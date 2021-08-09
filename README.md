@@ -17,7 +17,7 @@
 ## Setup and Usage
 For a well commented, feature-complete minimal project template, please see [kushi-quickstart](https://github.com/paintparty/kushi-quickstart).
 
-## Syntax
+##  Usage Details
 ```Clojure
 (defn my-component []
  [:div
@@ -39,8 +39,11 @@ This map contains:
   - If necessary, a style property containing the correct auto-generated css variable names.
   - All the other attributes you specify in your attributes map (supplied as an optional last arg to sx).
   - An optional data-ns attribute to help with browser-based debugging (see docs: "Using metadata").
-Using a build hook for the :compile-finish stage (or similar), your css is written to a static file.
+Using a build hook for the `:compile-finish` stage (or similar), your css is written to a static file.
 
+<br>
+
+### Styles as keywords
 Most values supplied to `sx` are keywords.<br>
 Keywords containing `--` represent a css prop and value pair (split on `--`).
 ```Clojure
@@ -103,6 +106,44 @@ This shorthand syntax is supported for the most commonly used css props:
 :ws  ; => :white-space
 :z   ; => :z-index
 ```
+<br>
+
+### Styles as tuples
+
+Any css prop-value declaration can also be written as tuple (2-element vector).<br>
+All the shorthand syntax listed above is valid in the first (property) position.<br>
+By convention, this form should only be used in the following cases:
+
+Most commonly, when using a dynamic, or variable, value:
+```Clojure
+(sx [:color my-color])
+```
+
+When a string is desired, or necessary:
+```Clojure
+(sx [:before:content "\"*\""]
+    [:width "calc((100vw / 3) + 12px)"])
+```
+When using kushi.core/cssfn to construct a value:
+```Clojure
+(sx [:transform (cssfn :translateY :-100px)])
+```
+<br>
+
+### Using the `cssfn` helper
+As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
+```Clojure
+(sx [:transform (cssfn :translate :-30px :5%)]
+    [:c (cssfn :rgba 0 200 100 0.4)]
+    [:bgi (cssfn :linear-gradient "to bottom right" :red :blue)])
+
+; The above example would be equivalent to:
+(sx [:transform "translate(-30px, 5%)"]
+    [:color "rgba(0, 200, 100, 0.4)"]
+    [:background-image "linear-gradient(to bottom right, red, blue)"])
+```
+
+<br>
 
 ## Shared styles
 You will typically want to defined all your shared styles in a dedicated namespace.
@@ -151,7 +192,11 @@ Then, in another namespace
 ;;     mix-blend-mode: darken;
 ;; }
 ```
-As arguments to `sx` classes are distinguished from other prop-styles by using a keyword beginning with a `.`, e.g. `:.headline`, as in the example above. You may have also noticed that the `defclass headline` code example above uses `:.absolute`, and then composes additional styles on top of that. `declasses` can mixin other classes. In this case, `headline` is mixing-in `:.absolute`, which is one of a small handful of very useful, pre-defined `defclasses` that ships with Kushi. The full list is as follows:
+As arguments to `sx`, classes are distinguished from other prop-styles by using a keyword beginning with a `.`, e.g. `:.headline`, as in the example above.
+
+You may have also noticed that the `defclass headline` code example above uses `:.absolute`, and then composes additional styles on top of that. `declasses` can mixin other classes. The class `:.absolute` is one of a small handful of very useful, pre-defined classes that ships with Kushi.
+
+The full list:
 
 ```
 :absolute
@@ -185,13 +230,43 @@ As arguments to `sx` classes are distinguished from other prop-styles by using a
 :sans-serif
 :serif
 ```
+Detailed documentation on the above classes can be found [here](https://github.com/paintparty/kushi/blob/main/doc/intro.md).
 
+If you pass a class to `sx` that is neither a pre-defined kushi class or one of your own classes defined with `defclass`, then it will simpley be attached to the elements classlist as an unscoped class, exactly as you wrote it. You might want to do this to pull in classes from some other stylesheet.
 
-## Dynamic values
-...docs coming very soon. See quickstart for working example.
 
 ## Media Queries
-...docs coming very soon. See quickstart for working example.
+```Clojure
+;; Specify the font-size of an <h1> element across breakpoints
+[:h1
+ (sx :fs--1.25rem
+     :md:fs--1.5rem
+     :lg:fs--1.75rem
+     :xl:fs--2rem)]
+```
+As in the example above, you can use preceding modifiers to set different values for a property at different breakpoints.
+
+Kushi ships with the following, industry-standard, mobile-first breakpoint scale:
+```Clojure
+{:sm {:min-width :640px}
+ :md {:min-width :768px}
+ :lg {:min-width :1024px}
+ :xl {:min-width :1280px}
+ :2xl {:min-width :1536px}}
+```
+Both the names and values can be customized via supplying a map in the `:media` entry in your `kushi.edn` config file. See [Configuration Options](##configuration-options).
+
+Below is an example of a scale that is desktop-first and uses different names.<br>
+Note that in the case of desktop-first(`max-width`), the order is reversed(relative to mobile-first / `min-width`).
+```Clojure
+{:desktop {:max-width :1280px}
+ :tablet {:max-width :1024px}
+ :mobile {:max-width :768px}
+ :small {:max-width :640px}}
+```
+Any media-query modifier that you use needs to correspond to a key in the breakpoint map.
+
+<br>
 
 ## Pseudos
 ...docs coming very soon. See quickstart for working example.
