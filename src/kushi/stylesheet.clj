@@ -72,8 +72,10 @@
       (do
         (print-status (count @state/user-defined-font-faces) "@font-face rule(s)")
         (spit-css {:pretty-print? pretty-print?
-                     :comment "Font faces"
-                     :content (string/join "\n" @state/user-defined-font-faces)}))
+                   :comment "Font faces"
+                   :content (if pretty-print?
+                              (string/join "\n" @state/user-defined-font-faces)
+                              (string/join (string/replace @state/user-defined-font-faces #"\n" "")))}))
       (reset! state/user-defined-font-faces []))
 
     ;; write defkeyframes
@@ -81,15 +83,16 @@
       (do
         (print-status (count @state/user-defined-keyframes) "@keyframes rule(s)")
         (spit-css {:comment "Animation Keyframes"
-                   :content (string/join
-                             "\n"
-                             (map (fn [[nm frames]]
-                                    (str "@keyframes "
-                                         (name nm)
-                                         " {\n"
-                                         (string/replace (garden.core/css frames) #"\n" "\n  ")
-                                         "\n}\n"))
-                                  @state/user-defined-keyframes))}))
+                   :content (let [content (string/join
+                                           "\n"
+                                           (map (fn [[nm frames]]
+                                                  (str "@keyframes "
+                                                       (name nm)
+                                                       " {\n"
+                                                       (string/replace (garden.core/css frames) #"\n" "\n  ")
+                                                       "\n}\n"))
+                                                @state/user-defined-keyframes))]
+                              (if pretty-print? content (string/replace content #"\n" "")))}))
       (reset! state/user-defined-keyframes {}))
 
        ;; write defclasses

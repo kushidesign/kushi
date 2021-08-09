@@ -1,7 +1,8 @@
 (ns kushi.printing
   #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
-   [clojure.string :as string]))
+   [clojure.string :as string]
+   [kushi.config :refer [user-config]]))
 
 
 ;; Helpers for logging formatting   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -276,3 +277,53 @@
                [(str "Warning: Invalid value"  " of " (:numeric-string %) " for " (:prop-hydrated %) " in kushi.core/" (name (:current-macro %)))
                 (str " Did you mean " (:numeric-string %) "px?\n\n")]))
            compilation-warnings))))
+
+
+;; Diagnostics   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn diagnostics [kw {:keys [defclass-registered? sym args attr-map css-injection-dev garden-vecs]}]
+  #?(:clj
+     (when-let [d (some->> user-config :diagnostics? (into #{}))]
+       (case kw
+         :defclass
+         (when (contains? d :defclass)
+           (println
+            (str
+             "\n\n\n"
+             "--(kushi.core/defclass)-------------------------------------------------------------"
+             "\n\n"
+             "(defclass " sym " " (string/join " " args) ")"
+             "\n"
+             "=>"
+             "\n"
+             attr-map
+             "\n\n"
+             "(state/add-styles! " garden-vecs ")"
+             "\n\n"
+             "CSS to be injected for dev preview:"
+             "\n"
+             css-injection-dev
+             "\n\n")))
+         :defclass-register
+         (when (contains? d :defclass-register)
+           (println "Registering defclass" kw "..." (if defclass-registered? "✔" "✘ FAIL")))
+         :sx
+         (when (contains? d :sx)
+           (println
+            (str
+             "\n\n\n"
+             "--(kushi.core/sx)-------------------------------------------------------------"
+             "\n\n"
+             "(sx " (string/join " " args) ")"
+             "\n"
+             "=>"
+             "\n"
+             attr-map
+             "\n\n"
+             "(state/add-styles! " garden-vecs ")"
+             "\n\n"
+             "CSS to be injected for dev preview:"
+             "\n"
+             css-injection-dev
+             "\n\n")))))))
+

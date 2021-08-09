@@ -13,7 +13,9 @@
    [kushi.specs :as specs]
    [kushi.state :as state]
    [kushi.stylesheet :as stylesheet]
-   [kushi.utils :as util :refer [pprint+]]))
+   [kushi.utils :as util]))
+
+#_(println "kushi.core.clj" user-config)
 
 (defn- scoped-atomic-classname
   "Returns a classname with proper prefixing for scoping.
@@ -66,19 +68,19 @@
         styles-argument-display (apply vector coll)
         console-warning-args {:classname classname
                               :styles-argument-display styles-argument-display
-                              :invalid-args invalid-args}]
+                              :invalid-args invalid-args}
+        m {:n classname
+           :selector* selector*
+           :args hydrated-styles
+           :garden-vecs garden-vecs}]
 
     ;; Print any problems to terminal
     (printing/console-warning-defclass console-warning-args)
 
     ;; Put atomic class into global registry
-    (swap! state/kushi-atomic-user-classes
-           assoc
-           classname
-           {:n classname
-            :selector* selector*
-            :args hydrated-styles
-            :garden-vecs garden-vecs})
+    (swap! state/kushi-atomic-user-classes assoc classname m)
+
+    (printing/diagnostics :defclass {:defclass-map m :args coll :sym sym})
 
     ;; Dev-only runtime code for potential warnings and dynamic injection for instant preview.
     `(do
@@ -185,6 +187,7 @@
    Returns a normalized attribute map which incorporates the prefixed selector(s)
    into the :class attribute."
   [& args]
+  #_(println "(sx" (string/join " " (drop 2 args))  " ...)")
   (reset! state/current-macro :s-)
   (let [{:keys [atomic-class-keys
                 garden-vecs
@@ -202,18 +205,33 @@
         compilation-warnings (mapv (fn [v] v) @state/compilation-warnings)
         invalid-warning-args {:invalid-args invalid-args
                               :styles-argument-display styles-argument-display}
-        css-injection-dev (stylesheet/garden-vecs-injection garden-vecs)]
+        css-injection-dev (stylesheet/garden-vecs-injection garden-vecs)
+        og-cls (:class attr)
+        cls (when og-cls (if (coll? og-cls) og-cls [og-cls]))]
 
-    (reset! state/compilation-warnings [])
-
-    ;; Add atomic-classes to previously-used registry
+    ;; Add classes to previously-used registry
     (doseq [kw atomic-class-keys]
-      (swap! state/atomic-declarative-classes-used conj kw))
+      (when-not (contains? @state/atomic-declarative-classes-used kw)
+        (swap! state/atomic-declarative-classes-used conj kw)
+        (printing/diagnostics
+         :defclass-register
+         {:defclass-registered? (contains? @state/atomic-declarative-classes-used kw)})))
+
+    (printing/diagnostics
+     :sx
+     {:garden-vecs garden-vecs
+      :css-injection-dev css-injection-dev
+      :args args
+      :attr-map (merge attr-base
+                       {:class (distinct (concat cls classlist conditional-class-sexprs))
+                        :style (merge (:style attr) css-vars)})})
 
     ;; Add vecs into garden state
     (state/add-styles! garden-vecs)
 
     (printing/console-warning-sx invalid-warning-args)
+
+    (reset! state/compilation-warnings [])
 
     `(let [og-cls# (:class ~attr)
            cls# (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
@@ -221,17 +239,17 @@
                             {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
                              :style (merge (:style ~attr) ~css-vars)})]
        (if ^boolean js/goog.DEBUG
-           (do
-             (when-not (empty? ~compilation-warnings)
-               (js/console.warn (kushi.core/console-warning-number ~compilation-warnings)))
+         (do
+           (when-not (empty? ~compilation-warnings)
+             (js/console.warn (kushi.core/console-warning-number ~compilation-warnings)))
 
-             (when (seq ~invalid-args)
-               (do
-                 (.apply
-                  js/console.warn
-                  js/console
-                  (kushi.core/js-warning-sx ~invalid-warning-args))))
-             (kushi.core/inject-style-rules (quote ~css-injection-dev) ~selector)
-             (merge (when ~f {~data-ns-key (kushi.core/ns+ ~f ~ident)})
-                    attr-map#))
-           attr-map#))))
+           (when (seq ~invalid-args)
+             (do
+               (.apply
+                js/console.warn
+                js/console
+                (kushi.core/js-warning-sx ~invalid-warning-args))))
+           (kushi.core/inject-style-rules (quote ~css-injection-dev) ~selector)
+           (merge (when ~f {~data-ns-key (kushi.core/ns+ ~f ~ident)})
+                  attr-map#))
+         attr-map#))))
