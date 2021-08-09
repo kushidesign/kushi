@@ -50,6 +50,8 @@
     :absolute {:position :absolute}
     :fixed {:position :fixed}
     :relative {:position :relative}
+
+   ;Content
     :content-blank {:content "\"\""}
 
    ;Combonatorial background utilities
