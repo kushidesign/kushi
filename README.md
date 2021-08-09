@@ -151,7 +151,7 @@ Then, in another namespace
 ;;     mix-blend-mode: darken;
 ;; }
 ```
-As arguments to `sx` classes are distinguished from other prop-styles by using a keyword beginning with a `.`, e.g. `:.headline`, as in the example above. You may have also noticed that the `defclass` code example above uses `:.absolute`, and then composes additional styles on top of that. `declasses` can "mixin" other classes. In this case, headline is mixining in :.absolute, which is one of a small handful of very useful, pre-defined `defclasses` that ships with Kushi. The full list is as follows:
+As arguments to `sx` classes are distinguished from other prop-styles by using a keyword beginning with a `.`, e.g. `:.headline`, as in the example above. You may have also noticed that the `defclass headline` code example above uses `:.absolute`, and then composes additional styles on top of that. `declasses` can mixin other classes. In this case, `headline` is mixing-in `:.absolute`, which is one of a small handful of very useful, pre-defined `defclasses` that ships with Kushi. The full list is as follows:
 
 ```
 :absolute
