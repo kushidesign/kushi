@@ -123,7 +123,7 @@
               :learn-more "Look at kushi.core/defclass docs for more details."
               :find-source "Look at browser console for source map info."}
 
-   :s- {:expected (str "kushi.core/s- expects:"
+   :sx {:expected (str "kushi.core/sx expects:"
                        "\n\n"
                        "- Any number of the following:"
                        "\n\n  - Keyword representing style declaration, e.g.,"
@@ -137,7 +137,7 @@
                        "\n\n"
                        "- An optional map of html attributes."
                        "\n  If present, this must be the last argument.")
-        :learn-more "See kushi.core/s- docs for more details"}})
+        :learn-more "See kushi.core/sx docs for more details"}})
 
 (defn warning-call-with-args
   [{:keys [fname classname] :as m}]
@@ -168,7 +168,7 @@
                     (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal")))))))
 
 (defn js-warning-sx [m*]
-  (let [m (assoc m* :fname "s-")]
+  (let [m (assoc m* :fname "sx")]
     (js-warning* m)))
 
 (defn js-warning-defclass [m*]
