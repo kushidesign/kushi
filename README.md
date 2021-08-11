@@ -15,24 +15,24 @@
 - Detailed warnings for the terminal and browser.
 
 **Index**<br>
-[Setup and usage](##setup-and-usage)<br>
-[Usage details](##usage-details)<br>
-[Shared styles](##shared-styles)<br>
-[Media queries](##media-queries)<br>
-[Pseudos and combo selectors](##pseudos-and-combo-selectors)<br>
-[Playing with scales](##playing-with-scales)<br>
-[Injecting stylesheets](##injecting-stylesheets)<br>
-[Adding font resources](##adding-font-resources)<br>
-[Element attributes](##element-attributes)<br>
-[Using metadata](##using-metadata)<br>
-[Configuration options](##configuration-options)<br>
-[Prefixing options](##prefixing-options)<br>
-[Style injection during development](##style-injection-during-development)<br>
-[Useful warnings](##useful-warnings)<br>
-[Usage with build tools](##usage-with-build-tools)<br>
-[Roadmap](##roadmap)<br>
-[Development](##development)<br>
-[License](##license)
+[Setup and usage](#setup-and-usage)<br>
+[Usage details](#usage-details)<br>
+[Shared styles](#shared-styles)<br>
+[Media queries](#media-queries)<br>
+[Pseudos and combo selectors](#pseudos-and-combo-selectors)<br>
+[Playing with scales](#playing-with-scales)<br>
+[Injecting stylesheets](#injecting-stylesheets)<br>
+[Adding font resources](#adding-font-resources)<br>
+[Element attributes](#element-attributes)<br>
+[Using metadata](#using-metadata)<br>
+[Configuration options](#configuration-options)<br>
+[Prefixing options](#prefixing-options)<br>
+[Style injection during development](#style-injection-during-development)<br>
+[Useful warnings](#useful-warnings)<br>
+[Usage with build tools](#usage-with-build-tools)<br>
+[Roadmap](#roadmap)<br>
+[Development](#development)<br>
+[License](#license)
 
 
 ## Setup and Usage
