@@ -14,7 +14,7 @@
 - Optionally use metadata to enhance debugging.
 - Detailed warnings for the terminal and browser.
 
-**Index**<br>
+## Index
 [Setup and usage](#setup-and-usage)<br>
 [Usage details](#usage-details)<br>
 [Shared styles](#shared-styles)<br>
