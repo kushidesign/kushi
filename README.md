@@ -58,9 +58,8 @@ For a well commented, feature-complete minimal project template, please see [kus
 This map contains:
   - A class property containing the correct auto-generated, prefixed classnames.
   - If necessary, a style property containing the correct auto-generated css variable names.
-  - All the other attributes you specify in your attributes map (supplied as an optional last arg to sx).
-  - An optional data-ns attribute to help with browser-based debugging (see docs: "Using metadata").
-Using a build hook for the `:compile-finish` stage (or similar), your css is written to a static file.
+  - All the other attributes you specify in your attributes map (supplied as an optional last arg to `sx`).
+  - An optional data-ns attribute to help with browser-based debugging.  See [Using metadata](#using-metadata). Your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool),
 
 <br>
 
@@ -145,7 +144,7 @@ When a string is desired, or necessary:
 (sx [:before:content "\"*\""]
     [:width "calc((100vw / 3) + 12px)"])
 ```
-When using kushi.core/cssfn to construct a value:
+When using `kushi.core/cssfn` to construct a value:
 ```Clojure
 (sx [:transform (cssfn :translateY :-100px)])
 ```
@@ -251,7 +250,7 @@ The full list:
 :.sans-serif
 :.serif
 ```
-Detailed documentation on the above classes can be found [here](https://github.com/paintparty/kushi/blob/main/doc/intro.md).
+Detailed documentation on the above classes can be found [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-predefined-classes.css).
 
 If you pass a class to `sx` that is neither a predefined kushi class or one of your own classes defined with `defclass`, then it will simpley be attached to the elements classlist as an unscoped class, exactly as you wrote it. You might want to do this to pull in classes from some other stylesheet.
 ### Applying classes conditionally
@@ -290,7 +289,7 @@ Kushi ships with the following, industry-standard, mobile-first breakpoint scale
  :xl {:min-width :1280px}
  :2xl {:min-width :1536px}}
 ```
-Both the names and values can be customized via supplying a map in the `:media` entry in your `kushi.edn` config file. See [Configuration Options](##configuration-options).
+Both the names and values can be customized via supplying a map in the `:media` entry in your `kushi.edn` config file. See [Configuration Options](#configuration-options).
 
 Below is an example of a scale that is desktop-first and uses different names.<br>
 Note that in the case of desktop-first(`max-width`), the order is reversed(relative to mobile-first / `min-width`).
@@ -372,7 +371,7 @@ You can use `kushi.core/inject-stylesheet` to load resources such as a font from
 ```
 
 You can also use `kushi.core/inject-stylesheet` to inject a static css file.
-This stylesheet might be a css reset file, or a third-party style library.
+The stylesheet, in this case, might be a css reset file, or a third-party style library.
 This is more of an edge case, as you would typically just do this with a <link> in your index.html.
 However, if your project uses a clj file to generate the contents of your index's <head> at build time,
 it may be handy to use this during development to inject new stylesheets without restarting your build.
