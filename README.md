@@ -1,4 +1,8 @@
+<br>
+
 # Style Made Easy.
+
+<br>
 
 **Native ClojureScript styling solution**
 
@@ -79,7 +83,9 @@ This map contains:
   - A class property containing the correct auto-generated, prefixed classnames.
   - If necessary, a style property containing the correct auto-generated css variable names.
   - All the other attributes you specify in your attributes map (supplied as an optional last arg to `sx`).
-  - An optional data-ns attribute to help with browser-based debugging.  See [Using metadata](#using-metadata). Your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool),
+  - An optional data-ns attribute to help with browser-based debugging.  See [Using metadata](#using-metadata).
+
+All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool).
 
 <br>
 
@@ -152,8 +158,8 @@ It is available for the most commonly used css props:
 ### Styles as tuples
 
 Any css prop-value declaration can also be written as tuple (2-element vector).<br>
-All the shorthand syntax listed above is valid in the first position (css-property).<br>
-By convention, this should only be used in the following cases:
+All syntax listed above is valid (in the first position as css property name).<br>
+By convention, such a tuple should only be used in the following cases:
 
 Most commonly, when using dynamic values:
 ```Clojure
@@ -179,6 +185,7 @@ As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
     [:bgi (cssfn :linear-gradient "to bottom right" :red :blue)])
 
 ; The above example would be equivalent to:
+
 (sx [:transform "translate(-30px, 5%)"]
     [:color "rgba(0, 200, 100, 0.4)"]
     [:background-image "linear-gradient(to bottom right, red, blue)"])
@@ -333,7 +340,7 @@ The full list of predefined classes:
 ```
 Detailed documentation on the above classes can be found [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-predefined-classes.css).
 
-If you pass a class to `sx` that is neither a predefined kushi class or one of your own classes defined with `defclass`, then it will simpley be attached to the elements classlist as an unscoped class, exactly as you wrote it. You might want to do this to apply classes from some other stylesheet.
+If you pass a class to `sx` that is neither a predefined kushi class or one of your own classes defined with `defclass`, then it will simply be attached to the element's classlist as an unscoped class, exactly as you wrote it. You might want to do this to apply classes from some other stylesheet.
 
 <br>
 
@@ -345,7 +352,7 @@ You can apply classes conditionally:
      (when my-condition :.active-link))]
 ```
 This will work with `if` `when` `cond` `if-let` `when-let` `if-not` `when-not`, and `case`.<br>
-The returned class cannot be nested.<br>
+The class to be returned cannot be nested.<br>
 For example, this following will not work:
 ```Clojure
 ;; This will NOT work.
