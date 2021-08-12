@@ -7,5 +7,6 @@
                  [garden "1.3.10"]
                  [io.aviso/pretty "1.1"]]
   :repl-options {:init-ns kushi.core}
-  :deploy-repositories [["releases"  {:sign-releases false :url "https://repo.clojars.org"}]]
+  :deploy-repositories [["clojars" {:url "https://clojars.org/repo"
+                                    :sign-releases false}]]
   )
