@@ -340,7 +340,7 @@ The full list of predefined classes:
 ```
 Detailed documentation on the above classes can be found [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-predefined-classes.css).
 
-If you pass a class to `sx` that is neither a predefined kushi class or one of your own classes defined with `defclass`, then it will simply be attached to the element's classlist as an unscoped class, exactly as you wrote it. You might want to do this to apply classes from some other stylesheet.
+If you pass a class to `sx` that is neither a predefined kushi class nor one of your own classes defined with `defclass`, then it will simply be attached to the element's classlist as an unscoped class, exactly as you wrote it. You might want to do this to apply classes from some other stylesheet.
 
 <br>
 
@@ -351,9 +351,8 @@ You can apply classes conditionally:
  (sx :bb--1px:solid:black
      (when my-condition :.active-link))]
 ```
-This will work with `if` `when` `cond` `if-let` `when-let` `if-not` `when-not`, and `case`.<br>
-The class to be returned cannot be nested.<br>
-For example, this following will not work:
+Works with `if` `when` `cond` `if-let` `when-let` `if-not` `when-not`, and `case`.<br>
+The class to be returned cannot be nested. For example, this following will not work:
 ```Clojure
 ;; This will NOT work.
 [:a
@@ -399,7 +398,7 @@ When "stacking" other modifiers (such as psuedo-classes) in front of props, the 
 <br>
 
 ## Pseudos and combo selectors
-Pseudo-classes, pseudo-elements, and combo selectors can be achieved through the use of the modifiers syntax.
+Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers:
 ```Clojure
 (sx :hover:c--blue
     :>a:hover:c--red
@@ -412,7 +411,7 @@ Pseudo-classes, pseudo-elements, and combo selectors can be achieved through the
     [:before:content "\"*\""]
     ["nth:child(2):c" :red])
 
-;; The last arg to sx above is an edge case requires
+;; The last arg to sx above is an edge case that requires
 ;; the tuple syntax with prop being expressed as a string.
 ```
 <br>
@@ -422,14 +421,12 @@ Pseudo-classes, pseudo-elements, and combo selectors can be achieved through the
 `kushi.core/defkeyframes` macro makes it easy to define css keyframes.
 ```Clojure
 ;; This will twirl something on its y-axis
-
 (defkeyframes :y-axis-spinner
   [:0% {:transform (cssfn :rotateY :0deg)}]
   [:100% {:transform (cssfn :rotateY :360deg)}])
 
 
 ;; Somewhere in your component code...
-
 [:div
  (sx :fs--32px
      :animation--y-axis-spinner:12s:linear:infinite)
@@ -438,17 +435,19 @@ Pseudo-classes, pseudo-elements, and combo selectors can be achieved through the
 <br>
 
 ## Using scales
-Kushi ships with two different predefined scaling systems. These systems provide a scale of values for `width`, `font-size`, `padding`, `margin`, and `border-widths`.
+Kushi ships with two different predefined scaling systems.<br>
+These systems provide a scale of values for `width`, `font-size`, `padding`, `margin`, and `border-widths`.
 
 These two systems shadow the scales provided by [Tachyons](http://tachyons.io/docs/typography/scale/) and [Tailwindcss](https://tailwindcss.com/docs/font-size).
 
-The Tacyons scale is available by default. You can opt to instead use the Tailwind scale in your `kushi.edn` config file:
+The Tacyons scale is available by default.<br>
+You can opt to instead use the Tailwind scale in your `kushi.edn` config file:
 ```Clojure
 {...
  :scaling-system :tailwind
  ...}
 ```
-Then supply a value affixed with an `*` to of the applicable css properties:
+Supply a value affixed with an `*` to of the applicable css properties:
 ```Clojure
 (sx :w--1*
     :bw--2*
@@ -487,7 +486,7 @@ The example below (typical use case), loads a stylesheet from Google Fonts.
 
 
 You can also use `kushi.core/inject-stylesheet` to inject a css reset stylesheet, or a third-party style library.
-This is more of an edge case, as you would typically just do this with a `<link>` in your index.html.
+This is more of an edge case, as you would typically just do this with a `<link>` in your index.html.<br>
 However, if your project uses a clj file to generate the contents of your `<head>` at build time,
 it may be handy to use this during development to inject new stylesheets without restarting your build.
 
