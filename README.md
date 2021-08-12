@@ -1,7 +1,10 @@
 <br>
-[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.paintparty/kushi.svg)](https://clojars.org/org.clojars.paintparty/kushi)
 
 # Style Made Easy.
+
+<br>
+
+[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.paintparty/kushi.svg)](https://clojars.org/org.clojars.paintparty/kushi)
 
 <br>
 
