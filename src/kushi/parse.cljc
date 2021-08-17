@@ -11,7 +11,7 @@
    [kushi.defs :as defs]
    [kushi.printing :as printing]
    [kushi.config :refer [user-config]]
-   [kushi.utils :as util]))
+   [kushi.utils :as util :refer [pprint+]]))
 
 (defn extract-vars* [coll]
   (mapv #(cond
@@ -115,7 +115,7 @@
     (some-> m :garden-vecs ffirst (subs 1))
     x))
 
-(defn- +conditionals [styles*]
+(defn- +conditionals [coll]
   (map
    (fn [v]
      (if (s/valid? ::specs/conditional-sexp v)
@@ -123,7 +123,7 @@
          {:_class (map scoped-classname v)}
          {:_class v})
        v))
-   styles*))
+   coll))
 
 (defn parse-classes
   "Converts any values with runtime dynamics into css var syntax"
@@ -135,6 +135,7 @@
                                       (mapv #(:_class %)))
         classes* (filter #(not (or (map? %) (seq? %))) +conditionals)
         classes (-> (concat conditional-class-keys classes*) distinct)]
+
     {:conditional-class-sexprs conditional-class-sexprs
      :conditional-class-keys conditional-class-keys
      :classes classes}))
@@ -154,10 +155,11 @@
 (defn css-var? [s] (re-find #"^var\(--.+\)$" s))
 
 (defn warn-if-bad-number
-  [prop-hydrated numeric-string]
+  [prop prop-hydrated numeric-string]
   (when-not (or (= "0" numeric-string)
                 (contains? defs/int-vals (keyword prop-hydrated)))
     (let [m {:warning-type :unitless-number
+             :prop prop
              :prop-hydrated prop-hydrated
              :numeric-string numeric-string
              :current-macro @state/current-macro}]
@@ -193,7 +195,7 @@
 
      ;; If numeric, convert number to px value based on prop.
      (util/numeric-string? s)
-     (do (warn-if-bad-number hydrated-k s)
+     (do (warn-if-bad-number k hydrated-k s)
          s)
 
      ;; If string with spaces, convert to string with spaces.
@@ -228,16 +230,19 @@
            :else x))
        coll))
 
-(defn maybe-convert-map [x]
+(defn maybe-convert-map
+  [x]
   (if (and (= true (:map-mode? user-config))
            (= 1 (count x))
            (-> x first map?))
-    (->> x first (map (fn [[k v]]
-                        ; TODO add coverage for these specs
-                        (if (or (and (= v :kushi/class) (s/valid? ::specs/scoped-class-syntax k))
-                                (and (= v :kushi/mixin) (keyword? k)))
-                          k
-                          [k v]))))
+    (->> x
+         first
+         (map (fn [[k v]]
+                ; TODO add coverage for these specs
+                (if (or (and (= v :kushi/class) (s/valid? ::specs/scoped-class-syntax k))
+                        (and (= v :kushi/mixin) (keyword? k)))
+                  k
+                  [k v]))))
     x))
 
 (defn hydrate-css

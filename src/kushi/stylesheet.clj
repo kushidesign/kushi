@@ -65,7 +65,7 @@
         pretty-print? (if (= :dev mode) true false)]
     (use 'clojure.java.io)
     (spit-css {:header "Kushi CSS" :append false})
-    (println (str "\nkushi.stylsheet/create-css-file\nWriting the following to " user-css-file-path ":"))
+    (println (str "\nkushi v0.1.2\nkushi.stylsheet/create-css-file\nWriting the following to " user-css-file-path ":"))
 
     ;; write @font-face declarations
     (when-not (empty? @state/user-defined-font-faces)

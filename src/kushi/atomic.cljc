@@ -106,7 +106,7 @@
    (fn [acc [k v]]
      (let [garden-vecs (let [style-map (get declarative-classes k)
                              selector-name (selector/selector-name
-                                            {:classname k
+                                            {:defclass-name k
                                              :defclass-hash defclass-hash})]
                          [[(:selector selector-name) style-map]])]
        (assoc acc k {:n k :args v :garden-vecs garden-vecs})))

@@ -176,8 +176,27 @@
     (js-warning* m)))
 
 (defn console-warning-number [compilation-warnings]
-  (js/console.log "defclass-warning")
-  #_(printing/console-warning-number compilation-warnings))
+  (let [warning (string/join
+                 "\n\n"
+                 (map #(cond
+                         (= (:warning-type %) :unitless-number)
+                         (string/join
+                          "\n\n"
+                          [(str "Warning: %cInvalid value%c"
+                                " of %c"
+                                (:numeric-string %)
+                                "%c for "
+                                (:prop-hydrated %)
+                                " in kushi.core/"
+                                (name (:current-macro %)))
+                           (str " Did you mean %c" (:numeric-string %) "px%c?\n")]))
+                      compilation-warnings))
+        number-of-formats (count (re-seq #"%c" warning))]
+    (to-array
+     (concat
+      [warning]
+      (interleave (repeat (/ number-of-formats 2) "color:black;font-weight:bold")
+                  (repeat (/ number-of-formats 2) "color:default;font-weight:normal"))))))
 
 (defn ns+
   "Creates a string that represents a fully namespaced-qualified

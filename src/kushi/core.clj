@@ -2,6 +2,7 @@
   (:require
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
+   [clojure.set :as set]
    [garden.core :as garden]
    [garden.def]
    [garden.stylesheet :refer [at-font-face]]
@@ -15,7 +16,6 @@
    [kushi.stylesheet :as stylesheet]
    [kushi.utils :as util]))
 
-#_(println "kushi.core.clj" user-config)
 
 (defn- scoped-atomic-classname
   "Returns a classname with proper prefixing for scoping.
@@ -32,7 +32,7 @@
    (scoped-atomic-classname {} {:atomic :col-2}) ;=> \".col-2\""
   [meta kw]
   (if (parse/atomic-user-class kw)
-    (some-> (assoc meta :classname kw :defclass-hash atomic/defclass-hash)
+    (some-> (assoc meta :defclass-name kw :defclass-hash atomic/defclass-hash)
             selector/selector-name
             :selector*)
     kw))
@@ -49,7 +49,7 @@
         grouped-by-mqs (parse/grouped-by-mqs tokenized-styles)
         {:keys [selector
                 selector*]} (selector/selector-name
-                             {:classname classname
+                             {:defclass-name classname
                               :defclass-hash atomic/defclass-hash})
         garden-vecs (parse/garden-vecs grouped-by-mqs selector)]
     {:selector* selector*
@@ -59,17 +59,17 @@
 (defmacro defclass
   [sym & coll]
   (reset! state/current-macro :defclass)
-  (let [classname (keyword sym)
+  (let [defclass-name (keyword sym)
         {styles :valid invalid-args* :invalid} (util/reduce-by-pred #(s/valid? ::specs/defclass-arg %) coll)
         invalid-args (or
                       (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
                       (into [] invalid-args*))
-        {:keys [selector* hydrated-styles garden-vecs]} (register-class! classname styles)
+        {:keys [selector* hydrated-styles garden-vecs]} (register-class! defclass-name styles)
         styles-argument-display (apply vector coll)
-        console-warning-args {:classname classname
+        console-warning-args {:defclass-name defclass-name
                               :styles-argument-display styles-argument-display
                               :invalid-args invalid-args}
-        m {:n classname
+        m {:n defclass-name
            :selector* selector*
            :args hydrated-styles
            :garden-vecs garden-vecs}]
@@ -78,7 +78,7 @@
     (printing/console-warning-defclass console-warning-args)
 
     ;; Put atomic class into global registry
-    (swap! state/kushi-atomic-user-classes assoc classname m)
+    (swap! state/kushi-atomic-user-classes assoc defclass-name m)
 
     (printing/diagnostics :defclass {:defclass-map m :args coll :sym sym})
 
@@ -153,31 +153,43 @@
      :data-ns-key data-ns-key
      :invalid-args invalid}))
 
+(defn classlist [meta classes* selector*]
+  (let [non-conditional-classes (filter #(not (seq? %)) classes*)
+        {:keys [conditional-class-sexprs classes]} (parse/parse-classes classes*)
+        {atomic-class-keys :valid other-keys :invalid} (util/reduce-by-pred util/starts-with-dot? classes)
+        non-conditional-atomic-class-keys (set/intersection
+                                           (into #{} atomic-class-keys)
+                                           (into #{} non-conditional-classes))
+        atomic-classes (atomic-classes meta (map
+                                             util/normalized-class-kw
+                                             non-conditional-atomic-class-keys))
+        classlist (concat atomic-classes [selector*] (map name other-keys))]
+   {:classlist classlist
+    :atomic-class-keys atomic-class-keys
+    :conditional-class-sexprs conditional-class-sexprs}))
+
 (defn sx* [args]
   (let [{:keys [styles* classes* invalid-args attr meta ident f data-ns-key]} (parse-attr+meta args)
         {:keys [selector selector*]} (selector/selector-name meta)
-        {:keys [conditional-class-sexprs classes]} (parse/parse-classes classes*)
+        classlist-map (classlist meta classes* selector*)
         styles (parse/+vars styles* selector*)
         css-vars (parse/css-vars styles* selector*)
         tokenized-styles (mapv parse/kushi-style->token styles)
         grouped-by-mqs (parse/grouped-by-mqs tokenized-styles)
-        {atomic-class-keys :valid other-keys :invalid} (util/reduce-by-pred util/starts-with-dot? classes)
         garden-vecs (parse/garden-vecs grouped-by-mqs selector)
-        attr-base (or attr {})
-        atomic-classes (atomic-classes meta (map util/normalized-class-kw atomic-class-keys))
-        classlist (concat atomic-classes [selector*] (map name other-keys))]
-    {:atomic-class-keys atomic-class-keys
-     :garden-vecs garden-vecs
-     :attr attr
-     :attr-base attr-base
-     :classlist classlist
-     :conditional-class-sexprs conditional-class-sexprs
-     :css-vars css-vars
-     :f f
-     :ident ident
-     :invalid-args invalid-args
-     :data-ns-key data-ns-key
-     :selector selector}))
+        attr-base (or attr {})]
+
+    (merge
+     classlist-map
+     {:garden-vecs garden-vecs
+      :attr attr
+      :attr-base attr-base
+      :css-vars css-vars
+      :f f
+      :ident ident
+      :invalid-args invalid-args
+      :data-ns-key data-ns-key
+      :selector selector})))
 
 (defmacro sx
   "Receives n-number of args representing css style declarations or classes.
@@ -188,7 +200,7 @@
    into the :class attribute."
   [& args]
   #_(println "(sx" (string/join " " (drop 2 args))  " ...)")
-  (reset! state/current-macro :s-)
+  (reset! state/current-macro :sx)
   (let [{:keys [atomic-class-keys
                 garden-vecs
                 attr
@@ -219,7 +231,8 @@
 
     (printing/diagnostics
      :sx
-     {:garden-vecs garden-vecs
+     {:ident ident
+      :garden-vecs garden-vecs
       :css-injection-dev css-injection-dev
       :args args
       :attr-map (merge attr-base
@@ -241,7 +254,10 @@
        (if ^boolean js/goog.DEBUG
          (do
            (when-not (empty? ~compilation-warnings)
-             (js/console.warn (kushi.core/console-warning-number ~compilation-warnings)))
+             (.apply
+              js/console.warn
+              js/console
+              (kushi.core/console-warning-number ~compilation-warnings)))
 
            (when (seq ~invalid-args)
              (do

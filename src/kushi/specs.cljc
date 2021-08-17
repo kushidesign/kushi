@@ -295,9 +295,9 @@
 
 (s/def ::kushi-conditional-class
   (s/and ::conditional-sexp
-         #(not (some (fn [x]
-                       (s/valid? ::kushi-dot-class-kw x))
-                     %))))
+         #(some (fn [x]
+                  (s/valid? ::kushi-dot-class-kw x))
+                %)))
 
 (s/def ::kushi-dot-class-with-mods
   (s/or :kushi-dot-class-kw-with-mods ::kushi-dot-class-kw-with-mods

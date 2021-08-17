@@ -13,7 +13,7 @@
       (string/replace #":" "")))
 
 (defn selector-name
-  [{:keys [ident element f prefix parent classname defclass-hash]}]
+  [{:keys [ident element f prefix parent defclass-name defclass-hash]}]
   (let [hash (auto-generated-hash)
         {global-parent :parent
          global-prefix :prefix
@@ -23,9 +23,11 @@
         prefix (or prefix global-prefix)
         parent (or parent global-parent)
         prefixed-names-for-selectors? (and prefix ident (not add-empty-classes?))
-        prefixed-name (when (and prefix ident) (str (name prefix) "__" (name ident)))
-        selector* (if classname
-                    (str (or defclass-prefix defclass-hash) "__" (nsqkw->selector-friendly classname))
+        prefixed-name (when (and prefix ident) (str (name prefix) (name ident)))
+        selector* (if defclass-name
+                    (str (or defclass-prefix defclass-hash)
+                         "__"
+                         (nsqkw->selector-friendly defclass-name))
                     (if prefixed-names-for-selectors?
                       prefixed-name
                       hash))
