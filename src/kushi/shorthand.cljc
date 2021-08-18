@@ -1,7 +1,7 @@
 (ns kushi.shorthand)
 
 (def css-sh
-  {:ai ^:kini {:name :align-items
+  {:ai {:name :align-items
                :vals {:c :center
                       :fs :flex-start
                       :fe :flex-end
@@ -15,7 +15,7 @@
    :bl {:name :border-left :example-val [[:1px :solid :black]]}
    :bt {:name :border-top :example-val [[:5% :dotted :#efefef]]}
    :bb {:name :border-bottom :example-val [[:5px :solid :white]]}
-   :bs ^:kini {:name :border-style
+   :bs {:name :border-style
                :vals {:n :none
                       :h :hidden
                       :d :dotted
@@ -25,19 +25,19 @@
                       :i :inset
                       :o :outset}}
    :bw {:name :border-width :example-val :3px}
-   :bc ^:kini {:name :border-color :example-val :blue}
+   :bc {:name :border-color :example-val :blue}
 
    :bgi {:name :background-image :example-val "linear-gradient(red, blue)"}
    :bg {:name :background :example-val [[:no-repeat "url('../bg-img.png')"]]}
    :bgs {:name :background-size :example-val :50%}
-   :bgc ^:kini {:name :background-color :example-val :red}
-   :bgp ^:kini {:name :background-position
+   :bgc {:name :background-color :example-val :red}
+   :bgp {:name :background-position
                 :vals {:t :top
                        :b :bottom
                        :l :left
                        :r :right
                        :c :center}}
-   :bgr ^:kini {:name :background-repeat
+   :bgr {:name :background-repeat
                 :vals {:nr :no-repeat
                        :rx :repeat-x
                        :ry :repeat-y
@@ -86,9 +86,9 @@
    :gtr {:name :grid-template-rows :example-val [[:1fr :2fr :1fr]]}
    :gtc {:name :grid-template-columns :example-val [[:1fr :2fr :1fr]]}
 
-   :h ^:kini {:name :height :example-val "calc(100% - 20px)"}
+   :h {:name :height :example-val "calc(100% - 20px)"}
 
-   :jc ^:kini {:name :justify-content
+   :jc {:name :justify-content
                :vals {:c :center
                       :s :start
                       :e :end
@@ -101,7 +101,7 @@
                       :sa :space-around
                       :se :space-evenly}}
 
-   :ji ^:kini {:name :justify-items
+   :ji {:name :justify-items
                :vals {:a :auto
                       :n :normal
                       :c :center
@@ -114,23 +114,23 @@
                       :l :left
                       :r :right}}
 
-   :lh ^:kini {:name :line-height :example-val 1.45}
+   :lh {:name :line-height :example-val 1.45}
 
-   :m ^:kini {:name :margin :example-val [[0 :5px]]}
-   :mr ^:kini {:name :margin-right :example-val :5%}
-   :ml ^:kini {:name :margin-left :example-val :10px}
-   :mt ^:kini {:name :margin-top :example-val :5px}
-   :mb ^:kini {:name :margin-bottom :example-val :8px}
+   :m {:name :margin :example-val [[0 :5px]]}
+   :mr {:name :margin-right :example-val :5%}
+   :ml {:name :margin-left :example-val :10px}
+   :mt {:name :margin-top :example-val :5px}
+   :mb {:name :margin-bottom :example-val :8px}
 
-   :p ^:kini {:name :padding  :example-val [[:10px 0]]}
-   :pr ^:kini {:name :padding-right :example-val :5px}
-   :pl ^:kini {:name :padding-left :example-val :3px}
-   :pt ^:kini {:name :padding-top :example-val :1px}
-   :pb ^:kini {:name :padding-bottom :example-val :2px}
+   :p {:name :padding  :example-val [[:10px 0]]}
+   :pr {:name :padding-right :example-val :5px}
+   :pl {:name :padding-left :example-val :3px}
+   :pt {:name :padding-top :example-val :1px}
+   :pb {:name :padding-bottom :example-val :2px}
 
-   :o ^:kini {:name :opacity :example-val 1}
+   :o {:name :opacity :example-val 1}
 
-   :ta ^:kini {:name :text-align
+   :ta {:name :text-align
                :vals {:c :center
                       :r :right
                       :l :left
@@ -139,35 +139,35 @@
                       :s :start
                       :e :end
                       :mp :match-parent}}
-   :tt ^:kini {:name :text-transform
+   :tt {:name :text-transform
                :vals {:u :uppercase
                       :l :lowercase
                       :c :captitalize
                       :fw :full-width}}
-   :td ^:kini {:name :text-decoration
+   :td {:name :text-decoration
                :vals {:u :underline
                       :o :overline
                       :lt :line-through}}
-   :tdl ^:kini {:name :text-decoration-line
+   :tdl {:name :text-decoration-line
                 :vals {:u :underline
                        :o :overline
                        :lt :line-through}}
    :tdc {:name :text-decoration-color :example-val :#333}
-   :tds ^:kini {:name :text-decoration-style
+   :tds {:name :text-decoration-style
                 :vals {:s :solid
                        :w :wavy}}
-   :tdt ^:kini {:name :text-decoration-thickness
+   :tdt {:name :text-decoration-thickness
                 :vals {:ff :from-font}}
 
-   :w ^:kini {:name :width :example-val :80%}
+   :w {:name :width :example-val :80%}
 
-   :ws ^:kini {:name :white-space
+   :ws {:name :white-space
                :vals {:n :nowrap
                       :p :pre
                       :pw :pre-wrap
                       :pl :pre-line}}
 
-   :va ^:kini {:name :vertical-align
+   :va {:name :vertical-align
                :vals {:b :baseline
                       :s :sub
                       :t :top
@@ -175,7 +175,7 @@
                       :tb :text-bottom
                       :m :middle}}
 
-   :z ^:kini {:name :z-index :example-val 10000}})
+   :z {:name :z-index :example-val 10000}})
 
 
 (defonce css-sh-by-prop
