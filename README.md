@@ -252,7 +252,7 @@ In the meantime, if you would like to incorporate a dynamic value into a css sho
 ;; Write the shorthand with a "default" value that subsequently
 ;; gets overridden with a dynamic value on the specific property.
 (sx (sx :b--1px:solid:black
-         [:bc mycolor])
+        [:bc mycolor])
 
 ;; Alternatively, this would work:
 (let [myborder (str "1px solid " mycolor)]
@@ -264,7 +264,6 @@ In the meantime, if you would like to incorporate a dynamic value into a css sho
 ### CSS value lists
 Sometimes multiple css values are seperated by commas to indicate they are ordered, or that there are ordered alternatives. With kushi, you can write them like this:
 ```Clojure
-;; Some element in your component
 (sx :ff--FiraCodeRegular|Consolas|monospace)
 ```
 The above will resolve to the following css declaration:
@@ -563,7 +562,7 @@ Element attributes, when needed, can be supplied via an optional map.<br>This ma
 <br>
 
 ## Using metadata
-Relative to using vanilla css or sass, kushi will obviate the need to write your styles in a separate location and/or language. In turn, you will not need to worry about keeping selector names in css in sync with classnames in your dom.
+Relative to using vanilla css or sass, kushi will obviate the need to write your styles in a separate location and/or language. In turn, you will not need to worry about keeping selector names in css in sync with classnames in your markup code.
 
 With kushi, tjhe html generated in the DOM will have many auto-generated class names. As a result, it can become difficult to quickly comprehend the source location when looking at elements in a browser inspector (such as Chrome DevTool Elements panel).
 
@@ -683,7 +682,7 @@ as the element that `sx` is being called within.
 <br>
 
 ## Style injection during development
-For instantaneous previews when developing, all styling from `sx` calls are injected dynamically in the the following tag that is required to be in your `index.html` :
+For instantaneous previews when developing, all styling from `sx` calls are injected dynamically into the following tag that is required to be in your `index.html` :
 ```html
 <style type="text/css" id="_kushi-dev_"></style>
 ```
