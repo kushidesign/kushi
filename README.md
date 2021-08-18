@@ -99,6 +99,12 @@ All your css is written to a static file, via a build hook for the `:compile-fin
 ### Styles as keywords
 Most values supplied to `sx` are keywords.<br>
 Keywords containing `--` represent a css prop and value pair (split on `--`).
+
+```Clojure
+:color--red
+```
+
+Kushi promotes a simple shorthand grammer based on the existing CSS standard. This shorthand syntax is optional.
 ```Clojure
 :c--red   ; => :color--red
 :ai--c    ; => :align-items--center
@@ -109,8 +115,7 @@ Keywords containing `--` represent a css prop and value pair (split on `--`).
 :d--f     ; => :display--flex
 :bgs--50% ; => :background-size--50%
 ```
-Kushi employs a simple shorthand grammer based on the existing CSS standard.<br>
-It is available for the most commonly used css props:
+This shorthand grammer is available for the most commonly used props:
 ```Clojure
 :ai  ; :align-items
 :b   ; :border
@@ -160,6 +165,34 @@ It is available for the most commonly used css props:
 :ws  ; :white-space
 :z   ; :z-index
 ```
+
+kushi shorthand grammer extends to enumerated values:
+```Clojure
+;; text-transform
+:tt--u   ; text-transform--uppercase
+:tt--l   ; text-transform--lowercase
+:tt--c   ; text-transform--capitalize
+:tt--fw  ; text-transform--full-width
+
+;; background-repeat
+:bgr--nr ;background-repeat--no-repeat
+:bgr--rx ;background-repeat--repeat-x
+:bgr--ry ;background-repeat--repeat-y
+:bgr--r  ;background-repeat--round
+:bgr--s  ;background-repeat--space
+
+;; align-items
+:ai--c   ; align-items--center
+:ai--fs  ; align-items--flex-start
+:ai--fe  ; align-items--flex-end
+:ai--n   ; align-items--normal
+:ai--s   ; align-items--start
+:ai--e   ; align-items--end
+:ai--b   ; align-items--baseline
+```
+
+For complete info on available enum values view the source [here](https://github.com/paintparty/kushi/blob/main/src/kushi/shorthand.cljc).
+
 <br>
 
 ### Styles as tuples
