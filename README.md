@@ -198,7 +198,7 @@ For complete info on available enum values view the source [here](https://github
 ### Styles as tuples
 
 Any css prop-value declaration can also be written as tuple (2-element vector).<br>
-All syntax listed above is valid (in the first position as css property name).<br>
+All the optional shorthand syntax listed above is valid (in the first position as css property name).<br>
 By convention, such a tuple should only be used in the following cases:
 
 Most commonly, when using dynamic values:
