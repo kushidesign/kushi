@@ -283,7 +283,8 @@ text-shadow: 5px 5px 10px red, -5px -5px 10px blue;
 <br>
 
 ## Shared styles
-You will typically want to defined all your shared styles in a dedicated namespace.
+The `kushi.core/defclass` macro makes it easy to create shared styles.<br>
+You will typically want to defined all of these in a dedicated namespace.
 ```Clojure
 (ns myapp.shared-styles
   (:require
@@ -303,7 +304,7 @@ You will typically want to defined all your shared styles in a dedicated namespa
 ;; This data is added to a register (an atom that exists in the build state).
 ;; This css class is only written to disk (once) if a component actually uses it.
 ```
-Then, in another namespace
+If your shared styles are organized into a single ns, you only need to require it once in your main or core ns, and all the styles from that ns will be available globally.
 ```Clojure
 (ns myapp.core
   (:require
@@ -384,7 +385,7 @@ You can apply classes conditionally:
      (when my-condition :.active-link))]
 ```
 Works with `if` `when` `cond` `if-let` `when-let` `if-not` `when-not`, and `case`.<br>
-The class to be returned cannot be nested. For example, this following will not work:
+The class to be returned cannot be nested. For example, the following will not work:
 ```Clojure
 ;; This will NOT work.
 [:a
