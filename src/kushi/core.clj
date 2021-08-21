@@ -16,6 +16,17 @@
    [kushi.stylesheet :as stylesheet]
    [kushi.utils :as util]))
 
+(def KUSHIDEBUG (atom true))
+
+(defn kushi-debug
+  {:shadow.build/stage :compile-prepare}
+  [build-state]
+  (let [mode (:shadow.build/mode build-state)]
+    (when mode
+      (println "(:shadow.build/mode build-state) =>" mode))
+    (when (not= mode :dev)
+      (reset! KUSHIDEBUG false)))
+  build-state)
 
 (defn- scoped-atomic-classname
   "Returns a classname with proper prefixing for scoping.
@@ -83,15 +94,17 @@
     (printing/diagnostics :defclass {:defclass-map m :args coll :sym sym})
 
     ;; Dev-only runtime code for potential warnings and dynamic injection for instant preview.
-    `(do
-       (when ^boolean js/goog.DEBUG
+    (if @KUSHIDEBUG
+      `(do
          (when (seq ~invalid-args)
            (do
              (.apply
               js/console.warn
               js/console
-              (kushi.core/js-warning-defclass ~console-warning-args)))))
-       nil)))
+              (kushi.core/js-warning-defclass ~console-warning-args))))
+         nil)
+      `(do nil)
+      )))
 
 
 (defmacro add-font-face
@@ -191,6 +204,7 @@
       :data-ns-key data-ns-key
       :selector selector})))
 
+
 (defmacro sx
   "Receives n-number of args representing css style declarations or classes.
    Evaluates styles and adds css data to global registery along with auto-generated
@@ -199,7 +213,7 @@
    Returns a normalized attribute map which incorporates the prefixed selector(s)
    into the :class attribute."
   [& args]
-  #_(println "(sx" (string/join " " (drop 2 args))  " ...)")
+  #_(println "(sx" (string/join " " args)  " ...)")
   (reset! state/current-macro :sx)
   (let [{:keys [atomic-class-keys
                 garden-vecs
@@ -212,7 +226,7 @@
                 ident
                 invalid-args
                 data-ns-key
-                selector]} (sx* args)
+                selector] :as m} (sx* args)
         styles-argument-display (apply vector args)
         compilation-warnings (mapv (fn [v] v) @state/compilation-warnings)
         invalid-warning-args {:invalid-args invalid-args
@@ -246,12 +260,12 @@
 
     (reset! state/compilation-warnings [])
 
-    `(let [og-cls# (:class ~attr)
-           cls# (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
-           attr-map# (merge ~attr-base
-                            {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
-                             :style (merge (:style ~attr) ~css-vars)})]
-       (if ^boolean js/goog.DEBUG
+    (if @KUSHIDEBUG
+      `(let [og-cls# (:class ~attr)
+             cls# (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
+             attr-map# (merge ~attr-base
+                              {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
+                               :style (merge (:style ~attr) ~css-vars)})]
          (do
            (when-not (empty? ~compilation-warnings)
              (.apply
@@ -265,7 +279,23 @@
                 js/console.warn
                 js/console
                 (kushi.core/js-warning-sx ~invalid-warning-args))))
+
            (kushi.core/inject-style-rules (quote ~css-injection-dev) ~selector)
            (merge (when ~f {~data-ns-key (kushi.core/ns+ ~f ~ident)})
-                  attr-map#))
-         attr-map#))))
+                  attr-map#)))
+      (let
+       [{:keys [only-class? only-class+style?]} (util/analyze-attr m)]
+        (cond
+          only-class?
+          `(do {:class (quote ~classlist)})
+
+          only-class+style?
+          `(do {:class (quote ~classlist)
+                :style (merge (:style ~attr) ~css-vars)})
+          :else
+          `(let [og-cls# (:class ~attr)
+                 cls# (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
+                 attr-map# (merge ~attr-base
+                                  {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
+                                   :style (merge (:style ~attr) ~css-vars)})]
+             attr-map#))))))
