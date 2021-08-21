@@ -138,3 +138,26 @@
       (-> x name (subs 1) keyword)
       x)
     x))
+
+(defn analyze-attr
+  [{:keys [conditional-class-sexprs attr css-vars]}]
+  (let
+   [conditional-classes? (boolean (not-empty conditional-class-sexprs))
+    existing-classes? (boolean (not-empty (:class attr)))
+    css-vars? (boolean (not-empty css-vars))
+    style? (boolean (not-empty (:style attr)))
+    attr? (boolean (not-empty attr))
+    class-like? (boolean (some true? [conditional-classes? existing-classes?]))
+    style-like? (boolean (some true? [css-vars? style?]))]
+
+    #_(pprint+ {:conditional-classes? conditional-classes?
+              :conditional-class-sexprs conditional-class-sexprs
+              :existing-classes? existing-classes?
+              :existing-classes (:class attr)
+              :css-vars? css-vars?
+              :css-vars css-vars
+              :style? style?
+              :style (:style attr)})
+
+    {:only-class? (and (not attr?) (not-any? true? [class-like? style-like?]))
+     :only-class+style? (and (not attr?) (and style-like? (not class-like?)))}))
