@@ -7,12 +7,13 @@
   "Removes all existing styles that were injected into #_kushi-dev_ style tag at dev time.
    Intended to be called by the projects main/core ns on every save/reload."
   []
-  (js/console.log "cleaning!")
-  (let [sheet (.-sheet (js/document.getElementById "_kushi-dev_"))
-        rules (.-rules sheet)
-        rules-len (.-length rules)]
-    (doseq [idx (reverse (range rules-len))]
-      (.deleteRule sheet idx))))
+  (when ^boolean js/goog.DEBUG
+   (do (js/console.log "kushi.core/clean!")
+       (let [sheet (.-sheet (js/document.getElementById "_kushi-dev_"))
+             rules (.-rules sheet)
+             rules-len (.-length rules)]
+         (doseq [idx (reverse (range rules-len))]
+           (.deleteRule sheet idx))))))
 
 (defn cssfn? [x]
   (and (list? x)
@@ -22,12 +23,14 @@
 (declare cssfn)
 
 (defn vec-in-cssfn [v]
-  (string/join " " (map #(cond
-                           (cssfn? %) (cssfn %)
-                           (vector? %) (vec-in-cssfn %)
-                           (keyword? %) (name %)
-                           :else (str %))
-                        v)))
+  (string/join
+   " "
+   (map #(cond
+           (cssfn? %) (cssfn %)
+           (vector? %) (vec-in-cssfn %)
+           (keyword? %) (name %)
+           :else (str %))
+        v)))
 
 (defn cssfn* [[_ nm & args]]
   (str (name nm)
@@ -48,6 +51,7 @@
 
 
 (defn inject-stylesheet
+
   "Expects a map with the following keys: :rel, :href, and :cross-origin(optional).
    Appends stylesheet as <link> element to the document <head>.
    Only appends if link with identical attributes does not already exist in the document head.
@@ -63,6 +67,7 @@
 
    (inject-stylesheet {:rel \"stylesheet\"
                        :href \"https://fonts.googleapis.com/css2?family=Rock+Salt&display=swap\"})"
+
   [m]
   (let [attr-selector* (map (fn [[k v]] (str "[" (name k) "=" "\"" v "\"" "]")) m)
         existing-link (js/document.querySelector (str "link" (string/join "" attr-selector*)))]
@@ -72,17 +77,17 @@
           (.setAttribute link (name attr) (name val)))
         (try
           (.appendChild js/document.head link)
-          (catch :default e (js/console.warn
-                             "kushi.core/s+:\n\nFailed attempt to inject stylesheet (or link):\n\n"
-                             m
-                             "\n\n¯\\_(ツ)_/¯")))))))
+          (catch :default e (when ^boolean js/goog.DEBUG
+                             (js/console.warn
+                              "kushi.core/s+:\n\nFailed attempt to inject stylesheet (or link):\n\n"
+                              m
+                              "\n\n¯\\_(ツ)_/¯"))))))))
 (defn- garden-mq-rule? [v]
   (and (map? v) (= :media (:identifier v))))
 
 (defn inject-style-rules
   "Called at dev time for zippy previews."
   [css-rules selector]
-  #_(js/console.log "css-rules" (str css-rules))
   (let [css-rules-as-indexed-seq (map-indexed vector css-rules)
         sheet (.-sheet (js/document.getElementById "_kushi-dev_"))
         selector-set (into #{} (->> sheet .-rules (map #(aget % "selectorText"))))]
@@ -139,7 +144,7 @@
                        "\n  If present, this must be the last argument.")
         :learn-more "See kushi.core/sx docs for more details"}})
 
-(defn warning-call-with-args
+(defn- warning-call-with-args
   [{:keys [fname classname] :as m}]
   (str "(" fname " "
        (when classname (name classname))
@@ -153,19 +158,18 @@
 
 (defn js-warning*
   [m]
-  (when ^boolean js/goog.DEBUG
-    (let [warning (string/join
-                   "\n\n"
-                   [(warning-header m)
-                    (warning-call-with-args m)
-                    (str (-> m :fname keyword dict :learn-more) "\n")])
-          number-of-formats (count (re-seq #"%c" warning))]
-      (to-array
-       (concat
-        [warning]
-        ["color:black;font-weight:bold" "font-weight:normal" "font-weight:bold;color:#ffaa00" "font-weight:normal"]
-        (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
-                    (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal")))))))
+  (let [warning (string/join
+                 "\n\n"
+                 [(warning-header m)
+                  (warning-call-with-args m)
+                  (str (-> m :fname keyword dict :learn-more) "\n")])
+        number-of-formats (count (re-seq #"%c" warning))]
+    (to-array
+     (concat
+      [warning]
+      ["color:black;font-weight:bold" "font-weight:normal" "font-weight:bold;color:#ffaa00" "font-weight:normal"]
+      (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
+                  (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal"))))))
 
 (defn js-warning-sx [m*]
   (let [m (assoc m* :fname "sx")]
@@ -175,7 +179,8 @@
   (let [m (assoc m* :fname "defclass")]
     (js-warning* m)))
 
-(defn console-warning-number [compilation-warnings]
+(defn console-warning-number
+  [compilation-warnings]
   (let [warning (string/join
                  "\n\n"
                  (map #(cond
@@ -196,7 +201,9 @@
      (concat
       [warning]
       (interleave (repeat (/ number-of-formats 2) "color:black;font-weight:bold")
-                  (repeat (/ number-of-formats 2) "color:default;font-weight:normal"))))))
+                  (repeat (/ number-of-formats 2) "color:default;font-weight:normal")))))
+                    ;;
+  )
 
 (defn ns+
   "Creates a string that represents a fully namespaced-qualified
