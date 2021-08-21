@@ -20,7 +20,7 @@
                garden-vecs)))))
 
 (def user-css-file-path
-  (str (:static-css-dir user-config)
+  (str (:css-dir user-config)
        "/"
        (or (:css-filename user-config) "kushi.css")))
 
@@ -31,7 +31,7 @@
   (let [cmnt (if header
                (str "/*" header "*/\n\n")
                (str (when comment (str "\n\n/*" comment "*/\n\n"))))
-        file-path (str (:static-css-dir user-config)
+        file-path (str (:css-dir user-config)
                        "/"
                        (or (:css-filename user-config) "kushi.css"))
         content (str cmnt (or content (garden/css {:pretty-print? pretty-print?} garden-vecs)))]
@@ -58,7 +58,9 @@
 (defn print-status [n kind]
   (println (str "    " n " unique " kind)))
 
-(def version "0.1.3")
+(def version* "0.1.3")
+(def _local_? true) ; Should be false except when developing kushi from local src
+(def version (str "\nkushi v" version* (when _local_? ":LOCAL")))
 
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
