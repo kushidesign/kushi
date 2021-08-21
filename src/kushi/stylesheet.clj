@@ -58,14 +58,16 @@
 (defn print-status [n kind]
   (println (str "    " n " unique " kind)))
 
+(def version "0.1.3")
+
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
   [build-state]
   (let [mode (:shadow.build/mode build-state)
         pretty-print? (if (= :dev mode) true false)]
     (use 'clojure.java.io)
-    (spit-css {:header "Kushi CSS" :append false})
-    (println (str "\nkushi v0.1.2\nkushi.stylsheet/create-css-file\nWriting the following to " user-css-file-path ":"))
+    (spit-css {:header (str "! kushi v" version " | EPL License | https://github.com/paintparty/kushi ") :append false})
+    (println (str "\nkushi v" version "\nkushi.stylsheet/create-css-file\nWriting the following to " user-css-file-path ":"))
 
     ;; write @font-face declarations
     (when-not (empty? @state/user-defined-font-faces)
@@ -73,9 +75,7 @@
         (print-status (count @state/user-defined-font-faces) "@font-face rule(s)")
         (spit-css {:pretty-print? pretty-print?
                    :comment "Font faces"
-                   :content (if pretty-print?
-                              (string/join "\n" @state/user-defined-font-faces)
-                              (string/join (string/replace @state/user-defined-font-faces #"\n" "")))}))
+                   :content (string/join "\n" @state/user-defined-font-faces)}))
       (reset! state/user-defined-font-faces []))
 
     ;; write defkeyframes
@@ -84,18 +84,18 @@
         (print-status (count @state/user-defined-keyframes) "@keyframes rule(s)")
         (spit-css {:comment "Animation Keyframes"
                    :content (let [content (string/join
-                                           "\n"
-                                           (map (fn [[nm frames]]
-                                                  (str "@keyframes "
-                                                       (name nm)
-                                                       " {\n"
-                                                       (string/replace (garden.core/css frames) #"\n" "\n  ")
-                                                       "\n}\n"))
-                                                @state/user-defined-keyframes))]
-                              (if pretty-print? content (string/replace content #"\n" "")))}))
+                                   "\n"
+                                   (map (fn [[nm frames]]
+                                          (str "@keyframes "
+                                               (name nm)
+                                               " {\n"
+                                               (garden.core/css frames)
+                                               "\n}\n"))
+                                        @state/user-defined-keyframes))]
+                              content)}))
       (reset! state/user-defined-keyframes {}))
 
-       ;; write defclasses
+    ;; write defclasses
     (when-not (empty? @state/atomic-declarative-classes-used)
       (let [gv (map #(let [normalized-class-kw (util/normalized-class-kw %)]
                        (some-> @state/kushi-atomic-user-classes normalized-class-kw :garden-vecs))
@@ -139,7 +139,3 @@
 
 (defn garden-mq-rule? [v]
   (and (map? v) (= :media (:identifier v))))
-
-#_(def mq-maps (some-> @state/media-queries :media vals))
-
-
