@@ -33,7 +33,7 @@
 (defn css-var-for-sexp [selector* css-prop]
   (str "--"
        selector*
-       "__"
+       "_"
        (string/replace css-prop #":" "_")))
 
 (defn sanitize-for-css-var-name [v]
