@@ -291,10 +291,10 @@
               garden-vecs
               ident]}]
   #?(:clj
-     (when-let [d (some->> user-config :diagnostics? (into #{}))]
-       (when (let [diagnostic-idents (some->> user-config :diagnostic-idents (into #{}))
-                   winner? (contains? diagnostic-idents ident)]
-               (or winner? (not diagnostic-idents)))
+     (when-let [d (some->> user-config :diagnose (into #{}))]
+       (when (let [diagnose-idents (some->> user-config :diagnose-idents (into #{}))
+                   winner? (contains? diagnose-idents ident)]
+               (or winner? (not diagnose-idents)))
         (case kw
           :defclass
           (when (contains? d :defclass)
