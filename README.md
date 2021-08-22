@@ -599,13 +599,13 @@ Then you would see this when inspecting the element in browser console:
 Various options are configurable via a required `kushi.edn` file.<br>
 This file must live in your project's root directory.
 
-The only required entry in this map is `:static-css-dir`
+The only required entry in this map is `:css-dir`
 
 ```Clojure
 {
  ;; REQUIRED.
  ;; Must be relative to proj root e.g "public/css" or "resources/public/css".
- :static-css-dir "public/css"
+ :css-dir "public/css"
 
  ;; Optional. Name of generated css file. Defaults to kushi.css.
  ;; :css-filename "my-kushi-styles.css"
