@@ -20,7 +20,7 @@
                garden-vecs)))))
 
 (def user-css-file-path
-  (str (:css-dir user-config)
+  (str (or (:css-dir user-config) (:static-css-dir user-config))
        "/"
        (or (:css-filename user-config) "kushi.css")))
 
@@ -31,15 +31,13 @@
   (let [cmnt (if header
                (str "/*" header "*/\n\n")
                (str (when comment (str "\n\n/*" comment "*/\n\n"))))
-        file-path (str (:css-dir user-config)
-                       "/"
-                       (or (:css-filename user-config) "kushi.css"))
+        path user-css-file-path
         content (str cmnt (or content (garden/css {:pretty-print? pretty-print?} garden-vecs)))]
     (if
      defclass?
-      (let [file-contents (slurp file-path)]
-        (spit file-path (str content "\n" file-contents)))
-      (spit file-path content :append append))))
+      (let [file-contents (slurp path)]
+        (spit path (str content "\n" file-contents)))
+      (spit path content :append append))))
 
 (defn has-mqs? [coll]
   (and (map? coll)
@@ -59,8 +57,8 @@
   (println (str "    " n " unique " kind)))
 
 (def version* "0.1.3")
-(def _local_? true) ; Should be false except when developing kushi from local src
-(def version (str "\nkushi v" version* (when _local_? ":LOCAL")))
+(def _local_? false) ; Only (optionally) set to true when developing kushi from local filesystem.
+(def version (str "v" version* (when _local_? ":LOCAL")))
 
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
@@ -69,7 +67,7 @@
         pretty-print? (if (= :dev mode) true false)]
     (use 'clojure.java.io)
     (spit-css {:header (str "! kushi v" version " | EPL License | https://github.com/paintparty/kushi ") :append false})
-    (println (str "\nkushi v" version "\nkushi.stylsheet/create-css-file\nWriting the following to " user-css-file-path ":"))
+    (println (str "\nkushi " version "\nkushi.stylsheet/create-css-file\nWriting the following to " user-css-file-path ":"))
 
     ;; write @font-face declarations
     (when-not (empty? @state/user-defined-font-faces)
