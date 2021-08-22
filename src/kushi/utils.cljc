@@ -139,14 +139,22 @@
       x)
     x))
 
+(defn values? [x]
+  (boolean
+   (when x
+     (or (string? x)
+         (keyword? x)
+         (when (coll? x)
+           (not-empty x))))))
+
 (defn analyze-attr
   [{:keys [conditional-class-sexprs attr css-vars]}]
   (let
-   [conditional-classes? (boolean (not-empty conditional-class-sexprs))
-    existing-classes? (boolean (not-empty (:class attr)))
-    css-vars? (boolean (not-empty css-vars))
-    style? (boolean (not-empty (:style attr)))
-    attr? (boolean (not-empty attr))
+   [conditional-classes? (values? conditional-class-sexprs)
+    existing-classes? (values? (:class attr))
+    css-vars? (values? css-vars)
+    style? (values? (:style attr))
+    attr? (values? attr)
     class-like? (boolean (some true? [conditional-classes? existing-classes?]))
     style-like? (boolean (some true? [css-vars? style?]))]
 
