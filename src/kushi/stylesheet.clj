@@ -1,9 +1,11 @@
 (ns ^:dev/always kushi.stylesheet
   (:require
    [clojure.string :as string]
+   [io.aviso.ansi :as ansi]
    [garden.stylesheet]
    [garden.core :as garden]
    [kushi.config :refer [user-config]]
+   [kushi.printing :refer [ansi-rainbow]]
    [kushi.state :as state]
    [kushi.utils :as util]))
 
@@ -56,7 +58,7 @@
 (defn print-status [n kind]
   (println (str "    " n " unique " kind)))
 
-(def version* "0.1.3")
+(def version* "0.1.4")
 (def _local_? false) ; Only (optionally) set to true when developing kushi from local filesystem.
 (def version (str "v" version* (when _local_? ":LOCAL")))
 
@@ -64,34 +66,37 @@
   {:shadow.build/stage :compile-finish}
   [build-state]
   (let [mode (:shadow.build/mode build-state)
-        pretty-print? (if (= :dev mode) true false)]
+        pretty-print? (if (= :dev mode) true false)
+        printables (atom [])
+        font-face-count (count @state/user-defined-font-faces)
+        keyframes-count (count @state/user-defined-keyframes)
+        ]
     (use 'clojure.java.io)
     (spit-css {:header (str "! kushi v" version " | EPL License | https://github.com/paintparty/kushi ") :append false})
-    (println (str "\nkushi " version "\nkushi.stylsheet/create-css-file\nWriting the following to " user-css-file-path ":"))
 
     ;; write @font-face declarations
-    (when-not (empty? @state/user-defined-font-faces)
+    (when (pos-int? font-face-count)
       (do
-        (print-status (count @state/user-defined-font-faces) "@font-face rule(s)")
+        (swap! printables conj (str font-face-count " @font-face rule" (when (> keyframes-count 1) "s")))
         (spit-css {:pretty-print? pretty-print?
                    :comment "Font faces"
                    :content (string/join "\n" @state/user-defined-font-faces)}))
       (reset! state/user-defined-font-faces []))
 
     ;; write defkeyframes
-    (when-not (empty? @state/user-defined-keyframes)
+    (when (pos-int? keyframes-count)
       (do
-        (print-status (count @state/user-defined-keyframes) "@keyframes rule(s)")
+        (swap! printables conj (str keyframes-count " @keyframes rule" (when (> keyframes-count 1) "s")))
         (spit-css {:comment "Animation Keyframes"
                    :content (let [content (string/join
-                                   "\n"
-                                   (map (fn [[nm frames]]
-                                          (str "@keyframes "
-                                               (name nm)
-                                               " {\n"
-                                               (garden.core/css frames)
-                                               "\n}\n"))
-                                        @state/user-defined-keyframes))]
+                                           "\n"
+                                           (map (fn [[nm frames]]
+                                                  (str "@keyframes "
+                                                       (name nm)
+                                                       " {\n"
+                                                       (garden.core/css frames)
+                                                       "\n}\n"))
+                                                @state/user-defined-keyframes))]
                               content)}))
       (reset! state/user-defined-keyframes {}))
 
@@ -104,22 +109,23 @@
             garden-vecs (remove has-mqs? garden-vecs*)
             atomic-classes-mq (mapv #(let [[mq args] %]
                                        (apply (partial garden.stylesheet/at-media mq) args))
-                                    (bunch-mqs garden-vecs*))]
-        (print-status (count garden-vecs) "defclasses")
+                                    (bunch-mqs garden-vecs*))
+            mq-count (count atomic-classes-mq)]
+        (swap! printables conj (str (count garden-vecs) " defclass" (when (> (count garden-vecs) 1) "es")))
         (spit-css {:pretty-print? pretty-print?
                    :garden-vecs garden-vecs
                    :comment "Atomic classes"})
 
-        (when-not (empty? atomic-classes-mq)
+        (when (pos-int? mq-count)
           (do
-            (print-status (count atomic-classes-mq) "defclasses under media-queries")
+            (swap! printables conj (str mq-count " defclass" (when (> mq-count 1) "es") " under a media-query" ))
             (spit-css {:pretty-print? pretty-print?
                        :garden-vecs atomic-classes-mq
                        :comment "Atomic classes, media queries"}))))
       (reset! state/atomic-declarative-classes-used #{}))
 
 
-       ;; write rules
+    ;; write rules
     (let [rules (map (fn [[k v]] (when v [k v]))
                      (:rules @state/garden-vecs-state))
           mqs (map (fn [[k v]]
@@ -128,12 +134,20 @@
                               (cons k as-seq))))
                    (dissoc @state/garden-vecs-state :rules))
           garden-vecs (remove nil? (concat rules mqs))]
-      (print-status (count garden-vecs) "classes")
+      (swap! printables conj (str (count garden-vecs) " class" (when (> (count garden-vecs) 1) "es")))
       (spit-css {:pretty-print? pretty-print?
                  :garden-vecs garden-vecs
                  :comment "Component styles"}))
 
-    (println "")
+    (println
+     (apply ansi-rainbow
+            (concat
+             [(str (ansi/bold (str "kushi " version)))
+              :br
+              (str "Writing: " #_(ansi/bold) user-css-file-path " ...")
+              :br]
+             @printables)))
+
     (reset! state/garden-vecs-state state/garden-vecs-state-init))
   build-state)
 

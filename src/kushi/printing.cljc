@@ -61,6 +61,9 @@
 (def info-border
   (border* info-dots border-length "..."))
 
+(def rainbow-border
+  (border* bold-rainbow border-length "..."))
+
 (defn js-fmt-args
   [{:keys [invalid-args :styles-argument-display]}]
   (mapv #(let [bad? (contains? (into #{} invalid-args) %)
@@ -186,6 +189,7 @@
   #?(:clj
      (let [msg-type (name msg-type*)
            color (case msg-type
+                   "rainbow" ansi/bold-yellow
                    "error" ansi/bold-red
                    "warning" ansi/bold-yellow
                    ansi/bold-black)]
@@ -212,6 +216,9 @@
        [(str "\n\n" border ansi/reset-font)]
        (map (partial indent-line indent-style) (body lines))
        [(str "" border ansi/reset-font "\n\n")]))))
+
+(defn ansi-rainbow [& lines]
+  (ansi* lines rainbow-border :rainbow))
 
 (defn ansi-info [& lines]
   (ansi* lines info-border :info))
