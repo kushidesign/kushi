@@ -22,7 +22,7 @@
   {:shadow.build/stage :compile-prepare}
   [build-state]
   (let [mode (:shadow.build/mode build-state)]
-    (when mode
+    #_(when mode
       (println "(:shadow.build/mode build-state) =>" mode))
     (when (not= mode :dev)
       (reset! KUSHIDEBUG false)))
