@@ -178,39 +178,3 @@
   (doseq [[mods args output] mods-tests]
     (kushi-assertion mods args output)))
 
-#_(run-tests 'kushi.core)
-
-;; var tests
-;; defclass test
-;; defclass with mixin test
-
-
-;; (testing "mq:sm, combo-selector, pseudo-element"
-;;   (are [input output] (re-find (css-re output :sm :combo :pe) (kushi-css input))
-;;     [["sm: > a~div *:before:c" :red]] "color:red"))
-
-;; (testing "mq:sm, combo-selector, pseudo-class"
-;;   (are [input output] (re-find (css-re output :sm :combo :pc) (kushi-css input))
-;;     [["sm:>a:hover:c" :red]] "color:red"))
-
-;; (testing "mq:sm, pseudo-element"
-;;   (are [input output] (re-find (css-re output :sm :pe) (kushi-css input))
-;;     [["sm:before:c" :red]] "color:red"))
-
-;; [:sm:p--10 :sm:m--20px:20px] "padding:10px;margin:20px 20px"
-
-
-#_(def kushi-tests
-    (concat
-     [[[:sm :combo :pe]
-       [["sm: > a~div *:before:c" :red]]
-       "color:red"]
-
-      [[:sm :combo :pc]
-       [["sm:>a:hover:c" :red]]
-       "color:red"]
-
-  ;; [[:sm :combo :pe]
-  ;;  [["sm: > a~div *:before:c" :red]]
-  ;;  "color:red"]
-      ]))
