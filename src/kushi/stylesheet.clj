@@ -58,9 +58,11 @@
 (defn print-status [n kind]
   (println (str "    " n " unique " kind)))
 
-(def version* "0.1.4")
-(def _local_? false) ; Only (optionally) set to true when developing kushi from local filesystem.
-(def version (str "v" version* (when _local_? ":LOCAL")))
+;; ! Update kushi version here for console printing
+(def version* "0.2.4")
+
+;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
+(def version (str "v" version* #_":LOCAL"))
 
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
