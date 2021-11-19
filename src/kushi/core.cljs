@@ -243,3 +243,37 @@
          el-ident-str (when el-ident (str (when fn-name "::") (name el-ident)))
          line-number (when line* (str ":" line*))]
      (str namespace* fn-name el-ident-str line-number))))
+
+(defn- merge-with-style-warning
+  [v k n]
+  (js/console.warn (str "kushi.core/merge-with-style:\n\n The " k " value supplied in the " n " argument must be a map.\n\n You supplied:\n") v))
+
+(defn- bad-style? [style n]
+  (let [bad? (and style (not (map? style)))]
+    (when bad? (merge-with-style-warning style :style n))
+    bad?))
+
+(defn- bad-class? [class n]
+  (let [bad? (and class
+                  (not (some #(% class) [seq? vector? keyword? string? symbol?])))]
+    (when bad? (merge-with-style-warning class :class n))
+    bad?))
+
+(defn merge-with-style-class-coll
+  [class bad-class?]
+  (when-not bad-class?
+    (if (or (string? class) (keyword? class))
+      [class]
+      class)))
+
+(defn merge-with-style
+  [{style1 :style class1 :class :as m1}
+   {style2 :style class2 :class :as m2}]
+  (let [[bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
+        [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i)) [class1 class2])
+        merged-style              (merge (when-not bad-style1? style1) (when-not bad-style2? style2))
+        class1-coll               (merge-with-style-class-coll class1 bad-class1?)
+        class2-coll               (merge-with-style-class-coll class2 bad-class2?)
+        classes                   (concat class1-coll class2-coll)
+        ret                       (assoc (merge m1 m2) :class classes :style merged-style)]
+    ret))
