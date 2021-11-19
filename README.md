@@ -74,10 +74,12 @@ For a well commented, feature-complete minimal project template, please see [kus
  [:div
   (sx :c--red
       :ta--c
-      :fs--18px)])
+      :fs--18px
+      {:id "foo"})])
 
 ;; The above call to the sx macro will return the following attribute map:
-;;  {:class "_j7338"}
+;;  {:class "_j7338"
+;;   :id "foo"}
 
 ;; When your build finishes, the following css will be written to disk:
 ;;  ._j7338 {
@@ -107,7 +109,7 @@ Keywords containing `--` represent a css prop and value pair (split on `--`).
 :color--red
 ```
 
-Kushi promotes a simple shorthand grammer based on the existing CSS standard. This shorthand syntax is optional.
+Kushi promotes a simple shorthand grammer which shadows CSS itself.<br>This shorthand syntax is optional.
 ```Clojure
 :c--red   ; => :color--red
 :ai--c    ; => :align-items--center
@@ -169,7 +171,7 @@ This shorthand grammer is available for the most commonly used props:
 :z   ; :z-index
 ```
 
-kushi shorthand grammer extends to enumerated values:
+Shorthand grammer extends to cover enumerated values:
 ```Clojure
 ;; text-transform
 :tt--u   ; text-transform--uppercase
@@ -194,13 +196,13 @@ kushi shorthand grammer extends to enumerated values:
 :ai--b   ; align-items--baseline
 ```
 
-For complete info on available enum values view the source [here](https://github.com/paintparty/kushi/blob/main/src/kushi/shorthand.cljc).
+For complete info on available enumurated values view the source [here](https://github.com/paintparty/kushi/blob/main/src/kushi/shorthand.cljc).
 
 <br>
 
 ### Styles as Tuples
 
-Any css prop-value declaration can also be written as tuple (2-element vector).<br>
+Any css prop-value declaration can also be written as a tuple (2-element vector).<br>
 All the optional shorthand syntax listed above is valid (in the first position as css property name).<br>
 By convention, such a tuple should only be used in the following cases:
 
@@ -220,7 +222,7 @@ When using `kushi.core/cssfn` to construct a value:
 ```
 <br>
 
-### Using the `cssfn` Helper
+### Using `cssfn`
 As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
 ```Clojure
 (sx [:c (cssfn :rgba 0 200 100 0.4)])
@@ -233,7 +235,7 @@ As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
 <br>
 
 ### CSS Shorthand Properties
-[CSS Shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are properties that let you set the values of multiple other CSS properties simultaneously. With kushi, you can write them like this:
+[CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are properties that let you set the values of multiple other CSS properties simultaneously. With kushi, you can write them like this:
 ```Clojure
 (sx :b--1px:solid:black)
 ```
@@ -276,7 +278,6 @@ font-family: FiraCodeRegular, Consolas, monospace;
 The example below uses a list of css shorthand values in order to render multiple text-shadows in different colors:
 ```Clojure
 (sx :text-shadow--5px:5px:10px:red|-5px:-5px:10px:blue)
- "Shadows"
 ```
 The above will resolve to the following css declaration:
 ```css
@@ -287,7 +288,11 @@ text-shadow: 5px 5px 10px red, -5px -5px 10px blue;
 
 # Shared Styles
 The `kushi.core/defclass` macro makes it easy to create shared styles.<br>
-You will typically want to defined all of these in a dedicated namespace.
+You will typically want to define all of these in a dedicated namespace.
+
+The example below will generate a data-representation of the css rule-set.
+<br>This data is added to a register (an atom that exists in the build state).
+<br>This css class is only written to disk if a component references it.
 ```Clojure
 (ns myapp.shared-styles
   (:require
@@ -303,9 +308,6 @@ You will typically want to defined all of these in a dedicated namespace.
   :font-style--italic
   :mix-blend-mode--darken)
 
-;; The above example will generate a data-representation of the css rule-set.
-;; This data is added to a register (an atom that exists in the build state).
-;; This css class is only written to disk (once) if a component actually uses it.
 ```
 If your shared styles are organized into a single ns, you only need to require it once in your main or core ns, and all the styles from that ns will be available globally.
 ```Clojure
@@ -380,7 +382,6 @@ If you pass a class to `sx` that is neither a predefined kushi class nor one of 
 <br>
 
 ### Applying Classes Conditionally
-You can apply classes conditionally:
 ```Clojure
 ;; Styling an <a> element
 [:a
@@ -429,7 +430,7 @@ Note that in the case of desktop-first(`max-width`), the order is reversed (rela
 ```
 Any media-query modifier that you use must correspond to a key in the breakpoint map.
 
-When "stacking" other modifiers (such as psuedo-classes) in front of props, the media queries must always come first.
+When "stacking" other modifiers (such as psuedo-classes) in front of css props, the media queries must always come first.
 
 <br>
 
@@ -447,8 +448,9 @@ Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers
     [:before:content "\"*\""]
     ["nth:child(2):c" :red])
 
-;; The last arg to sx above is an edge case that requires
-;; the tuple syntax with prop being expressed as a string.
+;; The last arg to sx above is an edge case (use of braces
+;; or brackets in the prop name) which necessitates the
+;; tuple syntax with prop written as a string.
 ```
 <br>
 
@@ -507,7 +509,7 @@ View all the scale values [here](https://github.com/paintparty/kushi/blob/main/s
 You can use `kushi.core/inject-stylesheet` to load css stylesheets.<br>
 The example below (typical use case), loads a stylesheet from Google Fonts.
 ```Clojure
-;;The additional "preconnect" hints will improve Google Fonts performance.
+;; The additional "preconnect" hints will improve Google Fonts performance.
 
 (inject-stylesheet {:rel "preconnet"
                     :href "https://fonts.gstatic.com"
@@ -566,9 +568,9 @@ Element attributes, when needed, can be supplied via an optional map.<br>This ma
 <br>
 
 # Using Metadata
-Relative to using vanilla css or sass, kushi will obviate the need to write your styles in a separate location and/or language. In turn, you will not need to worry about keeping selector names in css in sync with classnames in your markup code.
+Relative to using vanilla css or sass, kushi will obviate the need to write your styles in a separate location and/or language. In turn, you will not need to worry about keeping selector names in css files synced with classnames in your markup code.
 
-With kushi, tjhe html generated in the DOM will have many auto-generated class names. As a result, it can become difficult to quickly comprehend the source location when looking at elements in a browser inspector (such as Chrome DevTool Elements panel).
+With kushi, elements in the DOM will have auto-generated class names. As a result, it can become difficult to quickly comprehend the source location when looking at elements in a browser inspector (such as Chrome DevTool Elements panel).
 
 With `sx`, you can add metadata via a special `:f` entry in the element attribute map, which will then be transformed into a unique value and attached to the element as a custom data attribute called `data-ns`. The value of this `:f` entry is the var-quoted function name. If you are using the `kushi`-specific `:ident` entry in your attributes map, this will also be incorporated into the value of the generated `data-ns` attribute.
 ```Clojure
@@ -585,7 +587,7 @@ With `sx`, you can add metadata via a special `:f` entry in the element attribut
        :bgc--blue
        :border-radius--5px
        :cursor--pointer
-       {:f #'headline-layer
+       {:f #'my-button
         :ident :wrapper
         :on-click #(prn "clicked!")})
      text])
@@ -640,7 +642,7 @@ The only required entry in this map is `:css-dir`
 If you would like to prefix your generated classes with something other than an auto-generated string, you can make use of several kushi-specific properties in the attribute map that you pass to `sx`. These keys and values are only used by the macro at compile time and are removed in the attribute map that is returned by `sx`.
 
 The most common use case for this would be setting a global `:prefix` value, and then providing an `:ident` value (in the attr map) to some or all of your calls to `sx`.
-If you do this on a project-wide basis, you will need to make sure that your all your `:ident` values (or combos of `:parent` and `:ident`) are global unique.
+If you do this on a project-wide basis, you will need to make sure that your all your `:ident` values (or combos of `:parent` and `:ident`) are globally unique.
 
 ```Clojure
 ;; In your kushi.edn map ...
