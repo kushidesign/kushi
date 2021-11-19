@@ -55,35 +55,38 @@
 
 (defn- register-class!
   [classname coll*]
-  (let [hydrated-styles (parse/with-hydrated-classes coll*)
-        tokenized-styles (mapv parse/kushi-style->token hydrated-styles)
-        grouped-by-mqs (parse/grouped-by-mqs tokenized-styles)
+  (let [hydrated-styles     (parse/with-hydrated-classes coll*)
+        tokenized-styles    (mapv parse/kushi-style->token hydrated-styles)
+        grouped-by-mqs      (parse/grouped-by-mqs tokenized-styles)
         {:keys [selector
                 selector*]} (selector/selector-name
                              {:defclass-name classname
                               :defclass-hash atomic/defclass-hash})
-        garden-vecs (parse/garden-vecs grouped-by-mqs selector)]
-    {:selector* selector*
+        garden-vecs         (parse/garden-vecs grouped-by-mqs selector)]
+    {:selector*       selector*
      :hydrated-styles hydrated-styles
-     :garden-vecs garden-vecs}))
+     :garden-vecs     garden-vecs}))
 
 (defmacro defclass
   [sym & coll]
   (reset! state/current-macro :defclass)
-  (let [defclass-name (keyword sym)
-        {styles :valid invalid-args* :invalid} (util/reduce-by-pred #(s/valid? ::specs/defclass-arg %) coll)
-        invalid-args (or
-                      (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
-                      (into [] invalid-args*))
-        {:keys [selector* hydrated-styles garden-vecs]} (register-class! defclass-name styles)
-        styles-argument-display (apply vector coll)
-        console-warning-args {:defclass-name defclass-name
-                              :styles-argument-display styles-argument-display
-                              :invalid-args invalid-args}
-        m {:n defclass-name
-           :selector* selector*
-           :args hydrated-styles
-           :garden-vecs garden-vecs}]
+  (let [defclass-name            (keyword sym)
+        {styles        :valid
+         invalid-args* :invalid} (util/reduce-by-pred #(s/valid? ::specs/defclass-arg %) coll)
+        invalid-args             (or
+                                  (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
+                                  (into [] invalid-args*))
+        {:keys [selector*
+                hydrated-styles
+                garden-vecs]}    (register-class! defclass-name styles)
+        styles-argument-display  (apply vector coll)
+        console-warning-args     {:defclass-name           defclass-name
+                                  :styles-argument-display styles-argument-display
+                                  :invalid-args            invalid-args}
+        m                        {:n           defclass-name
+                                  :selector*   selector*
+                                  :args        hydrated-styles
+                                  :garden-vecs garden-vecs}]
 
     ;; Print any problems to terminal
     (printing/console-warning-defclass console-warning-args)
@@ -91,7 +94,9 @@
     ;; Put atomic class into global registry
     (swap! state/kushi-atomic-user-classes assoc defclass-name m)
 
-    (printing/diagnostics :defclass {:defclass-map m :args coll :sym sym})
+    (printing/diagnostics :defclass {:defclass-map m
+                                     :args         coll
+                                     :sym          sym})
 
     ;; Dev-only runtime code for potential warnings and dynamic injection for instant preview.
     (if @KUSHIDEBUG
@@ -145,64 +150,74 @@
 
 
 (defn- parse-attr+meta [args]
-  (let [attr* (when (map? (last args)) (last args))
-        meta-ks [:parent :prefix :f :ident :element :data-ns]
-        {:keys [f ident] :as meta} (select-keys attr* meta-ks)
-        data-ns-key (or (:data-ns-key user-config) :data-ns)
-        attr (apply dissoc attr* meta-ks)
-        styles+classes (if attr* (drop-last args) args)
-        {:keys [valid invalid]} (util/reduce-by-pred #(s/valid? ::specs/kushi-arg %) styles+classes)
-        {classes* :valid styles* :invalid} (util/reduce-by-pred #(s/valid? ::specs/kushi-class-like %) valid)
+  (let [attr*                      (when (map? (last args)) (last args))
+        meta-ks                    [:parent :prefix :f :ident :element :data-ns]
+        {:keys [f ident]
+         :as   meta}               (select-keys attr* meta-ks)
+        data-ns-key                (or (:data-ns-key user-config) :data-ns)
+        attr                       (apply dissoc attr* meta-ks)
+        styles+classes             (if attr* (drop-last args) args)
+        {:keys [valid invalid]}    (util/reduce-by-pred #(s/valid? ::specs/kushi-arg %) styles+classes)
+        {classes* :valid
+         styles*  :invalid}        (util/reduce-by-pred #(s/valid? ::specs/kushi-class-like %) valid)
         {classes-with-mods :valid} (util/reduce-by-pred #(s/valid? ::specs/kushi-dot-class-with-mods %) classes*)
         classes-with-mods-hydrated (parse/with-hydrated-classes classes-with-mods)
-        styles (into [] (concat styles* classes-with-mods-hydrated))]
-    {:attr attr
-     :meta meta
+        styles                     (into [] (concat styles* classes-with-mods-hydrated))]
+    {:attr           attr
+     :meta           meta
      :styles+classes styles+classes
-     :styles* styles
-     :classes* classes*
-     :f f
-     :ident ident
-     :data-ns-key data-ns-key
-     :invalid-args invalid}))
+     :styles*        styles
+     :classes*       classes*
+     :f              f
+     :ident          ident
+     :data-ns-key    data-ns-key
+     :invalid-args   invalid}))
 
 (defn classlist [meta classes* selector*]
-  (let [non-conditional-classes (filter #(not (seq? %)) classes*)
+  (let [non-conditional-classes                    (filter #(not (seq? %)) classes*)
         {:keys [conditional-class-sexprs classes]} (parse/parse-classes classes*)
-        {atomic-class-keys :valid other-keys :invalid} (util/reduce-by-pred util/starts-with-dot? classes)
-        non-conditional-atomic-class-keys (set/intersection
-                                           (into #{} atomic-class-keys)
-                                           (into #{} non-conditional-classes))
-        atomic-classes (atomic-classes meta (map
-                                             util/normalized-class-kw
-                                             non-conditional-atomic-class-keys))
-        classlist (concat atomic-classes [selector*] (map name other-keys))]
-   {:classlist classlist
-    :atomic-class-keys atomic-class-keys
-    :conditional-class-sexprs conditional-class-sexprs}))
+        {atomic-class-keys :valid
+         other-keys        :invalid}               (util/reduce-by-pred util/starts-with-dot? classes)
+        non-conditional-atomic-class-keys          (set/intersection
+                                                    (into #{} atomic-class-keys)
+                                                    (into #{} non-conditional-classes))
+        atomic-classes                             (atomic-classes meta (map
+                                                                         util/normalized-class-kw
+                                                                         non-conditional-atomic-class-keys))
+        classlist                                  (concat atomic-classes [selector*] (map name other-keys))]
+    {:classlist                classlist
+     :atomic-class-keys        atomic-class-keys
+     :conditional-class-sexprs conditional-class-sexprs}))
 
 (defn sx* [args]
-  (let [{:keys [styles* classes* invalid-args attr meta ident f data-ns-key]} (parse-attr+meta args)
+  (let [{:keys [styles*
+                classes*
+                invalid-args
+                attr
+                meta
+                ident
+                f
+                data-ns-key]}        (parse-attr+meta args)
         {:keys [selector selector*]} (selector/selector-name meta)
-        classlist-map (classlist meta classes* selector*)
-        styles (parse/+vars styles* selector*)
-        css-vars (parse/css-vars styles* selector*)
-        tokenized-styles (mapv parse/kushi-style->token styles)
-        grouped-by-mqs (parse/grouped-by-mqs tokenized-styles)
-        garden-vecs (parse/garden-vecs grouped-by-mqs selector)
-        attr-base (or attr {})]
+        classlist-map                (classlist meta classes* selector*)
+        styles                       (parse/+vars styles* selector*)
+        css-vars                     (parse/css-vars styles* selector*)
+        tokenized-styles             (mapv parse/kushi-style->token styles)
+        grouped-by-mqs               (parse/grouped-by-mqs tokenized-styles)
+        garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)
+        attr-base                    (or attr {})]
 
     (merge
      classlist-map
-     {:garden-vecs garden-vecs
-      :attr attr
-      :attr-base attr-base
-      :css-vars css-vars
-      :f f
-      :ident ident
+     {:garden-vecs  garden-vecs
+      :attr         attr
+      :attr-base    attr-base
+      :css-vars     css-vars
+      :f            f
+      :ident        ident
       :invalid-args invalid-args
-      :data-ns-key data-ns-key
-      :selector selector})))
+      :data-ns-key  data-ns-key
+      :selector     selector})))
 
 
 (defmacro sx
@@ -226,14 +241,15 @@
                 ident
                 invalid-args
                 data-ns-key
-                selector] :as m} (sx* args)
+                selector]
+         :as   m}               (sx* args)
         styles-argument-display (apply vector args)
-        compilation-warnings (mapv (fn [v] v) @state/compilation-warnings)
-        invalid-warning-args {:invalid-args invalid-args
-                              :styles-argument-display styles-argument-display}
-        css-injection-dev (stylesheet/garden-vecs-injection garden-vecs)
-        og-cls (:class attr)
-        cls (when og-cls (if (coll? og-cls) og-cls [og-cls]))]
+        compilation-warnings    (mapv (fn [v] v) @state/compilation-warnings)
+        invalid-warning-args    {:invalid-args            invalid-args
+                                 :styles-argument-display styles-argument-display}
+        css-injection-dev       (stylesheet/garden-vecs-injection garden-vecs)
+        og-cls                  (:class attr)
+        cls                     (when og-cls (if (coll? og-cls) og-cls [og-cls]))]
 
     ;; Add classes to previously-used registry
     (doseq [kw atomic-class-keys]
@@ -245,13 +261,13 @@
 
     (printing/diagnostics
      :sx
-     {:ident ident
-      :garden-vecs garden-vecs
+     {:ident             ident
+      :garden-vecs       garden-vecs
       :css-injection-dev css-injection-dev
-      :args args
-      :attr-map (merge attr-base
-                       {:class (distinct (concat cls classlist conditional-class-sexprs))
-                        :style (merge (:style attr) css-vars)})})
+      :args              args
+      :attr-map          (merge attr-base
+                                {:class (distinct (concat cls classlist conditional-class-sexprs))
+                                 :style (merge (:style attr) css-vars)})})
 
     ;; Add vecs into garden state
     (state/add-styles! garden-vecs)
@@ -261,8 +277,8 @@
     (reset! state/compilation-warnings [])
 
     (if @KUSHIDEBUG
-      `(let [og-cls# (:class ~attr)
-             cls# (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
+      `(let [og-cls#   (:class ~attr)
+             cls#      (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
              attr-map# (merge ~attr-base
                               {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
                                :style (merge (:style ~attr) ~css-vars)})]
@@ -293,8 +309,8 @@
           `(do {:class (quote ~classlist)
                 :style (merge (:style ~attr) ~css-vars)})
           :else
-          `(let [og-cls# (:class ~attr)
-                 cls# (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
+          `(let [og-cls#   (:class ~attr)
+                 cls#      (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
                  attr-map# (merge ~attr-base
                                   {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
                                    :style (merge (:style ~attr) ~css-vars)})]
