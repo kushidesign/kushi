@@ -151,9 +151,11 @@
 
 (defn- parse-attr+meta [args]
   (let [attr*                      (when (map? (last args)) (last args))
-        meta-ks                    [:parent :prefix :f :ident :element :data-ns]
-        {:keys [f ident]
-         :as   meta}               (select-keys attr* meta-ks)
+        meta-ks                    [:parent :prefix :f :fn :ident :element :data-ns]
+        {f            :f
+         component-fn :fn
+         ident        :ident
+         :as          meta}        (select-keys attr* meta-ks)
         data-ns-key                (or (:data-ns-key user-config) :data-ns)
         attr                       (apply dissoc attr* meta-ks)
         styles+classes             (if attr* (drop-last args) args)
@@ -168,7 +170,7 @@
      :styles+classes styles+classes
      :styles*        styles
      :classes*       classes*
-     :f              f
+     :f              (or f component-fn)
      :ident          ident
      :data-ns-key    data-ns-key
      :invalid-args   invalid}))
