@@ -228,7 +228,14 @@
    Returns a normalized attribute map which incorporates the prefixed selector(s)
    into the :class attribute."
   [& args]
+
   #_(println "(sx" (string/join " " args)  " ...)")
+
+  #_(let [la (last args)]
+    (when (map? la)
+      (when (= '(:src :style) (keys la))
+        (println "last arg " la))))
+
   (reset! state/current-macro :sx)
   (let [{:keys [atomic-class-keys
                 garden-vecs
@@ -261,13 +268,17 @@
 
     (printing/diagnostics
      :sx
-     {:ident             ident
-      :garden-vecs       garden-vecs
-      :css-injection-dev css-injection-dev
-      :args              args
-      :attr-map          (merge attr-base
-                                {:class (distinct (concat cls classlist conditional-class-sexprs))
-                                 :style (merge (:style attr) css-vars)})})
+     (let [style         (:style attr)
+           style-is-map? (map? style)
+           style-is-var? (symbol? style)]
+       {:ident             ident
+        :garden-vecs       garden-vecs
+        :css-injection-dev css-injection-dev
+        :args              args
+        :style-is-var?     style-is-var?
+        :attr-map          (merge attr-base
+                                  {:class (distinct (concat cls classlist conditional-class-sexprs))
+                                   :style (merge (when style-is-map? style) css-vars)})}))
 
     ;; Add vecs into garden state
     (state/add-styles! garden-vecs)

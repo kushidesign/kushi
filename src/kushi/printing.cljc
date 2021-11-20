@@ -296,50 +296,52 @@
               attr-map
               css-injection-dev
               garden-vecs
+              style-is-var?
               ident]}]
   #?(:clj
      (when-let [d (some->> user-config :diagnose (into #{}))]
        (when (let [diagnose-idents (some->> user-config :diagnose-idents (into #{}))
                    winner? (contains? diagnose-idents ident)]
                (or winner? (not diagnose-idents)))
-        (case kw
-          :defclass
-          (when (contains? d :defclass)
-            (println
-             (str
-              "\n\n\n"
-              "--(kushi.core/defclass)---------------"
-              "\n\n"
-              "(defclass " sym " " (string/join " " args) ")"
-              "\n"
-              "=>"
-              "\n"
-              attr-map
-              "\n\n"
-              "(state/add-styles! " garden-vecs ")"
-              "\n\n"
-              "CSS to be injected for dev preview:"
-              "\n"
-              css-injection-dev
-              "\n\n")))
-          :defclass-register
-          (when (contains? d :defclass-register)
-            (println "Registering defclass" kw "..." (if defclass-registered? "✔" "✘ FAIL")))
-          :sx
-          (when (contains? d :sx)
-            (println
-             (str
-              "\n\n\n"
-              "--(kushi.core/sx)--------------------"
-              "\n\n"
-              (str (with-out-str (pprint (cons 'sx args))) "")
-              "\n=>\n"
-              (with-out-str (pprint attr-map))
-              "\n\n"
-              (with-out-str (pprint (list 'state/add-styles! garden-vecs)))
-              "\n\n"
-              "CSS to be injected for dev preview:"
-              "\n\n"
-              (string/join "\n\n" (map #(string/replace % #"\\n" "\n") css-injection-dev))
-              "\n\n"))))))))
+         (case kw
+           :defclass
+           (when (contains? d :defclass)
+             (println
+              (str
+               "\n\n\n"
+               "--(kushi.core/defclass)---------------"
+               "\n\n"
+               "(defclass " sym " " (string/join " " args) ")"
+               "\n"
+               "=>"
+               "\n"
+               attr-map
+               "\n\n"
+               "(state/add-styles! " garden-vecs ")"
+               "\n\n"
+               "CSS to be injected for dev preview:"
+               "\n"
+               css-injection-dev
+               "\n\n")))
+           :defclass-register
+           (when (contains? d :defclass-register)
+             (println "Registering defclass" kw "..." (if defclass-registered? "✔" "✘ FAIL")))
+           :sx
+           (when (contains? d :sx)
+             (println
+              (str
+               "\n\n\n"
+               "--(kushi.core/sx)--------------------"
+               "\n\n"
+               (str (with-out-str (pprint (cons 'sx args))) "")
+               "\n=>\n"
+               (with-out-str (pprint attr-map))
+               (when style-is-var? "\n!!!Warning!!!\nThe above :style value is not necessarily accurate, as a binding was used as a value for :style in the attributes map (the last arg to the sx macro).\n")
+               "\n\n"
+               (with-out-str (pprint (list 'state/add-styles! garden-vecs)))
+               "\n\n"
+               "CSS to be injected for dev preview:"
+               "\n\n"
+               (string/join "\n\n" (map #(string/replace % #"\\n" "\n") css-injection-dev))
+               "\n\n"))))))))
 
