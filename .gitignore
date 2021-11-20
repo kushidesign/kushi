@@ -14,3 +14,4 @@ pom.xml.asc
 .hg/
 .lsp
 .clj-kondo
+.kushi.workspace.code-workspace
