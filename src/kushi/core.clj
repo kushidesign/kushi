@@ -28,6 +28,14 @@
       (reset! KUSHIDEBUG false)))
   build-state)
 
+(def map-mode? true)
+
+(defn style-map->vecs
+  [m]
+  (when (map? m)
+   (let [classes (some->> m :kushi/class (map #(->> % name (str ".") keyword)))]
+     (into [] (concat classes (into [] (dissoc m :kushi/class)))))))
+
 (defn- scoped-atomic-classname
   "Returns a classname with proper prefixing for scoping.
    Returns an uscoped classname for class not in global registry.
@@ -68,9 +76,12 @@
      :garden-vecs     garden-vecs}))
 
 (defmacro defclass
-  [sym & coll]
+  [sym & coll*]
   (reset! state/current-macro :defclass)
   (let [defclass-name            (keyword sym)
+        coll                     (if map-mode?
+                                     (-> coll* first style-map->vecs)
+                                     coll*)
         {styles        :valid
          invalid-args* :invalid} (util/reduce-by-pred #(s/valid? ::specs/defclass-arg %) coll)
         invalid-args             (or
@@ -142,15 +153,21 @@
   (let [frames (mapv keyframe frames*)]
     (swap! state/user-defined-keyframes assoc k frames)))
 
-
-
 (defn cssfn [& args]
   (cons 'cssfn (list args)))
 
-
+(defn- attr* [args]
+  (if map-mode?
+    (let [[a b] args]
+      (if (and
+           (= 1 (count args))
+           (= (meta a) {:attr true}))
+        a
+        (when (and (map? a) (map? b)) b)))
+    (when (map? (last args)) (last args))))
 
 (defn- parse-attr+meta [args]
-  (let [attr*                      (when (map? (last args)) (last args))
+  (let [attr*                      (attr* args)
         meta-ks                    [:parent :prefix :f :fn :ident :element :data-ns]
         {f            :f
          component-fn :fn
@@ -158,7 +175,9 @@
          :as          meta}        (select-keys attr* meta-ks)
         data-ns-key                (or (:data-ns-key user-config) :data-ns)
         attr                       (apply dissoc attr* meta-ks)
-        styles+classes             (if attr* (drop-last args) args)
+        styles+classes*            (if attr* (drop-last args) args)
+        styles+classes             (if map-mode? (style-map->vecs (first styles+classes*)) styles+classes*)
+        _ (util/pprint+ "s+c" styles+classes)
         {:keys [valid invalid]}    (util/reduce-by-pred #(s/valid? ::specs/kushi-arg %) styles+classes)
         {classes* :valid
          styles*  :invalid}        (util/reduce-by-pred #(s/valid? ::specs/kushi-class-like %) valid)
