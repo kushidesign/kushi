@@ -289,6 +289,11 @@
         :style-tuple ::style-tuple
         :kushi-dot-class-kw-defined ::kushi-dot-class-kw-defined))
 
+(s/def ::defclass-arg-map-mode
+  (s/or :dynamic ::kushi-style-kw-dynamic
+        :style-tuple ::style-tuple
+        :kushi-dot-class-kw-defined ::kushi-dot-class-kw-defined))
+
 (s/def ::conditional-sexp
   (s/and seq?
          #(contains? #{'if 'when 'cond 'if-let 'when-let 'if-not 'when-not 'case} (first %))))
@@ -361,6 +366,21 @@
   (s/and
    vector?
    #(some->> % first (s/valid? ::garden-mode-stylemap))))
+
+; Map mode
+(s/def ::map-mode-only-attr
+  #(and (= (count %) 1)
+        (map? (first %))
+        (= (some-> % first meta :attr) true)))
+
+(s/def ::map-mode-only-style
+  #(and (map? (first %))
+        (not (map? (second %)))
+        (not (s/valid? ::map-mode-only-attr %))))
+
+(s/def ::map-mode-style+attr
+  #(and (map? (first %))
+        (map? (second %))))
 
 ;; Validates args to macro. Finds fatally bad args.
 (s/def ::kushi-args
