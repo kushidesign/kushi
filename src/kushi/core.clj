@@ -28,11 +28,10 @@
       (reset! KUSHIDEBUG false)))
   build-state)
 
-(def map-mode? true)
 
 (defn style-map->vecs
   [m]
-  (when (map? m)
+  (when (and (:map-mode? user-config) (map? m))
    (let [classes (some->> m :kushi/class (map #(->> % name (str ".") keyword)))]
      (into [] (concat classes (into [] (dissoc m :kushi/class)))))))
 
@@ -79,18 +78,22 @@
   [sym & coll*]
   (reset! state/current-macro :defclass)
   (let [defclass-name            (keyword sym)
-        coll                     (if map-mode?
-                                     (-> coll* first style-map->vecs)
-                                     coll*)
+        coll                     (if (:map-mode? user-config)
+                                   (-> coll* first style-map->vecs)
+                                   coll*)
+        {invalid-map-args
+         :invalid}               (when (:map-mode? user-config) (util/reduce-by-pred map? coll*))
         {styles        :valid
          invalid-args* :invalid} (util/reduce-by-pred #(s/valid? ::specs/defclass-arg %) coll)
         invalid-args             (or
                                   (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
-                                  (into [] invalid-args*))
+                                  (into [] (concat invalid-map-args invalid-args*)))
         {:keys [selector*
                 hydrated-styles
                 garden-vecs]}    (register-class! defclass-name styles)
-        styles-argument-display  (apply vector coll)
+        styles-argument-display  (if (:map-mode? user-config)
+                                   coll*
+                                   (apply vector coll))
         console-warning-args     {:defclass-name           defclass-name
                                   :styles-argument-display styles-argument-display
                                   :invalid-args            invalid-args}
@@ -98,6 +101,13 @@
                                   :selector*   selector*
                                   :args        hydrated-styles
                                   :garden-vecs garden-vecs}]
+
+    #_(util/pprint+
+     "defclass"
+     {:invalid-map-args invalid-map-args
+      :invalid-args invalid-args
+      :styles styles
+      :m m})
 
     ;; Print any problems to terminal
     (printing/console-warning-defclass console-warning-args)
@@ -156,18 +166,40 @@
 (defn cssfn [& args]
   (cons 'cssfn (list args)))
 
-(defn- attr* [args]
-  (if map-mode?
-    (let [[a b] args]
-      (if (and
-           (= 1 (count args))
-           (= (meta a) {:attr true}))
-        a
-        (when (and (map? a) (map? b)) b)))
-    (when (map? (last args)) (last args))))
+(defn- style&classes+attr [args]
+  (if (:map-mode? user-config)
+    (let [only-attr?       (s/valid? ::specs/map-mode-only-attr args)
+          only-style?      (s/valid? ::specs/map-mode-only-style args)
+          style+attr?      (s/valid? ::specs/map-mode-style+attr args)
+          [style attr]     (cond only-style? [(first args) nil]
+                                 style+attr? args
+                                 only-attr?  [nil (first args)])
+          invalid-map-args (remove nil? (map-indexed (fn [idx v] (when-not (and (map? v) (< idx 2)) v)) args))]
+
+      #_(util/pprint+
+         "style&classes+attr"
+         {:only-attr? only-attr?
+          :only-style? only-style?
+          :style+attr? style+attr?
+          :invalid-map-args invalid-map-args
+          :style style
+          :attr attr})
+
+      {:styles+classes style
+       :attr attr
+       :invalid-map-args invalid-map-args})
+    
+    (if (map? (last args))
+      {:styles+classes (drop-last args) :attr (last args)}
+      {:styles+classes args :attr nil})))
 
 (defn- parse-attr+meta [args]
-  (let [attr*                      (attr* args)
+  (let [{styles+classes*
+         :styles+classes
+         attr*
+         :attr
+         invalid-map-args
+         :invalid-map-args}        (style&classes+attr args)
         meta-ks                    [:parent :prefix :f :fn :ident :element :data-ns]
         {f            :f
          component-fn :fn
@@ -175,15 +207,31 @@
          :as          meta}        (select-keys attr* meta-ks)
         data-ns-key                (or (:data-ns-key user-config) :data-ns)
         attr                       (apply dissoc attr* meta-ks)
-        styles+classes*            (if attr* (drop-last args) args)
-        styles+classes             (if map-mode? (style-map->vecs (first styles+classes*)) styles+classes*)
-        _ (util/pprint+ "s+c" styles+classes)
+        ;; styles+classes*            (if (:map-mode? user-config) (if attr* (drop-last args) args))
+        ;; _                          (util/pprint+ "x" {:attr* attr* :sc styles+classes*})
+        styles+classes             (if (:map-mode? user-config) (style-map->vecs styles+classes*) styles+classes*)
         {:keys [valid invalid]}    (util/reduce-by-pred #(s/valid? ::specs/kushi-arg %) styles+classes)
         {classes* :valid
          styles*  :invalid}        (util/reduce-by-pred #(s/valid? ::specs/kushi-class-like %) valid)
         {classes-with-mods :valid} (util/reduce-by-pred #(s/valid? ::specs/kushi-dot-class-with-mods %) classes*)
         classes-with-mods-hydrated (parse/with-hydrated-classes classes-with-mods)
-        styles                     (into [] (concat styles* classes-with-mods-hydrated))]
+        styles                     (into [] (concat styles* classes-with-mods-hydrated))
+        invalid-args               (into [] (concat invalid-map-args invalid))]
+
+    #_(util/pprint+ "parse-attr+meta"
+            {:attr*          attr*
+             :attr           attr
+             :meta           meta
+             :styles+classes* styles+classes*
+             :styles+classes styles+classes
+             :styles*        styles
+             :classes*       classes*
+             :f              (or f component-fn)
+             :ident          ident
+             :data-ns-key    data-ns-key
+             :invalid-map-args   invalid-map-args
+             :invalid-args   invalid-args})
+
     {:attr           attr
      :meta           meta
      :styles+classes styles+classes
@@ -192,7 +240,7 @@
      :f              (or f component-fn)
      :ident          ident
      :data-ns-key    data-ns-key
-     :invalid-args   invalid}))
+     :invalid-args   invalid-args}))
 
 (defn classlist [meta classes* selector*]
   (let [non-conditional-classes                    (filter #(not (seq? %)) classes*)
@@ -252,12 +300,8 @@
 
   #_(println "(sx" (string/join " " args)  " ...)")
 
-  #_(let [la (last args)]
-    (when (map? la)
-      (when (= '(:src :style) (keys la))
-        (println "last arg " la))))
-
   (reset! state/current-macro :sx)
+
   (let [{:keys [atomic-class-keys
                 garden-vecs
                 attr
