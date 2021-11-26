@@ -55,12 +55,27 @@
           {}
           (filter has-mqs? garden-vecs)))
 
+(defn atomic-classes-mq
+  [garden-vecs*]
+  (let [medias (-> user-config :media vals)
+        mq-idx (fn [x]
+                 (let [mq  (-> x :value :media-queries)
+                       idx (first (keep-indexed (fn [idx v] (when (= mq v) idx)) medias))]
+                   idx))
+        ret*   (mapv #(let [[mq args] %]
+                        (apply (partial garden.stylesheet/at-media mq) args))
+                     (bunch-mqs garden-vecs*))
+        ret    (sort-by mq-idx < ret*)]
+    ret))
+
 (defn print-status [n kind]
   (println (str "    " n " unique " kind)))
 
-(def version* "0.1.4")
-(def _local_? false) ; Only (optionally) set to true when developing kushi from local filesystem.
-(def version (str "v" version* (when _local_? ":LOCAL")))
+;; ! Update kushi version here for console printing
+(def version* "1.0.0")
+
+;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
+(def version (str "v" version* #_":LOCAL"))
 
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
@@ -102,26 +117,26 @@
 
     ;; write defclasses
     (when-not (empty? @state/atomic-declarative-classes-used)
-      (let [gv (map #(let [normalized-class-kw (util/normalized-class-kw %)]
-                       (some-> @state/kushi-atomic-user-classes normalized-class-kw :garden-vecs))
-                    @state/atomic-declarative-classes-used)
-            garden-vecs* (apply concat (concat gv))
-            garden-vecs (remove has-mqs? garden-vecs*)
-            atomic-classes-mq (mapv #(let [[mq args] %]
-                                       (apply (partial garden.stylesheet/at-media mq) args))
-                                    (bunch-mqs garden-vecs*))
-            mq-count (count atomic-classes-mq)]
+      (let [gv                (map #(let [normalized-class-kw (util/normalized-class-kw %)]
+                                      (some-> @state/kushi-atomic-user-classes
+                                              normalized-class-kw
+                                              :garden-vecs))
+                                   @state/atomic-declarative-classes-used)
+            garden-vecs*      (apply concat (concat gv))
+            garden-vecs       (remove has-mqs? garden-vecs*)
+            atomic-classes-mq (atomic-classes-mq garden-vecs*)
+            mq-count          (count atomic-classes-mq)]
         (swap! printables conj (str (count garden-vecs) " defclass" (when (> (count garden-vecs) 1) "es")))
         (spit-css {:pretty-print? pretty-print?
-                   :garden-vecs garden-vecs
-                   :comment "Atomic classes"})
+                   :garden-vecs   garden-vecs
+                   :comment       "Atomic classes"})
 
         (when (pos-int? mq-count)
           (do
-            (swap! printables conj (str mq-count " defclass" (when (> mq-count 1) "es") " under a media-query" ))
+            (swap! printables conj (str mq-count " defclass" (when (> mq-count 1) "es") " under a media-query"))
             (spit-css {:pretty-print? pretty-print?
-                       :garden-vecs atomic-classes-mq
-                       :comment "Atomic classes, media queries"}))))
+                       :garden-vecs   atomic-classes-mq
+                       :comment       "Atomic classes, media queries"}))))
       (reset! state/atomic-declarative-classes-used #{}))
 
 

@@ -2,13 +2,13 @@
 
 (def css-sh
   {:ai {:name :align-items
-               :vals {:c :center
-                      :fs :flex-start
-                      :fe :flex-end
-                      :n :normal
-                      :s :start
-                      :e :end
-                      :b :baseline}}
+        :vals {:c :center
+               :fs :flex-start
+               :fe :flex-end
+               :n :normal
+               :s :start
+               :e :end
+               :b :baseline}}
 
    :b {:name :border :example-val [[:1px :solid :orange]]}
    :br {:name :border-right :example-val :2px}
@@ -16,14 +16,14 @@
    :bt {:name :border-top :example-val [[:5% :dotted :#efefef]]}
    :bb {:name :border-bottom :example-val [[:5px :solid :white]]}
    :bs {:name :border-style
-               :vals {:n :none
-                      :h :hidden
-                      :d :dotted
-                      :s :solid
-                      :g :groove
-                      :r :ridge
-                      :i :inset
-                      :o :outset}}
+        :vals {:n :none
+               :h :hidden
+               :d :dotted
+               :s :solid
+               :g :groove
+               :r :ridge
+               :i :inset
+               :o :outset}}
    :bw {:name :border-width :example-val :3px}
    :bc {:name :border-color :example-val :blue}
 
@@ -32,17 +32,17 @@
    :bgs {:name :background-size :example-val :50%}
    :bgc {:name :background-color :example-val :red}
    :bgp {:name :background-position
-                :vals {:t :top
-                       :b :bottom
-                       :l :left
-                       :r :right
-                       :c :center}}
+         :vals {:t :top
+                :b :bottom
+                :l :left
+                :r :right
+                :c :center}}
    :bgr {:name :background-repeat
-                :vals {:nr :no-repeat
-                       :rx :repeat-x
-                       :ry :repeat-y
-                       :r :round
-                       :s :space}}
+         :vals {:nr :no-repeat
+                :rx :repeat-x
+                :ry :repeat-y
+                :r :round
+                :s :space}}
 
    :c {:name :color :example-val :maroon}
 
@@ -89,30 +89,30 @@
    :h {:name :height :example-val "calc(100% - 20px)"}
 
    :jc {:name :justify-content
-               :vals {:c :center
-                      :s :start
-                      :e :end
-                      :fs :flex-start
-                      :fe :flex-end
-                      :l :left
-                      :r :right
-                      :n :normal
-                      :sb :space-between
-                      :sa :space-around
-                      :se :space-evenly}}
+        :vals {:c :center
+               :s :start
+               :e :end
+               :fs :flex-start
+               :fe :flex-end
+               :l :left
+               :r :right
+               :n :normal
+               :sb :space-between
+               :sa :space-around
+               :se :space-evenly}}
 
    :ji {:name :justify-items
-               :vals {:a :auto
-                      :n :normal
-                      :c :center
-                      :s :start
-                      :e :end
-                      :fs :flex-start
-                      :fe :flex-end
-                      :ss :self-start
-                      :se :self-end
-                      :l :left
-                      :r :right}}
+        :vals {:a :auto
+               :n :normal
+               :c :center
+               :s :start
+               :e :end
+               :fs :flex-start
+               :fe :flex-end
+               :ss :self-start
+               :se :self-end
+               :l :left
+               :r :right}}
 
    :lh {:name :line-height :example-val 1.45}
 
@@ -131,51 +131,58 @@
    :o {:name :opacity :example-val 1}
 
    :ta {:name :text-align
-               :vals {:c :center
-                      :r :right
-                      :l :left
-                      :j :justify
-                      :ja :justify-all
-                      :s :start
-                      :e :end
-                      :mp :match-parent}}
+        :vals {:c :center
+               :r :right
+               :l :left
+               :j :justify
+               :ja :justify-all
+               :s :start
+               :e :end
+               :mp :match-parent}}
    :tt {:name :text-transform
-               :vals {:u :uppercase
-                      :l :lowercase
-                      :c :captitalize
-                      :fw :full-width}}
+        :vals {:u :uppercase
+               :l :lowercase
+               :c :captitalize
+               :fw :full-width}}
    :td {:name :text-decoration
-               :vals {:u :underline
-                      :o :overline
-                      :lt :line-through}}
+        :vals {:u :underline
+               :o :overline
+               :lt :line-through}}
    :tdl {:name :text-decoration-line
-                :vals {:u :underline
-                       :o :overline
-                       :lt :line-through}}
+         :vals {:u :underline
+                :o :overline
+                :lt :line-through}}
    :tdc {:name :text-decoration-color :example-val :#333}
    :tds {:name :text-decoration-style
-                :vals {:s :solid
-                       :w :wavy}}
+         :vals {:s :solid
+                :w :wavy}}
    :tdt {:name :text-decoration-thickness
-                :vals {:ff :from-font}}
+         :vals {:ff :from-font}}
 
    :w {:name :width :example-val :80%}
 
    :ws {:name :white-space
-               :vals {:n :nowrap
-                      :p :pre
-                      :pw :pre-wrap
-                      :pl :pre-line}}
+        :vals {:n :nowrap
+               :p :pre
+               :pw :pre-wrap
+               :pl :pre-line}}
+
+   :v {:name :visibility
+       :vals {:h :hidden
+              :v :visibile
+              :c :collapse}}
 
    :va {:name :vertical-align
-               :vals {:b :baseline
-                      :s :sub
-                      :t :top
-                      :tt :text-top
-                      :tb :text-bottom
-                      :m :middle}}
+        :vals {:b :baseline
+               :s :sub
+               :t :top
+               :tt :text-top
+               :tb :text-bottom
+               :m :middle}}
 
-   :z {:name :z-index :example-val 10000}})
+   :zi {:name :z-index :example-val 10000}
+   :z  {:name :z-index :example-val 10000}
+   })
 
 
 (defonce css-sh-by-prop
