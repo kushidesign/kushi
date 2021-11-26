@@ -75,7 +75,7 @@
 (def version* "1.0.0")
 
 ;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
-(def version (str "v" version* ":LOCAL"))
+(def version (str "v" version* #_":LOCAL"))
 
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
