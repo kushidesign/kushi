@@ -7,7 +7,7 @@
    :md {:min-width :768px}
    :lg {:min-width :1024px}
    :xl {:min-width :1280px}
-   :2xl {:min-width :1536px} ])
+   :2xl {:min-width :1536px}])
 
 (defn valid-responsive? [m]
   (and (map? m)
@@ -35,6 +35,5 @@
         responsive        (if (valid-responsive? user-responsive)
                             user-responsive
                             (apply array-map default-kushi-responsive))
-        config            (assoc config* :media responsive)
-        ]
+        config            (assoc config* :media responsive)]
     config))
