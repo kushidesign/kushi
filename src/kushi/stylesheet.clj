@@ -125,9 +125,7 @@
             garden-vecs*      (apply concat (concat gv))
             garden-vecs       (remove has-mqs? garden-vecs*)
             atomic-classes-mq (atomic-classes-mq garden-vecs*)
-            mq-count          (count atomic-classes-mq)
-            ]
-        #_(util/pprint+ "sort-by" (sort-by mq-idx < atomic-classes-mq))
+            mq-count          (count atomic-classes-mq)]
         (swap! printables conj (str (count garden-vecs) " defclass" (when (> (count garden-vecs) 1) "es")))
         (spit-css {:pretty-print? pretty-print?
                    :garden-vecs   garden-vecs
