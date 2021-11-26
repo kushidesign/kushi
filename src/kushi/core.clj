@@ -32,7 +32,8 @@
 (defn style-map->vecs
   [m]
   (when (and (:map-mode? user-config) (map? m))
-   (let [classes (some->> m :kushi/class (map #(->> % name (str ".") keyword)))]
+   (let [->coll  #(if (coll? %) % [%])
+         classes (some->> m :kushi/class ->coll (map #(->> % name (str ".") keyword)))]
      (into [] (concat classes (into [] (dissoc m :kushi/class)))))))
 
 (defn- scoped-atomic-classname
@@ -188,7 +189,6 @@
       {:styles+classes style
        :attr attr
        :invalid-map-args invalid-map-args})
-    
     (if (map? (last args))
       {:styles+classes (drop-last args) :attr (last args)}
       {:styles+classes args :attr nil})))
@@ -207,8 +207,6 @@
          :as          meta}        (select-keys attr* meta-ks)
         data-ns-key                (or (:data-ns-key user-config) :data-ns)
         attr                       (apply dissoc attr* meta-ks)
-        ;; styles+classes*            (if (:map-mode? user-config) (if attr* (drop-last args) args))
-        ;; _                          (util/pprint+ "x" {:attr* attr* :sc styles+classes*})
         styles+classes             (if (:map-mode? user-config) (style-map->vecs styles+classes*) styles+classes*)
         {:keys [valid invalid]}    (util/reduce-by-pred #(s/valid? ::specs/kushi-arg %) styles+classes)
         {classes* :valid
