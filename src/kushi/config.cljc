@@ -1,8 +1,6 @@
 (ns ^:dev/always kushi.config
   (:require
-   [clojure.edn :as edn]
-   [clojure.pprint :refer [pprint]]
-   ))
+   [clojure.edn :as edn]))
 
 (def default-kushi-responsive
   [:sm {:min-width :640px}
