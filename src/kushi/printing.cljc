@@ -146,11 +146,11 @@
      (str "Warning: %cInvalid argument" (when (< 1 (count invalid-args)) "s") "%c"  " to kushi.core/" fname ".")))
 
 (defn warning-call-classname
-  [{:keys [classname invalid-args]}]
-  #?(:clj (when classname
+  [{:keys [defclass-name invalid-args]}]
+  #?(:clj (when defclass-name
             (if (some-> invalid-args meta :classname)
               (str ansi/bold-font (first invalid-args) ansi/reset-font)
-              (name classname)))))
+              (name defclass-name)))))
 
 (defn warning-call-with-args
   [{:keys [fname classname] :as m}]
@@ -158,12 +158,11 @@
       (let [resolved-classname (warning-call-classname m)]
         (concat
          [(str "(" fname " " resolved-classname)]
-         (console-error-ansi-formatting m) ))
+         (console-error-ansi-formatting m)))
       :cljs
       (str "(" fname " "
            (when classname (name classname))
-           (do
-             (string/join (js-fmt-args m)))
+           (string/join (js-fmt-args m))
            ")")))
 
 (defn js-warning*
