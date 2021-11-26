@@ -48,11 +48,12 @@
        (string/join
         ", "
         (map #(cond
-               (cssfn? %) (cssfn %)
-               (vector? %) (vec-in-cssfn %)
-               (keyword? %) (name %)
-              ;;  (string? %) (str "\"" % "\"")
-               :else (str %))
+                (cssfn? %) (cssfn %)
+                (vector? %) (vec-in-cssfn %)
+                (keyword? %) (name %)
+                :else (if (nm = :url)
+                        (str "\"" % "\"")
+                        (str %)))
              args))
        ")"))
 
