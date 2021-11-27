@@ -43,6 +43,7 @@
                         v)))
 
 (defn cssfn [[_ nm & args]]
+  #_(pprint+ "cssfn" {:nm nm :args args})
   (str (name nm)
        "("
        (string/join
@@ -51,6 +52,7 @@
                 (cssfn? %) (cssfn %)
                 (vector? %) (vec-in-cssfn %)
                 (keyword? %) (name %)
+                (number? %) %
                 :else (if (nm = :url)
                         (str "\"" % "\"")
                         (str %)))
@@ -81,10 +83,39 @@
   #?(:clj (if float? (. Double parseDouble s) (. Integer parseInt s))
      :cljs (if float? (js/parseFloat s) (js/parseInt s))))
 
+(defn sanitize-for-css-var-name [v]
+  (-> v
+      (string/replace #"\?" "_QMARK")
+      (string/replace #"\!" "_BANG")
+      (string/replace #"\#" "_HASH")
+      (string/replace #"\+" "_PLUS")
+      (string/replace #"\$" "_DOLLAR")
+      (string/replace #"\%" "_PCT")
+      (string/replace #"\=" "_EQUALS")
+      (string/replace #"\<" "_LT")
+      (string/replace #"\>" "_GT")
+      (string/replace #"\&" "_AMP")
+      (string/replace #"\*" "_STAR")))
+
+(defn css-var-string
+  ([x]
+   (css-var-string x nil))
+  ([x suffix]
+   (str "var(--" (sanitize-for-css-var-name x) ")" suffix)))
+
+(defn css-var-string-!important
+  [x]
+  #_(pprint+ "css-var-string-!important" (css-var-string (second x) "!important"))
+  (css-var-string (second x) "!important"))
+
+(defn !important-var? [x] (and (list? x) (= '!important (first x))))
+
 (defn process-sexp [sexp]
   (walk/postwalk
    (fn [x]
-     (if (cssfn? x) (cssfn x) x))
+     (cond (cssfn? x) (cssfn x)
+           (!important-var? x) (css-var-string-!important x)
+           :else x))
    sexp))
 
 (defn process-value
