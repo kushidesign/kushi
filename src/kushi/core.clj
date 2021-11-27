@@ -274,6 +274,16 @@
         garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)
         attr-base                    (or attr {})]
 
+    #_(util/pprint+
+     "sx*"
+     {:classlist-map classlist-map
+      :styles*       styles*
+      :styles        styles
+      :css-vars      css-vars
+      :tokenized-styles tokenized-styles
+      :grouped-by-mqs grouped-by-mqs
+      :garden-vecs   garden-vecs})
+
     (merge
      classlist-map
      {:garden-vecs  garden-vecs
