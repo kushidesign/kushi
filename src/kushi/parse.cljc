@@ -127,7 +127,6 @@
    (fn [v]
      (if (s/valid? ::specs/style-tuple v)
        (let [[prop val] v]
-         #_(util/pprint+ "val!" val)
          (cond
            (symbol? val)
            [prop (css-var-string val)]
