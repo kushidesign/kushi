@@ -103,23 +103,31 @@
   ([x suffix]
    (str "var(--" (sanitize-for-css-var-name x) ")" suffix)))
 
+(defn css-var-for-sexp [selector* css-prop]
+  (str "--"
+       selector*
+       "_"
+       (string/replace css-prop #":" "_")))
+
 (defn css-var-string-!important
-  [x]
+  [x selector* prop]
   #_(pprint+ "css-var-string-!important" (css-var-string (second x) "!important"))
-  (css-var-string (second x) "!important"))
+  (if (list? (second x))
+    (str "var(" (css-var-for-sexp selector* prop) ")!important")
+    (css-var-string (second x) "!important")))
 
 (defn !important-var? [x] (and (list? x) (= '!important (first x))))
 
-(defn process-sexp [sexp]
+(defn process-sexp [sexp selector* css-prop]
   (walk/postwalk
    (fn [x]
      (cond (cssfn? x) (cssfn x)
-           (!important-var? x) (css-var-string-!important x)
+           (!important-var? x) (css-var-string-!important x selector* css-prop)
            :else x))
    sexp))
 
 (defn process-value
-  [v hydrated-k]
+  [v hydrated-k selector*]
    (cond
      (symbol? v)
      (str "var(--" (name v) ")")
@@ -140,10 +148,10 @@
      (cssfn v)
 
      (list? v)
-     (process-sexp v)
+     (process-sexp v selector* hydrated-k)
 
      (vector? v)
-     (mapv #(process-value % hydrated-k) v)
+     (mapv #(process-value % hydrated-k selector*) v)
 
      :else v))
 

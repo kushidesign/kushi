@@ -63,13 +63,13 @@
 
 (defn- register-class!
   [classname coll*]
-  (let [hydrated-styles     (parse/with-hydrated-classes coll*)
-        tokenized-styles    (mapv parse/kushi-style->token hydrated-styles)
-        grouped-by-mqs      (parse/grouped-by-mqs tokenized-styles)
-        {:keys [selector
+  (let [{:keys [selector
                 selector*]} (selector/selector-name
                              {:defclass-name classname
                               :defclass-hash atomic/defclass-hash})
+        hydrated-styles     (parse/with-hydrated-classes coll*)
+        tokenized-styles    (mapv (partial parse/kushi-style->token selector*) hydrated-styles)
+        grouped-by-mqs      (parse/grouped-by-mqs tokenized-styles)
         garden-vecs         (parse/garden-vecs grouped-by-mqs selector)]
     {:selector*       selector*
      :hydrated-styles hydrated-styles
@@ -269,7 +269,7 @@
         classlist-map                (classlist meta classes* selector*)
         styles                       (parse/+vars styles* selector*)
         css-vars                     (parse/css-vars styles* selector*)
-        tokenized-styles             (mapv parse/kushi-style->token styles)
+        tokenized-styles             (mapv (partial parse/kushi-style->token selector*) styles)
         grouped-by-mqs               (parse/grouped-by-mqs tokenized-styles)
         garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)
         attr-base                    (or attr {})]

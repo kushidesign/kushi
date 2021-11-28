@@ -43,11 +43,7 @@
                      :css-prop css-prop})
       :else nil)))
 
-(defn css-var-for-sexp [selector* css-prop]
-  (str "--"
-       selector*
-       "_"
-       (string/replace css-prop #":" "_")))
+
 
 (defn sanitize-for-css-var-name [v]
   (-> v
@@ -77,8 +73,12 @@
   (reduce
    (fn [acc v]
      (if-let [{:keys [selector* __logic css-prop]} (when (map? v) v)]
-       (assoc acc (css-var-for-sexp selector* css-prop) (-> v :__logic util/process-sexp))
-       (assoc acc (str "--" (sanitize-for-css-var-name v)) v)))
+       (assoc acc
+              (util/css-var-for-sexp selector* css-prop)
+              (-> v :__logic (util/process-sexp selector* css-prop)))
+       (assoc acc
+              (str "--" (sanitize-for-css-var-name v))
+              v)))
    {}
    extracted-vars))
 
@@ -116,12 +116,6 @@
   (when (keyword? k)
     (get @state/kushi-atomic-user-classes k)))
 
-(defn css-var-string
-  ([x]
-   (css-var-string x nil))
-  ([x suffix]
-   (str "var(--" (sanitize-for-css-var-name x) ")" suffix)))
-
 (defn +vars [styles* selector*]
   (map
    (fn [v]
@@ -129,16 +123,13 @@
        (let [[prop val] v]
          (cond
            (symbol? val)
-           [prop (css-var-string val)]
+           [prop (util/css-var-string val)]
 
            (list? val)
            (cond
-             (= 'cssfn (first val))      [prop val]
-             ;; (= '!important (first val)) (do (util/pprint+ "!important case" val) [prop (css-var-string (second val) "!important")])
-             (= '!important (first val)) [prop (if (list? (second val))
-                                                 (str "var(" (css-var-for-sexp selector* prop) ")!important")
-                                                 (css-var-string (second val) "!important"))]
-             :else                       [prop (str "var(" (css-var-for-sexp selector* prop) ")")])
+             (= 'cssfn (first val))     [prop val]
+             (util/!important-var? val) [prop (util/css-var-string-!important val selector* prop)]
+             :else                      [prop (str "var(" (util/css-var-for-sexp selector* prop) ")")])
 
            :else [prop val]))
         v))
@@ -278,7 +269,7 @@
            :else x))
        coll))
 
-(defn maybe-convert-map
+#_(defn maybe-convert-map
   [x]
   (if (and (= true (:map-mode? user-config))
            (= 1 (count x))
@@ -294,7 +285,8 @@
     x))
 
 (defn hydrate-css
-  [{css-prop :css-prop val* :val :as m}]
+  [{css-prop :css-prop val* :val :as m} selector*]
+  #_(util/pprint+ "hydrate-css" {:m m})
   (if (and css-prop val)
     (let [hydrated-css-prop-kw (shorthand/key-sh (if (string? css-prop) (keyword css-prop) css-prop))
           val (if (or (string? val*) (keyword? val*))
@@ -302,7 +294,7 @@
                                   :k css-prop}
                                  (name val*))
                  val*)
-          val+ (util/process-value val hydrated-css-prop-kw)]
+          val+ (util/process-value val hydrated-css-prop-kw selector*)]
         #_(util/pprint+ "hydrate-css" {:val* val* :val val :val+ val+})
       (assoc m :css-prop (name hydrated-css-prop-kw) :val val+))
     m))
@@ -334,14 +326,14 @@
                   {:mods mods :css-prop prop :mq mq}))))
 
 
-(defn kushi-style->token [x]
+(defn kushi-style->token [selector* x]
   (when (or (keyword? x) (vector? x))
     (let [[mods&prop val] (if (vector? x)
                             (let [[p v] x] [(name p) (specs/kw?->s v)])
                             (string/split (name x) #"--"))
           m2* (mods&prop->map mods&prop)
           m2 (if val (assoc m2* :val val) m2*)
-          hydrated (hydrate-css m2)]
+          hydrated (hydrate-css m2 selector*)]
       hydrated)))
 
 
