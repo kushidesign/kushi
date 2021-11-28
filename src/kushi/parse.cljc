@@ -72,40 +72,29 @@
 (defn css-vars-map
   [extracted-vars]
   #_(util/pprint+ "<< css-vars-map" extracted-vars)
-  #_(util/pprint+ "css-vars-map >>"
-                  (reduce
-                   (fn [acc v]
-                     (if-let [{:keys [selector* __logic css-prop]} (when (map? v) v)]
-                       (assoc acc
-                              (util/css-var-for-sexp selector* css-prop)
-                              (-> v :__logic (util/process-sexp selector* css-prop)))
-                       (assoc acc
-                              (str "--" (sanitize-for-css-var-name v))
-                              v)))
-                   {}
-                   extracted-vars))
-  (reduce
-   (fn [acc v]
-     (cond
+  (let [ret (reduce
+             (fn [acc v]
+               (cond
 
-       (and (map? v) (= :logic (:val-type v)))
-       (let [{:keys [selector* __logic css-prop]} v]
-         (assoc acc
-                (util/css-var-for-sexp selector* css-prop)
-                (util/process-sexp __logic selector* css-prop)))
+                 (and (map? v) (= :logic (:val-type v)))
+                 (let [{:keys [selector* __logic css-prop]} v]
+                   (assoc acc
+                          (util/css-var-for-sexp selector* css-prop)
+                          (util/process-sexp __logic selector* css-prop)))
 
-       (and (map? v) (= :derefed (:val-type v)))
-       (assoc acc
-              (str "--" (sanitize-for-css-var-name (:val v)))
-              (list 'clojure.core/deref (:val v)))
+                 (and (map? v) (= :derefed (:val-type v)))
+                 (assoc acc
+                        (str "--" (sanitize-for-css-var-name (:val v)))
+                        (list 'clojure.core/deref (:val v)))
 
-       :else
-       (assoc acc
-              (str "--" (sanitize-for-css-var-name v))
-              v)))
-   {}
-   extracted-vars))
-
+                 :else
+                 (assoc acc
+                        (str "--" (sanitize-for-css-var-name v))
+                        v)))
+             {}
+             extracted-vars)]
+    #_(util/pprint+ "css-vars-map >>" ret)
+    ret))
 
 (defn css-vars
   [styles selector*]
@@ -113,24 +102,15 @@
    "<< css-vars"
    {:styles styles
     :selector* selector*})
-
-  #_(util/pprint+
-   "css-vars >>"
-   (some->> styles
-            (filter vector?)
-            (map (partial extract-vars selector*))
-            flatten
-            (remove nil?)
-            distinct
-            css-vars-map))
-
-  (some->> styles
-           (filter vector?)
-           (map (partial extract-vars selector*))
-           flatten
-           (remove nil?)
-           distinct
-           css-vars-map))
+  (let [ret (some->> styles
+                     (filter vector?)
+                     (map (partial extract-vars selector*))
+                     flatten
+                     (remove nil?)
+                     distinct
+                     css-vars-map)]
+    #_(util/pprint+ "css-vars >>" ret)
+    ret))
 
 (defn scoped-class-syntax? [x]
   (and (keyword? x)
