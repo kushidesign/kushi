@@ -159,10 +159,10 @@
     [frame-key frame-val]))
 
 
-(defmacro defkeyframes [k & frames*]
+(defmacro defkeyframes [nm & frames*]
   (reset! state/current-macro :defkeyframes)
   (let [frames (mapv keyframe frames*)]
-    (swap! state/user-defined-keyframes assoc k frames)))
+    (swap! state/user-defined-keyframes assoc (keyword nm) frames)))
 
 (defn cssfn [& args]
   (cons 'cssfn (list args)))
