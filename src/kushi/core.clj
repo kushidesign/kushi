@@ -63,13 +63,13 @@
 
 (defn- register-class!
   [classname coll*]
-  (let [hydrated-styles     (parse/with-hydrated-classes coll*)
-        tokenized-styles    (mapv parse/kushi-style->token hydrated-styles)
-        grouped-by-mqs      (parse/grouped-by-mqs tokenized-styles)
-        {:keys [selector
+  (let [{:keys [selector
                 selector*]} (selector/selector-name
                              {:defclass-name classname
                               :defclass-hash atomic/defclass-hash})
+        hydrated-styles     (parse/with-hydrated-classes coll*)
+        tokenized-styles    (mapv (partial parse/kushi-style->token selector*) hydrated-styles)
+        grouped-by-mqs      (parse/grouped-by-mqs tokenized-styles)
         garden-vecs         (parse/garden-vecs grouped-by-mqs selector)]
     {:selector*       selector*
      :hydrated-styles hydrated-styles
@@ -269,7 +269,7 @@
         classlist-map                (classlist meta classes* selector*)
         styles                       (parse/+vars styles* selector*)
         css-vars                     (parse/css-vars styles* selector*)
-        tokenized-styles             (mapv parse/kushi-style->token styles)
+        tokenized-styles             (mapv (partial parse/kushi-style->token selector*) styles)
         grouped-by-mqs               (parse/grouped-by-mqs tokenized-styles)
         garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)
         attr-base                    (or attr {})]
@@ -341,17 +341,15 @@
 
     (printing/diagnostics
      :sx
-     (let [style         (:style attr)
-           style-is-map? (map? style)
-           style-is-var? (symbol? style)]
+     (let [style         (:style attr)]
        {:ident             ident
         :garden-vecs       garden-vecs
         :css-injection-dev css-injection-dev
         :args              args
-        :style-is-var?     style-is-var?
+        :style-is-var?     (symbol? style)
         :attr-map          (merge attr-base
                                   {:class (distinct (concat cls classlist conditional-class-sexprs))
-                                   :style (merge (when style-is-map? style) css-vars)})}))
+                                   :style (merge (when (map? style) style) css-vars)})}))
 
     ;; Add vecs into garden state
     (state/add-styles! garden-vecs)

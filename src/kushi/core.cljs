@@ -49,8 +49,8 @@
 (defn cssfn [& args]
   (cssfn (cons 'cssfn args)))
 
-(defn !important [& args]
-  (cssfn (cons 'important args)))
+(defn !important [x]
+  (cssfn (list 'important x)))
 
 (defn inject-stylesheet
 
