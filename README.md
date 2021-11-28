@@ -412,21 +412,21 @@ As in the example above, you can use preceding modifiers to set different values
 
 Kushi ships with the following, industry-standard, mobile-first breakpoint scale:
 ```Clojure
-{:sm {:min-width :640px}
+[:sm {:min-width :640px}
  :md {:min-width :768px}
  :lg {:min-width :1024px}
  :xl {:min-width :1280px}
- :2xl {:min-width :1536px}}
+ :2xl {:min-width :1536px}]
 ```
-Both the names and values can be customized via supplying a map in the `:media` entry in your `kushi.edn` config file. See [Configuration Options](#configuration-options).
+Both the names and values can be customized via supplying a map in the `:media` entry in your `kushi.edn` config file. Take note that this scale must be written as a vector of keyword args (not a map) to reinforce order. See [Configuration Options](#configuration-options).
 
 Below is an example of a scale that is desktop-first and uses different names.<br>
 Note that in the case of desktop-first(`max-width`), the order is reversed (relative to mobile-first / `min-width`).
 ```Clojure
-{:desktop {:max-width :1280px}
+[:desktop {:max-width :1280px}
  :tablet {:max-width :1024px}
  :mobile {:max-width :768px}
- :small {:max-width :640px}}
+ :small {:max-width :640px}]
 ```
 Any media-query modifier that you use must correspond to a key in the breakpoint map.
 
@@ -473,8 +473,7 @@ Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers
 <br>
 
 # Using Scales
-Kushi ships with two different predefined scaling systems.<br>
-These systems provide a scale of values for `width`, `font-size`, `padding`, `margin`, and `border-widths`.
+Kushi ships with two different predefined scaling systems, which provide a scale of values for `width`, `font-size`, `padding`, `margin`, and `border-widths`.
 
 These two systems shadow the scales provided by [Tachyons](http://tachyons.io/docs/typography/scale/) and [Tailwindcss](https://tailwindcss.com/docs/font-size).
 
@@ -485,7 +484,7 @@ You can opt to instead use the Tailwind scale in your `kushi.edn` config file:
  :scaling-system :tailwind
  ...}
 ```
-Supply a value affixed with an `*` to of the applicable css properties:
+To use values from these scales, supply a value affixed with an `*` to one of the applicable css properties:
 ```Clojure
 (sx :w--1*
     :bw--2*
@@ -572,7 +571,7 @@ Relative to using vanilla css or sass, kushi will obviate the need to write your
 
 With kushi, elements in the DOM will have auto-generated class names. As a result, it can become difficult to quickly comprehend the source location when looking at elements in a browser inspector (such as Chrome DevTool Elements panel).
 
-With `sx`, you can add metadata via a special `:f` entry in the element attribute map, which will then be transformed into a unique value and attached to the element as a custom data attribute called `data-ns`. The value of this `:f` entry is the var-quoted function name. If you are using the `kushi`-specific `:ident` entry in your attributes map, this will also be incorporated into the value of the generated `data-ns` attribute.
+With `sx`, you can add metadata via a special `:fn` entry in the element attribute map, which will then be transformed into a unique value and attached to the element as a custom data attribute called `data-ns`. The value of this `:f` entry is the var-quoted function name. If you are using the `kushi`-specific `:ident` entry in your attributes map, this will also be incorporated into the value of the generated `data-ns` attribute.
 ```Clojure
 (ns myapp.core
   (:require
@@ -615,9 +614,9 @@ The only required entry in this map is `:css-dir`
  ;; Optional. Name of generated css file. Defaults to kushi.css.
  ;; :css-filename "my-kushi-styles.css"
 
- ;; If this is defined it will prepend to selectors as parent element.
+ ;; If this is defined it will prepend to selectors as ancestor element.
  ;; Useful for scoping.
- ;; :parent :#my-target-div
+ ;; :ancestor :#my-target-div
 
  ;; If this is defined it will use this plus call-site supplied :ident
  ;; for classnames, instead of auto-generated hash.
@@ -629,11 +628,11 @@ The only required entry in this map is `:css-dir`
 
  ;; Optionally defined your own breakpoint scale to override the kushi
  ;; default breakpoint scale.
- ;; :media {:2xl {:max-width :1536px}
+ ;; :media [:2xl {:max-width :1536px}
  ;;         :xl {:max-width :1280px}
  ;;         :lg {:max-width :1024px}
  ;;         :md {:max-width :768px}
- ;;         :sm {:max-width :640px}}
+ ;;         :sm {:max-width :640px}]
 }
 ```
 <br>
@@ -642,7 +641,7 @@ The only required entry in this map is `:css-dir`
 If you would like to prefix your generated classes with something other than an auto-generated string, you can make use of several kushi-specific properties in the attribute map that you pass to `sx`. These keys and values are only used by the macro at compile time and are removed in the attribute map that is returned by `sx`.
 
 The most common use case for this would be setting a global `:prefix` value, and then providing an `:ident` value (in the attr map) to some or all of your calls to `sx`.
-If you do this on a project-wide basis, you will need to make sure that your all your `:ident` values (or combos of `:parent` and `:ident`) are globally unique.
+If you do this on a project-wide basis, you will need to make sure that your all your `:ident` values (or combos of `:ancestor` and `:ident`) are globally unique.
 
 ```Clojure
 ;; In your kushi.edn map ...
@@ -670,8 +669,8 @@ a la carte, you can supply both `:prefix` and `:ident` locally to the attr
 map that you are passing to `sx`.
 
 
-You can also use a `:parent` and/or `:element` prop for further selector
-specicifity. The value of `:parent` has to match the id or class of one
+You can also use an `:ancestor` and/or `:element` prop for further selector
+specicifity. The value of `:ancestor` has to match the id or class of one
 of the element's ancestors. The value of `:element` needs to be the same
 as the element that `sx` is being called within.
 
@@ -679,7 +678,7 @@ as the element that `sx` is being called within.
 [:div
  (sx :c--red
      {:ident :my-el
-      :parent :#myapp
+      :ancestor :#myapp
       :element :div})]
 
 ;; The above would instead result the following css:
