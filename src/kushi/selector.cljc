@@ -3,8 +3,7 @@
   (:require
    [clojure.string :as string]
    [kushi.config :refer [user-config]]
-   [kushi.utils :refer [auto-generated-hash]]))
-
+   [kushi.utils :as util :refer [auto-generated-hash]]))
 
 (defn nsqkw->selector-friendly [s]
   (-> (str s)
@@ -13,7 +12,7 @@
       (string/replace #":" "")))
 
 (defn selector-name
-  [{:keys [ident element f prefix parent defclass-name defclass-hash]}]
+  [{:keys [ident element prefix parent defclass-name defclass-hash]}]
   (let [hash (auto-generated-hash)
         {global-parent :parent
          global-prefix :prefix
@@ -38,6 +37,14 @@
                       (when element (name element))
                       "."
                       selector*)]
+    #_(util/pprint+ "selector-name" {:defclass-name defclass-name
+                                   :defclass-prefix defclass-prefix
+                                   :defclass-hash defclass-hash
+                                   :prefixed-names-for-selectors? prefixed-names-for-selectors?
+                                   :hash hash
+                                   :selector selector
+                                   :selector* selector*
+                                   })
     {:selector* selector*
      :selector selector
      :prefixed-name prefixed-name}))

@@ -124,7 +124,6 @@
          #(not (s/valid? ::kushi-style-kw-dynamic %))
          #(s/valid? ::css-selector-base (kw->s %))))
 
-
 (s/def ::kushi-dot-class-kw
   (s/and keyword?
          #(-> % name (string/starts-with? "."))
@@ -239,6 +238,8 @@
   (s/or :style-kw ::style-kw
         :combinatorial ::combinatorial
         :style-tuple ::style-tuple))
+
+(s/def ::derefed (s/and (s/coll-of symbol? :count 2) #(= (first %) 'clojure.core/deref)))
 
 ;; kushi style-kw related specs ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (s/def ::kushi-style-kw-dynamic

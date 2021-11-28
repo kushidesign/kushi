@@ -13,6 +13,9 @@
    [kushi.config :refer [user-config]]
    [kushi.utils :as util :refer [pprint+]]))
 
+(defn derefed? [x]
+  (s/valid? ::specs/derefed x))
+
 (defn extract-vars* [coll]
   (mapv #(cond
            (symbol? %) %
@@ -21,29 +24,36 @@
         coll))
 
 (defn extract-vars [selector* [css-prop val]]
-  #_(util/pprint+ "extract-vars"
-                (let [!important? (and (list? val) (= '!important (first val)))
-                      val (if !important? (second val) val)]
-                  (cond
-                    (symbol? val) val
-                    (vector? val) (extract-vars* val)
-                    (list? val) (when-not (= 'cssfn (first val))
-                                  {:__logic (apply list val)
-                                   :selector* selector*
-                                   :css-prop css-prop})
-                    :else nil)))
-  (let [!important? (and (list? val) (= '!important (first val)))
-        val (if !important? (second val) val)]
+  #_(util/pprint+ "<< extract-vars"
+                {:selector* selector* :css-prop css-prop :val val})
+  #_(util/pprint+
+   "extract-vars"
+   (let [!important? (and (list? val) (= '!important (first val)))
+        val         (if !important? (second val) val)]
     (cond
-      (symbol? val) val
-      (vector? val) (extract-vars* val)
-      (list? val) (when-not (= 'cssfn (first val))
-                    {:__logic (apply list val)
-                     :selector* selector*
-                     :css-prop css-prop})
-      :else nil)))
+      (symbol? val)  val
+      (derefed? val) (second val)
+      (vector? val)  (extract-vars* val)
+      (list? val)    (when-not (= 'cssfn (first val))
+                       {:__logic   (apply list val)
+                        :selector* selector*
+                        :css-prop  css-prop})
+      :else          nil)))
 
-
+  (let [!important? (and (list? val) (= '!important (first val)))
+        val         (if !important? (second val) val)]
+    (cond
+      (symbol? val)  val
+      (derefed? val) {:val-type  :derefed
+                      :val       (second val)
+                      :css-prop  css-prop}
+      (vector? val)  (extract-vars* val)
+      (list? val)    (when-not (= 'cssfn (first val))
+                       {:val-type  :logic
+                        :__logic   (apply list val)
+                        :selector* selector*
+                        :css-prop  css-prop})
+      :else          nil)))
 
 (defn sanitize-for-css-var-name [v]
   (-> v
@@ -63,19 +73,33 @@
   [extracted-vars]
   #_(util/pprint+ "<< css-vars-map" extracted-vars)
   #_(util/pprint+ "css-vars-map >>"
-                (reduce
-                 (fn [acc v]
-                   (if-let [{:keys [selector* __logic css-prop]} (when (map? v) v)]
-                     (assoc acc (css-var-for-sexp selector* css-prop) (-> v :__logic util/process-sexp))
-                     (assoc acc (str "--" (sanitize-for-css-var-name v)) v)))
-                 {}
-                 extracted-vars))
+                  (reduce
+                   (fn [acc v]
+                     (if-let [{:keys [selector* __logic css-prop]} (when (map? v) v)]
+                       (assoc acc
+                              (util/css-var-for-sexp selector* css-prop)
+                              (-> v :__logic (util/process-sexp selector* css-prop)))
+                       (assoc acc
+                              (str "--" (sanitize-for-css-var-name v))
+                              v)))
+                   {}
+                   extracted-vars))
   (reduce
    (fn [acc v]
-     (if-let [{:keys [selector* __logic css-prop]} (when (map? v) v)]
+     (cond
+
+       (and (map? v) (= :logic (:val-type v)))
+       (let [{:keys [selector* __logic css-prop]} v]
+         (assoc acc
+                (util/css-var-for-sexp selector* css-prop)
+                (util/process-sexp __logic selector* css-prop)))
+
+       (and (map? v) (= :derefed (:val-type v)))
        (assoc acc
-              (util/css-var-for-sexp selector* css-prop)
-              (-> v :__logic (util/process-sexp selector* css-prop)))
+              (str "--" (sanitize-for-css-var-name (:val v)))
+              (list 'clojure.core/deref (:val v)))
+
+       :else
        (assoc acc
               (str "--" (sanitize-for-css-var-name v))
               v)))
@@ -122,16 +146,16 @@
      (if (s/valid? ::specs/style-tuple v)
        (let [[prop val] v]
          (cond
-           (symbol? val)
-           [prop (util/css-var-string val)]
+           (derefed? val) [prop (util/css-var-string (second val))]
 
-           (list? val)
-           (cond
-             (= 'cssfn (first val))     [prop val]
-             (util/!important-var? val) [prop (util/css-var-string-!important val selector* prop)]
-             :else                      [prop (str "var(" (util/css-var-for-sexp selector* prop) ")")])
+           (symbol? val)  [prop (util/css-var-string val)]
 
-           :else [prop val]))
+           (list? val)    (cond
+                            (= 'cssfn (first val))     [prop val]
+                            (util/!important-var? val) [prop (util/css-var-string-!important val selector* prop)]
+                            :else                      [prop (str "var(" (util/css-var-for-sexp selector* prop) ")")])
+
+           :else          [prop val]))
         v))
    styles*))
 

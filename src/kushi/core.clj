@@ -341,17 +341,15 @@
 
     (printing/diagnostics
      :sx
-     (let [style         (:style attr)
-           style-is-map? (map? style)
-           style-is-var? (symbol? style)]
+     (let [style         (:style attr)]
        {:ident             ident
         :garden-vecs       garden-vecs
         :css-injection-dev css-injection-dev
         :args              args
-        :style-is-var?     style-is-var?
+        :style-is-var?     (symbol? style)
         :attr-map          (merge attr-base
                                   {:class (distinct (concat cls classlist conditional-class-sexprs))
-                                   :style (merge (when style-is-map? style) css-vars)})}))
+                                   :style (merge (when (map? style) style) css-vars)})}))
 
     ;; Add vecs into garden state
     (state/add-styles! garden-vecs)
