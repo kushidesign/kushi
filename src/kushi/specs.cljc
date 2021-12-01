@@ -47,7 +47,7 @@
 
 ;; kushi specs ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (s/def ::config
-  (s/keys :req-un [(or ::element ::prefix ::ns-attr-key ::f ::ident ::parent ::classname)]))
+  (s/keys :req-un [(or ::element ::prefix ::ns-attr-key ::f ::ident ::ancestor ::classname)]))
 
 (s/def ::responsive-config
   (s/and map? not-empty))

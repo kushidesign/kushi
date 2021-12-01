@@ -200,7 +200,7 @@
          :attr
          invalid-map-args
          :invalid-map-args}        (style&classes+attr args)
-        meta-ks                    [:parent :prefix :f :fn :ident :element :data-ns]
+        meta-ks                    [:ancestor :prefix :f :fn :ident :element :data-ns]
         {f            :f
          component-fn :fn
          ident        :ident
@@ -276,7 +276,9 @@
 
     #_(util/pprint+
      "sx*"
-     {:classlist-map classlist-map
+     {:selector* selector*
+      :selector  selector
+      :classlist-map classlist-map
       :styles*       styles*
       :styles        styles
       :css-vars      css-vars
