@@ -14,6 +14,7 @@
    [kushi.specs :as specs]
    [kushi.state :as state]
    [kushi.stylesheet :as stylesheet]
+   [kushi.typography :refer [system-font-stacks]]
    [kushi.utils :as util]))
 
 (def KUSHIDEBUG (atom true))
@@ -23,7 +24,7 @@
   [build-state]
   (let [mode (:shadow.build/mode build-state)]
     #_(when mode
-      (println "(:shadow.build/mode build-state) =>" mode))
+        (println "(:shadow.build/mode build-state) =>" mode))
     (when (not= mode :dev)
       (reset! KUSHIDEBUG false)))
   build-state)
@@ -32,9 +33,9 @@
 (defn style-map->vecs
   [m]
   (when (and (:map-mode? user-config) (map? m))
-   (let [->coll  #(if (coll? %) % [%])
-         classes (some->> m :kushi/class ->coll (map #(->> % name (str ".") keyword)))]
-     (into [] (concat classes (into [] (dissoc m :kushi/class)))))))
+    (let [->coll  #(if (coll? %) % [%])
+          classes (some->> m :kushi/class ->coll (map #(->> % name (str ".") keyword)))]
+      (into [] (concat classes (into [] (dissoc m :kushi/class)))))))
 
 (defn- scoped-atomic-classname
   "Returns a classname with proper prefixing for scoping.
@@ -104,11 +105,11 @@
                                   :garden-vecs garden-vecs}]
 
     #_(util/pprint+
-     "defclass"
-     {:invalid-map-args invalid-map-args
-      :invalid-args invalid-args
-      :styles styles
-      :m m})
+       "defclass"
+       {:invalid-map-args invalid-map-args
+        :invalid-args invalid-args
+        :styles styles
+        :m m})
 
     ;; Print any problems to terminal
     (printing/console-warning-defclass console-warning-args)
@@ -130,8 +131,7 @@
               js/console
               (kushi.core/js-warning-defclass ~console-warning-args))))
          nil)
-      `(do nil)
-      )))
+      `(do nil))))
 
 
 (defmacro add-font-face
@@ -146,6 +146,28 @@
          conj
          (garden/css (at-font-face m))))
 
+
+
+
+(defmacro add-system-ui-font-stack [& weights*]
+  (let [weights (if (empty? weights*)
+                  system-font-stacks
+                  (reduce (fn [acc v]
+                            (if (contains? system-font-stacks v)
+                              (assoc acc v (get system-font-stacks v))))
+                          {}
+                          weights*))]
+   (doseq [[weight fonts-by-style] weights]
+     (doseq [[style fonts] fonts-by-style]
+       (reset! state/current-macro :add-font-face)
+       (swap! state/user-defined-font-faces
+              conj
+              (garden/css
+               (at-font-face
+                {:font-family "system-font"
+                 :font-style (name style)
+                 :font-weight weight
+                 :src (mapv #(str "local(\"" % "\")") fonts)})))))))
 
 (defn- keyframe [[k v]]
   (let [frame-key (if (vector? k)
@@ -217,18 +239,18 @@
         invalid-args               (into [] (concat invalid-map-args invalid))]
 
     #_(util/pprint+ "parse-attr+meta"
-            {:attr*          attr*
-             :attr           attr
-             :meta           meta
-             :styles+classes* styles+classes*
-             :styles+classes styles+classes
-             :styles*        styles
-             :classes*       classes*
-             :f              (or f component-fn)
-             :ident          ident
-             :data-ns-key    data-ns-key
-             :invalid-map-args   invalid-map-args
-             :invalid-args   invalid-args})
+                    {:attr*          attr*
+                     :attr           attr
+                     :meta           meta
+                     :styles+classes* styles+classes*
+                     :styles+classes styles+classes
+                     :styles*        styles
+                     :classes*       classes*
+                     :f              (or f component-fn)
+                     :ident          ident
+                     :data-ns-key    data-ns-key
+                     :invalid-map-args   invalid-map-args
+                     :invalid-args   invalid-args})
 
     {:attr           attr
      :meta           meta
@@ -275,16 +297,16 @@
         attr-base                    (or attr {})]
 
     #_(util/pprint+
-     "sx*"
-     {:selector* selector*
-      :selector  selector
-      :classlist-map classlist-map
-      :styles*       styles*
-      :styles        styles
-      :css-vars      css-vars
-      :tokenized-styles tokenized-styles
-      :grouped-by-mqs grouped-by-mqs
-      :garden-vecs   garden-vecs})
+       "sx*"
+       {:selector* selector*
+        :selector  selector
+        :classlist-map classlist-map
+        :styles*       styles*
+        :styles        styles
+        :css-vars      css-vars
+        :tokenized-styles tokenized-styles
+        :grouped-by-mqs grouped-by-mqs
+        :garden-vecs   garden-vecs})
 
     (merge
      classlist-map
