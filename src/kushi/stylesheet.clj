@@ -75,7 +75,7 @@
 (def version* "1.0.0")
 
 ;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
-(def version (str "v" version* #_":LOCAL"))
+(def version (str version* #_":LOCAL"))
 
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
@@ -92,7 +92,7 @@
     ;; write @font-face declarations
     (when (pos-int? font-face-count)
       (do
-        (swap! printables conj (str font-face-count " @font-face rule" (when (> keyframes-count 1) "s")))
+        (swap! printables conj (str font-face-count " @font-face rule" (when (> font-face-count 1) "s")))
         (spit-css {:pretty-print? pretty-print?
                    :comment "Font faces"
                    :content (string/join "\n" @state/user-defined-font-faces)}))
@@ -154,14 +154,18 @@
                  :garden-vecs garden-vecs
                  :comment "Component styles"}))
 
-    (println
-     (apply ansi-rainbow
-            (concat
-             [(str (ansi/bold (str "kushi " version)))
-              :br
-              (str "Writing: " #_(ansi/bold) user-css-file-path " ...")
-              :br]
-             @printables)))
+    (if (= :banner (-> user-config :report-printing-style))
+      (println
+       (apply ansi-rainbow
+              (concat
+               [(str (ansi/bold (str "kushi " version)))
+                :br
+                (str "Writing: " user-css-file-path " ...")
+                :br]
+               @printables)))
+      (println (ansi/bold (str "\n[kushi " version "]"))
+               (str "Writing to " user-css-file-path " ...\n" (string/join "\n" @printables))
+               "\n"))
 
     (reset! state/garden-vecs-state state/garden-vecs-state-init))
   build-state)
