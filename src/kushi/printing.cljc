@@ -97,6 +97,11 @@
            lines (assoc flatlines (-> flatlines count dec) last-val)]
        lines)))
 
+(defn file-info-str
+  [{:keys [js? form-meta]}]
+  #?(:clj
+     (let [{:keys [file line column]} form-meta]
+       (str file ":"  (when-not js? ansi/bold-font) line ":" column (when-not js? ansi/reset-font)))))
 
 
 ;; Dictionaries   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -135,13 +140,15 @@
 (def left-border-glyphstring ": ")
 
 (defn warning-header
-  [{:keys [invalid-args fname]}]
+  [{:keys [invalid-args fname js?]}]
   #?(:clj
-     (str
-      ansi/bold-font
-      "Invalid argument" (when (< 1 (count invalid-args)) "s")
-      ansi/reset-font
-      " to kushi.core/" fname)
+     (if js?
+      (str "Warning: %cInvalid argument" (when (< 1 (count invalid-args)) "s") "%c"  " to kushi.core/" fname ".")
+      (str
+       ansi/bold-font
+       "Invalid argument" (when (< 1 (count invalid-args)) "s")
+       ansi/reset-font
+       " to kushi.core/" fname))
      :cljs
      (str "Warning: %cInvalid argument" (when (< 1 (count invalid-args)) "s") "%c"  " to kushi.core/" fname ".")))
 
@@ -153,12 +160,17 @@
               (name defclass-name)))))
 
 (defn warning-call-with-args
-  [{:keys [fname classname] :as m}]
+  [{:keys [fname classname js?] :as m}]
    #?(:clj
-      (let [resolved-classname (warning-call-classname m)]
-        (concat
-         [(str "(" fname " " resolved-classname)]
-         (console-error-ansi-formatting m)))
+      (if js?
+        (str "(" fname " "
+             (when classname (name classname))
+             (string/join (js-fmt-args m))
+             ")")
+        (let [resolved-classname (warning-call-classname m)]
+          (concat
+           [(str "(" fname " " resolved-classname)]
+           (console-error-ansi-formatting m))))
       :cljs
       (str "(" fname " "
            (when classname (name classname))
@@ -183,6 +195,26 @@
             (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
                         (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal")))))
           )))
+
+(defn preformat-js-warning
+  [m]
+   #?(:clj
+      (let [m                 (assoc m :js? true)
+            warning           (string/join
+                               "\n\n"
+                               [(warning-header m)
+                                (warning-call-with-args m)
+                                ;; (-> fname keyword dict :expected)
+                                (file-info-str m)
+                                (str (-> m :fname keyword dict :learn-more) "\n")])
+            number-of-formats (count (re-seq #"%c" warning))]
+
+        (into []
+              (concat
+               [warning]
+               ["color:black;font-weight:bold" "font-weight:normal" "font-weight:bold;color:#ffaa00" "font-weight:normal"]
+               (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
+                           (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal")))))))
 
 (defn indent-line [msg-type* s]
   #?(:clj
@@ -228,11 +260,12 @@
 (defn ansi-warning [& lines]
   (ansi* lines warning-border :warning))
 
+
+
 (defn ansi-bad-args-warning
   [{:keys [fname invalid-args] :as m}]
   #?(:clj
-     (let [fdict (-> fname keyword dict)
-           src (:find-source fdict)]
+     (let [fdict (-> fname keyword dict)]
        (when (seq invalid-args)
          (println
           (ansi-warning
@@ -240,9 +273,8 @@
            :br
            (warning-call-with-args m)
            :br
+           (file-info-str m)
            :br
-           (when src src)
-           (when src :br)
            (:learn-more fdict)))))))
 
 (defn console-warning-sx
