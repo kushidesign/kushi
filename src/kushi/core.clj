@@ -15,7 +15,8 @@
    [kushi.state :as state]
    [kushi.stylesheet :as stylesheet]
    [kushi.typography :refer [system-font-stacks]]
-   [kushi.utils :as util]))
+   [kushi.utils :as util]
+   [par.core :refer [? !? ?+ !?+]]))
 
 (def KUSHIDEBUG (atom true))
 
@@ -148,26 +149,27 @@
 
 
 
-
-(defmacro add-system-ui-font-stack [& weights*]
+(defmacro add-system-font-stack
+  [& weights*]
   (let [weights (if (empty? weights*)
                   system-font-stacks
                   (reduce (fn [acc v]
                             (if (contains? system-font-stacks v)
-                              (assoc acc v (get system-font-stacks v))))
+                              (assoc acc v (get system-font-stacks v))
+                              acc))
                           {}
                           weights*))]
-   (doseq [[weight fonts-by-style] weights]
-     (doseq [[style fonts] fonts-by-style]
-       (reset! state/current-macro :add-font-face)
-       (swap! state/user-defined-font-faces
-              conj
-              (garden/css
-               (at-font-face
-                {:font-family "system-font"
-                 :font-style (name style)
-                 :font-weight weight
-                 :src (mapv #(str "local(\"" % "\")") fonts)})))))))
+    (doseq [[weight fonts-by-style] weights]
+      (doseq [[style fonts] fonts-by-style]
+        (reset! state/current-macro :add-font-face)
+        (swap! state/user-defined-font-faces
+               conj
+               (garden/css
+                (at-font-face
+                 {:font-family "system"
+                  :font-style (name style)
+                  :font-weight weight
+                  :src (mapv #(str "local(\"" % "\")") fonts)})))))))
 
 (defn- keyframe [[k v]]
   (let [frame-key (if (vector? k)
@@ -238,19 +240,20 @@
         styles                     (into [] (concat styles* classes-with-mods-hydrated))
         invalid-args               (into [] (concat invalid-map-args invalid))]
 
-    #_(util/pprint+ "parse-attr+meta"
-                    {:attr*          attr*
-                     :attr           attr
-                     :meta           meta
-                     :styles+classes* styles+classes*
-                     :styles+classes styles+classes
-                     :styles*        styles
-                     :classes*       classes*
-                     :f              (or f component-fn)
-                     :ident          ident
-                     :data-ns-key    data-ns-key
-                     :invalid-map-args   invalid-map-args
-                     :invalid-args   invalid-args})
+    #_(util/pprint+
+       "parse-attr+meta"
+       {:attr*          attr*
+        :attr           attr
+        :meta           meta
+        :styles+classes* styles+classes*
+        :styles+classes styles+classes
+        :styles*        styles
+        :classes*       classes*
+        :f              (or f component-fn)
+        :ident          ident
+        :data-ns-key    data-ns-key
+        :invalid-map-args   invalid-map-args
+        :invalid-args   invalid-args})
 
     {:attr           attr
      :meta           meta
@@ -321,6 +324,7 @@
       :selector     selector})))
 
 
+
 (defmacro sx
   "Receives n-number of args representing css style declarations or classes.
    Evaluates styles and adds css data to global registery along with auto-generated
@@ -329,8 +333,6 @@
    Returns a normalized attribute map which incorporates the prefixed selector(s)
    into the :class attribute."
   [& args]
-
-  #_(println "(sx" (string/join " " args)  " ...)")
 
   (reset! state/current-macro :sx)
 
@@ -350,10 +352,16 @@
         styles-argument-display (apply vector args)
         compilation-warnings    (mapv (fn [v] v) @state/compilation-warnings)
         invalid-warning-args    {:invalid-args            invalid-args
-                                 :styles-argument-display styles-argument-display}
+                                 :styles-argument-display styles-argument-display
+                                 :form-meta (meta &form)
+                                 :fname "sx"}
         css-injection-dev       (stylesheet/garden-vecs-injection garden-vecs)
         og-cls                  (:class attr)
-        cls                     (when og-cls (if (coll? og-cls) og-cls [og-cls]))]
+        cls                     (when og-cls (if (coll? og-cls) og-cls [og-cls]))
+        data-cljs               (let [{:keys [file line column]} (meta &form)]
+                                  (str file ":"  line ":" column))
+        js-args-warning         (printing/preformat-js-warning invalid-warning-args)]
+
 
     ;; Add classes to previously-used registry
     (doseq [kw atomic-class-keys]
@@ -373,7 +381,8 @@
         :style-is-var?     (symbol? style)
         :attr-map          (merge attr-base
                                   {:class (distinct (concat cls classlist conditional-class-sexprs))
-                                   :style (merge (when (map? style) style) css-vars)})}))
+                                   :style (merge (when (map? style) style) css-vars)
+                                   :data-cljs data-cljs})}))
 
     ;; Add vecs into garden state
     (state/add-styles! garden-vecs)
@@ -387,7 +396,9 @@
              cls#      (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
              attr-map# (merge ~attr-base
                               {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
-                               :style (merge (:style ~attr) ~css-vars)})]
+                               :style (merge (:style ~attr) ~css-vars)
+                               :data-cljs ~data-cljs
+                               })]
          (do
            (when-not (empty? ~compilation-warnings)
              (.apply
@@ -400,8 +411,9 @@
                (.apply
                 js/console.warn
                 js/console
-                (kushi.core/js-warning-sx ~invalid-warning-args))))
+                (cljs.core/to-array ~js-args-warning))))
 
+           (par.core/? "WTF3")
            (kushi.core/inject-style-rules (quote ~css-injection-dev) ~selector)
            (merge (when ~f {~data-ns-key (kushi.core/ns+ ~f ~ident)})
                   attr-map#)))
