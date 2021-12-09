@@ -1,6 +1,7 @@
 (ns ^:dev/always kushi.core
   (:require-macros [kushi.core])
   (:require
+   [par.core :refer [? !? ?+ !?+]]
    [clojure.string :as string]))
 
 (defn clean!
@@ -172,10 +173,6 @@
       ["color:black;font-weight:bold" "font-weight:normal" "font-weight:bold;color:#ffaa00" "font-weight:normal"]
       (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
                   (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal"))))))
-
-(defn js-warning-sx [m*]
-  (let [m (assoc m* :fname "sx")]
-    (js-warning* m)))
 
 (defn js-warning-defclass [m*]
   (let [m (assoc m* :fname "defclass")]
