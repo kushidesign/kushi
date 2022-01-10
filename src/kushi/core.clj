@@ -15,8 +15,7 @@
    [kushi.state :as state]
    [kushi.stylesheet :as stylesheet]
    [kushi.typography :refer [system-font-stacks]]
-   [kushi.utils :as util]
-   [par.core :refer [? !? ?+ !?+]]))
+   [kushi.utils :as util]))
 
 (def KUSHIDEBUG (atom true))
 
@@ -134,6 +133,18 @@
          nil)
       `(do nil))))
 
+(defmacro clean!
+  "Removes all existing styles that were injected into #_kushi-dev_ style tag at dev time.
+   Intended to be called by the projects main/core ns on every save/reload."
+  []
+  (let [log? (:log-clean!? user-config)]
+    `(when ^boolean js/goog.DEBUG
+       (do (when ~log? (js/console.log "kushi.core/cleaning!"))
+           (let [sheet# (.-sheet (js/document.getElementById "_kushi-dev_"))
+                 rules# (.-rules sheet#)
+                 rules-len# (.-length rules#)]
+             (clojure.core/doseq [idx# (clojure.core/reverse (clojure.core/range rules-len#))]
+               (.deleteRule sheet# idx#)))))))
 
 (defmacro add-font-face
   "Example:
@@ -217,6 +228,8 @@
       {:styles+classes (drop-last args) :attr (last args)}
       {:styles+classes args :attr nil})))
 
+(def meta-ks [:ancestor :prefix :ident :element :data-attr-name])
+
 (defn- parse-attr+meta [args]
   (let [{styles+classes*
          :styles+classes
@@ -224,12 +237,9 @@
          :attr
          invalid-map-args
          :invalid-map-args}        (style&classes+attr args)
-        meta-ks                    [:ancestor :prefix :f :fn :ident :element :data-ns]
-        {f            :f
-         component-fn :fn
-         ident        :ident
+        {ident        :ident
          :as          meta}        (select-keys attr* meta-ks)
-        data-ns-key                (or (:data-ns-key user-config) :data-ns)
+        data-attr-name             (or (:data-attr-name user-config) :data-cljs)
         attr                       (apply dissoc attr* meta-ks)
         styles+classes             (if (:map-mode? user-config) (style-map->vecs styles+classes*) styles+classes*)
         {:keys [valid invalid]}    (util/reduce-by-pred #(s/valid? ::specs/kushi-arg %) styles+classes)
@@ -251,7 +261,7 @@
         :classes*       classes*
         :f              (or f component-fn)
         :ident          ident
-        :data-ns-key    data-ns-key
+        :data-attr-name data-attr-name
         :invalid-map-args   invalid-map-args
         :invalid-args   invalid-args})
 
@@ -260,9 +270,8 @@
      :styles+classes styles+classes
      :styles*        styles
      :classes*       classes*
-     :f              (or f component-fn)
      :ident          ident
-     :data-ns-key    data-ns-key
+     :data-attr-name data-attr-name
      :invalid-args   invalid-args}))
 
 (defn classlist [meta classes* selector*]
@@ -288,8 +297,7 @@
                 attr
                 meta
                 ident
-                f
-                data-ns-key]}        (parse-attr+meta args)
+                data-attr-name]}     (parse-attr+meta args)
         {:keys [selector selector*]} (selector/selector-name meta)
         classlist-map                (classlist meta classes* selector*)
         styles                       (parse/+vars styles* selector*)
@@ -313,123 +321,131 @@
 
     (merge
      classlist-map
-     {:garden-vecs  garden-vecs
-      :attr         attr
-      :attr-base    attr-base
-      :css-vars     css-vars
-      :f            f
-      :ident        ident
-      :invalid-args invalid-args
-      :data-ns-key  data-ns-key
-      :selector     selector})))
+     {:garden-vecs    garden-vecs
+      :attr           attr
+      :attr-base      attr-base
+      :css-vars       css-vars
+      :ident          ident
+      :invalid-args   invalid-args
+      :data-attr-name data-attr-name
+      :selector       selector})))
 
+(defn- only-attr
+  [args]
+  (let [selected                (:select-ns user-config)
+        select-ns-vector-valid? (s/valid? ::specs/select-ns-vector selected)]
+    (when select-ns-vector-valid?
+      (let [current-ns-sym       (symbol (.toString *ns*))
+            current-ns?          (contains? (into #{} selected) current-ns-sym)
+            current-ns-ancestor? (some? (some #(re-find
+                                                (re-pattern (str %))
+                                                (str current-ns-sym))
+                                              selected))]
+        (when-not (or current-ns-ancestor? current-ns?)
+          (let [attr (or (-> args style&classes+attr :attr) {})]
+            (apply dissoc attr meta-ks)))))))
 
 
 (defmacro sx
-  "Receives n-number of args representing css style declarations or classes.
-   Evaluates styles and adds css data to global registery along with auto-generated
-   (or user-defined) selector prefix.  A optional map containing html attributes
-   and/or kushi-specific options can be passed as the last argument.
-   Returns a normalized attribute map which incorporates the prefixed selector(s)
-   into the :class attribute."
   [& args]
-
   (reset! state/current-macro :sx)
-
-  (let [{:keys [atomic-class-keys
-                garden-vecs
-                attr
-                attr-base
-                classlist
-                conditional-class-sexprs
-                css-vars
-                f
-                ident
-                invalid-args
-                data-ns-key
-                selector]
-         :as   m}               (sx* args)
-        styles-argument-display (apply vector args)
-        compilation-warnings    (mapv (fn [v] v) @state/compilation-warnings)
-        invalid-warning-args    {:invalid-args            invalid-args
-                                 :styles-argument-display styles-argument-display
-                                 :form-meta (meta &form)
-                                 :fname "sx"}
-        css-injection-dev       (stylesheet/garden-vecs-injection garden-vecs)
-        og-cls                  (:class attr)
-        cls                     (when og-cls (if (coll? og-cls) og-cls [og-cls]))
-        data-cljs               (let [{:keys [file line column]} (meta &form)]
-                                  (str file ":"  line ":" column))
-        js-args-warning         (printing/preformat-js-warning invalid-warning-args)]
+  (or
+   (only-attr args)
+   (let [{:keys [atomic-class-keys
+                 garden-vecs
+                 attr
+                 attr-base
+                 classlist
+                 conditional-class-sexprs
+                 css-vars
+                 ident
+                 invalid-args
+                 data-attr-name
+                 selector]
+          :as   m}               (sx* args)
+         styles-argument-display (apply vector args)
+         compilation-warnings    (mapv (fn [v] v) @state/compilation-warnings)
+         invalid-warning-args    {:invalid-args            invalid-args
+                                  :styles-argument-display styles-argument-display
+                                  :form-meta               (meta &form)
+                                  :fname                   "sx"}
+         css-injection-dev       (stylesheet/garden-vecs-injection garden-vecs)
+         og-cls                  (:class attr)
+         cls                     (when og-cls (if (coll? og-cls) og-cls [og-cls]))
+         data-cljs               (let [{:keys [file line column]} (meta &form)]
+                                   (str file ":"  line ":" column))
+         js-args-warning         (printing/preformat-js-warning invalid-warning-args)]
 
 
     ;; Add classes to previously-used registry
-    (doseq [kw atomic-class-keys]
-      (when-not (contains? @state/atomic-declarative-classes-used kw)
-        (swap! state/atomic-declarative-classes-used conj kw)
-        (printing/diagnostics
-         :defclass-register
-         {:defclass-registered? (contains? @state/atomic-declarative-classes-used kw)})))
+     (doseq [kw atomic-class-keys]
+       (when-not (contains? @state/atomic-declarative-classes-used kw)
+         (swap! state/atomic-declarative-classes-used conj kw)
+         (printing/diagnostics
+          :defclass-register
+          {:defclass-registered? (contains? @state/atomic-declarative-classes-used kw)})))
 
-    (printing/diagnostics
-     :sx
-     (let [style         (:style attr)]
-       {:ident             ident
-        :garden-vecs       garden-vecs
-        :css-injection-dev css-injection-dev
-        :args              args
-        :style-is-var?     (symbol? style)
-        :attr-map          (merge attr-base
-                                  {:class (distinct (concat cls classlist conditional-class-sexprs))
-                                   :style (merge (when (map? style) style) css-vars)
-                                   :data-cljs data-cljs})}))
+     (printing/diagnostics
+      :sx
+      (let [style*    (:style attr)
+            style     (merge (when (map? style*) style*) css-vars)
+            class     (distinct (concat cls classlist conditional-class-sexprs))
+            data-cljs {(or data-attr-name :data-cljs) data-cljs}]
+        {:ident             ident
+         :garden-vecs       garden-vecs
+         :css-injection-dev css-injection-dev
+         :args              args
+         :style-is-var?     (symbol? style)
+         :attr-map          (merge attr-base {:class class :style style} data-cljs)}))
 
     ;; Add vecs into garden state
-    (state/add-styles! garden-vecs)
+     (state/add-styles! garden-vecs)
 
-    (printing/console-warning-sx invalid-warning-args)
+     (printing/console-warning-sx invalid-warning-args)
 
-    (reset! state/compilation-warnings [])
+     (reset! state/compilation-warnings [])
 
-    (if @KUSHIDEBUG
-      `(let [og-cls#   (:class ~attr)
-             cls#      (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
-             attr-map# (merge ~attr-base
-                              {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
-                               :style (merge (:style ~attr) ~css-vars)
-                               :data-cljs ~data-cljs
-                               })]
-         (do
-           (when-not (empty? ~compilation-warnings)
-             (.apply
-              js/console.warn
-              js/console
-              (kushi.core/console-warning-number ~compilation-warnings)))
+     (if @KUSHIDEBUG
 
-           (when (seq ~invalid-args)
-             (do
-               (.apply
-                js/console.warn
-                js/console
-                (cljs.core/to-array ~js-args-warning))))
+       ;; dev builds
+       `(let [og-cls#   (:class ~attr)
+              cls#      (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
+              attr-map# (merge ~attr-base
+                               {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
+                                :style (merge (:style ~attr) ~css-vars)
+                                :data-cljs ~data-cljs})
+              logfn#    (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
+          (do
+            (when-not (empty? ~compilation-warnings)
+              (.apply
+               js/console.warn
+               js/console
+               (kushi.core/console-warning-number ~compilation-warnings)))
 
-           (par.core/? "WTF3")
-           (kushi.core/inject-style-rules (quote ~css-injection-dev) ~selector)
-           (merge (when ~f {~data-ns-key (kushi.core/ns+ ~f ~ident)})
-                  attr-map#)))
-      (let
-       [{:keys [only-class? only-class+style?]} (util/analyze-attr m)]
-        (cond
-          only-class?
-          `(do {:class (quote ~classlist)})
+            (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
+            #_(when (seq ~invalid-args)
+                (.apply
+                 js/console.warn
+                 js/console
+                 (cljs.core/to-array ~js-args-warning)))
 
-          only-class+style?
-          `(do {:class (quote ~classlist)
-                :style (merge (:style ~attr) ~css-vars)})
-          :else
-          `(let [og-cls#   (:class ~attr)
-                 cls#      (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
-                 attr-map# (merge ~attr-base
-                                  {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
-                                   :style (merge (:style ~attr) ~css-vars)})]
-             attr-map#))))))
+            (kushi.core/inject-style-rules (quote ~css-injection-dev) ~selector)
+            attr-map#))
+
+      ;; release builds
+       (let
+        [{:keys [only-class? only-class+style?]} (util/analyze-attr m)]
+         (cond
+           only-class?
+           `(do {:class (quote ~classlist)})
+
+           only-class+style?
+           `(do {:class (quote ~classlist)
+                 :style (merge (:style ~attr) ~css-vars)})
+           :else
+           `(let [og-cls#   (:class ~attr)
+                  cls#      (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
+                  attr-map# (merge ~attr-base
+                                   {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
+                                    :style (merge (:style ~attr) ~css-vars)})]
+              attr-map#)))))))
