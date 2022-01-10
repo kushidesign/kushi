@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.stylesheet
   (:require
+   [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [io.aviso.ansi :as ansi]
    [garden.stylesheet]
@@ -7,6 +8,7 @@
    [kushi.config :refer [user-config]]
    [kushi.printing :refer [ansi-rainbow]]
    [kushi.state :as state]
+   [kushi.specs :as specs]
    [kushi.utils :as util]))
 
 (defn garden-vecs-injection
@@ -77,25 +79,57 @@
 ;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
 (def version (str version* #_":LOCAL"))
 
+(defn simple-report [selected-ns-msg printables]
+  (string/join
+   "\n"
+   (remove nil?
+           [(str "\n[kushi v" version "]")
+            selected-ns-msg
+            (str "Writing to " user-css-file-path " ...")
+            (string/join "\n" @printables)
+            "\n"])))
+
+(defn banner-report [selected-ns-msg printables]
+  (apply ansi-rainbow
+         (concat
+          [(str (ansi/bold (str "kushi v" version)))
+           (when selected-ns-msg :br)
+           selected-ns-msg
+           :br
+           (str "Writing to " user-css-file-path " ...")
+           :br]
+          @printables)))
+
+(defn print-report! [printables]
+  (let [selected         (:select-ns user-config)
+        selected-ns-msg  (when (s/valid? ::specs/select-ns-vector selected)
+                           (str "Compiling styles for namespaces: " selected))
+        report-format-fn (if (= :banner (-> user-config :reporting-style))
+                           banner-report
+                           simple-report)]
+    (println
+     (report-format-fn selected-ns-msg printables))))
+
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
   [build-state]
-  (let [mode (:shadow.build/mode build-state)
-        pretty-print? (if (= :dev mode) true false)
-        printables (atom [])
+  (let [mode            (:shadow.build/mode build-state)
+        pretty-print?   (if (= :dev mode) true false)
+        printables      (atom [])
         font-face-count (count @state/user-defined-font-faces)
         keyframes-count (count @state/user-defined-keyframes)
         ]
     (use 'clojure.java.io)
-    (spit-css {:header (str "! kushi v" version " | EPL License | https://github.com/paintparty/kushi ") :append false})
+    (spit-css {:header (str "! kushi v" version " | EPL License | https://github.com/paintparty/kushi ")
+               :append false})
 
     ;; write @font-face declarations
     (when (pos-int? font-face-count)
       (do
         (swap! printables conj (str font-face-count " @font-face rule" (when (> font-face-count 1) "s")))
         (spit-css {:pretty-print? pretty-print?
-                   :comment "Font faces"
-                   :content (string/join "\n" @state/user-defined-font-faces)}))
+                   :comment       "Font faces"
+                   :content       (string/join "\n" @state/user-defined-font-faces)}))
       (reset! state/user-defined-font-faces []))
 
     ;; write defkeyframes
@@ -141,31 +175,26 @@
 
 
     ;; write rules
-    (let [rules (map (fn [[k v]] (when v [k v]))
-                     (:rules @state/garden-vecs-state))
-          mqs (map (fn [[k v]]
-                     (when-let [as-seq (seq v)]
-                       (apply garden.stylesheet/at-media
-                              (cons k as-seq))))
-                   (dissoc @state/garden-vecs-state :rules))
-          garden-vecs (remove nil? (concat rules mqs))]
+    (let [rules                   (map (fn [[k v]] (when v [k v]))
+                                       (:rules @state/garden-vecs-state))
+          mqs                     (map (fn [[k v]]
+                                         (when-let [as-seq (seq v)]
+                                           (apply garden.stylesheet/at-media
+                                                  (cons k as-seq))))
+                                       (dissoc @state/garden-vecs-state :rules))
+          garden-vecs             (remove nil? (concat rules mqs))]
       (swap! printables conj (str (count garden-vecs) " class" (when (> (count garden-vecs) 1) "es")))
       (spit-css {:pretty-print? pretty-print?
-                 :garden-vecs garden-vecs
-                 :comment "Component styles"}))
+                 :garden-vecs   garden-vecs
+                 :comment       "Component styles"})
 
-    (if (= :banner (-> user-config :report-printing-style))
-      (println
-       (apply ansi-rainbow
-              (concat
-               [(str (ansi/bold (str "kushi " version)))
-                :br
-                (str "Writing: " user-css-file-path " ...")
-                :br]
-               @printables)))
-      (println (ansi/bold (str "\n[kushi " version "]"))
-               (str "Writing to " user-css-file-path " ...\n" (string/join "\n" @printables))
-               "\n"))
+    ;; (util/pprint+ "garden-vecs-state" @state/garden-vecs-state)
+    ;; (util/pprint+ "mqs" mqs)
+    ;; (util/pprint+ "rules" rules)
+    ;; (util/pprint+ "garden-vecs" garden-vecs)
+      )
+
+    (print-report! printables)
 
     (reset! state/garden-vecs-state state/garden-vecs-state-init))
   build-state)
