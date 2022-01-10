@@ -368,7 +368,7 @@
    vector?
    #(some->> % first (s/valid? ::garden-mode-stylemap))))
 
-; Map mode
+;; Map mode
 (s/def ::map-mode-only-attr
   #(and (= (count %) 1)
         (map? (first %))
@@ -382,6 +382,9 @@
 (s/def ::map-mode-style+attr
   #(and (map? (first %))
         (map? (second %))))
+
+;; user-config specs
+ (s/def ::select-ns-vector (s/and vector? #(seq %) (s/coll-of symbol?)))
 
 ;; Validates args to macro. Finds fatally bad args.
 (s/def ::kushi-args
