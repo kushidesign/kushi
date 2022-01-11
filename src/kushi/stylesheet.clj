@@ -28,20 +28,17 @@
        "/"
        (or (:css-filename user-config) "kushi.css")))
 
-(defn spit-css
-  [{:keys [header comment garden-vecs content defclass? append pretty-print?]
-    :or {append true}}]
-  (use 'clojure.java.io)
-  (let [cmnt (if header
-               (str "/*" header "*/\n\n")
-               (str (when comment (str "\n\n/*" comment "*/\n\n"))))
-        path user-css-file-path
-        content (str cmnt (or content (garden/css {:pretty-print? pretty-print?} garden-vecs)))]
-    (if
-     defclass?
-      (let [file-contents (slurp path)]
-        (spit path (str content "\n" file-contents)))
-      (spit path content :append append))))
+(defn append-css-chunk!
+  [{:keys [css-text
+           comment
+           content
+           defclass?]}]
+  (let [cmnt (when comment (str "\n\n/*" comment "*/\n\n"))
+        content (str cmnt content)]
+    (reset! css-text
+            (if defclass?
+              (str content "\n" @css-text)
+              (str @css-text "\n" content)))))
 
 (defn has-mqs? [coll]
   (and (map? coll)
@@ -79,6 +76,9 @@
 ;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
 (def version (str version* #_":LOCAL"))
 
+(def license-comment-header
+  (str "/*! kushi v" version " | EPL License | https://github.com/paintparty/kushi */"))
+
 (defn simple-report [selected-ns-msg printables]
   (string/join
    "\n"
@@ -110,38 +110,43 @@
     (println
      (report-format-fn selected-ns-msg printables))))
 
-(defn write-at-font-face!
-  [{:keys [pretty-print? printables]}]
+(defn append-at-font-face!
+  [{:keys [printables css-text]}]
   (let [font-face-count (count @state/user-defined-font-faces)]
     (when (pos-int? font-face-count)
       (do
         (swap! printables conj (str font-face-count " @font-face rule" (when (> font-face-count 1) "s")))
-        (spit-css {:pretty-print? pretty-print?
-                   :comment       "Font faces"
-                   :content       (string/join "\n" @state/user-defined-font-faces)}))
+        (append-css-chunk!
+         {:css-text css-text
+          :comment  "Font faces"
+          :content  (string/join "\n" @state/user-defined-font-faces)}))
       (reset! state/user-defined-font-faces []))))
 
-(defn write-defkeyframes!
-  [{:keys [printables]}]
+(defn defkeyframe-content []
+  (string/join
+   "\n"
+   (map (fn [[nm frames]]
+          (str "@keyframes "
+               (name nm)
+               " {\n"
+               (garden.core/css frames)
+               "\n}\n"))
+        @state/user-defined-keyframes)))
+
+(defn append-defkeyframes!
+  [{:keys [printables css-text]}]
   (let [keyframes-count (count @state/user-defined-keyframes)]
     (when (pos-int? keyframes-count)
       (do
         (swap! printables conj (str keyframes-count " @keyframes rule" (when (> keyframes-count 1) "s")))
-        (spit-css {:comment "Animation Keyframes"
-                   :content (let [content (string/join
-                                           "\n"
-                                           (map (fn [[nm frames]]
-                                                  (str "@keyframes "
-                                                       (name nm)
-                                                       " {\n"
-                                                       (garden.core/css frames)
-                                                       "\n}\n"))
-                                                @state/user-defined-keyframes))]
-                              content)}))
+        (append-css-chunk!
+         {:css-text css-text
+          :comment  "Animation Keyframes"
+          :content  (defkeyframe-content)}))
       (reset! state/user-defined-keyframes {}))))
 
-(defn write-defclasses!
-  [{:keys [pretty-print? printables]}]
+(defn append-defclasses!
+  [{:keys [pretty-print? printables css-text]}]
   (when-not (empty? @state/atomic-declarative-classes-used)
     (let [gv                (map #(let [normalized-class-kw (util/normalized-class-kw %)]
                                     (some-> @state/kushi-atomic-user-classes
@@ -153,21 +158,22 @@
           atomic-classes-mq (atomic-classes-mq garden-vecs*)
           mq-count          (count atomic-classes-mq)]
       (swap! printables conj (str (count garden-vecs) " defclass" (when (> (count garden-vecs) 1) "es")))
-      (spit-css {:pretty-print? pretty-print?
-                 :garden-vecs   garden-vecs
-                 :comment       "Atomic classes"})
+      (append-css-chunk!
+       {:css-text css-text
+        :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
+        :comment  "Atomic classes"})
 
       (when (pos-int? mq-count)
         (do
           (swap! printables conj (str mq-count " defclass" (when (> mq-count 1) "es") " under a media-query"))
-          (spit-css {:pretty-print? pretty-print?
-                     :garden-vecs   atomic-classes-mq
-                     :comment       "Atomic classes, media queries"}))))
+          (append-css-chunk!
+           {:css-text css-text
+            :content  (garden/css {:pretty-print? pretty-print?} atomic-classes-mq)
+            :comment  "Atomic classes, media queries"}))))
     (reset! state/atomic-declarative-classes-used #{})))
 
-
-(defn write-rules!
-  [{:keys [pretty-print? printables]}]
+(defn append-rules!
+  [{:keys [css-text pretty-print? printables]}]
   (let [rules       (map (fn [[k v]] (when v [k v]))
                          (:rules @state/garden-vecs-state))
         mqs         (map (fn [[k v]]
@@ -177,32 +183,28 @@
                          (dissoc @state/garden-vecs-state :rules))
         garden-vecs (remove nil? (concat rules mqs))]
     (swap! printables conj (str (count garden-vecs) " class" (when (> (count garden-vecs) 1) "es")))
-    (spit-css {:pretty-print? pretty-print?
-               :garden-vecs   garden-vecs
-               :comment       "Component styles"})
-
-    ;; (util/pprint+ "garden-vecs-state" @state/garden-vecs-state)
-    ;; (util/pprint+ "mqs" mqs)
-    ;; (util/pprint+ "rules" rules)
-    ;; (util/pprint+ "garden-vecs" garden-vecs)
-    ))
+    (append-css-chunk!
+     {:css-text css-text
+      :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
+      :comment  "Component styles"})))
 
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
   [build-state]
-  (let [mode            (:shadow.build/mode build-state)
-        pretty-print?   (if (:shadow.build/mode build-state) true false)
-        printables      (atom [])
-        m               {:pretty-print? pretty-print? :printables printables}]
+  (let [pretty-print? (if (:shadow.build/mode build-state) true false)
+        printables    (atom [])
+        css-text      (atom license-comment-header)
+        m             {:css-text css-text
+                       :pretty-print? pretty-print?
+                       :printables printables}]
+
+    (append-at-font-face! m)
+    (append-defkeyframes! m)
+    (append-defclasses! m)
+    (append-rules! m)
 
     (use 'clojure.java.io)
-    (spit-css {:header (str "! kushi v" version " | EPL License | https://github.com/paintparty/kushi ")
-               :append false})
-
-    (write-at-font-face! m)
-    (write-defkeyframes! m)
-    (write-defclasses! m)
-    (write-rules! m)
+    (spit user-css-file-path @css-text :append false)
 
     (print-report! printables)
 
