@@ -34,8 +34,8 @@
   [m]
   (when (and (:map-mode? user-config) (map? m))
     (let [->coll  #(if (coll? %) % [%])
-          classes (some->> m :kushi/class ->coll (map #(->> % name (str ".") keyword)))]
-      (into [] (concat classes (into [] (dissoc m :kushi/class)))))))
+          classes (some->> m :. ->coll (map #(->> % name (str ".") keyword)))]
+      (into [] (concat classes (into [] (dissoc m :.)))))))
 
 (defn- scoped-atomic-classname
   "Returns a classname with proper prefixing for scoping.
