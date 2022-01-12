@@ -10,7 +10,8 @@
    [kushi.printing :refer [ansi-rainbow]]
    [kushi.state :as state]
    [kushi.specs :as specs]
-   [kushi.utils :as util]))
+   [kushi.utils :as util]
+   [kushi.reporting :as reporting]))
 
 (defn garden-vecs-injection
   [garden-vecs]
@@ -80,144 +81,6 @@
 (def license-comment-header
   (str "/*! kushi v" version " | EPL License | https://github.com/paintparty/kushi */"))
 
-(defn simple-report
-  [selected-ns-msg
-   printables-pre
-   printables-post]
-  (string/join
-   "\n"
-   (remove nil?
-           [(str "\n-- kushi v" version " -------------------------------\n")
-            selected-ns-msg
-            (str "Writing to " user-css-file-path " ...")
-            (str (string/join "\n" printables-pre) "\n")
-            (str "Parsing css from " user-css-file-path " ...")
-            (str (string/join "\n" printables-post))
-            "\n-----------------------------------------------\n"])))
-
-(defn banner-report [selected-ns-msg printables]
-  (apply ansi-rainbow
-         (concat
-          [(str (ansi/bold (str "kushi v" version)))
-           (when selected-ns-msg :br)
-           selected-ns-msg
-           :br
-           (str "Writing to " user-css-file-path " ...")
-           :br]
-          printables)))
-
-(defn rules-under-styles [mq-count rules-under-mq-count]
-  (let [plural? (> rules-under-mq-count 1)]
-    (when plural?
-      (str ", including "
-           rules-under-mq-count
-           " rule" (when plural? "s") " under "
-           mq-count
-           " media quer" (if (> mq-count 1) "ies" "y")))))
-
-(defn check-or-x [check?]
- (if check? (ansi/bold-green "✓ ") (ansi/bold-red "✘ ")))
-
-(defn line-item-check
-  [expected results k label]
-  (let [n (get expected k nil)]
-    (when (pos? n)
-      (let [check? (= n (get results k nil))]
-        (str (check-or-x check?)
-             n
-             " "
-             label
-             " rule" (when (> n 1) "s"))))))
-
-(defn line-items-confirmation
-  [expected results]
-  (remove
-   nil?
-   [(line-item-check expected results :font-face "font-face")
-    (line-item-check expected results :keyframes "keyframes")
-    (line-item-check expected results :total-style-rules "style")
-    ]))
-
-(defn report-line-items
-  [{:keys [font-face
-           keyframes
-           total-style-rules
-           defclass-style-rules-total
-          normal-style-rules-total] :as m} ]
-  (remove
-   nil?
-   [(when (pos? font-face) (str font-face " @font-face rule" (when (> font-face 1) "s")))
-    (when (pos? keyframes) (str keyframes " @keyframes rule" (when (> keyframes 1) "s")))
-    (when (pos? keyframes) (str total-style-rules " style rules:"))
-    (when (pos? defclass-style-rules-total)
-      (str "  - " defclass-style-rules-total
-           " defclass style rules"
-           (rules-under-styles (:defclass-mq-count m) (:defclass-style-rules-under-mqs m))))
-    (when (pos? normal-style-rules-total)
-      (str "  - " normal-style-rules-total
-           " style rules"
-           (rules-under-styles (:normal-mq-count m) (:normal-style-rules-under-mqs m))))]))
-
-(defn calculate-total-style-rules!
-  [m]
-  (let [normal-style-rules-total   (+ (:normal-style-rules @m)
-                                      (:normal-style-rules-under-mqs @m))
-        defclass-style-rules-total (+ (:defclass-style-rules @m)
-                                      (:defclass-style-rules-under-mqs @m))
-        style-rules                (+ (:normal-style-rules @m)
-                                      (:defclass-style-rules @m))
-        style-rules-under-mqs      (+ (:normal-style-rules-under-mqs @m)
-                                      (:defclass-style-rules-under-mqs @m))
-        total-style-rules          (+ style-rules style-rules-under-mqs)]
-    (swap! m
-           assoc
-           :normal-style-rules-total
-           normal-style-rules-total
-           :defclass-style-rules-total
-           defclass-style-rules-total
-           :style-rules
-           style-rules
-           :style-rules-under-mqs
-           style-rules-under-mqs
-           :total-style-rules
-           total-style-rules)))
-
-(defn parse-generated-css []
-  (let [file-contents   (slurp user-css-file-path)
-        parsed          (ph-css/string->schema file-contents)
-        font-face-rules (filter #(= (:type %) :font-face-rule) parsed)
-        keyframes-rules (filter #(= (:type %) :keyframes-rule) parsed)
-        mqs             (filter #(= (:type %) :media-rule) parsed)
-        mqs-styles      (apply concat (map :rules mqs))
-        style-rules     (filter #(= (:type %) :style-rule) parsed)]
-
-    #_(util/pprint+ "media-rules" media-rules)
-    #_(util/pprint+ "style-rules" style-rules)
-    #_(util/pprint+
-       "to-be-printed"
-       @to-be-printed)
-
-    {:font-face    (count font-face-rules)
-     :keyframes    (count keyframes-rules)
-     :style-rules  (count style-rules)
-     :style-rules-under-mqs (count mqs-styles)
-     :total-style-rules (+ (count style-rules) (count mqs-styles))}))
-
-(defn print-report! [to-be-printed]
-  (calculate-total-style-rules! to-be-printed)
-  (let [selected               (:select-ns user-config)
-        selected-ns-msg        (when (s/valid? ::specs/select-ns-vector selected)
-                                 (str "Compiling styles for namespaces: " selected))
-        report-format-fn       (if (= :banner (-> user-config :reporting-style))
-                                 banner-report
-                                 simple-report)
-        report-line-items-pre  (report-line-items @to-be-printed)
-        report-line-items-post (line-items-confirmation @to-be-printed (parse-generated-css))]
-    (println
-     (report-format-fn
-      selected-ns-msg
-      report-line-items-pre
-      report-line-items-post))))
 
 (defn append-at-font-face!
   [{:keys [css-text to-be-printed]}]
@@ -324,7 +187,8 @@
     (append-css-chunk!
      {:css-text css-text
       :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
-      :comment  "Component styles"})))
+      :comment  "Component styles"})
+    (reset! state/garden-vecs-state state/garden-vecs-state-init)))
 
 
 (defn create-css-file
@@ -347,11 +211,7 @@
     (use 'clojure.java.io)
     (spit user-css-file-path @css-text :append false)
 
-    
-
-    (print-report! to-be-printed )
-
-    (reset! state/garden-vecs-state state/garden-vecs-state-init))
+    (reporting/print-report! to-be-printed))
 
   ;; Must return the build state
   build-state)
