@@ -3,6 +3,7 @@
   (:require
    [clojure.string :as string]
    [clojure.pprint :refer [pprint]]
+   [kushi.utils :as util]
    [kushi.config :refer [user-config]]))
 
 
@@ -282,6 +283,17 @@
   (let [m (assoc m* :fname "sx")]
     #?(:clj (ansi-bad-args-warning m)
        :cljs (js-warning* m))))
+
+(defn console-warning-defkeyframes
+  [{:keys [nm] :as m}]
+  (println (ansi-warning
+            (ansi/bold "Duplicate keyframe name")
+            :br
+            (str "(defkeyframe " (ansi/bold nm) " ...)")
+            :br
+            (file-info-str (assoc m :js? false))
+            :br
+            "Keyframes names must be globally unique")))
 
 ;; Warnings for kushi.core/defclass   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

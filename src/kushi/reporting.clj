@@ -82,7 +82,6 @@
            total-style-rules
            defclass-style-rules-total
            normal-style-rules-total] :as m} ]
-  (util/pprint+ {:m m})
   (remove
    nil?
    [(when (pos? font-face) (str font-face " font-face rule" (when (> font-face 1) "s")))

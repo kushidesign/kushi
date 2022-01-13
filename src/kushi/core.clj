@@ -193,11 +193,14 @@
                    v)]
     [frame-key frame-val]))
 
-
 (defmacro defkeyframes [nm & frames*]
-  (reset! state/current-macro :defkeyframes)
-  (let [frames (mapv keyframe frames*)]
-    (swap! state/user-defined-keyframes assoc (keyword nm) frames)))
+  (if (get @state/user-defined-keyframes (keyword nm))
+    (printing/console-warning-defkeyframes
+     {:form-meta (meta &form)
+      :nm nm})
+    (do (reset! state/current-macro :defkeyframes)
+        (let [frames (mapv keyframe frames*)]
+          (swap! state/user-defined-keyframes assoc (keyword nm) frames)))))
 
 (defn cssfn [& args]
   (cons 'cssfn (list args)))
@@ -401,7 +404,7 @@
     ;; Add vecs into garden state
      (state/add-styles! garden-vecs)
 
-     (printing/console-warning-sx invalid-warning-args)
+     (printing/console-warning invalid-warning-args)
 
      (reset! state/compilation-warnings [])
 
