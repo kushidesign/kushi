@@ -20,18 +20,15 @@
                   :rule-css (garden.core/css v)})
                garden-vecs)))))
 
-
 (defn append-css-chunk!
   [{:keys [css-text
            comment
-           content
-           defclass?]}]
+           content]}]
   (let [cmnt (when comment (str "\n\n/*" comment "*/\n\n"))
+        print? (and content (not (string/blank? content)))
         content (str cmnt content)]
-    (reset! css-text
-            (if defclass?
-              (str content "\n" @css-text)
-              (str @css-text "\n" content)))))
+    (when print?
+     (reset! css-text (str @css-text "\n" content))) ))
 
 (defn has-mqs? [coll]
   (and (map? coll)
@@ -199,6 +196,8 @@
                        :pretty-print? pretty-print?
                        :printables    printables
                        :to-be-printed to-be-printed}]
+
+    (util/pprint+ "user-defined-keyframes" @state/user-defined-keyframes)
 
     (append-at-font-face! m)
     (append-defkeyframes! m)
