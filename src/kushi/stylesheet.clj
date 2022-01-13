@@ -1,15 +1,10 @@
 (ns ^:dev/always kushi.stylesheet
   (:require
-   [clojure.spec.alpha :as s]
    [clojure.string :as string]
-   [io.aviso.ansi :as ansi]
-   [clj-ph-css.core :as ph-css]
    [garden.stylesheet]
    [garden.core :as garden]
-   [kushi.config :refer [user-config]]
-   [kushi.printing :refer [ansi-rainbow]]
+   [kushi.config :refer [user-config user-css-file-path]]
    [kushi.state :as state]
-   [kushi.specs :as specs]
    [kushi.utils :as util]
    [kushi.reporting :as reporting]))
 
@@ -25,10 +20,6 @@
                   :rule-css (garden.core/css v)})
                garden-vecs)))))
 
-(def user-css-file-path
-  (str (or (:css-dir user-config) (:static-css-dir user-config))
-       "/"
-       (or (:css-filename user-config) "kushi.css")))
 
 (defn append-css-chunk!
   [{:keys [css-text
@@ -72,14 +63,9 @@
 (defn print-status [n kind]
   (println (str "    " n " unique " kind)))
 
-;; ! Update kushi version here for console printing
-(def version* "1.0.0")
-
-;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
-(def version (str version* #_":LOCAL"))
 
 (def license-comment-header
-  (str "/*! kushi v" version " | EPL License | https://github.com/paintparty/kushi */"))
+  (str "/*! kushi v" reporting/version " | EPL License | https://github.com/paintparty/kushi */"))
 
 
 (defn append-at-font-face!
@@ -164,26 +150,37 @@
 
 (defn append-rules!
   [{:keys [css-text pretty-print? to-be-printed]}]
-  (let [rules       (map (fn [[k v]] (when v [k v]))
-                         (:rules @state/garden-vecs-state))
-        mqs         (remove
-                     nil?
-                     (map (fn [[k v]]
-                            (when-let [as-seq (seq v)]
-                              (apply garden.stylesheet/at-media
-                                     (cons k as-seq))))
-                          (dissoc @state/garden-vecs-state :rules)))
-        garden-vecs (remove nil? (concat rules mqs))]
-
+  (let [rules                        (remove
+                                      nil?
+                                      (map (fn [[k v]] (when v [k v]))
+                                           (:rules @state/garden-vecs-state)))
+        mqs                          (remove
+                                      nil?
+                                      (map (fn [[k v]]
+                                             (when-let [as-seq (seq v)]
+                                               (apply garden.stylesheet/at-media
+                                                      (cons k as-seq))))
+                                           (dissoc @state/garden-vecs-state :rules)))
+        garden-vecs                  (remove nil? (concat rules mqs))
+        normal-style-rules-under-mqs (count-mqs-rules mqs)
+        normal-style-rules           (count rules)
+        normal-mq-count              (count mqs)]
+    #_(util/pprint+
+     {:rules                        rules
+      :mqs                          mqs
+      :garden-vecs                  garden-vecs
+      :normal-style-rules-under-mqs normal-style-rules-under-mqs
+      :normal-style-rules           normal-style-rules
+      :normal-mq-count              normal-mq-count
+      })
     (swap! to-be-printed
            assoc
            :normal-style-rules-under-mqs
-           (count-mqs-rules mqs)
+           normal-style-rules-under-mqs
            :normal-style-rules
-           (count rules)
+           normal-style-rules
            :normal-mq-count
-           (count mqs)
-           )
+           normal-mq-count)
     (append-css-chunk!
      {:css-text css-text
       :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)

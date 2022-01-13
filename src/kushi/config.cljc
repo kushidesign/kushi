@@ -2,6 +2,7 @@
   (:require
    [clojure.edn :as edn]))
 
+
 (def default-kushi-responsive
   [:sm {:min-width :640px}
    :md {:min-width :768px}
@@ -37,3 +38,8 @@
                             (apply array-map default-kushi-responsive))
         config            (assoc config* :media responsive)]
     config))
+
+(def user-css-file-path
+  (str (or (:css-dir user-config) (:static-css-dir user-config))
+       "/"
+       (or (:css-filename user-config) "kushi.css")))
