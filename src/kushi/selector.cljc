@@ -25,9 +25,10 @@
         ancestor                      (or ancestor global-ancestor)
         prefixed-names-for-selectors? (and prefix ident (not (:add-empty-classes? user-config)))
         prefixed-name                 (when (and prefix ident) (str (name prefix) (name ident)))
+        defclass-prefix               (:defclass-prefix user-config)
         selector*                     (if defclass-name
-                                        (str (or (:defclass-prefix user-config) defclass-hash)
-                                             "__"
+                                        (str (or defclass-prefix
+                                                 (str defclass-hash "__"))
                                              (nsqkw->selector-friendly defclass-name))
                                         (if prefixed-names-for-selectors?
                                           prefixed-name
