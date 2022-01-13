@@ -284,6 +284,17 @@
     #?(:clj (ansi-bad-args-warning m)
        :cljs (js-warning* m))))
 
+(defn console-warning-duplicate-prefix+ident
+  [{:keys [ident] :as m}]
+  (println (ansi-warning
+            (str (ansi/bold "Duplicate prefix+ident combo") ", kushi.core/sx" )
+            :br
+            (str "{:ident " (ansi/bold ident) "}")
+            :br
+            (file-info-str (assoc m :js? false))
+            :br
+            "Each prefix+ident combo must be globally unique")))
+
 (defn console-warning-defkeyframes
   [{:keys [nm] :as m}]
   (println (ansi-warning
@@ -294,6 +305,17 @@
             (file-info-str (assoc m :js? false))
             :br
             "Keyframes names must be globally unique")))
+
+(defn console-warning-defclass-name
+  [{:keys [nm] :as m}]
+  (println (ansi-warning
+            (ansi/bold "Duplicate defclass name")
+            :br
+            (str "(defclass " (ansi/bold nm) " ...)")
+            :br
+            (file-info-str (assoc m :js? false))
+            :br
+            "defclass names must be globally unique")))
 
 ;; Warnings for kushi.core/defclass   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

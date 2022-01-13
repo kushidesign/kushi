@@ -6,6 +6,7 @@
    [kushi.config :refer [user-config user-css-file-path]]
    [kushi.state :as state]
    [kushi.utils :as util]
+   [kushi.atomic :as atomic]
    [kushi.reporting :as reporting]))
 
 (defn garden-vecs-injection
@@ -142,6 +143,7 @@
          {:css-text css-text
           :content  (garden/css {:pretty-print? pretty-print?} atomic-classes-mq)
           :comment  "Atomic classes, media queries"})))
+    (reset! state/kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
     (reset! state/atomic-declarative-classes-used #{})))
 
 
@@ -196,8 +198,6 @@
                        :pretty-print? pretty-print?
                        :printables    printables
                        :to-be-printed to-be-printed}]
-
-    (util/pprint+ "user-defined-keyframes" @state/user-defined-keyframes)
 
     (append-at-font-face! m)
     (append-defkeyframes! m)

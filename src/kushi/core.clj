@@ -78,60 +78,63 @@
 
 (defmacro defclass
   [sym & coll*]
-  (reset! state/current-macro :defclass)
-  (let [defclass-name            (keyword sym)
-        coll                     (if (:map-mode? user-config)
-                                   (-> coll* first style-map->vecs)
-                                   coll*)
-        {invalid-map-args
-         :invalid}               (when (:map-mode? user-config) (util/reduce-by-pred map? coll*))
-        {styles        :valid
-         invalid-args* :invalid} (util/reduce-by-pred #(s/valid? ::specs/defclass-arg %) coll)
-        invalid-args             (or
-                                  (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
-                                  (into [] (concat invalid-map-args invalid-args*)))
-        {:keys [selector*
-                hydrated-styles
-                garden-vecs]}    (register-class! defclass-name styles)
-        styles-argument-display  (if (:map-mode? user-config)
-                                   coll*
-                                   (apply vector coll))
-        console-warning-args     {:defclass-name           defclass-name
-                                  :styles-argument-display styles-argument-display
-                                  :invalid-args            invalid-args}
-        m                        {:n           defclass-name
-                                  :selector*   selector*
-                                  :args        hydrated-styles
-                                  :garden-vecs garden-vecs}]
+  (if (get @state/kushi-atomic-user-classes (keyword sym))
+    (printing/console-warning-defclass-name {:form-meta (meta &form) :nm sym})
+    (do
+      (reset! state/current-macro :defclass)
+      (let [defclass-name            (keyword sym)
+            coll                     (if (:map-mode? user-config)
+                                       (-> coll* first style-map->vecs)
+                                       coll*)
+            {invalid-map-args
+             :invalid}               (when (:map-mode? user-config) (util/reduce-by-pred map? coll*))
+            {styles        :valid
+             invalid-args* :invalid} (util/reduce-by-pred #(s/valid? ::specs/defclass-arg %) coll)
+            invalid-args             (or
+                                      (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
+                                      (into [] (concat invalid-map-args invalid-args*)))
+            {:keys [selector*
+                    hydrated-styles
+                    garden-vecs]}    (register-class! defclass-name styles)
+            styles-argument-display  (if (:map-mode? user-config)
+                                       coll*
+                                       (apply vector coll))
+            console-warning-args     {:defclass-name           defclass-name
+                                      :styles-argument-display styles-argument-display
+                                      :invalid-args            invalid-args}
+            m                        {:n           defclass-name
+                                      :selector*   selector*
+                                      :args        hydrated-styles
+                                      :garden-vecs garden-vecs}]
 
-    #_(util/pprint+
-       "defclass"
-       {:invalid-map-args invalid-map-args
-        :invalid-args invalid-args
-        :styles styles
-        :m m})
+        #_(util/pprint+
+           "defclass"
+           {:invalid-map-args invalid-map-args
+            :invalid-args invalid-args
+            :styles styles
+            :m m})
 
     ;; Print any problems to terminal
-    (printing/console-warning-defclass console-warning-args)
+        (printing/console-warning-defclass console-warning-args)
 
     ;; Put atomic class into global registry
-    (swap! state/kushi-atomic-user-classes assoc defclass-name m)
+        (swap! state/kushi-atomic-user-classes assoc defclass-name m)
 
-    (printing/diagnostics :defclass {:defclass-map m
-                                     :args         coll
-                                     :sym          sym})
+        (printing/diagnostics :defclass {:defclass-map m
+                                         :args         coll
+                                         :sym          sym})
 
     ;; Dev-only runtime code for potential warnings and dynamic injection for instant preview.
-    (if @KUSHIDEBUG
-      `(do
-         (when (seq ~invalid-args)
-           (do
-             (.apply
-              js/console.warn
-              js/console
-              (kushi.core/js-warning-defclass ~console-warning-args))))
-         nil)
-      `(do nil))))
+        (if @KUSHIDEBUG
+          `(do
+             (when (seq ~invalid-args)
+               (do
+                 (.apply
+                  js/console.warn
+                  js/console
+                  (kushi.core/js-warning-defclass ~console-warning-args))))
+             nil)
+          `(do nil))))))
 
 (defmacro clean!
   "Removes all existing styles that were injected into #_kushi-dev_ style tag at dev time.
@@ -366,6 +369,18 @@
                  data-attr-name
                  selector]
           :as   m}               (sx* args)
+        ;; _ (util/pprint+ "rules" (:rules @state/garden-vecs-state))
+        duplicate?                   (contains? (:rules @state/garden-vecs-state) selector)
+        _                            (when duplicate?
+                                       (printing/console-warning-duplicate-prefix+ident
+                                        {:form-meta (meta &form) :ident ident})
+                                       (reset! state/garden-vecs-state state/garden-vecs-state-init)
+                                       (let [{:keys [file line column]} (meta &form)]
+                                        (throw (AssertionError.
+                                                    (str "\n\nDuplicate prefix+ident\n"
+                                                         "kushi.core/sx\n"
+                                                         "at:\n"
+                                                         file ":" line ":" column "\n")))))
          styles-argument-display (apply vector args)
          compilation-warnings    (mapv (fn [v] v) @state/compilation-warnings)
          invalid-warning-args    {:invalid-args            invalid-args
@@ -404,7 +419,7 @@
     ;; Add vecs into garden state
      (state/add-styles! garden-vecs)
 
-     (printing/console-warning invalid-warning-args)
+     (printing/console-warning-sx invalid-warning-args)
 
      (reset! state/compilation-warnings [])
 
