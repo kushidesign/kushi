@@ -4,6 +4,8 @@
    [clojure.string :as string]
    [clojure.pprint :refer [pprint]]
    [kushi.utils :as util]
+   [kushi.state :as state]
+   [kushi.atomic :as atomic]
    [kushi.config :refer [user-config]]))
 
 
@@ -261,8 +263,6 @@
 (defn ansi-warning [& lines]
   (ansi* lines warning-border :warning))
 
-
-
 (defn ansi-bad-args-warning
   [{:keys [fname invalid-args] :as m}]
   #?(:clj
@@ -284,20 +284,73 @@
     #?(:clj (ansi-bad-args-warning m)
        :cljs (js-warning* m))))
 
-(defn console-warning-duplicate-prefix+ident
+(defn reset-build-states! []
+  (reset! state/user-defined-keyframes {})
+  (reset! state/garden-vecs-state state/garden-vecs-state-init)
+  (reset! state/garden-vecs-state state/garden-vecs-state-init)
+  (reset! state/kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
+  (reset! state/atomic-declarative-classes-used #{}))
+
+(defn squiggly [lead focus]
+  (str
+   (string/join (repeat (count lead) " "))
+   (string/join (repeat (count (str (str focus))) "^"))))
+
+(defn plain-text-warning-panel [width & lines]
+  (let [horizontal-border (string/join (repeat (/ width 2) "─ "))]
+    (str
+     "\n\n"
+     "┌" horizontal-border
+     "\n│\n"
+     (string/join "\n" (map #(str "│  " (if (= :br %) " " %)) lines))
+     "\n│\n└" horizontal-border "\n\n")))
+
+(defn console-warning-duplicate-ident
   [{:keys [ident] :as m}]
-  (println (ansi-warning
-            (str (ansi/bold "Duplicate prefix+ident combo") ", kushi.core/sx" )
+  (println (ansi-error
+            (str (ansi/bold "Duplicate prefix+ident combo") ", kushi.core/sx")
             :br
-            (str "{:ident " (ansi/bold ident) "}")
+            (str "{... :ident " (ansi/bold ident) " ...}")
+            (squiggly "{... :ident "  ident)
             :br
             (file-info-str (assoc m :js? false))
             :br
             "Each prefix+ident combo must be globally unique")))
 
+
+(defn assert-error-if-duplicate-ident!
+  [{:keys [form-meta ident nm selector]}]
+
+  #_(util/pprint+ (str "Checking for " selector " in (:rules @state/garden-vecs-state)\n:rules")
+                (:rules @state/garden-vecs-state))
+
+  #_(util/pprint+ (str "(contains? (:rules @state/garden-vecs-state) " selector ")")
+                (contains? (:rules @state/garden-vecs-state) selector))
+
+  (when (contains? (:rules @state/garden-vecs-state) selector)
+    (console-warning-duplicate-ident {:form-meta form-meta :ident ident})
+    (reset-build-states!)
+
+    #_(util/pprint+
+     "state/garden-vecs-state should be reset:"
+     (:rules @state/garden-vecs-state))
+
+    (let [{:keys [file line column]} form-meta]
+      (throw (AssertionError.
+              (plain-text-warning-panel
+               80
+               "Duplicate :ident in supplied attribute map, kushi.core/sx"
+               :br
+               (str "{... :ident " ident  " ...}")
+               (squiggly "{... :ident " ident)
+               :br
+               (str file ":" line ":" column)
+               :br
+               "All :prefix + :ident combos must be globally unique"))))))
+
 (defn console-warning-defkeyframes
   [{:keys [nm] :as m}]
-  (println (ansi-warning
+  (println (ansi-error
             (ansi/bold "Duplicate keyframe name")
             :br
             (str "(defkeyframe " (ansi/bold nm) " ...)")
@@ -306,17 +359,57 @@
             :br
             "Keyframes names must be globally unique")))
 
+(defn assert-error-if-duplicate-keyframes!
+  [{:keys [form-meta nm] :as m}]
+  (when (get @state/user-defined-keyframes (keyword nm))
+    (do
+      (console-warning-defkeyframes m)
+      (reset-build-states!)
+      (let [{:keys [file line column]} form-meta]
+        (throw (AssertionError.
+                (plain-text-warning-panel
+                 80
+                 "Duplicate keyframe name, kushi.core/defkeyframes"
+                 :br
+                 (str "(defkeyframe " nm " ...)")
+                 :br
+                 (str file ":" line ":" column)
+                 :br
+                 "Keyframes names must be globally unique")))
+                 ))))
+
 (defn console-warning-defclass-name
   [{:keys [nm] :as m}]
-  (println (ansi-warning
+  (println (ansi-error
             (ansi/bold "Duplicate defclass name")
             :br
-            (str "(defclass " (ansi/bold nm) " ...)")
+            (str "(defclass " (ansi/bold (name nm)) " ...)")
+            (squiqqly "(defclass " nm)
             :br
             (file-info-str (assoc m :js? false))
             :br
             "defclass names must be globally unique")))
 
+
+(defn assert-error-if-duplicate-defclass!
+  [{:keys [form-meta nm] :as m}]
+  (when (get @state/kushi-atomic-user-classes (keyword nm))
+    (do
+      (console-warning-defclass-name m)
+      (reset-build-states!)
+      (let [{:keys [file line column]} form-meta]
+        (throw (AssertionError.
+                (plain-text-warning-panel
+                 80
+                 "Duplicate defclass name, kushi.core/defclass"
+                 :br
+                 (str "(defclass " nm " ...)")
+                 (squiqqly "(defclass " nm)
+                 :br
+                 (str file ":" line ":" column)
+                 :br
+                 "defclass names must be globally unique")))
+                 ))))
 ;; Warnings for kushi.core/defclass   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn console-warning-defclass
