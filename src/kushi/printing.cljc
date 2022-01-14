@@ -312,12 +312,6 @@
     #?(:clj (ansi-bad-args-warning m)
        :cljs (js-warning* m))))
 
-(defn reset-build-states! []
-  (reset! state/user-defined-keyframes {})
-  (reset! state/garden-vecs-state state/garden-vecs-state-init)
-  (reset! state/garden-vecs-state state/garden-vecs-state-init)
-  (reset! state/kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
-  (reset! state/atomic-declarative-classes-used #{}))
 
 (defn squiggly [lead focus]
   (str
@@ -357,7 +351,6 @@
 
   (when (contains? (:rules @state/garden-vecs-state) selector)
     (console-warning-duplicate-ident {:form-meta form-meta :ident ident})
-    (reset-build-states!)
 
     #_(util/pprint+
      "state/garden-vecs-state should be reset:"
@@ -392,7 +385,6 @@
   (when (get @state/user-defined-keyframes (keyword nm))
     (do
       (console-warning-defkeyframes m)
-      (reset-build-states!)
       (let [{:keys [file line column]} form-meta]
         (throw (AssertionError.
                 (plain-text-warning-panel
@@ -424,7 +416,6 @@
   (when (get @state/kushi-atomic-user-classes (keyword nm))
     (do
       (console-warning-defclass-name m)
-      (reset-build-states!)
       (let [{:keys [file line column]} form-meta]
         (throw (AssertionError.
                 (plain-text-warning-panel

@@ -22,6 +22,14 @@
 (defn kushi-debug
   {:shadow.build/stage :compile-prepare}
   [build-state]
+
+  (util/pprint+ "kushi-debug:garden-vecs-state" @state/garden-vecs-state)
+  (util/pprint+ "kushi-debug:atomic-user-classes" @state/kushi-atomic-user-classes)
+  (util/pprint+ "kushi-debug:atomic-user-classes" (:minu @state/kushi-atomic-user-classes ))
+  (util/pprint+ "kushi-debug:atomic-declarative-classes-used" @state/atomic-declarative-classes-used)
+  (util/pprint+ "kushi-debug:state/user-defined-keyframes" @state/user-defined-keyframes)
+  (util/pprint+ "kushi-debug:state/user-defined-font-faces" @state/user-defined-font-faces)
+
   (let [mode (:shadow.build/mode build-state)]
     #_(when mode
         (println "(:shadow.build/mode build-state) =>" mode))

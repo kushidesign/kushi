@@ -7,7 +7,6 @@
 
 (def current-sx (atom nil))
 
-;; Used to create user-classes.
 (def compilation-warnings (atom []))
 
 ;; Used to create user-classes.
@@ -38,3 +37,10 @@
         (let [new-val (apply conj (get @state media-queries) rules)]
           (swap! state assoc media-queries new-val))
         (swap! state assoc :rules (conj (:rules @state) x))))))
+
+(defn reset-build-states! []
+  (reset! user-defined-keyframes {})
+  (reset! user-defined-font-faces [])
+  (reset! garden-vecs-state garden-vecs-state-init)
+  (reset! kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
+  (reset! atomic-declarative-classes-used #{}))
