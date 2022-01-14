@@ -384,7 +384,7 @@
             (ansi/bold "Duplicate defclass name")
             :br
             (str "(defclass " (ansi/bold (name nm)) " ...)")
-            (squiqqly "(defclass " nm)
+            (squiggly "(defclass " nm)
             :br
             (file-info-str (assoc m :js? false))
             :br
@@ -404,7 +404,7 @@
                  "Duplicate defclass name, kushi.core/defclass"
                  :br
                  (str "(defclass " nm " ...)")
-                 (squiqqly "(defclass " nm)
+                 (squiggly "(defclass " nm)
                  :br
                  (str file ":" line ":" column)
                  :br

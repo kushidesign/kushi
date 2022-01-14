@@ -19,27 +19,35 @@
   [selected-ns-msg
    printables-pre
    printables-post]
-  (string/join
-   "\n"
-   (remove nil?
-           [(str "\n-- kushi v" version " -------------------------------\n")
-            selected-ns-msg
-            (str "Writing to " user-css-file-path " ...")
-            (str (string/join "\n" printables-pre) "\n")
-            (str "Parsing css from " user-css-file-path " ...")
-            (str (string/join "\n" printables-post))
-            "\n-----------------------------------------------\n"])))
+  (let [sep "\n:   "]
+    (string/join
+     sep
+     (remove nil?
+             [(str "\n\n .. kushi v" version " ..........................................." sep sep)
+              selected-ns-msg
+              (str "Writing to " user-css-file-path " ...")
+              (str (string/join sep printables-pre) sep)
+              (str "Parsing css from " user-css-file-path " ...")
+              (str (string/join sep printables-post))
+              "\n ...........................................................\n"]))))
 
-(defn banner-report [selected-ns-msg printables]
+(defn banner-report
+  [selected-ns-msg
+   printables-pre
+   printables-post]
   (apply ansi-rainbow
          (concat
-          [(str (ansi/bold (str "kushi v" version)))
+          [(str (str "kushi v" version))
            (when selected-ns-msg :br)
            selected-ns-msg
            :br
            (str "Writing to " user-css-file-path " ...")
            :br]
-          printables)))
+          printables-pre
+          [:br
+           (str "Parsing css from " user-css-file-path " ...")
+           :br]
+          printables-post)))
 
 
 (defn rules-under-styles [mq-count rules-under-mq-count]
