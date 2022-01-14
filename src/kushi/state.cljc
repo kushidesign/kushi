@@ -5,6 +5,8 @@
 
 (def current-macro (atom nil))
 
+(def current-sx (atom nil))
+
 ;; Used to create user-classes.
 (def compilation-warnings (atom []))
 

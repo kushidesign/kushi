@@ -350,6 +350,7 @@
 (defmacro sx
   [& args]
   (reset! state/current-macro :sx)
+  (reset! state/current-sx {:form-meta (meta &form) :args args :bad-mods {}})
   (or
    (only-attr args)
    (let [{:keys [atomic-class-keys
@@ -405,6 +406,7 @@
      (state/add-styles! garden-vecs)
 
      (printing/console-warning-sx invalid-warning-args)
+     (printing/console-warning-sx-mods)
 
      (reset! state/compilation-warnings [])
 

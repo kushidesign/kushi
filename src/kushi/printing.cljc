@@ -278,6 +278,34 @@
            :br
            (:learn-more fdict)))))))
 
+(defn ansi-bad-mods-warning
+  [{:keys [fname args bad-mods] :as m}]
+  #?(:clj
+     (when-not (empty? bad-mods)
+       (let [more-than-one-bad-stack? (> (count bad-mods) 1)
+             first-stack-has-multiple-bads? (> (count (-> bad-mods first second)) 1)]
+         (println
+          (ansi-warning
+           (str
+            (ansi/bold
+             (str "Bad modifier"
+                  (when (or more-than-one-bad-stack? first-stack-has-multiple-bads?)
+                    "s")))
+            " passed in property stack to kushi.core/" fname ":")
+           :br
+           (map (fn [[prop-stack mods]] (str prop-stack "  ->  " (ansi/bold (string/join ", " mods)))) bad-mods)
+           :br
+           (file-info-str m)
+           :br
+           "See kushi docs #pseudos-and-combo-selectors for more details"))))))
+
+(defn console-warning-sx-mods
+  []
+  (let [m (assoc @state/current-sx :fname "sx")]
+    #?(:clj (ansi-bad-mods-warning m)
+      ;;  :cljs (js-warning* m)
+            )))
+
 (defn console-warning-sx
   [m*]
   (let [m (assoc m* :fname "sx")]

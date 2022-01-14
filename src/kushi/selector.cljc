@@ -43,7 +43,10 @@
 
     #_(util/pprint+
        "selector-name"
-       {:defclass-name defclass-name
+       {:ident ident
+        :prefix prefix
+        :prefix-name prefixed-name
+        :defclass-name defclass-name
         :defclass-prefix defclass-prefix
         :defclass-hash defclass-hash
         :prefixed-names-for-selectors? prefixed-names-for-selectors?

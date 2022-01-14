@@ -308,14 +308,33 @@
       (string/replace #"_" " ")
       (string/replace #"([>\+\~])" " $1 ")))
 
-(defn format-mod [s]
+(defn format-mod
+  "If mod is pseudo-class, prefixes a \":\".
+   If mod is pseudo-element, prefixes a \"::\".
+   If mod is combo-selector, formats appropriately.
+   Otherwise returns nil for dud selector."
+  [mods&prop s]
+  ;; First, extract the key by string/replacing any suffixed syntax.
+  ;; Example: :nth-child(3) => :nth-child
   (let [k (some-> s (string/replace #"\(.*\)$" "") keyword)]
-    (if (contains? (set/union defs/pseudo-classes defs/pseudo-elements) k)
-      (str (if (contains? defs/pseudo-elements (keyword s))
-             "::"
-             ":")
-            s)
-      (format-combo s))))
+    (cond
+      (contains? defs/pseudo-classes k)
+      (str ":" s)
+      (contains? defs/pseudo-elements k)
+      (str "::" s)
+      (re-find #"^[\.\>\+\~\_].+$" s)
+      (format-combo s)
+      :else
+      ;; Save this for reporting bad modifier to user
+      (do
+        (swap!
+           state/current-sx
+           assoc-in
+           [:bad-mods mods&prop]
+           (if-let [bad-mods (get (some-> @state/current-sx :bad-mods) mods&prop nil)]
+             (conj bad-mods s)
+             [s]))
+        nil))))
 
 
 (defn mods&prop->map [mods&prop]
@@ -323,8 +342,11 @@
         prop (last coll)
         mods* (drop-last coll)
         mq (when-not (empty? mods*) (specs/find-with (first mods*) specs/mq-re))
-        formatted-mods (map format-mod (if mq (rest mods*) mods*))
+        formatted-mods (remove nil? (map (partial format-mod mods&prop) (if mq (rest mods*) mods*)))
         mods (when-not (empty? formatted-mods) (string/join formatted-mods))]
+    #_(util/pprint+ "mods&prop->map" {:mods&prop mods&prop
+                                    :mods* mods* :mods mods
+                                    :formatted-mods formatted-mods})
     (into {}
           (filter (comp some? val)
                   {:mods mods :css-prop prop :mq mq}))))
@@ -338,6 +360,7 @@
           m2* (mods&prop->map mods&prop)
           m2 (if val (assoc m2* :val val) m2*)
           hydrated (hydrate-css m2 selector*)]
+      #_(util/pprint+ "hydrated" {:mods&prop mods&prop :val val :m2* m2* :m2 m2})
       hydrated)))
 
 
