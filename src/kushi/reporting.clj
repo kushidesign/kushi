@@ -94,27 +94,27 @@
    nil?
    [(when (pos? font-face) (str font-face " font-face rule" (when (> font-face 1) "s")))
     (when (pos? keyframes) (str keyframes " keyframes rule" (when (> keyframes 1) "s")))
-    (when (pos? keyframes) (str total-style-rules " style rules:"))
+    (when (pos? total-style-rules) (str total-style-rules " style rule" (when (> total-style-rules 1) "s")":"))
     (when (pos? defclass-style-rules-total)
       (str "  - " defclass-style-rules-total
            " defclass style rules"
            (rules-under-styles (:defclass-mq-count m) (:defclass-style-rules-under-mqs m))))
     (when (pos? normal-style-rules-total)
       (str "  - " normal-style-rules-total
-           " style rules"
+           " element style rule" (when (> total-style-rules 1) "s")
            (rules-under-styles (:normal-mq-count m) (:normal-style-rules-under-mqs m))))]))
 
 
 (defn calculate-total-style-rules!
   [m]
-  (let [normal-style-rules-total   (+ (:normal-style-rules @m)
-                                      (:normal-style-rules-under-mqs @m))
-        defclass-style-rules-total (+ (:defclass-style-rules @m)
-                                      (:defclass-style-rules-under-mqs @m))
-        style-rules                (+ (:normal-style-rules @m)
-                                      (:defclass-style-rules @m))
-        style-rules-under-mqs      (+ (:normal-style-rules-under-mqs @m)
-                                      (:defclass-style-rules-under-mqs @m))
+  (let [normal-style-rules-total   (+ (or (:normal-style-rules @m) 0)
+                                      (or (:normal-style-rules-under-mqs @m) 0))
+        defclass-style-rules-total (+ (or (:defclass-style-rules @m) 0)
+                                      (or (:defclass-style-rules-under-mqs @m) 0))
+        style-rules                (+ (or (:normal-style-rules @m) 0)
+                                      (or (:defclass-style-rules @m) 0))
+        style-rules-under-mqs      (+ (or (:normal-style-rules-under-mqs @m) 0)
+                                      (or (:defclass-style-rules-under-mqs @m) 0))
         total-style-rules          (+ style-rules style-rules-under-mqs)]
     (swap! m
            assoc
