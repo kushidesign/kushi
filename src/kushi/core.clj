@@ -23,12 +23,14 @@
   {:shadow.build/stage :compile-prepare}
   [build-state]
 
-  (util/pprint+ "kushi-debug:garden-vecs-state" @state/garden-vecs-state)
-  (util/pprint+ "kushi-debug:atomic-user-classes" @state/kushi-atomic-user-classes)
-  (util/pprint+ "kushi-debug:atomic-user-classes" (:minu @state/kushi-atomic-user-classes ))
-  (util/pprint+ "kushi-debug:atomic-declarative-classes-used" @state/atomic-declarative-classes-used)
-  (util/pprint+ "kushi-debug:state/user-defined-keyframes" @state/user-defined-keyframes)
-  (util/pprint+ "kushi-debug:state/user-defined-font-faces" @state/user-defined-font-faces)
+  (state/reset-build-states!)
+
+  ;; (util/pprint+ "kushi-debug:garden-vecs-state" @state/garden-vecs-state)
+  ;; (util/pprint+ "kushi-debug:atomic-user-classes" @state/kushi-atomic-user-classes)
+  ;; (util/pprint+ "kushi-debug:atomic-user-classes:minu" (:minu @state/kushi-atomic-user-classes ))
+  ;; (util/pprint+ "kushi-debug:atomic-declarative-classes-used" @state/atomic-declarative-classes-used)
+  ;; (util/pprint+ "kushi-debug:state/user-defined-keyframes" @state/user-defined-keyframes)
+  ;; (util/pprint+ "kushi-debug:state/user-defined-font-faces" @state/user-defined-font-faces)
 
   (let [mode (:shadow.build/mode build-state)]
     #_(when mode
@@ -299,45 +301,58 @@
      :atomic-class-keys        atomic-class-keys
      :conditional-class-sexprs conditional-class-sexprs}))
 
+(def user-config-args-sx
+  (select-keys
+   user-config
+   [:data-attr-name
+    :ancestor
+    :prefix
+    :map-mode?
+    :media]))
+
 (defn sx* [args]
-  (let [{:keys [styles*
-                classes*
-                invalid-args
-                attr
-                meta
-                ident
-                data-attr-name]}     (parse-attr+meta args)
-        {:keys [selector selector*]} (selector/selector-name meta)
-        classlist-map                (classlist meta classes* selector*)
-        styles                       (parse/+vars styles* selector*)
-        css-vars                     (parse/css-vars styles* selector*)
-        tokenized-styles             (mapv (partial parse/kushi-style->token selector*) styles)
-        grouped-by-mqs               (parse/grouped-by-mqs tokenized-styles)
-        garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)
-        attr-base                    (or attr {})]
-
-    #_(util/pprint+
-       "sx*"
-       {:selector* selector*
-        :selector  selector
-        :classlist-map classlist-map
-        :styles*       styles*
-        :styles        styles
-        :css-vars      css-vars
-        :tokenized-styles tokenized-styles
-        :grouped-by-mqs grouped-by-mqs
-        :garden-vecs   garden-vecs})
-
-    (merge
-     classlist-map
-     {:garden-vecs    garden-vecs
-      :attr           attr
-      :attr-base      attr-base
-      :css-vars       css-vars
-      :ident          ident
-      :invalid-args   invalid-args
-      :data-attr-name data-attr-name
-      :selector       selector})))
+  (let [cache-key [:sx user-config-args-sx args]
+        cached    (get @state/styles-cache cache-key)]
+    #_(util/pprint+ (str "(get\n  [:sx\n   " 'user-config-args-sx "\n   "  args "]\n   nil)") cached)
+    (or cached
+        (let [{:keys [styles*
+                      classes*
+                      invalid-args
+                      attr
+                      meta
+                      ident
+                      data-attr-name]}     (parse-attr+meta args)
+              {:keys [selector selector*]} (selector/selector-name meta)
+              classlist-map                (classlist meta classes* selector*)
+              styles                       (parse/+vars styles* selector*)
+              css-vars                     (parse/css-vars styles* selector*)
+              tokenized-styles             (mapv (partial parse/kushi-style->token selector*) styles)
+              grouped-by-mqs               (parse/grouped-by-mqs tokenized-styles)
+              garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)
+              attr-base                    (or attr {})
+              ret                          (merge
+                                            classlist-map
+                                            {:garden-vecs    garden-vecs
+                                             :attr           attr
+                                             :attr-base      attr-base
+                                             :css-vars       css-vars
+                                             :ident          ident
+                                             :invalid-args   invalid-args
+                                             :data-attr-name data-attr-name
+                                             :selector       selector})]
+          #_(util/pprint+
+             "sx*"
+             {:selector* selector*
+              :selector  selector
+              :classlist-map classlist-map
+              :styles*       styles*
+              :styles        styles
+              :css-vars      css-vars
+              :tokenized-styles tokenized-styles
+              :grouped-by-mqs grouped-by-mqs
+              :garden-vecs   garden-vecs})
+          (swap! state/styles-cache assoc cache-key ret)
+          ret))))
 
 (defn- only-attr
   [args]
@@ -387,7 +402,6 @@
          data-cljs               (let [{:keys [file line column]} (meta &form)]
                                    (str file ":"  line ":" column))
          js-args-warning         (printing/preformat-js-warning invalid-warning-args)]
-
 
     ;; Add classes to previously-used registry
      (doseq [kw atomic-class-keys]

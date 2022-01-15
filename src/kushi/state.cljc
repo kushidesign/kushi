@@ -44,3 +44,5 @@
   (reset! garden-vecs-state garden-vecs-state-init)
   (reset! kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
   (reset! atomic-declarative-classes-used #{}))
+
+(def styles-cache (atom {}))

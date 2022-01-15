@@ -43,3 +43,8 @@
   (str (or (:css-dir user-config) (:static-css-dir user-config))
        "/"
        (or (:css-filename user-config) "kushi.css")))
+
+(def kushi-cache-path
+  (str (or (:css-dir user-config)
+           (:static-css-dir user-config))
+       "/kushi.cache.edn"))
