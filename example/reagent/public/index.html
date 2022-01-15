@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!---
+    The value of the `href` in the link tag below needs to jive with your kushi.edn config file.
+    At minimum, you must specify a value for :static-css-dir in your kushi.edn.
+    You can optionally specify a value for :css-filename.
+    The default value for :css-filename will be `kushi.css`.
+  -->
+  <link rel="stylesheet" href="./css/kushi.css" type="text/css">
+
+  <!--- Include this tag for zippy hot-reload previews when developing -->
+  <style type="text/css" id="_kushi-dev_"></style>
+
+  <title>Kushi Example</title>
+</head>
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="app"></div>
+  <script src="./js/main.js"></script>
+</body>
+</html>

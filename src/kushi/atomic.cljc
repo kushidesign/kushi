@@ -27,26 +27,26 @@
     :se :space-evenly}))
 
 (defonce declarative-classes*
-   {
-    ;debug grids
+   {;debug grids
     :debug-grid {:background "transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAFElEQVR4AWPAC97/9x0eCsAEPgwAVLshdpENIxcAAAAASUVORK5CYII=) repeat top left"}
     :debug-grid-16 {:background "background:transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMklEQVR4AWOgCLz/b0epAa6UGuBOqQHOQHLUgFEDnAbcBZ4UGwDOkiCnkIhdgNgNxAYAiYlD+8sEuo8AAAAASUVORK5CYII=) repeat top left "}
     :debug-grid-8-solid {:background "background:white url(data:image/gif;base64,R0lGODdhCAAIAPEAAADw/wDx/////wAAACwAAAAACAAIAAACDZQvgaeb/lxbAIKA8y0AOw==) repeat top left"}
     :debug-grid-16-solid {:background "background:white url(data:image/gif;base64,R0lGODdhEAAQAPEAAADw/wDx/xXy/////ywAAAAAEAAQAAACIZyPKckYDQFsb6ZqD85jZ2+BkwiRFKehhqQCQgDHcgwEBQA7) repeat top left"}
 
     ;Typography
-    :sans-serif {:font-family "-apple-system, BlinkMacSystemFont,
-               'avenir next', avenir,
-               helvetica, 'helvetica neue',
-               ubuntu,
-               roboto, noto,
-               'segoe ui', arial,
-               sans-serif;"}
-    :serif {:font-family "georgia, times, serif;"}
-    :code {:font-family "Consolas, monaco, monospace;"}
+    :italic {:font-style :italic}
+    :oblique {:font-style :oblique}
+    :thin {:font-weight 100}
+    :extra-light {:font-weight 200}
+    :light {:font-weight 300}
+    :regular {:font-weight 400}
+    :medium {:font-weight 500}
+    :semi-bold {:font-weight 600}
+    :bold {:font-weight 700}
+    :extra-bold {:font-weight 800}
+    :heavy {:font-weight 900}
 
-
-   ;Position
+    ;Position
     :absolute {:position :absolute}
     :fixed {:position :fixed}
     :relative {:position :relative}

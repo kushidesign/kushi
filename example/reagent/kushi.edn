@@ -1,0 +1,53 @@
+{ :css-dir "public/css"
+
+ ;; Optional. Name of generated css file. Defaults to "kushi.css".
+
+;  :css-filename "my-kushi-styles.css"
+
+
+ ;; Optionally prepend an ancestor element to selectors.
+ ;; Useful for scoping.
+
+; :ancestor :#my-target-div
+
+
+ ;; Optional. If defined, AND an :ident value is supplied at the`sx` call site,
+ ;; this will be used for classnames, instead of auto-generated hash.
+
+; :prefix "_my-prefix__"
+
+
+ ;; If this is defined it will override the default `:data-cljs` value,
+ ;; which is used as an attribute name for attaching source file info
+ ;; to the rendered element in the DOM (dev only).
+
+; :data-attr-name "data-foo"
+
+
+ ;; Optionally defined your own breakpoint scale to override
+ ;; kushi's default breakpoint scale.
+
+;;  :media [:2xl {:max-width :1536px}
+;;          :xl {:max-width :1280px}
+;;          :lg {:max-width :1024px}
+;;          :md {:max-width :768px}
+;;          :sm {:max-width :640px}]
+
+
+
+ ;; Optional setting for using a map as the first argument to the `kushi.core/sx` macro.
+
+;  :map-mode? false
+
+
+
+ ;; Optional setting for printing "kushi.core/clean!" to the browser console (after clean! op).
+; :log-clean!? false
+
+
+ ;; Optional setting for printing-style of kushi compilation info to the console running your build.
+ ;; Defaults to :simple.
+
+;  :reporting-style :banner
+
+}
