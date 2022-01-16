@@ -1,9 +1,11 @@
 (ns ^:dev/always kushi.stylesheet
   (:require
    [clojure.string :as string]
+   [clojure.edn :as edn]
+   [clojure.data :as data]
    [garden.stylesheet]
    [garden.core :as garden]
-   [kushi.config :refer [user-config user-css-file-path]]
+   [kushi.config :refer [user-config user-css-file-path kushi-cache-path]]
    [kushi.state :as state]
    [kushi.utils :as util]
    [kushi.atomic :as atomic]
@@ -187,6 +189,14 @@
     (reset! state/garden-vecs-state state/garden-vecs-state-init)))
 
 
+(defn maybe-write-cache! []
+  (let [[only-in-a only-in-b _] (data/diff @state/styles-cache-current @state/styles-cache-updated)
+        cache-is-equal? (and (nil? only-in-a) (nil? only-in-b))]
+    (util/pprint+ "cache-is-equal?" cache-is-equal?)
+    (when-not cache-is-equal?
+      (spit kushi-cache-path @state/styles-cache-updated :append false))
+    (reset! state/styles-cache-current @state/styles-cache-updated)))
+
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
   [build-state]
@@ -208,6 +218,7 @@
     (spit user-css-file-path @css-text :append false)
 
     (reporting/print-report! to-be-printed))
+    (when (:__enable-caching?__ user-config) (maybe-write-cache!))
 
   ;; Must return the build state
   build-state)

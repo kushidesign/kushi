@@ -39,7 +39,21 @@
         config            (assoc config* :media responsive)]
     config))
 
+(def user-config-args-sx-defclass
+  (select-keys
+   user-config
+   [:data-attr-name
+    :ancestor
+    :prefix
+    :map-mode?
+    :media]))
+
 (def user-css-file-path
   (str (or (:css-dir user-config) (:static-css-dir user-config))
        "/"
        (or (:css-filename user-config) "kushi.css")))
+
+(def kushi-cache-path
+  (str (or (:css-dir user-config)
+           (:static-css-dir user-config))
+       "/kushi.cache.edn"))

@@ -1,7 +1,8 @@
 (ns ^:dev/always kushi.state
   (:require
+   [kushi.io :refer [load-edn]]
    [kushi.atomic :as atomic]
-   [kushi.config :refer [user-config]]))
+   [kushi.config :refer [user-config kushi-cache-path user-config-args-sx-defclass]]))
 
 (def current-macro (atom nil))
 
@@ -44,3 +45,17 @@
   (reset! garden-vecs-state garden-vecs-state-init)
   (reset! kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
   (reset! atomic-declarative-classes-used #{}))
+
+(defonce styles-cache-current
+  (let [styles-cache-disc (load-edn kushi-cache-path)]
+    (atom (or styles-cache-disc {}))))
+
+(defonce styles-cache-updated
+  (atom @styles-cache-current))
+
+(defn cached [k & more]
+  (let [caching?  (:__enable-caching?__ user-config)
+        cache-key (when caching? (apply conj [k user-config-args-sx-defclass] more))]
+    {:caching?  caching?
+     :cache-key cache-key
+     :cached    (when caching? (get @styles-cache-updated cache-key))}))
