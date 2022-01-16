@@ -111,6 +111,14 @@
                                   :selector*   selector*
                                   :args        hydrated-styles
                                   :garden-vecs garden-vecs}]
+
+    #_(util/pprint+
+     "defclass*"
+     {:invalid-map-args invalid-map-args
+      :invalid-args invalid-args
+      :styles styles
+      :m m})
+
     {:defclass-name        defclass-name
      :coll                 coll
      :invalid-args         invalid-args
@@ -142,13 +150,6 @@
                invalid-args
                console-warning-args
                m] :as result} (or cached (defclass* sym coll*))]
-
-      #_(util/pprint+
-         "defclass"
-         {:invalid-map-args invalid-map-args
-          :invalid-args invalid-args
-          :styles styles
-          :m m})
 
       ;; Print any problems to terminal
       (printing/console-warning-defclass console-warning-args)
@@ -234,11 +235,21 @@
                    v)]
     [frame-key frame-val]))
 
+#_(defmacro defkeyframes [nm & frames*]
+  (printing/assert-error-if-duplicate-keyframes! {:nm nm :form-meta (meta &form)})
+  (reset! state/current-macro :defkeyframes)
+    (let [frames (mapv keyframe frames*)]
+      (swap! state/user-defined-keyframes assoc (keyword nm) frames)))
+
 (defmacro defkeyframes [nm & frames*]
   (printing/assert-error-if-duplicate-keyframes! {:nm nm :form-meta (meta &form)})
   (reset! state/current-macro :defkeyframes)
-  (let [frames (mapv keyframe frames*)]
-    (swap! state/user-defined-keyframes assoc (keyword nm) frames)))
+  (let [{:keys [caching? cache-key cached]} (state/cached :keyframes nm frames*)
+        frames (or cached (mapv keyframe frames*))]
+    (swap! state/user-defined-keyframes assoc (keyword nm) frames)
+    (when (and caching? (not cached))
+      (swap! state/styles-cache-updated assoc cache-key frames))
+    nil))
 
 (defn cssfn [& args]
   (cons 'cssfn (list args)))
