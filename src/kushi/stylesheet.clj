@@ -188,19 +188,14 @@
       :comment  "Component styles"})
     (reset! state/garden-vecs-state state/garden-vecs-state-init)))
 
-(defn load-edn
-  "Load edn from an io/reader source (filename or io/resource)."
-  [source]
-  (use 'clojure.java.io)
-  (try
-    (with-open [r (clojure.java.io/reader source)]
-      (edn/read {:default (fn [tag value] value)} (java.io.PushbackReader. r)))
 
-    (catch java.io.IOException e
-      (printf "\nCouldn't open '%s': %s.\nIgnore the above warning about 'kushi.edn' if you are running tests from the source repo (kushi/test/kushi/test.clj).\n" source (.getMessage e)))
-
-    (catch RuntimeException e
-      (printf "Error parsing edn file '%s': %s\n" source (.getMessage e)))))
+(defn maybe-write-cache! []
+  (let [[only-in-a only-in-b _] (data/diff @state/styles-cache-current @state/styles-cache-updated)
+        cache-is-equal? (and (nil? only-in-a) (nil? only-in-b))]
+    (util/pprint+ "cache-is-equal?" cache-is-equal?)
+    (when-not cache-is-equal?
+      (spit kushi-cache-path @state/styles-cache-updated :append false))
+    (reset! state/styles-cache-current @state/styles-cache-updated)))
 
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
@@ -223,22 +218,7 @@
     (spit user-css-file-path @css-text :append false)
 
     (reporting/print-report! to-be-printed))
-
-  ;write cache file
-  (let [styles-cache-map (load-edn kushi-cache-path)]
-
-    (util/pprint+ "styles-cache-map" styles-cache-map)
-
-    (if (nil? styles-cache-map)
-      (spit kushi-cache-path @state/styles-cache :append false)
-      (let [[only-in-a only-in-b _] (when styles-cache-map
-                                      (data/diff styles-cache-map @state/styles-cache))
-            cache-is-equal? (and (nil? only-in-a) (nil? only-in-b))]
-
-        (util/pprint+ "cache-is-equal?" cache-is-equal?)
-
-        (when (not cache-is-equal?)
-          (spit kushi-cache-path @state/styles-cache :append false)))))
+    (when (:__enable-caching?__ user-config) (maybe-write-cache!))
 
   ;; Must return the build state
   build-state)
