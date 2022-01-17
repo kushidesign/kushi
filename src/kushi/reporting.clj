@@ -4,59 +4,104 @@
    [clojure.string :as string]
    [io.aviso.ansi :as ansi]
    [clj-ph-css.core :as ph-css]
-   [kushi.config :refer [user-config user-css-file-path]]
-   [kushi.printing :refer [ansi-rainbow]]
+   [kushi.config :refer [user-config user-css-file-path version]]
+   [kushi.printing :as printing :refer [ansi-rainbow]]
    [kushi.utils :as util]
    [kushi.specs :as specs]))
-
-;; ! Update kushi version here for console printing
-(def version* "1.0.0")
-
-;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
-(def version (str version* #_":LOCAL"))
 
 (defn simple-report
   [selected-ns-msg
    printables-pre
    printables-post]
-  (let [sep "\n:   "]
-    (string/join
-     sep
-     (remove nil?
-             [(str "\n\n .. kushi v" version " ..........................................." sep sep)
-              selected-ns-msg
-              (str "Writing to " user-css-file-path " ...")
-              (str (string/join sep printables-pre) sep)
-              (str "Parsing css from " user-css-file-path " ...")
-              (str (string/join sep printables-post))
-              "\n ...........................................................\n"]))))
+  (let [bl "   " #_((first printing/rainbow2) "⡇  "
+                                     #_"⋆   "
+                                     #_"┆  "
+                                     #_"│  ")
+        header (str "kushi v" version)]
+    (str "\n\n"
+        ;;  (string/join (map (fn [ans char] (ans char)) (take (count header) (cycle printing/rainbow2)) header))
+        ;;  (str (ansi/red "[") (ansi/magenta (str "kushi v" version))  (ansi/red "]"))
+         (str "[kushi v" version "]")
+         "\n"
+         (str bl selected-ns-msg)
+         "\n"
+         (str bl "Writing to " user-css-file-path " ...")
+         "\n"
+         (str bl "(" (string/join ", " printables-pre) ")")
+        ;;  "\n└"
+         "\n\n")))
+
+(def banner-border-color ansi/bold-black)
+
+(defn hz-brdr
+  [{:keys [width top? header color] :or {color ansi/black}}]
+  (if top?
+    (str (color (str "\n\n┌── ")) header " " (color (string/join (repeat (- width (+ 5 (count header))) "─"))))
+    (color (str "\n└" (string/join (repeat width "─")) "\n\n"))))
+
+(def v-border-char "│")
+
+(def v-border-indent (str "\n" v-border-char "   "))
+
+(defn v-border [color] (color v-border-indent))
 
 (defn banner-report
   [selected-ns-msg
    printables-pre
    printables-post]
+  (let [color         banner-border-color
+        sep           (v-border color)
+        hz-brdr-width 26
+        header        (str "kushi v" version)
+        brdr-opts     {:width hz-brdr-width
+                       :header header
+                       :theme printing/bold-rainbow2
+                      ;;  :theme printing/green-red
+                       :s "──"}
+        report-lines (remove
+                      nil?
+                      (concat
+                       [(printing/rainbow-border-title brdr-opts)
+                        " "
+                        selected-ns-msg
+                        (when selected-ns-msg " ")
+                        (str "Writing to " user-css-file-path " ...")
+                        " "]
+                       printables-pre
+                       [(when printables-post
+                          (str "Parsing css from " user-css-file-path " ..."))
+                        (when printables-post
+                          (str (string/join sep printables-post)))]))
+        color-cycle  (take (count report-lines)
+                           (cycle (printing/shift-cycle
+                                   printing/bold-rainbow2
+                                   1)))
+        lines        (interleave
+                      report-lines
+                      (map #(% v-border-indent) color-cycle))
+        bb-opts      (assoc brdr-opts :color-cycle color-cycle)]
+    (string/join (concat lines [(printing/rainbow-border-bottom bb-opts)]))))
+
+;; Rainbow borders
+#_(defn banner-report
+  [selected-ns-msg
+   printables-pre
+   printables-post]
   (apply ansi-rainbow
          (concat
-          [(str (str "kushi v" version))
-           (when selected-ns-msg :br)
+          [(when selected-ns-msg :br)
            selected-ns-msg
            :br
            (str "Writing to " user-css-file-path " ...")
            :br]
           printables-pre
-          [:br
-           (str "Parsing css from " user-css-file-path " ...")
-           :br]
+          (when printables-post
+            [:br
+             (str "Parsing css from " user-css-file-path " ...")
+             :br])
           printables-post)))
 
 
-(defn rules-under-styles [mq-count rules-under-mq-count]
-  (when (pos? rules-under-mq-count)
-    (str ", including "
-         rules-under-mq-count
-         " rule" (when (> rules-under-mq-count 1) "s") " under "
-         mq-count
-         " media quer" (if (> mq-count 1) "ies" "y"))))
 
 (defn check-or-x [check?]
  (if check? (ansi/bold-green "✓ ") (ansi/bold-red "✘ ")))
@@ -84,25 +129,65 @@
     (line-item-check expected results :total-style-rules "style")
     ]))
 
+(defn format-rule-count [n label {:keys [before]}]
+  (str before
+       n
+       " "
+       label
+       (when (and label (not (string/blank? label))) " ")
+       (str "rule" (when (> n 1) "s"))))
+
+(defn rules-under-styles [mq-count rules-under-mq-count]
+  (when (pos? rules-under-mq-count)
+    (str "    including "
+         (format-rule-count rules-under-mq-count "" {})
+         " under "
+         mq-count
+         " mq" (when (> mq-count 1) "s"))))
+
+(defn style-rules-details
+  [total under-mq? mq-count rules-under-mqs label]
+  [(when (pos? total)
+     (str (format-rule-count total label {:bold? false :before "  - "}) (when under-mq? ",")))
+   (when under-mq?
+     (rules-under-styles mq-count rules-under-mqs))])
+
 (defn report-line-items
   [{:keys [font-face
            keyframes
            total-style-rules
            defclass-style-rules-total
-           normal-style-rules-total] :as m} ]
-  (remove
-   nil?
-   [(when (pos? font-face) (str font-face " font-face rule" (when (> font-face 1) "s")))
-    (when (pos? keyframes) (str keyframes " keyframes rule" (when (> keyframes 1) "s")))
-    (when (pos? total-style-rules) (str total-style-rules " style rule" (when (> total-style-rules 1) "s")":"))
-    (when (pos? defclass-style-rules-total)
-      (str "  - " defclass-style-rules-total
-           " defclass style rules"
-           (rules-under-styles (:defclass-mq-count m) (:defclass-style-rules-under-mqs m))))
-    (when (pos? normal-style-rules-total)
-      (str "  - " normal-style-rules-total
-           " element style rule" (when (> total-style-rules 1) "s")
-           (rules-under-styles (:normal-mq-count m) (:normal-style-rules-under-mqs m))))]))
+           normal-style-rules-total
+           defclass-style-rules-under-mqs
+           normal-style-rules-under-mqs] :as m}]
+  (let [defclass-under-mq? (when defclass-style-rules-under-mqs
+                             (pos? defclass-style-rules-under-mqs))
+        normal-under-mq?   (when normal-style-rules-under-mqs
+                             (pos? normal-style-rules-under-mqs))
+        banner?            (= :banner (:reporting-style user-config))
+        opts               {}]
+   (remove
+    nil?
+    (concat
+     [(when (pos? font-face) (format-rule-count font-face "font-face" opts))
+      (when (and banner? (pos? font-face)) " ")
+      (when (pos? keyframes) (format-rule-count keyframes "keyframes" opts))
+      (when (and banner? (pos? keyframes)) " ")
+      (when (pos? total-style-rules) (format-rule-count total-style-rules "style" opts))]
+     (when (and banner? (pos? defclass-style-rules-total))
+        (style-rules-details
+         defclass-style-rules-total
+         defclass-under-mq?
+         (:defclass-mq-count m)
+         defclass-style-rules-under-mqs
+         "defclass style"))
+     (when (and banner? (pos? normal-style-rules-total))
+        (style-rules-details
+         normal-style-rules-total
+         normal-under-mq?
+         (:normal-mq-count m)
+         normal-style-rules-under-mqs
+         "element style"))))))
 
 
 (defn calculate-total-style-rules!
@@ -154,14 +239,13 @@
 
 (defn print-report! [to-be-printed]
   (calculate-total-style-rules! to-be-printed)
-  (let [selected               (:select-ns user-config)
-        selected-ns-msg        (when (s/valid? ::specs/select-ns-vector selected)
-                                 (str "Compiling styles for namespaces: " selected))
-        report-format-fn       (if (= :banner (-> user-config :reporting-style))
-                                 banner-report
-                                 simple-report)
+  (let [banner?                (= :banner (-> user-config :reporting-style))
+        selected               (:select-ns user-config)
+        selected-ns-msg        (when (s/valid? ::specs/select-ns-vector selected) (str "Target namespaces: " selected))
+        report-format-fn       (if banner? banner-report simple-report)
         report-line-items-pre  (report-line-items @to-be-printed)
-        report-line-items-post (line-items-confirmation @to-be-printed (parse-generated-css))]
+        report-line-items-post (when (:report-output? user-config)
+                                 (line-items-confirmation @to-be-printed (parse-generated-css)))]
     (println
      (report-format-fn
       selected-ns-msg
