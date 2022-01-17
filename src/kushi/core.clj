@@ -112,11 +112,11 @@
                                   :garden-vecs garden-vecs}]
 
     #_(util/pprint+
-     "defclass*"
-     {:invalid-map-args invalid-map-args
-      :invalid-args invalid-args
-      :styles styles
-      :m m})
+       "defclass*"
+       {:invalid-map-args invalid-map-args
+        :invalid-args invalid-args
+        :styles styles
+        :m m})
 
     {:defclass-name        defclass-name
      :coll                 coll
@@ -134,21 +134,21 @@
   (let [{:keys [caching? cache-key cached]} (state/cached :defclass sym coll*)]
 
     #_(util/pprint+
-     (str "(get\n  [:defclass\n   "
-          'user-config-args-sx-defclass
-          "\n   "
-          sym
-          "\n   "
-          coll*
-          "]\n   nil)")
-     cached)
+       (str "(get\n  [:defclass\n   "
+            'user-config-args-sx-defclass
+            "\n   "
+            sym
+            "\n   "
+            coll*
+            "]\n   nil)")
+       cached)
 
     (let
-      [{:keys [defclass-name
-               coll
-               invalid-args
-               console-warning-args
-               m] :as result} (or cached (defclass* sym coll*))]
+     [{:keys [defclass-name
+              coll
+              invalid-args
+              console-warning-args
+              m] :as result} (or cached (defclass* sym coll*))]
 
       ;; Print any problems to terminal
       (printing/console-warning-defclass console-warning-args)
@@ -200,28 +200,35 @@
          (garden/css (at-font-face m))))
 
 
+(defn system-at-font-face-rules [weights*]
+  (let [weights   (if (empty? weights*)
+                    system-font-stacks
+                    (reduce (fn [acc v]
+                              (if (contains? system-font-stacks v)
+                                (assoc acc v (get system-font-stacks v))
+                                acc))
+                            {}
+                            weights*))
+        ff-rules* (for [[weight fonts-by-style] weights]
+                    (for [[style fonts] fonts-by-style]
+                      (garden/css
+                       (at-font-face
+                        {:font-family "system"
+                         :font-style (name style)
+                         :font-weight weight
+                         :src (mapv #(str "local(\"" % "\")") fonts)}))))
+        ff-rules (apply concat ff-rules*)]
+    ff-rules))
 
 (defmacro add-system-font-stack
   [& weights*]
-  (let [weights (if (empty? weights*)
-                  system-font-stacks
-                  (reduce (fn [acc v]
-                            (if (contains? system-font-stacks v)
-                              (assoc acc v (get system-font-stacks v))
-                              acc))
-                          {}
-                          weights*))]
-    (doseq [[weight fonts-by-style] weights]
-      (doseq [[style fonts] fonts-by-style]
-        (reset! state/current-macro :add-font-face)
-        (swap! state/user-defined-font-faces
-               conj
-               (garden/css
-                (at-font-face
-                 {:font-family "system"
-                  :font-style (name style)
-                  :font-weight weight
-                  :src (mapv #(str "local(\"" % "\")") fonts)})))))))
+  (let [{:keys [caching? cache-key cached]} (state/cached :system-font-stack weights*)
+        ff-rules (or cached (system-at-font-face-rules weights*))]
+    (doseq [rule ff-rules]
+      (reset! state/current-macro :add-font-face)
+      (swap! state/user-defined-font-faces conj rule))
+    (when (and caching? (not cached))
+      (swap! state/styles-cache-updated assoc cache-key ff-rules))))
 
 (defn- keyframe [[k v]]
   (let [frame-key (if (vector? k)
@@ -233,12 +240,6 @@
                    {}
                    v)]
     [frame-key frame-val]))
-
-#_(defmacro defkeyframes [nm & frames*]
-  (printing/assert-error-if-duplicate-keyframes! {:nm nm :form-meta (meta &form)})
-  (reset! state/current-macro :defkeyframes)
-    (let [frames (mapv keyframe frames*)]
-      (swap! state/user-defined-keyframes assoc (keyword nm) frames)))
 
 (defmacro defkeyframes [nm & frames*]
   (printing/assert-error-if-duplicate-keyframes! {:nm nm :form-meta (meta &form)})
@@ -342,12 +343,11 @@
      :conditional-class-sexprs conditional-class-sexprs}))
 
 (defn sx* [args]
-  (let [
-       {:keys [caching? cache-key cached]} (state/cached :defclass args)]
+  (let [{:keys [caching? cache-key cached]} (state/cached :defclass args)]
 
     #_(util/pprint+
-     (str "(get\n  [:sx\n   " 'user-config-args-sx-defclass "\n   "  args "]\n   nil)")
-     cached)
+       (str "(get\n  [:sx\n   " 'user-config-args-sx-defclass "\n   "  args "]\n   nil)")
+       cached)
 
     (or cached
         (let [{:keys [styles*
