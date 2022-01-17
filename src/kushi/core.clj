@@ -27,7 +27,6 @@
 
   ;; (util/pprint+ "kushi-debug:garden-vecs-state" @state/garden-vecs-state)
   ;; (util/pprint+ "kushi-debug:atomic-user-classes" @state/kushi-atomic-user-classes)
-  ;; (util/pprint+ "kushi-debug:atomic-user-classes:minu" (:minu @state/kushi-atomic-user-classes ))
   ;; (util/pprint+ "kushi-debug:atomic-declarative-classes-used" @state/atomic-declarative-classes-used)
   ;; (util/pprint+ "kushi-debug:state/user-defined-keyframes" @state/user-defined-keyframes)
   ;; (util/pprint+ "kushi-debug:state/user-defined-font-faces" @state/user-defined-font-faces)
@@ -487,11 +486,6 @@
                (kushi.core/console-warning-number ~compilation-warnings)))
 
             (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
-            #_(when (seq ~invalid-args)
-                (.apply
-                 js/console.warn
-                 js/console
-                 (cljs.core/to-array ~js-args-warning)))
 
             (kushi.core/inject-style-rules (quote ~css-injection-dev) ~selector)
             attr-map#))

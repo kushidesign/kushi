@@ -21,7 +21,9 @@
     (str "\n\n"
         ;;  (string/join (map (fn [ans char] (ans char)) (take (count header) (cycle printing/rainbow2)) header))
         ;;  (str (ansi/red "[") (ansi/magenta (str "kushi v" version))  (ansi/red "]"))
-         (str "[kushi v" version "]")
+         (str (ansi/red "[") (ansi/blue (str "kushi v" version))  (ansi/red "]"))
+        ;;  (ansi/red (str  "[kushi v" version "]"))
+         #_(str "[kushi v" version "]")
          "\n"
          (str bl selected-ns-msg)
          "\n"
