@@ -13,16 +13,10 @@
   [selected-ns-msg
    printables-pre
    printables-post]
-  (let [bl "   " #_((first printing/rainbow2) "⡇  "
-                                     #_"⋆   "
-                                     #_"┆  "
-                                     #_"│  ")
+  (let [bl "   "
         header (str "kushi v" version)]
     (str "\n\n"
-        ;;  (string/join (map (fn [ans char] (ans char)) (take (count header) (cycle printing/rainbow2)) header))
-        ;;  (str (ansi/red "[") (ansi/magenta (str "kushi v" version))  (ansi/red "]"))
-         (str (ansi/red "[") (ansi/blue (str "kushi v" version))  (ansi/red "]"))
-        ;;  (ansi/red (str  "[kushi v" version "]"))
+         (str (ansi/red "[") (ansi/blue header)  (ansi/red "]"))
          #_(str "[kushi v" version "]")
          "\n"
          (str bl selected-ns-msg)
@@ -30,7 +24,6 @@
          (str bl "Writing to " user-css-file-path " ...")
          "\n"
          (str bl "(" (string/join ", " printables-pre) ")")
-        ;;  "\n└"
          "\n\n")))
 
 (def banner-border-color ansi/bold-black)

@@ -188,7 +188,6 @@
       :comment  "Component styles"})
     (reset! state/garden-vecs-state state/garden-vecs-state-init)))
 
-
 (defn maybe-write-cache! []
   (let [[only-in-a only-in-b _] (data/diff @state/styles-cache-current @state/styles-cache-updated)
         cache-is-equal? (and (nil? only-in-a) (nil? only-in-b))]
