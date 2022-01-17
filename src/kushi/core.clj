@@ -192,12 +192,15 @@
    (add-font-face {:font-family \"FiraCodeBold\"
                    :font-weight \"Bold\"
                    :font-style \"Normal\"
-                   :src [\"local(\"Fira Code Bold\")\"]})"
+                   :src [\"local(\\\"Fira Code Bold\\\")\"]})"
   [m]
-  (reset! state/current-macro :add-font-face)
-  (swap! state/user-defined-font-faces
-         conj
-         (garden/css (at-font-face m))))
+  (let [{:keys [caching? cache-key cached]} (state/cached :add-font-face m)
+        aff (or cached (garden/css (at-font-face m)))]
+    (reset! state/current-macro :add-font-face)
+    (swap! state/user-defined-font-faces conj aff)
+    (when (and caching? (not cached))
+      (swap! state/styles-cache-updated assoc cache-key aff))
+    nil))
 
 
 (defn system-at-font-face-rules [weights*]
@@ -228,7 +231,8 @@
       (reset! state/current-macro :add-font-face)
       (swap! state/user-defined-font-faces conj rule))
     (when (and caching? (not cached))
-      (swap! state/styles-cache-updated assoc cache-key ff-rules))))
+      (swap! state/styles-cache-updated assoc cache-key ff-rules))
+    nil))
 
 (defn- keyframe [[k v]]
   (let [frame-key (if (vector? k)
