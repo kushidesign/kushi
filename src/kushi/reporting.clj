@@ -3,9 +3,9 @@
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [io.aviso.ansi :as ansi]
-   #_[clj-ph-css.core :as ph-css]
+   [clj-ph-css.core :as ph-css]
    [kushi.config :refer [user-config user-css-file-path version]]
-   [kushi.printing :as printing :refer]
+   [kushi.printing :as printing :refer [ansi-rainbow]]
    [kushi.utils :as util]
    [kushi.specs :as specs]))
 
@@ -81,6 +81,26 @@
                       (map #(% v-border-indent) color-cycle))
         bb-opts      (assoc brdr-opts :color-cycle color-cycle)]
     (string/join (concat lines [(printing/rainbow-border-bottom bb-opts)]))))
+
+;; Rainbow borders
+#_(defn banner-report
+  [selected-ns-msg
+   printables-pre
+   printables-post]
+  (apply ansi-rainbow
+         (concat
+          [(when selected-ns-msg :br)
+           selected-ns-msg
+           :br
+           (str "Writing to " user-css-file-path " ...")
+           :br]
+          printables-pre
+          (when printables-post
+            [:br
+             (str "Parsing css from " user-css-file-path " ...")
+             :br])
+          printables-post)))
+
 
 
 (defn check-or-x [check?]
