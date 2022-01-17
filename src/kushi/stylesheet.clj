@@ -5,7 +5,7 @@
    [clojure.data :as data]
    [garden.stylesheet]
    [garden.core :as garden]
-   [kushi.config :refer [user-config user-css-file-path kushi-cache-path]]
+   [kushi.config :refer [user-config user-css-file-path kushi-cache-path version]]
    [kushi.state :as state]
    [kushi.utils :as util]
    [kushi.atomic :as atomic]
@@ -65,7 +65,7 @@
 
 
 (def license-comment-header
-  (str "/*! kushi v" reporting/version " | EPL License | https://github.com/paintparty/kushi */"))
+  (str "/*! kushi v" version " | EPL License | https://github.com/paintparty/kushi */"))
 
 
 (defn append-at-font-face!

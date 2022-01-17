@@ -57,3 +57,9 @@
   (str (or (:css-dir user-config)
            (:static-css-dir user-config))
        "/kushi.cache.edn"))
+
+;; ! Update kushi version here for console printing
+(def version* "1.0.0")
+
+;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
+(def version (str version* #_":LOCAL"))

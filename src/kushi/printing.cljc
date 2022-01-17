@@ -6,28 +6,51 @@
    [kushi.utils :as util]
    [kushi.state :as state]
    [kushi.atomic :as atomic]
-   [kushi.config :refer [user-config]]))
+   [kushi.config :refer [user-config version]]))
 
 
 ;; Helpers for logging formatting   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn shift-cycle [coll i]
+  (into [] (concat (subvec coll i) (subvec coll 0 i))))
+
 (def rainbow
   #?(:clj
-     [ansi/yellow-font
-      ansi/red-font
+     [ansi/red-font
       ansi/magenta-font
       ansi/blue-font
       ansi/cyan-font
-      ansi/green-font]))
+      ansi/green-font
+      ansi/yellow-font]))
+
+(def rainbow2
+  #?(:clj
+     [ansi/red
+      ansi/magenta
+      ansi/blue
+      ansi/cyan
+      ansi/green
+      ansi/cyan
+      ansi/blue
+      ansi/magenta]))
 
 (def bold-rainbow
   #?(:clj
-     [ansi/bold-yellow-font
-      ansi/bold-red-font
+     [ansi/bold-red-font
       ansi/bold-magenta-font
       ansi/bold-blue-font
       ansi/bold-cyan-font
-      ansi/bold-green-font]))
+      ansi/bold-green-font
+      ansi/bold-yellow-font]))
+
+(def bold-rainbow2
+  #?(:clj
+     [ansi/bold-red
+      ansi/bold-magenta
+      ansi/bold-blue
+      ansi/bold-cyan
+      ansi/bold-green
+      ansi/yellow]))
 
 (def warning-stripes
   #?(:clj
@@ -47,11 +70,15 @@
   #?(:clj
      [ansi/bold-yellow-font]))
 
+(defn str-insert
+  "Insert c in string s at index i."
+  [s c i]
+  (str (subs s 0 i) c (subs s i)))
 
 (defn border*
-  [theme n s]
-  (str " " (apply str
-                  (interpose s (take n (cycle theme))))))
+  ([theme n s]
+   (str " " (apply str
+                   (interpose s (take n (cycle theme)))))) )
 
 (def border-length 18)
 
@@ -66,6 +93,26 @@
 
 (def rainbow-border
   (border* bold-rainbow border-length "..."))
+
+(defn rainbow-border-title
+  [{:keys [width header theme s]}]
+  #?(:clj
+     (str
+      "\n\n"
+      ((nth theme 0) "┌") ((nth theme 0) "─") ((nth theme 1) "─")
+      " "
+      header
+      " "
+      (string/join (map #(% s) (take (- width (/ (+ 5 (count header)) 2)) (cycle theme)))))))
+
+(defn rainbow-border-bottom
+  [{:keys [width theme s color-cycle]}]
+  #?(:clj
+     (str
+      "\n"
+      ((last color-cycle) "└")
+      (string/join (map #(% s) (take width (cycle (reverse color-cycle)))))
+      "\n\n")))
 
 (defn js-fmt-args
   [{:keys [invalid-args :styles-argument-display]}]
@@ -141,6 +188,17 @@
 ;; Warnings for kushi.core/sx   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def left-border-glyphstring ": ")
+(def indent-num 2)
+(defn indent-line [msg-type* s]
+  #?(:clj
+     (let [msg-type (name msg-type*)
+           color (case msg-type
+                   "rainbow" ansi/bold-yellow
+                   "error" ansi/bold-red
+                   "warning" ansi/bold-yellow
+                   ansi/bold-black)]
+       (str (color (str left-border-glyphstring (string/join (repeat indent-num " ")))) s))))
+
 
 (defn warning-header
   [{:keys [invalid-args fname js?]}]
@@ -219,16 +277,6 @@
                (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
                            (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal")))))))
 
-(defn indent-line [msg-type* s]
-  #?(:clj
-     (let [msg-type (name msg-type*)
-           color (case msg-type
-                   "rainbow" ansi/bold-yellow
-                   "error" ansi/bold-red
-                   "warning" ansi/bold-yellow
-                   ansi/bold-black)]
-       (str (color (str left-border-glyphstring " ")) s))))
-
 
 (defn body [lines]
   (flatten
@@ -242,26 +290,29 @@
                 :else     (str x)))
             (concat [""] lines [""])))))
 
-(defn ansi* [lines border indent-style]
+(defn ansi* [lines border-top border indent-style]
   #?(:clj
      (string/join
       "\n"
       (concat
-       [(str "\n\n" border ansi/reset-font)]
+       [(str "\n\n" border-top ansi/reset-font)]
        (map (partial indent-line indent-style) (body lines))
        [(str "" border ansi/reset-font "\n\n")]))))
 
 (defn ansi-rainbow [& lines]
-  (ansi* lines rainbow-border :rainbow))
+  (ansi* lines
+         (rainbow-border-title bold-rainbow border-length "..." (str "kushi v" version))
+         rainbow-border
+         :rainbow))
 
 (defn ansi-info [& lines]
-  (ansi* lines info-border :info))
+  (ansi* lines info-border info-border :info))
 
 (defn ansi-error [& lines]
-  (ansi* lines error-border :error))
+  (ansi* lines error-border error-border :error))
 
 (defn ansi-warning [& lines]
-  (ansi* lines warning-border :warning))
+  (ansi* lines warning-border warning-border :warning))
 
 (defn ansi-bad-args-warning
   [{:keys [fname invalid-args] :as m}]

@@ -521,6 +521,12 @@ Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers
      :animation--y-axis-spinner:12s:linear:infinite)
  "Round & Round"]
 ```
+Because names for css `@keyframes` definitions are used as-is in other style rules that reference the animation, kushi does not apply any auto-generated prefixing to `@keyframes` names in the generated css. If you are worried about potential collisions with your `@keyframes` definitions and some other 3rd party @keyframes definitions, you should give them a prefixed name when you define them:
+
+```Clojure
+(defkeyframes my-prefix__y-axis-spinner
+ ...)
+```
 <br>
 
 # Using Scales
