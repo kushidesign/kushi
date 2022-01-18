@@ -10,27 +10,15 @@
    [kushi.specs :as specs]
    [par.core :refer [? !?]]))
 
+(def writing-to-css-msg (str "Writing to " user-css-file-path " ..."))
+(def parsing-css-msg (str "Parsing " user-css-file-path " ..."))
+
 (defn simple-report
-  [selected-ns-msg
-   printables-pre
-   printables-post
-   cache-report]
-  (let [bl "   "
-        header (str "kushi v" version)]
-    (str "\n\n"
-         (str (ansi/red "[") (ansi/blue header)  (ansi/red "]"))
-         #_(str "[kushi v" version "]")
-         "\n"
-         (str bl selected-ns-msg)
-         "\n"
-         (str bl "Writing to " user-css-file-path " ...")
-         "\n"
-         (str bl "(" (string/join ", " printables-pre) ")")
-         (when printables-post "\n")
-         (when printables-post (str bl "(" (string/join ", " printables-post) ")"))
-         (when cache-report "\n")
-         (when cache-report (str bl "(" (string/join ", " printables-post) ")"))
-         "\n\n")))
+  [{:keys [header]} & lines*]
+  (let [bl           "   "
+        lines        (reduce (fn [acc v] (concat acc (if (coll? v) v [v]))) [] (remove nil? lines*))
+        lines-indent (map #(str bl %) lines)]
+    (string/join "\n" (concat ["\n" header] lines-indent ["\n"]))))
 
 (def banner-border-color ansi/bold-black)
 
@@ -46,69 +34,67 @@
 
 (defn v-border [color] (color v-border-indent))
 
+(defn nl->sp [x] (if (= x "\n") " " x))
+
+(defn reduce-report-lines [lines*]
+  (reduce
+   (fn [acc v]
+     (concat acc (if (coll? v) (map nl->sp v) [(nl->sp v)])))
+   []
+   (remove nil? lines*)))
+
+(defn k->ansi [k]
+  (or (when (keyword? k) (k printing/ansi-color-map))
+      ansi/bold-black))
+
 (defn banner-report
-  [selected-ns-msg
-   printables-pre
-   printables-post
-   cache-report]
-  (let [color         banner-border-color
-        sep           (v-border color)
-        hz-brdr-width 26
-        header        (str "kushi v" version)
-        brdr-opts     {:width hz-brdr-width
-                       :header header
-                       :theme printing/bold-rainbow2
-                      ;;  :theme printing/green-red
-                       :s "──"}
-        report-lines (remove
-                      nil?
-                      (concat
-                       [(printing/rainbow-border-title brdr-opts)
-                        " "
-                        selected-ns-msg
-                        (when selected-ns-msg " ")
-                        (str "Writing to " user-css-file-path " ...")
-                        " "]
-                       printables-pre
-                       [(when printables-post " ")
-                        (when printables-post
-                          (str "Parsing css from " user-css-file-path " ..."))
-                        (when printables-post
-                          (str (string/join sep printables-post)))]
-                       [(when cache-report " ")
-                        (when cache-report cache-report)]))
-        color-cycle  (take (count report-lines)
-                           (cycle (printing/shift-cycle
-                                   printing/bold-rainbow2
-                                   1)))
-        lines        (interleave
-                      report-lines
-                      (map #(% v-border-indent) color-cycle))
-        bb-opts      (assoc brdr-opts :color-cycle color-cycle)]
-    (string/join (concat lines [(printing/rainbow-border-bottom bb-opts)]))))
-
-
-
-;; Rainbow borders
-#_(defn banner-report
-  [selected-ns-msg
-   printables-pre
-   printables-post]
-  (apply ansi-rainbow
-         (concat
-          [(when selected-ns-msg :br)
-           selected-ns-msg
-           :br
-           (str "Writing to " user-css-file-path " ...")
-           :br]
-          printables-pre
-          (when printables-post
-            [:br
-             (str "Parsing css from " user-css-file-path " ...")
-             :br])
-          printables-post)))
-
-
+  [{:keys [header
+           indent
+           theme
+           border-color
+           header-color
+           border-string
+           border-width
+           border-v-char]
+    :or   {indent        3
+           header-color  :black
+           border-color  :bold-black
+           border-string "──"
+           border-width  50
+           border-v-char "│"}}
+   & lines*]
+  (let [indent         (if (or (not (number? indent))
+                               (not (pos? indent)))
+                         1
+                         indent)
+        header-width   (+ (count (ansi/strip-ansi header)) 2 indent)
+        post-hd-width* (if header (- border-width header-width) border-width)
+        post-hd-width  (printing/closest-number post-hd-width* (count (ansi/strip-ansi border-string)) :up)
+        post-hd-diff   (- post-hd-width post-hd-width*)
+        border-width   (+ border-width post-hd-diff)
+        border-color   (k->ansi border-color)
+        header-color   (k->ansi header-color)
+        theme          (or theme
+                           (into [] (repeat 6 border-color)))
+        brdr-opts      {:border-width  border-width
+                        :header        (header-color header)
+                        :theme         theme
+                        :border-string border-string
+                        :indent        indent}
+        report-lines   (concat
+                        [(printing/rainbow-border-title brdr-opts) " "]
+                        (reduce-report-lines lines*))
+        color-cycle    (take (count report-lines)
+                             (cycle (printing/shift-cycle
+                                     theme
+                                     1)))
+        lines          (interleave
+                        report-lines
+                        (map #(% (str "\n" border-v-char (apply str (repeat indent " ")))) color-cycle))
+        bb-opts        (assoc brdr-opts :color-cycle color-cycle)]
+    (string/join
+     (concat lines
+             [(printing/rainbow-border-bottom bb-opts)]))))
 
 (defn check-or-x [check?]
  (if check? (ansi/bold-green "✓ ") (ansi/bold-red "✘ ")))
@@ -243,6 +229,11 @@
      :style-rules-under-mqs (count mqs-styles)
      :total-style-rules (+ (count style-rules) (count mqs-styles))}))
 
+(def simple-bl "   ")
+
+(defn format-line-items [banner? coll]
+  (when (and coll (seq coll))
+    (if banner? coll (str "(" (string/join ", " coll) ")"))))
 
 (defn print-report! [to-be-printed cache-will-update?]
   (calculate-total-style-rules! to-be-printed)
@@ -250,16 +241,28 @@
         selected               (:select-ns user-config)
         selected-ns-msg        (when (s/valid? ::specs/select-ns-vector selected) (str "Target namespaces: " selected))
         report-format-fn       (if banner? banner-report simple-report)
-        report-line-items-pre  (report-line-items @to-be-printed)
-        report-line-items-post (when (:report-output? user-config)
-                                 (line-items-confirmation @to-be-printed (parse-generated-css)))
+        report-line-items-pre* (report-line-items @to-be-printed)
+        report-line-items-pre  (format-line-items banner? report-line-items-pre*)
+        report-line-items-post* (when (:report-output? user-config)
+                                  (line-items-confirmation @to-be-printed (parse-generated-css)))
+        report-line-items-post (format-line-items banner? report-line-items-post*)
         cache-report           (when (and (:report-cache-update? user-config) cache-will-update?)
-                                 (str "Updated " kushi-cache-path))]
+                                 (str "Updated " kushi-cache-path))
+        header-text            (str "kushi v" version)
+        header-simple          (str (ansi/red "[") (ansi/blue header-text)  (ansi/red "]"))
+        header                 (if banner? header-text header-simple)]
 
     (println
      (report-format-fn
+      {:header header
+       :border-color :red
+       :header-color :bold-blue
+       :indent 3
+       }
       selected-ns-msg
+      (when report-line-items-pre [(when banner? "\n") writing-to-css-msg (when banner? "\n")])
       report-line-items-pre
+      (when report-line-items-post parsing-css-msg)
       report-line-items-post
       cache-report))))
 

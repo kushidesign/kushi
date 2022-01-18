@@ -11,6 +11,22 @@
 
 ;; Helpers for logging formatting   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(def ansi-color-map
+  {
+   :red     ansi/red
+   :magenta ansi/magenta
+   :blue    ansi/blue
+   :cyan    ansi/cyan
+   :green   ansi/green
+   :yellow  ansi/yellow
+   :bold-red     ansi/bold-red
+   :bold-magenta ansi/bold-magenta
+   :bold-blue    ansi/bold-blue
+   :bold-cyan    ansi/bold-cyan
+   :bold-green   ansi/bold-green
+   :bold-yellow  ansi/bold-yellow
+   })
+
 (defn shift-cycle [coll i]
   (into [] (concat (subvec coll i) (subvec coll 0 i))))
 
@@ -94,24 +110,60 @@
 (def rainbow-border
   (border* bold-rainbow border-length "..."))
 
+(defn closest-number
+  ([n m]
+   (closest-number n m nil))
+  ([n m k]
+  ;; given: (closest-number 23 4)
+  #?(:clj (let [n1 (+ n (- m (rem n m)))  ;;=> 24
+                n2 (* m (quot n m))       ;;=> 20
+                d1 (Math/abs (- n n1))    ;;=> 1
+                d2 (Math/abs (- n n2))    ;;=> 3
+                ]
+            (cond
+              (= k :up)
+              n1
+              (= k :down)
+              n2
+              :else (if (<= d1 d2) n1 n2))))))
+
+(defn border-gen
+  [{:keys [border-string border-width cyc]}]
+  (string/join
+   (let [adjusted-border-width (Math/round (float (/ border-width (count (ansi/strip-ansi border-string)))))]
+     (map #(% border-string) (take adjusted-border-width cyc)))))
+
 (defn rainbow-border-title
-  [{:keys [width header theme s]}]
+  [{:keys [border-width header theme border-string indent]
+    :as m}]
   #?(:clj
-     (str
-      "\n\n"
-      ((nth theme 0) "┌") ((nth theme 0) "─") ((nth theme 1) "─")
-      " "
-      header
-      " "
-      (string/join (map #(% s) (take (- width (/ (+ 5 (count header)) 2)) (cycle theme)))))))
+     (apply str
+      (concat
+       ["\n\n"
+        ((nth theme 0) "┌")]
+       (into [] (map-indexed (fn [idx v]
+                               ((nth theme idx) (first (ansi/strip-ansi border-string))))
+                             (range (dec indent))))
+       #_[((nth theme 0) "─")
+        ((nth theme 1) "─")]
+       [" "
+        header
+        " "
+        (let [header-size  (+ (count (ansi/strip-ansi header)) 5)
+              border-width (- border-width header-size)]
+      ;;  (println "ch" (count header))
+      ;;  (println "ch" (count (ansi/strip-ansi header)))
+      ;;  (println "hz" header-size)
+      ;;  (println "bw" border-width)
+          (border-gen (assoc m :border-width border-width :cyc (cycle theme))))]))))
 
 (defn rainbow-border-bottom
-  [{:keys [width theme s color-cycle]}]
+  [{:keys [color-cycle border-width] :as m}]
   #?(:clj
      (str
       "\n"
       ((last color-cycle) "└")
-      (string/join (map #(% s) (take width (cycle (reverse color-cycle)))))
+      (border-gen (assoc m :border-width (dec border-width) :cyc (cycle (reverse color-cycle))))
       "\n\n")))
 
 (defn js-fmt-args

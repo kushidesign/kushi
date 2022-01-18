@@ -232,7 +232,8 @@
                                (let [cache-is-equal? (cache-is-equal?)]
                                  (write-cache! cache-is-equal?)
                                  (not cache-is-equal?)))]
-     (reporting/print-report! to-be-printed cache-will-update?)))
+      #_(println "ud?" cache-will-update?)
+      (reporting/print-report! to-be-printed cache-will-update?)))
 
   ;; Must return the build state
   build-state)
