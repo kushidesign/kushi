@@ -4,15 +4,17 @@
    [clojure.string :as string]
    [io.aviso.ansi :as ansi]
    [clj-ph-css.core :as ph-css]
-   [kushi.config :refer [user-config user-css-file-path version]]
+   [kushi.config :refer [user-config user-css-file-path version kushi-cache-path]]
    [kushi.printing :as printing :refer [ansi-rainbow]]
    [kushi.utils :as util]
-   [kushi.specs :as specs]))
+   [kushi.specs :as specs]
+   [par.core :refer [? !?]]))
 
 (defn simple-report
   [selected-ns-msg
    printables-pre
-   printables-post]
+   printables-post
+   cache-report]
   (let [bl "   "
         header (str "kushi v" version)]
     (str "\n\n"
@@ -24,6 +26,10 @@
          (str bl "Writing to " user-css-file-path " ...")
          "\n"
          (str bl "(" (string/join ", " printables-pre) ")")
+         (when printables-post "\n")
+         (when printables-post (str bl "(" (string/join ", " printables-post) ")"))
+         (when cache-report "\n")
+         (when cache-report (str bl "(" (string/join ", " printables-post) ")"))
          "\n\n")))
 
 (def banner-border-color ansi/bold-black)
@@ -43,7 +49,8 @@
 (defn banner-report
   [selected-ns-msg
    printables-pre
-   printables-post]
+   printables-post
+   cache-report]
   (let [color         banner-border-color
         sep           (v-border color)
         hz-brdr-width 26
@@ -63,10 +70,13 @@
                         (str "Writing to " user-css-file-path " ...")
                         " "]
                        printables-pre
-                       [(when printables-post
+                       [(when printables-post " ")
+                        (when printables-post
                           (str "Parsing css from " user-css-file-path " ..."))
                         (when printables-post
-                          (str (string/join sep printables-post)))]))
+                          (str (string/join sep printables-post)))]
+                       [(when cache-report " ")
+                        (when cache-report cache-report)]))
         color-cycle  (take (count report-lines)
                            (cycle (printing/shift-cycle
                                    printing/bold-rainbow2
@@ -76,6 +86,8 @@
                       (map #(% v-border-indent) color-cycle))
         bb-opts      (assoc brdr-opts :color-cycle color-cycle)]
     (string/join (concat lines [(printing/rainbow-border-bottom bb-opts)]))))
+
+
 
 ;; Rainbow borders
 #_(defn banner-report
@@ -232,7 +244,7 @@
      :total-style-rules (+ (count style-rules) (count mqs-styles))}))
 
 
-(defn print-report! [to-be-printed]
+(defn print-report! [to-be-printed cache-will-update?]
   (calculate-total-style-rules! to-be-printed)
   (let [banner?                (= :banner (-> user-config :reporting-style))
         selected               (:select-ns user-config)
@@ -240,13 +252,16 @@
         report-format-fn       (if banner? banner-report simple-report)
         report-line-items-pre  (report-line-items @to-be-printed)
         report-line-items-post (when (:report-output? user-config)
-                                 (line-items-confirmation @to-be-printed (parse-generated-css)))]
+                                 (line-items-confirmation @to-be-printed (parse-generated-css)))
+        cache-report           (when (and (:report-cache-update? user-config) cache-will-update?)
+                                 (str "Updated " kushi-cache-path))]
+
     (println
      (report-format-fn
       selected-ns-msg
       report-line-items-pre
-      report-line-items-post))))
+      report-line-items-post
+      cache-report))))
 
-
-
-
+(defn report! [ns msg]
+ (println (str "\n" (ansi/red "[") (ansi/blue ns) (ansi/red "]") msg "\n"))                          )

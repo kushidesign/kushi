@@ -53,13 +53,14 @@
        "/"
        (or (:css-filename user-config) "kushi.css")))
 
-(def kushi-cache-path
-  (str (or (:css-dir user-config)
-           (:static-css-dir user-config))
-       "/kushi.cache.edn"))
-
-;; ! Update kushi version here for console printing
+;; ! Update kushi version here for console printing and cache file path generation
 (def version* "1.0.0")
 
 ;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
 (def version (str version* #_":LOCAL"))
+
+(def kushi-cache-dir ".kushi/.cache")
+
+(def kushi-cache-path
+  (str kushi-cache-dir "/" version* ".edn"))
+

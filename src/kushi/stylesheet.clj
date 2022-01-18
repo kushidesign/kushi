@@ -1,11 +1,13 @@
 (ns ^:dev/always kushi.stylesheet
   (:require
+   [par.core :refer-macros [!? ?]]
    [clojure.string :as string]
+   [clojure.java.io :as io]
    [clojure.edn :as edn]
    [clojure.data :as data]
    [garden.stylesheet]
    [garden.core :as garden]
-   [kushi.config :refer [user-config user-css-file-path kushi-cache-path version]]
+   [kushi.config :refer [user-config user-css-file-path kushi-cache-dir kushi-cache-path version]]
    [kushi.state :as state]
    [kushi.utils :as util]
    [kushi.atomic :as atomic]
@@ -188,18 +190,28 @@
       :comment  "Component styles"})
     (reset! state/garden-vecs-state state/garden-vecs-state-init)))
 
-(defn maybe-write-cache! []
+(defn write-cache! [cache-is-equal?]
+  (when-not cache-is-equal?
+    (do
+      (let [created-cache-dir? (io/make-parents kushi-cache-path)
+            {fname :name
+             ns*   :ns}        (meta #'write-cache!)
+            nsfn               (str (ns-name ns*) "/" fname)]
+        (when created-cache-dir?
+          (reporting/report! nsfn (str " Created cache dir -> " kushi-cache-dir))))
+      (spit kushi-cache-path @state/styles-cache-updated :append false)))
+  (reset! state/styles-cache-current @state/styles-cache-updated))
+
+(defn cache-is-equal? []
   (let [[only-in-a only-in-b _] (data/diff @state/styles-cache-current @state/styles-cache-updated)
         cache-is-equal? (and (nil? only-in-a) (nil? only-in-b))]
-    (util/pprint+ "cache-is-equal?" cache-is-equal?)
-    (when-not cache-is-equal?
-      (spit kushi-cache-path @state/styles-cache-updated :append false))
-    (reset! state/styles-cache-current @state/styles-cache-updated)))
+    cache-is-equal?))
 
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
   [build-state]
   (let [pretty-print? (if (:shadow.build/mode build-state) true false)
+        caching?      (true? (:__enable-caching?__ user-config))
         printables    (atom [])
         to-be-printed (atom {})
         css-text      (atom license-comment-header)
@@ -216,8 +228,11 @@
     (use 'clojure.java.io)
     (spit user-css-file-path @css-text :append false)
 
-    (reporting/print-report! to-be-printed))
-    (when (:__enable-caching?__ user-config) (maybe-write-cache!))
+    (let [cache-will-update? (when caching?
+                               (let [cache-is-equal? (cache-is-equal?)]
+                                 (write-cache! cache-is-equal?)
+                                 (not cache-is-equal?)))]
+     (reporting/print-report! to-be-printed cache-will-update?)))
 
   ;; Must return the build state
   build-state)
