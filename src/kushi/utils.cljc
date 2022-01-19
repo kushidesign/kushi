@@ -7,7 +7,29 @@
    [kushi.scales :refer [scales scaling-map]]
    [kushi.config :refer [user-config]]))
 
+(defmacro keyed [& ks]
+  #?(:clj
+     `(let [keys# (quote ~ks)
+            keys# (map keyword keys#)
+            vals# (list ~@ks)]
+        (zipmap keys# vals#))))
+
 (defn pprint+
+  ([v]
+   (pprint+ nil v))
+  ([title v]
+   #?(:cljs (do (if title
+                  (println "\n" title " =>")
+                  (println "\n\n"))
+                (cljs.pprint/pprint v)
+                (println "\n"))
+      :clj (do (if title
+                 (println "\n" title " =>")
+                 (println "\n\n"))
+               (clojure.pprint/pprint v)
+               (println "\n")))))
+
+(defn ?
   ([v]
    (pprint+ nil v))
   ([title v]

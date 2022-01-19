@@ -3,7 +3,7 @@
   (:require
    [clojure.string :as string]
    [clojure.pprint :refer [pprint]]
-   [kushi.utils :as util]
+   [kushi.utils :as util :refer [? keyed]]
    [kushi.state :as state]
    [kushi.atomic :as atomic]
    [kushi.config :refer [user-config version]]))
@@ -12,23 +12,22 @@
 ;; Helpers for logging formatting   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def ansi-color-map
-  {
-   :red     ansi/red
-   :magenta ansi/magenta
-   :blue    ansi/blue
-   :cyan    ansi/cyan
-   :green   ansi/green
-   :yellow  ansi/yellow
+  {:red          ansi/red
+   :magenta      ansi/magenta
+   :blue         ansi/blue
+   :cyan         ansi/cyan
+   :green        ansi/green
+   :yellow       ansi/yellow
    :bold-red     ansi/bold-red
    :bold-magenta ansi/bold-magenta
    :bold-blue    ansi/bold-blue
    :bold-cyan    ansi/bold-cyan
    :bold-green   ansi/bold-green
-   :bold-yellow  ansi/bold-yellow
-   })
+   :bold-yellow  ansi/bold-yellow})
 
-(defn shift-cycle [coll i]
-  (into [] (concat (subvec coll i) (subvec coll 0 i))))
+(defn shift-cycle [vc* i]
+  (let [vc (into [] vc*)]
+    (into [] (concat (subvec vc i) (subvec vc 0 i)))))
 
 (def rainbow
   #?(:clj
@@ -73,10 +72,20 @@
      [ansi/bold-yellow-font
       ansi/bold-black-font]))
 
+(def warning-stripes2
+  #?(:clj
+     [ansi/bold-yellow
+      ansi/bold-black]))
+
 (def error-stripes
   #?(:clj
      [ansi/bold-red-font
       ansi/bold-white-font]))
+
+(def error-stripes2
+  #?(:clj
+     [ansi/bold-red
+      ansi/bold-white]))
 
 (def info-dots
   #?(:clj
@@ -94,7 +103,7 @@
 (defn border*
   ([theme n s]
    (str " " (apply str
-                   (interpose s (take n (cycle theme)))))) )
+                   (interpose s (take n (cycle theme)))))))
 
 (def border-length 18)
 
@@ -114,56 +123,68 @@
   ([n m]
    (closest-number n m nil))
   ([n m k]
-  ;; given: (closest-number 23 4)
-  #?(:clj (let [n1 (+ n (- m (rem n m)))  ;;=> 24
-                n2 (* m (quot n m))       ;;=> 20
-                d1 (Math/abs (- n n1))    ;;=> 1
-                d2 (Math/abs (- n n2))    ;;=> 3
-                ]
-            (cond
-              (= k :up)
-              n1
-              (= k :down)
-              n2
-              :else (if (<= d1 d2) n1 n2))))))
+   #?(:clj (let [prev  (- n (rem n m))
+                 next  (+ n (- m (rem n m)))
+                 prevd (Math/abs (- n prev))
+                 nextd (Math/abs (- n next))
+                 ret   (cond
+                         (= k :up)
+                         next
+                         (= k :down)
+                         prev
+                         :else (if (<= prevd nextd) prev next))]
+             ret))))
 
-(defn border-gen
-  [{:keys [border-string border-width cyc]}]
+(defn border-seq->styled-string
+  [{:keys [border-seq border-width cyc top? bottom?] :as m}]
+  #_(util/pprint+ "border-gen" m)
   (string/join
-   (let [adjusted-border-width (Math/round (float (/ border-width (count (ansi/strip-ansi border-string)))))]
-     (map #(% border-string) (take adjusted-border-width cyc)))))
+   (let [adjusted-border-width (Math/round (float (/ border-width (count border-seq))))]
+     (if cyc
+       (map #(% (apply str border-seq)) (take adjusted-border-width cyc))
+       (apply str (repeat adjusted-border-width (apply str border-seq)))))))
 
-(defn rainbow-border-title
-  [{:keys [border-width header theme border-string indent]
-    :as m}]
+(defn panel-border-top
+  [{:keys [border-width
+           header
+           header-color
+           header-width
+           header-weight
+           post-header-width
+           theme
+           border-seq
+           border-tl-string
+           indent]
+    :as   m}]
   #?(:clj
      (apply str
-      (concat
-       ["\n\n"
-        ((nth theme 0) "┌")]
-       (into [] (map-indexed (fn [idx v]
-                               ((nth theme idx) (first (ansi/strip-ansi border-string))))
-                             (range (dec indent))))
-       #_[((nth theme 0) "─")
-        ((nth theme 1) "─")]
-       [" "
-        header
-        " "
-        (let [header-size  (+ (count (ansi/strip-ansi header)) 5)
-              border-width (- border-width header-size)]
-      ;;  (println "ch" (count header))
-      ;;  (println "ch" (count (ansi/strip-ansi header)))
-      ;;  (println "hz" header-size)
-      ;;  (println "bw" border-width)
-          (border-gen (assoc m :border-width border-width :cyc (cycle theme))))]))))
+            (concat
+             ["\n\n"
+              ((if theme (nth theme 0) str) border-tl-string)]
+             (let [chars (take (dec indent) (cycle border-seq))]
+               (if theme
+                 (map-indexed (fn [idx char] ((nth theme idx) char)) chars)
+                 (apply str chars)))
+             (when header [" " ((if (= :bold header-weight) ansi/bold str) ((or header-color str) header)) " "])
+             [(border-seq->styled-string
+               (assoc m
+                      :top? true
+                      :border-width post-header-width
+                      :cyc (when theme (take border-width (cycle theme)))))]))))
 
-(defn rainbow-border-bottom
-  [{:keys [color-cycle border-width] :as m}]
+(defn panel-border-bottom
+  [{:keys [color-cycle border-width border-bl-string theme header]
+    :as   m}]
+  #_(? "color-cycle" color-cycle)
   #?(:clj
      (str
       "\n"
-      ((last color-cycle) "└")
-      (border-gen (assoc m :border-width (dec border-width) :cyc (cycle (reverse color-cycle))))
+      ((last color-cycle) border-bl-string)
+      (border-seq->styled-string
+       (assoc m
+              :bottom? true
+              :border-width ((if header dec inc) border-width)
+              :cyc (when theme (take border-width (cycle (reverse (shift-cycle color-cycle 1)))))))
       "\n\n")))
 
 (defn js-fmt-args
@@ -256,12 +277,12 @@
   [{:keys [invalid-args fname js?]}]
   #?(:clj
      (if js?
-      (str "Warning: %cInvalid argument" (when (< 1 (count invalid-args)) "s") "%c"  " to kushi.core/" fname ".")
-      (str
-       ansi/bold-font
-       "Invalid argument" (when (< 1 (count invalid-args)) "s")
-       ansi/reset-font
-       " to kushi.core/" fname))
+       (str "Warning: %cInvalid argument" (when (< 1 (count invalid-args)) "s") "%c"  " to kushi.core/" fname ".")
+       (str
+        ansi/bold-font
+        "Invalid argument" (when (< 1 (count invalid-args)) "s")
+        ansi/reset-font
+        " to kushi.core/" fname))
      :cljs
      (str "Warning: %cInvalid argument" (when (< 1 (count invalid-args)) "s") "%c"  " to kushi.core/" fname ".")))
 
@@ -274,60 +295,59 @@
 
 (defn warning-call-with-args
   [{:keys [fname classname js?] :as m}]
-   #?(:clj
-      (if js?
-        (str "(" fname " "
-             (when classname (name classname))
-             (string/join (js-fmt-args m))
-             ")")
-        (let [resolved-classname (warning-call-classname m)]
-          (concat
-           [(str "(" fname " " resolved-classname)]
-           (console-error-ansi-formatting m))))
-      :cljs
-      (str "(" fname " "
-           (when classname (name classname))
-           (string/join (js-fmt-args m))
-           ")")))
+  #?(:clj
+     (if js?
+       (str "(" fname " "
+            (when classname (name classname))
+            (string/join (js-fmt-args m))
+            ")")
+       (let [resolved-classname (warning-call-classname m)]
+         (concat
+          [(str "(" fname " " resolved-classname)]
+          (console-error-ansi-formatting m))))
+     :cljs
+     (str "(" fname " "
+          (when classname (name classname))
+          (string/join (js-fmt-args m))
+          ")")))
 
 (defn js-warning*
   [m]
-   #?(:cljs
-      (when ^boolean js/goog.DEBUG
-        (let [warning (string/join
-                       "\n\n"
-                       [(warning-header m)
-                        (warning-call-with-args m)
+  #?(:cljs
+     (when ^boolean js/goog.DEBUG
+       (let [warning (string/join
+                      "\n\n"
+                      [(warning-header m)
+                       (warning-call-with-args m)
                       ;; (-> fname keyword dict :expected)
-                        (str (-> m :fname keyword dict :learn-more) "\n")])
-              number-of-formats (count (re-seq #"%c" warning))]
-          (to-array
-           (concat
-            [warning]
-            ["color:black;font-weight:bold" "font-weight:normal" "font-weight:bold;color:#ffaa00" "font-weight:normal"]
-            (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
-                        (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal")))))
-          )))
+                       (str (-> m :fname keyword dict :learn-more) "\n")])
+             number-of-formats (count (re-seq #"%c" warning))]
+         (to-array
+          (concat
+           [warning]
+           ["color:black;font-weight:bold" "font-weight:normal" "font-weight:bold;color:#ffaa00" "font-weight:normal"]
+           (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
+                       (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal"))))))))
 
 (defn preformat-js-warning
   [m]
-   #?(:clj
-      (let [m                 (assoc m :js? true)
-            warning           (string/join
-                               "\n\n"
-                               [(warning-header m)
-                                (warning-call-with-args m)
+  #?(:clj
+     (let [m                 (assoc m :js? true)
+           warning           (string/join
+                              "\n\n"
+                              [(warning-header m)
+                               (warning-call-with-args m)
                                 ;; (-> fname keyword dict :expected)
-                                (file-info-str m)
-                                (str (-> m :fname keyword dict :learn-more) "\n")])
-            number-of-formats (count (re-seq #"%c" warning))]
+                               (file-info-str m)
+                               (str (-> m :fname keyword dict :learn-more) "\n")])
+           number-of-formats (count (re-seq #"%c" warning))]
 
-        (into []
-              (concat
-               [warning]
-               ["color:black;font-weight:bold" "font-weight:normal" "font-weight:bold;color:#ffaa00" "font-weight:normal"]
-               (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
-                           (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal")))))))
+       (into []
+             (concat
+              [warning]
+              ["color:black;font-weight:bold" "font-weight:normal" "font-weight:bold;color:#ffaa00" "font-weight:normal"]
+              (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
+                          (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal")))))))
 
 
 (defn body [lines]
@@ -350,12 +370,6 @@
        [(str "\n\n" border-top ansi/reset-font)]
        (map (partial indent-line indent-style) (body lines))
        [(str "" border ansi/reset-font "\n\n")]))))
-
-(defn ansi-rainbow [& lines]
-  (ansi* lines
-         (rainbow-border-title bold-rainbow border-length "..." (str "kushi v" version))
-         rainbow-border
-         :rainbow))
 
 (defn ansi-info [& lines]
   (ansi* lines info-border info-border :info))
@@ -407,7 +421,7 @@
   (let [m (assoc @state/current-sx :fname "sx")]
     #?(:clj (ansi-bad-mods-warning m)
       ;;  :cljs (js-warning* m)
-            )))
+       )))
 
 (defn console-warning-sx
   [m*]
@@ -447,17 +461,17 @@
   [{:keys [form-meta ident nm selector]}]
 
   #_(util/pprint+ (str "Checking for " selector " in (:rules @state/garden-vecs-state)\n:rules")
-                (:rules @state/garden-vecs-state))
+                  (:rules @state/garden-vecs-state))
 
   #_(util/pprint+ (str "(contains? (:rules @state/garden-vecs-state) " selector ")")
-                (contains? (:rules @state/garden-vecs-state) selector))
+                  (contains? (:rules @state/garden-vecs-state) selector))
 
   (when (contains? (:rules @state/garden-vecs-state) selector)
     (console-warning-duplicate-ident {:form-meta form-meta :ident ident})
 
     #_(util/pprint+
-     "state/garden-vecs-state should be reset:"
-     (:rules @state/garden-vecs-state))
+       "state/garden-vecs-state should be reset:"
+       (:rules @state/garden-vecs-state))
 
     (let [{:keys [file line column]} form-meta]
       (throw (AssertionError.
@@ -498,8 +512,7 @@
                  :br
                  (str file ":" line ":" column)
                  :br
-                 "Keyframes names must be globally unique")))
-                 ))))
+                 "Keyframes names must be globally unique")))))))
 
 (defn console-warning-defclass-name
   [{:keys [nm] :as m}]
@@ -530,15 +543,14 @@
                  :br
                  (str file ":" line ":" column)
                  :br
-                 "defclass names must be globally unique")))
-                 ))))
+                 "defclass names must be globally unique")))))))
 ;; Warnings for kushi.core/defclass   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn console-warning-defclass
   [m*]
   (let [m (assoc m* :fname "defclass")]
-   #?(:clj (ansi-bad-args-warning m)
-      :cljs (js-warning* m) )))
+    #?(:clj (ansi-bad-args-warning m)
+       :cljs (js-warning* m))))
 
 ;; Warnings for bad numbers   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
