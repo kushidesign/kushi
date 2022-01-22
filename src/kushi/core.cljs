@@ -134,7 +134,7 @@
                        "\n  If present, this must be the last argument.")
         :learn-more "See kushi.core/sx docs for more details"}})
 
-(defn- warning-call-with-args
+#_(defn- warning-call-with-args
   [{:keys [fname classname] :as m}]
   (str "(" fname " "
        (when classname (name classname))
@@ -142,11 +142,11 @@
          (string/join (js-fmt-args m)))
        ")"))
 
-(defn warning-header
+#_(defn warning-header
   [{:keys [invalid-args fname]}]
   (str "Warning: %cInvalid argument" (when (< 1 (count invalid-args)) "s") "%c"  " to kushi.core/" fname "."))
 
-(defn js-warning*
+#_(defn js-warning*
   [m]
   (let [warning (string/join
                  "\n\n"
@@ -160,10 +160,6 @@
       ["color:black;font-weight:bold" "font-weight:normal" "font-weight:bold;color:#ffaa00" "font-weight:normal"]
       (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
                   (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal"))))))
-
-(defn js-warning-defclass [m*]
-  (let [m (assoc m* :fname "defclass")]
-    (js-warning* m)))
 
 (defn console-warning-number
   [compilation-warnings]

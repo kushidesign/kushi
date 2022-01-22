@@ -6,6 +6,7 @@
    [clj-ph-css.core :as ph-css]
    [kushi.config :refer [user-config user-css-file-path version kushi-cache-path]]
    [kushi.printing :as printing]
+   [kushi.ansipants :as ansipants]
    [kushi.utils :as util :refer [? keyed]]
    [kushi.specs :as specs]
    ))
@@ -19,102 +20,6 @@
         lines        (reduce (fn [acc v] (concat acc (if (coll? v) v [v]))) [] (remove nil? lines*))
         lines-indent (map #(str bl %) lines)]
     (string/join "\n" (concat ["\n" header] lines-indent ["\n"]))))
-
-(def banner-border-color ansi/bold-black)
-
-(defn hz-brdr
-  [{:keys [width top? header color] :or {color ansi/black}}]
-  (if top?
-    (str (color (str "\n\n┌── ")) header " " (color (string/join (repeat (- width (+ 5 (count header))) "─"))))
-    (color (str "\n└" (string/join (repeat width "─")) "\n\n"))))
-
-(def v-border-char "│")
-
-(def v-border-indent (str "\n" v-border-char "   "))
-
-(defn v-border [color] (color v-border-indent))
-
-(defn nl->sp [x] (if (= x "\n") " " x))
-
-(defn reduce-report-lines [lines*]
-  (reduce
-   (fn [acc v]
-     (concat acc (if (coll? v) (map nl->sp v) [(nl->sp v)])))
-   []
-   (remove nil? lines*)))
-
-(defn k->ansi [k]
-  (when (keyword? k)
-    (k printing/ansi-color-map)))
-
-(defn banner-report
-  [{:keys [header
-           header-weight
-           indent
-           theme
-           border-color
-           header-color
-           border-seq
-           border-tl-string
-           border-bl-string
-           border-width
-           border-weight
-           border-v-char]
-    :or   {indent           3
-           border-width     50}}
-   & lines*]
-  (let [bold-border?       (= :bold border-weight)
-        border-seq         (if bold-border? ["━" "━"] ["─" "─"])
-        border-tl-string   (if bold-border? "┏" "┌")
-        border-bl-string   (if bold-border? "┗" "└")
-        border-v-char      (if bold-border? "┃" "│")
-        indent             (if (or (not (number? indent))
-                                   (not (pos? indent)))
-                             1
-                             indent)
-        header-width       (if header (+ (count header) 2 indent) 0)
-        og-border-width    border-width
-        post-header-width* (if header (- border-width header-width) border-width)
-        post-header-width  (printing/closest-number post-header-width* (count border-seq))
-        post-hd-diff       (- post-header-width post-header-width*)
-        border-width       (+ border-width post-hd-diff)
-        border-color       (k->ansi border-color)
-        header-color       (k->ansi header-color)
-        header             (when header ((or header-color str) header))
-        _                  nil #_(util/pprint+
-                                  "wtf"
-                                  (keyed og-border-width
-                                         header-width
-                                         header-width
-                                         post-header-width*
-                                         post-header-width
-                                         post-hd-diff
-                                         border-width))
-        theme              (or theme
-                               (when border-color (into [] (repeat 6 border-color))))
-        brdr-opts          (keyed border-width
-                                  header-width
-                                  header-weight
-                                  post-header-width
-                                  header
-                                  theme
-                                  border-tl-string
-                                  border-bl-string
-                                  border-seq
-                                  indent)
-        report-lines       (concat
-                            [(printing/panel-border-top brdr-opts) " "]
-                            (reduce-report-lines lines*))
-        color-cycle        (take (* 2 (count report-lines))
-                                 (cycle (if theme (printing/shift-cycle theme 1) [str])))
-        lines              (interleave
-                            report-lines
-                            (map #(% (str "\n" border-v-char (apply str (repeat indent " ")))) color-cycle))
-        ;; _                  (? "lines" {:lines lines :report-lines-count (count lines) :report-lines-last (last lines)})
-        bb-opts            (assoc brdr-opts :color-cycle color-cycle)]
-    (string/join
-     (concat lines
-             [(printing/panel-border-bottom bb-opts)]))))
 
 (defn check-or-x [check?]
  (if check? (ansi/bold-green "✓ ") (ansi/bold-red "✘ ")))
@@ -254,7 +159,7 @@
   (let [banner?                 (= :banner (-> user-config :reporting-style))
         selected                (:select-ns user-config)
         selected-ns-msg         (when (s/valid? ::specs/select-ns-vector selected) (str "Targeting namespaces: " selected))
-        report-format-fn        (if banner? banner-report simple-report)
+        report-format-fn        (if banner? ansipants/panel simple-report)
         report-line-items-pre*  (report-line-items @to-be-printed)
         report-line-items-pre   (format-line-items banner? report-line-items-pre*)
         report-line-items-post* (when (:report-output? user-config)
@@ -271,10 +176,7 @@
       {
        :header       header
       ;;  :header-weight :bold
-      ;;  :header        "WARNING"
         :theme        printing/bold-rainbow2
-        ;; :theme        printing/warning-stripes2
-      ;;  :theme        printing/error-stripes2
         ;; :border-color :red
         ;; :border-seq       bs
         ;; :border-bl-string bs
@@ -292,4 +194,40 @@
       cache-report))))
 
 (defn report! [ns msg]
- (println (str "\n" (ansi/red "[") (ansi/blue ns) (ansi/red "]") msg "\n"))                          )
+ (println (str "\n" (ansi/red "[") (ansi/blue ns) (ansi/red "]") msg "\n")))
+
+(defn pluralize
+  ([s coll]
+   (pluralize s coll nil nil))
+  ([s coll singular-suffix plural-suffix]
+    (? "(count coll)" coll)
+    (str s (if (< 1 (count coll))
+             (or plural-suffix "s")
+             singular-suffix))))
+
+(defn warning-header
+  [{:keys [invalid-args fname]}]
+  (str
+   (ansi/bold (pluralize "Invalid argument" invalid-args))
+   " to kushi.core/" fname))
+
+(defn ansi-bad-args-warning
+  [{:keys [fname invalid-args] :as m}]
+  (let [fdict (-> fname keyword printing/dict)]
+    (when (seq invalid-args)
+      (println
+       (ansipants/panel
+        {
+         ;;  :header-weight :normal
+         :header        "WARNING"
+         :theme         ansipants/warning-stripes-bright
+         :border-width  50
+         :border-weight :bold
+         :indent        3}
+        "wtf" #_(warning-header m)
+        :br
+        (printing/warning-call-with-args m)
+        :br
+        (printing/file-info-str m)
+        :br
+        (:learn-more fdict))))))

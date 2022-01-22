@@ -15,7 +15,7 @@
    [kushi.state :as state]
    [kushi.stylesheet :as stylesheet]
    [kushi.typography :refer [system-font-stacks]]
-   [kushi.utils :as util]))
+   [kushi.utils :as util :refer [? keyed]]))
 
 (def KUSHIDEBUG (atom true))
 
@@ -23,9 +23,10 @@
   {:shadow.build/stage :compile-prepare}
   [build-state]
 
+  ;; (println {:shadow.build/stage :compile-prepare} "preparing to reset build states...")
   (state/reset-build-states!)
 
-  ;; (util/pprint+ "kushi-debug:garden-vecs-state" @state/garden-vecs-state)
+  ;; (util/pprint+ "After reset: kushi-debug:garden-vecs-state" @state/garden-vecs-state)
   ;; (util/pprint+ "kushi-debug:atomic-user-classes" @state/kushi-atomic-user-classes)
   ;; (util/pprint+ "kushi-debug:atomic-declarative-classes-used" @state/atomic-declarative-classes-used)
   ;; (util/pprint+ "kushi-debug:state/user-defined-keyframes" @state/user-defined-keyframes)
@@ -85,7 +86,7 @@
      :hydrated-styles hydrated-styles
      :garden-vecs     garden-vecs}))
 
-(defn defclass* [sym coll*]
+(defn defclass* [sym coll* form-meta]
   (let [defclass-name            (keyword sym)
         coll                     (if (:map-mode? user-config)
                                    (-> coll* first style-map->vecs)
@@ -105,18 +106,18 @@
                                    (apply vector coll))
         console-warning-args     {:defclass-name           defclass-name
                                   :styles-argument-display styles-argument-display
-                                  :invalid-args            invalid-args}
+                                  :invalid-args            invalid-args
+                                  :form-meta               form-meta
+                                  :fname                   "defclass"}
         m                        {:n           defclass-name
                                   :selector*   selector*
                                   :args        hydrated-styles
                                   :garden-vecs garden-vecs}]
 
-    #_(util/pprint+
-       "defclass*"
-       {:invalid-map-args invalid-map-args
-        :invalid-args invalid-args
-        :styles styles
-        :m m})
+    #_(? (keyed invalid-map-args
+              invalid-args
+              styles
+              m))
 
     {:defclass-name        defclass-name
      :coll                 coll
@@ -128,7 +129,7 @@
 (defmacro defclass
   [sym & coll*]
 
-  (printing/assert-error-if-duplicate-defclass! {:nm sym :form-meta (meta &form)})
+  (printing/duplicate-defclass! {:fname "defclass" :nm sym :form-meta (meta &form)})
   (reset! state/current-macro :defclass)
 
   (let [{:keys [caching? cache-key cached]} (state/cached :defclass sym coll*)]
@@ -148,10 +149,14 @@
               coll
               invalid-args
               console-warning-args
-              m] :as result} (or cached (defclass* sym coll*))]
+              m]
+       :as result}    (or cached (defclass* sym coll* (meta &form)))
+      js-args-warning (printing/preformat-js-warning console-warning-args)]
 
       ;; Print any problems to terminal
-      (printing/console-warning-defclass console-warning-args)
+
+      ;; TODO why no line thing
+      (printing/ansi-bad-args-warning console-warning-args)
 
       ;; Put atomic class into global registry
       (swap! state/kushi-atomic-user-classes assoc defclass-name m)
@@ -164,13 +169,10 @@
 
       ;; Dev-only runtime code for potential warnings and dynamic injection for instant preview.
       (if @KUSHIDEBUG
+
         `(do
-           (when (seq ~invalid-args)
-             (do
-               (.apply
-                js/console.warn
-                js/console
-                (kushi.core/js-warning-defclass ~console-warning-args))))
+           (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
+             (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning)))
            nil)
         `(do nil)))))
 
@@ -246,7 +248,7 @@
     [frame-key frame-val]))
 
 (defmacro defkeyframes [nm & frames*]
-  (printing/assert-error-if-duplicate-keyframes! {:nm nm :form-meta (meta &form)})
+  (printing/duplicate-keyframes! {:fname "defkeyframes" :nm nm :form-meta (meta &form)})
   (reset! state/current-macro :defkeyframes)
   (let [{:keys [caching? cache-key cached]} (state/cached :keyframes nm frames*)
         frames (or cached (mapv keyframe frames*))]
@@ -268,17 +270,16 @@
                                  only-attr?  [nil (first args)])
           invalid-map-args (remove nil? (map-indexed (fn [idx v] (when-not (and (map? v) (< idx 2)) v)) args))]
 
-      #_(util/pprint+
-         "style&classes+attr"
-         {:only-attr? only-attr?
-          :only-style? only-style?
-          :style+attr? style+attr?
-          :invalid-map-args invalid-map-args
-          :style style
-          :attr attr})
+      #_(? "style&classes+attr"
+         (keyed only-attr?
+                only-style?
+                style+attr?
+                invalid-map-args
+                style
+                attr))
 
-      {:styles+classes style
-       :attr attr
+      {:styles+classes   style
+       :attr             attr
        :invalid-map-args invalid-map-args})
     (if (map? (last args))
       {:styles+classes (drop-last args) :attr (last args)}
@@ -306,20 +307,19 @@
         styles                     (into [] (concat styles* classes-with-mods-hydrated))
         invalid-args               (into [] (concat invalid-map-args invalid))]
 
-    #_(util/pprint+
-       "parse-attr+meta"
-       {:attr*          attr*
-        :attr           attr
-        :meta           meta
-        :styles+classes* styles+classes*
-        :styles+classes styles+classes
-        :styles*        styles
-        :classes*       classes*
-        :f              (or f component-fn)
-        :ident          ident
-        :data-attr-name data-attr-name
-        :invalid-map-args   invalid-map-args
-        :invalid-args   invalid-args})
+    #_(? "parse-attr+meta"
+       (keyed
+        attr*
+        attr
+        meta
+        styles+classes*
+        styles+classes
+        styles*
+        classes*
+        ident
+        data-attr-name
+        invalid-map-args
+        invalid-args))
 
     {:attr           attr
      :meta           meta
@@ -379,17 +379,17 @@
                                              :invalid-args   invalid-args
                                              :data-attr-name data-attr-name
                                              :selector       selector})]
-          #_(util/pprint+
-             "sx*"
-             {:selector* selector*
-              :selector  selector
-              :classlist-map classlist-map
-              :styles*       styles*
-              :styles        styles
-              :css-vars      css-vars
-              :tokenized-styles tokenized-styles
-              :grouped-by-mqs grouped-by-mqs
-              :garden-vecs   garden-vecs})
+          #_(? "sx*"
+             (keyed selector*
+                    selector
+                    classlist-map
+                    styles*
+                    styles
+                    css-vars
+                    tokenized-styles
+                    grouped-by-mqs
+                    garden-vecs))
+
           (when caching?
             (swap! state/styles-cache-updated assoc cache-key ret))
           ret))))
@@ -428,8 +428,8 @@
                  data-attr-name
                  selector]
           :as   m}               (sx* args)
-         _                       (printing/assert-error-if-duplicate-ident!
-                                  (assoc m :form-meta (meta &form)))
+         _                       (printing/duplicate-ident!
+                                  (assoc m :form-meta (meta &form) :fname "sx"))
          styles-argument-display (apply vector args)
          compilation-warnings    (mapv (fn [v] v) @state/compilation-warnings)
          invalid-warning-args    {:invalid-args            invalid-args
@@ -467,7 +467,8 @@
     ;; Add vecs into garden state
      (state/add-styles! garden-vecs)
 
-     (printing/console-warning-sx invalid-warning-args)
+     #_(? (keyed invalid-warning-args))
+     (printing/ansi-bad-args-warning invalid-warning-args)
      (printing/console-warning-sx-mods)
 
      (reset! state/compilation-warnings [])
