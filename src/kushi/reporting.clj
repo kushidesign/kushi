@@ -6,21 +6,18 @@
    [clj-ph-css.core :as ph-css]
    [kushi.config :refer [user-config user-css-file-path version kushi-cache-path]]
    [kushi.printing :as printing]
-   [kushi.ansipants :as ansipants]
+   [kushi.ansiformat :as ansiformat]
    [kushi.utils :as util :refer [? keyed]]
    [kushi.specs :as specs]
    ))
 
+;; Build report messages ---------------------------------------------------------------
 (def writing-to-css-msg (str "Writing to " user-css-file-path " ..."))
 (def parsing-css-msg (str "Parsing " user-css-file-path " ..."))
 
-(defn simple-report
-  [{:keys [header]} & lines*]
-  (let [bl           "   "
-        lines        (reduce (fn [acc v] (concat acc (if (coll? v) v [v]))) [] (remove nil? lines*))
-        lines-indent (map #(str bl %) lines)]
-    (string/join "\n" (concat ["\n" header] lines-indent ["\n"]))))
 
+
+;; Build report helpers ---------------------------------------------------------------
 (defn check-or-x [check?]
  (if check? (ansi/bold-green "✓ ") (ansi/bold-red "✘ ")))
 
@@ -126,7 +123,6 @@
                   style-rules-under-mqs
                   total-style-rules))))
 
-
 (defn parse-generated-css []
   (let [file-contents   (slurp user-css-file-path)
         parsed          (ph-css/string->schema file-contents)
@@ -148,18 +144,27 @@
      :style-rules-under-mqs (count mqs-styles)
      :total-style-rules (+ (count style-rules) (count mqs-styles))}))
 
-(def simple-bl "   ")
-
 (defn format-line-items [banner? coll]
   (when (and coll (seq coll))
     (if banner? coll (str "(" (string/join ", " coll) ")"))))
 
+
+;; Formatting for kushi build report :simple option --------------------------------------------------
+(defn simple-report
+  [{:keys [header]} & lines*]
+  (let [bl           "   "
+        lines        (reduce (fn [acc v] (concat acc (if (coll? v) v [v]))) [] (remove nil? lines*))
+        lines-indent (map #(str bl %) lines)]
+    (string/join "\n" (concat ["\n" header] lines-indent ["\n"]))))
+
+
+;; Kushi build report --------------------------------------------------------------------------------
 (defn print-report! [to-be-printed cache-will-update?]
   (calculate-total-style-rules! to-be-printed)
   (let [banner?                 (= :banner (-> user-config :reporting-style))
         selected                (:select-ns user-config)
         selected-ns-msg         (when (s/valid? ::specs/select-ns-vector selected) (str "Targeting namespaces: " selected))
-        report-format-fn        (if banner? ansipants/panel simple-report)
+        report-format-fn        (if banner? ansiformat/panel simple-report)
         report-line-items-pre*  (report-line-items @to-be-printed)
         report-line-items-pre   (format-line-items banner? report-line-items-pre*)
         report-line-items-post* (when (:report-output? user-config)
@@ -173,18 +178,17 @@
 
     (println
      (report-format-fn
-      {
-       :header       header
-      ;;  :header-weight :bold
-        :theme        printing/bold-rainbow2
-        ;; :border-color :red
-        ;; :border-seq       bs
-        ;; :border-bl-string bs
-        ;; :border-tl-string bs
-        ;; :border-v-char    bs
-        ;; :header-color :bold-blue
+      {:header       header
+       ;;  :header-weight :bold
+       :theme        printing/bold-rainbow2
+       ;; :border-color :red
+       ;; :border-seq       bs
+       ;; :border-bl-string bs
+       ;; :border-tl-string bs
+       ;; :border-v-char    bs
+       ;; :header-color :bold-blue
        :border-width 50
-      ;;  :border-weight :bold
+       ;;  :border-weight :bold
        :indent       3}
       selected-ns-msg
       (when report-line-items-pre [(when banner? "\n") writing-to-css-msg (when banner? "\n")])
@@ -196,38 +200,6 @@
 (defn report! [ns msg]
  (println (str "\n" (ansi/red "[") (ansi/blue ns) (ansi/red "]") msg "\n")))
 
-(defn pluralize
-  ([s coll]
-   (pluralize s coll nil nil))
-  ([s coll singular-suffix plural-suffix]
-    (? "(count coll)" coll)
-    (str s (if (< 1 (count coll))
-             (or plural-suffix "s")
-             singular-suffix))))
 
-(defn warning-header
-  [{:keys [invalid-args fname]}]
-  (str
-   (ansi/bold (pluralize "Invalid argument" invalid-args))
-   " to kushi.core/" fname))
 
-(defn ansi-bad-args-warning
-  [{:keys [fname invalid-args] :as m}]
-  (let [fdict (-> fname keyword printing/dict)]
-    (when (seq invalid-args)
-      (println
-       (ansipants/panel
-        {
-         ;;  :header-weight :normal
-         :header        "WARNING"
-         :theme         ansipants/warning-stripes-bright
-         :border-width  50
-         :border-weight :bold
-         :indent        3}
-        "wtf" #_(warning-header m)
-        :br
-        (printing/warning-call-with-args m)
-        :br
-        (printing/file-info-str m)
-        :br
-        (:learn-more fdict))))))
+;; Reporting for duplicate idents, defclasses, and keyframes  ------------------------------------------------
