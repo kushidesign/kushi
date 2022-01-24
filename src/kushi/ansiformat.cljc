@@ -1,4 +1,4 @@
-(ns kushi.ansipants
+(ns kushi.ansiformat
   #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
    [clojure.pprint]
@@ -25,6 +25,55 @@
                  (println "\n\n"))
                (clojure.pprint/pprint v)
                (println "\n")))))
+
+(def colors
+  {:reset             0
+   :bold              1
+   :underlined        4
+   :black             30
+   :red               31
+   :green             32
+   :yellow            33
+   :blue              34
+   :magenta           35
+   :cyan              36
+   :white             37
+   :black-bright      90
+   :red-bright        91
+   :green-bright      92
+   :yellow-bright     93
+   :blue-bright       94
+   :magenta-bright    95
+   :cyan-bright       96
+   :white-bright      97
+   :black-bg          40
+   :red-bg            41
+   :green-bg          42
+   :yellow-bg         43
+   :blue-bg           44
+   :magenta-bg        45
+   :cyan-bg           46
+   :white-bg          47
+   :black-bg-bright   100
+   :red-bg-bright     101
+   :green-bg-bright   102
+   :yellow-bg-bright  103
+   :blue-bg-bright    104
+   :magenta-bg-bright 105
+   :cyan-bg-bright    106
+   :white-bg-bright   107
+   })
+
+(defn style [s styles]
+ (let [prefix  "\033"
+       reset   (str prefix "[0m")
+       codes* (mapv #(when (or (keyword? %) (string? %))
+                           (get colors (if (keyword? %) % (keyword %)) nil))
+                    styles)
+       styling (string/join (interpose ";" (remove nil? codes*)))
+       wrapped (str prefix "[" styling "m" s reset)]
+    (println "returning: " (string/split wrapped #""))
+    wrapped))
 
 (def ansi-color-map
   {:red          ansi/red

@@ -1,21 +1,23 @@
 (ns ^:dev/always kushi.core
-  (:require
-   [clojure.spec.alpha :as s]
-   [clojure.string :as string]
-   [clojure.set :as set]
-   [garden.core :as garden]
-   [garden.def]
-   [garden.stylesheet :refer [at-font-face]]
-   [kushi.atomic :as atomic]
-   [kushi.config :refer [user-config]]
-   [kushi.parse :as parse]
-   [kushi.printing :as printing]
-   [kushi.selector :as selector]
-   [kushi.specs :as specs]
-   [kushi.state :as state]
-   [kushi.stylesheet :as stylesheet]
-   [kushi.typography :refer [system-font-stacks]]
-   [kushi.utils :as util :refer [? keyed]]))
+ (:require
+  [io.aviso.ansi :as ansi]
+  [clojure.spec.alpha :as s]
+  [clojure.string :as string]
+  [clojure.set :as set]
+  [garden.core :as garden]
+  [garden.def]
+  [garden.stylesheet :refer [at-font-face]]
+  [kushi.atomic :as atomic]
+  [kushi.ansiformat :as ansiformat]
+  [kushi.config :refer [user-config]]
+  [kushi.parse :as parse]
+  [kushi.printing :as printing]
+  [kushi.selector :as selector]
+  [kushi.specs :as specs]
+  [kushi.state :as state]
+  [kushi.stylesheet :as stylesheet]
+  [kushi.typography :refer [system-font-stacks]]
+  [kushi.utils :as util :refer [? keyed]]))
 
 (def KUSHIDEBUG (atom true))
 
@@ -128,53 +130,52 @@
 
 (defmacro defclass
   [sym & coll*]
+  (let [dupe-defclass-warning (printing/dupe-defclass-warning {:fname "defclass" :nm sym :form-meta (meta &form)})]
+    (printing/print-dupe2! dupe-defclass-warning)
+    (reset! state/current-macro :defclass)
+    (let [{:keys [caching? cache-key cached]} (state/cached :defclass sym coll*)]
 
-  (printing/duplicate-defclass! {:fname "defclass" :nm sym :form-meta (meta &form)})
-  (reset! state/current-macro :defclass)
+      #_(util/pprint+
+         (str "(get\n  [:defclass\n   "
+              'user-config-args-sx-defclass
+              "\n   "
+              sym
+              "\n   "
+              coll*
+              "]\n   nil)")
+         cached)
 
-  (let [{:keys [caching? cache-key cached]} (state/cached :defclass sym coll*)]
+      (let
+       [{:keys [defclass-name
+                coll
+                invalid-args
+                console-warning-args
+                m]
+         :as result}    (or cached (defclass* sym coll* (meta &form)))
+      ;; _ (? :console-warning-args console-warning-args)
+        js-args-warning (printing/preformat-js-warning console-warning-args)]
 
-    #_(util/pprint+
-       (str "(get\n  [:defclass\n   "
-            'user-config-args-sx-defclass
-            "\n   "
-            sym
-            "\n   "
-            coll*
-            "]\n   nil)")
-       cached)
-
-    (let
-     [{:keys [defclass-name
-              coll
-              invalid-args
-              console-warning-args
-              m]
-       :as result}    (or cached (defclass* sym coll* (meta &form)))
-      js-args-warning (printing/preformat-js-warning console-warning-args)]
-
-      ;; Print any problems to terminal
-
-      ;; TODO why no line thing
-      (printing/ansi-bad-args-warning console-warning-args)
+      ;; TODO
+        (printing/ansi-bad-args-warning console-warning-args)
 
       ;; Put atomic class into global registry
-      (swap! state/kushi-atomic-user-classes assoc defclass-name m)
+        (swap! state/kushi-atomic-user-classes assoc defclass-name m)
 
-      (printing/diagnostics :defclass {:defclass-map m
-                                       :args         coll
-                                       :sym          sym})
+        (printing/diagnostics :defclass {:defclass-map m
+                                         :args         coll
+                                         :sym          sym})
 
-      (when caching? (swap! state/styles-cache-updated assoc cache-key result))
+        (when caching? (swap! state/styles-cache-updated assoc cache-key result))
 
-      ;; Dev-only runtime code for potential warnings and dynamic injection for instant preview.
-      (if @KUSHIDEBUG
-
-        `(do
-           (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
-             (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning)))
-           nil)
-        `(do nil)))))
+        ;; Dev-only runtime code for potential warnings and dynamic injection for instant preview.
+        (if @KUSHIDEBUG
+          `(do
+             (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
+               (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
+               (when ~dupe-defclass-warning
+                 (logfn# cljs.core/to-array (:browser ~dupe-defclass-warning))))
+             nil)
+          `(do nil))))))
 
 (defmacro clean!
   "Removes all existing styles that were injected into #_kushi-dev_ style tag at dev time.
@@ -248,14 +249,23 @@
     [frame-key frame-val]))
 
 (defmacro defkeyframes [nm & frames*]
-  (printing/duplicate-keyframes! {:fname "defkeyframes" :nm nm :form-meta (meta &form)})
-  (reset! state/current-macro :defkeyframes)
-  (let [{:keys [caching? cache-key cached]} (state/cached :keyframes nm frames*)
-        frames (or cached (mapv keyframe frames*))]
-    (swap! state/user-defined-keyframes assoc (keyword nm) frames)
-    (when (and caching? (not cached))
-      (swap! state/styles-cache-updated assoc cache-key frames))
-    nil))
+  (let [opts {:fname "defkeyframes" :nm nm :form-meta (meta &form)}
+        dupe-defkeyframes-warning (printing/dupe-defkeyframes-warning opts)]
+   (printing/print-dupe2! dupe-defkeyframes-warning)
+   (reset! state/current-macro :defkeyframes)
+   (let [{:keys [caching? cache-key cached]} (state/cached :keyframes nm frames*)
+         frames (or cached (mapv keyframe frames*))]
+     (swap! state/user-defined-keyframes assoc (keyword nm) frames)
+     (when (and caching? (not cached))
+       (swap! state/styles-cache-updated assoc cache-key frames))
+     #_nil
+     (if @KUSHIDEBUG
+       `(do
+          (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
+            (when ~dupe-defkeyframes-warning
+              (logfn# cljs.core/to-array (:browser ~dupe-defkeyframes-warning))))
+          nil)
+       `(do nil)))))
 
 (defn cssfn [& args]
   (cons 'cssfn (list args)))
@@ -409,11 +419,11 @@
           (let [attr (or (-> args style&classes+attr :attr) {})]
             (apply dissoc attr meta-ks)))))))
 
-
+;; TODO move all lines with trailing ;print comment into kushi.printing or kushi.reporting
 (defmacro sx
   [& args]
   (reset! state/current-macro :sx)
-  (reset! state/current-sx {:form-meta (meta &form) :args args :bad-mods {}})
+  (reset! state/current-sx {:form-meta (meta &form) :args args :bad-mods {} :fname "sx"})
   (or
    (only-attr args)
    (let [{:keys [atomic-class-keys
@@ -428,10 +438,13 @@
                  data-attr-name
                  selector]
           :as   m}               (sx* args)
-         _                       (printing/duplicate-ident!
-                                  (assoc m :form-meta (meta &form) :fname "sx"))
+         printing-opts           (assoc m :form-meta (meta &form) :fname "sx")
+         dupe-ident-warning      (printing/dupe-ident-warning printing-opts)
+        ;;  _                       (? :dupe-ident-warning dupe-ident-warning)
+         _                       (printing/print-dupe2! dupe-ident-warning)
          styles-argument-display (apply vector args)
-         compilation-warnings    (mapv (fn [v] v) @state/compilation-warnings)
+         compilation-warnings    (printing/compilation-warnings-coll printing-opts) ;print
+         compilation-warnings-js (printing/preformat-compilation-warnings-js compilation-warnings) ;print
          invalid-warning-args    {:invalid-args            invalid-args
                                   :styles-argument-display styles-argument-display
                                   :form-meta               (meta &form)
@@ -441,9 +454,14 @@
          cls                     (when og-cls (if (coll? og-cls) og-cls [og-cls]))
          data-cljs               (let [{:keys [file line column]} (meta &form)]
                                    (str file ":"  line ":" column))
-         js-args-warning         (printing/preformat-js-warning invalid-warning-args)]
+         js-args-warning         (printing/preformat-js-warning invalid-warning-args) ;print
+         bad-mods-warning        (printing/bad-mods-warning @state/current-sx) ;print
+         bad-mods-warning-js*    (printing/bad-mods-warning (assoc @state/current-sx :js? true)) ;print
+         bad-mods-warning-js     (printing/bad-mods-warning-js bad-mods-warning-js*)]
+
 
     ;; Add classes to previously-used registry
+    ;; TODO: move to kushi.state?
      (doseq [kw atomic-class-keys]
        (when-not (contains? @state/atomic-declarative-classes-used kw)
          (swap! state/atomic-declarative-classes-used conj kw)
@@ -451,6 +469,8 @@
           :defclass-register
           {:defclass-registered? (contains? @state/atomic-declarative-classes-used kw)})))
 
+     ;; Diagnostic printing for development
+     ;; TODO: move to kushi.reporting?
      (printing/diagnostics
       :sx
       (let [style*    (:style attr)
@@ -467,32 +487,50 @@
     ;; Add vecs into garden state
      (state/add-styles! garden-vecs)
 
-     #_(? (keyed invalid-warning-args))
-     (printing/ansi-bad-args-warning invalid-warning-args)
-     (printing/console-warning-sx-mods)
+     #_(? "compilation-warnings" compilation-warnings)
+     #_(? "compilation-warnings-js" compilation-warnings-js)
+     (printing/compilation-warnings! (:terminal compilation-warnings)) ;;print
+     (printing/ansi-bad-args-warning invalid-warning-args) ;;print
+     #_(? :current-sx @state/current-sx)
 
-     (reset! state/compilation-warnings [])
+     #_(? :bad-mods-warning-js bad-mods-warning-js)
+     #_(? :bad-mods-warning-js* bad-mods-warning-js*)
+     #_(? :bad-mods-warning-js bad-mods-warning-js)
+     #_(? :duplicate-ident-body-js duplicate-ident-body-js)
+
+     (printing/ansi-bad-mods-warning! bad-mods-warning) ;;print
+
+     (reset! state/compilation-warnings []) ;;maybe state/reset-compilation-warnings!
+
+     #_(? "compilation-warnings-js" compilation-warnings-js)
 
      (if @KUSHIDEBUG
-
        ;; dev builds
        `(let [og-cls#   (:class ~attr)
               cls#      (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
               attr-map# (merge ~attr-base
-                               {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
-                                :style (merge (:style ~attr) ~css-vars)
+                               {:class     (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
+                                :style     (merge (:style ~attr) ~css-vars)
                                 :data-cljs ~data-cljs})
+
+              ;; move  cljs.core/to-array inside fn and rename js-array# ?
               logfn#    (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
           (do
-            (when-not (empty? ~compilation-warnings)
-              (.apply
-               js/console.warn
-               js/console
-               (kushi.core/console-warning-number ~compilation-warnings)))
+            (when ~dupe-ident-warning
+                (logfn# cljs.core/to-array (:browser ~dupe-ident-warning)))
 
+            (when ~compilation-warnings-js
+              (doseq [warning# ~compilation-warnings-js]
+                (logfn# cljs.core/to-array warning#)))
+
+            (when ~bad-mods-warning-js (logfn# cljs.core/to-array ~bad-mods-warning-js))
+
+            ;; js-args-warning should already be nil if-not (seq ~invalid-args)
             (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
 
             (kushi.core/inject-style-rules (quote ~css-injection-dev) ~selector)
+
+            ;; return attribute map for the component to be rendered
             attr-map#))
 
       ;; release builds
