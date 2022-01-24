@@ -201,12 +201,14 @@
   [prop prop-hydrated numeric-string]
   (when-not (or (= "0" numeric-string)
                 (contains? defs/int-vals (keyword prop-hydrated)))
-    (let [m {:warning-type :unitless-number
-             :prop prop
-             :prop-hydrated prop-hydrated
+    (let [m {:warning-type   :unitless-number
+             :prop           prop
+             :prop-hydrated  prop-hydrated
              :numeric-string numeric-string
-             :current-macro @state/current-macro}]
-      (printing/console-warning-number (vector m))
+             :current-macro  @state/current-macro
+             :form-meta      (:form-meta @state/current-sx)}]
+      #_(printing/console-warning-number (vector m))
+      #_(util/pprint+ "warn" {:m m})
       (swap! state/compilation-warnings conj m))
     ))
 
