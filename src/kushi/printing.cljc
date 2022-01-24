@@ -5,9 +5,11 @@
    [clojure.pprint :refer [pprint]]
    [kushi.utils :as util :refer [? keyed]]
    [kushi.state :as state]
-   [kushi.ansipants :as ansipants]
+   [kushi.ansiformat :as ansiformat]
    [kushi.atomic :as atomic]
    [kushi.config :refer [user-config version]]))
+
+;; (ansiformat/ansi-format "wtf" :red)
 
 ;; Helpers for logging formatting   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -331,19 +333,18 @@
                singular-suffix)))))
 
 (defn warning-header
-  [{:keys [invalid-args fname js?]}]
-  #?(:clj
-     (if js?
-       (do
-         #_(util/pprint+ "invalid-args" invalid-args)
-         (str "Warning: %cInvalid argument" (when (< 1 (count invalid-args)) "s") "%c"  " to kushi.core/" fname "."))
-       (str
-        ansi/bold-font
-        (pluralize "Invalid argument" invalid-args)
-        ansi/reset-font
-        " to kushi.core/" fname))
-     :cljs
-     (str "Warning: %cInvalid argument" (when (< 1 (count invalid-args)) "s") "%c"  " to kushi.core/" fname ".")))
+  [{:keys [invalid-args fname js?] :as m}]
+  (let [s (pluralize "Invalid argument" invalid-args)
+        opts {:style-key :bold :s s}
+        opts-js (assoc opts :js? true)
+        desc #(str % " to kushi.core/" fname)]
+   #?(:clj
+      (if js?
+        (desc (format-wrap opts-js))
+        (desc (format-wrap opts)))
+      ;; delete this branch?
+      :cljs
+      (str "%cInvalid argument" (when (< 1 (count invalid-args)) "s") "%c"  " to kushi.core/" fname "."))))
 
 
 (defn warning-call-with-args
@@ -377,21 +378,21 @@
    (warning-call-with-args m)
    (file-info-str m)])
 
-(defn preformat-js-warning
-  [{:keys [invalid-args fname] :as m}]
-  #?(:clj
-     (when (and (vector? invalid-args) (seq invalid-args))
-       #_(? "preformat-js-warning" m)
-       (let [m                 (assoc m :js? true)
-             warning           (string/join
-                                "\n\n"
-                                (bad-arg-warning-body m))
-             number-of-formats (count (re-seq #"%c" warning))
-             formatting-arg    (interleave (repeat (/ number-of-formats 2) "color:black;font-weight:bold")
-                                           (repeat (/ number-of-formats 2) "color:default;font-weight:normal"))]
-         #_(? (keyed warning number-of-formats formatting-arg))
-         (into [] (concat [warning] formatting-arg))))))
+(defn browser-formatted-js-vec [warning]
+  (let [number-of-formats (count (re-seq #"%c" warning))
+        fmttrs            #(repeat (/ number-of-formats 2) %)
+        formatting-arg    (interleave (fmttrs "color:black;font-weight:bold")
+                                      (fmttrs "color:default;font-weight:normal"))]
+    (into [] (concat [warning] formatting-arg))))
 
+(defn preformat-js-warning
+  [{:keys [invalid-args] :as m}]
+  #?(:clj
+     (when (and (vector? invalid-args)
+                (seq invalid-args))
+       (let [m       (assoc m :js? true)
+             warning (str (string/join "\n\n" (bad-arg-warning-body m)) "\n")]
+         (browser-formatted-js-vec warning)))))
 
 (defn body [lines]
   (flatten
@@ -434,36 +435,45 @@
                body*      (bad-arg-warning-body m)
                body       (interpose "\n" body*)]
            (when (seq invalid-args)
-             (println (apply ansipants/warning-panel body))))))))
+             (println #_(str "bad-args: " fname) (apply ansiformat/warning-panel body))))))))
 
-(defn ansi-bad-mods-warning
-  [{:keys [fname args bad-mods] :as m}]
+(defn bad-mods-warning
+  [{:keys [fname args bad-mods js?] :as m}]
   #?(:clj
      (when-not (empty? bad-mods)
-       (let [more-than-one-bad-stack? (> (count bad-mods) 1)
-             first-stack-has-multiple-bads? (> (count (-> bad-mods first second)) 1)]
-         (println
-          (ansipants/warning-panel
-           (str
-            (ansi/bold
-             (str "Bad modifier"
-                  (when (or more-than-one-bad-stack? first-stack-has-multiple-bads?)
-                    "s")))
-            " passed to kushi.core/" fname ":")
-           :br
-           (map (fn [[prop-stack mods]]
-                  (str prop-stack "  ->  " (ansi/bold (string/join ", " mods))))
-                bad-mods)
-           :br
-           (file-info-str m)
+       (let [more-than-one-bad-stack?       (> (count bad-mods) 1)
+             first-stack-has-multiple-bads? (> (count (-> bad-mods first second)) 1)
+             opts                           {:style-key :bold
+                                             :js?       js?}
+             plural?                        (or more-than-one-bad-stack?
+                                                first-stack-has-multiple-bads?)
+             desc*                          (str "Bad modifier" (when plural? "s"))
+             desc                           (format-wrap (assoc opts :s desc*))
+             sep                            (if js? "\n\n" :br)
+             bad-mods                       (mapv (fn [[prop-stack mods]]
+                                                    (str prop-stack
+                                                         "  ->  "
+                                                         (format-wrap (assoc opts :s (string/join ", " mods)))))
+                                                  bad-mods)]
+         [(str desc " passed to kushi.core/" fname ":")
+          sep
+          (if js? (string/join "\n" bad-mods) bad-mods)
+          sep
+          (file-info-str m)
           ;;  :br
           ;;  "See kushi docs #pseudos-and-combo-selectors for more details"
-           ))))))
+          ]))))
 
-(defn console-warning-sx-mods
-  []
-  (let [m (assoc @state/current-sx :fname "sx")]
-    #?(:clj (ansi-bad-mods-warning m))))
+(defn bad-mods-warning-js
+  [coll]
+  (when (seq coll)
+    (let [warning (str (string/join coll) "\n")]
+      (browser-formatted-js-vec warning))))
+
+(defn ansi-bad-mods-warning!
+  [coll]
+  (when (seq coll)
+    (println (apply ansiformat/warning-panel coll))))
 
 (defn squiggly [lead focus]
   (str
@@ -479,44 +489,33 @@
      (string/join "\n" (map #(str "│  " (if (= :br %) " " %)) lines))
      "\n│\n└" horizontal-border "\n\n")))
 
-(defn throw-dupe-error! [m]
-  (throw (AssertionError.
-          (plain-text-warning-panel
-           55
-           (:desc m)
-           :br
-           (:deets m)
-           (:squiggly m)
-           (:file-info m)
-           :br
-           (:hint m)))))
+(defn throw-assertion-error!
+  ([lines]
+   (throw-assertion-error! lines 55))
+  ([lines width]
+   (throw
+    (AssertionError.
+     (apply
+      plain-text-warning-panel
+      (into [width] lines))))))
 
-(defn desc* [msg {:keys [fname] :as opts}]
-  (let [ns-fname  (str "kushi.core/" fname)]
-    {:plain (str msg)
-     :bold  (str (format-wrap (assoc opts :s msg)))}))
 
-(defn file-info* [opts]
-  {:plain (file-info-str (assoc opts :plain? true))
-   :bold (file-info-str opts)})
-
-(defn dupe-warning-body-lines
-  [{:keys [fname]} opts]
-  (let [desc      (desc* (str "Duplicate " fname " name") opts)
-        fn-call   (str "(" fname " ")
-        nm        (when-let [nm (:nm opts)] (name nm))
-        deets     {:plain (str fn-call nm " ...)")
-                   :bold  (str fn-call (format-wrap (assoc opts :s nm)) " ...)")}
-        squiggly  (squiggly fn-call nm)
-        file-info (file-info* opts)
-        hint      (str fname " names must be globally unique")]
-    (keyed desc deets squiggly file-info hint)))
+(defn print-dupe2!
+  [{:keys [terminal plain]}]
+  (when terminal
+   (let [throw?   (= :error (:handle-duplicates user-config))
+         panel-fn (if throw? ansiformat/error-panel ansiformat/warning-panel)
+         lines    (if throw? plain terminal)]
+     (println (apply panel-fn lines))
+     (when throw? (throw-assertion-error! lines)))))
 
 (defn print-dupe!
   [m
-   {:keys [desc deets squiggly file-info hint]}]
+   {:keys [desc deets squiggly file-info hint] :as opts}]
+   #_(? :print-dupe! m)
+   #_(? :print-dupe! opts)
   (let [throw?    (= :error (:handle-duplicates user-config))
-        panel-fn  (if throw? ansipants/error-panel ansipants/warning-panel)
+        panel-fn  (if throw? ansiformat/error-panel ansiformat/warning-panel)
         lines     [(:bold desc)
                    :br
                    (:bold deets)
@@ -526,7 +525,7 @@
                    :br
                    hint]]
     (println (apply panel-fn lines))
-    (when throw?
+    #_(when throw?
           (throw-dupe-error!
            (merge m
                   {:hint      hint
@@ -535,29 +534,108 @@
                    :desc      (:plain desc)
                    :deets     (:plain deets)})))))
 
-(defn duplicate-ident!
-  [{:keys [ident selector] :as m}]
-  (when (contains? (:rules @state/garden-vecs-state) selector)
-    (let [opts        (assoc m :style-key :bold)
-          desc        (desc* "Duplicate prefix+ident" opts)
-          deets       {:plain (str "{... :ident " ident " ...}")
-                       :bold  (str "{... :ident " (format-wrap (assoc opts :s ident)) " ...}")}
+(defn dupe-desc [msg {:keys [fname] :as opts}]
+  (let [ns-fname  (str "kushi.core/" fname)]
+    (str (format-wrap (assoc opts :s msg)))))
+
+(defn dupe-file-info [opts]
+  (file-info-str opts))
+
+(defn duplicate-ident-body
+  [{:keys [ident js? plain?] :as m}]
+    (let [opts        (assoc m :style-key :bold :js? js? :plain? plain?)
+          desc        (dupe-desc "Duplicate prefix+ident" opts)
+          deets       (str "{... :ident " (format-wrap (assoc opts :s ident)) " ...}")
           squiggly    (squiggly "{... :ident "  ident)
-          file-info   (file-info* opts)
+          file-info   (dupe-file-info opts)
           hint        "All prefix+ident combos must be globally unique"
-          body-lines  (keyed desc deets squiggly file-info hint)]
-      (print-dupe! m body-lines))))
+          sep         (if js? " " :br)
+          lines       [desc
+                       sep
+                       deets
+                       squiggly
+                       (when-not js? sep)
+                       file-info
+                       sep
+                       hint]]
+      lines))
 
-;; TODO js version
-(defn duplicate-keyframes! [m]
-  #_(? 'duplicate-keyframes! (get @state/user-defined-keyframes (keyword nm)))
-  (when (get @state/user-defined-keyframes (-> m :nm keyword))
-    (let [opts       (assoc m :style-key :bold)
-          body-lines (dupe-warning-body-lines m opts)]
-      (print-dupe! m body-lines) )))
+(defn dupe-ident-warning [{:keys [selector] :as m}]
+  (when (contains? (:rules @state/garden-vecs-state) selector)
+    {:terminal (duplicate-ident-body m)
+     :browser  (let [lines  (duplicate-ident-body (assoc m :js? true))
+                     ;; leading and trailing spaces are for adding vertical "padding"
+                     joined (str #_"\n " (string/join "\n" (remove nil? lines)) #_"\n ")]
+                 (browser-formatted-js-vec joined))
+     :plain    (duplicate-ident-body (assoc m :plain? true))}))
 
-;; TODO js version
-(defn duplicate-defclass! [m]
+(defn duplicate-ident-body
+  [{:keys [ident js? plain?] :as m}]
+    (let [opts        (assoc m :style-key :bold :js? js? :plain? plain?)
+          desc        (dupe-desc "Duplicate prefix+ident" opts)
+          deets       (str "{... :ident " (format-wrap (assoc opts :s ident)) " ...}")
+          squiggly    (squiggly "{... :ident "  ident)
+          file-info   (dupe-file-info opts)
+          hint        "All prefix+ident combos must be globally unique"
+          sep         (if js? " " :br)
+          lines       [desc
+                       sep
+                       deets
+                       squiggly
+                       (when-not js? sep)
+                       file-info
+                       sep
+                       hint]
+          ]
+      lines))
+
+(defn dupe-warning-body-lines
+  [{:keys [fname js? plain?] :as m}]
+  (let [opts      (assoc m :style-key :bold :js? js? :plain? plain?)
+        desc      (dupe-desc (str "Duplicate " fname " name") opts)
+        fn-call   (str "(" fname " ")
+        nm        (when-let [nm (:nm opts)] (name nm))
+        deets     (str fn-call (format-wrap (assoc opts :s nm)) " ...)")
+        squiggly  (squiggly fn-call nm)
+        file-info (dupe-file-info opts)
+        hint      (str fname " names must be globally unique")
+        sep         (if js? " " :br)
+        lines       [desc
+                     sep
+                     deets
+                     squiggly
+                     (when-not js? sep)
+                     file-info
+                     sep
+                     hint]]
+    lines))
+
+(defn dupe-*-warning [m coll]
+  (when (get coll (-> m :nm keyword))
+    {:terminal (dupe-warning-body-lines m)
+     :browser  (let [lines  (dupe-warning-body-lines (assoc m :js? true))
+                     ;; leading and trailing spaces are for adding vertical "padding"
+                     joined (str #_"\n " (string/join "\n" (remove nil? lines)) #_"\n ")]
+                 (browser-formatted-js-vec joined))
+     :plain    (dupe-warning-body-lines (assoc m :plain? true))}))
+
+(defn dupe-defkeyframes-warning [m]
+  (dupe-*-warning m @state/user-defined-keyframes))
+
+(defn dupe-defclass-warning [m]
+  (dupe-*-warning m @state/kushi-atomic-user-classes))
+
+#_(defn dupe-defclass-warning [m]
+  (when (get @state/kushi-atomic-user-classes (-> m :nm keyword))
+    {:terminal (dupe-warning-body-lines m)
+     :browser  (let [lines  (dupe-warning-body-lines (assoc m :js? true))
+                     ;; leading and trailing spaces are for adding vertical "padding"
+                     joined (str #_"\n " (string/join "\n" (remove nil? lines)) #_"\n ")]
+                 (browser-formatted-js-vec joined))
+     :plain    (dupe-warning-body-lines (assoc m :plain? true))
+     }))
+
+#_(defn duplicate-defclass! [m]
   (when (get @state/kushi-atomic-user-classes (-> m :nm keyword))
     (let [opts      (assoc m :style-key :bold)
           body-lines (dupe-warning-body-lines m opts)]
@@ -565,30 +643,45 @@
 
 ;; Warnings for bad numbers   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn console-warning-number
-  [compilation-warnings]
-  #?(:clj
-     (println
-      (string/join
-       "\n\n"
-       (map #(cond
-               (= (:warning-type %) :unitless-number)
-               (ansi-warning
-                (str (ansi/bold "Invalid value")  " of " (ansi/bold (:numeric-string %)) " for " (ansi/bold (:prop-hydrated %)) " in kushi.core/" (:current-macro %))
-                :br
-                (str "Did you mean " (:numeric-string %) "px?")))
-            compilation-warnings)))
-     :cljs
-     (string/join
-      "\n\n"
-      (map #(cond
-              (= (:warning-type %) :unitless-number)
-              (string/join
-               "\n\n"
-               [(str "Warning: Invalid value"  " of " (:numeric-string %) " for " (:prop-hydrated %) " in kushi.core/" (name (:current-macro %)))
-                (str " Did you mean " (:numeric-string %) "px?\n\n")]))
-           compilation-warnings))))
+(defn unitless-number-warning [% {:keys [js?] :as opts}]
+  (let [sep (if js? "\n\n" :br)]
+    [(str (format-wrap (assoc opts :s "Invalid value"))
+          " of "
+          (format-wrap (assoc opts :s (:numeric-string %)))
+          " for "
+          (format-wrap (assoc opts :s (:prop-hydrated %)))
+          #_" in kushi.core/"
+          #_(name (:current-macro %)))
+     sep
+     (file-info-str opts)
+     sep
+     (str "Did you mean " (format-wrap (assoc opts :s (str (:numeric-string %) "px?"))))]))
 
+(defn compilation-warnings-coll
+  [opts*]
+  (let [opts (assoc opts* :style-key :bold)]
+    {:terminal (mapv
+                #(cond
+                   (= (:warning-type %) :unitless-number)
+                   (unitless-number-warning % opts))
+                @state/compilation-warnings)
+     :browser (mapv
+               #(cond
+                  (= (:warning-type %) :unitless-number)
+                  (unitless-number-warning % (assoc opts :js? true)))
+               @state/compilation-warnings)}))
+
+(defn preformat-compilation-warnings-js
+  [{browser-warnings :browser}]
+  (when (seq browser-warnings)
+    (mapv #(let [warning (str (string/join %) "\n")]
+            (browser-formatted-js-vec warning))
+          browser-warnings)))
+
+(defn compilation-warnings!
+  [coll]
+  (doseq [lines coll]
+    (println #_"comp-warn" (apply ansiformat/warning-panel lines))))
 
 ;; Diagnostics   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
