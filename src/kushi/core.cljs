@@ -75,7 +75,7 @@
 (defn- garden-mq-rule? [v]
   (and (map? v) (= :media (:identifier v))))
 
-(defn inject-style-rules
+(defn inject-css*
   "Called internally by kushi.core/sx at dev/run time for zippy previews."
   [css-rules selector sheet-id]
   (let [rules-as-seq (map-indexed vector css-rules)
@@ -90,7 +90,7 @@
 
     ;Inject rules only if selector is not already in the sheet
     (when-not (contains? selector-set selector)
-      (js/console.log "INJECTING:" css-rules)
+      #_(js/console.log "INJECTING:" css-rules)
       (doseq [[_ rule-css] rules-as-seq
               :let         [updated-num-rules-idx (-> sheet .-rules .-length)]]
         (try
@@ -101,10 +101,14 @@
                              "\n\n¯\\_(ツ)_/¯"
                              e)))))))
 
+(defn inject-style-rules
+  [css-rules selector]
+   (inject-css* css-rules selector "_kushi-rules_"))
+
 (defn inject-kushi-atomics [kushi-atomics]
   (when (seq kushi-atomics)
     (doseq [[selector css-rules] kushi-atomics]
-      (kushi.core/inject-style-rules css-rules selector "_kushi-runtime-shared_"))))
+      (inject-css* css-rules selector "_kushi-rules-shared_"))))
 
 (defn- merge-with-style-warning
   [v k n]

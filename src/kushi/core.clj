@@ -165,7 +165,7 @@
         ;; Dev-only runtime code for potential warnings (and possible dynamic injection.)
         (if @KUSHIDEBUG
           `(do
-            (kushi.core/inject-style-rules (quote ~garden-vecs-for-shared) ~selector "_kushi-runtime-shared_")
+            (kushi.core/inject-css* (quote ~garden-vecs-for-shared) ~selector "_kushi-rules-shared_")
              (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
                (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
                (when ~dupe-defclass-warning
@@ -173,12 +173,12 @@
              nil)
           `(do
              (when ~inject?
-               (kushi.core/inject-style-rules (quote ~garden-vecs-for-shared) ~selector "_kushi-runtime-shared_"))
+               (kushi.core/inject-css* (quote ~garden-vecs-for-shared) ~selector "_kushi-rules-shared_"))
              nil)))))
 
 (defmacro clean!
   "Removes all existing styles that were injected into
-   #_kushi-runtime-shared_ or #_kushi-runtime_ style tags at dev time.
+   #_kushi-rules-shared_ or #_kushi-rules_ style tags at dev time.
    Intended to be called by the projects main/core ns on every save/reload."
   []
   (let [log?    (:log-clean!? user-config)
@@ -186,7 +186,7 @@
     `(when (or ^boolean js/goog.DEBUG
                ~inject?)
        ;;TODO make cleaning report more detailed
-       (for [sheet-id# ["_kushi-runtime-shared_" "_kushi-runtime_"]]
+       (for [sheet-id# ["_kushi-rules-shared_" "_kushi-rules_"]]
          (do (when ~log? (js/console.log (str "[kushi.core/clean!] stylesheet #" sheet-id#)))
              (let [sheet# (.-sheet (js/document.getElementById sheet-id#))
                    rules# (.-rules sheet#)
@@ -571,7 +571,7 @@
             (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
 
             ;; TODO why does first arg need to be quoted? vars?
-            (kushi.core/inject-style-rules (quote ~css-injection) ~selector "_kushi-runtime_")
+            (kushi.core/inject-style-rules (quote ~css-injection) ~selector)
             (kushi.core/inject-kushi-atomics ~kushi-atomics)
 
             ;; return attribute map for the component to be rendered
