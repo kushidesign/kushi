@@ -4,6 +4,7 @@
   [clojure.spec.alpha :as s]
   [clojure.string :as string]
   [clojure.set :as set]
+  [clojure.pprint :refer [pprint]]
   [garden.core :as garden]
   [garden.def]
   [garden.stylesheet :refer [at-font-face]]
@@ -24,15 +25,14 @@
 (defn kushi-debug
   {:shadow.build/stage :compile-prepare}
   [build-state]
-
-  ;; (println {:shadow.build/stage :compile-prepare} "preparing to reset build states...")
+  #_(println {:shadow.build/stage :compile-prepare} "preparing to reset build states...")
   (state/reset-build-states!)
-
-  ;; (util/pprint+ "After reset: kushi-debug:garden-vecs-state" @state/garden-vecs-state)
-  ;; (util/pprint+ "kushi-debug:atomic-user-classes" @state/kushi-atomic-user-classes)
-  ;; (util/pprint+ "kushi-debug:atomic-declarative-classes-used" @state/atomic-declarative-classes-used)
-  ;; (util/pprint+ "kushi-debug:state/user-defined-keyframes" @state/user-defined-keyframes)
-  ;; (util/pprint+ "kushi-debug:state/user-defined-font-faces" @state/user-defined-font-faces)
+  #_(util/pprint+
+   {"After reset: kushi-debug:garden-vecs-state" @state/garden-vecs-state
+    "kushi-debug:atomic-user-classes" @state/kushi-atomic-user-classes
+    "kushi-debug:atomic-declarative-classes-used" @state/atomic-declarative-classes-used
+    "kushi-debug:state/user-defined-keyframes" @state/user-defined-keyframes
+    "kushi-debug:state/user-defined-font-faces" @state/user-defined-font-faces})
 
   (let [mode (:shadow.build/mode build-state)]
     #_(when mode
@@ -58,33 +58,29 @@
    (scoped-atomic-classname {} {:atomic :myclass}) ;=> \"_o25757__myclass\"
 
    Example with a kushi pre-defined class:
-   (scoped-atomic-classname {} {:atomic :flex-row-c}) ;=> \"_o25757_flex-row-c\"
-
-   Example with a normal class that has been defined in a css file or style tag:
-   (scoped-atomic-classname {} {:atomic :col-2}) ;=> \".col-2\""
+   (scoped-atomic-classname {} {:atomic :flex-row-c}) ;=> \"_o25757_flex-row-c\""
   [meta kw]
-  (if (parse/atomic-user-class kw)
-    (some-> (assoc meta :defclass-name kw :defclass-hash atomic/defclass-hash)
-            selector/selector-name
-            :selector*)
-    kw))
+  (some-> (assoc meta :defclass-name kw :defclass-hash atomic/defclass-hash)
+          selector/selector-name
+          :selector*))
 
 (defn- atomic-classes
   [meta ks]
   (remove nil?
           (mapv (partial scoped-atomic-classname meta) ks)))
 
-(defn- register-class!
+(defn- hydrated-defclass
   [classname coll*]
   (let [{:keys [selector
                 selector*]} (selector/selector-name
                              {:defclass-name classname
                               :defclass-hash atomic/defclass-hash})
-        hydrated-styles     (parse/with-hydrated-classes coll*)
-        tokenized-styles    (mapv (partial parse/kushi-style->token selector*) hydrated-styles)
-        grouped-by-mqs      (parse/grouped-by-mqs tokenized-styles)
-        garden-vecs         (parse/garden-vecs grouped-by-mqs selector)]
-    {:selector*       selector*
+        hydrated-styles              (parse/with-hydrated-classes coll*)
+        tokenized-styles             (mapv (partial parse/kushi-style->token selector*) hydrated-styles)
+        grouped-by-mqs               (parse/grouped-by-mqs tokenized-styles)
+        garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)]
+    {:selector        selector
+     :selector*       selector*
      :hydrated-styles hydrated-styles
      :garden-vecs     garden-vecs}))
 
@@ -100,9 +96,10 @@
         invalid-args             (or
                                   (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
                                   (into [] (concat invalid-map-args invalid-args*)))
-        {:keys [selector*
+        {:keys [selector
+                selector*
                 hydrated-styles
-                garden-vecs]}    (register-class! defclass-name styles)
+                garden-vecs]}    (hydrated-defclass defclass-name styles)
         styles-argument-display  (if (:map-mode? user-config)
                                    coll*
                                    (apply vector coll))
@@ -112,6 +109,7 @@
                                   :form-meta               form-meta
                                   :fname                   "defclass"}
         m                        {:n           defclass-name
+                                  :selector    selector
                                   :selector*   selector*
                                   :args        hydrated-styles
                                   :garden-vecs garden-vecs}]
@@ -130,35 +128,32 @@
 
 (defmacro defclass
   [sym & coll*]
-  (let [dupe-defclass-warning (printing/dupe-defclass-warning {:fname "defclass" :nm sym :form-meta (meta &form)})]
+  (let [dupe-defclass-warning (printing/dupe-defclass-warning
+                               {:fname "defclass"
+                                :nm sym
+                                :form-meta (meta &form)})]
+
     (printing/print-dupe2! dupe-defclass-warning)
     (reset! state/current-macro :defclass)
-    (let [{:keys [caching? cache-key cached]} (state/cached :defclass sym coll*)]
 
-      #_(util/pprint+
-         (str "(get\n  [:defclass\n   "
-              'user-config-args-sx-defclass
-              "\n   "
-              sym
-              "\n   "
-              coll*
-              "]\n   nil)")
-         cached)
+    (let [{:keys [caching?
+                  cache-key
+                  cached]}             (state/cached :defclass sym coll*)
+          {:keys [defclass-name
+                  coll
+                  invalid-args
+                  console-warning-args
+                  m]
+           :as result}                 (or cached (defclass* sym coll* (meta &form)))
+          {:keys [garden-vecs
+                  selector]}           m
+          js-args-warning              (printing/preformat-js-warning console-warning-args)
+          garden-vecs-for-shared       (stylesheet/garden-vecs-injection garden-vecs)
+          inject?                      (:runtime-injection? user-config)]
 
-      (let
-       [{:keys [defclass-name
-                coll
-                invalid-args
-                console-warning-args
-                m]
-         :as result}    (or cached (defclass* sym coll* (meta &form)))
-      ;; _ (? :console-warning-args console-warning-args)
-        js-args-warning (printing/preformat-js-warning console-warning-args)]
-
-      ;; TODO
         (printing/ansi-bad-args-warning console-warning-args)
 
-      ;; Put atomic class into global registry
+        ;; Put atomic class into global registry
         (swap! state/kushi-atomic-user-classes assoc defclass-name m)
 
         (printing/diagnostics :defclass {:defclass-map m
@@ -167,28 +162,37 @@
 
         (when caching? (swap! state/styles-cache-updated assoc cache-key result))
 
-        ;; Dev-only runtime code for potential warnings and dynamic injection for instant preview.
+        ;; Dev-only runtime code for potential warnings (and possible dynamic injection.)
         (if @KUSHIDEBUG
           `(do
+            (kushi.core/inject-style-rules (quote ~garden-vecs-for-shared) ~selector "_kushi-runtime-shared_")
              (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
                (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
                (when ~dupe-defclass-warning
                  (logfn# cljs.core/to-array (:browser ~dupe-defclass-warning))))
              nil)
-          `(do nil))))))
+          `(do
+             (when ~inject?
+               (kushi.core/inject-style-rules (quote ~garden-vecs-for-shared) ~selector "_kushi-runtime-shared_"))
+             nil)))))
 
 (defmacro clean!
-  "Removes all existing styles that were injected into #_kushi-dev_ style tag at dev time.
+  "Removes all existing styles that were injected into
+   #_kushi-runtime-shared_ or #_kushi-runtime_ style tags at dev time.
    Intended to be called by the projects main/core ns on every save/reload."
   []
-  (let [log? (:log-clean!? user-config)]
-    `(when ^boolean js/goog.DEBUG
-       (do (when ~log? (js/console.log "kushi.core/cleaning!"))
-           (let [sheet# (.-sheet (js/document.getElementById "_kushi-dev_"))
-                 rules# (.-rules sheet#)
-                 rules-len# (.-length rules#)]
-             (clojure.core/doseq [idx# (clojure.core/reverse (clojure.core/range rules-len#))]
-               (.deleteRule sheet# idx#)))))))
+  (let [log?    (:log-clean!? user-config)
+        inject? (:runtime-injection? user-config)]
+    `(when (or ^boolean js/goog.DEBUG
+               ~inject?)
+       ;;TODO make cleaning report more detailed
+       (for [sheet-id# ["_kushi-runtime-shared_" "_kushi-runtime_"]]
+         (do (when ~log? (js/console.log (str "[kushi.core/clean!] stylesheet #" sheet-id#)))
+             (let [sheet# (.-sheet (js/document.getElementById sheet-id#))
+                   rules# (.-rules sheet#)
+                   rules-len# (.-length rules#)]
+               (clojure.core/doseq [idx# (clojure.core/reverse (clojure.core/range rules-len#))]
+                 (.deleteRule sheet# idx#))))))))
 
 (defmacro add-font-face
   "Example:
@@ -341,6 +345,7 @@
      :invalid-args   invalid-args}))
 
 (defn classlist [meta classes* selector*]
+  #_(? (keyed meta classes* selector*))
   (let [non-conditional-classes                    (filter #(not (seq? %)) classes*)
         {:keys [conditional-class-sexprs classes]} (parse/parse-classes classes*)
         {atomic-class-keys :valid
@@ -352,9 +357,21 @@
                                                                          util/normalized-class-kw
                                                                          non-conditional-atomic-class-keys))
         classlist                                  (concat atomic-classes [selector*] (map name other-keys))]
-    {:classlist                classlist
-     :atomic-class-keys        atomic-class-keys
-     :conditional-class-sexprs conditional-class-sexprs}))
+
+    ;; TODO what is difference between classes and atomic-class-keys?
+
+    #_(? (keyed
+        non-conditional-classes
+        classes
+        non-conditional-atomic-class-keys
+        atomic-classes
+        classlist
+        atomic-class-keys
+        conditional-class-sexprs))
+    (keyed
+     classlist
+     atomic-class-keys
+     conditional-class-sexprs)))
 
 (defn sx* [args]
   (let [{:keys [caching? cache-key cached]} (state/cached :defclass args)]
@@ -389,16 +406,19 @@
                                              :invalid-args   invalid-args
                                              :data-attr-name data-attr-name
                                              :selector       selector})]
+          #_(? 'ident ident)
+          #_(when true #_(= :sample2x ident) (? 'classlist-map classlist-map))
+
           #_(? "sx*"
-             (keyed selector*
-                    selector
-                    classlist-map
-                    styles*
-                    styles
-                    css-vars
-                    tokenized-styles
-                    grouped-by-mqs
-                    garden-vecs))
+               (keyed selector*
+                      selector
+                      classlist-map
+                      styles*
+                      styles
+                      css-vars
+                      tokenized-styles
+                      grouped-by-mqs
+                      garden-vecs))
 
           (when caching?
             (swap! state/styles-cache-updated assoc cache-key ret))
@@ -449,7 +469,21 @@
                                   :styles-argument-display styles-argument-display
                                   :form-meta               (meta &form)
                                   :fname                   "sx"}
-         css-injection-dev       (stylesheet/garden-vecs-injection garden-vecs)
+         css-injection           (stylesheet/garden-vecs-injection garden-vecs)
+         atomic-used?            #(contains? @state/atomic-declarative-classes-used %)
+        ;;  _ (? (keyed atomic-class-keys ident))
+
+        ;; Issue warning if class not found in registry
+         shared-classlist        (into
+                                  []
+                                  (remove
+                                   nil?
+                                   (doall
+                                    (for [k* atomic-class-keys
+                                          :let [k (keyword (subs (name k*) 1))
+                                                {:keys [selector selector*]} (-> {:defclass-name k} selector/selector-name)]]
+                                      (keyed k selector* selector)))))
+         inject?                 (:runtime-injection? user-config)
          og-cls                  (:class attr)
          cls                     (when og-cls (if (coll? og-cls) og-cls [og-cls]))
          data-cljs               (let [{:keys [file line column]} (meta &form)]
@@ -457,17 +491,33 @@
          js-args-warning         (printing/preformat-js-warning invalid-warning-args) ;print
          bad-mods-warning        (printing/bad-mods-warning @state/current-sx) ;print
          bad-mods-warning-js*    (printing/bad-mods-warning (assoc @state/current-sx :js? true)) ;print
-         bad-mods-warning-js     (printing/bad-mods-warning-js bad-mods-warning-js*)]
+         bad-mods-warning-js     (printing/bad-mods-warning-js bad-mods-warning-js*)
+         kushi-atomics*          (select-keys atomic/kushi-atomic-combo-classes (mapv :k shared-classlist))
+         kushi-atomics           (mapv (fn [{:keys [selector garden-vecs] :as m}]
+                                         (let [css-injection-for-kushi-atomic (stylesheet/garden-vecs-injection garden-vecs)]
+                                           [selector css-injection-for-kushi-atomic]))
+                                       (vals kushi-atomics*))]
 
+     #_(? (keyed
+         compilation-warnings
+         compilation-warnings-js
+         bad-mods-warning-js
+         bad-mods-warning-js*
+         bad-mods-warning-js
+         compilation-warnings-js
+         kushi-atomics
+         css-injection
+         shared-classlist))
 
+     #_(println class-stuff)
     ;; Add classes to previously-used registry
     ;; TODO: move to kushi.state?
-     (doseq [kw atomic-class-keys]
-       (when-not (contains? @state/atomic-declarative-classes-used kw)
-         (swap! state/atomic-declarative-classes-used conj kw)
+     (doseq [{:keys [k]} shared-classlist]
+       (when-not (atomic-used? k)
+         (swap! state/atomic-declarative-classes-used conj k)
          (printing/diagnostics
           :defclass-register
-          {:defclass-registered? (contains? @state/atomic-declarative-classes-used kw)})))
+          {:defclass-registered? (contains? @state/atomic-declarative-classes-used k)})))
 
      ;; Diagnostic printing for development
      ;; TODO: move to kushi.reporting?
@@ -479,30 +529,22 @@
             data-cljs {(or data-attr-name :data-cljs) data-cljs}]
         {:ident             ident
          :garden-vecs       garden-vecs
-         :css-injection-dev css-injection-dev
+         :css-injection-dev css-injection
          :args              args
          :style-is-var?     (symbol? style)
-         :attr-map          (merge attr-base {:class class :style style} data-cljs)}))
+         :attr-map          (merge attr-base {:class class :style style} data-cljs)
+         :extra             (keyed cls classlist conditional-class-sexprs)}))
 
     ;; Add vecs into garden state
      (state/add-styles! garden-vecs)
 
-     #_(? "compilation-warnings" compilation-warnings)
-     #_(? "compilation-warnings-js" compilation-warnings-js)
      (printing/compilation-warnings! (:terminal compilation-warnings)) ;;print
      (printing/ansi-bad-args-warning invalid-warning-args) ;;print
-     #_(? :current-sx @state/current-sx)
-
-     #_(? :bad-mods-warning-js bad-mods-warning-js)
-     #_(? :bad-mods-warning-js* bad-mods-warning-js*)
-     #_(? :bad-mods-warning-js bad-mods-warning-js)
-     #_(? :duplicate-ident-body-js duplicate-ident-body-js)
 
      (printing/ansi-bad-mods-warning! bad-mods-warning) ;;print
 
      (reset! state/compilation-warnings []) ;;maybe state/reset-compilation-warnings!
 
-     #_(? "compilation-warnings-js" compilation-warnings-js)
 
      (if @KUSHIDEBUG
        ;; dev builds
@@ -517,7 +559,7 @@
               logfn#    (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
           (do
             (when ~dupe-ident-warning
-                (logfn# cljs.core/to-array (:browser ~dupe-ident-warning)))
+              (logfn# cljs.core/to-array (:browser ~dupe-ident-warning)))
 
             (when ~compilation-warnings-js
               (doseq [warning# ~compilation-warnings-js]
@@ -528,25 +570,41 @@
             ;; js-args-warning should already be nil if-not (seq ~invalid-args)
             (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
 
-            (kushi.core/inject-style-rules (quote ~css-injection-dev) ~selector)
+            ;; TODO why does first arg need to be quoted? vars?
+            (kushi.core/inject-style-rules (quote ~css-injection) ~selector "_kushi-runtime_")
+            (kushi.core/inject-kushi-atomics ~kushi-atomics)
 
             ;; return attribute map for the component to be rendered
             attr-map#))
 
+
       ;; release builds
        (let
-        [{:keys [only-class? only-class+style?]} (util/analyze-attr m)]
+        [{:keys [only-class? only-class+style?]} (util/analyze-attr m)
+         inject? (:runtime-injection? user-config)]
          (cond
            only-class?
-           `(do {:class (quote ~classlist)})
+           `(do
+              (when ~inject?
+                (kushi.core/inject-style-rules (quote ~css-injection) ~selector)
+                (kushi.core/inject-kushi-atomics ~kushi-atomics))
+              {:class (quote ~classlist)})
 
            only-class+style?
-           `(do {:class (quote ~classlist)
-                 :style (merge (:style ~attr) ~css-vars)})
+           `(do
+              (when ~inject?
+                (kushi.core/inject-style-rules (quote ~css-injection) ~selector)
+                (kushi.core/inject-kushi-atomics ~kushi-atomics))
+              {:class (quote ~classlist)
+               :style (merge (:style ~attr) ~css-vars)})
+
            :else
            `(let [og-cls#   (:class ~attr)
                   cls#      (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
                   attr-map# (merge ~attr-base
                                    {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
                                     :style (merge (:style ~attr) ~css-vars)})]
+              (when ~inject?
+                (kushi.core/inject-style-rules (quote ~css-injection) ~selector)
+                (kushi.core/inject-kushi-atomics ~kushi-atomics))
               attr-map#)))))))

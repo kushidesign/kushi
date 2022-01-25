@@ -3,7 +3,7 @@
   (:require
    [clojure.string :as string]
    [kushi.config :refer [user-config]]
-   [kushi.utils :as util :refer [auto-generated-hash]]))
+   [kushi.utils :as util :refer [auto-generated-hash keyed ?]]))
 
 (defn nsqkw->selector-friendly [s]
   (-> (str s)
@@ -17,35 +17,39 @@
            prefix
            ancestor
            defclass-name
-           defclass-hash]}]
+           defclass-hash] :as m}]
   (let [hash                          (auto-generated-hash)
         {global-ancestor :ancestor
          global-prefix :prefix}       user-config
         prefix                        (or prefix global-prefix)
         ancestor                      (or ancestor global-ancestor)
         prefixed-names-for-selectors? (and prefix ident (not (:add-empty-classes? user-config)))
-        prefixed-name                 (when (and prefix ident) (str (name prefix) (name ident)))
-        defclass-prefix               (:defclass-prefix user-config)
+        prefixed-name-for-el          (when (and prefix ident) (str (name prefix) (name ident)))
+        defclass-prefix               (or (:defclass-prefix user-config) "_kushi-")
+        ;; TODO take out defclass-hash
         selector*                     (if defclass-name
                                         (str (or defclass-prefix
                                                  (str defclass-hash "__"))
                                              (nsqkw->selector-friendly defclass-name))
                                         (if prefixed-names-for-selectors?
-                                          prefixed-name
+                                          prefixed-name-for-el
                                           hash))
-        use-ancestor-prefix?          (if defclass-hash
+        use-ancestor-prefix?          (if defclass-name
                                         (:prefix-ancestor-to-defclass? user-config)
                                         (not (nil? ancestor)))
         selector                      (str (when use-ancestor-prefix? (str (name ancestor) " "))
                                            (when element (name element))
                                            "."
-                                           selector*)]
+                                           selector*)
+        ret                           {:selector* selector*
+                                       :selector selector
+                                       :prefixed-name prefixed-name-for-el}]
 
-    #_(util/pprint+
-       "selector-name"
+    #_(? 'kushi.selector/selector-name (keyed m ret))
+    #_(pprint
        {:ident ident
         :prefix prefix
-        :prefix-name prefixed-name
+        :prefixed-name prefixed-name
         :defclass-name defclass-name
         :defclass-prefix defclass-prefix
         :defclass-hash defclass-hash
@@ -53,7 +57,4 @@
         :hash hash
         :selector selector
         :selector* selector*})
-
-    {:selector* selector*
-     :selector selector
-     :prefixed-name prefixed-name}))
+    ret))

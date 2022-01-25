@@ -26,11 +26,11 @@
        (string/join
         ", "
         (map #(cond
-               (cssfn? %) (cssfn %)
-               (vector? %) (vec-in-cssfn %)
-               (keyword? %) (name %)
+                (cssfn? %) (cssfn %)
+                (vector? %) (vec-in-cssfn %)
+                (keyword? %) (name %)
               ;;  (string? %) (str "\"" % "\"")
-               :else (str %))
+                :else (str %))
              args))
        ")"))
 
@@ -68,24 +68,31 @@
         (try
           (.appendChild js/document.head link)
           (catch :default e (when ^boolean js/goog.DEBUG
-                             (js/console.warn
-                              "kushi.core/s+:\n\nFailed attempt to inject stylesheet (or link):\n\n"
-                              m
-                              "\n\n¯\\_(ツ)_/¯"))))))))
+                              (js/console.warn
+                               "kushi.core/s+:\n\nFailed attempt to inject stylesheet (or link):\n\n"
+                               m
+                               "\n\n¯\\_(ツ)_/¯"))))))))
 (defn- garden-mq-rule? [v]
   (and (map? v) (= :media (:identifier v))))
 
 (defn inject-style-rules
-  "Called at dev time for zippy previews."
-  [css-rules selector]
-  (let [css-rules-as-indexed-seq (map-indexed vector css-rules)
-        sheet (.-sheet (js/document.getElementById "_kushi-dev_"))
+  "Called internally by kushi.core/sx at dev/run time for zippy previews."
+  [css-rules selector sheet-id]
+  (let [rules-as-seq (map-indexed vector css-rules)
+        sheet        (.-sheet (js/document.getElementById sheet-id))
         selector-set (into #{} (->> sheet .-rules (map #(aget % "selectorText"))))]
+    #_(js/console.log "cssRuleList" (.-cssRules sheet))
+    #_(js/console.log {:css-rules    css-rules
+                     :selector     selector
+                     :rules-as-seq rules-as-seq
+                     :sheet        sheet
+                     :selector-set selector-set})
 
     ;Inject rules only if selector is not already in the sheet
     (when-not (contains? selector-set selector)
-      (doseq [[_ rule-css] css-rules-as-indexed-seq
-              :let [updated-num-rules-idx (-> sheet .-rules .-length)]]
+      (js/console.log "INJECTING:" css-rules)
+      (doseq [[_ rule-css] rules-as-seq
+              :let         [updated-num-rules-idx (-> sheet .-rules .-length)]]
         (try
           (.insertRule sheet rule-css updated-num-rules-idx)
           (catch :default e (js/console.warn
@@ -93,6 +100,11 @@
                              rule-css
                              "\n\n¯\\_(ツ)_/¯"
                              e)))))))
+
+(defn inject-kushi-atomics [kushi-atomics]
+  (when (seq kushi-atomics)
+    (doseq [[selector css-rules] kushi-atomics]
+      (kushi.core/inject-style-rules css-rules selector "_kushi-runtime-shared_"))))
 
 (defn- merge-with-style-warning
   [v k n]
