@@ -29,15 +29,36 @@
               (catch RuntimeException e
                 (printf "Error parsing edn file '%s': %s\n" source (.getMessage e)))))))
 
+(def user-config-defaults
+  {:diagnose             nil
+   :diagnose-idents      nil
+   :select-ns            nil
+   :__enable-caching?__  false
+   :post-build-report?   false
+   :report-cache-update? true
+   :reporting-style      :banner
+   :data-attr-name       :data-cljs-source
+   :ancestor             nil
+   :prefix               nil
+   :defclass-prefix      nil
+   :keyframes-prefix     nil
+   :map-mode?            false
+   :css-dir              nil
+   :write-stylesheet?    true
+   :runtime-injection?   false
+   ;; take out?
+   :log-clean!?          false})
+
 (def user-config
-  (let [config*           (let [m (load-edn "kushi.edn")]
-                            (if (map? m) m {}))
-        user-responsive   (apply array-map (:media config*))
-        responsive        (if (valid-responsive? user-responsive)
-                            user-responsive
-                            (apply array-map default-kushi-responsive))
-        config            (assoc config* :media responsive)]
-    config))
+  (let [config*         (let [m (load-edn "kushi.edn")]
+                          (if (map? m) m {}))
+        user-responsive (apply array-map (:media config*))
+        responsive      (if (valid-responsive? user-responsive)
+                          user-responsive
+                          (apply array-map default-kushi-responsive))
+        ret*            (assoc config* :media responsive)
+        ret             (merge user-config-defaults ret*)]
+    ret))
 
 (def user-config-args-sx-defclass
   (select-keys
