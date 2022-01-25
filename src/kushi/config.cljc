@@ -23,18 +23,24 @@
               (with-open [r (clojure.java.io/reader source)]
                 (edn/read (java.io.PushbackReader. r)))
 
+              ;; TODO use warning or error panel
+              ;; TODO consolidate these somewhere?
               (catch java.io.IOException e
-                (printf "\nCouldn't open '%s': %s.\nIgnore the above warning about 'kushi.edn' if you are running tests from the source repo (kushi/test/kushi/test.clj).\n" source (.getMessage e)))
+                (printf "\nCouldn't open '%s':\n %s.\nIgnore the above warning about 'kushi.edn' if you are running tests from the source repo (kushi/test/kushi/test.clj).\n"
+                        source
+                        (.getMessage e)))
 
               (catch RuntimeException e
-                (printf "Error parsing edn file '%s': %s\n" source (.getMessage e)))))))
+                (printf "Error parsing edn file '%s':\n %s\n"
+                        source
+                        (.getMessage e)))))))
 
 (def user-config-defaults
   {:diagnose             nil
    :diagnose-idents      nil
    :select-ns            nil
    :__enable-caching?__  false
-   :post-build-report?   false
+   :post-build-report?   true
    :report-cache-update? true
    :reporting-style      :banner
    :data-attr-name       :data-cljs-source
