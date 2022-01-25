@@ -693,7 +693,8 @@
               css-injection-dev
               garden-vecs
               style-is-var?
-              ident]}]
+              ident
+              extra ]}]
   #?(:clj
      (when-let [d (some->> user-config :diagnose (into #{}))]
        (when (let [diagnose-idents (some->> user-config :diagnose-idents (into #{}))
@@ -739,6 +740,8 @@
                "CSS to be injected for dev preview:"
                "\n\n"
                (string/join "\n\n" (map #(string/replace % #"\\n" "\n") css-injection-dev))
+               "\n\n"
+               (with-out-str (pprint extra))
                "\n\n"))))))))
 
 
