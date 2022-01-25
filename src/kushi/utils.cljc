@@ -3,6 +3,7 @@
    [clojure.string :as string]
    [clojure.walk :as walk]
    [clojure.pprint]
+   [io.aviso.ansi :as ansi]
    [kushi.defs :as defs]
    [kushi.scales :refer [scales scaling-map]]
    [kushi.config :refer [user-config]]))
@@ -19,12 +20,13 @@
    (pprint+ nil v))
   ([title v]
    #?(:cljs (do (if title
-                  (println "\n" title " =>")
+                  (println "\n" title "\n=>")
                   (println "\n\n"))
                 (cljs.pprint/pprint v)
                 (println "\n"))
       :clj (do (if title
-                 (println "\n" title " =>")
+                 (do (println "\n")
+                      (println (ansi/italic (ansi/red (str "; " title))) (str "\n" (ansi/bold-cyan "=>"))))
                  (println "\n\n"))
                (clojure.pprint/pprint v)
                (println "\n")))))
@@ -34,12 +36,14 @@
    (pprint+ nil v))
   ([title v]
    #?(:cljs (do (if title
-                  (println "\n" title " =>")
+                  (do (println "\n")
+                      (println title "\n=>"))
                   (println "\n\n"))
                 (cljs.pprint/pprint v)
                 (println "\n"))
       :clj (do (if title
-                 (println "\n" title " =>")
+                 (do (println "\n")
+                      (println (ansi/italic (ansi/red (str "; " title))) (str "\n" (ansi/bold-cyan "=>"))))
                  (println "\n\n"))
                (clojure.pprint/pprint v)
                (println "\n")))))
