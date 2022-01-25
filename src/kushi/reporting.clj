@@ -157,13 +157,15 @@
         lines-indent (map #(str bl %) lines)]
     (string/join "\n" (concat ["\n" header] lines-indent ["\n"]))))
 
+(defn select-ns-msg []
+  (let [selected (:select-ns user-config)]
+    (when (s/valid? ::specs/select-ns-vector selected)
+      (str "Targeting namespaces: " selected))))
 
 ;; Kushi build report --------------------------------------------------------------------------------
 (defn print-report! [to-be-printed cache-will-update?]
   (calculate-total-style-rules! to-be-printed)
   (let [banner?                 (= :banner (-> user-config :reporting-style))
-        selected                (:select-ns user-config)
-        selected-ns-msg         (when (s/valid? ::specs/select-ns-vector selected) (str "Targeting namespaces: " selected))
         report-format-fn        (if banner? ansiformat/panel simple-report)
         report-line-items-pre*  (report-line-items @to-be-printed)
         report-line-items-pre   (format-line-items banner? report-line-items-pre*)
@@ -190,8 +192,8 @@
        :border-width 50
        ;;  :border-weight :bold
        :indent       3}
-      selected-ns-msg
-      (when report-line-items-pre [(when banner? "\n") writing-to-css-msg (when banner? "\n")])
+      (:selected-ns-msg @to-be-printed)
+      (when report-line-items-pre (remove nil? [(when banner? "\n") writing-to-css-msg (when banner? "\n")]))
       report-line-items-pre
       (when report-line-items-post parsing-css-msg)
       report-line-items-post
