@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.stylesheet
   (:require
-   [par.core :refer-macros [!? ?]]
    [clojure.string :as string]
    [clojure.java.io :as io]
    [clojure.edn :as edn]
@@ -9,7 +8,7 @@
    [garden.core :as garden]
    [kushi.config :refer [user-config user-css-file-path kushi-cache-dir kushi-cache-path version]]
    [kushi.state :as state]
-   [kushi.utils :as util]
+   [kushi.utils :as util :refer [? keyed]]
    [kushi.atomic :as atomic]
    [kushi.reporting :as reporting]))
 
@@ -210,7 +209,11 @@
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
   [build-state]
-  (let [pretty-print? (if (:shadow.build/mode build-state) true false)
+  (let [{:keys [write-stylesheet?
+                __enable-caching?__
+                post-build-report?]} user-config
+        write-styles? (not (false? write-stylesheet?))
+        pretty-print? (if (:shadow.build/mode build-state) true false)
         caching?      (true? (:__enable-caching?__ user-config))
         printables    (atom [])
         to-be-printed (atom {})
@@ -220,20 +223,33 @@
                        :printables    printables
                        :to-be-printed to-be-printed}]
 
+    (when-let [select-ns-msg (reporting/select-ns-msg)]
+      (swap! to-be-printed assoc :select-ns-msg select-ns-msg))
     (append-at-font-face! m)
     (append-defkeyframes! m)
-    (append-defclasses! m)
-    (append-rules! m)
+    (when write-styles? (append-defclasses! m))
+    (when write-styles? (append-rules! m))
 
-    (use 'clojure.java.io)
-    (spit user-css-file-path @css-text :append false)
+    (let [zero-total-rules?   (nil? (some #(not (zero? %)) (vals @to-be-printed)))
+          something-to-write? (not zero-total-rules?)]
 
-    (let [cache-will-update? (when caching?
-                               (let [cache-is-equal? (cache-is-equal?)]
-                                 (write-cache! cache-is-equal?)
-                                 (not cache-is-equal?)))]
-      #_(println "ud?" cache-will-update?)
-      (reporting/print-report! to-be-printed cache-will-update?)))
+      (when (and write-stylesheet? something-to-write?)
+        (use 'clojure.java.io)
+        (spit user-css-file-path @css-text :append false))
+
+      (let [cache-will-update? (when caching?
+                                 (let [cache-is-equal? (cache-is-equal?)]
+                                   (write-cache! cache-is-equal?)
+                                   (not cache-is-equal?)))]
+        #_(? "kushi.stylesheet/create-css-file: local bindings"
+           (assoc
+            (keyed write-styles?
+                   cache-will-update?
+                   post-build-report?)
+            :to-be-printed @to-be-printed))
+
+        (when (and post-build-report? something-to-write?)
+          (reporting/print-report! to-be-printed cache-will-update?)))))
 
   ;; Must return the build state
   build-state)
