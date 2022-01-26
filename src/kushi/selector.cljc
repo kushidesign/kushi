@@ -25,7 +25,7 @@
         ancestor                      (or ancestor global-ancestor)
         prefixed-names-for-selectors? (and prefix ident (not (:add-empty-classes? user-config)))
         prefixed-name-for-el          (when (and prefix ident) (str (name prefix) (name ident)))
-        defclass-prefix               (or (:defclass-prefix user-config) "_kushi-")
+        defclass-prefix               (or (:defclass-prefix user-config) "_kushi_")
         ;; TODO take out defclass-hash
         selector*                     (if defclass-name
                                         (str (or defclass-prefix

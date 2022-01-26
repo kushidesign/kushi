@@ -78,11 +78,13 @@
         hydrated-styles              (parse/with-hydrated-classes coll*)
         tokenized-styles             (mapv (partial parse/kushi-style->token selector*) hydrated-styles)
         grouped-by-mqs               (parse/grouped-by-mqs tokenized-styles)
-        garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)]
-    {:selector        selector
-     :selector*       selector*
-     :hydrated-styles hydrated-styles
-     :garden-vecs     garden-vecs}))
+        garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)
+        ret                          (keyed selector
+                                            selector*
+                                            hydrated-styles
+                                            garden-vecs)]
+    #_(? 'ret ret)
+    ret))
 
 (defn defclass* [sym coll* form-meta]
   (let [defclass-name            (keyword sym)
@@ -309,7 +311,7 @@
          invalid-map-args
          :invalid-map-args}        (style&classes+attr args)
         {ident        :ident
-         :as          meta}        (select-keys attr* meta-ks)
+         :as          kushi-attr}  (select-keys attr* meta-ks)
         data-attr-name             (or (:data-attr-name user-config) :data-cljs)
         attr                       (apply dissoc attr* meta-ks)
         styles+classes             (if (:map-mode? user-config) (style-map->vecs styles+classes*) styles+classes*)
@@ -325,7 +327,7 @@
        (keyed
         attr*
         attr
-        meta
+        kushi-attr
         styles+classes*
         styles+classes
         styles*
@@ -336,7 +338,7 @@
         invalid-args))
 
     {:attr           attr
-     :meta           meta
+     :kushi-attr     kushi-attr
      :styles+classes styles+classes
      :styles*        styles
      :classes*       classes*
@@ -385,11 +387,12 @@
                       classes*
                       invalid-args
                       attr
-                      meta
+                      kushi-attr
                       ident
                       data-attr-name]}     (parse-attr+meta args)
-              {:keys [selector selector*]} (selector/selector-name meta)
-              classlist-map                (classlist meta classes* selector*)
+              ; TODO sort out prefix
+              {:keys [selector selector*]} (selector/selector-name kushi-attr)
+              classlist-map                (classlist kushi-attr classes* selector*)
               styles                       (parse/+vars styles* selector*)
               css-vars                     (parse/css-vars styles* selector*)
               tokenized-styles             (mapv (partial parse/kushi-style->token selector*) styles)
@@ -398,27 +401,29 @@
               attr-base                    (or attr {})
               ret                          (merge
                                             classlist-map
-                                            {:garden-vecs    garden-vecs
-                                             :attr           attr
-                                             :attr-base      attr-base
-                                             :css-vars       css-vars
-                                             :ident          ident
-                                             :invalid-args   invalid-args
-                                             :data-attr-name data-attr-name
-                                             :selector       selector})]
-          #_(? 'ident ident)
-          #_(when true #_(= :sample2x ident) (? 'classlist-map classlist-map))
+                                            (keyed garden-vecs
+                                                   attr
+                                                   attr-base
+                                                   css-vars
+                                                   kushi-attr
+                                                   ident
+                                                   invalid-args
+                                                   data-attr-name
+                                                   selector))]
 
           #_(? "sx*"
-               (keyed selector*
-                      selector
-                      classlist-map
-                      styles*
-                      styles
-                      css-vars
+               (keyed
+                selector*
+                selector
+                kushi-attr
+                classlist-map
+                styles*
+                styles
+                css-vars
                       tokenized-styles
                       grouped-by-mqs
-                      garden-vecs))
+                      garden-vecs
+                ))
 
           (when caching?
             (swap! state/styles-cache-updated assoc cache-key ret))
@@ -460,8 +465,7 @@
           :as   m}               (sx* args)
          printing-opts           (assoc m :form-meta (meta &form) :fname "sx")
          dupe-ident-warning      (printing/dupe-ident-warning printing-opts)
-        ;;  _                       (? :dupe-ident-warning dupe-ident-warning)
-         _                       (printing/print-dupe2! dupe-ident-warning)
+         _                       (printing/print-dupe2! (merge dupe-ident-warning printing-opts))
          styles-argument-display (apply vector args)
          compilation-warnings    (printing/compilation-warnings-coll printing-opts) ;print
          compilation-warnings-js (printing/preformat-compilation-warnings-js compilation-warnings) ;print
@@ -558,7 +562,7 @@
               ;; move  cljs.core/to-array inside fn and rename js-array# ?
               logfn#    (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
           (do
-            (when ~dupe-ident-warning
+            #_(when ~dupe-ident-warning
               (logfn# cljs.core/to-array (:browser ~dupe-ident-warning)))
 
             (when ~compilation-warnings-js

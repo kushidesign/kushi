@@ -42,11 +42,11 @@
                 (cljs.pprint/pprint v)
                 (println "\n"))
       :clj (do (if title
-                 (do (println "\n")
+                 (do  (println "\n")
                       (println (ansi/italic (ansi/red (str "; " title))) (str "\n" (ansi/bold-cyan "=>"))))
                  (println "\n\n"))
                (clojure.pprint/pprint v)
-               (println "\n")))))
+               #_(println "\n")))))
 
 (defn auto-generated-hash []
   (let [rando-a-z (char (+ (rand-int 25) 97))
@@ -68,22 +68,20 @@
                            :else (str %))
                         v)))
 
-(defn cssfn [[_ nm & args]]
-  #_(pprint+ "cssfn" {:nm nm :args args})
-  (str (name nm)
-       "("
-       (string/join
-        ", "
-        (map #(cond
-                (cssfn? %) (cssfn %)
-                (vector? %) (vec-in-cssfn %)
-                (keyword? %) (name %)
-                (number? %) %
-                :else (if (nm = :url)
-                        (str "\"" % "\"")
-                        (str %)))
-             args))
-       ")"))
+(defn cssfn [[_ nm & args*]]
+  #_(pprint+ "cssfn" {:nm nm :args args*})
+  (let [args (map #(cond
+                     (cssfn? %) (cssfn %)
+                     (vector? %) (vec-in-cssfn %)
+                     (keyword? %) (name %)
+                     (number? %) %
+                     :else (if (= nm :url)
+                             (str "\"" % "\"")
+                             (str %)))
+                  args*)
+        css-arg (string/join ", " args)]
+    #_(pprint+ "cssfn" {:nm nm :args args* :css-arg css-arg})
+    (str (name nm) "(" css-arg ")")))
 
 (defn num->pxstr-maybe
   [prop-hydrated n]

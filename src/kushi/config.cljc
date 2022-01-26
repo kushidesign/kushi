@@ -43,6 +43,7 @@
    :post-build-report?   true
    :report-cache-update? true
    :reporting-style      :banner
+   :warning-style        :banner
    :data-attr-name       :data-cljs-source
    :ancestor             nil
    :prefix               nil
@@ -52,6 +53,7 @@
    :css-dir              nil
    :write-stylesheet?    true
    :runtime-injection?   false
+   :handle-duplicates    nil
    ;; take out?
    :log-clean!?          false})
 
@@ -84,7 +86,7 @@
 (def version* "1.0.0-alpha")
 
 ;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
-(def version (str version* ":LOCAL"))
+(def version (str version* #_":LOCAL"))
 
 (def kushi-cache-dir ".kushi/.cache")
 

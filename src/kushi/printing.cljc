@@ -500,16 +500,32 @@
       (into [width] lines))))))
 
 
-(defn print-dupe2!
-  [{:keys [terminal plain]}]
-  (when terminal
-   (let [throw?   (= :error (:handle-duplicates user-config))
-         panel-fn (if throw? ansiformat/error-panel ansiformat/warning-panel)
-         lines    (if throw? plain terminal)]
-     (println (apply panel-fn lines))
-     (when throw? (throw-assertion-error! lines)))))
+(defn warning-block
+  [{:keys [fname]} lines]
+  #?(:clj
+     (interpose "\n"
+                (concat
+                 [" "
+                  " "
+                  (str (ansi/red "[") (ansi/yellow "WARNING") (ansi/red "]") " kushi.core/" fname)]
+                 lines))))
 
-(defn print-dupe!
+(defn print-dupe2!
+  [{:keys [terminal plain simple] :as m}]
+  (when (or terminal plain simple)
+    (let [throw?      (= :error (:handle-duplicates user-config))
+          use-simple? (= :simple (:warning-style user-config))
+          panel-fn    (if throw? ansiformat/error-panel ansiformat/warning-panel)
+          lines       (cond use-simple? simple
+                            throw? plain
+                            :else terminal)]
+      (if use-simple?
+        (apply println (warning-block m lines))
+        (println (apply panel-fn lines)))
+      (when throw? (throw-assertion-error! lines)))))
+
+;; Remove?
+#_(defn print-dupe!
   [m
    {:keys [desc deets squiggly file-info hint] :as opts}]
    #_(? :print-dupe! m)
@@ -524,7 +540,7 @@
                    (:bold file-info)
                    :br
                    hint]]
-    (println (apply panel-fn lines))
+    #_(println (apply panel-fn lines))
     #_(when throw?
           (throw-dupe-error!
            (merge m
@@ -542,52 +558,54 @@
   (file-info-str opts))
 
 (defn duplicate-ident-body
-  [{:keys [ident js? plain?] :as m}]
-    (let [opts        (assoc m :style-key :bold :js? js? :plain? plain?)
-          desc        (dupe-desc "Duplicate prefix+ident" opts)
-          deets       (str "{... :ident " (format-wrap (assoc opts :s ident)) " ...}")
-          squiggly    (squiggly "{... :ident "  ident)
-          file-info   (dupe-file-info opts)
-          hint        "All prefix+ident combos must be globally unique"
-          sep         (if js? " " :br)
-          lines       [desc
+  [{:keys [ident js? plain? simple?] :as m}]
+  (let [opts        (assoc m :style-key :bold :js? js? :plain? plain?)
+        desc        (dupe-desc "Duplicate prefix+ident" opts)
+        deets       (str "{... :ident " (format-wrap (assoc opts :s ident)) " ...}")
+        squiggly    (squiggly "{... :ident "  ident)
+        file-info   (dupe-file-info opts)
+        hint        "All prefix+ident combos must be globally unique"
+        sep         (if js? " " :br)
+        lines       (if simple?
+                      [desc
+                       file-info
+                       hint
+                       deets
+                       squiggly]
+                      [desc
                        sep
                        deets
                        squiggly
                        (when-not js? sep)
                        file-info
                        sep
-                       hint]]
-      lines))
+                       hint])]
+    lines))
 
-(defn dupe-ident-warning [{:keys [selector] :as m}]
-  (when (contains? (:rules @state/garden-vecs-state) selector)
-    {:terminal (duplicate-ident-body m)
-     :browser  (let [lines  (duplicate-ident-body (assoc m :js? true))
-                     ;; leading and trailing spaces are for adding vertical "padding"
-                     joined (str #_"\n " (string/join "\n" (remove nil? lines)) #_"\n ")]
-                 (browser-formatted-js-vec joined))
-     :plain    (duplicate-ident-body (assoc m :plain? true))}))
+(defn dupe-ident-warning
+  [{:keys [selector kushi-attr ident form-meta] :as m}]
+  (let [prefix (or (:prefix kushi-attr) (:prefix user-config))
+        {:keys [file line column]}      form-meta
+        file-info (str file ":" line ":" column)
+        k [prefix ident]
+        existing-file-info (get @state/prefixed-selectors k)]
+    #_(? :combo {[prefix ident] file-info})
+    #_(? (keyed existing-file-info))
+    (if existing-file-info
+      (when-not (= file-info existing-file-info)
+        {:terminal (duplicate-ident-body m)
+         :browser  (let [lines  (duplicate-ident-body (assoc m :js? true))
+                        ;; leading and trailing spaces are for adding vertical "padding"
+                         joined (str #_"\n " (string/join "\n" (remove nil? lines)) #_"\n ")]
+                     (browser-formatted-js-vec joined))
+         :plain    (duplicate-ident-body (assoc m :plain? true))
+         :simple   (duplicate-ident-body (assoc m :simple? true))
+         })
+      (do
+        (swap! state/prefixed-selectors assoc k file-info)
+        nil))))
 
-(defn duplicate-ident-body
-  [{:keys [ident js? plain?] :as m}]
-    (let [opts        (assoc m :style-key :bold :js? js? :plain? plain?)
-          desc        (dupe-desc "Duplicate prefix+ident" opts)
-          deets       (str "{... :ident " (format-wrap (assoc opts :s ident)) " ...}")
-          squiggly    (squiggly "{... :ident "  ident)
-          file-info   (dupe-file-info opts)
-          hint        "All prefix+ident combos must be globally unique"
-          sep         (if js? " " :br)
-          lines       [desc
-                       sep
-                       deets
-                       squiggly
-                       (when-not js? sep)
-                       file-info
-                       sep
-                       hint]
-          ]
-      lines))
+
 
 (defn dupe-warning-body-lines
   [{:keys [fname js? plain?] :as m}]
@@ -625,6 +643,7 @@
 (defn dupe-defclass-warning [m]
   (dupe-*-warning m @state/kushi-atomic-user-classes))
 
+;; Remove?
 #_(defn dupe-defclass-warning [m]
   (when (get @state/kushi-atomic-user-classes (-> m :nm keyword))
     {:terminal (dupe-warning-body-lines m)
@@ -635,6 +654,7 @@
      :plain    (dupe-warning-body-lines (assoc m :plain? true))
      }))
 
+;; Remove?
 #_(defn duplicate-defclass! [m]
   (when (get @state/kushi-atomic-user-classes (-> m :nm keyword))
     (let [opts      (assoc m :style-key :bold)
