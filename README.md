@@ -33,7 +33,7 @@
 
 **Robust and flexible selector prefixing options**
 
-**Optionally use metadata to enhance debugging**
+**Enhanced debugging powered by metadata**
 
 **Detailed warnings for the terminal and browser**
 
@@ -234,7 +234,7 @@ For complete info on available enumurated values view the source [here](https://
 *(Note that the info in this section does not apply if [using `map-mode`](#using-map-mode))*
 
 Any css prop-value declaration can also be written as a tuple (2-element vector).<br>
-All the optional shorthand syntax listed above is valid (in the first position as css property name).<br>
+All the optional shorthand syntax listed above is valid (! but only in the first position as css property name).<br>
 By convention, such a tuple should only be used in the following cases:
 
 Most commonly, when using dynamic values:
@@ -318,7 +318,7 @@ text-shadow: 5px 5px 10px red, -5px -5px 10px blue;
 
 # Shared Styles
 The `kushi.core/defclass` macro makes it easy to create shared styles.<br>
-You will typically want to define all of these in a dedicated namespace.
+These must be defined in a dedicated namespace, or set of dedicated namespaces, and required once in your core or main ns.
 
 The example below will generate a data-representation of the css rule-set.
 <br>This data is added to a register (an atom that exists in the build state).
@@ -339,7 +339,7 @@ The example below will generate a data-representation of the css rule-set.
   :mix-blend-mode--darken)
 
 ```
-If your shared styles are organized into a single ns, you only need to require it once in your main or core ns, and all the styles from that ns will be available globally.
+By authoring your shared styles in a dedicated ns (or namespaces), you only need to require once in your main or core ns, and all the styles from that ns will be available globally.
 ```Clojure
 (ns myapp.core
   (:require
@@ -367,7 +367,7 @@ If your shared styles are organized into a single ns, you only need to require i
 As arguments to `sx`, classes are distinguished from other prop-styles by using a keyword beginning with a `.`, e.g. `:.headline`, as in the example above.
 
 You may have noticed that the `defclass` example above mixes-in `:.absolute`.<br>
-With `declass`, you can mix-in any other defined classes.<br>
+With `defclass`, you can mix-in any other defined classes.<br>
 The `:.absolute` class is one of several predefined classes that ships with kushi.
 
 The full list of predefined classes:
@@ -428,25 +428,64 @@ The full list of predefined classes:
 
 Detailed documentation on the above classes can be found [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-predefined-classes.css).
 
-If you pass a class to `sx` that is neither a predefined kushi class nor one of your own classes defined with `defclass`, then it will simply be attached to the element's classlist as an unscoped class, exactly as you wrote it. You might want to do this to apply classes from some other stylesheet.
+If you pass a class to `sx` that is neither a predefined kushi class nor one of your own classes defined with `defclass`, it will be attached to the element's classlist as a scoped class. You probably don't want to do this.
+```Clojure
+;; In this example, :.foo is not a user-defined defclass
+[:a
+ (sx :.foo
+     :c--red
+     :p--10px)]
+```
+Instead, it is recommended to attach non-kushi classes to the tag (if using hiccup)
+```Clojure
+[:a.foo
+ (sx :c--red
+     :p--10px)]
+```
+You can also just put them in the `:class` entry in attributes map
+```Clojure
+[:a
+ (sx :c--red
+     :p--10px
+     {:class :foo})]
 
+;; If you have more than one non-kushi class
+[:a
+ (sx :c--red
+     :p--10px
+     {:class [:foo :bar :baz]})]
+```
 <br>
 
 ### Applying Classes Conditionally
-```Clojure
-;; Styling an <a> element
-[:a
- (sx :bb--1px:solid:black
-     (when my-condition :.active-link))]
-```
+
 Works with `if` `when` `cond` `if-let` `when-let` `if-not` `when-not`, and `case`.<br>
-The class to be returned cannot be nested. For example, the following will not work:
+```Clojure
+(defn link [opts]
+ [:a
+  (sx (when (:active? opts) :.active-link)
+      :bb--1px:solid:black))
+  "Go"])
+
+;; Somewhere else in your code, inside a component fn
+
+[link {:active? true}]
+; => [:a {:class ["_kushi_active-link" "_j7338" ]}]
+
+;; "_kushi_active-link" is the selector for your custom defclass.
+;; "_j7338" is an example selector for the border-bottom rule.
+```
+The class to be returned cannot be nested.<br>
+For example, the following will not work:
 ```Clojure
 ;; This will NOT work.
-[:a
- (sx :bb--1px:solid:black
-     (when my-condition
-       (when some-other-condition :.active-link)))]
+(defn link [opts]
+ [:a
+  (sx (when (:active? opts)
+        (if foo :.active-link :.some-other-class))
+      :bb--1px:solid:black))
+  "Go"])
+
 ```
 <br>
 
@@ -491,7 +530,7 @@ Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers
 (sx :hover:c--blue
     :>a:hover:c--red
     :~a:hover:c--blue
-    :_a:hover:c--gold
+    :_a:hover:c--gold ; The "_" gets converted to " "
     :before:position--absolute
     :before:top--0
     :before:right--0
@@ -713,9 +752,11 @@ The only required entry in this map is `:css-dir`
 Below is a full map of all the options available:
 ```Clojure
 {
+ ;; REQUIRED.
  :css-dir "public/css"
 
- ;; Optional. Name of generated css file. Defaults to "kushi.css".
+ ;; Optional. Name of generated css file.
+ ;; Defaults to "kushi.css".
  :css-filename "my-kushi-styles.css"
 
  ;; Optional. Narrow kushi compilation down to select namespaces.
@@ -733,11 +774,13 @@ Below is a full map of all the options available:
 
  ;; Optional. If defined, this will be used as the prefix for
  ;; the classnames of shared styles (defined with defclass).
+ ;; Defaults to "_kushi_"
  :defclass-prefix "_my-shared-class-prefix__"
 
- ;; If this is defined it will override the default `:data-cljs` value,
- ;; which is used as an attribute name for attaching source file info
- ;; to the rendered element in the DOM (dev only).
+ ;; Optional. If defined, this will be used as an attribute
+ ;; name for attaching source file info to the rendered
+ ;; element in the DOM (dev only).
+ ;; Defaults to "data-cljs"
  :data-attr-name "data-foo"
 
  ;; Optionally defined your own breakpoint scale to override
@@ -748,15 +791,17 @@ Below is a full map of all the options available:
          :md {:max-width :768px}
          :sm {:max-width :640px}]
 
- ;; Optional setting for using a map as the first argument to the `kushi.core/sx` macro.
+ ;; Optional setting for using a map as the first argument
+ ;; to the `kushi.core/sx` macro.
  :map-mode? false
 
- ;; Optional setting for printing "kushi.core/clean!" to the browser console (after clean! op).
- :log-clean!? false
-
- ;; Optional setting for printing-style of kushi compilation info to the console running your build.
+ ;; Optional setting for printing-style of kushi compilation
+ ;; info to the console running your build.
  ;; Defaults to :simple.
  :reporting-style :banner
+
+ ;; Optional setting to silence the post-build report.
+ :post-build-report?  false
 }
 ```
 <br>
@@ -847,20 +892,50 @@ as the element that `sx` is being called within.
 ;; The above would instead result the following css:
 ;; #myapp div._mypfx__my-el {color: red;}
 ```
+
+Another example:
+```Clojure
+(defn my-button [text]
+  [:button
+   (sx :c--white
+       :bgi--none
+       :bgc--blue
+       :border-radius--5px
+       :cursor--pointer
+       {:on-click #(prn "clicked!")
+        :class [:my-other-class :some-other-class]
+        :name :my-button
+
+        ;; Prefix for selector construction.
+        ;; Overrides a global :prefix, if set.
+        :prefix "_foo_"
+
+        ;; If :ident is supplied, and you also set a global :prefix,
+        ;; (or set :prefix in this map) your selector will be
+        ;; constructed using both.
+        ;; => ._foo_bar
+        :ident :bar
+
+        ;; If :element is supplied, it will be put in front
+        ;; of your selector for more specicifity.
+        ;; => `button._foo_bar`
+        :element :button
+
+        ;; Ancestor selector for selector construction.
+        ;; Overrides a global :ancestor, if set.
+        ;; => #baz button._foo_bar
+        :ancestor :#baz
+        })
+     text])
+```
+
 <br>
 
 # Style Injection During Development
-For instantaneous previews when developing, all styling from `sx` calls are injected dynamically into the following tag that is required to be in your `index.html` :
+For instantaneous previews when developing, all styling from `sx` and `defclass` calls are injected dynamically into the following 2 tags that are required to be in your `index.html` :
 ```html
-<style type="text/css" id="_kushi-dev_"></style>
-```
-You will want to call `kushi.core/clean!` once in your project's main or core namespace.
-```Clojure
-(ns myapp.core
-  (:require
-   [kushi.core :refer (clean!)]))
-
-(clean!)
+<style type="text/css" id="_kushi-rules_shared_"></style>
+<style type="text/css" id="_kushi-rules_"></style>
 ```
 
 See the [kushi-quickstart](https://github.com/paintparty/kushi-quickstart) template for an example of this setup.
@@ -902,8 +977,6 @@ The browser console warning will provide you with file and line info.
 ### shadow-cljs
 See the [kushi-quickstart](https://github.com/paintparty/kushi-quickstart) template for a detailed example of using Kushi in a shadow-cljs project.
 
-### Figwheel
-Figwheel quickstart template coming soon.
 
 <br>
 
