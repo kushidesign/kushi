@@ -11,7 +11,7 @@
    [kushi.defs :as defs]
    [kushi.printing :as printing]
    [kushi.config :refer [user-config]]
-   [kushi.utils :as util :refer [pprint+]]))
+   [kushi.utils :as util :refer [pprint+ ?]]))
 
 (defn derefed? [x]
   (s/valid? ::specs/derefed x))
@@ -201,12 +201,14 @@
   [prop prop-hydrated numeric-string]
   (when-not (or (= "0" numeric-string)
                 (contains? defs/int-vals (keyword prop-hydrated)))
-    (let [m {:warning-type :unitless-number
-             :prop prop
-             :prop-hydrated prop-hydrated
+    (let [m {:warning-type   :unitless-number
+             :prop           prop
+             :prop-hydrated  prop-hydrated
              :numeric-string numeric-string
-             :current-macro @state/current-macro}]
-      (printing/console-warning-number (vector m))
+             :current-macro  @state/current-macro
+             :form-meta      (:form-meta @state/current-sx)}]
+      #_(printing/console-warning-number (vector m))
+      #_(util/pprint+ "warn" {:m m})
       (swap! state/compilation-warnings conj m))
     ))
 
@@ -299,7 +301,8 @@
                                  (name val*))
                  val*)
           val+ (util/process-value val hydrated-css-prop-kw selector*)]
-        #_(util/pprint+ "hydrate-css" {:val* val* :val val :val+ val+})
+      #_(? "hydrate-css" {:val* val* :val val :val+ val+})
+
       (assoc m :css-prop (name hydrated-css-prop-kw) :val val+))
     m))
 

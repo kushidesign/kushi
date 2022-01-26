@@ -1,7 +1,7 @@
 (ns kushi.atomic
   (:require
    [kushi.selector :as selector]
-   [kushi.utils :refer [auto-generated-hash]]))
+   [kushi.utils :refer [auto-generated-hash ?]]))
 
 (defonce defclass-hash (auto-generated-hash))
 
@@ -104,11 +104,11 @@
 (def kushi-atomic-combo-classes
   (reduce
    (fn [acc [k v]]
-     (let [garden-vecs (let [style-map (get declarative-classes k)
-                             selector-name (selector/selector-name
-                                            {:defclass-name k
-                                             :defclass-hash defclass-hash})]
-                         [[(:selector selector-name) style-map]])]
-       (assoc acc k {:n k :args v :garden-vecs garden-vecs})))
+     #_(? :combo-classes k)
+     (let [{:keys [selector
+                   selector*]} (selector/selector-name {:defclass-name k :defclass-hash defclass-hash})
+           style-map           (get declarative-classes k)
+           garden-vecs         [[selector style-map]]]
+       (assoc acc k {:n k :args v :garden-vecs garden-vecs :selector selector :selector* selector*})))
    {}
    declarative-classes-kushi-syntax))

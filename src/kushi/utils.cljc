@@ -3,24 +3,50 @@
    [clojure.string :as string]
    [clojure.walk :as walk]
    [clojure.pprint]
+   [io.aviso.ansi :as ansi]
    [kushi.defs :as defs]
    [kushi.scales :refer [scales scaling-map]]
    [kushi.config :refer [user-config]]))
+
+(defmacro keyed [& ks]
+  #?(:clj
+     `(let [keys# (quote ~ks)
+            keys# (map keyword keys#)
+            vals# (list ~@ks)]
+        (zipmap keys# vals#))))
 
 (defn pprint+
   ([v]
    (pprint+ nil v))
   ([title v]
    #?(:cljs (do (if title
-                  (println "\n" title " =>")
+                  (println "\n" title "\n=>")
                   (println "\n\n"))
                 (cljs.pprint/pprint v)
                 (println "\n"))
       :clj (do (if title
-                 (println "\n" title " =>")
+                 (do (println "\n")
+                      (println (ansi/italic (ansi/red (str "; " title))) (str "\n" (ansi/bold-cyan "=>"))))
                  (println "\n\n"))
                (clojure.pprint/pprint v)
                (println "\n")))))
+
+(defn ?
+  ([v]
+   (pprint+ nil v))
+  ([title v]
+   #?(:cljs (do (if title
+                  (do (println "\n")
+                      (println title "\n=>"))
+                  (println "\n\n"))
+                (cljs.pprint/pprint v)
+                (println "\n"))
+      :clj (do (if title
+                 (do  (println "\n")
+                      (println (ansi/italic (ansi/red (str "; " title))) (str "\n" (ansi/bold-cyan "=>"))))
+                 (println "\n\n"))
+               (clojure.pprint/pprint v)
+               #_(println "\n")))))
 
 (defn auto-generated-hash []
   (let [rando-a-z (char (+ (rand-int 25) 97))
@@ -42,22 +68,20 @@
                            :else (str %))
                         v)))
 
-(defn cssfn [[_ nm & args]]
-  #_(pprint+ "cssfn" {:nm nm :args args})
-  (str (name nm)
-       "("
-       (string/join
-        ", "
-        (map #(cond
-                (cssfn? %) (cssfn %)
-                (vector? %) (vec-in-cssfn %)
-                (keyword? %) (name %)
-                (number? %) %
-                :else (if (nm = :url)
-                        (str "\"" % "\"")
-                        (str %)))
-             args))
-       ")"))
+(defn cssfn [[_ nm & args*]]
+  #_(pprint+ "cssfn" {:nm nm :args args*})
+  (let [args (map #(cond
+                     (cssfn? %) (cssfn %)
+                     (vector? %) (vec-in-cssfn %)
+                     (keyword? %) (name %)
+                     (number? %) %
+                     :else (if (= nm :url)
+                             (str "\"" % "\"")
+                             (str %)))
+                  args*)
+        css-arg (string/join ", " args)]
+    #_(pprint+ "cssfn" {:nm nm :args args* :css-arg css-arg})
+    (str (name nm) "(" css-arg ")")))
 
 (defn num->pxstr-maybe
   [prop-hydrated n]

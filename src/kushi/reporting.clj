@@ -4,111 +4,25 @@
    [clojure.string :as string]
    [io.aviso.ansi :as ansi]
    [clj-ph-css.core :as ph-css]
-   [kushi.config :refer [user-config user-css-file-path version]]
-   [kushi.printing :as printing :refer [ansi-rainbow]]
-   [kushi.utils :as util]
-   [kushi.specs :as specs]))
+   [kushi.config :refer [user-config user-css-file-path version kushi-cache-path]]
+   [kushi.printing :as printing]
+   [kushi.ansiformat :as ansiformat]
+   [kushi.utils :as util :refer [? keyed]]
+   [kushi.specs :as specs]
+   ))
 
-(defn simple-report
-  [selected-ns-msg
-   printables-pre
-   printables-post]
-  (let [bl "   " #_((first printing/rainbow2) "⡇  "
-                                     #_"⋆   "
-                                     #_"┆  "
-                                     #_"│  ")
-        header (str "kushi v" version)]
-    (str "\n\n"
-        ;;  (string/join (map (fn [ans char] (ans char)) (take (count header) (cycle printing/rainbow2)) header))
-        ;;  (str (ansi/red "[") (ansi/magenta (str "kushi v" version))  (ansi/red "]"))
-         (str "[kushi v" version "]")
-         "\n"
-         (str bl selected-ns-msg)
-         "\n"
-         (str bl "Writing to " user-css-file-path " ...")
-         "\n"
-         (str bl "(" (string/join ", " printables-pre) ")")
-        ;;  "\n└"
-         "\n\n")))
-
-(def banner-border-color ansi/bold-black)
-
-(defn hz-brdr
-  [{:keys [width top? header color] :or {color ansi/black}}]
-  (if top?
-    (str (color (str "\n\n┌── ")) header " " (color (string/join (repeat (- width (+ 5 (count header))) "─"))))
-    (color (str "\n└" (string/join (repeat width "─")) "\n\n"))))
-
-(def v-border-char "│")
-
-(def v-border-indent (str "\n" v-border-char "   "))
-
-(defn v-border [color] (color v-border-indent))
-
-(defn banner-report
-  [selected-ns-msg
-   printables-pre
-   printables-post]
-  (let [color         banner-border-color
-        sep           (v-border color)
-        hz-brdr-width 26
-        header        (str "kushi v" version)
-        brdr-opts     {:width hz-brdr-width
-                       :header header
-                       :theme printing/bold-rainbow2
-                      ;;  :theme printing/green-red
-                       :s "──"}
-        report-lines (remove
-                      nil?
-                      (concat
-                       [(printing/rainbow-border-title brdr-opts)
-                        " "
-                        selected-ns-msg
-                        (when selected-ns-msg " ")
-                        (str "Writing to " user-css-file-path " ...")
-                        " "]
-                       printables-pre
-                       [(when printables-post
-                          (str "Parsing css from " user-css-file-path " ..."))
-                        (when printables-post
-                          (str (string/join sep printables-post)))]))
-        color-cycle  (take (count report-lines)
-                           (cycle (printing/shift-cycle
-                                   printing/bold-rainbow2
-                                   1)))
-        lines        (interleave
-                      report-lines
-                      (map #(% v-border-indent) color-cycle))
-        bb-opts      (assoc brdr-opts :color-cycle color-cycle)]
-    (string/join (concat lines [(printing/rainbow-border-bottom bb-opts)]))))
-
-;; Rainbow borders
-#_(defn banner-report
-  [selected-ns-msg
-   printables-pre
-   printables-post]
-  (apply ansi-rainbow
-         (concat
-          [(when selected-ns-msg :br)
-           selected-ns-msg
-           :br
-           (str "Writing to " user-css-file-path " ...")
-           :br]
-          printables-pre
-          (when printables-post
-            [:br
-             (str "Parsing css from " user-css-file-path " ...")
-             :br])
-          printables-post)))
+;; Build report messages ---------------------------------------------------------------
+(def writing-to-css-msg (str "Writing to " user-css-file-path " ..."))
+(def parsing-css-msg (str "Parsing " user-css-file-path " ..."))
 
 
 
+;; Build report helpers ---------------------------------------------------------------
 (defn check-or-x [check?]
  (if check? (ansi/bold-green "✓ ") (ansi/bold-red "✘ ")))
 
 (defn line-item-check
   [expected results k label]
-  #_(util/pprint+ {:expected expected :results results})
   (let [expected (get expected k nil)
         actual   (get results k nil)]
     (when (pos? expected)
@@ -202,18 +116,12 @@
                                       (or (:defclass-style-rules-under-mqs @m) 0))
         total-style-rules          (+ style-rules style-rules-under-mqs)]
     (swap! m
-           assoc
-           :normal-style-rules-total
-           normal-style-rules-total
-           :defclass-style-rules-total
-           defclass-style-rules-total
-           :style-rules
-           style-rules
-           :style-rules-under-mqs
-           style-rules-under-mqs
-           :total-style-rules
-           total-style-rules)))
-
+           merge
+           (keyed normal-style-rules-total
+                  defclass-style-rules-total
+                  style-rules
+                  style-rules-under-mqs
+                  total-style-rules))))
 
 (defn parse-generated-css []
   (let [file-contents   (slurp user-css-file-path)
@@ -236,22 +144,64 @@
      :style-rules-under-mqs (count mqs-styles)
      :total-style-rules (+ (count style-rules) (count mqs-styles))}))
 
+(defn format-line-items [banner? coll]
+  (when (and coll (seq coll))
+    (if banner? coll (str "(" (string/join ", " coll) ")"))))
 
-(defn print-report! [to-be-printed]
+
+;; Formatting for kushi build report :simple option --------------------------------------------------
+(defn simple-report
+  [{:keys [header]} & lines*]
+  (let [bl           "   "
+        lines        (reduce (fn [acc v] (concat acc (if (coll? v) v [v]))) [] (remove nil? lines*))
+        lines-indent (map #(str bl %) lines)]
+    (string/join "\n" (concat ["\n" header] lines-indent ["\n"]))))
+
+(defn select-ns-msg []
+  (let [selected (:select-ns user-config)]
+    (when (s/valid? ::specs/select-ns-vector selected)
+      (str "Targeting namespaces: " selected))))
+
+;; Kushi build report --------------------------------------------------------------------------------
+(defn print-report! [to-be-printed cache-will-update?]
   (calculate-total-style-rules! to-be-printed)
-  (let [banner?                (= :banner (-> user-config :reporting-style))
-        selected               (:select-ns user-config)
-        selected-ns-msg        (when (s/valid? ::specs/select-ns-vector selected) (str "Target namespaces: " selected))
-        report-format-fn       (if banner? banner-report simple-report)
-        report-line-items-pre  (report-line-items @to-be-printed)
-        report-line-items-post (when (:report-output? user-config)
-                                 (line-items-confirmation @to-be-printed (parse-generated-css)))]
+  (let [banner?                 (= :banner (-> user-config :reporting-style))
+        report-format-fn        (if banner? ansiformat/panel simple-report)
+        report-line-items-pre*  (report-line-items @to-be-printed)
+        report-line-items-pre   (format-line-items banner? report-line-items-pre*)
+        report-line-items-post* (when (:report-output? user-config)
+                                  (line-items-confirmation @to-be-printed (parse-generated-css)))
+        report-line-items-post  (format-line-items banner? report-line-items-post*)
+        cache-report            (when (and (:report-cache-update? user-config) cache-will-update?)
+                                  (str "Updated " kushi-cache-path))
+        header-text             (str "kushi v" version)
+        header-simple           (str (ansi/red "[") (ansi/blue header-text)  (ansi/red "]"))
+        header                  (if banner? header-text header-simple)]
+
     (println
      (report-format-fn
-      selected-ns-msg
+      {:header       header
+       ;;  :header-weight :bold
+       :theme        printing/bold-rainbow2
+       ;; :border-color :red
+       ;; :border-seq       bs
+       ;; :border-bl-string bs
+       ;; :border-tl-string bs
+       ;; :border-v-char    bs
+       ;; :header-color :bold-blue
+       :border-width 50
+       ;;  :border-weight :bold
+       :indent       3}
+      (:selected-ns-msg @to-be-printed)
+      (when report-line-items-pre (remove nil? [(when banner? "\n") writing-to-css-msg (when banner? "\n")]))
       report-line-items-pre
-      report-line-items-post))))
+      (when report-line-items-post parsing-css-msg)
+      report-line-items-post
+      cache-report))))
+
+(defn report! [ns msg]
+ (println (str "\n" (ansi/red "[") (ansi/blue ns) (ansi/red "]") msg "\n")))
 
 
 
-
+;; Reporting for duplicate idents, defclasses, and keyframes  ------------------------------------------------

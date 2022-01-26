@@ -26,11 +26,11 @@
        (string/join
         ", "
         (map #(cond
-               (cssfn? %) (cssfn %)
-               (vector? %) (vec-in-cssfn %)
-               (keyword? %) (name %)
+                (cssfn? %) (cssfn %)
+                (vector? %) (vec-in-cssfn %)
+                (keyword? %) (name %)
               ;;  (string? %) (str "\"" % "\"")
-               :else (str %))
+                :else (str %))
              args))
        ")"))
 
@@ -68,24 +68,31 @@
         (try
           (.appendChild js/document.head link)
           (catch :default e (when ^boolean js/goog.DEBUG
-                             (js/console.warn
-                              "kushi.core/s+:\n\nFailed attempt to inject stylesheet (or link):\n\n"
-                              m
-                              "\n\n¯\\_(ツ)_/¯"))))))))
+                              (js/console.warn
+                               "kushi.core/s+:\n\nFailed attempt to inject stylesheet (or link):\n\n"
+                               m
+                               "\n\n¯\\_(ツ)_/¯"))))))))
 (defn- garden-mq-rule? [v]
   (and (map? v) (= :media (:identifier v))))
 
-(defn inject-style-rules
-  "Called at dev time for zippy previews."
-  [css-rules selector]
-  (let [css-rules-as-indexed-seq (map-indexed vector css-rules)
-        sheet (.-sheet (js/document.getElementById "_kushi-dev_"))
+(defn inject-css*
+  "Called internally by kushi.core/sx at dev/run time for zippy previews."
+  [css-rules selector sheet-id]
+  (let [rules-as-seq (map-indexed vector css-rules)
+        sheet        (.-sheet (js/document.getElementById sheet-id))
         selector-set (into #{} (->> sheet .-rules (map #(aget % "selectorText"))))]
+    #_(js/console.log "cssRuleList" (.-cssRules sheet))
+    #_(js/console.log {:css-rules    css-rules
+                     :selector     selector
+                     :rules-as-seq rules-as-seq
+                     :sheet        sheet
+                     :selector-set selector-set})
 
     ;Inject rules only if selector is not already in the sheet
     (when-not (contains? selector-set selector)
-      (doseq [[_ rule-css] css-rules-as-indexed-seq
-              :let [updated-num-rules-idx (-> sheet .-rules .-length)]]
+      #_(js/console.log "INJECTING:" css-rules)
+      (doseq [[_ rule-css] rules-as-seq
+              :let         [updated-num-rules-idx (-> sheet .-rules .-length)]]
         (try
           (.insertRule sheet rule-css updated-num-rules-idx)
           (catch :default e (js/console.warn
@@ -94,104 +101,22 @@
                              "\n\n¯\\_(ツ)_/¯"
                              e)))))))
 
-(defn js-fmt-args
-  [{:keys [invalid-args :styles-argument-display]}]
-  (mapv #(let [bad? (contains? (into #{} invalid-args) %)
-               q (when (string? %) "\"")]
-           (str (if bad? (str "\n" "%c %c ")
-                    "\n  ")
-                (when bad? "%c")
-                q (if bad? % "...") q
-                (when bad? "%c")))
-        styles-argument-display))
+(defn inject-style-rules
+  [css-rules selector]
+   (inject-css* css-rules selector "_kushi-rules_"))
 
-(def dict
-  {:defclass {:expected (str "kushi.core/defclass expects a name (symbol),\n"
-                             "followed by any number of the following:"
-                             "\n\n  - Keyword representing style declaration, e.g.,"
-                             "\n    :color--red"
-                             "\n\n  - 2-element vector representing a style declaration, e.g.,"
-                             "\n    [\"nth-child(2):color\" :blue]"
-                             "\n\n  - Keyword representing an existing kushi class to be \"mixed-in\", e.g.,"
-                             "\n    :bold-red-text")
-
-              :learn-more "Look at kushi.core/defclass docs for more details."
-              :find-source "Look at browser console for source map info."}
-
-   :sx {:expected (str "kushi.core/sx expects:"
-                       "\n\n"
-                       "- Any number of the following:"
-                       "\n\n  - Keyword representing style declaration, e.g.,"
-                       "\n    :color--red"
-                       "\n\n  - 2-element vector representing a style declaration, e.g.,"
-                       "\n    [:color my-color]"
-                       "\n\n  - Keyword representing a class, e.g."
-                       "\n    :my-class"
-                       "\n\n  - Valid conditional class expression"
-                       "\n    (when my-condition :my-class)"
-                       "\n\n"
-                       "- An optional map of html attributes."
-                       "\n  If present, this must be the last argument.")
-        :learn-more "See kushi.core/sx docs for more details"}})
-
-(defn- warning-call-with-args
-  [{:keys [fname classname] :as m}]
-  (str "(" fname " "
-       (when classname (name classname))
-       (do
-         (string/join (js-fmt-args m)))
-       ")"))
-
-(defn warning-header
-  [{:keys [invalid-args fname]}]
-  (str "Warning: %cInvalid argument" (when (< 1 (count invalid-args)) "s") "%c"  " to kushi.core/" fname "."))
-
-(defn js-warning*
-  [m]
-  (let [warning (string/join
-                 "\n\n"
-                 [(warning-header m)
-                  (warning-call-with-args m)
-                  (str (-> m :fname keyword dict :learn-more) "\n")])
-        number-of-formats (count (re-seq #"%c" warning))]
-    (to-array
-     (concat
-      [warning]
-      ["color:black;font-weight:bold" "font-weight:normal" "font-weight:bold;color:#ffaa00" "font-weight:normal"]
-      (interleave (repeat (/ (- number-of-formats 4) 2) "color:black;font-weight:bold")
-                  (repeat (/ (- number-of-formats 4) 2) "color:default;font-weight:normal"))))))
-
-(defn js-warning-defclass [m*]
-  (let [m (assoc m* :fname "defclass")]
-    (js-warning* m)))
-
-(defn console-warning-number
-  [compilation-warnings]
-  (let [warning (string/join
-                 "\n\n"
-                 (map #(cond
-                         (= (:warning-type %) :unitless-number)
-                         (string/join
-                          "\n\n"
-                          [(str "Warning: %cInvalid value%c"
-                                " of %c"
-                                (:numeric-string %)
-                                "%c for "
-                                (:prop-hydrated %)
-                                " in kushi.core/"
-                                (name (:current-macro %)))
-                           (str " Did you mean %c" (:numeric-string %) "px%c?\n")]))
-                      compilation-warnings))
-        number-of-formats (count (re-seq #"%c" warning))]
-    (to-array
-     (concat
-      [warning]
-      (interleave (repeat (/ number-of-formats 2) "color:black;font-weight:bold")
-                  (repeat (/ number-of-formats 2) "color:default;font-weight:normal"))))))
+(defn inject-kushi-atomics [kushi-atomics]
+  (when (seq kushi-atomics)
+    (doseq [[selector css-rules] kushi-atomics]
+      (inject-css* css-rules selector "_kushi-rules-shared_"))))
 
 (defn- merge-with-style-warning
   [v k n]
-  (js/console.warn (str "kushi.core/merge-with-style:\n\n The " k " value supplied in the " n " argument must be a map.\n\n You supplied:\n") v))
+  (js/console.warn
+   (str
+    "kushi.core/merge-with-style:\n\n "
+    "The " k " value supplied in the " n " argument must be a map.\n\n "
+    "You supplied:\n") v))
 
 (defn- bad-style? [style n]
   (let [bad? (and style (not (map? style)))]

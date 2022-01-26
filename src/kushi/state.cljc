@@ -14,6 +14,9 @@
 (def kushi-atomic-user-classes
   (atom atomic/kushi-atomic-combo-classes))
 
+;; Used to keep track of unique prefix + ident combos.
+(def prefixed-selectors (atom {}))
+
 ;; Used to keep track of atomic declarative classes which are used.
 (def atomic-declarative-classes-used (atom #{}))
 
@@ -42,12 +45,14 @@
 (defn reset-build-states! []
   (reset! user-defined-keyframes {})
   (reset! user-defined-font-faces [])
+  (reset! prefixed-selectors {})
   (reset! garden-vecs-state garden-vecs-state-init)
   (reset! kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
   (reset! atomic-declarative-classes-used #{}))
 
 (defonce styles-cache-current
-  (let [styles-cache-disc (load-edn kushi-cache-path)]
+  (let [styles-cache-disc (when (:__enable-caching?__ user-config)
+                            (load-edn kushi-cache-path))]
     (atom (or styles-cache-disc {}))))
 
 (defonce styles-cache-updated
