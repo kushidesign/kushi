@@ -194,8 +194,8 @@
     (do
       (let [created-cache-dir? (io/make-parents kushi-cache-path)
             {fname :name
-             ns*   :ns}        (meta #'write-cache!)
-            nsfn               (str (ns-name ns*) "/" fname)]
+             ns*   :ns}  (meta #'write-cache!)
+            nsfn         (str (ns-name ns*) "/" fname)]
         (when created-cache-dir?
           (reporting/report! nsfn (str " Created cache dir -> " kushi-cache-dir))))
       (spit kushi-cache-path @state/styles-cache-updated :append false)))
