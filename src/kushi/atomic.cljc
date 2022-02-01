@@ -34,6 +34,7 @@
     :debug-grid-16-solid {:background "background:white url(data:image/gif;base64,R0lGODdhEAAQAPEAAADw/wDx/xXy/////ywAAAAAEAAQAAACIZyPKckYDQFsb6ZqD85jZ2+BkwiRFKehhqQCQgDHcgwEBQA7) repeat top left"}
 
     ;Typography
+    :sans {:font-family :sans}
     :italic {:font-style :italic}
     :oblique {:font-style :oblique}
     :thin {:font-weight 100}
