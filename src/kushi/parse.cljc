@@ -56,31 +56,40 @@
       :else          nil)))
 
 (defn sanitize-for-css-var-name [v]
-  (-> v
-      (string/replace #"\?" "_QMARK")
-      (string/replace #"\!" "_BANG")
-      (string/replace #"\#" "_HASH")
-      (string/replace #"\+" "_PLUS")
-      (string/replace #"\$" "_DOLLAR")
-      (string/replace #"\%" "_PCT")
-      (string/replace #"\=" "_EQUALS")
-      (string/replace #"\<" "_LT")
-      (string/replace #"\>" "_GT")
-      (string/replace #"\&" "_AMP")
-      (string/replace #"\*" "_STAR")))
+  (string/escape
+   v
+   {\? "_QMARK"
+    \! "_BANG"
+    \# "_HASH"
+    \+ "_PLUS"
+    \$ "_DOLLAR"
+    \% "_PCT"
+    \= "_EQUALS"
+    \< "_LT"
+    \> "_GT"
+    \( "_OB"
+    \) "_CB"
+    \& "_AMP"
+    \* "_STAR"}))
 
 (defn css-vars-map
   [extracted-vars]
   #_(util/pprint+ "<< css-vars-map" extracted-vars)
-  (let [ret (reduce
+  (let [debug (= (-> extracted-vars first :selector*) "sfs-my-pee")
+        ret (reduce
              (fn [acc v]
+               #_(when debug (util/pprint+ "css-vars map: acc >>" acc))
                (cond
-
                  (and (map? v) (= :logic (:val-type v)))
-                 (let [{:keys [selector* __logic css-prop]} v]
+                 (let [{:keys [selector* __logic css-prop]} v
+                       k (util/css-var-for-sexp selector* css-prop)
+                       v (util/process-sexp __logic selector* css-prop)
+                       ]
+                   #_(when debug (util/pprint+ "css-vars map: branch >>" k))
+                   #_(when debug (util/pprint+ "css-vars map: branch >>" v))
                    (assoc acc
-                          (util/css-var-for-sexp selector* css-prop)
-                          (util/process-sexp __logic selector* css-prop)))
+                          k #_(util/css-var-for-sexp selector* css-prop)
+                          v #_(util/process-sexp __logic selector* css-prop)))
 
                  (and (map? v) (= :derefed (:val-type v)))
                  (assoc acc
@@ -94,6 +103,8 @@
              {}
              extracted-vars)]
     #_(util/pprint+ "css-vars-map >>" ret)
+    #_(when debug (util/pprint+ "css-vars map:RET!!! >>" ret))
+    #_(when (= selector* "sfs-my-pee") (util/pprint+ "css-vars map >>" ret))
     ret))
 
 (defn css-vars
