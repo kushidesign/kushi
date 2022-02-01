@@ -3,7 +3,7 @@
   (:require
    [clojure.string :as string]
    [clojure.pprint :refer [pprint]]
-   [kushi.utils :as util :refer [? keyed]]
+   [kushi.utils :as util :refer [? ?? ??t ??b keyed]]
    [kushi.state :as state]
    [kushi.ansiformat :as ansiformat]
    [kushi.atomic :as atomic]
@@ -364,12 +364,12 @@
           ")")))
 
 (defn file-info-str
-  [{:keys [js? form-meta plain?]}]
+  [{:keys [js? form-meta plain?] :as m}]
   #?(:clj
      (let [{:keys [file line column]} form-meta
            opts                       {:js?       js?
                                        :style-key :bold
-                                       :s         (str line ":" column )
+                                       :s         (str line ":" column)
                                        :plain?    plain?}]
        (str file ":"  (format-wrap opts)))))
 
@@ -524,32 +524,6 @@
         (println (apply panel-fn lines)))
       (when throw? (throw-assertion-error! lines)))))
 
-;; Remove?
-#_(defn print-dupe!
-  [m
-   {:keys [desc deets squiggly file-info hint] :as opts}]
-   #_(? :print-dupe! m)
-   #_(? :print-dupe! opts)
-  (let [throw?    (= :error (:handle-duplicates user-config))
-        panel-fn  (if throw? ansiformat/error-panel ansiformat/warning-panel)
-        lines     [(:bold desc)
-                   :br
-                   (:bold deets)
-                   squiggly
-                   :br
-                   (:bold file-info)
-                   :br
-                   hint]]
-    #_(println (apply panel-fn lines))
-    #_(when throw?
-          (throw-dupe-error!
-           (merge m
-                  {:hint      hint
-                   :squiggly  squiggly
-                   :file-info (:plain file-info)
-                   :desc      (:plain desc)
-                   :deets     (:plain deets)})))))
-
 (defn dupe-desc [msg {:keys [fname] :as opts}]
   (let [ns-fname  (str "kushi.core/" fname)]
     (str (format-wrap (assoc opts :s msg)))))
@@ -557,7 +531,7 @@
 (defn dupe-file-info [opts]
   (file-info-str opts))
 
-(defn duplicate-ident-body
+(defn dupe-ident-body
   [{:keys [ident js? plain? simple?] :as m}]
   (let [opts        (assoc m :style-key :bold :js? js? :plain? plain?)
         desc        (dupe-desc "Duplicate prefix+ident" opts)
@@ -582,30 +556,76 @@
                        hint])]
     lines))
 
-(defn dupe-ident-warning
-  [{:keys [selector kushi-attr ident form-meta] :as m}]
-  (let [prefix (or (:prefix kushi-attr) (:prefix user-config))
-        {:keys [file line column]}      form-meta
-        file-info (str file ":" line ":" column)
-        k [prefix ident]
-        existing-file-info (get @state/prefixed-selectors k)]
-    #_(? :combo {[prefix ident] file-info})
-    #_(? (keyed existing-file-info))
+(defn message-lines
+  [f m]
+  (let [targets  {:terminal nil
+                  :browser  :js?
+                  :plain    :plain?
+                  :simple   :simple?}
+        add-line (fn [acc [k v]]
+                   (let [opts  (assoc m v true)
+                         lines (f opts)]
+                     (assoc acc k lines)))
+        ret*     (reduce add-line {} targets)
+        browser  (let [joined (str (string/join "\n" (remove nil? (:browser ret*))))]
+                   (browser-formatted-js-vec joined))
+        ret      (assoc ret* :browser browser)
+        ]
+    ret))
+
+
+(defn dupe-warning-bindings
+  [{:keys [kushi-attr ident form-meta fname nm]
+    :as   m}]
+  (let [dupe-type          (keyword fname)
+        prefix             (or (:prefix kushi-attr) (:prefix user-config))
+        file-info          (file-info-str {:form-meta form-meta :plain? true})
+        k                  (if (= dupe-type :sx) [prefix ident] (keyword nm))
+        existing-file-info (get-in @state/declarations [dupe-type k])]
+
+    (keyed prefix file-info k existing-file-info dupe-type)))
+
+(defn dupe-warning*
+  [{:keys [caller
+           m
+           label
+           body-lines-fn
+           debug?]
+    :as args-map}]
+  #_(? (str "dupe-warning for " (or (:selector m) (:fname m))) "hi")
+  (let [{:keys
+         [file-info
+          k
+          dupe-type
+          existing-file-info]
+         :as bindings}        (dupe-warning-bindings m)
+        label                 (or label (str (name dupe-type) " name"))
+        [?? ??t]              (util/debug (assoc caller :debug? debug?))
+        ]
+    (??t)
+    (?? bindings)
     (if existing-file-info
-      (when-not (= file-info existing-file-info)
-        {:terminal (duplicate-ident-body m)
-         :browser  (let [lines  (duplicate-ident-body (assoc m :js? true))
-                        ;; leading and trailing spaces are for adding vertical "padding"
-                         joined (str #_"\n " (string/join "\n" (remove nil? lines)) #_"\n ")]
-                     (browser-formatted-js-vec joined))
-         :plain    (duplicate-ident-body (assoc m :plain? true))
-         :simple   (duplicate-ident-body (assoc m :simple? true))
-         })
+      (if-not (= file-info existing-file-info)
+        (do
+          (?? (str label " already used: ") {k file-info})
+          (?? :comment "Returning map of preformatted message-line colls...")
+          (message-lines body-lines-fn m))
+        (do
+          (?? (str label ", non-duplicate: ") file-info) #_:diff))
       (do
-        (swap! state/prefixed-selectors assoc k file-info)
+        (?? [(str label " not yet used...")
+             "Merging into state/prefixed-selectors:"]
+            {k file-info})
+        (swap! state/declarations assoc-in [dupe-type k] file-info)
         nil))))
 
-
+(defn dupe-ident-warning [m]
+  (dupe-warning*
+   {:m             m
+    :caller        (meta #'dupe-ident-warning)
+    :label         "prefix+ident combo"
+    ;; :debug?        true
+    :body-lines-fn dupe-ident-body}))
 
 (defn dupe-warning-body-lines
   [{:keys [fname js? plain?] :as m}]
@@ -628,31 +648,19 @@
                      hint]]
     lines))
 
-(defn dupe-*-warning [m coll]
-  (when (get coll (-> m :nm keyword))
-    {:terminal (dupe-warning-body-lines m)
-     :browser  (let [lines  (dupe-warning-body-lines (assoc m :js? true))
-                     ;; leading and trailing spaces are for adding vertical "padding"
-                     joined (str #_"\n " (string/join "\n" (remove nil? lines)) #_"\n ")]
-                 (browser-formatted-js-vec joined))
-     :plain    (dupe-warning-body-lines (assoc m :plain? true))}))
-
 (defn dupe-defkeyframes-warning [m]
-  (dupe-*-warning m @state/user-defined-keyframes))
+  (dupe-warning*
+   {:m             m
+    :caller        (meta #'dupe-defkeyframes-warning)
+    :body-lines-fn dupe-warning-body-lines}))
 
 (defn dupe-defclass-warning [m]
-  (dupe-*-warning m @state/kushi-atomic-user-classes))
+  (dupe-warning*
+   {:m             m
+    :caller        (meta #'dupe-defclass-warning)
+    ;; :debug? true
+    :body-lines-fn dupe-warning-body-lines}))
 
-;; Remove?
-#_(defn dupe-defclass-warning [m]
-  (when (get @state/kushi-atomic-user-classes (-> m :nm keyword))
-    {:terminal (dupe-warning-body-lines m)
-     :browser  (let [lines  (dupe-warning-body-lines (assoc m :js? true))
-                     ;; leading and trailing spaces are for adding vertical "padding"
-                     joined (str #_"\n " (string/join "\n" (remove nil? lines)) #_"\n ")]
-                 (browser-formatted-js-vec joined))
-     :plain    (dupe-warning-body-lines (assoc m :plain? true))
-     }))
 
 ;; Remove?
 #_(defn duplicate-defclass! [m]
