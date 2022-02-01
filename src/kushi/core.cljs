@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.core
-  (:require-macros [kushi.core :refer [sx clean! add-font-face defclass defkeyframes add-system-font-stack]])
-  (:require [clojure.string :as string]))
-
+  (:require-macros [kushi.core :refer [sx clean! add-font-face defclass defkeyframes add-system-font-stack keyed]])
+  (:require [clojure.string :as string]
+            [clojure.pprint :refer [pprint]]))
 
 (defn cssfn? [x]
   (and (list? x)
@@ -137,13 +137,94 @@
       class)))
 
 (defn merge-with-style
-  [{style1 :style class1 :class :as m1}
-   {style2 :style class2 :class :as m2}]
+  [{style1 :style class1 :class data-cljs1 :data-cljs :as m1}
+   {style2 :style class2 :class data-cljs2 :data-cljs :as m2}]
+  #_(pprint {:m1 m1 :m2 m2})
   (let [[bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
         [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i)) [class1 class2])
         merged-style              (merge (when-not bad-style1? style1) (when-not bad-style2? style2))
         class1-coll               (merge-with-style-class-coll class1 bad-class1?)
         class2-coll               (merge-with-style-class-coll class2 bad-class2?)
         classes                   (concat class1-coll class2-coll)
-        ret                       (assoc (merge m1 m2) :class classes :style merged-style)]
+        data-cljs                 (string/join " + " (remove nil? [data-cljs1 data-cljs2]))
+        ret                       (assoc (merge m1 m2)
+                                         :class classes
+                                         :style merged-style
+                                         :data-cljs data-cljs)]
     ret))
+
+
+(defn hiccup? [x]
+  (and (vector? x) (-> x first keyword?)))
+
+(defn opts&children [xs]
+  (let [[a & children*] xs
+        attr*    (when (map? a) a)
+        attr     attr*
+        ;; #_(absorb-style opts*)
+        children (if attr children* xs)]
+    ;; (when-let [data (:data-cljs opts)]
+    ;;   (reset! ui* (str "?" (:name data))))
+    ;
+    (keyed attr children)))
+
+(defn target-attr [xs]
+  (let [[a & children*] xs
+        attr*    (when (map? a) a)
+        attr     attr*
+        ;; #_(absorb-style opts*)
+        children (if attr children* xs)]
+    ;; (when-let [data (:data-cljs opts)]
+    ;;   (reset! ui* (str "?" (:name data))))
+    ;
+    (keyed attr children)))
+
+(defn split-key [k re] (-> k name (string/split re)))
+
+(defn hiccup-tag [k]
+  (let [tokens  (split-key k #":")
+        tag     (-> tokens first keyword)
+        target? (-> tokens last (= "!"))]
+    [tag target?]))
+
+(def kushi-keys
+  [:css :ident :data-cljs :element :prefix :ancestor])
+
+(defn ->hiccup [x]
+  (when (hiccup? x)
+    (let [[tag* attr*] x
+          [tag _]      (hiccup-tag tag*)
+          attr         (when (map? attr*) attr*)]
+      [tag attr])))
+
+(defn target-tag [v]
+  (assoc v 0 (keyword (-> v first name (str ":!")))))
+
+; new one
+(defn merge-hiccup [tag attr args]
+  (let [user-attr   (when (map? (first args)) (first args))
+        children    (if user-attr (rest args) args)
+        merge?      (and user-attr (map? attr))
+        attr-merged (if merge?
+                       (merge-with-style attr (first args))
+                       attr)]
+    (into [] (concat [tag attr-merged] children))))
+;
+(defn target-vector [hiccup*]
+  [[] hiccup*])
+
+(defn gui
+  ([hiccup*]
+   (gui hiccup* nil) )
+  ([hiccup* decorator]
+   (let [[child-path target] (if (and (hiccup? hiccup*)
+                                      (nil? (some hiccup? hiccup*)))
+                               [[] hiccup*]
+                               (target-vector hiccup*))
+         [tag attr*] (->hiccup target)
+         attr (if (map? decorator) (kushi.core/merge-with-style attr* decorator) attr*)]
+     (fn [& args]
+       #_(? args)
+       (let [ret (when (= child-path []) (merge-hiccup tag attr args))]
+         #_(? ret)
+         ret)))))
