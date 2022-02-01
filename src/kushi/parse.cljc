@@ -11,7 +11,8 @@
    [kushi.defs :as defs]
    [kushi.printing :as printing]
    [kushi.config :refer [user-config]]
-   [kushi.utils :as util :refer [pprint+ ?]]))
+   [kushi.utils :as util :refer [pprint+]]
+   [par.core :refer [?]]))
 
 (defn derefed? [x]
   (s/valid? ::specs/derefed x))

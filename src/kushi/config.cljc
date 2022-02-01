@@ -35,6 +35,8 @@
                         source
                         (.getMessage e)))))))
 
+
+
 (def user-config-defaults
   {:diagnose             nil
    :diagnose-idents      nil
@@ -42,9 +44,8 @@
    :__enable-caching?__  false
    :post-build-report?   true
    :report-cache-update? true
-   :reporting-style      :banner
+   :reporting-style      :simple
    :warning-style        :banner
-   :data-attr-name       :data-cljs-source
    :ancestor             nil
    :prefix               nil
    :defclass-prefix      nil
@@ -86,7 +87,7 @@
 (def version* "1.0.0-alpha")
 
 ;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
-(def version (str version* #_":LOCAL"))
+(def version (str version* ":LOCAL-QS"))
 
 (def kushi-cache-dir ".kushi/.cache")
 

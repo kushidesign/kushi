@@ -7,6 +7,7 @@
   [garden.core :as garden]
   [garden.def]
   [garden.stylesheet :refer [at-font-face]]
+  [par.core :refer [?]]
   [kushi.atomic :as atomic]
   [kushi.config :refer [user-config]]
   [kushi.parse :as parse]
@@ -16,7 +17,7 @@
   [kushi.state :as state]
   [kushi.stylesheet :as stylesheet]
   [kushi.typography :refer [system-font-stacks]]
-  [kushi.utils :as util :refer [? #_keyed]]))
+  [kushi.utils :as util :refer [#_? #_keyed]]))
 
 ;TODO move this to utils
 (defmacro keyed [& ks]
@@ -328,7 +329,7 @@
         styles                     (into [] (concat styles* classes-with-mods-hydrated))
         invalid-args               (into [] (concat invalid-map-args invalid))]
 
-    (? "parse-attr+meta"
+    #_(? :parse-attr+meta
        (keyed
         args
         attr*
