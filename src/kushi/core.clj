@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.core
  (:require
-  [io.aviso.ansi :as ansi]
   [clojure.spec.alpha :as s]
   [clojure.string :as string]
   [clojure.set :as set]
@@ -9,7 +8,6 @@
   [garden.def]
   [garden.stylesheet :refer [at-font-face]]
   [kushi.atomic :as atomic]
-  [kushi.ansiformat :as ansiformat]
   [kushi.config :refer [user-config]]
   [kushi.parse :as parse]
   [kushi.printing :as printing]
@@ -18,7 +16,14 @@
   [kushi.state :as state]
   [kushi.stylesheet :as stylesheet]
   [kushi.typography :refer [system-font-stacks]]
-  [kushi.utils :as util :refer [? keyed]]))
+  [kushi.utils :as util :refer [? #_keyed]]))
+
+;TODO move this to utils
+(defmacro keyed [& ks]
+  `(let [keys# (quote ~ks)
+         keys# (map keyword keys#)
+         vals# (list ~@ks)]
+     (zipmap keys# vals#)))
 
 (def KUSHIDEBUG (atom true))
 
@@ -301,7 +306,7 @@
       {:styles+classes (drop-last args) :attr (last args)}
       {:styles+classes args :attr nil})))
 
-(def meta-ks [:ancestor :prefix :ident :element :data-attr-name])
+(def meta-ks [:ancestor :prefix :ident :element])
 
 (defn- parse-attr+meta [args]
   (let [{styles+classes*
@@ -323,8 +328,9 @@
         styles                     (into [] (concat styles* classes-with-mods-hydrated))
         invalid-args               (into [] (concat invalid-map-args invalid))]
 
-    #_(? "parse-attr+meta"
+    (? "parse-attr+meta"
        (keyed
+        args
         attr*
         attr
         kushi-attr
@@ -412,18 +418,17 @@
                                                    selector))]
 
           #_(? "sx*"
-               (keyed
-                selector*
-                selector
-                kushi-attr
-                classlist-map
-                styles*
-                styles
-                css-vars
-                      tokenized-styles
-                      grouped-by-mqs
-                      garden-vecs
-                ))
+             (keyed
+              selector*
+              selector
+              kushi-attr
+              classlist-map
+              styles*
+              styles
+              css-vars
+              tokenized-styles
+              grouped-by-mqs
+              garden-vecs))
 
           (when caching?
             (swap! state/styles-cache-updated assoc cache-key ret))
@@ -448,13 +453,18 @@
 (defmacro sx
   [& args]
   (reset! state/current-macro :sx)
-  (reset! state/current-sx {:form-meta (meta &form) :args args :bad-mods {} :fname "sx"})
+  (reset! state/current-sx
+          {:form-meta (meta &form)
+           :args args
+           :bad-mods {}
+           :fname "sx"})
   (or
    (only-attr args)
    (let [{:keys [atomic-class-keys
                  garden-vecs
                  attr
                  attr-base
+                 kushi-attr
                  classlist
                  conditional-class-sexprs
                  css-vars
@@ -464,8 +474,8 @@
                  selector]
           :as   m}               (sx* args)
          printing-opts           (assoc m :form-meta (meta &form) :fname "sx")
-         dupe-ident-warning      (printing/dupe-ident-warning printing-opts)
-         _                       (printing/print-dupe2! (merge dupe-ident-warning printing-opts))
+         dupe-ident-warning      (when ident (printing/dupe-ident-warning printing-opts))
+         _                       (when ident (printing/print-dupe2! (merge dupe-ident-warning printing-opts)))
          styles-argument-display (apply vector args)
          compilation-warnings    (printing/compilation-warnings-coll printing-opts) ;print
          compilation-warnings-js (printing/preformat-compilation-warnings-js compilation-warnings) ;print
@@ -490,8 +500,9 @@
          inject?                 (:runtime-injection? user-config)
          og-cls                  (:class attr)
          cls                     (when og-cls (if (coll? og-cls) og-cls [og-cls]))
+         data-cljs-prefix        (when-let [pf (:data-cljs-prefix kushi-attr)] (str (name pf) ":"))
          data-cljs               (let [{:keys [file line column]} (meta &form)]
-                                   (str file ":"  line ":" column))
+                                   (str data-cljs-prefix file ":"  line ":" column))
          js-args-warning         (printing/preformat-js-warning invalid-warning-args) ;print
          bad-mods-warning        (printing/bad-mods-warning @state/current-sx) ;print
          bad-mods-warning-js*    (printing/bad-mods-warning (assoc @state/current-sx :js? true)) ;print
@@ -502,16 +513,18 @@
                                            [selector css-injection-for-kushi-atomic]))
                                        (vals kushi-atomics*))]
 
+     #_(? (keyed kushi-attr data-cljs))
+
      #_(? (keyed
-         compilation-warnings
-         compilation-warnings-js
-         bad-mods-warning-js
-         bad-mods-warning-js*
-         bad-mods-warning-js
-         compilation-warnings-js
-         kushi-atomics
-         css-injection
-         shared-classlist))
+           compilation-warnings
+           compilation-warnings-js
+           bad-mods-warning-js
+           bad-mods-warning-js*
+           bad-mods-warning-js
+           compilation-warnings-js
+           kushi-atomics
+           css-injection
+           shared-classlist))
 
      #_(println class-stuff)
     ;; Add classes to previously-used registry
@@ -563,7 +576,7 @@
               logfn#    (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
           (do
             #_(when ~dupe-ident-warning
-              (logfn# cljs.core/to-array (:browser ~dupe-ident-warning)))
+                (logfn# cljs.core/to-array (:browser ~dupe-ident-warning)))
 
             (when ~compilation-warnings-js
               (doseq [warning# ~compilation-warnings-js]
