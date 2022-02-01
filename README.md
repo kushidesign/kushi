@@ -54,7 +54,7 @@
 [Helpful metadata](#helpful-metadata)<br>
 [Configuration options](#configuration-options)<br>
 [Prefixing options](#prefixing-options)<br>
-[Style injection during development](#style-injection-during-development)<br>
+[Runtime injection](#runtime-injection)<br>
 [Useful warnings](#useful-warnings)<br>
 [Usage with build tools](#usage-with-build-tools)<br>
 [Roadmap](#roadmap)<br>
@@ -78,7 +78,7 @@ The `kushi.core/sx` macro takes a list of fully dynamic atomic classes plus an o
   (sx :c--red
       :ta--c
       :fs--18px
-      {:id :foo})])
+      {:on-click #()})])
 ```
 The shorthand grammer is optional. The above can also be written like this:
 ```Clojure
@@ -87,50 +87,71 @@ The shorthand grammer is optional. The above can also be written like this:
   (sx :color--red
       :text-align--center
       :font-size--18px
-      {:id :foo})])
+      {:on-click #()})])
 ```
-If the dynamic atomic-class notational style is not your speed, you can opt to use [`map-mode`](#using-map-mode) in your [kushi configuration options](#configuration-options). With [`map-mode`](#using-map-mode) active, the above examples would be written like this:
+If the dynamic tokenized keyword notational style is not your speed, you can opt to use [`map-mode`](#using-map-mode) in your [kushi configuration options](#configuration-options). With [`map-mode`](#using-map-mode) active, the above examples would be written like this:
 ```Clojure
 (defn my-component []
  [:div
-  (sx {:color :red
+  (sx {:color      :red
        :text-align :center
-       :font-size :18px}
-      {:id :foo})])
+       :font-size  :18px}
+      {:on-click #()})])
 ```
 
 In all 3 examples above, the `sx` macro would return the following attribute map with an auto-generated value for the `class` attribute:
 ```Clojure
 {:class "_j7338"
- :id :foo}
+ :on-click #()}
 ```
 
 When your build finishes, the following css will be written to disk:
 ```Clojure
- ._j7338 {
-   color: red;
-   text-align: center;
-   font-size: 18px;
- }
+ ._j7338 { color: red; text-align: center; font-size: 18px; }
+```
+
+If you need or want to define your own classnames, you can leverage kushi's flexible and robust [prefixing options](#prefixing-options):
+```Clojure
+;; Assuming you have a global prefix set with a value of "_foo_",
+;; kushi will combine that with a local supplied :ident value
+
+(defn my-component []
+ [:div
+  (sx :c--red
+      :ta--c
+      :fs--18px
+      {:ident :bar
+       :on-click #()})])
+```
+The above example would generate the following attribute map:
+```Clojure
+{:class "_foo_bar"
+ :on-click #()}
+```
+
+And the following css will be written to disk:
+```Clojure
+ ._foo_bar { color: red; text-align: center; font-size: 18px; }
 ```
 <br>
 
 In summary, the `kushi.core/sx` is a macro that returns an attribute map which contains the following:
 
-  - A `class` property containing the correct auto-generated, prefixed classnames.
+  - A `class` property containing the correct auto-generated/prefixed classnames.
   - If necessary, a `style` property containing the correct auto-generated css variable names.
   - All the other attributes you specify in your attributes map (supplied as an optional last arg to `sx`).
-  - An optional data-ns attribute to help with browser-based debugging.  See [Using metadata](#using-metadata).
+  - A dev-build-only `data-cjs` attribute to help with browser-based debugging.  See [Using metadata](#using-metadata).
 
-All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool).
+All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool). You can optionally disable writing styles to disk and enable producton builds to use the same [runtime injection](#runtime-injection) (used by default in dev-builds).
 
 <br>
 
 ### Styles as Keywords
 *(Note that the info in this section does not apply if [using `map-mode`](#using-map-mode))*
 
-Most values supplied to `sx` are keywords.<br>
+If you like the Tachyons/Tailwind approach to style notation, you will likely love using kushi.  It aims to provide the same benefits (styling expressed as a list of tokens co-located at the element level) while minimizing some of the common downsides (learning and using a whole new abstraction layer on top of standard css).
 
+Most values supplied to `sx` are keywords.<br>
 Keywords containing `--` represent a css prop and value pair (split on `--`).
 
 
@@ -261,6 +282,7 @@ As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
 ;; The above example is equivalent to:
 (sx [:color "rgba(0, 200, 100, 0.4)"])
 ```
+`cssfn` will only work when used inside a call to the sx macro.
 
 <br>
 
@@ -408,6 +430,7 @@ The full list of predefined classes:
 :.outlined
 
 ;; type styling
+:.sans
 :.italic
 :.oblique
 
@@ -849,7 +872,7 @@ In the edge case that you want to use kushi's prefixing or metadata functionalit
 If you would like to prefix your generated classes with something other than an auto-generated string, you can make use of several kushi-specific properties in the attribute map that you pass to `sx`. These keys and values are only used by the macro at compile time and are removed in the attribute map that is returned by `sx`.
 
 The most common use case for this would be setting a global `:prefix` value, and then providing an `:ident` value (in the attr map) to some or all of your calls to `sx`.
-If you do this on a project-wide basis, you will need to make sure that your all your `:ident` values (or combos of `:ancestor` and `:ident`) are globally unique.
+If you do this on a project-wide basis, you will need to make sure that your all your `:ident` values (or combos of `:ancestor` and `:ident`) are globally unique. The (kushi) compiler will warn you if you try to do this.
 
 ```Clojure
 ;; In your kushi.edn map ...
@@ -931,15 +954,25 @@ Another example:
 
 <br>
 
-# Style Injection During Development
+# Runtime Injection
 For instantaneous previews when developing, all styling from `sx` and `defclass` calls are injected dynamically into the following 2 tags that are required to be in your `index.html` :
 ```html
 <style type="text/css" id="_kushi-rules_shared_"></style>
 <style type="text/css" id="_kushi-rules_"></style>
 ```
-
 See the [kushi-quickstart](https://github.com/paintparty/kushi-quickstart) template for an example of this setup.
 
+You can enable this for release builds:
+
+```Clojure
+;; Add this to config map in your kushi.edn file
+
+;; {...
+    :runtime-injection? true
+;;  ...}
+
+to your `kushi.edn`.
+```
 <br>
 
 # Useful Warnings
@@ -954,8 +987,6 @@ Given the following:
     :fs--18px
     :c--#efefef)
 ```
-
-
 
 You will receive warnings about invalid args in the terminal:
 
