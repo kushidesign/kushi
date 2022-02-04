@@ -107,7 +107,7 @@
    (fn [acc [k v]]
      #_(? :combo-classes k)
      (let [{:keys [selector
-                   selector*]} (selector/selector-name {:defclass-name k :defclass-hash defclass-hash})
+                   selector*]} (selector/selector-name {:defclass-name k :atomic-class? true})
            style-map           (get declarative-classes k)
            garden-vecs         [[selector style-map]]]
        (assoc acc k {:n k :args v :garden-vecs garden-vecs :selector selector :selector* selector*})))
