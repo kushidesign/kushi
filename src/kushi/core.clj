@@ -51,6 +51,7 @@
 
 (defn style-map->vecs
   [m]
+  #_(? m)
   (when (and (:map-mode? user-config) (map? m))
     (let [kw->dotkw #(some->> (when (keyword? %) %)
                               name
@@ -536,7 +537,7 @@
 ;; TODO move all lines with trailing ;print comment into kushi.printing or kushi.reporting
 (defmacro sx
   [& args*]
-  (let [args (-> args* arguments/consolidated arguments/new-args)]
+  (let [{args :new-args :as arguments} (-> args* arguments/consolidated arguments/new-args)]
     ;; TODO make this fns in state
     (reset! state/current-macro :sx)
     (reset! state/current-sx
@@ -559,6 +560,8 @@
                    data-attr-name
                    selector]
             :as   m} (sx* args)
+          ;;  _ (? m)
+          ;;  _ (? arguments)
            printing-opts            (assoc m :form-meta (meta &form) :fname "sx")
            dupe-ident-warning       (when ident (printing/dupe-ident-warning printing-opts))
            _                        (when ident (printing/print-dupe2! (merge dupe-ident-warning printing-opts)))

@@ -2,7 +2,7 @@
  (:require
   [clojure.spec.alpha :as s]
   [clojure.string :as string]
-  [par.core :refer [? ?+]]
+  [par.core :refer [!? ? ?+]]
   [kushi.parse :as parse]
   [kushi.specs :as specs]
   [kushi.state :as state]
@@ -28,19 +28,27 @@
 (defn resolved-classes [x]
   #_(?+ :resolved-classes x)
   (when x
-    (let [class                                     (util/into-coll x)
-          [kushi-classes non-kushi-classes]         (util/partition-by-pred
-                                                     #(or (contains? (:defclass @state/declarations) %)
-                                                          (contains? @state/kushi-atomic-user-classes %))
-                                                     class)
-          [defclasses kushi-atomics]                (reduce-by-registered kushi-classes (:defclass @state/declarations))
-          [defclasses-used defclasses-unused]       (reduce-by-registered defclasses @state/defclasses-used)
-          [kushi-atomics-used kushi-atomics-unused] (reduce-by-registered
-                                                     kushi-atomics
-                                                     @state/atomic-declarative-classes-used)]
+    (let [class                  (util/into-coll x)
+          [kushi-classes
+           non-kushi-classes]    (util/partition-by-pred
+                                  #(or (contains? (:defclass @state/declarations) %)
+                                       (contains? @state/kushi-atomic-user-classes %))
+                                  class)
+          [defclasses
+           kushi-atomics]        (reduce-by-registered
+                                  kushi-classes
+                                  (:defclass @state/declarations))
+          [defclasses-used
+           defclasses-unused]    (reduce-by-registered
+                                  defclasses
+                                  @state/defclasses-used)
+          [kushi-atomics-used
+           kushi-atomics-unused] (reduce-by-registered
+                                  kushi-atomics
+                                  @state/atomic-declarative-classes-used)]
       #_(?+ :rc-class class)
 
-      (when (some #(= :foo %) class)
+      #_(when (some #(= :foo %) class)
         #_(? @state/declarations)
         #_(? @state/atomic-declarative-classes-used)
         #_(? (keyed kushi other defclasses kushi-atomics kushi-atomics-unused kushi-atomics-used defclasses-unused defclasses-used))
@@ -97,21 +105,20 @@
         new-args                     [(assoc (:style attrs) :. (:class attrs)) attrs+]]
 
     #_(? consolidated)
-    #_(? :bam
-         (keyed
-          args
-          tokens
-          style-tokens
-          style-tokens-map
-          class-tokens*
-          class-tokens
-          attrs*
-          attrs
-          classes-from-attrs
-          classes-from-tokens
-          classes-from-tokens+
-          new-args))
-    new-args))
+    (!? :bam
+        (keyed
+         args
+         tokens
+         style-tokens
+         style-tokens-map
+         class-tokens*
+         class-tokens
+         attrs*
+         attrs
+         classes-from-attrs
+         classes-from-tokens
+         classes-from-tokens+
+         new-args))))
 
 (defn combine-classes [coll]
   (let [f     (fn [acc v] (if (coll? v) (into [] (concat acc v)) (conj acc v)))
@@ -130,8 +137,8 @@
         style   (merge styles* (:style attr-map))
         ret     (assoc attr-map :class class :style style)]
     #_(?+ (keyed classes class* class ret))
-    ret)
-  )
+    ret))
+  
 
 (defn consolidated [args]
   (if (s/valid? ::specs/map-mode-style+attr args)
