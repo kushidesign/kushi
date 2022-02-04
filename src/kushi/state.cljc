@@ -26,6 +26,9 @@
 ;; Used to keep track of atomic declarative classes which are used.
 (def atomic-declarative-classes-used (atom #{}))
 
+;; Used to keep track of defclasses used.
+(def defclasses-used (atom #{}))
+
 ;; Used to keep track of keyframe definitions which are used.
 (def user-defined-keyframes (atom {}))
 
@@ -54,7 +57,9 @@
   (reset! declarations declarations-init)
   (reset! garden-vecs-state garden-vecs-state-init)
   (reset! kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
-  (reset! atomic-declarative-classes-used #{}))
+  (reset! atomic-declarative-classes-used #{})
+  (reset! defclasses-used #{})
+  )
 
 (defonce styles-cache-current
   (let [styles-cache-disc (when (:__enable-caching?__ user-config)
