@@ -2,6 +2,7 @@
   #?(:clj (:require [io.aviso.ansi :as ansi]
                     [kushi.ansiformat :as ansiformat]))
   (:require
+   [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.walk :as walk]
    [clojure.pprint :refer [pprint]]
@@ -222,6 +223,9 @@
                         (last args)))
          maps))
 
+(defn into-coll [x]
+  (if (coll? x) x [x]))
+
 (defn starts-with-dot? [x]
  (-> x name (string/starts-with? ".")))
 
@@ -231,6 +235,24 @@
               (assoc acc k (conj (k acc) v))))
           {:valid [] :invalid []}
           coll))
+
+(defn partition-by-pred [pred coll]
+  (let [ret* (reduce (fn [acc v]
+                       (let [k (if (pred v) :valid :invalid)]
+                         (assoc acc k (conj (k acc) v))))
+                     {:valid [] :invalid []}
+                     coll)
+        ret [(:valid ret*) (:invalid ret*)]]
+    ret))
+
+(defn partition-by-spec [pred coll]
+  (let [ret* (reduce (fn [acc v]
+                       (let [k (if (s/valid? pred v) :valid :invalid)]
+                         (assoc acc k (conj (k acc) v))))
+                     {:valid [] :invalid []}
+                     coll)
+        ret [(:valid ret*) (:invalid ret*)]]
+    ret))
 
 (defn normalized-class-kw [x]
   (if (keyword? x)
