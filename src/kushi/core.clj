@@ -295,36 +295,25 @@
   (cons 'cssfn (list args)))
 
 (defn- style&classes+attr [args]
-  #_(when (= (count args) 1)
-   (let [[attr*] args]
-     (when (map? attr*)
-       (if-let [{:keys [style class]} attr*]
-         ()
-         attr*))))
+  (let [only-attr?       (s/valid? ::specs/map-mode-only-attr args)
+        only-style?      (s/valid? ::specs/map-mode-only-style args)
+        style+attr?      (s/valid? ::specs/map-mode-style+attr args)
+        [style attr]     (cond only-style? [(first args) nil]
+                               style+attr? args
+                               only-attr?  [nil (first args)])
+        invalid-map-args (remove nil? (map-indexed (fn [idx v] (when-not (and (map? v) (< idx 2)) v)) args))]
 
-  (if (:map-mode? user-config)
-    (let [only-attr?       (s/valid? ::specs/map-mode-only-attr args)
-          only-style?      (s/valid? ::specs/map-mode-only-style args)
-          style+attr?      (s/valid? ::specs/map-mode-style+attr args)
-          [style attr]     (cond only-style? [(first args) nil]
-                                 style+attr? args
-                                 only-attr?  [nil (first args)])
-          invalid-map-args (remove nil? (map-indexed (fn [idx v] (when-not (and (map? v) (< idx 2)) v)) args))]
+    #_(? "style&classes+attr"
+       (keyed only-attr?
+              only-style?
+              style+attr?
+              invalid-map-args
+              style
+              attr))
 
-      #_(? "style&classes+attr"
-         (keyed only-attr?
-                only-style?
-                style+attr?
-                invalid-map-args
-                style
-                attr))
-
-      {:styles+classes   style
-       :attr             attr
-       :invalid-map-args invalid-map-args})
-    (if (map? (last args))
-      {:styles+classes (drop-last args) :attr (last args)}
-      {:styles+classes args :attr nil})))
+    {:styles+classes   style
+     :attr             attr
+     :invalid-map-args invalid-map-args}) )
 
 (def meta-ks [:ancestor :prefix :ident :element])
 
@@ -339,7 +328,7 @@
          :as          kushi-attr}  (select-keys attr* meta-ks)
         data-attr-name             (or (:data-attr-name user-config) :data-cljs)
         attr                       (apply dissoc attr* meta-ks)
-        styles+classes             (if (:map-mode? user-config) (style-map->vecs styles+classes*) styles+classes*)
+        styles+classes             (style-map->vecs styles+classes*)
         {:keys [valid invalid]}    (util/reduce-by-pred #(s/valid? ::specs/kushi-arg %) styles+classes)
         {classes* :valid
          styles*  :invalid}        (util/reduce-by-pred #(s/valid? ::specs/kushi-class-like %) valid)
@@ -348,10 +337,10 @@
         styles                     (into [] (concat styles* classes-with-mods-hydrated))
         invalid-args               (into [] (concat invalid-map-args invalid))]
 
-#_(when
- (= ident :modal-panel)
- (? :parse-attr+meta
-    (keyed
+    #_(when
+       (= ident :modal-panel)
+        (? :parse-attr+meta
+           (keyed
         ;; args
         ;; attr*
         ;; attr
@@ -359,26 +348,26 @@
         ;; styles+classes*
         ;; styles+classes
         ;; styles*
-     classes*
+            classes*
         ;; ident
         ;; data-attr-name
         ;; invalid-map-args
         ;; invalid-args
-     )))
+            )))
 
-    #_(? :parse-attr+meta
+    (? :parse-attr+meta
        (keyed
-        args
-        attr*
-        attr
-        kushi-attr
-        styles+classes*
-        styles+classes
-        styles*
-        classes*
+        ;; args
+        ;; attr*
+        ;; attr
+        ;; kushi-attr
+        ;; styles+classes*
+        ;; styles+classes
+        ;; styles*
+        ;; classes*
         ident
-        data-attr-name
-        invalid-map-args
+        ;; data-attr-name
+        ;; invalid-map-args
         invalid-args))
 
     {:attr           attr
