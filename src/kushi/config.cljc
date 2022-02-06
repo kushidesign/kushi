@@ -49,6 +49,7 @@
    :ancestor             nil
    :prefix               nil
    :defclass-prefix      nil
+   :atomic-class-prefix  nil
    :keyframes-prefix     nil
    :map-mode?            false
    :css-dir              nil
