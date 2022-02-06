@@ -110,6 +110,6 @@
                    selector*]} (selector/selector-name {:defclass-name k :atomic-class? true})
            style-map           (get declarative-classes k)
            garden-vecs         [[selector style-map]]]
-       (assoc acc k {:n k :args v :garden-vecs garden-vecs :selector selector :selector* selector*})))
+       (assoc acc k {:n k :args v :garden-vecs garden-vecs :selector selector :selector* selector* :__classtype__ :kushi-atomic})))
    {}
    declarative-classes-kushi-syntax))
