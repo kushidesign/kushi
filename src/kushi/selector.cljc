@@ -28,7 +28,6 @@
         shared-class-prefix           (if atomic-class?
                                         (:atomic-class-prefix user-config)
                                         (:defclass-prefix user-config))
-        ;; TODO take out defclass-hash
         selector*                     (if defclass-name
                                         (nsqkw->selector-friendly (str shared-class-prefix defclass-name))
                                         (if prefixed-names-for-selectors?
