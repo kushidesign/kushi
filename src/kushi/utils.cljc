@@ -158,7 +158,7 @@
   ([x]
    (css-var-string x nil))
   ([x suffix]
-   (str "var(--" (sanitize-for-css-var-name x) ")" suffix)))
+   (str "var(--" (sanitize-for-css-var-name (name x)) ")" suffix)))
 
 (defn css-var-for-sexp [selector* css-prop]
   (let [sanitized-name (-> css-prop
