@@ -262,6 +262,7 @@
           (into [] (repeat (count args) " ..."))
           invalid-args))
 
+
 (defn console-error-ansi-formatting
   [{:keys [fname
            invalid-args
@@ -270,51 +271,18 @@
            args]
     :as m}]
 
-  (? :m!!!!! m)
-#_(fn [acc [[idx style-kw] v]]
-                                  (let [v (if style-kw ["{..."])](assoc acc idx v)))
   (when (seq invalid-args)
     (let [classname (warning-call-classname m)
           opts-base {:js? js? :style-key :bold}
           args-display  (flatten (reduce-bad-args args invalid-args opts-base))
-
-        ;; invalids  (into #{} invalid-args)
-        ;; map-mode? (and (:map-mode? user-config) (contains? #{"sx" "defclass"} fname))
-        ;; mm-attr   (when map-mode? (second styles-argument-display))
-        ;; bad-attr? (and map-mode? mm-attr (contains? invalids mm-attr))
-        ;; mm-norm?  (and map-mode? (not bad-attr?))
-        ;; args      (cond-> styles-argument-display mm-norm? first)
-        ;; opts-base {:js? js? :style-key :bold}
-        ;; lines*    (if bad-attr?
-        ;;             [" {...}" (str " " (format-wrap (assoc opts-base :s mm-attr)))]
-        ;;             (map-indexed
-        ;;              (fn [idx %]
-        ;;                (let [bad? (contains? invalids %)
-        ;;                      q    (when (string? %) "\"")
-        ;;                      s    (str q (if map-mode? (str (first %) " " (second %)) %) q)
-        ;;                      frmt (if bad?
-        ;;                             (format-wrap (assoc opts-base :s s))
-        ;;                             "...")
-        ;;                      sp   (when-not (and map-mode? (zero? idx)) (str " " (when map-mode? " ")))]
-        ;;                  (str sp frmt)))
-        ;;              args))
-        ;;              _ (? :lines*!!!!! lines*)
-        ;; flatlines (into [] (flatten lines*))
-        ;; last-val  (str (-> flatlines last (str (when mm-norm? "}") ")")))
-        ;; first-val (str (->> flatlines first (str (when mm-norm? (str " {")))))
           lines     (into []
                           (remove nil?
                                   (concat
                                    [(str "(" fname (when classname (str " " classname)))]
-                                   args-display
-                                ;;  (assoc (assoc flatlines (-> flatlines count dec) last-val) 0 first-val)
-                                   )))]
-
+                                   args-display)))]
       #_(? :display args-display)
       #_(? :ansi-formatting lines)
       lines)))
-
-
 
 ;; Dictionaries   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
