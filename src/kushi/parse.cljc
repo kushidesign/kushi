@@ -85,10 +85,7 @@
 
 (defn css-vars
   [styles selector*]
-  #_(util/pprint+
-   "<< css-vars"
-   {:styles styles
-    :selector* selector*})
+  #_(?+ 'css-vars:input (keyed styles selector*))
   (let [ret (some->> styles
                      (filter vector?)
                      (map (partial extract-vars selector*))
@@ -96,7 +93,7 @@
                      (remove nil?)
                      distinct
                      css-vars-map)]
-    #_(util/pprint+ "css-vars >>" ret)
+    #_(?+ 'css-vars:ret ret)
     ret))
 
 (defn scoped-class-syntax? [x]
