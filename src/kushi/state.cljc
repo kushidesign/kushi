@@ -2,13 +2,36 @@
   (:require
    [kushi.io :refer [load-edn]]
    [kushi.atomic :as atomic]
+   [kushi.atomic :as atomic]
    [kushi.config :refer [user-config kushi-cache-path user-config-args-sx-defclass]]))
 
 (def current-macro (atom nil))
 
 (def current-sx (atom nil))
 
+(defn set-current-macro!
+  ([args* form-meta kw]
+   (set-current-macro! args* form-meta kw nil))
+  ([args* form-meta kw kushi-attr]
+   (let [opts        {:form-meta form-meta
+                      :bad-mods {}
+                      :fname (name kw)
+                      :kushi-attr kushi-attr
+                      :ident (:ident kushi-attr)}
+         opts-w-args (assoc opts :args args*)]
+     (reset! current-macro opts-w-args)
+     (reset! current-sx opts-w-args)
+     opts)))
+
+(def warnings-js (atom []))
+
+(def warnings-terminal (atom []))
+
 (def compilation-warnings (atom []))
+
+(def invalid-style-args (atom nil))
+
+(def invalid-style-warnings (atom []))
 
 ;; Used to create user-classes.
 (def kushi-atomic-user-classes
@@ -28,6 +51,8 @@
 
 ;; Used to keep track of defclasses used.
 (def defclasses-used (atom #{}))
+
+(def defclasses+atomics-used (atom {}))
 
 ;; Used to keep track of keyframe definitions which are used.
 (def user-defined-keyframes (atom {}))
@@ -59,6 +84,8 @@
   (reset! kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
   (reset! atomic-declarative-classes-used #{})
   (reset! defclasses-used #{})
+  (reset! defclasses+atomics-used {})
+  
   )
 
 (defonce styles-cache-current

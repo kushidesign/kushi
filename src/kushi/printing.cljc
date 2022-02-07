@@ -237,43 +237,82 @@
       (format-wrap (first invalid-args))
       (name defclass-name))))
 
+
+(defn bad-sx-args-fmt
+  [opts-base acc [[idx style-k] v]]
+  (let [
+        bad-val (cond
+                  style-k
+                  (let [style-map-indent "          "]
+                    (concat [" {..." "  :style {..."]
+                            (map (fn [[cssprop cssval]]
+                                   (format-wrap
+                                    (assoc opts-base
+                                           :s
+                                           (str style-map-indent cssprop " " cssval))))
+                                 v)
+                            [(str style-map-indent "...}")]
+                            ["  ...}"]))
+                  :else
+                  (format-wrap (assoc opts-base :s (str " " v))) )]
+    (assoc acc idx bad-val)))
+
+(defn reduce-bad-args [args invalid-args opts-base]
+  (reduce (partial bad-sx-args-fmt opts-base)
+          (into [] (repeat (count args) " ..."))
+          invalid-args))
+
 (defn console-error-ansi-formatting
-  [{:keys [styles-argument-display
-           fname
+  [{:keys [fname
            invalid-args
-           js?]
+           js?
+           form-meta
+           args]
     :as m}]
-  (let [classname (warning-call-classname m)
-        invalids  (into #{} invalid-args)
-        map-mode? (and (:map-mode? user-config) (contains? #{"sx" "defclass"} fname))
-        mm-attr   (when map-mode? (second styles-argument-display))
-        bad-attr? (and map-mode? mm-attr (contains? invalids mm-attr))
-        mm-norm?  (and map-mode? (not bad-attr?))
-        args      (cond-> styles-argument-display mm-norm? first)
-        opts-base {:js? js? :style-key :bold}
-        lines*    (if bad-attr?
-                    [" {...}" (str " " (format-wrap (assoc opts-base :s mm-attr)))]
-                    (map-indexed
-                     (fn [idx %]
-                       (let [bad? (contains? invalids %)
-                             q    (when (string? %) "\"")
-                             s    (str q (if map-mode? (str (first %) " " (second %)) %) q)
-                             frmt (if bad?
-                                    (format-wrap (assoc opts-base :s s))
-                                    "...")
-                             sp   (when-not (and map-mode? (zero? idx)) (str " " (when map-mode? " ")))]
-                         (str sp frmt)))
-                     args))
-        flatlines (into [] (flatten lines*))
-        last-val  (str (-> flatlines last (str (when mm-norm? "}") ")")))
-        first-val (str (->> flatlines first (str (when mm-norm? (str " {")))))
-        lines     (into []
-                        (remove nil?
-                                (concat
-                                 [(str "(" fname (when classname (str " " classname)))]
-                                 (assoc (assoc flatlines (-> flatlines count dec) last-val) 0 first-val))))]
-    #_(? (keyed lines))
-    lines))
+
+  (? :m!!!!! m)
+#_(fn [acc [[idx style-kw] v]]
+                                  (let [v (if style-kw ["{..."])](assoc acc idx v)))
+  (when (seq invalid-args)
+    (let [classname (warning-call-classname m)
+          opts-base {:js? js? :style-key :bold}
+          args-display  (flatten (reduce-bad-args args invalid-args opts-base))
+
+        ;; invalids  (into #{} invalid-args)
+        ;; map-mode? (and (:map-mode? user-config) (contains? #{"sx" "defclass"} fname))
+        ;; mm-attr   (when map-mode? (second styles-argument-display))
+        ;; bad-attr? (and map-mode? mm-attr (contains? invalids mm-attr))
+        ;; mm-norm?  (and map-mode? (not bad-attr?))
+        ;; args      (cond-> styles-argument-display mm-norm? first)
+        ;; opts-base {:js? js? :style-key :bold}
+        ;; lines*    (if bad-attr?
+        ;;             [" {...}" (str " " (format-wrap (assoc opts-base :s mm-attr)))]
+        ;;             (map-indexed
+        ;;              (fn [idx %]
+        ;;                (let [bad? (contains? invalids %)
+        ;;                      q    (when (string? %) "\"")
+        ;;                      s    (str q (if map-mode? (str (first %) " " (second %)) %) q)
+        ;;                      frmt (if bad?
+        ;;                             (format-wrap (assoc opts-base :s s))
+        ;;                             "...")
+        ;;                      sp   (when-not (and map-mode? (zero? idx)) (str " " (when map-mode? " ")))]
+        ;;                  (str sp frmt)))
+        ;;              args))
+        ;;              _ (? :lines*!!!!! lines*)
+        ;; flatlines (into [] (flatten lines*))
+        ;; last-val  (str (-> flatlines last (str (when mm-norm? "}") ")")))
+        ;; first-val (str (->> flatlines first (str (when mm-norm? (str " {")))))
+          lines     (into []
+                          (remove nil?
+                                  (concat
+                                   [(str "(" fname (when classname (str " " classname)))]
+                                   args-display
+                                ;;  (assoc (assoc flatlines (-> flatlines count dec) last-val) 0 first-val)
+                                   )))]
+
+      #_(? :display args-display)
+      #_(? :ansi-formatting lines)
+      lines)))
 
 
 
@@ -364,7 +403,8 @@
           ")")))
 
 (defn file-info-str
-  [{:keys [js? form-meta plain?] :as m}]
+  [{:keys [js? form-meta plain?]
+    :as m}]
   #?(:clj
      (let [{:keys [file line column]} form-meta
            opts                       {:js?       js?
@@ -375,7 +415,9 @@
 
 (defn bad-arg-warning-body [m]
   [(warning-header m)
+   [" "]
    (warning-call-with-args m)
+   [" "]
    (file-info-str m)])
 
 (defn browser-formatted-js-vec [warning]
@@ -710,6 +752,90 @@
   [coll]
   (doseq [lines coll]
     (println #_"comp-warn" (apply ansiformat/warning-panel lines))))
+
+;;  (printing/compilation-warnings! (:terminal compilation-warnings)) ;;print
+
+(defn set-warnings! []
+  (let [{:keys [ident args]
+         :as   opts} @state/current-macro
+        bad-nums                  (compilation-warnings-coll opts)
+        bad-nums-js               (preformat-compilation-warnings-js bad-nums)
+        dupe-ident                (when ident (dupe-ident-warning opts))
+
+        ;; more warnings...
+
+
+        ;; bad-mods-warning          (bad-mods-warning opts)
+        ;; bad-mods-warning-js*      (bad-mods-warning (assoc opts :js? true))
+        ;; bad-mods-warning-js       (bad-mods-warning-js bad-mods-warning-js*)
+
+      ;;  (printing/ansi-bad-args-warning invalid-warning-args) ;;print
+      ;;  (printing/ansi-bad-mods-warning! bad-mods-warning) ;;print
+
+        invalid-style*     (merge
+                            opts
+                            {:invalid-args @state/invalid-style-args
+                            ;; :styles-argument-display (apply vector args)
+                             })
+
+        invalid-style-terminal (bad-arg-warning-body invalid-style*)
+        ;; invalid-warning-args-js  (preformat-js-warning invalid-warning-args) ;print
+
+        ;; invalid-style-warnings    ( @state/invalid-style-warnings)
+        ;; _    (? :set-warnings! opts)
+
+
+        warnings-terminal         {:bad-nums   (:terminal bad-nums)
+                                   :dupe-ident dupe-ident
+                                   :invalid-style invalid-style-terminal
+                                  ;;  :invalid-style
+                                   }
+        warnings-js               (into []
+                                        (concat
+                                         bad-nums-js
+                                         [(:browser dupe-ident)]
+                                         #_[invalid-warning-args-js]))]
+
+#_(? :invalid-warning-args @state/invalid-style-args)
+#_(? :invalid-style (console-error-ansi-formatting invalid-style*))
+
+    #_(? :set-warnings!
+       (keyed
+        ;; invalid-warning-args
+        ;; bad-mods-warning
+        ;; bad-mods-warning-js*
+        ;; bad-mods-warning-js
+        ))
+    #_(? :opts opts)
+
+    #_(? 'dupe-ident-warnings dupe-ident)
+    #_(? 'compilation-warnings-js compilation-warnings-js)
+    #_(? 'warnings-terminal warnings-terminal)
+
+    (reset! state/warnings-terminal warnings-terminal)
+    (reset! state/warnings-js warnings-js)
+    (reset! state/invalid-style-warnings warnings-terminal)
+    )) ;print
+
+(defn print-warnings! []
+  #_(? :print-warnings @state/warnings-terminal)
+  (doseq [[warning-type warning-or-warnings] @state/warnings-terminal]
+    (let [printing-opts @state/current-macro]
+      (do
+        #_(? :print-warnings:inner (keyed warning-type warning-or-warnings))
+        (case warning-type
+          :bad-nums   (doseq [warning warning-or-warnings]
+                        (println (apply ansiformat/warning-panel warning)))
+          :dupe-ident (print-dupe2! (merge warning-or-warnings printing-opts))
+          :invalid-style (println (apply ansiformat/warning-panel warning-or-warnings))
+          ;;  :else nil
+          ))))
+  (reset! state/compilation-warnings [])
+  (reset! state/invalid-style-warnings [])
+  )
+
+        ;;    dupe-ident-warning       (when ident (printing/dupe-ident-warning printing-opts))
+        ;;    _                        (when ident (printing/print-dupe2! (merge dupe-ident-warning printing-opts)))
 
 ;; Diagnostics   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

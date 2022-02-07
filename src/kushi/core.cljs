@@ -110,6 +110,16 @@
     (doseq [[selector css-rules] kushi-atomics]
       (inject-css* css-rules selector "_kushi-rules-shared_"))))
 
+(defn merged-attrs-map
+  ([attrs-base classlist css-vars]
+   (merged-attrs-map attrs-base classlist css-vars nil))
+  ([attrs-base classlist css-vars data-cljs]
+   (assoc attrs-base
+          :class
+          (distinct classlist)
+          :style css-vars
+          :data-cljs data-cljs)))
+
 (defn- merge-with-style-warning
   [v k n]
   (js/console.warn
