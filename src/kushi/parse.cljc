@@ -12,7 +12,7 @@
    [kushi.printing :as printing]
    [kushi.config :refer [user-config]]
    [kushi.utils :as util :refer [pprint+]]
-   [par.core :refer [?]]))
+   [par.core :refer [? !? ?+ !?+]]))
 
 (defn derefed? [x]
   (s/valid? ::specs/derefed x))
@@ -25,22 +25,6 @@
         coll))
 
 (defn extract-vars [selector* [css-prop val]]
-  #_(util/pprint+ "<< extract-vars"
-                {:selector* selector* :css-prop css-prop :val val})
-  #_(util/pprint+
-   "extract-vars"
-   (let [!important? (and (list? val) (= '!important (first val)))
-        val         (if !important? (second val) val)]
-    (cond
-      (symbol? val)  val
-      (derefed? val) (second val)
-      (vector? val)  (extract-vars* val)
-      (list? val)    (when-not (= 'cssfn (first val))
-                       {:__logic   (apply list val)
-                        :selector* selector*
-                        :css-prop  css-prop})
-      :else          nil)))
-
   (let [!important? (and (list? val) (= '!important (first val)))
         val         (if !important? (second val) val)]
     (cond
@@ -75,22 +59,16 @@
 
 (defn css-vars-map
   [extracted-vars]
-  #_(util/pprint+ "<< css-vars-map" extracted-vars)
-  (let [debug (= (-> extracted-vars first :selector*) "sfs-my-pee")
+  (let [
+        ;; debug (= (-> extracted-vars first :selector*) "")
         ret (reduce
              (fn [acc v]
-               #_(when debug (util/pprint+ "css-vars map: acc >>" acc))
                (cond
                  (and (map? v) (= :logic (:val-type v)))
                  (let [{:keys [selector* __logic css-prop]} v
                        k (util/css-var-for-sexp selector* css-prop)
-                       v (util/process-sexp __logic selector* css-prop)
-                       ]
-                   #_(when debug (util/pprint+ "css-vars map: branch >>" k))
-                   #_(when debug (util/pprint+ "css-vars map: branch >>" v))
-                   (assoc acc
-                          k #_(util/css-var-for-sexp selector* css-prop)
-                          v #_(util/process-sexp __logic selector* css-prop)))
+                       v (util/process-sexp __logic selector* css-prop)]
+                   (assoc acc k v))
 
                  (and (map? v) (= :derefed (:val-type v)))
                  (assoc acc
@@ -99,13 +77,10 @@
 
                  :else
                  (assoc acc
-                        (str "--" (sanitize-for-css-var-name v))
+                        (str "--" (sanitize-for-css-var-name (name v)))
                         v)))
              {}
              extracted-vars)]
-    #_(util/pprint+ "css-vars-map >>" ret)
-    #_(when debug (util/pprint+ "css-vars map:RET!!! >>" ret))
-    #_(when (= selector* "sfs-my-pee") (util/pprint+ "css-vars map >>" ret))
     ret))
 
 (defn css-vars
@@ -198,7 +173,7 @@
 
 ;; PARSING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Nix this stuff if not needed
+;; TODO: Nix this stuff if not needed
 (def quoted-string-with-spaces "\\_")
 (def quoted-string-with-spaces-regex (re-pattern (str "\\s*" quoted-string-with-spaces "\\s*")))
 (defn quoted-string-with-spaces? [s] (re-find quoted-string-with-spaces-regex s))
@@ -217,7 +192,7 @@
              :prop           prop
              :prop-hydrated  prop-hydrated
              :numeric-string numeric-string
-             :current-macro  @state/current-macro
+             :current-macro  (:fname @state/current-macro)
              :form-meta      (:form-meta @state/current-sx)}]
       #_(printing/console-warning-number (vector m))
       #_(util/pprint+ "warn" {:m m})
@@ -287,20 +262,6 @@
            :else x))
        coll))
 
-#_(defn maybe-convert-map
-  [x]
-  (if (and (= true (:map-mode? user-config))
-           (= 1 (count x))
-           (-> x first map?))
-    (->> x
-         first
-         (map (fn [[k v]]
-                ; TODO add coverage for these specs
-                (if (or (and (= v :kushi/class) (s/valid? ::specs/scoped-class-syntax k))
-                        (and (= v :kushi/mixin) (keyword? k)))
-                  k
-                  [k v]))))
-    x))
 
 (defn hydrate-css
   [{css-prop :css-prop val* :val :as m} selector*]
