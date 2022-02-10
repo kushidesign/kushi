@@ -103,12 +103,17 @@
 
 (defn inject-style-rules
   [css-rules selector]
-   (inject-css* css-rules selector "_kushi-rules_"))
+   (when (seq css-rules)
+     (inject-css* css-rules selector "_kushi-rules_")))
 
 (defn inject-kushi-atomics [kushi-atomics]
   (when (seq kushi-atomics)
     (doseq [[selector css-rules] kushi-atomics]
       (inject-css* css-rules selector "_kushi-rules-shared_"))))
+
+(defn inject! [css-rules selector kushi-atomics]
+  (inject-kushi-atomics kushi-atomics)
+  (inject-style-rules css-rules selector))
 
 (defn merged-attrs-map
   ([attrs-base classlist css-vars]
