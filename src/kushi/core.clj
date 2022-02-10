@@ -16,7 +16,7 @@
   [kushi.state :as state]
   [kushi.stylesheet :as stylesheet]
   [kushi.typography :refer [system-font-stacks]]
-  [kushi.utils :as util :refer [#_? #_keyed]]))
+  [kushi.utils :as util]))
 
 ;TODO move this to utils
 (defmacro keyed [& ks]
@@ -64,26 +64,6 @@
           ret (into [] (concat classes (into [] (dissoc m :.))))]
         #_(? (keyed classes* classes ret))
       ret)))
-
-#_(defn- scoped-atomic-classname
-  "Returns a classname with proper prefixing for scoping.
-   Returns an uscoped classname for class not in global registry.
-
-   Example with a user-defined class:
-   (defclass myclass :c--red)
-   (scoped-atomic-classname {} {:atomic :myclass}) ;=> \"_o25757__myclass\"
-
-   Example with a kushi pre-defined class:
-   (scoped-atomic-classname {} {:atomic :flex-row-c}) ;=> \"_o25757_flex-row-c\""
-  [meta kw]
-  (some-> (assoc meta :defclass-name kw :defclass-hash atomic/defclass-hash)
-          selector/selector-name
-          :selector*))
-
-#_(defn- atomic-classes
-  [meta ks]
-  (remove nil?
-          (mapv (partial scoped-atomic-classname meta) ks)))
 
 (defn- hydrated-defclass
   [classname coll*]
@@ -280,7 +260,6 @@
      (swap! state/user-defined-keyframes assoc (keyword nm) frames)
      (when (and caching? (not cached))
        (swap! state/styles-cache-updated assoc cache-key frames))
-     #_nil
      (if @KUSHIDEBUG
        `(do
           (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
@@ -292,60 +271,7 @@
 (defn cssfn [& args]
   (cons 'cssfn (list args)))
 
-(defn- style&classes+attr [args]
-  (let [only-attr?       (s/valid? ::specs/map-mode-only-attr args)
-        only-style?      (s/valid? ::specs/map-mode-only-style args)
-        style+attr?      (s/valid? ::specs/map-mode-style+attr args)
-        [style attr]     (cond only-style? [(first args) nil]
-                               style+attr? args
-                               only-attr?  [nil (first args)])
-        invalid-map-args (remove nil? (map-indexed (fn [idx v] (when-not (and (map? v) (< idx 2)) v)) args))]
-
-    #_(? "style&classes+attr"
-       (keyed only-attr?
-              only-style?
-              style+attr?
-              invalid-map-args
-              style
-              attr))
-
-    {:styles+classes   style
-     :attr             attr
-     :invalid-map-args invalid-map-args}) )
-
 (def meta-ks [:ancestor :prefix :ident :element])
-
-
-
-
-
-(defn- only-attr
-  [args]
-  (let [selected                (:select-ns user-config)
-        select-ns-vector-valid? (s/valid? ::specs/select-ns-vector selected)]
-    (when select-ns-vector-valid?
-      (let [current-ns-sym       (symbol (.toString *ns*))
-            current-ns?          (contains? (into #{} selected) current-ns-sym)
-            current-ns-ancestor? (some? (some #(re-find
-                                                (re-pattern (str %))
-                                                (str current-ns-sym))
-                                              selected))]
-        (when-not (or current-ns-ancestor? current-ns?)
-          (let [attr (or (-> args style&classes+attr :attr) {})]
-            (apply dissoc attr meta-ks)))))))
-
-(defn shared-classlist
-  [atomic-class-keys]
-  #_(? atomic-class-keys)
-  (into
-   []
-   (remove
-    nil?
-    (doall
-     (for [k* atomic-class-keys
-           :let [k (keyword (subs (name k*) 1))
-                 {:keys [selector selector*]} (-> {:defclass-name k} selector/selector-name)]]
-       (keyed k selector* selector))))))
 
 (defn shared-classes-inj
   [distinct-classes selector]
@@ -358,32 +284,36 @@
     ret))
 
 ;; TODO
-;; finish printing
-;; bad args warning
-;; only attr
-;; bad args as tuple outside of map
-;; 
+;; bad args warning js
+
+;; only attr CHECK
+;; bad args as tuple outside of map CHECK
+
+;; defclass
+;; caching?
+
+;; take ? stuff out of utils
+;; ansi-lib
+;; pretty-bad
 
 (defmacro sx
   [& args*]
   #_(?+ (meta &form))
-  (let [form-meta                  (meta &form)
-        new-args                   (-> args*
-                                       arguments/consolidated
-                                       (arguments/new-args form-meta))
-        {:keys [;; new-style
-                prefixed-classlist
+  (let [form-meta                    (meta &form)
+        new-args                     (-> args*
+                                         arguments/consolidated
+                                         (arguments/new-args form-meta))
+        {:keys [prefixed-classlist
                 distinct-classes
                 attrs-base
                 kushi-attr
                 selector
-                ;; selector*
                 css-vars
                 garden-vecs
-                data-cljs]}        new-args
-        _                         (state/set-current-macro! args* form-meta :sx kushi-attr)
-        element-style-inj         (stylesheet/garden-vecs-injection garden-vecs)
-        shared-styles-inj         (shared-classes-inj distinct-classes selector)
+                data-cljs ]}        new-args
+        _                           (state/set-current-macro! args* form-meta :sx kushi-attr)
+        element-style-inj           (stylesheet/garden-vecs-injection garden-vecs)
+        shared-styles-inj           (shared-classes-inj distinct-classes selector)
 
         ; printing
         _ (printing/set-warnings!)
@@ -391,8 +321,6 @@
 
        (state/add-styles! garden-vecs)
        (printing/print-warnings!)
-
-
 
     #_(?
      (keyed
@@ -407,68 +335,37 @@
       ;; classlist
       ))
 
-    (or
-     #_(only-attr args)
      (if @KUSHIDEBUG
        ;; dev builds
-       `(let [;; move  cljs.core/to-array inside fn and rename js-array# ?
-              logfn#    (fn [f# js-array#]
+       ;; TODO move cljs.core/to-array inside fn and rename js-array# ?
+       `(let [logfn#    (fn [f# js-array#]
                           (.apply js/console.warn js/console (f# js-array#)))]
-
           (do
-              ;; Leave commented
-            #_(when ~dupe-ident-warning
-                (logfn# cljs.core/to-array (:browser ~dupe-ident-warning)))
-
             (when ~warnings-js
               (doseq [warning# ~warnings-js]
                 (logfn# cljs.core/to-array warning#)))
-
-              ;; (when ~bad-mods-warning-js (logfn# cljs.core/to-array ~bad-mods-warning-js))
-
-            ;; js-args-warning should already be nil if-not (seq ~invalid-args)
-            ;;   (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
 
             ;; TODO why does first arg need to be quoted? vars?
             (kushi.core/inject-style-rules (quote ~element-style-inj) ~selector)
             (kushi.core/inject-kushi-atomics ~shared-styles-inj)
 
-            ;; return attribute map for the component to be rendered
+            ;; return attributes map for the element
             (kushi.core/merged-attrs-map
              ~attrs-base
              ~prefixed-classlist
              ~css-vars
              ~data-cljs)))
 
-      ;; release builds
+       ;; release builds
+       (if (:runtime-injection? user-config)
+         `(do
+            (kushi.core/inject-style-rules (quote ~element-style-inj) ~selector)
+            (kushi.core/inject-kushi-atomics ~shared-styles-inj)
+            {:class ~prefixed-classlist})
 
-        ;;  (let
-        ;;   [{:keys [only-class? only-class+style?]} (util/analyze-attr m)
-        ;;    inject?                                 (:runtime-injection? user-config)]
-        ;;    (cond
-        ;;      only-class?
-        ;;      `(do
-        ;;         (when ~inject?
-        ;;           (kushi.core/inject-style-rules (quote ~css-injection) ~selector)
-        ;;           (kushi.core/inject-kushi-atomics ~kushi-atomics))
-        ;;         {:class (quote ~classlist)})
-
-        ;;      only-class+style?
-        ;;      `(do
-        ;;         (when ~inject?
-        ;;           (kushi.core/inject-style-rules (quote ~css-injection) ~selector)
-        ;;           (kushi.core/inject-kushi-atomics ~kushi-atomics))
-        ;;         {:class (quote ~classlist)
-        ;;          :style (merge (:style ~attr) ~css-vars)})
-
-        ;;      :else
-        ;;      `(let [og-cls#   (:class ~attr)
-        ;;             cls#      (when og-cls# (if (coll? og-cls#) og-cls# [og-cls#]))
-        ;;             attr-map# (merge ~attr-base
-        ;;                              {:class (distinct (concat cls# (quote ~classlist) ~conditional-class-sexprs))
-        ;;                               :style (merge (:style ~attr) ~css-vars)})]
-        ;;         (when ~inject?
-        ;;           (kushi.core/inject-style-rules (quote ~css-injection) ~selector)
-        ;;           (kushi.core/inject-kushi-atomics ~kushi-atomics))
-        ;;         attr-map#)))
-       ))))
+         `(do
+            ;; return attributes map for the element
+            (kushi.core/merged-attrs-map
+             ~attrs-base
+             ~prefixed-classlist
+             ~css-vars))))))
