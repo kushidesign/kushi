@@ -760,6 +760,7 @@ Below is a full map of all the options available:
 
  ;; Optionally defined your own breakpoint scale to override
  ;; kushi's default breakpoint scale.
+ ;; This must be a vector of kwargs, not a map.
  :media [:2xl {:max-width :1536px}
          :xl {:max-width :1280px}
          :lg {:max-width :1024px}
