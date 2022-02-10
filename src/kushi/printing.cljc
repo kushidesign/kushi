@@ -324,7 +324,7 @@
      (let [msg-type (name msg-type*)
            color (case msg-type
                    "rainbow" ansi/bold-yellow
-                   "error" ansi/bold-red
+                   "error"   ansi/bold-red
                    "warning" ansi/bold-yellow
                    ansi/bold-black)]
        (str (color (str left-border-glyphstring (string/join (repeat indent-num " ")))) s))))
@@ -339,9 +339,21 @@
                (or plural-suffix "s")
                singular-suffix)))))
 
+(defn pluralize2
+  ([s coll]
+   (pluralize2 s coll nil nil))
+  ([s coll singular-suffix plural-suffix]
+   (if-not (coll? coll)
+     (str s "s")
+     (let [n (count coll)
+           plural? (< 1 n) ]
+       (str s
+            (if plural? (or plural-suffix "s") singular-suffix)
+            (when plural? (str " (" n ")")))))))
+
 (defn warning-header
   [{:keys [invalid-args fname js?] :as m}]
-  (let [s (pluralize "Invalid argument" invalid-args)
+  (let [s (pluralize2 "Invalid argument" invalid-args)
         opts {:style-key :bold :s s}
         opts-js (assoc opts :js? true)
         desc #(str % " to kushi.core/" fname)]
@@ -381,11 +393,12 @@
                                        :plain?    plain?}]
        (str file ":"  (format-wrap opts)))))
 
-(defn bad-arg-warning-body [m]
+(defn bad-arg-warning-body [{:keys [js?] :as m}]
+  ;; (? :wb) (? m) (? :wb)
   [(warning-header m)
-   [" "]
+   (if js? "\n\n" :br)
    (warning-call-with-args m)
-   [" "]
+   (if js? "\n\n" :br)
    (file-info-str m)])
 
 (defn browser-formatted-js-vec [warning]
@@ -672,13 +685,6 @@
     :body-lines-fn dupe-warning-body-lines}))
 
 
-;; Remove?
-#_(defn duplicate-defclass! [m]
-  (when (get @state/kushi-atomic-user-classes (-> m :nm keyword))
-    (let [opts      (assoc m :style-key :bold)
-          body-lines (dupe-warning-body-lines m opts)]
-      (print-dupe! m body-lines))))
-
 ;; Warnings for bad numbers   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn unitless-number-warning [% {:keys [js?] :as opts}]
@@ -687,33 +693,35 @@
           " of "
           (format-wrap (assoc opts :s (:numeric-string %)))
           " for "
-          (format-wrap (assoc opts :s (:prop-hydrated %)))
-          #_" in kushi.core/"
-          #_(name (:current-macro %)))
+          (format-wrap (assoc opts :s (:prop-hydrated %))))
      sep
      (file-info-str opts)
      sep
      (str "Did you mean " (format-wrap (assoc opts :s (str (:numeric-string %) "px?"))))]))
 
+(defn compilation-warnings-coll*
+  [warnings opts]
+  (mapv
+   #(cond
+      (= (:warning-type %) :unitless-number)
+      (unitless-number-warning % opts))
+   warnings))
+
 (defn compilation-warnings-coll
   [opts*]
-  (let [opts (assoc opts* :style-key :bold)]
-    {:terminal (mapv
-                #(cond
-                   (= (:warning-type %) :unitless-number)
-                   (unitless-number-warning % opts))
-                @state/compilation-warnings)
-     :browser (mapv
-               #(cond
-                  (= (:warning-type %) :unitless-number)
-                  (unitless-number-warning % (assoc opts :js? true)))
-               @state/compilation-warnings)}))
+  (let [warnings @state/compilation-warnings]
+    (when (not-empty warnings)
+      (let [opts    (assoc opts* :style-key :bold)
+            opts-js (assoc opts :js? true)
+            f       (partial compilation-warnings-coll* warnings)]
+        {:terminal (f opts)
+         :browser  (f opts-js)}))))
 
 (defn preformat-compilation-warnings-js
   [{browser-warnings :browser}]
   (when (seq browser-warnings)
     (mapv #(let [warning (str (string/join %) "\n")]
-            (browser-formatted-js-vec warning))
+             (browser-formatted-js-vec warning))
           browser-warnings)))
 
 (defn compilation-warnings!
@@ -721,89 +729,52 @@
   (doseq [lines coll]
     (println #_"comp-warn" (apply ansiformat/warning-panel lines))))
 
-;;  (printing/compilation-warnings! (:terminal compilation-warnings)) ;;print
-
 (defn set-warnings! []
-  (let [{:keys [ident args]
-         :as   opts} @state/current-macro
-        bad-nums                  (compilation-warnings-coll opts)
-        bad-nums-js               (preformat-compilation-warnings-js bad-nums)
-        dupe-ident                (when ident (dupe-ident-warning opts))
+  (let [{:keys [ident args] :as opts}  @state/current-macro
+        bad-nums                       (compilation-warnings-coll opts)
+        bad-nums-js                    (preformat-compilation-warnings-js bad-nums)
+        dupe-ident                     (when ident (dupe-ident-warning opts))
+        invalid-style*                 (when @state/invalid-style-args
+                                         (merge
+                                          opts
+                                          {:invalid-args @state/invalid-style-args}))
 
-        ;; more warnings...
+        warnings-terminal              {:bad-nums      (:terminal bad-nums)
+                                        :dupe-ident    dupe-ident
+                                        :invalid-style (when invalid-style*
+                                                         (bad-arg-warning-body invalid-style*))}
 
-
-        ;; bad-mods-warning          (bad-mods-warning opts)
-        ;; bad-mods-warning-js*      (bad-mods-warning (assoc opts :js? true))
-        ;; bad-mods-warning-js       (bad-mods-warning-js bad-mods-warning-js*)
-
-      ;;  (printing/ansi-bad-args-warning invalid-warning-args) ;;print
-      ;;  (printing/ansi-bad-mods-warning! bad-mods-warning) ;;print
-
-        invalid-style*     (merge
-                            opts
-                            {:invalid-args @state/invalid-style-args
-                            ;; :styles-argument-display (apply vector args)
-                             })
-
-        invalid-style-terminal (bad-arg-warning-body invalid-style*)
-        ;; invalid-warning-args-js  (preformat-js-warning invalid-warning-args) ;print
-
-        ;; invalid-style-warnings    ( @state/invalid-style-warnings)
-        ;; _    (? :set-warnings! opts)
-
-
-        warnings-terminal         {:bad-nums   (:terminal bad-nums)
-                                   :dupe-ident dupe-ident
-                                   :invalid-style invalid-style-terminal
-                                  ;;  :invalid-style
-                                   }
-        warnings-js               (into []
-                                        (concat
-                                         bad-nums-js
-                                         [(:browser dupe-ident)]
-                                         #_[invalid-warning-args-js]))]
-
-#_(? :invalid-warning-args @state/invalid-style-args)
-#_(? :invalid-style (console-error-ansi-formatting invalid-style*))
-
-    #_(? :set-warnings!
-       (keyed
-        ;; invalid-warning-args
-        ;; bad-mods-warning
-        ;; bad-mods-warning-js*
-        ;; bad-mods-warning-js
-        ))
-    #_(? :opts opts)
-
-    #_(? 'dupe-ident-warnings dupe-ident)
-    #_(? 'compilation-warnings-js compilation-warnings-js)
-    #_(? 'warnings-terminal warnings-terminal)
+        warnings-js                    (into []
+                                             (concat
+                                              bad-nums-js
+                                              [(:browser dupe-ident)]
+                                              [(browser-formatted-js-vec
+                                                (string/join
+                                                 (bad-arg-warning-body
+                                                  (assoc invalid-style* :js? true))))]))]
 
     (reset! state/warnings-terminal warnings-terminal)
     (reset! state/warnings-js warnings-js)
     (reset! state/invalid-style-warnings warnings-terminal)
-    )) ;print
+    ))
 
 (defn print-warnings! []
   #_(? :print-warnings @state/warnings-terminal)
-  (doseq [[warning-type warning-or-warnings] @state/warnings-terminal]
-    (let [printing-opts @state/current-macro]
-      (do
-        #_(? :print-warnings:inner (keyed warning-type warning-or-warnings))
-        (case warning-type
-          :bad-nums   (doseq [warning warning-or-warnings]
-                        (println (apply ansiformat/warning-panel warning)))
-          :dupe-ident (print-dupe2! (merge warning-or-warnings printing-opts))
-          :invalid-style (println (apply ansiformat/warning-panel warning-or-warnings))
-          ;;  :else nil
-          ))))
+  (let [warnings (util/filter-map @state/warnings-terminal (fn [_ v] (not-empty v)))]
+    #_(? :warnings warnings)
+    (doseq [[warning-type warning-or-warnings] warnings]
+      (let [printing-opts @state/current-macro]
+        #_(? (keyed warning-type warning-or-warnings))
+        (when warning-or-warnings
+          #_(? :print-warnings:inner (keyed warning-type warning-or-warnings))
+          (case warning-type
+            :bad-nums   (doseq [warning warning-or-warnings]
+                          (println (apply ansiformat/warning-panel warning)))
+            :dupe-ident (print-dupe2! (merge warning-or-warnings printing-opts))
+            :invalid-style (println (apply ansiformat/warning-panel warning-or-warnings))
+            nil)))))
   (reset! state/compilation-warnings [])
-  (reset! state/invalid-style-warnings [])
-  )
-
-        ;;    dupe-ident-warning       (when ident (printing/dupe-ident-warning printing-opts))
-        ;;    _                        (when ident (printing/print-dupe2! (merge dupe-ident-warning printing-opts)))
+  (reset! state/invalid-style-warnings []))
 
 ;; Diagnostics   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
