@@ -135,7 +135,6 @@
   #?(:clj (if float? (. Double parseDouble s) (. Integer parseInt s))
      :cljs (if float? (js/parseFloat s) (js/parseInt s))))
 
-
 (defn sanitize-for-css-var-name [v]
   (string/escape
    v
@@ -151,8 +150,7 @@
     \( "_OB"
     \) "_CB"
     \& "_AMP"
-    \* "_STAR"})
-  )
+    \* "_STAR"}))
 
 (defn css-var-string
   ([x]
@@ -269,25 +267,13 @@
          (when (coll? x)
            (not-empty x))))))
 
-(defn analyze-attr
-  [{:keys [conditional-class-sexprs attr css-vars]}]
-  (let
-   [conditional-classes? (values? conditional-class-sexprs)
-    existing-classes? (values? (:class attr))
-    css-vars? (values? css-vars)
-    style? (values? (:style attr))
-    attr? (values? attr)
-    class-like? (boolean (some true? [conditional-classes? existing-classes?]))
-    style-like? (boolean (some true? [css-vars? style?]))]
 
-    #_(pprint+ {:conditional-classes? conditional-classes?
-              :conditional-class-sexprs conditional-class-sexprs
-              :existing-classes? existing-classes?
-              :existing-classes (:class attr)
-              :css-vars? css-vars?
-              :css-vars css-vars
-              :style? style?
-              :style (:style attr)})
+(defn filter-map [m pred]
+  (select-keys m (for [[k v] m :when (pred k v)] k)))
 
-    {:only-class? (and (not attr?) (not-any? true? [class-like? style-like?]))
-     :only-class+style? (and (not attr?) (and style-like? (not class-like?)))}))
+(defn positions
+  [pred coll]
+  (keep-indexed (fn [idx x]
+                  (when (pred x)
+                    idx))
+                coll))
