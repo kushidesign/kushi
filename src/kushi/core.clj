@@ -274,35 +274,26 @@
 (def meta-ks [:ancestor :prefix :ident :element])
 
 (defn shared-classes-inj
-  [distinct-classes selector]
+  [distinct-classes]
   (let [ret* (remove nil? (map #(get @state/kushi-atomic-user-classes %) distinct-classes))
-
-        ret (mapv (fn [{:keys [selector garden-vecs]}]
-                    (let [css-injection-for-kushi-atomic (stylesheet/garden-vecs-injection garden-vecs)]
-                      [selector css-injection-for-kushi-atomic]))
-                            ret*)]
+        ret  (mapv (fn [{:keys [selector garden-vecs]}]
+                     (let [css-injection-for-kushi-atomic (stylesheet/garden-vecs-injection garden-vecs)]
+                       [selector css-injection-for-kushi-atomic]))
+                   ret*)]
     ret))
 
-;; TODO
-;; bad args warning js
-
-;; only attr CHECK
-;; bad args as tuple outside of map CHECK
-
-;; defclass
-;; caching?
-
-;; take ? stuff out of utils
-;; ansi-lib
-;; pretty-bad
 
 (defmacro sx
   [& args*]
   #_(?+ (meta &form))
-  (let [form-meta                    (meta &form)
-        new-args                     (-> args*
-                                         arguments/consolidated
-                                         (arguments/new-args form-meta))
+  (let [{:keys [caching?
+                cache-key
+                cached]}            (state/cached :sx args*)
+        form-meta                   (meta &form)
+        new-args                    (or cached
+                                        (-> args*
+                                            arguments/consolidated
+                                            (arguments/new-args form-meta)))
         {:keys [prefixed-classlist
                 distinct-classes
                 attrs-base
@@ -310,20 +301,22 @@
                 selector
                 css-vars
                 garden-vecs
-                data-cljs ]}        new-args
+                data-cljs]}         new-args
         _                           (state/set-current-macro! args* form-meta :sx kushi-attr)
         element-style-inj           (stylesheet/garden-vecs-injection garden-vecs)
-        shared-styles-inj           (shared-classes-inj distinct-classes selector)
+        shared-styles-inj           (shared-classes-inj distinct-classes)
 
         ; printing
         _ (printing/set-warnings!)
         warnings-js @state/warnings-js]
 
-       (state/add-styles! garden-vecs)
-       (printing/print-warnings!)
+    (when (and caching? (not cached))
+      (swap! state/styles-cache-updated assoc cache-key new-args))
+    (state/add-styles! garden-vecs)
+    (printing/print-warnings!)
 
     #_(?
-     (keyed
+       (keyed
       ;; shared-classes-inj
       ;; new-style
       ;; selector
@@ -333,39 +326,40 @@
       ;; data-cljs-prefix
       ;; data-cljs
       ;; classlist
-      ))
+        ))
 
-     (if @KUSHIDEBUG
+    ;;TODO - fix injection mode
+    (if @KUSHIDEBUG
        ;; dev builds
        ;; TODO move cljs.core/to-array inside fn and rename js-array# ?
-       `(let [logfn#    (fn [f# js-array#]
-                          (.apply js/console.warn js/console (f# js-array#)))]
-          (do
-            (when ~warnings-js
-              (doseq [warning# ~warnings-js]
-                (logfn# cljs.core/to-array warning#)))
+      `(let [logfn#    (fn [f# js-array#]
+                         (.apply js/console.warn js/console (f# js-array#)))]
+         (do
+           (when ~warnings-js
+             (doseq [warning# ~warnings-js]
+               (logfn# cljs.core/to-array warning#)))
 
             ;; TODO why does first arg need to be quoted? vars?
-            (kushi.core/inject-style-rules (quote ~element-style-inj) ~selector)
-            (kushi.core/inject-kushi-atomics ~shared-styles-inj)
+           (kushi.core/inject-style-rules (quote ~element-style-inj) ~selector)
+           (kushi.core/inject-kushi-atomics ~shared-styles-inj)
 
             ;; return attributes map for the element
-            (kushi.core/merged-attrs-map
-             ~attrs-base
-             ~prefixed-classlist
-             ~css-vars
-             ~data-cljs)))
+           (kushi.core/merged-attrs-map
+            ~attrs-base
+            ~prefixed-classlist
+            ~css-vars
+            ~data-cljs)))
 
        ;; release builds
-       (if (:runtime-injection? user-config)
-         `(do
-            (kushi.core/inject-style-rules (quote ~element-style-inj) ~selector)
-            (kushi.core/inject-kushi-atomics ~shared-styles-inj)
-            {:class ~prefixed-classlist})
+      (if (:runtime-injection? user-config)
+        `(do
+           (kushi.core/inject-style-rules (quote ~element-style-inj) ~selector)
+           (kushi.core/inject-kushi-atomics ~shared-styles-inj)
+           {:class ~prefixed-classlist})
 
-         `(do
+        `(do
             ;; return attributes map for the element
-            (kushi.core/merged-attrs-map
-             ~attrs-base
-             ~prefixed-classlist
-             ~css-vars))))))
+           (kushi.core/merged-attrs-map
+            ~attrs-base
+            ~prefixed-classlist
+            ~css-vars))))))

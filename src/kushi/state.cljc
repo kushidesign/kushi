@@ -85,7 +85,6 @@
   (reset! atomic-declarative-classes-used #{})
   (reset! defclasses-used #{})
   (reset! defclasses+atomics-used {})
-  
   )
 
 (defonce styles-cache-current
@@ -96,9 +95,20 @@
 (defonce styles-cache-updated
   (atom @styles-cache-current))
 
-(defn cached [k & more]
+(defn cached
+  "Assuming the following user config:
+   (def user-config {:__enable-caching__? true
+                     :prefix              \"hi-\"})
+   (cached :sx :p--10px {:id :foo})
+   =>
+   {:caching?  true
+    :cache-key [:sx {... :prefix \"hi-\" ...} :p--10px {:id :foo}]
+    :cached    {...}}"
+  [k & more]
   (let [caching?  (:__enable-caching?__ user-config)
-        cache-key (when caching? (apply conj [k user-config-args-sx-defclass] more))]
+        cache-key (when caching?
+                    (apply conj [k user-config-args-sx-defclass] more))
+        cached    (when caching? (get @styles-cache-updated cache-key))]
     {:caching?  caching?
      :cache-key cache-key
-     :cached    (when caching? (get @styles-cache-updated cache-key))}))
+     :cached    cached}))

@@ -2,15 +2,23 @@
   (:require
    [clojure.string :as string]
    [clojure.java.io :as io]
-   [clojure.edn :as edn]
+   [clojure.edn :as edn] ;Take this out?
    [clojure.data :as data]
    [garden.stylesheet]
    [garden.core :as garden]
    [kushi.config :refer [user-config user-css-file-path kushi-cache-dir kushi-cache-path version]]
    [kushi.state :as state]
-   [kushi.utils :as util :refer [? keyed]]
+   [kushi.utils :as util]
+   [par.core :refer [? !?]]
    [kushi.atomic :as atomic]
    [kushi.reporting :as reporting]))
+
+;TODO move this to utils
+(defmacro keyed [& ks]
+  `(let [keys# (quote ~ks)
+         keys# (map keyword keys#)
+         vals# (list ~@ks)]
+     (zipmap keys# vals#)))
 
 (defn garden-vecs-injection
   [garden-vecs]
@@ -113,12 +121,12 @@
 
 (defn append-defclasses!
   [{:keys [pretty-print? css-text to-be-printed]}]
-  (when-not (empty? @state/atomic-declarative-classes-used)
+  (when-not (empty? @state/defclasses-used)
     (let [gv                  (map #(let [normalized-class-kw (util/normalized-class-kw %)]
                                       (some-> @state/kushi-atomic-user-classes
                                               normalized-class-kw
                                               :garden-vecs))
-                                   @state/atomic-declarative-classes-used)
+                                   @state/defclasses-used)
           garden-vecs*        (apply concat (concat gv))
           garden-vecs         (->> garden-vecs*
                                    (remove has-mqs?)
@@ -126,8 +134,7 @@
           atomic-classes-mq   (atomic-classes-mq garden-vecs*)
 
           defclass-mq-count   (count atomic-classes-mq)
-          defclass-style-rules-under-mqs (count-mqs-rules atomic-classes-mq)
-          total-defclasses    (+ defclass-style-rules-under-mqs (count garden-vecs))]
+          defclass-style-rules-under-mqs (count-mqs-rules atomic-classes-mq)]
       (swap! to-be-printed
              assoc
              :defclass-style-rules-under-mqs
@@ -232,7 +239,7 @@
 
     (let [zero-total-rules?   (nil? (some #(not (zero? %)) (vals @to-be-printed)))
           something-to-write? (not zero-total-rules?)]
-
+      #_(? (keyed write-stylesheet? something-to-write?))
       (when (and write-stylesheet? something-to-write?)
         (use 'clojure.java.io)
         (spit user-css-file-path @css-text :append false))

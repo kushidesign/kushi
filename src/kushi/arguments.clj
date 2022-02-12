@@ -44,6 +44,7 @@
                   :kushi-atomic state/atomic-declarative-classes-used
                   :defclass state/defclasses-used
                   nil)]
+      #_(? 'register&prefix* (keyed x ret store))
       (when store (swap! store conj x))
       ret)))
 
@@ -217,7 +218,6 @@
         grouped-by-mqs               (parse/grouped-by-mqs tokenized-styles)
         garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)
 
-
         ;; dev-time debugging info --------------------------------------------------------------------
         data-cljs-prefix             (when-let [pf (:data-cljs-prefix kushi-attr)] (str (name pf) ":"))
         data-cljs                    (let [{:keys [file line column]} form-meta]
@@ -229,7 +229,15 @@
         only-attrs?                  (and (not prefixed-classlist?) (not css-vars?) attrs?)
         only-class?                  (and prefixed-classlist? (not css-vars?) (not attrs?))
         only-class+style?            (and prefixed-classlist? styles? (not attrs?))
-        ]
+        ret                          (keyed
+                                      prefixed-classlist
+                                      distinct-classes
+                                      attrs-base
+                                      kushi-attr
+                                      selector
+                                      css-vars
+                                      garden-vecs
+                                      data-cljs)]
 
     ;; Set invalid style-args in state!
     (reset! state/invalid-style-args invalid-style-args)
@@ -258,7 +266,6 @@
         ;; only-attrs?
         ;; only-class?
         ;; only-class+style?
-
         ;;  new-style
         ;;  invalid-style-args
         ;;  attrs-base
@@ -269,25 +276,18 @@
         ;;  garden-vecs
         ;; classes-from-tokens+
         ;; new-args
-           ))
-
-    (keyed
-     prefixed-classlist
-     distinct-classes
-     attrs-base
-     kushi-attr
-     selector
-     css-vars
-     garden-vecs
-     data-cljs)))
+               ))
+    ret))
 
 (defn combine-classes [coll]
-  (let [f     (fn [acc v] (if (coll? v) (into [] (concat acc v)) (conj acc v)))
-        ret  (->> coll
-                  (reduce f [])
-                  (remove nil?)
-                  distinct
-                  (into []))]
+  (let [f   (fn [acc v]
+              (if (coll? v)
+                (into [] (concat acc v)) (conj acc v)))
+        ret (->> coll
+                 (reduce f [])
+                 (remove nil?)
+                 distinct
+                 (into []))]
     ret))
 
 (defn merge-attr [kushi-map attr-map]

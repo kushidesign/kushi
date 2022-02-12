@@ -1,7 +1,6 @@
 (ns ^:dev/always kushi.core
-  (:require-macros [kushi.core :refer [sx clean! add-font-face defclass defkeyframes add-system-font-stack keyed]])
-  (:require [clojure.string :as string]
-            [clojure.pprint :refer [pprint]]))
+  (:require-macros [kushi.core :refer [keyed]])
+  (:require [clojure.string :as string]))
 
 (defn cssfn? [x]
   (and (list? x)
@@ -96,7 +95,7 @@
         (try
           (.insertRule sheet rule-css updated-num-rules-idx)
           (catch :default e (js/console.warn
-                             "kushi.core/s+:\n\nFailed attempt to inject malformed css rule:\n\n"
+                             "kushi.core/sx:\n\nFailed attempt to inject malformed css rule:\n\n"
                              rule-css
                              "\n\n¯\\_(ツ)_/¯"
                              e)))))))
@@ -239,7 +238,5 @@
          [tag attr*] (->hiccup target)
          attr (if (map? decorator) (kushi.core/merge-with-style attr* decorator) attr*)]
      (fn [& args]
-       #_(? args)
        (let [ret (when (= child-path []) (merge-hiccup tag attr args))]
-         #_(? ret)
          ret)))))
