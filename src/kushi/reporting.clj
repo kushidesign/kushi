@@ -3,7 +3,6 @@
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [io.aviso.ansi :as ansi]
-   [clj-ph-css.core :as ph-css]
    [kushi.config :refer [user-config user-css-file-path version kushi-cache-path]]
    [kushi.printing :as printing]
    [kushi.ansiformat :as ansiformat]
@@ -123,27 +122,6 @@
                   style-rules-under-mqs
                   total-style-rules))))
 
-(defn parse-generated-css []
-  (let [file-contents   (slurp user-css-file-path)
-        parsed          (ph-css/string->schema file-contents)
-        font-face-rules (filter #(= (:type %) :font-face-rule) parsed)
-        keyframes-rules (filter #(= (:type %) :keyframes-rule) parsed)
-        mqs             (filter #(= (:type %) :media-rule) parsed)
-        mqs-styles      (apply concat (map :rules mqs))
-        style-rules     (filter #(= (:type %) :style-rule) parsed)]
-
-    #_(util/pprint+ "media-rules" media-rules)
-    #_(util/pprint+ "style-rules" style-rules)
-    #_(util/pprint+
-       "to-be-printed"
-       @to-be-printed)
-
-    {:font-face    (count font-face-rules)
-     :keyframes    (count keyframes-rules)
-     :style-rules  (count style-rules)
-     :style-rules-under-mqs (count mqs-styles)
-     :total-style-rules (+ (count style-rules) (count mqs-styles))}))
-
 (defn format-line-items [banner? coll]
   (when (and coll (seq coll))
     (if banner? coll (str "(" (string/join ", " coll) ")"))))
@@ -169,9 +147,6 @@
         report-format-fn        (if banner? ansiformat/panel simple-report)
         report-line-items-pre*  (report-line-items @to-be-printed)
         report-line-items-pre   (format-line-items banner? report-line-items-pre*)
-        report-line-items-post* (when (:report-output? user-config)
-                                  (line-items-confirmation @to-be-printed (parse-generated-css)))
-        report-line-items-post  (format-line-items banner? report-line-items-post*)
         cache-report            (when (and (:report-cache-update? user-config) cache-will-update?)
                                   (str "Updated " kushi-cache-path))
         header-text             (str "kushi v" version)
@@ -195,8 +170,6 @@
       (:selected-ns-msg @to-be-printed)
       (when report-line-items-pre (remove nil? [(when banner? "\n") writing-to-css-msg (when banner? "\n")]))
       report-line-items-pre
-      (when report-line-items-post parsing-css-msg)
-      report-line-items-post
       cache-report))))
 
 (defn report! [ns msg]
