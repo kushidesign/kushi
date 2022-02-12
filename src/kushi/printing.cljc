@@ -394,7 +394,6 @@
        (str file ":"  (format-wrap opts)))))
 
 (defn bad-arg-warning-body [{:keys [js?] :as m}]
-  ;; (? :wb) (? m) (? :wb)
   [(warning-header m)
    (if js? "\n\n" :br)
    (warning-call-with-args m)
@@ -730,33 +729,30 @@
     (println #_"comp-warn" (apply ansiformat/warning-panel lines))))
 
 (defn set-warnings! []
-  (let [{:keys [ident args] :as opts}  @state/current-macro
-        bad-nums                       (compilation-warnings-coll opts)
-        bad-nums-js                    (preformat-compilation-warnings-js bad-nums)
-        dupe-ident                     (when ident (dupe-ident-warning opts))
-        invalid-style*                 (when @state/invalid-style-args
-                                         (merge
-                                          opts
-                                          {:invalid-args @state/invalid-style-args}))
-
-        warnings-terminal              {:bad-nums      (:terminal bad-nums)
-                                        :dupe-ident    dupe-ident
-                                        :invalid-style (when invalid-style*
-                                                         (bad-arg-warning-body invalid-style*))}
-
-        warnings-js                    (into []
-                                             (concat
-                                              bad-nums-js
-                                              [(:browser dupe-ident)]
-                                              [(browser-formatted-js-vec
-                                                (string/join
-                                                 (bad-arg-warning-body
-                                                  (assoc invalid-style* :js? true))))]))]
-
+  (let [{:keys [ident]
+         :as   opts}              @state/current-macro
+        bad-nums                  (compilation-warnings-coll opts)
+        bad-nums-js               (preformat-compilation-warnings-js bad-nums)
+        dupe-ident                (when ident (dupe-ident-warning opts))
+        invalid-style             (when @state/invalid-style-args
+                                    (merge opts {:invalid-args @state/invalid-style-args}))
+        invalid-style-js          (when invalid-style
+                                    (browser-formatted-js-vec
+                                     (string/join
+                                      (bad-arg-warning-body
+                                       (assoc invalid-style :js? true)))))
+        warnings-terminal         {:bad-nums      (:terminal bad-nums)
+                                   :dupe-ident    dupe-ident
+                                   :invalid-style (when invalid-style
+                                                    (bad-arg-warning-body invalid-style))}
+        warnings-js               (into []
+                                        (concat
+                                         bad-nums-js
+                                         [(:browser dupe-ident)]
+                                         [invalid-style-js]))]
     (reset! state/warnings-terminal warnings-terminal)
     (reset! state/warnings-js warnings-js)
-    (reset! state/invalid-style-warnings warnings-terminal)
-    ))
+    (reset! state/invalid-style-warnings warnings-terminal)))
 
 (defn print-warnings! []
   #_(? :print-warnings @state/warnings-terminal)
@@ -768,9 +764,9 @@
         (when warning-or-warnings
           #_(? :print-warnings:inner (keyed warning-type warning-or-warnings))
           (case warning-type
-            :bad-nums   (doseq [warning warning-or-warnings]
-                          (println (apply ansiformat/warning-panel warning)))
-            :dupe-ident (print-dupe2! (merge warning-or-warnings printing-opts))
+            :bad-nums      (doseq [warning warning-or-warnings]
+                             (println (apply ansiformat/warning-panel warning)))
+            :dupe-ident    (print-dupe2! (merge warning-or-warnings printing-opts))
             :invalid-style (println (apply ansiformat/warning-panel warning-or-warnings))
             nil)))))
   (reset! state/compilation-warnings [])
