@@ -56,7 +56,6 @@
    :write-stylesheet?    true
    :runtime-injection?   false
    :handle-duplicates    nil
-   ;; take out?
    :log-clean!?          false})
 
 (def user-config
@@ -76,7 +75,7 @@
    [:data-attr-name
     :ancestor
     :prefix
-    :map-mode?
+    :map-mode? ;take this out
     :media]))
 
 (def user-css-file-path
