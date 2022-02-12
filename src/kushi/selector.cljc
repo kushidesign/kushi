@@ -17,7 +17,7 @@
            prefix
            ancestor
            defclass-name
-           defclass-hash] :as m}]
+           atomic-class?] :as m}]
   (let [hash                          (auto-generated-hash)
         {global-ancestor :ancestor
          global-prefix :prefix}       user-config
@@ -25,12 +25,11 @@
         ancestor                      (or ancestor global-ancestor)
         prefixed-names-for-selectors? (and prefix ident (not (:add-empty-classes? user-config)))
         prefixed-name-for-el          (when (and prefix ident) (str (name prefix) (name ident)))
-        defclass-prefix               (or (:defclass-prefix user-config) "_kushi_")
-        ;; TODO take out defclass-hash
+        shared-class-prefix           (if atomic-class?
+                                        (:atomic-class-prefix user-config)
+                                        (:defclass-prefix user-config))
         selector*                     (if defclass-name
-                                        (str (or defclass-prefix
-                                                 (str defclass-hash "__"))
-                                             (nsqkw->selector-friendly defclass-name))
+                                        (nsqkw->selector-friendly (str shared-class-prefix defclass-name))
                                         (if prefixed-names-for-selectors?
                                           prefixed-name-for-el
                                           hash))

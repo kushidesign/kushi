@@ -119,6 +119,20 @@
 ;; Excpects a keyword w/o a preceding dot
 (s/def ::kushi-class-defined #(get @state/kushi-atomic-user-classes %))
 
+(s/def ::dot-kw
+  (s/and keyword?
+         #(-> % name (string/starts-with? "."))))
+
+(s/def ::conditional-tokenized-class
+  (s/and ::conditional-sexp
+         #(some (fn [x]
+                  (s/valid? ::dot-kw x))
+                %)))
+
+(s/def ::tokenized-classes
+(s/or :dot-kw ::dot-kw
+      :conditional ::conditional-tokenized-class))
+
 (s/def ::kushi-class-kw
   (s/and keyword?
          #(not (s/valid? ::kushi-style-kw-dynamic %))
@@ -304,6 +318,7 @@
          #(some (fn [x]
                   (s/valid? ::kushi-dot-class-kw x))
                 %)))
+
 
 (s/def ::kushi-dot-class-with-mods
   (s/or :kushi-dot-class-kw-with-mods ::kushi-dot-class-kw-with-mods

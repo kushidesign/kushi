@@ -205,3 +205,17 @@
 
 
 ;; Reporting for duplicate idents, defclasses, and keyframes  ------------------------------------------------
+#_(printing/diagnostics
+        :sx
+        (let [style*    (:style attr)
+              style     (merge (when (map? style*) style*) css-vars)
+              class     (distinct (concat cls classlist conditional-class-sexprs))
+              data-cljs {(or data-attr-name :data-cljs) data-cljs}]
+          {:ident             ident
+           :garden-vecs       garden-vecs
+           :css-injection-dev css-injection
+           :args              args
+           :style-is-var?     (symbol? style)
+           :attr-map          (merge attr-base {:class class
+                                                :style style} data-cljs)
+           :extra             (keyed cls classlist conditional-class-sexprs)}))

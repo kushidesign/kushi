@@ -34,6 +34,7 @@
     :debug-grid-16-solid {:background "background:white url(data:image/gif;base64,R0lGODdhEAAQAPEAAADw/wDx/xXy/////ywAAAAAEAAQAAACIZyPKckYDQFsb6ZqD85jZ2+BkwiRFKehhqQCQgDHcgwEBQA7) repeat top left"}
 
     ;Typography
+    :sans {:font-family :sans}
     :italic {:font-style :italic}
     :oblique {:font-style :oblique}
     :thin {:font-weight 100}
@@ -106,9 +107,9 @@
    (fn [acc [k v]]
      #_(? :combo-classes k)
      (let [{:keys [selector
-                   selector*]} (selector/selector-name {:defclass-name k :defclass-hash defclass-hash})
+                   selector*]} (selector/selector-name {:defclass-name k :atomic-class? true})
            style-map           (get declarative-classes k)
            garden-vecs         [[selector style-map]]]
-       (assoc acc k {:n k :args v :garden-vecs garden-vecs :selector selector :selector* selector*})))
+       (assoc acc k {:n k :args v :garden-vecs garden-vecs :selector selector :selector* selector* :__classtype__ :kushi-atomic})))
    {}
    declarative-classes-kushi-syntax))

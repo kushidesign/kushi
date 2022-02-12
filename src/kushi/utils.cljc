@@ -1,9 +1,11 @@
 (ns ^:dev/always kushi.utils
+  #?(:clj (:require [io.aviso.ansi :as ansi]
+                    [kushi.ansiformat :as ansiformat]))
   (:require
+   [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.walk :as walk]
-   [clojure.pprint]
-   [io.aviso.ansi :as ansi]
+   [clojure.pprint :refer [pprint]]
    [kushi.defs :as defs]
    [kushi.scales :refer [scales scaling-map]]
    [kushi.config :refer [user-config]]))
@@ -26,27 +28,53 @@
                 (println "\n"))
       :clj (do (if title
                  (do (println "\n")
-                      (println (ansi/italic (ansi/red (str "; " title))) (str "\n" (ansi/bold-cyan "=>"))))
+                      (println (ansi/red (str "; " title)) (str "\n" (ansi/bold-cyan "=>"))))
                  (println "\n\n"))
                (clojure.pprint/pprint v)
                (println "\n")))))
 
-(defn ?
-  ([v]
-   (pprint+ nil v))
-  ([title v]
-   #?(:cljs (do (if title
+(defn ?*
+  ([opts desc]
+   (?* opts nil desc))
+  ([opts desc val]
+   #?(:cljs (do (if desc
                   (do (println "\n")
-                      (println title "\n=>"))
-                  (println "\n\n"))
-                (cljs.pprint/pprint v)
+                      (println desc " \n=>"))
+                  (println "\n"))
+                (cljs.pprint/pprint val)
                 (println "\n"))
-      :clj (do (if title
-                 (do  (println "\n")
-                      (println (ansi/italic (ansi/red (str "; " title))) (str "\n" (ansi/bold-cyan "=>"))))
-                 (println "\n\n"))
-               (clojure.pprint/pprint v)
-               #_(println "\n")))))
+      :clj (let [comment?      (= desc :comment)
+                 opts          (merge (keyed desc val comment?) opts)
+                 [desc v]      (ansiformat/format-desc+val opts)]
+             (when desc
+               (println desc))
+             (when-not comment? (println v))))))
+
+(defn ?
+  ([val]
+   (? nil val))
+  ([desc val]
+   (?* {:bottom-margin 1} desc val)))
+
+(defn ?? [& args] nil)
+(defn ??b [& args] nil)
+(defn ??t [& args] nil)
+
+(defn debug [{nm :name :as m debug? :debug?}]
+  #_(? :debug m)
+  (if-not debug?
+   [?? ??t]
+   (let [fn-namespace (some-> m :ns ns-name name)
+         header       (str fn-namespace "/" nm)
+         sep       (ansi/white "│")
+        ;; comment-color ansi/cyan
+         ]
+     [(partial ?* {:border? true :sep sep :indent 2 :bottom-margin 1})
+      #(println (str
+                 "\n\n"
+                 (ansi/white "┌─ ") (ansi/bold header) (ansi/white " ───────────────────────") "\n"
+                 sep))
+      (fn [] nil)])))
 
 (defn auto-generated-hash []
   (let [rando-a-z (char (+ (rand-int 25) 97))
@@ -108,30 +136,36 @@
      :cljs (if float? (js/parseFloat s) (js/parseInt s))))
 
 (defn sanitize-for-css-var-name [v]
-  (-> v
-      (string/replace #"\?" "_QMARK")
-      (string/replace #"\!" "_BANG")
-      (string/replace #"\#" "_HASH")
-      (string/replace #"\+" "_PLUS")
-      (string/replace #"\$" "_DOLLAR")
-      (string/replace #"\%" "_PCT")
-      (string/replace #"\=" "_EQUALS")
-      (string/replace #"\<" "_LT")
-      (string/replace #"\>" "_GT")
-      (string/replace #"\&" "_AMP")
-      (string/replace #"\*" "_STAR")))
+  (string/escape
+   v
+   {\? "_QMARK"
+    \! "_BANG"
+    \# "_HASH"
+    \+ "_PLUS"
+    \$ "_DOLLAR"
+    \% "_PCT"
+    \= "_EQUALS"
+    \< "_LT"
+    \> "_GT"
+    \( "_OB"
+    \) "_CB"
+    \& "_AMP"
+    \* "_STAR"}))
 
 (defn css-var-string
   ([x]
    (css-var-string x nil))
   ([x suffix]
-   (str "var(--" (sanitize-for-css-var-name x) ")" suffix)))
+   (str "var(--" (sanitize-for-css-var-name (name x)) ")" suffix)))
 
 (defn css-var-for-sexp [selector* css-prop]
-  (str "--"
-       selector*
-       "_"
-       (string/replace css-prop #":" "_")))
+  (let [sanitized-name (-> css-prop
+                           (string/replace  #":" "_")
+                           sanitize-for-css-var-name)]
+    (str "--"
+         selector*
+         "_"
+         sanitized-name)))
 
 (defn css-var-string-!important
   [x selector* prop]
@@ -152,6 +186,7 @@
 
 (defn process-value
   [v hydrated-k selector*]
+   #_(? :process-value v)
    (cond
      (symbol? v)
      (str "var(--" (name v) ")")
@@ -186,6 +221,9 @@
                         (last args)))
          maps))
 
+(defn into-coll [x]
+  (if (coll? x) x [x]))
+
 (defn starts-with-dot? [x]
  (-> x name (string/starts-with? ".")))
 
@@ -195,6 +233,24 @@
               (assoc acc k (conj (k acc) v))))
           {:valid [] :invalid []}
           coll))
+
+(defn partition-by-pred [pred coll]
+  (let [ret* (reduce (fn [acc v]
+                       (let [k (if (pred v) :valid :invalid)]
+                         (assoc acc k (conj (k acc) v))))
+                     {:valid [] :invalid []}
+                     coll)
+        ret [(:valid ret*) (:invalid ret*)]]
+    ret))
+
+(defn partition-by-spec [pred coll]
+  (let [ret* (reduce (fn [acc v]
+                       (let [k (if (s/valid? pred v) :valid :invalid)]
+                         (assoc acc k (conj (k acc) v))))
+                     {:valid [] :invalid []}
+                     coll)
+        ret [(:valid ret*) (:invalid ret*)]]
+    ret))
 
 (defn normalized-class-kw [x]
   (if (keyword? x)
@@ -211,25 +267,13 @@
          (when (coll? x)
            (not-empty x))))))
 
-(defn analyze-attr
-  [{:keys [conditional-class-sexprs attr css-vars]}]
-  (let
-   [conditional-classes? (values? conditional-class-sexprs)
-    existing-classes? (values? (:class attr))
-    css-vars? (values? css-vars)
-    style? (values? (:style attr))
-    attr? (values? attr)
-    class-like? (boolean (some true? [conditional-classes? existing-classes?]))
-    style-like? (boolean (some true? [css-vars? style?]))]
 
-    #_(pprint+ {:conditional-classes? conditional-classes?
-              :conditional-class-sexprs conditional-class-sexprs
-              :existing-classes? existing-classes?
-              :existing-classes (:class attr)
-              :css-vars? css-vars?
-              :css-vars css-vars
-              :style? style?
-              :style (:style attr)})
+(defn filter-map [m pred]
+  (select-keys m (for [[k v] m :when (pred k v)] k)))
 
-    {:only-class? (and (not attr?) (not-any? true? [class-like? style-like?]))
-     :only-class+style? (and (not attr?) (and style-like? (not class-like?)))}))
+(defn positions
+  [pred coll]
+  (keep-indexed (fn [idx x]
+                  (when (pred x)
+                    idx))
+                coll))

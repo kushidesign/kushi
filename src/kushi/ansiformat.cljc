@@ -1,7 +1,7 @@
 (ns kushi.ansiformat
   #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
-   [clojure.pprint]
+   [clojure.pprint :refer [pprint]]
    [clojure.string :as string]))
 
 (defmacro keyed [& ks]
@@ -307,3 +307,62 @@
                                opts*)
          panel-args     (into [opts] lines*)]
      (apply panel panel-args)))
+
+
+
+;; Some utility for formatting commentary within functions --------------------------------------------------
+(defn coll->str [sep coll]
+  (->> coll
+       (remove nil?)
+       (interpose sep)
+       (apply str)))
+
+(defn indent-str [indention color s]
+  (str indention (color s)))
+
+(defn desc-coll->str
+  [coll sep+indent comment-color]
+  (->>
+      coll
+      (map (partial indent-str sep+indent comment-color))
+      ((partial coll->str "\n"))))
+
+(defn margin* [n indentation]
+  (apply str (repeat n (str "\n" indentation))))
+
+(defn val->formatted-str
+  [val indentation bottom-margin]
+  (str indentation
+       (-> val
+           pprint
+           with-out-str
+           string/trim-newline
+           (string/replace #"\n" (str "\n" indentation)))
+       (margin* bottom-margin indentation)))
+
+(defn format-desc+val
+  [{:keys [desc
+           val
+           comment?
+           border?
+           indent
+           top-margin
+           bottom-margin
+          ;;  comment-color
+           sep]
+    :as   m
+    :or   {top-margin    0
+           bottom-margin 0
+           indent        0}}]
+  (let [sep           (if-not border? nil sep)
+        indent        (when (and indent (pos? indent))
+                        (apply str (repeat indent " ")))
+        sep+indent    (str sep indent)
+        comment-color ansi/cyan
+        desc          (when desc
+                        (if (coll? desc)
+                          (desc-coll->str desc sep+indent comment-color)
+                          (str sep+indent (comment-color (if comment? val desc)))))
+        val           (when-not comment?
+                        (val->formatted-str val sep+indent bottom-margin))]
+    [desc val]))
