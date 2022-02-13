@@ -87,7 +87,7 @@
 (def version* "1.0.0-alpha2")
 
 ;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
-(def version (str version* ":LOCAL-QS"))
+(def version (str version* #_":LOCAL-QS"))
 
 (def kushi-cache-dir ".kushi/.cache")
 
