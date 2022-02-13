@@ -130,9 +130,9 @@
 ;; Formatting for kushi build report :simple option --------------------------------------------------
 (defn simple-report
   [{:keys [header]} & lines*]
-  (let [bl           "   "
+  (let [body-indent  ""
         lines        (reduce (fn [acc v] (concat acc (if (coll? v) v [v]))) [] (remove nil? lines*))
-        lines-indent (map #(str bl %) lines)]
+        lines-indent (map #(str body-indent %) lines)]
     (string/join "\n" (concat ["\n" header] lines-indent ["\n"]))))
 
 (defn select-ns-msg []
