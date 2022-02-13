@@ -300,29 +300,45 @@
       :else
       ;; Save this for reporting bad modifier to user
       (do
+        #_(util/pprint+ "format-mod" s)
         (swap!
-           state/current-sx
-           assoc-in
-           [:bad-mods mods&prop]
-           (if-let [bad-mods (get (some-> @state/current-sx :bad-mods) mods&prop nil)]
-             (conj bad-mods s)
-             [s]))
+         state/current-sx
+         assoc-in
+         [:bad-mods mods&prop]
+         (if-let [bad-mods (get (some-> @state/current-sx :bad-mods) mods&prop nil)]
+           (conj bad-mods s)
+           [s]))
+;; (util/pprint+ "current-macro" @state/current-macro)
+;; (util/pprint+ "format-mod-macro" (get-in @state/current-macro [#_:bad-mods #_mods&prop]))
+        #_(swap!
+         state/current-macro
+         assoc-in
+         [:bad-mods mods&prop]
+         (if-let [bad-mods (get (some-> @state/current-macro :bad-mods) mods&prop nil)]
+           (conj bad-mods s)
+           [s]))
+        #_(util/pprint+ "kushi.parse/format-mod:current-sx" @state/current-macro)
+        #_(util/pprint+ "kushi.parse/format-mod:current-macro" @state/current-macro)
         nil))))
 
 
 (defn mods&prop->map [mods&prop]
-  (let [coll (string/split mods&prop #":")
-        prop (last coll)
-        mods* (drop-last coll)
-        mq (when-not (empty? mods*) (specs/find-with (first mods*) specs/mq-re))
+  (let [coll           (string/split mods&prop #":")
+        prop           (last coll)
+        mods*          (drop-last coll)
+        mq             (when-not (empty? mods*) (specs/find-with (first mods*) specs/mq-re))
         formatted-mods (remove nil? (map (partial format-mod mods&prop) (if mq (rest mods*) mods*)))
-        mods (when-not (empty? formatted-mods) (string/join formatted-mods))]
-    #_(util/pprint+ "mods&prop->map" {:mods&prop mods&prop
-                                    :mods* mods* :mods mods
+        mods           (when-not (empty? formatted-mods) (string/join formatted-mods))]
+
+    #_(util/pprint+ "mods&prop->map" {:mods&prop      mods&prop
+                                    :mods*          mods*
+                                    :mods           mods
                                     :formatted-mods formatted-mods})
     (into {}
           (filter (comp some? val)
-                  {:mods mods :css-prop prop :mq mq}))))
+                  {:mods     mods
+                   :css-prop prop
+                   :mq       mq}))))
 
 
 (defn kushi-style->token [selector* x]
@@ -330,10 +346,13 @@
     (let [[mods&prop val] (if (vector? x)
                             (let [[p v] x] [(name p) (specs/kw?->s v)])
                             (string/split (name x) #"--"))
-          m2* (mods&prop->map mods&prop)
-          m2 (if val (assoc m2* :val val) m2*)
-          hydrated (hydrate-css m2 selector*)]
-      #_(util/pprint+ "hydrated" {:mods&prop mods&prop :val val :m2* m2* :m2 m2})
+          m2*             (mods&prop->map mods&prop)
+          m2              (if val (assoc m2* :val val) m2*)
+          hydrated        (hydrate-css m2 selector*)]
+      #_(util/pprint+ "hydrated" {:mods&prop mods&prop
+                                  :val       val
+                                  :m2*       m2*
+                                  :m2        m2})
       hydrated)))
 
 (defn reduce-styles

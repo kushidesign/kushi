@@ -118,9 +118,8 @@
 
 (defn validate-args [args style-tokens attrs*]
   (let [style-map-grouped        (group-by #(if (s/valid? ::specs/style-tuple %) :clean :bad) (:style attrs*))
-
         style-tokens-indexed     (map-indexed (fn [idx v]
-                                                (if (s/valid? ::specs/kushi-arg v)
+                                                (if (s/valid? ::specs/kushi-tokenized-keyword v)
                                                   v
                                                   (do
                                                     (.indexOf args v)
@@ -141,6 +140,8 @@
                                                   (seq valid-styles-from-tokens)))
                                    true
                                    false)]
+
+    #_(? (keyed style-tokens-indexed style-tokens-grouped invalid-style-args))
 
     (keyed valid-styles-from-attrs
            valid-styles-from-tokens
@@ -198,7 +199,7 @@
          [valid-styles-from-attrs
           valid-styles-from-tokens
           invalid-style-args
-          styles?]}                  (!?+ (validate-args args style-tokens attrs*))
+          styles?]}                  (validate-args args style-tokens attrs*)
 
         classlist-from-attrs?        (if (seq classlist-from-attrs) true false)
         classes-from-tokens?         (if (seq class-tokens*) true false)

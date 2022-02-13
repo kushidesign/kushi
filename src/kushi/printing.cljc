@@ -240,7 +240,7 @@
 
 (defn bad-sx-args-fmt
   [opts-base acc [[idx style-k] v]]
-  (let [
+  (let [v+      (if (string? v) (str "\"" v "\"") v)
         bad-val (cond
                   style-k
                   (let [style-map-indent "          "]
@@ -250,11 +250,11 @@
                                     (assoc opts-base
                                            :s
                                            (str style-map-indent cssprop " " cssval))))
-                                 v)
+                                 v+)
                             [(str style-map-indent "...}")]
                             ["  ...}"]))
                   :else
-                  (format-wrap (assoc opts-base :s (str " " v))) )]
+                  (format-wrap (assoc opts-base :s (str " " v+))) )]
     (assoc acc idx bad-val)))
 
 (defn reduce-bad-args [args invalid-args opts-base]
@@ -267,7 +267,6 @@
   [{:keys [fname
            invalid-args
            js?
-           form-meta
            args]
     :as m}]
 
@@ -462,29 +461,36 @@
 (defn bad-mods-warning
   [{:keys [fname args bad-mods js?] :as m}]
   #?(:clj
-     (when-not (empty? bad-mods)
-       (let [more-than-one-bad-stack?       (> (count bad-mods) 1)
-             first-stack-has-multiple-bads? (> (count (-> bad-mods first second)) 1)
-             opts                           {:style-key :bold
-                                             :js?       js?}
-             plural?                        (or more-than-one-bad-stack?
-                                                first-stack-has-multiple-bads?)
-             desc*                          (str "Bad modifier" (when plural? "s"))
-             desc                           (format-wrap (assoc opts :s desc*))
-             sep                            (if js? "\n\n" :br)
-             bad-mods                       (mapv (fn [[prop-stack mods]]
-                                                    (str prop-stack
-                                                         "  ->  "
-                                                         (format-wrap (assoc opts :s (string/join ", " mods)))))
-                                                  bad-mods)]
-         [(str desc " passed to kushi.core/" fname ":")
-          sep
-          (if js? (string/join "\n" bad-mods) bad-mods)
-          sep
-          (file-info-str m)
-          ;;  :br
-          ;;  "See kushi docs #pseudos-and-combo-selectors for more details"
-          ]))))
+     (do
+      ;;  (util/pprint+ :printing/bad-mods-warning:m m)
+      ;;  (util/pprint+ :printing/bad-mods-warning:bad-mods bad-mods)
+       (when-not (empty? bad-mods)
+         (do
+          ;;  (util/pprint+ :printing/bad-mods-warning:m m)
+           (let [more-than-one-bad-stack?       (> (count bad-mods) 1)
+                 first-stack-has-multiple-bads? (> (count (-> bad-mods first second)) 1)
+                 opts                           {:style-key :bold
+                                                 :js?       js?}
+                 plural?                        (or more-than-one-bad-stack?
+                                                    first-stack-has-multiple-bads?)
+                 desc*                          (str "Bad modifier" (when plural? "s"))
+                 desc                           (format-wrap (assoc opts :s desc*))
+                 sep                            (if js? "\n\n" :br)
+                 bad-mods                       (mapv (fn [[prop-stack mods]]
+                                                        (str prop-stack
+                                                             "  ->  "
+                                                             (format-wrap (assoc opts :s (string/join ", " mods)))))
+                                                      bad-mods)
+                 ret                           [(str desc " passed to kushi.core/" fname ":")
+                                                sep
+                                                (if js? (string/join "\n" bad-mods) bad-mods)
+                                                sep
+                                                (file-info-str m)
+                                            ;;  :br
+                                            ;;  "See kushi docs #pseudos-and-combo-selectors for more details"
+                                                ]]
+             (util/pprint+ :printing/bad-mods-warning:ret ret)
+             ret))))))
 
 (defn bad-mods-warning-js
   [coll]
@@ -731,6 +737,19 @@
 (defn set-warnings! []
   (let [{:keys [ident]
          :as   opts}              @state/current-macro
+
+        ;; _ (when (contains? (into #{} (:args opts)) :x:right--52px)
+        ;;     (util/pprint+ :set-warnings! @state/current-sx)
+        ;;     (util/pprint+ :set-warnings! @state/current-macro))
+
+        ;; bad-mods                  (bad-mods-warning
+        ;;                            (if (some-> @state/current-sx :bad-mods not-empty)
+        ;;                              @state/current-sx
+        ;;                              opts))
+
+        ;; [{:keys [fname args bad-mods js?] :as m}]
+        ;; bad-nums                  (compilation-warnings-coll opts)
+
         bad-nums                  (compilation-warnings-coll opts)
         bad-nums-js               (preformat-compilation-warnings-js bad-nums)
         dupe-ident                (when ident (dupe-ident-warning opts))
@@ -741,7 +760,9 @@
                                      (string/join
                                       (bad-arg-warning-body
                                        (assoc invalid-style :js? true)))))
-        warnings-terminal         {:bad-nums      (:terminal bad-nums)
+        warnings-terminal         {
+                                  ;;  :bad-mods      bad-mods
+                                   :bad-nums      (:terminal bad-nums)
                                    :dupe-ident    dupe-ident
                                    :invalid-style (when invalid-style
                                                     (bad-arg-warning-body invalid-style))}

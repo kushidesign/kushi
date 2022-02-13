@@ -329,9 +329,14 @@
         :kushi-conditional-class ::kushi-conditional-class
         :kushi-dot-class-with-mods ::kushi-dot-class-with-mods))
 
+;; maybe deprecate
 (s/def ::kushi-arg
   (s/or :kushi-style-kw-dynamic ::kushi-style-kw-dynamic
         :style-tuple ::style-tuple
+        :kushi-class-like ::kushi-class-like))
+
+(s/def ::kushi-tokenized-keyword
+  (s/or :kushi-style-kw-dynamic ::kushi-style-kw-dynamic
         :kushi-class-like ::kushi-class-like))
 
 (s/def ::styles-as-map
