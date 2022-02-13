@@ -88,16 +88,17 @@
         :content  (string/join "\n" @state/user-defined-font-faces)})
       (reset! state/user-defined-font-faces []))))
 
-(defn defkeyframe-content []
+  (defn defkeyframes->css [[nm frames]]
+    (str "@keyframes "
+         (name nm)
+         " {\n"
+         (garden.core/css frames)
+         "\n}\n"))
+
+(defn all-defkeyframes-content []
   (string/join
    "\n"
-   (map (fn [[nm frames]]
-          (str "@keyframes "
-               (name nm)
-               " {\n"
-               (garden.core/css frames)
-               "\n}\n"))
-        @state/user-defined-keyframes)))
+   (map defkeyframes->css @state/user-defined-keyframes)))
 
 (defn append-defkeyframes!
   [{:keys [css-text to-be-printed]}]
@@ -107,7 +108,7 @@
       (append-css-chunk!
        {:css-text css-text
         :comment  "Animation Keyframes"
-        :content  (defkeyframe-content)})
+        :content  (all-defkeyframes-content)})
       (reset! state/user-defined-keyframes {}))))
 
 (defn count-mqs-rules [mqs]

@@ -1,6 +1,7 @@
 (ns ^:dev/always kushi.core
   (:require-macros [kushi.core :refer [keyed]])
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [clojure.pprint :refer [pprint]]))
 
 (defn cssfn? [x]
   (and (list? x)
@@ -75,6 +76,40 @@
   (and (map? v) (= :media (:identifier v))))
 
 (defn inject-css*
+  [css-rules
+   identifier*
+   sheet-id]
+  (let [keyframes-nm   (and (map? identifier*) (:nm identifier*))
+        identifier     (or keyframes-nm identifier*)
+        rules-as-seq   (map-indexed vector css-rules)
+        sheet          (.-sheet (js/document.getElementById sheet-id))
+        identifier-set (->> sheet
+                            .-rules
+                            (map #(aget % (if keyframes-nm "name" "selectorText")))
+                            (remove nil?)
+                            (into #{}))
+        already-there? (contains? identifier-set identifier)]
+
+    #_(pprint {;;  :sheet (->> sheet .-rules)
+             :already-there? already-there?
+             :identifier*    identifier*
+             :keyframes-nm   keyframes-nm
+             :identifier     identifier
+             :selector-set   identifier-set})
+
+    ;Inject rules only if identifier is not already in the sheet
+    (when-not already-there?
+      (doseq [[_ rule-css] rules-as-seq
+              :let         [updated-num-rules-idx (-> sheet .-rules .-length)]]
+        (try
+          (.insertRule sheet rule-css updated-num-rules-idx)
+          (catch :default e (js/console.warn
+                             "kushi.core/sx:\n\nFailed attempt to inject malformed css rule:\n\n"
+                             rule-css
+                             "\n\n¯\\_(ツ)_/¯"
+                             e)))))))
+
+#_(defn inject-css*
   "Called internally by kushi.core/sx at dev/run time for zippy previews."
   [css-rules selector sheet-id]
   (let [rules-as-seq (map-indexed vector css-rules)

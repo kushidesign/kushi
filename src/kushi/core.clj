@@ -251,22 +251,29 @@
     [frame-key frame-val]))
 
 (defmacro defkeyframes [nm & frames*]
-  (let [opts {:fname "defkeyframes" :nm nm :form-meta (meta &form)}
-        dupe-defkeyframes-warning (printing/dupe-defkeyframes-warning opts)]
-   (printing/print-dupe2! dupe-defkeyframes-warning)
-   (reset! state/current-macro :defkeyframes)
-   (let [{:keys [caching? cache-key cached]} (state/cached :keyframes nm frames*)
-         frames (or cached (mapv keyframe frames*))]
-     (swap! state/user-defined-keyframes assoc (keyword nm) frames)
-     (when (and caching? (not cached))
-       (swap! state/styles-cache-updated assoc cache-key frames))
-     (if @KUSHIDEBUG
-       `(do
-          (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
-            (when ~dupe-defkeyframes-warning
-              (logfn# cljs.core/to-array (:browser ~dupe-defkeyframes-warning))))
-          nil)
-       `(do nil)))))
+  (let [opts         {:fname     "defkeyframes"
+                      :nm        nm
+                      :form-meta (meta &form)}
+        dupe-warning (printing/dupe-defkeyframes-warning opts)
+        nmstr        (name nm)]
+    (printing/print-dupe2! dupe-warning)
+    (reset! state/current-macro :defkeyframes)
+    (let [{:keys [caching?
+                  cache-key
+                  cached]}  (state/cached :keyframes nm frames*)
+          frames            (or cached (mapv keyframe frames*))
+          css-inj           (vector (stylesheet/defkeyframes->css [nm frames]))]
+      (swap! state/user-defined-keyframes assoc (keyword nm) frames)
+      (when (and caching? (not cached))
+        (swap! state/styles-cache-updated assoc cache-key frames))
+      (if @KUSHIDEBUG
+        `(do
+           (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
+             (when ~dupe-warning
+               (logfn# cljs.core/to-array (:browser ~dupe-warning))))
+           (kushi.core/inject-css* ~css-inj {:nm ~nmstr} "_kushi-rules-shared_")
+           nil)
+        `(do nil)))))
 
 (defn cssfn [& args]
   (cons 'cssfn (list args)))
@@ -332,18 +339,18 @@
     (if @KUSHIDEBUG
        ;; dev builds
        ;; TODO move cljs.core/to-array inside fn and rename js-array# ?
-      `(let [logfn#    (fn [f# js-array#]
-                         (.apply js/console.warn js/console (f# js-array#)))]
+      `(let [logfn# (fn [f# js-array#]
+                      (.apply js/console.warn js/console (f# js-array#)))]
          (do
            (when ~warnings-js
              (doseq [warning# ~warnings-js]
                (logfn# cljs.core/to-array warning#)))
 
-            ;; TODO why does first arg need to be quoted? vars?
+           ;; TODO why does first arg need to be quoted? vars?
            (kushi.core/inject-style-rules (quote ~element-style-inj) ~selector)
            (kushi.core/inject-kushi-atomics ~shared-styles-inj)
 
-            ;; return attributes map for the element
+           ;; return attributes map for the element
            (kushi.core/merged-attrs-map
             ~attrs-base
             ~prefixed-classlist
@@ -351,15 +358,11 @@
             ~data-cljs)))
 
        ;; release builds
-      (if (:runtime-injection? user-config)
-        `(do
+      `(do
+         (when (:runtime-injection? user-config)
            (kushi.core/inject-style-rules (quote ~element-style-inj) ~selector)
-           (kushi.core/inject-kushi-atomics ~shared-styles-inj)
-           {:class ~prefixed-classlist})
-
-        `(do
-            ;; return attributes map for the element
-           (kushi.core/merged-attrs-map
-            ~attrs-base
-            ~prefixed-classlist
-            ~css-vars))))))
+           (kushi.core/inject-kushi-atomics ~shared-styles-inj))
+         (kushi.core/merged-attrs-map
+          ~attrs-base
+          ~prefixed-classlist
+          ~css-vars)))))
