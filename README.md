@@ -1,6 +1,6 @@
 <br>
 
-<h1>串</h1>
+<h1>Kushi</h1>
 <h5>Styling in ClojureScript</h5>
 
 <br>
@@ -302,7 +302,7 @@ As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
 (sx [:b "1px solid black"])
 ```
 
-The above examples will resolve to the following css declaration:
+All of the above examples will resolve to the following css declaration:
 ```css
 border: 1px solid black;
 ```
