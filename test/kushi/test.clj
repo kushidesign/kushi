@@ -99,34 +99,32 @@
 
 
 (def all-shorthand-kw-tests
-  (remove nil?
-          (map (fn [[k {hydrated-prop :name example-val :example-val}]]
-                 (when example-val
-                   (let [fmt-val (fmt-val example-val)
-                         args (if (keyword? fmt-val)
-                                [(keyword (str (name k) "--" (if (keyword? fmt-val) (name fmt-val) fmt-val)))]
-                                [[k example-val]])]
-                     [[]
-                      args
-                      (str (name hydrated-prop) ":" (if (keyword? fmt-val) (name fmt-val) fmt-val))])))
-               #_(select-keys shorthand/css-sh [:bg])
-               shorthand/css-sh
-               #_(let [as-vec (filter (fn [[_ {:keys [example-val]}]] (not (nil? example-val)))
-                                      (into [] shorthand/css-sh))]
-                   as-vec))))
+  (keep (fn [[k {hydrated-prop :name example-val :example-val}]]
+          (when example-val
+            (let [fmt-val (fmt-val example-val)
+                  args (if (keyword? fmt-val)
+                         [(keyword (str (name k) "--" (if (keyword? fmt-val) (name fmt-val) fmt-val)))]
+                         [[k example-val]])]
+              [[]
+               args
+               (str (name hydrated-prop) ":" (if (keyword? fmt-val) (name fmt-val) fmt-val))])))
+        #_(select-keys shorthand/css-sh [:bg])
+        shorthand/css-sh
+        #_(let [as-vec (filter (fn [[_ {:keys [example-val]}]] (not (nil? example-val)))
+                               (into [] shorthand/css-sh))]
+            as-vec)))
 
 (def all-shorthand-enum-kw-tests
   (apply concat
-         (remove nil?
-                 (map (fn [[k {hydrated-prop :name enum-vals :vals}]]
-                        (when enum-vals
-                          (mapv
-                           (fn [[enum-val-sh enum-val-hydrated]]
-                             [[]
-                              [(keyword (str (name k) "--" (name enum-val-sh)))]
-                              (str (name hydrated-prop) ":" (name enum-val-hydrated))])
-                           enum-vals)))
-                      shorthand/css-sh))))
+         (keep (fn [[k {hydrated-prop :name enum-vals :vals}]]
+                 (when enum-vals
+                   (mapv
+                    (fn [[enum-val-sh enum-val-hydrated]]
+                      [[]
+                       [(keyword (str (name k) "--" (name enum-val-sh)))]
+                       (str (name hydrated-prop) ":" (name enum-val-hydrated))])
+                    enum-vals)))
+               shorthand/css-sh)))
 
 (def css-fn-tests
   [[[]
