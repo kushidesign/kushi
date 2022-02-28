@@ -106,7 +106,7 @@
                            (reduce (fn [acc [k v]]
                                      (conj acc
                                            (if (vector? v)
-                                            [(keyword (str (name k))) (util/convert-vector2 v)]
+                                            [(keyword (str (name k))) (convert-vector2 v)]
                                             (keyword (str (name k) "--" (name v))))))
                                    acc
                                    m))

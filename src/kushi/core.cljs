@@ -1,8 +1,79 @@
 (ns ^:dev/always kushi.core
-  (:require-macros [kushi.core :refer [keyed]])
+  (:require-macros [kushi.core :refer [keyed]]
+                   [kushi.theme :refer [theme!]])
   (:require [clojure.string :as string]
-            [clojure.pprint :refer [pprint]]))
+            [kushi.clean :as clean]
+            [kushi.utils] ;; For aliasing merge-with-style
+            [par.core :refer [? !?]] ;; only use when developing kushi itself
+            ))
 
+;; Functionality for injecting styles into during development builds  ------------------------------------------
+;; This is also used in release builds if :runtime-injection? config param is set to true ----------------------
+
+;; Used to keep track of what has been injected, to avoid duplicate injections.
+(def injected (atom #{}))
+
+;; Flushes #_kushi-rules-shared_ or #_kushi-rules_ stylesheets during development builds.
+(clean/clean!)
+
+;; Toggle for debugging while developing kushi itself
+(def log-inject-css*? false)
+
+(defn lightswitch! []
+  (.toggle (-> js/document.body .-classList) "dark"))
+
+(defn inject-css*
+  "Called internally by kushi.core/sx at dev/run time for zippy previews."
+  [css-rules
+   sheet-id]
+  (let [rules-as-seq   (map-indexed vector css-rules)
+        sheet          (.-sheet (js/document.getElementById sheet-id))
+        num-injected   (count @injected)
+        sheet-len      (.-length (.-rules sheet))]
+    ;; (when (zero? num-injected) (js/console.clear))
+
+    ;Inject only if rule-css is not already a member of kushi.core/injected atom
+    (doseq [[_ rule-css]  rules-as-seq
+            :let         [injected? (contains? @injected rule-css)]]
+      (when log-inject-css*?
+        (js/console.log "[kushi.core/inject-css*]\n"
+                        (keyed css-rules injected? num-injected sheet-id sheet-len)))
+      (do
+        (when log-inject-css*?
+          (js/console.log "    Already injected, skipping: " rule-css))
+        (when-not injected?
+          (swap! injected conj rule-css)
+          (let [updated-num-rules-idx (-> sheet .-rules .-length)]
+            (try
+              (do (.insertRule sheet rule-css updated-num-rules-idx)
+                  (when log-inject-css*?
+                    (js/console.log "    Injecting: " rule-css)))
+              (catch :default e (js/console.warn
+                                 "kushi.core/sx:\n\nFailed attempt to inject malformed css rule:\n\n"
+                                 rule-css
+                                 "\n\n¯\\_(ツ)_/¯\n"
+                                 e)))))))))
+
+
+(defn inject-style-rules
+  [css-rules]
+   (when (seq css-rules)
+     (inject-css* css-rules "_kushi-rules_")))
+
+(defn inject-kushi-atomics [kushi-atomics]
+  (when (seq kushi-atomics)
+    (doseq [[_ css-rules] kushi-atomics]
+      (inject-css* css-rules "_kushi-rules-shared_"))))
+
+(defn inject! [css-rules kushi-atomics]
+  (inject-kushi-atomics kushi-atomics)
+  (inject-style-rules css-rules))
+
+;; This will inject / and or write theme to disc
+(theme!)
+
+
+;; cssfn (helper fn for use inside calls to sx macro)  ---------------------------------------------------------
 (defn cssfn? [x]
   (and (list? x)
        (= (first x) 'cssfn)
@@ -37,9 +108,16 @@
 (defn cssfn [& args]
   (cssfn (cons 'cssfn args)))
 
+
+
+
+;; !important (helper fn for use inside calls to sx macro)  -------------------------------------------------------
 (defn !important [x]
   (cssfn (list 'important x)))
 
+
+
+;; Public function for injecting 3rd party stylesheets ------------------------------------------------------------
 (defn inject-stylesheet
 
   "Expects a map with the following keys: :rel, :href, and :cross-origin(optional).
@@ -72,82 +150,14 @@
                                "kushi.core/s+:\n\nFailed attempt to inject stylesheet (or link):\n\n"
                                m
                                "\n\n¯\\_(ツ)_/¯"))))))))
+;; remove?
 (defn- garden-mq-rule? [v]
   (and (map? v) (= :media (:identifier v))))
 
-(defn inject-css*
-  [css-rules
-   identifier*
-   sheet-id]
-  (let [keyframes-nm   (and (map? identifier*) (:nm identifier*))
-        identifier     (or keyframes-nm identifier*)
-        rules-as-seq   (map-indexed vector css-rules)
-        sheet          (.-sheet (js/document.getElementById sheet-id))
-        identifier-set (->> sheet
-                            .-rules
-                            (map #(aget % (if keyframes-nm "name" "selectorText")))
-                            (remove nil?)
-                            (into #{}))
-        already-there? (contains? identifier-set identifier)]
 
-    #_(pprint {;;  :sheet (->> sheet .-rules)
-             :already-there? already-there?
-             :identifier*    identifier*
-             :keyframes-nm   keyframes-nm
-             :identifier     identifier
-             :selector-set   identifier-set})
 
-    ;Inject rules only if identifier is not already in the sheet
-    (when-not already-there?
-      (doseq [[_ rule-css] rules-as-seq
-              :let         [updated-num-rules-idx (-> sheet .-rules .-length)]]
-        (try
-          (.insertRule sheet rule-css updated-num-rules-idx)
-          (catch :default e (js/console.warn
-                             "kushi.core/sx:\n\nFailed attempt to inject malformed css rule:\n\n"
-                             rule-css
-                             "\n\n¯\\_(ツ)_/¯"
-                             e)))))))
 
-#_(defn inject-css*
-  "Called internally by kushi.core/sx at dev/run time for zippy previews."
-  [css-rules selector sheet-id]
-  (let [rules-as-seq (map-indexed vector css-rules)
-        sheet        (.-sheet (js/document.getElementById sheet-id))
-        selector-set (into #{} (->> sheet .-rules (map #(aget % "selectorText"))))]
-    #_(js/console.log "cssRuleList" (.-cssRules sheet))
-    #_(js/console.log {:css-rules    css-rules
-                     :selector     selector
-                     :rules-as-seq rules-as-seq
-                     :sheet        sheet
-                     :selector-set selector-set})
-
-    ;Inject rules only if selector is not already in the sheet
-    (when-not (contains? selector-set selector)
-      #_(js/console.log "INJECTING:" css-rules)
-      (doseq [[_ rule-css] rules-as-seq
-              :let         [updated-num-rules-idx (-> sheet .-rules .-length)]]
-        (try
-          (.insertRule sheet rule-css updated-num-rules-idx)
-          (catch :default e (js/console.warn
-                             "kushi.core/sx:\n\nFailed attempt to inject malformed css rule:\n\n"
-                             rule-css
-                             "\n\n¯\\_(ツ)_/¯"
-                             e)))))))
-
-(defn inject-style-rules
-  [css-rules selector]
-   (when (seq css-rules)
-     (inject-css* css-rules selector "_kushi-rules_")))
-
-(defn inject-kushi-atomics [kushi-atomics]
-  (when (seq kushi-atomics)
-    (doseq [[selector css-rules] kushi-atomics]
-      (inject-css* css-rules selector "_kushi-rules-shared_"))))
-
-(defn inject! [css-rules selector kushi-atomics]
-  (inject-kushi-atomics kushi-atomics)
-  (inject-style-rules css-rules selector))
+;; Functionaltiy for kushi style decoration -----------------------------------------------------------------
 
 (defn merged-attrs-map
   ([attrs-base classlist css-vars]
@@ -159,119 +169,4 @@
           :style css-vars
           :data-cljs data-cljs)))
 
-(defn- merge-with-style-warning
-  [v k n]
-  (js/console.warn
-   (str
-    "kushi.core/merge-with-style:\n\n "
-    "The " k " value supplied in the " n " argument must be a map.\n\n "
-    "You supplied:\n") v))
-
-(defn- bad-style? [style n]
-  (let [bad? (and style (not (map? style)))]
-    (when bad? (merge-with-style-warning style :style n))
-    bad?))
-
-(defn- bad-class? [class n]
-  (let [bad? (and class
-                  (not (some #(% class) [seq? vector? keyword? string? symbol?])))]
-    (when bad? (merge-with-style-warning class :class n))
-    bad?))
-
-(defn merge-with-style-class-coll
-  [class bad-class?]
-  (when-not bad-class?
-    (if (or (string? class) (keyword? class))
-      [class]
-      class)))
-
-(defn merge-with-style
-  [{style1 :style class1 :class data-cljs1 :data-cljs :as m1}
-   {style2 :style class2 :class data-cljs2 :data-cljs :as m2}]
-  #_(pprint {:m1 m1 :m2 m2})
-  (let [[bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
-        [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i)) [class1 class2])
-        merged-style              (merge (when-not bad-style1? style1) (when-not bad-style2? style2))
-        class1-coll               (merge-with-style-class-coll class1 bad-class1?)
-        class2-coll               (merge-with-style-class-coll class2 bad-class2?)
-        classes                   (concat class1-coll class2-coll)
-        data-cljs                 (string/join " + " (remove nil? [data-cljs1 data-cljs2]))
-        ret                       (assoc (merge m1 m2)
-                                         :class classes
-                                         :style merged-style
-                                         :data-cljs data-cljs)]
-    ret))
-
-
-(defn hiccup? [x]
-  (and (vector? x) (-> x first keyword?)))
-
-(defn opts&children [xs]
-  (let [[a & children*] xs
-        attr*    (when (map? a) a)
-        attr     attr*
-        ;; #_(absorb-style opts*)
-        children (if attr children* xs)]
-    ;; (when-let [data (:data-cljs opts)]
-    ;;   (reset! ui* (str "?" (:name data))))
-    ;
-    (keyed attr children)))
-
-(defn target-attr [xs]
-  (let [[a & children*] xs
-        attr*    (when (map? a) a)
-        attr     attr*
-        ;; #_(absorb-style opts*)
-        children (if attr children* xs)]
-    ;; (when-let [data (:data-cljs opts)]
-    ;;   (reset! ui* (str "?" (:name data))))
-    ;
-    (keyed attr children)))
-
-(defn split-key [k re] (-> k name (string/split re)))
-
-(defn hiccup-tag [k]
-  (let [tokens  (split-key k #":")
-        tag     (-> tokens first keyword)
-        target? (-> tokens last (= "!"))]
-    [tag target?]))
-
-(def kushi-keys
-  [:css :ident :data-cljs :element :prefix :ancestor])
-
-(defn ->hiccup [x]
-  (when (hiccup? x)
-    (let [[tag* attr*] x
-          [tag _]      (hiccup-tag tag*)
-          attr         (when (map? attr*) attr*)]
-      [tag attr])))
-
-(defn target-tag [v]
-  (assoc v 0 (keyword (-> v first name (str ":!")))))
-
-; new one
-(defn merge-hiccup [tag attr args]
-  (let [user-attr   (when (map? (first args)) (first args))
-        children    (if user-attr (rest args) args)
-        merge?      (and user-attr (map? attr))
-        attr-merged (if merge?
-                       (merge-with-style attr (first args))
-                       attr)]
-    (into [] (concat [tag attr-merged] children))))
-;
-(defn target-vector [hiccup*]
-  [[] hiccup*])
-
-(defn gui
-  ([hiccup*]
-   (gui hiccup* nil) )
-  ([hiccup* decorator]
-   (let [[child-path target] (if (and (hiccup? hiccup*)
-                                      (nil? (some hiccup? hiccup*)))
-                               [[] hiccup*]
-                               (target-vector hiccup*))
-         [tag attr*] (->hiccup target)
-         attr (if (map? decorator) (kushi.core/merge-with-style attr* decorator) attr*)]
-     (fn [& args]
-       (let [ret (when (= child-path []) (merge-hiccup tag attr args))]
-         ret)))))
+(def merge-with-style kushi.utils/merge-with-style)

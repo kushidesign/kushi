@@ -1,27 +1,28 @@
 (ns ^:dev/always kushi.state
   (:require
    [kushi.io :refer [load-edn]]
-   [kushi.atomic :as atomic]
+   [kushi.defs :as defs]
    [kushi.atomic :as atomic]
    [kushi.config :refer [user-config kushi-cache-path user-config-args-sx-defclass]]))
 
+
 (def current-macro (atom nil))
+
+(defn debug? [] (= (-> @current-macro :ident) :my-icon))
 
 (def current-sx (atom nil))
 
 (defn set-current-macro!
-  ([args* form-meta kw]
-   (set-current-macro! args* form-meta kw nil))
-  ([args* form-meta kw kushi-attr]
-   (let [opts        {:form-meta form-meta
-                      :bad-mods {}
-                      :fname (name kw)
-                      :kushi-attr kushi-attr
-                      :ident (:ident kushi-attr)}
-         opts-w-args (assoc opts :args args*)]
-     (reset! current-macro opts-w-args)
-     (reset! current-sx opts-w-args)
-     opts)))
+  [{:keys [args* form-meta kushi-attr macro]}]
+  (let [opts        {:form-meta  form-meta
+                     :bad-mods   {}
+                     :fname      (name macro)
+                     :kushi-attr kushi-attr
+                     :ident      (:ident kushi-attr)}
+        opts-w-args (assoc opts :args args*)]
+    (reset! current-macro opts-w-args)
+    (reset! current-sx opts-w-args)
+    opts))
 
 (def warnings-js (atom []))
 
@@ -38,8 +39,8 @@
   (atom atomic/kushi-atomic-combo-classes))
 
 (def declarations-init {:sx {}
-                         :defkeyframes {}
-                         :defclass {}})
+                        :defkeyframes {}
+                        :defclass {}})
 
 (def declarations (atom declarations-init))
 
@@ -60,21 +61,29 @@
 ;; Used to keep track of @font-face declarations which are used.
 (def user-defined-font-faces (atom []))
 
-;; Used to keep track of all the component styles.
 (defonce garden-vecs-state-init
   (reduce (fn [acc [k mq]] (assoc acc mq {}))
           {:rules {}}
           (:media user-config)))
 
+;; Used to keep track of all the component styles.
 (def garden-vecs-state (atom garden-vecs-state-init))
 
-(defn add-styles! [coll]
-  (let [state garden-vecs-state]
-    (doseq [x coll]
-      (if-let [{:keys [media-queries rules]}  (when (map? x) (:value x))]
-        (let [new-val (apply conj (get @state media-queries) rules)]
-          (swap! state assoc media-queries new-val))
-        (swap! state assoc :rules (conj (:rules @state) x))))))
+;; Used to keep track of all theme override styles.
+(def garden-vecs-state-theme (atom garden-vecs-state-init))
+
+(defn add-styles!
+  ([coll]
+   (add-styles! coll garden-vecs-state))
+  ([coll state]
+   (doseq [x coll]
+     (if-let [{:keys [media-queries rules]}  (when (map? x) (:value x))]
+       (let [new-val (apply conj (get @state media-queries) rules)]
+         (swap! state assoc media-queries new-val))
+       (swap! state assoc :rules (conj (:rules @state) x))))))
+
+(defn add-theme-styles! [coll]
+  (add-styles! coll garden-vecs-state-theme))
 
 (defn reset-build-states! []
   (reset! user-defined-keyframes {})
@@ -84,8 +93,7 @@
   (reset! kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
   (reset! atomic-declarative-classes-used #{})
   (reset! defclasses-used #{})
-  (reset! defclasses+atomics-used {})
-  )
+  (reset! defclasses+atomics-used {}))
 
 (defonce styles-cache-current
   (let [styles-cache-disc (when (:__enable-caching?__ user-config)

@@ -1,6 +1,7 @@
 (ns kushi.ansiformat
   #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
+   [par.core :refer [? !? ?+ !?+]]
    [clojure.pprint :refer [pprint]]
    [clojure.string :as string]))
 
@@ -11,20 +12,6 @@
             vals# (list ~@ks)]
         (zipmap keys# vals#))))
 
-(defn pprint+
-  ([v]
-   (pprint+ nil v))
-  ([title v]
-   #?(:cljs (do (if title
-                  (println "\n" title " =>")
-                  (println "\n\n"))
-                (cljs.pprint/pprint v)
-                (println "\n"))
-      :clj (do (if title
-                 (println "\n" title " =>")
-                 (println "\n\n"))
-               (clojure.pprint/pprint v)
-               (println "\n")))))
 
 (def colors
   {:reset             0
@@ -245,7 +232,7 @@
         border-color       (k->ansi border-color)
         header-color       (k->ansi header-color)
         header             (when header ((or header-color str) header))
-        _                  nil #_(pprint+
+        _                  nil #_(?+
                                   "wtf"
                                   (keyed og-border-width
                                          header-width

@@ -416,3 +416,8 @@
   (s/cat
    :garden-mode-vec ::garden-mode-vec
    :attr-map (s/? map?)))
+
+(s/def ::theme-key (s/and ::kw-with-no-colons))
+
+(s/def ::kushi-theme-map
+  (s/every-kv ::theme-key map?))

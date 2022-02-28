@@ -3,7 +3,8 @@
   (:require
    [clojure.string :as string]
    [clojure.pprint :refer [pprint]]
-   [kushi.utils :as util :refer [? ?? ??t ??b keyed]]
+   [par.core :refer [? !? ?+ !?+]]
+   [kushi.utils :as util :refer [keyed]]
    [kushi.state :as state]
    [kushi.ansiformat :as ansiformat]
    [kushi.atomic :as atomic]
@@ -14,19 +15,19 @@
 ;; Helpers for logging formatting   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def ansi-color-map
-  {:red          ansi/red
-   :magenta      ansi/magenta
-   :blue         ansi/blue
-   :cyan         ansi/cyan
-   :green        ansi/green
-   :yellow       ansi/yellow
-   :bold-red     ansi/bold-red
-   :bold-magenta ansi/bold-magenta
-   :bold-blue    ansi/bold-blue
-   :bold-cyan    ansi/bold-cyan
-   :bold-green   ansi/bold-green
-   :bold-yellow  ansi/bold-yellow
-   :bold         ansi/bold})
+  #?(:clj {:red          ansi/red
+         :magenta      ansi/magenta
+         :blue         ansi/blue
+         :cyan         ansi/cyan
+         :green        ansi/green
+         :yellow       ansi/yellow
+         :bold-red     ansi/bold-red
+         :bold-magenta ansi/bold-magenta
+         :bold-blue    ansi/bold-blue
+         :bold-cyan    ansi/bold-cyan
+         :bold-green   ansi/bold-green
+         :bold-yellow  ansi/bold-yellow
+         :bold         ansi/bold}))
 
 (defn k->ansi [k]
   (when (keyword? k)
@@ -144,7 +145,7 @@
 
 (defn border-seq->styled-string
   [{:keys [border-seq border-width cyc top? bottom?] :as m}]
-  #_(util/pprint+ "border-gen" m)
+  #_(?+ "border-gen" m)
   (string/join
    (let [adjusted-border-width (Math/round (float (/ border-width (count border-seq))))]
      (if cyc
@@ -415,36 +416,6 @@
              warning (str (string/join "\n\n" (bad-arg-warning-body m)) "\n")]
          (browser-formatted-js-vec warning)))))
 
-(defn body [lines]
-  (flatten
-   (remove nil?
-           (map
-            (fn [x]
-              (cond
-                (= x :br) [""]
-                (coll? x) x
-                (nil? x)  x
-                :else     (str x)))
-            (concat [""] lines [""])))))
-
-(defn ansi* [lines border-top border indent-style]
-  #?(:clj
-     (string/join
-      "\n"
-      (concat
-       [(str "\n\n" border-top ansi/reset-font)]
-       (map (partial indent-line indent-style) (body lines))
-       [(str "" border ansi/reset-font "\n\n")]))))
-
-(defn ansi-info [& lines]
-  (ansi* lines info-border info-border :info))
-
-(defn ansi-error [& lines]
-  (ansi* lines error-border error-border :error))
-
-(defn ansi-warning [& lines]
-  (ansi* lines warning-border warning-border :warning))
-
 (defn ansi-bad-args-warning
   [{:keys [fname invalid-args] :as m}]
   #_(? "m" m)
@@ -462,11 +433,11 @@
   [{:keys [fname args bad-mods js?] :as m}]
   #?(:clj
      (do
-      ;;  (util/pprint+ :printing/bad-mods-warning:m m)
-      ;;  (util/pprint+ :printing/bad-mods-warning:bad-mods bad-mods)
+      ;;  (?+ :printing/bad-mods-warning:m m)
+      ;;  (?+ :printing/bad-mods-warning:bad-mods bad-mods)
        (when-not (empty? bad-mods)
          (do
-          ;;  (util/pprint+ :printing/bad-mods-warning:m m)
+          ;;  (?+ :printing/bad-mods-warning:m m)
            (let [more-than-one-bad-stack?       (> (count bad-mods) 1)
                  first-stack-has-multiple-bads? (> (count (-> bad-mods first second)) 1)
                  opts                           {:style-key :bold
@@ -489,7 +460,7 @@
                                             ;;  :br
                                             ;;  "See kushi docs #pseudos-and-combo-selectors for more details"
                                                 ]]
-             (util/pprint+ :printing/bad-mods-warning:ret ret)
+             (?+ :printing/bad-mods-warning:ret ret)
              ret))))))
 
 (defn bad-mods-warning-js
@@ -628,22 +599,20 @@
           existing-file-info]
          :as bindings}        (dupe-warning-bindings m)
         label                 (or label (str (name dupe-type) " name"))
-        [?? ??t]              (util/debug (assoc caller :debug? debug?))
         ]
-    (??t)
-    (?? bindings)
+    #_(?+ bindings)
     (if existing-file-info
       (if-not (= file-info existing-file-info)
         (do
-          (?? (str label " already used: ") {k file-info})
-          (?? :comment "Returning map of preformatted message-line colls...")
+          #_(?+ (str label " already used: ") {k file-info})
+          #_(?+ :comment "Returning map of preformatted message-line colls...")
           (message-lines body-lines-fn m))
         (do
-          (?? (str label ", non-duplicate: ") file-info) #_:diff))
+          #_(?+ (str label ", non-duplicate: ") file-info)
+          ))
       (do
-        (?? [(str label " not yet used...")
-             "Merging into state/prefixed-selectors:"]
-            {k file-info})
+        #_(?+ (str label " not yet used..."))
+        #_(?+ "Merging into state/prefixed-selectors:" {k file-info})
         (swap! state/declarations assoc-in [dupe-type k] file-info)
         nil))))
 
@@ -739,8 +708,8 @@
          :as   opts}              @state/current-macro
 
         ;; _ (when (contains? (into #{} (:args opts)) :x:right--52px)
-        ;;     (util/pprint+ :set-warnings! @state/current-sx)
-        ;;     (util/pprint+ :set-warnings! @state/current-macro))
+        ;;     (?+ :set-warnings! @state/current-sx)
+        ;;     (?+ :set-warnings! @state/current-macro))
 
         ;; bad-mods                  (bad-mods-warning
         ;;                            (if (some-> @state/current-sx :bad-mods not-empty)

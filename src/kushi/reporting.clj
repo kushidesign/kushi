@@ -6,7 +6,7 @@
    [kushi.config :refer [user-config user-css-file-path version kushi-cache-path]]
    [kushi.printing :as printing]
    [kushi.ansiformat :as ansiformat]
-   [kushi.utils :as util :refer [? keyed]]
+   [kushi.utils :as util :refer [keyed]]
    [kushi.specs :as specs]
    ))
 

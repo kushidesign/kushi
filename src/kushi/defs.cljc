@@ -1,5 +1,7 @@
 (ns kushi.defs)
 
+(def meta-ks [:ancestor :prefix :ident :element])
+
 ;; These are sorted roughly be most-commonly used, for speeding up for regex (alternations)
 (def pseudo-elements
   #{:after

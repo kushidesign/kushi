@@ -26,7 +26,7 @@
               ;; TODO use warning or error panel
               ;; TODO consolidate these somewhere?
               (catch java.io.IOException e
-                (printf "\nCouldn't open '%s':\n %s.\nIgnore the above warning about 'kushi.edn' if you are running tests from the source repo (kushi/test/kushi/test.clj).\n"
+                (printf "\nCouldn't open '%s':\n %s.\nIgnore the above warning about 'kushi.edn' if you are running tests from the source repo kushi/test/kushi/test.clj.\n"
                         source
                         (.getMessage e)))
 
@@ -34,8 +34,6 @@
                 (printf "Error parsing edn file '%s':\n %s\n"
                         source
                         (.getMessage e)))))))
-
-
 
 (def user-config-defaults
   {:diagnose             nil
@@ -56,7 +54,8 @@
    :write-stylesheet?    true
    :runtime-injection?   false
    :handle-duplicates    nil
-   :log-clean!?          false})
+   :log-clean!?          false
+   :theme-ns             nil})
 
 (def user-config
   (let [config*         (let [m (load-edn "kushi.edn")]

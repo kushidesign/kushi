@@ -1,7 +1,7 @@
 (ns kushi.atomic
   (:require
    [kushi.selector :as selector]
-   [kushi.utils :refer [auto-generated-hash ?]]))
+   [kushi.utils :refer [auto-generated-hash]]))
 
 (defonce defclass-hash (auto-generated-hash))
 

@@ -1,6 +1,7 @@
 (ns ^:dev/always kushi.stylesheet
   (:require
    [clojure.string :as string]
+   [clojure.set :as set]
    [clojure.java.io :as io]
    [clojure.edn :as edn] ;Take this out?
    [clojure.data :as data]
@@ -9,7 +10,7 @@
    [kushi.config :refer [user-config user-css-file-path kushi-cache-dir kushi-cache-path version]]
    [kushi.state :as state]
    [kushi.utils :as util]
-   [par.core :refer [? !?]]
+   [par.core :refer [? !? ?+ !?+]]
    [kushi.atomic :as atomic]
    [kushi.reporting :as reporting]))
 
@@ -29,7 +30,7 @@
           (fn [{x :garden-vec}] (and (vector? x) (nil? (second x))))
           (map (fn [v]
                  {:garden-vec v
-                  :rule-css (garden.core/css v)})
+                  :rule-css (garden.core/css {:pretty-print? false} v)})
                garden-vecs)))))
 
 (defn append-css-chunk!
@@ -51,7 +52,7 @@
   (reduce (fn [acc m]
             (let [mq (-> m :value :media-queries)]
               (let [existing-rules (get acc mq)
-                    rules (some-> m :value :rules)]
+                    rules          (some-> m :value :rules)]
                 (assoc acc mq (concat existing-rules rules)))))
           {}
           (filter has-mqs? garden-vecs)))
@@ -122,12 +123,15 @@
 
 (defn append-defclasses!
   [{:keys [pretty-print? css-text to-be-printed]}]
+
   (when-not (empty? @state/defclasses-used)
-    (let [gv                  (map #(let [normalized-class-kw (util/normalized-class-kw %)]
+    (let [all-shared-classes  (set/union @state/defclasses-used
+                                         @state/atomic-declarative-classes-used)
+          gv                  (map #(let [normalized-class-kw (util/normalized-class-kw %)]
                                       (some-> @state/kushi-atomic-user-classes
                                               normalized-class-kw
                                               :garden-vecs))
-                                   @state/defclasses-used)
+                                   all-shared-classes)
           garden-vecs*        (apply concat (concat gv))
           garden-vecs         (->> garden-vecs*
                                    (remove has-mqs?)
@@ -159,43 +163,47 @@
 
 
 (defn append-rules!
-  [{:keys [css-text pretty-print? to-be-printed]}]
-  (let [rules                        (remove
-                                      nil?
-                                      (map (fn [[k v]] (when v [k v]))
-                                           (:rules @state/garden-vecs-state)))
-        mqs                          (remove
-                                      nil?
-                                      (map (fn [[k v]]
-                                             (when-let [as-seq (seq v)]
-                                               (apply garden.stylesheet/at-media
-                                                      (cons k as-seq))))
-                                           (dissoc @state/garden-vecs-state :rules)))
-        garden-vecs                  (remove nil? (concat rules mqs))
-        normal-style-rules-under-mqs (count-mqs-rules mqs)
-        normal-style-rules           (count rules)
-        normal-mq-count              (count mqs)]
-    #_(util/pprint+
-     {:rules                        rules
-      :mqs                          mqs
-      :garden-vecs                  garden-vecs
-      :normal-style-rules-under-mqs normal-style-rules-under-mqs
-      :normal-style-rules           normal-style-rules
-      :normal-mq-count              normal-mq-count
-      })
-    (swap! to-be-printed
-           assoc
-           :normal-style-rules-under-mqs
-           normal-style-rules-under-mqs
-           :normal-style-rules
-           normal-style-rules
-           :normal-mq-count
-           normal-mq-count)
-    (append-css-chunk!
-     {:css-text css-text
-      :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
-      :comment  "Component styles"})
-    (reset! state/garden-vecs-state state/garden-vecs-state-init)))
+  [{:keys [css-text pretty-print? to-be-printed]}
+    garden-vecs-state*
+    comment]
+   (let [rules                        (remove
+                                       nil?
+                                       (map (fn [[k v]] (when v [k v]))
+                                            (:rules @garden-vecs-state*)))
+         mqs                          (remove
+                                       nil?
+                                       (map (fn [[k v]]
+                                              (when-let [as-seq (seq v)]
+                                                (apply garden.stylesheet/at-media
+                                                       (cons k as-seq))))
+                                            (dissoc @garden-vecs-state* :rules)))
+         garden-vecs                  (remove nil? (concat rules mqs))
+         normal-style-rules-under-mqs (count-mqs-rules mqs)
+         normal-style-rules           (count rules)
+         normal-mq-count              (count mqs)]
+     #_(?+
+        (keyed rules
+               mqs
+               garden-vecs
+               normal-style-rules-under-mqs
+               normal-style-rules
+               normal-mq-count))
+     (swap! to-be-printed
+            merge
+            (keyed normal-style-rules-under-mqs
+                   normal-style-rules
+                   normal-mq-count))
+     (append-css-chunk!
+      {:css-text css-text
+       :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
+       :comment  comment})
+     (reset! garden-vecs-state* state/garden-vecs-state-init)))
+
+(defn append-component-rules! [m]
+  (append-rules! m state/garden-vecs-state "Component styles"))
+
+(defn append-theme-rules! [m]
+  (append-rules! m state/garden-vecs-state-theme "Kushi UI theming rules"))
 
 (defn write-cache! [cache-is-equal?]
   (when-not cache-is-equal?
@@ -233,10 +241,13 @@
 
     (when-let [select-ns-msg (reporting/select-ns-msg)]
       (swap! to-be-printed assoc :select-ns-msg select-ns-msg))
-    (append-at-font-face! m)
-    (append-defkeyframes! m)
-    (when write-styles? (append-defclasses! m))
-    (when write-styles? (append-rules! m))
+
+    (when write-styles?
+      (append-at-font-face! m)
+      (append-defkeyframes! m)
+      (append-defclasses! m)
+      (append-theme-rules! m)
+      (append-component-rules! m))
 
     (let [zero-total-rules?   (nil? (some #(not (zero? %)) (vals @to-be-printed)))
           something-to-write? (not zero-total-rules?)]
@@ -250,11 +261,11 @@
                                    (write-cache! cache-is-equal?)
                                    (not cache-is-equal?)))]
         #_(? "kushi.stylesheet/create-css-file: local bindings"
-           (assoc
-            (keyed write-styles?
-                   cache-will-update?
-                   post-build-report?)
-            :to-be-printed @to-be-printed))
+             (assoc
+              (keyed write-styles?
+                     cache-will-update?
+                     post-build-report?)
+              :to-be-printed @to-be-printed))
 
         (when (and post-build-report? something-to-write?)
           (reporting/print-report! to-be-printed cache-will-update?)))))

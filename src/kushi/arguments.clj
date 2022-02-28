@@ -5,8 +5,9 @@
   [par.core :refer [!? ? ?+ !?+]]
   [kushi.selector :as selector]
   [kushi.parse :as parse]
-  [kushi.specs :as specs]
   [kushi.state :as state]
+  [kushi.specs :as specs]
+  [kushi.defs :as defs]
   [kushi.utils :as util]))
 
 ;TODO move this to utils
@@ -23,7 +24,6 @@
 (defn register-classes [coll state-coll]
   (when (seq coll)
     (doseq [k coll]
-      #_(println (str "swapping " k " into " @state-coll))
       (swap! state-coll conj k))))
 
 (defn kushi-class? [x]
@@ -54,7 +54,6 @@
     (register&prefix* x)))
 
 (defn resolved-classes [x]
-  #_(?+ :resolved-classes x)
   (when x
     (let [class-coll             (util/into-coll x)
           [conditionals
@@ -62,16 +61,6 @@
           from-conditionals      (flatten (map #(filter keyword? (drop 2 %)) conditionals))
           distinct-classes       (distinct (concat kw-classes from-conditionals))
           prefixed               (map register&prefix class-coll)]
-
-      #_(? :resolved-classes
-           (keyed
-            ;; class-coll
-            ;; conditionals
-            ;; kw-classes
-            ;; from-conditionals
-            ;; distinct-classes
-            ))
-
       (keyed distinct-classes prefixed))))
 
 (defn tokens+attrs [args]
@@ -114,8 +103,6 @@
           (get-selector-base %))
        coll))
 
-(def meta-ks [:ancestor :prefix :ident :element])
-
 (defn validate-args [args style-tokens attrs*]
   (let [style-map-grouped        (group-by #(if (s/valid? ::specs/style-tuple %) :clean :bad) (:style attrs*))
         style-tokens-indexed     (map-indexed (fn [idx v]
@@ -140,9 +127,7 @@
                                                   (seq valid-styles-from-tokens)))
                                    true
                                    false)]
-
-    #_(? (keyed style-tokens-indexed style-tokens-grouped invalid-style-args))
-
+    #_(? (keyed style-map-grouped style-tokens-indexed style-tokens-grouped invalid-style-args))
     (keyed valid-styles-from-attrs
            valid-styles-from-tokens
            invalid-style-args
@@ -170,81 +155,88 @@
   [class-tokens*
    classlist-from-attrs
    selector*]
-  (let [class-tokens                 (map dotkw->kw class-tokens*)
-        from-attrs                   (resolved-classes classlist-from-attrs)
-        from-tokens                  (resolved-classes class-tokens)
-        from-attrs*&tokens           [from-attrs from-tokens]
-        distinct-classes             (distinct (apply concat (map :distinct-classes from-attrs*&tokens)))
-        prefixed-classlist           (->> from-attrs*&tokens
-                                          (map :prefixed)
-                                          (map classlist)
-                                          (apply concat)
-                                          (cons selector*)
-                                          distinct
-                                          (into []))]
+  (let [class-tokens       (map dotkw->kw class-tokens*)
+        from-attrs         (->> classlist-from-attrs (map dotkw->kw) resolved-classes)
+        from-tokens        (resolved-classes class-tokens)
+        from-attrs*&tokens [from-attrs from-tokens]
+        distinct-classes   (distinct (apply concat (map :distinct-classes from-attrs*&tokens)))
+        prefixed-classlist (->> from-attrs*&tokens
+                                (map :prefixed)
+                                (map classlist)
+                                (apply concat)
+                                (cons selector*)
+                                distinct
+                                (into []))]
     (keyed distinct-classes prefixed-classlist)))
 
 (defn new-args
   "Takes args and reorganizes it into internal/legacy format"
-  [args form-meta]
-  (let [[tokens attrs*]              (tokens+attrs args)
-        [class-tokens* style-tokens] (util/partition-by-spec ::specs/tokenized-classes tokens)
-        classlist-from-attrs         (:class attrs*)
-        attrs-base                   (dissoc attrs* :class :style)
-        kushi-attr                   (select-keys attrs-base meta-ks)
-        {:keys [selector selector*]} (selector/selector-name kushi-attr)
+  ([args form-meta]
+   (new-args args form-meta nil))
+  ([args form-meta defclass-name]
+   (let [[tokens attrs*]              (tokens+attrs args)
+         [class-tokens* style-tokens] (util/partition-by-spec ::specs/tokenized-classes tokens)
+         classlist-from-attrs         (:class attrs*)
+         kushi-attr*                  (select-keys attrs* defs/meta-ks)
+         kushi-attr                   (if defclass-name (assoc kushi-attr* :defclass-name defclass-name) kushi-attr*)
+         {:keys [selector selector*]} (selector/selector-name kushi-attr*)
+         attrs-base                   (apply dissoc attrs* (conj defs/meta-ks :class :style))
+
+         _                            (state/set-current-macro! (merge {:macro (if defclass-name :defclass :sx)}
+                                                                       (keyed args form-meta kushi-attr)))
 
         ;; args validation and conformance -----------------------------------------------------------
-        {:keys
-         [valid-styles-from-attrs
-          valid-styles-from-tokens
-          invalid-style-args
-          styles?]}                  (validate-args args style-tokens attrs*)
+         {:keys
+          [valid-styles-from-attrs
+           valid-styles-from-tokens
+           invalid-style-args
+           styles?]}                  (validate-args args style-tokens attrs*)
 
-        classlist-from-attrs?        (if (seq classlist-from-attrs) true false)
-        classes-from-tokens?         (if (seq class-tokens*) true false)
-        classes?                     (or classlist-from-attrs? classes-from-tokens?)
+         classlist-from-attrs?        (if (seq classlist-from-attrs) true false)
+         classes-from-tokens?         (if (seq class-tokens*) true false)
+         classes?                     (or classlist-from-attrs? classes-from-tokens?)
 
         ;; classlist construction ---------------------------------------------------------------------
-        {:keys [prefixed-classlist
-                distinct-classes]}   (when (or classes? styles?)
-                                       (prefixed-classlist class-tokens* classlist-from-attrs selector*))
+         {:keys [prefixed-classlist
+                 distinct-classes]}   (when (or classes? styles? selector*)
+                                        (prefixed-classlist class-tokens* classlist-from-attrs selector*))
 
         ;; element style with mqs, modifiers, & css vars ----------------------------------------------
-        style-tokens-map             (style-tokens-map valid-styles-from-tokens)
-        new-style                    (into [] (merge style-tokens-map valid-styles-from-attrs))
-        styles-with-vars             (parse/+vars new-style selector*)
-        css-vars                     (parse/css-vars new-style selector*)
-        tokenized-styles             (mapv (partial parse/kushi-style->token selector*) styles-with-vars)
-        grouped-by-mqs               (parse/grouped-by-mqs tokenized-styles)
-        garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)
+         style-tokens-map             (style-tokens-map valid-styles-from-tokens)
+         new-style                    (into [] (merge style-tokens-map valid-styles-from-attrs))
+         styles-with-vars             (parse/+vars new-style selector*)
+         css-vars                     (parse/css-vars new-style selector*)
+         tokenized-styles             (mapv (partial parse/kushi-style->token selector*) styles-with-vars)
+         grouped-by-mqs               (parse/grouped-by-mqs tokenized-styles)
+         garden-vecs                  (parse/garden-vecs grouped-by-mqs selector)
 
         ;; dev-time debugging info --------------------------------------------------------------------
-        data-cljs-prefix             (when-let [pf (:data-cljs-prefix kushi-attr)] (str (name pf) ":"))
-        data-cljs                    (let [{:keys [file line column]} form-meta]
-                                       (str data-cljs-prefix file ":"  line ":" column))
+         data-cljs-prefix             (when-let [pf (:data-cljs-prefix kushi-attr)] (str (name pf) ":"))
+         data-cljs                    (let [{:keys [file line column]} form-meta]
+                                        (str data-cljs-prefix file ":"  line ":" column))
 
-        prefixed-classlist?          (if (seq prefixed-classlist) true false)
-        css-vars?                    (if (seq css-vars) true false)
-        attrs?                       (if (seq attrs-base) true false)
-        only-attrs?                  (and (not prefixed-classlist?) (not css-vars?) attrs?)
-        only-class?                  (and prefixed-classlist? (not css-vars?) (not attrs?))
-        only-class+style?            (and prefixed-classlist? styles? (not attrs?))
-        ret                          (keyed
-                                      prefixed-classlist
-                                      distinct-classes
-                                      attrs-base
-                                      kushi-attr
-                                      selector
-                                      css-vars
-                                      garden-vecs
-                                      data-cljs)]
+         prefixed-classlist?          (if (seq prefixed-classlist) true false)
+         css-vars?                    (if (seq css-vars) true false)
+         attrs?                       (if (seq attrs-base) true false)
+         only-attrs?                  (and (not prefixed-classlist?) (not css-vars?) attrs?)
+         only-class?                  (and prefixed-classlist? (not css-vars?) (not attrs?))
+         only-class+style?            (and prefixed-classlist? styles? (not attrs?))
+         ret                          (keyed
+                                       prefixed-classlist
+                                       distinct-classes
+                                       attrs-base
+                                       kushi-attr
+                                       css-vars
+                                       garden-vecs
+                                       data-cljs)]
 
     ;; Set invalid style-args in state!
-    (reset! state/invalid-style-args invalid-style-args)
+     (reset! state/invalid-style-args invalid-style-args)
 
-    #_(?+ nil (keyed
-        ;; args
+     #_(when  (-> args first :style :pl)
+       (?+ :new-args:bindings
+           (keyed
+        args
         ;; tokens
         ;; style-tokens
         ;; style-tokens-map
@@ -260,25 +252,32 @@
         ;; classlist?
         ;; styles?
         ;; classes?
+        ;; css-vars
         ;; css-vars?
         ;; attrs?
-;;         prefixed-classlist
-;;         prefixed-classlist?
+        ;; prefixed-classlist
+        ;; prefixed-classlist?
         ;; only-attrs?
         ;; only-class?
         ;; only-class+style?
         ;;  new-style
         ;;  invalid-style-args
         ;;  attrs-base
+        ;;  defclass-name
         ;;  kushi-attr
+        ;;  styles-with-vars
+        ;;  style-tokens-map
+        ;;  styles-with-vars
+         tokenized-styles
+        ;;  grouped-by-mqs
+        ;;  css-vars
         ;;  selector
         ;;  selector*
-        ;;  css-vars
         ;;  garden-vecs
         ;; classes-from-tokens+
         ;; new-args
-               ))
-    ret))
+            )))
+     ret)))
 
 (defn combine-classes [coll]
   (let [f   (fn [acc v]

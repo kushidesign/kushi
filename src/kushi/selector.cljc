@@ -2,8 +2,9 @@
   #?(:clj (:require [garden.def]))
   (:require
    [clojure.string :as string]
+   [par.core :refer [!? ? ?+ !?+]]
    [kushi.config :refer [user-config]]
-   [kushi.utils :as util :refer [auto-generated-hash keyed ?]]))
+   [kushi.utils :as util :refer [auto-generated-hash keyed]]))
 
 (defn nsqkw->selector-friendly [s]
   (-> (str s)
@@ -45,15 +46,14 @@
                                        :prefixed-name prefixed-name-for-el}]
 
     #_(? 'kushi.selector/selector-name (keyed m ret))
-    #_(pprint
+    
+    #_(when (= defclass-name :exp)
+      (?+
        {:ident ident
         :prefix prefix
-        :prefixed-name prefixed-name
         :defclass-name defclass-name
-        :defclass-prefix defclass-prefix
-        :defclass-hash defclass-hash
         :prefixed-names-for-selectors? prefixed-names-for-selectors?
         :hash hash
         :selector selector
-        :selector* selector*})
+        :selector* selector*}))
     ret))

@@ -1,17 +1,14 @@
 (ns kushi.parse
   (:require
    [clojure.string :as string]
-   [clojure.set :as set]
    [garden.stylesheet]
-   [garden.core]
    [clojure.spec.alpha :as s]
    [kushi.state :as state]
    [kushi.specs :as specs]
    [kushi.shorthand :as shorthand]
    [kushi.defs :as defs]
-   [kushi.printing :as printing]
    [kushi.config :refer [user-config]]
-   [kushi.utils :as util :refer [pprint+]]
+   [kushi.utils :as util :refer [keyed]]
    [par.core :refer [? !? ?+ !?+]]))
 
 (defn derefed? [x]
@@ -59,9 +56,7 @@
 
 (defn css-vars-map
   [extracted-vars]
-  (let [
-        ;; debug (= (-> extracted-vars first :selector*) "")
-        ret (reduce
+  (let [ret (reduce
              (fn [acc v]
                (cond
                  (and (map? v) (= :logic (:val-type v)))
@@ -110,62 +105,22 @@
      (if (s/valid? ::specs/style-tuple v)
        (let [[prop val] v]
          (cond
-           (derefed? val) [prop (util/css-var-string (second val))]
+           (derefed? val)
+           [prop (util/css-var-string (second val))]
 
-           (symbol? val)  [prop (util/css-var-string val)]
+           (symbol? val)
+           [prop (util/css-var-string val)]
 
-           (list? val)    (cond
-                            (= 'cssfn (first val))     [prop val]
-                            (util/!important-var? val) [prop (util/css-var-string-!important val selector* prop)]
-                            :else                      [prop (str "var(" (util/css-var-for-sexp selector* prop) ")")])
+           (list? val)
+           (cond
+             (= 'cssfn (first val))     [prop val]
+             (util/!important-var? val) [prop (util/css-var-string-!important val selector* prop)]
+             :else                      [prop (str "var(" (util/css-var-for-sexp selector* prop) ")")])
 
-           :else          [prop val]))
+           :else
+           [prop val]))
         v))
    styles*))
-
-(defn- conditionals [styles*]
-  (remove nil?
-          (apply concat
-                 (map (fn [v]
-                        (when (s/valid? ::specs/conditional-sexp v)
-                          (map #(when (keyword? %)
-                                  (or (some-> (subs (str %) 1) atomic-user-class :n)
-                                      %))
-                               v)))
-                      styles*))))
-
-(defn scoped-classname [x]
-  (if-let [m (when (keyword? x)
-               (-> x
-                   (some-> name (subs 1) keyword)
-                   atomic-user-class))]
-    (some-> m :garden-vecs ffirst (subs 1))
-    x))
-
-(defn- +conditionals [coll]
-  (map
-   (fn [v]
-     (if (s/valid? ::specs/conditional-sexp v)
-       (if (some scoped-class-syntax? v)
-         {:_class (map scoped-classname v)}
-         {:_class v})
-       v))
-   coll))
-
-(defn parse-classes
-  "Converts any values with runtime dynamics into css var syntax"
-  [coll]
-  (let [conditional-class-keys (conditionals coll)
-        +conditionals (+conditionals coll)
-        conditional-class-sexprs (->> +conditionals
-                                      (filter #(and (map? %) (:_class %)))
-                                      (mapv #(:_class %)))
-        classes* (filter #(not (or (map? %) (seq? %))) +conditionals)
-        classes (-> (concat conditional-class-keys classes*) distinct)]
-
-    {:conditional-class-sexprs conditional-class-sexprs
-     :conditional-class-keys conditional-class-keys
-     :classes classes}))
 
 
 ;; PARSING ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -191,8 +146,7 @@
              :numeric-string numeric-string
              :current-macro  (:fname @state/current-macro)
              :form-meta      (:form-meta @state/current-sx)}]
-      #_(printing/console-warning-number (vector m))
-      #_(util/pprint+ "warn" {:m m})
+      #_(?+ "warn" {:m m})
       (swap! state/compilation-warnings conj m))
     ))
 
@@ -262,7 +216,7 @@
 
 (defn hydrate-css
   [{css-prop :css-prop val* :val :as m} selector*]
-  #_(util/pprint+ "hydrate-css" {:m m})
+  #_(?+ "hydrate-css" {:m m})
   (if (and css-prop val)
     (let [hydrated-css-prop-kw (shorthand/key-sh (if (string? css-prop) (keyword css-prop) css-prop))
           val (if (or (string? val*) (keyword? val*))
@@ -279,28 +233,45 @@
 (defn format-combo [s]
   (-> s
       (string/replace #"_" " ")
+      (string/replace #"&" "")
       (string/replace #"([>\+\~])" " $1 ")))
 
 (defn format-mod
   "If mod is pseudo-class, prefixes a \":\".
    If mod is pseudo-element, prefixes a \"::\".
-   If mod is combo-selector, formats appropriately.
+   If mod is combo-selector, child, or decendant, formats appropriately.
    Otherwise returns nil for dud selector."
   [mods&prop s]
+  #_(when (= mods&prop "&[aria-expanded=\"false\"]:c")
+    (?+ "format-mod" {:mods&prop mods&prop
+                      :s s}))
   ;; First, extract the key by string/replacing any suffixed syntax.
   ;; Example: :nth-child(3) => :nth-child
-  (let [k (some-> s (string/replace #"\(.*\)$" "") keyword)]
+  (let [k      (some-> s (string/replace #"\(.*\)$" "") keyword)
+        has*re #"^has\((ancestor|parent)\((.+)\)\)"]
     (cond
       (contains? defs/pseudo-classes k)
       (str ":" s)
+
       (contains? defs/pseudo-elements k)
       (str "::" s)
-      (re-find #"^[\.\>\+\~\_].+$" s)
+
+      ;; combo-selector -- sibling, child, decendant, etc
+      (re-find #"^[\.\>\+\~\_\&].+$" s)
       (format-combo s)
+
+      ;;remove this dark thing?
+      (= s "dark")
+      " _.dark_"
+
+      (re-find has*re s)
+      (let [[_ type x] (re-find has*re s)]
+        {:type (keyword type) :x x})
+
       :else
-      ;; Save this for reporting bad modifier to user
+      ;; For reporting bad modifier to user
       (do
-        #_(util/pprint+ "format-mod" s)
+        #_(?+ "format-mod" s)
         (swap!
          state/current-sx
          assoc-in
@@ -308,39 +279,42 @@
          (if-let [bad-mods (get (some-> @state/current-sx :bad-mods) mods&prop nil)]
            (conj bad-mods s)
            [s]))
-;; (util/pprint+ "current-macro" @state/current-macro)
-;; (util/pprint+ "format-mod-macro" (get-in @state/current-macro [#_:bad-mods #_mods&prop]))
-        #_(swap!
-         state/current-macro
-         assoc-in
-         [:bad-mods mods&prop]
-         (if-let [bad-mods (get (some-> @state/current-macro :bad-mods) mods&prop nil)]
-           (conj bad-mods s)
-           [s]))
-        #_(util/pprint+ "kushi.parse/format-mod:current-sx" @state/current-macro)
-        #_(util/pprint+ "kushi.parse/format-mod:current-macro" @state/current-macro)
+        #_(?+ "kushi.parse/format-mod:current-sx" @state/current-macro)
+        #_(?+ "kushi.parse/format-mod:current-macro" @state/current-macro)
         nil))))
 
+(defn coll->str [coll]
+ (when-not (empty? coll) (string/join coll)) )
 
 (defn mods&prop->map [mods&prop]
-  (let [coll           (string/split mods&prop #":")
-        prop           (last coll)
-        mods*          (drop-last coll)
-        mq             (when-not (empty? mods*) (specs/find-with (first mods*) specs/mq-re))
-        formatted-mods (remove nil? (map (partial format-mod mods&prop) (if mq (rest mods*) mods*)))
-        mods           (when-not (empty? formatted-mods) (string/join formatted-mods))]
+  (let [coll            (string/split mods&prop #":")
+        prop            (last coll)
+        mods*           (drop-last coll)
+        mq              (when-not (empty? mods*) (specs/find-with (first mods*) specs/mq-re))
+        formatted-mods* (keep (partial format-mod mods&prop) (if mq (rest mods*) mods*))
+        formatted-mods  (filter string? formatted-mods*)
+        ancestor*      (keep #(when (map? %) (str (:x %) (when (= :parent (:type %)) " >") " ")) formatted-mods*)
+        ancestor       (coll->str ancestor*)
+        mods            (if ancestor
+                          {:ancestor ancestor :mods (coll->str formatted-mods)}
+                          (coll->str formatted-mods))
+        ]
 
-    #_(util/pprint+ "mods&prop->map" {:mods&prop      mods&prop
-                                    :mods*          mods*
-                                    :mods           mods
-                                    :formatted-mods formatted-mods})
+#_(when (state/debug?)
+  (?+ "mods&prop->map" {
+                        ;; :mods&prop      mods&prop
+                        ;; :mods*          mods*
+                        :mods           mods
+                        :ancestor      ancestor
+                        :formatted-mods formatted-mods}))
     (into {}
           (filter (comp some? val)
-                  {:mods     mods
-                   :css-prop prop
-                   :mq       mq}))))
+                  {:mods      mods
+                  ;;  :ancestor ancestor
+                   :css-prop  prop
+                   :mq        mq}))))
 
-
+;; Parsing props
 (defn kushi-style->token [selector* x]
   (when (or (keyword? x) (vector? x))
     (let [[mods&prop val] (if (vector? x)
@@ -349,32 +323,46 @@
           m2*             (mods&prop->map mods&prop)
           m2              (if val (assoc m2* :val val) m2*)
           hydrated        (hydrate-css m2 selector*)]
-      #_(util/pprint+ "hydrated" {:mods&prop mods&prop
-                                  :val       val
-                                  :m2*       m2*
-                                  :m2        m2})
+
+      #_(when (state/debug?)
+        (?+ "->token" (keyed mods&prop val m2* m2 hydrated)))
       hydrated)))
 
 (defn reduce-styles
   [styles]
-  (let [styles-flat (map #(-> % (select-keys [:css-prop :val]) vals vec) styles)
-        ret (reduce (fn [acc [k v]]
-                      (if (and k v) (assoc acc k v) acc))
-                    {}
-                    styles-flat)]
+  (let [styles-flat (map #(-> % (select-keys [:css-prop :val]) vals vec)
+                         styles)
+        ret         (reduce (fn [acc [k v]]
+                              (if (and k v) (assoc acc k v) acc))
+                            {}
+                            styles-flat)]
+
+    #_(when (state/debug?)
+      (? (keyed styles-flat ret)))
+
     ret))
+
+(defn mod+styles-reducer [selector acc [mod-key* style-map]]
+  #_(when (state/debug?)
+      (? :mod-key:b4 mod-key*))
+  (let [mod-key (if (map? mod-key*)
+                  (str (:ancestor mod-key*)
+                        selector
+                        (:mods mod-key*))
+                  (str selector mod-key*))]
+    #_(when (state/debug?) (? :mod-key:after mod-key))
+    (conj acc [mod-key style-map])))
 
 (defn reduce-media-queries
   [grouped selector]
    (reduce
     (fn [acc [mq-key styles+mixins]]
-      (let [defaults (when-let [defaults (:_no-mods_ styles+mixins)]
-                       [selector defaults])
-            mods (reduce (fn [acc [mod-key style-map]]
-                           (conj acc [(str selector mod-key) style-map]))
-                         []
-                         (dissoc styles+mixins :_no-mods_))
-            mq-map ((keyword mq-key) (:media user-config))
+      (let [defaults      (when-let [defaults (:_no-mods_ styles+mixins)]
+                            [selector defaults])
+            mods          (reduce (partial mod+styles-reducer selector)
+                                  []
+                                  (dissoc styles+mixins :_no-mods_))
+            mq-map        ((keyword mq-key) (:media user-config))
             at-media-args (concat [mq-map] [defaults] mods)
             at-media-rule (apply garden.stylesheet/at-media at-media-args)]
         (conj acc at-media-rule)))
@@ -391,6 +379,7 @@
 
 (defn add-mods-to-classes
   [styles mq&mods]
+  ;; change to `keep`
   (remove nil?
           (map (fn [v]
                  (cond
@@ -400,6 +389,8 @@
                    (keyword (str mq&mods ":" (name v)))))
                styles)))
 
+;; TODO Write docs around this
+;; Mods on classes for mixins?
 (defn class-with-mods->styles [x]
   (when (s/valid? ::specs/kushi-dot-class-with-mods x)
     (let [as-string (if (vector? x) (first x) (name x))
@@ -421,14 +412,25 @@
    []
    coll))
 
+(defn valid-mod-key [mod-key*]
+  #_(when (state/debug?) (? mod-key*))
+  (when (or (and (map? mod-key*)
+                 (and (:ancestor mod-key*) #_(:mods mod-key*)))
+            (not (string/blank? mod-key*)))
+    mod-key*))
 
 (defn styles-by-mod-reducer
   [acc [mod-key* tokenized-styles]]
-  (let [mod-key (or (when-not (string/blank? mod-key*) mod-key*) :_no-mods_)]
+  #_(when (state/debug?)
+    (? mod-key*))
+  (let [mod-key (or (valid-mod-key mod-key*) :_no-mods_)]
+
+    #_(when (state/debug?)
+        (? :styles-by-mod-reducer:mod-key (keyed mod-key* mod-key)))
+
     (assoc acc
            mod-key
            (reduce-styles tokenized-styles))))
-
 
 (defn styles-by-mq-reducer
   [acc [mq-key* tokenized-styles]]
@@ -437,8 +439,10 @@
            mq-key
            (reduce styles-by-mod-reducer
                    {}
-                   (group-by :mods tokenized-styles)))))
-
+                   (do
+                     #_(when (state/debug?)
+                       (? (group-by :mods (? tokenized-styles))))
+                     (group-by :mods tokenized-styles))))))
 
 (def mq-ks (->> kushi.config/user-config :media keys (map name)))
 
@@ -449,21 +453,26 @@
                  (group-by :mq tokenized-styles))))
 
 (defn grouped-by-mqs [tokenized-styles]
+  #_(? (keyed tokenized-styles))
   (let [by-mqs (grouped-and-sorted-by-mqs tokenized-styles)
         grouped (reduce
                  styles-by-mq-reducer
                  {}
                  by-mqs)]
+    #_(when (state/debug?)
+            (? (keyed by-mqs grouped)))
     grouped))
 
 (defn garden-vecs [grouped selector]
   (let [base [selector (-> grouped :_media-default_ :_no-mods_)]
-        mods (reduce (fn [acc [mod-key style-map]]
-                       (conj acc [(str selector mod-key) style-map]))
+        mods (reduce (partial mod+styles-reducer selector)
                      []
                      (-> grouped :_media-default_ (dissoc :_no-mods_)))
         mqs (reduce-media-queries grouped selector)
-        ret (into [] (concat [base] mods mqs))
-        ]
+        ret (into [] (concat [base] mods mqs))]
+    (when (state/debug?)
+      #_(? (-> grouped :_media-default_ (dissoc :_no-mods_)))
+      #_(? (keyed mqs))
+      #_(? (keyed grouped base mods mqs ret)))
     ret))
 

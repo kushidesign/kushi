@@ -1,12 +1,10 @@
 (ns ^:dev/always kushi.utils
-  #?(:clj (:require [io.aviso.ansi :as ansi]
-                    [kushi.ansiformat :as ansiformat]))
   (:require
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.walk :as walk]
-   [clojure.pprint :refer [pprint]]
    [kushi.defs :as defs]
+   [par.core :refer [? !? ?+ !?+]]
    [kushi.scales :refer [scales scaling-map]]
    [kushi.config :refer [user-config]]))
 
@@ -16,65 +14,6 @@
             keys# (map keyword keys#)
             vals# (list ~@ks)]
         (zipmap keys# vals#))))
-
-(defn pprint+
-  ([v]
-   (pprint+ nil v))
-  ([title v]
-   #?(:cljs (do (if title
-                  (println "\n" title "\n=>")
-                  (println "\n\n"))
-                (cljs.pprint/pprint v)
-                (println "\n"))
-      :clj (do (if title
-                 (do (println "\n")
-                      (println (ansi/red (str "; " title)) (str "\n" (ansi/bold-cyan "=>"))))
-                 (println "\n\n"))
-               (clojure.pprint/pprint v)
-               (println "\n")))))
-
-(defn ?*
-  ([opts desc]
-   (?* opts nil desc))
-  ([opts desc val]
-   #?(:cljs (do (if desc
-                  (do (println "\n")
-                      (println desc " \n=>"))
-                  (println "\n"))
-                (cljs.pprint/pprint val)
-                (println "\n"))
-      :clj (let [comment?      (= desc :comment)
-                 opts          (merge (keyed desc val comment?) opts)
-                 [desc v]      (ansiformat/format-desc+val opts)]
-             (when desc
-               (println desc))
-             (when-not comment? (println v))))))
-
-(defn ?
-  ([val]
-   (? nil val))
-  ([desc val]
-   (?* {:bottom-margin 1} desc val)))
-
-(defn ?? [& args] nil)
-(defn ??b [& args] nil)
-(defn ??t [& args] nil)
-
-(defn debug [{nm :name :as m debug? :debug?}]
-  #_(? :debug m)
-  (if-not debug?
-   [?? ??t]
-   (let [fn-namespace (some-> m :ns ns-name name)
-         header       (str fn-namespace "/" nm)
-         sep       (ansi/white "│")
-        ;; comment-color ansi/cyan
-         ]
-     [(partial ?* {:border? true :sep sep :indent 2 :bottom-margin 1})
-      #(println (str
-                 "\n\n"
-                 (ansi/white "┌─ ") (ansi/bold header) (ansi/white " ───────────────────────") "\n"
-                 sep))
-      (fn [] nil)])))
 
 (defn auto-generated-hash []
   (let [rando-a-z (char (+ (rand-int 25) 97))
@@ -97,7 +36,7 @@
                         v)))
 
 (defn cssfn [[_ nm & args*]]
-  #_(pprint+ "cssfn" {:nm nm :args args*})
+  #_(?+ "cssfn" {:nm nm :args args*})
   (let [args (map #(cond
                      (cssfn? %) (cssfn %)
                      (vector? %) (vec-in-cssfn %)
@@ -108,7 +47,7 @@
                              (str %)))
                   args*)
         css-arg (string/join ", " args)]
-    #_(pprint+ "cssfn" {:nm nm :args args* :css-arg css-arg})
+    #_(?+ "cssfn" {:nm nm :args args* :css-arg css-arg})
     (str (name nm) "(" css-arg ")")))
 
 (defn num->pxstr-maybe
@@ -169,7 +108,7 @@
 
 (defn css-var-string-!important
   [x selector* prop]
-  #_(pprint+ "css-var-string-!important" (css-var-string (second x) "!important"))
+  #_(?+ "css-var-string-!important" (css-var-string (second x) "!important"))
   (if (list? (second x))
     (str "var(" (css-var-for-sexp selector* prop) ")!important")
     (css-var-string (second x) "!important")))
@@ -277,3 +216,73 @@
                   (when (pred x)
                     idx))
                 coll))
+
+(defn stacked-kw [coll]
+  (when (coll? coll) (->> coll (string/join ":") keyword)))
+
+(defn unstacked-kw [kw]
+  (when (keyword? kw)
+    (let [ret (-> kw name (string/split #":"))]
+      (when (< 1 (count ret)) ret))))
+
+(defn stacked-kw-tail [kw]
+  (some-> kw unstacked-kw rest stacked-kw))
+
+(defn stacked-kw-head [kw]
+  (some-> kw unstacked-kw first))
+
+(defn- merge-with-style-warning
+  [v k n]
+  #?(:cljs (js/console.warn
+            (str
+             "kushi.core/merge-with-style:\n\n "
+             "The " k " value supplied in the " n " argument must be a map.\n\n "
+             "You supplied:\n") v)))
+
+(defn- bad-style? [style n]
+  (let [bad? (and style (not (map? style)))]
+    (when bad? (merge-with-style-warning style :style n))
+    bad?))
+
+(defn- bad-class? [class n]
+  (let [bad? (and class
+                  (not (some #(% class) [seq? vector? keyword? string? symbol?])))]
+    (when bad? (merge-with-style-warning class :class n))
+    bad?))
+
+(defn class-coll
+  [class bad-class?]
+  (when-not bad-class?
+    (if (or (string? class) (keyword? class))
+      [class]
+      class)))
+
+(defn data-cljs [s1 s2]
+  (let [coll   (remove nil? [s1 s2])
+        joined (when (seq coll) (string/join " + " coll))]
+    (when joined {:data-cljs joined})))
+
+(defn on-click [c1 c2]
+  (let [f (if (and c1 c2)
+            (fn [e] (c1 e) (c2 e))
+            (or c1 c2))]
+    (when f {:on-click f})))
+
+;; Public function for style decoration
+(defn merge-with-style
+  ;; TODO add docstring
+  [{style1 :style class1 :class data-cljs1 :data-cljs on-click1 :on-click :as m1}
+   {style2 :style class2 :class data-cljs2 :data-cljs on-click2 :on-click :as m2}]
+  #_(? m1)
+  (let [[bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
+        [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i)) [class1 class2])
+        merged-style              (merge (when-not bad-style1? style1) (when-not bad-style2? style2))
+        class1-coll               (class-coll class1 bad-class1?)
+        class2-coll               (class-coll class2 bad-class2?)
+        classes                   (concat class1-coll class2-coll)
+        data-cljs                 (data-cljs data-cljs1 data-cljs2)
+        on-click                  (on-click on-click2 on-click1)
+        ret                       (assoc (merge m1 m2 data-cljs on-click)
+                                         :class classes
+                                         :style merged-style)]
+    ret))

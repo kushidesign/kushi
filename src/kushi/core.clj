@@ -5,7 +5,7 @@
   [garden.core :as garden]
   [garden.def]
   [garden.stylesheet :refer [at-font-face]]
-  [par.core :refer [? ?+]]
+  [par.core :refer [? !? ?+ !?+]]
   [kushi.arguments :as arguments]
   [kushi.atomic :as atomic]
   [kushi.config :refer [user-config]]
@@ -30,18 +30,17 @@
 (defn kushi-debug
   {:shadow.build/stage :compile-prepare}
   [build-state]
-  #_(println {:shadow.build/stage :compile-prepare} "preparing to reset build states...")
+  #_(?+ {:shadow.build/stage :compile-prepare} "preparing to reset build states...")
   (state/reset-build-states!)
-  #_(util/pprint+
-   {"After reset: kushi-debug:garden-vecs-state" @state/garden-vecs-state
-    "kushi-debug:atomic-user-classes" @state/kushi-atomic-user-classes
-    "kushi-debug:atomic-declarative-classes-used" @state/atomic-declarative-classes-used
-    "kushi-debug:state/user-defined-keyframes" @state/user-defined-keyframes
-    "kushi-debug:state/user-defined-font-faces" @state/user-defined-font-faces})
+  #_(?+ "After reset...kushi-debug:garden-vecs-state" @state/garden-vecs-state)
+  #_(?+ "After reset...kushi-debug:atomic-user-classes" @state/kushi-atomic-user-classes)
+  #_(?+ "After reset...kushi-debug:atomic-declarative-classes-used" @state/atomic-declarative-classes-used)
+  #_(?+ "After reset...kushi-debug:state/user-defined-keyframes" @state/user-defined-keyframes)
+  #_(?+ "After reset...kushi-debug:state/user-defined-font-faces" @state/user-defined-font-faces)
 
   (let [mode (:shadow.build/mode build-state)]
     #_(when mode
-        (println "(:shadow.build/mode build-state) =>" mode))
+        (?+ (? "(:shadow.build/mode build-state)") mode))
     (when (not= mode :dev)
       (reset! KUSHIDEBUG false)))
   build-state)
@@ -49,21 +48,19 @@
 
 (defn style-map->vecs
   [m]
-  #_(? m)
-  (when (and (:map-mode? user-config) (map? m))
-    (let [kw->dotkw #(some->> (when (keyword? %) %)
-                              name
-                              (str ".")
-                              keyword)
-          classes*  (some->> m :. util/into-coll)
-          classes   (map #(cond (seq? %)
-                                (map (fn [x] (if (keyword? x) (kw->dotkw x) x)) %)
-                                (keyword? %)
-                                (kw->dotkw %))
-                        classes*)
-          ret (into [] (concat classes (into [] (dissoc m :.))))]
-        #_(? (keyed classes* classes ret))
-      ret)))
+  (let [kw->dotkw #(some->> (when (keyword? %) %)
+                            name
+                            (str ".")
+                            keyword)
+        classes*  (some->> m :. util/into-coll)
+        classes   (map #(cond (seq? %)
+                              (map (fn [x] (if (keyword? x) (kw->dotkw x) x)) %)
+                              (keyword? %)
+                              (kw->dotkw %))
+                       classes*)
+        ret (into [] (concat classes (into [] (dissoc m :.))))]
+    #_(? (keyed classes* classes ret))
+    ret))
 
 (defn- hydrated-defclass
   [classname coll*]
@@ -84,22 +81,22 @@
 
 (defn defclass* [sym coll* form-meta]
   (let [defclass-name            (keyword sym)
-        coll                     (if (:map-mode? user-config)
-                                   (-> coll* first style-map->vecs)
+        style-map-vecs           (when (-> coll* last map?)
+                                   (-> coll* last style-map->vecs))
+        coll                     (if style-map-vecs
+                                   (-> coll* drop-last (concat style-map-vecs))
                                    coll*)
-        {invalid-map-args :invalid}               (when (:map-mode? user-config) (util/reduce-by-pred map? coll*))
+        ;; _ (when (= sym 'exp) (?+ (keyed style-map-vecs coll)))
         {styles        :valid
          invalid-args* :invalid} (util/reduce-by-pred #(s/valid? ::specs/defclass-arg %) coll)
         invalid-args             (or
                                   (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
-                                  (into [] (concat invalid-map-args invalid-args*)))
+                                  (into [] invalid-args*))
         {:keys [selector
                 selector*
                 hydrated-styles
                 garden-vecs]}    (hydrated-defclass defclass-name styles)
-        styles-argument-display  (if (:map-mode? user-config)
-                                   coll*
-                                   (apply vector coll))
+        styles-argument-display  (apply vector coll)
         console-warning-args     {:defclass-name           defclass-name
                                   :styles-argument-display styles-argument-display
                                   :invalid-args            invalid-args
@@ -116,6 +113,14 @@
               invalid-args
               styles
               m))
+    #_(when true #_(= :exp defclass-name)
+      (? :defclass*
+         {:defclass-name        defclass-name
+          :coll                 coll
+          :invalid-args         invalid-args
+          :hydrated-styles      hydrated-styles
+          :console-warning-args console-warning-args
+          :m                    m}))
     {:defclass-name        defclass-name
      :coll                 coll
      :invalid-args         invalid-args
@@ -123,15 +128,27 @@
      :console-warning-args console-warning-args
      :m                    m}))
 
+; todo
+; no prefix
+; (defclass :^lit name )
+
 (defmacro defclass
   [sym & coll*]
-  (let [dupe-defclass-warning (printing/dupe-defclass-warning
+  (let [form-meta             (meta &form)
+        dupe-defclass-warning (printing/dupe-defclass-warning
                                {:fname "defclass"
                                 :nm sym
-                                :form-meta (meta &form)})]
-
+                                :form-meta form-meta})]
     (printing/print-dupe2! dupe-defclass-warning)
     (reset! state/current-macro :defclass)
+
+    #_(when (= sym 'exp)
+      (?+ :defclass:new-args
+          (arguments/new-args (let [[m] coll*
+                                    args (if (map? m) [{:style m}] coll*)]
+                                args)
+                              form-meta
+                              sym)))
 
     (let [{:keys [caching?
                   cache-key
@@ -163,7 +180,7 @@
         ;; Dev-only runtime code for potential warnings (and possible dynamic injection.)
         (if @KUSHIDEBUG
           `(do
-            (kushi.core/inject-css* (quote ~garden-vecs-for-shared) ~selector "_kushi-rules-shared_")
+            (kushi.core/inject-css* (quote ~garden-vecs-for-shared) "_kushi-rules-shared_")
              (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
                (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
                (when ~dupe-defclass-warning
@@ -171,26 +188,8 @@
              nil)
           `(do
              (when ~inject?
-               (kushi.core/inject-css* (quote ~garden-vecs-for-shared) ~selector "_kushi-rules-shared_"))
+               (kushi.core/inject-css* (quote ~garden-vecs-for-shared) "_kushi-rules-shared_"))
              nil)))))
-
-(defmacro clean!
-  "Removes all existing styles that were injected into
-   #_kushi-rules-shared_ or #_kushi-rules_ style tags at dev time.
-   Intended to be called by the projects main/core ns on every save/reload."
-  []
-  (let [log?    (:log-clean!? user-config)
-        inject? (:runtime-injection? user-config)]
-    `(when (or ^boolean js/goog.DEBUG
-               ~inject?)
-       ;;TODO make cleaning report more detailed
-       (for [sheet-id# ["_kushi-rules-shared_" "_kushi-rules_"]]
-         (do (when ~log? (js/console.log (str "[kushi.core/clean!] stylesheet #" sheet-id#)))
-             (let [sheet# (.-sheet (js/document.getElementById sheet-id#))
-                   rules# (.-rules sheet#)
-                   rules-len# (.-length rules#)]
-               (clojure.core/doseq [idx# (clojure.core/reverse (clojure.core/range rules-len#))]
-                 (.deleteRule sheet# idx#))))))))
 
 (defmacro add-font-face
   "Example:
@@ -200,13 +199,15 @@
                    :src [\"local(\\\"Fira Code Bold\\\")\"]})"
   [m]
   (let [{:keys [caching? cache-key cached]} (state/cached :add-font-face m)
-        aff (or cached (garden/css (at-font-face m)))]
+        aff                                 (vector (or cached (garden/css (at-font-face m))))]
     (reset! state/current-macro :add-font-face)
     (swap! state/user-defined-font-faces conj aff)
     (when (and caching? (not cached))
       (swap! state/styles-cache-updated assoc cache-key aff))
-    nil))
-
+    (when (or @KUSHIDEBUG (:runtime-injection? user-config))
+      `(do
+         (kushi.core/inject-css* ~aff "_kushi-rules-shared_")
+         nil))))
 
 (defn system-at-font-face-rules [weights*]
   (let [weights   (if (empty? weights*)
@@ -231,13 +232,22 @@
 (defmacro add-system-font-stack
   [& weights*]
   (let [{:keys [caching? cache-key cached]} (state/cached :system-font-stack weights*)
-        ff-rules (or cached (system-at-font-face-rules weights*))]
+        ff-rules (into [] (or cached (system-at-font-face-rules weights*)))]
     (doseq [rule ff-rules]
       (reset! state/current-macro :add-font-face)
       (swap! state/user-defined-font-faces conj rule))
     (when (and caching? (not cached))
       (swap! state/styles-cache-updated assoc cache-key ff-rules))
-    nil))
+    (when (or @KUSHIDEBUG (:runtime-injection? user-config))
+      `(do
+         (kushi.core/inject-css* ~ff-rules "_kushi-rules-shared_")
+         nil))
+    ;; (if @KUSHIDEBUG
+    ;;   `(do
+    ;;      (kushi.core/inject-css* ~ff-rules "_kushi-rules-shared_")
+    ;;      nil)
+    ;;   `(do nil))
+    ))
 
 (defn- keyframe [[k v]]
   (let [frame-key (if (vector? k)
@@ -266,23 +276,33 @@
       (swap! state/user-defined-keyframes assoc (keyword nm) frames)
       (when (and caching? (not cached))
         (swap! state/styles-cache-updated assoc cache-key frames))
-      (if @KUSHIDEBUG
+
+      (when (or @KUSHIDEBUG (:runtime-injection? user-config))
         `(do
            (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
              (when ~dupe-warning
                (logfn# cljs.core/to-array (:browser ~dupe-warning))))
-           (kushi.core/inject-css* ~css-inj {:nm ~nmstr} "_kushi-rules-shared_")
-           nil)
-        `(do nil)))))
+           (kushi.core/inject-css* ~css-inj "_kushi-rules-shared_")
+           nil))
+
+      ;; (if @KUSHIDEBUG
+      ;;   `(do
+      ;;      (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
+      ;;        (when ~dupe-warning
+      ;;          (logfn# cljs.core/to-array (:browser ~dupe-warning))))
+      ;;      (kushi.core/inject-css* ~css-inj "_kushi-rules-shared_")
+      ;;      nil)
+      ;;   `(do nil))
+          )))
 
 (defn cssfn [& args]
   (cons 'cssfn (list args)))
 
-(def meta-ks [:ancestor :prefix :ident :element])
+
 
 (defn shared-classes-inj
   [distinct-classes]
-  (let [ret* (remove nil? (map #(get @state/kushi-atomic-user-classes %) distinct-classes))
+  (let [ret* (keep #(get @state/kushi-atomic-user-classes %) distinct-classes)
         ret  (mapv (fn [{:keys [selector garden-vecs]}]
                      (let [css-injection-for-kushi-atomic (stylesheet/garden-vecs-injection garden-vecs)]
                        [selector css-injection-for-kushi-atomic]))
@@ -295,7 +315,8 @@
   #_(?+ (meta &form))
   (let [{:keys [caching?
                 cache-key
-                cached]}            (state/cached :sx args*)
+                cached]
+         :as cache}                 (state/cached :sx args*)
         form-meta                   (meta &form)
         new-args                    (or cached
                                         (-> args*
@@ -305,11 +326,9 @@
                 distinct-classes
                 attrs-base
                 kushi-attr
-                selector
                 css-vars
                 garden-vecs
                 data-cljs]}         new-args
-        _                           (state/set-current-macro! args* form-meta :sx kushi-attr)
         element-style-inj           (stylesheet/garden-vecs-injection garden-vecs)
         shared-styles-inj           (shared-classes-inj distinct-classes)
 
@@ -322,18 +341,16 @@
     (state/add-styles! garden-vecs)
     (printing/print-warnings!)
 
-    #_(?
+    #_(when (= :theme (:ident kushi-attr))
+      (?
        (keyed
-      ;; shared-classes-inj
-      ;; new-style
-      ;; selector
-      ;; selector*
-      ;; css-vars
-      ;; garden-vecs
-      ;; data-cljs-prefix
-      ;; data-cljs
-      ;; classlist
-        ))
+        kushi-attr
+        attrs-base
+        shared-classes-inj
+        css-vars
+        garden-vecs
+        data-cljs
+        prefixed-classlist)))
 
     ;;TODO - fix injection mode
     (if @KUSHIDEBUG
@@ -346,23 +363,29 @@
              (doseq [warning# ~warnings-js]
                (logfn# cljs.core/to-array warning#)))
 
-           ;; TODO why does first arg need to be quoted? vars?
-           (kushi.core/inject-style-rules (quote ~element-style-inj) ~selector)
+           (kushi.core/inject-style-rules (quote ~element-style-inj))
            (kushi.core/inject-kushi-atomics ~shared-styles-inj)
 
            ;; return attributes map for the element
+           (par.core/!? (kushi.core/merged-attrs-map
+                        ~attrs-base
+                        ~prefixed-classlist
+                        ~css-vars
+                        ~data-cljs))))
+
+       ;; release builds
+      (if (:runtime-injection? user-config)
+        `(do
+           (kushi.core/inject-style-rules (quote ~element-style-inj))
+           (kushi.core/inject-kushi-atomics ~shared-styles-inj)
            (kushi.core/merged-attrs-map
             ~attrs-base
             ~prefixed-classlist
-            ~css-vars
-            ~data-cljs)))
+            ~css-vars))
+        `(do
+           (kushi.core/merged-attrs-map
+            ~attrs-base
+            ~prefixed-classlist
+            ~css-vars))))))
 
-       ;; release builds
-      `(do
-         (when (:runtime-injection? user-config)
-           (kushi.core/inject-style-rules (quote ~element-style-inj) ~selector)
-           (kushi.core/inject-kushi-atomics ~shared-styles-inj))
-         (kushi.core/merged-attrs-map
-          ~attrs-base
-          ~prefixed-classlist
-          ~css-vars)))))
+
