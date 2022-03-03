@@ -3,7 +3,7 @@
   (:require
    [clojure.string :as string]
    [clojure.pprint :refer [pprint]]
-   [par.core :refer [? !? ?+ !?+]]
+  ;;  [par.core :refer [? !? ?+ !?+]]
    [kushi.utils :as util :refer [keyed]]
    [kushi.state :as state]
    [kushi.ansiformat :as ansiformat]
@@ -145,7 +145,7 @@
 
 (defn border-seq->styled-string
   [{:keys [border-seq border-width cyc top? bottom?] :as m}]
-  #_(?+ "border-gen" m)
+  ;; #_(?+ "border-gen" m)
   (string/join
    (let [adjusted-border-width (Math/round (float (/ border-width (count border-seq))))]
      (if cyc
@@ -460,7 +460,7 @@
                                             ;;  :br
                                             ;;  "See kushi docs #pseudos-and-combo-selectors for more details"
                                                 ]]
-             (?+ :printing/bad-mods-warning:ret ret)
+            ;;  (?+ :printing/bad-mods-warning:ret ret)
              ret))))))
 
 (defn bad-mods-warning-js
@@ -591,7 +591,7 @@
            body-lines-fn
            debug?]
     :as args-map}]
-  #_(? (str "dupe-warning for " (or (:selector m) (:fname m))) "hi")
+  ;; #_(? (str "dupe-warning for " (or (:selector m) (:fname m))) "hi")
   (let [{:keys
          [file-info
           k
@@ -604,15 +604,15 @@
     (if existing-file-info
       (if-not (= file-info existing-file-info)
         (do
-          #_(?+ (str label " already used: ") {k file-info})
-          #_(?+ :comment "Returning map of preformatted message-line colls...")
+          ;; #_(?+ (str label " already used: ") {k file-info})
+          ;; #_(?+ :comment "Returning map of preformatted message-line colls...")
           (message-lines body-lines-fn m))
         (do
-          #_(?+ (str label ", non-duplicate: ") file-info)
+          ;; #_(?+ (str label ", non-duplicate: ") file-info)
           ))
       (do
-        #_(?+ (str label " not yet used..."))
-        #_(?+ "Merging into state/prefixed-selectors:" {k file-info})
+        ;; #_(?+ (str label " not yet used..."))
+        ;; #_(?+ "Merging into state/prefixed-selectors:" {k file-info})
         (swap! state/declarations assoc-in [dupe-type k] file-info)
         nil))))
 

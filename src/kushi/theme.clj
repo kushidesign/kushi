@@ -9,7 +9,8 @@
    [medley.core :refer [filter-keys map-kv-keys]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
-   [par.core    :refer [? !? ?+ !?+]]))
+  ;;  [par.core    :refer [? !? ?+ !?+]]
+   ))
 
 (defn resolve-user-theme
   ([x]
@@ -19,8 +20,8 @@
      (try (let [[ns-name themevar] (string/split (str x) #"/")]
             (require (symbol ns-name) :reload)
             (let [bar (find-ns (symbol ns-name))]
-              #_(?+ bar)
-              #_(?+ (symbol themevar))
+              ;; #_(?+ bar)
+              ;; #_(?+ (symbol themevar))
               (var-get (ns-resolve bar (symbol themevar)))))
           (catch Exception
                  e
@@ -82,8 +83,8 @@
                             garden-vecs-by-component
                             (apply concat))
                 inj    (stylesheet/garden-vecs-injection gvecs)]
-            (!?+ +darks)
-            (!?+ inj)
+            ;; (!?+ +darks)
+            ;; (!?+ inj)
             (state/add-theme-styles! gvecs)
             `(when (clojure.core/seq ~inj)
                (kushi.core/inject-css* ~inj "_kushi-rules-shared_")))

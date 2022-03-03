@@ -2,7 +2,7 @@
  (:require
   [clojure.spec.alpha :as s]
   [clojure.string :as string]
-  [par.core :refer [!? ? ?+ !?+]]
+  ;; [par.core :refer [!? ? ?+ !?+]]
   [kushi.selector :as selector]
   [kushi.parse :as parse]
   [kushi.state :as state]

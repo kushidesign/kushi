@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.gui
   (:require-macros [kushi.core :refer [keyed]])
   (:require [clojure.string :as string]
-            [par.core :refer [? !? ?+ !?+]]
+            ;; [par.core :refer [? !? ?+ !?+]]
             [kushi.utils :as util]))
 
 (defn hiccup? [x]
@@ -13,14 +13,14 @@
   (let [tagstr  (name k)
         target? (some? (re-find #".+\:\!$" tagstr))
         tag     (if target?
-                  (!?+ (-> tagstr (string/replace #":\!$" "") keyword))
+                  (-> tagstr (string/replace #":\!$" "") keyword)
                   k)]
-    (when target? (!?+ :hiccup-tag (keyed tagstr tag target?)))
+    (when target? (keyed tagstr tag target?))
     [tag target?]))
 
 (defn target-tag? [k]
   (when (keyword k)
-    (!? :target-tag? {:k k :ret (-> k hiccup-tag second)})
+    {:k k :ret (-> k hiccup-tag second)}
     (-> k hiccup-tag second)))
 
 (def kushi-keys
@@ -43,7 +43,7 @@
         attr-merged (if merge?
                       (util/merge-with-style attr (first args))
                       attr)]
-    (!? :coll? (coll? children))
+    (coll? children)
     (into [] (remove nil? (concat [tag attr-merged] children)))))
 
 (defn hiccup-path [pred coll]
@@ -72,13 +72,13 @@
   ([hiccup*]
    (gui hiccup* nil) )
   ([hiccup* decorator]
-   (!? (keyed hiccup* decorator))
+   (keyed hiccup* decorator)
    (let [[path target] (target-vector hiccup*)
          [tag attr*]   (->hiccup target)
          attr          (if (map? decorator)
                          (util/merge-with-style attr* decorator)
                          attr*)]
-     (!? (keyed path target tag attr* attr))
+     (keyed path target tag attr* attr)
      (fn [& args]
        (let [node (merge-hiccup tag attr args)
              ret  (if (seq path) (assoc-in hiccup* path node) node)]

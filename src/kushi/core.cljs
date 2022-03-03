@@ -4,7 +4,7 @@
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
             [kushi.utils] ;; For aliasing merge-with-style
-            [par.core :refer [? !?]] ;; only use when developing kushi itself
+            ;; [par.core :refer [? !?]] ;; only use when developing kushi itself
             ))
 
 ;; Functionality for injecting styles into during development builds  ------------------------------------------

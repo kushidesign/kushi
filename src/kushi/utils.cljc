@@ -4,7 +4,7 @@
    [clojure.string :as string]
    [clojure.walk :as walk]
    [kushi.defs :as defs]
-   [par.core :refer [? !? ?+ !?+]]
+  ;;  [par.core :refer [? !? ?+ !?+]]
    [kushi.scales :refer [scales scaling-map]]
    [kushi.config :refer [user-config]]))
 

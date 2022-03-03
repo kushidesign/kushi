@@ -1,7 +1,7 @@
 (ns kushi.ansiformat
   #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
-   [par.core :refer [? !? ?+ !?+]]
+  ;;  [par.core :refer [? !? ?+ !?+]]
    [clojure.pprint :refer [pprint]]
    [clojure.string :as string]))
 

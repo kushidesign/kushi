@@ -10,7 +10,7 @@
    [kushi.config :refer [user-config user-css-file-path kushi-cache-dir kushi-cache-path version]]
    [kushi.state :as state]
    [kushi.utils :as util]
-   [par.core :refer [? !? ?+ !?+]]
+  ;;  [par.core :refer [? !? ?+ !?+]]
    [kushi.atomic :as atomic]
    [kushi.reporting :as reporting]))
 

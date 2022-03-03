@@ -5,7 +5,7 @@
   [garden.core :as garden]
   [garden.def]
   [garden.stylesheet :refer [at-font-face]]
-  [par.core :refer [? !? ?+ !?+]]
+  ;; [par.core :refer [? !? ?+ !?+]]
   [kushi.arguments :as arguments]
   [kushi.atomic :as atomic]
   [kushi.config :refer [user-config]]
@@ -367,11 +367,11 @@
            (kushi.core/inject-kushi-atomics ~shared-styles-inj)
 
            ;; return attributes map for the element
-           (par.core/!? (kushi.core/merged-attrs-map
-                        ~attrs-base
-                        ~prefixed-classlist
-                        ~css-vars
-                        ~data-cljs))))
+           (kushi.core/merged-attrs-map
+            ~attrs-base
+            ~prefixed-classlist
+            ~css-vars
+            ~data-cljs)))
 
        ;; release builds
       (if (:runtime-injection? user-config)
