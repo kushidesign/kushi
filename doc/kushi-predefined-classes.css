@@ -42,18 +42,35 @@
 
 /* typography classes --------------------------------------------------------------------------------------- */
 
-.code {
-  font-family: Consolas, monaco, monospace;
-}
+.code { font-family: Consolas, monaco, monospace; }
 
-.sans-serif {
-  font-family: -apple-system, BlinkMacSystemFont, 'avenir next', avenir, helvetica, 'helvetica neue', ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;
-}
+.sans-serif { font-family: -apple-system, BlinkMacSystemFont, 'avenir next', avenir, helvetica, 'helvetica neue', ubuntu, roboto, noto, 'segoe ui', arial, sans-serif; }
 
-.serif {
-  font-family: georgia, times, serif;
-}
+.serif { font-family: georgia, times, serif; }
 
+.sans {font-family: sans}
+
+.italic {font-style: italic}
+
+.oblique {font-style: oblique}
+
+.thin {font-weight: 100}
+
+.extra-light {font-weight: 200}
+
+.light {font-weight: 300}
+
+.regular {font-weight: 400}
+
+.medium {font-weight: 500}
+
+.semi-bold {font-weight: 600}
+
+.bold {font-weight: 700}
+
+.extra-bold {font-weight: 800}
+
+.heavy {font-weight: 900}
 
 /* flex classes  -------------------------------------------------------------------------------------------- */
 
