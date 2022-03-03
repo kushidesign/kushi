@@ -36,10 +36,8 @@
                         (.getMessage e)))))))
 
 (def user-config-defaults
-  {:diagnose             nil
-   :diagnose-idents      nil
+  {
    :select-ns            nil
-   :__enable-caching?__  false
    :post-build-report?   true
    :report-cache-update? true
    :reporting-style      :simple
@@ -49,13 +47,19 @@
    :defclass-prefix      nil
    :atomic-class-prefix  nil
    :keyframes-prefix     nil
-   :map-mode?            false
+   :data-attr-name       nil
    :css-dir              nil
    :write-stylesheet?    true
    :runtime-injection?   false
    :handle-duplicates    nil
+
+   ;; Experimental - add to docs later
+   :diagnose             nil
+   :diagnose-idents      nil
    :log-clean!?          false
-   :theme-ns             nil})
+   :theme-ns             nil
+   :__enable-caching?__  false
+   })
 
 (def user-config
   (let [config*         (let [m (load-edn "kushi.edn")]
@@ -74,7 +78,6 @@
    [:data-attr-name
     :ancestor
     :prefix
-    :map-mode? ;take this out
     :media]))
 
 (def user-css-file-path
