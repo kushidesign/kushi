@@ -1,7 +1,8 @@
 (ns ^:dev/always kushi.gui
-  (:require-macros [kushi.core :refer [keyed]])
+  (:require-macros [kushi.core :refer [keyed]]
+                   [kushi.gui])
   (:require [clojure.string :as string]
-            ;; [par.core :refer [? !? ?+ !?+]]
+            [par.core :refer [? !? ?+ !?+]]
             [kushi.utils :as util]))
 
 (defn hiccup? [x]
@@ -33,7 +34,8 @@
           attr         (when (map? attr*) attr*)]
       [tag attr])))
 
-(defn merge-hiccup [tag attr args]
+(defn merge-hiccup [{:keys [tag attr args inner-span]}]
+  (!? :merge-hiccup (keyed tag attr args inner-span))
   (let [user-attr   (when (map? (first args)) (first args))
         children*   (if user-attr (rest args) args)
         nested?     (some-> children* first seq?)
@@ -43,8 +45,9 @@
         attr-merged (if merge?
                       (util/merge-with-style attr (first args))
                       attr)]
-    (coll? children)
-    (into [] (remove nil? (concat [tag attr-merged] children)))))
+    (into [] (if inner-span
+               [tag attr-merged (apply conj inner-span children)]
+               (remove nil? (concat [tag attr-merged] children))))))
 
 (defn hiccup-path [pred coll]
   (letfn [(path-in [x]
@@ -57,7 +60,6 @@
                           (when success (cons (count failures) success)))))]
     (path-in coll)))
 
-
 (defn nested-hiccup? [coll]
   (and (hiccup? coll)
        (some hiccup? coll)))
@@ -69,25 +71,19 @@
     [path target]))
 
 (defn gui
-  ([hiccup*]
-   (gui hiccup* nil) )
-  ([hiccup* decorator]
+  ([args hiccup*]
+   (gui args hiccup* nil) )
+  ([args hiccup* decorator]
    (keyed hiccup* decorator)
    (let [[path target] (target-vector hiccup*)
          [tag attr*]   (->hiccup target)
          attr          (if (map? decorator)
                          (util/merge-with-style attr* decorator)
                          attr*)]
-     (keyed path target tag attr* attr)
-     (fn [& args]
-       (let [node (merge-hiccup tag attr args)
-             ret  (if (seq path) (assoc-in hiccup* path node) node)]
-         ret)))))
+     #_(? (keyed path target tag attr* attr))
+     (let [inner-span (let [x (last target)] (when (and (vector? x) (-> x first (= :span))) x))
+           node (merge-hiccup (keyed tag attr args inner-span))
+           ret  (if (seq path) (assoc-in hiccup* path node) node)]
+       ret))))
 
-;; (def complex (gui [:section {} [:div [:span "wtf"]] [:div [:p.foo:! {:style {:color :red} :class [:wtf]} "hi"]]]))
-
-;; (def simple (gui [:a "hi"]))
-
-;; (!? (simple "hi" "bye"))
-;; (?+ :complex (complex {:style {:color :blue :padding :10px} :class [:foo]} "hi" "bye"))
 
