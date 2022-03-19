@@ -1,5 +1,5 @@
 (ns ^:dev/always kushi.core
-  (:require-macros [kushi.core :refer [keyed]]
+  (:require-macros [kushi.core :refer [keyed defclass]]
                    [kushi.theme :refer [theme!]])
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
@@ -57,8 +57,8 @@
 
 (defn inject-style-rules
   [css-rules]
-   (when (seq css-rules)
-     (inject-css* css-rules "_kushi-rules_")))
+  (when (seq css-rules)
+    (inject-css* css-rules "_kushi-rules_")))
 
 (defn inject-kushi-atomics [kushi-atomics]
   (when (seq kushi-atomics)
@@ -170,3 +170,87 @@
           :data-cljs data-cljs)))
 
 (def merge-with-style kushi.utils/merge-with-style)
+
+
+(defclass ^:kushi mini
+  {:fs :0.75rem
+   :&_.kushi-icon:w :10px
+   :&.kushi-icon:w :10px})
+
+(defclass ^:kushi small
+  {:fs :0.9rem
+   :&_.kushi-icon:w :12px
+   :&.kushi-icon:w :12px})
+
+(defclass ^:kushi medium
+  {:fs :1rem
+   :&_.kushi-icon:w :14px
+   :&.kushi-icon:w :14px})
+
+(defclass ^:kushi large
+  {:fs :1.2rem
+   :&_.kushi-icon:w :16px
+   :&.kushi-icon:w :16px})
+
+(defclass ^:kushi huge
+  {:fs :1.7rem
+   :&_.kushi-icon:w :18px
+   :&.kushi-icon:w :18px})
+
+(defclass ^:kushi rounded  :&.kushi-button:border-radius--0.3rem)
+(defclass ^:kushi ghosted
+  {:&.kushi-button:bw        :1px
+   :&.kushi-button:bgc       :transparent
+   :&.kushi-button:hover:bgc :transparent
+   :&.kushi-button:hover:o   0.6})
+(defclass ^:kushi disabled
+  {:&.kushi-button:o      :40%
+   :&.kushi-button:cursor :not-allowed})
+(defclass ^:kushi primary
+  {:&.kushi-button:c         :white
+   :&.kushi-button:bgc       :black
+   :&.kushi-button:hover:bgc :gray})
+(defclass ^:kushi secondary
+  {:&.kushi-button:hover:bgc :#e2e2e2})
+(defclass ^:kushi tertiary
+  {:&.kushi-button:bgc      :transparent
+   :&.kushi-button:hover:bgc :#eee})
+(defclass ^:kushi link
+  {:&.kushi-button:td        :underline
+   :&.kushi-button:bgc       :transparent
+   :&.kushi-button:hover:bgc :transparent})
+
+
+(defclass ^:kushi thin
+  {:font-weight 100
+   :stroke-width 0.5
+   :&_path:stroke-width 0.5
+   :&_svg&_path:stroke-width 0.5
+   :&_.kushi-icon&_svg&_path:stroke-width 0.5})
+
+(defclass ^:kushi light
+  {:font-weight 300
+   :stroke-width 1
+   :&_path:stroke-width 1
+   :&_svg&_path:stroke-width 1
+   :&_.kushi-icon&_svg&_path:stroke-width 1})
+
+(defclass ^:kushi normal
+  {:font-weight 400
+   :stroke-width 1.5
+   :&_path:stroke-width 1.5
+   :&_svg&_path:stroke-width 1.5
+   :&_.kushi-icon&_svg&_path:stroke-width 1.5})
+
+(defclass ^:kushi bold
+  {:font-weight 700
+   :stroke-width 4
+   :&_path:stroke-width 4
+   :&_svg&_path:stroke-width 4
+   :&_.kushi-icon&_svg&_path:stroke-width 4})
+
+
+;; auto-complete
+:.flex-row-centered
+:.flex-col-centered
+:.my-cool-keyword
