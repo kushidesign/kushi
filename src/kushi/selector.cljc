@@ -2,7 +2,6 @@
   #?(:clj (:require [garden.def]))
   (:require
    [clojure.string :as string]
-  ;;  [par.core :refer [!? ? ?+ !?+]]
    [kushi.config :refer [user-config]]
    [kushi.utils :as util :refer [auto-generated-hash keyed]]))
 
