@@ -8,7 +8,8 @@
 
 (def current-macro (atom nil))
 
-(defn debug? [] (= (-> @current-macro :ident) :my-icon))
+;; (defn debug? [] (= (-> @current-macro :ident) :my-icon))
+;; (defn debug? [] (= @current-macro :defclass))
 
 (def current-sx (atom nil))
 
