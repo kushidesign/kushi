@@ -3,7 +3,7 @@
   (:require
    [clojure.string :as string]
    [clojure.pprint :refer [pprint]]
-  ;;  [par.core :refer [? !? ?+ !?+]]
+   [par.core :refer [? !? ?+ !?+]]
    [kushi.utils :as util :refer [keyed]]
    [kushi.state :as state]
    [kushi.ansiformat :as ansiformat]
@@ -16,18 +16,18 @@
 
 (def ansi-color-map
   #?(:clj {:red          ansi/red
-         :magenta      ansi/magenta
-         :blue         ansi/blue
-         :cyan         ansi/cyan
-         :green        ansi/green
-         :yellow       ansi/yellow
-         :bold-red     ansi/bold-red
-         :bold-magenta ansi/bold-magenta
-         :bold-blue    ansi/bold-blue
-         :bold-cyan    ansi/bold-cyan
-         :bold-green   ansi/bold-green
-         :bold-yellow  ansi/bold-yellow
-         :bold         ansi/bold}))
+           :magenta      ansi/magenta
+           :blue         ansi/blue
+           :cyan         ansi/cyan
+           :green        ansi/green
+           :yellow       ansi/yellow
+           :bold-red     ansi/bold-red
+           :bold-magenta ansi/bold-magenta
+           :bold-blue    ansi/bold-blue
+           :bold-cyan    ansi/bold-cyan
+           :bold-green   ansi/bold-green
+           :bold-yellow  ansi/bold-yellow
+           :bold         ansi/bold}))
 
 (defn k->ansi [k]
   (when (keyword? k)
@@ -750,7 +750,7 @@
     #_(? :warnings warnings)
     (doseq [[warning-type warning-or-warnings] warnings]
       (let [printing-opts @state/current-macro]
-        #_(? (keyed warning-type warning-or-warnings))
+        #_(? (keyed warning-type warning-or-warnings printing-opts))
         (when warning-or-warnings
           #_(? :print-warnings:inner (keyed warning-type warning-or-warnings))
           (case warning-type
@@ -763,6 +763,8 @@
   (reset! state/invalid-style-warnings []))
 
 ;; Diagnostics   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; TODO Refactor this
 
 (defn diagnostics
   [kw {:keys [defclass-registered?
