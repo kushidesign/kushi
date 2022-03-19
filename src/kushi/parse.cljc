@@ -233,7 +233,7 @@
 
 (defn format-combo [s]
   (-> s
-      (string/replace #"_" " ")
+      (string/replace #"&_" " ")
       (string/replace #"&" "")
       (string/replace #"([>\+\~])" " $1 ")))
 
@@ -261,7 +261,7 @@
       (re-find #"^[\.\>\+\~\_\&].+$" s)
       (format-combo s)
 
-      ;;remove this dark thing?
+      ;;remove this dark thing? (replaced by has(parent/ancestor) ?)
       (= s "dark")
       " _.dark_"
 
@@ -285,7 +285,7 @@
         nil))))
 
 (defn coll->str [coll]
- (when-not (empty? coll) (string/join coll)) )
+ (when-not (empty? coll) (string/join coll)))
 
 (defn mods&prop->map [mods&prop]
   (let [coll            (string/split mods&prop #":")
