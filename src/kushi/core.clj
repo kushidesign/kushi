@@ -5,7 +5,7 @@
   [garden.core :as garden]
   [garden.def]
   [garden.stylesheet :refer [at-font-face]]
-  ;; [par.core :refer [? !? ?+ !?+]]
+  [par.core :refer [? !? ?+ !?+]]
   [kushi.arguments :as arguments]
   [kushi.atomic :as atomic]
   [kushi.config :refer [user-config]]
@@ -17,6 +17,8 @@
   [kushi.stylesheet :as stylesheet]
   [kushi.typography :refer [system-font-stacks]]
   [kushi.utils :as util]))
+
+
 
 ;TODO move this to utils
 (defmacro keyed [& ks]
@@ -63,11 +65,12 @@
     ret))
 
 (defn- hydrated-defclass
-  [classname coll*]
+  [classname classtype coll*]
   (let [{:keys [selector
                 selector*]} (selector/selector-name
                              {:defclass-name classname
-                              :defclass-hash atomic/defclass-hash})
+                              :defclass-hash atomic/defclass-hash
+                              :atomic-class? (= classtype :kushi-atomic)})
         hydrated-styles              (parse/with-hydrated-classes coll*)
         tokenized-styles             (mapv (partial parse/kushi-style->token selector*) hydrated-styles)
         grouped-by-mqs               (parse/grouped-by-mqs tokenized-styles)
@@ -80,13 +83,13 @@
     ret))
 
 (defn defclass* [sym coll* form-meta]
-  (let [defclass-name            (keyword sym)
+  (let [classtype                (if (-> sym meta :kushi) :kushi-atomic :defclass)
+        defclass-name            (keyword sym)
         style-map-vecs           (when (-> coll* last map?)
                                    (-> coll* last style-map->vecs))
         coll                     (if style-map-vecs
                                    (-> coll* drop-last (concat style-map-vecs))
                                    coll*)
-        ;; _ (when (= sym 'exp) (?+ (keyed style-map-vecs coll)))
         {styles        :valid
          invalid-args* :invalid} (util/reduce-by-pred #(s/valid? ::specs/defclass-arg %) coll)
         invalid-args             (or
@@ -95,7 +98,7 @@
         {:keys [selector
                 selector*
                 hydrated-styles
-                garden-vecs]}    (hydrated-defclass defclass-name styles)
+                garden-vecs]}    (hydrated-defclass defclass-name classtype styles)
         styles-argument-display  (apply vector coll)
         console-warning-args     {:defclass-name           defclass-name
                                   :styles-argument-display styles-argument-display
@@ -107,20 +110,8 @@
                                   :selector*     selector*
                                   :args          hydrated-styles
                                   :garden-vecs   garden-vecs
-                                  :__classtype__ :defclass}]
+                                  :__classtype__ classtype}]
 
-    #_(? (keyed invalid-map-args
-              invalid-args
-              styles
-              m))
-    #_(when true #_(= :exp defclass-name)
-      (? :defclass*
-         {:defclass-name        defclass-name
-          :coll                 coll
-          :invalid-args         invalid-args
-          :hydrated-styles      hydrated-styles
-          :console-warning-args console-warning-args
-          :m                    m}))
     {:defclass-name        defclass-name
      :coll                 coll
      :invalid-args         invalid-args
@@ -139,16 +130,9 @@
                                {:fname "defclass"
                                 :nm sym
                                 :form-meta form-meta})]
+
     (printing/print-dupe2! dupe-defclass-warning)
     (reset! state/current-macro :defclass)
-
-    #_(when (= sym 'exp)
-      (?+ :defclass:new-args
-          (arguments/new-args (let [[m] coll*
-                                    args (if (map? m) [{:style m}] coll*)]
-                                args)
-                              form-meta
-                              sym)))
 
     (let [{:keys [caching?
                   cache-key
@@ -168,7 +152,6 @@
         (printing/ansi-bad-args-warning console-warning-args)
 
         ;; Put atomic class into global registry
-        #_(?+ :m m)
         (swap! state/kushi-atomic-user-classes assoc defclass-name m)
 
         (printing/diagnostics :defclass {:defclass-map m
@@ -298,8 +281,6 @@
 (defn cssfn [& args]
   (cons 'cssfn (list args)))
 
-
-
 (defn shared-classes-inj
   [distinct-classes]
   (let [ret* (keep #(get @state/kushi-atomic-user-classes %) distinct-classes)
@@ -309,10 +290,9 @@
                    ret*)]
     ret))
 
-
 (defmacro sx
   [& args*]
-  #_(?+ (meta &form))
+  #_(println "hilo")
   (let [{:keys [caching?
                 cache-key
                 cached]
