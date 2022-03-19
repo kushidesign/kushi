@@ -92,7 +92,7 @@ The above example would be written like this:
                :fs :18px}})])
 ```
 If you want to go faster, write your styles as tokenized keywords.<br>
-This is similar to Tachyons/Tailwind, but much more helpful in learning actual CSS.
+This is similar to Tachyons/Tailwind, but much more helpful in learning actual CSS (or much more intuitive if you are an existing CSS expert).
 ```Clojure
 (defn my-component []
  [:div
@@ -255,12 +255,15 @@ For complete info on available enumurated values view the source [here](https://
 
 ### Expressing dynamic values
 
-Sometimes you will need to use variables or css syntax (for the property value) that is inherently complex. In these cases, you cannot use tokenized keywords and must locate your styling in the `:style` entry of the attributes map:
+Sometimes you need to use dynamic values based on application state. In these cases, you cannot use tokenized keywords and must locate your styling in the `:style` entry of the attributes map:
 
 Most commonly, when using dynamic values:
 ```Clojure
 (sx {:style {:color my-color})
 ```
+
+### Complex values
+Sometimes, css syntax (for the property value) is inherently complex. Again, you may want or need to locate your styling in the `:style` entry of the attributes map:
 
 When a string is desired, or necessary:
 ```Clojure
@@ -289,17 +292,17 @@ As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
 [CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are properties that let you set the values of multiple other CSS properties simultaneously. You can write them like this:
 
 ```Clojure
-;; Kushi-style, tokenized kw
+;; with tokenized keyword
 (sx :b--1px:solid:black)
 
-;; Kushi-style
+;; with style map
 (sx {:style {:b :1px:solid:black}})
 
 ;; Garden-style
 (sx {:style {:b [[:1px :solid :black]]}})
 
 ;; With string
-(sx [:b "1px solid black"])
+(sx {:style {:b "1px solid black"}})
 ```
 
 All of the above examples will resolve to the following css declaration:
@@ -574,9 +577,6 @@ Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers
     :~a:hover:c--blue
     :_a:hover:c--gold ; The "_" gets converted to " "
     :&.my-class:hover:c--purple
-    :before:position--absolute
-    :before:top--0
-    :before:right--0
     :before:fw--bold
     {:style {:before:content "\"*\""
              "nth:child(2):c" :red}})
