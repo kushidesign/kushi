@@ -826,3 +826,24 @@
                "\n\n"))))))))
 
 
+(defn simple-warning [{:keys [desc args hint]}]
+  (let [{:keys [fname form-meta]} @state/current-macro
+        fstr                      (str "kushi.core/" fname)]
+    (println
+     (str ansi/bold-magenta-font
+          "\nWARNING! "
+          ansi/reset-font
+          ansi/bold-font
+          fstr
+          ansi/reset-font
+          "\n"
+          desc
+          (when hint (str "\n" hint))
+          "\n"
+          (string/replace (with-out-str (pprint (cons (symbol fname) args))) #"\n$" "")
+          "\n"
+          ansi/italic-font
+          ansi/cyan-font
+          (file-info-str {:plain? true :style-key :italic :form-meta form-meta})
+          ansi/reset-font
+          "\n"))))
