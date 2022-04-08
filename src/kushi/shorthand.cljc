@@ -1,4 +1,5 @@
-(ns kushi.shorthand)
+(ns kushi.shorthand
+ (:require [par.core :refer [? ?+]]) )
 
 (def css-sh
   {:ai {:name :align-items
@@ -222,3 +223,18 @@
   (if (keyword? k)
     (or (some-> css-sh k :name) k)
     k))
+
+;; list of autocompletes
+#_(?+ (->> css-sh
+         (map (fn [[k {prop-name :name prop-vals :vals}]]
+                [(if prop-vals
+                   (map (fn [[_ prop-val]] (str (name prop-name) "--" (name prop-val))) prop-vals)
+                   [(str (name prop-name) "--")])
+
+                 (if prop-vals
+                   (map (fn [[prop-val-sh _]] (str (name k) "--" (name prop-val-sh))) prop-vals)
+                   [(str (name k) "--")])]))
+         flatten
+         sort
+         (map keyword)
+         ))
