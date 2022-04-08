@@ -1,12 +1,10 @@
 (ns ^:dev/always kushi.core
-  (:require-macros [kushi.core :refer [keyed defclass]]
-                   [kushi.theme :refer [theme!]])
+  (:require-macros [kushi.core :refer [keyed defclass sx sx-theme!]])
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
             [kushi.utils] ;; For aliasing merge-with-style
-            ;; [par.core :refer [? !?]] ;; only use when developing kushi itself
+            [par.core :refer [? !?]] ;; only use when developing kushi itself
             ))
-
 ;; Functionality for injecting styles into during development builds  ------------------------------------------
 ;; This is also used in release builds if :runtime-injection? config param is set to true ----------------------
 
@@ -14,7 +12,16 @@
 (def injected (atom #{}))
 
 ;; Flushes #_kushi-rules-shared_ or #_kushi-rules_ stylesheets during development builds.
-(clean/clean!)
+(def sheet-ids-by-type
+  {:custom-properties       "_kushi-rules-custom-properties_"
+   :kushi-atomic            "_kushi-rules-utility_"
+   :defclass                "_kushi-rules-shared_"
+   :theme                   "_kushi-rules-theme_"
+   :sx                      "_kushi-rules_"
+   :defclass-kushi-override "_kushi-rules-overrides_"
+   :defclass-user-override  "_kushi-rules-user-overrides_"})
+
+(clean/clean! (vals sheet-ids-by-type))
 
 ;; Toggle for debugging while developing kushi itself
 (def log-inject-css*? false)
@@ -26,52 +33,64 @@
   "Called internally by kushi.core/sx at dev/run time for zippy previews."
   [css-rules
    sheet-id]
-  (let [rules-as-seq   (map-indexed vector css-rules)
-        sheet          (.-sheet (js/document.getElementById sheet-id))
-        num-injected   (count @injected)
-        sheet-len      (.-length (.-rules sheet))]
-    ;; (when (zero? num-injected) (js/console.clear))
-
-    ;Inject only if rule-css is not already a member of kushi.core/injected atom
-    (doseq [[_ rule-css]  rules-as-seq
-            :let         [injected? (contains? @injected rule-css)]]
-      (when log-inject-css*?
-        (js/console.log "[kushi.core/inject-css*]\n"
-                        (keyed css-rules injected? num-injected sheet-id sheet-len)))
-      (do
+  (when-let [stylesheet-el (js/document.getElementById sheet-id)]
+    (let [;log-inject-css*? (= sheet-id "_kushi-rules_")
+          rules-as-seq   (map-indexed vector css-rules)
+          sheet          (.-sheet stylesheet-el)
+          num-injected   (count @injected)
+          sheet-len      (.-length (.-rules sheet))]
+     ;; (when (zero? num-injected) (js/console.clear))
+      #_(js/console.log (.-rules sheet))
+     ;Inject only if rule-css is not already a member of kushi.core/injected atom
+      (doseq [[_ rule-css]  rules-as-seq
+              :let         [injected? (contains? @injected rule-css)]]
         (when log-inject-css*?
-          (js/console.log "    Already injected, skipping: " rule-css))
-        (when-not injected?
-          (swap! injected conj rule-css)
-          (let [updated-num-rules-idx (-> sheet .-rules .-length)]
-            (try
-              (do (.insertRule sheet rule-css updated-num-rules-idx)
-                  (when log-inject-css*?
-                    (js/console.log "    Injecting: " rule-css)))
-              (catch :default e (js/console.warn
-                                 "kushi.core/sx:\n\nFailed attempt to inject malformed css rule:\n\n"
-                                 rule-css
-                                 "\n\n¯\\_(ツ)_/¯\n"
-                                 e)))))))))
-
+          (js/console.log "[kushi.core/inject-css*]\n"
+                          (keyed css-rules injected? num-injected sheet-id sheet-len)))
+        (do
+          #_(when log-inject-css*?
+              (js/console.log "    Already injected, skipping: " rule-css))
+          (when-not injected?
+            (swap! injected conj rule-css)
+            (let [updated-num-rules-idx (-> sheet .-rules .-length)]
+              (try
+                (do (.insertRule sheet rule-css updated-num-rules-idx)
+                    (when log-inject-css*?
+                      (js/console.log "    Injecting: " rule-css)))
+                (catch :default e (js/console.warn
+                                   "kushi.core/sx:\n\nFailed attempt to inject malformed css rule:\n\n"
+                                   rule-css
+                                   "\n\n¯\\_(ツ)_/¯\n"
+                                   e))))))))))
 
 (defn inject-style-rules
   [css-rules]
   (when (seq css-rules)
     (inject-css* css-rules "_kushi-rules_")))
 
-(defn inject-kushi-atomics [kushi-atomics]
-  (when (seq kushi-atomics)
-    (doseq [[_ css-rules] kushi-atomics]
-      (inject-css* css-rules "_kushi-rules-shared_"))))
+(defn inject-theme-rules
+  [css-rules]
+  (when (seq css-rules)
+    (inject-css* css-rules "_kushi-rules-theme_")))
+
+(defn inject-kushi-atomics [m]
+  (when (seq m)
+    (doseq [[classtype kushi-atomics] m]
+      (doseq [[_ css-rules] kushi-atomics]
+        (when-let [sheet-id (classtype sheet-ids-by-type)]
+          (inject-css* css-rules sheet-id))))))
 
 (defn inject! [css-rules kushi-atomics]
   (inject-kushi-atomics kushi-atomics)
   (inject-style-rules css-rules))
 
-;; This will inject / and or write theme to disc
-(theme!)
-
+(defn inject-custom-properties! [args]
+  (let [root js/document.documentElement]
+    (doseq [[prop val] args]
+      (do
+        #_(js/console.log (.getPropertyValue (.-style root) (str "--" prop)))
+        (.setProperty (.-style root) (str "--" prop) val)
+          #_(js/console.log (.-style root))))))
 
 ;; cssfn (helper fn for use inside calls to sx macro)  ---------------------------------------------------------
 (defn cssfn? [x]
@@ -109,12 +128,9 @@
   (cssfn (cons 'cssfn args)))
 
 
-
-
 ;; !important (helper fn for use inside calls to sx macro)  -------------------------------------------------------
 (defn !important [x]
   (cssfn (list 'important x)))
-
 
 
 ;; Public function for injecting 3rd party stylesheets ------------------------------------------------------------
@@ -155,8 +171,6 @@
   (and (map? v) (= :media (:identifier v))))
 
 
-
-
 ;; Functionaltiy for kushi style decoration -----------------------------------------------------------------
 
 (defn merged-attrs-map
@@ -171,86 +185,7 @@
 
 (def merge-with-style kushi.utils/merge-with-style)
 
-
-(defclass ^:kushi mini
-  {:fs :0.75rem
-   :&_.kushi-icon:w :10px
-   :&.kushi-icon:w :10px})
-
-(defclass ^:kushi small
-  {:fs :0.9rem
-   :&_.kushi-icon:w :12px
-   :&.kushi-icon:w :12px})
-
-(defclass ^:kushi medium
-  {:fs :1rem
-   :&_.kushi-icon:w :14px
-   :&.kushi-icon:w :14px})
-
-(defclass ^:kushi large
-  {:fs :1.2rem
-   :&_.kushi-icon:w :16px
-   :&.kushi-icon:w :16px})
-
-(defclass ^:kushi huge
-  {:fs :1.7rem
-   :&_.kushi-icon:w :18px
-   :&.kushi-icon:w :18px})
-
-(defclass ^:kushi rounded  :&.kushi-button:border-radius--0.3rem)
-(defclass ^:kushi ghosted
-  {:&.kushi-button:bw        :1px
-   :&.kushi-button:bgc       :transparent
-   :&.kushi-button:hover:bgc :transparent
-   :&.kushi-button:hover:o   0.6})
-(defclass ^:kushi disabled
-  {:&.kushi-button:o      :40%
-   :&.kushi-button:cursor :not-allowed})
-(defclass ^:kushi primary
-  {:&.kushi-button:c         :white
-   :&.kushi-button:bgc       :black
-   :&.kushi-button:hover:bgc :gray})
-(defclass ^:kushi secondary
-  {:&.kushi-button:hover:bgc :#e2e2e2})
-(defclass ^:kushi tertiary
-  {:&.kushi-button:bgc      :transparent
-   :&.kushi-button:hover:bgc :#eee})
-(defclass ^:kushi link
-  {:&.kushi-button:td        :underline
-   :&.kushi-button:bgc       :transparent
-   :&.kushi-button:hover:bgc :transparent})
+;; This will inject / and or write theme to disc
+(sx-theme!)
 
 
-(defclass ^:kushi thin
-  {:font-weight 100
-   :stroke-width 0.5
-   :&_path:stroke-width 0.5
-   :&_svg&_path:stroke-width 0.5
-   :&_.kushi-icon&_svg&_path:stroke-width 0.5})
-
-(defclass ^:kushi light
-  {:font-weight 300
-   :stroke-width 1
-   :&_path:stroke-width 1
-   :&_svg&_path:stroke-width 1
-   :&_.kushi-icon&_svg&_path:stroke-width 1})
-
-(defclass ^:kushi normal
-  {:font-weight 400
-   :stroke-width 1.5
-   :&_path:stroke-width 1.5
-   :&_svg&_path:stroke-width 1.5
-   :&_.kushi-icon&_svg&_path:stroke-width 1.5})
-
-(defclass ^:kushi bold
-  {:font-weight 700
-   :stroke-width 4
-   :&_path:stroke-width 4
-   :&_svg&_path:stroke-width 4
-   :&_.kushi-icon&_svg&_path:stroke-width 4})
-
-
-;; auto-complete
-:.flex-row-centered
-:.flex-col-centered
-:.my-cool-keyword
