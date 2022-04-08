@@ -25,14 +25,15 @@
    #_kushi-rules-shared_ or #_kushi-rules_ stylesheets at dev time.
    Is called automatically in dev builds on every save/reload,
    for the purpose of keeping the kushi style sheet lengths under control."
-  []
+  [ids]
   (let [log?  log-clean?]
     (when ^boolean js/goog.DEBUG
-      (doseq [sheet-id ["_kushi-rules-shared_" "_kushi-rules_"]]
-        (let [sheet     (.-sheet (js/document.getElementById sheet-id))
-              rules     (.-rules sheet)
-              rules-len (.-length rules)]
-          (when log? (log-cleaning-summary! rules rules-len sheet-id))
-          (doseq [idx (reverse (range rules-len))]
-            (when log? (log-cleaning-rule-at-idx! rules idx))
-            (.deleteRule sheet idx)))))))
+      (doseq [sheet-id ids]
+        (when-let [stylesheet-el (js/document.getElementById sheet-id)]
+          (let [sheet     (.-sheet stylesheet-el)
+                rules     (.-rules sheet)
+                rules-len (.-length rules)]
+            (when log? (log-cleaning-summary! rules rules-len sheet-id))
+            (doseq [idx (reverse (range rules-len))]
+              (when log? (log-cleaning-rule-at-idx! rules idx))
+              (.deleteRule sheet idx))))))))
