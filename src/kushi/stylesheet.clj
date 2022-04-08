@@ -10,7 +10,7 @@
    [kushi.config :refer [user-config user-css-file-path kushi-cache-dir kushi-cache-path version]]
    [kushi.state :as state]
    [kushi.utils :as util]
-  ;;  [par.core :refer [? !? ?+ !?+]]
+   [par.core :refer [? !? ?+ !?+]]
    [kushi.atomic :as atomic]
    [kushi.reporting :as reporting]))
 
@@ -37,7 +37,7 @@
   [{:keys [css-text
            comment
            content]}]
-  (let [cmnt (when comment (str "\n\n/*" comment "*/\n\n"))
+  (let [cmnt (when comment (str "\n\n/* " comment " */\n\n"))
         print? (and content (not (string/blank? content)))
         content (str cmnt content)]
     (when print?
@@ -73,10 +73,23 @@
 (defn print-status [n kind]
   (println (str "    " n " unique " kind)))
 
-
 (def license-comment-header
   (str "/*! kushi v" version " | EPL License | https://github.com/paintparty/kushi */"))
 
+(defn custom-properties->gvecs [coll]
+  [(into [] (cons ":root" (map (fn [[prop val]] {prop (util/maybe-wrap-css-var val)}) coll)))] )
+
+(defn append-custom-properties!
+  [{:keys [css-text to-be-printed :pretty-print?]}]
+  (let [custom-properties-count (count @state/custom-properties)]
+    (swap! to-be-printed assoc :custom-properties-count custom-properties-count)
+    (when (pos-int? custom-properties-count)
+      (append-css-chunk!
+       {:css-text css-text
+        :comment  "CSS custom properties"
+        :content  (garden/css {:pretty-print? pretty-print?}
+                              (custom-properties->gvecs @state/custom-properties))})
+      (reset! state/user-defined-font-faces []))))
 
 (defn append-at-font-face!
   [{:keys [css-text to-be-printed]}]
@@ -121,45 +134,39 @@
        (string? (first coll))
        (nil? (second coll))))
 
+
 (defn append-defclasses!
-  [{:keys [pretty-print? css-text to-be-printed]}]
+  [defclasses-used {:keys [pretty-print? css-text to-be-printed comment-base classtype]}]
+  (let [gv (keep #(let [normalized-class-kw (util/normalized-class-kw %)
+                         m (normalized-class-kw @state/kushi-atomic-user-classes)]
+                     (when (= (:__classtype__ m) classtype) (:garden-vecs m)))
+                  (distinct @defclasses-used))]
+   (when (seq gv)
+     (let [garden-vecs*                   (apply concat (concat gv))
+           garden-vecs                    (->> garden-vecs*
+                                               (remove has-mqs?)
+                                               (remove no-declarations?))
+           atomic-classes-mq              (atomic-classes-mq garden-vecs*)
+           defclass-mq-count              (count atomic-classes-mq)
+           defclass-style-rules-under-mqs (count-mqs-rules atomic-classes-mq)]
+       (swap! to-be-printed
+              assoc
+              :defclass-style-rules-under-mqs
+              defclass-style-rules-under-mqs
+              :defclass-style-rules
+              (count garden-vecs)
+              :defclass-mq-count
+              defclass-mq-count)
+       (append-css-chunk!
+        {:css-text css-text
+         :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
+         :comment  (str comment-base "atomic classes")})
 
-  (when-not (empty? @state/defclasses-used)
-    (let [all-shared-classes  (set/union @state/defclasses-used
-                                         @state/atomic-declarative-classes-used)
-          gv                  (map #(let [normalized-class-kw (util/normalized-class-kw %)]
-                                      (some-> @state/kushi-atomic-user-classes
-                                              normalized-class-kw
-                                              :garden-vecs))
-                                   all-shared-classes)
-          garden-vecs*        (apply concat (concat gv))
-          garden-vecs         (->> garden-vecs*
-                                   (remove has-mqs?)
-                                   (remove no-declarations?))
-          atomic-classes-mq   (atomic-classes-mq garden-vecs*)
-
-          defclass-mq-count   (count atomic-classes-mq)
-          defclass-style-rules-under-mqs (count-mqs-rules atomic-classes-mq)]
-      (swap! to-be-printed
-             assoc
-             :defclass-style-rules-under-mqs
-             defclass-style-rules-under-mqs
-             :defclass-style-rules
-             (count garden-vecs)
-             :defclass-mq-count
-             defclass-mq-count)
-      (append-css-chunk!
-       {:css-text css-text
-        :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
-        :comment  "Atomic classes"})
-
-      (when (pos-int? defclass-mq-count)
-        (append-css-chunk!
-         {:css-text css-text
-          :content  (garden/css {:pretty-print? pretty-print?} atomic-classes-mq)
-          :comment  "Atomic classes, media queries"})))
-    (reset! state/kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
-    (reset! state/atomic-declarative-classes-used #{})))
+       (when (pos-int? defclass-mq-count)
+         (append-css-chunk!
+          {:css-text css-text
+           :content  (garden/css {:pretty-print? pretty-print?} atomic-classes-mq)
+           :comment  (str comment-base "atomic classes, media queries")}))))))
 
 
 (defn append-rules!
@@ -243,11 +250,29 @@
       (swap! to-be-printed assoc :select-ns-msg select-ns-msg))
 
     (when write-styles?
+      (append-custom-properties! m)
       (append-at-font-face! m)
       (append-defkeyframes! m)
-      (append-defclasses! m)
+
+      (append-defclasses! state/atomic-declarative-classes-used
+                          (merge m {:classtype :kushi-atomic
+                                    :comment-base "Kushi base utility/"}))
+
+      (append-defclasses! state/defclasses-used
+                          (merge m {:classtype :defclass
+                                    :comment-base "User-defined, shared utility/"}))
+
       (append-theme-rules! m)
-      (append-component-rules! m))
+
+      (append-component-rules! m)
+
+      (append-defclasses! state/defclasses-used
+                          (merge m {:classtype    :defclass-kushi-override
+                                    :comment-base "Kushi lib, shared override utility/"}))
+
+      (append-defclasses! state/defclasses-used
+                          (merge m {:classtype    :defclass-user-override
+                                    :comment-base "User-defined, shared override utility/"})))
 
     (let [zero-total-rules?   (nil? (some #(not (zero? %)) (vals @to-be-printed)))
           something-to-write? (not zero-total-rules?)]
