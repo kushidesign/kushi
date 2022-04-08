@@ -24,15 +24,15 @@
     [:span (sx :.absolute-fill) label-text-expanded]
     [:span label-text]]])
 
-(defclass collapse-footer-contents
-  :.relative
-  :order--2
-  :jc--c
-  {
-   ">div>span:display" "none"
-   ">div>span:nth-child(3):display" "block"
-   ">div>span:nth-child(3):visibility" "hidden"
-   "&[aria-expanded='true']:>div>span:nth-child(2):display" "block"
-   "&[aria-expanded='false']:>div>span:nth-child(1):display" "block"
-   :>.kui-icon:transition-property :transform
-   :>.kui-icon:transition-duration :500ms})
+;; (defclass collapse-footer-contents
+;;   :.relative
+;;   :order--2
+;;   :jc--c
+;;   {
+;;    ">div>span:display" "none"
+;;    ">div>span:nth-child(3):display" "block"
+;;    ">div>span:nth-child(3):visibility" "hidden"
+;;    "&[aria-expanded='true']:>div>span:nth-child(2):display" "block"
+;;    "&[aria-expanded='false']:>div>span:nth-child(1):display" "block"
+;;    :>.kui-icon:transition-property :transform
+;;    :>.kui-icon:transition-duration :500ms})

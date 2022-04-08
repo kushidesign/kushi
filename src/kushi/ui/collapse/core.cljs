@@ -85,7 +85,7 @@
 
 (defn collapse
   "A section of content which can be collapsed and expanded"
-  [{:keys [parts label-text label-text-expanded icon-type on-click] :as opts} & children]
+  [{:keys [parts label-text label-text-expanded icon-type expanded? on-click] :as opts} & children]
   (let [attrs (partial get-attr opts)
         childs (partial get-children opts)]
     [:section
@@ -95,8 +95,9 @@
      [collapse-header
       (merge-with-style
        (attrs :header)
-       (sx {:on-click on-click})
-       )
+       (sx {:on-click on-click :aria-expanded (if expanded? "true" "false")}))
       #_[collapse-footer-contents {:label-text label-text :label-text-expanded label-text-expanded}]
-      [collapse-header-contents {:label-text label-text :label-text-expanded label-text-expanded :icon-type icon-type} #_(keyed label-text label-text-expanded icon-type)]]
+      [collapse-header-contents {:label-text label-text
+                                 :label-text-expanded label-text-expanded
+                                 :icon-type icon-type}]]
      [collapse-body (or (attrs :body) {}) children]]))

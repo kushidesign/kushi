@@ -1,5 +1,7 @@
 (ns kushi.ui.icon.core
   (:require
+   [reagent-mui.icons.face]
+   [reagent-mui.icons.add]
    [kushi.core  :refer (sx cssfn defclass)]
    [kushi.gui   :refer (gui defcom)]))
 
@@ -90,10 +92,9 @@
    (sx
     :.relative
     :.flex-row-c
-    :fs--16px
+    :fs--1rem
     :ta--center
-    :w--14px
-    :h--14px
+    :d--ib
     :ai--c
     {:prefix :kushi- :ident :icon})])
 
