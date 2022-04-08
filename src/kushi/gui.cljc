@@ -8,6 +8,9 @@
 (defn hiccup? [x]
   (and (vector? x) (-> x first keyword?)))
 
+(defn hiccup-span? [x]
+  (and (hiccup? x)  (->> x first str (re-find #"^\:span[\:\.\#]?.*"))))
+
 (defn split-key [k re] (-> k name (string/split re)))
 
 (defn hiccup-tag [k]
@@ -81,7 +84,7 @@
                          (util/merge-with-style attr* decorator)
                          attr*)]
      #_(? (keyed path target tag attr* attr))
-     (let [inner-span (let [x (last target)] (when (and (vector? x) (-> x first (= :span))) x))
+     (let [inner-span (let [x (last target)] (when (hiccup-span? x) x))
            node (merge-hiccup (keyed tag attr args inner-span))
            ret  (if (seq path) (assoc-in hiccup* path node) node)]
        ret))))
