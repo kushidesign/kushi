@@ -1,26 +1,27 @@
 (ns ^:dev/always kushi.state
   (:require
    [kushi.io :refer [load-edn]]
+   [garden.core :as garden]
    [kushi.defs :as defs]
+   [par.core :refer [? !? ?+ !?+]]
    [kushi.atomic :as atomic]
    [kushi.config :refer [user-config kushi-cache-path user-config-args-sx-defclass]]))
-
 
 (def current-macro (atom nil))
 
 ;; (defn debug? [] (= (-> @current-macro :ident) :my-icon))
-;; (defn debug? [] (= @current-macro :defclass))
+(defn debug? [] (= (-> @current-macro :ident) :button))
 
 (def current-sx (atom nil))
 
 (defn set-current-macro!
-  [{:keys [args* form-meta kushi-attr macro]}]
+  [{:keys [args form-meta kushi-attr macro]}]
   (let [opts        {:form-meta  form-meta
                      :bad-mods   {}
                      :fname      (name macro)
                      :kushi-attr kushi-attr
                      :ident      (:ident kushi-attr)}
-        opts-w-args (assoc opts :args args*)]
+        opts-w-args (assoc opts :args args)]
     (reset! current-macro opts-w-args)
     (reset! current-sx opts-w-args)
     opts))
@@ -39,6 +40,9 @@
 (def kushi-atomic-user-classes
   (atom atomic/kushi-atomic-combo-classes))
 
+(def ordered-defclasses
+  (atom []))
+
 (def declarations-init {:sx {}
                         :defkeyframes {}
                         :defclass {}})
@@ -49,10 +53,10 @@
 (def defkeyframes-selectors (atom {}))
 
 ;; Used to keep track of atomic declarative classes which are used.
-(def atomic-declarative-classes-used (atom #{}))
+(def atomic-declarative-classes-used (atom []))
 
 ;; Used to keep track of defclasses used.
-(def defclasses-used (atom #{}))
+(def defclasses-used (atom []))
 
 (def defclasses+atomics-used (atom {}))
 
@@ -61,6 +65,9 @@
 
 ;; Used to keep track of @font-face declarations which are used.
 (def user-defined-font-faces (atom []))
+
+;; Used to keep track of css custom properties which are added by themes or ala carte.
+(def custom-properties (atom []))
 
 (defonce garden-vecs-state-init
   (reduce (fn [acc [k mq]] (assoc acc mq {}))
@@ -72,6 +79,10 @@
 
 ;; Used to keep track of all theme override styles.
 (def garden-vecs-state-theme (atom garden-vecs-state-init))
+
+
+(defn add-custom-property! [var]
+  (swap! custom-properties conj var) )
 
 (defn add-styles!
   ([coll]
@@ -91,9 +102,12 @@
   (reset! user-defined-font-faces [])
   (reset! declarations declarations-init)
   (reset! garden-vecs-state garden-vecs-state-init)
+  (reset! garden-vecs-state-theme garden-vecs-state-init)
+  (reset! custom-properties [])
   (reset! kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
-  (reset! atomic-declarative-classes-used #{})
-  (reset! defclasses-used #{})
+  (reset! ordered-defclasses [])
+  (reset! atomic-declarative-classes-used [])
+  (reset! defclasses-used [])
   (reset! defclasses+atomics-used {}))
 
 (defonce styles-cache-current
