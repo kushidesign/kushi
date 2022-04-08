@@ -286,3 +286,22 @@
                                          :class classes
                                          :style merged-style)]
     ret))
+
+
+(defn nameable? [x] (or (string? x) (keyword? x) (symbol? x)))
+
+(defn stringify [x] (if (nameable? x) (name x) (str x)))
+
+(defn token? [x]
+  (when (nameable? x)
+    (some-> x name (string/starts-with? "--"))))
+
+(defn s->cssvar
+  ([x] (s->cssvar x nil))
+  ([x fallback]
+    (str "var(--" (name x) (when fallback (str ", " fallback)) ")")))
+
+(defn maybe-wrap-css-var [x]
+  (if (token? x)
+    (str "var(" x ")")
+    x))
