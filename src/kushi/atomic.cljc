@@ -1,6 +1,6 @@
 (ns kushi.atomic
   (:require
-   [par.core :refer [?]]
+   [par.core :refer [? ?+]]
    [kushi.selector :as selector]
    [kushi.utils :refer [auto-generated-hash]]))
 
@@ -30,12 +30,12 @@
 (defonce declarative-classes*
    {;debug grids
     :debug-grid          {:background "transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAFElEQVR4AWPAC97/9x0eCsAEPgwAVLshdpENIxcAAAAASUVORK5CYII=) repeat top left"}
-    :debug-grid-16       {:background "background:transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMklEQVR4AWOgCLz/b0epAa6UGuBOqQHOQHLUgFEDnAbcBZ4UGwDOkiCnkIhdgNgNxAYAiYlD+8sEuo8AAAAASUVORK5CYII=) repeat top left "}
-    :debug-grid-8-solid  {:background "background:white url(data:image/gif;base64,R0lGODdhCAAIAPEAAADw/wDx/////wAAACwAAAAACAAIAAACDZQvgaeb/lxbAIKA8y0AOw==) repeat top left"}
-    :debug-grid-16-solid {:background "background:white url(data:image/gif;base64,R0lGODdhEAAQAPEAAADw/wDx/xXy/////ywAAAAAEAAQAAACIZyPKckYDQFsb6ZqD85jZ2+BkwiRFKehhqQCQgDHcgwEBQA7) repeat top left"}
+    :debug-grid-16       {:background "transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMklEQVR4AWOgCLz/b0epAa6UGuBOqQHOQHLUgFEDnAbcBZ4UGwDOkiCnkIhdgNgNxAYAiYlD+8sEuo8AAAAASUVORK5CYII=) repeat top left "}
+    :debug-grid-8-solid  {:background "white url(data:image/gif;base64,R0lGODdhCAAIAPEAAADw/wDx/////wAAACwAAAAACAAIAAACDZQvgaeb/lxbAIKA8y0AOw==) repeat top left"}
+    :debug-grid-16-solid {:background "white url(data:image/gif;base64,R0lGODdhEAAQAPEAAADw/wDx/xXy/////ywAAAAAEAAQAAACIZyPKckYDQFsb6ZqD85jZ2+BkwiRFKehhqQCQgDHcgwEBQA7) repeat top left"}
 
     ;Typography
-    :sans                {:font-family :sans}
+    :sans                {:font-family :sans-serif}
     :italic              {:font-style :italic}
     :oblique             {:font-style :oblique}
 
@@ -126,7 +126,6 @@
 (def kushi-atomic-combo-classes
   (reduce
    (fn [acc [k v]]
-     #_(? :combo-classes k)
      (let [{:keys [selector
                    selector*]} (selector/selector-name {:defclass-name k :atomic-class? true})
            style-map           (get declarative-classes k)
