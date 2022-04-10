@@ -2,6 +2,7 @@
   (:require-macros [kushi.core :refer [keyed defclass sx sx-theme!]])
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
+            [kushi.sheets :as sheets]
             [kushi.utils] ;; For aliasing merge-with-style
             [par.core :refer [? !?]] ;; only use when developing kushi itself
             ))
@@ -12,7 +13,7 @@
 (def injected (atom #{}))
 
 ;; Flushes #_kushi-rules-shared_ or #_kushi-rules_ stylesheets during development builds.
-(def sheet-ids-by-type
+#_(def sheet-ids-by-type
   {:custom-properties       "_kushi-rules-custom-properties_"
    :kushi-atomic            "_kushi-rules-utility_"
    :defclass                "_kushi-rules-shared_"
@@ -21,7 +22,7 @@
    :defclass-kushi-override "_kushi-rules-overrides_"
    :defclass-user-override  "_kushi-rules-user-overrides_"})
 
-(clean/clean! (vals sheet-ids-by-type))
+(clean/clean! (vals sheets/sheet-ids-by-type))
 
 ;; Toggle for debugging while developing kushi itself
 (def log-inject-css*? false)
@@ -33,6 +34,7 @@
   "Called internally by kushi.core/sx at dev/run time for zippy previews."
   [css-rules
    sheet-id]
+  (? sheet-id)
   (when-let [stylesheet-el (js/document.getElementById sheet-id)]
     (let [;log-inject-css*? (= sheet-id "_kushi-rules_")
           rules-as-seq   (map-indexed vector css-rules)
@@ -64,25 +66,16 @@
                                    e))))))))))
 
 (defn inject-style-rules
-  [css-rules]
+  [css-rules inj-type]
   (when (seq css-rules)
-    (inject-css* css-rules "_kushi-rules_")))
-
-(defn inject-theme-rules
-  [css-rules]
-  (when (seq css-rules)
-    (inject-css* css-rules "_kushi-rules-theme_")))
+    (inject-css* css-rules (inj-type sheets/sheet-ids-by-type))))
 
 (defn inject-kushi-atomics [m]
   (when (seq m)
     (doseq [[classtype kushi-atomics] m]
       (doseq [[_ css-rules] kushi-atomics]
-        (when-let [sheet-id (classtype sheet-ids-by-type)]
+        (when-let [sheet-id (classtype sheets/sheet-ids-by-type)]
           (inject-css* css-rules sheet-id))))))
-
-(defn inject! [css-rules kushi-atomics]
-  (inject-kushi-atomics kushi-atomics)
-  (inject-style-rules css-rules))
 
 (defn inject-custom-properties! [args]
   (let [root js/document.documentElement]
