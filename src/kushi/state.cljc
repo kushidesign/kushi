@@ -9,8 +9,7 @@
 
 (def current-macro (atom nil))
 
-;; (defn debug? [] (= (-> @current-macro :ident) :my-icon))
-(defn debug? [] (= (-> @current-macro :ident) :button))
+(defn debug? [] (-> @current-macro :ident (= :tooltip)))
 
 (def current-sx (atom nil))
 
@@ -74,34 +73,37 @@
           {:rules {}}
           (:media user-config)))
 
-;; Used to keep track of all the component styles.
-(def garden-vecs-state (atom garden-vecs-state-init))
-
 ;; Used to keep track of all theme override styles.
 (def garden-vecs-state-theme (atom garden-vecs-state-init))
 
+;; Used to keep track of all reusable base component styles.
+(def garden-vecs-state-components (atom garden-vecs-state-init))
+
+;; Used to keep track of all the component styles.
+(def garden-vecs-state (atom garden-vecs-state-init))
 
 (defn add-custom-property! [var]
   (swap! custom-properties conj var) )
 
 (defn add-styles!
-  ([coll]
-   (add-styles! coll garden-vecs-state))
-  ([coll state]
-   (doseq [x coll]
-     (if-let [{:keys [media-queries rules]}  (when (map? x) (:value x))]
-       (let [new-val (apply conj (get @state media-queries) rules)]
-         (swap! state assoc media-queries new-val))
-       (swap! state assoc :rules (conj (:rules @state) x))))))
-
-(defn add-theme-styles! [coll]
-  (add-styles! coll garden-vecs-state-theme))
+  ([coll type*]
+   (let
+    [state (case type*
+             :theme garden-vecs-state-theme
+             :component garden-vecs-state-components
+             garden-vecs-state)]
+     (doseq [x coll]
+       (if-let [{:keys [media-queries rules]}  (when (map? x) (:value x))]
+         (let [new-val (apply conj (get @state media-queries) rules)]
+           (swap! state assoc media-queries new-val))
+         (swap! state assoc :rules (conj (:rules @state) x)))))))
 
 (defn reset-build-states! []
   (reset! user-defined-keyframes {})
   (reset! user-defined-font-faces [])
   (reset! declarations declarations-init)
   (reset! garden-vecs-state garden-vecs-state-init)
+  (reset! garden-vecs-state-components garden-vecs-state-init)
   (reset! garden-vecs-state-theme garden-vecs-state-init)
   (reset! custom-properties [])
   (reset! kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
