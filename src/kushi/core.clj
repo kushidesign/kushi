@@ -347,9 +347,6 @@
          _ (printing/set-warnings!)
          warnings-js @state/warnings-js]
 
-     #_(when (contains? (into #{} args*) :bottom--unset)
-         (?+ inj-type))
-
      (when (and caching? (not cached))
        (swap! state/styles-cache-updated assoc cache-key new-args))
      (state/add-styles! garden-vecs inj-type)
