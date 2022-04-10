@@ -1,6 +1,6 @@
 (ns kushi.defs)
 
-(def meta-ks [:ancestor :prefix :ident :element :kushi-theme?])
+(def meta-ks [:ancestor :prefix :ident :element :kushi-theme? :kushi-ui?])
 
 ;; These are sorted roughly be most-commonly used, for speeding up for regex (alternations)
 (def pseudo-elements
