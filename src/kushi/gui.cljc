@@ -5,6 +5,13 @@
             [par.core :refer [? !? ?+ !?+]]
             [kushi.utils :as util]))
 
+(defn opts+children [coll]
+  (when (coll? coll)
+    (let [[a* & c*] coll
+          opts      (when (map? a*) a*)
+          children  (if opts c* coll)]
+      (keyed opts children))))
+
 (defn hiccup? [x]
   (and (vector? x) (-> x first keyword?)))
 
