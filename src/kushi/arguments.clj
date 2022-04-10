@@ -253,9 +253,9 @@
     ;; Set invalid style-args in state!
      (reset! state/invalid-style-args invalid-style-args)
 
-     #_(when (state/debug?)
-       (?+ :new-args:bindings
-           (keyed
+     #_(when  (state/debug?)
+             (?+ :new-args:bindings
+                 (keyed
             ;; args
             ;; tokens
             ;; style-tokens
@@ -290,9 +290,8 @@
             ;; selector*
             ;; garden-vecs
             ;; new-args
-            ret
-            )))
-       ret)))
+                  ret)))
+     ret)))
 
 (defn combine-classes [coll]
   (let [f   (fn [acc v]
