@@ -5,13 +5,14 @@
   (:require
    [kushi.core :refer (merged-attrs-map)]
    [kushi.gui :refer (gui)]
-   #_[par.core :refer [? !? ?+ !?+]]))
+   [kushi.ui.tooltip.core :refer (tooltip+parent remove-tooltip! expand-tooltip!)]
+   [kushi.ui.util :refer (conditional-display?)]
+   [par.core :refer [? !? ?+ !?+]]))
 
 (defclass ^{:kushi true :base true} textbase :fs--48px)
 
 (defclass ^:kushi text
-  {
-   :fs :1rem
+  {:fs :1rem
    :m                          0
    :p                          0
    :line-height                1
@@ -29,23 +30,30 @@
    :bgi                        :none
    :bgc                        :#eee
    :hover:bgc                  :#e2e2e2
-   ;;  :bgc                        (theme/get-style [:button :background-color] :background-color)
-   ;;  :hover:bgc                  (theme/get-style [:button:hover :background-color])
    :cursor                     :pointer
-              ;;  :hover:o                    (theme/get-style [:button:hover :opacity] 0)
    :transition-property        :all
    :transition-timing-function (cssfn :cubic-bezier 0 0 1 1)
    :transition-duration        :200ms})
+
 
 (def button-base
   [:button:!
    (kushi.core/sx
     #_:.text
     #_:.button-base
+    :.relative
     {:prefix :kushi-
      :ident :button
-     :style {;;  :border-radius           (theme/get-style [:button :border-radius] 0)
-             :min-width                  :50px
+     :data-kushi-tooltip :true
+     :aria-expanded "false"
+     :on-mouse-enter #(when-let [[tooltip parent] (tooltip+parent %)]
+                        (when-not (conditional-display? tooltip)
+                          (expand-tooltip! tooltip parent)))
+     :on-mouse-leave #(when-let [[tooltip parent] (tooltip+parent %)]
+                        (when-not (conditional-display? tooltip)
+                          (remove-tooltip! parent)))
+
+     :style {:min-width                  :50px
              :h                          :fit-content
              :w                          :fit-content
              :fs                         :1rem
@@ -59,18 +67,11 @@
              :bgi                        :none
              :bgc                        :#eee
              :hover:bgc                  :#e2e2e2
-            ;;  :bgc                        (theme/get-style [:button :background-color] :background-color)
-            ;;  :hover:bgc                  (theme/get-style [:button:hover :background-color])
              :cursor                     :pointer
-              ;;  :hover:o                    (theme/get-style [:button:hover :opacity] 0)
              :transition-property        :all
              :transition-timing-function (cssfn :cubic-bezier 0 0 1 1)
              :transition-duration        :200ms}})
    [:span {:style {:display :block}}]])
-
-;; #_(def primary-button
-;;   (gui button*
-;;        (kushi.core/sx {:prefix :kushi- :ident :primary-button})))
 
 
 (defcom button
