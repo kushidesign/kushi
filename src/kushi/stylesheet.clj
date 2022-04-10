@@ -206,6 +206,9 @@
        :comment  comment})
      (reset! garden-vecs-state* state/garden-vecs-state-init)))
 
+(defn append-reusable-component-rules! [m]
+  (append-rules! m state/garden-vecs-state-components "Reusable component styles for kushi-ui components"))
+
 (defn append-component-rules! [m]
   (append-rules! m state/garden-vecs-state "Component styles"))
 
@@ -263,6 +266,8 @@
                                     :comment-base "User-defined, shared utility/"}))
 
       (append-theme-rules! m)
+
+      (append-reusable-component-rules! m)
 
       (append-component-rules! m)
 
