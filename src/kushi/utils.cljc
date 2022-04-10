@@ -4,7 +4,7 @@
    [clojure.string :as string]
    [clojure.walk :as walk]
    [kushi.defs :as defs]
-  ;;  [par.core :refer [? !? ?+ !?+]]
+   [par.core :refer [? !? ?+ !?+]]
    [kushi.scales :refer [scales scaling-map]]
    [kushi.config :refer [user-config]]))
 
@@ -262,10 +262,13 @@
         joined (when (seq coll) (string/join " + " coll))]
     (when joined {:data-cljs joined})))
 
-(defn on-click [c1 c2]
-  (let [f (if (and c1 c2)
-            (fn [e] (c1 e) (c2 e))
-            (or c1 c2))]
+(defn on-click [c1 c2 m2]
+  (let [block? (contains? (some->> m2 :data-kushi-block-events (into #{})) :on-click)
+        f (if block?
+            c2
+            (if (and c1 c2)
+              (fn [e] (c1 e) (c2 e))
+              (or c1 c2)))]
     (when f {:on-click f})))
 
 ;; Public function for style decoration
@@ -273,7 +276,6 @@
   ;; TODO add docstring
   [{style1 :style class1 :class data-cljs1 :data-cljs on-click1 :on-click :as m1}
    {style2 :style class2 :class data-cljs2 :data-cljs on-click2 :on-click :as m2}]
-  #_(? m1)
   (let [[bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
         [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i)) [class1 class2])
         merged-style              (merge (when-not bad-style1? style1) (when-not bad-style2? style2))
@@ -281,7 +283,7 @@
         class2-coll               (class-coll class2 bad-class2?)
         classes                   (concat class1-coll class2-coll)
         data-cljs                 (data-cljs data-cljs1 data-cljs2)
-        on-click                  (on-click on-click2 on-click1)
+        on-click                  (on-click on-click1 on-click2 m2)
         ret                       (assoc (merge m1 m2 data-cljs on-click)
                                          :class classes
                                          :style merged-style)]
