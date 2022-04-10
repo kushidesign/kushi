@@ -195,7 +195,7 @@
             ;; Inject all defclasses for dev, even if they are not used.
             ;; This makes them available for testing / sampling in browser devtools.
             (kushi.core/inject-css* (quote ~garden-vecs-for-shared)
-                                    (~__classtype__ kushi.core/sheet-ids-by-type))
+                                    (~__classtype__ kushi.sheets/sheet-ids-by-type))
             (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
               (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
               (when ~dupe-defclass-warning
@@ -204,7 +204,7 @@
          `(do
             (when ~inject?
               (kushi.core/inject-css* (quote ~garden-vecs-for-shared)
-                                      (~__classtype__ kushi.core/sheet-ids-by-type)))
+                                      (~__classtype__ kushi.sheets/sheet-ids-by-type)))
             nil))))))
 
 (defmacro add-font-face
@@ -337,7 +337,9 @@
                  css-vars
                  garden-vecs
                  data-cljs]}         new-args
-         theme?                      (:kushi-theme? kushi-attr)
+         inj-type                    (cond (:kushi-theme? kushi-attr) :theme
+                                           (:kushi-ui? kushi-attr) :ui
+                                           :else :sx)
          element-style-inj           (stylesheet/garden-vecs-injection garden-vecs)
          shared-styles-inj           (shared-classes-inj distinct-classes)
 
@@ -345,21 +347,25 @@
          _ (printing/set-warnings!)
          warnings-js @state/warnings-js]
 
+     #_(when (contains? (into #{} args*) :bottom--unset)
+         (?+ inj-type))
+
      (when (and caching? (not cached))
        (swap! state/styles-cache-updated assoc cache-key new-args))
-     ((if theme? state/add-theme-styles! state/add-styles!) garden-vecs)
+     (state/add-styles! garden-vecs inj-type)
+
      (printing/print-warnings!)
 
      #_(when true
-        (?
-         (keyed
-          kushi-attr
-          attrs-base
-          shared-classes-inj
-          css-vars
-          garden-vecs
-          data-cljs
-          prefixed-classlist)))
+         (?
+          (keyed
+           kushi-attr
+           attrs-base
+           shared-classes-inj
+           css-vars
+           garden-vecs
+           data-cljs
+           prefixed-classlist)))
 
     ;;TODO - fix injection mode
      (if @KUSHIDEBUG
@@ -372,8 +378,7 @@
               (doseq [warning# ~warnings-js]
                 (logfn# cljs.core/to-array warning#)))
 
-            ((if ~theme? kushi.core/inject-theme-rules kushi.core/inject-style-rules)
-             (quote ~element-style-inj))
+            (kushi.core/inject-style-rules (quote ~element-style-inj) ~inj-type )
             (kushi.core/inject-kushi-atomics ~shared-styles-inj)
 
            ;; return attributes map for the element
@@ -386,8 +391,7 @@
        ;; release builds
        (if (:runtime-injection? user-config)
          `(do
-            ((if ~theme? kushi.core/inject-theme-rules kushi.core/inject-style-rules)
-             (quote ~element-style-inj))
+            (kushi.core/inject-style-rules (quote ~element-style-inj) ~inj-type)
             (kushi.core/inject-kushi-atomics ~shared-styles-inj)
             (kushi.core/merged-attrs-map
              ~attrs-base
