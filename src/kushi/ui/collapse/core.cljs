@@ -48,8 +48,18 @@
   :p--10px:0px
   :transition--all:200ms:linear)
 
+(defn other-expanded-node
+  [accordian-node clicked-node]
+  (when accordian-node
+    (when-let [open-node (.querySelector accordian-node "section>div[aria-expanded='true'][role='button']")]
+      (when-not (= open-node clicked-node)
+        [open-node (-> open-node .-nextSibling)]))))
+
 (defcom collapse-header
-  (let [on-click #(let [node        (.closest (-> % .-target) "[aria-expanded][role='button']")
+  (let [on-click #(let [accordian   (.closest (-> % .-target) ".kushi-accordian")
+                        node        (.closest (-> % .-target) "[aria-expanded][role='button']")
+                        [open-node
+                         open-exp-parent] (other-expanded-node accordian node)
                         exp-parent  (-> node .-nextSibling)
                         exp-inner   (-> node .-nextSibling .-firstChild)
                         exp-inner-h (outer-height exp-inner)
@@ -57,9 +67,11 @@
                         height      (str exp-inner-h "px")
                         ->height    (if expanded? "0px" height)
                         no-height?  (and expanded? (string/blank? exp-parent.style.height))]
-
                     (when no-height? (set! exp-parent.style.height height))
                     (js/window.requestAnimationFrame (fn []
+                                                       (when open-exp-parent
+                                                         (set! open-exp-parent.style.height "0px")
+                                                         (toggle-boolean-attribute open-node :aria-expanded))
                                                        (set! exp-parent.style.height ->height)
                                                        (toggle-boolean-attribute node :aria-expanded))))]
     [:div
@@ -78,7 +90,8 @@
                        "&[aria-expanded='true']:+section:>*:opacity"     1}
        :role          :button
        :aria-expanded false
-       :on-click      on-click})]))
+       :on-click      on-click
+       })]))
 
 (defn get-attr [m k] (some-> m :parts k first))
 (defn get-children [m k] (some-> m :parts k rest))
@@ -95,9 +108,14 @@
      [collapse-header
       (merge-with-style
        (attrs :header)
-       (sx {:on-click on-click :aria-expanded (if expanded? "true" "false")}))
+       (sx {:on-click on-click
+            :aria-expanded (if expanded? "true" "false")
+            :data-kushi-label label-text}))
       #_[collapse-footer-contents {:label-text label-text :label-text-expanded label-text-expanded}]
       [collapse-header-contents {:label-text label-text
                                  :label-text-expanded label-text-expanded
                                  :icon-type icon-type}]]
      [collapse-body (or (attrs :body) {}) children]]))
+
+(defcom accordian
+  [:div.kushi-accordian])
