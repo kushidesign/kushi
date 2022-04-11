@@ -32,7 +32,7 @@
        (do
          (expand-tooltip! tooltip parent)
          (js/setTimeout (fn [_] (remove-tooltip! parent)) ms))
-       (js/console.warn "[kushi.button/add-temporary-tooltip!] - If you want to trigger a temporary tooltip, you must explicitly use a value of `false` for the `:display-on-hover` entry in the opts argument to the tooltip component")))))
+       (js/console.warn "[kushi.ui.tooltip.core/add-temporary-tooltip!]\n\nIf you want to trigger a temporary tooltip, you must explicitly use a value of `false` for the `:display-on-hover` entry in the opts argument to the tooltip component")))))
 
 (defn get-attr [m k] (some-> m :parts k first))
 (defn get-children [m k] (some-> m :parts k rest))
@@ -41,7 +41,6 @@
 (defn tooltip
   "A section of content which can be collapsed and expanded"
   [& args]
-  ;; [{:keys [display-on-hover? parts] :or {display-on-hover? true}} & children]
   (let [{:keys [opts children]}           (opts+children args)
         {:keys [display-on-hover? attrs]} opts]
     [:section

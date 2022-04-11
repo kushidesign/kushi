@@ -240,8 +240,10 @@
 
 
 (defn bad-sx-args-fmt
-  [opts-base acc [[idx style-k] v]]
-  (let [v+      (if (string? v) (str "\"" v "\"") v)
+  [opts-base acc arg3]
+  (let [_ (!?+ arg3)
+        [[idx style-k] v] arg3
+        v+      (if (string? v) (str "\"" v "\"") v)
         bad-val (cond
                   style-k
                   (let [style-map-indent "          "]
@@ -255,10 +257,11 @@
                             [(str style-map-indent "...}")]
                             ["  ...}"]))
                   :else
-                  (format-wrap (assoc opts-base :s (str " " v+))) )]
+                  (format-wrap (assoc opts-base :s (str " " v+))))]
     (assoc acc idx bad-val)))
 
 (defn reduce-bad-args [args invalid-args opts-base]
+  (!?+ (keyed args invalid-args opts-base))
   (reduce (partial bad-sx-args-fmt opts-base)
           (into [] (repeat (count args) " ..."))
           invalid-args))
@@ -270,7 +273,7 @@
            js?
            args]
     :as m}]
-
+  (!?+ :console-error-ansi-formatting:m m)
   (when (seq invalid-args)
     (let [classname (warning-call-classname m)
           opts-base {:js? js? :style-key :bold}
@@ -412,8 +415,10 @@
   #?(:clj
      (when (and (vector? invalid-args)
                 (seq invalid-args))
+       (!?+ :m1 m)
        (let [m       (assoc m :js? true)
              warning (str (string/join "\n\n" (bad-arg-warning-body m)) "\n")]
+         (?+ :m2 m)
          (browser-formatted-js-vec warning)))))
 
 (defn ansi-bad-args-warning
@@ -723,7 +728,7 @@
         bad-nums-js               (preformat-compilation-warnings-js bad-nums)
         dupe-ident                (when ident (dupe-ident-warning opts))
         invalid-style             (when @state/invalid-style-args
-                                    (merge opts {:invalid-args @state/invalid-style-args}))
+                                    (merge opts {:invalid-args (?+ @state/invalid-style-args)}))
         invalid-style-js          (when invalid-style
                                     (browser-formatted-js-vec
                                      (string/join

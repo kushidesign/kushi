@@ -108,9 +108,15 @@
        coll))
 
 (defn validate-args [args style-tokens attrs*]
+  ;; (when (state/debug?) (?+ args))
   (let [style-map-grouped        (let [stylemap (:style attrs*)]
                                    (if (or (map? stylemap) (nil? stylemap))
-                                     (group-by #(if (s/valid? ::specs/style-tuple %) :clean :bad) stylemap)
+                                     (group-by #(if (do
+                                                      (when (state/debug?)
+                                                        (?+ %)
+                                                        (?+ (s/valid? ::specs/style-tuple %)))
+                                                      (s/valid? ::specs/style-tuple %)) :clean :bad) stylemap)
+                                     ;; TODO move this out
                                      (printing/simple-warning {:desc "Invalid value for :style entry in attributes map."
                                                                :args args
                                                                :hint "Must be a map (data-literal) or nil."})))
@@ -138,6 +144,7 @@
                                    false)]
     #_(when (state/debug?)
       (? :validate-args (keyed style-map-grouped style-tokens-indexed style-tokens-grouped invalid-style-args)))
+    (when invalid-style-args (?+ invalid-style-args))
     (keyed valid-styles-from-attrs
            valid-styles-from-tokens
            invalid-style-args

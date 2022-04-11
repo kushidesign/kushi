@@ -9,7 +9,7 @@
 
 (def current-macro (atom nil))
 
-(defn debug? [] (-> @current-macro :ident (= :tooltip)))
+(defn debug? [] (-> @current-macro :ident (= :test)))
 
 (def current-sx (atom nil))
 

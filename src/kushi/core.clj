@@ -112,20 +112,36 @@
                                    (-> sym meta :override) :defclass-user-override
                                    :else                   :defclass)
         defclass-name            (keyword sym)
-        style-map-vecs           (when (-> coll* last map?)
-                                   (-> coll* last style-map->vecs))
-        coll                     (if style-map-vecs
-                                   (-> coll* drop-last (concat style-map-vecs))
-                                   coll*)
-        {styles        :valid
-         invalid-args* :invalid} (util/reduce-by-pred #(s/valid? ::specs/defclass-arg %) coll)
+        last*                    (last coll*)
+        style-map                (when (map? last*) last*)
+        style-tokens             (if style-map (drop-last coll*) coll*)
+        style-map-vecs           (some-> style-map style-map->vecs)
+        coll                     (concat style-tokens style-map-vecs)
+        {:keys
+         [valid-styles-from-attrs
+          valid-styles-from-tokens
+          invalid-style-args]}     (arguments/validate-args coll*  style-tokens  {:style style-map})
+
+        ;; _  (when (= sym* 'make) (?+ (arguments/validate-args coll*  style-tokens  {:style style-map})))
+
         invalid-args             (or
                                   (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
-                                  (into [] invalid-args*))
+                                  ;; (into [] invalid-style-args)
+                                  invalid-style-args
+                                  )
+        styles (into [] (concat valid-styles-from-tokens valid-styles-from-attrs))
+        ;;  _ (println :equal? (= styles (into [] (concat valid-styles-from-tokens valid-styles-from-attrs))))
         {:keys [selector
                 selector*
                 hydrated-styles
                 garden-vecs]}    (hydrated-defclass defclass-name classtype styles)
+
+        ;; _  (when (= sym* 'make) (?+ coll))
+        ;; _  (when (= sym* 'make) (?+ styles))
+
+        ;; _  (when (state/debug?) (?+ hydrated-styles))
+        ;; _  (when (= sym* 'make) (?+ garden-vecs))
+
         styles-argument-display  (apply vector coll)
         console-warning-args     {:defclass-name           defclass-name
                                   :styles-argument-display styles-argument-display
@@ -170,6 +186,7 @@
                    console-warning-args
                    m]
             :as result}                 (or cached (defclass* sym coll* (meta &form)))
+
            {:keys [garden-vecs
                    selector
                    __classtype__]}      m
@@ -409,6 +426,7 @@
 
 (defmacro sx-theme! []
   (let [{:keys [styles toks overrides]} (theme/theme-by-compo theme/base-theme)
+        css-tokens (into [] toks)
         [[c1 c1m]
          [c2 c2m]
          [c3 c3m]
@@ -499,9 +517,7 @@
          m44] styles
          kushi-debug   @KUSHIDEBUG
          rt-injection? (:runtime-injection? user-config)]
-
-    (doseq [tok toks] (state/add-custom-property! tok))
-
+    (doseq [tok css-tokens] (state/add-custom-property! tok))
     `(do
        (kushi.core/defclass ~c1 ~c1m)
        (kushi.core/defclass ~c2 ~c2m)
@@ -593,7 +609,5 @@
        (kushi.core/sx ~m43)
        (kushi.core/sx ~m44)
 
-      ;;  (when (or ~kushi-debug ~rt-injection?)
-      ;;    (kushi.core/inject-custom-properties! ~vars))
-
-       )))
+       (when (or ~kushi-debug ~rt-injection?)
+         (kushi.core/inject-custom-properties! ~css-tokens)))))
