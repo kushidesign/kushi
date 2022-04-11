@@ -34,7 +34,7 @@
   "Called internally by kushi.core/sx at dev/run time for zippy previews."
   [css-rules
    sheet-id]
-  (? sheet-id)
+  (!? :inject-css* css-rules)
   (when-let [stylesheet-el (js/document.getElementById sheet-id)]
     (let [;log-inject-css*? (= sheet-id "_kushi-rules_")
           rules-as-seq   (map-indexed vector css-rules)
@@ -78,12 +78,9 @@
           (inject-css* css-rules sheet-id))))))
 
 (defn inject-custom-properties! [args]
-  (let [root js/document.documentElement]
-    (doseq [[prop val] args]
-      (do
-        #_(js/console.log (.getPropertyValue (.-style root) (str "--" prop)))
-        (.setProperty (.-style root) (str "--" prop) val)
-          #_(js/console.log (.-style root))))))
+  (inject-css*
+   [(str ":root {" (string/join ";" (map (fn [x] (string/join ": " x)) args)) ";}")]
+   (:custom-properties sheets/sheet-ids-by-type)))
 
 ;; cssfn (helper fn for use inside calls to sx macro)  ---------------------------------------------------------
 (defn cssfn? [x]
