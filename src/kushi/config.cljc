@@ -36,7 +36,7 @@
                         (.getMessage e)))))))
 
 (def user-config-defaults
-  {
+  {:ui                   []
    :select-ns            nil
    :post-build-report?   true
    :report-cache-update? true
@@ -57,7 +57,7 @@
    :diagnose             nil
    :diagnose-idents      nil
    :log-clean!?          false
-   :theme-ns             nil
+   :theme                nil
    :__enable-caching?__  false
    })
 

@@ -1,5 +1,5 @@
 (ns ^:dev/always kushi.core
-  (:require-macros [kushi.core :refer [keyed sx theme!]])
+  (:require-macros [kushi.core :refer [keyed sx theme! #_ui-components!]])
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
             [kushi.sheets :as sheets]
@@ -7,6 +7,7 @@
             [par.core :refer [? !?]] ;; only use when developing kushi itself
             ))
 
+;; (ui-components!)
 
 ;; Functionality for injecting styles into during development builds  ------------------------------------------
 ;; This is also used in release builds if :runtime-injection? config param is set to true ----------------------

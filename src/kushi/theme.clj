@@ -8,6 +8,35 @@
 
 (def base-theme-sym* 'kushi.basetheme/base-theme)
 
+(defn resolve-user-theme
+  ([x]
+   (resolve-user-theme x :user))
+  ([x kw]
+   (when x
+     (try (let [[ns-name themevar] (string/split (str x) #"/")]
+            (require (?+ :symbol:ns-name (symbol ns-name)) :reload)
+            (let [bar (find-ns (symbol ns-name))]
+            ;; #_(?+ bar)
+            ;; #_(?+ (symbol themevar))
+              (var-get (ns-resolve bar (symbol themevar)))))
+          (catch Exception
+                 e
+            (println
+             (str
+              "\n[kushi.core/theme!][ERROR]\n"
+              (if (= :user kw)
+                "Possibly a bad theme ns specified in kushi.edn user config -> "
+                "Can't resolve base kushi ux theme -> ")
+              (str x)
+              (when (= :user kw)
+                (str
+                 "\n"
+                 "Or possibly a malformed def -> "
+                 (last (string/split (str x) #"/"))))
+              "\n" (.getMessage e) "\n")))))))
+
+
+
 (defn compound-override [schema m]
   (reduce (fn [acc [k v]]
             (assoc acc
@@ -246,27 +275,29 @@
                        :p   0}})
 
 (def base-theme
-  {:button {:default   {:bgc        :--gray100
-                        :hover:bgc  :--gray200
-                        :color      :--primary}
+  {:button {
+            ;; :default   {:bgc        :--gray100
+            ;;             :hover:bgc  :--gray200
+            ;;             :color      :--primary}
             :primary   (:primary theme*)
-            :link      {:td        :underline
-                        :bgc       :transparent
-                        :hover:bgc :transparent}
-            :secondary {:bgc        :--gray100
-                        :hover:bgc  :--gray200
-                        :color      :--primary}
-            :tertiary  {:bgc       :transparent
-                        :hover:bgc :--gray100}
-            :minimal   (:minimal theme*)
-            :ghosted   (:ghosted theme*)
+            ;; :link      {:td        :underline
+            ;;             :bgc       :transparent
+            ;;             :hover:bgc :transparent}
+            ;; :secondary {:bgc        :--gray100
+            ;;             :hover:bgc  :--gray200
+            ;;             :color      :--primary}
+            ;; :tertiary  {:bgc       :transparent
+            ;;             :hover:bgc :--gray100}
+            ;; :minimal   (:minimal theme*)
+            ;; :ghosted   (:ghosted theme*)
+
             }
 
-   :tag    {:default  {:c :--primary}
-            :primary  (:primary theme*)
-            :positive (:positive-inverted theme*)
-            :negative (:negative-inverted theme*)
-            :warning  (:warning-inverted theme*)}
+  ;;  :tag    {:default  {:c :--primary}
+  ;;           :primary  (:primary theme*)
+  ;;           :positive (:positive-inverted theme*)
+  ;;           :negative (:negative-inverted theme*)
+  ;;           :warning  (:warning-inverted theme*)}
 
    ;; stuff like this needs to be in sync with the var name it is creating
    })
@@ -366,21 +397,22 @@
           overrides))
 
 (defn theme-by-compo [base-theme]
-
-  (!?+ (resolve-tokens* (merge (keyed global-tokens alias-tokens)
-                              {:coll              alias-tokens
-                               :global-tokens-map global-tokens
-                               :global?           true})))
-
-  (let [by-compo          (reduce (fn [acc [kushi-compo m]]
+  (!?+ (resolve-user-theme (:theme user-config)))
+  (let [{user-theme :theme
+         user-global-tokens :global-tokens
+         user-alias-tokens  :alias-tokens} (resolve-user-theme (:theme user-config))
+        global-tokens     (merge global-tokens user-global-tokens)
+        alias-tokens      (merge alias-tokens user-alias-tokens)
+        merged-theme      (util/deep-merge base-theme user-theme)
+        by-compo          (reduce (fn [acc [kushi-compo m]]
                                     (apply conj
                                            acc
                                            (reduce (partial theme-by-compo-inner kushi-compo)
                                                    []
                                                    m)))
                                   []
-                                  base-theme)
-        styles            (map first by-compo)
+                                  merged-theme)
+        styles            (map first (?+ by-compo))
         tok-maps          (keyed global-tokens alias-tokens)
         override-tok-maps (->> overrides
                                vals

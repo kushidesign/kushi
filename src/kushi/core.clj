@@ -423,12 +423,13 @@
 #_(? (mapv (fn [n] (symbol (str "m" n))) (range 1 45)))
 #_(? (mapv (fn [n] (list 'kushi.core/sx (symbol (str "~m" n)))) (range 1 45)))
 
+#_(defmacro ui-components!)
 
 (defmacro theme! []
   (let [{:keys [styles toks global+alias-toks overrides]} (theme/theme-by-compo theme/base-theme)
         css-tokens-actually-used (into [] toks)
         css-tokens-global+alias (into [] global+alias-toks)
-        ;; _ (? {:overrides (count overrides) :styles (count styles)}
+        _ (? {:overrides (count overrides) :styles (count styles)})
         [[c1 c1m]
          [c2 c2m]
          [c3 c3m]
@@ -613,4 +614,4 @@
        (kushi.core/sx ~m44)
 
        (when (or ~kushi-debug ~rt-injection?)
-         (kushi.core/inject-custom-properties! ~css-tokens-to-inject))))))
+         (kushi.core/inject-custom-properties! ~css-tokens-to-inject)))))

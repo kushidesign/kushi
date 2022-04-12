@@ -1,7 +1,5 @@
 (ns kushi.ui.icon.core
   (:require
-   [reagent-mui.icons.face]
-   [reagent-mui.icons.add]
    [kushi.core  :refer (sx cssfn defclass)]
    [kushi.gui   :refer (gui defcom)]))
 

@@ -76,3 +76,43 @@
 
 (defcom button
   button-base)
+
+
+
+;; CRUFT
+
+;; (def icon-button-base
+;;   [:button
+;;    (sx {:class [:flex-row-c]
+;;         :style {:border-radius :100%
+;;                 :w     :1.5rem
+;;                 :h     :1.5rem
+;;                 :lh    0
+;;                 :p     :0.5rem
+;;                 :b     :none
+;;                 :fs    :1rem
+;;                 :bgi   :none
+;;                 :ai    :c
+;;                 :cursor :pointer
+;;                 :hover:o 0.8}})])
+
+;; (def dismiss-button
+;;   (gui icon-button-base
+;;        (sx {:class [:absolute]
+;;             :style {:top           :0.75rem
+;;                     :right         :0.75rem
+;;                     :after:content "\"✕\""}})))
+
+;; (def icon-button
+;;   (gui icon-button-base))
+
+
+
+;; (def button-group
+;;   (gui
+;;    [:div
+;;     (sx {:class [:flex-row-fs]
+;;          :style  {
+;;                   ;; ">button:nth-child(2n):margin" (theme/get-style [:button-group :>button :margin] 0)
+;;                   :>button:first-child:m 0
+;;                   :>button:last-child:m 0}})]))
