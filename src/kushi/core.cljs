@@ -3,9 +3,29 @@
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
             [kushi.sheets :as sheets]
+            ;; [goog.object :as obj]
             [kushi.utils :as util] ;; For aliasing merge-with-style
             [par.core :refer [? !?]] ;; only use when developing kushi itself
             ))
+
+(defn insert-style-tag!
+  [id]
+  (when-not (js/document.getElementById id)
+    (let [head (or js/document.head
+                   (-> (js/document.getElementsByTagName "head")
+                       (aget 0)))
+          tag (js/document.createElement "style")]
+      (.appendChild head tag)
+      (doto tag
+        (.setAttribute "type" "text/css")
+        (.setAttribute "id" id)))))
+
+(defn initialize-style-tags!
+  []
+  (doseq [val (vals sheets/sheet-ids-by-type)]
+    (insert-style-tag! val)))
+
+(initialize-style-tags!)
 
 ;; (ui-components!)
 
