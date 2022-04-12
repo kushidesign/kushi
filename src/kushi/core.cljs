@@ -1,5 +1,5 @@
 (ns ^:dev/always kushi.core
-  (:require-macros [kushi.core :refer [keyed defclass sx sx-theme!]])
+  (:require-macros [kushi.core :refer [keyed sx theme!]])
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
             [kushi.sheets :as sheets]
@@ -174,6 +174,4 @@
 (def merge-with-style kushi.utils/merge-with-style)
 
 ;; This will inject / and or write theme to disc
-(sx-theme!)
-
-
+(theme!)

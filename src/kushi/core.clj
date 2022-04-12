@@ -424,9 +424,11 @@
 #_(? (mapv (fn [n] (list 'kushi.core/sx (symbol (str "~m" n)))) (range 1 45)))
 
 
-(defmacro sx-theme! []
-  (let [{:keys [styles toks overrides]} (theme/theme-by-compo theme/base-theme)
-        css-tokens (into [] toks)
+(defmacro theme! []
+  (let [{:keys [styles toks global+alias-toks overrides]} (theme/theme-by-compo theme/base-theme)
+        css-tokens-actually-used (into [] toks)
+        css-tokens-global+alias (into [] global+alias-toks)
+        ;; _ (? {:overrides (count overrides) :styles (count styles)}
         [[c1 c1m]
          [c2 c2m]
          [c3 c3m]
@@ -515,10 +517,10 @@
          m42
          m43
          m44] styles
-         kushi-debug   @KUSHIDEBUG
-         rt-injection? (:runtime-injection? user-config)
-         css-tokens-css (stylesheet/custom-properties-css {:toks css-tokens :pretty-print? true})]
-    (doseq [tok css-tokens] (state/add-custom-property! tok))
+        kushi-debug   @KUSHIDEBUG
+        rt-injection? (:runtime-injection? user-config)
+        css-tokens-to-inject  (stylesheet/custom-properties-css {:toks css-tokens-global+alias :pretty-print? true})]
+    (doseq [tok css-tokens-actually-used] (state/add-custom-property! tok))
     `(do
        (kushi.core/defclass ~c1 ~c1m)
        (kushi.core/defclass ~c2 ~c2m)
@@ -611,4 +613,4 @@
        (kushi.core/sx ~m44)
 
        (when (or ~kushi-debug ~rt-injection?)
-         (kushi.core/inject-custom-properties! ~css-tokens-css)))))
+         (kushi.core/inject-custom-properties! ~css-tokens-to-inject))))))

@@ -318,7 +318,6 @@
                                             {:coll              toks1
                                              :global-tokens-map global-tokens
                                              :global?           true}))]
-    #_(?+ (keyed compo-toks* toks1 toks2))
     (concat compo-toks* toks1 toks2)))
 
 (defn theme-by-compo-inner
@@ -367,6 +366,12 @@
           overrides))
 
 (defn theme-by-compo [base-theme]
+
+  (!?+ (resolve-tokens* (merge (keyed global-tokens alias-tokens)
+                              {:coll              alias-tokens
+                               :global-tokens-map global-tokens
+                               :global?           true})))
+
   (let [by-compo          (reduce (fn [acc [kushi-compo m]]
                                     (apply conj
                                            acc
@@ -391,6 +396,6 @@
         toks              (->> [:global :alias :kushi-ui]
                                (map #(vars-by-type vars %))
                                (apply concat))
+        global+alias-toks (apply concat (map #(sort-by first %) [global-tokens alias-tokens]))
         overrides         (varize-overrides overrides)]
-    (keyed styles toks overrides)))
-
+    (keyed styles toks global+alias-toks overrides)))

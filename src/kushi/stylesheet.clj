@@ -88,7 +88,7 @@
       (append-css-chunk!
        {:css-text css-text
         :comment  "CSS custom properties"
-        :content  (? (custom-properties-css {:toks @state/custom-properties :pretty-print? pretty-print?}))})
+        :content  (custom-properties-css {:toks @state/custom-properties :pretty-print? pretty-print?})})
       (reset! state/user-defined-font-faces []))))
 
 (defn append-at-font-face!

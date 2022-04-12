@@ -113,8 +113,7 @@
                                    (if (or (map? stylemap) (nil? stylemap))
                                      (group-by #(if (do
                                                       (when (state/debug?)
-                                                        (?+ %)
-                                                        (?+ (s/valid? ::specs/style-tuple %)))
+                                                        (s/valid? ::specs/style-tuple %))
                                                       (s/valid? ::specs/style-tuple %)) :clean :bad) stylemap)
                                      ;; TODO move this out
                                      (printing/simple-warning {:desc "Invalid value for :style entry in attributes map."
