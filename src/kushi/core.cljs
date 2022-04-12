@@ -6,6 +6,8 @@
             [kushi.utils :as util] ;; For aliasing merge-with-style
             [par.core :refer [? !?]] ;; only use when developing kushi itself
             ))
+
+
 ;; Functionality for injecting styles into during development builds  ------------------------------------------
 ;; This is also used in release builds if :runtime-injection? config param is set to true ----------------------
 
@@ -173,5 +175,6 @@
 
 (def merge-with-style kushi.utils/merge-with-style)
 
-;; This will inject / and or write theme to disc
+
+;; This will inject / and or write ui theme to disc if config says to do so
 (theme!)
