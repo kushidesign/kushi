@@ -3,7 +3,7 @@
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
             [kushi.sheets :as sheets]
-            [kushi.utils] ;; For aliasing merge-with-style
+            [kushi.utils :as util] ;; For aliasing merge-with-style
             [par.core :refer [? !?]] ;; only use when developing kushi itself
             ))
 ;; Functionality for injecting styles into during development builds  ------------------------------------------
@@ -77,10 +77,8 @@
         (when-let [sheet-id (classtype sheets/sheet-ids-by-type)]
           (inject-css* css-rules sheet-id))))))
 
-(defn inject-custom-properties! [args]
-  (inject-css*
-   [(str ":root {" (string/join ";" (map (fn [x] (string/join ": " x)) args)) ";}")]
-   (:custom-properties sheets/sheet-ids-by-type)))
+(defn inject-custom-properties! [css]
+  (inject-css* [css] (:custom-properties sheets/sheet-ids-by-type)))
 
 ;; cssfn (helper fn for use inside calls to sx macro)  ---------------------------------------------------------
 (defn cssfn? [x]

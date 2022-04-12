@@ -76,19 +76,19 @@
 (def license-comment-header
   (str "/*! kushi v" version " | EPL License | https://github.com/paintparty/kushi */"))
 
-(defn custom-properties->gvecs [coll]
-  [(into [] (cons ":root" (map (fn [[prop val]] {prop (util/maybe-wrap-css-var val)}) coll)))] )
+(defn custom-properties-css [{:keys [toks pretty-print?]}]
+  (let [gvecs [(into [] (cons ":root" (map (fn [[prop val]] {prop (util/maybe-wrap-css-var val)}) toks)))]]
+    (garden/css {:pretty-print? pretty-print?} gvecs)))
 
 (defn append-custom-properties!
-  [{:keys [css-text to-be-printed :pretty-print?]}]
+  [{:keys [css-text to-be-printed pretty-print?]}]
   (let [custom-properties-count (count @state/custom-properties)]
     (swap! to-be-printed assoc :custom-properties-count custom-properties-count)
     (when (pos-int? custom-properties-count)
       (append-css-chunk!
        {:css-text css-text
         :comment  "CSS custom properties"
-        :content  (garden/css {:pretty-print? pretty-print?}
-                              (custom-properties->gvecs @state/custom-properties))})
+        :content  (? (custom-properties-css {:toks @state/custom-properties :pretty-print? pretty-print?}))})
       (reset! state/user-defined-font-faces []))))
 
 (defn append-at-font-face!

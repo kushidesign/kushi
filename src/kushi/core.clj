@@ -516,7 +516,8 @@
          m43
          m44] styles
          kushi-debug   @KUSHIDEBUG
-         rt-injection? (:runtime-injection? user-config)]
+         rt-injection? (:runtime-injection? user-config)
+         css-tokens-css (stylesheet/custom-properties-css {:toks css-tokens :pretty-print? true})]
     (doseq [tok css-tokens] (state/add-custom-property! tok))
     `(do
        (kushi.core/defclass ~c1 ~c1m)
@@ -610,4 +611,4 @@
        (kushi.core/sx ~m44)
 
        (when (or ~kushi-debug ~rt-injection?)
-         (kushi.core/inject-custom-properties! ~css-tokens)))))
+         (kushi.core/inject-custom-properties! ~css-tokens-css)))))
