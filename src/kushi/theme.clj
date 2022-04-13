@@ -14,7 +14,7 @@
   ([x kw]
    (when x
      (try (let [[ns-name themevar] (string/split (str x) #"/")]
-            (require (?+ :symbol:ns-name (symbol ns-name)) :reload)
+            (require (symbol ns-name) :reload)
             (let [bar (find-ns (symbol ns-name))]
             ;; #_(?+ bar)
             ;; #_(?+ (symbol themevar))
@@ -276,28 +276,28 @@
 
 (def base-theme
   {:button {
-            ;; :default   {:bgc        :--gray100
-            ;;             :hover:bgc  :--gray200
-            ;;             :color      :--primary}
+            :default   {:bgc        :--gray100
+                        :hover:bgc  :--gray200
+                        :color      :--primary}
             :primary   (:primary theme*)
-            ;; :link      {:td        :underline
-            ;;             :bgc       :transparent
-            ;;             :hover:bgc :transparent}
-            ;; :secondary {:bgc        :--gray100
-            ;;             :hover:bgc  :--gray200
-            ;;             :color      :--primary}
-            ;; :tertiary  {:bgc       :transparent
-            ;;             :hover:bgc :--gray100}
-            ;; :minimal   (:minimal theme*)
-            ;; :ghosted   (:ghosted theme*)
+            :link      {:td        :underline
+                        :bgc       :transparent
+                        :hover:bgc :transparent}
+            :secondary {:bgc        :--gray100
+                        :hover:bgc  :--gray200
+                        :color      :--primary}
+            :tertiary  {:bgc       :transparent
+                        :hover:bgc :--gray100}
+            :minimal   (:minimal theme*)
+            :ghosted   (:ghosted theme*)
 
             }
 
-  ;;  :tag    {:default  {:c :--primary}
-  ;;           :primary  (:primary theme*)
-  ;;           :positive (:positive-inverted theme*)
-  ;;           :negative (:negative-inverted theme*)
-  ;;           :warning  (:warning-inverted theme*)}
+   :tag    {:default  {:c :--primary}
+            :primary  (:primary theme*)
+            :positive (:positive-inverted theme*)
+            :negative (:negative-inverted theme*)
+            :warning  (:warning-inverted theme*)}
 
    ;; stuff like this needs to be in sync with the var name it is creating
    })
@@ -412,7 +412,7 @@
                                                    m)))
                                   []
                                   merged-theme)
-        styles            (map first (?+ by-compo))
+        styles            (map first by-compo)
         tok-maps          (keyed global-tokens alias-tokens)
         override-tok-maps (->> overrides
                                vals

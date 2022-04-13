@@ -429,7 +429,7 @@
   (let [{:keys [styles toks global+alias-toks overrides]} (theme/theme-by-compo theme/base-theme)
         css-tokens-actually-used (into [] toks)
         css-tokens-global+alias (into [] global+alias-toks)
-        _ (? {:overrides (count overrides) :styles (count styles)})
+        ;; _ (? {:overrides (count overrides) :styles (count styles)})
         [[c1 c1m]
          [c2 c2m]
          [c3 c3m]

@@ -5,12 +5,21 @@
             [par.core :refer [? !? ?+ !?+]]
             [kushi.utils :as util]))
 
-(defn opts+children [coll]
+(defn opts+children
+  "Reorganizes arguments to component and returns:
+   [map-of-user-opts attr child1 child2 ...]"
+  [coll ks]
   (when (coll? coll)
-    (let [[a* & c*] coll
-          opts      (when (map? a*) a*)
-          children  (if opts c* coll)]
-      (keyed opts children))))
+    (let [[a* & c*]           coll
+          attr*               (when (map? a*) a*)
+          children            (if attr* c* coll)
+          user-ks             (into #{} ks)
+          {:keys [opts attr]} (when attr*
+                                (apply merge
+                                       (map
+                                        (fn [[k v]] {(if k :opts :attr) (into {} v)})
+                                        (? (group-by #(contains? user-ks (first %)) attr*)))))]
+      (into [] (concat [opts] [attr] children)))))
 
 (defn hiccup? [x]
   (and (vector? x) (-> x first keyword?)))

@@ -41,8 +41,8 @@
 (defn tooltip
   "A section of content which can be collapsed and expanded"
   [& args]
-  (let [{:keys [opts children]}           (opts+children args)
-        {:keys [display-on-hover? attrs]} opts]
+  (let [[opts attr & children]      (opts+children args [:display-on-hover?])
+        {:keys [display-on-hover?]} opts]
     [:section
      (merge-with-style
       (sx :.absolute
@@ -63,13 +63,13 @@
           :overflow--hidden
           :transition--opacity:0.2s:linear
           {:style {"has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):opacity" 1
-                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):width" :fit-content
-                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):height" :auto
+                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):width"   :fit-content
+                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):height"  :auto
                    "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):padding" :7px:14px}
            :data-kushi-conditional-display (if (= false display-on-hover?) "true" "false")
            :id (gensym)
            :prefix :kushi-
            :ident :tooltip
            :kushi-ui? true})
-      attrs)
+      attr)
      children]))
