@@ -18,7 +18,7 @@
                                 (apply merge
                                        (map
                                         (fn [[k v]] {(if k :opts :attr) (into {} v)})
-                                        (? (group-by #(contains? user-ks (first %)) attr*)))))]
+                                        (group-by #(contains? user-ks (first %)) attr*))))]
       (into [] (concat [opts] [attr] children)))))
 
 (defn hiccup? [x]
