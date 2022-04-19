@@ -23,15 +23,12 @@
 
 (defn garden-vecs-injection
   [garden-vecs]
-  (into []
-        (map
-         :rule-css
-         (remove
-          (fn [{x :garden-vec}] (and (vector? x) (nil? (second x))))
-          (map (fn [v]
-                 {:garden-vec v
-                  :rule-css (garden.core/css {:pretty-print? false} v)})
-               garden-vecs)))))
+  (->> garden-vecs
+       (map (fn [v] {:garden-vec v :rule-css (garden.core/css {:pretty-print? false} v)}))
+       (remove (fn [{x :garden-vec}] (and (vector? x) (nil? (second x)))))
+       (map :rule-css)
+       (remove string/blank?)
+       (into [])))
 
 (defn append-css-chunk!
   [{:keys [css-text
