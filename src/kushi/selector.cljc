@@ -16,6 +16,7 @@
            element
            prefix
            ancestor
+           kushi-class
            defclass-name
            atomic-class?] :as m}]
   (let [hash                          (auto-generated-hash)
@@ -23,8 +24,12 @@
          global-prefix :prefix}       user-config
         prefix                        (or prefix global-prefix)
         ancestor                      (or ancestor global-ancestor)
-        prefixed-names-for-selectors? (and prefix ident (not (:add-empty-classes? user-config)))
-        prefixed-name-for-el          (when (and prefix ident) (str (name prefix) (name ident)))
+        prefixed-names-for-selectors? (and (or (and prefix ident) kushi-class) (not (:add-empty-classes? user-config)))
+        prefixed-name-for-el          (cond
+                                        kushi-class
+                                        (name kushi-class)
+                                        (and prefix ident)
+                                        (str (name prefix) (name ident)))
         shared-class-prefix           (if atomic-class?
                                         (:atomic-class-prefix user-config)
                                         (:defclass-prefix user-config))
