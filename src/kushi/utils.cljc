@@ -272,11 +272,18 @@
     (when f {:on-click f})))
 
 ;; Public function for style decoration
-(defn merge-with-style
-  ;; TODO add docstring
-  [{style1 :style class1 :class data-cljs1 :data-cljs on-click1 :on-click :as m1}
-   {style2 :style class2 :class data-cljs2 :data-cljs on-click2 :on-click :as m2}]
-  (let [[bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
+;; TODO support n number of maps
+(defn merge-with-style [& maps]
+  (let [[m1 m2]                   (map #(if (map? %) % {}) maps)
+        {style1 :style
+         class1 :class
+         data-cljs1 :data-cljs
+         on-click1 :on-click}     m1
+        {style2 :style
+         class2 :class
+         data-cljs2 :data-cljs
+         on-click2 :on-click}     m2
+        [bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
         [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i)) [class1 class2])
         merged-style              (merge (when-not bad-style1? style1) (when-not bad-style2? style2))
         class1-coll               (class-coll class1 bad-class1?)
