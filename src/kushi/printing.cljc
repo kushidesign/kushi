@@ -397,6 +397,7 @@
        (str file ":"  (format-wrap opts)))))
 
 (defn bad-arg-warning-body [{:keys [js?] :as m}]
+  (!?+ m)
   [(warning-header m)
    (if js? "\n\n" :br)
    (warning-call-with-args m)
@@ -712,23 +713,16 @@
   (let [{:keys [ident]
          :as   opts}              @state/current-macro
 
-        ;; _ (when (contains? (into #{} (:args opts)) :x:right--52px)
-        ;;     (?+ :set-warnings! @state/current-sx)
-        ;;     (?+ :set-warnings! @state/current-macro))
-
         ;; bad-mods                  (bad-mods-warning
         ;;                            (if (some-> @state/current-sx :bad-mods not-empty)
         ;;                              @state/current-sx
         ;;                              opts))
 
-        ;; [{:keys [fname args bad-mods js?] :as m}]
-        ;; bad-nums                  (compilation-warnings-coll opts)
-
         bad-nums                  (compilation-warnings-coll opts)
         bad-nums-js               (preformat-compilation-warnings-js bad-nums)
         dupe-ident                (when ident (dupe-ident-warning opts))
         invalid-style             (when @state/invalid-style-args
-                                    (merge opts {:invalid-args (?+ @state/invalid-style-args)}))
+                                    (merge opts {:invalid-args (!?+ @state/invalid-style-args)}))
         invalid-style-js          (when invalid-style
                                     (browser-formatted-js-vec
                                      (string/join
