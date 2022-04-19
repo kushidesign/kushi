@@ -5,7 +5,8 @@
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
    [kushi.ui.collapse.footer :refer (collapse-footer-contents)]
-   [kushi.gui :refer (gui defcom)]
+   [kushi.gui :refer (gui defcom opts+children)]
+   [kushi.ui.util :as util]
    ))
 
 (def ? js/console.log)
@@ -55,15 +56,18 @@
       (when-not (= open-node clicked-node)
         [open-node (-> open-node .-nextSibling)]))))
 
+
 (defcom collapse-header
-  (let [on-click #(let [accordian   (.closest (-> % .-target) ".kushi-accordian")
-                        node        (.closest (-> % .-target) "[aria-expanded][role='button']")
+  (let [on-click #(let [node        (.closest (-> % .-target) "[aria-expanded][role='button']")
+                        accordian*  (util/grandparent node)
+                        accordian   (when-let [cl (util/has-class accordian* "kushi-accordian")]
+                                      accordian*)
                         [open-node
                          open-exp-parent] (other-expanded-node accordian node)
                         exp-parent  (-> node .-nextSibling)
                         exp-inner   (-> node .-nextSibling .-firstChild)
                         exp-inner-h (outer-height exp-inner)
-                        expanded?   (= "true" (.getAttribute node (name :aria-expanded)))
+                        expanded?   (util/attribute-true? node :aria-expanded)
                         height      (str exp-inner-h "px")
                         ->height    (if expanded? "0px" height)
                         no-height?  (and expanded? (string/blank? exp-parent.style.height))]
@@ -91,31 +95,35 @@
        :role          :button
        :aria-expanded false
        :on-click      on-click
+       :prefix        :kushi-
+       :ident         :collapse-header
+       :base?         true
        })]))
 
 (defn get-attr [m k] (some-> m :parts k first))
 (defn get-children [m k] (some-> m :parts k rest))
 
+
 (defn collapse
   "A section of content which can be collapsed and expanded"
-  [{:keys [parts label-text label-text-expanded icon-type expanded? on-click] :as opts} & children]
-  (let [attrs (partial get-attr opts)
-        childs (partial get-children opts)]
+  [& args]
+  (let [[opts attr & children]  (opts+children args)
+        {:keys [parts expanded? on-click]} opts]
     [:section
      (merge-with-style
-      (sx :.flex-col-fs :w--100%)
-      (attrs :wrapper))
+      (sx
+       'kushi-collapse:ui
+       :.flex-col-fs
+       :w--100%)
+      attr)
      [collapse-header
       (merge-with-style
-       (attrs :header)
+       (:header parts)
        (sx {:on-click on-click
-            :aria-expanded (if expanded? "true" "false")
-            :data-kushi-label label-text}))
+            :aria-expanded (if expanded? "true" "false")}))
       #_[collapse-footer-contents {:label-text label-text :label-text-expanded label-text-expanded}]
-      [collapse-header-contents {:label-text label-text
-                                 :label-text-expanded label-text-expanded
-                                 :icon-type icon-type}]]
-     [collapse-body (or (attrs :body) {}) children]]))
+      [collapse-header-contents opts]]
+     [collapse-body (:body parts) children]]))
 
 (defcom accordian
   [:div.kushi-accordian])

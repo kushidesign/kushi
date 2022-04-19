@@ -1,80 +1,68 @@
 (ns kushi.ui.collapse.header
-  (:require-macros [kushi.core :refer (sx cssfn)]
+  (:require-macros [kushi.core :refer (defclass sx cssfn)]
                    [kushi.gui :refer (defcom)])
   (:require [kushi.ui.icon.core :refer (bar chevron-down icon)]
+            [kushi.utils :as util :refer-macros (keyed)]
+            [clojure.string :as string]
             [kushi.ui.icon.mui.core :refer (mui-icon)]
             [kushi.ui.title.core :refer (title)]
+            [kushi.core :refer (merge-with-style)]
             [par.core :refer-macros [!? ?]]))
 
+(defn readable-string? [label]
+  (and (string? label) (not (string/blank? label))))
+
+
+;; TODO put backin component when you get hashed vars working
+(defclass ^:kushi-override hide-when-expanded
+  {"has(parent([aria-expanded='true'])):display" "none"})
+
+(defclass ^:kushi-override show-when-expanded
+  {"has(parent([aria-expanded='true'])):display" "block"})
+
+(defn header-title
+  [{:keys [label
+           icon
+           icon-opposite?
+           title-sx]}]
+    (if (string? label)
+      (let [ico [mui-icon icon]]
+         (if icon-opposite?
+           [title title-sx label ico]
+           [title title-sx ico label]))
+      label))
+
 (defn collapse-header-contents
-  [{:keys [label-text label-text-expanded icon-type]}]
-  [:<>
-   ;; TODO refactor out cond once variable selector name generation is fixed
-   (cond
-     (= icon-type :plus)
-     [icon
-      (sx {:style {:transition-property :transform
-                   :transition-duration :500ms
-                   :position :.relative
-                   :width :14px
-                   :height :14px
-                   :&_path:stroke-width 1.5
-                   :mr    :10px}
-           :class [:kushi-custom-icon]})
-      [:div (sx :.absolute-fill
-                {:style {:overflow :hidden
-                         :transition-property :transform
-                         :transition-duration :500ms}})
-       [bar]]
-      [:div (sx :.absolute-fill
-                {:style {"has(ancestor([aria-expanded='false'])):transform" "rotate(-90deg)"
-                         "has(ancestor([aria-expanded='true'])):display" "none"
-                         :overflow :hidden
-                         :transition-duration :500ms}})
-       [bar]]]
-     #_[icon
-        (sx {:style {:transition-property :transform
-                     :transition-duration :500ms
-                     :position :.relative
-                     :width :10px
-                     :mr    :10px}})
-        [:div (sx :.absolute-fill
-                  {:style {:overflow :hidden
-                           :transition-property :transform
-                           :transition-duration :500ms}})
-         [bar]]
-        [:div (sx :.absolute-fill
-                  {:style {"has(ancestor([aria-expanded='false'])):transform" "rotate(-90deg)"
-                           "has(ancestor([aria-expanded='true'])):display" "none"
-                           :overflow :hidden
-                           :transition-duration :500ms}})
-         [bar]]]
-     :else
-     [icon
-      (sx {:style {"has(parent([aria-expanded='false'])):transform" "rotate(-90deg)"
-                   "has(parent([aria-expanded='true'])):transform" "rotate(0deg)"
-                   :transition-property :transform
-                   :transition-duration :500ms
-                   :&_path:stroke-width 1.5
-                   :width :14px
-                   :height :14px
-                   :mr    :10px}
-           :class [:kushi-custom-icon]})
-      [chevron-down]])
-   (if label-text-expanded
-     [:<>
-      [:span
-       (sx {:style {"has(parent([aria-expanded='true'])):display" "none"}
-            :prefix :kushi-
-            :ident :collapse-header-label-text-collapsed})
-       label-text]
-      [:span
-       (sx :d--none
-           {:style {"has(parent([aria-expanded='true'])):display" "block"}
-            :prefix :kushi-
-            :ident :collapse-header-label-text-expanded})
-       label-text-expanded]]
-     [title
-      (sx {:prefix :kushi-
-           :ident :collapse-header-label})
-      label-text])])
+  [{:keys [label label-expanded icon icon-expanded icon-position]}]
+  (let [label-expanded (or label-expanded label)
+        icon           (if (util/nameable? icon) (name icon) "add")
+        icon-expanded  (if (util/nameable? icon-expanded) (name icon-expanded) "remove")
+        icon-opposite? (= :end icon-position)
+        title-sx       (sx {:prefix :kushi-
+                            :ident  :collapse-header-title-contents
+                            :style  {:w :100%
+                                     :>span:jc (when icon-opposite? :space-between)}})
+        opts           (keyed label icon icon-opposite? title-sx)]
+   [:<>
+    [:span
+     (sx
+      :.hide-when-expanded
+      :.flex-row-fs
+      :w--100%
+      {:prefix :kushi-
+       :ident  :collapse-header-label-collapsed
+       :base?  true})
+     (if (string? label)
+       [header-title opts]
+       label)]
+    [:span
+     (sx :.show-when-expanded
+         :.flex-row-fs
+         :w--100%
+         :d--none
+         {:prefix :kushi-
+          :ident  :collapse-header-label-expanded
+          :base?  true})
+     (if (string? label-expanded)
+       [header-title (assoc opts :label label-expanded :icon icon-expanded)]
+       label-expanded)]]))

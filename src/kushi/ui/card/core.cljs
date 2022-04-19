@@ -3,13 +3,9 @@
             [kushi.core :refer-macros (sx cssfn defclass)]
             [kushi.gui :refer-macros (defcom)]))
 
-
-(defclass card-base
-  {:w :100%
-   :p :2rem
-   :bgc :white
-   })
-
-
 (defcom card
-  [:div (sx :.relative :.card-base {:prefix :kushi- :ident :card})])
+  [:div (sx 'kushi-card:ui
+            :.relative
+            :w--100%
+            :p--2rem
+            :bgc--white)])

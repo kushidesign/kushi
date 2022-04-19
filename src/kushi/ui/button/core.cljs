@@ -3,81 +3,54 @@
    [kushi.core :refer (sx cssfn defclass)]
    [kushi.gui :refer (defcom)])
   (:require
-   [kushi.core :refer (merged-attrs-map)]
+   [kushi.core :refer (merged-attrs-map merge-with-style)]
    [kushi.gui :refer (gui)]
-   [kushi.ui.tooltip.core :refer (tooltip+parent remove-tooltip! expand-tooltip!)]
-   [kushi.ui.util :refer (conditional-display?)]
+   [kushi.ui.tooltip.core :refer (tooltip-mouse-leave tooltip-mouse-enter)]
    [par.core :refer [? !? ?+ !?+]]))
 
-(defclass ^{:kushi true :base true} textbase :fs--48px)
 
-(defclass ^:kushi text
-  {:fs :1rem
-   :m                          0
-   :p                          0
-   :line-height                1
-   })
-
-(defclass ^:kushi button-base
-  {;;  :border-radius           (theme/get-style [:button :border-radius] 0)
-   :min-width                  :50px
-   :h                          :fit-content
-   :w                          :fit-content
-   :>span:padding              [[:0.8em :1.2em]]
-   :bw                         0
-   :bc                         :black
-   :bs                         :solid
-   :bgi                        :none
-   :bgc                        :#eee
-   :hover:bgc                  :#e2e2e2
-   :cursor                     :pointer
-   :transition-property        :all
-   :transition-timing-function (cssfn :cubic-bezier 0 0 1 1)
-   :transition-duration        :200ms})
-
-
-(def button-base
-  [:button:!
-   (kushi.core/sx
-    #_:.text
-    #_:.button-base
+(def label-base-sx
+ (kushi.core/sx
+    'kushi-label-base:ui
     :.relative
-    {:prefix :kushi-
-     :ident :button
-     :data-kushi-tooltip :true
+    ;; :.normal
+    {:data-kushi-tooltip true
      :aria-expanded "false"
-     :on-mouse-enter #(when-let [[tooltip parent] (tooltip+parent %)]
-                        (when-not (conditional-display? tooltip)
-                          (expand-tooltip! tooltip parent)))
-     :on-mouse-leave #(when-let [[tooltip parent] (tooltip+parent %)]
-                        (when-not (conditional-display? tooltip)
-                          (remove-tooltip! parent)))
-
-     :style {:min-width                  :50px
+     :on-mouse-enter tooltip-mouse-enter
+     :on-mouse-leave tooltip-mouse-leave
+     :style {:min-width                  :1rem
              :h                          :fit-content
              :w                          :fit-content
-             :fs                         :1rem
+            ;;  :fs                         "var(--text-medium)"
+             :&_.kushi-mui-icon-font:fs  "var(--text-medium)"
              :m                          0
              :p                          0
              :line-height                1
-             :>span:padding              [[:0.8em :1.2em]]
-             :bw                         0
-             :bc                         :black
-             :bs                         :solid
+             :>span:d                    :flex
+             :>span:jc                   :center
+             :>span:ai                   :center
+             :&_.kushi-label-text+.kushi-icon:mis "calc(var(--text-medium) / 5)"
+             :&_.kushi-icon+.kushi-label-text:mis "calc(var(--text-medium) / 5)"
              :bgi                        :none
-             :bgc                        :#eee
-             :hover:bgc                  :#e2e2e2
-             :cursor                     :pointer
-             :transition-property        :all
-             :transition-timing-function (cssfn :cubic-bezier 0 0 1 1)
-             :transition-duration        :200ms}})
-   [:span {:style {:display :block}}]])
+             }}) )
 
 
 (defcom button
-  button-base)
-
-
+  [:button:!
+   (merge-with-style
+     label-base-sx
+     (kushi.core/sx
+      'kushi-button:ui
+      :.transition
+      {:style {:bw                         0
+               :>span:padding              [[:0.8em :1.2em]]
+               :bc                         :black
+               :bs                         :solid
+               :bgi                        :none
+               :cursor                     :pointer}}))
+   [:span]]
+   nil
+  #(if (string? %) [:span.kushi-label-text %] %))
 
 ;; CRUFT
 

@@ -88,13 +88,14 @@
 (def icon-base
   [:div
    (sx
+    'kushi-icon:ui
     :.relative
+    :.transition
     :.flex-row-c
     :fs--1rem
     :ta--center
     :d--ib
-    :ai--c
-    {:prefix :kushi- :ident :icon})])
+    :ai--c)])
 
 (defcom icon
   icon-base)
