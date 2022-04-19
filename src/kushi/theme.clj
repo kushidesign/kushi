@@ -3,6 +3,7 @@
    [kushi.config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]
    [kushi.shorthand :as shorthand]
+   [kushi.utils :as util]
    [clojure.string :as string]
    [par.core    :refer [? !? ?+ !?+]]))
 
@@ -167,7 +168,22 @@
      :--rounded         :0.3rem
 
      ;; Intended for css props: box-shadow
-     :--elevated        "rgb(0 0 0 / 4%) 12px 10px 16px 2px, rgb(0 0 0 / 5%) 0px 2px 9px 0px;"})
+     :--elevated        "rgb(0 0 0 / 4%) 12px 10px 16px 2px, rgb(0 0 0 / 5%) 0px 2px 9px 0px;"
+
+     ;; Intended for css animations and transitions
+     :--timing-linear-curve "cubic-bezier(0 0 1 1)"
+     :--timing-ease-out-curve "cubic-bezier(.2, .8, .4, 1)"
+     :--timing-ease-in-curve "cubic-bezier(.8, .2, .6, 1)"
+     :--timing-ease-in-out-curve "cubic-bezier(0.4, 0, 0.2, 1)"
+
+     :--duration-0 :0ms
+     :--duration-50  :50ms
+     :--duration-100 :100ms
+     :--duration-200 :200ms
+     :--duration-300 :300ms
+     :--duration-400 :400ms
+     :--duration-500 :500ms
+     })
 
   (def alias-tokens
     {:--primary-a   :--black
@@ -230,32 +246,84 @@
      :--mono900     :--gray700
      :--mono1000    :--black })
 
+(defn icon-margin [k]
+ (str "calc(var(--text-" (name k) ") / 5)")  )
+
 (def overrides
   (merge
-
    (compound-override
-    [:fs
-     [:&.kushi-icon>*:fs :&_.kushi-icon>*:fs]
-     [:&.kushi-custom-icon:w :&_.kushi-custom-icon:w :&.kushi-custom-icon:h :&_.kushi-custom-icon:h]
-     [:&.kushi-custom-icon&_path:stroke-width :&_.kushi-custom-icon&_path:stroke-width]]
-    {:mini   [:--text-mini :--mui-icon-mini :10px 0.5]
-     :small  [:--text-small :--mui-icon-small :12px 1]
-     :medium [:--text-medium :--mui-icon-medium :14px 1.5]
-     :large  [:--text-large :--mui-icon-large :16px 2]
-     :huge   [:--text-huge :--mui-icon-huge :18px 2.25]})
+    [[:&_.kushi-label-text+.kushi-icon:mis
+      :&_.kushi-icon+.kushi-label-text:mis]
+     [:fs
+      :&.kushi-icon>*:fs
+      :&_.kushi-icon>*:fs]
+     ]
+    {:mini   [(icon-margin :mini) :--text-mini]
+     :small  [(icon-margin :small) :--text-small]
+     :medium [(icon-margin :medium) :--text-medium]
+     :large  [(icon-margin :large) :--text-large]
+     :huge   [(icon-margin :huge) :--text-huge]})
 
-   {:thin   {:fw :--text-thin}
+   {
+    ;; typography
+    :thin   {:fw :--text-thin}
     :light  {:fw :--text-light}
     :normal {:fw :--text-normal}
-    :bold   {:fw :--text-bold}}
+    :bold   {:fw :--text-bold}
 
-   {:rounded {:border-radius :--rounded}
-    :sharp {:border-radius 0}}
+    ;; animations
+    :transition {:transition-property        :all
+                 :transition-timing-function :--timing-linear-curve
+                 :transition-duration        :--duration-200}
 
-   {:elevated {:box-shadow :--elevated}}))
+    ;; surfaces, buttons, containers
+    :rounded {:border-radius :--rounded}
+    :sharp {:border-radius 0}
+    :elevated {:box-shadow :--elevated}
+
+    ;; buttons, tags, & labels
+    :primary           {:c         :--primary-b
+                        :bgc       :--primary
+                        :hover:bgc :--gray400}
+    :secondary         {:bgc        :--gray100
+                        :hover:bgc  :--gray200
+                        :color      :--primary}
+    :tertiary          {:bgc       :transparent
+                        :hover:bgc :--gray100}
+    :ghosted           {:bw        :1px
+                        :bgc       :transparent
+                        :hover:bgc :transparent
+                        :hover:o   0.6}
+    :positive-inverted {:c   :--primary-b
+                        :bgc :--positive}
+    :warning-inverted  {:c   :--primary-b
+                        :bgc :--warning}
+    :negative-inverted {:c   :--primary-b
+                        :bgc :--negative}
+    :minimal           {:bgc :transparent
+                        :p   0}
+
+    ;; buttons
+    :link      {:>span:p   0
+                :td        :u
+                :tup       :u
+                :bgc       :transparent
+                :hover:bgc :transparent
+                :hover:o   0.7
+
+                ;; THEME
+                ;; :tdc                 :red
+                ;; :transition-duration :--duration-0
+
+                }
+
+    ;; controls
+    :disabled          {:o      :40%
+                        :cursor :not-allowed} }
+   ))
 
 
-(def theme*
+#_(def theme*
   {:primary           {:c         :--primary-b
                        :bgc       :--primary
                        :hover:bgc :--gray400}
@@ -275,29 +343,28 @@
                        :p   0}})
 
 (def base-theme
-  {:button {
-            :default   {:bgc        :--gray100
-                        :hover:bgc  :--gray200
-                        :color      :--primary}
-            :primary   (:primary theme*)
-            :link      {:td        :underline
-                        :bgc       :transparent
-                        :hover:bgc :transparent}
-            :secondary {:bgc        :--gray100
-                        :hover:bgc  :--gray200
-                        :color      :--primary}
-            :tertiary  {:bgc       :transparent
-                        :hover:bgc :--gray100}
-            :minimal   (:minimal theme*)
-            :ghosted   (:ghosted theme*)
-
+  {:button {:default   (:secondary overrides)
+            ;; :disabled  {:color :turquoise}
+            ;; :primary   (:primary theme*)
+            ;; :link      {:td        :underline
+            ;;             :bgc       :transparent
+            ;;             :hover:bgc :transparent}
+            ;; :secondary {:bgc        :--gray100
+            ;;             :hover:bgc  :--gray200
+            ;;             :color      :--primary}
+            ;; :tertiary  {:bgc       :transparent
+            ;;             :hover:bgc :--gray100}
+            ;; :minimal   (:minimal theme*)
+            ;; :ghosted   (:ghosted theme*)
             }
 
-   :tag    {:default  {:c :--primary}
-            :primary  (:primary theme*)
-            :positive (:positive-inverted theme*)
-            :negative (:negative-inverted theme*)
-            :warning  (:warning-inverted theme*)}
+   :tag    {
+            ;; :default  {:c :--primary}
+            ;; :primary  (:primary theme*)
+            ;; :positive (:positive-inverted theme*)
+            ;; :negative (:negative-inverted theme*)
+            ;; :warning  (:warning-inverted theme*)
+            }
 
    ;; stuff like this needs to be in sync with the var name it is creating
    })
