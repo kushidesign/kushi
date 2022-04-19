@@ -67,13 +67,30 @@
           prefixed               (map register&prefix class-coll)]
       (keyed distinct-classes prefixed))))
 
+(defn sym->kushi-attr [tokens]
+  (when-let [[qsym*] (when (seq tokens) tokens)]
+    (when-let [[q sym] (when (list? qsym*) qsym*)]
+      (when (and (= q 'quote) (symbol? sym))
+        (let [[x type*] (-> sym name (string/split #":"))
+              sx-type (when type* (case type*
+                                    "ui" {:base? true}
+                                    "theme" {:kushi-theme? true}
+                                    nil))
+              prefixed (if (string/starts-with? x "-")
+                         {:ident (-> x (subs 1) keyword)}
+                         {:kushi-class (keyword x)})]
+         (merge sx-type prefixed))))))
+
 (defn tokens+attrs [args]
   (let [[attrs* & more]  args
         [tokens attrs] (cond (map? attrs*) [nil attrs*]
                              :else       (if (map? (last args))
                                            [(seq (drop-last args)) (last args)]
-                                           [args nil]))]
-    [tokens attrs]))
+                                           [args nil]))
+        kushi-attr     (sym->kushi-attr tokens)
+        tokens+        (if kushi-attr (rest tokens) tokens)
+        attrs+         (merge attrs kushi-attr)]
+    [tokens+ attrs+]))
 
 (defn dotkw->kw [x] (cond (s/valid? ::specs/dot-kw x) (parse/kw-subs1 x)
                           (coll? x) (map dotkw->kw x)
@@ -143,7 +160,7 @@
                                    false)]
     #_(when (state/debug?)
       (? :validate-args (keyed style-map-grouped style-tokens-indexed style-tokens-grouped invalid-style-args)))
-    (when invalid-style-args (?+ invalid-style-args))
+    (when invalid-style-args (!?+ invalid-style-args))
     (keyed valid-styles-from-attrs
            valid-styles-from-tokens
            invalid-style-args
@@ -200,6 +217,8 @@
   ([args form-meta]
    (new-args args form-meta nil))
   ([args form-meta defclass-name]
+   (when defclass-name (!?+ :defclass-name defclass-name))
+   
    (let [[tokens attrs*]              (tokens+attrs args)
          [class-tokens* style-tokens] (util/partition-by-spec ::specs/tokenized-classes tokens)
          classlist-from-attrs         (:class attrs*)
