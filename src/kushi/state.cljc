@@ -9,7 +9,7 @@
 
 (def current-macro (atom nil))
 
-(defn debug? [] (-> @current-macro :ident (= :test)))
+(defn debug? [] (-> @current-macro :args first (= :p--2000px)))
 
 (def current-sx (atom nil))
 
@@ -90,7 +90,7 @@
    (let
     [state (case type*
              :theme garden-vecs-state-theme
-             :component garden-vecs-state-components
+             :ui garden-vecs-state-components
              garden-vecs-state)]
      (doseq [x coll]
        (if-let [{:keys [media-queries rules]}  (when (map? x) (:value x))]
