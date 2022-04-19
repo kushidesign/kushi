@@ -5,21 +5,33 @@
             [par.core :refer [? !? ?+ !?+]]
             [kushi.utils :as util]))
 
+
 (defn opts+children
   "Reorganizes arguments to component and returns:
    [map-of-user-opts attr child1 child2 ...]"
-  [coll ks]
+  [coll]
   (when (coll? coll)
     (let [[a* & c*]           coll
           attr*               (when (map? a*) a*)
           children            (if attr* c* coll)
-          user-ks             (into #{} ks)
+          user-ks             (when attr*
+                                (->> attr*
+                                     keys
+                                     (keep #(when (and (keyword? %)
+                                                       (->> % name (re-find #"^-[^\s\d]+")))
+                                              %))
+                                     (into #{})))
           {:keys [opts attr]} (when attr*
                                 (apply merge
                                        (map
                                         (fn [[k v]] {(if k :opts :attr) (into {} v)})
-                                        (group-by #(contains? user-ks (first %)) attr*))))]
-      (into [] (concat [opts] [attr] children)))))
+                                        (group-by #(contains? user-ks (first %)) attr*))))
+          opts+               (->> opts
+                                   (map (fn [[k v]] [(-> k name (subs 1) keyword) v]))
+                                   (into {}))]
+
+      (!?+ (keyed user-ks opts opts+))
+      (into [] (concat [opts+] [attr] children)))))
 
 (defn hiccup? [x]
   (and (vector? x) (-> x first keyword?)))
@@ -53,12 +65,12 @@
           attr         (when (map? attr*) attr*)]
       [tag attr])))
 
-(defn merge-hiccup [{:keys [tag attr args inner-span]}]
-  (!? :merge-hiccup (keyed tag attr args inner-span))
-  (let [user-attr   (when (map? (first args)) (first args))
-        children*   (if user-attr (rest args) args)
-        nested?     (some-> children* first seq?)
-        children*   (if nested? (first children*) children*)
+(defn merge-hiccup [{:keys [tag attr inner-span] args* :args}]
+  (let [args        (remove nil? args*)
+        user-attr   (when (map? (first args)) (first args))
+        children**  (if user-attr (rest args) args)
+        nested?     (some-> children** first seq?)
+        children*   (if nested? (first children**) children**)
         children    (map-indexed (fn [idx x] ^{:key (str (hash x) "-" idx)} x) children*)
         merge?      (and user-attr (map? attr))
         attr-merged (if merge?
@@ -101,8 +113,8 @@
                          attr*)]
      #_(? (keyed path target tag attr* attr))
      (let [inner-span (let [x (last target)] (when (hiccup-span? x) x))
-           node (merge-hiccup (keyed tag attr args inner-span))
-           ret  (if (seq path) (assoc-in hiccup* path node) node)]
+           node       (merge-hiccup (keyed tag attr args inner-span))
+           ret        (if (seq path) (assoc-in hiccup* path node) node)]
        ret))))
 
 
