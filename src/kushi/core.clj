@@ -122,15 +122,12 @@
           valid-styles-from-tokens
           invalid-style-args]}     (arguments/validate-args coll*  style-tokens  {:style style-map})
 
-        ;; _  (when (= sym* 'make) (?+ (arguments/validate-args coll*  style-tokens  {:style style-map})))
-
         invalid-args             (or
                                   (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
                                   ;; (into [] invalid-style-args)
                                   invalid-style-args
                                   )
         styles (into [] (concat valid-styles-from-tokens valid-styles-from-attrs))
-        ;;  _ (println :equal? (= styles (into [] (concat valid-styles-from-tokens valid-styles-from-attrs))))
         {:keys [selector
                 selector*
                 hydrated-styles
@@ -163,6 +160,7 @@
      :m                    m}))
 
 (defn defclass-noop? [sym coll*]
+  ;; For skipping defclasses & overrides from theming
   (and (nil? sym) (= coll* '(nil))))
 
 (defmacro defclass
@@ -186,14 +184,12 @@
                    console-warning-args
                    m]
             :as result}                 (or cached (defclass* sym coll* (meta &form)))
-
            {:keys [garden-vecs
                    selector
                    __classtype__]}      m
            js-args-warning              (printing/preformat-js-warning console-warning-args)
            garden-vecs-for-shared       (stylesheet/garden-vecs-injection garden-vecs)
            inject?                      (:runtime-injection? user-config)]
-
        (printing/ansi-bad-args-warning console-warning-args)
 
       ;; Put atomic class into global registry
@@ -297,8 +293,7 @@
   (let [opts         {:fname     "defkeyframes"
                       :nm        nm
                       :form-meta (meta &form)}
-        dupe-warning (printing/dupe-defkeyframes-warning opts)
-        nmstr        (name nm)]
+        dupe-warning (printing/dupe-defkeyframes-warning opts)]
     (printing/print-dupe2! dupe-warning)
     (reset! state/current-macro :defkeyframes)
     (let [{:keys [caching?
@@ -316,23 +311,10 @@
              (when ~dupe-warning
                (logfn# cljs.core/to-array (:browser ~dupe-warning))))
            (kushi.core/inject-css* ~css-inj "_kushi-rules-shared_")
-           nil))
-
-      ;; (if @KUSHIDEBUG
-      ;;   `(do
-      ;;      (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
-      ;;        (when ~dupe-warning
-      ;;          (logfn# cljs.core/to-array (:browser ~dupe-warning))))
-      ;;      (kushi.core/inject-css* ~css-inj "_kushi-rules-shared_")
-      ;;      nil)
-      ;;   `(do nil))
-          )))
+           nil)))))
 
 (defn cssfn [& args]
   (cons 'cssfn (list args)))
-
-
-
 
 
 (defmacro sx
@@ -355,11 +337,10 @@
                  garden-vecs
                  data-cljs]}         new-args
          inj-type                    (cond (:kushi-theme? kushi-attr) :theme
-                                           (:kushi-ui? kushi-attr) :ui
+                                           (:base? kushi-attr) :ui
                                            :else :sx)
          element-style-inj           (stylesheet/garden-vecs-injection garden-vecs)
          shared-styles-inj           (shared-classes-inj distinct-classes)
-
         ; printing
          _ (printing/set-warnings!)
          warnings-js @state/warnings-js]
@@ -391,7 +372,6 @@
             (when ~warnings-js
               (doseq [warning# ~warnings-js]
                 (logfn# cljs.core/to-array warning#)))
-
             (kushi.core/inject-style-rules (quote ~element-style-inj) ~inj-type )
             (kushi.core/inject-kushi-atomics ~shared-styles-inj)
 
@@ -521,6 +501,7 @@
         kushi-debug   @KUSHIDEBUG
         rt-injection? (:runtime-injection? user-config)
         css-tokens-to-inject  (stylesheet/custom-properties-css {:toks css-tokens-global+alias :pretty-print? true})]
+    (!?+ @state/custom-properties)
     (doseq [tok css-tokens-actually-used] (state/add-custom-property! tok))
     `(do
        (kushi.core/defclass ~c1 ~c1m)
