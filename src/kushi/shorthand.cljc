@@ -122,6 +122,11 @@
    :ml {:name :margin-left :example-val :10px}
    :mt {:name :margin-top :example-val :5px}
    :mb {:name :margin-bottom :example-val :8px}
+   :mi {:name :margin-inline :example-val :8px}
+   :mis {:name :margin-inline-start :example-val :8px}
+   :mie {:name :margin-inline-end :example-val :8px}
+   :mbs {:name :margin-block-start :example-val :8px}
+   :mbe {:name :margin-block-end :example-val :8px}
 
    :p {:name :padding  :example-val [[:10px 0]]}
    :pr {:name :padding-right :example-val :5px}
@@ -159,6 +164,12 @@
                 :w :wavy}}
    :tdt {:name :text-decoration-thickness
          :vals {:ff :from-font}}
+   :tuo {:name :text-underline-offset}
+   :tup {:name :text-underline-position
+         :vals {:ff :from-font
+                :l  :left
+                :r  :right
+                :u  :under}}
 
    :w {:name :width :example-val :80%}
 
