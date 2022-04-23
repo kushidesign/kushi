@@ -40,6 +40,13 @@
 
 **Framework & build-tool agnostic**
 
+**Ships with minimal set of headless UI components**
+
+**Themeable design token system**
+
+
+
+
 <br>
 
 # Index
@@ -113,27 +120,24 @@ When your build finishes, the following css will be written to disk:
  ._c7338 { color: red; text-align: center; font-size: 18px; }
 ```
 
-If you need or want to define your own classnames, you can leverage kushi's flexible and robust [prefixing options](#prefixing-options):
-```Clojure
-;; Assuming you have a global prefix set with a value of "foo-",
-;; kushi will combine it with a local supplied :ident value
+If you need or want to define your own classnames, you can leverage kushi's flexible and robust [naming and prefixing options](#prefixing-options). You can supply your own classname by passing a quoted symbol as the first argument to sx:
 
+```Clojure
 (defn my-component []
  [:div
-  (sx :c--red
+  (sx 'foo-bar
+      :c--red
       :ta--c
-      :fs--18px
-      {:ident :bar
-       :id    :myid})])
+      :fs--18px)])
 ```
-The above example would generate the following attribute map:
+The above call to `sx` would generate the following attribute map:
 ```Clojure
-{:class "foo-bar"
- :id    :myid}
+{:class "foo-bar"}
 ```
 
+
 And the following css will be written to disk:
-```Clojure
+```css
  .foo-bar { color: red; text-align: center; font-size: 18px; }
 ```
 <br>
@@ -153,7 +157,6 @@ All your css is written to a static file, via a build hook for the `:compile-fin
 
 Kushi aims to provide the same benefits as Tachyons/Tailwind (styling expressed as a list of tokens co-located at the element level) while minimizing some of the common downsides (learning and using a whole new abstraction layer on top of standard css).
 
-You can provide style rules as tokenized keywords.<br>
 Keywords containing `--` represent a css prop and value pair (split on `--`).
 
 
@@ -255,15 +258,47 @@ For complete info on available enumurated values view the source [here](https://
 
 ### Expressing dynamic values
 
-Sometimes you need to use dynamic values based on application state. In these cases, you cannot use tokenized keywords and must locate your styling in the `:style` entry of the attributes map:
+Sometimes you need to use dynamic values based on application state.
 
-Most commonly, when using dynamic values:
 ```Clojure
-(sx {:style {:color my-color})
+;; Assuming there is a var defined as `mycolor` with a value of `:red`
+
+;; For tokenized keywords, you can use a `$` char:
+
+(sx :c--$mycolor)
+
+;; The above is equivalent to:
+
+(sx {:style {:color mycolor})
 ```
 
+Both examples above would result in the following attribute map:
+```Clojure
+{:class "_a402294" :style "--mycolor:red"}
+```
+And the following css would be written:
+```css
+._a402294 {color: var(--mycolor)}
+```
+<br>
+
+### Using CSS custom properties
+
+The following sugar is supported for css variables:
+
+```Clojure
+(sx :c--:--mycssvarname)
+
+(sx {:style {:color :--mycssvarname})
+
+;; Both of the above would be equivalent to:
+
+(sx {:style {:color "--var(mycssvarname)"})
+```
+<br>
+
 ### Complex values
-Sometimes, css syntax (for the property value) is inherently complex. Again, you may want or need to locate your styling in the `:style` entry of the attributes map:
+Sometimes, css syntax is inherently complex. In these cases, you may want or need to locate your styling in the `:style` entry of the attributes map:
 
 When a string is desired, or necessary:
 ```Clojure
@@ -298,9 +333,6 @@ As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
 ;; with style map
 (sx {:style {:b :1px:solid:black}})
 
-;; Garden-style
-(sx {:style {:b [[:1px :solid :black]]}})
-
 ;; With string
 (sx {:style {:b "1px solid black"}})
 ```
@@ -309,8 +341,7 @@ All of the above examples will resolve to the following css declaration:
 ```css
 border: 1px solid black;
 ```
-Future support is planned for dynamic values nested in garden-style double vectors and css values construction method such as `kushi.core/cssfn` or `cljs.core/str`.<br>
-In the meantime, if you would like to incorporate a dynamic value into a css shorthand property, you can do it like this:
+Future support is planned for dynamic values passed to construction method such as `kushi.core/cssfn` or `cljs.core/str`. In the meantime, if you would like to incorporate a dynamic value into a css shorthand property, you can do it like this:
 ```Clojure
 ;; Write the shorthand with a "default" value that subsequently
 ;; gets overridden with a dynamic value on the specific property.
@@ -361,7 +392,7 @@ The example below will generate a data-representation of the css rule-set.
 (defclass headline
   {:top            0
    :left           0
-   :border         [[:1px :solid :black]]
+   :border         :1px:solid:black
    :font-size      :200px
    :text-transform :u
    :font-style     :italic
@@ -372,7 +403,7 @@ The example below will generate a data-representation of the css rule-set.
 (defclass headline
   {:top            0
    :left           0
-   :b              [[:1px :solid :black]]
+   :b              :1px:solid:black
    :fs             :200px
    :tt             :u
    :fs             :italic
@@ -474,11 +505,17 @@ The full list of predefined classes:
 ;; borders & outlines
 :.bordered
 :.outlined
+:.pill
 
 ;; type styling
 :.sans
 :.italic
 :.oblique
+:.uppercase
+:.lowercase
+:.capitalize
+:.full-width
+:.full-width-kana
 
 ;; type weight
 :.thin
@@ -490,6 +527,12 @@ The full list of predefined classes:
 :.bold
 :.extra-bold
 :.heavy
+
+;; cursor
+:.pointer
+
+;; transitions
+:.transition
 
 ;; psuedo-element helper
 :.content-blank
@@ -505,7 +548,7 @@ Detailed documentation on the above classes can be found [here](https://github.c
 You can apply classes conditionally within the `sx` macro using the following constructs: `if` `when` `cond` `if-let` `when-let` `if-not` `when-not`, and `case`.<br>
 ```Clojure
 ;; In your ns for shared styles
-(defclass active-link {:color :red})
+(defclass active-link :color--red)
 
 ;; In some other ns
 (defn link [opts]
@@ -517,13 +560,16 @@ You can apply classes conditionally within the `sx` macro using the following co
 ;; Somewhere else in your code, calling above component
 
 [link {:active? true}]
-; => [:a {:class ["_kushi_active-link" "_j7338" ]}]
+; => [:a {:class ["active-link" "_j7338" ]}]
 
-;; "_kushi_active-link" is the selector for your custom defclass.
+;; "active-link" is the selector for your custom defclass.
 ```
 The class to be returned cannot be nested. For example, the following will not work:
 ```Clojure
 ;; This will NOT work.
+
+(def foo true)
+
 (defn link [opts]
  [:a
   (sx (when (:active? opts)
@@ -572,17 +618,50 @@ When "stacking" other modifiers (such as psuedo-classes) in front of css props, 
 # Pseudos and Combo Selectors
 Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers:
 ```Clojure
-(sx :hover:c--blue
-    :>a:hover:c--red
-    :~a:hover:c--blue
-    :_a:hover:c--gold ; The "_" gets converted to " "
-    :&.my-class:hover:c--purple
-    :before:fw--bold
-    {:style {:before:content "\"*\""
-             "nth:child(2):c" :red}})
+[:div (sx 'foo
+          :.bar
+          :hover:c--blue       ;  .foo:hover     {color: blue}
+          :>a:hover:c--red     ;  .foo > a:hover {color: red}
+          :&_a:hover:c--gold   ;  .foo a:hover   {color: gold}
+          :&.bar:hover:c--pink ;  .foo.bar:hover {color: pink}
+          :before:fw--bold     ;  .foo::before   {font-weight: bold}
+          :before:mie--5px     ;  .foo::before   {margin-inline-end: 5px}
+          {:style {:before:content  "\"⌫\""
+                   "~a:hover:c"     :blue
+                   "nth:child(2):c" :red}})
+ [:span [:a "Erase"]]]
+```
+CSS resulting from the above example:
+```css
+.foo {
+  color: red;
+}
 
-;; The `:before:content` and `nth:child(2)` in the above
-;; example must both be expressed in the stylemap.
+.foo:hover {
+  color: blue;
+}
+
+.foo ~ a:hover {
+  color: blue;
+}
+
+.foo a:hover {
+  color: gold;
+}
+
+.foo::before {
+  font-weight: bold;
+  margin-inline-end: 5px;
+  content: "⌫";
+}
+
+.foo.my-class:hover {
+  color: turquoise;
+}
+
+.foo > a:hover {
+  color: red;
+}
 ```
 <br>
 
@@ -732,7 +811,7 @@ Relative to using vanilla css or sass, kushi will obviate the need to write your
 
 With kushi, elements in the DOM will have auto-generated class names. As a result, it can become difficult to quickly comprehend the source location when looking at elements in a browser inspector (such as Chrome DevTool Elements panel).
 
-During development builds, the `sx` macro will automatically attach a `data-cljs` attribute to the DOM element. The value of this is the file name, line number, and column number of the source. 
+During development builds, the `sx` macro will automatically attach a `data-cljs` attribute to the DOM element. The value of this is the file name, line number, and column number of the source.
 ```Clojure
 (ns myapp.core
   (:require
@@ -798,22 +877,18 @@ Below is a full map of all the options available:
 
  ;; Optionally prepend an ancestor element to selectors.
  ;; Useful for scoping.
- :ancestor :#my-target-div
+ :ancestor "#my-target-div"
 
- ;; Optional. If defined, AND an :ident value is supplied at
- ;; the `sx` call site, this will be used for classnames,
- ;; instead of auto-generated hash.
+ ;; Optional. If defined, AND an custom classname value (with a
+ ;; leading `-` char) is supplied at the `sx` call site, this will
+ ;; be concatenated to the locally supplied value and used for
+ ;; the classname, instead of an auto-generated name.
  :prefix "_my-prefix_"
 
  ;; Optional. If defined, this will be used as the prefix for
  ;; the classnames of shared styles (defined with defclass).
  ;; Defaults to nil
  :defclass-prefix "_my-shared-class-prefix_"
-
- ;; Optional. If defined, this will be used as the prefix for
- ;; the classnames of the predifined shared styles that ship with kushi.
- ;; Defaults to nil.
-  :atomic-class-prefix   "_my-atomic-class-prefix_"
 
  ;; Optional. If defined, this will be used as an attribute
  ;; name for attaching source file info to the rendered
@@ -836,6 +911,7 @@ Below is a full map of all the options available:
  :reporting-style :banner
 
  ;; Optional setting to silence the post-build report.
+ ;; Defaults to true.
  :post-build-report?  false
 }
 ```
@@ -845,7 +921,6 @@ Below is a full map of all the options available:
 :report-cache-update? true
 :reporting-style      :simple
 :warning-style        :banner
-:keyframes-prefix     nil
 :data-attr-name       nil
 :css-dir              nil
 :write-stylesheet?    true
@@ -855,10 +930,8 @@ Below is a full map of all the options available:
 <br>
 
 # Prefixing Options
-If you would like to prefix your generated classes with something other than an auto-generated string, you can make use of several kushi-specific properties in the attribute map that you pass to `sx`. These keys and values are only used by the macro at compile time and are removed in the attribute map that is returned by `sx`.
-
-The most common use case for this would be setting a global `:prefix` value, and then providing an `:ident` value (in the attr map) to some or all of your calls to `sx`.
-If you do this on a project-wide basis, you will need to make sure that your all your `:ident` values (or combos of `:ancestor` and `:ident`) are globally unique. The (kushi) compiler will warn you if you try to do this.
+The most common pattern for this would be setting a global `:prefix` value, and then providing a classname (with a leading `-` char) to some or all of your calls to `sx`.
+If you do this on a project-wide basis, you will need to make sure that your all your prefix+ident values are globally unique. The kushi) compiler will warn you if you try to do this.
 
 ```Clojure
 ;; In your kushi.edn map ...
@@ -866,7 +939,8 @@ If you do this on a project-wide basis, you will need to make sure that your all
 
 ;; In one of your component namespaces ...
 [:div
- (sx :c--red
+ (sx '-my-el
+     :c--red
      {:ident :my-el})]
 
 ;; The above example will return the following attribute map:
@@ -878,88 +952,27 @@ If you do this on a project-wide basis, you will need to make sure that your all
 ;;}
 ```
 
-Note that using an `:ident` property will only affect the selector name
-if you also have a value set for `:prefix` in your `kushi.edn` config.
-Otherwise, the `:ident` property will be ignored and you will just get
-an auto-generated selector. If you want to use a custom prefix
-a la carte, you can supply both `:prefix` and `:ident` locally to the attr
-map that you are passing to `sx`.
-
-
-You can also use an `:ancestor` and/or `:element` prop for further selector
-specicifity. The value of `:ancestor` has to match the id or class of one
-of the element's ancestors. The value of `:element` needs to be the same
-as the element that `sx` is being called within.
-
-```Clojure
-[:div
- (sx :c--red
-     {:ident :my-el
-      :ancestor :#myapp
-      :element :div})]
-
-;; The above would instead result the following css:
-;; #myapp div._mypfx__my-el {color: red;}
-```
-
-Another example:
+### Parents and ancestors
+Kushi provides special sugar in the form of `_&` and `<` to achieve further specificity when needed. This is super useful when you want to use styles that might change when, for example, a class is toggled or changed further up in the DOM
 ```Clojure
 (defn my-button [text]
   [:button
-   (sx :c--white
-       :bgi--none
-       :bgc--blue
-       :border-radius--5px
-       :cursor--pointer
-       {:on-click #(prn "clicked!")
-        :class [:my-other-class :some-other-class]
-        :name :my-button
-
-        ;; Prefix for selector construction.
-        ;; Overrides a global :prefix, if set.
-        :prefix "_foo_"
-
-        ;; If :ident is supplied, and you also set
-        ;; a global :prefix, (or set :prefix in this map)
-        ;; your selector will be constructed using both.
-        ;; => ._foo_bar
-        :ident :bar
-
-        ;; If :element is supplied, it will be put in front
-        ;; of your selector for more specicifity.
-        ;; => `button._foo_bar`
-        :element :button
-
-        ;; Ancestor selector for selector construction.
-        ;; Overrides a global :ancestor, if set.
-        ;; => #baz button._foo_bar
-        :ancestor :#baz
-        })
+   (sx 'barbaz
+       {:style {"section.foo_&:color" :blue   ;; applies when `section.dark` ancestor
+                "section.dark<:color" :white} ;; applies when `section.dark` parent
+        :on-click #(prn "clicked!"))
      text])
+
+```
+The above will write the following css:
+```css
+section.foo .barbaz {color: blue}
+section.dark > .barbaz {color: white}
 ```
 
 <br>
 
-# Runtime Injection
-For instantaneous previews when developing, all styling from `sx` and `defclass` calls are injected dynamically into the following 2 tags that are required to be in your `index.html` :
-```html
-<style type="text/css" id="_kushi-rules_shared_"></style>
-<style type="text/css" id="_kushi-rules_"></style>
-```
-See the [kushi-quickstart](https://github.com/paintparty/kushi-quickstart) template for an example of this setup.
 
-You can enable this for release builds:
-
-```Clojure
-;; Add this to config map in your kushi.edn file
-
-;; {...
-    :runtime-injection? true
-;;  ...}
-
-to your `kushi.edn`.
-```
-<br>
 
 # Useful Warnings
 Given the following:
@@ -991,6 +1004,8 @@ The browser console warning will provide you with file and line info.
 <br>
 
 # Defining Components
+
+### Primitive components
 The `kushi.gui/gui` function is available to help you create primitive, stateless, and reusable components. `gui` will return a function, the signature of which mirrors hiccup itself. The produced function expects an optional map of attributes, and any number of children, and returns a hiccup vector with a (deeply) merged attributes map.
 
 ```Clojure
@@ -1034,11 +1049,11 @@ Assuming your are using something like Reagent, you can use the resulting `butto
 
 ```
 
-If you were building out a design system, you would realistically do something more like this:
+If you were rolling your own design system, you might do something more like this:
 ```Clojure
 ;; Define a "base" template in hiccup.
-(def button*
-  [:button:
+(def button-base
+  [:button
    (sx
     {:style {:p      :0.5rem:1rem
              :b      :none
@@ -1048,12 +1063,13 @@ If you were building out a design system, you would realistically do something m
              :cursor :pointer}})]
 
 
-;; Then use `kushi.gui/gui` to define a set
+;; Then use `kushi.gui/gui` to define some
 ;; of primitive components:
 
 ;; A `primary-button` component
+;; This will merge the "decorator" attr on top of the base attributes
 (def primary-button
-  (gui button* (sx :c--white :bgc--black))
+  (gui button-base (sx :c--white :bgc--black))
 
 ;; A `minimal-button` component
 (def minimal-button
@@ -1062,8 +1078,82 @@ If you were building out a design system, you would realistically do something m
 
 ;; Somewhere in your app
 [primary-button "Learn more"]
-
 ```
+<br>
+
+### Complex components
+Below is an example of an idiomatically defined complex component. Such a component maintains the same hiccup-like signature as the primitive component in the example above. Additionaly, it enables the use of custom attributes as well as providing decorator style/attribute maps to "named" parts of the component.
+
+```Clojure
+(ns myapp.core
+  (:require
+   [kushi.core :refer [sx]]
+   [kushi.ui.core :refer [opts+children]]))
+
+(defn my-section
+  [& args]
+  (let [[opts attr & children]  (opts+children args)
+        {:keys [mylabel parts]} opts]
+    [:div
+     attr
+     (when mylabel
+       [:section (:label-foo parts) mylabel])
+     [:section (:body-baz parts) children]]))
+```
+
+This specific example above assumes the following:
+
+- The args list in the function definition must be variadic
+<br>
+- The optional attributes map may contain the custom attributes `:-header-label` and `:-parts`. The value of `:-parts` will be a map which may contain the entries `:label-foo` and `:body-baz`, the values of which are html attribute maps.
+
+The helper function `kushi.ui.core/opts+children` will pull any keys prefixed with `:-` out of the attributes map and into a user `opts` map. `opts+children` always returns a vector in the form of `[user-opts attr child & more-childs]`
+
+
+```Clojure
+[my-section
+ (sx
+  {:on-click      #(prn "click")
+   :id            :my-id
+   :-mylabel      "My header label"
+   :-parts        {:label-foo (sx :fw--bold :c--blue)
+                   :body-baz  (sx :p--1rem :bgc--aliceblue)}})
+ [:section "Child 1"]
+ [:p "Child 2"]
+ [:button "Child 3"]]
+```
+
+Below is a slightly more complex version of the above component. Here, we are supplying default styling to each of the "parts", all of which are individually decoratable by the consumer of the component.
+```Clojure
+(defn my-section
+  [& args]
+  (let [[opts attr & children]       (opts+children args)
+        {:keys [header-label parts]} opts]
+    [:div
+      (merge-with-style (sx 'my-section-wrapper:ui
+                            :b--1px:solid:black)
+                        (:header parts))
+     [:section
+      (merge-with-style (sx 'my-section-label:ui
+                            :fs--1.5rem)
+                        (:header parts))
+      header-label]
+     [:section
+      (merge-with-style (sx 'my-section-body:ui
+                            :fs--0.8rem
+                            :bgc--#efefef)
+                        (:body parts))
+      children]]))
+```
+ Note the use of the `*:ui` directive affixed to the user-supplied classnames to `sx`. This `:ui` syntax is removed from the resulting classname, but its use here is crucial when defining reusable components. It ensures that user-supplied (the classes in) decorators will take precedence. If for some reason you are styling parts within a reusable component and you want the classname to be auto-generated, you can apply the *:ui directive like so:
+
+```Clojure
+(sx :fs--0.8rem
+    :bgc--#efefef
+    {:ui? true})
+```
+
+
 <br>
 <br>
 
@@ -1086,6 +1176,6 @@ See the [kushi-quickstart](https://github.com/paintparty/kushi-quickstart) templ
 
 # License
 
-Copyright © 2021 Jeremiah Coyle
+Copyright © 2021-2022 Jeremiah Coyle
 
 Distributed under the EPL License. See LICENSE.
