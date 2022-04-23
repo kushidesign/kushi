@@ -8,6 +8,7 @@
    [kushi.ansiformat :as ansiformat]
    [kushi.utils :as util :refer [keyed]]
    [kushi.specs :as specs]
+   [kushi.state :as state]
    ))
 
 ;; Build report messages ---------------------------------------------------------------
@@ -170,7 +171,8 @@
       (:selected-ns-msg @to-be-printed)
       (when report-line-items-pre (remove nil? [(when banner? "\n") writing-to-css-msg (when banner? "\n")]))
       report-line-items-pre
-      cache-report))))
+      cache-report))
+    #_(println "Number of rules served from cache: " @state/cached-sx-rule-count "\n")))
 
 (defn report! [ns msg]
  (println (str "\n" (ansi/red "[") (ansi/blue ns) (ansi/red "]") msg "\n")))

@@ -65,8 +65,14 @@
 ;; Used to keep track of @font-face declarations which are used.
 (def user-defined-font-faces (atom []))
 
-;; Used to keep track of css custom properties which are added by themes or ala carte.
-(def custom-properties (atom []))
+;; Used to keep track of global design tokens (css custom properties) which are added by themes or ala carte.
+(def global-tokens (atom []))
+
+;; Used to keep track of alias design tokens (css custom properties) which are added by themes or ala carte.
+(def alias-tokens (atom []))
+
+;; Used to keep track of design tokens (css custom properties) which are actually used.
+(def used-tokens (atom []))
 
 (defonce garden-vecs-state-init
   (reduce (fn [acc [k mq]] (assoc acc mq {}))
@@ -82,8 +88,17 @@
 ;; Used to keep track of all the component styles.
 (def garden-vecs-state (atom garden-vecs-state-init))
 
-(defn add-custom-property! [var]
-  (swap! custom-properties conj var) )
+(def cached-sx-rule-count (atom 0))
+
+
+(defn add-global-token! [var]
+  (swap! global-tokens conj var))
+
+(defn add-alias-token! [var]
+  (swap! alias-tokens conj var))
+
+(defn add-used-token! [var]
+  (swap! alias-tokens conj var))
 
 (defn add-styles!
   ([coll type*]
@@ -98,6 +113,7 @@
            (swap! state assoc media-queries new-val))
          (swap! state assoc :rules (conj (:rules @state) x)))))))
 
+;; TODO - refactor all this stuff into single atom?
 (defn reset-build-states! []
   (reset! user-defined-keyframes {})
   (reset! user-defined-font-faces [])
@@ -105,12 +121,15 @@
   (reset! garden-vecs-state garden-vecs-state-init)
   (reset! garden-vecs-state-components garden-vecs-state-init)
   (reset! garden-vecs-state-theme garden-vecs-state-init)
-  (reset! custom-properties [])
+  (reset! global-tokens [])
+  (reset! alias-tokens [])
+  (reset! used-tokens [])
   (reset! kushi-atomic-user-classes atomic/kushi-atomic-combo-classes)
   (reset! ordered-defclasses [])
   (reset! atomic-declarative-classes-used [])
   (reset! defclasses-used [])
-  (reset! defclasses+atomics-used {}))
+  (reset! defclasses+atomics-used {})
+  (reset! cached-sx-rule-count 0))
 
 (defonce styles-cache-current
   (let [styles-cache-disc (when (:__enable-caching?__ user-config)
@@ -131,8 +150,7 @@
     :cached    {...}}"
   [k & more]
   (let [caching?  (:__enable-caching?__ user-config)
-        cache-key (when caching?
-                    (apply conj [k user-config-args-sx-defclass] more))
+        cache-key (hash (apply conj [k user-config-args-sx-defclass] more))
         cached    (when caching? (get @styles-cache-updated cache-key))]
     {:caching?  caching?
      :cache-key cache-key

@@ -5,6 +5,7 @@
    [clojure.walk :as walk]
    [kushi.defs :as defs]
    [par.core :refer [? !? ?+ !?+]]
+   [kushi.cssvarspecs :as cssvarspecs]
    [kushi.scales :refer [scales scaling-map]]
    [kushi.config :refer [user-config]]))
 
@@ -15,7 +16,8 @@
             vals# (list ~@ks)]
         (zipmap keys# vals#))))
 
-(defn auto-generated-hash []
+
+(defn auto-generated-selector []
   (let [rando-a-z (char (+ (rand-int 25) 97))
         hash (string/replace (str (gensym)) #"^G__" (str "_" (str rando-a-z)))]
     hash))
@@ -97,10 +99,20 @@
   ([x suffix]
    (str "var(--" (sanitize-for-css-var-name (name x)) ")" suffix)))
 
+(defn hashed-css-var
+  [selector* css-prop]
+  (let [hashed-name    (hash (str selector* css-prop))]
+    (str "--" hashed-name)))
+
+;; TODO - safe to remove?
 (defn css-var-for-sexp [selector* css-prop]
-  (let [sanitized-name (-> css-prop
+  (let [hashed-name    (hash (str selector* css-prop))]
+    (str "--" hashed-name))
+  #_(let [sanitized-name (-> css-prop
                            (string/replace  #":" "_")
-                           sanitize-for-css-var-name)]
+                           sanitize-for-css-var-name)
+        hashed-name    (hash (str selector* css-prop))]
+    (?+ hashed-name)
     (str "--"
          selector*
          "_"
@@ -110,48 +122,58 @@
   [x selector* prop]
   #_(?+ "css-var-string-!important" (css-var-string (second x) "!important"))
   (if (list? (second x))
-    (str "var(" (css-var-for-sexp selector* prop) ")!important")
+    (str "var(" (hashed-css-var selector* prop) ")!important")
     (css-var-string (second x) "!important")))
 
 (defn !important-var? [x] (and (list? x) (= '!important (first x))))
 
+(defn wrap-css-var [x] (str "var(" (name x) ")"))
+
 (defn process-sexp [sexp selector* css-prop]
   (walk/postwalk
    (fn [x]
-     (cond (cssfn? x) (cssfn x)
-           (!important-var? x) (css-var-string-!important x selector* css-prop)
-           :else x))
+     (cond
+       (cssfn? x)
+       (cssfn x)
+
+       (!important-var? x)
+       (css-var-string-!important x selector* css-prop)
+
+       (s/valid? ::cssvarspecs/css-var-name x)
+       (wrap-css-var x)
+
+       :else x))
    sexp))
 
 (defn process-value
   [v hydrated-k selector*]
-   #_(? :process-value v)
-   (cond
-     (symbol? v)
-     (str "var(--" (name v) ")")
+  (!? :process-value v)
+  (cond
+    (s/valid? ::cssvarspecs/css-var-name v)
+    (wrap-css-var v)
 
-     (and (string? v) (re-find #"[\da-z]+\*$" v))
-     (let [scale-system (or (:scaling-mode user-config) :tachyons)
-           scale-key (string/replace v #"\*$" "")
-           css-val (get (some-> scales
-                                scale-system
-                                (get (hydrated-k scaling-map)))
-                        scale-key nil)]
-       (when css-val css-val))
+    (and (string? v) (re-find #"[\da-z]+\*$" v))
+    (let [scale-system (or (:scaling-mode user-config) :tachyons)
+          scale-key (string/replace v #"\*$" "")
+          css-val (get (some-> scales
+                               scale-system
+                               (get (hydrated-k scaling-map)))
+                       scale-key nil)]
+      (when css-val css-val))
 
-     (or (numeric-string? v) (number? v))
-     (convert-number (str v) hydrated-k)
+    (or (numeric-string? v) (number? v))
+    (convert-number (str v) hydrated-k)
 
-     (cssfn? v)
-     (cssfn v)
+    (cssfn? v)
+    (cssfn v)
 
-     (list? v)
-     (process-sexp v selector* hydrated-k)
+    (list? v)
+    (process-sexp v selector* hydrated-k)
 
-     (vector? v)
-     (mapv #(process-value % hydrated-k selector*) v)
+    (vector? v)
+    (mapv #(process-value % hydrated-k selector*) v)
 
-     :else v))
+    :else v))
 
 (defn deep-merge [& maps]
   (apply merge-with (fn [& args]
@@ -312,5 +334,5 @@
 
 (defn maybe-wrap-css-var [x]
   (if (token? x)
-    (str "var(" x ")")
+    (str "var(" (name x) ")")
     x))

@@ -3,7 +3,7 @@
   (:require
    [clojure.string :as string]
    [kushi.config :refer [user-config]]
-   [kushi.utils :as util :refer [auto-generated-hash keyed]]))
+   [kushi.utils :as util :refer [auto-generated-selector keyed]]))
 
 (defn nsqkw->selector-friendly [s]
   (-> (str s)
@@ -18,8 +18,10 @@
            ancestor
            kushi-class
            defclass-name
+           cache-key
            atomic-class?] :as m}]
-  (let [hash                          (auto-generated-hash)
+  (let [autogen                       (auto-generated-selector)
+        ;; autogen                          (str "_" cache-key)
         {global-ancestor :ancestor
          global-prefix :prefix}       user-config
         prefix                        (or prefix global-prefix)
@@ -37,7 +39,7 @@
                                         (nsqkw->selector-friendly (str shared-class-prefix defclass-name))
                                         (if prefixed-names-for-selectors?
                                           prefixed-name-for-el
-                                          hash))
+                                          autogen))
         use-ancestor-prefix?          (if defclass-name
                                         (:prefix-ancestor-to-defclass? user-config)
                                         (not (nil? ancestor)))
@@ -50,14 +52,13 @@
                                        :prefixed-name prefixed-name-for-el}]
 
     #_(? 'kushi.selector/selector-name (keyed m ret))
-    
     #_(when (= defclass-name :exp)
       (?+
        {:ident ident
         :prefix prefix
         :defclass-name defclass-name
         :prefixed-names-for-selectors? prefixed-names-for-selectors?
-        :hash hash
+        :autogen autogen
         :selector selector
         :selector* selector*}))
     ret))

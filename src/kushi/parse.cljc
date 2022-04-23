@@ -5,12 +5,12 @@
    [clojure.spec.alpha :as s]
    [kushi.state :as state]
    [kushi.specs :as specs]
+   [kushi.cssvarspecs :as cssvarspecs]
    [kushi.shorthand :as shorthand]
    [kushi.defs :as defs]
    [kushi.config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]
-  ;;  [par.core :refer [? !? ?+ !?+]]
-   ))
+   [par.core :refer [? !? ?+ !?+]] ))
 
 (defn derefed? [x]
   (s/valid? ::specs/derefed x))
@@ -57,13 +57,16 @@
 
 (defn css-vars-map
   [extracted-vars]
+  (!?+ :css-vars-map:extract-vars extracted-vars)
   (let [ret (reduce
              (fn [acc v]
                (cond
                  (and (map? v) (= :logic (:val-type v)))
-                 (let [{:keys [selector* __logic css-prop]} v
-                       k (util/css-var-for-sexp selector* css-prop)
-                       v (util/process-sexp __logic selector* css-prop)]
+                 (let [{:keys [selector*
+                               __logic
+                               css-prop]} v
+                       k                  (util/css-var-for-sexp selector* css-prop)
+                       v                  (util/process-sexp __logic selector* css-prop)]
                    (assoc acc k v))
 
                  (and (map? v) (= :derefed (:val-type v)))
@@ -77,11 +80,13 @@
                         v)))
              {}
              extracted-vars)]
+
+    (!?+ :css-vars-map:ret ret)
     ret))
 
 (defn css-vars
   [styles selector*]
-  #_(?+ 'css-vars:input (keyed styles selector*))
+  (!?+ :css-vars:input (keyed styles selector*))
   (let [ret (some->> styles
                      (filter vector?)
                      (map (partial extract-vars selector*))
@@ -89,16 +94,14 @@
                      (remove nil?)
                      distinct
                      css-vars-map)]
-    #_(?+ 'css-vars:ret ret)
+    (!?+ :css-vars:ret ret)
     ret))
 
-(defn scoped-class-syntax? [x]
-  (and (keyword? x)
-       (re-find #"\.-?[_a-zA-Z]+[_a-zA-Z0-9-\\/]*" (name x))))
 
 (defn atomic-user-class [k]
   (when (keyword? k)
     (get @state/kushi-atomic-user-classes k)))
+
 
 (defn +vars [styles* selector*]
   (map
@@ -111,6 +114,7 @@
 
            (symbol? val)
            [prop (util/css-var-string val)]
+
 
            (list? val)
            (cond
@@ -215,20 +219,40 @@
        coll))
 
 
+;; TODO move somewhere else?
+(defn add-used-token! [v]
+  (let [kw    (keyword v)
+        val   (or (->> @state/alias-tokens (into {}) kw)
+                  (->> @state/global-tokens (into {}) kw))
+        used? (when val (->> @state/used-tokens (into {}) kw))]
+    (!?+ :kushi.arguments/style-kw-with-cssvar->tuple
+       {"css var from sx or defclass" kw
+        "resolved value from global or alias tokens" val
+        "already used?" used?})
+    (!?+ (when (and val (not used?))
+          (when-not used?
+            (swap! state/used-tokens conj [kw val]))))))
+
 (defn hydrate-css
   [{css-prop :css-prop val* :val :as m} selector*]
-  #_(?+ "hydrate-css" {:m m})
+  (!?+ "hydrate-css" {:m m})
   (if (and css-prop val)
-    (let [hydrated-css-prop-kw (shorthand/key-sh (if (string? css-prop) (keyword css-prop) css-prop))
-          val (if (or (string? val*) (keyword? val*))
-                 (parse-sh-value {:hydrated-k (name hydrated-css-prop-kw)
-                                  :k css-prop}
+    (let [prop (shorthand/key-sh (if (string? css-prop) (keyword css-prop) css-prop))
+          val  (if (or (string? val*) (keyword? val*))
+                 (parse-sh-value {:hydrated-k (name prop)
+                                  :k          css-prop}
                                  (name val*))
                  val*)
-          val+ (util/process-value val hydrated-css-prop-kw selector*)]
-      #_(? "hydrate-css" {:val* val* :val val :val+ val+})
+          val+ (util/process-value val prop selector*)]
 
-      (assoc m :css-prop (name hydrated-css-prop-kw) :val val+))
+      (!? "hydrate-css" {:val  val
+                        :val+ val+})
+
+      ;; TODO move this somewhere else
+      (when (s/valid? ::cssvarspecs/wrapped-css-var-name val+)
+        (add-used-token! (keyword val)))
+
+      (assoc m :css-prop (name prop) :val val+))
     m))
 
 (defn format-combo [s]
@@ -250,6 +274,8 @@
   ;; Example: :nth-child(3) => :nth-child
   (let [k      (some-> s (string/replace #"\(.*\)$" "") keyword)
         has*re #"^has\((ancestor|parent)\((.+)\)\)"]
+    #_(?+ "format-mod" {:mods&prop mods&prop
+                      :s s})
     (cond
       (contains? defs/pseudo-classes k)
       (str ":" s)
@@ -265,9 +291,18 @@
       (= s "dark")
       " _.dark_"
 
+      ;; parent or ancestor selector via "has(parent(...))"
       (re-find has*re s)
       (let [[_ type x] (re-find has*re s)]
         {:type (keyword type) :x x})
+
+      ;; parent selector via tokenized kw such as: "div.foo>:color--red"
+      (re-find #"^.+<$" s)
+      {:type :parent :x (string/join "" (drop-last s))}
+
+      ;; ancestor selector via tokenized kw such as: "div.foo>:color--red"
+      (re-find #"^.+_&$" s)
+      {:type :ancestor :x (string/join "" (drop-last 2 s))}
 
       :else
       ;; For reporting bad modifier to user
@@ -294,20 +329,24 @@
         mq              (when-not (empty? mods*) (specs/find-with (first mods*) specs/mq-re))
         formatted-mods* (keep (partial format-mod mods&prop) (if mq (rest mods*) mods*))
         formatted-mods  (filter string? formatted-mods*)
-        ancestor*      (keep #(when (map? %) (str (:x %) (when (= :parent (:type %)) " >") " ")) formatted-mods*)
+        ancestor*      (keep #(when (map? %)
+                                (str (:x %) (when (= :parent (:type %)) " >") " "))
+                             formatted-mods*)
         ancestor       (coll->str ancestor*)
         mods            (if ancestor
                           {:ancestor ancestor :mods (coll->str formatted-mods)}
                           (coll->str formatted-mods))
         ]
 
-#_(when (state/debug?)
+#_(when true #_(state/debug?)
   (?+ "mods&prop->map" {
                         ;; :mods&prop      mods&prop
                         ;; :mods*          mods*
                         :mods           mods
                         :ancestor      ancestor
-                        :formatted-mods formatted-mods}))
+                        :formatted-mods formatted-mods
+                        :formatted-mods* formatted-mods*
+                        }))
     (into {}
           (filter (comp some? val)
                   {:mods      mods
@@ -324,9 +363,8 @@
           m2*             (mods&prop->map mods&prop)
           m2              (if val (assoc m2* :val val) m2*)
           hydrated        (hydrate-css m2 selector*)]
-
-      #_(when (state/debug?)
-        (?+ "->token" (keyed mods&prop val m2* m2 hydrated)))
+      (when true #_(state/debug?)
+        (!?+ "->token" (keyed mods&prop val m2* m2 hydrated)))
       hydrated)))
 
 (defn reduce-styles

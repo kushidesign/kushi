@@ -22,8 +22,8 @@
 
 (defn initialize-style-tags!
   []
-  (doseq [val (vals sheets/sheet-ids-by-type)]
-    (insert-style-tag! val)))
+  (doseq [kw sheets/sheet-types-ordered ]
+    (insert-style-tag! (kw sheets/sheet-ids-by-type))))
 
 (initialize-style-tags!)
 
@@ -37,7 +37,7 @@
 
 ;; Flushes #_kushi-rules-shared_ or #_kushi-rules_ stylesheets during development builds.
 #_(def sheet-ids-by-type
-  {:custom-properties       "_kushi-rules-custom-properties_"
+  {:global-tokens       "_kushi-rules-global-tokens_"
    :kushi-atomic            "_kushi-rules-utility_"
    :defclass                "_kushi-rules-shared_"
    :theme                   "_kushi-rules-theme_"
@@ -100,8 +100,8 @@
         (when-let [sheet-id (classtype sheets/sheet-ids-by-type)]
           (inject-css* css-rules sheet-id))))))
 
-(defn inject-custom-properties! [css]
-  (inject-css* [css] (:custom-properties sheets/sheet-ids-by-type)))
+(defn inject-design-tokens! [css inj-type]
+  (inject-css* [css] (inj-type sheets/sheet-ids-by-type)))
 
 ;; cssfn (helper fn for use inside calls to sx macro)  ---------------------------------------------------------
 (defn cssfn? [x]
