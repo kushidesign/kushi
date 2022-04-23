@@ -92,7 +92,6 @@
     :.relative
     :.transition
     :.flex-row-c
-    :fs--1rem
     :ta--center
     :d--ib
     :ai--c)])

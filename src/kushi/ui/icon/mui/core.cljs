@@ -12,13 +12,16 @@
 (inject-stylesheet {:rel "stylesheet"
                     :href "https://fonts.googleapis.com/css2?family=Material+Icons"})
 
-
 (def mui-icon-span
   [:span
    (sx
-    'kushi-mui-icon-font:ui
+    'kushi-mui-icon:ui
     :.transition
-    :.material-icons)])
+    :.material-icons
+    {:style {
+            ;;  "has(ancestor(.kushi-icon)):fs" "var(--mui-icon-relative-font-size)"
+             :&.material-icons:fs "var(--mui-icon-relative-font-size)"
+             }})])
 
 (defcom mui-icon
   (conj icon-base mui-icon-span))

@@ -14,11 +14,11 @@
 
 
 ;; TODO put backin component when you get hashed vars working
-(defclass ^:kushi-override hide-when-expanded
-  {"has(parent([aria-expanded='true'])):display" "none"})
+;; (defclass ^:kushi-override hide-when-expanded
+;;   {"has(parent([aria-expanded='true'])):display" "none"})
 
-(defclass ^:kushi-override show-when-expanded
-  {"has(parent([aria-expanded='true'])):display" "block"})
+;; (defclass ^:kushi-override show-when-expanded
+;;   {"has(parent([aria-expanded='true'])):display" "block"})
 
 (defn header-title
   [{:keys [label
@@ -46,23 +46,20 @@
    [:<>
     [:span
      (sx
-      :.hide-when-expanded
+      'kushi-collapse-header-label-collapsed:ui
       :.flex-row-fs
       :w--100%
-      {:prefix :kushi-
-       :ident  :collapse-header-label-collapsed
-       :base?  true})
+      {:style {"has(parent([aria-expanded='true'])):display" :none}})
      (if (string? label)
        [header-title opts]
        label)]
     [:span
-     (sx :.show-when-expanded
+     (sx 'kushi-collapse-header-label-expanded:ui
          :.flex-row-fs
          :w--100%
          :d--none
-         {:prefix :kushi-
-          :ident  :collapse-header-label-expanded
-          :base?  true})
+         {:style {"has(parent([aria-expanded='true'])):display" :block}
+          })
      (if (string? label-expanded)
        [header-title (assoc opts :label label-expanded :icon icon-expanded)]
        label-expanded)]]))

@@ -5,6 +5,7 @@
   (:require
    [kushi.core :refer (merged-attrs-map merge-with-style)]
    [kushi.gui :refer (gui)]
+   [kushi.ui.scaling :refer [icon-margin icon-font-size]]
    [kushi.ui.tooltip.core :refer (tooltip-mouse-leave tooltip-mouse-enter)]
    [par.core :refer [? !? ?+ !?+]]))
 
@@ -22,15 +23,15 @@
              :h                          :fit-content
              :w                          :fit-content
             ;;  :fs                         "var(--text-medium)"
-             :&_.kushi-mui-icon-font:fs  "var(--text-medium)"
+            ;;  :&_.kushi-icon:fs           :1.1875em #_"var(--mui-icon-medium-font-size)"
              :m                          0
              :p                          0
-             :line-height                1
+             :line-height                :normal
              :>span:d                    :flex
              :>span:jc                   :center
              :>span:ai                   :center
-             :&_.kushi-label-text+.kushi-icon:mis "calc(var(--text-medium) / 5)"
-             :&_.kushi-icon+.kushi-label-text:mis "calc(var(--text-medium) / 5)"
+             :&_.kushi-label-text+.kushi-icon:mis "var(--mui-icon-margin-inline-ems)"
+             :&_.kushi-icon+.kushi-label-text:mis "var(--mui-icon-margin-inline-ems)"
              :bgi                        :none
              }}) )
 

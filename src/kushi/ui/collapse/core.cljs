@@ -97,7 +97,7 @@
        :on-click      on-click
        :prefix        :kushi-
        :ident         :collapse-header
-       :base?         true
+       :ui?         true
        })]))
 
 (defn get-attr [m k] (some-> m :parts k first))
