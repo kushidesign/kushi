@@ -3,6 +3,7 @@
    [kushi.config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]
    [kushi.shorthand :as shorthand]
+   [kushi.state :as state]
    [kushi.utils :as util]
    [clojure.string :as string]
    [par.core    :refer [? !? ?+ !?+]]))
@@ -152,17 +153,15 @@
 
      ;; Intended for css props: font-size
      :--text-mini       :0.75rem
-     :--text-small      :0.9rem
+     :--text-small      :0.875rem
      :--text-medium     :1rem
-     :--text-large      :1.222rem
-     :--text-huge       :1.7rem
+     :--text-large      :1.25rem
+     :--text-xlarge     :1.5rem
+     :--text-huge       :2.25rem
 
      ;;  Material UI icons
-     :--mui-icon-mini   :1rem
-     :--mui-icon-small  :1.25rem
-     :--mui-icon-medium :1.7rem
-     :--mui-icon-large  :2.1875rem
-     :--mui-icon-huge   :2.75rem
+     :--mui-icon-relative-font-size :inherit
+     :--mui-icon-margin-inline-ems :0.333em
 
      ;; Intended for css props: border-radius
      :--rounded         :0.3rem
@@ -176,13 +175,13 @@
      :--timing-ease-in-curve "cubic-bezier(.8, .2, .6, 1)"
      :--timing-ease-in-out-curve "cubic-bezier(0.4, 0, 0.2, 1)"
 
-     :--duration-0 :0ms
-     :--duration-50  :50ms
-     :--duration-100 :100ms
-     :--duration-200 :200ms
-     :--duration-300 :300ms
-     :--duration-400 :400ms
-     :--duration-500 :500ms
+     :--duration-instant :0ms
+     :--duration-fast  :100ms
+     :--duration-normal :200ms
+     :--duration-slow :500ms
+     :--duration-extra-slow :1s
+     :--duration-super-slow :2s
+     :--duration-ultra-slow :4s
      })
 
   (def alias-tokens
@@ -233,8 +232,6 @@
      :--positive500 :--green500
      :--positive600 :--green600
      :--positive700 :--green700
-     :--white       :--white
-     :--black       :--black
      :--mono100     :--white
      :--mono200     :--gray50
      :--mono300     :--gray100
@@ -246,42 +243,51 @@
      :--mono900     :--gray700
      :--mono1000    :--black })
 
-(defn icon-margin [k]
- (str "calc(var(--text-" (name k) ") / 5)")  )
-
 (def overrides
   (merge
-   (compound-override
-    [[:&_.kushi-label-text+.kushi-icon:mis
-      :&_.kushi-icon+.kushi-label-text:mis]
-     [:fs
-      :&.kushi-icon>*:fs
-      :&_.kushi-icon>*:fs]
-     ]
-    {:mini   [(icon-margin :mini) :--text-mini]
-     :small  [(icon-margin :small) :--text-small]
-     :medium [(icon-margin :medium) :--text-medium]
-     :large  [(icon-margin :large) :--text-large]
-     :huge   [(icon-margin :huge) :--text-huge]})
+   #_(compound-override
+    [
+    ;;  [:&_.kushi-label-text+.kushi-icon:mis
+    ;;   :&_.kushi-icon+.kushi-label-text:mis]
+     :fs
+     #_[:&.kushi-icon&_*:fs
+      :&_.kushi-icon&_*:fs]]
+    {:mini   [#_:--mui-icon-mini-margin-inline :--text-mini #_:--mui-icon-mini-font-size]
+     :small  [#_:--mui-icon-margin-inline :--text-small #_:--mui-icon-small-font-size]
+     :medium [#_:--mui-icon-margin-inline :--text-medium #_:--mui-icon-medium-font-size]
+     :large  [#_:--mui-icon-margin-inline :--text-large #_:--mui-icon-large-font-size]
+     :xlarge  [#_:--mui-icon-margin-inline :--text-xlarge #_:--mui-icon-large-font-size]
+     :huge   [#_:--mui-icon-margin-inline :--text-huge #_:--mui-icon-huge-font-size]})
 
    {
-    ;; typography
+    ;; Type sizing
+    :mini   {:fs :--text-mini}
+    :small  {:fs :--text-small}
+    :medium {:fs :--text-medium}
+    :large  {:fs :--text-large}
+    :xlarge {:fs :--text-xlarge}
+    :huge   {:fs :--text-huge}
+
+    ;; Type weight
     :thin   {:fw :--text-thin}
     :light  {:fw :--text-light}
     :normal {:fw :--text-normal}
     :bold   {:fw :--text-bold}
 
-    ;; animations
-    :transition {:transition-property        :all
-                 :transition-timing-function :--timing-linear-curve
-                 :transition-duration        :--duration-200}
+    ;; Animations
+    :instant {:transition-duration :--duration-instant }
+    :fast {:transition-duration :--duration-fast }
+    :slow {:transition-duration :--duration-slow }
+    :extra-slow {:transition-duration :--duration-extra-slow }
+    :super-slow {:transition-duration :--duration-super-slow }
+    :ultra-slow {:transition-duration :--duration-ultra-slow }
 
-    ;; surfaces, buttons, containers
+    ;; Surfaces, buttons, containers
     :rounded {:border-radius :--rounded}
     :sharp {:border-radius 0}
     :elevated {:box-shadow :--elevated}
 
-    ;; buttons, tags, & labels
+    ;; Buttons, tags, & labels
     :primary           {:c         :--primary-b
                         :bgc       :--primary
                         :hover:bgc :--gray400}
@@ -303,7 +309,7 @@
     :minimal           {:bgc :transparent
                         :p   0}
 
-    ;; buttons
+    ;; Buttons
     :link      {:>span:p   0
                 :td        :u
                 :tup       :u
@@ -421,7 +427,9 @@
 (defn theme-by-compo-inner
   [kushi-compo acc [variant stylemap*]]
   (let [flat     (mapv (fn [[css-prop css-val]]
-                         (let [prop (-> css-prop name (string/replace #"dark:" "has(ancestor(.dark)):"))]
+                         (let [prop (-> css-prop
+                                        name
+                                        (string/replace #"dark:" "has(ancestor(.dark)):"))]
                            [prop (coll->var kushi-compo variant css-prop css-val)]))
                        stylemap*)
         toks     (resolve-tokens flat alias-tokens global-tokens)
@@ -494,7 +502,9 @@
         vars              (concat vars* override-toks)
         toks              (->> [:global :alias :kushi-ui]
                                (map #(vars-by-type vars %))
-                               (apply concat))
-        global+alias-toks (apply concat (map #(sort-by first %) [global-tokens alias-tokens]))
+                               (apply concat)
+                               #_(into []))
+        [global-toks
+         alias-toks]      (map #(sort-by first %) [global-tokens alias-tokens])
         overrides         (varize-overrides overrides)]
-    (keyed styles toks global+alias-toks overrides)))
+    (keyed styles toks global-toks alias-toks overrides)))
