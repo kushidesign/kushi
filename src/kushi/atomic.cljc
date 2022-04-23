@@ -2,9 +2,9 @@
   (:require
    [par.core :refer [? ?+]]
    [kushi.selector :as selector]
-   [kushi.utils :refer [auto-generated-hash]]))
+   [kushi.utils :refer [auto-generated-selector]]))
 
-(defonce defclass-hash (auto-generated-hash))
+(defonce defclass-hash (auto-generated-selector))
 
 (defn flex-atomic [fd]
   (reduce
@@ -108,7 +108,12 @@
     :absolute-centered   {:position  :absolute
                           :top       "50%"
                           :left      "50%"
-                          :transform "translate(-50%, -50%)"}})
+                          :transform "translate(-50%, -50%)"}
+
+   ;Combonatorial transition utility
+    :transition          {:transition-property        :all
+                          :transition-timing-function "cubic-bezier(0 0 1 1)"
+                          :transition-duration        :200ms}})
 
 (defonce declarative-classes
   (merge
