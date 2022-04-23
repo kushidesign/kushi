@@ -12,7 +12,8 @@
    [kushi.utils :as util]
    [par.core :refer [? !? ?+ !?+]]
    [kushi.atomic :as atomic]
-   [kushi.reporting :as reporting]))
+   [kushi.reporting :as reporting]
+   [medley.core :as medley]))
 
 ;TODO move this to utils
 (defmacro keyed [& ks]
@@ -73,20 +74,29 @@
 (def license-comment-header
   (str "/*! kushi v" version " | EPL License | https://github.com/paintparty/kushi */"))
 
-(defn custom-properties-css [{:keys [toks pretty-print?]}]
-  (let [gvecs [(into [] (cons ":root" (map (fn [[prop val]] {prop (util/maybe-wrap-css-var val)}) toks)))]]
+(defn design-tokens-css
+  [{:keys [toks pretty-print?]}]
+  (let [gvecs (->> toks
+                   (mapv (fn [[prop val]] {prop (util/maybe-wrap-css-var val)}))
+                   (cons ":root")
+                   (into [])
+                   vector)]
     (garden/css {:pretty-print? pretty-print?} gvecs)))
 
-(defn append-custom-properties!
-  [{:keys [css-text to-be-printed pretty-print?]}]
-  (let [custom-properties-count (count @state/custom-properties)]
-    (swap! to-be-printed assoc :custom-properties-count custom-properties-count)
-    (when (pos-int? custom-properties-count)
+(defn append-tokens!
+  [{:keys [token-type] :as m}]
+  (let [toks  (case token-type
+                :global @state/global-tokens
+                :alias @state/alias-tokens
+                [])
+        count (if (seq toks) (count toks) 0)
+        k     (-> token-type name (str  "-tokens-count") keyword)]
+    (swap! (:to-be-printed m) assoc k count)
+    (when (pos-int? count)
       (append-css-chunk!
-       {:css-text css-text
-        :comment  "CSS custom properties"
-        :content  (custom-properties-css {:toks @state/custom-properties :pretty-print? pretty-print?})})
-      (reset! state/user-defined-font-faces []))))
+       {:css-text (:css-text m)
+        :comment  (str (name token-type) " design tokens")
+        :content  (design-tokens-css (assoc m :toks toks))}))))
 
 (defn append-at-font-face!
   [{:keys [css-text to-be-printed]}]
@@ -96,8 +106,7 @@
       (append-css-chunk!
        {:css-text css-text
         :comment  "Font faces"
-        :content  (string/join "\n" @state/user-defined-font-faces)})
-      (reset! state/user-defined-font-faces []))))
+        :content  (string/join "\n" @state/user-defined-font-faces)}))))
 
   (defn defkeyframes->css [[nm frames]]
     (str "@keyframes "
@@ -120,7 +129,7 @@
        {:css-text css-text
         :comment  "Animation Keyframes"
         :content  (all-defkeyframes-content)})
-      (reset! state/user-defined-keyframes {}))))
+      #_(reset! state/user-defined-keyframes {}))))
 
 (defn count-mqs-rules [mqs]
   (count (apply concat (map #(some-> % :value :rules) mqs))))
@@ -250,28 +259,22 @@
       (swap! to-be-printed assoc :select-ns-msg select-ns-msg))
 
     (when write-styles?
-      (append-custom-properties! m)
+      (append-tokens! (assoc m :token-type :global))
+      (append-tokens! (assoc m :token-type :alias))
       (append-at-font-face! m)
       (append-defkeyframes! m)
-
       (append-defclasses! state/atomic-declarative-classes-used
                           (merge m {:classtype :kushi-atomic
                                     :comment-base "Kushi base utility/"}))
-
       (append-defclasses! state/defclasses-used
                           (merge m {:classtype :defclass
                                     :comment-base "User-defined, shared utility/"}))
-
       (append-theme-rules! m)
-
       (append-reusable-component-rules! m)
-
       (append-component-rules! m)
-
       (append-defclasses! state/defclasses-used
                           (merge m {:classtype    :defclass-kushi-override
                                     :comment-base "Kushi lib, shared override utility/"}))
-
       (append-defclasses! state/defclasses-used
                           (merge m {:classtype    :defclass-user-override
                                     :comment-base "User-defined, shared override utility/"})))
