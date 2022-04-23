@@ -46,7 +46,6 @@
    :prefix               nil
    :defclass-prefix      nil
    :atomic-class-prefix  nil
-   :keyframes-prefix     nil
    :data-attr-name       nil
    :css-dir              nil
    :write-stylesheet?    true
@@ -77,6 +76,7 @@
    user-config
    [:data-attr-name
     :ancestor
+    :defclass-prefix
     :prefix
     :media]))
 
