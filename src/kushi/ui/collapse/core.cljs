@@ -4,7 +4,7 @@
    [kushi.core :refer (sx defclass merge-with-style) :refer-macros (sx)]
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
-   [kushi.gui :refer (gui defcom opts+children)]
+   [kushi.ui.core :refer (gui defcom opts+children)]
    [kushi.ui.util :as util]
    ))
 

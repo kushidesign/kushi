@@ -1,7 +1,7 @@
 (ns kushi.ui.icon.core
   (:require
    [kushi.core  :refer (sx cssfn defclass)]
-   [kushi.gui   :refer (gui defcom)]))
+   [kushi.ui.core   :refer (gui defcom)]))
 
 
 ;; #_(def label*

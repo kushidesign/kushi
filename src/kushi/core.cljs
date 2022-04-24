@@ -53,6 +53,13 @@
 (defn lightswitch! []
   (.toggle (-> js/document.body .-classList) "dark"))
 
+(defn sanitize-if-malformed-garden-output [s]
+  (if (re-find #"calc\(" s)
+    (-> s
+        (string/replace #"\) *(\*|\+|\-|\\/) *\(" ") $1 (")
+        (string/replace #"(\S)(\+)(\S)" "$1 $2 $3"))
+    s))
+
 (defn inject-css*
   "Called internally by kushi.core/sx at dev/run time for zippy previews."
   [css-rules
@@ -67,8 +74,9 @@
      ;; (when (zero? num-injected) (js/console.clear))
       #_(js/console.log (.-rules sheet))
      ;Inject only if rule-css is not already a member of kushi.core/injected atom
-      (doseq [[_ rule-css]  rules-as-seq
-              :let         [injected? (contains? @injected rule-css)]]
+      (doseq [[_ rule-css*]  rules-as-seq
+              :let         [rule-css  (sanitize-if-malformed-garden-output rule-css*)
+                            injected? (contains? @injected rule-css)]]
         (when log-inject-css*?
           (js/console.log "[kushi.core/inject-css*]\n"
                           (keyed css-rules injected? num-injected sheet-id sheet-len)))
@@ -198,4 +206,4 @@
 
 
 ;; This will inject / and or write ui theme to disc if config says to do so
-#_(theme!)
+(theme!)

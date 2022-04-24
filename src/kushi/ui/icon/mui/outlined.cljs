@@ -2,7 +2,7 @@
   (:require
    [kushi.core  :refer (inject-stylesheet)]
    [kushi.ui.icon.core  :refer (icon-base)]
-   [kushi.gui   :refer (defcom)]))
+   [kushi.ui.core   :refer (defcom)]))
 
 (inject-stylesheet {:rel "preconnet"
                     :href "https://fonts.gstatic.com"

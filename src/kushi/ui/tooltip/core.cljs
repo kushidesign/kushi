@@ -2,7 +2,7 @@
   (:require-macros [kushi.utils :refer (keyed)])
   (:require
    [kushi.core :refer (sx defclass merge-with-style) :refer-macros (sx)]
-   [kushi.gui :refer (gui defcom opts+children)]
+   [kushi.ui.core :refer (gui defcom opts+children)]
    [kushi.ui.util :refer (set-overlay-position! conditional-display?)]
    [par.core :refer [? !? ?+ !?+]]))
 

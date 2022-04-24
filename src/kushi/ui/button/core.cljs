@@ -1,10 +1,10 @@
 (ns kushi.ui.button.core
   (:require-macros
    [kushi.core :refer (sx cssfn defclass)]
-   [kushi.gui :refer (defcom)])
+   [kushi.ui.core :refer (defcom)])
   (:require
    [kushi.core :refer (merged-attrs-map merge-with-style)]
-   [kushi.gui :refer (gui)]
+   [kushi.ui.core :refer (gui)]
    [kushi.ui.scaling :refer [icon-margin icon-font-size]]
    [kushi.ui.tooltip.core :refer (tooltip-mouse-leave tooltip-mouse-enter)]
    [par.core :refer [? !? ?+ !?+]]))

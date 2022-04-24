@@ -576,10 +576,7 @@
        (kushi.core/sx ~m43)
        (kushi.core/sx ~m44)
 
-       
-       #_(when (or ~kushi-debug ~rt-injection?)
+       (when (or ~kushi-debug ~rt-injection?)
          (kushi.core/inject-design-tokens! ~global-tokens-to-inject :global-tokens)
          (kushi.core/inject-design-tokens! ~alias-tokens-to-inject :alias-tokens)))))
-
-
 

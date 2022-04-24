@@ -3,7 +3,7 @@
   (:require
    [kushi.core :refer (sx defclass merge-with-style) :refer-macros (sx)]
    [clojure.string :as string]
-   [kushi.gui :refer (gui defcom)]
+   [kushi.ui.core :refer (gui defcom)]
    ))
 
 (defn copy-to-clipboard [val]

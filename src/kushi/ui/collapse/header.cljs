@@ -1,6 +1,6 @@
 (ns kushi.ui.collapse.header
   (:require-macros [kushi.core :refer (defclass sx cssfn)]
-                   [kushi.gui :refer (defcom)])
+                   [kushi.ui.core :refer (defcom)])
   (:require [kushi.ui.icon.core :refer (bar chevron-down icon)]
             [kushi.utils :as util :refer-macros (keyed)]
             [clojure.string :as string]
