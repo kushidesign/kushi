@@ -275,7 +275,7 @@
   ;; Example: :nth-child(3) => :nth-child
   (let [k      (some-> s (string/replace #"\(.*\)$" "") keyword)
         has*re #"^has\((ancestor|parent)\((.+)\)\)"]
-    (?+ "format-mod" {:mods&prop mods&prop
+    (!?+ "format-mod" {:mods&prop mods&prop
                       :s s})
     (cond
       (contains? defs/pseudo-classes k)
@@ -288,10 +288,11 @@
       (re-find #"^[\.\>\+\~\_\&].+$" s)
       (format-combo s)
 
-      ;;remove this dark thing? (replaced by has(parent/ancestor) ?)
+      ;;TODO remove this dark thing? (replaced by has(parent/ancestor) / .% sugar ?)
       (= s "dark")
       " _.dark_"
 
+      ;; TODO remove this has(parent/ancestor) thing, replaced by .% sugar ?)
       ;; parent or ancestor selector via "has(parent(...))"
       (re-find has*re s)
       (let [[_ type x] (re-find has*re s)]
