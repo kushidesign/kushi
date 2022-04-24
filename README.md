@@ -55,13 +55,13 @@
 [Shared styles](#shared-styles)<br>
 [Media queries](#media-queries)<br>
 [Pseudos and combo selectors](#pseudos-and-combo-selectors)<br>
+[Prefixing options](#prefixing-options)<br>
 [Using scales](#using-scales)<br>
 [Injecting stylesheets](#injecting-stylesheets)<br>
 [Adding font resources](#adding-font-resources)<br>
 [Element attributes](#element-attributes)<br>
 [Helpful metadata](#helpful-metadata)<br>
 [Configuration options](#configuration-options)<br>
-[Prefixing options](#prefixing-options)<br>
 [Runtime injection](#runtime-injection)<br>
 [Useful warnings](#useful-warnings)<br>
 [Usage with build tools](#usage-with-build-tools)<br>
@@ -619,34 +619,33 @@ When "stacking" other modifiers (such as psuedo-classes) in front of css props, 
 Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers:
 ```Clojure
 [:div (sx 'foo
-          :.bar
-          :hover:c--blue       ;  .foo:hover     {color: blue}
-          :>a:hover:c--red     ;  .foo > a:hover {color: red}
-          :&_a:hover:c--gold   ;  .foo a:hover   {color: gold}
+          :hover:c--blue
+          :>a:hover:c--red
+          :&_a:hover:c--gold ; The "_" gets converted to " "
           :&.bar:hover:c--pink ;  .foo.bar:hover {color: pink}
-          :before:fw--bold     ;  .foo::before   {font-weight: bold}
-          :before:mie--5px     ;  .foo::before   {margin-inline-end: 5px}
+          :before:fw--bold
+          :before:mie--5px
           {:style {:before:content  "\"⌫\""
-                   "~a:hover:c"     :blue
-                   "nth:child(2):c" :red}})
+                  "~a:hover:c"     :blue
+                  "nth-child(2):c" :red}})
  [:span [:a "Erase"]]]
 ```
 CSS resulting from the above example:
 ```css
-.foo {
-  color: red;
-}
-
 .foo:hover {
   color: blue;
 }
 
-.foo ~ a:hover {
-  color: blue;
+.foo > a:hover {
+  color: red;
 }
 
 .foo a:hover {
   color: gold;
+}
+
+.foo.bar:hover {
+  color: pink;
 }
 
 .foo::before {
@@ -655,14 +654,63 @@ CSS resulting from the above example:
   content: "⌫";
 }
 
-.foo.my-class:hover {
-  color: turquoise;
+.foo ~ a:hover {
+  color: blue;
 }
 
-.foo > a:hover {
+.foo:nth-child(2) {
   color: red;
 }
 ```
+<br>
+
+# Prefixing Options
+The most common pattern for this would be setting a global `:prefix` value in your [configuration options](#configuration-options), and then providing, as your first argument to sx, a symbol with a leading `-` char (which will be used as the classname). If you do this on a project-wide basis, you will need to make sure that your all your prefix+ident values are globally unique. The kushi compiler will warn you of duplicate instances.
+
+```Clojure
+;; In your kushi.edn map ...
+{:prefix :_mypfx__}
+
+;; In one of your component namespaces ...
+[:div
+ (sx '-my-el :c--red)]
+
+;; The above example will return the following attribute map:
+;; {:class "_mypfx__my-el"}
+
+;; And will write the following rule to the css file:
+;; ._mypfx__my-el {
+;;    color: red;
+;;}
+```
+
+### Parents and ancestors
+Kushi provides a special sugar token in the form of `.%` to achieve further specificity when needed with regards to parents and ancestors of the element that you are styling. This is super useful when you want to use styles that might change when, for example, a class is toggled or changed further up in the DOM.
+
+The `.%` token is just stubby syntax for the classname that will be created, and gets stripped out of any CSS that is generated.
+```Clojure
+(defn my-button [text]
+  [:button
+   (sx 'foo
+       :section.baz&_.%:color--blue  ;; when `section.foo` ancestor exists
+       :section.dark>.%:color--white ;; when `section.dark` parent exists
+       {:on-click #(prn "clicked!")})
+     text])
+
+```
+The above will write the following css:
+```css
+section.baz .foo {color: blue}
+section.dark > .foo {color: white}
+```
+If you want to use this feature in cases when you need to write you styles in a map with strings as keys, keep in mind you do not need to use the "&_" when talking about (non-direct) ancestors:
+```Clojure
+(sx 'foo
+    {:style {"section[aria-expanded='true'] .%:color"    :blue
+             "section[aria-expanded='false'] > .%:color" :white}
+    :on-click #(prn "clicked!")})
+```
+
 <br>
 
 # Defining Animations
@@ -670,7 +718,7 @@ CSS resulting from the above example:
 `kushi.core/defkeyframes` macro makes it easy to define css keyframes.
 ```Clojure
 ;; This will twirl something on its y-axis
-(defkeyframes y-axis-spinner
+(defkeyframes yspinner
   [:0% {:transform (cssfn :rotateY :0deg)}]
   [:100% {:transform (cssfn :rotateY :360deg)}])
 
@@ -678,13 +726,13 @@ CSS resulting from the above example:
 ;; Somewhere in your component code...
 [:div
  (sx :fs--32px
-     :animation--y-axis-spinner:12s:linear:infinite)
+     :animation--yspinner:12s:linear:infinite)
  "Round & Round"]
 ```
 Because names for css `@keyframes` definitions are used as-is in other style rules that reference the animation, kushi does not apply any auto-generated prefixing to `@keyframes` names in the generated css. If you are worried about potential collisions with your `@keyframes` definitions and some other 3rd party @keyframes definitions, you should give them a prefixed name when you define them:
 
 ```Clojure
-(defkeyframes my-prefix__y-axis-spinner
+(defkeyframes my-prefix__spinner
  ...)
 ```
 <br>
@@ -927,49 +975,6 @@ Below is a full map of all the options available:
 :runtime-injection?   false
 :handle-duplicates    nil
 -->
-<br>
-
-# Prefixing Options
-The most common pattern for this would be setting a global `:prefix` value, and then providing a classname (with a leading `-` char) to some or all of your calls to `sx`.
-If you do this on a project-wide basis, you will need to make sure that your all your prefix+ident values are globally unique. The kushi) compiler will warn you if you try to do this.
-
-```Clojure
-;; In your kushi.edn map ...
-{:prefix :_mypfx__}
-
-;; In one of your component namespaces ...
-[:div
- (sx '-my-el
-     :c--red
-     {:ident :my-el})]
-
-;; The above example will return the following attribute map:
-;; {:class "_mypfx__my-el"}
-
-;; And will write the following rule to the css file:
-;; ._mypfx__my-el {
-;;    color: red;
-;;}
-```
-
-### Parents and ancestors
-Kushi provides special sugar in the form of `_&` and `<` to achieve further specificity when needed. This is super useful when you want to use styles that might change when, for example, a class is toggled or changed further up in the DOM
-```Clojure
-(defn my-button [text]
-  [:button
-   (sx 'barbaz
-       {:style {"section.foo_&:color" :blue   ;; applies when `section.dark` ancestor
-                "section.dark<:color" :white} ;; applies when `section.dark` parent
-        :on-click #(prn "clicked!"))
-     text])
-
-```
-The above will write the following css:
-```css
-section.foo .barbaz {color: blue}
-section.dark > .barbaz {color: white}
-```
-
 <br>
 
 

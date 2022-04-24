@@ -272,9 +272,6 @@
     (vector (merge-attr (first args) (second args)))
     args))
 
-(defn kushi-attr* [attrs*]
-  )
-
 (defn new-args
   "Takes args and reorganizes it into internal/legacy format"
   [{:keys [args* form-meta defclass-name cache-key] :as xxx}]

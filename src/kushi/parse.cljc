@@ -267,6 +267,7 @@
    If mod is combo-selector, child, or decendant, formats appropriately.
    Otherwise returns nil for dud selector."
   [mods&prop s]
+  
   #_(when (= mods&prop "&[aria-expanded=\"false\"]:c")
     (?+ "format-mod" {:mods&prop mods&prop
                       :s s}))
@@ -274,7 +275,7 @@
   ;; Example: :nth-child(3) => :nth-child
   (let [k      (some-> s (string/replace #"\(.*\)$" "") keyword)
         has*re #"^has\((ancestor|parent)\((.+)\)\)"]
-    #_(?+ "format-mod" {:mods&prop mods&prop
+    (?+ "format-mod" {:mods&prop mods&prop
                       :s s})
     (cond
       (contains? defs/pseudo-classes k)
@@ -296,13 +297,17 @@
       (let [[_ type x] (re-find has*re s)]
         {:type (keyword type) :x x})
 
-      ;; parent selector via tokenized kw such as: "div.foo>:color--red"
-      (re-find #"^.+<$" s)
-      {:type :parent :x (string/join "" (drop-last s))}
+      ;; parent selector via tokenized kw such as: "div.foo>.%:color--red"
+      (re-find #"^.+ *\> *\.\%$" s)
+      {:type :parent :x (string/replace s #" *\> *\.\%$" "")}
 
-      ;; ancestor selector via tokenized kw such as: "div.foo>:color--red"
-      (re-find #"^.+_&$" s)
-      {:type :ancestor :x (string/join "" (drop-last 2 s))}
+      ;; ancestor selector via tokenized kw such as: "div.foo&_.%:color--red"
+      (re-find #"[^&_ ] *&_ *\.%$|[^&_ ] +\.%$" s)
+      {:type :ancestor :x (string/replace s #" *&_ *\.%$| +\.%$" "")}
+
+      ;; same element selector via tokenized kw such as: "div.foo.%:color--red"
+      (re-find #"\S+\.%$" s)
+      {:type :same-element :x (string/replace s #"\.%$" "")}
 
       :else
       ;; For reporting bad modifier to user
@@ -330,7 +335,10 @@
         formatted-mods* (keep (partial format-mod mods&prop) (if mq (rest mods*) mods*))
         formatted-mods  (filter string? formatted-mods*)
         ancestor*      (keep #(when (map? %)
-                                (str (:x %) (when (= :parent (:type %)) " >") " "))
+                                (let [{:keys [x type]} %
+                                      maybe-direct-child  (when (= :parent type) " >")
+                                      maybe-descendant (when-not (= :same-element type) " ")]
+                                  (str x maybe-direct-child maybe-descendant)))
                              formatted-mods*)
         ancestor       (coll->str ancestor*)
         mods            (if ancestor
@@ -338,8 +346,8 @@
                           (coll->str formatted-mods))
         ]
 
-#_(when true #_(state/debug?)
-  (?+ "mods&prop->map" {
+(when true #_(state/debug?)
+  (!?+ "mods&prop->map" {
                         ;; :mods&prop      mods&prop
                         ;; :mods*          mods*
                         :mods           mods
