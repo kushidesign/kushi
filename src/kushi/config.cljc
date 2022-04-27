@@ -51,13 +51,14 @@
    :write-stylesheet?    true
    :runtime-injection?   false
    :handle-duplicates    nil
+   :enable-caching?      true
+   :theme                nil
+   :scaling-system       nil
 
    ;; Experimental - add to docs later
    :diagnose             nil
    :diagnose-idents      nil
    :log-clean!?          false
-   :theme                nil
-   :__enable-caching?__  false
    })
 
 (def user-config
