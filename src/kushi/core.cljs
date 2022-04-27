@@ -3,7 +3,6 @@
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
             [kushi.sheets :as sheets]
-            ;; [goog.object :as obj]
             [kushi.utils :as util] ;; For aliasing merge-with-style
             [par.core :refer [? !?]] ;; only use when developing kushi itself
             ))
@@ -185,10 +184,64 @@
                                "kushi.core/s+:\n\nFailed attempt to inject stylesheet (or link):\n\n"
                                m
                                "\n\n¯\\_(ツ)_/¯"))))))))
-;; remove?
-(defn- garden-mq-rule? [v]
-  (and (map? v) (= :media (:identifier v))))
 
+
+;; Public function for injecting Google Fonts via stylesheet injection ------------------------------------------------------------
+(defn- weights->str
+  ([xs]
+   (weights->str xs nil) )
+  ([xs n]
+   (map #(str (when n (str n ",")) %)
+        (if (= xs :all) [100 200 300 400 500 600 700 800 900] (seq xs)))))
+
+(defn- weight-coll? [x]
+  (or (= x :all)
+      (and (seq x)
+           (every? number? x))))
+
+(defn- m->str [acc {family :family
+                   {:keys [normal italic]} :styles
+                   :as m}]
+  (if-not (and (string? family)
+               (or (weight-coll? normal) (weight-coll? italic)))
+   (do
+     (js/console.warn
+      "\n[WARNING] kushi.core/add-google-font!"
+      "\n\nMalformed font map argument:\n\n"
+      m
+      "\n\nMust be a map with the entries :family and :styles"
+      "\n\n:family must be a string representing a font family"
+      "\n\n:styles must be a map with the entries of :normal and/or :italic, both of which must be vectors of numbers representing font weights."
+      "\n\n\nExample:\n"
+      {:family "Fira Code" :styles {:normal [300 400] :italic [300 400]}})
+     acc)
+   (let [italics? (weight-coll? italic)
+         weights* (if-not italics?
+                    (weights->str normal)
+                    (concat (weights->str normal 0)
+                            (weights->str italic 1)))
+         weights  (str (when italics? "ital,")
+                       "wght@"
+                       (string/join ";" weights*))]
+     (conj acc (str "family="
+                    (string/replace family #" " "+")
+                    ":"
+                    weights)))))
+
+(defn add-google-font!
+  [& maps]
+  (let [families* (reduce m->str [] maps)
+        families  (str (string/join "&" families*) "&display=swap")]
+   (do
+     (inject-stylesheet {:rel "preconnet"
+                         :href "https://fonts.gstatic.com"
+                         :cross-origin "anonymous"})
+     (inject-stylesheet {:rel "preconnet"
+                         :href "https://fonts.googleapis.com"})
+     (inject-stylesheet {:rel "stylesheet"
+                         :href (str "https://fonts.googleapis.com/css2?" families)}))))
+
+#_(add-google-font! {:family "Fira Code" :style {:normal [300 400] :italic [300 400]}})
 
 ;; Functionaltiy for kushi style decoration -----------------------------------------------------------------
 
@@ -203,7 +256,3 @@
           :data-cljs data-cljs)))
 
 (def merge-with-style kushi.utils/merge-with-style)
-
-
-;; This will inject / and or write ui theme to disc if config says to do so
-(theme!)
