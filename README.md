@@ -62,7 +62,7 @@
 [Element attributes](#element-attributes)<br>
 [Helpful metadata](#helpful-metadata)<br>
 [Configuration options](#configuration-options)<br>
-[Runtime injection](#runtime-injection)<br>
+<!--[Runtime injection](#runtime-injection)<br>-->
 [Useful warnings](#useful-warnings)<br>
 [Usage with build tools](#usage-with-build-tools)<br>
 [Roadmap](#roadmap)<br>
@@ -77,9 +77,13 @@ For a well commented, feature-complete minimal project template, please see [kus
 <br>
 
 # Syntax
-Styles are co-located at the element level.<br>
-Wrap your attributes with the `kushi.core/sx` macro:
+Styles are co-located at the element level.
+Simply wrap your attributes with the `kushi.core/sx` macro:
 ```Clojure
+(ns myns.core
+  (:require
+   [kushi.core :refer [sx]]))
+
 (defn my-component []
  [:div
   (sx {:id    :my-id
@@ -88,7 +92,8 @@ Wrap your attributes with the `kushi.core/sx` macro:
                :font-size  :18px}})])
 ```
 
-Kushi promotes a simple shorthand grammer which shadows standard CSS.<br>
+<br>
+Kushi promotes a simple shorthand grammer which shadows standard CSS.
 The above example would be written like this:
 ```Clojure
 (defn my-component []
@@ -98,6 +103,7 @@ The above example would be written like this:
                :ta :c
                :fs :18px}})])
 ```
+<br>
 If you want to go faster, write your styles as tokenized keywords.<br>
 This is similar to Tachyons/Tailwind, but much more helpful in learning actual CSS (or much more intuitive if you are an existing CSS expert).
 ```Clojure
@@ -108,7 +114,7 @@ This is similar to Tachyons/Tailwind, but much more helpful in learning actual C
       :fs--18px
       {:id :my-id})])
 ```
-
+<br>
 In all three examples above, the `sx` macro would return the following attribute map with an auto-generated value for the `class` attribute:
 ```Clojure
 {:class "_c7338"
@@ -116,23 +122,23 @@ In all three examples above, the `sx` macro would return the following attribute
 ```
 
 When your build finishes, the following css will be written to disk:
-```Clojure
+```css
  ._c7338 { color: red; text-align: center; font-size: 18px; }
 ```
-
+<br>
 If you need or want to define your own classnames, you can leverage kushi's flexible and robust [naming and prefixing options](#prefixing-options). You can supply your own classname by passing a quoted symbol as the first argument to sx:
 
 ```Clojure
 (defn my-component []
  [:div
-  (sx 'foo-bar
+  (sx 'foobar
       :c--red
       :ta--c
       :fs--18px)])
 ```
 The above call to `sx` would generate the following attribute map:
 ```Clojure
-{:class "foo-bar"}
+{:class "foobar"}
 ```
 
 
@@ -147,10 +153,11 @@ In summary, the `kushi.core/sx` is a macro that returns an attribute map which c
   - A `class` property containing the correct auto-generated (or prefixed) classnames.
   - If necessary, a `style` property containing the correct auto-generated css variable names.
   - All the other attributes you specify in your attributes map (supplied as an optional last arg to `sx`).
-  - A dev-build-only `data-cjs` attribute to help with browser-based debugging.<br>See [Using metadata](#using-metadata).
+  - A dev-build-only `data-cjs` attribute for browser debugging. See [Using metadata](#using-metadata).
 
-All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool). For zippy previews when developing, styles are injected at runtime. You can optionally disable writing styles to disk and enable producton builds to [inject styles at runtime](#runtime-injection).
-
+All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool). For zippy previews when developing, styles are injected at runtime.
+<!---You can optionally disable writing styles to disk and enable producton builds to [inject styles at runtime](#runtime-injection).
+-->
 <br>
 
 ### Styles as Keywords
@@ -166,74 +173,68 @@ Keywords containing `--` represent a css prop and value pair (split on `--`).
 
 Some more examples, using kushi's optional shorthand grammer.
 ```Clojure
-:c--red   ; => :color--red
-:ai--c    ; => :align-items--center
-:ai--e    ; => :align-items--end
-:ta--r    ; => :text-align--right
-:fs--18px ; => :font-size--18px
-:d--b     ; => :display--block
-:d--f     ; => :display--flex
-:bgs--50% ; => :background-size--50%
+:c--red   ; :color--red
+:ai--c    ; :align-items--center
+:ai--e    ; :align-items--end
+:ta--r    ; :text-align--right
+:fs--18px ; :font-size--18px
+:d--b     ; :display--block
+:d--f     ; :display--flex
+:bgs--50% ; :background-size--50%
 ```
 This shorthand grammer is available for the most commonly used props:
 ```Clojure
-:ai  ; align-items
-:b   ; border
-:bb  ; border-bottom
-:bc  ; border-color
-:bg  ; background
-:bgc ; background-color
-:bgi ; background-image
-:bgp ; background-position
-:bgr ; background-repeat
-:bgs ; background-size
-:bl  ; border-left
-:br  ; border-right
-:bs  ; border-style
-:bt  ; border-top
-:bw  ; border-width
-:c   ; color
-:d   ; display
-:ff  ; font-family
-:fs  ; font-size
-:fv  ; font-variant
-:fw  ; font-weight
-:h   ; height
-:jc  ; justify-content
-:ji  ; justify-items
-:lh  ; line-height
-:m   ; margin
-:mb  ; margin-bottom
-:ml  ; margin-left
-:mr  ; margin-right
-:mt  ; margin-top
-:o   ; opacity
-:p   ; padding
-:pb  ; padding-bottom
-:pl  ; padding-left
-:pr  ; padding-right
-:pt  ; padding-top
-:ta  ; text-align
-:td  ; text-decoration
-:tdc ; text-decoration-color
-:tdl ; text-decoration-line
-:tds ; text-decoration-style
-:tdt ; text-decoration-thickness
-:tt  ; text-transform
-:va  ; vertical-align
-:v   ; visibility
-:w   ; width
-:ws  ; white-space
-:zi  ; z-index
+:ai   ; :align-items
+:b    ; :border
+:bb   ; :border-bottom
+:bc   ; :border-color
+:bg   ; :background
+:bgc  ; :background-color
+:bgi  ; :background-image
+:bgp  ; :background-position
+:bgr  ; :background-repeat
+:bgs  ; :background-size
+:bl   ; :border-left
+:br   ; :border-right
+:bs   ; :border-style
+:bt   ; :border-top
+:bw   ; :border-width
+:c    ; :color
+:d    ; :display
+:ff   ; :font-family
+:fs   ; :font-size
+:fv   ; :font-variant
+:fw   ; :font-weight
+:h    ; :height
+:jc   ; :justify-content
+:ji   ; :justify-items
+:lh   ; :line-height
+:m    ; :margin
+:mb   ; :margin-bottom
+:ml   ; :margin-left
+:mr   ; :margin-right
+:mt   ; :margin-top
+:o    ; :opacity
+:p    ; :padding
+:pb   ; :padding-bottom
+:pl   ; :padding-left
+:pr   ; :padding-right
+:pt   ; :padding-top
+:ta   ; :text-align
+:td   ; :text-decoration
+:tt   ; :text-transform
+:w    ; :width
+:ws   ; :white-space
+:zi   ; :z-index
 ```
+See the complete list of supported css properties [here](https://github.com/paintparty/kushi/blob/doc/kushi-shorthand-reference.md).
 
 Shorthand grammer extends to cover enumerated values:
 ```Clojure
-;; text-transform
-:tt--u   ; text-transform--uppercase
-:tt--l   ; text-transform--lowercase
-:tt--c   ; text-transform--capitalize
-:tt--fw  ; text-transform--full-width
+;; text-decoration
+:td--u   ; text-decoration--uppercase
+:td--o   ; text-decoration--overline
+:td--lt  ; text-decoration--line-through
 
 ;; background-repeat
 :bgr--nr ; background-repeat--no-repeat
@@ -252,7 +253,16 @@ Shorthand grammer extends to cover enumerated values:
 :ai--b   ; align-items--baseline
 ```
 
-For complete info on available enumurated values view the source [here](https://github.com/paintparty/kushi/blob/main/src/kushi/shorthand.cljc).
+Note that the enumerated value`:none`, as well as global properties such as `inherit`, `initial`, `revert`, `unset`, etc. are not supported with shorthand syntax:
+
+```Clojure
+;; This will NOT work
+:td--r
+
+;; This will work
+:td--revert ;=> text-decoration: revert;
+```
+See the complete list of supported enum values [here](https://github.com/paintparty/kushi/blob/doc/kushi-shorthand-reference.md).
 
 <br>
 
@@ -742,13 +752,19 @@ Kushi ships with two different predefined scaling systems, which provide a scale
 
 These two systems shadow the scales provided by [Tachyons](http://tachyons.io/docs/typography/scale/) and [Tailwindcss](https://tailwindcss.com/docs/font-size).
 
-The Tacyons scale is available by default.<br>
-You can opt to instead use the Tailwind scale in your `kushi.edn` config file:
+You must explicitly opt-in to use one of the scales in your `kushi.edn` config file:
 ```Clojure
+{...
+ :scaling-system :tachyons
+ ...}
+
+; or the tailwind flavor
+
 {...
  :scaling-system :tailwind
  ...}
 ```
+
 To use values from these scales, supply a value affixed with an `*` to one of the applicable css properties:
 ```Clojure
 (sx :w--1*
@@ -766,7 +782,6 @@ To use values from these scales, supply a value affixed with an `*` to one of th
     :margin--1rem)
 ```
 View all the scale values [here](https://github.com/paintparty/kushi/blob/main/src/kushi/scales.cljc).
-
 <br>
 
 # Injecting Stylesheets
@@ -801,7 +816,8 @@ it may be handy to use this during development to inject new stylesheets without
 # Adding Font Resources
 You can use the `kushi.core/add-font-face` macro to load a local font from a file.<br>
 This will add an `@font-face` block to the css file generated by kushi.<br>
-The location of the font file must be a path, relative the location of the generated css file.<br>
+The `:src` entry must be a path (string), or vector of paths if you want to specify multiple urls.
+The path(s) must be relative to the location of the generated css file.<br>
 You could also use a remote url to load a hosted font file.
 ```Clojure
 (add-font-face {:font-family "FiraCodeRegular"
@@ -818,7 +834,7 @@ This uses an efficient, [`@font-face`-based  approach](https://github.com/csstoo
 (add-system-font-stack)
 ```
 The example above would add a total of 8 `@font-face` definitions to your kushi css file.
-One `normal` and one `italic` for weights `300`("light"), `400`("regular"), `500`("semi-bold"), and `700`("bold"). Note that the name of the font-family kushi provides is **`system`**, *not* `system-ui`. This is for [differentiation](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) and to [help avoid confusion](https://infinnie.github.io/blog/2017/systemui.html).
+One `normal` and one `italic` for weights `300`("light"), `400`("regular"), `500`("semi-bold"), and `700`("bold"). Note that the name of the font-family kushi provides is **`kushi-system-ui`**, *not* `system-ui`. This is for [differentiation](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) and to [help avoid confusion](https://infinnie.github.io/blog/2017/systemui.html).
 
 ```CSS
 @font-face {
@@ -914,11 +930,6 @@ Below is a full map of all the options available:
  ;; Defaults to true.
  :write-stylesheet? false
 
- ;; Optional. Set to true if you want runtime
- ;; injection for release builds.
- ;; Defaults to false.
- :runtime-injection? false
-
  ;; Optional. Narrow kushi compilation down to select namespaces.
  :select-ns [app.ui.foo app.ui.bar]
  ;; :select-ns [app.ui.*] ;; will target all namespaces under app.ui
@@ -964,6 +975,12 @@ Below is a full map of all the options available:
 }
 ```
 <!--
+
+;; Optional. Set to true if you want runtime
+;; injection for release builds.
+;; Defaults to false.
+:runtime-injection? true
+
 :select-ns            nil
 :post-build-report?   true
 :report-cache-update? true
@@ -1158,6 +1175,9 @@ Below is a slightly more complex version of the above component. Here, we are su
     {:ui? true})
 ```
 
+### Theming
+You can theme
+
 
 <br>
 <br>
@@ -1165,7 +1185,6 @@ Below is a slightly more complex version of the above component. Here, we are su
 # Usage with Build Tools
 ### shadow-cljs
 See the [kushi-quickstart](https://github.com/paintparty/kushi-quickstart) template for a detailed example of using Kushi in a shadow-cljs project.
-
 
 <br>
 
