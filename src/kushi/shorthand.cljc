@@ -1,5 +1,7 @@
 (ns kushi.shorthand
- (:require [par.core :refer [? ?+]]) )
+ (:require [par.core :refer [? ?+]]
+           [clojure.pprint :refer [pprint]]
+           [clojure.string :as string]))
 
 (def css-sh
   {:ai {:name :align-items
@@ -17,8 +19,7 @@
    :bt {:name :border-top :example-val [[:5% :dotted :#efefef]]}
    :bb {:name :border-bottom :example-val [[:5px :solid :white]]}
    :bs {:name :border-style
-        :vals {:n :none
-               :h :hidden
+        :vals {:h :hidden
                :d :dotted
                :s :solid
                :g :groove
@@ -89,6 +90,14 @@
 
    :h {:name :height :example-val "calc(100% - 20px)"}
 
+   :i {:name :inset :example-val :8px:8px:10px:20px}
+   :ib {:name :inset-block :example-val :8px}
+   :ibs {:name :inset-block-start :example-val :8px}
+   :ibe {:name :inset-block-end :example-val :8px}
+   :ii {:name :inset-inline :example-val :8px}
+   :iis {:name :inset-inline-start :example-val :8px}
+   :iie {:name :inset-inline-end :example-val :8px}
+
    :jc {:name :justify-content
         :vals {:c :center
                :s :start
@@ -133,6 +142,11 @@
    :pl {:name :padding-left :example-val :3px}
    :pt {:name :padding-top :example-val :1px}
    :pb {:name :padding-bottom :example-val :2px}
+   :pi {:name :padding-inline :example-val :8px}
+   :pis {:name :padding-inline-start :example-val :8px}
+   :pie {:name :padding-inline-end :example-val :8px}
+   :pbs {:name :padding-block-start :example-val :8px}
+   :pbe {:name :padding-block-end :example-val :8px}
 
    :o {:name :opacity :example-val 1}
 
@@ -235,6 +249,27 @@
     (or (some-> css-sh k :name) k)
     k))
 
+;; list of shorthands for docs
+#_(doseq [x (sort (map (fn [[k v]]
+                       (let [n (- 5 (-> k name count))]
+                         (str k (string/join (repeat n " ")) "; " (:name v))))
+                     css-sh))]
+  (println x))
+
+;; list of enum shorthands
+#_(?+ (->> css-sh
+         (map (fn [[k {prop-name :name prop-vals :vals}]]
+                [(when prop-vals
+                   (map (fn [[prop-val-sh prop-val]]
+                          (let [tkw (str (name k) "--" (name prop-val-sh))
+                                n (- 9 (count tkw))]
+                            (str tkw (string/join (repeat n " ")) "; " (name prop-name) ": " (name prop-val))))
+                        prop-vals))]))
+         flatten
+         sort
+         (map keyword)
+         (remove nil?)))
+
 ;; list of autocompletes
 #_(?+ (->> css-sh
          (map (fn [[k {prop-name :name prop-vals :vals}]]
@@ -249,3 +284,4 @@
          sort
          (map keyword)
          ))
+
