@@ -27,21 +27,28 @@
    ;; Styles (generally) from user calls to kushi.core/sx
    :sx                      "_kushi-sx_"
 
+   ;; Injection to sync with css file output
+   :kushi-css-sync "_kushi-css-sync_"
+
    ;; Built-in kushi utility classes designed to override (decorate)
    :defclass-kushi-override "_kushi-defclass-overrides_"
 
    ;; User-defined utility classes designed to override (decorate)
    :defclass-user-override  "_kushi-defclass-user-overrides_"
-     })
+
+   })
 
 ;; keep these synced with above map
 (def sheet-types-ordered
-  [:global-tokens
-   :alias-tokens
+  [
+  ;;  :global-tokens
+  ;;  :alias-tokens
    :kushi-atomic
-   :defclass
-   :theme
-   :ui
-   :sx
+  ;;  :defclass
+  ;;  :theme
+  ;;  :ui
+  ;;  :sx
+   :kushi-css-sync
    :defclass-kushi-override
-   :defclass-user-override])
+   :defclass-user-override
+   ])
