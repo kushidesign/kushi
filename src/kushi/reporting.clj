@@ -142,37 +142,40 @@
       (str "Targeting namespaces: " selected))))
 
 ;; Kushi build report --------------------------------------------------------------------------------
-(defn print-report! [to-be-printed cache-will-update?]
-  (calculate-total-style-rules! to-be-printed)
-  (let [banner?                 (= :banner (-> user-config :reporting-style))
-        report-format-fn        (if banner? ansiformat/panel simple-report)
-        report-line-items-pre*  (report-line-items @to-be-printed)
-        report-line-items-pre   (format-line-items banner? report-line-items-pre*)
-        cache-report            (when (and (:report-cache-update? user-config) cache-will-update?)
-                                  (str "Updated " kushi-cache-path))
-        header-text             (str "kushi v" version)
-        header-simple           (str (ansi/red "[") (ansi/blue header-text)  (ansi/red "]"))
-        header                  (if banner? header-text header-simple)]
+(defn print-report!
+  ([to-be-printed]
+   (print-report! to-be-printed nil))
+  ([to-be-printed cache-will-update?]
+   (calculate-total-style-rules! to-be-printed)
+   (let [banner?                 (= :banner (-> user-config :reporting-style))
+         report-format-fn        (if banner? ansiformat/panel simple-report)
+         report-line-items-pre*  (report-line-items @to-be-printed)
+         report-line-items-pre   (format-line-items banner? report-line-items-pre*)
+         cache-report            (when (and (:report-cache-update? user-config) cache-will-update?)
+                                   (str "Updated " kushi-cache-path))
+         header-text             (str "kushi v" version)
+         header-simple           (str (ansi/red "[") (ansi/blue header-text)  (ansi/red "]"))
+         header                  (if banner? header-text header-simple)]
 
-    (println
-     (report-format-fn
-      {:header       header
+     (println
+      (report-format-fn
+       {:header       header
        ;;  :header-weight :bold
-       :theme        printing/bold-rainbow2
+        :theme        printing/bold-rainbow2
        ;; :border-color :red
        ;; :border-seq       bs
        ;; :border-bl-string bs
        ;; :border-tl-string bs
        ;; :border-v-char    bs
        ;; :header-color :bold-blue
-       :border-width 50
+        :border-width 50
        ;;  :border-weight :bold
-       :indent       3}
-      (:selected-ns-msg @to-be-printed)
-      (when report-line-items-pre (remove nil? [(when banner? "\n") writing-to-css-msg (when banner? "\n")]))
-      report-line-items-pre
-      cache-report))
-    #_(println "Number of rules served from cache: " @state/cached-sx-rule-count "\n")))
+        :indent       3}
+       (:selected-ns-msg @to-be-printed)
+       (when report-line-items-pre (remove nil? [(when banner? "\n") writing-to-css-msg (when banner? "\n")]))
+       report-line-items-pre
+       cache-report))
+     #_(println "Number of rules served from cache: " @state/cached-sx-rule-count "\n"))))
 
 (defn report! [ns msg]
  (println (str "\n" (ansi/red "[") (ansi/blue ns) (ansi/red "]") msg "\n")))
