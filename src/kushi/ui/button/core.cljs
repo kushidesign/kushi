@@ -37,7 +37,7 @@
 
 
 (defcom button
-  [:button:!
+  [:button:!attr
    (merge-with-style
      label-base-sx
      (kushi.core/sx
@@ -49,7 +49,7 @@
                :bs                         :solid
                :bgi                        :none
                :cursor                     :pointer}}))
-   [:span]]
+   [:span:!children]]
    nil
   #(if (string? %) [:span.kushi-label-text %] %))
 

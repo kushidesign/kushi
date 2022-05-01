@@ -5,7 +5,7 @@
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
    [kushi.ui.core :refer (gui defcom opts+children)]
-   [kushi.ui.util :as util]
+   [kushi.ui.dom :as util]
    ))
 
 (def ? js/console.log)
@@ -16,9 +16,9 @@
 
 (defcom collapse-body
   [:section
-   (sx
-    :overflow--hidden)
+   (sx 'kushi-collapse-body-wrapper :overflow--hidden)
    [:div:! (sx
+            'kushi-collapse-body:ui
             :bt--1px:solid:transparent
             :bb--1px:solid:transparent)]])
 
@@ -36,17 +36,7 @@
       margin-top (js/parseFloat (.-marginTop styles))
       margin-bottom (js/parseFloat (.-marginBottom styles))
       ret  (+ margin-top margin-bottom (js/Math.ceil (.-offsetHeight el)))]
-  #_(? {:styles styles
-      :margin-top margin-top
-      :margin-bottom margin-bottom
-      :ret ret})
   ret))
-
-(defclass collapse-header
-  :.pointer
-  :ai--center
-  :p--10px:0px
-  :transition--all:200ms:linear)
 
 (defn other-expanded-node
   [accordian-node clicked-node]
@@ -54,7 +44,6 @@
     (when-let [open-node (.querySelector accordian-node "section>div[aria-expanded='true'][role='button']")]
       (when-not (= open-node clicked-node)
         [open-node (-> open-node .-nextSibling)]))))
-
 
 (defcom collapse-header
   (let [on-click #(let [node        (.closest (-> % .-target) "[aria-expanded][role='button']")
@@ -79,8 +68,12 @@
                                                        (toggle-boolean-attribute node :aria-expanded))))]
     [:div
      (sx
+      'kushi-collapse-header:ui
+      :.pointer
       {:class         [:.flex-row-fs :.collapse-header]
-       :style         {
+       :style         {:ai                                               :center
+                       :padding-block                                    :0.75em
+                       :transition                                       :all:200ms:linear
                        :+section:transition-property                     :height
                        :+section:transition-timing-function              "cubic-bezier(0.23, 1, 0.32, 1)"
                        :+section:transition-duration                     :500ms
@@ -93,11 +86,7 @@
                        "&[aria-expanded='true']:+section:>*:opacity"     1}
        :role          :button
        :aria-expanded false
-       :on-click      on-click
-       :prefix        :kushi-
-       :ident         :collapse-header
-       :ui?         true
-       })]))
+       :on-click      on-click})]))
 
 (defn get-attr [m k] (some-> m :parts k first))
 (defn get-children [m k] (some-> m :parts k rest))

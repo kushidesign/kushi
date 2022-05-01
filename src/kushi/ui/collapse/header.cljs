@@ -1,12 +1,10 @@
 (ns kushi.ui.collapse.header
-  (:require-macros [kushi.core :refer (defclass sx cssfn)]
-                   [kushi.ui.core :refer (defcom)])
-  (:require [kushi.ui.icon.core :refer (bar chevron-down icon)]
+  (:require-macros [kushi.core :refer ( sx )] )
+  (:require 
             [kushi.utils :as util :refer-macros (keyed)]
             [clojure.string :as string]
             [kushi.ui.icon.mui.core :refer (mui-icon)]
             [kushi.ui.title.core :refer (title)]
-            [kushi.core :refer (merge-with-style)]
             [par.core :refer-macros [!? ?]]))
 
 (defn readable-string? [label]
@@ -45,11 +43,10 @@
         opts           (keyed label icon icon-opposite? title-sx)]
    [:<>
     [:span
-     (sx
-      'kushi-collapse-header-label-collapsed:ui
-      :.flex-row-fs
-      :w--100%
-      {:style {"has(parent([aria-expanded='true'])):display" :none}})
+     (sx 'kushi-collapse-header-label-collapsed:ui
+         :.flex-row-fs
+         :w--100%
+         {:style {"has(parent([aria-expanded='true'])):display" :none}})
      (if (string? label)
        [header-title opts]
        label)]

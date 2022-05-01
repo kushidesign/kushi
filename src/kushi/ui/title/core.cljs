@@ -12,6 +12,6 @@
         'kushi-title:ui
         :d--ib
         :>span:jc--fs))
-   [:span]]
+   [:span:!children]]
    nil
   #(if (string? %) [:span.kushi-label-text %] %))

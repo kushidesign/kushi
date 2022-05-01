@@ -3,6 +3,8 @@
             [kushi.ui.card.core :refer (card)]
             [kushi.utils :refer (merge-with-style)]
             [kushi.ui.button.core :refer (button)]
+            [kushi.ui.card.core :refer (card)]
+            [kushi.ui.core :refer (opts+children)]
             [kushi.core :refer-macros (sx cssfn defclass)]))
 
 (defn close-kushi-modal [e]
@@ -34,13 +36,39 @@
                    :after:content "\"✕\""
                    }})])
 
-(defclass modal-scrim
-  {:ai                           :c
-   :bgc                          (cssfn :rgba 232 232 232 0.86)
-   "&[aria-modal='false']:display" :none
-   :z                            1})
+(defn modal
+  "Desc for"
+  [& args]
+  (let [[opts attr & children]  (opts+children args)
+        {:keys [trigger parts]} opts]
+    [:div
+     (merge-with-style
+      (sx 'kushi-modal-wrapper:ui
+          :d--block)
+      attr)
+     trigger
+     [:div
+      (merge-with-style
+       (sx 'kushi-modal:ui
+           :.fixed-fill
+           :.flex-col-c
+           {:aria-modal false
+            :role       :dialog
+            :style      {:ai                             :c
+                         :bgc                            (cssfn :rgba 232 232 232 0.86)
+                         "&[aria-modal='false']:display" :none
+                         :z                              1}})
+       (:scrim parts))
+      [card (merge-with-style
+             (sx :.elevated
+                 :.flex-col-c
+                 :ai--c
+                 :w--600px
+                 :h--350px)
+             (:panel parts))
+       [:<> [dismiss-button] children]]]]))
 
-(defn modal [{:keys [children trigger parts]}]
+#_(defn modal [{:keys [children trigger parts]}]
   (let [{[scrim-attrs] :scrim [panel-attrs] :panel} parts]
     [:span (sx :d--block {:prefix :kushi- :ident :modal-wrapper})
      trigger

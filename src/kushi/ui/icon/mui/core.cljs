@@ -13,7 +13,7 @@
                     :href "https://fonts.googleapis.com/css2?family=Material+Icons"})
 
 (def mui-icon-span
-  [:span
+  [:span:!children
    (sx
     'kushi-mui-icon:ui
     :.transition

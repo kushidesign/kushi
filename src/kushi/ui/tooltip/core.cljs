@@ -3,7 +3,7 @@
   (:require
    [kushi.core :refer (sx defclass merge-with-style) :refer-macros (sx)]
    [kushi.ui.core :refer (gui defcom opts+children)]
-   [kushi.ui.util :refer (set-overlay-position! conditional-display?)]
+   [kushi.ui.dom :refer (set-overlay-position! conditional-display?)]
    [par.core :refer [? !? ?+ !?+]]))
 
 (defn tooltip+parent [e]
@@ -45,6 +45,17 @@
   (when-let [[tooltip parent] (tooltip+parent %)]
     (when-not (conditional-display? tooltip)
       (remove-tooltip! parent))))
+
+#_(defn my-complex-component
+  "Desc for"
+  [& args]
+  (let [[opts attr & children]      (opts+children args)
+        {:keys []} opts]
+    [:section
+     (merge-with-style
+      (sx 'my-component-component:ui)
+      attr)
+     children]))
 
 (defn tooltip
   "A section of content which can be collapsed and expanded"
