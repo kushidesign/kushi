@@ -113,7 +113,12 @@
    ;Combonatorial transition utility
     :transition          {:transition-property        :all
                           :transition-timing-function "cubic-bezier(0 0 1 1)"
-                          :transition-duration        :200ms}})
+                          :transition-duration        :200ms}
+
+    ;Combonatorial transition utility
+    :hidden              {:visibility :hidden}
+    :visible             {:visibility :visible}
+    :collapse            {:visibility :collapse}})
 
 (defonce declarative-classes
   (merge
