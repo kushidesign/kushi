@@ -88,8 +88,13 @@
 ;; Used to keep track of all the component styles.
 (def garden-vecs-state (atom garden-vecs-state-init))
 
-(def cached-sx-rule-count (atom 0))
+;; Used to store output of stylesheet which will be inected at dev (and maybe prod) runtime
+(def kushi-css-sync (atom nil))
 
+;; Used to store the rules "to be printed"
+(def kushi-css-sync-to-be-printed (atom nil))
+
+(def cached-sx-rule-count (atom 0))
 
 (defn add-global-token! [var]
   (swap! global-tokens conj var))
@@ -155,3 +160,28 @@
     {:caching?  caching?
      :cache-key cache-key
      :cached    cached}))
+
+
+;; Does user want runtime injection?
+(def rt-inj? (:runtime-injection? user-config))
+
+;; Keep track whether we are in dev or prod build
+(def KUSHIDEBUG (atom true))
+
+(defn kushi-debug
+  {:shadow.build/stage :compile-prepare}
+  [build-state]
+  #_(?+ {:shadow.build/stage :compile-prepare} "preparing to reset build states...")
+  (reset-build-states!)
+  #_(?+ "After reset...kushi-debug:garden-vecs-state" @state/garden-vecs-state)
+  #_(?+ "After reset...kushi-debug:atomic-user-classes" @state/kushi-atomic-user-classes)
+  #_(?+ "After reset...kushi-debug:atomic-declarative-classes-used" @state/atomic-declarative-classes-used)
+  #_(?+ "After reset...kushi-debug:state/user-defined-keyframes" @state/user-defined-keyframes)
+  #_(?+ "After reset...kushi-debug:state/user-defined-font-faces" @state/user-defined-font-faces)
+
+  (let [mode (:shadow.build/mode build-state)]
+    #_(when mode
+        (?+ (? "(:shadow.build/mode build-state)") mode))
+    (when (not= mode :dev)
+      (reset! KUSHIDEBUG false)))
+  build-state)
