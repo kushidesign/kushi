@@ -1,11 +1,21 @@
+
 (ns ^:dev/always kushi.core
-  (:require-macros [kushi.core :refer [keyed sx theme! #_ui-components!]])
+  (:require-macros [kushi.core :refer [keyed sx theme! #_ui-components! inject!]])
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
             [kushi.sheets :as sheets]
             [kushi.utils :as util] ;; For aliasing merge-with-style
             [par.core :refer [? !?]] ;; only use when developing kushi itself
             ))
+
+(defn css-sync! [s]
+  (let [id     (:kushi-css-sync sheets/sheet-ids-by-type)
+        el     (js/document.getElementById id)
+        el-new (js/document.createElement "style")]
+    (set! (.-innerHTML el-new) s)
+    (doto el-new
+      (.setAttribute "id" id))
+    (.replaceChild (.-parentNode el) el-new el)) )
 
 (defn insert-style-tag!
   [id]
@@ -34,17 +44,9 @@
 ;; Used to keep track of what has been injected, to avoid duplicate injections.
 (def injected (atom #{}))
 
-;; Flushes #_kushi-rules-shared_ or #_kushi-rules_ stylesheets during development builds.
-#_(def sheet-ids-by-type
-  {:global-tokens       "_kushi-rules-global-tokens_"
-   :kushi-atomic            "_kushi-rules-utility_"
-   :defclass                "_kushi-rules-shared_"
-   :theme                   "_kushi-rules-theme_"
-   :sx                      "_kushi-rules_"
-   :defclass-kushi-override "_kushi-rules-overrides_"
-   :defclass-user-override  "_kushi-rules-user-overrides_"})
 
-(clean/clean! (vals sheets/sheet-ids-by-type))
+(clean/clean! (vals (select-keys sheets/sheet-ids-by-type
+                                 sheets/sheet-types-ordered)))
 
 ;; Toggle for debugging while developing kushi itself
 (def log-inject-css*? false)
@@ -63,7 +65,7 @@
   "Called internally by kushi.core/sx at dev/run time for zippy previews."
   [css-rules
    sheet-id]
-  (!? :inject-css* css-rules)
+  (? :inject-css* css-rules)
   (when-let [stylesheet-el (js/document.getElementById sheet-id)]
     (let [;log-inject-css*? (= sheet-id "_kushi-rules_")
           rules-as-seq   (map-indexed vector css-rules)
@@ -230,6 +232,7 @@
 
 (defn add-google-font!
   [& maps]
+  (!? :add-google-font! maps)
   (let [families* (reduce m->str [] maps)
         families  (str (string/join "&" families*) "&display=swap")]
    (do
@@ -256,3 +259,5 @@
           :data-cljs data-cljs)))
 
 (def merge-with-style kushi.utils/merge-with-style)
+
+(theme!)
