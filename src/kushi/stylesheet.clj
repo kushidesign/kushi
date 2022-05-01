@@ -143,10 +143,20 @@
 
 (defn append-defclasses!
   [defclasses-used {:keys [pretty-print? css-text to-be-printed comment-base classtype]}]
-  (let [gv (keep #(let [normalized-class-kw (util/normalized-class-kw %)
+  (let [
+        ;; TODO Refactor
+        ;; For now this will always add kushi atomic base utility classes to kushi-css-sync stylesheet
+        ;; This is so they are always available for development (adding classes in browser dev tools etc).
+        distinct-used-defclasses (if (and state/KUSHIDEBUG (= classtype :kushi-atomic))
+                                   (->> @state/kushi-atomic-user-classes
+                                        (filter (fn [[_ v]] (= (:__classtype__ v) :kushi-atomic)))
+                                        keys)
+                                   (distinct @defclasses-used))
+
+        gv (keep #(let [normalized-class-kw (util/normalized-class-kw %)
                          m (normalized-class-kw @state/kushi-atomic-user-classes)]
                      (when (= (:__classtype__ m) classtype) (:garden-vecs m)))
-                  (distinct @defclasses-used))]
+                  distinct-used-defclasses)]
    (when (seq gv)
      (let [garden-vecs*                   (apply concat (concat gv))
            garden-vecs                    (->> garden-vecs*
@@ -238,55 +248,47 @@
         cache-is-equal? (and (nil? only-in-a) (nil? only-in-b))]
     cache-is-equal?))
 
-(defn create-css-file
-  {:shadow.build/stage :compile-finish}
-  [build-state]
-  (let [{:keys [write-stylesheet?
-                __enable-caching?__
-                post-build-report?]} user-config
-        write-styles? (not (false? write-stylesheet?))
-        pretty-print? (if (:shadow.build/mode build-state) true false)
-        caching?      (true? (:__enable-caching?__ user-config))
+(defn create-css-text []
+  (let [pretty-print? true
         printables    (atom [])
         to-be-printed (atom {})
         css-text      (atom license-comment-header)
         m             {:css-text      css-text
                        :pretty-print? pretty-print?
                        :printables    printables
-                       :to-be-printed to-be-printed}]
+                       :to-be-printed to-be-printed}
+        caching?      (true? (:enable-caching? user-config))
+        ]
 
     (when-let [select-ns-msg (reporting/select-ns-msg)]
       (swap! to-be-printed assoc :select-ns-msg select-ns-msg))
 
-    (when write-styles?
-      (append-tokens! (assoc m :token-type :global))
-      (append-tokens! (assoc m :token-type :alias))
-      (append-at-font-face! m)
-      (append-defkeyframes! m)
-      (append-defclasses! state/atomic-declarative-classes-used
-                          (merge m {:classtype :kushi-atomic
-                                    :comment-base "Kushi base utility/"}))
-      (append-defclasses! state/defclasses-used
-                          (merge m {:classtype :defclass
-                                    :comment-base "User-defined, shared utility/"}))
-      (append-theme-rules! m)
-      (append-reusable-component-rules! m)
-      (append-component-rules! m)
-      (append-defclasses! state/defclasses-used
-                          (merge m {:classtype    :defclass-kushi-override
-                                    :comment-base "Kushi lib, shared override utility/"}))
-      (append-defclasses! state/defclasses-used
-                          (merge m {:classtype    :defclass-user-override
-                                    :comment-base "User-defined, shared override utility/"})))
+    (append-tokens! (assoc m :token-type :global))
+    (append-tokens! (assoc m :token-type :alias))
+    (append-at-font-face! m)
+    (append-defkeyframes! m)
+    (append-defclasses! state/atomic-declarative-classes-used
+                        (merge m {:classtype    :kushi-atomic
+                                  :comment-base "Kushi base utility/"}))
+    (append-defclasses! state/defclasses-used
+                        (merge m {:classtype    :defclass
+                                  :comment-base "User-defined, shared utility/"}))
+    (append-theme-rules! m)
+    (append-reusable-component-rules! m)
+    (append-component-rules! m)
+    (append-defclasses! state/defclasses-used
+                        (merge m {:classtype    :defclass-kushi-override
+                                  :comment-base "Kushi lib, shared override utility/"}))
+    (append-defclasses! state/defclasses-used
+                        (merge m {:classtype    :defclass-user-override
+                                  :comment-base "User-defined, shared override utility/"}))
 
-    (let [zero-total-rules?   (nil? (some #(not (zero? %)) (vals @to-be-printed)))
-          something-to-write? (not zero-total-rules?)]
-      #_(? (keyed write-stylesheet? something-to-write?))
-      (when (and write-stylesheet? something-to-write?)
-        (use 'clojure.java.io)
-        (spit user-css-file-path @css-text :append false))
+    (reset! state/kushi-css-sync @css-text)
+    (!?+ :css-text @state/kushi-css-sync)
+    (reset! state/kushi-css-sync-to-be-printed @to-be-printed)
 
-      (let [cache-will-update? (when caching?
+      ;; Do caching here???
+    #_(let [cache-will-update? (when caching?
                                  (let [cache-is-equal? (cache-is-equal?)]
                                    (write-cache! cache-is-equal?)
                                    (not cache-is-equal?)))]
@@ -299,6 +301,22 @@
 
         (when (and post-build-report? something-to-write?)
           (reporting/print-report! to-be-printed cache-will-update?)))))
+
+(defn create-css-file
+  {:shadow.build/stage :compile-finish}
+  [build-state]
+  (if (nil? @state/kushi-css-sync) (create-css-text))
+  (let [to-be-printed       state/kushi-css-sync-to-be-printed
+        zero-total-rules?   (nil? (some #(not (zero? %)) (vals @to-be-printed)))
+        something-to-write? (not zero-total-rules?)
+        ]
+
+    (when (and (:write-stylesheet? user-config) something-to-write?)
+      (use 'clojure.java.io)
+      (spit user-css-file-path @state/kushi-css-sync :append false))
+
+    (when (and (:post-build-report? user-config) something-to-write?)
+      (reporting/print-report! to-be-printed)))
 
   ;; Must return the build state
   build-state)
