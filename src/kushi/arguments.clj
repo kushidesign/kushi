@@ -49,8 +49,7 @@
                   :defclass-kushi-override state/defclasses-used
                   :defclass-user-override  state/defclasses-used
                   nil)]
-      #_(? 'register&prefix*:x {x (:__classtype__ ret)})
-      #_(? 'register&prefix* (keyed x ret store))
+      (!? 'register&prefix* (keyed x ret store))
       (when store (swap! store conj x))
       ret)))
 
@@ -67,6 +66,8 @@
           from-conditionals      (flatten (map #(filter keyword? (drop 2 %)) conditionals))
           distinct-classes       (distinct (concat kw-classes from-conditionals))
           prefixed               (map register&prefix class-coll)]
+      #_(when (state/debug?)
+        (!?+ (keyed x distinct-classes prefixed)))
       (keyed distinct-classes prefixed))))
 
 (defn sym->kushi-attr [tokens]
