@@ -1,4 +1,5 @@
 (ns ^:dev/always kushi.utils
+  #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
@@ -153,13 +154,16 @@
     (wrap-css-var v)
 
     (and (string? v) (re-find #"[\da-z]+\*$" v))
-    (let [scale-system (or (:scaling-mode user-config) :tachyons)
-          scale-key (string/replace v #"\*$" "")
-          css-val (get (some-> scales
-                               scale-system
-                               (get (hydrated-k scaling-map)))
-                       scale-key nil)]
-      (when css-val css-val))
+    (if-let [scaling-system (:scaling-system user-config)]
+      (let [scale-key (string/replace v #"\*$" "")
+            css-val (get (some-> scales
+                                 scaling-system
+                                 (get (hydrated-k scaling-map)))
+                         scale-key nil)]
+        css-val)
+      (let [warning (str "\n[kushi - WARNING][Bad value => " v " ]\nIf you trying to use a scaling system, you need to explicitly set a value for the :scaling-system entry in your kushi.edn config map.\nCurrently support values are `:tachyons` and `:tailwind`\n")]
+        (println warning)
+        warning))
 
     (or (numeric-string? v) (number? v))
     (convert-number (str v) hydrated-k)
@@ -336,3 +340,13 @@
   (if (token? x)
     (str "var(" (name x) ")")
     x))
+
+(defn merged-attrs-map
+  ([attrs-base classlist css-vars]
+   (merged-attrs-map attrs-base classlist css-vars nil))
+  ([attrs-base classlist css-vars data-cljs]
+   (assoc attrs-base
+          :class
+          (distinct classlist)
+          :style css-vars
+          :data-cljs data-cljs)))
