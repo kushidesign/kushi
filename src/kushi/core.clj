@@ -8,18 +8,17 @@
    [par.core :refer [? !? ?+ !?+]]
    [kushi.arguments :as arguments]
    [kushi.atomic :as atomic]
-   [kushi.shorthand :as shorthand]
    [kushi.config :refer [user-config]]
    [kushi.parse :as parse]
    [kushi.printing :as printing]
    [kushi.selector :as selector]
    [kushi.specs :as specs]
    [kushi.cssvarspecs :as cssvarspecs]
-   [kushi.state :as state]
-   [kushi.theme :as theme]
+   [kushi.state :as state :refer [KUSHIDEBUG]]
    [kushi.stylesheet :as stylesheet]
    [kushi.typography :refer [system-font-stacks]]
-   [kushi.utils :as util]))
+   [kushi.utils :as util]
+   [kushi.ui.theme :as theme]))
 
 ;TODO move this to utils
 (defmacro keyed [& ks]
@@ -27,26 +26,6 @@
          keys# (map keyword keys#)
          vals# (list ~@ks)]
      (zipmap keys# vals#)))
-
-(def KUSHIDEBUG (atom true))
-
-(defn kushi-debug
-  {:shadow.build/stage :compile-prepare}
-  [build-state]
-  #_(?+ {:shadow.build/stage :compile-prepare} "preparing to reset build states...")
-  (state/reset-build-states!)
-  #_(?+ "After reset...kushi-debug:garden-vecs-state" @state/garden-vecs-state)
-  #_(?+ "After reset...kushi-debug:atomic-user-classes" @state/kushi-atomic-user-classes)
-  #_(?+ "After reset...kushi-debug:atomic-declarative-classes-used" @state/atomic-declarative-classes-used)
-  #_(?+ "After reset...kushi-debug:state/user-defined-keyframes" @state/user-defined-keyframes)
-  #_(?+ "After reset...kushi-debug:state/user-defined-font-faces" @state/user-defined-font-faces)
-
-  (let [mode (:shadow.build/mode build-state)]
-    #_(when mode
-        (?+ (? "(:shadow.build/mode build-state)") mode))
-    (when (not= mode :dev)
-      (reset! KUSHIDEBUG false)))
-  build-state)
 
 
 (defn style-map->vecs
@@ -108,7 +87,7 @@
         {:keys
          [valid-styles-from-attrs
           valid-styles-from-tokens
-          invalid-style-args]}     (arguments/validate-args coll*  style-tokens  {:style style-map})
+          invalid-style-args]}     (arguments/validate-args coll* style-tokens {:style style-map})
 
         invalid-args             (or
                                   (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
@@ -147,6 +126,7 @@
 
 (defmacro defclass
   [sym & coll*]
+  ;; (when (= :heavy sym) (?+ sym))
   (when-not (defclass-noop? sym coll*)
     (let [form-meta             (meta &form)
           dupe-defclass-warning (printing/dupe-defclass-warning
@@ -177,6 +157,7 @@
 
       ;; Put atomic class into global registry
         (swap! state/kushi-atomic-user-classes assoc defclass-name m)
+        ;; (when (= sym :light) (?+ :light (:light @state/kushi-atomic-user-classes)))
         (swap! state/ordered-defclasses conj (:n m))
 
         (printing/diagnostics :defclass {:defclass-map m
@@ -193,6 +174,7 @@
             ;; This makes them available for testing / sampling in browser devtools.
              (kushi.core/inject-css* (quote ~garden-vecs-for-shared)
                                      (~__classtype__ kushi.sheets/sheet-ids-by-type))
+
              (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
                (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
                (when ~dupe-defclass-warning
@@ -212,7 +194,8 @@
                    :src [\"local(\\\"Fira Code Bold\\\")\"]})"
   [m]
   (let [{:keys [caching? cache-key cached]} (state/cached :add-font-face m)
-        aff                                 (vector (or cached (garden/css (at-font-face m))))]
+        ;; aff                                 (vector (or cached (garden/css (at-font-face m))))
+        aff                                 (or cached (garden/css (at-font-face m)))]
     (reset! state/current-macro :add-font-face)
     (swap! state/user-defined-font-faces conj aff)
     (when (and caching? (not cached))
@@ -235,7 +218,7 @@
                     (for [[style fonts] fonts-by-style]
                       (garden/css
                        (at-font-face
-                        {:font-family "system"
+                        {:font-family "kushi-system-ui"
                          :font-style (name style)
                          :font-weight weight
                          :src (mapv #(str "local(\"" % "\")") fonts)}))))
@@ -244,6 +227,7 @@
 
 (defmacro add-system-font-stack
   [& weights*]
+  (?+ :add-system-font-stack!! weights*)
   (let [{:keys [caching? cache-key cached]} (state/cached :system-font-stack weights*)
         ff-rules (into [] (or cached (system-at-font-face-rules weights*)))]
     (doseq [rule ff-rules]
@@ -251,7 +235,7 @@
       (swap! state/user-defined-font-faces conj rule))
     (when (and caching? (not cached))
       (swap! state/styles-cache-updated assoc cache-key ff-rules))
-    (when (or @KUSHIDEBUG (:runtime-injection? user-config))
+    #_(when (or @KUSHIDEBUG (:runtime-injection? user-config))
       `(do
          (kushi.core/inject-css* ~ff-rules "_kushi-rules-shared_")
          nil))
@@ -303,6 +287,7 @@
 
 (defmacro sx
   [& args*]
+  ;; (when (= (first args*) :.heavy) (?+ args*))
   (when-not (= args* '(nil))
     (let [form-meta                   (meta &form)
           {:keys [caching?
@@ -315,14 +300,14 @@
                   garden-vecs
                   data-cljs
                   inj-type
-                  element-style-inj
-                  shared-styles-inj]
+                  ;; element-style-inj
+                  ; shared-styles-inj
+                  ]
            :as new-args}              (or cached (arguments/new-args (keyed args* form-meta cache-key)))
           _                           (printing/set-warnings!)
           warnings-js                 @state/warnings-js]
 
       (when caching?
-        #_(when cached (swap! state/cached-sx-rule-count inc))
         (when-not cached
           (swap! state/styles-cache-updated assoc cache-key new-args)))
 
@@ -331,15 +316,18 @@
       (printing/print-warnings!)
 
       #_(when true
-        (? :sx
-           (keyed
-            kushi-attr
-            attrs-base
-            shared-styles-inj
-            css-vars
-            garden-vecs
-            data-cljs
-            prefixed-classlist)))
+          (? :sx
+             (keyed
+              form-meta
+              ;; kushi-attr
+              ;; attrs-base
+              ;; shared-styles-inj
+              ;; css-vars
+              ;; garden-vecs
+              ;; inj-type
+              ;; data-cljs
+              ;; prefixed-classlist
+              )))
 
     ;;TODO - fix injection mode
       (if @KUSHIDEBUG
@@ -351,10 +339,11 @@
              (when ~warnings-js
                (doseq [warning# ~warnings-js]
                  (logfn# cljs.core/to-array warning#)))
-             (kushi.core/inject-style-rules (quote ~element-style-inj) ~inj-type)
-             (kushi.core/inject-kushi-atomics ~shared-styles-inj)
 
-           ;; return attributes map for the html element
+             ;;  (kushi.core/inject-style-rules (quote ~element-style-inj) ~inj-type)
+             ;;  (kushi.core/inject-kushi-atomics ~shared-styles-inj)
+
+             ;; return attributes map for the html element
              (kushi.core/merged-attrs-map
               ~attrs-base
               ~prefixed-classlist
@@ -362,19 +351,10 @@
               ~data-cljs)))
 
        ;; release builds -----------------------------------------------
-        (if (:runtime-injection? user-config)
-          `(do
-             (kushi.core/inject-style-rules (quote ~element-style-inj) ~inj-type)
-             (kushi.core/inject-kushi-atomics ~shared-styles-inj)
-             (kushi.core/merged-attrs-map
+        `(kushi.core/merged-attrs-map
               ~attrs-base
               ~prefixed-classlist
-              ~css-vars))
-          `(do
-             (kushi.core/merged-attrs-map
-              ~attrs-base
-              ~prefixed-classlist
-              ~css-vars)))))))
+              ~css-vars)))))
 
 ;; For generating sx-theme! destructuring vecs at repl
 #_(? (mapv (fn [n] [(symbol (str "c" n)) (symbol (str "c" n "m"))]) (range 1 45)))
@@ -384,8 +364,20 @@
 
 #_(defmacro ui-components!)
 
+(defmacro inject! []
+  (stylesheet/create-css-text)
+  (let [st @state/kushi-css-sync]
+   `(kushi.core/css-sync! ~st)))
+
+;TODO - Refactor out this destructuring after uniting defclass & sx same underlying supporting fns
 (defmacro theme! []
-  (let [{:keys [styles used-toks global-toks alias-toks overrides]} (theme/theme-by-compo theme/base-theme)
+  (let [{:keys [styles
+                overrides
+                alias-toks
+                global-toks
+                tokens-in-theme
+                font-loading-opts]
+         :as merged-theme-map} (theme/merged-theme)
         [[c1 c1m]
          [c2 c2m]
          [c3 c3m]
@@ -483,7 +475,7 @@
     ;; (?+ css-tokens-actually-used)
     (doseq [tok global-toks] (state/add-global-token! tok))
     (doseq [tok alias-toks] (state/add-alias-token! tok))
-    (doseq [tok used-toks] (state/add-used-token! tok))
+    (doseq [tok tokens-in-theme] (state/add-used-token! tok))
     (!?+ @state/global-tokens)
     `(do
        (kushi.core/defclass ~c1 ~c1m)
@@ -576,7 +568,17 @@
        (kushi.core/sx ~m43)
        (kushi.core/sx ~m44)
 
-       (when (or ~kushi-debug ~rt-injection?)
+       (when-not false
+         (let [flo#   ~font-loading-opts
+               asfs?# (:add-system-font-stack? flo#)
+               gfm#   (:google-font-maps flo#)]
+           #_(when asfs?#
+             (js/console.log :asfs?# asfs?#)
+             (kushi.core/add-system-font-stack))
+           (when gfm#
+             (apply kushi.core/add-google-font! gfm#))))
+
+       #_(when (or ~kushi-debug ~rt-injection?)
          (kushi.core/inject-design-tokens! ~global-tokens-to-inject :global-tokens)
          (kushi.core/inject-design-tokens! ~alias-tokens-to-inject :alias-tokens)))))
 
