@@ -47,8 +47,6 @@
 
 
 ;; kushi specs ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(s/def ::config
-  (s/keys :req-un [(or ::element ::prefix ::ns-attr-key ::f ::ident ::ancestor ::classname)]))
 
 (s/def ::responsive-config
   (s/and map? not-empty))
@@ -56,6 +54,7 @@
 (s/def ::namespaced-keyword
   (s/and keyword? #(re-find #"/" (str %))))
 
+;; TODO remove or move dependancy on atomic
 (s/def ::style-kw-declarative
   (s/and keyword?
          #(or (get atomic/declarative-classes %)
@@ -162,8 +161,9 @@
 
 
 (s/def ::style-tuple-prop
-  (s/and ::kushi-style-css-prop
-         ::with-valid-pseudo-order))
+  (s/or :valid-kushi-style-css-prop (s/and ::kushi-style-css-prop
+                                           ::with-valid-pseudo-order)
+        :valid-css-custom-property #(->> % name (re-find #"^--.+$"))))
 
 (s/def ::style-tuple-value
   (s/or :symbol? symbol? :list? list? :vector? vector? :string? string? :keyword? keyword? :number? number?))
@@ -206,10 +206,15 @@
               (or (get atomic/declarative-classes prop)
                   (get atomic/declarative-classes (-> prop name (subs 1) keyword)))))))
 
+(s/def ::kushi-tokenized-custom-property
+  (s/and keyword?
+         #(->> % name (re-find #"^--.+--.+$"))))
+
 (s/def ::style-kw
   (s/or :dynamic ::kushi-style-kw-dynamic
         :declarative ::style-kw-declarative
-        :declarative-with-modifiers ::style-kw-declarative-with-modifiers))
+        :declarative-with-modifiers ::style-kw-declarative-with-modifiers
+        :kushi-tokenized-custom-property ::kushi-tokenized-custom-property))
 
 
 ;; defclass related specs  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -233,13 +238,20 @@
         :kushi-conditional-class ::kushi-conditional-class
         :kushi-dot-class-with-mods ::kushi-dot-class-with-mods))
 
+
 (s/def ::kushi-tokenized-keyword
   (s/or :kushi-style-kw-dynamic ::kushi-style-kw-dynamic
-        :kushi-class-like ::kushi-class-like))
+        :kushi-class-like ::kushi-class-like
+        :kushi-tokenized-custom-property ::kushi-tokenized-custom-property))
 
 (s/def ::map-mode-style+attr
   #(and (map? (first %))
         (map? (second %))))
 
 ;; user-config specs
- (s/def ::select-ns-vector (s/and vector? #(seq %) (s/coll-of symbol?)))
+(s/def ::select-ns-vector (s/and vector? #(seq %) (s/coll-of symbol?)))
+
+;; css-reset-related specs
+(s/def ::css-reset-selector (s/or
+                             :string? string?
+                             :vector? (s/and vector? #(seq %) (s/coll-of string?))))
