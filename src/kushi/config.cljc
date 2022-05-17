@@ -42,10 +42,8 @@
    :report-cache-update? true
    :reporting-style      :simple
    :warning-style        :banner
-   :ancestor             nil
-   :prefix               nil
-   :defclass-prefix      nil
-   :atomic-class-prefix  nil
+   :kushi-class-prefix   nil
+   :kushi-class-prepend  nil
    :data-attr-name       nil
    :css-dir              nil
    :write-stylesheet?    true
@@ -76,9 +74,8 @@
   (select-keys
    user-config
    [:data-attr-name
-    :ancestor
-    :defclass-prefix
-    :prefix
+    :kushi-class-prepend
+    :kushi-class-prefix
     :media]))
 
 (def user-css-file-path
