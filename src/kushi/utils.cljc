@@ -10,6 +10,47 @@
    [kushi.scales :refer [scales scaling-map]]
    [kushi.config :refer [user-config]]))
 
+(def dom-element-events
+  #{
+    :on-change
+
+    :on-blur
+    :on-aux-click
+    :on-click
+    :on-composition-end
+    :on-composition-start
+    :on-composition-update
+    :on-context-menu
+    :on-copy
+    :on-cut
+    :on-dbl-click
+    :on-error
+    :on-focus
+    :on-focus-in
+    :on-focus-out
+    :on-fullscreen-change
+    :on-fullscreen-error
+    :on-key-down
+    :on-key-up
+    :on-mouse-down
+    :on-mouse-enter
+    :on-mouse-leave
+    :on-mouse-move
+    :on-mouse-out
+    :on-mouse-over
+    :on-mouse-up
+    :on-paste
+    :on-scroll
+    :on-security-policy-violation
+    :on-select
+    :on-touch-cancel
+    :on-touch-end
+    :on-touch-move
+    :on-touch-start
+    :on-webkit-mouse-force-down
+    :on-wheel})
+
+
 (defmacro keyed [& ks]
   #?(:clj
      `(let [keys# (quote ~ks)
@@ -288,18 +329,20 @@
         joined (when (seq coll) (string/join " + " coll))]
     (when joined {:data-cljs joined})))
 
-(defn on-click [c1 c2 m2]
-  (let [block? (contains? (some->> m2 :data-kushi-block-events (into #{})) :on-click)
+(defn on-click [c1 c2 m2 k]
+  (let [block? (contains? (some->> m2 :data-kushi-block-events (into #{})) k)
         f (if block?
             c2
             (if (and c1 c2)
-              (fn [e] (c1 e) (c2 e))
+              (do
+                ;; (println "merging 2 event handlers")
+                ;; (println m2)
+                (fn [e] (c1 e) (c2 e)))
               (or c1 c2)))]
-    (when f {:on-click f})))
+    (when f {k f})))
 
-;; Public function for style decoration
-;; TODO support n number of maps
-(defn merge-with-style [& maps]
+
+(defn- merge-with-style* [& maps]
   (let [[m1 m2]                   (map #(if (map? %) % {}) maps)
         {style1 :style
          class1 :class
@@ -316,12 +359,18 @@
         class2-coll               (class-coll class2 bad-class2?)
         classes                   (concat class1-coll class2-coll)
         data-cljs                 (data-cljs data-cljs1 data-cljs2)
-        on-click                  (on-click on-click1 on-click2 m2)
-        ret                       (assoc (merge m1 m2 data-cljs on-click)
+
+        user-event-handlers       (keys (select-keys m2 dom-element-events))
+        ;; _ (? user-event-handlers)
+        merged-event-handlers     (apply merge (map #(on-click (% m1) (% m2) m2 %) user-event-handlers))
+        ret                       (assoc (merge m1 m2 data-cljs merged-event-handlers)
                                          :class classes
                                          :style merged-style)]
     ret))
 
+;; Public function for style decoration
+(defn merge-with-style [& maps]
+ (reduce merge-with-style* maps))
 
 (defn nameable? [x] (or (string? x) (keyword? x) (symbol? x)))
 
@@ -342,6 +391,12 @@
     x))
 
 (defn merged-attrs-map
+  [{:keys [attrs-base classlist css-vars data-cljs] :as m}]
+  (cond-> attrs-base
+    true (assoc :class (distinct classlist) :style css-vars)
+    data-cljs (assoc :data-cljs data-cljs)))
+
+#_(defn merged-attrs-map
   ([attrs-base classlist css-vars]
    (merged-attrs-map attrs-base classlist css-vars nil))
   ([attrs-base classlist css-vars data-cljs]
