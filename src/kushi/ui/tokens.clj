@@ -3,7 +3,8 @@
 (def global-tokens
   {
     ;; Color
-    ;; Intended for css props: color, border-color, background-color
+    ;; Intended for css props that assign color
+    ;; ------------------------------------------------------
     :--white           :#FFFFFF
     :--gray50          :#F6F6F6
     :--gray100         :#EEEEEE
@@ -91,6 +92,12 @@
     :--brown700        :#3D281E
 
     ;; Typography
+    ;; ------------------------------------------------------
+
+    ;; font-family
+    :--sans-serif-stack  "Inter, sys, sans-serif"
+    :--serif-stack       "Times, serif"
+
     ;; Intended for css props: font-weight
     :--text-thin          100
     :--text-extra-light   200
@@ -103,7 +110,9 @@
     :--text-heavy         900
 
     ;; Intended for css props: font-size
-    :--text-mini       :0.75rem
+    :--text-mini       :0.625rem
+    :--text-xxsmall    :0.7rem
+    :--text-xsmall     :0.775rem
     :--text-small      :0.875rem
     :--text-medium     :1rem
     :--text-large      :1.25rem
@@ -111,16 +120,20 @@
     :--text-huge       :2.25rem
 
     ;;  Material UI icons
+    ;; ------------------------------------------------------
     :--mui-icon-relative-font-size :inherit
     :--mui-icon-margin-inline-ems :0.333em
 
     ;; Intended for css props: border-radius
+    ;; ------------------------------------------------------
     :--rounded         :0.3rem
 
     ;; Intended for css props: box-shadow
+    ;; ------------------------------------------------------
     :--elevated        "rgb(0 0 0 / 4%) 12px 10px 16px 2px, rgb(0 0 0 / 5%) 0px 2px 9px 0px;"
 
     ;; Intended for css animations and transitions
+    ;; ------------------------------------------------------
     :--timing-linear-curve "cubic-bezier(0 0 1 1)"
     :--timing-ease-out-curve "cubic-bezier(.2, .8, .4, 1)"
     :--timing-ease-in-curve "cubic-bezier(.8, .2, .6, 1)"
@@ -132,64 +145,63 @@
     :--duration-slow :500ms
     :--duration-extra-slow :1s
     :--duration-super-slow :2s
-    :--duration-ultra-slow :4s
-    })
+    :--duration-ultra-slow :4s})
 
 (def alias-tokens
   {:--primary-a   :--black
-    :--primary-b   :--white
-    :--primary     :--black
-    :--primary50   :--gray50
-    :--primary100  :--gray100
-    :--primary200  :--gray200
-    :--primary300  :--gray300
-    :--primary400  :--gray400
-    :--primary500  :--gray500
-    :--primary600  :--gray600
-    :--primary700  :--gray700
-    :--accent      :--blue400
-    :--accent50    :--blue50
-    :--accent100   :--blue100
-    :--accent200   :--blue200
-    :--accent300   :--blue300
-    :--accent400   :--blue400
-    :--accent500   :--blue500
-    :--accent600   :--blue600
-    :--accent700   :--blue700
-    :--negative    :--red400
-    :--negative50  :--red50
-    :--negative100 :--red100
-    :--negative200 :--red200
-    :--negative300 :--red300
-    :--negative400 :--red400
-    :--negative500 :--red500
-    :--negative600 :--red600
-    :--negative700 :--red700
-    :--warning     :--yellow400
-    :--warning50   :--yellow50
-    :--warning100  :--yellow100
-    :--warning200  :--yellow200
-    :--warning300  :--yellow300
-    :--warning400  :--yellow400
-    :--warning500  :--yellow500
-    :--warning600  :--yellow600
-    :--warning700  :--yellow700
-    :--positive    :--green500
-    :--positive50  :--green50
-    :--positive100 :--green100
-    :--positive200 :--green200
-    :--positive300 :--green300
-    :--positive400 :--green400
-    :--positive500 :--green500
-    :--positive600 :--green600
-    :--positive700 :--green700
-    :--mono100     :--white
-    :--mono200     :--gray50
-    :--mono300     :--gray100
-    :--mono400     :--gray200
-    :--mono500     :--gray300
-    :--mono600     :--gray400
-    :--mono700     :--gray500
-    :--mono800     :--gray600
-    :--mono900     :--gray700
-    :--mono1000    :--black })
+   :--primary-b   :--white
+   :--primary     :--black
+   :--primary50   :--gray50
+   :--primary100  :--gray100
+   :--primary200  :--gray200
+   :--primary300  :--gray300
+   :--primary400  :--gray400
+   :--primary500  :--gray500
+   :--primary600  :--gray600
+   :--primary700  :--gray700
+   :--accent      :--blue400
+   :--accent50    :--blue50
+   :--accent100   :--blue100
+   :--accent200   :--blue200
+   :--accent300   :--blue300
+   :--accent400   :--blue400
+   :--accent500   :--blue500
+   :--accent600   :--blue600
+   :--accent700   :--blue700
+   :--negative    :--red400
+   :--negative50  :--red50
+   :--negative100 :--red100
+   :--negative200 :--red200
+   :--negative300 :--red300
+   :--negative400 :--red400
+   :--negative500 :--red500
+   :--negative600 :--red600
+   :--negative700 :--red700
+   :--warning     :--yellow400
+   :--warning50   :--yellow50
+   :--warning100  :--yellow100
+   :--warning200  :--yellow200
+   :--warning300  :--yellow300
+   :--warning400  :--yellow400
+   :--warning500  :--yellow500
+   :--warning600  :--yellow600
+   :--warning700  :--yellow700
+   :--positive    :--green500
+   :--positive50  :--green50
+   :--positive100 :--green100
+   :--positive200 :--green200
+   :--positive300 :--green300
+   :--positive400 :--green400
+   :--positive500 :--green500
+   :--positive600 :--green600
+   :--positive700 :--green700
+   :--mono100     :--white
+   :--mono200     :--gray50
+   :--mono300     :--gray100
+   :--mono400     :--gray200
+   :--mono500     :--gray300
+   :--mono600     :--gray400
+   :--mono700     :--gray500
+   :--mono800     :--gray600
+   :--mono900     :--gray700
+   :--mono1000    :--black })
