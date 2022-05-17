@@ -2,23 +2,22 @@
   (:require
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
-   [garden.core :as garden]
-   [garden.def]
-   [garden.stylesheet :refer [at-font-face]]
    [par.core :refer [? !? ?+ !?+]]
-   [kushi.arguments :as arguments]
-   [kushi.atomic :as atomic]
-   [kushi.config :refer [user-config]]
-   [kushi.parse :as parse]
+   [garden.core :as garden]
+   [garden.stylesheet :refer [at-font-face]]
+   [kushi.arguments :as arguments :refer [args->map]]
    [kushi.printing :as printing]
-   [kushi.selector :as selector]
+   [kushi.state :as state]
    [kushi.specs :as specs]
-   [kushi.cssvarspecs :as cssvarspecs]
-   [kushi.state :as state :refer [KUSHIDEBUG]]
    [kushi.stylesheet :as stylesheet]
    [kushi.typography :refer [system-font-stacks]]
    [kushi.utils :as util]
-   [kushi.ui.theme :as theme]))
+
+   ;; [kushi.defclass :refer [defclass-noop? defclass-dispatch]]
+   [kushi.ui.theme :as theme]
+   [kushi.parse :as parse]
+   [kushi.selector :as selector]
+   [kushi.cssvarspecs :as cssvarspecs]))
 
 ;TODO move this to utils
 (defmacro keyed [& ks]
@@ -27,6 +26,95 @@
          vals# (list ~@ks)]
      (zipmap keys# vals#)))
 
+(defmacro add-font-face
+  "Example:
+   (add-font-face {:font-family \"FiraCodeBold\"
+                   :font-weight \"Bold\"
+                   :font-style \"Normal\"
+                   :src [\"local(\\\"Fira Code Bold\\\")\"]})"
+  [m]
+  (let [{:keys [caching? cache-key cached]} (state/cached :add-font-face m)
+        aff                                 (or cached (garden/css (at-font-face m)))]
+    (reset! state/current-macro :add-font-face)
+    (swap! state/user-defined-font-faces conj aff)
+    (when (and caching? (not cached))
+      (swap! state/styles-cache-updated assoc cache-key aff))))
+
+(defn system-at-font-face-rules [weights*]
+  (let [weights   (if (empty? weights*)
+                    system-font-stacks
+                    (reduce (fn [acc v]
+                              (if (contains? system-font-stacks v)
+                                (assoc acc v (get system-font-stacks v))
+                                acc))
+                            {}
+                            weights*))
+        ff-rules* (for [[weight fonts-by-style] weights]
+                    (for [[style fonts] fonts-by-style]
+                      (garden/css
+                       (at-font-face
+                        {:font-family "sys"
+                         :font-style  (name style)
+                         :font-weight weight
+                         :src         (mapv #(str "local(\"" % "\")") fonts)}))))
+        ff-rules  (apply concat ff-rules*)]
+    ff-rules))
+
+
+(defn add-system-font-stack
+  [& weights*]
+  (!? :add-system-font-stack!! weights*)
+  (let [{:keys [caching? cache-key cached]} (state/cached :system-font-stack weights*)
+        ff-rules (into [] (or cached (system-at-font-face-rules weights*)))]
+    (doseq [rule ff-rules]
+      (reset! state/current-macro :add-font-face)
+      (swap! state/user-defined-font-faces conj rule))
+    (when (and caching? (not cached))
+      (swap! state/styles-cache-updated assoc cache-key ff-rules))
+    @state/user-defined-font-faces))
+
+(defn- keyframe [[k v]]
+  (let [frame-key (if (vector? k)
+                    (string/join ", " (map name k))
+                    (string/replace (name k) #"\|" ","))
+        frame-val (reduce
+                   (fn [acc [key val]]
+                     (assoc acc key (if (util/cssfn? val) (util/cssfn val) val)))
+                   {}
+                   v)]
+    [frame-key frame-val]))
+
+(defmacro defkeyframes [nm & frames*]
+  (let [opts         {:fname     "defkeyframes"
+                      :nm        nm
+                      :form-meta (meta &form)}
+        dupe-warning (printing/dupe-defkeyframes-warning opts)]
+    (printing/print-dupe2! dupe-warning)
+    (reset! state/current-macro :defkeyframes)
+    (let [{:keys [caching?
+                  cache-key
+                  cached]}  (state/cached :keyframes nm frames*)
+          frames            (or cached (mapv keyframe frames*))]
+      (swap! state/user-defined-keyframes assoc (keyword nm) frames)
+      (when (and caching? (not cached))
+        (swap! state/styles-cache-updated assoc cache-key frames)))))
+
+(defn cssfn [& args]
+  (cons 'cssfn (list args)))
+
+;; -----------------------------------------------------
+
+(defn defclass-noop? [sym args]
+  ;; For skipping defclasses & overrides from theming
+  (and (nil? sym) (= args '(nil))))
+
+(defn sym->classtype [sym]
+  (let [meta* (some-> sym meta)]
+    (cond
+      (:kushi-utility meta*)          :kushi-utility
+      (:kushi-utility-override meta*) :kushi-utility-override
+      (:user-utility-override meta*)  :user-utility-override
+      :else                           :user-utility)))
 
 (defn style-map->vecs
   [m]
@@ -56,8 +144,8 @@
   (let [{:keys [selector
                 selector*]} (selector/selector-name
                              {:defclass-name classname
-                              :defclass-hash atomic/defclass-hash
-                              :atomic-class? (contains? #{:kushi-atomic :defclass-kushi-override} classtype)})
+                              :atomic-class? (contains? #{:kushi-utility :kushi-utility-override}
+                                                        classtype)})
         hydrated-styles*    (parse/with-hydrated-classes coll*)
         hydrated-styles     (hydrate-literal-css-vars hydrated-styles*)
         tokenized-styles    (mapv (partial parse/kushi-style->token selector*) hydrated-styles)
@@ -70,24 +158,19 @@
     ret))
 
 
-(defn defclass* [sym* coll* form-meta]
-  (let [sym                      (if (keyword? sym*) (symbol sym*) sym*)
-        classtype                (cond
-                                   (keyword? sym*)               :defclass-kushi-override
-                                   (-> sym meta :kushi)          :kushi-atomic
-                                   (-> sym meta :kushi-override) :defclass-kushi-override
-                                   (-> sym meta :override)       :defclass-user-override
-                                   :else                         :defclass)
+
+(defn defclass* [{:keys [sym args classtype]}]
+  (let [sym                      (if (keyword? sym) (symbol sym) sym)
         defclass-name            (keyword sym)
-        last*                    (last coll*)
+        last*                    (last args)
         style-map                (when (map? last*) last*)
-        style-tokens             (if style-map (drop-last coll*) coll*)
+        style-tokens             (if style-map (drop-last args) args)
         style-map-vecs           (some-> style-map style-map->vecs)
         coll                     (concat style-tokens style-map-vecs)
         {:keys
          [valid-styles-from-attrs
           valid-styles-from-tokens
-          invalid-style-args]}     (arguments/validate-args coll* style-tokens {:style style-map})
+          invalid-style-args]}     (arguments/validate-args args style-tokens {:style style-map})
 
         invalid-args             (or
                                   (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
@@ -97,488 +180,167 @@
                 selector*
                 hydrated-styles
                 garden-vecs]}    (hydrated-defclass defclass-name classtype styles)
-        styles-argument-display  (apply vector coll)
-        console-warning-args     {:defclass-name           defclass-name
-                                  :styles-argument-display styles-argument-display
-                                  :invalid-args            invalid-args
-                                  :form-meta               form-meta
-                                  :fname                   "defclass"}
-        m                        {:n             defclass-name
-                                  :selector      selector
-                                  :selector*     selector*
-                                  :args          hydrated-styles
-                                  :garden-vecs   garden-vecs
-                                  :__classtype__ classtype}]
+        warnings                 (when invalid-args
+                                   {:defclass-name defclass-name
+                                    :args          (apply vector args)
+                                    :invalid-args  invalid-args})
+        ret                       {:n             defclass-name
+                                  :args          hydrated-styles}]
 
     (!?+ (keyed last* style-map style-tokens style-map-vecs coll))
     ;; (?+ styles)
 
-    {:defclass-name        defclass-name
-     :coll                 coll
-     :invalid-args         invalid-args
-     :hydrated-styles      hydrated-styles
-     :console-warning-args console-warning-args
-     :m                    m}))
+    ;; TODO remove or consolidate :n and :args entry
+    ;; ...they are redundant with :defclass-name and :hydrated-styles
+    (merge {:n    defclass-name
+            :args hydrated-styles}
+           (keyed defclass-name
+                  coll
+                  invalid-args
+                  hydrated-styles
+                  warnings
+                  garden-vecs
+                  classtype
+                  selector
+                  selector*))))
 
-(defn defclass-noop? [sym coll*]
-  ;; For skipping defclasses & overrides from theming
-  (and (nil? sym) (= coll* '(nil))))
+
+(defn defclass-dispatch [{:keys [sym] :as m*}]
+  (reset! state/current-macro :defclass)
+  (let [classtype  (sym->classtype sym)
+        current-op (assoc m* :macro :defclass :classtype classtype)
+        _          (reset! state/current-op current-op)
+        cache-map  (state/cached current-op)
+        result     (or (:cached cache-map) (defclass* current-op))]
+    (state/add-utility-class! result)
+    (state/update-cache! cache-map result)
+
+    (!?+ :current-type (assoc current-op :sym-meta (meta sym)) )
+    ;; If this is an base class, add an override-class version
+    (let [base->override {:user-utility  :user-utility-override
+                          :kushi-utility :kushi-utility-override}]
+      (when-let [override-class (get base->override classtype)]
+        (let [sym (with-meta (-> sym name (str "\\!") symbol) {override-class true})]
+          (!?+ :bout-to-dispatch-> (assoc m* :sym sym :sym-meta (meta sym) :classtype-would-be (sym->classtype sym)))
+          (defclass-dispatch (assoc m* :sym sym))
+          #_(!?+ @state/utility-classes-by-classtype))))))
+
+
+
+;; ----------------------------------------------------
+
 
 (defmacro defclass
-  [sym & coll*]
-  ;; (when (= :heavy sym) (?+ sym))
-  (when-not (defclass-noop? sym coll*)
-    (let [form-meta             (meta &form)
-          dupe-defclass-warning (printing/dupe-defclass-warning
-                                 {:fname "defclass"
-                                  :nm (if (keyword? sym) (symbol sym) sym)
-                                  :form-meta form-meta})]
+  [sym & args]
+  (when-not (defclass-noop? sym args)
+    (defclass-dispatch {:sym sym :args args :form-meta (meta &form)})
+    `(do nil)))
 
-      (printing/print-dupe2! dupe-defclass-warning)
-      (reset! state/current-macro :defclass)
+(defn sx-dispatch
+  [{:keys [form-meta args]
+    :or   {form-meta {}}}]
+  (let [{:keys [cache-key
+                cached]
+         :as   cache-map}         (state/cached :sx args)
+        {:keys [distinct-classes
+                garden-vecs
+                inj-type]
+         :as   m}                 (or cached
+                                      (args->map (keyed args
+                                                        form-meta
+                                                        cache-key)))]
 
-      (let [{:keys [caching?
-                    cache-key
-                    cached]}             (state/cached :defclass sym coll*)
-            {:keys [defclass-name
-                    coll
-                    invalid-args
-                    console-warning-args
-                    m]
-             :as result}                 (or cached (defclass* sym coll* (meta &form)))
-            {:keys [garden-vecs
-                    selector
-                    __classtype__]}      m
-            js-args-warning              (printing/preformat-js-warning console-warning-args)
-            garden-vecs-for-shared       (stylesheet/garden-vecs-injection garden-vecs)
-            inject?                      (:runtime-injection? user-config)]
+    (state/register-utility-class-usage! distinct-classes)
 
-        (printing/ansi-bad-args-warning console-warning-args)
+    (state/update-cache! cache-map m)
+    (state/add-styles! garden-vecs inj-type)
+    (printing/set-warnings!)
+    (printing/print-warnings!)
 
-      ;; Put atomic class into global registry
-        (swap! state/kushi-atomic-user-classes assoc defclass-name m)
-        ;; (when (= sym :light) (?+ :light (:light @state/kushi-atomic-user-classes)))
-        (swap! state/ordered-defclasses conj (:n m))
-
-        (printing/diagnostics :defclass {:defclass-map m
-                                         :args         coll
-                                         :sym          sym})
-
-        (when caching?
-          (swap! state/styles-cache-updated assoc cache-key result))
-
-       ;; Dev-only runtime code for potential warnings (and possible dynamic injection.)
-        (if @KUSHIDEBUG
-          `(do
-            ;; Inject all defclasses for dev, even if they are not used.
-            ;; This makes them available for testing / sampling in browser devtools.
-             (kushi.core/inject-css* (quote ~garden-vecs-for-shared)
-                                     (~__classtype__ kushi.sheets/sheet-ids-by-type))
-
-             (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
-               (when (seq ~invalid-args) (logfn# cljs.core/to-array ~js-args-warning))
-               (when ~dupe-defclass-warning
-                 (logfn# cljs.core/to-array (:browser ~dupe-defclass-warning))))
-             nil)
-          `(do
-             (when ~inject?
-               (kushi.core/inject-css* (quote ~garden-vecs-for-shared)
-                                       (~__classtype__ kushi.sheets/sheet-ids-by-type)))
-             nil))))))
-
-(defmacro add-font-face
-  "Example:
-   (add-font-face {:font-family \"FiraCodeBold\"
-                   :font-weight \"Bold\"
-                   :font-style \"Normal\"
-                   :src [\"local(\\\"Fira Code Bold\\\")\"]})"
-  [m]
-  (let [{:keys [caching? cache-key cached]} (state/cached :add-font-face m)
-        ;; aff                                 (vector (or cached (garden/css (at-font-face m))))
-        aff                                 (or cached (garden/css (at-font-face m)))]
-    (reset! state/current-macro :add-font-face)
-    (swap! state/user-defined-font-faces conj aff)
-    (when (and caching? (not cached))
-      (swap! state/styles-cache-updated assoc cache-key aff))
-    (when (or @KUSHIDEBUG (:runtime-injection? user-config))
-      `(do
-         (kushi.core/inject-css* ~aff "_kushi-rules-shared_")
-         nil))))
-
-(defn system-at-font-face-rules [weights*]
-  (let [weights   (if (empty? weights*)
-                    system-font-stacks
-                    (reduce (fn [acc v]
-                              (if (contains? system-font-stacks v)
-                                (assoc acc v (get system-font-stacks v))
-                                acc))
-                            {}
-                            weights*))
-        ff-rules* (for [[weight fonts-by-style] weights]
-                    (for [[style fonts] fonts-by-style]
-                      (garden/css
-                       (at-font-face
-                        {:font-family "kushi-system-ui"
-                         :font-style (name style)
-                         :font-weight weight
-                         :src (mapv #(str "local(\"" % "\")") fonts)}))))
-        ff-rules (apply concat ff-rules*)]
-    ff-rules))
-
-(defmacro add-system-font-stack
-  [& weights*]
-  (?+ :add-system-font-stack!! weights*)
-  (let [{:keys [caching? cache-key cached]} (state/cached :system-font-stack weights*)
-        ff-rules (into [] (or cached (system-at-font-face-rules weights*)))]
-    (doseq [rule ff-rules]
-      (reset! state/current-macro :add-font-face)
-      (swap! state/user-defined-font-faces conj rule))
-    (when (and caching? (not cached))
-      (swap! state/styles-cache-updated assoc cache-key ff-rules))
-    #_(when (or @KUSHIDEBUG (:runtime-injection? user-config))
-      `(do
-         (kushi.core/inject-css* ~ff-rules "_kushi-rules-shared_")
-         nil))
-    ;; (if @KUSHIDEBUG
-    ;;   `(do
-    ;;      (kushi.core/inject-css* ~ff-rules "_kushi-rules-shared_")
-    ;;      nil)
-    ;;   `(do nil))
-    ))
-
-(defn- keyframe [[k v]]
-  (let [frame-key (if (vector? k)
-                    (string/join ", " (map name k))
-                    (string/replace (name k) #"\|" ","))
-        frame-val (reduce
-                   (fn [acc [key val]]
-                     (assoc acc key (if (util/cssfn? val) (util/cssfn val) val)))
-                   {}
-                   v)]
-    [frame-key frame-val]))
-
-(defmacro defkeyframes [nm & frames*]
-  (let [opts         {:fname     "defkeyframes"
-                      :nm        nm
-                      :form-meta (meta &form)}
-        dupe-warning (printing/dupe-defkeyframes-warning opts)]
-    (printing/print-dupe2! dupe-warning)
-    (reset! state/current-macro :defkeyframes)
-    (let [{:keys [caching?
-                  cache-key
-                  cached]}  (state/cached :keyframes nm frames*)
-          frames            (or cached (mapv keyframe frames*))
-          css-inj           (vector (stylesheet/defkeyframes->css [nm frames]))]
-      (swap! state/user-defined-keyframes assoc (keyword nm) frames)
-      (when (and caching? (not cached))
-        (swap! state/styles-cache-updated assoc cache-key frames))
-
-      (when (or @KUSHIDEBUG (:runtime-injection? user-config))
-        `(do
-           (let [logfn# (fn [f# js-array#] (.apply js/console.warn js/console (f# js-array#)))]
-             (when ~dupe-warning
-               (logfn# cljs.core/to-array (:browser ~dupe-warning))))
-           (kushi.core/inject-css* ~css-inj "_kushi-rules-shared_")
-           nil)))))
-
-(defn cssfn [& args]
-  (cons 'cssfn (list args)))
-
+    m))
 
 (defmacro sx
-  [& args*]
-  ;; (when (= (first args*) :.heavy) (?+ args*))
-  (when-not (= args* '(nil))
-    (let [form-meta                   (meta &form)
-          {:keys [caching?
-                  cache-key
-                  cached]}            (state/cached :sx args*)
-          {:keys [prefixed-classlist
-                  attrs-base
-                  kushi-attr
+  [& args]
+  (when-not (= args '(nil))
+    (let [{:keys [attrs-base
+                  prefixed-classlist
                   css-vars
-                  garden-vecs
-                  data-cljs
-                  inj-type
-                  ;; element-style-inj
-                  ; shared-styles-inj
-                  ]
-           :as new-args}              (or cached (arguments/new-args (keyed args* form-meta cache-key)))
-          _                           (printing/set-warnings!)
-          warnings-js                 @state/warnings-js]
+                  data-cljs]}        (sx-dispatch {:args      args
+                                                   :form-meta (meta &form)})]
+      `(kushi.core/merged-attrs-map
+        {:attrs-base ~attrs-base
+         :prefixed-classlist ~prefixed-classlist
+         :css-vars ~css-vars
+         :data-cljs ~data-cljs}))))
 
-      (when caching?
-        (when-not cached
-          (swap! state/styles-cache-updated assoc cache-key new-args)))
+(defn add-utility-classes! [coll kw]
+  (doseq [[k styles] coll]
+    (defclass-dispatch {:sym  (with-meta (symbol k) {kw true})
+                        :args [styles]})))
 
-      (state/add-styles! garden-vecs inj-type)
+(defn font-loading! [m]
+  (let [asfs? (:add-system-font-stack? m)
+        gfm   (:google-font-maps m)]
+    (when asfs? (add-system-font-stack))
+    (!?+ (count @state/user-defined-font-faces))
+    (when gfm (state/add-google-font-maps! gfm))))
 
-      (printing/print-warnings!)
 
-      #_(when true
-          (? :sx
-             (keyed
-              form-meta
-              ;; kushi-attr
-              ;; attrs-base
-              ;; shared-styles-inj
-              ;; css-vars
-              ;; garden-vecs
-              ;; inj-type
-              ;; data-cljs
-              ;; prefixed-classlist
-              )))
+(defn theme! []
+ (let [{:keys [css-reset
+               css-reset-el
+               font-loading-opts
+               global-toks
+               alias-toks
+               tokens-in-theme
+               styles
+               utility-classes]} theme/theme]
+   (when css-reset
+     (doseq [[selector m] (partition 2 css-reset)
+             :when        (s/valid? ::specs/css-reset-selector selector)
+             :let         [el       (when css-reset-el (str (name css-reset-el) " "))
+                           selector (if (vector? selector)
+                                      (let [el-bs     (when (and el (= m {:box-sizing :border-box}))
+                                                        [el (str el "::before") (str el "::after")])
+                                            prepended (map #(str el %) selector)
+                                            coll      (concat el-bs prepended)]
+                                        (string/join ", " coll))
+                                      selector)]]
+       (sx-dispatch {:args [selector {:style m :kushi/sheet :reset}]})))
 
-    ;;TODO - fix injection mode
-      (if @KUSHIDEBUG
-       ;; dev builds ----------------------------------------------------
-       ;; TODO move cljs.core/to-array inside fn and rename js-array# ?
-        `(let [logfn# (fn [f# js-array#]
-                        (.apply js/console.warn js/console (f# js-array#)))]
-           (do
-             (when ~warnings-js
-               (doseq [warning# ~warnings-js]
-                 (logfn# cljs.core/to-array warning#)))
+   ;; TODO test w prod-build
+   (when @state/KUSHIDEBUG
+     (doseq [tok global-toks] (state/add-global-token! tok))
+     (doseq [tok alias-toks] (state/add-alias-token! tok)))
 
-             ;;  (kushi.core/inject-style-rules (quote ~element-style-inj) ~inj-type)
-             ;;  (kushi.core/inject-kushi-atomics ~shared-styles-inj)
+   (doseq [tok tokens-in-theme] (state/add-used-token! tok))
 
-             ;; return attributes map for the html element
-             (kushi.core/merged-attrs-map
-              ~attrs-base
-              ~prefixed-classlist
-              ~css-vars
-              ~data-cljs)))
+   (!?+ :bout-to-add-utils)
+   (add-utility-classes! utility-classes :kushi-utility)
+  ;;  (add-utility-classes! base-classes :kushi-utility)
+  ;;  (add-utility-classes! override-classes :kushi-utility-override)
 
-       ;; release builds -----------------------------------------------
-        `(kushi.core/merged-attrs-map
-              ~attrs-base
-              ~prefixed-classlist
-              ~css-vars)))))
+   (doseq [m styles] (sx-dispatch {:args [m]}))
 
-;; For generating sx-theme! destructuring vecs at repl
-#_(? (mapv (fn [n] [(symbol (str "c" n)) (symbol (str "c" n "m"))]) (range 1 45)))
-#_(? (mapv (fn [n] (list 'kushi.core/defclass (symbol (str "~c" n)) (symbol (str "~c" n "m")))) (range 1 45)))
-#_(? (mapv (fn [n] (symbol (str "m" n))) (range 1 45)))
-#_(? (mapv (fn [n] (list 'kushi.core/sx (symbol (str "~m" n)))) (range 1 45)))
+   (font-loading! font-loading-opts)))
 
-#_(defmacro ui-components!)
+(defn kushi-debug
+  {:shadow.build/stage :compile-prepare}
+  [build-state]
+  (state/reset-build-states!)
+  (!?+ :reset-done!)
+  (let [mode (:shadow.build/mode build-state)]
+    (when (not= mode :dev)
+      (reset! state/KUSHIDEBUG false)))
+  (theme!)
+  build-state)
+
+(!?+ @state/utility-classes)
 
 (defmacro inject! []
   (stylesheet/create-css-text)
-  (let [st @state/kushi-css-sync]
-   `(kushi.core/css-sync! ~st)))
-
-;TODO - Refactor out this destructuring after uniting defclass & sx same underlying supporting fns
-(defmacro theme! []
-  (let [{:keys [styles
-                overrides
-                alias-toks
-                global-toks
-                tokens-in-theme
-                font-loading-opts]
-         :as merged-theme-map} (theme/merged-theme)
-        [[c1 c1m]
-         [c2 c2m]
-         [c3 c3m]
-         [c4 c4m]
-         [c5 c5m]
-         [c6 c6m]
-         [c7 c7m]
-         [c8 c8m]
-         [c9 c9m]
-         [c10 c10m]
-         [c11 c11m]
-         [c12 c12m]
-         [c13 c13m]
-         [c14 c14m]
-         [c15 c15m]
-         [c16 c16m]
-         [c17 c17m]
-         [c18 c18m]
-         [c19 c19m]
-         [c20 c20m]
-         [c21 c21m]
-         [c22 c22m]
-         [c23 c23m]
-         [c24 c24m]
-         [c25 c25m]
-         [c26 c26m]
-         [c27 c27m]
-         [c28 c28m]
-         [c29 c29m]
-         [c30 c30m]
-         [c31 c31m]
-         [c32 c32m]
-         [c33 c33m]
-         [c34 c34m]
-         [c35 c35m]
-         [c36 c36m]
-         [c37 c37m]
-         [c38 c38m]
-         [c39 c39m]
-         [c40 c40m]
-         [c41 c41m]
-         [c42 c42m]
-         [c43 c43m]
-         [c44 c44m]] (into [] overrides)
-        [m1
-         m2
-         m3
-         m4
-         m5
-         m6
-         m7
-         m8
-         m9
-         m10
-         m11
-         m12
-         m13
-         m14
-         m15
-         m16
-         m17
-         m18
-         m19
-         m20
-         m21
-         m22
-         m23
-         m24
-         m25
-         m26
-         m27
-         m28
-         m29
-         m30
-         m31
-         m32
-         m33
-         m34
-         m35
-         m36
-         m37
-         m38
-         m39
-         m40
-         m41
-         m42
-         m43
-         m44] styles
-        kushi-debug   @KUSHIDEBUG
-        rt-injection? (:runtime-injection? user-config)
-        global-tokens-to-inject (!?+ (stylesheet/design-tokens-css {:toks global-toks :pretty-print? true}))
-        alias-tokens-to-inject (!?+ (stylesheet/design-tokens-css {:toks alias-toks :pretty-print? true}))]
-    ;; (?+ used-toks)
-    ;; (?+ alias-toks)
-    ;; (?+ css-tokens-actually-used)
-    (doseq [tok global-toks] (state/add-global-token! tok))
-    (doseq [tok alias-toks] (state/add-alias-token! tok))
-    (doseq [tok tokens-in-theme] (state/add-used-token! tok))
-    (!?+ @state/global-tokens)
-    `(do
-       (kushi.core/defclass ~c1 ~c1m)
-       (kushi.core/defclass ~c2 ~c2m)
-       (kushi.core/defclass ~c3 ~c3m)
-       (kushi.core/defclass ~c4 ~c4m)
-       (kushi.core/defclass ~c5 ~c5m)
-       (kushi.core/defclass ~c6 ~c6m)
-       (kushi.core/defclass ~c7 ~c7m)
-       (kushi.core/defclass ~c8 ~c8m)
-       (kushi.core/defclass ~c9 ~c9m)
-       (kushi.core/defclass ~c10 ~c10m)
-       (kushi.core/defclass ~c11 ~c11m)
-       (kushi.core/defclass ~c12 ~c12m)
-       (kushi.core/defclass ~c13 ~c13m)
-       (kushi.core/defclass ~c14 ~c14m)
-       (kushi.core/defclass ~c15 ~c15m)
-       (kushi.core/defclass ~c16 ~c16m)
-       (kushi.core/defclass ~c17 ~c17m)
-       (kushi.core/defclass ~c18 ~c18m)
-       (kushi.core/defclass ~c19 ~c19m)
-       (kushi.core/defclass ~c20 ~c20m)
-       (kushi.core/defclass ~c21 ~c21m)
-       (kushi.core/defclass ~c22 ~c22m)
-       (kushi.core/defclass ~c23 ~c23m)
-       (kushi.core/defclass ~c24 ~c24m)
-       (kushi.core/defclass ~c25 ~c25m)
-       (kushi.core/defclass ~c26 ~c26m)
-       (kushi.core/defclass ~c27 ~c27m)
-       (kushi.core/defclass ~c28 ~c28m)
-       (kushi.core/defclass ~c29 ~c29m)
-       (kushi.core/defclass ~c30 ~c30m)
-       (kushi.core/defclass ~c31 ~c31m)
-       (kushi.core/defclass ~c32 ~c32m)
-       (kushi.core/defclass ~c33 ~c33m)
-       (kushi.core/defclass ~c34 ~c34m)
-       (kushi.core/defclass ~c35 ~c35m)
-       (kushi.core/defclass ~c36 ~c36m)
-       (kushi.core/defclass ~c37 ~c37m)
-       (kushi.core/defclass ~c38 ~c38m)
-       (kushi.core/defclass ~c39 ~c39m)
-       (kushi.core/defclass ~c40 ~c40m)
-       (kushi.core/defclass ~c41 ~c41m)
-       (kushi.core/defclass ~c42 ~c42m)
-       (kushi.core/defclass ~c43 ~c43m)
-       (kushi.core/defclass ~c44 ~c44m)
-
-       (kushi.core/sx ~m1)
-       (kushi.core/sx ~m2)
-       (kushi.core/sx ~m3)
-       (kushi.core/sx ~m4)
-       (kushi.core/sx ~m5)
-       (kushi.core/sx ~m6)
-       (kushi.core/sx ~m7)
-       (kushi.core/sx ~m8)
-       (kushi.core/sx ~m9)
-       (kushi.core/sx ~m10)
-       (kushi.core/sx ~m11)
-       (kushi.core/sx ~m12)
-       (kushi.core/sx ~m13)
-       (kushi.core/sx ~m14)
-       (kushi.core/sx ~m15)
-       (kushi.core/sx ~m16)
-       (kushi.core/sx ~m17)
-       (kushi.core/sx ~m18)
-       (kushi.core/sx ~m19)
-       (kushi.core/sx ~m20)
-       (kushi.core/sx ~m21)
-       (kushi.core/sx ~m22)
-       (kushi.core/sx ~m23)
-       (kushi.core/sx ~m24)
-       (kushi.core/sx ~m25)
-       (kushi.core/sx ~m26)
-       (kushi.core/sx ~m27)
-       (kushi.core/sx ~m28)
-       (kushi.core/sx ~m29)
-       (kushi.core/sx ~m30)
-       (kushi.core/sx ~m31)
-       (kushi.core/sx ~m32)
-       (kushi.core/sx ~m33)
-       (kushi.core/sx ~m34)
-       (kushi.core/sx ~m35)
-       (kushi.core/sx ~m36)
-       (kushi.core/sx ~m37)
-       (kushi.core/sx ~m38)
-       (kushi.core/sx ~m39)
-       (kushi.core/sx ~m40)
-       (kushi.core/sx ~m41)
-       (kushi.core/sx ~m42)
-       (kushi.core/sx ~m43)
-       (kushi.core/sx ~m44)
-
-       (when-not false
-         (let [flo#   ~font-loading-opts
-               asfs?# (:add-system-font-stack? flo#)
-               gfm#   (:google-font-maps flo#)]
-           #_(when asfs?#
-             (js/console.log :asfs?# asfs?#)
-             (kushi.core/add-system-font-stack))
-           (when gfm#
-             (apply kushi.core/add-google-font! gfm#))))
-
-       #_(when (or ~kushi-debug ~rt-injection?)
-         (kushi.core/inject-design-tokens! ~global-tokens-to-inject :global-tokens)
-         (kushi.core/inject-design-tokens! ~alias-tokens-to-inject :alias-tokens)))))
-
+  (let [css-sync         @state/kushi-css-sync
+        google-font-maps @state/google-font-maps]
+   `(do
+      (apply kushi.core/add-google-font! ~google-font-maps)
+      (kushi.core/css-sync! ~css-sync))))
