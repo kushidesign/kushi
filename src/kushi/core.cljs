@@ -1,6 +1,5 @@
-
 (ns ^:dev/always kushi.core
-  (:require-macros [kushi.core :refer [keyed sx theme! #_ui-components! inject!]])
+  (:require-macros [kushi.core :refer [keyed #_theme!]])
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
             [kushi.sheets :as sheets]
@@ -18,16 +17,20 @@
     (.replaceChild (.-parentNode el) el-new el)) )
 
 (defn insert-style-tag!
-  [id]
-  (when-not (js/document.getElementById id)
-    (let [head (or js/document.head
-                   (-> (js/document.getElementsByTagName "head")
-                       (aget 0)))
-          tag (js/document.createElement "style")]
-      (.appendChild head tag)
-      (doto tag
-        (.setAttribute "type" "text/css")
-        (.setAttribute "id" id)))))
+  ([id]
+   (insert-style-tag! id nil))
+  ([id css-text]
+   (when-not (js/document.getElementById id)
+     (let [head (or js/document.head
+                    (-> (js/document.getElementsByTagName "head")
+                        (aget 0)))
+           tag  (js/document.createElement "style")]
+       (when css-text (set! (.-innerHTML tag) css-text))
+
+       (.appendChild head tag)
+       (doto tag
+         (.setAttribute "type" "text/css")
+         (.setAttribute "id" id))))))
 
 (defn initialize-style-tags!
   []
@@ -65,7 +68,7 @@
   "Called internally by kushi.core/sx at dev/run time for zippy previews."
   [css-rules
    sheet-id]
-  (? :inject-css* css-rules)
+  (!? :inject-css* css-rules)
   (when-let [stylesheet-el (js/document.getElementById sheet-id)]
     (let [;log-inject-css*? (= sheet-id "_kushi-rules_")
           rules-as-seq   (map-indexed vector css-rules)
@@ -249,6 +252,11 @@
 ;; Functionaltiy for kushi style decoration -----------------------------------------------------------------
 
 (defn merged-attrs-map
+  [{:keys [attrs-base prefixed-classlist css-vars]
+    :as   m}]
+  (assoc attrs-base :class (distinct prefixed-classlist) :style css-vars))
+
+#_(defn merged-attrs-map
   ([attrs-base classlist css-vars]
    (merged-attrs-map attrs-base classlist css-vars nil))
   ([attrs-base classlist css-vars data-cljs]
@@ -260,4 +268,4 @@
 
 (def merge-with-style kushi.utils/merge-with-style)
 
-(theme!)
+#_(theme!)
