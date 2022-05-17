@@ -9,7 +9,7 @@
     (js/document.execCommand "copy")
     (.removeChild js/document.body el)))
 
-(defn screen-quadrent
+(defn screen-quadrant
   "Pass a dom node and get a tuple back reprenting the quadrant in which the center of the node lives.
    (screen-quadrant (js/document.getElementById \"my-id\")) => [:top :left]"
   [node]
@@ -22,8 +22,9 @@
         left? (> 0.5 (/ x js/window.innerWidth))]
     [(if top? :top :bottom) (if left? :left :right)]))
 
-(defn set-overlay-position! [node parent]
-  (let [[tb lr] (screen-quadrent parent)
+(defn set-overlay-position!
+  [node parent]
+  (let [[tb lr] (screen-quadrant parent)
         right? (= lr :right)
         top? (= tb :top)]
 
@@ -53,3 +54,6 @@
 (defn attribute-true? [node attribute] (when node (= "true" (.getAttribute node (name attribute)))))
 
 
+(defn etv [e] (some-> e .-target .-value))
+(defn etv->int [e] (some-> e .-target .-value js/parseInt))
+(defn etv->float [e] (some-> e .-target .-value js/parseFloat))
