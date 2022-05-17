@@ -9,18 +9,12 @@
    [garden.core :as garden]
    [kushi.config :refer [user-config user-css-file-path kushi-cache-dir kushi-cache-path version]]
    [kushi.state :as state]
-   [kushi.utils :as util]
+   [kushi.utils :as util :refer [keyed]]
    [par.core :refer [? !? ?+ !?+]]
    [kushi.atomic :as atomic]
    [kushi.reporting :as reporting]
    [medley.core :as medley]))
 
-;TODO move this to utils
-(defmacro keyed [& ks]
-  `(let [keys# (quote ~ks)
-         keys# (map keyword keys#)
-         vals# (list ~@ks)]
-     (zipmap keys# vals#)))
 
 (defn garden-vecs-injection
   [garden-vecs]
@@ -88,10 +82,11 @@
   (let [toks  (case token-type
                 :global @state/global-tokens
                 :alias @state/alias-tokens
+                :used @state/used-tokens
                 [])
         count (if (seq toks) (count toks) 0)
         k     (-> token-type name (str  "-tokens-count") keyword)]
-    (swap! (:to-be-printed m) assoc k count)
+    (!?+ (swap! (:to-be-printed m) assoc k count))
     (when (pos-int? count)
       (append-css-chunk!
        {:css-text (:css-text m)
@@ -140,23 +135,12 @@
        (string? (first coll))
        (nil? (second coll))))
 
-
 (defn append-defclasses!
-  [defclasses-used {:keys [pretty-print? css-text to-be-printed comment-base classtype]}]
-  (let [
-        ;; TODO Refactor
-        ;; For now this will always add kushi atomic base utility classes to kushi-css-sync stylesheet
-        ;; This is so they are always available for development (adding classes in browser dev tools etc).
-        distinct-used-defclasses (if (and state/KUSHIDEBUG (= classtype :kushi-atomic))
-                                   (->> @state/kushi-atomic-user-classes
-                                        (filter (fn [[_ v]] (= (:__classtype__ v) :kushi-atomic)))
-                                        keys)
-                                   (distinct @defclasses-used))
-
-        gv (keep #(let [normalized-class-kw (util/normalized-class-kw %)
-                         m (normalized-class-kw @state/kushi-atomic-user-classes)]
-                     (when (= (:__classtype__ m) classtype) (:garden-vecs m)))
-                  distinct-used-defclasses)]
+  [{:keys [pretty-print? css-text to-be-printed comment-base classtype] :as m*}]
+  (let [gv* (if @state/KUSHIDEBUG
+              (->> @state/utility-classes-by-classtype classtype vals)
+              (->> @state/utility-classes-used-by-classtype classtype))
+        gv  (map :garden-vecs gv*)]
    (when (seq gv)
      (let [garden-vecs*                   (apply concat (concat gv))
            garden-vecs                    (->> garden-vecs*
@@ -176,51 +160,64 @@
        (append-css-chunk!
         {:css-text css-text
          :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
-         :comment  (str comment-base "atomic classes")})
+         :comment  comment-base})
 
        (when (pos-int? defclass-mq-count)
          (append-css-chunk!
           {:css-text css-text
            :content  (garden/css {:pretty-print? pretty-print?} atomic-classes-mq)
-           :comment  (str comment-base "atomic classes, media queries")}))))))
+           :comment  (str comment-base ", media queries")}))))))
+
+(defn resolve-rules [m st reset?]
+  (let [rules** (:rules @st)
+        rules*  (if reset? (reverse rules**) rules**)
+        rules   (keep (fn [[k v]] (when v [k v])) rules*)]
+    rules))
 
 
 (defn append-rules!
-  [{:keys [css-text pretty-print? to-be-printed]}
-    garden-vecs-state*
-    comment]
-   (let [rules                        (remove
-                                       nil?
-                                       (map (fn [[k v]] (when v [k v]))
-                                            (:rules @garden-vecs-state*)))
-         mqs                          (remove
-                                       nil?
-                                       (map (fn [[k v]]
-                                              (when-let [as-seq (seq v)]
-                                                (apply garden.stylesheet/at-media
-                                                       (cons k as-seq))))
-                                            (dissoc @garden-vecs-state* :rules)))
-         garden-vecs                  (remove nil? (concat rules mqs))
-         normal-style-rules-under-mqs (count-mqs-rules mqs)
-         normal-style-rules           (count rules)
-         normal-mq-count              (count mqs)]
-     #_(?+
-        (keyed rules
-               mqs
-               garden-vecs
-               normal-style-rules-under-mqs
-               normal-style-rules
-               normal-mq-count))
-     (swap! to-be-printed
-            merge
-            (keyed normal-style-rules-under-mqs
-                   normal-style-rules
-                   normal-mq-count))
-     (append-css-chunk!
-      {:css-text css-text
-       :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
-       :comment  comment})
-     (reset! garden-vecs-state* state/garden-vecs-state-init)))
+  [{:keys [css-text pretty-print? to-be-printed]
+    :as   m}
+   gv-state-coll
+   comment]
+  (let [reset?                       (= :reset (:kushi/sheet m))
+        rules                        (resolve-rules m gv-state-coll reset?)
+        mqs                          (keep (fn [[k v]]
+                                             (when-let [as-seq (seq v)]
+                                               (apply garden.stylesheet/at-media
+                                                      (cons k as-seq))))
+                                           (dissoc @gv-state-coll :rules))
+        garden-vecs                  (remove nil? (concat rules mqs))
+        css-reset-style-rules        (if reset? (count rules) (:css-reset-style-rules to-be-printed))
+        normal-style-rules-under-mqs (count-mqs-rules mqs)
+        normal-style-rules           (count rules)
+        normal-mq-count              (count mqs)]
+
+    (!?+
+     (keyed
+      rules
+      ;; mqs
+      ;; garden-vecs
+      ;; normal-style-rules-under-mqs
+      ;; normal-style-rules
+      ;; normal-mq-count
+      ))
+
+    (swap! to-be-printed
+           merge
+           (keyed normal-style-rules-under-mqs
+                  normal-style-rules
+                  normal-mq-count
+                  css-reset-style-rules))
+    (append-css-chunk!
+     {:css-text css-text
+      :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
+      :comment  comment})))
+
+(defn append-reset-rules! [m]
+  (append-rules! (assoc m :kushi/sheet :reset)
+                 state/css-reset
+                 "CSS Reset rules via:\nThe new CSS reset - version 1.6.0 (last updated 29.4.2022)\nGitHub page: https://github.com/elad2412/the-new-css-reset"))
 
 (defn append-reusable-component-rules! [m]
   (append-rules! m state/garden-vecs-state-components "Reusable component styles for kushi-ui components"))
@@ -257,34 +254,35 @@
                        :pretty-print? pretty-print?
                        :printables    printables
                        :to-be-printed to-be-printed}
-        caching?      (true? (:enable-caching? user-config))
-        ]
+        caching?      (true? (:enable-caching? user-config))]
+
+    ;; (?+ @state/utility-classes-by-classtype)
+    ;; (?+ @state/utility-classes-used)
+    ;; (?+ @state/utility-classes-used-by-classtype)
+    ;; (?+ :kushi-utility-classes (-> @state/utility-classes-by-classtype :user-utility keys))
 
     (when-let [select-ns-msg (reporting/select-ns-msg)]
       (swap! to-be-printed assoc :select-ns-msg select-ns-msg))
 
+    (append-reset-rules! m)
+    (append-at-font-face! m)
     (append-tokens! (assoc m :token-type :global))
     (append-tokens! (assoc m :token-type :alias))
-    (append-at-font-face! m)
+    (append-tokens! (assoc m :token-type :used))
     (append-defkeyframes! m)
-    (append-defclasses! state/atomic-declarative-classes-used
-                        (merge m {:classtype    :kushi-atomic
-                                  :comment-base "Kushi base utility/"}))
-    (append-defclasses! state/defclasses-used
-                        (merge m {:classtype    :defclass
-                                  :comment-base "User-defined, shared utility/"}))
     (append-theme-rules! m)
+    (append-defclasses! (merge m {:classtype    :kushi-utility
+                                  :comment-base "Kushi base utility classes"}))
+    (append-defclasses! (merge m {:classtype    :user-utility
+                                  :comment-base "User-defined base utility classes"}))
     (append-reusable-component-rules! m)
     (append-component-rules! m)
-    (append-defclasses! state/defclasses-used
-                        (merge m {:classtype    :defclass-kushi-override
-                                  :comment-base "Kushi lib, shared override utility/"}))
-    (append-defclasses! state/defclasses-used
-                        (merge m {:classtype    :defclass-user-override
-                                  :comment-base "User-defined, shared override utility/"}))
+    (append-defclasses! (merge m {:classtype    :kushi-utility-override
+                                  :comment-base "Kushi base utility classes, override versions"}))
+    (append-defclasses! (merge m {:classtype    :user-utility-override
+                                  :comment-base "User-defined base utility classes, override versions"}))
 
     (reset! state/kushi-css-sync @css-text)
-    (!?+ :css-text @state/kushi-css-sync)
     (reset! state/kushi-css-sync-to-be-printed @to-be-printed)
 
       ;; Do caching here???
@@ -305,11 +303,10 @@
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
   [build-state]
-  (if (nil? @state/kushi-css-sync) (create-css-text))
+  (when (nil? @state/kushi-css-sync) (create-css-text))
   (let [to-be-printed       state/kushi-css-sync-to-be-printed
         zero-total-rules?   (nil? (some #(not (zero? %)) (vals @to-be-printed)))
-        something-to-write? (not zero-total-rules?)
-        ]
+        something-to-write? (not zero-total-rules?)]
 
     (when (and (:write-stylesheet? user-config) something-to-write?)
       (use 'clojure.java.io)
