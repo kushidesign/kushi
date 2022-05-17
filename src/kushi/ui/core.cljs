@@ -36,7 +36,9 @@
           opts-w-normal-keys  (->> opts
                                    (map (fn [[k v]] [(-> k name (subs 1) keyword) v]))
                                    (into {}))]
-      (into [] (concat [opts-w-normal-keys attr] children)))))
+      (into []
+            (concat [opts-w-normal-keys attr]
+                    (remove nil? children))))))
 
 (defn hiccup? [x]
   (and (vector? x) (-> x first keyword?)))

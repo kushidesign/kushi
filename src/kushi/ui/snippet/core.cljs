@@ -3,8 +3,10 @@
   (:require
    [kushi.core :refer (sx defclass merge-with-style) :refer-macros (sx)]
    [clojure.string :as string]
-   [kushi.ui.core :refer (gui defcom)]
-   ))
+   [kushi.ui.icon.mui.core :refer (mui-icon)]
+   [kushi.ui.tooltip.core :refer (tooltip add-temporary-tooltip!)]
+   [kushi.ui.button.core :refer (button)]
+   [kushi.ui.core :refer (gui defcom)]))
 
 (defn copy-to-clipboard [val]
   (let [el (js/document.createElement "textarea")]
@@ -17,36 +19,44 @@
 (defn copy-to-clipboard-button
   [opts & children*]
   (let [children (or children*
-                     [:img
-                      (sx :h--60%
-                          :o--0.7
-                          :hover:o--1
-                          {:src "graphics/copy.svg"})])]
-    [:button
-     (merge-with-style
-      (sx :.absolute
-          :.flex-row-c
-          :.pointer
-          :.pill
-          :ai--center
-          :w--22px
-          :h--22px
-          :top--0
-          :right--0
-          :ta--center
-          :fs--0.5rem
-          :fw--600
-          :letter-spacing--0.2ex
-          :tt--u
-          :b--none
-          :m--0.4rem
-          :hover:bgc--white
-          :bgi--none
-          :bgc--transparent
-          {:type :text
-           :value "copy"})
-      opts)
-     children]))
+                     [[button (sx :c--red :>span:padding--5px :.tertiary {:on-click add-temporary-tooltip!})
+                       [:img
+                        (sx :h--60%
+                            :o--0.7
+                            :hover:o--1
+                            {:src "graphics/copy.svg"})]
+                       [tooltip (sx :.mini :.rounded :ff--Inter {:-display-on-hover? false}) "Copied!"]]]
+                     #_[[:img
+                       (sx :h--60%
+                           :o--0.7
+                           :hover:o--1
+                           {:src "graphics/copy.svg"})]
+                      [tooltip #_{:-display-on-hover? true} "Copied!"]])]
+    (into [:div
+           (merge-with-style
+            (sx :.absolute
+                :.flex-row-c
+                :.pointer
+                :.pill
+                :ai--center
+                :w--22px
+                :h--22px
+                :top--0
+                :right--0
+                :ta--center
+                :fs--0.5rem
+                :fw--600
+                :letter-spacing--0.1ex
+                ;; :tt--u
+                :b--none
+                :m--0.4rem
+                :hover:bgc--white
+                :bgi--none
+                :bgc--transparent
+                {:type  :text
+                 :value "copy"})
+            opts)]
+          children)))
 
 (defn snippet [{:keys [text-to-display text-to-copy]}]
   [:div

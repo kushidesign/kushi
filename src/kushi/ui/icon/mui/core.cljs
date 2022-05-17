@@ -18,10 +18,7 @@
     'kushi-mui-icon:ui
     :.transition
     :.material-icons
-    {:style {
-            ;;  "has(ancestor(.kushi-icon)):fs" "var(--mui-icon-relative-font-size)"
-             :&.material-icons:fs "var(--mui-icon-relative-font-size)"
-             }})])
+    {:style {:&.material-icons:fs "var(--mui-icon-relative-font-size)"}})])
 
 (defcom mui-icon
   (conj icon-base mui-icon-span))

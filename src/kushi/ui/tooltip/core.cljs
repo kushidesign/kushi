@@ -2,7 +2,7 @@
   (:require-macros [kushi.utils :refer (keyed)])
   (:require
    [kushi.core :refer (sx defclass merge-with-style) :refer-macros (sx)]
-   [kushi.ui.core :refer (gui defcom opts+children)]
+   [kushi.ui.core :refer (gui defcom defcom+ opts+children)]
    [kushi.ui.dom :refer (set-overlay-position! conditional-display?)]
    [par.core :refer [? !? ?+ !?+]]))
 
@@ -27,7 +27,7 @@
    (add-temporary-tooltip! e 2000))
   ([e ms]
    (when-let [[tooltip parent] (tooltip+parent e)]
-     (if (? (conditional-display? tooltip))
+     (if (conditional-display? tooltip)
        (do
          (expand-tooltip! tooltip parent)
          (js/setTimeout (fn [_] (remove-tooltip! parent)) ms))
@@ -66,8 +66,8 @@
      (merge-with-style
       (sx 'kushi-tooltip:ui
           :.absolute
-          :.mini
-          :.rounded
+          ;; :.mini
+          ;; :.rounded
           :top--0
           :bottom--unset
           :left--100%
@@ -91,3 +91,35 @@
            :id (gensym)})
       attr)
      children]))
+
+(defcom+ tooltip2
+  (let [{:keys [display-on-hover?]} &opts]
+    [:section
+     (merge-with-style
+      (sx 'kushi-tooltip:ui
+          :._absolute
+          :._mini
+          :._rounded
+          :top--0
+          :bottom--unset
+          :left--100%
+          :right--unset
+          :p--0
+          :m--5px
+          :bgc--black
+          :c--white
+          :ws--n
+          :o--0
+          :w--0
+          :h--0
+          :overflow--hidden
+          :transition--opacity:0.2s:linear
+          ;; maybe abstract into an :.overlay defclass(es) with decoration defclasses for tooltip vs popover
+          {:style {"has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):opacity" 1
+                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):width"   :fit-content
+                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):height"  :auto
+                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):padding" :7px:14px}
+           :data-kushi-conditional-display (if (= false display-on-hover?) "true" "false")
+           :id (gensym)})
+      &attrs)
+     &children]))

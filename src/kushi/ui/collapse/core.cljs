@@ -20,7 +20,8 @@
    [:div:! (sx
             'kushi-collapse-body:ui
             :bt--1px:solid:transparent
-            :bb--1px:solid:transparent)]])
+            :bb--1px:solid:transparent
+            :padding-block--0.25em:0.5em)]])
 
 (defn toggle-class-on-ancestor [node root-class class]
   (let [root (.closest node (str "." (name root-class)))]

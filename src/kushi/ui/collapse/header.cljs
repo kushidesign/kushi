@@ -1,7 +1,6 @@
 (ns kushi.ui.collapse.header
-  (:require-macros [kushi.core :refer ( sx )] )
-  (:require 
-            [kushi.utils :as util :refer-macros (keyed)]
+  (:require-macros [kushi.core :refer (sx)] )
+  (:require [kushi.utils :as util :refer-macros (keyed)]
             [clojure.string :as string]
             [kushi.ui.icon.mui.core :refer (mui-icon)]
             [kushi.ui.title.core :refer (title)]
@@ -36,10 +35,10 @@
         icon           (if (util/nameable? icon) (name icon) "add")
         icon-expanded  (if (util/nameable? icon-expanded) (name icon-expanded) "remove")
         icon-opposite? (= :end icon-position)
-        title-sx       (sx {:prefix :kushi-
-                            :ident  :collapse-header-title-contents
-                            :style  {:w :100%
-                                     :>span:jc (when icon-opposite? :space-between)}})
+        title-sx       (sx ^:no-prefix
+                           'kushi-collapse-header-title-contents
+                           {:style {:w        :100%
+                                    :>span:jc (when icon-opposite? :space-between)}})
         opts           (keyed label icon icon-opposite? title-sx)]
    [:<>
     [:span
