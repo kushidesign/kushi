@@ -1,6 +1,5 @@
 (ns kushi.ui.grid.core
   (:require
-   [par.core :refer-macros [!? ?]]
    [kushi.core :refer (sx merge-with-style)]
    [kushi.ui.core :refer (opts+children)]
    #_[playground.util :as util :refer-macros (keyed)] ))

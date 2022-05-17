@@ -5,7 +5,6 @@
    [clojure.string :as string]
    [clojure.walk :as walk]
    [kushi.defs :as defs]
-   [par.core :refer [? !? ?+ !?+]]
    [kushi.cssvarspecs :as cssvarspecs]
    [kushi.scales :refer [scales scaling-map]]
    [kushi.config :refer [user-config]]))
@@ -189,7 +188,6 @@
 
 (defn process-value
   [v hydrated-k selector*]
-  (!? :process-value v)
   (cond
     (s/valid? ::cssvarspecs/css-var-name v)
     (wrap-css-var v)

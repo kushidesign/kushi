@@ -4,7 +4,7 @@
             [kushi.clean :as clean]
             [kushi.sheets :as sheets]
             [kushi.utils :as util] ;; For aliasing merge-with-style
-            [par.core :refer [? !?]] ;; only use when developing kushi itself
+            ;; [par.core :refer [? !?]] ;; only use when developing kushi itself
             ))
 
 (defn css-sync! [s]
@@ -68,7 +68,7 @@
   "Called internally by kushi.core/sx at dev/run time for zippy previews."
   [css-rules
    sheet-id]
-  (!? :inject-css* css-rules)
+  ;; (!? :inject-css* css-rules)
   (when-let [stylesheet-el (js/document.getElementById sheet-id)]
     (let [;log-inject-css*? (= sheet-id "_kushi-rules_")
           rules-as-seq   (map-indexed vector css-rules)
@@ -235,7 +235,7 @@
 
 (defn add-google-font!
   [& maps]
-  (!? :add-google-font! maps)
+  ;; (!? :add-google-font! maps)
   (let [families* (reduce m->str [] maps)
         families  (str (string/join "&" families*) "&display=swap")]
    (do

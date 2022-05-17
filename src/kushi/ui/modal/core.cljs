@@ -1,6 +1,5 @@
 (ns kushi.ui.modal.core
-  (:require [par.core :refer-macros [!? ?]]
-            [kushi.ui.card.core :refer (card)]
+  (:require [kushi.ui.card.core :refer (card)]
             [kushi.utils :refer (merge-with-style)]
             [kushi.ui.button.core :refer (button)]
             [kushi.ui.card.core :refer (card)]

@@ -5,7 +5,6 @@
    [kushi.atomic :as atomic]
    [kushi.defs :as defs]
    [clojure.spec.alpha :as s]
-   [par.core :refer [!? ? ?+ !?+]]
    [kushi.config :refer [user-config]]))
 
 ;; Utility regex ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

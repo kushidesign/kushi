@@ -3,8 +3,7 @@
   (:require
    [kushi.core :refer (sx defclass merge-with-style) :refer-macros (sx)]
    [kushi.ui.core :refer (gui defcom defcom+ opts+children)]
-   [kushi.ui.dom :refer (set-overlay-position! conditional-display?)]
-   [par.core :refer [? !? ?+ !?+]]))
+   [kushi.ui.dom :refer (set-overlay-position! conditional-display?)] ))
 
 (defn tooltip+parent [e]
  (let [node (-> e .-currentTarget)

@@ -3,8 +3,7 @@
    [kushi.core :refer (sx)])
   (:require
    [kushi.core :refer (merge-with-style)]
-   [kushi.ui.core :refer (opts+children)]
-   #_[par.core :refer [? !? ?+ !?+]]))
+   [kushi.ui.core :refer (opts+children)]))
 
 (defn radio-button
   "Radio button"

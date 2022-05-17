@@ -1,6 +1,5 @@
 (ns kushi.ui.input.slider.core
   (:require
-   [par.core :refer-macros [!? ?]]
    [kushi.core :refer (sx merge-with-style insert-style-tag!)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.input.slider.css]

@@ -6,8 +6,7 @@
    [kushi.ui.tokens :refer [global-tokens alias-tokens]]
    [kushi.defclass :refer [defclass-dispatch]]
   ;;  [kushi.ui.basetheme :refer [base-theme-map]]
-   [clojure.string :as string]
-   [par.core    :refer [? !? ?+ !?+]]))
+   [clojure.string :as string] ))
 
 (defn resolve-user-theme
   ([x]
@@ -46,7 +45,7 @@
     (str (some-> user-config :kushi-class-prefix name) (name kw))))
 
 (defn coll->var [compo variant css-prop css-val]
-  (!?+ (keyed compo variant css-prop css-val))
+  (keyed compo variant css-prop css-val)
   (let [variant   (when-not (= variant :default) (name variant))
         mods&prop (mods&prop css-prop)
         parts     (remove nil? (concat ["kushi" (name compo) variant] mods&prop))]
@@ -69,7 +68,7 @@
 
 (defn resolve-tokens
   [flat alias-tokens global-tokens]
-  (!?+ (keyed flat alias-tokens global-tokens))
+  (keyed flat alias-tokens global-tokens)
   (let [compo-toks* (map (fn [[_ [prop val]]]
                            {:type :kushi-ui
                             :cssvar (str "--" (name prop))
@@ -102,7 +101,7 @@
                                 (assoc acc css-prop)))
                          {}
                          flat)]
-    (!?+ (keyed toks))
+    (keyed toks)
     (conj acc
           [{:style              stylemap
             :kushi-selector (let [nm (variant-name variant)]
@@ -153,11 +152,11 @@
         google-font-maps  (->> m
                                :google-fonts
                                seq
-                               (concat google-font-maps1 (!?+ google-font-maps2))
+                               (concat google-font-maps1 google-font-maps2)
                                (remove nil?)
                                (into []))
         add-system-font-stack? (-> m :use-system-font-stack? false? not)]
-    (!?+ (keyed google-font-maps add-system-font-stack?))))
+    (keyed google-font-maps add-system-font-stack?)))
 
 (defn by-component
   [{:keys [base-compo-styles user-compo-styles]
@@ -174,7 +173,7 @@
   (let [font-loading  (merge (:font-loading m1) (:font-loading m2))
         global-tokens (merge (some-> m1 :tokens :global) (some-> m2 :tokens :global))
         alias-tokens  (merge (some-> m1 :tokens :alias) (some-> m2 :tokens :alias))]
-    (!?+ (keyed font-loading global-tokens alias-tokens))))
+    (keyed font-loading global-tokens alias-tokens)))
 
 (defn merged-theme []
   (let [user-theme-map    (resolve-user-theme (:theme user-config) :user)
@@ -209,34 +208,28 @@
         override-toks2    (resolve-tokens* (merge tok-maps {:coll    override-toks1
                                                             :global? true}))
         override-toks     (concat override-toks1 override-toks2)
-        vars*             (apply concat (map second (!?+ by-component)))
-        vars              (concat (!?+ vars*) (!?+ override-toks))
+        vars*             (apply concat (map second by-component))
+        vars              (concat vars* override-toks)
         tokens-in-theme   (->> [:global :alias :kushi-ui]
                                (map #(vars-by-type vars %))
                                (apply concat))
         [global-toks
          alias-toks]      (map #(sort-by first %) [global-tokens alias-tokens])
         utility-classes  (varize-overrides overrides)]
-    (!?+ (keyed
-         base-theme-map
-         #_overrides
-         #_by-component))
-    ;; (?+ (keyed by-component tok-maps override-tok-maps override-toks1 override-toks2))
-    (!?+ :merged-theme
-         (merge
-          (keyed
-           css-reset
-           css-reset-el
-           font-loading-opts
-           styles
-           tokens-in-theme
-           global-toks
-           alias-toks
-          ;;  utility-classes
-           utility-classes
-          ;;  override-classes
-           )))))
 
-#_(?+ :FUCKYOU)
+    ;; (?+ (keyed by-component tok-maps override-tok-maps override-toks1 override-toks2))
+    (merge
+     (keyed
+      css-reset
+      css-reset-el
+      font-loading-opts
+      styles
+      tokens-in-theme
+      global-toks
+      alias-toks
+          ;;  utility-classes
+      utility-classes
+          ;;  override-classes
+      ))))
 
 (def theme (merged-theme))

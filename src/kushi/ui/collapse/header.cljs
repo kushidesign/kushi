@@ -3,8 +3,7 @@
   (:require [kushi.utils :as util :refer-macros (keyed)]
             [clojure.string :as string]
             [kushi.ui.icon.mui.core :refer (mui-icon)]
-            [kushi.ui.title.core :refer (title)]
-            [par.core :refer-macros [!? ?]]))
+            [kushi.ui.title.core :refer (title)] ))
 
 (defn readable-string? [label]
   (and (string? label) (not (string/blank? label))))

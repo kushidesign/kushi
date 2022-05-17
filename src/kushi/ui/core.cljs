@@ -3,7 +3,6 @@
                    [kushi.ui.core])
   (:require [clojure.string :as string]
             [kushi.core :refer [add-google-font!]]
-            [par.core :refer [? !? ?+ !?+]]
             [kushi.utils :as util]))
 
 (defn with-hashed-keys [coll]

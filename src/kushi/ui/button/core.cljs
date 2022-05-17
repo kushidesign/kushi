@@ -6,8 +6,7 @@
    [kushi.core :refer (merged-attrs-map merge-with-style)]
    [kushi.ui.core :refer (gui)]
    [kushi.ui.scaling :refer [icon-margin icon-font-size]]
-   [kushi.ui.tooltip.core :refer (tooltip-mouse-leave tooltip-mouse-enter)]
-   [par.core :refer [? !? ?+ !?+]]))
+   [kushi.ui.tooltip.core :refer (tooltip-mouse-leave tooltip-mouse-enter)]))
 
 
 (def label-base-sx
