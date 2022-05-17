@@ -193,32 +193,6 @@
      :else
      s)))
 
-
-
-
-;; This adds dot-class to any kushi-classes
-(defn with-dot-kushi-classes
-  [coll]
-  (map (fn [x]
-         (cond
-           (and (s/valid? ::specs/kushi-class-kw x)
-                (get @state/kushi-atomic-user-classes x))
-           (->> x name (str ".") keyword)
-
-           (list? x)
-           (map #(or
-                  (some->> %
-                           atomic-user-class
-                           :n
-                           name
-                           (str ".")
-                           keyword)
-                  %)
-                x)
-           :else x))
-       coll))
-
-
 ;; TODO move somewhere else?
 (defn add-used-token! [v]
   (let [kw    (keyword v)
@@ -302,9 +276,9 @@
       (re-find #"^.+ *\> *\.\%$" s)
       {:type :parent :x (string/replace s #" *\> *\.\%$" "")}
 
-      ;; ancestor selector via tokenized kw such as: "div.foo&_.%:color--red"
+      ;; ancestors selector via tokenized kw such as: "div.foo&_.%:color--red"
       (re-find #"[^&_ ] *&_ *\.%$|[^&_ ] +\.%$" s)
-      {:type :ancestor :x (string/replace s #" *&_ *\.%$| +\.%$" "")}
+      {:type :ancestors :x (string/replace s #" *&_ *\.%$| +\.%$" "")}
 
       ;; same element selector via tokenized kw such as: "div.foo.%:color--red"
       (re-find #"\S+\.%$" s)
@@ -335,33 +309,33 @@
         mq              (when-not (empty? mods*) (specs/find-with (first mods*) specs/mq-re))
         formatted-mods* (keep (partial format-mod mods&prop) (if mq (rest mods*) mods*))
         formatted-mods  (filter string? formatted-mods*)
-        ancestor*      (keep #(when (map? %)
-                                (let [{:keys [x type]} %
-                                      maybe-direct-child  (when (= :parent type) " >")
-                                      maybe-descendant (when-not (= :same-element type) " ")]
-                                  (str x maybe-direct-child maybe-descendant)))
-                             formatted-mods*)
-        ancestor       (coll->str ancestor*)
-        mods            (if ancestor
-                          {:ancestor ancestor :mods (coll->str formatted-mods)}
-                          (coll->str formatted-mods))
-        ]
+        prepend*        (keep #(when (map? %)
+                                 (let [{:keys [x type]}   %
+                                       maybe-direct-child (when (= :parent type) " >")
+                                       maybe-descendant   (when-not (= :same-element type) " ")]
+                                   (str x maybe-direct-child maybe-descendant)))
+                              formatted-mods*)
+        prepend        (coll->str prepend*)
+        mods            (if prepend
+                          {:prepend prepend
+                           :mods     (coll->str formatted-mods)}
+                          (coll->str formatted-mods))]
 
-(when true #_(state/debug?)
-  (!?+ "mods&prop->map" {
+    #_(when true #_(state/debug?)
+          (!?+ "mods&prop->map" {
                         ;; :mods&prop      mods&prop
                         ;; :mods*          mods*
-                        :mods           mods
-                        :ancestor      ancestor
-                        :formatted-mods formatted-mods
-                        :formatted-mods* formatted-mods*
-                        }))
+                                 :mods            mods
+                                 :prepend         prepend
+                                 :formatted-mods  formatted-mods
+                                 :formatted-mods* formatted-mods*
+                                 }))
     (into {}
           (filter (comp some? val)
-                  {:mods      mods
-                  ;;  :ancestor ancestor
-                   :css-prop  prop
-                   :mq        mq}))))
+                  {:mods     mods
+                  ;; :prepend prepend
+                   :css-prop prop
+                   :mq       mq}))))
 
 ;; Parsing props
 (defn kushi-style->token [selector* x]
@@ -372,8 +346,8 @@
           m2*             (mods&prop->map mods&prop)
           m2              (if val (assoc m2* :val val) m2*)
           hydrated        (hydrate-css m2 selector*)]
-      (when true #_(state/debug?)
-        (!?+ "->token" (keyed mods&prop val m2* m2 hydrated)))
+      #_(when true #_(state/debug?)
+        (?+ "->token" (keyed mods&prop val m2* m2 hydrated)))
       hydrated)))
 
 (defn reduce-styles
@@ -391,10 +365,8 @@
     ret))
 
 (defn mod+styles-reducer [selector acc [mod-key* style-map]]
-  #_(when (state/debug?)
-      (? :mod-key:b4 mod-key*))
   (let [mod-key (if (map? mod-key*)
-                  (str (:ancestor mod-key*)
+                  (str (:prepend mod-key*)
                         selector
                         (:mods mod-key*))
                   (str selector mod-key*))]
@@ -461,9 +433,9 @@
    coll))
 
 (defn valid-mod-key [mod-key*]
-  #_(when (state/debug?) (? mod-key*))
+  #_(when true #_(state/debug?) (? mod-key*))
   (when (or (and (map? mod-key*)
-                 (and (:ancestor mod-key*) #_(:mods mod-key*)))
+                 (and (:prepend mod-key*) #_(:mods mod-key*)))
             (not (string/blank? mod-key*)))
     mod-key*))
 
