@@ -1,7 +1,6 @@
 (ns kushi.ansiformat
   #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
-  ;;  [par.core :refer [? !? ?+ !?+]]
    [clojure.pprint :refer [pprint]]
    [clojure.string :as string]))
 
@@ -11,7 +10,6 @@
             keys# (map keyword keys#)
             vals# (list ~@ks)]
         (zipmap keys# vals#))))
-
 
 (def colors
   {:reset             0
