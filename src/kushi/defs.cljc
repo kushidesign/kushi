@@ -1,6 +1,14 @@
 (ns kushi.defs)
 
-(def meta-ks [:ancestor :prefix :ident :element :kushi-theme? :ui? :kushi-class])
+;; TODO use :kushi/* ns kws ?
+(def meta-ks
+  [:kushi-class
+   :kushi-class-prefix
+   :kushi-class-prepend
+   :kushi-selector
+   :kushi-theme?
+   :ui?
+   :kushi/sheet])
 
 ;; These are sorted roughly be most-commonly used, for speeding up for regex (alternations)
 (def pseudo-elements
