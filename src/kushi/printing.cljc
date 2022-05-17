@@ -7,7 +7,6 @@
    [kushi.utils :as util :refer [keyed]]
    [kushi.state :as state]
    [kushi.ansiformat :as ansiformat]
-   [kushi.atomic :as atomic]
    [kushi.config :refer [user-config version]]))
 
 ;; (ansiformat/ansi-format "wtf" :red)
@@ -241,8 +240,7 @@
 
 (defn bad-sx-args-fmt
   [opts-base acc arg3]
-  (let [_ (!?+ arg3)
-        [[idx style-k] v] arg3
+  (let [[[idx style-k] v] arg3
         v+      (if (string? v) (str "\"" v "\"") v)
         bad-val (cond
                   style-k
@@ -583,7 +581,7 @@
   [{:keys [kushi-attr ident form-meta fname nm]
     :as   m}]
   (let [dupe-type          (keyword fname)
-        prefix             (or (:prefix kushi-attr) (:prefix user-config))
+        prefix             (or (:kushi-class-prefix kushi-attr) (:kushi-class-prefix user-config))
         file-info          (file-info-str {:form-meta form-meta :plain? true})
         k                  (if (= dupe-type :sx) [prefix ident] (keyword nm))
         existing-file-info (get-in @state/declarations [dupe-type k])]
@@ -657,12 +655,13 @@
     :caller        (meta #'dupe-defkeyframes-warning)
     :body-lines-fn dupe-warning-body-lines}))
 
-(defn dupe-defclass-warning [m]
-  (dupe-warning*
-   {:m             m
-    :caller        (meta #'dupe-defclass-warning)
+(defn dupe-defclass-warning [m*]
+  (let [m m*]
+    (dupe-warning*
+    {:m             m
+     :caller        (meta #'dupe-defclass-warning)
     ;; :debug? true
-    :body-lines-fn dupe-warning-body-lines}))
+     :body-lines-fn dupe-warning-body-lines})))
 
 
 ;; Warnings for bad numbers   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

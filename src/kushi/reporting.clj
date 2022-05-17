@@ -67,13 +67,16 @@
      (rules-under-styles mq-count rules-under-mqs))])
 
 (defn report-line-items
-  [{:keys [font-face
+  [{:keys [global-tokens-count
+           alias-tokens-count
+           font-face
            keyframes
            total-style-rules
            defclass-style-rules-total
            normal-style-rules-total
            defclass-style-rules-under-mqs
-           normal-style-rules-under-mqs] :as m}]
+           normal-style-rules-under-mqs
+           css-reset-style-rules] :as m}]
   (let [defclass-under-mq? (when defclass-style-rules-under-mqs
                              (pos? defclass-style-rules-under-mqs))
         normal-under-mq?   (when normal-style-rules-under-mqs
@@ -83,7 +86,14 @@
    (remove
     nil?
     (concat
-     [(when (pos? font-face) (format-rule-count font-face "font-face" opts))
+     [
+      ;; (when (pos? css-reset-style-rules) (format-rule-count css-reset-style-rules "css-reset" opts))
+      ;; (when (and banner? (pos? css-reset-style-rules)) " ")
+      (when (pos? global-tokens-count) (format-rule-count global-tokens-count "global token" opts))
+      (when (and banner? (pos? global-tokens-count)) " ")
+      (when (pos? alias-tokens-count) (format-rule-count alias-tokens-count "alias token" opts))
+      (when (and banner? (pos? alias-tokens-count)) " ")
+      (when (pos? font-face) (format-rule-count font-face "font-face" opts))
       (when (and banner? (pos? font-face)) " ")
       (when (pos? keyframes) (format-rule-count keyframes "keyframes" opts))
       (when (and banner? (pos? keyframes)) " ")
@@ -172,7 +182,7 @@
        ;;  :border-weight :bold
         :indent       3}
        (:selected-ns-msg @to-be-printed)
-       (when report-line-items-pre (remove nil? [(when banner? "\n") writing-to-css-msg (when banner? "\n")]))
+       (when report-line-items-pre (remove nil? [writing-to-css-msg (when banner? "\n")]))
        report-line-items-pre
        cache-report))
      #_(println "Number of rules served from cache: " @state/cached-sx-rule-count "\n"))))
