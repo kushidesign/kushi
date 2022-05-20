@@ -2,12 +2,13 @@
   #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
    [clojure.string :as string]
-   [clojure.pprint :refer [pprint]]
-   [par.core :refer [? !? ?+ !?+]]
+   [clojure.edn]
+   [clojure.pprint :as pp :refer [pprint]]
    [kushi.utils :as util :refer [keyed]]
    [kushi.state :as state]
    [kushi.ansiformat :as ansiformat]
-   [kushi.config :refer [user-config version]]))
+   [kushi.config :refer [user-config version]]
+   [par.core :refer [!? ?+]]))
 
 ;; (ansiformat/ansi-format "wtf" :red)
 
@@ -259,7 +260,7 @@
     (assoc acc idx bad-val)))
 
 (defn reduce-bad-args [args invalid-args opts-base]
-  (!?+ (keyed args invalid-args opts-base))
+  ;; (!?+ (keyed args invalid-args opts-base))
   (reduce (partial bad-sx-args-fmt opts-base)
           (into [] (repeat (count args) " ..."))
           invalid-args))
@@ -271,7 +272,7 @@
            js?
            args]
     :as m}]
-  (!?+ :console-error-ansi-formatting:m m)
+  ;; (!?+ :console-error-ansi-formatting:m m)
   (when (seq invalid-args)
     (let [classname (warning-call-classname m)
           opts-base {:js? js? :style-key :bold}
@@ -395,7 +396,7 @@
        (str file ":"  (format-wrap opts)))))
 
 (defn bad-arg-warning-body [{:keys [js?] :as m}]
-  (!?+ m)
+  ;; (!?+ m)
   [(warning-header m)
    (if js? "\n\n" :br)
    (warning-call-with-args m)
@@ -414,10 +415,10 @@
   #?(:clj
      (when (and (vector? invalid-args)
                 (seq invalid-args))
-       (!?+ :m1 m)
+      ;;  (!?+ :m1 m)
        (let [m       (assoc m :js? true)
              warning (str (string/join "\n\n" (bad-arg-warning-body m)) "\n")]
-         (?+ :m2 m)
+        ;;  (?+ :m2 m)
          (browser-formatted-js-vec warning)))))
 
 (defn ansi-bad-args-warning
@@ -721,7 +722,9 @@
         bad-nums-js               (preformat-compilation-warnings-js bad-nums)
         dupe-ident                (when ident (dupe-ident-warning opts))
         invalid-style             (when @state/invalid-style-args
-                                    (merge opts {:invalid-args (!?+ @state/invalid-style-args)}))
+                                    ;; TODO - typecheck below is defensive - remove when possible
+                                    (merge (when (map? opts) opts)
+                                           {:invalid-args @state/invalid-style-args}))
         invalid-style-js          (when invalid-style
                                     (browser-formatted-js-vec
                                      (string/join
@@ -825,8 +828,9 @@
 
 
 (defn simple-warning [{:keys [desc args hint]}]
-  (let [{:keys [fname form-meta]} @state/current-macro
-        fstr                      (str "kushi.core/" fname)]
+  (let [{:keys [fname
+                form-meta]} @state/current-macro
+        fstr                (str "kushi.core/" fname)]
     (println
      (str ansi/bold-magenta-font
           "\nWARNING! "
@@ -836,12 +840,166 @@
           ansi/reset-font
           "\n"
           desc
-          (when hint (str "\n" hint))
+          (when hint (str hint))
           "\n"
           (string/replace (with-out-str (pprint (cons (symbol fname) args))) #"\n$" "")
           "\n"
           ansi/italic-font
           ansi/cyan-font
-          (file-info-str {:plain? true :style-key :italic :form-meta form-meta})
+          (file-info-str {:plain?    true
+                          :style-key :italic
+                          :form-meta form-meta})
           ansi/reset-font
           "\n"))))
+
+(defn re-seq-pos [pattern string]
+  (let [m (re-matcher pattern string)]
+    ((fn step []
+      (when (. m find)
+        (cons {:start (. m start) :end (. m end) :group (. m group)}
+          (lazy-seq (step))))))))
+
+(defn replace-in-str [f in from len]
+  (let [before (subs in 0 from)
+        after (subs in (+ from len))
+        being-replaced (subs in from (+ from len))
+        replaced (f being-replaced)]
+    (str before replaced after)))
+
+(defn with-line-numbers
+  [form-meta fname args]
+  (let [sexp     (cons (symbol fname) args)
+        pprinted (string/replace (with-out-str (pprint sexp)) #"\n$" "")
+        lnum     (:line form-meta)]
+    (if lnum
+      (let [linenums   (->> pprinted (re-seq #"\n") count (+ lnum) (range lnum) (map inc))
+            pos        (map (fn [n pos] (dissoc (assoc pos :ln n) :group)) linenums (re-seq-pos #"\n" pprinted))
+            max-digits (-> linenums last str count)
+            spaces     (fn [ln]
+                         (let [num-digits (-> ln str count)
+                               spaces     (string/join (repeat (inc (- max-digits num-digits)) " "))]
+                           spaces))
+            numbered   (reduce (fn [acc {:keys [start ln]}]
+                                 (let [spaces      (spaces ln)]
+                                   (replace-in-str (fn [_] (str "\n"  ln spaces "│  ")) acc start 1)))
+                               pprinted
+                               (reverse pos))]
+        (str lnum (spaces (first linenums)) "│  " numbered))
+      pprinted)))
+
+(defn simple-border [s]
+  (str "\n\n" ansi/bold-font s ansi/reset-font "\n\n"))
+
+(def simple-bottom-border
+  (simple-border "-----------------------------------------------"))
+
+(def simple-warning-header
+  (simple-border "-- W A R N I N G ------------------------------"))
+
+(def simple-exception-header
+  (simple-border "-- E X C E P T I O N -------------------------"))
+
+(defn file-info-str*
+  [form-meta]
+  (if form-meta
+    (str (file-info-str {:plain?    true
+                         :style-key :italic
+                         :form-meta form-meta}))
+    (str "The above code was called internally by kushi.core/theme!."
+         "\n"
+         "There may be a problem with your theme.")))
+
+(defn simple-warning2
+  [{:keys [sym
+           args
+           hint
+           fname
+           form-meta
+           commentary]}]
+  (let [file-info-str (file-info-str* form-meta)
+        args (if (= fname "defclass") (cons sym args) args)]
+    (println
+     (str simple-warning-header
+          (with-line-numbers form-meta fname args)
+          "\n\n"
+          file-info-str
+          (when commentary
+            (str "\n\n\n" commentary))
+          (when hint (str "\n\n\n" hint))
+          simple-bottom-border))))
+
+(defn caught-exception [{:keys [ex
+                                sym
+                                args
+                                fname
+                                form-meta
+                                exception-message
+                                top-of-stack-trace
+                                commentary]}]
+  (let [file-info-str (file-info-str* form-meta)
+        args (if sym (cons sym args) args)]
+    (println
+     (str simple-exception-header
+          (with-line-numbers form-meta fname args)
+          "\n\n"
+          file-info-str
+          (when exception-message
+            (str "\n\n"
+                 ansi/italic-font
+                 ansi/cyan-font
+                 "(.getMessage ex) =>\n"
+                 ansi/reset-font
+                 exception-message))
+
+          (when top-of-stack-trace
+            (str "\n\n"
+                 ansi/italic-font
+                 ansi/cyan-font
+                 "StackTraceElement[0] =>\n"
+                 ansi/reset-font
+                 top-of-stack-trace))
+
+          (when commentary
+            (str "\n\n\n" commentary))
+
+          (when-not (or exception-message top-of-stack-trace)
+            (str "\n\n\n"
+                 ansi/italic-font
+                 ansi/cyan-font
+                 "Clojure says:\n"
+                 ansi/reset-font
+                 (with-out-str (pprint ex))))
+
+          simple-bottom-border))))
+
+
+(defn simple-add-font-face-warning [{:keys [bad-entries valid-ks] :as m}]
+  (when (seq bad-entries)
+    (simple-warning2
+     (assoc m
+            :fname
+            "add-font-face"
+            :commentary
+            (str "Invalid entries in map:\n"
+                 (with-out-str
+                   (pprint bad-entries)))
+            :hint (str "kushi.core/add-font-face expects a single map.\n\n"
+                       "The entries :font-family and :src are required.\n\n"
+                       "The following entries are optional:\n"
+                       (string/join "\n" (disj (apply hash-set valid-ks) :font-family :src))
+                       "\n")))))
+
+(defn simple-defclass-warning [m* result]
+  (when-not  (:duplicate-for-override? m*)
+   (when-let [invalid-args (:invalid-args result)]
+     (when (seq invalid-args)
+       (simple-warning2
+        (assoc m*
+               :fname
+               "defclass"
+               :commentary
+               (str "Invalid args supplied to kushi.core/defclass:\n"
+                    (with-out-str
+                      (pprint (if (map? invalid-args)
+                                (vals invalid-args)
+                                invalid-args))))))))))
