@@ -85,7 +85,7 @@
 
 (s/def ::css-selector-base
   (s/and string?
-         #(re-find #"^-?[_a-zA-Z]+[_a-zA-Z0-9-]*$" %)))
+         #(re-find #"^-?[_a-zA-Z\\!]+[_a-zA-Z0-9-\\!]*$" %)))
 
 (s/def ::class-kw
   (s/and keyword?
@@ -254,3 +254,34 @@
 (s/def ::css-reset-selector (s/or
                              :string? string?
                              :vector? (s/and vector? #(seq %) (s/coll-of string?))))
+
+;; font-face related
+(s/def ::font-face-val (s/or :keyword? keyword? :string? string?))
+(s/def ::ascent-override ::font-face-val)
+(s/def ::decent-override ::font-face-val)
+(s/def ::font-display ::font-face-val)
+(s/def ::font-stretch ::font-face-val)
+(s/def ::font-style ::font-face-val)
+(s/def ::font-weight ::font-face-val)
+(s/def ::font-variant ::font-face-val)
+(s/def ::font-feature-settings ::font-face-val)
+(s/def ::font-variation-settings ::font-face-val)
+(s/def ::line-gap-override ::font-face-val)
+(s/def ::unicode-range ::font-face-val)
+(s/def ::font-family string?)
+(s/def ::src (s/or :string? string? :coll-of-strings? (s/coll-of string?)))
+
+(s/def ::font-face-map
+       (s/keys :req-un [::font-family ::src]
+               :opt-un [::ascent-override
+                        ::decent-override
+                        ::font-display
+                        ::font-stretch
+                        ::font-style
+                        ::font-weight
+                        ::font-variant
+                        ::font-feature-settings
+                        ::font-variation-settings
+                        ::line-gap-override
+                        ::unicode-range]))
+
