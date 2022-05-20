@@ -155,6 +155,7 @@
                                (concat google-font-maps1 google-font-maps2)
                                (remove nil?)
                                (into []))
+        ;; Always adds system font stack unless `:use-system-font-stack?` is set to `false` in theme
         add-system-font-stack? (-> m :use-system-font-stack? false? not)]
     (keyed google-font-maps add-system-font-stack?)))
 
