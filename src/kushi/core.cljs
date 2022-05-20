@@ -1,9 +1,8 @@
 (ns ^:dev/always kushi.core
-  (:require-macros [kushi.core :refer [keyed #_theme!]])
+  (:require-macros [kushi.core])
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
             [kushi.sheets :as sheets]
-            [kushi.utils :as util] ;; For aliasing merge-with-style
             ;; [par.core :refer [? !?]] ;; only use when developing kushi itself
             ))
 
@@ -47,73 +46,15 @@
 ;; Used to keep track of what has been injected, to avoid duplicate injections.
 (def injected (atom #{}))
 
-
 (clean/clean! (vals (select-keys sheets/sheet-ids-by-type
                                  sheets/sheet-types-ordered)))
 
 ;; Toggle for debugging while developing kushi itself
-(def log-inject-css*? false)
+;; (def log-inject-css*? false)
 
 (defn lightswitch! []
   (.toggle (-> js/document.body .-classList) "dark"))
 
-(defn sanitize-if-malformed-garden-output [s]
-  (if (re-find #"calc\(" s)
-    (-> s
-        (string/replace #"\) *(\*|\+|\-|\\/) *\(" ") $1 (")
-        (string/replace #"(\S)(\+)(\S)" "$1 $2 $3"))
-    s))
-
-(defn inject-css*
-  "Called internally by kushi.core/sx at dev/run time for zippy previews."
-  [css-rules
-   sheet-id]
-  ;; (!? :inject-css* css-rules)
-  (when-let [stylesheet-el (js/document.getElementById sheet-id)]
-    (let [;log-inject-css*? (= sheet-id "_kushi-rules_")
-          rules-as-seq   (map-indexed vector css-rules)
-          sheet          (.-sheet stylesheet-el)
-          num-injected   (count @injected)
-          sheet-len      (.-length (.-rules sheet))]
-     ;; (when (zero? num-injected) (js/console.clear))
-      #_(js/console.log (.-rules sheet))
-     ;Inject only if rule-css is not already a member of kushi.core/injected atom
-      (doseq [[_ rule-css*]  rules-as-seq
-              :let         [rule-css  (sanitize-if-malformed-garden-output rule-css*)
-                            injected? (contains? @injected rule-css)]]
-        (when log-inject-css*?
-          (js/console.log "[kushi.core/inject-css*]\n"
-                          (keyed css-rules injected? num-injected sheet-id sheet-len)))
-        (do
-          #_(when log-inject-css*?
-              (js/console.log "    Already injected, skipping: " rule-css))
-          (when-not injected?
-            (swap! injected conj rule-css)
-            (let [updated-num-rules-idx (-> sheet .-rules .-length)]
-              (try
-                (do (.insertRule sheet rule-css updated-num-rules-idx)
-                    (when log-inject-css*?
-                      (js/console.log "    Injecting: " rule-css)))
-                (catch :default e (js/console.warn
-                                   "kushi.core/sx:\n\nFailed attempt to inject malformed css rule:\n\n"
-                                   rule-css
-                                   "\n\n¯\\_(ツ)_/¯\n"
-                                   e))))))))))
-
-(defn inject-style-rules
-  [css-rules inj-type]
-  (when (seq css-rules)
-    (inject-css* css-rules (inj-type sheets/sheet-ids-by-type))))
-
-(defn inject-kushi-atomics [m]
-  (when (seq m)
-    (doseq [[classtype kushi-atomics] m]
-      (doseq [[_ css-rules] kushi-atomics]
-        (when-let [sheet-id (classtype sheets/sheet-ids-by-type)]
-          (inject-css* css-rules sheet-id))))))
-
-(defn inject-design-tokens! [css inj-type]
-  (inject-css* [css] (inj-type sheets/sheet-ids-by-type)))
 
 ;; cssfn (helper fn for use inside calls to sx macro)  ---------------------------------------------------------
 (defn cssfn? [x]
@@ -266,6 +207,116 @@
           :style css-vars
           :data-cljs data-cljs)))
 
-(def merge-with-style kushi.utils/merge-with-style)
+#_(def merge-with-style kushi.utils/merge-with-style)
 
-#_(theme!)
+(def dom-element-events
+   [:on-change
+    :on-blur
+    :on-aux-click
+    :on-click
+    :on-composition-end
+    :on-composition-start
+    :on-composition-update
+    :on-context-menu
+    :on-copy
+    :on-cut
+    :on-dbl-click
+    :on-error
+    :on-focus
+    :on-focus-in
+    :on-focus-out
+    :on-fullscreen-change
+    :on-fullscreen-error
+    :on-key-down
+    :on-key-up
+    :on-mouse-down
+    :on-mouse-enter
+    :on-mouse-leave
+    :on-mouse-move
+    :on-mouse-out
+    :on-mouse-over
+    :on-mouse-up
+    :on-paste
+    :on-scroll
+    :on-security-policy-violation
+    :on-select
+    :on-touch-cancel
+    :on-touch-end
+    :on-touch-move
+    :on-touch-start
+    :on-webkit-mouse-force-down
+    :on-wheel ])
+
+(defn- merge-with-style-warning
+  [v k n]
+  (js/console.warn
+   (str
+    "kushi.core/merge-with-style:\n\n "
+    "The " k " value supplied in the " n " argument must be a map.\n\n "
+    "You supplied:\n") v))
+
+(defn- bad-style? [style n]
+  (let [bad? (and style (not (map? style)))]
+    (when bad? (merge-with-style-warning style :style n))
+    bad?))
+
+(defn- bad-class? [class n]
+  (let [bad? (and class
+                  (not (some #(% class) [seq? vector? keyword? string? symbol?])))]
+    (when bad? (merge-with-style-warning class :class n))
+    bad?))
+
+(defn class-coll
+  [class bad-class?]
+  (when-not bad-class?
+    (if (or (string? class) (keyword? class))
+      [class]
+      class)))
+
+(defn data-cljs [s1 s2]
+  (let [coll   (remove nil? [s1 s2])
+        joined (when (seq coll) (string/join " + " coll))]
+    (when joined {:data-cljs joined})))
+
+(defn on-click [c1 c2 m2 k]
+  (let [block? (contains? (some->> m2 :data-kushi-block-events (into #{})) k)
+        f (if block?
+            c2
+            (if (and c1 c2)
+              (do
+                ;; (println "merging 2 event handlers")
+                ;; (println m2)
+                (fn [e] (c1 e) (c2 e)))
+              (or c1 c2)))]
+    (when f {k f})))
+
+
+(defn- merge-with-style* [& maps]
+  (let [[m1 m2]                   (map #(if (map? %) % {}) maps)
+        {style1 :style
+         class1 :class
+         data-cljs1 :data-cljs
+         on-click1 :on-click}     m1
+        {style2 :style
+         class2 :class
+         data-cljs2 :data-cljs
+         on-click2 :on-click}     m2
+        [bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
+        [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i)) [class1 class2])
+        merged-style              (merge (when-not bad-style1? style1) (when-not bad-style2? style2))
+        class1-coll               (class-coll class1 bad-class1?)
+        class2-coll               (class-coll class2 bad-class2?)
+        classes                   (concat class1-coll class2-coll)
+        data-cljs                 (data-cljs data-cljs1 data-cljs2)
+
+        user-event-handlers       (keys (select-keys m2 dom-element-events))
+        ;; _ (? user-event-handlers)
+        merged-event-handlers     (apply merge (map #(on-click (% m1) (% m2) m2 %) user-event-handlers))
+        ret                       (assoc (merge m1 m2 data-cljs merged-event-handlers)
+                                         :class classes
+                                         :style merged-style)]
+    ret))
+
+;; Public function for style decoration
+(defn merge-with-style [& maps]
+ (reduce merge-with-style* maps))

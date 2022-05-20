@@ -2,8 +2,7 @@
   (:require-macros [kushi.core :refer [keyed add-system-font-stack]]
                    [kushi.ui.core])
   (:require [clojure.string :as string]
-            [kushi.core :refer [add-google-font!]]
-            [kushi.utils :as util]))
+            [kushi.core :refer [merge-with-style]]))
 
 (defn with-hashed-keys [coll]
   (map-indexed (fn [idx x] ^{:key (str (hash x) "-" idx)} x) coll))
@@ -101,7 +100,7 @@
 (defn merge-attr2
   [a b]
   (if (and (map? a) (map? b))
-    (util/merge-with-style a b)
+    (merge-with-style a b)
     (if (map? a) a (when (map? b) b))))
 
 (defn user-attr+children [args]
@@ -138,7 +137,7 @@
            attr-path]}]
   (let [[tag attr _]   (->hiccup attr-target)
         component-attr (if (map? decorator)
-                         (util/merge-with-style attr decorator)
+                         (merge-with-style attr decorator)
                          attr)
         merged-attr    (merge-attr2 component-attr user-attr)
         node-w-attr    (if single-target?

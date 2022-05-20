@@ -12,7 +12,6 @@
 (def dom-element-events
   #{
     :on-change
-
     :on-blur
     :on-aux-click
     :on-click
