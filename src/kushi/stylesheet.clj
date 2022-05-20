@@ -315,6 +315,9 @@
     (when (and (:post-build-report? user-config) something-to-write?)
       (reporting/print-report! to-be-printed)))
 
+  ;; Last, reset build states for subsequent builds at dev
+   (state/reset-build-states!)
+
   ;; Must return the build state
   build-state)
 
