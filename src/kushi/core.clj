@@ -2,6 +2,7 @@
   (:require
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
+   [clojure.pprint :refer [pprint]]
    [par.core :refer [? !? ?+ !?+]]
    [garden.core :as garden]
    [garden.stylesheet :refer [at-font-face]]
@@ -26,21 +27,51 @@
          vals# (list ~@ks)]
      (zipmap keys# vals#)))
 
-(defmacro add-font-face
+;TODO move this to utils
+(defn- exception-args [{:keys [ex]}]
+  {:exception-message (.getMessage ex)
+   :top-of-stack-trace (get (.getStackTrace ex) 0)})
+
+
+;; font-loading related
+;; -------------------------------------------------
+(defmacro ^:public add-font-face
   "Example:
    (add-font-face {:font-family \"FiraCodeBold\"
                    :font-weight \"Bold\"
                    :font-style \"Normal\"
                    :src [\"local(\\\"Fira Code Bold\\\")\"]})"
   [m]
-  (let [{:keys [caching? cache-key cached]} (state/cached :add-font-face m)
-        aff                                 (or cached (garden/css (at-font-face m)))]
-    (reset! state/current-macro :add-font-face)
-    (swap! state/user-defined-font-faces conj aff)
-    (when (and caching? (not cached))
-      (swap! state/styles-cache-updated assoc cache-key aff))))
+  (if (s/valid? ::specs/font-face-map m)
+    (let [valid-ks                            (->> ::specs/font-face-map
+                                                   s/describe
+                                                   rest
+                                                  (apply hash-map)
+                                                   vals
+                                                   (apply concat)
+                                                   (map (comp keyword name))
+                                                   (into []))
+          clean-map                           (select-keys m valid-ks)
+          bad-entries                         (into {} (filter (fn [[k _]] (not (get clean-map k))) m))
+          {:keys [caching? cache-key cached]} (state/cached :add-font-face m)
+          aff                                 (or cached (garden/css (at-font-face m)))]
 
-(defn system-at-font-face-rules [weights*]
+      (printing/simple-add-font-face-warning
+       {:form-meta   (meta &form)
+        :args        (list m)
+        :valid-ks    valid-ks
+        :bad-entries bad-entries})
+
+      (reset! state/current-macro :add-font-face)
+      (swap! state/user-defined-font-faces conj aff)
+      (when (and caching? (not cached))
+        (swap! state/styles-cache-updated assoc cache-key aff)))
+    (s/explain ::specs/font-face-map m)))
+
+
+
+(defn- system-at-font-face-rules [weights*]
+  
   (let [weights   (if (empty? weights*)
                     system-font-stacks
                     (reduce (fn [acc v]
@@ -61,11 +92,13 @@
     ff-rules))
 
 
-(defn add-system-font-stack
+(defmacro ^:public add-system-font-stack
   [& weights*]
-  (!? :add-system-font-stack!! weights*)
   (let [{:keys [caching? cache-key cached]} (state/cached :system-font-stack weights*)
-        ff-rules (into [] (or cached (system-at-font-face-rules weights*)))]
+        ff-rules                            (into []
+                                                  (or cached
+                                                      (system-at-font-face-rules weights*)))]
+    ;; (?+ weights*)
     (doseq [rule ff-rules]
       (reset! state/current-macro :add-font-face)
       (swap! state/user-defined-font-faces conj rule))
@@ -73,6 +106,10 @@
       (swap! state/styles-cache-updated assoc cache-key ff-rules))
     @state/user-defined-font-faces))
 
+
+
+;; defkeyframes related
+;; ----------------------------------------------------
 (defn- keyframe [[k v]]
   (let [frame-key (if (vector? k)
                     (string/join ", " (map name k))
@@ -84,7 +121,13 @@
                    v)]
     [frame-key frame-val]))
 
-(defmacro defkeyframes [nm & frames*]
+
+(defn- defkeyframes-exception-args
+  [{:keys [args ex] :as m}]
+  (merge m (exception-args m)))
+
+(defmacro ^:public defkeyframes
+  [nm & frames*]
   (let [opts         {:fname     "defkeyframes"
                       :nm        nm
                       :form-meta (meta &form)}
@@ -93,22 +136,40 @@
     (reset! state/current-macro :defkeyframes)
     (let [{:keys [caching?
                   cache-key
-                  cached]}  (state/cached :keyframes nm frames*)
-          frames            (or cached (mapv keyframe frames*))]
-      (swap! state/user-defined-keyframes assoc (keyword nm) frames)
-      (when (and caching? (not cached))
-        (swap! state/styles-cache-updated assoc cache-key frames)))))
+                  cached]} (state/cached :keyframes nm frames*)
+          frames           (try
+                             (or cached (mapv keyframe frames*))
+                             (catch Exception ex
+                               (-> {:form-meta (meta &form)
+                                    :fname     "defkeyframes"
+                                    :sym       nm
+                                    :args      frames*
+                                    :ex        ex}
+                                   defkeyframes-exception-args
+                                   printing/caught-exception)))]
+      (when frames
+        (swap! state/user-defined-keyframes assoc (keyword nm) frames)
+        (when (and caching? (not cached))
+          (swap! state/styles-cache-updated assoc cache-key frames))))))
 
-(defn cssfn [& args]
+
+(defn ^:public cssfn [& args]
+  ;TODO add some validation here
   (cons 'cssfn (list args)))
 
-;; -----------------------------------------------------
 
-(defn defclass-noop? [sym args]
+
+
+
+
+;; defclass related
+;; ----------------------------------------------------
+
+(defn- defclass-noop? [sym args]
   ;; For skipping defclasses & overrides from theming
   (and (nil? sym) (= args '(nil))))
 
-(defn sym->classtype [sym]
+(defn- sym->classtype [sym]
   (let [meta* (some-> sym meta)]
     (cond
       (:kushi-utility meta*)          :kushi-utility
@@ -116,7 +177,7 @@
       (:user-utility-override meta*)  :user-utility-override
       :else                           :user-utility)))
 
-(defn style-map->vecs
+(defn- style-map->vecs
   [m]
   (let [kw->dotkw #(some->> (when (keyword? %) %)
                             name
@@ -159,7 +220,8 @@
 
 
 
-(defn defclass* [{:keys [sym args classtype]}]
+(defn- defclass*
+  [{:keys [sym args classtype]}]
   (let [sym                      (if (keyword? sym) (symbol sym) sym)
         defclass-name            (keyword sym)
         last*                    (last args)
@@ -185,7 +247,7 @@
                                     :args          (apply vector args)
                                     :invalid-args  invalid-args})
         ret                       {:n             defclass-name
-                                  :args          hydrated-styles}]
+                                   :args          hydrated-styles}]
 
     (!?+ (keyed last* style-map style-tokens style-map-vecs coll))
     ;; (?+ styles)
@@ -205,38 +267,57 @@
                   selector*))))
 
 
-(defn defclass-dispatch [{:keys [sym] :as m*}]
+
+(defn- defclass-exception-args [{:keys [args ex] :as m}]
+  (merge m (exception-args m)))
+
+(defn defclass-dispatch [{:keys [sym form-meta args] :as m*}]
   (reset! state/current-macro :defclass)
-  (let [classtype  (sym->classtype sym)
-        current-op (assoc m* :macro :defclass :classtype classtype)
-        _          (reset! state/current-op current-op)
-        cache-map  (state/cached current-op)
-        result     (or (:cached cache-map) (defclass* current-op))]
-    (state/add-utility-class! result)
-    (state/update-cache! cache-map result)
+  (try
+    (let [classtype  (sym->classtype sym)
+          current-op (assoc m* :macro :defclass :classtype classtype)
+          _          (reset! state/current-op current-op)
+          cache-map  (state/cached current-op)
+          result     (or (:cached cache-map) (defclass* current-op))]
+      (state/add-utility-class! result)
+      (state/update-cache! cache-map result)
 
-    (!?+ :current-type (assoc current-op :sym-meta (meta sym)) )
-    ;; If this is an base class, add an override-class version
-    (let [base->override {:user-utility  :user-utility-override
-                          :kushi-utility :kushi-utility-override}]
-      (when-let [override-class (get base->override classtype)]
-        (let [sym (with-meta (-> sym name (str "\\!") symbol) {override-class true})]
-          (!?+ :bout-to-dispatch-> (assoc m* :sym sym :sym-meta (meta sym) :classtype-would-be (sym->classtype sym)))
-          (defclass-dispatch (assoc m* :sym sym))
-          #_(!?+ @state/utility-classes-by-classtype))))))
+      (printing/simple-defclass-warning m* result)
+      ;; If this is an base class, add an override-class version
+      (let [base->override {:user-utility  :user-utility-override
+                            :kushi-utility :kushi-utility-override}]
+        (when-let [override-class (get base->override classtype)]
+          (let [sym (with-meta (-> sym name (str "\\!") symbol) {override-class true})]
+            (!?+ :bout-to-dispatch-> (assoc m* :sym sym :sym-meta (meta sym) :classtype-would-be (sym->classtype sym)))
+            (defclass-dispatch (assoc m* :sym sym :duplicate-for-override? true))
+            #_(!?+ @state/utility-classes-by-classtype)))))
+    (catch Exception ex
+      (-> {:form-meta form-meta
+           :fname     "defclass"
+           :sym       sym
+           :args      args
+           :ex        ex}
+          defclass-exception-args
+          printing/caught-exception))))
 
 
 
-;; ----------------------------------------------------
 
-
-(defmacro defclass
+(defmacro ^:public defclass
   [sym & args]
   (when-not (defclass-noop? sym args)
-    (defclass-dispatch {:sym sym :args args :form-meta (meta &form)})
+    (try
+      (defclass-dispatch {:sym       sym
+                          :args      args
+                          :form-meta (meta &form)})
+      )
     `(do nil)))
 
-(defn sx-dispatch
+
+
+;; sx related
+;; -----------------------------------------------------
+(defn- sx-dispatch
   [{:keys [form-meta args]
     :or   {form-meta {}}}]
   (let [{:keys [cache-key
@@ -251,34 +332,59 @@
                                                         cache-key)))]
 
     (state/register-utility-class-usage! distinct-classes)
-
     (state/update-cache! cache-map m)
     (state/add-styles! garden-vecs inj-type)
     (printing/set-warnings!)
     (printing/print-warnings!)
-
     m))
 
-(defmacro sx
+(defn- sx-attrs-sans-styling [args]
+  (if-let [attrs (when (-> args last map?) (last args))]
+    (dissoc attrs :style)
+    {}) )
+
+(defn- sx-exception-args [{:keys [args ex] :as m}]
+  (merge m
+         (exception-args m)
+         {:commentary (str "The element you are trying to style" "\n"
+                           "will receive the following attribute map:" "\n"
+                           "\n"
+                           (with-out-str (pprint (sx-attrs-sans-styling args))))}) )
+(defmacro ^:public sx
   [& args]
   (when-not (= args '(nil))
     (let [{:keys [attrs-base
                   prefixed-classlist
                   css-vars
-                  data-cljs]}        (sx-dispatch {:args      args
-                                                   :form-meta (meta &form)})]
-      `(kushi.core/merged-attrs-map
-        {:attrs-base ~attrs-base
-         :prefixed-classlist ~prefixed-classlist
-         :css-vars ~css-vars
-         :data-cljs ~data-cljs}))))
+                  data-cljs]
+           :as   result}             (try
+                                       (sx-dispatch {:args args :form-meta (meta &form)})
+                                       (catch Exception ex
+                                         (-> {:form-meta (meta &form)
+                                              :fname     "sx"
+                                              :args      args
+                                              :ex        ex}
+                                             sx-exception-args
+                                             printing/caught-exception)))
+          attrs-sans-styling        (when (nil? result)
+                                      (sx-attrs-sans-styling args))]
+         (if attrs-sans-styling
+           `(do ~attrs-sans-styling)
+           `(kushi.core/merged-attrs-map
+             {:attrs-base         ~attrs-base
+              :prefixed-classlist ~prefixed-classlist
+              :css-vars           ~css-vars
+              :data-cljs          ~data-cljs})))))
 
-(defn add-utility-classes! [coll kw]
+
+;; Theme related
+;; -----------------------------------------------------
+(defn- add-utility-classes! [coll kw]
   (doseq [[k styles] coll]
     (defclass-dispatch {:sym  (with-meta (symbol k) {kw true})
                         :args [styles]})))
 
-(defn font-loading! [m]
+(defn- font-loading! [m]
   (let [asfs? (:add-system-font-stack? m)
         gfm   (:google-font-maps m)]
     (when asfs? (add-system-font-stack))
@@ -327,8 +433,9 @@
 (defn kushi-debug
   {:shadow.build/stage :compile-prepare}
   [build-state]
-  (state/reset-build-states!)
-  (!?+ :reset-done!)
+
+  #_(state/reset-build-states!)
+  #_(!?+ :reset-done!)
   (let [mode (:shadow.build/mode build-state)]
     (when (not= mode :dev)
       (reset! state/KUSHIDEBUG false)))
@@ -341,6 +448,8 @@
   (stylesheet/create-css-text)
   (let [css-sync         @state/kushi-css-sync
         google-font-maps @state/google-font-maps]
+  ;;  (?+ :inject:gfm @state/google-font-maps)
+  ;;  (?+ :inject:ff @state/user-defined-font-faces)
    `(do
       (apply kushi.core/add-google-font! ~google-font-maps)
       (kushi.core/css-sync! ~css-sync))))
