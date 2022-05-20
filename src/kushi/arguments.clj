@@ -278,10 +278,6 @@
         classlist-from-attrs         (:class attrs*)
         kushi-attr*                  (select-keys attrs* defs/meta-ks)
         kushi-attr                   (if defclass-name (assoc kushi-attr* :defclass-name defclass-name) kushi-attr*)
-        classes-to-mixin             (->> classlist-from-attrs
-                                          (concat tokens)
-                                          (filter #(% @state/utility-classes)))
-        classes-to-mixin-map         (reduce (fn [acc k] (merge acc (k @state/utility-classes))) {} classes-to-mixin)
         {:keys [selector selector*]} (selector/selector-name (assoc kushi-attr* :cache-key cache-key))
 
         attrs-base*                  (apply dissoc attrs* (conj defs/meta-ks :class :style))
@@ -311,7 +307,7 @@
 
         ;; element style with mqs, modifiers, & css vars ----------------------------------------------
         style-tokens-map             (style-tokens-map valid-styles-from-tokens)
-        new-style                    (into [] (merge classes-to-mixin-map style-tokens-map valid-styles-from-attrs))
+        new-style                    (into [] (merge style-tokens-map valid-styles-from-attrs))
 
         ;; DEBUGGING FOR MIXIN FEATURE
         ;; _ (when false #_(= :._purple (first args))
