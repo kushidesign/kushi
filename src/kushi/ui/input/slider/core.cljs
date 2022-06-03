@@ -119,7 +119,7 @@
                                 :.relative
                                 :ai--c
                                 :w--100%
-                                :padding-inline--0.75em)
+                                :padding-inline-end--2em)
                             wrapper-attrs)
 
      [slider-labels (keyed steps

@@ -4,6 +4,7 @@
   (str "
 
 :root{
+  --kushi-input-slider-track-background-color: silver;
   --kushi-input-slider-thumb-width: 1em;
   --kushi-input-slider-thumb-height: 1em;
   --kushi-input-slider-thumb-border-radius: var(--kushi-input-slider-thumb-width);
@@ -33,7 +34,7 @@ input[type=range]::-webkit-slider-runnable-track {
   cursor: pointer;
   animate: 0.2s;
   box-shadow: 0px 0px 0px #000000;
-  background: #000;
+  background: var(--kushi-input-slider-track-background-color);
   border-radius: 1px;
   border: 0px solid #000000;
 }
@@ -58,7 +59,7 @@ input[type=range]::-moz-range-track {
   cursor: pointer;
   animate: 0.2s;
   box-shadow: 0px 0px 0px #000000;
-  background: #000;
+  background: var(--kushi-input-slider-track-background-color);
   border-radius: 1px;
   border: 0px solid #000000;
 }
@@ -82,13 +83,13 @@ input[type=range]::-ms-track {
   color: transparent;
 }
 input[type=range]::-ms-fill-lower {
-  background: #000;
+  background: var(--kushi-input-slider-track-background-color);
   border: 0px solid #000000;
   border-radius: 2px;
   box-shadow: 0px 0px 0px #000000;
 }
 input[type=range]::-ms-fill-upper {
-  background: #000;
+  background: var(--kushi-input-slider-track-background-color);
   border: 0px solid #000000;
   border-radius: 2px;
   box-shadow: 0px 0px 0px #000000;
@@ -110,6 +111,4 @@ input[type=range]:focus::-ms-fill-lower {
 input[type=range]:focus::-ms-fill-upper {
   background: #000;
 }
-
-
 "))
