@@ -70,8 +70,12 @@
 [License](#license)
 
 <br>
+# Intro
+<br>
 
 # Setup and Usage
+Usage with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs) is currently recommended.
+
 For a well commented, feature-complete minimal project template, please see [kushi-quickstart](https://github.com/paintparty/kushi-quickstart).
 
 <br>
@@ -1027,84 +1031,12 @@ The browser console warning will provide you with file and line info.
 
 # Defining Components
 
-### Primitive components
-The `kushi.gui/gui` function is available to help you create primitive, stateless, and reusable components. `gui` will return a function, the signature of which mirrors hiccup itself. The produced function expects an optional map of attributes, and any number of children, and returns a hiccup vector with a (deeply) merged attributes map.
 
-```Clojure
-(def button
-  (gui [:button
-        (sx
-         {:style {:p      :0.5rem:1rem
-                  :b      :none
-                  :fs     :1rem
-                  :bgi    :none
-                  :cursor :pointer}})]))
+Below is a contrived example of creating a reusable, stateless, and composable component. This is a component definition pattern that relies on using the `kushi.ui.core/opts+children` helper fn. It optionally makes use of the kushi.core/merge-sx to enable decoratability. Using this pattern will result in a function that accepts an optional attributes map + any number of children, meaning the signature at the call site mirrros hiccup itself.
 
-```
+It also pulls out any keys passed in the attr map that start with `:-` and puts them in a separate `opts` map. This allows passing in various custom options within the attributes map that will not clash with existing html attributes.
 
-If your component structure needs to be more than just a single element (often the case), you can use a trailing `:!` on your tag to specify the target element for receiving attributes and children.
-
-```Clojure
-(def button
-  (gui [:div
-        [:button:!
-         (sx
-          {:style {:p      :0.5rem:1rem
-                   :b      :none
-                   :fs     :1rem
-                   :bgi    :none
-                   :bgc    :#eee
-                   :cursor :pointer}})]]))
-
-```
-Assuming your are using something like Reagent, you can use the resulting `button` component in your application code like so:
-
-```Clojure
-;; Default
-[button "Login"]
-
-;; A outline-style button
-[button (sx :b--1px:solid:black) "Learn more"]
-
-;; A inverse-styled button
-[button (sx :c--white :bgc--black) "Learn more"]
-
-```
-
-If you were rolling your own design system, you might do something more like this:
-```Clojure
-;; Define a "base" template in hiccup.
-(def button-base
-  [:button
-   (sx
-    {:style {:p      :0.5rem:1rem
-             :b      :none
-             :fs     :1rem
-             :bgi    :none
-             :bgc    :#eee
-             :cursor :pointer}})]
-
-
-;; Then use `kushi.gui/gui` to define some
-;; of primitive components:
-
-;; A `primary-button` component
-;; This will merge the "decorator" attr on top of the base attributes
-(def primary-button
-  (gui button-base (sx :c--white :bgc--black))
-
-;; A `minimal-button` component
-(def minimal-button
-  (gui button* (sx :bgc--none :hover-bgc--#eee))
-
-
-;; Somewhere in your app
-[primary-button "Learn more"]
-```
-<br>
-
-### Complex components
-Below is an example of an idiomatically defined complex component. Such a component maintains the same hiccup-like signature as the primitive component in the example above. Additionaly, it enables the use of custom attributes as well as providing decorator style/attribute maps to "named" parts of the component.
+Note in the example below we are using the `(into [:div ] ...)` for the parent node of our `children`. This is because Reagent likes everything in vectors.
 
 ```Clojure
 (ns myapp.core
@@ -1114,75 +1046,60 @@ Below is an example of an idiomatically defined complex component. Such a compon
 
 (defn my-section
   [& args]
-  (let [[opts attr & children]  (opts+children args)
-        {:keys [mylabel parts]} opts]
-    [:div
-     attr
-     (when mylabel
-       [:section (:label-foo parts) mylabel])
-     [:section (:body-baz parts) children]]))
+  (let [[opts attrs & children]  (opts+children args)
+        {:keys [label label-attrs body-attrs]} opts]
+    [:section
+     attrs
+     (when label
+       [:div label-attrs label])
+     (into [:div body-attrs] children)]))
 ```
 
-This specific example above assumes the following:
+The example above assumes the following:
 
-- The args list in the function definition must be variadic
+- The args list in the function definition is variadic
 <br>
-- The optional attributes map may contain the custom attributes `:-header-label` and `:-parts`. The value of `:-parts` will be a map which may contain the entries `:label-foo` and `:body-baz`, the values of which are html attribute maps.
+- The optional attributes map may contain the custom attributes `:-label`, `:-label-attrs`, `:-body-attrs`.
+<br>
+- The values of `:-label-attrs` and `:-body-attrs` html attribute maps.
 
 The helper function `kushi.ui.core/opts+children` will pull any keys prefixed with `:-` out of the attributes map and into a user `opts` map. `opts+children` always returns a vector in the form of `[user-opts attr child & more-childs]`
 
 
+Assuming your are using something like Reagent, you can use the resulting `my-section` component in your application code like so:
+
 ```Clojure
+;; Basic, no label
+[my-section [:p "Child one"] [:p "Child two"]]
+
+;; With optional label
+[my-section (sx {:-label "My Label"}) [:p "Child one"] [:p "Child two"]]
+
+;; With all the options and additional styling
 [my-section
  (sx
-  {:on-click      #(prn "click")
-   :id            :my-id
-   :-mylabel      "My header label"
-   :-parts        {:label-foo (sx :fw--bold :c--blue)
-                   :body-baz  (sx :p--1rem :bgc--aliceblue)}})
- [:section "Child 1"]
- [:p "Child 2"]
- [:button "Child 3"]]
+  'my-section-wrapper    ; Provides custom classname (instead of auto-generated).
+  :.xsmall               ; Font-size utility class.
+  :p--1rem               ; Padding inside component.
+  :b--1px:solid-black    ; Border around component.
+  {:-label "My Label"
+   :-label-attrs (sx :.huge :c--red)
+   :-body-attrs (sx :bgc--#efefef)})
+ [:p "Child one"]
+ [:p "Child two"]]
+
 ```
 
-Below is a slightly more complex version of the above component. Here, we are supplying default styling to each of the "parts", all of which are individually decoratable by the consumer of the component.
-```Clojure
-(defn my-section
-  [& args]
-  (let [[opts attr & children]       (opts+children args)
-        {:keys [header-label parts]} opts]
-    [:div
-      (merge-with-style (sx 'my-section-wrapper:ui
-                            :b--1px:solid:black)
-                        (:header parts))
-     [:section
-      (merge-with-style (sx 'my-section-label:ui
-                            :fs--1.5rem)
-                        (:header parts))
-      header-label]
-     [:section
-      (merge-with-style (sx 'my-section-body:ui
-                            :fs--0.8rem
-                            :bgc--#efefef)
-                        (:body parts))
-      children]]))
-```
- Note the use of the `*:ui` directive affixed to the user-supplied classnames to `sx`. This `:ui` syntax is removed from the resulting classname, but its use here is crucial when defining reusable components. It ensures that user-supplied (the classes in) decorators will take precedence. If for some reason you are styling parts within a reusable component and you want the classname to be auto-generated, you can apply the *:ui directive like so:
+<!-- ### Theming
+You can theme -->
+<!-- <br> -->
 
-```Clojure
-(sx :fs--0.8rem
-    :bgc--#efefef
-    {:ui? true})
-```
-
-### Theming
-You can theme
-
-
-<br>
 <br>
 
 # Usage with Build Tools
+Although Kushi is designed to be build-tool and framework agnostic, thus far it has only been used in production with
+[Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs).
+
 ### shadow-cljs
 See the [kushi-quickstart](https://github.com/paintparty/kushi-quickstart) template for a detailed example of using Kushi in a shadow-cljs project.
 
