@@ -174,9 +174,9 @@
                     ":"
                     weights)))))
 
+;; TODO add check maps keys & vals with alert
 (defn add-google-font!
   [& maps]
-  ;; (!? :add-google-font! maps)
   (let [families* (reduce m->str [] maps)
         families  (str (string/join "&" families*) "&display=swap")]
    (do
