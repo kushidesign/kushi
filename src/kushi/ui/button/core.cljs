@@ -44,6 +44,6 @@
      {:style {:>span:padding [[:0.8em :1.2em]]
               :cursor        :pointer}})
     &attrs)
-   [:span.wtf &children]]
+   [:span &children]]
   ;; fn for processing children
   #(if (string? %) [:span.kushi-label-text %] %))
