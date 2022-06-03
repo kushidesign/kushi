@@ -392,7 +392,8 @@
     (when gfm (state/add-google-font-maps! gfm))))
 
 
-(defn theme! []
+(defn theme!
+ []
  (let [{:keys [css-reset
                css-reset-el
                font-loading-opts
@@ -453,3 +454,23 @@
    `(do
       (apply kushi.core/add-google-font! ~google-font-maps)
       (kushi.core/css-sync! ~css-sync))))
+
+
+(defn map-of-all-tokens []
+  (into {} (concat @state/global-tokens @state/alias-tokens)))
+
+(defn resolve-token-value [m kw]
+  (let [v (kw m)]
+    (if (s/valid? ::cssvarspecs/css-var-name v)
+      (resolve-token-value m v)
+      v)))
+
+(defmacro token->ms [kw]
+  (let [v (-> (map-of-all-tokens) (resolve-token-value kw))
+        s (cond (number? v) (str v) (or (keyword? v) (string? v)) (name v))
+        [_ microseconds] (when s (re-find #"^([0-9]+)ms$" s))
+        [_ seconds]  (when s (re-find #"^([0-9]+)s$" s))
+        n  (or microseconds (some-> seconds (* 1000)))
+        ret (when n (Integer/parseInt n))]
+    (println :macro ret)
+    `~ret))
