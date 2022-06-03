@@ -84,7 +84,7 @@
        (or (:css-filename user-config) "kushi.css")))
 
 ;; ! Update kushi version here for console printing and cache file path generation
-(def version* "1.0.0-alpha8")
+(def version* "1.0.0-alpha9")
 
 ;; You can optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
 (def version (str version* #_":LOCAL"))
