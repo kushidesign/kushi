@@ -1,6 +1,6 @@
 (ns kushi.ui.icon.mui.outlined
   (:require
-   [kushi.core  :refer (inject-stylesheet)]
+   [kushi.core :refer (sx inject-stylesheet)]
    [kushi.ui.icon.core  :refer (icon-base)]
    [kushi.ui.core   :refer (defcom)]))
 
@@ -11,6 +11,13 @@
                     :href "https://fonts.googleapis.com"})
 (inject-stylesheet {:rel "stylesheet"
                     :href "https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"})
+(def mui-icon-span
+  [:span:!children
+   (sx
+    'kushi-mui-icon:ui
+    :.transition
+    :.material-icons-outlined
+    {:style {:&.material-icons:fs "var(--mui-icon-relative-font-size)"}})])
 
 (defcom mui-icon-outlined
-  (conj icon-base [:span.material-icons-outlined]))
+  (conj icon-base mui-icon-span))
