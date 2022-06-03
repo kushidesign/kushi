@@ -46,9 +46,9 @@
 
    [":where([draggable='true'])"]
    {:-webkit-user-drag :element}
-   
+
    ;; reverting this back to normal, for now
-   ["input" "textarea" "select"]
+   ["input" "textarea" "select" "p"]
    {:all :revert}])
 
 
@@ -200,6 +200,7 @@
     :medium            {:fs :--text-medium}
     :large             {:fs :--text-large}
     :xlarge            {:fs :--text-xlarge}
+    :xxlarge           {:fs :--text-xxlarge}
     :huge              {:fs :--text-huge}
 
 
@@ -283,9 +284,12 @@
 (def utility-classes
   (merge base-classes override-classes))
 
+(def component-tokens
+ {:--kushi-collapse-transition-duration :--duration-slow})
+
 (def tokens
   {:global global-tokens
-   :alias alias-tokens})
+   :alias (merge alias-tokens component-tokens)})
 
 (def font-loading
   {
@@ -327,29 +331,29 @@
 
 ;; Minimal theming for test cases
 (def min-config
-  {:css-reset                 css-reset
-   :tokens {:global {:--black           :#3d3d3d
-                     :--white           :#fff
-                     :--gray100         :#EEEEEE
-                     :--gray200         :#E2E2E2
-                     :--text-wee-bold   500
-                     :--text-extra-bold 500
-                     :--text-mini       :0.75rem}
+  {:css-reset       css-reset
+   :tokens          {:global {:--black           :#3d3d3d
+                              :--white           :#fff
+                              :--gray100         :#EEEEEE
+                              :--gray200         :#E2E2E2
+                              :--text-wee-bold   500
+                              :--text-extra-bold 500
+                              :--text-mini       :0.75rem}
 
-            :alias {:--primary   :--black
-                           :--primary-b :--white}}
+                     :alias  {:--primary   :--black
+                              :--primary-b :--white}}
 
   ;; :base-classes              {} #_(merge flex-utility-classes)
   ;;  :utility-classes-base     {:base }
   ;;  :utility-classes-override {:absolute-fill {:position :absolute
   ;;                                             :inset    0}}
+   
+   :utility-classes {:extra-bold {:fw :--text-extra-bold}
+                     :mini       {:fw :--text-mini}
+                     :pill       {:border-radius "9999px"}}
 
-   :utility-classes  {:extra-bold {:fw :--text-extra-bold}
-                      :mini       {:fw :--text-mini}
-                      :pill       {:border-radius "9999px"}}
-
-   :font-loading             {:google-fonts*          ["Inter"]
-                              :use-system-font-stack? false}
+   :font-loading    {:google-fonts*          ["Inter"]
+                     :use-system-font-stack? false}
 
 ;;  :theme            {:global {}
 ;;                     :components {:kushi {}}}
@@ -358,10 +362,10 @@
 ;;                     :color            :--primary}
 ;;  :global-dark      {:color            :--primary-b}
    
-   :ui                       {:kushi {:button {:default (merge (:secondary override-classes)
-                                                               {:fw :--text-wee-bold
-                                                                :ff :--primary-font-family})}
-                                      :tag    {:default {:c :--primary}}}}
+   :ui              {:kushi {:button {:default (merge (:secondary override-classes)
+                                                      {:fw :--text-wee-bold
+                                                       :ff :--primary-font-family})}
+                             :tag    {:default {:c :--primary}}}}
 
 ;;  :ui-dark          {:kushi {}}
    })
