@@ -60,13 +60,13 @@
   "A section of content which can be collapsed and expanded"
   [& args]
   (let [[opts attr & children]      (opts+children args)
-        {:keys [display-on-hover?]} opts]
+        {:keys [display-on-hover? above? below? before? after?]} opts]
     [:section
      (merge-with-style
       (sx 'kushi-tooltip:ui
           :.absolute
-          ;; :.mini
-          ;; :.rounded
+          :.mini
+          :.rounded
           :top--0
           :bottom--unset
           :left--100%
@@ -87,6 +87,8 @@
                    "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):height"  :auto
                    "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):padding" :7px:14px}
            :data-kushi-conditional-display (if (= false display-on-hover?) "true" "false")
+           :data-kushi-tooltip-position-block (cond above? "start" below? "end")
+           :data-kushi-tooltip-position-inline (cond before? "start" after? "end")
            :id (gensym)})
       attr)
      children]))
