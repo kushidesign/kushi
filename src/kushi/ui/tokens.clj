@@ -117,6 +117,7 @@
     :--text-medium     :1rem
     :--text-large      :1.25rem
     :--text-xlarge     :1.5rem
+    :--text-xxlarge    :1.85rem
     :--text-huge       :2.25rem
 
     ;;  Material UI icons
