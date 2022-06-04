@@ -283,7 +283,8 @@
         attrs-base*                  (apply dissoc attrs* (conj defs/meta-ks :class :style))
         data-cljs-prefix             (when-let [pf (:data-cljs-prefix kushi-attr)] (str (name pf) ":"))
         data-cljs                    (let [{:keys [file line column]} form-meta]
-                                       (str data-cljs-prefix file ":"  line ":" column))
+                                       (when-not (some->> file (re-find #"^kushi/ui/"))
+                                         (str data-cljs-prefix file ":"  line ":" column)))
         attrs-base                   (cond-> attrs-base*
                                        @state/KUSHIDEBUG (assoc :data-cljs data-cljs))
         _                            (state/set-current-macro! (merge {:macro (if defclass-name :defclass :sx)}
