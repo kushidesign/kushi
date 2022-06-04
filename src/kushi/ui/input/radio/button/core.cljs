@@ -49,7 +49,8 @@
             :checked:o--1
             :o--0.6
             :border-radius--50%
-            {:type  :radio
+            {:data-kushi-ui :input.radio
+             :type  :radio
              :style {}})
         attr)]]
      children)))

@@ -1,9 +1,7 @@
 (ns kushi.ui.grid.core
   (:require
    [kushi.core :refer (sx merge-with-style)]
-   [kushi.ui.core :refer (opts+children)]
-   [par.core :refer-macros [!? ?]]
-   #_[playground.util :as util :refer-macros (keyed)] ))
+   [kushi.ui.core :refer (opts+children)] ))
 
 (defn grid
   "Flexible grid layout with fixed-aspect ratio grid-items"
@@ -22,7 +20,8 @@
      [:section
       (merge-with-style
        (sx 'kushi-grid
-           {:style {:>*:w        :auto
+           {:data-kushi-ui :grid
+            :style {:>*:w        :auto
                     :>*:h        0
                     :>*:pt       aspect-ratio-pct
                     :>*:position :relative

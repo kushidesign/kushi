@@ -6,11 +6,12 @@
 (defcom title
   [:span
    (merge-with-style
-     label-base-sx
-     (kushi.core/sx
-        'kushi-title:ui
-        :d--ib
-        :>span:jc--fs))
+    label-base-sx
+    (kushi.core/sx
+     'kushi-title:ui
+     :d--ib
+     :>span:jc--fs
+     {:data-kushi-ui :title}))
    [:span:!children]]
    nil
   #(if (string? %) [:span.kushi-label-text %] %))

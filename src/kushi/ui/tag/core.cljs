@@ -13,5 +13,6 @@
      :>span:white-space--nowrap
      :>span:overflow--hidden
      :>span:text-overflow--ellipsis
-     :bgc--#efefef)
+     :bgc--#efefef
+     {:data-kushi-ui :tag})
     [:span:!children (sx :d--block)]]])

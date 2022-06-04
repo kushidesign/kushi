@@ -103,7 +103,8 @@
       (sx
        'kushi-collapse:ui
        :.flex-col-fs
-       :w--100%)
+       :w--100%
+       {:data-kushi-ui :collapse})
       attr)
      [collapse-header
       (merge-with-style

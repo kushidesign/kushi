@@ -12,7 +12,8 @@
     :.flex-row-c
     :ta--center
     :d--ib
-    :ai--c)])
+    :ai--c
+    {:data-kushi-ui :icon})])
 
 (defcom icon
   icon-base)

@@ -17,7 +17,8 @@
     'kushi-mui-icon:ui
     :.transition
     :.material-icons-outlined
-    {:style {:&.material-icons:fs "var(--mui-icon-relative-font-size)"}})])
+    {:data-kushi-ui :icon.mui.outlined
+     :style {:&.material-icons:fs "var(--mui-icon-relative-font-size)"}})])
 
 (defcom mui-icon-outlined
   (conj icon-base mui-icon-span))

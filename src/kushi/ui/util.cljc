@@ -2,6 +2,9 @@
   (:require
    [clojure.string :as string]))
 
+(defn data-kushi-attr [x]
+ (-> x name (string/replace #"^kushi\.ui\." "") (string/replace #".core$" "")) )
+
 (defn compound-override [schema m]
   (reduce (fn [acc [k v]]
             (assoc acc

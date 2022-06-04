@@ -52,6 +52,7 @@
            :.fixed-fill
            :.flex-col-c
            {:aria-modal false
+            :data-kushi-ui :modal
             :role       :dialog
             :style      {:ai                             :c
                          :bgc                            (cssfn :rgba 232 232 232 0.86)

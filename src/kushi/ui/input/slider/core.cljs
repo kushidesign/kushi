@@ -141,6 +141,7 @@
                               ;;  :z 1000
                                }
 
+                   :data-kushi-ui :input.range
                    :type      :range
                   ;;  :min       (str 0)
                   ;;  :max       (str (-> steps count dec))

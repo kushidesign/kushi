@@ -13,7 +13,8 @@
  (kushi.core/sx
     'kushi-label-base:ui
     ;; :.normal
-    {:data-kushi-tooltip true
+    {
+     :data-kushi-tooltip true
      :aria-expanded "false"
      :on-mouse-enter tooltip-mouse-enter
      :on-mouse-leave tooltip-mouse-leave
@@ -42,7 +43,8 @@
      'kushi-button
      :.transition
      {:style {:>span:padding [[:0.8em :1.2em]]
-              :cursor        :pointer}})
+              :cursor        :pointer}
+      :id    {:data-kushi-ui    :button}})
     &attrs)
    [:span &children]]
   ;; fn for processing children

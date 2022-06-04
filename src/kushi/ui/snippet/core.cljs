@@ -1,12 +1,9 @@
 (ns kushi.ui.snippet.core
-  (:require-macros [kushi.utils :refer (keyed)])
   (:require
-   [kushi.core :refer (sx defclass merge-with-style) :refer-macros (sx)]
-   [clojure.string :as string]
-   [kushi.ui.icon.mui.core :refer (mui-icon)]
+   [kushi.core :refer (sx merge-with-style) :refer-macros (sx)]
    [kushi.ui.tooltip.core :refer (tooltip add-temporary-tooltip!)]
    [kushi.ui.button.core :refer (button)]
-   [kushi.ui.core :refer (gui defcom)]))
+   #_[kushi.ui.core :refer (gui defcom)]))
 
 (defn copy-to-clipboard [val]
   (let [el (js/document.createElement "textarea")]
@@ -60,7 +57,7 @@
 
 (defn snippet [{:keys [text-to-display text-to-copy]}]
   [:div
-   (sx :.relative :.codebox)
+   (sx 'kushi-snippet :.relative :.codebox {:data-kushi-ui :snippet})
    text-to-display
    [copy-to-clipboard-button
     {:on-click #(copy-to-clipboard text-to-copy)}]])

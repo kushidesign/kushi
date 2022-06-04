@@ -1,5 +1,5 @@
 (ns kushi.ui.card.core
-  (:require [kushi.core :refer-macros (sx cssfn defclass)]
+  (:require [kushi.core :refer-macros (sx)]
             [kushi.ui.core :refer-macros (defcom)]))
 
 (defcom card
@@ -7,4 +7,5 @@
             :.relative
             :w--100%
             :p--2rem
-            :bgc--white)])
+            :bgc--white
+            {:data-kushi-ui :card})])

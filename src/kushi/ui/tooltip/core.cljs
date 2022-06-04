@@ -82,14 +82,15 @@
           :overflow--hidden
           :transition--opacity:0.2s:linear
           ;; maybe abstract into an :.overlay defclass(es) with decoration defclasses for tooltip vs popover
-          {:style {"has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):opacity" 1
-                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):width"   :fit-content
-                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):height"  :auto
-                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):padding" :7px:14px}
-           :data-kushi-conditional-display (if (= false display-on-hover?) "true" "false")
-           :data-kushi-tooltip-position-block (cond above? "start" below? "end")
+          {:style                              {"has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):opacity" 1
+                                                "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):width"   :fit-content
+                                                "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):height"  :auto
+                                                "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):padding" :7px:14px}
+           :data-kushi-conditional-display     (if (= false display-on-hover?) "true" "false")
+           :data-kushi-tooltip-position-block  (cond above? "start" below? "end")
            :data-kushi-tooltip-position-inline (cond before? "start" after? "end")
-           :id (gensym)})
+           :id                                 (gensym)
+           :data-kushi-ui                         :tooltip})
       attr)
      children]))
 
@@ -116,7 +117,8 @@
           :overflow--hidden
           :transition--opacity:0.2s:linear
           ;; maybe abstract into an :.overlay defclass(es) with decoration defclasses for tooltip vs popover
-          {:style {"has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):opacity" 1
+          {:data-kushi-ui :tooltip
+           :style {"has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):opacity" 1
                    "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):width"   :fit-content
                    "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):height"  :auto
                    "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):padding" :7px:14px}
