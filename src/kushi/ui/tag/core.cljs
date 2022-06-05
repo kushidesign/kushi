@@ -6,7 +6,7 @@
   [:div (sx :.relative)
    [:div:!attr
     (sx
-     'kushi-tag:ui
+     'kushi-tag
      :line-height--1
      :>span:padding--0.2em:0.6em
      :>span:max-width--140px
