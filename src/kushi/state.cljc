@@ -9,8 +9,11 @@
 
 (def current-macro (atom nil))
 
-(defn debug? [] false #_(let [first-arg (-> @current-macro :args first)]
-                  (or (= first-arg :bgc--$bgc) (and (map? first-arg)  (-> first-arg :style :--wtf)))))
+(defn debug? []
+  (-> @current-macro :args last :kushi-debug?)
+  #_(let [first-arg (-> (? @current-macro) :args first)]
+      (= (? first-arg) 'my-desired-classname)
+      #_(or (= first-arg :bgc--$bgc) (and (map? first-arg)  (-> first-arg :style :--wtf)))))
 
 (def current-sx (atom nil))
 
