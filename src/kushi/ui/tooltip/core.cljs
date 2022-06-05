@@ -1,9 +1,9 @@
 (ns kushi.ui.tooltip.core
   (:require-macros [kushi.utils :refer (keyed)])
   (:require
-   [kushi.core :refer (sx defclass merge-with-style) :refer-macros (sx)]
-   [kushi.ui.core :refer (gui defcom defcom+ opts+children)]
-   [kushi.ui.dom :refer (set-overlay-position! conditional-display?)] ))
+   [kushi.core :refer (sx merge-with-style) :refer-macros (sx)]
+   [kushi.ui.core :refer (defcom defcom+ opts+children)]
+   [kushi.ui.dom :refer (set-overlay-position! conditional-display?)]))
 
 (defn tooltip+parent [e]
  (let [node (-> e .-currentTarget)
@@ -32,30 +32,6 @@
          (js/setTimeout (fn [_] (remove-tooltip! parent)) ms))
        (js/console.warn "[kushi.ui.tooltip.core/add-temporary-tooltip!]\n\nIf you want to trigger a temporary tooltip, you must explicitly use a value of `false` for the `:display-on-hover` entry in the opts argument to the tooltip component")))))
 
-(defn get-attr [m k] (some-> m :parts k first))
-(defn get-children [m k] (some-> m :parts k rest))
-
-(defn tooltip-mouse-enter [%]
-  (when-let [[tooltip parent] (tooltip+parent %)]
-    (when-not (conditional-display? tooltip)
-      (expand-tooltip! tooltip parent))))
-
-(defn tooltip-mouse-leave [%]
-  (when-let [[tooltip parent] (tooltip+parent %)]
-    (when-not (conditional-display? tooltip)
-      (remove-tooltip! parent))))
-
-#_(defn my-complex-component
-  "Desc for"
-  [& args]
-  (let [[opts attr & children]      (opts+children args)
-        {:keys []} opts]
-    [:section
-     (merge-with-style
-      (sx 'my-component-component:ui)
-      attr)
-     children]))
-
 (defn tooltip
   "A section of content which can be collapsed and expanded"
   [& args]
@@ -63,7 +39,7 @@
         {:keys [display-on-hover? above? below? before? after?]} opts]
     [:section
      (merge-with-style
-      (sx 'kushi-tooltip:ui
+      (sx 'kushi-tooltip
           :.absolute
           :.mini
           :.rounded
@@ -98,7 +74,7 @@
   (let [{:keys [display-on-hover?]} &opts]
     [:section
      (merge-with-style
-      (sx 'kushi-tooltip:ui
+      (sx 'kushi-tooltip
           :._absolute
           :._mini
           :._rounded
