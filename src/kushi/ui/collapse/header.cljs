@@ -41,7 +41,7 @@
         opts           (keyed label icon icon-opposite? title-sx)]
    [:<>
     [:span
-     (sx 'kushi-collapse-header-label-collapsed:ui
+     (sx 'kushi-collapse-header-label-collapsed
          :.flex-row-fs
          :w--100%
          {:style {"has(parent([aria-expanded='true'])):display" :none}})
@@ -49,7 +49,7 @@
        [header-title opts]
        label)]
     [:span
-     (sx 'kushi-collapse-header-label-expanded:ui
+     (sx 'kushi-collapse-header-label-expanded
          :.flex-row-fs
          :w--100%
          :d--none

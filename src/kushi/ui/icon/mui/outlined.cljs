@@ -14,7 +14,7 @@
 (def mui-icon-span
   [:span:!children
    (sx
-    'kushi-mui-icon:ui
+    'kushi-mui-icon
     :.transition
     :.material-icons-outlined
     {:data-kushi-ui :icon.mui.outlined

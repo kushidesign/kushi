@@ -3,7 +3,7 @@
             [kushi.ui.core :refer-macros (defcom)]))
 
 (defcom card
-  [:div (sx 'kushi-card:ui
+  [:div (sx 'kushi-card
             :.relative
             :w--100%
             :p--2rem

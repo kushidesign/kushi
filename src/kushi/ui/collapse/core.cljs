@@ -18,7 +18,7 @@
   [:section
    (sx 'kushi-collapse-body-wrapper :overflow--hidden)
    [:div:! (sx
-            'kushi-collapse-body:ui
+            'kushi-collapse-body
             :bt--1px:solid:transparent
             :bb--1px:solid:transparent
             :padding-block--0.25em:0.5em)]])
@@ -69,7 +69,7 @@
                                                        (toggle-boolean-attribute node :aria-expanded))))]
     [:div
      (sx
-      'kushi-collapse-header:ui
+      'kushi-collapse-header
       :.pointer
       {:class         [:.flex-row-fs :.collapse-header]
        :style         {:ai                                               :center
@@ -101,7 +101,7 @@
     [:section
      (merge-with-style
       (sx
-       'kushi-collapse:ui
+       'kushi-collapse
        :.flex-col-fs
        :w--100%
        {:data-kushi-ui :collapse})

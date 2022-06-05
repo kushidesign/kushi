@@ -6,7 +6,7 @@
 (def icon-base
   [:div:!attr
    (sx
-    'kushi-icon:ui
+    'kushi-icon
     :.relative
     :.transition
     :.flex-row-c
