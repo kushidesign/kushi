@@ -10,22 +10,21 @@
 
 (defn button
   [& args]
-  (let [[attrs & children] (opts+children args)]
+  (let [[_ attrs & children] (opts+children args)]
     [:button
      (merge-with-style
       (sx 'kushi-button
           :.transition
           :.pointer
+          :>span:p--0.8em:1.2em
           {:data-kushi-ui :button})
       attrs)
      [apply
       label
-      (sx
-       :padding--0.8em:1.2em
-       {:data-kushi-tooltip true
-        :aria-expanded      "false"
-        :on-mouse-enter     tooltip-mouse-enter
-        :on-mouse-leave     tooltip-mouse-leave})
+      {:data-kushi-tooltip true
+       :aria-expanded      "false"
+       :on-mouse-enter     tooltip-mouse-enter
+       :on-mouse-leave     tooltip-mouse-leave}
       children]]))
 
 #_(defcom+ button
