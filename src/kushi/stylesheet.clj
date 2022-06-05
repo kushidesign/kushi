@@ -193,15 +193,17 @@
         normal-style-rules           (count rules)
         normal-mq-count              (count mqs)]
 
-    (!?+
-     (keyed
-      rules
+    #_(when
+     (= comment  "Component styles")
+     (!?+
+      (keyed
+       rules
       ;; mqs
       ;; garden-vecs
       ;; normal-style-rules-under-mqs
       ;; normal-style-rules
       ;; normal-mq-count
-      ))
+       )))
 
     (swap! to-be-printed
            merge

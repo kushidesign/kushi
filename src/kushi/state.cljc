@@ -72,8 +72,8 @@
 (def defclasses+atomics-used (atom {}))
 
 (defonce garden-vecs-state-init
-  (reduce (fn [acc [k mq]] (assoc acc mq {}))
-          {:rules {}}
+  (reduce (fn [acc [k mq]] (assoc acc mq []))
+          {:rules []}
           (:media user-config)))
 
 ;; Used to keep track of css-global resets which are used.
