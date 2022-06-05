@@ -1,19 +1,23 @@
 (ns kushi.ui.link.core
   (:require [kushi.core :refer (merge-with-style) :refer-macros (sx)]
-            [kushi.ui.core :refer-macros (defcom)]
-            [kushi.ui.button.core :refer (label-base-sx)]))
+            ;; [kushi.ui.core :refer-macros (defcom)]
+            [kushi.ui.core :refer (opts+children)]
+            [kushi.ui.label.core :refer (label)]))
 
-(defcom link
-  [:a
-   (merge-with-style
-     label-base-sx
-     (kushi.core/sx
-        'kushi-link
-        :d--ib
-        :td--underline
-        :tup--under
-        :>span:jc--fs
-      {:data-kushi-ui :link}))
-   [:span:!children]]
-   nil
-  #(if (string? %) [:span.kushi-label-text %] %))
+(defn link
+  "Desc for"
+  [& args]
+  (let [[opts attrs & children] (opts+children args)
+        {:keys []}              opts]
+    [:a
+     (merge-with-style
+      (sx 'kushi-link
+          :.xxsmall
+          :.pointer
+          :d--ib
+          :>span:jc--fs
+          :td--underline
+          :tup--under
+          {:data-kushi-ui :link})
+      attrs)
+      [apply label children]]))
