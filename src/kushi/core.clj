@@ -341,7 +341,7 @@
 (defn- sx-attrs-sans-styling [args]
   (if-let [attrs (when (-> args last map?) (last args))]
     (dissoc attrs :style)
-    {}) )
+    {}))
 
 (defn- sx-exception-args [{:keys [args ex] :as m}]
   (merge m
@@ -349,7 +349,8 @@
          {:commentary (str "The element you are trying to style" "\n"
                            "will receive the following attribute map:" "\n"
                            "\n"
-                           (with-out-str (pprint (sx-attrs-sans-styling args))))}) )
+                           (with-out-str (pprint (sx-attrs-sans-styling args))))}))
+
 (defmacro ^:public sx
   [& args]
   (when-not (= args '(nil))
