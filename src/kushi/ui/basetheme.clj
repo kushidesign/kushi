@@ -58,13 +58,14 @@
      (assoc acc
             (keyword (str "flex-"
                           (let [fdn* (-> fd name)
-                                fdn (if (= fdn* "column") "col" "row")]
+                                fdn  (if (= fdn* "column") "col" "row")]
                             fdn)
                           "-"
                           (name sh)))
-            {:flex-direction fd
+            {:flex-direction  fd
+             :align-items     :center
              :justify-content expanded
-             :display :flex}))
+             :display         :flex}))
    {}
    {:c :center
     :fs :flex-start
