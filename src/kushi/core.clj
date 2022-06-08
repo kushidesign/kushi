@@ -6,6 +6,7 @@
    [par.core :refer [? !? ?+ !?+]]
    [garden.core :as garden]
    [garden.stylesheet :refer [at-font-face]]
+   [kushi.config :refer [user-config]]
    [kushi.arguments :as arguments :refer [args->map]]
    [kushi.printing :as printing]
    [kushi.state :as state]
@@ -403,7 +404,7 @@
                tokens-in-theme
                styles
                utility-classes]} theme/theme]
-   (when css-reset
+   (when (and (not (false? (:css-reset? user-config))) css-reset )
      (doseq [[selector m] (partition 2 css-reset)
              :when        (s/valid? ::specs/css-reset-selector selector)
              :let         [el       (when css-reset-el (str (name css-reset-el) " "))
