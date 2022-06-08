@@ -52,6 +52,8 @@
    :enable-caching?      true
    :theme                nil
    :scaling-system       nil
+   :css-reset?   false
+   :ui-theming?  false
 
    ;; Experimental - add to docs later
    :diagnose             nil
