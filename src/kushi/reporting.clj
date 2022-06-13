@@ -66,6 +66,11 @@
    (when under-mq?
      (rules-under-styles mq-count rules-under-mqs))])
 
+(defn xcount [banner? opts [x nm]]
+  (when-let [pos-n? (some-> x pos?)]
+    [(when pos-n? (format-rule-count x nm opts))
+     (when (and banner? pos-n?) " ")]))
+
 (defn report-line-items
   [{:keys [global-tokens-count
            alias-tokens-count
@@ -86,32 +91,26 @@
    (remove
     nil?
     (concat
-     [
-      ;; (when (pos? css-reset-style-rules) (format-rule-count css-reset-style-rules "css-reset" opts))
-      ;; (when (and banner? (pos? css-reset-style-rules)) " ")
-      (when (pos? global-tokens-count) (format-rule-count global-tokens-count "global token" opts))
-      (when (and banner? (pos? global-tokens-count)) " ")
-      (when (pos? alias-tokens-count) (format-rule-count alias-tokens-count "alias token" opts))
-      (when (and banner? (pos? alias-tokens-count)) " ")
-      (when (pos? font-face) (format-rule-count font-face "font-face" opts))
-      (when (and banner? (pos? font-face)) " ")
-      (when (pos? keyframes) (format-rule-count keyframes "keyframes" opts))
-      (when (and banner? (pos? keyframes)) " ")
-      (when (pos? total-style-rules) (format-rule-count total-style-rules "style" opts))]
+     (mapcat (partial xcount banner? opts)
+             [[global-tokens-count "global token"]
+              [alias-tokens-count "alias token"]
+              [font-face "font-face"]
+              [keyframes "keyframes"]
+              [total-style-rules "style"]])
      (when (and banner? (pos? defclass-style-rules-total))
-        (style-rules-details
-         defclass-style-rules-total
-         defclass-under-mq?
-         (:defclass-mq-count m)
-         defclass-style-rules-under-mqs
-         "defclass style"))
+       (style-rules-details
+        defclass-style-rules-total
+        defclass-under-mq?
+        (:defclass-mq-count m)
+        defclass-style-rules-under-mqs
+        "defclass style"))
      (when (and banner? (pos? normal-style-rules-total))
-        (style-rules-details
-         normal-style-rules-total
-         normal-under-mq?
-         (:normal-mq-count m)
-         normal-style-rules-under-mqs
-         "element style"))))))
+       (style-rules-details
+        normal-style-rules-total
+        normal-under-mq?
+        (:normal-mq-count m)
+        normal-style-rules-under-mqs
+        "element style"))))))
 
 
 (defn calculate-total-style-rules!
@@ -189,21 +188,3 @@
 
 (defn report! [ns msg]
  (println (str "\n" (ansi/red "[") (ansi/blue ns) (ansi/red "]") msg "\n")))
-
-
-
-;; Reporting for duplicate idents, defclasses, and keyframes  ------------------------------------------------
-#_(printing/diagnostics
-        :sx
-        (let [style*    (:style attr)
-              style     (merge (when (map? style*) style*) css-vars)
-              class     (distinct (concat cls classlist conditional-class-sexprs))
-              data-cljs {(or data-attr-name :data-cljs) data-cljs}]
-          {:ident             ident
-           :garden-vecs       garden-vecs
-           :css-injection-dev css-injection
-           :args              args
-           :style-is-var?     (symbol? style)
-           :attr-map          (merge attr-base {:class class
-                                                :style style} data-cljs)
-           :extra             (keyed cls classlist conditional-class-sexprs)}))
