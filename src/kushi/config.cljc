@@ -41,7 +41,6 @@
    :post-build-report?   true
    :report-cache-update? true
    :reporting-style      :simple
-   :warning-style        :banner
    :kushi-class-prefix   nil
    :kushi-class-prepend  nil
    :data-attr-name       nil
@@ -52,8 +51,8 @@
    :enable-caching?      true
    :theme                nil
    :scaling-system       nil
-   :css-reset?   false
-   :ui-theming?  false
+   :css-reset?           true
+   :ui-theming?          true
 
    ;; Experimental - add to docs later
    :diagnose             nil
