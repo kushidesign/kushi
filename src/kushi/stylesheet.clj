@@ -1,9 +1,7 @@
 (ns ^:dev/always kushi.stylesheet
   (:require
    [clojure.string :as string]
-   [clojure.set :as set]
    [clojure.java.io :as io]
-   [clojure.edn :as edn] ;Take this out?
    [clojure.data :as data]
    [garden.stylesheet]
    [garden.core :as garden]
@@ -11,9 +9,7 @@
    [kushi.state :as state]
    [kushi.utils :as util :refer [keyed]]
    [par.core :refer [? !? ?+ !?+]]
-   [kushi.atomic :as atomic]
-   [kushi.reporting :as reporting]
-   [medley.core :as medley]))
+   [kushi.reporting :as reporting]))
 
 
 (defn garden-vecs-injection
@@ -78,20 +74,21 @@
     (garden/css {:pretty-print? pretty-print?} gvecs)))
 
 (defn append-tokens!
-  [{:keys [token-type] :as m}]
-  (let [toks  (case token-type
-                :global @state/global-tokens
-                :alias @state/alias-tokens
-                :used @state/used-tokens
-                [])
-        count (if (seq toks) (count toks) 0)
-        k     (-> token-type name (str  "-tokens-count") keyword)]
-    (!?+ (swap! (:to-be-printed m) assoc k count))
-    (when (pos-int? count)
-      (append-css-chunk!
-       {:css-text (:css-text m)
-        :comment  (str (name token-type) " design tokens")
-        :content  (design-tokens-css (assoc m :toks toks))}))))
+  [{:keys [token-type]
+    :as   m}]
+  (when (:ui-theming? user-config)
+      (let [toks  (case token-type
+                    :global @state/global-tokens
+                    :alias @state/alias-tokens
+                    :used @state/used-tokens
+                    [])
+            count (if (seq toks) (count toks) 0)
+            k     (-> token-type name (str  "-tokens-count") keyword)]
+        (when (pos-int? count)
+          (append-css-chunk!
+           {:css-text (:css-text m)
+            :comment  (str (name token-type) " design tokens")
+            :content  (design-tokens-css (assoc m :toks toks))})))))
 
 (defn append-at-font-face!
   [{:keys [css-text to-be-printed]}]
@@ -123,8 +120,7 @@
       (append-css-chunk!
        {:css-text css-text
         :comment  "Animation Keyframes"
-        :content  (all-defkeyframes-content)})
-      #_(reset! state/user-defined-keyframes {}))))
+        :content  (all-defkeyframes-content)}))))
 
 (defn count-mqs-rules [mqs]
   (count (apply concat (map #(some-> % :value :rules) mqs))))
@@ -192,19 +188,6 @@
         normal-style-rules-under-mqs (count-mqs-rules mqs)
         normal-style-rules           (count rules)
         normal-mq-count              (count mqs)]
-
-    #_(when
-     (= comment  "Component styles")
-     (!?+
-      (keyed
-       rules
-      ;; mqs
-      ;; garden-vecs
-      ;; normal-style-rules-under-mqs
-      ;; normal-style-rules
-      ;; normal-mq-count
-       )))
-
     (swap! to-be-printed
            merge
            (keyed normal-style-rules-under-mqs
@@ -217,9 +200,10 @@
       :comment  comment})))
 
 (defn append-reset-rules! [m]
-  (append-rules! (assoc m :kushi/sheet :reset)
-                 state/css-reset
-                 "CSS Reset rules via:\nThe new CSS reset - version 1.6.0 (last updated 29.4.2022)\nGitHub page: https://github.com/elad2412/the-new-css-reset"))
+  (when (:css-reset? user-config)
+    (append-rules! (assoc m :kushi/sheet :reset)
+                   state/css-reset
+                   "CSS Reset rules via:\nThe new CSS reset - version 1.6.0 (last updated 29.4.2022)\nGitHub page: https://github.com/elad2412/the-new-css-reset")))
 
 (defn append-reusable-component-rules! [m]
   (append-rules! m state/garden-vecs-state-components "Reusable component styles for kushi-ui components"))
@@ -228,7 +212,8 @@
   (append-rules! m state/garden-vecs-state "Component styles"))
 
 (defn append-theme-rules! [m]
-  (append-rules! m state/garden-vecs-state-theme "Kushi UI theming rules"))
+  (when (:ui-theming? user-config)
+    (append-rules! m state/garden-vecs-state-theme "Kushi UI theming rules")))
 
 (defn write-cache! [cache-is-equal?]
   (when-not cache-is-equal?
@@ -287,7 +272,7 @@
     (reset! state/kushi-css-sync @css-text)
     (reset! state/kushi-css-sync-to-be-printed @to-be-printed)
 
-      ;; Do caching here???
+      ;; TODO Do caching here?
     #_(let [cache-will-update? (when caching?
                                  (let [cache-is-equal? (cache-is-equal?)]
                                    (write-cache! cache-is-equal?)
@@ -302,6 +287,7 @@
         (when (and post-build-report? something-to-write?)
           (reporting/print-report! to-be-printed cache-will-update?)))))
 
+;; Used for build hook
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
   [build-state]
