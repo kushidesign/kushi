@@ -1,6 +1,7 @@
 (ns ^:dev/always kushi.utils
   #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
+  ;;  [par.core :refer [!? ?+ ?]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.walk :as walk]
@@ -8,46 +9,6 @@
    [kushi.cssvarspecs :as cssvarspecs]
    [kushi.scales :refer [scales scaling-map]]
    [kushi.config :refer [user-config]]))
-
-(def dom-element-events
-  #{
-    :on-change
-    :on-blur
-    :on-aux-click
-    :on-click
-    :on-composition-end
-    :on-composition-start
-    :on-composition-update
-    :on-context-menu
-    :on-copy
-    :on-cut
-    :on-dbl-click
-    :on-error
-    :on-focus
-    :on-focus-in
-    :on-focus-out
-    :on-fullscreen-change
-    :on-fullscreen-error
-    :on-key-down
-    :on-key-up
-    :on-mouse-down
-    :on-mouse-enter
-    :on-mouse-leave
-    :on-mouse-move
-    :on-mouse-out
-    :on-mouse-over
-    :on-mouse-up
-    :on-paste
-    :on-scroll
-    :on-security-policy-violation
-    :on-select
-    :on-touch-cancel
-    :on-touch-end
-    :on-touch-move
-    :on-touch-start
-    :on-webkit-mouse-force-down
-    :on-wheel})
-
 
 (defmacro keyed [& ks]
   #?(:clj
@@ -255,119 +216,8 @@
         ret [(:valid ret*) (:invalid ret*)]]
     ret))
 
-(defn normalized-class-kw [x]
-  (if (keyword? x)
-    (if (-> x name starts-with-dot?)
-      (-> x name (subs 1) keyword)
-      x)
-    x))
-
-(defn values? [x]
-  (boolean
-   (when x
-     (or (string? x)
-         (keyword? x)
-         (when (coll? x)
-           (not-empty x))))))
-
-
 (defn filter-map [m pred]
   (select-keys m (for [[k v] m :when (pred k v)] k)))
-
-(defn positions
-  [pred coll]
-  (keep-indexed (fn [idx x]
-                  (when (pred x)
-                    idx))
-                coll))
-
-(defn stacked-kw [coll]
-  (when (coll? coll) (->> coll (string/join ":") keyword)))
-
-(defn unstacked-kw [kw]
-  (when (keyword? kw)
-    (let [ret (-> kw name (string/split #":"))]
-      (when (< 1 (count ret)) ret))))
-
-(defn stacked-kw-tail [kw]
-  (some-> kw unstacked-kw rest stacked-kw))
-
-(defn stacked-kw-head [kw]
-  (some-> kw unstacked-kw first))
-
-(defn- merge-with-style-warning
-  [v k n]
-  #?(:cljs (js/console.warn
-            (str
-             "kushi.core/merge-with-style:\n\n "
-             "The " k " value supplied in the " n " argument must be a map.\n\n "
-             "You supplied:\n") v)))
-
-(defn- bad-style? [style n]
-  (let [bad? (and style (not (map? style)))]
-    (when bad? (merge-with-style-warning style :style n))
-    bad?))
-
-(defn- bad-class? [class n]
-  (let [bad? (and class
-                  (not (some #(% class) [seq? vector? keyword? string? symbol?])))]
-    (when bad? (merge-with-style-warning class :class n))
-    bad?))
-
-(defn class-coll
-  [class bad-class?]
-  (when-not bad-class?
-    (if (or (string? class) (keyword? class))
-      [class]
-      class)))
-
-(defn data-cljs [s1 s2]
-  (let [coll   (remove nil? [s1 s2])
-        joined (when (seq coll) (string/join " + " coll))]
-    (when joined {:data-cljs joined})))
-
-(defn on-click [c1 c2 m2 k]
-  (let [block? (contains? (some->> m2 :data-kushi-block-events (into #{})) k)
-        f (if block?
-            c2
-            (if (and c1 c2)
-              (do
-                ;; (println "merging 2 event handlers")
-                ;; (println m2)
-                (fn [e] (c1 e) (c2 e)))
-              (or c1 c2)))]
-    (when f {k f})))
-
-
-(defn- merge-with-style* [& maps]
-  (let [[m1 m2]                   (map #(if (map? %) % {}) maps)
-        {style1 :style
-         class1 :class
-         data-cljs1 :data-cljs
-         on-click1 :on-click}     m1
-        {style2 :style
-         class2 :class
-         data-cljs2 :data-cljs
-         on-click2 :on-click}     m2
-        [bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
-        [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i)) [class1 class2])
-        merged-style              (merge (when-not bad-style1? style1) (when-not bad-style2? style2))
-        class1-coll               (class-coll class1 bad-class1?)
-        class2-coll               (class-coll class2 bad-class2?)
-        classes                   (concat class1-coll class2-coll)
-        data-cljs                 (data-cljs data-cljs1 data-cljs2)
-
-        user-event-handlers       (keys (select-keys m2 dom-element-events))
-        ;; _ (? user-event-handlers)
-        merged-event-handlers     (apply merge (map #(on-click (% m1) (% m2) m2 %) user-event-handlers))
-        ret                       (assoc (merge m1 m2 data-cljs merged-event-handlers)
-                                         :class classes
-                                         :style merged-style)]
-    ret))
-
-;; Public function for style decoration
-(defn merge-with-style [& maps]
- (reduce merge-with-style* maps))
 
 (defn nameable? [x] (or (string? x) (keyword? x) (symbol? x)))
 
@@ -392,13 +242,3 @@
   (cond-> attrs-base
     true (assoc :class (distinct classlist) :style css-vars)
     data-cljs (assoc :data-cljs data-cljs)))
-
-#_(defn merged-attrs-map
-  ([attrs-base classlist css-vars]
-   (merged-attrs-map attrs-base classlist css-vars nil))
-  ([attrs-base classlist css-vars data-cljs]
-   (assoc attrs-base
-          :class
-          (distinct classlist)
-          :style css-vars
-          :data-cljs data-cljs)))
