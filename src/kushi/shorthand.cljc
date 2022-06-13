@@ -80,15 +80,6 @@
                 :b :baseline}}
 
     :b {:name :border :example-val [[:1px :solid :orange]]}
-
-  ;;  :br {:name :border-right :example-val :2px}
-  ;;  :bl {:name :border-left :example-val [[:1px :solid :black]]}
-  ;;  :bt {:name :border-top :example-val [[:5% :dotted :#efefef]]}
-  ;;  :bb {:name :border-bottom :example-val [[:5px :solid :white]]}
-  ;;  :bs {:name :border-style :vals border-styles}
-  ;;  :bw {:name :border-width :example-val :3px}
-  ;;  :bc {:name :border-color :example-val :blue}
-
     :bgi {:name :background-image :example-val "linear-gradient(red, blue)"}
     :bg  {:name :background :example-val [[:no-repeat "url('../bg-img.png')"]]}
     :bgs {:name :background-size :example-val :50%}
@@ -187,30 +178,8 @@
     :lh {:name :line-height :example-val 1.45}
 
     :m {:name :margin :example-val [[0 :5px]]}
-
-  ;;  :mr {:name :margin-right :example-val :5%}
-  ;;  :ml {:name :margin-left :example-val :10px}
-  ;;  :mt {:name :margin-top :example-val :5px}
-  ;;  :mb {:name :margin-bottom :example-val :8px}
-
-  ;;  :mi {:name :margin-inline :example-val :8px}
-  ;;  :mis {:name :margin-inline-start :example-val :8px}
-  ;;  :mie {:name :margin-inline-end :example-val :8px}
-  ;;  :mbs {:name :margin-block-start :example-val :8px}
-  ;;  :mbe {:name :margin-block-end :example-val :8px}
-
     :p {:name :padding  :example-val [[:10px 0]]}
 
-  ;;  :pr {:name :padding-right :example-val :5px}
-  ;;  :pl {:name :padding-left :example-val :3px}
-  ;;  :pt {:name :padding-top :example-val :1px}
-  ;;  :pb {:name :padding-bottom :example-val :2px}
-
-  ;;  :pi {:name :padding-inline :example-val :8px}
-  ;;  :pis {:name :padding-inline-start :example-val :8px}
-  ;;  :pie {:name :padding-inline-end :example-val :8px}
-  ;;  :pbs {:name :padding-block-start :example-val :8px}
-  ;;  :pbe {:name :padding-block-end :example-val :8px}
 
     :o {:name :opacity :example-val 1}
 
