@@ -160,9 +160,11 @@
 
 
 (s/def ::style-tuple-prop
-  (s/or :valid-kushi-style-css-prop (s/and ::kushi-style-css-prop
-                                           ::with-valid-pseudo-order)
-        :valid-css-custom-property #(->> % name (re-find #"^--.+$"))))
+  (s/and
+   ::s-or-kw
+   (s/or :valid-kushi-style-css-prop (s/and ::kushi-style-css-prop
+                                            ::with-valid-pseudo-order)
+         :valid-css-custom-property #(->> % name (re-find #"^--.+$")))))
 
 (s/def ::style-tuple-value
   (s/or :symbol? symbol? :list? list? :vector? vector? :string? string? :keyword? keyword? :number? number?))
