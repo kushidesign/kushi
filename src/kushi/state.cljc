@@ -10,7 +10,7 @@
 (def current-macro (atom nil))
 
 (defn debug? []
-  (-> @current-macro :args last :kushi-debug?)
+  (-> @current-op :args last :kushi-debug?)
   #_(let [first-arg (-> (? @current-macro) :args first)]
       (= (? first-arg) 'my-desired-classname)
       #_(or (= first-arg :bgc--$bgc) (and (map? first-arg)  (-> first-arg :style :--wtf)))))
@@ -134,6 +134,9 @@
             :ui garden-vecs-state-components
             :reset css-reset
             garden-vecs-state)]
+    ;; TODO throw error if duplicate? Maybe do this in stylesheet at end
+    #_(when-let [kushi-class (-> @current-op :kushi-attr :kushi-class)]
+      (?+ :add-styles @garden-vecs-state))
     (doseq [x coll]
       (if-let [{:keys [media-queries rules]}  (when (map? x) (:value x))]
         (let [new-val (apply conj (get @state media-queries) rules)]
