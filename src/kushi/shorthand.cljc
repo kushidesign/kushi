@@ -23,7 +23,6 @@
     border-block-start-color
     border-block-start-style
     border-block-start-width
-    border-block-style
     border-block-width
     border-color
     border-inline
@@ -36,7 +35,6 @@
     border-inline-start-color
     border-inline-start-style
     border-inline-start-width
-    border-inline-style
     border-inline-width
     border-start-start-radius
     border-start-end-radius
