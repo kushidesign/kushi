@@ -6,8 +6,7 @@
   :dependencies        [[org.clojure/clojure "1.10.3"]
                         [garden "1.3.10"]
                         [io.aviso/pretty "1.1"]
-                        [medley "1.3.0"]
-                        [org.clojars.paintparty/par "1.1.0"]]
+                        [medley "1.3.0"]]
   :repl-options        {:init-ns kushi.core}
   :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
                                     :sign-releases false}]])
