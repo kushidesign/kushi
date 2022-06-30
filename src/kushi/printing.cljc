@@ -8,7 +8,7 @@
    [kushi.state :as state]
    [kushi.ansiformat :as ansiformat]
    [kushi.config :refer [user-config version]]
-   [par.core :refer [!? ?+]]))
+   [kushi.parstub :refer [!? ?+]]))
 
 ;; (ansiformat/ansi-format "wtf" :red)
 

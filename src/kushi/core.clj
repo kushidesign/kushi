@@ -3,7 +3,7 @@
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.pprint :refer [pprint]]
-   [par.core :refer [? !? ?+ !?+]]
+   [kushi.parstub :refer [? !? ?+ !?+]]
    [garden.core :as garden]
    [garden.stylesheet :refer [at-font-face]]
    [kushi.config :refer [user-config]]

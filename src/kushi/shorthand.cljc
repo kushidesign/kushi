@@ -1,5 +1,5 @@
 (ns kushi.shorthand
- (:require [par.core :refer [? ?+]]
+ (:require [kushi.parstub :refer [? ?+]]
            [clojure.pprint :refer [pprint]]
            [clojure.string :as string]))
 

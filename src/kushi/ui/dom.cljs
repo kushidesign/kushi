@@ -1,8 +1,7 @@
 (ns kushi.ui.dom
   (:require
    [applied-science.js-interop :as j]
-   [camel-snake-kebab.core :as csk]
-   [par.core :refer-macros [!? ?]]))
+   [camel-snake-kebab.core :as csk]))
 
 
 ;; TODO organized this by Global and Element

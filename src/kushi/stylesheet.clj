@@ -8,7 +8,7 @@
    [kushi.config :refer [user-config user-css-file-path kushi-cache-dir kushi-cache-path version]]
    [kushi.state :as state]
    [kushi.utils :as util :refer [keyed]]
-   [par.core :refer [? !? ?+ !?+]]
+   [kushi.parstub :refer [? !? ?+ !?+]]
    [kushi.reporting :as reporting]))
 
 
@@ -135,7 +135,12 @@
   [{:keys [pretty-print? css-text to-be-printed comment-base classtype] :as m*}]
   (let [gv* (if @state/KUSHIDEBUG
               (->> @state/utility-classes-by-classtype classtype vals)
-              (->> @state/utility-classes-used-by-classtype classtype))
+
+              ; Temp fix
+              (->> @state/utility-classes-by-classtype classtype vals)
+              ;TODO Fix this for prod builds!
+              #_(->> @state/utility-classes-used-by-classtype classtype))
+
         gv  (map :garden-vecs gv*)]
    (when (seq gv)
      (let [garden-vecs*                   (apply concat (concat gv))

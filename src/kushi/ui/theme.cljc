@@ -1,6 +1,6 @@
 (ns ^:dev/always kushi.ui.theme
   (:require
-   [par.core :refer [!?+ ?+]]
+   [kushi.parstub :refer [!?+ ?+]]
    [kushi.config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]
    [kushi.shorthand :as shorthand]

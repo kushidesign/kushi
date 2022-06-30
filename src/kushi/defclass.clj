@@ -1,7 +1,7 @@
 (ns kushi.defclass
   (:require
    [clojure.spec.alpha :as s]
-   [par.core :refer [? !? ?+ !?+]]
+   [kushi.parstub :refer [? !? ?+ !?+]]
    [kushi.arguments :as arguments]
    [kushi.parse :as parse]
    [kushi.selector :as selector]

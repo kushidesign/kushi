@@ -3,7 +3,7 @@
    [kushi.utils :as util :refer [keyed]]
    [kushi.ui.tokens :refer [global-tokens alias-tokens]]
    [kushi.ui.utility :refer [utility-classes override-classes]]
-   [par.core    :refer [? !? ?+ !?+]]))
+   [kushi.parstub    :refer [? !? ?+ !?+]]))
 
 (def css-reset
   [["*:where(:not(html, iframe, canvas, img, svg, video):not(svg *, symbol *))"]

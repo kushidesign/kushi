@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.utils
   #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
-  ;;  [par.core :refer [!? ?+ ?]]
+  ;;  [kushi.parstub :refer [!? ?+ ?]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.walk :as walk]

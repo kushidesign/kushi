@@ -3,7 +3,7 @@
   (:require [clojure.string :as string]
             [kushi.clean :as clean]
             [kushi.sheets :as sheets]
-            ;; [par.core :refer [? !?]] ;; only use when developing kushi itself
+            ;; [kushi.parstub :refer [? !?]] ;; only use when developing kushi itself
             ))
 
 (defn css-sync! [s]

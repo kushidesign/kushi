@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.state
   (:require
    [kushi.io :refer [load-edn]]
-   [par.core :refer [? !? ?+ !?+]]
+   [kushi.parstub :refer [? !? ?+ !?+]]
    [kushi.atomic :as atomic]
    [kushi.config :refer [user-config kushi-cache-path user-config-args-sx-defclass]]))
 

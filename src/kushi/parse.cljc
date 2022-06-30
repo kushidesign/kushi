@@ -10,7 +10,7 @@
    [kushi.defs :as defs]
    [kushi.config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]
-   [par.core :refer [? !? ?+ !?+]] ))
+   [kushi.parstub :refer [? !? ?+ !?+]] ))
 
 (defn derefed? [x]
   (s/valid? ::specs/derefed x))

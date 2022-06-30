@@ -1,6 +1,6 @@
 (ns kushi.atomic
   (:require
-   [par.core :refer [? ?+]]
+   [kushi.parstub :refer [? ?+]]
    [kushi.selector :as selector]
    [kushi.utils :refer [auto-generated-selector]]))
 
