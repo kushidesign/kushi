@@ -1,19 +1,14 @@
 (ns kushi.ui.collapse.core
-  (:require-macros [kushi.utils :refer (keyed)])
+  (:require-macros [kushi.utils])
   (:require
-   [kushi.core :refer (sx defclass merge-with-style) :refer-macros (sx)]
+   [kushi.core :refer (sx merge-with-style) :refer-macros (sx)]
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
-   [kushi.ui.core :refer (gui defcom opts+children)]
-   [kushi.ui.dom :as util]
-   ))
+   [kushi.ui.core :refer (defcom opts+children)]
+   [kushi.ui.dom :as util]))
 
-(def ? js/console.log)
-;; Accordian with multiple expandable
-;; Dual animation
-;; positioning of icon
-;; make :. work in class vectors
 
+;TODO refactor this out
 (defcom collapse-body
   [:section
    (sx 'kushi-collapse-body-wrapper :overflow--hidden)
@@ -75,9 +70,7 @@
                'kushi-collapse-header
                :.pointer
                {:class         [:.flex-row-fs :.collapse-header]
-                :style         {
-                                ;; :&_.kushi-title>.kushi-label:width              (when (= :end icon-position) :100%)
-                                :ai                                             :center
+                :style         {:ai                                             :center
                                 :padding-block                                  :0.75em
                                 :transition                                     :all:200ms:linear
                                 :+section:transition-property                   :height
