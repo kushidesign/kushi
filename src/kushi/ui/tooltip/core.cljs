@@ -2,7 +2,7 @@
   (:require-macros [kushi.utils :refer (keyed)])
   (:require
    [kushi.core :refer (sx merge-with-style) :refer-macros (sx)]
-   [kushi.ui.core :refer (defcom defcom+ opts+children)]
+   [kushi.ui.core :refer (defcom opts+children)]
    [kushi.ui.dom :refer (set-overlay-position! conditional-display?)]))
 
 (defn tooltip+parent [e]
@@ -85,36 +85,3 @@
            :data-kushi-ui                      :tooltip})
       attr)
      children]))
-
-(defcom+ tooltip2
-  (let [{:keys [display-on-hover?]} &opts]
-    [:section
-     (merge-with-style
-      (sx 'kushi-tooltip
-          :._absolute
-          :._mini
-          :._rounded
-          :top--0
-          :bottom--unset
-          :left--100%
-          :right--unset
-          :p--0
-          :m--5px
-          :bgc--black
-          :c--white
-          :ws--n
-          :o--0
-          :w--0
-          :h--0
-          :overflow--hidden
-          :transition--opacity:0.2s:linear
-          ;; maybe abstract into an :.overlay defclass(es) with decoration defclasses for tooltip vs popover
-          {:data-kushi-ui :tooltip
-           :style {"has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):opacity" 1
-                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):width"   :fit-content
-                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):height"  :auto
-                   "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):padding" :7px:14px}
-           :data-kushi-conditional-display (if (= false display-on-hover?) "true" "false")
-           :id (gensym)})
-      &attrs)
-     &children]))

@@ -1,6 +1,5 @@
 (ns kushi.ui.link.core
   (:require [kushi.core :refer (merge-with-style) :refer-macros (sx)]
-            ;; [kushi.ui.core :refer-macros (defcom)]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.label.core :refer (label)]))
 

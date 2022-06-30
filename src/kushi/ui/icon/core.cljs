@@ -1,19 +1,19 @@
 (ns kushi.ui.icon.core
   (:require
-   [kushi.core :refer (sx)]
+   [kushi.core :refer (sx merge-with-style)]
    [kushi.ui.core :refer (defcom)]))
 
-(def icon-base
-  [:div:!attr
-   (sx
-    'kushi-icon
-    :.relative
-    :.transition
-    :.flex-row-c
-    :ta--center
-    :d--ib
-    :ai--c
-    {:data-kushi-ui :icon})])
-
 (defcom icon
-  icon-base)
+  [:div
+   (merge-with-style
+    (sx
+     'kushi-icon
+     :.relative
+     :.transition
+     :.flex-row-c
+     :ta--center
+     :d--ib
+     :ai--c
+     {:data-kushi-ui :icon})
+    &attrs)
+   &children])

@@ -1,7 +1,6 @@
 (ns kushi.ui.icon.mui.core
   (:require
-   [kushi.core :refer (sx inject-stylesheet)]
-   [kushi.ui.icon.core  :refer (icon-base)]
+   [kushi.core :refer (merge-with-style sx inject-stylesheet)]
    [kushi.ui.core   :refer (defcom)]))
 
 (inject-stylesheet {:rel "preconnet"
@@ -12,14 +11,25 @@
 (inject-stylesheet {:rel "stylesheet"
                     :href "https://fonts.googleapis.com/css2?family=Material+Icons"})
 
-(def mui-icon-span
-  [:span:!children
-   (sx
-    'kushi-mui-icon
-    :.transition
-    :.material-icons
-    {:data-kushi-ui :icon.mui
-     :style {:&.material-icons:fs "var(--mui-icon-relative-font-size)"}})])
 
 (defcom mui-icon
-  (conj icon-base mui-icon-span))
+  [:div
+   (merge-with-style
+    (sx
+     'kushi-icon
+     :.relative
+     :.transition
+     :.flex-row-c
+     :ta--center
+     :d--ib
+     :ai--c
+     {:data-kushi-ui :icon})
+    &attrs)
+   [:span
+    (sx
+     'kushi-mui-icon
+     :.transition
+     :.material-icons
+     {:data-kushi-ui :icon.mui
+      :style         {:&.material-icons:fs "var(--mui-icon-relative-font-size)"}})
+    &children]])
