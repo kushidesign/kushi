@@ -13,30 +13,30 @@
           (kushi.ui.core/gui (if ~f (mapv ~f ~args) ~args) ~hiccup ~decorator))))))
 
 (defmacro &*->val
-  [opts attrs children coll f]
-  (let [ret (walk/postwalk (fn [x]
-                             (cond
-                               (= x '&children) (list 'into [:<>] (if f (list 'map f children) children))
-                               (= x '&opts)     opts
-                               (= x '&attrs)    attrs
-                               :else            x))
-                           coll)]
-    `~ret))
+  ([opts attrs children coll f]
+   (&*->val opts attrs children coll f nil))
+  ([opts attrs children coll f form-meta]
+   (let [form-meta2 (meta &form)
+         ret (walk/postwalk (fn [x]
+                              (cond
+                                (= x '&children) (list 'kushi.ui.core/children children f)
+                                (= x '&opts)     opts
+                                (= x '&attrs)    (list 'assoc attrs :data-amp-form form-meta :data-amp-form2 form-meta2)
+                                :else            x))
+                            coll)
+         ]
+     `~ret)))
 
 (defmacro defcom+
-  ([nm coll]
-   `(kushi.ui.core/defcom+ ~nm ~coll nil))
-  ([nm coll f]
-   (let [args '[a b c d e f g h i j k l m n o p q r s t u v w x y z]]
-     `(def ~nm
-        (fn ~args
-          (let [[opts# attrs# & children#] (kushi.ui.core/opts+children ~args)]
-            (kushi.ui.core/&*->val opts#
-                                   attrs#
-                                   children#
-                                   #_(keep-indexed (fn [i# x#]
-                                                     ^{:key (str (hash x#) "--" i#)}
-                                                     x#)
-                                                   children#)
-                                   ~coll
-                                   ~f)))))))
+  [& args]
+  (let [[nm coll f] args
+        form-meta   (meta &form)]
+    `(defn ~nm
+       [& args#]
+       (let [[opts# attrs# & children#] (kushi.ui.core/opts+children args#)]
+         (kushi.ui.core/&*->val opts#
+                                attrs#
+                                children#
+                                ~coll
+                                ~f
+                                ~form-meta)))))
