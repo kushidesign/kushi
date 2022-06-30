@@ -1,6 +1,6 @@
 (ns kushi.ui.grid.core
   (:require
-   [par.core :refer-macros [!? ?]]
+   [kushi.parstub :refer-macros [!? ?]]
    [kushi.core :refer (sx merge-with-style)]
    [kushi.ui.util :refer [aspect-ratio->number]]
    [kushi.ui.core :refer (opts+children)] ))
@@ -12,23 +12,22 @@
             :default :150px
             :desc    ["The minimum width of the columns."
                       "The width of the columns will expand evenly to fill out the parent container."
-                      "Value must be a string or keyword representing a"
-                      "[valid CSS value for `min-width`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)"]}
+                      "Value must be a keyword representing a"
+                      "[valid CSS value for `min-width`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."]}
            {:name    aspect-ratio
             :type    :keyword
             :default :1:1
             :desc    ["The aspect ratio of the grid cells."
-                      "Value must be a string or keyword representing a formula of width to height."
+                      "Value must be a keyword representing a formula of width to height."
                       "For example, a value of `:1:1` would result in square elements,"
                       "while a value of `:2:3` would result in elements with a portrait orientation."]}
            {
             :name    gap
             :type    :keyword
-            :default "20px"
+            :default :20px
             :desc    ["The aspect ratio of the grid cells."
-                      "Value must be a string or keyword representing a"
-                      "[valid CSS value for `grid-gap`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)"]
-            }]}
+                      "Value must be a keyword representing a"
+                      "[valid CSS value for `grid-gap`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."]}]}
   [& args]
   (let [[opts attr & children]                     (opts+children args)
         {:keys [column-min-width aspect-ratio gap]
