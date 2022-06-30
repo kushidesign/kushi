@@ -12,7 +12,6 @@
     [:a
      (merge-with-style
       (sx 'kushi-link
-          :.xxsmall
           :.pointer
           :d--ib
           :>span:jc--fs
