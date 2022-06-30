@@ -273,12 +273,19 @@
       [class]
       class)))
 
-(defn data-cljs [s1 s2]
-  (let [coll   (remove nil? [s1 s2])
+(defn data-cljs-str [m]
+  (when m
+    (let [{:keys [file line column]} m]
+      (str file ":"  line ":" column))))
+
+(defn data-cljs [m2 s1 s2]
+  (let [from-defcom (data-cljs-str (:data-amp-form m2))
+        from-user   (data-cljs-str (:data-amp-form2 m2))
+        coll   (remove nil? [from-defcom from-user s1 s2])
         joined (when (seq coll) (string/join " + " coll))]
     (when joined {:data-cljs joined})))
 
-(defn on-click [c1 c2 m2 k]
+(defn handler-concat [c1 c2 m2 k]
   (let [block? (contains? (some->> m2 :data-kushi-block-events (into #{})) k)
         f (if block?
             c2
@@ -295,24 +302,22 @@
   (let [[m1 m2]                   (map #(if (map? %) % {}) maps)
         {style1 :style
          class1 :class
-         data-cljs1 :data-cljs
-         on-click1 :on-click}     m1
+         data-cljs1 :data-cljs}     m1
         {style2 :style
          class2 :class
-         data-cljs2 :data-cljs
-         on-click2 :on-click}     m2
+         data-cljs2 :data-cljs}     m2
         [bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
         [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i)) [class1 class2])
         merged-style              (merge (when-not bad-style1? style1) (when-not bad-style2? style2))
         class1-coll               (class-coll class1 bad-class1?)
         class2-coll               (class-coll class2 bad-class2?)
         classes                   (concat class1-coll class2-coll)
-        data-cljs                 (data-cljs data-cljs1 data-cljs2)
+        data-cljs                 (data-cljs m2 data-cljs1 data-cljs2)
 
         user-event-handlers       (keys (select-keys m2 dom-element-events))
-        ;; _ (? user-event-handlers)
-        merged-event-handlers     (apply merge (map #(on-click (% m1) (% m2) m2 %) user-event-handlers))
-        ret                       (assoc (merge m1 m2 data-cljs merged-event-handlers)
+        merged-event-handlers     (apply merge (map #(handler-concat (% m1) (% m2) m2 %) user-event-handlers))
+        m2-                       (dissoc m2 :data-amp-form)
+        ret                       (assoc (merge m1 m2- data-cljs merged-event-handlers)
                                          :class classes
                                          :style merged-style)]
     ret))
