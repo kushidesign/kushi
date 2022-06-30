@@ -11,11 +11,12 @@
 ;TODO refactor this out
 (defcom collapse-body
   [:section
-   (sx 'kushi-collapse-body-wrapper :overflow--hidden)
-   [:div:! (sx
-            'kushi-collapse-body
-            :bbe--1px:solid:transparent
-            :padding-block--0.25em:0.5em)]])
+   (merge-with-style (sx 'kushi-collapse-body-wrapper :overflow--hidden) &attrs)
+   [:div (sx
+          'kushi-collapse-body
+          :bbe--1px:solid:transparent
+          :padding-block--0.25em:0.5em)
+    &children]])
 
 (defn toggle-class-on-ancestor [node root-class class]
   (let [root (.closest node (str "." (name root-class)))]
