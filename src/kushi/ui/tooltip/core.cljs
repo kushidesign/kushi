@@ -33,10 +33,26 @@
        (js/console.warn "[kushi.ui.tooltip.core/add-temporary-tooltip!]\n\nIf you want to trigger a temporary tooltip, you must explicitly use a value of `false` for the `:display-on-hover` entry in the opts argument to the tooltip component")))))
 
 (defn tooltip
-  "A section of content which can be collapsed and expanded"
+  {:desc ["Tooltips provide additional context when hovering or clicking on an element."
+          :br
+          :br
+          "Tooltips in Kushi have no arrow indicator and are placed automatically depending on the parent element's relative postition in the viewport. "
+          "Currently, tooltips are only placed above or below the parent element that they describe."]
+   :opts '[{:name    display-on-hover?
+            :type    :boolean
+            :default true
+            :desc    "Setting to `false` will conditionalize display based on user event such as a click"}
+           {:name    block-offset
+            :type    #{:start :end}
+            :default nil
+            :desc    "Setting to either `:start` or `:end` will override vertical auto-placement"}
+           {:name    inline-offset
+            :type    #{:start :end}
+            :default nil
+            :desc    "Setting to either `:start` or `:end` will override horizontal auto-placement"}]}
   [& args]
   (let [[opts attr & children]      (opts+children args)
-        {:keys [display-on-hover? above? below? before? after?]} opts]
+        {:keys [display-on-hover? inline-offset block-offset]} opts]
     [:section
      (merge-with-style
       (sx 'kushi-tooltip
@@ -63,10 +79,10 @@
                                                 "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):height"  :auto
                                                 "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):padding" :7px:14px}
            :data-kushi-conditional-display     (if (= false display-on-hover?) "true" "false")
-           :data-kushi-tooltip-position-block  (cond above? "start" below? "end")
-           :data-kushi-tooltip-position-inline (cond before? "start" after? "end")
+           :data-kushi-tooltip-position-block  block-offset
+           :data-kushi-tooltip-position-inline inline-offset
            :id                                 (gensym)
-           :data-kushi-ui                         :tooltip})
+           :data-kushi-ui                      :tooltip})
       attr)
      children]))
 
