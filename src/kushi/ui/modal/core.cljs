@@ -1,9 +1,8 @@
 (ns kushi.ui.modal.core
   (:require [kushi.ui.card.core :refer (card)]
-            [kushi.ui.button.core :refer (button)]
             [kushi.ui.card.core :refer (card)]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.core :refer (merge-with-style) :refer-macros (sx cssfn defclass)]))
+            [kushi.core :refer (merge-with-style) :refer-macros (sx cssfn)]))
 
 (defn close-kushi-modal [e]
   (let [modal-parent (.closest (-> e .-target) ".kushi-modal")]
@@ -38,7 +37,7 @@
   "Desc for"
   [& args]
   (let [[opts attr & children]  (opts+children args)
-        {:keys [trigger parts]} opts]
+        {:keys [trigger scrim-attrs panel-attrs]} opts]
     [:div
      (merge-with-style
       (sx 'kushi-modal-wrapper
@@ -57,13 +56,13 @@
                          :bgc                            (cssfn :rgba 232 232 232 0.86)
                          "&[aria-modal='false']:display" :none
                          :z                              1}})
-       (:scrim parts))
+       scrim-attrs)
       (into [card (merge-with-style
                    (sx :.elevated
                        :.flex-col-c
                        :ai--c
                        :w--600px
                        :h--350px)
-                   (:panel parts))
+                   panel-attrs)
              [dismiss-button]]
             children)]]))

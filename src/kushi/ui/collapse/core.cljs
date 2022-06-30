@@ -89,9 +89,6 @@
               attrs)]
             children))))
 
-(defn get-attr [m k] (some-> m :parts k first))
-(defn get-children [m k] (some-> m :parts k rest))
-
 (defn collapse
   {:desc ["A section of content which can be collapsed and expanded."]
    :opts '[{:name    label
@@ -120,7 +117,7 @@
                       "Optional."]}]}
    [& args]
   (let [[opts attr & children]                           (opts+children args)
-        {:keys [parts expanded? on-click icon-position]} opts]
+        {:keys [header-attrs body-attrs expanded? on-click icon-position]} opts]
     [:section
      (merge-with-style
       (sx
@@ -131,14 +128,12 @@
       attr)
      [collapse-header
       (merge-with-style
-       (:header parts)
+       header-attrs
        (sx {:on-click       on-click
             :aria-expanded  (if expanded? "true" "false")
             :-icon-position icon-position}))
-      #_[collapse-footer-contents {:label-text          label-text
-                                   :label-text-expanded label-text-expanded}]
       [collapse-header-contents opts]]
-     [collapse-body (:body parts) children]]))
+     [collapse-body (:body body-attrs) children]]))
 
 
 (defn accordian
