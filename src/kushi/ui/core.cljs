@@ -17,6 +17,23 @@
   (and (keyword? x)
        (->> x name (re-find #"^-[^\s\d]+"))) )
 
+(defn unwrapped-children [children]
+  (let [fc (first children)]
+    (if (and
+         (seq? children)
+         (= 1 (count children))
+         (seq? fc)
+         (seq fc))
+      fc
+      children)))
+
+(defn children
+  "For internal use by defcom macro"
+  [children* f]
+  (let [children (unwrapped-children children*)
+        fragment? (-> children* first (= :<>))]
+    (into (if fragment? [] [:<>]) (if f (map f children) children))))
+
 (defn opts+children
   "Reorganizes arguments to component and returns:
    [map-of-user-opts attr child1 child2 ...]"
@@ -36,7 +53,7 @@
                                    (into {}))]
       (into []
             (concat [opts-w-normal-keys attr]
-                    (remove nil? children))))))
+                    (->> children (remove nil?) unwrapped-children))))))
 
 (defn hiccup? [x]
   (and (vector? x) (-> x first keyword?)))
