@@ -1,0 +1,106 @@
+<html>
+
+<head>
+  <title>Kushi UI Showcase</title>
+
+  <!-- <link href="https://cdn.nextjournal.com/data/QmZZpjcdZDa8WT27QpcepDfqwuGik6Y3Ueyxaxs1Gqpk9w?filename=nextjournal-c81d440c5a7312046bbc5a2c3f2c5567d9ea9131.css&amp;content-type=text/css" rel="stylesheet"><link href="https://cdn.nextjournal.com/data/QmW53nJSRrRao5FZ9sZ2pwQ4Gd4mK4nZcvhrATVdiabPkc?filename=tailwind-a4c8a6fe636b6d528505c30cb68526a024f446a7.css&amp;content-type=text/css" rel="stylesheet">
+    <link href="https://cdn.nextjournal.com/data/QmSaHZCU6U2DeNohfW2PuXDHkayw7w21uvUWL5oEqVWKwH?filename=viewer-1c61aac61ffa4da89b828d538c5e4eff188e7b56.css&amp;content-type=text/css" rel="stylesheet"> -->
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!--- highlight.js 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/default.min.css"
+    integrity="sha512-hasIneQUHlh06VNBe7f6ZcHmeRTLIaQWFd43YriJ0UND19bvYRauxthDg8E4eVNPm9bRUhr5JGeqH7FRFXQu5g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
+
+  <!--- kushi css -->
+  <link rel="stylesheet" href="./css/kushi.css" type="text/css">
+
+  <style>
+    body * {
+      box-sizing: border-box;
+    }
+
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      margin: 0;
+    }
+
+    /* p {color: black; font-weight: 300; font-size: 0.95rem; line-height: 1.3; margin: 1rem 0} */
+    /* Use Fira Mono without having to clutter up the demo with a custom CM theme. */
+    .cm-scroller {
+      font-family: var(--code-font) !important;
+    }
+
+    .kbd {
+      box-shadow: 0 2px 2px rgba(0, 0, 0, .1);
+      background: white;
+      border: 1px solid rgba(0, 0, 0, .15);
+      border-radius: 3px;
+      font-size: 0.75em;
+      padding: 2px 5px;
+      position: relative;
+      top: -2px;
+      font-family: var(--code-font);
+      text-transform: uppercase;
+    }
+
+    /* hljs */
+    pre code.hljs {
+      display: block;
+      overflow-x: auto;
+    }
+    .hljs-symbol {
+      color: #833597
+    }
+    .hljs-name {
+      color: #325CC0
+    }
+    .hljs-number {
+      color: #7A3E9D;
+    }
+    .hljs-string {
+      color: #448C27;
+    }
+    .hljs-comment {
+      color: #a54624;
+    }
+    div.code {white-space: pre}
+  </style>
+
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="text/javascript">
+    let fileHandle;
+
+    async function pickFile() {
+
+      [fileHandle] = await window.showOpenFilePicker();
+
+      const file = await fileHandle.getFile();
+      const content = await file.text();
+      textarea.innerText = content;
+
+      return content;
+    };
+
+    async function save() {
+      let stream = await fileHandle.createWritable();
+      await stream.write(textarea.innerText);
+      await stream.close()
+    };
+  </script>
+  <script src="./scripts/detect-element-resize.js" type="text/javascript"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>
