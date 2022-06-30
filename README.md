@@ -75,7 +75,7 @@ Usage with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https:/
 
 For a well commented, feature-complete minimal project template, please see [kushi-quickstart](https://github.com/paintparty/kushi-quickstart).
 
-[Checkout interactive documentation of pre-built components in the `kushi.ui` namespace](https://paintparty.github.io/kushi/).
+[Checkout interactive documentation of pre-built components in the `kushi.ui` namespace](https://paintparty.github.io/kushi/public/index.html).
 <br>
 
 # Syntax
