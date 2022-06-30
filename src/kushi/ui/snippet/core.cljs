@@ -3,15 +3,9 @@
    [kushi.core :refer (sx merge-with-style) :refer-macros (sx)]
    [kushi.ui.tooltip.core :refer (tooltip add-temporary-tooltip!)]
    [kushi.ui.button.core :refer (button)]
-   #_[kushi.ui.core :refer (gui defcom)]))
+   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.dom :refer (copy-to-clipboard)]))
 
-(defn copy-to-clipboard [val]
-  (let [el (js/document.createElement "textarea")]
-    (set! (.-value el) val)
-    (.appendChild js/document.body el)
-    (.select el)
-    (js/document.execCommand "copy")
-    (.removeChild js/document.body el)))
 
 (defn copy-to-clipboard-button
   [opts & children*]
@@ -55,9 +49,16 @@
             opts)]
           children)))
 
-(defn snippet [{:keys [text-to-display text-to-copy]}]
-  [:div
-   (sx 'kushi-snippet :.relative :.codebox {:data-kushi-ui :snippet})
-   text-to-display
-   [copy-to-clipboard-button
-    {:on-click #(copy-to-clipboard text-to-copy)}]])
+(defn snippet
+  "Desc for"
+  [& args]
+  (let [[opts attrs & children]                (opts+children args)
+        {:keys [text-to-display text-to-copy on-copy-click]} opts]
+    (into [:div
+           (merge-with-style
+            (sx 'kushi-snippet :.relative :.codebox {:data-kushi-ui :snippet})
+            attrs)
+           [:span text-to-display]
+           [copy-to-clipboard-button
+            {:on-click (or on-copy-click #(copy-to-clipboard text-to-copy))}]]
+          children)))
