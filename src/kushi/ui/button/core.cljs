@@ -1,7 +1,6 @@
 (ns kushi.ui.button.core
   (:require-macros
-   [kushi.core :refer (sx)]
-   [kushi.ui.core :refer (defcom+)])
+   [kushi.core :refer (sx)])
   (:require
    [kushi.core :refer (merge-with-style)]
    [kushi.ui.core :refer (opts+children)]
@@ -24,20 +23,8 @@
            :data-kushi-tooltip true
            :aria-expanded      "false"
            :on-mouse-enter     tooltip-mouse-enter
-           :on-mouse-leave     tooltip-mouse-leave
-           })
+           :on-mouse-leave     tooltip-mouse-leave})
       attrs)
      [apply
       label
       children]]))
-
-#_(defcom+ button
-  [:button
-   (merge-with-style
-    (sx 'kushi-button
-        :.transition
-        :.pointer
-        :>span:p--0.8em:1.2em
-        {:data-kushi-ui :button})
-    &attrs)
-   [apply label &children]])
