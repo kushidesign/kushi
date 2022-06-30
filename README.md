@@ -62,22 +62,20 @@
 [Element attributes](#element-attributes)<br>
 [Helpful metadata](#helpful-metadata)<br>
 [Configuration options](#configuration-options)<br>
-<!--[Runtime injection](#runtime-injection)<br>-->
 [Useful warnings](#useful-warnings)<br>
 [Usage with build tools](#usage-with-build-tools)<br>
 [Roadmap](#roadmap)<br>
 [Development](#development)<br>
 [License](#license)
 
-<br>
-# Intro
-<br>
+<!--[Runtime injection](#runtime-injection)<br>-->
 
 # Setup and Usage
 Usage with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs) is currently recommended.
 
 For a well commented, feature-complete minimal project template, please see [kushi-quickstart](https://github.com/paintparty/kushi-quickstart).
 
+[Checkout interactive documentation of pre-built components in the `kushi.ui` namespace](https://paintparty.github.io/kushi/).
 <br>
 
 # Syntax
@@ -1079,7 +1077,7 @@ in your application code like so:
 ```
 <br>
 
-###Manually defining complex components
+### Manually defining complex components
 
  If, for some reason, you don't want use the `defcom` to define your complex components, you can use the same underlying pattern that defcom abstracts. This component definition pattern relies on using the `kushi.ui.core/opts+children` helper fn. It optionally makes use of the kushi.core/merge-sx to enable decoratability, and also uses the `(into [:div ] ...)` for the parent node of the `children`.
 
