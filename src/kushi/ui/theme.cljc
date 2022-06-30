@@ -4,9 +4,8 @@
    [kushi.config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]
    [kushi.shorthand :as shorthand]
+   ;; TODO remove?
    [kushi.ui.tokens :refer [global-tokens alias-tokens]]
-   [kushi.defclass :refer [defclass-dispatch]]
-  ;;  [kushi.ui.basetheme :refer [base-theme-map]]
    [clojure.string :as string] ))
 
 (defn resolve-user-theme
@@ -229,9 +228,7 @@
       tokens-in-theme
       global-toks
       alias-toks
-          ;;  utility-classes
       utility-classes
-          ;;  override-classes
       ))))
 
 (def theme (merged-theme))
