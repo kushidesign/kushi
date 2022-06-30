@@ -5,18 +5,40 @@ Shorthand grammer is available for the following css props:
 ```Clojure
 :ai   ; :align-items
 :b    ; :border
-:bb   ; :border-bottom
+:bb   ; :border-block
+:bbc  ; :border-block-color
+:bbe  ; :border-block-end
+:bbec ; :border-block-end-color
+:bbes ; :border-block-end-style
+:bbew ; :border-block-end-width
+:bbs  ; :border-block-style
+:bbsc ; :border-block-start-color
+:bbss ; :border-block-start-style
+:bbsw ; :border-block-start-width
+:bbw  ; :border-block-width
 :bc   ; :border-color
+:beer ; :border-end-end-radius
+:besr ; :border-end-start-radius
 :bg   ; :background
 :bgc  ; :background-color
 :bgi  ; :background-image
 :bgp  ; :background-position
 :bgr  ; :background-repeat
 :bgs  ; :background-size
-:bl   ; :border-left
-:br   ; :border-right
+:bi   ; :border-inline
+:bic  ; :border-inline-color
+:bie  ; :border-inline-end
+:biec ; :border-inline-end-color
+:bies ; :border-inline-end-style
+:biew ; :border-inline-end-width
+:bis  ; :border-inline-style
+:bisc ; :border-inline-start-color
+:biss ; :border-inline-start-style
+:bisw ; :border-inline-start-width
+:biw  ; :border-inline-width
 :bs   ; :border-style
-:bt   ; :border-top
+:bser ; :border-start-end-radius
+:bssr ; :border-start-start-radius
 :bw   ; :border-width
 :c    ; :color
 :d    ; :display
@@ -40,25 +62,31 @@ Shorthand grammer is available for the following css props:
 :gtc  ; :grid-template-columns
 :gtr  ; :grid-template-rows
 :h    ; :height
+:i    ; :inset
+:ib   ; :inset-block
+:ibe  ; :inset-block-end
+:ibs  ; :inset-block-start
+:ii   ; :inset-inline
+:iie  ; :inset-inline-end
+:iis  ; :inset-inline-start
 :jc   ; :justify-content
 :ji   ; :justify-items
 :lh   ; :line-height
 :m    ; :margin
-:mb   ; :margin-bottom
+:mb   ; :margin-block
 :mbe  ; :margin-block-end
 :mbs  ; :margin-block-start
 :mi   ; :margin-inline
 :mie  ; :margin-inline-end
 :mis  ; :margin-inline-start
-:ml   ; :margin-left
-:mr   ; :margin-right
-:mt   ; :margin-top
 :o    ; :opacity
 :p    ; :padding
-:pb   ; :padding-bottom
-:pl   ; :padding-left
-:pr   ; :padding-right
-:pt   ; :padding-top
+:pb   ; :padding-block
+:pbe  ; :padding-block-end
+:pbs  ; :padding-block-start
+:pi   ; :padding-inline
+:pie  ; :padding-inline-end
+:pis  ; :padding-inline-start
 :ta   ; :text-align
 :td   ; :text-decoration
 :tdc  ; :text-decoration-color
@@ -96,13 +124,6 @@ Shorthand grammer is available for the following enumerated property values:
 :bgr--rx  ; background-repeat: repeat-x
 :bgr--ry  ; background-repeat: repeat-y
 :bgr--s   ; background-repeat: space
-:bs--d    ; border-style: dotted
-:bs--g    ; border-style: groove
-:bs--h    ; border-style: hidden
-:bs--i    ; border-style: inset
-:bs--o    ; border-style: outset
-:bs--r    ; border-style: ridge
-:bs--s    ; border-style: solid
 :d--b     ; display: block
 :d--c     ; display: contents
 :d--f     ; display: flex
