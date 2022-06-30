@@ -46,24 +46,20 @@
            default-index
            label-selected-class
            label-size-class
-           label-block-offset
-           thumb-size]
-    :or   {thumb-size "15px"}}]
+           labels-attrs]}]
   (into [:div
-         (sx 'kushi-slider-step-labels
-             :.flex-row-sa
-             :ai--c
-             :.relative
-             :w--100%
-             :h--0
-             {:style {:transform (str "translateY(calc(10px + " label-block-offset " ))")}})]
+         (merge-with-style
+          (sx 'kushi-slider-step-labels
+              :.flex-row-sa
+              :ai--c
+              :.relative
+              :w--100%
+              :h--0)
+          labels-attrs)]
         (map-indexed
          (fn [idx step]
-           (let [
-                 calcpct              (str "( (100% - var(--kushi-input-slider-thumb-width)) / " (dec num-steps) ")")
+           (let [calcpct              (str "( (100% - var(--kushi-input-slider-thumb-width)) / " (dec num-steps) ")")
                  inset-inline-start   (str "calc(" calcpct " * " idx "  + ( var(--kushi-input-slider-thumb-width) / 2)  )")
-                ;;  calcpct              (str "( (100% - " thumb-size ") / " (dec num-steps) ")")
-                ;;  inset-inline-start   (str "calc(" calcpct " * " idx "  + (" thumb-size  " / 2)  )")
                  default-index?       (= idx default-index)
                  label-selected-class (when default-index? label-selected-class)]
              [:span (sx 'kushi-slider-step-label
@@ -75,14 +71,25 @@
                         :c--:--gray600
                         :ta--center
                         {:class [label-size-class label-selected-class]
-                         :style {:inset-inline-start                           inset-inline-start
-                                 :w                                            0
-                                 :h                                            0
-                                 :transform                                    "scale(0.8)"
-                                 :&.kushi-slider-step-label-selected:transform :none
-                                 :&.kushi-slider-step-label-selected:o         1
-                                 :&.kushi-slider-step-label-selected:c         :--primary}})
-              step]))
+                         :style {:inset-inline-start                                inset-inline-start
+                                 :w                                                 0
+                                 :h                                                 0
+                                 :transform                                         "scale(0.8) translateX(-50%)"
+                                 :&.kushi-slider-step-label-selected:transform      "scale(1) translateX(-50%)"
+                                 :&.kushi-slider-step-label-selected:o              1
+                                 :&.kushi-slider-step-label-selected:c              :--primary
+                                 :>span:v                                           :hidden
+                                 :&.kushi-slider-step-label-selected>span:v         :visible
+                                 :before:content                                    "\"·\""
+                                 :before:fw                                         :800
+                                 :before:fs                                         :1.2rem
+                                 :before:o                                          :0.7
+                                 :before:position                                   :absolute
+                                 :before:top                                        :50%
+                                 :before:left                                       :50%
+                                 :before:transform                                  "translate(-50%, -50%)"
+                                 :&.kushi-slider-step-label-selected:before:content :unset}})
+              [:span (sx :.absolute-centered) step]]))
          steps)))
 
 (defn slider
@@ -96,17 +103,15 @@
                 step]}  attr
         {:keys  [default-index
                  label-size-class
-                 label-block-offset
-                 parts]
+                 wrapper-attrs
+                 labels-attrs]
          steps* :steps}          opts
-        {wrapper-attrs :wrapper} parts
         steps                    (slider-steps steps* min max)
         num-steps                (count steps)
         default-val              (or defaultValue default-value)
         default-index            (slider-default-index default-index default-val steps* steps)
         label-size-class         (or label-size-class :xsmall)
-        label-selected-class     "kushi-slider-step-label-selected"
-        label-block-offset       (or (name label-block-offset) (str "calc(- 1em * 2)"))]
+        label-selected-class     "kushi-slider-step-label-selected"]
 
     #_(? (keyed steps
                 num-steps
@@ -119,7 +124,7 @@
                                 :.relative
                                 :ai--c
                                 :w--100%
-                                :padding-inline-end--2em)
+                                :pi--1em:2em)
                             wrapper-attrs)
 
      [slider-labels (keyed steps
@@ -127,10 +132,11 @@
                            default-index
                            label-selected-class
                            label-size-class
-                           label-block-offset)]
+                           labels-attrs)]
      [:input (merge-with-style
               (sx {:class     [label-size-class]
                    :style     {
+                              ;; TODO (low priority) migrate from external slider.css to here
                               ;;  :--kushi-slider-thumb-sz "21px"
                               ;;  "-webkit-slider-thumb:width" "var(--kushi-slider-thumb-sz)!important"
                               ;;  "-webkit-slider-thumb:height"  "var(--kushi-slider-thumb-sz)!important"
