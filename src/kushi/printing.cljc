@@ -596,7 +596,7 @@
            body-lines-fn
            debug?]
     :as args-map}]
-  ;; #_(? (str "dupe-warning for " (or (:selector m) (:fname m))) "hi")
+  ;; #_(? (str "dupe-warning for " (or (:selector m) (:fname m))))
   (let [{:keys
          [file-info
           k
@@ -609,8 +609,8 @@
     (if existing-file-info
       (if-not (= file-info existing-file-info)
         (do
-          ;; #_(?+ (str label " already used: ") {k file-info})
-          ;; #_(?+ :comment "Returning map of preformatted message-line colls...")
+          ;; (?+ (str label " already used: ") {k file-info})
+          ;; (?+ :comment "Returning map of preformatted message-line colls...")
           (message-lines body-lines-fn m))
         (do
           ;; #_(?+ (str label ", non-duplicate: ") file-info)
@@ -710,6 +710,7 @@
     (println #_"comp-warn" (apply ansiformat/warning-panel lines))))
 
 (defn set-warnings! []
+  #_(when (state/debug?) (?+ @state/current-macro) (?+ @state/current-op))
   (let [{:keys [ident]
          :as   opts}              @state/current-macro
 
@@ -741,6 +742,7 @@
                                          bad-nums-js
                                          [(:browser dupe-ident)]
                                          [invalid-style-js]))]
+    #_(when (state/debug?) (?+ warnings-terminal))
     (reset! state/warnings-terminal warnings-terminal)
     (reset! state/warnings-js warnings-js)
     (reset! state/invalid-style-warnings warnings-terminal)))
@@ -859,15 +861,22 @@
         (cons {:start (. m start) :end (. m end) :group (. m group)}
           (lazy-seq (step))))))))
 
-(defn replace-in-str [f in from len]
-  (let [before (subs in 0 from)
-        after (subs in (+ from len))
+(defn replace-in-str [f in from len nspaces]
+  (let [before*         (subs in 0 from)
+        [match
+         carets]       (re-find #":____(\^+)( \")?$" before*)
+        replacement    (when match (str "\"\n" (string/join (repeat (inc nspaces) " ")) ansi/bold-font carets ansi/reset-font))
+        before         (if match (string/replace before* #":____\^+ \"?$" replacement) before*)
+        after          (subs in (+ from len))
         being-replaced (subs in from (+ from len))
-        replaced (f being-replaced)]
-    (str before replaced after)))
+        replaced       (f being-replaced)
+        result         (str before replaced after )]
+    ;; (?+ (keyed before after being-replaced replaced result match))
+    result))
 
 (defn with-line-numbers
   [form-meta fname args]
+
   (let [sexp     (cons (symbol fname) args)
         pprinted (string/replace (with-out-str (pprint sexp)) #"\n$" "")
         lnum     (:line form-meta)]
@@ -879,22 +888,65 @@
                          (let [num-digits (-> ln str count)
                                spaces     (string/join (repeat (inc (- max-digits num-digits)) " "))]
                            spaces))
+            borderchar "|"  #_"│"
             numbered   (reduce (fn [acc {:keys [start ln]}]
-                                 (let [spaces      (spaces ln)]
-                                   (replace-in-str (fn [_] (str "\n"  ln spaces "│  ")) acc start 1)))
+                                 (let [spaces      (spaces ln)
+                                       spaces-for-squiqqly (count (str ln spaces borderchar "  "))]
+                                   (replace-in-str (fn [_] (str "\n"  ln spaces borderchar "  ")) acc start 1 spaces-for-squiqqly)))
                                pprinted
-                               (reverse pos))]
-        (str lnum (spaces (first linenums)) "│  " numbered))
+                               (reverse pos))
+            result*    (str lnum (spaces (first linenums)) borderchar "  " numbered)
+            result     (-> result*
+                           (string/replace #"\"__bold__" ansi/bold-font)
+                           (string/replace #"__bold__\"" ansi/reset-font))]
+        result)
       pprinted)))
 
 (defn simple-border [s]
-  (str "\n\n" ansi/bold-font s ansi/reset-font "\n\n"))
+  (str "\n" ansi/bold-font s ansi/reset-font "\n\n"))
 
 (def simple-bottom-border
   (simple-border "-----------------------------------------------"))
 
+(defn warning-border2 [n]
+  (apply str
+         (for [i (range n)]
+           (str (if (even? i) ansi/bold-font ansi/bold-yellow-font) "-" ansi/reset-font))))
+
+
+#_(def simple-bottom-warning-border2 [n]
+  "\n\n" (warning-border2 49) "\n\n")
+
 (def simple-warning-header
   (simple-border "-- W A R N I N G ------------------------------"))
+
+(def border-char "-")
+(defn border-str [n] (string/join (repeat n border-char)))
+(def border-len 50)
+(def alert-indent 4)
+(def unbroken-border (border-str border-len))
+
+(defn simple-alert-header-border-top [header]
+  (str (border-str (dec alert-indent))
+       " "
+       ansi/bold-font
+       header
+       ansi/reset-font
+       " "
+       (string/join (repeat (- border-len (dec alert-indent) (+ 2 (count header))) "-"))))
+
+(defn simple-alert-header2 [header file-info-str]
+  (str "\n\n"
+       (simple-alert-header-border-top header)
+       "\n"
+       "    " file-info-str
+       "\n"
+       unbroken-border
+       "\n\n")
+  #_(str "\n\n"
+         "------ " ansi/bold-font header ansi/reset-font " --------------------------------\n"
+         " File: " file-info-str "\n"
+         "-----------------------------------------------\n\n"))
 
 (def simple-exception-header
   (simple-border "-- E X C E P T I O N -------------------------"))
@@ -909,6 +961,11 @@
          "\n"
          "There may be a problem with your theme.")))
 
+(defn simple-file-info-str
+  [form-meta]
+  (let [{:keys [file line column]} form-meta]
+    (str file ":" ansi/bold-font line ansi/reset-font ":" ansi/bold-font column ansi/reset-font)))
+
 (defn simple-warning2
   [{:keys [sym
            args
@@ -916,17 +973,16 @@
            fname
            form-meta
            commentary]}]
-  (let [file-info-str (file-info-str* form-meta)
+  (let [file-info-str (simple-file-info-str form-meta)
         args (if (= fname "defclass") (cons sym args) args)]
     (println
-     (str simple-warning-header
+     (str (simple-alert-header2 "WARNING" file-info-str)
+          (when commentary (str commentary "\n"))
           (with-line-numbers form-meta fname args)
+          (when hint (str "\n\n" hint))
           "\n\n"
-          file-info-str
-          (when commentary
-            (str "\n\n\n" commentary))
-          (when hint (str "\n\n\n" hint))
-          simple-bottom-border))))
+          unbroken-border
+          "\n\n"))))
 
 (defn caught-exception [{:keys [ex
                                 sym
@@ -936,13 +992,13 @@
                                 exception-message
                                 top-of-stack-trace
                                 commentary]}]
-  (let [file-info-str (file-info-str* form-meta)
+  (let [file-info-str (simple-file-info-str form-meta)
         args (if sym (cons sym args) args)]
     (println
-     (str simple-exception-header
+     (str (simple-alert-header2 "EXCEPTION CAUGHT" file-info-str)
           (with-line-numbers form-meta fname args)
-          "\n\n"
-          file-info-str
+          (when commentary
+            (str "\n\n" commentary))
           (when exception-message
             (str "\n\n"
                  ansi/italic-font
@@ -959,19 +1015,51 @@
                  ansi/reset-font
                  top-of-stack-trace))
 
-          (when commentary
-            (str "\n\n\n" commentary))
+          (when-let [stack-trace (.getStackTrace ex)]
+            (str "\n\n"
+                 ansi/italic-font
+                 ansi/cyan-font
+                 "StackTrace =>\n"
+                 ansi/reset-font
+                 (with-out-str (pprint stack-trace))))
 
           (when-not (or exception-message top-of-stack-trace)
-            (str "\n\n\n"
+            (str "\n\n"
                  ansi/italic-font
                  ansi/cyan-font
                  "Clojure says:\n"
                  ansi/reset-font
                  (with-out-str (pprint ex))))
 
-          simple-bottom-border))))
+          "\n"
+          unbroken-border))))
 
+(defn simple-sx-warning []
+  (when-let [{inval :invalid-style-args
+              args  :args
+              :as   m} @state/current-op]
+    (when (seq inval)
+      (simple-warning2
+       (let [invalid-args (if (map? inval) (vals inval) inval)
+             args+        (map #(if (contains? (into #{} invalid-args) %)
+                                  (str "__bold__" % "__bold__"
+                                       (str ":____" (string/join (repeat (+ (if (string? %) 2 0) (count (str %))) "^")) " "))
+                                  %)
+                               args)
+             _ (when true (?+ (keyed inval invalid-args args args+)))
+             ]
+         (assoc m
+                :commentary
+                (str ansi/bold-font "    Invalid args" ansi/reset-font " supplied to kushi.core/sx:\n"
+                     (str "    "
+                          (-> (->> invalid-args
+                                   (map #(str "__bold__" (if (string? %) (str "\"" % "\"") %) "__bold__" ))
+                                   pprint
+                                   with-out-str)
+                              (string/replace #"\"__bold__" ansi/bold-font)
+                              (string/replace #"__bold__\"" ansi/reset-font)
+                              (string/replace #"\n" "\n    "))))
+                :args args+))))))
 
 (defn simple-add-font-face-warning [{:keys [bad-entries valid-ks] :as m}]
   (when (seq bad-entries)
@@ -993,13 +1081,29 @@
   (when-not  (:duplicate-for-override? m*)
    (when-let [invalid-args (:invalid-args result)]
      (when (seq invalid-args)
-       (simple-warning2
-        (assoc m*
-               :fname
-               "defclass"
-               :commentary
-               (str "Invalid args supplied to kushi.core/defclass:\n"
-                    (with-out-str
-                      (pprint (if (map? invalid-args)
-                                (vals invalid-args)
-                                invalid-args))))))))))
+       (when-not (and (map? invalid-args)
+                      (= (-> invalid-args first second first)
+                         [:kushi-debug? true]))
+        (simple-warning2
+         (assoc m*
+                :fname
+                "defclass"
+                :commentary
+                (str "Invalid args supplied to kushi.core/defclass:\n"
+                     (with-out-str
+                       (pprint (if (map? invalid-args)
+                                 (vals invalid-args)
+                                 invalid-args)))))))))))
+
+(defn build-failure []
+  (throw (Exception.
+          (str "\n\n"
+               (simple-alert-header2 "EXCEPTION" "[kushi.core/kushi-debug]")
+               "The required entry `:css-dir` is missing from your kushi.edn config"
+               "\n\n"
+               "Its value must be a path relative to proj root e.g \"public/css\" or \"resources/public/css\"."
+               "\n\n"
+               "https://github.com/paintparty/kushi#configuration-options"
+               "\n\n"
+               unbroken-border
+               "\n\n\n"))))
