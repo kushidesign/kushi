@@ -1031,13 +1031,59 @@ The browser console warning will provide you with file and line info.
 <br>
 
 # Defining Components
+Below is a contrived example of creating a reusable, stateless, and composable component using `kushi.ui.core/defcom`.
 
 
-Below is a contrived example of creating a reusable, stateless, and composable component. This is a component definition pattern that relies on using the `kushi.ui.core/opts+children` helper fn. It optionally makes use of the kushi.core/merge-sx to enable decoratability. Using this pattern will result in a function that accepts an optional attributes map + any number of children, meaning the signature at the call site mirrros hiccup itself.
+```Clojure
+(ns myapp.core
+  (:require
+   [kushi.core :refer [sx]]
+   [kushi.ui.core :refer [defcom]]))
 
-It also pulls out any keys passed in the attr map that start with `:-` and puts them in a separate `opts` map. This allows passing in various custom options within the attributes map that will not clash with existing html attributes.
+(defcom my-section
+  (let [{:keys [label label-attrs body-attrs]} &opts]
+    [:section
+     &attrs
+     (when label
+       [:div label-attrs label])
+     [:div body-attrs &children]]))
+```
 
-Note in the example below we are using the `(into [:div ] ...)` for the parent node of our `children`. This is because Reagent likes everything in vectors.
+`defcom` is a macro that returns a component rendering function which accepts an optional attributes map, plus any number of children. This means the signature at the call site mirrros hiccup itself.
+
+Under the hood, defcom pulls out any keys in attr map that start with `:-` and put them in a separate `opts` map. This allows passing in various custom options within the attributes map that will not clash with existing html attributes. This opts map can referenced be referenced in the defcom body with the `&opts` binding. `&attrs` and `&children` are also available. This ampersand-leading naming convention takes its cue from the special `&form` and `&env` bindings used by Clojure's own `defmacro`.
+
+Assuming your are using something like Reagent, you can use the resulting `my-section` component (from the above example)
+in your application code like so:
+
+```Clojure
+;; Basic, no label
+[my-section [:p "Child one"] [:p "Child two"]]
+
+;; With optional label
+[my-section (sx {:-label "My Label"}) [:p "Child one"] [:p "Child two"]]
+
+;; With all the options and additional styling
+[my-section
+ (sx
+  'my-section-wrapper    ; Provides custom classname (instead of auto-generated).
+  :.xsmall               ; Font-size utility class.
+  :p--1rem               ; Padding inside component.
+  :b--1px:solid-black    ; Border around component.
+  {:-label "My Label"
+   :-label-attrs (sx :.huge :c--red)
+   :-body-attrs (sx :bgc--#efefef)})
+ [:p "Child one"]
+ [:p "Child two"]]
+
+```
+<br>
+
+###Manually defining complex components
+
+ If, for some reason, you don't want use the `defcom` to define your complex components, you can use the same underlying pattern that defcom abstracts. This component definition pattern relies on using the `kushi.ui.core/opts+children` helper fn. It optionally makes use of the kushi.core/merge-sx to enable decoratability, and also uses the `(into [:div ] ...)` for the parent node of the `children`.
+
+The `my-section` function below would result in the exact same component as the previous example that used `defmacro`.
 
 ```Clojure
 (ns myapp.core
@@ -1062,34 +1108,9 @@ The example above assumes the following:
 <br>
 - The optional attributes map may contain the custom attributes `:-label`, `:-label-attrs`, `:-body-attrs`.
 <br>
-- The values of `:-label-attrs` and `:-body-attrs` html attribute maps.
+- The values of `:-label-attrs` and `:-body-attrs` are html attribute maps.
 
-The helper function `kushi.ui.core/opts+children` will pull any keys prefixed with `:-` out of the attributes map and into a user `opts` map. `opts+children` always returns a vector in the form of `[user-opts attr child & more-childs]`
-
-
-Assuming your are using something like Reagent, you can use the resulting `my-section` component in your application code like so:
-
-```Clojure
-;; Basic, no label
-[my-section [:p "Child one"] [:p "Child two"]]
-
-;; With optional label
-[my-section (sx {:-label "My Label"}) [:p "Child one"] [:p "Child two"]]
-
-;; With all the options and additional styling
-[my-section
- (sx
-  'my-section-wrapper    ; Provides custom classname (instead of auto-generated).
-  :.xsmall               ; Font-size utility class.
-  :p--1rem               ; Padding inside component.
-  :b--1px:solid-black    ; Border around component.
-  {:-label "My Label"
-   :-label-attrs (sx :.huge :c--red)
-   :-body-attrs (sx :bgc--#efefef)})
- [:p "Child one"]
- [:p "Child two"]]
-
-```
+The helper function `kushi.ui.core/opts+children` will pull any keys prefixed with `:-` out of the attributes map and into a user `opts` map. `opts+children` always returns a vector in the form of `[user-opts attr child & more-childs]`.
 
 <!-- ### Theming
 You can theme -->
