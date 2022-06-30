@@ -9,6 +9,8 @@
    [kushi.ui.tooltip.events :refer (tooltip-mouse-leave tooltip-mouse-enter)]))
 
 (defn button
+  {:desc ["Buttons provide cues for actions and events."
+          "These fundamental components allow users to process actions or navigate an experience."]}
   [& args]
   (let [[_ attrs & children] (opts+children args)]
     [:button
@@ -16,29 +18,26 @@
       (sx 'kushi-button
           :.transition
           :.pointer
+          :.relative
           :>span:p--0.8em:1.2em
-          {:data-kushi-ui :button})
+          {:data-kushi-ui      :button
+           :data-kushi-tooltip true
+           :aria-expanded      "false"
+           :on-mouse-enter     tooltip-mouse-enter
+           :on-mouse-leave     tooltip-mouse-leave
+           })
       attrs)
      [apply
       label
-      {:data-kushi-tooltip true
-       :aria-expanded      "false"
-       :on-mouse-enter     tooltip-mouse-enter
-       :on-mouse-leave     tooltip-mouse-leave}
       children]]))
 
 #_(defcom+ button
   [:button
    (merge-with-style
-    ;; label-base-sx
-    (sx
-     'kushi-button
-     :.transition
-     {:style {:>span:padding [[:0.8em :1.2em]]
-              :cursor        :pointer}
-      :id    {:data-kushi-ui    :button}})
+    (sx 'kushi-button
+        :.transition
+        :.pointer
+        :>span:p--0.8em:1.2em
+        {:data-kushi-ui :button})
     &attrs)
-   [apply label &children]
-   #_[:span &children]]
-  ;; fn for processing children
-  #(if (string? %) [:span.kushi-label-text %] %))
+   [apply label &children]])
