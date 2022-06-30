@@ -95,25 +95,25 @@
 (defn collapse
   {:desc ["A section of content which can be collapsed and expanded."]
    :opts '[{:name    label
-            :type    {:pred string?}
+            :type    :string
             :default nil
             :desc    "The text to display in the collapse header."}
            {:name    label-expanded
-            :type    {:pred string?}
+            :type    :string
             :default nil
             :desc    "The text to display in the collapse header when expanded. Optional."}
            {:name    icon
-            :type    {:pred string?}
+            :type    :string
             :default "add"
             :desc    ["The [name of the Material Icon](https://fonts.google.com) to use in the collapse header."
                       "Optional."]}
            {:name    icon-expanded
-            :type    {:pred string?}
+            :type    :string
             :default "remove"
             :desc    ["The [name of the Material Icon](https://fonts.google.com) to use in the collapse header when expanded."
                       "Optional."]}
            {:name    icon-position
-            :type    {:pred keyword? :enum [:start :end]}
+            :type    #{:start :end}
             :default :start
             :desc    ["A value of `:start` will place the at the inline start of the header, preceding the label."
                       "A value of `:end` will place the icon at the inline end of the header, opposite the label."

@@ -8,14 +8,14 @@
 (defn grid
   {:desc ["Flexible grid layout with fixed-aspect ratio grid-items"]
    :opts '[{:name    column-min-width
-            :type    {:pred [:or string? keyword?]}
+            :type    :keyword
             :default :150px
             :desc    ["The minimum width of the columns."
                       "The width of the columns will expand evenly to fill out the parent container."
                       "Value must be a string or keyword representing a"
                       "[valid CSS value for `min-width`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)"]}
            {:name    aspect-ratio
-            :type    {:pred [:or string? keyword?]}
+            :type    :keyword
             :default :1:1
             :desc    ["The aspect ratio of the grid cells."
                       "Value must be a string or keyword representing a formula of width to height."
@@ -23,7 +23,7 @@
                       "while a value of `:2:3` would result in elements with a portrait orientation."]}
            {
             :name    gap
-            :type    {:pred [:or string? keyword?]}
+            :type    :keyword
             :default "20px"
             :desc    ["The aspect ratio of the grid cells."
                       "Value must be a string or keyword representing a"
