@@ -109,7 +109,7 @@ The above example would be written like this:
 ```
 <br>
 If you want to go faster, write your styles as tokenized keywords.<br>
-This is similar to Tachyons/Tailwind, but much more helpful in learning actual CSS (or much more intuitive if you are an existing CSS expert).
+This is similar to Tachyons/Tailwind, but much more helpful in learning actual CSS (and much more intuitive if you are an existing CSS expert).
 ```Clojure
 (defn my-component []
  [:div
@@ -121,13 +121,13 @@ This is similar to Tachyons/Tailwind, but much more helpful in learning actual C
 <br>
 In all three examples above, the `sx` macro would return the following attribute map with an auto-generated value for the `class` attribute:
 ```Clojure
-{:class "_c7338"
+{:class "_680769808"
  :id    :my-id}
 ```
 
 When your build finishes, the following css will be written to disk:
 ```css
- ._c7338 { color: red; text-align: center; font-size: 18px; }
+ ._680769808 { color: red; text-align: center; font-size: 18px; }
 ```
 <br>
 If you need or want to define your own classnames, you can leverage kushi's flexible and robust [naming and prefixing options](#prefixing-options). You can supply your own classname by passing a quoted symbol as the first argument to sx:
@@ -148,7 +148,7 @@ The above call to `sx` would generate the following attribute map:
 
 And the following css will be written to disk:
 ```css
- .foo-bar { color: red; text-align: center; font-size: 18px; }
+ .foobar { color: red; text-align: center; font-size: 18px; }
 ```
 <br>
 
@@ -177,32 +177,29 @@ Keywords containing `--` represent a css prop and value pair (split on `--`).
 
 Some more examples, using kushi's optional shorthand grammer.
 ```Clojure
-:c--red   ; :color--red
-:ai--c    ; :align-items--center
-:ai--e    ; :align-items--end
-:ta--r    ; :text-align--right
-:fs--18px ; :font-size--18px
-:d--b     ; :display--block
-:d--f     ; :display--flex
-:bgs--50% ; :background-size--50%
+:c--red    ; :color--red
+:ai--c     ; :align-items--center
+:ai--e     ; :align-items--end
+:ta--r     ; :text-align--right
+:bgs--50%  ; :background-size--50%
+:fs--18px  ; :font-size--18px
+:ff--serif ; :font-family--serif
 ```
 This shorthand grammer is available for the most commonly used props:
 ```Clojure
 :ai   ; :align-items
 :b    ; :border
-:bb   ; :border-bottom
 :bc   ; :border-color
+:bi   ; :border-inline
+:bb   ; :border-block
+:bs   ; :border-style
+:bw   ; :border-width
 :bg   ; :background
 :bgc  ; :background-color
 :bgi  ; :background-image
 :bgp  ; :background-position
 :bgr  ; :background-repeat
 :bgs  ; :background-size
-:bl   ; :border-left
-:br   ; :border-right
-:bs   ; :border-style
-:bt   ; :border-top
-:bw   ; :border-width
 :c    ; :color
 :d    ; :display
 :ff   ; :font-family
@@ -214,16 +211,20 @@ This shorthand grammer is available for the most commonly used props:
 :ji   ; :justify-items
 :lh   ; :line-height
 :m    ; :margin
-:mb   ; :margin-bottom
-:ml   ; :margin-left
-:mr   ; :margin-right
-:mt   ; :margin-top
+:mb   ; :margin-block
+:mbs  ; :margin-block-start
+:mbe  ; :margin-block-end
+:mi   ; :margin-inline
+:mis  ; :margin-inline-start
+:mie  ; :margin-inline-end
 :o    ; :opacity
 :p    ; :padding
-:pb   ; :padding-bottom
-:pl   ; :padding-left
-:pr   ; :padding-right
-:pt   ; :padding-top
+:pb   ; :padding-block
+:pbs  ; :padding-block-start
+:pbe  ; :padding-block-end
+:pi   ; :padding-inline
+:pis  ; :padding-inline-start
+:pie  ; :padding-inline-end
 :ta   ; :text-align
 :td   ; :text-decoration
 :tt   ; :text-transform
@@ -231,7 +232,7 @@ This shorthand grammer is available for the most commonly used props:
 :ws   ; :white-space
 :zi   ; :z-index
 ```
-See the complete list of supported css properties [here](https://github.com/paintparty/kushi/blob/doc/kushi-shorthand-reference.md).
+See the complete list of supported css properties [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-shorthand-reference.md).
 
 Shorthand grammer extends to cover enumerated values:
 ```Clojure
@@ -266,7 +267,7 @@ Note that the enumerated value`:none`, as well as global properties such as `inh
 ;; This will work
 :td--revert ;=> text-decoration: revert;
 ```
-See the complete list of supported enum values [here](https://github.com/paintparty/kushi/blob/doc/kushi-shorthand-reference.md).
+See the complete list of supported enum values [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-shorthand-reference.md).
 
 <br>
 
@@ -288,11 +289,11 @@ Sometimes you need to use dynamic values based on application state.
 
 Both examples above would result in the following attribute map:
 ```Clojure
-{:class "_a402294" :style "--mycolor:red"}
+{:class "_617784030" :style "--mycolor:red"}
 ```
-And the following css would be written:
+And the following css would be written to disk:
 ```css
-._a402294 {color: var(--mycolor)}
+._617784030 {color: var(--mycolor)}
 ```
 <br>
 
@@ -328,7 +329,7 @@ When using `kushi.core/cssfn` to construct a value:
 ### Using `cssfn`
 As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
 ```Clojure
-(sx {:style {:c (cssfn :rgba 0 200 100 0.4)}})
+(sx {:style {:color (cssfn :rgba 0 200 100 0.4)}})
 
 ;; The above example is equivalent to:
 (sx {:style {:color "rgba(0, 200, 100, 0.4)"})
@@ -338,7 +339,7 @@ As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
 <br>
 
 ### CSS Shorthand Properties
-[CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are properties that let you set the values of multiple other CSS properties simultaneously. You can write them like this:
+[CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are properties that let you set the values of multiple other CSS properties simultaneously. With kushi, you can write them like this:
 
 ```Clojure
 ;; with tokenized keyword
