@@ -1,10 +1,9 @@
 (ns kushi.ui.modal.core
   (:require [kushi.ui.card.core :refer (card)]
-            [kushi.utils :refer (merge-with-style)]
             [kushi.ui.button.core :refer (button)]
             [kushi.ui.card.core :refer (card)]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.core :refer-macros (sx cssfn defclass)]))
+            [kushi.core :refer (merge-with-style) :refer-macros (sx cssfn defclass)]))
 
 (defn close-kushi-modal [e]
   (let [modal-parent (.closest (-> e .-target) ".kushi-modal")]
@@ -59,11 +58,12 @@
                          "&[aria-modal='false']:display" :none
                          :z                              1}})
        (:scrim parts))
-      [card (merge-with-style
-             (sx :.elevated
-                 :.flex-col-c
-                 :ai--c
-                 :w--600px
-                 :h--350px)
-             (:panel parts))
-       [:<> [dismiss-button] children]]]]))
+      (into [card (merge-with-style
+                   (sx :.elevated
+                       :.flex-col-c
+                       :ai--c
+                       :w--600px
+                       :h--350px)
+                   (:panel parts))
+             [dismiss-button]]
+            children)]]))
