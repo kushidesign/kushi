@@ -7,6 +7,7 @@
    [garden.core :as garden]
    [garden.stylesheet :refer [at-font-face]]
    [kushi.config :refer [user-config]]
+   [kushi.ui.basetheme :as basetheme]
    [kushi.arguments :as arguments :refer [args->map]]
    [kushi.printing :as printing]
    [kushi.state :as state]
@@ -226,15 +227,20 @@
   (let [sym                      (if (keyword? sym) (symbol sym) sym)
         defclass-name            (keyword sym)
         last*                    (last args)
-        style-map                (when (map? last*) last*)
-        style-tokens             (if style-map (drop-last args) args)
-        style-map-vecs           (some-> style-map style-map->vecs)
-        coll                     (concat style-tokens style-map-vecs)
-        {:keys
-         [valid-styles-from-attrs
-          valid-styles-from-tokens
-          invalid-style-args]}     (arguments/validate-args args style-tokens {:style style-map})
-
+        style-map*                (when (map? last*) last*)
+        tokens*                  (if style-map* (drop-last args) args)
+        [class-tokens* tokens]   (util/partition-by-spec ::specs/tokenized-classes tokens*)
+        class-tokens             (arguments/defclass-class-tokens class-tokens*)
+        style-map-vecs           (some-> style-map* style-map->vecs)
+        coll                     (concat tokens style-map-vecs)
+        distinct-defclasses      (->> class-tokens :from-tokens :distinct-classes)
+        tokens-from-mixins       (mapv :tokens distinct-defclasses)
+        style-maps-from-mixins   (mapv #(->> % (get @state/utility-classes) :style-map) distinct-defclasses)
+        style-map                (->> style-map* (conj style-maps-from-mixins) (apply merge))
+        tokens                   (into [] (remove nil? (concat tokens-from-mixins tokens)))
+        {:keys [valid-styles-from-attrs
+                valid-styles-from-tokens
+                invalid-style-args]}     (arguments/validate-args args tokens {:style style-map})
         invalid-args             (or
                                   (when-not (s/valid? ::specs/defclass-name sym) ^:classname [sym])
                                   invalid-style-args)
@@ -243,34 +249,48 @@
                 selector*
                 hydrated-styles
                 garden-vecs]}    (hydrated-defclass defclass-name classtype styles)
-        warnings                 (when invalid-args
-                                   {:defclass-name defclass-name
-                                    :args          (apply vector args)
-                                    :invalid-args  invalid-args})
-        ret                       {:n             defclass-name
-                                   :args          hydrated-styles}]
 
-    (!?+ (keyed last* style-map style-tokens style-map-vecs coll))
+        warnings                (when invalid-args
+                                  {:defclass-name defclass-name
+                                   :args          (apply vector args)
+                                   :invalid-args  invalid-args})]
+
+    #_(when (when (= sym 'hi) (?+ args))
+      (?+ (keyed
+           garden-vecs
+          ;;  last*
+           style-map
+           distinct-defclasses
+           style-maps-from-mixins
+           tokens
+          ;;  style-map-vecs
+          ;;  coll
+           )))
     ;; (?+ styles)
 
     ;; TODO remove or consolidate :n and :args entry
     ;; ...they are redundant with :defclass-name and :hydrated-styles
     (merge {:n    defclass-name
             :args hydrated-styles}
-           (keyed defclass-name
-                  coll
-                  invalid-args
-                  hydrated-styles
-                  warnings
-                  garden-vecs
-                  classtype
-                  selector
-                  selector*))))
-
+           (keyed
+            defclass-name
+            style-map*
+            style-map
+            tokens
+            class
+            coll
+            invalid-args
+            hydrated-styles
+            warnings
+            garden-vecs
+            classtype
+            selector
+            selector*))))
 
 
 (defn- defclass-exception-args [{:keys [args ex] :as m}]
   (merge m (exception-args m)))
+
 
 (defn defclass-dispatch [{:keys [sym form-meta args] :as m*}]
   (reset! state/current-macro :defclass)
@@ -283,6 +303,7 @@
       (state/add-utility-class! result)
       (state/update-cache! cache-map result)
 
+      (when (state/debug?) result)
       (printing/simple-defclass-warning m* result)
       ;; If this is an base class, add an override-class version
       (let [base->override {:user-utility  :user-utility-override
@@ -302,16 +323,13 @@
           printing/caught-exception))))
 
 
-
-
 (defmacro ^:public defclass
   [sym & args]
   (when-not (defclass-noop? sym args)
     (try
       (defclass-dispatch {:sym       sym
                           :args      args
-                          :form-meta (meta &form)})
-      )
+                          :form-meta (meta &form)}))
     `(do nil)))
 
 
@@ -321,6 +339,7 @@
 (defn- sx-dispatch
   [{:keys [form-meta args]
     :or   {form-meta {}}}]
+  (reset! state/current-op (assoc {} :macro :sx :fname "sx" :args args :form-meta form-meta))
   (let [{:keys [cache-key
                 cached]
          :as   cache-map}         (state/cached :sx args)
@@ -331,10 +350,12 @@
                                       (args->map (keyed args
                                                         form-meta
                                                         cache-key)))]
-
+    (swap! state/current-op merge (select-keys m [:invalid-style-args :kushi-attr :bad-mods :fname]))
     (state/register-utility-class-usage! distinct-classes)
     (state/update-cache! cache-map m)
     (state/add-styles! garden-vecs inj-type)
+    ;; TODO use simple warning (after adding improved humanized error formatting)
+    #_(printing/simple-sx-warning)
     (printing/set-warnings!)
     (printing/print-warnings!)
     m))
@@ -349,7 +370,6 @@
          (exception-args m)
          {:commentary (str "The element you are trying to style" "\n"
                            "will receive the following attribute map:" "\n"
-                           "\n"
                            (with-out-str (pprint (sx-attrs-sans-styling args))))}))
 
 (defmacro ^:public sx
@@ -404,18 +424,17 @@
                tokens-in-theme
                styles
                utility-classes]} theme/theme]
-   (when (and (not (false? (:css-reset? user-config))) css-reset )
-     (doseq [[selector m] (partition 2 css-reset)
-             :when        (s/valid? ::specs/css-reset-selector selector)
-             :let         [el       (when css-reset-el (str (name css-reset-el) " "))
-                           selector (if (vector? selector)
-                                      (let [el-bs     (when (and el (= m {:box-sizing :border-box}))
-                                                        [el (str el "::before") (str el "::after")])
-                                            prepended (map #(str el %) selector)
-                                            coll      (concat el-bs prepended)]
-                                        (string/join ", " coll))
-                                      selector)]]
-       (sx-dispatch {:args [selector {:style m :kushi/sheet :reset}]})))
+   (doseq [[selector m] (partition 2 css-reset)
+           :when        (s/valid? ::specs/css-reset-selector selector)
+           :let         [el       (when css-reset-el (str (name css-reset-el) " "))
+                         selector (if (vector? selector)
+                                    (let [el-bs     (when (and el (= m {:box-sizing :border-box}))
+                                                      [el (str el "::before") (str el "::after")])
+                                          prepended (map #(str el %) selector)
+                                          coll      (concat el-bs prepended)]
+                                      (string/join ", " coll))
+                                    selector)]]
+     (sx-dispatch {:args [selector {:style m :kushi/sheet :reset}]}))
 
    ;; TODO test w prod-build
    (when @state/KUSHIDEBUG
@@ -424,7 +443,6 @@
 
    (doseq [tok tokens-in-theme] (state/add-used-token! tok))
 
-   (!?+ :bout-to-add-utils)
    (add-utility-classes! utility-classes :kushi-utility)
   ;;  (add-utility-classes! base-classes :kushi-utility)
   ;;  (add-utility-classes! override-classes :kushi-utility-override)
@@ -436,9 +454,8 @@
 (defn kushi-debug
   {:shadow.build/stage :compile-prepare}
   [build-state]
-
-  #_(state/reset-build-states!)
-  #_(!?+ :reset-done!)
+  (when-not (:css-dir user-config)
+    (printing/build-failure))
   (let [mode (:shadow.build/mode build-state)]
     (when (not= mode :dev)
       (reset! state/KUSHIDEBUG false)))
@@ -474,5 +491,4 @@
         [_ seconds]  (when s (re-find #"^([0-9]+)s$" s))
         n  (or microseconds (some-> seconds (* 1000)))
         ret (when n (Integer/parseInt n))]
-    (println :macro ret)
     `~ret))
