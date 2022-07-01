@@ -10,39 +10,39 @@
 <br>
 
 
-**Native ClojureScript styling solution**
+**✷ &nbsp; Native ClojureScript styling solution**
 
-**Shorthand syntax based on standard CSS**
+**✷ &nbsp; Shorthand syntax shadows CSS standard**
 
-**Co-locates all styles at the element level**
+**✷ &nbsp; Co-location of styling at the element level**
 
-**Compile-time macros generate static css**
+**✷ &nbsp; Compile-time macros generate static css**
 
-**Supports media-queries, psuedos, and combo selectors**
+**✷ &nbsp; Supports media-queries, psuedos, and combo selectors**
 
-**Leverages CSS variables for runtime dynamics**
+**✷ &nbsp; Leverages CSS variables for runtime dynamics**
 
-**Composable, user-defined shared classes**
+**✷ &nbsp; Composable, user-defined shared classes**
 
-**Ships with a small handful of useful utility classes**
+**✷ &nbsp; Ships with a small handful of useful css utility classes**
 
-**Includes a default industry-standard breakpoint scale**
+**✷ &nbsp; Includes a default industry-standard breakpoint scale**
 
-**Predefined scales for typography, widths, & more**
+**✷ &nbsp; Predefined scales for typography, widths, & more**
 
-**Auto-generated selectors to avoid pontential collisions**
+**✷ &nbsp; Auto-generated selectors to avoid pontential collisions**
 
-**Robust and flexible selector prefixing options**
+**✷ &nbsp; Robust and flexible selector prefixing options**
 
-**Enhanced debugging via metadata**
+**✷ &nbsp; Enhanced debugging via metadata**
 
-**Detailed warnings for the terminal and browser**
+**✷ &nbsp; Detailed warnings for the terminal and browser**
 
-**Framework & build-tool agnostic**
+**✷ &nbsp; Framework & build-tool agnostic**
 
-**Ships with minimal set of headless UI components**
+**✷ &nbsp; Ships with minimal set of headless UI components**
 
-**Themeable design token system**
+**✷ &nbsp; Themeable design token system**
 
 
 
@@ -75,7 +75,7 @@ Usage with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https:/
 
 For a well commented, feature-complete minimal project template, please see [kushi-quickstart](https://github.com/paintparty/kushi-quickstart).
 
-[Checkout interactive documentation of pre-built components in the `kushi.ui` namespace](https://paintparty.github.io/kushi/public/index.html).
+[Checkout interactive playground of pre-built headless UI components from the `kushi.ui` namespace](https://paintparty.github.io/kushi/public/index.html).
 <br>
 
 # Syntax
@@ -105,6 +105,7 @@ The above example would be written like this:
                :ta :c
                :fs :18px}})])
 ```
+
 <br>
 If you want to go faster, write your styles as tokenized keywords.<br>
 This is similar to Tachyons/Tailwind, but much more helpful in learning actual CSS (and much more intuitive if you are an existing CSS expert).
@@ -116,6 +117,7 @@ This is similar to Tachyons/Tailwind, but much more helpful in learning actual C
       :fs--18px
       {:id :my-id})])
 ```
+
 <br>
 In all three examples above, the `sx` macro would return the following attribute map with an auto-generated value for the `class` attribute:
 ```Clojure
