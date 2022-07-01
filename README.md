@@ -97,6 +97,7 @@ Simply wrap your attributes with the `kushi.core/sx` macro:
 <br>
 Kushi promotes a simple shorthand grammer which shadows standard CSS.
 The above example would be written like this:
+
 ```Clojure
 (defn my-component []
  [:div
