@@ -110,6 +110,7 @@ The above example would be written like this:
 <br>
 If you want to go faster, write your styles as tokenized keywords.<br>
 This is similar to Tachyons/Tailwind, but much more helpful in learning actual CSS (and much more intuitive if you are an existing CSS expert).
+
 ```Clojure
 (defn my-component []
  [:div
@@ -121,17 +122,20 @@ This is similar to Tachyons/Tailwind, but much more helpful in learning actual C
 
 <br>
 In all three examples above, the `sx` macro would return the following attribute map with an auto-generated value for the `class` attribute:
+
 ```Clojure
 {:class "_680769808"
  :id    :my-id}
 ```
 
 When your build finishes, the following css will be written to disk:
+
 ```css
  ._680769808 { color: red; text-align: center; font-size: 18px; }
 ```
 <br>
-If you need or want to define your own classnames, you can leverage kushi's flexible and robust [naming and prefixing options](#prefixing-options). You can supply your own classname by passing a quoted symbol as the first argument to sx:
+
+If you need or want to define your own classnames, you can leverage kushi's flexible and robust [prefixing options](#prefixing-options). You can supply your own classname by passing a quoted symbol as the first argument to sx:
 
 ```Clojure
 (defn my-component []
