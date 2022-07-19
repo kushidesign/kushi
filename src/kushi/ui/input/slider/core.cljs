@@ -1,12 +1,50 @@
 (ns kushi.ui.input.slider.core
   (:require
-   [kushi.core :refer (sx merge-with-style insert-style-tag!)]
+   [par.core :refer-macros [!? ?]]
+   [clojure.string :as string]
+   [kushi.core :refer (sx defclass merge-with-style insert-style-tag!)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.input.slider.css]
+   [kushi.ui.util :refer [range-of-floats]]
    [playground.shared-styles]
-   [playground.util :as util :refer-macros (keyed)] ))
+   [playground.util :as util :refer-macros (keyed)]))
 
 (insert-style-tag! "kushi-slider-styles" kushi.ui.input.slider.css/css)
+
+;; ----------------------------------------------------------------------------
+;; Styles for marker-labels
+;; ----------------------------------------------------------------------------
+
+(defclass kushi-slider-step-label-marker
+  {:>span:v                                           :hidden
+   :before:fw                                         :800
+   :before:fs                                         :1.2rem
+   :before:o                                          :0.7
+   :before:position                                   :absolute
+   :before:top                                        :50%
+   :before:left                                       :50%
+   :before:transform                                  "translate(-50%, -50%)"
+   :&.kushi-slider-step-label-selected:before:content :unset})
+
+(defclass kushi-slider-step-label-marker-dot
+  :.kushi-slider-step-label-marker
+  {:before:fw :800
+   :before:fs :1.2rem
+   :before:o  :0.7})
+
+(defclass kushi-slider-step-label-marker-bar
+  :.kushi-slider-step-label-marker
+  {:before:fw :300
+   :before:fs :0.8em
+   :before:o  :1})
+
+(defclass kushi-slider-step-label-marker-none
+  :.kushi-slider-step-label-marker
+  {:before:fw :300
+   :before:fs :0.8em
+   :before:o  :1})
+
+;; ----------------------------------------------------------------------------
 
 (defn find-index [pred coll]
   (first
@@ -15,16 +53,20 @@
       (when (pred x) i))
     coll)))
 
-(defn slider-steps [steps* min max]
+(defn- slider-steps
+  [steps* min max step]
   (map #(name (if (number? %) (str %) %))
        (or steps*
            (let [[min max] (when (and (number? min)
                                       (number? max)
                                       (< min max))
-                             [min max])]
-             (range (or min 0) (inc (or max 100)))))))
+                             [min max])
+                 ret       (if (int? step)
+                             (range (or min 0) (inc (or max 10)) step)
+                             (range-of-floats min max step))]
+             ret))))
 
-(defn slider-default-index
+(defn- slider-default-index
   [supplied-idx v steps* steps]
   (let [ret* (or supplied-idx
                  (cond
@@ -40,13 +82,15 @@
         ret (or ret* (js/Math.round (/ (-> steps count dec) 2)))]
     ret))
 
-(defn slider-labels
+
+(defn- slider-labels
   [{:keys [steps
            num-steps
            default-index
            label-selected-class
            label-size-class
-           labels-attrs]}]
+           labels-attrs
+           step-marker]}]
   (into [:div
          (merge-with-style
           (sx 'kushi-slider-step-labels
@@ -54,15 +98,25 @@
               :ai--c
               :.relative
               :w--100%
-              :h--0)
+              :h--0
+              {:style {:mbe "calc(10px + 0.5em)"}})
           labels-attrs)]
         (map-indexed
          (fn [idx step]
            (let [calcpct              (str "( (100% - var(--kushi-input-slider-thumb-width)) / " (dec num-steps) ")")
                  inset-inline-start   (str "calc(" calcpct " * " idx "  + ( var(--kushi-input-slider-thumb-width) / 2)  )")
                  default-index?       (= idx default-index)
-                 label-selected-class (when default-index? label-selected-class)]
+                 label-selected-class (when default-index? label-selected-class)
+                 step-marker          (or step-marker :none)
+                 step-marker-dot?     (= step-marker :dot)
+                 step-marker-bar?     (= step-marker :bar)
+                 step-marker-none?     (= step-marker :none)
+                 step-marker-content   (when (contains? #{:dot :bar :none} step-marker)
+                                           (case step-marker :dot "·" :bar "|" " "))]
              [:span (sx 'kushi-slider-step-label
+                        (when step-marker-dot? :.kushi-slider-step-label-marker-dot)
+                        (when step-marker-bar? :.kushi-slider-step-label-marker-bar)
+                        (when step-marker-none? :.kushi-slider-step-label-marker-none)
                         :.absolute
                         :.block
                         :.transition
@@ -70,54 +124,81 @@
                         :ai--c
                         :c--:--gray600
                         :ta--center
-                        {:class [label-size-class label-selected-class]
-                         :style {:inset-inline-start                                inset-inline-start
-                                 :w                                                 0
-                                 :h                                                 0
-                                 :transform                                         "scale(0.8) translateX(-50%)"
-                                 :&.kushi-slider-step-label-selected:transform      "scale(1) translateX(-50%)"
-                                 :&.kushi-slider-step-label-selected:o              1
-                                 :&.kushi-slider-step-label-selected:c              :--primary
-                                 :>span:v                                           :hidden
-                                 :&.kushi-slider-step-label-selected>span:v         :visible
-                                 :before:content                                    "\"·\""
-                                 :before:fw                                         :800
-                                 :before:fs                                         :1.2rem
-                                 :before:o                                          :0.7
-                                 :before:position                                   :absolute
-                                 :before:top                                        :50%
-                                 :before:left                                       :50%
-                                 :before:transform                                  "translate(-50%, -50%)"
-                                 :&.kushi-slider-step-label-selected:before:content :unset}})
+                        {:class [label-size-class
+                                 label-selected-class]
+                         :style {:inset-inline-start                           inset-inline-start
+                                 :w                                            0
+                                 :h                                            0
+                                 :transform                                    "scale(0.8) translateX(-50%)"
+                                 :&.kushi-slider-step-label-selected:transform "scale(1) translateX(-50%)"
+                                 :&.kushi-slider-step-label-selected:o         1
+                                 :&.kushi-slider-step-label-selected:c         :--primary
+                                 :&.kushi-slider-step-label-selected>span:v    :visible
+                                 :before:content                               (when step-marker-content (str "\"" step-marker-content "\"")) }})
               [:span (sx :.absolute-centered) step]]))
          steps)))
 
 (defn slider
+  {:desc ["A slider is a ui element which allows the user to specify a numeric value which must be no less than a given value, and no more than another given value."
+          "By default, values are represented as a numeric scale with a `min` and a `max`."
+          "Note that `:min`, `:max` and `:step` are passed down to the underlying `<input type=range>` element, and do not need to be written with the custom opts syntax."
+          "Checkout [`input range docs`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range) for info on how `min`, `max`, and `step` work."
+          "Alternately, a scale of named, stepped values may be provided with the custom `:-steps` option."]
+   :opts '[{:name    default-value
+            :type    :any
+            :default (:text "The supplied `min` or the first item in the supplied `:-steps` collection.")
+            :desc    "The initial, default value."}
+           {:name    default-index
+            :type    :integer
+            :default 0
+            :desc    "Use `default-index` when you want to set the default value by index. This is the index of the number in a numeric range (with a `min` and `max`), or the index of a value in a supplied `:-steps` collection"}
+           {:name   steps
+            :type    :vector
+            :default nil
+            :desc    "Collection of step values."}
+           {:name   step-marker
+            :type    #{:dot :bar :value :none}
+            :default :none
+            :desc    "Collection of step values."}
+           {:name   label-size-class
+            :type    #{:mini :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :huge}
+            :default true
+            :desc    "Kushi utility class which controls the size of the step label(s)."}
+           {:name   wrapper-attrs
+            :type    :map
+            :default nil
+            :desc    "html attributes map applied to the outer containing div."}
+           {:name   labels-attrs
+            :type    :map
+            :default nil
+            :desc    "html attributes map applied to the step labels containing div."}]}
   [& args]
   (let [[opts
-         attr]                   (opts+children args)
+         attr]                     (opts+children args)
         {:keys [defaultValue
                 default-value
                 min
                 max
-                step]}  attr
+                step]}             attr
         {:keys  [default-index
                  label-size-class
                  wrapper-attrs
-                 labels-attrs]
-         steps* :steps}          opts
-        steps                    (slider-steps steps* min max)
-        num-steps                (count steps)
-        default-val              (or defaultValue default-value)
-        default-index            (slider-default-index default-index default-val steps* steps)
-        label-size-class         (or label-size-class :xsmall)
-        label-selected-class     "kushi-slider-step-label-selected"]
+                 labels-attrs
+                 step-marker]
+         steps* :steps}            opts
+        steps                      (slider-steps steps* min max (or step 1))
+        num-steps                  (count steps)
+        default-val                (or defaultValue default-value)
+        default-index              (slider-default-index default-index default-val steps* steps)
+        label-size-class           (or label-size-class :xsmall)
+        label-selected-class       "kushi-slider-step-label-selected"]
 
-    #_(? (keyed steps
-                num-steps
-                default-index
-                label-size-class
-                label-selected-class))
+    #_(js/console.log  (keyed steps
+                            num-steps
+                            default-index
+                            label-size-class
+                            label-selected-class
+                            opts))
 
     [:div (merge-with-style (sx 'kushi-slider
                                 :.flex-col-c
@@ -132,43 +213,22 @@
                            default-index
                            label-selected-class
                            label-size-class
-                           labels-attrs)]
+                           labels-attrs
+                           step-marker)]
      [:input (merge-with-style
-              (sx {:class     [label-size-class]
-                   :style     {
-                              ;; TODO (low priority) migrate from external slider.css to here
-                              ;;  :--kushi-slider-thumb-sz "21px"
-                              ;;  "-webkit-slider-thumb:width" "var(--kushi-slider-thumb-sz)!important"
-                              ;;  "-webkit-slider-thumb:height"  "var(--kushi-slider-thumb-sz)!important"
-                              ;;  "-webkit-slider-thumb:outline" "calc(var(--kushi-slider-thumb-sz) / 3) solid #000!important"
-                              ;;  "-webkit-slider-thumb:outline-offset" "- calc(var(--kushi-slider-thumb-sz) / 3)!important"
-                              ;;  "-webkit-slider-thumb:margin-top" "calc(0 - var(--kushi-slider-thumb-sz))!important"
-                               :w :100%
-                              ;;  :z 1000
-                               }
-
+              (sx {:class         [label-size-class]
+                   :style         {:w :100%}
                    :data-kushi-ui :input.range
-                   :type      :range
-                  ;;  :min       (str 0)
-                  ;;  :max       (str (-> steps count dec))
-                  ;;  :step      (or step 1)
-                   :on-change #(let [el                  (-> % .-target)
-                                     val                 (js/parseInt (.-value el))
-                                     parent              (.-parentNode el)
-                                     previous-sibling    (.-firstChild parent)
-                                     label-node          (.querySelector previous-sibling
-                                                                         (str ":nth-child(" (+ 1 val) ")"))
-                                     selected-label-node (.querySelector previous-sibling (str "." label-selected-class))
-                                    ;;  step                (name (nth steps val))
-
-                                     ]
-
-                                  ;;  (js/console.log "ln: " label-node)
-                                  ;;  (js/console.log "sln: " selected-label-node)
-                                 (.remove (.-classList selected-label-node) label-selected-class)
-                                  ;;  (js/console.log "selected class: " label-selected-class)
-                                  ;;  (js/console.log label-node)
-                                 (.add (.-classList label-node) label-selected-class))})
+                   :type          :range
+                   :on-change     #(let [el                  (-> % .-target)
+                                         val                 (js/parseInt (.-value el))
+                                         parent              (.-parentNode el)
+                                         previous-sibling    (.-firstChild parent)
+                                         label-node          (.querySelector previous-sibling
+                                                                             (str ":nth-child(" (+ 1 val) ")"))
+                                         selected-label-node (.querySelector previous-sibling (str "." label-selected-class))]
+                                     (.remove (.-classList selected-label-node) label-selected-class)
+                                     (.add (.-classList label-node) label-selected-class))})
               (assoc (or attr {})
                      :defaultValue default-index
                      :min (str 0)
