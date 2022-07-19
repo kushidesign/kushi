@@ -596,30 +596,29 @@
            body-lines-fn
            debug?]
     :as args-map}]
-  ;; #_(? (str "dupe-warning for " (or (:selector m) (:fname m))))
-  (let [{:keys
-         [file-info
-          k
-          dupe-type
-          existing-file-info]
-         :as bindings}        (dupe-warning-bindings m)
-        label                 (or label (str (name dupe-type) " name"))
-        ]
-    #_(?+ bindings)
-    (if existing-file-info
-      (if-not (= file-info existing-file-info)
-        (do
+  (when-not @state/silence-warnings?
+   (let [{:keys
+               [file-info
+                k
+                dupe-type
+                existing-file-info]
+               :as bindings}        (dupe-warning-bindings m)
+              label                 (or label (str (name dupe-type) " name"))]
+          #_(?+ bindings)
+          (if existing-file-info
+            (if-not (= file-info existing-file-info)
+              (do
           ;; (?+ (str label " already used: ") {k file-info})
           ;; (?+ :comment "Returning map of preformatted message-line colls...")
-          (message-lines body-lines-fn m))
-        (do
+                (message-lines body-lines-fn m))
+              (do
           ;; #_(?+ (str label ", non-duplicate: ") file-info)
-          ))
-      (do
+                ))
+            (do
         ;; #_(?+ (str label " not yet used..."))
         ;; #_(?+ "Merging into state/prefixed-selectors:" {k file-info})
-        (swap! state/declarations assoc-in [dupe-type k] file-info)
-        nil))))
+              (swap! state/declarations assoc-in [dupe-type k] file-info)
+              nil)))))
 
 (defn dupe-ident-warning [m]
   (dupe-warning*
@@ -749,19 +748,20 @@
 
 (defn print-warnings! []
   #_(? :print-warnings @state/warnings-terminal)
-  (let [warnings (util/filter-map @state/warnings-terminal (fn [_ v] (not-empty v)))]
-    #_(? :warnings warnings)
-    (doseq [[warning-type warning-or-warnings] warnings]
-      (let [printing-opts @state/current-macro]
-        #_(? (keyed warning-type warning-or-warnings printing-opts))
-        (when warning-or-warnings
-          #_(? :print-warnings:inner (keyed warning-type warning-or-warnings))
-          (case warning-type
-            :bad-nums      (doseq [warning warning-or-warnings]
-                             (println (apply ansiformat/warning-panel warning)))
-            :dupe-ident    (print-dupe2! (merge warning-or-warnings printing-opts))
-            :invalid-style (println (apply ansiformat/warning-panel warning-or-warnings))
-            nil)))))
+  (when-not @state/silence-warnings?
+   (let [warnings (util/filter-map @state/warnings-terminal (fn [_ v] (not-empty v)))]
+     #_(? :warnings warnings)
+     (doseq [[warning-type warning-or-warnings] warnings]
+       (let [printing-opts @state/current-macro]
+         #_(? (keyed warning-type warning-or-warnings printing-opts))
+         (when warning-or-warnings
+           #_(? :print-warnings:inner (keyed warning-type warning-or-warnings))
+           (case warning-type
+             :bad-nums      (doseq [warning warning-or-warnings]
+                              (println (apply ansiformat/warning-panel warning)))
+             :dupe-ident    (print-dupe2! (merge warning-or-warnings printing-opts))
+             :invalid-style (println (apply ansiformat/warning-panel warning-or-warnings))
+             nil))))))
   (reset! state/compilation-warnings [])
   (reset! state/invalid-style-warnings []))
 
