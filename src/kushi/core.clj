@@ -35,6 +35,21 @@
    :top-of-stack-trace (get (.getStackTrace ex) 0)})
 
 
+(defn add-font-face* [m]
+  (let [valid-ks                            (->> ::specs/font-face-map
+                                                 s/describe
+                                                 rest
+                                                 (apply hash-map)
+                                                 vals
+                                                 (apply concat)
+                                                 (map (comp keyword name))
+                                                 (into []))
+        clean-map                           (select-keys m valid-ks)
+        bad-entries                         (into {} (filter (fn [[k _]] (not (get clean-map k))) m))
+        {:keys [caching? cache-key cached]} (state/cached :add-font-face m)
+        aff                                 (or cached (garden/css (at-font-face m)))]
+    (keyed valid-ks bad-entries aff caching? cache-key cached)))
+
 ;; font-loading related
 ;; -------------------------------------------------
 (defmacro ^:public add-font-face
@@ -45,19 +60,7 @@
                    :src [\"local(\\\"Fira Code Bold\\\")\"]})"
   [m]
   (if (s/valid? ::specs/font-face-map m)
-    (let [valid-ks                            (->> ::specs/font-face-map
-                                                   s/describe
-                                                   rest
-                                                  (apply hash-map)
-                                                   vals
-                                                   (apply concat)
-                                                   (map (comp keyword name))
-                                                   (into []))
-          clean-map                           (select-keys m valid-ks)
-          bad-entries                         (into {} (filter (fn [[k _]] (not (get clean-map k))) m))
-          {:keys [caching? cache-key cached]} (state/cached :add-font-face m)
-          aff                                 (or cached (garden/css (at-font-face m)))]
-
+    (let [{:keys [valid-ks bad-entries aff caching? cache-key cached]} (add-font-face* m)]
       (printing/simple-add-font-face-warning
        {:form-meta   (meta &form)
         :args        (list m)
@@ -71,9 +74,7 @@
     (s/explain ::specs/font-face-map m)))
 
 
-
-(defn- system-at-font-face-rules [weights*]
-  
+(defn system-at-font-face-rules [weights*]
   (let [weights   (if (empty? weights*)
                     system-font-stacks
                     (reduce (fn [acc v]
@@ -100,7 +101,6 @@
         ff-rules                            (into []
                                                   (or cached
                                                       (system-at-font-face-rules weights*)))]
-    ;; (?+ weights*)
     (doseq [rule ff-rules]
       (reset! state/current-macro :add-font-face)
       (swap! state/user-defined-font-faces conj rule))
@@ -112,7 +112,7 @@
 
 ;; defkeyframes related
 ;; ----------------------------------------------------
-(defn- keyframe [[k v]]
+(defn keyframe [[k v]]
   (let [frame-key (if (vector? k)
                     (string/join ", " (map name k))
                     (string/replace (name k) #"\|" ","))
@@ -277,7 +277,6 @@
             style-map*
             style-map
             tokens
-            class
             coll
             invalid-args
             hydrated-styles
@@ -312,7 +311,8 @@
           (let [sym (with-meta (-> sym name (str "\\!") symbol) {override-class true})]
             (!?+ :bout-to-dispatch-> (assoc m* :sym sym :sym-meta (meta sym) :classtype-would-be (sym->classtype sym)))
             (defclass-dispatch (assoc m* :sym sym :duplicate-for-override? true))
-            #_(!?+ @state/utility-classes-by-classtype)))))
+            #_(!?+ @state/utility-classes-by-classtype))))
+      result)
     (catch Exception ex
       (-> {:form-meta form-meta
            :fname     "defclass"
@@ -336,7 +336,7 @@
 
 ;; sx related
 ;; -----------------------------------------------------
-(defn- sx-dispatch
+(defn sx-dispatch
   [{:keys [form-meta args]
     :or   {form-meta {}}}]
   (reset! state/current-op (assoc {} :macro :sx :fname "sx" :args args :form-meta form-meta))
@@ -371,6 +371,12 @@
          {:commentary (str "The element you are trying to style" "\n"
                            "will receive the following attribute map:" "\n"
                            (with-out-str (pprint (sx-attrs-sans-styling args))))}))
+
+;; Dupe of public fn in core.cljs. Needed for testing when doing (macroexpand-1 (sx ...)).
+(defn merged-attrs-map
+  [{:keys [attrs-base prefixed-classlist css-vars]
+    :as   m}]
+  (assoc attrs-base :class (distinct prefixed-classlist) :style css-vars))
 
 (defmacro ^:public sx
   [& args]
@@ -462,7 +468,6 @@
   (theme!)
   build-state)
 
-(!?+ @state/utility-classes)
 
 (defmacro inject! []
   (stylesheet/create-css-text)
