@@ -400,8 +400,10 @@ The `kushi.core/defclass` macro makes it easy to create shared styles.<br>
 These should be defined in a dedicated namespace, or set of dedicated namespaces, and required once in your core or main ns.
 
 The example below will generate a data-representation of the css rule-set.
-<br>This data is added to a register (an atom that exists in the build state).
-<br>This css class is only written to disk if a component references it.
+
+This data is added to a register (an atom that exists in the build state).
+
+This css class is only written to disk if a component references it.
 ```Clojure
 (ns myapp.shared-styles
   (:require
