@@ -109,6 +109,17 @@
     :--text-extra-bold    800
     :--text-heavy         900
 
+    ;; Intended for css props: border-weight
+    :--input-border-weight-thin          :0.05em
+    :--input-border-weight-extra-light   :0.07em
+    :--input-border-weight-light         :0.09em
+    :--input-border-weight-normal        :0.1em
+    :--input-border-weight-wee-bold      :0.12em
+    :--input-border-weight-semi-bold     :0.135em
+    :--input-border-weight-bold          :0.165em
+    :--input-border-weight-extra-bold    :0.195em
+    :--input-border-weight-heavy         :0.21em
+
     ;; Intended for css props: font-size
     :--text-mini       :0.625rem
     :--text-xxsmall    :0.7rem
