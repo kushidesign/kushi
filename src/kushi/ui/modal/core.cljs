@@ -34,9 +34,23 @@
                    }})])
 
 (defn modal
-  "Desc for"
+  {:desc ["Modal dialogs create a new floating layer over the current view to get user feedback or display information."]
+   :opts '[{:name    trigger
+            :type    :vector
+            :default nil
+            :desc    ["Required. The element that will trigger the modal when clicked."
+                      :br
+                      "Must have an `on-click` attr that calls `kushi.ui.modal.core/open-kushi-modal`."]}
+           {:name    scrim-attrs
+            :type    :map
+            :default nil
+            :desc    "html attributes map applied to the background scrim `div`."}
+           {:name    panel-attrs
+            :type    :map
+            :default nil
+            :desc    "html attributes map applied to the modal panel `div`"}]}
   [& args]
-  (let [[opts attr & children]  (opts+children args)
+  (let [[opts attr & children]                    (opts+children args)
         {:keys [trigger scrim-attrs panel-attrs]} opts]
     [:div
      (merge-with-style

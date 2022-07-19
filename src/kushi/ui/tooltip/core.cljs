@@ -36,8 +36,9 @@
   {:desc ["Tooltips provide additional context when hovering or clicking on an element."
           :br
           :br
-          "Tooltips in Kushi have no arrow indicator and are placed automatically depending on the parent element's relative postition in the viewport. "
-          "Currently, tooltips are only placed above or below the parent element that they describe."]
+          "Tooltips in Kushi have no arrow indicator and are placed automatically depending on the parent element's relative postition in the viewport."
+          "Tooltips are placed above or below the parent element that they describe."
+          "Exact placement can be achieved via css."]
    :opts '[{:name    display-on-hover?
             :type    :boolean
             :default true

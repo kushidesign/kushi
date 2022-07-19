@@ -4,6 +4,7 @@
             [kushi.ui.label.core :refer (label)]))
 
 (defn title
+  {:desc ["Title is a kind of label, typically used for providing titles to sections of content."]}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys []}             opts]

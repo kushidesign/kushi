@@ -138,6 +138,9 @@
 
 
 (defn accordian
+  {:desc ["A wrapper for multiple instances of the `collapse` component."
+          :br
+          "When `collapse` components are children of the accordian component, they can only be expanded one at a time".]}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys []}              opts]
