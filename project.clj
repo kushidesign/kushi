@@ -8,5 +8,6 @@
                         [io.aviso/pretty "1.1"]
                         [medley "1.3.0"]]
   :repl-options        {:init-ns kushi.core}
+  :profiles            {:dev {:plugins [[com.jakemccrary/lein-test-refresh "0.25.0"]]}}
   :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
                                     :sign-releases false}]])
