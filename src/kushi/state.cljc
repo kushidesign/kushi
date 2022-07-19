@@ -1,9 +1,14 @@
 (ns ^:dev/always kushi.state
   (:require
+   [clojure.pprint :refer [pprint]]
    [kushi.io :refer [load-edn]]
    [kushi.parstub :refer [? !? ?+ !?+]]
    [kushi.atomic :as atomic]
    [kushi.config :refer [user-config kushi-cache-path user-config-args-sx-defclass]]))
+
+(def silence-warnings? (atom false))
+
+(def user-config-args-sx-defclass-stub (atom nil))
 
 (def current-op (atom nil))
 
@@ -145,6 +150,11 @@
 
 ;; TODO - refactor all this stuff into single atom?
 (defn reset-build-states! []
+  ;; user-config-stub (used only for tests)
+  (reset! user-config-args-sx-defclass-stub nil)
+  ;; silence warnings (used only for tests)
+  (reset! silence-warnings? false)
+
   ;; css-sync
   (reset! kushi-css-sync nil)
 
@@ -196,7 +206,7 @@
 
 (defn cached
   "Assuming the following user config:
-   (def user-config {:enable-caching? true
+   (def user-config {:enable-caching? false
                      :kushi-class-prefix  \"hi-\"})
    (cached :sx :p--10px {:id :foo})
    =>
@@ -204,7 +214,10 @@
     :cache-key [:sx {... :kushi-class-prefix \"hi-\" ...} :p--10px {:id :foo}]
     :cached    {...}}"
   [k & more]
-  (let [caching?  (:enable-caching? user-config)
+  (let [caching?  (if @user-config-args-sx-defclass-stub
+                    false
+                    (:enable-caching? user-config))
+        user-config-args-sx-defclass (or @user-config-args-sx-defclass-stub user-config-args-sx-defclass)
         cache-key (hash (apply conj [k user-config-args-sx-defclass] more))
         cached    (when caching? (get @styles-cache-updated cache-key))]
     (!?+ :sym-meta (-> more first meta))
