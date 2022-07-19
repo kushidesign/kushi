@@ -60,9 +60,8 @@
    :log-clean!?          false
    })
 
-(def user-config
-  (let [config*         (let [m (load-edn "kushi.edn")]
-                          (if (map? m) m {}))
+(defn ->user-config [m]
+  (let [config*         m
         user-responsive (apply array-map (:media config*))
         responsive      (if (valid-responsive? user-responsive)
                           user-responsive
@@ -71,13 +70,22 @@
         ret             (merge user-config-defaults ret*)]
     ret))
 
+(def user-config
+  (let [config* (let [m (load-edn "kushi.edn")]
+                  (if (map? m) m {}))]
+    (->user-config config*)))
+
+(defn ->user-config-args-sx-defclass
+  "Takes a merged config and selects only the keys needed for hashing (cache key) for sx and defclass."
+  [m]
+  (select-keys m
+               [:data-attr-name
+                :kushi-class-prepend
+                :kushi-class-prefix
+                :media]))
+
 (def user-config-args-sx-defclass
-  (select-keys
-   user-config
-   [:data-attr-name
-    :kushi-class-prepend
-    :kushi-class-prefix
-    :media]))
+  (->user-config-args-sx-defclass user-config))
 
 (def user-css-file-path
   (str (or (:css-dir user-config) (:static-css-dir user-config))
