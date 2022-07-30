@@ -270,7 +270,7 @@ Note that the enumerated value`:none`, as well as global properties such as `inh
 :td--r
 
 ;; This will work
-:td--revert ;=> text-decoration: revert;
+:td--revert ; => text-decoration: revert;
 ```
 See the complete list of supported enum values [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-shorthand-reference.md).
 
@@ -287,12 +287,12 @@ Sometimes you need to use dynamic values based on application state.
 
 (sx :c--$mycolor)
 
-;; The above is equivalent to:
+;; You could also write this as:
 
 (sx {:style {:color mycolor})
 ```
 
-Both examples above would result in the following attribute map:
+Both examples above would result in the following attribute map.
 ```Clojure
 {:class "_617784030" :style "--mycolor:red"}
 ```
@@ -344,7 +344,7 @@ As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
 <br>
 
 ### CSS Shorthand Properties
-[CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are properties that let you set the values of multiple other CSS properties simultaneously. With kushi, you can write them like this:
+[CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are a fundamental feature of CSS. They are properties that let you set the values of multiple other CSS properties simultaneously. With kushi, you can write them like this:
 
 ```Clojure
 ;; with tokenized keyword
@@ -567,7 +567,7 @@ Detailed documentation on the above classes can be found [here](https://github.c
 
 ### Applying Classes Conditionally
 
-You can apply classes conditionally within the `sx` macro using the following constructs: `if` `when` `cond` `if-let` `when-let` `if-not` `when-not`, and `case`.<br>
+You can apply classes conditionally within the `sx` macro using the following constructs: `if` `when` `cond` `if-let` `when-let` `if-not`, and `when-not`.<br>
 ```Clojure
 ;; In your ns for shared styles
 (defclass active-link :color--red)
@@ -714,8 +714,8 @@ The `.%` token is just stubby syntax for the classname that will be created, and
 (defn my-button [text]
   [:button
    (sx 'foo
-       :section.baz&_.%:color--blue  ;; when `section.foo` ancestor exists
-       :section.dark>.%:color--white ;; when `section.dark` parent exists
+       :section.baz:&_.%:color--blue  ;; when `section.foo` ancestor exists
+       :section.dark:>.%:color--white ;; when `section.dark` parent exists
        {:on-click #(prn "clicked!")})
      text])
 
