@@ -28,7 +28,7 @@
     (sx
      'kushi-mui-icon
      :.transition
-     :.material-icons-outlined
+     :.material-icons-round
      {:data-kushi-ui :icon.mui.round
-      :style         {:&.material-icons:fs "var(--mui-icon-relative-font-size)"}})
+      :style         {:&.material-icons-round:fs "var(--mui-icon-relative-font-size)"}})
     &children]])

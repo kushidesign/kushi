@@ -10,14 +10,6 @@
                     :href "https://fonts.googleapis.com"})
 (inject-stylesheet {:rel "stylesheet"
                     :href "https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"})
-#_(def mui-icon-span
-  [:span:!children
-   (sx
-    'kushi-mui-icon
-    :.transition
-    :.material-icons-outlined
-    {:data-kushi-ui :icon.mui.outlined
-     :style {:&.material-icons:fs "var(--mui-icon-relative-font-size)"}})])
 
 (defcom mui-icon-outlined
   [:div
@@ -38,5 +30,5 @@
      :.transition
      :.material-icons-outlined
      {:data-kushi-ui :icon.mui.outlined
-      :style         {:&.material-icons:fs "var(--mui-icon-relative-font-size)"}})
+      :style         {:&.material-icons-outlined:fs "var(--mui-icon-relative-font-size)"}})
     &children]])
