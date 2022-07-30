@@ -302,10 +302,10 @@
   (let [[m1 m2]                   (map #(if (map? %) % {}) maps)
         {style1 :style
          class1 :class
-         data-cljs1 :data-cljs}     m1
+         data-cljs1 :data-cljs}   m1
         {style2 :style
          class2 :class
-         data-cljs2 :data-cljs}     m2
+         data-cljs2 :data-cljs}   m2
         [bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
         [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i)) [class1 class2])
         merged-style              (merge (when-not bad-style1? style1) (when-not bad-style2? style2))
@@ -324,4 +324,4 @@
 
 ;; Public function for style decoration
 (defn merge-with-style [& maps]
- (reduce merge-with-style* maps))
+  (reduce merge-with-style* maps))
