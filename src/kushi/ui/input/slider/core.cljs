@@ -89,6 +89,7 @@
            default-index
            label-selected-class
            label-size-class
+           label-scale-factor
            labels-attrs
            step-marker]}]
   (into [:div
@@ -129,7 +130,7 @@
                          :style {:inset-inline-start                           inset-inline-start
                                  :w                                            0
                                  :h                                            0
-                                 :transform                                    "scale(0.8) translateX(-50%)"
+                                 :transform                                    (str "scale(" label-scale-factor ") translateX(-50%)")
                                  :&.kushi-slider-step-label-selected:transform "scale(1) translateX(-50%)"
                                  :&.kushi-slider-step-label-selected:o         1
                                  :&.kushi-slider-step-label-selected:c         :--primary
@@ -162,8 +163,12 @@
             :desc    "Collection of step values."}
            {:name   label-size-class
             :type    #{:mini :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :huge}
-            :default true
-            :desc    "Kushi utility class which controls the size of the step label(s)."}
+            :default :small
+            :desc    "Kushi text-size utility class which controls the size of the step label(s)."}
+           {:name   label-scale-factor
+            :type    :float
+            :default 0.7
+            :desc    "Factor to scale down labels in range which are not selected. Must be positive float and <= 1.0."}
            {:name   wrapper-attrs
             :type    :map
             :default nil
@@ -182,6 +187,7 @@
                 step]}             attr
         {:keys  [default-index
                  label-size-class
+                 label-scale-factor
                  wrapper-attrs
                  labels-attrs
                  step-marker]
@@ -190,7 +196,10 @@
         num-steps                  (count steps)
         default-val                (or defaultValue default-value)
         default-index              (slider-default-index default-index default-val steps* steps)
-        label-size-class           (or label-size-class :xsmall)
+        label-size-class           (or label-size-class :medium)
+        label-scale-factor         (cond (= 1 label-scale-factor) 1.0
+                                         (and (float? label-scale-factor) (< label-scale-factor 1.0)) label-scale-factor
+                                         :else 0.7)
         label-selected-class       "kushi-slider-step-label-selected"]
 
     #_(js/console.log  (keyed steps
@@ -213,6 +222,7 @@
                            default-index
                            label-selected-class
                            label-size-class
+                           label-scale-factor
                            labels-attrs
                            step-marker)]
      [:input (merge-with-style
