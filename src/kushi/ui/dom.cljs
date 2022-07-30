@@ -127,21 +127,21 @@ first
 
 (defn set-overlay-position!
   [node parent]
-  (let [[tb lr] (screen-quadrant parent)
-        position-block (.getAttribute node "data-kushi-tooltip-position-block")
+  (let [[tb lr]         (screen-quadrant parent)
+        position-block  (.getAttribute node "data-kushi-tooltip-position-block")
         position-inline (.getAttribute node "data-kushi-tooltip-position-inline")
-        right? (cond (= "end" position-inline)
-                   true
-                   (= "start" position-inline)
-                   false
-                   :else
-                   (= lr :right))
-        top? (cond (= "end" position-block)
-                   true
-                   (= "start" position-block)
-                   false
-                   :else
-                   (= tb :top))]
+        right?          (cond (= "end" position-inline)
+                              true
+                              (= "start" position-inline)
+                              false
+                              :else
+                              (= lr :right))
+        top?            (cond (= "end" position-block)
+                              true
+                              (= "start" position-block)
+                              false
+                              :else
+                              (= tb :top))]
 
     ;; (js/console.log right? top?)
     ;; display on right or left
@@ -149,8 +149,8 @@ first
     ;; (set! node.style.right (if right? "100%" "unset"))
     ;; (set! node.style.top (if top? 0 "unset"))
     ;; (set! node.style.bottom (if top? "unset" 0))
-
     ;; display on top or bottom
+
     (set! node.style.left (if right? "unset" "0"))
     (set! node.style.right (if right? "0" "unset"))
     (set! node.style.top (if top? "100%" "unset"))
@@ -194,7 +194,6 @@ first
    [:tc :textContent]
    [:tn :tagName]])
 
-
 (defn el+ [el]
   (doseq [[sh og] dom-el-attributes]
     (j/assoc! el (name sh) (j/get el og)))
@@ -225,13 +224,17 @@ first
 (defn nearest-ancestor [node selector]
   (.closest node selector))
 
-(defn toggle-class [el & xs] (doseq [x xs] (.toggle (.-classList el) x)))
+(defn toggle-class [el & xs]
+  (doseq [x xs] (.toggle (.-classList el) (name x))))
 
-(defn remove-class [el & xs] (doseq [x xs] (.remove (.-classList el) x)))
+(defn remove-class [el & xs]
+  (doseq [x xs] (.remove (.-classList el) (name x))))
 
-(defn add-class [el & xs] (doseq [x xs] (.add (.-classList el) x)))
+(defn add-class [el & xs]
+  (doseq [x xs] (.add (.-classList el) (name x))))
 
-(defn set-css-var! [el prop val] (when el (.setProperty el.style prop val)))
+(defn set-css-var! [el prop val]
+  (when el (.setProperty el.style prop val)))
 
 (defn set-client-wh-css-vars! [el]
   (when el
@@ -253,5 +256,52 @@ first
 (defn set-attribute! [el attr v]
   (when el (.setAttribute el (name attr) v)))
 
+(defn set-property! [el attr v]
+  (when el (.setProperty el (name attr) v)))
+
+(defn set! [el attr v]
+  (when el (j/assoc! el (name attr) v)))
+
 (defn has-class? [el s]
   (when el (.contains (.-classList el) s)))
+
+(defn el-idx
+  "Get index of element, relative to its parent"
+  [el]
+  (when-let [parent (some-> el .-parentNode)]
+    (let [children-array (.from js/Array (.-children parent))]
+      (.indexOf children-array el))))
+
+(defn observe-intersection
+  [{:keys [element intersecting not-intersecting f threshold]
+    :or {threshold 0.1}}]
+  (when element
+    (let [observer (js/IntersectionObserver.
+                    (fn [^js entries]
+                      (if (.-isIntersecting (aget entries 0))
+                        (when intersecting (intersecting))
+                        (when not-intersecting (not-intersecting)))
+                      (when f (f)))
+                    #js {:threshold threshold})]
+      (when observer
+        (.observe observer element)))))
+
+(defn scroll-by
+  [{:keys [x y behavior]
+    :or   {x        0
+           y        0
+           behavior "auto"}}]
+  (let [behavior (name behavior)]
+    (j/call
+     js/window
+     :scrollBy
+     #js
+     {"top" y "left" x "behavior" behavior})))
+
+(defn scroll-into-view
+  ([el]
+   (scroll-into-view el {}))
+  ([el {:keys [inline block behavior]
+        :or {block "start" inline "nearest" behavior "auto"}}]
+   (let [opts {"block" (name block) "inline" (name inline) "behavior" (name behavior)}]
+     (j/call el :scrollIntoView (clj->js opts)))))
