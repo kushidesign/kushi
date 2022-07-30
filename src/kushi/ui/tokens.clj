@@ -120,6 +120,10 @@
     :--input-border-weight-extra-bold    :0.195em
     :--input-border-weight-heavy         :0.21em
 
+    ;; Intended for overlay placement
+    :--overlay-placement-inline-offset   :12px
+    :--overlay-placement-block-offset    :6px
+
     ;; Intended for css props: font-size
     :--text-mini       :0.625rem
     :--text-xxsmall    :0.7rem
@@ -134,7 +138,12 @@
     ;;  Material UI icons
     ;; ------------------------------------------------------
     :--mui-icon-relative-font-size :inherit
-    :--mui-icon-margin-inline-ems :0.333em
+
+    ;;  General icons
+    ;; ------------------------------------------------------
+    :--icon-label-padding-inline-ems :1em
+    :--icon-label-margin-inline-start-ems "0.3em 0.4em"
+    :--icon-label-margin-inline-end-ems "0.4em 0.3em"
 
     ;; Intended for css props: border-radius
     ;; ------------------------------------------------------
