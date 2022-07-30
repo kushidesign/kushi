@@ -72,26 +72,25 @@
   {:kushi {:button      {:default (merge (:secondary override-classes)
                                          {:fw :--text-wee-bold
                                           :ff :--primary-font-family})
-            ;; :disabled  {:color :turquoise}
-            ;; :primary   (:primary override-classes)
-            ;; :link      {:td        :underline
-            ;;             :bgc       :transparent
-            ;;             :hover:bgc :transparent}
-            ;; :secondary {:bgc        :--gray100
-            ;;             :hover:bgc  :--gray200
-            ;;             :color      :--primary}
-            ;; :tertiary  {:bgc       :transparent
-            ;;             :hover:bgc :--gray100}
-            ;; :minimal   (:minimal override-classes)
-            ;; :ghosted   (:ghosted override-classes)
+
+                         :primary {:hover:bgc :--gray400}
+                         :ghosted {:hover:o   0.6}
+                         :secondary {:hover:bgc  :--gray200}
+                         :tertiary  {:bgc       :transparent
+                                     :hover:bgc :--gray100}
+
+                         ;; :link      {:td        :underline
+                         ;;             :bgc       :transparent
+                         ;;             :hover:bgc :transparent}
+                         ;; :minimal   (:minimal override-classes)
+                         ;; :ghosted   (:ghosted override-classes)
+
                          }
            :tag         {:default  {:c :--primary}
                          :primary  (:primary override-classes)
                          :positive (:positive override-classes)
                          :negative (:negative override-classes)
-                         :warning  (:warning override-classes)}
-            ;; stuff like this needs to be in sync with the var name it is creating
-           }})
+                         :warning  (:warning override-classes)} }})
 
 (def global {:font-family      :--sans-serif-stack
              :background-color :blanched-almond
@@ -114,7 +113,6 @@
   ;;  :utility-classes-base     {:base }
   ;;  :utility-classes-override {:absolute-fill {:position :absolute
   ;;                                             :inset    0}}
-   
    :utility-classes {:extra-bold {:fw :--text-extra-bold}
                      :mini       {:fw :--text-mini}
                      :pill       {:border-radius "9999px"}}
