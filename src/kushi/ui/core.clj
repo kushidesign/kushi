@@ -41,3 +41,17 @@
                                 ~coll
                                 ~f
                                 ~form-meta)))))
+
+(defmacro defcom2
+  [nm mm coll f]
+  (let [form-meta  (meta &form)]
+    `(defn ~nm
+       ~mm
+       [& args#]
+       (let [[opts# attrs# & children#] (kushi.ui.core/opts+children args#)]
+         (kushi.ui.core/&*->val opts#
+                                attrs#
+                                children#
+                                ~coll
+                                ~f
+                                ~form-meta)))))
