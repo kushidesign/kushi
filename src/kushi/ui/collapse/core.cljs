@@ -5,8 +5,7 @@
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
    [kushi.ui.core :refer (defcom opts+children)]
-   [kushi.ui.dom :as util]))
-
+   [kushi.ui.dom :as dom]))
 
 ;TODO refactor this out
 (defcom collapse-body
@@ -46,18 +45,21 @@
   (let [[opts attrs & children] (opts+children args)
         {:keys [icon-position]} opts]
     (let [on-click #(let [node                        (.closest (-> % .-target) "[aria-expanded][role='button']")
-                          accordian*                  (util/grandparent node)
-                          accordian                   (when-let [cl (util/has-class accordian* "kushi-accordian")]
+                          collapse                    (.-parentNode node)
+                          accordian*                  (dom/grandparent node)
+                          accordian                   (when (dom/has-class accordian* "kushi-accordian")
                                                         accordian*)
                           [open-node
                            open-exp-parent]           (other-expanded-node accordian node)
                           exp-parent                  (-> node .-nextSibling)
                           exp-inner                   (-> node .-nextSibling .-firstChild)
                           exp-inner-h                 (outer-height exp-inner)
-                          expanded?                   (util/attribute-true? node :aria-expanded)
+                          expanded?                   (dom/attribute-true? node :aria-expanded)
                           height                      (str exp-inner-h "px")
                           ->height                    (if expanded? "0px" height)
-                          no-height?                  (and expanded? (string/blank? exp-parent.style.height))]
+                          no-height?                  (and expanded? (string/blank? exp-parent.style.height))
+                          toggle-op                   (if expanded? dom/remove-class dom/add-class)]
+                      (toggle-op collapse :kushi-collapse-expanded)
                       (when no-height? (set! exp-parent.style.height height))
                       (js/window.requestAnimationFrame (fn []
                                                          (when open-exp-parent
@@ -124,6 +126,7 @@
       (sx
        'kushi-collapse
        :.flex-col-fs
+       (when expanded? :.kushi-collapse-expanded)
        :w--100%
        {:data-kushi-ui :collapse})
       attr)
@@ -134,13 +137,13 @@
             :aria-expanded  (if expanded? "true" "false")
             :-icon-position icon-position}))
       [collapse-header-contents opts]]
-     [collapse-body (:body body-attrs) children]]))
+     [collapse-body body-attrs children]]))
 
 
 (defn accordian
   {:desc ["A wrapper for multiple instances of the `collapse` component."
           :br
-          "When `collapse` components are children of the accordian component, they can only be expanded one at a time".]}
+          "When `collapse` components are children of the accordian component, they can only be expanded one at a time."]}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys []}              opts]
