@@ -105,6 +105,7 @@ Shorthand grammer is available for the following css props:
 ```
 
 <br>
+
 Shorthand grammer is available for the following enumerated property values:
 ```Clojure
 :ai--b    ; align-items: baseline
