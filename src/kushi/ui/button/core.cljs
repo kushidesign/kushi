@@ -2,7 +2,7 @@
   (:require-macros
    [kushi.core :refer (sx)])
   (:require
-   [kushi.core :refer (merge-with-style)]
+   [kushi.core :refer (merge-attrs)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.icon.mui.core :refer (mui-icon)]
    [kushi.ui.icon.mui.outlined :refer (mui-icon-outlined)]
@@ -41,7 +41,7 @@
         icon-class (when mi (str "kushi-button-with-icon-" (name icon-position)))
         inline-icon? (contains? #{:inline-start :inline-end} icon-position)]
     [:button
-     (merge-with-style
+     (merge-attrs
       (sx 'kushi-button
           :.transition
           :.pointer

@@ -2,7 +2,7 @@
   (:require-macros
    [kushi.core :refer (sx)])
   (:require
-   [kushi.core :refer (merge-with-style)]
+   [kushi.core :refer (merge-attrs)]
    [kushi.ui.core :refer (opts+children)]))
 
 ;; TODO outlines for ally
@@ -16,7 +16,7 @@
   (let [[opts attrs & children] (opts+children args)
         {:keys [label-attrs]}   opts]
     [:label
-     (merge-with-style
+     (merge-attrs
       (sx
        'kushi-checkbox
        :.transition
@@ -30,7 +30,7 @@
        :+.form-control:mbs--1em)
       label-attrs)
      [:input
-      (merge-with-style
+      (merge-attrs
        (sx
         'kushi-checkbox-input
         :.transition

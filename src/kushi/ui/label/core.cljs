@@ -4,12 +4,12 @@
    [kushi.ui.core :refer (defcom2)])
   (:require
    [kushi.ui.core :refer (opts+children)]
-   [kushi.core :refer (merge-with-style)]))
+   [kushi.core :refer (merge-attrs)]))
 
 (defcom2 label
   {:desc {:desc ["A label is typically used for providing titles to sections of content."]}}
   [:span
-   (merge-with-style
+   (merge-attrs
     (sx 'kushi-label
         :.flex-row-c
         :ai--c

@@ -1,5 +1,5 @@
 (ns kushi.ui.card.core
-  (:require [kushi.core :refer (sx merge-with-style)]
+  (:require [kushi.core :refer (sx merge-attrs)]
             [kushi.ui.core :refer (opts+children)]))
 
 (defn card
@@ -8,7 +8,7 @@
   (let [[opts attrs & children] (opts+children args)
         {:keys []}              opts]
     (into
-     [:div (merge-with-style
+     [:div (merge-attrs
             (sx 'kushi-card
                 :.relative
                 :w--100%

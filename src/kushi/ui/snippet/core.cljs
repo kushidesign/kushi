@@ -1,6 +1,6 @@
 (ns kushi.ui.snippet.core
   (:require
-   [kushi.core :refer (sx merge-with-style) :refer-macros (sx)]
+   [kushi.core :refer (sx merge-attrs) :refer-macros (sx)]
    [kushi.ui.tooltip.core :refer (tooltip add-temporary-tooltip!)]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.core :refer (opts+children)]
@@ -24,7 +24,7 @@
                            {:src "graphics/copy.svg"})]
                       [tooltip #_{:-display-on-hover? true} "Copied!"]])]
     (into [:div
-           (merge-with-style
+           (merge-attrs
             (sx :.absolute
                 :.flex-row-c
                 :.pointer
@@ -55,7 +55,7 @@
   (let [[opts attrs & children]                (opts+children args)
         {:keys [text-to-display text-to-copy on-copy-click]} opts]
     (into [:div
-           (merge-with-style
+           (merge-attrs
             (sx 'kushi-snippet :.relative :.codebox {:data-kushi-ui :snippet})
             attrs)
            [:span text-to-display]

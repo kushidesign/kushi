@@ -1,7 +1,7 @@
 (ns kushi.ui.grid.core
   (:require
    [kushi.parstub :refer-macros [!? ?]]
-   [kushi.core :refer (sx merge-with-style)]
+   [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.util :refer [aspect-ratio->number]]
    [kushi.ui.core :refer (opts+children)] ))
 
@@ -38,7 +38,7 @@
         aspect-ratio-pct                           (str (* 100 (if (number? ar) (js/Math.abs ar) 1)) "%")]
     (into
      [:section
-      (merge-with-style
+      (merge-attrs
        (sx 'kushi-grid
            {:data-kushi-ui :grid
             :style         {:>*:w        :auto

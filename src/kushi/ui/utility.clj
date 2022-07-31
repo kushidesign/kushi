@@ -280,18 +280,3 @@
 
 (def utility-classes
   (merge combo-flex-utility-classes base-classes override-classes))
-
-    ;; :primary           {:c         :--primary-b
-    ;;                     :bgc       :--primary
-    ;;                     :hover:bgc :--gray400}
-    ;; :secondary         {:bgc       :--gray100
-    ;;                     :hover:bgc :--gray200
-    ;;                     :color     :--primary}
-    ;; :tertiary          {:bgc       :transparent
-    ;;                     :hover:bgc :--gray100}
-    ;; :ghosted           {:bw        :1px
-    ;;                     :bs        :solid
-    ;;                     :bc        :--black
-    ;;                     :bgc       :transparent
-    ;;                     :hover:bgc :transparent
-    ;;                     :hover:o   0.6}

@@ -1,5 +1,5 @@
 (ns kushi.ui.link.core
-  (:require [kushi.core :refer (merge-with-style) :refer-macros (sx)]
+  (:require [kushi.core :refer (merge-attrs) :refer-macros (sx)]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.label.core :refer (label)]))
 
@@ -9,7 +9,7 @@
   (let [[opts attrs & children] (opts+children args)
         {:keys []}              opts]
     [:a
-     (merge-with-style
+     (merge-attrs
       (sx 'kushi-link
           :.pointer
           :d--ib

@@ -1,11 +1,11 @@
 (ns kushi.ui.icon.core
   (:require
-   [kushi.core :refer (sx merge-with-style)]
+   [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.core :refer (defcom)]))
 
 (defcom icon
   [:div
-   (merge-with-style
+   (merge-attrs
     (sx
      'kushi-icon
      :.relative

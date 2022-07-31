@@ -3,7 +3,7 @@
    [kushi.core :refer (sx)])
   (:require
    [clojure.pprint :refer [pprint]]
-   [kushi.core :refer (merge-with-style)]
+   [kushi.core :refer (merge-attrs)]
    [kushi.ui.core :refer (opts+children)]))
 
 (defn radio
@@ -17,7 +17,7 @@
         {:keys [input-attrs]}   opts]
     (into
      [:label
-      (merge-with-style
+      (merge-attrs
        (sx 'kushi-radio
            :.transition
            :.fast!
@@ -34,7 +34,7 @@
            :>*:align-self--center)
        attrs)
       [:input
-       (merge-with-style
+       (merge-attrs
         (sx 'kushi-radio-input
             :.transition
             :.fast!

@@ -2,7 +2,7 @@
   (:require
    [par.core :refer-macros [!? ?]]
    [clojure.string :as string]
-   [kushi.core :refer (sx defclass merge-with-style insert-style-tag!)]
+   [kushi.core :refer (sx defclass merge-attrs insert-style-tag!)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.input.slider.css]
    [kushi.ui.util :refer [range-of-floats]]
@@ -93,7 +93,7 @@
            labels-attrs
            step-marker]}]
   (into [:div
-         (merge-with-style
+         (merge-attrs
           (sx 'kushi-slider-step-labels
               :.flex-row-sa
               :ai--c
@@ -209,7 +209,7 @@
                             label-selected-class
                             opts))
 
-    [:div (merge-with-style (sx 'kushi-slider
+    [:div (merge-attrs (sx 'kushi-slider
                                 :.flex-col-c
                                 :.relative
                                 :ai--c
@@ -225,7 +225,7 @@
                            label-scale-factor
                            labels-attrs
                            step-marker)]
-     [:input (merge-with-style
+     [:input (merge-attrs
               (sx {:class         [label-size-class]
                    :style         {:w :100%}
                    :data-kushi-ui :input.range

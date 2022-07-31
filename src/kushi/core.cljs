@@ -207,7 +207,7 @@
           :style css-vars
           :data-cljs data-cljs)))
 
-#_(def merge-with-style kushi.utils/merge-with-style)
+#_(def merge-attrs kushi.utils/merge-attrs)
 
 (def dom-element-events
    [:on-change
@@ -247,23 +247,23 @@
     :on-webkit-mouse-force-down
     :on-wheel ])
 
-(defn- merge-with-style-warning
+(defn- merge-attrs-warning
   [v k n]
   (js/console.warn
    (str
-    "kushi.core/merge-with-style:\n\n "
+    "kushi.core/merge-attrs:\n\n "
     "The " k " value supplied in the " n " argument must be a map.\n\n "
     "You supplied:\n") v))
 
 (defn- bad-style? [style n]
   (let [bad? (and style (not (map? style)))]
-    (when bad? (merge-with-style-warning style :style n))
+    (when bad? (merge-attrs-warning style :style n))
     bad?))
 
 (defn- bad-class? [class n]
   (let [bad? (and class
                   (not (some #(% class) [seq? vector? keyword? string? symbol?])))]
-    (when bad? (merge-with-style-warning class :class n))
+    (when bad? (merge-attrs-warning class :class n))
     bad?))
 
 (defn class-coll
@@ -298,7 +298,7 @@
     (when f {k f})))
 
 
-(defn- merge-with-style* [& maps]
+(defn- merge-attrs* [& maps]
   (let [[m1 m2]                   (map #(if (map? %) % {}) maps)
         {style1 :style
          class1 :class
@@ -323,5 +323,5 @@
     ret))
 
 ;; Public function for style decoration
-(defn merge-with-style [& maps]
-  (reduce merge-with-style* maps))
+(defn merge-attrs [& maps]
+  (reduce merge-attrs* maps))

@@ -1,6 +1,6 @@
 (ns kushi.ui.icon.mui.core
   (:require
-   [kushi.core :refer (merge-with-style sx inject-stylesheet)]
+   [kushi.core :refer (merge-attrs sx inject-stylesheet)]
    [kushi.ui.core   :refer (defcom)]))
 
 (inject-stylesheet {:rel "preconnet"
@@ -14,7 +14,7 @@
 
 (defcom mui-icon
   [:div
-   (merge-with-style
+   (merge-attrs
     (sx
      'kushi-icon
      :.relative

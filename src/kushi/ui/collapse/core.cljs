@@ -1,7 +1,7 @@
 (ns kushi.ui.collapse.core
   (:require-macros [kushi.utils])
   (:require
-   [kushi.core :refer (sx merge-with-style) :refer-macros (sx)]
+   [kushi.core :refer (sx merge-attrs) :refer-macros (sx)]
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
    [kushi.ui.core :refer (defcom opts+children)]
@@ -10,7 +10,7 @@
 ;TODO refactor this out
 (defcom collapse-body
   [:section
-   (merge-with-style (sx 'kushi-collapse-body-wrapper :overflow--hidden) &attrs)
+   (merge-attrs (sx 'kushi-collapse-body-wrapper :overflow--hidden) &attrs)
    [:div (sx
           'kushi-collapse-body
           :bbe--1px:solid:transparent
@@ -68,7 +68,7 @@
                                                          (set! exp-parent.style.height ->height)
                                                          (toggle-boolean-attribute node :aria-expanded))))]
       (into [:div
-             (merge-with-style
+             (merge-attrs
               (sx
                'kushi-collapse-header
                :.pointer
@@ -122,7 +122,7 @@
   (let [[opts attr & children]                           (opts+children args)
         {:keys [header-attrs body-attrs expanded? on-click icon-position]} opts]
     [:section
-     (merge-with-style
+     (merge-attrs
       (sx
        'kushi-collapse
        :.flex-col-fs
@@ -131,7 +131,7 @@
        {:data-kushi-ui :collapse})
       attr)
      [collapse-header
-      (merge-with-style
+      (merge-attrs
        header-attrs
        (sx {:on-click       on-click
             :aria-expanded  (if expanded? "true" "false")
@@ -149,7 +149,7 @@
         {:keys []}              opts]
     (into
      [:div
-      (merge-with-style
+      (merge-attrs
        {:class [:kushi-accordian]}
        attrs)]
      children)))

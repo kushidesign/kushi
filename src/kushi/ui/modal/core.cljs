@@ -2,7 +2,7 @@
   (:require [kushi.ui.card.core :refer (card)]
             [kushi.ui.card.core :refer (card)]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.core :refer (merge-with-style) :refer-macros (sx cssfn)]))
+            [kushi.core :refer (merge-attrs) :refer-macros (sx cssfn)]))
 
 (defn close-kushi-modal [e]
   (let [modal-parent (.closest (-> e .-target) ".kushi-modal")]
@@ -53,13 +53,13 @@
   (let [[opts attr & children]                    (opts+children args)
         {:keys [trigger scrim-attrs panel-attrs]} opts]
     [:div
-     (merge-with-style
+     (merge-attrs
       (sx 'kushi-modal-wrapper
           :d--block)
       attr)
      trigger
      [:div
-      (merge-with-style
+      (merge-attrs
        (sx 'kushi-modal
            :.fixed-fill
            :.flex-col-c
@@ -71,7 +71,7 @@
                          "&[aria-modal='false']:display" :none
                          :z                              1}})
        scrim-attrs)
-      (into [card (merge-with-style
+      (into [card (merge-attrs
                    (sx :.elevated
                        :.flex-col-c
                        :ai--c

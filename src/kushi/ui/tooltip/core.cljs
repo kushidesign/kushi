@@ -1,7 +1,7 @@
 (ns kushi.ui.tooltip.core
   (:require-macros [kushi.utils :refer (keyed)])
   (:require
-   [kushi.core :refer (sx merge-with-style defclass)]
+   [kushi.core :refer (sx merge-attrs defclass)]
    [kushi.ui.core :refer (defcom opts+children)]
    [kushi.ui.dom :refer (set-overlay-position! conditional-display?)]))
 
@@ -101,7 +101,7 @@
         {:keys [display-on-hover? inline-offset block-offset placement]} opts]
     [:section
      (let [placement-class (when placement (str "kushi-tooltip-placement-" (name placement)))]
-       (merge-with-style
+       (merge-attrs
         (sx 'kushi-tooltip
             :.absolute
             :.mini

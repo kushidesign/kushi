@@ -1,5 +1,5 @@
 (ns kushi.ui.tag.core
-  (:require [kushi.core :refer [merge-with-style] :refer-macros (sx)]
+  (:require [kushi.core :refer [merge-attrs] :refer-macros (sx)]
             [kushi.ui.icon.mui.core :refer (mui-icon)]
             [kushi.ui.core :refer-macros (defcom)]))
 
@@ -7,7 +7,7 @@
   (let [{:keys [dismissable?]} &opts]
     [:div (sx :.relative)
      [:div
-      (merge-with-style
+      (merge-attrs
        (sx
         'kushi-tag
         :line-height--1
