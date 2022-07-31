@@ -121,7 +121,7 @@ This is similar to Tachyons/Tailwind, but much more helpful in learning actual C
 ```
 
 <br>
-In all three examples above, the `sx` macro would return the following attribute map with an auto-generated value for the `class` attribute:
+In all three examples above, the `sx` macro would return the following attribute map with an auto-generated, hashed value for the `class` attribute:
 
 ```Clojure
 {:class "_680769808"
@@ -164,14 +164,14 @@ In summary, the `kushi.core/sx` is a macro that returns an attribute map which c
   - All the other attributes you specify in your attributes map (supplied as an optional last arg to `sx`).
   - A dev-build-only `data-cjs` attribute for browser debugging. See [Using metadata](#using-metadata).
 
-All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool). For zippy previews when developing, styles are injected at runtime.
+All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool). For dev builds, styles are injected by default at runtime for zippy previews.
 <!---You can optionally disable writing styles to disk and enable producton builds to [inject styles at runtime](#runtime-injection).
 -->
 <br>
 
 ### Styles as Keywords
 
-Kushi aims to provide the same benefits as Tachyons/Tailwind (styling expressed as a list of tokens co-located at the element level) while minimizing some of the common downsides (learning and using a whole new abstraction layer on top of standard css).
+Kushi aims to provide the same benefits as Tachyons/Tailwind (styling expressed as a list of tokens co-located at the element level) while minimizing some of the common downsides (learning and using a whole new and proprietary abstraction layer on top of standard css).
 
 Keywords containing `--` represent a css prop and value pair (split on `--`).
 
@@ -180,7 +180,7 @@ Keywords containing `--` represent a css prop and value pair (split on `--`).
 :color--red
 ```
 
-Some more examples, using kushi's optional shorthand grammer.
+More examples, using Kushi's optional shorthand grammer.
 ```Clojure
 :c--red    ; :color--red
 :ai--c     ; :align-items--center
@@ -284,11 +284,9 @@ Sometimes you need to use dynamic values based on application state.
 ;; Assuming there is a var defined as `mycolor` with a value of `:red`
 
 ;; For tokenized keywords, you can use a `$` char:
-
 (sx :c--$mycolor)
 
 ;; You could also write this as:
-
 (sx {:style {:color mycolor})
 ```
 
@@ -344,7 +342,7 @@ As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
 <br>
 
 ### CSS Shorthand Properties
-[CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are a fundamental feature of CSS. They are properties that let you set the values of multiple other CSS properties simultaneously. With kushi, you can write them like this:
+[CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are a fundamental feature of CSS. They are properties that let you set the values of multiple other CSS properties simultaneously. With Kushi, you can write them like this:
 
 ```Clojure
 ;; with tokenized keyword
@@ -376,7 +374,7 @@ Future support is planned for dynamic values passed to construction method such 
 <br>
 
 ### CSS Value Lists
-Sometimes multiple css values are seperated by commas to indicate they are ordered, or that there are ordered alternatives. With kushi, you can write them like this:
+Sometimes multiple css values are seperated by commas to indicate they are ordered, or that there are ordered alternatives. With Kushi, you can write them like this:
 ```Clojure
 (sx :ff--FiraCodeRegular|Consolas|monospace)
 ```
@@ -396,7 +394,8 @@ text-shadow: 5px 5px 10px red, -5px -5px 10px blue;
 <br>
 
 # Shared Styles
-The `kushi.core/defclass` macro makes it easy to create shared styles.<br>
+The `kushi.core/defclass` macro makes it easy to create shared styles.
+
 These should be defined in a dedicated namespace, or set of dedicated namespaces, and required once in your core or main ns.
 
 The example below will generate a data-representation of the css rule-set.
@@ -562,7 +561,7 @@ The full list of predefined classes:
 ```
 <!-- TODO add debug grid helpers to above list -->
 
-Detailed documentation on the above classes can be found [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-predefined-classes.css).
+Checkout [this source file](https://github.com/paintparty/kushi/blob/main/src/kushi/ui/utility.clj) for a complete reference of all current pre-defined utility classes.
 <br>
 
 ### Applying Classes Conditionally
@@ -634,6 +633,7 @@ Note that in the case of desktop-first(`max-width`), the order is reversed (rela
 Any media-query modifier that you use must correspond to a key in the breakpoint map.
 
 When "stacking" other modifiers (such as psuedo-classes) in front of css props, the media queries must always come first.
+<!-- TODO: Provide example of such stacking -->
 
 <br>
 
@@ -643,13 +643,13 @@ Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers
 [:div (sx 'foo
           :hover:c--blue
           :>a:hover:c--red
-          :&_a:hover:c--gold ; The "_" gets converted to " "
-          :&.bar:hover:c--pink ;  .foo.bar:hover {color: pink}
+          :&_a:hover:c--gold   ; The "_" gets converted to " "
+          :&.bar:hover:c--pink
           :before:fw--bold
-          :before:mie--5px
-          {:style {:before:content  "\"⌫\""
-                  "~a:hover:c"     :blue
-                  "nth-child(2):c" :red}})
+          :after:mie--5px
+          {:style {"~a:hover:c"    :blue ; Because "~" is not valid in a keyword
+                  "nth-child(2):c" :red  ; Because "(" and ")" are not valid in keywords
+                  :before:content  "\"⌫\""}})
  [:span [:a "Erase"]]]
 ```
 CSS resulting from the above example:
@@ -707,7 +707,7 @@ The most common pattern for this would be setting a global `:prefix` value in yo
 ```
 
 ### Parents and ancestors
-Kushi provides a special sugar token in the form of `.%` to achieve further specificity when needed with regards to parents and ancestors of the element that you are styling. This is super useful when you want to use styles that might change when, for example, a class is toggled or changed further up in the DOM.
+Kushi provides a special sugar token in the form of `.%` to achieve further specificity when needed with regards to parents and ancestors of the element that you are styling. This is useful when you want to use styles that might change when, for example, a class is toggled or changed further up in the DOM.
 
 The `.%` token is just stubby syntax for the classname that will be created, and gets stripped out of any CSS that is generated.
 ```Clojure
@@ -1058,10 +1058,9 @@ Below is a contrived example of creating a reusable, stateless, and composable c
 
 `defcom` is a macro that returns a component rendering function which accepts an optional attributes map, plus any number of children. This means the signature at the call site mirrros hiccup itself.
 
-Under the hood, defcom pulls out any keys in attr map that start with `:-` and put them in a separate `opts` map. This allows passing in various custom options within the attributes map that will not clash with existing html attributes. This opts map can referenced be referenced in the defcom body with the `&opts` binding. `&attrs` and `&children` are also available. This ampersand-leading naming convention takes its cue from the special `&form` and `&env` bindings used by Clojure's own `defmacro`.
+Under the hood, defcom pulls out any keys in attr map that start with `:-` and put them in a separate `opts` map. This allows passing in various custom options within the attributes map that will not clash with existing html attributes. This opts map can be referenced in the `defcom` body with the `&opts` binding. `&attrs` and `&children` are also available. This ampersand-leading naming convention takes its cue from the special `&form` and `&env` bindings used by Clojure's own `defmacro`.
 
-Assuming your are using something like Reagent, you can use the resulting `my-section` component (from the above example)
-in your application code like so:
+Assuming your are using something like Reagent, you can use the resulting `my-section` component (from the above example) in your application code like so:
 
 ```Clojure
 ;; Basic, no label
@@ -1088,9 +1087,9 @@ in your application code like so:
 
 ### Manually defining complex components
 
- If, for some reason, you don't want use the `defcom` to define your complex components, you can use the same underlying pattern that defcom abstracts. This component definition pattern relies on using the `kushi.ui.core/opts+children` helper fn. It optionally makes use of the kushi.core/merge-sx to enable decoratability, and also uses the `(into [:div ] ...)` for the parent node of the `children`.
+ If, for some reason, you don't want use the `defcom` to define your complex components, you can use the same underlying pattern that `defcom` abstracts. This component definition pattern relies on using the `kushi.ui.core/opts+children` helper fn. It optionally makes use of `kushi.core/merge-attrs` to enable decoration, and also uses the `(into [:div ] ...)` for the parent node of the `children`.
 
-The `my-section` function below would result in the exact same component as the previous example that used `defmacro`.
+The `my-section` function below would result in the exact same component as the previous example (that used `defmacro`).
 
 ```Clojure
 (ns myapp.core
@@ -1126,14 +1125,14 @@ You can theme -->
 <br>
 
 # Usage with Build Tools
-Although Kushi is designed to be build-tool and framework agnostic, thus far it has only been used in production with
-[Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs).
+Although Kushi is designed to be build-tool and framework agnostic, thus far it has only been used in production with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs).
 
 ### shadow-cljs
 See the [kushi-quickstart](https://github.com/paintparty/kushi-quickstart) template for a detailed example of using Kushi in a shadow-cljs project.
 
 <br>
 
+<!--
 # Roadmap
 ...more info coming soon.
 
@@ -1143,7 +1142,7 @@ See the [kushi-quickstart](https://github.com/paintparty/kushi-quickstart) templ
 ...more info coming soon.
 
 <br>
-
+-->
 # License
 
 Copyright © 2021-2022 Jeremiah Coyle
