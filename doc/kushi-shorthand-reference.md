@@ -1,4 +1,4 @@
-#Kushi shorthand reference
+# Kushi shorthand reference
 
 
 Shorthand grammer is available for the following css props:
