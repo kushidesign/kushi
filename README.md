@@ -28,7 +28,7 @@
 
 **✷ &nbsp; Includes a default industry-standard breakpoint scale**
 
-**✷ &nbsp; Predefined scales for typography, widths, & more**
+<!-- **✷ &nbsp; Predefined scales for typography, widths, & more** -->
 
 **✷ &nbsp; Auto-generated selectors to avoid pontential collisions**
 
@@ -714,8 +714,8 @@ The `.%` token is just stubby syntax for the classname that will be created, and
 (defn my-button [text]
   [:button
    (sx 'foo
-       :section.baz:&_.%:color--blue  ;; when `section.foo` ancestor exists
-       :section.dark:>.%:color--white ;; when `section.dark` parent exists
+       :section.baz&_.%:color--blue  ;; when `section.foo` ancestor exists
+       :section.dark>.%:color--white ;; when `section.dark` parent exists
        {:on-click #(prn "clicked!")})
      text])
 
@@ -759,6 +759,7 @@ Because names for css `@keyframes` definitions are used as-is in other style rul
 ```
 <br>
 
+<!--
 # Using Scales
 Kushi ships with two different predefined scaling systems, which provide a scale of values for `width`, `font-size`, `padding`, `margin`, and `border-widths`.
 
@@ -795,6 +796,7 @@ To use values from these scales, supply a value affixed with an `*` to one of th
 ```
 View all the scale values [here](https://github.com/paintparty/kushi/blob/main/src/kushi/scales.cljc).
 <br>
+-->
 
 # Injecting Stylesheets
 You can use `kushi.core/inject-stylesheet` to load css stylesheets.<br>
@@ -1024,15 +1026,6 @@ Given the following:
 You will receive warnings about invalid args in the terminal:
 
 <img width=500 src="doc/terminal-warning.png"/><br>
-
-<br>
-
-And also in your browser's dev console:
-
-<img width=500 src="doc/cdt-warning.png"/>
-
-<br>
-The browser console warning will provide you with file and line info.
 
 <br>
 <br>
