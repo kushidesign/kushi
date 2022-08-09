@@ -54,8 +54,7 @@
         {:keys [trigger scrim-attrs panel-attrs]} opts]
     [:div
      (merge-attrs
-      (sx 'kushi-modal-wrapper
-          :d--block)
+      {:class [:kushi-modal-wrapper]}
       attr)
      trigger
      [:div
