@@ -1,6 +1,6 @@
 (ns kushi.ui.input.slider.core
   (:require
-   [par.core :refer-macros [!? ?]]
+   [kushi.parstub :refer-macros [!? ?]]
    [clojure.string :as string]
    [kushi.core :refer (sx defclass merge-attrs insert-style-tag!)]
    [kushi.ui.core :refer (opts+children)]
