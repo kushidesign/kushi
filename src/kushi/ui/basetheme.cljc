@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.ui.basetheme
  (:require
-   [kushi.utils :as util :refer [keyed]]
    [kushi.ui.tokens :refer [global-tokens alias-tokens]]
    [kushi.ui.utility :refer [utility-classes override-classes]]
    [kushi.parstub    :refer [? !? ?+ !?+]]))
@@ -48,8 +47,10 @@
    {:-webkit-user-drag :element}
 
    ;; reverting this back to normal, for now
-   ["input" "textarea" "select" "p"]
-   {:all :revert}])
+   ["input" "textarea" "select" "p" "code"]
+   {:all :revert}
+
+   ])
 
 
 (def component-tokens
@@ -69,16 +70,58 @@
    :google-fonts* ["Fira Code" "Inter"]})
 
 (def ui
-  {:kushi {:button      {:default (merge (:secondary override-classes)
-                                         {:fw :--text-wee-bold
-                                          :ff :--primary-font-family})
+  {:body                    {:font-family :--sans-serif-font-stack
+                             :color       :--primary}
 
-                         :primary {:hover:bgc :--gray400}
-                         :ghosted {:hover:o   0.6}
-                         :secondary {:hover:bgc  :--gray200}
-                         :tertiary  {:bgc       :transparent
-                                     :hover:bgc :--gray100}
+   :code                    {:font-family   :--code-font-stack
+                             :font-size     :0.9em}
 
+   :.code                   {:font-family   :--code-font-stack
+                             :font-size     :0.9em
+                             :pi            :0.4em
+                             :pb            :0.15em:0.08em
+                             :border-radius :3px
+                             :bgc           :--gray100
+                             :h             :fit-content
+                             :w             :fit-content}
+
+   :.kushi-button           (merge (:secondary override-classes)
+                                   {:fw :--text-wee-bold
+                                    :ff :--primary-font-family})
+
+   :.kushi-button.primary   {:hover:bgc :--gray400}
+
+   :.kushi-button.secondary {:hover:bgc :--gray200}
+
+   :.kushi-button.tertiary  {:bgc       :transparent
+                             :hover:bgc :--gray100}
+
+   :.kushi-tag              {:c :--primary}
+
+   :.kushi-tag.primary      (:primary override-classes)
+
+   :.kushi-tag.positive     (:positive override-classes)
+
+   :.kushi-tag.negative     (:negative override-classes)
+
+   :.kushi-tag.warning      (:warning override-classes)
+
+   }
+
+  #_{:kushi {:button      {
+                        ;;  :default (merge (:secondary override-classes)
+                        ;;                  {:fw :--text-wee-bold
+                        ;;                   :ff :--primary-font-family})
+
+                         :primary {:hover:bgc :--positive400
+                                   :text-decoration :underline}
+                        ;;  :ghosted {:hover:o   0.6}
+
+                        ;;  :secondary {:hover:bgc  :--gray200}
+                        ;;  :tertiary  {:bgc       :transparent
+                        ;;              :hover:bgc :--gray100}
+
+                         ;; LEAVE OFF
                          ;; :link      {:td        :underline
                          ;;             :bgc       :transparent
                          ;;             :hover:bgc :transparent}
@@ -86,7 +129,7 @@
                          ;; :ghosted   (:ghosted override-classes)
 
                          }
-           :tag         {:default  {:c :--primary}
+           #_:tag         #_{:default  {:c :--primary}
                          :primary  (:primary override-classes)
                          :positive (:positive override-classes)
                          :negative (:negative override-classes)
@@ -97,7 +140,7 @@
              :color            :--primary})
 
 ;; Minimal theming for test cases
-(def min-config
+#_(def min-config
   {:css-reset       css-reset
    :tokens          {:global {:--black           :#3d3d3d
                               :--white           :#fff
@@ -138,5 +181,9 @@
 ;; Minimal theming for test cases end
 
 (def base-theme-map
-  (keyed css-reset utility-classes tokens font-loading global ui)
-  #_min-config)
+  {:css-reset css-reset
+   :utility-classes utility-classes
+   :tokens tokens
+   :font-loading font-loading
+   :global global
+   :ui ui})
