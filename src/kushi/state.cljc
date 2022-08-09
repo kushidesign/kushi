@@ -111,7 +111,7 @@
 ;; Used to keep track of all the google fonts to be added.
 (def google-font-maps (atom []))
 
-;; Used to store output of stylesheet which will be inected at dev (and maybe prod) runtime
+;; Used to store output of stylesheet which will be inected at dev (and optionally prod) runtime
 (def kushi-css-sync (atom nil))
 
 ;; Used to store the rules "to be printed"
@@ -126,7 +126,15 @@
   (swap! alias-tokens conj var))
 
 (defn add-used-token! [var]
-  (swap! used-tokens conj var))
+  (let [val           "hsl(var(--yellow-hue), var(--my-alias-token), 42%)"
+        tokens-in-val (map second (re-seq #"var\((\-\-[a-z|-]+)\)" val))
+        ;; global-tokens-in-val (re-find #"\-\-[a-z|-]+" val)
+        ]
+
+    #_(when tokens-in-val (?+ :tokens-in-val tokens-in-val))
+
+    ;add recursive token resolution here)
+    (swap! used-tokens conj var)))
 
 (defn add-reset-rules! [coll]
   (?+ coll))
