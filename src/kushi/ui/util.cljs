@@ -2,6 +2,8 @@
   (:require
    [clojure.string :as string]))
 
+;; Generic
+;; --------------------------------------------------------------------------
 (defn data-kushi-attr [x]
  (-> x name (string/replace #"^kushi\.ui\." "") (string/replace #".core$" "")) )
 
@@ -43,3 +45,7 @@
                                        schema)))))
           {}
           m))
+
+
+;; Components
+;; --------------------------------------------------------------------------
