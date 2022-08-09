@@ -165,6 +165,8 @@
 
     ;; Type styling
     ;; ------------------------------------------------------
+    :sans              {:font-family :--sans-serif-font-stack}
+    :sans-serif        {:font-family :--serif-font-stack}
     :italic            {:font-style :italic}
     :oblique           {:font-style :oblique}
 
@@ -189,31 +191,31 @@
 
     ;; Type weight
     ;; ------------------------------------------------------
-    :thin              {:fw                               :--text-thin
+    :thin              {:fw                                 :--text-thin
                         ">.kushi-radio-input:outline-width" :--input-border-weight-thin
                         ">.kushi-checkbox-input:bw"         :--input-border-weight-thin}
-    :extra-light       {:fw                               :--text-extra-light
+    :extra-light       {:fw                                 :--text-extra-light
                         ">.kushi-radio-input:outline-width" :--input-border-weight-extra-light
                         ">.kushi-checkbox-input:bw"         :--input-border-weight-extra-light}
-    :light             {:fw                               :--text-light
+    :light             {:fw                                 :--text-light
                         ">.kushi-radio-input:outline-width" :--input-border-weight-light
                         ">.kushi-checkbox-input:bw"         :--input-border-weight-light}
-    :normal            {:fw                               :--text-normal
+    :normal            {:fw                                 :--text-normal
                         ">.kushi-radio-input:outline-width" :--input-border-weight-normal
                         ">.kushi-checkbox-input:bw"         :--input-border-weight-normal}
-    :wee-bold          {:fw                               :--text-wee-bold
+    :wee-bold          {:fw                                 :--text-wee-bold
                         ">.kushi-radio-input:outline-width" :--input-border-weight-wee-bold
                         ">.kushi-checkbox-input:bw"         :--input-border-weight-wee-bold}
-    :semi-bold         {:fw                               :--text-semi-bold
+    :semi-bold         {:fw                                 :--text-semi-bold
                         ">.kushi-radio-input:outline-width" :--input-border-weight-semi-bold
                         ">.kushi-checkbox-input:bw"         :--input-border-weight-semi-bold}
-    :bold              {:fw                               :--text-bold
+    :bold              {:fw                                 :--text-bold
                         ">.kushi-radio-input:outline-width" :--input-border-weight-bold
                         ">.kushi-checkbox-input:bw"         :--input-border-weight-bold}
-    :extra-bold        {:fw                               :--text-extra-bold
+    :extra-bold        {:fw                                 :--text-extra-bold
                         ">.kushi-radio-input:outline-width" :--input-border-weight-extra-bold
                         ">.kushi-checkbox-input:bw"         :--input-border-weight-extra-bold}
-    :heavy             {:fw                               :--text-heavy
+    :heavy             {:fw                                 :--text-heavy
                         ">.kushi-radio-input:outline-width" :--input-border-weight-heavy
                         ">.kushi-checkbox-input:bw"         :--input-border-weight-heavy}
 
@@ -275,8 +277,8 @@
 
     ;; Controls
     ;; ------------------------------------------------------
-    :disabled          {:o      :40%
-                        :cursor :not-allowed}}))
+    :disabled          {:o      :40%!important
+                        :cursor :not-allowed!important}}))
 
 (def utility-classes
   (merge combo-flex-utility-classes base-classes override-classes))
