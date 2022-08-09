@@ -26,7 +26,9 @@
               ;; TODO use warning or error panel
               ;; TODO consolidate these somewhere?
               (catch java.io.IOException e
-                (printf "\nCouldn't open '%s':\n %s.\nIgnore the above warning about 'kushi.edn' if you are running tests from the source repo kushi/test/kushi/test.clj.\n"
+                (printf (str "Warning in kushi.config/load-edn: "
+                             "Could not open '%s': "
+                             " %s.\nIgnore the above warning if you are running tests from the source repo kushi/test/kushi/test.clj.\n")
                         source
                         (.getMessage e)))
 
@@ -48,7 +50,7 @@
    :write-stylesheet?    true
    :runtime-injection?   false
    :handle-duplicates    nil
-   :enable-caching?      true
+   :enable-caching?      false
    :theme                nil
    :scaling-system       nil
    :css-reset?           true
