@@ -10,30 +10,23 @@
 (defn copy-to-clipboard-button
   [opts & children*]
   (let [children (or children*
-                     [[button (sx :c--red :>span:padding--5px :.tertiary {:on-click add-temporary-tooltip!})
+                     [[button (sx 'kushi-copy-to-clipboard-button :c--red :>span:padding--5px :.tertiary {:on-click add-temporary-tooltip!})
                        [:img
-                        (sx :h--60%
+                        (sx 'kushi-copy-to-clipboard-button-graphic
+                            :h--60%
                             :o--0.7
                             :hover:o--1
                             {:src "graphics/copy.svg"})]
-                       [tooltip (sx :.mini :.rounded :ff--Inter {:-display-on-hover? false}) "Copied!"]]]
-                     #_[[:img
-                       (sx :h--60%
-                           :o--0.7
-                           :hover:o--1
-                           {:src "graphics/copy.svg"})]
-                      [tooltip #_{:-display-on-hover? true} "Copied!"]])]
+                       [tooltip (sx 'kushi-copy-to-clipboard-tooltip :.mini :.rounded :ff--Inter {:-display-on-hover? false}) "Copied!"]]] )]
     (into [:div
            (merge-attrs
-            (sx :.absolute
+            (sx 'kushi-copy-to-clipboard-button-wrapper
                 :.flex-row-c
                 :.pointer
                 :.pill
                 :ai--center
                 :w--22px
                 :h--22px
-                :top--0
-                :right--0
                 :ta--center
                 :fs--0.5rem
                 :fw--600
