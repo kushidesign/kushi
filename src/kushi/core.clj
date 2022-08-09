@@ -3,6 +3,7 @@
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.pprint :refer [pprint]]
+   #_[kushi.parstub :refer [? !? ?+ !?+]]
    [kushi.parstub :refer [? !? ?+ !?+]]
    [garden.core :as garden]
    [garden.stylesheet :refer [at-font-face]]
@@ -442,11 +443,11 @@
                                     selector)]]
      (sx-dispatch {:args [selector {:style m :kushi/sheet :reset}]}))
 
-   ;; TODO test w prod-build
-   (when @state/KUSHIDEBUG
-     (doseq [tok global-toks] (state/add-global-token! tok))
-     (doseq [tok alias-toks] (state/add-alias-token! tok)))
+   ;; TODO - conditionalize these 2 for prod vs dev - OR - always add to state and then conditionalize writing of css chunks based on user config setting
+   (doseq [tok global-toks] (state/add-global-token! tok))
+   (doseq [tok alias-toks] (state/add-alias-token! tok))
 
+   ;; TODO - Maybe not needed if always writing above.
    (doseq [tok tokens-in-theme] (state/add-used-token! tok))
 
    (add-utility-classes! utility-classes :kushi-utility)
@@ -490,10 +491,10 @@
       v)))
 
 (defmacro token->ms [kw]
-  (let [v (-> (map-of-all-tokens) (resolve-token-value kw))
-        s (cond (number? v) (str v) (or (keyword? v) (string? v)) (name v))
+  (let [v                (-> (map-of-all-tokens) (resolve-token-value kw))
+        s                (cond (number? v) (str v) (or (keyword? v) (string? v)) (name v))
         [_ microseconds] (when s (re-find #"^([0-9]+)ms$" s))
-        [_ seconds]  (when s (re-find #"^([0-9]+)s$" s))
-        n  (or microseconds (some-> seconds (* 1000)))
-        ret (when n (Integer/parseInt n))]
+        [_ seconds]      (when s (re-find #"^([0-9]+)s$" s))
+        n                (or microseconds (some-> seconds (* 1000)))
+        ret              (when n (Integer/parseInt n))]
     `~ret))
