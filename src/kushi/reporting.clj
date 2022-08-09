@@ -143,7 +143,7 @@
   (let [body-indent  ""
         lines        (reduce (fn [acc v] (concat acc (if (coll? v) v [v]))) [] (remove nil? lines*))
         lines-indent (map #(str body-indent %) lines)]
-    (string/join "\n" (concat ["\n" header] lines-indent ["\n"]))))
+    (string/join "\nkushi - " (concat [header] lines-indent))))
 
 (defn select-ns-msg []
   (let [selected (:select-ns user-config)]
@@ -162,8 +162,9 @@
          report-line-items-pre   (format-line-items banner? report-line-items-pre*)
          cache-report            (when (and (:report-cache-update? user-config) cache-will-update?)
                                    (str "Updated " kushi-cache-path))
-         header-text             (str "kushi v" version)
-         header-simple           (str (ansi/red "[") (ansi/blue header-text)  (ansi/red "]"))
+         header-text             (str "kushi - v" version)
+        ;;  header-simple           (str (ansi/red "[") (ansi/blue header-text)  (ansi/red "]"))
+         header-simple           header-text
          header                  (if banner? header-text header-simple)]
 
      (println
