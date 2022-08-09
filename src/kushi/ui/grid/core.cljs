@@ -13,7 +13,7 @@
             :desc    ["The minimum width of the columns."
                       "The width of the columns will expand evenly to fill out the parent container."
                       "Value must be a keyword representing a"
-                      "[valid CSS value for `min-width`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."]}
+                      "valid CSS value for [`min-width`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."]}
            {:name    aspect-ratio
             :type    :keyword
             :default :1:1
@@ -25,9 +25,9 @@
             :name    gap
             :type    :keyword
             :default :20px
-            :desc    ["The aspect ratio of the grid cells."
+            :desc    ["The gap between grid cells."
                       "Value must be a keyword representing a"
-                      "[valid CSS value for `grid-gap`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."]}]}
+                      "valid CSS value for [`grid-gap`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."]}]}
   [& args]
   (let [[opts attr & children]                     (opts+children args)
         {:keys [column-min-width aspect-ratio gap]
