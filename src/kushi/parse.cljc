@@ -241,7 +241,7 @@
    If mod is combo-selector, child, or decendant, formats appropriately.
    Otherwise returns nil for dud selector."
   [mods&prop s]
-  
+
   #_(when (= mods&prop "&[aria-expanded=\"false\"]:c")
     (?+ "format-mod" {:mods&prop mods&prop
                       :s s}))
