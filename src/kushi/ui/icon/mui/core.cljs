@@ -31,5 +31,5 @@
      :.transition
      :.material-icons
      {:data-kushi-ui :icon.mui
-      :style         {:&.material-icons:fs "var(--mui-icon-relative-font-size)"}})
+      :style         {:&.material-icons:fs "var(--mui-icon-relative-font-size), inherit"}})
     &children]])

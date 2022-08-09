@@ -30,5 +30,5 @@
      :.transition
      :.material-icons-two-tone
      {:data-kushi-ui :icon.mui.tone
-      :style         {:&.material-icons-two-tone:fs "var(--mui-icon-relative-font-size)"}})
+      :style         {:&.material-icons-two-tone:fs "var(--mui-icon-relative-font-size, inherit)"}})
     &children]])

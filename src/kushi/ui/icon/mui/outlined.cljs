@@ -30,5 +30,5 @@
      :.transition
      :.material-icons-outlined
      {:data-kushi-ui :icon.mui.outlined
-      :style         {:&.material-icons-outlined:fs "var(--mui-icon-relative-font-size)"}})
+      :style         {:&.material-icons-outlined:fs "var(--mui-icon-relative-font-size, inherit)"}})
     &children]])
