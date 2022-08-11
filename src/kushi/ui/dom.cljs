@@ -305,3 +305,5 @@ first
         :or {block "start" inline "nearest" behavior "auto"}}]
    (let [opts {"block" (name block) "inline" (name inline) "behavior" (name behavior)}]
      (j/call el :scrollIntoView (clj->js opts)))))
+
+(defn scroll-to-top [] (js/window.scrollTo 0 0))
