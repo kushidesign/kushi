@@ -3,11 +3,12 @@
    [kushi.core :refer (sx defclass)])
   (:require
    [kushi.parstub :refer-macros [!? ?]]
-   [kushi.ui.icon.mui.core :refer (mui-icon)]
-   [kushi.ui.icon.mui.outlined :refer (mui-icon-outlined)]
-   [kushi.ui.icon.mui.round :refer (mui-icon-round)]
-   [kushi.ui.icon.mui.two-tone :refer (mui-icon-two-tone)]
-   [kushi.ui.icon.mui.sharp :refer (mui-icon-sharp)] ))
+   [kushi.ui.icon.mui.core :refer (mui-icon mui-icon-outlined mui-icon-round mui-icon-two-tone mui-icon-sharp)]
+  ;;  [kushi.ui.icon.mui.outlined :refer (mui-icon-outlined)]
+  ;;  [kushi.ui.icon.mui.round :refer (mui-icon-round)]
+  ;;  [kushi.ui.icon.mui.two-tone :refer (mui-icon-two-tone)]
+  ;;  [kushi.ui.icon.mui.sharp :refer (mui-icon-sharp)]
+   ))
 
 (defclass kushi-icon-inline-start :mie--:--icon-enhancer-inline-gap-ems)
 (defclass kushi-icon-inline-end :mis--:--icon-enhancer-inline-gap-ems)
