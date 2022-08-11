@@ -42,10 +42,15 @@
 :.oblique
 
 ;; ui-specific
-:.mini
+:.xxxsmall
+:.xxsmall
+:.xsmall
 :.small
 :.medium
 :.large
+:.xlarge
+:.xxlarge
+:.xxxlarge
 :.huge
 :.rounded
 :.sharp

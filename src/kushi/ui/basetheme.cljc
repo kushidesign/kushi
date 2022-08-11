@@ -74,7 +74,13 @@
                              :color       :--primary}
 
    :code                    {:font-family   :--code-font-stack
-                             :font-size     :0.9em}
+                             :font-size     :0.9em
+                             :pi            :0.4em
+                             :pb            :0.15em:0.08em
+                             :border-radius :3px
+                             :bgc           :--gray100
+                             :h             :fit-content
+                             :w             :fit-content}
 
    :.code                   {:font-family   :--code-font-stack
                              :font-size     :0.9em
@@ -89,7 +95,7 @@
                                    {:fw :--text-wee-bold
                                     :ff :--primary-font-family})
 
-   :.kushi-button.primary   {:hover:bgc :--gray400}
+   :.kushi-button.primary   {:hover:bgc :--gray700}
 
    :.kushi-button.secondary {:hover:bgc :--gray200}
 
@@ -147,8 +153,7 @@
                               :--gray100         :#EEEEEE
                               :--gray200         :#E2E2E2
                               :--text-wee-bold   500
-                              :--text-extra-bold 500
-                              :--text-mini       :0.75rem}
+                              :--text-extra-bold 500}
 
                      :alias  {:--primary   :--black
                               :--primary-b :--white}}
@@ -157,7 +162,6 @@
   ;;  :utility-classes-override {:absolute-fill {:position :absolute
   ;;                                             :inset    0}}
    :utility-classes {:extra-bold {:fw :--text-extra-bold}
-                     :mini       {:fw :--text-mini}
                      :pill       {:border-radius "9999px"}}
 
    :font-loading    {:google-fonts*          ["Inter"]

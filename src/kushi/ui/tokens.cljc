@@ -164,7 +164,7 @@
     :--overlay-placement-block-offset    :6px
 
     ;; Intended for css props: font-size
-    :--text-mini       :0.625rem
+    :--text-xxxsmall   :0.625rem
     :--text-xxsmall    :0.7rem
     :--text-xsmall     :0.775rem
     :--text-small      :0.875rem
@@ -172,7 +172,7 @@
     :--text-large      :1.25rem
     :--text-xlarge     :1.5rem
     :--text-xxlarge    :1.85rem
-    :--text-huge       :2.25rem
+    :--text-xxxlarge   :2.25rem
 
     ;; Buttons
     ;; ------------------------------------------------------
@@ -227,7 +227,7 @@
    :--primary800   :--gray800
    :--primary900   :--gray900
    :--primary1000  :--gray1000
-   :--accent       :--blue400
+   :--accent       :--blue600
    :--accent50     :--blue50
    :--accent100    :--blue100
    :--accent200    :--blue200
@@ -239,7 +239,7 @@
    :--accent800    :--blue800
    :--accent900    :--blue900
    :--accent1000   :--blue1000
-   :--negative     :--red400
+   :--negative     :--red600
    :--negative50   :--red50
    :--negative100  :--red100
    :--negative200  :--red200
@@ -251,7 +251,7 @@
    :--negative800  :--red800
    :--negative900  :--red900
    :--negative1000 :--red1000
-   :--warning      :--yellow400
+   :--warning      :--yellow800
    :--warning50    :--yellow50
    :--warning100   :--yellow100
    :--warning200   :--yellow200
@@ -263,7 +263,7 @@
    :--warning800   :--yellow800
    :--warning900   :--yellow900
    :--warning1000  :--yellow1000
-   :--positive     :--green500
+   :--positive     :--green800
    :--positive50   :--green50
    :--positive100  :--green100
    :--positive200  :--green200

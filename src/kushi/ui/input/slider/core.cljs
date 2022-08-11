@@ -162,7 +162,7 @@
             :default :none
             :desc    "Collection of step values."}
            {:name   label-size-class
-            :type    #{:mini :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :huge}
+            :type    #{:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :huge}
             :default :small
             :desc    "Kushi text-size utility class which controls the size of the step label(s)."}
            {:name   label-scale-factor

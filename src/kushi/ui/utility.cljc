@@ -178,7 +178,7 @@
 
     ;; Type sizing
     ;; ------------------------------------------------------
-    :mini              {:fs :--text-mini}
+    :xxxsmall          {:fs :--text-xxxsmall}
     :xxsmall           {:fs :--text-xxsmall}
     :xsmall            {:fs :--text-xsmall}
     :small             {:fs :--text-small}
@@ -186,7 +186,7 @@
     :large             {:fs :--text-large}
     :xlarge            {:fs :--text-xlarge}
     :xxlarge           {:fs :--text-xxlarge}
-    :huge              {:fs :--text-huge}
+    :xxxlarge          {:fs :--text-xxxlarge}
 
 
     ;; Type weight
@@ -251,7 +251,7 @@
                         :hover:bgc :transparent}
     :positive          {:c   :--positive
                         :bgc :--positive50}
-    :warning           {:c   :--warning600
+    :warning           {:c   :--warning
                         :bgc :--warning100}
     :negative          {:c   :--negative
                         :bgc :--negative50}

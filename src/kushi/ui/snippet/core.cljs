@@ -17,7 +17,7 @@
                             :o--0.7
                             :hover:o--1
                             {:src "graphics/copy.svg"})]
-                       [tooltip (sx 'kushi-copy-to-clipboard-tooltip :.mini :.rounded :ff--Inter {:-display-on-hover? false}) "Copied!"]]] )]
+                       [tooltip (sx 'kushi-copy-to-clipboard-tooltip :.xxxsmall :.rounded :ff--Inter {:-display-on-hover? false}) "Copied!"]]] )]
     (into [:div
            (merge-attrs
             (sx 'kushi-copy-to-clipboard-button-wrapper

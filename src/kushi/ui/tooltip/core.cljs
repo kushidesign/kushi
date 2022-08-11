@@ -73,7 +73,7 @@
           "Tooltips are placed above or below the parent element that they describe."
           :br
           :br
-          "Overriding auto placement - inline, block, or both - is available via the options `:-block-offset` and `:-inline-offset`."
+          "Overriding the automatic inline or block (or both) placement is available via the options `:-block-offset` and `:-inline-offset`."
           :br
           :br
           "Forcing centered-aligned placement to the top, bottom, left, or right of the parent item can be done with the `:-placement` option."
@@ -104,7 +104,7 @@
        (merge-attrs
         (sx 'kushi-tooltip
             :.absolute
-            :.mini
+            :.xxsmall
             :.rounded
             :top--0
             :bottom--unset
