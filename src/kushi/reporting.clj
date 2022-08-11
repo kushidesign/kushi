@@ -134,27 +134,28 @@
 
 (defn format-line-items [banner? coll]
   (when (and coll (seq coll))
-    (if banner? coll (str "(" (string/join ", " coll) ")"))))
+    (if banner? coll (str "Writing " (string/join ", " coll) ""))))
 
 
-;; Formatting for kushi build report :simple option --------------------------------------------------
+
+;; Formatting for kushi build report :simple option -------------------------------------------------
 (defn simple-report
-  [{:keys [header]} & lines*]
+  [{:keys [header build-id]} & lines*]
   (let [body-indent  ""
         lines        (reduce (fn [acc v] (concat acc (if (coll? v) v [v]))) [] (remove nil? lines*))
         lines-indent (map #(str body-indent %) lines)]
-    (string/join "\nkushi - " (concat [header] lines-indent))))
+    (str "[" build-id "] Kushi-v" version " - " (string/join lines-indent))
+    #_(string/join (str "\n[" build-id "] Kushi - ") (concat [header] lines-indent))))
 
 (defn select-ns-msg []
   (let [selected (:select-ns user-config)]
     (when (s/valid? ::specs/select-ns-vector selected)
       (str "Targeting namespaces: " selected))))
 
+
 ;; Kushi build report --------------------------------------------------------------------------------
 (defn print-report!
-  ([to-be-printed]
-   (print-report! to-be-printed nil))
-  ([to-be-printed cache-will-update?]
+  [{:keys [to-be-printed cache-will-update? build-state]}]
    (calculate-total-style-rules! to-be-printed)
    (let [banner?                 (= :banner (-> user-config :reporting-style))
          report-format-fn        (if banner? ansiformat/panel simple-report)
@@ -162,7 +163,7 @@
          report-line-items-pre   (format-line-items banner? report-line-items-pre*)
          cache-report            (when (and (:report-cache-update? user-config) cache-will-update?)
                                    (str "Updated " kushi-cache-path))
-         header-text             (str "kushi - v" version)
+         header-text             (str "[" (:shadow.build/build-id build-state) "]" " Kushi-v" version " -")
         ;;  header-simple           (str (ansi/red "[") (ansi/blue header-text)  (ansi/red "]"))
          header-simple           header-text
          header                  (if banner? header-text header-simple)]
@@ -170,6 +171,7 @@
      (println
       (report-format-fn
        {:header       header
+        :build-id     (:shadow.build/build-id build-state)
        ;;  :header-weight :bold
         :theme        printing/bold-rainbow2
        ;; :border-color :red
@@ -182,10 +184,10 @@
        ;;  :border-weight :bold
         :indent       3}
        (:selected-ns-msg @to-be-printed)
-       (when report-line-items-pre (remove nil? [writing-to-css-msg (when banner? "\n")]))
+       (when report-line-items-pre (remove nil? [ #_writing-to-css-msg (when banner? "\n")]))
        report-line-items-pre
        cache-report))
-     #_(println "Number of rules served from cache: " @state/cached-sx-rule-count "\n"))))
+     #_(println "Number of rules served from cache: " @state/cached-sx-rule-count "\n")))
 
 (defn report! [ns msg]
  (println (str "\n" (ansi/red "[") (ansi/blue ns) (ansi/red "]") msg "\n")))

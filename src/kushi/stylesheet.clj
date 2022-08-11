@@ -292,6 +292,7 @@
         (when (and post-build-report? something-to-write?)
           (reporting/print-report! to-be-printed cache-will-update?)))))
 
+
 ;; Used for build hook
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
@@ -306,13 +307,15 @@
       (spit user-css-file-path @state/kushi-css-sync :append false))
 
     (when (and (:post-build-report? user-config) something-to-write?)
-      (reporting/print-report! to-be-printed)))
+      (reporting/print-report! {:to-be-printed to-be-printed
+                                :build-state   build-state} )))
 
-  ;; Last, reset build states for subsequent builds at dev
+   ;; Last, reset build states for subsequent builds at dev
    (state/reset-build-states!)
 
   ;; Must return the build state
   build-state)
+
 
 (defn garden-mq-rule? [v]
   (and (map? v) (= :media (:identifier v))))
