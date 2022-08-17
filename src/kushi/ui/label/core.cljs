@@ -35,6 +35,7 @@
      (merge-attrs
       (sx 'kushi-label
           :.flex-row-c
+          :.transition
           :ai--c
           :d--inline-flex
           :w--fit-content
@@ -44,7 +45,7 @@
      (cond
        (and mi (= icon-position :inline-end))
        (do
-         (js/console.log
+         #_(js/console.log
           {:mi mi :ip icon-position :ic icon-component :children &children :result (conj &children icon-component)})
          (conj &children icon-component))
        (and mi (= icon-position :inline-start))
