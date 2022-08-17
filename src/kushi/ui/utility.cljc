@@ -1,4 +1,7 @@
-(ns kushi.ui.utility)
+(ns kushi.ui.utility
+  (:require
+   [kushi.utils :refer [deep-merge]]
+   [kushi.config :refer [user-config]]))
 
 (def combo-flex-utility-classes
   ;; Combinatorial flexbox utilities
@@ -63,7 +66,7 @@
    :bordered              {:border-color :silver
                            :border-style :solid
                            :border-width "1px"}
-   :outlined              {:outline-color :silver
+   :wireframe             {:outline-color :silver
                            :outline-style :solid
                            :outline-width "1px"}
 
@@ -130,155 +133,119 @@
   (merge
    {;; General
     ;; ------------------------------------------------------
-    :hidden            {:visibility :hidden}
-    :visible           {:visibility :visible}
-    :collapse          {:visibility :collapse}
+    :hidden        {:visibility :hidden}
+    :visible       {:visibility :visible}
+    :collapse      {:visibility :collapse}
 
 
     ;; Content
     ;; ------------------------------------------------------
-    :content-blank     {:content "\"\""}
-    :open-in-new       {:content "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"}
+    :content-blank {:content "\"\""}
+    :open-in-new   {:content "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"}
 
     ;; Cursor
     ;; ------------------------------------------------------
-    :pointer           {:cursor :pointer}
-
+    :pointer       {:cursor :pointer}
 
     ;; Position
     ;; ------------------------------------------------------
-    :absolute          {:position :absolute}
-    :fixed             {:position :fixed}
-    :relative          {:position :relative}
+    :absolute      {:position :absolute}
+    :fixed         {:position :fixed}
+    :relative      {:position :relative}
 
     ;; Display
     ;; ------------------------------------------------------
-    :block             {:display :block}
-    :inline            {:display :flex}
-    :inline-block      {:display :inline-block}
-    :flex              {:display :inline}
-    :inline-flex       {:display :inline-flex}
-    :grid              {:display :grid}
-    :inline-grid       {:display :inline-grid}
-    :flow-root         {:display :flow-root}
-    :contents          {:display :contents}
+    :block         {:display :block}
+    :inline        {:display :flex}
+    :inline-block  {:display :inline-block}
+    :flex          {:display :inline}
+    :inline-flex   {:display :inline-flex}
+    :grid          {:display :grid}
+    :inline-grid   {:display :inline-grid}
+    :flow-root     {:display :flow-root}
+    :contents      {:display :contents}
 
     ;; Type styling
     ;; ------------------------------------------------------
-    :sans              {:font-family :--sans-serif-font-stack}
-    :sans-serif        {:font-family :--serif-font-stack}
-    :italic            {:font-style :italic}
-    :oblique           {:font-style :oblique}
+    :sans          {:font-family :--sans-serif-font-stack}
+    :sans-serif    {:font-family :--serif-font-stack}
+    :italic        {:font-style :italic}
+    :oblique       {:font-style :oblique}
 
     ;; Text capitalization
     ;; ------------------------------------------------------
-    :uppercase         {:text-transform :uppercase}
-    :lowercase         {:text-transform :lowercase}
-    :capitalize        {:text-transform :capitalize}
+    :uppercase     {:text-transform :uppercase}
+    :lowercase     {:text-transform :lowercase}
+    :capitalize    {:text-transform :capitalize}
 
     ;; Type sizing
     ;; ------------------------------------------------------
-    :xxxsmall          {:fs :--text-xxxsmall}
-    :xxsmall           {:fs :--text-xxsmall}
-    :xsmall            {:fs :--text-xsmall}
-    :small             {:fs :--text-small}
-    :medium            {:fs :--text-medium}
-    :large             {:fs :--text-large}
-    :xlarge            {:fs :--text-xlarge}
-    :xxlarge           {:fs :--text-xxlarge}
-    :xxxlarge          {:fs :--text-xxxlarge}
+    :xxxsmall      {:fs :--text-xxxsmall}
+    :xxsmall       {:fs :--text-xxsmall}
+    :xsmall        {:fs :--text-xsmall}
+    :small         {:fs :--text-small}
+    :medium        {:fs :--text-medium}
+    :large         {:fs :--text-large}
+    :xlarge        {:fs :--text-xlarge}
+    :xxlarge       {:fs :--text-xxlarge}
+    :xxxlarge      {:fs :--text-xxxlarge}
 
 
     ;; Type weight
     ;; ------------------------------------------------------
-    :thin              {:fw                                 :--text-thin
-                        ">.kushi-radio-input:outline-width" :--input-border-weight-thin
-                        ">.kushi-checkbox-input:bw"         :--input-border-weight-thin}
-    :extra-light       {:fw                                 :--text-extra-light
-                        ">.kushi-radio-input:outline-width" :--input-border-weight-extra-light
-                        ">.kushi-checkbox-input:bw"         :--input-border-weight-extra-light}
-    :light             {:fw                                 :--text-light
-                        ">.kushi-radio-input:outline-width" :--input-border-weight-light
-                        ">.kushi-checkbox-input:bw"         :--input-border-weight-light}
-    :normal            {:fw                                 :--text-normal
-                        ">.kushi-radio-input:outline-width" :--input-border-weight-normal
-                        ">.kushi-checkbox-input:bw"         :--input-border-weight-normal}
-    :wee-bold          {:fw                                 :--text-wee-bold
-                        ">.kushi-radio-input:outline-width" :--input-border-weight-wee-bold
-                        ">.kushi-checkbox-input:bw"         :--input-border-weight-wee-bold}
-    :semi-bold         {:fw                                 :--text-semi-bold
-                        ">.kushi-radio-input:outline-width" :--input-border-weight-semi-bold
-                        ">.kushi-checkbox-input:bw"         :--input-border-weight-semi-bold}
-    :bold              {:fw                                 :--text-bold
-                        ">.kushi-radio-input:outline-width" :--input-border-weight-bold
-                        ">.kushi-checkbox-input:bw"         :--input-border-weight-bold}
-    :extra-bold        {:fw                                 :--text-extra-bold
-                        ">.kushi-radio-input:outline-width" :--input-border-weight-extra-bold
-                        ">.kushi-checkbox-input:bw"         :--input-border-weight-extra-bold}
-    :heavy             {:fw                                 :--text-heavy
-                        ">.kushi-radio-input:outline-width" :--input-border-weight-heavy
-                        ">.kushi-checkbox-input:bw"         :--input-border-weight-heavy}
+    :thin          {:fw :--text-thin}
+    :extra-light   {:fw :--text-extra-light}
+    :light         {:fw :--text-light}
+    :normal        {:fw :--text-normal}
+    :wee-bold      {:fw :--text-wee-bold}
+    :semi-bold     {:fw :--text-semi-bold}
+    :bold          {:fw :--text-bold}
+    :extra-bold    {:fw :--text-extra-bold}
+    :heavy         {:fw :--text-heavy}
 
 
     ;; Animations
     ;; ------------------------------------------------------
-    :instant           {:transition-duration :--duration-instant}
-    :fast              {:transition-duration :--duration-fast}
-    :slow              {:transition-duration :--duration-slow}
-    :extra-slow        {:transition-duration :--duration-extra-slow}
-    :super-slow        {:transition-duration :--duration-super-slow}
-    :ultra-slow        {:transition-duration :--duration-ultra-slow}
+    :instant       {:transition-duration :--duration-instant}
+    :fast          {:transition-duration :--duration-fast}
+    :slow          {:transition-duration :--duration-slow}
+    :extra-slow    {:transition-duration :--duration-extra-slow}
+    :super-slow    {:transition-duration :--duration-super-slow}
+    :ultra-slow    {:transition-duration :--duration-ultra-slow}
 
 
     ;; Surfaces, buttons, containers
     ;; ------------------------------------------------------
-    :rounded           {:border-radius :--rounded}
-    :sharp             {:border-radius 0}
-    :elevated          {:box-shadow :--elevated}
-
-
-    ;; Buttons, tags, & labels
-    ;; ------------------------------------------------------
-    :primary           {:c         :--primary-b
-                        :bgc       :--primary}
-    :secondary         {:bgc       :--gray100
-                        :color     :--primary}
-    :tertiary          {:bgc       :transparent}
-    :ghosted           {:bw        :1px
-                        :bs        :solid
-                        :bc        :--black
-                        :bgc       :transparent
-                        :hover:bgc :transparent}
-    :positive          {:c   :--positive
-                        :bgc :--positive50}
-    :warning           {:c   :--warning
-                        :bgc :--warning100}
-    :negative          {:c   :--negative
-                        :bgc :--negative50}
-    :positive-inverted {:c   :--primary-b
-                        :bgc :--positive}
-    :warning-inverted  {:c   :--primary-b
-                        :bgc :--warning}
-    :negative-inverted {:c   :--primary-b
-                        :bgc :--negative}
-    :minimal           {:bgc :transparent
-                        :p   0}
-    :pill              {:border-radius "9999px"}
-
-
-    ;; Buttons
-    ;; ------------------------------------------------------
-    :link              {:>span:p   0
-                        :td        :u
-                        :tup       :u
-                        :bgc       :transparent
-                        :hover:bgc :transparent
-                        :hover:o   0.7}
+    :rounded       {:border-radius :--rounded}
+    :sharp         {:border-radius 0}
+    :elevated      {:box-shadow :--elevated}
 
     ;; Controls
     ;; ------------------------------------------------------
-    :disabled          {:o      :40%!important
-                        :cursor :not-allowed!important}}))
+    :disabled      {:o      :40%!important
+                    :cursor :not-allowed!important}}))
+
+(def ui-theming-classes
+  ;; Type weight
+  ;; ------------------------------------------------------
+  {:thin        {">.kushi-radio-input:outline-width" :--input-border-weight-thin
+                 ">.kushi-checkbox-input:bw"         :--input-border-weight-thin}
+   :extra-light {">.kushi-radio-input:outline-width" :--input-border-weight-extra-light
+                 ">.kushi-checkbox-input:bw"         :--input-border-weight-extra-light}
+   :light       {">.kushi-radio-input:outline-width" :--input-border-weight-light
+                 ">.kushi-checkbox-input:bw"         :--input-border-weight-light}
+   :normal      {">.kushi-radio-input:outline-width" :--input-border-weight-normal
+                 ">.kushi-checkbox-input:bw"         :--input-border-weight-normal}
+   :wee-bold    {">.kushi-radio-input:outline-width" :--input-border-weight-wee-bold
+                 ">.kushi-checkbox-input:bw"         :--input-border-weight-wee-bold}
+   :semi-bold   {">.kushi-radio-input:outline-width" :--input-border-weight-semi-bold
+                 ">.kushi-checkbox-input:bw"         :--input-border-weight-semi-bold}
+   :bold        {">.kushi-radio-input:outline-width" :--input-border-weight-bold
+                 ">.kushi-checkbox-input:bw"         :--input-border-weight-bold}
+   :extra-bold  {">.kushi-radio-input:outline-width" :--input-border-weight-extra-bold
+                 ">.kushi-checkbox-input:bw"         :--input-border-weight-extra-bold}
+   :heavy       {">.kushi-radio-input:outline-width" :--input-border-weight-heavy
+                 ">.kushi-checkbox-input:bw"         :--input-border-weight-heavy}})
 
 (def utility-classes
-  (merge combo-flex-utility-classes base-classes override-classes))
+  (deep-merge combo-flex-utility-classes base-classes override-classes (when false ui-theming-classes)))
