@@ -357,15 +357,18 @@
     ;; Remove
     (reset! state/invalid-style-args invalid-style-args)
 
-    #_(when (state/debug?)
-        (?+ :new-args:bindings
+    #_(when (= :.hidden (first args))
+        (println
             (keyed
             ;;  args
             ;;  args*
+            ;;  attrs*
+            ;;  attrs**
+            ;;  args*
             ;;  tokens
             ;;  style-tokens
-             valid-styles-from-tokens
-             style-tokens-map
+            ;;  valid-styles-from-tokens
+            ;;  style-tokens-map
             ;;  attrs*
             ;;  class-tokens*
             ;;  classlist-from-attrs

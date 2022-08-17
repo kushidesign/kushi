@@ -16,7 +16,6 @@
           ;;  kushi-class-prefix
            kushi-class
            kushi-selector
-           kushi-prepend
            defclass-name
            cache-key
            atomic-class?] :as m}]
@@ -31,11 +30,10 @@
   cache-key
   atomic-class?))
 
-  (let [;;autogen                       (auto-generated-selector)
+  (let [;; autogen                       (auto-generated-selector)
         autogen                       (str "_" cache-key)
         ;; kushi-class-prefix            (or kushi-class-prefix (:kushi-class-prefix user-config))
 
-        prepend                       kushi-prepend
         prefixed-name-for-el          (some-> kushi-class name)
 
         ;; Currently using same shared class as sx
@@ -44,17 +42,24 @@
                                         (:kushi-class-prefix user-config))
         selector*                     (or
                                        kushi-selector
-                                       (when defclass-name (nsqkw->selector-friendly (str shared-class-prefix defclass-name)))
+                                       (when defclass-name
+                                         (nsqkw->selector-friendly
+                                          (str shared-class-prefix defclass-name)))
                                        prefixed-name-for-el
                                        autogen)
         selector                      (if kushi-selector
                                         selector*
                                         ;; TODO replace this stuff with :kushi/prepend
-                                        (str (when-not (nil? prepend) (name prepend))
-                                             "."
-                                             selector*))
+                                        (str "." selector*))
+        css-reset-rule?               (= (:kushi/sheet m) :reset)
+        prepend-to-selectors          (:prepend-to-selectors user-config)
+        prepend                       (when (and (not css-reset-rule?)
+                                                 prepend-to-selectors
+                                                 (or (string? prepend-to-selectors)
+                                                     (keyword? prepend-to-selectors)))
+                                        (name prepend-to-selectors))
         ret                           {:selector*     selector*
-                                       :selector      selector
+                                       :selector      (str prepend selector)
                                        :prefixed-name prefixed-name-for-el}]
 
     #_(when true #_(state/debug?)

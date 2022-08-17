@@ -44,7 +44,8 @@
    :report-cache-update? true
    :reporting-style      :simple
    :kushi-class-prefix   nil
-   :kushi-class-prepend  nil
+   :prepend-to-selectors nil ;; Usually would be the id of the "app" container, e.g "#app".
+   :css-vars-root        nil ;; Usually would be the id of the "app" container, e.g "#app". Defaults to ":root"
    :data-attr-name       nil
    :css-dir              nil
    :write-stylesheet?    true
@@ -52,15 +53,14 @@
    :handle-duplicates    nil
    :enable-caching?      false
    :theme                nil
-   :scaling-system       nil
    :css-reset?           true
    :ui-theming?          true
 
    ;; Experimental - add to docs later
+   :scaling-system       nil
    :diagnose             nil
    :diagnose-idents      nil
-   :log-clean!?          false
-   })
+   :log-clean!?          false})
 
 (defn ->user-config [m]
   (let [config*         m
@@ -82,7 +82,7 @@
   [m]
   (select-keys m
                [:data-attr-name
-                :kushi-class-prepend
+                :prepend-to-selectors
                 :kushi-class-prefix
                 :media]))
 

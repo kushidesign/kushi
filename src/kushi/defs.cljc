@@ -4,7 +4,7 @@
 (def meta-ks
   [:kushi-class
    :kushi-class-prefix
-   :kushi-class-prepend
+   :prepend-to-selectors
    :kushi-selector
    :kushi-theme?
    :ui?
