@@ -68,7 +68,9 @@
   [{:keys [toks pretty-print?]}]
   (let [gvecs (->> toks
                    (mapv (fn [[prop val]] {prop (util/maybe-wrap-css-var val)}))
-                   (cons ":root")
+                   (cons (or (when-let [selector* (:css-vars-root user-config)]
+                               (name selector*))
+                             ":root"))
                    (into [])
                    vector)]
     (garden/css {:pretty-print? pretty-print?} gvecs)))
