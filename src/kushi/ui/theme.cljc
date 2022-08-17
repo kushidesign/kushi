@@ -4,6 +4,7 @@
    [kushi.config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]
    [kushi.shorthand :as shorthand]
+   [kushi.printing :as printing]
    [clojure.string :as string]))
 
 (defn resolve-user-theme
@@ -117,14 +118,16 @@
     (let [mods&prop   (mods&prop css-prop)
           parts       (-> kui-key
                           name
-                          (string/split #"\.") )
+                          (string/split #"\."))
           parts*      (concat (some->> parts
                                        (remove string/blank?)
                                        (remove nil?)
                                        (map #(if (= % "*") "global" %)))
                               mods&prop)
-          theme-token (string/join "-" parts*)]
-      (!?+ (keyed parts* theme-token))
+          theme-token (if (= (first parts*) "dark ")
+                        (str (string/join "-" (rest parts*)) "-inverse")
+                        (string/replace (string/join "-" parts*) #" -" "_"))]
+      (keyed parts* theme-token)
       [(name css-prop) [theme-token  (if (number? css-val) css-val (name css-val))]]))
 
 
@@ -157,7 +160,7 @@
                                                       :kushi-selector (name kui-key)
                                                       :kushi-theme?   true}
                                                      toks])]
-                                 (!?+ :ret2 (keyed flat toks stylemap))
+                                 (keyed flat toks stylemap)
                                  ret))
                              []
                              merged-theme)]
@@ -209,9 +212,14 @@
                                (concat google-font-maps1 google-font-maps2)
                                (remove nil?)
                                (into []))
-        ;; Always adds system font stack unless `:use-system-font-stack?` is set to `false` in theme
-        add-system-font-stack? (-> m :use-system-font-stack? false? not)]
-    (keyed google-font-maps add-system-font-stack?)))
+        ;; Always adds system font stack unless `:add-system-font-stack?` is set to `false` in theme
+        add-system-font-stack? (-> m :add-system-font-stack? false? not)
+        system-font-stack-weights* (-> m :system-font-stack-weights)
+        system-font-stack-weights  (if (and (seq system-font-stack-weights*)
+                                            (every? int? system-font-stack-weights*))
+                                     system-font-stack-weights*
+                                     [])]
+    (keyed google-font-maps add-system-font-stack? system-font-stack-weights)))
 
 
 (defn merged-theme-props [m1 m2]
@@ -220,22 +228,29 @@
         alias-tokens  (merge (some-> m1 :tokens :alias) (some-> m2 :tokens :alias))]
     (keyed font-loading global-tokens alias-tokens)))
 
+;; simple-bad-global-selector-key-warning
+(defn remove-global-selector [m]
+  (if (and (map? m) (:* m))
+    (do (printing/simple-bad-global-selector-key-warning {:form-meta {:file "kushi.ui.theme/theme"}
+                                                          :invalid-args {:ui (:* m)}})
+        (dissoc m :*))
+    m))
+
 (defn merged-theme []
   (let [user-theme-map    (resolve-user-theme (:theme user-config) :user)
         base-theme-map    (resolve-user-theme 'kushi.ui.basetheme/base-theme-map)
         _ (!?+ base-theme-map)
         _ (!?+ user-theme-map)
-        css-reset         (when-not (false? (:css-reset user-theme-map))
+        css-reset         (when (true? (:css-reset? user-config))
                             (or (:css-reset user-theme-map)
                                 (:css-reset base-theme-map)))
-        css-reset-el      (:css-reset-el user-theme-map)
         {:keys
          [font-loading
           global-tokens
           alias-tokens]}  (merged-theme-props base-theme-map user-theme-map)
         font-loading-opts (font-loading-opts font-loading)
-        by-component-args {:base-compo-styles   (-> base-theme-map :ui #_:kushi)
-                           :user-compo-styles   (-> user-theme-map :ui #_:kushi)
+        by-component-args {:base-compo-styles   (-> base-theme-map :ui remove-global-selector)
+                           :user-compo-styles   (-> user-theme-map :ui remove-global-selector)
                            :theme-global-tokens global-tokens
                            :theme-alias-tokens  alias-tokens}
         by-component      (by-component by-component-args)
@@ -269,7 +284,6 @@
     (merge
      (keyed
       css-reset
-      css-reset-el
       font-loading-opts
       styles
       tokens-in-theme
