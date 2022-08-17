@@ -964,7 +964,8 @@
 (defn simple-file-info-str
   [form-meta]
   (let [{:keys [file line column]} form-meta]
-    (str file ":" ansi/bold-font line ansi/reset-font ":" ansi/bold-font column ansi/reset-font)))
+    (str file
+         (when line (str ":" ansi/bold-font line ansi/reset-font ":" ansi/bold-font column ansi/reset-font)))))
 
 (defn simple-warning2
   [{:keys [sym
@@ -978,7 +979,7 @@
     (println
      (str (simple-alert-header2 "WARNING" file-info-str)
           (when commentary (str commentary "\n"))
-          (with-line-numbers form-meta fname args)
+          (when fname (with-line-numbers form-meta fname args))
           (when hint (str "\n\n" hint))
           "\n\n"
           unbroken-border
@@ -1094,6 +1095,19 @@
                        (pprint (if (map? invalid-args)
                                  (vals invalid-args)
                                  invalid-args)))))))))))
+
+(defn simple-bad-global-selector-key-warning
+  [m*]
+  (when-let [invalid-args (:invalid-args m*)]
+    (when (seq invalid-args)
+      (when-not (and (map? invalid-args)
+                     (= (-> invalid-args first second first)
+                        [:kushi-debug? true]))
+        (simple-warning2
+         (assoc m*
+                :commentary
+                (str "Discarding the global \"*\" selector from theme :ui entry.\n"
+                     "Use something like :body or :#my-app-id instead.")))))))
 
 (defn build-failure []
   (throw (Exception.

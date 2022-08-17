@@ -95,6 +95,18 @@
         ff-rules  (apply concat ff-rules*)]
     ff-rules))
 
+(defn add-system-font-stack*
+  [& weights*]
+  (let [{:keys [caching? cache-key cached]} (state/cached :system-font-stack weights*)
+        ff-rules                            (into []
+                                                  (or cached
+                                                      (system-at-font-face-rules weights*)))]
+    (doseq [rule ff-rules]
+      (reset! state/current-macro :add-font-face)
+      (swap! state/user-defined-font-faces conj rule))
+    (when (and caching? (not cached))
+      (swap! state/styles-cache-updated assoc cache-key ff-rules))
+    @state/user-defined-font-faces))
 
 (defmacro ^:public add-system-font-stack
   [& weights*]
@@ -292,7 +304,8 @@
   (merge m (exception-args m)))
 
 
-(defn defclass-dispatch [{:keys [sym form-meta args] :as m*}]
+(defn defclass-dispatch
+  [{:keys [sym form-meta args] :as m*}]
   (reset! state/current-macro :defclass)
   (try
     (let [classtype  (sym->classtype sym)
@@ -416,15 +429,13 @@
 (defn- font-loading! [m]
   (let [asfs? (:add-system-font-stack? m)
         gfm   (:google-font-maps m)]
-    (when asfs? (add-system-font-stack))
-    (!?+ (count @state/user-defined-font-faces))
+    (when asfs? (apply add-system-font-stack* (:system-font-stack-weights m)))
     (when gfm (state/add-google-font-maps! gfm))))
 
 
 (defn theme!
  []
  (let [{:keys [css-reset
-               css-reset-el
                font-loading-opts
                global-toks
                alias-toks
@@ -433,14 +444,7 @@
                utility-classes]} theme/theme]
    (doseq [[selector m] (partition 2 css-reset)
            :when        (s/valid? ::specs/css-reset-selector selector)
-           :let         [el       (when css-reset-el (str (name css-reset-el) " "))
-                         selector (if (vector? selector)
-                                    (let [el-bs     (when (and el (= m {:box-sizing :border-box}))
-                                                      [el (str el "::before") (str el "::after")])
-                                          prepended (map #(str el %) selector)
-                                          coll      (concat el-bs prepended)]
-                                      (string/join ", " coll))
-                                    selector)]]
+           :let         [selector (if (vector? selector) (string/join ", " selector) selector)]]
      (sx-dispatch {:args [selector {:style m :kushi/sheet :reset}]}))
 
    ;; TODO - conditionalize these 2 for prod vs dev - OR - always add to state and then conditionalize writing of css chunks based on user config setting
