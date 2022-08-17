@@ -136,7 +136,8 @@
   (when (and coll (seq coll))
     (if banner? coll (str "Writing " (string/join ", " coll) ""))))
 
-
+(defn build-id+kushi-version [build-id version]
+  (str "[" build-id "]" " Kushi-v" version " -"))
 
 ;; Formatting for kushi build report :simple option -------------------------------------------------
 (defn simple-report
@@ -144,7 +145,7 @@
   (let [body-indent  ""
         lines        (reduce (fn [acc v] (concat acc (if (coll? v) v [v]))) [] (remove nil? lines*))
         lines-indent (map #(str body-indent %) lines)]
-    (str "[" build-id "] Kushi-v" version " - " (string/join lines-indent))
+    (str "[" build-id "] [Kushi v" version "] - " (string/join lines-indent))
     #_(string/join (str "\n[" build-id "] Kushi - ") (concat [header] lines-indent))))
 
 (defn select-ns-msg []
@@ -163,7 +164,8 @@
          report-line-items-pre   (format-line-items banner? report-line-items-pre*)
          cache-report            (when (and (:report-cache-update? user-config) cache-will-update?)
                                    (str "Updated " kushi-cache-path))
-         header-text             (str "[" (:shadow.build/build-id build-state) "]" " Kushi-v" version " -")
+         build-id                (:shadow.build/build-id build-state)
+         header-text             (build-id+kushi-version build-id version)
         ;;  header-simple           (str (ansi/red "[") (ansi/blue header-text)  (ansi/red "]"))
          header-simple           header-text
          header                  (if banner? header-text header-simple)]
@@ -171,7 +173,7 @@
      (println
       (report-format-fn
        {:header       header
-        :build-id     (:shadow.build/build-id build-state)
+        :build-id     build-id
        ;;  :header-weight :bold
         :theme        printing/bold-rainbow2
        ;; :border-color :red
