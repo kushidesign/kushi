@@ -75,7 +75,7 @@ Usage with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https:/
 
 For a well commented, feature-complete minimal project template, please see [kushi-quickstart](https://github.com/paintparty/kushi-quickstart).
 
-[Checkout interactive playground of pre-built headless UI components from the `kushi.ui` namespace](https://paintparty.github.io/kushi/public/index.html).
+<!--[Checkout interactive playground of pre-built headless UI components from the `kushi.ui` namespace](https://paintparty.github.io/kushi/public/index.html).-->
 <br>
 
 # Syntax
@@ -108,8 +108,10 @@ The above example would be written like this:
 ```
 
 <br>
-If you want to go faster, write your styles as tokenized keywords.<br>
-This is similar to Tachyons/Tailwind, but much more helpful in learning actual CSS (and much more intuitive if you are an existing CSS expert).
+If you want to go faster, write your styles as tokenized keywords.
+This approach is similar to Tachyons (and its follow-on called Tailwind), but much more helpful in learning actual CSS, and much more intuitive if you are an existing CSS expert.
+
+<br>
 
 ```Clojure
 (defn my-component []
@@ -171,8 +173,6 @@ All your css is written to a static file, via a build hook for the `:compile-fin
 
 ### Styles as Keywords
 
-Kushi aims to provide the same benefits as Tachyons/Tailwind (styling expressed as a list of tokens co-located at the element level) while minimizing some of the common downsides (learning and using a whole new and proprietary abstraction layer on top of standard css).
-
 Keywords containing `--` represent a css prop and value pair (split on `--`).
 
 
@@ -186,7 +186,6 @@ More examples, using Kushi's optional shorthand grammer.
 :ai--c     ; :align-items--center
 :ai--e     ; :align-items--end
 :ta--r     ; :text-align--right
-:bgs--50%  ; :background-size--50%
 :fs--18px  ; :font-size--18px
 :ff--serif ; :font-family--serif
 ```
@@ -200,11 +199,6 @@ This shorthand grammer is available for the most commonly used props:
 :bs   ; :border-style
 :bw   ; :border-width
 :bg   ; :background
-:bgc  ; :background-color
-:bgi  ; :background-image
-:bgp  ; :background-position
-:bgr  ; :background-repeat
-:bgs  ; :background-size
 :c    ; :color
 :d    ; :display
 :ff   ; :font-family
@@ -263,7 +257,7 @@ Shorthand grammer extends to cover enumerated values:
 :ai--b   ; align-items--baseline
 ```
 
-Note that the enumerated value`:none`, as well as global properties such as `inherit`, `initial`, `revert`, `unset`, etc. are not supported with shorthand syntax:
+Note that the enumerated value`none`, as well as global properties such as `inherit`, `initial`, `revert`, `unset`, etc. are intentially not supported with shorthand syntax:
 
 ```Clojure
 ;; This will NOT work
@@ -316,7 +310,7 @@ The following sugar is supported for css variables:
 <br>
 
 ### Complex values
-Sometimes, css syntax is inherently complex. In these cases, you may want or need to locate your styling in the `:style` entry of the attributes map:
+Sometimes, css syntax is inherently convoluted. In these cases, you may want or need to locate your styling in the `:style` entry of the attributes map:
 
 When a string is desired, or necessary:
 ```Clojure
@@ -394,7 +388,7 @@ text-shadow: 5px 5px 10px red, -5px -5px 10px blue;
 <br>
 
 # Shared Styles
-The `kushi.core/defclass` macro makes it easy to create shared styles.
+The `kushi.core/defclass` allows for the creation of shared styles.
 
 These should be defined in a dedicated namespace, or set of dedicated namespaces, and required once in your core or main ns.
 
@@ -402,7 +396,8 @@ The example below will generate a data-representation of the css rule-set.
 
 This data is added to a register (an atom that exists in the build state).
 
-This css class is only written to disk if a component references it.
+ <!-- This css class is only written to disk if a component references it. -->
+
 ```Clojure
 (ns myapp.shared-styles
   (:require
