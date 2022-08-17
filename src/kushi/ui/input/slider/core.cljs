@@ -1,6 +1,6 @@
 (ns kushi.ui.input.slider.core
   (:require
-   [kushi.parstub :refer-macros [!? ?]]
+   [kushi.parstub :refer [!? ?]]
    [clojure.string :as string]
    [kushi.core :refer (sx defclass merge-attrs insert-style-tag!)]
    [kushi.ui.core :refer (opts+children)]
@@ -100,7 +100,8 @@
               :.relative
               :w--100%
               :h--0
-              {:style {:mbe "calc(10px + 0.5em)"}})
+              {:style {:mbe "calc(10px + 0.5em)"
+                       :width "100%"}})
           labels-attrs)]
         (map-indexed
          (fn [idx step]
