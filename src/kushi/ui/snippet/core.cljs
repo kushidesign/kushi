@@ -10,7 +10,7 @@
 (defn copy-to-clipboard-button
   [opts & children*]
   (let [children (or children*
-                     [[button (sx 'kushi-copy-to-clipboard-button :c--red :>span:padding--5px :.tertiary {:on-click add-temporary-tooltip!})
+                     [[button (sx 'kushi-copy-to-clipboard-button :c--red :p--5px :.tertiary {:on-click add-temporary-tooltip!})
                        [:img
                         (sx 'kushi-copy-to-clipboard-button-graphic
                             :h--60%
