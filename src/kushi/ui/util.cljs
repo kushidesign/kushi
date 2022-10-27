@@ -31,21 +31,5 @@
       (when (and (numeric-string? w) (numeric-string? h))
         (/ h w)))))
 
-(defn compound-override [schema m]
-  (reduce (fn [acc [k v]]
-            (assoc acc
-                   k
-                   (into {}
-                         (apply
-                          concat
-                          (map-indexed (fn [idx x]
-                                         (mapv (fn [kw]
-                                                 [kw (nth v idx nil)])
-                                               (if (coll? x) x [x])))
-                                       schema)))))
-          {}
-          m))
-
-
-;; Components
-;; --------------------------------------------------------------------------
+(defn ->pairs [coll]
+  (->> coll (partition 2) (map vec)))

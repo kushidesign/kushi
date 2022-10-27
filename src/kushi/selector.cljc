@@ -2,8 +2,7 @@
   #?(:clj (:require [garden.def]))
   (:require
    [clojure.string :as string]
-   [kushi.config :refer [user-config]]
-   [kushi.utils :as util :refer [auto-generated-selector keyed]]))
+   [kushi.config :refer [user-config]]))
 
 (defn nsqkw->selector-friendly [s]
   (-> (str s)
@@ -12,61 +11,35 @@
       (string/replace #":" "")))
 
 (defn selector-name
-  [{:keys [
-          ;;  kushi-class-prefix
-           kushi-class
+  [{:keys [assigned-class
            kushi-selector
-           defclass-name
            cache-key
-           atomic-class?] :as m}]
+           :kushi/process]}]
+  (let [autogen              (str "_" cache-key)
+        prefixed-name-for-el (some-> assigned-class name)
+        selector*            (or
+                              kushi-selector
+                              prefixed-name-for-el
+                              autogen)
+        selector             (if kushi-selector
+                               selector*
+                               (str (when-not (string? assigned-class) ".") selector*))
+        ppend*               (:prepend-selector* user-config)
+        ppend                (when (and (not= process :kushi/css-reset)
+                                        ppend*
+                                        (or (string? ppend*)
+                                            (keyword? ppend*)))
+                               (name ppend*))
+        ret                  {:selector*     selector*
+                              :selector      (str ppend selector)
+                              :prefixed-name prefixed-name-for-el}]
 
-#_(?+
- :selector-name
- (keyed
-  kushi-class
-  kushi-selector
-  kushi-prepend
-  defclass-name
-  cache-key
-  atomic-class?))
-
-  (let [;; autogen                       (auto-generated-selector)
-        autogen                       (str "_" cache-key)
-        ;; kushi-class-prefix            (or kushi-class-prefix (:kushi-class-prefix user-config))
-
-        prefixed-name-for-el          (some-> kushi-class name)
-
-        ;; Currently using same shared class as sx
-        shared-class-prefix           (if atomic-class?
-                                        (:atomic-class-prefix user-config)
-                                        (:kushi-class-prefix user-config))
-        selector*                     (or
-                                       kushi-selector
-                                       (when defclass-name
-                                         (nsqkw->selector-friendly
-                                          (str shared-class-prefix defclass-name)))
-                                       prefixed-name-for-el
-                                       autogen)
-        selector                      (if kushi-selector
-                                        selector*
-                                        ;; TODO replace this stuff with :kushi/prepend
-                                        (str "." selector*))
-        css-reset-rule?               (= (:kushi/sheet m) :reset)
-        prepend-to-selectors          (:prepend-to-selectors user-config)
-        prepend                       (when (and (not css-reset-rule?)
-                                                 prepend-to-selectors
-                                                 (or (string? prepend-to-selectors)
-                                                     (keyword? prepend-to-selectors)))
-                                        (name prepend-to-selectors))
-        ret                           {:selector*     selector*
-                                       :selector      (str prepend selector)
-                                       :prefixed-name prefixed-name-for-el}]
-
-    #_(when true #_(state/debug?)
-      (println
-       {:kushi-class kushi-class
-        :defclass-name defclass-name
-        :autogen autogen
-        :selector selector
-        :selector* selector*}))
+    #_(when true
+        (pprint
+         {:assigned-class assigned-class
+          :kushi-selector kushi-selector
+          :cache-key      cache-key
+          :autogen        autogen
+          :selector       selector
+          :selector*      selector*}))
     ret))

@@ -6,34 +6,46 @@
    [kushi.ui.dom :refer (set-overlay-position! conditional-display?)]))
 
 
- (defclass kushi-tooltip-placement-inline
+ (defclass
+   ^{:kushi/chunk :kushi/kushi-ui-defclass}
+   kushi-tooltip-placement-inline
   {:top       :50%!important
    :bottom    :unset!important
    :transform "translateY(-50%)!important"
    :margin    :0!important})
 
-(defclass kushi-tooltip-placement-inline-end
+(defclass
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-tooltip-placement-inline-end
   :.kushi-tooltip-placement-inline
   {:left      "calc(100% + var(--overlay-placement-inline-offset, 12px))!important"
    :right     :unset!important})
 
-(defclass kushi-tooltip-placement-inline-start
+(defclass
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-tooltip-placement-inline-start
   :.kushi-tooltip-placement-inline
   {:right     "calc(100% + var(--overlay-placement-inline-offset, 12px))!important"
    :left      :unset!important})
 
-(defclass kushi-tooltip-placement-block
+(defclass
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-tooltip-placement-block
   {:left      :50%!important
    :right     :unset!important
    :transform "translateX(-50%)!important"
    :margin    :0!important})
 
-(defclass kushi-tooltip-placement-block-start
+(defclass
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-tooltip-placement-block-start
   :.kushi-tooltip-placement-block
   {:bottom    "calc(100% + var(--overlay-placement-block-offset, 6px))!important"
    :top       :unset!important})
 
-(defclass kushi-tooltip-placement-block-end
+(defclass
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-tooltip-placement-block-end
   :.kushi-tooltip-placement-block
   {:top       "calc(100% + var(--overlay-placement-block-offset, 6px))!important"
    :bottom    :unset!important})
@@ -99,45 +111,52 @@
   [& args]
   (let [[opts attr & children]      (opts+children args)
         {:keys [display-on-hover? inline-offset block-offset placement]} opts]
-    [:section
-     (let [placement-class (when placement (str "kushi-tooltip-placement-" (name placement)))]
-       (merge-attrs
-        (sx 'kushi-tooltip
-            :.absolute
-            :.xxsmall
-            :.rounded
-            :top--0
-            :bottom--unset
-            :left--100%
-            :right--unset
-            :p--0
-            :m--5px
-            :bgc--black
-            :c--white
-            :ws--n
-            :o--0
-            :w--0
-            :h--0
-            :overflow--hidden
-            :transition--opacity:0.2s:linear
-          ;; maybe abstract into an :.overlay defclass(es) with decoration defclasses for tooltip vs popover
-            :line-height--1.5
-            {:class                              [placement-class]
-             :style                              {"has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):transition" :none
-                                                  "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):opacity" 1
-                                                  "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):width"   :fit-content
-                                                  "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):height"  :auto
-                                                  "has(ancestor([data-kushi-tooltip='true'][aria-expanded='true'])):padding" :0.75em:1.5em}
-             :data-kushi-conditional-display     (if (= false display-on-hover?) "true" "false")
-             :data-kushi-tooltip-position-block  block-offset
-             :data-kushi-tooltip-position-inline inline-offset
-             :id                                 (gensym)
-             :data-kushi-ui                      :tooltip})
-        #_(when (= placement :inline-end)
-            {:style {:left      "calc(100% + 12px)!important"
-                     :right     :unset!important
-                     :top       :50%!important
-                     :transform "translateY(-50%)!important"
-                     :margin    :0!important}})
-        attr))
-     children]))
+    (into
+     [:section
+      (let [placement-class (when placement (str "kushi-tooltip-placement-" (name placement)))]
+        (merge-attrs
+         (sx 'kushi-tooltip
+             :.absolute
+             :border-radius--:--tooltip-border-radius
+             :fs--:--tooltip-font-size
+             :bgc--:--tooltip-background-color
+             :c--:--tooltip-color
+             :top--0
+             :bottom--unset
+             :left--100%
+             :right--unset
+             :p--0
+             :m--5px
+             :ws--n
+             :o--0
+             :w--0
+             :h--0
+             :overflow--hidden
+             :transition--opacity:0.2s:linear
+             ;; maybe abstract into an :.overlay defclass(es) with decoration defclasses for tooltip vs popover
+             :line-height--1.5
+             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):transition"     :none]
+             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):opacity"        1]
+             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):width"          :fit-content]
+             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):height"         :auto]
+             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding-block"  :--tooltip-padding-block]
+             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding-inline" :--tooltip-padding-inline]
+             {:class                              [placement-class]
+              ;; :style                              {"has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):transition" :none
+              ;;                                      "has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):opacity"    1
+              ;;                                      "has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):width"      :fit-content
+              ;;                                      "has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):height"     :auto
+              ;;                                      "has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding"    :0.75em:1.5em}
+              :data-kushi-conditional-display     (if (= false display-on-hover?) "true" "false")
+              :data-kushi-tooltip-position-block  block-offset
+              :data-kushi-tooltip-position-inline inline-offset
+              :id                                 (gensym)
+              :data-kushi-ui                      :tooltip})
+         #_(when (= placement :inline-end)
+             {:style {:left      "calc(100% + 12px)!important"
+                      :right     :unset!important
+                      :top       :50%!important
+                      :transform "translateY(-50%)!important"
+                      :margin    :0!important}})
+         attr))]
+     children)))

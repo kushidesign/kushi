@@ -1,21 +1,52 @@
 (ns ^:dev/always kushi.stylesheet
   (:require
    [clojure.string :as string]
+   [kushi.io :refer [load-edn]]
    [clojure.java.io :as io]
-   [clojure.data :as data]
    [garden.stylesheet]
    [garden.core :as garden]
-   [kushi.config :refer [user-config user-css-file-path kushi-cache-dir kushi-cache-path version]]
-   [kushi.state :as state]
+   [kushi.config :refer [user-config
+                         user-css-file-path
+                         version]]
+   [kushi.state2 :as state2]
    [kushi.utils :as util :refer [keyed]]
-   [kushi.parstub :refer [? !? ?+ !?+]]
-   [kushi.reporting :as reporting]))
+   [kushi.printing2 :as printing2]
+   [kushi.defs :refer [rule-type-report-order rule-type-labels token-types]]
+   [kushi.reporting :as reporting])
+  (:import [java.util.zip ZipEntry ZipOutputStream]))
 
+
+(def license-comment-header
+  (str "/*! kushi v" version " | EPL License | https://github.com/paintparty/kushi */"))
+
+
+(defn keep-garden-vecs [chunk]
+  (reduce (fn [acc {gv  :garden-vecs
+                    :as m}]
+
+            #_(when
+             (and
+              (or (= chunk :kushi/utility (:kushi/chunk m))
+                  (= chunk :kushi/utility-override (:kushi/chunk m))    )
+              (some->> m :selector :selector* (re-find #"^oblique")))
+              #_(= chunk :kushi/utility (:kushi/chunk m))
+              #_(= chunk :kushi.core/defclass-override (:kushi/chunk m))
+              #_(println (some-> m :selector :selector*) (:kushi/process m) (:kushi/chunk m))
+              (? m))
+
+            (if (and (= (:kushi/chunk m) chunk)
+                     (seq gv))
+              (conj acc gv)
+              acc))
+          []
+          @state2/css))
 
 (defn garden-vecs-injection
   [garden-vecs]
   (->> garden-vecs
-       (map (fn [v] {:garden-vec v :rule-css (garden.core/css {:pretty-print? false} v)}))
+       (map (fn [v]
+              {:garden-vec v
+               :rule-css   (garden.core/css {:pretty-print? false} v)}))
        (remove (fn [{x :garden-vec}] (and (vector? x) (nil? (second x)))))
        (map :rule-css)
        (remove string/blank?)
@@ -31,293 +62,319 @@
     (when print?
      (reset! css-text (str @css-text "\n" content))) ))
 
-(defn has-mqs? [coll]
-  (and (map? coll)
-        (some-> coll :value :media-queries)
-        coll))
-
-(defn bunch-mqs [garden-vecs]
-  (reduce (fn [acc m]
-            (let [mq (-> m :value :media-queries)]
-              (let [existing-rules (get acc mq)
-                    rules          (some-> m :value :rules)]
-                (assoc acc mq (concat existing-rules rules)))))
-          {}
-          (filter has-mqs? garden-vecs)))
-
-(defn atomic-classes-mq
-  [garden-vecs*]
-  (let [medias (-> user-config :media vals)
-        mq-idx (fn [x]
-                 (let [mq  (-> x :value :media-queries)
-                       idx (first (keep-indexed (fn [idx v] (when (= mq v) idx)) medias))]
-                   idx))
-        ret*   (mapv #(let [[mq args] %]
-                        (apply (partial garden.stylesheet/at-media mq) args))
-                     (bunch-mqs garden-vecs*))
-        ret    (sort-by mq-idx < ret*)]
-    ret))
-
-(defn print-status [n kind]
-  (println (str "    " n " unique " kind)))
-
-(def license-comment-header
-  (str "/*! kushi v" version " | EPL License | https://github.com/paintparty/kushi */"))
 
 (defn design-tokens-css
-  [{:keys [toks pretty-print?]}]
-  (let [gvecs (->> toks
-                   (mapv (fn [[prop val]] {prop (util/maybe-wrap-css-var val)}))
-                   (cons (or (when-let [selector* (:css-vars-root user-config)]
-                               (name selector*))
-                             ":root"))
-                   (into [])
-                   vector)]
-    (garden/css {:pretty-print? pretty-print?} gvecs)))
+  [{:keys [pretty-print?]}
+   toks]
+  (when (:add-design-tokens? user-config)
+   (let [gvecs (->> toks
+                    (mapv (fn [[prop val]] {prop (util/maybe-wrap-css-var val)}))
+                    (cons (or (when-let [selector* (:design-tokens-root user-config)]
+                                (name selector*))
+                              ":root"))
+                    (into [])
+                    vector)]
+     (garden/css {:pretty-print? pretty-print?} gvecs))))
 
-(defn append-tokens!
-  [{:keys [token-type]
+
+(defn defkeyframes->css [[nm frames]]
+  (str "@keyframes "
+       (name nm)
+       " {\n"
+       (garden.core/css frames)
+       "\n}\n"))
+
+(defn font-face->css
+  [{:keys [css-rule :kushi/process]}]
+  (when css-rule
+    (cond (and (= process :kushi.core/add-system-font-stack)
+               (vector? css-rule)
+               (seq css-rule))
+          (string/join "\n" css-rule)
+          (and (= process :kushi.core/add-font-face)
+               (string? css-rule))
+          css-rule)))
+
+(defn number-of-rules [f coll]
+  (if (seq coll)
+    (if (= f font-face->css)
+      (reduce (fn [acc {:keys [css-rule]}]
+                (let [num-font-face-rules (cond
+                                            (string? css-rule)
+                                            1
+                                            (seq css-rule)
+                                            (count css-rule)
+                                            :else
+                                            0)]
+                  (+ acc num-font-face-rules)))
+              0
+              coll)
+      (count coll))
+    0))
+
+(defn append-css!*
+  [{:keys [css-text to-be-printed]}
+   {:keys [coll k comment map-fn content]
     :as   m}]
-  (when (:ui-theming? user-config)
-      (let [toks  (case token-type
-                    :global @state/global-tokens
-                    :alias @state/alias-tokens
-                    :used @state/used-tokens
-                    [])
-            count (if (seq toks) (count toks) 0)
-            k     (-> token-type name (str  "-tokens-count") keyword)]
-        (when (pos-int? count)
-          (append-css-chunk!
-           {:css-text (:css-text m)
-            :comment  (str (name token-type) " design tokens")
-            :content  (design-tokens-css (assoc m :toks toks))})))))
+  (let [num    (number-of-rules map-fn coll)
+        f       (or map-fn identity)
+        content (or content
+                    (->> coll
+                         (map f)
+                         (string/join "\n")))]
 
-(defn append-at-font-face!
-  [{:keys [css-text to-be-printed]}]
-  (let [font-face-count (count @state/user-defined-font-faces)]
-    (swap! to-be-printed assoc :font-face font-face-count)
-    (when (pos-int? font-face-count)
+    (swap! to-be-printed assoc k num)
+    (when (pos-int? num)
       (append-css-chunk!
-       {:css-text css-text
-        :comment  "Font faces"
-        :content  (string/join "\n" @state/user-defined-font-faces)}))))
-
-  (defn defkeyframes->css [[nm frames]]
-    (str "@keyframes "
-         (name nm)
-         " {\n"
-         (garden.core/css frames)
-         "\n}\n"))
-
-(defn all-defkeyframes-content []
-  (string/join
-   "\n"
-   (map defkeyframes->css @state/user-defined-keyframes)))
-
-(defn append-defkeyframes!
-  [{:keys [css-text to-be-printed]}]
-  (let [keyframes-count (count @state/user-defined-keyframes)]
-    (swap! to-be-printed assoc :keyframes keyframes-count)
-    (when (pos-int? keyframes-count)
-      (append-css-chunk!
-       {:css-text css-text
-        :comment  "Animation Keyframes"
-        :content  (all-defkeyframes-content)}))))
-
-(defn count-mqs-rules [mqs]
-  (count (apply concat (map #(some-> % :value :rules) mqs))))
-
-(defn no-declarations? [coll]
-  (and (vector? coll)
-       (= (count coll) 2)
-       (string? (first coll))
-       (nil? (second coll))))
-
-(defn append-defclasses!
-  [{:keys [pretty-print? css-text to-be-printed comment-base classtype] :as m*}]
-  (let [gv* (if @state/KUSHIDEBUG
-              (->> @state/utility-classes-by-classtype classtype vals)
-
-              ; Temp fix
-              (->> @state/utility-classes-by-classtype classtype vals)
-              ;TODO Fix this for prod builds!
-              #_(->> @state/utility-classes-used-by-classtype classtype))
-
-        gv  (map :garden-vecs gv*)]
-   (when (seq gv)
-     (let [garden-vecs*                   (apply concat (concat gv))
-           garden-vecs                    (->> garden-vecs*
-                                               (remove has-mqs?)
-                                               (remove no-declarations?))
-           atomic-classes-mq              (atomic-classes-mq garden-vecs*)
-           defclass-mq-count              (count atomic-classes-mq)
-           defclass-style-rules-under-mqs (count-mqs-rules atomic-classes-mq)]
-       (swap! to-be-printed
-              assoc
-              :defclass-style-rules-under-mqs
-              defclass-style-rules-under-mqs
-              :defclass-style-rules
-              (count garden-vecs)
-              :defclass-mq-count
-              defclass-mq-count)
-       (append-css-chunk!
-        {:css-text css-text
-         :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
-         :comment  comment-base})
-
-       (when (pos-int? defclass-mq-count)
-         (append-css-chunk!
-          {:css-text css-text
-           :content  (garden/css {:pretty-print? pretty-print?} atomic-classes-mq)
-           :comment  (str comment-base ", media queries")}))))))
-
-(defn resolve-rules [m st reset?]
-  (let [rules** (:rules @st)
-        rules*  (if reset? (reverse rules**) rules**)
-        rules   (keep (fn [[k v]] (when v [k v])) rules*)]
-    rules))
+       (keyed css-text comment content) ))))
 
 
-(defn append-rules!
-  [{:keys [css-text pretty-print? to-be-printed]
-    :as   m}
-   gv-state-coll
-   comment]
-  (let [reset?                       (= :reset (:kushi/sheet m))
-        rules                        (resolve-rules m gv-state-coll reset?)
-        mqs                          (keep (fn [[k v]]
-                                             (when-let [as-seq (seq v)]
-                                               (apply garden.stylesheet/at-media
-                                                      (cons k as-seq))))
-                                           (dissoc @gv-state-coll :rules))
-        garden-vecs                  (remove nil? (concat rules mqs))
-        css-reset-style-rules        (if reset? (count rules) (:css-reset-style-rules to-be-printed))
-        normal-style-rules-under-mqs (count-mqs-rules mqs)
-        normal-style-rules           (count rules)
-        normal-mq-count              (count mqs)]
-    (swap! to-be-printed
-           merge
-           (keyed normal-style-rules-under-mqs
-                  normal-style-rules
-                  normal-mq-count
-                  css-reset-style-rules))
-    (append-css-chunk!
-     {:css-text css-text
-      :content  (garden/css {:pretty-print? pretty-print?} garden-vecs)
-      :comment  comment})))
+(defn append-from-gv!*
+  [{:keys [css-text to-be-printed pretty-print?]}
+   {:keys [config-key to-be-printed-log-key :kushi/chunk comment]}]
+  (when (config-key user-config)
+    (let [rules              (keep-garden-vecs chunk)
+          content            (garden/css {:pretty-print? pretty-print?}
+                                         rules)
+          to-be-printed-key* (or to-be-printed-log-key
+                                 (when (some-> config-key
+                                               name
+                                               (string/starts-with? "add-"))
+                                   (-> config-key
+                                       name
+                                       (subs 4)
+                                       keyword))
+                                 config-key)
+          to-be-printed-key  (->> to-be-printed-key*
+                                  name
+                                  drop-last
+                                  (apply str)
+                                  keyword)
+          num-rules          (count rules)]
+      (swap! to-be-printed assoc to-be-printed-key num-rules)
+      (append-css-chunk! (keyed comment content css-text)))))
 
-(defn append-reset-rules! [m]
-  (when (:css-reset? user-config)
-    (append-rules! (assoc m :kushi/sheet :reset)
-                   state/css-reset
-                   "CSS Reset rules via:\nThe new CSS reset - version 1.6.0 (last updated 29.4.2022)\nGitHub page: https://github.com/elad2412/the-new-css-reset")))
 
-(defn append-reusable-component-rules! [m]
-  (append-rules! m state/garden-vecs-state-components "Reusable component styles for kushi-ui components"))
+(defn create-css-text
+  ([]
+   (create-css-text nil))
+  ([context]
+   #_(when context
+     (? :create-css-text
+        (str "kushi.stylesheet/create-css-text being called from "
+             (name context))))
 
-(defn append-component-rules! [m]
-  (append-rules! m state/garden-vecs-state "Component styles"))
+   (let [pretty-print?   true
+         printables      (atom [])
+         to-be-printed   (atom {})
+         css-text        (atom license-comment-header)
+         m               {:css-text      css-text
+                          :pretty-print? pretty-print?
+                          :printables    printables
+                          :to-be-printed to-be-printed}
+         append-from-gv! (partial append-from-gv!* m)
+         append-css!     (partial append-css!* m)]
 
-(defn append-theme-rules! [m]
-  (when (:ui-theming? user-config)
-    (append-rules! m state/garden-vecs-state-theme "Kushi UI theming rules")))
+    ;; css-reset
+     (append-from-gv! {:config-key  :add-css-reset?
+                       :kushi/chunk :kushi/css-reset
+                       :comment     (str "CSS Reset rules via:\n"
+                                         "The new CSS reset - version 1.6.0 (last updated 29.4.2022)\n"
+                                         "GitHub page: https://github.com/elad2412/the-new-css-reset")})
 
-(defn write-cache! [cache-is-equal?]
-  (when-not cache-is-equal?
-    (do
-      (let [created-cache-dir? (io/make-parents kushi-cache-path)
-            {fname :name
-             ns*   :ns}  (meta #'write-cache!)
-            nsfn         (str (ns-name ns*) "/" fname)]
-        (when created-cache-dir?
-          (reporting/report! nsfn (str " Created cache dir -> " kushi-cache-dir))))
-      (spit kushi-cache-path @state/styles-cache-updated :append false)))
-  (reset! state/styles-cache-current @state/styles-cache-updated))
+    ;; font-face
+     (append-css! {:k       :font-face
+                   :coll    @state2/user-defined-font-faces
+                   :map-fn  font-face->css
+                   :comment "Font faces"})
 
-(defn cache-is-equal? []
-  (let [[only-in-a only-in-b _] (data/diff @state/styles-cache-current @state/styles-cache-updated)
-        cache-is-equal? (and (nil? only-in-a) (nil? only-in-b))]
-    cache-is-equal?))
 
-(defn create-css-text []
-  (let [pretty-print? true
-        printables    (atom [])
-        to-be-printed (atom {})
-        css-text      (atom license-comment-header)
-        m             {:css-text      css-text
-                       :pretty-print? pretty-print?
-                       :printables    printables
-                       :to-be-printed to-be-printed}
-        caching?      (true? (:enable-caching? user-config))]
+    ;; design-tokens
+     (when (:add-design-tokens? user-config)
+       (append-css! (let [coll @state2/global-tokens]
+                      {:k       :global-tokens
+                       :coll    coll
+                       :comment "global design tokens"
+                       :content (design-tokens-css m coll)}))
 
-    ;; (?+ @state/utility-classes-by-classtype)
-    ;; (?+ @state/utility-classes-used)
-    ;; (?+ @state/utility-classes-used-by-classtype)
-    ;; (?+ :kushi-utility-classes (-> @state/utility-classes-by-classtype :user-utility keys))
+       (append-css! (let [coll @state2/alias-tokens]
+                      {:k       :alias-tokens
+                       :coll    coll
+                       :comment "alias design tokens"
+                       :content (design-tokens-css m coll)}))
 
-    (when-let [select-ns-msg (reporting/select-ns-msg)]
-      (swap! to-be-printed assoc :select-ns-msg select-ns-msg))
+       (append-css! (let [coll @state2/theming-tokens]
+                      {:k       :theming-tokens
+                       :coll    coll
+                       :comment "theming design tokens"
+                       :content (design-tokens-css m coll)}))
 
-    (append-reset-rules! m)
-    (append-at-font-face! m)
-    (append-tokens! (assoc m :token-type :global))
-    (append-tokens! (assoc m :token-type :alias))
-    (append-tokens! (assoc m :token-type :used))
-    (append-defkeyframes! m)
-    (append-theme-rules! m)
-    (append-defclasses! (merge m {:classtype    :kushi-utility
-                                  :comment-base "Kushi base utility classes"}))
-    (append-defclasses! (merge m {:classtype    :user-utility
-                                  :comment-base "User-defined base utility classes"}))
-    (append-reusable-component-rules! m)
-    (append-component-rules! m)
-    (append-defclasses! (merge m {:classtype    :kushi-utility-override
-                                  :comment-base "Kushi base utility classes, override versions"}))
-    (append-defclasses! (merge m {:classtype    :user-utility-override
-                                  :comment-base "User-defined base utility classes, override versions"}))
+       (append-css! (let [coll @state2/used-tokens]
+                      {:k       :used-tokens
+                       :coll    coll
+                       :comment "used design tokens"
+                       :content (design-tokens-css m coll)})))
 
-    (reset! state/kushi-css-sync @css-text)
-    (reset! state/kushi-css-sync-to-be-printed @to-be-printed)
 
-      ;; TODO Do caching here?
-    #_(let [cache-will-update? (when caching?
-                                 (let [cache-is-equal? (cache-is-equal?)]
-                                   (write-cache! cache-is-equal?)
-                                   (not cache-is-equal?)))]
-        #_(? "kushi.stylesheet/create-css-file: local bindings"
-             (assoc
-              (keyed write-styles?
-                     cache-will-update?
-                     post-build-report?)
-              :to-be-printed @to-be-printed))
+    ;; keyframes
+     (append-css! {:k       :keyframes
+                   :coll    @state2/user-defined-keyframes
+                   :map-fn  defkeyframes->css
+                   :comment "Animation Keyframes"})
 
-        (when (and post-build-report? something-to-write?)
-          (reporting/print-report! to-be-printed cache-will-update?)))))
+    ;; kushi.ui theming classes
+     (append-from-gv! {:config-key            :add-kushi-ui-theming?
+                       :kushi/chunk           :kushi/theme
+                       :comment               "kushi.ui component theming rules"})
+
+     (append-from-gv! {:config-key            :add-kushi-ui-theming-defclass?
+                       :kushi/chunk           :kushi/kushi-ui-defclass
+                       :comment               "kushi.ui component theming rules (shared, via defclass)"})
+
+    ;; kushi base utility classes
+     (append-from-gv! {:config-key  :add-kushi-defclass?
+                       :kushi/chunk :kushi/utility
+                       :comment     "Base kushi utility classes"})
+
+    ;; user shared classes
+     (append-from-gv! {:config-key  :add-user-defclass?
+                       :kushi/chunk :kushi.core/defclass
+                       :comment     "User-defined shared classes (via defclass)"})
+
+    ;; user sx classes
+     (append-from-gv! {:config-key  :add-user-sx?
+                       :kushi/chunk :kushi.core/sx
+                       :comment     "User styles generated from kushi.core/sx"})
+
+    ;; kushi base utility classes, overrides
+     (append-from-gv! {:config-key    :add-kushi-defclass?
+                       :kushi/chunk   :kushi/utility-override
+                       :comment       "Kushi base utility classes, override versions"
+                       :override?     true})
+
+    ;; user shared classes, overrides
+     (append-from-gv! {:config-key    :add-user-defclass?
+                       :kushi/chunk   :kushi.core/defclass-override
+                       :comment       "User-defined shared classes (via defclass), override versions"
+                       :override?     true})
+
+     (reset! state2/->css @css-text)
+     (reset! state2/->css-to-be-printed-previously @state2/->css-to-be-printed)
+     (reset! state2/->css-to-be-printed @to-be-printed))))
+
+(defn to-be-printed+ [to-be-printed]
+  (let [with-diffs     (into {}
+                             (map (fn [[k current-count]]
+                                    (let [previous-count (k @state2/->css-to-be-printed-previously)
+                                          ndiff          (when (every? int? [current-count previous-count])
+                                                           (- current-count previous-count))
+                                          tup            [current-count ndiff]]
+                                      [k tup]))
+                                  @to-be-printed))
+        num-rules      (->> (apply dissoc (concat [@to-be-printed] token-types))
+                            vals
+                            (remove #(not (int? %)))
+                            (apply +))
+        num-tokens     (->> (select-keys @to-be-printed token-types)
+                            vals
+                            (remove #(not (int? %)))
+                            (apply +))
+        to-be-printed+ (mapv (fn [k] [k (k with-diffs)])
+                             rule-type-report-order)]
+    (keyed with-diffs
+           to-be-printed+
+           num-rules
+           num-tokens)))
+
+#_(defn gzip
+  [input output & opts]
+  (use 'clojure.java.io)
+  (with-open [output (-> output clojure.java.io/output-stream GZIPOutputStream.)]
+    (with-open [rdr (clojure.java.io/reader input)]
+      (doall (apply clojure.java.io/copy rdr output opts)))))
+
+#_(defmacro ^:private with-entry
+  [zip entry-name & body]
+  `(let [^ZipOutputStream zip# ~zip]
+     (.putNextEntry zip# (ZipEntry. ~entry-name))
+     ~@body
+     (flush)
+     (.closeEntry zip#)))
+
+
+(defn add-stylesheet? []
+  (or (and (:add-stylesheet-dev? user-config)
+           @state2/KUSHIDEBUG)
+      (and (:add-stylesheet-prod? user-config)
+           (not @state2/KUSHIDEBUG))))
 
 
 ;; Used for build hook
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
   [build-state]
-  (when (nil? @state/kushi-css-sync) (create-css-text))
-  (let [to-be-printed       state/kushi-css-sync-to-be-printed
-        zero-total-rules?   (nil? (some #(not (zero? %)) (vals @to-be-printed)))
-        something-to-write? (not zero-total-rules?)]
+  (when (nil? @state2/->css)
+    (create-css-text "kushi.stylesheet/create-css-file")
+    (count @state2/->css))
+  (let [to-be-printed          state2/->css-to-be-printed
+        zero-total-rules?      (nil? (some #(not (zero? %)) (vals @to-be-printed)))
+        something-to-write?    (not zero-total-rules?)
+        caching?               (true? (:caching? user-config))
+        [cache-will-update?
+         cache-diff-count
+         diff-callsites]       (when caching?
+                                 (let [{:keys [equal? diff-count diff-callsites]} (state2/cache-is-equal?)]
+                                   (state2/write-cache! equal?)
+                                   [(not equal?) diff-count diff-callsites]))
+        {:keys [to-be-printed+
+                num-rules
+                num-tokens]}   (to-be-printed+ to-be-printed)]
+    #_(!?
+       (keyed
+        ;;  cache-will-update?
+        ;;  @to-be-printed
+        ;;  to-be-printed
+        ;;  to-be-printed+
+        ;;  num-rules
+        ;;  previously-printed
+        ))
 
-    (when (and (:write-stylesheet? user-config) something-to-write?)
+    (when (and (add-stylesheet?) something-to-write?)
       (use 'clojure.java.io)
-      (spit user-css-file-path @state/kushi-css-sync :append false))
+      (spit user-css-file-path @state2/->css :append false))
 
-    (when (and (:post-build-report? user-config) something-to-write?)
-      (reporting/print-report! {:to-be-printed to-be-printed
-                                :build-state   build-state} )))
+
+    (when (and (:log-build-report? user-config)
+               something-to-write?)
+      (let [
+            ;; TODO - for reporting size of css file in KB.
+            ;; filesize     (str (quot (.length (io/file user-css-file-path)) 1024) "KB")
+            ;; _ (println filesize)
+            ;; _ (pprint (into (sorted-map) user-config))
+
+            ;;TODO - for creating a gzipped version to get its size for reporting (then delete it).
+            ;; gzipped-size (with-open [output (ZipOutputStream. (io/output-stream (user-css-file-path ".zip")))
+                          ;;            input  (io/input-stream user-css-file-path)]
+                          ;;  (with-entry output user-css-file-path
+                          ;;    (io/copy input output)))
+            ]
+       (reporting/print-report! (assoc (keyed to-be-printed
+                                              build-state
+                                              cache-will-update?
+                                              to-be-printed+
+                                              num-rules
+                                              num-tokens
+                                              cache-diff-count
+                                              diff-callsites)
+                                       :kushi-cache-path
+                                       state2/kushi-cache-path
+                                       :initial-build?
+                                       @state2/initial-build?)))))
 
    ;; Last, reset build states for subsequent builds at dev
-   (state/reset-build-states!)
+  (state2/reset-build-states!)
 
   ;; Must return the build state
   build-state)
 
 
-(defn garden-mq-rule? [v]
-  (and (map? v) (= :media (:identifier v))))

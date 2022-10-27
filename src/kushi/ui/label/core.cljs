@@ -8,13 +8,12 @@
    [kushi.core :refer (merge-attrs)]))
 
 (defcom2 label
-
   {:desc ["A label is typically used for providing titles to sections of content."]
    :opts '[{:name    mui-icon
             :type    :string
             :default nil
             :desc    "Must be a string corresponding to a [mui-icon](https://fonts.google.com/icons?icon.set=Material+Icons)."}
-           {:name    icon-style
+           {:name    mui-icon-style
             :type    #{:filled :outlined :rounded :sharp :two-tone}
             :default :filled
             :desc    "Controls the style of the [mui-icon](https://fonts.google.com/icons?icon.set=Material+Icons)."}
@@ -23,12 +22,12 @@
             :default nil
             :desc    "Setting to one of the accepted values will place the icon, relative to any text labels."}]}
 
-  (let [{:keys [icon-position icon-style]
+  (let [{:keys [icon-position mui-icon-style]
          mi    :mui-icon
-         :or   {mi            nil
-                icon-style    :filled
-                icon-position :inline-start}} &opts
-        icon-component (icon-component {:mi mi :icon-position icon-position :icon-style icon-style})
+         :or   {mi             nil
+                mui-icon-style :filled
+                icon-position  :inline-start}} &opts
+        icon-component (icon-component {:mi mi :icon-position icon-position :mui-icon-style mui-icon-style})
         icon-class (when mi (str "kushi-label-with-icon-" (name icon-position))) ]
 
     [:span
@@ -44,10 +43,7 @@
       {:class icon-class})
      (cond
        (and mi (= icon-position :inline-end))
-       (do
-         #_(js/console.log
-          {:mi mi :ip icon-position :ic icon-component :children &children :result (conj &children icon-component)})
-         (conj &children icon-component))
+       (conj &children icon-component)
        (and mi (= icon-position :inline-start))
        (into [:<> icon-component] (rest &children))
        :else &children)])

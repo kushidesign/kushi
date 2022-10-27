@@ -1,11 +1,16 @@
 (ns ^:dev/always kushi.ui.core
-    (:require [clojure.walk :as walk]))
-
+    (:require [clojure.string :as string]
+              [clojure.pprint :refer [pprint]]
+              [clojure.walk :as walk]))
 
 (defmacro &*->val
   ([opts attrs children coll f]
    (&*->val opts attrs children coll f nil))
   ([opts attrs children coll f form-meta]
+  ;;  (println "\n\n" :&*->val:form-meta)
+  ;;  (pprint form-meta)
+  ;;  (println "\n\n" :&*->val:form-meta2 )
+  ;;  (pprint (meta &form))
    (let [form-meta2 (meta &form)
          ret (walk/postwalk (fn [x]
                               (cond
@@ -31,7 +36,13 @@
 (defmacro defcom
   [& args]
   (let [[nm coll f] args
-        form-meta   (meta &form)]
+        caller-ns (-> &env :ns :name)
+        form-meta   (assoc (meta &form)
+                           :kushi/caller-ns caller-ns
+                           :kushi/from-defcom? true
+                           :kushi/enclosing-fn-name nm
+                           :kushi/qualified-caller (symbol (str (name caller-ns) "/" (name nm)))
+                           )]
     `(defn ~nm
        [& args#]
        (let [[opts# attrs# & children#] (kushi.ui.core/opts+children args#)]

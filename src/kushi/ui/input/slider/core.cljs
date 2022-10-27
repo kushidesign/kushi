@@ -1,7 +1,5 @@
 (ns kushi.ui.input.slider.core
   (:require
-   [kushi.parstub :refer [!? ?]]
-   [clojure.string :as string]
    [kushi.core :refer (sx defclass merge-attrs insert-style-tag!)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.input.slider.css]
@@ -15,7 +13,9 @@
 ;; Styles for marker-labels
 ;; ----------------------------------------------------------------------------
 
-(defclass kushi-slider-step-label-marker
+(defclass
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-slider-step-label-marker
   {:>span:v                                           :hidden
    :before:fw                                         :800
    :before:fs                                         :1.2rem
@@ -26,19 +26,25 @@
    :before:transform                                  "translate(-50%, -50%)"
    :&.kushi-slider-step-label-selected:before:content :unset})
 
-(defclass kushi-slider-step-label-marker-dot
+(defclass
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-slider-step-label-marker-dot
   :.kushi-slider-step-label-marker
   {:before:fw :800
    :before:fs :1.2rem
    :before:o  :0.7})
 
-(defclass kushi-slider-step-label-marker-bar
+(defclass
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-slider-step-label-marker-bar
   :.kushi-slider-step-label-marker
   {:before:fw :300
    :before:fs :0.8em
    :before:o  :1})
 
-(defclass kushi-slider-step-label-marker-none
+(defclass
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-slider-step-label-marker-none
   :.kushi-slider-step-label-marker
   {:before:fw :300
    :before:fs :0.8em
@@ -140,6 +146,17 @@
               [:span (sx :.absolute-centered) step]]))
          steps)))
 
+(defn on-change [label-selected-class e]
+  (let [el                  (-> e .-target)
+        val                 (js/parseInt (.-value el))
+        parent              (.-parentNode el)
+        previous-sibling    (.-firstChild parent)
+        label-node          (.querySelector previous-sibling
+                                            (str ":nth-child(" (+ 1 val) ")"))
+        selected-label-node (.querySelector previous-sibling (str "." label-selected-class))]
+    (.remove (.-classList selected-label-node) label-selected-class)
+    (.add (.-classList label-node) label-selected-class)) )
+
 (defn slider
   {:desc ["A slider is a ui element which allows the user to specify a numeric value which must be no less than a given value, and no more than another given value."
           "By default, values are represented as a numeric scale with a `min` and a `max`."
@@ -163,7 +180,7 @@
             :default :none
             :desc    "Collection of step values."}
            {:name   label-size-class
-            :type    #{:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :huge}
+            :type    [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge]
             :default :small
             :desc    "Kushi text-size utility class which controls the size of the step label(s)."}
            {:name   label-scale-factor
@@ -231,15 +248,7 @@
                    :style         {:w :100%}
                    :data-kushi-ui :input.range
                    :type          :range
-                   :on-change     #(let [el                  (-> % .-target)
-                                         val                 (js/parseInt (.-value el))
-                                         parent              (.-parentNode el)
-                                         previous-sibling    (.-firstChild parent)
-                                         label-node          (.querySelector previous-sibling
-                                                                             (str ":nth-child(" (+ 1 val) ")"))
-                                         selected-label-node (.querySelector previous-sibling (str "." label-selected-class))]
-                                     (.remove (.-classList selected-label-node) label-selected-class)
-                                     (.add (.-classList label-node) label-selected-class))})
+                   :on-change     (partial on-change label-selected-class)})
               (assoc (or attr {})
                      :defaultValue default-index
                      :min (str 0)

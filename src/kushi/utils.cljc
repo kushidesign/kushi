@@ -1,14 +1,11 @@
 (ns ^:dev/always kushi.utils
-  #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
-  ;;  [kushi.parstub :refer [!? ?+ ?]]
    [clojure.spec.alpha :as s]
-   [clojure.string :as string]
-   [clojure.walk :as walk]
-   [kushi.defs :as defs]
-   [kushi.cssvarspecs :as cssvarspecs]
-   [kushi.scales :refer [scales scaling-map]]
-   [kushi.config :refer [user-config]]))
+   [clojure.string :as string]))
+
+(defn exception-args [{:keys [ex]}]
+  {:exception-message (.getMessage ex)
+   :top-of-stack-trace (get (.getStackTrace ex) 0)})
 
 (defmacro keyed [& ks]
   #?(:clj
@@ -17,166 +14,32 @@
             vals# (list ~@ks)]
         (zipmap keys# vals#))))
 
+(defn nameable? [x]
+  (or (string? x) (keyword? x) (symbol? x)))
 
-(defn auto-generated-selector []
-  (let [rando-a-z (char (+ (rand-int 25) 97))
-        hash (string/replace (str (gensym)) #"^G__" (str "_" (str rando-a-z)))]
-    hash))
+(defn stringify [x]
+  (if (nameable? x) (name x) (str x)))
 
-(defn cssfn? [x]
-  (and (list? x)
-       (= (first x) 'cssfn)
-       (keyword? (second x))))
+(defn token? [x]
+  (when (nameable? x)
+    (some-> x name (string/starts-with? "--"))))
 
-(declare cssfn)
+(defn s->cssvar
+  ([x] (s->cssvar x nil))
+  ([x fallback]
+    (str "var(--" (name x) (when fallback (str ", " fallback)) ")")))
 
-(defn vec-in-cssfn [v]
-  (string/join " " (map #(cond
-                           (cssfn? %) (cssfn %)
-                           (vector? %) (vec-in-cssfn %)
-                           (keyword? %) (name %)
-                           :else (str %))
-                        v)))
+(defn maybe-wrap-css-var [x]
+  (if (token? x)
+    (str "var(" (name x) ")")
+    x))
 
-(defn cssfn [[_ nm & args*]]
-  #_(?+ "cssfn" {:nm nm :args args*})
-  (let [args (map #(cond
-                     (cssfn? %) (cssfn %)
-                     (vector? %) (vec-in-cssfn %)
-                     (keyword? %) (name %)
-                     (number? %) %
-                     :else (if (= nm :url)
-                             (str "\"" % "\"")
-                             (str %)))
-                  args*)
-        css-arg (string/join ", " args)]
-    #_(?+ "cssfn" {:nm nm :args args* :css-arg css-arg})
-    (str (name nm) "(" css-arg ")")))
+(declare replace-nth)
 
-(defn num->pxstr-maybe
-  [prop-hydrated n]
-  (let [prop-hydrated-kw (keyword prop-hydrated)]
-   (if (contains? defs/int-vals prop-hydrated-kw)
-    n
-    (str n "px"))))
-
-(defn convert-number
-  [s hydrated-k]
-  (let [float? (not (nil? (re-find #"[0-9]\.[0-9]" s)))
-        s #?(:clj (if float? (. Double parseDouble s) (. Integer parseInt s))
-             :cljs (if float? (js/parseFloat s) (js/parseInt s)))]
-    (num->pxstr-maybe hydrated-k s)))
-
-(defn numeric-string?
-  "String representation of float or int?"
-  [s]
-  (when (and (string? s) (not (string/blank? s)))
-    (if (re-find  #"^[-+]?[0-9]*\.?[0-9]*$" s) true false)))
-
-(defn parse-int [s]
-  #?(:clj (if float? (. Double parseDouble s) (. Integer parseInt s))
-     :cljs (if float? (js/parseFloat s) (js/parseInt s))))
-
-(defn sanitize-for-css-var-name [v]
-  (string/escape
-   v
-   {\? "_QMARK"
-    \! "_BANG"
-    \# "_HASH"
-    \+ "_PLUS"
-    \$ "_DOLLAR"
-    \% "_PCT"
-    \= "_EQUALS"
-    \< "_LT"
-    \> "_GT"
-    \( "_OB"
-    \) "_CB"
-    \& "_AMP"
-    \* "_STAR"}))
-
-(defn css-var-string
-  ([x]
-   (css-var-string x nil))
-  ([x suffix]
-   (str "var(--" (sanitize-for-css-var-name (name x)) ")" suffix)))
-
-(defn hashed-css-var
-  [selector* css-prop]
-  (let [hashed-name    (hash (str selector* css-prop))]
-    (str "--" hashed-name)))
-
-;; TODO - safe to remove?
-(defn css-var-for-sexp [selector* css-prop]
-  (let [hashed-name    (hash (str selector* css-prop))]
-    (str "--" hashed-name))
-  #_(let [sanitized-name (-> css-prop
-                           (string/replace  #":" "_")
-                           sanitize-for-css-var-name)
-        hashed-name    (hash (str selector* css-prop))]
-    (?+ hashed-name)
-    (str "--"
-         selector*
-         "_"
-         sanitized-name)))
-
-(defn css-var-string-!important
-  [x selector* prop]
-  #_(?+ "css-var-string-!important" (css-var-string (second x) "!important"))
-  (if (list? (second x))
-    (str "var(" (hashed-css-var selector* prop) ")!important")
-    (css-var-string (second x) "!important")))
-
-(defn !important-var? [x] (and (list? x) (= '!important (first x))))
-
-(defn wrap-css-var [x] (str "var(" (name x) ")"))
-
-(defn process-sexp [sexp selector* css-prop]
-  (walk/postwalk
-   (fn [x]
-     (cond
-       (cssfn? x)
-       (cssfn x)
-
-       (!important-var? x)
-       (css-var-string-!important x selector* css-prop)
-
-       (s/valid? ::cssvarspecs/css-var-name x)
-       (wrap-css-var x)
-
-       :else x))
-   sexp))
-
-(defn process-value
-  [v hydrated-k selector*]
-  (cond
-    (s/valid? ::cssvarspecs/css-var-name v)
-    (wrap-css-var v)
-
-    (and (string? v) (re-find #"[\da-z]+\*$" v))
-    (if-let [scaling-system (:scaling-system user-config)]
-      (let [scale-key (string/replace v #"\*$" "")
-            css-val (get (some-> scales
-                                 scaling-system
-                                 (get (hydrated-k scaling-map)))
-                         scale-key nil)]
-        css-val)
-      (let [warning (str "\n[kushi - WARNING][Bad value => " v " ]\nIf you trying to use a scaling system, you need to explicitly set a value for the :scaling-system entry in your kushi.edn config map.\nCurrently support values are `:tachyons` and `:tailwind`\n")]
-        (println warning)
-        warning))
-
-    (or (numeric-string? v) (number? v))
-    (convert-number (str v) hydrated-k)
-
-    (cssfn? v)
-    (cssfn v)
-
-    (list? v)
-    (process-sexp v selector* hydrated-k)
-
-    (vector? v)
-    (mapv #(process-value % hydrated-k selector*) v)
-
-    :else v))
+(defn replace-last [item coll]
+  (replace-nth (dec (count coll))
+                      item
+                      coll))
 
 (defn deep-merge [& maps]
   (apply merge-with (fn [& args]
@@ -184,19 +47,6 @@
                         (apply deep-merge args)
                         (last args)))
          maps))
-
-(defn into-coll [x]
-  (if (coll? x) x [x]))
-
-(defn starts-with-dot? [x]
- (-> x name (string/starts-with? ".")))
-
-(defn reduce-by-pred [pred coll]
-  (reduce (fn [acc v]
-            (let [k (if (pred v) :valid :invalid)]
-              (assoc acc k (conj (k acc) v))))
-          {:valid [] :invalid []}
-          coll))
 
 (defn partition-by-pred [pred coll]
   (let [ret* (reduce (fn [acc v]
@@ -216,29 +66,117 @@
         ret [(:valid ret*) (:invalid ret*)]]
     ret))
 
-(defn filter-map [m pred]
-  (select-keys m (for [[k v] m :when (pred k v)] k)))
 
-(defn nameable? [x] (or (string? x) (keyword? x) (symbol? x)))
+(defn mapj [sep f coll]
+  (string/join sep (map f coll)))
 
-(defn stringify [x] (if (nameable? x) (name x) (str x)))
 
-(defn token? [x]
-  (when (nameable? x)
-    (some-> x name (string/starts-with? "--"))))
+(defn shared-class? [kw]
+  (contains? #{:kushi.core/defclass
+               :kushi.core/defclass-override
+               :kushi/utility
+               :kushi/utility-override}
+             kw))
 
-(defn s->cssvar
-  ([x] (s->cssvar x nil))
-  ([x fallback]
-    (str "var(--" (name x) (when fallback (str ", " fallback)) ")")))
+(defn hydrate-css-shorthand+alternations [v]
+  ;; TODO detect if value expresses url for something like a background image via image or svg, and don't split on `:` or `|` within the url() part:
+  ;; "url(https://blah.blah.com/blah.png)"
+  ;; or
+  ;; "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='12px' ...)"
 
-(defn maybe-wrap-css-var [x]
-  (if (token? x)
-    (str "var(" (name x) ")")
-    x))
+  (-> v
+      (string/replace #"\|" ", ")
+      (string/replace #"\:" " ")))
 
-(defn merged-attrs-map
-  [{:keys [attrs-base classlist css-vars data-cljs] :as m}]
-  (cond-> attrs-base
-    true (assoc :class (distinct classlist) :style css-vars)
-    data-cljs (assoc :data-cljs data-cljs)))
+(defn kwargs-keys
+  "Expects an even-numbered kwarg-style collection of key/values.
+   Returns a coll of the keys."
+  [kwargs]
+  (keep-indexed (fn [idx x] (when (even? idx) x)) kwargs))
+
+(defn ordered-pairs
+  "Takes a vector of keys, and a map.
+   All values in vector of keys are expected to have a corresponding entry in map.
+   Useful when you want to express an ordered-map as a vector of values (similar to kwargs),
+   subsequently convert it to a map for further processing, then convert it back to an vector
+   of kv tuples with an ordering based on original kwargs vector."
+  [ks m]
+  (into [] (keep (fn [k] (when-let [v (get m k)] [k v])) ks)))
+
+
+;; Utility fns below are taken from: http://weavejester.github.io/medley/medley.core.html
+
+(defn remove-nth
+  "Returns a lazy sequence of the items in coll, except for the item at the
+  supplied index. Runs in O(n) time. Returns a transducer when no collection is
+  provided."
+  {:added "1.2.0"}
+  ([index]
+   (fn [rf]
+     (let [idx (volatile! (inc index))]
+       (fn
+         ([] (rf))
+         ([result] (rf result))
+         ([result x]
+          (if (zero? (vswap! idx dec))
+            result
+            (rf result x)))))))
+  ([index coll]
+   (lazy-seq
+    (if (zero? index)
+      (rest coll)
+      (when (seq coll)
+        (cons (first coll) (remove-nth (dec index) (rest coll))))))))
+
+(defn replace-nth
+  "Returns a lazy sequence of the items in coll, with a new item replacing the
+  item at the supplied index. Runs in O(n) time. Returns a transducer when no
+  collection is provided."
+  {:added "1.2.0"}
+  ([index item]
+   (fn [rf]
+     (let [idx (volatile! (inc index))]
+       (fn
+         ([] (rf))
+         ([result] (rf result))
+         ([result x]
+          (if (zero? (vswap! idx dec))
+            (rf result item)
+            (rf result x)))))))
+  ([index item coll]
+   (lazy-seq
+    (if (zero? index)
+      (cons item (rest coll))
+      (when (seq coll)
+        (cons (first coll) (replace-nth (dec index) item (rest coll))))))))
+
+(defn- editable? [coll]
+  #?(:clj  (instance? clojure.lang.IEditableCollection coll)
+     :cljs (satisfies? cljs.core/IEditableCollection coll)))
+
+(defn- reduce-map [f coll]
+  (let [coll' (if (record? coll) (into {} coll) coll)]
+    (if (editable? coll')
+      (persistent! (reduce-kv (f assoc!) (transient (empty coll')) coll'))
+      (reduce-kv (f assoc) (empty coll') coll'))))
+
+(defn map-keys
+  "Maps a function over the keys of an associative collection."
+  [f coll]
+  (reduce-map (fn [xf] (fn [m k v] (xf m (f k) v))) coll))
+
+(defn map-vals
+  "Maps a function over the values of one or more associative collections.
+  The function should accept number-of-colls arguments. Any keys which are not
+  shared among all collections are ignored."
+  ([f coll]
+   (reduce-map (fn [xf] (fn [m k v] (xf m k (f v)))) coll))
+  ([f c1 & colls]
+   (reduce-map
+    (fn [xf]
+      (fn [m k v]
+        (if (every? #(contains? % k) colls)
+          (xf m k (apply f v (map #(get % k) colls)))
+          m)))
+    c1)))
+

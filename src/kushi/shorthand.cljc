@@ -1,7 +1,5 @@
 (ns kushi.shorthand
- (:require [kushi.parstub :refer [? ?+]]
-           [clojure.pprint :refer [pprint]]
-           [clojure.string :as string]))
+ (:require [clojure.string :as string]))
 
 (def border-styles
   {:h :hidden
@@ -157,9 +155,11 @@
     :gc {:name :grid-column :example-val [[1 :/ :span 2]]}
     :gce {:name :grid-column-end :example-val 3}
     :gcs {:name :grid-column-start :example-val -1}
+    :gcg {:name :grid-column-gap :example-val :0.2em}
     :gr {:name :grid-row :example-val [[1 :/ 3]]}
     :gre {:name :grid-row-end :example-val 3}
     :grs {:name :grid-row-start :example-val :auto}
+    :grg {:name :grid-row-gap :example-val :0.2em}
     :gt {:name :grid-template :example-val ["a b b" :20% "a c d" :auto]}
     :gta {:name :grid-template-areas :example-val ["a b b" "a c d"]}
     :gtr {:name :grid-template-rows :example-val [[:1fr :2fr :1fr]]}
@@ -315,7 +315,7 @@
   (println x))
 
 ;; list of enum shorthands
-#_(?+ (->> css-sh
+#_(? (->> css-sh
          (map (fn [[k {prop-name :name prop-vals :vals}]]
                 [(when prop-vals
                    (map (fn [[prop-val-sh prop-val]]
@@ -329,7 +329,7 @@
          (remove nil?)))
 
 ;; list of autocompletes
-#_(?+ (->> css-sh
+#_(? (->> css-sh
          (map (fn [[k {prop-name :name prop-vals :vals}]]
                 [(if prop-vals
                    (map (fn [[_ prop-val]] (str (name prop-name) "--" (name prop-val))) prop-vals)

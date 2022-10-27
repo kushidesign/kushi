@@ -1,91 +1,126 @@
 <br>
 
-<h1>Kushi</h1>
-<h5>Styling in ClojureScript</h5>
+# Kushi
+<h5>Kushi is a foundation for building web UI with ClojureScript.</h5>
+<h5><a href=""><strong>Explore Kushi UI Playground »</strong></a></h5>
+<h5><a href="https://github.com/paintparty/kushi-quickstart"><strong>Kushi Quickstart »</strong></a></h5>
+
+
 
 <br>
 
+## Features
+- **100% Clojure(Script)**
+
+- **Ships with minimal set of headless UI components**
+
+- **Themeable design system foundation**
+
+- **Shorthand styling syntax shadows CSS standard**
+
+- **Co-location of styling at the element level**
+
+- **Compile-time macros generate static css**
+
+- **Supports media-queries, psuedos, and combo selectors**
+
+- **Leverages CSS variables for runtime dynamics**
+
+- **Composable, user-defined shared classes**
+
+- **Ships with a handful of useful css utility classes**
+
+- **Includes a default industry-standard breakpoint scale**
+
+- **Auto-generated selectors to avoid pontential collisions**
+
+- **Robust and flexible selector prefixing options**
+
+- **Helpers for typography, keyframes, and more**
+
+- **Enhanced debugging via metadata**
+
+- **Detailed, human-readable warnings**
+
+- **Framework & build-tool agnostic**
+
+
+
+
+
+<br>
+
+## Table of Contents
+- [Setup and usage](#setup-and-usage)<br>
+- [Syntax](#syntax)<br>
+- [Shared styles](#shared-styles)<br>
+- [Media queries](#media-queries)<br>
+- [Pseudos and combo selectors](#pseudos-and-combo-selectors)<br>
+- [Selector prefixing options](#selector-prefixing-options)<br>
+- [Injecting stylesheets](#injecting-stylesheets)<br>
+- [Adding font resources](#adding-font-resources)<br>
+- [Element attributes](#element-attributes)<br>
+- [Helpful metadata](#helpful-metadata)<br>
+- [Configuration options](#configuration-options)<br>
+- [Useful warnings](#useful-warnings)<br>
+- [Usage with build tools](#usage-with-build-tools)<br>
+- [Roadmap](#roadmap)<br>
+- [Development](#development)<br>
+- [License](#license)
+
+<br>
+
+## Introduction
+Kushi provides a comprehensive solution for creating and evolving web-based UI projects in ClojureScript.
+
+The following features work in concert, making it easy to roll your own design system:
+- A set of professionally designed, themeable, headless UI components
+- A solid foundation of hand-tuned global + alias design tokens
+- Functional styling engine
+- Configurable theming
+
+Usage of Kushi's baseline design system and component library is completly optional. You can just simply use the functional styling engine for a lightweight css-in-cljs solution.
+
+<br>
+
+## Setup and Usage
 [![Clojars Project](https://img.shields.io/clojars/v/org.clojars.paintparty/kushi.svg)](https://clojars.org/org.clojars.paintparty/kushi)
 
-<br>
-
-
-**✷ &nbsp; Native ClojureScript styling solution**
-
-**✷ &nbsp; Shorthand syntax shadows CSS standard**
-
-**✷ &nbsp; Co-location of styling at the element level**
-
-**✷ &nbsp; Compile-time macros generate static css**
-
-**✷ &nbsp; Supports media-queries, psuedos, and combo selectors**
-
-**✷ &nbsp; Leverages CSS variables for runtime dynamics**
-
-**✷ &nbsp; Composable, user-defined shared classes**
-
-**✷ &nbsp; Ships with a small handful of useful css utility classes**
-
-**✷ &nbsp; Includes a default industry-standard breakpoint scale**
-
-<!-- **✷ &nbsp; Predefined scales for typography, widths, & more** -->
-
-**✷ &nbsp; Auto-generated selectors to avoid pontential collisions**
-
-**✷ &nbsp; Robust and flexible selector prefixing options**
-
-**✷ &nbsp; Enhanced debugging via metadata**
-
-**✷ &nbsp; Detailed warnings for the terminal and browser**
-
-**✷ &nbsp; Framework & build-tool agnostic**
-
-**✷ &nbsp; Ships with minimal set of headless UI components**
-
-**✷ &nbsp; Themeable design token system**
-
-
-
-
-<br>
-
-# Index
-[Setup and usage](#setup-and-usage)<br>
-[Syntax](#syntax)<br>
-[Shared styles](#shared-styles)<br>
-[Media queries](#media-queries)<br>
-[Pseudos and combo selectors](#pseudos-and-combo-selectors)<br>
-[Prefixing options](#prefixing-options)<br>
-[Using scales](#using-scales)<br>
-[Injecting stylesheets](#injecting-stylesheets)<br>
-[Adding font resources](#adding-font-resources)<br>
-[Element attributes](#element-attributes)<br>
-[Helpful metadata](#helpful-metadata)<br>
-[Configuration options](#configuration-options)<br>
-[Useful warnings](#useful-warnings)<br>
-[Usage with build tools](#usage-with-build-tools)<br>
-[Roadmap](#roadmap)<br>
-[Development](#development)<br>
-[License](#license)
-
-<!--[Runtime injection](#runtime-injection)<br>-->
-
-# Setup and Usage
 Usage with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs) is currently recommended.
 
-For a well commented, feature-complete minimal project template, please see [kushi-quickstart](https://github.com/paintparty/kushi-quickstart).
+Please check out [Kushi Quickstart](https://github.com/paintparty/kushi-quickstart) for a well commented, feature-complete minimal project template. This is probably the easiest way to get started with Kushi.
 
 <!--[Checkout interactive playground of pre-built headless UI components from the `kushi.ui` namespace](https://paintparty.github.io/kushi/public/index.html).-->
 <br>
 
-# Syntax
+
+<!--Intro section for ui lib vs user guide -->
+
+
+<!--TODO reverse examples -->
+## Kushi Styling Syntax
 Styles are co-located at the element level.
 Simply wrap your attributes with the `kushi.core/sx` macro:
 ```Clojure
 (ns myns.core
   (:require
    [kushi.core :refer [sx]]))
+ 
+(defn my-component []
+ [:div
+  (sx :c--red
+      :ta--c
+      :fs--18px
+      {:id :my-id})])
 
+;; html attribute map is (optional) last arg to sx
+```
+
+As you can see in the above example, Kushi promotes a simple tokenized-keyword-based shorthand grammer which shadows standard CSS. This approach is similar to Tachyons (and its follow-on called Tailwind), but much more helpful in learning actual CSS, and much more intuitive if you are an existing CSS expert.
+
+The above could also be written (verbosely) like this:
+
+```Clojure
 (defn my-component []
  [:div
   (sx {:id    :my-id
@@ -93,33 +128,15 @@ Simply wrap your attributes with the `kushi.core/sx` macro:
                :text-align :center
                :font-size  :18px}})])
 ```
-
-<br>
-Kushi promotes a simple shorthand grammer which shadows standard CSS.
-The above example would be written like this:
-
-```Clojure
-(defn my-component []
- [:div
-  (sx {:id    :my-id
-       :style {:c  :red
-               :ta :c
-               :fs :18px}})])
-```
-
-<br>
-If you want to go faster, write your styles as tokenized keywords.
-This approach is similar to Tachyons (and its follow-on called Tailwind), but much more helpful in learning actual CSS, and much more intuitive if you are an existing CSS expert.
-
-<br>
+You could also use shorthand syntax with style maps, and mix in tokenized keywords as well.
 
 ```Clojure
 (defn my-component []
  [:div
   (sx :c--red
-      :ta--c
-      :fs--18px
-      {:id :my-id})])
+      {:style {:ta :c
+               :fs :18px}
+       :id :my-id})])
 ```
 
 <br>
@@ -137,7 +154,7 @@ When your build finishes, the following css will be written to disk:
 ```
 <br>
 
-If you need or want to define your own classnames, you can leverage kushi's flexible and robust [prefixing options](#prefixing-options). You can supply your own classname by passing a quoted symbol as the first argument to sx:
+If you need or want to define your own classnames, you can supply your own classname by passing a quoted symbol as the first argument to sx:
 
 ```Clojure
 (defn my-component []
@@ -166,7 +183,7 @@ In summary, the `kushi.core/sx` is a macro that returns an attribute map which c
   - All the other attributes you specify in your attributes map (supplied as an optional last arg to `sx`).
   - A dev-build-only `data-cjs` attribute for browser debugging. See [Using metadata](#using-metadata).
 
-All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool). For dev builds, styles are injected by default at runtime for zippy previews.
+All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool). For dev builds, styles are also injected at runtime for zippy previews.
 <!---You can optionally disable writing styles to disk and enable producton builds to [inject styles at runtime](#runtime-injection).
 -->
 <br>
@@ -231,6 +248,8 @@ This shorthand grammer is available for the most commonly used props:
 :ws   ; :white-space
 :zi   ; :z-index
 ```
+
+<!-- TODO maybe just link to source? -->
 See the complete list of supported css properties [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-shorthand-reference.md).
 
 Shorthand grammer extends to cover enumerated values:
@@ -257,7 +276,7 @@ Shorthand grammer extends to cover enumerated values:
 :ai--b   ; align-items--baseline
 ```
 
-Note that the enumerated value`none`, as well as global properties such as `inherit`, `initial`, `revert`, `unset`, etc. are intentially not supported with shorthand syntax:
+Note that the enumerated value `none`, as well as global properties such as `inherit`, `initial`, `revert`, `unset`, etc. are intentially not supported with shorthand syntax:
 
 ```Clojure
 ;; This will NOT work
@@ -266,6 +285,7 @@ Note that the enumerated value`none`, as well as global properties such as `inhe
 ;; This will work
 :td--revert ; => text-decoration: revert;
 ```
+<!-- TODO maybe just link to source? -->
 See the complete list of supported enum values [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-shorthand-reference.md).
 
 <br>
@@ -277,11 +297,11 @@ Sometimes you need to use dynamic values based on application state.
 ```Clojure
 ;; Assuming there is a var defined as `mycolor` with a value of `:red`
 
-;; For tokenized keywords, you can use a `$` char:
-(sx :c--$mycolor)
+;; Expressed as a 2-element vector
+(sx :fs--36px [:c mycolor])
 
 ;; You could also write this as:
-(sx {:style {:color mycolor})
+(sx :fs--36px {:style {:color mycolor})
 ```
 
 Both examples above would result in the following attribute map.
@@ -290,8 +310,27 @@ Both examples above would result in the following attribute map.
 ```
 And the following css would be written to disk:
 ```css
-._617784030 {color: var(--mycolor)}
+._617784030 {color: var(--mycolor); font-size: 36px}
 ```
+<br>
+
+### Expressing complex values
+Sometimes, css syntax is inherently convoluted. In these cases, you may want or need to express a style as a 2-element vector.
+
+When a string is desired, or necessary:
+```Clojure
+(sx [:before:content "\"*\""]
+    [:width "calc((100vw / 3) + 12px)"])
+```
+When constructing a value using css function syntax:
+```Clojure
+(sx [:transform '(translateY :-100px)]])
+```
+You can likewise locate these as entries in the `:style` entry of the attributes map:
+```Clojure
+(sx {:style {:transform '(translateY :-100px)}}])
+```
+
 <br>
 
 ### Using CSS custom properties
@@ -299,39 +338,31 @@ And the following css would be written to disk:
 The following sugar is supported for css variables:
 
 ```Clojure
-(sx :c--:--mycssvarname)
+(sx :border-radius--:--mycssvarname)
 
-(sx {:style {:color :--mycssvarname})
+(sx [:border-radius :--mycssvarname)
 
-;; Both of the above would be equivalent to:
+(sx {:style {:border-radius :--mycssvarname})
+
+;; All of the above would be equivalent to:
 
 (sx {:style {:color "--var(mycssvarname)"})
 ```
+
+<!-- Add section for defining css custom props -->
+
+
+
 <br>
 
-### Complex values
-Sometimes, css syntax is inherently convoluted. In these cases, you may want or need to locate your styling in the `:style` entry of the attributes map:
-
-When a string is desired, or necessary:
+### Using css function syntax
+As seen in the example above, you can use a quoted list to convey css function values.
 ```Clojure
-(sx {:style {:before:content "\"*\""
-             :width "calc((100vw / 3) + 12px)"}})
-```
-When using `kushi.core/cssfn` to construct a value:
-```Clojure
-(sx {:style {:transform (cssfn :translateY :-100px)}}])
-```
-<br>
-
-### Using `cssfn`
-As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
-```Clojure
-(sx {:style {:color (cssfn :rgba 0 200 100 0.4)}})
+(sx [:color '(rgba 0 200 100 0.4)])
 
 ;; The above example is equivalent to:
-(sx {:style {:color "rgba(0, 200, 100, 0.4)"})
+(sx [:color "rgba(0, 200, 100, 0.4)"])
 ```
-`cssfn` will only work when used inside a call to the sx macro.
 
 <br>
 
@@ -342,28 +373,20 @@ As seen in the example above, you can use `kushi.core/cssfn` to contruct values.
 ;; with tokenized keyword
 (sx :b--1px:solid:black)
 
+;; with style tuple
+(sx [:b :1px:solid:black])
+
+;; With string
+(sx [:b "1px solid black"])
+
 ;; with style map
 (sx {:style {:b :1px:solid:black}})
 
-;; With string
-(sx {:style {:b "1px solid black"}})
 ```
 
 All of the above examples will resolve to the following css declaration:
 ```css
 border: 1px solid black;
-```
-Future support is planned for dynamic values passed to construction method such as `kushi.core/cssfn` or `cljs.core/str`. In the meantime, if you would like to incorporate a dynamic value into a css shorthand property, you can do it like this:
-```Clojure
-;; Write the shorthand with a "default" value that subsequently
-;; gets overridden with a dynamic value on the specific property.
-(sx {:style {:b :1px:solid:black
-             :bc mycolor}}
-
-;; Alternatively, this would work:
-(let [myborder (str "1px solid " mycolor)]
-   (sx {:style {:b myborder})
-
 ```
 <br>
 
@@ -387,94 +410,91 @@ text-shadow: 5px 5px 10px red, -5px -5px 10px blue;
 
 <br>
 
-# Shared Styles
-The `kushi.core/defclass` allows for the creation of shared styles.
+## Shared Styles
+`kushi.core/defclass` is intended for the creation of shared styles.
 
-These should be defined in a dedicated namespace, or set of dedicated namespaces, and required once in your core or main ns.
-
-The example below will generate a data-representation of the css rule-set.
-
-This data is added to a register (an atom that exists in the build state).
+These shared styles should be defined in a dedicated namespace, or set of dedicated namespaces, and required once in your core or main ns.
 
  <!-- This css class is only written to disk if a component references it. -->
 
 ```Clojure
 (ns myapp.shared-styles
   (:require
-   [kushi.core :refer (defclass)]))
+   [kushi.core :refer [defclass]]))
 
-;; Note that when using a map, unlike the sx macro it
-;; does not need to be a nested `:style` entry.
+
+;; Example with tokenized keyword + kushi shorthand
 (defclass headline
-  {:top            0
-   :left           0
-   :border         :1px:solid:black
-   :font-size      :200px
-   :text-transform :u
-   :font-style     :italic
-   :mix-blend-mode :darken})
+  :ta--left
+  :w--100%
+  :ff--Inter|sys|sans-serif
+  :fw--900
+  :fs--24px
+  :tt--u
+  :mix-blend-mode--darken)
 
 
-;; Same as above, using kushi shorthand
-(defclass headline
-  {:top            0
-   :left           0
-   :b              :1px:solid:black
-   :fs             :200px
-   :tt             :u
-   :fs             :italic
-   :mix-blend-mode :darken})
-
-
-;; Same as above, using tokenized keyword + kushi shorthand
-(defclass headline
+;; Example with some styles expressed using 2-element vectors
+(defclass headline2
   :top--0
   :left--0
   :b--1px:solid:black
   :fs--200px
   :tt--u
-  :fs--italic
-  :mix-blend-mode--darken)
+  :mix-blend-mode--darken
+  [:c '(rgba 155 155 155 0.8)])
+
+
+;; Example using a single map.
+;; Note that when using a map, unlike the sx macro it
+;; does not need to be a nested `:style` entry.
+(defclass headline3
+  {:top               0
+   :left              0
+   :b                 :1px:solid:black
+   :fs                :200px
+   :tt                :u
+   :mix-blend-mode    :darken
+   :c                 '(rgba 155 155 155 0.8)})
+
 ```
 By authoring your shared styles in a dedicated ns (or namespaces), you only need to require once in your main or core ns, and all the styles from that ns will be available globally.
 ```Clojure
 (ns myapp.core
   (:require
-   [kushi.core :refer (sx)]
+   [kushi.core :refer [sx]]
    [myapp.shared-styles]))
 
   (defn my-headline [text]
     [:h1 (sx :.headline :mt--5px) text])
 
 ;; The above call to the sx macro will return attribute map like this:
-;; {:class "headline _c77789"}
+;; {:class "headline _887777949"}
 
-;; The resulting css would be like this:
+;; The resulting css would be:
 
 ;; .headline {
-;;     position: absolute;
 ;;     top: 0px;
 ;;     left: 0px;
 ;;     border: 1px solid black;
 ;;     font-size: 200px;
-;;     font-style: italic;
 ;;     text-transform: uppercase;
 ;;     mix-blend-mode: darken;
 ;; }
 
-;; ._c77789 {
+;; ._887777949 {
 ;;     margin-top: 5px;
 ;; }
 
 ;; The `.headline` selector is the shared class,
-;; and the `._c77789` is the autogenerated selector for margin-top rule.
+;; and the `._887777949` is the autogenerated selector for margin-top rule.
 ```
 As arguments to `sx`, classes are distinguished from other prop-styles by using a keyword beginning with a `.`, e.g. `:.headline`, as in the example above.
 
 With `defclass`, you can mix-in any other defined classes:<br>
 ```Clojure
 (defclass headline
-  :.absolute
+  :.flex-row-fs
   :top--0
   :left--0
   :b--1px:solid:black
@@ -482,8 +502,44 @@ With `defclass`, you can mix-in any other defined classes:<br>
   :tt--u
   :fs--italic
   :mix-blend-mode--darken)
+
+;; The above example will mix-in the individual declarations
+;; of the :.flex-row-fs class and result in the following css:
+
+;; .headline {
+;;   display: flex;
+;;   flex-direction: row;
+;;   justify-content: center;
+;;   top: 0px;
+;;   left: 0px;
+;;   border: 1px solid black;
+;;   font-size: 200px;
+;;   text-transform: uppercase;
+;;   mix-blend-mode: darken;
+;; }
+
+(defclass headline-colored
+  :.headline
+  :c--red
+  :b--1px:solid:pink)
+
+;; The above example will mix-in the individual declarations
+;; of the :.headline class and result in the following css:
+
+;; .headline {
+;;   display: flex;
+;;   flex-direction: row;
+;;   justify-content: center;
+;;   top: 0px;
+;;   left: 0px;
+;;   font-size: 200px;
+;;   text-transform: uppercase;
+;;   mix-blend-mode: darken;
+;;   c--red
+;;   border: 1px solid pink;
+;; }
 ```
-The `:.absolute` class is one of several predefined classes that ships with kushi.
+In the example above, the `:.headline` class is one of several predefined classes that ships with kushi.
 
 The full list of predefined classes:
 
@@ -569,14 +625,15 @@ You can apply classes conditionally within the `sx` macro using the following co
 ;; In some other ns
 (defn link [opts]
  [:a
-  (sx (when (:active? opts) :.active-link)
+  (sx 'mylink
+      (when (:active? opts) :.active-link)
       :bb--1px:solid:black))
   "Go"])
 
 ;; Somewhere else in your code, calling above component
 
 [link {:active? true}]
-; => [:a {:class ["active-link" "_j7338" ]}]
+; => [:a {:class ["active-link" "mylink"]}]
 
 ;; "active-link" is the selector for your custom defclass.
 ```
@@ -596,7 +653,7 @@ The class to be returned cannot be nested. For example, the following will not w
 ```
 <br>
 
-# Media Queries
+## Media Queries
 ```Clojure
 ;; Specify the font-size of an <h1> element across breakpoints
 [:h1
@@ -618,7 +675,7 @@ Kushi ships with the following, industry-standard, mobile-first breakpoint scale
 Both the names and values can be customized via supplying a kwargs vector (not a map) as the `:media` entry in your `kushi.edn` config file. Becuase CSS Media Queries must be explicity ordered, this scale must be written as a vector of kwargs. See [Configuration Options](#configuration-options).
 
 Below is an example of a scale that is desktop-first and uses different names.<br>
-Note that in the case of desktop-first(`max-width`), the order is reversed (relative to mobile-first / `min-width`).
+Note that in the case of desktop-first (`max-width`), the order is reversed (relative to mobile-first / `min-width`).
 ```Clojure
 [:desktop {:max-width :1280px}
  :tablet {:max-width :1024px}
@@ -632,7 +689,7 @@ When "stacking" other modifiers (such as psuedo-classes) in front of css props, 
 
 <br>
 
-# Pseudos and Combo Selectors
+## Pseudos and Combo Selectors
 Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers:
 ```Clojure
 [:div (sx 'foo
@@ -642,10 +699,10 @@ Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers
           :&.bar:hover:c--pink
           :before:fw--bold
           :after:mie--5px
-          {:style {"~a:hover:c"    :blue ; Because "~" is not valid in a keyword
-                  "nth-child(2):c" :red  ; Because "(" and ")" are not valid in keywords
-                  :before:content  "\"⌫\""}})
- [:span [:a "Erase"]]]
+          {:style {"~a:hover:c"     :blue ; Because "~" is not valid in a keyword
+                   "nth-child(2):c" :red  ; Because "(" and ")" are not valid in keywords
+                   :before:content  "\"⌫\""}})
+ [:a "Erase"]]
 ```
 CSS resulting from the above example:
 ```css
@@ -671,6 +728,10 @@ CSS resulting from the above example:
   content: "⌫";
 }
 
+.foo::after {
+  margin-inline-end: 5px;
+}
+
 .foo ~ a:hover {
   color: blue;
 }
@@ -679,38 +740,17 @@ CSS resulting from the above example:
   color: red;
 }
 ```
-<br>
-
-# Prefixing Options
-The most common pattern for this would be setting a global `:prefix` value in your [configuration options](#configuration-options), and then providing, as your first argument to sx, a symbol with a leading `-` char (which will be used as the classname). If you do this on a project-wide basis, you will need to make sure that your all your prefix+ident values are globally unique. The kushi compiler will warn you of duplicate instances.
-
-```Clojure
-;; In your kushi.edn map ...
-{:prefix :_mypfx__}
-
-;; In one of your component namespaces ...
-[:div
- (sx '-my-el :c--red)]
-
-;; The above example will return the following attribute map:
-;; {:class "_mypfx__my-el"}
-
-;; And will write the following rule to the css file:
-;; ._mypfx__my-el {
-;;    color: red;
-;;}
-```
 
 ### Parents and ancestors
-Kushi provides a special sugar token in the form of `.%` to achieve further specificity when needed with regards to parents and ancestors of the element that you are styling. This is useful when you want to use styles that might change when, for example, a class is toggled or changed further up in the DOM.
+Kushi provides a special sugar token in the form of `has-parent()` and `has-ancestor()` to achieve further specificity with regards to parents and ancestors of the element that you are styling. This is useful when you want to use styles that might change when, for example, a class is toggled or changed further up in the DOM.
 
-The `.%` token is just stubby syntax for the classname that will be created, and gets stripped out of any CSS that is generated.
+
 ```Clojure
 (defn my-button [text]
   [:button
    (sx 'foo
-       :section.baz&_.%:color--blue  ;; when `section.foo` ancestor exists
-       :section.dark>.%:color--white ;; when `section.dark` parent exists
+       ["has-ancestor(section.baz):color" :blue]
+       ["has-parent(section.dark):color" :white]
        {:on-click #(prn "clicked!")})
      text])
 
@@ -720,19 +760,30 @@ The above will write the following css:
 section.baz .foo {color: blue}
 section.dark > .foo {color: white}
 ```
-If you want to use this feature in cases when you need to write you styles in a map with strings as keys, keep in mind you do not need to use the "&_" when talking about (non-direct) ancestors:
+<br>
+
+## Selector Prefixing Options
+You can narrow the specicifity of you selectors by globally prepending a class or id (or any valid selector) of an ancestor element. Typically this would be something like the id of your "app" container.
 ```Clojure
-(sx 'foo
-    {:style {"section[aria-expanded='true'] .%:color"    :blue
-             "section[aria-expanded='false'] > .%:color" :white}
-    :on-click #(prn "clicked!")})
+;; In your kushi.edn map ...
+{:selector-prepend "#my-app"}
+
+;; In one of your component namespaces ...
+[:div
+ (sx '-my-el :c--red)]
+
+;; The above example would write the following rule to the css file:
+;; #my-app .my-el {
+;;    color: red;
+;;}
 ```
+
 
 <br>
 
-# Defining Animations
+## Defining Animations
 
-`kushi.core/defkeyframes` macro makes it easy to define css keyframes.
+Use `kushi.core/defkeyframes` to define css keyframes.
 ```Clojure
 ;; This will twirl something on its y-axis
 (defkeyframes yspinner
@@ -746,16 +797,10 @@ If you want to use this feature in cases when you need to write you styles in a 
      :animation--yspinner:12s:linear:infinite)
  "Round & Round"]
 ```
-Because names for css `@keyframes` definitions are used as-is in other style rules that reference the animation, kushi does not apply any auto-generated prefixing to `@keyframes` names in the generated css. If you are worried about potential collisions with your `@keyframes` definitions and some other 3rd party @keyframes definitions, you should give them a prefixed name when you define them:
-
-```Clojure
-(defkeyframes my-prefix__spinner
- ...)
-```
 <br>
 
 <!--
-# Using Scales
+## Using Scales
 Kushi ships with two different predefined scaling systems, which provide a scale of values for `width`, `font-size`, `padding`, `margin`, and `border-widths`.
 
 These two systems shadow the scales provided by [Tachyons](http://tachyons.io/docs/typography/scale/) and [Tailwindcss](https://tailwindcss.com/docs/font-size).
@@ -793,26 +838,9 @@ View all the scale values [here](https://github.com/paintparty/kushi/blob/main/s
 <br>
 -->
 
-# Injecting Stylesheets
-You can use `kushi.core/inject-stylesheet` to load css stylesheets.<br>
-The example below (typical use case), loads a stylesheet from Google Fonts.
-```Clojure
-;; The additional "preconnect" hints will improve Google Fonts performance.
-
-(inject-stylesheet {:rel "preconnet"
-                    :href "https://fonts.gstatic.com"
-                    :cross-origin "anonymous"})
-
-(inject-stylesheet {:rel "preconnet"
-                    :href "https://fonts.googleapis.com"})
-
-(inject-stylesheet {:rel "stylesheet"
-                    :href "https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap"})
-```
-
-
-You can also use `kushi.core/inject-stylesheet` to inject a css reset stylesheet, or a third-party style library.
-This is more of an edge case, as you would typically just do this with a `<link>` in your index.html.<br>
+## Injecting Stylesheets
+You can also use `kushi.core/inject-stylesheet` to inject a stylesheet, or a third-party style library.
+This is more of an edge case, as you would typically just do this with a `<link>` in your index.html.
 However, if your project uses a clj file to generate the contents of your `<head>` at build time,
 it may be handy to use this during development to inject new stylesheets without restarting your build.
 
@@ -820,9 +848,50 @@ it may be handy to use this during development to inject new stylesheets without
 (inject-stylesheet {:rel "stylesheet"
                     :href "css/my-global-styles.css"})
 ```
+### Loading Google Fonts
+A more common use case for injecting a stylesheet would the loading of webfonts via stylesheets, ala Google Fonts, or another similar webfonts service.
+
+You can leverage `kushi.core/add-google-font!` to simplify the process of adding Google fonts to your project.
+
+The example below is a typical use case which loads a stylesheet from Google Fonts.
+```Clojure
+(ns myapp.core
+  (:require
+   [kushi.core :refer [add-google-fonts!]]))
+
+(add-google-fonts! {:family "Playfair Display"
+                    :styles {:normal [400 700]
+                             :italic [400 700]}})
+
+;; The above call is equivalent to the following:
+
+;; Note - the additional "preconnect" hints will improve Google Fonts performance.
+
+;; (inject-stylesheet {:rel "preconnet"
+;;                     :href "https://fonts.gstatic.com"
+;;                     :cross-origin "anonymous"})
+
+;; (inject-stylesheet {:rel "preconnet"
+;;                     :href "https://fonts.googleapis.com"})
+
+;; (inject-stylesheet {:rel "stylesheet"
+;;                     :href "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"})
+
+```
+`kushi.core/add-google-font!` accepts any number of args, each one a single map that represents a font-family and associated weights & styles. You can as many different families as you want in a single go (although be mindful of performance!):
+
+
+```Clojure
+(add-google-fonts! {:family "Playfair Display"
+                    :styles {:normal [400 700] :italic [400 700]}}
+                   {:family "Lato"
+                    :styles {:normal [100 400]}}
+                   {:family "Pacifico"
+                    :styles {:normal [400]}})
+```
 <br>
 
-# Adding Font Resources
+## Adding Font Resources
 You can use the `kushi.core/add-font-face` macro to load a local font from a file.<br>
 This will add an `@font-face` block to the css file generated by kushi.<br>
 The `:src` entry must be a path (string), or vector of paths if you want to specify multiple urls.
@@ -847,13 +916,13 @@ One `normal` and one `italic` for weights `300`("light"), `400`("regular"), `500
 
 ```CSS
 @font-face {
-  font-family: system;
+  font-family: sys;
   font-style: normal;
   font-weight: 300;
   src: local(".SFNS-Light"), local(".SFNSText-Light"), local(".HelveticaNeueDeskInterface-Light"), local(".LucidaGrandeUI"), local("Segoe UI Light"), local("Ubuntu Light"), local("Roboto-Light"), local("DroidSans"), local("Tahoma");
 }
 @font-face {
-  font-family: system;
+  font-family: sys;
   font-style: italic;
   font-weight: 300;
   src: local(".SFNS-LightItalic"), local(".SFNSText-LightItalic"), local(".HelveticaNeueDeskInterface-Italic"), local(".LucidaGrandeUI"), local("Segoe UI Light Italic"), local("Ubuntu Light Italic"), local("Roboto-LightItalic"), local("DroidSans"), local("Tahoma");
@@ -867,28 +936,28 @@ If you want to be more precise you can pass in only the weights you need. The ex
 
 Then you can use the system font stack like so:
 ```Clojure
-[:div (sx :font-family--system)]
+[:div (sx :font-family--sys)]
 
 ; Using kushi shorthand:
-[:div (sx :ff--system)]
+[:div (sx :ff--sys)]
 
 ; An example using kushi syntax to specify multiple values for the css shorthand `font` property.
-[:div (sx :font--italic:700:system)] ;
+[:div (sx :font--italic:700:sys)] ;
 
 ```
 
 <br>
 
-# Helpful Metadata
-Relative to using vanilla css or sass, kushi will obviate the need to write your styles in a separate location and/or language. In turn, you will not need to worry about keeping selector names in css files synced with classnames in your markup code.
+## Helpful Metadata
+Relative to using vanilla css or sass, Kushi will obviate the need to write your styles in a separate location and/or language. In turn, you will not need to worry about keeping selector names in css files synced with classnames in your markup code.
 
-With kushi, elements in the DOM will have auto-generated class names. As a result, it can become difficult to quickly comprehend the source location when looking at elements in a browser inspector (such as Chrome DevTool Elements panel).
+With Kushi, elements in the DOM will, by default, be given auto-generated class names. As a result, it can become difficult to quickly comprehend the source location when looking at elements in a browser inspector (such as Chrome DevTool Elements panel).
 
-During development builds, the `sx` macro will automatically attach a `data-cljs` attribute to the DOM element. The value of this is the file name, line number, and column number of the source.
+During development builds, the `sx` macro will automatically attach a `data-sx` attribute to the DOM element. The value of this is the file name, line number, and column number of the source.
 ```Clojure
 (ns myapp.core
   (:require
-   [kushi.core :refer (sx)]))
+   [kushi.core :refer [sx]]))
 
 ;; A component defined, for example, on line 170
 (defn my-button [text]
@@ -902,67 +971,41 @@ During development builds, the `sx` macro will automatically attach a `data-cljs
 ```
 You would see something like this in the browser console, when inspecting an element rendered from this function:
 ```html
-<div data-cljs="myapp.core.cljs:172:4" class="_h30702"">
+<div data-sx="myapp.core.cljs:172:4" class="_h30702"">
   Button Text
 </div>
 ```
-If you would like to change the name of this attribute to something else (for example, `data-foo`), simply supply a `:data-attr-name` entry with a value of `:data-foo` in your `kushi.edn` config map.
+If you would like to change the name of this attribute to something else (for example, `data-foo`), simply supply a `:data-attr-name` entry with a value of `:foo` or `"foo"` in your `kushi.edn` config map.
 
 <br>
 <br>
 
-# Configuration Options
+## Configuration Options
 Various options are configurable via a required `kushi.edn` file.<br>
 This file must live in your project's root directory.
 
-The only required entry in this map is `:css-dir`
+The only required entry in this map is `:css-dir`.
 
+Below is a full map of all the options available. The values shown in the map below correspond to the default values.
+If you are looking for a well commented starting point for your own config, [the sample `kushi.edn` config from the Kushi Quickstart template](https://github.com/paintparty/kushi-quickstart/blob/main/kushi.edn) (similar to below) is recommended.
 ```Clojure
 {
- ;; REQUIRED.
- ;; Must be relative to proj root e.g "public/css" or "resources/public/css".
- :css-dir "public/css"
-}
-```
-Below is a full map of all the options available:
-```Clojure
-{
- ;; REQUIRED.
- :css-dir "public/css"
+ ;; REQUIRED
 
- ;; Optional. Name of generated css file.
- ;; Defaults to "kushi.css".
- :css-filename "my-kushi-styles.css"
+ ;; Needs to be a path to a dir, e.g. "public/css"
+ ;; The example above would write to "public/css/kushi.css"
+ :css-dir                nil
 
- ;; Optional. Set to false if you don't want css files
- ;; written to disk for release builds.
- ;; Defaults to true.
- :write-stylesheet? false
 
- ;; Optional. Narrow kushi compilation down to select namespaces.
- :select-ns [app.ui.foo app.ui.bar]
- ;; :select-ns [app.ui.*] ;; will target all namespaces under app.ui
+ ;; OPTIONAL
 
- ;; Optionally prepend an ancestor element to selectors.
- ;; Useful for scoping.
- :ancestor "#my-target-div"
+ ;; You can specify your own filename, e.g. "mystyles.css"
+ :css-filename           "kushi.css"
 
- ;; Optional. If defined, AND an custom classname value (with a
- ;; leading `-` char) is supplied at the `sx` call site, this will
- ;; be concatenated to the locally supplied value and used for
- ;; the classname, instead of an auto-generated name.
- :prefix "_my-prefix_"
-
- ;; Optional. If defined, this will be used as the prefix for
- ;; the classnames of shared styles (defined with defclass).
- ;; Defaults to nil
- :defclass-prefix "_my-shared-class-prefix_"
-
- ;; Optional. If defined, this will be used as an attribute
- ;; name for attaching source file info to the rendered
- ;; element in the DOM (dev only).
- ;; Defaults to "data-cljs"
- :data-attr-name "data-foo"
+ ;; Fully qualified name of user theming map.
+ ;; This needs to be defined in a clj namespace, and saved as a `.clj` file.
+ ;; e.g. `myproject.theme/theme`
+ :theme                   nil
 
  ;; Optionally defined your own breakpoint scale to override
  ;; kushi's default breakpoint scale.
@@ -973,44 +1016,62 @@ Below is a full map of all the options available:
          :md {:max-width :768px}
          :sm {:max-width :640px}]
 
- ;; Optional setting for printing-style of kushi compilation
- ;; info to the console running your build.
- ;; Defaults to :simple.
- :reporting-style :banner
+ ;; Optionally disable build caching.
+ :caching?                true
 
- ;; Optional setting to silence the post-build report.
- ;; Defaults to true.
- :post-build-report?  false
-}
+ ;; Prepend to generated selectors, useful for narrowing scope.
+ ;; Usually would be the id of the "app" container, e.g "#app".
+ :selector-prepend        nil
+
+ ;; Optionally narrow the scope of generated design tokens.
+ ;; Usually would be the id of the "app" container, e.g "#app".
+ ;; If nil, defaults to using ":root"
+ :design-tokens-root      nil
+ :data-attr-name          :sx
+
+ ;; Runtime injection
+ :inject-at-runtime-prod? false
+ :inject-at-runtime-dev?  true
+
+ ;; Logging
+ :log-build-report?       true
+ :log-build-report-style  :simple ;; or :detailed
+ :log-kushi-version?      true
+ :log-updates-to-cache?   false
+ :log-cache-call-sites?   false
+
+
+ ;; ADVANCED
+
+ ;; For leaving specific things out of css, set individual options below to `false`.
+ ;; You probably don't want to override these unless you are only using
+ ;; Kushi's styling engine (`sx`, `defclass`, etc.) and not using any prebuilt
+ ;; kushi.ui lib components or kushi's design tokens, etc.
+ :add-stylesheet-prod?    true
+ :add-stylesheet-dev?     true
+ :add-css-reset?          true
+ :add-system-font-stack?  true
+ :add-design-tokens?      true
+ ;; If :add-kushi-ui-theming? is set to false, it will not include
+ ;; theming classes for for kushi ui components such as buttons, tags, etc.
+ :add-kushi-ui-theming?   true
+ :add-ui-theming?         true
+ :add-kushi-defclass?      true
+ :add-user-defclass?      true
+ :add-user-sx?            true}
 ```
-<!--
 
-;; Optional. Set to true if you want runtime
-;; injection for release builds.
-;; Defaults to false.
-:runtime-injection? true
-
-:select-ns            nil
-:post-build-report?   true
-:report-cache-update? true
-:reporting-style      :simple
-:warning-style        :banner
-:data-attr-name       nil
-:css-dir              nil
-:write-stylesheet?    true
-:runtime-injection?   false
-:handle-duplicates    nil
--->
 <br>
 
 
 
-# Useful Warnings
+## Useful Warnings
+It is highly recommended to keep the terminal (that is running the `cljs-shadow` build process) visible so that you can catch warnings for malformed arguments to Kushi functions.
+
 Given the following:
 ```Clojure
 (sx :.relative
     :ta--center
-    "badstring"
     :.sans
     :p--10px
     12
@@ -1018,35 +1079,55 @@ Given the following:
     :c--#efefef)
 ```
 
-You will receive warnings about invalid args in the terminal:
+You would receive warnings about invalid args in the terminal:
 
-<img width=500 src="doc/terminal-warning.png"/><br>
+```
+◢◤◢◤ WARNING ◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
 
+File: collage/compound_rules_editor/ui/nav.cljs:65:9
+
+65 |  (sx
+66 |   :.relative
+67 |   :ta--center
+68 |   "badstring"
+69 |   :p--10px
+70 |   :m-10px
+71 |   12
+72 |   :border-radius--18px)
+
+Invalid args:
+:m-10px
+12
+
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+```
 <br>
 <br>
 
-# Defining Components
+## Defining Components
 Below is a contrived example of creating a reusable, stateless, and composable component using `kushi.ui.core/defcom`.
 
 
 ```Clojure
 (ns myapp.core
   (:require
-   [kushi.core :refer [sx]]
+   [kushi.core :refer [sx merge-attrs]]
    [kushi.ui.core :refer [defcom]]))
 
 (defcom my-section
   (let [{:keys [label label-attrs body-attrs]} &opts]
     [:section
-     &attrs
-     (when label
-       [:div label-attrs label])
+     (merge-attrs (sx :c--black)
+                  &attrs
+     (when label [:div label-attrs label])
      [:div body-attrs &children]]))
 ```
 
 `defcom` is a macro that returns a component rendering function which accepts an optional attributes map, plus any number of children. This means the signature at the call site mirrros hiccup itself.
 
 Under the hood, defcom pulls out any keys in attr map that start with `:-` and put them in a separate `opts` map. This allows passing in various custom options within the attributes map that will not clash with existing html attributes. This opts map can be referenced in the `defcom` body with the `&opts` binding. `&attrs` and `&children` are also available. This ampersand-leading naming convention takes its cue from the special `&form` and `&env` bindings used by Clojure's own `defmacro`.
+
+The example above also uses `kushi.core/merge-attrs` to intelligently merge attribute maps that are created with `kushi.core/sx`.
 
 Assuming your are using something like Reagent, you can use the resulting `my-section` component (from the above example) in your application code like so:
 
@@ -1112,7 +1193,7 @@ You can theme -->
 
 <br>
 
-# Usage with Build Tools
+## Usage with Build Tools
 Although Kushi is designed to be build-tool and framework agnostic, thus far it has only been used in production with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs).
 
 ### shadow-cljs
@@ -1121,17 +1202,17 @@ See the [kushi-quickstart](https://github.com/paintparty/kushi-quickstart) templ
 <br>
 
 <!--
-# Roadmap
+## Roadmap
 ...more info coming soon.
 
 <br>
 
-# Development
+## Development
 ...more info coming soon.
 
 <br>
 -->
-# License
+## License
 
 Copyright © 2021-2022 Jeremiah Coyle
 

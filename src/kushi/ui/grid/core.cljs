@@ -1,6 +1,5 @@
 (ns kushi.ui.grid.core
   (:require
-   [kushi.parstub :refer [!? ?]]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.util :refer [aspect-ratio->number]]
    [kushi.ui.core :refer (opts+children)] ))

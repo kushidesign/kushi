@@ -1,12 +1,13 @@
 (ns kushi.ui.utility
   (:require
    [kushi.utils :refer [deep-merge]]
-   [kushi.config :refer [user-config]]))
+   [kushi.config :refer [user-config]]
+   [kushi.utils :as util]))
 
 (def combo-flex-utility-classes
   ;; Combinatorial flexbox utilities
   ;; ------------------------------------------------------
-  {:flex-row-c        {:flex-direction  :row
+  [:flex-row-c        {:flex-direction  :row
                        :justify-content :center
                        :display         :flex}
    :flex-row-sa       {:flex-direction  :row
@@ -52,11 +53,11 @@
                        :justify-content :center
                        :align-content   :center
                        :justify-items   :center
-                       :align-items     :center}})
+                       :align-items     :center}])
 
 
 (def base-classes
-  {
+  [
     ;; Visual debugging utilities
     ;; ------------------------------------------------------
    :debug-grid            {:background "transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAFElEQVR4AWPAC97/9x0eCsAEPgwAVLshdpENIxcAAAAASUVORK5CYII=) repeat top left"}
@@ -127,108 +128,119 @@
     ;; ------------------------------------------------------
    :transition            {:transition-property        :all
                            :transition-timing-function "cubic-bezier(0, 0, 1, 1)"
-                           :transition-duration        :200ms}})
+                           :transition-duration        :200ms}])
 
 (def override-classes
-  (merge
-   {;; General
-    ;; ------------------------------------------------------
-    :hidden        {:visibility :hidden}
-    :visible       {:visibility :visible}
-    :collapse      {:visibility :collapse}
+  [;; General
+   ;; ------------------------------------------------------
+   :hidden        {:visibility :hidden}
+   :visible       {:visibility :visible}
+   :collapse      {:visibility :collapse}
 
 
-    ;; Content
-    ;; ------------------------------------------------------
-    :content-blank {:content "\"\""}
-    :open-in-new   {:content "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"}
+   ;; Content
+   ;; ------------------------------------------------------
+   :content-blank {:content "\"\""}
+   :open-in-new   {:content "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"}
 
-    ;; Cursor
-    ;; ------------------------------------------------------
-    :pointer       {:cursor :pointer}
+   ;; Cursor
+   ;; ------------------------------------------------------
+   :pointer       {:cursor :pointer}
 
-    ;; Position
-    ;; ------------------------------------------------------
-    :absolute      {:position :absolute}
-    :fixed         {:position :fixed}
-    :relative      {:position :relative}
+   ;; Position
+   ;; ------------------------------------------------------
+   :absolute      {:position :absolute}
+   :fixed         {:position :fixed}
+   :relative      {:position :relative}
 
-    ;; Display
-    ;; ------------------------------------------------------
-    :block         {:display :block}
-    :inline        {:display :flex}
-    :inline-block  {:display :inline-block}
-    :flex          {:display :inline}
-    :inline-flex   {:display :inline-flex}
-    :grid          {:display :grid}
-    :inline-grid   {:display :inline-grid}
-    :flow-root     {:display :flow-root}
-    :contents      {:display :contents}
+   ;; Display
+   ;; ------------------------------------------------------
+   :block         {:display :block}
+   :inline        {:display :inline}
+   :inline-block  {:display :inline-block}
+   :flex          {:display :flex}
+   :inline-flex   {:display :inline-flex}
+   :grid          {:display :grid}
+   :inline-grid   {:display :inline-grid}
+   :flow-root     {:display :flow-root}
+   :contents      {:display :contents}
 
-    ;; Type styling
-    ;; ------------------------------------------------------
-    :sans          {:font-family :--sans-serif-font-stack}
-    :sans-serif    {:font-family :--serif-font-stack}
-    :italic        {:font-style :italic}
-    :oblique       {:font-style :oblique}
+   ;; Type styling
+   ;; ------------------------------------------------------
+   :sans          {:font-family :--sans-serif-font-stack}
+   :sans-serif    {:font-family :--serif-font-stack}
+   :italic        {:font-style :italic}
+   :oblique       {:font-style :oblique}
 
-    ;; Text capitalization
-    ;; ------------------------------------------------------
-    :uppercase     {:text-transform :uppercase}
-    :lowercase     {:text-transform :lowercase}
-    :capitalize    {:text-transform :capitalize}
+   ;; Text capitalization
+   ;; ------------------------------------------------------
+   :uppercase     {:text-transform :uppercase}
+   :lowercase     {:text-transform :lowercase}
+   :capitalize    {:text-transform :capitalize}
 
-    ;; Type sizing
-    ;; ------------------------------------------------------
-    :xxxsmall      {:fs :--text-xxxsmall}
-    :xxsmall       {:fs :--text-xxsmall}
-    :xsmall        {:fs :--text-xsmall}
-    :small         {:fs :--text-small}
-    :medium        {:fs :--text-medium}
-    :large         {:fs :--text-large}
-    :xlarge        {:fs :--text-xlarge}
-    :xxlarge       {:fs :--text-xxlarge}
-    :xxxlarge      {:fs :--text-xxxlarge}
-
-
-    ;; Type weight
-    ;; ------------------------------------------------------
-    :thin          {:fw :--text-thin}
-    :extra-light   {:fw :--text-extra-light}
-    :light         {:fw :--text-light}
-    :normal        {:fw :--text-normal}
-    :wee-bold      {:fw :--text-wee-bold}
-    :semi-bold     {:fw :--text-semi-bold}
-    :bold          {:fw :--text-bold}
-    :extra-bold    {:fw :--text-extra-bold}
-    :heavy         {:fw :--text-heavy}
+   ;; Type sizing
+   ;; ------------------------------------------------------
+   :xxxsmall      {:fs :--text-xxxsmall}
+   :xxsmall       {:fs :--text-xxsmall}
+   :xsmall        {:fs :--text-xsmall}
+   :small         {:fs :--text-small}
+   :medium        {:fs :--text-medium}
+   :large         {:fs :--text-large}
+   :xlarge        {:fs :--text-xlarge}
+   :xxlarge       {:fs :--text-xxlarge}
+   :xxxlarge      {:fs :--text-xxxlarge}
 
 
-    ;; Animations
-    ;; ------------------------------------------------------
-    :instant       {:transition-duration :--duration-instant}
-    :fast          {:transition-duration :--duration-fast}
-    :slow          {:transition-duration :--duration-slow}
-    :extra-slow    {:transition-duration :--duration-extra-slow}
-    :super-slow    {:transition-duration :--duration-super-slow}
-    :ultra-slow    {:transition-duration :--duration-ultra-slow}
+   ;; Type weight
+   ;; ------------------------------------------------------
+   :thin          {:fw :--text-thin}
+   :extra-light   {:fw :--text-extra-light}
+   :light         {:fw :--text-light}
+   :normal        {:fw :--text-normal}
+   :wee-bold      {:fw :--text-wee-bold}
+   :semi-bold     {:fw :--text-semi-bold}
+   :bold          {:fw :--text-bold}
+   :extra-bold    {:fw :--text-extra-bold}
+   :heavy         {:fw :--text-heavy}
 
 
-    ;; Surfaces, buttons, containers
-    ;; ------------------------------------------------------
-    :rounded       {:border-radius :--rounded}
-    :sharp         {:border-radius 0}
-    :elevated      {:box-shadow :--elevated}
+   ;; Tracking (aka letter-spacing)
+   ;; ------------------------------------------------------
+   :xxxtight      {:letter-spacing :--text-xxxtight}
+   :xxtight       {:letter-spacing :--text-xxtight}
+   :xtight        {:letter-spacing :--text-xtight}
+   :tight         {:letter-spacing :--text-tight}
+   :loose         {:letter-spacing :--text-loose}
+   :xloose        {:letter-spacing :--text-xloose}
+   :xxloose       {:letter-spacing :--text-xxloose}
+   :xxxloose      {:letter-spacing :--text-xxxloose}
 
-    ;; Controls
-    ;; ------------------------------------------------------
-    :disabled      {:o      :40%!important
-                    :cursor :not-allowed!important}}))
+
+   ;; Animations
+   ;; ------------------------------------------------------
+   :instant       {:transition-duration :--duration-instant}
+   :fast          {:transition-duration :--duration-fast}
+   :slow          {:transition-duration :--duration-slow}
+   :extra-slow    {:transition-duration :--duration-extra-slow}
+   :super-slow    {:transition-duration :--duration-super-slow}
+   :ultra-slow    {:transition-duration :--duration-ultra-slow}
+
+
+   ;; Surfaces, buttons, containers
+   ;; ------------------------------------------------------
+   :rounded       {:border-radius :--rounded}
+   :sharp         {:border-radius 0}
+   :elevated      {:box-shadow :--elevated}
+
+   ;; Controls
+   ;; ------------------------------------------------------
+   :disabled      {:o      :40%!important
+                   :cursor :not-allowed!important}])
 
 (def ui-theming-classes
   ;; Type weight
   ;; ------------------------------------------------------
-  {:thin        {">.kushi-radio-input:outline-width" :--input-border-weight-thin
+  [:thin        {">.kushi-radio-input:outline-width" :--input-border-weight-thin
                  ">.kushi-checkbox-input:bw"         :--input-border-weight-thin}
    :extra-light {">.kushi-radio-input:outline-width" :--input-border-weight-extra-light
                  ">.kushi-checkbox-input:bw"         :--input-border-weight-extra-light}
@@ -245,7 +257,19 @@
    :extra-bold  {">.kushi-radio-input:outline-width" :--input-border-weight-extra-bold
                  ">.kushi-checkbox-input:bw"         :--input-border-weight-extra-bold}
    :heavy       {">.kushi-radio-input:outline-width" :--input-border-weight-heavy
-                 ">.kushi-checkbox-input:bw"         :--input-border-weight-heavy}})
+                 ">.kushi-checkbox-input:bw"         :--input-border-weight-heavy}])
+
+(def utility-class-ks
+  (mapcat util/kwargs-keys
+          [combo-flex-utility-classes
+           base-classes
+           override-classes
+           ui-theming-classes]))
 
 (def utility-classes
-  (deep-merge combo-flex-utility-classes base-classes override-classes (when false ui-theming-classes)))
+  (apply deep-merge
+         (map #(apply hash-map %)
+              [combo-flex-utility-classes
+               base-classes
+               override-classes
+               ui-theming-classes])))

@@ -21,7 +21,7 @@
             :type    :string
             :default nil
             :desc    "Must be a string corresponding to a [mui-icon](https://fonts.google.com/icons?icon.set=Material+Icons)."}
-           {:name    icon-style
+           {:name    mui-icon-style
             :type    #{:filled :outlined :rounded :sharp :two-tone}
             :default :filled
             :desc    "Controls the style of the [mui-icon](https://fonts.google.com/icons?icon.set=Material+Icons)."}
@@ -31,12 +31,12 @@
             :desc    "Setting to one of the accepted values will place the icon, relative to any text labels."}]}
   [& args]
   (let [[opts attrs & children] (opts+children args)
-        {:keys [icon-position icon-style background]
+        {:keys [icon-position mui-icon-style background]
          mi    :mui-icon
          :or   {mi            nil
-                icon-style    :filled
+                mui-icon-style    :filled
                 icon-position :inline-start}} opts
-        icon-component (icon-component {:mi mi :icon-position icon-position :icon-style icon-style})
+        icon-component (icon-component {:mi mi :icon-position icon-position :mui-icon-style mui-icon-style})
         icon-class (when icon-component (str "kushi-button-with-icon-" (name icon-position)))
         pis (resolve-inline-offset {:offset? (and mi (= icon-position :inline-start))})
         pie (resolve-inline-offset {:offset? (and mi (= icon-position :inline-end))})]
@@ -47,8 +47,8 @@
           :.transition
           :.pointer
           :.relative
-          :pis--$pis
-          :pie--$pie
+          [:pis pis]
+          [:pie pie]
           :pb--0.8em
           :&.minimal:pb--0
           :&.minimal:pi--0
@@ -65,7 +65,10 @@
          :block-start
          (into [:span (sx :.flex-col-c :ai--c) icon-component] children)
          :block-end
-         (into [:span (sx :.flex-col-c :ai--c :flex-direction--column-reverse) icon-component] children)
+         (into [:span (sx :.flex-col-c
+                          :ai--c
+                          :flex-direction--column-reverse)
+                icon-component] children)
          :inline-start
          (into [label icon-component] children)
          (into [label] (concat children [icon-component])))

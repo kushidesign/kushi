@@ -148,6 +148,27 @@
     :--text-extra-bold    800
     :--text-heavy         900
 
+    ;; Intended for css props: font-size
+    :--text-xxxsmall   :0.625rem
+    :--text-xxsmall    :0.7rem
+    :--text-xsmall     :0.775rem
+    :--text-small      :0.875rem
+    :--text-medium     :1rem
+    :--text-large      :1.25rem
+    :--text-xlarge     :1.5rem
+    :--text-xxlarge    :1.85rem
+    :--text-xxxlarge   :2.25rem
+
+    ;; Intended for css props: letterspacing
+    :--text-xxxtight   :-0.09em
+    :--text-xxtight    :-0.06em
+    :--text-xtight     :-0.03em
+    :--text-tight      :-0.01em
+    :--text-loose      :0.04em
+    :--text-xloose     :0.08em
+    :--text-xxloose    :0.12em
+    :--text-xxxloose   :0.16em
+
     ;; Intended for css props: border-weight
     :--input-border-weight-thin          :0.05em
     :--input-border-weight-extra-light   :0.07em
@@ -163,22 +184,21 @@
     :--overlay-placement-inline-offset   :12px
     :--overlay-placement-block-offset    :6px
 
-    ;; Intended for css props: font-size
-    :--text-xxxsmall   :0.625rem
-    :--text-xxsmall    :0.7rem
-    :--text-xsmall     :0.775rem
-    :--text-small      :0.875rem
-    :--text-medium     :1rem
-    :--text-large      :1.25rem
-    :--text-xlarge     :1.5rem
-    :--text-xxlarge    :1.85rem
-    :--text-xxxlarge   :2.25rem
 
     ;; Buttons
     ;; ------------------------------------------------------
     :--button-padding-inline-ems :1.2em
     :--button-padding-block-ems  :0.8em
     :--button-with-icon-padding-inline-offset :1em
+
+    ;; Tooltips
+    ;; ------------------------------------------------------
+    :--tooltip-padding-inline   :1.5em
+    :--tooltip-padding-block    :0.75em
+    :--tooltip-border-radius    :0.5rem
+    :--tooltip-font-size        :--text-xxsmall
+    :--tooltip-color            :white
+    :--tooltip-background-color :black
 
     ;; Material UI icons
     ;; ------------------------------------------------------

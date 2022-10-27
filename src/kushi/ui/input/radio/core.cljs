@@ -2,7 +2,6 @@
   (:require-macros
    [kushi.core :refer (sx)])
   (:require
-   [clojure.pprint :refer [pprint]]
    [kushi.core :refer (merge-attrs)]
    [kushi.ui.core :refer (opts+children)]))
 
@@ -30,7 +29,6 @@
            :gap--0.4em
            :padding-inline--0.5em:1em
            :padding-block--0.4em
-           :hover:bgc--:--gray50
            :>*:align-self--center)
        attrs)
       [:input

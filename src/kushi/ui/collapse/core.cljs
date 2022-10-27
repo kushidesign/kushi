@@ -79,13 +79,13 @@
                                 :+section:transition-property                   :height
                                 :+section:transition-timing-function            "cubic-bezier(0.23, 1, 0.32, 1)"
                                 :+section:transition-duration                   :--kushi-collapse-transition-duration
-                                "&[aria-expanded='false']:+section:height"        :0px
+                                "&[aria-expanded='false']+section:height"        :0px
 
-                                "&[aria-expanded='false']:+section:>*:transition" :opacity:200ms:linear:10ms
-                                "&[aria-expanded='true']:+section:>*:transition"  :opacity:200ms:linear:200ms
+                                "&[aria-expanded='false']+section:>*:transition" :opacity:200ms:linear:10ms
+                                "&[aria-expanded='true']+section:>*:transition"  :opacity:200ms:linear:200ms
 
-                                "&[aria-expanded='false']:+section:>*:opacity"    0
-                                "&[aria-expanded='true']:+section:>*:opacity"     1}
+                                "&[aria-expanded='false']+section:>*:opacity"    0
+                                "&[aria-expanded='true']+section:>*:opacity"     1}
                 :role          :button
                 :aria-expanded false
                 :on-click      on-click})
@@ -102,25 +102,35 @@
             :type    :string
             :default nil
             :desc    "The text to display in the collapse header when expanded. Optional."}
-           {:name    icon
+           {:name    mui-icon
             :type    :string
             :default "add"
-            :desc    ["The [name of the Material Icon](https://fonts.google.com) to use in the collapse header."
+            :desc    ["The [name of the Material Icon](https://fonts.google.com/icons?icon.set=Material+Icons) to use in the collapse header."
                       "Optional."]}
-           {:name    icon-expanded
+           {:name    mui-icon-expanded
             :type    :string
             :default "remove"
-            :desc    ["The [name of the Material Icon](https://fonts.google.com) to use in the collapse header when expanded."
+            :desc    ["The [name of the Material Icon](https://fonts.google.com/icons?icon.set=Material+Icons) to use in the collapse header when expanded."
                       "Optional."]}
            {:name    icon-position
             :type    #{:start :end}
             :default :start
             :desc    ["A value of `:start` will place the at the inline start of the header, preceding the label."
                       "A value of `:end` will place the icon at the inline end of the header, opposite the label."
-                      "Optional."]}]}
+                      "Optional."]}
+           {:name    expanded?
+            :type    :boolean
+            :default false
+            :desc    ["When a value of `true` is passed, the collapse is initially rendered in an expanded state."
+                      "Optional"]}
+           ]}
    [& args]
-  (let [[opts attr & children]                           (opts+children args)
-        {:keys [header-attrs body-attrs expanded? on-click icon-position]} opts]
+  (let [[opts attr & children]  (opts+children args)
+        {:keys [header-attrs
+                body-attrs
+                expanded?
+                on-click
+                icon-position]} opts]
     [:section
      (merge-attrs
       (sx
@@ -131,13 +141,20 @@
        {:data-kushi-ui :collapse})
       attr)
      [collapse-header
-      (merge-attrs
-       header-attrs
-       (sx {:on-click       on-click
-            :aria-expanded  (if expanded? "true" "false")
-            :-icon-position icon-position}))
+      (merge-attrs header-attrs
+                   (sx {:on-click       on-click
+                        :aria-expanded  (if expanded? "true" "false")
+                        :-icon-position icon-position}))
       [collapse-header-contents opts]]
-     [collapse-body body-attrs children]]))
+
+     ;; collapse body
+     [:section
+      (merge-attrs (sx 'kushi-collapse-body-wrapper :overflow--hidden) body-attrs)
+      (into [:div (sx
+                   'kushi-collapse-body
+                   :bbe--1px:solid:transparent
+                   :padding-block--0.25em:0.5em)]
+            children)]]))
 
 
 (defn accordian

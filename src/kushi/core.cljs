@@ -1,13 +1,23 @@
 (ns ^:dev/always kushi.core
   (:require-macros [kushi.core])
   (:require [clojure.string :as string]
-            [kushi.clean :as clean]
-            [kushi.sheets :as sheets]
-            ;; [kushi.parstub :refer [? !?]] ;; only use when developing kushi itself
-            ))
+            [kushi.clean :as clean]))
+
+(def sheet-ids-by-type
+  ;; Renamings?
+  {:kushi-atomic            "_kushi-defclass-utility_"
+   :kushi-css-sync          "_kushi-css-sync_"
+   :defclass-kushi-override "_kushi-defclass-overrides_"
+   :defclass-user-override  "_kushi-defclass-user-overrides_"})
+
+(def sheet-types-ordered
+  [:kushi-atomic
+   :kushi-css-sync
+   :defclass-kushi-override
+   :defclass-user-override])
 
 (defn css-sync! [s]
-  (let [id     (:kushi-css-sync sheets/sheet-ids-by-type)
+  (let [id     (:kushi-css-sync sheet-ids-by-type)
         el     (js/document.getElementById id)
         el-new (js/document.createElement "style")]
     (set! (.-innerHTML el-new) s)
@@ -33,8 +43,8 @@
 
 (defn initialize-style-tags!
   []
-  (doseq [kw sheets/sheet-types-ordered ]
-    (insert-style-tag! (kw sheets/sheet-ids-by-type))))
+  (doseq [kw sheet-types-ordered ]
+    (insert-style-tag! (kw sheet-ids-by-type))))
 
 (initialize-style-tags!)
 
@@ -46,55 +56,14 @@
 ;; Used to keep track of what has been injected, to avoid duplicate injections.
 (def injected (atom #{}))
 
-(clean/clean! (vals (select-keys sheets/sheet-ids-by-type
-                                 sheets/sheet-types-ordered)))
+(clean/clean! (vals (select-keys sheet-ids-by-type
+                                 sheet-types-ordered)))
 
 ;; Toggle for debugging while developing kushi itself
 ;; (def log-inject-css*? false)
 
 (defn lightswitch! []
   (.toggle (-> js/document.body .-classList) "dark"))
-
-
-;; cssfn (helper fn for use inside calls to sx macro)  ---------------------------------------------------------
-(defn cssfn? [x]
-  (and (list? x)
-       (= (first x) 'cssfn)
-       (keyword? (second x))))
-
-(declare cssfn)
-
-(defn vec-in-cssfn [v]
-  (string/join
-   " "
-   (map #(cond
-           (cssfn? %) (cssfn %)
-           (vector? %) (vec-in-cssfn %)
-           (keyword? %) (name %)
-           :else (str %))
-        v)))
-
-(defn cssfn* [[_ nm & args]]
-  (str (name nm)
-       "("
-       (string/join
-        ", "
-        (map #(cond
-                (cssfn? %) (cssfn %)
-                (vector? %) (vec-in-cssfn %)
-                (keyword? %) (name %)
-              ;;  (string? %) (str "\"" % "\"")
-                :else (str %))
-             args))
-       ")"))
-
-(defn cssfn [& args]
-  (cssfn (cons 'cssfn args)))
-
-
-;; !important (helper fn for use inside calls to sx macro)  -------------------------------------------------------
-(defn !important [x]
-  (cssfn (list 'important x)))
 
 
 ;; Public function for injecting 3rd party stylesheets ------------------------------------------------------------
@@ -179,35 +148,20 @@
   [& maps]
   (let [families* (reduce m->str [] maps)
         families  (str (string/join "&" families*) "&display=swap")]
-   (do
-     (inject-stylesheet {:rel "preconnet"
-                         :href "https://fonts.gstatic.com"
-                         :cross-origin "anonymous"})
-     (inject-stylesheet {:rel "preconnet"
-                         :href "https://fonts.googleapis.com"})
-     (inject-stylesheet {:rel "stylesheet"
-                         :href (str "https://fonts.googleapis.com/css2?" families)}))))
+    (inject-stylesheet {:rel          "preconnet"
+                        :href         "https://fonts.gstatic.com"
+                        :cross-origin "anonymous"})
+    (inject-stylesheet {:rel  "preconnet"
+                        :href "https://fonts.googleapis.com"})
+    (inject-stylesheet {:rel  "stylesheet"
+                        :href (str "https://fonts.googleapis.com/css2?" families)})))
 
-#_(add-google-font! {:family "Fira Code" :style {:normal [300 400] :italic [300 400]}})
 
 ;; Functionaltiy for kushi style decoration -----------------------------------------------------------------
 
 (defn merged-attrs-map
-  [{:keys [attrs-base prefixed-classlist css-vars]
-    :as   m}]
+  [{:keys [attrs-base prefixed-classlist css-vars]}]
   (assoc attrs-base :class (distinct prefixed-classlist) :style css-vars))
-
-#_(defn merged-attrs-map
-  ([attrs-base classlist css-vars]
-   (merged-attrs-map attrs-base classlist css-vars nil))
-  ([attrs-base classlist css-vars data-cljs]
-   (assoc attrs-base
-          :class
-          (distinct classlist)
-          :style css-vars
-          :data-cljs data-cljs)))
-
-#_(def merge-attrs kushi.utils/merge-attrs)
 
 (def dom-element-events
    [:on-change
@@ -273,17 +227,17 @@
       [class]
       class)))
 
-(defn data-cljs-str [m]
+(defn data-sx-str [m]
   (when m
     (let [{:keys [file line column]} m]
       (str file ":"  line ":" column))))
 
-(defn data-cljs [m2 s1 s2]
-  (let [from-defcom (data-cljs-str (:data-amp-form m2))
-        from-user   (data-cljs-str (:data-amp-form2 m2))
+(defn data-sx [m2 s1 s2]
+  (let [from-defcom (data-sx-str (:data-amp-form m2))
+        from-user   (data-sx-str (:data-amp-form2 m2))
         coll   (remove nil? [from-defcom from-user s1 s2])
         joined (when (seq coll) (string/join " + " coll))]
-    (when joined {:data-cljs joined})))
+    (when joined {:data-sx joined})))
 
 (defn handler-concat [c1 c2 m2 k]
   (let [block? (contains? (some->> m2 :data-kushi-block-events (into #{})) k)
@@ -302,22 +256,22 @@
   (let [[m1 m2]                   (map #(if (map? %) % {}) maps)
         {style1 :style
          class1 :class
-         data-cljs1 :data-cljs}   m1
+         data-sx1 :data-sx}   m1
         {style2 :style
          class2 :class
-         data-cljs2 :data-cljs}   m2
+         data-sx2 :data-sx}   m2
         [bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i)) [style1 style2])
         [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i)) [class1 class2])
         merged-style              (merge (when-not bad-style1? style1) (when-not bad-style2? style2))
         class1-coll               (class-coll class1 bad-class1?)
         class2-coll               (class-coll class2 bad-class2?)
         classes                   (concat class1-coll class2-coll)
-        data-cljs                 (data-cljs m2 data-cljs1 data-cljs2)
+        data-sx                 (data-sx m2 data-sx1 data-sx2)
 
         user-event-handlers       (keys (select-keys m2 dom-element-events))
         merged-event-handlers     (apply merge (map #(handler-concat (% m1) (% m2) m2 %) user-event-handlers))
         m2-                       (dissoc m2 :data-amp-form)
-        ret                       (assoc (merge m1 m2- data-cljs merged-event-handlers)
+        ret                       (assoc (merge m1 m2- data-sx merged-event-handlers)
                                          :class classes
                                          :style merged-style)]
     ret))

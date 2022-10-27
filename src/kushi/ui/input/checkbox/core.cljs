@@ -47,8 +47,8 @@
         :border-radius--0em
         :display--inline-grid
         :place-content--center
-        :bgc--white
-        :checked:bgc--black
+        :bgc--transparent
+        :checked:bgc--currentColor
         :checked:o--1
         :o--0.6
         {:style {:before:content           "\"\""

@@ -2,7 +2,7 @@
   (:require [kushi.ui.card.core :refer (card)]
             [kushi.ui.card.core :refer (card)]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.core :refer (merge-attrs) :refer-macros (sx cssfn)]))
+            [kushi.core :refer (merge-attrs) :refer-macros (sx)]))
 
 (defn close-kushi-modal [e]
   (let [modal-parent (.closest (-> e .-target) ".kushi-modal")]
@@ -50,8 +50,10 @@
             :default nil
             :desc    "html attributes map applied to the modal panel `div`"}]}
   [& args]
-  (let [[opts attr & children]                    (opts+children args)
-        {:keys [trigger scrim-attrs panel-attrs]} opts]
+  (let [[opts attr & children] (opts+children args)
+        {:keys [trigger
+                scrim-attrs
+                panel-attrs]}   opts]
     [:div
      (merge-attrs
       {:class [:kushi-modal-wrapper]}
@@ -66,7 +68,7 @@
             :data-kushi-ui :modal
             :role       :dialog
             :style      {:ai                             :c
-                         :bgc                            (cssfn :rgba 232 232 232 0.86)
+                         :bgc                            '(rgba 232 232 232 0.86)
                          "&[aria-modal='false']:display" :none
                          :z                              1}})
        scrim-attrs)
