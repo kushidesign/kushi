@@ -2,7 +2,7 @@
 
 # Kushi
 <h5>Kushi is a foundation for building web UI with ClojureScript.</h5>
-<h5><a href=""><strong>Explore Kushi UI Playground »</strong></a></h5>
+<!-- <h5><a href=""><strong>Explore Kushi UI Playground »</strong></a></h5> -->
 <h5><a href="https://github.com/paintparty/kushi-quickstart"><strong>Kushi Quickstart »</strong></a></h5>
 
 
