@@ -52,13 +52,15 @@
                           [open-node
                            open-exp-parent]           (other-expanded-node accordian node)
                           exp-parent                  (-> node .-nextSibling)
+                          collapsed?                  (= "none"  (.-display (.-style exp-parent)))
+                          _                           (when collapsed? (set! exp-parent.style.display "block"))
                           exp-inner                   (-> node .-nextSibling .-firstChild)
                           exp-inner-h                 (outer-height exp-inner)
-                          expanded?                   (dom/attribute-true? node :aria-expanded)
+                          aria-expanded?              (dom/attribute-true? node :aria-expanded)
                           height                      (str exp-inner-h "px")
-                          ->height                    (if expanded? "0px" height)
-                          no-height?                  (and expanded? (string/blank? exp-parent.style.height))
-                          toggle-op                   (if expanded? dom/remove-class dom/add-class)]
+                          ->height                    (if aria-expanded? "0px" height)
+                          no-height?                  (and aria-expanded? (string/blank? exp-parent.style.height))
+                          toggle-op                   (if aria-expanded? dom/remove-class dom/add-class)]
                       (toggle-op collapse :kushi-collapse-expanded)
                       (when no-height? (set! exp-parent.style.height height))
                       (js/window.requestAnimationFrame (fn []
@@ -66,19 +68,20 @@
                                                            (set! open-exp-parent.style.height "0px")
                                                            (toggle-boolean-attribute open-node :aria-expanded))
                                                          (set! exp-parent.style.height ->height)
-                                                         (toggle-boolean-attribute node :aria-expanded))))]
+                                                         (toggle-boolean-attribute node :aria-expanded)
+                                                         (when-not collapsed? (js/setTimeout (fn [] (set! exp-parent.style.display "none")) 200)))))]
       (into [:div
              (merge-attrs
               (sx
                'kushi-collapse-header
                :.pointer
                {:class         [:.flex-row-fs :.collapse-header]
-                :style         {:ai                                             :center
-                                :padding-block                                  :0.75em
-                                :transition                                     :all:200ms:linear
-                                :+section:transition-property                   :height
-                                :+section:transition-timing-function            "cubic-bezier(0.23, 1, 0.32, 1)"
-                                :+section:transition-duration                   :--kushi-collapse-transition-duration
+                :style         {:ai                                            :center
+                                :padding-block                                 :0.75em
+                                :transition                                    :all:200ms:linear
+                                :+section:transition-property                  :height
+                                :+section:transition-timing-function           "cubic-bezier(0.23, 1, 0.32, 1)"
+                                :+section:transition-duration                  :--kushi-collapse-transition-duration
                                 "&[aria-expanded='false']+section:height"        :0px
 
                                 "&[aria-expanded='false']+section:>*:transition" :opacity:200ms:linear:10ms
@@ -86,9 +89,12 @@
 
                                 "&[aria-expanded='false']+section:>*:opacity"    0
                                 "&[aria-expanded='true']+section:>*:opacity"     1}
+                :tabIndex      0
                 :role          :button
                 :aria-expanded false
-                :on-click      on-click})
+                :on-click      on-click
+                :onKeyDown     #(when (or (= "Enter" (.-key %)) (= 13 (.-which %)) (= 13  (.-keyCode %)))
+                                  (-> % .-target .click))})
               attrs)]
             children))))
 
@@ -142,14 +148,19 @@
       attr)
      [collapse-header
       (merge-attrs header-attrs
-                   (sx {:on-click       on-click
+                   (sx #_["[aria-expanded='false']+.kushi-collapse-body-wrapper:d" :none]
+                       {:on-click       on-click
                         :aria-expanded  (if expanded? "true" "false")
                         :-icon-position icon-position}))
       [collapse-header-contents opts]]
 
      ;; collapse body
      [:section
-      (merge-attrs (sx 'kushi-collapse-body-wrapper :overflow--hidden) body-attrs)
+      (merge-attrs (sx 'kushi-collapse-body-wrapper
+                       :overflow--hidden
+                       {:disabled true})
+                   body-attrs
+                   {:style {:display :none}})
       (into [:div (sx
                    'kushi-collapse-body
                    :bbe--1px:solid:transparent
