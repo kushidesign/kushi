@@ -144,6 +144,7 @@
                                    node-w-children)]
     (keyed merged-children hiccup-w-children)))
 
+;; TODO: Is this redundant with kushi.core/merge-attrs ?
 (defn merge-attributes
   [{:keys [decorator
            user-attr
@@ -167,6 +168,7 @@
                          node-w-attr)]
     hiccup))
 
+;; TODO: Get rid of this?
 (defn gui
   ([args hiccup*]
    (gui args hiccup* nil))
@@ -178,3 +180,15 @@
          m+               (-> m merge-children (merge m))
          hiccup-with-attr (merge-attributes m+)]
      hiccup-with-attr)))
+
+(defn ^:public lightswitch!
+  "Expects a querySelector string and toggles a .dark class on that element.
+   If no querySelector string provided, it will toggle .dark on the body element."
+  ([]
+   (lightswitch! nil))
+  ([s]
+   (.toggle (-> (if s
+                  (js/document.querySelector s)
+                  js/document.body)
+                .-classList)
+            "dark") ))
