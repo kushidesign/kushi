@@ -1,11 +1,12 @@
 (ns kushi.styles
- (:require [clojure.spec.alpha :as s]
-           [clojure.walk :as walk]
-           [clojure.string :as string]
-           [kushi.selector :as selector]
-           [kushi.state2 :as state2]
-           [kushi.utils :as util :refer [keyed]]
-           [kushi.specs2 :as specs2]))
+ (:require
+  [clojure.spec.alpha :as s]
+  [clojure.walk :as walk]
+  [clojure.string :as string]
+  [kushi.selector :as selector]
+  [kushi.state2 :as state2]
+  [kushi.utils :as util :refer [keyed]]
+  [kushi.specs2 :as specs2]))
 
 (defn- fnsym->string [sexp s]
   (concat [(str s (-> sexp first name))] (rest sexp)))
@@ -246,9 +247,10 @@
         (when-let [coll tokenized-style]
           (when (seq coll)
             (map #(let [s (name %)]
+                    ;; TODO abstract this
                     (if (re-find #"^.*[^-]--:--[^-]+.+$" s)
                       (string/split (name %) #"--:")
-                      (string/split (name %) #"--")))
+                      (string/split (name %) #"--" 2)))
                  coll)))
 
 
@@ -309,17 +311,20 @@
 
 
   ;; just for debugging
-  #_(when test?
-    (? :all-style-tuples*
+  #_(when @state2/trace?
+    (println #_:all-style-tuples*
        (keyed
-        process
-        shared-class?
-        clean*
-        attrs*
-        attrs
-        by-kind
-        clean-stylemap*
-        clean-stylemap)))
+        ;; process
+        ;; shared-class?
+        ;; clean*
+        ;; attrs*
+        ;; attrs
+        ;; by-kind
+        ;; clean-stylemap*
+        ;; clean-stylemap
+        ;; style-tuples-from-tokenized
+        ;; all-style-tuples
+        )))
 
   (merge (when defclass-style-tuples
            {:defclass-style-tuples defclass-style-tuples})
