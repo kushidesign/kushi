@@ -62,8 +62,7 @@
 ;; Toggle for debugging while developing kushi itself
 ;; (def log-inject-css*? false)
 
-(defn lightswitch! []
-  (.toggle (-> js/document.body .-classList) "dark"))
+
 
 
 ;; Public function for injecting 3rd party stylesheets ------------------------------------------------------------
