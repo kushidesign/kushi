@@ -27,7 +27,7 @@
 (defn clean-args
   [{:keys [args :kushi/process form-meta] :as m}]
   (let [
-        test? (reset! state2/trace? (= '(quote wtfx) (some-> args first)))
+        ;; test? (reset! state2/trace? (= 'tester (some-> args first)))
         [validation-spec conformance-spec]
         (if (util/shared-class? process)
           [::specs2/defclass-args ::specs2/defclass-args2]
@@ -89,27 +89,7 @@
         (stylesheet/garden-vecs-injection garden-vecs)]
 
     #_(when test?
-      (? :clean
-                    (keyed
-        ;;  args
-        ;;  process
-        ;; bad
-        ;;  bad-args
-        ;;  bad-stylemap
-        ;;  all-style-tuples
-        ;;  parts*
-        ;;  grouped-by-mq2
-        ;;  no-mq
-        ;;  mqs
-        tups
-        ;; parsed
-                    ;;  garden-vecs
-        ;;  gv*
-        ;;  grouped
-        ;;  css-vars
-        ;;  data-sx-attr
-        ;;  attrs
-                     )))
+        )
 
     (merge data-sx-attr
            {:kushi/process process
