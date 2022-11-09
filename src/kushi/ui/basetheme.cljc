@@ -246,7 +246,14 @@
 (def ui
   ["body"
    {:font-family :--sans-serif-font-stack
-    :color       :--primary}
+    :bgc         :--white
+    :color       :--primary
+    :transition  :all
+    :transition-duration :--duration-normal}
+
+   "body.dark"
+   {:bgc         :--gray1000
+    :color       :--gray50}
 
    "code"
    {:font-family   :--code-font-stack
@@ -256,7 +263,10 @@
     :border-radius :3px
     :bgc           :--gray100
     :h             :fit-content
-    :w             :fit-content}
+    :w             :fit-content
+    :transition-property :all
+    :transition-duration :--duration-normal
+    }
 
    ".code"
    {:font-family   :--code-font-stack
@@ -266,7 +276,18 @@
     :border-radius :3px
     :bgc           :--gray100
     :h             :fit-content
-    :w             :fit-content}
+    :w             :fit-content
+    :transition-property :all
+    :transition-duration :--duration-normal
+    }
+
+   ".dark code"
+   {:bgc           :--gray900
+    :c             :--gray50}
+
+   ".dark .code"
+   {:bgc           :--gray900
+    :c             :--gray50 }
 
    ;; Buttons, tags, & labels
 
@@ -323,12 +344,13 @@
 
 (def user-narrowed-variants
   (let [{:keys [kushi-ui-variants]} user-config]
-    (->> kushi-ui-variants
-         (reduce (fn [acc [k m]]
-                   (conj acc (varients-by-kind k m)))
-                 [])
-         flatten
-         distinct)))
+    (when (map? kushi-ui-variants)
+      (->> kushi-ui-variants
+           (reduce (fn [acc [k m]]
+                     (conj acc (varients-by-kind k m)))
+                   [])
+           flatten
+           distinct))))
 
 (def kushi-ui
   [".kushi-button"                          (merge primary-color*
@@ -336,9 +358,7 @@
                                                    {:fw :--text-wee-bold
                                                     :ff :--primary-font-family})
    ".dark .kushi-button"                    (merge primary-color-inverse*
-                                                   primary-target-inverse*
-                                                   {:fw :--text-wee-bold
-                                                    :ff :--primary-font-family})
+                                                   primary-target-inverse*)
    ".kushi-button.accent"                   (merge accent* accent-target*)
    ".kushi-button.positive"                 (merge positive* positive-target*)
    ".kushi-button.warning"                  (merge warning* warning-target*)
@@ -460,23 +480,23 @@
    ".dark .kushi-tag.outlined.negative"     (outlined-tag-inverse* :negative)
    ".dark .kushi-tag.outlined.warning"      (outlined-tag-inverse* :warning)
    ".dark .kushi-tag.outlined.accent"       (outlined-tag-inverse* :accent)
+   ".dark .kushi-tooltip"                   {:c :black :bgc :white}
 
-  ;;  :.kushi-radio                            (tertiary* :primary)
-  ;;  ".dark .kushi-radio"                     (merge (tertiary-inverse* :primary) {:c :--primary-b})
-  ;;  ".dark .kushi-button"                    (merge primary-color-inverse*
-  ;;                                                  primary-target-inverse*
-  ;;                                                  {:fw :--text-wee-bold
-  ;;                                                   :ff :--primary-font-family})
-   ])
+   ".dark .kushi-radio-input"                                        {:bgc :black}
+   ".dark .kushi-checkbox-input"                                     {:bgc :black}
+   ".dark .kushi-checkbox-input:before"                              {:box-shadow :inset:1em:1em:black}
+   ".dark .kushi-slider-step-label.kushi-slider-step-label-selected" {:c :white}
+   ".dark .kushi-slider-step-label"                                  {:c :--gray300}])
+
 
 (def global {:font-family      :--sans-serif-stack
              :background-color :crimson
              :color            :--primary})
 
-
 (def tokens
   {:global global-tokens
    :alias (merge alias-tokens component-tokens)})
+
 
 (def font-loading
   {
@@ -488,6 +508,7 @@
   ;;                  :styles {:normal [100] :italic [300]}}]
    :google-fonts* ["Fira Code" "Inter"]})
 
+
 (def merged-ui
   (let [darks?            (:add-kushi-ui-dark-theming? user-config)
         lights?           (:add-kushi-ui-light-theming? user-config)
@@ -496,7 +517,9 @@
         [ui kushi-ui]     (map #(apply hash-map %) [ui kushi-ui])
         coll              (merge ui
                                  (when kushi-ui-theming?
-                                   (select-keys kushi-ui user-narrowed-variants)))]
+                                   (if user-narrowed-variants
+                                    (select-keys kushi-ui user-narrowed-variants)
+                                    kushi-ui )))]
 
     (if (and kushi-ui-theming?
              (or (not darks?)
