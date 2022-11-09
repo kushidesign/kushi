@@ -112,10 +112,7 @@
    ;;           :kind     #{:primary :minimal}}
    ;;  :tag    {:semantic #{:positive :negative}}}
 
-   :kushi-ui-variants              {:button {:kind     #{:primary :secondary :tertiary :outlined :minimal}
-                                             :semantic #{:positive :negative :warning :accent}}
-                                    :tag    {:kind     #{:primary :secondary :outlined}
-                                             :semantic #{:positive :negative :warning :accent}}}
+   :kushi-ui-variants              :all
 
 
    ;; ADVANCED
