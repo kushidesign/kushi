@@ -100,7 +100,7 @@ Please check out [Kushi Quickstart](https://github.com/paintparty/kushi-quicksta
 <!--TODO reverse examples -->
 ## Kushi Styling Syntax
 Styles are co-located at the element level.
-Simply wrap your attributes with the `kushi.core/sx` macro:
+The macro `kushi.core/sx` takes any number of styles followed by an (optional) attributes map :
 ```Clojure
 (ns myns.core
   (:require
@@ -128,7 +128,7 @@ The above could also be written (verbosely) like this:
                :text-align :center
                :font-size  :18px}})])
 ```
-You could also use shorthand syntax with style maps, and mix in tokenized keywords as well.
+You could also use shorthand syntax with style maps, and mix in tokenized keywords.
 
 ```Clojure
 (defn my-component []
@@ -333,6 +333,17 @@ You can likewise locate these as entries in the `:style` entry of the attributes
 
 <br>
 
+### Using css function syntax
+As seen in the example above, you can use a quoted list to convey css function values.
+```Clojure
+(sx [:color '(rgba 0 200 100 0.4)])
+
+;; The above example is equivalent to:
+"rgba(0, 200, 100, 0.4)"
+```
+
+<br>
+
 ### Using CSS custom properties
 
 The following sugar is supported for css variables:
@@ -355,16 +366,6 @@ The following sugar is supported for css variables:
 
 <br>
 
-### Using css function syntax
-As seen in the example above, you can use a quoted list to convey css function values.
-```Clojure
-(sx [:color '(rgba 0 200 100 0.4)])
-
-;; The above example is equivalent to:
-(sx [:color "rgba(0, 200, 100, 0.4)"])
-```
-
-<br>
 
 ### CSS Shorthand Properties
 [CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are a fundamental feature of CSS. They are properties that let you set the values of multiple other CSS properties simultaneously. With Kushi, you can write them like this:
@@ -755,10 +756,47 @@ Kushi provides a special sugar token in the form of `has-parent()` and `has-ance
      text])
 
 ```
-The above will write the following css:
+The above would result in the following css:
 ```css
 section.baz .foo {color: blue}
 section.dark > .foo {color: white}
+```
+
+### Targeting dark mode
+You can use the `dark` modifier to define styles that are scoped to the dark themes. This is sugar for `has-ancestor(.dark)`. It is assumed there will potentially be a class of `.dark` on an ancestor element in the DOM. This would typically be the `<body>` or the target element for the app.
+
+```Clojure
+(defn my-button [text]
+  [:button
+   (sx 'foo
+       :dark:color--hotpink
+       :dark:b--2px:solid:hotpink
+       :dark:&_.some-other-class:c--white
+       {:on-click #(prn "clicked!")})
+     text])
+
+```
+The above would result in the following css:
+```css
+.dark .foo {color: hotpink; border: 2px solid hotpink}
+.dark .foo .some-other-class {color: white}
+```
+
+You can use `kushi.ui.core/lightswitch!` to toggle a `.dark` class on the body, or a specific element of your choice.
+```Clojure
+(ns myns.core
+  (:require [kushi.ui.core :refer [lightswitch!]]))
+
+;; Toggle `.dark` class on body
+(lightswitch!)
+
+;; Toggle `.dark` class using querySelector
+(lightswitch! "#my-id")
+
+;; Any querySelector is valid and will work as long as it
+;; corresponds to an existing element in the DOM.
+(lightswitch! "div.some-class")
+
 ```
 <br>
 
