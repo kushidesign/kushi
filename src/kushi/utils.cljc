@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.utils
   (:require
+   [kushi.specs2 :as specs2]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]))
 
@@ -12,7 +13,7 @@
      `(let [keys# (quote ~ks)
             keys# (map keyword keys#)
             vals# (list ~@ks)]
-        (zipmap keys# vals#))))
+        (apply array-map (interleave keys# vals#)))))
 
 (defn nameable? [x]
   (or (string? x) (keyword? x) (symbol? x)))
@@ -84,9 +85,19 @@
   ;; or
   ;; "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='12px' ...)"
 
-  (-> v
-      (string/replace #"\|" ", ")
-      (string/replace #"\:" " ")))
+  (if (string? v)
+    (let [alternations*       (string/split v #"\|")
+          with-css-shorthands (map #(let [coll* (string/split % #"\:")
+                                          coll  (map (fn [%]
+                                                       (if (s/valid? ::specs2/cssvar-name %)
+                                                         (str "var(" % ")")
+                                                         %))
+                                                     coll*)]
+                                      (string/join " " coll))
+                                   alternations*)
+          alternations         (string/join ", " with-css-shorthands)]
+      alternations)
+    v))
 
 (defn kwargs-keys
   "Expects an even-numbered kwarg-style collection of key/values.
