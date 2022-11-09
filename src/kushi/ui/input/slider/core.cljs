@@ -130,7 +130,7 @@
                         :.transition
                         :.flex-row-c
                         :ai--c
-                        :c--:--gray600
+                        :c--currentColor
                         :ta--center
                         {:class [label-size-class
                                  label-selected-class]
@@ -140,7 +140,7 @@
                                  :transform                                    (str "scale(" label-scale-factor ") translateX(-50%)")
                                  :&.kushi-slider-step-label-selected:transform "scale(1) translateX(-50%)"
                                  :&.kushi-slider-step-label-selected:o         1
-                                 :&.kushi-slider-step-label-selected:c         :--primary
+                                 :&.kushi-slider-step-label-selected:c         :currentColor
                                  :&.kushi-slider-step-label-selected>span:v    :visible
                                  :before:content                               (when step-marker-content (str "\"" step-marker-content "\"")) }})
               [:span (sx :.absolute-centered) step]]))
@@ -217,7 +217,7 @@
         label-size-class           (or label-size-class :medium)
         label-scale-factor         (cond (= 1 label-scale-factor) 1.0
                                          (and (float? label-scale-factor) (< label-scale-factor 1.0)) label-scale-factor
-                                         :else 0.7)
+                                         :else 0.6)
         label-selected-class       "kushi-slider-step-label-selected"]
 
     #_(js/console.log  (keyed steps
