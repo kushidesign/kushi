@@ -296,7 +296,7 @@
   (s/tuple ::cssvar-name ::cssvar-name))
 
 (defn kw->tup [x re]
-  (into [] (string/split (kw->s x) re)))
+  (into [] (string/split (kw->s x) re 2)))
 
 (defn kw->valid-tup? [x re spec]
   (when-let [v (kw->tup x re)]
