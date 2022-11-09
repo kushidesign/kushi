@@ -5,231 +5,229 @@
     ;; Color
     ;; Intended for css props that assign color
     ;; ------------------------------------------------------
+   
 
+   :--white                                  :#FFFFFF
+   :--black                                  :#000000
+   :--gray-hue                               0
 
-    :--white           :#FFFFFF
+   :--gray50                                 "hsl(var(--gray-hue), 0%, 98%)"
+   :--gray100                                "hsl(var(--gray-hue), 0%, 95%)"
+   :--gray200                                "hsl(var(--gray-hue), 0%, 91%)"
+   :--gray300                                "hsl(var(--gray-hue), 0%, 85%)"
+   :--gray400                                "hsl(var(--gray-hue), 0%, 77%)"
+   :--gray500                                "hsl(var(--gray-hue), 0%, 68%)"
+   :--gray600                                "hsl(var(--gray-hue), 0%, 57%)"
+   :--gray700                                "hsl(var(--gray-hue), 0%, 44%)"
+   :--gray800                                "hsl(var(--gray-hue), 0%, 31%)"
+   :--gray900                                "hsl(var(--gray-hue), 0%, 20%)"
+   :--gray1000                               "hsl(var(--gray-hue), 0%, 8%)"
 
-    :--gray-hue        0
+   :--red-hue                                358
+   :--red50                                  "hsl(var(--red-hue), 100%, 98%)"
+   :--red100                                 "hsl(var(--red-hue), 95%, 94%)"
+   :--red200                                 "hsl(var(--red-hue), 90%, 87%)"
+   :--red300                                 "hsl(var(--red-hue), 85%, 76%)"
+   :--red400                                 "hsl(var(--red-hue), 85%, 66%)"
+   :--red500                                 "hsl(var(--red-hue), 85%, 55%)"
+   :--red600                                 "hsl(var(--red-hue), 85%, 45%)"
+   :--red700                                 "hsl(var(--red-hue), 90%, 37%)"
+   :--red800                                 "hsl(var(--red-hue), 95%, 29%)"
+   :--red900                                 "hsl(var(--red-hue), 100%, 20%)"
+   :--red1000                                "hsl(var(--red-hue), 100%, 11%)"
 
-    :--gray50           "hsl(var(--gray-hue), 0%, 98%)"
-    :--gray100          "hsl(var(--gray-hue), 0%, 95%)"
-    :--gray200          "hsl(var(--gray-hue), 0%, 91%)"
-    :--gray300          "hsl(var(--gray-hue), 0%, 85%)"
-    :--gray400          "hsl(var(--gray-hue), 0%, 77%)"
-    :--gray500          "hsl(var(--gray-hue), 0%, 68%)"
-    :--gray600          "hsl(var(--gray-hue), 0%, 57%)"
-    :--gray700          "hsl(var(--gray-hue), 0%, 44%)"
-    :--gray800          "hsl(var(--gray-hue), 0%, 31%)"
-    :--gray900          "hsl(var(--gray-hue), 0%, 20%)"
-    :--gray1000         "hsl(var(--gray-hue), 0%, 8%)"
+   :--orange-hue                             32
+   :--orange50                               "hsl(var(--orange-hue), 100%, 97%)"
+   :--orange100                              "hsl(var(--orange-hue), 98%, 93%)"
+   :--orange200                              "hsl(var(--orange-hue), 93%, 87%)"
+   :--orange300                              "hsl(var(--orange-hue), 90%, 76%)"
+   :--orange400                              "hsl(var(--orange-hue), 90%, 66%)"
+   :--orange500                              "hsl(var(--orange-hue), 90%, 55%)"
+   :--orange600                              "hsl(var(--orange-hue), 90%, 45%)"
+   :--orange700                              "hsl(var(--orange-hue), 93%, 37%)"
+   :--orange800                              "hsl(var(--orange-hue), 98%, 29%)"
+   :--orange900                              "hsl(var(--orange-hue), 100%, 20%)"
+   :--orange1000                             "hsl(var(--orange-hue), 100%, 11%)"
 
-    :--black           :#000000
+   :--yellow-hue                             52
+   :--yellow50                               "hsl(var(--yellow-hue), 100%, 95%)"
+   :--yellow100                              "hsl(var(--yellow-hue), 98%, 90%)"
+   :--yellow200                              "hsl(var(--yellow-hue), 95%, 83%)"
+   :--yellow300                              "hsl(var(--yellow-hue), 93%, 73%)"
+   :--yellow400                              "hsl(var(--yellow-hue), 90%, 56%)"
+   :--yellow500                              "hsl(var(--yellow-hue), 95%, 46%)"
+   :--yellow600                              "hsl(var(--yellow-hue), 93%, 42%)"
+   :--yellow700                              "hsl(var(--yellow-hue), 96%, 34%)"
+   :--yellow800                              "hsl(var(--yellow-hue), 100%, 25%)"
+   :--yellow900                              "hsl(var(--yellow-hue), 100%, 18%)"
+   :--yellow1000                             "hsl(var(--yellow-hue), 100%, 11%)"
 
-    :--red-hue         358
-    :--red50           "hsl(var(--red-hue), 100%, 98%)"
-    :--red100          "hsl(var(--red-hue), 95%, 94%)"
-    :--red200          "hsl(var(--red-hue), 90%, 87%)"
-    :--red300          "hsl(var(--red-hue), 85%, 76%)"
-    :--red400          "hsl(var(--red-hue), 85%, 66%)"
-    :--red500          "hsl(var(--red-hue), 85%, 55%)"
-    :--red600          "hsl(var(--red-hue), 85%, 45%)"
-    :--red700          "hsl(var(--red-hue), 90%, 37%)"
-    :--red800          "hsl(var(--red-hue), 95%, 29%)"
-    :--red900          "hsl(var(--red-hue), 100%, 20%)"
-    :--red1000         "hsl(var(--red-hue), 100%, 11%)"
+   :--green-hue                              150
+   :--green50                                "hsl(var(--green-hue), 100%, 96%)"
+   :--green100                               "hsl(var(--green-hue), 90%, 91%)"
+   :--green200                               "hsl(var(--green-hue), 85%, 85%)"
+   :--green300                               "hsl(var(--green-hue), 80%, 75%)"
+   :--green400                               "hsl(var(--green-hue), 75%, 61%)"
+   :--green500                               "hsl(var(--green-hue), 75%, 48%)"
+   :--green600                               "hsl(var(--green-hue), 80%, 41%)"
+   :--green700                               "hsl(var(--green-hue), 85%, 34%)"
+   :--green800                               "hsl(var(--green-hue), 90%, 27%)"
+   :--green900                               "hsl(var(--green-hue), 95%, 20%)"
+   :--green1000                              "hsl(var(--green-hue), 100%, 11%)"
 
-    :--orange-hue      32
-    :--orange50        "hsl(var(--orange-hue), 100%, 97%)"
-    :--orange100       "hsl(var(--orange-hue), 98%, 93%)"
-    :--orange200       "hsl(var(--orange-hue), 93%, 87%)"
-    :--orange300       "hsl(var(--orange-hue), 90%, 76%)"
-    :--orange400       "hsl(var(--orange-hue), 90%, 66%)"
-    :--orange500       "hsl(var(--orange-hue), 90%, 55%)"
-    :--orange600       "hsl(var(--orange-hue), 90%, 45%)"
-    :--orange700       "hsl(var(--orange-hue), 93%, 37%)"
-    :--orange800       "hsl(var(--orange-hue), 98%, 29%)"
-    :--orange900       "hsl(var(--orange-hue), 100%, 20%)"
-    :--orange1000      "hsl(var(--orange-hue), 100%, 11%)"
+   :--blue-hue                               212
+   :--blue50                                 "hsl(var(--blue-hue), 100%, 97%)"
+   :--blue100                                "hsl(var(--blue-hue), 98%, 93%)"
+   :--blue200                                "hsl(var(--blue-hue), 97%, 87%)"
+   :--blue300                                "hsl(var(--blue-hue), 96%, 78%)"
+   :--blue400                                "hsl(var(--blue-hue), 94%, 68%)"
+   :--blue500                                "hsl(var(--blue-hue), 92%, 59%)"
+   :--blue600                                "hsl(var(--blue-hue), 90%, 45%)"
+   :--blue700                                "hsl(var(--blue-hue), 92%, 37%)"
+   :--blue800                                "hsl(var(--blue-hue), 94%, 29%)"
+   :--blue900                                "hsl(var(--blue-hue), 97%, 20%)"
+   :--blue1000                               "hsl(var(--blue-hue), 100%, 11%)"
 
-    :--yellow-hue      52
-    :--yellow50        "hsl(var(--yellow-hue), 100%, 95%)"
-    :--yellow100       "hsl(var(--yellow-hue), 98%, 90%)"
-    :--yellow200       "hsl(var(--yellow-hue), 95%, 83%)"
-    :--yellow300       "hsl(var(--yellow-hue), 93%, 73%)"
-    :--yellow400       "hsl(var(--yellow-hue), 90%, 56%)"
-    :--yellow500       "hsl(var(--yellow-hue), 95%, 46%)"
-    :--yellow600       "hsl(var(--yellow-hue), 93%, 42%)"
-    :--yellow700       "hsl(var(--yellow-hue), 96%, 34%)"
-    :--yellow800       "hsl(var(--yellow-hue), 100%, 25%)"
-    :--yellow900       "hsl(var(--yellow-hue), 100%, 18%)"
-    :--yellow1000      "hsl(var(--yellow-hue), 100%, 11%)"
+   :--purple-hue                             267
+   :--purple50                               "hsl(var(--purple-hue), 100%, 97%)"
+   :--purple100                              "hsl(var(--purple-hue), 90%, 93%)"
+   :--purple200                              "hsl(var(--purple-hue), 85%, 87%)"
+   :--purple300                              "hsl(var(--purple-hue), 80%, 78%)"
+   :--purple400                              "hsl(var(--purple-hue), 78%, 68%)"
+   :--purple500                              "hsl(var(--purple-hue), 78%, 58%)"
+   :--purple600                              "hsl(var(--purple-hue), 77%, 50%)"
+   :--purple700                              "hsl(var(--purple-hue), 80%, 42%)"
+   :--purple800                              "hsl(var(--purple-hue), 85%, 33%)"
+   :--purple900                              "hsl(var(--purple-hue), 90%, 24%)"
+   :--purple1000                             "hsl(var(--purple-hue), 100%, 11%)"
 
-    :--green-hue      150
-    :--green50        "hsl(var(--green-hue), 100%, 96%)"
-    :--green100       "hsl(var(--green-hue), 90%, 91%)"
-    :--green200       "hsl(var(--green-hue), 85%, 85%)"
-    :--green300       "hsl(var(--green-hue), 80%, 75%)"
-    :--green400       "hsl(var(--green-hue), 75%, 61%)"
-    :--green500       "hsl(var(--green-hue), 75%, 48%)"
-    :--green600       "hsl(var(--green-hue), 80%, 41%)"
-    :--green700       "hsl(var(--green-hue), 85%, 34%)"
-    :--green800       "hsl(var(--green-hue), 90%, 27%)"
-    :--green900       "hsl(var(--green-hue), 95%, 20%)"
-    :--green1000      "hsl(var(--green-hue), 100%, 11%)"
+   :--magenta-hue                            324
+   :--magenta50                              "hsl(var(--magenta-hue), 100%, 97%)"
+   :--magenta100                             "hsl(var(--magenta-hue), 90%, 93%)"
+   :--magenta200                             "hsl(var(--magenta-hue), 85%, 87%)"
+   :--magenta300                             "hsl(var(--magenta-hue), 80%, 80%)"
+   :--magenta400                             "hsl(var(--magenta-hue), 78%, 71%)"
+   :--magenta500                             "hsl(var(--magenta-hue), 78%, 62%)"
+   :--magenta600                             "hsl(var(--magenta-hue), 77%, 48%)"
+   :--magenta700                             "hsl(var(--magenta-hue), 80%, 41%)"
+   :--magenta800                             "hsl(var(--magenta-hue), 85%, 33%)"
+   :--magenta900                             "hsl(var(--magenta-hue), 90%, 24%)"
+   :--magenta1000                            "hsl(var(--magenta-hue), 100%, 11%)"
 
-    :--blue-hue      212
-    :--blue50        "hsl(var(--blue-hue), 100%, 97%)"
-    :--blue100       "hsl(var(--blue-hue), 98%, 93%)"
-    :--blue200       "hsl(var(--blue-hue), 97%, 87%)"
-    :--blue300       "hsl(var(--blue-hue), 96%, 78%)"
-    :--blue400       "hsl(var(--blue-hue), 94%, 68%)"
-    :--blue500       "hsl(var(--blue-hue), 92%, 59%)"
-    :--blue600       "hsl(var(--blue-hue), 90%, 45%)"
-    :--blue700       "hsl(var(--blue-hue), 92%, 37%)"
-    :--blue800       "hsl(var(--blue-hue), 94%, 29%)"
-    :--blue900       "hsl(var(--blue-hue), 97%, 20%)"
-    :--blue1000      "hsl(var(--blue-hue), 100%, 11%)"
-
-    :--purple-hue      267
-    :--purple50        "hsl(var(--purple-hue), 100%, 97%)"
-    :--purple100       "hsl(var(--purple-hue), 90%, 93%)"
-    :--purple200       "hsl(var(--purple-hue), 85%, 87%)"
-    :--purple300       "hsl(var(--purple-hue), 80%, 78%)"
-    :--purple400       "hsl(var(--purple-hue), 78%, 68%)"
-    :--purple500       "hsl(var(--purple-hue), 78%, 58%)"
-    :--purple600       "hsl(var(--purple-hue), 77%, 50%)"
-    :--purple700       "hsl(var(--purple-hue), 80%, 42%)"
-    :--purple800       "hsl(var(--purple-hue), 85%, 33%)"
-    :--purple900       "hsl(var(--purple-hue), 90%, 24%)"
-    :--purple1000      "hsl(var(--purple-hue), 100%, 11%)"
-
-    :--magenta-hue      324
-    :--magenta50        "hsl(var(--magenta-hue), 100%, 97%)"
-    :--magenta100       "hsl(var(--magenta-hue), 90%, 93%)"
-    :--magenta200       "hsl(var(--magenta-hue), 85%, 87%)"
-    :--magenta300       "hsl(var(--magenta-hue), 80%, 80%)"
-    :--magenta400       "hsl(var(--magenta-hue), 78%, 71%)"
-    :--magenta500       "hsl(var(--magenta-hue), 78%, 62%)"
-    :--magenta600       "hsl(var(--magenta-hue), 77%, 48%)"
-    :--magenta700       "hsl(var(--magenta-hue), 80%, 41%)"
-    :--magenta800       "hsl(var(--magenta-hue), 85%, 33%)"
-    :--magenta900       "hsl(var(--magenta-hue), 90%, 24%)"
-    :--magenta1000      "hsl(var(--magenta-hue), 100%, 11%)"
-
-    :--brown-hue      19
-    :--brown50        "hsl(var(--brown-hue), 40%, 97%)"
-    :--brown100       "hsl(var(--brown-hue), 37%, 93%)"
-    :--brown200       "hsl(var(--brown-hue), 35%, 87%)"
-    :--brown300       "hsl(var(--brown-hue), 32%, 78%)"
-    :--brown400       "hsl(var(--brown-hue), 29%, 68%)"
-    :--brown500       "hsl(var(--brown-hue), 27%, 59%)"
-    :--brown600       "hsl(var(--brown-hue), 29%, 50%)"
-    :--brown700       "hsl(var(--brown-hue), 32%, 42%)"
-    :--brown800       "hsl(var(--brown-hue), 35%, 33%)"
-    :--brown900       "hsl(var(--brown-hue), 37%, 24%)"
-    :--brown1000      "hsl(var(--brown-hue), 40%, 11%)"
+   :--brown-hue                              19
+   :--brown50                                "hsl(var(--brown-hue), 40%, 97%)"
+   :--brown100                               "hsl(var(--brown-hue), 37%, 93%)"
+   :--brown200                               "hsl(var(--brown-hue), 35%, 87%)"
+   :--brown300                               "hsl(var(--brown-hue), 32%, 78%)"
+   :--brown400                               "hsl(var(--brown-hue), 29%, 68%)"
+   :--brown500                               "hsl(var(--brown-hue), 27%, 59%)"
+   :--brown600                               "hsl(var(--brown-hue), 29%, 50%)"
+   :--brown700                               "hsl(var(--brown-hue), 32%, 42%)"
+   :--brown800                               "hsl(var(--brown-hue), 35%, 33%)"
+   :--brown900                               "hsl(var(--brown-hue), 37%, 24%)"
+   :--brown1000                              "hsl(var(--brown-hue), 40%, 11%)"
 
     ;; Typography
     ;; ------------------------------------------------------
-
+   
     ;; font-family
-    :--sans-serif-font-stack  "Inter, sys, sans-serif"
-    :--serif-font-stack       "Times, serif"
-    :--code-font-stack        "Fira Code, monospace"
+   :--sans-serif-font-stack                  "Inter, sys, sans-serif"
+   :--serif-font-stack                       "Times, serif"
+   :--code-font-stack                        "Fira Code, monospace"
 
     ;; Intended for css props: font-weight
-    :--text-thin          100
-    :--text-extra-light   200
-    :--text-light         300
-    :--text-normal        400
-    :--text-wee-bold      500
-    :--text-semi-bold     600
-    :--text-bold          700
-    :--text-extra-bold    800
-    :--text-heavy         900
+   :--text-thin                              100
+   :--text-extra-light                       200
+   :--text-light                             300
+   :--text-normal                            400
+   :--text-wee-bold                          500
+   :--text-semi-bold                         600
+   :--text-bold                              700
+   :--text-extra-bold                        800
+   :--text-heavy                             900
 
     ;; Intended for css props: font-size
-    :--text-xxxsmall   :0.625rem
-    :--text-xxsmall    :0.7rem
-    :--text-xsmall     :0.775rem
-    :--text-small      :0.875rem
-    :--text-medium     :1rem
-    :--text-large      :1.25rem
-    :--text-xlarge     :1.5rem
-    :--text-xxlarge    :1.85rem
-    :--text-xxxlarge   :2.25rem
+   :--text-xxxsmall                          :0.625rem
+   :--text-xxsmall                           :0.7rem
+   :--text-xsmall                            :0.775rem
+   :--text-small                             :0.875rem
+   :--text-medium                            :1rem
+   :--text-large                             :1.25rem
+   :--text-xlarge                            :1.5rem
+   :--text-xxlarge                           :1.85rem
+   :--text-xxxlarge                          :2.25rem
 
     ;; Intended for css props: letterspacing
-    :--text-xxxtight   :-0.09em
-    :--text-xxtight    :-0.06em
-    :--text-xtight     :-0.03em
-    :--text-tight      :-0.01em
-    :--text-loose      :0.04em
-    :--text-xloose     :0.08em
-    :--text-xxloose    :0.12em
-    :--text-xxxloose   :0.16em
+   :--text-xxxtight                          :-0.09em
+   :--text-xxtight                           :-0.06em
+   :--text-xtight                            :-0.03em
+   :--text-tight                             :-0.01em
+   :--text-loose                             :0.04em
+   :--text-xloose                            :0.08em
+   :--text-xxloose                           :0.12em
+   :--text-xxxloose                          :0.16em
 
     ;; Intended for css props: border-weight
-    :--input-border-weight-thin          :0.05em
-    :--input-border-weight-extra-light   :0.07em
-    :--input-border-weight-light         :0.09em
-    :--input-border-weight-normal        :0.1em
-    :--input-border-weight-wee-bold      :0.12em
-    :--input-border-weight-semi-bold     :0.135em
-    :--input-border-weight-bold          :0.165em
-    :--input-border-weight-extra-bold    :0.195em
-    :--input-border-weight-heavy         :0.21em
+   :--input-border-weight-thin               :0.05em
+   :--input-border-weight-extra-light        :0.07em
+   :--input-border-weight-light              :0.09em
+   :--input-border-weight-normal             :0.1em
+   :--input-border-weight-wee-bold           :0.12em
+   :--input-border-weight-semi-bold          :0.135em
+   :--input-border-weight-bold               :0.165em
+   :--input-border-weight-extra-bold         :0.195em
+   :--input-border-weight-heavy              :0.21em
 
     ;; Intended for overlay placement
-    :--overlay-placement-inline-offset   :12px
-    :--overlay-placement-block-offset    :6px
+   :--overlay-placement-inline-offset        :12px
+   :--overlay-placement-block-offset         :6px
 
 
     ;; Buttons
     ;; ------------------------------------------------------
-    :--button-padding-inline-ems :1.2em
-    :--button-padding-block-ems  :0.8em
-    :--button-with-icon-padding-inline-offset :1em
+   :--button-padding-inline-ems              :1.2em
+   :--button-padding-block-ems               :0.8em
+   :--button-with-icon-padding-inline-offset :1em
 
     ;; Tooltips
     ;; ------------------------------------------------------
-    :--tooltip-padding-inline   :1.5em
-    :--tooltip-padding-block    :0.75em
-    :--tooltip-border-radius    :0.5rem
-    :--tooltip-font-size        :--text-xxsmall
-    :--tooltip-color            :white
-    :--tooltip-background-color :black
+   :--tooltip-padding-inline                 :1.5em
+   :--tooltip-padding-block                  :0.75em
+   :--tooltip-border-radius                  :0.5rem
+   :--tooltip-font-size                      :--text-xxsmall
+   :--tooltip-color                          :white
+   :--tooltip-background-color               :black
 
     ;; Material UI icons
     ;; ------------------------------------------------------
-    :--mui-icon-relative-font-size :inherit
+   :--mui-icon-relative-font-size            :inherit
 
     ;; General icons
     ;; ------------------------------------------------------
-    :--icon-enhancer-inline-gap-ems :0.25em
+   :--icon-enhancer-inline-gap-ems           :0.25em
 
     ;; Intended for css props: border-radius
     ;; ------------------------------------------------------
-    :--rounded         :0.5rem
+   :--rounded                                :0.5rem
 
     ;; Intended for css props: box-shadow
     ;; ------------------------------------------------------
-    :--elevated        "rgb(0 0 0 / 4%) 12px 10px 16px 2px, rgb(0 0 0 / 5%) 0px 2px 9px 0px;"
+   :--elevated                               "rgb(0 0 0 / 4%) 12px 10px 16px 2px, rgb(0 0 0 / 5%) 0px 2px 9px 0px;"
 
     ;; Intended for css animations and transitions
     ;; ------------------------------------------------------
-    :--timing-linear-curve "cubic-bezier(0 0 1 1)"
-    :--timing-ease-out-curve "cubic-bezier(.2, .8, .4, 1)"
-    :--timing-ease-in-curve "cubic-bezier(.8, .2, .6, 1)"
-    :--timing-ease-in-out-curve "cubic-bezier(0.4, 0, 0.2, 1)"
+   :--timing-linear-curve                    "cubic-bezier(0 0 1 1)"
+   :--timing-ease-out-curve                  "cubic-bezier(.2, .8, .4, 1)"
+   :--timing-ease-in-curve                   "cubic-bezier(.8, .2, .6, 1)"
+   :--timing-ease-in-out-curve               "cubic-bezier(0.4, 0, 0.2, 1)"
 
-    :--duration-instant :0ms
-    :--duration-fast  :100ms
-    :--duration-normal :200ms
-    :--duration-slow :500ms
-    :--duration-extra-slow :1s
-    :--duration-super-slow :2s
-    :--duration-ultra-slow :4s})
+   :--duration-instant                       :0ms
+   :--duration-fast                          :100ms
+   :--duration-normal                        :200ms
+   :--duration-slow                          :500ms
+   :--duration-extra-slow                    :1s
+   :--duration-super-slow                    :2s
+   :--duration-ultra-slow                    :4s})
 
 
 (def alias-tokens
