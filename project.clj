@@ -1,4 +1,4 @@
-(defproject org.clojars.paintparty/kushi "1.0.0-alpha11"
+(defproject org.clojars.paintparty/kushi "1.0.0-a.12"
   :description         "ClojureScript CSS Solution"
   :url                 "https://github.com/paintparty/kushi"
   :license             {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
