@@ -29,17 +29,16 @@
                 ;; hydrated shorthand value
                 css-value                      (if (s/valid? ::specs2/s|kw v)
                                                  (if (= css-prop "content")
-                                                  v
-                                                  (name (or (shorthand/enum-prop-shorty (keyword css-prop)
-                                                                                        (keyword v))
+                                                   v
+                                                   (name (or (shorthand/enum-prop-shorty (keyword css-prop)
+                                                                                         (keyword v))
                                                            ;; hydrate css shorthand and alternations
-                                                            (util/hydrate-css-shorthand+alternations v))))
+                                                             (util/hydrate-css-shorthand+alternations v))))
                                                  v)
                 {:keys [mods parent ancestor]} (when mods? (mods/mods x-wo-mq prop-re))
 
                 ;; compound selector
                 compound-selector              (str (or parent ancestor) selector mods)]
-
 
             (keyed
              selector
@@ -49,5 +48,6 @@
              ancestor
              mods
              css-prop
-             css-value)))
+             css-value)
+            ))
         coll)))
