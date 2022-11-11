@@ -154,20 +154,6 @@
 (s/def ::defclass-class
   #(s/valid? ::dot-kw-classname %))
 
-;; New!
-(s/def ::defclass-style-expr
-  (s/or :kushi-style-kw-dynamic ::kushi-style-kw-dynamic
-        :style-tuple            ::style-tuple))
-
-;; New!
-(s/def ::style-expr
-  (s/or :kushi-style-kw-dynamic          ::kushi-style-kw-dynamic
-        :kushi-tokenized-custom-property ::kushi-tokenized-custom-property
-        :style-tuple                     ::style-tuple))
-
-(s/def ::multiple-slashes #(let [matches (re-seq #"\/" %)]
-                             (when (seq matches) (< 1 (count matches)))))
-
 
 (s/def ::cssvar-name
   (s/and ::s|kw
