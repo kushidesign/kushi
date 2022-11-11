@@ -1,5 +1,5 @@
 (defproject org.clojars.paintparty/kushi "1.0.0-a.13"
-  :description         "ClojureScript CSS Solution"
+  :description         "ClojureScript UI Framework"
   :url                 "https://github.com/paintparty/kushi"
   :license             {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
                         :url  "https://www.eclipse.org/legal/epl-2.0/"}
