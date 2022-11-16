@@ -6,7 +6,8 @@
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.icon.helper :refer (icon-component)]
    [kushi.ui.label.core :refer (label)]
-   [kushi.ui.tooltip.events :refer (tooltip-mouse-leave tooltip-mouse-enter)]))
+   [kushi.ui.tooltip.events :refer (tooltip-mouse-leave tooltip-mouse-enter)]
+   [clojure.string :as string]))
 
 (defn resolve-inline-offset
   [{:keys [offset?]}]
@@ -33,17 +34,25 @@
   (let [[opts attrs & children] (opts+children args)
         {:keys [icon-position mui-icon-style background]
          mi    :mui-icon
-         :or   {mi            nil
-                mui-icon-style    :filled
-                icon-position :inline-start}} opts
-        icon-component (icon-component {:mi mi :icon-position icon-position :mui-icon-style mui-icon-style})
+         :or   {mi             nil
+                mui-icon-style :filled
+                icon-position  :inline-start}} opts
+        only-icons? (and mi (string? mi) (not (string/blank? mi)) (empty? children))
+        icon-component (icon-component {:mi             mi
+                                        :icon-position  icon-position
+                                        :mui-icon-style mui-icon-style
+                                        :no-margins?    only-icons?})
         icon-class (when icon-component (str "kushi-button-with-icon-" (name icon-position)))
-        pis (resolve-inline-offset {:offset? (and mi (= icon-position :inline-start))})
-        pie (resolve-inline-offset {:offset? (and mi (= icon-position :inline-end))})]
-
+        pis (if only-icons?
+              :0.8em
+              (resolve-inline-offset {:offset? (and mi (= icon-position :inline-start))}))
+        pie (if only-icons?
+              :0.8em
+              (resolve-inline-offset {:offset? (and mi (= icon-position :inline-end))}))]
     [:button
      (merge-attrs
       (sx 'kushi-button
+          :.flex-row-c
           :.transition
           :.pointer
           :.relative
