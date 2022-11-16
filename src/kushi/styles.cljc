@@ -180,11 +180,23 @@
   [css-vars cssvar-tuples2]
   (let [with-extracted-names (some->> css-vars
                                       (util/map-keys extract-cssvar-name))
-        cssvar-tuples (some->> cssvar-tuples2
-                               (into {})
-                               (util/map-keys name)
-                               (util/map-vals util/hydrate-css-shorthand+alternations))
-        ret (merge with-extracted-names cssvar-tuples)]
+        cssvar-tuples        (some->> cssvar-tuples2
+                                      (into {})
+                                      (util/map-keys name)
+                                      (util/map-vals util/hydrate-css-shorthand+alternations))
+        ret*                 (merge with-extracted-names cssvar-tuples)
+
+        ;; normalized kushi-style shorthand syntax within css-var sexp
+        ret                  (util/map-vals (fn [v]
+                                              (if (s/valid? ::specs2/conditional-sexp v)
+                                                (map (fn [x]
+                                                       (if (or (s/valid? ::specs2/tokenized-css-shorthand x)
+                                                               (s/valid? ::specs2/tokenized-css-alternation x))
+                                                         (-> x name util/hydrate-css-shorthand+alternations)
+                                                         x))
+                                                     v)
+                                                v))
+                                            ret*)]
     ret))
 
 (defn style-tuples*
@@ -312,18 +324,18 @@
 
   ;; just for debugging
   #_(when @state2/trace?
-    (println #_:all-style-tuples*
-       (keyed
+    (? (keyed
         ;; process
         ;; shared-class?
         ;; clean*
         ;; attrs*
-        ;; attrs
+        attrs
         ;; by-kind
         ;; clean-stylemap*
         ;; clean-stylemap
         ;; style-tuples-from-tokenized
         ;; all-style-tuples
+        css-vars
         )))
 
   (merge (when defclass-style-tuples
