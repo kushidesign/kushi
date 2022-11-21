@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.state2
   (:require
+   [clojure.walk :as walk]
    [clojure.pprint :refer [pprint]]
    [clojure.data :as data]
    [kushi.io :refer [load-edn]]
@@ -14,7 +15,7 @@
 (def KUSHIDEBUG (atom true))
 (def shadow-build-id (atom nil))
 (def initial-build? (atom true))
-(def trace? (atom false))
+(def trace?* (atom false))
 
 (def css (atom []))
 (def ->css (atom nil))
@@ -27,11 +28,9 @@
 (def theming-tokens (atom []))
 (def used-tokens (atom []))
 (def ->css-to-be-printed-previously (atom nil))
-(def ->css-to-be-printed
-  (atom (into {}
-              (map (fn [k] [k nil])
-                   defs/rule-type-report-order))))
-
+(def ->css-to-be-printed (atom (into {}
+                                     (map (fn [k] [k nil])
+                                          defs/rule-type-report-order))))
 
 (defn reset-build-states! []
   (reset! shadow-build-id nil)
@@ -112,6 +111,13 @@
   (reset! styles-cache-current
           @styles-cache-updated))
 
+
+;; Tracing ---------------------------------------------------------------
+(defn trace! [args & more] (reset! trace?* (contains? (into #{} more) (first args))))
+(defn trace? [] @trace?*)
+
+
+;; Caching and hashing ---------------------------------------------------
 (defn cached
   "Example below assumes these entries are present in the user's kushi.edn config:
    {:caching? false}
@@ -121,12 +127,14 @@
    {:caching?  false
     :cache-key -345599837
     :cached    {...}}"
-  [k & more]
+  [{:keys [process sym args]}]
   (let [caching?  (if @user-config-args-sx-defclass-stub
                     false
                     (:caching? user-config))
         user-config-args-sx-defclass (or @user-config-args-sx-defclass-stub user-config-args-sx-defclass)
-        cache-key (hash (apply conj [k user-config-args-sx-defclass] more))
+        args (walk/postwalk (fn [v] (if (map? v) (select-keys v [:style :class]) v)) args)
+        base (into [] (remove nil? (apply conj [process user-config-args-sx-defclass sym] args)))
+        cache-key (hash base)
         cached    (when caching? (get @styles-cache-updated cache-key))]
     {:caching?  caching?
      :cache-key cache-key
@@ -136,6 +144,3 @@
 
 (def user-config-args-sx-defclass-stub (atom nil))
 
-
-;; Tracing ---------------------------------------------------------------
-(defn trace [v comment] (if @trace? (do (println "\n" comment) (pprint v) (println "\n") v) v))

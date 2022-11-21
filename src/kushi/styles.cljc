@@ -323,7 +323,7 @@
 
 
   ;; just for debugging
-  #_(when @state2/trace?
+  #_(when (state2/trace?)
     (? (keyed
         ;; process
         ;; shared-class?

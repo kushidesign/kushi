@@ -172,7 +172,6 @@
         ui-ks (distinct (concat base-ui-ks user-ui-ks))
         ordered (util/ordered-pairs ui-ks merged)
         ret2   (reduce (fn [acc [kui-key m]]
-                         (reset! state2/trace? (= kui-key :.kushi-tag.secondary.negative))
                          (let [flat     (mapv (partial inner3 kui-key) m)
                                toks     (when (:add-theming-css-vars? user-config)
                                           (resolve-tokens flat alias-tokens global-tokens))

@@ -44,7 +44,7 @@
                                ret                    pseudo-elements]
                            ret)]
 
-    #_(when @state2/trace?
+    #_(when (state2/trace? )
       (println (keyed
           mods1*
           mods-dark
