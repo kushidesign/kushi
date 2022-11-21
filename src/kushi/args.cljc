@@ -26,9 +26,7 @@
 
 (defn clean-args
   [{:keys [args :kushi/process form-meta] :as m}]
-  (let [
-        ;; test? (reset! state2/trace? (= 'tester (some-> args first)))
-        [validation-spec conformance-spec]
+  (let [[validation-spec conformance-spec]
         (if (util/shared-class? process)
           [::specs2/defclass-args ::specs2/defclass-args2]
           [::specs2/sx-args ::specs2/sx-args-conformance])
