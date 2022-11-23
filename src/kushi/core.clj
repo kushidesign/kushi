@@ -128,7 +128,9 @@
   [nm & frames*]
   (let [{:keys [cached]
          :as   cache-map}
-        (state2/cached :keyframes nm frames*)
+        (state2/cached {:process :keyframes
+                        :sym nm
+                        :args frames*})
 
         spec
         ::specs2/defkeyframes-args
@@ -235,7 +237,9 @@
   [{:keys [sym form-meta args override] :as m}]
   (try
     (let [{:keys [cached]
-           :as   cache-map} (state2/cached :defclass sym args)
+           :as   cache-map} (state2/cached {:process :defclass
+                                            :sym     sym
+                                            :args    args})
           process           (sym->process m)
           clean             (or cached
                                 (args/clean-args {:args          (cons sym args)
@@ -308,7 +312,8 @@
 (defn sx-dispatch
   [{:keys [form-meta args]
     :or   {form-meta {}}}]
-  (let [cache-map (state2/cached :sx args)
+  (let [cache-map (state2/cached {:process :sx
+                                  :args    args})
         process   (process args)
         clean     (or (:cached cache-map)
                       (args/clean-args {:args          args

@@ -59,7 +59,7 @@
   ([weights* form-meta fn-meta]
    (let [{:keys [caching? cache-key cached]
           :as   cache-map}
-         (state2/cached :system-font-stack weights*)
+         (state2/cached {:process :system-font-stack :args weights*})
 
          spec
          ::specs2/add-system-font-stack-args
@@ -151,7 +151,8 @@
         bad         (bad problems)
         fatal       (fatal bad missing)
         weird       (weird m)
-        cache-map   (state2/cached :add-font-face m)
+        cache-map   (state2/cached {:process :add-font-face
+                                    :args [m]})
         css-rule    (when-not fatal
                       (or (:cached cache-map)
                           (garden/css (at-font-face m))))
