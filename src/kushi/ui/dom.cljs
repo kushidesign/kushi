@@ -116,8 +116,6 @@
 (defn el-by-id [s] (js/document.getElementById s))
 
 (defn get-first-onscreen-child-from-top [parent]
-  (js/console.log (.hasOwnProperty #js {} "childNodes"))
-  (js/console.log (.hasOwnProperty parent "childNodes"))
   (first (filter (fn [node] (pos? (.-top (.getBoundingClientRect node)))) (js->clj parent.childNodes))))
 
 (defn nearest-ancestor [node selector]
