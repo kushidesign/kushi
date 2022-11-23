@@ -69,8 +69,11 @@
     (str (kushi-logging-prefix build-id version) " - " (string/join lines-indent))))
 
 (defn simple-report2
-  [{:keys [build-id initial-build?]} & lines]
-  (str (kushi-logging-prefix build-id version) " - " (string/join lines)))
+  [{:keys [build-id initial-build? num-rules num-tokens]} & lines]
+  (str (kushi-logging-prefix build-id version)
+       " - "
+       (string/join lines)
+       (str "Wrote " num-rules " rules and " num-tokens " tokens.")))
 
 
 ;; Kushi build report --------------------------------------------------------------------------------
@@ -116,7 +119,9 @@
      (if (= :detailed
             (:log-build-report-style user-config))
        (simple-report2 {:build-id       build-id
-                        :initial-build? initial-build?}
+                        :initial-build? initial-build?
+                        :num-rules      num-rules
+                        :num-tokens     num-tokens}
                        report-line-items-stack
                        cache-report)
        (simple-report {:build-id build-id}
