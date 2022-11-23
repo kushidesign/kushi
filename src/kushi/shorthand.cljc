@@ -65,35 +65,9 @@
 (def logicals
   (map-props logical-props))
 
-(def unlogical-props
-  '[border-top
-    border-right
-    border-left
-    border-top-left-radius
-    border-top-right-radius
-    border-top-width
-    border-right-width
-    border-left-width
-    border-top-color
-    border-right-color
-    border-left-color
-    border-top-style
-    border-right-style
-    border-left-style
-    padding-top
-    padding-right
-    padding-left
-    margin-top
-    margin-right
-    margin-left])
-
-(def unlogicals
-  (map-props unlogical-props))
-
 (def css-sh
   (merge
    (apply merge logicals)
-   (apply merge unlogicals)
    {:ai {:name :align-items
          :vals {:c :center
                 :fs :flex-start
