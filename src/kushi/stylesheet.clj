@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.stylesheet
   (:require
+   [clojure.pprint :refer [pprint]]
    [clojure.string :as string]
    [kushi.io :refer [load-edn]]
    [clojure.java.io :as io]
@@ -23,17 +24,6 @@
 (defn keep-garden-vecs [chunk]
   (reduce (fn [acc {gv  :garden-vecs
                     :as m}]
-
-            #_(when
-             (and
-              (or (= chunk :kushi/utility (:kushi/chunk m))
-                  (= chunk :kushi/utility-override (:kushi/chunk m))    )
-              (some->> m :selector :selector* (re-find #"^oblique")))
-              #_(= chunk :kushi/utility (:kushi/chunk m))
-              #_(= chunk :kushi.core/defclass-override (:kushi/chunk m))
-              #_(println (some-> m :selector :selector*) (:kushi/process m) (:kushi/chunk m))
-              (? m))
-
             (if (and (= (:kushi/chunk m) chunk)
                      (seq gv))
               (conj acc gv)
@@ -158,12 +148,12 @@
 (defn create-css-text
   ([]
    (create-css-text nil))
-  ([context]
-   #_(when context
-     (? :create-css-text
-        (str "kushi.stylesheet/create-css-text being called from "
-             (name context))))
-
+  ([caller]
+   (println "\n"
+            (str "kushi.stylesheet/create-css-text from "
+                 (or caller "kushi.stylesheet/create-css-file"))
+            "\n"
+            "(count @state2/css) => " (count @state2/css))
    (let [pretty-print?   true
          printables      (atom [])
          to-be-printed   (atom {})
@@ -313,22 +303,22 @@
 (defn create-css-file
   {:shadow.build/stage :compile-finish}
   [build-state]
-  (when (nil? @state2/->css)
-    (create-css-text "kushi.stylesheet/create-css-file")
-    (count @state2/->css))
-  (let [to-be-printed          state2/->css-to-be-printed
-        zero-total-rules?      (nil? (some #(not (zero? %)) (vals @to-be-printed)))
-        something-to-write?    (not zero-total-rules?)
-        caching?               (true? (:caching? user-config))
+
+  (create-css-text "kushi.stylesheet/create-css-file")
+
+  (let [to-be-printed                                        state2/->css-to-be-printed
+        zero-total-rules?                                    (nil? (some #(not (zero? %)) (vals @to-be-printed)))
+        something-to-write?                                  (not zero-total-rules?)
+        caching?                                             (true? (:caching? user-config))
         [cache-will-update?
          cache-diff-count
-         diff-callsites]       (when caching?
-                                 (let [{:keys [equal? diff-count diff-callsites]} (state2/cache-is-equal?)]
-                                   (state2/write-cache! equal?)
-                                   [(not equal?) diff-count diff-callsites]))
+         diff-callsites] (when caching?
+                           (let [{:keys [equal? diff-count diff-callsites]} (state2/cache-is-equal?)]
+                             (state2/write-cache! equal?)
+                             [(not equal?) diff-count diff-callsites]))
         {:keys [to-be-printed+
                 num-rules
-                num-tokens]}   (to-be-printed+ to-be-printed)]
+                num-tokens]}        (to-be-printed+ to-be-printed)]
     #_(!?
        (keyed
         ;;  cache-will-update?
@@ -342,7 +332,6 @@
     (when (and (add-stylesheet?) something-to-write?)
       (use 'clojure.java.io)
       (spit user-css-file-path @state2/->css :append false))
-
 
     (when (and (:log-build-report? user-config)
                something-to-write?)
@@ -358,18 +347,19 @@
                           ;;  (with-entry output user-css-file-path
                           ;;    (io/copy input output)))
             ]
-       (reporting/print-report! (assoc (keyed to-be-printed
-                                              build-state
-                                              cache-will-update?
-                                              to-be-printed+
-                                              num-rules
-                                              num-tokens
-                                              cache-diff-count
-                                              diff-callsites)
-                                       :kushi-cache-path
-                                       state2/kushi-cache-path
-                                       :initial-build?
-                                       @state2/initial-build?)))))
+        (reporting/print-report! (assoc (keyed to-be-printed
+                                               build-state
+                                               cache-will-update?
+                                               to-be-printed+
+                                               num-rules
+                                               num-tokens
+                                               cache-diff-count
+                                               diff-callsites)
+                                        :kushi-cache-path
+                                        state2/kushi-cache-path
+                                        :initial-build?
+                                        @state2/initial-build?)))))
+
 
    ;; Last, reset build states for subsequent builds at dev
   (state2/reset-build-states!)
