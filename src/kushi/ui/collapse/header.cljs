@@ -20,9 +20,15 @@
   [{:keys [label
            icon-opposite?]
     :as   opts}]
+    (js/console.log :header-title [label
+                                   icon-opposite?])
     (if (string? label)
-      (let [ico      [mui-icon (sx :mie--:--icon-enhancer-inline-gap-ems) (:mui-icon opts)]
+      (let [ico      [mui-icon
+                      (sx 'kushi-collapse-header-title-icon
+                          [:mie (when-not icon-opposite? :--icon-enhancer-inline-gap-ems)])
+                      (:mui-icon opts)]
             title-sx (sx
+                      'kushi-collapse-header-title-contents
                       {:style {:w                    (when icon-opposite? :100%)
                                :>span.kushi-label:w  (when icon-opposite? :100%)
                                :>span.kushi-label:jc (when icon-opposite? :space-between)}})]
@@ -32,32 +38,28 @@
       label))
 
 (defn collapse-header-contents
-  [{:keys [label label-expanded mui-icon mui-icon-expanded icon-position] :as m}]
-  (let [label-expanded (or label-expanded label)
-        mui-icon           (if (util/nameable? mui-icon) (name mui-icon) "add")
-        mui-icon-expanded  (if (util/nameable? mui-icon-expanded) (name mui-icon-expanded) "remove")
-        icon-opposite? (= :end icon-position)
-        title-sx       (sx ^:no-prefix
-                           'kushi-collapse-header-title-contents
-                           {:style {:w        :100%
-                                    :>span:jc (when icon-opposite? :space-between)}})
-        opts           (keyed label mui-icon icon-opposite? title-sx)]
-   [:<>
-    [:span
-     (sx 'kushi-collapse-header-label-collapsed
-         :.flex-row-fs
-         :w--100%
-         {:style {"has-parent([aria-expanded='true']):display" :none}})
-     (if (string? label)
-       [header-title opts]
-       label)]
-    [:span
-     (sx 'kushi-collapse-header-label-expanded
-         :.flex-row-fs
-         :w--100%
-         :d--none
-         {:style {"has-parent([aria-expanded='true']):display" :block}
-          })
-     (if (string? label-expanded)
-       [header-title (assoc opts :label label-expanded :mui-icon mui-icon-expanded)]
-       label-expanded)]]))
+  [{:keys [label label-expanded mui-icon mui-icon-expanded icon-position]
+    :as   m}]
+  (let [label-expanded    (or label-expanded label)
+        mui-icon          (if (util/nameable? mui-icon) (name mui-icon) "add")
+        mui-icon-expanded (if (util/nameable? mui-icon-expanded) (name mui-icon-expanded) "remove")
+        icon-opposite?    (= :end icon-position)
+        opts              (keyed label mui-icon icon-opposite?)]
+    [:<>
+     [:span
+      (sx 'kushi-collapse-header-label-collapsed
+          :.flex-row-fs
+          :w--100%
+          ["has-parent([aria-expanded='true']):display" :none])
+      (if (string? label)
+        [header-title opts]
+        label)]
+     [:span
+      (sx 'kushi-collapse-header-label-expanded
+          :.flex-row-fs
+          :w--100%
+          :d--none
+          ["has-parent([aria-expanded='true']):display" :block])
+      (if (string? label-expanded)
+        [header-title (assoc opts :label label-expanded :mui-icon mui-icon-expanded)]
+        label-expanded)]]))
