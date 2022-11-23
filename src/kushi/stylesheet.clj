@@ -149,7 +149,7 @@
   ([]
    (create-css-text nil))
   ([caller]
-   (println "\n"
+   #_(println "\n"
             (str "kushi.stylesheet/create-css-text from "
                  (or caller "kushi.stylesheet/create-css-file"))
             "\n"
