@@ -1,9 +1,7 @@
 (ns kushi.ui.button.core
   (:require-macros
-   [kushi.core :refer (sx)]
-   [kushi.utils :refer (keyed)])
+   [kushi.core :refer (sx)])
   (:require
-   [par.core :refer [!? ?]]
    [kushi.core :refer (merge-attrs)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.icon.helper :refer (icon-component)]
@@ -16,47 +14,6 @@
   (if offset?
     "var(--button-with-icon-padding-inline-offset)"
     "var(--button-padding-inline-ems)"))
-
-(defn button2
-  [& args]
-  (let [[opts attrs & children] (opts+children args)
-        class-set (some->> attrs :class (into #{}))
-        outlined? true
-        base "purps"
-        dark? (.contains (js->clj js/document.body.classList) "dark")
-        ;; fg-color (when (? (contains? class-set "purps")) "var(--purps)")
-        [c hc ac bgc hbgc abgc bc hbc abc ]
-        (map #(str "var(--" base (when % (str "-" (name %))) (when dark? "-inverse") ")")
-             [nil
-              :hover
-              :active
-              :background
-              :background-hover
-              :background-active
-              :border
-              :border-hover
-              :border-active])]
-    (? attrs)
-    [:button
-     (merge-attrs
-      (sx 'kushi-button2
-          :cursor--pointer
-          [:c c]
-          [:hover:c hc]
-          [:active:c hc]
-          [:bgc bgc]
-          [:hover:bgc hbgc]
-          [:active:bgc abgc]
-          [:bw (if outlined? :2px 0)]
-          [:bs (if outlined? :solid 0)]
-          [:bc bc]
-          [:hover:bc hbc]
-          [:active:bc abc]
-          :pb--0.8em
-          :pi--1.2em
-          :bgi--none)
-      attrs)
-     children]))
 
 (defn button
   {:desc ["Buttons provide cues for actions and events."
@@ -95,9 +52,6 @@
         pie (if only-icons?
               :0.8em
               (resolve-inline-offset {:offset? (and mi (= icon-position :inline-end))}))]
-
-    (when (= mi "push_pin")
-      (js/console.log (keyed mi only-icons? children)))
     [:button
      (merge-attrs
       (sx 'kushi-button
