@@ -1,7 +1,9 @@
 (ns kushi.ui.button.core
   (:require-macros
-   [kushi.core :refer (sx)])
+   [kushi.core :refer (sx)]
+   [kushi.utils :refer (keyed)])
   (:require
+   [par.core :refer [!? ?]]
    [kushi.core :refer (merge-attrs)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.icon.helper :refer (icon-component)]
@@ -14,6 +16,47 @@
   (if offset?
     "var(--button-with-icon-padding-inline-offset)"
     "var(--button-padding-inline-ems)"))
+
+(defn button2
+  [& args]
+  (let [[opts attrs & children] (opts+children args)
+        class-set (some->> attrs :class (into #{}))
+        outlined? true
+        base "purps"
+        dark? (.contains (js->clj js/document.body.classList) "dark")
+        ;; fg-color (when (? (contains? class-set "purps")) "var(--purps)")
+        [c hc ac bgc hbgc abgc bc hbc abc ]
+        (map #(str "var(--" base (when % (str "-" (name %))) (when dark? "-inverse") ")")
+             [nil
+              :hover
+              :active
+              :background
+              :background-hover
+              :background-active
+              :border
+              :border-hover
+              :border-active])]
+    (? attrs)
+    [:button
+     (merge-attrs
+      (sx 'kushi-button2
+          :cursor--pointer
+          [:c c]
+          [:hover:c hc]
+          [:active:c hc]
+          [:bgc bgc]
+          [:hover:bgc hbgc]
+          [:active:bgc abgc]
+          [:bw (if outlined? :2px 0)]
+          [:bs (if outlined? :solid 0)]
+          [:bc bc]
+          [:hover:bc hbc]
+          [:active:bc abc]
+          :pb--0.8em
+          :pi--1.2em
+          :bgi--none)
+      attrs)
+     children]))
 
 (defn button
   {:desc ["Buttons provide cues for actions and events."
@@ -37,7 +80,10 @@
          :or   {mi             nil
                 mui-icon-style :filled
                 icon-position  :inline-start}} opts
-        only-icons? (and mi (string? mi) (not (string/blank? mi)) (empty? children))
+        text-node-label? (and (seq children)
+                              (some string? children))
+        legit-icon? (and mi (string? mi) (not (string/blank? mi)) )
+        only-icons? (and legit-icon? (not text-node-label?))
         icon-component (icon-component {:mi             mi
                                         :icon-position  icon-position
                                         :mui-icon-style mui-icon-style
@@ -49,6 +95,9 @@
         pie (if only-icons?
               :0.8em
               (resolve-inline-offset {:offset? (and mi (= icon-position :inline-end))}))]
+
+    (when (= mi "push_pin")
+      (js/console.log (keyed mi only-icons? children)))
     [:button
      (merge-attrs
       (sx 'kushi-button
