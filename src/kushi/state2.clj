@@ -128,14 +128,19 @@
     :cache-key -345599837
     :cached    {...}}"
   [{:keys [process sym args]}]
-  (let [caching?  (if @user-config-args-sx-defclass-stub
-                    false
-                    (:caching? user-config))
+  (let [caching?                     (if @user-config-args-sx-defclass-stub
+                                       false
+                                       (:caching? user-config))
         user-config-args-sx-defclass (or @user-config-args-sx-defclass-stub user-config-args-sx-defclass)
-        args (walk/postwalk (fn [v] (if (map? v) (select-keys v [:style :class]) v)) args)
-        base (into [] (remove nil? (apply conj [process user-config-args-sx-defclass sym] args)))
-        cache-key (hash base)
-        cached    (when caching? (get @styles-cache-updated cache-key))]
+        args                         (let [m* (when (seq args) (last args))]
+                                       (if (map? m*)
+                                         (let [hd        (drop-last args)
+                                               clean-map (select-keys m* [:style :class])]
+                                           (concat hd [clean-map]))
+                                         args))
+        base                         (into [] (remove nil? (apply conj [process user-config-args-sx-defclass sym] args)))
+        cache-key                    (hash base)
+        cached                       (when caching? (get @styles-cache-updated cache-key))]
     {:caching?  caching?
      :cache-key cache-key
      :cached    cached}))
