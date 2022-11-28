@@ -155,9 +155,9 @@
          nil
          ))
 
-;; (? (map #(apply gentest %) sx-tests-gentest-args))
-;; (? sx-tests-gentest-args)
-;; (? (gentest sx-dispatch 'sx-dispatch [:c--red] form-meta))
+;; (println (map #(apply gentest %) sx-tests-gentest-args))
+;; (println sx-tests-gentest-args)
+;; (println (gentest sx-dispatch 'sx-dispatch [:c--red] form-meta))
 
 
 ;; Uncomment these to run tests

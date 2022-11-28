@@ -23,7 +23,7 @@
         being-replaced (subs in from (+ from len))
         replaced       (f being-replaced)
         result         (str before replaced after )]
-    ;; (? (keyed before after being-replaced replaced result match))
+    ;; (println (keyed before after being-replaced replaced result match))
     result))
 
 (defn pprinted
@@ -224,7 +224,7 @@
     bad-args :args/bad
     :as   m}]
 
-  #_(? :simple-warning2
+  #_(println :simple-warning2
       (keyed
       ;;  sym
       ;;  args

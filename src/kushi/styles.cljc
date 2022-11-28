@@ -324,7 +324,7 @@
 
   ;; just for debugging
   #_(when (state2/trace?)
-    (? (keyed
+    (println (keyed
         ;; process
         ;; shared-class?
         ;; clean*

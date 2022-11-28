@@ -289,7 +289,7 @@
   (println x))
 
 ;; list of enum shorthands
-#_(? (->> css-sh
+#_(println (->> css-sh
          (map (fn [[k {prop-name :name prop-vals :vals}]]
                 [(when prop-vals
                    (map (fn [[prop-val-sh prop-val]]
@@ -303,7 +303,7 @@
          (remove nil?)))
 
 ;; list of autocompletes
-#_(? (->> css-sh
+#_(println (->> css-sh
          (map (fn [[k {prop-name :name prop-vals :vals}]]
                 [(if prop-vals
                    (map (fn [[_ prop-val]] (str (name prop-name) "--" (name prop-val))) prop-vals)

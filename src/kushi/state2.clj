@@ -87,9 +87,9 @@
 (defn cache-is-equal? []
   (let [[only-in-a only-in-b _] (data/diff @styles-cache-current @styles-cache-updated)
         equal?                  (and (nil? only-in-a) (nil? only-in-b))]
-    #_(!? {:only-in-a only-in-a
-           :only-in-b only-in-b})
-    #_(? (mapv (fn [[cache-key {:keys [form-meta args]}]] [cache-key form-meta args]) only-in-b))
+    #_(println {:only-in-a only-in-a
+                :only-in-b only-in-b})
+    #_(println (mapv (fn [[cache-key {:keys [form-meta args]}]] [cache-key form-meta args]) only-in-b))
     {:equal?         equal?
      :diff-count     (some-> only-in-b count)
      :diff-callsites (mapv (fn [[_ {:keys [form-meta]}]] form-meta) only-in-b)}))
