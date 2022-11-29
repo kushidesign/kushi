@@ -234,7 +234,7 @@
 
    ;; Controls
    ;; ------------------------------------------------------
-   :disabled      {:o      :40%!important
+   :disabled      {:o      :45%!important
                    :cursor :not-allowed!important}])
 
 (def ui-theming-classes
