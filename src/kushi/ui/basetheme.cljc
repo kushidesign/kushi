@@ -1,10 +1,716 @@
 (ns ^:dev/always kushi.ui.basetheme
- (:require
-   [kushi.ui.tokens :refer [global-tokens alias-tokens]]
+  (:require
+   [clojure.string :as string]
+   [par.core :refer [!? ?]]
+   [kushi.ui.tokens :refer [design-tokens]]
    [kushi.ui.utility :refer [utility-classes]]
-   [kushi.config :refer [user-config]]
-   [kushi.utils :as util]
-   [clojure.string :as string]))
+   [kushi.colors :refer [colors]]
+   [kushi.color :refer [colors->tokens colors->alias-tokens semantic-aliases]]))
+
+(def variant-values
+  [
+   ;; Neutral --------------------------------------------------
+   ;; default
+   :.neutral:color                                  1000
+   :.neutral:hover:color                            1000
+   :.neutral:active:color                           1000
+
+   :.neutral:background-color                       100
+   :.neutral:hover:background-color                 200
+   :.neutral:active:background-color                300
+
+   :.neutral.info:color                             1000
+   :.neutral.info:hover:color                       1000
+   :.neutral.info:active:color                      1000
+
+   :.neutral.info:background-color                  100
+   :.neutral.info:hover:background-color            100
+   :.neutral.info:active:background-color           100
+
+
+   ;; minimal
+   :.neutral.minimal:color                          1000
+   :.neutral.minimal:hover:color                    1000
+   :.neutral.minimal:active:color                   1000
+
+   :.neutral.minimal:background-color               :transparent
+   :.neutral.minimal:hover:background-color         100
+   :.neutral.minimal:active:background-color        200
+
+
+   ;; bordered
+   :.neutral.bordered:color                         1000
+   :.neutral.bordered:hover:color                   1000
+   :.neutral.bordered:active:color                  1000
+
+   :.neutral.bordered:background-color              :transparent
+   :.neutral.bordered:hover:background-color        :transparent
+   :.neutral.bordered:active:background-color       :transparent
+
+   :.neutral.bordered:border-color                  1000
+   :.neutral.bordered:hover:border-color            1000
+   :.neutral.bordered:active:border-color           1000
+
+   :.neutral.bordered.info:background-color         :transparent
+   :.neutral.bordered.info:hover:background-color   :transparent
+   :.neutral.bordered.info:active:background-color  :transparent
+
+   :.neutral.bordered.info:border-color             1000
+   :.neutral.bordered.info:hover:border-color       1000
+   :.neutral.bordered.info:active:border-color      1000
+
+
+   ;; filled
+   :.neutral.filled:color                           :white
+   :.neutral.filled:hover:color                     :white
+   :.neutral.filled:active:color                    :white
+
+   :.neutral.filled:background-color                800
+   :.neutral.filled:hover:background-color          900
+   :.neutral.filled:active:background-color         1000
+
+   :.neutral.filled.info:background-color           800
+   :.neutral.filled.info:hover:background-color     900
+   :.neutral-filled.info:active:background-color    1000
+
+
+   ;; NEUTRAL INVERSE
+   ;; default
+   ".dark .neutral:color"                                  150
+   ".dark .neutral:hover:color"                            100
+   ".dark .neutral:active:color"                           50
+
+   ".dark .neutral:background-color"                       800
+   ".dark .neutral:hover:background-color"                 700
+   ".dark .neutral:active:background-color"                600
+
+   ".dark .neutral.info:color"                             150
+   ".dark .neutral.info:hover:color"                       150
+   ".dark .neutral.info:active:color"                      150
+
+   ".dark .neutral.info:background-color"                  800
+   ".dark .neutral.info:hover:background-color"            800
+   ".dark .neutral.info:active:background-color"           800
+
+   ;; minimal
+   ".dark .neutral.minimal:color"                          150
+   ".dark .neutral.minimal:hover:color"                    100
+   ".dark .neutral.minimal:active:color"                   50
+
+   ".dark .neutral.minimal:background-color"               :transparent
+   ".dark .neutral.minimal:hover:background-color"         750
+   ".dark .neutral.minimal:active:background-color"        700
+
+   ;; bordered
+   ".dark .neutral.bordered:color"                         150
+   ".dark .neutral.bordered:hover:color"                   100
+   ".dark .neutral.bordered:active:color"                  50
+
+   ".dark .neutral.bordered:background-color"              :transparent
+   ".dark .neutral.bordered:hover:background-color"        :transparent
+   ".dark .neutral.bordered:active:background-color"       :transparent
+
+   ".dark .neutral.bordered:border-color"                  150
+   ".dark .neutral.bordered:hover:border-color"            100
+   ".dark .neutral.bordered:active:border-color"           50
+
+   ".dark .neutral.bordered.info:color"                    100
+   ".dark .neutral.bordered.info:hover:color"              100
+   ".dark .neutral.bordered.info:active:color"             100
+
+   ".dark .neutral.bordered.info:background-color"         :transparent
+   ".dark .neutral.bordered.info:hover:background-color"   :transparent
+   ".dark .neutral.bordered.info:active:background-color"  :transparent
+
+   ".dark .neutral.bordered.info:border-color"             50
+   ".dark .neutral.bordered.info:hover:border-color"       50
+   ".dark .neutral.bordered.info:active:border-color"      50
+
+   ;; filled
+   ".dark .neutral.filled:color"                           :black
+   ".dark .neutral.filled:hover:color"                     :black
+   ".dark .neutral.filled:active:color"                    :black
+
+   ".dark .neutral.filled:background-color"                250
+   ".dark .neutral.filled:hover:background-color"          100
+   ".dark .neutral.filled:active:background-color"         50
+
+   ".dark .neutral.filled.info:background-color"           250
+   ".dark .neutral.filled.info:hover:background-color"     250
+   ".dark .neutral-filled.info:active:background-color"    250
+
+   ;; Accent
+   :.accent:color                                700
+   :.accent:hover:color                            800
+   :.accent:active:color                           900
+
+   :.accent:background-color                       100
+   :.accent:hover:background-color                 200
+   :.accent:active:background-color                300
+
+   :.accent.info:color                             800
+   :.accent.info:hover:color                       800
+   :.accent.info:active:color                      800
+
+   :.accent.info:background-color                  100
+   :.accent.info:hover:background-color            100
+   :.accent.info:active:background-color           100
+
+   :.accent.minimal:color                          650
+   :.accent.minimal:hover:color                    800
+   :.accent.minimal:active:color                   900
+
+   :.accent.minimal:background-color               :transparent
+   :.accent.minimal:hover:background-color         100
+   :.accent.minimal:active:background-color        200
+
+   :.accent.bordered:color                         600
+   :.accent.bordered:hover:color                   700
+   :.accent.bordered:active:color                  800
+
+   :.accent.bordered:background-color              :transparent
+   :.accent.bordered:hover:background-color        :transparent
+   :.accent.bordered:active:background-color       :transparent
+
+   :.accent.bordered:border-color                  600
+   :.accent.bordered:hover:border-color            700
+   :.accent.bordered:active:border-color           800
+
+   :.accent.bordered.info:color                    600
+   :.accent.bordered.info:hover:color              600
+   :.accent.bordered.info:active:color             600
+
+   :.accent.bordered.info:background-color         :transparent
+   :.accent.bordered.info:hover:background-color   :transparent
+   :.accent.bordered.info:active:background-color  :transparent
+
+   :.accent.bordered.info:border-color             600
+   :.accent.bordered.info:hover:border-color       600
+   :.accent.bordered.info:active:border-color      600
+
+   :.accent.filled:color                           :white
+   :.accent.filled:hover:color                     :white
+   :.accent.filled:active:color                    :white
+
+   :.accent.filled:background-color                600
+   :.accent.filled:hover:background-color          700
+   :.accent.filled:active:background-color         800
+
+  ;;  :.accent.filled.info:color                      :filled
+  ;;  :.accent.filled.info:hover:color                :filled
+  ;;  :.accent.filled.info:active:color               :filled
+
+   :.accent.filled.info:background-color           600
+   :.accent.filled.info:hover:background-color     600
+   :.accent-filled.info:active:background-color    600
+
+   ;; ACCENT INVERSE
+   ;; default
+   ".dark .accent:color"                                  200
+   ".dark .accent:hover:color"                            100
+   ".dark .accent:active:color"                           50
+
+   ".dark .accent:background-color"                       800
+   ".dark .accent:hover:background-color"                 700
+   ".dark .accent:active:background-color"                600
+
+   ".dark .accent.info:color"                             200
+   ".dark .accent.info:hover:color"                       200
+   ".dark .accent.info:active:color"                      200
+
+   ".dark .accent.info:background-color"                  800
+   ".dark .accent.info:hover:background-color"            800
+   ".dark .accent.info:active:background-color"           800
+
+   ;; minimal
+   ".dark .accent.minimal:color"                          300
+   ".dark .accent.minimal:hover:color"                    200
+   ".dark .accent.minimal:active:color"                   100
+
+   ".dark .accent.minimal:background-color"               :transparent
+   ".dark .accent.minimal:hover:background-color"         750
+   ".dark .accent.minimal:active:background-color"        850
+
+   ;; bordered
+   ".dark .accent.bordered:color"                         300
+   ".dark .accent.bordered:hover:color"                   200
+   ".dark .accent.bordered:active:color"                  100
+
+   ".dark .accent.bordered:background-color"              :transparent
+   ".dark .accent.bordered:hover:background-color"        :transparent
+   ".dark .accent.bordered:active:background-color"       :transparent
+
+   ".dark .accent.bordered:border-color"                  300
+   ".dark .accent.bordered:hover:border-color"            200
+   ".dark .accent.bordered:active:border-color"           100
+
+   ".dark .accent.bordered.info:color"                    300
+   ".dark .accent.bordered.info:hover:color"              300
+   ".dark .accent.bordered.info:active:color"             300
+
+   ".dark .accent.bordered.info:background-color"         :transparent
+   ".dark .accent.bordered.info:hover:background-color"   :transparent
+   ".dark .accent.bordered.info:active:background-color"  :transparent
+
+   ".dark .accent.bordered.info:border-color"             300
+   ".dark .accent.bordered.info:hover:border-color"       300
+   ".dark .accent.bordered.info:active:border-color"      300
+
+   ;; filled
+   ".dark .accent.filled:color"                           :black
+   ".dark .accent.filled:hover:color"                     :black
+   ".dark .accent.filled:active:color"                    :black
+
+   ".dark .accent.filled:background-color"                400
+   ".dark .accent.filled:hover:background-color"          250
+   ".dark .accent.filled:active:background-color"         100
+
+   ".dark .accent.filled.info:background-color"           400
+   ".dark .accent.filled.info:hover:background-color"     400
+   ".dark .accent-filled.info:active:background-color"    400
+
+   ;; Pos
+   :.positive:color                                  800
+   :.positive:hover:color                            900
+   :.positive:active:color                           1000
+
+   :.positive:background-color                       100
+   :.positive:hover:background-color                 200
+   :.positive:active:background-color                300
+
+   :.positive.info:color                             800
+   :.positive.info:hover:color                       800
+   :.positive.info:active:color                      800
+
+   :.positive.info:background-color                  100
+   :.positive.info:hover:background-color            100
+   :.positive.info:active:background-color           100
+
+
+   :.positive.minimal:color                          650
+   :.positive.minimal:hover:color                    800
+   :.positive.minimal:active:color                   900
+
+   :.positive.minimal:background-color               :transparent
+   :.positive.minimal:hover:background-color         100
+   :.positive.minimal:active:background-color        200
+
+   :.positive.bordered:color                         650
+   :.positive.bordered:hover:color                   800
+   :.positive.bordered:active:color                  900
+
+   :.positive.bordered:background-color              :transparent
+   :.positive.bordered:hover:background-color        :transparent
+   :.positive.bordered:active:background-color       :transparent
+
+   :.positive.bordered:border-color                  600
+   :.positive.bordered:hover:border-color            800
+   :.positive.bordered:active:border-color           900
+
+   :.positive.bordered.info:color                    650
+   :.positive.bordered.info:hover:color              650
+   :.positive.bordered.info:active:color             650
+
+   :.positive.bordered.info:background-color         :transparent
+   :.positive.bordered.info:hover:background-color   :transparent
+   :.positive.bordered.info:active:background-color  :transparent
+
+   :.positive.bordered.info:border-color             600
+   :.positive.bordered.info:hover:border-color       600
+   :.positive.bordered.info:active:border-color      600
+
+   :.positive.filled:color                           :white
+   :.positive.filled:hover:color                     :white
+   :.positive.filled:active:color                    :white
+
+   :.positive.filled:background-color                650
+   :.positive.filled:hover:background-color          750
+   :.positive.filled:active:background-color         850
+
+   :.positive.filled.info:background-color           650
+   :.positive.filled.info:hover:background-color     650
+   :.positive-filled.info:active:background-color    650
+
+   ;; POSITIVE INVERSE
+   ;; default
+   ".dark .positive:color"                                  200
+   ".dark .positive:hover:color"                            100
+   ".dark .positive:active:color"                           50
+
+   ".dark .positive:background-color"                       800
+   ".dark .positive:hover:background-color"                 700
+   ".dark .positive:active:background-color"                600
+
+   ".dark .positive.info:color"                             200
+   ".dark .positive.info:hover:color"                       200
+   ".dark .positive.info:active:color"                      200
+
+   ".dark .positive.info:background-color"                  800
+   ".dark .positive.info:hover:background-color"            800
+   ".dark .positive.info:active:background-color"           800
+
+   ;; minimal
+   ".dark .positive.minimal:color"                          350
+   ".dark .positive.minimal:hover:color"                    150
+   ".dark .positive.minimal:active:color"                   50
+
+   ".dark .positive.minimal:background-color"               :transparent
+   ".dark .positive.minimal:hover:background-color"         800
+   ".dark .positive.minimal:active:background-color"        700
+
+   ;; bordered
+   ".dark .positive.bordered:color"                         350
+   ".dark .positive.bordered:hover:color"                   150
+   ".dark .positive.bordered:active:color"                  50
+
+   ".dark .positive.bordered:background-color"              :transparent
+   ".dark .positive.bordered:hover:background-color"        :transparent
+   ".dark .positive.bordered:active:background-color"       :transparent
+
+   ".dark .positive.bordered:border-color"                  350
+   ".dark .positive.bordered:hover:border-color"            150
+   ".dark .positive.bordered:active:border-color"           50
+
+   ".dark .positive.bordered.info:color"                    350
+   ".dark .positive.bordered.info:hover:color"              350
+   ".dark .positive.bordered.info:active:color"             350
+
+   ".dark .positive.bordered.info:background-color"         :transparent
+   ".dark .positive.bordered.info:hover:background-color"   :transparent
+   ".dark .positive.bordered.info:active:background-color"  :transparent
+
+   ".dark .positive.bordered.info:border-color"             350
+   ".dark .positive.bordered.info:hover:border-color"       350
+   ".dark .positive.bordered.info:active:border-color"      350
+
+   ;; filled
+   ".dark .positive.filled:color"                           :black
+   ".dark .positive.filled:hover:color"                     :black
+   ".dark .positive.filled:active:color"                    :black
+
+   ".dark .positive.filled:background-color"                400
+   ".dark .positive.filled:hover:background-color"          250
+   ".dark .positive.filled:active:background-color"         100
+
+   ".dark .positive.filled.info:background-color"           400
+   ".dark .positive.filled.info:hover:background-color"     400
+   ".dark .positive-filled.info:active:background-color"    400
+
+   ;; Negative
+   :.negative:color                                  600
+   :.negative:hover:color                            800
+   :.negative:active:color                           900
+
+   :.negative:background-color                       100
+   :.negative:hover:background-color                 200
+   :.negative:active:background-color                300
+
+   :.negative.info:color                             600
+   :.negative.info:hover:color                       600
+   :.negative.info:active:color                      600
+
+   :.negative.info:background-color                  100
+   :.negative.info:hover:background-color            100
+   :.negative.info:active:background-color           100
+
+   :.negative.minimal:color                          650
+   :.negative.minimal:hover:color                    800
+   :.negative.minimal:active:color                   900
+
+   :.negative.minimal:background-color               :transparent
+   :.negative.minimal:hover:background-color         100
+   :.negative.minimal:active:background-color        200
+
+   :.negative.bordered:color                         600
+   :.negative.bordered:hover:color                   700
+   :.negative.bordered:active:color                  800
+
+   :.negative.bordered:background-color              :transparent
+   :.negative.bordered:hover:background-color        :transparent
+   :.negative.bordered:active:background-color       :transparent
+
+   :.negative.bordered:border-color                  600
+   :.negative.bordered:hover:border-color            700
+   :.negative.bordered:active:border-color           800
+
+   :.negative.bordered.info:color                    600
+   :.negative.bordered.info:hover:color              600
+   :.negative.bordered.info:active:color             600
+
+   :.negative.bordered.info:background-color         :transparent
+   :.negative.bordered.info:hover:background-color   :transparent
+   :.negative.bordered.info:active:background-color  :transparent
+
+   :.negative.bordered.info:border-color             600
+   :.negative.bordered.info:hover:border-color       600
+   :.negative.bordered.info:active:border-color      600
+
+   :.negative.filled:color                           :white
+   :.negative.filled:hover:color                     :white
+   :.negative.filled:active:color                    :white
+
+   :.negative.filled:background-color                500
+   :.negative.filled:hover:background-color          700
+   :.negative.filled:active:background-color         800
+
+   :.negative.filled.info:background-color           600
+   :.negative.filled.info:hover:background-color     600
+   :.negative-filled.info:active:background-color    600
+
+
+   ;; NEGATIVE INVERSE
+   ;; default
+   ".dark .negative:color"                                  200
+   ".dark .negative:hover:color"                            100
+   ".dark .negative:active:color"                           50
+
+   ".dark .negative:background-color"                       850
+   ".dark .negative:hover:background-color"                 750
+   ".dark .negative:active:background-color"                650
+
+   ".dark .negative.info:color"                             200
+   ".dark .negative.info:hover:color"                       200
+   ".dark .negative.info:active:color"                      200
+
+   ".dark .negative.info:background-color"                  850
+   ".dark .negative.info:hover:background-color"            850
+   ".dark .negative.info:active:background-color"           850
+
+   ;; minimal
+   ".dark .negative.minimal:color"                          300
+   ".dark .negative.minimal:hover:color"                    200
+   ".dark .negative.minimal:active:color"                   100
+
+   ".dark .negative.minimal:background-color"               :transparent
+   ".dark .negative.minimal:hover:background-color"         850
+   ".dark .negative.minimal:active:background-color"        750
+
+   ;; bordered
+   ".dark .negative.bordered:color"                         300
+   ".dark .negative.bordered:hover:color"                   200
+   ".dark .negative.bordered:active:color"                  100
+
+   ".dark .negative.bordered:background-color"              :transparent
+   ".dark .negative.bordered:hover:background-color"        :transparent
+   ".dark .negative.bordered:active:background-color"       :transparent
+
+   ".dark .negative.bordered:border-color"                  300
+   ".dark .negative.bordered:hover:border-color"            200
+   ".dark .negative.bordered:active:border-color"           100
+
+   ".dark .negative.bordered.info:color"                    300
+   ".dark .negative.bordered.info:hover:color"              300
+   ".dark .negative.bordered.info:active:color"             300
+
+   ".dark .negative.bordered.info:background-color"         :transparent
+   ".dark .negative.bordered.info:hover:background-color"   :transparent
+   ".dark .negative.bordered.info:active:background-color"  :transparent
+
+   ".dark .negative.bordered.info:border-color"             300
+   ".dark .negative.bordered.info:hover:border-color"       300
+   ".dark .negative.bordered.info:active:border-color"      300
+
+   ;; filled
+   ".dark .negative.filled:color"                           :black
+   ".dark .negative.filled:hover:color"                     :black
+   ".dark .negative.filled:active:color"                    :black
+
+   ".dark .negative.filled:background-color"                400
+   ".dark .negative.filled:hover:background-color"          300
+   ".dark .negative.filled:active:background-color"         200
+
+   ".dark .negative.filled.info:background-color"           500
+   ".dark .negative.filled.info:hover:background-color"     500
+   ".dark .negative-filled.info:active:background-color"    500
+
+   ;; Warning
+   :.warning:color                                  800
+   :.warning:hover:color                            900
+   :.warning:active:color                           1000
+
+   :.warning:background-color                       100
+   :.warning:hover:background-color                 250
+   :.warning:active:background-color                350
+
+   :.warning.info:color                             800
+   :.warning.info:hover:color                       800
+   :.warning.info:active:color                      800
+
+   :.warning.info:background-color                  100
+   :.warning.info:hover:background-color            100
+   :.warning.info:active:background-color           100
+
+   :.warning.minimal:color                          750
+   :.warning.minimal:hover:color                    900
+   :.warning.minimal:active:color                   1000
+
+   :.warning.minimal:background-color               :transparent
+   :.warning.minimal:hover:background-color         100
+   :.warning.minimal:active:background-color        200
+
+   :.warning.bordered:color                         750
+   :.warning.bordered:hover:color                   900
+   :.warning.bordered:active:color                  1000
+
+   :.warning.bordered:background-color              :transparent
+   :.warning.bordered:hover:background-color        :transparent
+   :.warning.bordered:active:background-color       :transparent
+
+   :.warning.bordered:border-color                  600
+   :.warning.bordered:hover:border-color            800
+   :.warning.bordered:active:border-color           900
+
+   :.warning.bordered.info:color                    600
+   :.warning.bordered.info:hover:color              600
+   :.warning.bordered.info:active:color             600
+
+   :.warning.bordered.info:background-color         :transparent
+   :.warning.bordered.info:hover:background-color   :transparent
+   :.warning.bordered.info:active:background-color  :transparent
+
+   :.warning.bordered.info:border-color             600
+   :.warning.bordered.info:hover:border-color       600
+   :.warning.bordered.info:active:border-color      600
+
+   :.warning.filled:color                           :white
+   :.warning.filled:hover:color                     :white
+   :.warning.filled:active:color                    :white
+
+   :.warning.filled:background-color                750
+   :.warning.filled:hover:background-color          800
+   :.warning.filled:active:background-color         90
+
+   :.warning.filled.info:background-color           750
+   :.warning.filled.info:hover:background-color     750
+   :.warning-filled.info:active:background-color    750
+
+   ;; WARNING INVERSE
+   ;; default
+   ".dark .warning:color"                                  300
+   ".dark .warning:hover:color"                            200
+   ".dark .warning:active:color"                           100
+
+   ".dark .warning:background-color"                       850
+   ".dark .warning:hover:background-color"                 750
+   ".dark .warning:active:background-color"                650
+
+   ".dark .warning.info:color"                             200
+   ".dark .warning.info:hover:color"                       200
+   ".dark .warning.info:active:color"                      200
+
+   ".dark .warning.info:background-color"                  850
+   ".dark .warning.info:hover:background-color"            850
+   ".dark .warning.info:active:background-color"           850
+
+     ;; minimal
+   ".dark .warning.minimal:color"                          500
+   ".dark .warning.minimal:hover:color"                    350
+   ".dark .warning.minimal:active:color"                   200
+
+   ".dark .warning.minimal:background-color"               :transparent
+   ".dark .warning.minimal:hover:background-color"         850
+   ".dark .warning.minimal:active:background-color"        750
+
+     ;; bordered
+   ".dark .warning.bordered:color"                         500
+   ".dark .warning.bordered:hover:color"                   350
+   ".dark .warning.bordered:active:color"                  200
+
+   ".dark .warning.bordered:background-color"              :transparent
+   ".dark .warning.bordered:hover:background-color"        :transparent
+   ".dark .warning.bordered:active:background-color"       :transparent
+
+   ".dark .warning.bordered:border-color"                  450
+   ".dark .warning.bordered:hover:border-color"            300
+   ".dark .warning.bordered:active:border-color"           200
+
+   ".dark .warning.bordered.info:color"                    400
+   ".dark .warning.bordered.info:hover:color"              400
+   ".dark .warning.bordered.info:active:color"             400
+
+   ".dark .warning.bordered.info:background-color"         :transparent
+   ".dark .warning.bordered.info:hover:background-color"   :transparent
+   ".dark .warning.bordered.info:active:background-color"  :transparent
+
+   ".dark .warning.bordered.info:border-color"             450
+   ".dark .warning.bordered.info:hover:border-color"       450
+   ".dark .warning.bordered.info:active:border-color"      450
+
+     ;; filled
+   ".dark .warning.filled:color"                           :black
+   ".dark .warning.filled:hover:color"                     :black
+   ".dark .warning.filled:active:color"                    :black
+
+   ".dark .warning.filled:background-color"                500
+   ".dark .warning.filled:hover:background-color"          450
+   ".dark .warning.filled:active:background-color"         350
+
+   ".dark .warning.filled.info:background-color"           500
+   ".dark .warning.filled.info:hover:background-color"     500
+   ".dark .warning-filled.info:active:background-color"    500])
+
+(defn x2 [k v]
+  (let [
+        color                    (into #{} (map name (vals semantic-aliases)))
+        style                    (into #{} (map name [:bordered :minimal :filled]))
+        context                  #{"info"}
+        k                        (name k)
+        [ _ dark semantics props] (re-find #"^(\.dark )?(\.[^:]+)(.+)$" k)
+        inverse?                 (= dark ".dark ")
+        f                        (fn [s re] (into [] (remove #(or (nil? %) (string/blank? %)) (string/split s re))))
+        semantics                (f semantics #"\.")
+        props                    (f props #":")
+        css-prop                 (last props)
+        css-mods                 (into []
+                                       (if (> (count props) 1)
+                                         (drop-last props)
+                                         []))
+        f2                       (fn [x] (first (filter #(contains? x %) semantics)))
+        color                    (f2 color)
+        style                    (f2 style)
+        context                  (f2 context)
+        token-name*              (string/join "-"
+                                              (remove nil?
+                                                      [color
+                                                       style
+                                                       context
+                                                       css-prop
+                                                       (when (seq css-mods) (string/join "-" css-mods))
+                                                       (when inverse? "inverse")]))
+        token-key                (keyword (str "--" (name token-name*)))
+        token-value             (if (int? v)
+                                  (keyword (str "--" color v))
+                                  (name v))
+        [selector prop]         (string/split (name k) #":" 2)
+        value                   [prop token-key]]
+    {
+    ;;  :inverse?    inverse?
+    ;;  :props       props
+    ;;  :css-prop    css-prop
+    ;;  :css-mods    css-mods
+    ;;  :color       color
+    ;;  :style       style
+    ;;  :context     context
+    ;;  :token-name  token-key
+    ;;  :token-key   token-key
+    ;;  :token-value token-value
+     :token-pair  [token-key token-value]
+     :selector    selector
+     :value       value
+     }))
+
+(defn tokenizer [coll]
+  (let [all                   (map (fn [[k v]]
+                                     (x2 k v))
+                                   (partition 2 coll))
+        token-pairs           (into [] (apply concat (map :token-pair all)))
+        by-selector           (group-by :selector all)
+        by-selector-stylemaps (reduce (fn [acc [selector coll]] (assoc acc selector (into {} (map :value coll)))) {} by-selector)
+        selectors             (distinct (map :selector all))
+        ret                   (mapv (fn [k] [k (get by-selector-stylemaps k)]) selectors)]
+    {:styles      (into [] (apply concat ret))
+     :token-pairs token-pairs}))
+
 
 (def css-reset
   [["*:where(:not(html, iframe, canvas, img, svg, video):not(svg *, symbol *))"]
@@ -48,216 +754,24 @@
    [":where([draggable='true'])"]
    {:-webkit-user-drag :element}])
 
-(def component-tokens
- {:--kushi-collapse-transition-duration :--duration-slow})
-
-
-(defn tok*
-  ([k]
-   (tok* k nil))
-  ([k n]
-   (keyword (str "--" (name k) n))))
-
-(defn tok-darker* [k n]
-  (tok* k (if (= n 50) 200 (+ n 100))))
-
-(defn tok-lighter* [k n]
-  (tok* k (if (= n 100) 50 (- n 100))))
-
-;; (defn dark-primary* [k n]
-;;   {:bgc       (tok* k n)
-;;    :hover:bgc (tok* k (+ n 100))
-;;    :color     :--primary-a})
-
-(defn dark-primary-intense* [k n]
-  {:bgc          (tok* k n)
-   :color        :--primary-a})
-
-(defn primary-intense* [k n]
-  {:bgc          (tok* k n)
-   :color        :--primary-b})
-
-(defn dark-primary-intense-target* [k n]
-  {:hover:bgc    (tok-darker* k n)
-   :active:bgc   (tok* k n)
-   :hover:color  :--primary-a
-   :active:color :--primary-a})
-
-(defn primary-intense-target* [k n]
-  {:hover:bgc    (tok-lighter* k n)
-   :active:bgc   (tok* k n)
-   :hover:color  :--primary-b
-   :active:color :--primary-b})
-
-(defn dark-outlined* [k n]
-  (let [c (tok* k n)
-        hc (tok-darker* k n)]
-    {:c         c
-     :hover:c   hc
-     :bc        c
-     :hover:bc  hc
-     :bgc       :transparent
-     :hover:bgc :transparent}))
-
-(defn minimal* [k n]
-  {:bgc        :transparent
-   :hover:bgc  :transparent
-   :active:bgc :transparent
-   :c          (tok* k)
-   :hover:c    (tok* k n)
-   :active:c   (tok* k)})
-
-(defn minimal-inverse* [k n]
-  (let [c (tok* k n)
-        hc (tok-darker* k n)]
-    {:c          c
-     :hover:c    hc
-     :active:c   c
-     :bgc        :transparent
-     :hover:bgc  :transparent
-     :active:bgc :transparent}))
-
-(defn semantic-cssvar [{:keys [kw inverse?]} [css-prop s]]
-  [css-prop (tok* (str (name kw) s (when inverse? "-inverse")))])
-
-(defn semantic-outline-map [opts]
-  (into {}
-        (map
-         (partial semantic-cssvar opts)
-         {:c:hover    "500"
-          :bc:hover   "-border"})))
-
-(defn semantic-map [opts]
-  (into {}
-        (map
-         (partial semantic-cssvar opts)
-         {:c          ""
-          :bgc        "-background"
-          :bc         "-border"})))
-
-(defn semantic-target-map [opts]
-  (into {}
-        (map
-         (partial semantic-cssvar opts)
-         {:hover:c    "-hover"
-          :active:c   "-active"
-          :hover:bgc  "-background-hover"
-          :active:bgc "-background-active"
-          :hover:bc   "-border-hover"
-          :active:bc  "-border-active"})))
-
-(defn semantic-inverse* [kw]
-  (semantic-map {:kw kw :inverse? true}))
-
-(defn semantic* [kw]
-  (semantic-map {:kw kw}))
-
-(defn semantic-target-inverse* [kw]
-  (semantic-target-map {:kw kw :inverse? true}))
-
-(defn semantic-target* [kw]
-  (semantic-target-map {:kw kw}))
-
-(defn semantic-outline-inverse* [kw]
-  (semantic-outline-map {:kw kw :inverse? true}))
-
-(defn semantic-outline* [kw]
-  (semantic-outline-map {:kw kw}))
-
-(def primary-color* (semantic* :primary))
-(def primary-color-inverse* (semantic-inverse* :primary))
-(def accent* (semantic* :accent))
-(def accent-inverse* (semantic-inverse* :accent))
-(def positive* (semantic* :positive))
-(def positive-inverse* (semantic-inverse* :positive))
-(def warning* (semantic* :warning))
-(def warning-inverse* (semantic-inverse* :warning))
-(def negative* (semantic* :negative))
-(def negative-inverse* (semantic-inverse* :negative))
-
-(def white-text {:c :--primary-b :hover:c :--primary-b :active:c :--primary-b})
-(def primary-target* (semantic-target* :primary))
-(def primary-target-inverse* (merge (semantic-target-inverse* :primary) white-text))
-(def accent-target* (semantic-target* :accent))
-(def accent-target-inverse* (merge (semantic-target-inverse* :accent) white-text))
-(def positive-target* (semantic-target* :positive))
-(def positive-target-inverse* (merge (semantic-target-inverse* :positive) white-text))
-(def warning-target* (semantic-target* :warning))
-(def warning-target-inverse* (merge (semantic-target-inverse* :warning) white-text))
-(def negative-target* (semantic-target* :negative))
-(def negative-target-inverse* (merge (semantic-target-inverse* :negative) white-text))
-
-
-(def outlined*
-  {:bgc       :transparent
-   :hover:bgc :transparent
-   :bw        :2px
-   :outline   :none
-   :bs        :solid})
-
-(defn outlined-target* [k n]
-  (merge (let [c  (tok* k)
-               hc (tok* k n)]
-           {:hover:c    hc
-            :active:c   c
-            :bc         c
-            :hover:bc   hc
-            :active:bc  c
-            :active:bgc :transparent})
-         outlined*))
-
-(defn outlined-tag* [k]
-  (merge (let [c  (tok* k)]
-           {:c          c
-            :bc         c})
-         outlined*
-         {:bw :1px}))
-
-(defn outlined-tag-inverse* [k]
-  (merge (let [c  (tok* k "-inverse")]
-           {:c          c
-            :bc         c})
-         outlined*
-         {:bw :1px}))
-
-(defn outlined-target-inverse* [k n]
-  (merge (let [c  (tok* k "-inverse")
-               hc (tok* k n)]
-           {:c          c
-            :hover:c    hc
-            :active:c   c
-            :bc         c
-            :hover:bc   hc
-            :active:bc  c
-            :active:bgc :transparent})
-         outlined*))
-
-(defn tertiary* [k]
-  {:bgc        :transparent
-   :hover:bgc  (tok* k 100)
-   :active:bgc (tok* k 200)})
-
-(defn tertiary-inverse* [k]
-  {:bgc        :transparent
-   :hover:bgc  (tok* k "-background-inverse")
-   :active:bgc (tok* k "-background-active-inverse")})
-
-
 (def ui
-  ["body"
+  [
+   ;; uncomment TEMP
+
+   "body"
    {:font-family :--sans-serif-font-stack
     :bgc         :--white
     :color       :--primary
     :transition  :all
     :transition-duration :--duration-normal}
 
-   "body.dark"
+   "body.dark, .dark"
    {:bgc         :--gray1000
     :color       :--gray50}
 
-   "code"
+   "code, .code"
    {:font-family   :--code-font-stack
-    :font-size     :0.9em
+    :font-size     :0.95em
     :pi            :0.4em
     :pb            :0.15em:0.08em
     :border-radius :3px
@@ -268,234 +782,12 @@
     :transition-duration :--duration-normal
     }
 
-   ".code"
-   {:font-family   :--code-font-stack
-    :font-size     :0.9em
-    :pi            :0.4em
-    :pb            :0.15em:0.08em
-    :border-radius :3px
-    :bgc           :--gray100
-    :h             :fit-content
-    :w             :fit-content
-    :transition-property :all
-    :transition-duration :--duration-normal
-    }
-
-   ".dark code"
+   ".dark code, .dark .code"
    {:bgc           :--gray900
     :c             :--gray50}
 
-   ".dark .code"
-   {:bgc           :--gray900
-    :c             :--gray50 }
+   ])
 
-   ;; Buttons, tags, & labels
-
-   ".accent"
-   accent*
-
-   ".dark .accent"
-   accent-inverse*
-
-   ".positive"
-   positive*
-
-   ".dark .positive"
-   positive-inverse*
-
-   ".warning"
-   warning*
-
-   ".dark .warning"
-   warning-inverse*
-
-   ".negative"
-   negative*
-
-   ".dark .negative"
-   negative-inverse*
-
-   ".pill"
-   {:border-radius :9999px}])
-
-
-(defn- semantic-variants*
-  [{:keys [selector-base kind semantic-variants]}]
-  (map (fn [semantic]
-         (let [default-light (str selector-base (when kind (str "." (name kind))))
-               default-dark (str ".dark " default-light)
-               light (str selector-base "." (when kind (str (name kind) ".")) (name semantic))
-               dark  (str ".dark " light)]
-           [default-light default-dark light dark]))
-       semantic-variants))
-
-
-(defn- varients-by-kind
-  [k {semantic-variants :semantic kind-variants :kind}]
-  (let [selector-base (str ".kushi-" (name k))
-        m*            {:selector-base     selector-base
-                       :semantic-variants semantic-variants}
-        default-kind  (semantic-variants* m*)
-        by-kind       (map (fn [kind]
-                             (conj (semantic-variants* (assoc m* :kind kind))))
-                           kind-variants)]
-    [default-kind by-kind]))
-
-
-(def user-narrowed-variants
-  (let [{:keys [kushi-ui-variants]} user-config]
-    (when (map? kushi-ui-variants)
-      (->> kushi-ui-variants
-           (reduce (fn [acc [k m]]
-                     (conj acc (varients-by-kind k m)))
-                   [])
-           flatten
-           distinct))))
-
-(def kushi-ui
-  [".kushi-button"                          (merge primary-color*
-                                                   primary-target*
-                                                   {:fw :--text-wee-bold
-                                                    :ff :--primary-font-family})
-   ".dark .kushi-button"                    (merge primary-color-inverse*
-                                                   primary-target-inverse*)
-   ".kushi-button.accent"                   (merge accent* accent-target*)
-   ".kushi-button.positive"                 (merge positive* positive-target*)
-   ".kushi-button.warning"                  (merge warning* warning-target*)
-   ".kushi-button.negative"                 (merge negative* negative-target*)
-   ".dark .kushi-button.positive"           (merge positive-inverse* positive-target-inverse*)
-   ".dark .kushi-button.negative"           (merge negative-inverse* negative-target-inverse*)
-   ".dark .kushi-button.warning"            (merge warning-inverse* warning-target-inverse*)
-   ".dark .kushi-button.accent"             (merge accent-inverse* accent-target-inverse*)
-
-   ".kushi-button.secondary.accent"         (merge accent* accent-target*)
-   ".kushi-button.secondary.positive"       (merge positive* positive-target*)
-   ".kushi-button.secondary.warning"        (merge warning* warning-target*)
-   ".kushi-button.secondary.negative"       (merge negative* negative-target*)
-   ".dark .kushi-button.secondary.positive" (merge positive-inverse* positive-target-inverse*)
-   ".dark .kushi-button.secondary.negative" (merge negative-inverse* negative-target-inverse*)
-   ".dark .kushi-button.secondary.warning"  (merge warning-inverse* warning-target-inverse*)
-   ".dark .kushi-button.secondary.accent"   (merge accent-inverse* accent-target-inverse*)
-
-   ".kushi-button.tertiary"                 (tertiary* :primary)
-   ".kushi-button.tertiary.positive"        (tertiary* :positive)
-   ".kushi-button.tertiary.negative"        (tertiary* :negative)
-   ".kushi-button.tertiary.warning"         (tertiary* :warning)
-   ".kushi-button.tertiary.accent"          (tertiary* :accent)
-   ".dark .kushi-button.tertiary"           (merge (tertiary-inverse* :primary) {:c :--primary-b})
-   ".dark .kushi-button.tertiary.positive"  (tertiary-inverse* :positive)
-   ".dark .kushi-button.tertiary.negative"  (tertiary-inverse* :negative)
-   ".dark .kushi-button.tertiary.warning"   (tertiary-inverse* :warning)
-   ".dark .kushi-button.tertiary.accent"    (tertiary-inverse* :accent)
-
-   ".kushi-button.primary"                  (merge (primary-intense* :primary 800) (primary-intense-target* :primary 800))
-   ".kushi-button.primary.positive"         (merge (primary-intense* :positive 700) (primary-intense-target* :positive 700))
-   ".kushi-button.primary.negative"         (merge (primary-intense* :negative 700) (primary-intense-target* :negative 700))
-   ".kushi-button.primary.warning"          (merge (primary-intense* :warning 700) (primary-intense-target* :warning 700))
-   ".kushi-button.primary.accent"           (merge (primary-intense* :accent 600) (primary-intense-target* :accent 600))
-
-   ".dark .kushi-button.primary"            (dark-primary-intense* :primary 50)
-   ".dark .kushi-button.primary.positive"   (dark-primary-intense* :positive 500)
-   ".dark .kushi-button.primary.negative"   (dark-primary-intense* :negative 400)
-   ".dark .kushi-button.primary.warning"    (dark-primary-intense* :warning 500)
-   ".dark .kushi-button.primary.accent"     (dark-primary-intense* :accent 300)
-
-   ".kushi-button.outlined"                 (outlined-target* :primary 800)
-   ".kushi-button.outlined.accent"          (outlined-target* :accent 400)
-   ".kushi-button.outlined.positive"        (outlined-target* :positive 700)
-   ".kushi-button.outlined.warning"         (outlined-target* :warning 700)
-   ".kushi-button.outlined.negative"        (outlined-target* :negative 400)
-
-   ".dark .kushi-button.outlined"           {:c         :--primary-b
-                                             :hover:c   :--primary100
-                                             :bc        :--primary-b
-                                             :hover:bc  :--primary100
-                                             :bgc       :transparent
-                                             :hover:bgc :transparent}
-
-   ".dark .kushi-button.outlined.positive"  (outlined-target-inverse* :positive 400)
-   ".dark .kushi-button.outlined.negative"  (outlined-target-inverse* :negative 300)
-   ".dark .kushi-button.outlined.warning"   (outlined-target-inverse* :warning 500)
-   ".dark .kushi-button.outlined.accent"    (outlined-target-inverse* :accent 300)
-
-   ".kushi-button.minimal"                  (merge (minimal* :primary 700) {:p 0})
-   ".kushi-button.minimal.positive"         (minimal* :positive 700)
-   ".kushi-button.minimal.negative"         (minimal* :negative 500)
-   ".kushi-button.minimal.warning"          (minimal* :warning 700)
-   ".kushi-button.minimal.accent"           (minimal* :accent 500)
-
-   ".dark .kushi-button.minimal"            (minimal-inverse* :primary 50)
-   ".dark .kushi-button.minimal.positive"   (minimal-inverse* :positive 300)
-   ".dark .kushi-button.minimal.negative"   (minimal-inverse* :negative 200)
-   ".dark .kushi-button.minimal.warning"    (minimal-inverse* :warning 300)
-   ".dark .kushi-button.minimal.accent"     (minimal-inverse* :accent 200)
-
-
-   ".kushi-tag"                             (merge primary-color* {:fw :--text-wee-bold})
-   ".dark .kushi-tag"                       (merge primary-color-inverse* {:fw :--text-wee-bold})
-   ".kushi-tag.accent"                      accent*
-   ".kushi-tag.positive"                    positive*
-   ".kushi-tag.warning"                     warning*
-   ".kushi-tag.negative"                    negative*
-   ".dark .kushi-tag.positive"              positive-inverse*
-   ".dark .kushi-tag.negative"              negative-inverse*
-   ".dark .kushi-tag.warning"               warning-inverse*
-   ".dark .kushi-tag.accent"                accent-inverse*
-
-   ".kushi-tag.secondary"                   (merge primary-color* {:fw :--text-wee-bold})
-   ".dark .kushi-tag.secondary"             (merge primary-color-inverse* {:fw :--text-wee-bold})
-   ".kushi-tag.secondary.accent"            accent*
-   ".kushi-tag.secondary.positive"          positive*
-   ".kushi-tag.secondary.warning"           warning*
-   ".kushi-tag.secondary.negative"          negative*
-   ".dark .kushi-tag.secondary.positive"    positive-inverse*
-   ".dark .kushi-tag.secondary.negative"    negative-inverse*
-   ".dark .kushi-tag.secondary.warning"     warning-inverse*
-   ".dark .kushi-tag.secondary.accent"      accent-inverse*
-
-   ".kushi-tag.primary"                     (primary-intense* :primary 800)
-   ".kushi-tag.primary.positive"            (primary-intense* :positive 700)
-   ".kushi-tag.primary.negative"            (primary-intense* :negative 700)
-   ".kushi-tag.primary.warning"             (primary-intense* :warning 700)
-   ".kushi-tag.primary.accent"              (primary-intense* :accent 600)
-
-   ".dark .kushi-tag.primary"               (dark-primary-intense* :primary 50)
-   ".dark .kushi-tag.primary.positive"      (dark-primary-intense* :positive 500)
-   ".dark .kushi-tag.primary.negative"      (dark-primary-intense* :negative 400)
-   ".dark .kushi-tag.primary.warning"       (dark-primary-intense* :warning 500)
-   ".dark .kushi-tag.primary.accent"        (dark-primary-intense* :accent 300)
-
-
-   ".kushi-tag.outlined"                    (outlined-tag* :primary)
-   ".kushi-tag.outlined.accent"             (outlined-tag* :accent)
-   ".kushi-tag.outlined.positive"           (outlined-tag* :positive)
-   ".kushi-tag.outlined.warning"            (outlined-tag* :warning)
-   ".kushi-tag.outlined.negative"           (outlined-tag* :negative)
-
-   ".dark .kushi-tag.outlined"              {:c   :--primary-b
-                                             :bc  :--primary-b
-                                             :bgc :transparent}
-
-   ".dark .kushi-tag.outlined.positive"     (outlined-tag-inverse* :positive)
-   ".dark .kushi-tag.outlined.negative"     (outlined-tag-inverse* :negative)
-   ".dark .kushi-tag.outlined.warning"      (outlined-tag-inverse* :warning)
-   ".dark .kushi-tag.outlined.accent"       (outlined-tag-inverse* :accent)
-   ".dark .kushi-tooltip"                   {:c :black :bgc :white}
-
-   ".dark .kushi-radio-input"                                        {:bgc :black}
-   ".dark .kushi-checkbox-input"                                     {:bgc :black}
-   ".dark .kushi-checkbox-input:before"                              {:box-shadow :inset:1em:1em:black}
-   ".dark .kushi-slider-step-label.kushi-slider-step-label-selected" {:c :white}
-   ".dark .kushi-slider-step-label"                                  {:c :--gray300}])
-
-
-(def global {:font-family      :--sans-serif-stack
-             :background-color :crimson
-             :color            :--primary})
-
-(def tokens
-  {:global global-tokens
-   :alias (merge alias-tokens component-tokens)})
 
 
 (def font-loading
@@ -509,34 +801,36 @@
    :google-fonts* ["Fira Code" "Inter"]})
 
 
-(def merged-ui
-  (let [darks?            (:add-kushi-ui-dark-theming? user-config)
-        lights?           (:add-kushi-ui-light-theming? user-config)
-        kushi-ui-theming? (:add-kushi-ui-theming? user-config)
-        kushi-ui-theming? (and kushi-ui-theming? (or darks? lights?))
-        [ui kushi-ui]     (map #(apply hash-map %) [ui kushi-ui])
-        coll              (merge ui
-                                 (when kushi-ui-theming?
-                                   (if user-narrowed-variants
-                                    (select-keys kushi-ui user-narrowed-variants)
-                                    kushi-ui )))]
+(def ui*
+  [
+   ".kushi-button" {"font-weight" :--text-wee-bold
+                    "font-family" :--primary-font-family}
+   ".kushi-button.bordered" {"border-width" :--button-border-width}
+   ".kushi-tag.bordered" {"border-width" :--tag-border-width}
+   ".kushi-tag"    {"font-weight" :--text-wee-bold
+                    "font-family" :--primary-font-family}
+   ".dark .kushi-radio-input"                                        {:bgc :black}
+   ".dark .kushi-checkbox-input"                                     {:bgc :black}
+   ".dark .kushi-checkbox-input:before"                              {:box-shadow :inset:1em:1em:black}
+   ".dark .kushi-slider-step-label.kushi-slider-step-label-selected" {:c :white}
+   ".dark .kushi-slider-step-label"                                  {:c :--gray300}
+   ])
 
-    (if (and kushi-ui-theming?
-             (or (not darks?)
-                 (not lights?)))
-      (let [[darks lights]
-            (util/partition-by-pred (fn [[k _]]
-                                      (and (string? k)
-                                           (string/starts-with? k ".dark ")))
-                                    coll)]
-        (into {} (if lights? lights darks)))
-      coll)))
-
-(def base-theme-map
-  {:css-reset css-reset
-   :utility-classes utility-classes
-   :tokens tokens
-   :font-loading font-loading
-   ;; This needs a different name?
-   :ui merged-ui})
+(defn base-theme-map
+  []
+  (let [{ui2            :styles
+         variant-tokens :token-pairs} (tokenizer variant-values)]
+    {:css-reset       css-reset
+     :utility-classes utility-classes
+     :design-tokens   (let [color-tokens       (colors->tokens colors {:format :css :expanded? true})
+                            alias-color-tokens (colors->alias-tokens semantic-aliases {:expanded? true})]
+                        (into []
+                              (concat color-tokens
+                                      alias-color-tokens
+                                      variant-tokens
+                                      design-tokens)))
+     :font-loading    font-loading
+     :ui              (into []
+                            (concat ui ui2 ui*))
+     }))
 
