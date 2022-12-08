@@ -1,7 +1,6 @@
 (ns kushi.ui.utility
   (:require
    [kushi.utils :refer [deep-merge]]
-   [kushi.config :refer [user-config]]
    [kushi.utils :as util]))
 
 (def combo-flex-utility-classes
@@ -64,7 +63,7 @@
    :debug-grid-16         {:background "transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMklEQVR4AWOgCLz/b0epAa6UGuBOqQHOQHLUgFEDnAbcBZ4UGwDOkiCnkIhdgNgNxAYAiYlD+8sEuo8AAAAASUVORK5CYII=) repeat top left "}
    :debug-grid-8-solid    {:background "white url(data:image/gif;base64,R0lGODdhCAAIAPEAAADw/wDx/////wAAACwAAAAACAAIAAACDZQvgaeb/lxbAIKA8y0AOw==) repeat top left"}
    :debug-grid-16-solid   {:background "white url(data:image/gif;base64,R0lGODdhEAAQAPEAAADw/wDx/xXy/////ywAAAAAEAAQAAACIZyPKckYDQFsb6ZqD85jZ2+BkwiRFKehhqQCQgDHcgwEBQA7) repeat top left"}
-   :bordered              {:border-color :silver
+   :bordered              {:border-color :currentColor
                            :border-style :solid
                            :border-width "1px"}
    :wireframe             {:outline-color :silver
@@ -109,6 +108,46 @@
                            :inset-block-start  "100%"
                            :inset-inset-start  "50%"
                            :transform          "translateX(-50%)"}
+
+  ;; northwest
+   :northwest-inside {:position :absolute :inset-block-start 0 :inset-inline-start 0  :transform "translate(0, 0)"}
+   :northwest {:position :absolute :inset-block-start 0 :inset-inline-start 0  :transform "translate(-50%, -50%)"}
+   :northwest-outside {:position :absolute :inset-block-start 0 :inset-inline-start 0  :transform "translate(-100%, -100%)"}
+
+  ;; north
+   :north-inside {:position :absolute :inset-block-start 0 :inset-inline-start :50%  :transform "translate(-50%, 0)"}
+   :north {:position :absolute :inset-block-start 0 :inset-inline-start :50%  :transform "translate(-50%, -50%)"}
+   :north-outside {:position :absolute :inset-block-start 0 :inset-inline-start :50%  :transform "translate(-50%, -100%)"}
+
+  ;; east
+   :east-inside {:position :absolute :inset-block-start :50% :inset-inline-end 0  :transform "translate(0, -50%)"}
+   :east {:position :absolute :inset-block-start :50% :inset-inline-end 0  :transform "translate(50%, -50%)"}
+   :east-outside {:position :absolute :inset-block-start :50% :inset-inline-end 0  :transform "translate(100%, -50%)"}
+
+  ;; northeast
+   :northeast-inside {:position :absolute :inset-block-start 0 :inset-inline-end 0  :transform "translate(0, 0)"}
+   :northeast {:position :absolute :inset-block-start 0 :inset-inline-end 0  :transform "translate(50%, -50%)"}
+   :northeast-outside {:position :absolute :inset-block-start 0 :inset-inline-end 0  :transform "translate(100%, -100%)"}
+
+  ;; southwest
+   :southwest-inside {:position :absolute :inset-block-end 0 :inset-inline-start 0  :transform "translate(0, 0)"}
+   :southwest {:position :absolute :inset-block-end 0 :inset-inline-start 0  :transform "translate(-50%, 50%)"}
+   :southwest-outside {:position :absolute :inset-block-end 0 :inset-inline-start 0  :transform "translate(-100%, 100%)"}
+
+  ;; south
+   :south-inside {:position :absolute :inset-block-end 0 :inset-inline-start :50%  :transform "translate(-50%, 0)"}
+   :south {:position :absolute :inset-block-end 0 :inset-inline-start :50%  :transform "translate(-50%, 50%)"}
+   :south-outside {:position :absolute :inset-block-end 0 :inset-inline-start :50%  :transform "translate(-50%, 100%)"}
+
+  ;; southeast
+   :southeast-inside {:position :absolute :inset-block-end 0 :inset-inline-end 0  :transform "translate(0, 0)"}
+   :southeast {:position :absolute :inset-block-end 0 :inset-inline-end 0  :transform "translate(50%, 50%)"}
+   :southeast-outside {:position :absolute :inset-block-end 0 :inset-inline-end 0  :transform "translate(100%, 100%)"}
+
+  ;; west
+   :west-inside {:position :absolute :inset-block-start :50% :inset-inline-start 0  :transform "translate(0, -50%)"}
+   :west {:position :absolute :inset-block-start :50% :inset-inline-start 0  :transform "translate(-50%, -50%)"}
+   :west-outside {:position :absolute :inset-block-start :50% :inset-inline-start 0  :transform "translate(-100%, -50%)"}
 
 
     ;; Surfaces, buttons, containers
@@ -226,11 +265,21 @@
    :ultra-slow    {:transition-duration :--duration-ultra-slow}
 
 
-   ;; Surfaces, buttons, containers
+   ;; Surfaces, buttons, containers 2D
    ;; ------------------------------------------------------
    :rounded       {:border-radius :--rounded}
    :sharp         {:border-radius 0}
-   :elevated      {:box-shadow :--elevated}
+   :pill          {:border-radius :9999px}
+
+
+   ;; Surfaces, buttons, containers 3D
+   ;; ------------------------------------------------------
+   :debossed      {:text-shadow "0 1px 2px hsl(0deg 0% 100% / 55%), 0 -1px 2px hsl(0deg 0% 0% / 27%)"}
+   :embossed      {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}
+   :convex        {:background-image "linear-gradient(180deg, hsl(0deg 0% 100% / 20%), transparent, hsl(0deg 0% 0% / 15%))"}
+   :concave       {:background-image "linear-gradient(180deg, hsl(0deg 0% 0% / 15%), transparent, hsl(0deg 0% 100% / 20%))"}
+   :elevated      {:box-shadow    :--elevated}
+
 
    ;; Controls
    ;; ------------------------------------------------------
