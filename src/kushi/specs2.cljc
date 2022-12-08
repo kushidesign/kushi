@@ -41,8 +41,8 @@
    Bookends the pattern string with \"^\" and \"$\"."
   [pattern x]
   (when (or (string? x) (keyword? x) (symbol? x))
-   (let [s (kw?->s x)]
-     (re-find (re-pattern (str "^" pattern "$")) s))))
+    (let [s (kw?->s x)]
+      (re-find (re-pattern (str "^" pattern "$")) s))))
 
 (defn symbol-present? [coll]
   (some #(if (coll? %)
@@ -56,11 +56,11 @@
    silently break the rest of the css that comes after it in a css file."
   ([expr] (balanced-parens? (clojure.string/split expr #"") 0))
   ([[x & xs] count]
-    (cond (neg? count) false
-          (nil? x) (zero? count)
-          (= x "(") (recur xs (inc count))
-          (= x ")") (recur xs (dec count))
-          :else (recur xs count))))
+   (cond (neg? count) false
+         (nil? x) (zero? count)
+         (= x "(") (recur xs (inc count))
+         (= x ")") (recur xs (dec count))
+         :else (recur xs count))))
 
 ;; SPECS -----------------------------------------------------------------
 
@@ -100,12 +100,12 @@
 ;; This will NOT work: `":after:hover:c"`
 (s/def ::with-valid-pseudo-order
   (s/and
-   ::s|kw
-   #(let [s (kw?->s %)]
-      (if (and (re-find #":" s)
-               (re-find (re-pattern css-pseudo-element-re-fast) (str ":" s)))
-        (not (re-find (re-pattern css-pseudo-element-followed-by-pseudo-class-re) s))
-        true))))
+    ::s|kw
+    #(let [s (kw?->s %)]
+       (if (and (re-find #":" s)
+                (re-find (re-pattern css-pseudo-element-re-fast) (str ":" s)))
+         (not (re-find (re-pattern css-pseudo-element-followed-by-pseudo-class-re) s))
+         true))))
 
 (s/def ::tokenized-css-alternation
   (s/and ::s|kw
@@ -175,29 +175,29 @@
 
 (s/def ::cssfn-list-nested
   (s/and
-   seq?
-   (s/cat :cssfn-name (s/+ symbol?)
-          :cssfn-args (s/* ::css-value-scalar))))
+    seq?
+    (s/cat :cssfn-name (s/+ symbol?)
+           :cssfn-args (s/* ::css-value-scalar))))
 
 (s/def ::cssfn-list
   (s/and
-   seq?
-   (s/cat :cssfn-name (s/+ symbol?)
-          :cssfn-args (s/* (s/or :css-value-scalar  ::css-value-scalar
-                                 :cssfn-list-nested ::cssfn-list-nested)))))
+    seq?
+    (s/cat :cssfn-name (s/+ symbol?)
+           :cssfn-args (s/* (s/or :css-value-scalar  ::css-value-scalar
+                                  :cssfn-list-nested ::cssfn-list-nested)))))
 
 (s/def ::cssfn-list-defclass-nested
   (s/and
-   seq?
-   (s/cat :cssfn-name (s/+ symbol?)
-          :cssfn-args (s/* ::css-value-scalar-no-bindings))))
+    seq?
+    (s/cat :cssfn-name (s/+ symbol?)
+           :cssfn-args (s/* ::css-value-scalar-no-bindings))))
 
 (s/def ::cssfn-list-defclass
   (s/and
-   seq?
-   (s/cat :cssfn-name (s/+ symbol?)
-          :cssfn-args (s/* (s/or :css-value-scalar-no-bindings  ::css-value-scalar-no-bindings
-                                 :cssfn-list-defclass-nested    ::cssfn-list-defclass-nested)))))
+    seq?
+    (s/cat :cssfn-name (s/+ symbol?)
+           :cssfn-args (s/* (s/or :css-value-scalar-no-bindings  ::css-value-scalar-no-bindings
+                                  :cssfn-list-defclass-nested    ::cssfn-list-defclass-nested)))))
 
 (s/def ::css-shorthand-inner-vector-member
   (s/or :css-value-scalar ::css-value-scalar
@@ -214,10 +214,10 @@
              :count 1))
 
 (s/def ::symbol-present
-       #(symbol-present? %))
+  #(symbol-present? %))
 
 (s/def ::no-symbol-present
-       #(not (symbol-present? %)))
+  #(not (symbol-present? %)))
 
 (s/def ::css-shorthand-vector-defclass
   (s/and ::css-shorthand-vector
@@ -236,19 +236,19 @@
          ::with-valid-pseudo-order))
 
 (s/def ::css-value-scalar
- (s/or :number                   number?
-       :runtime-binding          symbol?
-       :css-val-alphanumeric     ::css-val-alphanumeric
-       :cssvar-name              ::cssvar-name))
+  (s/or :number                   number?
+        :runtime-binding          symbol?
+        :css-val-alphanumeric     ::css-val-alphanumeric
+        :cssvar-name              ::cssvar-name))
 
 (s/def ::css-value-scalar-no-bindings
- (s/or :number                   number?
-       :css-val-alphanumeric     ::css-val-alphanumeric
-       :cssvar-name ::cssvar-name))
+  (s/or :number                   number?
+        :css-val-alphanumeric     ::css-val-alphanumeric
+        :cssvar-name ::cssvar-name))
 
 (s/def ::pseudo-element-content
- (s/and string?
-        #(re-find #"^\"[^\"]*\"$" %)))
+  (s/and string?
+         #(re-find #"^\"[^\"]*\"$" %)))
 
 (s/def ::style-tuple-value
   (s/or :css-value-scalar       ::css-value-scalar
@@ -290,8 +290,8 @@
 
 (s/def ::cssvar-tokenized*
   #(and
-    (re-find (re-pattern (str "^" cssvar-name-re)) (name %))
-    (re-find (re-pattern (str "--" css-val-re-base "$")) (name %))))
+     (re-find (re-pattern (str "^" cssvar-name-re)) (name %))
+     (re-find (re-pattern (str "--" css-val-re-base "$")) (name %))))
 
 (s/def ::cssvar-tokenized
   (s/and keyword?
@@ -304,8 +304,8 @@
 
 ;; CSS RESET -------------------------------------------------------------
 (s/def ::css-reset-selector (s/or
-                             :string? string?
-                             :vector? (s/and vector? #(seq %) (s/coll-of string?))))
+                              :string? string?
+                              :vector? (s/and vector? #(seq %) (s/coll-of string?))))
 
 ;; TOKENIZED STYLE -------------------------------------------------------
 (s/def ::tokenized-style
@@ -332,10 +332,10 @@
                           :cssvar-tuple ::cssvar-tuple))))
 
 (s/def ::stylemap-conformance
-       (s/and map?
-              (s/every (fn [[k v]]
-                         (and (s/valid? ::style-tuple-prop k)
-                              (s/valid? ::style-tuple-value v))))))
+  (s/and map?
+         (s/every (fn [[k v]]
+                    (and (s/valid? ::style-tuple-prop k)
+                         (s/valid? ::style-tuple-value v))))))
 (s/def ::style
   #(s/valid? ::stylemap %)
   #_(s/every #_::style-tuple (fn [[k v]]
@@ -405,9 +405,9 @@
         :dot-kw-classname ::dot-kw-classname))
 
 (s/def ::defclass
-       (s/cat :defclass-name     ::defclass-name
-              :defclass-style    (s/* ::defclass-style-or-class)
-              :defclass-stylemap (s/? ::defclass-stylemap)))
+  (s/cat :defclass-name     ::defclass-name
+         :defclass-style    (s/* ::defclass-style-or-class)
+         :defclass-stylemap (s/? ::defclass-stylemap)))
 
 
 
@@ -459,27 +459,27 @@
 (s/def ::src (s/or :string? string? :coll-of-strings? (s/coll-of string?)))
 
 (s/def ::font-face-map
-       (s/keys :req-un [::font-family ::src]
-               :opt-un [::ascent-override
-                        ::decent-override
-                        ::font-display
-                        ::font-stretch
-                        ::font-style
-                        ::font-weight
-                        ::font-variant
-                        ::font-feature-settings
-                        ::font-variation-settings
-                        ::line-gap-override
-                        ::unicode-range]))
+  (s/keys :req-un [::font-family ::src]
+          :opt-un [::ascent-override
+                   ::decent-override
+                   ::font-display
+                   ::font-stretch
+                   ::font-style
+                   ::font-weight
+                   ::font-variant
+                   ::font-feature-settings
+                   ::font-variation-settings
+                   ::line-gap-override
+                   ::unicode-range]))
 
 (s/def ::add-font-face-args
   (s/cat :opts ::font-face-map))
 
 (s/def ::system-font-stack-weight
-       #{300 400 500 700})
+  #{300 400 500 700})
 
 (s/def ::add-system-font-stack-args
-       (s/coll-of ::system-font-stack-weight))
+  (s/coll-of ::system-font-stack-weight))
 
 (defonce valid-font-face-map-ks
   (->> ::font-face-map
@@ -495,15 +495,15 @@
 ;; CSS-VARS -------------------------------------------------------------
 
 (s/def ::css-var-name-string
- (s/and string? #(re-find #"^--\S+" %)))
+  (s/and string? #(re-find #"^--\S+" %)))
 
 (s/def ::css-var-name-kw
- (s/and keyword?
-        #(s/valid? ::css-var-name-string (name %))))
+  (s/and keyword?
+         #(s/valid? ::css-var-name-string (name %))))
 
 (s/def ::css-var-name
- (s/or :keyword? ::css-var-name-kw
-       :string?  ::css-var-name-string))
+  (s/or :keyword? ::css-var-name-kw
+        :string?  ::css-var-name-string))
 
 
 ;; DEFKEYFRAMES ----------------------------------------------------------
@@ -522,9 +522,9 @@
   (s/tuple ::keyframe ::keyframe-stylemap))
 
 (s/def ::defkeyframes-args
- (s/cat :keyframes-name (s/or :symbol symbol?
-                              :quoted-symbol ::quoted-symbol)
-        :keyframes      (s/+ ::keyframe-tuple)))
+  (s/cat :keyframes-name (s/or :symbol symbol?
+                               :quoted-symbol ::quoted-symbol)
+         :keyframes      (s/+ ::keyframe-tuple)))
 
 
 ;; THEME -----------------------------------------------------------------
@@ -545,11 +545,9 @@
                               #(s/valid? ::stylish-map (apply hash-map %))))
 (s/def ::ui ::stylish-pairs)
 (s/def ::utility-classes ::stylish-pairs)
-(s/def ::tokens-map-key #{:global :alias})
-(s/def ::tokens (s/map-of ::tokens-map-key
-                          (s/map-of ::cssvar-name
-                                    #(and (s/valid? ::style-tuple-value %)
-                                          (not (s/valid? ::style-tuple-value-imbalanced-string %))))))
+(s/def ::tokens (s/map-of ::cssvar-name
+                          #(and (s/valid? ::style-tuple-value %)
+                                (not (s/valid? ::style-tuple-value-imbalanced-string %)))))
 (s/def ::font-loading (s/and map?
                              (s/keys :opt-un
                                      [::google-fonts
