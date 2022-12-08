@@ -23,8 +23,7 @@
 (def user-defined-keyframes (atom {}))
 (def user-defined-font-faces (atom []))
 (def google-font-maps (atom []))
-(def global-tokens (atom []))
-(def alias-tokens (atom []))
+(def design-tokens (atom []))
 (def theming-tokens (atom []))
 (def used-tokens (atom []))
 (def ->css-to-be-printed-previously (atom nil))
@@ -40,17 +39,13 @@
   (reset! user-defined-keyframes {})
   (reset! user-defined-font-faces [])
   (reset! google-font-maps [])
-  (reset! global-tokens [])
-  (reset! alias-tokens [])
+  (reset! design-tokens [])
   (reset! theming-tokens [])
   (reset! used-tokens [])
   (reset! initial-build? false))
 
-(defn add-global-token! [var]
-  (swap! global-tokens conj var))
-
-(defn add-alias-token! [var]
-  (swap! alias-tokens conj var))
+(defn add-design-token! [var]
+  (swap! design-tokens conj var))
 
 (defn add-used-token! [var]
   (swap! used-tokens conj var))
