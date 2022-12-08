@@ -34,9 +34,10 @@
   (let [[opts attrs & children] (opts+children args)
         {:keys [icon-position mui-icon-style background]
          mi    :mui-icon
-         :or   {mi             nil
-                mui-icon-style :filled
-                icon-position  :inline-start}} opts
+         :or   {mi             nil}} opts
+
+        icon-position  (or icon-position :inline-start)
+        mui-icon-style (or mui-icon-style :filled)
         text-node-label? (and (seq children)
                               (some string? children))
         legit-icon? (and mi (string? mi) (not (string/blank? mi)) )
@@ -59,12 +60,10 @@
           :.transition
           :.pointer
           :.relative
+          :.neutral
           [:pis pis]
           [:pie pie]
           :pb--0.8em
-          :&.minimal:pb--0
-          :&.minimal:pi--0
-          :&.minimal:bgc--transparent
           {:data-kushi-ui      :button
            :data-kushi-tooltip true
            :aria-expanded      "false"
