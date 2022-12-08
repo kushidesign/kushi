@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.core
   (:require
+   [par.core :refer [!? ?]]
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
@@ -171,14 +172,14 @@
               (let [m       (assoc m :ex ex)
                     ex-args (merge m (util/exception-args m))]
                 (printing2/caught-exception ex-args)))))]
-  (swap! state2/user-defined-keyframes assoc (keyword nm) frames)
-  (update-cache! frames cache-map)))
+    (swap! state2/user-defined-keyframes assoc (keyword nm) frames)
+    (update-cache! frames cache-map)))
 
 
 ;; DESIGN TOKENS ---------------------------------------------------------
 
 (defn map-of-all-tokens []
-  (into {} (concat @state2/global-tokens @state2/alias-tokens)))
+  (into {} @state2/design-tokens))
 
 (defn resolve-token-value [m kw]
   (let [v (kw m)]
@@ -392,8 +393,7 @@
   []
   (let [{:keys [css-reset
                 font-loading-opts
-                global-toks
-                alias-toks
+                design-tokens
                 tokens-in-theme
                 styles
                 utility-classes]} (theme/theme)]
@@ -413,8 +413,9 @@
    ;; TODO - conditionalize these 2 for prod vs dev
    ;; - OR -
    ;; always add to state and then conditionalize writing of css chunks based on user config setting
-    (doseq [tok global-toks] (state2/add-global-token! tok))
-    (doseq [tok alias-toks] (state2/add-alias-token! tok))
+    ;; (pprint :theme!)
+    ;; (pprint design-tokens)
+    (doseq [tok design-tokens] (state2/add-design-token! tok))
 
    ;; TODO - tokens from theme go in here.
     (doseq [tok tokens-in-theme] (state2/add-theming-token! tok))
@@ -461,3 +462,5 @@
     `(do
        (apply kushi.core/add-google-font! ~google-font-maps)
        (kushi.core/css-sync! ~css-sync))))
+
+
