@@ -28,7 +28,7 @@
 (defn s->cssvar
   ([x] (s->cssvar x nil))
   ([x fallback]
-    (str "var(--" (name x) (when fallback (str ", " fallback)) ")")))
+   (str "var(--" (name x) (when fallback (str ", " fallback)) ")")))
 
 (defn maybe-wrap-css-var [x]
   (if (token? x)
@@ -39,8 +39,8 @@
 
 (defn replace-last [item coll]
   (replace-nth (dec (count coll))
-                      item
-                      coll))
+               item
+               coll))
 
 (defn deep-merge [& maps]
   (apply merge-with (fn [& args]
@@ -114,6 +114,14 @@
   [ks m]
   (into [] (keep (fn [k] (when-let [v (get m k)] [k v])) ks)))
 
+(defn sort-a-with-b
+  "Takes two sequential collections and orders coll a by coll b."
+  [a b]
+  (sort-by
+   (->> (range)
+        (interleave b)
+        (apply hash-map))
+   a))
 
 ;; Utility fns below are taken from: http://weavejester.github.io/medley/medley.core.html
 
