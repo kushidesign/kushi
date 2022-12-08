@@ -6,9 +6,9 @@
    [kushi.ui.dom :refer (set-overlay-position! conditional-display?)]))
 
 
- (defclass
-   ^{:kushi/chunk :kushi/kushi-ui-defclass}
-   kushi-tooltip-placement-inline
+(defclass
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-tooltip-placement-inline
   {:top       :50%!important
    :bottom    :unset!important
    :transform "translateY(-50%)!important"
@@ -51,8 +51,8 @@
    :bottom    :unset!important})
 
 (defn tooltip+parent [e]
- (let [node (-> e .-currentTarget)
-       tooltip (.querySelector node ".kushi-tooltip")]
+  (let [node (-> e .-currentTarget)
+        tooltip (.querySelector node ".kushi-tooltip")]
     (when tooltip
       (when-let [parent (.closest node "[data-kushi-tooltip='true']")]
         [tooltip parent]))))
@@ -83,6 +83,9 @@
           :br
           "Tooltips in Kushi have no arrow indicator and are placed automatically depending on the parent element's relative postition in the viewport."
           "Tooltips are placed above or below the parent element that they describe."
+          :br
+          :br
+          "The font-size for the tooltip should be set with the `:--tooltip-font-size` token."
           :br
           :br
           "Overriding the automatic inline or block (or both) placement is available via the options `:-block-offset` and `:-inline-offset`."
@@ -117,7 +120,7 @@
         (merge-attrs
          (sx 'kushi-tooltip
              :.absolute
-             :border-radius--:--tooltip-border-radius
+             :.rounded
              :fs--:--tooltip-font-size
              :bgc--:--tooltip-background-color
              :c--:--tooltip-color
@@ -142,11 +145,6 @@
              ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding-block"  :--tooltip-padding-block]
              ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding-inline" :--tooltip-padding-inline]
              {:class                              [placement-class]
-              ;; :style                              {"has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):transition" :none
-              ;;                                      "has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):opacity"    1
-              ;;                                      "has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):width"      :fit-content
-              ;;                                      "has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):height"     :auto
-              ;;                                      "has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding"    :0.75em:1.5em}
               :data-kushi-conditional-display     (if (= false display-on-hover?) "true" "false")
               :data-kushi-tooltip-position-block  block-offset
               :data-kushi-tooltip-position-inline inline-offset
