@@ -2,10 +2,8 @@
   (:require
    [kushi.config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]
-   [kushi.shorthand :as shorthand]
    [kushi.printing2 :as printing2]
    [kushi.specs2 :as specs2]
-   [kushi.state2 :as state2]
    [kushi.ui.basetheme :as basetheme]
    [kushi.ui.utility :refer [utility-class-ks]]
    [expound.alpha :as expound]
@@ -39,170 +37,44 @@
               "\n" (.getMessage e) "\n")))))))
 
 
-(defn mods&prop [css-prop]
-  (let [mods&prop* (-> css-prop name (string/split #":"))
-        hydrated (-> mods&prop* last keyword shorthand/key-sh name)
-        mods&prop (into [] (concat (drop-last mods&prop*) [hydrated]))]
-    mods&prop))
 
-(defn variant-name [kw]
-  (when-not (= kw :default)
-    (str (name kw))))
-
-(defn coll->var [compo variant css-prop css-val]
-  (keyed compo variant css-prop css-val)
-  (let [variant   (when-not (= variant :default) (name variant))
-        mods&prop (mods&prop css-prop)
-        parts     (remove nil? (concat ["kushi" (name compo) variant] mods&prop))]
-    [(string/join "-" parts) (if (number? css-val) css-val (name css-val))]))
-
-(defn resolve-tokens*
-  [{:keys [coll global-tokens alias-tokens global?] :as m}]
-  (keep (fn [{:keys [val]}]
-          (when (util/token? val)
-            (let [global-tok (some-> val keyword global-tokens util/stringify)
-                  alias-tok (when-not global?
-                              (some-> val keyword alias-tokens util/stringify))]
-              (keyed global-tok alias-tok)
-              (when-let [v (or global-tok alias-tok)]
-                {:type   (if (or global? global-tok) :global :alias)
-                 :cssvar val
-                 :val    v}))))
-        coll))
-
-(defn resolve-tokens
-  "Called internally for individual variants in themes. Sets up css tokens and resolves the
-   corrent token chain based on merged theme global and alias token maps.
-
-   Example below assumes the merged theme map includes such a :ui entry that contains, among other things, the following:
-   {:ui {:kushi {:button {:primary {:hover:bgc       :--positive400
-                                    :text-decoration :underline}}}}}
-
-   (resolve-tokens
-    [[\"hover:bgc\"       [\"kushi-button-primary-hover-background-color\" \"--positive400\"]]
-     [\"text-decoration\" [\"kushi-button-primary-text-decoration\"        \"underline\"]]]
-    alias-tokens
-    global-tokens)
-
-   =>
-
-   ({:type :kushi-ui,
-     :cssvar \"--kushi-button-primary-hover-background-color\",
-     :val \"--positive400\"}
-
-    {:type :kushi-ui,
-     :cssvar \"--kushi-button-primary-text-decoration\",
-     :val \"underline\"}
-
-    {:type :alias, :cssvar \"--positive400\", :val \"--green400\"}
-
-    {:type :global,
-     :cssvar \"--green400\",
-     :val \"hsl(var(--kushi-green-hue), 75%, 68%)\"})"
-
-  [flat alias-tokens global-tokens]
-
-  (let [compo-toks* (map (fn [[_ [prop val]]]
-                           {:type :kushi-ui
-                            :cssvar (str "--" (name prop))
-                            :val val})
-                         flat)
-        tok-maps    (keyed global-tokens alias-tokens)
-        toks1       (resolve-tokens* (merge tok-maps
-                                            {:coll             compo-toks*
-                                             :alias-tokens-map alias-tokens}))
-        toks2       (resolve-tokens* (merge tok-maps
-                                            {:coll              toks1
-                                             :global-tokens-map global-tokens
-                                             :global?           true}))
-        ret         (concat compo-toks* toks1 toks2)]
-    ret))
+(defn inner3 [[css-prop css-val]]
+  (let [css-val (if (number? css-val) css-val (name css-val))]
+    [(name css-prop) css-val]))
 
 
-  (defn inner2 [kui-key [css-prop css-val]]
-    (let [mods&prop   (mods&prop css-prop)
-          parts       (-> kui-key
-                          name
-                          (string/split #"\."))
-          parts*      (concat (some->> parts
-                                       (remove string/blank?)
-                                       (remove nil?)
-                                       (map #(if (= % "*") "global" %)))
-                              mods&prop)
-          theme-token (if (= (first parts*) "dark ")
-                        (str (string/join "-" (rest parts*)) "-inverse")
-                        (string/replace (string/join "-" parts*) #" -" "_"))]
-      [(name css-prop) [theme-token  (if (number? css-val) css-val (name css-val))]]))
-
-
-(defn inner3 [kui-key [css-prop css-val]]
-    (let [mods&prop (mods&prop css-prop)
-          css-val   (if (number? css-val) css-val (name css-val))
-          css-val   (if (:add-theming-css-vars? user-config)
-                      (let [parts       (-> kui-key
-                                            name
-                                            (string/split #"\."))
-                            parts*      (concat (some->> parts
-                                                         (remove string/blank?)
-                                                         (remove nil?)
-                                                         (map #(if (= % "*") "global" %)))
-                                                mods&prop)
-                            theme-token (if (= (first parts*) "dark ")
-                                          (str (string/join "-" (rest parts*)) "-inverse")
-                                          (string/replace (string/join "-" parts*) #" -" "_"))]
-                        [theme-token css-val])
-                      css-val)]
-      [(name css-prop) css-val]))
-
-
-(def sample-merged-theme
-  {:code                  {:color :red}
-   :.kushi-button.primary {:hover:bgc       :--positive400
-                           :text-decoration :underline}})
+(defn remove-global-selector
+  "Simple-bad-global-selector-key warning."
+  [m]
+  (if (and (map? m) (:* m))
+    (do (printing2/simple-bad-global-selector-key-warning {:form-meta    {:file "kushi.ui.theme/theme"}
+                                                           :invalid-args {:ui (:* m)}})
+        (dissoc m :*))
+    m))
 
 
 (defn by-component
-  [{:keys [base-ui
-           user-ui
-           base-ui-ks
-           user-ui-ks
-           global-tokens
-           alias-tokens]}]
-  (let [merged (merge base-ui user-ui)
-        ui-ks (distinct (concat base-ui-ks user-ui-ks))
-        ordered (util/ordered-pairs ui-ks merged)
-        ret2   (reduce (fn [acc [kui-key m]]
-                         (let [flat     (mapv (partial inner3 kui-key) m)
-                               toks     (when (:add-theming-css-vars? user-config)
-                                          (resolve-tokens flat alias-tokens global-tokens))
-                               stylemap (reduce (fn [acc [css-prop x]]
-                                                  (if (vector? x)
-                                                    (let [[css-var fallback] x]
-                                                      (->> fallback
-                                                           util/maybe-wrap-css-var
-                                                           (util/s->cssvar css-var)
-                                                           (assoc acc css-prop)))
-                                                    (assoc acc css-prop (util/maybe-wrap-css-var x))))
-                                                {}
-                                                flat)
-                               ret      (conj acc
-                                              [{:style                stylemap
-                                                :kushi-selector       (name kui-key)
-                                                :kushi-theme-selector (name kui-key)}
-                                               toks])]
-                           ret))
-                       []
-                       ordered)]
-    ret2))
+  [acc [kui-key m]]
+  (let [flat     (mapv inner3 m)
+        stylemap (reduce (fn [acc [css-prop x]]
+                           (if (vector? x)
+                             (let [[css-var fallback] x]
+                               (->> fallback
+                                    util/maybe-wrap-css-var
+                                    (util/s->cssvar css-var)
+                                    (assoc acc css-prop)))
+                             (assoc acc css-prop (util/maybe-wrap-css-var x))))
+                         {}
+                         flat)
+        ret      (conj acc
+                       [{:style                stylemap
+                         :kushi-selector       (name kui-key)
+                         :kushi-theme-selector (name kui-key)}])]
+    #_(println :by-component-reduce (keyed flat stylemap ret))
+    ret))
 
-(defn vars-by-type [vars* kw]
-  (->>  vars*
-        (filter #(= (:type %) kw))
-        (map (juxt :cssvar :val))
-        distinct
-        (sort-by first)))
 
-(defn varize-overrides* [m]
+(defn varize-utility-classes* [m]
   (reduce (fn [acc [k v]]
             (assoc acc
                    k
@@ -212,9 +84,9 @@
           {}
           m))
 
-(defn varize-overrides [overrides]
+(defn varize-utility-classes [overrides]
   (reduce (fn [acc [k m]]
-            (assoc acc k (varize-overrides* m)))
+            (assoc acc k (varize-utility-classes* m)))
           {}
           overrides))
 
@@ -251,94 +123,86 @@
     (keyed google-font-maps add-system-font-stack? system-font-stack-weights)))
 
 
-(defn merged-theme-props [m1 m2]
-  (let [font-loading  (merge (:font-loading m1) (:font-loading m2))
-        global-tokens (merge (some-> m1 :tokens :global) (some-> m2 :tokens :global))
-        alias-tokens  (merge (some-> m1 :tokens :alias) (some-> m2 :tokens :alias))]
-    (keyed font-loading global-tokens alias-tokens)))
+(defn merged-theme-props [base-theme-map user-theme-map]
+  (let [
+        base-tokens    (:design-tokens base-theme-map)
+        user-tokens    (:design-tokens user-theme-map)
+        base-tokens-ks (util/kwargs-keys base-tokens)
+        user-tokens-ks (util/kwargs-keys user-tokens)
+        tokens-ks      (distinct (concat base-tokens-ks user-tokens-ks))
+        ;; merge base and user tokens
+        design-tokens  (apply merge
+                              (map #(some->> %
+                                             :design-tokens
+                                             (partition 2)
+                                             (mapv (fn [pair] (into [] pair)))
+                                             (into {}))
+                                   [base-theme-map user-theme-map]))
+        ;; preserve authored token ordering
+        design-tokens (mapv (fn [k] [k (k design-tokens)]) tokens-ks)
+        font-loading   (merge (:font-loading base-theme-map) (:font-loading user-theme-map))]
+    (keyed font-loading design-tokens)))
 
-;; simple-bad-global-selector-key-warning
-(defn remove-global-selector [m]
-  (if (and (map? m) (:* m))
-    (do (printing2/simple-bad-global-selector-key-warning {:form-meta    {:file "kushi.ui.theme/theme"}
-                                                           :invalid-args {:ui (:* m)}})
-        (dissoc m :*))
-    m))
+(defn utility-classes [m ks]
+  (let [utility-classes (when (:add-kushi-defclass? user-config)
+                          (some-> m :utility-classes varize-utility-classes))]
+    (util/ordered-pairs ks utility-classes)))
+
+(defn user-theme-map []
+  (let [m (resolve-user-theme (:theme user-config) :user)
+        ret (when m
+              (if (s/valid? ::specs2/theme m)
+                m
+                (printing2/simple-warning2
+                 {:commentary  (str  "kushi.ui.theme/theme\n"
+                                     "Invalid value(s) in user theming config:\n"
+                                     ansi/bold-font (:theme user-config) ansi/reset-font)
+                  :expound-str (expound/expound-str ::specs2/theme m)})))]
+    ret))
 
 
-(defn tokens-in-theme
-  [overrides tok-maps]
-  (let [override-tok-maps (->> overrides
-                               vals
-                               (map vals)
-                               (apply concat)
-                               distinct
-                               (keep #(when (util/nameable? %) (hash-map :val (name %)))))
-        override-toks1    (resolve-tokens* (merge tok-maps {:coll override-tok-maps}))
-        override-toks2    (resolve-tokens* (merge tok-maps {:coll    override-toks1
-                                                            :global? true}))
-        override-toks     (concat override-toks1 override-toks2)
-
-        vars*             (apply concat (map second by-component))
-        vars              (concat vars* override-toks)
-        tokens-in-theme   (->> [:global :alias :kushi-ui]
-                               (map #(vars-by-type vars %))
-                               (apply concat))]
-    tokens-in-theme))
+(defn merge-base-and-user-ui
+  [base-theme-map user-theme-map]
+  (let [base-ui*   (:ui base-theme-map)
+        user-ui*   (:ui user-theme-map)
+        base-ui    (->> base-ui* (apply hash-map) remove-global-selector)
+        user-ui    (->> user-ui* (apply hash-map) remove-global-selector)
+        user-ui-ks (util/kwargs-keys user-ui*)
+        base-ui-ks (util/kwargs-keys base-ui*)
+        merged     (merge base-ui user-ui)
+        ks-ui      (distinct (concat base-ui-ks user-ui-ks))
+        ordered-ui (util/ordered-pairs ks-ui merged)]
+    (keyed merged ks-ui ordered-ui)))
 
 
 (defn theme []
-  (let [user-theme-map    (resolve-user-theme (:theme user-config) :user)
-        user-theme-map    (when user-theme-map
-                            (if (s/valid? ::specs2/theme user-theme-map)
-                              user-theme-map
-                              (printing2/simple-warning2
-                               {:commentary  (str  "kushi.ui.theme/theme\n"
-                                                   "Invalid value(s) in user theming config:\n"
-                                                   ansi/bold-font (:theme user-config) ansi/reset-font)
-                                :expound-str (expound/expound-str ::specs2/theme user-theme-map)})))
-        base-theme-map    (resolve-user-theme 'kushi.ui.basetheme/base-theme-map)
+  (let [user-theme-map                       (user-theme-map)
 
-        {:keys [font-loading
-                global-tokens
-                alias-tokens]}  (merged-theme-props base-theme-map user-theme-map)
+        base-theme-map                       (basetheme/base-theme-map)
+        ;; base-theme-map                       (resolve-user-theme 'kushi.ui.basetheme/base-theme-map)
 
-        base-ui*          (:ui base-theme-map)
-        user-ui*          (:ui user-theme-map)
-        base-ui           (remove-global-selector base-ui*)
-        user-ui           (->> user-ui* (apply hash-map) remove-global-selector)
-        base-ui-ks        (mapcat util/kwargs-keys [basetheme/ui basetheme/kushi-ui])
-        user-ui-ks        (util/kwargs-keys user-ui*)
+        {:keys [ordered-ui]}                 (merge-base-and-user-ui base-theme-map user-theme-map)
 
-        ;; ui-theming related start
-        by-component-args {:base-ui       base-ui
-                           :user-ui       user-ui
-                           :user-ui-ks    user-ui-ks
-                           :base-ui-ks    base-ui-ks
-                           :global-tokens global-tokens
-                           :alias-tokens  alias-tokens}
-        by-component      (by-component by-component-args)
-        styles            (map first by-component)
-        ;;ui-theming related end
+        {:keys [font-loading design-tokens]} (merged-theme-props base-theme-map user-theme-map)
 
-        overrides         (base-theme-map :utility-classes)
-        [global-toks
-         alias-toks]      (map #(sort-by first %) [global-tokens alias-tokens])
-        utility-classes   (when (:add-kushi-defclass? user-config)
-                            (varize-overrides overrides))
-        utility-classes   (util/ordered-pairs utility-class-ks utility-classes)
-        css-reset         (when (:add-css-reset? user-config)
-                            (or (:css-reset user-theme-map)
-                                (:css-reset base-theme-map)))
-        font-loading-opts (let [opts (font-loading-opts font-loading)]
-                            (if (false? (:add-system-font-stack? user-config))
-                              (assoc opts :add-system-font-stack? false)
-                              opts))]
+        by-component                         (reduce by-component [] ordered-ui)
+
+        styles                               (map first by-component)
+
+        utility-classes                      (utility-classes base-theme-map utility-class-ks)
+
+        css-reset                            (when (:add-css-reset? user-config)
+                                               (or (:css-reset user-theme-map)
+                                                   (:css-reset base-theme-map)))
+
+        font-loading-opts                    (let [opts (font-loading-opts font-loading)]
+                                               (if (false? (:add-system-font-stack? user-config))
+                                                 (assoc opts :add-system-font-stack? false)
+                                                 opts))]
     (merge
      (keyed
       css-reset
       utility-classes
       font-loading-opts
       styles
-      global-toks
-      alias-toks))))
+      design-tokens))))
