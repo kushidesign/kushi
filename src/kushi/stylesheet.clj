@@ -50,21 +50,21 @@
         print? (and content (not (string/blank? content)))
         content (str cmnt content)]
     (when print?
-     (reset! css-text (str @css-text "\n" content))) ))
+      (reset! css-text (str @css-text "\n" content))) ))
 
 
 (defn design-tokens-css
   [{:keys [pretty-print?]}
    toks]
   (when (:add-design-tokens? user-config)
-   (let [gvecs (->> toks
-                    (mapv (fn [[prop val]] {prop (util/maybe-wrap-css-var val)}))
-                    (cons (or (when-let [selector* (:design-tokens-root user-config)]
-                                (name selector*))
-                              ":root"))
-                    (into [])
-                    vector)]
-     (garden/css {:pretty-print? pretty-print?} gvecs))))
+    (let [gvecs (->> toks
+                     (mapv (fn [[prop val]] {prop (util/maybe-wrap-css-var val)}))
+                     (cons (or (when-let [selector* (:design-tokens-root user-config)]
+                                 (name selector*))
+                               ":root"))
+                     (into [])
+                     vector)]
+      (garden/css {:pretty-print? pretty-print?} gvecs))))
 
 
 (defn defkeyframes->css [[nm frames]]
@@ -150,10 +150,10 @@
    (create-css-text nil))
   ([caller]
    #_(println "\n"
-            (str "kushi.stylesheet/create-css-text from "
-                 (or caller "kushi.stylesheet/create-css-file"))
-            "\n"
-            "(count @state2/css) => " (count @state2/css))
+              (str "kushi.stylesheet/create-css-text from "
+                   (or caller "kushi.stylesheet/create-css-file"))
+              "\n"
+              "(count @state2/css) => " (count @state2/css))
    (let [pretty-print?   true
          printables      (atom [])
          to-be-printed   (atom {})
@@ -181,16 +181,10 @@
 
     ;; design-tokens
      (when (:add-design-tokens? user-config)
-       (append-css! (let [coll @state2/global-tokens]
-                      {:k       :global-tokens
+       (append-css! (let [coll @state2/design-tokens]
+                      {:k       :design-tokens
                        :coll    coll
-                       :comment "global design tokens"
-                       :content (design-tokens-css m coll)}))
-
-       (append-css! (let [coll @state2/alias-tokens]
-                      {:k       :alias-tokens
-                       :coll    coll
-                       :comment "alias design tokens"
+                       :comment "Design tokens"
                        :content (design-tokens-css m coll)}))
 
        (append-css! (let [coll @state2/theming-tokens]
@@ -277,19 +271,19 @@
            num-tokens)))
 
 #_(defn gzip
-  [input output & opts]
-  (use 'clojure.java.io)
-  (with-open [output (-> output clojure.java.io/output-stream GZIPOutputStream.)]
-    (with-open [rdr (clojure.java.io/reader input)]
-      (doall (apply clojure.java.io/copy rdr output opts)))))
+    [input output & opts]
+    (use 'clojure.java.io)
+    (with-open [output (-> output clojure.java.io/output-stream GZIPOutputStream.)]
+      (with-open [rdr (clojure.java.io/reader input)]
+        (doall (apply clojure.java.io/copy rdr output opts)))))
 
 #_(defmacro ^:private with-entry
-  [zip entry-name & body]
-  `(let [^ZipOutputStream zip# ~zip]
-     (.putNextEntry zip# (ZipEntry. ~entry-name))
-     ~@body
-     (flush)
-     (.closeEntry zip#)))
+    [zip entry-name & body]
+    `(let [^ZipOutputStream zip# ~zip]
+       (.putNextEntry zip# (ZipEntry. ~entry-name))
+       ~@body
+       (flush)
+       (.closeEntry zip#)))
 
 
 (defn add-stylesheet? []
