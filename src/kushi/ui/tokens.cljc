@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.ui.tokens
   (:require
-   [par.core :refer [!? ?]]
    [kushi.color :refer [semantic-aliases]]))
 
 (def design-tokens
