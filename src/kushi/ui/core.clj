@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.ui.core
-    (:require [clojure.string :as string]
-              [clojure.pprint :refer [pprint]]
-              [clojure.walk :as walk]))
+  (:require [clojure.string :as string]
+            [clojure.pprint :refer [pprint]]
+            [clojure.walk :as walk]))
 
 (defmacro &*->val
   ([opts attrs children coll f]

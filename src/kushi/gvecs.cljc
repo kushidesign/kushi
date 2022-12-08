@@ -1,7 +1,7 @@
 (ns kushi.gvecs
- (:require [kushi.utils :as util]
-           [kushi.config :refer [user-config]]
-           [garden.stylesheet]))
+  (:require [kushi.utils :as util]
+            [kushi.config :refer [user-config]]
+            [garden.stylesheet]))
 
 (defn inner1
   [acc [compound-selector coll]]
@@ -38,7 +38,7 @@
         mq-gvecs-ordered
         (apply concat mq-gvecs-ordered*)]
 
-     mq-gvecs-ordered))
+    mq-gvecs-ordered))
 
 
 (defn gvecs [coll]
@@ -65,4 +65,4 @@
         gvecs
         (concat base-gvecs mq-gvecs-ordered)]
 
-     gvecs))
+    gvecs))

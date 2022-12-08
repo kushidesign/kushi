@@ -120,7 +120,7 @@
                  step-marker-bar?     (= step-marker :bar)
                  step-marker-none?     (= step-marker :none)
                  step-marker-content   (when (contains? #{:dot :bar :none} step-marker)
-                                           (case step-marker :dot "·" :bar "|" " "))]
+                                         (case step-marker :dot "·" :bar "|" " "))]
              [:span (sx 'kushi-slider-step-label
                         (when step-marker-dot? :.kushi-slider-step-label-marker-dot)
                         (when step-marker-bar? :.kushi-slider-step-label-marker-bar)
@@ -221,19 +221,19 @@
         label-selected-class       "kushi-slider-step-label-selected"]
 
     #_(js/console.log  (keyed steps
-                            num-steps
-                            default-index
-                            label-size-class
-                            label-selected-class
-                            opts))
+                              num-steps
+                              default-index
+                              label-size-class
+                              label-selected-class
+                              opts))
 
     [:div (merge-attrs (sx 'kushi-slider
-                                :.flex-col-c
-                                :.relative
-                                :ai--c
-                                :w--100%
-                                :pi--1em:2em)
-                            wrapper-attrs)
+                           :.flex-col-c
+                           :.relative
+                           :ai--c
+                           :w--100%
+                           :pi--1em:2em)
+                       wrapper-attrs)
 
      [slider-labels (keyed steps
                            num-steps

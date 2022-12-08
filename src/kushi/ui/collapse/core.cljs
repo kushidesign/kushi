@@ -27,11 +27,11 @@
     (.setAttribute node (name attr) newv)))
 
 (defn outer-height [el]
-(let [styles (js/window.getComputedStyle el)
-      margin-top (js/parseFloat (.-marginTop styles))
-      margin-bottom (js/parseFloat (.-marginBottom styles))
-      ret  (+ margin-top margin-bottom (js/Math.ceil (.-offsetHeight el)))]
-  ret))
+  (let [styles (js/window.getComputedStyle el)
+        margin-top (js/parseFloat (.-marginTop styles))
+        margin-bottom (js/parseFloat (.-marginBottom styles))
+        ret  (+ margin-top margin-bottom (js/Math.ceil (.-offsetHeight el)))]
+    ret))
 
 (defn other-expanded-node
   [accordian-node clicked-node]
@@ -130,7 +130,7 @@
             :desc    ["When a value of `true` is passed, the collapse is initially rendered in an expanded state."
                       "Optional"]}
            ]}
-   [& args]
+  [& args]
   (let [[opts attr & children]  (opts+children args)
         {:keys [header-attrs
                 body-attrs
@@ -149,9 +149,9 @@
      [collapse-header
       (merge-attrs header-attrs
                    (sx #_["[aria-expanded='false']+.kushi-collapse-body-wrapper:d" :none]
-                       {:on-click       on-click
-                        :aria-expanded  (if expanded? "true" "false")
-                        :-icon-position icon-position}))
+                    {:on-click       on-click
+                     :aria-expanded  (if expanded? "true" "false")
+                     :-icon-position icon-position}))
       [collapse-header-contents opts]]
 
      ;; collapse body

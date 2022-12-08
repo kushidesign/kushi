@@ -1,11 +1,11 @@
 (ns kushi.mods
- (:require [kushi.utils :as util :refer [keyed]]
-           [kushi.specs2 :as specs2]
-           [clojure.string :as string]
-           [kushi.state2 :as state2]))
+  (:require [kushi.utils :as util :refer [keyed]]
+            [kushi.specs2 :as specs2]
+            [clojure.string :as string]
+            [kushi.state2 :as state2]))
 
 (defn parent-or-ancestor [x s]
- (when-not (or (string/blank? x) (nil? x)) (str x s)) )
+  (when-not (or (string/blank? x) (nil? x)) (str x s)) )
 
 (defn leading-pseudo-classes [s]
   (string/replace s
@@ -24,7 +24,7 @@
         dark-re          #"^dark:(.+)"
         [_ mods-dark]    (re-find dark-re mods1*)
         dark?            (or mods-dark (= mods1* "dark"))
-        mods1            (or mods-dark (if (= "dark"mods1*) "" mods1*))
+        mods1            (or mods-dark (if (= "dark" mods1*) "" mods1*))
         parent-re        #"\:?has-parent\((.+)\)"
         ancestor-re      #"\:?has-ancestor\((.+)\)"
         [_ parent*]      (re-find parent-re mods1)
@@ -45,18 +45,18 @@
                            ret)]
 
     #_(when (state2/trace? )
-      (println (keyed
-          mods1*
-          mods-dark
-          mods1
-          mods3
-          mods
-          parent*
-          parent
-          ancestor*
-          ancestor
-          mods2*
-          mods2
-          mods3
-          mods)))
+        (println (keyed
+                  mods1*
+                  mods-dark
+                  mods1
+                  mods3
+                  mods
+                  parent*
+                  parent
+                  ancestor*
+                  ancestor
+                  mods2*
+                  mods2
+                  mods3
+                  mods)))
     (keyed parent ancestor mods)))

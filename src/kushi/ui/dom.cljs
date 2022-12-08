@@ -193,7 +193,7 @@
      js/window
      :scrollBy
      #js
-     {"top" y "left" x "behavior" behavior})))
+      {"top" y "left" x "behavior" behavior})))
 
 (defn scroll-into-view
   ([el]

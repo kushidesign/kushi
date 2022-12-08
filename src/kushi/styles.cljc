@@ -1,12 +1,12 @@
 (ns kushi.styles
- (:require
-  [clojure.spec.alpha :as s]
-  [clojure.walk :as walk]
-  [clojure.string :as string]
-  [kushi.selector :as selector]
-  [kushi.state2 :as state2]
-  [kushi.utils :as util :refer [keyed]]
-  [kushi.specs2 :as specs2]))
+  (:require
+   [clojure.spec.alpha :as s]
+   [clojure.walk :as walk]
+   [clojure.string :as string]
+   [kushi.selector :as selector]
+   [kushi.state2 :as state2]
+   [kushi.utils :as util :refer [keyed]]
+   [kushi.specs2 :as specs2]))
 
 (defn- fnsym->string [sexp s]
   (concat [(str s (-> sexp first name))] (rest sexp)))
@@ -323,22 +323,22 @@
 
 
   ;; just for debugging
-  #_(when (state2/trace?)
-    (println (keyed
+    #_(when (state2/trace?)
+        (println (keyed
         ;; process
         ;; shared-class?
         ;; clean*
         ;; attrs*
-        attrs
+                  attrs
         ;; by-kind
         ;; clean-stylemap*
         ;; clean-stylemap
         ;; style-tuples-from-tokenized
         ;; all-style-tuples
-        css-vars
-        )))
+                  css-vars
+                  )))
 
-  (merge (when defclass-style-tuples
-           {:defclass-style-tuples defclass-style-tuples})
-         {:all-style-tuples all-style-tuples2}
-         (keyed css-vars attrs classlist selector))))
+    (merge (when defclass-style-tuples
+             {:defclass-style-tuples defclass-style-tuples})
+           {:all-style-tuples all-style-tuples2}
+           (keyed css-vars attrs classlist selector))))

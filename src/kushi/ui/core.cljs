@@ -20,10 +20,10 @@
 (defn unwrapped-children [children]
   (let [fc (first children)]
     (if (and
-         (seq? children)
-         (= 1 (count children))
-         (seq? fc)
-         (seq fc))
+          (seq? children)
+          (= 1 (count children))
+          (seq? fc)
+          (seq fc))
       fc
       children)))
 
@@ -60,16 +60,16 @@
 
 (defn hiccup-tag
   [{:keys [k re-str]}]
-   (let [re-str (or re-str "!")
-         tagstr  (name k)
-         target? (some? (re-find (re-pattern (str ".+\\:\\" re-str "$")) tagstr))
-         tag     (if (keyword? k)
-                   (-> tagstr
-                       (string/replace #":\!$|:\!children$|:\!attr$" "")
-                       keyword)
-                   k)]
-     (when target? (keyed tagstr tag target?))
-     [tag target?]))
+  (let [re-str (or re-str "!")
+        tagstr  (name k)
+        target? (some? (re-find (re-pattern (str ".+\\:\\" re-str "$")) tagstr))
+        tag     (if (keyword? k)
+                  (-> tagstr
+                      (string/replace #":\!$|:\!children$|:\!attr$" "")
+                      keyword)
+                  k)]
+    (when target? (keyed tagstr tag target?))
+    [tag target?]))
 
 (defn target-tag? [re-str k]
   (when (keyword k)
@@ -90,10 +90,10 @@
             (cond
               (pred x) '()
               (hiccup? x) (let [[failures [success & _]]
-                              (->> x
-                                   (map path-in)
-                                   (split-with not))]
-                          (when success (cons (count failures) success)))))]
+                                (->> x
+                                     (map path-in)
+                                     (split-with not))]
+                            (when success (cons (count failures) success)))))]
     (path-in coll)))
 
 (defn nested-hiccup? [coll]
@@ -140,8 +140,8 @@
                                   with-hashed-keys)
         node-w-children      (into [] (concat [tag attr] merged-children))
         hiccup-w-children     (if (seq children-path)
-                                   (assoc-in hiccup* children-path node-w-children)
-                                   node-w-children)]
+                                (assoc-in hiccup* children-path node-w-children)
+                                node-w-children)]
     (keyed merged-children hiccup-w-children)))
 
 ;; TODO: Is this redundant with kushi.core/merge-attrs ?

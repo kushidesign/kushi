@@ -15,4 +15,4 @@
           :>span:jc--fs
           {:data-kushi-ui :title})
       attrs)
-      [apply label children]]))
+     [apply label children]]))

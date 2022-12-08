@@ -5,7 +5,7 @@
 ;; Generic
 ;; --------------------------------------------------------------------------
 (defn data-kushi-attr [x]
- (-> x name (string/replace #"^kushi\.ui\." "") (string/replace #".core$" "")) )
+  (-> x name (string/replace #"^kushi\.ui\." "") (string/replace #".core$" "")) )
 
 (defn ->fixed-float [points n]
   (.toFixed (.parseFloat js/Number n) points))
@@ -33,3 +33,5 @@
 
 (defn ->pairs [coll]
   (->> coll (partition 2) (map vec)))
+
+

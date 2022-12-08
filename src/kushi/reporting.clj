@@ -25,11 +25,11 @@
           ;; first change :kushi-ui-theming-defclass key to :kushi-ui-theming-defclass
           ;; so display log map keys are of a relatively uniform display length
           coll             (mapv (fn [[k v]]
-                                    [(if (= k :kushi-ui-theming-defclass)
-                                       :kushi-ui-theming*
-                                       k)
-                                     v])
-                                  coll)
+                                   [(if (= k :kushi-ui-theming-defclass)
+                                      :kushi-ui-theming*
+                                      k)
+                                    v])
+                                 coll)
           max-label-length (->> coll
                                 (into {})
                                 keys
@@ -128,4 +128,4 @@
                       report-line-items-simple)))))
 
 (defn report! [build-id msg]
- (println (str "\n" (kushi-logging-prefix build-id version) msg "\n")))
+  (println (str "\n" (kushi-logging-prefix build-id version) msg "\n")))

@@ -115,14 +115,13 @@
    :scope])
 
 (def pseudo-classes
-   (into #{} pseudo-classes*))
+  (into #{} pseudo-classes*))
 
 
 (def rule-type-report-order
   [:css-reset
    :font-face
-   :global-tokens
-   :alias-tokens
+   :design-tokens
    :theming-tokens
    :keyframes
    :kushi-ui-theming
@@ -136,4 +135,4 @@
   (into {} (map (fn [k] [k (name k)]) rule-type-report-order)))
 
 
-(def token-types [:global-tokens :alias-tokens :theming-tokens :used-tokens])
+(def token-types [:design-tokens :alias-tokens :theming-tokens :used-tokens])

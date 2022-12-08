@@ -14,15 +14,15 @@
 
 (defn- data-sx-attr [form-meta]
   (when @state2/KUSHIDEBUG
-          (when-let [{:keys [file line column]} form-meta]
-            (when-not (some->> file (re-find #"kushi/ui/"))
-              (let [v (str file ":"  line ":" column)
-                    k (some->> user-config
-                               :data-attr-name
-                               name
-                               (str "data-")
-                               keyword)]
-                {k v})))))
+    (when-let [{:keys [file line column]} form-meta]
+      (when-not (some->> file (re-find #"kushi/ui/"))
+        (let [v (str file ":"  line ":" column)
+              k (some->> user-config
+                         :data-attr-name
+                         name
+                         (str "data-")
+                         keyword)]
+          {k v})))))
 
 (defn clean-args
   [{:keys [args :kushi/process form-meta] :as m}]

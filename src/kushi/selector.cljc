@@ -18,9 +18,9 @@
   (let [autogen              (str "_" cache-key)
         prefixed-name-for-el (some-> assigned-class name)
         selector*            (or
-                              kushi-selector
-                              prefixed-name-for-el
-                              autogen)
+                               kushi-selector
+                               prefixed-name-for-el
+                               autogen)
         selector             (if kushi-selector
                                selector*
                                (str (when-not (string? assigned-class) ".") selector*))

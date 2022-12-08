@@ -1,5 +1,5 @@
 (ns kushi.shorthand
- (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]))
 
 (def border-styles
   {:h :hidden
@@ -271,8 +271,8 @@
 (defn val-sh [v k]
   (if (and (keyword? k) (keyword? v))
     (or
-     (some-> css-sh k :vals v)
-     (some-> css-sh-by-propname k v) v)
+      (some-> css-sh k :vals v)
+      (some-> css-sh-by-propname k v) v)
     v))
 
 
@@ -283,37 +283,37 @@
 
 ;; list of shorthands for docs
 #_(doseq [x (sort (map (fn [[k v]]
-                       (let [n (- 5 (-> k name count))]
-                         (str k (string/join (repeat n " ")) "; " (:name v))))
-                     css-sh))]
-  (println x))
+                         (let [n (- 5 (-> k name count))]
+                           (str k (string/join (repeat n " ")) "; " (:name v))))
+                       css-sh))]
+    (println x))
 
 ;; list of enum shorthands
 #_(println (->> css-sh
-         (map (fn [[k {prop-name :name prop-vals :vals}]]
-                [(when prop-vals
-                   (map (fn [[prop-val-sh prop-val]]
-                          (let [tkw (str (name k) "--" (name prop-val-sh))
-                                n (- 9 (count tkw))]
-                            (str tkw (string/join (repeat n " ")) "; " (name prop-name) ": " (name prop-val))))
-                        prop-vals))]))
-         flatten
-         sort
-         (map keyword)
-         (remove nil?)))
+                (map (fn [[k {prop-name :name prop-vals :vals}]]
+                       [(when prop-vals
+                          (map (fn [[prop-val-sh prop-val]]
+                                 (let [tkw (str (name k) "--" (name prop-val-sh))
+                                       n (- 9 (count tkw))]
+                                   (str tkw (string/join (repeat n " ")) "; " (name prop-name) ": " (name prop-val))))
+                               prop-vals))]))
+                flatten
+                sort
+                (map keyword)
+                (remove nil?)))
 
 ;; list of autocompletes
 #_(println (->> css-sh
-         (map (fn [[k {prop-name :name prop-vals :vals}]]
-                [(if prop-vals
-                   (map (fn [[_ prop-val]] (str (name prop-name) "--" (name prop-val))) prop-vals)
-                   [(str (name prop-name) "--")])
+                (map (fn [[k {prop-name :name prop-vals :vals}]]
+                       [(if prop-vals
+                          (map (fn [[_ prop-val]] (str (name prop-name) "--" (name prop-val))) prop-vals)
+                          [(str (name prop-name) "--")])
 
-                 (if prop-vals
-                   (map (fn [[prop-val-sh _]] (str (name k) "--" (name prop-val-sh))) prop-vals)
-                   [(str (name k) "--")])]))
-         flatten
-         sort
-         (map keyword)
-         ))
+                        (if prop-vals
+                          (map (fn [[prop-val-sh _]] (str (name k) "--" (name prop-val-sh))) prop-vals)
+                          [(str (name k) "--")])]))
+                flatten
+                sort
+                (map keyword)
+                ))
 

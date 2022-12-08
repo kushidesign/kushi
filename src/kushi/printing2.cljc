@@ -9,9 +9,9 @@
 (defn re-seq-pos [pattern string]
   (let [m (re-matcher pattern string)]
     ((fn step []
-      (when (. m find)
-        (cons {:start (. m start) :end (. m end) :group (. m group)}
-          (lazy-seq (step))))))))
+       (when (. m find)
+         (cons {:start (. m start) :end (. m end) :group (. m group)}
+               (lazy-seq (step))))))))
 
 (defn replace-in-str [f in from len nspaces]
   (let [before*         (subs in 0 from)
@@ -225,14 +225,14 @@
     :as   m}]
 
   #_(println :simple-warning2
-      (keyed
+             (keyed
       ;;  sym
       ;;  args
       ;;  hint
       ;;  fname
       ;;  form-meta
       ;;  commentary
-       problems))
+              problems))
 
   (let [file-info-str           (file+line+col-str form-meta)
         fname                   (some-> process name)

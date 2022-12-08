@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.problems
- (:require [kushi.utils :as util :refer [keyed]]
-           [clojure.spec.alpha :as s]
-           [kushi.specs2 :as specs2]))
+  (:require [kushi.utils :as util :refer [keyed]]
+            [clojure.spec.alpha :as s]
+            [kushi.specs2 :as specs2]))
 
 (defn problematics [coll problems*]
   (let [last-index (dec (count coll))

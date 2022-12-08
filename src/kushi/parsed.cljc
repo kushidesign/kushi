@@ -1,11 +1,11 @@
 (ns kushi.parsed
- (:require [kushi.utils :as util :refer [keyed]]
-           [clojure.spec.alpha :as s]
-           [clojure.string :as string]
-           [kushi.shorthand :as shorthand]
-           [kushi.mods :as mods]
-           [kushi.config :refer [user-config]]
-           [kushi.specs2 :as specs2]))
+  (:require [kushi.utils :as util :refer [keyed]]
+            [clojure.spec.alpha :as s]
+            [clojure.string :as string]
+            [kushi.shorthand :as shorthand]
+            [kushi.mods :as mods]
+            [kushi.config :refer [user-config]]
+            [kushi.specs2 :as specs2]))
 
 (defn parsed [coll {:keys [selector]}]
   (doall

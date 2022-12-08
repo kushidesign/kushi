@@ -11,7 +11,7 @@
 (defn open-kushi-modal [e]
   (let [modal-wrapper (.closest (-> e .-target) ".kushi-modal-wrapper")
         modal-node (aget (.-childNodes modal-wrapper) 1)]
-        (.toggleAttribute modal-node "aria-modal")))
+    (.toggleAttribute modal-node "aria-modal")))
 
 (defn dismiss-button []
   [:button

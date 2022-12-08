@@ -114,33 +114,33 @@
            (every? number? x))))
 
 (defn- m->str [acc {family :family
-                   {:keys [normal italic]} :styles
-                   :as m}]
+                    {:keys [normal italic]} :styles
+                    :as m}]
   (if-not (and (string? family)
                (or (weight-coll? normal) (weight-coll? italic)))
-   (do
-     (js/console.warn
-      "\n[WARNING] kushi.core/add-google-font!"
-      "\n\nMalformed font map argument:\n\n"
-      m
-      "\n\nMust be a map with the entries :family and :styles"
-      "\n\n:family must be a string representing a font family"
-      "\n\n:styles must be a map with the entries of :normal and/or :italic, both of which must be vectors of numbers representing font weights."
-      "\n\n\nExample:\n"
-      {:family "Fira Code" :styles {:normal [300 400] :italic [300 400]}})
-     acc)
-   (let [italics? (weight-coll? italic)
-         weights* (if-not italics?
-                    (weights->str normal)
-                    (concat (weights->str normal 0)
-                            (weights->str italic 1)))
-         weights  (str (when italics? "ital,")
-                       "wght@"
-                       (string/join ";" weights*))]
-     (conj acc (str "family="
-                    (string/replace family #" " "+")
-                    ":"
-                    weights)))))
+    (do
+      (js/console.warn
+       "\n[WARNING] kushi.core/add-google-font!"
+       "\n\nMalformed font map argument:\n\n"
+       m
+       "\n\nMust be a map with the entries :family and :styles"
+       "\n\n:family must be a string representing a font family"
+       "\n\n:styles must be a map with the entries of :normal and/or :italic, both of which must be vectors of numbers representing font weights."
+       "\n\n\nExample:\n"
+       {:family "Fira Code" :styles {:normal [300 400] :italic [300 400]}})
+      acc)
+    (let [italics? (weight-coll? italic)
+          weights* (if-not italics?
+                     (weights->str normal)
+                     (concat (weights->str normal 0)
+                             (weights->str italic 1)))
+          weights  (str (when italics? "ital,")
+                        "wght@"
+                        (string/join ";" weights*))]
+      (conj acc (str "family="
+                     (string/replace family #" " "+")
+                     ":"
+                     weights)))))
 
 ;; TODO add check maps keys & vals with alert
 (defn add-google-font!
@@ -163,42 +163,42 @@
   (assoc attrs-base :class (distinct prefixed-classlist) :style css-vars))
 
 (def dom-element-events
-   [:on-change
-    :on-blur
-    :on-aux-click
-    :on-click
-    :on-composition-end
-    :on-composition-start
-    :on-composition-update
-    :on-context-menu
-    :on-copy
-    :on-cut
-    :on-dbl-click
-    :on-error
-    :on-focus
-    :on-focus-in
-    :on-focus-out
-    :on-fullscreen-change
-    :on-fullscreen-error
-    :on-key-down
-    :on-key-up
-    :on-mouse-down
-    :on-mouse-enter
-    :on-mouse-leave
-    :on-mouse-move
-    :on-mouse-out
-    :on-mouse-over
-    :on-mouse-up
-    :on-paste
-    :on-scroll
-    :on-security-policy-violation
-    :on-select
-    :on-touch-cancel
-    :on-touch-end
-    :on-touch-move
-    :on-touch-start
-    :on-webkit-mouse-force-down
-    :on-wheel ])
+  [:on-change
+   :on-blur
+   :on-aux-click
+   :on-click
+   :on-composition-end
+   :on-composition-start
+   :on-composition-update
+   :on-context-menu
+   :on-copy
+   :on-cut
+   :on-dbl-click
+   :on-error
+   :on-focus
+   :on-focus-in
+   :on-focus-out
+   :on-fullscreen-change
+   :on-fullscreen-error
+   :on-key-down
+   :on-key-up
+   :on-mouse-down
+   :on-mouse-enter
+   :on-mouse-leave
+   :on-mouse-move
+   :on-mouse-out
+   :on-mouse-over
+   :on-mouse-up
+   :on-paste
+   :on-scroll
+   :on-security-policy-violation
+   :on-select
+   :on-touch-cancel
+   :on-touch-end
+   :on-touch-move
+   :on-touch-start
+   :on-webkit-mouse-force-down
+   :on-wheel ])
 
 (defn- merge-attrs-warning
   [v k n]
