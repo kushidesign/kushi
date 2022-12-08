@@ -20,22 +20,20 @@
   [{:keys [label
            icon-opposite?]
     :as   opts}]
-    (js/console.log :header-title [label
-                                   icon-opposite?])
-    (if (string? label)
-      (let [ico      [mui-icon
-                      (sx 'kushi-collapse-header-title-icon
-                          [:mie (when-not icon-opposite? :--icon-enhancer-inline-gap-ems)])
-                      (:mui-icon opts)]
-            title-sx (sx
-                      'kushi-collapse-header-title-contents
-                      {:style {:w                    (when icon-opposite? :100%)
-                               :>span.kushi-label:w  (when icon-opposite? :100%)
-                               :>span.kushi-label:jc (when icon-opposite? :space-between)}})]
-        (if icon-opposite?
-          [title title-sx label ico]
-          [title title-sx ico label]))
-      label))
+  (if (string? label)
+    (let [ico      [mui-icon
+                    (sx 'kushi-collapse-header-title-icon
+                        [:mie (when-not icon-opposite? :--icon-enhancer-inline-gap-ems)])
+                    (:mui-icon opts)]
+          title-sx (sx
+                    'kushi-collapse-header-title-contents
+                    {:style {:w                    (when icon-opposite? :100%)
+                             :>span.kushi-label:w  (when icon-opposite? :100%)
+                             :>span.kushi-label:jc (when icon-opposite? :space-between)}})]
+      (if icon-opposite?
+        [title title-sx label ico]
+        [title title-sx ico label]))
+    label))
 
 (defn collapse-header-contents
   [{:keys [label label-expanded mui-icon mui-icon-expanded icon-position]
