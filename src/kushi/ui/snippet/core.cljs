@@ -16,12 +16,12 @@
   (let [children (or children*
                      [[button
                        (sx 'kushi-copy-to-clipboard-button
-                           :p--5px
-                           :.tertiary
+                           :p--0px
+                           :.minimal
                            {:on-click add-temporary-tooltip!})
                        [:img
                         (sx 'kushi-copy-to-clipboard-button-graphic
-                            :h--60%
+                            :h--75%
                             :o--0.7
                             :hover:o--1
                             {:src copy-content-svg})]
