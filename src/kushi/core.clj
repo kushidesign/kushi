@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.core
   (:require
-   [par.core :refer [!? ?]]
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]

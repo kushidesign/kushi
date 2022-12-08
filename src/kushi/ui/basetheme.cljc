@@ -1,7 +1,6 @@
 (ns ^:dev/always kushi.ui.basetheme
   (:require
    [clojure.string :as string]
-   [par.core :refer [!? ?]]
    [kushi.ui.tokens :refer [design-tokens]]
    [kushi.ui.utility :refer [utility-classes]]
    [kushi.colors :refer [colors]]
