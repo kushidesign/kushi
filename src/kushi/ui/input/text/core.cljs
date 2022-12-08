@@ -20,32 +20,45 @@
             :default nil
             :desc    ["html attributes map applied to the div that wraps the outermost div of the component."
                       "This div wraps the label, input-wrapper div, and the helper text span."]}
+           {:name    label-placement
+            :type    #{:block-start :inline-start}
+            :default nil
+            :desc    "html attributes map applied to the `label` element associated with the `input` element, and end-enhancer div."}
+           {:name    input-label-attrs
+            :type    :map
+            :default nil
+            :desc    "html attributes map applied to the `label` element associated with the `input` element, and end-enhancer div."}
            {:name    input-wrapper-attrs
             :type    :map
             :default nil
             :desc    "html attributes map applied to the div that wraps the start-enhancer div, `input` element, and end-enhancer div."}]}
   [& args]
-  (let [[opts attrs & children] (opts+children args)
+  (let [[opts attrs & children]     (opts+children args)
         {:keys [label
+                label-placement
+                label-attrs
                 helper
-                attrs
                 outer-wrapper-attrs
                 wrapper-attrs
                 start-enhancer
-                end-enhancer]}   opts
+                end-enhancer]}      opts
         input-id (:id attrs)]
     [:div
      (merge-attrs
-      (sx 'kushi-text-input-outer-wrapper
+      (sx 'kushi-input
+          (when (= :inline-start label-placement) :.flex-row-fs)
           :ai--center)
       outer-wrapper-attrs)
-     (when label [:label
-                  (sx 'kushi-text-input-label
-                      :.small
-                      :mbe--0.5em
-                      :d--block
-                      {:for input-id})
-                  label])
+     (when label
+       [:label
+        (merge-attrs
+         (sx 'kushi-text-input-label
+             :.small
+             :mbe--0.5em
+             :d--block
+             {:for input-id})
+         label-attrs)
+        label])
      [:div
       (merge-attrs
        (sx 'kushi-text-input-wrapper
@@ -75,6 +88,7 @@
              :h--100%
              :w--100%
              :pi--0.5em
+             :pb--0.5em
              :placeholder:o--0.4
              {:type :text})
          attrs)]]
