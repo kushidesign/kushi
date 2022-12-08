@@ -1,5 +1,6 @@
 (ns kushi.ui.icon.mui.core
   (:require
+   [clojure.string :as string]
    [kushi.core :refer (merge-attrs sx inject-stylesheet defclass)]
    [kushi.ui.core :refer (defcom)]))
 
@@ -11,6 +12,14 @@
 (inject-stylesheet {:rel "stylesheet"
                     :href "https://fonts.googleapis.com/css2?family=Material+Icons&family=Material+Icons+Outlined&family=Material+Icons+Sharp&family=Material+Icons+Round&family=Material+Icons+Two+Tone"})
 
+(defn kw->string [coll]
+  (mapv #(cond
+           (= % :<>)
+           :<>
+           (keyword? %)
+           (-> % name (string/replace #"-" "_"))
+           :else %)
+        coll))
 
 (defclass kushi-mui-icon
   :.relative
@@ -28,7 +37,7 @@
      'kushi-mui-icon
      {:data-kushi-ui :mui-icon-outlined})
     &attrs)
-   [:span.material-icons-outlined &children]])
+   [:span.material-icons-outlined (kw->string &children)]])
 
 (defcom mui-icon-round
   [:div
@@ -37,7 +46,7 @@
      'kushi-mui-icon
      {:data-kushi-ui :mui-icon-round})
     &attrs)
-   [:span.material-icons-round &children]])
+   [:span.material-icons-round (kw->string &children)]])
 
 (defcom mui-icon-sharp
   [:div
@@ -46,7 +55,7 @@
      'kushi-mui-icon
      {:data-kushi-ui :mui-icon-sharp})
     &attrs)
-   [:span.material-icons-sharp &children]])
+   [:span.material-icons-sharp (kw->string &children)]])
 
 (defcom mui-icon-two-tone
   [:div
@@ -55,7 +64,7 @@
      'kushi-mui-icon
      {:data-kushi-ui :mui-icon-two-tone})
     &attrs)
-   [:span.material-icons-two-tone &children]])
+   [:span.material-icons-two-tone (kw->string &children)]])
 
 (defcom mui-icon
   [:div
@@ -64,4 +73,4 @@
      'kushi-mui-icon
      {:data-kushi-ui :mui-icon})
     &attrs)
-   [:span.material-icons &children]])
+   [:span.material-icons (kw->string &children)]])
