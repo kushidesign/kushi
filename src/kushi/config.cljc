@@ -92,12 +92,18 @@
    ;; Set this to false to leave out user theme-related classes
    :add-ui-theming?                true
 
-   ;; If :add-kushi-ui-theming-defclass? is set to false, it will not include defclasses
-   ;; for kushi.ui components (these are defined internally from namespaces within kushi.ui).
-   ;; You probably do not want to disable this unless you are developing on kushi itself.
+   ;; Set this to false to leave out all of kushi's built-in utility classes
    :add-kushi-defclass?            true
+
+   ;; Set this to false to leave out any shared classes created by the user via the defclass macro
    :add-user-defclass?             true
+
+   ;; Set this to false to leave out any styling classes created by the user via the sx macro
    :add-user-sx?                   true
+
+
+
+   ;; NOTE - probably just remove this option or rethink interface?
 
    ;; You can explicitly opt-in to include support for `kind` and `semantic` variants of certain kushi.ui components.
    ;; By default, support for all these variants is included in the css, so narrowing it will reduce
@@ -115,29 +121,6 @@
    :kushi-ui-variants              :all
 
 
-   ;; ADVANCED
-
-   ;; By default all theming classes from user or kushi.ui will be written like something like this:
-   ;; .kushi-button.secondary-negative {
-   ;;   background-color: var(--negative-background);
-   ;;   border-color: var(--negative-border);
-   ;;   color: var(--negative);
-   ;;   box-shadow: 0 0 5px red
-   ;; }
-
-   ;; If set to `true` all theming classes from user or kushi.ui be written like this,
-   ;; with the appropriate additional alias tokens added to the theming tokens css chunk:
-   ;; .kushi-button.secondary-negative {
-   ;;   background-color: var(--kushi-button-secondary-negative-background-color, var(--negative-background));
-   ;;   border-color: var(--kushi-button-secondary-negative-border-color, var(--negative-border));
-   ;;   color: var(--kushi-button-secondary-negative-color , var(--negative));
-   ;;   box-shadow: var(--kushi-button-secondary-negative-box-shadow, 0 0 5px red);
-   ;; }
-
-   ;; The more verbose option is probably not necessary unless you are doing one of the following:
-   ;; - Building tooling for interactively tweaking themes
-   ;; - Writing your theming config using a flat map of verbose css vars (not necessarily recommended)
-   :add-theming-css-vars?          false
 
 
 
