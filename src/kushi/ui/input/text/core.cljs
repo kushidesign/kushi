@@ -21,8 +21,8 @@
             :desc    ["html attributes map applied to the div that wraps the outermost div of the component."
                       "This div wraps the label, input-wrapper div, and the helper text span."]}
            {:name    label-placement
-            :type    #{:block-start :inline-start}
-            :default nil
+            :type    #{:block :inline}
+            :default :block-start
             :desc    "html attributes map applied to the `label` element associated with the `input` element, and end-enhancer div."}
            {:name    input-label-attrs
             :type    :map
@@ -42,11 +42,12 @@
                 wrapper-attrs
                 start-enhancer
                 end-enhancer]}      opts
-        input-id (:id attrs)]
+        input-id (:id attrs)
+        inline? (= :inline label-placement)]
     [:div
      (merge-attrs
       (sx 'kushi-input
-          (when (= :inline-start label-placement) :.flex-row-fs)
+          (when inline? :.flex-row-fs)
           :ai--center)
       outer-wrapper-attrs)
      (when label
@@ -54,7 +55,7 @@
         (merge-attrs
          (sx 'kushi-text-input-label
              :.small
-             :mbe--0.5em
+             [:mbe (when-not inline? :0.5em)]
              :d--block
              {:for input-id})
          label-attrs)
