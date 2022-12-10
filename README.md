@@ -250,7 +250,7 @@ This shorthand grammer is available for the most commonly used props:
 ```
 
 <!-- TODO maybe just link to source? -->
-See the complete list of supported css properties [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-shorthand-reference.md).
+See the complete list of supported css properties [here](https://github.com/paintparty/kushi/blob/main/docs/kushi-shorthand-reference.md).
 
 Shorthand grammer extends to cover enumerated values:
 ```Clojure
