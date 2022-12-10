@@ -17,7 +17,7 @@
   [node]
   (let [rect (.getBoundingClientRect node)
         x* (* 0.5 (- (.-right rect) (.-left rect)))
-        x  (+ (.-right rect) x*)
+        x  (+ (.-left rect) x*)
         y* (* 0.5 (- (.-bottom rect) (.-top rect)))
         y  (+ (.-top rect) y*)
         top? (> 0.5 (/ y js/window.innerHeight))
