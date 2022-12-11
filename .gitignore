@@ -15,16 +15,15 @@ pom.xml.asc
 .lsp
 .clj-kondo
 .calva
+.vscode
+.idea
 kushi.workspace.code-workspace
 
 
-/example/reagent/public/js
-/example/reagent/node_modules
-/example/reagent/target
-/example/reagent/yarn.lock
-/example/reagent/package-lock.json
-/example/reagent/.shadow-cljs
-/example/reagent/*.iml
-/example/reagent/.nrepl-port
-/example/reagent/.idea
-/example/reagent/public/css/kushi.css
+/docs/public/js
+/docs/node_modules
+/docs/target
+/docs/tmp
+/docs/.shadow-cljs
+/docs/*.iml
+/docs/.nrepl-port
