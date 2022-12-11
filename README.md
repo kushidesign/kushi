@@ -30,7 +30,7 @@
 
 - **A collection of Useful css utility classes**
 
-- **A default industry-standard breakpoint scale**
+- **Default industry-standard breakpoint scale**
 
 - **Auto-generated selectors to avoid pontential collisions**
 
@@ -139,7 +139,6 @@ You could also use shorthand syntax with style maps, and mix in tokenized keywor
        :id :my-id})])
 ```
 
-<br>
 In all three examples above, the `sx` macro would return the following attribute map with an auto-generated, hashed value for the `class` attribute:
 
 ```Clojure
@@ -152,7 +151,6 @@ When your build finishes, the following css will be written to disk:
 ```css
  ._680769808 { color: red; text-align: center; font-size: 18px; }
 ```
-<br>
 
 If you need or want to define your own classnames, you can supply your own classname by passing a quoted symbol as the first argument to sx:
 
@@ -181,7 +179,7 @@ In summary, the `kushi.core/sx` is a macro that returns an attribute map which c
   - A `class` property containing the correct auto-generated (or prefixed) classnames.
   - If necessary, a `style` property containing the correct auto-generated css variable names.
   - All the other attributes you specify in your attributes map (supplied as an optional last arg to `sx`).
-  - A dev-build-only `data-cjs` attribute for browser debugging. See [Using metadata](#helpful-metadata).
+  - A dev-build-only `data-cjs` attribute for browser debugging. See [Helpful metadata](#helpful-metadata).
 
 All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool).
 <!---You can optionally disable writing styles to disk and enable producton builds to [inject styles at runtime](#runtime-injection).
@@ -1176,7 +1174,7 @@ Below is a contrived example of creating a reusable, stateless, and composable c
 
 `defcom` is a macro that returns a component rendering function which accepts an optional attributes map, plus any number of children. The signature at the call site mirrros hiccup itself.
 
-Under the hood, `defcom` pulls out any keys in attr map that start with `:-` and put them in a separate `opts` map. This allows passing in various custom options within the attributes map that will not clash with existing html attributes. This opts map can be referenced in the `defcom` body with the `&opts` binding. `&attrs` and `&children` are also available. This ampersand-leading naming convention takes its cue from the special `&form` and `&env` bindings used by Clojure's own `defmacro`.
+Under the hood, `defcom` pulls out any keys in attr map that start with `:-` and puts them in a separate `opts` map. This allows passing in various custom options within the attributes map that will not clash with existing html attributes. This opts map can be referenced in the `defcom` body with the `&opts` binding. `&attrs` and `&children` are also available. This ampersand-leading naming convention takes its cue from the special `&form` and `&env` bindings used by Clojure's own `defmacro`.
 
 The example above also uses `kushi.core/merge-attrs` to carefully merge attribute maps that are created with `kushi.core/sx`.
 
@@ -1234,7 +1232,7 @@ The example above assumes the following:
 - The optional attributes map may contain the custom attributes `:-label`, `:-label-attrs`, `:-body-attrs`.
 - The values of `:-label-attrs` and `:-body-attrs` are html attribute maps.
 
-The helper function `kushi.ui.core/opts+children` will pull any keys prefixed with `:-` out of the attributes map and into a user `opts` map. `opts+children` always returns a vector in the form of `[user-opts attr child & more-childs]`.
+The helper function `kushi.ui.core/opts+children` will pull any keys prefixed with `:-` out of the attributes map and into a user `opts` map. `opts+children` always returns a vector in the form of `[user-opts attr child & more-children]`.
 
 <!-- ### Theming
 You can theme -->
