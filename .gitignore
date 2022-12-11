@@ -13,7 +13,7 @@ pom.xml.asc
 .hgignore
 .hg/
 .lsp
-.clj-kondo
+.clj-kondo/.cache
 .calva
 .vscode
 .idea
@@ -29,3 +29,4 @@ kushi.workspace.code-workspace
 /docs/.shadow-cljs
 /docs/*.iml
 /docs/.nrepl-port
+/docs/.clj-kondo/.cache
