@@ -1,5 +1,4 @@
 (ns kushi.ui.tooltip.events
-  (:require-macros [kushi.utils])
   (:require
    [kushi.ui.tooltip.core :refer (tooltip+parent remove-tooltip! expand-tooltip!)]
    [kushi.ui.dom :refer (conditional-display?)]))

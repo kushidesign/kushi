@@ -1,5 +1,4 @@
 (ns kushi.ui.collapse.core
-  (:require-macros [kushi.utils])
   (:require
    [kushi.core :refer (sx merge-attrs) :refer-macros (sx)]
    [clojure.string :as string]

@@ -1,5 +1,4 @@
 (ns kushi.ui.tooltip.core
-  (:require-macros [kushi.utils :refer (keyed)])
   (:require
    [kushi.core :refer (sx merge-attrs defclass)]
    [kushi.ui.core :refer (defcom opts+children)]
