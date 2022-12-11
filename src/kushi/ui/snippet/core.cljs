@@ -29,7 +29,8 @@
                                     :.xxxsmall
                                     :.rounded
                                     :ff--Inter
-                                    {:-display-on-hover? false})
+                                    {:-display-on-hover? false
+                                     :-placement (:-tooltip-placement opts)})
                         "Copied!"]]] )]
     (into [:div
            (merge-attrs
