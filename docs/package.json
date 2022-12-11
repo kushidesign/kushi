@@ -1,0 +1,18 @@
+{
+  "name": "kushi.design",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "shadow-cljs": "^2.20.2"
+  },
+  "scripts": {
+    "dev": "npx shadow-cljs watch demo",
+    "release": "npx shadow-cljs release demo",
+    "clean": "rm -rf public/js .shadow-cljs .cpcache"
+  },
+  "dependencies": {
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "tinycolor2": "^1.4.2"
+  }
+}

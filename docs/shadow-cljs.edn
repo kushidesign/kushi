@@ -1,0 +1,32 @@
+;; shadow-cljs configuration
+{
+ :source-paths   ["src"
+                  ;; "../kushi/src"
+                  ;; "../playground/src"
+                  ;; "../../cljc/par/src"
+                  ]
+
+ :dependencies   [
+                  [reagent/reagent                       "1.1.0"]
+                  [org.clojars.paintparty/kushi          "1.0.0-a.15"]
+                  ;; [org.clojars.paintparty/par            "1.1.0"]
+                  [binaryage/devtools                    "1.0.3"]
+                  [design.kushi/playground               "0.1.0-SNAPSHOT"]
+                  ]
+
+ :dev-http       {7777 "public"}
+
+ :cache-blockers #{kushi.core kushi.stylesheet}
+
+ :builds         {:demo {:devtools         {:log             false
+                                            :reload-strategy :full
+                                            :watch-dir       "public"}
+                         :target           :browser
+                         :compiler-options {:output-feature-set :es8
+                                            :warnings {:redef false}}
+                         :build-options    {:cache-level :off}
+                         :build-hooks      [(kushi.core/kushi-debug)
+                                            (kushi.stylesheet/create-css-file)
+                                            (shadow.cljs.build-report/hook
+                                             {:output-to "tmp/report.html"})]
+                         :modules          {:main {:init-fn site.browser/init}}}}}
