@@ -3,8 +3,6 @@
     [kushi.colors :refer [colors]]
     [clojure.string :as string]))
 
-
-
 (defn parse-int [n]
   #?(:clj (Integer/parseInt n)
      :cljs (js/parseInt n)))
