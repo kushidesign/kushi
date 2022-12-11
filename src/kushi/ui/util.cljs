@@ -34,4 +34,5 @@
 (defn ->pairs [coll]
   (->> coll (partition 2) (map vec)))
 
-
+(defn nameable? [x]
+  (or (string? x) (keyword? x) (symbol? x)))
