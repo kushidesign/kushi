@@ -756,35 +756,38 @@
 (def ui
   [
    ;; uncomment TEMP
-
    "body"
-   {:font-family :--sans-serif-font-stack
-    :bgc         :--white
-    :color       :--primary
-    :transition  :all
+   {:font-family         :--sans-serif-font-stack
+    :bgc                 :--white
+    :color               :--primary
+    :transition          :all
     :transition-duration :--duration-normal}
 
    "body.dark, .dark"
-   {:bgc         :--gray1000
-    :color       :--gray50}
+   {:bgc   :--gray1000
+    :color :--gray50}
 
    "code, .code"
-   {:font-family   :--code-font-stack
-    :font-size     :0.95em
-    :pi            :0.4em
-    :pb            :0.15em:0.08em
-    :border-radius :3px
-    :bgc           :--gray100
-    :h             :fit-content
-    :w             :fit-content
+   {:font-family         :--code-font-stack
+    :font-size           :--code-font-size
+    :pi                  :--code-padding-inline
+    :pb                  :--code-padding-block
+    :border-radius       :--code-border-radius
+    :bgc                 :--code-background-color
+    :h                   :fit-content
+    :w                   :fit-content
     :transition-property :all
     :transition-duration :--duration-normal
+    :transition-timing-function "cubic-bezier(0, 0, 1, 1)"
     }
 
    ".dark code, .dark .code"
-   {:bgc           :--gray900
-    :c             :--gray50}
-
+   {:bgc :--code-background-color-inverse
+    :c   :--code-color-inverse
+    :transition-property :all
+    :transition-duration :--duration-normal
+    :transition-timing-function "cubic-bezier(0, 0, 1, 1)"
+    }
    ])
 
 
