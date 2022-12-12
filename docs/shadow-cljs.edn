@@ -1,18 +1,12 @@
 ;; shadow-cljs configuration
 {
  :source-paths   ["src"
-                  ;; "../kushi/src"
-                  ;; "../playground/src"
-                  ;; "../../cljc/par/src"
-                  ]
+                  "../src" ]
 
- :dependencies   [
-                  [reagent/reagent                       "1.1.0"]
-                  [org.clojars.paintparty/kushi          "1.0.0-a.15"]
-                  ;; [org.clojars.paintparty/par            "1.1.0"]
+ :dependencies   [[reagent/reagent                       "1.1.0"]
                   [binaryage/devtools                    "1.0.3"]
-                  [design.kushi/playground               "0.1.0-SNAPSHOT"]
-                  ]
+                  [org.clojars.paintparty/kushi          "1.0.0-a.15"]
+                  [design.kushi/playground               "0.1.2"]]
 
  :dev-http       {7777 "public"}
 

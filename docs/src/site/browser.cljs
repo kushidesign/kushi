@@ -47,7 +47,7 @@
                                                :target         :_blank}
 
                            :kushi-about       {:render?        true
-                                               :header         "About Kushi"
+                                               :header         "About"
                                                :sidenav-header "About"}
 
                            :hide-lightswitch? false}]

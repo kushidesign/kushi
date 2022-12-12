@@ -32,7 +32,7 @@
 
  :media                   [:xsm {:min-width :480px}
                            :sm {:min-width :640px}
-                           :md {:min-width :850px}
+                           :md {:min-width :900px}
                            :lg {:min-width :1124px}
                            :xl {:min-width :1280px}
                            :xxl {:min-width :1536px}]
