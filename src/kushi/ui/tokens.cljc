@@ -12,6 +12,15 @@
    :--serif-font-stack                       "Times, serif"
    :--code-font-stack                        "Fira Code, monospace"
 
+   ;; code
+   :--code-font-size                         :0.9em
+   :--code-padding-inline                    :0.2em
+   :--code-padding-block                     :0.08em
+   :--code-border-radius                     :3px
+   :--code-background-color                  :--gray100
+   :--code-background-color-inverse          :--gray750
+   :--code-color-inverse                     :--gray50
+
     ;; Intended for css props: font-weight
    :--text-thin                              100
    :--text-extra-light                       200
