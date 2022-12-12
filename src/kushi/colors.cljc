@@ -3,7 +3,7 @@
 (def colors
   [
    "gray"
-   {:alias nil,
+   {:alias "neutral",
     :hue   0,
     :scale [[50 0 98]
             [100 0 95]
