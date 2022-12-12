@@ -3,7 +3,7 @@
 # Kushi
 <h5>Kushi is a foundation for building web UI with ClojureScript.</h5>
 <!-- <h5><a href=""><strong>Explore Kushi UI Playground »</strong></a></h5> -->
-<h5><a href="https://github.com/paintparty/kushi-quickstart"><strong>Kushi Quickstart »</strong></a></h5>
+<h5><a href="https://github.com/kushidesign/kushi-quickstart"><strong>Kushi Quickstart »</strong></a></h5>
 
 
 
@@ -84,13 +84,13 @@ Usage of Kushi's design system and component library is completly optional. You 
 <br>
 
 ## Setup and Usage
-[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.paintparty/kushi.svg)](https://clojars.org/org.clojars.paintparty/kushi)
+[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.kushidesign/kushi.svg)](https://clojars.org/org.clojars.kushidesign/kushi)
 
 Usage with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs) is currently recommended.
 
-Please check out [Kushi Quickstart](https://github.com/paintparty/kushi-quickstart) for a well commented, feature-complete minimal project template. This is probably the easiest way to get started with Kushi.
+Please check out [Kushi Quickstart](https://github.com/kushidesign/kushi-quickstart) for a well commented, feature-complete minimal project template. This is probably the easiest way to get started with Kushi.
 
-<!--[Checkout interactive playground of pre-built headless UI components from the `kushi.ui` namespace](https://paintparty.github.io/kushi/public/index.html).-->
+<!--[Checkout interactive playground of pre-built headless UI components from the `kushi.ui` namespace](https://kushidesign.github.io/kushi/public/index.html).-->
 <br>
 
 
@@ -248,7 +248,7 @@ This shorthand grammer is available for the most commonly used props:
 ```
 
 <!-- TODO maybe just link to source? -->
-See the complete list of supported css properties [here](https://github.com/paintparty/kushi/blob/main/docs/kushi-shorthand-reference.md).
+See the complete list of supported css properties [here](https://github.com/kushidesign/kushi/blob/main/docs/kushi-shorthand-reference.md).
 
 Shorthand grammer extends to cover enumerated values:
 ```Clojure
@@ -284,7 +284,7 @@ Note that the enumerated value `none`, as well as global properties such as `inh
 :td--revert ; => text-decoration: revert;
 ```
 <!-- TODO maybe just link to source? -->
-See the complete list of supported enum values [here](https://github.com/paintparty/kushi/blob/main/doc/kushi-shorthand-reference.md).
+See the complete list of supported enum values [here](https://github.com/kushidesign/kushi/blob/main/doc/kushi-shorthand-reference.md).
 
 <br>
 
@@ -620,7 +620,7 @@ The full list of predefined classes:
 ```
 <!-- TODO add debug grid helpers to above list -->
 
-Checkout [this source file](https://github.com/paintparty/kushi/blob/main/src/kushi/ui/utility.cljc) for a complete reference of all current pre-defined utility classes.
+Checkout [this source file](https://github.com/kushidesign/kushi/blob/main/src/kushi/ui/utility.cljc) for a complete reference of all current pre-defined utility classes.
 <br>
 
 ### Applying Classes Conditionally
@@ -880,7 +880,7 @@ To use values from these scales, supply a value affixed with an `*` to one of th
     :padding--.5rem
     :margin--1rem)
 ```
-View all the scale values [here](https://github.com/paintparty/kushi/blob/main/src/kushi/scales.cljc).
+View all the scale values [here](https://github.com/kushidesign/kushi/blob/main/src/kushi/scales.cljc).
 <br>
 -->
 
@@ -1036,7 +1036,7 @@ This file must live in your project's root directory.
 The only required entry in this map is `:css-dir`.
 
 Below is a full map of all the options available. The values shown in the map below correspond to the default values.
-If you are looking for a well commented starting point for your own config, [the sample `kushi.edn` config from the Kushi Quickstart template](https://github.com/paintparty/kushi-quickstart/blob/main/kushi.edn) (similar to below) is recommended.
+If you are looking for a well commented starting point for your own config, [the sample `kushi.edn` config from the Kushi Quickstart template](https://github.com/kushidesign/kushi-quickstart/blob/main/kushi.edn) (similar to below) is recommended.
 ```Clojure
 {
  ;; REQUIRED
@@ -1244,7 +1244,7 @@ You can theme -->
 Although Kushi is designed to be build-tool and framework agnostic, thus far it has only been used in production with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs).
 
 ### shadow-cljs
-See the [kushi-quickstart](https://github.com/paintparty/kushi-quickstart) template for a detailed example of using Kushi in a shadow-cljs project.
+See the [kushi-quickstart](https://github.com/kushidesign/kushi-quickstart) template for a detailed example of using Kushi in a shadow-cljs project.
 
 <br>
 

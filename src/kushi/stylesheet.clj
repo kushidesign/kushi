@@ -18,7 +18,7 @@
 
 
 (def license-comment-header
-  (str "/*! kushi v" version " | EPL License | https://github.com/paintparty/kushi */"))
+  (str "/*! kushi v" version " | EPL License | https://github.com/kushidesign/kushi */"))
 
 
 (defn keep-garden-vecs [chunk]

@@ -188,7 +188,7 @@
                "\n\n"
                "Its value must be a path relative to proj root e.g \"public/css\" or \"resources/public/css\"."
                "\n\n"
-               "https://github.com/paintparty/kushi#configuration-options"
+               "https://github.com/kushidesign/kushi#configuration-options"
                "\n\n"
                unbroken-border
                "\n\n\n"))))
