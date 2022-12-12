@@ -12,7 +12,7 @@
 ## Features
 - **100% Clojure(Script)**
 
-- **A minimal set of headless UI components**
+- **Minimal set of headless UI components**
 
 - **Themeable design system foundation**
 
