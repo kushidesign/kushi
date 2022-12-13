@@ -50,7 +50,9 @@
                                                :header         "About"
                                                :sidenav-header "About"}
 
-                           :hide-lightswitch? false}]
+                           :hide-lightswitch?                  false
+                           :display-kushi-links-in-mobile-nav? true
+                           }]
                (.getElementById js/document "app")))
 
 (defn init []
