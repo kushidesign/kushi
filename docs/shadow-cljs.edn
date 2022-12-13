@@ -1,7 +1,7 @@
 ;; shadow-cljs configuration
 {
  :source-paths   ["src"
-                  "../src" ]
+                  "../src"]
 
  :dependencies   [[reagent/reagent                       "1.1.0"]
                   [binaryage/devtools                    "1.0.3"]
