@@ -25,7 +25,6 @@
        :.grid
        :gtc--1em:auto
        :gap--0.4em
-       :font-family--system-ui|sans-serif
        :line-height--1.1
        :+.form-control:mbs--1em)
       label-attrs)
