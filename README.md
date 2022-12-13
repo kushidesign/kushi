@@ -28,7 +28,7 @@
 
 - **Composable, user-defined shared classes**
 
-- **A collection of Useful css utility classes**
+- **A collection of useful css utility classes**
 
 - **Default industry-standard breakpoint scale**
 
@@ -59,10 +59,9 @@
 - [Selector prefixing options](#selector-prefixing-options)<br>
 - [Injecting stylesheets](#injecting-stylesheets)<br>
 - [Adding font resources](#adding-font-resources)<br>
-- [Element attributes](#element-attributes)<br>
 - [Helpful metadata](#helpful-metadata)<br>
 - [Configuration options](#configuration-options)<br>
-- [Useful warnings](#useful-warnings)<br>
+- [Actionable warnings](#actionable-warnings)<br>
 - [Usage with build tools](#usage-with-build-tools)<br>
 - [Roadmap](#roadmap)<br>
 - [Development](#development)<br>
@@ -84,7 +83,7 @@ Usage of Kushi's design system and component library is completly optional. You 
 <br>
 
 ## Setup and Usage
-[![Clojars Project](https://img.shields.io/clojars/v/org.clojars.kushidesign/kushi.svg)](https://clojars.org/org.clojars.kushidesign/kushi)
+[![Clojars Project](https://img.shields.io/clojars/v/design.kushi/kushi.svg)](https://clojars.org/design.kushi/kushi)
 
 Usage with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs) is currently recommended.
 
@@ -1114,7 +1113,7 @@ If you are looking for a well commented starting point for your own config, [the
 
 
 
-## Useful Warnings
+## Actionable Warnings
 It is highly recommended to keep the terminal (that is running the `cljs-shadow` build process) visible so that you can catch warnings for malformed arguments to Kushi functions.
 
 Given the following:
