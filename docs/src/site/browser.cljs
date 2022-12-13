@@ -8,6 +8,7 @@
 (defn site-header []
   [title
    (sx 'playground-header
+       :.playground-title
        :.xxlarge
        :>span:ai--baseline
        :md:pbs--:--vp-top-header-padding-with-offset)
