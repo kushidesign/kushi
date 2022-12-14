@@ -68,7 +68,13 @@
                                                            (toggle-boolean-attribute open-node :aria-expanded))
                                                          (set! exp-parent.style.height ->height)
                                                          (toggle-boolean-attribute node :aria-expanded)
-                                                         (when-not collapsed? (js/setTimeout (fn [] (set! exp-parent.style.display "none")) 200)))))]
+                                                         (if-not collapsed?
+                                                           (js/setTimeout (fn []
+                                                                            (set! exp-parent.style.display "none"))
+                                                                          200)
+                                                           (js/setTimeout (fn []
+                                                                            (set! exp-parent.style.height "auto"))
+                                                                          210)))))]
       (into [:div
              (merge-attrs
               (sx
