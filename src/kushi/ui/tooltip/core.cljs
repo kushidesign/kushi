@@ -84,7 +84,7 @@
           "Tooltips are placed above or below the parent element that they describe."
           :br
           :br
-          "The font-size for the tooltip should be set with the `:--tooltip-font-size` token."
+          "The font-size for the tooltip should be set with the `:$tooltip-font-size` token."
           :br
           :br
           "Overriding the automatic inline or block (or both) placement is available via the options `:-block-offset` and `:-inline-offset`."
@@ -120,9 +120,9 @@
          (sx 'kushi-tooltip
              :.absolute
              :.rounded
-             :fs--:--tooltip-font-size
-             :bgc--:--tooltip-background-color
-             :c--:--tooltip-color
+             :fs--$tooltip-font-size
+             :bgc--$tooltip-background-color
+             :c--$tooltip-color
              :top--0
              :bottom--unset
              :left--100%
@@ -141,8 +141,8 @@
              ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):opacity"        1]
              ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):width"          :fit-content]
              ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):height"         :auto]
-             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding-block"  :--tooltip-padding-block]
-             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding-inline" :--tooltip-padding-inline]
+             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding-block"  :$tooltip-padding-block]
+             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding-inline" :$tooltip-padding-inline]
              {:class                              [placement-class]
               :data-kushi-conditional-display     (if (= false display-on-hover?) "true" "false")
               :data-kushi-tooltip-position-block  block-offset

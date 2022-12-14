@@ -76,20 +76,20 @@
                      :example [:example2 [:mui-icon x]]})))
               icons)
         '[
-         {:label   [mui-icon (sx :.xlarge :c--:--red500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--:--red500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--:--orange500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--:--orange500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--:--yellow500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--:--yellow500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--:--green500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--:--green500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--:--blue500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--:--blue500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--:--purple500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--:--purple500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--:--magenta500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--:--magenta500) "auto_awesome"])}]))
+         {:label   [mui-icon (sx :.xlarge :c--$red500 {:title "auto_awesome"}) "auto_awesome"]
+          :example (example2 [mui-icon (sx :c--$red500) "auto_awesome"])}
+         {:label   [mui-icon (sx :.xlarge :c--$orange500 {:title "auto_awesome"}) "auto_awesome"]
+          :example (example2 [mui-icon (sx :c--$orange500) "auto_awesome"])}
+         {:label   [mui-icon (sx :.xlarge :c--$yellow500 {:title "auto_awesome"}) "auto_awesome"]
+          :example (example2 [mui-icon (sx :c--$yellow500) "auto_awesome"])}
+         {:label   [mui-icon (sx :.xlarge :c--$green500 {:title "auto_awesome"}) "auto_awesome"]
+          :example (example2 [mui-icon (sx :c--$green500) "auto_awesome"])}
+         {:label   [mui-icon (sx :.xlarge :c--$blue500 {:title "auto_awesome"}) "auto_awesome"]
+          :example (example2 [mui-icon (sx :c--$blue500) "auto_awesome"])}
+         {:label   [mui-icon (sx :.xlarge :c--$purple500 {:title "auto_awesome"}) "auto_awesome"]
+          :example (example2 [mui-icon (sx :c--$purple500) "auto_awesome"])}
+         {:label   [mui-icon (sx :.xlarge :c--$magenta500 {:title "auto_awesome"}) "auto_awesome"]
+          :example (example2 [mui-icon (sx :c--$magenta500) "auto_awesome"])}]))
 
 
 #_(pprint icon-examples*)
@@ -235,37 +235,37 @@
    {:label   [mui-icon-outlined (sx :.xlarge {:title "folder"}) "folder"],
     :example (example2 [mui-icon-outlined "folder"])}
    {:label   [mui-icon
-              (sx :.xlarge :c--:--red500 {:title "auto_awesome"})
+              (sx :.xlarge :c--$red500 {:title "auto_awesome"})
               "auto_awesome"],
     :key     "auto_awesome-red"
-    :example (example2 [mui-icon (sx :c--:--red500) "auto_awesome"])}
+    :example (example2 [mui-icon (sx :c--$red500) "auto_awesome"])}
    {:label   [mui-icon
-              (sx :.xlarge :c--:--orange500 {:title "auto_awesome"})
+              (sx :.xlarge :c--$orange500 {:title "auto_awesome"})
               "auto_awesome"],
     :key     "auto_awesome-orange"
-    :example (example2 [mui-icon (sx :c--:--orange500) "auto_awesome"])}
+    :example (example2 [mui-icon (sx :c--$orange500) "auto_awesome"])}
    {:label   [mui-icon
-              (sx :.xlarge :c--:--yellow500 {:title "auto_awesome"})
+              (sx :.xlarge :c--$yellow500 {:title "auto_awesome"})
               "auto_awesome"],
     :key     "auto_awesome-yellow"
-    :example (example2 [mui-icon (sx :c--:--yellow500) "auto_awesome"])}
+    :example (example2 [mui-icon (sx :c--$yellow500) "auto_awesome"])}
    {:label   [mui-icon
-              (sx :.xlarge :c--:--green500 {:title "auto_awesome"})
+              (sx :.xlarge :c--$green500 {:title "auto_awesome"})
               "auto_awesome"],
     :key     "auto_awesome-green"
-    :example (example2 [mui-icon (sx :c--:--green500) "auto_awesome"])}
+    :example (example2 [mui-icon (sx :c--$green500) "auto_awesome"])}
    {:label   [mui-icon
-              (sx :.xlarge :c--:--blue500 {:title "auto_awesome"})
+              (sx :.xlarge :c--$blue500 {:title "auto_awesome"})
               "auto_awesome"],
     :key     "auto_awesome-blue"
-    :example (example2 [mui-icon (sx :c--:--blue500) "auto_awesome"])}
+    :example (example2 [mui-icon (sx :c--$blue500) "auto_awesome"])}
    {:label   [mui-icon
-              (sx :.xlarge :c--:--purple500 {:title "auto_awesome"})
+              (sx :.xlarge :c--$purple500 {:title "auto_awesome"})
               "auto_awesome"],
     :key     "auto_awesome-purple"
-    :example (example2 [mui-icon (sx :c--:--purple500) "auto_awesome"])}
+    :example (example2 [mui-icon (sx :c--$purple500) "auto_awesome"])}
    {:label   [mui-icon
-              (sx :.xlarge :c--:--magenta500 {:title "auto_awesome"})
+              (sx :.xlarge :c--$magenta500 {:title "auto_awesome"})
               "auto_awesome"],
     :key     "auto_awesome-magenta"
-    :example (example2 [mui-icon (sx :c--:--magenta500) "auto_awesome"])}])
+    :example (example2 [mui-icon (sx :c--$magenta500) "auto_awesome"])}])

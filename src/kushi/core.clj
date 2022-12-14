@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.core
   (:require
+   [par.core :refer [!? ?]]
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
@@ -312,7 +313,10 @@
 (defn sx-dispatch
   [{:keys [form-meta args]
     :or   {form-meta {}}}]
-  (let [cache-map (state2/cached {:process :sx
+  (let [
+        ;; _ (state2/trace! args '(quote headline-layer))
+        _ (state2/trace! args '(quote letter))
+        cache-map (state2/cached {:process :sx
                                   :args    args})
         process   (process args)
         clean     (or (:cached cache-map)
@@ -321,6 +325,8 @@
                                         :cache-key     (:cache-key cache-map)
                                         :form-meta     form-meta}))
         clean     (merge clean {:kushi/chunk process})]
+
+;; (when (state2/trace?) (? (-> clean :attrs :style)))
 
     (swap! state2/css conj clean)
 

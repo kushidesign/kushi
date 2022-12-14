@@ -1,5 +1,6 @@
 (ns kushi.styles
   (:require
+   [par.core :refer [!? ? ?+]]
    [clojure.spec.alpha :as s]
    [clojure.walk :as walk]
    [clojure.string :as string]
@@ -46,9 +47,11 @@
          ")")
     x))
 
-(defn- normalize-css-custom-propery [x]
+(defn- normalize-css-custom-propery
+  "hi"
+  [x]
   (if (s/valid? ::specs2/cssvar-name x)
-    (str "var(" (name x) ")")
+    (str "var(" (util/cssvar-dollar-syntax->double-dash x) ")")
     x))
 
 (defn css-var-string [s x css-vars]
@@ -154,6 +157,14 @@
 (defn dequote [coll]
   (walk/postwalk dequote* coll))
 
+(defn css-custom-property-keys-normalized [coll]
+  (map (fn [[k v]]
+         (let [k (if (s/valid? ::specs2/cssvar-name k)
+                   (util/cssvar-dollar-syntax->double-dash k)
+                   k)]
+           [k v]))
+       coll))
+
 (defn all-style-tuples
   [coll]
   (let [css-vars (atom {})
@@ -165,7 +176,12 @@
                      (bindings-cssvarized css-vars)
                      (postwalk-style-tuples cssfn-list->string)
                      (postwalk-style-tuples unescape-sexp)
-                     (postwalk-style-tuples specs2/kw?->s))]
+                     (postwalk-style-tuples specs2/kw?->s)
+
+                     ;; Normalize any tuple keys that are css custom properties
+                     ;;  [:$xxx "red"] => ["--xxx" "red"]
+                     css-custom-property-keys-normalized)]
+    ;; (when (state2/trace?) (?+ tuples))
     [tuples @css-vars]))
 
 (defn extract-cssvar-name [%]
@@ -186,7 +202,7 @@
                                       (util/map-vals util/hydrate-css-shorthand+alternations))
         ret*                 (merge with-extracted-names cssvar-tuples)
 
-        ;; normalized kushi-style shorthand syntax within css-var sexp
+        ;; Normalized kushi-style shorthand syntax within css-var sexp
         ret                  (util/map-vals (fn [v]
                                               (if (s/valid? ::specs2/conditional-sexp v)
                                                 (map (fn [x]
@@ -197,6 +213,13 @@
                                                      v)
                                                 v))
                                             ret*)]
+
+    #_(when (seq with-extracted-names)
+      (? (keyed with-extracted-names cssvar-tuples2 ret)))
+
+    #_(when (state2/trace?)
+      (?+ (keyed css-vars cssvar-tuples with-extracted-names cssvar-tuples ret* ret)))
+
     ret))
 
 (defn style-tuples*
@@ -270,8 +293,8 @@
         (when-let [coll tokenized-cssvars]
           (when (seq coll)
             (map (fn [%]
-                   (let [[_ nm val] (string/split (name %) #"--")]
-                     [(str "--" nm) val]))
+                   (let [[nm val] (string/split (name %) #"--")]
+                     [(util/cssvar-dollar-syntax->double-dash nm) val]))
                  coll)))
 
         style-tuples-from-defclass-class
@@ -296,7 +319,11 @@
         (all-style-tuples all-style-tuples*)
 
         [cssvar-tuples2 all-style-tuples2]
-        (util/partition-by-pred #(->> % first (s/valid? ::specs2/css-var-name)) all-style-tuples)
+        (util/partition-by-pred #(->> %
+                                      first
+                                      (s/valid? ::specs2/css-var-name))
+                                all-style-tuples)
+
 
         defclass-style-tuples
         (when shared-class? all-style-tuples2)
@@ -314,8 +341,19 @@
         classlist
         (classlist attrs-no-style class selector)
 
+        ;; _ (when (state2/trace?)
+        ;;     (?+ (keyed by-kind
+        ;;                cssvar-tuples
+        ;;                all-style-tuples*
+        ;;                all-style-tuples
+        ;;                all-style-tuples2
+        ;;                css-vars
+        ;;                )))
+
+        ;; _ (? args)
         css-vars
         (cssvars css-vars cssvar-tuples2)
+
 
         attrs
         (merge (-> (or attrs-no-style {}) (assoc :class classlist))

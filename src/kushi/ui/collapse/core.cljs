@@ -86,7 +86,7 @@
                                 :transition                                    :all:200ms:linear
                                 :+section:transition-property                  :height
                                 :+section:transition-timing-function           "cubic-bezier(0.23, 1, 0.32, 1)"
-                                :+section:transition-duration                  :--kushi-collapse-transition-duration
+                                :+section:transition-duration                  :$kushi-collapse-transition-duration
                                 "&[aria-expanded='false']+section:height"        :0px
 
                                 "&[aria-expanded='false']+section:>*:transition" :opacity:200ms:linear:10ms
