@@ -768,26 +768,60 @@
     :color :--gray50}
 
    "code, .code"
-   {:font-family         :--code-font-stack
-    :font-size           :--code-font-size
-    :pi                  :--code-padding-inline
-    :pb                  :--code-padding-block
-    :border-radius       :--code-border-radius
-    :bgc                 :--code-background-color
-    :h                   :fit-content
-    :w                   :fit-content
-    :transition-property :all
-    :transition-duration :--duration-normal
-    :transition-timing-function "cubic-bezier(0, 0, 1, 1)"
-    }
+   {:font-family                :--code-font-stack
+    :font-size                  :--code-font-size
+    :pi                         :--code-padding-inline
+    :pb                         :--code-padding-block
+    :border-radius              :--code-border-radius
+    :bgc                        :--code-background-color
+    :h                          :fit-content
+    :w                          :fit-content
+    :transition-property        :all
+    :transition-duration        :--duration-normal
+    :transition-timing-function "cubic-bezier(0, 0, 1, 1)"}
 
    ".dark code, .dark .code"
-   {:bgc :--code-background-color-inverse
-    :c   :--code-color-inverse
-    :transition-property :all
-    :transition-duration :--duration-normal
-    :transition-timing-function "cubic-bezier(0, 0, 1, 1)"
-    }
+   {:bgc                        :--code-background-color-inverse
+    :c                          :--code-color-inverse
+    :transition-property        :all
+    :transition-duration        :--duration-normal
+    :transition-timing-function "cubic-bezier(0, 0, 1, 1)"}
+
+
+   ".styled-scrollbars"
+   ;; Foreground, Background
+   {:scrollbar-color :--scrollbar-thumb-color
+    :scrollbar-width :thin}
+
+   ".styled-scrollbars::-webkit-scrollbar"
+   {;; Mostly for vertical scrollbars
+    :width  :6px
+    ;; Mostly for horizontal scrollbars
+    :height :6px}
+
+   ;; Foreground
+   ".styled-scrollbars::-webkit-scrollbar-thumb"
+   {:background    :--scrollbar-thumb-color
+    :border-radius :9999px
+    :border        :0px:solid:--scrollbar-background-color}
+
+   ;; Background
+   ".styled-scrollbars::-webkit-scrollbar-track"
+   {:background :--scrollbar-background-color}
+
+   ;; Focusing the button with a keyboard will show a blue outline.
+   "*:focus-visible"
+   {:outline        "4px solid rgba(0, 125, 250, 0.6)"
+    :outline-offset :1px}
+
+   ".kushi-radio-input:focus-visible"
+   {:box-shadow "0 0 0 4px rgba(0, 125, 250, 0.6)"}
+
+   ;; Focusing the button with a mouse, touch, or stylus will show a subtle drop shadow.
+  ;; LEAVE OUT FOR NOS
+  ;;  "*:focus:not(:focus-visible)"
+  ;;  {:outline    :none
+  ;;   :box-shadow "1px 1px 5px rgba(1, 1, 0, .7)"}
    ])
 
 

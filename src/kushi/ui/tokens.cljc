@@ -125,6 +125,13 @@
    :--duration-super-slow                    :2s
    :--duration-ultra-slow                    :4s
 
+   
+   ;; Intended for styling scrollbars
+   ;; ------------------------------------------------------
+   :--scrollbar-background-color  "rgb(241, 241, 241)"
+   :--scrollbar-thumb-color      "rgb(160, 160, 160)"
+
+
    ;; Components
    :--kushi-collapse-transition-duration :--duration-slow
    ])
