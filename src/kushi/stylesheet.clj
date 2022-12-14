@@ -313,15 +313,15 @@
         {:keys [to-be-printed+
                 num-rules
                 num-tokens]}        (to-be-printed+ to-be-printed)]
-    #_(!?
-       (keyed
+    #_(prn
+     (keyed
         ;;  cache-will-update?
         ;;  @to-be-printed
         ;;  to-be-printed
         ;;  to-be-printed+
         ;;  num-rules
         ;;  previously-printed
-        ))
+      ))
 
     (when (and (add-stylesheet?) something-to-write?)
       (use 'clojure.java.io)
