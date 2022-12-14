@@ -25,10 +25,15 @@
   (when (nameable? x)
     (some-> x name (string/starts-with? "--"))))
 
+(defn cssvar-dollar-syntax->double-dash
+  [x]
+  (string/replace (name x) #"^\$" "--"))
+
 (defn s->cssvar
   ([x] (s->cssvar x nil))
   ([x fallback]
    (str "var(--" (name x) (when fallback (str ", " fallback)) ")")))
+
 
 (defn maybe-wrap-css-var [x]
   (if (token? x)

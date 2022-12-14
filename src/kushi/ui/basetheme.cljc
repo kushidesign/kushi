@@ -757,35 +757,35 @@
   [
    ;; uncomment TEMP
    "body"
-   {:font-family         :--sans-serif-font-stack
-    :bgc                 :--white
-    :color               :--primary
+   {:font-family         :$sans-serif-font-stack
+    :bgc                 :$white
+    :color               :$primary
     :transition          :all
-    :transition-duration :--duration-normal}
+    :transition-duration :$duration-normal}
 
    "body.dark, .dark"
-   {:bgc   :--gray1000
-    :color :--gray50}
+   {:bgc   :$gray1000
+    :color :$gray50}
 
    "code, .code"
-   {:font-family         :--code-font-stack
-    :font-size           :--code-font-size
-    :pi                  :--code-padding-inline
-    :pb                  :--code-padding-block
-    :border-radius       :--code-border-radius
-    :bgc                 :--code-background-color
+   {:font-family         :$code-font-stack
+    :font-size           :$code-font-size
+    :pi                  :$code-padding-inline
+    :pb                  :$code-padding-block
+    :border-radius       :$code-border-radius
+    :bgc                 :$code-background-color
     :h                   :fit-content
     :w                   :fit-content
     :transition-property :all
-    :transition-duration :--duration-normal
+    :transition-duration :$duration-normal
     :transition-timing-function "cubic-bezier(0, 0, 1, 1)"
     }
 
    ".dark code, .dark .code"
-   {:bgc :--code-background-color-inverse
-    :c   :--code-color-inverse
+   {:bgc :$code-background-color-inverse
+    :c   :$code-color-inverse
     :transition-property :all
-    :transition-duration :--duration-normal
+    :transition-duration :$duration-normal
     :transition-timing-function "cubic-bezier(0, 0, 1, 1)"
     }
    ])
@@ -805,17 +805,17 @@
 
 (def ui*
   [
-   ".kushi-button" {"font-weight" :--text-wee-bold
-                    "font-family" :--primary-font-family}
-   ".kushi-button.bordered" {"border-width" :--button-border-width}
-   ".kushi-tag.bordered" {"border-width" :--tag-border-width}
-   ".kushi-tag"    {"font-weight" :--text-wee-bold
-                    "font-family" :--primary-font-family}
+   ".kushi-button" {"font-weight" :$text-wee-bold
+                    "font-family" :$primary-font-family}
+   ".kushi-button.bordered" {"border-width" :$button-border-width}
+   ".kushi-tag.bordered" {"border-width" :$tag-border-width}
+   ".kushi-tag"    {"font-weight" :$text-wee-bold
+                    "font-family" :$primary-font-family}
    ".dark .kushi-radio-input"                                        {:bgc :black}
    ".dark .kushi-checkbox-input"                                     {:bgc :black}
    ".dark .kushi-checkbox-input:before"                              {:box-shadow :inset:1em:1em:black}
    ".dark .kushi-slider-step-label.kushi-slider-step-label-selected" {:c :white}
-   ".dark .kushi-slider-step-label"                                  {:c :--gray300}
+   ".dark .kushi-slider-step-label"                                  {:c :$gray300}
    ])
 
 (defn base-theme-map

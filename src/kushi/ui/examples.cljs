@@ -75,7 +75,7 @@
                                     [radio {:-input-attrs {:name :demo}} "No"]
                                     [radio {:-input-attrs {:name :demo}} "Maybe"]])}
                {:label   "Inherited color"
-                :example (example2 [:section (sx :c--:--purple400)
+                :example (example2 [:section (sx :c--$purple400)
                                     [title (sx :.bold :mbe--0.75em) "Choose an option:"]
                                     [radio {:-input-attrs {:name :demo}} "Yes"]
                                     [radio {:-input-attrs {:name :demo}} "No"]
@@ -176,16 +176,16 @@
                                            :-label-scale-factor 0.8
                                            :-labels-attrs       (sx :>span>span:border-radius--9999px
                                                                     :>span>span:padding--0.125em:0.75em:0.2em
-                                                                    {:style {">span:nth-child(1):c"         :--positive
-                                                                             ">span:nth-child(1):>span:bgc" :--positive50
-                                                                             ">span:nth-child(2):c"         :--accent
-                                                                             ">span:nth-child(2):>span:bgc" :--accent50
-                                                                             ">span:nth-child(3):c"         :--warning
-                                                                             ">span:nth-child(3):>span:bgc" :--warning50
-                                                                             ">span:nth-child(4):c"         :--orange700
-                                                                             ">span:nth-child(4):>span:bgc" :--orange50
-                                                                             ">span:nth-child(5):c"         :--negative
-                                                                             ">span:nth-child(5):>span:bgc" :--negative50}})}])}]}
+                                                                    {:style {">span:nth-child(1):c"         :$positive
+                                                                             ">span:nth-child(1):>span:bgc" :$positive50
+                                                                             ">span:nth-child(2):c"         :$accent
+                                                                             ">span:nth-child(2):>span:bgc" :$accent50
+                                                                             ">span:nth-child(3):c"         :$warning
+                                                                             ">span:nth-child(3):>span:bgc" :$warning50
+                                                                             ">span:nth-child(4):c"         :$orange700
+                                                                             ">span:nth-child(4):>span:bgc" :$orange50
+                                                                             ">span:nth-child(5):c"         :$negative
+                                                                             ">span:nth-child(5):>span:bgc" :$negative50}})}])}]}
 
    {:fn       tooltip
     :meta     #'tooltip
@@ -243,7 +243,7 @@
                                     [tooltip (sx :c--black
                                                  :bgc--white
                                                  :box-shadow--1px:2px:7px:#42320035|0px:0px:1px:#42320035
-                                                 :bgc--:--yellow100
+                                                 :bgc--$yellow100
                                                  :p--0.3em:0.6em!important)
                                      "This is an example tooltip"]])}]}
 

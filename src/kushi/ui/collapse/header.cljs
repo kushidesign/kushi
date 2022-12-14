@@ -22,7 +22,7 @@
   (if (string? label)
     (let [ico      [mui-icon
                     (sx 'kushi-collapse-header-title-icon
-                        [:mie (when-not icon-opposite? :--icon-enhancer-inline-gap-ems)])
+                        [:mie (when-not icon-opposite? :$icon-enhancer-inline-gap-ems)])
                     (:mui-icon opts)]
           title-sx (sx
                     'kushi-collapse-header-title-contents
