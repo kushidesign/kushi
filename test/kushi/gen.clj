@@ -58,8 +58,11 @@
 
    ['css-custom-properties
     nil
-    [[:b--:--my-css-custom-prop-for-border]
-     [{:style {:b :--my-css-custom-prop-for-border}}]]]
+    [[:b--:--custom-prop]
+     [[:b :--custom-prop]]
+     [{:style {:b :--css-custom}}]
+     [:--custom-prop-name--:--custom-prop-val]
+     [[:--custom-prop-name :--custom-prop-val]]]]
 
    ['complex-values
     nil
@@ -161,5 +164,7 @@
 
 
 ;; Uncomment these to run tests
-;; (pprint sx-tests)
-;; (deftest hey (is (= 1 1)))
+#_(pprint sx-tests)
+#_(deftest hey (is (= 1 1)))
+
+
