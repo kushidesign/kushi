@@ -2,7 +2,7 @@
 
 # Kushi
 <h5>Kushi is a foundation for building web UI with ClojureScript.</h5>
-<!-- <h5><a href=""><strong>Explore Kushi UI Playground »</strong></a></h5> -->
+<h5><a href="https://kushi.design"><strong>Explore Kushi UI Playground »</strong></a></h5>
 <h5><a href="https://github.com/kushidesign/kushi-quickstart"><strong>Kushi Quickstart »</strong></a></h5>
 
 
@@ -52,7 +52,7 @@
 
 ## Table of Contents
 - [Setup and usage](#setup-and-usage)<br>
-- [Syntax](#syntax)<br>
+- [Kushi styling syntax](#kushi-styling-syntax)<br>
 - [Shared styles](#shared-styles)<br>
 - [Media queries](#media-queries)<br>
 - [Pseudos and combo selectors](#pseudos-and-combo-selectors)<br>
@@ -62,9 +62,8 @@
 - [Helpful metadata](#helpful-metadata)<br>
 - [Configuration options](#configuration-options)<br>
 - [Actionable warnings](#actionable-warnings)<br>
+- [Defining components](#defining-components)<br>
 - [Usage with build tools](#usage-with-build-tools)<br>
-- [Roadmap](#roadmap)<br>
-- [Development](#development)<br>
 - [License](#license)
 
 <br>
