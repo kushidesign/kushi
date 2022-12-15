@@ -7,10 +7,10 @@
                   ;; "../../playground/src"
                   ]
 
- :dependencies   [[reagent/reagent                       "1.1.0"]
-                  [binaryage/devtools                    "1.0.3"]
-                  [org.clojars.paintparty/kushi          "1.0.0-a.16"]
-                  [design.kushi/playground               "0.1.3"]]
+ :dependencies   [[reagent/reagent         "1.1.1"]
+                  [binaryage/devtools      "1.0.6"]
+                  [design.kushi/kushi      "1.0.0-a.16"]
+                  [design.kushi/playground "0.1.3"]]
 
  :dev-http       {7777 "public"}
 
@@ -21,7 +21,7 @@
                                             :watch-dir       "public"}
                          :target           :browser
                          :compiler-options {:output-feature-set :es8
-                                            :warnings {:redef false}}
+                                            :warnings           {:redef false}}
                          :build-options    {:cache-level :off}
                          :build-hooks      [(kushi.core/kushi-debug)
                                             (kushi.stylesheet/create-css-file)
