@@ -1,7 +1,8 @@
 (ns site.browser
   (:require
    [kushi.ui.title.core :refer [title]]
-   [playground.core :refer [main-view]]
+   [kushi.playground.core :refer [main-view]]
+   [kushi.playground.util :refer [kushi-github-url kushi-clojars-url]]
    [kushi.core :refer [sx inject!]]
    [reagent.dom :as rdom]))
 
@@ -39,12 +40,12 @@
 
                            :kushi-user-guide  {:render?        true
                                                :sidenav-header "User Guide"
-                                               :href           "https://github.com/paintparty/kushi"
+                                               :href           kushi-github-url
                                                :target         :_blank}
 
                            :kushi-clojars     {:render?        true
                                                :sidenav-header "Clojars"
-                                               :href           "https://clojars.org/org.clojars.paintparty/kushi"
+                                               :href           kushi-clojars-url
                                                :target         :_blank}
 
                            :kushi-about       {:render?        true

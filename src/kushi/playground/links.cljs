@@ -2,6 +2,7 @@
   (:require
    [kushi.core :refer (sx defclass merge-attrs)]
    [kushi.playground.ui :refer [light-dark-mode-switch]]
+   [kushi.playground.util :refer [kushi-github-url kushi-clojars-url]]
    [kushi.ui.core :refer (opts+children)]))
 
 (defclass grayscale
@@ -44,9 +45,9 @@
        attrs)]
      children)))
 
-(def link-data [{:href "https://github.com/kushidesign/kushi"
+(def link-data [{:href kushi-github-url
                  :src  "public/graphics/github.svg"}
-                {:href "https://clojars.org/design.kushi/kushi"
+                {:href kushi-clojars-url
                  :on-error "this.onerror=null; this.src='graphics/clojars-logo-bw2.png'"
                  :src "public/graphics/clojars-logo-bw2.png"}
                 #_{:href "https://twitter.svg"
