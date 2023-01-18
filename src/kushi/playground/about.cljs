@@ -123,8 +123,8 @@
                   :.wee-bold
                   :mbs--5em
                   :pbs--1.5em
-                  :bbs--1px:solid:$gray300
-                  :dark:bbs--1px:solid:$gray700)
+                  [:bbs "1px solid var(--gray300)"]
+                  [:dark:bbs "1px solid var(--gray700)"])
           (str "Type " label " Scale")]]
         (for [x coll]
           [:div (sx :.flex-col-fs :mb--37px)
