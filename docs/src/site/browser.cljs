@@ -11,7 +11,7 @@
        :.playground-title
        :.xxlarge
        :>span:ai--baseline
-       :md:pbs--:--vp-top-header-padding-with-offset)
+       :md:pbs--$vp-top-header-padding-with-offset)
    "Kushi"
    [:span
     (sx 'playground-title-version-number :.xxxsmall :.tester :mis--0.5rem)
