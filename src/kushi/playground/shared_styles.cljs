@@ -47,7 +47,7 @@
 (defclass kushi-opts-grid-row-item
   :padding-block--1.5em
   :bbe--1px:solid:#efefef
-  :bc--:$gray200
+  :bc--$gray200
   :&_p:margin-block--0
   :&_.kushi-ui-opt-desc&_p:fs--0.775rem
   :&_a:td--underline)
