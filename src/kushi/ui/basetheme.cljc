@@ -757,11 +757,11 @@
   [
    ;; uncomment TEMP
    "body"
-   {:font-family         :$sans-serif-font-stack
-    :bgc                 :$white
-    :color               :$primary
-    :transition          :all
-    :transition-duration :$duration-normal}
+   {:font-family         :--sans-serif-font-stack
+    :bgc                 :white
+    :color               :--gray900
+    :transition-property :all
+    :transition-duration :--duration-normal}
 
    "body.dark, .dark"
    {:bgc   :$gray1000
