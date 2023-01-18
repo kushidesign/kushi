@@ -5,8 +5,7 @@
 
  :dependencies   [[reagent/reagent                       "1.1.0"]
                   [binaryage/devtools                    "1.0.3"]
-                  [org.clojars.paintparty/kushi          "1.0.0-a.15"]
-                  [design.kushi/playground               "0.1.2"]]
+                  [org.clojars.paintparty/kushi          "1.0.0-a.15"]]
 
  :dev-http       {7777 "public"}
 
