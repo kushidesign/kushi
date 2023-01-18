@@ -4,8 +4,8 @@
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.input.slider.css]
    [kushi.ui.util :refer [range-of-floats]]
-   [playground.shared-styles]
-   [playground.util :as util :refer-macros (keyed)]))
+   [kushi.playground.shared-styles]
+   [kushi.playground.util :as util :refer-macros (keyed)]))
 
 (insert-style-tag! "kushi-slider-styles" kushi.ui.input.slider.css/css)
 
