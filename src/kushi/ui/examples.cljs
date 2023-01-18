@@ -34,30 +34,30 @@
                 :example (example2 [button "Play"])}
                {:label   "Leading icon"
                 :example (example2 [:div
-                                    [button (sx {:-mui-icon "play_arrow"})
+                                    [button (sx {:-mui-icon :play-arrow})
                                      "Play"]])}
                {:label   "Trailing icon"
-                :example (example2 [button {:-mui-icon      "play_arrow"
+                :example (example2 [button {:-mui-icon      :play-arrow
                                             :-icon-position :inline-end}
                                     "Play"])}
                {:label   "Icon above"
-                :example (example2 [button (sx {:-mui-icon      "play_arrow"
+                :example (example2 [button (sx {:-mui-icon      :play-arrow
                                                 :-icon-position :block-start})
                                     "Play"])}
                {:label   "Icon below"
-                :example (example2 [button (sx {:-mui-icon      "play_arrow"
+                :example (example2 [button (sx {:-mui-icon      :play-arrow
                                                 :-icon-position :block-end})
                                     "Play"])}
 
               ;; TODO -- fix this example
               ;;  {:label   "Trailing icon, custom spacing"
               ;;   :example (example2 [button (sx :&_.kushi-icon:mis--0
-              ;;                                  {:-mui-icon      "play_arrow"
+              ;;                                  {:-mui-icon      :play-arrow
               ;;                                   :-icon-position :inline-end})
               ;;                       "Play"])}
 
                {:label   "Icon button"
-                :example (example2 [button (sx  {:-mui-icon "play_arrow"})])}
+                :example (example2 [button (sx  {:-mui-icon :play-arrow})])}
 
                {:label   "Custom dimensions"
                 :example (example2 [button (sx :w--75px :h--75px) "YES"])}]}
@@ -114,7 +114,7 @@
     :content  [{:label   "Simple"
                 :example (example2 [checkbox "Sign me up"])}
                {:label   "With trailing icon"
-                :example (example2 [checkbox [label {:-mui-icon      "auto_awesome"
+                :example (example2 [checkbox [label {:-mui-icon      :auto-awesome
                                                      :-icon-position :inline-end}
                                               "Make it shiny" ]])}]}
 
@@ -134,7 +134,7 @@
                                                :-label          "Input label"})])}
                {:label   "With end enhancer"
                 :example (example2 [input (sx {:placeholder "Your text here"
-                                               :-end-enhancer [mui-icon (sx :pi--0.375em) "star"]
+                                               :-end-enhancer [mui-icon (sx :pi--0.375em) :star]
                                                :-label      "Input label"})])}
                {:label   "Inline label"
                 :example (example2 [input (sx {:placeholder      "Your text here"
@@ -293,9 +293,9 @@
     :content  [{:label   "Simple"
                 :example (example2 [label "my label"])}
                {:label   "Leading icon"
-                :example (example2 [label (sx {:-mui-icon "pets"}) "Pet friendly"])}
+                :example (example2 [label (sx {:-mui-icon :pets}) "Pet friendly"])}
                {:label   "Trailing icon"
-                :example (example2 [label (sx {:-mui-icon      "pets"
+                :example (example2 [label (sx {:-mui-icon      :pets
                                                :-icon-position :inline-end}) "Pet friendly"])}]}
 
    {:fn       title
@@ -310,9 +310,9 @@
                {:label   "Longer text"
                 :example (example2 [title "My title with longer text"])}
                #_{:label   "Leading icon"
-                  :example (example2 [title (sx {:-mui-icon "pets"}) "Pet friendly"])}
+                  :example (example2 [title (sx {:-mui-icon :pets}) "Pet friendly"])}
                #_{:label   "Trailing icon"
-                  :example (example2 [title (sx {:-mui-icon      "pets"
+                  :example (example2 [title (sx {:-mui-icon      :pets
                                                  :-icon-position :inline-end} "Pet friendly")])}]}
 
    {:fn       card
