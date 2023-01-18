@@ -81,8 +81,8 @@
    :ff--Inter|system|sans-serif
    :.wee-bold
    {:style {:$topnav-height                                      (str (:topnav-height shared-styles/shared-values) "px")
-            :$divisor                                            :4px:solid:$gray100
-            :$divisor-dark                                       :4px:solid:$gray700
+            :$divisor                                            "4px solid var(--gray100)"
+            :$divisor-dark                                       "4px solid var(--gray700)"
             :$title-margin-block                                 :0.0em:3.5rem
             :$body-copy-line-height                              :1.5em
             :$sidebar-width                                      :225px
@@ -103,7 +103,7 @@
             :&_a.kushi-link:d                                     :inline-flex
             :&_a.kushi-link:after:content                         "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='12px' viewBox='0 0 24 24' width='12px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"
             :&_a.kushi-link:after:d                               :flex
-            :&_a.kushi-link:after:flex-direction                  :column
+            :&_a.kushi-link:after:flex-direction                   :column
             :&_a.kushi-link:after:jc                              :center
             :&_a.kushi-link:after:va                              :middle
             :&_a.kushi-link:after:mi                              :0.2em:0.25em}}) )
