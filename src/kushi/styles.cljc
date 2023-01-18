@@ -46,9 +46,11 @@
          ")")
     x))
 
-(defn- normalize-css-custom-propery [x]
+(defn- normalize-css-custom-propery
+  "hi"
+  [x]
   (if (s/valid? ::specs2/cssvar-name x)
-    (str "var(" (name x) ")")
+    (str "var(" (util/cssvar-dollar-syntax->double-dash x) ")")
     x))
 
 (defn css-var-string [s x css-vars]
@@ -154,6 +156,14 @@
 (defn dequote [coll]
   (walk/postwalk dequote* coll))
 
+(defn css-custom-property-keys-normalized [coll]
+  (map (fn [[k v]]
+         (let [k (if (s/valid? ::specs2/cssvar-name k)
+                   (util/cssvar-dollar-syntax->double-dash k)
+                   k)]
+           [k v]))
+       coll))
+
 (defn all-style-tuples
   [coll]
   (let [css-vars (atom {})
@@ -165,15 +175,19 @@
                      (bindings-cssvarized css-vars)
                      (postwalk-style-tuples cssfn-list->string)
                      (postwalk-style-tuples unescape-sexp)
-                     (postwalk-style-tuples specs2/kw?->s))]
+                     (postwalk-style-tuples specs2/kw?->s)
+
+                     ;; Normalize any tuple keys that are css custom properties
+                     ;;  [:$xxx "red"] => ["--xxx" "red"]
+                     css-custom-property-keys-normalized)]
     [tuples @css-vars]))
 
 (defn extract-cssvar-name [%]
   ;; TODO use spec for this re-find re-pattern stuff
-  (when-let [[_ nm] (re-find (re-pattern (str "^var\\(("
-                                              specs2/cssvar-name-re
-                                              ")\\)$"))
-                             %)]
+  (when-let [[_ nm] (re-find (re-pattern (str "^"
+                                        specs2/cssvar-in-css-re
+                                        "$"))
+                       %)]
     nm))
 
 (defn cssvars
@@ -186,7 +200,7 @@
                                       (util/map-vals util/hydrate-css-shorthand+alternations))
         ret*                 (merge with-extracted-names cssvar-tuples)
 
-        ;; normalized kushi-style shorthand syntax within css-var sexp
+        ;; Normalized kushi-style shorthand syntax within css-var sexp
         ret                  (util/map-vals (fn [v]
                                               (if (s/valid? ::specs2/conditional-sexp v)
                                                 (map (fn [x]
@@ -239,7 +253,6 @@
          :as                   by-kind}
         (args-by-conformance clean conformance-spec)
 
-
         clean-stylemap
         (or clean-stylemap*
             (when shared-class?
@@ -270,8 +283,8 @@
         (when-let [coll tokenized-cssvars]
           (when (seq coll)
             (map (fn [%]
-                   (let [[_ nm val] (string/split (name %) #"--")]
-                     [(str "--" nm) val]))
+                   (let [[nm val] (string/split (name %) #"--")]
+                     [(util/cssvar-dollar-syntax->double-dash nm) val]))
                  coll)))
 
         style-tuples-from-defclass-class
@@ -296,7 +309,11 @@
         (all-style-tuples all-style-tuples*)
 
         [cssvar-tuples2 all-style-tuples2]
-        (util/partition-by-pred #(->> % first (s/valid? ::specs2/css-var-name)) all-style-tuples)
+        (util/partition-by-pred #(->> %
+                                      first
+                                      (s/valid? ::specs2/css-var-name))
+                                all-style-tuples)
+
 
         defclass-style-tuples
         (when shared-class? all-style-tuples2)
@@ -317,6 +334,7 @@
         css-vars
         (cssvars css-vars cssvar-tuples2)
 
+
         attrs
         (merge (-> (or attrs-no-style {}) (assoc :class classlist))
                (when css-vars {:style css-vars}))]
@@ -324,19 +342,19 @@
 
   ;; just for debugging
     #_(when (state2/trace?)
-        (println (keyed
+      (keyed
         ;; process
         ;; shared-class?
         ;; clean*
         ;; attrs*
-                  attrs
+                  ;; attrs
         ;; by-kind
         ;; clean-stylemap*
         ;; clean-stylemap
         ;; style-tuples-from-tokenized
         ;; all-style-tuples
-                  css-vars
-                  )))
+       css-vars
+       ))
 
     (merge (when defclass-style-tuples
              {:defclass-style-tuples defclass-style-tuples})

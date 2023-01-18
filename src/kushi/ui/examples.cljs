@@ -16,7 +16,7 @@
    [kushi.ui.collapse.core :refer (collapse accordian)]
    [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
    [kushi.ui.icon.mui.examples :refer [icon-examples]]
-   [playground.util :refer-macros (example2)]))
+   [kushi.playground.util :refer-macros (example2)]))
 
 
 (def components
@@ -34,30 +34,30 @@
                 :example (example2 [button "Play"])}
                {:label   "Leading icon"
                 :example (example2 [:div
-                                    [button (sx {:-mui-icon "play_arrow"})
+                                    [button (sx {:-mui-icon :play-arrow})
                                      "Play"]])}
                {:label   "Trailing icon"
-                :example (example2 [button {:-mui-icon      "play_arrow"
+                :example (example2 [button {:-mui-icon      :play-arrow
                                             :-icon-position :inline-end}
                                     "Play"])}
                {:label   "Icon above"
-                :example (example2 [button (sx {:-mui-icon      "play_arrow"
+                :example (example2 [button (sx {:-mui-icon      :play-arrow
                                                 :-icon-position :block-start})
                                     "Play"])}
                {:label   "Icon below"
-                :example (example2 [button (sx {:-mui-icon      "play_arrow"
+                :example (example2 [button (sx {:-mui-icon      :play-arrow
                                                 :-icon-position :block-end})
                                     "Play"])}
 
               ;; TODO -- fix this example
               ;;  {:label   "Trailing icon, custom spacing"
               ;;   :example (example2 [button (sx :&_.kushi-icon:mis--0
-              ;;                                  {:-mui-icon      "play_arrow"
+              ;;                                  {:-mui-icon      :play-arrow
               ;;                                   :-icon-position :inline-end})
               ;;                       "Play"])}
 
                {:label   "Icon button"
-                :example (example2 [button (sx  {:-mui-icon "play_arrow"})])}
+                :example (example2 [button (sx  {:-mui-icon :play-arrow})])}
 
                {:label   "Custom dimensions"
                 :example (example2 [button (sx :w--75px :h--75px) "YES"])}]}
@@ -75,7 +75,7 @@
                                     [radio {:-input-attrs {:name :demo}} "No"]
                                     [radio {:-input-attrs {:name :demo}} "Maybe"]])}
                {:label   "Inherited color"
-                :example (example2 [:section (sx :c--:--purple400)
+                :example (example2 [:section (sx :c--$purple400)
                                     [title (sx :.bold :mbe--0.75em) "Choose an option:"]
                                     [radio {:-input-attrs {:name :demo}} "Yes"]
                                     [radio {:-input-attrs {:name :demo}} "No"]
@@ -114,7 +114,7 @@
     :content  [{:label   "Simple"
                 :example (example2 [checkbox "Sign me up"])}
                {:label   "With trailing icon"
-                :example (example2 [checkbox [label {:-mui-icon      "auto_awesome"
+                :example (example2 [checkbox [label {:-mui-icon      :auto-awesome
                                                      :-icon-position :inline-end}
                                               "Make it shiny" ]])}]}
 
@@ -134,7 +134,7 @@
                                                :-label          "Input label"})])}
                {:label   "With end enhancer"
                 :example (example2 [input (sx {:placeholder "Your text here"
-                                               :-end-enhancer [mui-icon (sx :pi--0.375em) "star"]
+                                               :-end-enhancer [mui-icon (sx :pi--0.375em) :star]
                                                :-label      "Input label"})])}
                {:label   "Inline label"
                 :example (example2 [input (sx {:placeholder      "Your text here"
@@ -176,16 +176,16 @@
                                            :-label-scale-factor 0.8
                                            :-labels-attrs       (sx :>span>span:border-radius--9999px
                                                                     :>span>span:padding--0.125em:0.75em:0.2em
-                                                                    {:style {">span:nth-child(1):c"         :--positive
-                                                                             ">span:nth-child(1):>span:bgc" :--positive50
-                                                                             ">span:nth-child(2):c"         :--accent
-                                                                             ">span:nth-child(2):>span:bgc" :--accent50
-                                                                             ">span:nth-child(3):c"         :--warning
-                                                                             ">span:nth-child(3):>span:bgc" :--warning50
-                                                                             ">span:nth-child(4):c"         :--orange700
-                                                                             ">span:nth-child(4):>span:bgc" :--orange50
-                                                                             ">span:nth-child(5):c"         :--negative
-                                                                             ">span:nth-child(5):>span:bgc" :--negative50}})}])}]}
+                                                                    {:style {">span:nth-child(1):c"         :$positive
+                                                                             ">span:nth-child(1):>span:bgc" :$positive50
+                                                                             ">span:nth-child(2):c"         :$accent
+                                                                             ">span:nth-child(2):>span:bgc" :$accent50
+                                                                             ">span:nth-child(3):c"         :$warning
+                                                                             ">span:nth-child(3):>span:bgc" :$warning50
+                                                                             ">span:nth-child(4):c"         :$orange700
+                                                                             ">span:nth-child(4):>span:bgc" :$orange50
+                                                                             ">span:nth-child(5):c"         :$negative
+                                                                             ">span:nth-child(5):>span:bgc" :$negative50}})}])}]}
 
    {:fn       tooltip
     :meta     #'tooltip
@@ -243,7 +243,7 @@
                                     [tooltip (sx :c--black
                                                  :bgc--white
                                                  :box-shadow--1px:2px:7px:#42320035|0px:0px:1px:#42320035
-                                                 :bgc--:--yellow100
+                                                 :bgc--$yellow100
                                                  :p--0.3em:0.6em!important)
                                      "This is an example tooltip"]])}]}
 
@@ -293,9 +293,9 @@
     :content  [{:label   "Simple"
                 :example (example2 [label "my label"])}
                {:label   "Leading icon"
-                :example (example2 [label (sx {:-mui-icon "pets"}) "Pet friendly"])}
+                :example (example2 [label (sx {:-mui-icon :pets}) "Pet friendly"])}
                {:label   "Trailing icon"
-                :example (example2 [label (sx {:-mui-icon      "pets"
+                :example (example2 [label (sx {:-mui-icon      :pets
                                                :-icon-position :inline-end}) "Pet friendly"])}]}
 
    {:fn       title
@@ -310,9 +310,9 @@
                {:label   "Longer text"
                 :example (example2 [title "My title with longer text"])}
                #_{:label   "Leading icon"
-                  :example (example2 [title (sx {:-mui-icon "pets"}) "Pet friendly"])}
+                  :example (example2 [title (sx {:-mui-icon :pets}) "Pet friendly"])}
                #_{:label   "Trailing icon"
-                  :example (example2 [title (sx {:-mui-icon      "pets"
+                  :example (example2 [title (sx {:-mui-icon      :pets
                                                  :-icon-position :inline-end} "Pet friendly")])}]}
 
    {:fn       card

@@ -206,8 +206,8 @@
 
    ;; Type styling
    ;; ------------------------------------------------------
-   :sans          {:font-family :--sans-serif-font-stack}
-   :sans-serif    {:font-family :--serif-font-stack}
+   :sans          {:font-family :$sans-serif-font-stack}
+   :sans-serif    {:font-family :$serif-font-stack}
    :italic        {:font-style :italic}
    :oblique       {:font-style :oblique}
 
@@ -219,55 +219,55 @@
 
    ;; Type sizing
    ;; ------------------------------------------------------
-   :xxxsmall      {:fs :--text-xxxsmall}
-   :xxsmall       {:fs :--text-xxsmall}
-   :xsmall        {:fs :--text-xsmall}
-   :small         {:fs :--text-small}
-   :medium        {:fs :--text-medium}
-   :large         {:fs :--text-large}
-   :xlarge        {:fs :--text-xlarge}
-   :xxlarge       {:fs :--text-xxlarge}
-   :xxxlarge      {:fs :--text-xxxlarge}
+   :xxxsmall      {:fs :$text-xxxsmall}
+   :xxsmall       {:fs :$text-xxsmall}
+   :xsmall        {:fs :$text-xsmall}
+   :small         {:fs :$text-small}
+   :medium        {:fs :$text-medium}
+   :large         {:fs :$text-large}
+   :xlarge        {:fs :$text-xlarge}
+   :xxlarge       {:fs :$text-xxlarge}
+   :xxxlarge      {:fs :$text-xxxlarge}
 
 
    ;; Type weight
    ;; ------------------------------------------------------
-   :thin          {:fw :--text-thin}
-   :extra-light   {:fw :--text-extra-light}
-   :light         {:fw :--text-light}
-   :normal        {:fw :--text-normal}
-   :wee-bold      {:fw :--text-wee-bold}
-   :semi-bold     {:fw :--text-semi-bold}
-   :bold          {:fw :--text-bold}
-   :extra-bold    {:fw :--text-extra-bold}
-   :heavy         {:fw :--text-heavy}
+   :thin          {:fw :$text-thin}
+   :extra-light   {:fw :$text-extra-light}
+   :light         {:fw :$text-light}
+   :normal        {:fw :$text-normal}
+   :wee-bold      {:fw :$text-wee-bold}
+   :semi-bold     {:fw :$text-semi-bold}
+   :bold          {:fw :$text-bold}
+   :extra-bold    {:fw :$text-extra-bold}
+   :heavy         {:fw :$text-heavy}
 
 
    ;; Tracking (aka letter-spacing)
    ;; ------------------------------------------------------
-   :xxxtight      {:letter-spacing :--text-xxxtight}
-   :xxtight       {:letter-spacing :--text-xxtight}
-   :xtight        {:letter-spacing :--text-xtight}
-   :tight         {:letter-spacing :--text-tight}
-   :loose         {:letter-spacing :--text-loose}
-   :xloose        {:letter-spacing :--text-xloose}
-   :xxloose       {:letter-spacing :--text-xxloose}
-   :xxxloose      {:letter-spacing :--text-xxxloose}
+   :xxxtight      {:letter-spacing :$text-xxxtight}
+   :xxtight       {:letter-spacing :$text-xxtight}
+   :xtight        {:letter-spacing :$text-xtight}
+   :tight         {:letter-spacing :$text-tight}
+   :loose         {:letter-spacing :$text-loose}
+   :xloose        {:letter-spacing :$text-xloose}
+   :xxloose       {:letter-spacing :$text-xxloose}
+   :xxxloose      {:letter-spacing :$text-xxxloose}
 
 
    ;; Animations
    ;; ------------------------------------------------------
-   :instant       {:transition-duration :--duration-instant}
-   :fast          {:transition-duration :--duration-fast}
-   :slow          {:transition-duration :--duration-slow}
-   :extra-slow    {:transition-duration :--duration-extra-slow}
-   :super-slow    {:transition-duration :--duration-super-slow}
-   :ultra-slow    {:transition-duration :--duration-ultra-slow}
+   :instant       {:transition-duration :$duration-instant}
+   :fast          {:transition-duration :$duration-fast}
+   :slow          {:transition-duration :$duration-slow}
+   :extra-slow    {:transition-duration :$duration-extra-slow}
+   :super-slow    {:transition-duration :$duration-super-slow}
+   :ultra-slow    {:transition-duration :$duration-ultra-slow}
 
 
    ;; Surfaces, buttons, containers 2D
    ;; ------------------------------------------------------
-   :rounded       {:border-radius :--rounded}
+   :rounded       {:border-radius :$rounded}
    :sharp         {:border-radius 0}
    :pill          {:border-radius :9999px}
 
@@ -278,7 +278,7 @@
    :embossed      {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}
    :convex        {:background-image "linear-gradient(180deg, hsl(0deg 0% 100% / 20%), transparent, hsl(0deg 0% 0% / 15%))"}
    :concave       {:background-image "linear-gradient(180deg, hsl(0deg 0% 0% / 15%), transparent, hsl(0deg 0% 100% / 20%))"}
-   :elevated      {:box-shadow    :--elevated}
+   :elevated      {:box-shadow    :$elevated}
 
 
    ;; Controls
@@ -289,24 +289,24 @@
 (def ui-theming-classes
   ;; Type weight
   ;; ------------------------------------------------------
-  [:thin        {">.kushi-radio-input:outline-width" :--input-border-weight-thin
-                 ">.kushi-checkbox-input:bw"         :--input-border-weight-thin}
-   :extra-light {">.kushi-radio-input:outline-width" :--input-border-weight-extra-light
-                 ">.kushi-checkbox-input:bw"         :--input-border-weight-extra-light}
-   :light       {">.kushi-radio-input:outline-width" :--input-border-weight-light
-                 ">.kushi-checkbox-input:bw"         :--input-border-weight-light}
-   :normal      {">.kushi-radio-input:outline-width" :--input-border-weight-normal
-                 ">.kushi-checkbox-input:bw"         :--input-border-weight-normal}
-   :wee-bold    {">.kushi-radio-input:outline-width" :--input-border-weight-wee-bold
-                 ">.kushi-checkbox-input:bw"         :--input-border-weight-wee-bold}
-   :semi-bold   {">.kushi-radio-input:outline-width" :--input-border-weight-semi-bold
-                 ">.kushi-checkbox-input:bw"         :--input-border-weight-semi-bold}
-   :bold        {">.kushi-radio-input:outline-width" :--input-border-weight-bold
-                 ">.kushi-checkbox-input:bw"         :--input-border-weight-bold}
-   :extra-bold  {">.kushi-radio-input:outline-width" :--input-border-weight-extra-bold
-                 ">.kushi-checkbox-input:bw"         :--input-border-weight-extra-bold}
-   :heavy       {">.kushi-radio-input:outline-width" :--input-border-weight-heavy
-                 ">.kushi-checkbox-input:bw"         :--input-border-weight-heavy}])
+  [:thin        {">.kushi-radio-input:outline-width" :$input-border-weight-thin
+                 ">.kushi-checkbox-input:bw"         :$input-border-weight-thin}
+   :extra-light {">.kushi-radio-input:outline-width" :$input-border-weight-extra-light
+                 ">.kushi-checkbox-input:bw"         :$input-border-weight-extra-light}
+   :light       {">.kushi-radio-input:outline-width" :$input-border-weight-light
+                 ">.kushi-checkbox-input:bw"         :$input-border-weight-light}
+   :normal      {">.kushi-radio-input:outline-width" :$input-border-weight-normal
+                 ">.kushi-checkbox-input:bw"         :$input-border-weight-normal}
+   :wee-bold    {">.kushi-radio-input:outline-width" :$input-border-weight-wee-bold
+                 ">.kushi-checkbox-input:bw"         :$input-border-weight-wee-bold}
+   :semi-bold   {">.kushi-radio-input:outline-width" :$input-border-weight-semi-bold
+                 ">.kushi-checkbox-input:bw"         :$input-border-weight-semi-bold}
+   :bold        {">.kushi-radio-input:outline-width" :$input-border-weight-bold
+                 ">.kushi-checkbox-input:bw"         :$input-border-weight-bold}
+   :extra-bold  {">.kushi-radio-input:outline-width" :$input-border-weight-extra-bold
+                 ">.kushi-checkbox-input:bw"         :$input-border-weight-extra-bold}
+   :heavy       {">.kushi-radio-input:outline-width" :$input-border-weight-heavy
+                 ">.kushi-checkbox-input:bw"         :$input-border-weight-heavy}])
 
 (def utility-class-ks
   (mapcat util/kwargs-keys

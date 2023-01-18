@@ -412,8 +412,6 @@
    ;; TODO - conditionalize these 2 for prod vs dev
    ;; - OR -
    ;; always add to state and then conditionalize writing of css chunks based on user config setting
-    ;; (pprint :theme!)
-    ;; (pprint design-tokens)
     (doseq [tok design-tokens] (state2/add-design-token! tok))
 
    ;; TODO - tokens from theme go in here.
@@ -454,12 +452,9 @@
 ;; RUNTIME ---------------------------------------------------------------
 
 (defmacro inject! []
-  ;; maybe make warning if inject called too early
   (stylesheet/create-css-text "kushi.core/inject!")
   (let [css-sync         @state2/->css
         google-font-maps @state2/google-font-maps]
     `(do
        (apply kushi.core/add-google-font! ~google-font-maps)
        (kushi.core/css-sync! ~css-sync))))
-
-

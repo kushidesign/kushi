@@ -1,3 +1,16 @@
+
+;; TODO - DECIDE Between these 2
+;; (s/def ::cssvar-name
+;;   (s/and ::s|kw
+;;          #(re-find (re-pattern (str "^" cssvar-name-re "$")) (name %))))
+
+
+;; (s/def ::css-var-name
+;;   (s/or :keyword? ::css-var-name-kw
+;;         :string?  ::css-var-name-string))
+
+
+
 (ns kushi.specs2
   (:require
    [clojure.string :as string]
@@ -15,8 +28,8 @@
 (def css-pseudo-class-re (str "(?:" (string/join "|" (map name defs/pseudo-classes*)) ")(?:\\(.*\\))?"))
 (def css-pseudo-element-followed-by-pseudo-class-re (str css-pseudo-element-re ":" css-pseudo-class-re))
 (def cssvar-name-base-re "[-_a-zA-Z0-9]+")
-(def cssvar-name-re (str "--" cssvar-name-base-re))
-(def cssvar-in-css-re (str "var\\((" cssvar-name-re ")\\)"))
+(def cssvar-name-re (str "\\$" cssvar-name-base-re))
+(def cssvar-in-css-re (str "var\\((--" cssvar-name-base-re ")\\)"))
 ;; Clojure valid symbol related
 (def clj-sym-special-chars "\\*\\+\\!\\-\\_\\'\\?\\<\\>\\=" )
 (def clj-sym-special-chars2 "\\/\\:")
@@ -291,13 +304,13 @@
 (s/def ::cssvar-tokenized*
   #(and
      (re-find (re-pattern (str "^" cssvar-name-re)) (name %))
-     (re-find (re-pattern (str "--" css-val-re-base "$")) (name %))))
+     (re-find (re-pattern (str "\\$" css-val-re-base "$")) (name %))))
 
 (s/def ::cssvar-tokenized
   (s/and keyword?
          (s/or :tokenized* ::cssvar-tokenized*
                ;; TODO maybe lose this?
-               :valid-cssvar-tuple-on-split #(kw->valid-tup? % #"(?=--)" ::cssvar-tuple))))
+               :valid-cssvar-tuple-on-split #(kw->valid-tup? % #"(?=\$)" ::cssvar-tuple))))
 
 
 
@@ -314,10 +327,10 @@
                #(kw->valid-tup? % #"--" ::style-tuple)
 
                :style-tuple-with-css-var
-               #(kw->valid-tup? % #"--:" ::style-tuple-with-css-var)
+               #(kw->valid-tup? % #"--" ::style-tuple-with-css-var)
 
                :cssvar-tuple-with-css-var
-               #(kw->valid-tup? % #"--:" ::cssvar-tuple-with-css-var))))
+               #(kw->valid-tup? % #"--" ::cssvar-tuple-with-css-var))))
 
 
 
@@ -495,7 +508,7 @@
 ;; CSS-VARS -------------------------------------------------------------
 
 (s/def ::css-var-name-string
-  (s/and string? #(re-find #"^--\S+" %)))
+  (s/and string? #(re-find #"^\$\S+" %)))
 
 (s/def ::css-var-name-kw
   (s/and keyword?

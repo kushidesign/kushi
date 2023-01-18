@@ -48,7 +48,7 @@
             :width--1em
             :height--1em
             :outline-style--solid
-            :outline-width--:--input-border-weight-normal
+            :outline-width--$input-border-weight-normal
             :outline-color--currentColor
             :outline-offset---0.15em
             :checked:outline-width--0.333em
