@@ -1,4 +1,4 @@
-(ns ^:dev-always playground.component-section
+(ns ^:dev-always kushi.playground.component-section
   (:require
    [clojure.edn :refer [read-string]]
    [clojure.walk :as walk]
