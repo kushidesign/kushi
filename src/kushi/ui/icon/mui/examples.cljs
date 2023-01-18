@@ -2,7 +2,7 @@
   (:require
    [kushi.core :refer (sx)]
    [kushi.ui.icon.mui.core :refer (mui-icon mui-icon-outlined)]
-   [playground.util :refer-macros (example2)]))
+   [kushi.playground.util :refer-macros (example2)]))
 
 #_(def icons
   [

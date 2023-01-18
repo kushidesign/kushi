@@ -16,7 +16,7 @@
    [kushi.ui.collapse.core :refer (collapse accordian)]
    [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
    [kushi.ui.icon.mui.examples :refer [icon-examples]]
-   [playground.util :refer-macros (example2)]))
+   [kushi.playground.util :refer-macros (example2)]))
 
 
 (def components
