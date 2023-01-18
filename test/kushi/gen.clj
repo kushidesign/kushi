@@ -58,11 +58,13 @@
 
    ['css-custom-properties
     nil
-    [[:b--:--custom-prop]
-     [[:b :--custom-prop]]
-     [{:style {:b :--css-custom}}]
-     [:--custom-prop-name--:--custom-prop-val]
-     [[:--custom-prop-name :--custom-prop-val]]]]
+    [[:b--$custom-prop]
+     [[:b :$custom-prop]]
+     [{:style {:b :$custom-prop}}]
+     [:$custom-prop-name--red]
+     [:$custom-prop-name--$custom-prop-val]
+     [[:$custom-prop-name :$custom-prop-val]]
+     [{:style {:$custom-prop-name :$custom-prop}}]]]
 
    ['complex-values
     nil
