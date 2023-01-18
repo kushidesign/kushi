@@ -186,10 +186,10 @@
 
 (defn extract-cssvar-name [%]
   ;; TODO use spec for this re-find re-pattern stuff
-  (when-let [[_ nm] (re-find (re-pattern (str "^var\\(("
-                                              specs2/cssvar-name-re
-                                              ")\\)$"))
-                             %)]
+  (when-let [[_ nm] (re-find (re-pattern (str "^"
+                                        specs2/cssvar-in-css-re
+                                        "$"))
+                       %)]
     nm))
 
 (defn cssvars
