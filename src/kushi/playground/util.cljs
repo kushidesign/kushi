@@ -4,6 +4,9 @@
    [clojure.pprint :refer [pprint]]
    [clojure.string :as string]))
 
+(def kushi-github-url  "https://github.com/kushidesign/kushi")
+(def kushi-clojars-url "https://clojars.org/design.kushi/kushi")
+
 (defn pprint-snippet [coll]
   (string/replace (with-out-str (pprint coll)) #"\n$" ""))
 
