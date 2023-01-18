@@ -29,7 +29,7 @@
 (def css-pseudo-element-followed-by-pseudo-class-re (str css-pseudo-element-re ":" css-pseudo-class-re))
 (def cssvar-name-base-re "[-_a-zA-Z0-9]+")
 (def cssvar-name-re (str "\\$" cssvar-name-base-re))
-(def cssvar-in-css-re (str "var\\((" cssvar-name-re ")\\)"))
+(def cssvar-in-css-re (str "var\\((--" cssvar-name-base-re ")\\)"))
 ;; Clojure valid symbol related
 (def clj-sym-special-chars "\\*\\+\\!\\-\\_\\'\\?\\<\\>\\=" )
 (def clj-sym-special-chars2 "\\/\\:")
