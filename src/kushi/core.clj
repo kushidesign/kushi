@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.core
   (:require
-   [par.core :refer [!? ?]]
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
@@ -313,10 +312,7 @@
 (defn sx-dispatch
   [{:keys [form-meta args]
     :or   {form-meta {}}}]
-  (let [
-        ;; _ (state2/trace! args '(quote headline-layer))
-        _ (state2/trace! args '(quote letter))
-        cache-map (state2/cached {:process :sx
+  (let [cache-map (state2/cached {:process :sx
                                   :args    args})
         process   (process args)
         clean     (or (:cached cache-map)
@@ -325,8 +321,6 @@
                                         :cache-key     (:cache-key cache-map)
                                         :form-meta     form-meta}))
         clean     (merge clean {:kushi/chunk process})]
-
-;; (when (state2/trace?) (? (-> clean :attrs :style)))
 
     (swap! state2/css conj clean)
 
@@ -418,8 +412,6 @@
    ;; TODO - conditionalize these 2 for prod vs dev
    ;; - OR -
    ;; always add to state and then conditionalize writing of css chunks based on user config setting
-    ;; (pprint :theme!)
-    ;; (pprint design-tokens)
     (doseq [tok design-tokens] (state2/add-design-token! tok))
 
    ;; TODO - tokens from theme go in here.
@@ -460,12 +452,9 @@
 ;; RUNTIME ---------------------------------------------------------------
 
 (defmacro inject! []
-  ;; maybe make warning if inject called too early
   (stylesheet/create-css-text "kushi.core/inject!")
   (let [css-sync         @state2/->css
         google-font-maps @state2/google-font-maps]
     `(do
        (apply kushi.core/add-google-font! ~google-font-maps)
        (kushi.core/css-sync! ~css-sync))))
-
-
