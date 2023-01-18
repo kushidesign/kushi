@@ -1,6 +1,5 @@
 (ns kushi.styles
   (:require
-   [par.core :refer [!? ? ?+]]
    [clojure.spec.alpha :as s]
    [clojure.walk :as walk]
    [clojure.string :as string]
@@ -181,7 +180,6 @@
                      ;; Normalize any tuple keys that are css custom properties
                      ;;  [:$xxx "red"] => ["--xxx" "red"]
                      css-custom-property-keys-normalized)]
-    ;; (when (state2/trace?) (?+ tuples))
     [tuples @css-vars]))
 
 (defn extract-cssvar-name [%]
@@ -213,13 +211,6 @@
                                                      v)
                                                 v))
                                             ret*)]
-
-    ;; (when (seq with-extracted-names)
-    ;;   (?+ (keyed with-extracted-names cssvar-tuples2 ret)))
-
-    ;; (when (state2/trace?)
-    ;;   (?+ :whoa (keyed css-vars cssvar-tuples with-extracted-names cssvar-tuples ret* ret)))
-
     ret))
 
 (defn style-tuples*
