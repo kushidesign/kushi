@@ -214,11 +214,11 @@
                                                 v))
                                             ret*)]
 
-    #_(when (seq with-extracted-names)
-      (? (keyed with-extracted-names cssvar-tuples2 ret)))
+    ;; (when (seq with-extracted-names)
+    ;;   (?+ (keyed with-extracted-names cssvar-tuples2 ret)))
 
-    #_(when (state2/trace?)
-      (?+ (keyed css-vars cssvar-tuples with-extracted-names cssvar-tuples ret* ret)))
+    ;; (when (state2/trace?)
+    ;;   (?+ :whoa (keyed css-vars cssvar-tuples with-extracted-names cssvar-tuples ret* ret)))
 
     ret))
 
@@ -261,7 +261,6 @@
          cssvar-tuples         :cssvar-tuple
          :as                   by-kind}
         (args-by-conformance clean conformance-spec)
-
 
         clean-stylemap
         (or clean-stylemap*
@@ -341,16 +340,6 @@
         classlist
         (classlist attrs-no-style class selector)
 
-        ;; _ (when (state2/trace?)
-        ;;     (?+ (keyed by-kind
-        ;;                cssvar-tuples
-        ;;                all-style-tuples*
-        ;;                all-style-tuples
-        ;;                all-style-tuples2
-        ;;                css-vars
-        ;;                )))
-
-        ;; _ (? args)
         css-vars
         (cssvars css-vars cssvar-tuples2)
 
@@ -362,19 +351,19 @@
 
   ;; just for debugging
     #_(when (state2/trace?)
-        (println (keyed
+      (keyed
         ;; process
         ;; shared-class?
         ;; clean*
         ;; attrs*
-                  attrs
+                  ;; attrs
         ;; by-kind
         ;; clean-stylemap*
         ;; clean-stylemap
         ;; style-tuples-from-tokenized
         ;; all-style-tuples
-                  css-vars
-                  )))
+       css-vars
+       ))
 
     (merge (when defclass-style-tuples
              {:defclass-style-tuples defclass-style-tuples})
