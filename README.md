@@ -2,8 +2,8 @@
 
 # Kushi
 <h5>Kushi is a foundation for building web UI with ClojureScript.</h5>
-<h5><a href="https://kushi.design"><strong>Explore Kushi UI Playground »</strong></a></h5>
-<h5><a href="https://github.com/kushidesign/kushi-quickstart"><strong>Kushi Quickstart »</strong></a></h5>
+<h5><a href="https://kushi.design" target="_blank"><strong>Explore Kushi UI Playground »</strong></a></h5>
+<h5><a href="https://github.com/kushidesign/kushi-quickstart" target="_blank"><strong>Kushi Quickstart »</strong></a></h5>
 
 
 
@@ -20,7 +20,7 @@
 
 - **Co-location of styling at the element level**
 
-- **Compile-time macros generate static css**
+- **Compile-time macros generate static CSS**
 
 - **Supports media-queries, psuedos, and combo selectors**
 
@@ -28,7 +28,7 @@
 
 - **Composable, user-defined shared classes**
 
-- **A collection of useful css utility classes**
+- **A collection of useful CSS utility classes**
 
 - **Default industry-standard breakpoint scale**
 
@@ -43,6 +43,8 @@
 - **Detailed, human-readable warnings**
 
 - **Framework & build-tool agnostic**
+
+- **Generates interactive UI documentation**
 
 
 
@@ -63,6 +65,7 @@
 - [Configuration options](#configuration-options)<br>
 - [Actionable warnings](#actionable-warnings)<br>
 - [Defining components](#defining-components)<br>
+- [Kushi Playground](#kushi-playground)
 - [Usage with build tools](#usage-with-build-tools)<br>
 - [License](#license)
 
@@ -246,7 +249,7 @@ This shorthand grammer is available for the most commonly used props:
 ```
 
 <!-- TODO maybe just link to source? -->
-See the complete list of supported css properties [here](https://github.com/kushidesign/kushi/blob/main/docs/kushi-shorthand-reference.md).
+See the complete list of supported css properties <a href="https://github.com/kushidesign/kushi/blob/main/docs/kushi-shorthand-reference.md" target="_blank">here</a>.
 
 Shorthand grammer extends to cover enumerated values:
 ```Clojure
@@ -345,15 +348,15 @@ As seen in the example above, you can use a quoted list to convey css function v
 The following sugar is supported for css variables:
 
 ```Clojure
-(sx :border-radius--:--mycssvarname)
+(sx :border-radius--$mycssvarname)
 
-(sx [:border-radius :--mycssvarname)
+(sx [:border-radius :$mycssvarname)
 
-(sx {:style {:border-radius :--mycssvarname})
+(sx {:style {:border-radius :$mycssvarname})
 
 ;; All of the above would be equivalent to:
 
-(sx {:style {:color "--var(mycssvarname)"})
+(sx {:style {:color "var(--mycssvarname)"})
 ```
 
 <!-- Add section for defining css custom props -->
@@ -618,7 +621,8 @@ The full list of predefined classes:
 ```
 <!-- TODO add debug grid helpers to above list -->
 
-Checkout [this source file](https://github.com/kushidesign/kushi/blob/main/src/kushi/ui/utility.cljc) for a complete reference of all current pre-defined utility classes.
+Checkout <a href="https://github.com/kushidesign/kushi/blob/main/src/kushi/ui/utility.cljc" target="_blank">this source file</a>
+ for a complete reference of all current pre-defined utility classes.
 <br>
 
 ### Applying Classes Conditionally
@@ -731,7 +735,6 @@ CSS resulting from the above example:
 
 .foo::before {
   font-weight: bold;
-  margin-inline-end: 5px;
   content: "⌫";
 }
 
@@ -1232,9 +1235,18 @@ The example above assumes the following:
 
 The helper function `kushi.ui.core/opts+children` will pull any keys prefixed with `:-` out of the attributes map and into a user `opts` map. `opts+children` always returns a vector in the form of `[user-opts attr child & more-children]`.
 
-<!-- ### Theming
-You can theme -->
-<!-- <br> -->
+<br>
+
+## Theming
+Detailed docs on theming coming soon...
+<br>
+
+<br>
+
+## Kushi Playground
+The `kushi.playground` namespace exists to enable the generation of a clean, interactive documentation site for all the UI in your project. You can customize this with all your own custom components, branding, typography, colors and more. Playground can be thought of as a lighter weight, ClojureScript-specific alternative to something like Storybook. Kushi's own UI documentation site at <a href="https://kushi.design">kushi.design</a> is built using Playground.
+
+Detailed documentation for this feature is coming soon. In the meantime, you can peruse the `docs` dir in this repo which is the setup for the Kushi UI documentation site linked above.
 
 <br>
 
@@ -1243,6 +1255,13 @@ Although Kushi is designed to be build-tool and framework agnostic, thus far it 
 
 ### shadow-cljs
 See the [kushi-quickstart](https://github.com/kushidesign/kushi-quickstart) template for a detailed example of using Kushi in a shadow-cljs project.
+
+<br>
+
+## Helping
+Feel free to file issues or initiate discussion in <a href="https://github.com/kushidesign/kushi/issues" target="_blank">Issues</a>.
+
+More details on ways to contribute coming soon...
 
 <br>
 
