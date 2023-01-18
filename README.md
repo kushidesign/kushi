@@ -34,7 +34,7 @@
 
 - **Auto-generated selectors to avoid pontential collisions**
 
-- **Robust and flexible selector prefixing options**
+- **Flexible selector prefixing options**
 
 - **Helpers for typography, keyframes, and more**
 
