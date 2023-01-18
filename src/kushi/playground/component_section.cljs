@@ -275,10 +275,10 @@
                   (when nm
                     [:div (sx
                            :.small
-                           :first-child:bbs--1px:solid:$gray200
-                           :dark:first-child:bbs--1px:solid:$gray800
-                           :bbe--1px:solid:$gray200
-                           :dark:bbe--1px:solid:$gray800
+                           [:first-child:bbs "1px solid var(--gray200)"]
+                           [:dark:first-child:bbs "1px solid var(--gray800)"]
+                           [:bbe "1px solid var(--gray200)"]
+                           [:dark:bbe "1px solid var(--gray800)"]
                            :pb--1em)
                      [:div (sx :mb--0.7rem)
                       [:span (sx :.code :.wee-bold) (str ":-" nm)]]
