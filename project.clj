@@ -7,7 +7,9 @@
                         [garden "1.3.10"]
                         [applied-science/js-interop "0.3.3"]
                         [io.aviso/pretty "1.1"]
-                        [expound "0.9.0"]]
+                        [expound "0.9.0"]
+                        [metosin/malli                         "0.8.4"]
+                        [markdown-to-hiccup/markdown-to-hiccup "0.6.2"]]
   :repl-options        {:init-ns kushi.core}
   :profiles            {:dev {:plugins [[com.jakemccrary/lein-test-refresh "0.25.0"]]}}
   :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
