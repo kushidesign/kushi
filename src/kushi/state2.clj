@@ -108,7 +108,7 @@
 
 
 ;; Tracing ---------------------------------------------------------------
-(defn trace! [args & more] (reset! trace?* (contains? (into #{} more) (first args))))
+(defn trace! [args target] (reset! trace?* (= args (rest target))) )
 (defn trace? [] @trace?*)
 
 
