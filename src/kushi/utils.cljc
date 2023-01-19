@@ -89,13 +89,12 @@
   ;; "url(https://blah.blah.com/blah.png)"
   ;; or
   ;; "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='12px' ...)"
-
   (if (string? v)
     (let [alternations*       (string/split v #"\|")
           with-css-shorthands (map #(let [coll* (string/split % #"\:")
                                           coll  (map (fn [%]
                                                        (if (s/valid? ::specs2/cssvar-name %)
-                                                         (str "var(" % ")")
+                                                         (str "var(" (cssvar-dollar-syntax->double-dash %) ")")
                                                          %))
                                                      coll*)]
                                       (string/join " " coll))
