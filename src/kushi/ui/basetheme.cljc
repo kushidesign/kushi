@@ -1,10 +1,64 @@
 (ns ^:dev/always kushi.ui.basetheme
   (:require
    [clojure.string :as string]
+   [clojure.set :as set]
+   [kushi.specs2 :as specs]
+   [kushi.config :refer [user-config]]
    [kushi.ui.tokens :refer [design-tokens]]
    [kushi.ui.utility :refer [utility-classes]]
    [kushi.colors :refer [colors]]
    [kushi.color :refer [colors->tokens colors->alias-tokens semantic-aliases]]))
+
+;; TODO - explore more efficient way to transform authored theme code
+
+;; Right now we are using vectors instead of maps to preserve
+;; authored "insertion" order
+
+;; Then using the maybe-remove-lights-and-darks fn to remove them
+;; after the fact (based on user-config options to elide light or dark styles)
+
+;; Would it be possible to use maps like this and just remove stuff
+;; structurally? (like all lights or all darks, or all bordereds, etc),
+;; before the base-theme-map is built up?
+
+;; This^^^ approach would necessitate a seperately defined order to
+;; eventually re-sort them in the following way the following in nested way:
+(comment
+  [:neutral :accent :positive :negative :warning]
+  [:default :minimal :bordered :filled]
+  [:color
+   :hover:color
+   :active:color
+
+   :background-color
+   :background-color:hover:color
+   :background-color:hover:color
+
+   :.info:color
+   :.info:hover:color
+   :.info:neutral:active:color])
+
+(comment
+  {:neutral {:light {:default  {:color        1000
+                                :hover:color  1000
+                                :active:color 1000
+                                :...          :...}
+                     :minimal  {:... :...}
+                     :bordered {:... :...}}
+             :dark  {:default  {:... :...}
+                     :minimal  {:... :...}
+                     :bordered {:... :...}}}
+
+   :accent  {:light {:default  {:color        1000
+                                :hover:color  1000
+                                :active:color 1000
+                                :...          :...}
+                     :minimal  {:... :...}
+                     :bordered {:... :...}}
+             :dark  {:default  {:... :...}
+                     :minimal  {:... :...}
+                     :bordered {:... :...}}}})
+
 
 (def variant-values
   [
@@ -763,7 +817,7 @@
     :transition-property :all
     :transition-duration :--duration-normal}
 
-   "body.dark, .dark"
+   ".dark, body.dark"
    {:bgc   :$gray1000
     :color :$gray50}
 
@@ -849,24 +903,101 @@
    ".dark .kushi-checkbox-input"                                     {:bgc :black}
    ".dark .kushi-checkbox-input:before"                              {:box-shadow :inset:1em:1em:black}
    ".dark .kushi-slider-step-label.kushi-slider-step-label-selected" {:c :white}
-   ".dark .kushi-slider-step-label"                                  {:c :$gray300}
-   ])
+   ".dark .kushi-slider-step-label"                                  {:c :$gray300}])
+
+
+
+(defn- styles-transform-report
+  ([coll ret]
+   (styles-transform-report coll ret nil nil))
+  ([coll ret k v]
+   (let [in  (count coll)
+         out (count ret)]
+     (merge {:in      in
+             :out     out
+             :removed (- in out)}
+            (when (and k v)
+              {k v})))))
+
+(defn- remove-darks? [] (not (:add-kushi-ui-dark-theming? user-config)))
+
+(defn- remove-lights? [] (not (:add-kushi-ui-light-theming? user-config)))
+
+(defn- starts-with-dark? [x]
+  (re-find (re-pattern specs/starts-with-dark-re) (name x)))
+
+(defn- filter-flatmap [coll f]
+  (->> coll
+       (partition 2)
+       (filter #(f (first %)))
+       flatten))
+
+(defn- remove-lights-or-darks [coll k]
+  (let [dark?  (= k :dark)
+        ret    (filter-flatmap coll
+                               (if dark?
+                                 #(not (starts-with-dark? %))
+                                 #(starts-with-dark? %)))
+        report (styles-transform-report coll ret)]
+    ;; (if dark?
+    ;;   (? "Removing dark styles"
+    ;;      report)
+    ;;   (? "Removing light styles"
+    ;;      report))
+    ret))
+
+(defn- maybe-remove-lights-or-darks [coll]
+  (cond (remove-darks?)
+        (remove-lights-or-darks coll :dark)
+        (remove-lights?)
+        (remove-lights-or-darks coll :light)
+        :else
+        variant-values))
+
+(defn- variant-elision-re [key-set]
+  (->> key-set
+       (map #(str  "\\." (name %)))
+       (string/join "|")
+       re-pattern))
+
+(defn- maybe-remove-semantic-or-style-variants
+  [coll]
+  (let [elided (set/union (:elide-ui-variants-semantic user-config)
+                          (:elide-ui-variants-style    user-config))]
+   (if (and (set? elided)
+            (seq elided))
+     (let [re  (variant-elision-re elided)
+           ret (filter-flatmap coll #(not (re-find re (name %))))]
+      ;;  (? "Removing styles from unused variants"
+      ;;     (styles-transform-report coll ret :variants-to-elide elided))
+       ret)
+     coll)))
+
+(defn- maybe-remove-some-variants [coll]
+  (->> coll
+       maybe-remove-lights-or-darks
+       maybe-remove-semantic-or-style-variants))
+
 
 (defn base-theme-map
   []
-  (let [{ui2            :styles
-         variant-tokens :token-pairs} (tokenizer variant-values)]
+  (let [variant-values     (maybe-remove-some-variants variant-values)
+        {ui2 :styles variant-tokens :token-pairs} (tokenizer variant-values)
+        ui                 (into [] (concat ui ui2 ui*))
+        ui                 (if (remove-darks?) (remove-lights-or-darks ui :darks) ui)]
     {:css-reset       css-reset
      :utility-classes utility-classes
-     :design-tokens   (let [color-tokens       (colors->tokens colors {:format :css :expanded? true})
-                            alias-color-tokens (colors->alias-tokens semantic-aliases {:expanded? true})]
+     :design-tokens   (let [color-tokens       (colors->tokens colors
+                                                               {:format    :css
+                                                                :expanded? true})
+                            alias-color-tokens (colors->alias-tokens
+                                                semantic-aliases
+                                                {:expanded? true})]
                         (into []
                               (concat color-tokens
                                       alias-color-tokens
                                       variant-tokens
                                       design-tokens)))
      :font-loading    font-loading
-     :ui              (into []
-                            (concat ui ui2 ui*))
-     }))
+     :ui              ui}))
 

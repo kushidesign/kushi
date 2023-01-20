@@ -30,6 +30,8 @@
 (def cssvar-name-base-re "[-_a-zA-Z0-9]+")
 (def cssvar-name-re (str "\\$" cssvar-name-base-re))
 (def cssvar-in-css-re (str "var\\((--" cssvar-name-base-re ")\\)"))
+(def starts-with-dark-re (str "^\\.dark,?"))
+
 ;; Clojure valid symbol related
 (def clj-sym-special-chars "\\*\\+\\!\\-\\_\\'\\?\\<\\>\\=" )
 (def clj-sym-special-chars2 "\\/\\:")
