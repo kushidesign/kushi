@@ -103,27 +103,16 @@
    ;; Set this to false to leave out any styling classes created by the user via the sx macro
    :add-user-sx?                   true
 
-
-
-   ;; NOTE - probably just remove this option or rethink interface?
-
-   ;; You can explicitly opt-in to include support for `kind` and `semantic` variants of certain kushi.ui components.
+   ;; You can explicitly elide support for `kind` and `semantic` variants of certain kushi.ui components.
    ;; By default, support for all these variants is included in the css, so narrowing it will reduce
-   ;; the amount of default theme-related css that gets included in the css.
+   ;; the amount of default theme-related styles that gets included in the css.
 
    ;; The components that use `kind` and `semantic` variants are:
    ;; kushi.ui.button.core/button
    ;; kushi.ui.tag.core/tag
 
-   ;; Using this example value below would limit the support to just a subset of these variants:
-   ;; {:button {:semantic #{:positive :negative}
-   ;;           :kind     #{:primary :minimal}}
-   ;;  :tag    {:semantic #{:positive :negative}}}
-
-   :kushi-ui-variants              :all
-
-
-
+   :elide-ui-variants-semantic #{} ;; can include :accent :negative :warning :neutral :positive
+   :elide-ui-variants-style    #{} ;; can include :bordered :minimal :filled
 
 
    ;; Build process logging ----------------------------------------------
