@@ -179,7 +179,6 @@
   (let [user-theme-map                       (user-theme-map)
 
         base-theme-map                       (basetheme/base-theme-map)
-        ;; base-theme-map                       (resolve-user-theme 'kushi.ui.basetheme/base-theme-map)
 
         {:keys [ordered-ui]}                 (merge-base-and-user-ui base-theme-map user-theme-map)
 
