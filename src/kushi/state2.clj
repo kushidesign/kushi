@@ -1,7 +1,5 @@
 (ns ^:dev/always kushi.state2
   (:require
-   [clojure.walk :as walk]
-   [clojure.pprint :refer [pprint]]
    [clojure.data :as data]
    [kushi.io :refer [load-edn]]
    [clojure.java.io :refer [make-parents]]
