@@ -6,13 +6,11 @@
    [kushi.ui.core :refer (opts+children)]))
 
 (defn input* [& args]
-  (let [[opts attrs & _]     (opts+children args)
+  (let [[opts attrs & _]       (opts+children args)
         {:keys [wrapper-attrs
                 start-enhancer
                 end-enhancer
-                semantic
-                required?
-                disabled?]} opts]
+                semantic]}     opts]
     [:div
      (merge-attrs
       (sx 'kushi-text-input-wrapper
@@ -48,9 +46,7 @@
             :pi--0.5em
             :pb--0.5em
             :placeholder:o--0.4
-            {:type     :text
-             :disabled disabled?
-             :required required?})
+            {:type     :text})
         attrs)]]
      (when end-enhancer
        [:div
@@ -126,16 +122,15 @@
                 outer-wrapper-attrs
                 label
                 label-placement
-                label-width
                 label-attrs
                 wrapper-attrs
                 start-enhancer
                 end-enhancer
                 helper
-                semantic
-                required?
-                disabled?]
+                semantic]
          :or   {label " "}}         opts
+        {:keys [required
+                disabled]}          attrs
         input-id                    (:id attrs)
         inline?                     (= :inline label-placement)
         label-text-attrs   (sx 'kushi-text-input-label-text
@@ -153,30 +148,31 @@
                                   :.neutral-secondary-fg
                                   :.inline-block
                                   :.normal
+                                  :fs--smaller
                                   :mbs--0.5em)))
 
         wrapped-input [input* (merge attrs
                                      {:-wrapper-attrs  wrapper-attrs
                                       :-start-enhancer start-enhancer
                                       :-end-enhancer   end-enhancer
-                                      :-semantic       semantic
-                                      :-required?      required?
-                                      :-disabled?      disabled?})]
+                                      :-semantic       semantic})]
         label-with-attrs [:label
                           (merge-attrs
                            label-text-attrs
                            (sx 'kushi-text-input-label
                                :.inline-block
-                               [:after:content (when required? "\"*\"")]
-                               [:after:c (when required? :$negative600)]
+                               [:after:content (when required "\"*\"")]
+                               [:after:c (when required :$negative600)]
                                :after:pis--0.15em
-                               [:mbe :0.5em]
                                {:for input-id})
+                           (if inline?
+                             (sx 'kushi-text-input-label-block [:mie :0.5em])
+                             (sx 'kushi-text-input-label-inline [:mbe :0.5em]))
                            label-attrs)
                           label]
 
         kushi-input-attrs (merge-attrs (sx 'kushi-input
-                                           (when disabled? :.disabled)
+                                           (when disabled :.disabled)
                                            :ai--center)
                                        (when inline?
                                          (sx 'kushi-input-inline
