@@ -13,7 +13,7 @@
    :--code-font-stack                        "Fira Code, monospace"
 
    ;; code
-   :--code-font-size                         :0.9em
+   :--code-font-size                         :--text-small
    :--code-padding-inline                    :0.2em
    :--code-padding-block                     :0.08em
    :--code-border-radius                     :3px
@@ -125,7 +125,7 @@
    :--duration-super-slow                    :2s
    :--duration-ultra-slow                    :4s
 
-   
+
    ;; Intended for styling scrollbars
    ;; ------------------------------------------------------
    :--scrollbar-background-color  "rgb(241, 241, 241)"
@@ -135,4 +135,3 @@
    ;; Components
    :--kushi-collapse-transition-duration :--duration-slow
    ])
-
