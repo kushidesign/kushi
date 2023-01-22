@@ -863,10 +863,15 @@
    ".styled-scrollbars::-webkit-scrollbar-track"
    {:background :--scrollbar-background-color}
 
-   ;; Focusing the button with a keyboard will show a blue outline.
    "*:focus-visible"
    {:outline        "4px solid rgba(0, 125, 250, 0.6)"
     :outline-offset :1px}
+
+   "*:disabled"
+   disabled
+
+   ".kushi-radio-input:focus-visible"
+   {:box-shadow "0 0 0 4px rgba(0, 125, 250, 0.6)"}
 
    ".kushi-radio-input:focus-visible"
    {:box-shadow "0 0 0 4px rgba(0, 125, 250, 0.6)"}
