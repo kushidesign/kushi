@@ -5,7 +5,7 @@
    [kushi.specs2 :as specs]
    [kushi.config :refer [user-config]]
    [kushi.ui.tokens :refer [design-tokens]]
-   [kushi.ui.utility :refer [utility-classes]]
+   [kushi.ui.utility :refer [utility-classes disabled]]
    [kushi.colors :refer [colors]]
    [kushi.color :refer [colors->tokens colors->alias-tokens semantic-aliases]]))
 
@@ -881,6 +881,22 @@
   ;;  "*:focus:not(:focus-visible)"
   ;;  {:outline    :none
   ;;   :box-shadow "1px 1px 5px rgba(1, 1, 0, .7)"}
+
+   :.neutral-secondary-fg {:color :--gray700}
+
+   ;; Semantic fg
+   :.neutral-fg {:color :--neutral-minimal-color}
+   :.accent-fg {:color :--accent-minimal-color}
+   :.positive-fg {:color :--positive-minimal-color}
+   :.negative-fg {:color :--negative-minimal-color}
+   :.warning-fg {:color :--warning-minimal-color}
+
+   ;; Semantic bg
+   :.neutral-bg {:background-color :--neutral-background-color}
+   :.accent-bg {:background-color :--accent-background-color}
+   :.positive-bg {:background-color :--positive-background-color}
+   :.negative-bg {:background-color :--negative-background-color}
+   :.warning-bg {:background-color :--warning-background-color}
    ])
 
 
@@ -897,13 +913,12 @@
 
 
 (def ui*
-  [
-   ".kushi-button" {"font-weight" :$text-wee-bold
-                    "font-family" :$primary-font-family}
-   ".kushi-button.bordered" {"border-width" :$button-border-width}
-   ".kushi-tag.bordered" {"border-width" :$tag-border-width}
-   ".kushi-tag"    {"font-weight" :$text-wee-bold
-                    "font-family" :$primary-font-family}
+  [".kushi-button"                                                   {"font-weight" :$text-wee-bold
+                                                                      "font-family" :$primary-font-family}
+   ".kushi-button.bordered"                                          {"border-width" :$button-border-width}
+   ".kushi-tag.bordered"                                             {"border-width" :$tag-border-width}
+   ".kushi-tag"                                                      {"font-weight" :$text-wee-bold
+                                                                      "font-family" :$primary-font-family}
    ".dark .kushi-radio-input"                                        {:bgc :black}
    ".dark .kushi-checkbox-input"                                     {:bgc :black}
    ".dark .kushi-checkbox-input:before"                              {:box-shadow :inset:1em:1em:black}
