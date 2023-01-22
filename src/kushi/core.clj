@@ -458,12 +458,12 @@
                           (and (:inject-at-runtime-prod? user-config)
                                (= mode :release)))
         kushi-log-tag (str "[" @state2/shadow-build-id "] [Kushi v" config/version "]")]
-    (println (str kushi-log-tag " - Injecting stylesheet at runtimes? " inject?))
+    #_(println (str kushi-log-tag " - Injecting stylesheet at runtimes? " inject?))
     (when inject?
       (stylesheet/create-css-text "kushi.core/inject!")
       (let [css-sync         @state2/->css
             google-font-maps @state2/google-font-maps]
         `(do
-           (println (str ~kushi-log-tag " - Injecting stylesheet"))
+           #_(println (str ~kushi-log-tag " - Injecting stylesheet"))
            (apply kushi.core/add-google-font! ~google-font-maps)
            (kushi.core/css-sync! ~css-sync))))))
