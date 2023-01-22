@@ -5,107 +5,189 @@
    [kushi.core :refer (merge-attrs)]
    [kushi.ui.core :refer (opts+children)]))
 
+(defn input* [& args]
+  (let [[opts attrs & _]     (opts+children args)
+        {:keys [wrapper-attrs
+                start-enhancer
+                end-enhancer
+                semantic
+                required?
+                disabled?]} opts]
+    [:div
+     (merge-attrs
+      (sx 'kushi-text-input-wrapper
+          :.flex-row-fs
+          :ai--stretch
+          :jc--sb
+          :w--100%
+          :w--auto
+          :min-height--34px
+          :bw--1px
+          :bs--solid
+          :bc--currentColor
+          [:focus-within:bgc :transparent!important] ;; tmp fix for when semantic class + input is focused
+          [:focus-within:c :currentColor!important] ;; ["has-ancestor(.error):bc" :$negative600]
+          [:focus-within:bc '(rgba 0 125 250 1)]
+          {:class [semantic]})
+      wrapper-attrs)
+     (when start-enhancer
+       [:div
+        (sx 'kushi-text-input-start-enhancer
+            :d--if
+            :ai--center
+            :jc--c
+            [:pi (when (string? start-enhancer) :0.375em)])
+        start-enhancer])
+     [:div (sx 'kushi-text-input-input-wrapper :flex-grow--1)
+      [:input
+       (merge-attrs
+        (sx 'kushi-text-input-input
+            :.transition
+            :h--100%
+            :w--100%
+            :pi--0.5em
+            :pb--0.5em
+            :placeholder:o--0.4
+            {:type     :text
+             :disabled disabled?
+             :required required?})
+        attrs)]]
+     (when end-enhancer
+       [:div
+        (sx 'kushi-text-input-end-enhancer
+            :d--if
+            :ai--center
+            :jc--c
+            [:pi (when (string? end-enhancer) :0.375em)])
+        end-enhancer])])
+  )
+
 (defn input
   {:desc ["An input enables the entry of single lines of text."]
-   :opts '[{:name    start-enhancer
-            :type    #{string vector}
-            :default nil
-            :desc    "A string, hiccup vector, or child component intended to aid the user and positioned within the input field area, at the start"}
-           {:name    end-enhancer
-            :type    #{string vector}
-            :default nil
-            :desc    "A string, hiccup vector, or child component intended to aid the user and positioned within the input field area, at the end"}
+   :opts '[
            {:name    outer-wrapper-attrs
             :type    :map
             :default nil
-            :desc    ["html attributes map applied to the div that wraps the outermost div of the component."
+            :desc    ["html attributes map applied to the outermost div of the component."
                       "This div wraps the label, input-wrapper div, and the helper text span."]}
+
+           {:name    label
+            :type    :string
+            :default nil
+            :desc    "The text for `:label` element associated with the input field."}
+
+           {:name    label-attrs
+            :type    :map
+            :default nil
+            :desc    "html attributes map applied to the `:label` element that contains the `label` text."}
+
            {:name    label-placement
             :type    #{:block :inline}
             :default :block-start
             :desc    "html attributes map applied to the `label` element associated with the `input` element, and end-enhancer div."}
-           {:name    input-label-attrs
+
+           {:name    label-width
+            :type    #{:keyword :string}
+            :default :block-start
+            :desc    ["Sets the width of your label \"column\", when `:-label-placement` is set to `:inline`."
+                      "Must be a valid css width value (`px`, `em` `rem`, etc)"]}
+
+           {:name    wrapper-attrs
             :type    :map
             :default nil
-            :desc    "html attributes map applied to the `label` element associated with the `input` element, and end-enhancer div."}
-           {:name    input-wrapper-attrs
-            :type    :map
+            :desc    ["html attributes map applied to the input wrapper div, which is bordered by default."
+                      "This div wraps the `start-enhancer` div, the actual `input` element, and the `end-enhancer` div."]}
+
+           {:name    start-enhancer
+            :type    #{string vector}
             :default nil
-            :desc    "html attributes map applied to the div that wraps the start-enhancer div, `input` element, and end-enhancer div."}]}
-  [& args]
-  (let [[opts attrs & children]     (opts+children args)
-        {:keys [label
-                label-placement
-                label-attrs
-                helper
+            :desc    "A string, hiccup vector, or child component intended to aid the user and positioned within the input field area, at the start"}
+
+           {:name    end-enhancer
+            :type    #{string vector}
+            :default nil
+            :desc    "A string, hiccup vector, or child component intended to aid the user and positioned within the input field area, at the end"}
+
+           {:name    helper
+            :type    :string
+            :default nil
+            :desc    ["The text for `:.kushi-text-input-helper` label."
+                      "If used, this should give the user actionable information about the value of the associated input field."]}
+
+           {:name    semantic
+            :type    #{:neutral :accent :positive :negative :warning}
+            :default nil
+            :desc    ["The text for `:.kushi-text-input-helper` label."
+                      "If used, this should give the user actionable information about the value of the associated input field."]}
+           ]}
+   [& args]
+  (let [[opts attrs & _]     (opts+children args)
+        {:keys [
                 outer-wrapper-attrs
+                label
+                label-placement
+                label-width
+                label-attrs
                 wrapper-attrs
                 start-enhancer
-                end-enhancer]}      opts
-        input-id (:id attrs)
-        inline? (= :inline label-placement)]
+                end-enhancer
+                helper
+                semantic
+                required?
+                disabled?]
+         :or   {label " "}}         opts
+        input-id                    (:id attrs)
+        inline?                     (= :inline label-placement)
+        label-text-attrs   (sx 'kushi-text-input-label-text
+                               :.minimal
+                               :.info
+                               :.block
+                               :hover:bgc--transparent!important ;; temp fix
+                               :active:bgc--transparent!important ;; temp fix
+                               {:class [semantic]})
+
+        helper-label-attrs (when helper
+                             (merge-attrs
+                              label-text-attrs
+                              (sx 'kushi-text-input-helper
+                                  :.neutral-secondary-fg
+                                  :.inline-block
+                                  :.normal
+                                  :mbs--0.5em)))
+
+        wrapped-input [input* (merge attrs
+                                     {:-wrapper-attrs  wrapper-attrs
+                                      :-start-enhancer start-enhancer
+                                      :-end-enhancer   end-enhancer
+                                      :-semantic       semantic
+                                      :-required?      required?
+                                      :-disabled?      disabled?})]
+        label-with-attrs [:label
+                          (merge-attrs
+                           label-text-attrs
+                           (sx 'kushi-text-input-label
+                               :.inline-block
+                               [:after:content (when required? "\"*\"")]
+                               [:after:c (when required? :$negative600)]
+                               :after:pis--0.15em
+                               [:mbe :0.5em]
+                               {:for input-id})
+                           label-attrs)
+                          label]
+
+        kushi-input-attrs (merge-attrs (sx 'kushi-input
+                                           (when disabled? :.disabled)
+                                           :ai--center)
+                                       (when inline?
+                                         (sx 'kushi-input-inline
+                                             :d--grid
+                                             :gtc--auto:auto))
+                                       outer-wrapper-attrs)]
     [:div
-     (merge-attrs
-      (sx 'kushi-input
-          (when inline? :.flex-row-fs)
-          :ai--center)
-      outer-wrapper-attrs)
-     (when label
-       [:label
-        (merge-attrs
-         (sx 'kushi-text-input-label
-             :.small
-             [:mbe (when-not inline? :0.5em)]
-             :d--block
-             {:for input-id})
-         label-attrs)
-        label])
-     [:div
-      (merge-attrs
-       (sx 'kushi-text-input-wrapper
-           :.flex-row-fs
-           :ai--stretch
-           :jc--sb
-           :w--100%
-           :min-height--34px
-           :bw--1px
-           :bs--solid
-           :bc--currentColor
-           [:focus-within:bc '(rgba 0 125 250 1)])
-       wrapper-attrs)
-      (when start-enhancer
-        [:div
-         (sx 'kushi-text-input-start-enhancer
-             :d--if
-             :ai--center
-             :jc--c
-             [:pi (when (string? start-enhancer) :0.375em)])
-         start-enhancer])
-      [:div (sx 'kushi-text-input-input-wrapper :flex-grow--1)
-       [:input
-        (merge-attrs
-         (sx 'kushi-text-input-input
-             :.transition
-             :h--100%
-             :w--100%
-             :pi--0.5em
-             :pb--0.5em
-             :placeholder:o--0.4
-             {:type :text})
-         attrs)]]
-      (when end-enhancer
-        [:div
-         (sx 'kushi-text-input-end-enhancer
-             :d--if
-             :ai--center
-             :jc--c
-             [:pi (when (string? end-enhancer) :0.375em)])
-         end-enhancer])]
+     kushi-input-attrs
+     label-with-attrs
+     wrapped-input
      (when helper
-       [:span
-        (sx 'kushi-text-input-helper
-            :d--block
-            :.small
-            :o--0.6
-            :mbs--0.5em)
-        helper])]))
+       [:<>
+        (when inline? [:div])
+        [:span helper-label-attrs helper]])]))
