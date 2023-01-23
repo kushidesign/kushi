@@ -1,16 +1,10 @@
 (ns ^:dev/always kushi.ui.core
-  (:require [clojure.string :as string]
-            [clojure.pprint :refer [pprint]]
-            [clojure.walk :as walk]))
+  (:require [clojure.walk :as walk]))
 
 (defmacro &*->val
   ([opts attrs children coll f]
    (&*->val opts attrs children coll f nil))
   ([opts attrs children coll f form-meta]
-  ;;  (println "\n\n" :&*->val:form-meta)
-  ;;  (pprint form-meta)
-  ;;  (println "\n\n" :&*->val:form-meta2 )
-  ;;  (pprint (meta &form))
    (let [form-meta2 (meta &form)
          ret (walk/postwalk (fn [x]
                               (cond

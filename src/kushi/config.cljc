@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.config
   (:require
-   [clojure.pprint :refer [pprint]]
    [clojure.edn :as edn]))
 
 (def default-font-families-from-google-fonts
