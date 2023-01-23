@@ -900,18 +900,6 @@
    ])
 
 
-
-(def font-loading
-  {
-  ;;  :add-system-font-stack? false
-  ;;  :system-font-stack-weights  [300 700]
-  ;;  :use-default-code-font-family? false
-  ;;  :use-default-primary-font-family? false
-  ;;  :google-fonts [{:family "Public Sans"
-  ;;                  :styles {:normal [100] :italic [300]}}]
-   :google-fonts* ["Fira Code" "Inter"]})
-
-
 (def ui*
   [".kushi-button"                                                   {"font-weight" :$text-wee-bold
                                                                       "font-family" :$primary-font-family}
@@ -1018,6 +1006,12 @@
                                       alias-color-tokens
                                       variant-tokens
                                       design-tokens)))
-     :font-loading    font-loading
-     :ui              ui}))
+     :ui              ui
+     :font-loading    {
+                      ;;  :google-fonts  [{:family "Public Sans"
+                      ;;                   :styles {:normal [100]
+                      ;;                            :italic [300]}}]
+                      ;;  :google-fonts* ["Fira Code" "Inter"]
+                       }
+     }))
 

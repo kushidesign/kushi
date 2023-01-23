@@ -377,10 +377,11 @@
                         :args [styles]})))
 
 (defn- font-loading! [m]
-  (let [asfs? (:add-system-font-stack? m)
-        gfm   (:google-font-maps m)]
-    (when asfs? (sysfont (:system-font-stack-weights m)))
-    (when gfm (state2/add-google-font-maps! gfm))))
+  (let [gfm   (:google-font-maps m)]
+    (when (:add-system-font-stack? m)
+      (sysfont (:system-font-stack-weights m)))
+    (when (seq gfm)
+      (state2/add-google-font-maps! gfm))))
 
 
 (defmacro form-meta* []
@@ -391,7 +392,7 @@
 (defn theme!
   []
   (let [{:keys [css-reset
-                font-loading-opts
+                font-loading
                 design-tokens
                 tokens-in-theme
                 styles
@@ -425,7 +426,7 @@
                       :form-meta     (form-meta*)
                       :kushi/process :theme})))
 
-    (font-loading! font-loading-opts)))
+    (font-loading! font-loading)))
 
 
 
@@ -447,23 +448,42 @@
   build-state)
 
 
-
-
 ;; RUNTIME ---------------------------------------------------------------
+;; todo
+;; separate macro for injecting gfonts & webfonts from theme
+;; ^^^ always gets called from core.cljs
+;; make sure manually inject gfonts still load
+
+(defmacro inject-google-fonts! []
+  (let [tag (str "[" @state2/shadow-build-id "] [Kushi v" config/version "]")
+        tag-browser-gf (str tag " - Injecting goog-fonts-map")]
+    (do (let [google-font-maps @state2/google-font-maps]
+          #_(pprint google-font-maps)
+          `(do
+             (js/console.log ~google-font-maps)
+             (println ~tag-browser-gf)
+             (apply kushi.core/add-google-font! ~google-font-maps) )))))
+
 
 (defmacro inject! []
-  (let [mode          (if @state2/KUSHIDEBUG :dev :release)
-        inject?       (or (and (:inject-at-runtime-dev? user-config)
-                               (= mode :dev))
-                          (and (:inject-at-runtime-prod? user-config)
-                               (= mode :release)))
-        kushi-log-tag (str "[" @state2/shadow-build-id "] [Kushi v" config/version "]")]
-    #_(println (str kushi-log-tag " - Injecting stylesheet at runtimes? " inject?))
-    (when inject?
-      (stylesheet/create-css-text "kushi.core/inject!")
-      (let [css-sync         @state2/->css
-            google-font-maps @state2/google-font-maps]
-        `(do
-           #_(println (str ~kushi-log-tag " - Injecting stylesheet"))
-           (apply kushi.core/add-google-font! ~google-font-maps)
-           (kushi.core/css-sync! ~css-sync))))))
+  (let [mode                     (if @state2/KUSHIDEBUG :dev :release)
+        inject?                  (or (and (:inject-at-runtime-dev? user-config)
+                                          (= mode :dev))
+                                     (and (:inject-at-runtime-prod? user-config)
+                                          (= mode :release)))
+        tag            (str "[" @state2/shadow-build-id "] [Kushi v" config/version "]")
+        tag-build      (str tag " - Injecting stylesheet at runtimes? " inject?)
+        tag-browser    (str tag " - Injecting stylesheet")
+        tag-browser-gf (str tag " - Injecting goog-fonts-map")
+        google-font-maps         @state2/google-font-maps]
+    #_(println tag-build)
+    (if inject?
+      (do (stylesheet/create-css-text "kushi.core/inject!")
+          (let [css-sync         @state2/->css]
+            `(do
+              ;; (println ~tag-browser)
+               (apply kushi.core/add-google-font! ~google-font-maps)
+               (kushi.core/css-sync! ~css-sync))))
+      `(do
+         ;; (println ~tag-browser-gf)
+         (apply kushi.core/add-google-font! ~google-font-maps)))))
