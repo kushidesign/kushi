@@ -3,6 +3,9 @@
    [kushi.utils :refer [deep-merge]]
    [kushi.utils :as util]))
 
+(def disabled {:opacity :45%!important
+               :cursor  :not-allowed!important})
+
 (def combo-flex-utility-classes
   ;; Combinatorial flexbox utilities
   ;; ------------------------------------------------------
@@ -283,8 +286,7 @@
 
    ;; Controls
    ;; ------------------------------------------------------
-   :disabled      {:o      :45%!important
-                   :cursor :not-allowed!important}])
+   :disabled      disabled])
 
 (def ui-theming-classes
   ;; Type weight

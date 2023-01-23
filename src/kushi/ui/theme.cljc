@@ -1,6 +1,6 @@
 (ns ^:dev/always kushi.ui.theme
   (:require
-   [kushi.config :refer [user-config]]
+   [kushi.config :as config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]
    [kushi.printing2 :as printing2]
    [kushi.specs2 :as specs2]
@@ -90,63 +90,103 @@
           {}
           overrides))
 
+(defn- default-font [k1 k2]
+  (when (k1 user-config)
+    (k2 config/default-font-families-from-google-fonts)))
 
-(def google-font-maps
-  {"Fira Code" {:family "Fira Code"
-                :styles {:normal [400 500]}}
-   "Inter"     {:family "Inter"
-                :styles {:normal [500 700]}}})
+(defn- google-font-maps
+  "Expects a map of font-loading opts that may contain a :google-fonts entry.
+   The :google-fonts entry is a user-exposed option that can be added to
+   the :font-loading entry of their theme map. It is a vector of font-family names
+   which correspond to hosted Google fonts. All font-families listed in this vector
+   will be loaded, with all available weights and italics variants included."
+  [m]
+  (let [primary      (default-font :add-default-primary-font-family? :sans)
+        code         (default-font :add-default-code-font-family? :code)
+        families     (->> m
+                          :google-fonts
+                          (util/partition-by-pred string?))
+        full-fams    (-> families
+                         first
+                         (conj primary code))
+        font-maps    (let [gf (->> (conj full-fams primary code)
+                                   (remove nil?)
+                                   distinct
+                                   (into []))]
+                       (mapv (fn [s] {:family s
+                                      :styles {:normal :all
+                                               :italic :all}})
+                             gf))
 
-(defn font-loading-opts
+        partial-fams (second families)
+        ret          (->> partial-fams
+                          seq
+                          (concat font-maps)
+                          (remove nil?)
+                          (into []))]
+    ret))
+
+(defn- system-font-opts
+  "Always creates @font-face declarations for all the weights and italics for
+   system ui fonts, unless the user sets the entry `:add-system-font-stack?` to `false`
+   in their kushi.edn config map.
+
+   If the user passes a vector of valid font weights for
+   `:system-font-stack-weights` entry, only those weights will be added."
+  []
+  (let [add?     (not (false? (:add-system-font-stack? user-config)))
+        weights* (:add-system-font-stack-weights user-config)
+        weights  (if (and (seq weights*)
+                          (every? int? weights*))
+                   weights*
+                   [])]
+    {:add-system-font-stack?    add?
+     :system-font-stack-weights weights}))
+
+(defn- font-loading-opts
   "Provides an argument map for kushi.core.ui/init-typography!"
   [m]
-  (let [default-code      (when-not (false? (:use-default-code-font-family? m))
-                            (get google-font-maps "Fira Code"))
-        default-primary   (when-not (false? (:use-default-primary-font-family? m))
-                            (get google-font-maps "Inter"))
-        google-font-maps1 (when (or default-code default-primary)
-                            [default-code default-primary])
-        google-font-maps2 (map (fn [s] {:family s :styles {:normal :all :italic :all}}) (:google-fonts* m))
-        google-font-maps  (->> m
-                               :google-fonts
-                               seq
-                               (concat google-font-maps1 google-font-maps2)
-                               (remove nil?)
-                               (into []))
-        ;; Always adds system font stack unless `:add-system-font-stack?` is set to `false` in theme
-        add-system-font-stack? (-> m :add-system-font-stack? false? not)
-        system-font-stack-weights* (-> m :system-font-stack-weights)
-        system-font-stack-weights  (if (and (seq system-font-stack-weights*)
-                                            (every? int? system-font-stack-weights*))
-                                     system-font-stack-weights*
-                                     [])]
-    (keyed google-font-maps add-system-font-stack? system-font-stack-weights)))
+  (let [google-font-maps (google-font-maps m)
+        sys              (system-font-opts)]
+    (merge (keyed google-font-maps)
+           sys)))
 
 
-(defn merged-theme-props [base-theme-map user-theme-map]
-  (let [
-        base-tokens    (:design-tokens base-theme-map)
-        user-tokens    (:design-tokens user-theme-map)
-        base-tokens-ks (util/kwargs-keys base-tokens)
-        user-tokens-ks (util/kwargs-keys user-tokens)
-        tokens-ks      (distinct (concat base-tokens-ks user-tokens-ks))
+(defn- design-tokens [base user]
+  (let [f       #(-> % :design-tokens util/kwargs-keys)
+        toks-ks (distinct (concat (f base)
+                                  (f user)))
+
         ;; merge base and user tokens
-        design-tokens  (apply merge
-                              (map #(some->> %
-                                             :design-tokens
-                                             (partition 2)
-                                             (mapv (fn [pair] (into [] pair)))
-                                             (into {}))
-                                   [base-theme-map user-theme-map]))
+        toks    (apply merge
+                       (map #(some->> %
+                                      :design-tokens
+                                      (partition 2)
+                                      (mapv (fn [pair] (into [] pair)))
+                                      (into {}))
+                            [base user]))
+
         ;; preserve authored token ordering
-        design-tokens (mapv (fn [k] [k (k design-tokens)]) tokens-ks)
-        font-loading   (merge (:font-loading base-theme-map) (:font-loading user-theme-map))]
-    (keyed font-loading design-tokens)))
+        toks    (mapv (fn [k] [k (k toks)]) toks-ks)]
+    toks))
+
+
+(defn merged-theme-props [base user]
+  (let [design-tokens (design-tokens base user)
+        font-loading  (font-loading-opts (merge (:font-loading base)
+                                                (:font-loading user)))]
+    (keyed font-loading
+           design-tokens)))
+
 
 (defn utility-classes [m ks]
   (let [utility-classes (when (:add-kushi-defclass? user-config)
-                          (some-> m :utility-classes varize-utility-classes))]
-    (util/ordered-pairs ks utility-classes)))
+                          (some-> m
+                                  :utility-classes
+                                  varize-utility-classes))]
+    (util/ordered-pairs ks
+                        utility-classes)))
+
 
 (defn user-theme-map []
   (let [m (resolve-user-theme (:theme user-config) :user)
@@ -162,11 +202,12 @@
 
 
 (defn merge-base-and-user-ui
-  [base-theme-map user-theme-map]
-  (let [base-ui*   (:ui base-theme-map)
-        user-ui*   (:ui user-theme-map)
-        base-ui    (->> base-ui* (apply hash-map) remove-global-selector)
-        user-ui    (->> user-ui* (apply hash-map) remove-global-selector)
+  [base user]
+  (let [base-ui*   (:ui base)
+        user-ui*   (:ui user)
+        f          #(->> % :ui (apply hash-map) remove-global-selector)
+        base-ui    (f base)
+        user-ui    (f user)
         user-ui-ks (util/kwargs-keys user-ui*)
         base-ui-ks (util/kwargs-keys base-ui*)
         merged     (merge base-ui user-ui)
@@ -176,32 +217,19 @@
 
 
 (defn theme []
-  (let [user-theme-map                       (user-theme-map)
-
-        base-theme-map                       (basetheme/base-theme-map)
-
-        {:keys [ordered-ui]}                 (merge-base-and-user-ui base-theme-map user-theme-map)
-
-        {:keys [font-loading design-tokens]} (merged-theme-props base-theme-map user-theme-map)
-
-        by-component                         (reduce by-component [] ordered-ui)
-
-        styles                               (map first by-component)
-
-        utility-classes                      (utility-classes base-theme-map utility-class-ks)
-
-        css-reset                            (when (:add-css-reset? user-config)
-                                               (or (:css-reset user-theme-map)
-                                                   (:css-reset base-theme-map)))
-
-        font-loading-opts                    (let [opts (font-loading-opts font-loading)]
-                                               (if (false? (:add-system-font-stack? user-config))
-                                                 (assoc opts :add-system-font-stack? false)
-                                                 opts))]
+  (let [user                 (user-theme-map)
+        base                 (basetheme/base-theme-map)
+        {:keys [ordered-ui]} (merge-base-and-user-ui base user)
+        merged-theme-props   (merged-theme-props base user)
+        by-component         (reduce by-component [] ordered-ui)
+        styles               (map first by-component)
+        utility-classes      (utility-classes base utility-class-ks)
+        css-reset            (when (:add-css-reset? user-config)
+                               (or (:css-reset user)
+                                   (:css-reset base)))]
     (merge
+     merged-theme-props ;; <- map with the entries of [:font-loading :design tokens]
      (keyed
       css-reset
       utility-classes
-      font-loading-opts
-      styles
-      design-tokens))))
+      styles))))

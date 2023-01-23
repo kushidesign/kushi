@@ -552,8 +552,9 @@
 (s/def ::styles (s/and map? (s/keys :req-un [::normal ::italic])))
 (s/def ::family string?)
 (s/def ::google-font-opts (s/and map? (s/keys :req-un [::family ::styles])))
-(s/def ::google-fonts* (s/coll-of string? :kind vector?))
-(s/def ::google-fonts (s/coll-of ::google-font-opts :kind vector?))
+(s/def ::google-fonts (s/coll-of (s/or :google-font-opts ::google-font-opts
+                                       :family ::family)
+                                 :kind vector?))
 (s/def ::stylish-map (s/map-of ::s|kw map?))
 (s/def ::stylish-pairs (s/and vector?
                               #(even? (count %))
@@ -565,8 +566,7 @@
                                 (not (s/valid? ::style-tuple-value-imbalanced-string %)))))
 (s/def ::font-loading (s/and map?
                              (s/keys :opt-un
-                                     [::google-fonts
-                                      ::google-fonts*])))
+                                     [::google-fonts])))
 
 (s/def ::theme
   (s/and map?

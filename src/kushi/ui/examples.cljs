@@ -120,7 +120,7 @@
 
    {:fn       input
     :meta     #'input
-    :stage    {:style {:min-height :135px}}
+    :stage    {:style {:min-height :170px}}
     :controls [:size :weight]
     :defaults {:size     :medium
                :weight   :normal
@@ -128,19 +128,58 @@
     :content  [{:label   "Simple"
                 :example (example2 [input (sx {:placeholder "Your text here"
                                                :-label      "Input label"})])}
+
+               {:label   "Required"
+                :example (example2 [input (sx {:placeholder "Your text here"
+                                               :required    true
+                                               :-label      "Input label"})])}
+               {:label   "Disabled"
+                :example (example2 [input (sx {:placeholder "Your text here"
+                                               :disabled   true
+                                               :-label      "Input label"})])}
+               {:label   "With helper"
+                :example (example2 [input (sx {:placeholder "Your text here"
+                                               :-label      "Input label"
+                                               :-helper     "Your helper text here"})])}
                {:label   "With start enhancer"
                 :example (example2 [input (sx {:placeholder     "Monetary value"
                                                :-start-enhancer "$"
                                                :-label          "Input label"})])}
                {:label   "With end enhancer"
-                :example (example2 [input (sx {:placeholder "Your text here"
+                :example (example2 [input (sx {:placeholder   "Your text here"
                                                :-end-enhancer [mui-icon (sx :pi--0.375em) :star]
-                                               :-label      "Input label"})])}
+                                               :-label        "Input label"})])}
                {:label   "Inline label"
                 :example (example2 [input (sx {:placeholder      "Your text here"
                                                :-label           "Input label"
+                                               :-label-placement :inline})])}
+               {:label   "Inline label with helper"
+                :example (example2 [input (sx {:placeholder      "Your text here"
+                                               :-label           "Input label"
                                                :-label-placement :inline
-                                               :-label-attrs     (sx :ws--n :min-width--100px)})])} ]}
+                                               :-helper          "Your helper text here"})])}
+               {:label   "With semantic class"
+                :example (example2 [input (sx {:placeholder "Your text here"
+                                               :-label      "Input label"
+                                               :-helper     "Your helper text here"
+                                               :-semantic   :negative})])}
+               {:label   "All options"
+                :example (example2 [input (sx {:placeholder          "Your text here"
+                                               :required             false
+                                               :disabled             false
+                                               :-start-enhancer      "$"
+                                               :-end-enhancer        "🦄"
+                                               :-label               "Input label"
+                                               :-label-placement     :inline
+                                               :-helper              "Your helper text here"
+                                               :-semantic            :accent
+                                               :-outer-wrapper-attrs (sx :b--1px:solid:yellow
+                                                                         :box-shadow--8px:8px:17px:#f2baf9ab
+                                                                         :p--1em)
+                                               :-label-attrs         (sx :bgc--yellow)
+                                               :-wrapper-attrs       (sx :box-shadow--4px:4px:7px:#f2baf9ab
+                                                                         {:class :my-input-wrapper-name})
+                                               })])}]}
 
    {:fn      slider
     :meta    #'slider

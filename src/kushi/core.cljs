@@ -3,6 +3,7 @@
   (:require [clojure.string :as string]
             [kushi.clean :as clean]))
 
+
 (def sheet-ids-by-type
   ;; Renamings?
   {:kushi-atomic            "_kushi-defclass-utility_"
@@ -100,7 +101,18 @@
                                "\n\n¯\\_(ツ)_/¯"))))))))
 
 
-;; Public function for injecting Google Fonts via stylesheet injection ------------------------------------------------------------
+
+
+;; ----------------------------------------------------------------------------------------------------------
+;; Public function for injecting Google Fonts via stylesheet injection 
+;; ----------------------------------------------------------------------------------------------------------
+
+;; TODO -- analyze weight savings & tradeoffs if normalization logic, warnings etc associated
+;; with kushi.core/add-google-font! is all offloaded into a macro. Still might need a dynamic version
+;; if developer wants to allow users to load google fonts on demand. Maybe single source logic could live in a
+;; cljc file somewhere and then there is a dynamic, cljs version of the function that user would have to
+;; explicitly load from a seperate namespace.
+
 (defn- weights->str
   ([xs]
    (weights->str xs nil) )
@@ -113,9 +125,9 @@
       (and (seq x)
            (every? number? x))))
 
-(defn- m->str [acc {family :family
+(defn- m->str [acc {family                  :family
                     {:keys [normal italic]} :styles
-                    :as m}]
+                    :as                     m}]
   (if-not (and (string? family)
                (or (weight-coll? normal) (weight-coll? italic)))
     (do
@@ -145,18 +157,35 @@
 ;; TODO add check maps keys & vals with alert
 (defn add-google-font!
   [& maps]
-  (let [families* (reduce m->str [] maps)
-        families  (str (string/join "&" families*) "&display=swap")]
-    (inject-stylesheet {:rel          "preconnet"
-                        :href         "https://fonts.gstatic.com"
-                        :cross-origin "anonymous"})
-    (inject-stylesheet {:rel  "preconnet"
-                        :href "https://fonts.googleapis.com"})
-    (inject-stylesheet {:rel  "stylesheet"
-                        :href (str "https://fonts.googleapis.com/css2?" families)})))
+  (when (seq maps)
+    (let [converted (keep #(if (string? %)
+                             (when-not (string/blank? %)
+                               {:family %
+                                :styles {:normal :all :italic :all}})
+                             %)
+                          maps)
+          _  (js/console.log "\n" :converted maps converted "\n")
+          families* (reduce m->str [] converted)
+          families  (str (string/join "&" families*) "&display=swap")]
+      (inject-stylesheet {:rel          "preconnet"
+                          :href         "https://fonts.gstatic.com"
+                          :cross-origin "anonymous"})
+      (inject-stylesheet {:rel  "preconnet"
+                          :href "https://fonts.googleapis.com"})
+      (inject-stylesheet {:rel  "stylesheet"
+                          :href (str "https://fonts.googleapis.com/css2?" families)}))))
 
 
-;; Functionaltiy for kushi style decoration -----------------------------------------------------------------
+;; This always gets called
+(kushi.core/inject-google-fonts!)
+
+
+
+
+
+;; ----------------------------------------------------------------------------------------------------------
+;; Functionality for kushi style decoration
+;; ----------------------------------------------------------------------------------------------------------
 
 (defn merged-attrs-map
   [{:keys [attrs-base prefixed-classlist css-vars]}]
@@ -219,26 +248,26 @@
     (when bad? (merge-attrs-warning class :class n))
     bad?))
 
-(defn class-coll
+(defn- class-coll
   [class bad-class?]
   (when-not bad-class?
     (if (or (string? class) (keyword? class))
       [class]
       class)))
 
-(defn data-sx-str [m]
+(defn- data-sx-str [m]
   (when m
     (let [{:keys [file line column]} m]
       (str file ":"  line ":" column))))
 
-(defn data-sx [m2 s1 s2]
+(defn- data-sx [m2 s1 s2]
   (let [from-defcom (data-sx-str (:data-amp-form m2))
         from-user   (data-sx-str (:data-amp-form2 m2))
         coll   (remove nil? [from-defcom from-user s1 s2])
         joined (when (seq coll) (string/join " + " coll))]
     (when joined {:data-sx joined})))
 
-(defn handler-concat [c1 c2 m2 k]
+(defn- handler-concat [c1 c2 m2 k]
   (let [block? (contains? (some->> m2 :data-kushi-block-events (into #{})) k)
         f (if block?
             c2

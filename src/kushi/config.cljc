@@ -1,7 +1,12 @@
 (ns ^:dev/always kushi.config
   (:require
-   [clojure.pprint :refer [pprint]]
    [clojure.edn :as edn]))
+
+(def default-font-families-from-google-fonts
+  {:code "Fira Code"
+   :sans "Inter"
+  ;;  :serif ""
+   })
 
 
 (def default-kushi-responsive
@@ -42,13 +47,13 @@
 (def user-config-defaults
   {
    ;; REQUIRED
-
+   
    ;; Needs to be a path to a dir
    :css-dir                        nil
 
 
    ;; OPTIONAL
-
+   
    ;; Misc --------------------------------------------------------------
    ;; User theme - this should be a fully qualified symbol to a theme config map
    ;; e.g. 'my-project.theme/my-theme
@@ -72,9 +77,24 @@
    ;; For leaving things out of css --------------------------------------
    :add-stylesheet-prod?           true
    :add-stylesheet-dev?            true
-   :add-system-font-stack?         true
    :add-css-reset?                 true
    :add-design-tokens?             true
+
+   ;; By default, kushi adds a set of cross-platform-friendly (Mac, Windows, Linux)
+   ;; @font-face declarations for using the system's native ui font.
+   ;; These are written near the top of the .css file that kushi produces.
+   ;; The font-family value that you then use in your CSS is `sys` (NOT `system-ui`).
+   ;; Setting this entry to `false` will not include any of these in your css.
+   :add-system-font-stack?         true
+   :add-system-font-stack-weights  []
+
+   ;; By default, Kushi uses Inter, served from Google Fonts, as the primary sans font-family.
+   ;; https://fonts.google.com/specimen/Inter?query=Inter
+   :add-default-primary-font-family?      true
+
+   ;; By default, Kushi uses Fira Code, served from Google Fonts, as the primary code font-family.
+   ;; https://fonts.google.com/specimen/Fira+Code?query=Fira
+   :add-default-code-font-family?         true
 
    ;; If :add-kushi-ui-theming? is set to false, it will not include theming classes
    ;; for for kushi.ui components such as buttons, tags, etc.
@@ -98,35 +118,38 @@
    :add-kushi-defclass?            true
 
    ;; Set this to false to leave out any shared classes created by the user via the defclass macro
+   ;; You probably do not want to disable this unless you are developing on kushi itself.
    :add-user-defclass?             true
 
-   ;; Set this to false to leave out any styling classes created by the user via the sx macro
+   ;; Set this to false to leave out any styling classes created by the user via the sx macro.
+   ;; You probably do not want to disable this unless you are developing on kushi itself.
    :add-user-sx?                   true
 
    ;; You can explicitly elide support for `kind` and `semantic` variants of certain kushi.ui components.
    ;; By default, support for all these variants is included in the css, so narrowing it will reduce
    ;; the amount of default theme-related styles that gets included in the css.
-
+   
    ;; The components that use `kind` and `semantic` variants are:
    ;; kushi.ui.button.core/button
    ;; kushi.ui.tag.core/tag
-
-   :elide-ui-variants-semantic #{} ;; can include :accent :negative :warning :neutral :positive
-   :elide-ui-variants-style    #{} ;; can include :bordered :minimal :filled
-
+   
+   :elide-ui-variants-semantic     #{} ;; can include :accent :negative :warning :neutral :positive
+   :elide-ui-variants-style        #{} ;; can include :bordered :minimal :filled
+   
 
    ;; Build process logging ----------------------------------------------
    :log-build-report?              true
-   :log-build-report-style         :simple
+   :log-build-report-style         :simple ;; :simple OR :detailed
    :log-kushi-version?             true
-   :log-updates-to-cache?          false
-   :log-cache-call-sites?          false
+   :log-updates-to-cache?          false ;; not yet documented
+   :log-cache-call-sites?          false ;; not yet documented
+   
 
-
-   ;; Experimental - add later ------------------------------------------
+   ;; Experimental - add later -------------------------------------------
    ;; :scaling-system          nil
+   
 
-   ;; Chopping block
+   ;; Chopping block -----------------------------------------------------
    ;; :warn-duplicates?        true
    ;; :ui                      []
    ;; :select-ns               nil
