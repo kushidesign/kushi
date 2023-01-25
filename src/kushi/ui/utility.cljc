@@ -222,16 +222,25 @@
 
    ;; Type sizing
    ;; ------------------------------------------------------
-   :xxxsmall      {:fs :$text-xxxsmall}
-   :xxsmall       {:fs :$text-xxsmall}
-   :xsmall        {:fs :$text-xsmall}
-   :small         {:fs :$text-small}
-   :medium        {:fs :$text-medium}
-   :large         {:fs :$text-large}
-   :xlarge        {:fs :$text-xlarge}
-   :xxlarge       {:fs :$text-xxlarge}
-   :xxxlarge      {:fs :$text-xxxlarge}
 
+   :xxxsmall      {:fs :$text-xxxsmall
+                   :&_.kushi-mui-icon>svg:height :$text-xxxsmall}
+   :xxsmall       {:fs :$text-xxsmall
+                   :&_.kushi-mui-icon>svg:height :$text-xxsmall}
+   :xsmall        {:fs :$text-xsmall
+                   :&_.kushi-mui-icon>svg:height :$text-xsmall}
+   :small         {:fs :$text-small
+                   :&_.kushi-mui-icon>svg:height :$text-small}
+   :medium        {:fs :$text-medium
+                   :&_.kushi-mui-icon>svg:height :$text-medium}
+   :large         {:fs :$text-large
+                   :&_.kushi-mui-icon>svg:height :$text-large}
+   :xlarge        {:fs :$text-xlarge
+                   :&_.kushi-mui-icon>svg:height :$text-xlarge}
+   :xxlarge       {:fs :$text-xxlarge
+                   :&_.kushi-mui-icon>svg:height :$text-xxlarge}
+   :xxxlarge      {:fs :$text-xxxlarge
+                   :&_.kushi-mui-icon>svg:height :$text-xxxlarge}
 
    ;; Type weight
    ;; ------------------------------------------------------
