@@ -13,11 +13,12 @@
                {:on-click #(lightswitch!)})
    [label (sx ["has-ancestor(.dark):display" :none]
               ["has-ancestor(.kushi-playground-mobile-nav):c" :white]
-              {:-mui-icon       "dark_mode"
-               :-mui-icon-style :outlined})]
+              {:-mui-icon       :dark-mode
+               :-mui-icon-style :outlined
+               :-icon-svg      true})]
    [label (sx :d--none
               ["has-ancestor(.dark):display" :block]
               :c--white
               ["has-ancestor(.kushi-playground-mobile-nav):c" :black]
-              {:-mui-icon       "light_mode"
+              {:-mui-icon       :light-mode
                :-mui-icon-style :outlined})]])

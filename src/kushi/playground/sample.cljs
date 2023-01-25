@@ -81,7 +81,7 @@
                     :max                 3
                     :on-change           #(let [val  (dom/etv->int %)
                                                 step (name (nth steps val))]
-                                            (js/console.log step))
+                                            #_(js/console.log step))
                     :-label-size-class   :small
                     :-label-block-offset "-45px"
                     :-steps              steps

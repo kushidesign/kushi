@@ -460,8 +460,8 @@
     (do (let [google-font-maps @state2/google-font-maps]
           #_(pprint google-font-maps)
           `(do
-             (js/console.log ~google-font-maps)
-             (println ~tag-browser-gf)
+             #_(js/console.log ~google-font-maps)
+             #_(js/console.log ~tag-browser-gf)
              (apply kushi.core/add-google-font! ~google-font-maps) )))))
 
 
