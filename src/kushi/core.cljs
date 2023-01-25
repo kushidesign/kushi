@@ -164,7 +164,6 @@
                                 :styles {:normal :all :italic :all}})
                              %)
                           maps)
-          _  (js/console.log "\n" :converted maps converted "\n")
           families* (reduce m->str [] converted)
           families  (str (string/join "&" families*) "&display=swap")]
       (inject-stylesheet {:rel          "preconnet"
