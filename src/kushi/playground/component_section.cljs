@@ -8,6 +8,7 @@
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.collapse.core :refer (collapse)]
    [kushi.ui.core :refer (defcom)]
+   [kushi.ui.icon.mui.core :refer (mui-icon-svgs)]
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
    [kushi.ui.title.core :refer (title)]
    [kushi.ui.dom :as dom]
@@ -230,9 +231,12 @@
        :id             fname
        :on-click       #(state/nav! fname)
        :-label         title
+       :-mui-icon      :add
        :-icon          :add
+       :-mui-icon-style :outlined
        :-icon-expanded :remove
        :-icon-position :end
+       :-icon-svg      (get mui-icon-svgs "add")
        :-expanded?     (:components-expanded? @state/*state)
        :-header-attrs  (sx
                         :.xxlarge
