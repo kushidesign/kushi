@@ -42,7 +42,7 @@
 (defn collapse-header
   [& args]
   (let [[opts attrs & children] (opts+children args)
-        {:keys [icon-position]} opts]
+        {:keys [icon-position icon-svg]} opts]
     (let [on-click #(let [node                        (.closest (-> % .-target) "[aria-expanded][role='button']")
                           collapse                    (.-parentNode node)
                           accordian*                  (dom/grandparent node)
@@ -129,6 +129,12 @@
             :desc    ["A value of `:start` will place the at the inline start of the header, preceding the label."
                       "A value of `:end` will place the icon at the inline end of the header, opposite the label."
                       "Optional."]}
+           {:name    icon-svg
+            :type    :boolean
+            :default false
+            :desc    ["Pass a `mui-icon` in `svg` (hiccup) to use in place of the Google Fonts Material Icons font."
+                      "Must use `:viewBox` attribute with values such as `\"0 0 24 24\"`."
+                      "The `:width` and `:height` attributes of the `svg` do not need to be set."]}
            {:name    expanded?
             :type    :boolean
             :default false
@@ -136,7 +142,7 @@
                       "Optional"]}
            ]}
   [& args]
-  (let [[opts attr & children]  (opts+children args)
+  (let [[opts attr & children]   (opts+children args)
         {:keys [header-attrs
                 body-attrs
                 expanded?
@@ -154,9 +160,9 @@
      [collapse-header
       (merge-attrs header-attrs
                    (sx #_["[aria-expanded='false']+.kushi-collapse-body-wrapper:d" :none]
-                    {:on-click       on-click
-                     :aria-expanded  (if expanded? "true" "false")
-                     :-icon-position icon-position}))
+                       {:on-click       on-click
+                        :aria-expanded  (if expanded? "true" "false")
+                        :-icon-position icon-position}))
       [collapse-header-contents opts]]
 
      ;; collapse body

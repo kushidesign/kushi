@@ -2,7 +2,7 @@
   (:require [kushi.core :refer (sx)]
             [clojure.string :as string]
             [kushi.ui.util :as util]
-            [kushi.ui.icon.mui.core :refer (mui-icon)]
+            [kushi.ui.icon.mui.core :refer (mui-icon mui-icon-outlined mui-icon-sharp mui-icon-round)]
             [kushi.ui.title.core :refer (title)] ))
 
 (defn readable-string? [label]
@@ -17,12 +17,23 @@
 
 (defn header-title
   [{:keys [label
-           icon-opposite?]
+           icon-opposite?
+           icon-svg
+           mui-icon-style]
     :as   opts}]
   (if (string? label)
-    (let [ico      [mui-icon
+    (let [f        (case mui-icon-style
+                     :outlined
+                     mui-icon-outlined
+                     :round
+                     mui-icon-round
+                     :sharp
+                     mui-icon-sharp
+                     mui-icon)
+          ico      [f
                     (sx 'kushi-collapse-header-title-icon
-                        [:mie (when-not icon-opposite? :$icon-enhancer-inline-gap-ems)])
+                        [:mie (when-not icon-opposite? :$icon-enhancer-inline-gap-ems)]
+                        {:-icon-svg icon-svg})
                     (:mui-icon opts)]
           title-sx (sx
                     'kushi-collapse-header-title-contents
@@ -35,13 +46,23 @@
     label))
 
 (defn collapse-header-contents
-  [{:keys [label label-expanded mui-icon mui-icon-expanded icon-position]
+  [{:keys [label
+           label-expanded
+           mui-icon
+           mui-icon-style
+           mui-icon-expanded
+           icon-position
+           icon-svg]
     :as   m}]
   (let [label-expanded    (or label-expanded label)
         mui-icon          (if (util/nameable? mui-icon) (name mui-icon) "add")
         mui-icon-expanded (if (util/nameable? mui-icon-expanded) (name mui-icon-expanded) "remove")
         icon-opposite?    (= :end icon-position)
-        opts              {:label label :mui-icon mui-icon :icon-opposite? icon-opposite?}]
+        opts              {:label          label
+                           :mui-icon       mui-icon
+                           :mui-icon-style mui-icon-style
+                           :icon-opposite? icon-opposite?
+                           :icon-svg       icon-svg}]
     [:<>
      [:span
       (sx 'kushi-collapse-header-label-collapsed
