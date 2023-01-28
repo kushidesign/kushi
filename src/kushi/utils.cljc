@@ -25,6 +25,25 @@
   (when (nameable? x)
     (some-> x name (string/starts-with? "--"))))
 
+(defn cssfn-string
+  "(cssfn-string \"hsla\" \"100deg\" \"50%\" \"33%\" \"0.8\")
+   => \"hsla(100deg, 50%, 33%, 0.8)\""
+  [s args]
+  (str s
+       "("
+       (string/join ", " args)
+       ")"))
+
+(defn extract-cssvar-name
+  "(extract-cssvar-name \"var(--red500)\")
+   => \"--red500\""
+  [%]
+  (when-let [[_ nm] (re-find (re-pattern (str "^"
+                                              specs2/cssvar-in-css-re
+                                              "$"))
+                             %)]
+    nm))
+
 (defn cssvar-dollar-syntax->double-dash
   [x]
   (string/replace (name x) #"^\$" "--"))

@@ -312,7 +312,13 @@
 (defn sx-dispatch
   [{:keys [form-meta args]
     :or   {form-meta {}}}]
-  (let [cache-map (state2/cached {:process :sx
+
+  (when @state2/KUSHIDEBUG (state2/trace-mode! args))
+
+  (let [args      (if (and @state2/KUSHIDEBUG (state2/trace-mode?))
+                    (drop-last args)
+                    args)
+        cache-map (state2/cached {:process :sx
                                   :args    args})
         process   (process args)
         clean     (or (:cached cache-map)

@@ -1,6 +1,6 @@
  (ns ^:dev/always kushi.color
    (:require
-    [kushi.colors :refer [colors]]
+    [kushi.colors :as colors]
     [clojure.string :as string]))
 
 (defn parse-int [n]
@@ -67,7 +67,8 @@
 
 (defn colors->tokens-inner
   [opts [color {:keys [hue scale]}]]
-  (let [data?  (= (:format opts) :data)
+  (let [alias? (:alias? opts)
+        data?  (= (:format opts) :data)
         h      [(keyword (str (when-not data? "--") color "-hue")) hue]
         scale+ (map-indexed
                 (fn [i [level saturation lightness]]
@@ -78,7 +79,8 @@
                         opts         {:data? data?
                                       :color color
                                       :h     hue}
-                        current-tup  (color-pair (merge opts
+                        color (if alias? (get colors/aliases-by-color color) color)
+                        current-tup  (color-pair (merge (assoc opts :color color)
                                                         {:level level
                                                          :s     saturation
                                                          :l     lightness}))
@@ -192,7 +194,6 @@
     [:blue400 \"hsl(var(--blue-hue), 94%, 68%)\"]"
 
   [colors opts]
-
   (let [color-pairs (partition 2 colors)
         ret (into
              []
@@ -221,4 +222,12 @@
                       semantic-aliases)))) )
 
 (def base-color-map
-  (apply hash-map (colors->tokens colors {:format :css :expanded? false})))
+  (apply hash-map (colors->tokens colors/colors {:format :css :expanded? false})))
+
+(def base-color-map-data
+  (let [f #(apply hash-map (colors->tokens colors/colors %))]
+    (merge (f {:format    :data
+               :expanded? false})
+           (f {:format    :data
+               :alias?    true
+               :expanded? false}))))

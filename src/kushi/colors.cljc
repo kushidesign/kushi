@@ -1,4 +1,5 @@
-(ns ^:dev/always kushi.colors)
+(ns ^:dev/always kushi.colors
+    (:require [clojure.set :as set :refer [map-invert]]))
 
 (def colors
   [
@@ -129,3 +130,13 @@
             [900 37 24]
             [1000 40 11]]}
    ])
+
+(def colors-by-alias
+  (into {}
+        (keep (fn [[k v]]
+                (when-let [alias (:alias v)]
+                  [alias k]))
+              (partition 2 colors))))
+
+(def aliases-by-color
+  (map-invert colors-by-alias))

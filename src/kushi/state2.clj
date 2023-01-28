@@ -14,6 +14,7 @@
 (def shadow-build-id (atom nil))
 (def initial-build? (atom true))
 (def trace?* (atom false))
+(def *trace-mode? (atom false))
 
 (def css (atom []))
 (def ->css (atom nil))
@@ -109,6 +110,8 @@
 (defn trace! [args target] (reset! trace?* (= args (rest target))) )
 (defn trace? [] @trace?*)
 
+(defn trace-mode! [args] (reset! *trace-mode? (= (last args) :kushi/trace)))
+(defn trace-mode? [] @*trace-mode?)
 
 ;; Caching and hashing ---------------------------------------------------
 (defn cached
