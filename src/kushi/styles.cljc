@@ -1,15 +1,18 @@
 (ns kushi.styles
   (:require
+  ;; TODO figure out which of the color fns to pass thru to public api
+  ;;  [garden.color]
    [clojure.spec.alpha :as s]
    [clojure.walk :as walk]
    [clojure.string :as string]
+   [kushi.color :as color]
    [kushi.selector :as selector]
    [kushi.state2 :as state2]
    [kushi.utils :as util :refer [keyed]]
    [kushi.specs2 :as specs2]))
 
 (defn- fnsym->string [sexp s]
-  (concat [(str s (-> sexp first name))] (rest sexp)))
+  (concat [(str s (-> sexp first str))] (rest sexp)))
 
 (defn- fname-from-list [x]
   (when (seq? x)
@@ -38,12 +41,37 @@
               (string/split #"__cssfn__")
               second))))
 
+(defn color-token->hsla [s alpha]
+  (if-let [{:keys [h s l]
+            :as   hsl-map}  (some-> s
+                                    util/extract-cssvar-name
+                                    (subs 2)
+                                    keyword
+                                    color/base-color-map-data)]
+    (let [alpha (if (and (number? alpha)
+                         (<= 0 alpha 1))
+                  alpha
+                  1)
+          css-string-values [(str h "deg")
+                             (str s "%")
+                             (str l "%")
+                             (str alpha)]]
+      {:data              hsl-map
+       :css-string        (util/cssfn-string "hsla" css-string-values)
+       :css-string-values css-string-values})
+    s))
+
 (defn- cssfn-list->string [x]
-  (if-let [cssfn-name (cssfn-name-from-escaped x)]
-    (str cssfn-name
-         "("
-         (string/join ", " (rest x))
-         ")")
+  (if-let [nm (cssfn-name-from-escaped x)]
+    (do
+      (let [trans? (= nm "kushi/transparentize")
+            nm     (if trans? "hsla" nm)
+            hsla   (when trans?
+                     (:css-string-values (color-token->hsla (second x) (last x))))
+            args   (or hsla (rest x))]
+        #_(when (state2/trace-mode?)
+          (? (garden.color/as-hsla )))
+        (util/cssfn-string nm args)))
     x))
 
 (defn- normalize-css-custom-propery
@@ -182,18 +210,11 @@
                      css-custom-property-keys-normalized)]
     [tuples @css-vars]))
 
-(defn extract-cssvar-name [%]
-  ;; TODO use spec for this re-find re-pattern stuff
-  (when-let [[_ nm] (re-find (re-pattern (str "^"
-                                        specs2/cssvar-in-css-re
-                                        "$"))
-                       %)]
-    nm))
 
 (defn cssvars
   [css-vars cssvar-tuples2]
   (let [with-extracted-names (some->> css-vars
-                                      (util/map-keys extract-cssvar-name))
+                                      (util/map-keys util/extract-cssvar-name))
         cssvar-tuples        (some->> cssvar-tuples2
                                       (into {})
                                       (util/map-keys name)
