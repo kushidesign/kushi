@@ -6,6 +6,7 @@
    [kushi.ui.input.checkbox.core :refer (checkbox)]
    [kushi.ui.input.text.core :refer (input)]
    [kushi.ui.input.slider.core :refer (slider)]
+   [kushi.ui.alert.core :refer (alert)]
    [kushi.ui.grid.core :refer (grid)]
    [kushi.ui.icon.mui.core :refer (mui-icon)]
    [kushi.ui.tag.core :refer (tag)]
@@ -55,7 +56,7 @@
               ;;                                  {:-mui-icon      :play-arrow
               ;;                                   :-icon-position :inline-end})
               ;;                       "Play"])}
-
+               
                {:label   "Icon button"
                 :example (example2 [button (sx  {:-mui-icon :play-arrow})])}
 
@@ -97,7 +98,8 @@
                                               :&_.kushi-radio-input:checked+.kushi-label>.emoji:transform "scale(1.5)"
                                               :&_.kushi-radio-input:checked+.kushi-label>.emoji:animation :jiggle2:0.5s}})
                                     [radio
-                                     {:-input-attrs {:name :demo :defaultChecked true}} [label [:span.emoji "🦑"] "Squid"]]
+                                     {:-input-attrs {:name           :demo
+                                                     :defaultChecked true}} [label [:span.emoji "🦑"] "Squid"]]
                                     [radio {:-input-attrs {:name :demo}} [label [:span.emoji "🐋"] "Whale"]]
                                     [radio {:-input-attrs {:name :demo}} [label [:span.emoji "🦈 "] "Shark"]]
                                     [radio {:-input-attrs {:name :demo}} [label [:span.emoji "🐊"] "Croc"]]])}]}
@@ -135,7 +137,7 @@
                                                :-label      "Input label"})])}
                {:label   "Disabled"
                 :example (example2 [input (sx {:placeholder "Your text here"
-                                               :disabled   true
+                                               :disabled    true
                                                :-label      "Input label"})])}
                {:label   "With helper"
                 :example (example2 [input (sx {:placeholder "Your text here"
@@ -181,50 +183,50 @@
                                                                          {:class :my-input-wrapper-name})
                                                })])}]}
 
-   {:fn      slider
-    :meta    #'slider
-    :stage   {:style {:min-height :135px}}
+   {:fn       slider
+    :meta     #'slider
+    :stage    {:style {:min-height :135px}}
     :defaults {:examples "Simple"}
-    :content [{:label   "Simple"
-               :example (example2 [slider {:min 0
-                                           :max 7}])}
-              {:label   "Lables"
-               :example (example2 [slider {:min          0
-                                           :max          7
-                                           :-step-marker :label}])}
-              {:label   "Dot markers"
-               :example (example2 [slider {:min          0
-                                           :max          7
-                                           :-step-marker :dot}])}
-              {:label   "Bar markers"
-               :example (example2 [slider {:min          0
-                                           :max          7
-                                           :-step-marker :bar}])}
-              {:label   "Fractional step"
-               :example (example2 [slider {:min  0
-                                           :max  1
-                                           :step 0.01}])}
-              {:label   "Supplied step values"
-               :example (example2 [slider {:-steps            ["xsmall" "medium" "large" "xlarge"]
-                                           :-step-marker      :label
-                                           :-label-size-class :medium}])}
-              #_{:label   "Supplied step values, custom label styling"
-               :example (example2 [slider {:-steps              ["low" "guarded" "elevated" "high" "severe"]
-                                           :-step-marker        :label
-                                           :-label-size-class   :small
-                                           :-label-scale-factor 0.8
-                                           :-labels-attrs       (sx :>span>span:border-radius--9999px
-                                                                    :>span>span:padding--0.125em:0.75em:0.2em
-                                                                    {:style {">span:nth-child(1):c"         :$positive
-                                                                             ">span:nth-child(1):>span:bgc" :$positive50
-                                                                             ">span:nth-child(2):c"         :$accent
-                                                                             ">span:nth-child(2):>span:bgc" :$accent50
-                                                                             ">span:nth-child(3):c"         :$warning
-                                                                             ">span:nth-child(3):>span:bgc" :$warning50
-                                                                             ">span:nth-child(4):c"         :$orange700
-                                                                             ">span:nth-child(4):>span:bgc" :$orange50
-                                                                             ">span:nth-child(5):c"         :$negative
-                                                                             ">span:nth-child(5):>span:bgc" :$negative50}})}])}]}
+    :content  [{:label   "Simple"
+                :example (example2 [slider {:min 0
+                                            :max 7}])}
+               {:label   "Lables"
+                :example (example2 [slider {:min          0
+                                            :max          7
+                                            :-step-marker :label}])}
+               {:label   "Dot markers"
+                :example (example2 [slider {:min          0
+                                            :max          7
+                                            :-step-marker :dot}])}
+               {:label   "Bar markers"
+                :example (example2 [slider {:min          0
+                                            :max          7
+                                            :-step-marker :bar}])}
+               {:label   "Fractional step"
+                :example (example2 [slider {:min  0
+                                            :max  1
+                                            :step 0.01}])}
+               {:label   "Supplied step values"
+                :example (example2 [slider {:-steps            ["xsmall" "medium" "large" "xlarge"]
+                                            :-step-marker      :label
+                                            :-label-size-class :medium}])}
+               #_{:label   "Supplied step values, custom label styling"
+                  :example (example2 [slider {:-steps              ["low" "guarded" "elevated" "high" "severe"]
+                                              :-step-marker        :label
+                                              :-label-size-class   :small
+                                              :-label-scale-factor 0.8
+                                              :-labels-attrs       (sx :>span>span:border-radius--9999px
+                                                                       :>span>span:padding--0.125em:0.75em:0.2em
+                                                                       {:style {">span:nth-child(1):c"         :$positive
+                                                                                ">span:nth-child(1):>span:bgc" :$positive50
+                                                                                ">span:nth-child(2):c"         :$accent
+                                                                                ">span:nth-child(2):>span:bgc" :$accent50
+                                                                                ">span:nth-child(3):c"         :$warning
+                                                                                ">span:nth-child(3):>span:bgc" :$warning50
+                                                                                ">span:nth-child(4):c"         :$orange700
+                                                                                ">span:nth-child(4):>span:bgc" :$orange50
+                                                                                ">span:nth-child(5):c"         :$negative
+                                                                                ">span:nth-child(5):>span:bgc" :$negative50}})}])}]}
 
    {:fn       tooltip
     :meta     #'tooltip
@@ -286,20 +288,20 @@
                                                  :p--0.3em:0.6em!important)
                                      "This is an example tooltip"]])}]}
 
-   {:fn                   mui-icon
-    :meta                 #'mui-icon
-    :title                "Icons"
-    :stage                {:style {:min-height :135px}}
-    :controls             [:size]
-    :defaults             {:size :medium}
-    :desc                 ["Icons in Kushi are pulled in via [Google's Material Icons font for the web](https://developers.google.com/fonts/docs/material_icons#icon_font_for_the_web)."
-                           :br
-                           "Use [this page](https://fonts.google.com/icons?icon.set=Material+Icons) to explore over 1000+ different icons."
-                           :br
-                           :br
-                           "This component expects a child argument which is a string or keyword that correspondes to the name of an existing mui icon. If a string, snake case (underscores instead of spaces) must be used. If using a keyword, kebab (hyphens instead of spaces) case must be used."]
+   {:fn       mui-icon
+    :meta     #'mui-icon
+    :title    "Icons"
+    :stage    {:style {:min-height :135px}}
+    :controls [:size]
+    :defaults {:size :medium}
+    :desc     ["Icons in Kushi are pulled in via [Google's Material Icons font for the web](https://developers.google.com/fonts/docs/material_icons#icon_font_for_the_web)."
+               :br
+               "Use [this page](https://fonts.google.com/icons?icon.set=Material+Icons) to explore over 1000+ different icons."
+               :br
+               :br
+               "This component expects a child argument which is a string or keyword that correspondes to the name of an existing mui icon. If a string, snake case (underscores instead of spaces) must be used. If using a keyword, kebab (hyphens instead of spaces) case must be used."]
 
-    :content              icon-examples }
+    :content  icon-examples }
 
    {:fn       tag
     :meta     #'tag
@@ -378,6 +380,39 @@
                                              :text-shadow--1px:1px:5px:#9eef00b5
                                              :box-shadow--inset:0px:0px:40px:#9eef0073)
                                     [:span (sx :pis--7ex :letter-spacing--7ex) "alien"]])}]}
+
+
+   {:fn       alert
+    :meta     #'alert
+    :stage    {:style {:min-height :150px}}
+    :controls [:semantic :kind :size :shape :weight]
+    :defaults {:kind     :default
+               :shape    :sharp
+               :semantic :neutral
+               :size     :medium
+               :weight   :wee-bold
+               :examples "Default"}
+    :content  [{:label   "Default"
+                :example (example2 [alert
+                                    (sx :.accent
+                                        {:-mui-icon         :info-outline
+                                         :-close-icon?      true
+                                         :-close-icon-attrs {:on-click #(js/alert "Example close-icon click event.")}})
+                                    "Your message goes here."])}
+               {:label   "with fixed position"
+                :example (example2 [alert
+                                    (sx :.accent
+                                        :.fixed
+                                        :zi--100
+                                        :bottom--0
+                                        :left--0
+                                        :right--0
+                                        {:-mui-icon         :auto-awesome
+                                         :-mui-icon-style   :outlined
+                                         :-close-icon?      true
+                                         :-close-icon-attrs {:on-click #(js/alert "Example close-icon click event.")}})
+                                    "Your message goes here."])}
+               ]}
 
    {:fn       modal
     :meta     #'modal
