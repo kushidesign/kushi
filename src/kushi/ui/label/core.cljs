@@ -36,22 +36,20 @@
                 mui-icon-style :filled
                 icon-position  :inline-start}} &opts
         icon-component (icon-component {:mi             mi
-                                        :icon-position  icon-position
                                         :mui-icon-style mui-icon-style
-                                        :icon-svg       icon-svg})
-        icon-class (when mi (str "kushi-label-with-icon-" (name icon-position))) ]
+                                        :icon-svg       icon-svg})]
 
     [:span
      (merge-attrs
       (sx 'kushi-label
           :.flex-row-c
+          :gap--$icon-enhancer-inline-gap-ems
           :.transition
           :ai--c
           :d--inline-flex
           :w--fit-content
           {:data-kushi-ui :label})
-      &attrs
-      {:class icon-class})
+      &attrs)
      (cond
        (and mi (= icon-position :inline-end))
        (conj &children icon-component)
