@@ -1,6 +1,7 @@
 (ns ^:dev/always kushi.core
   (:require-macros [kushi.core])
   (:require [clojure.string :as string]
+            [par.core :refer [!? ?]]
             [kushi.clean :as clean]))
 
 
@@ -67,6 +68,8 @@
 
 
 ;; Public function for injecting 3rd party stylesheets ------------------------------------------------------------
+;; TODO add example that is not a google-font.
+
 (defn inject-stylesheet
 
   "Expects a map with the following keys: :rel, :href, and :cross-origin(optional).
@@ -104,14 +107,25 @@
 
 
 ;; ----------------------------------------------------------------------------------------------------------
-;; Public function for injecting Google Fonts via stylesheet injection 
+;; Public function for injecting Google Fonts via stylesheet injection
 ;; ----------------------------------------------------------------------------------------------------------
 
 ;; TODO -- analyze weight savings & tradeoffs if normalization logic, warnings etc associated
 ;; with kushi.core/add-google-font! is all offloaded into a macro. Still might need a dynamic version
 ;; if developer wants to allow users to load google fonts on demand. Maybe single source logic could live in a
 ;; cljc file somewhere and then there is a dynamic, cljs version of the function that user would have to
-;; explicitly load from a seperate namespace.
+;; explicitly load from a separate namespace.
+
+(defn- axis->str
+  [kw v]
+  (map #(when % (str % ","))
+       (if (= v :all)
+         (case kw
+           :opsz [20 24 40 48]
+           :grad [-25 0 200]
+           :fill [0 1]
+           :wght [100 200 300 400 500 600 700])
+         (seq v))))
 
 (defn- weights->str
   ([xs]
@@ -154,6 +168,61 @@
                      ":"
                      weights)))))
 
+
+(defn- goog-symbols-map->str
+  [acc {:keys [family axes]
+        :as   m}]
+  (if-not (string? family)
+    (do
+      (js/console.warn
+       "\n[WARNING] kushi.core/add-google-font!"
+       "\n\nMalformed font map argument:\n\n"
+       m
+       "\n\nMust be a map with the entries :family and, optionally, :axes"
+       "\n\n:family must be a string representing a font family"
+       "\n\n:axes must be a map with the optional entries of :opsz, :wght, :fill, and :grad."
+       "\n\n\nExample:\n"
+       {:family "Material Symbols Outlined"
+        :axes   {:wght 400
+                 :opsz 24
+                 :fill 0
+                 :grad 0}})
+      acc)
+    (let [axes*     (into {}
+                          (map (fn [[k v]]
+                                 (let [k (case k :grad "GRAD" :fill "FILL" (name k))
+                                       v (cond (vector? v)
+                                               (axis->str k v)
+                                               (keyword? v)
+                                               (name v)
+                                               :else
+                                               (str v))]
+                                   [k v]))
+                               axes))
+          f         #(when-let [v (get axes* %)] [% v])
+          axes*     (map f ["opsz" "wght" "FILL" "GRAD"])
+          axes      (string/join "," (keep #(some-> % first) axes*))
+          axes-vals (string/join "," (keep #(some-> % second name) axes*))]
+;; (? axes*)
+;; (? axes)
+;; (? axes-vals)
+      (conj acc (str "family="
+                     (string/replace family #" " "+")
+                     ":"
+                     axes
+                     (when axes
+                       (str "@" axes-vals)))))))
+
+
+(defn inject-google-fonts-with-preconnects [s]
+  (inject-stylesheet {:rel          "preconnect"
+                      :href         "https://fonts.gstatic.com"
+                      :cross-origin "anonymous"})
+  (inject-stylesheet {:rel  "preconnect"
+                      :href "https://fonts.googleapis.com"})
+  (inject-stylesheet {:rel  "stylesheet"
+                      :href (str "https://fonts.googleapis.com/css2?" s)}))
+
 ;; TODO add check maps keys & vals with alert
 (defn add-google-font!
   [& maps]
@@ -166,19 +235,28 @@
                           maps)
           families* (reduce m->str [] converted)
           families  (str (string/join "&" families*) "&display=swap")]
-      (inject-stylesheet {:rel          "preconnet"
-                          :href         "https://fonts.gstatic.com"
-                          :cross-origin "anonymous"})
-      (inject-stylesheet {:rel  "preconnet"
-                          :href "https://fonts.googleapis.com"})
-      (inject-stylesheet {:rel  "stylesheet"
-                          :href (str "https://fonts.googleapis.com/css2?" families)}))))
+      (inject-google-fonts-with-preconnects families))))
 
 
-;; This always gets called
+(defn add-google-material-symbols-font!
+  [& maps]
+  (when (seq maps)
+    (let [converted (keep #(if (string? %)
+                             (when-not (string/blank? %)
+                               {:family %
+                                :styles {:opsz :20..48
+                                         :wght :100..700
+                                         :grad :-50..200
+                                         :fill :0..1}})
+                             %)
+                          maps)
+          families* (reduce goog-symbols-map->str [] converted)
+          families  (str (string/join "&" families*) "&display=swap")]
+      (inject-google-fonts-with-preconnects families))))
+
+
+;; This should always gets called for both prod or dev builds
 (kushi.core/inject-google-fonts!)
-
-
 
 
 

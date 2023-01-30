@@ -7,9 +7,9 @@
    [kushi.gvecs :as gvecs]
    [kushi.styles :as styles]
    [kushi.problems :as problems]
+   [kushi.printing2 :refer [kushi-expound]]
    [kushi.utils :as util :refer [keyed]]
-   [kushi.config :as config :refer [user-config]]
-   [expound.alpha :as expound]))
+   [kushi.config :as config :refer [user-config]]))
 
 
 (defn- data-sx-attr [form-meta]
@@ -80,8 +80,7 @@
                          :entry [k v]})
                       entries)))))
 
-        expound-str
-        (expound/expound-str validation-spec args)
+        expound-str (kushi-expound validation-spec args)
 
         element-style-inj
         (stylesheet/garden-vecs-injection garden-vecs)]

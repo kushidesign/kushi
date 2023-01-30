@@ -143,7 +143,8 @@
    :log-kushi-version?             true
    :log-updates-to-cache?          false ;; not yet documented
    :log-cache-call-sites?          false ;; not yet documented
-   
+   :log-relevant-specs?            false ;; not yet documented
+
 
    ;; Experimental - add later -------------------------------------------
    ;; :scaling-system          nil
@@ -156,13 +157,15 @@
    })
 
 (defn ->user-config [m]
-  (let [config*         m
-        user-responsive (apply array-map (:media config*))
-        responsive      (if (valid-responsive? user-responsive)
-                          user-responsive
-                          (apply array-map default-kushi-responsive))
-        ret*            (assoc config* :media responsive)
-        ret             (merge user-config-defaults ret*)]
+  (let [config*                    m
+        user-responsive            (apply array-map (:media config*))
+        responsive                 (if (valid-responsive? user-responsive)
+                                     user-responsive
+                                     (apply array-map default-kushi-responsive))
+        ret*                       (assoc config* :media responsive)
+        ret                        (merge user-config-defaults
+                                          ret*
+                                          {:warnings-and-errors {:print-specs? (:log-relevant-specs? m)}})]
     ret))
 
 (def user-config

@@ -1,12 +1,12 @@
 (ns kushi.typography
-  (:require [kushi.utils :as util :refer [keyed]]
-            [kushi.specs2 :as specs2]
-            [kushi.state2 :as state2]
-            [kushi.printing2 :as printing2]
-            [expound.alpha :as expound]
-            [garden.core :as garden]
-            [garden.stylesheet :refer [at-font-face]]
-            [clojure.spec.alpha :as s]))
+  (:require
+   [clojure.spec.alpha :as s]
+   [garden.core :as garden]
+   [garden.stylesheet :refer [at-font-face]]
+   [kushi.printing2 :as printing2 :refer [kushi-expound]]
+   [kushi.specs2 :as specs2]
+   [kushi.state2 :as state2]
+   [kushi.utils :as util :refer [keyed]]))
 
 
 ;; SYSTEM UI FONT STACK --------------------------------------------------
@@ -78,7 +78,7 @@
                        stack-rules)))
 
          expound-str
-         (when problems (expound/expound-str spec weights*))
+         (when problems (kushi-expound spec weights*))
 
          m
          (merge cache-map
@@ -156,7 +156,7 @@
         css-rule    (when-not fatal
                       (or (:cached cache-map)
                           (garden/css (at-font-face m))))
-        expound-str (when problems (expound/expound-str spec [m]))]
+        expound-str (when problems (kushi-expound spec [m]))]
     (merge (keyed css-rule)
            {:expound-str                 expound-str
             :entries/bad                 bad

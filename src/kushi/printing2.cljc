@@ -4,6 +4,8 @@
    [clojure.string :as string]
    [clojure.edn]
    [clojure.pprint :as pp :refer [pprint]]
+   [expound.alpha :as expound]
+   [kushi.config :as config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]))
 
 (defn re-seq-pos [pattern string]
@@ -287,3 +289,8 @@
                 :commentary
                 (str "Discarding the global \"*\" selector from theme :ui entry.\n"
                      "Use something like :body or :#my-app-id instead.")))))))
+
+(defn kushi-expound [spec x]
+  (expound/expound-str spec
+                       x
+                       (:warnings-and-errors user-config)))

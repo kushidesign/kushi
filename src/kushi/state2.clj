@@ -22,6 +22,7 @@
 (def user-defined-keyframes (atom {}))
 (def user-defined-font-faces (atom []))
 (def google-font-maps (atom []))
+(def google-material-symbols-font-maps (atom []))
 (def design-tokens (atom []))
 (def theming-tokens (atom []))
 (def used-tokens (atom []))
@@ -38,6 +39,7 @@
   (reset! user-defined-keyframes {})
   (reset! user-defined-font-faces [])
   (reset! google-font-maps [])
+  (reset! google-material-symbols-font-maps [])
   (reset! design-tokens [])
   (reset! theming-tokens [])
   (reset! used-tokens [])
@@ -56,6 +58,9 @@
   [coll]
   (doseq [m coll] (swap! google-font-maps conj m)))
 
+(defn add-google-material-symbols-font-maps!
+  [coll]
+  (doseq [m coll] (swap! google-material-symbols-font-maps conj m)))
 
 ;; caching ----------------------------------------------------------------
 

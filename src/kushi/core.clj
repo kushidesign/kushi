@@ -3,11 +3,10 @@
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
-   [expound.alpha :as expound]
    [kushi.styles :refer [all-style-tuples]]
    [kushi.config :as config :refer [user-config]]
    [kushi.shorthand :as shorthand]
-   [kushi.printing2 :as printing2]
+   [kushi.printing2 :as printing2 :refer [kushi-expound]]
    [kushi.state2 :as state2]
    [kushi.specs2 :as specs2]
    [kushi.stylesheet :as stylesheet]
@@ -160,7 +159,7 @@
                 :clojure.spec.alpha/problems problems}
                (when problems
                  {:doc         (:doc (meta #'defkeyframes))
-                  :expound-str (expound/expound-str spec args)}))
+                  :expound-str (kushi-expound spec args)}))
 
         frames
         (if problems
@@ -382,12 +381,19 @@
     (defclass-dispatch {:sym  (with-meta (symbol k) {kw true})
                         :args [styles]})))
 
-(defn- font-loading! [m]
-  (let [gfm   (:google-font-maps m)]
-    (when (:add-system-font-stack? m)
-      (sysfont (:system-font-stack-weights m)))
-    (when (seq gfm)
-      (state2/add-google-font-maps! gfm))))
+(defn- font-loading!
+  [{:keys [google-font-maps
+           google-material-symbols-maps
+           add-system-font-stack?
+           system-font-stack-weights]}]
+  (when add-system-font-stack?
+    (sysfont system-font-stack-weights))
+  (when (seq google-font-maps)
+    (state2/add-google-font-maps!
+     google-font-maps))
+  (when (seq google-material-symbols-maps)
+    (state2/add-google-material-symbols-font-maps!
+     google-material-symbols-maps)))
 
 
 (defmacro form-meta* []
@@ -461,14 +467,16 @@
 ;; make sure manually inject gfonts still load
 
 (defmacro inject-google-fonts! []
-  (let [tag (str "[" @state2/shadow-build-id "] [Kushi v" config/version "]")
+  (let [tag            (str "[" @state2/shadow-build-id "] [Kushi v" config/version "]")
         tag-browser-gf (str tag " - Injecting goog-fonts-map")]
-    (do (let [google-font-maps @state2/google-font-maps]
+    (do (let [google-font-maps                  @state2/google-font-maps
+              google-material-symbols-font-maps @state2/google-material-symbols-font-maps]
           #_(pprint google-font-maps)
           `(do
              #_(js/console.log ~google-font-maps)
              #_(js/console.log ~tag-browser-gf)
-             (apply kushi.core/add-google-font! ~google-font-maps) )))))
+             (apply kushi.core/add-google-font! ~google-font-maps)
+             (apply kushi.core/add-google-material-symbols-font! ~google-material-symbols-font-maps))))))
 
 
 (defmacro inject! []
