@@ -1,12 +1,12 @@
 (ns ^:dev/always kushi.ui.theme
   (:require
+   [par.core :refer [!? ?]]
    [kushi.config :as config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]
-   [kushi.printing2 :as printing2]
+   [kushi.printing2 :as printing2 :refer [kushi-expound]]
    [kushi.specs2 :as specs2]
    [kushi.ui.basetheme :as basetheme]
    [kushi.ui.utility :refer [utility-class-ks]]
-   [expound.alpha :as expound]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [io.aviso.ansi :as ansi]))
@@ -126,6 +126,33 @@
                           (into []))]
     ret))
 
+(defn- google-material-symbols-maps
+  "Expects a map of font-loading opts that may contain a :google-material-symbols entry.
+   The :google-material-symbols entry is a user-exposed option that can be added to
+   the :font-loading entry of their theme map. It is a vector of material-symbol font-family
+   names which correspond to hosted Material Symbols Google Fonts. All font-families listed
+   in this vector will be loaded, with all variable axes loaded, unless an :axes entry is
+   supplied to load the font as a static icon font."
+  [m]
+  (let [families     (->> m
+                          :google-material-symbols
+                          (util/partition-by-pred string?))
+        font-maps    (mapv (fn [s]
+                             {:family s
+                              :axes   {:opsz :20..48
+                                       :wght :100..700
+                                       :grad :-50..200
+                                       :fill :0..1}})
+                           (first families))
+        partial-fams (second families)
+        ret          (->> partial-fams
+                          seq
+                          (concat font-maps)
+                          (remove nil?)
+                          (into []))]
+    (!? (keyed families font-maps partial-fams ret))
+    ret))
+
 (defn- system-font-opts
   "Always creates @font-face declarations for all the weights and italics for
    system ui fonts, unless the user sets the entry `:add-system-font-stack?` to `false`
@@ -146,9 +173,11 @@
 (defn- font-loading-opts
   "Provides an argument map for kushi.core.ui/init-typography!"
   [m]
-  (let [google-font-maps (google-font-maps m)
-        sys              (system-font-opts)]
-    (merge (keyed google-font-maps)
+  (let [google-font-maps             (google-font-maps m)
+        google-material-symbols-maps (google-material-symbols-maps m)
+        sys                          (system-font-opts)]
+    (merge (keyed google-font-maps
+                  google-material-symbols-maps)
            sys)))
 
 
@@ -190,6 +219,18 @@
 
 (defn user-theme-map []
   (let [m (resolve-user-theme (:theme user-config) :user)
+
+        ;; Temp debugging start
+        ;; m (assoc m
+        ;;          :font-loading
+        ;;          {:google-material-symbols [{:family "Material Symbols Outlined"
+        ;;                                      :axes   {:opsz 25
+        ;;                                               :wght 400
+        ;;                                               :grad 0
+        ;;                                               :fill 1}}]})
+        ;; _ (? (:font-loading m))
+        ;; Temp debugging end
+
         ret (when m
               (if (s/valid? ::specs2/theme m)
                 m
@@ -197,7 +238,7 @@
                  {:commentary  (str  "kushi.ui.theme/theme\n"
                                      "Invalid value(s) in user theming config:\n"
                                      ansi/bold-font (:theme user-config) ansi/reset-font)
-                  :expound-str (expound/expound-str ::specs2/theme m)})))]
+                  :expound-str (kushi-expound ::specs2/theme m)})))]
     ret))
 
 
@@ -228,7 +269,7 @@
                                (or (:css-reset user)
                                    (:css-reset base)))]
     (merge
-     merged-theme-props ;; <- map with the entries of [:font-loading :design tokens]
+     merged-theme-props ;; <- map with the entries of [:font-loading :design-tokens]
      (keyed
       css-reset
       utility-classes
