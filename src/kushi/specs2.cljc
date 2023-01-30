@@ -544,17 +544,61 @@
 
 ;; THEME -----------------------------------------------------------------
 
+(s/def ::family string?)
 
+;; Google Material Symbols
+(s/def ::google-material-symbols-range (s/and keyword?
+                                              #(let [ab (string/split (name %) #"\.\.")]
+                                                 (every? (fn [s] (re-find #"^-?\d*$" s)) ab)
+                                                ;; need to cast as numbers first
+                                                ;;  (apply < ab)
+                                                 )))
+
+(s/def ::google-material-symbols-fill-val #{0 1})
+(s/def ::google-material-symbols-fills
+  (s/or :kw-fill-range ::google-material-symbols-range
+        :fill-val ::google-material-symbols-fill-val))
+(s/def ::fill ::google-material-symbols-fills)
+
+(s/def ::google-material-symbols-grad-val #{-50 0 200})
+(s/def ::google-material-symbols-grads
+  (s/or :kw-grad-range ::google-material-symbols-range
+        :grad-val ::google-material-symbols-grad-val))
+(s/def ::grad ::google-material-symbols-grads)
+
+(s/def ::google-material-symbols-wght-val #{100 200 300 400 500 600 700})
+(s/def ::google-material-symbols-wghts
+  (s/or :kw-wght-range ::google-material-symbols-range
+        :wght-val ::google-material-symbols-wght-val))
+(s/def ::wght ::google-material-symbols-wghts)
+
+(s/def ::google-material-symbols-opsz-val #{20 24 40 48})
+(s/def ::google-material-symbols-opsz
+  (s/or :kw-opsz-range ::google-material-symbols-range
+        :opsz-val ::google-material-symbols-opsz-val))
+(s/def ::opsz ::google-material-symbols-opsz)
+
+(s/def ::axes (s/and map? (s/keys :opt-un [::opsz ::wght ::grad ::fill])))
+(s/def ::google-material-symbols-opts
+  (s/and map? (s/keys :req-un [::family ::axes])))
+
+(s/def ::google-material-symbols
+  (s/coll-of (s/or :google-material-symbols-opts ::google-material-symbols-opts
+                   :family ::family)
+             :kind vector?))
+
+
+;; Google Fonts
 (s/def ::google-font-weight #{100 200 300 400 500 600 700 800 900 1000})
 (s/def ::google-font-weights (s/coll-of ::google-font-weight :kind vector?))
 (s/def ::normal ::google-font-weights)
 (s/def ::italic ::google-font-weights)
 (s/def ::styles (s/and map? (s/keys :req-un [::normal ::italic])))
-(s/def ::family string?)
 (s/def ::google-font-opts (s/and map? (s/keys :req-un [::family ::styles])))
-(s/def ::google-fonts (s/coll-of (s/or :google-font-opts ::google-font-opts
-                                       :family ::family)
-                                 :kind vector?))
+(s/def ::google-fonts
+  (s/coll-of (s/or :google-font-opts ::google-font-opts
+                   :family ::family)
+             :kind vector?))
 (s/def ::stylish-map (s/map-of ::s|kw map?))
 (s/def ::stylish-pairs (s/and vector?
                               #(even? (count %))
@@ -566,7 +610,8 @@
                                 (not (s/valid? ::style-tuple-value-imbalanced-string %)))))
 (s/def ::font-loading (s/and map?
                              (s/keys :opt-un
-                                     [::google-fonts])))
+                                     [::google-fonts
+                                      ::google-material-symbols])))
 
 (s/def ::theme
   (s/and map?
