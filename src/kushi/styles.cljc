@@ -1,7 +1,8 @@
 (ns kushi.styles
   (:require
+  [par.core :refer [!? ?]]
   ;; TODO figure out which of the color fns to pass thru to public api
-  ;;  [garden.color]
+   [garden.color]
    [clojure.spec.alpha :as s]
    [clojure.walk :as walk]
    [clojure.string :as string]
@@ -42,36 +43,42 @@
               second))))
 
 (defn color-token->hsla [s alpha]
-  (if-let [{:keys [h s l]
-            :as   hsl-map}  (some-> s
-                                    util/extract-cssvar-name
-                                    (subs 2)
-                                    keyword
-                                    color/base-color-map-data)]
-    (let [alpha (if (and (number? alpha)
-                         (<= 0 alpha 1))
-                  alpha
-                  1)
-          css-string-values [(str h "deg")
-                             (str s "%")
-                             (str l "%")
-                             (str alpha)]]
-      {:data              hsl-map
-       :css-string        (util/cssfn-string "hsla" css-string-values)
-       :css-string-values css-string-values})
-    s))
+  (when (string? s)
+    (when-let [{:keys [h s l]
+                :as   hsl-map}  (some-> s
+                                        util/extract-cssvar-name
+                                        (subs 2)
+                                        keyword
+                                        color/base-color-map-data)]
+      (let [alpha             (if (and (number? alpha)
+                                       (<= 0 alpha 1))
+                                alpha
+                                1)
+            css-string-values [(str h "deg")
+                               (str s "%")
+                               (str l "%")
+                               (str alpha)]]
+        {:data              hsl-map
+         :css-string        (util/cssfn-string "hsla" css-string-values)
+         :css-string-values css-string-values}))))
+
+(defn transparentize [nm n]
+  (or (some-> nm (color-token->hsla n) :css-string)
+      (when-let [color (when (or (string? nm)
+                                 (keyword? nm))
+                         (contains? garden.color/color-name->hex
+                                    (keyword nm)))]
+        (garden.color/transparentize color n))
+      nm))
 
 (defn- cssfn-list->string [x]
   (if-let [nm (cssfn-name-from-escaped x)]
     (do
-      (let [trans? (= nm "kushi/transparentize")
-            nm     (if trans? "hsla" nm)
-            hsla   (when trans?
-                     (:css-string-values (color-token->hsla (second x) (last x))))
-            args   (or hsla (rest x))]
-        #_(when (state2/trace-mode?)
-          (? (garden.color/as-hsla )))
-        (util/cssfn-string nm args)))
+      (let [trans?     (= nm "kushi/transparentize")
+            css-string (when trans?
+                         (transparentize (second x) (last x)))]
+        (or css-string
+            (util/cssfn-string nm (rest x)))))
     x))
 
 (defn- normalize-css-custom-propery
