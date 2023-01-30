@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.ui.theme
   (:require
-   [par.core :refer [!? ?]]
    [kushi.config :as config :refer [user-config]]
    [kushi.utils :as util :refer [keyed]]
    [kushi.printing2 :as printing2 :refer [kushi-expound]]
@@ -150,7 +149,6 @@
                           (concat font-maps)
                           (remove nil?)
                           (into []))]
-    (!? (keyed families font-maps partial-fams ret))
     ret))
 
 (defn- system-font-opts

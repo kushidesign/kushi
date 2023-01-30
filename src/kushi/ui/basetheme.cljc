@@ -1008,10 +1008,10 @@
                                       design-tokens)))
      :ui              ui
      :font-loading    {
-                      ;;  :google-fonts  [{:family "Public Sans"
-                      ;;                   :styles {:normal [100]
-                      ;;                            :italic [300]}}]
-                      ;;  :google-fonts* ["Fira Code" "Inter"]
+                        ;;  :google-fonts  [{:family "Public Sans"
+                        ;;                   :styles {:normal [100]
+                        ;;                            :italic [300]}}]
+
                        }
      }))
 
