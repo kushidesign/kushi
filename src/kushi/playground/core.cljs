@@ -2,6 +2,7 @@
   (:require
    [malli.dev.pretty :as pretty]
    [malli.core :as malli]
+   [garden.color]
    [kushi.core :refer [sx merge-attrs]]
    [kushi.color :refer [colors->tokens]]
    [kushi.colors :as kushi.colors]
@@ -226,27 +227,26 @@
                               :sidenav-header "About"}}
     :as   m}]
   (let [
-        m                      (merge m (keyed render
-                                               mobile-nav
-                                               kushi-colors
-                                               kushi-user-guide
-                                               kushi-clojars
-                                               kushi-about))
+        m                   (merge m (keyed render
+                                            mobile-nav
+                                            kushi-colors
+                                            kushi-user-guide
+                                            kushi-clojars
+                                            kushi-about))
 
-        kushi-components        (merge kushi-components
-                                       {:coll (components-to-render examples/components [])})
-        global-color-scales     (color-scales2 {:colorlist colorlist})
-        nav-opts                (keyed
-                                 custom-components
-                                 kushi-components
-                                 custom-colors
-                                 kushi-colors
-                                 custom-typography
-                                 kushi-typography
-                                 kushi-user-guide
-                                 kushi-clojars
-                                 kushi-about)]
-
+        kushi-components    (merge kushi-components
+                                   {:coll (components-to-render examples/components [])})
+        global-color-scales (color-scales2 {:colorlist colorlist})
+        nav-opts            (keyed
+                             custom-components
+                             kushi-components
+                             custom-colors
+                             kushi-colors
+                             custom-typography
+                             kushi-typography
+                             kushi-user-guide
+                             kushi-clojars
+                             kushi-about)]
 
     [:div
      (merge-attrs main-view-outer-wrapper-attrs
@@ -260,11 +260,11 @@
 
      ;; print focused section for deving
      #_(when true
-       [:div
-        (sx :.fixed
-            :bottom--0
-            :right--0)
-        @state/*focused-section])
+         [:div
+          (sx :.fixed
+              :bottom--0
+              :right--0)
+          @state/*focused-section])
 
      [:div
       main-view-wrapper-attrs
