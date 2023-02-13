@@ -64,7 +64,7 @@
            {:name    outer-wrapper-attrs
             :type    :map
             :default nil
-            :desc    ["html attributes map applied to the outermost div of the component."
+            :desc    ["HTML attributes map applied to the outermost div of the component."
                       "This div wraps the label, input-wrapper div, and the helper text span."]}
 
            {:name    label
@@ -75,12 +75,12 @@
            {:name    label-attrs
             :type    :map
             :default nil
-            :desc    "html attributes map applied to the `:label` element that contains the `label` text."}
+            :desc    "HTML attributes map applied to the `:label` element that contains the `label` text."}
 
            {:name    label-placement
             :type    #{:block :inline}
             :default :block-start
-            :desc    "html attributes map applied to the `label` element associated with the `input` element, and end-enhancer div."}
+            :desc    "HTML attributes map applied to the `label` element associated with the `input` element, and end-enhancer div."}
 
            {:name    label-width
             :type    #{:keyword :string}
@@ -91,7 +91,7 @@
            {:name    wrapper-attrs
             :type    :map
             :default nil
-            :desc    ["html attributes map applied to the input wrapper div, which is bordered by default."
+            :desc    ["HTML attributes map applied to the input wrapper div, which is bordered by default."
                       "This div wraps the `start-enhancer` div, the actual `input` element, and the `end-enhancer` div."]}
 
            {:name    start-enhancer
