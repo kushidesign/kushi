@@ -1,7 +1,7 @@
 (ns kushi.ui.snippet.core
   (:require
    [kushi.core :refer (sx merge-attrs) :refer-macros (sx)]
-   [kushi.ui.tooltip.core :refer (tooltip add-temporary-tooltip!)]
+   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.dom :refer (copy-to-clipboard)]))
@@ -15,22 +15,20 @@
   [opts & children*]
   (let [children (or children*
                      [[button
-                       (sx 'kushi-copy-to-clipboard-button
-                           :p--0px
-                           :.minimal
-                           {:on-click add-temporary-tooltip!})
+                       (merge-attrs
+                        (sx 'kushi-copy-to-clipboard-button
+                            :p--0px
+                            :.minimal)
+                        (tooltip-attrs {:-text                     "Copied!"
+                                        :-placement                "inline-start center"
+                                        :-reveal-on-click?         true
+                                        :-reveal-on-click-duration 40000}))
                        [:img
                         (sx 'kushi-copy-to-clipboard-button-graphic
                             :h--75%
                             :o--0.7
                             :hover:o--1
-                            {:src copy-content-svg})]
-                       [tooltip (sx 'kushi-copy-to-clipboard-tooltip
-                                    :.xxxsmall
-                                    :.rounded
-                                    :ff--Inter
-                                    {:-display-on-hover? false})
-                        "Copied!"]]] )]
+                            {:src copy-content-svg})]]])]
     (into [:div
            (merge-attrs
             (sx 'kushi-copy-to-clipboard-button-wrapper
