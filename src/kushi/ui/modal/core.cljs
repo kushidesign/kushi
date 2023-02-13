@@ -44,11 +44,11 @@
            {:name    scrim-attrs
             :type    :map
             :default nil
-            :desc    "html attributes map applied to the background scrim `div`."}
+            :desc    "HTML attributes map applied to the background scrim `div`."}
            {:name    panel-attrs
             :type    :map
             :default nil
-            :desc    "html attributes map applied to the modal panel `div`"}]}
+            :desc    "HTML attributes map applied to the modal panel `div`"}]}
   [& args]
   (let [[opts attr & children] (opts+children args)
         {:keys [trigger
