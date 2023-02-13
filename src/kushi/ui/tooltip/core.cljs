@@ -1,159 +1,407 @@
 (ns kushi.ui.tooltip.core
   (:require
-   [kushi.core :refer (sx merge-attrs defclass)]
-   [kushi.ui.core :refer (defcom opts+children)]
-   [kushi.ui.dom :refer (set-overlay-position! conditional-display?)]))
+   [par.core :refer [!? ? ?j]]
+   [clojure.string :as string]
+   [kushi.core :refer (sx defclass)]
+   [kushi.ui.dom :as dom]))
 
-
-(defclass
+(defclass kushi-pseudo-tooltip
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-tooltip-placement-inline
-  {:top       :50%!important
-   :bottom    :unset!important
-   :transform "translateY(-50%)!important"
-   :margin    :0!important})
+  {:hover:after:z-index        9999
+   :hover:after:opacity        1
+   :hover:after:width          :auto
+   :hover:after:height         :fit-content
+   :hover:after:position       :absolute
+   :hover:after:text-transform :$tooltip-text-transform
+   :hover:after:color          :$tooltip-color
+   :dark:hover:after:color     :$tooltip-color-inverse
+   :hover:after:bgc            :$tooltip-background-color
+   :dark:hover:after:bgc       :$tooltip-background-color-inverse
+   :hover:after:padding-block  :$tooltip-padding-block
+   :hover:after:padding-inline :$tooltip-padding-inline
+   :hover:after:border-radius  :$tooltip-border-radius
+   :hover:after:font-size      :$tooltip-font-size
+   :hover:after:top            :$_kushi-ui-pseudo-tooltip-top
+   :hover:after:left           :$_kushi-ui-pseudo-tooltip-left
+   :hover:after:transform      :$_kushi-ui-pseudo-tooltip-transform
+   :hover:after:white-space    :pre
 
-(defclass
+   :focus-visible:after:z-index        9999
+   :focus-visible:after:opacity        1
+   :focus-visible:after:width          :auto
+   :focus-visible:after:height         :fit-content
+   :focus-visible:after:position       :absolute
+   :focus-visible:after:text-transform :$tooltip-text-transform
+   :focus-visible:after:color          :$tooltip-color
+   :dark:focus-visible:after:color     :$tooltip-color-inverse
+   :focus-visible:after:bgc            :$tooltip-background-color
+   :dark:focus-visible:after:bgc       :$tooltip-background-color-inverse
+   :focus-visible:after:padding-block  :$tooltip-padding-block
+   :focus-visible:after:padding-inline :$tooltip-padding-inline
+   :focus-visible:after:border-radius  :$tooltip-border-radius
+   :focus-visible:after:font-size      :$tooltip-font-size
+   :focus-visible:after:top            :$_kushi-ui-pseudo-tooltip-top
+   :focus-visible:after:left           :$_kushi-ui-pseudo-tooltip-left
+   :focus-visible:after:transform      :$_kushi-ui-pseudo-tooltip-transform
+   :focus-visible:after:white-space    :pre
+   })
+
+(defclass kushi-pseudo-tooltip-hidden
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-tooltip-placement-inline-end
-  :.kushi-tooltip-placement-inline
-  {:left      "calc(100% + var(--overlay-placement-inline-offset, 12px))!important"
-   :right     :unset!important})
+  {:after:display        :none})
 
-(defclass
+(defclass kushi-pseudo-tooltip-revealed
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-tooltip-placement-inline-start
-  :.kushi-tooltip-placement-inline
-  {:right     "calc(100% + var(--overlay-placement-inline-offset, 12px))!important"
-   :left      :unset!important})
+  {:after:display        :block
+   :after:z-index        9999
+   :after:opacity        1
+   :after:width          :auto
+   :after:height         :fit-content
+   :after:position       :absolute
+   :after:text-transform :$tooltip-text-transform
+   :after:color          :$tooltip-color
+   :dark:after:color     :$tooltip-color-inverse
+   :after:bgc            :$tooltip-background-color
+   :dark:after:bgc       :$tooltip-background-color-inverse
+   :after:padding-block  :$tooltip-padding-block
+   :after:padding-inline :$tooltip-padding-inline
+   :after:border-radius  :$tooltip-border-radius
+   :after:font-size      :$tooltip-font-size
+   :after:top            :$_kushi-ui-pseudo-tooltip-top
+   :after:left           :$_kushi-ui-pseudo-tooltip-left
+   :after:transform      :$_kushi-ui-pseudo-tooltip-transform
+   :after:white-space    :pre})
 
-(defclass
-  ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-tooltip-placement-block
-  {:left      :50%!important
-   :right     :unset!important
-   :transform "translateX(-50%)!important"
-   :margin    :0!important})
 
-(defclass
-  ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-tooltip-placement-block-start
-  :.kushi-tooltip-placement-block
-  {:bottom    "calc(100% + var(--overlay-placement-block-offset, 6px))!important"
-   :top       :unset!important})
+(def non-logicals
+  #{"bottom" "right" "top" "left" "corner"})
 
-(defclass
-  ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-tooltip-placement-block-end
-  :.kushi-tooltip-placement-block
-  {:top       "calc(100% + var(--overlay-placement-block-offset, 6px))!important"
-   :bottom    :unset!important})
 
-(defn tooltip+parent [e]
-  (let [node (-> e .-currentTarget)
-        tooltip (.querySelector node ".kushi-tooltip")]
-    (when tooltip
-      (when-let [parent (.closest node "[data-kushi-tooltip='true']")]
-        [tooltip parent]))))
+(def placement-values
+  {:inline #{"inline-end" "inline-start" "inline-auto"}
+   :block #{"block-end" "block-start" "block-auto"}})
 
-(defn expand-tooltip! [tooltip parent]
-  (set-overlay-position! tooltip parent)
-  (.setAttribute parent "aria-expanded" "true")
-  (.setAttribute parent "aria-described-by" (.getAttribute tooltip "id")))
 
-(defn remove-tooltip! [parent]
-  (.setAttribute parent "aria-expanded" "false")
-  (.removeAttribute parent "aria-described-by"))
+(defn- p2? [s kw]
+  (or (= "center" s)
+      (contains? (kw placement-values) s)))
 
-(defn add-temporary-tooltip!
-  ([e]
-   (add-temporary-tooltip! e 2000))
-  ([e ms]
-   (when-let [[tooltip parent] (tooltip+parent e)]
-     (if (conditional-display? tooltip)
-       (do
-         (expand-tooltip! tooltip parent)
-         (js/setTimeout (fn [_] (remove-tooltip! parent)) ms))
-       (js/console.warn "[kushi.ui.tooltip.core/add-temporary-tooltip!]\n\nIf you want to trigger a temporary tooltip, you must explicitly use a value of `false` for the `:display-on-hover` entry in the opts argument to the tooltip component")))))
+(defn- p1? [s kw]
+  (contains? (kw placement-values) s))
 
-(defn tooltip
+
+(defn valid-placement [[p1 p2 corner]]
+  (let [p1-inline?         (p1? p1 :inline)
+        p1-block?          (p1? p1 :block)
+        p2-inline?         (p2? p2 :inline)
+        p2-block?          (p2? p2 :block)
+        inline-then-block? (and p1-inline? p2-block?)
+        block-then-inline? (and p1-block? p2-inline?)
+        p1+p2              (or inline-then-block? block-then-inline?)]
+    (if (or (and (= corner "corner") p1+p2)
+            p1+p2
+            (and (nil? corner)
+                 (nil? p2)
+                 (or p1-inline? p1-block?)))
+      [p1 p2 corner]
+      ["block-auto"])))
+
+(defn- translate-with-calc [coord offset corner?]
+  (let [offset  (name offset)
+        pct     (str coord "%")
+        ret     (if (= offset "0")
+                  pct
+                  (let [tt* "var(--tooltip-offset)"
+                        tt (if corner? (str "calc(" tt* " * 0.71)") tt*)]
+                    (str "calc(" pct " " offset " " tt ")")))]
+    ret))
+
+(defn- translate-with-offset
+  [x y offset-x offset-y corner?]
+  (let [x (translate-with-calc x offset-x corner?)
+        y (translate-with-calc y offset-y corner?)]
+    (str "translate(" x ", " y ")")))
+
+(def placement-by-kw
+  {:tlc [0 0 -100 -100 :- :-]
+   :tl  [0 0 0 -100 :0 :-]
+   :t   [0 50 -50 -100 :0 :-]
+   :tr  [0 100 -100 -100 :0 :-]
+   :trc [0 100 0 -100 :+ :-]
+
+   :rtc [0 100 0 -100 :+ :+]
+   :rt  [0 100 0 0 :+ :0]
+   :r   [50 100 0 -50 :+ :0]
+   :rb  [100 100 0 -100 :+ :0]
+   :rbc [100 100 0 0 :+ :+]
+
+   :brc [100 100 0 0 :+ :+]
+   :br  [100 100 -100 0 :0 :+]
+   :b   [100 50 -50 0 :0 :+]
+   :bl  [100 0 0 0 :0 :+]
+   :blc [100 0 -100 0 :- :+]
+
+   :lbc [100 0 -100 0 :- :+]
+   :lb  [100 0 -100 -100 :- :0]
+   :l   [50 0 -100 -50 :- :0]
+   :lt  [0 0 -100 0 :- :0]
+   :ltc [0 0 -100 -100 :- :-]})
+
+
+(def by-logic
+  (let [m {"block-start"  "t"
+           "inline-end"   "r"
+           "block-end"    "b"
+           "inline-start" "l"
+           "center"       nil
+           true         "c"
+           false        nil}]
+    {:ltr m
+     :rtl (assoc m "inline-end" "l" "inline-start" "r")}))
+
+
+(defn logic-placement
+  [{:keys [ltr? tb lr user-placement]}]
+  (let [placement      (some-> user-placement
+                               (string/trim)
+                               (string/split #" "))
+
+        [p1 p2 corner] (valid-placement placement)
+
+        corner?        (= "corner" corner)
+
+        p1*            (or p1 "block-auto")
+
+        p1             (case p1*
+                         "block-auto"
+                         (if (= tb :top) "block-end" "block-start")
+                         "inline-auto"
+                         (if (= lr :left)
+                           (if ltr? "inline-end" "inline-start")
+                           p1*)
+                         p1*)
+
+        p2             (or p2
+                           (cond
+                             (p1? p1 :block)
+                             (if (= lr :left)
+                               (if ltr? "inline-start" "inline-end")
+                               (if ltr? "inline-end" "inline-start"))
+                             (p1? p1 :inline)
+                             (if (= tb :top) "block-start" "block-end")
+                             ))
+
+        placement      [p1 p2 corner?]
+
+        wtf            (->> placement
+                            (map #(get ((if ltr? :ltr :rtl) by-logic) %))
+                            string/join
+                            keyword)]
+    wtf))
+
+
+(defn user-placement [s]
+  (let [kw (some-> s keyword)]
+    (when (string? s)
+      (or
+       (when (contains? placement-by-kw kw)
+         kw)
+       (let [parts (string/split s #"-")]
+         (when (every? #(contains? non-logicals %) parts)
+           (let [kw (some->> parts
+                             (map first)
+                             string/join
+                             keyword)]
+             (when (contains? placement-by-kw kw)
+               kw))))))))
+
+
+(defn set-tooltip-position! [%]
+  (let [node          (dom/et %)
+        ltr?          (= (.-direction (js/window.getComputedStyle node)) "ltr")
+        [tb lr]       (dom/screen-quadrant node)
+        user-supplied (.getAttribute node "data-kushi-ui-pseudo-tooltip-placement")
+        wtf           (or (user-placement user-supplied)
+                          (logic-placement {:ltr?           ltr?
+                                            :tb             tb
+                                            :lr             lr
+                                            :user-placement user-supplied}))
+        corner?       (string/ends-with? (name wtf) "c")
+        [tt-top
+         tt-left
+         tt-x
+         tt-y
+         offset-x
+         offset-y]    (wtf placement-by-kw)]
+    (dom/set-style! node
+                    "--_kushi-ui-pseudo-tooltip-top" (str tt-top "%"))
+    (dom/set-style! node
+                    "--_kushi-ui-pseudo-tooltip-left" (str tt-left "%"))
+    (dom/set-style! node
+                    "--_kushi-ui-pseudo-tooltip-transform"
+                    (translate-with-offset tt-x tt-y offset-x offset-y corner?))))
+
+
+(defn tooltip-attrs
   {:desc ["Tooltips provide additional context when hovering or clicking on an element."
           :br
           :br
           "Tooltips in Kushi have no arrow indicator and are placed automatically depending on the parent element's relative postition in the viewport."
-          "Tooltips are placed above or below the parent element that they describe."
+          :br
+          "Specifying placement in various ways can be done with the `:-placement` option."
           :br
           :br
-          "The font-size for the tooltip should be set with the `:$tooltip-font-size` token."
+          "Tooltips can be styled via the following tokens in your theme:"
+          :br
+          "`:--tooltip-padding-inline`"
+          :br
+          "`:--tooltip-padding-block`"
+          :br
+          "`:--tooltip-border-radius`"
+          :br
+          "`:--tooltip-font-size`"
+          :br
+          "`:--tooltip-color`"
+          :br
+          "`:--tooltip-background-color`"
+          :br
+          "`:--tooltip-color-inverse`"
+          :br
+          "`:--tooltip-background-color-inverse`"
+          :br
+          "`:--tooltip-text-transform`"
+          :br
+          "`:--tooltip-offset`"
           :br
           :br
-          "Overriding the automatic inline or block (or both) placement is available via the options `:-block-offset` and `:-inline-offset`."
+          "These tooltips are implemented with an `::after` pseudo-element and therefore differ from most of the other primitive component Kushi offers."
+          "The element being tipped must receive an attributes map that is a result of passing a map of options to `kushi.ui.tooltip.core/tooltip-attrs`."
+          "You can compose this map to an existing elements attributes map using the pattern `(merge-attrs (sx ...) (tooltip-attrs ...))`."
           :br
           :br
-          "Forcing centered-aligned placement to the top, bottom, left, or right of the parent item can be done with the `:-placement` option."
+          "The element being tipped must also have a css `postition` value such as `relative` set, so that the absolutely-positioned tooltip pseudo-element will end up with the desired placement."
           :br
           :br
-          "Exact placement can be achieved via css."]
-   :opts '[{:name    display-on-hover?
-            :type    :boolean
-            :default true
-            :desc    "Setting to `false` will conditionalize display based on user event such as a click"}
-           {:name    block-offset
-            :type    #{:start :end}
+          ]
+   :opts '[{:name    text
+            :type    :string
             :default nil
-            :desc    "Setting to either `:start` or `:end` will override vertical auto-placement"}
-           {:name    inline-offset
-            :type    #{:start :end}
-            :default nil
-            :desc    "Setting to either `:start` or `:end` will override horizontal auto-placement"}
+            :desc    "Required. The text to display in the tooltip"}
            {:name    placement
-            :type    #{:inline-start :inline-end :block-start :block-end}
+            :type    #{string keyword}
+            :default "block-auto"
+            :desc    ["Accepts a string of up to 3 logical properties, separated by spaces:"
+                      :br
+                      "`\"block-auto\"`"
+                      :br
+                      "`\"block-auto inline-end\"`"
+                      :br
+                      "`\"block-auto inline-end corner\"`"
+                      :br
+                      "`\"inline-end\"`"
+                      :br
+                      "`\"inline-end block-start\"`"
+                      :br
+                      "`\"inline-end block-start corner\"`"
+                      :br
+                      "`\"inline-start center\"`"
+                      :br
+                      "`\"inline-end center\"`"
+                      :br
+                      "`\"block-start center\"`"
+                      :br
+                      "`\"block-end center\"`"
+                      :br
+                      :br
+                      "If you don't care about the tooltip placement respecting writing direction and/or document flow, you can also use single keywords specifying exact placement:"
+                      :br
+                      "`:top-left-corner`"
+                      :br
+                      "`:top-left`"
+                      :br
+                      "`:top`"
+                      :br
+                      "`:top-right`"
+                      :br
+                      "`:top-right-corner`"
+                      :br
+                      "`:right-top-corner`"
+                      :br
+                      "`:right-top`"
+                      :br
+                      "`:right`"
+                      :br
+                      "`:right-bottom`"
+                      :br
+                      "`:right-bottom-corner`"
+                      :br
+                      :br
+                      "You can also use shorthand versions of the single keywords:"
+                      :br
+                      "`:tlc`"
+                      :br
+                      "`:tl`"
+                      :br
+                      "`:t`"
+                      :br
+                      "`:tr`"
+                      :br
+                      "`:trc`"
+                      :br
+                      "`:rtc`"
+                      :br
+                      "`:rt`"
+                      :br
+                      "`:r`"
+                      :br
+                      "`:rb`"
+                      :br
+                      "`:rbc`"
+                      ]}
+           {:name    reveal-on-click?
+            :type    :boolean
             :default nil
-            :desc    "Setting to one of the accepted values will override horizontal and vertical auto-placement. When used, any supplied values for `:-inline-offset` and `:-block-offset` will be ignored."}]}
-  [& args]
-  (let [[opts attr & children]      (opts+children args)
-        {:keys [display-on-hover? inline-offset block-offset placement]} opts]
-    (into
-     [:section
-      (let [placement-class (when placement (str "kushi-tooltip-placement-" (name placement)))]
-        (merge-attrs
-         (sx 'kushi-tooltip
-             :.absolute
-             :.rounded
-             :fs--$tooltip-font-size
-             :bgc--$tooltip-background-color
-             :c--$tooltip-color
-             :top--0
-             :bottom--unset
-             :left--100%
-             :right--unset
-             :p--0
-             :m--5px
-             :ws--n
-             :o--0
-             :w--0
-             :h--0
-             :overflow--hidden
-             :transition--opacity:0.2s:linear
-             ;; maybe abstract into an :.overlay defclass(es) with decoration defclasses for tooltip vs popover
-             :line-height--1.5
-             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):transition"     :none]
-             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):opacity"        1]
-             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):width"          :fit-content]
-             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):height"         :auto]
-             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding-block"  :$tooltip-padding-block]
-             ["has-ancestor([data-kushi-tooltip='true'][aria-expanded='true']):padding-inline" :$tooltip-padding-inline]
-             {:class                              [placement-class]
-              :data-kushi-conditional-display     (if (= false display-on-hover?) "true" "false")
-              :data-kushi-tooltip-position-block  block-offset
-              :data-kushi-tooltip-position-inline inline-offset
-              :id                                 (gensym)
-              :data-kushi-ui                      :tooltip})
-         #_(when (= placement :inline-end)
-             {:style {:left      "calc(100% + 12px)!important"
-                      :right     :unset!important
-                      :top       :50%!important
-                      :transform "translateY(-50%)!important"
-                      :margin    :0!important}})
-         attr))]
-     children)))
+            :desc    "Setting to true will reveal the tooltip on click."}
+           {:name    reveal-on-click-duration
+            :type    :integer
+            :default 2000
+            :desc    "When `:-reveal-on-click?` is true, this milliseconds value will control the duration of the tooltip's appearance."}]}
+  [{text                     :-text
+    placement                :-placement
+    reveal-on-click?         :-reveal-on-click?
+    reveal-on-click-duration :-reveal-on-click-duration
+    :or                      {reveal-on-click-duration 2000}}]
+  (when-let [tooltip-text-type (cond (and (string? text)
+                                          (not (string/blank? text)))
+                                     :string
+                                     (and (seq text)
+                                          (every? string? text))
+                                     :multi-line-string)]
+    (let [text* (case tooltip-text-type
+                  :multi-line-string
+                  (string/join "\\a" text)
+                  text)
+          text  (str "\"" text* "\"")]
+
+      (if reveal-on-click?
+        (sx :.kushi-pseudo-tooltip-hidden
+            {:on-mouse-enter                         set-tooltip-position!
+             :on-focus                               set-tooltip-position!
+             :on-click                               (fn [e]
+                                                       (? "REVEAL")
+                                                       (let [node  (-> e .-currentTarget)
+                                                             class "kushi-pseudo-tooltip-revealed"]
+                                                         (dom/add-class node class)
+                                                         (js/setTimeout
+                                                          #(dom/remove-class node class)
+                                                          reveal-on-click-duration)))
+             :data-kushi-ui-pseudo-tooltip-text      true
+             :data-kushi-ui-pseudo-tooltip-placement placement
+             :style                                  {:after:content text}})
+        (sx :.kushi-pseudo-tooltip
+            {:on-mouse-enter                         set-tooltip-position!
+             :on-focus                               set-tooltip-position!
+             :data-kushi-ui-pseudo-tooltip-text      true
+             :data-kushi-ui-pseudo-tooltip-placement placement
+             :style                                  {:hover:after:content         text
+                                                      :focus-visible:after:content text}})))))
