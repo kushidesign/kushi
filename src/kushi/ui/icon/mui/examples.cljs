@@ -1,7 +1,7 @@
 (ns kushi.ui.icon.mui.examples
   (:require
    [kushi.core :refer (sx)]
-   [kushi.ui.icon.mui.core :refer (mui-icon mui-icon-outlined)]
+   [kushi.ui.icon.core :refer (icon)]
    [kushi.playground.util :refer-macros (example2)]))
 
 #_(def icons
@@ -63,209 +63,189 @@
    "folder"
    "folder*"])
 
-
-
-#_(def icon-examples*
-  (into (mapv (fn [x]
-                (let [outlined? (re-find #"\*$" x)
-                      x         (string/replace x #"\*$" "")]
-                  (if outlined?
-                    {:label   [:mui-icon-outlined [:sx :.xlarge {:title x}] x]
-                     :example [:example2 [:mui-icon-outlined x]]}
-                    {:label   [:mui-icon [:sx :.xlarge {:title x}] x]
-                     :example [:example2 [:mui-icon x]]})))
-              icons)
-        '[
-         {:label   [mui-icon (sx :.xlarge :c--$red500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--$red500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--$orange500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--$orange500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--$yellow500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--$yellow500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--$green500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--$green500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--$blue500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--$blue500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--$purple500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--$purple500) "auto_awesome"])}
-         {:label   [mui-icon (sx :.xlarge :c--$magenta500 {:title "auto_awesome"}) "auto_awesome"]
-          :example (example2 [mui-icon (sx :c--$magenta500) "auto_awesome"])}]))
-
-
-#_(pprint icon-examples*)
-
+;; (pprint icon-examples*)
 
 (def icon-examples
-  [{:label   [mui-icon (sx :.xlarge {:title :auto-awesome}) :auto-awesome],
-    :example (example2 [mui-icon :auto-awesome])}
-   {:label   [mui-icon-outlined
-              (sx :.xlarge {:title :auto-awesome})
-              :auto-awesome],
-    :example (example2 [mui-icon-outlined :auto-awesome])}
-   {:label   [mui-icon (sx :.xlarge {:title :settings}) :settings],
-    :example (example2 [mui-icon :settings])}
-   {:label   [mui-icon-outlined (sx :.xlarge {:title :settings}) :settings],
-    :example (example2 [mui-icon-outlined :settings])}
-   {:label   [mui-icon (sx :.xlarge {:title :search}) :search],
-    :example (example2 [mui-icon :search])}
-   {:label   [mui-icon (sx :.xlarge {:title :filter-alt}) :filter-alt],
-    :example (example2 [mui-icon :filter-alt])}
-   {:label   [mui-icon-outlined
-              (sx :.xlarge {:title :filter-alt})
-              :filter-alt],
-    :example (example2 [mui-icon-outlined :filter-alt])}
-   {:label   [mui-icon (sx :.xlarge {:title :cloud-upload}) :cloud-upload],
-    :example (example2 [mui-icon :cloud-upload])}
-   {:label   [mui-icon-outlined
-              (sx :.xlarge {:title :cloud-upload})
-              :cloud-upload],
-    :example (example2 [mui-icon-outlined :cloud-upload])}
-   {:label   [mui-icon (sx :.xlarge {:title :download}) :download],
-    :example (example2 [mui-icon :download])}
-   {:label   [mui-icon-outlined (sx :.xlarge {:title :download}) :download],
-    :example (example2 [mui-icon-outlined :download])}
-   {:label   [mui-icon (sx :.xlarge {:title :playlist-add}) :playlist-add],
-    :example (example2 [mui-icon :playlist-add])}
-   {:label   [mui-icon (sx :.xlarge {:title :expand}) :expand],
-    :example (example2 [mui-icon :expand])}
-   {:label   [mui-icon (sx :.xlarge {:title :compress}) :compress],
-    :example (example2 [mui-icon :compress])}
-   {:label   [mui-icon (sx :.xlarge {:title :arrow-back}) :arrow-back],
-    :example (example2 [mui-icon :arrow-back])}
-   {:label   [mui-icon (sx :.xlarge {:title :arrow-forward}) :arrow-forward],
-    :example (example2 [mui-icon :arrow-forward])}
-   {:label   [mui-icon (sx :.xlarge {:title :sort}) :sort],
-    :example (example2 [mui-icon :sort])}
-   {:label   [mui-icon (sx :.xlarge {:title :clear}) :clear],
-    :example (example2 [mui-icon :clear])}
-   {:label   [mui-icon (sx :.xlarge {:title :delete}) :delete],
-    :example (example2 [mui-icon :delete])}
-   {:label   [mui-icon-outlined (sx :.xlarge {:title :delete}) :delete],
-    :example (example2 [mui-icon-outlined :delete])}
-   {:label   [mui-icon (sx :.xlarge {:title :cancel}) :cancel],
-    :example (example2 [mui-icon :cancel])}
-   {:label   [mui-icon-outlined (sx :.xlarge {:title :cancel}) :cancel],
-    :example (example2 [mui-icon-outlined :cancel])}
-   {:label   [mui-icon
-              (sx :.xlarge {:title :auto-awesome-motion})
-              :auto-awesome-motion],
-    :example (example2 [mui-icon :auto-awesome-motion])}
-   {:label   [mui-icon-outlined
-              (sx :.xlarge {:title :auto-awesome-motion})
-              :auto-awesome-motion],
-    :example (example2 [mui-icon-outlined :auto-awesome-motion])}
-   {:label   [mui-icon
-              (sx :.xlarge {:title :keyboard-return})
-              :keyboard-return],
-    :example (example2 [mui-icon :keyboard-return])}
-   {:label   [mui-icon (sx :.xlarge {:title :archive}) :archive],
-    :example (example2 [mui-icon :archive])}
-   {:label   [mui-icon-outlined (sx :.xlarge {:title :archive}) :archive],
-    :example (example2 [mui-icon-outlined :archive])}
-   {:label   [mui-icon (sx :.xlarge {:title :star}) :star],
-    :example (example2 [mui-icon :star])}
-   {:label   [mui-icon (sx :.xlarge {:title :star-border}) :star-border],
-    :example (example2 [mui-icon :star-border])}
-   {:label   [mui-icon (sx :.xlarge {:title :check}) :check],
-    :example (example2 [mui-icon :check])}
-   {:label   [mui-icon (sx :.xlarge {:title :sell}) :sell],
-    :example (example2 [mui-icon :sell])}
-   {:label   [mui-icon-outlined (sx :.xlarge {:title :sell}) :sell],
-    :example (example2 [mui-icon-outlined :sell])}
-   {:label   [mui-icon (sx :.xlarge {:title :visibility}) :visibility],
-    :example (example2 [mui-icon :visibility])}
-   {:label   [mui-icon-outlined
-              (sx :.xlarge {:title :visibility})
-              :visibility],
-    :example (example2 [mui-icon-outlined :visibility])}
-   {:label   [mui-icon
-              (sx :.xlarge {:title :visibility-off})
-              :visibility-off],
-    :example (example2 [mui-icon :visibility-off])}
-   {:label   [mui-icon-outlined
-              (sx :.xlarge {:title :visibility-off})
-              :visibility-off],
-    :example (example2 [mui-icon-outlined :visibility-off])}
-   {:label   [mui-icon (sx :.xlarge {:title :find-replace}) :find-replace],
-    :example (example2 [mui-icon :find-replace])}
-   {:label   [mui-icon
-              (sx :.xlarge {:title :report-problem})
-              :report-problem],
-    :example (example2 [mui-icon :report-problem])}
-   {:label   [mui-icon-outlined
-              (sx :.xlarge {:title :report-problem})
-              :report-problem],
-    :example (example2 [mui-icon-outlined :report-problem])}
-   {:label   [mui-icon (sx :.xlarge {:title :error}) :error],
-    :example (example2 [mui-icon :error])}
-   {:label   [mui-icon (sx :.xlarge {:title :error-outline}) :error-outline],
-    :example (example2 [mui-icon :error-outline])}
-   {:label   [mui-icon (sx :.xlarge {:title :check-circle}) :check-circle],
-    :example (example2 [mui-icon :check-circle])}
-   {:label   [mui-icon-outlined
-              (sx :.xlarge {:title :check-circle})
-              :check-circle],
-    :example (example2 [mui-icon-outlined :check-circle])}
-   {:label   [mui-icon (sx :.xlarge {:title :open-in-new}) :open-in-new],
-    :example (example2 [mui-icon :open-in-new])}
-   {:label   [mui-icon (sx :.xlarge {:title :edit}) :edit],
-    :example (example2 [mui-icon :edit])}
-   {:label   [mui-icon-outlined (sx :.xlarge {:title :edit}) :edit],
-    :example (example2 [mui-icon-outlined :edit])}
-   {:label   [mui-icon (sx :.xlarge {:title :favorite}) :favorite],
-    :example (example2 [mui-icon :favorite])}
-   {:label   [mui-icon
-              (sx :.xlarge {:title :favorite-border})
-              :favorite-border],
-    :example (example2 [mui-icon :favorite-border])}
-   {:label   [mui-icon (sx :.xlarge {:title :fingerprint}) :fingerprint],
-    :example (example2 [mui-icon :fingerprint])}
-   {:label   [mui-icon (sx :.xlarge {:title :help}) :help],
-    :example (example2 [mui-icon :help])}
-   {:label   [mui-icon (sx :.xlarge {:title :help-outline}) :help-outline],
-    :example (example2 [mui-icon :help-outline])}
-   {:label   [mui-icon (sx :.xlarge {:title :info}) :info],
-    :example (example2 [mui-icon :info])}
-   {:label   [mui-icon (sx :.xlarge {:title :info-outline}) :info-outline],
-    :example (example2 [mui-icon :info-outline])}
-   {:label   [mui-icon (sx :.xlarge {:title :smartphone}) :smartphone],
-    :example (example2 [mui-icon :smartphone])}
-   {:label   [mui-icon (sx :.xlarge {:title :folder}) :folder],
-    :example (example2 [mui-icon :folder])}
-   {:label   [mui-icon-outlined (sx :.xlarge {:title :folder}) :folder],
-    :example (example2 [mui-icon-outlined :folder])}
-   {:label   [mui-icon
+  [{:label   [icon (sx :.xlarge {:title :auto-awesome}) "auto-awesome"],
+    :example (example2 [icon "auto-awesome"])}
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :auto-awesome}) :auto-awesome],
+    :example (example2 [icon (sx {:-icon-filled? true}) :auto-awesome])}
+
+   {:label   [icon (sx :.xlarge {:title :settings}) :settings],
+    :example (example2 [icon :settings])}
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :settings}) :settings],
+    :example (example2 [icon (sx {:-icon-filled? true}) :settings])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :search}) :search],
+    :example (example2 [icon (sx {:-icon-filled? true}) :search])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :filter-alt}) :filter-alt],
+    :example (example2 [icon (sx {:-icon-filled? true}) :filter-alt])}
+   {:label   [icon (sx :.xlarge {:title :filter-alt}) :filter-alt],
+    :example (example2 [icon :filter-alt])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :cloud-upload}) :cloud-upload],
+    :example (example2 [icon (sx {:-icon-filled? true}) :cloud-upload])}
+   {:label   [icon (sx :.xlarge {:title :cloud-upload}) :cloud-upload],
+    :example (example2 [icon :cloud-upload])}
+
+   {:label   [icon (sx :.xlarge {:title :download}) :download],
+    :example (example2 [icon :download])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :playlist-add}) :playlist-add],
+    :example (example2 [icon (sx {:-icon-filled? true}) :playlist-add])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :expand}) :expand],
+    :example (example2 [icon (sx {:-icon-filled? true}) :expand])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :compress}) :compress],
+    :example (example2 [icon (sx {:-icon-filled? true}) :compress])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :arrow-back}) :arrow-back],
+    :example (example2 [icon (sx {:-icon-filled? true}) :arrow-back])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :arrow-forward}) :arrow-forward],
+    :example (example2 [icon (sx {:-icon-filled? true}) :arrow-forward])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :sort}) :sort],
+    :example (example2 [icon (sx {:-icon-filled? true}) :sort])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :clear}) :clear],
+    :example (example2 [icon (sx {:-icon-filled? true}) :clear])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :delete}) :delete],
+    :example (example2 [icon (sx {:-icon-filled? true}) :delete])}
+   {:label   [icon (sx :.xlarge {:title :delete}) :delete],
+    :example (example2 [icon :delete])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :cancel}) :cancel],
+    :example (example2 [icon (sx {:-icon-filled? true}) :cancel])}
+   {:label   [icon (sx :.xlarge {:title :cancel}) :cancel],
+    :example (example2 [icon :cancel])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :auto-awesome-motion}) :auto-awesome-motion],
+    :example (example2 [icon (sx {:-icon-filled? true}) :auto-awesome-motion])}
+   {:label   [icon (sx :.xlarge {:title :auto-awesome-motion}) :auto-awesome-motion],
+    :example (example2 [icon :auto-awesome-motion])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :keyboard-return}) :keyboard-return],
+    :example (example2 [icon (sx {:-icon-filled? true}) :keyboard-return])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :archive}) :archive],
+    :example (example2 [icon (sx {:-icon-filled? true}) :archive])}
+   {:label   [icon (sx :.xlarge {:title :archive}) :archive],
+    :example (example2 [icon :archive])}
+
+   {:label   [icon (sx :.xlarge {:title :star}) :star],
+    :example (example2 [icon :star])}
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :star-border}) :star-border],
+    :example (example2 [icon (sx {:-icon-filled? true}) :star-border])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :check}) :check],
+    :example (example2 [icon (sx {:-icon-filled? true}) :check])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :sell}) :sell],
+    :example (example2 [icon (sx {:-icon-filled? true}) :sell])}
+   {:label   [icon (sx :.xlarge {:title :sell}) :sell],
+    :example (example2 [icon :sell])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :visibility}) :visibility],
+    :example (example2 [icon (sx {:-icon-filled? true}) :visibility])}
+   {:label   [icon (sx :.xlarge {:title :visibility}) :visibility],
+    :example (example2 [icon :visibility])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :visibility-off}) :visibility-off],
+    :example (example2 [icon (sx {:-icon-filled? true}) :visibility-off])}
+   {:label   [icon (sx :.xlarge {:title :visibility-off}) :visibility-off],
+    :example (example2 [icon :visibility-off])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :find-replace}) :find-replace],
+    :example (example2 [icon (sx {:-icon-filled? true}) :find-replace])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :report-problem}) :report-problem],
+    :example (example2 [icon (sx {:-icon-filled? true}) :report-problem])}
+   {:label   [icon (sx :.xlarge {:title :report-problem}) :report-problem],
+    :example (example2 [icon :report-problem])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :error}) :error],
+    :example (example2 [icon (sx {:-icon-filled? true}) :error])}
+   {:label   [icon (sx :.xlarge {:title :error}) :error],
+    :example (example2 [icon :error])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :check-circle}) :check-circle],
+    :example (example2 [icon (sx {:-icon-filled? true}) :check-circle])}
+   {:label   [icon (sx :.xlarge {:title :check-circle}) :check-circle],
+    :example (example2 [icon :check-circle])}
+
+   {:label   [icon (sx :.xlarge {:title :open-in-new}) :open-in-new],
+    :example (example2 [icon  :open-in-new])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :edit}) :edit],
+    :example (example2 [icon (sx {:-icon-filled? true}) :edit])}
+
+   {:label   [icon (sx :.xlarge {:title :edit}) :edit],
+    :example (example2 [icon :edit])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :favorite}) :favorite],
+    :example (example2 [icon (sx {:-icon-filled? true}) :favorite])}
+
+   {:label   [icon (sx :.xlarge {:title :favorite}) :favorite],
+    :example (example2 [icon :favorite])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :fingerprint}) :fingerprint],
+    :example (example2 [icon (sx {:-icon-filled? true}) :fingerprint])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :help}) :help],
+    :example (example2 [icon (sx {:-icon-filled? true}) :help])}
+   {:label   [icon (sx :.xlarge {:title :help}) :help],
+    :example (example2 [icon :help])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :info}) :info],
+    :example (example2 [icon (sx {:-icon-filled? true}) :info])}
+   {:label   [icon (sx :.xlarge {:title :info}) :info],
+    :example (example2 [icon :info])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :smartphone}) :smartphone],
+    :example (example2 [icon (sx {:-icon-filled? true}) :smartphone])}
+
+   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :folder}) :folder],
+    :example (example2 [icon (sx {:-icon-filled? true}) :folder])}
+   {:label   [icon (sx :.xlarge {:title :folder}) :folder],
+    :example (example2 [icon :folder])}
+
+   {:label   [icon
               (sx :.xlarge :c--$red500 {:title :auto-awesome})
               :auto-awesome],
     :key     :auto-awesome-red
-    :example (example2 [mui-icon (sx :c--$red500) :auto-awesome])}
-   {:label   [mui-icon
+    :example (example2 [icon (sx :c--$red500) :auto-awesome])}
+   {:label   [icon
               (sx :.xlarge :c--$orange500 {:title :auto-awesome})
               :auto-awesome],
     :key     :auto-awesome-orange
-    :example (example2 [mui-icon (sx :c--$orange500) :auto-awesome])}
-   {:label   [mui-icon
+    :example (example2 [icon (sx :c--$orange500) :auto-awesome])}
+   {:label   [icon
               (sx :.xlarge :c--$yellow500 {:title :auto-awesome})
               :auto-awesome],
     :key     :auto-awesome-yellow
-    :example (example2 [mui-icon (sx :c--$yellow500) :auto-awesome])}
-   {:label   [mui-icon
+    :example (example2 [icon (sx :c--$yellow600) :auto-awesome])}
+   {:label   [icon
               (sx :.xlarge :c--$green500 {:title :auto-awesome})
               :auto-awesome],
     :key     :auto-awesome-green
-    :example (example2 [mui-icon (sx :c--$green500) :auto-awesome])}
-   {:label   [mui-icon
+    :example (example2 [icon (sx :c--$green500) :auto-awesome])}
+   {:label   [icon
               (sx :.xlarge :c--$blue500 {:title :auto-awesome})
               :auto-awesome],
     :key     :auto-awesome-blue
-    :example (example2 [mui-icon (sx :c--$blue500) :auto-awesome])}
-   {:label   [mui-icon
+    :example (example2 [icon (sx :c--$blue500) :auto-awesome])}
+   {:label   [icon
               (sx :.xlarge :c--$purple500 {:title :auto-awesome})
               :auto-awesome],
     :key     :auto-awesome-purple
-    :example (example2 [mui-icon (sx :c--$purple500) :auto-awesome])}
-   {:label   [mui-icon
+    :example (example2 [icon (sx :c--$purple500) :auto-awesome])}
+   {:label   [icon
               (sx :.xlarge :c--$magenta500 {:title :auto-awesome})
               :auto-awesome],
     :key     :auto-awesome-magenta
-    :example (example2 [mui-icon (sx :c--$magenta500) :auto-awesome])}])
+    :example (example2 [icon (sx :c--$magenta500) :auto-awesome])}
+                                                                 ])
