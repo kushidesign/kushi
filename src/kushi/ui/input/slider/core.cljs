@@ -190,11 +190,11 @@
            {:name   wrapper-attrs
             :type    :map
             :default nil
-            :desc    "html attributes map applied to the outer containing div."}
+            :desc    "HTML attributes map applied to the outer containing div."}
            {:name   labels-attrs
             :type    :map
             :default nil
-            :desc    "html attributes map applied to the step labels containing div."}]}
+            :desc    "HTML attributes map applied to the step labels containing div."}]}
   [& args]
   (let [[opts
          attr]                     (opts+children args)
