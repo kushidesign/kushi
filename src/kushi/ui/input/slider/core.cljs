@@ -97,7 +97,8 @@
            label-size-class
            label-scale-factor
            labels-attrs
-           step-marker]}]
+           step-marker
+           step-label-suffix]}]
   (into [:div
          (merge-attrs
           (sx 'kushi-slider-step-labels
@@ -143,7 +144,7 @@
                                  :&.kushi-slider-step-label-selected:c         :currentColor
                                  :&.kushi-slider-step-label-selected>span:v    :visible
                                  :before:content                               (when step-marker-content (str "\"" step-marker-content "\"")) }})
-              [:span (sx :.absolute-centered) step]]))
+              [:span (sx :.absolute-centered) (str step step-label-suffix)]]))
          steps)))
 
 (defn on-change [label-selected-class e]
@@ -171,30 +172,34 @@
             :type    :integer
             :default 0
             :desc    "Use `default-index` when you want to set the default value by index. This is the index of the number in a numeric range (with a `min` and `max`), or the index of a value in a supplied `:-steps` collection"}
-           {:name   steps
+           {:name    steps
             :type    :vector
             :default nil
             :desc    "Collection of step values."}
-           {:name   step-marker
+           {:name    step-marker
             :type    #{:dot :bar :value :none}
             :default :none
             :desc    "Collection of step values."}
-           {:name   label-size-class
+           {:name    label-size-class
             :type    [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge]
             :default :small
             :desc    "Kushi text-size utility class which controls the size of the step label(s)."}
-           {:name   label-scale-factor
+           {:name    label-scale-factor
             :type    :float
             :default 0.7
             :desc    "Factor to scale down labels in range which are not selected. Must be positive float and <= 1.0."}
-           {:name   wrapper-attrs
+           {:name    wrapper-attrs
             :type    :map
             :default nil
             :desc    "HTML attributes map applied to the outer containing div."}
-           {:name   labels-attrs
+           {:name    labels-attrs
             :type    :map
             :default nil
-            :desc    "HTML attributes map applied to the step labels containing div."}]}
+            :desc    "HTML attributes map applied to the step labels containing div."}
+           {:name    step-label-suffix
+            :type    :string
+            :default nil
+            :desc    "String to postpend to step value label, e.g. `\"px\"`"}]}
   [& args]
   (let [[opts
          attr]                     (opts+children args)
@@ -208,7 +213,8 @@
                  label-scale-factor
                  wrapper-attrs
                  labels-attrs
-                 step-marker]
+                 step-marker
+                 step-label-suffix]
          steps* :steps}            opts
         steps                      (slider-steps steps* min max (or step 1))
         num-steps                  (count steps)
@@ -242,7 +248,8 @@
                            label-size-class
                            label-scale-factor
                            labels-attrs
-                           step-marker)]
+                           step-marker
+                           step-label-suffix)]
      [:input (merge-attrs
               (sx {:class         [label-size-class]
                    :style         {:w :100%}
