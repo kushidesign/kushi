@@ -882,9 +882,11 @@
   ;;  {:outline    :none
   ;;   :box-shadow "1px 1px 5px rgba(1, 1, 0, .7)"}
 
+   ;; Foreground text that is slightly de-emphasized (such as text input field helper text)
    :.neutral-secondary-fg {:color :--gray700}
 
    ;; Semantic fg
+   ;; TODO -- dark versions of each with *--inverse tokens to match
    :.neutral-fg {:color :--neutral-minimal-color}
    :.accent-fg {:color :--accent-minimal-color}
    :.positive-fg {:color :--positive-minimal-color}
