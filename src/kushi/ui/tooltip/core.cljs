@@ -1,6 +1,5 @@
 (ns kushi.ui.tooltip.core
   (:require
-   [par.core :refer [!? ? ?j]]
    [clojure.string :as string]
    [kushi.core :refer (sx defclass)]
    [kushi.ui.dom :as dom]))
@@ -201,7 +200,7 @@
 
 
 (defn user-placement [s]
-  (let [kw (some-> s keyword)]
+  (let [kw (some-> s name keyword)]
     (when (string? s)
       (or
        (when (contains? placement-by-kw kw)
@@ -239,7 +238,8 @@
                     "--_kushi-ui-pseudo-tooltip-left" (str tt-left "%"))
     (dom/set-style! node
                     "--_kushi-ui-pseudo-tooltip-transform"
-                    (translate-with-offset tt-x tt-y offset-x offset-y corner?))))
+                    (translate-with-offset tt-x tt-y offset-x offset-y corner?))
+    ))
 
 
 (defn tooltip-attrs
@@ -370,25 +370,44 @@
     placement                :-placement
     reveal-on-click?         :-reveal-on-click?
     reveal-on-click-duration :-reveal-on-click-duration
-    :or                      {reveal-on-click-duration 2000}}]
+    :or                      {reveal-on-click-duration 2000
+                              placement "block-end center"}
+    :as m}]
   (when-let [tooltip-text-type (cond (and (string? text)
                                           (not (string/blank? text)))
                                      :string
                                      (and (seq text)
                                           (every? string? text))
                                      :multi-line-string)]
-    (let [text* (case tooltip-text-type
-                  :multi-line-string
-                  (string/join "\\a" text)
-                  text)
-          text  (str "\"" text* "\"")]
+    (let [text*     (case tooltip-text-type
+                      :multi-line-string
+                      (string/join "\\a" text)
+                      text)
+          text      (str "\"" text* "\"")
 
+          wtf       (user-placement (name placement))
+          corner?   (string/ends-with? (name wtf) "c")
+          [tt-top
+           tt-left
+           tt-x
+           tt-y
+           offset-x
+           offset-y] (wtf placement-by-kw)
+          translate-with-offset (translate-with-offset tt-x tt-y offset-x offset-y corner?)]
+
+      (js/console.log [corner?
+                       tt-top
+                       tt-left
+                       tt-x
+                       tt-y
+                       offset-x
+                       offset-y])
       (if reveal-on-click?
         (sx :.kushi-pseudo-tooltip-hidden
-            {:on-mouse-enter                         set-tooltip-position!
-             :on-focus                               set-tooltip-position!
+            {
+            ;;  :on-mouse-enter                         set-tooltip-position!
+            ;;  :on-focus                               set-tooltip-position!
              :on-click                               (fn [e]
-                                                       (? "REVEAL")
                                                        (let [node  (-> e .-currentTarget)
                                                              class "kushi-pseudo-tooltip-revealed"]
                                                          (dom/add-class node class)
@@ -399,9 +418,13 @@
              :data-kushi-ui-pseudo-tooltip-placement placement
              :style                                  {:after:content text}})
         (sx :.kushi-pseudo-tooltip
-            {:on-mouse-enter                         set-tooltip-position!
-             :on-focus                               set-tooltip-position!
+            {
+            ;;  :on-mouse-enter                         set-tooltip-position!
+            ;;  :on-focus                               set-tooltip-position!
              :data-kushi-ui-pseudo-tooltip-text      true
              :data-kushi-ui-pseudo-tooltip-placement placement
              :style                                  {:hover:after:content         text
-                                                      :focus-visible:after:content text}})))))
+                                                      :focus-visible:after:content text
+                                                      :hover:after:top             (str tt-top "%")
+                                                      :hover:after:left            (str tt-left "%")
+                                                      :hover:after:transform        translate-with-offset}})))))
