@@ -85,9 +85,6 @@
         element-style-inj
         (stylesheet/garden-vecs-injection garden-vecs)]
 
-    #_(when test?
-        )
-
     (merge data-sx-attr
            {:kushi/process process
             :args/bad bad-args
