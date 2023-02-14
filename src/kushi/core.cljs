@@ -1,7 +1,6 @@
 (ns ^:dev/always kushi.core
   (:require-macros [kushi.core])
   (:require [clojure.string :as string]
-            [par.core :refer [!? ?]]
             [kushi.clean :as clean]))
 
 

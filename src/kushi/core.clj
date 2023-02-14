@@ -234,8 +234,15 @@
 
 (defn defclass-dispatch
   [{:keys [sym form-meta args override] :as m}]
+
+  (when @state2/KUSHIDEBUG
+    (state2/trace-mode! args))
   (try
-    (let [{:keys [cached]
+    (let [args              (if (and @state2/KUSHIDEBUG
+                                     (state2/trace-mode?))
+                              (drop-last args)
+                              args)
+          {:keys [cached]
            :as   cache-map} (state2/cached {:process :defclass
                                             :sym     sym
                                             :args    args})
@@ -309,12 +316,12 @@
 
 
 (defn sx-dispatch
-  [{:keys [form-meta args]
+  [{:keys [form-meta args macro]
     :or   {form-meta {}}}]
-
-  (when @state2/KUSHIDEBUG (state2/trace-mode! args))
-
-  (let [args      (if (and @state2/KUSHIDEBUG (state2/trace-mode?))
+  (when @state2/KUSHIDEBUG
+    (state2/trace-mode! args))
+  (let [args      (if (and @state2/KUSHIDEBUG
+                           (state2/trace-mode?))
                     (drop-last args)
                     args)
         cache-map (state2/cached {:process :sx
@@ -325,7 +332,10 @@
                                         :kushi/process process
                                         :cache-key     (:cache-key cache-map)
                                         :form-meta     form-meta}))
-        clean     (merge clean {:kushi/chunk process})]
+        clean     (merge clean {:kushi/chunk process} )
+        clean     (if (= macro :sx*)
+                    (assoc-in clean [:attrs :data-sx-tweak] (str (into [] args)))
+                    clean)]
 
     (swap! state2/css conj clean)
 
@@ -356,21 +366,45 @@
 
 (defmacro ^:public sx
   [& args]
-  (when-not (= args '(nil))
-    (let [m               {:args          args
-                           :form-meta     (meta &form)
-                           :kushi/process :kushi.core/sx
-                           :fname         "sx"
-                           :macro         :sx}
-          {:keys [attrs]} (try
-                            (sx-dispatch m)
-                            (catch Exception ex
-                              (-> m
-                                  (assoc :ex ex)
-                                  sx-exception-args
-                                  printing2/caught-exception)))]
-      `~attrs)))
+ (let [m*           (first args)
+       from-defcom? (and (map? m*) (:_kushi/defcom? m*))
+       args         (if from-defcom? (:args m*) args)
+       form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
+   (when-not (= args '(nil))
+     (let [m               {:args          args
+                            :form-meta     form-meta
+                            :kushi/process :kushi.core/sx
+                            :fname         "sx"
+                            :macro         :sx}
+           {:keys [attrs]} (try
+                             (sx-dispatch m)
+                             (catch Exception ex
+                               (-> m
+                                   (assoc :ex ex)
+                                   sx-exception-args
+                                   printing2/caught-exception)))]
+       `~attrs))))
 
+(defmacro ^:public sx*
+  [& args]
+ (let [m*           (first args)
+       from-defcom? (and (map? m*) (:_kushi/defcom? m*))
+       args         (if from-defcom? (:args m*) args)
+       form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
+   (when-not (= args '(nil))
+     (let [m               {:args          args
+                            :form-meta     form-meta
+                            :kushi/process :kushi.core/sx
+                            :fname         "sx"
+                            :macro         :sx*}
+           {:keys [attrs]} (try
+                             (sx-dispatch m)
+                             (catch Exception ex
+                               (-> m
+                                   (assoc :ex ex)
+                                   sx-exception-args
+                                   printing2/caught-exception)))]
+       `~attrs))))
 
 
 
@@ -501,3 +535,5 @@
       `(do
          ;; (println ~tag-browser-gf)
          (apply kushi.core/add-google-font! ~google-font-maps)))))
+
+
