@@ -31,6 +31,7 @@
 (def cssvar-name-re (str "\\$" cssvar-name-base-re))
 (def cssvar-in-css-re (str "var\\((--" cssvar-name-base-re ")\\)"))
 (def starts-with-dark-re (str "^\\.dark,?"))
+(def font-variation-settings-re "^(?:(?:'wght'|'opsz'|'GRAD'|'FILL') [0-9]+ ?(?:, )?)+$")
 
 ;; Clojure valid symbol related
 (def clj-sym-special-chars "\\*\\+\\!\\-\\_\\'\\?\\<\\>\\=" )
@@ -78,6 +79,15 @@
          :else (recur xs count))))
 
 ;; SPECS -----------------------------------------------------------------
+
+;; ::kushi-trace is for debugging during dev
+(s/def ::kushi-trace
+  (s/and map?
+         #(:kushi/trace? %)))
+
+(s/def ::font-variations-settings
+  #(re-find (re-pattern font-variation-settings-re)
+            %))
 
 (s/def ::double-quoted-string
   (s/and string?
@@ -272,14 +282,16 @@
         :css-shorthand-vector   ::css-shorthand-vector
         :conditional-sexp       ::conditional-sexp
         :str-sexp               ::str-sexp
-        :pseudo-element-content ::pseudo-element-content))
+        :pseudo-element-content ::pseudo-element-content
+        :font-variation-settings ::font-variations-settings))
 
 (s/def ::style-tuple-value-defclass
   (s/or :css-value-scalar-no-bindings ::css-value-scalar-no-bindings
         :cssfn-list                   ::cssfn-list-defclass
         :ccs-alternation-vector       ::ccs-alternation-vector
         :css-shorthand-vector         ::css-shorthand-vector
-        :pseudo-element-content       ::pseudo-element-content))
+        :pseudo-element-content       ::pseudo-element-content
+        :font-variation-settings      ::font-variations-settings))
 
 (s/def ::style-tuple-with-css-var
   (s/tuple ::style-tuple-prop ::cssvar-name))
@@ -387,7 +399,8 @@
                               :style-tuple       ::style-tuple-without-imbalanced-string
                               :class             ::class
                               :conditional-class ::conditional-class))
-   :sx-attrs-map   (s/? ::sx-attrs-map)))
+   :sx-attrs-map   (s/? ::sx-attrs-map)
+   :kushi-trace    (s/? ::kushi-trace)))
 
 
 (s/def ::valid-sx-arg
@@ -422,7 +435,8 @@
 (s/def ::defclass
   (s/cat :defclass-name     ::defclass-name
          :defclass-style    (s/* ::defclass-style-or-class)
-         :defclass-stylemap (s/? ::defclass-stylemap)))
+         :defclass-stylemap (s/? ::defclass-stylemap)
+         :kushi-trace       (s/? ::kushi-trace)))
 
 
 
@@ -441,7 +455,8 @@
         :defclass-class       #(s/valid? ::defclass-class %)
         :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
         :tokenized-style      #(s/valid? ::tokenized-style %)
-        :defclass-stylemap    #(s/valid? ::defclass-stylemap %)))
+        :defclass-stylemap    #(s/valid? ::defclass-stylemap %)
+        :kushi-trace          #(s/valid? ::kushi-trace %)))
 
 
 (s/def ::defclass-args
@@ -449,7 +464,8 @@
   (s/cat
    :assigned-class          (s/? symbol?)
    :defclass-style-or-class (s/* ::defclass-style-or-class)
-   :defclass-stylemap       (s/? ::defclass-stylemap)))
+   :defclass-stylemap       (s/? ::defclass-stylemap)
+   :kushi-trace             (s/? ::kushi-trace)))
 
 
 (s/def ::defclass-args2

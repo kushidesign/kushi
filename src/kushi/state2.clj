@@ -3,11 +3,13 @@
    [clojure.data :as data]
    [kushi.io :refer [load-edn]]
    [clojure.java.io :refer [make-parents]]
+   [clojure.spec.alpha :as s]
    [kushi.reporting :as reporting]
    [kushi.defs :as defs]
    [kushi.config :refer [user-config
                          version*
-                         user-config-args-sx-defclass]]))
+                         user-config-args-sx-defclass]]
+   [kushi.specs2 :as specs2]))
 
 ;; Keep track whether we are in dev or prod build
 (def KUSHIDEBUG (atom true))
@@ -115,7 +117,7 @@
 (defn trace! [args target] (reset! trace?* (= args (rest target))) )
 (defn trace? [] @trace?*)
 
-(defn trace-mode! [args] (reset! *trace-mode? (= (last args) :kushi/trace)))
+(defn trace-mode! [args] (reset! *trace-mode? (s/valid? ::specs2/kushi-trace (last args))))
 (defn trace-mode? [] @*trace-mode?)
 
 ;; Caching and hashing ---------------------------------------------------
