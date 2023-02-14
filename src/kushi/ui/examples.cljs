@@ -1,6 +1,6 @@
 (ns kushi.ui.examples
   (:require
-   [kushi.core :refer (sx defkeyframes)]
+   [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.input.radio.core :refer (radio)]
    [kushi.ui.input.checkbox.core :refer (checkbox)]
@@ -8,17 +8,15 @@
    [kushi.ui.input.slider.core :refer (slider)]
    [kushi.ui.alert.core :refer (alert)]
    [kushi.ui.grid.core :refer (grid)]
-   [kushi.ui.icon.mui.core :refer (mui-icon)]
    [kushi.ui.tag.core :refer (tag)]
-   [kushi.ui.title.core :refer (title)]
    [kushi.ui.label.core :refer (label)]
    [kushi.ui.card.core :refer (card)]
-   [kushi.ui.tooltip.core :refer (tooltip)]
+   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.collapse.core :refer (collapse accordian)]
    [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
    [kushi.ui.icon.mui.examples :refer [icon-examples]]
+   [kushi.ui.icon.core :refer [icon]]
    [kushi.playground.util :refer-macros (example2)]))
-
 
 (def components
   [{:fn       button
@@ -34,34 +32,25 @@
     :content  [{:label   "Simple"
                 :example (example2 [button "Play"])}
                {:label   "Leading icon"
-                :example (example2 [:div
-                                    [button (sx {:-mui-icon :play-arrow})
-                                     "Play"]])}
+                :example (example2 [button [icon :play-arrow] "Play"])}
                {:label   "Trailing icon"
-                :example (example2 [button {:-mui-icon      :play-arrow
-                                            :-icon-position :inline-end}
-                                    "Play"])}
-               {:label   "Icon above"
-                :example (example2 [button (sx {:-mui-icon      :play-arrow
-                                                :-icon-position :block-start})
-                                    "Play"])}
-               {:label   "Icon below"
-                :example (example2 [button (sx {:-mui-icon      :play-arrow
-                                                :-icon-position :block-end})
-                                    "Play"])}
-
-              ;; TODO -- fix this example
-              ;;  {:label   "Trailing icon, custom spacing"
-              ;;   :example (example2 [button (sx :&_.kushi-icon:mis--0
-              ;;                                  {:-mui-icon      :play-arrow
-              ;;                                   :-icon-position :inline-end})
-              ;;                       "Play"])}
-               
+                :example (example2 [button "Play" [icon :play-arrow]])}
+               {:label   "2 icons"
+                :example (example2 [button [icon :auto-awesome] "Play" [icon :auto-awesome]])}
                {:label   "Icon button"
-                :example (example2 [button (sx  {:-mui-icon :play-arrow})])}
-
-               {:label   "Custom dimensions"
-                :example (example2 [button (sx :w--75px :h--75px) "YES"])}]}
+                :example (example2 [button [icon :play-arrow]])}
+               {:label   "Custom"
+                :example (example2 [button (sx :.heavy
+                                               :.xxxloose
+                                               :c--white
+                                               :pb--1em
+                                               :pi--5em
+                                               [:transform '(skew :159deg)]
+                                               [:bgi '(linear-gradient :135deg :$blue600 :$magenta500)])
+                                    "YES"])}
+               {:label   "On-click"
+                :example (example2 [button {:on-click (fn [e] (js/alert "Clicked!"))} "Play"])}
+               ]}
 
    {:fn       radio
     :meta     #'radio
@@ -77,7 +66,7 @@
                                     [radio {:-input-attrs {:name :demo}} "Maybe"]])}
                {:label   "Inherited color"
                 :example (example2 [:section (sx :c--$purple400)
-                                    [title (sx :.bold :mbe--0.75em) "Choose an option:"]
+                                    [label (sx :.bold :mbe--0.75em) "Choose an option:"]
                                     [radio {:-input-attrs {:name :demo}} "Yes"]
                                     [radio {:-input-attrs {:name :demo}} "No"]
                                     [radio {:-input-attrs {:name :demo}} "Maybe"]])}
@@ -90,7 +79,7 @@
                                      :&_.emoji:fs--28px
                                      :&_.emoji:mi--0.3em:0.6em
                                      :&_.kushi-radio:mbe--0.95em
-                                     {:style {"&_.kushi-radio:nth-child(even):mis"                          :1em
+                                     {:style {"&_.kushi-radio:nth-child(even):mis"                        :1em
                                               :&_.emoji:filter                                            "grayscale(1)"
                                               :&_.emoji:transition-property                               :transform
                                               :&_.emoji:transition-duration                               :500ms
@@ -116,9 +105,7 @@
     :content  [{:label   "Simple"
                 :example (example2 [checkbox "Sign me up"])}
                {:label   "With trailing icon"
-                :example (example2 [checkbox [label {:-mui-icon      :auto-awesome
-                                                     :-icon-position :inline-end}
-                                              "Make it shiny" ]])}]}
+                :example (example2 [checkbox [label "Make it shiny" [icon :auto-awesome]]])}]}
 
    {:fn       input
     :meta     #'input
@@ -149,7 +136,7 @@
                                                :-label          "Input label"})])}
                {:label   "With end enhancer"
                 :example (example2 [input (sx {:placeholder   "Your text here"
-                                               :-end-enhancer [mui-icon (sx :pi--0.375em) :star]
+                                               :-end-enhancer [icon :star]
                                                :-label        "Input label"})])}
                {:label   "Inline label"
                 :example (example2 [input (sx {:placeholder      "Your text here"
@@ -228,78 +215,109 @@
                                                                                 ">span:nth-child(5):c"         :$negative
                                                                                 ">span:nth-child(5):>span:bgc" :$negative50}})}])}]}
 
-   {:fn       tooltip
-    :meta     #'tooltip
+   {:fn       tooltip-attrs
+    :meta     #'tooltip-attrs
+    :title    "Tooltip"
     :stage    {:style {:min-height      :135px
                        :justify-content :center}}
-    :controls [:shape]
-    :defaults {:shape    :rounded
-               :examples "Auto"}
+    :defaults {:examples "Auto"}
     :content  [{:label   "Auto"
                 :example (example2 [button
-                                    "Hover me"
-                                    [tooltip "This is an example tooltip"]])}
-               {:label   "Auto, Start"
+                                    (tooltip-attrs {:-text "My tooltip text"})
+                                    "Hover me to reveal tooltip"])}
+               {:label   "block-start, auto"
                 :example (example2 [button
-                                    "Hover me"
-                                    [tooltip {:-inline-offset :start} "This is an example tooltip"]])}
-               {:label   "Auto, End"
-                :example (example2 [button
-                                    "Hover me"
-                                    [tooltip {:-inline-offset :end} "This is an example tooltip"]])}
-               {:label   "Above, Start"
-                :example (example2 [button
-                                    "Hover me"
-                                    [tooltip {:-inline-offset :start
-                                              :-block-offset  :start} "This is an example tooltip"]])}
-               {:label   "Above, End"
-                :example (example2 [button
-                                    "Hover me"
-                                    [tooltip {:-inline-offset :end
-                                              :-block-offset  :start} "This is an example tooltip"]])}
-               {:label   "Below, End"
-                :example (example2 [button
-                                    "Hover me"
-                                    [tooltip {:-inline-offset :end
-                                              :-block-offset  :end} "This is an example tooltip"]])}
-               {:label   "inline-start"
-                :example (example2 [button
-                                    "Hover me"
-                                    [tooltip (sx {:-placement :inline-start}) "This is an example tooltip"]])}
-               {:label   "inline-end"
-                :example (example2 [button
-                                    "Hover me"
-                                    [tooltip (sx {:-placement :inline-end}) "This is an example tooltip"]])}
-               {:label   "block-start"
-                :example (example2 [button
-                                    "Hover me"
-                                    [tooltip (sx {:-placement :block-start}) "This is an example tooltip"]])}
-               {:label   "block-end"
-                :example (example2 [button
-                                    "Hover me"
-                                    [tooltip (sx {:-placement :block-end}) "This is an example tooltip"]])}
-               {:label   "Custom styling"
-                :example (example2 [button
-                                    "Hover me"
-                                    [tooltip (sx :c--black
-                                                 :bgc--white
-                                                 :box-shadow--1px:2px:7px:#42320035|0px:0px:1px:#42320035
-                                                 :bgc--$yellow100
-                                                 :p--0.3em:0.6em!important)
-                                     "This is an example tooltip"]])}]}
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement "block-start"})
+                                    "Hover me to reveal tooltip"])}
 
-   {:fn       mui-icon
-    :meta     #'mui-icon
+               {:label   "block-end, auto"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement "block-end"})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "inline-start, auto"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement "inline-start"})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "inline-end, auto"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement "inline-end"})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "inline-end, center"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement "inline-end center"})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "block-start, center"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement "block-start center"})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "block-start, inline-end, corner"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement "block-start inline-end corner"})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "top-left-corner (non-logical)"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement :top-left-corner})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "right (non-logical)"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement :right})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "With forced linebreaks"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      ["My tooltip text line1" "My tooltip text line2"]
+                                                    :-placement "inline-end"})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "Reveal on click"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text                     "My tooltip text!"
+                                                    :-reveal-on-click?         true
+                                                    :-reveal-on-click-duration 1500
+                                                    :-placement                "inline-end"})
+                                    "Click me to reveal tooltip"])}
+
+               {:label   "With custom styled span"
+                :example (example2 [:span
+                                    (merge-attrs
+                                     (sx :.relative
+                                         :.pointer
+                                         :.pill
+                                         :tt--u
+                                         :td--u
+                                         :tuo--8px
+                                         :tds--dashed
+                                         :tdc--$green400
+                                         :tdt--4px
+                                         :pi--1em
+                                         :pb--0.25em)
+                                     (tooltip-attrs {:-text      "My tooltip text"
+                                                     :-placement "block-start center"}))
+                                    "Hover me to reveal tooltip"])}
+               ]}
+
+   {:fn       icon
+    :meta     #'icon
     :title    "Icons"
     :stage    {:style {:min-height :135px}}
     :controls [:size]
     :defaults {:size :medium}
-    :desc     ["Icons in Kushi are pulled in via [Google's Material Icons font for the web](https://developers.google.com/fonts/docs/material_icons#icon_font_for_the_web)."
-               :br
-               "Use [this page](https://fonts.google.com/icons?icon.set=Material+Icons) to explore over 1000+ different icons."
-               :br
-               :br
-               "This component expects a child argument which is a string or keyword that correspondes to the name of an existing mui icon. If a string, snake case (underscores instead of spaces) must be used. If using a keyword, kebab (hyphens instead of spaces) case must be used."]
 
     :content  icon-examples }
 
@@ -323,7 +341,6 @@
                {:label   "Max-width example"
                 :example (example2 [tag (sx :max-width--140px) "My tag with longer text"])}]}
 
-
    {:fn       label
     :meta     #'label
     :stage    {:style {:min-height :135px}}
@@ -334,27 +351,9 @@
     :content  [{:label   "Simple"
                 :example (example2 [label "my label"])}
                {:label   "Leading icon"
-                :example (example2 [label (sx {:-mui-icon :pets}) "Pet friendly"])}
+                :example (example2 [label [icon :pets] "Pet friendly"])}
                {:label   "Trailing icon"
-                :example (example2 [label (sx {:-mui-icon      :pets
-                                               :-icon-position :inline-end}) "Pet friendly"])}]}
-
-   {:fn       title
-    :meta     #'title
-    :stage    {:style {:min-height :135px}}
-    :controls [:size :weight]
-    :defaults {:size     :medium
-               :weight   :wee-bold
-               :examples "Simple"}
-    :content  [{:label   "Simple"
-                :example (example2 [title "my title"])}
-               {:label   "Longer text"
-                :example (example2 [title "My title with longer text"])}
-               #_{:label   "Leading icon"
-                  :example (example2 [title (sx {:-mui-icon :pets}) "Pet friendly"])}
-               #_{:label   "Trailing icon"
-                  :example (example2 [title (sx {:-mui-icon      :pets
-                                                 :-icon-position :inline-end} "Pet friendly")])}]}
+                :example (example2 [label "Pet friendly" [icon :pets]])}]}
 
    {:fn       card
     :meta     #'card
@@ -385,17 +384,17 @@
    {:fn       alert
     :meta     #'alert
     :stage    {:style {:min-height :150px}}
-    :controls [:semantic :kind :size :shape :weight]
+    :controls [:semantic :kind :shape :size :weight]
     :defaults {:kind     :default
                :shape    :sharp
-               :semantic :neutral
+               :semantic :accent
                :size     :medium
                :weight   :wee-bold
                :examples "Default"}
     :content  [{:label   "Default"
                 :example (example2 [alert
                                     (sx :.accent
-                                        {:-mui-icon         :info-outline
+                                        {:-icon             [icon :info]
                                          :-close-icon?      true
                                          :-close-icon-attrs {:on-click #(js/alert "Example close-icon click event.")}})
                                     "Your message goes here."])}
@@ -407,8 +406,7 @@
                                         :bottom--0
                                         :left--0
                                         :right--0
-                                        {:-mui-icon         :auto-awesome
-                                         :-mui-icon-style   :outlined
+                                        {:-icon             [icon :auto-awesome]
                                          :-close-icon?      true
                                          :-close-icon-attrs {:on-click #(js/alert "Example close-icon click event.")}})
                                     "Your message goes here."])}
@@ -469,7 +467,6 @@
                                      :-icon-position :end}
                                     [:p "child 1"]
                                     [:p "child 2"]])}
-
                {:label   "Borders"
                 :example (example2 [collapse
                                     (sx
@@ -487,7 +484,7 @@
                {:label   "Body color"
                 :example (example2 [collapse
                                     {:-label      "Collapsable section label "
-                                     :-body-attrs (sx :bgc--#ffe3ac :pl--1rem)}
+                                     :-body-attrs (sx :bgc--$accent100 :pl--1rem)}
                                     [:p "child 1"]
                                     [:p "child 2"]])}
                {:label   "Header color"
@@ -496,18 +493,20 @@
                                         {:-label        "Collapsable section label "
                                          :-body-attrs   (sx :pl--0.5rem)
                                          :-header-attrs (sx :p--10px
-                                                            :bgc--#3d3d3d
-                                                            :c--white
-                                                            :fw--600)})
+                                                            :bgc--$gray1000
+                                                            :c--white)})
                                     [:p "child 1"]
                                     [:p "child 2"]])}
-               {:label   "Expanded"
+
+               ;; TODO fix expanded? functionality
+               #_{:label   "Expanded"
                 :example (example2 [collapse
                                     {:-expanded?  true
                                      :-label      "Collapsable section label "
                                      :-body-attrs (sx :bgc--#ffe3ac :pl--1rem)}
                                     [:p "child 1"]
                                     [:p "child 2"]])}
+
                {:label   "With click handler"
                 :example (example2 [collapse
                                     {:-label    "Collapsable section label"
