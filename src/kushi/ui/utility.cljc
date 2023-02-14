@@ -11,21 +11,25 @@
   ;; ------------------------------------------------------
   [:flex-row-c        {:flex-direction  :row
                        :justify-content :center
+                       :align-items     :center
                        :display         :flex}
    :flex-row-sa       {:flex-direction  :row
                        :justify-content :space-around
+                       :align-items     :center
                        :display         :flex}
    :flex-col-se       {:flex-direction  :column
                        :justify-content :space-evenly
                        :display         :flex}
    :flex-row-fs       {:flex-direction  :row
                        :justify-content :flex-start
+                       :align-items     :center
                        :display         :flex}
    :flex-col-c        {:flex-direction  :column
                        :justify-content :center
                        :display         :flex}
    :flex-row-se       {:flex-direction  :row
                        :justify-content :space-evenly
+                       :align-items     :center
                        :display         :flex}
    :flex-col-fe       {:flex-direction  :column
                        :justify-content :flex-end
@@ -35,6 +39,7 @@
                        :display         :flex}
    :flex-row-fe       {:flex-direction  :row
                        :justify-content :flex-end
+                       :align-items     :center
                        :display         :flex}
    :flex-col-sa       {:flex-direction  :column
                        :justify-content :space-around
@@ -44,6 +49,7 @@
                        :display         :flex}
    :flex-row-sb       {:flex-direction  :row
                        :justify-content :space-between
+                       :align-items     :center
                        :display         :flex}
    :flex-row-centered {:display         :flex
                        :justify-content :center
@@ -72,6 +78,14 @@
    :wireframe             {:outline-color :silver
                            :outline-style :solid
                            :outline-width "1px"}
+
+
+    ;; Non-combo flex utility classes
+   :shrink               {:flex-shrink 1}
+   :no-shrink            {:flex-shrink 0}
+   :grow                 {:flex-grow 1}
+   :no-grow              {:flex-grow 0}
+
 
     ;; Combinatorial absolute positioning utilities
     ;; ------------------------------------------------------
@@ -210,7 +224,7 @@
    ;; Type styling
    ;; ------------------------------------------------------
    :sans          {:font-family :$sans-serif-font-stack}
-   :sans-serif    {:font-family :$serif-font-stack}
+   :serif         {:font-family :$serif-font-stack}
    :italic        {:font-style :italic}
    :oblique       {:font-style :oblique}
 
@@ -222,37 +236,63 @@
 
    ;; Type sizing
    ;; ------------------------------------------------------
-
-   :xxxsmall      {:fs :$text-xxxsmall
-                   :&_.kushi-mui-icon>svg:height :$text-xxxsmall}
-   :xxsmall       {:fs :$text-xxsmall
-                   :&_.kushi-mui-icon>svg:height :$text-xxsmall}
-   :xsmall        {:fs :$text-xsmall
-                   :&_.kushi-mui-icon>svg:height :$text-xsmall}
-   :small         {:fs :$text-small
-                   :&_.kushi-mui-icon>svg:height :$text-small}
-   :medium        {:fs :$text-medium
-                   :&_.kushi-mui-icon>svg:height :$text-medium}
-   :large         {:fs :$text-large
-                   :&_.kushi-mui-icon>svg:height :$text-large}
-   :xlarge        {:fs :$text-xlarge
-                   :&_.kushi-mui-icon>svg:height :$text-xlarge}
-   :xxlarge       {:fs :$text-xxlarge
-                   :&_.kushi-mui-icon>svg:height :$text-xxlarge}
-   :xxxlarge      {:fs :$text-xxxlarge
-                   :&_.kushi-mui-icon>svg:height :$text-xxxlarge}
+   :xxxsmall      {:fs                       :$text-xxxsmall
+                   :&_.kushi-icon>svg:height :$text-xxxsmall}
+   :xxsmall       {:fs                       :$text-xxsmall
+                   :&_.kushi-icon>svg:height :$text-xxsmall}
+   :xsmall        {:fs                       :$text-xsmall
+                   :&_.kushi-icon>svg:height :$text-xsmall}
+   :small         {:fs                       :$text-small
+                   :&_.kushi-icon>svg:height :$text-small}
+   :medium        {:fs                       :$text-medium
+                   :&_.kushi-icon>svg:height :$text-medium}
+   :large         {:fs                       :$text-large
+                   :&_.kushi-icon>svg:height :$text-large}
+   :xlarge        {:fs                       :$text-xlarge
+                   :&_.kushi-icon>svg:height :$text-xlarge}
+   :xxlarge       {:fs                       :$text-xxlarge
+                   :&_.kushi-icon>svg:height :$text-xxlarge}
+   :xxxlarge      {:fs                       :$text-xxxlarge
+                   :&_.kushi-icon>svg:height :$text-xxxlarge}
 
    ;; Type weight
    ;; ------------------------------------------------------
-   :thin          {:fw :$text-thin}
-   :extra-light   {:fw :$text-extra-light}
-   :light         {:fw :$text-light}
-   :normal        {:fw :$text-normal}
-   :wee-bold      {:fw :$text-wee-bold}
-   :semi-bold     {:fw :$text-semi-bold}
-   :bold          {:fw :$text-bold}
-   :extra-bold    {:fw :$text-extra-bold}
-   :heavy         {:fw :$text-heavy}
+   :thin          {:fw :$text-thin
+                   :&_.kushi-icon:font-variation-settings "'wght' 100"
+                   :&.kushi-icon:font-variation-settings "'wght' 100"
+                   }
+   :extra-light   {:fw :$text-extra-light
+                   :&_.kushi-icon:font-variation-settings "'wght' 200"
+                   :&.kushi-icon:font-variation-settings "'wght' 200"
+                   }
+   :light         {:fw :$text-light
+                   :&_.kushi-icon:font-variation-settings "'wght' 300"
+                   :&.kushi-icon:font-variation-settings "'wght' 300"
+                   }
+   :normal        {:fw :$text-normal
+                   :&_.kushi-icon:font-variation-settings "'wght' 400"
+                   :&.kushi-icon:font-variation-settings "'wght' 400"
+                   }
+   :wee-bold      {:fw :$text-wee-bold
+                   :&_.kushi-icon:font-variation-settings "'wght' 500"
+                   :&.kushi-icon:font-variation-settings "'wght' 500"
+                   }
+   :semi-bold     {:fw :$text-semi-bold
+                   :&_.kushi-icon:font-variation-settings "'wght' 600"
+                   :&.kushi-icon:font-variation-settings "'wght' 600"
+                   }
+   :bold          {:fw :$text-bold
+                   :&_.kushi-icon:font-variation-settings "'wght' 700"
+                   :&.kushi-icon:font-variation-settings "'wght' 700"
+                   }
+   :extra-bold    {:fw :$text-extra-bold
+                   :&_.kushi-icon:font-variation-settings "'wght' 700"
+                   :&.kushi-icon:font-variation-settings "'wght' 700"
+                   }
+   :heavy         {:fw :$text-heavy
+                   :&_.kushi-icon:font-variation-settings "'wght' 700"
+                   :&.kushi-icon:font-variation-settings "'wght' 700"
+                   }
 
 
    ;; Tracking (aka letter-spacing)
@@ -269,12 +309,16 @@
 
    ;; Animations
    ;; ------------------------------------------------------
+   ;; TODO - change these to t-shirt sizing
    :instant       {:transition-duration :$duration-instant}
+   :xxxfast       {:transition-duration :$duration-xxxfast}
+   :xxfast        {:transition-duration :$duration-xxfast}
+   :xfast         {:transition-duration :$duration-xfast}
    :fast          {:transition-duration :$duration-fast}
    :slow          {:transition-duration :$duration-slow}
-   :extra-slow    {:transition-duration :$duration-extra-slow}
-   :super-slow    {:transition-duration :$duration-super-slow}
-   :ultra-slow    {:transition-duration :$duration-ultra-slow}
+   :xslow         {:transition-duration :$duration-extra-slow}
+   :xxslow        {:transition-duration :$duration-super-slow}
+   :xxxslow       {:transition-duration :$duration-ultra-slow}
 
 
    ;; Surfaces, buttons, containers 2D
@@ -290,7 +334,7 @@
    :embossed      {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}
    :convex        {:background-image "linear-gradient(180deg, hsl(0deg 0% 100% / 20%), transparent, hsl(0deg 0% 0% / 15%))"}
    :concave       {:background-image "linear-gradient(180deg, hsl(0deg 0% 0% / 15%), transparent, hsl(0deg 0% 100% / 20%))"}
-   :elevated      {:box-shadow    :$elevated}
+   :elevated      {:box-shadow :$elevated}
 
 
    ;; Controls
