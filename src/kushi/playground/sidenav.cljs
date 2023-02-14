@@ -73,47 +73,56 @@
           [:li
            [:a (sx
                 :.pointer
-                :.fast!
+                :.xxfast!
+                :.normal
+                :c--black
+                :dark:c--white
+                [:hover:o (if focused? 1 0.5)]
                 :d--block
                 :p--9px:12px:9px:48px
                 :border-left--3px:solid:transparent
                 {:style    {:bgc           (if focused? "rgba(0, 0, 0, 0.07)" :transparent)
                             :dark:bgc      (if focused? :$gray800 :transparent)
                             :bisc          (if focused? :black :transparent)
-                            :dark:bisc     (if focused? :white :transparent)
-                            :hover:opacity (when-not focused? 0.5)}
+                            :dark:bisc     (if focused? :white :transparent)}
                  :href     hashed-href
                  :on-click (partial section-item-on-click href fname)})
             label]])))
 
+
+
 (defn sidenav-section-header
-  [{:keys [section-focused? kw header href target sidenav-header] :as m}]
+  [{:keys [section-focused? kw header href target sidenav-header]
+    :as   m}]
   [:a (merge-attrs
        (when target {:target target})
        (sx :.kushi-treenav-section-level-1-header
+           :.relative
+           :.semi-bold
            (when target :.kushi-link)
-           {:id       (when (keyword? kw) (str (name kw) "-nav-section"))
-            :href     (or href (when (keyword? kw) (str "#" (name kw))))
-            :style    {:hover:o                                           (when-not section-focused? 0.5)
-                       :bgc                                               (when section-focused? :$gray0)
-                       :bisc                                              (if section-focused? "rgba(0, 0, 0, 0.2)" :transparent)
-                       :dark:bisc                                         (if section-focused? "rgba(255, 255, 255, 0.4)" :transparent)
-                       "has-ancestor(.mobile-subnav):fs"                  :$text-xsmall
-                       "has-ancestor(.mobile-subnav):tt"                  :capitalize
-                       "has-ancestor(.mobile-subnav):bgc"                 (if section-focused? :$gray100 :transparent)
-                       "dark:has-ancestor(.mobile-subnav):bgc"            (if section-focused? :$gray750 :transparent)
-                       "has-ancestor(.mobile-subnav):border-radius"       :9999px
-                       "has-ancestor(.mobile-subnav):border-inline-style" :solid
-                       "has-ancestor(.mobile-subnav):biw"                 :8px
-                       "has-ancestor(.mobile-subnav):bic"                 (if section-focused? :$gray100 :transparent)
-                       "dark:has-ancestor(.mobile-subnav):bic"            (if section-focused? :$gray750 :transparent)
-                       "has-ancestor(.mobile-subnav):tuo"                 :3px}
-            :on-click #(when-not target
-                         (reset! state/*focused-section kw)
-                         (state/set-focused-component! nil)
-                         (dom/scroll-to-top))}))
-  (or header
-      [:span.kushi-treenav-section-header sidenav-header])])
+           :w--fit-content
+           {:id                              (when (keyword? kw) (str (name kw) "-nav-section"))
+            :href                            (or href (when (keyword? kw) (str "#" (name kw))))
+            :style                           {:hover:c                                           (when-not section-focused? :$gray500)
+                                              :bgc                                               (when section-focused? :$gray0)
+                                              :bisc                                              (if section-focused? "rgba(0, 0, 0, 0.2)" :transparent)
+                                              :dark:bisc                                         (if section-focused? "rgba(255, 255, 255, 0.4)" :transparent)
+                                              "has-ancestor(.mobile-subnav):fs"                  :$text-xsmall
+                                              "has-ancestor(.mobile-subnav):tt"                  :capitalize
+                                              "has-ancestor(.mobile-subnav):bgc"                 (if section-focused? :$gray100 :transparent)
+                                              "dark:has-ancestor(.mobile-subnav):bgc"            (if section-focused? :$gray750 :transparent)
+                                              "has-ancestor(.mobile-subnav):border-radius"       :9999px
+                                              "has-ancestor(.mobile-subnav):border-inline-style" :solid
+                                              "has-ancestor(.mobile-subnav):biw"                 :8px
+                                              "has-ancestor(.mobile-subnav):bic"                 (if section-focused? :$gray100 :transparent)
+                                              "dark:has-ancestor(.mobile-subnav):bic"            (if section-focused? :$gray750 :transparent)
+                                              "has-ancestor(.mobile-subnav):tuo"                 :3px}
+            :on-click                        #(when-not target
+                                                (reset! state/*focused-section kw)
+                                                (state/set-focused-component! nil)
+                                                (dom/scroll-to-top))}))
+   (or header
+       [:span.kushi-treenav-section-header sidenav-header])])
 
 (defn sidenav-section
   [{:keys [items kw] :as m}]
@@ -199,6 +208,7 @@
          :.small
          :.fixed
          :.flex-col-fs
+         :.wee-bold
          :&_ul:list-style-type--none
          :&_li:list-style-type--none
          :&_ul:p--0
@@ -233,7 +243,6 @@
    (sx 'mobile-subnav
        :d--flex
        :jc--c
-       :ai--c
        :position--relative
        :h--auto
        [:pis "calc(var(--page-padding-inline) - 12px)"]
