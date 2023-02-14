@@ -18,7 +18,6 @@
    [kushi.playground.util :as util :refer-macros [keyed]]
    [kushi.playground.shared-styles :as shared-styles]))
 
-
 (def Example
   [:map
    [:fn fn?]
@@ -57,7 +56,7 @@
    (components-to-render coll []))
   ([coll syms]
    (let [idxs (map (partial component-by-index coll) syms)
-        ;; idxs [0]
+        ;; idxs [6]
          ret (cond-> coll
                (seq idxs) (filter-by-index idxs)
                true validated-components)]
@@ -80,7 +79,7 @@
   (sx
    'main-view-outer-wrapper
    :ff--Inter|system|sans-serif
-   :.wee-bold
+  ;;  :.wee-bold
    {:style {:$topnav-height                                      (str (:topnav-height shared-styles/shared-values) "px")
             :$divisor                                            "4px solid var(--gray100)"
             :$divisor-dark                                       "4px solid var(--gray700)"
@@ -88,7 +87,7 @@
             :$body-copy-line-height                              :1.5em
             :$sidebar-width                                      :225px
             :$sidebar-width-lg                                   :21vw
-            :$components-menu-width                              :660px
+            :$components-menu-width                              :830px
             :$page-padding-inline                                :1.5rem
             :$vp-top-header-padding                              :0.7em
             :$vp-top-header-padding-with-offset                  (str "calc( var(--vp-top-header-padding) - "
@@ -140,7 +139,7 @@
   (let [sem   [:neutral :positive :negative :accent :warning]
         kinds [:minimal :simple :bordered :filled ]]
     [:div.dark
-     (into [:div (sx :.flex-col-c :ai--c)]
+     (into [:div (sx :.flex-col-c)]
            (for [styling-class [nil :bordered :filled]]
              [info-sections styling-class]))
      [:div (sx :.flex-row-c
@@ -151,7 +150,7 @@
                :&_button:mb--0.5em)
       (into [:div.flex-row-sa (sx :max-width--1100px)]
             (for [kind kinds]
-              (into [:div (sx :.flex-col-c :ai--c)]
+              (into [:div (sx :.flex-col-c)]
                     (for [kw sem]
                       [button {:class [kw kind :medium]} "Hello"])))) ]]))
 
@@ -183,6 +182,9 @@
 
 ;; TODO Make this work with anything user-supplied
 (def colorlist [:gray :red :orange :yellow :green :blue :purple :magenta :brown])
+
+
+
 
 (defn main-view
   [{:keys [
@@ -334,5 +336,3 @@
          [about/intro-section
           {:-header (:header kushi-about)}
           about/kushi-about]])]]))
-
-
