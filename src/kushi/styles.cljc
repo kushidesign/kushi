@@ -1,6 +1,5 @@
 (ns kushi.styles
   (:require
-  [par.core :refer [!? ?]]
   ;; TODO figure out which of the color fns to pass thru to public api
    [garden.color]
    [clojure.spec.alpha :as s]
