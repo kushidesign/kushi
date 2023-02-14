@@ -1,6 +1,6 @@
 (ns kushi.playground.about
   (:require
-   [kushi.ui.title.core :refer [title]]
+   [kushi.ui.label.core :refer [label]]
    [kushi.ui.link.core :refer [link]]
    [kushi.ui.dom :as dom]
    [kushi.ui.core :refer [defcom]]
@@ -8,7 +8,6 @@
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
    [kushi.ui.dom :refer (copy-to-clipboard)]
    [kushi.playground.util :as util]
-   [kushi.playground.component-section :refer [collapse-all-component-sections]]
    [kushi.playground.shared-styles]))
 
 
@@ -19,7 +18,6 @@
      (sx 'playground-generic-intro-section
          :.transition
          :bbe--$divisor
-         ;; dark theme
          :dark:bbe--$divisor-dark
          :pbe--0.5rem
          :md:pbe--0.6rem
@@ -27,8 +25,6 @@
          ;; typography
          ["has-ancestor(.kushi-typography):bbe" :none]
          ["has-ancestor(.custom-typography):bbe" :none]
-         ["has-ancestor(.kushi-typography)&_.code:fs" :12.6px!important]
-         ["has-ancestor(.kushi-typography)&_code:fs" :12.6px!important]
          ["has-ancestor(.kushi-typography)&_.code:h" :fit-content]
          ["has-ancestor(.kushi-typography)&_code:h" :fit-content]
          ["has-ancestor(.kushi-typography)&_.code:lh" :initial]
@@ -43,10 +39,11 @@
            'intro-section-title-wrapper
            :.flex-col-fs
            :.xxlarge
+           :.wee-bold
            :.relative
            :w--100%
            :mbe--4.25rem)
-     [title
+     [label
       (sx 'intro-section-title
           :pbs--2.25em
           :md:pbs--$vp-top-header-padding-with-offset
@@ -78,17 +75,7 @@
    [:p "Kushi includes a foundation of global and alias color token scales."]
 
    [:p.alias-token-scales
-    "Alias token scales for "
-    [:code (sx :.code :ws--n) (str "--neutral")]
-    ", "
-    [:code (sx :.code :ws--n) (str "--positive")]
-    ", "
-    [:code (sx :.code :ws--n) (str "--negative")]
-    ", "
-    [:code (sx :.code :ws--n) (str "--warning")]
-    ", and "
-    [:code (sx :.code :ws--n) (str "--accent")]
-    " all map to underlying global token scales, as in the following examples:"
+     "Semantic alias tokens map to global tokens like so:"
     [:br]]
 
    (into [:div (sx :.grid
@@ -97,9 +84,10 @@
                    :gtc--1.3fr:0.3fr:1fr
                    :w--275px)]
          (for [[a g] [["positive200" "green200"]
-                      ["negative200" "red400"]
-                      ["warning50" "yellow50"]
-                      ["accent600" "blue600"]]]
+                      ["negative400" "red400"]
+                      ["warning300" "yellow300"]
+                      ["accent600" "blue600"]
+                      ["neutral50" "neutral50"]]]
            (alias-global-mapping-row a g)))
 
    [:p
@@ -116,9 +104,9 @@
     " will decorate the element with the corresponding foreground and background colors."]])
 
 
-(defn type-scale [{:keys [coll label desc]}]
+(defn type-scale [{:keys [coll label]}]
   (into [:div
-         [:h3 (sx :.large
+         [:h3 (sx :.xxlarge
                   :.subsection-title
                   :.wee-bold
                   :mbs--5em
@@ -127,11 +115,10 @@
                   [:dark:bbs "1px solid var(--gray700)"])
           (str "Type " label " Scale")]]
         (for [x coll]
-          [:div (sx :.flex-col-fs :mb--37px)
+          [:div (sx :.flex-col-fs :mb--47px)
            [:div (sx :.small :.normal)
-            [:span.code (str ":." (name x))] #_", " #_[:span.code (str ":$text-" (name x))]]
-           [:div (sx :.xlarge
-                     (when (= label "Tracking") :.uppercase)
+            [:span.code (str ":." (name x))]]
+           [:div (sx (when (= label "Tracking") :.uppercase)
                      :mbs--10px)
             [:span {:class [x]} "The quick brown fox."]]])))
 
@@ -212,7 +199,7 @@
            :target :_blank}
      "Quickstart repo"] "."]
    [:p
-    "In addition to providing robust css-in-cljs functionality, Kushi offers a basic suite of themeable, headless UI components for free. "
+    "In addition to providing a css-in-cljs solution, Kushi offers a basic suite of themeable, headless UI components for free. "
     "This set of building blocks consitutes a base for rolling your own design system."]
    [:p
     "The components menu on this site provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]])
