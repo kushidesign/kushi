@@ -8,9 +8,10 @@
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.collapse.core :refer (collapse)]
    [kushi.ui.core :refer (defcom)]
-   [kushi.ui.icon.mui.core :refer (mui-icon-svgs)]
+   [kushi.ui.icon.core :refer (icon)]
+   [kushi.ui.icon.mui.svg :refer (mui-icon-svgs)]
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-   [kushi.ui.title.core :refer (title)]
+   [kushi.ui.label.core :refer (label)]
    [kushi.ui.dom :as dom]
    [kushi.ui.button.core :refer (button)]
    [kushi.playground.shared-styles :as shared-styles]
@@ -50,11 +51,9 @@
      (sx :p--0
          :.minimal
          :hover:bgc--transparent!important
-         :&>.kushi-label>span:td--none!important
-         {:-mui-icon "compress"
-          :title     "Collapse All Component Demos"})
-     [:span (sx :.xxsmall :mie--0.5em :td--none) s]
-     #_[mui-icon {:title "Collapse All Component Demos"} "compress"]]]))
+         :&>.kushi-label>span:td--none!important)
+     [icon {:title "Collapse All Component Demos"} :compress]
+     [:span (sx :.xxsmall :mie--0.5em :td--none) s]]]))
 
 (defn require-snippet
   [m* refers]
@@ -161,37 +160,20 @@
    []
    maps) )
 
-(defn kushi-opts-grid [kushi-opts]
-  (let [maps             (second kushi-opts)
-        header-row-data  (maps->header-row-data maps)
-        header-row-items (map #(vector title
-                                       (sx
-                                        'opts-grid-header
-                                        :.kushi-opts-grid-row-item
-                                        :.capitalize
-                                        :pbe--0.5em)
-                                       %)
-                              header-row-data)
-        grid-items (kushi-opts-grid-items maps)]
-    (into [:div (sx 'kushi-opts-grid
-                    :.grid
-                    :.small
-                    {:style {:gtc :2fr:1fr:1fr:3fr}})]
-          (concat header-row-items grid-items))))
 
-(defn opt-detail [label v f]
+(defn opt-detail [text v f]
   [:div
    (sx :.flex-row-fs
        :pb--0.5em
-       {:style {:ai (if (= label "Desc.") :flex-start :center)}})
+       {:style {:ai (if (= text "Desc.") :flex-start :center)}})
    [:div
     (sx 'kushi-opt-detail-label :min-width--75px)
-    [title (sx :.meta-desc-label :.normal)
+    [label (sx :.meta-desc-label :.normal)
      (if (= f kushi-opts-grid-type)
        (if (or (set? v) (vector? v))
          "Enum"
-         label)
-       label)]]
+         text)
+       text)]]
    [f v]])
 
 
@@ -231,15 +213,13 @@
        :id             fname
        :on-click       #(state/nav! fname)
        :-label         title
-       :-mui-icon      :add
-       :-icon          :add
-       :-mui-icon-style :outlined
-       :-icon-expanded :remove
+       :-icon          [icon {:-icon-svg (get mui-icon-svgs "add")}]
+       :-icon-expanded [icon :remove]
        :-icon-position :end
-       :-icon-svg      (get mui-icon-svgs "add")
        :-expanded?     (:components-expanded? @state/*state)
        :-header-attrs  (sx
                         :.xxlarge
+                        :.wee-bold
                         :pb--$vp-top-header-padding
                         :hover:bgc--$gray50
                         :dark:hover:bgc--$gray800
