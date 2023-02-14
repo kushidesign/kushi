@@ -62,10 +62,7 @@
                                 icon-inline-start?
                                 icon-inline-end?)
                         "var(--icon-enhancer-inline-gap-ems)")]
-                {:data-kushi-ui      :button
-                 :data-kushi-tooltip true
-                 :aria-expanded      "false"})
+                {:data-kushi-ui :button})
             attrs)]
            children)))
- 
 
