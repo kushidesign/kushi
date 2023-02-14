@@ -1,6 +1,16 @@
 (ns kushi.ui.dom
   (:require
+   [clojure.string :as string]
    [applied-science.js-interop :as j]))
+
+
+(defn css-style-string [m]
+  (string/join ";"
+               (map (fn [[k v]]
+                      (str (name k)
+                           ":"
+                           (if (number? v) (str v) (name v))))
+                    m)))
 
 ;; https://gist.github.com/rotaliator/73daca2dc93c586122a0da57189ece13
 (defn copy-to-clipboard [val]
