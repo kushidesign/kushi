@@ -18,7 +18,7 @@
    :--code-padding-block                     :0.08em
    :--code-border-radius                     :3px
    :--code-background-color                  :--gray100
-   :--code-background-color-inverse          :--gray750
+   :--code-background-color-inverse          :--gray800
    :--code-color-inverse                     :--gray50
 
     ;; Intended for css props: font-weight
