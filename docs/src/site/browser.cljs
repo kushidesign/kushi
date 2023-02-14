@@ -1,21 +1,22 @@
 (ns site.browser
   (:require
-   [kushi.ui.title.core :refer [title]]
+   [kushi.ui.label.core :refer [label]]
    [kushi.playground.core :refer [main-view]]
    [kushi.playground.util :refer [kushi-github-url kushi-clojars-url]]
    [kushi.core :refer [sx inject!]]
    [reagent.dom :as rdom]))
 
 (defn site-header []
-  [title
+  [label
    (sx 'playground-header
        :.playground-title
        :.xxlarge
-       :>span:ai--baseline
+       :.wee-bold
+       :ai--baseline
        :md:pbs--$vp-top-header-padding-with-offset)
    "Kushi"
    [:span
-    (sx 'playground-title-version-number :.xxxsmall :.tester :mis--0.5rem)
+    (sx 'playground-title-version-number :.xxxsmall :.wee-bold :.tester :mis--0.5rem)
     "v1.0.0-alpha"]])
 
 (defn ^:dev/after-load start []
