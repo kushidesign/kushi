@@ -207,13 +207,13 @@
                    :comment "Animation Keyframes"})
 
     ;; kushi.ui theming classes
-     (append-from-gv! {:config-key            :add-kushi-ui-theming?
-                       :kushi/chunk           :kushi/theme
-                       :comment               "kushi.ui component theming rules"})
+     (append-from-gv! {:config-key  :add-kushi-ui-theming?
+                       :kushi/chunk :kushi/theme
+                       :comment     "kushi.ui component theming rules"})
 
-     (append-from-gv! {:config-key            :add-kushi-ui-theming-defclass?
-                       :kushi/chunk           :kushi/kushi-ui-defclass
-                       :comment               "kushi.ui component theming rules (shared, via defclass)"})
+     (append-from-gv! {:config-key  :add-kushi-ui-theming-defclass?
+                       :kushi/chunk :kushi/kushi-ui-defclass
+                       :comment     "kushi.ui component theming rules (shared, via defclass)"})
 
     ;; kushi base utility classes
      (append-from-gv! {:config-key  :add-kushi-defclass?
