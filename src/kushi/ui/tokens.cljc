@@ -91,6 +91,10 @@
    :--tooltip-font-size                      :--text-xsmall
    :--tooltip-color                          :white
    :--tooltip-background-color               :black
+   :--tooltip-color-inverse                  :black
+   :--tooltip-background-color-inverse       :white
+   :--tooltip-text-transform                 :none
+   :--tooltip-offset                         :6px
 
     ;; Material UI icons
     ;; ------------------------------------------------------
