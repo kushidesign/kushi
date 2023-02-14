@@ -113,15 +113,15 @@
             :type    :string
             :default nil
             :desc    "The text to display in the collapse header when expanded. Optional."}
-           {:name    mui-icon
-            :type    :string
-            :default "add"
-            :desc    ["The [name of the Material Icon](https://fonts.google.com/icons?icon.set=Material+Icons) to use in the collapse header."
+           {:name    icon
+            :type    :vector
+            :default '[kushi.ui.icon.core/icon :add]
+            :desc    ["An instance of a kushi.ui.icon/icon component"
                       "Optional."]}
-           {:name    mui-icon-expanded
-            :type    :string
-            :default "remove"
-            :desc    ["The [name of the Material Icon](https://fonts.google.com/icons?icon.set=Material+Icons) to use in the collapse header when expanded."
+           {:name    icon-expanded
+            :type    :vector
+            :default '[kushi.ui.icon.core/icon :remove]
+            :desc    ["An instance of a kushi.ui.icon/icon component"
                       "Optional."]}
            {:name    icon-position
             :type    #{:start :end}
@@ -129,12 +129,6 @@
             :desc    ["A value of `:start` will place the at the inline start of the header, preceding the label."
                       "A value of `:end` will place the icon at the inline end of the header, opposite the label."
                       "Optional."]}
-           {:name    icon-svg
-            :type    :boolean
-            :default false
-            :desc    ["Pass a `mui-icon` in `svg` (hiccup) to use in place of the Google Fonts Material Icons font."
-                      "Must use `:viewBox` attribute with values such as `\"0 0 24 24\"`."
-                      "The `:width` and `:height` attributes of the `svg` do not need to be set."]}
            {:name    expanded?
             :type    :boolean
             :default false
