@@ -12,15 +12,8 @@
 
 
   ;;  [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
-  ;;  [kushi.ui.title.core :refer (title)]
   ;;  [kushi.ui.snippet.core :refer (snippet copy-to-clipboard-button)]
   ;; ;; ;;  [kushi.ui.icon.core :refer (icon)]
-  ;;  [kushi.ui.icon.mui.core :refer (mui-icon)]
-  ;;  [kushi.ui.icon.mui.outlined :refer (mui-icon-outlined)]
-  ;;  [kushi.ui.icon.mui.round :refer (mui-icon-round)]
-  ;;  [kushi.ui.icon.mui.sharp :refer (mui-icon-sharp)]
-  ;;  [kushi.ui.icon.mui.two-tone :refer (mui-icon-two-tone)]
-
   ;;  [clojure.pprint :refer [pprint]]
    ))
 
@@ -108,7 +101,7 @@
   #_[modal {:-trigger [button (sx :.absolute :right--0 {:on-click open-kushi-modal})
                        "click to launch modal"
                        [tooltip2 (sx :.huge) #_{:-display-on-hover? false} "Blah Blah and blah blah blah"]]}
-     [:div (sx :.flex-col-sa :ai--c :h--100% :w--100%)
+     [:div (sx :.flex-col-sa :h--100% :w--100%)
       [:p (sx :.huge :.normal) "modal content"]
       [button {:on-click close-kushi-modal}
        "submit and dismiss"]]])

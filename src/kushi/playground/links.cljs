@@ -1,8 +1,9 @@
 (ns kushi.playground.links
   (:require
    [kushi.core :refer (sx defclass merge-attrs)]
-   [kushi.playground.ui :refer [light-dark-mode-switch]]
    [kushi.playground.util :refer [kushi-github-url kushi-clojars-url]]
+   [kushi.ui.icon.core :refer [icon icon-svgs]]
+   [kushi.ui.icon.svg :refer [icon-svgs]]
    [kushi.ui.core :refer (opts+children)]))
 
 (defclass grayscale
@@ -45,11 +46,17 @@
        attrs)]
      children)))
 
-(def link-data [{:href kushi-github-url
-                 :src  "public/graphics/github.svg"}
-                {:href kushi-clojars-url
-                 :on-error "this.onerror=null; this.src='graphics/clojars-logo-bw2.png'"
-                 :src "public/graphics/clojars-logo-bw2.png"}
+(def link-data [{:href     kushi-github-url
+                 :attrs    (sx :&.kushi-icon>svg:w--22px
+                               :&.kushi-icon>svg:h--20px
+                               :&.kushi-icon>svg>path:fill--black
+                               {:-icon-svg (get icon-svgs "github")})}
+                {:href     kushi-clojars-url
+                 :attrs    (sx :&.kushi-icon>svg:w--22px
+                               :&.kushi-icon>svg:h--20px
+                               :&.kushi-icon>svg>path:fill--black
+                               :dark:&.kushi-icon>svg>path:fill--white
+                               {:-icon-svg (get icon-svgs "clojars")})}
                 #_{:href "https://twitter.svg"
                  :src "graphics/twitter.svg"}])
 (defn links []
@@ -57,11 +64,9 @@
    [:div
     (sx 'project-links
         :.flex-row-sa
-        :ai--center
         :>a:display--inline-flex
-        :>a:mis--0.75rem
-        )]
-   (for [{:keys [href on-error src]} link-data]
+        :>a:mis--0.75rem)]
+   (for [{:keys [href attrs]} link-data]
      [badge
       {:href href :target :_blank}
-      [contained-image (sx :.grayscale :.small-badge {:src src})]])))
+      [icon attrs]])))
