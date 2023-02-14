@@ -122,12 +122,15 @@
    :--timing-ease-in-out-curve               "cubic-bezier(0.4, 0, 0.2, 1)"
 
    :--duration-instant                       :0ms
-   :--duration-fast                          :100ms
-   :--duration-normal                        :200ms
+   :--duration-xxxfast                       :50s
+   :--duration-xxfast                        :100ms
+   :--duration-xfast                         :150ms
+   :--duration-fast                          :200ms
+   :--duration-normal                        :250ms
    :--duration-slow                          :500ms
-   :--duration-extra-slow                    :1s
-   :--duration-super-slow                    :2s
-   :--duration-ultra-slow                    :4s
+   :--duration-xslow                         :1s
+   :--duration-xxslow                        :2s
+   :--duration-xxxslow                       :4s
 
 
    ;; Intended for styling scrollbars
