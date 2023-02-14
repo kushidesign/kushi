@@ -5,10 +5,11 @@
    [clojure.pprint :as pprint]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.dom :as dom]
+   [kushi.ui.flex.core :as flex]
    [kushi.ui.input.slider.css]
    [kushi.ui.input.checkbox.core :refer [checkbox]]
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-   [kushi.ui.title.core :refer (title)]
+   [kushi.ui.label.core :refer (label)]
    [kushi.ui.input.slider.core :refer (slider)]
    [kushi.ui.dom :refer (copy-to-clipboard)]
    [kushi.ui.core :refer (defcom)]
@@ -118,7 +119,7 @@
 
 
 (defcom input-row
-  (let [{:keys [label group-id group-role]} &opts]
+  (let [{:keys [group-id group-role] text :label} &opts]
     [:section
      (merge-attrs
       (sx 'kushi-input-row-wrapper
@@ -130,22 +131,26 @@
       (sx
        'kushi-input-row
        :.flex-row-fs
-       :ai--c
        {:id              group-id
         :role            group-role
         :aria-labelledby (str group-id "-label")})
-
-      [title
+      [label
        (sx :.meta-desc-label
            :min-width--90px
+           :jc--fs
            {:id (str group-id "-label")})
-       label]
-      [:section
+       text]
+      [flex/row-fs
        (sx
         'kushi-input-section
-        :.flex-row-fs
-        :flex-grow--1
-        :flex-wrap--wrap )
+        :.wee-bold
+        :.grow
+        :flex-wrap--wrap
+        :row-gap--0.25em
+        ["has-ancestor(#icon):row-gap" :0.5em]
+        ["has-ancestor(#icon):column-gap" :1em]
+        :&_label:hover:bgc--$gray100
+        :dark:&_label:hover:bgc--$gray800)
        &children]]]))
 
 
@@ -333,18 +338,16 @@
                                 'kushi-playground-demobox
                                 :&_.kushi-input-row-wrapper:bbe--0px:solid:#eee
                                 :&_.kushi-input-row-wrapper:min-height--60px
-                                :&_.kushi-input-row-wrapper:padding-block--0.25em
+                                :&_.kushi-input-row-wrapper:padding-block--0.5em
                                 :&_.kushi-radio-button-wrapper:margin-inline--0:0.666em
                                 :&_.kushi-radio-button-wrapper:margin-block--0.125em)
 
                                ;; Component preview section
                                ;; ------------------------------------
-                               [:section
+                               [flex/row-fs
                                 (merge-attrs
                                  stage-attr
-                                 (sx :.flex-row-fs
-                                     :ai--c
-                                     :p--30px:15px
+                                 (sx :p--30px:15px
                                      :bw--1px
                                      :bs--solid
                                      :bc--$gray300
@@ -363,12 +366,15 @@
                                       :let [id (if (vector? label)
                                                  (str (last label) ":" (-> example :quoted first name))
                                                  label)
-                                            key (or key id)]]
+                                            key (or key id)
+                                            key (or (when-let [icon-opts (some-> example :evaled second)]
+                                                      (when-let [m (when (map? icon-opts) icon-opts)]
+                                                        (when (contains? m :-icon-filled?)
+                                                          (str key "-icon-filled"))))
+                                                    key)]]
                                   ^{:key key}
                                   [radio
                                    (sx
-                                    ["has-ancestor(#mui-icon):mis" :1em]
-                                    ["has-ancestor(#mui-icon):mbe" :0.5em]
                                     {:-input-attrs {:id              id
                                                     :value           id
                                                     :name            (str nm "-example:content")

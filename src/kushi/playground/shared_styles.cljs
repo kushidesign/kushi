@@ -88,7 +88,6 @@
 
 (defclass kushi-main-section-wrapper
   :.flex-col-fs
-  :ai--c
   :width--100%
   :md:width--auto
   :flex-shrink--0
@@ -114,8 +113,8 @@
 
 (defclass kushi-treenav-section-header
   :.relative
-  :.flex-row-fs
-  :ai--c)
+  :.flex-row-fs)
+
 
 
 
