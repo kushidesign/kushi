@@ -19,10 +19,9 @@
                         (sx 'kushi-copy-to-clipboard-button
                             :p--0px
                             :.minimal)
-                        (tooltip-attrs {:-text                     "Copied!"
-                                        :-placement                "inline-start center"
-                                        :-reveal-on-click?         true
-                                        :-reveal-on-click-duration 40000}))
+                        (tooltip-attrs {:-text             "Copied!"
+                                        :-placement        (or (:-placement opts) :right)
+                                        :-reveal-on-click? true}))
                        [:img
                         (sx 'kushi-copy-to-clipboard-button-graphic
                             :h--75%
