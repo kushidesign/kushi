@@ -3,8 +3,8 @@
    [clojure.string :as string]
    ["tinycolor2" :as tinycolor]
    [kushi.playground.util :as util :refer-macros (keyed)]
-   [kushi.core :refer (sx inject! defclass merge-attrs)]
-   [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal]]
+   [kushi.core :refer (sx merge-attrs)]
+   [kushi.ui.modal.core :refer [modal open-kushi-modal]]
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
    [kushi.ui.dom :refer (copy-to-clipboard)]
    [kushi.ui.core :refer [defcom]]
@@ -15,26 +15,28 @@
 
 (defcom text-sample-sticker
   (let [{:keys [color bgc]} &opts]
-    [label [:span (merge-attrs
-                   (sx :.flex-row-c
-                       :.small
-                       :w--44px
-                       :sm:w--54px
-                       :h--44px
-                       :sm:h--54px
-                       [:c color]
-                       [:bgc bgc]
-                       :border-radius--50%
-                       :mis--10px)
-                   &attrs)
-            "Text"]]))
+    [label
+     [:span (merge-attrs
+             (sx :.flex-row-c
+                 :.small
+                 :w--44px
+                 :sm:w--54px
+                 :h--44px
+                 :sm:h--54px
+                 [:c color]
+                 [:bgc bgc]
+                 :border-radius--50%
+                 :mis--10px)
+             &attrs)
+      "Text"]]))
 
 
 (defn copy-color [s]
  [:span (sx :.flex-row-fs)
   [:code s]
   [copy-to-clipboard-button
-   {:on-click          #(copy-to-clipboard s)}]])
+   {:-placement :right
+    :on-click   #(copy-to-clipboard s)}]])
 
 (defn color-modal
   [{:keys [k
