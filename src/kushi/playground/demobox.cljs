@@ -117,20 +117,25 @@
                    variant-category
                    step))))))
 
-
 (defcom input-row
-  (let [{:keys [group-id group-role] text :label} &opts]
+  (let [{:keys [group-id group-role]
+         text  :label}
+        &opts]
     [:section
      (merge-attrs
       (sx 'kushi-input-row-wrapper
           :.flex-col-c
           :color--inherit
-          :.small)
+          :fs--$text-xsmall
+          :md:fs--$text-small)
       &attrs)
      [:fieldset
       (sx
        'kushi-input-row
-       :.flex-row-fs
+       :.flex-col-fs
+       :md:flex-direction--row
+       :gap--0.25em
+       :md:gap--0
        {:id              group-id
         :role            group-role
         :aria-labelledby (str group-id "-label")})
@@ -338,7 +343,8 @@
                                 'kushi-playground-demobox
                                 :&_.kushi-input-row-wrapper:bbe--0px:solid:#eee
                                 :&_.kushi-input-row-wrapper:min-height--60px
-                                :&_.kushi-input-row-wrapper:padding-block--0.5em
+                                :&_.kushi-input-row-wrapper:padding-block--0.75em
+                                :md:&_.kushi-input-row-wrapper:padding-block--0.5em
                                 :&_.kushi-radio-button-wrapper:margin-inline--0:0.666em
                                 :&_.kushi-radio-button-wrapper:margin-block--0.125em)
 
