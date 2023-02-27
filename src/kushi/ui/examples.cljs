@@ -12,6 +12,7 @@
    [kushi.ui.label.core :refer (label)]
    [kushi.ui.card.core :refer (card)]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
+   [kushi.ui.tooltip.demo :as tooltip-demo]
    [kushi.ui.collapse.core :refer (collapse accordian)]
    [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
    [kushi.ui.icon.mui.examples :refer [icon-examples]]
@@ -21,7 +22,7 @@
 (def components
   [{:fn       button
     :meta     #'button
-    :stage    {:style {:min-height :135px}}
+    :stage    {:style {:min-height :115px}}
     :controls [:kind :shape :semantic :size :weight]
     :defaults {:kind     :default
                :semantic :neutral
@@ -218,6 +219,8 @@
    {:fn       tooltip-attrs
     :meta     #'tooltip-attrs
     :title    "Tooltip"
+    :demo     tooltip-demo/demo
+    :demo-attrs (sx :d--none :md:d--block)
     :stage    {:style {:min-height      :200px
                        :justify-content :center}}
     :defaults {:examples "Auto"}
