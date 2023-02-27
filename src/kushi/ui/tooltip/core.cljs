@@ -104,7 +104,7 @@
    :after:transform     "translate(0%, calc(-100% - var(--tooltip-offset) - var(--tooltip-arrow-depth)))"
    :before:top          :0%
    :before:left         :0%
-   :before:transform    "translate(calc(0% + var(--tooltip-border-radius) + var(--tooltip-arrow-x-offset) ), calc(-100% - var(--tooltip-offset)))"})
+   :before:transform    "translate(calc(0% + 0.333px + var(--tooltip-border-radius) + var(--tooltip-arrow-x-offset) ), calc(-100% - var(--tooltip-offset)))"})
 
 (defclass kushi-pseudo-tooltip-t
   {:after:top        :0%
@@ -112,7 +112,7 @@
    :after:transform  "translate(-50%, calc(-100% - var(--tooltip-offset) - var(--tooltip-arrow-depth)))"
    :before:top       :0%
    :before:left      :50%
-   :before:transform "translate(-50%, calc(-100% - var(--tooltip-offset)))"})
+   :before:transform "translate(-50%, calc(-100% - 0.333px - var(--tooltip-offset)))"})
 
 (defclass kushi-pseudo-tooltip-tr
   {:after:top        :0%
@@ -120,7 +120,7 @@
    :after:transform  "translate(-100%, calc(-100% - var(--tooltip-offset) - var(--tooltip-arrow-depth)))"
    :before:top       :0%
    :before:left      :100%
-   :before:transform "translate(calc(-100% - var(--tooltip-border-radius) - var(--tooltip-arrow-x-offset) ), calc(-100% - var(--tooltip-offset)))"})
+   :before:transform "translate(calc(-100% - 0.333px - var(--tooltip-border-radius) - var(--tooltip-arrow-x-offset) ), calc(-100% - var(--tooltip-offset)))"})
 
 (defclass kushi-pseudo-tooltip-trc
   {:after:besr      0
@@ -135,7 +135,7 @@
    :after:transform      "translate(calc(0% + var(--tooltip-offset) + var(--tooltip-arrow-depth)), 0%)"
    :before:top           :0%
    :before:left          :100%
-   :before:transform     "translate(calc(0% + var(--tooltip-offset)), calc(0% + var(--tooltip-border-radius) + var(--tooltip-arrow-y-offset)))"})
+   :before:transform     "translate(calc(0% + 0.333px + var(--tooltip-offset)), calc(0% + var(--tooltip-border-radius) + var(--tooltip-arrow-y-offset)))"})
 
 (defclass kushi-pseudo-tooltip-r
   {:after:top        :50%
@@ -143,7 +143,7 @@
    :after:transform  "translate(calc(0% + var(--tooltip-offset) + var(--tooltip-arrow-depth)), -50%)"
    :before:top       :50%
    :before:left      :100%
-   :before:transform "translate(calc(0% + var(--tooltip-offset)), -50%)"})
+   :before:transform "translate(calc(0% + 0.333px + var(--tooltip-offset)), -50%)"})
 
 (defclass kushi-pseudo-tooltip-rb
   {:after:top        :100%
@@ -151,7 +151,7 @@
    :after:transform  "translate(calc(0% + var(--tooltip-offset) + var(--tooltip-arrow-depth)), -100%)"
    :before:top       :100%
    :before:left      :100%
-   :before:transform "translate(calc(0% + var(--tooltip-offset)), calc(-100% - var(--tooltip-border-radius) - var(--tooltip-arrow-y-offset)))"})
+   :before:transform "translate(calc(0% + 0.333px + var(--tooltip-offset)), calc(-100% - var(--tooltip-border-radius) - var(--tooltip-arrow-y-offset)))"})
 
 (defclass kushi-pseudo-tooltip-brc
   {:after:bssr      0
@@ -167,7 +167,7 @@
 
    :before:top           :100%
    :before:left          :100%
-   :before:transform     "translate(calc(-100% - var(--tooltip-border-radius) - var(--tooltip-arrow-x-offset) ), calc(0% + var(--tooltip-offset)))"})
+   :before:transform     "translate(calc(-100% - 0.333px - var(--tooltip-border-radius) - var(--tooltip-arrow-x-offset) ), calc(0% + var(--tooltip-offset)))"})
 
 (defclass kushi-pseudo-tooltip-b
   {:after:top            :100%
@@ -175,7 +175,7 @@
    :after:transform      "translate(-50%, calc(0% + var(--tooltip-offset) + var(--tooltip-arrow-depth)))"
    :before:top           :100%
    :before:left          :50%
-   :before:transform     "translate(-50%, calc(0% + var(--tooltip-offset)))"})
+   :before:transform     "translate(-50%, calc(0% + 0.333px + var(--tooltip-offset)))"})
 
 (defclass kushi-pseudo-tooltip-bl
   {:after:top            :100%
@@ -184,7 +184,7 @@
 
    :before:top           :100%
    :before:left          :0%
-   :before:transform     "translate(calc(0% + var(--tooltip-border-radius) + var(--tooltip-arrow-x-offset) ), calc(0% + var(--tooltip-offset)))"})
+   :before:transform     "translate(calc(0% + 0.333px + var(--tooltip-border-radius) + var(--tooltip-arrow-x-offset) ), calc(0% + var(--tooltip-offset)))"})
 
 (defclass kushi-pseudo-tooltip-blc
   {:after:bser      0
@@ -199,7 +199,7 @@
    :after:transform "translate(calc(-100% - var(--tooltip-offset) - var(--tooltip-arrow-depth)), -100%)"
    :before:top           :100%
    :before:left          :0%
-   :before:transform     "translate(calc(-100% - var(--tooltip-offset)), calc(-100% - var(--tooltip-border-radius) - var(--tooltip-arrow-y-offset)))"})
+   :before:transform     "translate(calc(-100% - 0.333px - var(--tooltip-offset)), calc(-100% - var(--tooltip-border-radius) - var(--tooltip-arrow-y-offset)))"})
 
 (defclass kushi-pseudo-tooltip-l
   {:after:top            :50%
@@ -207,7 +207,7 @@
    :after:transform      "translate(calc(-100% - var(--tooltip-offset) - var(--tooltip-arrow-depth)), -50%)"
    :before:top           :50%
    :before:left          :0%
-   :before:transform     "translate(calc(-100% - var(--tooltip-offset)), -50%)"})
+   :before:transform     "translate(calc(-100% - 0.333px - var(--tooltip-offset)), -50%)"})
 
 (defclass kushi-pseudo-tooltip-lt
   {:after:top            :0%
@@ -215,7 +215,7 @@
    :after:transform      "translate(calc(-100% - var(--tooltip-offset) - var(--tooltip-arrow-depth)), 0%)"
    :before:top           :0%
    :before:left          :0%
-   :before:transform     "translate(calc(-100% - var(--tooltip-offset)), calc(0% + var(--tooltip-border-radius) + var(--tooltip-arrow-y-offset)))"})
+   :before:transform     "translate(calc(-100% - 0.333px - var(--tooltip-offset)), calc(0% + var(--tooltip-border-radius) + var(--tooltip-arrow-y-offset)))"})
 
 
 (def non-logicals
@@ -382,8 +382,6 @@
           :br
           :br
           "The element being tipped must also have a css `postition` value such as `relative` set, so that the absolutely-positioned tooltip pseudo-element will end up with the desired placement."
-          :br
-          :br
           ]
    :opts '[{:name    text
             :type    #{:string :keyword}

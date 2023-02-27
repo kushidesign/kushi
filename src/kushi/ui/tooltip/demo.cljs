@@ -1,6 +1,5 @@
 (ns kushi.ui.tooltip.demo
   (:require
-   [clojure.string :as string]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]))
 
@@ -8,27 +7,26 @@
   (into
    [:div
     (sx
-     :.wireframe
-     :.absolute-centered
      :.grid
      :gtc--1fr:1fr:1fr:1fr:1fr
      :gtr--auto
      :gap--1rem
-     :w--450px
-     :h--450px
-     :p--24px
+     :w--400px
+     :h--400px
      [:gta '(kushi/grid-template-areas
              "brc br b  bl blc"
              "rt  .  .  .  lt"
              "r   .  .  .  l"
              "rb  .  .  .  lb"
              "trc tr t  tl tlc")])]
+
    (for [x     ["brc" "br" "b"  "bl" "blc"
                 "rt"  nil  nil  nil  "lt"
                 "r"   nil  nil  nil  "l"
                 "rb"  nil  nil  nil  "lb"
                 "trc" "tr" "t"  "tl" "tlc"]
          :when (not (nil? x))]
+
      [:button (merge-attrs
                (sx :.flex-row-c
                    :.pointer
