@@ -41,6 +41,8 @@
               (string/split #"__cssfn__")
               second))))
 
+
+;;;; Custom kushi css functions start
 (defn color-token->hsla [s alpha]
   (when (string? s)
     (when-let [{:keys [h s l]
@@ -70,15 +72,23 @@
         (garden.color/transparentize color n))
       nm))
 
+(defn grid-template-areas [rows]
+  (string/join " " (map #(str "\"" % "\"") rows)))
+
 (defn- cssfn-list->string [x]
   (if-let [nm (cssfn-name-from-escaped x)]
     (do
-      (let [trans?     (= nm "kushi/transparentize")
-            css-string (when trans?
-                         (transparentize (second x) (last x)))]
+      (let [css-string           (case nm
+                                   "kushi/transparentize"
+                                   (transparentize (second x) (last x))
+                                   "kushi/grid-template-areas"
+                                   (grid-template-areas (rest x))
+                                   nil)]
         (or css-string
             (util/cssfn-string nm (rest x)))))
     x))
+;;;; Custom kushi css functions end
+
 
 (defn- normalize-css-custom-propery
   "hi"
