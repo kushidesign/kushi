@@ -218,35 +218,81 @@
    {:fn       tooltip-attrs
     :meta     #'tooltip-attrs
     :title    "Tooltip"
-    :stage    {:style {:min-height      :135px
+    :stage    {:style {:min-height      :200px
                        :justify-content :center}}
     :defaults {:examples "Auto"}
-    :content  [{:label   "Auto"
+    :content  [
+               {:label   "Auto"
                 :example (example2 [button
                                     (tooltip-attrs {:-text "My tooltip text"})
                                     "Hover me to reveal tooltip"])}
-               {:label   "block-start, auto"
+
+              ;; Leave these auto placements out for now
+              ;;  {:label   "block-start, auto"
+              ;;   :example (example2 [button
+              ;;                       (tooltip-attrs {:-text      "My tooltip text"
+              ;;                                       :-placement "block-start"})
+              ;;                       "Hover me to reveal tooltip"])}
+
+              ;;  {:label   "block-end, auto"
+              ;;   :example (example2 [button
+              ;;                       (tooltip-attrs {:-text      "My tooltip text"
+              ;;                                       :-placement "block-end"})
+              ;;                       "Hover me to reveal tooltip"])}
+
+              ;;  {:label   "inline-start, auto"
+              ;;   :example (example2 [button
+              ;;                       (tooltip-attrs {:-text      "My tooltip text"
+              ;;                                       :-placement "inline-start"})
+              ;;                       "Hover me to reveal tooltip"])}
+
+              ;;  {:label   "inline-end, auto"
+              ;;   :example (example2 [button
+              ;;                       (tooltip-attrs {:-text      "My tooltip text"
+              ;;                                       :-placement "inline-end"})
+              ;;                       "Hover me to reveal tooltip"])}
+
+
+               {:label   "top-left-corner"
                 :example (example2 [button
                                     (tooltip-attrs {:-text      "My tooltip text"
-                                                    :-placement "block-start"})
+                                                    :-placement :top-left-corner})
                                     "Hover me to reveal tooltip"])}
 
-               {:label   "block-end, auto"
+               {:label   "top-left"
                 :example (example2 [button
                                     (tooltip-attrs {:-text      "My tooltip text"
-                                                    :-placement "block-end"})
+                                                    :-placement :top-left})
                                     "Hover me to reveal tooltip"])}
 
-               {:label   "inline-start, auto"
+               {:label   "top"
                 :example (example2 [button
                                     (tooltip-attrs {:-text      "My tooltip text"
-                                                    :-placement "inline-start"})
+                                                    :-placement :top})
                                     "Hover me to reveal tooltip"])}
 
-               {:label   "inline-end, auto"
+               {:label   "top-right"
                 :example (example2 [button
                                     (tooltip-attrs {:-text      "My tooltip text"
-                                                    :-placement "inline-end"})
+                                                    :-placement :top-right})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "top-right-corner"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement :top-right-corner})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "right-top-corner"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement :right-top-corner})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "right"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement :right})
                                     "Hover me to reveal tooltip"])}
 
                {:label   "inline-end, center"
@@ -255,10 +301,22 @@
                                                     :-placement "inline-end center"})
                                     "Hover me to reveal tooltip"])}
 
+               {:label   "block-start, inline-start"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement "block-start inline-start"})
+                                    "Hover me to reveal tooltip"])}
+
                {:label   "block-start, center"
                 :example (example2 [button
                                     (tooltip-attrs {:-text      "My tooltip text"
                                                     :-placement "block-start center"})
+                                    "Hover me to reveal tooltip"])}
+
+               {:label   "block-start, inline-end"
+                :example (example2 [button
+                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                    :-placement "block-start inline-end"})
                                     "Hover me to reveal tooltip"])}
 
                {:label   "block-start, inline-end, corner"
@@ -266,23 +324,10 @@
                                     (tooltip-attrs {:-text      "My tooltip text"
                                                     :-placement "block-start inline-end corner"})
                                     "Hover me to reveal tooltip"])}
-
-               {:label   "top-left-corner (non-logical)"
-                :example (example2 [button
-                                    (tooltip-attrs {:-text      "My tooltip text"
-                                                    :-placement :top-left-corner})
-                                    "Hover me to reveal tooltip"])}
-
-               {:label   "right (non-logical)"
-                :example (example2 [button
-                                    (tooltip-attrs {:-text      "My tooltip text"
-                                                    :-placement :right})
-                                    "Hover me to reveal tooltip"])}
-
                {:label   "With forced linebreaks"
                 :example (example2 [button
                                     (tooltip-attrs {:-text      ["My tooltip text line1" "My tooltip text line2"]
-                                                    :-placement "inline-end"})
+                                                    :-placement :right #_"inline-end"})
                                     "Hover me to reveal tooltip"])}
 
                {:label   "Reveal on click"
@@ -290,8 +335,31 @@
                                     (tooltip-attrs {:-text                     "My tooltip text!"
                                                     :-reveal-on-click?         true
                                                     :-reveal-on-click-duration 1500
-                                                    :-placement                "inline-end"})
+                                                    :-placement                :right #_"inline-end"})
                                     "Click me to reveal tooltip"])}
+
+               {:label   "Toggle on click"
+                :example (example2 [:div.flex-row-fs
+                                    [button "WTF"]
+                                    [icon (merge-attrs
+                                           (sx :.pill
+                                               :.pointer
+                                               :m--1em
+                                               :hover:c--black
+                                               :hover:bgc--$neutral-background-color
+                                               :dark:hover:c--white
+                                               :dark:hover:bgc--$neutral-background-color-inverse
+                                               :&.kushi-pseudo-tooltip-revealed:c--$accent-color
+                                               :&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color
+                                               :dark:&.kushi-pseudo-tooltip-revealed:c--$accent-color-inverse
+                                               :dark:&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color-inverse
+                                              ;;  :hover:bgc--$accent-background-color
+                                              ;;  :dark:hover:c--$accent-color-inverse
+                                               )
+                                           (tooltip-attrs {:-text                     "My tooltip text!"
+                                                           :-reveal-on-click?         true
+                                                           :-reveal-on-click-duration :infinite
+                                                           :-placement                :right})) :info]])}
 
                {:label   "With custom styled span"
                 :example (example2 [:span
@@ -308,9 +376,8 @@
                                          :pi--1em
                                          :pb--0.25em)
                                      (tooltip-attrs {:-text      "My tooltip text"
-                                                     :-placement "block-start center"}))
-                                    "Hover me to reveal tooltip"])}
-               ]}
+                                                     :-placement :top}))
+                                    "Hover me to reveal tooltip"])}]}
 
    {:fn       icon
     :meta     #'icon

@@ -88,6 +88,9 @@
    :--tooltip-arrow-depth                    :5px
    :--tooltip-arrow-x-offset                 :7px
    :--tooltip-arrow-y-offset                 :2px
+   :--_tooltip-arrow-border-trans            "var(--tooltip-arrow-depth) solid transparent"
+   :--_tooltip-arrow-border                  "var(--tooltip-arrow-depth) solid var(--tooltip-background-color)"
+   :--_tooltip-arrow-border-inverse          "var(--tooltip-arrow-depth) solid var(--tooltip-background-color-inverse)"
    :--tooltip-padding-inline                 :1.25em
    :--tooltip-padding-block                  :0.65em
    :--tooltip-border-radius                  :0.5rem

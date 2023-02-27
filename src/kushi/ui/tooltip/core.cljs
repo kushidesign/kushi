@@ -41,7 +41,8 @@
    :hover:before:transition-delay           :$tooltip-transition-delay
 
    :focus-visible:after:opacity             1
-   :focus-visible:before:opacity            1 })
+   :focus-visible:before:opacity            1
+   :transition                              :color:200ms:linear})
 
 (defclass kushi-pseudo-tooltip-hidden
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
@@ -59,38 +60,42 @@
 
 (defclass kushi-pseudo-tooltip-right-pointing-arrow
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  {:before:border-left   "var(--tooltip-arrow-depth) solid var(--tooltip-background-color)"
-   :before:border-top    [[:$tooltip-arrow-depth :solid :transparent]]
-   :before:border-bottom [[:$tooltip-arrow-depth :solid :transparent]]
-   :before:content       "\" \""})
+  {:before:border-left      :$_tooltip-arrow-border
+   :dark:before:border-left :$_tooltip-arrow-border-inverse
+   :before:border-top       :$_tooltip-arrow-border-trans
+   :before:border-bottom    :$_tooltip-arrow-border-trans
+   :before:content          "\" \""})
 
 (defclass kushi-pseudo-tooltip-left-pointing-arrow
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  {:before:border-right  "var(--tooltip-arrow-depth) solid var(--tooltip-background-color)"
-   :before:border-top    [[:$tooltip-arrow-depth :solid :transparent]]
-   :before:border-bottom [[:$tooltip-arrow-depth :solid :transparent]]
-   :before:content       "\" \""})
+  {:before:border-right      :$_tooltip-arrow-border
+   :dark:before:border-right :$_tooltip-arrow-border-inverse
+   :before:border-top        :$_tooltip-arrow-border-trans
+   :before:border-bottom     :$_tooltip-arrow-border-trans
+   :before:content           "\" \""})
 
 (defclass kushi-pseudo-tooltip-down-pointing-arrow
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  {:before:border-top "var(--tooltip-arrow-depth) solid var(--tooltip-background-color)"
-   :before:border-left [[:$tooltip-arrow-depth :solid :transparent]]
-   :before:border-right [[:$tooltip-arrow-depth :solid :transparent]]
-   :before:content "\" \""})
+  {:before:border-top      :$_tooltip-arrow-border
+   :dark:before:border-top :$_tooltip-arrow-border-inverse
+   :before:border-left     :$_tooltip-arrow-border-trans
+   :before:border-right    :$_tooltip-arrow-border-trans
+   :before:content         "\" \""})
 
 (defclass kushi-pseudo-tooltip-up-pointing-arrow
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  {:before:border-bottom "var(--tooltip-arrow-depth) solid var(--tooltip-background-color)"
-   :before:border-left   [[:$tooltip-arrow-depth :solid :transparent]]
-   :before:border-right  [[:$tooltip-arrow-depth :solid :transparent]]
-   :before:content       "\" \""})
+  {:before:border-bottom      :$_tooltip-arrow-border
+   :dark:before:border-bottom :$_tooltip-arrow-border-inverse
+   :before:border-left        :$_tooltip-arrow-border-trans
+   :before:border-right       :$_tooltip-arrow-border-trans
+   :before:content            "\" \""})
 
 
 (defclass kushi-pseudo-tooltip-tlc
   {:after:beer      0
    :after:top       :0%
    :after:left      :0%
-   :after:transform "translate(calc(-100% - calc(var(--tooltip-offset) * 0.71) - var(--tooltip-arrow-depth)), calc(-100% - calc(var(--tooltip-offset) * 0.71) - var(--tooltip-arrow-depth)))"
+   :after:transform "translate(calc(-100% - calc(var(--tooltip-offset) * 0.71)), calc(-100% - calc(var(--tooltip-offset) * 0.71)))"
    :before:content  "\"\""})
 
 (defclass kushi-pseudo-tooltip-tl
@@ -121,7 +126,7 @@
   {:after:besr      0
    :after:top       :0%
    :after:left      :100%
-   :after:transform "translate(calc(0% + calc(var(--tooltip-offset) * 0.71) + var(--tooltip-arrow-depth)), calc(-100% - calc(var(--tooltip-offset) * 0.71) - var(--tooltip-arrow-depth)))"
+   :after:transform "translate(calc(0% + calc(var(--tooltip-offset) * 0.71)), calc(-100% - calc(var(--tooltip-offset) * 0.71)))"
    :before:content  "\"\""})
 
 (defclass kushi-pseudo-tooltip-rt
@@ -152,7 +157,7 @@
   {:after:bssr      0
    :after:top       :100%
    :after:left      :100%
-   :after:transform "translate(calc(0% + calc(var(--tooltip-offset) * 0.71) + var(--tooltip-arrow-depth)), calc(0% + calc(var(--tooltip-offset) * 0.71) + var(--tooltip-arrow-depth)))"
+   :after:transform "translate(calc(0% + calc(var(--tooltip-offset) * 0.71)), calc(0% + calc(var(--tooltip-offset) * 0.71)))"
    :before:content  "\"\""})
 
 (defclass kushi-pseudo-tooltip-br
@@ -185,7 +190,7 @@
   {:after:bser      0
    :after:top       :100%
    :after:left      :0%
-   :after:transform "translate(calc(-100% - calc(var(--tooltip-offset) * 0.71) - var(--tooltip-arrow-depth)), calc(0% + calc(var(--tooltip-offset) * 0.71) + var(--tooltip-arrow-depth)))"
+   :after:transform "translate(calc(-100% - calc(var(--tooltip-offset) * 0.71)), calc(0% + calc(var(--tooltip-offset) * 0.71)))"
    :before:content  "\"\""})
 
 (defclass kushi-pseudo-tooltip-lb
@@ -248,43 +253,7 @@
       [p1 p2 corner]
       ["block-start"])))
 
-(defn- translate-with-calc
-  [{:keys [coord offset corner? arrow? arrow-offset]}]
-  (let [offset    (name offset)
-        coord-pct (str coord "%")
-        pct       (if arrow-offset
-                    (str " " coord-pct arrow-offset)
-                    coord-pct)
-        ret       (if (= offset "0")
-                    pct
-                    (let [tt* "var(--tooltip-offset)"
-                          tt  (if corner? (str "calc(" tt* " * 0.71)") tt*)]
-                      (str "calc("
-                           pct
-                           " "
-                           offset
-                           " "
-                           tt
-                           (when-not arrow? (str " " offset " " "var(--tooltip-arrow-depth)"))
-                           ")")))]
-    ret))
 
-(defn- translate-with-offset
-  [{:keys [tt-x tt-y offset-x offset-y placement-kw arrow?] :as m}]
-  (let [opts         (select-keys m [:corner? :arrow?])
-        arrow-offset (when (and arrow? (= :tl placement-kw))
-                       " + 10px ")
-        x            (translate-with-calc (merge opts {:coord        tt-x
-                                                       :offset       offset-x
-                                                       :arrow-offset arrow-offset}))
-        y            (translate-with-calc (merge opts {:coord  tt-y
-                                                       :offset offset-y}))
-        ret           (str "translate(" x ", " y ")")]
-    ret))
-
-        ;; (case placement-kw
-        ;;                :tl " + 1rem + 5px "
-        ;;                nil)
 (def placement-by-kw
   {:tlc [0 0 -100 -100 :- :-]
    :tl  [0 0 0 -100 :0 :-]
@@ -292,7 +261,7 @@
    :tr  [0 100 -100 -100 :0 :-]
    :trc [0 100 0 -100 :+ :-]
 
-   :rtc [0 100 0 -100 :+ :+]
+   :rtc [0 100 0 -100 :+ :-]
    :rt  [0 100 0 0 :+ :0]
    :r   [50 100 0 -50 :+ :0]
    :rb  [100 100 0 -100 :+ :0]
@@ -310,7 +279,6 @@
    :lt  [0 0 -100 0 :- :0]
    :ltc [0 0 -100 -100 :- :-]})
 
-
 (def by-logic
   (let [m {"block-start"  "t"
            "inline-end"   "r"
@@ -321,8 +289,6 @@
            false        nil}]
     {:ltr m
      :rtl (assoc m "inline-end" "l" "inline-start" "r")}))
-
-
 
 (defn logical-placement
   [{:keys [ltr? placement]}]
@@ -340,11 +306,21 @@
                             keyword)]
    ret))
 
+(def corner-placements
+  {:rtc                 :trc
+   :right-top-corner    :trc
+   :rbc                 :brc
+   :right-bottom-corner :brc
+   :lbc                 :blc
+   :left-bottom-corner  :blc
+   :ltc                 :ltc
+   :left-top-corner     :ltc})
 
 (defn- user-placement
   "Expects a string"
   [s]
-  (let [kw (some-> s name keyword)]
+  (let [kw* (some-> s name keyword)
+        kw (or (kw* corner-placements) kw*)]
     (or
      (when (contains? placement-by-kw kw) kw)
      (let [parts (string/split s #"-")]
@@ -359,21 +335,15 @@
                                        "ltr")
                          :placement s}))))
 
-
-
-
 (defn tooltip-attrs
   {:desc ["Tooltips provide additional context when hovering or clicking on an element."
-          :br
-          :br
-          ;; "Tooltips in Kushi have no arrow indicator and are placed automatically depending on the parent element's relative postition in the viewport."
-          "Tooltips in Kushi have no arrow indicator."
           :br
           :br
           "Specifying placement in various ways can be done with the `:-placement` option."
           :br
           :br
           "Tooltips can be styled via the following tokens in your theme:"
+          ;; TODO add documentation for each token
           :br
           "`:--tooltip-arrow-depth`"
           :br
@@ -423,31 +393,7 @@
             :type    :keyword
             :default :top
             :desc    [
-                      "Accepts a string of up to 3 logical properties, separated by spaces:"
-                      :br
-                      ;; "`\"block-auto\"`"
-                      ;; :br
-                      ;; "`\"block-auto inline-end\"`"
-                      ;; :br
-                      ;; "`\"block-auto inline-end corner\"`"
-                      ;; :br
-                      "`\"inline-end block-start\"`"
-                      :br
-                      "`\"inline-end block-start corner\"`"
-                      :br
-                      "`\"inline-start center\"`"
-                      :br
-                      "`\"inline-end center\"`"
-                      :br
-                      "`\"block-start center\"`"
-                      :br
-                      "`\"block-end center\"`"
-                      :br
-                      "`\"block-end inline-start\"`"
-                      :br
-                      :br
-                      "If you don't care about the tooltip placement respecting writing direction and/or document flow, you can also use single keywords specifying exact placement:"
-                      ;; "You can use single keywords to specify the exact placement of the tooltip:"
+                      "You can use single keywords to specify the exact placement of the tooltip:"
                       :br
                       "`:top-left-corner`"
                       :br
@@ -491,7 +437,24 @@
                       "`:rb`"
                       :br
                       "`:rbc`"
-                      ]}
+                      :br
+                      :br
+                      "If you care about the tooltip placement respecting writing direction and/or document flow, you can use a string of up to 3 logical properties, separated by spaces:"
+                      :br
+                      "`\"inline-end block-start\"`"
+                      :br
+                      "`\"inline-end block-start corner\"`"
+                      :br
+                      "`\"inline-start center\"`"
+                      :br
+                      "`\"inline-end center\"`"
+                      :br
+                      "`\"block-start center\"`"
+                      :br
+                      "`\"block-end center\"`"
+                      :br
+                      "`\"block-end inline-start\"`"
+                      :br]}
            {:name    arrow?
             :type    :boolean
             :default true
@@ -501,7 +464,7 @@
             :default false
             :desc    "Setting to true will reveal the tooltip on click."}
            {:name    reveal-on-click-duration
-            :type    :integer
+            :type    #{integer :infinite}
             :default 2000
             :desc    "When `:-reveal-on-click?` is true, this milliseconds value will control the duration of the tooltip's appearance."}]}
   [{text                     :-text
@@ -540,8 +503,7 @@
         (sx :.kushi-pseudo-tooltip-hidden
             :.kushi-pseudo-tooltip
             [:after:content text]
-            {:aria-description text
-             :class            [placement-class dir-class]
+            {:class            [placement-class dir-class]
              :role             :button
              :on-click         (fn [e]
                                  (let [node     (-> e .-currentTarget)
@@ -550,10 +512,10 @@
                                                   reveal-on-click-duration
                                                   (token->ms :--tooltip-reveal-on-click-duration))]
                                    (dom/toggle-class node class)
-                                   (js/setTimeout #(dom/remove-class node class)
-                                                  duration)))})
+                                   (when-not (= reveal-on-click-duration :infinite)
+                                    (js/setTimeout #(dom/remove-class node class)
+                                                   duration))))})
         (sx :.kushi-pseudo-tooltip
-            {:aria-description text
-             :class            [placement-class dir-class]
+            {:class            [placement-class dir-class]
              :style            {:after:content        text
                                 :hover:before:display (when (false? arrow?) :none)}})))))
