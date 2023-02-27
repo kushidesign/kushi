@@ -6,42 +6,42 @@
 
 (defclass kushi-pseudo-tooltip
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  {:after:z-index        9999
-   :after:display        :none
-   :hover:after:display  :block
-   :after:width          :auto
-   :after:height         :fit-content
-   :after:position       :absolute
-   :after:text-transform :$tooltip-text-transform
-   :after:color          :$tooltip-color
-   :dark:after:color     :$tooltip-color-inverse
-   :after:bgc            :$tooltip-background-color
-   :dark:after:bgc       :$tooltip-background-color-inverse
-   :after:padding-block  :$tooltip-padding-block
-   :after:padding-inline :$tooltip-padding-inline
-   :after:border-radius  :$tooltip-border-radius
-   :after:font-size      :$tooltip-font-size
-   :after:font-weight    :$tooltip-font-weight
-   :after:white-space    :pre
+  {:after:z-index                           9999
+   :after:display                           :none
+   :hover:after:display                     :block
+   :after:width                             :auto
+   :after:height                            :fit-content
+   :after:position                          :absolute
+   :after:text-transform                    :$tooltip-text-transform
+   :after:color                             :$tooltip-color
+   :dark:after:color                        :$tooltip-color-inverse
+   :after:bgc                               :$tooltip-background-color
+   :dark:after:bgc                          :$tooltip-background-color-inverse
+   :after:padding-block                     :$tooltip-padding-block
+   :after:padding-inline                    :$tooltip-padding-inline
+   :after:border-radius                     :$tooltip-border-radius
+   :after:font-size                         :$tooltip-font-size
+   :after:font-weight                       :$tooltip-font-weight
+   :after:white-space                       :pre
 
-   :hover:after:transition-property        :opacity
-   :hover:after:transition-duration        :$tooltip-transition-duration
-   :hover:after:transition-timing-function :linear
-   :hover:after:transition-delay           :$tooltip-transition-delay
+   :hover:after:transition-property         :opacity
+   :hover:after:transition-duration         :$tooltip-transition-duration
+   :hover:after:transition-timing-function  :linear
+   :hover:after:transition-delay            :$tooltip-transition-delay
 
-   :before:display        :none
-   :hover:before:display  :block
-   :before:position       :absolute
-   :before:z-index        :9998
-   :before:w              0
-   :before:h              0
+   :before:display                          :none
+   :hover:before:display                    :block
+   :before:position                         :absolute
+   :before:z-index                          :9998
+   :before:w                                0
+   :before:h                                0
    :hover:before:transition-property        :opacity
    :hover:before:transition-duration        :$tooltip-transition-duration
    :hover:before:transition-timing-function :linear
    :hover:before:transition-delay           :$tooltip-transition-delay
 
-   :focus-visible:after:opacity        1
-   :focus-visible:before:opacity       1 })
+   :focus-visible:after:opacity             1
+   :focus-visible:before:opacity            1 })
 
 (defclass kushi-pseudo-tooltip-hidden
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
