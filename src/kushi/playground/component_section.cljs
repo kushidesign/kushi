@@ -179,6 +179,8 @@
 
 (defn component-section
   [{m*            :meta
+    demo          :demo
+    demo-attrs    :demo-attrs
     desc          :desc
     refers        :refers
     section-title :title
@@ -243,6 +245,13 @@
                  :inset-block-start--0
                  :inset-inline-end--0
                  {:on-click #(dom/copy-to-clipboard text)})]])]]
+
+       (when demo
+         [subsection
+          (merge-attrs
+           (sx :.description {:-title [subsection-title title "Demo"]})
+           demo-attrs)
+          [demo]])
 
        [subsection
         (sx :.description {:-title [subsection-title title "Description"]})
