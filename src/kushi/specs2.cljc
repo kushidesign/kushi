@@ -164,6 +164,13 @@
                   (s/valid? ::dot-kw x))
                 %)))
 
+(s/def ::css-quoted-string-value
+  (s/and string?
+         #(re-find-with css-quoted-string-value-re %)))
+
+(s/def ::pseudo-element-content
+  #(s/valid? ::css-quoted-string-value %))
+
 ;; New!
 (s/def ::dot-kw-classname
   (s/and keyword?
@@ -265,26 +272,32 @@
   (s/or :number                   number?
         :runtime-binding          symbol?
         :css-val-alphanumeric     ::css-val-alphanumeric
-        :cssvar-name              ::cssvar-name))
+        :cssvar-name              ::cssvar-name
+        :css-quoted-string-value  ::css-quoted-string-value))
 
 (s/def ::css-value-scalar-no-bindings
   (s/or :number                   number?
         :css-val-alphanumeric     ::css-val-alphanumeric
         :cssvar-name ::cssvar-name))
 
-(s/def ::pseudo-element-content
+
+;; ::list-of-quoted-strings is for css property values such as `grid-template-areas`
+;; below example of :grid-template-areas for a 3x3 grid with named grid areas
+;; {:grid-template-areas "\"a1 a2 a3\" \"b1 b2 b3\" \"c1 c2 c3\""}
+(s/def ::list-of-quoted-strings
   (s/and string?
-         #(re-find #"^\"[^\"]*\"$" %)))
+         #(re-find #"^\"[^\"]*\"(?: \"[^\"]*\")*$" %)))
 
 (s/def ::style-tuple-value
-  (s/or :css-value-scalar       ::css-value-scalar
-        :cssfn-list             ::cssfn-list
-        :ccs-alternation-vector ::ccs-alternation-vector
-        :css-shorthand-vector   ::css-shorthand-vector
-        :conditional-sexp       ::conditional-sexp
-        :str-sexp               ::str-sexp
-        :pseudo-element-content ::pseudo-element-content
-        :font-variation-settings ::font-variations-settings))
+  (s/or :css-value-scalar        ::css-value-scalar
+        :cssfn-list              ::cssfn-list
+        :ccs-alternation-vector  ::ccs-alternation-vector
+        :css-shorthand-vector    ::css-shorthand-vector
+        :conditional-sexp        ::conditional-sexp
+        :str-sexp                ::str-sexp
+        :pseudo-element-content  ::pseudo-element-content
+        :font-variation-settings ::font-variations-settings
+        :list-of-quoted-strings  ::list-of-quoted-strings))
 
 (s/def ::style-tuple-value-defclass
   (s/or :css-value-scalar-no-bindings ::css-value-scalar-no-bindings
@@ -292,7 +305,8 @@
         :ccs-alternation-vector       ::ccs-alternation-vector
         :css-shorthand-vector         ::css-shorthand-vector
         :pseudo-element-content       ::pseudo-element-content
-        :font-variation-settings      ::font-variations-settings))
+        :font-variation-settings      ::font-variations-settings
+        :list-of-quoted-strings       ::list-of-quoted-strings))
 
 (s/def ::style-tuple-with-css-var
   (s/tuple ::style-tuple-prop ::cssvar-name))
