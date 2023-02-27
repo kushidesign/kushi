@@ -83,18 +83,23 @@
    ;; Tags
    :--tag-border-width                       :1px
 
-    ;; Tooltips
-    ;; ------------------------------------------------------
+   ;; Tooltips
+   ;; ------------------------------------------------------
+   :--tooltip-arrow-depth                    :5px
+   :--tooltip-arrow-x-offset                 :7px
+   :--tooltip-arrow-y-offset                 :2px
    :--tooltip-padding-inline                 :1.25em
-   :--tooltip-padding-block                  :0.55em
+   :--tooltip-padding-block                  :0.65em
    :--tooltip-border-radius                  :0.5rem
    :--tooltip-font-size                      :--text-xsmall
+   :--tooltip-font-weight                    :--text-wee-bold
    :--tooltip-color                          :white
-   :--tooltip-background-color               :black
    :--tooltip-color-inverse                  :black
+   :--tooltip-background-color               :black
    :--tooltip-background-color-inverse       :white
    :--tooltip-text-transform                 :none
-   :--tooltip-offset                         :6px
+   :--tooltip-offset                         :10px
+   :--tooltip-reveal-on-click-duration       :2000ms
 
     ;; Material UI icons
     ;; ------------------------------------------------------
