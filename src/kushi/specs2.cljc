@@ -27,6 +27,7 @@
 (def css-pseudo-element-re (str "(?:" (string/join "|" (map name defs/pseudo-elements)) ")(?:\\(.*\\))?"))
 (def css-pseudo-class-re (str "(?:" (string/join "|" (map name defs/pseudo-classes*)) ")(?:\\(.*\\))?"))
 (def css-pseudo-element-followed-by-pseudo-class-re (str css-pseudo-element-re ":" css-pseudo-class-re))
+(def css-quoted-string-value-re "\"[^\"]*\"")
 (def cssvar-name-base-re "[-_a-zA-Z0-9]+")
 (def cssvar-name-re (str "\\$" cssvar-name-base-re))
 (def cssvar-in-css-re (str "var\\((--" cssvar-name-base-re ")\\)"))
