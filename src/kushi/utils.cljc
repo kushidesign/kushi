@@ -23,7 +23,9 @@
 
 (defn token? [x]
   (when (nameable? x)
-    (some-> x name (string/starts-with? "--"))))
+    (let [nm (name x)]
+      (or (string/starts-with? nm "--")
+          (string/starts-with? nm "$")))))
 
 (defn cssfn-string
   "(cssfn-string \"hsla\" \"100deg\" \"50%\" \"33%\" \"0.8\")
@@ -35,8 +37,8 @@
        ")"))
 
 (defn extract-cssvar-name
-  "(extract-cssvar-name \"var(--red500)\")
-   => \"--red500\""
+  "(extract-cssvar-name \"var(--red-500)\")
+   => \"--red-500\""
   [%]
   (when-let [[_ nm] (re-find (re-pattern (str "^"
                                               specs2/cssvar-in-css-re
@@ -46,7 +48,9 @@
 
 (defn cssvar-dollar-syntax->double-dash
   [x]
-  (string/replace (name x) #"^\$" "--"))
+  (if (nameable? x)
+    (string/replace (name x) #"^\$" "--")
+    x))
 
 (defn s->cssvar
   ([x] (s->cssvar x nil))
@@ -56,7 +60,7 @@
 
 (defn maybe-wrap-css-var [x]
   (if (token? x)
-    (str "var(" (name x) ")")
+    (str "var(" (cssvar-dollar-syntax->double-dash x) ")")
     x))
 
 (declare replace-nth)
