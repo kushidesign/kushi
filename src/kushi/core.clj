@@ -3,6 +3,7 @@
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
+   [clojure.set :as set]
    [kushi.styles :refer [all-style-tuples]]
    [kushi.config :as config :refer [user-config]]
    [kushi.shorthand :as shorthand]
@@ -10,7 +11,7 @@
    [kushi.state2 :as state2]
    [kushi.specs2 :as specs2]
    [kushi.stylesheet :as stylesheet]
-   [kushi.typography :refer [sysfont add-font-face*]]
+   [kushi.typography :refer [add-font-face*]]
    [kushi.args :as args]
    [kushi.ui.theme :as theme]
    [kushi.utils :as util]))
