@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.args
   (:require
+   [clojure.spec.alpha :as s]
    [kushi.specs2 :as specs2]
    [kushi.state2 :as state2]
    [kushi.stylesheet :as stylesheet]
@@ -24,6 +25,46 @@
                          keyword)]
           {k v})))))
 
+(defn- trailing-map [styles pred]
+  (if (s/valid? pred (last styles))
+    [(drop-last styles) (last styles)]
+    [styles nil]))
+
+(defn- pre-clean-sx-args [args]
+  (let [[nm styles]            (if (symbol? (first args))
+                                 [(first args) (rest args)]
+                                 [nil args])
+        [styles tracing]       (trailing-map styles ::specs2/kushi-trace)
+        [styles attrs]         (trailing-map styles map?)
+        stylemap               (or (some-> attrs :style) {})
+        attrs                  (dissoc attrs :style)
+        styles                 (map-indexed (fn [idx %]
+                                        (if (s/valid? ::specs2/valid-sx-arg %)
+                                          %
+                                          {:bad-value %
+                                           :path      [idx]}))
+                                      styles)
+        [bad-styles
+         styles]               (util/partition-by-spec ::specs2/bad-sx-value styles)
+        [stylemap-tuples
+         bad-stylemap-entries] (util/partition-by-pred
+                                (fn [kv]
+                                  (or (s/valid? ::specs2/style-tuple kv)
+                                      (s/valid? ::specs2/cssvar-tuple kv)))
+                                stylemap)
+        stylemap               (into {} stylemap-tuples)]
+
+{:nm                   nm
+ :tracing              tracing
+ :attrs                attrs
+ :styles               styles
+ :stylemap             stylemap
+ :bad-styles           bad-styles
+ :bad-stylemap-entries bad-stylemap-entries
+ :stylemap-tuples      stylemap-tuples
+ :args-pre-cleaned     (remove nil? (concat (when nm [nm]) styles (when (seq stylemap) [stylemap])))}))
+
+
 (defn clean-args
   [{:keys [args :kushi/process form-meta] :as m}]
   (let [[validation-spec conformance-spec]
@@ -32,9 +73,10 @@
           [::specs2/sx-args ::specs2/sx-args-conformance])
 
         bad
-        (problems/problems args
-                           validation-spec
-                           conformance-spec)
+        (problems/problems (merge m
+                                  (keyed args
+                                         validation-spec
+                                         conformance-spec)))
 
         {:keys [all-style-tuples
                 defclass-style-tuples
@@ -47,7 +89,6 @@
                                             conformance-spec)
                                      m
                                      bad))
-
         ;; dev debuggging
         data-sx-attr
         (data-sx-attr form-meta)
