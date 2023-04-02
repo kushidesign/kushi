@@ -6,17 +6,24 @@
          vals# (list ~@ks)]
      (zipmap keys# vals#)))
 
-(defmacro example2 [coll]
-  (let [
-        ;; argslist* (into [] args)
-        ;; f (when (and (vector? (first argslist*))
-        ;;              (= 1 (count argslist*))
-        ;;              (symbol? (ffirst argslist*)))
-        ;;     (ffirst argslist*))
-        ;; argslist (if f (into [] (rest (first argslist*))) argslist*)
-        ]
-    `{:evaled ~coll
-      :quoted (quote ~coll)}))
+(defmacro feature
+  [sym m]
+  (let [examples (mapv (fn [x] (assoc x :example (list 'example2 (:example x)))) (:examples m))
+        m        (assoc m
+                        :examples
+                        examples
+                        :meta
+                        (list 'var sym)
+                        :fn
+                        sym)]
+    m
+    `~m))
+
+(defmacro example2
+  [coll]
+  `{:evaled ~coll
+    :quoted (quote ~coll)})
+
 
 (defmacro example [& args]
   (let [argslist* (into [] args)
