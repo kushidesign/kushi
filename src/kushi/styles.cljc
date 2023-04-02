@@ -90,12 +90,27 @@
 ;;;; Custom kushi css functions end
 
 
+(defn css-var-syntax [& args]
+  (str "var(" (string/join ", " (remove nil? args)) ")"))
+
 (defn- normalize-css-custom-propery
   "hi"
   [x]
-  (if (s/valid? ::specs2/cssvar-name x)
-    (str "var(" (util/cssvar-dollar-syntax->double-dash x) ")")
-    x))
+  (let [f      util/cssvar-dollar-syntax->double-dash
+        valid? (partial (fn [spec x] (s/valid? spec x)) ::specs2/cssvar-name)]
+    (if (valid? x)
+      (if (re-find #"\|" (name x))
+        (let [[a b c] (string/split (name x) #"\|")
+              c       (when c (if (valid? c)
+                                (css-var-syntax (f c))
+                                c))
+              b       (when b (if (valid? b)
+                                (css-var-syntax (f b) c)
+                                b))
+              ret     (css-var-syntax (f a) b)]
+          ret)
+        (str "var(" (f x) ")"))
+      x)))
 
 (defn css-var-string [s x css-vars]
   (let [css-var-string  (str "var(--" s ")")]
@@ -149,7 +164,7 @@
            v))
        coll))
 
-(defn- args-by-conformance
+(defn args-by-conformance
   "Expects a coll that will conform to conformance spec.
    If it does not conform, there is a problem with the validation spec."
   [coll
@@ -158,7 +173,7 @@
     (println
      (str "[!Warning] kushi.styles/args-by-conformance\n"
           "There is a problem with either the validation spec or the conformance spec.\n"
-          "This is a bug internal to Kushi, please report.")))
+          "This is a bug internal to Kushi, feel free to file an issue if you are feeling generous.")))
   (let [conformed (s/conform conformance-spec coll)
         grouped** (group-by #(first %) conformed)
         grouped*  (map (fn [[k v]] [k (map second v)]) grouped**)
@@ -251,10 +266,12 @@
     ret))
 
 (defn style-tuples*
+  "This is where bad args get cleaned out"
   [{:keys [args
            conformance-spec
            bad-args-vals
            bad-stylemap
+           bad-entries
            :kushi/process]
     :as   m*}]
 
@@ -268,15 +285,22 @@
         (when (map? (last args)) (last args))
 
         clean-stylemap*
-        (if-let [problem-keys (keys bad-stylemap)]
-          (when attrs*
-            (apply dissoc (cons (:style attrs*) problem-keys)))
-          (some-> attrs* :style))
+        (if shared-class?
+          (when (state2/tracing?)
+            #_(println (if (and bad-stylemap bad-entries)
+                       (apply dissoc
+                              bad-stylemap
+                              (->> bad-entries (into {}) keys))
+                       (when (map? (last args)) (last args)))))
+          (if-let [problem-keys (keys bad-stylemap)]
+            (do
+                (when attrs*
+                  (apply dissoc (cons (:style attrs*) problem-keys))))
+            (some-> attrs* :style)))
 
         clean
         (if clean-stylemap*
-          (util/replace-last (assoc attrs* :style clean-stylemap*)
-                             clean*)
+          (util/replace-last (assoc attrs* :style clean-stylemap*) clean*)
           clean*)
 
         {:keys                 [assigned-class
@@ -288,6 +312,8 @@
          tokenized-cssvars     :cssvar-tokenized
          cssvar-tuples         :cssvar-tuple
          :as                   by-kind}
+
+
         (args-by-conformance clean conformance-spec)
 
         clean-stylemap
@@ -310,7 +336,7 @@
           (when (seq coll)
             (map #(let [s (name %)]
                     ;; TODO abstract this
-                    (if (re-find #"^.*[^-]--:--[^-]+.+$" s)
+                    (if (re-find #"^.*[^-]--:$[^-]+.+$" s)
                       (string/split (name %) #"--:")
                       (string/split (name %) #"--" 2)))
                  coll)))
