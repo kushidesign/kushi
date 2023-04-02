@@ -2,7 +2,7 @@
   (:require
    [kushi.core :refer (sx)]
    [kushi.ui.icon.core :refer (icon)]
-   [kushi.playground.util :refer-macros (example2)]))
+   [kushi.playground.util :refer-macros (feature)]))
 
 #_(def icons
   [
@@ -63,189 +63,275 @@
    "folder"
    "folder*"])
 
-;; (pprint icon-examples*)
 
 (def icon-examples
-  [{:label   [icon (sx :.xlarge {:title :auto-awesome}) "auto-awesome"],
-    :example (example2 [icon "auto-awesome"])}
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :auto-awesome}) :auto-awesome],
-    :example (example2 [icon (sx {:-icon-filled? true}) :auto-awesome])}
+  (feature
+   icon
+   {:title    "Icons"
+    :stage    {:style {:min-height :135px}}
+    :variants [:size-expanded]
+    :defaults {:size-expanded :xxxlarge
+               :examples      "auto-awesome"}
+    :examples [
+               {:radio-label [icon "auto-awesome"],
+                :label       "auto-awesome"
+                :example     [icon "auto-awesome"]}
 
-   {:label   [icon (sx :.xlarge {:title :settings}) :settings],
-    :example (example2 [icon :settings])}
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :settings}) :settings],
-    :example (example2 [icon (sx {:-icon-filled? true}) :settings])}
+               {:radio-label [icon {:-icon-filled? true} :auto-awesome],
+                :label       "auto-awesome-filled"
+                :example     [icon (sx {:-icon-filled? true}) :auto-awesome]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :search}) :search],
-    :example (example2 [icon (sx {:-icon-filled? true}) :search])}
+               {:radio-label [icon :settings],
+                :label       "settings"
+                :example     [icon :settings]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :filter-alt}) :filter-alt],
-    :example (example2 [icon (sx {:-icon-filled? true}) :filter-alt])}
-   {:label   [icon (sx :.xlarge {:title :filter-alt}) :filter-alt],
-    :example (example2 [icon :filter-alt])}
+               {:radio-label [icon {:-icon-filled? true} :settings]
+                :label       "settings-filled"
+                :example     [icon (sx {:-icon-filled? true}) :settings]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :cloud-upload}) :cloud-upload],
-    :example (example2 [icon (sx {:-icon-filled? true}) :cloud-upload])}
-   {:label   [icon (sx :.xlarge {:title :cloud-upload}) :cloud-upload],
-    :example (example2 [icon :cloud-upload])}
+               {:radio-label [icon {:-icon-filled? true} :search]
+                :label       "search-filled"
+                :example     [icon (sx {:-icon-filled? true}) :search]}
 
-   {:label   [icon (sx :.xlarge {:title :download}) :download],
-    :example (example2 [icon :download])}
+               {:radio-label [icon {:-icon-filled? true} :filter-alt]
+                :label       "filter-alt-filled"
+                :example     [icon (sx {:-icon-filled? true}) :filter-alt]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :playlist-add}) :playlist-add],
-    :example (example2 [icon (sx {:-icon-filled? true}) :playlist-add])}
+               {:radio-label [icon :filter-alt]
+                :label       "filter-alt"
+                :example     [icon :filter-alt]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :expand}) :expand],
-    :example (example2 [icon (sx {:-icon-filled? true}) :expand])}
+               {:radio-label [icon {:-icon-filled? true} :cloud-upload]
+                :label       "cloud-upload-filled"
+                :example     [icon (sx {:-icon-filled? true}) :cloud-upload]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :compress}) :compress],
-    :example (example2 [icon (sx {:-icon-filled? true}) :compress])}
+               {:radio-label [icon :cloud-upload]
+                :label       "cloud-upload"
+                :example     [icon :cloud-upload]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :arrow-back}) :arrow-back],
-    :example (example2 [icon (sx {:-icon-filled? true}) :arrow-back])}
+               {:radio-label [icon :download]
+                :label       "download"
+                :example     [icon :download]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :arrow-forward}) :arrow-forward],
-    :example (example2 [icon (sx {:-icon-filled? true}) :arrow-forward])}
+               {:radio-label [icon {:-icon-filled? true} :playlist-add]
+                :label       "playlist-add-filled"
+                :example     [icon (sx {:-icon-filled? true}) :playlist-add]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :sort}) :sort],
-    :example (example2 [icon (sx {:-icon-filled? true}) :sort])}
+               {:radio-label [icon {:-icon-filled? true} :expand]
+                :label       "expanded-filled"
+                :example     [icon (sx {:-icon-filled? true}) :expand]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :clear}) :clear],
-    :example (example2 [icon (sx {:-icon-filled? true}) :clear])}
+               {:radio-label [icon {:-icon-filled? true} :compress]
+                :label       "compress-filled"
+                :example     [icon (sx {:-icon-filled? true}) :compress]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :delete}) :delete],
-    :example (example2 [icon (sx {:-icon-filled? true}) :delete])}
-   {:label   [icon (sx :.xlarge {:title :delete}) :delete],
-    :example (example2 [icon :delete])}
+               {:radio-label [icon {:-icon-filled? true} :arrow-back],
+                :label       "arrow-back-filled"
+                :example     [icon (sx {:-icon-filled? true}) :arrow-back]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :cancel}) :cancel],
-    :example (example2 [icon (sx {:-icon-filled? true}) :cancel])}
-   {:label   [icon (sx :.xlarge {:title :cancel}) :cancel],
-    :example (example2 [icon :cancel])}
+               {:radio-label [icon {:-icon-filled? true} :arrow-forward],
+                :label       "arrow-forward-filled"
+                :example     [icon (sx {:-icon-filled? true}) :arrow-forward]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :auto-awesome-motion}) :auto-awesome-motion],
-    :example (example2 [icon (sx {:-icon-filled? true}) :auto-awesome-motion])}
-   {:label   [icon (sx :.xlarge {:title :auto-awesome-motion}) :auto-awesome-motion],
-    :example (example2 [icon :auto-awesome-motion])}
+               {:radio-label [icon {:-icon-filled? true} :sort]
+                :label       "sort-filled"
+                :example     [icon (sx {:-icon-filled? true}) :sort]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :keyboard-return}) :keyboard-return],
-    :example (example2 [icon (sx {:-icon-filled? true}) :keyboard-return])}
+               {:radio-label [icon {:-icon-filled? true} :clear],
+                :label       "clear-filled"
+                :example     [icon (sx {:-icon-filled? true}) :clear]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :archive}) :archive],
-    :example (example2 [icon (sx {:-icon-filled? true}) :archive])}
-   {:label   [icon (sx :.xlarge {:title :archive}) :archive],
-    :example (example2 [icon :archive])}
+               {:radio-label [icon {:-icon-filled? true} :delete],
+                :label       "delete-filled"
+                :example     [icon (sx {:-icon-filled? true}) :delete]}
 
-   {:label   [icon (sx :.xlarge {:title :star}) :star],
-    :example (example2 [icon :star])}
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :star-border}) :star-border],
-    :example (example2 [icon (sx {:-icon-filled? true}) :star-border])}
+               {:radio-label [icon {:title :delete} :delete],
+                :label       "delete"
+                :example     [icon :delete]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :check}) :check],
-    :example (example2 [icon (sx {:-icon-filled? true}) :check])}
+               {:radio-label [icon {:-icon-filled? true} :cancel],
+                :label       "cancel-filled"
+                :example     [icon (sx {:-icon-filled? true}) :cancel]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :sell}) :sell],
-    :example (example2 [icon (sx {:-icon-filled? true}) :sell])}
-   {:label   [icon (sx :.xlarge {:title :sell}) :sell],
-    :example (example2 [icon :sell])}
+               {:radio-label [icon :cancel],
+                :label       "cancel"
+                :example     [icon :cancel]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :visibility}) :visibility],
-    :example (example2 [icon (sx {:-icon-filled? true}) :visibility])}
-   {:label   [icon (sx :.xlarge {:title :visibility}) :visibility],
-    :example (example2 [icon :visibility])}
+               {:radio-label [icon {:-icon-filled? true} :auto-awesome-motion],
+                :label       "auto-awesome-motion-filled"
+                :example     [icon (sx {:-icon-filled? true}) :auto-awesome-motion]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :visibility-off}) :visibility-off],
-    :example (example2 [icon (sx {:-icon-filled? true}) :visibility-off])}
-   {:label   [icon (sx :.xlarge {:title :visibility-off}) :visibility-off],
-    :example (example2 [icon :visibility-off])}
+               {:radio-label [icon {:title :auto-awesome-motion} :auto-awesome-motion],
+                :label       "auto-awesome-motion"
+                :example     [icon :auto-awesome-motion]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :find-replace}) :find-replace],
-    :example (example2 [icon (sx {:-icon-filled? true}) :find-replace])}
+               {:radio-label [icon {:-icon-filled? true} :keyboard-return],
+                :label       "keyboard-return"
+                :example     [icon (sx {:-icon-filled? true}) :keyboard-return]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :report-problem}) :report-problem],
-    :example (example2 [icon (sx {:-icon-filled? true}) :report-problem])}
-   {:label   [icon (sx :.xlarge {:title :report-problem}) :report-problem],
-    :example (example2 [icon :report-problem])}
+               {:radio-label [icon {:-icon-filled? true} :archive]
+                :label       "archive-filled"
+                :example     [icon (sx {:-icon-filled? true}) :archive]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :error}) :error],
-    :example (example2 [icon (sx {:-icon-filled? true}) :error])}
-   {:label   [icon (sx :.xlarge {:title :error}) :error],
-    :example (example2 [icon :error])}
+               {:radio-label [icon {:title :archive} :archive]
+                :label       "archive"
+                :example     [icon :archive]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :check-circle}) :check-circle],
-    :example (example2 [icon (sx {:-icon-filled? true}) :check-circle])}
-   {:label   [icon (sx :.xlarge {:title :check-circle}) :check-circle],
-    :example (example2 [icon :check-circle])}
+               {:radio-label [icon {:title :star} :star]
+                :label       "star"
+                :example     [icon :star]}
 
-   {:label   [icon (sx :.xlarge {:title :open-in-new}) :open-in-new],
-    :example (example2 [icon  :open-in-new])}
+               {:radio-label [icon {:-icon-filled? true} :star-border]
+                :label       "star-border-filled"
+                :example     [icon (sx {:-icon-filled? true}) :star-border]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :edit}) :edit],
-    :example (example2 [icon (sx {:-icon-filled? true}) :edit])}
+               {:radio-label [icon {:-icon-filled? true} :check]
+                :label       "check-filled"
+                :example     [icon (sx {:-icon-filled? true}) :check]}
 
-   {:label   [icon (sx :.xlarge {:title :edit}) :edit],
-    :example (example2 [icon :edit])}
+               {:radio-label [icon {:-icon-filled? true} :sell]
+                :label       "sell-filled"
+                :example     [icon (sx {:-icon-filled? true}) :sell]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :favorite}) :favorite],
-    :example (example2 [icon (sx {:-icon-filled? true}) :favorite])}
+               {:radio-label [icon :sell]
+                :label       "sell"
+                :example     [icon :sell]}
 
-   {:label   [icon (sx :.xlarge {:title :favorite}) :favorite],
-    :example (example2 [icon :favorite])}
+               {:radio-label [icon {:-icon-filled? true} :visibility]
+                :label       "visibility-filled"
+                :example     [icon (sx {:-icon-filled? true}) :visibility]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :fingerprint}) :fingerprint],
-    :example (example2 [icon (sx {:-icon-filled? true}) :fingerprint])}
+               {:radio-label [icon {:title :visibility} :visibility]
+                :label       "visibility"
+                :example     [icon :visibility]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :help}) :help],
-    :example (example2 [icon (sx {:-icon-filled? true}) :help])}
-   {:label   [icon (sx :.xlarge {:title :help}) :help],
-    :example (example2 [icon :help])}
+               {:radio-label [icon {:-icon-filled? true} :visibility-off]
+                :label       "visibility-off-filled"
+                :example     [icon (sx {:-icon-filled? true}) :visibility-off]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :info}) :info],
-    :example (example2 [icon (sx {:-icon-filled? true}) :info])}
-   {:label   [icon (sx :.xlarge {:title :info}) :info],
-    :example (example2 [icon :info])}
+               {:radio-label [icon :visibility-off]
+                :label       "visibility-off"
+                :example     [icon :visibility-off]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :smartphone}) :smartphone],
-    :example (example2 [icon (sx {:-icon-filled? true}) :smartphone])}
+               {:radio-label [icon {:-icon-filled? true} :find-replace]
+                :label       "find-replace-filled"
+                :example     [icon (sx {:-icon-filled? true}) :find-replace]}
 
-   {:label   [icon (sx :.xlarge {:-icon-filled? true :title :folder}) :folder],
-    :example (example2 [icon (sx {:-icon-filled? true}) :folder])}
-   {:label   [icon (sx :.xlarge {:title :folder}) :folder],
-    :example (example2 [icon :folder])}
+               {:radio-label [icon {:-icon-filled? true} :report-problem]
+                :label       "report-problem-filled"
+                :example     [icon (sx {:-icon-filled? true}) :report-problem]}
 
-   {:label   [icon
-              (sx :.xlarge :c--$red500 {:title :auto-awesome})
-              :auto-awesome],
-    :key     :auto-awesome-red
-    :example (example2 [icon (sx :c--$red500) :auto-awesome])}
-   {:label   [icon
-              (sx :.xlarge :c--$orange500 {:title :auto-awesome})
-              :auto-awesome],
-    :key     :auto-awesome-orange
-    :example (example2 [icon (sx :c--$orange500) :auto-awesome])}
-   {:label   [icon
-              (sx :.xlarge :c--$yellow500 {:title :auto-awesome})
-              :auto-awesome],
-    :key     :auto-awesome-yellow
-    :example (example2 [icon (sx :c--$yellow600) :auto-awesome])}
-   {:label   [icon
-              (sx :.xlarge :c--$green500 {:title :auto-awesome})
-              :auto-awesome],
-    :key     :auto-awesome-green
-    :example (example2 [icon (sx :c--$green500) :auto-awesome])}
-   {:label   [icon
-              (sx :.xlarge :c--$blue500 {:title :auto-awesome})
-              :auto-awesome],
-    :key     :auto-awesome-blue
-    :example (example2 [icon (sx :c--$blue500) :auto-awesome])}
-   {:label   [icon
-              (sx :.xlarge :c--$purple500 {:title :auto-awesome})
-              :auto-awesome],
-    :key     :auto-awesome-purple
-    :example (example2 [icon (sx :c--$purple500) :auto-awesome])}
-   {:label   [icon
-              (sx :.xlarge :c--$magenta500 {:title :auto-awesome})
-              :auto-awesome],
-    :key     :auto-awesome-magenta
-    :example (example2 [icon (sx :c--$magenta500) :auto-awesome])}
-                                                                 ])
+               {:radio-label [icon :report-problem]
+                :label       "report-problem"
+                :example     [icon :report-problem]}
+
+               {:radio-label [icon {:-icon-filled? true} :error]
+                :label       "error-filled"
+                :example     [icon (sx {:-icon-filled? true}) :error]}
+
+               {:radio-label [icon :error]
+                :label       "error"
+                :example     [icon :error]}
+
+               {:radio-label [icon {:-icon-filled? true} :check-circle]
+                :label       "check-circle-filled"
+                :example     [icon (sx {:-icon-filled? true}) :check-circle]}
+
+               {:radio-label [icon :check-circle]
+                :label       "check-circle"
+                :example     [icon :check-circle]}
+
+               {:radio-label [icon :open-in-new]
+                :label       "open-in-new"
+                :example     [icon  :open-in-new]}
+
+               {:radio-label [icon {:-icon-filled? true} :edit]
+                :label       "edit-filled"
+                :example     [icon (sx {:-icon-filled? true}) :edit]}
+
+               {:radio-label [icon :edit],
+                :label       "edit"
+                :example     [icon :edit]}
+
+               {:radio-label [icon {:-icon-filled? true} :favorite],
+                :label       "favorite"
+                :example     [icon (sx {:-icon-filled? true}) :favorite]}
+
+               {:radio-label [icon :favorite],
+                :label       "favorite"
+                :example     [icon :favorite]}
+
+               {:radio-label [icon {:-icon-filled? true} :fingerprint],
+                :label       "fingerprint"
+                :example     [icon (sx {:-icon-filled? true}) :fingerprint]}
+
+               {:radio-label [icon {:-icon-filled? true} :help],
+                :label       "help-filled"
+                :example     [icon (sx {:-icon-filled? true}) :help]}
+
+               {:radio-label [icon :help],
+                :label       "help"
+                :example     [icon :help]}
+
+               {:radio-label [icon {:-icon-filled? true} :info],
+                :label       "info-filled"
+                :example     [icon (sx {:-icon-filled? true}) :info]}
+
+               {:radio-label [icon :info],
+                :label       "info"
+                :example     [icon :info]}
+
+               {:radio-label [icon {:-icon-filled? true} :smartphone],
+                :label       "smartphone"
+                :example     [icon (sx {:-icon-filled? true}) :smartphone]}
+
+               {:radio-label [icon {:-icon-filled? true} :folder],
+                :label       "folder-filled"
+                :example     [icon (sx {:-icon-filled? true}) :folder]}
+
+               {:radio-label [icon :folder],
+                :label       "folder"
+                :example     [icon :folder]}
+
+               {:radio-label [icon (sx :c--$red-500) :auto-awesome],
+                :label       "auto-awesome-red"
+                :example     [icon (sx :c--$red-500) :auto-awesome]}
+
+               {:radio-label [icon
+                              (sx :c--$orange-500)
+                              :auto-awesome],
+                :label       "auto-awesome-orange"
+                :example     [icon (sx :c--$orange-500) :auto-awesome]}
+
+               {:radio-label [icon
+                              (sx :c--$yellow-500)
+                              :auto-awesome],
+                :label       "auto-awesome-yellow"
+                :example     [icon (sx :c--$yellow-600) :auto-awesome]}
+
+               {:radio-label [icon
+                              (sx :c--$green-500)
+                              :auto-awesome],
+                :label       "auto-awesome-green"
+                :example     [icon (sx :c--$green-500) :auto-awesome]}
+
+               {:radio-label [icon
+                              (sx :c--$blue-500)
+                              :auto-awesome],
+                :label       "auto-awesome-blue"
+                :example     [icon (sx :c--$blue-500) :auto-awesome]}
+
+               {:radio-label [icon
+                              (sx :c--$purple-500)
+                              :auto-awesome],
+                :label       "auto-awesome-purple"
+                :example     [icon (sx :c--$purple-500) :auto-awesome]}
+
+               {:radio-label [icon
+                              (sx :c--$magenta-500)
+                              :auto-awesome],
+                :label       "auto-awesome-magenta"
+                :example     [icon (sx :c--$magenta-500) :auto-awesome]}
+
+               ]}))
+
