@@ -84,7 +84,7 @@
 ;; ::kushi-trace is for debugging during dev
 (s/def ::kushi-trace
   (s/and map?
-         #(:kushi/trace? %)))
+         #(:kushi/tracing? %)))
 
 (s/def ::font-variations-settings
   #(re-find (re-pattern font-variation-settings-re)
