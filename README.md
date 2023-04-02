@@ -429,7 +429,7 @@ Unlike the `sx` macro, defclass does not support runtime bindings.
 (defclass headline
   :ta--left
   :w--100%
-  :ff--Inter|sys|sans-serif
+  :ff--Inter|system-ui|sans-serif
   :fw--900
   :fs--24px
   :tt--u
@@ -955,48 +955,7 @@ You could also use a remote url to load a hosted font file.
                 :src ["url(../fonts/FiraCode-Regular.woff)"]})
 ```
 
-### System Font Stack
-You can use the `kushi.core/add-system-font-stack` macro to use a system font stack.
-This uses an efficient, [`@font-face`-based  approach](https://github.com/csstools/system-font-css) introduced by Jonathan Neal.
-```Clojure
-; In your core namespace
-(add-system-font-stack)
-```
-The example above would add a total of 8 `@font-face` definitions to your kushi css file.
-One `normal` and one `italic` for weights `300`("light"), `400`("regular"), `500`("semi-bold"), and `700`("bold"). Note that the name of the font-family kushi provides is **`sys`**, *not* `system-ui`. This is for [differentiation](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) and to [help avoid confusion](https://infinnie.github.io/blog/2017/systemui.html).
-
-```CSS
-@font-face {
-  font-family: sys;
-  font-style: normal;
-  font-weight: 300;
-  src: local(".SFNS-Light"), local(".SFNSText-Light"), local(".HelveticaNeueDeskInterface-Light"), local(".LucidaGrandeUI"), local("Segoe UI Light"), local("Ubuntu Light"), local("Roboto-Light"), local("DroidSans"), local("Tahoma");
-}
-@font-face {
-  font-family: sys;
-  font-style: italic;
-  font-weight: 300;
-  src: local(".SFNS-LightItalic"), local(".SFNSText-LightItalic"), local(".HelveticaNeueDeskInterface-Italic"), local(".LucidaGrandeUI"), local("Segoe UI Light Italic"), local("Ubuntu Light Italic"), local("Roboto-LightItalic"), local("DroidSans"), local("Tahoma");
-}
-/* + 6 more */
-```
-If you want to be more precise you can pass in only the weights you need. The example below would write a total of 4 `@font-face` rules to your kushi css file (`normal` and `italic` for both `300`("light") & `700`("bold")).
-```Clojure
-(add-system-font-stack 300 700)
-```
-
-Then you can use the system font stack like so:
-```Clojure
-[:div (sx :font-family--sys)]
-
-; Using kushi shorthand:
-[:div (sx :ff--sys)]
-
-; An example using kushi syntax to specify multiple values for the css shorthand `font` property.
-[:div (sx :font--italic:700:sys)] ;
-
-```
-
+<br>
 <br>
 
 ## Helpful Metadata
@@ -1100,7 +1059,6 @@ If you are looking for a well commented starting point for your own config, [the
  :add-stylesheet-prod?    true
  :add-stylesheet-dev?     true
  :add-css-reset?          true
- :add-system-font-stack?  true
  :add-design-tokens?      true
  ;; If :add-kushi-ui-theming? is set to false, it will not include
  ;; theming classes for for kushi ui components such as buttons, tags, etc.
