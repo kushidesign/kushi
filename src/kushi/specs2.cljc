@@ -190,7 +190,12 @@
 
 (s/def ::cssvar-name
   (s/and ::s|kw
-         #(re-find (re-pattern (str "^" cssvar-name-re "$")) (name %))))
+         #(re-find (re-pattern (str "^"
+                                    cssvar-name-re
+                                    "(?:\\|" cssvar-name-re "|" css-val-re-base ")?"
+                                    "(?:\\|" cssvar-name-re "|" css-val-re-base ")?"
+                                    "$"))
+                   (name %))))
 
 (s/def ::cssvar-name-base
   (s/and ::s|kw
