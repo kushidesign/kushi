@@ -10,14 +10,13 @@
    [kushi.ui.core :refer (defcom)]
    [kushi.ui.icon.core :refer (icon)]
    [kushi.ui.icon.mui.svg :refer (mui-icon-svgs)]
-   [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
    [kushi.ui.label.core :refer (label)]
    [kushi.ui.dom :as dom]
    [kushi.ui.button.core :refer (button)]
    [kushi.playground.shared-styles :as shared-styles]
-   [kushi.playground.state :as state]
-   [kushi.playground.util :as util :refer (capitalize-words )]
-   [kushi.playground.demobox :refer (demobox2)]))
+   [kushi.playground.state :as state :refer [*state]]
+   [kushi.playground.util :as util :refer (capitalize-words)]
+   [kushi.playground.demobox.core :refer (demobox2 copy-to-clipboard-button)]))
 
 (defn scroll-window-by-px []
   (dom/scroll-by {:y (:scroll-window-by-px shared-styles/shared-values)}))
@@ -73,17 +72,22 @@
        (sx
         'kushi-playground-subsection
         :pb--4.5em:1em
-        :&_p:fs--$text-small
-        :&_p:fw--$text-normal
-        :&_p:lh--1.70
+        :&.description&_p:fs--$kushi-playground-main-section-wrapper_font-size|$medium
+        :&_p:fs--$kushi-playground-main-section-wrapper_font-size|$medium
+        :&_p:ff--$kushi-playground-main-section-wrapper_font-family|$sans-serif-font-stack
+        :&_p:fw--$kushi-playground-main-section-wrapper_font-weight|$normal
+        :&_p:lh--$kushi-playground-main-section-wrapper_line-height|1.7
         :&_p&_code:pb--0.07em
         :&_p&_code:pi--0.2em
         :&_p&_code:fs--0.9em
         :&_.kushi-opt-detail-label:lh--2.05
-        :&_.code.opt-type:bgc--transparent
-        :&.description&_p:fs--$text-medium)
+        :&_.code.opt-type:bgc--transparent)
        &attrs)
-      [:h3 (sx 'kushi-playground-subsection-title :.xlarge :.wee-bold :margin-block--0:1.25rem) title]
+      [:h3 (sx 'kushi-playground-subsection-header
+               :fs--$kushi-playground-main-section-subsection-header_font-size|$xlarge
+               :fw--$kushi-playground-main-section-subsection-header_font-weight|$wee-bold
+               :margin-block--0:1.25rem)
+       title]
       &children]))
 
 
@@ -101,106 +105,87 @@
                  coll))
 
 (defn kushi-opts-grid-desc [v m]
-  [:div
-   [:span
-    (sx :.kushi-ui-opt-desc
-        :.normal
-        :&_p:m--0
-        :&_p:fs--$text-medium
-        )
-    (let [ret* (cond
-                 (string? v)
-                 (->> v md->hc/md->hiccup md->hc/component)
+  [:span
+   (sx :.kushi-ui-opt-desc
+       :.normal
+       :&_p:m--0
+       :&_p:fs--$medium
+       )
+   (let [ret* (cond
+                (string? v)
+                (->> v md->hc/md->hiccup md->hc/component)
 
-                 (coll? v)
-                 (some->> v util/desc->hiccup)
+                (coll? v)
+                (some->> v util/desc->hiccup)
 
-                 :else
-                 [:span])]
-      (add-links ret*))]])
+                :else
+                [:span])]
+     (add-links ret*))])
 
 (defn kushi-opts-grid-default [v m]
   (if (and (list? v) (= :text (first v)) (string? (second v)))
     [kushi-opts-grid-desc (second v) m]
-    [:div
-     [:span.code
-      (str
-       (cond (nil? v)
-             "nil"
-             (string? v)
-             (str "\"" v "\"")
-             :else
-             v))]]))
+    [:span.code
+     (str
+      (cond (nil? v)
+            "nil"
+            (string? v)
+            (str "\"" v "\"")
+            :else
+            v))]))
 
 (defn kushi-opts-grid-type [v]
-  [:div
-   (when v
-     (cond
-       (or (set? v) (vector? v))
-       (into [:span] (map (fn [x] [:span.code (sx :mie--0.5em) (str x)]) v))
-       (keyword? v)
-       [:span.code (name v)]))])
+  (when v
+    (cond
+      (and (list? v) (= (first v) 'fn*))
+      (let [anon-fn-display* (nth v 2)
+            anon-fn-display (walk/postwalk #(if (re-find #"^p[0-9]+__[0-9]+\#$" (str %))
+                                              (symbol "%")
+                                              %)
+                                           anon-fn-display*)]
+        [:span.code (str "#" anon-fn-display)])
+      (set? v)
+      [:span.code (str v)]
+      (symbol? v)
+      [:span.code (name v)])))
 
 
-(defn kushi-opts-grid-name [v]
-  [:div
-   (sx #_:.kushi-opts-grid-row-item)
-   [:span.code (str ":-" v)]])
-
-(defn kushi-opts-grid-items [maps]
-  (reduce
-   (fn [acc m]
-     (concat acc
-             (let [{nm :name typ :type default :default desc :desc} m]
-               (when nm
-                 [(kushi-opts-grid-name nm)
-                  (kushi-opts-grid-type typ)
-                  (kushi-opts-grid-default default m)
-                  (kushi-opts-grid-desc desc m)]))))
-   []
-   maps) )
-
-
-(defn opt-detail [text v f]
+(defn opt-detail [text v f kw]
   [:div
    (sx :.flex-row-fs
        :pb--0.5em
        {:style {:ai (if (= text "Desc.") :flex-start :center)}})
    [:div
     (sx 'kushi-opt-detail-label :min-width--75px)
-    [label (sx :.meta-desc-label :.normal)
-     (if (= f kushi-opts-grid-type)
-       (if (or (set? v) (vector? v))
-         "Enum"
-         text)
-       text)]]
-   [f v]])
+    [label (sx :.kushi-playground-meta-desc-label :.normal) text]]
+   [:div (sx 'kushi-opt-detail-value)
+    [f v]]])
 
 
 (defn component-section
-  [{m*            :meta
-    demo          :demo
-    demo-attrs    :demo-attrs
-    desc          :desc
-    refers        :refers
-    section-title :title
-    opts          :opts
-    :as           m}]
+  [{m*         :meta
+    demo       :demo
+    demo-attrs :demo-attrs
+    desc       :desc
+    refers     :refers
+    title      :title
+    opts       :opts
+    :as        m}]
   (let [{kushi-desc :desc
          kushi-opts :opts} (meta m*)
         opts                                 (or kushi-opts opts)
         fname                                (util/meta->fname m*)
-        title                                (or section-title (-> fname (string/replace #"-" " ") capitalize-words))
+        title                                (or title (-> fname (string/replace #"-" " ") capitalize-words))
         doc-hiccup                           (-> (or kushi-desc desc) util/desc->hiccup add-links)]
     ^{:key title}
     [collapse
      (sx
       :bbew--4px
       :bbes--solid
-      :bbec--$gray100
-      :dark:bbec--$gray700
+      :bbec--$gray-100
+      :dark:bbec--$gray-700
       :&.kushi-collapse-expanded:bbec--black
-      :dark:&.kushi-collapse-expanded:bbec--$gray50
+      :dark:&.kushi-collapse-expanded:bbec--$gray-50
       :transition--border-block-end-color:200ms:linear
       {
           ;; :ref            (fn [el]
@@ -216,16 +201,18 @@
        :on-click       #(state/nav! fname)
        :-label         title
        :-icon          [icon {:-icon-svg (get mui-icon-svgs "add")}]
-       :-icon-expanded [icon :remove]
+       :-icon-expanded [:span (sx :.flex-row-sb
+                                  :gap--2rem)
+                        [icon :remove]]
        :-icon-position :end
        :-expanded?     (:components-expanded? @state/*state)
-       :-header-attrs  (sx
-                        :.xxlarge
-                        :.wee-bold
-                        :pb--$vp-top-header-padding
-                        :hover:bgc--$gray50
-                        :dark:hover:bgc--$gray800
-                        ["&[aria-expanded='true']:hover:bgc" :transparent])})
+       :-header-attrs  (sx :fs--$kushi-playground-main-section-header_font-size|$xxlarge
+                           :.wee-bold
+                           :.hover-trailing-fade-out
+                           :pb--$vp-top-header-padding
+                           :hover:bgc--$gray-100
+                           :dark:hover:bgc--$gray-800
+                           ["&[aria-expanded='true']:hover:bgc" :transparent])})
      ^{:key fname}
      [:section
       (sx :mbe--40px )
@@ -241,15 +228,12 @@
            [:<>
             [util/formatted-code full-text]
             [copy-to-clipboard-button
-             (sx :.absolute
-                 :inset-block-start--0
-                 :inset-inline-end--0
-                 {:on-click #(dom/copy-to-clipboard text)})]])]]
+             (sx :.northeast-inside! {:-text-to-copy text})]])]]
 
        (when demo
          [subsection
           (merge-attrs
-           (sx :.description {:-title [subsection-title title "Demo"]})
+           (sx :.description {:-title [subsection-title title "Examples"]})
            demo-attrs)
           [demo]])
 
@@ -263,19 +247,21 @@
           (into [:div]
                 (for [{nm      :name
                        typ     :type
+                       pred    :pred
                        desc    :desc
                        default :default} (second opts)]
                   (when nm
                     [:div (sx
                            :.small
-                           [:first-child:bbs "1px solid var(--gray200)"]
-                           [:dark:first-child:bbs "1px solid var(--gray800)"]
-                           [:bbe "1px solid var(--gray200)"]
-                           [:dark:bbe "1px solid var(--gray800)"]
+                           [:first-child:bbs "1px solid var(--gray-200)"]
+                           [:dark:first-child:bbs "1px solid var(--gray-800)"]
+                           [:bbe "1px solid var(--gray-200)"]
+                           [:dark:bbe "1px solid var(--gray-800)"]
                            :pb--1em)
                      [:div (sx :mb--0.7rem)
-                      [:span (sx :.code :.wee-bold) (str ":-" nm)]]
+                      [:span (sx :.code :.semi-bold) (str ":-" nm)]]
                      [:div (sx :pis--1.4em)
-                      (when typ [opt-detail "Type" typ kushi-opts-grid-type])
-                      [opt-detail "Default" default kushi-opts-grid-default]
-                      (when desc [opt-detail "Desc." desc kushi-opts-grid-desc])]])))])]]]))
+                      (when pred [opt-detail "Pred" pred kushi-opts-grid-type :pred])
+                      (when typ [opt-detail "Type" typ kushi-opts-grid-type :type])
+                      [opt-detail "Default" default kushi-opts-grid-default :default]
+                      (when desc [opt-detail "Desc." desc kushi-opts-grid-desc :desc])]])))])]]]))
