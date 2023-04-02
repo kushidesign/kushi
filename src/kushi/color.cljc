@@ -12,12 +12,12 @@
 
    Expects the map to be structured like the following example,
    with css hsl value where the hue is expressed as a var:
-   {:--red50  \"hsl(var(--red-hue), 100%, 98%)\"
-    :--red100 \"hsl(var(--red-hue), 95%, 94%)\"
-    :--red200 \"hsl(var(--red-hue), 90%, 87%)\"}
+   {:$red-50  \"hsl(var(--red-hue), 100%, 98%)\"
+    :$red-100 \"hsl(var(--red-hue), 95%, 94%)\"
+    :$red-200 \"hsl(var(--red-hue), 90%, 87%)\"}
 
    Example input:
-   [:--red50  \"hsl(var(--red-hue), 100%, 98%)\"]
+   [:$red-50  \"hsl(var(--red-hue), 100%, 98%)\"]
 
    Example output:
    {:color red :level 50 :saturation 100 :value 98}"
@@ -36,7 +36,7 @@
   {:blue :accent
    :gray :neutral
    :green :positive
-   :yellow :warning
+   :gold :warning
    :red :negative})
 
 
@@ -46,11 +46,7 @@
         num-string #?(:clj (Float/toString ret*) :cljs (.toString ret*))
         ret        (if (re-find #"\.0$" num-string)
                      (parse-int (string/replace num-string #"\.0$" ""))
-                     ret*)
-        ;; ret        (if (re-find #"\.0$" (do (!? :intermediary-hsl (string? num-string)) num-string))
-        ;;              (parse-int (string/replace num-string #"\.0$" ""))
-        ;;              ret*)
-        ]
+                     ret*)]
     ret))
 
 (defn hsl-values
@@ -61,7 +57,7 @@
 
 (defn color-pair [{:keys [data? color level] :as m}]
   (let [hsl-values (hsl-values m)
-        ret        [(keyword (str (when-not data? "--") color level))
+        ret        [(keyword (str (when-not data? "$") color "-" level))
                     hsl-values]]
     ret))
 
@@ -69,7 +65,7 @@
   [opts [color {:keys [hue scale]}]]
   (let [alias? (:alias? opts)
         data?  (= (:format opts) :data)
-        h      [(keyword (str (when-not data? "--") color "-hue")) hue]
+        h      [(keyword (str (when-not data? "$") color "-hue")) hue]
         scale+ (map-indexed
                 (fn [i [level saturation lightness]]
                   (let [first?       (zero? i)
@@ -145,48 +141,48 @@
 
    Example output (with {:format :data} as opts arg):
 
-   [[:--gray-hue 0]
-    [:--gray50 {:h 0, :s 0, :l 98}]
-    [:--gray100 {:h 0, :s 0, :l 95}]
-    [:--gray150 {:h 0, :s 0, :l 93}]
-    [:--gray200 {:h 0, :s 0, :l 91}]
-    [:--gray250 {:h 0, :s 0, :l 88}]
-    [:--gray300 {:h 0, :s 0, :l 85}]
-    [:--gray350 {:h 0, :s 0, :l 81}]
-    [:--gray400 {:h 0, :s 0, :l 77}]
-    [:--gray450 {:h 0, :s 0, :l 72.5}]
-    [:--gray500 {:h 0, :s 0, :l 68}]
-    [:--gray550 {:h 0, :s 0, :l 62.5}]
-    [:--gray600 {:h 0, :s 0, :l 57}]
-    [:--gray650 {:h 0, :s 0, :l 50.5}]
-    [:--gray700 {:h 0, :s 0, :l 44}]
-    [:--gray750 {:h 0, :s 0, :l 37.5}]
-    [:--gray800 {:h 0, :s 0, :l 31}]
-    [:--gray850 {:h 0, :s 0, :l 25.5}]
-    [:--gray900 {:h 0, :s 0, :l 20}]
-    [:--gray950 {:h 0, :s 0, :l 14}]
-    [:--gray1000 {:h 0, :s 0, :l 8}]
-    [:--blue-hue 212]
-    [:--blue50 {:h 212, :s 100, :l 97}]
-    [:--blue100 {:h 212, :s 98, :l 93}]
-    [:--blue150 {:h 212, :s 97.5, :l 90}]
-    [:--blue200 {:h 212, :s 97, :l 87}]
-    [:--blue250 {:h 212, :s 96.5, :l 82.5}]
-    [:--blue300 {:h 212, :s 96, :l 78}]
-    [:--blue350 {:h 212, :s 95, :l 73}]
-    [:--blue400 {:h 212, :s 94, :l 68}]
-    [:--blue450 {:h 212, :s 93, :l 63.5}]
-    [:--blue500 {:h 212, :s 92, :l 59}]
-    [:--blue550 {:h 212, :s 91, :l 52}]
-    [:--blue600 {:h 212, :s 90, :l 45}]
-    [:--blue650 {:h 212, :s 91, :l 41}]
-    [:--blue700 {:h 212, :s 92, :l 37}]
-    [:--blue750 {:h 212, :s 93, :l 33}]
-    [:--blue800 {:h 212, :s 94, :l 29}]
-    [:--blue850 {:h 212, :s 95.5, :l 24.5}]
-    [:--blue900 {:h 212, :s 97, :l 20}]
-    [:--blue950 {:h 212, :s 98.5, :l 15.5}]
-    [:--blue1000 {:h 212, :s 100, :l 11}]
+   [[:$gray-hue 0]
+    [:$gray-50 {:h 0, :s 0, :l 98}]
+    [:$gray-100 {:h 0, :s 0, :l 95}]
+    [:$gray-150 {:h 0, :s 0, :l 93}]
+    [:$gray-200 {:h 0, :s 0, :l 91}]
+    [:$gray-250 {:h 0, :s 0, :l 88}]
+    [:$gray-300 {:h 0, :s 0, :l 85}]
+    [:$gray-350 {:h 0, :s 0, :l 81}]
+    [:$gray-400 {:h 0, :s 0, :l 77}]
+    [:$gray-450 {:h 0, :s 0, :l 72.5}]
+    [:$gray-500 {:h 0, :s 0, :l 68}]
+    [:$gray-550 {:h 0, :s 0, :l 62.5}]
+    [:$gray-600 {:h 0, :s 0, :l 57}]
+    [:$gray-650 {:h 0, :s 0, :l 50.5}]
+    [:$gray-700 {:h 0, :s 0, :l 44}]
+    [:$gray-750 {:h 0, :s 0, :l 37.5}]
+    [:$gray-800 {:h 0, :s 0, :l 31}]
+    [:$gray-850 {:h 0, :s 0, :l 25.5}]
+    [:$gray-900 {:h 0, :s 0, :l 20}]
+    [:$gray-950 {:h 0, :s 0, :l 14}]
+    [:$gray-1000 {:h 0, :s 0, :l 8}]
+    [:$blue-hue 212]
+    [:$blue-50 {:h 212, :s 100, :l 97}]
+    [:$blue-100 {:h 212, :s 98, :l 93}]
+    [:$blue-150 {:h 212, :s 97.5, :l 90}]
+    [:$blue-200 {:h 212, :s 97, :l 87}]
+    [:$blue-250 {:h 212, :s 96.5, :l 82.5}]
+    [:$blue-300 {:h 212, :s 96, :l 78}]
+    [:$blue-350 {:h 212, :s 95, :l 73}]
+    [:$blue-400 {:h 212, :s 94, :l 68}]
+    [:$blue-450 {:h 212, :s 93, :l 63.5}]
+    [:$blue-500 {:h 212, :s 92, :l 59}]
+    [:$blue-550 {:h 212, :s 91, :l 52}]
+    [:$blue-600 {:h 212, :s 90, :l 45}]
+    [:$blue-650 {:h 212, :s 91, :l 41}]
+    [:$blue-700 {:h 212, :s 92, :l 37}]
+    [:$blue-750 {:h 212, :s 93, :l 33}]
+    [:$blue-800 {:h 212, :s 94, :l 29}]
+    [:$blue-850 {:h 212, :s 95.5, :l 24.5}]
+    [:$blue-900 {:h 212, :s 97, :l 20}]
+    [:$blue-950 {:h 212, :s 98.5, :l 15.5}]
+    [:$blue-1000 {:h 212, :s 100, :l 11}]
 
 
     Passing {:format :css} will yield map entries like this:
@@ -206,9 +202,10 @@
 
 (defn alias-color-tokens
   [opts [color alias]]
-  (mapv (fn [n]
-          [(keyword (str "--" (name alias) n))
-           (keyword (str "--" (name color) n))])
+  [color alias]
+  (mapv (fn [level]
+          [(keyword (str "$" (name alias) "-" level))
+           (keyword (str "$" (name color) "-" level))])
         (if (false? (:expanded? opts))
           (concat [50] (range 100 1100 100))
           (range 50 1050 50))))
