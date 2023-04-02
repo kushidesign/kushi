@@ -308,6 +308,15 @@
     `(do nil)))
 
 ;; SX ---------------------------------------------------------------------
+(defn register-classes
+  [clean]
+  (let [used (into #{}
+                   (keep #(when (and (string? %)
+                                     (->> % first str (re-find #"[a-z]")))
+                            (let [ret* (string/replace % #"\!$" "\\\\!")]
+                              ret*))
+                         (:classlist clean)))]
+    (swap! state2/registered-shared-classes set/union used)))
 
 (defn process [args]
   (let [m* (last args)]
@@ -326,9 +335,9 @@
   [{:keys [form-meta args macro]
     :or   {form-meta {}}}]
   (when @state2/KUSHIDEBUG
-    (state2/trace-mode! args))
+    (state2/tracing! args))
   (let [args      (if (and @state2/KUSHIDEBUG
-                           (state2/trace-mode?))
+                           (state2/tracing?))
                     (drop-last args)
                     args)
         cache-map (state2/cached {:process :sx
@@ -343,6 +352,10 @@
         clean     (if (= macro :sx*)
                     (assoc-in clean [:attrs :data-sx-tweak] (str (into [] args)))
                     clean)]
+
+    (when (and (not @state2/KUSHIDEBUG)
+               (:elide-unused-kushi-utility-classes? user-config))
+      (register-classes clean))
 
     (swap! state2/css conj clean)
 
