@@ -8,7 +8,7 @@
 (defn radio
   {:desc ["Radio buttons are used in groups of 2 or more, when only one choice may be selected from an array of options."]
    :opts '[{:name    input-attrs
-            :type    :map
+            :pred    map?
             :default nil
             :desc    "HTML attributes map applied to the underlying `input` div."}]}
   [& args]

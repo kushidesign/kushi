@@ -27,18 +27,22 @@
 
 (defn icon
   {:desc ["Icons in Kushi are pulled in via [Google's Material Symbols font for the web](https://developers.google.com/fonts/docs/material_symbols)."
+          :br
+          :br
           "Use [this page](https://fonts.google.com/icons?icon.set=Material+Symbols) to explore over 1000+ different icons."
-          "This component expects a child argument which is a string or keyword that correspondes to the name of an existing mui icon. This string or keyword should be kebab-case (will get converted internally to snake-case)"]
+          :br
+          :br
+          "This component expects a child argument which is a string or keyword that correspondes to the name of an existing mui icon. This string or keyword, by convention, should be kebab-case (it is internally converted to snake-case to work with Google Material Symbols icon font)"]
    :opts '[{:name    icon-style
-            :type    #{:outlined :rounded :sharp}
+            :pred    #{:outlined :rounded :sharp}
             :default :outlined
             :desc    "Controls the style of the [mui-icon](https://fonts.google.com/icons?icon.set=Material+Symbols)."}
            {:name    icon-filled?
-            :type    :boolean
+            :pred  boolean?
             :default false
             :desc    "Use the filled (solid) version of the icon, if available"}
            {:name    icon-svg
-            :type    :vector
+            :pred  vector?
             :default false
             :desc    ["Pass a Material Symbols icon in `svg` (hiccup) to use in place of the Google Fonts Material Symbols font."
                       "Must use `:viewBox` attribute with values such as `\"0 0 24 24\"`."
@@ -50,6 +54,7 @@
      (merge-attrs
       (sx
        'kushi-icon
+       :&_svg:height--1em
        :&_svg>path:fill--currentColor
        {:data-kushi-ui :icon})
       attrs)

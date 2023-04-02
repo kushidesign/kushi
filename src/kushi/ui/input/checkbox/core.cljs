@@ -9,7 +9,7 @@
 (defn checkbox
   {:desc ["Checkboxes are used to provide multiple options for selection. One or more checkboxes can be checked at a time."]
    :opts '[{:name    input-attrs
-            :type    :map
+            :pred    map?
             :default nil
             :desc    "HTML attributes map applied to the underlying `input` div."}]}
   [& args]
