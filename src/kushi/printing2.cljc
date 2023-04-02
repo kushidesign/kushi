@@ -5,8 +5,7 @@
    [clojure.edn]
    [clojure.pprint :as pp :refer [pprint]]
    [expound.alpha :as expound]
-   [kushi.config :as config :refer [user-config]]
-   [kushi.utils :as util :refer [keyed]]))
+   [kushi.config :as config :refer [user-config]] ))
 
 (defn re-seq-pos [pattern string]
   (let [m (re-matcher pattern string)]
@@ -25,7 +24,6 @@
         being-replaced (subs in from (+ from len))
         replaced       (f being-replaced)
         result         (str before replaced after )]
-    ;; (println (keyed before after being-replaced replaced result match))
     result))
 
 (defn pprinted
@@ -106,9 +104,19 @@
 
 
 (defn simple-alert-header2 [header file-info-str color]
-  (str "\n"
-       (simple-alert-header-border-top header color)
-       (when file-info-str (str "\n\n" "File: " file-info-str))))
+  (str
+   "\n"
+   (when-let [user-warning-banner (:log-warning-banner user-config)]
+     (when (some->> user-warning-banner seq (every? string?))
+       (str
+        ansi/bold-font
+        "\n"
+        (string/join "\n" user-warning-banner)
+        "\n\n"
+        ansi/reset-font
+        )))
+   (simple-alert-header-border-top header color)
+   (when file-info-str (str "\n\n" "File: " file-info-str))))
 
 (defn file+line+col-str
   [form-meta]
