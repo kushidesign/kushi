@@ -65,24 +65,30 @@
             (state/nav! fname)))
        (if menu* 0 100)))))
 
-(defn sidenav-section-items [section-opts items]
+(defn sidenav-section-items
+  [section-opts items]
   (into [:ul]
-        (for [{:keys [fname label href focused?]} items
-              :let [focused? (and (:section-focused? section-opts) focused?)
+        (for [{:keys [fname
+                      label
+                      href
+                      focused?]} items
+              :let [focused?    (and (:section-focused? section-opts) focused?)
                     hashed-href (str "#" fname)]]
-          [:li
+          [:li.kushi-playground-sidenav-section-item-wrapper
            [:a (sx
+                'kushi-playground-sidenav-section-item
+                :.hover-trailing-fade-out
                 :.pointer
-                :.xxfast!
-                :.normal
+                :fw--$kushi-playground-sidenav-section-item_font-weight|$normal
+                :fs--$kushi-playground-sidenav-section-item_font-size|$small
                 :c--black
                 :dark:c--white
-                [:hover:o (if focused? 1 0.5)]
                 :d--block
                 :p--9px:12px:9px:48px
                 :border-left--3px:solid:transparent
+                [:hover:o 1]
                 {:style    {:bgc           (if focused? "rgba(0, 0, 0, 0.07)" :transparent)
-                            :dark:bgc      (if focused? :$gray800 :transparent)
+                            :dark:bgc      (if focused? :$gray-800 :transparent)
                             :bisc          (if focused? :black :transparent)
                             :dark:bisc     (if focused? :white :transparent)}
                  :href     hashed-href
@@ -96,31 +102,34 @@
     :as   m}]
   [:a (merge-attrs
        (when target {:target target})
-       (sx :.kushi-treenav-section-level-1-header
+       (sx 'kushi-playground-sidenav-section-header
+           ;; TODO drop this legacy selector
+           :.kushi-treenav-section-level-1-header
            :.relative
            :.semi-bold
+           :fs--$kushi-playground-sidenav-section-header_font-size|$medium
            (when target :.kushi-link)
            :w--fit-content
-           {:id                              (when (keyword? kw) (str (name kw) "-nav-section"))
-            :href                            (or href (when (keyword? kw) (str "#" (name kw))))
-            :style                           {:hover:c                                           (when-not section-focused? :$gray500)
-                                              :bgc                                               (when section-focused? :$gray0)
-                                              :bisc                                              (if section-focused? "rgba(0, 0, 0, 0.2)" :transparent)
-                                              :dark:bisc                                         (if section-focused? "rgba(255, 255, 255, 0.4)" :transparent)
-                                              "has-ancestor(.mobile-subnav):fs"                  :$text-xsmall
-                                              "has-ancestor(.mobile-subnav):tt"                  :capitalize
-                                              "has-ancestor(.mobile-subnav):bgc"                 (if section-focused? :$gray100 :transparent)
-                                              "dark:has-ancestor(.mobile-subnav):bgc"            (if section-focused? :$gray750 :transparent)
-                                              "has-ancestor(.mobile-subnav):border-radius"       :9999px
-                                              "has-ancestor(.mobile-subnav):border-inline-style" :solid
-                                              "has-ancestor(.mobile-subnav):biw"                 :8px
-                                              "has-ancestor(.mobile-subnav):bic"                 (if section-focused? :$gray100 :transparent)
-                                              "dark:has-ancestor(.mobile-subnav):bic"            (if section-focused? :$gray750 :transparent)
-                                              "has-ancestor(.mobile-subnav):tuo"                 :3px}
-            :on-click                        #(when-not target
-                                                (reset! state/*focused-section kw)
-                                                (state/set-focused-component! nil)
-                                                (dom/scroll-to-top))}))
+           {:id       (when (keyword? kw) (str (name kw) "-nav-section"))
+            :href     (or href (when (keyword? kw) (str "#" (name kw))))
+            :style    {:hover:c                                         (when-not section-focused? :$gray-500)
+                       :bgc                                             (when section-focused? :$gray-0)
+                       :bisc                                            (if section-focused? "rgba(0, 0, 0, 0.2)" :transparent)
+                       :dark:bisc                                       (if section-focused? "rgba(255, 255, 255, 0.4)" :transparent)
+                       "has-ancestor(.mobile-subnav):fs"                  :$xsmall
+                       "has-ancestor(.mobile-subnav):tt"                  :capitalize
+                       "has-ancestor(.mobile-subnav):bgc"                 (if section-focused? :$gray-100 :transparent)
+                       "dark:has-ancestor(.mobile-subnav):bgc"            (if section-focused? :$gray-750 :transparent)
+                       "has-ancestor(.mobile-subnav):border-radius"       :9999px
+                       "has-ancestor(.mobile-subnav):border-inline-style" :solid
+                       "has-ancestor(.mobile-subnav):biw"                 :8px
+                       "has-ancestor(.mobile-subnav):bic"                 (if section-focused? :$gray-100 :transparent)
+                       "dark:has-ancestor(.mobile-subnav):bic"            (if section-focused? :$gray-750 :transparent)
+                       "has-ancestor(.mobile-subnav):tuo"                 :3px}
+            :on-click #(when-not target
+                         (reset! state/*focused-section kw)
+                         (state/set-focused-component! nil)
+                         (dom/scroll-to-top))}))
    (or header
        [:span.kushi-treenav-section-header sidenav-header])])
 
@@ -219,7 +228,7 @@
 
         ;; sidenav gradation
         ;;  [:bgi '(rgba 0 0 0 0.7)]
-        ;;  [:bgi                      '(linear-gradient "to left" "var(--gray50)" :transparent)]
+        ;;  [:bgi                      '(linear-gradient "to left" "var(--gray-50)" :transparent)]
         ;;  ["has-ancestor(.dark):bgi" '(linear-gradient "to left" "hsl(0deg, 0%, 15%)" :transparent)]
 
          {:style {:d         :none
@@ -241,9 +250,8 @@
   [opts]
   [sidenav
    (sx 'mobile-subnav
-       :d--flex
-       :jc--c
-       :position--relative
+       :.flex-row-c!
+       :.relative!
        :h--auto
        [:pis "calc(var(--page-padding-inline) - 12px)"]
        :pie--$page-padding-inline
@@ -268,10 +276,10 @@
        :&_.collapse-all-control:d--none
        {:-wrapper-attrs (sx :.fixed
                             :md:d--none
-                            :top--77px
+                            :top--$kushi-playground-mobile-header-height
                             :w--100%
                             :bgc--white
-                            :dark:bgc--$gray1000
+                            :dark:bgc--$gray-1000
                             :zi--100
                             :bbe--1px:solid:black
                             :dark:bbe--1px:solid:white)})
@@ -279,6 +287,7 @@
              :flex-shrink--1
              :flex-grow--0
              :overflow-y--auto
+             :w--100%
              [:max-height "calc(100vh - 114px)"])
     [sidenav-content opts ]]])
 
@@ -286,8 +295,7 @@
 (defn desktop-sidenav [{:keys [site-header nav-opts]}]
   [sidenav
    [:div
-    (sx :.xlarge
-        :.relative
+    (sx :.relative
         :d--none
         :md:d--block
         :w--100%
