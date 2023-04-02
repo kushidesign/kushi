@@ -37,7 +37,7 @@
                    (string/replace-first pprinted #"\n" "")
                    pprinted)
         lnum     (:line form-meta)]
-    (keyed pprinted lnum)))
+    {:pprinted pprinted :lnum lnum}))
 
 (defn with-line-numbers
   [{:keys [pprinted lnum]}]
