@@ -644,10 +644,15 @@
                                      [::google-fonts
                                       ::google-material-symbols])))
 
+(s/def ::typography-scale (s/and (s/coll-of pos? :kind vector?)
+                                 #(let [n (count %)] (or (= n 11) (= n 22)))
+                                 #(= % (sort %))))
+
 (s/def ::theme
   (s/and map?
          (s/keys :opt-un
                  [::font-loading
+                  ::typography-scale
                   ::tokens
                   ::ui
                   ::utility-classes])))
