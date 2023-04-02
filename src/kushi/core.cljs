@@ -202,9 +202,9 @@
           axes*     (map f ["opsz" "wght" "FILL" "GRAD"])
           axes      (string/join "," (keep #(some-> % first) axes*))
           axes-vals (string/join "," (keep #(some-> % second name) axes*))]
-;; (? axes*)
-;; (? axes)
-;; (? axes-vals)
+;; (println axes*)
+;; (println axes)
+;; (println axes-vals)
       (conj acc (str "family="
                      (string/replace family #" " "+")
                      ":"
