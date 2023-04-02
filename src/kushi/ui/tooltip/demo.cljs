@@ -31,11 +31,11 @@
                (sx :.flex-row-c
                    :.pointer
                    :.relative
-                   :b--1px:solid:$neutral600
+                   :b--1px:solid:$neutral-600
                    :hover:b--1px:solid:black
                    :>span.placement-label:ff--$code-font-stack
                    :fs--0.9em
-                   :c--$neutral600
+                   :c--$neutral-600
                    :hover:c--black
                    :&.kushi-pseudo-tooltip-revealed:bc--$accent-color
                    :dark:&.kushi-pseudo-tooltip-revealed:bc--$accent-color-inverse
