@@ -214,3 +214,9 @@
      (j/call el :scrollIntoView (clj->js opts)))))
 
 (defn scroll-to-top [] (js/window.scrollTo 0 0))
+
+(defn writing-direction []
+  (.-direction (js/window.getComputedStyle js/document.documentElement)))
+
+(defn dev-only [x]
+  (when ^boolean js/goog.DEBUG x))
