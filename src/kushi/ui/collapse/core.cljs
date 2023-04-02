@@ -1,6 +1,5 @@
 (ns kushi.ui.collapse.core
   (:require
-   [kushi.playground.util :as util :refer-macros [keyed]]
    [kushi.core :refer (sx merge-attrs) :refer-macros (sx)]
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
