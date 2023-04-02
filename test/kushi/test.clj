@@ -3,7 +3,7 @@
    [clojure.test :as test :refer [is deftest]]
    [kushi.core :refer (sx-dispatch defclass-dispatch defkeyframes)]
    [kushi.state2 :as state2]
-   [kushi.typography :refer (sysfont add-font-face*)]))
+   [kushi.typography :refer (add-font-face*)]))
 
 
 ;; keyframes ---------------------------------------------------------
@@ -34,29 +34,6 @@
           :cache-map                   {:caching?  false
                                         :cache-key 497721303
                                         :cached    nil}})))
-
-
-
-;; add-font-face ---------------------------------------------------------
-
-(deftest add-system-font-stack
-  (is (= (sysfont [300 500])
-         '{:m         {:args                        [300 500],
-                       :kushi/process               :kushi.core/add-system-font-stack,
-                       :form-meta                   nil,
-                       :cached                      nil,
-                       :cache-key                   397725409,
-                       :expound-str                 nil,
-                       :caching?                    false,
-                       :css-rule                    ["@font-face {\n  font-family: sys;\n  font-style: normal;\n  font-weight: 300;\n  src: local(\".SFNS-Light\"), local(\".SFNSText-Light\"), local(\".HelveticaNeueDeskInterface-Light\"), local(\".LucidaGrandeUI\"), local(\"Segoe UI Light\"), local(\"Ubuntu Light\"), local(\"Roboto-Light\"), local(\"DroidSans\"), local(\"Tahoma\");\n}"
-                                                     "@font-face {\n  font-family: sys;\n  font-style: italic;\n  font-weight: 300;\n  src: local(\".SFNS-LightItalic\"), local(\".SFNSText-LightItalic\"), local(\".HelveticaNeueDeskInterface-Italic\"), local(\".LucidaGrandeUI\"), local(\"Segoe UI Light Italic\"), local(\"Ubuntu Light Italic\"), local(\"Roboto-LightItalic\"), local(\"DroidSans\"), local(\"Tahoma\");\n}"
-                                                     "@font-face {\n  font-family: sys;\n  font-style: normal;\n  font-weight: 500;\n  src: local(\".SFNS-Medium\"), local(\".SFNSText-Medium\"), local(\".HelveticaNeueDeskInterface-MediumP4\"), local(\".LucidaGrandeUI\"), local(\"Segoe UI Semibold\"), local(\"Ubuntu Medium\"), local(\"Roboto-Medium\"), local(\"DroidSans-Bold\"), local(\"Tahoma Bold\");\n}"
-                                                     "@font-face {\n  font-family: sys;\n  font-style: italic;\n  font-weight: 500;\n  src: local(\".SFNS-MediumItalic\"), local(\".SFNSText-MediumItalic\"), local(\".HelveticaNeueDeskInterface-MediumItalicP4\"), local(\".LucidaGrandeUI\"), local(\"Segoe UI Semibold Italic\"), local(\"Ubuntu Medium Italic\"), local(\"Roboto-MediumItalic\"), local(\"DroidSans-Bold\"), local(\"Tahoma Bold\");\n}"],
-                       :clojure.spec.alpha/problems nil},
-           :cache-map {:caching?  false
-                       :cache-key 397725409
-                       :cached    nil}})))
-
 
 
 ;; defclass --------------------------------------------------------------
