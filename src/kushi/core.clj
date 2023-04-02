@@ -68,35 +68,6 @@
 
 
 
-(defmacro ^:public add-system-font-stack
-
-  "Produces a scale of @font-face declarations, that allows the
-   reliable use of the system ui font from the OS running the browser.
-
-   Produces eight variations by default - 2 each (normal + italic) for the weights
-   300, 400, 500, and 700. Output can be limited to one or more weights by explicitly
-   passing one of more of the 4 weight values.
-
-   Based on the following implementation: https://github.com/csstools/system-font-css.
-
-   Examples:
-   (add-system-font-stack)
-   (add-system-font-stack 300)
-   (add-system-font-stack 300 400)
-   (add-system-font-stack 300 500)
-   (add-system-font-stack 700)"
-
-  [& weights*]
-
-  (let [{m         :m
-         cache-map :cache-map} (sysfont weights*
-                                        (meta &form)
-                                        (meta #'add-system-font-stack))]
-
-    (update-cache! m cache-map)
-    nil))
-
-
 
 ;; DEFKEYFRAMES ----------------------------------------------------------
 
