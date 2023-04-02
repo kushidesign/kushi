@@ -15,12 +15,12 @@
 (def KUSHIDEBUG (atom true))
 (def shadow-build-id (atom nil))
 (def initial-build? (atom true))
-(def trace?* (atom false))
-(def *trace-mode? (atom false))
+(def *tracing? (atom false))
 
 (def css (atom []))
 (def ->css (atom nil))
 (def shared-classes (atom {}))
+(def registered-shared-classes (atom #{}))
 (def user-defined-keyframes (atom {}))
 (def user-defined-font-faces (atom []))
 (def google-font-maps (atom []))
@@ -38,6 +38,7 @@
   (reset! css [])
   (reset! ->css nil)
   (reset! shared-classes {})
+  (reset! registered-shared-classes #{})
   (reset! user-defined-keyframes {})
   (reset! user-defined-font-faces [])
   (reset! google-font-maps [])
@@ -114,11 +115,11 @@
 
 
 ;; Tracing ---------------------------------------------------------------
-(defn trace! [args target] (reset! trace?* (= args (rest target))) )
-(defn trace? [] @trace?*)
+;; (defn trace! [args target] (reset! trace?* (= args (rest target))) )
+;; (defn trace? [] @trace?*)
 
-(defn trace-mode! [args] (reset! *trace-mode? (s/valid? ::specs2/kushi-trace (last args))))
-(defn trace-mode? [] @*trace-mode?)
+(defn tracing! [args] (reset! *tracing? (s/valid? ::specs2/kushi-trace (last args))))
+(defn tracing? [] @*tracing?)
 
 ;; Caching and hashing ---------------------------------------------------
 (defn cached
