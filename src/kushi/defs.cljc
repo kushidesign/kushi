@@ -129,7 +129,9 @@
    :ui-theming
    :kushi-defclass
    :user-defclass
-   :user-sx])
+   :user-sx
+   :kushi-defclass-overrides
+   :user-defclass-overrides])
 
 (def rule-type-labels
   (into {} (map (fn [k] [k (name k)]) rule-type-report-order)))
