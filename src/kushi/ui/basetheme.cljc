@@ -6,7 +6,7 @@
    [kushi.config :refer [user-config]]
    [kushi.ui.tokens :refer [design-tokens]]
    [kushi.ui.utility :refer [utility-classes disabled]]
-   [kushi.colors :refer [colors]]
+   [kushi.colors :refer [colors transparent-neutrals]]
    [kushi.color :refer [colors->tokens colors->alias-tokens semantic-aliases]]))
 
 ;; TODO - explore more efficient way to transform authored theme code
@@ -129,21 +129,21 @@
 
    ;; NEUTRAL INVERSE
    ;; default
-   ".dark .neutral:color"                                  150
-   ".dark .neutral:hover:color"                            100
-   ".dark .neutral:active:color"                           50
+   ".dark .neutral:color"                                  50
+   ".dark .neutral:hover:color"                            0
+   ".dark .neutral:active:color"                           0
 
-   ".dark .neutral:background-color"                       800
+   ".dark .neutral:background-color"                       750
    ".dark .neutral:hover:background-color"                 700
-   ".dark .neutral:active:background-color"                600
+   ".dark .neutral:active:background-color"                700
 
-   ".dark .neutral.info:color"                             150
-   ".dark .neutral.info:hover:color"                       150
-   ".dark .neutral.info:active:color"                      150
+   ".dark .neutral.info:color"                             50
+   ".dark .neutral.info:hover:color"                       50
+   ".dark .neutral.info:active:color"                      50
 
-   ".dark .neutral.info:background-color"                  800
-   ".dark .neutral.info:hover:background-color"            800
-   ".dark .neutral.info:active:background-color"           800
+   ".dark .neutral.info:background-color"                  750
+   ".dark .neutral.info:hover:background-color"            750
+   ".dark .neutral.info:active:background-color"           750
 
    ;; minimal
    ".dark .neutral.minimal:color"                          150
@@ -245,35 +245,31 @@
    :.accent.filled:hover:color                     :white
    :.accent.filled:active:color                    :white
 
-   :.accent.filled:background-color                600
+   :.accent.filled:background-color                550
    :.accent.filled:hover:background-color          700
    :.accent.filled:active:background-color         800
 
-  ;;  :.accent.filled.info:color                      :filled
-  ;;  :.accent.filled.info:hover:color                :filled
-  ;;  :.accent.filled.info:active:color               :filled
-
-   :.accent.filled.info:background-color           600
-   :.accent.filled.info:hover:background-color     600
-   :.accent-filled.info:active:background-color    600
+   :.accent.filled.info:background-color           550
+   :.accent.filled.info:hover:background-color     550
+   :.accent-filled.info:active:background-color    550
 
    ;; ACCENT INVERSE
    ;; default
-   ".dark .accent:color"                                  200
-   ".dark .accent:hover:color"                            100
+   ".dark .accent:color"                                  100
+   ".dark .accent:hover:color"                            50
    ".dark .accent:active:color"                           50
 
-   ".dark .accent:background-color"                       800
-   ".dark .accent:hover:background-color"                 700
-   ".dark .accent:active:background-color"                600
+   ".dark .accent:background-color"                       750
+   ".dark .accent:hover:background-color"                 600
+   ".dark .accent:active:background-color"                500
 
-   ".dark .accent.info:color"                             200
-   ".dark .accent.info:hover:color"                       200
-   ".dark .accent.info:active:color"                      200
+   ".dark .accent.info:color"                             100
+   ".dark .accent.info:hover:color"                       100
+   ".dark .accent.info:active:color"                      100
 
-   ".dark .accent.info:background-color"                  800
-   ".dark .accent.info:hover:background-color"            800
-   ".dark .accent.info:active:background-color"           800
+   ".dark .accent.info:background-color"                  750
+   ".dark .accent.info:hover:background-color"            750
+   ".dark .accent.info:active:background-color"           750
 
    ;; minimal
    ".dark .accent.minimal:color"                          300
@@ -328,8 +324,8 @@
    :.positive:active:color                           1000
 
    :.positive:background-color                       100
-   :.positive:hover:background-color                 200
-   :.positive:active:background-color                300
+   :.positive:hover:background-color                 150
+   :.positive:active:background-color                250
 
    :.positive.info:color                             800
    :.positive.info:hover:color                       800
@@ -340,15 +336,15 @@
    :.positive.info:active:background-color           100
 
 
-   :.positive.minimal:color                          650
+   :.positive.minimal:color                          700
    :.positive.minimal:hover:color                    800
    :.positive.minimal:active:color                   900
 
    :.positive.minimal:background-color               :transparent
    :.positive.minimal:hover:background-color         100
-   :.positive.minimal:active:background-color        200
+   :.positive.minimal:active:background-color        150
 
-   :.positive.bordered:color                         650
+   :.positive.bordered:color                         700
    :.positive.bordered:hover:color                   800
    :.positive.bordered:active:color                  900
 
@@ -356,21 +352,21 @@
    :.positive.bordered:hover:background-color        :transparent
    :.positive.bordered:active:background-color       :transparent
 
-   :.positive.bordered:border-color                  600
-   :.positive.bordered:hover:border-color            800
+   :.positive.bordered:border-color                  650
+   :.positive.bordered:hover:border-color            750
    :.positive.bordered:active:border-color           900
 
-   :.positive.bordered.info:color                    650
-   :.positive.bordered.info:hover:color              650
-   :.positive.bordered.info:active:color             650
+   :.positive.bordered.info:color                    700
+   :.positive.bordered.info:hover:color              700
+   :.positive.bordered.info:active:color             700
 
    :.positive.bordered.info:background-color         :transparent
    :.positive.bordered.info:hover:background-color   :transparent
    :.positive.bordered.info:active:background-color  :transparent
 
-   :.positive.bordered.info:border-color             600
-   :.positive.bordered.info:hover:border-color       600
-   :.positive.bordered.info:active:border-color      600
+   :.positive.bordered.info:border-color             650
+   :.positive.bordered.info:hover:border-color       650
+   :.positive.bordered.info:active:border-color      650
 
    :.positive.filled:color                           :white
    :.positive.filled:hover:color                     :white
@@ -441,13 +437,13 @@
    ".dark .positive.filled:hover:color"                     :black
    ".dark .positive.filled:active:color"                    :black
 
-   ".dark .positive.filled:background-color"                400
-   ".dark .positive.filled:hover:background-color"          250
-   ".dark .positive.filled:active:background-color"         100
+   ".dark .positive.filled:background-color"                500
+   ".dark .positive.filled:hover:background-color"          350
+   ".dark .positive.filled:active:background-color"         250
 
-   ".dark .positive.filled.info:background-color"           400
-   ".dark .positive.filled.info:hover:background-color"     400
-   ".dark .positive-filled.info:active:background-color"    400
+   ".dark .positive.filled.info:background-color"           500
+   ".dark .positive.filled.info:hover:background-color"     500
+   ".dark .positive-filled.info:active:background-color"    500
 
    ;; Negative
    :.negative:color                                  600
@@ -513,21 +509,21 @@
 
    ;; NEGATIVE INVERSE
    ;; default
-   ".dark .negative:color"                                  200
-   ".dark .negative:hover:color"                            100
+   ".dark .negative:color"                                  100
+   ".dark .negative:hover:color"                            50
    ".dark .negative:active:color"                           50
 
-   ".dark .negative:background-color"                       850
-   ".dark .negative:hover:background-color"                 750
-   ".dark .negative:active:background-color"                650
+   ".dark .negative:background-color"                       800
+   ".dark .negative:hover:background-color"                 700
+   ".dark .negative:active:background-color"                600
 
-   ".dark .negative.info:color"                             200
-   ".dark .negative.info:hover:color"                       200
-   ".dark .negative.info:active:color"                      200
+   ".dark .negative.info:color"                             100
+   ".dark .negative.info:hover:color"                       100
+   ".dark .negative.info:active:color"                      100
 
-   ".dark .negative.info:background-color"                  850
-   ".dark .negative.info:hover:background-color"            850
-   ".dark .negative.info:active:background-color"           850
+   ".dark .negative.info:background-color"                  800
+   ".dark .negative.info:hover:background-color"            800
+   ".dark .negative.info:active:background-color"           800
 
    ;; minimal
    ".dark .negative.minimal:color"                          300
@@ -539,109 +535,109 @@
    ".dark .negative.minimal:active:background-color"        750
 
    ;; bordered
-   ".dark .negative.bordered:color"                         300
-   ".dark .negative.bordered:hover:color"                   200
-   ".dark .negative.bordered:active:color"                  100
+   ".dark .negative.bordered:color"                         350
+   ".dark .negative.bordered:hover:color"                   250
+   ".dark .negative.bordered:active:color"                  150
 
    ".dark .negative.bordered:background-color"              :transparent
    ".dark .negative.bordered:hover:background-color"        :transparent
    ".dark .negative.bordered:active:background-color"       :transparent
 
-   ".dark .negative.bordered:border-color"                  300
-   ".dark .negative.bordered:hover:border-color"            200
-   ".dark .negative.bordered:active:border-color"           100
+   ".dark .negative.bordered:border-color"                  350
+   ".dark .negative.bordered:hover:border-color"            250
+   ".dark .negative.bordered:active:border-color"           150
 
-   ".dark .negative.bordered.info:color"                    300
-   ".dark .negative.bordered.info:hover:color"              300
-   ".dark .negative.bordered.info:active:color"             300
+   ".dark .negative.bordered.info:color"                    350
+   ".dark .negative.bordered.info:hover:color"              350
+   ".dark .negative.bordered.info:active:color"             350
 
    ".dark .negative.bordered.info:background-color"         :transparent
    ".dark .negative.bordered.info:hover:background-color"   :transparent
    ".dark .negative.bordered.info:active:background-color"  :transparent
 
-   ".dark .negative.bordered.info:border-color"             300
-   ".dark .negative.bordered.info:hover:border-color"       300
-   ".dark .negative.bordered.info:active:border-color"      300
+   ".dark .negative.bordered.info:border-color"             350
+   ".dark .negative.bordered.info:hover:border-color"       350
+   ".dark .negative.bordered.info:active:border-color"      350
 
    ;; filled
    ".dark .negative.filled:color"                           :black
    ".dark .negative.filled:hover:color"                     :black
    ".dark .negative.filled:active:color"                    :black
 
-   ".dark .negative.filled:background-color"                400
-   ".dark .negative.filled:hover:background-color"          300
-   ".dark .negative.filled:active:background-color"         200
+   ".dark .negative.filled:background-color"                450
+   ".dark .negative.filled:hover:background-color"          350
+   ".dark .negative.filled:active:background-color"         250
 
-   ".dark .negative.filled.info:background-color"           500
-   ".dark .negative.filled.info:hover:background-color"     500
-   ".dark .negative-filled.info:active:background-color"    500
+   ".dark .negative.filled.info:background-color"           450
+   ".dark .negative.filled.info:hover:background-color"     450
+   ".dark .negative-filled.info:active:background-color"    450
 
    ;; Warning
    :.warning:color                                  800
-   :.warning:hover:color                            900
-   :.warning:active:color                           1000
+   :.warning:hover:color                            850
+   :.warning:active:color                           900
 
-   :.warning:background-color                       100
-   :.warning:hover:background-color                 250
-   :.warning:active:background-color                350
+   :.warning:background-color                       150
+   :.warning:hover:background-color                 200
+   :.warning:active:background-color                300
 
    :.warning.info:color                             800
    :.warning.info:hover:color                       800
    :.warning.info:active:color                      800
 
-   :.warning.info:background-color                  100
-   :.warning.info:hover:background-color            100
-   :.warning.info:active:background-color           100
+   :.warning.info:background-color                  150
+   :.warning.info:hover:background-color            150
+   :.warning.info:active:background-color           150
 
    :.warning.minimal:color                          750
-   :.warning.minimal:hover:color                    900
-   :.warning.minimal:active:color                   1000
+   :.warning.minimal:hover:color                    850
+   :.warning.minimal:active:color                   900
 
    :.warning.minimal:background-color               :transparent
    :.warning.minimal:hover:background-color         100
-   :.warning.minimal:active:background-color        200
+   :.warning.minimal:active:background-color        150
 
-   :.warning.bordered:color                         750
-   :.warning.bordered:hover:color                   900
-   :.warning.bordered:active:color                  1000
+   :.warning.bordered:color                         700
+   :.warning.bordered:hover:color                   800
+   :.warning.bordered:active:color                  900
 
    :.warning.bordered:background-color              :transparent
    :.warning.bordered:hover:background-color        :transparent
    :.warning.bordered:active:background-color       :transparent
 
-   :.warning.bordered:border-color                  600
-   :.warning.bordered:hover:border-color            800
-   :.warning.bordered:active:border-color           900
+   :.warning.bordered:border-color                  650
+   :.warning.bordered:hover:border-color            750
+   :.warning.bordered:active:border-color           850
 
-   :.warning.bordered.info:color                    600
-   :.warning.bordered.info:hover:color              600
-   :.warning.bordered.info:active:color             600
+   :.warning.bordered.info:color                    650
+   :.warning.bordered.info:hover:color              650
+   :.warning.bordered.info:active:color             650
 
    :.warning.bordered.info:background-color         :transparent
    :.warning.bordered.info:hover:background-color   :transparent
    :.warning.bordered.info:active:background-color  :transparent
 
-   :.warning.bordered.info:border-color             600
-   :.warning.bordered.info:hover:border-color       600
-   :.warning.bordered.info:active:border-color      600
+   :.warning.bordered.info:border-color             650
+   :.warning.bordered.info:hover:border-color       650
+   :.warning.bordered.info:active:border-color      650
 
    :.warning.filled:color                           :white
    :.warning.filled:hover:color                     :white
    :.warning.filled:active:color                    :white
 
-   :.warning.filled:background-color                750
-   :.warning.filled:hover:background-color          800
-   :.warning.filled:active:background-color         90
+   :.warning.filled:background-color                650
+   :.warning.filled:hover:background-color          700
+   :.warning.filled:active:background-color         750
 
-   :.warning.filled.info:background-color           750
-   :.warning.filled.info:hover:background-color     750
-   :.warning-filled.info:active:background-color    750
+   :.warning.filled.info:background-color           650
+   :.warning.filled.info:hover:background-color     650
+   :.warning-filled.info:active:background-color    650
 
    ;; WARNING INVERSE
    ;; default
-   ".dark .warning:color"                                  300
-   ".dark .warning:hover:color"                            200
-   ".dark .warning:active:color"                           100
+   ".dark .warning:color"                                  200
+   ".dark .warning:hover:color"                            100
+   ".dark .warning:active:color"                           50
 
    ".dark .warning:background-color"                       850
    ".dark .warning:hover:background-color"                 750
@@ -695,8 +691,8 @@
    ".dark .warning.filled:active:color"                    :black
 
    ".dark .warning.filled:background-color"                500
-   ".dark .warning.filled:hover:background-color"          450
-   ".dark .warning.filled:active:background-color"         350
+   ".dark .warning.filled:hover:background-color"          350
+   ".dark .warning.filled:active:background-color"         250
 
    ".dark .warning.filled.info:background-color"           500
    ".dark .warning.filled.info:hover:background-color"     500
@@ -732,7 +728,7 @@
                                                        (when inverse? "inverse")]))
         token-key                (keyword (str "--" (name token-name*)))
         token-value             (if (int? v)
-                                  (keyword (str "--" color v))
+                                  (keyword (str "--" color "-" v))
                                   (name v))
         [selector prop]         (string/split (name k) #":" 2)
         value                   [prop token-key]]
@@ -811,40 +807,41 @@
   [
    ;; uncomment TEMP
    "body"
-   {:font-family         :--sans-serif-font-stack
-    :bgc                 :white
-    :color               :--gray900
-    :transition-property :all
-    :transition-duration :--duration-normal}
+   {:font-family                :$sans-serif-font-stack
+    :bgc                        :white
+    :color                      :$gray-900
+    :transition-property        :background-color|color
+    :transition-duration        :$fast
+    :transition-timing-function :$timing-linear-curve}
 
    ".dark, body.dark"
-   {:bgc   :$gray1000
-    :color :$gray50}
+   {:bgc   :$gray-1000
+    :color :$gray-50}
 
    "code, .code"
-   {:font-family                :--code-font-stack
-    :font-size                  :--code-font-size
-    :pi                         :--code-padding-inline
-    :pb                         :--code-padding-block
-    :border-radius              :--code-border-radius
-    :bgc                        :--code-background-color
+   {:font-family                :$code-font-stack
+    :font-size                  :$code-font-size
+    :pi                         :$code-padding-inline
+    :pb                         :$code-padding-block
+    :border-radius              :$code-border-radius
+    :bgc                        :$code-background-color
     :h                          :fit-content
     :w                          :fit-content
     :transition-property        :all
-    :transition-duration        :--duration-normal
+    :transition-duration        :$fast
     :transition-timing-function "cubic-bezier(0, 0, 1, 1)"}
 
    ".dark code, .dark .code"
-   {:bgc                        :--code-background-color-inverse
-    :c                          :--code-color-inverse
+   {:bgc                        :$code-background-color-inverse
+    :c                          :$code-color-inverse
     :transition-property        :all
-    :transition-duration        :--duration-normal
+    :transition-duration        :$fast
     :transition-timing-function "cubic-bezier(0, 0, 1, 1)"}
 
 
    ".styled-scrollbars"
    ;; Foreground, Background
-   {:scrollbar-color :--scrollbar-thumb-color
+   {:scrollbar-color :$scrollbar-thumb-color
     :scrollbar-width :thin}
 
    ".styled-scrollbars::-webkit-scrollbar"
@@ -855,13 +852,13 @@
 
    ;; Foreground
    ".styled-scrollbars::-webkit-scrollbar-thumb"
-   {:background    :--scrollbar-thumb-color
+   {:background    :$scrollbar-thumb-color
     :border-radius :9999px
-    :border        :0px:solid:--scrollbar-background-color}
+    :border        "0px solid var(--scrollbar-background-color)"}
 
    ;; Background
    ".styled-scrollbars::-webkit-scrollbar-track"
-   {:background :--scrollbar-background-color}
+   {:background :$scrollbar-background-color}
 
    "*:focus-visible"
    {:outline        "4px solid rgba(0, 125, 250, 0.6)"
@@ -882,38 +879,46 @@
   ;;  {:outline    :none
   ;;   :box-shadow "1px 1px 5px rgba(1, 1, 0, .7)"}
 
+
+   ;; TODO - Move these to utility? or should then just be here?
    ;; Foreground text that is slightly de-emphasized (such as text input field helper text)
-   :.neutral-secondary-fg {:color :--gray700}
+   :.neutral-secondary-fg {:color :$neutral-secondary-fg}
+   :.neutral-secondary-fg-inverse {:color :$neutral-secondary-fg-inverse}
 
    ;; Semantic fg
    ;; TODO -- dark versions of each with *--inverse tokens to match
-   :.neutral-fg {:color :--neutral-minimal-color}
-   :.accent-fg {:color :--accent-minimal-color}
-   :.positive-fg {:color :--positive-minimal-color}
-   :.negative-fg {:color :--negative-minimal-color}
-   :.warning-fg {:color :--warning-minimal-color}
+   :.neutral-fg {:color :$neutral-minimal-color}
+   :.accent-fg {:color :$accent-minimal-color}
+   :.positive-fg {:color :$positive-minimal-color}
+   :.negative-fg {:color :$negative-minimal-color}
+   :.warning-fg {:color :$warning-minimal-color}
 
    ;; Semantic bg
-   :.neutral-bg {:background-color :--neutral-background-color}
-   :.accent-bg {:background-color :--accent-background-color}
-   :.positive-bg {:background-color :--positive-background-color}
-   :.negative-bg {:background-color :--negative-background-color}
-   :.warning-bg {:background-color :--warning-background-color}
+   :.neutral-bg {:background-color :$neutral-background-color}
+   :.accent-bg {:background-color :$accent-background-color}
+   :.positive-bg {:background-color :$positive-background-color}
+   :.negative-bg {:background-color :$negative-background-color}
+   :.warning-bg {:background-color :$warning-background-color}
    ])
 
 
+;; User would probably want to change from wee-bold for button and tag
+;; Add to docs
 (def ui*
-  [".kushi-button"                                                   {"font-weight" :$text-wee-bold
+  [".kushi-button"                                                   {"font-weight" :$wee-bold
                                                                       "font-family" :$primary-font-family}
    ".kushi-button.bordered"                                          {"border-width" :$button-border-width}
    ".kushi-tag.bordered"                                             {"border-width" :$tag-border-width}
-   ".kushi-tag"                                                      {"font-weight" :$text-wee-bold
+   ".kushi-tag"                                                      {"font-weight" :$wee-bold
                                                                       "font-family" :$primary-font-family}
    ".dark .kushi-radio-input"                                        {:bgc :black}
    ".dark .kushi-checkbox-input"                                     {:bgc :black}
    ".dark .kushi-checkbox-input:before"                              {:box-shadow :inset:1em:1em:black}
    ".dark .kushi-slider-step-label.kushi-slider-step-label-selected" {:c :white}
-   ".dark .kushi-slider-step-label"                                  {:c :$gray300}])
+   ".dark .kushi-slider-step-label"                                  {:c :$gray-300}
+
+  ;;  ".dark .kushi-slider-step-label"                               {:c :$gray-300}
+   ])
 
 
 
@@ -950,9 +955,9 @@
                                  #(starts-with-dark? %)))
         report (styles-transform-report coll ret)]
     ;; (if dark?
-    ;;   (? "Removing dark styles"
+    ;;   (println "Removing dark styles"
     ;;      report)
-    ;;   (? "Removing light styles"
+    ;;   (println "Removing light styles"
     ;;      report))
     ret))
 
@@ -978,8 +983,9 @@
             (seq elided))
      (let [re  (variant-elision-re elided)
            ret (filter-flatmap coll #(not (re-find re (name %))))]
-      ;;  (? "Removing styles from unused variants"
-      ;;     (styles-transform-report coll ret :variants-to-elide elided))
+
+      ;;  (println "Removing styles from unused variants" (styles-transform-report coll ret :variants-to-elide elided))
+
        ret)
      coll)))
 
@@ -989,12 +995,14 @@
        maybe-remove-semantic-or-style-variants))
 
 
+
 (defn base-theme-map
   []
-  (let [variant-values     (maybe-remove-some-variants variant-values)
-        {ui2 :styles variant-tokens :token-pairs} (tokenizer variant-values)
-        ui                 (into [] (concat ui ui2 ui*))
-        ui                 (if (remove-darks?) (remove-lights-or-darks ui :darks) ui)]
+  (let [variant-values                (maybe-remove-some-variants variant-values)
+        {ui2            :styles
+         variant-tokens :token-pairs} (tokenizer variant-values)
+        ui                            (into [] (concat ui ui2 ui*))
+        ui                            (if (remove-darks?) (remove-lights-or-darks ui :darks) ui)]
     {:css-reset       css-reset
      :utility-classes utility-classes
      :design-tokens   (let [color-tokens       (colors->tokens colors
@@ -1005,15 +1013,17 @@
                                                 {:expanded? true})]
                         (into []
                               (concat color-tokens
+                                      transparent-neutrals
                                       alias-color-tokens
                                       variant-tokens
                                       design-tokens)))
      :ui              ui
-     :font-loading    {
-                        ;;  :google-fonts  [{:family "Public Sans"
-                        ;;                   :styles {:normal [100]
-                        ;;                            :italic [300]}}]
-
+     :font-loading    {:add-default-sans-font-family? true
+                       :add-default-code-font-family? true
+                       :add-default-serif-font-family? true
+                       ;;  :google-fonts  [{:family "Public Sans"
+                       ;;                   :styles {:normal [100]
+                       ;;                            :italic [300]}}]
                        }
      }))
 
