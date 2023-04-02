@@ -50,12 +50,15 @@
        (map string/capitalize)
        string/join))
 
+(defn anon-fn-syntax [s]
+  (string/replace s #"\(fn\* \[" "(fn [e"))
+
 (defn formatted-code [s]
   [:pre
    [:code {:class :language-clojure
            :style {:white-space :pre
                    :line-height 1.5}}
-    s]])
+    (anon-fn-syntax s)]])
 
 (defn kushi-component-desc->md [coll]
   (string/replace (string/join " "
