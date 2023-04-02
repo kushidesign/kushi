@@ -364,6 +364,13 @@
 
 
 ;; STYLEMAP --------------------------------------------------------------
+(s/def ::bad-sx-value
+  (s/and map?
+         #(= 2 (count %))
+         #(contains? % :bad-value)
+         #(when-let [path (:path %)]
+            (and (seq path) (vector? path)))))
+
 (s/def ::defclass-stylemap
   (s/and map?
          (s/coll-of ::style-tuple-defclass)))
