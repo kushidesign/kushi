@@ -1,7 +1,6 @@
 (ns ^:dev/always kushi.reporting
   (:require
    [io.aviso.ansi :as ansi]
-   [clojure.pprint :refer [pprint]]
    [clojure.string :as string]
    [kushi.printing2 :refer [file+line+col-str]]
    [kushi.utils :as util :refer [mapj]]
@@ -22,9 +21,6 @@
   [coll initial-build?]
   (when (seq coll)
     (let [
-          ;; coll             (mapv (fn [[k v]]
-          ;;                          [k v])
-          ;;                        coll)
           max-label-length (->> coll
                                 (into {})
                                 keys
