@@ -1,7 +1,8 @@
 (ns ^:dev/always kushi.problems
-  (:require [kushi.utils :as util :refer [keyed]]
-            [clojure.spec.alpha :as s]
-            [kushi.specs2 :as specs2]))
+  (:require
+   [kushi.utils :as util :refer [keyed]]
+   [clojure.spec.alpha :as s]
+   [kushi.specs2 :as specs2]))
 
 (defn problematics [coll problems*]
   (let [last-index (dec (count coll))
@@ -22,9 +23,13 @@
        :clojure.spec.alpha/problems))
 
 (defn bad-stylemap
-  [stylemap]
+  [stylemap process]
+
   (when stylemap
-    (let [bad-stylemap          (-> stylemap :val :style)
+    (let [shared-class?         (util/shared-class? process)
+          bad-stylemap          (if shared-class?
+                                  (-> stylemap :val)
+                                  (-> stylemap :val :style))
           bad-stylemap-path*    (:in stylemap)
           [_ bad-entries]       (util/partition-by-spec ::specs2/style-tuple bad-stylemap)
           bad-stylemap-path     (conj bad-stylemap-path* :style)
@@ -34,32 +39,34 @@
              bad-stylemap-path-map))))
 
 (defn problems
-  [args
-   validation-spec
-   conformance-spec]
+  [{:keys [args
+           validation-spec
+           conformance-spec
+           :kushi/process]
+    :as   m}]
   (when-not (s/valid? validation-spec args)
-    (let [bad-strings      (->> args
-                                (map-indexed (fn [idx arg]
-                                               (when-not (zero? idx)
-                                                 (when (string? arg) [[idx] arg]))))
-                                (remove nil?)
-                                (into {}))
-          problems         (spec-problems args conformance-spec)
+    (let [bad-strings       (->> args
+                                 (map-indexed (fn [idx arg]
+                                                (when-not (zero? idx)
+                                                  (when (string? arg) [[idx] arg]))))
+                                 (remove nil?)
+                                 (into {}))
+          problems          (spec-problems args conformance-spec)
 
           [stylemap*
-           args*]          (problematics args problems)
+           args*]           (problematics args problems)
 
-          bad-args         (merge (reduce (fn [acc {:keys [in val]}]
-                                            (assoc acc in val))
-                                          {}
-                                          args*)
-                                  bad-strings)
+          bad-args          (merge (reduce (fn [acc {:keys [in val]}]
+                                             (assoc acc in val))
+                                           {}
+                                           args*)
+                                   bad-strings)
 
-          bad-args-vals    (->> bad-args vals (into #{}))
+          bad-args-vals     (->> bad-args vals (into #{}))
 
 
-          bad-stylemap     (bad-stylemap stylemap*)
-          ret              (merge
-                            bad-stylemap
-                            (keyed bad-args bad-args-vals bad-strings))]
+          bad-stylemap      (bad-stylemap stylemap* process)
+          ret               (merge
+                             bad-stylemap
+                             (keyed bad-args bad-args-vals bad-strings))]
       ret)))
