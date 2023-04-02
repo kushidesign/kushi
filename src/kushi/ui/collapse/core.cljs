@@ -1,5 +1,6 @@
 (ns kushi.ui.collapse.core
   (:require
+   [kushi.playground.util :as util :refer-macros [keyed]]
    [kushi.core :refer (sx merge-attrs) :refer-macros (sx)]
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
@@ -25,75 +26,109 @@
         newv (if (= aria-expanded? "false") true false)]
     (.setAttribute node (name attr) newv)))
 
-(defn outer-height [el]
+(defn bod-height [el]
   (let [styles (js/window.getComputedStyle el)
         margin-top (js/parseFloat (.-marginTop styles))
         margin-bottom (js/parseFloat (.-marginBottom styles))
         ret  (+ margin-top margin-bottom (js/Math.ceil (.-offsetHeight el)))]
     ret))
 
-(defn other-expanded-node
-  [accordian-node clicked-node]
-  (when accordian-node
-    (when-let [open-node (.querySelector accordian-node "section>div[aria-expanded='true'][role='button']")]
-      (when-not (= open-node clicked-node)
-        [open-node (-> open-node .-nextSibling)]))))
+;; todo figure out accordian
+(defn currently-open-accordian-node
+  [currently-open-header]
+  (let [accordian-root* (dom/grandparent currently-open-header)
+        accordian-root  (when (dom/has-class accordian-root* "kushi-accordian") accordian-root*)]
+    (when accordian-root
+      (when-let [open-node (.querySelector
+                            accordian-root
+                            "section>div[aria-expanded='true'][role='button']")]
+        (when-not (= open-node currently-open-header)
+          open-node)))))
 
 (defn collapse-header
   [& args]
-  (let [[opts attrs & children] (opts+children args)
-        {:keys [icon-position icon-svg]} opts]
-    (let [on-click #(let [node                        (.closest (-> % .-target) "[aria-expanded][role='button']")
-                          collapse                    (.-parentNode node)
-                          accordian*                  (dom/grandparent node)
-                          accordian                   (when (dom/has-class accordian* "kushi-accordian")
-                                                        accordian*)
-                          [open-node
-                           open-exp-parent]           (other-expanded-node accordian node)
-                          exp-parent                  (-> node .-nextSibling)
-                          collapsed?                  (= "none"  (.-display (.-style exp-parent)))
-                          _                           (when collapsed? (set! exp-parent.style.display "block"))
-                          exp-inner                   (-> node .-nextSibling .-firstChild)
-                          exp-inner-h                 (outer-height exp-inner)
-                          aria-expanded?              (dom/attribute-true? node :aria-expanded)
-                          height                      (str exp-inner-h "px")
-                          ->height                    (if aria-expanded? "0px" height)
-                          no-height?                  (and aria-expanded? (string/blank? exp-parent.style.height))
-                          toggle-op                   (if aria-expanded? dom/remove-class dom/add-class)]
-                      (toggle-op collapse :kushi-collapse-expanded)
-                      (when no-height? (set! exp-parent.style.height height))
-                      (js/window.requestAnimationFrame (fn []
-                                                         (when open-exp-parent
-                                                           (set! open-exp-parent.style.height "0px")
-                                                           (toggle-boolean-attribute open-node :aria-expanded))
-                                                         (set! exp-parent.style.height ->height)
-                                                         (toggle-boolean-attribute node :aria-expanded)
-                                                         (if-not collapsed?
-                                                           (js/setTimeout (fn []
-                                                                            (set! exp-parent.style.display "none"))
-                                                                          200)
-                                                           (js/setTimeout (fn []
-                                                                            (set! exp-parent.style.height "auto"))
-                                                                          210)))))]
+  (let [[opts attrs & children]       (opts+children args)
+        {:keys [speed]
+         :or   {speed 250}} opts]
+    (let [on-click
+          #(let [header   (.closest (-> % .-target) "[aria-expanded][role='button']")
+                 collapse (.-parentNode header)]
+
+             ;; First, we make sure the collapse is not already in the process of opening or closing.
+             (when-not (dom/has-class collapse "kushi-collapse-transit")
+
+               ;; Add an 'in-transit' class to the collapse
+               (dom/add-class collapse "kushi-collapse-transit")
+
+               (let [bod                           (-> header .-nextSibling)
+                     collapsed?                    (= "none" (.-display (.-style bod)))
+                     _                             (when collapsed? (set! bod.style.display "block"))
+                     expanded?                     (dom/attribute-true? header :aria-expanded)
+                     bod-height-px                 (some-> bod .-firstChild bod-height (str "px"))
+                     next-bod-height-px            (if expanded? "0px" bod-height-px)
+                     expanded-and-not-yet-clicked? (and expanded? (string/blank? bod.style.height))
+
+                     ;; If the collapse happens to be inside an accordian,
+                     ;; and the user has clicked on a "collapsed" collapse & there is currently an expanded sibling collapse,
+                     ;; get the currently open sibling collapse that needs to be auto-closed as this one opens.
+                     currently-open-accordian-child-head (currently-open-accordian-node header)]
+
+                 ;; If accordian with open sibling, simulate click on it
+                 (some-> currently-open-accordian-child-head .click)
+
+                 ;; Toggle kushi-collapse-expanded classes
+                 ((if expanded? dom/remove-class dom/add-class) collapse :kushi-collapse-expanded)
+
+                 (when expanded-and-not-yet-clicked?
+                   ;; Set the bod height to something, so we can animate it to the actual value we need.
+                   #_(js/console.log "expanded-and-not-yet-clicked, setting bod height to: " bod-height-px)
+                   (set! bod.style.height bod-height-px))
+
+                 ;; Set the bod height to animate it open or closed.
+                 (set! bod.style.height bod-height-px)
+
+                 (js/window.requestAnimationFrame
+                  (fn []
+                    ;; Now set the current collapse height
+                    (set! bod.style.height next-bod-height-px)
+
+                    ;; Toggle the aria-expanded attribute
+                    ;; If false:
+                    ;;    - This will set the collapse's body-wrapper to 0 via css selector rule
+                    ;;    - This will set the collapse's body-wrapper opacity duration to 10ms, and the opacity to 0 (fade out effect)
+                    ;; If true:
+                    ;;    - This will set the collapse's body-wrapper to 0 via css selector rule
+                    ;;    - This will set the collapse's body-wrapper opacity duration to 200ms, and the opacity to 1 (fade-in effect)
+                    (toggle-boolean-attribute header :aria-expanded)
+                    (if-not collapsed?
+                      (js/setTimeout (fn []
+                                       ;; body is open, closing
+                                       (set! bod.style.display "none")
+                                       (dom/remove-class collapse "kushi-collapse-transit"))
+                                     speed)
+                      (js/setTimeout (fn []
+                                       ;; body is closed, opening
+                                       (set! bod.style.height "auto")
+                                       (dom/remove-class collapse "kushi-collapse-transit"))
+                                     (+ speed 10))))))))]
       (into [:div
              (merge-attrs
               (sx
                'kushi-collapse-header
+               :.flex-row-fs
                :.pointer
-               {:class         [:.flex-row-fs :.collapse-header]
-                :style         {:ai                                            :center
-                                :padding-block                                 :0.75em
-                                :transition                                    :all:200ms:linear
-                                :+section:transition-property                  :height
-                                :+section:transition-timing-function           "cubic-bezier(0.23, 1, 0.32, 1)"
-                                :+section:transition-duration                  :$kushi-collapse-transition-duration
-                                "&[aria-expanded='false']+section:height"        :0px
+               {:style         {:ai                                             :center
+                                :padding-block                                  :0.75em
+                                :+section:transition-property                   :height
+                                :+section:transition-timing-function            "cubic-bezier(0.23, 1, 0.32, 1)"
+                                :+section:transition-duration                   :$speed
+                                "&[aria-expanded='false']+section:height"       :0px
 
-                                "&[aria-expanded='false']+section:>*:transition" :opacity:200ms:linear:10ms
-                                "&[aria-expanded='true']+section:>*:transition"  :opacity:200ms:linear:200ms
+                                "&[aria-expanded='false']+section>*:transition" [[:opacity :$speed :linear :10ms]]
+                                "&[aria-expanded='true']+section>*:transition"  [[:opacity :$speed :linear :200ms]]
 
-                                "&[aria-expanded='false']+section:>*:opacity"    0
-                                "&[aria-expanded='true']+section:>*:opacity"     1}
+                                "&[aria-expanded='false']+section>*:opacity"    0
+                                "&[aria-expanded='true']+section>*:opacity"     1}
                 :tabIndex      0
                 :role          :button
                 :aria-expanded false
@@ -106,42 +141,48 @@
 (defn collapse
   {:desc ["A section of content which can be collapsed and expanded."]
    :opts '[{:name    label
-            :type    :string
+            :pred    string?
             :default nil
             :desc    "The text to display in the collapse header."}
            {:name    label-expanded
-            :type    :string
+            :pred    string?
             :default nil
             :desc    "The text to display in the collapse header when expanded. Optional."}
            {:name    icon
-            :type    :vector
+            :pred    vector?
             :default '[kushi.ui.icon.core/icon :add]
             :desc    ["An instance of a kushi.ui.icon/icon component"
                       "Optional."]}
            {:name    icon-expanded
-            :type    :vector
+            :pred    vector?
             :default '[kushi.ui.icon.core/icon :remove]
             :desc    ["An instance of a kushi.ui.icon/icon component"
                       "Optional."]}
            {:name    icon-position
-            :type    #{:start :end}
+            :pred    #{:start :end}
             :default :start
             :desc    ["A value of `:start` will place the at the inline start of the header, preceding the label."
                       "A value of `:end` will place the icon at the inline end of the header, opposite the label."
                       "Optional."]}
            {:name    expanded?
-            :type    :boolean
+            :pred    boolean?
             :default false
             :desc    ["When a value of `true` is passed, the collapse is initially rendered in an expanded state."
                       "Optional"]}
+           {:name    speed
+            :pred    pos-int?
+            :default 250
+            :desc    ["The speed of the transition."]}
            ]}
   [& args]
-  (let [[opts attr & children]   (opts+children args)
+  (let [[opts attr & children] (opts+children args)
         {:keys [header-attrs
                 body-attrs
                 expanded?
                 on-click
-                icon-position]} opts]
+                icon-position
+                speed]
+         :or   {speed 250}}    opts]
     [:section
      (merge-attrs
       (sx
@@ -149,6 +190,7 @@
        :.flex-col-fs
        (when expanded? :.kushi-collapse-expanded)
        :w--100%
+       [:$speed (str speed "ms")]
        {:data-kushi-ui :collapse})
       attr)
      [collapse-header
@@ -156,16 +198,18 @@
                    (sx #_["[aria-expanded='false']+.kushi-collapse-body-wrapper:d" :none]
                        {:on-click       on-click
                         :aria-expanded  (if expanded? "true" "false")
-                        :-icon-position icon-position}))
+                        :-icon-position icon-position
+                        :-speed         speed}))
       [collapse-header-contents opts]]
 
      ;; collapse body
      [:section
       (merge-attrs (sx 'kushi-collapse-body-wrapper
                        :overflow--hidden
-                       {:disabled true})
+                       #_{:disabled true})
                    body-attrs
-                   {:style {:display :none}})
+                   {:style {:display             (if expanded? :block :none)
+                            :transition-duration :$speed}})
       (into [:div (sx
                    'kushi-collapse-body
                    :bbe--1px:solid:transparent
