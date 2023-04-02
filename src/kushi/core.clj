@@ -437,11 +437,8 @@
 
 (defn- font-loading!
   [{:keys [google-font-maps
-           google-material-symbols-maps
-           add-system-font-stack?
-           system-font-stack-weights]}]
-  (when add-system-font-stack?
-    (sysfont system-font-stack-weights))
+           google-material-symbols-maps]
+    :as m}]
   (when (seq google-font-maps)
     (state2/add-google-font-maps!
      google-font-maps))
