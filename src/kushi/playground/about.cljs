@@ -8,6 +8,7 @@
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
    [kushi.ui.dom :refer (copy-to-clipboard)]
    [kushi.playground.util :as util]
+   [kushi.playground.colors :as playground.colors]
    [kushi.playground.shared-styles]))
 
 
@@ -38,13 +39,13 @@
     [:div (sx
            'intro-section-title-wrapper
            :.flex-col-fs
-           :.xxlarge
            :.wee-bold
            :.relative
            :w--100%
            :mbe--4.25rem)
      [label
       (sx 'intro-section-title
+          :fs--$kushi-playground-main-section-header_font-size|$xxlarge
           :pbs--2.25em
           :md:pbs--$vp-top-header-padding-with-offset
           {:style {:transform '(translateX :-1.5px)}})
@@ -53,10 +54,6 @@
      (sx 'intro-section-body
          :.normal
          :.transition
-        ;; :.medium
-        ;; :lg:pie--5rem
-        ;; :md:pie--3rem
-        ;; :sm:pie--5rem
          :pie--2rem
          :&_p:line-height--$body-copy-line-height
          :&_p:margin-block--2em)
@@ -74,8 +71,30 @@
   [:span
    [:p "Kushi includes a foundation of global and alias color token scales."]
 
+   [:div
+    (sx
+     :sm:d--none
+     :pb--1rem:2.5rem
+     :pis--0)
+    [playground.colors/color-grid
+     {:-row-gap     :4px
+      :-column-gap  :8px
+      :-labels?     false
+      :-swatch-attrs (sx :w--23px :h--23px)}]]
+
+   [:div
+    (sx
+     :d--none
+     :sm:d--block
+     :pb--2rem:4.5rem
+     :pis--2.5rem)
+    [playground.colors/color-grid
+     {:-row-gap      :7px
+      :-column-gap   :14px
+      :-swatch-attrs (sx :w--34px :h--34px)}]]
+
    [:p.alias-token-scales
-     "Semantic alias tokens map to global tokens like so:"
+    "Semantic alias tokens map to global tokens like so:"
     [:br]]
 
    (into [:div (sx :.grid
@@ -106,17 +125,30 @@
 
 (defn type-scale [{:keys [coll label]}]
   (into [:div
-         [:h3 (sx :.xxlarge
-                  :.subsection-title
+         [:h3 (sx :fs--$kushi-playground-main-section-header_font-size|$xxlarge
                   :.wee-bold
-                  :mbs--5em
+                  :mbs--3em
                   :pbs--1.5em
-                  [:bbs "1px solid var(--gray300)"]
-                  [:dark:bbs "1px solid var(--gray700)"])
-          (str "Type " label " Scale")]]
+                  [:bbs "1px solid var(--gray-300)"]
+                  [:dark:bbs "1px solid var(--gray-700)"])
+          (str "Type " label " Scale")]
+         (when (= "Size" label)
+           [:p
+            (sx :>code:mi--0.25em :>code:ws--n)
+            "Kushi offers a typographic scale with t-shirt sizing from"
+            [:code "xxxsmall"]
+            "up to"
+            [:code "xxxxlarge"]
+            ;; ". There is a version for low x-height fonts which is"
+            ;; [:code "xxxsmall-low-x"]
+            ;; "up to"
+            ;; [:code "xxxxlarge-low-x"]
+            ;; "."
+            ])]
         (for [x coll]
-          [:div (sx :.flex-col-fs :mb--47px)
-           [:div (sx :.small :.normal)
+          [:div 
+           (sx :.flex-col-fs :mb--24px)
+           #_[:div (sx :.small :.normal)
             [:span.code (str ":." (name x))]]
            [:div (sx (when (= label "Tracking") :.uppercase)
                      :mbs--10px)
@@ -139,17 +171,20 @@
 
 (def typography-tokens-snippet
 "[:span
-  (sx :fs--$text-xxlarge
-      :fw--$text-bold
-      :letter-spacing--$text-xloose)
+  (sx :fs--$xxlarge
+      :fw--$bold
+      :letter-spacing--$xloose)
   \"My text\"]" )
 
 
 (def typography-utility-classes-snippet
   "[:span \n  (sx :.xxlarge :.bold :.xloose :.uppercase :.italic) \n  \"My text\"]" )
 
+(def typescale [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge :xxxxlarge])
+;; (def typescale-low-x [:xxxsmall-low-x :xxsmall-low-x :xsmall-low-x :small-low-x :medium-low-x :large-low-x :xlarge-low-x :xxlarge-low-x :xxxlarge-low-x :xxxxlarge-low-x])
 
-(def kushi-typography-about
+(defn kushi-typography-about
+  [{:keys [use-low-x-type-scale?]}]
   [:span
    [:p "Kushi includes a foundation of global tokens and utility class scales for type size, weight, letter-spacing, sizing, and capitalization."]
 
@@ -179,7 +214,7 @@
      "here."]]
 
    [type-scale {:label "Size"
-                :coll  [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge]}]
+                :coll  typescale #_(if use-low-x-type-scale? typescale-low-x typescale)}]
    [type-scale {:label "Weight"
                 :coll  [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy]}]
    [type-scale {:label "Tracking"
