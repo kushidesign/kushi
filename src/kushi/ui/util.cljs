@@ -36,3 +36,8 @@
 
 (defn nameable? [x]
   (or (string? x) (keyword? x) (symbol? x)))
+
+(defn html-attr? [m k]
+  (when (keyword? k)
+   (or (true? (k m))
+       (true? ((keyword (str (name k) "?")) m)))))
