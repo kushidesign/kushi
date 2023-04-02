@@ -89,8 +89,8 @@
           {}
           overrides))
 
-(defn- default-font [k1 k2]
-  (when (k1 user-config)
+(defn- default-font [opts k1 k2]
+  (when (k1 opts)
     (k2 config/default-font-families-from-google-fonts)))
 
 (defn- google-font-maps
@@ -100,15 +100,16 @@
    which correspond to hosted Google fonts. All font-families listed in this vector
    will be loaded, with all available weights and italics variants included."
   [m]
-  (let [primary      (default-font :add-default-primary-font-family? :sans)
-        code         (default-font :add-default-code-font-family? :code)
+  (let [sans         (default-font m :add-default-sans-font-family? :sans)
+        code         (default-font m :add-default-code-font-family? :code)
+        serif        (default-font m :add-default-serif-font-family? :serif)
         families     (->> m
                           :google-fonts
                           (util/partition-by-pred string?))
         full-fams    (-> families
                          first
-                         (conj primary code))
-        font-maps    (let [gf (->> (conj full-fams primary code)
+                         (conj sans code serif))
+        font-maps    (let [gf (->> (conj full-fams sans code serif)
                                    (remove nil?)
                                    distinct
                                    (into []))]
@@ -151,36 +152,21 @@
                           (into []))]
     ret))
 
-(defn- system-font-opts
-  "Always creates @font-face declarations for all the weights and italics for
-   system ui fonts, unless the user sets the entry `:add-system-font-stack?` to `false`
-   in their kushi.edn config map.
-
-   If the user passes a vector of valid font weights for
-   `:system-font-stack-weights` entry, only those weights will be added."
-  []
-  (let [add?     (not (false? (:add-system-font-stack? user-config)))
-        weights* (:add-system-font-stack-weights user-config)
-        weights  (if (and (seq weights*)
-                          (every? int? weights*))
-                   weights*
-                   [])]
-    {:add-system-font-stack?    add?
-     :system-font-stack-weights weights}))
 
 (defn- font-loading-opts
   "Provides an argument map for kushi.core.ui/init-typography!"
   [m]
   (let [google-font-maps             (google-font-maps m)
-        google-material-symbols-maps (google-material-symbols-maps m)
-        sys                          (system-font-opts)]
-    (merge (keyed google-font-maps
-                  google-material-symbols-maps)
-           sys)))
+        google-material-symbols-maps (google-material-symbols-maps m)]
+    (keyed google-font-maps
+           google-material-symbols-maps)))
 
 
 (defn- design-tokens [base user]
-  (let [f       #(-> % :design-tokens util/kwargs-keys)
+  (let [user    (assoc user
+                       :design-tokens
+                       (apply conj (:design-tokens user) (:typescale user)))
+        f       #(-> % :design-tokens util/kwargs-keys)
         toks-ks (distinct (concat (f base)
                                   (f user)))
 
@@ -226,7 +212,7 @@
         ;;                                               :wght 400
         ;;                                               :grad 0
         ;;                                               :fill 1}}]})
-        ;; _ (? (:font-loading m))
+        ;; _ (println (:font-loading m))
         ;; Temp debugging end
 
         ret (when m
@@ -249,7 +235,7 @@
         user-ui    (f user)
         user-ui-ks (util/kwargs-keys user-ui*)
         base-ui-ks (util/kwargs-keys base-ui*)
-        merged     (merge base-ui user-ui)
+        merged     (util/deep-merge base-ui user-ui)
         ks-ui      (distinct (concat base-ui-ks user-ui-ks))
         ordered-ui (util/ordered-pairs ks-ui merged)]
     (keyed merged ks-ui ordered-ui)))
@@ -266,6 +252,7 @@
         css-reset            (when (:add-css-reset? user-config)
                                (or (:css-reset user)
                                    (:css-reset base)))]
+
     (merge
      merged-theme-props ;; <- map with the entries of [:font-loading :design-tokens]
      (keyed
