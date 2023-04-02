@@ -234,30 +234,31 @@
     (printing2/simple-warning2 clean)))
 
 (defn defclass-dispatch
-  [{:keys [sym form-meta args override] :as m}]
+  [{:keys [sym form-meta args override user-defclass-with-override?]
+    :as   m}]
 
   (when @state2/KUSHIDEBUG
-    (state2/trace-mode! args))
+    (state2/tracing! args))
   (try
-    (let [args              (if (and @state2/KUSHIDEBUG
-                                     (state2/trace-mode?))
-                              (drop-last args)
-                              args)
+    (let [args                            (if (and @state2/KUSHIDEBUG
+                                                   (state2/tracing?))
+                                            (drop-last args)
+                                            args)
+
+          ;; TODO change :process to :kushi/process?
           {:keys [cached]
            :as   cache-map} (state2/cached {:process :defclass
                                             :sym     sym
                                             :args    args})
-          process           (sym->process m)
-          clean             (or cached
-                                (args/clean-args {:args          (cons sym args)
-                                                  :kushi/process process
-                                                  :form-meta     form-meta}))
-          chunk             (or (:kushi/chunk (meta sym))
-                                process)
-          clean             (merge clean
-                                   {:kushi/chunk chunk})]
-
-      #_(when true #_override? (println sym process chunk "\n"))
+          process                         (sym->process m)
+          clean                           (or cached
+                                              (args/clean-args {:args          (cons sym args)
+                                                                :kushi/process process
+                                                                :form-meta     form-meta}))
+          chunk                           (or (:kushi/chunk (meta sym))
+                                              process)
+          clean                           (merge clean
+                                                 {:kushi/chunk chunk})]
 
       (swap! state2/css conj clean)
 
@@ -267,14 +268,12 @@
 
       (update-cache! clean cache-map)
 
-      (when (and (not override)
-                 (= :kushi.core/defclass chunk))
+      (when (and (not override) user-defclass-with-override?)
         (defclass-dispatch (merge (keyed args form-meta)
                                   {:sym      (symbol (str sym "\\!"))
                                    :override :kushi.core/defclass-override})))
 
-      (when (and (not override)
-                 (= :kushi/utility chunk))
+      (when (and (not override) (= :kushi/utility chunk))
         (defclass-dispatch (merge (keyed args form-meta)
                                   {:sym      (symbol (str sym "\\!"))
                                    :override :kushi/utility-override})))
@@ -293,13 +292,20 @@
 
 (defmacro ^:public defclass
   [sym & args]
-
   (when-not (defclass-noop? sym args)
     (defclass-dispatch {:sym       sym
                         :args      args
                         :form-meta (meta &form)})
     `(do nil)))
 
+(defmacro ^:public defclass-with-override
+  [sym & args]
+  (when-not (defclass-noop? sym args)
+    (defclass-dispatch {:sym                          sym
+                        :args                         args
+                        :form-meta                    (meta &form)
+                        :user-defclass-with-override? true})
+    `(do nil)))
 
 ;; SX ---------------------------------------------------------------------
 
