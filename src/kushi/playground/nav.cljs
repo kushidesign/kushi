@@ -16,7 +16,7 @@
          :md:d--none
          :w--100%
          :padding-inline--$page-padding-inline
-         :padding-block--0.7em
+         :h--$kushi-playground-mobile-header-height
          :bb--$divisor
          :bc--black
          :dark:bc--white
