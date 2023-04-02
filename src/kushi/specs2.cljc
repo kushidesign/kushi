@@ -473,7 +473,6 @@
         :defclass-stylemap    #(s/valid? ::defclass-stylemap %)
         :kushi-trace          #(s/valid? ::kushi-trace %)))
 
-
 (s/def ::defclass-args
   ;; TODO spec for symbol name validation
   (s/cat
@@ -482,7 +481,7 @@
    :defclass-stylemap       (s/? ::defclass-stylemap)
    :kushi-trace             (s/? ::kushi-trace)))
 
-
+;; using this for conformance TODO
 (s/def ::defclass-args2
   (s/coll-of ::valid-defclass-arg))
 
@@ -521,11 +520,6 @@
 (s/def ::add-font-face-args
   (s/cat :opts ::font-face-map))
 
-(s/def ::system-font-stack-weight
-  #{300 400 500 700})
-
-(s/def ::add-system-font-stack-args
-  (s/coll-of ::system-font-stack-weight))
 
 (defonce valid-font-face-map-ks
   (->> ::font-face-map
