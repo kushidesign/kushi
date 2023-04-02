@@ -2,7 +2,7 @@
   (:require
    [kushi.core :refer (sx)]
    [kushi.ui.icon.core :refer (icon)]
-   [kushi.playground.util :refer-macros (feature)]))
+   [kushi.playground.util :refer-macros (feature example2)]))
 
 #_(def icons
   [
