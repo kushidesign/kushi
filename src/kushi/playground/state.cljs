@@ -4,11 +4,15 @@
    [applied-science.js-interop :as j]
    [reagent.core :as r]))
 
-(def *state (r/atom {
-                    ;;  :init-focused-component "button"
-                     :components-expanded? false
-                     :snippet-by-component {}
-                     :dev {:show-focused-section? false}}))
+(defonce *state
+  (r/atom {
+           ;;  :init-focused-component "button"
+           :kushi-components-indexes []
+           :components-expanded? false
+           :snippet-by-component {}
+           :dev-mode?            false
+           :option-radios        {}
+           :controls-by-type     {}}))
 
 (def *focused-component (r/atom nil))
 
