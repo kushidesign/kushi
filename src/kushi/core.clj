@@ -258,7 +258,11 @@
            :args      args
            :ex        ex}
           defclass-exception-args
-          printing2/caught-exception))))
+          printing2/caught-exception))
+
+    (finally
+      (when @state2/KUSHIDEBUG
+        (state2/tracing! {:kushi/tracing? false})))))
 
 
 (defmacro ^:public defclass
@@ -333,6 +337,9 @@
     (update-cache! clean cache-map)
 
     (print-warnings clean)
+
+    (when @state2/KUSHIDEBUG
+      (state2/tracing! {:kushi/tracing? false}))
 
     clean))
 
