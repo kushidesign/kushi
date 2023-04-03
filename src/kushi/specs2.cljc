@@ -369,12 +369,6 @@
 
 
 ;; STYLEMAP --------------------------------------------------------------
-(s/def ::bad-sx-value
-  (s/and map?
-         #(= 2 (count %))
-         #(contains? % :bad-value)
-         #(when-let [path (:path %)]
-            (and (seq path) (vector? path)))))
 
 (s/def ::defclass-stylemap
   (s/and map?
@@ -426,9 +420,16 @@
                               :style-tuple       ::style-tuple-without-imbalanced-string
                               :class             ::class
                               :conditional-class ::conditional-class))
-   :sx-attrs-map   (s/? ::sx-attrs-map)
-   :kushi-trace    (s/? ::kushi-trace)))
+   :sx-attrs-map   (s/? ::sx-attrs-map)))
 
+;; everything except name and attr-map, used in kushi.args/clean-args
+(s/def ::valid-sx-arg*
+  (s/or :tokenized-style               #(s/valid? ::tokenized-style %)
+        :cssvar-tokenized              #(s/valid? ::cssvar-tokenized %)
+        :cssvar-tuple                  #(s/valid? ::cssvar-tuple %)
+        :style-tuple                   #(s/valid? ::style-tuple-without-imbalanced-string %)
+        :class                         #(s/valid? ::class %)
+        :conditional-class             #(s/valid? ::conditional-class %)))
 
 (s/def ::valid-sx-arg
   (s/or :assigned-class                #(s/valid? ::assigned-class %)
@@ -463,8 +464,8 @@
   (s/cat :defclass-name     ::defclass-name
          :defclass-style    (s/* ::defclass-style-or-class)
          :defclass-stylemap (s/? ::defclass-stylemap)
+         ;; TODO maybe take out trace
          :kushi-trace       (s/? ::kushi-trace)))
-
 
 
 ;; from og specs start ---------
@@ -474,29 +475,54 @@
 
 ;; from og specs end -----------
 
+(s/def ::valid-defclass-arg*
+  ;; everything except name and map - used in kushi.args/clean-args
+  (s/or :defclass-class       #(s/valid? ::defclass-class %)
+        :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
+        :tokenized-style      #(s/valid? ::tokenized-style %)))
 
-
-(s/def ::valid-defclass-arg
+(s/def ::valid-defclass-arg-normalized
   ;; TODO spec for symbol name validation
+  ;; TODO maybe take out trace
   (s/or :assigned-class       #(s/valid? symbol? %)
         :defclass-class       #(s/valid? ::defclass-class %)
         :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
         :tokenized-style      #(s/valid? ::tokenized-style %)
-        :defclass-stylemap    #(s/valid? ::defclass-stylemap %)
-        :kushi-trace          #(s/valid? ::kushi-trace %)))
+        ;; Internally, we nest a stylemap passed to kushi.core/defclass on a :style key, so it can be processed through the same pipeline as kushi.core/sx
+        :defclass-stylemap    #(s/valid? ::defclass-stylemap (when (map? %) (:style %)))))
+
+(s/def ::valid-defclass-arg
+  ;; TODO spec for symbol name validation
+  ;; TODO maybe take out trace
+  (s/or :assigned-class       #(s/valid? symbol? %)
+        :defclass-class       #(s/valid? ::defclass-class %)
+        :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
+        :tokenized-style      #(s/valid? ::tokenized-style %)
+        :defclass-stylemap    #(s/valid? ::defclass-stylemap %)))
 
 (s/def ::defclass-args
   ;; TODO spec for symbol name validation
+  ;; TODO maybe take out trace
   (s/cat
    :assigned-class          (s/? symbol?)
    :defclass-style-or-class (s/* ::defclass-style-or-class)
-   :defclass-stylemap       (s/? ::defclass-stylemap)
-   :kushi-trace             (s/? ::kushi-trace)))
+   :defclass-stylemap       (s/? ::defclass-stylemap)))
 
-;; using this for conformance TODO
+;; using this for conformance
+(s/def ::defclass-args2-normalized
+  (s/coll-of ::valid-defclass-arg-normalized))
+
+;; using this for conformance
 (s/def ::defclass-args2
   (s/coll-of ::valid-defclass-arg))
 
+;; use for error printing in kushi.args/pre-clean*
+(s/def ::bad-sx-or-defclass-arg
+  (s/and map?
+         #(= 2 (count %))
+         #(contains? % :arg)
+         #(when-let [path (:path %)]
+            (and (seq path) (vector? path)))))
 
 
 ;; FONT-FACE -------------------------------------------------------------
