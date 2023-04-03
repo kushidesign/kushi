@@ -158,7 +158,8 @@
                                           (with-line-numbers2 m+)
                                           pprinted)]
     (println
-     (str (simple-alert-header2 "EXCEPTION CAUGHT" file-info-str :red)
+     #_(simple-alert-header3 "EXCEPTION CAUGHT" file-info-str :red)
+     (str (simple-alert-header3 "EXCEPTION CAUGHT" file-info-str :red)
           (when with-line-numbers
             (str "\n\n" with-line-numbers))
           (when commentary
@@ -244,15 +245,6 @@
     bad-args :args/bad
     :as   m}]
 
-  #_(println :simple-warning2
-             (keyed
-      ;;  sym
-      ;;  args
-      ;;  hint
-      ;;  fname
-      ;;  form-meta
-      ;;  commentary
-              problems))
 
   (let [file-info-str           (file+line+col-str form-meta)
         fname                   (some-> process name)
