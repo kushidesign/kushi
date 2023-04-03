@@ -1,6 +1,7 @@
 (ns kushi.styles
   (:require
   ;; TODO figure out which of the color fns to pass thru to public api
+   [par.core :refer [!? ?]]
    [garden.color]
    [clojure.spec.alpha :as s]
    [clojure.walk :as walk]
@@ -174,6 +175,7 @@
      (str "[!Warning] kushi.styles/args-by-conformance\n"
           "There is a problem with either the validation spec or the conformance spec.\n"
           "This is a bug internal to Kushi, feel free to file an issue if you are feeling generous.")))
+
   (let [conformed (s/conform conformance-spec coll)
         grouped** (group-by #(first %) conformed)
         grouped*  (map (fn [[k v]] [k (map second v)]) grouped**)
@@ -194,7 +196,9 @@
     :else %))
 
 (defn classlist
-  [attrs class selector]
+  [attrs
+   class
+   selector]
   (let [selector  (:selector* selector)
         cls       (some-> attrs :class)
         cls       (when cls (if (s/valid? ::specs2/s|kw cls) [cls] cls))
@@ -246,10 +250,12 @@
   [css-vars cssvar-tuples2]
   (let [with-extracted-names (some->> css-vars
                                       (util/map-keys util/extract-cssvar-name))
+
         cssvar-tuples        (some->> cssvar-tuples2
                                       (into {})
                                       (util/map-keys name)
                                       (util/map-vals util/hydrate-css-shorthand+alternations))
+
         ret*                 (merge with-extracted-names cssvar-tuples)
 
         ;; Normalized kushi-style shorthand syntax within css-var sexp
@@ -265,19 +271,29 @@
                                             ret*)]
     ret))
 
+
 (defn style-tuples*
   "This is where bad args get cleaned out"
   [{:keys [args
            conformance-spec
            bad-args-vals
            bad-stylemap
-           bad-entries
-           :kushi/process]
+           kushi-selector
+           cache-key
+           :kushi/process
+           
+           ;;new stuff
+          ;;  assigned-class
+          ;;  attrs
+           
+           ]
     :as   m*}]
 
   (let [shared-class?
         (util/shared-class? process)
 
+        ;; NIX START ------------------------------------------------------------
+        ;;
         clean*
         (filter #(not (contains? bad-args-vals %)) args)
 
@@ -286,23 +302,20 @@
 
         clean-stylemap*
         (if shared-class?
-          (when (state2/tracing?)
-            #_(println (if (and bad-stylemap bad-entries)
-                       (apply dissoc
-                              bad-stylemap
-                              (->> bad-entries (into {}) keys))
-                       (when (map? (last args)) (last args)))))
           (if-let [problem-keys (keys bad-stylemap)]
             (do
-                (when attrs*
-                  (apply dissoc (cons (:style attrs*) problem-keys))))
+              (when attrs*
+                (apply dissoc (cons (:style attrs*) problem-keys))))
             (some-> attrs* :style)))
 
+
+        ;; clean map with :style entry
         clean
         (if clean-stylemap*
           (util/replace-last (assoc attrs* :style clean-stylemap*) clean*)
           clean*)
 
+        ;; ;; nix
         {:keys                 [assigned-class
                                 tokenized-style
                                 class]
@@ -313,23 +326,41 @@
          cssvar-tuples         :cssvar-tuple
          :as                   by-kind}
 
-
         (args-by-conformance clean conformance-spec)
 
+
+        ;; replace
         clean-stylemap
         (or clean-stylemap*
             (when shared-class?
               (some-> by-kind :defclass-stylemap first)))
 
 
+        ;; replace
         assigned-class
         (when assigned-class
           (if (s/valid? ::specs2/quoted-symbol assigned-class)
             (-> assigned-class second)
             assigned-class))
+        ;;
+        ;; NIX END ------------------------------------------------------------
 
         selector
-        (selector/selector-name (assoc m* :assigned-class assigned-class))
+        (selector/selector-name {:assigned-class assigned-class
+                                 :kushi-selector kushi-selector
+                                 :cache-key      cache-key
+                                 :kushi/process  process})
+
+        ;; NEW
+        ;; style-tuples-from-tokenized
+        ;; (when-let [coll (:tokenized-style conformed)]
+        ;;   (when (seq coll)
+        ;;     (map #(let [s (name %)]
+        ;;             ;; TODO abstract this
+        ;;             (if (re-find #"^.*[^-]--:$[^-]+.+$" s)
+        ;;               (string/split (name %) #"--:")
+        ;;               (string/split (name %) #"--" 2)))
+        ;;          coll)))
 
         style-tuples-from-tokenized
         (when-let [coll tokenized-style]
@@ -342,6 +373,15 @@
                  coll)))
 
 
+        ;; NEW
+        ;; cssvar-tuples-from-tokenized
+        ;; (when-let [coll (:cssvar-tokenized conformed)]
+        ;;   (when (seq coll)
+        ;;     (map (fn [%]
+        ;;            (let [[nm val] (string/split (name %) #"--")]
+        ;;              [(util/cssvar-dollar-syntax->double-dash nm) val]))
+        ;;          coll)))
+
         cssvar-tuples-from-tokenized
         (when-let [coll tokenized-cssvars]
           (when (seq coll)
@@ -350,12 +390,33 @@
                      [(util/cssvar-dollar-syntax->double-dash nm) val]))
                  coll)))
 
+
+        ;; NEW
+        ;; style-tuples-from-defclass-class
+        ;; (when (:defclass-classes conformed)
+        ;;   (mapcat #(let [k (some-> % specs2/dot-kw->s symbol)]
+        ;;              (get-in @state2/shared-classes [k]))
+        ;;           (:defclass-classes conformed))
+        ;;   #_(println " "))
+
         style-tuples-from-defclass-class
         (when defclass-classes
           (mapcat #(let [k (some-> % specs2/dot-kw->s symbol)]
                      (get-in @state2/shared-classes [k]))
                   defclass-classes)
           #_(println " "))
+
+
+        ;; NEW
+        ;; all-style-tuples*
+        ;; (distinct
+        ;;  (concat cssvar-tuples-from-tokenized
+        ;;          (:cssvar-tuple conformed)
+        ;;          style-tuples-from-tokenized
+        ;;          (:style-tuple conformed)
+        ;;          (:style-tuples-defclass conformed)
+        ;;          style-tuples-from-defclass-class
+        ;;          clean-stylemap))
 
         all-style-tuples*
         (distinct
@@ -383,13 +444,25 @@
 
         selector
         (cond
+          ;; NEW (:assiged-class conformed)
           assigned-class
           selector
           (seq all-style-tuples2)
           selector)
 
+        ;; maybe handle defclass differently here
+
+
+        ;; NEW but mabye do this in args?
+        ;; attrs-no-style
+        ;; (when attrs (dissoc attrs :style))
         attrs-no-style
         (when attrs* (dissoc attrs* :style))
+
+
+        ;; NEW
+        ;; classlist
+        ;; (classlist attrs-no-style (:class conformed) selector)
 
         classlist
         (classlist attrs-no-style class selector)
