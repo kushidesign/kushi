@@ -131,20 +131,18 @@
                                                  conformance-spec)
                                           {:m clean-attrs}))]
 
-    (merge
-     (!? :pre-clean***
-         (keyed
-          assigned-class
-          attrs
-          stylemap-tuples
-          bad-stylemap-entries
-          weird-entries
-          clean-stylemap
-          clean-attrs
-          styles
-          bad-args
-          args-pre-cleaned
-          conformed)))))
+    (keyed
+     assigned-class
+     attrs
+     stylemap-tuples
+     bad-stylemap-entries
+     weird-entries
+     clean-stylemap
+     clean-attrs
+     styles
+     bad-args
+     args-pre-cleaned
+     conformed)))
 
 ;; pre-clean end ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -273,7 +271,7 @@
 
     (merge data-sx-attr
            {:kushi/process process
-            :args/bad bad-args
+            :args/bad      bad-args
             :entries/weird weird-entries}
            (when defclass-style-tuples
              (keyed defclass-style-tuples))
