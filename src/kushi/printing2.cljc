@@ -103,7 +103,9 @@
        ansi/reset-font))
 
 
-(defn simple-alert-header2 [header file-info-str color]
+(defn simple-alert-header*
+  "File info is directly below header"
+  [header file-info-str color lb lb2]
   (str
    "\n"
    (when-let [user-warning-banner (:log-warning-banner user-config)]
@@ -116,7 +118,15 @@
         ansi/reset-font
         )))
    (simple-alert-header-border-top header color)
-   (when file-info-str (str "\n\n" "File: " file-info-str))))
+   (when file-info-str (str lb "File: " file-info-str lb2))))
+
+(defn simple-alert-header3
+  [header file-info-str color]
+  (simple-alert-header* header file-info-str color "\n" "\n\n"))
+
+(defn simple-alert-header2
+  [header file-info-str color]
+  (simple-alert-header* header file-info-str color "\n\n" nil))
 
 (defn file+line+col-str
   [form-meta]
