@@ -71,11 +71,8 @@
                                     [assigned-class])
                                   styles
                                   (when m [m])))
-        _         (when (state2/tracing?) (!? :conformed2 (keyed cleaned)))
         conformed (styles/args-by-conformance cleaned conformance-spec)
         ]
-    #_(when (state2/tracing?)
-      (? :conformed2 (keyed cleaned conformance-spec)))
     [cleaned conformed]))
 
 
@@ -184,7 +181,7 @@
         args
         (if defclass-with-bad-entries?
           (let [ks        (keys (into {} (:bad-entries bad)))
-                stylemap  (last (? args))
+                stylemap  (last args)
                 clean-map (apply dissoc stylemap ks)]
             (concat (drop-last args) [clean-map]))
           args)
@@ -272,10 +269,6 @@
     ;;         selector
     ;;         element-style-inj
     ;;         garden-vecs))
-
-
-    #_(when (state2/tracing?)
-      (? bad))
 
 
     (merge data-sx-attr
