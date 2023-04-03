@@ -25,44 +25,133 @@
                          keyword)]
           {k v})))))
 
+;; Args clean start ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TODO - incorporate this into pipeline ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; This is where args to both sx and defclass get cleaned,
+;; sorted into warning buckets, and conformed into a map for
+;; the next step in the pipeline.
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn- trailing-map [styles pred]
   (if (s/valid? pred (last styles))
-    [(drop-last styles) (last styles)]
+    [(drop-last styles) [(-> styles count dec) (last styles)]]
     [styles nil]))
 
-(defn- pre-clean-sx-args [args]
-  (let [[nm styles]            (if (symbol? (first args))
-                                 [(first args) (rest args)]
-                                 [nil args])
-        [styles tracing]       (trailing-map styles ::specs2/kushi-trace)
-        [styles attrs]         (trailing-map styles map?)
-        stylemap               (or (some-> attrs :style) {})
-        attrs                  (dissoc attrs :style)
-        styles                 (map-indexed (fn [idx %]
-                                        (if (s/valid? ::specs2/valid-sx-arg %)
-                                          %
-                                          {:bad-value %
-                                           :path      [idx]}))
-                                      styles)
-        [bad-styles
-         styles]               (util/partition-by-spec ::specs2/bad-sx-value styles)
-        [stylemap-tuples
-         bad-stylemap-entries] (util/partition-by-pred
-                                (fn [kv]
-                                  (or (s/valid? ::specs2/style-tuple kv)
-                                      (s/valid? ::specs2/cssvar-tuple kv)))
-                                stylemap)
-        stylemap               (into {} stylemap-tuples)]
 
-{:nm                   nm
- :tracing              tracing
- :attrs                attrs
- :styles               styles
- :stylemap             stylemap
- :bad-styles           bad-styles
- :bad-stylemap-entries bad-stylemap-entries
- :stylemap-tuples      stylemap-tuples
- :args-pre-cleaned     (remove nil? (concat (when nm [nm]) styles (when (seq stylemap) [stylemap])))}))
+(defn- weird-entries [idx entries]
+  (mapv (fn [[k v]] {:path  [idx :style k]
+                     :entry [k v]}) entries))
+
+(defn- sorted-styles [styles spec]
+  (map-indexed (fn [idx %]
+                 (if (s/valid? spec %)
+                   %
+                   {:arg  %
+                    :path [idx]}))
+               styles))
+
+(defn- parts [args shared-class?]
+  (let [[assigned-class
+         styles]         (if (s/valid? ::specs2/assigned-class (first args))
+                           [(first args) (rest args)] [nil args])
+        [styles
+         [attrs-idx m*]] (trailing-map styles map?)
+        ;; m* is an attrs map (in the case of sx), or a just a stylemap (in the case of defclass)
+        ;; In the case of defclass, we are normalizing it e.g.  {:c :red} => {:style {:c :red}}
+        attrs            (when m*
+                           (if shared-class? {:style m*} m*))]
+    (keyed assigned-class styles attrs-idx attrs)))
+
+(defn- clean-args-conformed
+  [{:keys [conformance-spec
+           assigned-class
+           styles
+           m]}]
+  (let [cleaned   (remove nil?
+                          (concat (when assigned-class
+                                    [assigned-class])
+                                  styles
+                                  (when m [m])))
+        _         (when (state2/tracing?) (!? :conformed2 (keyed cleaned)))
+        conformed (styles/args-by-conformance cleaned conformance-spec)
+        ]
+    #_(when (state2/tracing?)
+      (? :conformed2 (keyed cleaned conformance-spec)))
+    [cleaned conformed]))
+
+
+(defn- pre-clean-args
+  [{:keys [args :kushi/process] :as m}]
+  (let [shared-class?              (util/shared-class? process)
+
+        ;; This is a loose, initial conforming of the sequence / structure of the args
+        ;; into name, tokens/tuples, and option attributes/stylemap
+        {:keys [assigned-class
+                styles
+                attrs-idx
+                attrs]
+         :as   parts}             (parts args shared-class?)
+
+        ;; This transforms the optional stylemap into a collection of tuples
+        ;; And partitions it apart from a collection of bad entries that will
+        ;; be feed to a warning printer from within sx-dispatch / defclass-dispatch
+        [stylemap-tuples
+         bad-stylemap-entries]    (some->> attrs
+                                           :style
+                                           (util/partition-by-pred
+                                            (fn [kv]
+                                              (if shared-class?
+                                                (s/valid? ::specs2/style-tuple-defclass kv)
+                                                (or (s/valid? ::specs2/style-tuple kv)
+                                                    (s/valid? ::specs2/cssvar-tuple kv))))))
+
+        ;; Format the bad stylemap entries for printing
+        weird-entries             (weird-entries attrs-idx bad-stylemap-entries)
+
+        ;; Prepare a clean stylemap with no bad entries for return
+        clean-stylemap            (some->> stylemap-tuples (into {}))
+
+        ;; Prepare a clean attributes map for return
+        clean-attrs               (merge (dissoc attrs :style)
+                                         (some->> clean-stylemap (assoc {} :style)))
+
+        ;; This will wrap any bad style args in a map to be partitioned out in next step
+        styles                    (sorted-styles styles (if shared-class?
+                                                          ::specs2/valid-defclass-arg*
+                                                          ::specs2/valid-sx-arg*))
+
+        ;; Partition out bad args
+        [bad-args styles]         (util/partition-by-spec ::specs2/bad-sx-or-defclass-arg styles)
+
+        conformance-spec           (if shared-class?
+                                     ::specs2/defclass-args2-normalized
+                                     ::specs2/sx-args-conformance)
+
+        ;; This assembles a clean version of the args and conforms it to its spec
+        [args-pre-cleaned
+         conformed]               (clean-args-conformed
+                                   (merge (keyed assigned-class
+                                                 styles
+                                                 conformance-spec)
+                                          {:m clean-attrs}))]
+
+    (merge
+     (!? :pre-clean***
+         (keyed
+          assigned-class
+          attrs
+          stylemap-tuples
+          bad-stylemap-entries
+          weird-entries
+          clean-stylemap
+          clean-attrs
+          styles
+          bad-args
+          args-pre-cleaned
+          conformed)))))
+
+;; pre-clean end ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 
 (defn clean-args
