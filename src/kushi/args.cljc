@@ -10,8 +10,7 @@
    [kushi.problems :as problems]
    [kushi.printing2 :refer [kushi-expound]]
    [kushi.utils :as util :refer [keyed]]
-   [kushi.config :as config :refer [user-config]]))
-
+   [kushi.config :as config :refer [user-config]] ))
 
 (defn- data-sx-attr [form-meta]
   (when @state2/KUSHIDEBUG
@@ -154,18 +153,47 @@
 
 
 
+;; TODO - refactor in clean args from above
 (defn clean-args
   [{:keys [args :kushi/process form-meta] :as m}]
-  (let [[validation-spec conformance-spec]
-        (if (util/shared-class? process)
+  (let [shared-class?
+        (util/shared-class? process)
+
+        data-sx-attr
+        (data-sx-attr form-meta)
+
+        [validation-spec conformance-spec]
+        (if shared-class?
           [::specs2/defclass-args ::specs2/defclass-args2]
           [::specs2/sx-args ::specs2/sx-args-conformance])
+
+        expound-str (kushi-expound validation-spec args)
+
 
         bad
         (problems/problems (merge m
                                   (keyed args
-                                         validation-spec
-                                         conformance-spec)))
+                                         conformance-spec)
+                                  {:validation-spec (or #_validation-spec-normalized
+                                                        validation-spec)}))
+
+
+        defclass-with-bad-entries?
+        (and shared-class? (-> bad :bad-entries seq))
+
+        args
+        (if defclass-with-bad-entries?
+          (let [ks        (keys (into {} (:bad-entries bad)))
+                stylemap  (last (? args))
+                clean-map (apply dissoc stylemap ks)]
+            (concat (drop-last args) [clean-map]))
+          args)
+
+        m
+        (if defclass-with-bad-entries?
+          (assoc m :args args)
+          m)
+
 
         {:keys [all-style-tuples
                 defclass-style-tuples
@@ -177,10 +205,15 @@
         (styles/style-tuples* (merge (keyed validation-spec
                                             conformance-spec)
                                      m
-                                     bad))
-        ;; dev debuggging
-        data-sx-attr
-        (data-sx-attr form-meta)
+
+                                     ;; maybe nix this
+                                     bad
+
+                                     ;; From pre-cleaned
+                                     ;; conformed
+                                     ;; clean-stylemap
+
+                                     ))
 
         attrs
         (merge attrs data-sx-attr)
@@ -194,11 +227,17 @@
         (gvecs/gvecs parsed)
 
 
+        ;; Nix
         bad-args
-        (let [bad (mapv (fn [[path arg]] {:path path
-                                          :arg  arg}) (:bad-args bad))]
-          (when (seq bad) bad))
+        (when (some-> bad :args)
+          (let [bad (mapv (fn [x]
+                            (when x {:path (:path x)
+                                     :arg  (:arg x)}))
+                          (:bad-args bad))]
+            (when (seq bad) bad)))
 
+
+        ;; Nix
         weird-entries
         (when (:bad-stylemap bad)
           (when-let [bad-entries (some-> bad :bad-stylemap-path-map)]
@@ -210,10 +249,34 @@
                          :entry [k v]})
                       entries)))))
 
-        expound-str (kushi-expound validation-spec args)
 
         element-style-inj
         (stylesheet/garden-vecs-injection garden-vecs)]
+
+
+    ;; NEW
+    ;;  (merge data-sx-attr
+    ;;        {:kushi/process process
+    ;;         :args/bad      (:bad-args cleaned)
+    ;;         :entries/weird (:weird-entries cleaned)}
+    ;;        (when defclass-style-tuples
+    ;;          (keyed defclass-style-tuples))
+    ;;        (keyed
+    ;;         ;; Leave expound str out of return map for now
+    ;;         expound-str
+    ;;         form-meta
+    ;;         args
+    ;;         css-vars
+    ;;         attrs
+    ;;         classlist
+    ;;         selector
+    ;;         element-style-inj
+    ;;         garden-vecs))
+
+
+    #_(when (state2/tracing?)
+      (? bad))
+
 
     (merge data-sx-attr
            {:kushi/process process
