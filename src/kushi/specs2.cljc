@@ -463,9 +463,7 @@
 (s/def ::defclass
   (s/cat :defclass-name     ::defclass-name
          :defclass-style    (s/* ::defclass-style-or-class)
-         :defclass-stylemap (s/? ::defclass-stylemap)
-         ;; TODO maybe take out trace
-         :kushi-trace       (s/? ::kushi-trace)))
+         :defclass-stylemap (s/? ::defclass-stylemap)))
 
 
 ;; from og specs start ---------
@@ -508,6 +506,7 @@
    :defclass-style-or-class (s/* ::defclass-style-or-class)
    :defclass-stylemap       (s/? ::defclass-stylemap)))
 
+
 ;; using this for conformance
 (s/def ::defclass-args2-normalized
   (s/coll-of ::valid-defclass-arg-normalized))
@@ -515,6 +514,7 @@
 ;; using this for conformance
 (s/def ::defclass-args2
   (s/coll-of ::valid-defclass-arg))
+
 
 ;; use for error printing in kushi.args/pre-clean*
 (s/def ::bad-sx-or-defclass-arg
