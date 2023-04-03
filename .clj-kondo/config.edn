@@ -1,4 +1,5 @@
 {:linters {:redundant-do {:level :off}}
- :lint-as {kushi.core/defclass     clojure.core/def
-           kushi.core/defkeyframes clj-kondo.lint-as/def-catch-all
-           kushi.ui.core/defcom    clj-kondo.lint-as/def-catch-all}}
+ :lint-as {kushi.core/defclass               clojure.core/def
+           kushi.core/defclass-with-override clojure.core/def
+           kushi.core/defkeyframes           clj-kondo.lint-as/def-catch-all
+           kushi.ui.core/defcom              clj-kondo.lint-as/def-catch-all}}
