@@ -15,7 +15,7 @@
 (def KUSHIDEBUG (atom true))
 (def shadow-build-id (atom nil))
 (def initial-build? (atom true))
-(def *tracing? (atom false))
+(def *trace? (atom false))
 
 (def css (atom []))
 (def ->css (atom nil))
@@ -114,12 +114,13 @@
           @styles-cache-updated))
 
 
-;; Tracing ---------------------------------------------------------------
-;; (defn trace! [args target] (reset! trace?* (= args (rest target))) )
-;; (defn trace? [] @trace?*)
+;; For enabling tracing in dispatch args ---------------------------------
+(defn enable-trace? [args] (s/valid? ::specs2/kushi-trace (last args)))
+(defn enable-trace! [] (reset! *trace? true))
+(defn disable-trace! [] (reset! *trace? false))
 
-(defn tracing! [args] (reset! *tracing? (s/valid? ::specs2/kushi-trace (last args))))
-(defn tracing? [] @*tracing?)
+;; For checking if tracing is enabled when debugging source --------------
+(defn trace? [] @*trace?)
 
 ;; Caching and hashing ---------------------------------------------------
 (defn cached
