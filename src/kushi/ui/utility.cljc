@@ -69,15 +69,66 @@
 
 (def base-classes
   [
-    ;; Visual debugging utilities
-    ;; ------------------------------------------------------
-   :debug-grid            {:background "transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAFElEQVR4AWPAC97/9x0eCsAEPgwAVLshdpENIxcAAAAASUVORK5CYII=) repeat top left"}
-   :debug-grid-16         {:background "transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMklEQVR4AWOgCLz/b0epAa6UGuBOqQHOQHLUgFEDnAbcBZ4UGwDOkiCnkIhdgNgNxAYAiYlD+8sEuo8AAAAASUVORK5CYII=) repeat top left "}
-   :debug-grid-8-solid    {:background "white url(data:image/gif;base64,R0lGODdhCAAIAPEAAADw/wDx/////wAAACwAAAAACAAIAAACDZQvgaeb/lxbAIKA8y0AOw==) repeat top left"}
-   :debug-grid-16-solid   {:background "white url(data:image/gif;base64,R0lGODdhEAAQAPEAAADw/wDx/xXy/////ywAAAAAEAAQAAACIZyPKckYDQFsb6ZqD85jZ2+BkwiRFKehhqQCQgDHcgwEBQA7) repeat top left"}
+   ;; Visual debugging utilities
+   ;; ------------------------------------------------------
+   :debug-grid            {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent var(--kushi-debug-grid-size), var(--kushi-debug-grid-color) var(--kushi-debug-grid-size), var(--kushi-debug-grid-color) calc(var(--kushi-debug-grid-size) + 1px), transparent calc(var(--kushi-debug-grid-size) + 1px)), "
+                                                  "repeating-linear-gradient(to right, transparent, transparent var(--kushi-debug-grid-size), var(--kushi-debug-grid-color) var(--kushi-debug-grid-size), var(--kushi-debug-grid-color) calc(var(--kushi-debug-grid-size) + 1px), transparent calc(var(--kushi-debug-grid-size) + 1px))")}
+   :debug-grid-8          {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--kushi-debug-grid-color) 8px, var(--kushi-debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                  "repeating-linear-gradient(to right, transparent, transparent 8px, var(--kushi-debug-grid-color) 8px, var(--kushi-debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
+                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--kushi-debug-grid-color-inverse) 8px, var(--kushi-debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                       "repeating-linear-gradient(to right, transparent, transparent 8px, var(--kushi-debug-grid-color-inverse) 8px, var(--kushi-debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px))")}
+   :debug-grid-16         {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--kushi-debug-grid-color) 16px, var(--kushi-debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
+                                                       "repeating-linear-gradient(to right, transparent, transparent 16px, var(--kushi-debug-grid-color) 16px, var(--kushi-debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
+                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--kushi-debug-grid-color-inverse) 16px, var(--kushi-debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px)), "
+                                                       "repeating-linear-gradient(to right, transparent, transparent 16px, var(--kushi-debug-grid-color-inverse) 16px, var(--kushi-debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px))")}
    :bordered              {:border-color :currentColor
                            :border-style :solid
                            :border-width "1px"}
+
+
+   ;; could do something like this
+   ;; "[class^='bordered-']" {:border-style :solid :border-width "1px"}
+
+   :bordered-red          {:border-color "var(--red-500, red)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-blue         {:border-color "var(--blue-500, blue)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-green        {:border-color "var(--green-500, green)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-yellow       {:border-color "var(--yellow-500, yellow)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-orange       {:border-color "var(--orange-500, orange)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-purple       {:border-color "var(--purple-500, purple)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-magenta      {:border-color "var(--magenta-500, magenta)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-gray         {:border-color "var(--gray-500, gray)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-black        {:border-color "black"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-white       {:border-color "white"
+                          :border-style :solid
+                          :border-width "1px"}
+
    :wireframe             {:outline-color :silver
                            :outline-style :solid
                            :outline-width "1px"}
