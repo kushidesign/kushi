@@ -887,11 +887,16 @@
 
    ;; Semantic fg
    ;; TODO -- dark versions of each with *--inverse tokens to match
-   :.neutral-fg {:color :$neutral-minimal-color}
-   :.accent-fg {:color :$accent-minimal-color}
-   :.positive-fg {:color :$positive-minimal-color}
-   :.negative-fg {:color :$negative-minimal-color}
-   :.warning-fg {:color :$warning-minimal-color}
+   :.neutral-fg {:color :$neutral-minimal-color
+                 :dark:color :$neutral-minimal-color-inverse}
+   :.accent-fg {:color :$accent-minimal-color
+                :dark:color :$accent-minimal-color-inverse}
+   :.positive-fg {:color :$positive-minimal-color
+                  :dark:color :$positive-minimal-color-inverse}
+   :.negative-fg {:color :$negative-minimal-color
+                  :dark:color :$positive-minimal-color-inverse}
+   :.warning-fg {:color :$warning-minimal-color
+                 :dark:color :$positive-minimal-color-inverse}
 
    ;; Semantic bg
    :.neutral-bg {:background-color :$neutral-background-color}
