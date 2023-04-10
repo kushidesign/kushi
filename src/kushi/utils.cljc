@@ -29,11 +29,22 @@
 
 (defn cssfn-string
   "(cssfn-string \"hsla\" \"100deg\" \"50%\" \"33%\" \"0.8\")
-   => \"hsla(100deg, 50%, 33%, 0.8)\""
+   => \"hsla(100deg, 50%, 33%, 0.8)\"
+
+   Note that is works differently for css calc()
+
+   (cssfn-string \"calc\" \"1px\" \"+\" \"1px\")
+   => \"calc(1px + 1px)\"
+
+   "
   [s args]
   (str s
        "("
-       (string/join ", " args)
+       (string/join (if (= "calc" s) " " ", ")
+                    (map #(if (keyword? %)
+                            (name %)
+                            %)
+                         args))
        ")"))
 
 (defn extract-cssvar-name
