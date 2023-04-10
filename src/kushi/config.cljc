@@ -76,6 +76,7 @@
    ;; For leaving things out of css --------------------------------------
    :add-stylesheet-prod?             true
    :add-stylesheet-dev?              true
+
    :add-css-reset?                   true
    :add-design-tokens?               true
 
@@ -138,7 +139,7 @@
    ;; Note that with this option on, the following examples cannot be guaranteed to work:
    ;; [:div.absolute "hi"]
    ;; [:div {:class [:absolute]} "hi"]
-   :elide-unused-kushi-utility-classes? true
+   :elide-unused-kushi-utility-classes? false
 
 
    ;; Build process logging ----------------------------------------------
