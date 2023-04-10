@@ -1,6 +1,6 @@
 (ns kushi.ui.button.core
   (:require-macros
-   [kushi.core :refer (sx keyed)])
+   [kushi.core :refer (sx)])
   (:require
    [kushi.playground.util :as util :refer-macros (keyed)]
    [kushi.core :refer (merge-attrs)]
