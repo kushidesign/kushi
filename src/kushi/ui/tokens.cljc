@@ -27,6 +27,9 @@
    :$neutral-secondary-fg                    :$gray-700
    :$neutral-secondary-fg-inverse            :$gray-300
 
+   :$debug-grid-size                         :16px
+   :$debug-grid-color                        "hsla(0 0% 90%)"
+   :$debug-grid-color-inverse                "hsla(0 0% 25%)"
 
    ;; Typography
    ;; ------------------------------------------------------
