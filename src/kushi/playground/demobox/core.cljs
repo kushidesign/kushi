@@ -219,28 +219,30 @@
                                             (get-example examples (:label active)))
                                           (get-example examples (:examples defaults)))})))
 
-(defn stage-control [a b [prop value] st]
+(defn stage-control
+  [a b [prop value]]
   [button
    (merge-attrs
-    {:on-click #(when-let [stage (dom/nearest-ancestor (dom/et %) ".dev-mode-stage")]
-                  (dom/set-style! stage (name prop) (name value)))}
+    (sx
+     :.kushi-playground-demobox-ui-icon
+     :.kushi-playground-demobox-ui-icon-stage-control
+     {:on-click #(let [clicked (dom/et %)]
+                   (when-let [stage (dom/nearest-ancestor clicked ".dev-mode-stage")]
+                     (let [cls             ".kushi-playground-demobox-ui-icon-stage-control"
+                           button-group    (dom/nearest-ancestor clicked ".stage-control-button-group")
+                           buttons-checked (.querySelectorAll button-group (str cls "[aria-selected='true']"))
+                           ctrl-button     (if (dom/has-class? clicked cls)
+                                             clicked
+                                             (dom/nearest-ancestor clicked cls))]
+                       (doseq [el buttons-checked]
+                         (dom/set-attribute! el "aria-selected" false))
+                       (dom/set-attribute! ctrl-button "aria-selected" true)
+                       (dom/set-style! stage (name prop) (name value)))))
+      :aria-selected false})
     (tooltip-attrs {:-text      a
                     :-placement :top}))
    [icon b]])
 
-#_(defcom stage-control-button
-  (let [{:keys [tooltip-text
-                tooltip-placement icon-name]
-         :or {tooltip-placement :top}} &opts]
-    [button
-     (merge-attrs
-      (sx :.xlarge!
-          :bgc--transparent
-          :p--7px)
-      (tooltip-attrs {:-text      tooltip-text
-                      :-placement (or tooltip-placement :top)})
-      &attrs)
-     [icon icon-name]]))
 
   (defn demobox2
     [{:keys      [defaults
@@ -289,9 +291,9 @@
                                       dev-mode-stage-jc (or (-> @*demostate :layout :align-items) :center)]
                                   [:section (sx :.kushi-playground-demobox)
 
-                                 ;; Component preview stage
-                                 ;; ------------------------------------
-                                   [:div.flex-row-c.relative
+                                   ;; Component preview stage
+                                   ;; ------------------------------------
+                                   [:div.flex-row-c.relative.fuck
                                     (merge-attrs stage-attr
                                                  (sx 'kushi-demo-stage {:id  component-id
                                                                         :key (-> @*demostate
@@ -302,8 +304,7 @@
 
                                     [button (merge-attrs
                                              (sx :.southeast-inside
-                                                 :bgc--transparent
-                                                 :p--7px
+                                                 :.kushi-playground-demobox-ui-icon
                                                  {:on-click #(open-kushi-modal dev-modal-id)})
                                              (tooltip-attrs {:-text      "Enter dev mode"
                                                              :-placement "block-start inline-end"}))
@@ -352,18 +353,20 @@
                                                  :&_.kushi-icon:fs--large
                                                  :&_.kushi-button:bgc--transparent
                                                  :&_.kushi-button:p--7px)
-                                        [:div (sx :.flex-row-fs :gap--0.5em)
-                                         [stage-control "Justify left" :align-horizontal-left [:align-items :flex-start] *demostate]
-                                         [stage-control "Justify center" :align-horizontal-center [:align-items :center] *demostate]
-                                         [stage-control "Justify right" :align-horizontal-right [:align-items :flex-end] *demostate]]
-                                        [:div (sx :.flex-row-fs :gap--0.5em)
+                                        [:div (sx :.flex-row-fs :.stage-control-button-group :gap--0.5em)
+                                         [stage-control "Justify left" :align-horizontal-left [:align-items :flex-start]]
+                                         [stage-control "Justify center" :align-horizontal-center [:align-items :center]]
+                                         [stage-control "Justify right" :align-horizontal-right [:align-items :flex-end]]]
+                                        [:div (sx :.flex-row-fs :.stage-control-button-group :gap--0.5em)
                                          [stage-control "Justify top" :vertical-align-top [:justify-content :flex-start]]
                                          [stage-control "Justify middle" :vertical-align-center [:justify-content :center]]
                                          [stage-control "Justify bottom" :vertical-align-bottom [:justify-content :flex-end]]]]
                                        [modal-close-button (merge-attrs
                                                             (sx :.sharp!
-                                                                :transform--none
                                                                 :.relative!
+                                                                :.kushi-playground-demobox-ui-icon
+                                                                :.kushi-playground-demobox-ui-icon-stage-control
+                                                                :transform--none
                                                                 :bgc--transparent
                                                                 :p--7px
                                                                 :.pill!
