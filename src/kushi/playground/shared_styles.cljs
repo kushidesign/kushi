@@ -72,20 +72,6 @@
    "has-ancestor(.dark):bisc" :$gray-700}
    )
 
-#_(sx 'faaaar
-    :c--red
-    :bgc--gold
-    {12 :gold
-     :c :blue}
-    {:kushi/tracing? true})
-
-(defclass foo
-  :c--red
-  :bgc--gold
-  #_{12 :gold
-   :c :red}
-  {:kushi/tracing? true})
-
 (defclass kushi-treenav-section-level-1
   :mbs--1em
   :>span:mbs--0.5em
@@ -213,7 +199,7 @@
   ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+6)>a:hover:bgc" :$blue-950]
   ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+7)>a:hover:bgc" :$green-950]
   ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+8)>a:hover:bgc" :$yellow-950]
-)
+  )
 
 (defclass kushi-demo-stage
   :min-height--135px
@@ -231,3 +217,28 @@
   :md:&_.kushi-playground-examples-input-row-wrapper:padding-block--0.5em
   :&_.kushi-radio-button-wrapper:margin-inline--0:0.666em
   :&_.kushi-radio-button-wrapper:margin-block--0.125em)
+
+(defclass kushi-playground-demobox-ui-icon
+  :fs--1rem!important
+  :b--none!important
+  :bw--0!important
+  :p--0.3em!important
+  :c--$neutral-minimal-color!important
+  :dark:c--$neutral-minimal-color-inverse!important
+  :bgc--transparent!important
+  :hover:bgc--transparent!important
+  :active:bgc--transparent!important)
+
+(defclass kushi-playground-demobox-ui-icon-stage-control
+  :p--0.5em!important
+  :hover:bgc--$neutral-200!important
+  :active:bgc--$neutral-300!important
+  ["&[aria-selected='true']:bgc" :$neutral-100!important]
+  )
+
+(defclass go :m--0 :p--0)
+
+(defclass go2
+  :.go
+  [:c :green]
+  [:bgc :yellow])
