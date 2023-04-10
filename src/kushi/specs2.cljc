@@ -22,6 +22,7 @@
 (def css-prop-base-re "-?[a-z]+[a-z-]*")
 (def css-prop-re (str "(?:[^:\t\n\r\\s]+:)*" css-prop-base-re))
 (def css-val-re-base "[#-]?[a-zA-Z0-9]+[_a-zA-Z0-9-:|\\.\\*]*")
+(def css-val-re-base-no-bar "[#-]?[a-zA-Z0-9]+[_a-zA-Z0-9-:\\.\\*]*")
 (def css-val-re (str "^" css-val-re-base))
 (def css-pseudo-element-re-fast ":(?:af|be|se|ba|pl|cu|fi|gr|ma|pa|sl|sp|-m|-w)")
 (def css-pseudo-element-re (str "(?:" (string/join "|" (map name defs/pseudo-elements)) ")(?:\\(.*\\))?"))
@@ -31,8 +32,9 @@
 (def cssvar-name-base-re "[-_a-zA-Z0-9]+")
 (def cssvar-name-re (str "\\$" cssvar-name-base-re))
 (def cssvar-in-css-re (str "var\\((--" cssvar-name-base-re ")\\)"))
+(def cssvar-in-css-with-misplaced-!important-re (str "var\\(--" cssvar-name-base-re "\\!important\\)"))
 (def starts-with-dark-re (str "^\\.dark,?"))
-(def font-variation-settings-re "^(?:(?:'wght'|'opsz'|'GRAD'|'FILL') [0-9]+ ?(?:, )?)+$")
+(def font-variations-settings-re "^(?:(?:'wght'|'opsz'|'GRAD'|'FILL') [0-9]+ ?(?:, )?)+$")
 
 ;; Clojure valid symbol related
 (def clj-sym-special-chars "\\*\\+\\!\\-\\_\\'\\?\\<\\>\\=" )
@@ -40,10 +42,10 @@
 (def clj-sym-leading-char (str "[a-zA-Z" clj-sym-special-chars "]"))
 (def clj-sym-following-chars (str "[a-zA-Z0-9" clj-sym-special-chars clj-sym-special-chars2 "]"))
 (def clj-sym-re-base (str "^" clj-sym-leading-char clj-sym-following-chars "*"))
+
 (def trailing-slash-re "\\/$")
 (def trailing-colon-re "\\:$")
 (def double-colon-re "\\:\\:")
-
 
 
 ;; UTILITY FNS -----------------------------------------------------------
@@ -79,16 +81,20 @@
          (= x ")") (recur xs (dec count))
          :else (recur xs count))))
 
+
 ;; SPECS -----------------------------------------------------------------
+
+
 
 ;; ::kushi-trace is for debugging during dev
 (s/def ::kushi-trace
-  (s/and map?
-         #(:kushi/tracing? %)))
+  (s/and #(= % :kushi/trace)))
 
 (s/def ::font-variations-settings
-  #(re-find (re-pattern font-variation-settings-re)
-            %))
+  (s/and
+   string?
+   #(re-find (re-pattern font-variations-settings-re)
+            %)))
 
 (s/def ::double-quoted-string
   (s/and string?
@@ -103,6 +109,12 @@
 (s/def ::s|kw #(or (keyword? %) (string? %)))
 
 (s/def ::s|kw|num #(or (keyword? %) (string? %) (number? %)))
+
+(s/def ::nameable #(or (keyword? %) (string? %) (symbol? %)))
+
+(s/def ::css-calc-op
+  (s/and ::nameable
+         #(contains? #{"/" "-" "+" "*"} (name %))))
 
 (s/def ::dot-kw
   (s/and keyword?
@@ -128,10 +140,11 @@
   (s/and
     ::s|kw
     #(let [s (kw?->s %)]
-       (if (and (re-find #":" s)
-                (re-find (re-pattern css-pseudo-element-re-fast) (str ":" s)))
-         (not (re-find (re-pattern css-pseudo-element-followed-by-pseudo-class-re) s))
-         true))))
+       (when (string? s)
+         (if (and (re-find #":" s)
+                  (re-find (re-pattern css-pseudo-element-re-fast) (str ":" s)))
+           (not (re-find (re-pattern css-pseudo-element-followed-by-pseudo-class-re) s))
+           true)))))
 
 (s/def ::tokenized-css-alternation
   (s/and ::s|kw
@@ -188,12 +201,16 @@
   #(s/valid? ::dot-kw-classname %))
 
 
+(s/def ::cssvar-in-css #(re-find-with cssvar-in-css-re %))
+(s/def ::cssvar-in-css-with-misplaced-!important #(re-find-with cssvar-in-css-with-misplaced-!important-re %))
+
 (s/def ::cssvar-name
   (s/and ::s|kw
          #(re-find (re-pattern (str "^"
                                     cssvar-name-re
                                     "(?:\\|" cssvar-name-re "|" css-val-re-base ")?"
                                     "(?:\\|" cssvar-name-re "|" css-val-re-base ")?"
+                                    "(?:\\!important)?"
                                     "$"))
                    (name %))))
 
@@ -205,11 +222,12 @@
   (s/and ::s|kw
          #(re-find (re-pattern css-val-re) (name %)) ))
 
-
 (s/def ::quoted-css-fn-list
   (s/cat :quote #(= % 'quote)
          :list  #(and (seq? %)
-                      (some->> % second first (re-find #"^__cssfn__[a-zA-Z-]+$")))))
+                      (let [escaped-cssfn-name (some->> % second first)]
+                        (when (string? escaped-cssfn-name)
+                          (re-find #"^__cssfn__[a-zA-Z-]+$" escaped-cssfn-name))))))
 
 (s/def ::cssfn-list-nested
   (s/and
@@ -265,7 +283,7 @@
   (s/or :css-value-scalar           ::css-value-scalar
         :css-shorthand-inner-vector ::css-shorthand-inner-vector))
 
-(s/def ::ccs-alternation-vector
+(s/def ::css-alternation-vector
   (s/coll-of ::css-alternation-vector-member :kind vector?))
 
 (s/def ::style-tuple-prop
@@ -283,8 +301,12 @@
 (s/def ::css-value-scalar-no-bindings
   (s/or :number                   number?
         :css-val-alphanumeric     ::css-val-alphanumeric
-        :cssvar-name ::cssvar-name))
+        :cssvar-name              ::cssvar-name))
 
+
+(s/def ::defclass-stylemap-nested
+  (s/and map?
+         (s/coll-of ::style-tuple-defclass)))
 
 ;; ::list-of-quoted-strings is for css property values such as `grid-template-areas`
 ;; below example of :grid-template-areas for a 3x3 grid with named grid areas
@@ -294,23 +316,24 @@
          #(re-find #"^\"[^\"]*\"(?: \"[^\"]*\")*$" %)))
 
 (s/def ::style-tuple-value
-  (s/or :css-value-scalar        ::css-value-scalar
-        :cssfn-list              ::cssfn-list
-        :ccs-alternation-vector  ::ccs-alternation-vector
-        :css-shorthand-vector    ::css-shorthand-vector
-        :conditional-sexp        ::conditional-sexp
-        :str-sexp                ::str-sexp
-        :pseudo-element-content  ::pseudo-element-content
-        :font-variation-settings ::font-variations-settings
-        :list-of-quoted-strings  ::list-of-quoted-strings))
+  (s/or :css-value-scalar         ::css-value-scalar
+        :cssfn-list               ::cssfn-list
+        :css-alternation-vector   ::css-alternation-vector
+        :css-shorthand-vector     ::css-shorthand-vector
+        :conditional-sexp         ::conditional-sexp
+        :str-sexp                 ::str-sexp
+        :pseudo-element-content   ::pseudo-element-content
+        :font-variations-settings ::font-variations-settings
+        :list-of-quoted-strings   ::list-of-quoted-strings
+        :stylemap-nested          ::stylemap))
 
 (s/def ::style-tuple-value-defclass
   (s/or :css-value-scalar-no-bindings ::css-value-scalar-no-bindings
         :cssfn-list                   ::cssfn-list-defclass
-        :ccs-alternation-vector       ::ccs-alternation-vector
+        :css-alternation-vector       ::css-alternation-vector
         :css-shorthand-vector         ::css-shorthand-vector
         :pseudo-element-content       ::pseudo-element-content
-        :font-variation-settings      ::font-variations-settings
+        :font-variations-settings     ::font-variations-settings
         :list-of-quoted-strings       ::list-of-quoted-strings))
 
 (s/def ::style-tuple-with-css-var
@@ -321,6 +344,9 @@
 
 (s/def ::style-tuple-defclass
   (s/tuple ::style-tuple-prop ::style-tuple-value-defclass))
+
+(s/def ::style-tuple-nested
+  (s/tuple ::style-tuple-prop ::stylemap))
 
 (s/def ::cssvar-tuple
   (s/tuple ::cssvar-name ::style-tuple-value))
@@ -370,6 +396,7 @@
 
 ;; STYLEMAP --------------------------------------------------------------
 
+
 (s/def ::defclass-stylemap
   (s/and map?
          (s/coll-of ::style-tuple-defclass)))
@@ -410,6 +437,8 @@
   #(and (s/valid? ::style-tuple %)
         (not (s/valid? ::style-tuple-value-imbalanced-string
                        (second %)))))
+
+
 
 (s/def ::sx-args
   (s/cat
@@ -481,17 +510,16 @@
 
 (s/def ::valid-defclass-arg-normalized
   ;; TODO spec for symbol name validation
-  ;; TODO maybe take out trace
   (s/or :assigned-class       #(s/valid? symbol? %)
         :defclass-class       #(s/valid? ::defclass-class %)
         :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
         :tokenized-style      #(s/valid? ::tokenized-style %)
-        ;; Internally, we nest a stylemap passed to kushi.core/defclass on a :style key, so it can be processed through the same pipeline as kushi.core/sx
+        ;; Internally, we nest a stylemap passed to kushi.core/defclass on a :style key,
+        ;; so it can be processed through the same pipeline as kushi.core/sx
         :defclass-stylemap    #(s/valid? ::defclass-stylemap (when (map? %) (:style %)))))
 
 (s/def ::valid-defclass-arg
   ;; TODO spec for symbol name validation
-  ;; TODO maybe take out trace
   (s/or :assigned-class       #(s/valid? symbol? %)
         :defclass-class       #(s/valid? ::defclass-class %)
         :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
@@ -500,7 +528,6 @@
 
 (s/def ::defclass-args
   ;; TODO spec for symbol name validation
-  ;; TODO maybe take out trace
   (s/cat
    :assigned-class          (s/? symbol?)
    :defclass-style-or-class (s/* ::defclass-style-or-class)
