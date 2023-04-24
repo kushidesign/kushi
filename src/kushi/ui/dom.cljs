@@ -117,6 +117,8 @@
     (j/assoc! el "ggpn" ggpn)
     el))
 
+(defn cet [e] (some-> e .-currentTarget))
+(defn cetv [e] (some-> e .-currentTarget .-value))
 (defn et [e] (some-> e .-target))
 (defn et+ [e] (some-> e .-target el+))
 (defn etv [e] (some-> e .-target .-value))
