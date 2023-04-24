@@ -17,9 +17,8 @@
            (merge-attrs
             (sx 'kushi-label
                 :.flex-row-c
-                :gap--$icon-enhancer-inline-gap-ems
+                :.enhanceable
                 :.transition
-                :ai--c
                 :d--inline-flex
                 :w--fit-content
                 {:data-kushi-ui :label})
