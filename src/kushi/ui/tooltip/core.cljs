@@ -369,6 +369,10 @@
 (defn- text-type [x]
   (cond (and (string? x) (not (string/blank? x)))
         :string
+        (and (keyword? x) (not (string/blank? (name x))))
+        :keyword
+        (number? x)
+        :number
         (seq x)
         :multi-line-string))
 
@@ -398,7 +402,7 @@
           "If the element that you are tipping is already using either of the `::before` or `::after` pseudo-elements, you will need to wrap it in a container (perhaps a `<span>`) and apply the tooltip attrs to that wrapper."
           :br
           :br
-          "The element being tipped must also have a css `postition` value such as `relative` set, so that the absolutely-positioned tooltip pseudo-element will end up with the desired placement."
+          "The element being tipped must also have a css `position` value such as `relative` set, so that the absolutely-positioned tooltip pseudo-element will end up with the desired placement."
           "Tooltips can be custom styled via the following tokens in your theme:"
           :br
           :br
