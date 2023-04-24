@@ -81,7 +81,6 @@
   :.pointer
   :fs--$kushi-playground-sidenav-section-header_font-size
   :d--block
-  :tt--u
   :line-height--$body-copy-line-height
   :pb--0.4em
   :lh--1.25
@@ -89,16 +88,6 @@
   :bisw--3px
   :biss--solid
   :bisc--transparent)
-
-(defclass kushi-playground-main-section-wrapper
-  :.flex-col-fs
-  :ai--c
-  :width--100%
-  :md:width--auto
-  :flex-shrink--0
-  :md:flex-grow--1
-  :lg:flex-grow--0
-  :padding-inline--$page-padding-inline)
 
 (defclass kushi-playground-main-section
   {:flex-grow 0
@@ -126,80 +115,36 @@
 
 (defclass kushi-playground-with-rainbow-keys
 
-  ;; Main sections rainbow keys
-  ["&_.kushi-collapse:nth-child(8n+1)>.kushi-collapse-header:hover:bgc" :$gold-50]
-  ["&_.kushi-collapse:nth-child(8n+1)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-50]
-  ["&_.kushi-collapse:nth-child(8n+2)>.kushi-collapse-header:hover:bgc" :$orange-50]
-  ["&_.kushi-collapse:nth-child(8n+2)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-50]
-  ["&_.kushi-collapse:nth-child(8n+3)>.kushi-collapse-header:hover:bgc" :$red-50]
-  ["&_.kushi-collapse:nth-child(8n+3)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-50]
-  ["&_.kushi-collapse:nth-child(8n+4)>.kushi-collapse-header:hover:bgc" :$magenta-50]
-  ["&_.kushi-collapse:nth-child(8n+4)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-50]
-  ["&_.kushi-collapse:nth-child(8n+5)>.kushi-collapse-header:hover:bgc" :$purple-50]
-  ["&_.kushi-collapse:nth-child(8n+5)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-50]
-  ["&_.kushi-collapse:nth-child(8n+6)>.kushi-collapse-header:hover:bgc" :$blue-50]
-  ["&_.kushi-collapse:nth-child(8n+6)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-50]
-  ["&_.kushi-collapse:nth-child(8n+7)>.kushi-collapse-header:hover:bgc" :$green-50]
-  ["&_.kushi-collapse:nth-child(8n+7)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-50]
-  ["&_.kushi-collapse:nth-child(8n+8)>.kushi-collapse-header:hover:bgc" :$yellow-50]
-  ["&_.kushi-collapse:nth-child(8n+8)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-50]
+  ;trailing fade out rainbow keys
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out:hover" {:bgc :$gold-50 :color :$gold-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :color :$neutral-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out:hover" {:bgc :$orange-50 :c :$orange-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out:hover" {:bgc :$red-50 :c :$red-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out:hover" {:bgc :$magenta-50 :c :$magenta-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out:hover" {:bgc :$purple-50 :c :$purple-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out:hover" {:bgc :$blue-50 :c :$blue-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out:hover" {:bgc :$green-50 :c :$green-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out:hover" {:bgc :$yellow-50 :c :$yellow-1000}]
+  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
 
-  ;; Main sections rainbow keys inverse
-  ["dark:&_.kushi-collapse:nth-child(8n+1)>.kushi-collapse-header:hover:bgc" :$gold-950]
-  ["dark:&_.kushi-collapse:nth-child(8n+1)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-900]
-  ["dark:&_.kushi-collapse:nth-child(8n+2)>.kushi-collapse-header:hover:bgc" :$orange-950]
-  ["dark:&_.kushi-collapse:nth-child(8n+2)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-900]
-  ["dark:&_.kushi-collapse:nth-child(8n+3)>.kushi-collapse-header:hover:bgc" :$red-950]
-  ["dark:&_.kushi-collapse:nth-child(8n+3)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-900]
-  ["dark:&_.kushi-collapse:nth-child(8n+4)>.kushi-collapse-header:hover:bgc" :$magenta-950]
-  ["dark:&_.kushi-collapse:nth-child(8n+4)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-900]
-  ["dark:&_.kushi-collapse:nth-child(8n+5)>.kushi-collapse-header:hover:bgc" :$purple-950]
-  ["dark:&_.kushi-collapse:nth-child(8n+5)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-900]
-  ["dark:&_.kushi-collapse:nth-child(8n+6)>.kushi-collapse-header:hover:bgc" :$blue-950]
-  ["dark:&_.kushi-collapse:nth-child(8n+6)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-900]
-  ["dark:&_.kushi-collapse:nth-child(8n+7)>.kushi-collapse-header:hover:bgc" :$green-950]
-  ["dark:&_.kushi-collapse:nth-child(8n+7)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-900]
-  ["dark:&_.kushi-collapse:nth-child(8n+8)>.kushi-collapse-header:hover:bgc" :$yellow-950]
-  ["dark:&_.kushi-collapse:nth-child(8n+8)>.kushi-collapse-header[aria-expanded='true']:hover:bgc" :$neutral-900]
-
-  ;; Sidenav rainbow keys
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+1)>a:hover:c" :$gold-1000]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+2)>a:hover:c" :$orange-1000]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+3)>a:hover:c" :$red-1000]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+4)>a:hover:c" :$magenta-1000]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+5)>a:hover:c" :$purple-1000]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+6)>a:hover:c" :$blue-1000]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+7)>a:hover:c" :$green-1000]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+8)>a:hover:c" :$yellow-1000]
-
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+1)>a:hover:bgc" :$gold-50]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+2)>a:hover:bgc" :$orange-50]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+3)>a:hover:bgc" :$red-50]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+4)>a:hover:bgc" :$magenta-50]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+5)>a:hover:bgc" :$purple-50]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+6)>a:hover:bgc" :$blue-50]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+7)>a:hover:bgc" :$green-50]
-  ["&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+8)>a:hover:bgc" :$yellow-50]
-
-  ;; Sidenav rainbow keys inverse
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+1)>a:hover:c" :$gold-100]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+2)>a:hover:c" :$orange-100]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+3)>a:hover:c" :$red-100]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+4)>a:hover:c" :$magenta-100]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+5)>a:hover:c" :$purple-100]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+6)>a:hover:c" :$blue-100]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+7)>a:hover:c" :$green-100]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+8)>a:hover:c" :$yellow-100]
-
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+1)>a:hover:bgc" :$gold-950]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+2)>a:hover:bgc" :$orange-950]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+3)>a:hover:bgc" :$red-950]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+4)>a:hover:bgc" :$magenta-950]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+5)>a:hover:bgc" :$purple-950]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+6)>a:hover:bgc" :$blue-950]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+7)>a:hover:bgc" :$green-950]
-  ["dark:&_.kushi-playground-sidenav-section-item-wrapper:nth-child(8n+8)>a:hover:bgc" :$yellow-950]
+  ;; Inverse (dark-theme) trailing fade out rainbow keys
+  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out:hover" {:bgc :$gold-950 :color :$gold-50}]
+  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out:hover" {:bgc :$orange-950 :c :$orange-50}]
+  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out:hover" {:bgc :$red-950 :c :$red-50}]
+  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out:hover" {:bgc :$magenta-950 :c :$magenta-50}]
+  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out:hover" {:bgc :$purple-950 :c :$purple-50}]
+  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out:hover" {:bgc :$blue-950 :c :$blue-50}]
+  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out:hover" {:bgc :$green-950 :c :$green-50}]
+  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out:hover" {:bgc :$yellow-950 :c :$yellow-50}]
   )
+
+(defclass no-hover-bgc :bgc--transparent!important)
 
 (defclass kushi-demo-stage
   :min-height--135px
@@ -220,9 +165,10 @@
 
 (defclass kushi-playground-demobox-ui-icon
   :fs--1rem!important
+  :>div.kushi-icon>span:fs--1rem!important
   :b--none!important
   :bw--0!important
-  :p--0.3em!important
+  :p--0.425em!important
   :c--$neutral-minimal-color!important
   :dark:c--$neutral-minimal-color-inverse!important
   :bgc--transparent!important
@@ -232,13 +178,51 @@
 (defclass kushi-playground-demobox-ui-icon-stage-control
   :p--0.5em!important
   :hover:bgc--$neutral-200!important
+  :dark:hover:bgc--$neutral-750!important
   :active:bgc--$neutral-300!important
+  :dark:active:bgc--$neutral-650!important
   ["&[aria-selected='true']:bgc" :$neutral-100!important]
+  ["dark:&[aria-selected='true']:bgc" :$neutral-750!important]
   )
 
-(defclass go :m--0 :p--0)
+(defclass truncate 
+  :overflow--hidden
+  :text-overflow--ellipsis
+  :white-space--nowrap)
 
-(defclass go2
-  :.go
-  [:c :green]
-  [:bgc :yellow])
+(defclass kushi-playground-dev-mode-portal
+  :.fixed
+  :.transition
+  :.xxslow!
+  :transition-property--opacity
+  :w--0
+  :h--0
+  :o--0
+  :dark:bgc--$gray-1000
+  :bgc--white
+  :zi--10000)
+
+
+(defclass kushi-playground-dev-mode-hidden
+  :overflow--hidden)
+
+
+(defclass kushi-playground-dev-mode
+  :>#app:o--0
+  :>#app:transition--all
+  :>#app:transition-duration--500ms
+  :>#kushi-playground-dev-mode-portal:o--1
+  :>#kushi-playground-dev-mode-portal:w--100vw
+  :>#kushi-playground-dev-mode-portal:h--100vh)
+
+
+(defclass kushi-playground-sidenav-wrapper
+  :h--100vh
+  :.grow
+  :d--none
+  :xl:d--flex
+  :xl:jc--c
+  :ai--fs
+  [:w "calc(100% - (708px / 2))"]
+  [:max-width :$kushi-playground-sidenav-max-width]
+  [:xl:max-width :unset])
