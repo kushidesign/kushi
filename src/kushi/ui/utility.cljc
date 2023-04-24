@@ -482,6 +482,7 @@
 (def override-classes
   [;; General
    ;; ------------------------------------------------------
+   :invisible     {:opacity 0}
    :hidden        {:visibility :hidden}
    :visible       {:visibility :visible}
    :collapse      {:visibility :collapse}
