@@ -41,12 +41,6 @@
 
 (defn section-focused? [x] (= @*focused-section x))
 
-#_(defn initial-focus? [fname]
-  (when (= (:init-focused-component @*state) fname)
-    (swap! *state assoc :focused-component fname)
-    (swap! *state assoc :init-focused-component nil)
-    true))
-
 (defn set-focused-component! [x]
   #_(js/console.log :set-focused-component! x)
   (j/call js/history :pushState  #js {} "" (str "#" x))
