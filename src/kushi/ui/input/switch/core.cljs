@@ -24,7 +24,6 @@
         node  (if (dom/has-class? node* "kushi-switch")
                 node*
                 (dom/nearest-ancestor node* ".kushi-switch"))]
-    (js/console.log node)
     (dom/toggle-boolean-attribute node "aria-checked")))
 
 (defn- track-content [opts x]
