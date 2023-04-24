@@ -21,8 +21,10 @@
     (when root (.toggle (.-classList root) (name class)))))
 
 (defn toggle-boolean-attribute [node attr]
-  (let [aria-expanded? (.getAttribute node (name attr))
-        newv (if (= aria-expanded? "false") true false)]
+  (let [oldv (.getAttribute node (name attr))
+        newv (if (or (= oldv "false") (= oldv false))
+               "true"
+               "false")]
     (.setAttribute node (name attr) newv)))
 
 (defn bod-height [el]
@@ -47,7 +49,7 @@
 (defn collapse-header
   [& args]
   (let [[opts attrs & children]       (opts+children args)
-        {:keys [speed]
+        {:keys [speed expanded?]
          :or   {speed 250}} opts]
     (let [on-click
           #(let [header   (.closest (-> % .-target) "[aria-expanded][role='button']")
@@ -99,6 +101,7 @@
                     ;;    - This will set the collapse's body-wrapper to 0 via css selector rule
                     ;;    - This will set the collapse's body-wrapper opacity duration to 200ms, and the opacity to 1 (fade-in effect)
                     (toggle-boolean-attribute header :aria-expanded)
+                    (.setAttribute header "aria-expanded" (if expanded? "false" "true"))
                     (if-not collapsed?
                       (js/setTimeout (fn []
                                        ;; body is open, closing
@@ -130,7 +133,7 @@
                                 "&[aria-expanded='true']+section>*:opacity"     1}
                 :tabIndex      0
                 :role          :button
-                :aria-expanded false
+                :aria-expanded expanded?
                 :on-click      on-click
                 :onKeyDown     #(when (or (= "Enter" (.-key %)) (= 13 (.-which %)) (= 13  (.-keyCode %)))
                                   (-> % .-target .click))})
@@ -194,8 +197,7 @@
       attr)
      [collapse-header
       (merge-attrs header-attrs
-                   (sx #_["[aria-expanded='false']+.kushi-collapse-body-wrapper:d" :none]
-                       {:on-click       on-click
+                   (sx {:on-click       on-click
                         :aria-expanded  (if expanded? "true" "false")
                         :-icon-position icon-position
                         :-speed         speed}))
@@ -204,8 +206,7 @@
      ;; collapse body
      [:section
       (merge-attrs (sx 'kushi-collapse-body-wrapper
-                       :overflow--hidden
-                       #_{:disabled true})
+                       :overflow--hidden)
                    body-attrs
                    {:style {:display             (if expanded? :block :none)
                             :transition-duration :$speed}})
