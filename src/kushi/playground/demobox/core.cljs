@@ -8,6 +8,7 @@
    [kushi.ui.input.slider.css]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.icon.core :refer (icon)]
+   [kushi.ui.tag.core :refer (tag)]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.label.core :refer (label)]
    [kushi.ui.input.slider.core :refer (slider)]
@@ -15,15 +16,17 @@
    [kushi.ui.dom :refer (copy-to-clipboard)]
    [kushi.ui.core :refer (defcom)]
    [kushi.ui.input.radio.core :refer (radio)]
-   [kushi.ui.modal.core :refer [modal modal-close-button open-kushi-modal]]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.playground.demobox.handlers :as handlers]
    [kushi.playground.demobox.decorate :as decorate]
    [kushi.playground.demobox.defs :refer [variants-by-category]]
-   [kushi.playground.state :refer [*state]]
+   [kushi.playground.state :as state :refer [*state *dev-mode?]]
    [kushi.playground.shared-styles]
+   [kushi.playground.ui :refer [light-dark-mode-switch]]
    [kushi.playground.util :as util :refer-macros (keyed)]
-   [reagent.core :as r]))
+   [reagent.core :as r]
+   [reagent.dom :as rdom]
+   ["react-dom" :as react-dom]))
 
 (defcom input-row
   (let [{:keys [group-id
@@ -220,15 +223,16 @@
                                           (get-example examples (:examples defaults)))})))
 
 (defn stage-control
-  [a b [prop value]]
+  [active? tooltip-text icon-name [prop value]]
   [button
    (merge-attrs
     (sx
      :.kushi-playground-demobox-ui-icon
      :.kushi-playground-demobox-ui-icon-stage-control
      {:on-click #(let [clicked (dom/et %)]
-                   (when-let [stage (dom/nearest-ancestor clicked ".dev-mode-stage")]
-                     (let [cls             ".kushi-playground-demobox-ui-icon-stage-control"
+                   (when-let [stage-settings (dom/nearest-ancestor clicked ".dev-mode-stage-settings") ]
+                     (let [stage           (.-previousSibling stage-settings)
+                           cls             ".kushi-playground-demobox-ui-icon-stage-control"
                            button-group    (dom/nearest-ancestor clicked ".stage-control-button-group")
                            buttons-checked (.querySelectorAll button-group (str cls "[aria-selected='true']"))
                            ctrl-button     (if (dom/has-class? clicked cls)
@@ -238,10 +242,20 @@
                          (dom/set-attribute! el "aria-selected" false))
                        (dom/set-attribute! ctrl-button "aria-selected" true)
                        (dom/set-style! stage (name prop) (name value)))))
-      :aria-selected false})
-    (tooltip-attrs {:-text      a
+      :aria-selected (str active?)})
+    (tooltip-attrs {:-text      tooltip-text 
                     :-placement :top}))
-   [icon b]])
+   [icon icon-name]])
+
+  
+(defcom exit-dev-mode-button
+  [button (merge-attrs
+           (sx 
+            :.kushi-playground-demobox-ui-icon)
+           &attrs
+           (tooltip-attrs {:-text      "Exit dev mode"
+                           :-placement (:tooltip-placement &opts)}))
+   [icon :fullscreen-exit]])
 
 
   (defn demobox2
@@ -254,6 +268,7 @@
       stage-attr :stage
       :as        m+}]
     (let [component-id         (subs (str m*) 2)
+          dev-modal-id         (str component-id "-dev-modal")
           nm                   (util/meta->fname m*)
           utility-class-target (or utility-class-target nm)
           snippet-id           (str nm "-snippet")
@@ -283,17 +298,26 @@
 
       (r/create-class
        {:display-name         "example"
-        :component-did-mount  update-classes
+        :component-did-mount  (fn [this]
+                                (let [focused? (state/focused? nm)
+                                      node (rdom/dom-node this)]
+                                  (when (and focused? @*dev-mode?)
+                                    
+                                    #_(dom/add-class node "kushi-playground-demobox-dev-mode")
+                                    #_(open-kushi-modal dev-modal-id)
+                                    #_(js/setTimeout (fn [_]
+                                                       (dom/remove-class node "kushi-playground-demobox-dev-mode"))
+                                                     1000)))
+                                (update-classes this))
         :component-did-update update-classes
         :reagent-render       (fn []
-                                (let [dev-modal-id (str component-id "-dev-modal")
-                                      dev-mode-stage-ai (or (-> @*demostate :layout :justify-content) :center)
+                                (let [dev-mode-stage-ai (or (-> @*demostate :layout :justify-content) :center)
                                       dev-mode-stage-jc (or (-> @*demostate :layout :align-items) :center)]
                                   [:section (sx :.kushi-playground-demobox)
 
                                    ;; Component preview stage
                                    ;; ------------------------------------
-                                   [:div.flex-row-c.relative.fuck
+                                   [:div.flex-row-c.relative
                                     (merge-attrs stage-attr
                                                  (sx 'kushi-demo-stage {:id  component-id
                                                                         :key (-> @*demostate
@@ -305,76 +329,100 @@
                                     [button (merge-attrs
                                              (sx :.southeast-inside
                                                  :.kushi-playground-demobox-ui-icon
-                                                 {:on-click #(open-kushi-modal dev-modal-id)})
+                                                 {:on-click (fn [_] 
+                                                               (dom/add-class js/document.body "kushi-playground-dev-mode")
+                                                               (js/setTimeout (fn [_]
+                                                                                (dom/add-class js/document.body "kushi-playground-dev-mode-hidden")
+                                                                                (reset! *dev-mode? true))
+                                                                              500))})
+                                             (sx :$tooltip-offset---3px)
                                              (tooltip-attrs {:-text      "Enter dev mode"
-                                                             :-placement "block-start inline-end"}))
+                                                             :-placement "block-start inline-start corner"}))
                                      [icon :fullscreen]]
-                                    [modal
-                                     (sx
-                                      :$modal-backdrop-color--white
-                                      :.fixed-block-end!
-                                      :.elevated-0!
-                                      :max-width--unset
-                                      :max-height--unset
-                                      :pb--2rem:3rem
-                                      :w--100%
-                                      :h--100vh
-                                      {:id dev-modal-id})
-                                     [:section (sx 'dev-mode-stage
-                                                   :.relative
-                                                   :.flex-col-c
-                                                   :ai--c
-                                                   :outline--1px:solid:$neutral-100
-                                                   :w--100%
-                                                   :h--100%
-                                                   {:id "wtf"})
-                                      [:h1 (sx :.north-outside!
-                                               :.flex-row-c
-                                               :gap--2rem
-                                               #_[:transform "translateY('100%')"])
-                                       [:span "Kushi Dev Mode"]
-                                       [:span (str nm " - " (-> @*demostate :active-example :label))]]
-                                      @current-stage
-                                      [:div (sx 'dev-mode-stage-settings
-                                                :.absolute-block-end
-                                                :.flex-row-sb
-                                                :w--100%
-                                                :&_.kushi-icon:fs--large
-                                                :&_.kushi-button:bgc--transparent
-                                                :&_.kushi-button:hover:bgc--$gray-150
-                                                :&_.kushi-button:p--7px
-                                                :&_.kushi-button:border-radius--999px
-                                                [:>*:transform "translateY(calc(100% + 15px))!important"])
-                                       [:div (sx :w--32px)]
-                                       [:div (sx 'dev-mode-stage-settings-alignment
-                                                 :.flex-row-c
-                                                 :.pill!
-                                                 :gap--4.5em
-                                                 :&_.kushi-icon:fs--large
-                                                 :&_.kushi-button:bgc--transparent
-                                                 :&_.kushi-button:p--7px)
-                                        [:div (sx :.flex-row-fs :.stage-control-button-group :gap--0.5em)
-                                         [stage-control "Justify left" :align-horizontal-left [:align-items :flex-start]]
-                                         [stage-control "Justify center" :align-horizontal-center [:align-items :center]]
-                                         [stage-control "Justify right" :align-horizontal-right [:align-items :flex-end]]]
-                                        [:div (sx :.flex-row-fs :.stage-control-button-group :gap--0.5em)
-                                         [stage-control "Justify top" :vertical-align-top [:justify-content :flex-start]]
-                                         [stage-control "Justify middle" :vertical-align-center [:justify-content :center]]
-                                         [stage-control "Justify bottom" :vertical-align-bottom [:justify-content :flex-end]]]]
-                                       [modal-close-button (merge-attrs
-                                                            (sx :.sharp!
-                                                                :.relative!
-                                                                :.kushi-playground-demobox-ui-icon
-                                                                :.kushi-playground-demobox-ui-icon-stage-control
-                                                                :transform--none
-                                                                :bgc--transparent
-                                                                :p--7px
-                                                                :.pill!
-                                                                :.large!
-                                                                {:-icon :fullscreen-exit})
-                                                            (tooltip-attrs {:-text      "Exit dev mode"
-                                                                            :-placement "block-start inline-end"}))]]]
-                                     ]]
+
+                                     (when (and (state/focused? nm) @*dev-mode?)
+                                       (react-dom/createPortal
+                                        (r/as-element
+                                         [:div
+                                          (sx :.flex-col-sb :ai--c :w--100% :h--100%)
+
+                                          [:div (sx :.flex-row-sb
+                                                    :ai--c
+                                                    :gap--1rem
+                                                    :pb--0.75em
+                                                    :pi--3rem:1rem
+                                                    :w--100%)
+
+                                           [:section.flex-row-fs 
+                                            (sx :gap--2rem)
+                                            [tag (sx :fs--$xxxsmall!important
+                                                     :fw--$normal!important
+                                                     :&_.kushi-icon:text-shadow--0:0:4px:#00ffe0
+                                                     :&_.kushi-icon:c--#0a79ff
+                                                     :dark:&_.kushi-icon:c--$accent--300
+                                                     :.uppercase
+                                                     :.rounded)
+                                             [icon {:-icon-filled? false} :bolt]
+                                             "Playground Dev Mode"
+                                             [icon {:-icon-filled? false} :bolt]]
+
+                                            [:span.flex-row-fs
+                                             (sx :gap--0.5em)
+                                             [:code.semi-bold.xsmall! component-id]
+                                             [:span.small.italic.small! (-> @*demostate :active-example :label)]]]
+                                           
+                                           [:div
+                                            (sx :>button:pb--0.4rem!important)
+                                            ;; todo put dark mode switch here
+                                            [light-dark-mode-switch]]]
+
+                                          [:section (sx 'dev-mode-stage
+                                                        :$dev-mode-stage-margin-inline--3rem
+                                                        :.relative
+                                                        :.flex-col-c
+                                                        :.grow
+                                                        :ai--c
+                                                        [:width "calc(100% - (2 * var(--dev-mode-stage-margin-inline)))"]
+                                                        :outline--1px:solid:$neutral-200
+                                                        :dark:outline--1px:solid:$neutral-600
+                                                        {:id "wtf"})
+                                           
+                                           @current-stage ]  
+
+                                          [:div (sx 'dev-mode-stage-settings
+                                                    :.flex-row-sb
+                                                    :pb--0.75em
+                                                    :pi--1rem
+                                                    :w--100%
+                                                    :&_.kushi-icon:fs--large
+                                                    :&_.kushi-button:bgc--transparent
+                                                    :&_.kushi-button:hover:bgc--$gray-150
+                                                    :&_.kushi-button:p--7px
+                                                    :&_.kushi-button:border-radius--999px)
+                                           [:div (sx :w--32px)]
+                                           [:div (sx 'dev-mode-stage-settings-alignment
+                                                     :.flex-row-c
+                                                     :.pill!
+                                                     :gap--4.5em
+                                                     :&_.kushi-icon:fs--large
+                                                     :&_.kushi-button:bgc--transparent
+                                                     :&_.kushi-button:p--7px)
+                                            [:div (sx :.flex-row-fs :.stage-control-button-group :gap--0.5em)
+                                             [stage-control false "Justify left" :align-horizontal-left [:align-items :flex-start]]
+                                             [stage-control true "Justify center" :align-horizontal-center [:align-items :center]]
+                                             [stage-control false "Justify right" :align-horizontal-right [:align-items :flex-end]]]
+                                            [:div (sx :.flex-row-fs :.stage-control-button-group :gap--0.5em)
+                                             [stage-control false "Justify top" :vertical-align-top [:justify-content :flex-start]]
+                                             [stage-control true "Justify middle" :vertical-align-center [:justify-content :center]]
+                                             [stage-control false "Justify bottom" :vertical-align-bottom [:justify-content :flex-end]]]]
+
+                                           [exit-dev-mode-button
+                                            {:on-click           (fn [_] 
+                                                                   (dom/remove-class js/document.body "kushi-playground-dev-mode-hidden")
+                                                                   (reset! *dev-mode? false)
+                                                                   (dom/remove-class js/document.body "kushi-playground-dev-mode"))
+                                             :-tooltip-placement "inline-start"}]]])
+                                         (.. js/document (getElementById "kushi-playground-dev-mode-portal"))))]
 
 
                                  ;; Examples radio group
