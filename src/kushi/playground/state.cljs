@@ -1,5 +1,6 @@
 (ns kushi.playground.state
   (:require
+   [kushi.core :refer [breakpoints]]
    [kushi.ui.dom :as dom]
    [applied-science.js-interop :as j]
    [reagent.core :as r]))
@@ -8,13 +9,27 @@
   (r/atom {
            ;;  :init-focused-component "button"
            :kushi-components-indexes []
-           :components-expanded? false
+          ;;  :focused-component    "button"
            :snippet-by-component {}
-           :dev-mode?            false
            :option-radios        {}
            :controls-by-type     {}}))
 
-(def *focused-component (r/atom nil))
+(defonce *md-or-smaller?
+  (r/atom 
+   (not (let [md-breakpoints    (some-> (breakpoints) :md)
+              [md-key md-value] (some-> md-breakpoints first)
+              mql               (when-let [[md-key md-value] (when (and (or (string? md-key) (keyword? md-key))
+                                                                        (or (string? md-value) (keyword? md-value)))
+                                                               [(name md-key) (name md-value)])]
+                                  (let [mql (js/window.matchMedia (str "(" md-key ": " md-value  ")"))]
+                                    (j/assoc! mql :onchange #(do (reset! *md-or-smaller? (not (.-matches %)))))))]
+          (.-matches mql)))))
+
+(defonce *dev-mode? (r/atom false))
+
+(defonce *components-expanded? (r/atom false))
+
+(defonce *focused-component (r/atom nil))
 
 (def *focused-section (r/atom :kushi-components))
 
@@ -35,10 +50,10 @@
 (defn set-focused-component! [x]
   #_(js/console.log :set-focused-component! x)
   (j/call js/history :pushState  #js {} "" (str "#" x))
-  (reset! *focused-component x) )
+  (reset! *focused-component x))
 
 (defn nav! [x]
-  #_(js/console.log :nav!)
+  #_(js/console.log :nav! x)
   (let [el (dom/el-by-id x)
         expanded? (dom/has-class? el "kushi-collapse-expanded")]
     (swap! *expanded-sections (if expanded? conj disj) x)
