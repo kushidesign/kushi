@@ -275,6 +275,12 @@
       (some-> css-sh-by-propname k v) v)
     v))
 
+(defn enum-val-type? 
+  "Expects a hydrated css-prop keyword.
+   Returns true if css value is of enum type."
+  [k]
+  (when (keyword? k)
+    (some-> css-sh-by-propname k :vals)))
 
 (defn key-sh [k]
   (if (keyword? k)
