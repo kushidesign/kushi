@@ -17,6 +17,13 @@
   (str "/*! kushi v" version " | EPL License | https://github.com/kushidesign/kushi */"))
 
 
+(defn add-utility-class?
+  [m]
+  (let [selector    (-> m :selector :selector*)
+        registered? (contains? @state2/registered-shared-classes selector)
+        always-add? (some #(re-find % selector) (:kushi-utility-classes-to-always-add user-config))]
+    (or registered? always-add?)))
+
 (defn keep-garden-vecs [chunk]
   (let [ret (reduce (fn [acc {gv  :garden-vecs
                               :as m} ]
@@ -25,9 +32,8 @@
                             utility?                  (contains? #{:kushi/utility :kushi/utility-override} chunk)]
                         (if non-empty-matching-chunk?
                           (if utility?
-                            (if (or @state2/KUSHIDEBUG
-                                    ;;only for prod
-                                    (contains? @state2/registered-shared-classes (-> m :selector :selector*)))
+                            (if (or (not (:elide-unused-kushi-utility-classes? user-config))
+                                    (add-utility-class? m))
                               (conj acc gv)
                               acc)
                             (conj acc gv))
