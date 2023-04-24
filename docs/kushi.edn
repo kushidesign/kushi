@@ -1,24 +1,6 @@
 
 {:css-dir                "public/css"
- :caching?               false
-;;  :log-build-report-style :detailed
-
- ;; default true
- :add-stylesheet-dev?    true
-
-;;  :add-design-tokens?      false
-;;  :add-system-font-stack?  false
-;;  :add-css-reset?          false
- 
- ;; Set this to false to leave out all of kushi's built-in utility classes
-;;  :add-kushi-defclass?     false
- 
- ;; Set this to false to leave out any shared classes created by the user via the defclass macro
-;;  :add-user-defclass?      false
- 
- ;; :log-build-report-style  :detailed
- :log-updates-to-cache?  true
- :log-cache-call-sites?  true
+ :log-build-report-style :detailed
 
  ;; This is optional. The intent of this is to use the words or iconography of your choosing
  ;; to draw more attention to the terminal when there is a problem.
@@ -32,21 +14,22 @@
                           " ____|_       ___|   |___.'  "
                           "/_/_____/____/_______|       "
                           ]
- ;;  :inject-at-runtime-dev?  false
- ;;  :inject-at-runtime-prod? true
- 
+
+
  :theme                  site.theme/my-theme
 
 
-;;  :kushi-ui-variants       {:button {:semantic #{:positive :negative}
-;;                                     :kind     #{:primary :minimal}}
-;;                            :tag    {:semantic #{:positive :negative}}}
- 
+ ;;  :kushi-ui-variants  {:button {:semantic #{:positive :negative}
+ ;;                                :kind     #{:primary :minimal}}
+ ;;                       :tag    {:semantic #{:positive :negative}}}
+
  :media                  [:xsm {:min-width :480px}
                           :sm {:min-width :640px}
                           :md {:min-width :900px}
                           :lg {:min-width :1124px}
                           :xl {:min-width :1280px}
                           :xxl {:min-width :1536px}]
+
+ :elide-unused-kushi-utility-classes? false
  }
 
