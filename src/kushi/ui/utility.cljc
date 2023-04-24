@@ -617,7 +617,9 @@
    :rounded-xlarge        {:border-radius :$rounded-xlarge}
    :rounded-xxlarge       {:border-radius :$rounded-xxlarge}
    :rounded-xxxlarge      {:border-radius :$rounded-xxxlarge}
-   :rounded               {:border-radius :$rounded-medium}
+   
+   ;; This one is used for buttons, tags etc ... The roundedness is always relative to font-size
+   :rounded               {:border-radius :0.5em}
 
    :sharp         {:border-radius 0}
    :pill          {:border-radius :9999px}
