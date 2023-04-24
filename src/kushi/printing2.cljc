@@ -204,7 +204,7 @@
 (defn build-failure []
   (throw (Exception.
           (str "\n\n"
-               (simple-alert-header2 "EXCEPTION" "[kushi.core/kushi-debug]")
+               (simple-alert-header2 "EXCEPTION" "[kushi.core/kushi-debug]" nil)
                "The required entry `:css-dir` is missing from your kushi.edn config"
                "\n\n"
                "Its value must be a path relative to proj root e.g \"public/css\" or \"resources/public/css\"."
