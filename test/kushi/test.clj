@@ -65,8 +65,7 @@
       :kushi/chunk           :kushi.core/defclass,
       :args/bad              nil,
       :attrs                 {:class   ["gold"]
-                              :style   {}
-                              :data-sx "filename.cljs:11:11"},
+                              :style   {}},
       :classlist             ["gold"],
       :data-sx               "filename.cljs:11:11",
       :css-vars              {}})))
@@ -107,8 +106,7 @@
       :kushi/chunk           :kushi.core/defclass,
       :args/bad              nil,
       :attrs                 {:class   ["abs-blue"]
-                              :style   {}
-                              :data-sx "filename.cljs:11:11"},
+                              :style   {}},
       :classlist             ["abs-blue"],
       :data-sx               "filename.cljs:11:11",
       :css-vars              {}})))
