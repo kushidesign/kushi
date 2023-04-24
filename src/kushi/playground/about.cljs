@@ -7,6 +7,8 @@
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
    [kushi.ui.dom :refer (copy-to-clipboard)]
+   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
+   [kushi.playground.state :as state]
    [kushi.playground.util :as util]
    [kushi.playground.colors :as playground.colors]
    [kushi.playground.shared-styles]))
@@ -138,21 +140,20 @@
             "Kushi offers a typographic scale with t-shirt sizing from"
             [:code "xxxsmall"]
             "up to"
-            [:code "xxxxlarge"]
-            ;; ". There is a version for low x-height fonts which is"
-            ;; [:code "xxxsmall-low-x"]
-            ;; "up to"
-            ;; [:code "xxxxlarge-low-x"]
-            ;; "."
-            ])]
+            [:code "xxxxlarge"]])]
         (for [x coll]
-          [:div 
+          [:div
            (sx :.flex-col-fs :mb--24px)
-           #_[:div (sx :.small :.normal)
-            [:span.code (str ":." (name x))]]
-           [:div (sx (when (= label "Tracking") :.uppercase)
-                     :mbs--10px)
-            [:span {:class [x]} "The quick brown fox."]]])))
+           [:div (merge 
+                  (sx :.pointer
+                      (when (= label "Tracking") :.uppercase)
+                      :mbs--10px))
+            [:span.relative
+             (merge-attrs
+              {:class [x]}
+              (tooltip-attrs {:-text      (str ":." (name x)) 
+                              :-placement "inline-end center"}))
+             "The quick brown fox."]]])))
 
 
 (defn typography-snippet [s]
@@ -241,5 +242,6 @@
 
 
 (defn component-playground-about [{:keys [header]}]
-  [intro-section
-   {:-header header}])
+  (when (or @state/*md-or-smaller?
+            (not @state/*focused-component))
+    [intro-section {:-header header}]))
