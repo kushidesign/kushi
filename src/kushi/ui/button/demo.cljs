@@ -49,7 +49,7 @@
                                  :-text      [v1 v2]}))
          "hello"]])
   [:div
-   [:p "Hover to reveal the Kushi utility classes used for styling."]
+   [:p.pointer-only "Hover (non-touch devices) to reveal the Kushi utility classes used for styling."]
    [:div
     (sx :>div:pb--1em)
     [button-grid :sharp true]]])
