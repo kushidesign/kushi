@@ -182,7 +182,7 @@ In summary, the `kushi.core/sx` is a macro that returns an attribute map which c
   - All the other attributes you specify in your attributes map (supplied as an optional last arg to `sx`).
   - A dev-build-only `data-sx` attribute for browser debugging. See [Helpful metadata](#helpful-metadata).
 
-All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool).
+All your css is written to a static file, via a build hook for the `:compile-finish` stage (assuming shadow-cljs).
 <!---You can optionally disable writing styles to disk and enable producton builds to [inject styles at runtime](#runtime-injection).
 -->
 <br>
