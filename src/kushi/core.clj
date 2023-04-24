@@ -213,31 +213,36 @@
     (printing2/simple-warning2 clean)))
 
 (defn defclass-dispatch
-  [{:keys [sym form-meta args override user-defclass-with-override?]
+  [{:keys [sym
+           form-meta
+           args
+           override
+           user-defclass-with-override?]
     :as   m}]
 
-  (when @state2/KUSHIDEBUG
-    (state2/tracing! args))
   (try
-    (let [args                            (if (and @state2/KUSHIDEBUG
-                                                   (state2/tracing?))
-                                            (drop-last args)
-                                            args)
+    (let [dev-trace?        (and @state2/KUSHIDEBUG
+                                 (state2/enable-trace? args))
+          _                 (when dev-trace? (state2/enable-trace!))
+          args              (if dev-trace? (drop-last args) args)
 
           ;; TODO change :process to :kushi/process?
           {:keys [cached]
-           :as   cache-map} (state2/cached {:process :defclass
-                                            :sym     sym
-                                            :args    args})
-          process                         (sym->process m)
-          clean                           (or cached
-                                              (args/clean-args {:args          (cons sym args)
-                                                                :kushi/process process
-                                                                :form-meta     form-meta}))
-          chunk                           (or (:kushi/chunk (meta sym))
-                                              process)
-          clean                           (merge clean
-                                                 {:kushi/chunk chunk})]
+           :as   cache-map} (state2/cached
+                             {:process :defclass
+                              :sym     sym
+                              :args    args})
+
+          process           (sym->process m)
+          chunk             (or (:kushi/chunk (meta sym))
+                                process)
+
+          clean             (or cached
+                                (args/clean-args {:args          (cons sym args)
+                                                  :kushi/process process
+                                                  :form-meta     form-meta}))
+          clean             (merge clean
+                                   {:kushi/chunk chunk})]
 
       (swap! state2/css conj clean)
 
@@ -270,7 +275,7 @@
 
     (finally
       (when @state2/KUSHIDEBUG
-        (state2/tracing! {:kushi/tracing? false})))))
+        (state2/disable-trace!)))))
 
 
 (defmacro ^:public defclass
