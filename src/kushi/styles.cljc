@@ -1,7 +1,5 @@
 (ns kushi.styles
   (:require
-   ;; TODO figure out which of the color fns to pass thru to public api
-   [par.core :refer [!? ?]]
    [garden.color]
    [clojure.spec.alpha :as s]
    [clojure.walk :as walk]
@@ -172,9 +170,7 @@
     x))
 
 (defn- bindings-cssvarized [coll css-vars]
-  (!? :css-vars:before @css-vars)
   (let [ret (cssvarized coll css-vars binding->css-var)]
-    (!? :css-vars:after @css-vars)
     ret))
 
 (defn postwalk-with-f [f v]
@@ -269,10 +265,10 @@
 (defn all-style-tuples
   [coll]
   (let [css-vars (atom {})
-        tuples   (as-> (!? coll) $
+        tuples   (as-> coll $
                    (postwalk-style-tuples $ normalize-css-custom-property)
 
-                   (!? :normalize-css-custom-property $)
+                  ;;  (!? :normalize-css-custom-property $)
 
                    ;; '([:bc (if true mybc mybc2)]) => ([:bc "var(---1429181005)"])
                    ;; TODO - See if you can do this later in this op in order to support things like:
@@ -280,49 +276,50 @@
                    ;; or
                    ;; [:c (if true '(rgb 2 133 47) :$myvar2)]
                    (sexp-cssvarized $ css-vars)
-                   (!? sexp-cssvarized $)
-
+                  ;;  (!? sexp-cssvarized $)
+                   
                    ;; ([:b [["var(--myborder-width)" bstyle '(rgb 2 mygreenval 44)]]]) =>
                    ;; ([:b [["var(--myborder-width)" bstyle '("__cssfn__rgb" 2 mygreenval 44)]]])
                    (postwalk-style-tuples $ escape-list)
-                   (!? :escape-list $)
+                  ;;  (!? :escape-list $)
 
                    ;; '([:bgc '("__cssfn__rgb" 2 2 "var(--orange-800)")]) =>
                    ;; '([:bgc ("__cssfn__rgb" 2 2 "var(--orange-800)")]) =>
                    (dequote $)
-                   (!? :dequote $)
-
+                  ;;  (!? :dequote $)
+                   
                    ;; '([:bw mybw]
                    ;;   [:outline [[:1px :solid mybc]]]) =>
                    ;; '([:bw "var(--mybw)"]
                    ;;   [:outline [[:1px :solid "var(--mybc)"]]])
                    (bindings-cssvarized $ css-vars)
-                   (!? :bindings-cssvarized $)
-
+                  ;;  (!? :bindings-cssvarized $)
+                   
                    ;; '([:bgc ("__cssfn__rgb" 2 2 "var(--orange-800)")]) =>
                    ;; '([:bgc "rgb( 2, 2, var(--orange-800))"])
                    (postwalk-style-tuples $ cssfn-list->string)
-                   (!? :cssfn-list->string $)
-
+                  ;;  (!? :cssfn-list->string $)
+                   
                    ;; TODO -- Maybe don't need this sexp unescaping???
                    (postwalk-style-tuples $ unescape-sexp)
-                   (!? :unescape-sexp $)
-
+                  ;;  (!? :unescape-sexp $)
+                   
                    ;; Stringify any tuple values that are keywords
                    ;; These would be from user-supplied 2 element tuples, and/or entries in a stylemap
                    ;; '([:p :1rem]) => '([:p "1rem"])
                    (postwalk-style-tuples $ specs2/kw?->s)
-                   (!? :specs2/kw?->s $)
-
+                  ;;  (!? :specs2/kw?->s $)
+                   
                    ;; Normalize any tuple keys that are css custom properties
                    ;; '([:$xxx "red"]) => '(["--xxx" "red"])
                    (css-custom-property-keys-normalized $)
-                   (!? :css-custom-property-keys-normalized $)
-
+                  ;;  (!? :css-custom-property-keys-normalized $)
+                   
                    ;; Proper !important syntax for user-supplied cssvars
                    ;; '(["c" "var(--myvar!important)"]) => '(["c" "var(--myvar!important)"])
                    (css-custom-property-values-!important-normalized $)
-                   (!? :css-custom-property-values-!important-normalized $))
+                  ;;  (!? :css-custom-property-values-!important-normalized $)
+                   )
         ]
     [tuples @css-vars]))
 
@@ -396,9 +393,8 @@
                       (string/split (name %) #"--" 2)))
                  coll)))
 
-        _ (!? conformed)
-        _ (!? style-tuples-from-tokenized {:before (:tokenized-style conformed)
-                                          :after  style-tuples-from-tokenized})
+        ;; _ (!? conformed)
+        ;; _ (!? style-tuples-from-tokenized {:before (:tokenized-style conformed) :after  style-tuples-from-tokenized})
 
         ;; '($mycssvar--gold $myothervar--red) =>
         ;; '(["$mycssvar" "gold"] ["$myothervar" red])
@@ -407,8 +403,7 @@
           (when (seq coll)
             (map #(string/split (name %) #"--") coll)))
 
-        _ (!? cssvar-tuples-from-tokenized {:before (:cssvar-tokenized conformed)
-                                           :after  cssvar-tuples-from-tokenized})
+        ;; _ (!? cssvar-tuples-from-tokenized {:before (:cssvar-tokenized conformed) :after  cssvar-tuples-from-tokenized})
 
         ;; Given a list of existing defclasses,
         ;; for each defclass get all its prop/vals as a list of 2-element vectors
@@ -419,8 +414,7 @@
                      (get-in @state2/shared-classes [k]))
                   classes))
 
-        _ (!? style-tuples-from-defclass-class {:before (:defclass-class conformed)
-                                               :after  style-tuples-from-defclass-class})
+        ;; _ (!? style-tuples-from-defclass-class {:before (:defclass-class conformed) :after  style-tuples-from-defclass-class})
 
         ;; Concat and distinct all the different kinds of style tuples
         all-style-tuples*
@@ -435,6 +429,10 @@
 
 
         ;; Deal with runtime vars, cssvars, and cssfns
+        ;; Example:
+        ;; '([:border (str "1px solid" mybc)] [:sm:dark:hover:c mybc]) =>
+        ;; [([:border "var(---49390836)"] [:sm:dark:hover:c "var(--mybc)"])
+        ;;  {"var(---49390836)" (str "1px solid" mybc), "var(--mybc)" mybc}]
         [all-style-tuples css-vars]
         (all-style-tuples all-style-tuples*)
 
@@ -448,12 +446,6 @@
         (when shared-class? all-style-tuples2)
 
 
-        ;; _ (when (contains? #{'kushi-playground-demobox-ui-icon} assigned-class)
-        ;;     (? :styles/tuples* (keyed assigned-class
-        ;;                               all-style-tuples*
-        ;;                               all-style-tuples
-        ;;                               conformed)))
-
         selector
         (cond
           (:assigned-class conformed)
@@ -463,7 +455,6 @@
           selector)
 
         ;; maybe handle defclass differently here
-
         ;; mabye do this in args?
         attrs-no-style
         (when clean-attrs (dissoc clean-attrs :style))
