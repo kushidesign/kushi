@@ -24,9 +24,25 @@
    ;; Color
    ;; ------------------------------------------------------
    ;; Neutrals
+   :$neutral-fg                              :$neutral-minimal-color
+   :$neutral-fg-inverse                      :$neutral-minimal-color-inverse
    :$neutral-secondary-fg                    :$gray-700
    :$neutral-secondary-fg-inverse            :$gray-300
 
+   :$accent-fg                               :$accent-minimal-color
+   :$accent-fg-inverse                       :$accent-minimal-color-inverse
+
+   :$positive-fg                             :$positive-minimal-color
+   :$positive-fg-inverse                     :$positive-minimal-color-inverse
+
+   :$warning-fg                              :$warning-minimal-color
+   :$warning-fg-inverse                      :$warning-minimal-color-inverse
+
+   :$negative-fg                             :$negative-minimal-color
+   :$negative-fg-inverse                     :$negative-minimal-color-inverse
+
+   ;; Debugging grid
+   ;; ------------------------------------------------------
    :$debug-grid-size                         :16px
    :$debug-grid-color                        "hsla(0 0% 90%)"
    :$debug-grid-color-inverse                "hsla(0 0% 25%)"
