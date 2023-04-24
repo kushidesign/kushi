@@ -322,27 +322,25 @@
 (defn sx-dispatch
   [{:keys [form-meta args macro]
     :or   {form-meta {}}}]
-  (when @state2/KUSHIDEBUG
-    (state2/tracing! args))
-  (let [args      (if (and @state2/KUSHIDEBUG
-                           (state2/tracing?))
-                    (drop-last args)
-                    args)
-        cache-map (state2/cached {:process :sx
-                                  :args    args})
-        process   (process args)
-        clean     (or (:cached cache-map)
-                      (args/clean-args {:args          args
-                                        :kushi/process process
-                                        :cache-key     (:cache-key cache-map)
-                                        :form-meta     form-meta}))
-        clean     (merge clean {:kushi/chunk process} )
-        clean     (if (= macro :sx*)
-                    (assoc-in clean [:attrs :data-sx-tweak] (str (into [] args)))
-                    clean)]
 
-    (when (and (not @state2/KUSHIDEBUG)
-               (:elide-unused-kushi-utility-classes? user-config))
+  (let [dev-trace? (and @state2/KUSHIDEBUG
+                        (state2/enable-trace? args))
+        _          (when dev-trace? (state2/enable-trace!))
+        args       (if dev-trace? (drop-last args) args)
+        cache-map  (state2/cached {:process :sx
+                                   :args    args})
+        process    (process args)
+        clean      (or (:cached cache-map)
+                       (args/clean-args {:args          args
+                                         :kushi/process process
+                                         :cache-key     (:cache-key cache-map)
+                                         :form-meta     form-meta}))
+        clean      (merge clean {:kushi/chunk process})
+        clean      (if (= macro :sx*)
+                     (assoc-in clean [:attrs :data-sx-tweak] (str (into [] args)))
+                     clean)]
+
+    (when (:elide-unused-kushi-utility-classes? user-config)
       (register-classes clean))
 
     (swap! state2/css conj clean)
@@ -351,8 +349,7 @@
 
     (print-warnings clean)
 
-    (when @state2/KUSHIDEBUG
-      (state2/tracing! {:kushi/tracing? false}))
+    (when @state2/KUSHIDEBUG (state2/disable-trace!))
 
     clean))
 
