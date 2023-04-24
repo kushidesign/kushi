@@ -169,7 +169,7 @@
 
    ;; Modals
    ;; ------------------------------------------------------
-   :$modal-border-radius                    :$rounded
+   :$modal-border-radius                    :$rounded-medium
    :$modal-border                           :none
    :$modal-padding-block                    :2rem
    :$modal-padding-inline                   :2rem
@@ -199,7 +199,7 @@
    :$rounded-xlarge                         :0.1rem           ;; 16px
    :$rounded-xxlarge                        :1.25rem          ;; 20px
    :$rounded-xxxlarge                       :1.5625rem        ;; 25px
-   :$rounded                                :$rounded-medium
+   :$rounded                                :0.4em
 
    :$border-weight                          :1px
 
@@ -269,15 +269,23 @@
    :$loading-spinner-height        :0.8em
 
 
-   ;; Intended for styling scrollbars
+   ;; Intended for styling scrollbars with the .styled-scrollbars utility-class
    ;; ------------------------------------------------------
-   :$scrollbar-background-color  "rgb(241, 241, 241)"
-   :$scrollbar-thumb-color       "rgb(160, 160, 160)"
+   :$scrollbar-thumb-color                  :$neutral-300
+   :$scrollbar-thumb-color-inverse          :$neutral-700
+   :$scrollbar-background-color             :$neutral-50
+   :$scrollbar-background-color-inverse     :$neutral-900
+   :$scrollbar-width                        :5px
 
 
    ;; Kushi UI Components (move?)
    ;; ------------------------------------------------------
    :$kushi-collapse-transition-duration :$slow
+
+   ;; kushi.ui.input.text.core/input
+   :$kushi-text-input-helper-margin-block-start :0.3em
+   :$kushi-text-input-label-inline-margin-inline-end :0.7em
+   :$kushi-text-input-label-block-margin-block-end :0.4em
 
 
    ;; Switches
