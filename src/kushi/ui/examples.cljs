@@ -45,7 +45,7 @@
                 :weight   :wee-bold
                 :examples "Simple"}
      :examples [{:label   "Simple"
-                 :example [button "Playxxxx"]}
+                 :example [button "Play"]}
                 {:label   "Leading icon"
                  :example [button [icon :play-arrow] "Play"]}
                 {:label   "Trailing icon"
