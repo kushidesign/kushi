@@ -22,7 +22,6 @@
                :ns
                #_(str "/" nm)
                )]
-    #_(js/console.log {:nm nm :vc vc})
     (-> vc
         symbol
         vector
@@ -34,14 +33,7 @@
         [a1]          args
         [_sx sx-attr] (when (list? a1) a1)
         break?        (or (map? a1) (and (= _sx 'sx) (map? sx-attr)))]
-    (-> code first str)
-    #_(-> (str (into []
-                   (cons (if break? :__BR__ :__NOBR__) args*)
-                   #_(cons (symbol nm)
-                           (cons (if break? :__BR__ :__NOBR__)
-                                 args*))))
-        (string/replace #" :__BR__" "\n")
-        (string/replace #" :__NOBR__" "")) ))
+    (-> code first str)))
 
 (defn capitalize-words
   "Capitalize every word in a string"
