@@ -23,48 +23,6 @@
    [kushi.ui.icon.core :refer [icon]]
    [kushi.playground.util :refer-macros (feature example2)]))
 
-(defn butt [s] [:div.my-button-example s])
-(defn buttx [s] [:div.my-button-example s])
-
-(def mock-custom-components
-  [{:fn       butt
-    :meta     #'butt
-    :stage    {:style {:min-height :150px}}
-    :variants [:kind :shape :semantic :size :weight]
-    :selector ".my-button-example"
-    :defaults {:kind     :default
-               :semantic :neutral
-               :size     :medium
-               :shape    :sharp
-               :weight   :wee-bold
-               :examples "dumb"}
-    :examples  [
-               {:label   "dumb"
-                :example (example2 [butt "Pla"])}
-               {:label   "Leading dumb icon"
-                :example (example2 [butt [icon :play-arrow] "Plays"])}
-               {:label   "Trailing dumb icon"
-                :example (example2 [butt "Play" [icon :auto-awesome]])}
-               ]}
-   (feature
-      buttx
-      {:stage    {:style {:min-height :150px}}
-       :variants [:kind :shape :semantic :size :weight]
-       :selector ".my-button-example"
-       :defaults {:kind     :default
-                  :semantic :neutral
-                  :size     :medium
-                  :shape    :sharp
-                  :weight   :wee-bold
-                  :examples "dumb"}
-       :examples  [
-                  {:label   "dumb"
-                   :example [buttx "Pla"]}
-                  {:label   "Leading dumb icon"
-                   :example [buttx [icon :play-arrow] "Plays"]}
-                  {:label   "Trailing dumb icon"
-                   :example [buttx "Play" [icon :auto-awesome]]}
-                  ]})])
 
 (def components
   [(feature
@@ -72,6 +30,14 @@
     {:stage    {:style {:min-height :150px}}
      :variants [:kind :shape :semantic :size :weight]
      :demo     button-demo/demo
+     :requires (str 
+                "            ;; Optional, for icons\n" 
+                "            [kushi.ui.icon.core :refer [icon]]\n"
+                "            ;; Optional, for loading animations\n" 
+                "            [kushi.ui.progress.core :refer [progress\n"
+                "                                            spinner\n"
+                "                                            propeller\n"
+                "                                            thinking]]")
      :defaults {:kind     :default
                 :semantic :neutral
                 :size     :medium
@@ -233,61 +199,62 @@
      :defaults {:size     :medium
                 :weight   :normal
                 :examples "Simple"}
-     :examples  [{:label   "Simple"
+     :examples [{:label   "Simple"
                  :example [input (sx {:placeholder "Your text here"
-                                                :-label      "Input label"})]}
+                                      :-label      "Input label"
+                                      :-helper     "My helper text"})]}
 
                 {:label   "Required"
                  :example [input (sx {:placeholder "Your text here"
-                                                :required    true
-                                                :-label      "Input label"})]}
+                                      :required    true
+                                      :-label      "Input label"})]}
                 {:label   "Disabled"
                  :example [input (sx {:placeholder "Your text here"
-                                                :disabled    true
-                                                :-label      "Input label"})]}
+                                      :disabled    true
+                                      :-label      "Input label"})]}
                 {:label   "With helper"
                  :example [input (sx {:placeholder "Your text here"
-                                                :-label      "Input label"
-                                                :-helper     "Your helper text here"})]}
+                                      :-label      "Input label"
+                                      :-helper     "Your helper text here"})]}
                 {:label   "With start enhancer"
                  :example [input (sx {:placeholder     "Monetary value"
-                                                :-start-enhancer "$"
-                                                :-label          "Input label"})]}
+                                      :-start-enhancer "$"
+                                      :-label          "Input label"})]}
                 {:label   "With end enhancer"
                  :example [input (sx {:placeholder   "Your text here"
-                                                :-end-enhancer [icon :star]
-                                                :-label        "Input label"})]}
+                                      :-end-enhancer [icon :star]
+                                      :-label        "Input label"})]}
                 {:label   "Inline label"
                  :example [input (sx {:placeholder      "Your text here"
-                                                :-label           "Input label"
-                                                :-label-placement :inline})]}
+                                      :-label           "Input label"
+                                      :-label-placement :inline})]}
                 {:label   "Inline label with helper"
                  :example [input (sx {:placeholder      "Your text here"
-                                                :-label           "Input label"
-                                                :-label-placement :inline
-                                                :-helper          "Your helper text here"})]}
+                                      :-label           "Input label"
+                                      :-label-placement :inline
+                                      :-helper          "Your helper text here"})]}
                 {:label   "With semantic class"
                  :example [input (sx {:placeholder "Your text here"
-                                                :-label      "Input label"
-                                                :-helper     "Your helper text here"
-                                                :-semantic   :negative})]}
+                                      :-label      "Input label"
+                                      :-helper     "Your helper text here"
+                                      :-semantic   :negative})]}
                 {:label   "All options"
                  :example [input (sx {:placeholder          "Your text here"
-                                                :required             false
-                                                :disabled             false
-                                                :-start-enhancer      "$"
-                                                :-end-enhancer        "🦄"
-                                                :-label               "Input label"
-                                                :-label-placement     :inline
-                                                :-helper              "Your helper text here"
-                                                :-semantic            :accent
-                                                :-outer-wrapper-attrs (sx :b--1px:solid:yellow
-                                                                          :box-shadow--8px:8px:17px:#f2baf9ab
-                                                                          :p--1em)
-                                                :-label-attrs         (sx :bgc--yellow)
-                                                :-wrapper-attrs       (sx :box-shadow--4px:4px:7px:#f2baf9ab
-                                                                          {:class :my-input-wrapper-name})
-                                                })]}]})
+                                      :required             false
+                                      :disabled             false
+                                      :-start-enhancer      "$"
+                                      :-end-enhancer        "🦄"
+                                      :-label               "Input label"
+                                      :-label-placement     :inline
+                                      :-helper              "Your helper text here"
+                                      :-semantic            :accent
+                                      :-outer-wrapper-attrs (sx :b--1px:solid:yellow
+                                                                :box-shadow--8px:8px:17px:#f2baf9ab
+                                                                :p--1em)
+                                      :-label-attrs         (sx :bgc--yellow)
+                                      :-wrapper-attrs       (sx :box-shadow--4px:4px:7px:#f2baf9ab
+                                                                {:class :my-input-wrapper-name})
+                                      })]}]})
 
    (feature
     slider
@@ -531,13 +498,13 @@
                :weight   :wee-bold
                :examples "\"my tag\""}
     :examples  [{:label   "\"my tag\""
-                :example (example2 [tag "my tag"])}
-               {:label   "\"xyz\""
-                :example (example2 [tag "xyz"])}
-               {:label   "\"XYZ\""
-                :example (example2 [tag "XYZ"])}
-               {:label   "Max-width example"
-                :example (example2 [tag (sx :max-width--140px) "My tag with longer text"])}]}
+                 :example (example2 [tag "my tag"])}
+                {:label   "\"xyz\""
+                 :example (example2 [tag "xyz"])}
+                {:label   "\"XYZ\""
+                 :example (example2 [tag "XYZ"])}
+                {:label   "Max-width example"
+                 :example (example2 [tag [:span (sx :.truncate :max-width--130px) "My tag with longer text"]])}]}
 
    {:fn       label
     :meta     #'label
