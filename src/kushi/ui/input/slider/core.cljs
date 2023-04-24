@@ -1,11 +1,14 @@
 (ns kushi.ui.input.slider.core
-  (:require
+  (:require 
+   [applied-science.js-interop :as j]
    [kushi.core :refer (sx defclass merge-attrs insert-style-tag!)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.input.slider.css]
-   [kushi.ui.util :refer [range-of-floats]]
+   [kushi.ui.util :refer [range-of-floats find-index]]
    [kushi.playground.shared-styles]
    [kushi.playground.util :as util :refer-macros (keyed)]
+   [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
+   [kushi.ui.dom :refer (copy-to-clipboard)]
    [kushi.ui.dom :as dom]))
 
 (insert-style-tag! "kushi-slider-styles" kushi.ui.input.slider.css/css)
@@ -53,12 +56,7 @@
 
 ;; ----------------------------------------------------------------------------
 
-(defn find-index [pred coll]
-  (first
-   (keep-indexed
-    (fn [i x]
-      (when (pred x) i))
-    coll)))
+
 
 (defn- slider-steps
   [steps* min max step]
@@ -92,18 +90,20 @@
 
 (defn- slider-labels
   [{:keys [steps
+           supplied-steps?
            num-steps
            default-index
            label-selected-class
-           label-size-class
            label-scale-factor
            labels-attrs
            step-marker
-           step-label-suffix]}]
+           step-label-suffix
+           display-step-labels?]}]
   (into [:div
          (merge-attrs
           (sx 'kushi-slider-step-labels
               :.flex-row-sa
+              [:display (if display-step-labels? :flex :none)]
               :ai--c
               :.relative
               :w--100%
@@ -157,15 +157,15 @@
                [:span
                 (sx :.absolute-centered
                     [:transform (cond right-most?
-                                      "translate(-67%, -50%)"
+                                      (str "translate(" (if supplied-steps? "-67%" "-50%" ) ", -50%)")
                                       left-most?
-                                      "translate(-33%, -50%)"
+                                      (str "translate(" (if supplied-steps? "-33%" "-50%" ) ", -50%)")
                                       :else
                                       "translate(-50%, -50%)")])
                 (str step step-label-suffix)]]))
           steps))))
 
-(defn on-change [label-selected-class e]
+(defn on-change [label-selected-class label-id e]
   (let [el                  (-> e .-target)
         val                 (js/parseInt (.-value el))
         parent              (.-parentNode el)
@@ -174,7 +174,9 @@
                                             (str ":nth-child(" (+ 1 val) ")"))
         selected-label-node (.querySelector previous-sibling (str "." label-selected-class))]
     (.remove (.-classList selected-label-node) label-selected-class)
-    (.add (.-classList label-node) label-selected-class)) )
+    (.add (.-classList label-node) label-selected-class)
+    (j/assoc! (dom/el-by-id label-id) :textContent (.-textContent label-node))
+    #_(dom/set-attribute! (dom/el-by-id label-id) "textContent" (.-textContent label-node))))
 
 (defn slider
   {:desc ["A slider is a ui element which allows the user to specify a numeric value which must be no less than a given value, and no more than another given value."
@@ -213,62 +215,123 @@
            {:name    step-label-suffix
             :pred    string?
             :default nil
-            :desc    "String to postpend to step value label, e.g. `\"px\"`"}]}
+            :desc    "String to postpend to step value label, e.g. `\"px\"`"}
+           {:name    display-step-labels?
+            :pred    boolean?
+            :default false
+            :desc    "If set to `false`, step labels above slider will not be rendered."}
+           {:name    copy-to-clipboard-fn
+            :pred    fn?
+            :default nil
+            :desc    "This fn can be used to transform the string value when using a copy-to-clipboard button"}
+           ]}
   [& args]
   (let [[opts
-         attrs]                     (opts+children args)
+         attrs]                              
+        (opts+children args)
+
         {:keys [defaultValue
                 default-value
                 min
                 max
-                step]}             attrs
+                step]}                       
+        attrs
+
         {:keys  [default-index
                  label-scale-factor
                  wrapper-attrs
                  labels-attrs
                  step-marker
-                 step-label-suffix]
-         steps* :steps}            opts
-        steps                      (slider-steps steps* min max (or step 1))
-        num-steps                  (count steps)
-        default-val                (or defaultValue default-value)
-        default-index              (slider-default-index default-index default-val steps* steps)
-        label-scale-factor         (cond
-                                     (= 1 label-scale-factor)
-                                     1.0
-                                     (and (float? label-scale-factor) (< label-scale-factor 1.0))
-                                     label-scale-factor
-                                     :else 0.6)
-        label-selected-class       "kushi-slider-step-label-selected"]
+                 step-label-suffix
+                 display-step-labels?
+                 copy-to-clipboard-fn]
+         steps* :steps
+         :or    {display-step-labels? true}}
+        opts
 
-    #_(js/console.log  (keyed steps
-                              num-steps
-                              default-index
-                              label-size-class
-                              label-selected-class
-                              opts))
+        supplied-steps?
+        (boolean steps*)
+
+        steps                      
+        (slider-steps steps* min max (or step 1))
+
+        num-steps                   
+        (count steps)
+
+        default-val                 
+        (or defaultValue default-value)
+
+        default-index               
+        (slider-default-index default-index default-val steps* steps)
+
+        label-scale-factor          
+        (cond
+          (= 1 label-scale-factor)
+          1.0
+          (and (float? label-scale-factor) (< label-scale-factor 1.0))
+          label-scale-factor
+          :else 0.6)
+
+        label-selected-class        
+        "kushi-slider-step-label-selected"
+
+        id                          
+        (or (:id attrs) (gensym))
+
+        label-id                    
+        (str "label-for-" id)
+        ]
 
     [:div (merge-attrs (sx 'kushi-slider
                            :.flex-col-c
+
+                           ;; when not showing labels and using leading value label
+                          ;;  :.flex-row-fs
+
                            :.relative
-                           :ai--c
+                          ;;  :ai--c
+                           :ai--stretch
                            :w--100%
                            :pi--1em:2em)
                        wrapper-attrs)
 
      [slider-labels (keyed steps
+                           supplied-steps?
                            num-steps
                            default-index
                            label-selected-class
                            label-scale-factor
                            labels-attrs
                            step-marker
-                           step-label-suffix)]
+                           step-label-suffix
+                           display-step-labels?)]
+
+     #_[:div (merge-attrs
+            (sx 'kushi-slider-single-value-label-wrapper
+                :.flex-row-sb
+                :.no-shrink
+                :flex-basis--50px
+                :pie--0.75em)
+            labels-attrs)
+      [:label (sx 'kushi-slider-single-value-label
+                  :ws--n
+                  {:id  label-id
+                   :for id})
+       default-value]
+      [copy-to-clipboard-button
+       (sx 'kushi-slider-single-value-label-copy-to-clipboard-button
+           :>button:h--$medium
+           :m--0
+           {:-placement :left
+            ;; :on-click   #(copy-to-clipboard (.-textContent (.-firstChild (dom/nearest-ancestor (dom/et %) ".kushi-slider-single-value-label-wrapper"))))
+            :on-click   #(copy-to-clipboard (copy-to-clipboard-fn %))})]]
+
      [:input (merge-attrs
               (sx {:style         {:w :100%}
+                   :id            id
                    :data-kushi-ui :input.range
                    :type          :range
-                   :on-change     (partial on-change label-selected-class)})
+                   :on-change     (partial on-change label-selected-class label-id)})
               (assoc (or attrs {})
                      :defaultValue default-index
                      :min (str 0)
