@@ -1,12 +1,12 @@
 (ns kushi.playground.sidenav
  (:require
    [clojure.string :as string]
-   [kushi.core :refer (sx merge-attrs)]
+   [kushi.core :refer (sx merge-attrs token->ms)]
    [kushi.ui.core :refer (defcom)]
    [kushi.ui.dom :as dom]
    [kushi.playground.component-section :refer [collapse-all-component-sections
-                                         collapse-all-handler
-                                         scroll-menu-item-into-view]]
+                                               collapse-all-handler
+                                               scroll-menu-item-into-view]]
    [kushi.playground.state :as state]
    [kushi.playground.util :as util :refer-macros (keyed)]))
 
@@ -14,15 +14,21 @@
   (string/replace s #"-nav-section$" ""))
 
 
+(defn transition-between-focused-components
+  [fname]
+  (let [wrapper (dom/el-by-id "#kushi-playground-main-section-wrapper")]
+    (when wrapper (dom/add-class wrapper "invisible"))
+    (js/setTimeout
+     #(do (dom/scroll-to-top)
+          (reset! state/*focused-component fname)
+          (when wrapper (dom/remove-class wrapper "invisible")))
+     (token->ms :$fast))))
+
+
 (defn section-item-on-click [href fname e]
   (let [section            (dom/nearest-ancestor (dom/et e) ".kushi-treenav-section-level-1")
         section-id         (some->  section .-firstChild .-id)
-        focused-section-id (keyword (nav-section-id->base-id section-id))
-        menu*              (dom/el-by-id "kushi-components")
-        custom-menu*       (dom/el-by-id "custom-components")
-        ]
-
-    #_(js/console.log (keyed section section-id focused-section-id menu*))
+        focused-section-id (keyword (nav-section-id->base-id section-id))]
 
     (when  focused-section-id
       (when-not (state/section-focused? focused-section-id)
@@ -38,32 +44,11 @@
             (state/nav! href))))
 
       "custom-components-nav-section"
-      (js/setTimeout
-       #(let [menu (dom/el-by-id "custom-components")
-              item (when (and menu fname)
-                     (.querySelector menu
-                                     (str "#" fname ">[role='button']")))]
-          (when item
-            (scroll-menu-item-into-view item)
-            (let [section-is-expanded? (when item (= (.-ariaExpanded item) "true"))]
-              (when-not section-is-expanded?
-                (.click item)))
-            (state/nav! fname)))
-       (if custom-menu* 0 100))
+      (transition-between-focused-components fname)
 
       "kushi-components-nav-section"
-      (js/setTimeout
-       #(let [menu (dom/el-by-id "kushi-components")
-              item (when (and menu fname)
-                     (.querySelector menu
-                                     (str "#" fname ">[role='button']")))]
-          (when item
-            (scroll-menu-item-into-view item)
-            (let [section-is-expanded? (when item (= (.-ariaExpanded item) "true"))]
-              (when-not section-is-expanded?
-                (.click item)))
-            (state/nav! fname)))
-       (if menu* 0 100)))))
+      (transition-between-focused-components fname))))
+
 
 (defn sidenav-section-items
   [section-opts items]
@@ -74,7 +59,9 @@
                       focused?]} items
               :let [focused?    (and (:section-focused? section-opts) focused?)
                     hashed-href (str "#" fname)]]
-          [:li.kushi-playground-sidenav-section-item-wrapper
+          [:li
+           (sx :.kushi-playground-sidenav-section-item-wrapper
+               :.hover-trailing-fade-out-wrapper)
            [:a (sx
                 'kushi-playground-sidenav-section-item
                 :.hover-trailing-fade-out
@@ -195,8 +182,7 @@
            kushi-about]}]
   (into
    [:ul
-    (sx :pi--5px!important
-        :md:pbe--50px!important)
+    (sx :md:pbe--50px!important)
     (xxxy custom-components :custom-components "Custom Components")
     (xxxy kushi-components :kushi-components "Base Kushi Components")
     (xxx custom-colors :custom-colors)
@@ -209,7 +195,7 @@
 
 
 (defcom sidenav
-  [:div.sidenav-wrapper
+  [:div.sidenav-wrapper.kushi-playground-sidenav-wrapper
    (:wrapper-attrs &opts)
    [:nav
     (merge-attrs
@@ -218,31 +204,17 @@
          :.fixed
          :.flex-col-fs
          :.wee-bold
+         :iis--$kushi-playground-sidenav-inset-inline-start|1.5rem
+         [:xl:iis "calc((100% - 708px) / 4)"]
+         [:xl:transform '(translateX :-50%)]
+         :ibs--0
          :&_ul:list-style-type--none
          :&_li:list-style-type--none
          :&_ul:p--0
          :&_li:p--0
          :&_ul:m--0
          :&_li:m--0
-         :h--100vh
-
-        ;; sidenav gradation
-        ;;  [:bgi '(rgba 0 0 0 0.7)]
-        ;;  [:bgi                      '(linear-gradient "to left" "var(--gray-50)" :transparent)]
-        ;;  ["has-ancestor(.dark):bgi" '(linear-gradient "to left" "hsl(0deg, 0%, 15%)" :transparent)]
-
-         {:style {:d         :none
-                  :md:d      :flex
-                  :md:w      :$sidebar-width
-                  :lg:w      :$sidebar-width-lg
-                  :xl:w      :$sidebar-width
-                  :lg:m      :0
-                  :xl:m      :0:24px
-                  :md:pis    :1.5rem
-                  :md:ii     0
-                  :max-width :$sidebar-width
-                  :xl:iis    :unset
-                  :xl:iie    "calc((var(--components-menu-width) + ((100vw - var(--components-menu-width)) / 2) + 44px))"}})
+         :h--100vh)
      &attrs)
     &children]])
 
@@ -252,6 +224,7 @@
    (sx 'mobile-subnav
        :.flex-row-c!
        :.relative!
+       :iis--0
        :h--auto
        [:pis "calc(var(--page-padding-inline) - 12px)"]
        :pie--$page-padding-inline
@@ -275,8 +248,11 @@
        :&_.kushi-treenav-section-level-1>span:pi--0:1.5em
        :&_.collapse-all-control:d--none
        {:-wrapper-attrs (sx :.fixed
+                            :d--block
                             :md:d--none
                             :top--$kushi-playground-mobile-header-height
+                            :max-width--unset
+                            :h--auto
                             :w--100%
                             :bgc--white
                             :dark:bgc--$gray-1000
@@ -292,12 +268,12 @@
     [sidenav-content opts ]]])
 
 
-(defn desktop-sidenav [{:keys [site-header nav-opts]}]
+(defn desktop-sidenav
+  [{:keys [site-header nav-opts]}]
   [sidenav
+   {:-wrapper-attrs (sx :md:d--flex)}
    [:div
     (sx :.relative
-        :d--none
-        :md:d--block
         :w--100%
         :padding-block--$title-margin-block)
     (when site-header [site-header])]
@@ -305,14 +281,6 @@
              :flex-shrink--1
              :flex-grow--0
              :overflow-y--auto
-             [:max-height "calc(100vh - 114px)"])
+             [:max-height "calc(100vh - 114px)"]
+             [:max-width :$kushi-playground-sidenav-max-width])
     [sidenav-content nav-opts]]])
-
-
-(defn hidden-desktop-sidenav [{:keys [opts]}]
-  [sidenav
-   (sx :.hidden
-       :position--unset
-       :flex--0:0:auto
-       :lg:d--none)
-   [sidenav-content opts]])
