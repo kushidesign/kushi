@@ -808,15 +808,15 @@
    ;; uncomment TEMP
    "body"
    {:font-family                :$sans-serif-font-stack
-    :bgc                        :white
-    :color                      :$gray-900
+    :color                      :$gray-900 ; <- TODO should this be an alias token like $fg-color?
     :transition-property        :background-color|color
     :transition-duration        :$fast
     :transition-timing-function :$timing-linear-curve}
 
    ".dark, body.dark"
    {:bgc   :$gray-1000
-    :color :$gray-50}
+    :color :$gray-50  ; <- TODO should this be an alias token like $fg-color-inverse?
+    }
 
    "code, .code"
    {:font-family                :$code-font-stack
@@ -839,26 +839,32 @@
     :transition-timing-function "cubic-bezier(0, 0, 1, 1)"}
 
 
-   ".styled-scrollbars"
+                        
    ;; Foreground, Background
+   ".styled-scrollbars"
    {:scrollbar-color :$scrollbar-thumb-color
+    :dark:scrollbar-color :$scrollbar-thumb-color-inverse
     :scrollbar-width :thin}
 
    ".styled-scrollbars::-webkit-scrollbar"
    {;; Mostly for vertical scrollbars
-    :width  :6px
+    :width  :$scrollbar-width
     ;; Mostly for horizontal scrollbars
-    :height :6px}
+    :height :$scrollbar-width}
 
-   ;; Foreground
+   ;; scrollbar foreground
    ".styled-scrollbars::-webkit-scrollbar-thumb"
    {:background    :$scrollbar-thumb-color
+    :dark:background    :$scrollbar-thumb-color-inverse
     :border-radius :9999px
-    :border        "0px solid var(--scrollbar-background-color)"}
+    :border        "0px solid var(--scrollbar-background-color)"
+    :dark:border   "0px solid var(--scrollbar-background-color-inverse)"}
 
-   ;; Background
+   ;; scrollbar background
    ".styled-scrollbars::-webkit-scrollbar-track"
-   {:background :$scrollbar-background-color}
+   {:background  :$scrollbar-background-color
+    :dark:background  :$scrollbar-background-color-inverse}
+
 
    "*:focus-visible"
    {:outline        "4px solid rgba(0, 125, 250, 0.6)"
@@ -887,16 +893,16 @@
 
    ;; Semantic fg
    ;; TODO -- dark versions of each with *--inverse tokens to match
-   :.neutral-fg {:color :$neutral-minimal-color
-                 :dark:color :$neutral-minimal-color-inverse}
-   :.accent-fg {:color :$accent-minimal-color
-                :dark:color :$accent-minimal-color-inverse}
-   :.positive-fg {:color :$positive-minimal-color
-                  :dark:color :$positive-minimal-color-inverse}
-   :.negative-fg {:color :$negative-minimal-color
-                  :dark:color :$positive-minimal-color-inverse}
-   :.warning-fg {:color :$warning-minimal-color
-                 :dark:color :$positive-minimal-color-inverse}
+   :.neutral-fg {:color :$neutral-fg
+                 :dark:color :$neutral-fg-inverse}
+   :.accent-fg {:color :$accent-fg
+                :dark:color :$accent-fg-inverse}
+   :.positive-fg {:color :$positive-fg
+                  :dark:color :$positive-fg-inverse}
+   :.negative-fg {:color :$negative-fg
+                  :dark:color :$negative-fg-inverse}
+   :.warning-fg {:color :$warning-fg
+                 :dark:color :$warning-fg-inverse}
 
    ;; Semantic bg
    :.neutral-bg {:background-color :$neutral-background-color}
@@ -959,11 +965,6 @@
                                  #(not (starts-with-dark? %))
                                  #(starts-with-dark? %)))
         report (styles-transform-report coll ret)]
-    ;; (if dark?
-    ;;   (println "Removing dark styles"
-    ;;      report)
-    ;;   (println "Removing light styles"
-    ;;      report))
     ret))
 
 (defn- maybe-remove-lights-or-darks [coll]
@@ -1003,19 +1004,14 @@
 
 (defn base-theme-map
   []
-  (let [variant-values                (maybe-remove-some-variants variant-values)
-        {ui2            :styles
+  (let [{ui2            :styles
          variant-tokens :token-pairs} (tokenizer variant-values)
         ui                            (into [] (concat ui ui2 ui*))
-        ui                            (if (remove-darks?) (remove-lights-or-darks ui :darks) ui)]
+        ]
     {:css-reset       css-reset
      :utility-classes utility-classes
-     :design-tokens   (let [color-tokens       (colors->tokens colors
-                                                               {:format    :css
-                                                                :expanded? true})
-                            alias-color-tokens (colors->alias-tokens
-                                                semantic-aliases
-                                                {:expanded? true})]
+     :design-tokens   (let [color-tokens       (colors->tokens colors {:format :css :expanded? true})
+                            alias-color-tokens (colors->alias-tokens semantic-aliases {:expanded? true})]
                         (into []
                               (concat color-tokens
                                       transparent-neutrals
@@ -1023,12 +1019,14 @@
                                       variant-tokens
                                       design-tokens)))
      :ui              ui
-     :font-loading    {:add-default-sans-font-family? true
-                       :add-default-code-font-family? true
+     :font-loading    {:add-default-sans-font-family?  true
+                       :add-default-code-font-family?  true
                        :add-default-serif-font-family? true
+                       :google-material-symbols        ["Material Symbols Outlined"
+                                                        "Material Symbols Rounded"
+                                                        "Material Symbols Sharp"]
                        ;;  :google-fonts  [{:family "Public Sans"
                        ;;                   :styles {:normal [100]
                        ;;                            :italic [300]}}]
-                       }
-     }))
+                       }}))
 
