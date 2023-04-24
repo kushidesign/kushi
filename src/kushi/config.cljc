@@ -1,5 +1,9 @@
 (ns ^:dev/always kushi.config
   (:require
+   [kushi.utils :as util]
+   [clojure.string :as string]
+  ;;  [clojure.pprint :refer [pprint]]
+   [clojure.set :as set]
    [clojure.edn :as edn]))
 
 (def default-font-families-from-google-fonts
@@ -91,7 +95,7 @@
    :add-kushi-ui-theming-defclass?   true
 
    ;; Set this to false to leave out dark theme variants for kushi.ui related classes
-   :add-kushi-ui-dark-theming?       true
+   :add-kushi-ui-dark-theming?       false
 
    ;; Set this to false to leave out light theme variants for kushi.ui related classes
    :add-kushi-ui-light-theming?      true
@@ -129,18 +133,27 @@
    :elide-ui-variants-semantic       #{} ;; can include :accent :negative :warning :neutral :positive
    :elide-ui-variants-style          #{} ;; can include :bordered :minimal :filled
 
-   ;; This option only applies to production builds.
-   ;; Setting this to true will only include kushi utility classes that are explicitly used within the sx macro.
-   ;; This will reduce the amount of css written to disc.
-   ;; This means that only the following syntax examples will result in the utility class being writting to disc:
+   ;; Setting :elide-unused-kushi-utility-classes? to true will only include
+   ;; kushi utility classes that are explicitly used within the sx macro.
+   ;; This will reduce the amount of css in the output.
+   ;; This means that only the following syntax examples will result in the utility class being written to your css file:
    ;; [:div (sx :.absolute) "hi"]
    ;; [:div (sx (when x :.absolute)) "hi"]
    ;; [:div (sx {:class [:absolute]}) "hi"]
    ;; Note that with this option on, the following examples cannot be guaranteed to work:
    ;; [:div.absolute "hi"]
    ;; [:div {:class [:absolute]} "hi"]
+
    :elide-unused-kushi-utility-classes? false
 
+   ;; If you have :elide-unused-kushi-utility-classes? set to true, you can add specific kushi utility
+   ;; classes to this set in order to ensure they are always written.
+   ;; Any values that are not strings or keywords will be discarded.
+   ;; Remaining values will be stringified, bookended with "^" and "$" and passed to clojure.core/re-pattern.
+   ;; The "flex-.+" example below demonstrates how to included "families" of kushi utility classes.
+   ;; #{:xxxtight "flex-.+" "heavy"} => {#"^xxxtight$" #"^flex-.+$" #"^heavy$"}
+
+   :kushi-utility-classes-to-always-add #{}
 
    ;; Build process logging ----------------------------------------------
    :log-build-report?                true
@@ -165,22 +178,46 @@
    ;; :select-ns               nil
    })
 
+(defn utility-classes-to-always-add
+  [config*]
+  (let [set1*    (:kushi-utility-classes-to-always-add user-config-defaults)
+        set1     (if (set? set1*) set1* #{})
+        set2*    (:kushi-utility-classes-to-always-add config*)
+        set2     (if (set? set2*) set2* #{})
+        combined (set/union set1 set2)
+        ret      (keep #(cond #?(:clj (instance? java.util.regex.Pattern %))
+                              %
+                              (util/nameable? %)
+                              (re-pattern (str "^" (string/replace (name %) #"^\." "") "$")))
+                       combined)]
+    (into #{} ret)))
+
 (defn ->user-config [m]
-  (let [config*                    m
-        user-responsive            (apply array-map (:media config*))
-        responsive                 (if (valid-responsive? user-responsive)
-                                     user-responsive
-                                     (apply array-map default-kushi-responsive))
-        ret*                       (assoc config* :media responsive)
-        ret                        (merge user-config-defaults
-                                          ret*
-                                          {:warnings-and-errors {:print-specs? (:log-relevant-specs? m)}})]
+  (let [config*         m
+        user-responsive (apply array-map (:media config*))
+        responsive      (if (valid-responsive? user-responsive)
+                          user-responsive
+                          (apply array-map default-kushi-responsive))
+        always-add      (utility-classes-to-always-add config*)
+        ret*            (assoc config* :media responsive :kushi-utility-classes-to-always-add always-add)
+        ret             (merge user-config-defaults
+                               ret*
+                               {:warnings-and-errors {:print-specs? (:log-relevant-specs? m)}})]
+    ;; (println "\n\n")
+    ;; (pprint (util/keyed config* user-config-defaults ret* ret))
+    ;; (println "\n\n")
     ret))
 
 (def user-config
   (let [config* (let [m (load-edn "kushi.edn")]
-                  (if (map? m) m {}))]
-    (->user-config config*)))
+                  (if (map? m) m {}))
+        ret     (->user-config config*)]
+
+    ;; (println "\n\n")
+    ;; (pprint ret)
+    ;; (println "\n\n")
+
+    ret))
 
 ;; TODO used?
 (defn ->user-config-args-sx-defclass
@@ -203,6 +240,6 @@
 (def version* "1.0.0-a.17")
 
 ;; Optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
-(def version (str version* ":LOCAL"))
+(def version (str version* ":LOCALX"))
 
 
