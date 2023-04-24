@@ -41,7 +41,6 @@
                 :fs--0.5rem
                 :fw--600
                 :letter-spacing--0.1ex
-                ;; :tt--u
                 :b--none
                 :m--0.4rem
                 :hover:bgc--white
@@ -49,7 +48,7 @@
                 :bgc--transparent
                 {:type  :text
                  :value "copy"})
-            opts)]
+            (dissoc opts :-placement))]
           children)))
 
 (defn snippet
