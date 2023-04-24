@@ -31,6 +31,14 @@
   (when (and coll caching? (not cached))
     (swap! state2/styles-cache-updated assoc cache-key coll)))
 
+(defmacro breakpoints
+  "Returns (:media kushi.config/user-config).
+   The value will be a vector of breakpoints, which will be either kushi.config/defalt-kushi-responsive,
+   or a user-provided a vector if the user gives a valid :media entry in their kushi.edn config map."
+  []
+  (let [ret (:media user-config)]
+    `~ret))
+
 ;; FONT FACE -------------------------------------------------------------
 
 (defmacro ^:public add-font-face
