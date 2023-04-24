@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.core
   (:require-macros [kushi.core])
   (:require [clojure.string :as string]
-            [kushi.clean :as clean]))
+            [kushi.clean :as clean] ))
 
 
 (def sheet-ids-by-type
