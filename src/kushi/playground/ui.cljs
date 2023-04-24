@@ -19,3 +19,13 @@
               :c--white
               ["has-ancestor(.kushi-playground-mobile-nav):c" :black])
     [icon :light-mode]]])
+
+(defn desktop-lightswitch []
+  [:div (sx 'kushi-light-dark-switch-desktop
+            :d--none
+            ["md:has-ancestor(.hide-lightswitch):d" :none]
+            :md:d--block
+            :position--fixed
+            :inset-inline--auto:0.75rem
+            :inset-block--1rem:auto)
+   [light-dark-mode-switch]])
