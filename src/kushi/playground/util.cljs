@@ -7,6 +7,7 @@
 (def kushi-github-url  "https://github.com/kushidesign/kushi")
 (def kushi-clojars-url "https://clojars.org/design.kushi/kushi")
 
+;; Todo find way around using pprint here
 (defn pprint-snippet [coll]
   (string/replace (with-out-str (pprint coll)) #"\n$" ""))
 
