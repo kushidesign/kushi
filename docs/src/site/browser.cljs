@@ -37,7 +37,7 @@
      ;; Change to `:site-header`
      :site-header                        site-header
 
-     :custom-components                  {:render?        true
+     :custom-components                  {:render?        false
                                           :header         "Custom Components Playground"
                                           :sidenav-header "Custom Components"
                                           :coll           (components-to-render mock-custom-components)}
