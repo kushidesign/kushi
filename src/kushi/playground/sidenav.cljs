@@ -281,6 +281,7 @@
              :flex-shrink--1
              :flex-grow--0
              :overflow-y--auto
+             :min-width--190px
              [:max-height "calc(100vh - 114px)"]
              [:max-width :$kushi-playground-sidenav-max-width])
     [sidenav-content nav-opts]]])
