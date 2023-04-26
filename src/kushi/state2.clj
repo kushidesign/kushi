@@ -3,25 +3,28 @@
    [clojure.data :as data]
    [kushi.io :refer [load-edn]]
    [clojure.java.io :refer [make-parents]]
+   [clojure.spec.alpha :as s]
    [kushi.reporting :as reporting]
    [kushi.defs :as defs]
    [kushi.config :refer [user-config
                          version*
-                         user-config-args-sx-defclass]]))
+                         user-config-args-sx-defclass]]
+   [kushi.specs2 :as specs2]))
 
 ;; Keep track whether we are in dev or prod build
 (def KUSHIDEBUG (atom true))
 (def shadow-build-id (atom nil))
 (def initial-build? (atom true))
-(def trace?* (atom false))
-(def *trace-mode? (atom false))
+(def *trace? (atom false))
 
 (def css (atom []))
 (def ->css (atom nil))
 (def shared-classes (atom {}))
+(def registered-shared-classes (atom #{}))
 (def user-defined-keyframes (atom {}))
 (def user-defined-font-faces (atom []))
 (def google-font-maps (atom []))
+(def google-material-symbols-font-maps (atom []))
 (def design-tokens (atom []))
 (def theming-tokens (atom []))
 (def used-tokens (atom []))
@@ -35,9 +38,11 @@
   (reset! css [])
   (reset! ->css nil)
   (reset! shared-classes {})
+  (reset! registered-shared-classes #{})
   (reset! user-defined-keyframes {})
   (reset! user-defined-font-faces [])
   (reset! google-font-maps [])
+  (reset! google-material-symbols-font-maps [])
   (reset! design-tokens [])
   (reset! theming-tokens [])
   (reset! used-tokens [])
@@ -56,6 +61,9 @@
   [coll]
   (doseq [m coll] (swap! google-font-maps conj m)))
 
+(defn add-google-material-symbols-font-maps!
+  [coll]
+  (doseq [m coll] (swap! google-material-symbols-font-maps conj m)))
 
 ;; caching ----------------------------------------------------------------
 
@@ -106,12 +114,13 @@
           @styles-cache-updated))
 
 
-;; Tracing ---------------------------------------------------------------
-(defn trace! [args target] (reset! trace?* (= args (rest target))) )
-(defn trace? [] @trace?*)
+;; For enabling tracing in dispatch args ---------------------------------
+(defn enable-trace? [args] (s/valid? ::specs2/kushi-trace (last args)))
+(defn enable-trace! [] (reset! *trace? true))
+(defn disable-trace! [] (reset! *trace? false))
 
-(defn trace-mode! [args] (reset! *trace-mode? (= (last args) :kushi/trace)))
-(defn trace-mode? [] @*trace-mode?)
+;; For checking if tracing is enabled when debugging source --------------
+(defn trace? [] @*trace?)
 
 ;; Caching and hashing ---------------------------------------------------
 (defn cached

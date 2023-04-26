@@ -2,6 +2,8 @@
   (:require
    [kushi.core :refer [sx]]
    [kushi.ui.label.core :refer [label]]
+   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.core :refer [defcom lightswitch!]]))
 
 (defcom light-dark-mode-switch
@@ -9,16 +11,22 @@
                :.large
                :.pointer
                :pb--0.5rem!important
-               :&_.kushi-mui-icon:m--0
                {:on-click #(lightswitch!)})
    [label (sx ["has-ancestor(.dark):display" :none]
-              ["has-ancestor(.kushi-playground-mobile-nav):c" :white]
-              {:-mui-icon       :dark-mode
-               :-mui-icon-style :outlined
-               :-icon-svg      true})]
+              ["has-ancestor(.kushi-playground-mobile-nav):c" :white])
+    [icon mui.svg/dark-mode]]
    [label (sx :d--none
               ["has-ancestor(.dark):display" :block]
               :c--white
-              ["has-ancestor(.kushi-playground-mobile-nav):c" :black]
-              {:-mui-icon       :light-mode
-               :-mui-icon-style :outlined})]])
+              ["has-ancestor(.kushi-playground-mobile-nav):c" :black])
+    [icon mui.svg/light-mode]]])
+
+(defn desktop-lightswitch []
+  [:div (sx 'kushi-light-dark-switch-desktop
+            :d--none
+            ["md:has-ancestor(.hide-lightswitch):d" :none]
+            :md:d--block
+            :position--fixed
+            :inset-inline--auto:0.75rem
+            :inset-block--1rem:auto)
+   [light-dark-mode-switch]])

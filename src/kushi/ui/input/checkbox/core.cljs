@@ -9,9 +9,9 @@
 (defn checkbox
   {:desc ["Checkboxes are used to provide multiple options for selection. One or more checkboxes can be checked at a time."]
    :opts '[{:name    input-attrs
-            :type    :map
+            :pred    map?
             :default nil
-            :desc    "html attributes map applied to the underlying `input` div."}]}
+            :desc    "HTML attributes map applied to the underlying `input` div."}]}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys [label-attrs]}   opts]
@@ -20,7 +20,7 @@
       (sx
        'kushi-checkbox
        :.transition
-       :.fast!
+       :.xxfast!
        :.pointer
        :.grid
        :gtc--1em:auto
@@ -33,7 +33,7 @@
        (sx
         'kushi-checkbox-input
         :.transition
-        :.fast!
+        :.xxfast!
         :.pointer
         :-webkit-appearance--none
         :appearance--none

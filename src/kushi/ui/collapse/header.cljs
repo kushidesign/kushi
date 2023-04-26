@@ -1,9 +1,8 @@
 (ns kushi.ui.collapse.header
   (:require [kushi.core :refer (sx)]
             [clojure.string :as string]
-            [kushi.ui.util :as util]
-            [kushi.ui.icon.mui.core :refer (mui-icon mui-icon-outlined mui-icon-sharp mui-icon-round)]
-            [kushi.ui.title.core :refer (title)] ))
+            [kushi.ui.icon.core]
+            [kushi.ui.label.core]))
 
 (defn readable-string? [label]
   (and (string? label) (not (string/blank? label))))
@@ -18,51 +17,31 @@
 (defn header-title
   [{:keys [label
            icon-opposite?
-           icon-svg
-           mui-icon-style]
+           icon]
     :as   opts}]
   (if (string? label)
-    (let [f        (case mui-icon-style
-                     :outlined
-                     mui-icon-outlined
-                     :round
-                     mui-icon-round
-                     :sharp
-                     mui-icon-sharp
-                     mui-icon)
-          ico      [f
-                    (sx 'kushi-collapse-header-title-icon
-                        [:mie (when-not icon-opposite? :$icon-enhancer-inline-gap-ems)]
-                        {:-icon-svg icon-svg})
-                    (:mui-icon opts)]
-          title-sx (sx
-                    'kushi-collapse-header-title-contents
-                    {:style {:w                    (when icon-opposite? :100%)
-                             :>span.kushi-label:w  (when icon-opposite? :100%)
-                             :>span.kushi-label:jc (when icon-opposite? :space-between)}})]
+    (let [attrs (sx
+                 'kushi-collapse-header-title-contents
+                 {:style {:w  (when icon-opposite? :100%)
+                          :jc (when icon-opposite? :space-between)}})]
       (if icon-opposite?
-        [title title-sx label ico]
-        [title title-sx ico label]))
+        [kushi.ui.label.core/label attrs label icon]
+        [kushi.ui.label.core/label attrs icon label]))
     label))
 
 (defn collapse-header-contents
   [{:keys [label
            label-expanded
-           mui-icon
-           mui-icon-style
-           mui-icon-expanded
-           icon-position
-           icon-svg]
-    :as   m}]
+           icon
+           icon-expanded
+           icon-position]
+    :or {icon          [kushi.ui.icon.core/icon :add]
+         icon-expanded [kushi.ui.icon.core/icon :remove]}}]
   (let [label-expanded    (or label-expanded label)
-        mui-icon          (if (util/nameable? mui-icon) (name mui-icon) "add")
-        mui-icon-expanded (if (util/nameable? mui-icon-expanded) (name mui-icon-expanded) "remove")
         icon-opposite?    (= :end icon-position)
         opts              {:label          label
-                           :mui-icon       mui-icon
-                           :mui-icon-style mui-icon-style
-                           :icon-opposite? icon-opposite?
-                           :icon-svg       icon-svg}]
+                           :icon           icon
+                           :icon-opposite? icon-opposite?}]
     [:<>
      [:span
       (sx 'kushi-collapse-header-label-collapsed
@@ -79,5 +58,5 @@
           :d--none
           ["has-parent([aria-expanded='true']):display" :block])
       (if (string? label-expanded)
-        [header-title (assoc opts :label label-expanded :mui-icon mui-icon-expanded)]
+        [header-title (assoc opts :label label-expanded :icon icon-expanded)]
         label-expanded)]]))

@@ -8,9 +8,9 @@
 (defn radio
   {:desc ["Radio buttons are used in groups of 2 or more, when only one choice may be selected from an array of options."]
    :opts '[{:name    input-attrs
-            :type    :map
+            :pred    map?
             :default nil
-            :desc    "html attributes map applied to the underlying `input` div."}]}
+            :desc    "HTML attributes map applied to the underlying `input` div."}]}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys [input-attrs]}   opts]
@@ -19,7 +19,7 @@
       (merge-attrs
        (sx 'kushi-radio
            :.transition
-           :.fast!
+           :.xxfast!
            :.pointer
            :.pill
            :color--currentColor
@@ -35,7 +35,7 @@
        (merge-attrs
         (sx 'kushi-radio-input
             :.transition
-            :.fast!
+            :.xxfast!
             :.pointer
             :display--grid
             :place-content--center

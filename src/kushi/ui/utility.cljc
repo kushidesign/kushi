@@ -9,23 +9,40 @@
 (def combo-flex-utility-classes
   ;; Combinatorial flexbox utilities
   ;; ------------------------------------------------------
-  [:flex-row-c        {:flex-direction  :row
+  [
+   ;; TODO - Analyze performance tradeoffs with writing selectors like these:
+   ;; first need to fix compiler to not prepend a "." in front of selector.
+   ;; "[class^='flex-row-']" {:flex-direction  :row
+   ;;                         :align-items     :center
+   ;;                         :display         :flex}
+   ;; "[class^='flex-row-']" {:flex-direction  :col
+   ;;                         :display         :flex}
+   ;; "[class$='c']"     {:justify-content :center}
+   ;; "[class$='fs']"    {:justify-content :flex-start}
+   ;; "[class$='fe']"    {:justify-content :flex-end}
+
+
+   :flex-row-c        {:flex-direction  :row
                        :justify-content :center
+                       :align-items     :center
                        :display         :flex}
    :flex-row-sa       {:flex-direction  :row
                        :justify-content :space-around
+                       :align-items     :center
                        :display         :flex}
    :flex-col-se       {:flex-direction  :column
                        :justify-content :space-evenly
                        :display         :flex}
    :flex-row-fs       {:flex-direction  :row
                        :justify-content :flex-start
+                       :align-items     :center
                        :display         :flex}
    :flex-col-c        {:flex-direction  :column
                        :justify-content :center
                        :display         :flex}
    :flex-row-se       {:flex-direction  :row
                        :justify-content :space-evenly
+                       :align-items     :center
                        :display         :flex}
    :flex-col-fe       {:flex-direction  :column
                        :justify-content :flex-end
@@ -35,6 +52,7 @@
                        :display         :flex}
    :flex-row-fe       {:flex-direction  :row
                        :justify-content :flex-end
+                       :align-items     :center
                        :display         :flex}
    :flex-col-sa       {:flex-direction  :column
                        :justify-content :space-around
@@ -44,114 +62,403 @@
                        :display         :flex}
    :flex-row-sb       {:flex-direction  :row
                        :justify-content :space-between
+                       :align-items     :center
                        :display         :flex}
-   :flex-row-centered {:display         :flex
-                       :justify-content :center
-                       :align-content   :center
-                       :justify-items   :center
-                       :align-items     :center}
-   :flex-col-centered {:display         :flex
-                       :flex-direction  :col
-                       :justify-content :center
-                       :align-content   :center
-                       :justify-items   :center
-                       :align-items     :center}])
+                       ])
 
 
 (def base-classes
   [
-    ;; Visual debugging utilities
-    ;; ------------------------------------------------------
-   :debug-grid            {:background "transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAFElEQVR4AWPAC97/9x0eCsAEPgwAVLshdpENIxcAAAAASUVORK5CYII=) repeat top left"}
-   :debug-grid-16         {:background "transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMklEQVR4AWOgCLz/b0epAa6UGuBOqQHOQHLUgFEDnAbcBZ4UGwDOkiCnkIhdgNgNxAYAiYlD+8sEuo8AAAAASUVORK5CYII=) repeat top left "}
-   :debug-grid-8-solid    {:background "white url(data:image/gif;base64,R0lGODdhCAAIAPEAAADw/wDx/////wAAACwAAAAACAAIAAACDZQvgaeb/lxbAIKA8y0AOw==) repeat top left"}
-   :debug-grid-16-solid   {:background "white url(data:image/gif;base64,R0lGODdhEAAQAPEAAADw/wDx/xXy/////ywAAAAAEAAQAAACIZyPKckYDQFsb6ZqD85jZ2+BkwiRFKehhqQCQgDHcgwEBQA7) repeat top left"}
+   ;; Visual debugging utilities
+   ;; ------------------------------------------------------
+   :debug-grid            {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px)), "
+                                                  "repeating-linear-gradient(to right, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
+   :debug-grid-8          {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                  "repeating-linear-gradient(to right, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
+                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                       "repeating-linear-gradient(to right, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px))")}
+   :debug-grid-16         {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
+                                                       "repeating-linear-gradient(to right, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
+                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px)), "
+                                                       "repeating-linear-gradient(to right, transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px))")}
    :bordered              {:border-color :currentColor
                            :border-style :solid
                            :border-width "1px"}
+
+
+   ;; could do something like this
+   ;; "[class^='bordered-']" {:border-style :solid :border-width "1px"}
+
+   :bordered-red          {:border-color "var(--red-500, red)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-blue         {:border-color "var(--blue-500, blue)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-green        {:border-color "var(--green-500, green)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-yellow       {:border-color "var(--yellow-500, yellow)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-orange       {:border-color "var(--orange-500, orange)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-purple       {:border-color "var(--purple-500, purple)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-magenta      {:border-color "var(--magenta-500, magenta)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-gray         {:border-color "var(--gray-500, gray)"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-black        {:border-color "black"
+                           :border-style :solid
+                           :border-width "1px"}
+
+   :bordered-white       {:border-color "white"
+                          :border-style :solid
+                          :border-width "1px"}
+
    :wireframe             {:outline-color :silver
                            :outline-style :solid
                            :outline-width "1px"}
 
-    ;; Combinatorial absolute positioning utilities
-    ;; ------------------------------------------------------
-   :fixed-fill            {:position :fixed
-                           :top      0
-                           :right    0
-                           :bottom   0
-                           :left     0}
+    ;; Non-combo flex utility classes
+   :shrink               {:flex-shrink 1}
+   :no-shrink            {:flex-shrink 0}
+   :grow                 {:flex-grow 1}
+   :no-grow              {:flex-grow 0}
 
+   ;; Position
+   ;; ------------------------------------------------------
+   :relative      {:position :relative}
+   :absolute      {:position :absolute}
+   :fixed         {:position :fixed}
+
+    ;; Combinatorial absolute and fixed positioning utilities
+    ;; ------------------------------------------------------
    :absolute-fill         {:position :absolute
                            :top      0
                            :right    0
                            :bottom   0
                            :left     0}
 
-   :absolute-centered     {:position  :absolute
-                           :top       "50%"
-                           :left      "50%"
-                           :transform "translate(-50%, -50%)"}
+   :after-absolute-centered     {:after:content            "\"\""
+                                 :after:position           :absolute
+                                 :after:inset-inline-start "50%"
+                                 :after:inset-block-start  "50%"
+                                 :after:transform          "translate(-50%, -50%)"}
 
-   :absolute-inline-start {:position          :absolute
-                           :inset-inline-end  "100%"
-                           :inset-block-start "50%"
-                           :transform         "translateY(-50%)"}
+   :after-absolute-inline-start {:after:content            "\"\""
+                                 :after:position           :absolute
+                                 :after:inset-inline-start "0%"
+                                 :after:inset-inline-end   :unset
+                                 :after:inset-block-start  "50%"
+                                 :after:transform          "translateY(-50%)"}
 
-   :absolute-inline-end   {:position           :absolute
-                           :inset-inline-start "100%"
+   :after-absolute-inline-end   {:after:content            "\"\""
+                                 :after:position           :absolute
+                                 :after:inset-inline-end   "0%"
+                                 :after:inset-inline-start :unset
+                                 :after:inset-block-start  "50%"
+                                 :after:transform          "translateY(-50%)"}
+
+   :after-absolute-block-start  {:after:content            "\"\""
+                                 :after:position           :absolute
+                                 :after:inset-block-start  "0%"
+                                 :after:inset-block-end    :unset
+                                 :after:inset-inline-start "50%"
+                                 :after:transform          "translateX(-50%)"}
+
+   :after-absolute-block-end    {:after:content            "\"\""
+                                 :after:position           :absolute
+                                 :after:inset-block-end    "0%"
+                                 :after:inset-block-start  :unset
+                                 :after:inset-inline-start "50%"
+                                 :after:transform          "translateX(-50%)"}
+
+   :after-absolute-fill         {:after:content  "\"\""
+                                 :after:position :absolute
+                                 :after:top      0
+                                 :after:right    0
+                                 :after:bottom   0
+                                 :after:left     0}
+
+   :before-absolute-centered     {:before:content            "\"\""
+                                  :before:position           :absolute
+                                  :before:inset-inline-start "50%"
+                                  :before:inset-block-start  "50%"
+                                  :before:transform          "translate(-50%, -50%)"}
+
+   :before-absolute-inline-start {:before:content            "\"\""
+                                  :before:position           :absolute
+                                  :before:inset-inline-end   :unset
+                                  :before:inset-inline-start "0%"
+                                  :before:inset-block-start  "50%"
+                                  :before:transform          "translateY(-50%)"}
+
+   :before-absolute-inline-end   {:before:content            "\"\""
+                                  :before:position           :absolute
+                                  :before:inset-inline-start :unset
+                                  :before:inset-inline-end   "0%"
+                                  :before:inset-block-start  "50%"
+                                  :before:transform          "translateY(-50%)"}
+
+   :before-absolute-block-start  {:before:content            "\"\""
+                                  :before:position           :absolute
+                                  :before:inset-block-end    :unset
+                                  :before:inset-block-start  "0%"
+                                  :before:inset-inline-start "50%"
+                                  :before:transform          "translateX(-50%)"}
+
+   :before-absolute-block-end    {:before:content            "\"\""
+                                  :before:position           :absolute
+                                  :before:inset-block-start  :unset
+                                  :before:inset-block-end    "0%"
+                                  :before:inset-inline-start "50%"
+                                  :before:transform          "translateX(-50%)"}
+
+   :before-absolute-fill         {:before:content  "\"\""
+                                  :before:position :absolute
+                                  :before:top      0
+                                  :before:right    0
+                                  :before:bottom   0
+                                  :before:left     0}
+
+
+   :absolute-centered     {:position           :absolute
+                           :inset-inline-start "50%"
+                           :inset-block-start  "50%"
+                           :transform          "translate(-50%, -50%)"}
+
+   :absolute-inline-start {:position           :absolute
+                           :inset-inline-start "0%"
+                           :inset-inline-end   :unset
                            :inset-block-start  "50%"
                            :transform          "translateY(-50%)"}
 
-   :absolute-block-start  {:position          :absolute
-                           :inset-block-end   "100%"
-                           :inset-block-start "50%"
-                           :transform         "translateX(-50%)"}
+   :absolute-inline-end   {:position           :absolute
+                           :inset-inline-start :unset
+                           :inset-inline-end   "0%"
+                           :inset-block-start  "50%"
+                           :transform          "translateY(-50%)"}
 
-   :absolute-block-end    {:position           :absolute
-                           :inset-block-start  "100%"
-                           :inset-inset-start  "50%"
+   :absolute-block-start  {:position           :absolute
+                           :inset-block-start  "0%"
+                           :inset-block-end    :unset
+                           :inset-inline-start "50%"
                            :transform          "translateX(-50%)"}
 
-  ;; northwest
-   :northwest-inside {:position :absolute :inset-block-start 0 :inset-inline-start 0  :transform "translate(0, 0)"}
-   :northwest {:position :absolute :inset-block-start 0 :inset-inline-start 0  :transform "translate(-50%, -50%)"}
-   :northwest-outside {:position :absolute :inset-block-start 0 :inset-inline-start 0  :transform "translate(-100%, -100%)"}
+   :absolute-block-end    {:position           :absolute
+                           :inset-block-start  :unset
+                           :inset-block-end    "0%"
+                           :inset-inline-start "50%"
+                           :transform          "translateX(-50%)"}
 
-  ;; north
-   :north-inside {:position :absolute :inset-block-start 0 :inset-inline-start :50%  :transform "translate(-50%, 0)"}
-   :north {:position :absolute :inset-block-start 0 :inset-inline-start :50%  :transform "translate(-50%, -50%)"}
-   :north-outside {:position :absolute :inset-block-start 0 :inset-inline-start :50%  :transform "translate(-50%, -100%)"}
+   :fixed-fill            {:position :fixed
+                           :top      0
+                           :right    0
+                           :bottom   0
+                           :left     0}
 
-  ;; east
-   :east-inside {:position :absolute :inset-block-start :50% :inset-inline-end 0  :transform "translate(0, -50%)"}
-   :east {:position :absolute :inset-block-start :50% :inset-inline-end 0  :transform "translate(50%, -50%)"}
-   :east-outside {:position :absolute :inset-block-start :50% :inset-inline-end 0  :transform "translate(100%, -50%)"}
+   :fixed-centered     {:position           :fixed
+                        :inset-inline-start "50%"
+                        :inset-block-start  "50%"
+                        :transform          "translate(-50%, -50%)"}
 
-  ;; northeast
-   :northeast-inside {:position :absolute :inset-block-start 0 :inset-inline-end 0  :transform "translate(0, 0)"}
-   :northeast {:position :absolute :inset-block-start 0 :inset-inline-end 0  :transform "translate(50%, -50%)"}
-   :northeast-outside {:position :absolute :inset-block-start 0 :inset-inline-end 0  :transform "translate(100%, -100%)"}
+   :fixed-inline-start {:position           :fixed
+                        :inset-inline-start "0%"
+                        :inset-inline-end   :unset
+                        :inset-block-start  "50%"
+                        :transform          "translateY(-50%)"}
 
-  ;; southwest
-   :southwest-inside {:position :absolute :inset-block-end 0 :inset-inline-start 0  :transform "translate(0, 0)"}
-   :southwest {:position :absolute :inset-block-end 0 :inset-inline-start 0  :transform "translate(-50%, 50%)"}
-   :southwest-outside {:position :absolute :inset-block-end 0 :inset-inline-start 0  :transform "translate(-100%, 100%)"}
+   :fixed-inline-end   {:position           :fixed
+                        :inset-inline-end   "0%"
+                        :inset-inline-start :unset
+                        :inset-block-start  "50%"
+                        :transform          "translateY(-50%)"}
 
-  ;; south
-   :south-inside {:position :absolute :inset-block-end 0 :inset-inline-start :50%  :transform "translate(-50%, 0)"}
-   :south {:position :absolute :inset-block-end 0 :inset-inline-start :50%  :transform "translate(-50%, 50%)"}
-   :south-outside {:position :absolute :inset-block-end 0 :inset-inline-start :50%  :transform "translate(-50%, 100%)"}
+   :fixed-block-start  {:position           :fixed
+                        :inset-block-start  "0%"
+                        :inset-block-end    :unset
+                        :inset-inline-start "50%"
+                        :transform          "translateX(-50%)"}
 
-  ;; southeast
-   :southeast-inside {:position :absolute :inset-block-end 0 :inset-inline-end 0  :transform "translate(0, 0)"}
-   :southeast {:position :absolute :inset-block-end 0 :inset-inline-end 0  :transform "translate(50%, 50%)"}
-   :southeast-outside {:position :absolute :inset-block-end 0 :inset-inline-end 0  :transform "translate(100%, 100%)"}
+   :fixed-block-end    {:position           :fixed
+                        :inset-block-end    "0%"
+                        :inset-block-start  :unset
+                        :inset-inline-start "50%"
+                        :transform          "translateX(-50%)"}
 
-  ;; west
-   :west-inside {:position :absolute :inset-block-start :50% :inset-inline-start 0  :transform "translate(0, -50%)"}
-   :west {:position :absolute :inset-block-start :50% :inset-inline-start 0  :transform "translate(-50%, -50%)"}
-   :west-outside {:position :absolute :inset-block-start :50% :inset-inline-start 0  :transform "translate(-100%, -50%)"}
+   ;; northwest
+   :northwest-inside {:position           :absolute
+                      :inset-block-start  0
+                      :inset-block-end    :unset
+                      :inset-inline-start 0
+                      :inset-inline-end   :unset
+                      :transform          "translate(0, 0)"}
+   :northwest {:position           :absolute
+               :inset-block-start  0
+               :inset-block-end    :unset
+               :inset-inline-start 0
+               :inset-inline-end   :unset
+               :transform          "translate(-50%, -50%)"}
+   :northwest-outside {:position           :absolute
+                       :inset-block-start  0
+                       :inset-block-end    :unset
+                       :inset-inline-start 0
+                       :inset-inline-end   :unset
+                       :transform          "translate(-100%, -100%)"}
 
+   ;; north
+   :north-inside {:position           :absolute
+                  :inset-block-start  0
+                  :inset-block-end    :unset
+                  :inset-inline-start :50%
+                  :inset-inline-end   :unset
+                  :transform          "translate(-50%, 0)"}
+   :north {:position           :absolute
+           :inset-block-start  0
+           :inset-block-end    :unset
+           :inset-inline-start :50%
+           :inset-inline-end   :unset
+           :transform          "translate(-50%, -50%)"}
+   :north-outside {:position           :absolute
+                   :inset-block-start  0
+                   :inset-block-end    :unset
+                   :inset-inline-start :50%
+                   :inset-inline-end   :unset
+                   :transform          "translate(-50%, -100%)"}
+
+   ;; east
+   :east-inside {:position           :absolute
+                 :inset-block-start  :50%
+                 :inset-block-end    :unset
+                 :inset-inline-end   0
+                 :inset-inline-start :unset
+                 :transform          "translate(0, -50%)"}
+   :east {:position           :absolute
+          :inset-block-start  :50%
+          :inset-block-end    :unset
+          :inset-inline-end   0
+          :inset-inline-start :unset
+          :transform          "translate(50%, -50%)"}
+   :east-outside {:position           :absolute
+                  :inset-block-start  :50%
+                  :inset-block-end    :unset
+                  :inset-inline-end   0
+                  :inset-inline-start :unset
+                  :transform          "translate(100%, -50%)"}
+
+   ;; northeast
+   :northeast-inside  {:position           :absolute
+                       :inset-block-start  0
+                       :inset-block-end    :unset
+                       :inset-inline-end   0
+                       :inset-inline-start :unset
+                       :transform          "translate(0, 0)"}
+   :northeast         {:position           :absolute
+                       :inset-block-start  0
+                       :inset-block-end    :unset
+                       :inset-inline-end   0
+                       :inset-inline-start :unset
+                       :transform          "translate(50%, -50%)"}
+   :northeast-outside {:position           :absolute
+                       :inset-block-start  0
+                       :inset-block-end    :unset
+                       :inset-inline-end   0
+                       :inset-inline-start :unset
+                       :transform          "translate(100%, -100%)"}
+
+   ;; southwest
+   :southwest-inside  {:position           :absolute
+                       :inset-block-end    0
+                       :inset-block-start  :unset
+                       :inset-inline-start 0
+                       :inset-inline-end   :unset
+                       :transform          "translate(0, 0)"}
+   :southwest         {:position           :absolute
+                       :inset-block-end    0
+                       :inset-block-start  :unset
+                       :inset-inline-start 0
+                       :inset-inline-end   :unset
+                       :transform          "translate(-50%, 50%)"}
+   :southwest-outside {:position           :absolute
+                       :inset-block-end    0
+                       :inset-block-start  :unset
+                       :inset-inline-start 0
+                       :inset-inline-end   :unset
+                       :transform          "translate(-100%, 100%)"}
+
+   ;; south
+   :south-inside {:position           :absolute
+                  :inset-block-end    0
+                  :inset-block-start  :unset
+                  :inset-inline-start :50%
+                  :inset-inline-end   :unset
+                  :transform          "translate(-50%, 0)"}
+   :south {:position           :absolute
+           :inset-block-end    0
+           :inset-block-start  :unset
+           :inset-inline-start :50%
+           :inset-inline-end   :unset
+           :transform          "translate(-50%, 50%)"}
+   :south-outside {:position           :absolute
+                   :inset-block-end    0
+                   :inset-block-start  :unset
+                   :inset-inline-start :50%
+                   :inset-inline-end   :unset
+                   :transform          "translate(-50%, 100%)"}
+
+   ;; southeast
+   :southeast-inside  {:position           :absolute
+                       :inset-block-end    0
+                       :inset-block-start  :unset
+                       :inset-inline-end   0
+                       :inset-inline-start :unset
+                       :transform          "translate(0, 0)"}
+   :southeast         {:position           :absolute
+                       :inset-block-end    0
+                       :inset-block-start  :unset
+                       :inset-inline-end   0
+                       :inset-inline-start :unset
+                       :transform          "translate(50%, 50%)"}
+   :southeast-outside {:position           :absolute
+                       :inset-block-end    0
+                       :inset-block-start  :unset
+                       :inset-inline-end   0
+                       :inset-inline-start :unset
+                       :transform          "translate(100%, 100%)"}
+
+   ;; west
+   :west-inside  {:position           :absolute
+                  :inset-block-start  :50%
+                  :inset-block-end    :unset
+                  :inset-inline-start 0
+                  :inset-inline-end   :unset
+                  :transform          "translate(0, -50%)"}
+   :west         {:position           :absolute
+                  :inset-block-start  :50%
+                  :inset-block-end    :unset
+                  :inset-inline-start 0
+                  :inset-inline-end   :unset
+                  :transform          "translate(-50%, -50%)"}
+   :west-outside {:position           :absolute
+                  :inset-block-start  :50%
+                  :inset-block-end    :unset
+                  :inset-inline-start 0
+                  :inset-inline-end   :unset
+                  :transform          "translate(-100%, -50%)"}
 
     ;; Surfaces, buttons, containers
     ;; ------------------------------------------------------
@@ -169,12 +476,13 @@
     ;; Combinatorial transition utility
     ;; ------------------------------------------------------
    :transition            {:transition-property        :all
-                           :transition-timing-function "cubic-bezier(0, 0, 1, 1)"
-                           :transition-duration        :200ms}])
+                           :transition-timing-function :$timing-linear-curve
+                           :transition-duration        :$fast}])
 
 (def override-classes
   [;; General
    ;; ------------------------------------------------------
+   :invisible     {:opacity 0}
    :hidden        {:visibility :hidden}
    :visible       {:visibility :visible}
    :collapse      {:visibility :collapse}
@@ -182,18 +490,12 @@
 
    ;; Content
    ;; ------------------------------------------------------
-   :content-blank {:content "\"\""}
-   :open-in-new   {:content "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"}
-
+  ;;  :content-blank {:content "\"\""}
+  ;;  :open-in-new   {:content "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"}
+   
    ;; Cursor
    ;; ------------------------------------------------------
    :pointer       {:cursor :pointer}
-
-   ;; Position
-   ;; ------------------------------------------------------
-   :absolute      {:position :absolute}
-   :fixed         {:position :fixed}
-   :relative      {:position :relative}
 
    ;; Display
    ;; ------------------------------------------------------
@@ -210,7 +512,7 @@
    ;; Type styling
    ;; ------------------------------------------------------
    :sans          {:font-family :$sans-serif-font-stack}
-   :sans-serif    {:font-family :$serif-font-stack}
+   :serif         {:font-family :$serif-font-stack}
    :italic        {:font-style :italic}
    :oblique       {:font-style :oblique}
 
@@ -220,66 +522,105 @@
    :lowercase     {:text-transform :lowercase}
    :capitalize    {:text-transform :capitalize}
 
+   ;; Icon enhancement
+   ;; ------------------------------------------------------
+   :enhanceable   {:gap :$icon-enhanceable-gap}
+
    ;; Type sizing
    ;; ------------------------------------------------------
-
-   :xxxsmall      {:fs :$text-xxxsmall
-                   :&_.kushi-mui-icon>svg:height :$text-xxxsmall}
-   :xxsmall       {:fs :$text-xxsmall
-                   :&_.kushi-mui-icon>svg:height :$text-xxsmall}
-   :xsmall        {:fs :$text-xsmall
-                   :&_.kushi-mui-icon>svg:height :$text-xsmall}
-   :small         {:fs :$text-small
-                   :&_.kushi-mui-icon>svg:height :$text-small}
-   :medium        {:fs :$text-medium
-                   :&_.kushi-mui-icon>svg:height :$text-medium}
-   :large         {:fs :$text-large
-                   :&_.kushi-mui-icon>svg:height :$text-large}
-   :xlarge        {:fs :$text-xlarge
-                   :&_.kushi-mui-icon>svg:height :$text-xlarge}
-   :xxlarge       {:fs :$text-xxlarge
-                   :&_.kushi-mui-icon>svg:height :$text-xxlarge}
-   :xxxlarge      {:fs :$text-xxxlarge
-                   :&_.kushi-mui-icon>svg:height :$text-xxxlarge}
+   :xxxsmall      {:fs :$xxxsmall}
+   :xxsmall       {:fs :$xxsmall}
+   :xsmall        {:fs :$xsmall}
+   :small         {:fs :$small}
+   :medium        {:fs :$medium}
+   :large         {:fs :$large}
+   :xlarge        {:fs :$xlarge}
+   :xxlarge       {:fs :$xxlarge}
+   :xxxlarge      {:fs :$xxxlarge}
+   :xxxxlarge     {:fs :$xxxxlarge}
 
    ;; Type weight
    ;; ------------------------------------------------------
-   :thin          {:fw :$text-thin}
-   :extra-light   {:fw :$text-extra-light}
-   :light         {:fw :$text-light}
-   :normal        {:fw :$text-normal}
-   :wee-bold      {:fw :$text-wee-bold}
-   :semi-bold     {:fw :$text-semi-bold}
-   :bold          {:fw :$text-bold}
-   :extra-bold    {:fw :$text-extra-bold}
-   :heavy         {:fw :$text-heavy}
+   :thin          {:fw                                    :$thin
+                   :&_.kushi-icon:font-variation-settings "'wght' 100"
+                   :&.kushi-icon:font-variation-settings  "'wght' 100"
+                   }
+   :extra-light   {:fw                                    :$extra-light
+                   :&_.kushi-icon:font-variation-settings "'wght' 200"
+                   :&.kushi-icon:font-variation-settings  "'wght' 200"
+                   }
+   :light         {:fw                                    :$light
+                   :&_.kushi-icon:font-variation-settings "'wght' 300"
+                   :&.kushi-icon:font-variation-settings  "'wght' 300"
+                   }
+   :normal        {:fw                                    :$normal
+                   :&_.kushi-icon:font-variation-settings "'wght' 400"
+                   :&.kushi-icon:font-variation-settings  "'wght' 400"
+                   }
+   :wee-bold      {:fw                                    :$wee-bold
+                   :&_.kushi-icon:font-variation-settings "'wght' 500"
+                   :&.kushi-icon:font-variation-settings  "'wght' 500"
+                   }
+   :semi-bold     {:fw                                    :$semi-bold
+                   :&_.kushi-icon:font-variation-settings "'wght' 600"
+                   :&.kushi-icon:font-variation-settings  "'wght' 600"
+                   }
+   :bold          {:fw                                    :$bold
+                   :&_.kushi-icon:font-variation-settings "'wght' 700"
+                   :&.kushi-icon:font-variation-settings  "'wght' 700"
+                   }
+   :extra-bold    {:fw                                    :$extra-bold
+                   :&_.kushi-icon:font-variation-settings "'wght' 700"
+                   :&.kushi-icon:font-variation-settings  "'wght' 700"
+                   }
+   :heavy         {:fw                                    :$heavy
+                   :&_.kushi-icon:font-variation-settings "'wght' 700"
+                   :&.kushi-icon:font-variation-settings  "'wght' 700"
+                   }
 
 
    ;; Tracking (aka letter-spacing)
    ;; ------------------------------------------------------
-   :xxxtight      {:letter-spacing :$text-xxxtight}
-   :xxtight       {:letter-spacing :$text-xxtight}
-   :xtight        {:letter-spacing :$text-xtight}
-   :tight         {:letter-spacing :$text-tight}
-   :loose         {:letter-spacing :$text-loose}
-   :xloose        {:letter-spacing :$text-xloose}
-   :xxloose       {:letter-spacing :$text-xxloose}
-   :xxxloose      {:letter-spacing :$text-xxxloose}
+   :xxxtight      {:letter-spacing :$xxxtight}
+   :xxtight       {:letter-spacing :$xxtight}
+   :xtight        {:letter-spacing :$xtight}
+   :tight         {:letter-spacing :$tight}
+   :default-tracking {:letter-spacing 0}
+   :loose         {:letter-spacing :$loose}
+   :xloose        {:letter-spacing :$xloose}
+   :xxloose       {:letter-spacing :$xxloose}
+   :xxxloose      {:letter-spacing :$xxxloose}
 
 
    ;; Animations
    ;; ------------------------------------------------------
-   :instant       {:transition-duration :$duration-instant}
-   :fast          {:transition-duration :$duration-fast}
-   :slow          {:transition-duration :$duration-slow}
-   :extra-slow    {:transition-duration :$duration-extra-slow}
-   :super-slow    {:transition-duration :$duration-super-slow}
-   :ultra-slow    {:transition-duration :$duration-ultra-slow}
+   ;; TODO - change these to t-shirt sizing
+   :instant       {:transition-duration :$instant}
+   :xxxfast       {:transition-duration :$xxxfast}
+   :xxfast        {:transition-duration :$xxfast}
+   :xfast         {:transition-duration :$xfast}
+   :fast          {:transition-duration :$fast}
+   :slow          {:transition-duration :$slow}
+   :xslow         {:transition-duration :$extra-slow}
+   :xxslow        {:transition-duration :$super-slow}
+   :xxxslow       {:transition-duration :$ultra-slow}
 
 
    ;; Surfaces, buttons, containers 2D
    ;; ------------------------------------------------------
-   :rounded       {:border-radius :$rounded}
+   :rounded-xxxsmall      {:border-radius :$rounded-xxxsmal}
+   :rounded-xxsmall       {:border-radius :$rounded-xxsmall}
+   :rounded-xsmall        {:border-radius :$rounded-xsmall}
+   :rounded-small         {:border-radius :$rounded-small}
+   :rounded-medium        {:border-radius :$rounded-medium}
+   :rounded-large         {:border-radius :$rounded-large}
+   :rounded-xlarge        {:border-radius :$rounded-xlarge}
+   :rounded-xxlarge       {:border-radius :$rounded-xxlarge}
+   :rounded-xxxlarge      {:border-radius :$rounded-xxxlarge}
+   
+   ;; This one is used for buttons, tags etc ... The roundedness is always relative to font-size
+   :rounded               {:border-radius :0.5em}
+
    :sharp         {:border-radius 0}
    :pill          {:border-radius :9999px}
 
@@ -290,8 +631,21 @@
    :embossed      {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}
    :convex        {:background-image "linear-gradient(180deg, hsl(0deg 0% 100% / 20%), transparent, hsl(0deg 0% 0% / 15%))"}
    :concave       {:background-image "linear-gradient(180deg, hsl(0deg 0% 0% / 15%), transparent, hsl(0deg 0% 100% / 20%))"}
-   :elevated      {:box-shadow    :$elevated}
 
+   :elevated-0    {:box-shadow      :$elevated-0}
+   :elevated-1    {:box-shadow      :$elevated-1
+                   :dark:box-shadow :$elevated-1-inverse}
+   :elevated-2    {:box-shadow      :$elevated-2
+                   :dark:box-shadow :$elevated-2-inverse}
+   :elevated-3    {:box-shadow      :$elevated-3
+                   :dark:box-shadow :$elevated-3-inverse}
+   :elevated-4    {:box-shadow      :$elevated-4
+                   :dark:box-shadow :$elevated-4-inverse}
+   :elevated-5    {:box-shadow      :$elevated-5
+                   :dark:box-shadow :$elevated-5-inverse}
+
+   :elevated      {:box-shadow      :$elevated-4
+                   :dark:box-shadow :$elevated-4-inverse}
 
    ;; Controls
    ;; ------------------------------------------------------

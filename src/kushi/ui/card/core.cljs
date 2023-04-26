@@ -14,7 +14,7 @@
                 :w--100%
                 :p--2rem
                 :bgc--white
-                :dark:bgc--$gray1000
+                :dark:bgc--$gray-1000
                 {:data-kushi-ui :card})
             attrs)]
      children)))

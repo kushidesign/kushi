@@ -1,7 +1,6 @@
 (ns ^:dev/always kushi.reporting
   (:require
    [io.aviso.ansi :as ansi]
-   [clojure.pprint :refer [pprint]]
    [clojure.string :as string]
    [kushi.printing2 :refer [file+line+col-str]]
    [kushi.utils :as util :refer [mapj]]
@@ -22,14 +21,6 @@
   [coll initial-build?]
   (when (seq coll)
     (let [
-          ;; first change :kushi-ui-theming-defclass key to :kushi-ui-theming-defclass
-          ;; so display log map keys are of a relatively uniform display length
-          coll             (mapv (fn [[k v]]
-                                   [(if (= k :kushi-ui-theming-defclass)
-                                      :kushi-ui-theming*
-                                      k)
-                                    v])
-                                 coll)
           max-label-length (->> coll
                                 (into {})
                                 keys
@@ -97,10 +88,11 @@
                   #(file+line+col-str (assoc %
                                              :printing/normal-font-weight?
                                              true))
-                  diff-callsites))))
+                  (into [] (distinct diff-callsites)))
+            "\n")))
     (when (true? (:caching? user-config))
       #_(str "Caching is not enabled.")
-      (str "No updates to cache."))))
+      (str "No updates to cache.\n"))))
 
 
 (defn print-report!

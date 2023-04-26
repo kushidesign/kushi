@@ -8,15 +8,15 @@
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.collapse.core :refer (collapse)]
    [kushi.ui.core :refer (defcom)]
-   [kushi.ui.icon.mui.core :refer (mui-icon-svgs)]
-   [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-   [kushi.ui.title.core :refer (title)]
+   [kushi.ui.icon.core :refer (icon)]
+   [kushi.ui.icon.mui.svg :as mui.svg]
+   [kushi.ui.label.core :refer (label)]
    [kushi.ui.dom :as dom]
    [kushi.ui.button.core :refer (button)]
    [kushi.playground.shared-styles :as shared-styles]
-   [kushi.playground.state :as state]
-   [kushi.playground.util :as util :refer (capitalize-words )]
-   [kushi.playground.demobox :refer (demobox2)]))
+   [kushi.playground.state :as state :refer [*components-expanded?]]
+   [kushi.playground.util :as util :refer (capitalize-words)]
+   [kushi.playground.demobox.core :refer (demobox2 copy-to-clipboard-button)]))
 
 (defn scroll-window-by-px []
   (dom/scroll-by {:y (:scroll-window-by-px shared-styles/shared-values)}))
@@ -50,21 +50,19 @@
      (sx :p--0
          :.minimal
          :hover:bgc--transparent!important
-         :&>.kushi-label>span:td--none!important
-         {:-mui-icon "compress"
-          :title     "Collapse All Component Demos"})
-     [:span (sx :.xxsmall :mie--0.5em :td--none) s]
-     #_[mui-icon {:title "Collapse All Component Demos"} "compress"]]]))
+         :&>.kushi-label>span:td--none!important)
+     [icon {:title "Collapse All Component Demos"} :compress]
+     [:span (sx :.xxsmall :mie--0.5em :td--none) s]]]))
 
 (defn require-snippet
-  [m* refers]
+  [m* refers requires]
   (let [text (util/require-snippet-text m* refers)]
     {:hiccup    [:div (sx :line-height--1.2rem)
                  (str "(ns your.namespace")
                  [:br]
                  [:span (sx :pis--1rem) (str "(:require " text "))")]]
      :text      text
-     :full-text (str "(ns your.namespace\n  (:require " text "))")
+     :full-text (str "(ns your.namespace\n  (:require " text ")" (when requires  (str "\n" requires))")")
      :form      (read-string (str "(ns your.namespace  (:require " text "))"))}))
 
  (defcom subsection
@@ -74,17 +72,22 @@
        (sx
         'kushi-playground-subsection
         :pb--4.5em:1em
-        :&_p:fs--$text-small
-        :&_p:fw--$text-normal
-        :&_p:lh--1.70
+        :&.description&_p:fs--$kushi-playground-main-section-wrapper_font-size|$medium
+        :&_p:fs--$kushi-playground-main-section-wrapper_font-size|$medium
+        :&_p:ff--$kushi-playground-main-section-wrapper_font-family|$sans-serif-font-stack
+        :&_p:fw--$kushi-playground-main-section-wrapper_font-weight|$normal
+        :&_p:lh--$kushi-playground-main-section-wrapper_line-height|1.7
         :&_p&_code:pb--0.07em
         :&_p&_code:pi--0.2em
         :&_p&_code:fs--0.9em
         :&_.kushi-opt-detail-label:lh--2.05
-        :&_.code.opt-type:bgc--transparent
-        :&.description&_p:fs--$text-medium)
+        :&_.code.opt-type:bgc--transparent)
        &attrs)
-      [:h3 (sx 'kushi-playground-subsection-title :.xlarge :.wee-bold :margin-block--0:1.25rem) title]
+      [:h3 (sx 'kushi-playground-subsection-header
+               :fs--$kushi-playground-main-section-subsection-header_font-size|$xlarge
+               :fw--$kushi-playground-main-section-subsection-header_font-weight|$wee-bold
+               :margin-block--0:1.25rem)
+       title ]
       &children]))
 
 
@@ -102,191 +105,214 @@
                  coll))
 
 (defn kushi-opts-grid-desc [v m]
-  [:div
-   [:span
-    (sx :.kushi-ui-opt-desc
-        :.normal
-        :&_p:m--0
-        :&_p:fs--$text-medium
-        )
-    (let [ret* (cond
-                 (string? v)
-                 (->> v md->hc/md->hiccup md->hc/component)
+  [:span
+   (sx :.kushi-ui-opt-desc
+       :.normal
+       :&_p:m--0
+       :&_p:fs--$medium
+       )
+   (let [ret* (cond
+                (string? v)
+                (->> v md->hc/md->hiccup md->hc/component)
 
-                 (coll? v)
-                 (some->> v util/desc->hiccup)
+                (coll? v)
+                (some->> v util/desc->hiccup)
 
-                 :else
-                 [:span])]
-      (add-links ret*))]])
+                :else
+                [:span])]
+     (add-links ret*))])
 
 (defn kushi-opts-grid-default [v m]
   (if (and (list? v) (= :text (first v)) (string? (second v)))
     [kushi-opts-grid-desc (second v) m]
-    [:div
-     [:span.code
-      (str
-       (cond (nil? v)
-             "nil"
-             (string? v)
-             (str "\"" v "\"")
-             :else
-             v))]]))
+    [:span.code
+     (str
+      (cond (nil? v)
+            "nil"
+            (string? v)
+            (str "\"" v "\"")
+            :else
+            v))]))
 
 (defn kushi-opts-grid-type [v]
-  [:div
-   (when v
-     (cond
-       (or (set? v) (vector? v))
-       (into [:span] (map (fn [x] [:span.code (sx :mie--0.5em) (str x)]) v))
-       (keyword? v)
-       [:span.code (name v)]))])
+  (when v
+    (cond
+      (and (list? v) (= (first v) 'fn*))
+      (let [anon-fn-display* (nth v 2)
+            anon-fn-display (walk/postwalk #(if (re-find #"^p[0-9]+__[0-9]+\#$" (str %))
+                                              (symbol "%")
+                                              %)
+                                           anon-fn-display*)]
+        [:span.code (str "#" anon-fn-display)])
+      (set? v)
+      [:span.code (str v)]
+      (symbol? v)
+      [:span.code (name v)])))
 
 
-(defn kushi-opts-grid-name [v]
-  [:div
-   (sx #_:.kushi-opts-grid-row-item)
-   [:span.code (str ":-" v)]])
-
-(defn kushi-opts-grid-items [maps]
-  (reduce
-   (fn [acc m]
-     (concat acc
-             (let [{nm :name typ :type default :default desc :desc} m]
-               (when nm
-                 [(kushi-opts-grid-name nm)
-                  (kushi-opts-grid-type typ)
-                  (kushi-opts-grid-default default m)
-                  (kushi-opts-grid-desc desc m)]))))
-   []
-   maps) )
-
-(defn kushi-opts-grid [kushi-opts]
-  (let [maps             (second kushi-opts)
-        header-row-data  (maps->header-row-data maps)
-        header-row-items (map #(vector title
-                                       (sx
-                                        'opts-grid-header
-                                        :.kushi-opts-grid-row-item
-                                        :.capitalize
-                                        :pbe--0.5em)
-                                       %)
-                              header-row-data)
-        grid-items (kushi-opts-grid-items maps)]
-    (into [:div (sx 'kushi-opts-grid
-                    :.grid
-                    :.small
-                    {:style {:gtc :2fr:1fr:1fr:3fr}})]
-          (concat header-row-items grid-items))))
-
-(defn opt-detail [label v f]
+(defn opt-detail [text v f kw]
   [:div
    (sx :.flex-row-fs
        :pb--0.5em
-       {:style {:ai (if (= label "Desc.") :flex-start :center)}})
+       {:style {:ai (if (= text "Desc.") :flex-start :center)}})
    [:div
     (sx 'kushi-opt-detail-label :min-width--75px)
-    [title (sx :.meta-desc-label :.normal)
-     (if (= f kushi-opts-grid-type)
-       (if (or (set? v) (vector? v))
-         "Enum"
-         label)
-       label)]]
-   [f v]])
+    [label (sx :.kushi-playground-meta-desc-label :.normal) text]]
+   [:div (sx 'kushi-opt-detail-value)
+    [f v]]])
 
+(defn component-section-body
+  [{:keys [fname m* m refers requires demo title demo-attrs doc-hiccup opts]}]
+  ^{:key fname}
+  [:section
+   (sx :mbe--40px )
+   [:section
+    [demobox2 m]
+    [:section (sx :padding-block--1rem)
+     [:div
+      (sx 'kushi-snippet
+          :.relative
+          :.codebox
+          :&_pre:max-width--250px
+          {:data-kushi-ui :snippet})
+      (let [{:keys [full-text text]} (require-snippet m* refers requires)]
+        [:<>
+         [util/formatted-code full-text]
+         [copy-to-clipboard-button
+          (sx :.northeast-inside! {:-text-to-copy text})]])]]
+
+    [:div
+     (sx :d--none :sm:d--block)
+     (when demo
+       [subsection
+        (merge-attrs
+         (sx :.description {:-title [subsection-title title "Examples"]})
+         demo-attrs)
+        [demo]])]
+
+    [subsection
+     (sx :.description {:-title [subsection-title title "Description"]})
+     doc-hiccup]
+
+    (when opts
+      [subsection
+       {:-title [subsection-title title "Opts"]}
+       (into [:div]
+             (for [{nm      :name
+                    typ     :type
+                    pred    :pred
+                    desc    :desc
+                    default :default} (second opts)]
+               (when nm
+                 [:div (sx
+                        :.small
+                        [:first-child:bbs "1px solid var(--gray-200)"]
+                        [:dark:first-child:bbs "1px solid var(--gray-800)"]
+                        [:bbe "1px solid var(--gray-200)"]
+                        [:dark:bbe "1px solid var(--gray-800)"]
+                        :pb--1em)
+                  [:div (sx :mb--0.7rem)
+                   [:span (sx :.code :.semi-bold) (str ":-" nm)]]
+                  [:div (sx :pis--1.4em)
+                   (when pred [opt-detail "Pred" pred kushi-opts-grid-type :pred])
+                   (when typ [opt-detail "Type" typ kushi-opts-grid-type :type])
+                   [opt-detail "Default" default kushi-opts-grid-default :default]
+                   (when desc [opt-detail "Desc." desc kushi-opts-grid-desc :desc])]])))])]]
+  )
 
 (defn component-section
-  [{m*            :meta
-    desc          :desc
-    refers        :refers
-    section-title :title
-    opts          :opts
-    :as           m}]
-  (let [{kushi-desc :desc
-         kushi-opts :opts} (meta m*)
-        opts                                 (or kushi-opts opts)
-        fname                                (util/meta->fname m*)
-        title                                (or section-title (-> fname (string/replace #"-" " ") capitalize-words))
-        doc-hiccup                           (-> (or kushi-desc desc) util/desc->hiccup add-links)]
-    ^{:key title}
-    [collapse
-     (sx
-      :bbew--4px
-      :bbes--solid
-      :bbec--$gray100
-      :dark:bbec--$gray700
-      :&.kushi-collapse-expanded:bbec--black
-      :dark:&.kushi-collapse-expanded:bbec--$gray50
-      :transition--border-block-end-color:200ms:linear
-      {
-          ;; :ref            (fn [el]
-          ;;                   (dom/observe-intersection
-          ;;                    {:element          el
-          ;;                     :intersecting     #(swap! state/*visible-sections assoc (.-id el) (dom/el-idx el))
-          ;;                     :not-intersecting #(swap! state/*visible-sections dissoc (.-id el))
-          ;;                     :f                #(let [focused-component-is-visible?  (contains? @state/*visible-sections @state/*focused-component)]
-          ;;                                          (when (or (not @state/*focused-component)
-          ;;                                                    (not focused-component-is-visible?))
-          ;;                                            (state/set-focused-component! (ffirst (sort-by val < @state/*visible-sections)))))}))
-       :id             fname
-       :on-click       #(state/nav! fname)
-       :-label         title
-       :-mui-icon      :add
-       :-icon          :add
-       :-mui-icon-style :outlined
-       :-icon-expanded :remove
-       :-icon-position :end
-       :-icon-svg      (get mui-icon-svgs "add")
-       :-expanded?     (:components-expanded? @state/*state)
-       :-header-attrs  (sx
-                        :.xxlarge
-                        :pb--$vp-top-header-padding
-                        :hover:bgc--$gray50
-                        :dark:hover:bgc--$gray800
-                        ["&[aria-expanded='true']:hover:bgc" :transparent])})
-     ^{:key fname}
-     [:section
-      (sx :mbe--40px )
-      [:section
-       [demobox2 m]
-       [:section (sx :padding-block--1rem)
-        [:div
-         (sx 'kushi-snippet
-             :.relative
-             :.codebox
-             {:data-kushi-ui :snippet})
-         (let [{:keys [full-text text]} (require-snippet m* refers)]
-           [:<>
-            [util/formatted-code full-text]
-            [copy-to-clipboard-button
-             (sx :.absolute
-                 :inset-block-start--0
-                 :inset-inline-end--0
-                 {:on-click #(dom/copy-to-clipboard text)})]])]]
-
-       [subsection
-        (sx :.description {:-title [subsection-title title "Description"]})
-        doc-hiccup]
-
-       (when opts
-         [subsection
-          {:-title [subsection-title title "Opts"]}
-          (into [:div]
-                (for [{nm      :name
-                       typ     :type
-                       desc    :desc
-                       default :default} (second opts)]
-                  (when nm
-                    [:div (sx
-                           :.small
-                           [:first-child:bbs "1px solid var(--gray200)"]
-                           [:dark:first-child:bbs "1px solid var(--gray800)"]
-                           [:bbe "1px solid var(--gray200)"]
-                           [:dark:bbe "1px solid var(--gray800)"]
-                           :pb--1em)
-                     [:div (sx :mb--0.7rem)
-                      [:span (sx :.code :.wee-bold) (str ":-" nm)]]
-                     [:div (sx :pis--1.4em)
-                      (when typ [opt-detail "Type" typ kushi-opts-grid-type])
-                      [opt-detail "Default" default kushi-opts-grid-default]
-                      (when desc [opt-detail "Desc." desc kushi-opts-grid-desc])]])))])]]]))
+  [{m*         :meta
+    demo       :demo
+    demo-attrs :demo-attrs
+    desc       :desc
+    refers     :refers
+    requires   :requires
+    title      :title
+    opts       :opts
+    :as        m}]
+         
+  (let [fname                      (util/meta->fname m*)
+        no-components-are-focused? (not @state/*focused-component)
+        focused?                   (state/focused? fname)
+        render-collapses?          @state/*md-or-smaller?
+        header-attrs               (sx :fs--$kushi-playground-main-section-header_font-size|$xxlarge
+                                       :.wee-bold
+                                       :.hover-trailing-fade-out
+                                       (when focused? :.no-hover-bgc)
+                                       :pb--$vp-top-header-padding
+                                       :hover:bgc--$gray-100
+                                       :dark:hover:bgc--$gray-800
+                                       ["&[aria-expanded='true']:hover:bgc" :transparent])
+        ]
+    (if render-collapses?
+      (let [{kushi-desc :desc
+             kushi-opts :opts} (meta m*)
+            opts                                 (or kushi-opts opts)
+            title                                (or title (-> fname (string/replace #"-" " ") capitalize-words))
+            doc-hiccup                           (-> (or kushi-desc desc) util/desc->hiccup add-links)
+            component-section-body-opts          (util/keyed fname
+                                                             m*
+                                                             m
+                                                             refers
+                                                             requires
+                                                             title
+                                                             demo
+                                                             demo-attrs
+                                                             doc-hiccup
+                                                             opts)]
+        ^{:key title}
+        [collapse
+         (sx
+          :.hover-trailing-fade-out-wrapper
+          :bbew--4px
+          :bbes--solid
+          :bbec--$gray-100
+          :dark:bbec--$gray-700
+          :&.kushi-collapse-expanded:bbec--black
+          :dark:&.kushi-collapse-expanded:bbec--$gray-50
+          :transition--border-block-end-color:200ms:linear
+          {:id             fname
+           :on-click       #(state/nav! fname)
+           :-label         title
+           :-icon          [icon mui.svg/add]
+           :-icon-expanded [:span (sx :.flex-row-sb
+                                      :gap--2rem)
+                            [icon mui.svg/remove]]
+           :-icon-position :end
+           :-expanded?     (or @*components-expanded? (state/focused? fname))
+           :-header-attrs  header-attrs})
+         [component-section-body component-section-body-opts]])
+         
+         
+         (when (or no-components-are-focused?
+                   focused?)
+           (let [{kushi-desc :desc
+                  kushi-opts :opts} (meta m*)
+                 opts                                 (or kushi-opts opts)
+                 title                                (or title (-> fname (string/replace #"-" " ") capitalize-words))
+                 doc-hiccup                           (-> (or kushi-desc desc) util/desc->hiccup add-links)
+                 component-section-body-opts          (util/keyed fname
+                                                                  m*
+                                                                  m
+                                                                  refers
+                                                                  requires
+                                                                  title
+                                                                  demo
+                                                                  demo-attrs
+                                                                  doc-hiccup
+                                                                  opts)]
+             [:div.hover-trailing-fade-out-wrapper
+              [:header 
+               (merge-attrs
+                (sx :.pointer
+                    :bbe--$divisor
+                    [:bbec (if no-components-are-focused? :$neutral-100 :transparent)]
+                    [:dark:bbec (if no-components-are-focused? :$neutral-750 :transparent)]
+                    {:role     :button
+                     :on-click #(reset! state/*focused-component fname)})
+                header-attrs
+                (when focused? {:aria-expanded true}))
+               title]
+              (when focused?
+                [component-section-body
+                 component-section-body-opts])])))))

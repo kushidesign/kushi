@@ -7,6 +7,7 @@
 (def kushi-github-url  "https://github.com/kushidesign/kushi")
 (def kushi-clojars-url "https://clojars.org/design.kushi/kushi")
 
+;; Todo find way around using pprint here
 (defn pprint-snippet [coll]
   (string/replace (with-out-str (pprint coll)) #"\n$" ""))
 
@@ -22,7 +23,6 @@
                :ns
                #_(str "/" nm)
                )]
-    #_(js/console.log {:nm nm :vc vc})
     (-> vc
         symbol
         vector
@@ -34,14 +34,7 @@
         [a1]          args
         [_sx sx-attr] (when (list? a1) a1)
         break?        (or (map? a1) (and (= _sx 'sx) (map? sx-attr)))]
-    (-> code first str)
-    #_(-> (str (into []
-                   (cons (if break? :__BR__ :__NOBR__) args*)
-                   #_(cons (symbol nm)
-                           (cons (if break? :__BR__ :__NOBR__)
-                                 args*))))
-        (string/replace #" :__BR__" "\n")
-        (string/replace #" :__NOBR__" "")) ))
+    (-> code first str)))
 
 (defn capitalize-words
   "Capitalize every word in a string"
@@ -50,12 +43,15 @@
        (map string/capitalize)
        string/join))
 
+(defn anon-fn-syntax [s]
+  (string/replace s #"\(fn\* \[" "(fn [e"))
+
 (defn formatted-code [s]
   [:pre
    [:code {:class :language-clojure
            :style {:white-space :pre
                    :line-height 1.5}}
-    s]])
+    (anon-fn-syntax s)]])
 
 (defn kushi-component-desc->md [coll]
   (string/replace (string/join " "

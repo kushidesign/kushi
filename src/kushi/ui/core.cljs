@@ -1,5 +1,5 @@
 (ns ^:dev/always kushi.ui.core
-  (:require-macros [kushi.core :refer [keyed add-system-font-stack]]
+  (:require-macros [kushi.core :refer [keyed]]
                    [kushi.ui.core])
   (:require [clojure.string :as string]
             [kushi.core :refer [merge-attrs]]))

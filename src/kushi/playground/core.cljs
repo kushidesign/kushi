@@ -1,22 +1,41 @@
-(ns kushi.playground.core
+(ns ^:dev/always kushi.playground.core
   (:require
+   [applied-science.js-interop :as j]
+   [clojure.string :as string]
    [malli.dev.pretty :as pretty]
    [malli.core :as malli]
-   [kushi.core :refer [sx merge-attrs]]
+   [garden.color]
+   [kushi.core :refer [sx merge-attrs breakpoints]]
    [kushi.color :refer [colors->tokens]]
    [kushi.colors :as kushi.colors]
+   [kushi.ui.icon.core :refer (icon)]
+   [kushi.ui.core :refer [defcom]]
+   [kushi.ui.input.text.core :refer [input]]
+   [kushi.ui.input.switch.core :refer [switch]]
+   [kushi.ui.input.slider.core :refer [slider]]
+   [kushi.ui.tokens :as tokens]
    [kushi.ui.button.core :refer [button]]
+   [kushi.ui.button.demo :as button-demo]
+   [kushi.ui.input.switch.demo :refer [switch-demo switch-demo-light+dark]]
+   [kushi.ui.collapse.core :refer (collapse accordian)]
    [kushi.ui.examples :as examples]
    [kushi.playground.nav :as nav]
+   [kushi.playground.tweak.element :refer [element-tweaker!]]
+   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
+   [kushi.ui.progress.core :refer (progress propeller spinner thinking)]
    [kushi.playground.about :as about]
-   [kushi.playground.state :as state]
+   [kushi.playground.state :as state :refer [*state]]
    [kushi.playground.component-section :refer [component-section]]
-   [kushi.playground.sidenav :refer [mobile-subnav desktop-sidenav hidden-desktop-sidenav]]
+   [kushi.playground.sidenav :refer [mobile-subnav desktop-sidenav]]
    [kushi.playground.ui :refer [light-dark-mode-switch]]
-   [kushi.playground.colors :as colors]
+   [kushi.playground.colors :as playground.colors]
    [kushi.playground.util :as util :refer-macros [keyed]]
-   [kushi.playground.shared-styles :as shared-styles]))
+   [kushi.playground.shared-styles :as shared-styles]
 
+  ;; leave in, comment out when tweaking typescale
+  ;; [kushi.playground.tweak.typescale :refer [type-tweaker]]
+
+   ))
 
 (def Example
   [:map
@@ -24,8 +43,8 @@
    [:meta fn?]
    [:desc {:optional true} [:or vector? string?]]
    [:stage {:optional true} [:map [:style [:map [:min-height keyword?]]]]]
-   [:controls {:optional true} [:vector keyword?]]
-   [:content
+   [:variants {:optional true} [:vector keyword?]]
+   [:examples
     [:vector
      [:map
       [:example
@@ -55,34 +74,49 @@
   ([coll]
    (components-to-render coll []))
   ([coll syms]
-   (let [idxs (map (partial component-by-index coll) syms)
-        ;; idxs [0]
-         ret (cond-> coll
-               (seq idxs) (filter-by-index idxs)
-               true validated-components)]
+   (let [idxs* (:kushi-component-indexes @*state)
+         idxs  (if (and (seq (:kushi-components-indexes @*state))
+                        (every? int? idxs*))
+                 idxs*
+                 (map (partial component-by-index coll) syms))
+
+         ;; idxs [0 1]
+
+         ;; idxs [13 14]
+
+         ret   (cond-> coll
+                 (seq idxs) (filter-by-index idxs)
+                 true validated-components)]
      ret)))
 
 (defn main-section [s & children]
   ^{:key s}
   [:div
-   (sx 'kushi-main-section-wrapper
-       :mbs--155px
+   (sx 'kushi-playground-main-section
+       [:mbs "calc(2 * var(--kushi-playground-mobile-header-height))"]
        :md:mbs--0
        {:class [(str s "-wrapper")]})
    (into [:section
           {:id    s
-           :class [s :kushi-main-section]}]
+           :class [s]}]
          children)
-   [:section#kushi-docs (sx :min-height--1000px :flex-grow--0)]])
+   #_[:section#kushi-docs (sx :min-height--1000px :flex-grow--0)]])
 
-(def main-view-outer-wrapper-attrs
+
+(def kushi-playground-page-wrapper-attrs
+  "Default styling class for kushi playground page wrapper, only child of #app div.
+   This can be augmented by the user-provied :page-wrapper-attrs map."
   (sx
-   'main-view-outer-wrapper
-   :ff--Inter|system|sans-serif
-   :.wee-bold
+   'kushi-playground-page-wrapper-attrs
+   :.flex-row-fs
+   :ai--fs
+
+   ;; :ff--Inter|system-ui|sans-serif
+   ;; :.wee-bold
+   ;; TODO wire most of these up into theming
    {:style {:$topnav-height                                      (str (:topnav-height shared-styles/shared-values) "px")
-            :$divisor                                            "4px solid var(--gray100)"
-            :$divisor-dark                                       "4px solid var(--gray700)"
+            :$divisor                                            "var(--kushi-playground-main-section-divisor, 4px solid var(--gray-100))"
+            :$divisor-dark                                       "var(--kushi-playground-main-section-divisor-inverse, 4px solid var(--gray-700))"
             :$title-margin-block                                 :0.0em:3.5rem
             :$body-copy-line-height                              :1.5em
             :$sidebar-width                                      :225px
@@ -91,9 +125,11 @@
             :$page-padding-inline                                :1.5rem
             :$vp-top-header-padding                              :0.7em
             :$vp-top-header-padding-with-offset                  (str "calc( var(--vp-top-header-padding) - "
-                                                                       (:scroll-window-by-px shared-styles/shared-values)
-                                                                       "px)")
+                                                                      (:scroll-window-by-px shared-styles/shared-values)
+                                                                      "px)")
             :$kushi-tooltip-placement-inline-offset              :3px
+            :$kushi-playground-sidenav-max-width                 :250px
+
             "dark:&_.kushi-copy-to-clipboard-button-graphic:filter" '(invert 1)
             "dark:&_a.kushi-link:after:filter"                      '(invert 1)
 
@@ -103,10 +139,13 @@
             :&_a.kushi-link:d                                     :inline-flex
             :&_a.kushi-link:after:content                         "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='12px' viewBox='0 0 24 24' width='12px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"
             :&_a.kushi-link:after:d                               :flex
-            :&_a.kushi-link:after:flex-direction                   :column
+            :&_a.kushi-link:after:flex-direction                  :column
             :&_a.kushi-link:after:jc                              :center
             :&_a.kushi-link:after:va                              :middle
-            :&_a.kushi-link:after:mi                              :0.2em:0.25em}}) )
+            :&_a.kushi-link:after:mi                              :0.2em:0.25em
+
+            ;; For dev-mode isolation
+            "&_.kushi-playground-dev-mode>section:not(.kushi-playground-dev-mode-target):display" :none}}))
 
 
 (defn desktop-lightswitch []
@@ -120,49 +159,23 @@
    [light-dark-mode-switch]])
 
 
-(def main-view-wrapper-attrs
-  (sx :.flex-col-fs
-      :md:flex-direction--row
-      :md:jc--fs
-      :lg:jc--c
-      :min-height--1500px
-      {:style {:md:pbs (str "calc(var(--topnav-height) + "
-                            (:main-view-wrapper-padding-block-start shared-styles/shared-values)
-                            "px)")}}))
-
 (defn info-sections [style-class]
   (into [:div.flex-row-fs]
         (for [color-class [:neutral :accent :positive :negative :warning]]
           [:p.info (sx :p--1em :m--1em {:class [color-class style-class]}) "info section"])))
 
-(defn button-gallery []
-  (let [sem   [:neutral :positive :negative :accent :warning]
-        kinds [:minimal :simple :bordered :filled ]]
-    [:div.dark
-     (into [:div (sx :.flex-col-c :ai--c)]
-           (for [styling-class [nil :bordered :filled]]
-             [info-sections styling-class]))
-     [:div (sx :.flex-row-c
-               :>div:first-child:mie--2em
-               :>div:p--3em
-               :>div:flex-grow--1
-               :>div:flex-shrink--0
-               :&_button:mb--0.5em)
-      (into [:div.flex-row-sa (sx :max-width--1100px)]
-            (for [kind kinds]
-              (into [:div (sx :.flex-col-c :ai--c)]
-                    (for [kw sem]
-                      [button {:class [kw kind :medium]} "Hello"])))) ]]))
 
 ;; TODO - just get this from kushi.colors and mix with user-supplied?
 (defn color-scales2
   [{:keys [colorlist]}]
   (let [tokens (colors->tokens kushi.colors/colors {:format :css})
         coll   (keep (fn [[k v]]
-                       (let [color*       (->> k name (re-find #"^--([a-zAZ-_]+)([0-9]+)$"))
+                       (let [color*       (or (->> k name (re-find #"^--([a-zAZ-_]+)-([0-9]+)$"))
+                                              (->> k name (re-find #"^\$([a-zAZ-_]+)-([0-9]+)$")))
                              color-name   (some-> color* second)
                              color-level  (some-> color* last js/parseInt)
                              color-token? (contains? (into #{} colorlist) (keyword color-name))]
+                         (name k) #_(keyed color*)
                          (when color-token?
                            {:color*      color*
                             :color-name  color-name
@@ -178,14 +191,13 @@
                         {:color-name %
                          :scale      scale})
                      colorlist)]
+    (keyed coll ret)
     ret))
 
-;; TODO Make this work with anything user-supplied
-(def colorlist [:gray :red :orange :yellow :green :blue :purple :magenta :brown])
+
 
 (defn main-view
   [{:keys [
-           main-view-attrs
            site-header
           ;; desktop-nav ; disable for now
            mobile-nav
@@ -201,8 +213,10 @@
            render
           ;;  theme
            hide-lightswitch?
+           use-low-x-type-scale?
            display-kushi-links-in-mobile-nav?
-           ]
+           colorlist
+           page-wrapper-attrs]
     :or   {render            []
            mobile-nav        nav/kushi-mobile-nav
            custom-components nil
@@ -223,63 +237,94 @@
                               :sidenav-header "Clojars"}
            kushi-about       {:render?        true
                               :header         "About"
-                              :sidenav-header "About"}}
+                              :sidenav-header "About"}
+           colorlist         [:gray :red :orange :gold :yellow :green :blue :purple :magenta :brown]}
     :as   m}]
-  (let [
-        m                      (merge m (keyed render
-                                               mobile-nav
-                                               kushi-colors
-                                               kushi-user-guide
-                                               kushi-clojars
-                                               kushi-about))
+  (let [m                   (merge m (keyed render
+                                            mobile-nav
+                                            kushi-colors
+                                            kushi-user-guide
+                                            kushi-clojars
+                                            kushi-about))
 
-        kushi-components        (merge kushi-components
-                                       {:coll (components-to-render examples/components [])})
-        global-color-scales     (color-scales2 {:colorlist colorlist})
-        nav-opts                (keyed
-                                 custom-components
-                                 kushi-components
-                                 custom-colors
-                                 kushi-colors
-                                 custom-typography
-                                 kushi-typography
-                                 kushi-user-guide
-                                 kushi-clojars
-                                 kushi-about)]
+        kushi-components    (merge kushi-components
+                                   {:coll (let [idxs* (:kushi-component-indexes @*state)
+                                                idxs  (if (and (seq (:kushi-components-indexes @*state))
+                                                               (every? int? idxs*))
+                                                        idxs*
+                                                        (map (partial component-by-index examples/components) []))
+                                                ret   (cond-> examples/components
+                                                        (seq idxs) (filter-by-index idxs)
+                                                        true validated-components)]
+                                            ret)})
+
+        global-color-scales (color-scales2 {:colorlist colorlist})
+
+        nav-opts            (keyed
+                             custom-components
+                             kushi-components
+                             custom-colors
+                             kushi-colors
+                             custom-typography
+                             kushi-typography
+                             kushi-user-guide
+                             kushi-clojars
+                             kushi-about)
+
+        page-wrapper-attrs-from-user
+        page-wrapper-attrs]
 
 
+
+    ;; Page layout -------------------------------------------------------------------------------
     [:div
-     (merge-attrs main-view-outer-wrapper-attrs
-                  (when hide-lightswitch? {:class [:hide-lightswitch]})
-                  main-view-attrs)
+     (merge-attrs kushi-playground-page-wrapper-attrs
+                  (when hide-lightswitch? {:class [:hide-lightswitch :one-more-thing]})
+                  page-wrapper-attrs-from-user)
 
+     ;; Auxillary fixed controls
+     ;; [type-tweaker]
+     #_[:div.fixed-inline-end
+      [:button {:on-click #(element-tweaker!)} [icon :tune]]]
      [desktop-lightswitch]
 
-       ;; User Desktop nav - leave out for now
-     #_[desktop-nav]
 
-     ;; print focused section for deving
-     #_(when true
-       [:div
-        (sx :.fixed
-            :bottom--0
-            :right--0)
-        @state/*focused-section])
+     ;; Mobile nav
+     [mobile-nav (keyed site-header display-kushi-links-in-mobile-nav?)]
+     [mobile-subnav nav-opts]
 
+     ;; Sidenav
+     [desktop-sidenav (keyed site-header nav-opts)]
+
+     ;; Main Section
      [:div
-      main-view-wrapper-attrs
-
-      [mobile-nav (keyed site-header display-kushi-links-in-mobile-nav?)]
-
-      [mobile-subnav nav-opts]
-
-      [desktop-sidenav (keyed site-header nav-opts)]
-
-      ;; TODO eliminate
-      [hidden-desktop-sidenav {:opts (merge
-                                      {:kushi-components-sidenav-header (:sidenav-header kushi-components)}
-                                      (keyed kushi-components))}]
-
+      (let [md-pbs (str "calc(var(--topnav-height) + "
+                        (:main-view-wrapper-padding-block-start shared-styles/shared-values)
+                        "px)")]
+        (sx
+         'kushi-playground-main-section-wrapper
+         :.flex-col-fs
+         :.grow
+         :.no-shrink
+         :.fast
+         :ai--c
+         :&_p:ff--$kushi-playground-main-section-wrapper_font-family|$sans-serif-font-stack
+         :&_p:fs--$kushi-playground-main-section-wrapper_font-size|$medium
+         :fs--$kushi-playground-main-section-wrapper_font-size|$medium
+         :transition-property--opacity
+         :md:flex-direction--row
+         :md:jc--fe
+         :md:pie--05vw
+         :lg:jc--c
+         :lg:pis--4rem
+         :pi--$page-padding-inline
+         :pbe--5rem
+         :w--100%
+         [:md:pbs md-pbs]
+         {:id    "#kushi-playground-main-section-wrapper"
+          :style {:md:pbs (str "calc(var(--topnav-height) + "
+                               (:main-view-wrapper-padding-block-start shared-styles/shared-values)
+                               "px)")}}))
 
       (case @state/*focused-section
 
@@ -314,7 +359,7 @@
          "kushi-colors"
          [about/intro-section {:-header (:header kushi-colors)}
           about/kushi-colors-about]
-         [colors/color-rows global-color-scales]]
+         [playground.colors/color-rows global-color-scales]]
 
         :custom-typography
         [main-section
@@ -326,13 +371,17 @@
          "kushi-typography"
          [about/intro-section
           {:-header (:header kushi-typography)}
-          about/kushi-typography-about]]
+          [about/kushi-typography-about (keyed use-low-x-type-scale?)]]]
 
         :kushi-about
         [main-section
          "kushi-about"
          [about/intro-section
           {:-header (:header kushi-about)}
-          about/kushi-about]])]]))
+          about/kushi-about]])]
 
-
+     ;; Placeholder for secondary nav, necessary for symmetrical layout on desktop
+     [:div
+      (sx 'kushi-playground-desktop-secondary-nav-wrapper
+          :.kushi-playground-sidenav-wrapper
+          :h--100vh)]]))

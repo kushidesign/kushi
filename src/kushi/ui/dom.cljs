@@ -1,6 +1,16 @@
 (ns kushi.ui.dom
   (:require
+   [clojure.string :as string]
    [applied-science.js-interop :as j]))
+
+
+(defn css-style-string [m]
+  (string/join ";"
+               (map (fn [[k v]]
+                      (str (name k)
+                           ":"
+                           (if (number? v) (str v) (name v))))
+                    m)))
 
 ;; https://gist.github.com/rotaliator/73daca2dc93c586122a0da57189ece13
 (defn copy-to-clipboard [val]
@@ -107,6 +117,8 @@
     (j/assoc! el "ggpn" ggpn)
     el))
 
+(defn cet [e] (some-> e .-currentTarget))
+(defn cetv [e] (some-> e .-currentTarget .-value))
 (defn et [e] (some-> e .-target))
 (defn et+ [e] (some-> e .-target el+))
 (defn etv [e] (some-> e .-target .-value))
@@ -204,3 +216,9 @@
      (j/call el :scrollIntoView (clj->js opts)))))
 
 (defn scroll-to-top [] (js/window.scrollTo 0 0))
+
+(defn writing-direction []
+  (.-direction (js/window.getComputedStyle js/document.documentElement)))
+
+(defn dev-only [x]
+  (when ^boolean js/goog.DEBUG x))

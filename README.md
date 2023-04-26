@@ -12,15 +12,15 @@
 ## Features
 - **100% Clojure(Script)**
 
-- **Minimal set of headless UI components**
-
-- **Themeable design system foundation**
-
-- **Shorthand styling syntax shadows CSS standard**
+- **Compile-time macros generate static CSS**
 
 - **Co-location of styling at the element level**
 
-- **Compile-time macros generate static CSS**
+- **Shorthand styling syntax shadows CSS standard**
+
+- **Minimal set of headless UI components**
+
+- **Themeable design system foundation**
 
 - **Supports media-queries, psuedos, and combo selectors**
 
@@ -80,7 +80,7 @@ The following features work in concert, making it easy to roll your own design s
 - Functional styling engine
 - Configurable theming
 
-Usage of Kushi's design system and component library is completly optional. You can just use the functional styling engine for a lightweight css-in-cljs solution.
+Usage of Kushi's design system and component library is completly optional. You can just use the functional styling engine for a lightweight compile-time css-in-cljs solution.
 
 <br>
 
@@ -180,9 +180,9 @@ In summary, the `kushi.core/sx` is a macro that returns an attribute map which c
   - A `class` property containing the correct auto-generated (or prefixed) classnames.
   - If necessary, a `style` property containing the correct auto-generated css variable names.
   - All the other attributes you specify in your attributes map (supplied as an optional last arg to `sx`).
-  - A dev-build-only `data-cjs` attribute for browser debugging. See [Helpful metadata](#helpful-metadata).
+  - A dev-build-only `data-sx` attribute for browser debugging. See [Helpful metadata](#helpful-metadata).
 
-All your css is written to a static file, via a build hook for the `:compile-finish` stage (or similar depending on build tool).
+All your css is written to a static file, via a build hook for the `:compile-finish` stage (assuming shadow-cljs).
 <!---You can optionally disable writing styles to disk and enable producton builds to [inject styles at runtime](#runtime-injection).
 -->
 <br>
@@ -345,7 +345,7 @@ As seen in the example above, you can use a quoted list to convey css function v
 
 ### Using CSS custom properties
 
-The following sugar is supported for css variables:
+The following sugar is supported for css variables values:
 
 ```Clojure
 (sx :border-radius--$mycssvarname)
@@ -353,14 +353,39 @@ The following sugar is supported for css variables:
 (sx [:border-radius :$mycssvarname)
 
 (sx {:style {:border-radius :$mycssvarname})
+```
+All of the above would generate the following css value:
 
-;; All of the above would be equivalent to:
-
-(sx {:style {:color "var(--mycssvarname)"})
+```css
+border-radius: var(--mycssvarname);
 ```
 
-<!-- Add section for defining css custom props -->
+Up to 2 additional fallback values can be supplied:
 
+```Clojure
+(sx :border-radius--$mycssvarname|$myfallback|10px)
+```
+The above would generate the following css value:
+
+```css
+border-radius: var(--mycssvarname, var(--myfallback, 10px));
+```
+
+css custom properties can be defined (on the element level) like this:
+
+```Clojure
+(sx $mycustomprop--10px)
+
+(sx [$mycustomprop :10px])
+
+(sx {:style {$mycustomprop :10px})
+```
+All of the above would generate the an attribute map looking something like this:
+
+```css
+{:class ["_897766778"]
+ :style {"--mycustomprop" "10px"}}
+```
 
 
 <br>
@@ -429,7 +454,7 @@ Unlike the `sx` macro, defclass does not support runtime bindings.
 (defclass headline
   :ta--left
   :w--100%
-  :ff--Inter|sys|sans-serif
+  :ff--Inter|system-ui|sans-serif
   :fw--900
   :fs--24px
   :tt--u
@@ -519,6 +544,7 @@ With `defclass`, you can mix-in any other defined classes:<br>
 ;;   display: flex;
 ;;   flex-direction: row;
 ;;   justify-content: center;
+;;   align-items: center;
 ;;   top: 0px;
 ;;   left: 0px;
 ;;   border: 1px solid black;
@@ -539,6 +565,7 @@ With `defclass`, you can mix-in any other defined classes:<br>
 ;;   display: flex;
 ;;   flex-direction: row;
 ;;   justify-content: center;
+;;   align-items: center;
 ;;   top: 0px;
 ;;   left: 0px;
 ;;   font-size: 200px;
@@ -550,7 +577,7 @@ With `defclass`, you can mix-in any other defined classes:<br>
 ```
 In the example above, the `:.headline` class is one of several predefined classes that ships with kushi.
 
-The full list of predefined classes:
+Other predefined classes:
 
 ```Clojure
 ;; positioning
@@ -615,8 +642,6 @@ The full list of predefined classes:
 ;; transitions
 :.transition
 
-;; psuedo-element helper
-:.content-blank
 
 ```
 <!-- TODO add debug grid helpers to above list -->
@@ -627,7 +652,7 @@ Checkout <a href="https://github.com/kushidesign/kushi/blob/main/src/kushi/ui/ut
 
 ### Applying Classes Conditionally
 
-You can apply classes conditionally within the `sx` macro using the following constructs: `if` `when` `cond` `if-let` `when-let` `if-not`, and `when-not`.<br>
+You can apply classes conditionally within the `sx` macro using the following constructs: `if`, `when`, `cond`, `if-let`, `when-let`, `if-not`, and `when-not`.<br>
 ```Clojure
 ;; In your ns for shared styles
 (defclass active-link :color--red)
@@ -955,48 +980,7 @@ You could also use a remote url to load a hosted font file.
                 :src ["url(../fonts/FiraCode-Regular.woff)"]})
 ```
 
-### System Font Stack
-You can use the `kushi.core/add-system-font-stack` macro to use a system font stack.
-This uses an efficient, [`@font-face`-based  approach](https://github.com/csstools/system-font-css) introduced by Jonathan Neal.
-```Clojure
-; In your core namespace
-(add-system-font-stack)
-```
-The example above would add a total of 8 `@font-face` definitions to your kushi css file.
-One `normal` and one `italic` for weights `300`("light"), `400`("regular"), `500`("semi-bold"), and `700`("bold"). Note that the name of the font-family kushi provides is **`sys`**, *not* `system-ui`. This is for [differentiation](https://developer.mozilla.org/en-US/docs/Web/CSS/font-family) and to [help avoid confusion](https://infinnie.github.io/blog/2017/systemui.html).
-
-```CSS
-@font-face {
-  font-family: sys;
-  font-style: normal;
-  font-weight: 300;
-  src: local(".SFNS-Light"), local(".SFNSText-Light"), local(".HelveticaNeueDeskInterface-Light"), local(".LucidaGrandeUI"), local("Segoe UI Light"), local("Ubuntu Light"), local("Roboto-Light"), local("DroidSans"), local("Tahoma");
-}
-@font-face {
-  font-family: sys;
-  font-style: italic;
-  font-weight: 300;
-  src: local(".SFNS-LightItalic"), local(".SFNSText-LightItalic"), local(".HelveticaNeueDeskInterface-Italic"), local(".LucidaGrandeUI"), local("Segoe UI Light Italic"), local("Ubuntu Light Italic"), local("Roboto-LightItalic"), local("DroidSans"), local("Tahoma");
-}
-/* + 6 more */
-```
-If you want to be more precise you can pass in only the weights you need. The example below would write a total of 4 `@font-face` rules to your kushi css file (`normal` and `italic` for both `300`("light") & `700`("bold")).
-```Clojure
-(add-system-font-stack 300 700)
-```
-
-Then you can use the system font stack like so:
-```Clojure
-[:div (sx :font-family--sys)]
-
-; Using kushi shorthand:
-[:div (sx :ff--sys)]
-
-; An example using kushi syntax to specify multiple values for the css shorthand `font` property.
-[:div (sx :font--italic:700:sys)] ;
-
-```
-
+<br>
 <br>
 
 ## Helpful Metadata
@@ -1100,7 +1084,6 @@ If you are looking for a well commented starting point for your own config, [the
  :add-stylesheet-prod?    true
  :add-stylesheet-dev?     true
  :add-css-reset?          true
- :add-system-font-stack?  true
  :add-design-tokens?      true
  ;; If :add-kushi-ui-theming? is set to false, it will not include
  ;; theming classes for for kushi ui components such as buttons, tags, etc.

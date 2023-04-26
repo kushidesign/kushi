@@ -4,7 +4,8 @@
    [clojure.string :as string]
    [clojure.edn]
    [clojure.pprint :as pp :refer [pprint]]
-   [kushi.utils :as util :refer [keyed]]))
+   [expound.alpha :as expound]
+   [kushi.config :as config :refer [user-config]] ))
 
 (defn re-seq-pos [pattern string]
   (let [m (re-matcher pattern string)]
@@ -23,7 +24,6 @@
         being-replaced (subs in from (+ from len))
         replaced       (f being-replaced)
         result         (str before replaced after )]
-    ;; (println (keyed before after being-replaced replaced result match))
     result))
 
 (defn pprinted
@@ -35,7 +35,7 @@
                    (string/replace-first pprinted #"\n" "")
                    pprinted)
         lnum     (:line form-meta)]
-    (keyed pprinted lnum)))
+    {:pprinted pprinted :lnum lnum}))
 
 (defn with-line-numbers
   [{:keys [pprinted lnum]}]
@@ -103,10 +103,30 @@
        ansi/reset-font))
 
 
-(defn simple-alert-header2 [header file-info-str color]
-  (str "\n"
-       (simple-alert-header-border-top header color)
-       (when file-info-str (str "\n\n" "File: " file-info-str))))
+(defn simple-alert-header*
+  "File info is directly below header"
+  [header file-info-str color lb lb2]
+  (str
+   "\n"
+   (when-let [user-warning-banner (:log-warning-banner user-config)]
+     (when (some->> user-warning-banner seq (every? string?))
+       (str
+        ansi/bold-font
+        "\n"
+        (string/join "\n" user-warning-banner)
+        "\n\n"
+        ansi/reset-font
+        )))
+   (simple-alert-header-border-top header color)
+   (when file-info-str (str lb "File: " file-info-str lb2))))
+
+(defn simple-alert-header3
+  [header file-info-str color]
+  (simple-alert-header* header file-info-str color "\n" "\n\n"))
+
+(defn simple-alert-header2
+  [header file-info-str color]
+  (simple-alert-header* header file-info-str color "\n\n" nil))
 
 (defn file+line+col-str
   [form-meta]
@@ -138,7 +158,8 @@
                                           (with-line-numbers2 m+)
                                           pprinted)]
     (println
-     (str (simple-alert-header2 "EXCEPTION CAUGHT" file-info-str :red)
+     #_(simple-alert-header3 "EXCEPTION CAUGHT" file-info-str :red)
+     (str (simple-alert-header3 "EXCEPTION CAUGHT" file-info-str :red)
           (when with-line-numbers
             (str "\n\n" with-line-numbers))
           (when commentary
@@ -183,7 +204,7 @@
 (defn build-failure []
   (throw (Exception.
           (str "\n\n"
-               (simple-alert-header2 "EXCEPTION" "[kushi.core/kushi-debug]")
+               (simple-alert-header2 "EXCEPTION" "[kushi.core/kushi-debug]" nil)
                "The required entry `:css-dir` is missing from your kushi.edn config"
                "\n\n"
                "Its value must be a path relative to proj root e.g \"public/css\" or \"resources/public/css\"."
@@ -224,15 +245,6 @@
     bad-args :args/bad
     :as   m}]
 
-  #_(println :simple-warning2
-             (keyed
-      ;;  sym
-      ;;  args
-      ;;  hint
-      ;;  fname
-      ;;  form-meta
-      ;;  commentary
-              problems))
 
   (let [file-info-str           (file+line+col-str form-meta)
         fname                   (some-> process name)
@@ -287,3 +299,8 @@
                 :commentary
                 (str "Discarding the global \"*\" selector from theme :ui entry.\n"
                      "Use something like :body or :#my-app-id instead.")))))))
+
+(defn kushi-expound [spec x]
+  (expound/expound-str spec
+                       x
+                       (:warnings-and-errors user-config)))

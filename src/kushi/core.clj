@@ -3,15 +3,15 @@
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
-   [expound.alpha :as expound]
+   [clojure.set :as set]
    [kushi.styles :refer [all-style-tuples]]
    [kushi.config :as config :refer [user-config]]
    [kushi.shorthand :as shorthand]
-   [kushi.printing2 :as printing2]
+   [kushi.printing2 :as printing2 :refer [kushi-expound]]
    [kushi.state2 :as state2]
    [kushi.specs2 :as specs2]
    [kushi.stylesheet :as stylesheet]
-   [kushi.typography :refer [sysfont add-font-face*]]
+   [kushi.typography :refer [add-font-face*]]
    [kushi.args :as args]
    [kushi.ui.theme :as theme]
    [kushi.utils :as util]))
@@ -30,6 +30,14 @@
    {:keys [caching? cached cache-key]}]
   (when (and coll caching? (not cached))
     (swap! state2/styles-cache-updated assoc cache-key coll)))
+
+(defmacro breakpoints
+  "Returns (:media kushi.config/user-config).
+   The value will be a vector of breakpoints, which will be either kushi.config/defalt-kushi-responsive,
+   or a user-provided a vector if the user gives a valid :media entry in their kushi.edn config map."
+  []
+  (let [ret (:media user-config)]
+    `~ret))
 
 ;; FONT FACE -------------------------------------------------------------
 
@@ -66,35 +74,6 @@
 
     (update-cache! aff cache-map)))
 
-
-
-(defmacro ^:public add-system-font-stack
-
-  "Produces a scale of @font-face declarations, that allows the
-   reliable use of the system ui font from the OS running the browser.
-
-   Produces eight variations by default - 2 each (normal + italic) for the weights
-   300, 400, 500, and 700. Output can be limited to one or more weights by explicitly
-   passing one of more of the 4 weight values.
-
-   Based on the following implementation: https://github.com/csstools/system-font-css.
-
-   Examples:
-   (add-system-font-stack)
-   (add-system-font-stack 300)
-   (add-system-font-stack 300 400)
-   (add-system-font-stack 300 500)
-   (add-system-font-stack 700)"
-
-  [& weights*]
-
-  (let [{m         :m
-         cache-map :cache-map} (sysfont weights*
-                                        (meta &form)
-                                        (meta #'add-system-font-stack))]
-
-    (update-cache! m cache-map)
-    nil))
 
 
 
@@ -160,7 +139,7 @@
                 :clojure.spec.alpha/problems problems}
                (when problems
                  {:doc         (:doc (meta #'defkeyframes))
-                  :expound-str (expound/expound-str spec args)}))
+                  :expound-str (kushi-expound spec args)}))
 
         frames
         (if problems
@@ -234,23 +213,36 @@
     (printing2/simple-warning2 clean)))
 
 (defn defclass-dispatch
-  [{:keys [sym form-meta args override] :as m}]
+  [{:keys [sym
+           form-meta
+           args
+           override
+           user-defclass-with-override?]
+    :as   m}]
+
   (try
-    (let [{:keys [cached]
-           :as   cache-map} (state2/cached {:process :defclass
-                                            :sym     sym
-                                            :args    args})
+    (let [dev-trace?        (and @state2/KUSHIDEBUG
+                                 (state2/enable-trace? args))
+          _                 (when dev-trace? (state2/enable-trace!))
+          args              (if dev-trace? (drop-last args) args)
+
+          ;; TODO change :process to :kushi/process?
+          {:keys [cached]
+           :as   cache-map} (state2/cached
+                             {:process :defclass
+                              :sym     sym
+                              :args    args})
+
           process           (sym->process m)
+          chunk             (or (:kushi/chunk (meta sym))
+                                process)
+
           clean             (or cached
                                 (args/clean-args {:args          (cons sym args)
                                                   :kushi/process process
                                                   :form-meta     form-meta}))
-          chunk             (or (:kushi/chunk (meta sym))
-                                process)
           clean             (merge clean
                                    {:kushi/chunk chunk})]
-
-      #_(when true #_override? (println sym process chunk "\n"))
 
       (swap! state2/css conj clean)
 
@@ -260,14 +252,12 @@
 
       (update-cache! clean cache-map)
 
-      (when (and (not override)
-                 (= :kushi.core/defclass chunk))
+      (when (and (not override) user-defclass-with-override?)
         (defclass-dispatch (merge (keyed args form-meta)
                                   {:sym      (symbol (str sym "\\!"))
                                    :override :kushi.core/defclass-override})))
 
-      (when (and (not override)
-                 (= :kushi/utility chunk))
+      (when (and (not override) (= :kushi/utility chunk))
         (defclass-dispatch (merge (keyed args form-meta)
                                   {:sym      (symbol (str sym "\\!"))
                                    :override :kushi/utility-override})))
@@ -281,20 +271,40 @@
            :args      args
            :ex        ex}
           defclass-exception-args
-          printing2/caught-exception))))
+          printing2/caught-exception))
+
+    (finally
+      (when @state2/KUSHIDEBUG
+        (state2/disable-trace!)))))
 
 
 (defmacro ^:public defclass
   [sym & args]
-
   (when-not (defclass-noop? sym args)
     (defclass-dispatch {:sym       sym
                         :args      args
                         :form-meta (meta &form)})
     `(do nil)))
 
+(defmacro ^:public defclass-with-override
+  [sym & args]
+  (when-not (defclass-noop? sym args)
+    (defclass-dispatch {:sym                          sym
+                        :args                         args
+                        :form-meta                    (meta &form)
+                        :user-defclass-with-override? true})
+    `(do nil)))
 
 ;; SX ---------------------------------------------------------------------
+(defn register-classes
+  [clean]
+  (let [used (into #{}
+                   (keep #(when (and (string? %)
+                                     (->> % first str (re-find #"[a-z]")))
+                            (let [ret* (string/replace % #"\!$" "\\\\!")]
+                              ret*))
+                         (:classlist clean)))]
+    (swap! state2/registered-shared-classes set/union used)))
 
 (defn process [args]
   (let [m* (last args)]
@@ -310,29 +320,36 @@
 
 
 (defn sx-dispatch
-  [{:keys [form-meta args]
+  [{:keys [form-meta args macro]
     :or   {form-meta {}}}]
 
-  (when @state2/KUSHIDEBUG (state2/trace-mode! args))
+  (let [dev-trace? (and @state2/KUSHIDEBUG
+                        (state2/enable-trace? args))
+        _          (when dev-trace? (state2/enable-trace!))
+        args       (if dev-trace? (drop-last args) args)
+        cache-map  (state2/cached {:process :sx
+                                   :args    args})
+        process    (process args)
+        clean      (or (:cached cache-map)
+                       (args/clean-args {:args          args
+                                         :kushi/process process
+                                         :cache-key     (:cache-key cache-map)
+                                         :form-meta     form-meta}))
+        clean      (merge clean {:kushi/chunk process})
+        clean      (if (= macro :sx*)
+                     (assoc-in clean [:attrs :data-sx-tweak] (str (into [] args)))
+                     clean)]
 
-  (let [args      (if (and @state2/KUSHIDEBUG (state2/trace-mode?))
-                    (drop-last args)
-                    args)
-        cache-map (state2/cached {:process :sx
-                                  :args    args})
-        process   (process args)
-        clean     (or (:cached cache-map)
-                      (args/clean-args {:args          args
-                                        :kushi/process process
-                                        :cache-key     (:cache-key cache-map)
-                                        :form-meta     form-meta}))
-        clean     (merge clean {:kushi/chunk process})]
+    (when (:elide-unused-kushi-utility-classes? user-config)
+      (register-classes clean))
 
     (swap! state2/css conj clean)
 
     (update-cache! clean cache-map)
 
     (print-warnings clean)
+
+    (when @state2/KUSHIDEBUG (state2/disable-trace!))
 
     clean))
 
@@ -357,21 +374,45 @@
 
 (defmacro ^:public sx
   [& args]
-  (when-not (= args '(nil))
-    (let [m               {:args          args
-                           :form-meta     (meta &form)
-                           :kushi/process :kushi.core/sx
-                           :fname         "sx"
-                           :macro         :sx}
-          {:keys [attrs]} (try
-                            (sx-dispatch m)
-                            (catch Exception ex
-                              (-> m
-                                  (assoc :ex ex)
-                                  sx-exception-args
-                                  printing2/caught-exception)))]
-      `~attrs)))
+ (let [m*           (first args)
+       from-defcom? (and (map? m*) (:_kushi/defcom? m*))
+       args         (if from-defcom? (:args m*) args)
+       form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
+   (when-not (= args '(nil))
+     (let [m               {:args          args
+                            :form-meta     form-meta
+                            :kushi/process :kushi.core/sx
+                            :fname         "sx"
+                            :macro         :sx}
+           {:keys [attrs]} (try
+                             (sx-dispatch m)
+                             (catch Exception ex
+                               (-> m
+                                   (assoc :ex ex)
+                                   sx-exception-args
+                                   printing2/caught-exception)))]
+       `~attrs))))
 
+(defmacro ^:public sx*
+  [& args]
+ (let [m*           (first args)
+       from-defcom? (and (map? m*) (:_kushi/defcom? m*))
+       args         (if from-defcom? (:args m*) args)
+       form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
+   (when-not (= args '(nil))
+     (let [m               {:args          args
+                            :form-meta     form-meta
+                            :kushi/process :kushi.core/sx
+                            :fname         "sx"
+                            :macro         :sx*}
+           {:keys [attrs]} (try
+                             (sx-dispatch m)
+                             (catch Exception ex
+                               (-> m
+                                   (assoc :ex ex)
+                                   sx-exception-args
+                                   printing2/caught-exception)))]
+       `~attrs))))
 
 
 
@@ -382,12 +423,16 @@
     (defclass-dispatch {:sym  (with-meta (symbol k) {kw true})
                         :args [styles]})))
 
-(defn- font-loading! [m]
-  (let [gfm   (:google-font-maps m)]
-    (when (:add-system-font-stack? m)
-      (sysfont (:system-font-stack-weights m)))
-    (when (seq gfm)
-      (state2/add-google-font-maps! gfm))))
+(defn- font-loading!
+  [{:keys [google-font-maps
+           google-material-symbols-maps]
+    :as m}]
+  (when (seq google-font-maps)
+    (state2/add-google-font-maps!
+     google-font-maps))
+  (when (seq google-material-symbols-maps)
+    (state2/add-google-material-symbols-font-maps!
+     google-material-symbols-maps)))
 
 
 (defmacro form-meta* []
@@ -461,14 +506,16 @@
 ;; make sure manually inject gfonts still load
 
 (defmacro inject-google-fonts! []
-  (let [tag (str "[" @state2/shadow-build-id "] [Kushi v" config/version "]")
+  (let [tag            (str "[" @state2/shadow-build-id "] [Kushi v" config/version "]")
         tag-browser-gf (str tag " - Injecting goog-fonts-map")]
-    (do (let [google-font-maps @state2/google-font-maps]
+    (do (let [google-font-maps                  @state2/google-font-maps
+              google-material-symbols-font-maps @state2/google-material-symbols-font-maps]
           #_(pprint google-font-maps)
           `(do
              #_(js/console.log ~google-font-maps)
              #_(js/console.log ~tag-browser-gf)
-             (apply kushi.core/add-google-font! ~google-font-maps) )))))
+             (apply kushi.core/add-google-font! ~google-font-maps)
+             (apply kushi.core/add-google-material-symbols-font! ~google-material-symbols-font-maps))))))
 
 
 (defmacro inject! []
@@ -493,3 +540,5 @@
       `(do
          ;; (println ~tag-browser-gf)
          (apply kushi.core/add-google-font! ~google-font-maps)))))
+
+

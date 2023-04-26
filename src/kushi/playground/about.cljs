@@ -1,14 +1,16 @@
 (ns kushi.playground.about
   (:require
-   [kushi.ui.title.core :refer [title]]
+   [kushi.ui.label.core :refer [label]]
    [kushi.ui.link.core :refer [link]]
    [kushi.ui.dom :as dom]
    [kushi.ui.core :refer [defcom]]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
    [kushi.ui.dom :refer (copy-to-clipboard)]
+   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
+   [kushi.playground.state :as state]
    [kushi.playground.util :as util]
-   [kushi.playground.component-section :refer [collapse-all-component-sections]]
+   [kushi.playground.colors :as playground.colors]
    [kushi.playground.shared-styles]))
 
 
@@ -19,7 +21,6 @@
      (sx 'playground-generic-intro-section
          :.transition
          :bbe--$divisor
-         ;; dark theme
          :dark:bbe--$divisor-dark
          :pbe--0.5rem
          :md:pbe--0.6rem
@@ -27,8 +28,6 @@
          ;; typography
          ["has-ancestor(.kushi-typography):bbe" :none]
          ["has-ancestor(.custom-typography):bbe" :none]
-         ["has-ancestor(.kushi-typography)&_.code:fs" :12.6px!important]
-         ["has-ancestor(.kushi-typography)&_code:fs" :12.6px!important]
          ["has-ancestor(.kushi-typography)&_.code:h" :fit-content]
          ["has-ancestor(.kushi-typography)&_code:h" :fit-content]
          ["has-ancestor(.kushi-typography)&_.code:lh" :initial]
@@ -42,12 +41,13 @@
     [:div (sx
            'intro-section-title-wrapper
            :.flex-col-fs
-           :.xxlarge
+           :.wee-bold
            :.relative
            :w--100%
            :mbe--4.25rem)
-     [title
+     [label
       (sx 'intro-section-title
+          :fs--$kushi-playground-main-section-header_font-size|$xxlarge
           :pbs--2.25em
           :md:pbs--$vp-top-header-padding-with-offset
           {:style {:transform '(translateX :-1.5px)}})
@@ -56,10 +56,6 @@
      (sx 'intro-section-body
          :.normal
          :.transition
-        ;; :.medium
-        ;; :lg:pie--5rem
-        ;; :md:pie--3rem
-        ;; :sm:pie--5rem
          :pie--2rem
          :&_p:line-height--$body-copy-line-height
          :&_p:margin-block--2em)
@@ -77,18 +73,30 @@
   [:span
    [:p "Kushi includes a foundation of global and alias color token scales."]
 
+   [:div
+    (sx
+     :sm:d--none
+     :pb--1rem:2.5rem
+     :pis--0)
+    [playground.colors/color-grid
+     {:-row-gap     :4px
+      :-column-gap  :8px
+      :-labels?     false
+      :-swatch-attrs (sx :w--23px :h--23px)}]]
+
+   [:div
+    (sx
+     :d--none
+     :sm:d--block
+     :pb--2rem:4.5rem
+     :pis--2.5rem)
+    [playground.colors/color-grid
+     {:-row-gap      :7px
+      :-column-gap   :14px
+      :-swatch-attrs (sx :w--34px :h--34px)}]]
+
    [:p.alias-token-scales
-    "Alias token scales for "
-    [:code (sx :.code :ws--n) (str "--neutral")]
-    ", "
-    [:code (sx :.code :ws--n) (str "--positive")]
-    ", "
-    [:code (sx :.code :ws--n) (str "--negative")]
-    ", "
-    [:code (sx :.code :ws--n) (str "--warning")]
-    ", and "
-    [:code (sx :.code :ws--n) (str "--accent")]
-    " all map to underlying global token scales, as in the following examples:"
+    "Semantic alias tokens map to global tokens like so:"
     [:br]]
 
    (into [:div (sx :.grid
@@ -97,9 +105,10 @@
                    :gtc--1.3fr:0.3fr:1fr
                    :w--275px)]
          (for [[a g] [["positive200" "green200"]
-                      ["negative200" "red400"]
-                      ["warning50" "yellow50"]
-                      ["accent600" "blue600"]]]
+                      ["negative400" "red400"]
+                      ["warning300" "yellow300"]
+                      ["accent600" "blue600"]
+                      ["neutral50" "neutral50"]]]
            (alias-global-mapping-row a g)))
 
    [:p
@@ -116,24 +125,35 @@
     " will decorate the element with the corresponding foreground and background colors."]])
 
 
-(defn type-scale [{:keys [coll label desc]}]
+(defn type-scale [{:keys [coll label]}]
   (into [:div
-         [:h3 (sx :.large
-                  :.subsection-title
+         [:h3 (sx :fs--$kushi-playground-main-section-header_font-size|$xxlarge
                   :.wee-bold
-                  :mbs--5em
+                  :mbs--3em
                   :pbs--1.5em
-                  [:bbs "1px solid var(--gray300)"]
-                  [:dark:bbs "1px solid var(--gray700)"])
-          (str "Type " label " Scale")]]
+                  [:bbs "1px solid var(--gray-300)"]
+                  [:dark:bbs "1px solid var(--gray-700)"])
+          (str "Type " label " Scale")]
+         (when (= "Size" label)
+           [:p
+            (sx :>code:mi--0.25em :>code:ws--n)
+            "Kushi offers a typographic scale with t-shirt sizing from"
+            [:code "xxxsmall"]
+            "up to"
+            [:code "xxxxlarge"]])]
         (for [x coll]
-          [:div (sx :.flex-col-fs :mb--37px)
-           [:div (sx :.small :.normal)
-            [:span.code (str ":." (name x))] #_", " #_[:span.code (str ":$text-" (name x))]]
-           [:div (sx :.xlarge
-                     (when (= label "Tracking") :.uppercase)
-                     :mbs--10px)
-            [:span {:class [x]} "The quick brown fox."]]])))
+          [:div
+           (sx :.flex-col-fs :mb--24px)
+           [:div (merge 
+                  (sx :.pointer
+                      (when (= label "Tracking") :.uppercase)
+                      :mbs--10px))
+            [:span.relative
+             (merge-attrs
+              {:class [x]}
+              (tooltip-attrs {:-text      (str ":." (name x)) 
+                              :-placement "inline-end center"}))
+             "The quick brown fox."]]])))
 
 
 (defn typography-snippet [s]
@@ -152,17 +172,20 @@
 
 (def typography-tokens-snippet
 "[:span
-  (sx :fs--$text-xxlarge
-      :fw--$text-bold
-      :letter-spacing--$text-xloose)
+  (sx :fs--$xxlarge
+      :fw--$bold
+      :letter-spacing--$xloose)
   \"My text\"]" )
 
 
 (def typography-utility-classes-snippet
   "[:span \n  (sx :.xxlarge :.bold :.xloose :.uppercase :.italic) \n  \"My text\"]" )
 
+(def typescale [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge :xxxxlarge])
+;; (def typescale-low-x [:xxxsmall-low-x :xxsmall-low-x :xsmall-low-x :small-low-x :medium-low-x :large-low-x :xlarge-low-x :xxlarge-low-x :xxxlarge-low-x :xxxxlarge-low-x])
 
-(def kushi-typography-about
+(defn kushi-typography-about
+  [{:keys [use-low-x-type-scale?]}]
   [:span
    [:p "Kushi includes a foundation of global tokens and utility class scales for type size, weight, letter-spacing, sizing, and capitalization."]
 
@@ -192,7 +215,7 @@
      "here."]]
 
    [type-scale {:label "Size"
-                :coll  [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge]}]
+                :coll  typescale #_(if use-low-x-type-scale? typescale-low-x typescale)}]
    [type-scale {:label "Weight"
                 :coll  [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy]}]
    [type-scale {:label "Tracking"
@@ -212,12 +235,13 @@
            :target :_blank}
      "Quickstart repo"] "."]
    [:p
-    "In addition to providing robust css-in-cljs functionality, Kushi offers a basic suite of themeable, headless UI components for free. "
+    "In addition to providing a css-in-cljs solution, Kushi offers a basic suite of themeable, headless UI components for free. "
     "This set of building blocks consitutes a base for rolling your own design system."]
    [:p
     "The components menu on this site provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]])
 
 
 (defn component-playground-about [{:keys [header]}]
-  [intro-section
-   {:-header header}])
+  (when (or @state/*md-or-smaller?
+            (not @state/*focused-component))
+    [intro-section {:-header header}]))

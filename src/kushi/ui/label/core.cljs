@@ -1,59 +1,26 @@
 (ns kushi.ui.label.core
   (:require-macros
-   [kushi.core :refer (sx)]
-   [kushi.ui.core :refer (defcom2)])
+   [kushi.core :refer (sx)])
   (:require
-   [kushi.ui.icon.helper :refer (icon-component)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.core :refer (merge-attrs)]))
 
-(defcom2 label
-  {:desc ["A label is typically used for providing titles to sections of content."]
-   :opts '[{:name    mui-icon
-            :type    :string
-            :default nil
-            :desc    "Must be a string corresponding to a [mui-icon](https://fonts.google.com/icons?icon.set=Material+Icons)."}
-           {:name    mui-icon-style
-            :type    #{:filled :outlined :rounded :sharp :two-tone}
-            :default :filled
-            :desc    "Controls the style of the [mui-icon](https://fonts.google.com/icons?icon.set=Material+Icons)."}
-           {:name    icon-position
-            :type    #{:inline-start :inline-end :block-start :block-end}
-            :default nil
-            :desc    "Setting to one of the accepted values will place the icon, relative to any text labels."}
-           {:name    icon-svg
-            :type    :boolean
-            :default false
-            :desc    ["Pass a `mui-icon` in `svg` (hiccup) to use in place of the Google Fonts Material Icons font."
-                      "Must use `:viewBox` attribute with values such as `\"0 0 24 24\"`."
-                      "The `:width` and `:height` attributes of the `svg` do not need to be set."]}]}
-
-  (let [{:keys [icon-position
-                mui-icon-style
-                icon-svg]
-         mi    :mui-icon
-         :or   {mi             nil
-                mui-icon-style :filled
-                icon-position  :inline-start}} &opts
-        icon-component (icon-component {:mi             mi
-                                        :mui-icon-style mui-icon-style
-                                        :icon-svg       icon-svg})]
-
-    [:span
-     (merge-attrs
-      (sx 'kushi-label
-          :.flex-row-c
-          :gap--$icon-enhancer-inline-gap-ems
-          :.transition
-          :ai--c
-          :d--inline-flex
-          :w--fit-content
-          {:data-kushi-ui :label})
-      &attrs)
-     (cond
-       (and mi (= icon-position :inline-end))
-       (conj &children icon-component)
-       (and mi (= icon-position :inline-start))
-       (into [:<> icon-component] (rest &children))
-       :else &children)])
-  #(if (string? %) [:span.kushi-label-text %] %))
+(defn label
+  {:desc ["A label is typically used for providing titles to sections of content."]}
+  [& args]
+  (let [[_ attrs & children] (opts+children args)
+        children (map #(if (string? %)
+                         [:span.kushi-label-text %]
+                         %)
+                      children)]
+    (into [:span
+           (merge-attrs
+            (sx 'kushi-label
+                :.flex-row-c
+                :.enhanceable
+                :.transition
+                :d--inline-flex
+                :w--fit-content
+                {:data-kushi-ui :label})
+            attrs)]
+          children)))

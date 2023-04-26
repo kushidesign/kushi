@@ -1,7 +1,7 @@
 (ns kushi.ui.snippet.core
   (:require
    [kushi.core :refer (sx merge-attrs) :refer-macros (sx)]
-   [kushi.ui.tooltip.core :refer (tooltip add-temporary-tooltip!)]
+   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.dom :refer (copy-to-clipboard)]))
@@ -15,22 +15,19 @@
   [opts & children*]
   (let [children (or children*
                      [[button
-                       (sx 'kushi-copy-to-clipboard-button
-                           :p--0px
-                           :.minimal
-                           {:on-click add-temporary-tooltip!})
+                       (merge-attrs
+                        (sx 'kushi-copy-to-clipboard-button
+                            :p--0px
+                            :.minimal)
+                        (tooltip-attrs {:-text             "Copied!"
+                                        :-placement        (or (:-placement opts) :right)
+                                        :-reveal-on-click? true}))
                        [:img
                         (sx 'kushi-copy-to-clipboard-button-graphic
                             :h--75%
                             :o--0.7
                             :hover:o--1
-                            {:src copy-content-svg})]
-                       [tooltip (sx 'kushi-copy-to-clipboard-tooltip
-                                    :.xxxsmall
-                                    :.rounded
-                                    :ff--Inter
-                                    {:-display-on-hover? false})
-                        "Copied!"]]] )]
+                            {:src copy-content-svg})]]])]
     (into [:div
            (merge-attrs
             (sx 'kushi-copy-to-clipboard-button-wrapper
@@ -44,7 +41,6 @@
                 :fs--0.5rem
                 :fw--600
                 :letter-spacing--0.1ex
-                ;; :tt--u
                 :b--none
                 :m--0.4rem
                 :hover:bgc--white
@@ -52,7 +48,7 @@
                 :bgc--transparent
                 {:type  :text
                  :value "copy"})
-            opts)]
+            (dissoc opts :-placement))]
           children)))
 
 (defn snippet

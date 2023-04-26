@@ -1,11 +1,9 @@
 (ns kushi.playground.nav
   (:require
-   [kushi.ui.title.core :refer [title]]
    [kushi.playground.links :refer [links]]
    [kushi.playground.ui :refer [light-dark-mode-switch]]
-   [kushi.core :refer [sx]]))
-
-
+   [kushi.core :refer [sx]]
+   [kushi.ui.flex.core :as flex]))
 
 (defn kushi-mobile-nav [{:keys [site-header display-kushi-links-in-mobile-nav?]}]
   [:div (sx
@@ -18,7 +16,7 @@
          :md:d--none
          :w--100%
          :padding-inline--$page-padding-inline
-         :padding-block--0.7em
+         :h--$kushi-playground-mobile-header-height
          :bb--$divisor
          :bc--black
          :dark:bc--white
@@ -31,7 +29,7 @@
    [:div
     (sx :.extra :.flex-row-sb :w--$components-menu-width)
     [site-header]
-    [:div (sx :.flex-row-fs)
+    [flex/row-fs
      (when display-kushi-links-in-mobile-nav?
        [links])
      [:span
