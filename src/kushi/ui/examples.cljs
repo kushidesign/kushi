@@ -531,7 +531,7 @@
      :examples [{:label   "Default, elevated"
                  :example [:div [card (sx :.elevated-3) "my content"]]}
                 {:label   "Elevation levels 1-5"
-                 :example [:div.grid (sx :ai--c :gap--3rem :gtc--1fr:1fr:1fr :&_code:fs--$xsmall) 
+                 :example [:div.grid (sx :ai--c :gap--2rem :gtc--1fr:1fr:1fr :&_code:ws--n :&_code:fs--$xsmall :&_.kushi-card:pi--1.5rem) 
                            [card (sx :.elevated-1) [:code ":.elevation-1"]]
                            [card (sx :.elevated-2) [:code ":.elevation-2"]]
                            [card (sx :.elevated-3) [:code ":.elevation-3"]]
