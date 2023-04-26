@@ -213,15 +213,6 @@
     ;; Intended for css props: box-shadow
     ;; ------------------------------------------------------
 
-   :$box-shadow-layer-1-opacity "10%"
-   :$box-shadow-layer-2-opacity "7%"
-   :$box-shadow-layer-3-opacity "6%"
-
-
-   ;; --elevated can be considered kushi legacy
-   :$elevated
-   "rgb(0 0 0 / 4%) 12px 10px 16px 2px, rgb(0 0 0 / 5%) 0px 2px 9px 0px"
-
    :$elevated-0
    :none
 
