@@ -23,6 +23,12 @@
   [
    ;; Color
    ;; ------------------------------------------------------
+   :$body-color                              :$gray-950
+   :$body-color-inverse                      :$gray-50
+
+   :$body-background-color                   :white
+   :$body-background-color-inverse           :$gray-1000
+
    ;; Neutrals
    :$neutral-fg                              :$neutral-minimal-color
    :$neutral-fg-inverse                      :$neutral-minimal-color-inverse
