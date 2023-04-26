@@ -9,7 +9,7 @@
    [kushi.ui.collapse.core :refer (collapse)]
    [kushi.ui.core :refer (defcom)]
    [kushi.ui.icon.core :refer (icon)]
-   [kushi.ui.icon.mui.svg :refer (mui-icon-svgs)]
+   [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.label.core :refer (label)]
    [kushi.ui.dom :as dom]
    [kushi.ui.button.core :refer (button)]
@@ -274,10 +274,10 @@
           {:id             fname
            :on-click       #(state/nav! fname)
            :-label         title
-           :-icon          [icon {:-icon-svg (get mui-icon-svgs "add")}]
+           :-icon          [icon mui.svg/add]
            :-icon-expanded [:span (sx :.flex-row-sb
                                       :gap--2rem)
-                            [icon :remove]]
+                            [icon mui.svg/remove]]
            :-icon-position :end
            :-expanded?     (or @*components-expanded? (state/focused? fname))
            :-header-attrs  header-attrs})
