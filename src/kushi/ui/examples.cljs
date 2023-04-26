@@ -503,76 +503,162 @@
                  :example (example2 [tag "xyz"])}
                 {:label   "\"XYZ\""
                  :example (example2 [tag "XYZ"])}
+                {:label   "With icon"
+                 :example (example2 [tag [icon :pets] "pet friendly"])}
                 {:label   "Max-width example"
-                 :example (example2 [tag [:span (sx :.truncate :max-width--130px) "My tag with longer text"]])}]}
+                 :example (example2 [tag [:span (sx :.truncate :max-width--130px) "My tag with longer text"]])}
+                
+                ]}
 
-   {:fn       label
-    :meta     #'label
-    :stage    {:style {:min-height :135px}}
-    :variants [:size :weight]
-    :defaults {:size     :medium
-               :weight   :wee-bold
-               :examples "Simple"}
-    :examples  [{:label   "Simple"
-                :example (example2 [label "my label"])}
-               {:label   "Leading icon"
-                :example (example2 [label [icon :pets] "Pet friendly"])}
-               {:label   "Trailing icon"
-                :example (example2 [label "Pet friendly" [icon :pets]])}]}
+   (feature
+    label
+    {:stage    {:style {:min-height :135px}}
+     :variants [:size :weight]
+     :defaults {:size     :medium
+                :weight   :wee-bold
+                :examples "Simple"}
+     :examples [{:label   "Simple"
+                 :example [label "my label"]}
+                {:label   "Leading icon"
+                 :example [label [icon :pets] "Pet Friendly"]}
+                {:label   "Trailing icon"
+                 :example [label "Pet friendly" [icon :pets]]}]})
 
-   {:fn       card
-    :meta     #'card
-    :stage    {:style {:min-height :280px}}
-    :defaults {:examples "Default"}
-    :examples  [{:label   "Default"
-                :example (example2 [card (sx :.elevated) "my content"])}
-               {:label   "sharp, bordered"
-                :example (example2 [card (sx :.sharp :.bordered) "my content"])}
-               {:label   "rounded, bordered"
-                :example (example2 [card (sx :.rounded :.bordered) "my content"])}
-               {:label   "Alien"
-                :example (example2 [card (sx :.large
-                                             :.extra-bold
-                                             :.flex-col-c
-                                             :p--0
-                                             :height--220px
-                                             :tt--u
-                                             :ta--center
-                                             :bgc--#313131
-                                             :c--white
-                                             :b--1px:solid:#9eef00
-                                             :text-shadow--1px:1px:5px:#9eef00b5
-                                             :box-shadow--inset:0px:0px:40px:#9eef0073)
-                                    [:span (sx :pis--7ex :letter-spacing--7ex) "alien"]])}]}
+   (feature 
+    card
+    {:stage    {:style {:min-height :280px}}
+     :defaults {:examples "Default"}
+     :examples [{:label   "Default, elevated"
+                 :example [:div [card (sx :.elevated-3) "my content"]]}
+                {:label   "Elevation levels 1-5"
+                 :example [:div.grid (sx :ai--c :gap--3rem :gtc--1fr:1fr:1fr :&_code:fs--$xsmall) 
+                           [card (sx :.elevated-1) [:code ":.elevation-1"]]
+                           [card (sx :.elevated-2) [:code ":.elevation-2"]]
+                           [card (sx :.elevated-3) [:code ":.elevation-3"]]
+                           [card (sx :.elevated-4) [:code ":.elevation-4"]]
+                           [card (sx :.elevated-5) [:code ":.elevation-5"]]]}
+                {:label   "sharp, bordered"
+                 :example [card (sx :.sharp :.bordered) "my content"]}
+                {:label   "rounded, bordered"
+                 :example [card (sx :.rounded :.bordered) "my content"]}
+                {:label   "Alien"
+                 :example [card (sx :.large
+                                    :.extra-bold
+                                    :.flex-col-c
+                                    :p--0
+                                    :height--220px
+                                    :tt--u
+                                    :ta--center
+                                    :bgc--#313131
+                                    :c--white
+                                    :b--1px:solid:#9eef00
+                                    :text-shadow--1px:1px:5px:#9eef00b5
+                                    :box-shadow--inset:0px:0px:40px:#9eef0073)
+                           [:span (sx :pis--7ex :letter-spacing--7ex) "alien"]]}]})
 
 
-   {:fn       alert
-    :meta     #'alert
-    :stage    {:style {:min-height :150px}}
-    :variants [:semantic :kind :shape :size :weight]
-    :defaults {:kind     :default
-               :shape    :sharp
-               :semantic :accent
-               :size     :medium
-               :weight   :wee-bold
-               :examples "Default"}
-    :examples  [{:label   "Default"
-                :example (example2 [alert
-                                    (sx :.accent
-                                        {:-icon             [icon :info]
-                                         :-close-icon?      true
-                                         :-close-icon-attrs {:on-click #(js/alert "Example close-icon click event.")}})
-                                    "Your message goes here."])}
-               #_{:label   "With fixed position and auto-dismiss"
-                :example (example2 [alert
-                                    (sx :.accent
-                                        :.fixed-block-start
-                                        {:-icon             [icon :auto-awesome]
-                                         :-close-icon?      true
-                                         :-close-icon-attrs {:on-click #(js/alert "Example close-icon click event.")}})
-                                    "Your message goes here."])}
-               ]}
+   (feature
+    alert
+    {:stage    {:style {:min-height :220px}}
+     :variants [:shape :size :weight]
+     :defaults {:shape    :sharp
+                :size     :medium
+                :weight   :wee-bold
+                :examples "Default"}
+     :examples [{:label   "Default"
+                 :example [alert
+                           (sx :.neutral
+                               {:-header-text "Alert header text goes here." })]}
 
+                {:label   "With close button"
+                 :example [alert
+                           (sx :.neutral
+                               {:-header-text  "Alert header text goes here."
+                                :-close-button [button (sx :.pill
+                                                           :p--0.25em
+                                                           {:on-click #(js/alert "Example close-icon click event.")})
+                                                [icon :clear]]})]}
+
+                {:label   "With close button and icon"
+                 :example [alert
+                           (sx :.neutral
+                               {:-icon         [icon :info]
+                                :-header-text  "Alert header text goes here."
+                                :-close-button [button (sx :.pill
+                                                           :p--0.25em
+                                                           {:on-click #(js/alert "Example close-icon click event.")})
+                                                [icon :clear]]})]}
+                {:label   "Accent"
+                 :example [alert
+                           (sx :.accent
+                               {:-icon         [icon :info]
+                                :-header-text  "Alert header text goes here."
+                                :-close-button [button (sx :.accent
+                                                           :.pill
+                                                           :p--0.25em
+                                                           {:on-click #(js/alert "Example close-icon click event.")})
+                                                [icon :clear]]})]}
+                {:label   "Accented, filled"
+                 :example [alert
+                           (sx :.accent
+                               :.filled
+                               {:-icon         [icon :info]
+                                :-header-text  "Alert header text goes here."
+                                :-close-button [button (sx :.accent
+                                                           :.filled
+                                                           :.pill
+                                                           :p--0.25em
+                                                           {:on-click #(js/alert "Example close-icon click event.")})
+                                                [icon :clear]]})]}
+                {:label   "Positive, filled"
+                 :example [alert
+                           (sx :.positive
+                               {:-icon         [icon :info]
+                                :-header-text  "Alert header text goes here."
+                                :-close-button [button (sx :.positive
+                                                           :.pill
+                                                           :p--0.25em
+                                                           {:on-click #(js/alert "Example close-icon click event.")})
+                                                [icon :clear]]})]}
+                {:label   "Negative, bordered"
+                 :example [alert
+                           (sx :.negative
+                               :.bordered
+                               :bw--2px
+                               {:-icon         [icon (sx :.bold) :info]
+                                :-header-text  "Alert header text goes here."
+                                :-close-button [button (sx :.negative
+                                                           :.minimal
+                                                           :.pill
+                                                           :p--0.25em
+                                                           {:on-click #(js/alert "Example close-icon click event.")})
+                                                [icon (sx :.bold) :clear]]})]}
+                {:label   "Warning, with body"
+                 :example [alert
+                           (sx :.warning
+                               {:-icon         [icon :warning]
+                                :-header-text  "Alert header text goes here."
+                                :-close-button [button (sx :.warning
+                                                           :.pill
+                                                           :p--0.25em
+                                                           {:on-click #(js/alert "Example close-icon click event.")})
+                                                [icon :clear]]})
+                           [:div (sx :.flex-col-c :ai--c)
+                            "Alert body"
+                            [label (sx :.xxxlarge) "👻"]]]}
+
+                ;;; leave this out for now
+                #_{:label   "With fixed position and auto-dismiss"
+                   :example (example2 [alert
+                                       (sx :.accent
+                                           :.fixed-block-start
+                                           {:-icon             [icon :auto-awesome]
+                                            :-close-icon?      true
+                                            :-close-icon-attrs {:on-click #(js/alert "Example close-icon click event.")}})
+                                       "Your message goes here."])}
+                ]})
+
+   ;; We are passing in the examples as a var, so we are not using the `kushi.playground.util/feature` macro here
    {:fn       modal
     :meta     #'modal
     :stage    {:style {:min-height :150px :justify-content :center}}
@@ -580,101 +666,100 @@
     :defaults {:examples "With title and description"}
     :examples  modal-examples}
 
-   {:fn       collapse
-    :meta     #'collapse
-    :stage    {:style {:min-height  :190px
-                       :align-items :start}}
-    :defaults {:examples "Default"}
-    :examples  [{:label   "Default"
-                :example (example2 [collapse
-                                    {:-label "collapsable section label"}
-                                    [:p "child 1"]
-                                    [:p "child 2"]])}
-               {:label   "Dynamic label"
-                :example (example2 [collapse
-                                    {:-label          "Click to expand"
-                                     :-label-expanded "Click to collapse"}
-                                    [:p "child 1"]
-                                    [:p "child 2"]])}
-               {:label   "Icon on right"
-                :example (example2 [collapse
-                                    {:-label         "Collapsable section label "
-                                     :-icon-position :end}
-                                    [:p "child 1"]
-                                    [:p "child 2"]])}
-               {:label   "Borders"
-                :example (example2 [collapse
-                                    (sx
-                                     :bbe--1px:solid:black
-                                     {:-label        "Collapsable section label "
-                                      :-header-attrs (sx :bbs--1px:solid:black)})
-                                    [:p "child 1"]
-                                    [:p "child 2"]])}
-               {:label   "Label weight"
-                :example (example2 [collapse
-                                    {:-label        "Collapsable section label "
-                                     :-header-attrs (sx :.bold)}
-                                    [:p "child 1"]
-                                    [:p "child 2"]])}
-               {:label   "Body color"
-                :example (example2 [collapse
-                                    {:-label      "Collapsable section label "
-                                     :-body-attrs (sx :bgc--$accent-100 :pis--1rem)
-                                     :-speed      1000}
-                                    [:section
-                                     (sx :pb--0.5rem)
-                                     [:p "child 1"]
-                                     [:p "child 1"]
-                                     [:p "child 1"]
-                                     [:p "child 1"]
-                                     [:p "child 2"]]])}
-               {:label   "Header color"
-                :example (example2 [collapse
-                                    (sx :bbe--3px:solid:#3d3d3d
-                                        {:-label        "Collapsable section label "
-                                         :-body-attrs   (sx :pis--0.5rem)
-                                         :-header-attrs (sx :p--10px
-                                                            :bgc--$gray-1000
-                                                            :c--white)})
-                                    [:p "child 1"]
-                                    [:p "child 2"]])}
+   (feature
+    collapse
+    {:stage    {:style {:min-height  :190px
+                        :align-items :start}}
+     :defaults {:examples "Default"}
+     :examples [{:label   "Default"
+                 :example [collapse
+                           {:-label "collapsable section label"}
+                           [:p "child 1"]
+                           [:p "child 2"]]}
+                {:label   "Dynamic label"
+                 :example [collapse
+                           {:-label          "Click to expand"
+                            :-label-expanded "Click to collapse"}
+                           [:p "child 1"]
+                           [:p "child 2"]]}
+                {:label   "Icon on right"
+                 :example [collapse
+                           {:-label         "Collapsable section label "
+                            :-icon-position :end}
+                           [:p "child 1"]
+                           [:p "child 2"]]}
+                {:label   "Borders"
+                 :example [collapse
+                           (sx
+                            :bbe--1px:solid:black
+                            {:-label        "Collapsable section label "
+                             :-header-attrs (sx :bbs--1px:solid:black)})
+                           [:p "child 1"]
+                           [:p "child 2"]]}
+                {:label   "Label weight"
+                 :example [collapse
+                           {:-label        "Collapsable section label "
+                            :-header-attrs (sx :.bold)}
+                           [:p "child 1"]
+                           [:p "child 2"]]}
+                {:label   "Body color"
+                 :example [collapse
+                           {:-label      "Collapsable section label "
+                            :-body-attrs (sx :bgc--$accent-100 :pis--1rem)
+                            :-speed      1000}
+                           [:section
+                            (sx :pb--0.5rem)
+                            [:p "child 1"]
+                            [:p "child 2"]
+                            [:p "child 3"]
+                            [:p "child 4"]
+                            [:p "child 5"]]]}
+                {:label   "Header color"
+                 :example [collapse
+                           (sx :bbe--3px:solid:#3d3d3d
+                               {:-label        "Collapsable section label "
+                                :-body-attrs   (sx :pis--0.5rem)
+                                :-header-attrs (sx :p--10px
+                                                   :bgc--$gray-1000
+                                                   :c--white)})
+                           [:p "child 1"]
+                           [:p "child 2"]]}
 
                ;; TODO fix expanded? functionality
-               #_{:label   "Expanded"
-                :example (example2 [collapse
-                                    {:-expanded?  true
-                                     :-label      "Collapsable section label "
-                                     :-body-attrs (sx :bgc--#ffe3ac :pl--1rem)}
-                                    [:p "child 1"]
-                                    [:p "child 2"]])}
+                #_{:label   "Expanded"
+                   :example [collapse
+                             {:-expanded?  true
+                              :-label      "Collapsable section label "
+                              :-body-attrs (sx :bgc--#ffe3ac :pl--1rem)}
+                             [:p "child 1"]
+                             [:p "child 2"]]}
 
-               {:label   "With click handler"
-                :example (example2 [collapse
-                                    {:-label    "Collapsable section label"
-                                     :-on-click #(js/alert "clicked")}
-                                    [:p "child 1"]
-                                    [:p "child 2"]])}]}
+                {:label   "With click handler"
+                 :example [collapse
+                           {:-label    "Collapsable section label"
+                            :-on-click #(js/alert "clicked")}
+                           [:p "child 1"]
+                           [:p "child 2"]]}]})
 
-   {:fn       accordian
-    :meta     #'accordian
-    :stage    {:style {:min-height      :190px
-                       :justify-content :flex-start
-                       :align-items     :start}}
-    :desc     ["cool"]
-    :defaults {:examples "Simple"}
-    :examples  [{:label   "Simple"
-                :example (example2 [accordian
-                                    [collapse
-                                     {:-label "first section"
-                                      :-speed 1000}
-                                     [:div (sx :pis--0.5rem) [:p "child 1"] [:p "child 2"]]]
-                                    [collapse
-                                     {:-label "second section"
-                                      :-speed 1000}
-                                     [:div (sx :pis--0.5rem) [:p "child 1"] [:p "child 2"]]]])}
-               {:label   "borders"
-                :example (example2
-                          [accordian
+   (feature
+    accordian
+    {:stage    {:style {:min-height      :190px
+                        :justify-content :flex-start
+                        :align-items     :start}}
+     :desc     ["cool"]
+     :defaults {:examples "Simple"}
+     :examples [{:label   "Simple"
+                 :example [accordian
+                           [collapse
+                            {:-label "first section"
+                             :-speed 1000}
+                            [:div (sx :pis--0.5rem) [:p "child 1"] [:p "child 2"]]]
+                           [collapse
+                            {:-label "second section"
+                             :-speed 1000}
+                            [:div (sx :pis--0.5rem) [:p "child 1"] [:p "child 2"]]]]}
+                {:label   "borders"
+                 :example [accordian
                            (sx :>section:first-child:bbs--1px:solid:black)
                            (for [[label-text content] [["first section" "lorem ipsum"]
                                                        ["second section" "lorem ipsum2"]
@@ -684,25 +769,26 @@
                               (sx
                                :bbe--1px:solid:black
                                {:-label "collapsable section label" })
-                              [:p content]])])}]}
+                              [:p content]])]}]})
 
-   {:fn       grid
-    :meta     #'grid
-    :stage    {:style {:min-height :135px
-                       :padding    :20px}}
-    :defaults {:examples "Simple"}
-    :examples  [{:label   "Simple"
-                :example (example2 [grid
-                                    (sx [:>div:bgc '(rgba 128 128 128 0.2)])
-                                    (for [x (range 6)]
-                                      [:div
-                                       [:div (sx :.absolute-fill :.flex-col-c :ai--c) (inc x)]])])}
-               {:label   "With sizing options"
-                :example (example2 [grid
-                                    (sx [:>div:bgc '(rgba 128 128 128 0.2)]
-                                        {:-column-min-width :80px
-                                         :-gap              :15px
-                                         :-aspect-ratio     :2:3})
-                                    (for [x (range 15)]
-                                      [:div
-                                       [:div (sx :.absolute-fill :.flex-col-c :ai--c) (inc x)]])])}]}])
+
+   (feature
+    grid
+    {:stage    {:style {:min-height :135px
+                        :padding    :20px}}
+     :defaults {:examples "Simple"}
+     :examples  [{:label   "Simple"
+                  :example [grid
+                            (sx [:>div:bgc '(rgba 128 128 128 0.2)])
+                            (for [x (range 6)]
+                              [:div
+                               [:div (sx :.absolute-fill :.flex-col-c :ai--c) (inc x)]])]}
+                 {:label   "With sizing options"
+                  :example [grid
+                            (sx [:>div:bgc '(rgba 128 128 128 0.2)]
+                                {:-column-min-width :80px
+                                 :-gap              :15px
+                                 :-aspect-ratio     :2:3})
+                            (for [x (range 15)]
+                              [:div
+                               [:div (sx :.absolute-fill :.flex-col-c :ai--c) (inc x)]])]}]})])
