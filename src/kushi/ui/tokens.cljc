@@ -225,33 +225,79 @@
    :$elevated-0
    :none
 
+   :$elevation-shadow-layer-1-color :$black-transparent-08
+   :$elevation-shadow-layer-2-color :$black-transparent-05
+   :$elevation-shadow-layer-3-color :$black-transparent-03
+
+   :$elevation-shadow-layer-1-color-inverse :$white-transparent-08
+   :$elevation-shadow-layer-2-color-inverse :$white-transparent-05
+   :$elevation-shadow-layer-3-color-inverse :$white-transparent-03
+
    ;; maps to MUI2 level 1
    :$elevated-1
-   "rgb(0 0 0 / var(--box-shadow-layer-1-opacity)) 0px 2px 1px -1px, rgb(0 0 0 / var(--box-shadow-layer-2-opacity)) 0px 1px 1px 0px, rgb(0 0 0 / var(--box-shadow-layer-3-opacity)) 0px 1px 3px 0px"
+   [[:0px :3px :3px :-2px  "var(--elevation-shadow-layer-1-color)"]
+    [:0px :3px :4px :0px "var(--elevation-shadow-layer-2-color)"]
+    [:0px :1px :8px :0px  "var(--elevation-shadow-layer-3-color)"]]
+   :$elevated-1-inverse
+   [[:0px :3px :3px :-2px  "var(--elevation-shadow-layer-1-color-inverse)"]
+    [:0px :3px :4px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
+    [:0px :1px :8px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px 0px, rgb(0 0 0 / 12%) 0px 1px 3px 0px"
 
 
    ;; maps to MUI2 level 3
    :$elevated-2
-   "rgb(0 0 0 / var(--box-shadow-layer-1-opacity)) 0px 3px 3px -2px, rgb(0 0 0 / var(--box-shadow-layer-2-opacity)) 0px 3px 4px 0px, rgb(0 0 0 / var(--box-shadow-layer-3-opacity)) 0px 1px 8px 0px"
+   [[:0px :3px :3px :-2px  "var(--elevation-shadow-layer-1-color)"]
+    [:0px :3px :4px :0px "var(--elevation-shadow-layer-2-color)"]
+    [:0px :1px :8px :0px  "var(--elevation-shadow-layer-3-color)"]]
+   :$elevated-2-inverse
+   [[:0px :3px :3px :-2px  "var(--elevation-shadow-layer-1-color-inverse)"]
+    [:0px :3px :4px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
+    [:0px :1px :8px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 14%) 0px 3px 4px 0px, rgb(0 0 0 / 12%) 0px 1px 8px 0px"
 
 
    ;; maps to MUI2 level 6
    :$elevated-3
-   "rgb(0 0 0 / var(--box-shadow-layer-1-opacity)) 0px 3px 5px -1px, rgb(0 0 0 / var(--box-shadow-layer-2-opacity)) 0px 6px 10px 0px, rgb(0 0 0 / var(--box-shadow-layer-3-opacity)) 0px 1px 18px 0px"
+   [[:0px :3px :5px :-1px  "var(--elevation-shadow-layer-1-color)"]
+    [:0px :6px :10px :0px "var(--elevation-shadow-layer-2-color)"]
+    [:0px :1px :18px :0px  "var(--elevation-shadow-layer-3-color)"]]
+
+   :$elevated-3-inverse
+   [[:0px :3px :5px :-1px  "var(--elevation-shadow-layer-1-color-inverse)"]
+    [:0px :6px :10px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
+    [:0px :1px :18px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 3px 5px -1px, rgb(0 0 0 / 14%) 0px 6px 10px 0px, rgb(0 0 0 / 12%) 0px 1px 18px 0px"
 
    ;; maps to MUI2 level 8
    :$elevated-4
-   "rgb(0 0 0 / var(--box-shadow-layer-1-opacity)) 0px 5px 5px -3px, rgb(0 0 0 / var(--box-shadow-layer-2-opacity)) 0px 8px 10px 1px, rgb(0 0 0 / var(--box-shadow-layer-3-opacity)) 0px 3px 14px 2px"
+   [[:0px :5px :5px :-3px  "var(--elevation-shadow-layer-1-color)"]
+    [:0px :8px :18px :1px "var(--elevation-shadow-layer-2-color)"]
+    [:0px :6px :20px :2px  "var(--elevation-shadow-layer-3-color)"]]
+   :$elevated-4-inverse
+   [[:0px :5px :5px :-3px  "var(--elevation-shadow-layer-1-color-inverse)"]
+    [:0px :8px :18px :1px "var(--elevation-shadow-layer-2-color-inverse)"]
+    [:0px :6px :20px :2px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px"
 
    ;; maps to MUI2 level 12
    :$elevated-5
-   "rgb(0 0 0 / var(--box-shadow-layer-1-opacity)) 0px 7px 8px -4px, rgb(0 0 0 / var(--box-shadow-layer-2-opacity)) 0px 12px 17px 2px, rgb(0 0 0 / var(--box-shadow-layer-3-opacity)) 0px 5px 22px 4px"
+   [[:0px :7px :14px :-2px  "var(--elevation-shadow-layer-1-color)"]
+    [:0px :6px :26px :0px "var(--elevation-shadow-layer-2-color)"]
+    [:0px :8px :27px :0px  "var(--elevation-shadow-layer-3-color)"]]
+
+   :$elevated-5-inverse
+   [[:0px :7px :14px :-2px  "var(--elevation-shadow-layer-1-color-inverse)"]
+    [:0px :6px :26px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
+    [:0px :8px :27px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 7px 8px -4px, rgb(0 0 0 / 14%) 0px 12px 17px 2px, rgb(0 0 0 / 12%) 0px 5px 22px 4px"
 
+
+   :$elevated
+   :$elevated-4
+
+   :$elevated-inverse
+   :$elevated-4-inverse
 
    ;; Intended for css animations and transitions
    ;; ------------------------------------------------------
