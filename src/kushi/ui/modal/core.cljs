@@ -65,12 +65,12 @@
           :.minimal
           :.pill
           :.large
-          :padding--0.9rem
+          :padding--0.5rem
           {:on-click close-kushi-modal
            :style    {:position           :absolute
-                      :inset-block-start  0
+                      :inset-block-start  :0.5rem
                       :inset-block-end    :unset
-                      :inset-inline-end   0
+                      :inset-inline-end   :0.5rem
                       :inset-inline-start :unset}})
       attrs)
      (if icon-svg
@@ -103,8 +103,13 @@
         valid-elevation?     (and (int? elevation) (< -1 elevation 6))
         elevation-token      (when-not (zero? elevation)
                                (if valid-elevation?
-                                 (str "var(--elevated-" elevation "), ")
-                                 (str "var(--elevated), ")))]
+                                 (str "var(--elevated-" elevation"), ")
+                                 (str "var(--elevated), ")))
+        elevation-token-inverse (when-not (zero? elevation)
+                                  (if valid-elevation?
+                                    (str "var(--elevated-" elevation "-inverse), ")
+                                    (str "var(--elevated-inverse), ")))
+        ]
     (when expanded? (js/setTimeout #(open-kushi-modal id) 100))
     (into
      [:dialog (merge-attrs
@@ -113,7 +118,8 @@
                    :.fixed-centered
                    :.transition
                    [:transition-duration "var(--modal-transition-duration, var(--fast))"]
-                   :bgc--white
+                   :bgc--$body-background-color
+                   :dark:bgc--$body-background-color-inverse
                    :border-radius--$modal-border-radius
                    :b--$modal-border
                    [:width :480px]
@@ -121,6 +127,7 @@
                    [:max-height "calc(100vh - (2 * var(--modal-margin, 1rem)))"]
                    :height--$modal-min-height
                    [:box-shadow (str elevation-token "0 0 0 100vmax var(--modal-backdrop-color)")]
+                   [:dark:box-shadow (str elevation-token-inverse "0 0 0 100vmax var(--dark-gray-transparent-90)")]
                    :opacity--0
                    :&.open:opacity--1
                    :overflow--auto
