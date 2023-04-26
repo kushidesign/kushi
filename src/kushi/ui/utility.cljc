@@ -631,14 +631,21 @@
    :embossed      {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}
    :convex        {:background-image "linear-gradient(180deg, hsl(0deg 0% 100% / 20%), transparent, hsl(0deg 0% 0% / 15%))"}
    :concave       {:background-image "linear-gradient(180deg, hsl(0deg 0% 0% / 15%), transparent, hsl(0deg 0% 100% / 20%))"}
-   :elevated      {:box-shadow :$elevated}
-   :elevated-0    {:box-shadow :$elevated-0}
-   :elevated-1    {:box-shadow :$elevated-1}
-   :elevated-2    {:box-shadow :$elevated-2}
-   :elevated-3    {:box-shadow :$elevated-3}
-   :elevated-4    {:box-shadow :$elevated-4}
-   :elevated-5    {:box-shadow :$elevated-5}
 
+   :elevated-0    {:box-shadow      :$elevated-0}
+   :elevated-1    {:box-shadow      :$elevated-1
+                   :dark:box-shadow :$elevated-1-inverse}
+   :elevated-2    {:box-shadow      :$elevated-2
+                   :dark:box-shadow :$elevated-2-inverse}
+   :elevated-3    {:box-shadow      :$elevated-3
+                   :dark:box-shadow :$elevated-3-inverse}
+   :elevated-4    {:box-shadow      :$elevated-4
+                   :dark:box-shadow :$elevated-4-inverse}
+   :elevated-5    {:box-shadow      :$elevated-5
+                   :dark:box-shadow :$elevated-5-inverse}
+
+   :elevated      {:box-shadow      :$elevated-4
+                   :dark:box-shadow :$elevated-4-inverse}
 
    ;; Controls
    ;; ------------------------------------------------------
