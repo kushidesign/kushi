@@ -239,6 +239,6 @@
 (def version* "1.0.0-a.17")
 
 ;; Optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
-(def version (str version* ":LOCALX"))
+(def version (str version* #_":LOCAL"))
 
 
