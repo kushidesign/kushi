@@ -5,7 +5,7 @@
    [kushi.ui.core :refer (opts+children)] ))
 
 (defn grid
-  {:desc ["Flexible grid layout with fixed-aspect ratio grid-items"]
+  {:desc ["Elastic grid layout with fixed-aspect ratio grid-items"]
    :opts '[{:name    column-min-width
             :pred    keyword?
             :default :150px
