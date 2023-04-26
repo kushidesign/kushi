@@ -8,6 +8,7 @@
    [kushi.ui.input.slider.css]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.icon.core :refer (icon)]
+   [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.tag.core :refer (tag)]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.label.core :refer (label)]
@@ -151,7 +152,7 @@
       :-text-on-click-duration 3000
       :-placement              "block-start inline-end"})
     &attrs)
-   [icon (sx :.medium!) :content-copy]])
+   [icon (sx :.medium!) mui.svg/content-copy]])
 
 (defn controls-by-type-init
   [{:keys [defaults variants init-w-defaults?]}]
@@ -255,7 +256,7 @@
            &attrs
            (tooltip-attrs {:-text      "Exit dev mode"
                            :-placement (:tooltip-placement &opts)}))
-   [icon :fullscreen-exit]])
+   [icon mui.svg/fullscreen-exit]])
 
 
   (defn demobox2
@@ -338,7 +339,7 @@
                                              (sx :$tooltip-offset---3px)
                                              (tooltip-attrs {:-text      "Enter dev mode"
                                                              :-placement "block-start inline-start corner"}))
-                                     [icon :fullscreen]]
+                                     [icon #_(sx :.medium!) #_mui.svg/fullscreen :fullscreen]]
 
                                      (when (and (state/focused? nm) @*dev-mode?)
                                        (react-dom/createPortal
@@ -381,11 +382,12 @@
                                                         :.relative
                                                         :.flex-col-c
                                                         :.grow
+                                                        :p--2rem
                                                         :ai--c
                                                         [:width "calc(100% - (2 * var(--dev-mode-stage-margin-inline)))"]
                                                         :outline--1px:solid:$neutral-200
                                                         :dark:outline--1px:solid:$neutral-600
-                                                        {:id "wtf"})
+                                                        {:id :dev-mode-stage})
                                            
                                            @current-stage ]  
 
