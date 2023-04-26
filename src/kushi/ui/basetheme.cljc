@@ -123,8 +123,8 @@
    :.neutral.filled:active:background-color         1000
 
    :.neutral.filled.info:background-color           800
-   :.neutral.filled.info:hover:background-color     900
-   :.neutral-filled.info:active:background-color    1000
+   :.neutral.filled.info:hover:background-color     800
+   :.neutral-filled.info:active:background-color    800
 
 
    ;; NEUTRAL INVERSE
@@ -808,15 +808,15 @@
    ;; uncomment TEMP
    "body"
    {:font-family                :$sans-serif-font-stack
-    :color                      :$gray-900 ; <- TODO should this be an alias token like $fg-color?
+    :color                      :$body-color
+    :background-color           :$body-background-color
     :transition-property        :background-color|color
     :transition-duration        :$fast
     :transition-timing-function :$timing-linear-curve}
 
    ".dark, body.dark"
-   {:bgc   :$gray-1000
-    :color :$gray-50  ; <- TODO should this be an alias token like $fg-color-inverse?
-    }
+   {:bgc                        :$body-background-color-inverse
+    :color                      :$body-color-inverse}
 
    "code, .code"
    {:font-family                :$code-font-stack
