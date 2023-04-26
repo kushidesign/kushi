@@ -12,15 +12,15 @@
 ## Features
 - **100% Clojure(Script)**
 
-- **Minimal set of headless UI components**
-
-- **Themeable design system foundation**
-
-- **Shorthand styling syntax shadows CSS standard**
+- **Compile-time macros generate static CSS**
 
 - **Co-location of styling at the element level**
 
-- **Compile-time macros generate static CSS**
+- **Shorthand styling syntax shadows CSS standard**
+
+- **Minimal set of headless UI components**
+
+- **Themeable design system foundation**
 
 - **Supports media-queries, psuedos, and combo selectors**
 
@@ -80,7 +80,7 @@ The following features work in concert, making it easy to roll your own design s
 - Functional styling engine
 - Configurable theming
 
-Usage of Kushi's design system and component library is completly optional. You can just use the functional styling engine for a lightweight css-in-cljs solution.
+Usage of Kushi's design system and component library is completly optional. You can just use the functional styling engine for a lightweight compile-time css-in-cljs solution.
 
 <br>
 
@@ -345,7 +345,7 @@ As seen in the example above, you can use a quoted list to convey css function v
 
 ### Using CSS custom properties
 
-The following sugar is supported for css variables:
+The following sugar is supported for css variables values:
 
 ```Clojure
 (sx :border-radius--$mycssvarname)
@@ -353,14 +353,39 @@ The following sugar is supported for css variables:
 (sx [:border-radius :$mycssvarname)
 
 (sx {:style {:border-radius :$mycssvarname})
+```
+All of the above would generate the following css value:
 
-;; All of the above would be equivalent to:
-
-(sx {:style {:color "var(--mycssvarname)"})
+```css
+border-radius: var(--mycssvarname);
 ```
 
-<!-- Add section for defining css custom props -->
+Up to 2 additional fallback values can be supplied:
 
+```Clojure
+(sx :border-radius--$mycssvarname|$myfallback|10px)
+```
+The above would generate the following css value:
+
+```css
+border-radius: var(--mycssvarname, var(--myfallback, 10px));
+```
+
+css custom properties can be defined (on the element level) like this:
+
+```Clojure
+(sx $mycustomprop--10px)
+
+(sx [$mycustomprop :10px])
+
+(sx {:style {$mycustomprop :10px})
+```
+All of the above would generate the an attribute map looking something like this:
+
+```css
+{:class ["_897766778"]
+ :style {"--mycustomprop" "10px"}}
+```
 
 
 <br>
@@ -519,6 +544,7 @@ With `defclass`, you can mix-in any other defined classes:<br>
 ;;   display: flex;
 ;;   flex-direction: row;
 ;;   justify-content: center;
+;;   align-items: center;
 ;;   top: 0px;
 ;;   left: 0px;
 ;;   border: 1px solid black;
@@ -539,6 +565,7 @@ With `defclass`, you can mix-in any other defined classes:<br>
 ;;   display: flex;
 ;;   flex-direction: row;
 ;;   justify-content: center;
+;;   align-items: center;
 ;;   top: 0px;
 ;;   left: 0px;
 ;;   font-size: 200px;
@@ -550,7 +577,7 @@ With `defclass`, you can mix-in any other defined classes:<br>
 ```
 In the example above, the `:.headline` class is one of several predefined classes that ships with kushi.
 
-The full list of predefined classes:
+Other predefined classes:
 
 ```Clojure
 ;; positioning
@@ -615,8 +642,6 @@ The full list of predefined classes:
 ;; transitions
 :.transition
 
-;; psuedo-element helper
-:.content-blank
 
 ```
 <!-- TODO add debug grid helpers to above list -->
@@ -627,7 +652,7 @@ Checkout <a href="https://github.com/kushidesign/kushi/blob/main/src/kushi/ui/ut
 
 ### Applying Classes Conditionally
 
-You can apply classes conditionally within the `sx` macro using the following constructs: `if` `when` `cond` `if-let` `when-let` `if-not`, and `when-not`.<br>
+You can apply classes conditionally within the `sx` macro using the following constructs: `if`, `when`, `cond`, `if-let`, `when-let`, `if-not`, and `when-not`.<br>
 ```Clojure
 ;; In your ns for shared styles
 (defclass active-link :color--red)
