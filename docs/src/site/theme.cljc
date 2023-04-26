@@ -7,7 +7,7 @@
    ;;  :add-default-sans-font-family? true
    ;;  :add-default-code-font-family? true
    ;;  :add-default-serif-font-family? true
-
+   
 
    ;;  Google Fonts
    ;;  :google-fonts  [
@@ -15,32 +15,32 @@
    ;;                  {:family "Public Sans"
    ;;                   :styles {:normal [100]
    ;;                            :italic [300]}}]
-
+   
 
    ;;  Google Material Symbols
   ;;  :google-material-symbols ["Material Symbols Outlined"
   ;;                            "Material Symbols Rounded"
   ;;                            "Material Symbols Sharp"]
-
+   
    ;; Because all three requests above (for Material Symbols font-families)
    ;; do not contain an entry for :axes, they will load fonts with all the variable axes included.
-   ;; An example, the first map in the :google-material-symbols is equivalent to this:
+   ;; An example, the first element ("Material Symbols Outlined") in the :google-material-symbols vector is equivalent to this:
    ;;
-   ;; {:family "Material Symbols Outlined"
-   ;;  :axes {:opsz :20..48
-   ;;         :wght :100..700
-   ;;         :grad :-50..200
-   ;;         :fill :0..1}}
+   :google-material-symbols [{:family "Material Symbols Outlined"
+                              :axes   {:opsz :20..48
+                                       :wght :100..700
+                                       :grad :-50..200
+                                       :fill :0..1}}]
 
    ;; When you've made a design decision about the look and feel of icons
    ;; in your project, you can load the symbols font of your choice as a
    ;; static icon font instead of a variable one:
-
-   ;; {:family "Material Symbols Outlined"
-   ;;  :axes {:opsz 24
-   ;;         :wght 400
-   ;;         :grad 0
-   ;;         :fill 0}}
+   
+  ;;  :google-material-symbols [{:family "Material Symbols Outlined"
+  ;;                             :axes   {:opsz 24
+  ;;                                      :wght 400
+  ;;                                      :grad 0
+  ;;                                      :fill 0}}]
    })
 
 (def my-theme
@@ -51,7 +51,9 @@
                         :$button-with-icon-padding-inline-offset :0.8em
                         :$button-border-width                    :1.5px
 
-                        :$kushi-playground-mobile-header-height  :46px]
+                        :$kushi-playground-mobile-header-height  :46px
+                        
+                        ]
 
      :typescale        (create-typescale {:size-limit "xxx"
                                           :shift      0})
