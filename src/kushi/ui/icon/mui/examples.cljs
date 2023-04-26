@@ -75,7 +75,7 @@
     :examples [
                {:radio-label [icon "auto-awesome"],
                 :label       "auto-awesome"
-                :example     [icon "auto-awesome"]}
+                :example     [icon :auto-awesome]}
 
                {:radio-label [icon {:-icon-filled? true} :auto-awesome],
                 :label       "auto-awesome-filled"
