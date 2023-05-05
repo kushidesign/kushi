@@ -348,8 +348,8 @@
                                 og-idx     (js/parseInt (:og-idx og))
                                 diff       (- cur-idx og-idx)]
                             (if (neg? diff)
-                              (.stepUp input (* multiplier (abs diff)))
-                              (.stepDown input (* multiplier (abs diff))))
+                              (.stepUp input (* multiplier (js/Math.abs diff)))
+                              (.stepDown input (* multiplier (js/Math.abs diff))))
                             (highlight-tweaked-label! % og-idx og-idx)
                             (j/assoc! label :textContent (:og-value og))
                             (cond 
