@@ -1,5 +1,6 @@
 (ns kushi.ui.tooltip.core
   (:require
+   [goog.string]
    [clojure.string :as string]
    [kushi.core :refer (sx defclass defclass-with-override token->ms merge-attrs)]
    [kushi.ui.dom :as dom]))
@@ -380,11 +381,11 @@
 
 (defn formatted-text [x]
   (when-let [text-type (text-type x)]
-    (let [text* (case text-type
-                  :multi-line-string
-                  (string/join "\\a" (map str x))
-                  x)
-          text  (str "\"" text* "\"")]
+    (let [text (case text-type
+                 :multi-line-string
+                 (let [lf (goog.string/unescapeEntities "&#10;")]
+                   (string/join lf (map str x)))
+                 x)]
       text)))
 
 (defn tooltip-attrs
@@ -549,27 +550,35 @@
                             (str "kushi-pseudo-tooltip-" dir "-pointing-arrow"))]
 
       (if reveal-on-click?
-        (sx :.kushi-pseudo-tooltip-hidden
-            :.kushi-pseudo-tooltip
-            [:before:content text]
-            {:class    [placement-class dir-class]
-             :role     :button
-             :on-click (fn [e]
-                         (let [node     (-> e .-currentTarget)
-                               class    "kushi-pseudo-tooltip-revealed"
-                               duration (if (pos-int? reveal-on-click-duration)
-                                          reveal-on-click-duration
-                                          (token->ms :$tooltip-reveal-on-click-duration))]
-                           (dom/toggle-class node class)
-                           (when-not (= reveal-on-click-duration :infinite)
-                             (js/setTimeout #(dom/remove-class node class)
-                                            duration))))})
+        (do
+          (sx 'kushi-pseudo-tooltip-reveal-on-click
+              :.kushi-pseudo-tooltip-hidden
+              :.kushi-pseudo-tooltip
+              [:before:content "attr(data-kushi-pseudo-tooltip-text)"]
+              {:class                          [placement-class dir-class]
+               :data-kushi-pseudo-tooltip-text text
+               :role                           :button
+               :on-click                       (fn [e]
+                                                 (let [node     (-> e .-currentTarget)
+                                                       class    "kushi-pseudo-tooltip-revealed"
+                                                       duration (if (pos-int? reveal-on-click-duration)
+                                                                  reveal-on-click-duration
+                                                                  (token->ms :$tooltip-reveal-on-click-duration))]
+                                                   (dom/toggle-class node class)
+                                                   (when-not (= reveal-on-click-duration :infinite)
+                                                     (js/setTimeout #(dom/remove-class node class)
+                                                                    duration))))}))
         (merge-attrs
-         (sx :.kushi-pseudo-tooltip
+         (sx 'kushi-pseudo-tooltip-reveal-on-hover
+             :.kushi-pseudo-tooltip
+
              {:class    [placement-class dir-class]
-              :style    {:before:content                                      text
-                         :&.kushi-pseudo-tooltip-text-on-click:before:content text-on-click
-                         :hover:after:display                               (when (false? arrow?) :none)}})
+              :data-kushi-pseudo-tooltip-text text
+              :data-kushi-pseudo-tooltip-text-on-click text-on-click
+              :style    {
+                         :before:content                                      "attr(data-kushi-pseudo-tooltip-text)"
+                         :&.kushi-pseudo-tooltip-text-on-click:before:content "attr(data-kushi-pseudo-tooltip-text-on-click)"
+                         :hover:after:display                                 (when (false? arrow?) :none)}})
          (when text-on-click
            {:on-click (fn [e]
                         (let [node     (-> e .-currentTarget)
