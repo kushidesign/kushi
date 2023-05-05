@@ -163,6 +163,8 @@
    :$tooltip-padding-inline                 :1.25em
    :$tooltip-padding-block                  :0.65em
    :$tooltip-border-radius                  :0.5rem
+   :$tooltip-line-height                    1.25
+   :$tooltip-font-family                    :$sans-serif-font-stack
    :$tooltip-font-size                      :$xsmall
    :$tooltip-font-weight                    :$wee-bold
    :$tooltip-color                          :white

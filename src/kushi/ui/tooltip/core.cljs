@@ -23,6 +23,8 @@
    :before:border-radius                     :$tooltip-border-radius
    :before:font-size                         :$tooltip-font-size
    :before:font-weight                       :$tooltip-font-weight
+   :before:font-family                       :$tooltip-font-family
+   :before:line-height                       :$tooltip-line-height
    :before:white-space                       :pre
 
    :hover:before:transition-property         :opacity
@@ -30,20 +32,20 @@
    :hover:before:transition-timing-function  :linear
    :hover:before:transition-delay            :$tooltip-transition-delay
 
-   :after:display                          :none
-   :hover:after:display                    :block
-   :after:position                         :absolute
-   :after:z-index                          :9998
-   :after:w                                0
-   :after:h                                0
-   :hover:after:transition-property        :opacity
-   :hover:after:transition-duration        :$tooltip-transition-duration
-   :hover:after:transition-timing-function :linear
-   :hover:after:transition-delay           :$tooltip-transition-delay
+   :after:display                            :none
+   :hover:after:display                      :block
+   :after:position                           :absolute
+   :after:z-index                            :9998
+   :after:w                                  0
+   :after:h                                  0
+   :hover:after:transition-property          :opacity
+   :hover:after:transition-duration          :$tooltip-transition-duration
+   :hover:after:transition-timing-function   :linear
+   :hover:after:transition-delay             :$tooltip-transition-delay
 
    :focus-visible:before:opacity             1
-   :focus-visible:after:opacity            1
-   :transition                              :color:200ms:linear})
+   :focus-visible:after:opacity              1
+   :transition                               :color:200ms:linear})
 
 (defclass-with-override
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
