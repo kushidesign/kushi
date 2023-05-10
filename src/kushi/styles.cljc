@@ -1,5 +1,6 @@
 (ns kushi.styles
   (:require
+   [clojure.pprint :refer [pprint]]
    [garden.color]
    [clojure.spec.alpha :as s]
    [clojure.walk :as walk]
@@ -113,6 +114,32 @@
   (str "var(" (string/join ", " (remove nil? args)) ")"))
 
 
+(defn- kushi-shorthand? [x]
+  (when (s/valid? ::specs2/s|kw x)
+    (and (re-find #":" (name x))
+         (not (re-find #" " (name x)))
+         (not (re-find #"^\".*\"$" (name x))))))
+
+(defn cssvar-name? [x]
+  (s/valid? ::specs2/cssvar-name x))
+
+(defn- normalize-css-custom-property-inner
+  [x]
+  (let [$->dd         util/cssvar-dollar-syntax->double-dash]
+    (if (cssvar-name? (name x))
+      (if (re-find #"\|" (name x))
+        (let [[a b c] (string/split (name x) #"\|")
+              c       (when c (if (cssvar-name? c)
+                                (css-var-syntax ($->dd c))
+                                c))
+              b       (when b (if (cssvar-name? b)
+                                (css-var-syntax ($->dd b) c)
+                                b))
+              ret     (css-var-syntax ($->dd a) b)]
+          ret)
+        (str "var(" ($->dd x) ")"))
+      x)))
+
 (defn- normalize-css-custom-property
   "Works with keyword or string.
    Supports up to 2 fallback values.
@@ -121,21 +148,16 @@
    :$mycssvarname|$myfallback => \"var(--mycssvarname, var(--myfallback))\"
    :$mycssvarname!important => \"var(--mycssvarname)!important\""
   [x]
-  (let [f      util/cssvar-dollar-syntax->double-dash
-        valid? (partial (fn [spec x] (s/valid? spec x)) ::specs2/cssvar-name)
-        ret    (if (valid? x)
-                 (if (re-find #"\|" (name x))
-                   (let [[a b c] (string/split (name x) #"\|")
-                         c       (when c (if (valid? c)
-                                           (css-var-syntax (f c))
-                                           c))
-                         b       (when b (if (valid? b)
-                                           (css-var-syntax (f b) c)
-                                           b))
-                         ret     (css-var-syntax (f a) b)]
-                     ret)
-                   (str "var(" (f x) ")"))
-                 x)]
+  (let [
+        ksh?         (kushi-shorthand? x)
+        ret          (if (cssvar-name? x)
+                       (if ksh?
+                         (string/join ":"
+                                      (map normalize-css-custom-property-inner
+                                           (string/split (name x) #"\:")))
+                         (normalize-css-custom-property-inner x))
+                       x)
+        ]
     ret))
 
 
@@ -262,13 +284,19 @@
            [k v]))
        coll))
 
+(defn trace [coll kw $]
+  (when (= coll '(["b" "$tooltip-arrow-depth:solid:$red-500"]))
+    (println kw) (pprint $)) $)
+
 (defn all-style-tuples
   [coll]
   (let [css-vars (atom {})
         tuples   (as-> coll $
+
+                  ;;  (trace coll :->kushi.styles/all-style-tuples $)
                    (postwalk-style-tuples $ normalize-css-custom-property)
 
-                  ;;  (!? :normalize-css-custom-property $)
+                  ;; (trace coll :normalize-css-custom-property $)
 
                    ;; '([:bc (if true mybc mybc2)]) => ([:bc "var(---1429181005)"])
                    ;; TODO - See if you can do this later in this op in order to support things like:
@@ -277,7 +305,7 @@
                    ;; [:c (if true '(rgb 2 133 47) :$myvar2)]
                    (sexp-cssvarized $ css-vars)
                   ;;  (!? sexp-cssvarized $)
-                   
+
                    ;; ([:b [["var(--myborder-width)" bstyle '(rgb 2 mygreenval 44)]]]) =>
                    ;; ([:b [["var(--myborder-width)" bstyle '("__cssfn__rgb" 2 mygreenval 44)]]])
                    (postwalk-style-tuples $ escape-list)
@@ -287,34 +315,34 @@
                    ;; '([:bgc ("__cssfn__rgb" 2 2 "var(--orange-800)")]) =>
                    (dequote $)
                   ;;  (!? :dequote $)
-                   
+
                    ;; '([:bw mybw]
                    ;;   [:outline [[:1px :solid mybc]]]) =>
                    ;; '([:bw "var(--mybw)"]
                    ;;   [:outline [[:1px :solid "var(--mybc)"]]])
                    (bindings-cssvarized $ css-vars)
                   ;;  (!? :bindings-cssvarized $)
-                   
+
                    ;; '([:bgc ("__cssfn__rgb" 2 2 "var(--orange-800)")]) =>
                    ;; '([:bgc "rgb( 2, 2, var(--orange-800))"])
                    (postwalk-style-tuples $ cssfn-list->string)
                   ;;  (!? :cssfn-list->string $)
-                   
+
                    ;; TODO -- Maybe don't need this sexp unescaping???
                    (postwalk-style-tuples $ unescape-sexp)
                   ;;  (!? :unescape-sexp $)
-                   
+
                    ;; Stringify any tuple values that are keywords
                    ;; These would be from user-supplied 2 element tuples, and/or entries in a stylemap
                    ;; '([:p :1rem]) => '([:p "1rem"])
                    (postwalk-style-tuples $ specs2/kw?->s)
                   ;;  (!? :specs2/kw?->s $)
-                   
+
                    ;; Normalize any tuple keys that are css custom properties
                    ;; '([:$xxx "red"]) => '(["--xxx" "red"])
                    (css-custom-property-keys-normalized $)
                   ;;  (!? :css-custom-property-keys-normalized $)
-                   
+
                    ;; Proper !important syntax for user-supplied cssvars
                    ;; '(["c" "var(--myvar!important)"]) => '(["c" "var(--myvar!important)"])
                    (css-custom-property-values-!important-normalized $)
@@ -366,7 +394,12 @@
 
     :as   m*}]
 
-  (let [shared-class?
+
+  (let [
+        ;; debug?
+        ;; (= assigned-class 'foo)
+
+        shared-class?
         (util/shared-class? process)
 
 
@@ -417,14 +450,15 @@
         ;; _ (!? style-tuples-from-defclass-class {:before (:defclass-class conformed) :after  style-tuples-from-defclass-class})
 
         ;; Concat and distinct all the different kinds of style tuples
+        ;; style-tuples-from-defclass-class needs to be first so it can be overridden when we are defining shared classes
         all-style-tuples*
         (distinct
-         (concat cssvar-tuples-from-tokenized
+         (concat style-tuples-from-defclass-class
+                 cssvar-tuples-from-tokenized
                  (:cssvar-tuple conformed)
                  style-tuples-from-tokenized
                  (:style-tuple conformed)
                  (:style-tuple-defclass conformed)
-                 style-tuples-from-defclass-class
                  clean-stylemap))
 
 
@@ -471,8 +505,8 @@
 
 
     ;; just for debugging
-    #_(when (state2/trace?)
-      (keyed
+    #_(when debug?
+      (println (keyed
         ;; process
         ;; shared-class?
         ;; clean*
@@ -482,9 +516,11 @@
         ;; clean-stylemap*
         ;; clean-stylemap
         ;; style-tuples-from-tokenized
-        ;; all-style-tuples
-       css-vars
-       ))
+        all-style-tuples*
+        all-style-tuples
+        all-style-tuples2
+      ;;  css-vars
+       )))
 
     (merge (when defclass-style-tuples
              {:defclass-style-tuples defclass-style-tuples})
