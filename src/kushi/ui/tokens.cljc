@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.ui.tokens)
 
 ;; TODO
-;; Use a vector of maps like this:
+;; Use a vector of maps like this map:
 ;; {:name         "neutral-secondary-fg"
 ;;  :desc         {:en "Foreground text that is slightly de-emphasized (such as text input field helper text)."}
 ;;  :value        :$gray-700
@@ -151,15 +151,12 @@
    :$tag-border-width                       :1px
 
 
-
    ;; Tooltips
    ;; ------------------------------------------------------
    :$tooltip-arrow-depth                    :5px
    :$tooltip-arrow-x-offset                 :7px
    :$tooltip-arrow-y-offset                 :2px
-   :$_tooltip-arrow-border-trans            "var(--tooltip-arrow-depth) solid transparent"
-   :$_tooltip-arrow-border                  "var(--tooltip-arrow-depth) solid var(--tooltip-background-color)"
-   :$_tooltip-arrow-border-inverse          "var(--tooltip-arrow-depth) solid var(--tooltip-background-color-inverse)"
+
    :$tooltip-padding-inline                 :1.25em
    :$tooltip-padding-block                  :0.65em
    :$tooltip-border-radius                  :0.5rem
@@ -388,8 +385,6 @@
    :$accent-minimal-color-hover
 
    ;; Positive
-  ;;  :$switch-on-positive-background-color--$lime-600
-  ;;  :$switch-on-positive-background-color-hover--$lime-650
    :$switch-on-positive-background-color
    :$positive-500
 
