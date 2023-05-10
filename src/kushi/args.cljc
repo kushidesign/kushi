@@ -53,9 +53,20 @@
   (let [[nested-styles
          styles-]      (util/partition-by-spec ::specs2/style-tuple-nested tups)
         nested-styles+ (mapcat (fn [[k m]]
-                                 (map (fn [[prop value]]
-                                        [(str (specs2/kw?->s k) ":" (specs2/kw?->s prop)) value])
-                                      m))
+                                 (let [mq-keys*    (->> user-config :media keys (map name) (into #{}))
+                                       mq-keys     (conj mq-keys* "dark")
+                                       k-as-string (specs2/kw?->s k)
+                                       k-is-mq?    (contains? mq-keys k-as-string)
+                                      ;;  debug?      (= tups '(["has-ancestor(.g)" {:&_.foo:c :red}]))
+                                       ]
+
+                                   (map (fn [[prop value]]
+                                          (let [nested-prop-as-string (specs2/kw?->s prop)
+                                                nested-prop-has-mod?  (re-find #"\:" nested-prop-as-string)
+                                                sep (if (and nested-prop-has-mod? (not k-is-mq?)) "" ":")]
+                                            #_(when debug? (? (keyed value-as-string value-has-mod? k-is-mq?)))
+                                            [(str k-as-string sep (specs2/kw?->s prop)) value]))
+                                        m)))
                                nested-styles)
         styles         (concat styles- nested-styles+)
         styles         (when (seq styles) styles)]
@@ -63,26 +74,29 @@
 
 (defn- parts [args shared-class?]
   (let [[assigned-class
-         styles]           (if (s/valid? ::specs2/assigned-class (first args))
-                             [(first args) (rest args)]
-                             [nil args])
-        assigned-class     (if (s/valid? ::specs2/quoted-symbol assigned-class)
-                             (second assigned-class)
-                             assigned-class)
+         styles*]                 (if (s/valid? ::specs2/assigned-class (first args))
+                                    [(first args) (rest args)]
+                                    [nil args])
+        assigned-class           (if (s/valid? ::specs2/quoted-symbol assigned-class)
+                                   (second assigned-class)
+                                   assigned-class)
         [styles
-         [attrs-idx m*]]   (trailing-map styles map?)
+         [attrs-idx m*]]  (trailing-map styles* map?)
+
         ;; m* is an attrs map (in the case of sx), or a just a stylemap (in the case of defclass)
         ;; In the case of defclass, we are normalizing it e.g.  {:c :red} => {:style {:c :red}}
-        attrs              (when m*
-                             (if shared-class? {:style m*} m*))
+        attrs                    (when m*
+                                   (if shared-class? {:style m*} m*))
+
         ;; Unnest styles
-        styles-unnested       (unnested-styles styles)
-        styles                (when (seq styles-unnested) styles-unnested)
-        styles-from-map-unnested    (unnested-styles (some-> attrs :style))
-        attrs                       (when attrs
-                                      (merge attrs
-                                             (when (seq styles-from-map-unnested)
-                                               {:style (into {} styles-from-map-unnested)})))]
+        styles-unnested          (unnested-styles styles)
+        styles                   (when (seq styles-unnested) styles-unnested)
+        styles-from-map-unnested (unnested-styles (some-> attrs :style))
+        attrs                    (when attrs
+                                   (merge attrs
+                                          (when (seq styles-from-map-unnested)
+                                            {:style (into {} styles-from-map-unnested)})))]
+
     (keyed assigned-class styles attrs-idx attrs)))
 
 (defn- clean-args-conformed
@@ -164,21 +178,22 @@
 
         ;; Nilify weird/bad entries if empty
         weird-entries            (some->> weird-entries seq (into []))
-        bad-args                 (some->> bad-args seq (into []))]
+        bad-args                 (some->> bad-args seq (into []))
+        ret                      (keyed
+                                  data-sx-attr
+                                  assigned-class
+                                  attrs
+                                  stylemap-tuples
+                                  bad-stylemap-entries
+                                  weird-entries
+                                  clean-stylemap
+                                  clean-attrs
+                                  styles
+                                  bad-args
+                                  args-pre-cleaned
+                                  conformed)]
 
-    (keyed
-     data-sx-attr
-     assigned-class
-     attrs
-     stylemap-tuples
-     bad-stylemap-entries
-     weird-entries
-     clean-stylemap
-     clean-attrs
-     styles
-     bad-args
-     args-pre-cleaned
-     conformed)))
+    ret))
 
 ;; pre-clean end ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -248,6 +263,7 @@
 
 
         ;; Kushi-style tuple syntax -> normalized css.
+        ;; Kushi shorthand gets hydrated here.
         ;; This is where all the media-query, pseudo-class/element, and ancestor stuff gets pulled out
         ;; Example
         ;; '([:sm:dark:hover:c :red])
@@ -262,7 +278,6 @@
         ;;    :css-value         "red"})
         parsed
         (parsed/parsed all-style-tuples selector)
-
 
         ;; Create garden vectors from kushi object
         ;; Example:
@@ -303,6 +318,14 @@
         element-style-inj
         (stylesheet/garden-vecs-injection garden-vecs)
         ]
+
+
+;; Debugging - change quoted sym to line up with the sx or defclass call (with manually assigned class) you want to observe
+
+#_(when (= (first args) '(quote foo))
+  (? all-style-tuples)
+  (? parsed))
+
 
      (merge
       data-sx-attr
