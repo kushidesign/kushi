@@ -244,6 +244,9 @@
           clean             (merge clean
                                    {:kushi/chunk chunk})]
 
+      ;; debugging
+      ;; (when (= sym 'foo) (? clean))
+
       (swap! state2/css conj clean)
 
       (print-warnings clean)
@@ -339,6 +342,10 @@
         clean      (if (= macro :sx*)
                      (assoc-in clean [:attrs :data-sx-tweak] (str (into [] args)))
                      clean)]
+
+    ;; debugging
+    ;; (when (= '(quote foo) (first args))
+    ;;   (? :sx2 clean))
 
     (when (:elide-unused-kushi-utility-classes? user-config)
       (register-classes clean))
