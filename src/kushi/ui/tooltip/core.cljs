@@ -65,34 +65,34 @@
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-pseudo-tooltip-right-pointing-arrow
-  {:after:border-left      :$_tooltip-arrow-border
-   :dark:after:border-left :$_tooltip-arrow-border-inverse
-   :after:border-top       :$_tooltip-arrow-border-trans
-   :after:border-bottom    :$_tooltip-arrow-border-trans
+  {:after:border-left      :$tooltip-arrow-depth:solid:$tooltip-background-color
+   :dark:after:border-left :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
+   :after:border-top       :$tooltip-arrow-depth:solid:transparent
+   :after:border-bottom    :$tooltip-arrow-depth:solid:transparent
    :after:content          "\" \""})
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-pseudo-tooltip-left-pointing-arrow
-  {:after:border-right      :$_tooltip-arrow-border
-   :dark:after:border-right :$_tooltip-arrow-border-inverse
-   :after:border-top        :$_tooltip-arrow-border-trans
-   :after:border-bottom     :$_tooltip-arrow-border-trans
+  {:after:border-right      :$tooltip-arrow-depth:solid:$tooltip-background-color
+   :dark:after:border-right :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
+   :after:border-top        :$tooltip-arrow-depth:solid:transparent
+   :after:border-bottom     :$tooltip-arrow-depth:solid:transparent
    :after:content           "\" \""})
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-pseudo-tooltip-down-pointing-arrow
-  {:after:border-top      :$_tooltip-arrow-border
-   :dark:after:border-top :$_tooltip-arrow-border-inverse
-   :after:border-left     :$_tooltip-arrow-border-trans
-   :after:border-right    :$_tooltip-arrow-border-trans
+  {:after:border-top      :$tooltip-arrow-depth:solid:$tooltip-background-color
+   :dark:after:border-top :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
+   :after:border-left     :$tooltip-arrow-depth:solid:transparent
+   :after:border-right    :$tooltip-arrow-depth:solid:transparent
    :after:content         "\" \""})
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-pseudo-tooltip-up-pointing-arrow
-  {:after:border-bottom      :$_tooltip-arrow-border
-   :dark:after:border-bottom :$_tooltip-arrow-border-inverse
-   :after:border-left        :$_tooltip-arrow-border-trans
-   :after:border-right       :$_tooltip-arrow-border-trans
+  {:after:border-bottom      :$tooltip-arrow-depth:solid:$tooltip-background-color
+   :dark:after:border-bottom :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
+   :after:border-left        :$tooltip-arrow-depth:solid:transparent
+   :after:border-right       :$tooltip-arrow-depth:solid:transparent
    :after:content            "\" \""})
 
 
@@ -429,7 +429,11 @@
           "If you want supply the value of any of the above tokens ala-carte, use the following pattern."
           :br
           :br
-          "`(merge-attrs (sx :$tooltip-offset--5px ...) (tooltip-attrs {...}))`"]
+          "`(merge-attrs (sx :$tooltip-offset--5px ...) (tooltip-attrs {...}))`"
+          :br
+          :br
+          "If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for `$tooltip-offset`, `$tooltip-arrow-x-offset`, `$tooltip-arrow-y-offset`, or `$tooltip-border-radius`, you will need to use an explicit unit e.g. `0px`."
+          ]
    :opts '[{:name    text
             :pred    #(or (string? %) (keyword? %))
             :default nil
