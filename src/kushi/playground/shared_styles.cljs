@@ -1,6 +1,6 @@
 (ns kushi.playground.shared-styles
   (:require
-   [kushi.playground.util :as util :refer-macros (keyed let-map)]
+   [kushi.playground.util :as util :refer-macros (let-map)]
    [kushi.core :refer (defclass defkeyframes)]))
 
 (defkeyframes jiggle
@@ -107,7 +107,8 @@
 
 (defclass kushi-treenav-section-header
   :.relative
-  :.flex-row-fs)
+  :.flex-row-c
+  :md:jc--fs)
 
 (defclass hover-trailing-fade-out
   :transition-duration--350ms
