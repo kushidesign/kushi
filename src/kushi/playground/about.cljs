@@ -182,10 +182,9 @@
   "[:span \n  (sx :.xxlarge :.bold :.xloose :.uppercase :.italic) \n  \"My text\"]" )
 
 (def typescale [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge :xxxxlarge])
-;; (def typescale-low-x [:xxxsmall-low-x :xxsmall-low-x :xsmall-low-x :small-low-x :medium-low-x :large-low-x :xlarge-low-x :xxlarge-low-x :xxxlarge-low-x :xxxxlarge-low-x])
 
 (defn kushi-typography-about
-  [{:keys [use-low-x-type-scale?]}]
+  [m]
   [:span
    [:p "Kushi includes a foundation of global tokens and utility class scales for type size, weight, letter-spacing, sizing, and capitalization."]
 
@@ -209,13 +208,18 @@
     [link (sx {:href   "https://fonts.google.com/specimen/Fira+Code"
                :target :_blank})
      "Fira Code"]
-    " by default. These can be changed via the " [:code ":ui"] " entry in your theming config map. See example "
-    [link (sx {:href   "https://github.com/kushidesign/kushi-quickstart/blob/main/src/main/starter/theme.cljc"
-               :target :_blank})
-     "here."]]
+    " by default."
+    [:br]
+    "These can be changed via the " [:code ":ui"] " entry in your theming config map."
+    [:br]
+    ;; "See example "
+    ;; [link (sx {:href   "https://github.com/kushidesign/kushi-quickstart/blob/main/src/main/starter/theme.cljc"
+    ;;            :target :_blank})
+    ;;  "here."]
+    ]
 
    [type-scale {:label "Size"
-                :coll  typescale #_(if use-low-x-type-scale? typescale-low-x typescale)}]
+                :coll  typescale}]
    [type-scale {:label "Weight"
                 :coll  [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy]}]
    [type-scale {:label "Tracking"
