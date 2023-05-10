@@ -888,8 +888,8 @@
 
    ;; TODO - Move these to utility? or should then just be here?
    ;; Foreground text that is slightly de-emphasized (such as text input field helper text)
-   :.neutral-secondary-fg {:color :$neutral-secondary-fg}
-   :.neutral-secondary-fg-inverse {:color :$neutral-secondary-fg-inverse}
+   :.neutral-secondary-fg {:color      :$neutral-secondary-fg
+                           :dark:color :$neutral-secondary-fg-inverse}
 
    ;; Semantic fg
    ;; TODO -- dark versions of each with *--inverse tokens to match
