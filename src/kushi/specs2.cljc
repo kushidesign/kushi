@@ -20,8 +20,22 @@
 
 ;; UTILITY REGEX ---------------------------------------------------------
 (def css-prop-base-re "-?[a-z]+[a-z-]*")
-(def css-prop-re (str "(?:[^:\t\n\r\\s]+:)*" css-prop-base-re))
-(def css-val-re-base "[#-]?[a-zA-Z0-9]+[_a-zA-Z0-9-:|\\.\\*]*")
+(def optional-modifier-base-re "[^:\t\n\r\\s]+:")
+(def optional-modifier-re (str "(?:" optional-modifier-base-re  ")*"))
+(def optional-modifier-nested-syntax-re (str "(?:" optional-modifier-base-re  "*)*"))
+(def css-prop-re (str optional-modifier-re css-prop-base-re))
+(def css-prop-nested-syntax-re (str optional-modifier-nested-syntax-re "(?:" css-prop-base-re ")*"))
+
+
+;; css-val-re-base, when used with re-find-width, will pass kushi-shorthand such as "1px:solid:red", or "$my-bw:$my-bs:$my-bc"
+
+;; Which means, currently, this would happen;
+;; (s/conform :kushi.specs2/style-tuple-value :$gg:solid:red) =>
+;; [:css-value-scalar [:css-val-alphanumeric :$gg:solid:red]]
+
+;; It is not really designed for this ... should we make a separate spec for kushi-style css shorthand and make only that work (meaning it woule fail css-val-re-base)
+
+(def css-val-re-base "[#-]?[a-zA-Z0-9\\$]+[_a-zA-Z0-9-:|\\.\\*]*")
 (def css-val-re-base-no-bar "[#-]?[a-zA-Z0-9]+[_a-zA-Z0-9-:\\.\\*]*")
 (def css-val-re (str "^" css-val-re-base))
 (def css-pseudo-element-re-fast ":(?:af|be|se|ba|pl|cu|fi|gr|ma|pa|sl|sp|-m|-w)")
@@ -220,7 +234,7 @@
 
 (s/def ::css-val-alphanumeric
   (s/and ::s|kw
-         #(re-find (re-pattern css-val-re) (name %)) ))
+         #(re-find (re-pattern css-val-re) (name %))))
 
 (s/def ::quoted-css-fn-list
   (s/cat :quote #(= % 'quote)
@@ -291,6 +305,11 @@
          #(re-find-with css-prop-re (name %))
          ::with-valid-pseudo-order))
 
+(s/def ::style-tuple-prop-nested-syntax
+  (s/and ::s|kw
+         #(re-find-with css-prop-nested-syntax-re (name %))
+         ::with-valid-pseudo-order))
+
 (s/def ::css-value-scalar
   (s/or :number                   number?
         :runtime-binding          symbol?
@@ -346,7 +365,7 @@
   (s/tuple ::style-tuple-prop ::style-tuple-value-defclass))
 
 (s/def ::style-tuple-nested
-  (s/tuple ::style-tuple-prop ::stylemap))
+  (s/tuple ::style-tuple-prop-nested-syntax ::stylemap))
 
 (s/def ::cssvar-tuple
   (s/tuple ::cssvar-name ::style-tuple-value))
