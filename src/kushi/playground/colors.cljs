@@ -18,20 +18,21 @@
     [label
      [:span (merge-attrs
              (sx :.flex-row-c
-                 :.small
-                 :w--44px
+                 :fs--$kushi-playground-text-sample-sticker_font-size|$small
                  :sm:w--54px
-                 :h--44px
                  :sm:h--54px
-                 [:c color]
-                 [:bgc bgc]
+                 :w--44px
+                 :h--44px
                  :border-radius--50%
-                 :mis--10px)
+                 :mis--10px
+                 [:c color]
+                 [:bgc bgc])
              &attrs)
       "Text"]]))
 
 (defn copy-color [s]
- [:span (sx :.flex-row-fs)
+ [:span (sx :.flex-row-fs
+            [:&_.kushi-button>img:transform '(scale 0.75)])
   [:code s]
   [copy-to-clipboard-button
    {:-placement :right
@@ -54,7 +55,7 @@
                 {:on-click #(open-kushi-modal token-name)})
       [:span (sx :sm:d--none) color-level]
       [:span (sx :.code :sm:d--block :d--none) token-name]
-      [icon (sx :mis--0.5em) :help]]
+      [icon (sx :.neutral-secondary-fg :mis--0.5em {:-icon-style :outlined}) :help]]
      [modal
       {:id token-name}
       [:div
@@ -151,7 +152,8 @@
                      :bbew--1px
                      [:bbec hsl])
             [color-modal (keyed k hsl color-name color-level)]
-            [:div (sx :.flex-row-fe :.wee-bold)
+            [:div (sx :.flex-row-fe
+                      :.wee-bold)
              [text-sample-sticker (sx {:-color :white
                                        :-bgc   hsl})]
              [text-sample-sticker (sx {:-color :black
