@@ -96,7 +96,7 @@
            :.semi-bold
            :fs--$kushi-playground-sidenav-section-header_font-size|$medium
            (when target :.kushi-link)
-           :w--fit-content
+           :w--100%
            {:id       (when (keyword? kw) (str (name kw) "-nav-section"))
             :href     (or href (when (keyword? kw) (str "#" (name kw))))
             :style    {:hover:c                                         (when-not section-focused? :$gray-500)
@@ -146,7 +146,7 @@
   [{:keys [coll kw title]}]
   {:header [:span.kushi-treenav-section-header
             (sx {:on-click (partial collapse-all-handler kw)})
-            [:span (sx :mie--0.5em) title]
+            [:span (sx :md:mie--0.5em) title]
             ;; Leave this out for now
             ;; Maybe place next to sidenav focused sections?
             #_(when (and (state/section-focused? kw)
@@ -192,7 +192,6 @@
     (xxx kushi-user-guide :kushi-user-guide)
     (xxx kushi-clojars :kushi-clojars)
     (xxx kushi-about :kushi-about)]))
-
 
 (defcom sidenav
   [:div.sidenav-wrapper.kushi-playground-sidenav-wrapper
@@ -250,7 +249,7 @@
        {:-wrapper-attrs (sx :.fixed
                             :d--block
                             :md:d--none
-                            :top--$kushi-playground-mobile-header-height
+                            :top--$kushi-playground-mobile-header-height-fallback
                             :max-width--unset
                             :h--auto
                             :w--100%
@@ -271,13 +270,14 @@
 (defn desktop-sidenav
   [{:keys [site-header nav-opts]}]
   [sidenav
-   {:-wrapper-attrs (sx :md:d--flex)}
+   {:-wrapper-attrs (sx :md:d--flex :zi--1000)}
    [:div
     (sx :.relative
         :w--100%
         :padding-block--$title-margin-block)
     (when site-header [site-header])]
-   [:div (sx :.styled-scrollbars
+   [:div (sx 'sidenav-inner
+             :.styled-scrollbars
              :flex-shrink--1
              :flex-grow--0
              :overflow-y--auto
