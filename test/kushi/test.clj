@@ -1,5 +1,6 @@
 (ns kushi.test
   (:require
+   [clojure.pprint :refer [pprint]]
    [clojure.test :as test :refer [is deftest]]
    [kushi.core :refer (sx-dispatch defclass-dispatch defkeyframes)]
    [kushi.state2 :as state2]
@@ -94,19 +95,19 @@
       :form-meta             {:file   "filename.cljs"
                               :line   11
                               :column 11},
-      :defclass-style-tuples [["c" "blue"] [:position "absolute"]],
+      :defclass-style-tuples [[:position "absolute"] ["c" "blue"]],
       :entries/weird         nil,
       :selector              {:selector*     "abs-blue",
                               :selector      ".abs-blue",
                               :prefixed-name "abs-blue"},
-      :element-style-inj     [".abs-blue{color:blue;position:absolute}"],
+      :element-style-inj     [".abs-blue{position:absolute;color:blue}"],
       :expound-str           "Success!\n",
-      :garden-vecs           ([".abs-blue" {"color"    "blue"
-                                            "position" "absolute"}]),
+      :garden-vecs           ([".abs-blue" {"position" "absolute"
+                                            "color"    "blue"}]),
       :kushi/chunk           :kushi.core/defclass,
       :args/bad              nil,
-      :attrs                 {:class   ["abs-blue"]
-                              :style   {}},
+      :attrs                 {:class ["abs-blue"]
+                              :style {}},
       :classlist             ["abs-blue"],
       :data-sx               "filename.cljs:11:11",
       :css-vars              {}})))
