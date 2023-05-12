@@ -66,13 +66,13 @@
         :.grow
         :flex-wrap--wrap
         (when slider? :.kushi-playground-examples-input-group-slider)
-        [:mbs (when slider? :$kushi-playground-examples-input-group-slider_margin-block-start|0)]
-        [:sm:mbs (when slider? :$sm_kushi-playground-examples-input-group-slider_margin-block-start|2.25em)]
-        :row-gap--$kushi-playground-examples-input-group_row-gap|0.25em
+        [:mbs (when slider? :$kushi-playground-examples-input-group-slider_margin-block-start||0)]
+        [:sm:mbs (when slider? :$sm_kushi-playground-examples-input-group-slider_margin-block-start||2.25em)]
+        :row-gap--$kushi-playground-examples-input-group_row-gap||0.25em
 
-        :$inputs-fw--$kushi-playground-examples-input-group_font-weight|$wee-bold
-        :$inputs-fs--$kushi-playground-examples-input-group_font-size|$xsmall
-        :$mqsm-inputs-fs--$sm_kushi-playground-examples-input-group_font-size|$small
+        :$inputs-fw--$kushi-playground-examples-input-group_font-weight||$wee-bold
+        :$inputs-fs--$kushi-playground-examples-input-group_font-size||$xsmall
+        :$mqsm-inputs-fs--$sm_kushi-playground-examples-input-group_font-size||$small
 
         :fw--$inputs-fw
 

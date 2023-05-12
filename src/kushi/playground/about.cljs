@@ -47,7 +47,7 @@
            :mbe--4.25rem)
      [label
       (sx 'intro-section-title
-          :fs--$kushi-playground-main-section-header_font-size|$xxlarge
+          :fs--$kushi-playground-main-section-header_font-size||$xxlarge
           :pbs--2.25em
           :md:pbs--$vp-top-header-padding-with-offset
           {:style {:transform '(translateX :-1.5px)}})
@@ -127,7 +127,7 @@
 
 (defn type-scale [{:keys [coll label]}]
   (into [:div
-         [:h3 (sx :fs--$kushi-playground-main-section-header_font-size|$xxlarge
+         [:h3 (sx :fs--$kushi-playground-main-section-header_font-size||$xxlarge
                   :.wee-bold
                   :mbs--3em
                   :pbs--1.5em

@@ -66,8 +66,8 @@
                 'kushi-playground-sidenav-section-item
                 :.hover-trailing-fade-out
                 :.pointer
-                :fw--$kushi-playground-sidenav-section-item_font-weight|$normal
-                :fs--$kushi-playground-sidenav-section-item_font-size|$small
+                :fw--$kushi-playground-sidenav-section-item_font-weight||$normal
+                :fs--$kushi-playground-sidenav-section-item_font-size||$small
                 :c--black
                 :dark:c--white
                 :d--block
@@ -94,7 +94,7 @@
            :.kushi-treenav-section-level-1-header
            :.relative
            :.semi-bold
-           :fs--$kushi-playground-sidenav-section-header_font-size|$medium
+           :fs--$kushi-playground-sidenav-section-header_font-size||$medium
            (when target :.kushi-link)
            :w--100%
            {:id       (when (keyword? kw) (str (name kw) "-nav-section"))
@@ -203,7 +203,7 @@
          :.fixed
          :.flex-col-fs
          :.wee-bold
-         :iis--$kushi-playground-sidenav-inset-inline-start|1.5rem
+         :iis--$kushi-playground-sidenav-inset-inline-start||1.5rem
          [:xl:iis "calc((100% - 708px) / 4)"]
          [:xl:transform '(translateX :-50%)]
          :ibs--0

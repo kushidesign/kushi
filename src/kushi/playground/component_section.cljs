@@ -72,11 +72,11 @@
        (sx
         'kushi-playground-subsection
         :pb--4.5em:1em
-        :&.description&_p:fs--$kushi-playground-main-section-wrapper_font-size|$medium
-        :&_p:fs--$kushi-playground-main-section-wrapper_font-size|$medium
-        :&_p:ff--$kushi-playground-main-section-wrapper_font-family|$sans-serif-font-stack
-        :&_p:fw--$kushi-playground-main-section-wrapper_font-weight|$normal
-        :&_p:lh--$kushi-playground-main-section-wrapper_line-height|1.7
+        :&.description&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
+        :&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
+        :&_p:ff--$kushi-playground-main-section-wrapper_font-family||$sans-serif-font-stack
+        :&_p:fw--$kushi-playground-main-section-wrapper_font-weight||$normal
+        :&_p:lh--$kushi-playground-main-section-wrapper_line-height||1.7
         :&_p&_code:pb--0.07em
         :&_p&_code:pi--0.2em
         :&_p&_code:fs--0.9rem
@@ -84,8 +84,8 @@
         :&_.code.opt-type:bgc--transparent)
        &attrs)
       [:h3 (sx 'kushi-playground-subsection-header
-               :fs--$kushi-playground-main-section-subsection-header_font-size|$xlarge
-               :fw--$kushi-playground-main-section-subsection-header_font-weight|$wee-bold
+               :fs--$kushi-playground-main-section-subsection-header_font-size||$xlarge
+               :fw--$kushi-playground-main-section-subsection-header_font-weight||$wee-bold
                :margin-block--0:1.25rem)
        title]
       &children]))
@@ -235,7 +235,7 @@
         no-components-are-focused? (not @state/*focused-component)
         focused?                   (state/focused? fname)
         render-collapses?          @state/*md-or-smaller?
-        header-attrs               (sx :fs--$kushi-playground-main-section-header_font-size|$xxlarge
+        header-attrs               (sx :fs--$kushi-playground-main-section-header_font-size||$xxlarge
                                        :.wee-bold
                                        :.hover-trailing-fade-out
                                        (when focused? :.no-hover-bgc)

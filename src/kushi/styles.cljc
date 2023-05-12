@@ -120,15 +120,21 @@
          (not (re-find #" " (name x)))
          (not (re-find #"^\".*\"$" (name x))))))
 
+(defn- kushi-shorthand-alternation? [x]
+  (when (s/valid? ::specs2/s|kw x)
+    (and (re-find #"[^\s\|]\|[^\s\|]" (name x))
+         (not (re-find #" " (name x)))
+         (not (re-find #"^\".*\"$" (name x))))))
+
 (defn cssvar-name? [x]
   (s/valid? ::specs2/cssvar-name x))
 
 (defn- normalize-css-custom-property-inner
   [x]
-  (let [$->dd         util/cssvar-dollar-syntax->double-dash]
-    (if (cssvar-name? (name x))
+  (if (cssvar-name? x)
+    (let [$->dd         util/cssvar-dollar-syntax->double-dash]
       (if (re-find #"\|" (name x))
-        (let [[a b c] (string/split (name x) #"\|")
+        (let [[a b c] (string/split (name x) #"\|\|")
               c       (when c (if (cssvar-name? c)
                                 (css-var-syntax ($->dd c))
                                 c))
@@ -137,27 +143,34 @@
                                 b))
               ret     (css-var-syntax ($->dd a) b)]
           ret)
-        (str "var(" ($->dd x) ")"))
-      x)))
+        (str "var(" ($->dd x) ")")))
+    x))
 
 (defn- normalize-css-custom-property
   "Works with keyword or string.
    Supports up to 2 fallback values.
    Examples:
    :$mycssvarname => \"var(--mycssvarname)\"
-   :$mycssvarname|$myfallback => \"var(--mycssvarname, var(--myfallback))\"
+   :$mycssvarname||$myfallback => \"var(--mycssvarname, var(--myfallback))\"
    :$mycssvarname!important => \"var(--mycssvarname)!important\""
   [x]
-  (let [
-        ksh?         (kushi-shorthand? x)
-        ret          (if (cssvar-name? x)
-                       (if ksh?
-                         (string/join ":"
-                                      (map normalize-css-custom-property-inner
-                                           (string/split (name x) #"\:")))
-                         (normalize-css-custom-property-inner x))
-                       x)
-        ]
+  (let [ksh?     (kushi-shorthand? x)
+        ksh-alt? (kushi-shorthand-alternation? x)
+        ret      (cond
+                   ksh?
+                   (string/join ":"
+                                (map normalize-css-custom-property-inner
+                                     (string/split (name x) #"\:")))
+                   ksh-alt?
+                   (let [with-sub (string/replace (name x) #"([^\s\|])(\|)([^\s\|])" "$1____ALT____$3")
+                         coll     (string/split with-sub #"____ALT____")
+                         ret      (string/join "|"
+                                               (map normalize-css-custom-property-inner
+                                                    coll))]
+                     ret)
+
+                   :else
+                   (normalize-css-custom-property-inner x))]
     ret))
 
 

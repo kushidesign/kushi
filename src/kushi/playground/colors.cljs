@@ -18,7 +18,7 @@
     [label
      [:span (merge-attrs
              (sx :.flex-row-c
-                 :fs--$kushi-playground-text-sample-sticker_font-size|$small
+                 :fs--$kushi-playground-text-sample-sticker_font-size||$small
                  :sm:w--54px
                  :sm:h--54px
                  :w--44px
