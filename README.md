@@ -360,10 +360,10 @@ All of the above would generate the following css value:
 border-radius: var(--mycssvarname);
 ```
 
-Up to 2 additional fallback values can be supplied:
+Up to 2 additional fallback values can be supplied using the `||` syntax:
 
 ```Clojure
-(sx :border-radius--$mycssvarname|$myfallback|10px)
+(sx :border-radius--$mycssvarname||$myfallback||10px)
 ```
 The above would generate the following css value:
 
