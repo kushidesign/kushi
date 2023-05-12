@@ -64,7 +64,7 @@
                                           (let [nested-prop-as-string (specs2/kw?->s prop)
                                                 nested-prop-has-mod?  (re-find #"\:" nested-prop-as-string)
                                                 sep (if (and nested-prop-has-mod? (not k-is-mq?)) "" ":")]
-                                            #_(when debug? (? (keyed value-as-string value-has-mod? k-is-mq?)))
+                                            ;; (when debug? (? (keyed value-as-string value-has-mod? k-is-mq?)))
                                             [(str k-as-string sep (specs2/kw?->s prop)) value]))
                                         m)))
                                nested-styles)
@@ -322,9 +322,9 @@
 
 ;; Debugging - change quoted sym to line up with the sx or defclass call (with manually assigned class) you want to observe
 
-#_(when (= (first args) '(quote foo))
-  (? all-style-tuples)
-  (? parsed))
+;; (when (= (first args) '(quote foo))
+;;   (? all-style-tuples)
+;;   (? parsed))
 
 
      (merge
