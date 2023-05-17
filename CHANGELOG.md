@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.<br>
 This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## 1.0.0-a.18
+2023-5-17
+
+Documentation of changes coming soon ...
+
 ## 1.0.0
 2022-1-14
 
