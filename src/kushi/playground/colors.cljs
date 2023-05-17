@@ -86,10 +86,11 @@
           (sx :d--grid
               :ai--c
               :grid-gap--20px
-              :gtc--1fr:3fr)
-          [:span.kushi-playground-meta-desc-label "name"] [copy-color (string/replace token-name #"^--" "")]
-          [:span.kushi-playground-meta-desc-label "token"] [copy-color token-name]
-          [:span.kushi-playground-meta-desc-label "css var"] [copy-color (str "var(" token-name ")")]
+              :gtc--1fr:3fr
+              :&_.kushi-copy-to-clipboard-button-graphic:width--13px)
+          [:span.kushi-playground-meta-desc-label "name"] [copy-color (string/replace token-name #"^\$" "")]
+          [:span.kushi-playground-meta-desc-label "token"] [copy-color (str ":" token-name)]
+          [:span.kushi-playground-meta-desc-label "css var"] [copy-color (str "var(" (string/replace token-name #"^\$" "--") ")")]
           [:span.kushi-playground-meta-desc-label "hex"] [copy-color hex]
           [:span.kushi-playground-meta-desc-label "hsl"] [copy-color hsl]
           [:span.kushi-playground-meta-desc-label "rgb"] [copy-color rgb]])]]]) )
