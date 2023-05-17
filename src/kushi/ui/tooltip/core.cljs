@@ -1,5 +1,6 @@
 (ns kushi.ui.tooltip.core
   (:require
+   [goog.string]
    [clojure.string :as string]
    [kushi.core :refer (sx defclass defclass-with-override token->ms merge-attrs)]
    [kushi.ui.dom :as dom]))
@@ -23,6 +24,8 @@
    :before:border-radius                     :$tooltip-border-radius
    :before:font-size                         :$tooltip-font-size
    :before:font-weight                       :$tooltip-font-weight
+   :before:font-family                       :$tooltip-font-family
+   :before:line-height                       :$tooltip-line-height
    :before:white-space                       :pre
 
    :hover:before:transition-property         :opacity
@@ -30,20 +33,20 @@
    :hover:before:transition-timing-function  :linear
    :hover:before:transition-delay            :$tooltip-transition-delay
 
-   :after:display                          :none
-   :hover:after:display                    :block
-   :after:position                         :absolute
-   :after:z-index                          :9998
-   :after:w                                0
-   :after:h                                0
-   :hover:after:transition-property        :opacity
-   :hover:after:transition-duration        :$tooltip-transition-duration
-   :hover:after:transition-timing-function :linear
-   :hover:after:transition-delay           :$tooltip-transition-delay
+   :after:display                            :none
+   :hover:after:display                      :block
+   :after:position                           :absolute
+   :after:z-index                            :9998
+   :after:w                                  0
+   :after:h                                  0
+   :hover:after:transition-property          :opacity
+   :hover:after:transition-duration          :$tooltip-transition-duration
+   :hover:after:transition-timing-function   :linear
+   :hover:after:transition-delay             :$tooltip-transition-delay
 
    :focus-visible:before:opacity             1
-   :focus-visible:after:opacity            1
-   :transition                              :color:200ms:linear})
+   :focus-visible:after:opacity              1
+   :transition                               :color:200ms:linear})
 
 (defclass-with-override
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
@@ -62,34 +65,34 @@
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-pseudo-tooltip-right-pointing-arrow
-  {:after:border-left      :$_tooltip-arrow-border
-   :dark:after:border-left :$_tooltip-arrow-border-inverse
-   :after:border-top       :$_tooltip-arrow-border-trans
-   :after:border-bottom    :$_tooltip-arrow-border-trans
+  {:after:border-left      :$tooltip-arrow-depth:solid:$tooltip-background-color
+   :dark:after:border-left :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
+   :after:border-top       :$tooltip-arrow-depth:solid:transparent
+   :after:border-bottom    :$tooltip-arrow-depth:solid:transparent
    :after:content          "\" \""})
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-pseudo-tooltip-left-pointing-arrow
-  {:after:border-right      :$_tooltip-arrow-border
-   :dark:after:border-right :$_tooltip-arrow-border-inverse
-   :after:border-top        :$_tooltip-arrow-border-trans
-   :after:border-bottom     :$_tooltip-arrow-border-trans
+  {:after:border-right      :$tooltip-arrow-depth:solid:$tooltip-background-color
+   :dark:after:border-right :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
+   :after:border-top        :$tooltip-arrow-depth:solid:transparent
+   :after:border-bottom     :$tooltip-arrow-depth:solid:transparent
    :after:content           "\" \""})
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-pseudo-tooltip-down-pointing-arrow
-  {:after:border-top      :$_tooltip-arrow-border
-   :dark:after:border-top :$_tooltip-arrow-border-inverse
-   :after:border-left     :$_tooltip-arrow-border-trans
-   :after:border-right    :$_tooltip-arrow-border-trans
+  {:after:border-top      :$tooltip-arrow-depth:solid:$tooltip-background-color
+   :dark:after:border-top :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
+   :after:border-left     :$tooltip-arrow-depth:solid:transparent
+   :after:border-right    :$tooltip-arrow-depth:solid:transparent
    :after:content         "\" \""})
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-pseudo-tooltip-up-pointing-arrow
-  {:after:border-bottom      :$_tooltip-arrow-border
-   :dark:after:border-bottom :$_tooltip-arrow-border-inverse
-   :after:border-left        :$_tooltip-arrow-border-trans
-   :after:border-right       :$_tooltip-arrow-border-trans
+  {:after:border-bottom      :$tooltip-arrow-depth:solid:$tooltip-background-color
+   :dark:after:border-bottom :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
+   :after:border-left        :$tooltip-arrow-depth:solid:transparent
+   :after:border-right       :$tooltip-arrow-depth:solid:transparent
    :after:content            "\" \""})
 
 
@@ -378,11 +381,11 @@
 
 (defn formatted-text [x]
   (when-let [text-type (text-type x)]
-    (let [text* (case text-type
-                  :multi-line-string
-                  (string/join "\\a" (map str x))
-                  x)
-          text  (str "\"" text* "\"")]
+    (let [text (case text-type
+                 :multi-line-string
+                 (let [lf (goog.string/unescapeEntities "&#10;")]
+                   (string/join lf (map str x)))
+                 x)]
       text)))
 
 (defn tooltip-attrs
@@ -426,7 +429,11 @@
           "If you want supply the value of any of the above tokens ala-carte, use the following pattern."
           :br
           :br
-          "`(merge-attrs (sx :$tooltip-offset--5px ...) (tooltip-attrs {...}))`"]
+          "`(merge-attrs (sx :$tooltip-offset--5px ...) (tooltip-attrs {...}))`"
+          :br
+          :br
+          "If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for `$tooltip-offset`, `$tooltip-arrow-x-offset`, `$tooltip-arrow-y-offset`, or `$tooltip-border-radius`, you will need to use an explicit unit e.g. `0px`."
+          ]
    :opts '[{:name    text
             :pred    #(or (string? %) (keyword? %))
             :default nil
@@ -547,27 +554,35 @@
                             (str "kushi-pseudo-tooltip-" dir "-pointing-arrow"))]
 
       (if reveal-on-click?
-        (sx :.kushi-pseudo-tooltip-hidden
-            :.kushi-pseudo-tooltip
-            [:before:content text]
-            {:class    [placement-class dir-class]
-             :role     :button
-             :on-click (fn [e]
-                         (let [node     (-> e .-currentTarget)
-                               class    "kushi-pseudo-tooltip-revealed"
-                               duration (if (pos-int? reveal-on-click-duration)
-                                          reveal-on-click-duration
-                                          (token->ms :$tooltip-reveal-on-click-duration))]
-                           (dom/toggle-class node class)
-                           (when-not (= reveal-on-click-duration :infinite)
-                             (js/setTimeout #(dom/remove-class node class)
-                                            duration))))})
+        (do
+          (sx 'kushi-pseudo-tooltip-reveal-on-click
+              :.kushi-pseudo-tooltip-hidden
+              :.kushi-pseudo-tooltip
+              [:before:content "attr(data-kushi-pseudo-tooltip-text)"]
+              {:class                          [placement-class dir-class]
+               :data-kushi-pseudo-tooltip-text text
+               :role                           :button
+               :on-click                       (fn [e]
+                                                 (let [node     (-> e .-currentTarget)
+                                                       class    "kushi-pseudo-tooltip-revealed"
+                                                       duration (if (pos-int? reveal-on-click-duration)
+                                                                  reveal-on-click-duration
+                                                                  (token->ms :$tooltip-reveal-on-click-duration))]
+                                                   (dom/toggle-class node class)
+                                                   (when-not (= reveal-on-click-duration :infinite)
+                                                     (js/setTimeout #(dom/remove-class node class)
+                                                                    duration))))}))
         (merge-attrs
-         (sx :.kushi-pseudo-tooltip
+         (sx 'kushi-pseudo-tooltip-reveal-on-hover
+             :.kushi-pseudo-tooltip
+
              {:class    [placement-class dir-class]
-              :style    {:before:content                                      text
-                         :&.kushi-pseudo-tooltip-text-on-click:before:content text-on-click
-                         :hover:after:display                               (when (false? arrow?) :none)}})
+              :data-kushi-pseudo-tooltip-text text
+              :data-kushi-pseudo-tooltip-text-on-click text-on-click
+              :style    {
+                         :before:content                                      "attr(data-kushi-pseudo-tooltip-text)"
+                         :&.kushi-pseudo-tooltip-text-on-click:before:content "attr(data-kushi-pseudo-tooltip-text-on-click)"
+                         :hover:after:display                                 (when (false? arrow?) :none)}})
          (when text-on-click
            {:on-click (fn [e]
                         (let [node     (-> e .-currentTarget)

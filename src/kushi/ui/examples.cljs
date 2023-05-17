@@ -30,10 +30,10 @@
     {:stage    {:style {:min-height :150px}}
      :variants [:kind :shape :semantic :size :weight]
      :demo     button-demo/demo
-     :requires (str 
-                "            ;; Optional, for icons\n" 
+     :requires (str
+                "            ;; Optional, for icons\n"
                 "            [kushi.ui.icon.core :refer [icon]]\n"
-                "            ;; Optional, for loading animations\n" 
+                "            ;; Optional, for loading animations\n"
                 "            [kushi.ui.progress.core :refer [progress\n"
                 "                                            spinner\n"
                 "                                            propeller\n"
@@ -68,7 +68,7 @@
                  :example [button {:-loading? true} [progress [icon :play-arrow] [spinner]] "Play"]}
                 {:label   "Loading state, propeller on icon"
                  :example [button {:-loading? true} [progress [icon :play-arrow] [propeller]] "Play"]}
-                {:label   "Custom"
+                #_{:label   "Custom"
                  :example [button (sx :.heavy
                                       :.xxxloose
                                       :c--white
@@ -189,9 +189,8 @@
                                                          [:b "calc(var(--switch-border-width) * (1 / var(--switch-thumb-scale-factor))) solid transparent"]
                                                          :bgc--$switch-border-color
                                                          ["has-ancestor(.kushi-switch[aria-checked='true']):bgc" :currentColor]
-                                                         )})]}
-                ]})
-   
+                                                         )})]}]})
+
    (feature
     input
     {:stage    {:style {:min-height :170px}}
@@ -331,25 +330,25 @@
               ;;                       (tooltip-attrs {:-text      "My tooltip text"
               ;;                                       :-placement "block-start"})
               ;;                       "Hover me to reveal tooltip"]}
-                              
+
               ;;  {:label   "block-end, auto"
               ;;   :example [button
               ;;                       (tooltip-attrs {:-text      "My tooltip text"
               ;;                                       :-placement "block-end"})
               ;;                       "Hover me to reveal tooltip"]}
-                              
+
               ;;  {:label   "inline-start, auto"
               ;;   :example [button
               ;;                       (tooltip-attrs {:-text      "My tooltip text"
               ;;                                       :-placement "inline-start"})
               ;;                       "Hover me to reveal tooltip"]}
-                              
+
               ;;  {:label   "inline-end, auto"
               ;;   :example [button
               ;;                       (tooltip-attrs {:-text      "My tooltip text"
               ;;                                       :-placement "inline-end"})
               ;;                       "Hover me to reveal tooltip"]}
-                              
+
 
                               {:label   "top-left-corner"
                                :example [button
@@ -417,11 +416,20 @@
                                                                    :-placement "block-start inline-end"})
                                                    "Hover me to reveal tooltip"]}
 
-                              {:label   "block-start, inline-end, corner"
+                              {:label   "corner"
                                :example [button
                                                    (tooltip-attrs {:-text      "My tooltip text"
                                                                    :-placement "block-start inline-end corner"})
                                                    "Hover me to reveal tooltip"]}
+
+                              {:label   "corner, with custom offset"
+                               :example [button
+                                                   (merge-attrs
+                                                    (sx :$tooltip-offset--0px)
+                                                    (tooltip-attrs {:-text      "My tooltip text"
+                                                                    :-placement "block-start inline-end corner"}))
+                                                   "Hover me to reveal tooltip"]}
+
                               {:label   "With forced linebreaks"
                                :example [button
                                                    (tooltip-attrs {:-text      ["My tooltip text line1" "My tooltip text line2"]
@@ -507,7 +515,7 @@
                  :example (example2 [tag [icon :pets] "pet friendly"])}
                 {:label   "Max-width example"
                  :example (example2 [tag [:span (sx :.truncate :max-width--130px) "My tag with longer text"]])}
-                
+
                 ]}
 
    (feature
@@ -524,14 +532,14 @@
                 {:label   "Trailing icon"
                  :example [label "Pet friendly" [icon :pets]]}]})
 
-   (feature 
+   (feature
     card
     {:stage    {:style {:min-height :280px}}
      :defaults {:examples "Default"}
      :examples [{:label   "Default, elevated"
                  :example [:div [card (sx :.elevated-3) "my content"]]}
                 {:label   "Elevation levels 1-5"
-                 :example [:div.grid (sx :ai--c :gap--2rem :gtc--1fr:1fr:1fr :&_code:ws--n :&_code:fs--$xsmall :&_.kushi-card:pi--1.5rem) 
+                 :example [:div.grid (sx :ai--c :gap--2rem :gtc--1fr:1fr:1fr :&_code:ws--n :&_code:fs--$xsmall :&_.kushi-card:pi--1.5rem)
                            [card (sx :.elevated-1) [:code ":.elevation-1"]]
                            [card (sx :.elevated-2) [:code ":.elevation-2"]]
                            [card (sx :.elevated-3) [:code ":.elevation-3"]]

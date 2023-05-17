@@ -12,9 +12,9 @@
   [label
    (sx 'playground-header
        :.playground-title
-       :fs--$kushi-playground-main-section-header_font-size|$large
-       :md:fs--$kushi-playground-main-section-header_font-size|$xxlarge
-       :fw--$kushi-playground-main-section-header_font-weight|$wee-bold
+       :fs--$kushi-playground-main-section-header_font-size||$large
+       :md:fs--$kushi-playground-main-section-header_font-size||$xxlarge
+       :fw--$kushi-playground-main-section-header_font-weight||$wee-bold
        :md:pbs--$vp-top-header-padding-with-offset
        :ai--baseline)
    "Kushi"

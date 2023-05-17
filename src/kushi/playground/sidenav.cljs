@@ -66,8 +66,8 @@
                 'kushi-playground-sidenav-section-item
                 :.hover-trailing-fade-out
                 :.pointer
-                :fw--$kushi-playground-sidenav-section-item_font-weight|$normal
-                :fs--$kushi-playground-sidenav-section-item_font-size|$small
+                :fw--$kushi-playground-sidenav-section-item_font-weight||$normal
+                :fs--$kushi-playground-sidenav-section-item_font-size||$small
                 :c--black
                 :dark:c--white
                 :d--block
@@ -94,9 +94,9 @@
            :.kushi-treenav-section-level-1-header
            :.relative
            :.semi-bold
-           :fs--$kushi-playground-sidenav-section-header_font-size|$medium
+           :fs--$kushi-playground-sidenav-section-header_font-size||$medium
            (when target :.kushi-link)
-           :w--fit-content
+           :w--100%
            {:id       (when (keyword? kw) (str (name kw) "-nav-section"))
             :href     (or href (when (keyword? kw) (str "#" (name kw))))
             :style    {:hover:c                                         (when-not section-focused? :$gray-500)
@@ -146,7 +146,7 @@
   [{:keys [coll kw title]}]
   {:header [:span.kushi-treenav-section-header
             (sx {:on-click (partial collapse-all-handler kw)})
-            [:span (sx :mie--0.5em) title]
+            [:span (sx :md:mie--0.5em) title]
             ;; Leave this out for now
             ;; Maybe place next to sidenav focused sections?
             #_(when (and (state/section-focused? kw)
@@ -193,7 +193,6 @@
     (xxx kushi-clojars :kushi-clojars)
     (xxx kushi-about :kushi-about)]))
 
-
 (defcom sidenav
   [:div.sidenav-wrapper.kushi-playground-sidenav-wrapper
    (:wrapper-attrs &opts)
@@ -204,7 +203,7 @@
          :.fixed
          :.flex-col-fs
          :.wee-bold
-         :iis--$kushi-playground-sidenav-inset-inline-start|1.5rem
+         :iis--$kushi-playground-sidenav-inset-inline-start||1.5rem
          [:xl:iis "calc((100% - 708px) / 4)"]
          [:xl:transform '(translateX :-50%)]
          :ibs--0
@@ -250,7 +249,7 @@
        {:-wrapper-attrs (sx :.fixed
                             :d--block
                             :md:d--none
-                            :top--$kushi-playground-mobile-header-height
+                            :top--$kushi-playground-mobile-header-height-fallback
                             :max-width--unset
                             :h--auto
                             :w--100%
@@ -271,13 +270,14 @@
 (defn desktop-sidenav
   [{:keys [site-header nav-opts]}]
   [sidenav
-   {:-wrapper-attrs (sx :md:d--flex)}
+   {:-wrapper-attrs (sx :md:d--flex :zi--1000)}
    [:div
     (sx :.relative
         :w--100%
         :padding-block--$title-margin-block)
     (when site-header [site-header])]
-   [:div (sx :.styled-scrollbars
+   [:div (sx 'sidenav-inner
+             :.styled-scrollbars
              :flex-shrink--1
              :flex-grow--0
              :overflow-y--auto

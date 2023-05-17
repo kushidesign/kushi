@@ -28,15 +28,20 @@
          :when (not (nil? x))]
 
      [:button (merge-attrs
-               (sx :.flex-row-c
+               (sx 'kushi-playground-tooltip-demo-button
+                   :.flex-row-c
                    :.pointer
                    :.relative
                    :b--1px:solid:$neutral-600
+                   :dark:b--1px:solid:$neutral-400
                    :hover:b--1px:solid:black
+                   :dark:hover:b--1px:solid:white
                    :>span.placement-label:ff--$code-font-stack
                    :fs--0.9em
                    :c--$neutral-600
+                   :dark:c--$neutral-400
                    :hover:c--black
+                   :dark:hover:c--white
                    :&.kushi-pseudo-tooltip-revealed:bc--$accent-color
                    :dark:&.kushi-pseudo-tooltip-revealed:bc--$accent-color-inverse
                    :&.kushi-pseudo-tooltip-revealed:c--$accent-color

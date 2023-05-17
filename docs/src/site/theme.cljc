@@ -7,7 +7,7 @@
    ;;  :add-default-sans-font-family? true
    ;;  :add-default-code-font-family? true
    ;;  :add-default-serif-font-family? true
-   
+
 
    ;;  Google Fonts
    ;;  :google-fonts  [
@@ -15,13 +15,13 @@
    ;;                  {:family "Public Sans"
    ;;                   :styles {:normal [100]
    ;;                            :italic [300]}}]
-   
+
 
    ;;  Google Material Symbols
   ;;  :google-material-symbols ["Material Symbols Outlined"
   ;;                            "Material Symbols Rounded"
   ;;                            "Material Symbols Sharp"]
-   
+
    ;; Because all three requests above (for Material Symbols font-families)
    ;; do not contain an entry for :axes, they will load fonts with all the variable axes included.
    ;; An example, the first element ("Material Symbols Outlined") in the :google-material-symbols vector is equivalent to this:
@@ -35,7 +35,7 @@
    ;; When you've made a design decision about the look and feel of icons
    ;; in your project, you can load the symbols font of your choice as a
    ;; static icon font instead of a variable one:
-   
+
   ;;  :google-material-symbols [{:family "Material Symbols Outlined"
   ;;                             :axes   {:opsz 24
   ;;                                      :wght 400
@@ -51,9 +51,7 @@
                         :$button-with-icon-padding-inline-offset :0.8em
                         :$button-border-width                    :1.5px
 
-                        :$kushi-playground-mobile-header-height  :46px
-                        
-                        ]
+                        :$kushi-playground-mobile-header-height  :46px]
 
      :typescale        (create-typescale {:size-limit "xxx"
                                           :shift      0})
@@ -66,16 +64,15 @@
                         {
                          ;; :color       :$gray-950
                          }
-                        
 
-   ;; Override .styled-scrollbars (defined in basetheme) so that scrollbars only appear on hover 
+   ;; Override .styled-scrollbars (defined in basetheme) so that scrollbars only appear on hover
    ;; Put this back in when you can use mq to isolate pointer devices
   ;;  ".styled-scrollbars:hover"
   ;;  {:scrollbar-color      :$scrollbar-thumb-color
   ;;   :dark:scrollbar-color :$scrollbar-thumb-color-inverse}
 
   ;;  ".styled-scrollbars"
-  ;;  {:scrollbar-color :transparent 
+  ;;  {:scrollbar-color :transparent
   ;;   :dark:scrollbar-color :transparent
   ;;   :scrollbar-width :thin}
 

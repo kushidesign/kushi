@@ -72,22 +72,22 @@
        (sx
         'kushi-playground-subsection
         :pb--4.5em:1em
-        :&.description&_p:fs--$kushi-playground-main-section-wrapper_font-size|$medium
-        :&_p:fs--$kushi-playground-main-section-wrapper_font-size|$medium
-        :&_p:ff--$kushi-playground-main-section-wrapper_font-family|$sans-serif-font-stack
-        :&_p:fw--$kushi-playground-main-section-wrapper_font-weight|$normal
-        :&_p:lh--$kushi-playground-main-section-wrapper_line-height|1.7
+        :&.description&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
+        :&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
+        :&_p:ff--$kushi-playground-main-section-wrapper_font-family||$sans-serif-font-stack
+        :&_p:fw--$kushi-playground-main-section-wrapper_font-weight||$normal
+        :&_p:lh--$kushi-playground-main-section-wrapper_line-height||1.7
         :&_p&_code:pb--0.07em
         :&_p&_code:pi--0.2em
-        :&_p&_code:fs--0.9em
+        :&_p&_code:fs--0.9rem
         :&_.kushi-opt-detail-label:lh--2.05
         :&_.code.opt-type:bgc--transparent)
        &attrs)
       [:h3 (sx 'kushi-playground-subsection-header
-               :fs--$kushi-playground-main-section-subsection-header_font-size|$xlarge
-               :fw--$kushi-playground-main-section-subsection-header_font-weight|$wee-bold
+               :fs--$kushi-playground-main-section-subsection-header_font-size||$xlarge
+               :fw--$kushi-playground-main-section-subsection-header_font-weight||$wee-bold
                :margin-block--0:1.25rem)
-       title ]
+       title]
       &children]))
 
 
@@ -230,12 +230,12 @@
     title      :title
     opts       :opts
     :as        m}]
-         
+
   (let [fname                      (util/meta->fname m*)
         no-components-are-focused? (not @state/*focused-component)
         focused?                   (state/focused? fname)
         render-collapses?          @state/*md-or-smaller?
-        header-attrs               (sx :fs--$kushi-playground-main-section-header_font-size|$xxlarge
+        header-attrs               (sx :fs--$kushi-playground-main-section-header_font-size||$xxlarge
                                        :.wee-bold
                                        :.hover-trailing-fade-out
                                        (when focused? :.no-hover-bgc)
@@ -282,8 +282,8 @@
            :-expanded?     (or @*components-expanded? (state/focused? fname))
            :-header-attrs  header-attrs})
          [component-section-body component-section-body-opts]])
-         
-         
+
+
          (when (or no-components-are-focused?
                    focused?)
            (let [{kushi-desc :desc
@@ -302,14 +302,14 @@
                                                                   doc-hiccup
                                                                   opts)]
              [:div.hover-trailing-fade-out-wrapper
-              [:header 
+              [:header
                (merge-attrs
                 (sx :.pointer
                     :bbe--$divisor
-                    [:bbec (if no-components-are-focused? :$neutral-100 :transparent)]
+                    [:bbec      (if no-components-are-focused? :$neutral-100 :transparent)]
                     [:dark:bbec (if no-components-are-focused? :$neutral-750 :transparent)]
-                    {:role     :button
-                     :on-click #(reset! state/*focused-component fname)})
+                    {:role      :button
+                     :on-click  #(reset! state/*focused-component fname)})
                 header-attrs
                 (when focused? {:aria-expanded true}))
                title]

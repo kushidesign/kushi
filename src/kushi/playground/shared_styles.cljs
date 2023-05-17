@@ -1,6 +1,6 @@
 (ns kushi.playground.shared-styles
   (:require
-   [kushi.playground.util :as util :refer-macros (keyed let-map)]
+   [kushi.playground.util :as util :refer-macros (let-map)]
    [kushi.core :refer (defclass defkeyframes)]))
 
 (defkeyframes jiggle
@@ -60,9 +60,9 @@
    :bgc                       :$gray-50
    "has-ancestor(.dark):bgc"  :$gray-900
    :mbs                       :7px
-   :fs                        :$kushi-playground-codebox-snippet_font-size|$xsmall
-   :&_.code:fs                :$kushi-playground-codebox-snippet_font-size|$xsmall
-   :&_code:fs                 :$kushi-playground-codebox-snippet_font-size|$xsmall
+   :fs                        :$kushi-playground-codebox-snippet_font-size||$xsmall
+   :&_.code:fs                :$kushi-playground-codebox-snippet_font-size||$xsmall
+   :&_code:fs                 :$kushi-playground-codebox-snippet_font-size||$xsmall
    :&_.code:bgc               :transparent
    :&_code:bgc                :transparent
    :fw                        400
@@ -98,16 +98,17 @@
    :xl:w      :$components-menu-width})
 
 (defclass kushi-playground-meta-desc-label
-  {:fs         :$kushi-playground-meta-desc-label_font-size|$xsmall
-   :fw         :$kushi-playground-meta-desc-label_font-weight|$wee-bold
-   :font-style :$kushi-playground-meta-desc-label_font-style|italic
-   :tt         :$kushi-playground-meta-desc-label_text-transform|uppercase
+  {:fs         :$kushi-playground-meta-desc-label_font-size||$xsmall
+   :fw         :$kushi-playground-meta-desc-label_font-weight||$wee-bold
+   :font-style :$kushi-playground-meta-desc-label_font-style||italic
+   :tt         :$kushi-playground-meta-desc-label_text-transform||uppercase
    :c          :$neutral-secondary-fg
    :dark:c     :$neutral-secondary-fg-inverse })
 
 (defclass kushi-treenav-section-header
   :.relative
-  :.flex-row-fs)
+  :.flex-row-c
+  :md:jc--fs)
 
 (defclass hover-trailing-fade-out
   :transition-duration--350ms

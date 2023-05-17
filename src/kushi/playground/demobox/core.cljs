@@ -20,6 +20,7 @@
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.playground.demobox.handlers :as handlers]
    [kushi.playground.demobox.decorate :as decorate]
+   [kushi.playground.demobox.devmode :refer [dev-mode-view]]
    [kushi.playground.demobox.defs :refer [variants-by-category]]
    [kushi.playground.state :as state :refer [*state *dev-mode?]]
    [kushi.playground.shared-styles]
@@ -65,13 +66,13 @@
         :.grow
         :flex-wrap--wrap
         (when slider? :.kushi-playground-examples-input-group-slider)
-        [:mbs (when slider? :$kushi-playground-examples-input-group-slider_margin-block-start|0)]
-        [:sm:mbs (when slider? :$sm_kushi-playground-examples-input-group-slider_margin-block-start|2.25em)]
-        :row-gap--$kushi-playground-examples-input-group_row-gap|0.25em
+        [:mbs (when slider? :$kushi-playground-examples-input-group-slider_margin-block-start||0)]
+        [:sm:mbs (when slider? :$sm_kushi-playground-examples-input-group-slider_margin-block-start||2.25em)]
+        :row-gap--$kushi-playground-examples-input-group_row-gap||0.25em
 
-        :$inputs-fw--$kushi-playground-examples-input-group_font-weight|$wee-bold
-        :$inputs-fs--$kushi-playground-examples-input-group_font-size|$xsmall
-        :$mqsm-inputs-fs--$sm_kushi-playground-examples-input-group_font-size|$small
+        :$inputs-fw--$kushi-playground-examples-input-group_font-weight||$wee-bold
+        :$inputs-fs--$kushi-playground-examples-input-group_font-size||$xsmall
+        :$mqsm-inputs-fs--$sm_kushi-playground-examples-input-group_font-size||$small
 
         :fw--$inputs-fw
 
@@ -223,261 +224,146 @@
                                             (get-example examples (:label active)))
                                           (get-example examples (:examples defaults)))})))
 
-(defn stage-control
-  [active? tooltip-text icon-name [prop value]]
-  [button
-   (merge-attrs
-    (sx
-     :.kushi-playground-demobox-ui-icon
-     :.kushi-playground-demobox-ui-icon-stage-control
-     {:on-click #(let [clicked (dom/et %)]
-                   (when-let [stage-settings (dom/nearest-ancestor clicked ".dev-mode-stage-settings") ]
-                     (let [stage           (.-previousSibling stage-settings)
-                           cls             ".kushi-playground-demobox-ui-icon-stage-control"
-                           button-group    (dom/nearest-ancestor clicked ".stage-control-button-group")
-                           buttons-checked (.querySelectorAll button-group (str cls "[aria-selected='true']"))
-                           ctrl-button     (if (dom/has-class? clicked cls)
-                                             clicked
-                                             (dom/nearest-ancestor clicked cls))]
-                       (doseq [el buttons-checked]
-                         (dom/set-attribute! el "aria-selected" false))
-                       (dom/set-attribute! ctrl-button "aria-selected" true)
-                       (dom/set-style! stage (name prop) (name value)))))
-      :aria-selected (str active?)})
-    (tooltip-attrs {:-text      tooltip-text 
-                    :-placement :top}))
-   [icon icon-name]])
 
-  
-(defcom exit-dev-mode-button
-  [button (merge-attrs
-           (sx 
-            :.kushi-playground-demobox-ui-icon)
-           &attrs
-           (tooltip-attrs {:-text      "Exit dev mode"
-                           :-placement (:tooltip-placement &opts)}))
-   [icon mui.svg/fullscreen-exit]])
-
-
-  (defn demobox2
-    [{:keys      [defaults
-                  utility-class-target
-                  selector]
-      examples   :examples
-      variants   :variants
-      m*         :meta
-      stage-attr :stage
-      :as        m+}]
-    (let [component-id         (subs (str m*) 2)
-          dev-modal-id         (str component-id "-dev-modal")
-          nm                   (util/meta->fname m*)
-          utility-class-target (or utility-class-target nm)
-          snippet-id           (str nm "-snippet")
-          init-w-defaults?     true
-          opts                 (keyed nm
-                                      component-id
-                                      defaults
-                                      variants
-                                      init-w-defaults?
-                                      examples
-                                      selector
-                                      utility-class-target)
-          *demostate           (*demostate opts)
-          current-snippet      (current-snippet *demostate opts)
-          current-stage        (r/reaction (-> @*demostate :active-example :example :evaled))
-          update-classes        (fn [_]
-                                  (decorate/utility-classes-into-dom
-                                   (merge opts
-                                          {:active-controls-by-type (:active-controls-by-type @*demostate)})))]
+(defn demobox2
+  [{:keys      [defaults
+                utility-class-target
+                selector]
+    examples   :examples
+    variants   :variants
+    m*         :meta
+    stage-attr :stage
+    :as        m+}]
+  (let [component-id         (subs (str m*) 2)
+        dev-modal-id         (str component-id "-dev-modal")
+        nm                   (util/meta->fname m*)
+        utility-class-target (or utility-class-target nm)
+        snippet-id           (str nm "-snippet")
+        init-w-defaults?     true
+        opts                 (keyed nm
+                                    component-id
+                                    defaults
+                                    variants
+                                    init-w-defaults?
+                                    examples
+                                    selector
+                                    utility-class-target)
+        *demostate           (*demostate opts)
+        current-snippet      (current-snippet *demostate opts)
+        current-stage        (r/reaction (-> @*demostate :active-example :example :evaled))
+        update-classes       (fn [_]
+                               (decorate/utility-classes-into-dom
+                                (merge opts
+                                       {:active-controls-by-type (:active-controls-by-type @*demostate)})))]
 
 
 ;; (println current-stage)
 ;; (println (dissoc @*demostate :examples))
 ;; (println @*demostate)
 ;; (println (keyed current-snippet current-stage))
+    
 
+    (r/create-class
+     {:display-name         "example"
+      :component-did-mount  (fn [this]
+                              (let [focused? (state/focused? nm)
+                                    node     (rdom/dom-node this)]
+                                (when (and focused? @*dev-mode?)
 
-      (r/create-class
-       {:display-name         "example"
-        :component-did-mount  (fn [this]
-                                (let [focused? (state/focused? nm)
-                                      node (rdom/dom-node this)]
-                                  (when (and focused? @*dev-mode?)
-                                    
-                                    #_(dom/add-class node "kushi-playground-demobox-dev-mode")
-                                    #_(open-kushi-modal dev-modal-id)
-                                    #_(js/setTimeout (fn [_]
-                                                       (dom/remove-class node "kushi-playground-demobox-dev-mode"))
-                                                     1000)))
-                                (update-classes this))
-        :component-did-update update-classes
-        :reagent-render       (fn []
-                                (let [dev-mode-stage-ai (or (-> @*demostate :layout :justify-content) :center)
-                                      dev-mode-stage-jc (or (-> @*demostate :layout :align-items) :center)]
-                                  [:section (sx :.kushi-playground-demobox)
+                                  #_(dom/add-class node "kushi-playground-demobox-dev-mode")
+                                  #_(open-kushi-modal dev-modal-id)
+                                  #_(js/setTimeout (fn [_]
+                                                     (dom/remove-class node "kushi-playground-demobox-dev-mode"))
+                                                   1000)))
+                              (update-classes this))
+      :component-did-update update-classes
+      :reagent-render       (fn []
+                              (let [dev-mode-stage-ai (or (-> @*demostate :layout :justify-content) :center)
+                                    dev-mode-stage-jc (or (-> @*demostate :layout :align-items) :center)]
+                                [:section (sx :.kushi-playground-demobox)
 
                                    ;; Component preview stage
                                    ;; ------------------------------------
-                                   [:div.flex-row-c.relative
-                                    (merge-attrs stage-attr
-                                                 (sx 'kushi-demo-stage {:id  component-id
-                                                                        :key (-> @*demostate
-                                                                                 :active-example
-                                                                                 :example
-                                                                                 :quoted)}))
-                                    @current-stage
+                                 [:div.flex-row-c.relative
+                                  (merge-attrs stage-attr
+                                               (sx 'kushi-demo-stage {:id  component-id
+                                                                      :key (-> @*demostate
+                                                                               :active-example
+                                                                               :example
+                                                                               :quoted)}))
+                                  @current-stage
 
-                                    [button (merge-attrs
-                                             (sx :.southeast-inside
-                                                 :.kushi-playground-demobox-ui-icon
-                                                 {:on-click (fn [_] 
-                                                               (dom/add-class js/document.body "kushi-playground-dev-mode")
-                                                               (js/setTimeout (fn [_]
-                                                                                (dom/add-class js/document.body "kushi-playground-dev-mode-hidden")
-                                                                                (reset! *dev-mode? true))
-                                                                              500))})
-                                             (sx :$tooltip-offset---3px)
-                                             (tooltip-attrs {:-text      "Enter dev mode"
-                                                             :-placement "block-start inline-start corner"}))
-                                     [icon #_(sx :.medium!) #_mui.svg/fullscreen :fullscreen]]
+                                  [button (merge-attrs
+                                           (sx :.southeast-inside
+                                               :.kushi-playground-demobox-ui-icon
+                                               {:on-click (fn [_]
+                                                            (dom/add-class js/document.body "kushi-playground-dev-mode")
+                                                            (js/setTimeout (fn [_]
+                                                                             (dom/add-class js/document.body "kushi-playground-dev-mode-hidden")
+                                                                             (reset! *dev-mode? true))
+                                                                           500))})
+                                           (sx :$tooltip-offset---3px)
+                                           (tooltip-attrs {:-text      "Enter dev mode"
+                                                           :-placement "block-start inline-start corner"}))
+                                   [icon :fullscreen]]
 
-                                     (when (and (state/focused? nm) @*dev-mode?)
-                                       (react-dom/createPortal
-                                        (r/as-element
-                                         [:div
-                                          (sx :.flex-col-sb :ai--c :w--100% :h--100%)
-
-                                          [:div (sx :.flex-row-sb
-                                                    :ai--c
-                                                    :gap--1rem
-                                                    :pb--0.75em
-                                                    :pi--3rem:1rem
-                                                    :w--100%)
-
-                                           [:section.flex-row-fs 
-                                            (sx :gap--2rem)
-                                            [tag (sx :fs--$xxxsmall!important
-                                                     :fw--$normal!important
-                                                     :&_.kushi-icon:text-shadow--0:0:4px:#00ffe0
-                                                     :&_.kushi-icon:c--#0a79ff
-                                                     :dark:&_.kushi-icon:c--$accent--300
-                                                     :.uppercase
-                                                     :.rounded)
-                                             [icon {:-icon-filled? false} :bolt]
-                                             "Playground Dev Mode"
-                                             [icon {:-icon-filled? false} :bolt]]
-
-                                            [:span.flex-row-fs
-                                             (sx :gap--0.5em)
-                                             [:code.semi-bold.xsmall! component-id]
-                                             [:span.small.italic.small! (-> @*demostate :active-example :label)]]]
-                                           
-                                           [:div
-                                            (sx :>button:pb--0.4rem!important)
-                                            ;; todo put dark mode switch here
-                                            [light-dark-mode-switch]]]
-
-                                          [:section (sx 'dev-mode-stage
-                                                        :$dev-mode-stage-margin-inline--3rem
-                                                        :.relative
-                                                        :.flex-col-c
-                                                        :.grow
-                                                        :p--2rem
-                                                        :ai--c
-                                                        [:width "calc(100% - (2 * var(--dev-mode-stage-margin-inline)))"]
-                                                        :outline--1px:solid:$neutral-200
-                                                        :dark:outline--1px:solid:$neutral-600
-                                                        {:id :dev-mode-stage})
-                                           
-                                           @current-stage ]  
-
-                                          [:div (sx 'dev-mode-stage-settings
-                                                    :.flex-row-sb
-                                                    :pb--0.75em
-                                                    :pi--1rem
-                                                    :w--100%
-                                                    :&_.kushi-icon:fs--large
-                                                    :&_.kushi-button:bgc--transparent
-                                                    :&_.kushi-button:hover:bgc--$gray-150
-                                                    :&_.kushi-button:p--7px
-                                                    :&_.kushi-button:border-radius--999px)
-                                           [:div (sx :w--32px)]
-                                           [:div (sx 'dev-mode-stage-settings-alignment
-                                                     :.flex-row-c
-                                                     :.pill!
-                                                     :gap--4.5em
-                                                     :&_.kushi-icon:fs--large
-                                                     :&_.kushi-button:bgc--transparent
-                                                     :&_.kushi-button:p--7px)
-                                            [:div (sx :.flex-row-fs :.stage-control-button-group :gap--0.5em)
-                                             [stage-control false "Justify left" :align-horizontal-left [:align-items :flex-start]]
-                                             [stage-control true "Justify center" :align-horizontal-center [:align-items :center]]
-                                             [stage-control false "Justify right" :align-horizontal-right [:align-items :flex-end]]]
-                                            [:div (sx :.flex-row-fs :.stage-control-button-group :gap--0.5em)
-                                             [stage-control false "Justify top" :vertical-align-top [:justify-content :flex-start]]
-                                             [stage-control true "Justify middle" :vertical-align-center [:justify-content :center]]
-                                             [stage-control false "Justify bottom" :vertical-align-bottom [:justify-content :flex-end]]]]
-
-                                           [exit-dev-mode-button
-                                            {:on-click           (fn [_] 
-                                                                   (dom/remove-class js/document.body "kushi-playground-dev-mode-hidden")
-                                                                   (reset! *dev-mode? false)
-                                                                   (dom/remove-class js/document.body "kushi-playground-dev-mode"))
-                                             :-tooltip-placement "inline-start"}]]])
-                                         (.. js/document (getElementById "kushi-playground-dev-mode-portal"))))]
+                                  (when (and (state/focused? nm) @*dev-mode?)
+                                    (react-dom/createPortal
+                                     (r/as-element [dev-mode-view *demostate current-stage component-id])
+                                     (.. js/document (getElementById "kushi-playground-dev-mode-portal"))))]
 
 
                                  ;; Examples radio group
                                  ;; ------------------------------------
-                                   (into [input-row {:-label "Examples"
-                                                     :-nm    nm}]
-                                         (for [{:keys [label radio-label example]} examples
-                                               :let                                [id (if (vector? label)
-                                                                                         (str (last label) ":" (-> example :quoted first name))
-                                                                                         label)
-                                                                                    label       (name label)
-                                                                                    radio-label (or radio-label label)]]
-                                           [radio
-                                            (sx
-                                             {:-input-attrs {:id        id
-                                                             :value     id
-                                                             :name      (str nm "-example:content")
-                                                             :checked   (= label (-> @*demostate :active-example :label))
-                                                             :on-change (fn [_]
-                                                                          (swap! *state
-                                                                                 assoc-in
-                                                                                 [:demo component-id :active-example]
-                                                                                 (get-example (:examples @*demostate) label))
-                                                                          (swap! *demostate
-                                                                                 assoc
-                                                                                 :active-example
-                                                                                 (get-example (:examples @*demostate) label)))}})
-                                            (if (keyword? radio-label) (name radio-label) radio-label)]))
+                                 (into [input-row {:-label "Examples"
+                                                   :-nm    nm}]
+                                       (for [{:keys [label radio-label example]} examples
+                                             :let                                [id (if (vector? label)
+                                                                                       (str (last label) ":" (-> example :quoted first name))
+                                                                                       label)
+                                                                                  label       (name label)
+                                                                                  radio-label (or radio-label label)]]
+                                         [radio
+                                          (sx
+                                           {:-input-attrs {:id        id
+                                                           :value     id
+                                                           :name      (str nm "-example:content")
+                                                           :checked   (= label (-> @*demostate :active-example :label))
+                                                           :on-change (fn [_]
+                                                                        (swap! *state
+                                                                               assoc-in
+                                                                               [:demo component-id :active-example]
+                                                                               (get-example (:examples @*demostate) label))
+                                                                        (swap! *demostate
+                                                                               assoc
+                                                                               :active-example
+                                                                               (get-example (:examples @*demostate) label)))}})
+                                          (if (keyword? radio-label) (name radio-label) radio-label)]))
 
 
                                  ;; Variant controls section, radio groups and sliders
                                  ;; ------------------------------------
-                                   [variant-controls {:*demostate *demostate}]
+                                 [variant-controls {:*demostate *demostate}]
 
-                                   [:section
-                                    (sx :margin-block--1.5rem:0.5rem)
+                                 [:section
+                                  (sx :margin-block--1.5rem:0.5rem)
 
                                   ;; Code snippet section
                                   ;; ------------------------------------
-                                    [:div
-                                     (sx :.relative)
-                                     [:div
-                                      (sx :.codebox
-                                          {:id snippet-id})
-                                      [util/formatted-code @current-snippet]]
-                                     [:div (sx :.absolute-fill)]
+                                  [:div
+                                   (sx :.relative)
+                                   [:div
+                                    (sx :.codebox
+                                        {:id snippet-id})
+                                    [util/formatted-code @current-snippet]]
+                                   [:div (sx :.absolute-fill)]
 
-                                     [copy-to-clipboard-button
-                                      (sx :.northeast-inside!
-                                          {:-text-to-copy @current-snippet})]]
+                                   [copy-to-clipboard-button
+                                    (sx :.northeast-inside!
+                                        {:-text-to-copy @current-snippet})]]
 
 
                                     ;; Show utility class if checked = default
                                     ;; Leave this out for now
                                     ;; ------------------------------------
-                                    #_[show-utility-class-checkbox *demostate] ]]))})))
+                                  #_[show-utility-class-checkbox *demostate] ]]))})))

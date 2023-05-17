@@ -202,20 +202,12 @@
         ret             (merge user-config-defaults
                                ret*
                                {:warnings-and-errors {:print-specs? (:log-relevant-specs? m)}})]
-    ;; (println "\n\n")
-    ;; (pprint (util/keyed config* user-config-defaults ret* ret))
-    ;; (println "\n\n")
     ret))
 
 (def user-config
   (let [config* (let [m (load-edn "kushi.edn")]
                   (if (map? m) m {}))
         ret     (->user-config config*)]
-
-    ;; (println "\n\n")
-    ;; (pprint ret)
-    ;; (println "\n\n")
-
     ret))
 
 ;; TODO used?
@@ -236,7 +228,7 @@
        (or (:css-filename user-config) "kushi.css")))
 
 ;; ! Update kushi version here for console printing and cache file path generation
-(def version* "1.0.0-a.18-SNAPSHOT")
+(def version* "1.0.0-a.18")
 
 ;; Optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
 (def version (str version* #_":LOCAL"))

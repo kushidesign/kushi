@@ -93,7 +93,7 @@
   ^{:key s}
   [:div
    (sx 'kushi-playground-main-section
-       [:mbs "calc(2 * var(--kushi-playground-mobile-header-height))"]
+       [:mbs "calc(2 * var(--kushi-playground-mobile-header-height-fallback))"]
        :md:mbs--0
        {:class [(str s "-wrapper")]})
    (into [:section
@@ -129,6 +129,7 @@
                                                                       "px)")
             :$kushi-tooltip-placement-inline-offset              :3px
             :$kushi-playground-sidenav-max-width                 :250px
+            :$kushi-playground-mobile-header-height-fallback     :$kushi-playground-mobile-header-height||46px
 
             "dark:&_.kushi-copy-to-clipboard-button-graphic:filter" '(invert 1)
             "dark:&_a.kushi-link:after:filter"                      '(invert 1)
@@ -277,6 +278,7 @@
 
 
     ;; Page layout -------------------------------------------------------------------------------
+
     [:div
      (merge-attrs kushi-playground-page-wrapper-attrs
                   (when hide-lightswitch? {:class [:hide-lightswitch :one-more-thing]})
@@ -308,9 +310,9 @@
          :.no-shrink
          :.fast
          :ai--c
-         :&_p:ff--$kushi-playground-main-section-wrapper_font-family|$sans-serif-font-stack
-         :&_p:fs--$kushi-playground-main-section-wrapper_font-size|$medium
-         :fs--$kushi-playground-main-section-wrapper_font-size|$medium
+         :&_p:ff--$kushi-playground-main-section-wrapper_font-family||$sans-serif-font-stack
+         :&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
+         :fs--$kushi-playground-main-section-wrapper_font-size||$medium
          :transition-property--opacity
          :md:flex-direction--row
          :md:jc--fe
