@@ -68,7 +68,7 @@
                  :example [button {:-loading? true} [progress [icon :play-arrow] [spinner]] "Play"]}
                 {:label   "Loading state, propeller on icon"
                  :example [button {:-loading? true} [progress [icon :play-arrow] [propeller]] "Play"]}
-                {:label   "Custom"
+                #_{:label   "Custom"
                  :example [button (sx :.heavy
                                       :.xxxloose
                                       :c--white
