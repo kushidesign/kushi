@@ -519,7 +519,7 @@
 
     ;; just for debugging
     #_(when debug?
-      (println (keyed
+        (println (keyed
         ;; process
         ;; shared-class?
         ;; clean*
@@ -529,11 +529,11 @@
         ;; clean-stylemap*
         ;; clean-stylemap
         ;; style-tuples-from-tokenized
-        all-style-tuples*
-        all-style-tuples
-        all-style-tuples2
+                  all-style-tuples*
+                  all-style-tuples
+                  all-style-tuples2
       ;;  css-vars
-       )))
+                  )))
 
     (merge (when defclass-style-tuples
              {:defclass-style-tuples defclass-style-tuples})

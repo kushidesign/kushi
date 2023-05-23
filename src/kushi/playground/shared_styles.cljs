@@ -16,7 +16,7 @@
   [:90% {:transform "translate(1px, 2px) rotate(0deg) scale(1.55)"}]
   [:100% {:transform "translate(1px, -2px) rotate(-1deg) scale(1.55)"}])
 
- (defkeyframes jiggle2
+(defkeyframes jiggle2
   [:0% {:transform "rotate(0deg) scale(1.55)"}]
   [:18% {:transform "rotate(-5deg) scale(1.55)"}]
   [:36% {:transform "rotate(5deg) scale(1.55)"}]
@@ -70,7 +70,7 @@
    :biss                      :solid
    :bisc                      :$gray-300
    "has-ancestor(.dark):bisc" :$gray-700}
-   )
+  )
 
 (defclass kushi-treenav-section-level-1
   :mbs--1em
@@ -186,7 +186,7 @@
   ["dark:&[aria-selected='true']:bgc" :$neutral-750!important]
   )
 
-(defclass truncate 
+(defclass truncate
   :overflow--hidden
   :text-overflow--ellipsis
   :white-space--nowrap)

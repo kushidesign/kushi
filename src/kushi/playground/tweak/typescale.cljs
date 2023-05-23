@@ -144,5 +144,5 @@
                               (sx :.small
                                   {:on-click #(reset! copy-view? (not @copy-view?))})
                               [icon :west]
-                             "Back to controls"]]]]))))))
+                              "Back to controls"]]]]))))))
 

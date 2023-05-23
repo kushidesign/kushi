@@ -1,5 +1,5 @@
 (ns kushi.ui.input.slider.core
-  (:require 
+  (:require
    [applied-science.js-interop :as j]
    [kushi.core :refer (sx defclass merge-attrs insert-style-tag!)]
    [kushi.ui.core :refer (opts+children)]
@@ -113,57 +113,57 @@
           labels-attrs)]
         (let [ltr?     (= "ltr" (dom/writing-direction))
               last-int (dec num-steps)]
-         (map-indexed
-          (fn [idx step]
-            (let [calcpct              (str "( (100% - var(--kushi-input-slider-thumb-width)) / " last-int ")")
-                  inset-inline-start   (str "calc(" calcpct " * " idx "  + ( var(--kushi-input-slider-thumb-width) / 2)  )")
-                  default-index?       (= idx default-index)
-                  label-selected-class (when default-index? label-selected-class)
-                  step-marker          (or step-marker :none)
-                  step-marker-dot?     (= step-marker :dot)
-                  step-marker-bar?     (= step-marker :bar)
-                  step-marker-none?    (= step-marker :none)
-                  step-marker-content  (when (contains? #{:dot :bar :none} step-marker)
-                                         (case step-marker :dot "·" :bar "|" " "))
-                  first?               (= idx 0)
-                  last?                (= idx last-int)
-                  left-most?           (or (and first? ltr?) (and last? (not ltr?)))
-                  right-most?          (or (and first? (not ltr?)) (and last? ltr?))
-                  ]
-              [:span (sx 'kushi-slider-step-label
-                         (when step-marker-dot? :.kushi-slider-step-label-marker-dot)
-                         (when step-marker-bar? :.kushi-slider-step-label-marker-bar)
-                         (when step-marker-none? :.kushi-slider-step-label-marker-none)
-                         :.absolute
-                         :.block
-                         :.transition
-                         :.flex-row-c
-                         :ai--c
-                         :c--currentColor
-                         :ta--center
-                         :>span:white-space--nowrap
-                         {:class [
+          (map-indexed
+           (fn [idx step]
+             (let [calcpct              (str "( (100% - var(--kushi-input-slider-thumb-width)) / " last-int ")")
+                   inset-inline-start   (str "calc(" calcpct " * " idx "  + ( var(--kushi-input-slider-thumb-width) / 2)  )")
+                   default-index?       (= idx default-index)
+                   label-selected-class (when default-index? label-selected-class)
+                   step-marker          (or step-marker :none)
+                   step-marker-dot?     (= step-marker :dot)
+                   step-marker-bar?     (= step-marker :bar)
+                   step-marker-none?    (= step-marker :none)
+                   step-marker-content  (when (contains? #{:dot :bar :none} step-marker)
+                                          (case step-marker :dot "·" :bar "|" " "))
+                   first?               (= idx 0)
+                   last?                (= idx last-int)
+                   left-most?           (or (and first? ltr?) (and last? (not ltr?)))
+                   right-most?          (or (and first? (not ltr?)) (and last? ltr?))
+                   ]
+               [:span (sx 'kushi-slider-step-label
+                          (when step-marker-dot? :.kushi-slider-step-label-marker-dot)
+                          (when step-marker-bar? :.kushi-slider-step-label-marker-bar)
+                          (when step-marker-none? :.kushi-slider-step-label-marker-none)
+                          :.absolute
+                          :.block
+                          :.transition
+                          :.flex-row-c
+                          :ai--c
+                          :c--currentColor
+                          :ta--center
+                          :>span:white-space--nowrap
+                          {:class [
                                   ;; label-size-class
-                                  label-selected-class]
-                          :style {:inset-inline-start                           inset-inline-start
-                                  :w                                            0
-                                  :h                                            0
-                                  :transform                                    (str "scale(" label-scale-factor ")")
-                                  :&.kushi-slider-step-label-selected:transform "scale(1)"
-                                  :&.kushi-slider-step-label-selected:o         1
-                                  :&.kushi-slider-step-label-selected:c         :currentColor
-                                  :&.kushi-slider-step-label-selected>span:v    :visible
-                                  :before:content                               (when step-marker-content (str "\"" step-marker-content "\"")) }})
-               [:span
-                (sx :.absolute-centered
-                    [:transform (cond right-most?
-                                      (str "translate(" (if supplied-steps? "-67%" "-50%" ) ", -50%)")
-                                      left-most?
-                                      (str "translate(" (if supplied-steps? "-33%" "-50%" ) ", -50%)")
-                                      :else
-                                      "translate(-50%, -50%)")])
-                (str step step-label-suffix)]]))
-          steps))))
+                                   label-selected-class]
+                           :style {:inset-inline-start                           inset-inline-start
+                                   :w                                            0
+                                   :h                                            0
+                                   :transform                                    (str "scale(" label-scale-factor ")")
+                                   :&.kushi-slider-step-label-selected:transform "scale(1)"
+                                   :&.kushi-slider-step-label-selected:o         1
+                                   :&.kushi-slider-step-label-selected:c         :currentColor
+                                   :&.kushi-slider-step-label-selected>span:v    :visible
+                                   :before:content                               (when step-marker-content (str "\"" step-marker-content "\"")) }})
+                [:span
+                 (sx :.absolute-centered
+                     [:transform (cond right-most?
+                                       (str "translate(" (if supplied-steps? "-67%" "-50%" ) ", -50%)")
+                                       left-most?
+                                       (str "translate(" (if supplied-steps? "-33%" "-50%" ) ", -50%)")
+                                       :else
+                                       "translate(-50%, -50%)")])
+                 (str step step-label-suffix)]]))
+           steps))))
 
 (defn on-change [label-selected-class label-id e]
   (let [el                  (-> e .-target)
@@ -227,14 +227,14 @@
            ]}
   [& args]
   (let [[opts
-         attrs]                              
+         attrs]
         (opts+children args)
 
         {:keys [defaultValue
                 default-value
                 min
                 max
-                step]}                       
+                step]}
         attrs
 
         {:keys  [default-index
@@ -252,19 +252,19 @@
         supplied-steps?
         (boolean steps*)
 
-        steps                      
+        steps
         (slider-steps steps* min max (or step 1))
 
-        num-steps                   
+        num-steps
         (count steps)
 
-        default-val                 
+        default-val
         (or defaultValue default-value)
 
-        default-index               
+        default-index
         (slider-default-index default-index default-val steps* steps)
 
-        label-scale-factor          
+        label-scale-factor
         (cond
           (= 1 label-scale-factor)
           1.0
@@ -272,13 +272,13 @@
           label-scale-factor
           :else 0.6)
 
-        label-selected-class        
+        label-selected-class
         "kushi-slider-step-label-selected"
 
-        id                          
+        id
         (or (:id attrs) (gensym))
 
-        label-id                    
+        label-id
         (str "label-for-" id)
         ]
 
@@ -307,24 +307,24 @@
                            display-step-labels?)]
 
      #_[:div (merge-attrs
-            (sx 'kushi-slider-single-value-label-wrapper
-                :.flex-row-sb
-                :.no-shrink
-                :flex-basis--50px
-                :pie--0.75em)
-            labels-attrs)
-      [:label (sx 'kushi-slider-single-value-label
-                  :ws--n
-                  {:id  label-id
-                   :for id})
-       default-value]
-      [copy-to-clipboard-button
-       (sx 'kushi-slider-single-value-label-copy-to-clipboard-button
-           :>button:h--$medium
-           :m--0
-           {:-placement :left
+              (sx 'kushi-slider-single-value-label-wrapper
+                  :.flex-row-sb
+                  :.no-shrink
+                  :flex-basis--50px
+                  :pie--0.75em)
+              labels-attrs)
+        [:label (sx 'kushi-slider-single-value-label
+                    :ws--n
+                    {:id  label-id
+                     :for id})
+         default-value]
+        [copy-to-clipboard-button
+         (sx 'kushi-slider-single-value-label-copy-to-clipboard-button
+             :>button:h--$medium
+             :m--0
+             {:-placement :left
             ;; :on-click   #(copy-to-clipboard (.-textContent (.-firstChild (dom/nearest-ancestor (dom/et %) ".kushi-slider-single-value-label-wrapper"))))
-            :on-click   #(copy-to-clipboard (copy-to-clipboard-fn %))})]]
+              :on-click   #(copy-to-clipboard (copy-to-clipboard-fn %))})]]
 
      [:input (merge-attrs
               (sx {:style         {:w :100%}

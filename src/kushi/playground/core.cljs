@@ -287,7 +287,7 @@
      ;; Auxillary fixed controls
      ;; [type-tweaker]
      #_[:div.fixed-inline-end
-      [:button {:on-click #(element-tweaker!)} [icon :tune]]]
+        [:button {:on-click #(element-tweaker!)} [icon :tune]]]
      [desktop-lightswitch]
 
 

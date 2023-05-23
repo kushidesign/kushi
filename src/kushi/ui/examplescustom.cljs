@@ -8,7 +8,7 @@
 (defn button2 [s] [:div.my-button2-example s])
 
 (def mock-custom-components
-  [(feature 
+  [(feature
     button
     {:stage    {:style {:min-height :150px}}
      :variants [:kind :shape :semantic :size :weight]

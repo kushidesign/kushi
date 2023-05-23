@@ -17,49 +17,49 @@
 (defcom intro-section
   (let [{:keys [header]} &opts]
     [:section
-    (merge-attrs
-     (sx 'playground-generic-intro-section
-         :.transition
-         :bbe--$divisor
-         :dark:bbe--$divisor-dark
-         :pbe--0.5rem
-         :md:pbe--0.6rem
+     (merge-attrs
+      (sx 'playground-generic-intro-section
+          :.transition
+          :bbe--$divisor
+          :dark:bbe--$divisor-dark
+          :pbe--0.5rem
+          :md:pbe--0.6rem
 
          ;; typography
-         ["has-ancestor(.kushi-typography):bbe" :none]
-         ["has-ancestor(.custom-typography):bbe" :none]
-         ["has-ancestor(.kushi-typography)&_.code:h" :fit-content]
-         ["has-ancestor(.kushi-typography)&_code:h" :fit-content]
-         ["has-ancestor(.kushi-typography)&_.code:lh" :initial]
-         ["has-ancestor(.kushi-typography)&_code:lh" :initial]
+          ["has-ancestor(.kushi-typography):bbe" :none]
+          ["has-ancestor(.custom-typography):bbe" :none]
+          ["has-ancestor(.kushi-typography)&_.code:h" :fit-content]
+          ["has-ancestor(.kushi-typography)&_code:h" :fit-content]
+          ["has-ancestor(.kushi-typography)&_.code:lh" :initial]
+          ["has-ancestor(.kushi-typography)&_code:lh" :initial]
 
          ;; colors
-         ["has-ancestor(.kushi-colors):bbe" :none]
-         ["has-ancestor(.custom-colors):bbe" :none]
-         ["has-ancestor(.kushi-colors)&_p.alias-token-scales:mbe" :0.3em])
-     &attrs)
-    [:div (sx
-           'intro-section-title-wrapper
-           :.flex-col-fs
-           :.wee-bold
-           :.relative
-           :w--100%
-           :mbe--4.25rem)
-     [label
-      (sx 'intro-section-title
-          :fs--$kushi-playground-main-section-header_font-size||$xxlarge
-          :pbs--2.25em
-          :md:pbs--$vp-top-header-padding-with-offset
-          {:style {:transform '(translateX :-1.5px)}})
-      header]]
-    [:section
-     (sx 'intro-section-body
-         :.normal
-         :.transition
-         :pie--2rem
-         :&_p:line-height--$body-copy-line-height
-         :&_p:margin-block--2em)
-     &children]]))
+          ["has-ancestor(.kushi-colors):bbe" :none]
+          ["has-ancestor(.custom-colors):bbe" :none]
+          ["has-ancestor(.kushi-colors)&_p.alias-token-scales:mbe" :0.3em])
+      &attrs)
+     [:div (sx
+            'intro-section-title-wrapper
+            :.flex-col-fs
+            :.wee-bold
+            :.relative
+            :w--100%
+            :mbe--4.25rem)
+      [label
+       (sx 'intro-section-title
+           :fs--$kushi-playground-main-section-header_font-size||$xxlarge
+           :pbs--2.25em
+           :md:pbs--$vp-top-header-padding-with-offset
+           {:style {:transform '(translateX :-1.5px)}})
+       header]]
+     [:section
+      (sx 'intro-section-body
+          :.normal
+          :.transition
+          :pie--2rem
+          :&_p:line-height--$body-copy-line-height
+          :&_p:margin-block--2em)
+      &children]]))
 
 
 (defn alias-global-mapping-row [a g]
@@ -144,14 +144,14 @@
         (for [x coll]
           [:div
            (sx :.flex-col-fs :mb--24px)
-           [:div (merge 
+           [:div (merge
                   (sx :.pointer
                       (when (= label "Tracking") :.uppercase)
                       :mbs--10px))
             [:span.relative
              (merge-attrs
               {:class [x]}
-              (tooltip-attrs {:-text      (str ":." (name x)) 
+              (tooltip-attrs {:-text      (str ":." (name x))
                               :-placement "inline-end center"}))
              "The quick brown fox."]]])))
 
@@ -171,7 +171,7 @@
 
 
 (def typography-tokens-snippet
-"[:span
+  "[:span
   (sx :fs--$xxlarge
       :fw--$bold
       :letter-spacing--$xloose)

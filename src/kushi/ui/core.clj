@@ -73,9 +73,9 @@
   (let [icon-font  "material-symbols" ;; <- TODO: from user config
         ]
     `(let [style#      (if (clojure.core/contains? #{:outlined :rounded :sharp} ~icon-style)
-                        ~icon-style
-                        :outlined)
+                         ~icon-style
+                         :outlined)
            icon-style# (str ~icon-font "-" (name style#))
            icon-fill#  (when ~icon-filled? :material-symbols-icon-filled)]
-      (into [:span {:class [icon-style# icon-fill#]}]
+       (into [:span {:class [icon-style# icon-fill#]}]
              ~icon-name))))

@@ -58,7 +58,7 @@
                                :dark:&.kushi-icon>svg>path:fill--white
                                {:-icon-svg (get icon-svgs "clojars")})}
                 #_{:href "https://twitter.svg"
-                 :src "graphics/twitter.svg"}])
+                   :src "graphics/twitter.svg"}])
 (defn links []
   (into
    [:div

@@ -15,7 +15,7 @@
            :controls-by-type     {}}))
 
 (defonce *md-or-smaller?
-  (r/atom 
+  (r/atom
    (not (let [md-breakpoints    (some-> (breakpoints) :md)
               [md-key md-value] (some-> md-breakpoints first)
               mql               (when-let [[md-key md-value] (when (and (or (string? md-key) (keyword? md-key))

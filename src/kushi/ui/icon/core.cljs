@@ -72,7 +72,7 @@
        :&_svg>path:fill--currentColor
        {:data-kushi-ui :icon})
       attrs)
-     (cond 
+     (cond
        (and (vector? icon*) (= :svg (first icon*)))
        icon*
 

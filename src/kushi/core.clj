@@ -381,45 +381,45 @@
 
 (defmacro ^:public sx
   [& args]
- (let [m*           (first args)
-       from-defcom? (and (map? m*) (:_kushi/defcom? m*))
-       args         (if from-defcom? (:args m*) args)
-       form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
-   (when-not (= args '(nil))
-     (let [m               {:args          args
-                            :form-meta     form-meta
-                            :kushi/process :kushi.core/sx
-                            :fname         "sx"
-                            :macro         :sx}
-           {:keys [attrs]} (try
-                             (sx-dispatch m)
-                             (catch Exception ex
-                               (-> m
-                                   (assoc :ex ex)
-                                   sx-exception-args
-                                   printing2/caught-exception)))]
-       `~attrs))))
+  (let [m*           (first args)
+        from-defcom? (and (map? m*) (:_kushi/defcom? m*))
+        args         (if from-defcom? (:args m*) args)
+        form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
+    (when-not (= args '(nil))
+      (let [m               {:args          args
+                             :form-meta     form-meta
+                             :kushi/process :kushi.core/sx
+                             :fname         "sx"
+                             :macro         :sx}
+            {:keys [attrs]} (try
+                              (sx-dispatch m)
+                              (catch Exception ex
+                                (-> m
+                                    (assoc :ex ex)
+                                    sx-exception-args
+                                    printing2/caught-exception)))]
+        `~attrs))))
 
 (defmacro ^:public sx*
   [& args]
- (let [m*           (first args)
-       from-defcom? (and (map? m*) (:_kushi/defcom? m*))
-       args         (if from-defcom? (:args m*) args)
-       form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
-   (when-not (= args '(nil))
-     (let [m               {:args          args
-                            :form-meta     form-meta
-                            :kushi/process :kushi.core/sx
-                            :fname         "sx"
-                            :macro         :sx*}
-           {:keys [attrs]} (try
-                             (sx-dispatch m)
-                             (catch Exception ex
-                               (-> m
-                                   (assoc :ex ex)
-                                   sx-exception-args
-                                   printing2/caught-exception)))]
-       `~attrs))))
+  (let [m*           (first args)
+        from-defcom? (and (map? m*) (:_kushi/defcom? m*))
+        args         (if from-defcom? (:args m*) args)
+        form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
+    (when-not (= args '(nil))
+      (let [m               {:args          args
+                             :form-meta     form-meta
+                             :kushi/process :kushi.core/sx
+                             :fname         "sx"
+                             :macro         :sx*}
+            {:keys [attrs]} (try
+                              (sx-dispatch m)
+                              (catch Exception ex
+                                (-> m
+                                    (assoc :ex ex)
+                                    sx-exception-args
+                                    printing2/caught-exception)))]
+        `~attrs))))
 
 
 

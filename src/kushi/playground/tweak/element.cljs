@@ -23,14 +23,14 @@
             ))
 
 (def utility-family-label-by-key
-  {:flex      "Flexbox"      
-   :display   "Display"   
-   :size      "Type size"      
-   :weight    "Type weight"    
-   :semantic  "Semantic"  
-   :kind      "Kind"      
-   :tracking  "Type tracking"  
-   :elevation "Elevation" 
+  {:flex      "Flexbox"
+   :display   "Display"
+   :size      "Type size"
+   :weight    "Type weight"
+   :semantic  "Semantic"
+   :kind      "Kind"
+   :tracking  "Type tracking"
+   :elevation "Elevation"
    :shape     "Shape"})
 
 (defn highlight-tweaked-label!
@@ -50,7 +50,7 @@
           (j/get :kushiTweak)
           edn/read-string))
 
-(defn copy-to-clipboard-fn [e] 
+(defn copy-to-clipboard-fn [e]
   (let [text (some-> e
                      dom/et
                      (dom/nearest-ancestor ".kushi-slider-single-value-label-wrapper")
@@ -61,30 +61,30 @@
                 og-prop
                 og-single-value]} profile]
 
-   (case category
+    (case category
 
-        :class
-        (str ":." text)
+      :class
+      (str ":." text)
 
-        :tokenized-style
-        (keyword (str og-prop "--" text))
+      :tokenized-style
+      (keyword (str og-prop "--" text))
 
-        :style-tuple
-        (let [val (cond
-                    (keyword? og-single-value)
-                    (keyword text)
-                    :else
-                    text)]
-          [og-prop val])
-        nil
-        )))
+      :style-tuple
+      (let [val (cond
+                  (keyword? og-single-value)
+                  (keyword text)
+                  :else
+                  text)]
+        [og-prop val])
+      nil
+      )))
 
 
 (defn flex-row-icon-inner []
- [:div (sx :h--100% :w--3px :bgc--$neutral-800)])
+  [:div (sx :h--100% :w--3px :bgc--$neutral-800)])
 
 (defn flex-col-icon-inner []
- [:div (sx :w--100% :h--3px :bgc--$neutral-800)])
+  [:div (sx :w--100% :h--3px :bgc--$neutral-800)])
 
 (defn select-flex-thumb [e flex-class]
   (let [node           (.-currentTarget e)
@@ -93,7 +93,7 @@
         select-target  (.querySelector control (str ".flex-option-thumb." (name flex-class)))]
 
     (doseq [sibling siblings]
-      (dom/set-attribute! sibling "aria-selected" "false") ) 
+      (dom/set-attribute! sibling "aria-selected" "false") )
     (dom/set-attribute! select-target "aria-selected" "true")))
 
 (defcom flex-options
@@ -101,7 +101,7 @@
     (into [:div (sx :.flex-row-sa  :p--2px :gap--1rem)]
           (for [flex-class (filter #(string/starts-with? (name %) starts-with) (:flex variants-by-category))
                 :let [og? (= (name flex-class) (name og-flex-class))]]
-            [:div (merge-attrs 
+            [:div (merge-attrs
                    (sx 'flex-option-thumb
                        :.relative
                        (when og? :.og-value)
@@ -143,7 +143,7 @@
         opts                              {:-og-flex-class  og-flex-class
                                            :-target-els     target-els
                                            :-family-classes family-classes}]
-    [:div.flex-row-fs 
+    [:div.flex-row-fs
      (sx :pi--1em:2em)
      [:div (merge-attrs
             (sx 'kushi-slider-single-value-label-wrapper
@@ -156,7 +156,7 @@
       [:label (sx 'kushi-slider-single-value-label
                   :ws--n
                   #_{:id  label-id
-                   :for id})
+                     :for id})
        og-flex-class]
       [copy-to-clipboard-button
        (sx 'kushi-slider-single-value-label-copy-to-clipboard-button
@@ -194,7 +194,7 @@
                                               resolved-value (.getPropertyValue (js/window.getComputedStyle mock-el) css-property)
                                               _              (.remove mock-el)
                                               ]
-                                          [class resolved-value])) 
+                                          [class resolved-value]))
                                       family-classes))
         current-computed  (.getPropertyValue (js/window.getComputedStyle (first target-els)) css-property)
         og-class          (or (first (filter #(contains? (into #{} family-classes) %) classes))
@@ -208,7 +208,7 @@
     [kushi.ui.input.slider.core/slider
      {:-copy-to-clipboard-fn copy-to-clipboard-fn
       :-steps                family-classes
-      :-step-marker          :dot 
+      :-step-marker          :dot
       :-label-size-class     :medium
       :-labels-attrs         (sx :.tweakable-label)
       :-display-step-labels? false
@@ -227,56 +227,56 @@
 
 (defn slider [{:keys [css-prop css-value target-els unit-type]
                :as   m}]
-  (let [max (case unit-type 
+  (let [max (case unit-type
               :px 1000
               :em 7
               :rem 7
               :%  100)
-        step (case unit-type 
+        step (case unit-type
                :em 0.05
                :rem 0.05
                1)
         og-idx  (cond (contains? #{:rem :em} unit-type)
                       (* (/ (js/parseFloat css-value) 7)
-                         (/ max step)) 
+                         (/ max step))
                       :else
                       (js/parseInt css-value))
         og-class  "original-tweakable-value"
         tweaked-class  "tweaked-value-row"
         ]
-   [kushi.ui.input.slider.core/slider
-    (sx :w--100%
-        {:-copy-to-clipboard-fn copy-to-clipboard-fn
-         :-step-label-suffix    (name unit-type)
-         :-label-size-class     :xxsmall
-         :-labels-attrs         (sx :.tweakable-label)
-         :-default-index        og-idx    
-         :default-value         css-value    
-         :step                  step
-         :min                   0
-         :max                   max
-         :data-kushi-tweak-og   (str {:og-value css-value :og-idx og-idx})
-         :on-change             (fn [e]
-                                  (let [idx   (dom/etv->int e)] 
-                                    (highlight-tweaked-label! e og-idx idx)
-                                    (doseq [el target-els]
-                                      (let [value (* idx step)] 
-                                        (dom/set-style! el css-prop (str value (name unit-type)))))))
-         :class                 [og-class]})]))
+    [kushi.ui.input.slider.core/slider
+     (sx :w--100%
+         {:-copy-to-clipboard-fn copy-to-clipboard-fn
+          :-step-label-suffix    (name unit-type)
+          :-label-size-class     :xxsmall
+          :-labels-attrs         (sx :.tweakable-label)
+          :-default-index        og-idx
+          :default-value         css-value
+          :step                  step
+          :min                   0
+          :max                   max
+          :data-kushi-tweak-og   (str {:og-value css-value :og-idx og-idx})
+          :on-change             (fn [e]
+                                   (let [idx   (dom/etv->int e)]
+                                     (highlight-tweaked-label! e og-idx idx)
+                                     (doseq [el target-els]
+                                       (let [value (* idx step)]
+                                         (dom/set-style! el css-prop (str value (name unit-type)))))))
+          :class                 [og-class]})]))
 
-(defclass tweakable-css-prop-label 
+(defclass tweakable-css-prop-label
   [:after:content "\":\""]
   [:after:color :$neutral-fg]
   [:dark:after:color :$neutral-fg-inverse])
 
-(defclass tweakable-label 
+(defclass tweakable-label
   :.xsmall
   :.wee-bold
   :>label:padding--0.25em:0.5em
   :>label:border-radius--$rounded
   :ff--$code-font-stack)
 
-(defclass highlight-tweaked 
+(defclass highlight-tweaked
   [:&_.tweakable-label>label:bgi '(linear-gradient "to right" "var(--magenta-100)" "var(--blue-100)")])
 
 (defcom control
@@ -309,7 +309,7 @@
                  (when css-prop :.tweakable-css-prop-label)
                  (when-not css-prop :.italic)
                  :min-width--180px
-                 [:ff (when css-prop :$code-font-stack)] 
+                 [:ff (when css-prop :$code-font-stack)]
                  (if utility-family :.xsmall :.xxsmall)
                  :.wee-bold)
       (or css-prop utility-family-control-label)]
@@ -352,7 +352,7 @@
                               (.stepDown input (* multiplier (js/Math.abs diff))))
                             (highlight-tweaked-label! % og-idx og-idx)
                             (j/assoc! label :textContent (:og-value og))
-                            (cond 
+                            (cond
 
                               (contains? #{:tokenized-style :style-tuple} (:category profile))
                               (dom/set-style! tweakables (:css-prop profile) (:single-value profile))
@@ -362,29 +362,29 @@
                                 (apply dom/remove-class el (:family-classes og))
                                 (dom/add-class el (:og-value og))))))}
        :refresh]]
-       [switch (sx :.small
-                   :mis--1rem
-                   {:-on?     true
-                    :on-click (fn [e]
+     [switch (sx :.small
+                 :mis--1rem
+                 {:-on?     true
+                  :on-click (fn [e]
 
-                                (let [el          (dom/cet e)
-                                      checked?    (= "true" (.getAttribute el "aria-checked"))
-                                      control     (dom/nearest-ancestor (dom/et e) ".tweaker-control-row")
-                                      label       (.querySelector control ".tweakable-label>label")
-                                      current-val (.-textContent label)] 
+                              (let [el          (dom/cet e)
+                                    checked?    (= "true" (.getAttribute el "aria-checked"))
+                                    control     (dom/nearest-ancestor (dom/et e) ".tweaker-control-row")
+                                    label       (.querySelector control ".tweakable-label>label")
+                                    current-val (.-textContent label)]
 
-                                  ((if checked? dom/remove-class dom/add-class) control :tweak-off)
+                                ((if checked? dom/remove-class dom/add-class) control :tweak-off)
 
-                                  (cond 
+                                (cond
 
-                                    (contains? #{:class} (:category profile))
-                                    (do (doseq [el tweakables]
-                                          ((if checked? dom/add-class dom/remove-class) el current-val)))
+                                  (contains? #{:class} (:category profile))
+                                  (do (doseq [el tweakables]
+                                        ((if checked? dom/add-class dom/remove-class) el current-val)))
 
-                                    (contains? #{:tokenized-style :style-tuple} (:category profile))
-                                    (do (dom/set-style! tweakables 
-                                                        (:css-prop profile)
-                                                        (if checked? current-val "unset"))))))})]]))
+                                  (contains? #{:tokenized-style :style-tuple} (:category profile))
+                                  (do (dom/set-style! tweakables
+                                                      (:css-prop profile)
+                                                      (if checked? current-val "unset"))))))})]]))
 
 
 
@@ -421,7 +421,7 @@
         css-value-scalar? (when (vector? value-category) (= (first value-category) :css-value-scalar))
         unit-type         (when css-value-scalar? (unit-type single-value))
         ]
-    (merge 
+    (merge
      (when kushi-prop-sh? {:kushi-prop-sh? kushi-prop-sh?})
      (when kushi-val-sh? {:kushi-val-sh v})
      {:css-prop          (-> p keyword shorthand/key-sh name)
@@ -438,7 +438,7 @@
       }))
   )
 
-(def families 
+(def families
   [[:flex      (:flex variants-by-category)]
    [:display   (:display variants-by-category)]
    [:size      (:size-expanded variants-by-category)]
@@ -456,7 +456,7 @@
                                  utility-family))
                              families)]
     {:classname     (let [nm (-> arg name (subs 1) keyword)]
-                       nm)
+                      nm)
      :selector-text  (name arg)
      :utility-family utility-family
      :control-type   (case utility-family
@@ -483,7 +483,7 @@
 
                                                          :style-tuple
                                                          (style-profile arg)
-                                                         
+
                                                          {})
                                                   ret  (assoc ret*
                                                               :arg
@@ -533,7 +533,7 @@
         (into [:ul
                (sx :.flex-col-fs
                    :gap--2em)]
-              (concat 
+              (concat
                (for [{:keys [tweakable?
                              css-prop
                              single-value
@@ -546,33 +546,33 @@
                  (cond
 
                    unit-type
-                   [control 
+                   [control
                     {:-css-prop css-prop
                      :-profile  profile}
                     [slider (merge (keyed css-prop css-value target-els unit-type))]]
 
                    (= category :class)
-                   [control 
+                   [control
                     {:-css-prop css-prop
                      :-profile  profile}
                     [(:control-type profile) (keyed target-els classes profile)]]
-                   
+
                    :else
                    nil))
 
                #_(let [profile {:category :class}]
                    [
-                    [control 
+                    [control
                      {:-utility-family "Semantic"}
                      [semantic-slider (assoc (keyed target-els classes)
                                              :css-property
                                              "color"
                                              :default-value
                                              "neutral"
-                                             :category     
+                                             :category
                                              :semantic )]]
 
-                    [control 
+                    [control
                      {:-utility-family "Flexbox"
                       :-profile        profile}
                      [semantic-slider (assoc (keyed target-els classes)
@@ -580,10 +580,10 @@
                                              "flex"
                                              :default-value
                                              "flex-row-fs"
-                                             :category     
+                                             :category
                                              :flex)]]
 
-                    [control 
+                    [control
                      {:-utility-family "Type size"
                       :-profile        profile}
                      [semantic-slider (assoc (keyed target-els classes)
@@ -591,10 +591,10 @@
                                              "font-size"
                                              :default-value
                                              "medium"
-                                             :category     
+                                             :category
                                              :size-expanded)]]
 
-                    [control 
+                    [control
                      {:-utility-family "Type weight"
                       :-profile        profile}
                      [semantic-slider (assoc (keyed target-els classes)
@@ -602,9 +602,9 @@
                                              "font-weight"
                                              :default-value
                                              "normal"
-                                             :category     
+                                             :category
                                              :weight)]]
-                    [control 
+                    [control
                      {:-utility-family "Elevation"
                       :-profile        profile}
                      [semantic-slider (assoc (keyed target-els classes)
@@ -612,9 +612,9 @@
                                              "box-shadow"
                                              :default-value
                                              "elevated-0"
-                                             :category     
+                                             :category
                                              :elevation)]]
-                    [control 
+                    [control
                      {:-utility-family "Type tracking"
                       :-profile        profile}
                      [semantic-slider (assoc (keyed target-els classes)
@@ -622,9 +622,9 @@
                                              "letter-spacing"
                                              :default-value
                                              "default-tracking"
-                                             :category     
+                                             :category
                                              :tracking)]]
-                    
+
                     ])
 
                ;; Close Modal, Reset, and copy code controls
@@ -636,26 +636,26 @@
                      {:on-click #(dom/set-style! (dom/el-by-id "tweaker") "display" "none")})
                  [icon :close]]
 
-                #_[button 
-                 (sx :.xsmall
-                     :w--fit-content
-                     {:on-click (fn [_]
-                                  (let [
+                #_[button
+                   (sx :.xsmall
+                       :w--fit-content
+                       {:on-click (fn [_]
+                                    (let [
                                         ;; reset-buttons (js->clj (.from js/Array 
                                         ;;                               (.querySelectorAll (dom/el-by-id "tweaker")
                                         ;;                                                  ".kushi-reset-tweakable")))
 
-                                        reset-button (.querySelector (dom/el-by-id "tweaker")
-                                                                     ".kushi-reset-tweakable")
-                                        ]
-                                    
-                                    (js/console.log reset-button)
-                                    (reset-button.click)
+                                          reset-button (.querySelector (dom/el-by-id "tweaker")
+                                                                       ".kushi-reset-tweakable")
+                                          ]
+
+                                      (js/console.log reset-button)
+                                      (reset-button.click)
 
                                     ;; (js/console.log  reset-buttons)
                                     ;; (doseq [btn reset-buttons]
                                     ;;   (.click btn))
-                                    )
+                                      )
 
                                       ;; (doseq [[el og] og-target-els-classname]
                                       ;;   (do 
@@ -664,8 +664,8 @@
                                       ;;   (do 
                                       ;;     (dom/set-attribute! el "style" og)))
 
-                                  )})
-                 [icon :refresh]
-                 "Reset styles"]]
+                                    )})
+                   [icon :refresh]
+                   "Reset styles"]]
                ))]
        node))))

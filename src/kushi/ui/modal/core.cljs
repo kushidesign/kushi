@@ -1,6 +1,6 @@
 (ns kushi.ui.modal.core
   (:require [kushi.ui.icon.core :refer (icon)]
-            
+
             [kushi.ui.button.core :refer [button]]
             [clojure.string :as string]
             [kushi.ui.dom :as dom]
@@ -17,12 +17,12 @@
                  el
                  (dom/nearest-ancestor el ".kushi-modal-dialog"))]
     (when (gdom/isElement dialog)
-     (let [duration* (.-transitionDuration (js/window.getComputedStyle dialog))
-           duration  (js/Math.round (* 1000 (js/parseFloat (string/replace duration* #"s$" ""))))]
-       (.removeEventListener dialog "click" close-on-backdrop-click)
-       (dom/remove-class dialog "open")
-       (js/setTimeout #(.close dialog)
-                      duration)))))
+      (let [duration* (.-transitionDuration (js/window.getComputedStyle dialog))
+            duration  (js/Math.round (* 1000 (js/parseFloat (string/replace duration* #"s$" ""))))]
+        (.removeEventListener dialog "click" close-on-backdrop-click)
+        (dom/remove-class dialog "open")
+        (js/setTimeout #(.close dialog)
+                       duration)))))
 
 (defn close-on-backdrop-click  [e]
   (when (= "DIALOG" (.-nodeName (dom/et e)))
@@ -103,7 +103,7 @@
         valid-elevation?     (and (int? elevation) (< -1 elevation 6))
         elevation-token      (when-not (zero? elevation)
                                (if valid-elevation?
-                                 (str "var(--elevated-" elevation"), ")
+                                 (str "var(--elevated-" elevation "), ")
                                  (str "var(--elevated), ")))
         elevation-token-inverse (when-not (zero? elevation)
                                   (if valid-elevation?

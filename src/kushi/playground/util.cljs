@@ -65,6 +65,6 @@
       md->hc/component))
 
 (defn desc->hiccup [coll]
- (some->> coll
-          kushi-component-desc->md
-          md->component))
+  (some->> coll
+           kushi-component-desc->md
+           md->component))

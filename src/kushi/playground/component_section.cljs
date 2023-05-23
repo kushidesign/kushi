@@ -62,33 +62,33 @@
                  [:br]
                  [:span (sx :pis--1rem) (str "(:require " text "))")]]
      :text      text
-     :full-text (str "(ns your.namespace\n  (:require " text ")" (when requires  (str "\n" requires))")")
+     :full-text (str "(ns your.namespace\n  (:require " text ")" (when requires  (str "\n" requires)) ")")
      :form      (read-string (str "(ns your.namespace  (:require " text "))"))}))
 
- (defcom subsection
-   (let [{:keys [title]} &opts]
-     [:section
-      (merge-attrs
-       (sx
-        'kushi-playground-subsection
-        :pb--4.5em:1em
-        :&.description&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
-        :&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
-        :&_p:ff--$kushi-playground-main-section-wrapper_font-family||$sans-serif-font-stack
-        :&_p:fw--$kushi-playground-main-section-wrapper_font-weight||$normal
-        :&_p:lh--$kushi-playground-main-section-wrapper_line-height||1.7
-        :&_p&_code:pb--0.07em
-        :&_p&_code:pi--0.2em
-        :&_p&_code:fs--0.9rem
-        :&_.kushi-opt-detail-label:lh--2.05
-        :&_.code.opt-type:bgc--transparent)
-       &attrs)
-      [:h3 (sx 'kushi-playground-subsection-header
-               :fs--$kushi-playground-main-section-subsection-header_font-size||$xlarge
-               :fw--$kushi-playground-main-section-subsection-header_font-weight||$wee-bold
-               :margin-block--0:1.25rem)
-       title]
-      &children]))
+(defcom subsection
+  (let [{:keys [title]} &opts]
+    [:section
+     (merge-attrs
+      (sx
+       'kushi-playground-subsection
+       :pb--4.5em:1em
+       :&.description&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
+       :&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
+       :&_p:ff--$kushi-playground-main-section-wrapper_font-family||$sans-serif-font-stack
+       :&_p:fw--$kushi-playground-main-section-wrapper_font-weight||$normal
+       :&_p:lh--$kushi-playground-main-section-wrapper_line-height||1.7
+       :&_p&_code:pb--0.07em
+       :&_p&_code:pi--0.2em
+       :&_p&_code:fs--0.9rem
+       :&_.kushi-opt-detail-label:lh--2.05
+       :&_.code.opt-type:bgc--transparent)
+      &attrs)
+     [:h3 (sx 'kushi-playground-subsection-header
+              :fs--$kushi-playground-main-section-subsection-header_font-size||$xlarge
+              :fw--$kushi-playground-main-section-subsection-header_font-weight||$wee-bold
+              :margin-block--0:1.25rem)
+      title]
+     &children]))
 
 
 (defn subsection-title [title s]
@@ -96,7 +96,7 @@
 
 
 (defn maps->header-row-data [maps]
- (->> maps (map keys) (sort-by count) reverse first))
+  (->> maps (map keys) (sort-by count) reverse first))
 
 (defn add-links [coll]
   (walk/postwalk #(if (and (map? %) (contains? % :href))
@@ -284,35 +284,35 @@
          [component-section-body component-section-body-opts]])
 
 
-         (when (or no-components-are-focused?
-                   focused?)
-           (let [{kushi-desc :desc
-                  kushi-opts :opts} (meta m*)
-                 opts                                 (or kushi-opts opts)
-                 title                                (or title (-> fname (string/replace #"-" " ") capitalize-words))
-                 doc-hiccup                           (-> (or kushi-desc desc) util/desc->hiccup add-links)
-                 component-section-body-opts          (util/keyed fname
-                                                                  m*
-                                                                  m
-                                                                  refers
-                                                                  requires
-                                                                  title
-                                                                  demo
-                                                                  demo-attrs
-                                                                  doc-hiccup
-                                                                  opts)]
-             [:div.hover-trailing-fade-out-wrapper
-              [:header
-               (merge-attrs
-                (sx :.pointer
-                    :bbe--$divisor
-                    [:bbec      (if no-components-are-focused? :$neutral-100 :transparent)]
-                    [:dark:bbec (if no-components-are-focused? :$neutral-750 :transparent)]
-                    {:role      :button
-                     :on-click  #(reset! state/*focused-component fname)})
-                header-attrs
-                (when focused? {:aria-expanded true}))
-               title]
-              (when focused?
-                [component-section-body
-                 component-section-body-opts])])))))
+      (when (or no-components-are-focused?
+                focused?)
+        (let [{kushi-desc :desc
+               kushi-opts :opts} (meta m*)
+              opts                                 (or kushi-opts opts)
+              title                                (or title (-> fname (string/replace #"-" " ") capitalize-words))
+              doc-hiccup                           (-> (or kushi-desc desc) util/desc->hiccup add-links)
+              component-section-body-opts          (util/keyed fname
+                                                               m*
+                                                               m
+                                                               refers
+                                                               requires
+                                                               title
+                                                               demo
+                                                               demo-attrs
+                                                               doc-hiccup
+                                                               opts)]
+          [:div.hover-trailing-fade-out-wrapper
+           [:header
+            (merge-attrs
+             (sx :.pointer
+                 :bbe--$divisor
+                 [:bbec      (if no-components-are-focused? :$neutral-100 :transparent)]
+                 [:dark:bbec (if no-components-are-focused? :$neutral-750 :transparent)]
+                 {:role      :button
+                  :on-click  #(reset! state/*focused-component fname)})
+             header-attrs
+             (when focused? {:aria-expanded true}))
+            title]
+           (when focused?
+             [component-section-body
+              component-section-body-opts])])))))

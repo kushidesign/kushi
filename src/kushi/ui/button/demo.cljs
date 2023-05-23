@@ -42,12 +42,12 @@
 (defn demo []
   (let [v1 "foo"
         v2 "bar"]
-   [:div.absolute-centered
-        [button (merge-attrs
-                 (sx {:class [:pill]})
-                 (tooltip-attrs {:-placement "block-start"
-                                 :-text      [v1 v2]}))
-         "hello"]])
+    [:div.absolute-centered
+     [button (merge-attrs
+              (sx {:class [:pill]})
+              (tooltip-attrs {:-placement "block-start"
+                              :-text      [v1 v2]}))
+      "hello"]])
   [:div
    [:p.pointer-only "Hover (non-touch devices) to reveal the Kushi utility classes used for styling."]
    [:div

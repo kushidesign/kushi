@@ -96,48 +96,48 @@
   [{:keys [*demostate]
     :as m}]
   (let [{:keys [nm variants]} @*demostate]
-   (into [:<>]
-         (for [variant-category variants
-               :let             [label       (name variant-category)
-                                 flavors     (get variants-by-category variant-category)
-                                 slider?     (contains? #{"size" "size-expanded" "weight"} label) ]]
-           [input-row
-            (sx  {:-label      label
-                  :-group-id   (str nm "-" (string/lower-case label))
-                  :-group-role (when-not slider? "radiogroup")
-                  :-slider?    slider? })
+    (into [:<>]
+          (for [variant-category variants
+                :let             [label       (name variant-category)
+                                  flavors     (get variants-by-category variant-category)
+                                  slider?     (contains? #{"size" "size-expanded" "weight"} label) ]]
+            [input-row
+             (sx  {:-label      label
+                   :-group-id   (str nm "-" (string/lower-case label))
+                   :-group-role (when-not slider? "radiogroup")
+                   :-slider?    slider? })
 
-            (cond
-              slider?
-              (let [slider-opts (sx {:-labels-attrs (sx {:style {:mbe "calc(10px + 0.5em)" :ws :n}})
-                                     :-steps        flavors
-                                     :-step-marker  :dot
-                                     :on-change     (partial handlers/slider-on-change
-                                                             (merge m
-                                                                    (keyed variant-category
-                                                                           flavors)))
-                                     :default-value (variant-category (:active-controls-by-type @*demostate))})]
-                [slider slider-opts])
+             (cond
+               slider?
+               (let [slider-opts (sx {:-labels-attrs (sx {:style {:mbe "calc(10px + 0.5em)" :ws :n}})
+                                      :-steps        flavors
+                                      :-step-marker  :dot
+                                      :on-change     (partial handlers/slider-on-change
+                                                              (merge m
+                                                                     (keyed variant-category
+                                                                            flavors)))
+                                      :default-value (variant-category (:active-controls-by-type @*demostate))})]
+                 [slider slider-opts])
 
-              :else
-              (into [:<>]
-                    (for [utility-class* flavors
-                          :let           [utility-class   (name utility-class*)
-                                          label-id        (str utility-class "-label")
-                                          current-checked (variant-category (:active-controls-by-type @*demostate))
-                                          checked?        (= utility-class current-checked)
-                                          m+              (merge m (keyed variant-category utility-class))]]
-                      [radio
-                       {:id           label-id
-                        :-input-attrs (do
-                                        {:id              utility-class
-                                         :tabIndex        0
-                                         :aria-labelledby label-id
-                                         :value           utility-class
-                                         :name            (str nm "-example:" (name variant-category))
-                                         :checked         checked?
-                                         :on-change       (partial handlers/variant-change m+)})}
-                       utility-class])))]))))
+               :else
+               (into [:<>]
+                     (for [utility-class* flavors
+                           :let           [utility-class   (name utility-class*)
+                                           label-id        (str utility-class "-label")
+                                           current-checked (variant-category (:active-controls-by-type @*demostate))
+                                           checked?        (= utility-class current-checked)
+                                           m+              (merge m (keyed variant-category utility-class))]]
+                       [radio
+                        {:id           label-id
+                         :-input-attrs (do
+                                         {:id              utility-class
+                                          :tabIndex        0
+                                          :aria-labelledby label-id
+                                          :value           utility-class
+                                          :name            (str nm "-example:" (name variant-category))
+                                          :checked         checked?
+                                          :on-change       (partial handlers/variant-change m+)})}
+                        utility-class])))]))))
 
 
 (defcom copy-to-clipboard-button
@@ -261,7 +261,7 @@
 ;; (println (dissoc @*demostate :examples))
 ;; (println @*demostate)
 ;; (println (keyed current-snippet current-stage))
-    
+
 
     (r/create-class
      {:display-name         "example"

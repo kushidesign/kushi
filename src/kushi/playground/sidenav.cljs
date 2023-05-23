@@ -1,5 +1,5 @@
 (ns kushi.playground.sidenav
- (:require
+  (:require
    [clojure.string :as string]
    [kushi.core :refer (sx merge-attrs token->ms)]
    [kushi.ui.core :refer (defcom)]
@@ -150,8 +150,8 @@
             ;; Leave this out for now
             ;; Maybe place next to sidenav focused sections?
             #_(when (and (state/section-focused? kw)
-                       (seq @state/*expanded-sections))
-              [collapse-all-component-sections])]
+                         (seq @state/*expanded-sections))
+                [collapse-all-component-sections])]
    :kw     kw
    :href   (str "#" (string/lower-case title))
    :items  (sidenav-component-section-items coll)})

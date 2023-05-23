@@ -117,7 +117,7 @@
             :desc    ["The text for `:.kushi-text-input-helper` label."
                       "If used, this should give the user actionable information about the value of the associated input field."]}
            ]}
-   [& args]
+  [& args]
   (let [[opts attrs & _]     (opts+children args)
         {:keys [
                 outer-wrapper-attrs

@@ -106,9 +106,9 @@
 
 (s/def ::font-variations-settings
   (s/and
-   string?
-   #(re-find (re-pattern font-variations-settings-re)
-            %)))
+    string?
+    #(re-find (re-pattern font-variations-settings-re)
+              %)))
 
 (s/def ::double-quoted-string
   (s/and string?

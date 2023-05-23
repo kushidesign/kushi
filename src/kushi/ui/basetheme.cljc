@@ -839,7 +839,7 @@
     :transition-timing-function "cubic-bezier(0, 0, 1, 1)"}
 
 
-                        
+
    ;; Foreground, Background
    ".styled-scrollbars"
    {:scrollbar-color :$scrollbar-thumb-color
@@ -985,15 +985,15 @@
   [coll]
   (let [elided (set/union (:elide-ui-variants-semantic user-config)
                           (:elide-ui-variants-style    user-config))]
-   (if (and (set? elided)
-            (seq elided))
-     (let [re  (variant-elision-re elided)
-           ret (filter-flatmap coll #(not (re-find re (name %))))]
+    (if (and (set? elided)
+             (seq elided))
+      (let [re  (variant-elision-re elided)
+            ret (filter-flatmap coll #(not (re-find re (name %))))]
 
       ;;  (println "Removing styles from unused variants" (styles-transform-report coll ret :variants-to-elide elided))
 
-       ret)
-     coll)))
+        ret)
+      coll)))
 
 (defn- maybe-remove-some-variants [coll]
   (->> coll
