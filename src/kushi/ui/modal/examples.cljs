@@ -30,7 +30,7 @@
                          [modal-close-button {:-modal-id "my-dialog"}]
                          [:div [:p "My modal content"]]
                          [:div (sx :.flex-row-fe :gap--1em)
-                          [button (sx {:on-click #(close-kushi-modal "my-dialog")}) "Cancel"]
+                          [button (sx {:on-click close-kushi-modal}) "Cancel"]
                           [button (sx :.filled) "Submit"]]]])}
    {:label   "Rounded, bordered panel with white backdrop"
     :example (example2 [:div
@@ -47,7 +47,7 @@
                          [modal-close-button {:-modal-id "my-dialog"}]
                          [:div [:p "My modal content"]]
                          [:div (sx :.flex-row-fe :gap--1em)
-                          [button (sx :.minimal :.pill {:on-click #(close-kushi-modal "my-dialog")}) "Cancel"]
+                          [button (sx :.minimal :.pill {:on-click close-kushi-modal}) "Cancel"]
                           [button (sx :.bordered :.pill) "Submit"]]]])}
    {:label   "No drop shadow"
     :example (example2 [:div
@@ -79,7 +79,7 @@
                          [modal-close-button {:-modal-id "my-dialog"}]
                          [:div [:p "My modal content"]]
                          [:div (sx :.flex-row-fe :gap--1em)
-                          [button (sx {:on-click #(close-kushi-modal "my-dialog")}) "Cancel"]
+                          [button (sx {:on-click close-kushi-modal}) "Cancel"]
                           [button (sx :.filled) "Submit"]]]])}
    {:label   "From viewport top, animated"
     :example (example2 [:div
@@ -97,7 +97,7 @@
                          [modal-close-button {:-modal-id "my-dialog"}]
                          [:div [:p "My modal content"]]
                          [:div (sx :.flex-row-fe :gap--1em)
-                          [button (sx {:on-click #(close-kushi-modal "my-dialog")}) "Cancel"]
+                          [button (sx {:on-click close-kushi-modal}) "Cancel"]
                           [button (sx :.filled) "Submit"]]]])}
 
    {:label   "From viewport top, animated fast"
@@ -117,7 +117,7 @@
                          [modal-close-button {:-modal-id "my-dialog"}]
                          [:div [:p "My modal content"]]
                          [:div (sx :.flex-row-fe :gap--1em)
-                          [button (sx {:on-click #(close-kushi-modal "my-dialog")}) "Cancel"]
+                          [button (sx {:on-click close-kushi-modal}) "Cancel"]
                           [button (sx :.filled) "Submit"]]]])}
 
    {:label   "Minimal"
