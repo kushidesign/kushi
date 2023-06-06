@@ -256,6 +256,30 @@
     (name %)
     :else %))
 
+(defn- normalize-keywords-in-nested-sexprs
+  "To accomodate for unexpected behavior in reagent when conditionally applying classes.
+   Example:
+   `(sx (when (= :error @some-reagent-reaction-or-atom) :.negative))`
+   Does not work as expected.
+   This function will convert the above to
+   `(sx (when (= (keyword \"error\") @some-reagent-reaction-or-atom) :.negative))`"
+  [coll]
+  (if (and (coll? coll) (seq coll))
+    (mapv (fn [c]
+            (if (s/valid? ::specs2/conditional-sexp c)
+              (map #(if (list? %)
+                      (walk/prewalk
+                       (fn [x]
+                         (if (keyword? x)
+                           (list 'keyword (name x))
+                           x))
+                       %)
+                      %)
+                   c)
+              c))
+          coll)
+    coll))
+
 (defn classlist
   [attrs
    class
@@ -263,6 +287,7 @@
   (let [selector  (:selector* selector)
         cls       (some-> attrs :class)
         cls       (when cls (if (s/valid? ::specs2/s|kw cls) [cls] cls))
+        class     (normalize-keywords-in-nested-sexprs class)
         classlist (concat class cls [selector])
         ret       (postwalk-list classlist normalize-classnames)]
     (into [] ret)))
@@ -317,7 +342,9 @@
                    ;; or
                    ;; [:c (if true '(rgb 2 133 47) :$myvar2)]
                    (sexp-cssvarized $ css-vars)
-                  ;;  (!? sexp-cssvarized $)
+                   #_(when (contains? (into #{} coll) [:wtf :wtf])
+                    (? coll)
+                    (? sexp-cssvarized $))
 
                    ;; ([:b [["var(--myborder-width)" bstyle '(rgb 2 mygreenval 44)]]]) =>
                    ;; ([:b [["var(--myborder-width)" bstyle '("__cssfn__rgb" 2 mygreenval 44)]]])
