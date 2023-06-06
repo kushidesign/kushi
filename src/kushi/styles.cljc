@@ -256,26 +256,61 @@
     (name %)
     :else %))
 
+
+(defn- walk-nested-conditional-sexprs [coll]
+  (walk/prewalk
+   (fn [x]
+     (if (keyword? x)
+       (list 'keyword (name x))
+       x))
+   coll))
+
 (defn- normalize-keywords-in-nested-sexprs
-  "To accomodate for unexpected behavior in reagent when conditionally applying classes.
+  "To accomodate for unexpected behavior (so far seen when derefing reagent/reframe subs), when conditionally applying classes.
+   This has to do with equality checking on keywords.
    Example:
    `(sx (when (= :error @some-reagent-reaction-or-atom) :.negative))`
    Does not work as expected.
    This function will convert the above to
-   `(sx (when (= (keyword \"error\") @some-reagent-reaction-or-atom) :.negative))`"
+   `(sx (when (= (keyword \"error\") @some-reagent-reaction-or-atom) :.negative))`
+   TODO: Check if same thing applies to symbols"
   [coll]
   (if (and (coll? coll) (seq coll))
     (mapv (fn [c]
             (if (s/valid? ::specs2/conditional-sexp c)
-              (map #(if (list? %)
-                      (walk/prewalk
-                       (fn [x]
-                         (if (keyword? x)
-                           (list 'keyword (name x))
-                           x))
-                       %)
-                      %)
-                   c)
+              (if (= (first c) 'case)
+                ;; If the conditonal sexpr is a clojure.core/case, and there are any test clauses that are keywords, we need to:
+                ;; 1 - Wrap the test expression in an `if` clause that conditionally converts it to a string (if it is a keyword).
+                ;; 2 - Convert any test clauses that are keywords to strings
+                (let [len                     (count c)
+                      some-kw-or-sym-clauses? (->> c
+                                                   (drop 2)
+                                                   (take-nth 2)
+                                                   (some keyword?)
+                                                   boolean)]
+                  (map-indexed (fn [idx el]
+                                 (cond
+                                   (and (= idx 1)
+                                        some-kw-or-sym-clauses?)
+                                   (list 'if (list 'keyword? el)
+                                         (list 'name el)
+                                         el)
+                                   (and some-kw-or-sym-clauses?
+                                        (keyword? el)
+                                        (pos? idx)
+                                        (even? idx)
+                                        (not (and (= el :else)
+                                                  (= idx (- len 2)))))
+                                   (name el)
+                                   :else
+                                   el))
+                               c))
+
+                ;; Otherwise we only wrap keywords inside nested lists for things like (= @myvalue :foo)
+                (map #(if (list? %)
+                        (walk-nested-conditional-sexprs %)
+                        %)
+                     c))
               c))
           coll)
     coll))
@@ -290,6 +325,10 @@
         class     (normalize-keywords-in-nested-sexprs class)
         classlist (concat class cls [selector])
         ret       (postwalk-list classlist normalize-classnames)]
+
+    (when (= selector "add-taxonomy-modal-button")
+      (? class))
+
     (into [] ret)))
 
 (defn dequote* [x]
