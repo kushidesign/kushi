@@ -257,7 +257,9 @@
     :else %))
 
 
+
 (defn- walk-nested-conditional-sexprs [coll]
+  ;; TODO - to support symbols, might need to do (list 'symbol (name x)), but only if not in first position?
   (walk/prewalk
    (fn [x]
      (if (keyword? x)
@@ -286,22 +288,24 @@
                       some-kw-or-sym-clauses? (->> c
                                                    (drop 2)
                                                    (take-nth 2)
-                                                   (some keyword?)
+                                                   (some util/kw-or-sym?)
                                                    boolean)]
                   (map-indexed (fn [idx el]
                                  (cond
                                    (and (= idx 1)
                                         some-kw-or-sym-clauses?)
-                                   (list 'if (list 'keyword? el)
+                                   (list 'if (list 'or (list 'keyword? el) (list 'symbol? el))
                                          (list 'name el)
                                          el)
+
                                    (and some-kw-or-sym-clauses?
-                                        (keyword? el)
+                                        (util/kw-or-sym? el)
                                         (pos? idx)
                                         (even? idx)
                                         (not (and (= el :else)
                                                   (= idx (- len 2)))))
                                    (name el)
+
                                    :else
                                    el))
                                c))
