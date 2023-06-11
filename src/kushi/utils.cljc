@@ -15,6 +15,9 @@
             vals# (list ~@ks)]
         (apply array-map (interleave keys# vals#)))))
 
+(defn kw-or-sym? [x]
+  (or (keyword? x) (symbol? x)))
+
 (defn nameable? [x]
   (or (string? x) (keyword? x) (symbol? x)))
 
