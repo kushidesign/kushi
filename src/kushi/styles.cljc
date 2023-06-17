@@ -110,8 +110,6 @@
 ;;;; Custom kushi css functions end
 
 
-(defn css-var-syntax [& args]
-  (str "var(" (string/join ", " (remove nil? args)) ")"))
 
 
 (defn- kushi-shorthand? [x]
@@ -129,24 +127,60 @@
 (defn cssvar-name? [x]
   (s/valid? ::specs2/cssvar-name x))
 
-(defn- normalize-css-custom-property-inner
-  [x]
-  (if (cssvar-name? x)
-    (let [$->dd         util/cssvar-dollar-syntax->double-dash]
-      (if (re-find #"\|" (name x))
-        (let [[a b c] (string/split (name x) #"\|\|")
-              c       (when c (if (cssvar-name? c)
-                                (css-var-syntax ($->dd c))
-                                c))
-              b       (when b (if (cssvar-name? b)
-                                (css-var-syntax ($->dd b) c)
-                                b))
-              ret     (css-var-syntax ($->dd a) b)]
-          ret)
-        (str "var(" ($->dd x) ")")))
+(defn cssvar-with-fallbacks-syntax [& args]
+  (let [args (remove nil? args)]
+    (if (string/starts-with? (first args) "--")
+      (str "var(" (string/join ", " args) ")")
+      (string/join ", " args))))
+
+(defn- maybe-transparentize [x]
+  (if-let [[_ color* alpha* important] (specs2/maybe-transparent-color-capturing x)]
+    (if (or (s/valid? ::specs2/named-css-color color*)
+            (s/valid? ::specs2/token-color color*))
+      (str (transparentize (str "var(--" color* ")")
+                           (* #?(:cljs (js/parseInt alpha*)
+                                 :clj  (Integer/parseInt alpha*))
+                              0.01))
+           important)
+      x)
     x))
 
-(defn- normalize-css-custom-property
+(defn- normalize-css-custom-property-fallbacks [x f]
+  (let [
+        ;; debug?  (= x ":$blue-200||$blue-500||$blue-500/alpha-37")
+        [a b c] (string/split x #"\|\|") ]
+    (if
+      ;; If the first is a transparentized color, just use that
+      (s/valid? ::specs2/maybe-transparent-color a)
+      (f a)
+
+      (let [c   (when c (if (cssvar-name? c)
+                          (cssvar-with-fallbacks-syntax (f c))
+                          c))
+            b   (when b (if (cssvar-name? b)
+                          (cssvar-with-fallbacks-syntax (f b) c)
+                          b))
+            ret (cssvar-with-fallbacks-syntax (f a) b)]
+        ret))))
+
+(defn- normalize-css-custom-property-inner
+  [x*]
+  (let [
+        ;; debug? (= x* :$blue-200||$blue-500 #_||$blue-500/alpha-37)
+        ]
+    ;; (when debug? (println (cssvar-name? x*)))
+    (if (cssvar-name? x*)
+      (let [$->dd (comp maybe-transparentize util/cssvar-dollar-syntax->double-dash)
+            x     (specs2/kw?->s x*)]
+        (if (re-find #"\|\|" x)
+          (normalize-css-custom-property-fallbacks x $->dd)
+          (let [ret* ($->dd x)]
+            (if (string/starts-with? ret* "--")
+              (str "var(" ret* ")")
+              ret*))))
+      x*)))
+
+(defn normalize-css-custom-property
   "Works with keyword or string.
    Supports up to 2 fallback values.
    Examples:
@@ -154,23 +188,22 @@
    :$mycssvarname||$myfallback => \"var(--mycssvarname, var(--myfallback))\"
    :$mycssvarname!important => \"var(--mycssvarname)!important\""
   [x]
-  (let [ksh?     (kushi-shorthand? x)
-        ksh-alt? (kushi-shorthand-alternation? x)
-        ret      (cond
-                   ksh?
-                   (string/join ":"
-                                (map normalize-css-custom-property-inner
-                                     (string/split (name x) #"\:")))
-                   ksh-alt?
-                   (let [with-sub (string/replace (name x) #"([^\s\|])(\|)([^\s\|])" "$1____ALT____$3")
-                         coll     (string/split with-sub #"____ALT____")
-                         ret      (string/join "|"
-                                               (map normalize-css-custom-property-inner
-                                                    coll))]
-                     ret)
+  (let [ret (cond
+              (kushi-shorthand? x)
+              (string/join ":"
+                           (map normalize-css-custom-property-inner
+                                (string/split (name x) #"\:")))
 
-                   :else
-                   (normalize-css-custom-property-inner x))]
+              (kushi-shorthand-alternation? x)
+              (let [with-sub (string/replace (name x) #"([^\s\|])(\|)([^\s\|])" "$1____ALT____$3")
+                    coll     (string/split with-sub #"____ALT____")
+                    ret      (string/join "|"
+                                          (map normalize-css-custom-property-inner
+                                               coll))]
+                ret)
+
+              :else
+              (normalize-css-custom-property-inner x))]
     ret))
 
 
@@ -329,10 +362,6 @@
         class     (normalize-keywords-in-nested-sexprs class)
         classlist (concat class cls [selector])
         ret       (postwalk-list classlist normalize-classnames)]
-
-    (when (= selector "add-taxonomy-modal-button")
-      (? class))
-
     (into [] ret)))
 
 (defn dequote* [x]
@@ -366,18 +395,23 @@
        coll))
 
 (defn trace [coll kw $]
-  (when (= coll '(["b" "$tooltip-arrow-depth:solid:$red-500"]))
-    (println kw) (pprint $)) $)
+  (when (= coll '([:bgc :$purple-200/alpha-50]))
+    (println kw)
+    (pprint $))
+  $)
 
 (defn all-style-tuples
   [coll]
   (let [css-vars (atom {})
         tuples   (as-> coll $
 
-                  ;;  (trace coll :->kushi.styles/all-style-tuples $)
+                   ;; (trace coll :->kushi.styles/all-style-tuples $)
+
+                   ;; This converts dollar sign syntax to normal css var strings
+                   ;; '([:bgc :$purple-200]) => ([:bgc "var(--purple-200)"])
                    (postwalk-style-tuples $ normalize-css-custom-property)
 
-                  ;; (trace coll :normalize-css-custom-property $)
+                   ;; (trace coll :normalize-css-custom-property $)
 
                    ;; '([:bc (if true mybc mybc2)]) => ([:bc "var(---1429181005)"])
                    ;; TODO - See if you can do this later in this op in order to support things like:
@@ -385,9 +419,6 @@
                    ;; or
                    ;; [:c (if true '(rgb 2 133 47) :$myvar2)]
                    (sexp-cssvarized $ css-vars)
-                   #_(when (contains? (into #{} coll) [:wtf :wtf])
-                    (? coll)
-                    (? sexp-cssvarized $))
 
                    ;; ([:b [["var(--myborder-width)" bstyle '(rgb 2 mygreenval 44)]]]) =>
                    ;; ([:b [["var(--myborder-width)" bstyle '("__cssfn__rgb" 2 mygreenval 44)]]])
@@ -430,34 +461,28 @@
                    ;; '(["c" "var(--myvar!important)"]) => '(["c" "var(--myvar!important)"])
                    (css-custom-property-values-!important-normalized $)
                   ;;  (!? :css-custom-property-values-!important-normalized $)
-                   )
-        ]
+                   )]
     [tuples @css-vars]))
 
 
 (defn cssvars
-  [css-vars cssvar-tuples2]
-  (let [with-extracted-names (some->> css-vars
-                                      (util/map-keys util/extract-cssvar-name))
-
-        cssvar-tuples        (some->> cssvar-tuples2
-                                      (into {})
-                                      (util/map-keys name)
-                                      (util/map-vals util/hydrate-css-shorthand+alternations))
-
-        ret*                 (merge with-extracted-names cssvar-tuples)
+  [css-vars]
+  (let [with-extracted-names
+        (some->> css-vars
+                 (util/map-keys util/extract-cssvar-name))
 
         ;; Normalized kushi-style shorthand syntax within css-var sexp
-        ret                  (util/map-vals (fn [v]
-                                              (if (s/valid? ::specs2/conditional-sexp v)
-                                                (map (fn [x]
-                                                       (if (or (s/valid? ::specs2/tokenized-css-shorthand x)
-                                                               (s/valid? ::specs2/tokenized-css-alternation x))
-                                                         (-> x name util/hydrate-css-shorthand+alternations)
-                                                         x))
-                                                     v)
-                                                v))
-                                            ret*)]
+        ret
+        (util/map-vals (fn [v]
+                         (if (s/valid? ::specs2/conditional-sexp v)
+                           (map (fn [x]
+                                  (if (or (s/valid? ::specs2/tokenized-css-shorthand x)
+                                          (s/valid? ::specs2/tokenized-css-alternation x))
+                                    (-> x name util/hydrate-css-shorthand+alternations)
+                                    x))
+                                v)
+                           v))
+                       with-extracted-names)]
     ret))
 
 
@@ -479,18 +504,16 @@
 
 
   (let [
-        ;; debug?
-        ;; (= assigned-class 'foo)
+        debug?                           (or (= assigned-class 'hewn-base)
+                                             (= assigned-class 'xy))
 
-        shared-class?
-        (util/shared-class? process)
+        shared-class?                    (util/shared-class? process)
 
 
-        selector
-        (selector/selector-name {:assigned-class assigned-class
-                                 :kushi-selector kushi-selector
-                                 :cache-key      cache-key
-                                 :kushi/process  process})
+        selector                         (selector/selector-name {:assigned-class assigned-class
+                                                                  :kushi-selector kushi-selector
+                                                                  :cache-key      cache-key
+                                                                  :kushi/process  process})
 
 
         ;; '(:b--1px:solid:$blue-500
@@ -499,97 +522,86 @@
         ;; '(["b" "1px:solid:$blue-500"]
         ;;   ["c" "$myvar"]
         ;;   ["m" "0"])}
-        style-tuples-from-tokenized
-        (when-let [coll (:tokenized-style conformed)]
-          (when (seq coll)
-            (map #(let [s (name %)]
+        style-tuples-from-tokenized      (when-let [coll (:tokenized-style conformed)]
+                                           (when (seq coll)
+                                             (map #(let [s (name %)]
                     ;; TODO abstract this
-                    (if (re-find #"^.*[^-]--:$[^-]+.+$" s)
-                      (string/split (name %) #"--:")
-                      (string/split (name %) #"--" 2)))
-                 coll)))
+                                                     (if (re-find #"^.*[^-]--:$[^-]+.+$" s)
+                                                       (string/split (name %) #"--:")
+                                                       (string/split (name %) #"--" 2)))
+                                                  coll)))
 
         ;; _ (!? conformed)
         ;; _ (!? style-tuples-from-tokenized {:before (:tokenized-style conformed) :after  style-tuples-from-tokenized})
 
         ;; '($mycssvar--gold $myothervar--red) =>
         ;; '(["$mycssvar" "gold"] ["$myothervar" red])
-        cssvar-tuples-from-tokenized
-        (when-let [coll (:cssvar-tokenized conformed)]
-          (when (seq coll)
-            (map #(string/split (name %) #"--") coll)))
+        cssvar-tuples-from-tokenized     (when-let [coll (:cssvar-tokenized conformed)]
+                                           (when (seq coll)
+                                             (map #(string/split (name %) #"--") coll)))
 
         ;; _ (!? cssvar-tuples-from-tokenized {:before (:cssvar-tokenized conformed) :after  cssvar-tuples-from-tokenized})
 
         ;; Given a list of existing defclasses,
         ;; for each defclass get all its prop/vals as a list of 2-element vectors
         ;; Then concat these all together
-        style-tuples-from-defclass-class
-        (when-let [classes (:defclass-class conformed)]
-          (mapcat #(let [k (some-> % specs2/dot-kw->s symbol)]
-                     (get-in @state2/shared-classes [k]))
-                  classes))
+        style-tuples-from-defclass-class (when-let [classes (:defclass-class conformed)]
+                                           (mapcat #(let [k (some-> % specs2/dot-kw->s symbol)]
+                                                      (get-in @state2/shared-classes [k]))
+                                                   classes))
 
         ;; _ (!? style-tuples-from-defclass-class {:before (:defclass-class conformed) :after  style-tuples-from-defclass-class})
 
         ;; Concat and distinct all the different kinds of style tuples
         ;; style-tuples-from-defclass-class needs to be first so it can be overridden when we are defining shared classes
-        all-style-tuples*
-        (distinct
-         (concat style-tuples-from-defclass-class
-                 cssvar-tuples-from-tokenized
-                 (:cssvar-tuple conformed)
-                 style-tuples-from-tokenized
-                 (:style-tuple conformed)
-                 (:style-tuple-defclass conformed)
-                 clean-stylemap))
+        all-style-tuples*                (distinct
+                                          (concat style-tuples-from-defclass-class
+                                                  cssvar-tuples-from-tokenized
+                                                  (:cssvar-tuple conformed)
+                                                  (:cssvar-tuple-defclass conformed)
+                                                  style-tuples-from-tokenized
+                                                  (:style-tuple conformed)
+                                                  (:style-tuple-defclass conformed)
+                                                  clean-stylemap))
 
 
-        ;; Deal with runtime vars, cssvars, and cssfns
+        ;; Deal with design token syntax, runtime vars, cssvars, and cssfns
         ;; Example:
-        ;; '([:border (str "1px solid" mybc)] [:sm:dark:hover:c mybc]) =>
-        ;; [([:border "var(---49390836)"] [:sm:dark:hover:c "var(--mybc)"])
-        ;;  {"var(---49390836)" (str "1px solid" mybc), "var(--mybc)" mybc}]
-        [all-style-tuples css-vars]
-        (all-style-tuples all-style-tuples*)
+        ;; '([:border (str "1px solid" mybc)]
+        ;;   [:sm:dark:hover:c mybc]
+        ;;   [:bgc :$purple-500]) =>
+        ;; [([:border "var(---49390836)"]
+        ;;   [:sm:dark:hover:c "var(--mybc)"]
+        ;;   [:bgc "var(--purple-500)"])
+        ;;  {"var(---49390836)" (str "1px solid" mybc),
+        ;;   "var(--mybc)"      mybc}]
+        [all-style-tuples css-vars]      (all-style-tuples all-style-tuples*)
 
-        [cssvar-tuples2 all-style-tuples2]
-        (util/partition-by-pred #(->> %
-                                      first
-                                      (s/valid? ::specs2/css-var-name))
-                                all-style-tuples)
-
-        defclass-style-tuples
-        (when shared-class? all-style-tuples2)
+        defclass-style-tuples            (when shared-class? all-style-tuples)
 
 
-        selector
-        (cond
-          (:assigned-class conformed)
-          ;; assigned-class
-          selector
-          (seq all-style-tuples2)
-          selector)
+        selector                         (cond
+                                           (:assigned-class conformed)
+                                           selector
+                                           (seq all-style-tuples)
+                                           selector)
 
         ;; maybe handle defclass differently here
         ;; mabye do this in args?
-        attrs-no-style
-        (when clean-attrs (dissoc clean-attrs :style))
+        attrs-no-style                   (when clean-attrs (dissoc clean-attrs :style))
 
-        classlist
-        (classlist attrs-no-style (:class conformed) selector)
+        classlist                        (classlist attrs-no-style (:class conformed) selector)
 
-        css-vars
-        (cssvars css-vars cssvar-tuples2)
+        css-vars                         (cssvars css-vars)
 
-        attrs
-        (merge (-> (or attrs-no-style {}) (assoc :class classlist))
-               (when css-vars {:style css-vars}))]
+        attrs                            (merge (-> (or attrs-no-style {}) (assoc :class classlist))
+                                                (when css-vars {:style css-vars}))]
 
 
     ;; just for debugging
     #_(when debug?
-        (println (keyed
+      (println (keyed
+        ;; m*
         ;; process
         ;; shared-class?
         ;; clean*
@@ -599,13 +611,12 @@
         ;; clean-stylemap*
         ;; clean-stylemap
         ;; style-tuples-from-tokenized
-                  all-style-tuples*
-                  all-style-tuples
-                  all-style-tuples2
+            all-style-tuples*
+            all-style-tuples
       ;;  css-vars
-                  )))
+            )))
 
     (merge (when defclass-style-tuples
              {:defclass-style-tuples defclass-style-tuples})
-           {:all-style-tuples all-style-tuples2}
+           {:all-style-tuples all-style-tuples}
            (keyed css-vars attrs classlist selector))))
