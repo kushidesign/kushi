@@ -1,10 +1,11 @@
 (ns ^:dev/always kushi.core
   (:require
+   [garden.color]
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.set :as set]
-   [kushi.styles :refer [all-style-tuples]]
+   [kushi.styles :refer [all-style-tuples all-style-tuples]]
    [kushi.config :as config :refer [user-config]]
    [kushi.shorthand :as shorthand]
    [kushi.printing2 :as printing2 :refer [kushi-expound]]
@@ -452,7 +453,7 @@
   (let [{:keys [css-reset
                 font-loading
                 design-tokens
-                tokens-in-theme
+                theme-design-tokens
                 styles
                 utility-classes]} (theme/theme)]
 
@@ -474,7 +475,7 @@
     (doseq [tok design-tokens] (state2/add-design-token! tok))
 
    ;; TODO - tokens from theme go in here.
-    (doseq [tok tokens-in-theme] (state2/add-theming-token! tok))
+    (doseq [tok theme-design-tokens] (state2/add-theming-token! tok))
 
     (add-utility-classes! utility-classes :kushi-defclass)
 
