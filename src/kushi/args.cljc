@@ -137,7 +137,8 @@
                                            (util/partition-by-pred
                                             (fn [kv]
                                               (if shared-class?
-                                                (s/valid? ::specs2/style-tuple-defclass kv)
+                                                (or (s/valid? ::specs2/style-tuple-defclass kv)
+                                                    (s/valid? ::specs2/cssvar-tuple-defclass kv))
                                                 (or (s/valid? ::specs2/style-tuple kv)
                                                     (s/valid? ::specs2/cssvar-tuple kv))))))
 
@@ -325,6 +326,8 @@
 ;; (when (= (first args) '(quote foo))
 ;;   (? all-style-tuples)
 ;;   (? parsed))
+
+
 
 
     (merge
