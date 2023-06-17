@@ -254,6 +254,7 @@
                                    (:css-reset base)))]
 
     (merge
+     {:theme-design-tokens (mapv #(into [] %) (partition 2 (:design-tokens user)))}
      merged-theme-props ;; <- map with the entries of [:font-loading :design-tokens]
      (keyed
       css-reset
