@@ -162,7 +162,7 @@
 
 (defn resolve-token-value [m kw]
   (let [v (kw m)]
-    (if (s/valid? ::specs2/css-var-name v)
+    (if (s/valid? ::specs2/cssvar-name v)
       (resolve-token-value m v)
       v)))
 
