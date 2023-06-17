@@ -8,6 +8,7 @@
                          user-css-file-path
                          version]]
    [kushi.state2 :as state2]
+   [kushi.log :as kushi.log]
    [kushi.utils :as util :refer [keyed]]
    [kushi.defs :refer [rule-type-report-order token-types]]
    [kushi.reporting :as reporting]))
@@ -355,10 +356,10 @@
                                       :initial-build?
                                       @state2/initial-build?))))
 
-
    ;; Last, reset build states for subsequent builds at dev
   (state2/reset-build-states!)
 
+  (kushi.log/reset-log-states!)
   ;; Must return the build state
   build-state)
 
