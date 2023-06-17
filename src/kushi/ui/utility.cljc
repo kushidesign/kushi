@@ -73,8 +73,8 @@
    ;; ------------------------------------------------------
    :debug-grid            {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px)), "
                                                   "repeating-linear-gradient(to right, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
-   :debug-grid-8          {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                  "repeating-linear-gradient(to right, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
+   :debug-grid-8          {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                       "repeating-linear-gradient(to right, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
                            :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px)), "
                                                        "repeating-linear-gradient(to right, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px))")}
    :debug-grid-16         {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
@@ -88,7 +88,7 @@
 
    ;; could do something like this
    ;; "[class^='bordered-']" {:border-style :solid :border-width "1px"}
-
+   
    :bordered-red          {:border-color "var(--red-500, red)"
                            :border-style :solid
                            :border-width "1px"}
@@ -129,9 +129,10 @@
                           :border-style :solid
                           :border-width "1px"}
 
-   :wireframe             {:outline-color :silver
-                           :outline-style :solid
-                           :outline-width "1px"}
+   :wireframe             {:outline-color  :silver
+                           :outline-style  :solid
+                           :outline-width  "1px"
+                           :outline-offset :-1px}
 
     ;; Non-combo flex utility classes
    :shrink               {:flex-shrink 1}
