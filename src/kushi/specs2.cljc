@@ -1,16 +1,3 @@
-
-;; TODO - DECIDE Between these 2
-;; (s/def ::cssvar-name
-;;   (s/and ::s|kw
-;;          #(re-find (re-pattern (str "^" cssvar-name-re "$")) (name %))))
-
-
-;; (s/def ::css-var-name
-;;   (s/or :keyword? ::css-var-name-kw
-;;         :string?  ::css-var-name-string))
-
-
-
 (ns kushi.specs2
   (:require
    [clojure.string :as string]
@@ -421,7 +408,7 @@
         :font-variations-settings     ::font-variations-settings
         :list-of-quoted-strings       ::list-of-quoted-strings))
 
-(s/def ::style-tuple-with-css-var
+(s/def ::style-tuple-with-cssvar
   (s/tuple ::style-tuple-prop ::cssvar-name))
 
 (s/def ::style-tuple
@@ -439,7 +426,7 @@
 (s/def ::cssvar-tuple
   (s/tuple ::cssvar-name ::style-tuple-value))
 
-(s/def ::cssvar-tuple-with-css-var
+(s/def ::cssvar-tuple-with-cssvar
   (s/tuple ::cssvar-name ::cssvar-name))
 
 (defn kw->tup [x re]
@@ -474,11 +461,11 @@
          (s/or :style-tuple
                #(kw->valid-tup? % #"--" ::style-tuple)
 
-               :style-tuple-with-css-var
-               #(kw->valid-tup? % #"--" ::style-tuple-with-css-var)
+               :style-tuple-with-cssvar
+               #(kw->valid-tup? % #"--" ::style-tuple-with-cssvar)
 
-               :cssvar-tuple-with-css-var
-               #(kw->valid-tup? % #"--" ::cssvar-tuple-with-css-var))))
+               :cssvar-tuple-with-cssvar
+               #(kw->valid-tup? % #"--" ::cssvar-tuple-with-cssvar))))
 
 
 
@@ -691,18 +678,18 @@
        (into [])))
 
 
-;; CSS-VARS -------------------------------------------------------------
+;; cssvarS -------------------------------------------------------------
 
-(s/def ::css-var-name-string
+(s/def ::cssvar-name-string
   (s/and string? #(re-find #"^\$\S+" %)))
 
-(s/def ::css-var-name-kw
+(s/def ::cssvar-name-kw
   (s/and keyword?
-         #(s/valid? ::css-var-name-string (name %))))
+         #(s/valid? ::cssvar-name-string (name %))))
 
-(s/def ::css-var-name
-  (s/or :keyword? ::css-var-name-kw
-        :string?  ::css-var-name-string))
+(s/def ::cssvar-name
+  (s/or :keyword? ::cssvar-name-kw
+        :string?  ::cssvar-name-string))
 
 
 ;; DEFKEYFRAMES ----------------------------------------------------------
