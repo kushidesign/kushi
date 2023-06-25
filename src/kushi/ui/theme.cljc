@@ -57,12 +57,12 @@
   (let [flat     (mapv inner3 m)
         stylemap (reduce (fn [acc [css-prop x]]
                            (if (vector? x)
-                             (let [[css-var fallback] x]
+                             (let [[cssvar fallback] x]
                                (->> fallback
-                                    util/maybe-wrap-css-var
-                                    (util/s->cssvar css-var)
+                                    util/maybe-wrap-cssvar
+                                    (util/s->cssvar cssvar)
                                     (assoc acc css-prop)))
-                             (assoc acc css-prop (util/maybe-wrap-css-var x))))
+                             (assoc acc css-prop (util/maybe-wrap-cssvar x))))
                          {}
                          flat)
         ret      (conj acc
@@ -79,7 +79,7 @@
                    k
                    (-> v
                        util/stringify
-                       util/maybe-wrap-css-var)))
+                       util/maybe-wrap-cssvar)))
           {}
           m))
 
