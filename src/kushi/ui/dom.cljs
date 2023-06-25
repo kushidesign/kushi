@@ -21,6 +21,14 @@
     (js/document.execCommand "copy")
     (.removeChild js/document.body el)))
 
+(defn screen-quadrant-from-point
+  "Pass an x and y val and get a tuple back reprenting the quadrant in which the point lives.
+   (screen-quadrant 10 20) => [:top :left]"
+  [x y]
+  (let [top? (> 0.5 (/ y js/window.innerHeight))
+        left? (> 0.5 (/ x js/window.innerWidth))]
+    [(if top? :top :bottom) (if left? :left :right)]))
+
 (defn screen-quadrant
   "Pass a dom node and get a tuple back reprenting the quadrant in which the center of the node lives.
    (screen-quadrant (js/document.getElementById \"my-id\")) => [:top :left]"
