@@ -17,6 +17,7 @@
            (merge-attrs
             (sx 'kushi-label
                 :.flex-row-c
+                :jc--fs
                 :.enhanceable
                 :.transition
                 :d--inline-flex
