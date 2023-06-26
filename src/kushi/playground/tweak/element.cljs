@@ -1,4 +1,3 @@
-
 ;; TODO rewrite this ns with reframe
 
 (ns kushi.playground.tweak.element
@@ -21,12 +20,10 @@
             [kushi.ui.dom :refer (copy-to-clipboard)]
             [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
             [applied-science.js-interop :as j]
-            [reagent.dom :as rdom]
-            ))
+            [reagent.dom :as rdom]))
 
 
-
-;; event listeners for tweaking
+;; Event listeners for tweaking
 
 ;; (js/document.body.addEventListener
 ;;  "mousemove"
