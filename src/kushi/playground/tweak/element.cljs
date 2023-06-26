@@ -23,6 +23,17 @@
             [reagent.dom :as rdom]))
 
 
+
+;; (defclass kushi-devtools-guide
+;;   :outline--2px:dashed:$purple-500
+;;   :outline-offset---2px)
+
+;; (defclass kushi-devtools-guide-outline
+;;   :transition--outline:0s:linear)
+
+
+
+
 ;; Event listeners for tweaking
 
 ;; (js/document.body.addEventListener
