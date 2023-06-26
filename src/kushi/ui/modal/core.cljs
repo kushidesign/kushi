@@ -20,7 +20,7 @@
       (let [duration* (.-transitionDuration (js/window.getComputedStyle dialog))
             duration  (js/Math.round (* 1000 (js/parseFloat (string/replace duration* #"s$" ""))))]
         (.removeEventListener dialog "click" close-on-backdrop-click)
-        (dom/remove-class dialog "open")
+        (dom/remove-class dialog "kushi-modal-dialog-open")
         (js/setTimeout #(.close dialog)
                        duration)))))
 
@@ -34,7 +34,7 @@
                            "click"
                            close-on-backdrop-click)
         (.showModal dialog)
-        (dom/add-class dialog "open"))
+        (dom/add-class dialog "kushi-modal-dialog-open"))
     (js/console.warn (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of: " id))))
 
 
