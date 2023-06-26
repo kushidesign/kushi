@@ -207,38 +207,38 @@
     ret))
 
 
-(defn css-var-string [s x css-vars]
+(defn css-var-string [s x *css-vars]
   (let [css-var-string  (str "var(--" s ")")]
-    (swap! css-vars assoc css-var-string x)
+    (swap! *css-vars assoc css-var-string x)
     css-var-string))
 
-(defn- sexp->css-var [p css-vars x]
+(defn- sexp->css-var [p *css-vars x]
   (if (or (s/valid? ::specs2/conditional-sexp x)
           (and (list? x)
                (= (first x) 'str)))
     (let [s (hash (str p x))]
-      (css-var-string s x css-vars))
+      (css-var-string s x *css-vars))
     x))
 
-(defn cssvarized [coll css-vars f]
+(defn cssvarized [coll *css-vars f]
   (doall
    (map (fn [[p v]]
           (let [v (if (coll? v)
-                    (walk/postwalk #(f p css-vars %) v)
-                    (f p css-vars v))]
+                    (walk/postwalk #(f p *css-vars %) v)
+                    (f p *css-vars v))]
             [p v]))
         coll)))
 
-(defn- sexp-cssvarized [coll css-vars]
-  (cssvarized coll css-vars sexp->css-var))
+(defn- sexp-cssvarized [coll *css-vars]
+  (cssvarized coll *css-vars sexp->css-var))
 
 (defn- binding->css-var [p css-vars x]
   (if (symbol? x)
     (css-var-string (name x) x css-vars)
     x))
 
-(defn- bindings-cssvarized [coll css-vars]
-  (let [ret (cssvarized coll css-vars binding->css-var)]
+(defn- bindings-cssvarized [coll *css-vars]
+  (let [ret (cssvarized coll *css-vars binding->css-var)]
     ret))
 
 (defn postwalk-with-f [f v]
@@ -402,7 +402,7 @@
 
 (defn all-style-tuples
   [coll]
-  (let [css-vars (atom {})
+  (let [*css-vars (atom {})
         tuples   (as-> coll $
 
                    ;; (trace coll :->kushi.styles/all-style-tuples $)
@@ -418,7 +418,7 @@
                    ;; [:border (when true [[:1px myborder-style '(rgb 2 mygreenval 2)]])]
                    ;; or
                    ;; [:c (if true '(rgb 2 133 47) :$myvar2)]
-                   (sexp-cssvarized $ css-vars)
+                   (sexp-cssvarized $ *css-vars)
 
                    ;; ([:b [["var(--myborder-width)" bstyle '(rgb 2 mygreenval 44)]]]) =>
                    ;; ([:b [["var(--myborder-width)" bstyle '("__cssfn__rgb" 2 mygreenval 44)]]])
@@ -434,7 +434,7 @@
                    ;;   [:outline [[:1px :solid mybc]]]) =>
                    ;; '([:bw "var(--mybw)"]
                    ;;   [:outline [[:1px :solid "var(--mybc)"]]])
-                   (bindings-cssvarized $ css-vars)
+                   (bindings-cssvarized $ *css-vars)
                   ;;  (!? :bindings-cssvarized $)
 
                    ;; '([:bgc ("__cssfn__rgb" 2 2 "var(--orange-800)")]) =>
@@ -462,27 +462,25 @@
                    (css-custom-property-values-!important-normalized $)
                   ;;  (!? :css-custom-property-values-!important-normalized $)
                    )]
-    [tuples @css-vars]))
+    [tuples @*css-vars]))
 
 
 (defn cssvars
   [css-vars]
-  (let [with-extracted-names
-        (some->> css-vars
-                 (util/map-keys util/extract-cssvar-name))
+  (let [with-extracted-names (some->> css-vars
+                                      (util/map-keys util/extract-cssvar-name))
 
         ;; Normalized kushi-style shorthand syntax within css-var sexp
-        ret
-        (util/map-vals (fn [v]
-                         (if (s/valid? ::specs2/conditional-sexp v)
-                           (map (fn [x]
-                                  (if (or (s/valid? ::specs2/tokenized-css-shorthand x)
-                                          (s/valid? ::specs2/tokenized-css-alternation x))
-                                    (-> x name util/hydrate-css-shorthand+alternations)
-                                    x))
-                                v)
-                           v))
-                       with-extracted-names)]
+        ret                  (util/map-vals (fn [v]
+                                              (if (s/valid? ::specs2/conditional-sexp v)
+                                                (map (fn [x]
+                                                       (if (or (s/valid? ::specs2/tokenized-css-shorthand x)
+                                                               (s/valid? ::specs2/tokenized-css-alternation x))
+                                                         (-> x name util/hydrate-css-shorthand+alternations)
+                                                         x))
+                                                     v)
+                                                v))
+                                            with-extracted-names)]
     ret))
 
 
@@ -490,14 +488,10 @@
   [{:keys [kushi-selector
            cache-key
            :kushi/process
-
-           ;;new stuff
            assigned-class
            clean-stylemap
            clean-attrs
-
            conformed ;<- map of args by conformace spec
-
            ]
 
     :as   m*}]
@@ -525,7 +519,7 @@
         style-tuples-from-tokenized      (when-let [coll (:tokenized-style conformed)]
                                            (when (seq coll)
                                              (map #(let [s (name %)]
-                    ;; TODO abstract this
+                                                     ;; TODO abstract this
                                                      (if (re-find #"^.*[^-]--:$[^-]+.+$" s)
                                                        (string/split (name %) #"--:")
                                                        (string/split (name %) #"--" 2)))
