@@ -19,10 +19,53 @@
             [kushi.playground.demobox.defs :refer [variants-by-category]]
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
             [kushi.ui.dom :refer (copy-to-clipboard)]
-            [kushi.ui.modal.core :refer (modal close-kushi-modal)]
+            [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
             [applied-science.js-interop :as j]
             [reagent.dom :as rdom]
             ))
+
+
+
+;; event listeners for tweaking
+
+;; (js/document.body.addEventListener
+;;  "mousemove"
+;;  #(let [el             (js/document.elementFromPoint (.-clientX %) (.-clientY %))
+;;         devtools-class "kushi-devtools-guide"]
+;;     (when el
+;;       (dom/add-class el devtools-class "kushi-devtools-guide-outline")
+;;       (el.addEventListener "mouseout"
+;;                            (fn [_]
+;;                              (dom/remove-class el
+;;                                                devtools-class))))
+;;     #_(js/console.log el)))
+
+
+;; (js/document.body.addEventListener
+;;  "contextmenu"
+;;  #(let [el          (dom/et %)
+;;         rect        (.getBoundingClientRect el)
+;;         [tb lr]     (dom/screen-quadrant-from-point (.-x rect) (.-y rect))
+;;         ibs         (if (= tb :top)
+;;                       (str (+ (.-y rect) (.-height rect)) "px")
+;;                       (str (.-y rect) "px"))
+;;         iis         (if (= lr :left)
+;;                       (str (.-x rect) "px")
+;;                       (str (+ (.-x rect) (.-width rect)) "px"))
+;;         modal-el    (dom/el-by-id   "kushi-tweak-contextmenu")
+;;         translate-x (if-not (= lr :left) "-100%" 0)
+;;         translate-y (if-not (= tb :top) "-100%" 0)
+;;         data-sx     el.dataset.sx]
+;;     ;; TODO el.nodeValue set to data-sx
+;;     (when data-sx
+;;       (dom/set-style! modal-el "content" ibs))
+;;     (.preventDefault %)
+;;     (dom/set-style! modal-el "inset-block-start" ibs)
+;;     (dom/set-style! modal-el "inset-inline-start" iis)
+;;     (dom/set-style! modal-el "transform" (str "translate(" translate-x ", " translate-y ")"))
+;;     (open-kushi-modal  "kushi-tweak-contextmenu")
+;;     false))
+
 
 
 
