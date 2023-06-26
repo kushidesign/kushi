@@ -29,14 +29,9 @@
 
 (defn ^:dev/after-load start []
 
-  ;; (rdom/render [main-view] (.getElementById js/document "app"))
-
   (rdom/render
    [main-view
-    {
-     ;; Change to `:site-header`
-     :site-header                        site-header
-
+    {:site-header                        site-header
      :custom-components                  {:render?        false
                                           :header         "Custom Components Playground"
                                           :sidenav-header "Custom Components"
