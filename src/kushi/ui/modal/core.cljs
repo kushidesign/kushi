@@ -90,13 +90,20 @@
            {:name    elevation
             :pred    #(< -1 % 6)
             :default nil
-            :desc    "Optional. The kushi utility class in the elevation family that will be used to create a drop-shadow for the modal panel"}]}
+            :desc    "Optional. The kushi utility class in the elevation family that will be used to create a drop-shadow for the modal panel"}
+           ;; TODO -- add on-close callback option (for calling function with on backdrop click)
+           ;; TODO -- add option for disabling auto close-on-background click
+           ;; TODO -- add option for naive BSL
+           ;; TODO -- add x
+           ;; TODO -- add y
+           ]}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys [modal-title
                 description
                 elevation
-                expanded?]}  opts
+                expanded?
+                context-menu?]}  opts
         {:keys [id]}         attrs
         desc-id              (str id "-description")
         title-id             (str id "-title")
@@ -115,14 +122,17 @@
      [:dialog (merge-attrs
                (sx 'kushi-modal-dialog
                    :backdrop:bgc--transparent
-                   :.fixed-centered
+                   :position--fixed
+                   [:inset-inline-start :50%]
+                   [:inset-block-start :50%]
+                   [:transform (if context-menu? :none '(translate :-50% :-50%))]
                    :.transition
                    [:transition-duration "var(--modal-transition-duration, var(--fast))"]
                    :bgc--$body-background-color
                    :dark:bgc--$body-background-color-inverse
                    :border-radius--$modal-border-radius
                    :b--$modal-border
-                   [:width :480px]
+                   [:min-width :$kushi-modal-min-width]
                    [:max-width "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
                    [:max-height "calc(100vh - (2 * var(--modal-margin, 1rem)))"]
                    :height--$modal-min-height
