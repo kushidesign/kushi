@@ -74,7 +74,7 @@
                              (let [prop+ (if (util/nameable? prop)
                                            (keyword (string/replace (name prop) #"^\$" "--"))
                                            prop)]
-                               {prop+ (util/maybe-wrap-css-var val)})))
+                               {prop+ (util/maybe-wrap-cssvar val)})))
                      (cons (or (when-let [selector* (:design-tokens-root user-config)]
                                  (name selector*))
                                ":root"))
