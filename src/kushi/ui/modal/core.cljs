@@ -6,7 +6,7 @@
             [kushi.ui.dom :as dom]
             [goog.dom :as gdom]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.core :refer (merge-attrs) :refer-macros (sx defclass)]))
+            [kushi.core :refer (merge-attrs) :refer-macros (sx)]))
 
 (declare close-on-backdrop-click)
 
