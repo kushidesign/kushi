@@ -81,7 +81,7 @@
 ;; DEFKEYFRAMES ----------------------------------------------------------
 
 
-;; TODO use existing code to deal with vectors, css lists, and css-vars
+;; TODO use existing code to deal with vectors, css lists, and cssvars
 (defn- keyframe [[k v]]
   (let [frame-key (if (vector? k)
                     (string/join ", " (map name k))
