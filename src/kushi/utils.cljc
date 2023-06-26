@@ -72,7 +72,7 @@
    (str "var(--" (name x) (when fallback (str ", " fallback)) ")")))
 
 
-(defn maybe-wrap-css-var [x]
+(defn maybe-wrap-cssvar [x]
   (if (token? x)
     (str "var(" (cssvar-dollar-syntax->double-dash x) ")")
     x))
