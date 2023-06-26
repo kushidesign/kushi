@@ -1,3 +1,4 @@
+
 ;; TODO rewrite this ns with reframe
 
 (ns kushi.playground.tweak.element
@@ -18,9 +19,30 @@
             [kushi.playground.demobox.defs :refer [variants-by-category]]
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
             [kushi.ui.dom :refer (copy-to-clipboard)]
+            [kushi.ui.modal.core :refer (modal close-kushi-modal)]
             [applied-science.js-interop :as j]
             [reagent.dom :as rdom]
             ))
+
+
+
+;; Temp context menu for debugging
+;; This would not live here but rather get injected dynamically
+;; [modal (sx :.elevated-4!
+;;           :border--1px:solid:$neutral-300
+;;           :border-radius--3px
+;;           :box-shadow--none
+;;           {:id             "kushi-tweak-contextmenu"
+;;             :-context-menu? true})
+;; [:ul
+;;   [:li [button (sx :.minimal :.pill)
+;;         [icon :tune]
+;;         "Tweak"]]
+;;   [:li [button (sx :.minimal :.pill {:on-click close-kushi-modal})
+;;         [icon :close]
+;;         "Cancel"]]]]
+
+
 
 (def utility-family-label-by-key
   {:flex      "Flexbox"
