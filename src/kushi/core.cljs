@@ -263,9 +263,6 @@
 ;; Functionality for kushi style decoration
 ;; ----------------------------------------------------------------------------------------------------------
 
-(defn merged-attrs-map
-  [{:keys [attrs-base prefixed-classlist css-vars]}]
-  (assoc attrs-base :class (distinct prefixed-classlist) :style css-vars))
 
 (def dom-element-events
   [:on-change
