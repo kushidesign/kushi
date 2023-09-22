@@ -514,6 +514,8 @@
    ;; ------------------------------------------------------
    :sans          {:font-family :$sans-serif-font-stack}
    :serif         {:font-family :$serif-font-stack}
+   :fantasy       {:font-family :fantasy}
+   :cursive       {:font-family :cursive}
    :italic        {:font-style :italic}
    :oblique       {:font-style :oblique}
 
