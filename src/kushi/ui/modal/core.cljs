@@ -20,8 +20,7 @@
             duration  (js/Math.round (* 1000 (js/parseFloat (string/replace duration* #"s$" ""))))]
         (.removeEventListener dialog "click" close-on-backdrop-click)
         (dom/remove-class dialog "kushi-modal-open")
-        (js/setTimeout #(.close dialog)
-                       duration)))))
+        (js/setTimeout #(.close dialog) duration)))))
 
 (defn close-on-backdrop-click  [e]
   (when (= "DIALOG" (.-nodeName (dom/et e)))
@@ -35,7 +34,6 @@
         (.showModal dialog)
         (dom/add-class dialog "kushi-modal-open"))
     (js/console.warn (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of: " id))))
-
 
 (defn modal-close-button
   {:desc ["The `modal-close-button` is meant to be a cta for closing a modal that is independant of other button groups that may be in the modal."
@@ -97,25 +95,27 @@
            ;; TODO -- add y
            ]}
   [& args]
-  (let [[opts attrs & children] (opts+children args)
+  (let [[opts attrs & children]   (opts+children args)
         {:keys [modal-title
                 description
                 elevation
                 expanded?
-                context-menu?]}  opts
-        {:keys [id]}         attrs
-        desc-id              (str id "-description")
-        title-id             (str id "-title")
-        valid-elevation?     (and (int? elevation) (< -1 elevation 6))
-        elevation-token      (when-not (zero? elevation)
-                               (if valid-elevation?
-                                 (str "var(--elevated-" elevation "), ")
-                                 (str "var(--elevated), ")))
-        elevation-token-inverse (when-not (zero? elevation)
-                                  (if valid-elevation?
-                                    (str "var(--elevated-" elevation "-inverse), ")
-                                    (str "var(--elevated-inverse), ")))]
+                context-menu?]}   opts
+        {:keys [id]}              attrs
+        desc-id                   (str id "-description")
+        title-id                  (str id "-title")
+        valid-elevation?          (and (int? elevation) (< -1 elevation 6))
+        elevation-token           (when-not (zero? elevation)
+                                    (if valid-elevation?
+                                      (str "var(--elevated-" elevation "), ")
+                                      (str "var(--elevated), ")))
+        elevation-token-inverse   (when-not (zero? elevation)
+                                    (if valid-elevation?
+                                      (str "var(--elevated-" elevation "-inverse), ")
+                                      (str "var(--elevated-inverse), ")))]
+
     (when expanded? (js/setTimeout #(open-kushi-modal id) 100))
+
     (into
      [:dialog (merge-attrs
                (sx 'kushi-modal
