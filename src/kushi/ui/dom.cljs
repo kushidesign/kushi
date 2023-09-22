@@ -182,6 +182,11 @@
 (defn has-class? [el s]
   (when el (.contains (.-classList el) s)))
 
+;; TODO Rename?
+(defn has-class-or-ancestor-with-class? [el]
+  (boolean (or (has-class? el "dropdown-list-item")
+               (nearest-ancestor el ".dropdown-list-item"))))
+
 (defn el-idx
   "Get index of element, relative to its parent"
   [el]
