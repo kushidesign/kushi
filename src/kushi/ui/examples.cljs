@@ -252,8 +252,12 @@
                                                                 :p--1em)
                                       :-label-attrs         (sx :bgc--yellow)
                                       :-wrapper-attrs       (sx :box-shadow--4px:4px:7px:#f2baf9ab
-                                                                {:class :my-input-wrapper-name})
-                                      })]}]})
+                                                                {:class :my-input-wrapper-name})})]}
+                {:label   "With textarea element"
+                 :example [input (sx {:placeholder "Your text here"
+                                      :-textarea?  true
+                                      :-label      "Input label"
+                                      :-helper     "My helper text"})]}]})
 
    (feature
     slider
