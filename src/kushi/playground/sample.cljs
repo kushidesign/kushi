@@ -7,7 +7,7 @@
   ;;  [kushi.ui.dom :as dom]
   ;;  [kushi.ui.input.slider.core :refer (slider)]
   ;;  [kushi.ui.button.core :refer (button)]
-  ;;  [kushi.ui.collapse.core :refer (collapse accordian)]
+  ;;  [kushi.ui.collapse.core :refer (collapse accordion)]
   ;;  [kushi.ui.tooltip.core :refer (tooltip2 tooltip add-temporary-tooltip!)]
 
 

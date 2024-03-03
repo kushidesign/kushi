@@ -2,7 +2,25 @@
 All notable changes to this project will be documented in this file.<br>
 This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## 1.0.0-a.19
+2023-5-17
+
+### Added
+- Textarea primitive support via `:-textarea?` option on `kushi.ui.input.text/input` component.
+
+### Fixed
+- sans/sans-serif utility class typo
+- `kushi.ui.modal` documentation instructions, Fixes #42
+- Accordion typos
+
+### Breaking changes
+- kushi.ui.collapse.core/accordian -> kushi.ui.collapse.core/accordion
+
+
+
+
 ## 1.0.0-a.18
+
 2023-5-17
 
 ### Added
@@ -54,7 +72,7 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
   - Alert
   - Modal
   - Collapse
-  - Accordian
+  - Accordion
   - Grid
 
 - `kushi.ui.core/lightswitch!` for toggling between light and dark modes.
@@ -78,7 +96,7 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
     - `rounded`
     - `sharp`
 - Ability to theme with user `.edn` theme file.
-- Color pallet of `gray`, `purple`, `blue`, `green`, `lime`, `yellow`, `gold`, `orange`, `red`, `magena`, and `brown`
+- Color pallet of `gray`, `purple`, `blue`, `green`, `lime`, `yellow`, `gold`, `orange`, `red`, `magenta`, and `brown`
 - Scaled transparent grayscale design tokens e.g. `$white-transparent-50`, `$dark-gray-transparent-15`, etc.
 - `:.bordered-red`, `:.bordered-blue`, etc. for all colors in stock kushi pallette.
 - Support syncing of type weight with radio and checkbox outline/border-width  
@@ -92,7 +110,7 @@ site for projects.
 - Ability to elide sections of css output by category.
 - Added various `:log-*` options to config to control what gets logged on each build.
 
-#### DOM utilility namespace
+#### DOM utility namespace
 - Added `kushi.ui.dom` utility namespace for helper fns like `copy-to-clipboard!`, `scroll-into-view!`, `screen-quadrant`, and many more.
 
 
@@ -123,7 +141,7 @@ site for projects.
 2022-1-14
 
 ### Added
-- [`merge-with-style` function for more flexible composibility](https://github.com/paintparty/kushi/issues/1)
+- [`merge-with-style` function for more flexible composability](https://github.com/paintparty/kushi/issues/1)
 
 - [`map-mode`, which enables opting-in to project-wide style-map syntax instead of default atomic syntax](https://github.com/paintparty/kushi/issues/5)
 
@@ -144,7 +162,7 @@ is automatically added to styled elements for dev builds
 
 - Example reageant project.
 
-- `:select-ns` config option for narrrowing compilation to select namespaces
+- `:select-ns` config option for narrowing compilation to select namespaces
 
 - Support for error reporting and assertion errors in the case of duplicate `keyframe` names, duplicate `defclass` names, and duplicate `:prefix` + `:ident` combos.
 
@@ -173,7 +191,7 @@ is automatically added to styled elements for dev builds
 
 - [`deref`'ed atoms use the same css var naming convention as normal bindings](https://github.com/paintparty/kushi/issues/5)
 
-- Preformatting of js warnings for bad args fixes edge case dev build exceptions.
+- Pre-formatting of js warnings for bad args fixes edge case dev build exceptions.
 ## 0.1.2
 2021-08-16
 ### Fixed

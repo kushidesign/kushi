@@ -16,7 +16,7 @@
    [kushi.ui.card.core :refer (card)]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.tooltip.demo :as tooltip-demo]
-   [kushi.ui.collapse.core :refer (collapse accordian)]
+   [kushi.ui.collapse.core :refer (collapse accordion)]
    [kushi.ui.modal.core :refer (modal)]
    [kushi.ui.modal.examples :refer (modal-examples)]
    [kushi.ui.icon.mui.examples :refer [icon-examples]]
@@ -754,14 +754,14 @@
                            [:p "child 2"]]}]})
 
    (feature
-    accordian
+    accordion
     {:stage    {:style {:min-height      :190px
                         :justify-content :flex-start
                         :align-items     :start}}
      :desc     ["cool"]
      :defaults {:examples "Simple"}
      :examples [{:label   "Simple"
-                 :example [accordian
+                 :example [accordion
                            [collapse
                             {:-label "first section"
                              :-speed 1000}
@@ -771,7 +771,7 @@
                              :-speed 1000}
                             [:div (sx :pis--0.5rem) [:p "child 1"] [:p "child 2"]]]]}
                 {:label   "borders"
-                 :example [accordian
+                 :example [accordion
                            (sx :>section:first-child:bbs--1px:solid:black)
                            (for [[label-text content] [["first section" "lorem ipsum"]
                                                        ["second section" "lorem ipsum2"]

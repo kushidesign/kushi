@@ -17,7 +17,7 @@
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.button.demo :as button-demo]
    [kushi.ui.input.switch.demo :refer [switch-demo switch-demo-light+dark]]
-   [kushi.ui.collapse.core :refer (collapse accordian)]
+   [kushi.ui.collapse.core :refer (collapse accordion)]
    [kushi.ui.examples :as examples]
    [kushi.playground.nav :as nav]
    [kushi.playground.tweak.element :refer [element-tweaker!]]
