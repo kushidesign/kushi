@@ -128,6 +128,12 @@
     (j/assoc! el "ggpn" ggpn)
     el))
 
+(defn event-target [e {:keys [attrs]}]
+  ;; check node type
+  (let [el (some-> e .-target)]
+    (doseq [attr attrs]
+      (j/assoc! el (name attr) (j/get el attr)))))
+
 (defn cet [e] (some-> e .-currentTarget))
 (defn cetv [e] (some-> e .-currentTarget .-value))
 (defn et [e] (some-> e .-target))
