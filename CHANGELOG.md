@@ -6,12 +6,14 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
 2023-5-17
 
 ### Added
-- Textarea primitive support via `:-textarea?` option on `kushi.ui.input.text/input` component.
+- Textarea primitive support via `:-textarea?` option on `kushi.ui.input.text/input` component. Closes #43
 
 ### Fixed
-- sans/sans-serif utility class typo
+- [Support normalization of keywords for equality checks within conditional class application in sx macro](https://github.com/kushidesign/kushi/commit/ea745a3d4d46f9d3aa3369c4a6dfc4a6b8e570da)
+- sans/sans-serif utility class typo, Fixes #39
 - `kushi.ui.modal` documentation instructions, Fixes #42
 - Accordion typos
+- css var tuple support
 
 ### Breaking changes
 - kushi.ui.collapse.core/accordian -> kushi.ui.collapse.core/accordion
