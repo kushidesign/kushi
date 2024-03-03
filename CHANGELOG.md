@@ -8,8 +8,8 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
 ### Added
 
 #### Functionality
-- `fireworks.core/breakpoints`
-- `fireworks.core/token->ms`
+- `kushi.core/breakpoints`
+- `kushi.core/token->ms`
 
 #### Styling Engine / sx macro
 - Support mixing of shorthand and map notation in argument to sx macro 
@@ -18,8 +18,8 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
 - 
 
 #### Font loading
-- `fireworks.core/add-google-font!`
-- `fireworks.core/add-google-material-symbols-font!`
+- `kushi.core/add-google-font!`
+- `kushi.core/add-google-material-symbols-font!`
 
 #### Typography
 - Added type scale system
@@ -58,6 +58,7 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
   - Grid
 
 - `kushi.ui.core/lightswitch!` for toggling between light and dark modes.
+- `kushi.ui.progress.core` ns with basics components for animated loading/progress indicators.
 
 #### Design system
 - Added complete design system with light/dark support across variants:
@@ -112,7 +113,7 @@ site for projects.
 
 
 ### Removed
-- `fireworks.core/add-system-font-stack`
+- `kushi.core/add-system-font-stack`
 - Explicit `map-mode`.
 
 
