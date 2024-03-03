@@ -1,6 +1,6 @@
 {
   "name": "kushi.design",
-  "version": "0.1.0",
+  "version": "1.0.0-a.19",
   "private": true,
   "devDependencies": {
     "shadow-cljs": "^2.20.2"

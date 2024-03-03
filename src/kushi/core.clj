@@ -1,10 +1,11 @@
 (ns ^:dev/always kushi.core
   (:require
+   [garden.color]
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.set :as set]
-   [kushi.styles :refer [all-style-tuples]]
+   [kushi.styles :refer [all-style-tuples all-style-tuples]]
    [kushi.config :as config :refer [user-config]]
    [kushi.shorthand :as shorthand]
    [kushi.printing2 :as printing2 :refer [kushi-expound]]
@@ -80,7 +81,7 @@
 ;; DEFKEYFRAMES ----------------------------------------------------------
 
 
-;; TODO use existing code to deal with vectors, css lists, and css-vars
+;; TODO use existing code to deal with vectors, css lists, and cssvars
 (defn- keyframe [[k v]]
   (let [frame-key (if (vector? k)
                     (string/join ", " (map name k))
@@ -161,7 +162,7 @@
 
 (defn resolve-token-value [m kw]
   (let [v (kw m)]
-    (if (s/valid? ::specs2/css-var-name v)
+    (if (s/valid? ::specs2/cssvar-name v)
       (resolve-token-value m v)
       v)))
 
@@ -381,45 +382,45 @@
 
 (defmacro ^:public sx
   [& args]
- (let [m*           (first args)
-       from-defcom? (and (map? m*) (:_kushi/defcom? m*))
-       args         (if from-defcom? (:args m*) args)
-       form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
-   (when-not (= args '(nil))
-     (let [m               {:args          args
-                            :form-meta     form-meta
-                            :kushi/process :kushi.core/sx
-                            :fname         "sx"
-                            :macro         :sx}
-           {:keys [attrs]} (try
-                             (sx-dispatch m)
-                             (catch Exception ex
-                               (-> m
-                                   (assoc :ex ex)
-                                   sx-exception-args
-                                   printing2/caught-exception)))]
-       `~attrs))))
+  (let [m*           (first args)
+        from-defcom? (and (map? m*) (:_kushi/defcom? m*))
+        args         (if from-defcom? (:args m*) args)
+        form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
+    (when-not (= args '(nil))
+      (let [m               {:args          args
+                             :form-meta     form-meta
+                             :kushi/process :kushi.core/sx
+                             :fname         "sx"
+                             :macro         :sx}
+            {:keys [attrs]} (try
+                              (sx-dispatch m)
+                              (catch Exception ex
+                                (-> m
+                                    (assoc :ex ex)
+                                    sx-exception-args
+                                    printing2/caught-exception)))]
+        `~attrs))))
 
 (defmacro ^:public sx*
   [& args]
- (let [m*           (first args)
-       from-defcom? (and (map? m*) (:_kushi/defcom? m*))
-       args         (if from-defcom? (:args m*) args)
-       form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
-   (when-not (= args '(nil))
-     (let [m               {:args          args
-                            :form-meta     form-meta
-                            :kushi/process :kushi.core/sx
-                            :fname         "sx"
-                            :macro         :sx*}
-           {:keys [attrs]} (try
-                             (sx-dispatch m)
-                             (catch Exception ex
-                               (-> m
-                                   (assoc :ex ex)
-                                   sx-exception-args
-                                   printing2/caught-exception)))]
-       `~attrs))))
+  (let [m*           (first args)
+        from-defcom? (and (map? m*) (:_kushi/defcom? m*))
+        args         (if from-defcom? (:args m*) args)
+        form-meta    (if from-defcom? (:form-meta m*) (meta &form))]
+    (when-not (= args '(nil))
+      (let [m               {:args          args
+                             :form-meta     form-meta
+                             :kushi/process :kushi.core/sx
+                             :fname         "sx"
+                             :macro         :sx*}
+            {:keys [attrs]} (try
+                              (sx-dispatch m)
+                              (catch Exception ex
+                                (-> m
+                                    (assoc :ex ex)
+                                    sx-exception-args
+                                    printing2/caught-exception)))]
+        `~attrs))))
 
 
 
@@ -452,7 +453,7 @@
   (let [{:keys [css-reset
                 font-loading
                 design-tokens
-                tokens-in-theme
+                theme-design-tokens
                 styles
                 utility-classes]} (theme/theme)]
 
@@ -474,7 +475,7 @@
     (doseq [tok design-tokens] (state2/add-design-token! tok))
 
    ;; TODO - tokens from theme go in here.
-    (doseq [tok tokens-in-theme] (state2/add-theming-token! tok))
+    (doseq [tok theme-design-tokens] (state2/add-theming-token! tok))
 
     (add-utility-classes! utility-classes :kushi-defclass)
 

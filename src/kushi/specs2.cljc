@@ -1,20 +1,8 @@
-
-;; TODO - DECIDE Between these 2
-;; (s/def ::cssvar-name
-;;   (s/and ::s|kw
-;;          #(re-find (re-pattern (str "^" cssvar-name-re "$")) (name %))))
-
-
-;; (s/def ::css-var-name
-;;   (s/or :keyword? ::css-var-name-kw
-;;         :string?  ::css-var-name-string))
-
-
-
 (ns kushi.specs2
   (:require
    [clojure.string :as string]
    [kushi.defs :as defs]
+   [garden.color]
    [clojure.spec.alpha :as s]))
 
 
@@ -35,20 +23,61 @@
 
 ;; It is not really designed for this ... should we make a separate spec for kushi-style css shorthand and make only that work (meaning it woule fail css-val-re-base)
 
+;; Color related
+(def hex-color-re "#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})")
+(def int-0-100-base-re "100|[0-9][0-9]?")
+(def int-0-100-re (str "(?:" int-0-100-base-re ")"))
+(def int-0-100-capturing-re (str "(" int-0-100-base-re ")"))
+(def transparent-color-alpha-channel-re (str "\\/alpha-" int-0-100-re))
+(def transparent-color-alpha-channel-capturing-re (str "\\/alpha-" int-0-100-capturing-re))
+(def maybe-named-or-token-color-base-re "[a-zA-Z_][a-zA-Z0-9_-]+")
+(def maybe-named-or-token-color-re (str "(?:" maybe-named-or-token-color-base-re ")"))
+(def maybe-named-or-token-color-capturing-re (str "(" maybe-named-or-token-color-base-re ")"))
+(def token-color-re "[a-zA-Z_-]+-(?:50|[1-9][50]0)+")
+(def token-color-capturing-re (str "(" token-color-re ")"))
+(def maybe-transparent-color-re (str ":?(?:\\$|--)"
+                                     maybe-named-or-token-color-re
+                                     transparent-color-alpha-channel-re
+                                     "(?:!important)?"))
+(def maybe-transparent-color-capturing-re (str ":?(?:\\$|--)"
+                                               maybe-named-or-token-color-capturing-re
+                                               transparent-color-alpha-channel-capturing-re
+                                               "(!important)?"))
+
+
+;; General
+;; TODO can you take the bar out of here?
 (def css-val-re-base "[#-]?[a-zA-Z0-9\\$]+[_a-zA-Z0-9-:|\\.\\*]*")
+
+;; TODO you have no dollar sign here
 (def css-val-re-base-no-bar "[#-]?[a-zA-Z0-9]+[_a-zA-Z0-9-:\\.\\*]*")
+
 (def css-val-re (str "^" css-val-re-base))
 (def css-pseudo-element-re-fast ":(?:af|be|se|ba|pl|cu|fi|gr|ma|pa|sl|sp|-m|-w)")
 (def css-pseudo-element-re (str "(?:" (string/join "|" (map name defs/pseudo-elements)) ")(?:\\(.*\\))?"))
 (def css-pseudo-class-re (str "(?:" (string/join "|" (map name defs/pseudo-classes*)) ")(?:\\(.*\\))?"))
 (def css-pseudo-element-followed-by-pseudo-class-re (str css-pseudo-element-re ":" css-pseudo-class-re))
 (def css-quoted-string-value-re "\"[^\"]*\"")
-(def cssvar-name-base-re "[-_a-zA-Z0-9]+")
+(def cssvar-name-base-re (str "[-_a-zA-Z0-9]+" "(?:" transparent-color-alpha-channel-re ")?"))
+(def cssvar-name-with-alpha-base-re (str cssvar-name-base-re transparent-color-alpha-channel-re))
+(def cssvar-name-generated-base-re "-*[0-9]+")
+(def cssvar-declaration-re (str "--" cssvar-name-base-re))
 (def cssvar-name-re (str "\\$" cssvar-name-base-re))
 (def cssvar-in-css-re (str "var\\((--" cssvar-name-base-re ")\\)"))
+(def cssvar-in-css-with-alpha-re (str "var\\((--" cssvar-name-with-alpha-base-re ")\\)"))
+(def cssvar-in-css-generated-re (str "var\\((--" cssvar-name-generated-base-re ")\\)"))
 (def cssvar-in-css-with-misplaced-!important-re (str "var\\(--" cssvar-name-base-re "\\!important\\)"))
+(def cssvar-fallback-start-re "\\|\\|")
+(def cssvar-fallback-re (str "(?:"
+                             cssvar-fallback-start-re
+                             "(?:" cssvar-name-re "|" css-val-re-base-no-bar ")"
+                             ")"))
+
+
 (def starts-with-dark-re (str "^\\.dark,?"))
 (def font-variations-settings-re "^(?:(?:'wght'|'opsz'|'GRAD'|'FILL') [0-9]+ ?(?:, )?)+$")
+
+
 
 ;; Clojure valid symbol related
 (def clj-sym-special-chars "\\*\\+\\!\\-\\_\\'\\?\\<\\>\\=" )
@@ -70,7 +99,7 @@
 (defn kw?->s [x] (if (keyword? x) (kw->s x) x))
 
 (defn re-find-with
-  "Take a string for consumption by `re-pattern`, and a string or keyword to search against.
+  "Take a string for consumption by `re-pattern`, and a string, keyword, or symbol to search against.
    Bookends the pattern string with \"^\" and \"$\"."
   [pattern x]
   (when (or (string? x) (keyword? x) (symbol? x))
@@ -95,10 +124,25 @@
          (= x ")") (recur xs (dec count))
          :else (recur xs count))))
 
+(defn maybe-transparent-color-capturing [x]
+  (re-find-with (re-pattern maybe-transparent-color-capturing-re) x))
+
+(defn token-color-capturing [x]
+  (re-find-with (re-pattern token-color-capturing-re) x))
 
 ;; SPECS -----------------------------------------------------------------
 
+(s/def ::hex-color
+  #(re-find-with hex-color-re %))
 
+(s/def ::named-css-color
+  (s/and ::nameable #(contains? garden.color/color-name->hex (keyword (name %)))))
+
+(s/def ::token-color
+  (s/and ::nameable #(re-find (re-pattern token-color-re) %)))
+
+(s/def ::maybe-transparent-color
+  (s/and ::nameable #(re-find (re-pattern maybe-transparent-color-re) %)))
 
 ;; ::kushi-trace is for debugging during dev
 (s/def ::kushi-trace
@@ -106,9 +150,9 @@
 
 (s/def ::font-variations-settings
   (s/and
-   string?
-   #(re-find (re-pattern font-variations-settings-re)
-            %)))
+    string?
+    #(re-find (re-pattern font-variations-settings-re)
+              %)))
 
 (s/def ::double-quoted-string
   (s/and string?
@@ -198,35 +242,44 @@
 (s/def ::pseudo-element-content
   #(s/valid? ::css-quoted-string-value %))
 
-;; New!
 (s/def ::dot-kw-classname
   (s/and keyword?
          #(not (s/valid? ::tokenized-style %))
          ::dot-kw
          #(s/valid? ::css-selector-base (dot-kw->s %))))
 
-;; New!
 (s/def ::class
   (s/or :dot-kw-classname  ::dot-kw-classname
         :conditional-class ::conditional-class))
 
-;; New!
 (s/def ::defclass-class
   #(s/valid? ::dot-kw-classname %))
 
+(s/def ::cssvar-declaration
+  #(re-find-with cssvar-declaration-re %))
 
-(s/def ::cssvar-in-css #(re-find-with cssvar-in-css-re %))
-(s/def ::cssvar-in-css-with-misplaced-!important #(re-find-with cssvar-in-css-with-misplaced-!important-re %))
+(s/def ::cssvar-in-css-with-alpha
+  (s/and string?
+         #(re-find-with cssvar-in-css-with-alpha-re %)))
+(s/def ::cssvar-in-css-generated
+  (s/and string?
+         #(re-find-with cssvar-in-css-generated-re %)))
+
+(s/def ::cssvar-in-css
+  (s/and string?
+         #(re-find-with cssvar-in-css-re %)))
+
+(s/def ::cssvar-in-css-with-misplaced-!important
+  (s/and string?
+         #(re-find-with cssvar-in-css-with-misplaced-!important-re %)))
 
 (s/def ::cssvar-name
   (s/and ::s|kw
-         #(re-find (re-pattern (str "^"
-                                    cssvar-name-re
-                                    "(?:\\|" cssvar-name-re "|" css-val-re-base ")?"
-                                    "(?:\\|" cssvar-name-re "|" css-val-re-base ")?"
-                                    "(?:\\!important)?"
-                                    "$"))
-                   (name %))))
+         #(re-find-with
+           (re-pattern (str cssvar-name-re
+                            cssvar-fallback-re "?"
+                            cssvar-fallback-re "?"))
+           %)))
 
 (s/def ::cssvar-name-base
   (s/and ::s|kw
@@ -355,7 +408,7 @@
         :font-variations-settings     ::font-variations-settings
         :list-of-quoted-strings       ::list-of-quoted-strings))
 
-(s/def ::style-tuple-with-css-var
+(s/def ::style-tuple-with-cssvar
   (s/tuple ::style-tuple-prop ::cssvar-name))
 
 (s/def ::style-tuple
@@ -364,13 +417,16 @@
 (s/def ::style-tuple-defclass
   (s/tuple ::style-tuple-prop ::style-tuple-value-defclass))
 
+(s/def ::cssvar-tuple-defclass
+  (s/tuple ::cssvar-name ::style-tuple-value-defclass))
+
 (s/def ::style-tuple-nested
   (s/tuple ::style-tuple-prop-nested-syntax ::stylemap))
 
 (s/def ::cssvar-tuple
   (s/tuple ::cssvar-name ::style-tuple-value))
 
-(s/def ::cssvar-tuple-with-css-var
+(s/def ::cssvar-tuple-with-cssvar
   (s/tuple ::cssvar-name ::cssvar-name))
 
 (defn kw->tup [x re]
@@ -405,11 +461,11 @@
          (s/or :style-tuple
                #(kw->valid-tup? % #"--" ::style-tuple)
 
-               :style-tuple-with-css-var
-               #(kw->valid-tup? % #"--" ::style-tuple-with-css-var)
+               :style-tuple-with-cssvar
+               #(kw->valid-tup? % #"--" ::style-tuple-with-cssvar)
 
-               :cssvar-tuple-with-css-var
-               #(kw->valid-tup? % #"--" ::cssvar-tuple-with-css-var))))
+               :cssvar-tuple-with-cssvar
+               #(kw->valid-tup? % #"--" ::cssvar-tuple-with-cssvar))))
 
 
 
@@ -501,13 +557,16 @@
          #(s/valid? ::css-selector-base (name %))))
 
 (s/def ::defclass-style
-  (s/or :tokenized-style      ::tokenized-style
-        :style-tuple-defclass ::style-tuple-defclass))
+  (s/or :tokenized-style       ::tokenized-style
+        :style-tuple-defclass  ::style-tuple-defclass
+        :cssvar-tuple-defclass ::cssvar-tuple-defclass
+        ))
 
 (s/def ::defclass-style-or-class
   (s/or :defclass-style   ::defclass-style
         :dot-kw-classname ::dot-kw-classname))
 
+;; remove this cruft?
 (s/def ::defclass
   (s/cat :defclass-name     ::defclass-name
          :defclass-style    (s/* ::defclass-style-or-class)
@@ -525,6 +584,7 @@
   ;; everything except name and map - used in kushi.args/clean-args
   (s/or :defclass-class       #(s/valid? ::defclass-class %)
         :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
+        :cssvar-tuple-defclass #(s/valid? ::cssvar-tuple-defclass %)
         :tokenized-style      #(s/valid? ::tokenized-style %)))
 
 (s/def ::valid-defclass-arg-normalized
@@ -532,6 +592,7 @@
   (s/or :assigned-class       #(s/valid? symbol? %)
         :defclass-class       #(s/valid? ::defclass-class %)
         :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
+        :cssvar-tuple-defclass #(s/valid? ::cssvar-tuple-defclass %)
         :tokenized-style      #(s/valid? ::tokenized-style %)
         ;; Internally, we nest a stylemap passed to kushi.core/defclass on a :style key,
         ;; so it can be processed through the same pipeline as kushi.core/sx
@@ -542,6 +603,7 @@
   (s/or :assigned-class       #(s/valid? symbol? %)
         :defclass-class       #(s/valid? ::defclass-class %)
         :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
+        :cssvar-tuple-defclass #(s/valid? ::cssvar-tuple-defclass %)
         :tokenized-style      #(s/valid? ::tokenized-style %)
         :defclass-stylemap    #(s/valid? ::defclass-stylemap %)))
 
@@ -616,18 +678,18 @@
        (into [])))
 
 
-;; CSS-VARS -------------------------------------------------------------
+;; cssvarS -------------------------------------------------------------
 
-(s/def ::css-var-name-string
+(s/def ::cssvar-name-string
   (s/and string? #(re-find #"^\$\S+" %)))
 
-(s/def ::css-var-name-kw
+(s/def ::cssvar-name-kw
   (s/and keyword?
-         #(s/valid? ::css-var-name-string (name %))))
+         #(s/valid? ::cssvar-name-string (name %))))
 
-(s/def ::css-var-name
-  (s/or :keyword? ::css-var-name-kw
-        :string?  ::css-var-name-string))
+(s/def ::cssvar-name
+  (s/or :keyword? ::cssvar-name-kw
+        :string?  ::cssvar-name-string))
 
 
 ;; DEFKEYFRAMES ----------------------------------------------------------

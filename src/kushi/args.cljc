@@ -137,7 +137,8 @@
                                            (util/partition-by-pred
                                             (fn [kv]
                                               (if shared-class?
-                                                (s/valid? ::specs2/style-tuple-defclass kv)
+                                                (or (s/valid? ::specs2/style-tuple-defclass kv)
+                                                    (s/valid? ::specs2/cssvar-tuple-defclass kv))
                                                 (or (s/valid? ::specs2/style-tuple kv)
                                                     (s/valid? ::specs2/cssvar-tuple kv))))))
 
@@ -327,22 +328,24 @@
 ;;   (? parsed))
 
 
-     (merge
-      data-sx-attr
-      {:kushi/process process
-       :args/bad      bad-args
-       :entries/weird weird-entries}
-      (when defclass-style-tuples
-        (keyed defclass-style-tuples))
-      (when-not shared-class?
-        {:attrs attrs})
-      (keyed element-style-inj
-             garden-vecs
-             args
-             css-vars
-             classlist
-             selector
-             expound-str
-             attrs
-             form-meta
-             ))))
+
+
+    (merge
+     data-sx-attr
+     {:kushi/process process
+      :args/bad      bad-args
+      :entries/weird weird-entries}
+     (when defclass-style-tuples
+       (keyed defclass-style-tuples))
+     (when-not shared-class?
+       {:attrs attrs})
+     (keyed element-style-inj
+            garden-vecs
+            args
+            css-vars
+            classlist
+            selector
+            expound-str
+            attrs
+            form-meta
+            ))))

@@ -8,6 +8,7 @@
                          user-css-file-path
                          version]]
    [kushi.state2 :as state2]
+   [kushi.log :as kushi.log]
    [kushi.utils :as util :refer [keyed]]
    [kushi.defs :refer [rule-type-report-order token-types]]
    [kushi.reporting :as reporting]))
@@ -73,7 +74,7 @@
                              (let [prop+ (if (util/nameable? prop)
                                            (keyword (string/replace (name prop) #"^\$" "--"))
                                            prop)]
-                               {prop+ (util/maybe-wrap-css-var val)})))
+                               {prop+ (util/maybe-wrap-cssvar val)})))
                      (cons (or (when-let [selector* (:design-tokens-root user-config)]
                                  (name selector*))
                                ":root"))
@@ -327,14 +328,14 @@
                 num-rules
                 num-tokens]}        (to-be-printed+ to-be-printed)]
     #_(prn
-     (keyed
+       (keyed
         ;;  cache-will-update?
         ;;  @to-be-printed
         ;;  to-be-printed
         ;;  to-be-printed+
         ;;  num-rules
         ;;  previously-printed
-      ))
+        ))
 
     (when (and (add-stylesheet?) something-to-write?)
       (use 'clojure.java.io)
@@ -355,10 +356,10 @@
                                       :initial-build?
                                       @state2/initial-build?))))
 
-
    ;; Last, reset build states for subsequent builds at dev
   (state2/reset-build-states!)
 
+  (kushi.log/reset-log-states!)
   ;; Must return the build state
   build-state)
 

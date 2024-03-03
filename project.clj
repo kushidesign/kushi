@@ -1,4 +1,4 @@
-(defproject design.kushi/kushi "1.0.0-a.18"
+(defproject design.kushi/kushi "1.0.0-a.19-SNAPSHOT"
   :description         "ClojureScript UI Framework"
   :url                 "https://github.com/kushidesign/kushi"
   :license             {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
@@ -11,6 +11,5 @@
                         [metosin/malli                         "0.11.0"]
                         [markdown-to-hiccup/markdown-to-hiccup "0.6.2"]]
   :repl-options        {:init-ns kushi.core}
-  :profiles            {:dev {:plugins [[com.jakemccrary/lein-test-refresh "0.25.0"]]}}
   :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
                                     :sign-releases false}]])

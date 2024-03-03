@@ -25,7 +25,8 @@
         {:keys [wrapper-attrs
                 start-enhancer
                 end-enhancer
-                semantic]}     opts]
+                semantic
+                textarea?]}     opts]
     [:div
      (merge-attrs
       (sx 'kushi-text-input-wrapper
@@ -43,25 +44,43 @@
           [:focus-within:bc '(rgba 0 125 250 1)]
           {:class [semantic]})
       wrapper-attrs)
-     (when start-enhancer [enhancer start-enhancer])
+     (when (and start-enhancer
+                (not textarea?)) 
+       [enhancer start-enhancer])
      [:div (sx 'kushi-text-input-input-wrapper :flex-grow--1)
-      [:input
-       (merge-attrs
-        (sx 'kushi-text-input-input
-            :.transition
-            :h--100%
-            :w--100%
-            :pi--0.5em
-            :pb--0.5em
-            :placeholder:o--0.4
-            {:type :text})
-        attrs)]]
-     (when end-enhancer [enhancer end-enhancer])])
-  )
+      (if textarea?
+        [:textarea
+         (merge-attrs
+          (sx 'kushi-text-input-input
+              :.transition
+              :h--100%
+              :w--100%
+              :pi--0.5em
+              :pb--0.5em
+              :placeholder:o--0.4)
+          attrs)]
+        [:input
+         (merge-attrs
+          (sx 'kushi-text-input-input
+              :.transition
+              :h--100%
+              :w--100%
+              :pi--0.5em
+              :pb--0.5em
+              :placeholder:o--0.4
+              {:type :text})
+          attrs)])]
+     (when (and end-enhancer
+                (not textarea?))
+       [enhancer end-enhancer])]))
 
 (defn input
-  {:desc ["An input enables the entry of single lines of text."]
-   :opts '[
+  {:desc ["An input enables the entry of text. By default, this component will use an `<input>` element of type `text`. If the option `:-textarea?` is set to `true`, a `<textarea>` element will be used instead."]
+   :opts '[{:name    textarea?
+            :pred    boolean?
+            :default false
+            :desc    ["Setting to `true` will render an html `<textarea/>` element, instead of a <input type='text'/> element."]}
+
            {:name    outer-wrapper-attrs
             :pred    map?
             :default nil
@@ -117,7 +136,7 @@
             :desc    ["The text for `:.kushi-text-input-helper` label."
                       "If used, this should give the user actionable information about the value of the associated input field."]}
            ]}
-   [& args]
+  [& args]
   (let [[opts attrs & _]     (opts+children args)
         {:keys [
                 outer-wrapper-attrs
@@ -128,7 +147,8 @@
                 start-enhancer
                 end-enhancer
                 helper
-                semantic]
+                semantic
+                textarea?]
          :or   {label " "}}         opts
         {:keys [required
                 disabled]}          attrs
@@ -156,7 +176,8 @@
                                      {:-wrapper-attrs  wrapper-attrs
                                       :-start-enhancer start-enhancer
                                       :-end-enhancer   end-enhancer
-                                      :-semantic       semantic})]
+                                      :-semantic       semantic
+                                      :-textarea?      textarea?})]
         label-with-attrs [:label
                           (merge-attrs
                            label-text-attrs

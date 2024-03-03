@@ -64,7 +64,7 @@
                        :justify-content :space-between
                        :align-items     :center
                        :display         :flex}
-                       ])
+   ])
 
 
 (def base-classes
@@ -73,8 +73,8 @@
    ;; ------------------------------------------------------
    :debug-grid            {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px)), "
                                                   "repeating-linear-gradient(to right, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
-   :debug-grid-8          {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                  "repeating-linear-gradient(to right, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
+   :debug-grid-8          {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                       "repeating-linear-gradient(to right, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
                            :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px)), "
                                                        "repeating-linear-gradient(to right, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px))")}
    :debug-grid-16         {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
@@ -88,7 +88,7 @@
 
    ;; could do something like this
    ;; "[class^='bordered-']" {:border-style :solid :border-width "1px"}
-
+   
    :bordered-red          {:border-color "var(--red-500, red)"
                            :border-style :solid
                            :border-width "1px"}
@@ -129,9 +129,10 @@
                           :border-style :solid
                           :border-width "1px"}
 
-   :wireframe             {:outline-color :silver
-                           :outline-style :solid
-                           :outline-width "1px"}
+   :wireframe             {:outline-color  :silver
+                           :outline-style  :solid
+                           :outline-width  "1px"
+                           :outline-offset :-1px}
 
     ;; Non-combo flex utility classes
    :shrink               {:flex-shrink 1}
@@ -492,7 +493,7 @@
    ;; ------------------------------------------------------
   ;;  :content-blank {:content "\"\""}
   ;;  :open-in-new   {:content "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"}
-   
+
    ;; Cursor
    ;; ------------------------------------------------------
    :pointer       {:cursor :pointer}
@@ -513,6 +514,8 @@
    ;; ------------------------------------------------------
    :sans          {:font-family :$sans-serif-font-stack}
    :serif         {:font-family :$serif-font-stack}
+   :fantasy       {:font-family :fantasy}
+   :cursive       {:font-family :cursive}
    :italic        {:font-style :italic}
    :oblique       {:font-style :oblique}
 
@@ -617,7 +620,7 @@
    :rounded-xlarge        {:border-radius :$rounded-xlarge}
    :rounded-xxlarge       {:border-radius :$rounded-xxlarge}
    :rounded-xxxlarge      {:border-radius :$rounded-xxxlarge}
-   
+
    ;; This one is used for buttons, tags etc ... The roundedness is always relative to font-size
    :rounded               {:border-radius :0.5em}
 

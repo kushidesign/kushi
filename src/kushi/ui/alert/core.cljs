@@ -36,7 +36,7 @@
                 header-text
                 ;; Leave this out for now
                 duration
-                ]}                 opts
+                ]}opts
         alert-id                   (str (.now js/Date))]
 
     ;; Leave this out for now
@@ -44,7 +44,7 @@
     ;;   (js/setTimeout #(when-let [el (dom/el-by-id alert-id)]
     ;;                     (.remove el))
     ;;                  duration))
-    
+
     [:section
      (merge-attrs
       (sx 'kushi-alert

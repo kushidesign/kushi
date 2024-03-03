@@ -7,10 +7,10 @@
 (defn switch-demo [{dark? :-dark? :or {dark? false}}]
   (into [:div
          (sx :.flex-col-fs
-            :gap--0.5em
-            :padding--1rem
-            :.xxxlarge
-            {:class [(when dark? :dark)]})]
+             :gap--0.5em
+             :padding--1rem
+             :.xxxlarge
+             {:class [(when dark? :dark)]})]
         (for [semantic [:foo
                         :neutral :accent
                         :positive :warning :negative

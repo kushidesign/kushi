@@ -16,7 +16,7 @@
    [kushi.ui.card.core :refer (card)]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.tooltip.demo :as tooltip-demo]
-   [kushi.ui.collapse.core :refer (collapse accordian)]
+   [kushi.ui.collapse.core :refer (collapse accordion)]
    [kushi.ui.modal.core :refer (modal)]
    [kushi.ui.modal.examples :refer (modal-examples)]
    [kushi.ui.icon.mui.examples :refer [icon-examples]]
@@ -69,14 +69,14 @@
                 {:label   "Loading state, propeller on icon"
                  :example [button {:-loading? true} [progress [icon :play-arrow] [propeller]] "Play"]}
                 #_{:label   "Custom"
-                 :example [button (sx :.heavy
-                                      :.xxxloose
-                                      :c--white
-                                      :pb--1em
-                                      :pi--5em
-                                      [:transform '(skew :159deg)]
-                                      [:bgi '(linear-gradient :135deg :$blue-600 :$magenta-500)])
-                           "YES"]}
+                   :example [button (sx :.heavy
+                                        :.xxxloose
+                                        :c--white
+                                        :pb--1em
+                                        :pi--5em
+                                        [:transform '(skew :159deg)]
+                                        [:bgi '(linear-gradient :135deg :$blue-600 :$magenta-500)])
+                             "YES"]}
                 ]})
 
    (feature
@@ -88,36 +88,36 @@
                 :examples "Simple"}
      :examples [{:label   "Simple"
                  :example [:span
-                                     [radio {:-input-attrs {:name :demo}} "Yes"]
-                                     [radio {:-input-attrs {:name :demo}} "No"]
-                                     [radio {:-input-attrs {:name :demo}} "Maybe"]]}
+                           [radio {:-input-attrs {:name :demo}} "Yes"]
+                           [radio {:-input-attrs {:name :demo}} "No"]
+                           [radio {:-input-attrs {:name :demo}} "Maybe"]]}
                 {:label   "Inherited color"
                  :example [:section (sx :c--$purple-400)
-                                     [label (sx :.bold :mbe--0.75em) "Choose an option:"]
-                                     [radio {:-input-attrs {:name :demo}} "Yes"]
-                                     [radio {:-input-attrs {:name :demo}} "No"]
-                                     [radio {:-input-attrs {:name :demo}} "Maybe"]]}
+                           [label (sx :.bold :mbe--0.75em) "Choose an option:"]
+                           [radio {:-input-attrs {:name :demo}} "Yes"]
+                           [radio {:-input-attrs {:name :demo}} "No"]
+                           [radio {:-input-attrs {:name :demo}} "Maybe"]]}
 
                 {:label   "Custom, with default checked"
                  :example [:span
-                                     (sx
-                                      :d--grid
-                                      :gtc--1fr:1fr
-                                      :&_.emoji:fs--28px
-                                      :&_.emoji:mi--0.3em:0.6em
-                                      :&_.kushi-radio:mbe--0.95em
-                                      {:style {"&_.kushi-radio:nth-child(even):mis"                          :1em
-                                               :&_.emoji:filter                                            "grayscale(1)"
-                                               :&_.emoji:transition-property                               :transform
-                                               :&_.emoji:transition-duration                               :500ms
-                                               :&_.kushi-radio-input:checked+.kushi-label>.emoji:filter    :none
-                                               :&_.kushi-radio-input:checked+.kushi-label>.emoji:transform "scale(1.5)"
-                                               :&_.kushi-radio-input:checked+.kushi-label>.emoji:animation :jiggle2:0.5s}})
-                                     [radio {:-input-attrs {:name           :demo
-                                                            :defaultChecked true}} [label [:span.emoji "🦑"] "Squid"]]
-                                     [radio {:-input-attrs {:name :demo}} [label [:span.emoji "🐋"] "Whale"]]
-                                     [radio {:-input-attrs {:name :demo}} [label [:span.emoji "🦈 "] "Shark"]]
-                                     [radio {:-input-attrs {:name :demo}} [label [:span.emoji "🐊"] "Croc"]]]}]})
+                           (sx
+                            :d--grid
+                            :gtc--1fr:1fr
+                            :&_.emoji:fs--28px
+                            :&_.emoji:mi--0.3em:0.6em
+                            :&_.kushi-radio:mbe--0.95em
+                            {:style {"&_.kushi-radio:nth-child(even):mis"                          :1em
+                                     :&_.emoji:filter                                            "grayscale(1)"
+                                     :&_.emoji:transition-property                               :transform
+                                     :&_.emoji:transition-duration                               :500ms
+                                     :&_.kushi-radio-input:checked+.kushi-label>.emoji:filter    :none
+                                     :&_.kushi-radio-input:checked+.kushi-label>.emoji:transform "scale(1.5)"
+                                     :&_.kushi-radio-input:checked+.kushi-label>.emoji:animation :jiggle2:0.5s}})
+                           [radio {:-input-attrs {:name           :demo
+                                                  :defaultChecked true}} [label [:span.emoji "🦑"] "Squid"]]
+                           [radio {:-input-attrs {:name :demo}} [label [:span.emoji "🐋"] "Whale"]]
+                           [radio {:-input-attrs {:name :demo}} [label [:span.emoji "🦈 "] "Shark"]]
+                           [radio {:-input-attrs {:name :demo}} [label [:span.emoji "🐊"] "Croc"]]]}]})
 
    (feature
     checkbox
@@ -129,9 +129,9 @@
                 :weight   :wee-bold
                 :examples "Simple"}
      :examples  [{:label   "Simple"
-                 :example [checkbox "Sign me up"]}
-                {:label   "With trailing icon"
-                 :example [checkbox [label "Make it shiny" [icon :auto-awesome]]]}]})
+                  :example [checkbox "Sign me up"]}
+                 {:label   "With trailing icon"
+                  :example [checkbox [label "Make it shiny" [icon :auto-awesome]]]}]})
 
    (feature
     switch
@@ -252,77 +252,81 @@
                                                                 :p--1em)
                                       :-label-attrs         (sx :bgc--yellow)
                                       :-wrapper-attrs       (sx :box-shadow--4px:4px:7px:#f2baf9ab
-                                                                {:class :my-input-wrapper-name})
-                                      })]}]})
+                                                                {:class :my-input-wrapper-name})})]}
+                {:label   "With textarea element"
+                 :example [input (sx {:placeholder "Your text here"
+                                      :-textarea?  true
+                                      :-label      "Input label"
+                                      :-helper     "My helper text"})]}]})
 
    (feature
     slider
     {:stage    {:style {:min-height :135px}}
      :defaults {:examples "Simple"}
      :examples  [{:label   "Simple"
-                 :example [slider {:min 0
-                                             :max 7}]}
-                {:label   "Lables"
-                 :example [slider {:min          0
-                                             :max          7
-                                             :-step-marker :label}]}
-                {:label   "Dot markers"
-                 :example [slider {:min          0
-                                             :max          7
-                                             :-step-marker :dot}]}
-                {:label   "Bar markers"
-                 :example [slider {:min          0
-                                             :max          7
-                                             :-step-marker :bar}]}
-                {:label   "Fractional step"
-                 :example [slider {:min  0
-                                             :max  1
-                                             :step 0.01}]}
-                {:label   "Supplied step values"
-                 :example [slider {:-steps            ["xsmall" "medium" "large" "xlarge"]
-                                             :-step-marker      :label
-                                             :-label-size-class :medium}]}
+                  :example [slider {:min 0
+                                    :max 7}]}
+                 {:label   "Lables"
+                  :example [slider {:min          0
+                                    :max          7
+                                    :-step-marker :label}]}
+                 {:label   "Dot markers"
+                  :example [slider {:min          0
+                                    :max          7
+                                    :-step-marker :dot}]}
+                 {:label   "Bar markers"
+                  :example [slider {:min          0
+                                    :max          7
+                                    :-step-marker :bar}]}
+                 {:label   "Fractional step"
+                  :example [slider {:min  0
+                                    :max  1
+                                    :step 0.01}]}
+                 {:label   "Supplied step values"
+                  :example [slider {:-steps            ["xsmall" "medium" "large" "xlarge"]
+                                    :-step-marker      :label
+                                    :-label-size-class :medium}]}
 
-                {:label   "Supplied step values, custom horizontal shift for first and last step labels"
-                 :example [slider {:-steps            ["First label is long" "Second label" "Third label" "Last label is long"]
-                                             :-step-marker      :dot
-                                             :-label-size-class :small
-                                             :-labels-attrs     (sx [:&_.kushi-slider-step-label:first-child>span:transform '(translate :-25% :-50%)]
-                                                                    [:&_.kushi-slider-step-label:last-child>span:transform '(translate :-75% :-50%)])}]}
+                 {:label   "Supplied step values, custom horizontal shift for first and last step labels"
+                  :example [slider {:-steps            ["First label is long" "Second label" "Third label" "Last label is long"]
+                                    :-step-marker      :dot
+                                    :-label-size-class :small
+                                    :-labels-attrs     (sx [:&_.kushi-slider-step-label:first-child>span:transform '(translate :-25% :-50%)]
+                                                           [:&_.kushi-slider-step-label:last-child>span:transform '(translate :-75% :-50%)])}]}
 
-                #_{:label   "Supplied step values, custom label styling"
-                   :example [slider {:-steps              ["low" "guarded" "elevated" "high" "severe"]
-                                               :-step-marker        :label
-                                               :-label-size-class   :small
-                                               :-label-scale-factor 0.8
-                                               :-labels-attrs       (sx :>span>span:border-radius--9999px
-                                                                        :>span>span:padding--0.125em:0.75em:0.2em
-                                                                        {:style {">span:nth-child(1):c"         :$positive
-                                                                                 ">span:nth-child(1):>span:bgc" :$positive-50
-                                                                                 ">span:nth-child(2):c"         :$accent
-                                                                                 ">span:nth-child(2):>span:bgc" :$accent-50
-                                                                                 ">span:nth-child(3):c"         :$warning
-                                                                                 ">span:nth-child(3):>span:bgc" :$warning-50
-                                                                                 ">span:nth-child(4):c"         :$orange-700
-                                                                                 ">span:nth-child(4):>span:bgc" :$orange-50
-                                                                                 ">span:nth-child(5):c"         :$negative
-                                                                                 ">span:nth-child(5):>span:bgc" :$negative-50}})}]}]})
+                 #_{:label   "Supplied step values, custom label styling"
+                    :example [slider {:-steps              ["low" "guarded" "elevated" "high" "severe"]
+                                      :-step-marker        :label
+                                      :-label-size-class   :small
+                                      :-label-scale-factor 0.8
+                                      :-labels-attrs       (sx :>span>span:border-radius--9999px
+                                                               :>span>span:padding--0.125em:0.75em:0.2em
+                                                               {:style {">span:nth-child(1):c"         :$positive
+                                                                        ">span:nth-child(1):>span:bgc" :$positive-50
+                                                                        ">span:nth-child(2):c"         :$accent
+                                                                        ">span:nth-child(2):>span:bgc" :$accent-50
+                                                                        ">span:nth-child(3):c"         :$warning
+                                                                        ">span:nth-child(3):>span:bgc" :$warning-50
+                                                                        ">span:nth-child(4):c"         :$orange-700
+                                                                        ">span:nth-child(4):>span:bgc" :$orange-50
+                                                                        ">span:nth-child(5):c"         :$negative
+                                                                        ">span:nth-child(5):>span:bgc" :$negative-50}})}]}]})
 
    (feature
     tooltip-attrs
     {:fn       tooltip-attrs
-                   :meta     #'tooltip-attrs
-                   :title    "Tooltip"
-                   :demo     tooltip-demo/demo
-                   :demo-attrs (sx :d--none :md:d--block)
-                   :stage    {:style {:min-height      :200px
-                                      :justify-content :center}}
-                   :defaults {:examples "Auto"}
-                   :examples  [
-                              {:label   "Auto"
-                               :example [button
-                                                   (tooltip-attrs {:-text "My tooltip text"})
-                                                   "Hover me to reveal tooltip"]}
+     :meta     #'tooltip-attrs
+     :title    "Tooltip"
+     :demo     tooltip-demo/demo
+     :demo-attrs (sx :d--none :md:d--block)
+     :stage    {:style {:min-height      :200px
+                        :justify-content :center}}
+     :defaults {:examples "Auto"}
+     :examples  [
+                 {:label   "Auto"
+                  :example [button
+                            (tooltip-attrs {:-text "My tooltip text"})
+                            "Hover me to reveal tooltip"]}
 
               ;; Leave these auto placements out for now
               ;;  {:label   "block-start, auto"
@@ -350,145 +354,145 @@
               ;;                       "Hover me to reveal tooltip"]}
 
 
-                              {:label   "top-left-corner"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement :top-left-corner})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "top-left-corner"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement :top-left-corner})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "top-left"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement :top-left})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "top-left"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement :top-left})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "top"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement :top})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "top"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement :top})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "top-right"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement :top-right})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "top-right"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement :top-right})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "top-right-corner"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement :top-right-corner})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "top-right-corner"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement :top-right-corner})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "right-top-corner"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement :right-top-corner})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "right-top-corner"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement :right-top-corner})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "right"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement :right})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "right"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement :right})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "inline-end, center"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement "inline-end center"})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "inline-end, center"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement "inline-end center"})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "block-start, inline-start"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement "block-start inline-start"})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "block-start, inline-start"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement "block-start inline-start"})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "block-start, center"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement "block-start center"})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "block-start, center"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement "block-start center"})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "block-start, inline-end"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement "block-start inline-end"})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "block-start, inline-end"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement "block-start inline-end"})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "corner"
-                               :example [button
-                                                   (tooltip-attrs {:-text      "My tooltip text"
-                                                                   :-placement "block-start inline-end corner"})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "corner"
+                  :example [button
+                            (tooltip-attrs {:-text      "My tooltip text"
+                                            :-placement "block-start inline-end corner"})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "corner, with custom offset"
-                               :example [button
-                                                   (merge-attrs
-                                                    (sx :$tooltip-offset--0px)
-                                                    (tooltip-attrs {:-text      "My tooltip text"
-                                                                    :-placement "block-start inline-end corner"}))
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "corner, with custom offset"
+                  :example [button
+                            (merge-attrs
+                             (sx :$tooltip-offset--0px)
+                             (tooltip-attrs {:-text      "My tooltip text"
+                                             :-placement "block-start inline-end corner"}))
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "With forced linebreaks"
-                               :example [button
-                                                   (tooltip-attrs {:-text      ["My tooltip text line1" "My tooltip text line2"]
-                                                                   :-placement :right #_"inline-end"})
-                                                   "Hover me to reveal tooltip"]}
+                 {:label   "With forced linebreaks"
+                  :example [button
+                            (tooltip-attrs {:-text      ["My tooltip text line1" "My tooltip text line2"]
+                                            :-placement :right #_"inline-end"})
+                            "Hover me to reveal tooltip"]}
 
-                              {:label   "Reveal on click"
-                               :example [button
-                                                   (tooltip-attrs {:-text                     "My tooltip text!"
-                                                                   :-reveal-on-click?         true
-                                                                   :-reveal-on-click-duration 1500
-                                                                   :-placement                :right #_"inline-end"})
-                                                   "Click me to reveal tooltip"]}
+                 {:label   "Reveal on click"
+                  :example [button
+                            (tooltip-attrs {:-text                     "My tooltip text!"
+                                            :-reveal-on-click?         true
+                                            :-reveal-on-click-duration 1500
+                                            :-placement                :right #_"inline-end"})
+                            "Click me to reveal tooltip"]}
 
-                              {:label   "Toggle on click"
-                               :example [:div.flex-row-fs
-                                                   [button "WTF"]
-                                                   [icon
-                                                    (merge-attrs
-                                                     (sx :.pill
-                                                         :.pointer
-                                                         :m--1em
-                                                         :hover:c--black
-                                                         :hover:bgc--$neutral-background-color
-                                                         :dark:hover:c--white
-                                                         :dark:hover:bgc--$neutral-background-color-inverse
-                                                         :&.kushi-pseudo-tooltip-revealed:c--$accent-color
-                                                         :&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color
-                                                         :dark:&.kushi-pseudo-tooltip-revealed:c--$accent-color-inverse
-                                                         :dark:&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color-inverse)
-                                                     (tooltip-attrs {:-text                     "My tooltip text!"
-                                                                     :-reveal-on-click?         true
-                                                                     :-reveal-on-click-duration :infinite
-                                                                     :-placement                :right}))
-                                                    :info]]}
-                              {:label   "Change text on click"
-                               :example [:div.flex-row-fs
-                                                   [button
-                                                    (tooltip-attrs {:-text          "My tooltip text!"
-                                                                    :-text-on-click "Clicked!"
-                                                                    :-placement     :right})
-                                                    "Hover me to reveal tooltip"]]}
-                              {:label   "With custom styled span"
-                               :example [:span
-                                                   (merge-attrs
-                                                    (sx :.relative
-                                                        :.pointer
-                                                        :.pill
-                                                        :tt--u
-                                                        :td--u
-                                                        :tuo--8px
-                                                        :tds--dashed
-                                                        :tdc--$green-400
-                                                        :tdt--4px
-                                                        :pi--1em
-                                                        :pb--0.25em)
-                                                    (tooltip-attrs {:-text      "My tooltip text"
-                                                                    :-placement :top}))
-                                                   "Hover me to reveal tooltip"]}]})
+                 {:label   "Toggle on click"
+                  :example [:div.flex-row-fs
+                            [button "WTF"]
+                            [icon
+                             (merge-attrs
+                              (sx :.pill
+                                  :.pointer
+                                  :m--1em
+                                  :hover:c--black
+                                  :hover:bgc--$neutral-background-color
+                                  :dark:hover:c--white
+                                  :dark:hover:bgc--$neutral-background-color-inverse
+                                  :&.kushi-pseudo-tooltip-revealed:c--$accent-color
+                                  :&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color
+                                  :dark:&.kushi-pseudo-tooltip-revealed:c--$accent-color-inverse
+                                  :dark:&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color-inverse)
+                              (tooltip-attrs {:-text                     "My tooltip text!"
+                                              :-reveal-on-click?         true
+                                              :-reveal-on-click-duration :infinite
+                                              :-placement                :right}))
+                             :info]]}
+                 {:label   "Change text on click"
+                  :example [:div.flex-row-fs
+                            [button
+                             (tooltip-attrs {:-text          "My tooltip text!"
+                                             :-text-on-click "Clicked!"
+                                             :-placement     :right})
+                             "Hover me to reveal tooltip"]]}
+                 {:label   "With custom styled span"
+                  :example [:span
+                            (merge-attrs
+                             (sx :.relative
+                                 :.pointer
+                                 :.pill
+                                 :tt--u
+                                 :td--u
+                                 :tuo--8px
+                                 :tds--dashed
+                                 :tdc--$green-400
+                                 :tdt--4px
+                                 :pi--1em
+                                 :pb--0.25em)
+                             (tooltip-attrs {:-text      "My tooltip text"
+                                             :-placement :top}))
+                            "Hover me to reveal tooltip"]}]})
 
 
    ;; Defined in kushi.ui.icon.mui.examples
@@ -750,14 +754,14 @@
                            [:p "child 2"]]}]})
 
    (feature
-    accordian
+    accordion
     {:stage    {:style {:min-height      :190px
                         :justify-content :flex-start
                         :align-items     :start}}
      :desc     ["cool"]
      :defaults {:examples "Simple"}
      :examples [{:label   "Simple"
-                 :example [accordian
+                 :example [accordion
                            [collapse
                             {:-label "first section"
                              :-speed 1000}
@@ -767,7 +771,7 @@
                              :-speed 1000}
                             [:div (sx :pis--0.5rem) [:p "child 1"] [:p "child 2"]]]]}
                 {:label   "borders"
-                 :example [accordian
+                 :example [accordion
                            (sx :>section:first-child:bbs--1px:solid:black)
                            (for [[label-text content] [["first section" "lorem ipsum"]
                                                        ["second section" "lorem ipsum2"]

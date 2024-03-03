@@ -39,8 +39,8 @@
 
 (defn html-attr? [m k]
   (when (keyword? k)
-   (or (true? (k m))
-       (true? ((keyword (str (name k) "?")) m)))))
+    (or (true? (k m))
+        (true? ((keyword (str (name k) "?")) m)))))
 
 (defn find-index [pred coll]
   (first

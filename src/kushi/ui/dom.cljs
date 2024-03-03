@@ -21,6 +21,14 @@
     (js/document.execCommand "copy")
     (.removeChild js/document.body el)))
 
+(defn screen-quadrant-from-point
+  "Pass an x and y val and get a tuple back reprenting the quadrant in which the point lives.
+   (screen-quadrant 10 20) => [:top :left]"
+  [x y]
+  (let [top? (> 0.5 (/ y js/window.innerHeight))
+        left? (> 0.5 (/ x js/window.innerWidth))]
+    [(if top? :top :bottom) (if left? :left :right)]))
+
 (defn screen-quadrant
   "Pass a dom node and get a tuple back reprenting the quadrant in which the center of the node lives.
    (screen-quadrant (js/document.getElementById \"my-id\")) => [:top :left]"
@@ -73,6 +81,9 @@
         newv (if (= attr-val "false") true false)]
     (.setAttribute node (name attr) newv)))
 
+(defn parent [node] (some-> node .-parentNode))
+(defn next-element-sibling [node] (some-> node .-nextElementSibling))
+(defn previous-element-sibling [node] (some-> node .-previousElementSibling))
 (defn grandparent [node] (some-> node .-parentNode .-parentNode))
 (defn has-class [node classname] (some-> node .-classList (.contains (name classname))))
 (defn attribute-true? [node attribute] (when node (= "true" (.getAttribute node (name attribute)))))
@@ -117,6 +128,12 @@
     (j/assoc! el "ggpn" ggpn)
     el))
 
+(defn event-target [e {:keys [attrs]}]
+  ;; check node type
+  (let [el (some-> e .-target)]
+    (doseq [attr attrs]
+      (j/assoc! el (name attr) (j/get el attr)))))
+
 (defn cet [e] (some-> e .-currentTarget))
 (defn cetv [e] (some-> e .-currentTarget .-value))
 (defn et [e] (some-> e .-target))
@@ -133,7 +150,7 @@
 (defn nearest-ancestor [node selector]
   (.closest node selector))
 
-(defn toggle-class [el & xs]
+(defn toggle-class! [el & xs]
   (doseq [x xs] (.toggle (.-classList el) (name x))))
 
 (defn remove-class [el & xs]
@@ -155,7 +172,7 @@
   (set-css-var! el "--client-height" (str "-" el.clientHeight "px")))
 
 (defn set-style!* [el prop s]
-  (when el (.setProperty el.style prop s)))
+  (when el (.setProperty el.style (name prop) s)))
 
 (defn set-style! [el prop s]
   (if (coll? el)
@@ -172,7 +189,12 @@
   (when el (j/assoc! el (name attr) v)))
 
 (defn has-class? [el s]
-  (when el (.contains (.-classList el) s)))
+  (when el (.contains (.-classList el) (name s))))
+
+;; TODO Rename?
+(defn has-class-or-ancestor-with-class? [el]
+  (boolean (or (has-class? el "dropdown-list-item")
+               (nearest-ancestor el ".dropdown-list-item"))))
 
 (defn el-idx
   "Get index of element, relative to its parent"
@@ -222,3 +244,107 @@
 
 (defn dev-only [x]
   (when ^boolean js/goog.DEBUG x))
+
+
+;; Events
+
+
+;; Primitive Zipper navigation
+(def zip-nav 
+  {"^"     :parentNode
+   "up"    :parentNode
+
+   "V"     :firstElementChild
+   "v"     :firstElementChild
+   "down"  :firstElementChild
+
+   ">"     :nextElementSibling
+   "right" :nextElementSibling
+
+   "<"     :previousElementSibling
+   "left"  :previousElementSibling
+   })
+
+(defn zip-get [el steps]
+  (reduce (fn [el x]
+            (let [k (get zip-nav x x)]
+              ;; TODO - Warning here in case x in not one of:
+              ;; :parentNode ;; :firstElementChild ;; :nextElementSibling ;; :previousElementSibling
+              (some-> el (j/get k nil))))
+          el
+          (if (string? steps)
+            (string/split steps #" ")
+            steps)))
+
+;; querySelector
+(defn data-selector= [data-attr v]
+  (str "[data-" (name data-attr) "=\"" v "\"]"))
+
+(defn value-selector= [v]
+  (str "[value=\"" (str v) "\"]"))
+
+(defn qs 
+  ([s]
+   (qs js/document s))
+  ([el s]
+   (.querySelector el s)))
+
+(defn qs-data=
+  ([data-attr v]
+   (qs-data= js/document data-attr (str v)))
+  ([el data-attr v]
+   (.querySelector el (data-selector= data-attr (str v)))))
+
+;; focus
+
+;;macro?
+(defn focus! [el] (some-> el .focus))
+
+;;macro?
+(defn click! [el] (some-> el .click))
+
+;; data-* attribute
+;;macro?
+(defn data-attr [el nm]
+  (.getAttribute el (str "data-" (name nm))))
+
+;; node types
+(defn node-is-of-type? [el s]
+  (boolean (some-> el .-nodeName string/lower-case (= s))))
+
+(defn el-type [el]
+  (some-> el .-nodeName string/lower-case keyword))
+
+;; keypresses
+;;macro?
+(defn arrow-keycode? [e]
+  (< 36 e.keyCode 41))
+
+;; text input
+(defn set-caret! [el i]
+  (some-> el (.setSelectionRange i i))
+  i)
+
+;;macro?
+(defn prevent-default! [e] 
+  (some-> e .preventDefault))
+
+;;macro?
+(defn click-xy [e]
+  [e.clientX e.clientY])
+
+;;macro?
+(defn el-from-point [x y]
+  (.elementFromPoint js/document x y))
+
+;; geometry
+(defn client-rect [el]
+(j/let [^:js {:keys [left right top bottom x y width height]} (.getBoundingClientRect el)]
+  {:left left
+   :right right
+   :top  top 
+   :bottom bottom
+   :x x
+   :y y
+   :width width
+   :height height}))

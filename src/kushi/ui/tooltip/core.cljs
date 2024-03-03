@@ -6,7 +6,7 @@
    [kushi.ui.dom :as dom]))
 
 (defclass
- ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-pseudo-tooltip
   {:before:z-index                           9999
    :before:display                           :none
@@ -144,8 +144,8 @@
    :after:content    "\"\""})
 
 (defclass
- ^{:kushi/chunk :kushi/kushi-ui-defclass}
- kushi-pseudo-tooltip-rt
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-pseudo-tooltip-rt
   {:before:top            :0%
    :before:left           :100%
    :before:transform      "translate(calc(0% + var(--tooltip-offset) + var(--tooltip-arrow-depth)), 0%)"
@@ -154,7 +154,7 @@
    :after:transform     "translate(calc(0% + 0.333px + var(--tooltip-offset)), calc(0% + var(--tooltip-border-radius) + var(--tooltip-arrow-y-offset)))"})
 
 (defclass kushi-pseudo-tooltip-r
- ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
   {:before:top        :50%
    :before:left       :100%
    :before:transform  "translate(calc(0% + var(--tooltip-offset) + var(--tooltip-arrow-depth)), -50%)"
@@ -173,8 +173,8 @@
    :after:transform  "translate(calc(0% + 0.333px + var(--tooltip-offset)), calc(-100% - var(--tooltip-border-radius) - var(--tooltip-arrow-y-offset)))"})
 
 (defclass
- ^{:kushi/chunk :kushi/kushi-ui-defclass}
- kushi-pseudo-tooltip-brc
+  ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-pseudo-tooltip-brc
   {:before:bssr      0
    :before:top       :100%
    :before:left      :100%
@@ -339,7 +339,7 @@
                             (map #(get ((if ltr? :ltr :rtl) by-logic) %))
                             string/join
                             keyword)]
-   ret))
+    ret))
 
 (def corner-placements
   {:rtc                 :trc
@@ -357,17 +357,17 @@
   (let [kw* (some-> s name keyword)
         kw (or (kw* corner-placements) kw*)]
     (or
-     (when (contains? placement-by-kw kw) kw)
-     (let [parts (string/split s #"-")]
-       (when (every? #(contains? non-logicals %) parts)
-         (let [kw (some->> parts
-                           (map first)
-                           string/join
-                           keyword)]
-           (when (contains? placement-by-kw kw)
-             kw))))
-     (logical-placement {:ltr?      (= (dom/writing-direction) "ltr")
-                         :placement s}))))
+      (when (contains? placement-by-kw kw) kw)
+      (let [parts (string/split s #"-")]
+        (when (every? #(contains? non-logicals %) parts)
+          (let [kw (some->> parts
+                            (map first)
+                            string/join
+                            keyword)]
+            (when (contains? placement-by-kw kw)
+              kw))))
+      (logical-placement {:ltr?      (= (dom/writing-direction) "ltr")
+                          :placement s}))))
 
 (defn- text-type [x]
   (cond (and (string? x) (not (string/blank? x)))
@@ -568,7 +568,7 @@
                                                        duration (if (pos-int? reveal-on-click-duration)
                                                                   reveal-on-click-duration
                                                                   (token->ms :$tooltip-reveal-on-click-duration))]
-                                                   (dom/toggle-class node class)
+                                                   (dom/toggle-class! node class)
                                                    (when-not (= reveal-on-click-duration :infinite)
                                                      (js/setTimeout #(dom/remove-class node class)
                                                                     duration))))}))

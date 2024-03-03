@@ -31,12 +31,12 @@
       "Text"]]))
 
 (defn copy-color [s]
- [:span (sx :.flex-row-fs
-            [:&_.kushi-button>img:transform '(scale 0.75)])
-  [:code s]
-  [copy-to-clipboard-button
-   {:-placement :right
-    :on-click   #(copy-to-clipboard s)}]])
+  [:span (sx :.flex-row-fs
+             [:&_.kushi-button>img:transform '(scale 0.75)])
+   [:code s]
+   [copy-to-clipboard-button
+    {:-placement :right
+     :on-click   #(copy-to-clipboard s)}]])
 
 (defn color-modal
   [{:keys [k

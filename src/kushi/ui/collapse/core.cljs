@@ -34,14 +34,14 @@
         ret  (+ margin-top margin-bottom (js/Math.ceil (.-offsetHeight el)))]
     ret))
 
-;; todo figure out accordian
-(defn currently-open-accordian-node
+;; todo figure out accordion
+(defn currently-open-accordion-node
   [currently-open-header]
-  (let [accordian-root* (dom/grandparent currently-open-header)
-        accordian-root  (when (dom/has-class accordian-root* "kushi-accordian") accordian-root*)]
-    (when accordian-root
+  (let [accordion-root* (dom/grandparent currently-open-header)
+        accordion-root  (when (dom/has-class accordion-root* "kushi-accordion") accordion-root*)]
+    (when accordion-root
       (when-let [open-node (.querySelector
-                            accordian-root
+                            accordion-root
                             "section>div[aria-expanded='true'][role='button']")]
         (when-not (= open-node currently-open-header)
           open-node)))))
@@ -69,13 +69,13 @@
                      next-bod-height-px            (if expanded? "0px" bod-height-px)
                      expanded-and-not-yet-clicked? (and expanded? (string/blank? bod.style.height))
 
-                     ;; If the collapse happens to be inside an accordian,
+                     ;; If the collapse happens to be inside an accordion,
                      ;; and the user has clicked on a "collapsed" collapse & there is currently an expanded sibling collapse,
                      ;; get the currently open sibling collapse that needs to be auto-closed as this one opens.
-                     currently-open-accordian-child-head (currently-open-accordian-node header)]
+                     currently-open-accordion-child-head (currently-open-accordion-node header)]
 
-                 ;; If accordian with open sibling, simulate click on it
-                 (some-> currently-open-accordian-child-head .click)
+                 ;; If accordion with open sibling, simulate click on it
+                 (some-> currently-open-accordion-child-head .click)
 
                  ;; Toggle kushi-collapse-expanded classes
                  ((if expanded? dom/remove-class dom/add-class) collapse :kushi-collapse-expanded)
@@ -217,17 +217,17 @@
             children)]]))
 
 
-(defn accordian
+(defn accordion
   {:desc ["A wrapper for multiple instances of the `collapse` component."
           :br
-          "When `collapse` components are children of the accordian component, they can only be expanded one at a time."]}
+          "When `collapse` components are children of the accordion component, they can only be expanded one at a time."]}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys []}              opts]
     (into
      [:div
       (merge-attrs
-       {:class [:kushi-accordian]}
+       {:class [:kushi-accordion]}
        attrs)]
      children)))
 

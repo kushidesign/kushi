@@ -731,13 +731,13 @@ Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers
 [:div (sx 'foo
           :hover:c--blue
           :>a:hover:c--red
-          :&_a:hover:c--gold   ; The "_" gets converted to " "
+          :&_a:hover:c--gold ; The "_" gets converted to " "
           :&.bar:hover:c--pink
           :before:fw--bold
           :after:mie--5px
-          ["~a:hover:c"     :blue] ; Because "~" is not valid in a keyword
-          ["nth-child(2):c" :red] ; Because "(" and ")" are not valid in keywords
-          [:before:content  "\"⌫\""])
+          ["~a:hover:c" :blue] ; Vector is used as "~" is not valid in a keyword
+          ["nth-child(2):c" :red] ; Vector is used as "(" and ")" are not valid in keywords
+          [:before:content "\"⌫\""])
  [:a "Erase"]]
 ```
 CSS resulting from the above example:
@@ -833,6 +833,20 @@ You can use `kushi.ui.core/lightswitch!` to toggle a `.dark` class on the body, 
 
 ```
 <br>
+
+## Transparent Colors
+Kushi offers a special syntax for adding transparency to colors. This will work with any named css colors, hex colors, or any color that is part of Kushi's built-in color scale (click on the "Color" section in sidemenu of the [interactive docs page](kushi.design) to view color scale).
+
+```Clojure
+;; With a css named color ...
+(sx :bgc--aliceblue/alpha-50)
+
+;; With a hex color ...
+(sx :bgc--00ff00/alpha-33)
+
+;; With a color from Kushi's design tokens color scale ...
+(sx :bgc--$purple-500/alpha-79)
+```
 
 ## Selector Prefixing Options
 You can narrow the specicifity of you selectors by globally prepending a class or id (or any valid selector) of an ancestor element. Typically this would be something like the id of your "app" container.
