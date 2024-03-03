@@ -154,7 +154,8 @@
   :bs--solid
   :bc--$gray-300
   :dark:bc--$gray-800
-  :mb--10px)
+  :mb--10px
+  :&_.kushi-input:min-width--220px)
 
 (defclass kushi-playground-demobox
   :&_.kushi-playground-examples-input-row-wrapper:bbe--0px:solid:#eee
