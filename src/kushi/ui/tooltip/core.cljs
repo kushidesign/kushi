@@ -568,7 +568,7 @@
                                                        duration (if (pos-int? reveal-on-click-duration)
                                                                   reveal-on-click-duration
                                                                   (token->ms :$tooltip-reveal-on-click-duration))]
-                                                   (dom/toggle-class node class)
+                                                   (dom/toggle-class! node class)
                                                    (when-not (= reveal-on-click-duration :infinite)
                                                      (js/setTimeout #(dom/remove-class node class)
                                                                     duration))))}))
