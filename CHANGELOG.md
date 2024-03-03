@@ -5,9 +5,120 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
 ## 1.0.0-a.18
 2023-5-17
 
-Documentation of changes coming soon ...
+### Added
 
-## 1.0.0
+#### Functionality
+- `fireworks.core/breakpoints`
+- `fireworks.core/token->ms`
+
+#### Styling Engine / sx macro
+- Support mixing of shorthand and map notation in argument to sx macro 
+- Support `has-parent()` and `has-ancestor()`
+- Support all pseudo and combo selectors
+- 
+
+#### Font loading
+- `fireworks.core/add-google-font!`
+- `fireworks.core/add-google-material-symbols-font!`
+
+#### Typography
+- Added type scale system
+- Ability to create custom type scale system with half-step shifts.
+
+#### Design tokens
+- Introduced use of `$` syntax for css variables `"var(--foo)"` -> `:$foo`
+- Non-combo flex utility classes such as `:.shrink` `:.grow`
+- Combinatorial absolute and fixed positioning utilities such as `:.after-absolute-centered` and `:.northwest`
+- Augmented display utility classes with `:.inline-block`, `:.inline-flex`, etc.
+- `:.enhanceable`` utility class for icons
+- `:.xxxtight` ~ `:.xxxloose` utility class scale for tracking
+- `:.xxxfast` ~ `:.xxxloose` utility class scale for animations
+- `:.rounded-xxxsmall` ~ `:.rounded-xxxlarge` utility class scale for rounded-corners
+- `:.convex`, `:.debossed`, `:.elevated-0` ~ `:.elevated-5`
+
+
+#### UI Component Library
+- Added a `kushi.ui.*` set of namespaces for library components which includes
+
+  - Button
+  - Radio
+  - Checkbox
+  - Switch
+  - Input
+  - Slider
+  - Tooltip
+  - Icons
+  - Tag
+  - Label
+  - Card
+  - Alert
+  - Modal
+  - Collapse
+  - Accordian
+  - Grid
+
+- `kushi.ui.core/lightswitch!` for toggling between light and dark modes.
+
+#### Design system
+- Added complete design system with light/dark support across variants:
+  - Semantic variants:
+    - `neutral`
+    - `warning`
+    - `positive`
+    - `negative`
+    - `accent`
+  - Kind variants:
+    - `default`
+    - `minimal`
+    - `bordered`
+    - `filled`
+  - Shape variants:
+    - `pill`
+    - `rounded`
+    - `sharp`
+- Ability to theme with user `.edn` theme file.
+- Color pallet of `gray`, `purple`, `blue`, `green`, `lime`, `yellow`, `gold`, `orange`, `red`, `magena`, and `brown`
+- Scaled transparent grayscale design tokens e.g. `$white-transparent-50`, `$dark-gray-transparent-15`, etc.
+- `:.bordered-red`, `:.bordered-blue`, etc. for all colors in stock kushi pallette.
+- Support syncing of type weight with radio and checkbox outline/border-width  
+
+
+#### Interactive documentation
+- Added a `kushi.playground.*` set of namespaces for generating interactive documentation
+site for projects.
+
+#### Build system
+- Ability to elide sections of css output by category.
+- Added various `:log-*` options to config to control what gets logged on each build.
+
+#### DOM utilility namespace
+- Added `kushi.ui.dom` utility namespace for helper fns like `copy-to-clipboard!`, `scroll-into-view!`, `screen-quadrant`, and many more.
+
+
+
+
+### Changed
+- `kushi.core/merge-with-style` renamed to `kushi.core/merge-attrs` 
+
+#### Icons
+- Uses Material Symbols instead of Material Icons
+
+
+
+
+### Fixed
+- `kushi.core/merge-with-style` renamed to `kushi.core/merge-attrs` 
+
+
+
+### Removed
+- `fireworks.core/add-system-font-stack`
+- Explicit `map-mode`.
+
+
+<br>
+
+## 1.0.0-alpha
 2022-1-14
 
 ### Added
