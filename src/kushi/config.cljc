@@ -35,11 +35,13 @@
               ;; TODO use warning or error panel
               ;; TODO consolidate these somewhere?
               (catch java.io.IOException e
-                (printf (str "Warning in kushi.config/load-edn: "
-                             "Could not open '%s': "
-                             " %s.\nIgnore the above warning if you are running tests from the source repo kushi/test/kushi/test.clj.\n")
-                        source
-                        (.getMessage e)))
+                (printf
+                 (str "Warning in kushi.config/load-edn: "
+                      "Could not open '%s': "
+                      " %s.\nIgnore the above warning if you are running"
+                      " tests from the source repo kushi/test/kushi/test.clj.\n")
+                 source
+                 (.getMessage e)))
 
               (catch RuntimeException e
                 (printf "Error parsing edn file '%s':\n %s\n"
