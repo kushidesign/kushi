@@ -81,6 +81,9 @@
         newv (if (= attr-val "false") true false)]
     (.setAttribute node (name attr) newv)))
 
+(defn parent [node] (some-> node .-parentNode))
+(defn next-element-sibling [node] (some-> node .-nextElementSibling))
+(defn previous-element-sibling [node] (some-> node .-previousElementSibling))
 (defn grandparent [node] (some-> node .-parentNode .-parentNode))
 (defn has-class [node classname] (some-> node .-classList (.contains (name classname))))
 (defn attribute-true? [node attribute] (when node (= "true" (.getAttribute node (name attribute)))))
