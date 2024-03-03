@@ -150,7 +150,7 @@
 (defn nearest-ancestor [node selector]
   (.closest node selector))
 
-(defn toggle-class [el & xs]
+(defn toggle-class! [el & xs]
   (doseq [x xs] (.toggle (.-classList el) (name x))))
 
 (defn remove-class [el & xs]
@@ -172,7 +172,7 @@
   (set-css-var! el "--client-height" (str "-" el.clientHeight "px")))
 
 (defn set-style!* [el prop s]
-  (when el (.setProperty el.style prop s)))
+  (when el (.setProperty el.style (name prop) s)))
 
 (defn set-style! [el prop s]
   (if (coll? el)
@@ -189,7 +189,7 @@
   (when el (j/assoc! el (name attr) v)))
 
 (defn has-class? [el s]
-  (when el (.contains (.-classList el) s)))
+  (when el (.contains (.-classList el) (name s))))
 
 ;; TODO Rename?
 (defn has-class-or-ancestor-with-class? [el]
