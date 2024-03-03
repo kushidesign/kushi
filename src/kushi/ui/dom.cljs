@@ -244,3 +244,107 @@
 
 (defn dev-only [x]
   (when ^boolean js/goog.DEBUG x))
+
+
+;; Events
+
+
+;; Primitive Zipper navigation
+(def zip-nav 
+  {"^"     :parentNode
+   "up"    :parentNode
+
+   "V"     :firstElementChild
+   "v"     :firstElementChild
+   "down"  :firstElementChild
+
+   ">"     :nextElementSibling
+   "right" :nextElementSibling
+
+   "<"     :previousElementSibling
+   "left"  :previousElementSibling
+   })
+
+(defn zip-get [el steps]
+  (reduce (fn [el x]
+            (let [k (get zip-nav x x)]
+              ;; TODO - Warning here in case x in not one of:
+              ;; :parentNode ;; :firstElementChild ;; :nextElementSibling ;; :previousElementSibling
+              (some-> el (j/get k nil))))
+          el
+          (if (string? steps)
+            (string/split steps #" ")
+            steps)))
+
+;; querySelector
+(defn data-selector= [data-attr v]
+  (str "[data-" (name data-attr) "=\"" v "\"]"))
+
+(defn value-selector= [v]
+  (str "[value=\"" (str v) "\"]"))
+
+(defn qs 
+  ([s]
+   (qs js/document s))
+  ([el s]
+   (.querySelector el s)))
+
+(defn qs-data=
+  ([data-attr v]
+   (qs-data= js/document data-attr (str v)))
+  ([el data-attr v]
+   (.querySelector el (data-selector= data-attr (str v)))))
+
+;; focus
+
+;;macro?
+(defn focus! [el] (some-> el .focus))
+
+;;macro?
+(defn click! [el] (some-> el .click))
+
+;; data-* attribute
+;;macro?
+(defn data-attr [el nm]
+  (.getAttribute el (str "data-" (name nm))))
+
+;; node types
+(defn node-is-of-type? [el s]
+  (boolean (some-> el .-nodeName string/lower-case (= s))))
+
+(defn el-type [el]
+  (some-> el .-nodeName string/lower-case keyword))
+
+;; keypresses
+;;macro?
+(defn arrow-keycode? [e]
+  (< 36 e.keyCode 41))
+
+;; text input
+(defn set-caret! [el i]
+  (some-> el (.setSelectionRange i i))
+  i)
+
+;;macro?
+(defn prevent-default! [e] 
+  (some-> e .preventDefault))
+
+;;macro?
+(defn click-xy [e]
+  [e.clientX e.clientY])
+
+;;macro?
+(defn el-from-point [x y]
+  (.elementFromPoint js/document x y))
+
+;; geometry
+(defn client-rect [el]
+(j/let [^:js {:keys [left right top bottom x y width height]} (.getBoundingClientRect el)]
+  {:left left
+   :right right
+   :top  top 
+   :bottom bottom
+   :x x
+   :y y
+   :width width
+   :height height}))
