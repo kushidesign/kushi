@@ -51,7 +51,11 @@
                         :$button-with-icon-padding-inline-offset :0.8em
                         :$button-border-width                    :1.5px
 
-                        :$kushi-playground-mobile-header-height  :46px]
+                        :$kushi-playground-mobile-header-height  :46px
+                        :$tooltip-border-radius                  :5px
+                        :$tooltip-delay-duration                 :200ms
+                        :$tooltip-auto-placement-y-threshold     0.1
+                        ]
 
      :typescale        (create-typescale {:size-limit "xxx"
                                           :shift      0})
