@@ -147,6 +147,7 @@
    :fixed         {:position :fixed}
 
     ;; Combinatorial absolute and fixed positioning utilities
+    ;; TODO migrate :transform to :translate
     ;; ------------------------------------------------------
    :absolute-fill         {:position :absolute
                            :top      0
@@ -603,10 +604,11 @@
    :xxfast        {:transition-duration :$xxfast}
    :xfast         {:transition-duration :$xfast}
    :fast          {:transition-duration :$fast}
+   :moderate      {:transition-duration :$moderate}
    :slow          {:transition-duration :$slow}
-   :xslow         {:transition-duration :$extra-slow}
-   :xxslow        {:transition-duration :$super-slow}
-   :xxxslow       {:transition-duration :$ultra-slow}
+   :xslow         {:transition-duration :$xslow}
+   :xxslow        {:transition-duration :$xxslow}
+   :xxxslow       {:transition-duration :$xxxslow}
 
 
    ;; Surfaces, buttons, containers 2D
