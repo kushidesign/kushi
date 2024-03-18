@@ -151,8 +151,9 @@
             [:span.relative
              (merge-attrs
               {:class [x]}
-              (tooltip-attrs {:-text      (str ":." (name x))
-                              :-placement "inline-end center"}))
+              (tooltip-attrs {:-text          (str ":." (name x))
+                              :-placement     "inline-end center"
+                              :-tooltip-class "code wee-bold"}))
              "The quick brown fox."]]])))
 
 
