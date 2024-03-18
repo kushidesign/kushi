@@ -325,7 +325,10 @@
      :examples  [
                  {:label   "Auto"
                   :example [button
-                            (tooltip-attrs {:-text "My tooltip text"})
+                            (merge-attrs
+                             ;; If you need to show the auto-top placement thing
+                             #_(sx :$tooltip-auto-placement-y-threshold--0.1)
+                             (tooltip-attrs {:-text "My tooltip text"}))
                             "Hover me to reveal tooltip"]}
 
               ;; Leave these auto placements out for now
@@ -440,35 +443,40 @@
                                             :-placement :right #_"inline-end"})
                             "Hover me to reveal tooltip"]}
 
-                 {:label   "Reveal on click"
-                  :example [button
-                            (tooltip-attrs {:-text                     "My tooltip text!"
-                                            :-reveal-on-click?         true
-                                            :-reveal-on-click-duration 1500
-                                            :-placement                :right #_"inline-end"})
-                            "Click me to reveal tooltip"]}
+                ;; Disabled in a20
+                ;;  {:label   "Reveal on click"
+                ;;   :example [button
+                ;;             (tooltip-attrs {:-text                     "My tooltip text!"
+                ;;                             :-reveal-on-click-duration 1500
+                ;;                             :-placement                :right #_"inline-end"})
+                ;;             "Click me to reveal tooltip"]}
 
-                 {:label   "Toggle on click"
-                  :example [:div.flex-row-fs
-                            [button "WTF"]
-                            [icon
-                             (merge-attrs
-                              (sx :.pill
-                                  :.pointer
-                                  :m--1em
-                                  :hover:c--black
-                                  :hover:bgc--$neutral-background-color
-                                  :dark:hover:c--white
-                                  :dark:hover:bgc--$neutral-background-color-inverse
-                                  :&.kushi-pseudo-tooltip-revealed:c--$accent-color
-                                  :&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color
-                                  :dark:&.kushi-pseudo-tooltip-revealed:c--$accent-color-inverse
-                                  :dark:&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color-inverse)
-                              (tooltip-attrs {:-text                     "My tooltip text!"
-                                              :-reveal-on-click?         true
-                                              :-reveal-on-click-duration :infinite
-                                              :-placement                :right}))
-                             :info]]}
+
+                ;; Disabled in a20
+                ;;  {:label   "Toggle on click"
+                ;;   :example [:div.flex-row-fs
+                ;;             [button "WTF"]
+                ;;             [icon
+                ;;              (merge-attrs
+                ;;               (sx :.pill
+                ;;                   :.pointer
+                ;;                   :m--1em
+                ;;                   :hover:c--black
+                ;;                   :hover:bgc--$neutral-background-color
+                ;;                   :dark:hover:c--white
+                ;;                   :dark:hover:bgc--$neutral-background-color-inverse
+                ;;                   :&.kushi-pseudo-tooltip-revealed:c--$accent-color
+                ;;                   :&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color
+                ;;                   :dark:&.kushi-pseudo-tooltip-revealed:c--$accent-color-inverse
+                ;;                   :dark:&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color-inverse)
+                ;;               (tooltip-attrs {:-text                     "My tooltip text!"
+                ;;                               :-reveal-on-click?         true
+                ;;                               :-reveal-on-click-duration :infinite
+                ;;                               :-placement                :right}))
+                ;;              :info]]}
+
+
+                ;; Disabled in a20
                  {:label   "Change text on click"
                   :example [:div.flex-row-fs
                             [button
