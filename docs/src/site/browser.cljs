@@ -28,7 +28,6 @@
     "v1.0.0-alpha"]])
 
 (defn ^:dev/after-load start []
-
   (rdom/render
    [main-view
     {:site-header                        site-header
