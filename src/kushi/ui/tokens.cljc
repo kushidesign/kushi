@@ -1,23 +1,5 @@
 (ns ^:dev/always kushi.ui.tokens)
-
-;; TODO
-;; Use a vector of maps like this map:
-;; {:name         "neutral-secondary-fg"
-;;  :desc         {:en "Foreground text that is slightly de-emphasized (such as text input field helper text)."}
-;;  :value        :$gray-700
-;;  :added        "1.0"
-;;  :categories   ["Color" "Typography"]
-;;  :tags         ["label" "de-emphasis"]
-;;  :family       :font-weight  ;; :code :font-weight :font-size :letter-spacing etc (could be nil)
-;;  :alias-token? <reactive based on :value>
-;;  :provenance   {:namespace 'kushi.ui.tokens :added "1.0"}
-
-;;  TODO need some kind of curve fn which creates a scale of values, e.g. more precise at beginning with larger jumps towards end
-;;  -- we would only use this :suggested for like padding or similar
-;;  -- or infer it in general based on css-prop?
-;;  :suggested    {"em" [{:min 0 :max 4 :step 0.05}
-;;                       {:min 0 :max 12 :step 0.5}]
-;;                 "px" {:min 0 :max 30}}}
+;; TODO - describe each tokens using a map
 
 (def design-tokens
   [
@@ -153,24 +135,48 @@
 
    ;; Tooltips
    ;; ------------------------------------------------------
-   :$tooltip-arrow-depth                    :5px
-   :$tooltip-arrow-x-offset                 :7px
-   :$tooltip-arrow-y-offset                 :2px
 
-   :$tooltip-padding-inline                 :1.25em
-   :$tooltip-padding-block                  :0.65em
-   :$tooltip-border-radius                  :0.5rem
-   :$tooltip-line-height                    1.25
-   :$tooltip-font-family                    :$sans-serif-font-stack
-   :$tooltip-font-size                      :$xsmall
-   :$tooltip-font-weight                    :$wee-bold
-   :$tooltip-color                          :white
-   :$tooltip-color-inverse                  :black
-   :$tooltip-background-color               :black
-   :$tooltip-background-color-inverse       :white
-   :$tooltip-text-transform                 :none
-   :$tooltip-offset                         :10px
-   :$tooltip-reveal-on-click-duration       :2000ms
+   ;; tooltip arrows
+   :$tooltip-arrow-depth-min-px               :5px 
+   :$tooltip-arrow-depth-max-px               :16px 
+   :$tooltip-arrow-depth-ems                  :0.3em 
+   ;; Note the fallbacks here
+   :$tooltip-arrow-depth                      "max( min( var(--tooltip-arrow-depth-max-px, 12px), var(--tooltip-arrow-depth-ems, 0.3em)), var(--tooltip-arrow-depth-min-px, 5px))"  
+   :$tooltip-arrow-x-offset                   :7px
+   :$tooltip-arrow-y-offset                   :2px
+   :$tooltip-arrow-transition-timing-function :$timing-ease-out-curve 
+   :$tooltip-arrow-transition-duration        :$xxfast 
+
+   ;; tooltip type
+   :$tooltip-line-height                      1.25
+   :$tooltip-font-family                      :$sans-serif-font-stack
+   :$tooltip-font-size                        :$xsmall
+   :$tooltip-font-weight                      :$wee-bold
+   :$tooltip-text-transform                   :none
+
+   ;; tooltip geometry
+   :$tooltip-padding-inline                   :1.25em
+   :$tooltip-padding-block                    :0.65em
+   :$tooltip-border-radius                    :7px
+   :$tooltip-offset                           :10px
+   :$tooltip-viewport-padding                 :5px 
+   :$tooltip-flip-viewport-edge-threshold     :32px 
+   :$tooltip-auto-placement-y-threshold       :0.1 
+
+   ;; tooltip colors and images
+   :$tooltip-color                            :white
+   :$tooltip-color-inverse                    :black
+   :$tooltip-background-color                 :black
+   :$tooltip-background-color-inverse         :white
+   :$tooltip-background-image                 :white
+   
+   ;; tooltip choreography
+   :$tooltip-delay-duration                   :700ms
+   :$tooltip-reveal-on-click-duration         :2000ms
+   :$tooltip-initial-scale                    :0px 
+   :$tooltip-offset-transition-distance       :0px 
+   :$tooltip-transition-duration              :$fast 
+   :$tooltip-transition-timing-function       :$timing-ease-out-curve 
 
    ;; Modals
    ;; ------------------------------------------------------
