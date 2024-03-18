@@ -17,7 +17,6 @@
    [kushi.ui.dom :refer (copy-to-clipboard)]
    [kushi.ui.core :refer (defcom)]
    [kushi.ui.input.radio.core :refer (radio)]
-   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.playground.demobox.handlers :as handlers]
    [kushi.playground.demobox.decorate :as decorate]
    [kushi.playground.demobox.devmode :refer [dev-mode-view]]
@@ -147,11 +146,10 @@
         :p--7px
         {:on-click #(copy-to-clipboard (:text-to-copy &opts))})
     (tooltip-attrs
-     {:-text                   "Click to copy"
-      :-text-on-click          "Copied!"
-      :-text-on-click-attrs    (sx :bgc--green)
-      :-text-on-click-duration 3000
-      :-placement              "block-start inline-end"})
+     {:-text                        "Click to copy"
+      :-text-on-click               "Copied!"
+      :-text-on-click-tooltip-class (first (:class (sx :$tooltip-background-color--$positive-filled-background-color)))
+      :-placement                   "block-start inline-end"})
     &attrs)
    [icon (sx :.medium!) mui.svg/content-copy]])
 
@@ -297,9 +295,11 @@
                                            (sx :.southeast-inside
                                                :.kushi-playground-demobox-ui-icon
                                                {:on-click (fn [_]
-                                                            (dom/add-class js/document.body "kushi-playground-dev-mode")
+                                                            (dom/add-class js/document.body
+                                                                           "kushi-playground-dev-mode")
                                                             (js/setTimeout (fn [_]
-                                                                             (dom/add-class js/document.body "kushi-playground-dev-mode-hidden")
+                                                                             (dom/add-class js/document.body
+                                                                                            "kushi-playground-dev-mode-hidden")
                                                                              (reset! *dev-mode? true))
                                                                            500))})
                                            (sx :$tooltip-offset---3px)

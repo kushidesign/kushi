@@ -21,7 +21,6 @@
    [kushi.ui.examples :as examples]
    [kushi.playground.nav :as nav]
    [kushi.playground.tweak.element :refer [element-tweaker!]]
-   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.progress.core :refer (progress propeller spinner thinking)]
    [kushi.playground.about :as about]
    [kushi.playground.state :as state :refer [*state]]

@@ -145,6 +145,7 @@
     (keyed merged-children hiccup-w-children)))
 
 ;; TODO: Is this redundant with kushi.core/merge-attrs ?
+;; Maybe remove
 (defn merge-attributes
   [{:keys [decorator
            user-attr

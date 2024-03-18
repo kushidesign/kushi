@@ -1,7 +1,16 @@
+;; TODO integration test suite
+;; Maybe grandparent etc should use zipper thing under hood
+;; Add docs to everything
+
+
 (ns kushi.ui.dom
   (:require
    [clojure.string :as string]
    [applied-science.js-interop :as j]))
+
+(defn round-by-dpr [v]
+ (let [dpr (or js/window.devicePixelRatio 1)]
+   (/ (js/Math.round (* dpr v)) dpr)))
 
 
 (defn css-style-string [m]
@@ -21,60 +30,57 @@
     (js/document.execCommand "copy")
     (.removeChild js/document.body el)))
 
+(defn viewport []
+  {:inner-height js/window.innerHeight
+   :inner-width js/window.innerWidth
+   :inner-height-without-scrollbars js/window.innerHeight 
+   :inner-width-without-scrollbars js/document.documentElement.clientWidth})
+
+(defn- viewport-x-fraction [x vp]
+  (/ x (:inner-width-without-scrollbars vp)))
+
+(defn- viewport-y-fraction [y vp]
+  (/ y (:inner-height-without-scrollbars vp)))
+
+;; Todo use x-center and y-center instead of center and middle
+(defn client-rect [el]
+(let [vp (viewport)]
+  (j/let [^:js {:keys [left right top bottom x y width height]} (.getBoundingClientRect el)]
+    {:left       left
+     :right      right
+     :center     (round-by-dpr (- right (/ width 2)))
+     :top        top 
+     :bottom     bottom
+     :middle     (round-by-dpr (- bottom (/ height 2)))
+     :width      width
+     :height     height
+     :x          x
+     :x-fraction (viewport-x-fraction x vp)
+     :y          y
+     :y-fraction (viewport-y-fraction y vp)
+     :vp         vp})))
+
+(defn- screen-quadrant* [x-fraction y-fraction]
+  (let [left? (> 0.5 x-fraction)
+        top?  (> 0.5 y-fraction)]
+    [(if top? :top :bottom)
+     (if left? :left :right)]))
+
 (defn screen-quadrant-from-point
   "Pass an x and y val and get a tuple back reprenting the quadrant in which the point lives.
    (screen-quadrant 10 20) => [:top :left]"
   [x y]
-  (let [top? (> 0.5 (/ y js/window.innerHeight))
-        left? (> 0.5 (/ x js/window.innerWidth))]
-    [(if top? :top :bottom) (if left? :left :right)]))
+  (let [vp (viewport)]
+    (screen-quadrant* (viewport-x-fraction x vp)
+                      (viewport-y-fraction y vp))))
+
 
 (defn screen-quadrant
   "Pass a dom node and get a tuple back reprenting the quadrant in which the center of the node lives.
    (screen-quadrant (js/document.getElementById \"my-id\")) => [:top :left]"
   [node]
-  (let [rect (.getBoundingClientRect node)
-        x* (* 0.5 (- (.-right rect) (.-left rect)))
-        x  (+ (.-left rect) x*)
-        y* (* 0.5 (- (.-bottom rect) (.-top rect)))
-        y  (+ (.-top rect) y*)
-        top? (> 0.5 (/ y js/window.innerHeight))
-        left? (> 0.5 (/ x js/window.innerWidth))]
-    [(if top? :top :bottom) (if left? :left :right)]))
-
-(defn set-overlay-position!
-  [node parent]
-  (let [[tb lr]         (screen-quadrant parent)
-        position-block  (.getAttribute node "data-kushi-tooltip-position-block")
-        position-inline (.getAttribute node "data-kushi-tooltip-position-inline")
-        right?          (cond (= "end" position-inline)
-                              true
-                              (= "start" position-inline)
-                              false
-                              :else
-                              (= lr :right))
-        top?            (cond (= "end" position-block)
-                              true
-                              (= "start" position-block)
-                              false
-                              :else
-                              (= tb :top))]
-
-    ;; (js/console.log right? top?)
-    ;; display on right or left
-    ;; (set! node.style.left (if right? "unset" "100%"))
-    ;; (set! node.style.right (if right? "100%" "unset"))
-    ;; (set! node.style.top (if top? 0 "unset"))
-    ;; (set! node.style.bottom (if top? "unset" 0))
-    ;; display on top or bottom
-
-    (set! node.style.left (if right? "unset" "0"))
-    (set! node.style.right (if right? "0" "unset"))
-    (set! node.style.top (if top? "100%" "unset"))
-    (set! node.style.bottom (if top? "unset" "100%"))))
-
-(defn conditional-display? [node]
-  (= "true" (.getAttribute node "data-kushi-conditional-display")))
+  (let [{:keys [x-fraction y-fraction]} (client-rect node)]
+    (screen-quadrant* x-fraction y-fraction)))
 
 (defn toggle-boolean-attribute [node attr]
   (let [attr-val (.getAttribute node (name attr))
@@ -174,6 +180,7 @@
 (defn set-style!* [el prop s]
   (when el (.setProperty el.style (name prop) s)))
 
+;; optionally take a coll of styles?
 (defn set-style! [el prop s]
   (if (coll? el)
     (doseq [x el] (set-style!* x prop s))
@@ -181,6 +188,9 @@
 
 (defn set-attribute! [el attr v]
   (when el (.setAttribute el (name attr) v)))
+
+(defn remove-attribute! [el attr]
+  (when el (.removeAttribute el (name attr))))
 
 (defn set-property! [el attr v]
   (when el (.setProperty el (name attr) v)))
@@ -190,6 +200,10 @@
 
 (defn has-class? [el s]
   (when el (.contains (.-classList el) (name s))))
+
+;; check if string or keyword
+(defn has-attribute? [el x]
+  (some-> el (.hasAttribute (name x))))
 
 ;; TODO Rename?
 (defn has-class-or-ancestor-with-class? [el]
@@ -241,6 +255,30 @@
 
 (defn writing-direction []
   (.-direction (js/window.getComputedStyle js/document.documentElement)))
+
+;; TODO - coerce kw or string w/o leading `--` into "--*"
+;; TODO - maybe provide a map with a numeric :value and a string :unit-type
+;;    e.g => {:value 2 :unit "px"} or {:value 200 :unit "ms"}
+(defn css-custom-property-value
+  "Gets computed style for css custom property.
+   First checks for the computed sytle on the element, if supplied.
+   If element is not supplied, checks for the computed style on the root html."
+  ([nm]
+   (css-custom-property-value nil nm))
+  ([el nm]
+   (some-> (or el js/document.documentElement)
+           js/window.getComputedStyle
+           (.getPropertyValue nm))))
+
+(defn computed-style
+  ([nm]
+   (css-custom-property-value js/document.documentElement nm))
+  ([el nm]
+   (some-> el
+           js/window.getComputedStyle
+           (j/get nm))))
+
+;; (j/call-in o [:x :someFn] 42)
 
 (defn dev-only [x]
   (when ^boolean js/goog.DEBUG x))
@@ -337,14 +375,96 @@
 (defn el-from-point [x y]
   (.elementFromPoint js/document x y))
 
-;; geometry
-(defn client-rect [el]
-(j/let [^:js {:keys [left right top bottom x y width height]} (.getBoundingClientRect el)]
-  {:left left
-   :right right
-   :top  top 
-   :bottom bottom
-   :x x
-   :y y
-   :width width
-   :height height}))
+
+(defn duration-property-ms 
+  [el property]
+  (let [s      (-> el
+                   (computed-style property)
+                   (string/split #",")
+                   first
+                   string/trim)
+        factor (cond (string/ends-with? s "ms") 1
+                     (string/ends-with? s "s") 1000)
+        ms     (when factor
+                 (js/Math.round (* factor (js/parseFloat s))))]
+    ms))
+
+(def emojis
+  ["👹"
+   "👺"
+   "🤡"
+   "💩"
+   "👻"
+   "💀"
+   "☠️"
+   "👽"
+   "👾"
+   "🤖"
+   "🎃"
+   "🍄"
+   "🌞"
+   "🌝"
+   "🌛"
+   "🌜"
+   "🌎"
+   "🪐"
+   "💫"
+   "⭐️"
+   "🌟"
+   "✨"
+   "⚡️"
+   "☄️"
+   "💥"
+   "🔥"
+   "🐉"
+   "🐲"
+   "🐢"
+   "🐍"
+   "🦎"
+   "🦖"
+   "🦕"
+   "🐙"
+   "🦑"
+   "🦐"
+   "🦞"
+   "🦀"
+   "🐋"
+   "🦈"
+   "🐊"])
+
+(def total-emojis (count emojis))
+
+(defn random-emoji
+  ([]
+   (nth emojis (rand-int total-emojis) nil))
+  ([coll]
+   (let [total (count coll)]
+     (nth coll (rand-int total) nil))))
+
+(defn random-emojis
+  ([n]
+   (random-emojis n emojis))
+  ([n coll]
+   (let [total (count coll)]
+     (into []
+           (for [_ (range n)]
+             (nth coll (rand-int total) nil))))))
+
+
+;; new Events
+(defn mouse-event
+  ([nm]
+   (mouse-event nm nil))
+  ([nm opts]
+   (let [opts* #js {"view" js/window "bubbles" true "cancelable" true}
+         opts (if opts
+                (.assign js/Object #js {} opts* opts)
+                opts*)]
+     (new js/MouseEvent (name nm) opts))))
+
+(defn dispatch-event
+  ([el event]
+   (some-> el (.dispatchEvent event))))
+
+(defn add-event-listener [el nm f opts]
+  (.addEventListener el (name nm) f opts))
