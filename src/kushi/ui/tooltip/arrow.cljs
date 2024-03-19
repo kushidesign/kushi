@@ -1,7 +1,7 @@
 (ns kushi.ui.tooltip.arrow
   (:require
    [kushi.core :refer (keyed)]
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    [kushi.ui.util :as util :refer [ck?]] ))
 
 

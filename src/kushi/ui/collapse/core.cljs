@@ -4,7 +4,7 @@
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
    [kushi.ui.core :refer (defcom opts+children)]
-   [kushi.ui.dom :as dom]))
+   [domo.core :as dom]))
 
 ;TODO refactor this out
 (defcom collapse-body

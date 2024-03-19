@@ -3,7 +3,7 @@
    [clojure.string :as string]
    [goog.string]
    [kushi.core :refer (keyed)]
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    [kushi.ui.util :refer [ck? maybe as-str]]
    [kushi.ui.tooltip.translate :as translate]))
 

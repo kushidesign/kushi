@@ -2,7 +2,7 @@
   (:require [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.button.core :refer [button]]
             [clojure.string :as string]
-            [kushi.ui.dom :as dom]
+            [domo.core :as dom]
             [goog.dom :as gdom]
             [kushi.ui.core :refer (opts+children)]
             [kushi.core :refer (merge-attrs) :refer-macros (sx)]))

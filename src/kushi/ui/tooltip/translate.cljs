@@ -2,7 +2,7 @@
   (:require
    [clojure.string :as string]
    [kushi.core :refer (keyed)]
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    [kushi.ui.util :refer [ck?]]))
 
 

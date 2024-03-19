@@ -4,7 +4,7 @@
 
 
   ;;  [kushi.ui.core :refer (opts+children defcom defcom)]
-  ;;  [kushi.ui.dom :as dom]
+  ;;  [domo.core :as dom]
   ;;  [kushi.ui.input.slider.core :refer (slider)]
   ;;  [kushi.ui.button.core :refer (button)]
   ;;  [kushi.ui.collapse.core :refer (collapse accordion)]

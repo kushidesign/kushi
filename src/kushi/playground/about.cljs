@@ -2,11 +2,11 @@
   (:require
    [kushi.ui.label.core :refer [label]]
    [kushi.ui.link.core :refer [link]]
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    [kushi.ui.core :refer [defcom]]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-   [kushi.ui.dom :refer (copy-to-clipboard)]
+   [domo.core :refer (copy-to-clipboard)]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
    [kushi.playground.state :as state]
    [kushi.playground.util :as util]

@@ -1,6 +1,6 @@
 (ns kushi.playground.demobox.handlers
   (:require
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    [kushi.playground.state :refer [*state]]))
 
 (defn variant-change

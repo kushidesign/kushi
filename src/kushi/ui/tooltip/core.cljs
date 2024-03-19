@@ -2,7 +2,7 @@
   (:require
    [clojure.string :as string]
    [goog.string]
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    ;; Import this to create defclasses
    [kushi.core :refer (keyed token->ms)]
    [kushi.ui.util :as util :refer [maybe nameable? as-str]]

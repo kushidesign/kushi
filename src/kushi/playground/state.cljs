@@ -1,7 +1,7 @@
 (ns kushi.playground.state
   (:require
    [kushi.core :refer [breakpoints]]
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    [applied-science.js-interop :as j]
    [reagent.core :as r]))
 

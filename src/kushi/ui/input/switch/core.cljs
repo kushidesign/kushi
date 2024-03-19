@@ -3,7 +3,7 @@
    [kushi.core :refer (sx defclass)])
   (:require
    [kushi.core :refer (merge-attrs)]
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    [kushi.ui.util :as util]
    [kushi.ui.core :refer (opts+children)]))
 

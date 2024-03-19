@@ -3,7 +3,7 @@
    [clojure.string :as string]
    [kushi.core :refer (sx merge-attrs token->ms)]
    [kushi.ui.core :refer (defcom)]
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    [kushi.playground.component-section :refer [collapse-all-component-sections
                                                collapse-all-handler
                                                scroll-menu-item-into-view]]

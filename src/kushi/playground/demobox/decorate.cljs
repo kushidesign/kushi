@@ -1,7 +1,7 @@
 (ns kushi.playground.demobox.decorate
   (:require
    [clojure.walk :as walk]
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    [kushi.playground.demobox.defs :refer [variants-by-category]]
    [kushi.playground.util :as util :refer-macros (keyed)]))
 

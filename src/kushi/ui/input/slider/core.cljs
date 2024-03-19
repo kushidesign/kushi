@@ -8,8 +8,8 @@
    [kushi.playground.shared-styles]
    [kushi.playground.util :as util :refer-macros (keyed)]
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-   [kushi.ui.dom :refer (copy-to-clipboard)]
-   [kushi.ui.dom :as dom]))
+   [domo.core :refer (copy-to-clipboard)]
+   [domo.core :as dom]))
 
 (insert-style-tag! "kushi-slider-styles" kushi.ui.input.slider.css/css)
 

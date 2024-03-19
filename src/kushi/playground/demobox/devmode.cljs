@@ -1,7 +1,7 @@
 (ns ^dev-always kushi.playground.demobox.devmode
   (:require
    [kushi.core :refer (sx merge-attrs)]
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    [kushi.ui.input.slider.css]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.icon.core :refer (icon)]

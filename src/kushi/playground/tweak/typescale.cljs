@@ -2,7 +2,7 @@
   (:require [clojure.string :as string]
             [clojure.data :as data]
             [kushi.core :refer [sx]]
-            [kushi.ui.dom :as dom]
+            [domo.core :as dom]
             [kushi.ui.label.core :refer [label]]
             [kushi.ui.button.core :refer [ button]]
             [kushi.ui.icon.core :refer [icon]]

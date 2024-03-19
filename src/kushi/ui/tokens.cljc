@@ -163,7 +163,7 @@
    :$tooltip-delay-duration                   :700ms
    :$tooltip-reveal-on-click-duration         :2000ms
    :$tooltip-initial-scale                    :0px 
-   :$tooltip-offset-start                     :12px 
+   :$tooltip-offset-start                     "calc($tooltip-offset + 3px)"
    :$tooltip-transition-duration              :$fast 
    :$tooltip-transition-timing-function       :$timing-ease-out-curve 
 

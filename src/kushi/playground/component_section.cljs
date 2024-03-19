@@ -11,7 +11,7 @@
    [kushi.ui.icon.core :refer (icon)]
    [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.label.core :refer (label)]
-   [kushi.ui.dom :as dom]
+   [domo.core :as dom]
    [kushi.ui.button.core :refer (button)]
    [kushi.playground.shared-styles :as shared-styles]
    [kushi.playground.state :as state :refer [*components-expanded?]]

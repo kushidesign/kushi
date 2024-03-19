@@ -3,7 +3,7 @@
    [goog.string]
    [clojure.string :as string]
    [kushi.core :refer (sx defclass defclass-with-override token->ms merge-attrs)]
-   [kushi.ui.dom :as dom]))
+   [domo.core :as dom]))
 
 (defclass
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
