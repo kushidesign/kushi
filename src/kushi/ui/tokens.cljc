@@ -136,18 +136,14 @@
    ;; Tooltips
    ;; ------------------------------------------------------
 
-   ;; tooltip arrows
-   :$tooltip-arrow-depth-min-px               :5px 
-   :$tooltip-arrow-depth-max-px               :16px 
-   :$tooltip-arrow-depth-ems                  :0.3em 
-   ;; Note the fallbacks here
-   :$tooltip-arrow-depth                      "max( min( var(--tooltip-arrow-depth-max-px, 12px), var(--tooltip-arrow-depth-ems, 0.3em)), var(--tooltip-arrow-depth-min-px, 5px))"  
-   :$tooltip-arrow-x-offset                   :7px
-   :$tooltip-arrow-y-offset                   :2px
-   :$tooltip-arrow-transition-timing-function :$timing-ease-out-curve 
-   :$tooltip-arrow-transition-duration        :$xxfast 
+   ;; tooltip colors and images
+   :$tooltip-color                            :white
+   :$tooltip-color-inverse                    :black
+   :$tooltip-background-color                 :black
+   :$tooltip-background-color-inverse         :white
+   :$tooltip-background-image                 :white
 
-   ;; tooltip type
+   ;; tooltip typography
    :$tooltip-line-height                      1.25
    :$tooltip-font-family                      :$sans-serif-font-stack
    :$tooltip-font-size                        :$xsmall
@@ -158,25 +154,28 @@
    :$tooltip-padding-inline                   :1.25em
    :$tooltip-padding-block                    :0.65em
    :$tooltip-border-radius                    :7px
-   :$tooltip-offset                           :10px
+   :$tooltip-offset                           :7px
    :$tooltip-viewport-padding                 :5px 
    :$tooltip-flip-viewport-edge-threshold     :32px 
    :$tooltip-auto-placement-y-threshold       :0.1 
 
-   ;; tooltip colors and images
-   :$tooltip-color                            :white
-   :$tooltip-color-inverse                    :black
-   :$tooltip-background-color                 :black
-   :$tooltip-background-color-inverse         :white
-   :$tooltip-background-image                 :white
-   
    ;; tooltip choreography
    :$tooltip-delay-duration                   :700ms
    :$tooltip-reveal-on-click-duration         :2000ms
    :$tooltip-initial-scale                    :0px 
-   :$tooltip-offset-transition-distance       :0px 
+   :$tooltip-offset-start                     :12px 
    :$tooltip-transition-duration              :$fast 
    :$tooltip-transition-timing-function       :$timing-ease-out-curve 
+
+   ;; tooltip arrows
+   :$tooltip-arrow-depth-min-px               :3px 
+   :$tooltip-arrow-depth-max-px               :16px 
+   :$tooltip-arrow-depth-ems                  :0.3em 
+   ;; Note the fallbacks here
+   :$tooltip-arrow-depth                      "max( min( var(--tooltip-arrow-depth-max-px, 12px), var(--tooltip-arrow-depth-ems, 0.3em)), var(--tooltip-arrow-depth-min-px, 5px))"  
+   :$tooltip-arrow-x-offset                   :7px
+   :$tooltip-arrow-y-offset                   :2px
+
 
    ;; Modals
    ;; ------------------------------------------------------
