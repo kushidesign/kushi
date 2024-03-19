@@ -4,7 +4,7 @@
    [kushi.core :refer (defclass)]))
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip
+  kushi-tooltip
   :.fixed
   :fs--$tooltip-font-size
   ;; :fs--100px
@@ -17,13 +17,13 @@
   :transition-timing-function--$tooltip-transition-timing-function
   ;; :scale--1
   :scale--$tooltip-initial-scale
-  [:$_kushi-floating-tooltip-translate-y-shift :0px]
-  [:$_kushi-floating-tooltip-translate-x-shift :0px]
-  [:$_kushi-floating-tooltip-translate-y-base :0px]
-  [:$_kushi-floating-tooltip-translate-x-base :0px]
-  [:$_kushi-floating-tooltip-translate-x "calc(var(--_kushi-floating-tooltip-translate-x-base) + var(--_kushi-floating-tooltip-translate-x-shift))"]
-  [:$_kushi-floating-tooltip-translate-y  "calc(var(--_kushi-floating-tooltip-translate-y-base) + var(--_kushi-floating-tooltip-translate-y-shift))"]
-  :translate--$_kushi-floating-tooltip-translate-x:$_kushi-floating-tooltip-translate-y
+  [:$_kushi-tooltip-translate-y-shift :0px]
+  [:$_kushi-tooltip-translate-x-shift :0px]
+  [:$_kushi-tooltip-translate-y-base :0px]
+  [:$_kushi-tooltip-translate-x-base :0px]
+  [:$_kushi-tooltip-translate-x "calc(var(--_kushi-tooltip-translate-x-base) + var(--_kushi-tooltip-translate-x-shift))"]
+  [:$_kushi-tooltip-translate-y  "calc(var(--_kushi-tooltip-translate-y-base) + var(--_kushi-tooltip-translate-y-shift))"]
+  :translate--$_kushi-tooltip-translate-x:$_kushi-tooltip-translate-y
   :transition-delay--$tooltip-delay-duration
   :zi--auto
   :top--0
@@ -37,111 +37,111 @@
 
 ;; block start
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-tl 
+  kushi-tooltip-tl 
   :transform-origin--bottom:left)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-t 
+  kushi-tooltip-t 
   :transform-origin--bottom:center)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-tr
+  kushi-tooltip-tr
   :transform-origin--bottom:right)
 
 
 ;; inline-end
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-rt
+  kushi-tooltip-rt
   :transform-origin--top:left)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-r 
+  kushi-tooltip-r 
   :transform-origin--center:left)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-rb
+  kushi-tooltip-rb
   :transform-origin--bottom:left)
 
 
 ;; block-end
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-br
+  kushi-tooltip-br
   :transform-origin--top:right)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-b
+  kushi-tooltip-b
   :transform-origin--top:center)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-bl
+  kushi-tooltip-bl
   :transform-origin--top:left)
 
 
 ;; inline-start
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-lt
+  kushi-tooltip-lt
   :transform-origin--top:right)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-l 
+  kushi-tooltip-l 
   :transform-origin--center:right)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-lb
+  kushi-tooltip-lb
   :transform-origin--bottom:right)
 
 
 ;; corner positioning 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-tlc 
+  kushi-tooltip-tlc 
   :beer--0
   :transform-origin--bottom:right)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-ltc
+  kushi-tooltip-ltc
   :beer--0
   :transform-origin--bottom:right )
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-trc
+  kushi-tooltip-trc
   :besr--0
   :transform-origin--bottom:left)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-rtc
+  kushi-tooltip-rtc
   :besr--0
   :transform-origin--bottom:left)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-brc
+  kushi-tooltip-brc
   :bssr--0
   :transform-origin--top:left)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-rbc
+  kushi-tooltip-rbc
   :bssr--0
   :transform-origin--top:left)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-blc
+  kushi-tooltip-blc
  :bser--0
  :transform-origin--top:right)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-lbc
+  kushi-tooltip-lbc
   :bser--0
   :transform-origin--top:right)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-arrowless
+  kushi-tooltip-arrowless
   :beer--$tooltip-border-radius
   :besr--$tooltip-border-radius
   :bssr--$tooltip-border-radius
   :bser--$tooltip-border-radius
-  :&>.kushi-floating-tooltip-arrow:d--none)
+  :&>.kushi-tooltip-arrow:d--none)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-arrow
+  kushi-tooltip-arrow
   :w--0
   :h--0
   :zi--10
@@ -149,39 +149,36 @@
   :.transition
   :.xxfast
   :&.hidden:border--0!important
-  :transition-property--translate
-  :transition-timing-function--$tooltip-arrow-transition-timing-function
-  :transition-duration--$tooltip-arrow-transition-duration
   [:translate "calc(var(--__ktt-x, 0px) + var(--__ktt-shift-x, 0px)) calc(var(--__ktt-y, 0px) + var(--__ktt-shift-y, 0px))"])
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-arrow-pointing-down
+  kushi-tooltip-arrow-pointing-down
   {:border-top      :$tooltip-arrow-depth:solid:$tooltip-background-color
    :dark:border-top :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
    :border-left     :$tooltip-arrow-depth:solid:transparent
    :border-right    :$tooltip-arrow-depth:solid:transparent})
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-arrow-pointing-up
+  kushi-tooltip-arrow-pointing-up
   {:border-bottom      :$tooltip-arrow-depth:solid:$tooltip-background-color
    :dark:border-bottom :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
    :border-left        :$tooltip-arrow-depth:solid:transparent
    :border-right       :$tooltip-arrow-depth:solid:transparent})
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-floating-tooltip-arrow-pointing-left
+  kushi-tooltip-arrow-pointing-left
   {:border-right      :$tooltip-arrow-depth:solid:$tooltip-background-color
    :dark:border-right :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
    :border-top        :$tooltip-arrow-depth:solid:transparent
    :border-bottom     :$tooltip-arrow-depth:solid:transparent})
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-arrow-pointing-right
+  kushi-tooltip-arrow-pointing-right
   {:border-left      :$tooltip-arrow-depth:solid:$tooltip-background-color
    :dark:border-left :$tooltip-arrow-depth:solid:$tooltip-background-color-inverse
    :border-top       :$tooltip-arrow-depth:solid:transparent
    :border-bottom    :$tooltip-arrow-depth:solid:transparent})
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-floating-tooltip-mounting
+  kushi-tooltip-mounting
   :.hidden)

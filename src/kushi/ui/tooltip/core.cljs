@@ -22,9 +22,9 @@
   [{:keys [tooltip-class tooltip-arrow?]}]
   (string/join
    " " 
-   ["kushi-floating-tooltip"
+   ["kushi-tooltip"
     "invisible" 
-    (when-not tooltip-arrow? "kushi-floating-tooltip-arrowless")
+    (when-not tooltip-arrow? "kushi-tooltip-arrowless")
     (some-> tooltip-class (maybe nameable?) as-str)]))
 
 (defn maybe-multiline-tooltip-text [ttt]
@@ -48,7 +48,7 @@
 
   ;; Set the innerHTML / tooltip text
   (set! (.-innerHTML el)
-        (str "<div class=\"kushi-floating-tooltip-text-wrapper\" style=\"position:relative;display:flex;justify-content:center;align-items:center;width:fit-content;\"><span class=\"kushi-floating-tooltip-text\">"
+        (str "<div class=\"kushi-tooltip-text-wrapper\" style=\"position:relative;display:flex;justify-content:center;align-items:center;width:fit-content;\"><span class=\"kushi-tooltip-text\">"
                (maybe-multiline-tooltip-text ttt)
              "</span></div>"))
   
@@ -210,11 +210,11 @@
       
 
       ;; 4) Arrow
-      ;; Add the class with final placement syntax "kushi-floating-tooltip-tr".
+      ;; Add the class with final placement syntax "kushi-tooltip-tr".
       ;; Then create an arrow element and calculate position and geometry.
       ;; ----------------------------------------------------------------------
       (dom/add-class el
-                     (str "kushi-floating-tooltip-"
+                     (str "kushi-tooltip-"
                           (name new-placement-kw)))
 
       
@@ -222,16 +222,16 @@
       ;; 5) Display
       ;; Remove `.invisible` class, which will fade-in the tooltip via
       ;; css transition setting, if desired. 
-      (let [arrow-el              (when (and tooltip-arrow?
-                                             (not (:corner-positioning? tt-pos)))
-                                    (arrow/append-arrow-el!
-                                     (keyed el
-                                            tt-pos
-                                            shift-x 
-                                            shift-y
-                                            new-placement-kw
-                                            owning-el-vpp
-                                            shift?)))
+      (let [arrow-el (when (and tooltip-arrow?
+                                (not (:corner-positioning? tt-pos)))
+                       (arrow/append-arrow-el!
+                        (keyed el
+                               tt-pos
+                               shift-x 
+                               shift-y
+                               new-placement-kw
+                               owning-el-vpp
+                               shift?)))
 
             ;; No shifting for now, so leaving these out
             ;; transition-duration-ms (dom/duration-property-ms el "transitionDuration")
@@ -265,16 +265,20 @@
     (when (or (= e.type "scroll") 
               (= e.key "Escape"))
       (when owning-el
-        (remove-tooltip! owning-el tt-id nil)))))
+        (remove-tooltip! owning-el tt-id nil)
+        (.removeEventListener owning-el
+                              "mouseleave"
+                              (partial remove-tooltip! owning-el tt-id)
+                              #js {"once" true})))))
 
 (defn- remove-tooltip!
   "Removes tooltip from dom.
    Removes :aria-describedby on owning element.
    Removes the tooltip instance-specific `keydown` event on window."
-  [owning-el tt-id _]
+  [owning-el tt-id e]
   (some->> tt-id
            dom/el-by-id
-           #_(.removeChild js/document.body))
+           (.removeChild js/document.body))
   (dom/remove-attribute! owning-el :aria-describedby)
   (.removeEventListener owning-el
                         "mouseleave"
@@ -287,12 +291,23 @@
   (.removeEventListener js/window
                         "scroll"
                         (partial escape-tooltip! owning-el tt-id)
-                        #js {"once" true}))
+                        #js {"once" true})
+  )
+
+(defn- remove-tooltip2!
+  "Removes tooltip from dom.
+   Removes :aria-describedby on owning element.
+   Removes the tooltip instance-specific `keydown` event on window."
+  [el]
+  (.remove el)
+  (let [owning-el (dom/qs (str "[aria-describedby='" (.-id el) "']")) ]
+    (dom/remove-attribute! owning-el :aria-describedby)))
 
 (defn append-tooltip!
   ([opts e]
   (append-tooltip! opts nil e))
   ([opts tt-id e]
+  (js/console.log e.type)
    ;; We need to use cet here (.currentEventTarget), in order
    ;; To prevent mis-assignment of ownership of the tooltip to
    ;; A child element of the intended owning el. 
@@ -301,7 +316,8 @@
          tt-id     (or tt-id (str "kushi-" (gensym)))]
      (do 
        (dom/set-attribute! owning-el :aria-describedby tt-id)
-       (append-tooltip!* (assoc opts :owning-el owning-el) tt-id)
+       (append-tooltip!* (assoc opts :owning-el owning-el)
+                         tt-id)
        (.addEventListener owning-el
                           "mouseleave"
                           (partial remove-tooltip! owning-el tt-id)
@@ -313,7 +329,8 @@
        (.addEventListener js/window
                           "scroll"
                           (partial escape-tooltip! owning-el tt-id)
-                          #js {"once" true})))))
+                          #js {"once" true})
+       ))))
 
 (defn valid-tooltip-text-coll? [x]
   (and (seq x) 
@@ -494,19 +511,25 @@
           opts           (keyed tooltip-text
                                 placement-kw
                                 tooltip-arrow?
-                                tooltip-class)
-          tt-id          (str "kushi-" (gensym))]
+                                tooltip-class)]
       (merge 
        {:data-kushi-ui-tooltip (name placement-kw)
-        :on-mouse-enter        (partial append-tooltip! opts tt-id)}
+        :on-mouse-enter        (partial append-tooltip! opts)
+        ;; :on-mouse-enter        #(js/console.log "ENTER")
+        ;; :on-mouse-leave        (fn [e] 
+        ;;                          (?> e.type)
+        ;;                          (let [tts (js/document.querySelectorAll ".kushi-tooltip")]
+        ;;                            (doseq [el tts]
+        ;;                              (remove-tooltip2! el))))
+        }
 
        ;; Todo use when-let to validate text-on-click and normalize if vector
        (when-let [text-on-click (maybe-multiline-tooltip-text text-on-click)]
          {:on-click (fn [_]
                       (let [duration           (token->ms :$tooltip-reveal-on-click-duration)
-                            tt-el              (dom/el-by-id tt-id)
-                            tt-el-text-wrapper (dom/qs tt-el ".kushi-floating-tooltip-text-wrapper")
-                            tt-el-text-span    (dom/qs tt-el ".kushi-floating-tooltip-text")
+                            tt-el              (dom/qs ".kushi-tooltip")
+                            tt-el-text-wrapper (dom/qs tt-el ".kushi-tooltip-text-wrapper")
+                            tt-el-text-span    (dom/qs tt-el ".kushi-tooltip-text")
                             text-on-click-el   (js/document.createElement "span")]
                         (j/assoc! text-on-click-el "innerText" text-on-click)
                         (dom/add-class text-on-click-el "absolute-centered")

@@ -125,7 +125,7 @@
                                       (ck? #{:lt :l :lb}) "right"
                                       (ck? #{:rt :r :rb}) "left")
 
-        direction-class         (str "kushi-floating-tooltip-arrow-pointing-"
+        direction-class         (str "kushi-tooltip-arrow-pointing-"
                                      direction-class*)
 
         f                       (partial translate direction-class*)
@@ -135,7 +135,7 @@
     ;; Set class and style on arrow element
     (doto arrow-el
       (.setAttribute "class"
-                     (str "kushi-floating-tooltip-arrow "
+                     (str "kushi-tooltip-arrow "
                           direction-class 
                           #_(when (or shift-x shift-y)
                             " hidden")))

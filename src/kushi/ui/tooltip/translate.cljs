@@ -152,6 +152,6 @@
      "left: " left "; "
      "top: " top "; "
      "scale: " scl "; "
-     "--_kushi-floating-tooltip-translate-x-base: " (or tx "0px") "; "
-     "--_kushi-floating-tooltip-translate-y-base: " (or ty "0px") ";"
+     "--_kushi-tooltip-translate-x-base: " (or tx "0px") "; "
+     "--_kushi-tooltip-translate-y-base: " (or ty "0px") ";"
      )))
