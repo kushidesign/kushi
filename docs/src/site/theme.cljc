@@ -55,6 +55,8 @@
                         :$tooltip-border-radius                  :5px
                         :$tooltip-delay-duration                 :200ms
                         :$tooltip-auto-placement-y-threshold     0.1
+                        :$tooltip-offset-start                   :12px
+                        :$tooltip-arrow-depth-min-px             :4px 
                         ]
 
      :typescale        (create-typescale {:size-limit "xxx"
