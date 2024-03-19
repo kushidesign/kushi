@@ -32,6 +32,7 @@
    :ltc [:left -100 :top    -100 "-" "-"]})
 
 
+;; TODO - clean up this implementation, maybe do offset start differently
 (defn- tooltip-translate-xy
   [{:keys [placement-kw
            owning-el-rect
@@ -48,15 +49,37 @@
   (let [[hrz translate-x vrt translate-y offset-x-op offset-y-op]
         (get translate-xy placement-kw nil)
 
-        otd*
-        (dom/css-custom-property-value
+        {tooltip-offset-value        :value
+         tooltip-offset-value-units  :units}
+        (dom/css-custom-property-value-data
          owning-el
-         "--tooltip-offset-transition-distance")
+         "--tooltip-offset")
 
+        tooltip-offset-value
+        (or tooltip-offset-value 10)
+
+        {tooltip-offset-start-value        :value
+         tooltip-offset-start-value-units  :units}
+        (dom/css-custom-property-value-data
+         owning-el
+         "--tooltip-offset-start")
+
+        otd
+        (cond 
+          (and (seq tooltip-offset-value-units)
+               (= tooltip-offset-value-units
+                  tooltip-offset-start-value-units))
+          (- (max 0 tooltip-offset-start-value)
+             tooltip-offset-value)
+          :else
+          0)
+        
         offset-transitions-towards?
-        (not (string/starts-with? otd* "-"))
+        (pos? otd)
+        
+        otd-abs
+        (str (abs otd) (or tooltip-offset-value-units "px"))
 
-        otd-abs      (if offset-transitions-towards? otd* (subs otd* 1))
         offset-css   (str "calc((var(--tooltip-offset))"
                           (if corner-positioning?
                             " * 0.75 "
