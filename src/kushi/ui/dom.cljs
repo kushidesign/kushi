@@ -256,13 +256,34 @@
 (defn writing-direction []
   (.-direction (js/window.getComputedStyle js/document.documentElement)))
 
-;; TODO - coerce kw or string w/o leading `--` into "--*"
-;; TODO - maybe provide a map with a numeric :value and a string :unit-type
-;;    e.g => {:value 2 :unit "px"} or {:value 200 :unit "ms"}
+(defn css-custom-property-value-data
+  "Gets computed style for css custom property.
+   First checks for the computed sytle on the element, if supplied.
+   If element is not supplied, checks for the computed style on the root html.
+   Returns a map of values."
+  ([nm]
+   (css-custom-property-value-data nil nm))
+  ([el nm]
+   (when-let [s (some-> (or el js/document.documentElement)
+                        js/window.getComputedStyle
+                        (.getPropertyValue nm)) ]
+     (let [ret {:string s}
+           m   (when-let [matches (re-find #"^(\-?[0-9]+(?:(\.)[0-9]+)?)([a-z-_]+)?$"
+                                           s)]
+                 (let [decimal? (boolean (nth matches 2 nil))
+                       value    (nth matches 1 nil)
+                       value    (if decimal?
+                                  (some-> value js/parseFloat)
+                                  (some-> value js/parseInt))]
+                   {:value value
+                    :units (nth matches 3 nil)}))]
+       (merge ret m)))))
+
 (defn css-custom-property-value
   "Gets computed style for css custom property.
    First checks for the computed sytle on the element, if supplied.
-   If element is not supplied, checks for the computed style on the root html."
+   If element is not supplied, checks for the computed style on the root html.
+   Returns a string."
   ([nm]
    (css-custom-property-value nil nm))
   ([el nm]
