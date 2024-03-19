@@ -203,14 +203,14 @@
     :rbc :lbc))
 
 (defn updated-tooltip-placement
-  [{:keys [corner-positioning?
-           block-positioning?
-           inline-positioning?
+  [{:keys [corner-plc?
+           block-plc?
+           inline-plc?
            placement-kw]
     {:keys [sw? nw? ne? se? n? s? e? w?]} :vpp}]
   (or (cond
         sw?          
-        (if corner-positioning? 
+        (if corner-plc? 
           :trc
           (case placement-kw
             :lt :rb
@@ -221,7 +221,7 @@
             :br :tr))
 
         nw?
-        (if corner-positioning?
+        (if corner-plc?
           :brc
           (case placement-kw
             :lt :rt
@@ -232,7 +232,7 @@
             :tr :bt))
 
         ne?
-        (if corner-positioning?
+        (if corner-plc?
           :blc
           (case placement-kw
             :rt :lt
@@ -243,7 +243,7 @@
             :tl :bl))
 
         se?
-        (if corner-positioning? 
+        (if corner-plc? 
           :tlc
           (case placement-kw
             :rt :lb
@@ -257,7 +257,7 @@
         (cond
           ;; Branch for non-shifting scenario
           ;; Comment out/remove if you want to support shift
-          inline-positioning?
+          inline-plc?
           (case placement-kw
             :l   (if n? :lt :lb)
             :lt  :lb
@@ -266,10 +266,10 @@
             :rt  :rb
             :rb  :rt)
 
-          block-positioning?
+          block-plc?
           (v-flip placement-kw)
 
-          corner-positioning?
+          corner-plc?
           (case placement-kw
             ;; version where tooltip is basically shifted from intended corner
             ;; :ltc :lt
@@ -296,7 +296,7 @@
         (cond
           ;; Branch for non-shifting scenario
           ;; Comment out/remove if you want to support shift
-          block-positioning?
+          block-plc?
           (case placement-kw
             :t   (if w? :tl :tr)
             :tr  :tl
@@ -305,10 +305,10 @@
             :br  :bl
             :bl  :br)
           
-          inline-positioning?
+          inline-plc?
           (h-flip placement-kw)
 
-          corner-positioning?
+          corner-plc?
           (case placement-kw
             ;; version where tooltip is basically shifted from intended corner
             ;; :ltc :tr
@@ -341,30 +341,30 @@
 ;; to the viewport.
 
 
-(defn tooltip-positioning [k]
+(defn tooltip-plc [k]
   ;; TODO use let-map macro here
   ;; change f to ck?
   (let [f                       (partial ck? k)
         block-start?            (f #{:tl :t :tr})
         block-end?              (f #{:bl :b :br})
-        block-positioning?      (or block-start? block-end?)
+        block-plc?      (or block-start? block-end?)
         inline-start?           (f #{:lt :l :lb})
         inline-end?             (f #{:rt :r :rb})
-        inline-positioning?     (or inline-start? inline-end?)
-        corner-positioning?     (f #{:tlc :trc
+        inline-plc?     (or inline-start? inline-end?)
+        corner-plc?     (f #{:tlc :trc
                                      :ltc :rtc
                                      :blc :brc
                                      :lbc :rbc})
         ]
     (keyed block-start?       
            block-end?         
-           block-positioning? 
+           block-plc? 
            inline-start?      
            inline-end?        
-           inline-positioning?
-           corner-positioning?)))
+           inline-plc?
+           corner-plc?)))
 
-(defn el-positioning
+(defn el-plc
   [viewport el edge-threshold]
   ;; TODO - use let-map here
   (let [{:keys [top
@@ -410,9 +410,9 @@
  
 
 (defn shifts
-  [{:keys [inline-positioning?
-           corner-positioning?
-           block-positioning?
+  [{:keys [inline-plc?
+           corner-plc?
+           block-plc?
            viewport
            vpp]}]
   (let [
@@ -427,13 +427,13 @@
                            (:inner-height-without-scrollbars viewport))
                          x)
                       viewport-padding))
-        c-on-c?   (and corner-positioning? (:on-corner? vpp))
-        shift-x   (when-not (or inline-positioning?
+        c-on-c?   (and corner-plc? (:on-corner? vpp))
+        shift-x   (when-not (or inline-plc?
                                 c-on-c?)
                     (cond
                       (:e? vpp) (br-shift (:right vpp) :right)
                       (:w? vpp) (tl-shift (:left vpp))))
-        shift-y   (when-not (or block-positioning?
+        shift-y   (when-not (or block-plc?
                                 c-on-c?)
                     (cond
                       (:n? vpp) (tl-shift (:top vpp))

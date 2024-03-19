@@ -37,7 +37,7 @@
   [{:keys [placement-kw
            owning-el-rect
            owning-el
-           corner-positioning?
+           corner-plc?
            shift-x
            shift-y
            tooltip-arrow?
@@ -81,7 +81,7 @@
         (str (abs otd) (or tooltip-offset-value-units "px"))
 
         offset-css   (str "calc((var(--tooltip-offset))"
-                          (if corner-positioning?
+                          (if corner-plc?
                             " * 0.75 "
                             (when tooltip-arrow? " + var(--tooltip-arrow-depth) "))
                           (if offset-transitions-towards? " + " " - ") otd-abs
@@ -109,7 +109,7 @@
         tx+          otd-abs
         ty-          (str "-" otd-abs)
         ty+          otd-abs
-        [tx ty]      (if corner-positioning?
+        [tx ty]      (if corner-plc?
                        (if offset-transitions-towards?
                          (cond 
                            (ck? #{:tlc :ltc}) [tx+ ty+]

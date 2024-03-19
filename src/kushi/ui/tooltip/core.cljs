@@ -7,8 +7,8 @@
    [kushi.core :refer (keyed token->ms)]
    [kushi.ui.util :as util :refer [maybe nameable? as-str]]
    [kushi.ui.tooltip.arrow :as arrow]
-   [kushi.ui.tooltip.placement :refer [el-positioning
-                                       tooltip-positioning
+   [kushi.ui.tooltip.placement :refer [el-plc
+                                       tooltip-plc
                                        updated-tooltip-placement
                                        user-placement
                                        og-placement
@@ -64,8 +64,8 @@
   (let [txy (or translate-xy-style
                 (translate/tooltip-translate-css
                  (assoc opts
-                        :corner-positioning?
-                        (:corner-positioning? tt-pos-og)
+                        :corner-plc?
+                        (:corner-plc? tt-pos-og)
                         :tooltip-el el)
                  placement-kw))]
     (.setAttribute el
@@ -113,19 +113,19 @@
                                 (dom/css-custom-property-value
                                  "--tooltip-flip-viewport-edge-threshold")
                                 js/parseInt)
-        owning-el-vpp   (el-positioning viewport
+        owning-el-vpp   (el-plc viewport
                                         owning-el
                                         edge-threshold)
         placement-kw    (og-placement placement-kw
                                       owning-el
                                       owning-el-vpp)
-        tt-pos-og       (tooltip-positioning placement-kw)
+        tt-pos-og       (tooltip-plc placement-kw)
         el              (js/document.createElement "div")
         ;; TODO - maybe use existing opts instead of nesting it here?
         ;; also you are doing this in append-tooltip-el!, so maybed do it here?:
             ;; (assoc opts 
-            ;;   :corner-positioning?
-            ;;   (:corner-positioning? tt-pos-og)
+            ;;   :corner-plc?
+            ;;   (:corner-plc? tt-pos-og)
             ;;   :tooltip-el el)
         append-tt-opts  (keyed el
                                id
@@ -149,12 +149,12 @@
     ;; Add some kind of :tl or :br key to opts below, then use padding value
     ;; in css land.
     ;; -----------------------------------------------------------------------------
-    (let [vpp               (el-positioning viewport el 0)
+    (let [vpp               (el-plc viewport el 0)
           new-placement-kw  (updated-tooltip-placement
                              (merge tt-pos-og
                                     (keyed vpp placement-kw)))
 
-          tt-pos            (tooltip-positioning new-placement-kw)
+          tt-pos            (tooltip-plc new-placement-kw)
 
 
           ;; Disable shifting for now and just return nil for shift-x & shift-y
@@ -173,7 +173,7 @@
             (let [opts (assoc opts
                               :shift-x             shift-x
                               :shift-y             shift-y
-                              :corner-positioning? (:corner-positioning? tt-pos)
+                              :corner-plc? (:corner-plc? tt-pos)
                               :tooltip-el          el
                               :tooltip-arrow?      tooltip-arrow?
                               :adjust?             true) ]
@@ -223,7 +223,7 @@
       ;; Remove `.invisible` class, which will fade-in the tooltip via
       ;; css transition setting, if desired. 
       (let [arrow-el (when (and tooltip-arrow?
-                                (not (:corner-positioning? tt-pos)))
+                                (not (:corner-plc? tt-pos)))
                        (arrow/append-arrow-el!
                         (keyed el
                                tt-pos

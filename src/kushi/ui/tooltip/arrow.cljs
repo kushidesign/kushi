@@ -11,10 +11,10 @@
         axis-a         axis
         axis-b         (if (= axis-a "y") "x" "y")
         arrow-offset   (str "var(--tooltip-arrow-" axis-a "-offset)")
-        tt-shft-down? (and (= axis "y") (pos? shift))
-        tt-shft-up?   (and (= axis "y") (neg? shift))
+        tt-shft-down?  (and (= axis "y") (pos? shift))
+        tt-shft-up?    (and (= axis "y") (neg? shift))
         tt-shft-right? (and (= axis "x") (pos? shift))
-        tt-shft-left? (and (= axis "x") (pos? shift))
+        tt-shft-left?  (and (= axis "x") (pos? shift))
         ;; _ (keyed [direction-class*
         ;;           axis
         ;;           op
@@ -51,22 +51,22 @@
 (defn- translate-xy
   [{:keys [f
            k
-           block-positioning?
-           inline-positioning?
+           block-plc?
+           inline-plc?
            shift-x
            shift-y]}]
   (let [ck?   (partial ck? k) 
         [x y] (cond 
-                (neg? shift-x)      (f "x" "-" shift-x)
-                (pos? shift-x)      (f "x" "+" shift-x)
-                (neg? shift-y)      (f "x" "-" shift-y)
-                (pos? shift-y)      (f "x" "+" shift-y)
-                (ck? #{:br :tr})    (f "x" "-" shift-x)
-                (ck? #{:bl :tl})    (f "x" "+" shift-x)
-                block-positioning?  ["-50%" "0px"]
-                (ck? #{:rt :lt})    (f "y" "+" shift-y)
-                (ck? #{:rb :lb})    (f "y" "-" shift-y)
-                inline-positioning? ["0px" "-50%"])]
+                (neg? shift-x)   (f "x" "-" shift-x)
+                (pos? shift-x)   (f "x" "+" shift-x)
+                (neg? shift-y)   (f "x" "-" shift-y)
+                (pos? shift-y)   (f "x" "+" shift-y)
+                (ck? #{:br :tr}) (f "x" "-" shift-x)
+                (ck? #{:bl :tl}) (f "x" "+" shift-x)
+                block-plc?       ["-50%" "0px"]
+                (ck? #{:rt :lt}) (f "y" "+" shift-y)
+                (ck? #{:rb :lb}) (f "y" "-" shift-y)
+                inline-plc?      ["0px" "-50%"])]
     {:--__ktt-x x
      :--__ktt-y y}))
 
@@ -86,9 +86,9 @@
         css-var! #(dom/set-css-var! arrow-el
                                     (str "--__ktt-shift-" %)
                                     diff)]
-    (cond (:block-positioning? tt-pos)
+    (cond (:block-plc? tt-pos)
           (css-var! "x")
-          (:inline-positioning? tt-pos)
+          (:inline-plc? tt-pos)
           (css-var! "y")) ))
 
 (defn append-arrow-el!
@@ -104,21 +104,21 @@
         {:keys
          [block-start?          
           block-end?            
-          block-positioning?    
+          block-plc?    
           inline-start?         
           inline-end?           
-          inline-positioning?]} tt-pos
-        arrow-top-bottom        (cond block-start?        {:top :100%}
-                                      block-end?          {:bottom :100%}
-                                      (ck? #{:lt :rt})    {:top :0}
-                                      (ck? #{:lb :rb})    {:bottom :0}
-                                      inline-positioning? {:top :50%})
+          inline-plc?]} tt-pos
+        arrow-top-bottom        (cond block-start?     {:top :100%}
+                                      block-end?       {:bottom :100%}
+                                      (ck? #{:lt :rt}) {:top :0}
+                                      (ck? #{:lb :rb}) {:bottom :0}
+                                      inline-plc?      {:top :50%})
 
-        arrow-left-right        (cond inline-start?      {:left :100%}
-                                      inline-end?        {:right :100%}
-                                      (ck? #{:tr :br})   {:right :0}
-                                      (ck? #{:tl :bl})   {:left :0}
-                                      block-positioning? {:left :50%})
+        arrow-left-right        (cond inline-start?    {:left :100%}
+                                      inline-end?      {:right :100%}
+                                      (ck? #{:tr :br}) {:right :0}
+                                      (ck? #{:tl :bl}) {:left :0}
+                                      block-plc?       {:left :50%})
 
         direction-class*        (cond (ck? #{:tl :t :tr}) "down"
                                       (ck? #{:bl :b :br}) "up"
@@ -144,8 +144,8 @@
                      (arrow-style-css2
                       (merge {:f f
                               :k new-placement-kw}
-                             (keyed block-positioning?
-                                    inline-positioning?
+                             (keyed block-plc?
+                                    inline-plc?
                                     arrow-position-stylemap
                                     shift-x
                                     shift-y)))))
