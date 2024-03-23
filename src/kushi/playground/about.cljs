@@ -2,11 +2,11 @@
   (:require
    [kushi.ui.label.core :refer [label]]
    [kushi.ui.link.core :refer [link]]
-   [domo.core :as dom]
+   [domo.core :as domo]
    [kushi.ui.core :refer [defcom]]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-   [domo.core :refer (copy-to-clipboard)]
+   [domo.core :refer (copy-to-clipboard!)]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
    [kushi.playground.state :as state]
    [kushi.playground.util :as util]
@@ -168,7 +168,7 @@
     (sx :.absolute
         :inset-block-start--0
         :inset-inline-end--0
-        {:on-click #(copy-to-clipboard s)})]])
+        {:on-click #(copy-to-clipboard! s)})]])
 
 
 (def typography-tokens-snippet

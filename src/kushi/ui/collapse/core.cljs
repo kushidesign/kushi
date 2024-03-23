@@ -4,7 +4,7 @@
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
    [kushi.ui.core :refer (defcom opts+children)]
-   [domo.core :as dom]))
+   [domo.core :as domo]))
 
 ;TODO refactor this out
 (defcom collapse-body
@@ -37,8 +37,8 @@
 ;; todo figure out accordion
 (defn currently-open-accordion-node
   [currently-open-header]
-  (let [accordion-root* (dom/grandparent currently-open-header)
-        accordion-root  (when (dom/has-class accordion-root* "kushi-accordion") accordion-root*)]
+  (let [accordion-root* (domo/grandparent currently-open-header)
+        accordion-root  (when (domo/has-class accordion-root* "kushi-accordion") accordion-root*)]
     (when accordion-root
       (when-let [open-node (.querySelector
                             accordion-root
@@ -56,15 +56,15 @@
                  collapse (.-parentNode header)]
 
              ;; First, we make sure the collapse is not already in the process of opening or closing.
-             (when-not (dom/has-class collapse "kushi-collapse-transit")
+             (when-not (domo/has-class collapse "kushi-collapse-transit")
 
                ;; Add an 'in-transit' class to the collapse
-               (dom/add-class collapse "kushi-collapse-transit")
+               (domo/add-class! collapse "kushi-collapse-transit")
 
                (let [bod                           (-> header .-nextSibling)
                      collapsed?                    (= "none" (.-display (.-style bod)))
                      _                             (when collapsed? (set! bod.style.display "block"))
-                     expanded?                     (dom/attribute-true? header :aria-expanded)
+                     expanded?                     (domo/attribute-true? header :aria-expanded)
                      bod-height-px                 (some-> bod .-firstChild bod-height (str "px"))
                      next-bod-height-px            (if expanded? "0px" bod-height-px)
                      expanded-and-not-yet-clicked? (and expanded? (string/blank? bod.style.height))
@@ -78,7 +78,7 @@
                  (some-> currently-open-accordion-child-head .click)
 
                  ;; Toggle kushi-collapse-expanded classes
-                 ((if expanded? dom/remove-class dom/add-class) collapse :kushi-collapse-expanded)
+                 ((if expanded? domo/remove-class! domo/add-class!) collapse :kushi-collapse-expanded)
 
                  (when expanded-and-not-yet-clicked?
                    ;; Set the bod height to something, so we can animate it to the actual value we need.
@@ -106,12 +106,12 @@
                       (js/setTimeout (fn []
                                        ;; body is open, closing
                                        (set! bod.style.display "none")
-                                       (dom/remove-class collapse "kushi-collapse-transit"))
+                                       (domo/remove-class! collapse "kushi-collapse-transit"))
                                      speed)
                       (js/setTimeout (fn []
                                        ;; body is closed, opening
                                        (set! bod.style.height "auto")
-                                       (dom/remove-class collapse "kushi-collapse-transit"))
+                                       (domo/remove-class! collapse "kushi-collapse-transit"))
                                      (+ speed 10))))))))]
       (into [:div
              (merge-attrs

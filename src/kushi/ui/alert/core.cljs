@@ -41,7 +41,7 @@
 
     ;; Leave this out for now
     ;; (when (pos-int? duration)
-    ;;   (js/setTimeout #(when-let [el (dom/el-by-id alert-id)]
+    ;;   (js/setTimeout #(when-let [el (domo/el-by-id alert-id)]
     ;;                     (.remove el))
     ;;                  duration))
 

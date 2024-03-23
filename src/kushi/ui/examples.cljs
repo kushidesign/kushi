@@ -547,7 +547,7 @@
    (feature
     card
     {:stage    {:style {:min-height :280px}}
-     :defaults {:examples "Default"}
+     :defaults {:examples "Default, elevated"}
      :examples [{:label   "Default, elevated"
                  :example [:div [card (sx :.elevated-3) "my content"]]}
                 {:label   "Elevation levels 1-5"

@@ -11,7 +11,7 @@
    [kushi.ui.icon.core :refer (icon)]
    [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.label.core :refer (label)]
-   [domo.core :as dom]
+   [domo.core :as domo]
    [kushi.ui.button.core :refer (button)]
    [kushi.playground.shared-styles :as shared-styles]
    [kushi.playground.state :as state :refer [*components-expanded?]]
@@ -19,13 +19,13 @@
    [kushi.playground.demobox.core :refer (demobox2 copy-to-clipboard-button)]))
 
 (defn scroll-window-by-px []
-  (dom/scroll-by {:y (:scroll-window-by-px shared-styles/shared-values)}))
+  (domo/scroll-by! {:y (:scroll-window-by-px shared-styles/shared-values)}))
 
 (defn scroll-window-by-nav-height []
-  (dom/scroll-by {:y (:scroll-to-component-menu-item-y shared-styles/shared-values)}))
+  (domo/scroll-by! {:y (:scroll-to-component-menu-item-y shared-styles/shared-values)}))
 
 (defn scroll-menu-item-into-view [el]
-  (dom/scroll-into-view el)
+  (domo/scroll-into-view! el)
   (scroll-window-by-px)
   ;; Only use if you have a fixed top-nav
   #_(scroll-window-by-nav-height)

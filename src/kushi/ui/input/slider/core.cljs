@@ -8,8 +8,8 @@
    [kushi.playground.shared-styles]
    [kushi.playground.util :as util :refer-macros (keyed)]
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-   [domo.core :refer (copy-to-clipboard)]
-   [domo.core :as dom]))
+   [domo.core :refer (copy-to-clipboard!)]
+   [domo.core :as domo]))
 
 (insert-style-tag! "kushi-slider-styles" kushi.ui.input.slider.css/css)
 
@@ -111,7 +111,7 @@
               {:style {:mbe "calc(10px + 0.5em)"
                        :width "100%"}})
           labels-attrs)]
-        (let [ltr?     (= "ltr" (dom/writing-direction))
+        (let [ltr?     (= "ltr" (domo/writing-direction))
               last-int (dec num-steps)]
           (map-indexed
            (fn [idx step]
@@ -175,8 +175,8 @@
         selected-label-node (.querySelector previous-sibling (str "." label-selected-class))]
     (.remove (.-classList selected-label-node) label-selected-class)
     (.add (.-classList label-node) label-selected-class)
-    (j/assoc! (dom/el-by-id label-id) :textContent (.-textContent label-node))
-    #_(dom/set-attribute! (dom/el-by-id label-id) "textContent" (.-textContent label-node))))
+    (j/assoc! (domo/el-by-id label-id) :textContent (.-textContent label-node))
+    #_(domo/set-attribute! (domo/el-by-id label-id) "textContent" (.-textContent label-node))))
 
 (defn slider
   {:desc ["A slider is a ui element which allows the user to specify a numeric value which must be no less than a given value, and no more than another given value."
@@ -323,8 +323,8 @@
              :>button:h--$medium
              :m--0
              {:-placement :left
-            ;; :on-click   #(copy-to-clipboard (.-textContent (.-firstChild (dom/nearest-ancestor (dom/et %) ".kushi-slider-single-value-label-wrapper"))))
-              :on-click   #(copy-to-clipboard (copy-to-clipboard-fn %))})]]
+            ;; :on-click   #(copy-to-clipboard! (.-textContent (.-firstChild (domo/nearest-ancestor (domo/et %) ".kushi-slider-single-value-label-wrapper"))))
+              :on-click   #(copy-to-clipboard! (copy-to-clipboard-fn %))})]]
 
      [:input (merge-attrs
               (sx {:style         {:w :100%}

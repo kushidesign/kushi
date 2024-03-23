@@ -2,7 +2,7 @@
   (:require [clojure.string :as string]
             [clojure.data :as data]
             [kushi.core :refer [sx]]
-            [domo.core :as dom]
+            [domo.core :as domo]
             [kushi.ui.label.core :refer [label]]
             [kushi.ui.button.core :refer [ button]]
             [kushi.ui.icon.core :refer [icon]]
@@ -93,10 +93,10 @@
                                       :value     (size-kw @state)
                                       ;; :value     size-kw
                                       :step      0.005
-                                      :on-change #(let [node (dom/et %)
+                                      :on-change #(let [node (domo/et %)
                                                         val  (.-value node)]
                                                     (swap! state assoc (keyword size-kw) val)
-                                                    (dom/set-css-var! js/document.body
+                                                    (domo/set-css-var! js/document.body
                                                                       (str "--" (name size-kw))
                                                                       (str val "rem")))}]])
                           [[:div
@@ -105,7 +105,7 @@
                              (sx :.small
                                  {:on-click #(do (let [[_ to-reset _] (data/diff init-scale @state)]
                                                    (doseq [[size-kw _] to-reset]
-                                                     (dom/set-css-var! js/document.body
+                                                     (domo/set-css-var! js/document.body
                                                                        (str "--" (name size-kw))
                                                                        (str (size-kw init-scale) "rem"))))
                                                  (reset! state init-scale))})

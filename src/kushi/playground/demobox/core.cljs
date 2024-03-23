@@ -3,7 +3,7 @@
    [clojure.string :as string]
    [clojure.pprint :as pprint]
    [kushi.core :refer (sx merge-attrs)]
-   [domo.core :as dom]
+   [domo.core :as domo]
    [kushi.ui.flex.core :as flex]
    [kushi.ui.input.slider.css]
    [kushi.ui.button.core :refer (button)]
@@ -14,7 +14,7 @@
    [kushi.ui.label.core :refer (label)]
    [kushi.ui.input.slider.core :refer (slider)]
    [kushi.ui.input.checkbox.core :refer (checkbox)]
-   [domo.core :refer (copy-to-clipboard)]
+   [domo.core :refer (copy-to-clipboard!)]
    [kushi.ui.core :refer (defcom)]
    [kushi.ui.input.radio.core :refer (radio)]
    [kushi.playground.demobox.handlers :as handlers]
@@ -144,7 +144,7 @@
    (merge-attrs
     (sx :.minimal
         :p--7px
-        {:on-click #(copy-to-clipboard (:text-to-copy &opts))})
+        {:on-click #(copy-to-clipboard! (:text-to-copy &opts))})
     (tooltip-attrs
      {:-text                        "Click to copy"
       :-text-on-click               "Copied!"
@@ -268,10 +268,10 @@
                                     node     (rdom/dom-node this)]
                                 (when (and focused? @*dev-mode?)
 
-                                  #_(dom/add-class node "kushi-playground-demobox-dev-mode")
+                                  #_(domo/add-class! node "kushi-playground-demobox-dev-mode")
                                   #_(open-kushi-modal dev-modal-id)
                                   #_(js/setTimeout (fn [_]
-                                                     (dom/remove-class node "kushi-playground-demobox-dev-mode"))
+                                                     (domo/remove-class! node "kushi-playground-demobox-dev-mode"))
                                                    1000)))
                               (update-classes this))
       :component-did-update update-classes
@@ -295,10 +295,10 @@
                                            (sx :.southeast-inside
                                                :.kushi-playground-demobox-ui-icon
                                                {:on-click (fn [_]
-                                                            (dom/add-class js/document.body
+                                                            (domo/add-class! js/document.body
                                                                            "kushi-playground-dev-mode")
                                                             (js/setTimeout (fn [_]
-                                                                             (dom/add-class js/document.body
+                                                                             (domo/add-class! js/document.body
                                                                                             "kushi-playground-dev-mode-hidden")
                                                                              (reset! *dev-mode? true))
                                                                            500))})

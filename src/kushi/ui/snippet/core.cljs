@@ -4,7 +4,7 @@
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.core :refer (opts+children)]
-   [domo.core :refer (copy-to-clipboard)]))
+   [domo.core :refer (copy-to-clipboard!)]))
 
 (def copy-content-svg
   "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' height='16' viewBox='0 0 16 16' version='1.1' width='16' data-view-component='true'>
@@ -65,5 +65,5 @@
             attrs)
            [:span text-to-display]
            [copy-to-clipboard-button
-            {:on-click (or on-copy-click #(copy-to-clipboard text-to-copy))}]]
+            {:on-click (or on-copy-click #(copy-to-clipboard! text-to-copy))}]]
           children)))

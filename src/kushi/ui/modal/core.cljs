@@ -2,7 +2,7 @@
   (:require [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.button.core :refer [button]]
             [clojure.string :as string]
-            [domo.core :as dom]
+            [domo.core :as domo]
             [goog.dom :as gdom]
             [kushi.ui.core :refer (opts+children)]
             [kushi.core :refer (merge-attrs) :refer-macros (sx)]))
@@ -11,28 +11,28 @@
 
 (defn close-kushi-modal [e]
   (.stopPropagation e)
-  (let [el     (dom/et e)
+  (let [el     (domo/et e)
         dialog (if (= "DIALOG" (.-nodeName el))
                  el
-                 (dom/nearest-ancestor el ".kushi-modal"))]
+                 (domo/nearest-ancestor el ".kushi-modal"))]
     (when (gdom/isElement dialog)
       (let [duration* (.-transitionDuration (js/window.getComputedStyle dialog))
             duration  (js/Math.round (* 1000 (js/parseFloat (string/replace duration* #"s$" ""))))]
         (.removeEventListener dialog "click" close-on-backdrop-click)
-        (dom/remove-class dialog "kushi-modal-open")
+        (domo/remove-class! dialog "kushi-modal-open")
         (js/setTimeout #(.close dialog) duration)))))
 
 (defn close-on-backdrop-click  [e]
-  (when (= "DIALOG" (.-nodeName (dom/et e)))
+  (when (= "DIALOG" (.-nodeName (domo/et e)))
     (close-kushi-modal e)))
 
 (defn open-kushi-modal [id]
-  (if-let [dialog (dom/el-by-id id)]
+  (if-let [dialog (domo/el-by-id id)]
     (do (.addEventListener dialog
                            "click"
                            close-on-backdrop-click)
         (.showModal dialog)
-        (dom/add-class dialog "kushi-modal-open"))
+        (domo/add-class! dialog "kushi-modal-open"))
     (js/console.warn (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of: " id))))
 
 (defn modal-close-button

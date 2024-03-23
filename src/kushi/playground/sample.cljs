@@ -4,7 +4,7 @@
 
 
   ;;  [kushi.ui.core :refer (opts+children defcom defcom)]
-  ;;  [domo.core :as dom]
+  ;;  [domo.core :as domo]
   ;;  [kushi.ui.input.slider.core :refer (slider)]
   ;;  [kushi.ui.button.core :refer (button)]
   ;;  [kushi.ui.collapse.core :refer (collapse accordion)]
@@ -72,7 +72,7 @@
     #_[slider (sx  {:default-value       :D
                     :min                 1
                     :max                 3
-                    :on-change           #(let [val  (dom/etv->int %)
+                    :on-change           #(let [val  (domo/etv->int %)
                                                 step (name (nth steps val))]
                                             #_(js/console.log step))
                     :-label-size-class   :small

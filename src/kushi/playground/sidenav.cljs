@@ -3,7 +3,7 @@
    [clojure.string :as string]
    [kushi.core :refer (sx merge-attrs token->ms)]
    [kushi.ui.core :refer (defcom)]
-   [domo.core :as dom]
+   [domo.core :as domo]
    [kushi.playground.component-section :refer [collapse-all-component-sections
                                                collapse-all-handler
                                                scroll-menu-item-into-view]]
@@ -16,17 +16,17 @@
 
 (defn transition-between-focused-components
   [fname]
-  (let [wrapper (dom/el-by-id "#kushi-playground-main-section-wrapper")]
-    (when wrapper (dom/add-class wrapper "invisible"))
+  (let [wrapper (domo/el-by-id "#kushi-playground-main-section-wrapper")]
+    (when wrapper (domo/add-class! wrapper "invisible"))
     (js/setTimeout
-     #(do (dom/scroll-to-top)
+     #(do (domo/scroll-to-top!)
           (reset! state/*focused-component fname)
-          (when wrapper (dom/remove-class wrapper "invisible")))
+          (when wrapper (domo/remove-class! wrapper "invisible")))
      (token->ms :$fast))))
 
 
 (defn section-item-on-click [href fname e]
-  (let [section            (dom/nearest-ancestor (dom/et e) ".kushi-treenav-section-level-1")
+  (let [section            (domo/nearest-ancestor (domo/et e) ".kushi-treenav-section-level-1")
         section-id         (some->  section .-firstChild .-id)
         focused-section-id (keyword (nav-section-id->base-id section-id))]
 
@@ -38,7 +38,7 @@
 
       "getting-started-nav-section"
       (when href
-        (let [el   (dom/el-by-id href)]
+        (let [el   (domo/el-by-id href)]
           (when el
             (scroll-menu-item-into-view el)
             (state/nav! href))))
@@ -116,7 +116,7 @@
             :on-click #(when-not target
                          (reset! state/*focused-section kw)
                          (state/set-focused-component! nil)
-                         (dom/scroll-to-top))}))
+                         (domo/scroll-to-top!))}))
    (or header
        [:span.kushi-treenav-section-header sidenav-header])])
 

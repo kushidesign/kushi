@@ -3,7 +3,7 @@
    [goog.string]
    [clojure.string :as string]
    [kushi.core :refer (sx defclass defclass-with-override token->ms merge-attrs)]
-   [domo.core :as dom]))
+   [domo.core :as domo]))
 
 (defclass
   ^{:kushi/chunk :kushi/kushi-ui-defclass}
@@ -366,7 +366,7 @@
                             keyword)]
             (when (contains? placement-by-kw kw)
               kw))))
-      (logical-placement {:ltr?      (= (dom/writing-direction) "ltr")
+      (logical-placement {:ltr?      (= (domo/writing-direction) "ltr")
                           :placement s}))))
 
 (defn- text-type [x]
@@ -568,9 +568,9 @@
                                                        duration (if (pos-int? reveal-on-click-duration)
                                                                   reveal-on-click-duration
                                                                   (token->ms :$tooltip-reveal-on-click-duration))]
-                                                   (dom/toggle-class! node class)
+                                                   (domo/toggle-class! node class)
                                                    (when-not (= reveal-on-click-duration :infinite)
-                                                     (js/setTimeout #(dom/remove-class node class)
+                                                     (js/setTimeout #(domo/remove-class! node class)
                                                                     duration))))}))
         (merge-attrs
          (sx 'kushi-pseudo-tooltip-reveal-on-hover
@@ -590,6 +590,6 @@
                               duration (if (pos-int? text-on-click-duration)
                                          text-on-click-duration
                                          (token->ms :$tooltip-reveal-on-click-duration))]
-                          (when-not (dom/has-class? node class)
-                            (dom/add-class node class)
-                            (js/setTimeout #(dom/remove-class node class) duration))))}))))))
+                          (when-not (domo/has-class? node class)
+                            (domo/add-class! node class)
+                            (js/setTimeout #(domo/remove-class! node class) duration))))}))))))

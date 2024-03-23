@@ -1,7 +1,7 @@
 (ns kushi.playground.demobox.decorate
   (:require
    [clojure.walk :as walk]
-   [domo.core :as dom]
+   [domo.core :as domo]
    [kushi.playground.demobox.defs :refer [variants-by-category]]
    [kushi.playground.util :as util :refer-macros (keyed)]))
 
@@ -36,7 +36,7 @@
 
 (defn utility-classes-into-dom
   [{:keys [component-id utility-class-target active-controls-by-type] :as m}]
-  (when-let [dom-el (dom/el-by-id component-id)]
+  (when-let [dom-el (domo/el-by-id component-id)]
     (when-let [els (.querySelectorAll dom-el (str ".kushi-" utility-class-target ":not(.material-icons)"))]
     ;; (js/console.log "utility-class-target: " utility-class-target)
     ;; (js/console.log (js/document.getElementById component-id))
@@ -53,10 +53,10 @@
             (when-let [to-remove* (->> category keyword variants-by-category (map name))]
               (keyed component-id utility-class-target category class to-remove*)
               ; figure out controls by type
-              (apply dom/remove-class el to-remove*)
+              (apply domo/remove-class! el to-remove*)
               (.add cl (name class))))))
       (when (= utility-class-target "slider")
-        (dom/set! (.querySelector dom-el "input") :value 0)))))
+        (domo/set! (.querySelector dom-el "input") :value 0)))))
 
 
 (defn utility-classes-into-snippet
