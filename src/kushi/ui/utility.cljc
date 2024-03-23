@@ -81,14 +81,15 @@
                                                        "repeating-linear-gradient(to right, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
                            :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px)), "
                                                        "repeating-linear-gradient(to right, transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px))")}
-   :bordered              {:border-color :currentColor
-                           :border-style :solid
-                           :border-width "1px"}
 
 
    ;; could do something like this
    ;; "[class^='bordered-']" {:border-style :solid :border-width "1px"}
    
+   ;; Start debugging utils 
+   ;; TODO - should these be outline to not mess with layout?
+   ;; TODO - hard code fallbacks better
+   ;; maybe just call these :debug-red
    :bordered-red          {:border-color "var(--red-500, red)"
                            :border-style :solid
                            :border-width "1px"}
@@ -133,6 +134,13 @@
                            :outline-style  :solid
                            :outline-width  "1px"
                            :outline-offset :-1px}
+   ;; End debugging utils 
+
+
+   ;; Borders
+   :bordered              {:border-color :currentColor
+                           :border-style :solid
+                           :border-width "1px"}
 
     ;; Non-combo flex utility classes
    :shrink               {:flex-shrink 1}
