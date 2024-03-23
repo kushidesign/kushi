@@ -56,7 +56,10 @@
                         :$tooltip-delay-duration                 :200ms
                         :$tooltip-auto-placement-y-threshold     0.1
                         :$tooltip-offset-start                   :10px
-                        :$tooltip-arrow-depth-min-px             :4px 
+                        :$tooltip-offset                         :10px
+                        :$tooltip-arrow-depth-min-px             :4px
+                        :$modal-transition-duration              :$xxxfast
+                        :$modal-backdrop-color                   :$black-transparent-40
                         ]
 
      :typescale        (create-typescale {:size-limit "xxx"
