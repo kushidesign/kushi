@@ -4,6 +4,9 @@
 
 ;; Generic
 ;; --------------------------------------------------------------------------
+(defn calc [& strs]
+  (str "calc(" (apply str strs) ")"))
+
 (defn data-kushi-attr [x]
   (-> x name (string/replace #"^kushi\.ui\." "") (string/replace #".core$" "")) )
 
