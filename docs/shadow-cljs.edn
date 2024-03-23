@@ -1,11 +1,14 @@
 ;; shadow-cljs configuration
 {
  :source-paths   ["src"
-                  "../src"]
+                  "../src"
+                  "../../domo/src"
+                  ]
 
  :dependencies   [[reagent/reagent    "1.1.1"]
                   [binaryage/devtools "1.0.6"]
                   [design.kushi/kushi "1.0.0-a.20"]
+                  [design.kushi/domo  "0.1.0"]
                   [io.github.paintparty/fireworks "0.2.0"]]
 
  :dev-http       {7777 "public"}
