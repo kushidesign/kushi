@@ -186,6 +186,7 @@
    :$modal-backdrop-color                   :$black-transparent-50
    :$modal-margin                           :1rem
    :$modal-min-width                        :500px
+   :$modal-transition-duration              :$xxfast
 
 
    ;; Material UI icons
@@ -455,8 +456,8 @@
    :$accent-minimal-color-hover-inverse
 
    ;; Positive dark
-  ;;  :$switch-on-positive-background-color-inverse--$lime-600
-  ;;  :$switch-on-positive-background-color-hover-inverse--$lime-650
+   ;; :$switch-on-positive-background-color-inverse--$lime-600
+   ;; :$switch-on-positive-background-color-hover-inverse--$lime-650
    :$switch-on-positive-background-color-inverse
    :$positive-500
 
