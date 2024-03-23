@@ -1,11 +1,11 @@
-(ns kushi.ui.tooltip.placement
+(ns kushi.ui.dom.fune.placement
   (:require
    [clojure.string :as string]
    [goog.string]
    [kushi.core :refer (keyed)]
-   [domo.core :as dom]
+   [domo.core :as domo]
    [kushi.ui.util :refer [ck? maybe as-str]]
-   [kushi.ui.tooltip.translate :as translate]))
+   [kushi.ui.dom.fune.translate :as translate]))
 
 (defn og-placement
   "Returns a keyword such as :t or :blc"
@@ -31,7 +31,7 @@
       ;; :$tooltip-auto-placement-y-threshold css custom property.
       (if (< (:y-fraction vpp)
              (some-> owning-el
-                     (dom/css-custom-property-value
+                     (domo/css-custom-property-value
                       "--tooltip-auto-placement-y-threshold")
                      js/parseFloat))
         :b
@@ -160,7 +160,7 @@
                            keyword)]
            (when (contains? translate/translate-xy kw)
              kw))))
-     (logical-placement {:ltr?      (= (dom/writing-direction) "ltr")
+     (logical-placement {:ltr?      (= (domo/writing-direction) "ltr")
                          :placement s}))) )
 
 
@@ -371,10 +371,10 @@
                 bottom
                 left
                 right
-                middle
+                y-center
                 center
                 x-fraction
-                y-fraction]} (dom/client-rect el)
+                y-fraction]} (domo/client-rect el)
         s?         (< (- (:inner-height-without-scrollbars viewport)
                          edge-threshold)
                            bottom)
@@ -403,7 +403,7 @@
                bottom
                left
                right
-               middle
+               y-center
                center
                x-fraction
                y-fraction)))

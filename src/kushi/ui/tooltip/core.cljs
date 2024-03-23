@@ -1,21 +1,23 @@
 (ns kushi.ui.tooltip.core
   (:require
+   [fireworks.core :refer [? ?? ??? !? ?> !?> ]]
    [clojure.string :as string]
+   [clojure.data :as data]
    [goog.string]
-   [domo.core :as dom]
+   [domo.core :as domo]
    ;; Import this to create defclasses
    [kushi.core :refer (keyed token->ms)]
    [kushi.ui.util :as util :refer [maybe nameable? as-str]]
-   [kushi.ui.tooltip.arrow :as arrow]
-   [kushi.ui.tooltip.placement :refer [el-plc
+   [kushi.ui.dom.fune.arrow :as arrow]
+   [kushi.ui.dom.fune.placement :refer [el-plc
                                        tooltip-plc
                                        updated-tooltip-placement
                                        user-placement
                                        og-placement
                                       ;;  shifts
                                        ]]
-   [kushi.ui.tooltip.styles]
-   [kushi.ui.tooltip.translate :as translate]
+   [kushi.ui.dom.fune.styles]
+   [kushi.ui.dom.fune.translate :as translate]
    [applied-science.js-interop :as j]))
 
 (defn tooltip-classes
@@ -39,18 +41,26 @@
   [{:keys [el
            ttt
            id
-           opts
            placement-kw
            tt-pos-og
            metrics?
            translate-xy-style]
     :as append-tt-opts}]
+(!? append-tt-opts)
 
   ;; Set the innerHTML / tooltip text
-  (set! (.-innerHTML el)
-        (str "<div class=\"kushi-tooltip-text-wrapper\" style=\"position:relative;display:flex;justify-content:center;align-items:center;width:fit-content;\"><span class=\"kushi-tooltip-text\">"
+  (let [style (domo/css-style-string
+               {:position        :relative
+                :display         :flex
+                :justify-content :center
+                :align-items     :center
+                :width           :fit-content})]
+    (set! (.-innerHTML el)
+          (str "<div class=\"kushi-tooltip-text-wrapper\""
+               "style=\"" style  "\">"
+               "<span class=\"kushi-tooltip-text\">"
                (maybe-multiline-tooltip-text ttt)
-             "</span></div>"))
+               "</span></div>")))
   
   ;; Set the class and id of the tooltip el
   (doto el
@@ -61,18 +71,20 @@
   (.appendChild js/document.body el)
 
   ;; Calculate the css :translate property and set the :style
-  (let [txy (or translate-xy-style
-                (translate/tooltip-translate-css
-                 (assoc opts
-                        :corner-plc?
-                        (:corner-plc? tt-pos-og)
-                        :tooltip-el el)
-                 placement-kw))]
+  (let [
+        txy     (or translate-xy-style
+                    (translate/fune-translate-css
+                     (assoc append-tt-opts
+                            :corner-plc?
+                            (:corner-plc? tt-pos-og)
+                            :tooltip-el el
+                            :placement-kw placement-kw)
+                     #_placement-kw))]
     (.setAttribute el
                    "style"
                    (str txy
                         (when metrics? 
-                          (dom/css-style-string
+                          (domo/css-style-string
                            {:scale               :1!important
                             :transition-property :none!important}))))
 
@@ -88,7 +100,6 @@
    axis in order to keep it wholly in the veiwport."
   [{ttt            :tooltip-text
     placement-kw   :placement-kw
-    tooltip-class  :tooltip-class
     tooltip-arrow? :tooltip-arrow?
     owning-el      :owning-el
     :as opts}
@@ -105,39 +116,32 @@
   (let [tooltip-arrow?  (if (false? tooltip-arrow?) false true)
         opts            (assoc opts
                                :owning-el-rect
-                               (dom/client-rect owning-el))
-        viewport        (dom/viewport)
+                               (domo/client-rect owning-el))
+        viewport        (domo/viewport)
         ;; TOOD - Use some koind of dpi calc for edge-threshold.
         ;; Convert to px if user supplies ems or rems.
         edge-threshold  (some-> owning-el
-                                (dom/css-custom-property-value
+                                (domo/css-custom-property-value
                                  "--tooltip-flip-viewport-edge-threshold")
                                 js/parseInt)
         owning-el-vpp   (el-plc viewport
-                                        owning-el
-                                        edge-threshold)
+                                owning-el
+                                edge-threshold)
         placement-kw    (og-placement placement-kw
                                       owning-el
                                       owning-el-vpp)
         tt-pos-og       (tooltip-plc placement-kw)
         el              (js/document.createElement "div")
-        ;; TODO - maybe use existing opts instead of nesting it here?
-        ;; also you are doing this in append-tooltip-el!, so maybed do it here?:
-            ;; (assoc opts 
-            ;;   :corner-plc?
-            ;;   (:corner-plc? tt-pos-og)
-            ;;   :tooltip-el el)
-        append-tt-opts  (keyed el
-                               id
-                               ttt
-                               opts
-                               placement-kw 
-                               tooltip-class
-                               tooltip-arrow?
-                               tt-pos-og)]
-    (append-tooltip-el! (assoc append-tt-opts
-                               :metrics? true
-                               :id       (str "_kushi-metrics_" id)))
+        append-tt-opts  (merge opts
+                               (keyed el
+                                      id
+                                      ttt
+                                      placement-kw
+                                      tt-pos-og 
+                                      tooltip-arrow?))]
+    (append-tooltip-el! (merge append-tt-opts
+                               {:metrics? true
+                                :id       (str "_kushi-metrics_" id)}))
 
 
     ;; 2) Measure and adjust
@@ -170,41 +174,51 @@
 
           translate-xy-style
           (when adjust?
-            (let [opts (assoc opts
-                              :shift-x             shift-x
-                              :shift-y             shift-y
-                              :corner-plc? (:corner-plc? tt-pos)
-                              :tooltip-el          el
-                              :tooltip-arrow?      tooltip-arrow?
-                              :adjust?             true) ]
-              (translate/tooltip-translate-css
+            ;; (??? new-placement-kw)
+            ;; (? (data/diff opts append-tt-opts))
+            (let [opts (assoc opts ;; need to be different than append-tt-opts?
+                              :shift-x        shift-x
+                              :shift-y        shift-y
+                              :corner-plc?    (:corner-plc? tt-pos)
+                              :el             el
+                              :tooltip-arrow? tooltip-arrow?
+                              :adjust?        true
+                              :placement-kw   new-placement-kw)]
+              (translate/fune-translate-css
                opts
-               new-placement-kw)))
+               #_new-placement-kw)))
           
 
           
           ;; 3) Remove dummy and append new element
           ;; If shifted, update scale
           ;; ----------------------------------------------------------------------
-          _               (.removeChild js/document.body el)
-          el              (js/document.createElement "div")
-          append-tt-opts  (keyed el
-                                 id
-                                 ttt
-                                 opts
-                                 placement-kw 
-                                 tooltip-arrow?
-                                 tooltip-class
-                                 ;; is this right or tt-pos better?
-                                 tt-pos-og)]
+          _
+          (.removeChild js/document.body el) ;; move down
 
-       (append-tooltip-el! append-tt-opts)
+          el              
+          (js/document.createElement "div")
+
+          append-tt-opts-part2
+          (merge opts
+                 (keyed el
+                        id 
+                        ttt
+                        tooltip-arrow?
+                        
+                        ;; is this right? why not new-placement-kw
+                        placement-kw ;;exists in atto 
+                        
+                        ;; is this right or tt-pos better?
+                        tt-pos-og))]
+
+       (append-tooltip-el! append-tt-opts-part2)
        
        (when adjust?
          (.setAttribute el "style" translate-xy-style))
           
 
-      ;;  (println :after-update (keyed shift-x shift-y adjust? new-placement-kw placement-kw))
+      ;; (println :after-update (keyed shift-x shift-y adjust? new-placement-kw placement-kw))
 
       ;; (.setAttribute el "style" updated-translate-xy)
       
@@ -213,7 +227,7 @@
       ;; Add the class with final placement syntax "kushi-tooltip-tr".
       ;; Then create an arrow element and calculate position and geometry.
       ;; ----------------------------------------------------------------------
-      (dom/add-class el
+      (domo/add-class! el
                      (str "kushi-tooltip-"
                           (name new-placement-kw)))
 
@@ -234,13 +248,13 @@
                                shift?)))
 
             ;; No shifting for now, so leaving these out
-            ;; transition-duration-ms (dom/duration-property-ms el "transitionDuration")
-            ;; transition-delay-ms    (dom/duration-property-ms el "transitionDelay")
+            ;; transition-duration-ms (domo/duration-property-ms el "transitionDuration")
+            ;; transition-delay-ms    (domo/duration-property-ms el "transitionDelay")
             ;; compute-shift-delay    (+ transition-delay-ms transition-duration-ms)
             ]
         (js/window.requestAnimationFrame
             (fn [_]
-              (dom/remove-class el "invisible")
+              (domo/remove-class! el "invisible")
               
               ;; Shifts are disabled for now so commenting this expression out
               #_(when shift?
@@ -268,7 +282,9 @@
         (remove-tooltip! owning-el tt-id nil)
         (.removeEventListener owning-el
                               "mouseleave"
-                              (partial remove-tooltip! owning-el tt-id)
+                              (partial remove-tooltip!
+                                       owning-el
+                                       tt-id)
                               #js {"once" true})))))
 
 (defn- remove-tooltip!
@@ -277,9 +293,9 @@
    Removes the tooltip instance-specific `keydown` event on window."
   [owning-el tt-id e]
   (some->> tt-id
-           dom/el-by-id
+           domo/el-by-id
            (.removeChild js/document.body))
-  (dom/remove-attribute! owning-el :aria-describedby)
+  (domo/remove-attribute! owning-el :aria-describedby)
   (.removeEventListener owning-el
                         "mouseleave"
                         (partial remove-tooltip! owning-el tt-id)
@@ -291,8 +307,7 @@
   (.removeEventListener js/window
                         "scroll"
                         (partial escape-tooltip! owning-el tt-id)
-                        #js {"once" true})
-  )
+                        #js {"once" true}))
 
 (defn- remove-tooltip2!
   "Removes tooltip from dom.
@@ -300,22 +315,21 @@
    Removes the tooltip instance-specific `keydown` event on window."
   [el]
   (.remove el)
-  (let [owning-el (dom/qs (str "[aria-describedby='" (.-id el) "']")) ]
-    (dom/remove-attribute! owning-el :aria-describedby)))
+  (let [owning-el (domo/qs (str "[aria-describedby='" (.-id el) "']")) ]
+    (domo/remove-attribute! owning-el :aria-describedby)))
 
 (defn append-tooltip!
   ([opts e]
   (append-tooltip! opts nil e))
   ([opts tt-id e]
-  (js/console.log e.type)
    ;; We need to use cet here (.currentEventTarget), in order
    ;; To prevent mis-assignment of ownership of the tooltip to
    ;; A child element of the intended owning el. 
-   (let [owning-el (dom/cet e)
+   (let [owning-el (domo/cet e)
                    ;; TODO - should this be "kushi-tooltip-*" ?
          tt-id     (or tt-id (str "kushi-" (gensym)))]
      (do 
-       (dom/set-attribute! owning-el :aria-describedby tt-id)
+       (domo/set-attribute! owning-el :aria-describedby tt-id)
        (append-tooltip!* (assoc opts :owning-el owning-el)
                          tt-id)
        (.addEventListener owning-el
@@ -355,50 +369,80 @@
 
 
 (defn tooltip-attrs
-  {:desc ["Tooltips provide additional context when hovering or clicking on an element. They are intended to be ephemeral, containing only non-interactive content."
+  {:desc ["Tooltips provide additional context when hovering or clicking on an"
+          "element. They are intended to be ephemeral, containing only"
+          "non-interactive content."
           :br
           :br
-          "Specifying placement in various ways can be done with the `:-placement` option."
+          "By default, tooltips will show up above the owning element. "
+          "Specifying placement in various ways can be done with the"
+          "`:-placement` option."
           :br
           :br
-          "These tooltips are implemented with a `::after` and `::before` pseudo-elements and therefore differ from most of the other primitive component Kushi offers."
-          "The element being tipped must receive an attributes map that is a result of passing a map of options to `kushi.ui.tooltip.core/tooltip-attrs`."
-          "You can compose this map to an existing elements attributes map using the pattern:"
+          "The element being tipped must receive an attributes map that is a "
+          "result of passing a map of options to "
+          "`kushi.ui.tooltip.core/tooltip-attrs`. You can compose this map to "
+          "an existing elements attributes map using the pattern:"
           :br
           :br "`(merge-attrs (sx ...) (tooltip-attrs {...}))`"
           :br
           :br
-          "If the element that you are tipping is already using either of the `::before` or `::after` pseudo-elements, you will need to wrap it in a container (perhaps a `<span>`) and apply the tooltip attrs to that wrapper."
-          :br
-          :br
-          "The element being tipped must also have a css `position` value such as `relative` set, so that the absolutely-positioned tooltip pseudo-element will end up with the desired placement."
-          "Tooltips can be custom styled via the following tokens in your theme:"
-          :br
+          "Tooltips can be custom styled and controlled via the following "
+          "tokens in your theme:"
           :br
           ;; TODO add documentation for each token
-          :br "`:$tooltip-arrow-depth`"
-          :br "`:$tooltip-arrow-x-offset`"
-          :br "`:$tooltip-arrow-y-offset`"
+          :br "Colors and images:"
+          :br "`:$tooltip-color`"                            
+          :br "`:$tooltip-color-inverse`"                    
+          :br "`:$tooltip-background-color`"                 
+          :br "`:$tooltip-background-color-inverse`"         
+          :br "`:$tooltip-background-image`"                 
+          :br
+          :br "Typography:"
+          :br "`:$tooltip-line-height`"
+          :br "`:$tooltip-font-family`"
+          :br "`:$tooltip-font-size`"
+          :br "`:$tooltip-font-weight`"
+          :br "`:$tooltip-text-transform`"
+          :br
+          :br "Geometry:"
           :br "`:$tooltip-padding-inline`"
           :br "`:$tooltip-padding-block`"
           :br "`:$tooltip-border-radius`"
-          :br "`:$tooltip-font-size`"
-          :br "`:$tooltip-font-weight`"
-          :br "`:$tooltip-color`"
-          :br "`:$tooltip-background-color`"
-          :br "`:$tooltip-color-inverse`"
-          :br "`:$tooltip-background-color-inverse`"
-          :br "`:$tooltip-text-transform`"
           :br "`:$tooltip-offset`"
+          :br "`:$tooltip-viewport-padding`"
+          :br "`:$tooltip-flip-viewport-edge-threshold`"
+          :br "`:$tooltip-auto-placement-y-threshold`"
+          :br
+          :br "Choreography:"
+          :br "`:$tooltip-delay-duration`"            
+          :br "`:$tooltip-reveal-on-click-duration`"  
+          :br "`:$tooltip-initial-scale`"             
+          :br "`:$tooltip-offset-start`"              
+          :br "`:$tooltip-transition-duration`"       
+          :br "`:$tooltip-transition-timing-function`"
+          :br
+          :br "Arrows:"
+          :br "`:$tooltip-arrow-depth-min-px`"
+          :br "`:$tooltip-arrow-depth-max-px`"
+          :br "`:$tooltip-arrow-depth-ems`"
+          :br "`:$tooltip-arrow-depth`"   
+          :br "`:$tooltip-arrow-x-offset`"
+          :br "`:$tooltip-arrow-y-offset`"
+
           :br
           :br
-          "If you want supply the value of any of the above tokens ala-carte, use the following pattern."
+          "If you want supply the value of any of the above tokens ala-carte, "
+          "use the following pattern."
           :br
           :br
           "`(merge-attrs (sx :$tooltip-offset--5px ...) (tooltip-attrs {...}))`"
           :br
           :br
-          "If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for `$tooltip-offset`, `$tooltip-arrow-x-offset`, `$tooltip-arrow-y-offset`, or `$tooltip-border-radius`, you will need to use an explicit unit e.g. `0px`."
+          "If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for "
+          "`$tooltip-offset`, `$tooltip-arrow-x-offset`, "
+          "`$tooltip-arrow-y-offset`, or `$tooltip-border-radius`, you will need "
+          "to use an explicit unit e.g. `0px`."
           ]
    :opts '[{:name    text
             :pred    #(or (string? %) (keyword? %) (vector? %))
@@ -408,7 +452,8 @@
             :pred    keyword?
             :default :auto
             :desc    [
-                      "You can use single keywords to specify the exact placement of the tooltip:"
+                      "You can use single keywords to specify the exact placement "
+                      "of the tooltip:"
                       :br
                       "`:top-left-corner`"
                       :br
@@ -454,42 +499,44 @@
                       "`:rbc`"
                       :br
                       :br
-                      "If you care about the tooltip placement respecting writing direction and/or document flow, you can use a string of up to 3 logical properties, separated by spaces:"
+                      "If you care about the tooltip placement respecting writing "
+                      "direction and/or document flow, you can use a vector of of "
+                      "up to 3 logical properties keywords, separated by spaces:"
                       :br
-                      "`\"inline-end block-start\"`"
+                      "`[:inline-end :block-start]`"
                       :br
-                      "`\"inline-end block-start corner\"`"
+                      "`[:inline-end :block-start :corner]`"
                       :br
-                      "`\"inline-start center\"`"
+                      "`[:inline-start :center]`"
                       :br
-                      "`\"inline-end center\"`"
+                      "`[:inline-end :center]`"
                       :br
-                      "`\"block-start center\"`"
+                      "`[:block-start :enter]`"
                       :br
-                      "`\"block-end center\"`"
+                      "`[:block-end :center]`"
                       :br
-                      "`\"block-end inline-start\"`"
+                      "`[:block-end :inline-start]`"
                       :br]}
            {:name    arrow?
             :pred    boolean?
             :default true
-            :desc    "Setting to false will not render a directional arrow with the tooltip."}
+            :desc    ["Setting to false will not render a directional arrow with "
+                     "the tooltip."]}
            {:name    tooltip-class
-            :pred    string
+            :pred    string?
             :default nil
-            :desc    "A classname for a la carte application of a classes on the tooltip element."}
+            :desc    ["A class name for a la carte application of a classes on the "
+                      " tooltip element."]}
            {:name    text-on-click
             :pred    #(or (string? %) (keyword? %) (vector? %))
             :default nil
             :desc    ["The tooltip text, after the tipped element has been clicked."]}
            {:name    text-on-click-tooltip-class
-            :pred    string
+            :pred    string?
             :default nil
-            :desc    "A classname for a la carte application of a classes on the tooltip element which is displaying alternate text after click."}
-           {:name    text-on-click-duration
-            :pred    int?
-            :default 2000
-            :desc    "When `:-text-on-click` is utilized, this milliseconds value will control the duration of the `:-text-on-click` value being used as the tooltip text."} ]}
+            :desc    ["A class name for the la carte application of classes on "
+                      "the tooltip element which is displaying alternate text "
+                      "after click."]}]}
   [{text                        :-text
     placement                   :-placement
     arrow?                      :-arrow?
@@ -498,7 +545,7 @@
     text-on-click-tooltip-class :-text-on-click-tooltip-class
     :or                         {placement :auto
                                  arrow?    true}}]
-
+  
   (when-let [tooltip-text (valid-tooltip-text text)] 
     (let [tooltip-arrow? (if (false? arrow?) false true)
           placement      (if-not (or (string? placement)
@@ -514,30 +561,23 @@
                                 tooltip-class)]
       (merge 
        {:data-kushi-ui-tooltip (name placement-kw)
-        :on-mouse-enter        (partial append-tooltip! opts)
-        ;; :on-mouse-enter        #(js/console.log "ENTER")
-        ;; :on-mouse-leave        (fn [e] 
-        ;;                          (?> e.type)
-        ;;                          (let [tts (js/document.querySelectorAll ".kushi-tooltip")]
-        ;;                            (doseq [el tts]
-        ;;                              (remove-tooltip2! el))))
-        }
+        :on-mouse-enter        (partial append-tooltip! opts)}
 
        ;; Todo use when-let to validate text-on-click and normalize if vector
        (when-let [text-on-click (maybe-multiline-tooltip-text text-on-click)]
          {:on-click (fn [_]
                       (let [duration           (token->ms :$tooltip-reveal-on-click-duration)
-                            tt-el              (dom/qs ".kushi-tooltip")
-                            tt-el-text-wrapper (dom/qs tt-el ".kushi-tooltip-text-wrapper")
-                            tt-el-text-span    (dom/qs tt-el ".kushi-tooltip-text")
+                            tt-el              (domo/qs ".kushi-tooltip")
+                            tt-el-text-wrapper (domo/qs tt-el ".kushi-tooltip-text-wrapper")
+                            tt-el-text-span    (domo/qs tt-el ".kushi-tooltip-text")
                             text-on-click-el   (js/document.createElement "span")]
                         (j/assoc! text-on-click-el "innerText" text-on-click)
-                        (dom/add-class text-on-click-el "absolute-centered")
-                        (dom/add-class tt-el text-on-click-tooltip-class)
+                        (domo/add-class! text-on-click-el "absolute-centered")
+                        (domo/add-class! tt-el text-on-click-tooltip-class)
                         (.appendChild tt-el-text-wrapper text-on-click-el)
-                        (dom/add-class tt-el-text-span "invisible")
+                        (domo/add-class! tt-el-text-span "invisible")
                         (js/setTimeout (fn [_] 
                                          (.removeChild tt-el-text-wrapper text-on-click-el)
-                                         (dom/remove-class tt-el text-on-click-tooltip-class)
-                                         (dom/remove-class tt-el-text-span "invisible"))
+                                         (domo/remove-class! tt-el text-on-click-tooltip-class)
+                                         (domo/remove-class! tt-el-text-span "invisible"))
                                        duration)))})))))

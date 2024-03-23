@@ -1,4 +1,4 @@
-(ns kushi.ui.tooltip.styles
+(ns kushi.ui.dom.fune.styles
   (:require
    [goog.string]
    [kushi.core :refer (defclass)]))

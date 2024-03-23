@@ -1,7 +1,7 @@
-(ns kushi.ui.tooltip.arrow
+(ns kushi.ui.dom.fune.arrow
   (:require
    [kushi.core :refer (keyed)]
-   [domo.core :as dom]
+   [domo.core :as domo]
    [kushi.ui.util :as util :refer [ck?]] ))
 
 
@@ -73,17 +73,17 @@
 
 (defn- arrow-style-css2
   [opts]
-  (str (dom/css-style-string 
+  (str (domo/css-style-string 
         (merge (:arrow-position-stylemap opts)
                (translate-xy opts)))))
 
 
 (defn shift-arrow! 
   [{:keys [owning-el-vpp arrow-el tt-pos]}]
-  (let [diff     (str (- (:center owning-el-vpp)
-                         (:center (dom/client-rect arrow-el)))
+  (let [diff     (str (- (:x-center owning-el-vpp)
+                         (:x-center (domo/client-rect arrow-el)))
                       "px")
-        css-var! #(dom/set-css-var! arrow-el
+        css-var! #(domo/set-css-var! arrow-el
                                     (str "--__ktt-shift-" %)
                                     diff)]
     (cond (:block-plc? tt-pos)
