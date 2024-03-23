@@ -53,19 +53,25 @@
   (let [[nested-styles
          styles-]      (util/partition-by-spec ::specs2/style-tuple-nested tups)
         nested-styles+ (mapcat (fn [[k m]]
-                                 (let [mq-keys*    (->> user-config :media keys (map name) (into #{}))
-                                       mq-keys     (conj mq-keys* "dark")
-                                       k-as-string (specs2/kw?->s k)
-                                       k-is-mq?    (contains? mq-keys k-as-string)
-                                      ;;  debug?      (= tups '(["has-ancestor(.g)" {:&_.foo:c :red}]))
-                                       ]
+                                 (let [mq-keys* (->> user-config
+                                                     :media
+                                                     keys
+                                                     (map name)
+                                                     (into #{}))
+                                       mq-keys  (conj mq-keys* "dark")
+                                       k-as-str (specs2/kw?->s k)
+                                       k-is-mq? (contains? mq-keys
+                                                           k-as-str)]
 
                                    (map (fn [[prop value]]
-                                          (let [nested-prop-as-string (specs2/kw?->s prop)
-                                                nested-prop-has-mod?  (re-find #"\:" nested-prop-as-string)
-                                                sep (if (and nested-prop-has-mod? (not k-is-mq?)) "" ":")]
-                                            ;; (when debug? (? (keyed value-as-string value-has-mod? k-is-mq?)))
-                                            [(str k-as-string sep (specs2/kw?->s prop)) value]))
+                                          (let [nested-prop-as-str   (specs2/kw?->s prop)
+                                                nested-prop-has-mod? (re-find #"\:" 
+                                                                              nested-prop-as-str)
+                                                sep                  (if (and nested-prop-has-mod?
+                                                                              (not k-is-mq?))
+                                                                       ""
+                                                                       ":")]
+                                            [(str k-as-str sep (specs2/kw?->s prop)) value]))
                                         m)))
                                nested-styles)
         styles         (concat styles- nested-styles+)
