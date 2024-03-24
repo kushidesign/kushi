@@ -1,5 +1,6 @@
 (ns kushi.ui.dom.fune.translate
   (:require
+   [fireworks.core :refer [??? ?? ? !? ?> !?>]]
    [clojure.string :as string]
    [kushi.core :refer (keyed)]
    [domo.core :as domo]
@@ -38,12 +39,10 @@
            owning-el-rect
            owning-el
            corner-plc?
-           shift-x
-           shift-y
-           arrow?]
+           arrow?
+           metrics?]
     fune-el :el
-    :or {shift-x 0
-         shift-y 0}}]
+    }]
 
   (let [[hrz translate-x vrt translate-y offset-x-op offset-y-op]
         (get translate-xy placement-kw nil)
@@ -91,15 +90,24 @@
         offset-y     (some-> offset-y-op offset*)
         x            (str (domo/round-by-dpr (get owning-el-rect hrz 0)) "px")
         y            (str (domo/round-by-dpr (get owning-el-rect vrt 0)) "px")
-        shift-x      (str (domo/round-by-dpr shift-x) "px")
-        shift-y      (str (domo/round-by-dpr shift-y) "px")
 
         left*        (calc (.-clientWidth fune-el) "px * (" translate-x " / 100)")
-        left         (calc x " + " shift-x " + " left* " " offset-x)
+        left         (calc x " + " left* " " offset-x)
 
         top*         (calc (.-clientHeight fune-el) "px * (" translate-y " / 100)")
-        top          (calc y " + " shift-y " + " top* " " offset-y)
+        top          (calc y " + " top* " " offset-y)
 
+
+        _ (when-not metrics?
+            (!? (keyed fune-offset-value
+                      fune-offset-value-units
+                      fune-offset-start-value
+                      fune-offset-start-value-units
+                      offset-transitions-towards?
+                      otd
+                      otd-abs
+                      )))
+        _ (!? :top top)
         ;; For offset-on-reveal shift
         ;; if otd-abs stars-with "0" and initial-scale is 1 don't calc a transform
         ck?          (partial ck? placement-kw)
@@ -120,7 +128,7 @@
                            (ck? #{:rtc :trc}) [tx+ ty-]
                            (ck? #{:rbc :brc}) [tx+ ty+]
                            (ck? #{:lbc :blc}) [tx- ty+]))
-                       (let [c (-> placement-kw name first) ]
+                       (let [c (-> placement-kw name first)]
                          (if offset-transitions-towards?
                            (case c
                              "t" [nil ty+]
@@ -140,18 +148,30 @@
 
 (defn fune-translate-css
   ;; TODO put k in opts?
-  [opts #_k]
+  [opts]
   (let [
-        ;; opts  (assoc opts :placement-kw k)
-        [left
-         top
-         scl
-         tx
-         ty]  (fune-translate-xy opts)]
-    (str
-     "left: " left "; "
-     "top: " top "; "
-     "scale: " scl "; "
-     "--_kushi-tooltip-translate-x-base: " (or tx "0px") "; "
-     "--_kushi-tooltip-translate-y-base: " (or ty "0px") ";"
-     )))
+        ;; [left
+        ;;  top
+        ;;  scl
+        ;;  tx
+        ;;  ty]  (fune-translate-xy opts)
+        {oe-top      :top
+         oe-left     :left
+         oe-right    :right
+         oe-bottom   :bottom
+         oe-x-center :x-center
+         oe-y-center :y-center} (:owning-el-rect opts)]
+
+     (domo/css-style-string
+      {"--oe-top"      (str oe-top "px")
+       "--oe-left"     (str oe-left "px")
+       "--oe-right"    (str oe-right "px")
+       "--oe-bottom"   (str oe-bottom "px")
+       "--oe-x-center" (str oe-x-center "px")
+       "--oe-y-center" (str oe-y-center "px")
+       "--tt-offset"   "max(var(--tooltip-offset-start), 0px)"
+       "--offset"      (calc "(var(--tt-offset) + var(--tooltip-arrow-depth))")
+       "--top-plc"     (calc "(var(--oe-top) - 100%) - var(--offset)")
+       "--bottom-plc"  (calc "var(--oe-bottom) + var(--offset)")
+       "--right-plc"   (calc "var(--oe-right) + var(--offset)")
+       "--left-plc"    (calc "(var(--oe-left) - 100%) - var(--offset)")})))

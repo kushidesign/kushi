@@ -21,11 +21,20 @@
    [applied-science.js-interop :as j]))
 
 (defn tooltip-classes
-  [{:keys [tooltip-class tooltip-arrow?]}]
+  [{:keys [tooltip-class 
+           tooltip-arrow?
+           placement-kw
+           new-placement-kw
+           metrics?]}]
   (string/join
    " " 
    ["kushi-tooltip"
     "invisible" 
+    (some->> (if metrics? 
+               placement-kw
+               new-placement-kw)
+             name
+             (str "kushi-tooltip-"))
     (when-not tooltip-arrow? "kushi-tooltip-arrowless")
     (some-> tooltip-class (maybe nameable?) as-str)]))
 
@@ -54,7 +63,8 @@
                 :display         :flex
                 :justify-content :center
                 :align-items     :center
-                :width           :fit-content})]
+                :width           :fit-content})
+        ]
     (set! (.-innerHTML el)
           (str "<div class=\"kushi-tooltip-text-wrapper\""
                "style=\"" style  "\">"
@@ -63,9 +73,27 @@
                "</span></div>")))
   
   ;; Set the class and id of the tooltip el
-  (doto el
-    (.setAttribute "id" id)
-    (.setAttribute "class" (tooltip-classes append-tt-opts)))
+  ;; make sure translate-xy-style is always map, then merge with below
+  (let [txy     (or translate-xy-style
+                    (translate/fune-translate-css
+                     (assoc append-tt-opts
+                            :corner-plc?
+                            (:corner-plc? tt-pos-og)
+                            :tooltip-el el
+                            :placement-kw placement-kw)
+                     #_placement-kw))
+        
+        txy (str txy
+                 "; "
+                 (when metrics? 
+                   (domo/css-style-string
+                    {:scale               :1!important
+                     :transition-property :none!important})))]
+    (doto el
+      (.setAttribute "id" id)
+      (.setAttribute "style" txy)
+      (.setAttribute "class" (tooltip-classes append-tt-opts))
+      ))
   
   ;; Append tooltip el to the <body> 
   (.appendChild js/document.body el)
@@ -79,8 +107,10 @@
                             (:corner-plc? tt-pos-og)
                             :tooltip-el el
                             :placement-kw placement-kw)
-                     #_placement-kw))]
-    (.setAttribute el
+                     #_placement-kw))
+        ]
+    #_(??? txy)
+    #_(.setAttribute el
                    "style"
                    (str txy
                         (when metrics? 
@@ -95,7 +125,7 @@
 
 (defn- append-tooltip!*
   "A tooltip is given an initial position based on screen-quadrant of the owning
-   element, or user-supplied `-placment` attr. If it is offscreen, it is then
+   element, or user-supplied `-placement` attr. If it is offscreen, it is then
    given a new placement and position which may include a shift on the x or y
    axis in order to keep it wholly in the veiwport."
   [{ttt            :tooltip-text
@@ -130,7 +160,7 @@
         placement-kw    (og-placement placement-kw
                                       owning-el
                                       owning-el-vpp)
-        tt-pos-og       (tooltip-plc placement-kw)
+        tt-pos-og       (!? :tt-pos-og (tooltip-plc placement-kw))
         el              (js/document.createElement "div")
         append-tt-opts  (merge opts
                                (keyed el
@@ -153,73 +183,77 @@
     ;; Add some kind of :tl or :br key to opts below, then use padding value
     ;; in css land.
     ;; -----------------------------------------------------------------------------
-    (let [vpp               (el-plc viewport el 0)
-          new-placement-kw  (updated-tooltip-placement
-                             (merge tt-pos-og
-                                    (keyed vpp placement-kw)))
+    (let [vpp                  (!? {:label 'vpp :coll-limit 24} (el-plc viewport el 0))
+          new-placement-kw     (!? 'npkw (updated-tooltip-placement
+                                (merge tt-pos-og
+                                       (keyed vpp placement-kw))))
 
-          tt-pos            (tooltip-plc new-placement-kw)
+          tt-pos               (tooltip-plc new-placement-kw)
 
 
           ;; Disable shifting for now and just return nil for shift-x & shift-y
           ;; {:keys [shift-x
           ;;         shift-y]} (shifts (merge tt-pos (keyed viewport vpp)))
           
-          shift-x        nil 
-          shift-y        nil 
+          shift-x              nil 
+          shift-y              nil 
           
-          shift?            (boolean (or shift-x shift-y))
-          new-placement?    (not= placement-kw new-placement-kw)    
-          adjust?           (boolean (or shift? new-placement?))
+          shift?               (boolean (or shift-x shift-y))
+          new-placement?       (not= placement-kw new-placement-kw)    
+          adjust?              (boolean (or shift? new-placement?))
 
-          translate-xy-style
-          (when adjust?
+          translate-xy-style   (when adjust?
             ;; (??? new-placement-kw)
             ;; (? (data/diff opts append-tt-opts))
-            (let [opts (assoc opts ;; need to be different than append-tt-opts?
-                              :shift-x        shift-x
-                              :shift-y        shift-y
-                              :corner-plc?    (:corner-plc? tt-pos)
-                              :el             el
-                              :tooltip-arrow? tooltip-arrow?
-                              :adjust?        true
-                              :placement-kw   new-placement-kw)]
-              (translate/fune-translate-css
-               opts
-               #_new-placement-kw)))
+                                 (let [opts (assoc opts ;; need to be different than append-tt-opts?
+                                                   :shift-x        shift-x
+                                                   :shift-y        shift-y
+                                                   :corner-plc?    (:corner-plc? tt-pos)
+                                                   :el             el
+                                                   :tooltip-arrow? tooltip-arrow?
+                                                   :adjust?        true
+                                                   :placement-kw   new-placement-kw)]
+                                   (translate/fune-translate-css
+                                    opts
+                                    #_new-placement-kw)))
           
 
           
           ;; 3) Remove dummy and append new element
           ;; If shifted, update scale
           ;; ----------------------------------------------------------------------
-          _
-          (.removeChild js/document.body el) ;; move down
 
-          el              
-          (js/document.createElement "div")
-
-          append-tt-opts-part2
-          (merge opts
-                 (keyed el
-                        id 
-                        ttt
-                        tooltip-arrow?
-                        
-                        ;; is this right? why not new-placement-kw
-                        placement-kw ;;exists in atto 
-                        
-                        ;; is this right or tt-pos better?
-                        tt-pos-og))]
-
-       (append-tooltip-el! append-tt-opts-part2)
-       
-       (when adjust?
-         (.setAttribute el "style" translate-xy-style))
+          _                    (.removeChild js/document.body el) ;; move down
           
+          el                   (js/document.createElement "div")
+
+          append-tt-opts-part2 (merge opts
+                                      (keyed el
+                                             id 
+                                             ttt
+                                             tooltip-arrow?
+                                             
+                                             ;; is this right? why not new-placement-kw
+                                             placement-kw ;;exists in atto 
+                                             
+                                             ;; is this right or tt-pos better?
+                                             tt-pos-og
+                                             ;; experimental
+                                             new-placement-kw 
+                                             ))
+          ]
+
+      ;; temp :11:09
+      (append-tooltip-el! append-tt-opts-part2)
+      
+      ;; temp :11:09
+      (when adjust?
+        (.setAttribute el "style" translate-xy-style))
+      
 
       ;; (println :after-update (keyed shift-x shift-y adjust? new-placement-kw placement-kw))
-
+      
+      
       ;; (.setAttribute el "style" updated-translate-xy)
       
 
@@ -227,10 +261,12 @@
       ;; Add the class with final placement syntax "kushi-tooltip-tr".
       ;; Then create an arrow element and calculate position and geometry.
       ;; ----------------------------------------------------------------------
-      (domo/add-class! el
-                     (str "kushi-tooltip-"
-                          (name new-placement-kw)))
 
+      ;; Trying this in append-tooltip-el! for now
+      #_(domo/add-class! el
+                       (str "kushi-tooltip-"
+                            (name new-placement-kw)))
+      #_(domo/set-attribute! el "data-kushi-tooltip-placement" (name new-placement-kw))
       
 
       ;; 5) Display
@@ -253,20 +289,22 @@
             ;; compute-shift-delay    (+ transition-delay-ms transition-duration-ms)
             ]
         (js/window.requestAnimationFrame
-            (fn [_]
-              (domo/remove-class! el "invisible")
-              
+         (fn [_]
+           (domo/remove-class! el "invisible")
+           (domo/set-css-var! el "--tt-offset" "max(var(--tooltip-offset), 0px)")
+           (domo/set-style! el "scale" "1")
+           
               ;; Shifts are disabled for now so commenting this expression out
-              #_(when shift?
+           #_(when shift?
                 ;; TODO - we could also try doing a recusive setInterval loop here
                 ;; to progressively move arrow. Or maybe just introduce a second
                 ;; metrics dummy to get the exact postion, taking into accont for
                 ;; the border-radius.
-                (js/setTimeout
-                 #(arrow/shift-arrow! (keyed owning-el-vpp arrow-el tt-pos))
-                 compute-shift-delay))
-                 
-                 ))))))
+               (js/setTimeout
+                #(arrow/shift-arrow! (keyed owning-el-vpp arrow-el tt-pos))
+                compute-shift-delay))
+           
+           ))))))
 
 (declare remove-tooltip!)
 
@@ -292,7 +330,7 @@
    Removes :aria-describedby on owning element.
    Removes the tooltip instance-specific `keydown` event on window."
   [owning-el tt-id e]
-  (some->> tt-id
+  #_(some->> tt-id
            domo/el-by-id
            (.removeChild js/document.body))
   (domo/remove-attribute! owning-el :aria-describedby)
@@ -325,6 +363,7 @@
    ;; We need to use cet here (.currentEventTarget), in order
    ;; To prevent mis-assignment of ownership of the tooltip to
    ;; A child element of the intended owning el. 
+  ;;  (js/console.clear)
    (let [owning-el (domo/cet e)
                    ;; TODO - should this be "kushi-tooltip-*" ?
          tt-id     (or tt-id (str "kushi-" (gensym)))]

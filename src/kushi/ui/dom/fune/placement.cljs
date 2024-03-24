@@ -135,7 +135,9 @@
 
 
 ;; TODO Add some safety here for bad inputs
-;; Make the logic more efficient if arg is a string or vector (for logic placement)
+;; Make the logic more efficient if arg is a
+;; string or vector (for logic placement)
+
 (defn user-placement
   "Expects a string, keyword, or vector of strings or keywords"
   [x]
@@ -366,7 +368,6 @@
 
 (defn el-plc
   [viewport el edge-threshold]
-  ;; TODO - use let-map here
   (let [{:keys [top
                 bottom
                 left
@@ -408,34 +409,3 @@
                x-fraction
                y-fraction)))
  
-
-(defn shifts
-  [{:keys [inline-plc?
-           corner-plc?
-           block-plc?
-           viewport
-           vpp]}]
-  (let [
-        ;; TODO - This should be a css-var called :$tooltip-viewport-padding
-        viewport-padding 5
-
-        ;; TODO - if needed, viewport-padding should be handled in css-land
-        tl-shift #(+ (js/Math.abs %) viewport-padding)
-        br-shift (fn [x k]
-                   (- (- (if (= k :right)
-                           (:inner-width-without-scrollbars viewport) 
-                           (:inner-height-without-scrollbars viewport))
-                         x)
-                      viewport-padding))
-        c-on-c?   (and corner-plc? (:on-corner? vpp))
-        shift-x   (when-not (or inline-plc?
-                                c-on-c?)
-                    (cond
-                      (:e? vpp) (br-shift (:right vpp) :right)
-                      (:w? vpp) (tl-shift (:left vpp))))
-        shift-y   (when-not (or block-plc?
-                                c-on-c?)
-                    (cond
-                      (:n? vpp) (tl-shift (:top vpp))
-                      (:s? vpp) (br-shift (:bottom vpp) :left))) ]
-    (keyed shift-x shift-y)))
