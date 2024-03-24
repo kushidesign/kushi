@@ -10,14 +10,12 @@
    [kushi.ui.util :as util :refer [maybe nameable? as-str]]
    [kushi.ui.dom.fune.arrow :as arrow]
    [kushi.ui.dom.fune.placement :refer [el-plc
-                                       tooltip-plc
-                                       updated-tooltip-placement
-                                       user-placement
-                                       og-placement
-                                      ;;  shifts
-                                       ]]
+                                        tooltip-plc
+                                        updated-tooltip-placement
+                                        user-placement
+                                        og-placement
+                                        placement-css-custom-property]]
    [kushi.ui.dom.fune.styles]
-   [kushi.ui.dom.fune.translate :as translate]
    [applied-science.js-interop :as j]))
 
 (defn tooltip-classes
@@ -72,10 +70,11 @@
                (maybe-multiline-tooltip-text ttt)
                "</span></div>")))
   
+  ;; TODO
   ;; Set the class and id of the tooltip el
   ;; make sure translate-xy-style is always map, then merge with below
   (let [txy     (or translate-xy-style
-                    (translate/fune-translate-css
+                    (placement-css-custom-property
                      (assoc append-tt-opts
                             :corner-plc?
                             (:corner-plc? tt-pos-og)
@@ -92,34 +91,10 @@
     (doto el
       (.setAttribute "id" id)
       (.setAttribute "style" txy)
-      (.setAttribute "class" (tooltip-classes append-tt-opts))
-      ))
+      (.setAttribute "class" (tooltip-classes append-tt-opts))))
   
   ;; Append tooltip el to the <body> 
-  (.appendChild js/document.body el)
-
-  ;; Calculate the css :translate property and set the :style
-  (let [
-        txy     (or translate-xy-style
-                    (translate/fune-translate-css
-                     (assoc append-tt-opts
-                            :corner-plc?
-                            (:corner-plc? tt-pos-og)
-                            :tooltip-el el
-                            :placement-kw placement-kw)
-                     #_placement-kw))
-        ]
-    #_(??? txy)
-    #_(.setAttribute el
-                   "style"
-                   (str txy
-                        (when metrics? 
-                          (domo/css-style-string
-                           {:scale               :1!important
-                            :transition-property :none!important}))))
-
-    ;; TODO - maybe return txy so we can use it again next time we call this fn?
-    ))
+  (.appendChild js/document.body el))
 
 
 
@@ -213,7 +188,7 @@
                                                    :tooltip-arrow? tooltip-arrow?
                                                    :adjust?        true
                                                    :placement-kw   new-placement-kw)]
-                                   (translate/fune-translate-css
+                                   (placement-css-custom-property
                                     opts
                                     #_new-placement-kw)))
           

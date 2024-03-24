@@ -4,8 +4,7 @@
    [goog.string]
    [kushi.core :refer (keyed)]
    [domo.core :as domo]
-   [kushi.ui.util :refer [ck? maybe as-str]]
-   [kushi.ui.dom.fune.translate :as translate]))
+   [kushi.ui.util :refer [ck? maybe as-str calc]]))
 
 (defn og-placement
   "Returns a keyword such as :t or :blc"
@@ -133,6 +132,53 @@
    :top-left-corner     :ltc
    :left-top-corner     :ltc})
 
+(def ^:private translate-xy
+  {:tlc [:left   -100 :top -100 "-" "-"]
+   :tl  [:left   0    :top -100 nil "-"]
+   :t   [:x-center -50  :top -100 nil "-"]
+   :tr  [:right  -100 :top -100 nil "-"]
+   :trc [:right  0    :top -100 "+" "-"]
+
+   :rtc [:right 0 :top    -100 "+" "-"]
+   :rt  [:right 0 :top    0    "+" nil]
+   :r   [:right 0 :y-center -50  "+" nil]
+   :rb  [:right 0 :bottom -100 "+" nil]
+   :rbc [:right 0 :bottom 0    "+" "+"]
+
+   :brc [:right  0    :bottom 0  "+" "+"]
+   :br  [:right  -100 :bottom 0  nil "+"]
+   :b   [:x-center -50  :bottom 0  nil "+"]
+   :bl  [:left   -0   :bottom 0  nil "+"]
+   :blc [:left   -100 :bottom 0  "-" "+"]
+
+   :lbc [:left -100 :bottom 0    "-" "+"]
+   :lb  [:left -100 :bottom -100 "-" nil]
+   :l   [:left -100 :y-center -50  "-" nil]
+   :lt  [:left -100 :top    0    "-" nil]
+   :ltc [:left -100 :top    -100 "-" "-"]})
+
+(defn placement-css-custom-property
+  [opts]
+  (let [{oe-top      :top
+         oe-left     :left
+         oe-right    :right
+         oe-bottom   :bottom
+         oe-x-center :x-center
+         oe-y-center :y-center} (:owning-el-rect opts)]
+
+     (domo/css-style-string
+      {"--oe-top"      (str oe-top "px")
+       "--oe-left"     (str oe-left "px")
+       "--oe-right"    (str oe-right "px")
+       "--oe-bottom"   (str oe-bottom "px")
+       "--oe-x-center" (str oe-x-center "px")
+       "--oe-y-center" (str oe-y-center "px")
+       "--tt-offset"   "max(var(--tooltip-offset-start), 0px)"
+       "--offset"      (calc "(var(--tt-offset) + var(--tooltip-arrow-depth))")
+       "--top-plc"     (calc "(var(--oe-top) - 100%) - var(--offset)")
+       "--bottom-plc"  (calc "var(--oe-bottom) + var(--offset)")
+       "--right-plc"   (calc "var(--oe-right) + var(--offset)")
+       "--left-plc"    (calc "(var(--oe-left) - 100%) - var(--offset)")})))
 
 ;; TODO Add some safety here for bad inputs
 ;; Make the logic more efficient if arg is a
@@ -153,14 +199,14 @@
               (string/join " " (map #(as-str %) x))
               x)]
     (or
-     (when (contains? translate/translate-xy kw) kw)
+     (when (contains? translate-xy kw) kw)
      (let [parts (string/split s #"-")]
        (when (every? #(contains? non-logicals %) parts)
          (let [kw (some->> parts
                            (map first)
                            string/join
                            keyword)]
-           (when (contains? translate/translate-xy kw)
+           (when (contains? translate-xy kw)
              kw))))
      (logical-placement {:ltr?      (= (domo/writing-direction) "ltr")
                          :placement s}))) )
