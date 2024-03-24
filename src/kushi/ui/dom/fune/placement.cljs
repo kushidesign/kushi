@@ -25,13 +25,13 @@
             (:w? vpp) :r)
 
       :else
-      ;; Always auto-place tooltip on top, unless the owning element falls
+      ;; Always auto-place fune on top, unless the owning element falls
       ;; within the top fraction of the viewport, as defined by the
-      ;; :$tooltip-auto-placement-y-threshold css custom property.
+      ;; :$fune-auto-placement-y-threshold css custom property.
       (if (< (:y-fraction vpp)
              (some-> owning-el
                      (domo/css-custom-property-value
-                      "--tooltip-auto-placement-y-threshold")
+                      "--fune-auto-placement-y-threshold")
                      js/parseFloat))
         :b
         :t))
@@ -167,7 +167,7 @@
          oe-y-center :y-center} (:owning-el-rect opts)]
 
     ; TODO - pass in kind of component
-    
+
     (domo/css-style-string
      {"--oe-top"      (str oe-top "px")
       "--oe-left"     (str oe-left "px")
@@ -175,8 +175,8 @@
       "--oe-bottom"   (str oe-bottom "px")
       "--oe-x-center" (str oe-x-center "px")
       "--oe-y-center" (str oe-y-center "px")
-      "--tt-offset"   "max(var(--tooltip-offset-start), 0px)"
-      "--offset"      (calc "(var(--tt-offset) + var(--tooltip-arrow-depth))")
+      "--tt-offset"   "max(var(--fune-offset-start), 0px)"
+      "--offset"      (calc "(var(--tt-offset) + var(--fune-arrow-depth))")
       "--top-plc"     (calc "(var(--oe-top) - 100%) - var(--offset)")
       "--bottom-plc"  (calc "var(--oe-bottom) + var(--offset)")
       "--right-plc"   (calc "var(--oe-right) + var(--offset)")
@@ -252,7 +252,7 @@
     :brc :blc
     :rbc :lbc))
 
-(defn updated-tooltip-placement
+(defn updated-fune-placement
   [{:keys [corner-plc?
            block-plc?
            inline-plc?
@@ -321,7 +321,7 @@
 
           corner-plc?
           (case placement-kw
-            ;; version where tooltip is basically shifted from intended corner
+            ;; version where fune is basically shifted from intended corner
             ;; :ltc :lt
             ;; :tlc :lt
             ;; :trc :rt
@@ -360,7 +360,7 @@
 
           corner-plc?
           (case placement-kw
-            ;; version where tooltip is basically shifted from intended corner
+            ;; version where fune is basically shifted from intended corner
             ;; :ltc :tr
             ;; :tlc :tr
             ;; :trc :tl
@@ -386,12 +386,12 @@
 
 
 
-;; Functions below deal with calculating the position of the tooltip based
+;; Functions below deal with calculating the position of the fune based
 ;; on its placement keyword and the position of the owning element relative
 ;; to the viewport.
 
 
-(defn tooltip-plc [k]
+(defn fune-plc [k]
   ;; TODO use let-map macro here
   ;; change f to ck?
   (let [f                       (partial ck? k)

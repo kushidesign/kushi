@@ -10,31 +10,31 @@
    [kushi.ui.util :as util :refer [maybe nameable? as-str]]
    [kushi.ui.dom.fune.arrow :as arrow]
    [kushi.ui.dom.fune.placement :refer [el-plc
-                                        tooltip-plc
-                                        updated-tooltip-placement
+                                        fune-plc
+                                        updated-fune-placement
                                         user-placement
                                         og-placement
                                         placement-css-custom-property]]
    [kushi.ui.dom.fune.styles]
    [applied-science.js-interop :as j]))
 
-(defn tooltip-classes
-  [{:keys [tooltip-class 
-           tooltip-arrow?
+(defn fune-classes
+  [{:keys [fune-class 
+           fune-arrow?
            placement-kw
            new-placement-kw
            metrics?]}]
   (string/join
    " " 
-   ["kushi-tooltip"
+   ["kushi-fune"
     "invisible" 
     (some->> (if metrics? 
                placement-kw
                new-placement-kw)
              name
-             (str "kushi-tooltip-"))
-    (when-not tooltip-arrow? "kushi-tooltip-arrowless")
-    (some-> tooltip-class (maybe nameable?) as-str)]))
+             (str "kushi-fune-"))
+    (when-not fune-arrow? "kushi-fune-arrowless")
+    (some-> fune-class (maybe nameable?) as-str)]))
 
 (defn maybe-multiline-tooltip-text [ttt]
   (if (or (vector? ttt)
@@ -55,7 +55,7 @@
     :as append-tt-opts}]
 (!? append-tt-opts)
 
-  ;; Set the innerHTML / tooltip text
+  ;; Set the innerHTML / fune text
   (let [style (domo/css-style-string
                {:position        :relative
                 :display         :flex
@@ -67,18 +67,18 @@
           (str "<div class=\"kushi-tooltip-text-wrapper\""
                "style=\"" style  "\">"
                "<span class=\"kushi-tooltip-text\">"
-               (maybe-multiline-tooltip-text ttt)
+               (? (maybe-multiline-tooltip-text (? ttt)))
                "</span></div>")))
   
   ;; TODO
-  ;; Set the class and id of the tooltip el
+  ;; Set the class and id of the fune el
   ;; make sure translate-xy-style is always map, then merge with below
   (let [txy     (or translate-xy-style
                     (placement-css-custom-property
                      (assoc append-tt-opts
                             :corner-plc?
                             (:corner-plc? tt-pos-og)
-                            :tooltip-el el
+                            :fune-el el
                             :placement-kw placement-kw)
                      #_placement-kw))
         
@@ -91,34 +91,34 @@
     (doto el
       (.setAttribute "id" id)
       (.setAttribute "style" txy)
-      (.setAttribute "class" (tooltip-classes append-tt-opts))))
+      (.setAttribute "class" (fune-classes append-tt-opts))))
   
-  ;; Append tooltip el to the <body> 
+  ;; Append fune el to the <body> 
   (.appendChild js/document.body el))
 
 
 
 (defn- append-tooltip!*
-  "A tooltip is given an initial position based on screen-quadrant of the owning
+  "A fune is given an initial position based on screen-quadrant of the owning
    element, or user-supplied `-placement` attr. If it is offscreen, it is then
    given a new placement and position which may include a shift on the x or y
    axis in order to keep it wholly in the veiwport."
-  [{ttt            :tooltip-text
-    placement-kw   :placement-kw
-    tooltip-arrow? :tooltip-arrow?
-    owning-el      :owning-el
+  [{ttt          :tooltip-text
+    placement-kw :placement-kw
+    fune-arrow?  :fune-arrow?
+    owning-el    :owning-el
     :as opts}
    id]
 
-  ;; 1) Pre-calculate and append tooltip
-  ;; Calculate an initial placment and append a tooltip element to the
-  ;; dom. If the owning element is beyond the edge-threshold, the tooltip will
-  ;; be assigned a new placement, but only if the value of :-tooltip-placement
+  ;; 1) Pre-calculate and append fune
+  ;; Calculate an initial placment and append a fune element to the
+  ;; dom. If the owning element is beyond the edge-threshold, the fune will
+  ;; be assigned a new placement, but only if the value of :-fune-placement
   ;; is something other than :auto.
 
   ;; TODO - optimize for auto placement
   ;; --------------------------------------------------------------------------------
-  (let [tooltip-arrow?  (if (false? tooltip-arrow?) false true)
+  (let [fune-arrow?  (if (false? fune-arrow?) false true)
         opts            (assoc opts
                                :owning-el-rect
                                (domo/client-rect owning-el))
@@ -127,7 +127,7 @@
         ;; Convert to px if user supplies ems or rems.
         edge-threshold  (some-> owning-el
                                 (domo/css-custom-property-value
-                                 "--tooltip-flip-viewport-edge-threshold")
+                                 "--fune-flip-viewport-edge-threshold")
                                 js/parseInt)
         owning-el-vpp   (el-plc viewport
                                 owning-el
@@ -135,7 +135,7 @@
         placement-kw    (og-placement placement-kw
                                       owning-el
                                       owning-el-vpp)
-        tt-pos-og       (!? :tt-pos-og (tooltip-plc placement-kw))
+        tt-pos-og       (!? :tt-pos-og (fune-plc placement-kw))
         el              (js/document.createElement "div")
         append-tt-opts  (merge opts
                                (keyed el
@@ -143,15 +143,15 @@
                                       ttt
                                       placement-kw
                                       tt-pos-og 
-                                      tooltip-arrow?))]
+                                      fune-arrow?))]
     (append-tooltip-el! (merge append-tt-opts
                                {:metrics? true
                                 :id       (str "_kushi-metrics_" id)}))
 
 
     ;; 2) Measure and adjust
-    ;; Second, detect if the tooltip falls outside the viewport
-    ;; If the tooltip needs to be "shifted" along x or y axis to move it
+    ;; Second, detect if the fune falls outside the viewport
+    ;; If the fune needs to be "shifted" along x or y axis to move it
     ;; back inside viewport, get an updated style value and reset the style.
     
     ;; TODO - if needed, viewport-padding should be handled in css-land.
@@ -159,11 +159,11 @@
     ;; in css land.
     ;; -----------------------------------------------------------------------------
     (let [vpp                  (!? {:label 'vpp :coll-limit 24} (el-plc viewport el 0))
-          new-placement-kw     (!? 'npkw (updated-tooltip-placement
+          new-placement-kw     (!? 'npkw (updated-fune-placement
                                 (merge tt-pos-og
                                        (keyed vpp placement-kw))))
 
-          tt-pos               (tooltip-plc new-placement-kw)
+          tt-pos               (fune-plc new-placement-kw)
 
 
           ;; Disable shifting for now and just return nil for shift-x & shift-y
@@ -185,7 +185,7 @@
                                                    :shift-y        shift-y
                                                    :corner-plc?    (:corner-plc? tt-pos)
                                                    :el             el
-                                                   :tooltip-arrow? tooltip-arrow?
+                                                   :fune-arrow? fune-arrow?
                                                    :adjust?        true
                                                    :placement-kw   new-placement-kw)]
                                    (placement-css-custom-property
@@ -206,7 +206,7 @@
                                       (keyed el
                                              id 
                                              ttt
-                                             tooltip-arrow?
+                                             fune-arrow?
                                              
                                              ;; is this right? why not new-placement-kw
                                              placement-kw ;;exists in atto 
@@ -233,21 +233,21 @@
       
 
       ;; 4) Arrow
-      ;; Add the class with final placement syntax "kushi-tooltip-tr".
+      ;; Add the class with final placement syntax "kushi-fune-tr".
       ;; Then create an arrow element and calculate position and geometry.
       ;; ----------------------------------------------------------------------
 
-      ;; Trying this in append-tooltip-el! for now
+      ;; Trying this in append-fune-el! for now
       #_(domo/add-class! el
-                       (str "kushi-tooltip-"
+                       (str "kushi-fune-"
                             (name new-placement-kw)))
-      #_(domo/set-attribute! el "data-kushi-tooltip-placement" (name new-placement-kw))
+      #_(domo/set-attribute! el "data-kushi-fune-placement" (name new-placement-kw))
       
 
       ;; 5) Display
-      ;; Remove `.invisible` class, which will fade-in the tooltip via
+      ;; Remove `.invisible` class, which will fade-in the fune via
       ;; css transition setting, if desired. 
-      (let [arrow-el (when (and tooltip-arrow?
+      (let [arrow-el (when (and fune-arrow?
                                 (not (:corner-plc? tt-pos)))
                        (arrow/append-arrow-el!
                         (keyed el
@@ -266,7 +266,7 @@
         (js/window.requestAnimationFrame
          (fn [_]
            (domo/remove-class! el "invisible")
-           (domo/set-css-var! el "--tt-offset" "max(var(--tooltip-offset), 0px)")
+           (domo/set-css-var! el "--tt-offset" "max(var(--fune-offset), 0px)")
            (domo/set-style! el "scale" "1")
            
               ;; Shifts are disabled for now so commenting this expression out
@@ -284,8 +284,8 @@
 (declare remove-tooltip!)
 
 (defn- escape-tooltip!
-  "If Escape key is pressed when tooltip is active, dispatch `remove-tooltip`.
-   to remove tooltip element from DOM.
+  "If Escape key is pressed when fune is active, dispatch `remove-tooltip`.
+   to remove fune element from DOM.
    Also removes the `mouseleave` event listener on owning element."
   [owning-el tt-id e]
   (when-not e.defaultPrevented
@@ -301,9 +301,9 @@
                               #js {"once" true})))))
 
 (defn- remove-tooltip!
-  "Removes tooltip from dom.
+  "Removes fune from dom.
    Removes :aria-describedby on owning element.
-   Removes the tooltip instance-specific `keydown` event on window."
+   Removes the fune instance-specific `keydown` event on window."
   [owning-el tt-id e]
   #_(some->> tt-id
            domo/el-by-id
@@ -323,9 +323,9 @@
                         #js {"once" true}))
 
 (defn- remove-tooltip2!
-  "Removes tooltip from dom.
+  "Removes fune from dom.
    Removes :aria-describedby on owning element.
-   Removes the tooltip instance-specific `keydown` event on window."
+   Removes the fune instance-specific `keydown` event on window."
   [el]
   (.remove el)
   (let [owning-el (domo/qs (str "[aria-describedby='" (.-id el) "']")) ]
@@ -336,11 +336,11 @@
   (append-tooltip! opts nil e))
   ([opts tt-id e]
    ;; We need to use cet here (.currentEventTarget), in order
-   ;; To prevent mis-assignment of ownership of the tooltip to
+   ;; To prevent mis-assignment of ownership of the fune to
    ;; A child element of the intended owning el. 
   ;;  (js/console.clear)
    (let [owning-el (domo/cet e)
-                   ;; TODO - should this be "kushi-tooltip-*" ?
+                   ;; TODO - should this be "kushi-fune-*" ?
          tt-id     (or tt-id (str "kushi-" (gensym)))]
      (do 
        (domo/set-attribute! owning-el :aria-describedby tt-id)
@@ -383,7 +383,7 @@
 
 
 (defn tooltip-attrs
-  {:desc ["Tooltips provide additional context when hovering or clicking on an"
+  {:desc ["tooltips provide additional context when hovering or clicking on an"
           "element. They are intended to be ephemeral, containing only"
           "non-interactive content."
           :br
@@ -401,7 +401,7 @@
           :br "`(merge-attrs (sx ...) (tooltip-attrs {...}))`"
           :br
           :br
-          "Tooltips can be custom styled and controlled via the following "
+          "tooltips can be custom styled and controlled via the following "
           "tokens in your theme:"
           :br
           ;; TODO add documentation for each token
@@ -561,7 +561,7 @@
                                  arrow?    true}}]
   
   (when-let [tooltip-text (valid-tooltip-text text)] 
-    (let [tooltip-arrow? (if (false? arrow?) false true)
+    (let [fune-arrow? (if (false? arrow?) false true)
           placement      (if-not (or (string? placement)
                                      (keyword? placement)
                                      (vector? placement))
@@ -571,17 +571,17 @@
                              (user-placement placement))
           opts           (keyed tooltip-text
                                 placement-kw
-                                tooltip-arrow?
+                                fune-arrow?
                                 tooltip-class)]
       (merge 
-       {:data-kushi-ui-tooltip (name placement-kw)
-        :on-mouse-enter        (partial append-tooltip! opts)}
+       {:data-kushi-ui-fune (name placement-kw)
+        :on-mouse-enter     (partial append-tooltip! opts)}
 
        ;; Todo use when-let to validate text-on-click and normalize if vector
        (when-let [text-on-click (maybe-multiline-tooltip-text text-on-click)]
          {:on-click (fn [_]
                       (let [duration           (token->ms :$tooltip-reveal-on-click-duration)
-                            tt-el              (domo/qs ".kushi-tooltip")
+                            tt-el              (domo/qs ".kushi-fune")
                             tt-el-text-wrapper (domo/qs tt-el ".kushi-tooltip-text-wrapper")
                             tt-el-text-span    (domo/qs tt-el ".kushi-tooltip-text")
                             text-on-click-el   (js/document.createElement "span")]

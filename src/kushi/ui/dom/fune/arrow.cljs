@@ -13,13 +13,13 @@
                                       (ck? #{:bl :b :br}) "up"
                                       (ck? #{:lt :l :lb}) "right"
                                       (ck? #{:rt :r :rb}) "left")
-        direction-class         (str "kushi-tooltip-arrow-pointing-"
+        direction-class         (str "kushi-fune-arrow-pointing-"
                                      direction-class*)]
 
     ;; Set class and style on arrow element
     (doto arrow-el
-      (.setAttribute "class" (str "kushi-tooltip-arrow " direction-class)))
+      (.setAttribute "class" (str "kushi-fune-arrow " direction-class)))
 
-    ;; Finally, append arrow element to tooltip element.
+    ;; Finally, append arrow element to fune element.
     (.appendChild el arrow-el)
     arrow-el))

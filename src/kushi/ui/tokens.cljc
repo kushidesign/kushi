@@ -133,48 +133,48 @@
    :$tag-border-width                       :1px
 
 
-   ;; Tooltips
+   ;; funes
    ;; ------------------------------------------------------
 
-   ;; tooltip colors and images
-   :$tooltip-color                            :white
-   :$tooltip-color-inverse                    :black
-   :$tooltip-background-color                 :black
-   :$tooltip-background-color-inverse         :white
-   :$tooltip-background-image                 :white
+   ;; fune colors and images
+   :$fune-color                            :white
+   :$fune-color-inverse                    :black
+   :$fune-background-color                 :black
+   :$fune-background-color-inverse         :white
+   :$fune-background-image                 :white
 
-   ;; tooltip typography
-   :$tooltip-line-height                      1.25
-   :$tooltip-font-family                      :$sans-serif-font-stack
-   :$tooltip-font-size                        :$xsmall
-   :$tooltip-font-weight                      :$wee-bold
-   :$tooltip-text-transform                   :none
+   ;; fune typography
+   :$fune-line-height                      1.25
+   :$fune-font-family                      :$sans-serif-font-stack
+   :$fune-font-size                        :$xsmall
+   :$fune-font-weight                      :$wee-bold
+   :$fune-text-transform                   :none
 
-   ;; tooltip geometry
-   :$tooltip-padding-inline                   :1.25em
-   :$tooltip-padding-block                    :0.65em
-   :$tooltip-border-radius                    :7px
-   :$tooltip-offset                           :7px
-   :$tooltip-viewport-padding                 :5px 
-   :$tooltip-flip-viewport-edge-threshold     :32px 
-   :$tooltip-auto-placement-y-threshold       :0.1 
+   ;; fune geometry
+   :$fune-padding-inline                   :1.25em
+   :$fune-padding-block                    :0.65em
+   :$fune-border-radius                    :7px
+   :$fune-offset                           :7px
+   :$fune-viewport-padding                 :5px 
+   :$fune-flip-viewport-edge-threshold     :32px 
+   :$fune-auto-placement-y-threshold       :0.1 
 
-   ;; tooltip choreography
-   :$tooltip-delay-duration                   :700ms
-   :$tooltip-reveal-on-click-duration         :2000ms
-   :$tooltip-initial-scale                    :0px 
-   :$tooltip-offset-start                     "calc($tooltip-offset + 3px)"
-   :$tooltip-transition-duration              :$fast 
-   :$tooltip-transition-timing-function       :$timing-ease-out-curve 
+   ;; fune choreography
+   :$fune-delay-duration                   :700ms
+   :$fune-reveal-on-click-duration         :2000ms
+   :$fune-initial-scale                    :0px 
+   :$fune-offset-start                     "calc($fune-offset + 3px)"
+   :$fune-transition-duration              :$fast 
+   :$fune-transition-timing-function       :$timing-ease-out-curve 
 
-   ;; tooltip arrows
-   :$tooltip-arrow-depth-min-px               :3px 
-   :$tooltip-arrow-depth-max-px               :16px 
-   :$tooltip-arrow-depth-ems                  :0.3em 
+   ;; fune arrows
+   :$fune-arrow-depth-min-px               :3px 
+   :$fune-arrow-depth-max-px               :16px 
+   :$fune-arrow-depth-ems                  :0.3em 
    ;; Note the fallbacks here
-   :$tooltip-arrow-depth                      "max( min( var(--tooltip-arrow-depth-max-px, 12px), var(--tooltip-arrow-depth-ems, 0.3em)), var(--tooltip-arrow-depth-min-px, 5px))"  
-   :$tooltip-arrow-x-offset                   :7px
-   :$tooltip-arrow-y-offset                   :2px
+   :$fune-arrow-depth                      "max( min( var(--fune-arrow-depth-max-px, 12px), var(--fune-arrow-depth-ems, 0.3em)), var(--fune-arrow-depth-min-px, 5px))"  
+   :$fune-arrow-x-offset                   :7px
+   :$fune-arrow-y-offset                   :2px
 
 
    ;; Modals
