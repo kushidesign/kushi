@@ -83,7 +83,7 @@
   kushi-tooltip-t 
   :.kushi-tooltip-top-mixin
   :.kushi-tooltip-block-center-mixin
-  :transform-origin--bottom:centr )
+  :transform-origin--bottom:center)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
   kushi-tooltip-tr
@@ -228,7 +228,7 @@
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-tooltip-left-corner-mixin 
-  [:$tx "calc(var(--oe-left) + (0.5 * var(--offset)))"] )
+  [:$tx "calc((var(--oe-left) - 100%) - (0.5 * var(--offset)))"] )
 
 ;; Top left corner
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}

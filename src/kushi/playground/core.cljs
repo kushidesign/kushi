@@ -126,7 +126,6 @@
             :$vp-top-header-padding-with-offset                  (str "calc( var(--vp-top-header-padding) - "
                                                                       (:scroll-window-by-px shared-styles/shared-values)
                                                                       "px)")
-            :$kushi-tooltip-placement-inline-offset              :3px
             :$kushi-playground-sidenav-max-width                 :250px
             :$kushi-playground-mobile-header-height-fallback     :$kushi-playground-mobile-header-height||46px
 

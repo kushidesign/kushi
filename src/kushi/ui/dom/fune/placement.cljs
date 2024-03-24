@@ -119,18 +119,18 @@
 
 
 (def ^:private corner-placements
-  {:rtc                 :trc
-   :top-right-corner    :trc
+  {:top-right-corner    :trc
    :right-top-corner    :trc
-   :rbc                 :brc
+   :rtc                 :trc
    :bottom-right-corner :brc
    :right-bottom-corner :brc
-   :lbc                 :blc
-   :left-bottom-corner  :blc
+   :rbc                 :brc
    :bottom-left-corner  :blc
-   :ltc                 :ltc
-   :top-left-corner     :ltc
-   :left-top-corner     :ltc})
+   :left-bottom-corner  :blc
+   :lbc                 :blc
+   :top-left-corner     :tlc
+   :left-top-corner     :tlc
+   :ltc                 :tlc})
 
 (def ^:private translate-xy
   {:tlc [:left   -100 :top -100 "-" "-"]
@@ -166,19 +166,21 @@
          oe-x-center :x-center
          oe-y-center :y-center} (:owning-el-rect opts)]
 
-     (domo/css-style-string
-      {"--oe-top"      (str oe-top "px")
-       "--oe-left"     (str oe-left "px")
-       "--oe-right"    (str oe-right "px")
-       "--oe-bottom"   (str oe-bottom "px")
-       "--oe-x-center" (str oe-x-center "px")
-       "--oe-y-center" (str oe-y-center "px")
-       "--tt-offset"   "max(var(--tooltip-offset-start), 0px)"
-       "--offset"      (calc "(var(--tt-offset) + var(--tooltip-arrow-depth))")
-       "--top-plc"     (calc "(var(--oe-top) - 100%) - var(--offset)")
-       "--bottom-plc"  (calc "var(--oe-bottom) + var(--offset)")
-       "--right-plc"   (calc "var(--oe-right) + var(--offset)")
-       "--left-plc"    (calc "(var(--oe-left) - 100%) - var(--offset)")})))
+    ; TODO - pass in kind of component
+    
+    (domo/css-style-string
+     {"--oe-top"      (str oe-top "px")
+      "--oe-left"     (str oe-left "px")
+      "--oe-right"    (str oe-right "px")
+      "--oe-bottom"   (str oe-bottom "px")
+      "--oe-x-center" (str oe-x-center "px")
+      "--oe-y-center" (str oe-y-center "px")
+      "--tt-offset"   "max(var(--tooltip-offset-start), 0px)"
+      "--offset"      (calc "(var(--tt-offset) + var(--tooltip-arrow-depth))")
+      "--top-plc"     (calc "(var(--oe-top) - 100%) - var(--offset)")
+      "--bottom-plc"  (calc "var(--oe-bottom) + var(--offset)")
+      "--right-plc"   (calc "var(--oe-right) + var(--offset)")
+      "--left-plc"    (calc "(var(--oe-left) - 100%) - var(--offset)")})))
 
 ;; TODO Add some safety here for bad inputs
 ;; Make the logic more efficient if arg is a
