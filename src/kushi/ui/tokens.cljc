@@ -3,6 +3,7 @@
 
 (def design-tokens
   [
+
    ;; Color
    ;; ------------------------------------------------------
    :$body-color                              :$gray-950
@@ -10,6 +11,7 @@
 
    :$body-background-color                   :white
    :$body-background-color-inverse           :$gray-1000
+
 
    ;; Neutrals
    :$neutral-fg                              :$neutral-minimal-color
@@ -29,20 +31,24 @@
    :$negative-fg                             :$negative-minimal-color
    :$negative-fg-inverse                     :$negative-minimal-color-inverse
 
+
    ;; Debugging grid
    ;; ------------------------------------------------------
    :$debug-grid-size                         :16px
    :$debug-grid-color                        "hsla(0 0% 90%)"
    :$debug-grid-color-inverse                "hsla(0 0% 25%)"
 
+
    ;; Typography
    ;; ------------------------------------------------------
+
 
    ;; font-family
    ;; TODO should this live in basetheme?
    :$sans-serif-font-stack                  "Inter, system-ui, sans-serif"
    :$serif-font-stack                       "Cormorant, Times, serif"
    :$code-font-stack                        "Fira Code, monospace"
+
 
    ;; code
    :$code-font-size                         :$small
@@ -52,6 +58,7 @@
    :$code-background-color                  :$gray-100
    :$code-background-color-inverse          :$gray-800
    :$code-color-inverse                     :$gray-50
+
 
    ;; Intended for css prop `font-weight`
    :$thin                                   100
@@ -65,6 +72,7 @@
    :$heavy                                  900
 
    :$kushi-root-font-size                   :1rem
+
 
    ;; Intended for css prop `font-size`
    :$xxxxsmall                              :0.64rem
@@ -91,6 +99,7 @@
    :$xxxlarge-b                             :2.68rem
    :$xxxxlarge-b                            :3.475rem
 
+
    ;; Intended for css prop `letterspacing`
    :$xxxtight                               :-0.09em
    :$xxtight                                :-0.06em
@@ -100,6 +109,7 @@
    :$xloose                                 :0.08em
    :$xxloose                                :0.12em
    :$xxxloose                               :0.16em
+
 
    ;; Intended for css props `border-width` for inputs
    :$input-border-weight-thin               :0.05em
@@ -112,13 +122,17 @@
    :$input-border-weight-extra-bold         :0.195em
    :$input-border-weight-heavy              :0.21em
 
+
    ;; Intended for css props: border-*, general
    :$border-width                           :1px
    :$border-style                           :solid
 
-    ;; Intended for overlay placement
+
+
+   ;; Intended for overlay placement
    :$overlay-placement-inline-offset        :12px
    :$overlay-placement-block-offset         :6px
+
 
 
    ;; Buttons
@@ -129,30 +143,42 @@
    :$button-with-icon-padding-inline-offset :0.8em
    :$button-border-width                    :1.5px
 
+
+
    ;; Tags
    :$tag-border-width                       :1px
 
 
-   ;; funes
+
+   ;; Modals
+   ;; ------------------------------------------------------
+   :$modal-border-radius                    :$rounded-medium
+   :$modal-border                           :none
+   :$modal-padding-block                    :2rem
+   :$modal-padding-inline                   :2rem
+   :$modal-backdrop-color                   :$black-transparent-50
+   :$modal-margin                           :1rem
+   :$modal-min-width                        :500px
+   :$modal-transition-duration              :$xxfast
+
+
+   
+
+   ;; Fune - floating layer abstraction
    ;; ------------------------------------------------------
 
    ;; fune colors and images
-   :$fune-color                            :white
-   :$fune-color-inverse                    :black
-   :$fune-background-color                 :black
-   :$fune-background-color-inverse         :white
+   :$fune-background-color                 :$body-background-color
+   :$fune-background-color-inverse         :$body-background-color-inverse
    :$fune-background-image                 :white
-
-   ;; fune typography
-   :$fune-line-height                      1.25
-   :$fune-font-family                      :$sans-serif-font-stack
-   :$fune-font-size                        :$xsmall
-   :$fune-font-weight                      :$wee-bold
-   :$fune-text-transform                   :none
+   :$fune-box-shadow                       :$elevated-4
+   :$fune-border-width                     :0
+   :$fune-border-style                     :solid
+   :$fune-border-color                     :transparent
 
    ;; fune geometry
-   :$fune-padding-inline                   :1.25em
-   :$fune-padding-block                    :0.65em
+   :$fune-padding-inline                   :1em
+   :$fune-padding-block                    :0.5em
    :$fune-border-radius                    :7px
    :$fune-offset                           :7px
    :$fune-viewport-padding                 :5px 
@@ -160,21 +186,74 @@
    :$fune-auto-placement-y-threshold       :0.1 
 
    ;; fune choreography
+   :$fune-z-index                          :auto
    :$fune-delay-duration                   :700ms
    :$fune-reveal-on-click-duration         :2000ms
    :$fune-initial-scale                    :0px 
    :$fune-offset-start                     "calc($fune-offset + 3px)"
-   :$fune-transition-duration              :$fast 
+   :$fune-transition-duration              :$xfast 
    :$fune-transition-timing-function       :$timing-ease-out-curve 
 
    ;; fune arrows
    :$fune-arrow-depth-min-px               :3px 
-   :$fune-arrow-depth-max-px               :16px 
+   :$fune-arrow-depth-max-px               :11px 
    :$fune-arrow-depth-ems                  :0.3em 
    ;; Note the fallbacks here
    :$fune-arrow-depth                      "max( min( var(--fune-arrow-depth-max-px, 12px), var(--fune-arrow-depth-ems, 0.3em)), var(--fune-arrow-depth-min-px, 5px))"  
-   :$fune-arrow-x-offset                   :7px
-   :$fune-arrow-y-offset                   :2px
+   :$fune-arrow-inline-inset               :7px
+   :$fune-arrow-block-inset                :2px
+
+
+   
+
+   ;; Tooltips
+   ;; ------------------------------------------------------
+
+   ;; tooltip colors and images
+   :$tooltip-color                            :$body-color-inverse
+   :$tooltip-color-inverse                    :$body-color
+   :$tooltip-background-color                 :$body-background-color-inverse
+   :$tooltip-background-color-inverse         :$body-background-color
+   :$tooltip-background-image                 :none
+   :$tooltip-box-shadow                       :none
+   :$tooltip-border-width                     :$fune-border-width
+   :$tooltip-border-style                     :$fune-border-style
+   :$tooltip-border-color                     :$fune-border-color
+
+   ;; fune typography
+   :$tooltip-line-height                      1.25
+   :$tooltip-font-family                      :$sans-serif-font-stack
+   :$tooltip-font-size                        :$xsmall
+   :$tooltip-font-weight                      :$wee-bold
+   :$tooltip-text-transform                   :none
+
+   ;; tooltip geometry
+   :$tooltip-padding-inline                   :$fune-padding-inline
+   :$tooltip-padding-block                    :$fune-padding-block
+   :$tooltip-border-radius                    :$fune-border-radius
+   :$tooltip-offset                           :$fune-offset
+   :$tooltip-viewport-padding                 :$fune-viewport-padding 
+   :$tooltip-flip-viewport-edge-threshold     :$fune-flip-viewport-edge-threshold 
+   :$tooltip-auto-placement-y-threshold       :$fune-auto-placement-y-threshold 
+
+   ;; tooltip choreography
+   :$tooltip-z-index                          :$fune-z-index
+   :$tooltip-delay-duration                   :$fune-delay-duration
+   :$tooltip-reveal-on-click-duration         :$fune-reveal-on-click-duration
+   :$tooltip-initial-scale                    :$fune-initial-scale 
+   :$tooltip-offset-start                     :$fune-offset-start
+   :$tooltip-transition-duration              :$fune-transition-duration 
+   :$tooltip-transition-timing-function       :$fune-transition-timing-function 
+
+   ;; tooltip arrows
+   :$tooltip-arrow-depth-min-px               :$fune-arrow-depth-min-px 
+   :$tooltip-arrow-depth-max-px               :$fune-arrow-depth-max-px 
+   :$tooltip-arrow-depth-ems                  "max( min( var(--tooltip-arrow-depth-max-px, 12px), var(--tooltip-arrow-depth-ems, 0.3em)), var(--tooltip-arrow-depth-min-px, 5px))"  
+
+   ;; Note the fallbacks here
+   :$tooltip-arrow-depth                      :$fune-arrow-depth
+   :$tooltip-arrow-inline-inset               :$fune-arrow-inline-inset
+   :$tooltip-arrow-block-inset                :$fune-arrow-inline-inset
 
 
    ;; Modals
@@ -299,8 +378,10 @@
    ;; ------------------------------------------------------
    :$timing-linear-curve           "cubic-bezier(0, 0, 1, 1)"
    :$timing-ease-out-curve         "cubic-bezier(.2, .8, .4, 1)"
+   :$timing-ease-out-curve-5       "cubic-bezier(.2, .8, .4, 1)"
    :$timing-ease-in-curve          "cubic-bezier(.8, .2, .6, 1)"
    :$timing-ease-in-out-curve      "cubic-bezier(0.4, 0, 0.2, 1)"
+   :$timing-ease-out-curve-extreme "cubic-bezier(0.190, 0.510, 0.125, 0.905)"
 
    :$instant                       :0ms
    :$xxxfast                       :50ms

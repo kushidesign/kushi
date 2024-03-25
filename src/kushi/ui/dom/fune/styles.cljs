@@ -6,41 +6,49 @@
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune
   :.fixed
-  :fs--$fune-font-size
-  ;; :fs--100px
+  :bw--$fune-border-width
+  :bs-style--$fune-border-style
+  :bc-color--$fune-border-color
+  :box-shadow--$fune-box-shadow||$elevated-3
   :border-radius--$fune-border-radius
-  ;; toggle this to none to get metrics
   :transition-property--opacity|translate|scale|transform
-  ;; :transition-property--none
   :.transition
   :transition-duration--$fune-transition-duration
   :transition-timing-function--$fune-transition-timing-function
   ;; :scale--1
   :scale--$fune-initial-scale
-  ;; [:$_kushi-fune-translate-y-shift :0px]
-  ;; [:$_kushi-fune-translate-x-shift :0px]
-  ;; [:$_kushi-fune-translate-y-base :0px]
-  ;; [:$_kushi-fune-translate-x-base :0px]
-  ;; [:$_kushi-fune-translate-x "calc(var(--_kushi-fune-translate-x-base) + var(--_kushi-fune-translate-x-shift))"]
-  ;; [:$_kushi-fune-translate-y  "calc(var(--_kushi-fune-translate-y-base) + var(--_kushi-fune-translate-y-shift))"]
-  ;; :translate--$_kushi-fune-translate-x:$_kushi-fune-translate-y
   :transition-delay--$fune-delay-duration
-  :zi--auto
+  :zi--$fune-z-index
   :top--0
   :left--0
-  :c--$fune-color
-  :bgc--red
   :bgc--$fune-background-color
   :w--max-content
-  :p--0.5em:1em)
+  :p--$fune-padding-block:$fune-padding-inline)
 
+(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-tooltip
+  :.kushi-fune
+  :border-width--$tooltip-border-width
+  :border-style--$tooltip-border-style
+  :border-color--$tooltip-border-color
+  :box-shadow--$tooltip-box-shadow||$elevated-3
+  :fs--$tooltip-font-size
+  :border-radius--$tooltip-border-radius
+  :transition-duration--$tooltip-transition-duration
+  :transition-timing-function--$tooltip-transition-timing-function
+  :scale--$tooltip-initial-scale
+  :transition-delay--$tooltip-delay-duration
+  :zi--$tooltip-z-index
+  :c--$tooltip-color
+  :bgc--$tooltip-background-color
+  :p--$tooltip-padding-block:$tooltip-padding-inline)
 
 ;; block mixins
 ;; ------------------------------------------------
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune-block-arrow-offset-mixin
-  [:$arrow-plus-radius "calc(var(--fune-arrow-x-offset) + var(--fune-border-radius))"])
+  [:$arrow-plus-radius "calc(var(--arrow-inline-inset) + var(--border-radius))"])
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune-block-right-mixin
@@ -70,9 +78,8 @@
   :.kushi-fune-block-arrow-offset-mixin
   :translate--$tx:$ty
   :$ty--$top-plc
-  [:$arrow-ty "-0.333px"]
-  [:&_.kushi-fune-arrow {:top       :100%
-                            :translate :$arrow-tx:$arrow-ty}])
+  [:$arrow-ty "calc(-50% + (var(--border-width) * 0.7))"]
+  [:&_.kushi-fune-arrow {:top :100%} ])
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune-tl 
   :.kushi-fune-top-mixin
@@ -99,9 +106,8 @@
   :.kushi-fune-block-arrow-offset-mixin
   :translate--$tx:$ty
   :$ty--$bottom-plc
-  [:$arrow-ty "0.333px"]
-  [:&_.kushi-fune-arrow {:bottom    :100%
-                            :translate :$arrow-tx:$arrow-ty}])
+  [:$arrow-ty "calc(50% - (var(--border-width) * 0.7))"]
+  [:&_.kushi-fune-arrow {:bottom :100%}])
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune-bl
@@ -131,7 +137,7 @@
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune-inline-arrow-offset-mixin
-  [:$arrow-plus-radius "calc(var(--fune-arrow-y-offset) + var(--fune-border-radius))"])
+  [:$arrow-plus-radius "calc(var(--arrow-inline-inset) + var(--fune-border-radius))"])
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune-inline-top-mixin
@@ -159,9 +165,10 @@
   :.kushi-fune-inline-arrow-offset-mixin
   :translate--$tx:$ty
   :$tx--$right-plc
-  [:$arrow-tx "0.333px"]
+  [:$arrow-tx "calc(50% - (var(--border-width) * 0.7))"]
   [:&_.kushi-fune-arrow {:right    :100%
-                            :translate :$arrow-tx:$arrow-ty}])
+                        ;;  :translate :$arrow-tx:$arrow-ty
+                         }])
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
   kushi-fune-rt
@@ -181,16 +188,18 @@
   :.kushi-fune-inline-bottom-mixin
   :transform-origin--bottom:left)
 
-;; inline-start
+
+;; Left
 ;; ------------------------------------------------
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune-left-mixin
   :.kushi-fune-inline-arrow-offset-mixin
   :translate--$tx:$ty
   :$tx--$left-plc
-  [:$arrow-tx "-0.333px"]
+  [:$arrow-tx "calc(-50% + (var(--border-width) * 0.7))"]
   [:&_.kushi-fune-arrow {:left      :100%
-                            :translate :$arrow-tx:$arrow-ty}])
+                        ;;  :translate :$arrow-tx:$arrow-ty
+                         }])
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
   kushi-fune-lt
@@ -268,44 +277,59 @@
   :bser--$fune-border-radius
   :&>.kushi-fune-arrow:d--none)
 
+;; (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
+;;   kushi-fune-arrow
+;;   :w--0
+;;   :h--0
+;;   :zi--10
+;;   :.absolute
+;;   :.transition
+;;   :.xxfast
+;;   :&.hidden:border--0!important
+;;   [:translate "var(--tx) var(--ty)"])
+
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
   kushi-fune-arrow
-  :w--0
-  :h--0
-  :zi--10
+  :bw--inherit
+  :bs--inherit
+  :bc--inherit
   :.absolute
-  :.transition
-  :.xxfast
-  :&.hidden:border--0!important
-  [:translate "var(--tx) var(--ty)"])
+  [:$sz "calc(sqrt(2)* var(--arrow-depth))"]
+  :w--$sz
+  :h--$sz
+  [:$arrow-inline-inset :-50%]
+  [:$arrow-block-inset :-50%]
+  :bgc--inherit
+  :h--$sz
+  [:transform "translate(var(--arrow-tx), var(--arrow-ty)) rotate(45deg)"]
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-fune-arrow-pointing-down
-  {:border-top      :$fune-arrow-depth:solid:$fune-background-color
-   :dark:border-top :$fune-arrow-depth:solid:$fune-background-color-inverse
-   :border-left     :$fune-arrow-depth:solid:transparent
-   :border-right    :$fune-arrow-depth:solid:transparent})
+  ["has-parent(.kushi-fune-tl)" {:border-top-width :0!important
+                                :border-left-width :0!important}]
+  ["has-parent(.kushi-fune-t)" {:border-top-width :0!important
+                                :border-left-width :0!important}]
+  ["has-parent(.kushi-fune-tr)" {:border-top-width :0!important
+                                :border-left-width :0!important}]
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-fune-arrow-pointing-up
-  {:border-bottom      :$fune-arrow-depth:solid:$fune-background-color
-   :dark:border-bottom :$fune-arrow-depth:solid:$fune-background-color-inverse
-   :border-left        :$fune-arrow-depth:solid:transparent
-   :border-right       :$fune-arrow-depth:solid:transparent})
+  ["has-parent(.kushi-fune-rt)" {:border-top-width :0!important
+                                :border-right-width :0!important}]
+  ["has-parent(.kushi-fune-r)" {:border-top-width :0!important
+                                :border-right-width :0!important}]
+  ["has-parent(.kushi-fune-rb)" {:border-top-width :0!important
+                                :border-right-width :0!important}]
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-fune-arrow-pointing-left
-  {:border-right      :$fune-arrow-depth:solid:$fune-background-color
-   :dark:border-right :$fune-arrow-depth:solid:$fune-background-color-inverse
-   :border-top        :$fune-arrow-depth:solid:transparent
-   :border-bottom     :$fune-arrow-depth:solid:transparent})
+  ["has-parent(.kushi-fune-br)" {:border-bottom-width :0!important
+                                :border-right-width :0!important}]
+  ["has-parent(.kushi-fune-b)" {:border-bottom-width :0!important
+                                :border-right-width :0!important}]
+  ["has-parent(.kushi-fune-bl)" {:border-bottom-width :0!important
+                                :border-right-width :0!important}]
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-fune-arrow-pointing-right
-  {:border-left      :$fune-arrow-depth:solid:$fune-background-color
-   :dark:border-left :$fune-arrow-depth:solid:$fune-background-color-inverse
-   :border-top       :$fune-arrow-depth:solid:transparent
-   :border-bottom    :$fune-arrow-depth:solid:transparent})
+  ["has-parent(.kushi-fune-l)" {:border-bottom-width :0!important
+                                :border-left-width :0!important}]
+  ["has-parent(.kushi-fune-lt)" {:border-bottom-width :0!important
+                                :border-left-width :0!important}]
+  ["has-parent(.kushi-fune-lb)" {:border-bottom-width :0!important
+                                :border-left-width :0!important}])
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
   kushi-fune-mounting

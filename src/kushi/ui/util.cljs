@@ -44,7 +44,10 @@
   (str (if (or (keyword? x) (symbol? x)) (name x) x)))
 
 (defn maybe [x pred]
-  (when (pred x) x))
+  (when (if (set? pred)
+          (contains? pred x)
+          (pred x))
+    x))
 
 (defn html-attr? [m k]
   (when (keyword? k)

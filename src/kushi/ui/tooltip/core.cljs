@@ -8,7 +8,6 @@
    ;; Import this to create defclasses
    [kushi.core :refer (keyed token->ms)]
    [kushi.ui.util :as util :refer [maybe nameable? as-str]]
-   [kushi.ui.dom.fune.arrow :as arrow]
    [kushi.ui.dom.fune.placement :refer [el-plc
                                         fune-plc
                                         updated-fune-placement
@@ -18,80 +17,100 @@
    [kushi.ui.dom.fune.styles]
    [applied-science.js-interop :as j]))
 
+
+(def stock-fune-types #{:fune :tooltip #_:popover #_:hover-board #_:context-menu})
+        
+
 (defn fune-classes
   [{:keys [fune-class 
            fune-arrow?
            placement-kw
            new-placement-kw
+           fune-type
            metrics?]}]
-  (string/join
-   " " 
-   ["kushi-fune"
-    "invisible" 
-    (some->> (if metrics? 
-               placement-kw
-               new-placement-kw)
-             name
-             (str "kushi-fune-"))
-    (when-not fune-arrow? "kushi-fune-arrowless")
-    (some-> fune-class (maybe nameable?) as-str)]))
+  (let [fune-type-class (some-> fune-type
+                                (maybe #(not= :fune %))
+                                (maybe stock-fune-types)
+                                as-str)]
+    (string/join
+     " "
+     ["kushi-fune"
+      (some->> fune-type-class (str "kushi-"))
+      "invisible" 
+      (some->> (if metrics? 
+                 placement-kw
+                 new-placement-kw)
+               name
+               (str "kushi-fune-"))
+      (when-not fune-arrow? "kushi-fune-arrowless")
+      (some-> fune-class (maybe nameable?) as-str)])))
 
-(defn maybe-multiline-tooltip-text [ttt]
-  (if (or (vector? ttt)
-          (array? ttt)
-          (and (not (string? ttt))
-               (seq ttt)))
-    (string/join "<br>" ttt)
-    ttt))
 
-(defn- append-tooltip-el!
+(defn maybe-multiline-tooltip-text [v]
+  (if (or (vector? v)
+          (array? v)
+          (and (not (string? v))
+               (seq v)))
+    (string/join "<br>" v)
+    v))
+
+
+(defn- txy 
   [{:keys [el
-           ttt
-           id
            placement-kw
            tt-pos-og
            metrics?
            translate-xy-style]
-    :as append-tt-opts}]
-(!? append-tt-opts)
+    :as   append-tt-opts}]
+  (let [txy (or translate-xy-style
+                (placement-css-custom-property
+                 (merge append-tt-opts
+                        {:corner-plc?  (:corner-plc? tt-pos-og)
+                         :fune-el      el
+                         :placement-kw placement-kw})))]
+    (str txy
+         "; "
+         (when metrics? 
+           (domo/css-style-string
+            {:scale               :1!important
+             :transition-property :none!important})))))
 
-  ;; Set the innerHTML / fune text
+
+(defn- append-tooltip-el!
+  [{:keys [el tooltip-text id]
+    :as append-tt-opts}]
+
+  ;; Set the innerHTML / or tooltip text
   (let [style (domo/css-style-string
                {:position        :relative
                 :display         :flex
                 :justify-content :center
                 :align-items     :center
-                :width           :fit-content})
-        ]
+                :width           :fit-content})]
+    
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; TODO - abstract out tooltip-specific code
+    ;; Make new fune.core ns
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
     (set! (.-innerHTML el)
           (str "<div class=\"kushi-tooltip-text-wrapper\""
                "style=\"" style  "\">"
                "<span class=\"kushi-tooltip-text\">"
-               (? (maybe-multiline-tooltip-text (? ttt)))
+               (maybe-multiline-tooltip-text tooltip-text)
                "</span></div>")))
   
-  ;; TODO
   ;; Set the class and id of the fune el
+  ;; TODO
   ;; make sure translate-xy-style is always map, then merge with below
-  (let [txy     (or translate-xy-style
-                    (placement-css-custom-property
-                     (assoc append-tt-opts
-                            :corner-plc?
-                            (:corner-plc? tt-pos-og)
-                            :fune-el el
-                            :placement-kw placement-kw)
-                     #_placement-kw))
-        
-        txy (str txy
-                 "; "
-                 (when metrics? 
-                   (domo/css-style-string
-                    {:scale               :1!important
-                     :transition-property :none!important})))]
+  (let [txy          (txy append-tt-opts)
+        fune-classes (fune-classes append-tt-opts)]
     (doto el
       (.setAttribute "id" id)
       (.setAttribute "style" txy)
-      (.setAttribute "class" (fune-classes append-tt-opts))))
+      (.setAttribute "class" fune-classes)))
   
   ;; Append fune el to the <body> 
   (.appendChild js/document.body el))
@@ -103,11 +122,12 @@
    element, or user-supplied `-placement` attr. If it is offscreen, it is then
    given a new placement and position which may include a shift on the x or y
    axis in order to keep it wholly in the veiwport."
-  [{ttt          :tooltip-text
-    placement-kw :placement-kw
+  [{placement-kw :placement-kw
     fune-arrow?  :fune-arrow?
     owning-el    :owning-el
-    :as opts}
+    fune-type    :fune-type
+    :as opts
+    :or {fune-type :fune}}
    id]
 
   ;; 1) Pre-calculate and append fune
@@ -118,8 +138,13 @@
 
   ;; TODO - optimize for auto placement
   ;; --------------------------------------------------------------------------------
-  (let [fune-arrow?  (if (false? fune-arrow?) false true)
+  (let [fune-type       (or (maybe fune-type stock-fune-types)
+                            (maybe fune-type nameable?)
+                            :fune)
+        fune-arrow?     (if (false? fune-arrow?) false true)
         opts            (assoc opts
+                               :fune-type
+                               fune-type
                                :owning-el-rect
                                (domo/client-rect owning-el))
         viewport        (domo/viewport)
@@ -140,14 +165,12 @@
         append-tt-opts  (merge opts
                                (keyed el
                                       id
-                                      ttt
                                       placement-kw
                                       tt-pos-og 
                                       fune-arrow?))]
     (append-tooltip-el! (merge append-tt-opts
                                {:metrics? true
                                 :id       (str "_kushi-metrics_" id)}))
-
 
     ;; 2) Measure and adjust
     ;; Second, detect if the fune falls outside the viewport
@@ -158,46 +181,30 @@
     ;; Add some kind of :tl or :br key to opts below, then use padding value
     ;; in css land.
     ;; -----------------------------------------------------------------------------
-    (let [vpp                  (!? {:label 'vpp :coll-limit 24} (el-plc viewport el 0))
-          new-placement-kw     (!? 'npkw (updated-fune-placement
+    (let [vpp                  (el-plc viewport el 0)
+          new-placement-kw     (updated-fune-placement
                                 (merge tt-pos-og
-                                       (keyed vpp placement-kw))))
+                                       (keyed vpp placement-kw)))
 
           tt-pos               (fune-plc new-placement-kw)
 
-
-          ;; Disable shifting for now and just return nil for shift-x & shift-y
-          ;; {:keys [shift-x
-          ;;         shift-y]} (shifts (merge tt-pos (keyed viewport vpp)))
-          
-          shift-x              nil 
-          shift-y              nil 
-          
-          shift?               (boolean (or shift-x shift-y))
           new-placement?       (not= placement-kw new-placement-kw)    
-          adjust?              (boolean (or shift? new-placement?))
 
-          translate-xy-style   (when adjust?
-            ;; (??? new-placement-kw)
-            ;; (? (data/diff opts append-tt-opts))
-                                 (let [opts (assoc opts ;; need to be different than append-tt-opts?
-                                                   :shift-x        shift-x
-                                                   :shift-y        shift-y
-                                                   :corner-plc?    (:corner-plc? tt-pos)
-                                                   :el             el
-                                                   :fune-arrow? fune-arrow?
-                                                   :adjust?        true
-                                                   :placement-kw   new-placement-kw)]
-                                   (placement-css-custom-property
-                                    opts
-                                    #_new-placement-kw)))
-          
+          adjust?              new-placement?
 
+          translate-xy-style   (when new-placement?
+                                 (placement-css-custom-property 
+                                  ;; need to be different than append-tt-opts?
+                                  (merge opts
+                                         {:corner-plc?  (:corner-plc? tt-pos)
+                                          :el           el
+                                          :fune-arrow?  fune-arrow?
+                                          :adjust?      true
+                                          :placement-kw new-placement-kw}) ))
           
           ;; 3) Remove dummy and append new element
-          ;; If shifted, update scale
           ;; ----------------------------------------------------------------------
-
+          
           _                    (.removeChild js/document.body el) ;; move down
           
           el                   (js/document.createElement "div")
@@ -205,81 +212,37 @@
           append-tt-opts-part2 (merge opts
                                       (keyed el
                                              id 
-                                             ttt
                                              fune-arrow?
                                              
-                                             ;; is this right? why not new-placement-kw
-                                             placement-kw ;;exists in atto 
+                                             ;; is this right?
+                                             ;; why not new-placement-kw
+                                             placement-kw 
                                              
                                              ;; is this right or tt-pos better?
                                              tt-pos-og
-                                             ;; experimental
                                              new-placement-kw 
-                                             ))
-          ]
+                                             ))]
 
-      ;; temp :11:09
       (append-tooltip-el! append-tt-opts-part2)
       
-      ;; temp :11:09
       (when adjust?
         (.setAttribute el "style" translate-xy-style))
       
 
-      ;; (println :after-update (keyed shift-x shift-y adjust? new-placement-kw placement-kw))
-      
-      
-      ;; (.setAttribute el "style" updated-translate-xy)
-      
-
-      ;; 4) Arrow
-      ;; Add the class with final placement syntax "kushi-fune-tr".
-      ;; Then create an arrow element and calculate position and geometry.
-      ;; ----------------------------------------------------------------------
-
-      ;; Trying this in append-fune-el! for now
-      #_(domo/add-class! el
-                       (str "kushi-fune-"
-                            (name new-placement-kw)))
-      #_(domo/set-attribute! el "data-kushi-fune-placement" (name new-placement-kw))
-      
-
-      ;; 5) Display
+      ;; 4) Display
       ;; Remove `.invisible` class, which will fade-in the fune via
       ;; css transition setting, if desired. 
       (let [arrow-el (when (and fune-arrow?
                                 (not (:corner-plc? tt-pos)))
-                       (arrow/append-arrow-el!
-                        (keyed el
-                               tt-pos
-                               shift-x 
-                               shift-y
-                               new-placement-kw
-                               owning-el-vpp
-                               shift?)))
-
-            ;; No shifting for now, so leaving these out
-            ;; transition-duration-ms (domo/duration-property-ms el "transitionDuration")
-            ;; transition-delay-ms    (domo/duration-property-ms el "transitionDelay")
-            ;; compute-shift-delay    (+ transition-delay-ms transition-duration-ms)
-            ]
+                       (let [arrow-el (js/document.createElement "div")]
+                         (doto arrow-el
+                           (.setAttribute "class" "kushi-fune-arrow"))
+                         (.appendChild el arrow-el)))]
         (js/window.requestAnimationFrame
          (fn [_]
            (domo/remove-class! el "invisible")
-           (domo/set-css-var! el "--tt-offset" "max(var(--fune-offset), 0px)")
-           (domo/set-style! el "scale" "1")
-           
-              ;; Shifts are disabled for now so commenting this expression out
-           #_(when shift?
-                ;; TODO - we could also try doing a recusive setInterval loop here
-                ;; to progressively move arrow. Or maybe just introduce a second
-                ;; metrics dummy to get the exact postion, taking into accont for
-                ;; the border-radius.
-               (js/setTimeout
-                #(arrow/shift-arrow! (keyed owning-el-vpp arrow-el tt-pos))
-                compute-shift-delay))
-           
-           ))))))
+           (domo/set-css-var! el "--offset" "max(var(--fune-offset), 0px)")
+           (domo/set-style! el "scale" "1") ))))))
 
 (declare remove-tooltip!)
 
@@ -288,6 +251,8 @@
    to remove fune element from DOM.
    Also removes the `mouseleave` event listener on owning element."
   [owning-el tt-id e]
+  ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Add conditionality around fune-type for dismissal
   (when-not e.defaultPrevented
     (when (or (= e.type "scroll") 
               (= e.key "Escape"))
@@ -305,7 +270,9 @@
    Removes :aria-describedby on owning element.
    Removes the fune instance-specific `keydown` event on window."
   [owning-el tt-id e]
-  #_(some->> tt-id
+  ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Add conditionality around fune-type for dismissal, if necessary
+  (some->> tt-id
            domo/el-by-id
            (.removeChild js/document.body))
   (domo/remove-attribute! owning-el :aria-describedby)
@@ -569,9 +536,11 @@
                            placement)
           placement-kw   (or (maybe placement #(= % :auto))
                              (user-placement placement))
+          fune-type      :tooltip
           opts           (keyed tooltip-text
                                 placement-kw
                                 fune-arrow?
+                                fune-type
                                 tooltip-class)]
       (merge 
        {:data-kushi-ui-fune (name placement-kw)
