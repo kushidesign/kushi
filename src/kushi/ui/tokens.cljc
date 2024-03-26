@@ -71,6 +71,7 @@
    :$extra-bold                             800
    :$heavy                                  900
 
+   ;; TODO Remove "kushi" prefix?
    :$kushi-root-font-size                   :1rem
 
 
@@ -171,12 +172,15 @@
    :$fune-background-color                 :$body-background-color
    :$fune-background-color-inverse         :$body-background-color-inverse
    :$fune-background-image                 :white
-   :$fune-box-shadow                       :$elevated-4
-   :$fune-border-width                     :0
+   :$fune-box-shadow                       :$elevated-5
+   :$fune-border-width                     :0px
    :$fune-border-style                     :solid
    :$fune-border-color                     :transparent
 
    ;; fune geometry
+
+   :$fune-min-width                        :2rem
+   :$fune-min-height                       :2rem
    :$fune-padding-inline                   :1em
    :$fune-padding-block                    :0.5em
    :$fune-border-radius                    :7px
@@ -186,22 +190,21 @@
    :$fune-auto-placement-y-threshold       :0.1 
 
    ;; fune choreography
+   :$fune-offset-start                     "calc(var(--fune-offset) + 3px)"
    :$fune-z-index                          :auto
    :$fune-delay-duration                   :700ms
    :$fune-reveal-on-click-duration         :2000ms
-   :$fune-initial-scale                    :0px 
-   :$fune-offset-start                     "calc($fune-offset + 3px)"
+   :$fune-initial-scale                    1 
    :$fune-transition-duration              :$xfast 
    :$fune-transition-timing-function       :$timing-ease-out-curve 
 
    ;; fune arrows
+   :$fune-arrow-inline-inset               :7px
+   :$fune-arrow-block-inset                :2px
    :$fune-arrow-depth-min-px               :3px 
    :$fune-arrow-depth-max-px               :11px 
    :$fune-arrow-depth-ems                  :0.3em 
-   ;; Note the fallbacks here
    :$fune-arrow-depth                      "max( min( var(--fune-arrow-depth-max-px, 12px), var(--fune-arrow-depth-ems, 0.3em)), var(--fune-arrow-depth-min-px, 5px))"  
-   :$fune-arrow-inline-inset               :7px
-   :$fune-arrow-block-inset                :2px
 
 
    
@@ -228,6 +231,8 @@
    :$tooltip-text-transform                   :none
 
    ;; tooltip geometry
+   :$tooltip-min-width                        :1rem
+   :$tooltip-min-height                       :1rem
    :$tooltip-padding-inline                   :$fune-padding-inline
    :$tooltip-padding-block                    :$fune-padding-block
    :$tooltip-border-radius                    :$fune-border-radius
@@ -237,24 +242,63 @@
    :$tooltip-auto-placement-y-threshold       :$fune-auto-placement-y-threshold 
 
    ;; tooltip choreography
+   :$tooltip-offset-start                     :$fune-offset-start
    :$tooltip-z-index                          :$fune-z-index
    :$tooltip-delay-duration                   :$fune-delay-duration
    :$tooltip-reveal-on-click-duration         :$fune-reveal-on-click-duration
    :$tooltip-initial-scale                    :$fune-initial-scale 
-   :$tooltip-offset-start                     :$fune-offset-start
    :$tooltip-transition-duration              :$fune-transition-duration 
    :$tooltip-transition-timing-function       :$fune-transition-timing-function 
 
    ;; tooltip arrows
-   :$tooltip-arrow-depth-min-px               :$fune-arrow-depth-min-px 
-   :$tooltip-arrow-depth-max-px               :$fune-arrow-depth-max-px 
-   :$tooltip-arrow-depth-ems                  "max( min( var(--tooltip-arrow-depth-max-px, 12px), var(--tooltip-arrow-depth-ems, 0.3em)), var(--tooltip-arrow-depth-min-px, 5px))"  
-
-   ;; Note the fallbacks here
-   :$tooltip-arrow-depth                      :$fune-arrow-depth
    :$tooltip-arrow-inline-inset               :$fune-arrow-inline-inset
    :$tooltip-arrow-block-inset                :$fune-arrow-inline-inset
+   :$tooltip-arrow-depth-min-px               :$fune-arrow-depth-min-px 
+   :$tooltip-arrow-depth-max-px               :$fune-arrow-depth-max-px 
+   :$tooltip-arrow-depth-ems                  :$fune-arrow-depth-ems
+   :$tooltip-arrow-depth                      "max( min( var(--tooltip-arrow-depth-max-px, 12px), var(--tooltip-arrow-depth-ems, 0.3em)), var(--tooltip-arrow-depth-min-px, 5px))"  
 
+   
+   ;; Popovers
+   ;; ------------------------------------------------------
+
+   ;; popover colors and images
+   :$popover-background-color                 :$fune-background-color
+   :$popover-background-color-inverse         :$fune-background-color-inverse
+   :$popover-background-image                 :none
+   :$popover-box-shadow                       :$fune-box-shadow
+   :$popover-border-width                     :$fune-border-width
+   :$popover-border-style                     :$fune-border-style
+   :$popover-border-color                     :$fune-border-color
+
+   ;; popover geometry
+   :$popover-min-width                        :$fune-min-width
+   :$popover-min-height                       :$fune-min-height
+   :$popover-border-radius                    :$fune-border-radius
+   :$popover-offset                           :$fune-offset
+   :$popover-viewport-padding                 :$fune-viewport-padding 
+   :$popover-flip-viewport-edge-threshold     :$fune-flip-viewport-edge-threshold 
+   :$popover-auto-placement-y-threshold       :$fune-auto-placement-y-threshold 
+
+   ;; popover choreography
+   :$popover-offset-start                     :$fune-offset-start
+   :$popover-z-index                          :$fune-z-index
+   :$popover-delay-duration                   0
+   :$popover-reveal-on-click-duration         :$fune-reveal-on-click-duration
+   :$popover-initial-scale                    :$fune-initial-scale 
+   :$popover-transition-duration              :$fune-transition-duration 
+   :$popover-transition-timing-function       :$fune-transition-timing-function 
+
+   ;; popover arrows
+   :$popover-arrow-inline-inset               :$fune-arrow-inline-inset
+   :$popover-arrow-block-inset                :$fune-arrow-inline-inset
+   :$popover-arrow-depth-min-px               :$fune-arrow-depth-min-px 
+   :$popover-arrow-depth-max-px               :$fune-arrow-depth-max-px 
+   :$popover-arrow-depth-ems                  :$fune-arrow-depth-ems 
+   :$popover-arrow-depth                      "max( min( var(--popover-arrow-depth-max-px, 12px), var(--popover-arrow-depth-ems, 0.3em)), var(--popover-arrow-depth-min-px, 5px))"  
+
+
+   
 
    ;; Modals
    ;; ------------------------------------------------------
