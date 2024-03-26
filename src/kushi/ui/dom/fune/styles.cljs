@@ -6,8 +6,8 @@
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune
   :.fixed
-  :min-height--$tooltip-min-height
-  :min-width--$tooltip-min-width
+  :min-height--$fune-min-height
+  :min-width--$fune-min-width
   :border-width--$fune-border-width
   :border-style--$fune-border-style
   :border-color--$fune-border-color
@@ -209,13 +209,13 @@
   :.kushi-fune-inline-top-mixin
   :transform-origin--top:left)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
+(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass :kushi/__selector ".kushi-fune-rx"} 
   kushi-fune-r 
   :.kushi-fune-right-mixin
   :.kushi-fune-inline-center-mixin
   :transform-origin--center:left)
 
-;; (defclass
+;; (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
 ;;   ["[kushi-ui-fune-placement=\"r\"]"] 
 ;;   :.kushi-fune-right-mixin
 ;;   :.kushi-fune-inline-center-mixin

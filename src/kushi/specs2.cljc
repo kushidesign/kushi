@@ -553,8 +553,9 @@
 ;; DEFCLASS --------------------------------------------------------------
 
 (s/def ::defclass-name
-  (s/and symbol?
-         #(s/valid? ::css-selector-base (name %))))
+  (s/or :vector vector?
+        :symbol (s/and symbol?
+                       #(s/valid? ::css-selector-base (name %)))))
 
 (s/def ::defclass-style
   (s/or :tokenized-style       ::tokenized-style
@@ -566,7 +567,7 @@
   (s/or :defclass-style   ::defclass-style
         :dot-kw-classname ::dot-kw-classname))
 
-;; remove this cruft?
+;; TODO Remove this cruft? & 3 above?
 (s/def ::defclass
   (s/cat :defclass-name     ::defclass-name
          :defclass-style    (s/* ::defclass-style-or-class)
@@ -574,43 +575,52 @@
 
 
 ;; from og specs start ---------
-
+;; TODO - Is this duplicate?
 (s/def ::defclass-class
   #(s/valid? ::dot-kw-classname %))
-
 ;; from og specs end -----------
+
+;; This one is new
+(s/def ::defcss-selector
+  (s/or :symbol symbol?
+        :vector vector?))
 
 (s/def ::valid-defclass-arg*
   ;; everything except name and map - used in kushi.args/clean-args
-  (s/or :defclass-class       #(s/valid? ::defclass-class %)
-        :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
+  (s/or :defclass-class        #(s/valid? ::defclass-class %)
+        :style-tuple-defclass  #(s/valid? ::style-tuple-defclass %)
         :cssvar-tuple-defclass #(s/valid? ::cssvar-tuple-defclass %)
-        :tokenized-style      #(s/valid? ::tokenized-style %)))
+        :tokenized-style       #(s/valid? ::tokenized-style %)))
 
 (s/def ::valid-defclass-arg-normalized
   ;; TODO spec for symbol name validation
-  (s/or :assigned-class       #(s/valid? symbol? %)
-        :defclass-class       #(s/valid? ::defclass-class %)
-        :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
-        :cssvar-tuple-defclass #(s/valid? ::cssvar-tuple-defclass %)
-        :tokenized-style      #(s/valid? ::tokenized-style %)
-        ;; Internally, we nest a stylemap passed to kushi.core/defclass on a :style key,
-        ;; so it can be processed through the same pipeline as kushi.core/sx
-        :defclass-stylemap    #(s/valid? ::defclass-stylemap (when (map? %) (:style %)))))
+  (s/or 
+   ;; :assigned-class       #(s/valid? symbol? %)
+   :defcss-selector       #(s/valid? ::defcss-selector %)
+   :defclass-class        #(s/valid? ::defclass-class %)
+   :style-tuple-defclass  #(s/valid? ::style-tuple-defclass %)
+   :cssvar-tuple-defclass #(s/valid? ::cssvar-tuple-defclass %)
+   :tokenized-style       #(s/valid? ::tokenized-style %)
+   ;; Internally, we nest a stylemap passed to kushi.core/defclass on a :style key,
+   ;; so it can be processed through the same pipeline as kushi.core/sx
+   :defclass-stylemap     #(s/valid? ::defclass-stylemap (when (map? %) (:style %)))))
 
 (s/def ::valid-defclass-arg
   ;; TODO spec for symbol name validation
-  (s/or :assigned-class       #(s/valid? symbol? %)
-        :defclass-class       #(s/valid? ::defclass-class %)
-        :style-tuple-defclass #(s/valid? ::style-tuple-defclass %)
+  (s/or :defcss-selector       #(s/valid? :defcss-selector %)
+        :defclass-class        #(s/valid? ::defclass-class %)
+        :style-tuple-defclass  #(s/valid? ::style-tuple-defclass %)
         :cssvar-tuple-defclass #(s/valid? ::cssvar-tuple-defclass %)
-        :tokenized-style      #(s/valid? ::tokenized-style %)
-        :defclass-stylemap    #(s/valid? ::defclass-stylemap %)))
+        :tokenized-style       #(s/valid? ::tokenized-style %)
+        :defclass-stylemap     #(s/valid? ::defclass-stylemap %)))
+
+
+;; Also checkout args/parts, which cleans args
 
 (s/def ::defclass-args
   ;; TODO spec for symbol name validation
   (s/cat
-   :assigned-class          (s/? symbol?)
+   :defcss-selector         (s/? ::defcss-selector)
    :defclass-style-or-class (s/* ::defclass-style-or-class)
    :defclass-stylemap       (s/? ::defclass-stylemap)))
 

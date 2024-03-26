@@ -1,5 +1,7 @@
 (ns ^:dev/always kushi.core
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
+   [fireworks.pp :refer [?pp]]
    [garden.color]
    [clojure.pprint :refer [pprint]]
    [clojure.spec.alpha :as s]
@@ -246,7 +248,7 @@
                                    {:kushi/chunk chunk})]
 
       ;; debugging
-      ;; (when (= sym 'foo) (? clean))
+      ;; (when (vector? sym) (?pp clean))
 
       (swap! state2/css conj clean)
 

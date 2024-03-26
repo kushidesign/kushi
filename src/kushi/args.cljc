@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.args
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.spec.alpha :as s]
    [kushi.specs2 :as specs2]
    [kushi.state2 :as state2]
@@ -9,7 +10,8 @@
    [kushi.styles :as styles]
    [kushi.printing2 :refer [kushi-expound]]
    [kushi.utils :as util :refer [keyed]]
-   [kushi.config :as config :refer [user-config]]))
+   [kushi.config :as config :refer [user-config]]
+   [clojure.string :as string]))
 
 (defn- data-sx-attr [form-meta]
   (when @state2/KUSHIDEBUG
@@ -80,11 +82,18 @@
 
 (defn- parts [args shared-class?]
   (let [[assigned-class
-         styles*]                 (if (s/valid? ::specs2/assigned-class (first args))
-                                    [(first args) (rest args)]
-                                    [nil args])
-        assigned-class           (if (s/valid? ::specs2/quoted-symbol assigned-class)
+         styles*]                (if (or (s/valid? ::specs2/assigned-class (first args))
+                                         (when shared-class? (s/valid? ::specs2/defcss-selector (first args))))
+                                   [(first args) (rest args)]
+                                   [nil args])
+        assigned-class           (cond
+                                   (s/valid? ::specs2/quoted-symbol assigned-class)
                                    (second assigned-class)
+                                   (when (and shared-class?
+                                              (vector? assigned-class)
+                                              (seq assigned-class)))
+                                   (string/join ", " assigned-class)
+                                   :else
                                    assigned-class)
         [styles
          [attrs-idx m*]]  (trailing-map styles* map?)
@@ -200,10 +209,14 @@
                                   args-pre-cleaned
                                   conformed)]
 
+    (when (:bad-args ret) #_(:defcss-selector conformed)
+
+      (? ret))
     ret))
 
 ;; pre-clean end ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; TODO -- Rename assigned-class
 
 
 ;; TODO - refactor in clean args from above
@@ -285,6 +298,17 @@
         ;;    :css-value         "red"})
         parsed
         (parsed/parsed all-style-tuples selector)
+        
+
+        ;; TODO - Add support for metadata-driven override, maybe here or above
+        ;; For creating rules with non-class selectors
+        ;; Example -
+        ;; (defclass {:^kushi/__selector "[data-kushi-ui-fune-placement\"=right\"]"}
+        ;;          kushi-fune-r
+        ;;          ...)
+
+        _  (when (some-> parsed first :selector (= ".kushi-fune-r"))
+             (? selector))
 
         ;; Create garden vectors from kushi object
         ;; Example:
@@ -327,14 +351,11 @@
         ]
 
 
-;; Debugging - change quoted sym to line up with the sx or defclass call (with manually assigned class) you want to observe
+      ;; Debugging - change quoted sym to line up with the sx or defclass call (with manually assigned class) you want to observe
 
-;; (when (= (first args) '(quote foo))
-;;   (? all-style-tuples)
-;;   (? parsed))
-
-
-
+      ;; (when (= (first args) '(quote foo))
+      ;;   (? all-style-tuples)
+      ;;   (? parsed))
 
     (merge
      data-sx-attr

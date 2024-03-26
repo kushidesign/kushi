@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.stylesheet
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [clojure.java.io :as io]
    [garden.stylesheet]
@@ -163,6 +164,12 @@
 
       ;; (when (= :kushi/utility-override chunk)
       ;;   (println (keyed rules to-be-printed-key num-rules)))
+      
+      ;; (when (string/starts-with? content ".kushi-fune" )
+      ;;   (? m2))
+      ;; (when (= :kushi/kushi-ui-defclass chunk)
+      ;;   (!? #_(keyed rules to-be-printed-key num-rules)
+      ;;            (keyed comment content css-text)))
 
       (swap! to-be-printed assoc to-be-printed-key num-rules+)
 

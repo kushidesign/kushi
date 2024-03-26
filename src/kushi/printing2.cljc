@@ -303,4 +303,4 @@
 (defn kushi-expound [spec x]
   (expound/expound-str spec
                        x
-                       (:warnings-and-errors user-config)))
+                       (:warnings-and-errors true #_user-config)))
