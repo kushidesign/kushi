@@ -412,9 +412,11 @@
    :$kushi-collapse-transition-duration :$slow
 
    ;; kushi.ui.input.text.core/input
-   :$kushi-text-input-helper-margin-block-start :0.3em
+   :$kushi-text-input-helper-margin-block-start      :0.3em
    :$kushi-text-input-label-inline-margin-inline-end :0.7em
-   :$kushi-text-input-label-block-margin-block-end :0.4em
+   :$kushi-text-input-label-block-margin-block-end   :0.4em
+   :$text-input-wrapper-border-intensity             0.75
+   :$text-input-border-radius                        :0px
 
 
    ;; Switches
