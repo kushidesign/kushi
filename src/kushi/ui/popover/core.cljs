@@ -1,4 +1,4 @@
-(ns kushi.ui.tooltip.core
+(ns kushi.ui.popover.core
   (:require
    [fireworks.core :refer [? ?? ??? !? ?> !?> ]]
    [applied-science.js-interop :as j]
@@ -10,10 +10,13 @@
    [kushi.ui.dom.fune.core :as fune]
    [kushi.ui.dom.fune.placement :refer [user-placement]]
    ;; Import this styles ns to create defclasses
-   [kushi.ui.dom.fune.styles]))
+   [kushi.ui.dom.fune.styles]
+   [reagent.dom :as rdom]
+   ))
 
 
-(defn valid-tooltip-text-coll? [x]
+
+(defn valid-popover-text-coll? [x]
   (and (seq x) 
        (every? #(or (and (string? %)
                          (not (string/blank? %)))
@@ -22,80 +25,80 @@
                     (symbol? %))
                x)))
 
-(defn valid-tooltip-text [text]
+(defn valid-popover-text [text]
   (cond (string? text)
         (when-not (string/blank? text)
           text)
         (coll? text)
-        (when (valid-tooltip-text-coll? text)
+        (when (valid-popover-text-coll? text)
           (into [] text))
         (array? text)
         (let [v (js->clj text)]
-          (when (valid-tooltip-text-coll? v)
+          (when (valid-popover-text-coll? v)
             v))))
 
 
-(defn tooltip-attrs
-  {:desc ["tooltips provide additional context when hovering or clicking on an"
-          "element. They are intended to be ephemeral, containing only"
-          "non-interactive content."
+(defn popover-attrs
+  {:desc ["popovers provide additional context when hovering or clicking on an"
+          "element. They can be interactive and are typically dismissed"
+          "manually by the user."
           :br
           :br
-          "By default, tooltips will show up above the owning element. "
+          "By default, popovers will show up above the owning element. "
           "Specifying placement in various ways can be done with the"
           "`:-placement` option."
           :br
           :br
           "The element being tipped must receive an attributes map that is a "
           "result of passing a map of options to "
-          "`kushi.ui.tooltip.core/tooltip-attrs`. You can compose this map to "
+          "`kushi.ui.popover.core/popover-attrs`. You can compose this map to "
           "an existing elements attributes map using the pattern:"
           :br
-          :br "`(merge-attrs (sx ...) (tooltip-attrs {...}))`"
+          :br "`(merge-attrs (sx ...) (popover-attrs {...}))`"
           :br
           :br
-          "tooltips can be custom styled and controlled via the following "
+          "popovers can be custom styled and controlled via the following "
           "tokens in your theme:"
           :br
           ;; TODO add documentation for each token
           :br "Colors and images:"
-          :br "`:$tooltip-color`"                            
-          :br "`:$tooltip-color-inverse`"                    
-          :br "`:$tooltip-background-color`"                 
-          :br "`:$tooltip-background-color-inverse`"         
-          :br "`:$tooltip-background-image`"                 
+          :br "`:$popover-color`"                            
+          :br "`:$popover-color-inverse`"                    
+          :br "`:$popover-background-color`"                 
+          :br "`:$popover-background-color-inverse`"         
+          :br "`:$popover-background-image`"                 
           :br
           :br "Typography:"
-          :br "`:$tooltip-line-height`"
-          :br "`:$tooltip-font-family`"
-          :br "`:$tooltip-font-size`"
-          :br "`:$tooltip-font-weight`"
-          :br "`:$tooltip-text-transform`"
+          :br "`:$popover-line-height`"
+          :br "`:$popover-font-family`"
+          :br "`:$popover-font-size`"
+          :br "`:$popover-font-weight`"
+          :br "`:$popover-text-transform`"
           :br
           :br "Geometry:"
-          :br "`:$tooltip-padding-inline`"
-          :br "`:$tooltip-padding-block`"
-          :br "`:$tooltip-border-radius`"
-          :br "`:$tooltip-offset`"
-          :br "`:$tooltip-viewport-padding`"
-          :br "`:$tooltip-flip-viewport-edge-threshold`"
-          :br "`:$tooltip-auto-placement-y-threshold`"
+          :br "`:$popover-padding-inline`"
+          :br "`:$popover-padding-block`"
+          :br "`:$popover-border-radius`"
+          :br "`:$popover-offset`"
+          :br "`:$popover-viewport-padding`"
+          :br "`:$popover-flip-viewport-edge-threshold`"
+          :br "`:$popover-auto-placement-y-threshold`"
           :br
           :br "Choreography:"
-          :br "`:$tooltip-delay-duration`"            
-          :br "`:$tooltip-reveal-on-click-duration`"  
-          :br "`:$tooltip-initial-scale`"             
-          :br "`:$tooltip-offset-start`"              
-          :br "`:$tooltip-transition-duration`"       
-          :br "`:$tooltip-transition-timing-function`"
+          :br "`:$popover-delay-duration`"            
+          :br "`:$popover-reveal-on-click-duration`"  
+          :br "`:$popover-initial-scale`"             
+          :br "`:$popover-offset-start`"              
+          :br "`:$popover-transition-duration`"       
+          :br "`:$popover-transition-timing-function`"
           :br
           :br "Arrows:"
-          :br "`:$tooltip-arrow-depth-min-px`"
-          :br "`:$tooltip-arrow-depth-max-px`"
-          :br "`:$tooltip-arrow-depth-ems`"
-          :br "`:$tooltip-arrow-depth`"   
-          :br "`:$tooltip-arrow-x-offset`"
-          :br "`:$tooltip-arrow-y-offset`"
+          :br "`:$popover-arrow-depth-min-px`"
+          :br "`:$popover-arrow-depth-max-px`"
+          :br "`:$popover-arrow-depth-ems`"
+          :br "`:$popover-arrow-depth`"   
+          :br "`:$popover-arrow-x-offset`"
+          :br "`:$popover-arrow-y-offset`"
 
           :br
           :br
@@ -103,24 +106,24 @@
           "use the following pattern."
           :br
           :br
-          "`(merge-attrs (sx :$tooltip-offset--5px ...) (tooltip-attrs {...}))`"
+          "`(merge-attrs (sx :$popover-offset--5px ...) (popover-attrs {...}))`"
           :br
           :br
           "If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for "
-          "`$tooltip-offset`, `$tooltip-arrow-x-offset`, "
-          "`$tooltip-arrow-y-offset`, or `$tooltip-border-radius`, you will need "
+          "`$popover-offset`, `$popover-arrow-x-offset`, "
+          "`$popover-arrow-y-offset`, or `$popover-border-radius`, you will need "
           "to use an explicit unit e.g. `0px`."
           ]
    :opts '[{:name    text
             :pred    #(or (string? %) (keyword? %) (vector? %))
             :default nil
-            :desc    "Required. The text to display in the tooltip"}
+            :desc    "Required. The text to display in the popover"}
            {:name    placement
             :pred    keyword?
             :default :auto
             :desc    [
                       "You can use single keywords to specify the exact placement "
-                      "of the tooltip:"
+                      "of the popover:"
                       :br
                       "`:top-left-corner`"
                       :br
@@ -166,7 +169,7 @@
                       "`:rbc`"
                       :br
                       :br
-                      "If you care about the tooltip placement respecting writing "
+                      "If you care about the popover placement respecting writing "
                       "direction and/or document flow, you can use a vector of of "
                       "up to 3 logical properties keywords, separated by spaces:"
                       :br
@@ -188,32 +191,19 @@
             :pred    boolean?
             :default true
             :desc    ["Setting to false will not render a directional arrow with "
-                     "the tooltip."]}
-           {:name    tooltip-class
+                     "the popover."]}
+           {:name    popover-class
             :pred    string?
             :default nil
             :desc    ["A class name for a la carte application of a classes on the "
-                      " tooltip element."]}
-           {:name    text-on-click
-            :pred    #(or (string? %) (keyword? %) (vector? %))
-            :default nil
-            :desc    ["The tooltip text, after the tipped element has been clicked."]}
-           {:name    text-on-click-tooltip-class
-            :pred    string?
-            :default nil
-            :desc    ["A class name for the la carte application of classes on "
-                      "the tooltip element which is displaying alternate text "
-                      "after click."]}]}
-  [{text                        :-text
-    placement                   :-placement
+                      " popover element."]}]}
+  [{placement                   :-placement
     arrow?                      :-arrow?
-    tooltip-class               :-tooltip-class
-    text-on-click               :-text-on-click
-    text-on-click-tooltip-class :-text-on-click-tooltip-class
+    user-rendering-fn           :-f
     :or                         {placement :auto
                                  arrow?    true}}]
   
-  (when-let [tooltip-text (valid-tooltip-text text)] 
+  (when user-rendering-fn 
     (let [arrow?       (if (false? arrow?) false true)
           placement    (if-not (or (string? placement)
                                    (keyword? placement)
@@ -222,31 +212,18 @@
                          placement)
           placement-kw (or (maybe placement #(= % :auto))
                            (user-placement placement))
-          fune-type    :tooltip
-          opts         (keyed tooltip-text
-                              placement-kw
+          fune-type    :popover
+          opts         (keyed placement-kw
                               arrow?
                               fune-type
-                              tooltip-class)]
+                              user-rendering-fn)]
       (merge 
        {:data-kushi-ui-fune (name placement-kw)
-        :on-mouse-enter     (partial fune/append-fune! opts)}
+        :on-click           (partial fune/append-fune! opts)}))))
 
-       ;; Todo use when-let to validate text-on-click and normalize if vector
-       (when-let [text-on-click (fune/maybe-multiline-tooltip-text text-on-click)]
-         {:on-click (fn [_]
-                      (let [duration           (token->ms :$tooltip-reveal-on-click-duration)
-                            tt-el              (domo/qs ".kushi-fune")
-                            tt-el-text-wrapper (domo/qs tt-el ".kushi-tooltip-text-wrapper")
-                            tt-el-text-span    (domo/qs tt-el ".kushi-tooltip-text")
-                            text-on-click-el   (js/document.createElement "span")]
-                        (j/assoc! text-on-click-el "innerText" text-on-click)
-                        (domo/add-class! text-on-click-el "absolute-centered")
-                        (domo/add-class! tt-el text-on-click-tooltip-class)
-                        (.appendChild tt-el-text-wrapper text-on-click-el)
-                        (domo/add-class! tt-el-text-span "invisible")
-                        (js/setTimeout (fn [_] 
-                                         (.removeChild tt-el-text-wrapper text-on-click-el)
-                                         (domo/remove-class! tt-el text-on-click-tooltip-class)
-                                         (domo/remove-class! tt-el-text-span "invisible"))
-                                       duration)))})))))
+(defn remove-popover! [e]
+  (let [el         (domo/et e)
+        popover-el (domo/nearest-ancestor el ".kushi-popover")
+        fune-id    (j/get popover-el :id)
+        owning-el  (domo/qs (str "[aria-controls=\"" fune-id "\"]"))]
+    (fune/remove-fune! owning-el fune-id :popover e)))

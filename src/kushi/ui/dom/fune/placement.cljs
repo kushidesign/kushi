@@ -161,36 +161,34 @@
 (defn- fune-prop [t prop]
   (str "var(--" t "-" prop ")"))
 
+(defn owning-el-rect-cp [rect]
+  {"--oe-top"      (-> rect :top (str "px"))
+   "--oe-left"     (-> rect :left (str "px"))
+   "--oe-right"    (-> rect :right (str "px"))
+   "--oe-bottom"   (-> rect :bottom (str "px"))
+   "--oe-x-center" (-> rect :x-center (str "px"))
+   "--oe-y-center" (-> rect :y-center (str "px"))})
+
 (defn placement-css-custom-property
   [opts]
-  (let [{oe-top      :top
-         oe-left     :left
-         oe-right    :right
-         oe-bottom   :bottom
-         oe-x-center :x-center
-         oe-y-center :y-center} (:owning-el-rect opts)
-        t (-> opts :fune-type as-str)]
+  (let [t (-> opts :fune-type as-str)]
     (domo/css-style-string
      (let [tot-off "var(--total-offset)"]
-       {"--oe-top"             (str oe-top "px")
-        "--oe-left"            (str oe-left "px")
-        "--oe-right"           (str oe-right "px")
-        "--oe-bottom"          (str oe-bottom "px")
-        "--oe-x-center"        (str oe-x-center "px")
-        "--oe-y-center"        (str oe-y-center "px")
-        "--border-width"       (fune-prop t "border-width")
-        "--border-style"       (fune-prop t "border-style")
-        "--border-color"       (fune-prop t "border-color")
-        "--arrow-depth"        (fune-prop t "arrow-depth")
-        "--offset"             (str "max(var(--" t "-offset-start), 0px)")
-        "--total-offset"       (calc "(var(--offset) + var(--arrow-depth))")
-        "--border-radius"      (fune-prop t "border-radius") 
-        "--arrow-inline-inset" (fune-prop t "arrow-inline-inset") 
-        "--arrow-block-inset"  (fune-prop t "arrow-block-inset") 
-        "--top-plc"            (calc "(var(--oe-top) - 100%) - " tot-off)
-        "--bottom-plc"         (calc "var(--oe-bottom) + " tot-off)
-        "--right-plc"          (calc "var(--oe-right) + " tot-off)
-        "--left-plc"           (calc "(var(--oe-left) - 100%) - " tot-off)}))))
+       (merge 
+        (owning-el-rect-cp (:owning-el-rect opts))
+        {"--border-width"       (fune-prop t "border-width")
+         "--border-style"       (fune-prop t "border-style")
+         "--border-color"       (fune-prop t "border-color")
+         "--arrow-depth"        (fune-prop t "arrow-depth")
+         "--offset"             (str "max(var(--" t "-offset-start), 0px)")
+         "--total-offset"       (calc "(var(--offset) + var(--arrow-depth))")
+         "--border-radius"      (fune-prop t "border-radius") 
+         "--arrow-inline-inset" (fune-prop t "arrow-inline-inset") 
+         "--arrow-block-inset"  (fune-prop t "arrow-block-inset") 
+         "--top-plc"            (calc "(var(--oe-top) - 100%) - " tot-off)
+         "--bottom-plc"         (calc "var(--oe-bottom) + " tot-off)
+         "--right-plc"          (calc "var(--oe-right) + " tot-off)
+         "--left-plc"           (calc "(var(--oe-left) - 100%) - " tot-off)})))))
 
 
 ;; TODO Add some safety here for bad inputs
@@ -218,8 +216,7 @@
                            (map first)
                            string/join
                            keyword)]
-           (when (contains? translate-xy kw)
-             kw))))
+           (when (contains? translate-xy kw) kw))))
      (logical-placement {:ltr?      (= (domo/writing-direction) "ltr")
                          :placement s}))) )
 

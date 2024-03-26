@@ -6,10 +6,12 @@
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune
   :.fixed
-  :bw--$fune-border-width
-  :bs-style--$fune-border-style
-  :bc-color--$fune-border-color
-  :box-shadow--$fune-box-shadow||$elevated-3
+  :min-height--$tooltip-min-height
+  :min-width--$tooltip-min-width
+  :border-width--$fune-border-width
+  :border-style--$fune-border-style
+  :border-color--$fune-border-color
+  :box-shadow--$fune-box-shadow
   :border-radius--$fune-border-radius
   :transition-property--opacity|translate|scale|transform
   :.transition
@@ -23,15 +25,20 @@
   :left--0
   :bgc--$fune-background-color
   :w--max-content
-  :p--$fune-padding-block:$fune-padding-inline)
+  :p--$fune-padding-block:$fune-padding-inline
+  [:$fune-arrow-depth
+   "max( min( var(--fune-arrow-depth-max-px, 12px), var(--fune-arrow-depth-ems, 0.3em)), var(--fune-arrow-depth-min-px, 5px))"]
+  )
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-tooltip
   :.kushi-fune
+  :min-height--$tooltip-min-height
+  :min-width--$tooltip-min-width
   :border-width--$tooltip-border-width
   :border-style--$tooltip-border-style
   :border-color--$tooltip-border-color
-  :box-shadow--$tooltip-box-shadow||$elevated-3
+  :box-shadow--$tooltip-box-shadow||none
   :fs--$tooltip-font-size
   :border-radius--$tooltip-border-radius
   :transition-duration--$tooltip-transition-duration
@@ -41,7 +48,33 @@
   :zi--$tooltip-z-index
   :c--$tooltip-color
   :bgc--$tooltip-background-color
-  :p--$tooltip-padding-block:$tooltip-padding-inline)
+  :p--$tooltip-padding-block:$tooltip-padding-inline
+  [:$tooltip-arrow-depth
+   "max( min( var(--tooltip-arrow-depth-max-px, 12px), var(--tooltip-arrow-depth-ems, 0.3em)), var(--tooltip-arrow-depth-min-px, 5px))"]
+  )
+
+(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-popover
+  :.kushi-fune
+  :p--0
+  :min-height--$popover-min-height
+  :min-width--$popover-min-width
+  :border-width--$popover-border-width
+  :border-style--$popover-border-style
+  :border-color--$popover-border-color
+  :box-shadow--$popover-box-shadow
+  :border-radius--$popover-border-radius
+  :transition-duration--$popover-transition-duration
+  :transition-timing-function--$popover-transition-timing-function
+  :scale--$popover-initial-scale
+  :transition-delay--$popover-delay-duration
+  :zi--$popover-z-index
+  :c--$popover-color
+  :bgc--$popover-background-color
+  [:$popover-arrow-depth
+   "max( min( var(--popover-arrow-depth-max-px, 12px), var(--popover-arrow-depth-ems, 0.3em)), var(--popover-arrow-depth-min-px, 5px))"]
+  )
+
 
 ;; block mixins
 ;; ------------------------------------------------
@@ -181,6 +214,12 @@
   :.kushi-fune-right-mixin
   :.kushi-fune-inline-center-mixin
   :transform-origin--center:left)
+
+;; (defclass
+;;   ["[kushi-ui-fune-placement=\"r\"]"] 
+;;   :.kushi-fune-right-mixin
+;;   :.kushi-fune-inline-center-mixin
+;;   :transform-origin--center:left)
 
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune-rb
