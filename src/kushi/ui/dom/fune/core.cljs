@@ -102,24 +102,25 @@
 
   ;; Set the innerHTML / or tooltip text
   (cond (= fune-type :tooltip)
-        (tooltip-text-html! append-tt-opts)
-        ;; (= fune-type :popover)
-        ;; (user-rendering-fn el)
-        )
+        (tooltip-text-html! append-tt-opts))
   ;; popover-close-button-html! append-tt-opts
   ;; Set the class and id of the fune el
   ;; TODO
   ;; make sure translate-xy-style is always map, then merge with below
   (let [txy          (txy append-tt-opts)
         fune-classes (fune-classes append-tt-opts)
-        placement    (some->> (if metrics? 
-                                placement-kw
-                                new-placement-kw)
-                              name)]
+
+      ;; TODO swap this in once kushi.core/defcss is ready
+      ;; (.setAttribute "data-kushi-ui-fune-placement" placement)
+       ;; placement    (some->> (if metrics? 
+       ;;                         placement-kw
+       ;;                         new-placement-kw)
+       ;;                       name)
+        ]
     (doto el
       (.setAttribute "data-kushi-ui" "fune")
 
-      ;; TODO swap this in !
+      ;; TODO swap this in once kushi.core/defcss is ready
       ;; (.setAttribute "data-kushi-ui-fune-placement" placement)
 
       (.setAttribute "id" id)
