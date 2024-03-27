@@ -451,8 +451,10 @@
    :$kushi-text-input-helper-margin-block-start      :0.3em
    :$kushi-text-input-label-inline-margin-inline-end :0.7em
    :$kushi-text-input-label-block-margin-block-end   :0.4em
-   :$text-input-wrapper-border-intensity             :50%
-   :$text-input-wrapper-border-intensity-inverse     :55%
+
+   ;; Remove wrapper from this
+   :$text-input-border-intensity             :50%
+   :$text-input-border-intensity-inverse     :55%
    :$text-input-border-radius                        :0px
 
 
