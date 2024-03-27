@@ -90,37 +90,6 @@
                "</div>"))))
 
 
-#_(defn- popover-close-button-html!
-  [{:keys [el]}]
-  (let [style (domo/css-style-string
-               {:position        :relative
-                :display         :flex
-                :justify-content :center
-                :align-items     :center
-                :width           :fit-content})]
-    (set! (.-innerHTML el)
-      (str 
-        "<button data-kushi-ui=\"button\""
-                "class=\"kushi-popover-close-button northeast-inside flex-row-c transition pointer relative "
-                        "neutral minimal enhanceable kushi-button no-shrink pill small\""
-                "style=\"--pis: var(--popover-close-button-padding); "
-                        "--popover-close-button-opacity: 0.7; "
-                        "opacity: var(--popover-close-button-opacity); "
-                        "--popover-close-button-padding: 0.4em; "
-                        "--button-padding-block-ems: var(--popover-close-button-padding); "
-                        "margin-inline: var(--popover-close-button-margin-inline, var(--popover-close-button-padding)); "
-                        "margin-block: var(--popover-close-button-margin-block, var(--popover-close-button-padding)); "
-                        "--pie: var(--popover-close-button-padding);\">"
-            "<div data-kushi-ui=\"icon\""
-                  "class=\"kushi-icon\">"
-                "<svg xmlns=\"http://www.w3.org/2000/svg\""
-                    "viewBox=\"0 0 24 24\">"
-                  "<path d=\"M6.4 19 5 17.6l5.6-5.6L5 6.4 6.4 5l5.6 5.6L17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6Z\"></path>"
-                "</svg>"
-            "</div>"
-        "</button>"
-        "<span>My Popover</span>"))))
-
 (defn- append-fune-el!
   [{:keys [el 
            id
@@ -227,7 +196,8 @@
     ;; Add some kind of :tl or :br key to opts below, then use padding value
     ;; in css land.
     ;; -----------------------------------------------------------------------------
-    (let [vpp                  (el-plc viewport el 0)
+    (let [
+          vpp                  (el-plc viewport el 0)
           new-placement-kw     (updated-fune-placement
                                 (merge tt-pos-og
                                        (keyed vpp placement-kw)))
@@ -298,8 +268,6 @@
 
 (declare remove-fune!)
 
-;; (defn)
-
 (defn remove-fune-if-clicked-outside!
   [owning-el fune-id fune-type e] 
   (let [skip? (let [el (domo/et e)]
@@ -312,19 +280,54 @@
     (when-not skip?
       (remove-fune! owning-el fune-id fune-type e))))
 
+(defn update-fune-placement-class!
+  [fune-el placement-class placement-kw _]
+  (js/window.requestAnimationFrame
+   (fn []
+     (let [vpp                 (el-plc (domo/viewport) fune-el 0)
+           tt-pos-og           (fune-plc placement-kw)
+           new-placement-kw    (updated-fune-placement
+                                (merge tt-pos-og
+                                       (keyed vpp placement-kw)))
+           new-placement-class (some->> new-placement-kw
+                                        name
+                                        (str "kushi-fune-"))]
+       (when (and placement-class
+                  new-placement-class
+                  (not= placement-class
+                        new-placement-class))
+         (domo/remove-class! fune-el placement-class)
+         (domo/add-class! fune-el new-placement-class))))))
+
+;; Make sure this is getting removed properly
+;; TODO maybe batch the 2 different adjustments into one
 (def update-fune-placement!
   (goog.functions.debounce
    (fn [el fune-id]
-     (let [m       (-> el domo/client-rect owning-el-rect-cp)
-           fune-el (domo/el-by-id fune-id)
-           ms      (domo/duration-property-ms fune-el "transition-duration")]
-       (doseq [[k v] m]
-         (domo/set-css-var! fune-el k v))
-       (js/setTimeout (fn [_]
-                        (js/window.requestAnimationFrame
-                         (fn [] 
-                           (!? (el-plc (domo/viewport) fune-el 0)))))
-                      ms)))
+       (when-let [fune-el (domo/el-by-id fune-id)]
+         (let [m       
+               (-> el domo/client-rect owning-el-rect-cp)
+
+               ms      
+               (domo/duration-property-ms fune-el "transition-duration")
+
+               coll   
+               (keep #(re-find #"^kushi-fune-([a-z]*)$" %)
+                     (.-classList fune-el))
+               [placement-class placement-kw*]
+               (some-> coll (nth 0 nil))
+
+               placement-kw
+               (some->  placement-kw* keyword)]
+
+          (doseq [[k v] m]
+            (domo/set-css-var! fune-el k v))
+
+          (js/setTimeout (partial update-fune-placement-class!
+                                  fune-el
+                                  placement-class
+                                  placement-kw)
+                         ms))))
    300))
 
 (defn- escape-fune!
