@@ -42,6 +42,7 @@
           :&_textarea:border-radius--$text-input-border-radius
           :&_input:border-radius--$text-input-border-radius
           [:bc "color-mix(in srgb, currentColor var(--text-input-wrapper-border-intensity, 75%), transparent)"]
+          [:dark:bc "color-mix(in srgb, currentColor var(--text-input-wrapper-border-intensity-inverse, 55%), transparent)"]
           [:focus-within:bgc :transparent!important] ;; tmp fix for when semantic class + input is focused
           [:focus-within:c :currentColor!important] ;; ["has-ancestor(.error):bc" :$negative-600]
           [:focus-within:bc '(rgba 0 125 250 1)]

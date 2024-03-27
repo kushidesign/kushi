@@ -16,12 +16,15 @@
    [kushi.ui.card.core :refer (card)]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.tooltip.demo :as tooltip-demo]
+   [kushi.ui.popover.core :refer [popover-attrs close-popover!]]
+   [kushi.ui.popover.demo :refer [popover-content]]
+   [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.collapse.core :refer (collapse accordion)]
    [kushi.ui.modal.core :refer (modal)]
    [kushi.ui.modal.examples :refer (modal-examples)]
    [kushi.ui.icon.mui.examples :refer [icon-examples]]
-   [kushi.ui.icon.core :refer [icon]]
-   [kushi.playground.util :refer-macros (feature example2)]))
+   [kushi.playground.util :refer-macros (feature example2)]
+   [reagent.dom :as rdom]))
 
 
 (def components
@@ -476,7 +479,6 @@
                 ;;              :info]]}
 
 
-                ;; Disabled in a20
                  {:label   "Change text on click"
                   :example [:div.flex-row-fs
                             [button
@@ -484,6 +486,18 @@
                                              :-text-on-click "Clicked!"
                                              :-placement     :right})
                              "Hover me to reveal tooltip"]]}
+
+                ;; When you get sx-class working
+                ;;  {:label   "Change text and color on click"
+                ;;   :example [:div.flex-row-fs
+                ;;             [button
+                ;;              (merge-attrs 
+                ;;               (tooltip-attrs {:-text                        "My tooltip text!"
+                ;;                               :-text-on-click               "Success!"
+                ;;                               :-text-on-click-tooltip-class (sx-class :bgc--$positive-bg :c--white) 
+                ;;                               :-placement                   :right}))
+                ;;              "Hover me to reveal tooltip"]]}
+
                  {:label   "With custom styled span"
                   :example [:span
                             (merge-attrs
@@ -502,9 +516,50 @@
                                              :-placement :top}))
                             "Hover me to reveal tooltip"]}]})
 
+  (feature
+    popover-attrs
+    {:fn       popover-attrs
+     :meta     #'popover-attrs
+     :title    "Popover"
+     :stage    {:style {:min-height      :200px
+                        :justify-content :center}}
+     :defaults {:examples "Auto"}
+     :refers   '[close-popover!]
+     :examples [{:label   "Auto"
+                 :example [button
+                           (popover-attrs {:-f (fn [popover-el]
+                                                 (rdom/render popover-content
+                                                              popover-el))})
+                           "Click me"]}
+
+                {:label   "left-top"
+                 :example [button
+                           (popover-attrs {:-f         (fn [popover-el]
+                                                         (rdom/render popover-content
+                                                                      popover-el))
+                                           :-placement :left-top})
+                           "Click me"]}
+                
+                {:label   "With dismiss action"
+                 :example [button
+                           (popover-attrs
+                            {:-f (fn [el]
+                                   (rdom/render [:div (sx :.flex-col-c
+                                                          :ai--c
+                                                          :h--100%)
+                                                 [button 
+                                                  (sx :.small
+                                                      :.minimal
+                                                      :.absolute-centered
+                                                      {:on-click close-popover!})
+                                                  "Close"]]
+                                                el))})
+                           "Click me"]}]})
+
 
    ;; Defined in kushi.ui.icon.mui.examples
    icon-examples
+
 
    {:fn       tag
     :meta     #'tag

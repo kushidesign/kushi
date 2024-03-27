@@ -173,14 +173,15 @@
    :$fune-background-color-inverse         :$body-background-color-inverse
    :$fune-background-image                 :white
    :$fune-box-shadow                       :$elevated-5
+   :$fune-box-shadow-inverse               :$elevated-5-inverse
    :$fune-border-width                     :0px
    :$fune-border-style                     :solid
    :$fune-border-color                     :transparent
+   :$fune-border-color-inverse             :transparent
 
    ;; fune geometry
-
-   :$fune-min-width                        :2rem
-   :$fune-min-height                       :2rem
+   :$fune-min-width                        :150px
+   :$fune-min-height                       :75px
    :$fune-padding-inline                   :1em
    :$fune-padding-block                    :0.5em
    :$fune-border-radius                    :7px
@@ -190,10 +191,9 @@
    :$fune-auto-placement-y-threshold       :0.1 
 
    ;; fune choreography
-   :$fune-offset-start                     "calc(var(--fune-offset) + 3px)"
+   :$fune-offset-start                     "calc(var(--fune-offset) + 5px)"
    :$fune-z-index                          :auto
-   :$fune-delay-duration                   :700ms
-   :$fune-reveal-on-click-duration         :2000ms
+   :$fune-delay-duration                   :0ms
    :$fune-initial-scale                    1 
    :$fune-transition-duration              :$xfast 
    :$fune-transition-timing-function       :$timing-ease-out-curve 
@@ -201,10 +201,7 @@
    ;; fune arrows
    :$fune-arrow-inline-inset               :7px
    :$fune-arrow-block-inset                :2px
-   :$fune-arrow-depth-min-px               :3px 
-   :$fune-arrow-depth-max-px               :11px 
-   :$fune-arrow-depth-ems                  :0.3em 
-   :$fune-arrow-depth                      "max( min( var(--fune-arrow-depth-max-px, 12px), var(--fune-arrow-depth-ems, 0.3em)), var(--fune-arrow-depth-min-px, 5px))"  
+   :$fune-arrow-depth                      :7px
 
 
    
@@ -219,9 +216,11 @@
    :$tooltip-background-color-inverse         :$body-background-color
    :$tooltip-background-image                 :none
    :$tooltip-box-shadow                       :none
+   :$tooltip-box-shadow-inverse               :none
    :$tooltip-border-width                     :$fune-border-width
    :$tooltip-border-style                     :$fune-border-style
    :$tooltip-border-color                     :$fune-border-color
+   :$tooltip-border-color-inverse             :$fune-border-color-inverse
 
    ;; fune typography
    :$tooltip-line-height                      1.25
@@ -244,8 +243,8 @@
    ;; tooltip choreography
    :$tooltip-offset-start                     :$fune-offset-start
    :$tooltip-z-index                          :$fune-z-index
-   :$tooltip-delay-duration                   :$fune-delay-duration
-   :$tooltip-reveal-on-click-duration         :$fune-reveal-on-click-duration
+   :$tooltip-delay-duration                   :550ms
+   :$tooltip-text-on-click-duration           :2000ms
    :$tooltip-initial-scale                    :$fune-initial-scale 
    :$tooltip-transition-duration              :$fune-transition-duration 
    :$tooltip-transition-timing-function       :$fune-transition-timing-function 
@@ -253,10 +252,7 @@
    ;; tooltip arrows
    :$tooltip-arrow-inline-inset               :$fune-arrow-inline-inset
    :$tooltip-arrow-block-inset                :$fune-arrow-inline-inset
-   :$tooltip-arrow-depth-min-px               :$fune-arrow-depth-min-px 
-   :$tooltip-arrow-depth-max-px               :$fune-arrow-depth-max-px 
-   :$tooltip-arrow-depth-ems                  :$fune-arrow-depth-ems
-   :$tooltip-arrow-depth                      "max( min( var(--tooltip-arrow-depth-max-px, 12px), var(--tooltip-arrow-depth-ems, 0.3em)), var(--tooltip-arrow-depth-min-px, 5px))"  
+   :$tooltip-arrow-depth                      :5px
 
    
    ;; Popovers
@@ -267,9 +263,11 @@
    :$popover-background-color-inverse         :$fune-background-color-inverse
    :$popover-background-image                 :none
    :$popover-box-shadow                       :$fune-box-shadow
+   :$popover-box-shadow-inverse               :$fune-box-shadow-inverse
    :$popover-border-width                     :$fune-border-width
    :$popover-border-style                     :$fune-border-style
    :$popover-border-color                     :$fune-border-color
+   :$popover-border-color-inverse             :$fune-border-color-inverse
 
    ;; popover geometry
    :$popover-min-width                        :$fune-min-width
@@ -283,8 +281,7 @@
    ;; popover choreography
    :$popover-offset-start                     :$fune-offset-start
    :$popover-z-index                          :$fune-z-index
-   :$popover-delay-duration                   0
-   :$popover-reveal-on-click-duration         :$fune-reveal-on-click-duration
+   :$popover-delay-duration                   :0ms
    :$popover-initial-scale                    :$fune-initial-scale 
    :$popover-transition-duration              :$fune-transition-duration 
    :$popover-transition-timing-function       :$fune-transition-timing-function 
@@ -292,14 +289,9 @@
    ;; popover arrows
    :$popover-arrow-inline-inset               :$fune-arrow-inline-inset
    :$popover-arrow-block-inset                :$fune-arrow-inline-inset
-   :$popover-arrow-depth-min-px               :$fune-arrow-depth-min-px 
-   :$popover-arrow-depth-max-px               :$fune-arrow-depth-max-px 
-   :$popover-arrow-depth-ems                  :$fune-arrow-depth-ems 
-   :$popover-arrow-depth                      "max( min( var(--popover-arrow-depth-max-px, 12px), var(--popover-arrow-depth-ems, 0.3em)), var(--popover-arrow-depth-min-px, 5px))"  
-
+   :$popover-arrow-depth                      :$fune-arrow-depth
 
    
-
    ;; Modals
    ;; ------------------------------------------------------
    :$modal-border-radius                    :$rounded-medium
@@ -459,7 +451,8 @@
    :$kushi-text-input-helper-margin-block-start      :0.3em
    :$kushi-text-input-label-inline-margin-inline-end :0.7em
    :$kushi-text-input-label-block-margin-block-end   :0.4em
-   :$text-input-wrapper-border-intensity             0.75
+   :$text-input-wrapper-border-intensity             :50%
+   :$text-input-wrapper-border-intensity-inverse     :55%
    :$text-input-border-radius                        :0px
 
 

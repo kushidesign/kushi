@@ -48,18 +48,39 @@
     {:design-tokens    [:$sans-serif-font-stack                  "Inter, system-ui, sans-serif"
                         :$primary-font-family                    :$sans-serif-font-stack
 
+
+                        :$fune-z-index                           1000
+
                         :$button-with-icon-padding-inline-offset :0.8em
                         :$button-border-width                    :1.5px
 
                         :$kushi-playground-mobile-header-height  :46px
+
+                        :$tooltip-font-weight                    :$wee-bold
+                        :$tooltip-color-inverse                  :$body-color
                         :$tooltip-border-radius                  :5px
-                        :$tooltip-delay-duration                 :200ms
+                        :$tooltip-delay-duration                 :700ms
                         :$tooltip-auto-placement-y-threshold     0.1
-                        :$tooltip-offset-start                   :10px
-                        :$tooltip-offset                         :10px
+
+                        ;; :$tooltip-offset-start                   :10px
+                        ;; :$tooltip-offset                         :10px
+
                         :$tooltip-arrow-depth-min-px             :4px
+                        :$tooltip-arrow-depth                    :8px
+
                         :$modal-transition-duration              :$xxxfast
                         :$modal-backdrop-color                   :$black-transparent-40
+                        :$popover-border-width                   :1px
+                        :$popover-border-style                   :solid
+                        :$popover-border-color                   :$neutral-300
+                        :$popover-arrow-depth                    :17px
+                        :$popover-border-color-inverse           :$neutral-500
+                        :$text-input-wrapper-border-intensity    :55%
+                        :$text-input-wrapper-border-intensity-inverse  :55%
+                        :$text-input-border-radius               :0.3em
+                        :$tooltip-text-on-click-duration        :2000ms
+                        :$fune-min-width                        :150px
+                        :$fune-min-height                       :75px
                         ]
 
      :typescale        (create-typescale {:size-limit "xxx"

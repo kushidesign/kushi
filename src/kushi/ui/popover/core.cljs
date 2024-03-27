@@ -1,6 +1,5 @@
 (ns kushi.ui.popover.core
   (:require
-   [fireworks.core :refer [? ?? ??? !? ?> !?> ]]
    [applied-science.js-interop :as j]
    [clojure.string :as string]
    [goog.string]
@@ -39,45 +38,55 @@
 
 
 (defn popover-attrs
-  {:desc ["popovers provide additional context when hovering or clicking on an"
+  {:desc ["Popovers provide additional context when hovering or clicking on an"
           "element. They can be interactive and are typically dismissed"
           "manually by the user."
           :br
           :br
           "By default, popovers will show up above the owning element. "
           "Specifying placement in various ways can be done with the"
-          "`:-placement` option."
+          "`:-placement` option. See the tooltip docs for details on "
+          "`:-placement`."
           :br
           :br
-          "The element being tipped must receive an attributes map that is a "
-          "result of passing a map of options to "
+          "The element owning the popover must receive an attributes map that "
+          "is a result of passing a map of options to "
           "`kushi.ui.popover.core/popover-attrs`. You can compose this map to "
-          "an existing elements attributes map using the pattern:"
+          "an existing element's attributes map with `kushi.core/merge-attrs` "
+          "using the pattern:"
           :br
           :br "`(merge-attrs (sx ...) (popover-attrs {...}))`"
           :br
           :br
-          "popovers can be custom styled and controlled via the following "
-          "tokens in your theme:"
+          "You are responsible for providing your own rendering function, which "
+          "takes as a single argument the dom node of the generated popover "
+          "into which you can render whatever you like."
+          :br
+          :br
+          "You can use the `kushi.ui.popover.core/close-popover!` function if "
+          "you want to close the popover from an action within the popover."
+          "If you are using a close button that is potitioned near the edge "
+          "of the popover, it is recommended to give it a `z-index` of `1` or "
+          "higher so that it does not get clipped by the arrow element. See "
+          "the example above."
+          :br
+          :br
+          "Elements and behaviors of the popover containers can be custom "
+          "styled and controlled via the following tokens in your theme:"
           :br
           ;; TODO add documentation for each token
           :br "Colors and images:"
-          :br "`:$popover-color`"                            
-          :br "`:$popover-color-inverse`"                    
           :br "`:$popover-background-color`"                 
           :br "`:$popover-background-color-inverse`"         
           :br "`:$popover-background-image`"                 
-          :br
-          :br "Typography:"
-          :br "`:$popover-line-height`"
-          :br "`:$popover-font-family`"
-          :br "`:$popover-font-size`"
-          :br "`:$popover-font-weight`"
-          :br "`:$popover-text-transform`"
+          :br "`:$popover-box-shadow`"                 
+          :br "`:$popover-border-width`"                 
+          :br "`:$popover-border-style`"                 
+          :br "`:$popover-border-color`"                 
           :br
           :br "Geometry:"
-          :br "`:$popover-padding-inline`"
-          :br "`:$popover-padding-block`"
+          :br "`:$popover-min-width`"
+          :br "`:$popover-min-height`"
           :br "`:$popover-border-radius`"
           :br "`:$popover-offset`"
           :br "`:$popover-viewport-padding`"
@@ -85,20 +94,18 @@
           :br "`:$popover-auto-placement-y-threshold`"
           :br
           :br "Choreography:"
+          :br "`:$popover-offset-start`"
+          :br "`:$popover-z-index`"             
           :br "`:$popover-delay-duration`"            
-          :br "`:$popover-reveal-on-click-duration`"  
           :br "`:$popover-initial-scale`"             
           :br "`:$popover-offset-start`"              
           :br "`:$popover-transition-duration`"       
           :br "`:$popover-transition-timing-function`"
           :br
           :br "Arrows:"
-          :br "`:$popover-arrow-depth-min-px`"
-          :br "`:$popover-arrow-depth-max-px`"
-          :br "`:$popover-arrow-depth-ems`"
+          :br "`:$popover-arrow-inline-inset`"
+          :br "`:$popover-arrow-block-inset`"
           :br "`:$popover-arrow-depth`"   
-          :br "`:$popover-arrow-x-offset`"
-          :br "`:$popover-arrow-y-offset`"
 
           :br
           :br
@@ -110,19 +117,26 @@
           :br
           :br
           "If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for "
-          "`$popover-offset`, `$popover-arrow-x-offset`, "
-          "`$popover-arrow-y-offset`, or `$popover-border-radius`, you will need "
+          "`$popover-offset`, `$popover-arrow-inline-inset`, "
+          "`$popover-arrow-block-inset`, or `$popover-border-radius`, you will need "
           "to use an explicit unit e.g. `0px`."
           ]
-   :opts '[{:name    text
-            :pred    #(or (string? %) (keyword? %) (vector? %))
+   :opts '[{:name    f
+            :pred    fn?
             :default nil
-            :desc    "Required. The text to display in the popover"}
+            :desc    ["A component rendering function which takes a single "
+                      "argument, (the popover container dom node), and renders "
+                      "content into it."
+                      :br
+                      :br
+                      "The example above uses reagent, but you could do "
+                      "something similar with another rendering library:"
+                      :br
+                      "`(fn [el] (rdom/render [my-popover-content] el))`"]}
            {:name    placement
             :pred    keyword?
             :default :auto
-            :desc    [
-                      "You can use single keywords to specify the exact placement "
+            :desc    ["You can use single keywords to specify the exact placement "
                       "of the popover:"
                       :br
                       "`:top-left-corner`"
@@ -191,12 +205,8 @@
             :pred    boolean?
             :default true
             :desc    ["Setting to false will not render a directional arrow with "
-                     "the popover."]}
-           {:name    popover-class
-            :pred    string?
-            :default nil
-            :desc    ["A class name for a la carte application of a classes on the "
-                      " popover element."]}]}
+                     "the popover."]}]}
+
   [{placement                   :-placement
     arrow?                      :-arrow?
     user-rendering-fn           :-f
@@ -221,7 +231,7 @@
        {:data-kushi-ui-fune (name placement-kw)
         :on-click           (partial fune/append-fune! opts)}))))
 
-(defn remove-popover! [e]
+(defn close-popover! [e]
   (let [el         (domo/et e)
         popover-el (domo/nearest-ancestor el ".kushi-popover")
         fune-id    (j/get popover-el :id)

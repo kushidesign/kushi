@@ -1,6 +1,5 @@
 (ns kushi.ui.dom.fune.core
   (:require
-   [fireworks.core :refer [? ?? ??? !? ?> !?> ]]
    [applied-science.js-interop :as j]
    [clojure.string :as string]
    [goog.string]
@@ -176,7 +175,7 @@
         placement-kw    (og-placement placement-kw
                                       owning-el
                                       owning-el-vpp)
-        tt-pos-og       (!? :tt-pos-og (fune-plc placement-kw))
+        tt-pos-og       (fune-plc placement-kw)
         el              (js/document.createElement "div")
         append-tt-opts  (merge opts
                                (keyed el
@@ -305,7 +304,9 @@
 (def update-fune-placement!
   (goog.functions.debounce
    (fn [el fune-id]
-       (when-let [fune-el (domo/el-by-id fune-id)]
+      (when-let [fune-el (domo/el-by-id fune-id)]
+       (if-not (domo/qs (str "[aria-controls=\"" fune-id "\"]")) 
+         (domo/set-style! fune-el "display" "none")
          (let [m       
                (-> el domo/client-rect owning-el-rect-cp)
 
@@ -321,15 +322,15 @@
                placement-kw
                (some->  placement-kw* keyword)]
 
-          (doseq [[k v] m]
-            (domo/set-css-var! fune-el k v))
+           (doseq [[k v] m]
+             (domo/set-css-var! fune-el k v))
 
-          (js/setTimeout (partial update-fune-placement-class!
-                                  fune-el
-                                  placement-class
-                                  placement-kw)
-                         ms))))
-   300))
+           (js/setTimeout (partial update-fune-placement-class!
+                                   fune-el
+                                   placement-class
+                                   placement-kw)
+                          ms)))))
+   100))
 
 (defn- escape-fune!
   "If Escape key is pressed when fune is active, dispatch `remove-fune`.
@@ -339,7 +340,8 @@
   ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Add conditionality around fune-type for dismissal
   (when-not e.defaultPrevented
-    (when (or (= e.type "scroll") 
+    (when (or (and (= :tooltip fune-type)
+                   (= e.type "scroll")) 
               (= e.key "Escape"))
       (when owning-el
         (remove-fune! owning-el fune-id fune-type nil)
@@ -360,7 +362,6 @@
   [owning-el fune-id fune-type e]
   ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Add conditionality around fune-type for dismissal, if necessary
-  (!?> "Removing fune!")
   (some->> fune-id
            domo/el-by-id
            (.removeChild js/document.body))
@@ -375,8 +376,11 @@
     (.removeEventListener js/window
                           "resize"
                           #(update-fune-placement! owning-el fune-id))
+    
+    (.removeEventListener js/window
+                          "scroll"
+                          #(update-fune-placement! owning-el fune-id))
 
-    (!?> 'removing-attributes!)
     (when-let [owning-el (domo/qs (str "[aria-controls=\"" fune-id "\"]"))]
       (domo/remove-attribute! owning-el :aria-controls)
       (domo/remove-attribute! owning-el :aria-haspopup)
@@ -398,6 +402,69 @@
                         #js {"once" true}))
 
 
+(defn observe-fune! [fune-id]
+  (goog.functions.debounce
+   (fn [_ observer]
+     (when-not (domo/qs (str "[aria-controls=\"" fune-id "\"]"))
+       (.disconnect observer)
+       (.remove (domo/el-by-id fune-id))))
+   30))
+
+(defn set-popover-focus! [fune-id]
+  (let [focusables*     "button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])"
+        fune            (domo/el-by-id fune-id)
+        focusables      (.querySelectorAll fune focusables*)
+        focusables-len  (.-length focusables)
+        first-focusable (j/get focusables 0)
+        last-focusable  (j/get focusables (dec focusables-len))
+        second-to-last-focusable  (when (> focusables-len 2)
+                                    (j/get focusables (- (.-length focusables) 2)))]
+    (when (pos? focusables-len)
+      (.addEventListener fune
+                         "keydown"
+                         (fn [e]
+                           (when (or (= "Tab" e.key) (= 9 e.keyCode))
+                             (cond
+                               (and e.shiftKey
+                                    (= js/document.activeElement first-focusable))
+                               (do (.focus last-focusable)
+                                   (.preventDefault e))
+
+                               (and e.shiftKey
+                                    (= js/document.activeElement last-focusable)
+                                    second-to-last-focusable)
+                               (do (.focus second-to-last-focusable)
+                                   (.preventDefault e))
+
+                               (= js/document.activeElement last-focusable)
+                               (do (.focus first-focusable)
+                                   (.preventDefault e))))))
+      (.focus first-focusable)))
+
+
+;; document.addEventListener('keydown', function(e) {
+;;   let isTabPressed = e.key === 'Tab' || e.keyCode === 9;
+  
+;;   if (!isTabPressed) {
+;;     return;
+;;   }
+  
+;;   if (e.shiftKey) { // if shift key pressed for shift + tab combination
+;;     if (document.activeElement === firstFocusableElement) {
+;;       lastFocusableElement.focus(); // add focus for the last focusable element
+;;       e.preventDefault();
+;;     }
+;;   } else { // if tab key is pressed
+;;     if (document.activeElement === lastFocusableElement) { // if focused has reached to last focusable element then focus first focusable element after pressing tab
+;;       firstFocusableElement.focus(); // add focus for the first focusable element
+;;       e.preventDefault();
+;;     }
+;;   }
+;; });
+  
+;; firstFocusableElement.focus();
+  
+  )
 
 (defn append-fune!
   ([opts e]
@@ -407,7 +474,6 @@
    ;; To prevent mis-assignment of ownership of the fune to
    ;; A child element of the intended owning el. 
   ;;  (js/console.clear)
-   (!?> 'appending-fune)
    (let [owning-el        (domo/cet e)
          ;; TODO - should this be "kushi-fune-*" ?
          fune-id          (or fune-id (str "kushi-" (gensym)))
@@ -430,7 +496,6 @@
                             #js {"once" true}))
 
        (when (= fune-type :popover)
-         (!?> 'adding-attributes!)
          (domo/set-attribute! owning-el :aria-controls fune-id)
          (domo/set-attribute! owning-el :aria-haspopup "dialog")
          (domo/set-attribute! owning-el :aria-expanded true)
@@ -442,19 +507,18 @@
                                        fune-id
                                        fune-type))
           (.addEventListener js/window
+                             "scroll"
+                             #(update-fune-placement! owning-el fune-id))
+          (.addEventListener js/window
                              "resize"
                              #(update-fune-placement! owning-el fune-id))
-         ;; TODO
-         ;; add window resize debouce it
-          ;; update oe-left etc on popover el
-          ;; setup some kind of observer so if it goes offscreen, it flips
-          ;; if owning el goes beyond threshold, it flips
-          
-          ;; on scroll, if outside, or threshold, same as above
-          ;; on if owning el is offscreen, just leave it
-          
-          ;; move placement from kushi-fune-b to data-kushi-ui-pane-placement="b"
-          ))
+
+          (set-popover-focus! fune-id)
+
+          (let [mo (new js/MutationObserver (observe-fune! fune-id))]
+            (.observe mo
+                      (domo/el-by-id fune-id)
+                      #js{:attributes true}))))
        (.addEventListener js/window
                           "keydown"
                           (partial escape-fune! owning-el fune-id fune-type)

@@ -1,6 +1,5 @@
 (ns kushi.ui.tooltip.core
   (:require
-   [fireworks.core :refer [? ?? ??? !? ?> !?> ]]
    [applied-science.js-interop :as j]
    [clojure.string :as string]
    [goog.string]
@@ -90,9 +89,6 @@
           :br "`:$tooltip-transition-timing-function`"
           :br
           :br "Arrows:"
-          :br "`:$tooltip-arrow-depth-min-px`"
-          :br "`:$tooltip-arrow-depth-max-px`"
-          :br "`:$tooltip-arrow-depth-ems`"
           :br "`:$tooltip-arrow-depth`"   
           :br "`:$tooltip-arrow-x-offset`"
           :br "`:$tooltip-arrow-y-offset`"
@@ -234,19 +230,23 @@
 
        ;; Todo use when-let to validate text-on-click and normalize if vector
        (when-let [text-on-click (fune/maybe-multiline-tooltip-text text-on-click)]
-         {:on-click (fn [_]
-                      (let [duration           (token->ms :$tooltip-reveal-on-click-duration)
-                            tt-el              (domo/qs ".kushi-fune")
-                            tt-el-text-wrapper (domo/qs tt-el ".kushi-tooltip-text-wrapper")
-                            tt-el-text-span    (domo/qs tt-el ".kushi-tooltip-text")
-                            text-on-click-el   (js/document.createElement "span")]
-                        (j/assoc! text-on-click-el "innerText" text-on-click)
-                        (domo/add-class! text-on-click-el "absolute-centered")
-                        (domo/add-class! tt-el text-on-click-tooltip-class)
-                        (.appendChild tt-el-text-wrapper text-on-click-el)
-                        (domo/add-class! tt-el-text-span "invisible")
-                        (js/setTimeout (fn [_] 
-                                         (.removeChild tt-el-text-wrapper text-on-click-el)
-                                         (domo/remove-class! tt-el text-on-click-tooltip-class)
-                                         (domo/remove-class! tt-el-text-span "invisible"))
-                                       duration)))})))))
+         {:on-click
+          (fn [_]
+            (let [duration           (token->ms :$tooltip-text-on-click-duration)
+                  tt-el              (domo/qs ".kushi-fune")
+                  tt-el-text-wrapper (domo/qs tt-el ".kushi-tooltip-text-wrapper")
+                  tt-el-text-span    (domo/qs tt-el ".kushi-tooltip-text")
+                  text-on-click-el   (js/document.createElement "span")]
+              (j/assoc! text-on-click-el "innerText" text-on-click)
+              (domo/add-class! text-on-click-el "absolute-centered")
+              (some->> text-on-click-tooltip-class (domo/add-class! tt-el))
+              (.appendChild tt-el-text-wrapper text-on-click-el)
+              (domo/add-class! tt-el-text-span "invisible")
+              (js/setTimeout (fn [_] 
+                               (.removeChild tt-el-text-wrapper
+                                             text-on-click-el)
+                               (some->> text-on-click-tooltip-class
+                                        (domo/remove-class! tt-el))
+                               (domo/remove-class! tt-el-text-span
+                                                   "invisible"))
+                             duration)))})))))
