@@ -1,7 +1,6 @@
 (ns kushi.ui.utility
   (:require
-   [kushi.utils :refer [deep-merge]]
-   [kushi.utils :as util]))
+   [kushi.utils :as util :refer [deep-merge]]))
 
 (def disabled {:opacity :45%!important
                :cursor  :not-allowed!important})
@@ -63,8 +62,7 @@
    :flex-row-sb       {:flex-direction  :row
                        :justify-content :space-between
                        :align-items     :center
-                       :display         :flex}
-   ])
+                       :display         :flex}])
 
 
 (def base-classes
@@ -135,7 +133,7 @@
                            :outline-width  "1px"
                            :outline-offset :-1px}
    ;; End debugging utils 
-
+   
 
    ;; Borders
    :bordered              {:border-color :currentColor
@@ -310,166 +308,6 @@
                         :inset-inline-start "50%"
                         :transform          "translateX(-50%)"}
 
-   ;; northwest
-   :northwest-inside {:position           :absolute
-                      :inset-block-start  0
-                      :inset-block-end    :unset
-                      :inset-inline-start 0
-                      :inset-inline-end   :unset
-                      :transform          "translate(0, 0)"}
-   :northwest {:position           :absolute
-               :inset-block-start  0
-               :inset-block-end    :unset
-               :inset-inline-start 0
-               :inset-inline-end   :unset
-               :transform          "translate(-50%, -50%)"}
-   :northwest-outside {:position           :absolute
-                       :inset-block-start  0
-                       :inset-block-end    :unset
-                       :inset-inline-start 0
-                       :inset-inline-end   :unset
-                       :transform          "translate(-100%, -100%)"}
-
-   ;; north
-   :north-inside {:position           :absolute
-                  :inset-block-start  0
-                  :inset-block-end    :unset
-                  :inset-inline-start :50%
-                  :inset-inline-end   :unset
-                  :transform          "translate(-50%, 0)"}
-   :north {:position           :absolute
-           :inset-block-start  0
-           :inset-block-end    :unset
-           :inset-inline-start :50%
-           :inset-inline-end   :unset
-           :transform          "translate(-50%, -50%)"}
-   :north-outside {:position           :absolute
-                   :inset-block-start  0
-                   :inset-block-end    :unset
-                   :inset-inline-start :50%
-                   :inset-inline-end   :unset
-                   :transform          "translate(-50%, -100%)"}
-
-   ;; east
-   :east-inside {:position           :absolute
-                 :inset-block-start  :50%
-                 :inset-block-end    :unset
-                 :inset-inline-end   0
-                 :inset-inline-start :unset
-                 :transform          "translate(0, -50%)"}
-   :east {:position           :absolute
-          :inset-block-start  :50%
-          :inset-block-end    :unset
-          :inset-inline-end   0
-          :inset-inline-start :unset
-          :transform          "translate(50%, -50%)"}
-   :east-outside {:position           :absolute
-                  :inset-block-start  :50%
-                  :inset-block-end    :unset
-                  :inset-inline-end   0
-                  :inset-inline-start :unset
-                  :transform          "translate(100%, -50%)"}
-
-   ;; northeast
-   :northeast-inside  {:position           :absolute
-                       :inset-block-start  0
-                       :inset-block-end    :unset
-                       :inset-inline-end   0
-                       :inset-inline-start :unset
-                       :transform          "translate(0, 0)"}
-   :northeast         {:position           :absolute
-                       :inset-block-start  0
-                       :inset-block-end    :unset
-                       :inset-inline-end   0
-                       :inset-inline-start :unset
-                       :transform          "translate(50%, -50%)"}
-   :northeast-outside {:position           :absolute
-                       :inset-block-start  0
-                       :inset-block-end    :unset
-                       :inset-inline-end   0
-                       :inset-inline-start :unset
-                       :transform          "translate(100%, -100%)"}
-
-   ;; southwest
-   :southwest-inside  {:position           :absolute
-                       :inset-block-end    0
-                       :inset-block-start  :unset
-                       :inset-inline-start 0
-                       :inset-inline-end   :unset
-                       :transform          "translate(0, 0)"}
-   :southwest         {:position           :absolute
-                       :inset-block-end    0
-                       :inset-block-start  :unset
-                       :inset-inline-start 0
-                       :inset-inline-end   :unset
-                       :transform          "translate(-50%, 50%)"}
-   :southwest-outside {:position           :absolute
-                       :inset-block-end    0
-                       :inset-block-start  :unset
-                       :inset-inline-start 0
-                       :inset-inline-end   :unset
-                       :transform          "translate(-100%, 100%)"}
-
-   ;; south
-   :south-inside {:position           :absolute
-                  :inset-block-end    0
-                  :inset-block-start  :unset
-                  :inset-inline-start :50%
-                  :inset-inline-end   :unset
-                  :transform          "translate(-50%, 0)"}
-   :south {:position           :absolute
-           :inset-block-end    0
-           :inset-block-start  :unset
-           :inset-inline-start :50%
-           :inset-inline-end   :unset
-           :transform          "translate(-50%, 50%)"}
-   :south-outside {:position           :absolute
-                   :inset-block-end    0
-                   :inset-block-start  :unset
-                   :inset-inline-start :50%
-                   :inset-inline-end   :unset
-                   :transform          "translate(-50%, 100%)"}
-
-   ;; southeast
-   :southeast-inside  {:position           :absolute
-                       :inset-block-end    0
-                       :inset-block-start  :unset
-                       :inset-inline-end   0
-                       :inset-inline-start :unset
-                       :transform          "translate(0, 0)"}
-   :southeast         {:position           :absolute
-                       :inset-block-end    0
-                       :inset-block-start  :unset
-                       :inset-inline-end   0
-                       :inset-inline-start :unset
-                       :transform          "translate(50%, 50%)"}
-   :southeast-outside {:position           :absolute
-                       :inset-block-end    0
-                       :inset-block-start  :unset
-                       :inset-inline-end   0
-                       :inset-inline-start :unset
-                       :transform          "translate(100%, 100%)"}
-
-   ;; west
-   :west-inside  {:position           :absolute
-                  :inset-block-start  :50%
-                  :inset-block-end    :unset
-                  :inset-inline-start 0
-                  :inset-inline-end   :unset
-                  :transform          "translate(0, -50%)"}
-   :west         {:position           :absolute
-                  :inset-block-start  :50%
-                  :inset-block-end    :unset
-                  :inset-inline-start 0
-                  :inset-inline-end   :unset
-                  :transform          "translate(-50%, -50%)"}
-   :west-outside {:position           :absolute
-                  :inset-block-start  :50%
-                  :inset-block-end    :unset
-                  :inset-inline-start 0
-                  :inset-inline-end   :unset
-                  :transform          "translate(-100%, -50%)"}
-
     ;; Surfaces, buttons, containers
     ;; ------------------------------------------------------
    :bgi-cover             {:background-position "center center"
@@ -632,7 +470,7 @@
    :rounded-xxxlarge      {:border-radius :$rounded-xxxlarge}
 
    ;; This one is used for buttons, tags etc ... The roundedness is always relative to font-size
-   :rounded               {:border-radius :0.5em}
+   :rounded               {:border-radius :$rounded-medium}
 
    :sharp         {:border-radius 0}
    :pill          {:border-radius :9999px}
@@ -686,10 +524,576 @@
    :heavy       {">.kushi-radio-input:outline-width" :$input-border-weight-heavy
                  ">.kushi-checkbox-input:bw"         :$input-border-weight-heavy}])
 
+(def geometry-classes
+  [:top-left-corner-outside
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-100% -100%"}
+   :top-left-corner
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-50% -50%"}
+   :top-left-corner-inside
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "0% 0%"}
+   :top-left-outside
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "0% -100%"}
+   :top-left
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "0% -50%"}
+   :top-outside
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% -100%"}
+   :top
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% -50%"}
+   :top-inside
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% 0%"}
+   :top-right-outside
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "0% -100%"}
+   :top-right
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "0% -50%"}
+   :top-right-corner-outside
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "100% -100%"}
+   :top-right-corner
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "50% -50%"}
+   :top-right-corner-inside
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "0% 0%"}
+   :right-top-outside
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "100% 0%"}
+   :right-top
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "50% 0%"}
+   :right-inside
+   {:position  :absolute,
+    :top       "50%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "0% -50%"}
+   :right
+   {:position  :absolute,
+    :top       "50%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "50% -50%"}
+   :right-outside
+   {:position  :absolute,
+    :top       "50%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "100% -50%"}
+   :right-bottom-outside
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "100% 0%"}
+   :right-bottom
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "50% 0%"}
+   :bottom-right-corner-outside
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "100% 100%"}
+   :bottom-right-corner
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "50% 50%"}
+   :bottom-right-corner-inside
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "0% 0%"}
+   :bottom-right-outside
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "0% 100%"}
+   :bottom-right
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "0% 50%"}
+   :bottom-inside
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% 0%"}
+   :bottom
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% 50%"}
+   :bottom-outside
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% 100%"}
+   :bottom-left-outside
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "0% 100%"}
+   :bottom-left
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "0% 50%"}
+   :bottom-left-corner-outside
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "-100% 100%"}
+   :bottom-left-corner
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "-50% 50%"}
+   :bottom-left-corner-inside
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "0% 0%"}
+   :left-bottom-outside
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "-100% 0%"}
+   :left-bottom
+   {:position  :absolute,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "-50% 0%"}
+   :left-inside
+   {:position  :absolute,
+    :top       "50%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "0% -50%"}
+   :left
+   {:position  :absolute,
+    :top       "50%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-50% -50%"}
+   :left-outside
+   {:position  :absolute,
+    :top       "50%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-100% -50%"}
+   :left-top-outside
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-100% 0%"}
+   :left-top
+   {:position  :absolute,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-50% 0%"} ])
+
+(def geometry-classes-fixed
+  [:top-left-corner-outside-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-100% -100%"}
+   :top-left-corner-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-50% -50%"}
+   :top-left-corner-inside-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "0% 0%"}
+   :top-left-outside-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "0% -100%"}
+   :top-left-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "0% -50%"}
+   :top-outside-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% -100%"}
+   :top-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% -50%"}
+   :top-inside-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% 0%"}
+   :top-right-outside-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "0% -100%"}
+   :top-right-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "0% -50%"}
+   :top-right-corner-outside-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "100% -100%"}
+   :top-right-corner-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "50% -50%"}
+   :top-right-corner-inside-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "0% 0%"}
+   :right-top-outside-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "100% 0%"}
+   :right-top-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "50% 0%"}
+   :right-inside-fixed
+   {:position  :fixed,
+    :top       "50%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "0% -50%"}
+   :right-fixed
+   {:position  :fixed,
+    :top       "50%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "50% -50%"}
+   :right-outside-fixed
+   {:position  :fixed,
+    :top       "50%",
+    :bottom    :unset,
+    :left      :unset,
+    :right     "0%",
+    :translate "100% -50%"}
+   :right-bottom-outside-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "100% 0%"}
+   :right-bottom-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "50% 0%"}
+   :bottom-right-corner-outside-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "100% 100%"}
+   :bottom-right-corner-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "50% 50%"}
+   :bottom-right-corner-inside-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "0% 0%"}
+   :bottom-right-outside-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "0% 100%"}
+   :bottom-right-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      :unset,
+    :right     "0%",
+    :translate "0% 50%"}
+   :bottom-inside-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% 0%"}
+   :bottom-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% 50%"}
+   :bottom-outside-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "50%",
+    :right     :unset,
+    :translate "-50% 100%"}
+   :bottom-left-outside-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "0% 100%"}
+   :bottom-left-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "0% 50%"}
+   :bottom-left-corner-outside-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "-100% 100%"}
+   :bottom-left-corner-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "-50% 50%"}
+   :bottom-left-corner-inside-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "0% 0%"}
+   :left-bottom-outside-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "-100% 0%"}
+   :left-bottom-fixed
+   {:position  :fixed,
+    :top       :unset,
+    :bottom    "0%",
+    :left      "0%",
+    :right     :unset,
+    :translate "-50% 0%"}
+   :left-inside-fixed
+   {:position  :fixed,
+    :top       "50%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "0% -50%"}
+   :left-fixed
+   {:position  :fixed,
+    :top       "50%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-50% -50%"}
+   :left-outside-fixed
+   {:position  :fixed,
+    :top       "50%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-100% -50%"}
+   :left-top-outside-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-100% 0%"}
+   :left-top-fixed
+   {:position  :fixed,
+    :top       "0%",
+    :bottom    :unset,
+    :left      "0%",
+    :right     :unset,
+    :translate "-50% 0%"} ])
+
 (def utility-class-ks
   (mapcat util/kwargs-keys
           [combo-flex-utility-classes
            base-classes
+           geometry-classes
+          ;;  geometry-classes-fixed
            override-classes
            ui-theming-classes]))
 
@@ -698,5 +1102,9 @@
          (map #(apply hash-map %)
               [combo-flex-utility-classes
                base-classes
+               geometry-classes
+              ;;  geometry-classes-fixed
                override-classes
                ui-theming-classes])))
+
+
