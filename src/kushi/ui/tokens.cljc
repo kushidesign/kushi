@@ -194,7 +194,6 @@
    :$fune-offset-start                     "calc(var(--fune-offset) + 5px)"
    :$fune-z-index                          :auto
    :$fune-delay-duration                   :0ms
-   :$fune-initial-scale                    1 
    :$fune-transition-duration              :$xfast 
    :$fune-transition-timing-function       :$timing-ease-out-curve 
 
@@ -245,7 +244,7 @@
    :$tooltip-z-index                          :$fune-z-index
    :$tooltip-delay-duration                   :550ms
    :$tooltip-text-on-click-duration           :2000ms
-   :$tooltip-initial-scale                    :$fune-initial-scale 
+   :$tooltip-initial-scale                    1
    :$tooltip-transition-duration              :$fune-transition-duration 
    :$tooltip-transition-timing-function       :$fune-transition-timing-function 
 
@@ -254,7 +253,10 @@
    :$tooltip-arrow-block-inset                :$fune-arrow-inline-inset
    :$tooltip-arrow-depth                      :5px
 
-   
+
+
+
+
    ;; Popovers
    ;; ------------------------------------------------------
 
@@ -282,9 +284,10 @@
    :$popover-offset-start                     :$fune-offset-start
    :$popover-z-index                          :$fune-z-index
    :$popover-delay-duration                   :0ms
-   :$popover-initial-scale                    :$fune-initial-scale 
+   :$popover-initial-scale                    1
    :$popover-transition-duration              :$fune-transition-duration 
    :$popover-transition-timing-function       :$fune-transition-timing-function 
+   :$popover-auto-dismiss-duration            :5000ms
 
    ;; popover arrows
    :$popover-arrow-inline-inset               :$fune-arrow-inline-inset
@@ -292,6 +295,35 @@
    :$popover-arrow-depth                      :$fune-arrow-depth
 
    
+   ;; toasts
+   ;; ------------------------------------------------------
+
+   ;; toast colors and images
+   :$toast-background-color                 :$fune-background-color
+   :$toast-background-color-inverse         :$fune-background-color-inverse
+   :$toast-background-image                 :none
+   :$toast-box-shadow                       :$fune-box-shadow
+   :$toast-box-shadow-inverse               :$fune-box-shadow-inverse
+   :$toast-border-width                     :$fune-border-width
+   :$toast-border-style                     :$fune-border-style
+   :$toast-border-color                     :$fune-border-color
+   :$toast-border-color-inverse             :$fune-border-color-inverse
+
+   ;; toast geometry
+   :$toast-border-radius                    :$fune-border-radius
+   :$toast-slot-padding-inline              :1rem
+   :$toast-slot-padding-block               :1rem
+   :$toast-slot-gap                         :1rem
+   :$toast-slot-z-index                     :auto
+
+   ;; toast choreography
+   :$toast-delay-duration                   :200ms
+   :$toast-initial-scale                    1
+   :$toast-transition-duration              :$fune-transition-duration 
+   :$toast-transition-timing-function       :$fune-transition-timing-function 
+   :$toast-auto-dismiss-duration            :5000ms
+   
+
    ;; Modals
    ;; ------------------------------------------------------
    :$modal-border-radius                    :$rounded-medium
@@ -304,9 +336,11 @@
    :$modal-transition-duration              :$xxfast
 
 
+
    ;; Material UI icons
    ;; ------------------------------------------------------
    :$mui-icon-relative-font-size            :inherit
+
 
 
    ;; General icons
@@ -453,8 +487,8 @@
    :$kushi-text-input-label-block-margin-block-end   :0.4em
 
    ;; Remove wrapper from this
-   :$text-input-border-intensity             :50%
-   :$text-input-border-intensity-inverse     :55%
+   :$text-input-border-intensity                     :50%
+   :$text-input-border-intensity-inverse             :55%
    :$text-input-border-radius                        :0px
 
 
