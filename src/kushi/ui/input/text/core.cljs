@@ -174,7 +174,7 @@
                                   :.inline-block
                                   :.normal
                                   :fs--smaller
-                                  :mbs--$kushi-text-input-helper-margin-block-start||0.3em)))
+                                  :mbs--$text-input-helper-margin-block-start||0.3em)))
 
         wrapped-input [input* (merge attrs
                                      {:-wrapper-attrs  wrapper-attrs
@@ -192,8 +192,8 @@
                                :after:pis--0.15em
                                {:for input-id})
                            (if inline?
-                             (sx 'kushi-text-input-label-inline [:mie :$kushi-text-input-label-inline-margin-inline-end||0.7em])
-                             (sx 'kushi-text-input-label-block [:mbe :$kushi-text-input-label-block-margin-block-end||0.4em]))
+                             (sx 'kushi-text-input-label-inline [:mie :$text-input-label-inline-margin-inline-end||0.7em])
+                             (sx 'kushi-text-input-label-block [:mbe :$text-input-label-block-margin-block-end||0.4em]))
                            label-attrs)
                           label]
 

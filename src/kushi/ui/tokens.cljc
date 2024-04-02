@@ -71,8 +71,7 @@
    :$extra-bold                             800
    :$heavy                                  900
 
-   ;; TODO Remove "kushi" prefix?
-   :$kushi-root-font-size                   :1rem
+   :$root-font-size                   :1rem
 
 
    ;; Intended for css prop `font-size`
@@ -151,20 +150,6 @@
 
 
 
-   ;; Modals
-   ;; ------------------------------------------------------
-   :$modal-border-radius                    :$rounded-medium
-   :$modal-border                           :none
-   :$modal-padding-block                    :2rem
-   :$modal-padding-inline                   :2rem
-   :$modal-backdrop-color                   :$black-transparent-50
-   :$modal-margin                           :1rem
-   :$modal-min-width                        :500px
-   :$modal-transition-duration              :$xxfast
-
-
-   
-
    ;; Fune - floating layer abstraction
    ;; ------------------------------------------------------
 
@@ -184,7 +169,7 @@
    :$fune-min-height                       :75px
    :$fune-padding-inline                   :1em
    :$fune-padding-block                    :0.5em
-   :$fune-border-radius                    :7px
+   :$fune-border-radius                    :$rounded
    :$fune-offset                           :7px
    :$fune-viewport-padding                 :5px 
    :$fune-flip-viewport-edge-threshold     :32px 
@@ -203,7 +188,18 @@
    :$fune-arrow-depth                      :7px
 
 
-   
+   ;; Modals
+   ;; ------------------------------------------------------
+   :$modal-border-radius                    :$fune-border-radius
+   :$modal-border                           :none
+   :$modal-padding-block                    :2rem
+   :$modal-padding-inline                   :2rem
+   :$modal-backdrop-color                   :$black-transparent-50
+   :$modal-margin                           :1rem
+   :$modal-min-width                        :500px
+   :$modal-transition-duration              :$fune-transition-duration
+
+
 
    ;; Tooltips
    ;; ------------------------------------------------------
@@ -359,8 +355,10 @@
    :$rounded-xlarge                         :0.1rem           ;; 16px
    :$rounded-xxlarge                        :1.25rem          ;; 20px
    :$rounded-xxxlarge                       :1.5625rem        ;; 25px
-   :$rounded                                :0.4em
 
+   :$rounded                                :$rounded-medium
+
+   ;; TODO - what
    :$border-weight                          :1px
 
 
@@ -479,12 +477,12 @@
 
    ;; Kushi UI Components (move?)
    ;; ------------------------------------------------------
-   :$kushi-collapse-transition-duration :$slow
+   :$collapse-transition-duration :$slow
 
    ;; kushi.ui.input.text.core/input
-   :$kushi-text-input-helper-margin-block-start      :0.3em
-   :$kushi-text-input-label-inline-margin-inline-end :0.7em
-   :$kushi-text-input-label-block-margin-block-end   :0.4em
+   :$text-input-helper-margin-block-start      :0.3em
+   :$text-input-label-inline-margin-inline-end :0.7em
+   :$text-input-label-block-margin-block-end   :0.4em
 
    ;; Remove wrapper from this
    :$text-input-border-intensity                     :50%
