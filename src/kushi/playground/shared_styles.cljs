@@ -153,7 +153,7 @@
   :bw--1px
   :bs--solid
   :bc--$gray-300
-  :dark:bc--$gray-800
+  :dark:bc--$gray-700
   :mb--10px
   :&_.kushi-input:min-width--220px)
 
