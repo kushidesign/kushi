@@ -34,7 +34,7 @@
          :rows         22
          :readOnly     true})]
    [copy-to-clipboard-button
-    (sx :.northeast-inside!
+    (sx :.top-right-corner-inside!
         {:-text-to-copy x})]
    ])
 

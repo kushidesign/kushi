@@ -128,4 +128,4 @@
                             (domo/remove-class! js/document.body "kushi-playground-dev-mode-hidden")
                             (reset! *dev-mode? false)
                             (domo/remove-class! js/document.body "kushi-playground-dev-mode"))
-      :-tooltip-placement "inline-start"}]]])
+      :-tooltip-placement [:inline-start :block-start]}]]])

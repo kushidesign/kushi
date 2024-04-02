@@ -179,19 +179,21 @@
         [:<>
          [util/formatted-code full-text]
          [copy-to-clipboard-button
-          (sx :.northeast-inside! {:-text-to-copy text})]])]]
+          (sx :.top-right-corner-inside! {:-text-to-copy text})]])]]
 
     [:div
      (sx :d--none :sm:d--block)
      (when demo
        [subsection
         (merge-attrs
-         (sx :.description {:-title [subsection-title title "Examples"]})
+         (sx :.description
+             {:-title [subsection-title title "Examples"]})
          demo-attrs)
         [demo]])]
 
     [subsection
-     (sx :.description {:-title [subsection-title title "Description"]})
+     (sx :.description
+         {:-title [subsection-title title "Description"]})
      doc-hiccup]
 
     (when opts

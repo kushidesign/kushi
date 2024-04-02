@@ -15,12 +15,12 @@
   [:<>
    [:div (sx 'mbis-guide-corner
              :.margin-guide
-             :.west-outside
+             :.left-outside
              :h--100%
              [:w misw])]
    [:div (sx 'mbie-guide-corner
              :.margin-guide
-             :.east-outside
+             :.right-outside
              :h--100%
              [:w miew])]])
 
@@ -50,27 +50,27 @@
 
      [:div (sx 'mbs-guide
                :.margin-guide
-               :.north-outside
+               :.top-outside
                :w--100%
                [:h :$mbs])
       [mb-corners (str mis "px") (str mie "px")]]
 
      [:div (sx 'mie-guide
                :.margin-guide
-               :.east-outside
+               :.right-outside
                :h--100%
                [:w :$mie])]
 
      [:div (sx 'mbe-guide
                :.margin-guide
-               :.south-outside
+               :.bottom-outside
                :w--100%
                [:h :$mbe])
       [mb-corners (str mis "px") (str mie "px")]]
 
      [:div (sx 'mis-guide
                :.margin-guide
-               :.west-outside
+               :.left-outside
                :h--100%
                [:w :$mis])]
 

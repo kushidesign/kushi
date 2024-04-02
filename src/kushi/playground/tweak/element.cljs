@@ -705,7 +705,7 @@
                 [button
                  (sx :.minimal
                      :.pill
-                     :.northeast-inside
+                     :.top-right-corner-inside
                      {:on-click #(domo/set-style! (domo/el-by-id "tweaker") "display" "none")})
                  [icon :close]]
 

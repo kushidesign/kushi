@@ -149,7 +149,7 @@
      {:-text                        "Click to copy"
       :-text-on-click               "Copied!"
       :-text-on-click-tooltip-class (first (:class (sx :$tooltip-background-color--$positive-filled-background-color)))
-      :-placement                   "block-start inline-end"})
+      :-placement                   [:block-start :inline-end]})
     &attrs)
    [icon (sx :.medium!) mui.svg/content-copy]])
 
@@ -292,7 +292,7 @@
                                   @current-stage
 
                                   [button (merge-attrs
-                                           (sx :.southeast-inside
+                                           (sx :.bottom-right-corner-inside
                                                :.kushi-playground-demobox-ui-icon
                                                {:on-click (fn [_]
                                                             (domo/add-class! js/document.body
@@ -304,7 +304,7 @@
                                                                            500))})
                                            (sx :$tooltip-offset---3px)
                                            (tooltip-attrs {:-text      "Enter dev mode"
-                                                           :-placement "block-start inline-start corner"}))
+                                                           :-placement [:block-start :inline-start :corner]}))
                                    [icon :fullscreen]]
 
                                   (when (and (state/focused? nm) @*dev-mode?)
@@ -359,7 +359,7 @@
                                    [:div (sx :.absolute-fill)]
 
                                    [copy-to-clipboard-button
-                                    (sx :.northeast-inside!
+                                    (sx :.top-right-corner-inside!
                                         {:-text-to-copy @current-snippet})]]
 
 
