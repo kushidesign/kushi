@@ -32,7 +32,7 @@
           "toast, into which you can render whatever you like."
           :br
           :br
-          "You can use the `kushi.ui.toast.core/close-toast!` function if "
+          "You can use the `kushi.ui.toast.core/dismiss-toast!` function if "
           "you want to close the toast from an action within the toast."
           "If you are using a close button that is potitioned near the edge "
           "of the toast, it is recommended to give it a `z-index` of `1` or "
@@ -200,7 +200,7 @@
        {:on-click (partial fune/append-fune! opts)}))))
 
 
-(defn close-toast! [e]
+(defn dismiss-toast! [e]
   (let [et            (domo/et e)
         toast-el      (domo/nearest-ancestor et ".kushi-toast")
         toast-slot-el (domo/nearest-ancestor et ".kushi-toast-slot")]

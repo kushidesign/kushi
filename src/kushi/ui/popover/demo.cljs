@@ -5,7 +5,7 @@
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg ]
    [kushi.ui.button.core :refer [button]]
-   [kushi.ui.popover.core :refer [close-popover!]]
+   [kushi.ui.popover.core :refer [dismiss-popover!]]
    [kushi.ui.input.text.core :refer [input]]))
 
 (defn popover-content []
@@ -60,5 +60,5 @@
         [:$button-padding-block-ems       :$icon-button-padding-inline-ems]
         [:margin-inline                   :$popover-close-button-margin-inline||$icon-button-padding-inline-ems]
         [:margin-block                    :$popover-close-button-margin-block||$icon-button-padding-inline-ems]
-        {:on-click close-popover!})
+        {:on-click dismiss-popover!})
     [icon mui.svg/close]]])

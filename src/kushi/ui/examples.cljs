@@ -16,7 +16,7 @@
    [kushi.ui.card.core :refer (card)]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.tooltip.demo :as tooltip-demo]
-   [kushi.ui.popover.core :refer [popover-attrs close-popover!]]
+   [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
    [kushi.ui.popover.demo :refer [popover-content]]
    [kushi.ui.toast.core :refer [toast-attrs]]
    [kushi.ui.toast.demo :refer [toast-content]]
@@ -462,7 +462,7 @@
      :stage    {:style {:min-height      :200px
                         :justify-content :center}}
      :defaults {:examples "Auto"}
-     :refers   '[close-popover!]
+     :refers   '[dismiss-popover!]
      :requires (str
                 "            ;; Optional, for label component shown in examples\n"
                 "            [kushi.ui.icon.core :refer [icon]]\n"
@@ -498,7 +498,7 @@
                                                           :p--1rem)
                                                  [button 
                                                   (sx :.small
-                                                      {:on-click close-popover!})
+                                                      {:on-click dismiss-popover!})
                                                   "Close"]]
                                                 el))})
                            "Click me"]}
@@ -526,7 +526,7 @@
      :stage    {:style {:min-height      :200px
                         :justify-content :center}}
      :defaults {:examples "Auto"}
-     :refers   '[close-toast!]
+     :refers   '[dismiss-toast!]
      :requires (str
                 "            ;; Optional, for label component shown in examples\n"
                 "            [kushi.ui.icon.core :refer [icon]]\n"
@@ -540,14 +540,11 @@
                  :example [button
                            (toast-attrs
                             {:-auto-dismiss? false
-                             :-placement :nonsense
+                             :-placement     :nonsense
                              :-f             (fn [toast-el]
                                                (rdom/render toast-content
                                                             toast-el))})
-                           "Save for later"]}
-                
-                
-                ]})
+                           "Save for later"]}]})
 
 
    ;; Defined in kushi.ui.icon.mui.examples

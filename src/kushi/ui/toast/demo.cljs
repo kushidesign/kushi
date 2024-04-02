@@ -3,7 +3,7 @@
    [goog.string]
    [kushi.core :refer (sx)]
    [kushi.ui.button.core :refer [button]]
-   [kushi.ui.toast.core :refer [close-toast!]]))
+   [kushi.ui.toast.core :refer [dismiss-toast!]]))
 
 (defn toast-content []
   [:div
@@ -38,5 +38,5 @@
         :.loose
         :zi--1
         [:opacity  :$popover-close-button-opacity]
-        {:on-click close-toast!})
+        {:on-click dismiss-toast!})
     "Undo Save" ]])

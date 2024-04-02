@@ -36,7 +36,7 @@
           "into which you can render whatever you like."
           :br
           :br
-          "You can use the `kushi.ui.popover.core/close-popover!` function if "
+          "You can use the `kushi.ui.popover.core/dismiss-popover!` function if "
           "you want to close the popover from an action within the popover."
           "If you are using a close button that is potitioned near the edge "
           "of the popover, it is recommended to give it a `z-index` of `1` or "
@@ -214,7 +214,7 @@
        {:data-kushi-ui-fune (name placement-kw)
         :on-click           (partial fune/append-fune! opts)}))))
 
-(defn close-popover! [e]
+(defn dismiss-popover! [e]
   (let [el         (domo/et e)
         popover-el (domo/nearest-ancestor el ".kushi-popover")
         fune-id    (j/get popover-el :id)
