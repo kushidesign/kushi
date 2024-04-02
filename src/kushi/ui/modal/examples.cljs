@@ -69,12 +69,11 @@
                          {:on-click #(open-kushi-modal "my-modal")}
                          "Click to open modal"]
                         [modal
-                         (sx
-                          [:transform '(translate :-50% "calc(-50% + 30px)")]
-                          [:&.kushi-modal-open:transform '(translate :-50% :-50%)]
-                          {:-modal-title "My modal"
-                           :-description "My modal description"
-                           :id           "my-modal"})
+                         (sx [:translate "-50% calc(-50% + 30px)"]
+                             [:&.kushi-modal-open:translate "-50% -50%"]
+                             {:-modal-title "My modal"
+                              :-description "My modal description"
+                              :id           "my-modal"})
                          [modal-close-button {:-modal-id "my-modal"}]
                          [:div [:p "My modal content"]]
                          [:div (sx :.flex-row-fe :gap--1em)
@@ -87,9 +86,9 @@
                          "Click to open modal"]
                         [modal
                          (sx
-                          :.fixed-block-start
-                          [:transform '(translate :-50% :-50px)]
-                          [:&.kushi-modal-open:transform '(translate :-50% :50px)]
+                          :.fixed-block-start-inside
+                          [:translate "-50% -50px"]
+                          [:&.kushi-modal-open:translate "-50% 50px"]
                           {:-modal-title "My modal"
                            :-description "My modal description"
                            :id           "my-modal"})
@@ -98,27 +97,6 @@
                          [:div (sx :.flex-row-fe :gap--1em)
                           [button {:on-click close-kushi-modal} "Cancel"]
                           [button (sx :.filled) "Submit"]]]])}
-
-   {:label   "From viewport top, animated fast"
-    :example (example2 [:div
-                        [button
-                         {:on-click #(open-kushi-modal "my-modal")}
-                         "Click to open modal"]
-                        [modal
-                         (sx
-                          :.fixed-block-start
-                          [:transform '(translate :-50% :-50px)]
-                          [:&.kushi-modal-open:transform '(translate :-50% :50px)]
-                          :transition-duration--$xxfast
-                          {:-modal-title "My modal"
-                           :-description "My modal description"
-                           :id           "my-modal"})
-                         [modal-close-button {:-modal-id "my-modal"}]
-                         [:div [:p "My modal content"]]
-                         [:div (sx :.flex-row-fe :gap--1em)
-                          [button {:on-click close-kushi-modal} "Cancel"]
-                          [button (sx :.filled) "Submit"]]]])}
-
    {:label   "Minimal"
     :example (example2 [:div
                         [button

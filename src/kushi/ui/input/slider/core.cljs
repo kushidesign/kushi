@@ -142,9 +142,7 @@
                           :c--currentColor
                           :ta--center
                           :>span:white-space--nowrap
-                          {:class [
-                                  ;; label-size-class
-                                   label-selected-class]
+                          {:class [label-selected-class]
                            :style {:inset-inline-start                           inset-inline-start
                                    :w                                            0
                                    :h                                            0
@@ -156,12 +154,12 @@
                                    :before:content                               (when step-marker-content (str "\"" step-marker-content "\"")) }})
                 [:span
                  (sx :.absolute-centered
-                     [:transform (cond right-most?
-                                       (str "translate(" (if supplied-steps? "-67%" "-50%" ) ", -50%)")
+                     [:translate (cond right-most?
+                                       (str (if supplied-steps? "-67%" "-50%" ) " -50%")
                                        left-most?
-                                       (str "translate(" (if supplied-steps? "-33%" "-50%" ) ", -50%)")
+                                       (str (if supplied-steps? "-33%" "-50%" ) " -50%")
                                        :else
-                                       "translate(-50%, -50%)")])
+                                       "-50% -50%")])
                  (str step step-label-suffix)]]))
            steps))))
 

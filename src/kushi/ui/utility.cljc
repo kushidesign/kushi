@@ -69,76 +69,91 @@
   [
    ;; Visual debugging utilities
    ;; ------------------------------------------------------
-   :debug-grid            {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px)), "
-                                                  "repeating-linear-gradient(to right, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
+   :debug-grid            {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px)), "
+                                                       "repeating-linear-gradient(to right,  transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
    :debug-grid-8          {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                       "repeating-linear-gradient(to right, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
                            :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                       "repeating-linear-gradient(to right, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px))")}
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px))")}
    :debug-grid-16         {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
-                                                       "repeating-linear-gradient(to right, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
                            :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px)), "
-                                                       "repeating-linear-gradient(to right, transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px))")}
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px))")}
 
 
-   ;; could do something like this
-   ;; "[class^='bordered-']" {:border-style :solid :border-width "1px"}
+   ;; TODO - after string-based selector is working, use something like this instead
+  ;;  "[class^='debug-']" {:outline-color  :silver
+  ;;                       :outline-style  :solid
+  ;;                       :outline-width  :1px
+  ;;                       :outline-offset :-1px}
+  ;;  :debug-red {:outline-color :$red-500}
    
-   ;; Start debugging utils 
-   ;; TODO - should these be outline to not mess with layout?
-   ;; TODO - hard code fallbacks better
-   ;; maybe just call these :debug-red
-   :bordered-red          {:border-color "var(--red-500, red)"
-                           :border-style :solid
-                           :border-width "1px"}
 
-   :bordered-blue         {:border-color "var(--blue-500, blue)"
-                           :border-style :solid
-                           :border-width "1px"}
+   :debug-red          {:outline-color :$red-500||red
+                        :outline-style :solid
+                        :outline-offset :-1px
+                        :outline-width :1px}
 
-   :bordered-green        {:border-color "var(--green-500, green)"
-                           :border-style :solid
-                           :border-width "1px"}
+   :debug-blue         {:outline-color  :$blue-500||blue
+                        :outline-style  :solid
+                        :outline-offset :-1px
+                        :outline-width  :1px}
 
-   :bordered-yellow       {:border-color "var(--yellow-500, yellow)"
-                           :border-style :solid
-                           :border-width "1px"}
+   :debug-green        {:outline-color  :$green-500||green
+                        :outline-style  :solid
+                        :outline-offset :-1px
+                        :outline-width  :1px}
 
-   :bordered-orange       {:border-color "var(--orange-500, orange)"
-                           :border-style :solid
-                           :border-width "1px"}
+   :debug-yellow       {:outline-color  :$yellow-500||yellow
+                        :outline-style  :solid
+                        :outline-offset :-1px
+                        :outline-width  :1px}
 
-   :bordered-purple       {:border-color "var(--purple-500, purple)"
-                           :border-style :solid
-                           :border-width "1px"}
+   :debug-orange       {:outline-color  :$orange-500||orange
+                        :outline-style  :solid
+                        :outline-offset :-1px
+                        :outline-width  :1px}
 
-   :bordered-magenta      {:border-color "var(--magenta-500, magenta)"
-                           :border-style :solid
-                           :border-width "1px"}
+   :debug-purple       {:outline-color  :$purple-500||purple
+                        :outline-style  :solid
+                        :outline-offset :-1px
+                        :outline-width  :1px}
 
-   :bordered-gray         {:border-color "var(--gray-500, gray)"
-                           :border-style :solid
-                           :border-width "1px"}
+   :debug-magenta      {:outline-color  :$magenta-500||magenta
+                        :outline-style  :solid
+                        :outline-offset :-1px
+                        :outline-width  :1px}
 
-   :bordered-black        {:border-color "black"
-                           :border-style :solid
-                           :border-width "1px"}
+   :debug-gray         {:outline-color  :$gray-500||gray
+                        :outline-style  :solid
+                        :outline-offset :-1px
+                        :outline-width  :1px}
 
-   :bordered-white       {:border-color "white"
-                          :border-style :solid
-                          :border-width "1px"}
+   :debug-black        {:outline-color  "black"
+                        :outline-style  :solid
+                        :outline-offset :-1px
+                        :outline-width  :1px}
 
-   :wireframe             {:outline-color  :silver
-                           :outline-style  :solid
-                           :outline-width  "1px"
-                           :outline-offset :-1px}
+   :debug-white       {:outline-color  "white"
+                       :outline-style  :solid
+                       :outline-offset :-1px
+                       :outline-width  :1px}
+
+   :wireframe         {:outline-color  :silver
+                       :outline-style  :solid
+                       :outline-width  :1px
+                       :outline-offset :-1px}
    ;; End debugging utils 
    
 
    ;; Borders
+   :outlined              {:outline-color :currentColor
+                           :outline-style :solid
+                           :outline-width :1px
+                           :outline-offset :-1px}
    :bordered              {:border-color :currentColor
                            :border-style :solid
-                           :border-width "1px"}
+                           :border-width :1px}
 
     ;; Non-combo flex utility classes
    :shrink               {:flex-shrink 1}
@@ -153,47 +168,17 @@
    :fixed         {:position :fixed}
 
     ;; Combinatorial absolute and fixed positioning utilities
-    ;; TODO migrate :transform to :translate
     ;; ------------------------------------------------------
-   :absolute-fill         {:position :absolute
-                           :top      0
-                           :right    0
-                           :bottom   0
-                           :left     0}
+   :absolute-centered            {:position           :absolute
+                                  :inset-inline-start "50%"
+                                  :inset-block-start  "50%"
+                                  :translate          "-50% -50%"}
 
-   :after-absolute-centered     {:after:content            "\"\""
-                                 :after:position           :absolute
-                                 :after:inset-inline-start "50%"
-                                 :after:inset-block-start  "50%"
-                                 :after:transform          "translate(-50%, -50%)"}
-
-   :after-absolute-inline-start {:after:content            "\"\""
-                                 :after:position           :absolute
-                                 :after:inset-inline-start "0%"
-                                 :after:inset-inline-end   :unset
-                                 :after:inset-block-start  "50%"
-                                 :after:transform          "translateY(-50%)"}
-
-   :after-absolute-inline-end   {:after:content            "\"\""
-                                 :after:position           :absolute
-                                 :after:inset-inline-end   "0%"
-                                 :after:inset-inline-start :unset
-                                 :after:inset-block-start  "50%"
-                                 :after:transform          "translateY(-50%)"}
-
-   :after-absolute-block-start  {:after:content            "\"\""
-                                 :after:position           :absolute
-                                 :after:inset-block-start  "0%"
-                                 :after:inset-block-end    :unset
-                                 :after:inset-inline-start "50%"
-                                 :after:transform          "translateX(-50%)"}
-
-   :after-absolute-block-end    {:after:content            "\"\""
-                                 :after:position           :absolute
-                                 :after:inset-block-end    "0%"
-                                 :after:inset-block-start  :unset
-                                 :after:inset-inline-start "50%"
-                                 :after:transform          "translateX(-50%)"}
+   :absolute-fill                {:position :absolute
+                                  :top      0
+                                  :right    0
+                                  :bottom   0
+                                  :left     0}
 
    :after-absolute-fill         {:after:content  "\"\""
                                  :after:position :absolute
@@ -202,40 +187,6 @@
                                  :after:bottom   0
                                  :after:left     0}
 
-   :before-absolute-centered     {:before:content            "\"\""
-                                  :before:position           :absolute
-                                  :before:inset-inline-start "50%"
-                                  :before:inset-block-start  "50%"
-                                  :before:transform          "translate(-50%, -50%)"}
-
-   :before-absolute-inline-start {:before:content            "\"\""
-                                  :before:position           :absolute
-                                  :before:inset-inline-end   :unset
-                                  :before:inset-inline-start "0%"
-                                  :before:inset-block-start  "50%"
-                                  :before:transform          "translateY(-50%)"}
-
-   :before-absolute-inline-end   {:before:content            "\"\""
-                                  :before:position           :absolute
-                                  :before:inset-inline-start :unset
-                                  :before:inset-inline-end   "0%"
-                                  :before:inset-block-start  "50%"
-                                  :before:transform          "translateY(-50%)"}
-
-   :before-absolute-block-start  {:before:content            "\"\""
-                                  :before:position           :absolute
-                                  :before:inset-block-end    :unset
-                                  :before:inset-block-start  "0%"
-                                  :before:inset-inline-start "50%"
-                                  :before:transform          "translateX(-50%)"}
-
-   :before-absolute-block-end    {:before:content            "\"\""
-                                  :before:position           :absolute
-                                  :before:inset-block-start  :unset
-                                  :before:inset-block-end    "0%"
-                                  :before:inset-inline-start "50%"
-                                  :before:transform          "translateX(-50%)"}
-
    :before-absolute-fill         {:before:content  "\"\""
                                   :before:position :absolute
                                   :before:top      0
@@ -243,70 +194,64 @@
                                   :before:bottom   0
                                   :before:left     0}
 
+   :absolute-inline-start-inside {:position           :absolute
+                                  :inset-inline-start "0%"
+                                  :inset-inline-end   :unset
+                                  :inset-block-start  "50%"
+                                  :translate          "0px -50%"}
 
-   :absolute-centered     {:position           :absolute
-                           :inset-inline-start "50%"
-                           :inset-block-start  "50%"
-                           :transform          "translate(-50%, -50%)"}
+   :absolute-inline-end-inside   {:position           :absolute
+                                  :inset-inline-start :unset
+                                  :inset-inline-end   "0%"
+                                  :inset-block-start  "50%"
+                                  :translate          "0px -50%"}
 
-   :absolute-inline-start {:position           :absolute
-                           :inset-inline-start "0%"
-                           :inset-inline-end   :unset
-                           :inset-block-start  "50%"
-                           :transform          "translateY(-50%)"}
+   :absolute-block-start-inside  {:position           :absolute
+                                  :inset-block-start  "0%"
+                                  :inset-block-end    :unset
+                                  :inset-inline-start "50%"
+                                  :translate          "-50% 0px"}
 
-   :absolute-inline-end   {:position           :absolute
-                           :inset-inline-start :unset
-                           :inset-inline-end   "0%"
-                           :inset-block-start  "50%"
-                           :transform          "translateY(-50%)"}
+   :absolute-block-end-inside    {:position           :absolute
+                                  :inset-block-start  :unset
+                                  :inset-block-end    "0%"
+                                  :inset-inline-start "50%"
+                                  :translate          "-50% 0px"}
 
-   :absolute-block-start  {:position           :absolute
-                           :inset-block-start  "0%"
-                           :inset-block-end    :unset
-                           :inset-inline-start "50%"
-                           :transform          "translateX(-50%)"}
+   :fixed-fill                   {:position :fixed
+                                  :top      0
+                                  :right    0
+                                  :bottom   0
+                                  :left     0}
 
-   :absolute-block-end    {:position           :absolute
-                           :inset-block-start  :unset
-                           :inset-block-end    "0%"
-                           :inset-inline-start "50%"
-                           :transform          "translateX(-50%)"}
+   :fixed-centered            {:position           :fixed
+                               :inset-inline-start "50%"
+                               :inset-block-start  "50%"
+                               :translate          "-50% -50%"}
 
-   :fixed-fill            {:position :fixed
-                           :top      0
-                           :right    0
-                           :bottom   0
-                           :left     0}
+   :fixed-inline-start-inside {:position           :fixed
+                               :inset-inline-start "0%"
+                               :inset-inline-end   :unset
+                               :inset-block-start  "50%"
+                               :translate          "0px -50%"}
 
-   :fixed-centered     {:position           :fixed
-                        :inset-inline-start "50%"
-                        :inset-block-start  "50%"
-                        :transform          "translate(-50%, -50%)"}
+   :fixed-inline-end-inside   {:position           :fixed
+                               :inset-inline-end   "0%"
+                               :inset-inline-start :unset
+                               :inset-block-start  "50%"
+                               :translate          "0px -50%"}
 
-   :fixed-inline-start {:position           :fixed
-                        :inset-inline-start "0%"
-                        :inset-inline-end   :unset
-                        :inset-block-start  "50%"
-                        :transform          "translateY(-50%)"}
+   :fixed-block-start-inside  {:position           :fixed
+                               :inset-block-start  "0%"
+                               :inset-block-end    :unset
+                               :inset-inline-start "50%"
+                               :translate          "-50%"}
 
-   :fixed-inline-end   {:position           :fixed
-                        :inset-inline-end   "0%"
-                        :inset-inline-start :unset
-                        :inset-block-start  "50%"
-                        :transform          "translateY(-50%)"}
-
-   :fixed-block-start  {:position           :fixed
-                        :inset-block-start  "0%"
-                        :inset-block-end    :unset
-                        :inset-inline-start "50%"
-                        :transform          "translateX(-50%)"}
-
-   :fixed-block-end    {:position           :fixed
-                        :inset-block-end    "0%"
-                        :inset-block-start  :unset
-                        :inset-inline-start "50%"
-                        :transform          "translateX(-50%)"}
+   :fixed-block-end-inside    {:position           :fixed
+                               :inset-block-end    "0%"
+                               :inset-block-start  :unset
+                               :inset-inline-start "50%"
+                               :translate          "-50%"}
 
     ;; Surfaces, buttons, containers
     ;; ------------------------------------------------------

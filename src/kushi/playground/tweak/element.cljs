@@ -84,7 +84,11 @@
 ;;           :border-radius--3px
 ;;           :box-shadow--none
 ;;           {:id             "kushi-tweak-contextmenu"
-;;             :-context-menu? true})
+
+;;            ;; Heads up this :-context-menu? option was removed 1.0.0-a.20
+
+;;            :-context-menu? true})
+
 ;; [:ul
 ;;   [:li [button (sx :.minimal :.pill)
 ;;         [icon :tune]
@@ -597,7 +601,7 @@
 
       (rdom/render
        [:form#kushi-playground-tweaker
-        (sx :.fixed-block-start
+        (sx :.fixed-block-start-inside
             :.elevated-3
             :bgc--white
             :p--3rem

@@ -158,19 +158,26 @@
            {:name    icon-expanded
             :pred    vector?
             :default '[kushi.ui.icon.core/icon :remove]
-            :desc    ["An instance of a kushi.ui.icon/icon component"
-                      "Optional."]}
+            :desc    ["An instance of a kushi.ui.icon/icon component. Optional."]}
            {:name    icon-position
             :pred    #{:start :end}
             :default :start
-            :desc    ["A value of `:start` will place the at the inline start of the header, preceding the label."
-                      "A value of `:end` will place the icon at the inline end of the header, opposite the label."
+            :desc    ["A value of `:start` will place the at the inline start of the header, preceding the label. "
+                      "A value of `:end` will place the icon at the inline end of the header, opposite the label. "
                       "Optional."]}
+           {:name    header-attrs
+            :pred    map?
+            :default nil
+            :desc    ["Attribute map for header element."]}
+           {:name    body-attrs
+            :pred    map?
+            :default nil
+            :desc    ["Attribute map for body element."]}
            {:name    expanded?
             :pred    boolean?
             :default false
-            :desc    ["When a value of `true` is passed, the collapse is initially rendered in an expanded state."
-                      "Optional"]}
+            :desc    ["When a value of `true` is passed, the collapse is initially rendered in an expanded state. "
+                      "Optional."]}
            {:name    speed
             :pred    pos-int?
             :default 250

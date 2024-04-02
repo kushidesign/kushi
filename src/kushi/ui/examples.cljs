@@ -276,6 +276,7 @@
                   :example [slider {:min          0
                                     :max          7
                                     :-step-marker :label}]}
+
                  {:label   "Dot markers"
                   :example [slider {:min          0
                                     :max          7
@@ -297,8 +298,8 @@
                   :example [slider {:-steps            ["First label is long" "Second label" "Third label" "Last label is long"]
                                     :-step-marker      :dot
                                     :-label-size-class :small
-                                    :-labels-attrs     (sx [:&_.kushi-slider-step-label:first-child>span:transform '(translate :-25% :-50%)]
-                                                           [:&_.kushi-slider-step-label:last-child>span:transform '(translate :-75% :-50%)])}]}
+                                    :-labels-attrs     (sx [:&_.kushi-slider-step-label:first-child>span:translate :-25%:-50%]
+                                                           [:&_.kushi-slider-step-label:last-child>span:translate :-75%:-50%])}]}
 
                  #_{:label   "Supplied step values, custom label styling"
                     :example [slider {:-steps              ["low" "guarded" "elevated" "high" "severe"]
@@ -774,12 +775,15 @@
                             [:p "child 5"]]]}
                 {:label   "Header color"
                  :example [collapse
-                           (sx :bbe--3px:solid:#3d3d3d
+                           (sx :border-block--3px:solid:$neutral-1000
                                {:-label        "Collapsable section label "
                                 :-body-attrs   (sx :pis--0.5rem)
-                                :-header-attrs (sx :p--10px
-                                                   :bgc--$gray-1000
-                                                   :c--white)})
+                                :-header-attrs (sx :.semi-bold
+                                                   :p--10px
+                                                   :bgc--$neutral-1000
+                                                   :dark:bgc--$neutral-200
+                                                   :c--white
+                                                   :dark:c--black)})
                            [:p "child 1"]
                            [:p "child 2"]]}
 

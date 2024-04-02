@@ -75,7 +75,21 @@
        [icon icon-name])]))
 
 (defn modal
-  {:desc ["Modal dialogs create a new floating layer over the current view to get user feedback or display information."]
+  {:desc ["Modal dialogs create a new floating layer over the current view "
+          "to get user feedback or display information."
+          :br
+          :br
+          "Elements and behaviors of modals can be custom styled and "
+          "controlled via the following tokens in your theme:"
+          :br
+          :br "`:$modal-border-radius`"      
+          :br "`:$modal-border`"             
+          :br "`:$modal-padding-block`"      
+          :br "`:$modal-padding-inline`"     
+          :br "`:$modal-backdrop-color`"     
+          :br "`:$modal-margin`"             
+          :br "`:$modal-min-width`"          
+          :br "`:$modal-transition-duration`"]
    :opts '[{:name    modal-title
             :pred    string?
             :default nil
@@ -99,8 +113,7 @@
         {:keys [modal-title
                 description
                 elevation
-                expanded?
-                context-menu?]}   opts
+                expanded?]}   opts
         {:keys [id]}              attrs
         desc-id                   (str id "-description")
         title-id                  (str id "-title")
@@ -122,7 +135,6 @@
                    :.fixed-centered
                    :.transition
                    :backdrop:bgc--transparent
-                   [:transform (if context-menu? :none "translate(-50%, -50%)")]
                    [:transition-duration "var(--modal-transition-duration, var(--fast))"]
                    :bgc--$body-background-color
                    :dark:bgc--$body-background-color-inverse

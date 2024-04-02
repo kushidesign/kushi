@@ -189,13 +189,13 @@
 
      [track-content
       (sx 'kushi-switch-track-content-on
-          :.absolute-inline-start
+          :.absolute-inline-start-inside
           :.kushi-switch-track-content)
       track-content-on]
 
      [track-content
       (sx 'kushi-switch-track-content-off
-          :.absolute-inline-end
+          :.absolute-inline-end-inside
           :.kushi-switch-track-content)
       track-content-off]
 
