@@ -18,6 +18,8 @@
    [kushi.ui.tooltip.demo :as tooltip-demo]
    [kushi.ui.popover.core :refer [popover-attrs close-popover!]]
    [kushi.ui.popover.demo :refer [popover-content]]
+   [kushi.ui.toast.core :refer [toast-attrs]]
+   [kushi.ui.toast.demo :refer [toast-content]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.collapse.core :refer (collapse accordion)]
    [kushi.ui.modal.core :refer (modal)]
@@ -90,12 +92,13 @@
                 :weight   :wee-bold
                 :examples "Simple"}
      :examples [{:label   "Simple"
-                 :example [:span
+                 :example [:section
+                           [label (sx :.bold :mbe--0.75em) "Choose an option:"]
                            [radio {:-input-attrs {:name :demo}} "Yes"]
                            [radio {:-input-attrs {:name :demo}} "No"]
                            [radio {:-input-attrs {:name :demo}} "Maybe"]]}
                 {:label   "Inherited color"
-                 :example [:section (sx :c--$purple-400)
+                 :example [:section (sx :c--$purple-500 :dark:c--$purple-300)
                            [label (sx :.bold :mbe--0.75em) "Choose an option:"]
                            [radio {:-input-attrs {:name :demo}} "Yes"]
                            [radio {:-input-attrs {:name :demo}} "No"]
@@ -334,31 +337,6 @@
                              (tooltip-attrs {:-text "My tooltip text"}))
                             "Hover me to reveal tooltip"]}
 
-              ;; Leave these auto placements out for now
-              ;;  {:label   "block-start, auto"
-              ;;   :example [button
-              ;;                       (tooltip-attrs {:-text      "My tooltip text"
-              ;;                                       :-placement "block-start"})
-              ;;                       "Hover me to reveal tooltip"]}
-
-              ;;  {:label   "block-end, auto"
-              ;;   :example [button
-              ;;                       (tooltip-attrs {:-text      "My tooltip text"
-              ;;                                       :-placement "block-end"})
-              ;;                       "Hover me to reveal tooltip"]}
-
-              ;;  {:label   "inline-start, auto"
-              ;;   :example [button
-              ;;                       (tooltip-attrs {:-text      "My tooltip text"
-              ;;                                       :-placement "inline-start"})
-              ;;                       "Hover me to reveal tooltip"]}
-
-              ;;  {:label   "inline-end, auto"
-              ;;   :example [button
-              ;;                       (tooltip-attrs {:-text      "My tooltip text"
-              ;;                                       :-placement "inline-end"})
-              ;;                       "Hover me to reveal tooltip"]}
-
 
                  {:label   "top-left-corner"
                   :example [button
@@ -405,39 +383,31 @@
                  {:label   "inline-end, center"
                   :example [button
                             (tooltip-attrs {:-text      "My tooltip text"
-                                            :-placement "inline-end center"})
+                                            :-placement [:inline-end :center]})
                             "Hover me to reveal tooltip"]}
 
                  {:label   "block-start, inline-start"
                   :example [button
                             (tooltip-attrs {:-text      "My tooltip text"
-                                            :-placement "block-start inline-start"})
+                                            :-placement [:block-start :inline-start]})
                             "Hover me to reveal tooltip"]}
 
                  {:label   "block-start, center"
                   :example [button
                             (tooltip-attrs {:-text      "My tooltip text"
-                                            :-placement "block-start center"})
+                                            :-placement [:block-start :center]})
                             "Hover me to reveal tooltip"]}
 
                  {:label   "block-start, inline-end"
                   :example [button
                             (tooltip-attrs {:-text      "My tooltip text"
-                                            :-placement "block-start inline-end"})
+                                            :-placement [:block-start :inline-end]})
                             "Hover me to reveal tooltip"]}
 
                  {:label   "corner"
                   :example [button
                             (tooltip-attrs {:-text      "My tooltip text"
-                                            :-placement "block-start inline-end corner"})
-                            "Hover me to reveal tooltip"]}
-
-                 {:label   "corner, with custom offset"
-                  :example [button
-                            (merge-attrs
-                             (sx :$tooltip-offset--0px)
-                             (tooltip-attrs {:-text      "My tooltip text"
-                                             :-placement "block-start inline-end corner"}))
+                                            :-placement [:block-start :inline-end :corner]})
                             "Hover me to reveal tooltip"]}
 
                  {:label   "With forced linebreaks"
@@ -445,38 +415,6 @@
                             (tooltip-attrs {:-text      ["My tooltip text line1" "My tooltip text line2"]
                                             :-placement :right #_"inline-end"})
                             "Hover me to reveal tooltip"]}
-
-                ;; Disabled in a20
-                ;;  {:label   "Reveal on click"
-                ;;   :example [button
-                ;;             (tooltip-attrs {:-text                     "My tooltip text!"
-                ;;                             :-reveal-on-click-duration 1500
-                ;;                             :-placement                :right #_"inline-end"})
-                ;;             "Click me to reveal tooltip"]}
-
-
-                ;; Disabled in a20
-                ;;  {:label   "Toggle on click"
-                ;;   :example [:div.flex-row-fs
-                ;;             [button "WTF"]
-                ;;             [icon
-                ;;              (merge-attrs
-                ;;               (sx :.pill
-                ;;                   :.pointer
-                ;;                   :m--1em
-                ;;                   :hover:c--black
-                ;;                   :hover:bgc--$neutral-background-color
-                ;;                   :dark:hover:c--white
-                ;;                   :dark:hover:bgc--$neutral-background-color-inverse
-                ;;                   :&.kushi-pseudo-tooltip-revealed:c--$accent-color
-                ;;                   :&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color
-                ;;                   :dark:&.kushi-pseudo-tooltip-revealed:c--$accent-color-inverse
-                ;;                   :dark:&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color-inverse)
-                ;;               (tooltip-attrs {:-text                     "My tooltip text!"
-                ;;                               :-reveal-on-click?         true
-                ;;                               :-reveal-on-click-duration :infinite
-                ;;                               :-placement                :right}))
-                ;;              :info]]}
 
 
                  {:label   "Change text on click"
@@ -525,19 +463,29 @@
                         :justify-content :center}}
      :defaults {:examples "Auto"}
      :refers   '[close-popover!]
+     :requires (str
+                "            ;; Optional, for label component shown in examples\n"
+                "            [kushi.ui.icon.core :refer [icon]]\n"
+                "            ;; Optional, for button component shown in examples\n"
+                "            [kushi.ui.button.core :refer [button]]\n"
+                "            ;; Optional, only if you are using reagent as in\n"
+                "            ;; examples above. Otherwise you can bring your\n"
+                "            ;; own rendering function.\n"
+                "            [reagent.dom :as rdom]"
+                
+                )
      :examples [{:label   "Auto"
                  :example [button
                            (popover-attrs {:-f (fn [popover-el]
                                                  (rdom/render popover-content
                                                               popover-el))})
                            "Click me"]}
-
-                {:label   "left-top"
+                {:label   "Arrowless"
                  :example [button
-                           (popover-attrs {:-f         (fn [popover-el]
-                                                         (rdom/render popover-content
-                                                                      popover-el))
-                                           :-placement :left-top})
+                           (popover-attrs {:-f (fn [popover-el]
+                                                 (rdom/render popover-content
+                                                              popover-el))
+                                           :-arrow? false})
                            "Click me"]}
                 
                 {:label   "With dismiss action"
@@ -546,15 +494,60 @@
                             {:-f (fn [el]
                                    (rdom/render [:div (sx :.flex-col-c
                                                           :ai--c
-                                                          :h--100%)
+                                                          :min-height--100%
+                                                          :p--1rem)
                                                  [button 
                                                   (sx :.small
-                                                      :.minimal
-                                                      :.absolute-centered
                                                       {:on-click close-popover!})
                                                   "Close"]]
                                                 el))})
+                           "Click me"]}
+
+                {:label   "Auto-dismiss"
+                 :example [button
+                           (popover-attrs
+                            {:-f             (fn [el]
+                                               (rdom/render [:div (sx :.flex-col-c
+                                                                      :ai--c
+                                                                      :min-height--100%
+                                                                      :p--1rem)
+                                                             [label 
+                                                              (sx :.small)
+                                                              "I will close automatically after 5000ms"]]
+                                                            el))
+                             :-auto-dismiss? true})
                            "Click me"]}]})
+   
+   (feature
+    toast-attrs
+    {:fn       toast-attrs
+     :meta     #'toast-attrs
+     :title    "Toast"
+     :stage    {:style {:min-height      :200px
+                        :justify-content :center}}
+     :defaults {:examples "Auto"}
+     :refers   '[close-toast!]
+     :requires (str
+                "            ;; Optional, for label component shown in examples\n"
+                "            [kushi.ui.icon.core :refer [icon]]\n"
+                "            ;; Optional, for button component shown in examples\n"
+                "            [kushi.ui.button.core :refer [button]]\n"
+                "            ;; Optional, only if you are using reagent as in\n"
+                "            ;; examples above. Otherwise you can bring your\n"
+                "            ;; own rendering function.\n"
+                "            [reagent.dom :as rdom]")
+     :examples [{:label   "Auto"
+                 :example [button
+                           (toast-attrs
+                            {:-auto-dismiss? false
+                             :-placement :nonsense
+                             :-f             (fn [toast-el]
+                                               (rdom/render toast-content
+                                                            toast-el))})
+                           "Save for later"]}
+                
+                
+                ]})
 
 
    ;; Defined in kushi.ui.icon.mui.examples
@@ -581,9 +574,7 @@
                 {:label   "With icon"
                  :example (example2 [tag [icon :pets] "pet friendly"])}
                 {:label   "Max-width example"
-                 :example (example2 [tag [:span (sx :.truncate :max-width--130px) "My tag with longer text"]])}
-
-                ]}
+                 :example (example2 [tag [:span (sx :.truncate :max-width--130px) "My tag with longer text"]])}]}
 
    (feature
     label
@@ -606,7 +597,12 @@
      :examples [{:label   "Default, elevated"
                  :example [:div [card (sx :.elevated-3) "my content"]]}
                 {:label   "Elevation levels 1-5"
-                 :example [:div.grid (sx :ai--c :gap--2rem :gtc--1fr:1fr:1fr :&_code:ws--n :&_code:fs--$xsmall :&_.kushi-card:pi--1.5rem)
+                 :example [:div.grid (sx :ai--c
+                                         :gap--2rem
+                                         :gtc--1fr:1fr:1fr
+                                         :&_code:ws--n
+                                         :&_code:fs--$xsmall
+                                         :&_.kushi-card:pi--1.5rem)
                            [card (sx :.elevated-1) [:code ":.elevation-1"]]
                            [card (sx :.elevated-2) [:code ":.elevation-2"]]
                            [card (sx :.elevated-3) [:code ":.elevation-3"]]
@@ -620,6 +616,7 @@
                  :example [card (sx :.large
                                     :.extra-bold
                                     :.flex-col-c
+                                    :.rounded-small
                                     :p--0
                                     :height--220px
                                     :tt--u
@@ -720,18 +717,7 @@
                                                 [icon :clear]]})
                            [:div (sx :.flex-col-c :ai--c)
                             "Alert body"
-                            [label (sx :.xxxlarge) "👻"]]]}
-
-                ;;; leave this out for now
-                #_{:label   "With fixed position and auto-dismiss"
-                   :example (example2 [alert
-                                       (sx :.accent
-                                           :.fixed-block-start
-                                           {:-icon             [icon :auto-awesome]
-                                            :-close-icon?      true
-                                            :-close-icon-attrs {:on-click #(js/alert "Example close-icon click event.")}})
-                                       "Your message goes here."])}
-                ]})
+                            [label (sx :.xxxlarge) "👻"]]]}]})
 
    ;; We are passing in the examples as a var, so we are not using the `kushi.playground.util/feature` macro here
    {:fn       modal
