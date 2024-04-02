@@ -3,44 +3,21 @@
    [applied-science.js-interop :as j]
    [clojure.string :as string]
    [goog.string]
+   [goog.functions]
    [domo.core :as domo]
    ;; Import this to create defclasses
    [kushi.core :refer (keyed)]
    [kushi.ui.util :as util :refer [maybe nameable? as-str]]
+   [kushi.ui.dom.fune.toast :refer [append-toast!]]
+   [kushi.ui.dom.fune.shared :refer [stock-fune-types fune-classes]]
    [kushi.ui.dom.fune.placement :refer [el-plc
                                         fune-plc
                                         updated-fune-placement
                                         og-placement
                                         placement-css-custom-property
-                                        owning-el-rect-cp]]
-   [goog.functions]))
+                                        owning-el-rect-cp]]))
 
-(def stock-fune-types #{:fune :tooltip :popover #_:hover-board #_:context-menu})
-        
-
-(defn fune-classes
-  [{:keys [fune-class 
-           arrow?
-           placement-kw
-           new-placement-kw
-           fune-type
-           metrics?]}]
-  (let [fune-type-class (some-> fune-type
-                                (maybe #(not= :fune %))
-                                (maybe stock-fune-types)
-                                as-str)]
-    (string/join
-     " "
-     ["kushi-fune"
-      (some->> fune-type-class (str "kushi-"))
-      "invisible" 
-      (some->> (if metrics? 
-                 placement-kw
-                 new-placement-kw)
-               name
-               (str "kushi-fune-"))
-      (when-not arrow? "kushi-fune-arrowless")
-      (some-> fune-class (maybe nameable?) as-str)])))
+(js/console.clear)
 
 
 (defn maybe-multiline-tooltip-text [v]
@@ -72,6 +49,7 @@
             {:scale               :1!important
              :transition-property :none!important})))))
 
+
 (defn- tooltip-text-html!
   [{:keys [el tooltip-text]}]
   (let [style (domo/css-style-string
@@ -102,20 +80,9 @@
   ;; Set the innerHTML / or tooltip text
   (cond (= fune-type :tooltip)
         (tooltip-text-html! append-tt-opts))
-  ;; popover-close-button-html! append-tt-opts
-  ;; Set the class and id of the fune el
-  ;; TODO
-  ;; make sure translate-xy-style is always map, then merge with below
-  (let [txy          (txy append-tt-opts)
-        fune-classes (fune-classes append-tt-opts)
 
-      ;; TODO swap this in once kushi.core/defcss is ready
-      ;; (.setAttribute "data-kushi-ui-fune-placement" placement)
-       ;; placement    (some->> (if metrics? 
-       ;;                         placement-kw
-       ;;                         new-placement-kw)
-       ;;                       name)
-        ]
+  (let [txy          (txy append-tt-opts)
+        fune-classes (fune-classes append-tt-opts)]
     (doto el
       (.setAttribute "data-kushi-ui" "fune")
 
@@ -128,6 +95,8 @@
   
   ;; Append fune el to the <body> 
   (.appendChild js/document.body el)
+  
+  ;; Render contents if popover
   (when (contains? #{:popover} fune-type)
     (user-rendering-fn el)))
 
@@ -138,11 +107,11 @@
    given a new placement and position which may include a shift on the x or y
    axis in order to keep it wholly in the veiwport."
   [{placement-kw :placement-kw
-    arrow?  :arrow?
+    arrow?       :arrow?
     owning-el    :owning-el
     fune-type    :fune-type
-    :as opts
-    :or {fune-type :fune}}
+    :or          {fune-type :fune}
+    :as          opts}
    id]
 
   ;; 1) Pre-calculate and append fune
@@ -156,7 +125,7 @@
   (let [fune-type       (or (maybe fune-type stock-fune-types)
                             (maybe fune-type nameable?)
                             :fune)
-        arrow?     (if (false? arrow?) false true)
+        arrow?          (if (false? arrow?) false true)
         opts            (assoc opts
                                :fune-type
                                fune-type
@@ -480,21 +449,30 @@
          fune-type        (:fune-type opts)
          existing-popover (and (= fune-type :popover)
                                (j/get owning-el "ariaHasPopup"))
-         ]
+         opts             (assoc opts :owning-el owning-el)]
 
      (when-not existing-popover
+       
+       ;; Adding `aria-describedby` for tooltips
        (when (= fune-type :tooltip)
          (domo/set-attribute! owning-el :aria-describedby fune-id))
 
-       (append-fune!* (assoc opts :owning-el owning-el)
-                      fune-id)
+       ;; Appending fune
+       (if (= fune-type :toast)
+         (append-toast! (assoc opts :owning-el owning-el)
+                        fune-id)
+         (append-fune!* (assoc opts :owning-el owning-el)
+                        fune-id))
 
+
+       ;; Tooltip-specific mouseleave
        (when (= fune-type :tooltip)
          (.addEventListener owning-el
                             "mouseleave"
                             (partial remove-fune! owning-el fune-id fune-type)
                             #js {"once" true}))
 
+       ;; Popover-specific aria attributes, listeners, and focus-trap
        (when (= fune-type :popover)
          (domo/set-attribute! owning-el :aria-controls fune-id)
          (domo/set-attribute! owning-el :aria-haspopup "dialog")
@@ -513,19 +491,30 @@
                              "resize"
                              #(update-fune-placement! owning-el fune-id))
 
+
+          ;; This will set focus on first focusable element within fune
           (set-popover-focus! fune-id)
 
+          ;; This will remove fune from dom if owning element goes away
           (let [mo (new js/MutationObserver (observe-fune! fune-id))]
             (.observe mo
                       (domo/el-by-id fune-id)
                       #js{:attributes true}))))
-       (.addEventListener js/window
-                          "keydown"
-                          (partial escape-fune! owning-el fune-id fune-type)
-                          #js {"once" true})
-       (.addEventListener js/window
-                          "scroll"
-                          (partial escape-fune! owning-el fune-id fune-type)
-                          #js {"once" true}))
-     )))
 
+       ;; This will auto-dismiss fune, for toasts (default) and popovers (opt-in).
+       (js/window.requestAnimationFrame 
+        #(when (:auto-dismiss? opts)
+           (js/setTimeout (partial remove-fune! owning-el fune-id fune-type)
+                          #_(domo/duration-property-ms  "popover-auto-dismiss-duration")
+                          5000)))
+
+       ;; Additional listeners for escaping funes
+       (when-not (= fune-type :toast)
+         (.addEventListener js/window
+                            "keydown"
+                            (partial escape-fune! owning-el fune-id fune-type)
+                            #js {"once" true})
+         (.addEventListener js/window
+                            "scroll"
+                            (partial escape-fune! owning-el fune-id fune-type)
+                            #js {"once" true}))))))

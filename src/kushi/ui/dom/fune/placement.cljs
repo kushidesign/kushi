@@ -1,11 +1,66 @@
 (ns kushi.ui.dom.fune.placement
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [goog.string]
    [kushi.core :refer (keyed)]
    [domo.core :as domo]
    [kushi.ui.util :refer [ck? maybe as-str calc]]))
+
+(def ^:private non-corner-placements
+  {:top-left     :tl  
+   :top          :t   
+   :top-right    :tr  
+   :right-top    :rt  
+   :right        :r   
+   :right-bottom :rb  
+   :bottom-right :br  
+   :bottom       :b   
+   :bottom-left  :bl  
+   :left-bottom  :lb  
+   :left         :l   
+   :left-top     :lt})
+
+(def ^:private corner-placements-tla
+  {:rtc                 :trc
+   :rbc                 :brc
+   :lbc                 :blc
+   :ltc                 :tlc})
+
+(def ^:private corner-placements
+  {:top-right-corner    :trc
+   :right-top-corner    :trc
+   :rtc                 :trc
+   :bottom-right-corner :brc
+   :right-bottom-corner :brc
+   :rbc                 :brc
+   :bottom-left-corner  :blc
+   :left-bottom-corner  :blc
+   :lbc                 :blc
+   :top-left-corner     :tlc
+   :left-top-corner     :tlc
+   :ltc                 :tlc})
+
+(def placement-kws-hydrated
+  {:tlc :top-left-corner 
+   :tl  :top-left  
+   :t   :top
+   :tr  :top-right  
+   :trc :top-right-corner 
+   :rtc :top-right-corner 
+   :rt  :right-top  
+   :r   :right
+   :rb  :right-bottom  
+   :rbc :right-bottom-corner
+   :brc :bottom-right-corner 
+   :br  :bottom-right
+   :b   :bottom
+   :bl  :bottom-left  
+   :blc :bottom-left-corner 
+   :lbc :bottom-left-corner  
+   :lb  :left-bottom
+   :l   :left
+   :lt  :left-top  
+   :ltc :left-top-corner})
 
 (defn og-placement
   "Returns a keyword such as :t or :blc"
@@ -82,56 +137,57 @@
            "block-end"    "b"
            "inline-start" "l"
            "center"       nil
-           true         "c"
-           false        nil}]
+           true           "c"
+           false          nil}]
     {:ltr m
      :rtl (assoc m "inline-end" "l" "inline-start" "r")}))
 
 (defn- logical-placement
   [{:keys [ltr? placement]}]
-  (let [placement      (some-> placement
+  (let [placement-vec* (some-> placement
                                (string/trim)
                                (string/split #" "))
-        [p1 p2 corner] (valid-placement placement)
+        [p1 p2 corner] (valid-placement placement-vec*)
         corner?        (= "corner" corner)
         p1             (or p1 "block-start")
         p2             (or p2 "center")
-        placement      [p1 p2 corner?]
-        ret            (->> placement
+        placement-vec  [p1 p2 corner?]
+        ret            (->> placement-vec
                             (map #(get ((if ltr? :ltr :rtl) by-logic) %))
                             string/join
                             keyword)]
     ret))
 
+(def logical-options-p1
+  #{"inline-end"  "inline-start"
+    "block-start" "block-end"})
 
-(def ^:private non-corner-placements
-  {:top-left     :tl  
-   :top          :t   
-   :top-right    :tr  
-   :right-top    :rt  
-   :right        :r   
-   :right-bottom :rb  
-   :bottom-right :br  
-   :bottom       :b   
-   :bottom-left  :bl  
-   :left-bottom  :lb  
-   :left         :l   
-   :left-top     :lt})
+(def logical-options-p2
+  (conj logical-options-p1 "center"))
 
+(defn- valid-placement-vec? [[p1 p2 corner]]
+  (boolean 
+   (and (contains? logical-options-p1 p1)
+        (contains? logical-options-p2 p2)
+        (or (nil? corner)
+            (= "corner" corner)))))
 
-(def ^:private corner-placements
-  {:top-right-corner    :trc
-   :right-top-corner    :trc
-   :rtc                 :trc
-   :bottom-right-corner :brc
-   :right-bottom-corner :brc
-   :rbc                 :brc
-   :bottom-left-corner  :blc
-   :left-bottom-corner  :blc
-   :lbc                 :blc
-   :top-left-corner     :tlc
-   :left-top-corner     :tlc
-   :ltc                 :tlc})
+(defn- logical-placement2
+  [{:keys [ltr? placement-vec]}]
+  (let [placement-vec (mapv as-str placement-vec)]
+    (when (some-> placement-vec
+                  (maybe vector?) 
+                  (valid-placement-vec?))
+      (let [[p1 p2 corner] placement-vec
+            corner?        (= "corner" corner)
+            placement-vec  [p1 p2 corner?]
+            ret            (->> placement-vec
+                                (map #(get ((if ltr? :ltr :rtl) by-logic) %))
+                                string/join
+                                keyword)
+            ret            (get corner-placements-tla ret ret)]
+        (keyed p1 p2 corner corner? placement-vec ret)
+        ret))))
 
 (def ^:private translate-xy
   {:tlc [:left   -100 :top -100 "-" "-"]
@@ -191,9 +247,11 @@
          "--left-plc"           (calc "(var(--oe-left) - 100%) - " tot-off)})))))
 
 
+
 ;; TODO Add some safety here for bad inputs
 ;; Make the logic more efficient if arg is a
 ;; string or vector (for logic placement)
+;; TODO - should return nil if bad, let call site provide callback
 (defn user-placement
   "Expects a string, keyword, or vector of strings or keywords"
   [x]
@@ -204,21 +262,28 @@
         kw  (when kw*
               (or (kw* non-corner-placements)
                   (kw* corner-placements)
-                  kw*))
-        s   (if (vector? x)
-              (string/join " " (map #(as-str %) x))
-              x)]
+                  kw*))]
+
     (or
+     ;; use maybe
      (when (contains? translate-xy kw) kw)
-     (let [parts (string/split s #"-")]
-       (when (every? #(contains? non-logicals %) parts)
-         (let [kw (some->> parts
-                           (map first)
-                           string/join
-                           keyword)]
-           (when (contains? translate-xy kw) kw))))
-     (logical-placement {:ltr?      (= (domo/writing-direction) "ltr")
-                         :placement s}))) )
+     ;; This branch converts stringified kw
+     ;;"bottom-right-corner" => :brc
+     ;; Then check if it is member of placement set
+    ;;  (when (some->> x
+    ;;                 (maybe vector?)
+    ;;                 (every? #(contains? non-logicals (as-str %))))
+    ;;    (let [kw (some->> x
+    ;;                      (map first)
+    ;;                      string/join
+    ;;                      keyword)]
+    ;;      (when (contains? translate-xy kw) kw)))
+     
+     ;; This branch resolves logical placement
+     (when (and (vector? x) (seq x))
+       (logical-placement2 {:ltr?          (= (domo/writing-direction) "ltr")
+                            :placement-vec x}))
+     )))
 
 
 ;; for re-assigning placement
@@ -333,8 +398,7 @@
             :blc :lb
             :lbc :lb
             :brc :rb
-            :rbc :rb
-            ))
+            :rbc :rb))
 
         (or w? e?)
         (cond
@@ -359,8 +423,7 @@
             :blc :bl
             :lbc :bl
             :brc :br
-            :rbc :br
-            )))
+            :rbc :br)))
 
       ;; fallback to existing placement kw
       placement-kw))
@@ -374,18 +437,17 @@
 (defn fune-plc [k]
   ;; TODO use let-map macro here
   ;; change f to ck?
-  (let [f                       (partial ck? k)
-        block-start?            (f #{:tl :t :tr})
-        block-end?              (f #{:bl :b :br})
-        block-plc?      (or block-start? block-end?)
-        inline-start?           (f #{:lt :l :lb})
-        inline-end?             (f #{:rt :r :rb})
-        inline-plc?     (or inline-start? inline-end?)
-        corner-plc?     (f #{:tlc :trc
-                                     :ltc :rtc
-                                     :blc :brc
-                                     :lbc :rbc})
-        ]
+  (let [f             (partial ck? k)
+        block-start?  (f #{:tl :t :tr})
+        block-end?    (f #{:bl :b :br})
+        block-plc?    (or block-start? block-end?)
+        inline-start? (f #{:lt :l :lb})
+        inline-end?   (f #{:rt :r :rb})
+        inline-plc?   (or inline-start? inline-end?)
+        corner-plc?   (f #{:tlc :trc
+                           :ltc :rtc
+                           :blc :brc
+                           :lbc :rbc})]
     (keyed block-start?       
            block-end?         
            block-plc? 

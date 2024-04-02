@@ -1,41 +1,14 @@
 (ns kushi.ui.popover.core
   (:require
    [applied-science.js-interop :as j]
-   [clojure.string :as string]
    [goog.string]
    [domo.core :as domo]
-   [kushi.core :refer (keyed token->ms)]
+   [kushi.core :refer (keyed)]
    [kushi.ui.util :as util :refer [maybe]]
    [kushi.ui.dom.fune.core :as fune]
    [kushi.ui.dom.fune.placement :refer [user-placement]]
    ;; Import this styles ns to create defclasses
-   [kushi.ui.dom.fune.styles]
-   [reagent.dom :as rdom]
-   ))
-
-
-
-(defn valid-popover-text-coll? [x]
-  (and (seq x) 
-       (every? #(or (and (string? %)
-                         (not (string/blank? %)))
-                    (keyword? %)
-                    (number? %)
-                    (symbol? %))
-               x)))
-
-(defn valid-popover-text [text]
-  (cond (string? text)
-        (when-not (string/blank? text)
-          text)
-        (coll? text)
-        (when (valid-popover-text-coll? text)
-          (into [] text))
-        (array? text)
-        (let [v (js->clj text)]
-          (when (valid-popover-text-coll? v)
-            v))))
-
+   [kushi.ui.dom.fune.styles]))
 
 (defn popover-attrs
   {:desc ["Popovers provide additional context when hovering or clicking on an"
@@ -101,6 +74,7 @@
           :br "`:$popover-offset-start`"              
           :br "`:$popover-transition-duration`"       
           :br "`:$popover-transition-timing-function`"
+          :br "`:$popover-auto-dismiss-duration`"
           :br
           :br "Arrows:"
           :br "`:$popover-arrow-inline-inset`"
@@ -116,7 +90,7 @@
           "`(merge-attrs (sx :$popover-offset--5px ...) (popover-attrs {...}))`"
           :br
           :br
-          "If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for "
+          "If you would like to use a value of `0` (`px`, `ems`, `rem`, etc.) for "
           "`$popover-offset`, `$popover-arrow-inline-inset`, "
           "`$popover-arrow-block-inset`, or `$popover-border-radius`, you will need "
           "to use an explicit unit e.g. `0px`."
@@ -205,13 +179,21 @@
             :pred    boolean?
             :default true
             :desc    ["Setting to false will not render a directional arrow with "
-                     "the popover."]}]}
+                     "the popover."]}
+           {:name    auto-dismiss?
+            :pred    boolean?
+            :default false
+            :desc    ["Setting to true will auto-dismiss the popover. "
+                      "The time of display before display is controlled "
+                      "by the theme token `:$popover-auto-dismiss-duration`"]}]}
 
   [{placement                   :-placement
     arrow?                      :-arrow?
+    auto-dismiss?               :-auto-dismiss?
     user-rendering-fn           :-f
-    :or                         {placement :auto
-                                 arrow?    true}}]
+    :or                         {placement     :auto
+                                 arrow?        true
+                                 auto-dismiss? false}}]
   
   (when user-rendering-fn 
     (let [arrow?       (if (false? arrow?) false true)
@@ -225,6 +207,7 @@
           fune-type    :popover
           opts         (keyed placement-kw
                               arrow?
+                              auto-dismiss?
                               fune-type
                               user-rendering-fn)]
       (merge 

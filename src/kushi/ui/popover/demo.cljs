@@ -49,7 +49,7 @@
 
    [button
     (sx 'kushi-popover-close-button
-        :.northeast-inside
+        :.top-right-corner-inside
         :.neutral
         :.minimal
         :.small

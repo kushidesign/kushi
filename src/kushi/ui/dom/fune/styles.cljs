@@ -6,8 +6,6 @@
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-fune
   :.fixed
-  :min-height--$tooltip-min-height
-  :min-width--$tooltip-min-width
   :border-width--$fune-border-width
   :border-style--$fune-border-style
   :border-color--$fune-border-color
@@ -28,13 +26,13 @@
   :bgc--$fune-background-color
   :dark:bgc--$fune-background-color-inverse
   :w--max-content
+  :h--max-content
   :p--$fune-padding-block:$fune-padding-inline)
 
+;; TODO maybe move to tooltip.styles
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-tooltip
   :.kushi-fune
-  :min-height--$tooltip-min-height
-  :min-width--$tooltip-min-width
   :border-width--$tooltip-border-width
   :border-style--$tooltip-border-style
   :border-color--$tooltip-border-color
@@ -55,12 +53,11 @@
   :dark:bgc--$tooltip-background-color-inverse
   :p--$tooltip-padding-block:$tooltip-padding-inline)
 
+;; TODO maybe move to popover.styles
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
   kushi-popover
   :.kushi-fune
   :p--0
-  :min-height--$popover-min-height
-  :min-width--$popover-min-width
   :border-width--$popover-border-width
   :border-style--$popover-border-style
   :border-color--$popover-border-color
@@ -75,7 +72,63 @@
   :zi--$popover-z-index
   :c--$popover-color
   :bgc--$popover-background-color
-  :dark:bgc--$popover-background-color-inverse)
+  :dark:bgc--$popover-background-color-inverse
+  :$_auto-dismiss-duration--$popover-auto-dismiss-duration)
+
+;; TODO maybe move to toast.styles
+(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-toast-slot
+  :.flex-col-c
+  :transition-duration--$toast-transition-duration||$fune-transition-duration
+  ;; :.xxxslow
+  :transition-property--width|height
+  :gap--$toast-slot-gap||1rem
+  :w--fit-content
+  :h--0
+  :$_pb--$toast-slot-padding-block||1rem
+  :$_pi--$toast-slot-padding-inline||1rem
+  :zi--$toast-slot-z-index
+  
+  ;; leave these out for now
+  ;; ["&[data-kushi-ui-toast-slot='left']:p" :0:0:0:$_pi]
+  ;; ["&[data-kushi-ui-toast-slot='left-top']:p" :_$pb:0:0:$_pi]
+  ;; ["&[data-kushi-ui-toast-slot='top-left-corner']:p" :_$pb:0:0:$_pi]
+  ;; ["&[data-kushi-ui-toast-slot='top-left']:p" :$_pb:0:0:$_pi]
+  ;; ["&[data-kushi-ui-toast-slot='top']:p" :$_pb:0:0:0]
+  ;; ["&[data-kushi-ui-toast-slot='top-right']:p" :$_pb:$_pi:0:0]
+  ;; ["&[data-kushi-ui-toast-slot='top-right-corner']:p" :$_pb:$_pi:0:0]
+  ;; ["&[data-kushi-ui-toast-slot='right-top']:p" :$_pb:$_pi:0:0]
+  ;; ["&[data-kushi-ui-toast-slot='right']:p" :0:$_pi:0:0]
+  ;; ["&[data-kushi-ui-toast-slot='right-bottom']:p" :0:0:$_pb:0]
+  ;; ["&[data-kushi-ui-toast-slot='bottom-right-corner']:p" :0:$_pi:$_pb:0]
+  ;; ["&[data-kushi-ui-toast-slot='bottom-right']:p" :0:$_pi:$_pb:0]
+  ;; ["&[data-kushi-ui-toast-slot='bottom']:p" :0:0:$_pb:0]
+  ;; ["&[data-kushi-ui-toast-slot='bottom-left']:p" :0:0:$_pb:$_pi]
+  ;; ["&[data-kushi-ui-toast-slot='bottom-left-corner']:p" :0:0:$_pb:$_pi]
+  ;; ["&[data-kushi-ui-toast-slot='left-bottom']:p" :0:0:$_pb:$_pi]
+  )
+
+(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
+  kushi-toast
+  :.kushi-fune
+  :position--relative
+  :.relative!
+  :p--0
+  :translate--$_tx:$_ty
+  :border-width--$toast-border-width
+  :border-style--$toast-border-style
+  :border-color--$toast-border-color
+  :dark:border-color--$toast-border-color-inverse
+  :box-shadow--$toast-box-shadow
+  :dark:box-shadow--$toast-box-shadow-inverse
+  :border-radius--$toast-border-radius
+  :transition-duration--$toast-transition-duration
+  :transition-timing-function--$toast-transition-timing-function
+  :scale--$toast-initial-scale
+  :transition-delay--$toast-delay-duration
+  :bgc--$toast-background-color
+  :dark:bgc--$toast-background-color-inverse
+  :$_auto-dismiss-duration--$toast-auto-dismiss-duration)
 
 
 ;; block mixins
