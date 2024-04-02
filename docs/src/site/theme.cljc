@@ -44,40 +44,68 @@
    })
 
 (def my-theme
-    ;; (typescale/create-type-scale {:size-limit "xxx" :shift 0})
-    {:design-tokens    [:$sans-serif-font-stack                        "Inter, system-ui, sans-serif"
-                        :$primary-font-family                          :$sans-serif-font-stack
-                        :$fune-z-index                                 1000
-                        :$button-with-icon-padding-inline-offset       :0.8em
-                        :$button-border-width                          :1.5px
-                        :$kushi-playground-mobile-header-height        :46px
+    {:design-tokens    [:$sans-serif-font-stack                  "Inter, system-ui, sans-serif"
+                        :$primary-font-family                    :$sans-serif-font-stack
+                        :$fune-z-index                           1000
+                        :$button-with-icon-padding-inline-offset :0.8em
+                        :$button-border-width                    :1.5px
+                        :$kushi-playground-mobile-header-height  :46px
+                        :$tooltip-font-weight                    :$wee-bold
+                        :$tooltip-color-inverse                  :$body-color
+                        :$tooltip-border-radius                  :5px
+                        :$tooltip-delay-duration                 :700ms
+                        :$tooltip-auto-placement-y-threshold     0.1
+                        :$tooltip-arrow-depth                    :4px
+                        :$tooltip-text-on-click-duration         :2000ms
+                        :$modal-transition-duration              :$xxxfast
+                        :$modal-backdrop-color                   :$black-transparent-40
+                        :$text-input-border-radius               :0.3em
+                        :$fune-min-width                         :150px
+                        :$fune-min-height                        :75px
+                        :$popover-border-width                   :1px
+                        :$popover-border-style                   :solid
+                        :$popover-border-color                   :$neutral-300
+                        :$popover-arrow-depth                    :7px
+                        :$popover-border-color-inverse           :$neutral-500
+                        :$popover-auto-dismiss-duration          :5000ms
 
-                        :$tooltip-font-weight                          :$wee-bold
-                        :$tooltip-color-inverse                        :$body-color
-                        :$tooltip-border-radius                        :5px
-                        :$tooltip-delay-duration                       :700ms
-                        :$tooltip-auto-placement-y-threshold           0.1
-                        :$tooltip-arrow-depth                          :4px
-                        :$tooltip-text-on-click-duration               :2000ms
+                        ;; Toasts
+                        ;; ------------------------------------------------------
 
-                        :$modal-transition-duration                    :$xxxfast
-                        :$modal-backdrop-color                         :$black-transparent-40
-                        :$text-input-border-radius                     :0.3em
-                        :$fune-min-width                               :150px
-                        :$fune-min-height                              :75px
-                        :$popover-border-width                         :1px
-                        :$popover-border-style                         :solid
-                        :$popover-border-color                         :$neutral-300
-                        :$popover-arrow-depth                          :17px
-                        :$popover-border-color-inverse                 :$neutral-500
-                        ]
+                        ;; toast colors and images
+                        :$toast-background-color                 :$fune-background-color
+                        :$toast-background-color-inverse         :$fune-background-color-inverse
+                        :$toast-background-image                 :none
+                        :$toast-box-shadow                       :$fune-box-shadow
+                        :$toast-box-shadow-inverse               :$fune-box-shadow-inverse
+                        :$toast-border-width                     :$fune-border-width
+                        :$toast-border-style                     :$fune-border-style
+                        :$toast-border-color                     :$fune-border-color
+                        :$toast-border-color-inverse             :$fune-border-color-inverse
 
-     :typescale        (create-typescale {:size-limit "xxx"
-                                          :shift      0})
+                        ;; toast geometry
+                        :$toast-min-width                        :$fune-min-width
+                        :$toast-min-height                       :$fune-min-height
+                        :$toast-border-radius                    :$fune-border-radius
+                        :$toast-inset-inline                     :1.5rem
+                        :$toast-inset-block                      :1.5rem
+
+                        ;; toast choreography
+                        :$toast-inset-inline-enter               :0
+                        :$toast-inset-block-enter                :0
+                        :$toast-z-index                          :$fune-z-index
+                        :$toast-delay-duration                   :200ms
+                        :$toast-initial-scale                    :$fune-initial-scale 
+                        :$toast-transition-duration              :$fune-transition-duration 
+                        :$toast-transition-timing-function       :$fune-transition-timing-function 
+                        :$toast-auto-dismiss-duration            :5000ms
+                        
+                        :$toast-border-width                     :1px
+                        :$toast-border-color                     :$gray-150
+                        :$toast-border-color-inverse             :$gray-700]
+     :typescale        (create-typescale {:size-limit "xxx" :shift 0})
      :type-scale-shift 1
-
      :font-loading     font-loading
-
      :ui               ["body"
                         ;; this should be :--primary-font-family ?
                         {
