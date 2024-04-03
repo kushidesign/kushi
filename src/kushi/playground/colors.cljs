@@ -96,8 +96,7 @@
           [:span.kushi-playground-meta-desc-label "css var"] [copy-color (str "var(" (string/replace token-name #"^\$" "--") ")")]
           [:span.kushi-playground-meta-desc-label "hex"] [copy-color hex]
           [:span.kushi-playground-meta-desc-label "hsl"] [copy-color hsl]
-          [:span.kushi-playground-meta-desc-label "rgb"] [copy-color rgb]])]
-          #_[:div.kushi-fune.kushi-tooltip "hi"]]]) )
+          [:span.kushi-playground-meta-desc-label "rgb"] [copy-color rgb]])]]]) )
 
 
 ;; TODO refactor this into some subcomponents
