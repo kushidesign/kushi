@@ -824,6 +824,7 @@
     :pi                         :$code-padding-inline
     :pb                         :$code-padding-block
     :border-radius              :$code-border-radius
+    :c                          :$code-color
     :bgc                        :$code-background-color
     :h                          :fit-content
     :w                          :fit-content
@@ -833,10 +834,7 @@
 
    ".dark code, .dark .code"
    {:bgc                        :$code-background-color-inverse
-    :c                          :$code-color-inverse
-    :transition-property        :all
-    :transition-duration        :$fast
-    :transition-timing-function "cubic-bezier(0, 0, 1, 1)"}
+    :c                          :$code-color-inverse}
 
 
 
