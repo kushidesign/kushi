@@ -230,7 +230,7 @@
    :$tooltip-min-height                       :1rem
    :$tooltip-padding-inline                   :$fune-padding-inline
    :$tooltip-padding-block                    :$fune-padding-block
-   :$tooltip-border-radius                    :$fune-border-radius
+   :$tooltip-border-radius                    :5px
    :$tooltip-offset                           :$fune-offset
    :$tooltip-viewport-padding                 :$fune-viewport-padding 
    :$tooltip-flip-viewport-edge-threshold     :$fune-flip-viewport-edge-threshold 
@@ -263,10 +263,10 @@
    :$popover-background-image                 :none
    :$popover-box-shadow                       :$fune-box-shadow
    :$popover-box-shadow-inverse               :$fune-box-shadow-inverse
-   :$popover-border-width                     :$fune-border-width
-   :$popover-border-style                     :$fune-border-style
-   :$popover-border-color                     :$fune-border-color
-   :$popover-border-color-inverse             :$fune-border-color-inverse
+   :$popover-border-width                     :1px
+   :$popover-border-style                     :solid
+   :$popover-border-color                     :$neutral-300
+   :$popover-border-color-inverse             :$neutral-500
 
    ;; popover geometry
    :$popover-min-width                        :$fune-min-width
@@ -289,7 +289,7 @@
    ;; popover arrows
    :$popover-arrow-inline-inset               :$fune-arrow-inline-inset
    :$popover-arrow-block-inset                :$fune-arrow-inline-inset
-   :$popover-arrow-depth                      :$fune-arrow-depth
+   :$popover-arrow-depth                      :7px
 
    
    ;; toasts
@@ -301,10 +301,10 @@
    :$toast-background-image                 :none
    :$toast-box-shadow                       :$fune-box-shadow
    :$toast-box-shadow-inverse               :$fune-box-shadow-inverse
-   :$toast-border-width                     :$fune-border-width
-   :$toast-border-style                     :$fune-border-style
-   :$toast-border-color                     :$fune-border-color
-   :$toast-border-color-inverse             :$fune-border-color-inverse
+   :$toast-border-width                     :1px
+   :$toast-border-style                     :solid
+   :$toast-border-color                     :$gray-150
+   :$toast-border-color-inverse             :$gray-700
 
    ;; toast geometry
    :$toast-border-radius                    :$fune-border-radius
@@ -325,13 +325,13 @@
    ;; ------------------------------------------------------
    :$modal-border-radius                    :$rounded-medium
    :$modal-border                           :none
-   :$modal-padding-block                    :2rem
-   :$modal-padding-inline                   :2rem
-   :$modal-backdrop-color                   :$black-transparent-50
+   :$modal-padding                          :2rem
+   :$modal-padding-block                    :$modal-padding
+   :$modal-padding-inline                   :$modal-padding
+   :$modal-backdrop-color                   :$black-transparent-40
    :$modal-margin                           :1rem
    :$modal-min-width                        :500px
-   :$modal-transition-duration              :$xxfast
-
+   :$modal-transition-duration              :$xfast
 
 
    ;; Material UI icons
@@ -488,7 +488,7 @@
    ;; Remove wrapper from this
    :$text-input-border-intensity                     :50%
    :$text-input-border-intensity-inverse             :55%
-   :$text-input-border-radius                        :0px
+   :$text-input-border-radius                        :0.3em
 
 
    ;; Switches
