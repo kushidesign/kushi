@@ -162,6 +162,8 @@
                                :.minimal
                                :.info
                                :.block
+                               :.small
+                               :fw--$semi-bold
                                :hover:bgc--transparent!important ;; temp fix
                                :active:bgc--transparent!important ;; temp fix
                                {:class [semantic]})
@@ -172,8 +174,7 @@
                               (sx 'kushi-text-input-helper
                                   :.neutral-secondary-fg
                                   :.inline-block
-                                  :.normal
-                                  :fs--smaller
+                                  :fw--$normal
                                   :mbs--$text-input-helper-margin-block-start||0.3em)))
 
         wrapped-input [input* (merge attrs
