@@ -192,11 +192,12 @@
    ;; ------------------------------------------------------
    :$modal-border-radius                    :$fune-border-radius
    :$modal-border                           :none
-   :$modal-padding-block                    :2rem
-   :$modal-padding-inline                   :2rem
+   :$modal-padding                          :1.75rem
+   :$modal-padding-inline                   :$modal-padding
+   :$modal-padding-block                    :$modal-padding
    :$modal-backdrop-color                   :$black-transparent-50
    :$modal-margin                           :1rem
-   :$modal-min-width                        :500px
+   :$modal-min-width                        :450px
    :$modal-transition-duration              :$fune-transition-duration
 
 
