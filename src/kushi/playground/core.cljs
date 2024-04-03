@@ -1,46 +1,43 @@
+;; TODO - test Malli validation
+
 (ns ^:dev/always kushi.playground.core
   (:require
-   [applied-science.js-interop :as j]
-   [clojure.string :as string]
-   [malli.dev.pretty :as pretty]
-   [malli.core :as malli]
    [garden.color]
-   [kushi.core :refer [sx merge-attrs breakpoints]]
+   [kushi.core :refer [sx merge-attrs #_breakpoints]]
    [kushi.color :refer [colors->tokens]]
    [kushi.colors :as kushi.colors]
-   [kushi.ui.icon.core :refer (icon)]
-   [kushi.ui.core :refer [defcom]]
-   [kushi.ui.input.text.core :refer [input]]
-   [kushi.ui.input.switch.core :refer [switch]]
-   [kushi.ui.input.slider.core :refer [slider]]
-   [kushi.ui.tokens :as tokens]
-   [kushi.ui.button.core :refer [button]]
-   [kushi.ui.button.demo :as button-demo]
-   [kushi.ui.input.switch.demo :refer [switch-demo switch-demo-light+dark]]
-   [kushi.ui.collapse.core :refer (collapse accordion)]
    [kushi.ui.examples :as examples]
    [kushi.playground.nav :as nav]
-   [kushi.playground.tweak.element :refer [element-tweaker!]]
-   [kushi.ui.progress.core :refer (progress propeller spinner thinking)]
    [kushi.playground.about :as about]
    [kushi.playground.state :as state :refer [*state]]
    [kushi.playground.component-section :refer [component-section]]
    [kushi.playground.sidenav :refer [mobile-subnav desktop-sidenav]]
    [kushi.playground.ui :refer [light-dark-mode-switch]]
    [kushi.playground.colors :as playground.colors]
-   [kushi.playground.util :as util :refer-macros [keyed]]
    [kushi.playground.shared-styles :as shared-styles]
-
+   [kushi.playground.util
+    :as util
+    :refer-macros [keyed]]
+   
   ;; leave in, comment out when tweaking typescale
   ;; [kushi.playground.tweak.typescale :refer [type-tweaker]]
 
+  ;; ------------------------------------------------------
+  ;; TODO figure out how to use as dev-only instrumentation 
+  [malli.dev.pretty :as pretty]
+  [malli.core :as malli]
+  ;; ------------------------------------------------------
+
    ))
 
+
+;; --------------------------------------------------------------------------------
+;; TODO figure how to instrument this for dev-only
 (def Example
   [:map
    [:fn fn?]
    [:meta fn?]
-   [:desc {:optional true} [:or vector? string?]]
+   [:desc {:optional true} [:or vector? strin?]]
    [:stage {:optional true} [:map [:style [:map [:min-height keyword?]]]]]
    [:variants {:optional true} [:vector keyword?]]
    [:examples
@@ -52,15 +49,29 @@
         [:quoted vector?]]]]]]
    [:defaults {:optional true} [:map-of keyword? any?]]])
 
+
+;; Prod 
+;; (defn validated-components [coll]
+;;   coll)
+
+;; Dev
 (defn validated-components [coll]
   (filter #(let [valid? (malli/validate Example %)]
              (when-not valid? (js/console.log (with-out-str (pretty/explain Example %))))
              valid?)
           coll))
+;; --------------------------------------------------------------------------------
 
 (defn filter-by-index [coll idxs]
   (keep-indexed #(when ((set idxs) %1) %2)
                 coll))
+
+(defn validated-playground-examples
+  [idxs coll]
+  (println "HI")
+  (cond-> coll
+    (seq idxs) (filter-by-index idxs)
+    true validated-components))
 
 (defn component-name [m]
   (-> m :meta meta :name))
@@ -78,14 +89,9 @@
                         (every? int? idxs*))
                  idxs*
                  (map (partial component-by-index coll) syms))
-
          ;; idxs [0 1]
-
          ;; idxs [13 14]
-
-         ret   (cond-> coll
-                 (seq idxs) (filter-by-index idxs)
-                 true validated-components)]
+         ret   (validated-playground-examples idxs coll)]
      ret)))
 
 (defn main-section [s & children]
@@ -239,36 +245,39 @@
                               :sidenav-header "About"}
            colorlist         [:gray :red :orange :gold :yellow :green :blue :purple :magenta :brown]}
     :as   m}]
-  (let [m                   (merge m (keyed render
-                                            mobile-nav
-                                            kushi-colors
-                                            kushi-user-guide
-                                            kushi-clojars
-                                            kushi-about))
+  (let [m                  
+        (merge m (keyed render
+                        mobile-nav
+                        kushi-colors
+                        kushi-user-guide
+                        kushi-clojars
+                        kushi-about))
 
-        kushi-components    (merge kushi-components
-                                   {:coll (let [idxs* (:kushi-component-indexes @*state)
-                                                idxs  (if (and (seq (:kushi-components-indexes @*state))
-                                                               (every? int? idxs*))
-                                                        idxs*
-                                                        (map (partial component-by-index examples/components) []))
-                                                ret   (cond-> examples/components
-                                                        (seq idxs) (filter-by-index idxs)
-                                                        true validated-components)]
-                                            ret)})
+        kushi-components    
+        (merge kushi-components
+               {:coll (let [coll  examples/components 
+                            idxs* (:kushi-component-indexes @*state)
+                            idxs  (if (and (seq (:kushi-components-indexes @*state))
+                                           (every? int? idxs*))
+                                    idxs*
+                                    (map (partial component-by-index coll) []))
+                            ret   (validated-playground-examples idxs coll)]
+                        ret)})
 
-        global-color-scales (color-scales2 {:colorlist colorlist})
+        global-color-scales
+        (color-scales2 {:colorlist colorlist})
 
-        nav-opts            (keyed
-                             custom-components
-                             kushi-components
-                             custom-colors
-                             kushi-colors
-                             custom-typography
-                             kushi-typography
-                             kushi-user-guide
-                             kushi-clojars
-                             kushi-about)
+        nav-opts            
+        (keyed
+         custom-components
+         kushi-components
+         custom-colors
+         kushi-colors
+         custom-typography
+         kushi-typography
+         kushi-user-guide
+         kushi-clojars
+         kushi-about)
 
         page-wrapper-attrs-from-user
         page-wrapper-attrs]
@@ -385,3 +394,5 @@
       (sx 'kushi-playground-desktop-secondary-nav-wrapper
           :.kushi-playground-sidenav-wrapper
           :h--100vh)]]))
+
+
