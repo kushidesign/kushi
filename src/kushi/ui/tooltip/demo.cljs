@@ -51,6 +51,6 @@
                    [:grid-area x]
                    {:tab-index 0})
                (tooltip-attrs {:-text      ["Tooltip Line 1" "Tooltip Line 2" ]
-                                      ;; :-reveal-on-click?         true
+                               ;; :-reveal-on-click?         true
                                :-placement (keyword x)}))
       [:span.placement-label (str ":" x)]])))

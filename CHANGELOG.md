@@ -2,6 +2,20 @@
 All notable changes to this project will be documented in this file.<br>
 This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## 1.0.0-a.20
+2024-3-21
+
+### Added
+- New floating layer abstraction & tooltip implementation. Closes #43. Closes #47.
+- Dependency on `design.kushi/domo` in place of `kushi.ui.dom`
+
+### Fixed
+- Typos in animation utility classes.
+
+### Breaking changes
+- Removed `:-reveal-on-click?` `:-reveal-on-click-duration` from tooltip. These will resurface in upcoming toggle tip or popover component.
+- Removed `kushi.dom.ui` namespace. Replaced by dependency `design.kushi/domo`
+
 ## 1.0.0-a.19
 2023-5-17
 
@@ -35,7 +49,9 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
 - Support mixing of shorthand and map notation in argument to sx macro 
 - Support `has-parent()` and `has-ancestor()`
 - Support all pseudo and combo selectors
-- 
+
+#### Css Reset
+- `:add-css-reset?` option adds css reset to stylesheet 
 
 #### Font loading
 - `kushi.core/add-google-font!`

@@ -10,14 +10,14 @@
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-            [kushi.ui.dom :as dom]
+            [domo.core :as domo]
             [kushi.ui.core :refer [defcom]]
             [kushi.ui.input.slider.core]
             [kushi.ui.input.switch.core :refer [switch]]
             [kushi.ui.util :refer [find-index]]
             [kushi.playground.demobox.defs :refer [variants-by-category]]
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-            [kushi.ui.dom :refer (copy-to-clipboard)]
+            [domo.core :refer (copy-to-clipboard!)]
             [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
             [applied-science.js-interop :as j]
             [reagent.dom :as rdom]))
@@ -41,36 +41,36 @@
 ;;  #(let [el             (js/document.elementFromPoint (.-clientX %) (.-clientY %))
 ;;         devtools-class "kushi-devtools-guide"]
 ;;     (when el
-;;       (dom/add-class el devtools-class "kushi-devtools-guide-outline")
+;;       (domo/add-class! el devtools-class "kushi-devtools-guide-outline")
 ;;       (el.addEventListener "mouseout"
 ;;                            (fn [_]
-;;                              (dom/remove-class el
+;;                              (domo/remove-class! el
 ;;                                                devtools-class))))
 ;;     #_(js/console.log el)))
 
 
 ;; (js/document.body.addEventListener
 ;;  "contextmenu"
-;;  #(let [el          (dom/et %)
+;;  #(let [el          (domo/et %)
 ;;         rect        (.getBoundingClientRect el)
-;;         [tb lr]     (dom/screen-quadrant-from-point (.-x rect) (.-y rect))
+;;         [tb lr]     (domo/screen-quadrant-from-point (.-x rect) (.-y rect))
 ;;         ibs         (if (= tb :top)
 ;;                       (str (+ (.-y rect) (.-height rect)) "px")
 ;;                       (str (.-y rect) "px"))
 ;;         iis         (if (= lr :left)
 ;;                       (str (.-x rect) "px")
 ;;                       (str (+ (.-x rect) (.-width rect)) "px"))
-;;         modal-el    (dom/el-by-id   "kushi-tweak-contextmenu")
+;;         modal-el    (domo/el-by-id   "kushi-tweak-contextmenu")
 ;;         translate-x (if-not (= lr :left) "-100%" 0)
 ;;         translate-y (if-not (= tb :top) "-100%" 0)
 ;;         data-sx     el.dataset.sx]
 ;;     ;; TODO el.nodeValue set to data-sx
 ;;     (when data-sx
-;;       (dom/set-style! modal-el "content" ibs))
+;;       (domo/set-style! modal-el "content" ibs))
 ;;     (.preventDefault %)
-;;     (dom/set-style! modal-el "inset-block-start" ibs)
-;;     (dom/set-style! modal-el "inset-inline-start" iis)
-;;     (dom/set-style! modal-el "transform" (str "translate(" translate-x ", " translate-y ")"))
+;;     (domo/set-style! modal-el "inset-block-start" ibs)
+;;     (domo/set-style! modal-el "inset-inline-start" iis)
+;;     (domo/set-style! modal-el "transform" (str "translate(" translate-x ", " translate-y ")"))
 ;;     (open-kushi-modal  "kushi-tweak-contextmenu")
 ;;     false))
 
@@ -84,7 +84,11 @@
 ;;           :border-radius--3px
 ;;           :box-shadow--none
 ;;           {:id             "kushi-tweak-contextmenu"
-;;             :-context-menu? true})
+
+;;            ;; Heads up this :-context-menu? option was removed 1.0.0-a.20
+
+;;            :-context-menu? true})
+
 ;; [:ul
 ;;   [:li [button (sx :.minimal :.pill)
 ;;         [icon :tune]
@@ -108,25 +112,25 @@
 
 (defn highlight-tweaked-label!
   [e a b]
-  (let [control-el (dom/nearest-ancestor (dom/et e) ".tweaker-control-row")
+  (let [control-el (domo/nearest-ancestor (domo/et e) ".tweaker-control-row")
         a (if (s/valid? ::specs2/s|kw a) (name a) a)
         b (if (s/valid? ::specs2/s|kw b) (name b) b)]
     (if (= a b)
-      (dom/remove-class control-el "highlight-tweaked" "info")
-      (dom/add-class control-el "highlight-tweaked" "info"))))
+      (domo/remove-class! control-el "highlight-tweaked" "info")
+      (domo/add-class! control-el "highlight-tweaked" "info"))))
 
 (defn profile-from-el [e]
   (some-> e
-          dom/et
-          (dom/nearest-ancestor "[data-kushi-tweak]")
+          domo/et
+          (domo/nearest-ancestor "[data-kushi-tweak]")
           .-dataset
           (j/get :kushiTweak)
           edn/read-string))
 
 (defn copy-to-clipboard-fn [e]
   (let [text (some-> e
-                     dom/et
-                     (dom/nearest-ancestor ".kushi-slider-single-value-label-wrapper")
+                     domo/et
+                     (domo/nearest-ancestor ".kushi-slider-single-value-label-wrapper")
                      .-firstChild
                      .-textContent)
         profile (profile-from-el e)
@@ -161,13 +165,13 @@
 
 (defn select-flex-thumb [e flex-class]
   (let [node           (.-currentTarget e)
-        control        (dom/nearest-ancestor node ".tweaker-control-row")
+        control        (domo/nearest-ancestor node ".tweaker-control-row")
         siblings       (.querySelectorAll control ".flex-option-thumb")
         select-target  (.querySelector control (str ".flex-option-thumb." (name flex-class)))]
 
     (doseq [sibling siblings]
-      (dom/set-attribute! sibling "aria-selected" "false") )
-    (dom/set-attribute! select-target "aria-selected" "true")))
+      (domo/set-attribute! sibling "aria-selected" "false") )
+    (domo/set-attribute! select-target "aria-selected" "true")))
 
 (defcom flex-options
   (let [{:keys [og-flex-class target-els family-classes starts-with]} &opts]
@@ -192,7 +196,7 @@
                         :aria-selected og?
                         :on-click      (fn [e]
                                          (let [node    (.-currentTarget e)
-                                               control (dom/nearest-ancestor (dom/et e) ".tweaker-control-row")
+                                               control (domo/nearest-ancestor (domo/et e) ".tweaker-control-row")
                                                label   (.querySelector control ".kushi-slider-single-value-label")]
 
                                            (select-flex-thumb e flex-class)
@@ -200,9 +204,9 @@
                                            (j/assoc! label :textContent (name flex-class))
 
                                            (doseq [el target-els]
-                                             (apply dom/remove-class el family-classes)
-                                             (apply dom/remove-class el (:display variants-by-category))
-                                             (dom/add-class el flex-class))))})
+                                             (apply domo/remove-class! el family-classes)
+                                             (apply domo/remove-class! el (:display variants-by-category))
+                                             (domo/add-class! el flex-class))))})
                    (tooltip-attrs {:-text      (str ":." (name flex-class))
                                    :-placement :top}))
              &children]))))
@@ -236,8 +240,8 @@
            :>button:h--$medium
            :m--0
            {:-placement :left
-            ;; :on-click   #(copy-to-clipboard (.-textContent (.-firstChild (dom/nearest-ancestor (dom/et %) ".kushi-slider-single-value-label-wrapper"))))
-            :on-click   #(copy-to-clipboard (copy-to-clipboard-fn %))})]]
+            ;; :on-click   #(copy-to-clipboard! (.-textContent (.-firstChild (domo/nearest-ancestor (domo/et %) ".kushi-slider-single-value-label-wrapper"))))
+            :on-click   #(copy-to-clipboard! (copy-to-clipboard-fn %))})]]
 
      [:div.flex-row-sa.grow.flex-option-thumbs
       [flex-options
@@ -289,11 +293,11 @@
       :default-value         og-class
       :data-kushi-tweak-og   (str {:og-value og-class :og-idx og-class-idx :family-classes family-classes})
       :on-change             (fn [e]
-                               (let [updated-class-idx   (dom/etv->int e)]
+                               (let [updated-class-idx   (domo/etv->int e)]
                                  (highlight-tweaked-label! e og-class-idx updated-class-idx)
                                  (doseq [el target-els]
-                                   (apply dom/remove-class el family-classes)
-                                   (dom/add-class el (nth family-classes (js/parseInt (dom/etv e)))))))}]))
+                                   (apply domo/remove-class! el family-classes)
+                                   (domo/add-class! el (nth family-classes (js/parseInt (domo/etv e)))))))}]))
 
 
 
@@ -330,11 +334,11 @@
           :max                   max
           :data-kushi-tweak-og   (str {:og-value css-value :og-idx og-idx})
           :on-change             (fn [e]
-                                   (let [idx   (dom/etv->int e)]
+                                   (let [idx   (domo/etv->int e)]
                                      (highlight-tweaked-label! e og-idx idx)
                                      (doseq [el target-els]
                                        (let [value (* idx step)]
-                                         (dom/set-style! el css-prop (str value (name unit-type)))))))
+                                         (domo/set-style! el css-prop (str value (name unit-type)))))))
           :class                 [og-class]})]))
 
 (defclass tweakable-css-prop-label
@@ -397,7 +401,7 @@
       [icon {:on-click #(cond
 
                           (contains? #{flex-picker} control-type)
-                          (let [control       (dom/nearest-ancestor (dom/et %) ".tweaker-control-row")
+                          (let [control       (domo/nearest-ancestor (domo/et %) ".tweaker-control-row")
                                 label         (.querySelector control ".tweakable-label>label")
                                 cur-classname (j/get label :textContent)
                                 tweakables    (js->clj (.from js/Array (js/document.querySelectorAll "[data-sx-tweak]")))]
@@ -407,7 +411,7 @@
                             (select-flex-thumb % classname))
 
                           :else
-                          (let [control    (dom/nearest-ancestor (dom/et %) ".tweaker-control-row")
+                          (let [control    (domo/nearest-ancestor (domo/et %) ".tweaker-control-row")
                                 slider     (.querySelector control ".kushi-slider")
                                 input      (.querySelector control ".kushi-slider input")
                                 step       (js/parseFloat (.-step input))
@@ -428,34 +432,34 @@
                             (cond
 
                               (contains? #{:tokenized-style :style-tuple} (:category profile))
-                              (dom/set-style! tweakables (:css-prop profile) (:single-value profile))
+                              (domo/set-style! tweakables (:css-prop profile) (:single-value profile))
 
                               (contains? #{:class} (:category profile))
                               (doseq [el tweakables]
-                                (apply dom/remove-class el (:family-classes og))
-                                (dom/add-class el (:og-value og))))))}
+                                (apply domo/remove-class! el (:family-classes og))
+                                (domo/add-class! el (:og-value og))))))}
        :refresh]]
      [switch (sx :.small
                  :mis--1rem
                  {:-on?     true
                   :on-click (fn [e]
 
-                              (let [el          (dom/cet e)
+                              (let [el          (domo/cet e)
                                     checked?    (= "true" (.getAttribute el "aria-checked"))
-                                    control     (dom/nearest-ancestor (dom/et e) ".tweaker-control-row")
+                                    control     (domo/nearest-ancestor (domo/et e) ".tweaker-control-row")
                                     label       (.querySelector control ".tweakable-label>label")
                                     current-val (.-textContent label)]
 
-                                ((if checked? dom/remove-class dom/add-class) control :tweak-off)
+                                ((if checked? domo/remove-class! domo/add-class!) control :tweak-off)
 
                                 (cond
 
                                   (contains? #{:class} (:category profile))
                                   (do (doseq [el tweakables]
-                                        ((if checked? dom/add-class dom/remove-class) el current-val)))
+                                        ((if checked? domo/add-class! domo/remove-class!) el current-val)))
 
                                   (contains? #{:tokenized-style :style-tuple} (:category profile))
-                                  (do (dom/set-style! tweakables
+                                  (do (domo/set-style! tweakables
                                                       (:css-prop profile)
                                                       (if checked? current-val "unset"))))))})]]))
 
@@ -593,11 +597,11 @@
 
       (js/document.body.appendChild node)
 
-      (dom/set-style! node "display" "block")
+      (domo/set-style! node "display" "block")
 
       (rdom/render
        [:form#kushi-playground-tweaker
-        (sx :.fixed-block-start
+        (sx :.fixed-block-start-inside
             :.elevated-3
             :bgc--white
             :p--3rem
@@ -705,8 +709,8 @@
                 [button
                  (sx :.minimal
                      :.pill
-                     :.northeast-inside
-                     {:on-click #(dom/set-style! (dom/el-by-id "tweaker") "display" "none")})
+                     :.top-right-corner-inside
+                     {:on-click #(domo/set-style! (domo/el-by-id "tweaker") "display" "none")})
                  [icon :close]]
 
                 #_[button
@@ -715,10 +719,10 @@
                        {:on-click (fn [_]
                                     (let [
                                         ;; reset-buttons (js->clj (.from js/Array 
-                                        ;;                               (.querySelectorAll (dom/el-by-id "tweaker")
+                                        ;;                               (.querySelectorAll (domo/el-by-id "tweaker")
                                         ;;                                                  ".kushi-reset-tweakable")))
 
-                                          reset-button (.querySelector (dom/el-by-id "tweaker")
+                                          reset-button (.querySelector (domo/el-by-id "tweaker")
                                                                        ".kushi-reset-tweakable")
                                           ]
 
@@ -732,10 +736,10 @@
 
                                       ;; (doseq [[el og] og-target-els-classname]
                                       ;;   (do 
-                                      ;;     (dom/set-attribute! el "class" og)))
+                                      ;;     (domo/set-attribute! el "class" og)))
                                       ;; (doseq [[el og] og-target-els-styles]
                                       ;;   (do 
-                                      ;;     (dom/set-attribute! el "style" og)))
+                                      ;;     (domo/set-attribute! el "style" og)))
 
                                     )})
                    [icon :refresh]

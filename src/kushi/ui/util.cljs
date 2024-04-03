@@ -4,6 +4,9 @@
 
 ;; Generic
 ;; --------------------------------------------------------------------------
+(defn calc [& strs]
+  (str "calc(" (apply str strs) ")"))
+
 (defn data-kushi-attr [x]
   (-> x name (string/replace #"^kushi\.ui\." "") (string/replace #".core$" "")) )
 
@@ -37,6 +40,15 @@
 (defn nameable? [x]
   (or (string? x) (keyword? x) (symbol? x)))
 
+(defn as-str [x]
+  (str (if (or (keyword? x) (symbol? x)) (name x) x)))
+
+(defn maybe [x pred]
+  (when (if (set? pred)
+          (contains? pred x)
+          (pred x))
+    x))
+
 (defn html-attr? [m k]
   (when (keyword? k)
     (or (true? (k m))
@@ -48,3 +60,10 @@
     (fn [i x]
       (when (pred x) i))
     coll)))
+
+(defn ck?
+ "`contains key?` helper function.
+  Used with partial, e.g. `(partial ck? new-placement-kw)`"
+ [k keyset]
+ (contains? keyset k))
+

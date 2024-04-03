@@ -5,8 +5,8 @@
    [clojure.string :as string]))
 
 (defn exception-args [{:keys [ex]}]
-  {:exception-message (.getMessage ex)
-   :top-of-stack-trace (get (.getStackTrace ex) 0)})
+  #?(:clj {:exception-message (.getMessage ex)
+           :top-of-stack-trace (get (.getStackTrace ex) 0)}))
 
 (defmacro keyed [& ks]
   #?(:clj

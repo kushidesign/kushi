@@ -6,7 +6,7 @@
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.modal.core :refer [modal open-kushi-modal]]
    [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-   [kushi.ui.dom :refer (copy-to-clipboard)]
+   [domo.core :refer (copy-to-clipboard!)]
    [kushi.ui.core :refer [defcom]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.color :refer [base-color-map]]
@@ -36,7 +36,7 @@
    [:code s]
    [copy-to-clipboard-button
     {:-placement :right
-     :on-click   #(copy-to-clipboard s)}]])
+     :on-click   #(copy-to-clipboard! s)}]])
 
 (defn color-modal
   [{:keys [k
@@ -55,7 +55,10 @@
                 {:on-click #(open-kushi-modal token-name)})
       [:span (sx :sm:d--none) color-level]
       [:span (sx :.code :sm:d--block :d--none) token-name]
-      [icon (sx :.neutral-secondary-fg :mis--0.5em {:-icon-style :outlined}) :help]]
+      [icon (sx :.accent-secondary-fg
+                :mis--0.5em
+                {:-icon-style :outlined})
+       :help]]
      [modal
       {:id token-name}
       [:div

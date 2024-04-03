@@ -3,7 +3,7 @@
    [kushi.core :refer (sx defclass)])
   (:require
    [kushi.core :refer (merge-attrs)]
-   [kushi.ui.dom :as dom]
+   [domo.core :as domo]
    [kushi.ui.util :as util]
    [kushi.ui.core :refer (opts+children)]))
 
@@ -20,11 +20,11 @@
   :d--none :w--100% :h--100% :.flex-col-c :ai--c)
 
 (defn- toggle-switch [%]
-  (let [node* (dom/et %)
-        node  (if (dom/has-class? node* "kushi-switch")
+  (let [node* (domo/et %)
+        node  (if (domo/has-class? node* "kushi-switch")
                 node*
-                (dom/nearest-ancestor node* ".kushi-switch"))]
-    (dom/toggle-boolean-attribute node "aria-checked")))
+                (domo/nearest-ancestor node* ".kushi-switch"))]
+    (domo/toggle-boolean-attribute node "aria-checked")))
 
 (defn- track-content [opts x]
   (when x
@@ -189,13 +189,13 @@
 
      [track-content
       (sx 'kushi-switch-track-content-on
-          :.absolute-inline-start
+          :.absolute-inline-start-inside
           :.kushi-switch-track-content)
       track-content-on]
 
      [track-content
       (sx 'kushi-switch-track-content-off
-          :.absolute-inline-end
+          :.absolute-inline-end-inside
           :.kushi-switch-track-content)
       track-content-off]
 

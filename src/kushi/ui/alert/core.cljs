@@ -7,24 +7,28 @@
   {:desc ["Alerts provide contextual feedback information for the user"
           :br
           :br
-          "To position the alert at the top of the viewport, use the `:.fixed-block-start` utility class, or the `:.fixed-block-end` utility class for positioning at the bottom of the viewport."]
+          "To position the alert at the top of the viewport, use the "
+          "`:.fixed-block-start-inside` utility class, or the "
+          "`:.fixed-block-end-inside` utility class for positioning "
+          "at the bottom of the viewport."]
    :opts '[{:name    icon
             :pred    vector?
             :default nil
             :desc    ["An instance of a `kushi.ui.icon/icon` component"
-                      "Places an icon anchored to the inline-start area of the alert."
-                      "Optional."]}
+                      "Places an icon anchored to the inline-start area "
+                      "of the alert. Optional."]}
            {:name    close-button
             :pred    vector?
             :default nil
             :desc    ["Hiccup to render a close button."
                       "Optional."]}
 
-           ;; Leave this out for now
-           ;;  {:name    duration
-           ;;   :pred    pos-int?
-           ;;   :default nil
-           ;;   :desc    "When supplied, the alert will dismiss itself after the given time (in milliseconds) has passed."}
+          ;;  Leave this out for now
+          ;;   {:name    duration
+          ;;    :pred    pos-int?
+          ;;    :default nil
+          ;;    :desc    ["When supplied, the alert will dismiss itself after "
+          ;;              "the given time (in milliseconds) has passed."]}
 
            ]}
 
@@ -41,7 +45,7 @@
 
     ;; Leave this out for now
     ;; (when (pos-int? duration)
-    ;;   (js/setTimeout #(when-let [el (dom/el-by-id alert-id)]
+    ;;   (js/setTimeout #(when-let [el (domo/el-by-id alert-id)]
     ;;                     (.remove el))
     ;;                  duration))
 

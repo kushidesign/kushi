@@ -11,7 +11,7 @@
    [kushi.ui.icon.core :refer (icon)]
    [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.label.core :refer (label)]
-   [kushi.ui.dom :as dom]
+   [domo.core :as domo]
    [kushi.ui.button.core :refer (button)]
    [kushi.playground.shared-styles :as shared-styles]
    [kushi.playground.state :as state :refer [*components-expanded?]]
@@ -19,13 +19,13 @@
    [kushi.playground.demobox.core :refer (demobox2 copy-to-clipboard-button)]))
 
 (defn scroll-window-by-px []
-  (dom/scroll-by {:y (:scroll-window-by-px shared-styles/shared-values)}))
+  (domo/scroll-by! {:y (:scroll-window-by-px shared-styles/shared-values)}))
 
 (defn scroll-window-by-nav-height []
-  (dom/scroll-by {:y (:scroll-to-component-menu-item-y shared-styles/shared-values)}))
+  (domo/scroll-by! {:y (:scroll-to-component-menu-item-y shared-styles/shared-values)}))
 
 (defn scroll-menu-item-into-view [el]
-  (dom/scroll-into-view el)
+  (domo/scroll-into-view! el)
   (scroll-window-by-px)
   ;; Only use if you have a fixed top-nav
   #_(scroll-window-by-nav-height)
@@ -73,13 +73,20 @@
        'kushi-playground-subsection
        :pb--4.5em:1em
        :&.description&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
+       [:&.description&_p&_b {:fw      :$wee-bold
+                              :mbe     :0.4em
+                              :display :block}]
        :&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
        :&_p:ff--$kushi-playground-main-section-wrapper_font-family||$sans-serif-font-stack
        :&_p:fw--$kushi-playground-main-section-wrapper_font-weight||$normal
        :&_p:lh--$kushi-playground-main-section-wrapper_line-height||1.7
-       :&_p&_code:pb--0.07em
-       :&_p&_code:pi--0.2em
-       :&_p&_code:fs--0.9rem
+       [:&_p&_code {:pb  :0.07em
+                    :pi  :0.2em
+                    :fs  :0.85rem
+                    :c   :$accent-750
+                    :bgc :$accent-50}]
+       [:dark:&_p&_code {:c   :$accent-100
+                         :bgc :$accent-900}]
        :&_.kushi-opt-detail-label:lh--2.05
        :&_.code.opt-type:bgc--transparent)
       &attrs)
@@ -158,7 +165,14 @@
    [:div
     (sx 'kushi-opt-detail-label :min-width--75px)
     [label (sx :.kushi-playground-meta-desc-label :.normal) text]]
-   [:div (sx 'kushi-opt-detail-value)
+   [:div (sx 'kushi-opt-detail-value
+             [:&_.code {:pb       :0.07em
+                        :pi       :0.2em
+                        :fs       :0.85rem
+                        :c        :$accent-750
+                        :bgc      :$accent-50
+                        :dark:c   :$accent-100
+                        :dark:bgc :$accent-900}])
     [f v]]])
 
 (defn component-section-body
@@ -179,19 +193,21 @@
         [:<>
          [util/formatted-code full-text]
          [copy-to-clipboard-button
-          (sx :.northeast-inside! {:-text-to-copy text})]])]]
+          (sx :.top-right-corner-inside! {:-text-to-copy text})]])]]
 
     [:div
      (sx :d--none :sm:d--block)
      (when demo
        [subsection
         (merge-attrs
-         (sx :.description {:-title [subsection-title title "Examples"]})
+         (sx :.description
+             {:-title [subsection-title title "Examples"]})
          demo-attrs)
         [demo]])]
 
     [subsection
-     (sx :.description {:-title [subsection-title title "Description"]})
+     (sx :.description
+         {:-title [subsection-title title "Description"]})
      doc-hiccup]
 
     (when opts
@@ -212,7 +228,17 @@
                         [:dark:bbe "1px solid var(--gray-800)"]
                         :pb--1em)
                   [:div (sx :mb--0.7rem)
-                   [:span (sx :.code :.semi-bold) (str ":-" nm)]]
+                   [:span
+                    (sx :.code
+                        :.semi-bold
+                        {:style {:pb       :0.07em
+                                 :pi       :0.2em
+                                 :fs       :0.85rem
+                                 :c        :$accent-750
+                                 :bgc      :$accent-50
+                                 :dark:c   :$accent-100
+                                 :dark:bgc :$accent-900}})
+                    (str ":-" nm)]]
                   [:div (sx :pis--1.4em)
                    (when pred [opt-detail "Pred" pred kushi-opts-grid-type :pred])
                    (when typ [opt-detail "Type" typ kushi-opts-grid-type :type])

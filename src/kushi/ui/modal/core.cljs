@@ -2,7 +2,7 @@
   (:require [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.button.core :refer [button]]
             [clojure.string :as string]
-            [kushi.ui.dom :as dom]
+            [domo.core :as domo]
             [goog.dom :as gdom]
             [kushi.ui.core :refer (opts+children)]
             [kushi.core :refer (merge-attrs) :refer-macros (sx)]))
@@ -11,28 +11,28 @@
 
 (defn close-kushi-modal [e]
   (.stopPropagation e)
-  (let [el     (dom/et e)
+  (let [el     (domo/et e)
         dialog (if (= "DIALOG" (.-nodeName el))
                  el
-                 (dom/nearest-ancestor el ".kushi-modal"))]
+                 (domo/nearest-ancestor el ".kushi-modal"))]
     (when (gdom/isElement dialog)
       (let [duration* (.-transitionDuration (js/window.getComputedStyle dialog))
             duration  (js/Math.round (* 1000 (js/parseFloat (string/replace duration* #"s$" ""))))]
         (.removeEventListener dialog "click" close-on-backdrop-click)
-        (dom/remove-class dialog "kushi-modal-open")
+        (domo/remove-class! dialog "kushi-modal-open")
         (js/setTimeout #(.close dialog) duration)))))
 
 (defn close-on-backdrop-click  [e]
-  (when (= "DIALOG" (.-nodeName (dom/et e)))
+  (when (= "DIALOG" (.-nodeName (domo/et e)))
     (close-kushi-modal e)))
 
 (defn open-kushi-modal [id]
-  (if-let [dialog (dom/el-by-id id)]
+  (if-let [dialog (domo/el-by-id id)]
     (do (.addEventListener dialog
                            "click"
                            close-on-backdrop-click)
         (.showModal dialog)
-        (dom/add-class dialog "kushi-modal-open"))
+        (domo/add-class! dialog "kushi-modal-open"))
     (js/console.warn (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of: " id))))
 
 (defn modal-close-button
@@ -75,7 +75,21 @@
        [icon icon-name])]))
 
 (defn modal
-  {:desc ["Modal dialogs create a new floating layer over the current view to get user feedback or display information."]
+  {:desc ["Modal dialogs create a new floating layer over the current view "
+          "to get user feedback or display information."
+          :br
+          :br
+          "Elements and behaviors of modals can be custom styled and "
+          "controlled via the following tokens in your theme:"
+          :br
+          :br "`:$modal-border-radius`"      
+          :br "`:$modal-border`"             
+          :br "`:$modal-padding-block`"      
+          :br "`:$modal-padding-inline`"     
+          :br "`:$modal-backdrop-color`"     
+          :br "`:$modal-margin`"             
+          :br "`:$modal-min-width`"          
+          :br "`:$modal-transition-duration`"]
    :opts '[{:name    modal-title
             :pred    string?
             :default nil
@@ -99,8 +113,7 @@
         {:keys [modal-title
                 description
                 elevation
-                expanded?
-                context-menu?]}   opts
+                expanded?]}   opts
         {:keys [id]}              attrs
         desc-id                   (str id "-description")
         title-id                  (str id "-title")
@@ -122,13 +135,13 @@
                    :.fixed-centered
                    :.transition
                    :backdrop:bgc--transparent
-                   [:transform (if context-menu? :none "translate(-50%, -50%)")]
+                   :overflow--visible
                    [:transition-duration "var(--modal-transition-duration, var(--fast))"]
                    :bgc--$body-background-color
                    :dark:bgc--$body-background-color-inverse
                    :border-radius--$modal-border-radius
                    :b--$modal-border
-                   :min-width--$kushi-modal-min-width||400px
+                   :min-width--$modal-min-width||450px
                    [:max-width "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
                    [:max-height "calc(100vh - (2 * var(--modal-margin, 1rem)))"]
                    :height--$modal-min-height
@@ -136,7 +149,6 @@
                    [:dark:box-shadow (str elevation-token-inverse "0 0 0 100vmax var(--dark-gray-transparent-90)")]
                    :opacity--0
                    :&.kushi-modal-open:opacity--1
-                   :overflow--auto
                    {:id               id
                     :aria-labelledby  title-id
                     :aria-describedby desc-id})
@@ -148,16 +160,25 @@
                       ["has-parent(.kushi-modal.kushi-modal-open):opacity" 1]
                       ["has-parent(.kushi-modal.kushi-modal-open):transition-delay" "calc(var(--modal-transition-duration, var(--fast)))"]
                       :gap--2em
-                      :pi--$modal-padding-inline
-                      :pb--$modal-padding-block
+                      :pi--$modal-padding-inline||$modal-padding
+                      :pb--$modal-padding-block||$modal-padding
                       :w--100%
-                      :h--100%)
-             (when modal-title [:h2 (sx 'kushi-modal-title
-                                        :.large
-                                        :.semi-bold
-                                        {:id title-id})
-                                modal-title])
-             (when description [:p (sx 'kushi-modal-description
-                                       {:id desc-id})
-                                description])]
+                      :h--100%
+                      :overflow--auto)
+             (when (or modal-title description)
+               [:div (sx 'kushi-modal-title-and-description
+                         :.flex-col-fs
+                         :gap--1em
+                         :.large
+                         {:id title-id})
+                (when modal-title 
+                  [:h2 (sx 'kushi-modal-title
+                           :.semi-bold
+                           {:id title-id})
+                   modal-title])
+                (when description
+                  [:p (sx 'kushi-modal-description
+                          :.small
+                          {:id desc-id})
+                   description])])]
             children)])))

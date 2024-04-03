@@ -123,6 +123,10 @@
 (defn trace? [] @*trace?)
 
 ;; Caching and hashing ---------------------------------------------------
+
+;; TODO - Illustrate how this works
+;; TODO - Bypass if not needed?
+
 (defn cached
   "Example below assumes these entries are present in the user's kushi.edn config:
    {:caching? false}
@@ -136,16 +140,27 @@
   (let [caching?                     (if @user-config-args-sx-defclass-stub
                                        false
                                        (:caching? user-config))
-        user-config-args-sx-defclass (or @user-config-args-sx-defclass-stub user-config-args-sx-defclass)
+        user-config-args-sx-defclass (or @user-config-args-sx-defclass-stub
+                                         user-config-args-sx-defclass)
         args                         (let [m* (when (seq args) (last args))]
                                        (if (map? m*)
                                          (let [hd        (drop-last args)
-                                               clean-map (select-keys m* [:style :class])]
+                                               clean-map (select-keys m*
+                                                                      [:style
+                                                                       :class])]
                                            (concat hd [clean-map]))
                                          args))
-        base                         (into [] (remove nil? (apply conj [process user-config-args-sx-defclass sym] args)))
+        base                         (into [] 
+                                           (remove nil?
+                                                   (apply conj
+                                                          [process
+                                                           user-config-args-sx-defclass
+                                                           sym] 
+                                                          args)))
         cache-key                    (hash base)
-        cached                       (when caching? (get @styles-cache-updated cache-key))]
+        cached                       (when caching?
+                                       (get @styles-cache-updated
+                                            cache-key))]
     {:caching?  caching?
      :cache-key cache-key
      :cached    cached}))

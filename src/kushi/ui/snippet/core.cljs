@@ -3,8 +3,10 @@
    [kushi.core :refer (sx merge-attrs) :refer-macros (sx)]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.button.core :refer (button)]
+   [kushi.ui.icon.core :refer (icon)]
+   [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.core :refer (opts+children)]
-   [kushi.ui.dom :refer (copy-to-clipboard)]))
+   [domo.core :refer (copy-to-clipboard!)]))
 
 (def copy-content-svg
   "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' height='16' viewBox='0 0 16 16' version='1.1' width='16' data-view-component='true'>
@@ -18,16 +20,15 @@
                        (merge-attrs
                         (sx 'kushi-copy-to-clipboard-button
                             :p--0px
-                            :.minimal)
-                        (tooltip-attrs {:-text             "Copied!"
-                                        :-placement        (or (:-placement opts) :right)
-                                        :-reveal-on-click? true}))
-                       [:img
-                        (sx 'kushi-copy-to-clipboard-button-graphic
-                            :h--75%
-                            :o--0.7
-                            :hover:o--1
-                            {:src copy-content-svg})]]])]
+                            :.minimal
+                            :.accent
+                            :.small)
+                        (tooltip-attrs
+                         {:-text                        "Click to copy"
+                          :-text-on-click               "Copied!"
+                          :-text-on-click-tooltip-class (first (:class (sx :$tooltip-background-color--$accent-filled-background-color)))
+                          :-placement                   :r}))
+                       [icon mui.svg/content-copy]]])]
     (into [:div
            (merge-attrs
             (sx 'kushi-copy-to-clipboard-button-wrapper
@@ -65,5 +66,5 @@
             attrs)
            [:span text-to-display]
            [copy-to-clipboard-button
-            {:on-click (or on-copy-click #(copy-to-clipboard text-to-copy))}]]
+            {:on-click (or on-copy-click #(copy-to-clipboard! text-to-copy))}]]
           children)))

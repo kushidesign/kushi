@@ -3,7 +3,7 @@
    [clojure.string :as string]
    [clojure.pprint :as pprint]
    [kushi.core :refer (sx merge-attrs)]
-   [kushi.ui.dom :as dom]
+   [domo.core :as domo]
    [kushi.ui.flex.core :as flex]
    [kushi.ui.input.slider.css]
    [kushi.ui.button.core :refer (button)]
@@ -14,10 +14,9 @@
    [kushi.ui.label.core :refer (label)]
    [kushi.ui.input.slider.core :refer (slider)]
    [kushi.ui.input.checkbox.core :refer (checkbox)]
-   [kushi.ui.dom :refer (copy-to-clipboard)]
+   [domo.core :refer (copy-to-clipboard!)]
    [kushi.ui.core :refer (defcom)]
    [kushi.ui.input.radio.core :refer (radio)]
-   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.playground.demobox.handlers :as handlers]
    [kushi.playground.demobox.decorate :as decorate]
    [kushi.playground.demobox.devmode :refer [dev-mode-view]]
@@ -143,15 +142,15 @@
 (defcom copy-to-clipboard-button
   [button
    (merge-attrs
-    (sx :.minimal
+    (sx :.accent
+        :.minimal
         :p--7px
-        {:on-click #(copy-to-clipboard (:text-to-copy &opts))})
+        {:on-click #(copy-to-clipboard! (:text-to-copy &opts))})
     (tooltip-attrs
-     {:-text                   "Click to copy"
-      :-text-on-click          "Copied!"
-      :-text-on-click-attrs    (sx :bgc--green)
-      :-text-on-click-duration 3000
-      :-placement              "block-start inline-end"})
+     {:-text                        "Click to copy"
+      :-text-on-click               "Copied!"
+      :-text-on-click-tooltip-class (first (:class (sx :$tooltip-background-color--$accent-filled-background-color)))
+      :-placement                   [:block-start :inline-end]})
     &attrs)
    [icon (sx :.medium!) mui.svg/content-copy]])
 
@@ -270,10 +269,10 @@
                                     node     (rdom/dom-node this)]
                                 (when (and focused? @*dev-mode?)
 
-                                  #_(dom/add-class node "kushi-playground-demobox-dev-mode")
+                                  #_(domo/add-class! node "kushi-playground-demobox-dev-mode")
                                   #_(open-kushi-modal dev-modal-id)
                                   #_(js/setTimeout (fn [_]
-                                                     (dom/remove-class node "kushi-playground-demobox-dev-mode"))
+                                                     (domo/remove-class! node "kushi-playground-demobox-dev-mode"))
                                                    1000)))
                               (update-classes this))
       :component-did-update update-classes
@@ -294,17 +293,19 @@
                                   @current-stage
 
                                   [button (merge-attrs
-                                           (sx :.southeast-inside
+                                           (sx :.bottom-right-corner-inside
                                                :.kushi-playground-demobox-ui-icon
                                                {:on-click (fn [_]
-                                                            (dom/add-class js/document.body "kushi-playground-dev-mode")
+                                                            (domo/add-class! js/document.body
+                                                                           "kushi-playground-dev-mode")
                                                             (js/setTimeout (fn [_]
-                                                                             (dom/add-class js/document.body "kushi-playground-dev-mode-hidden")
+                                                                             (domo/add-class! js/document.body
+                                                                                            "kushi-playground-dev-mode-hidden")
                                                                              (reset! *dev-mode? true))
                                                                            500))})
                                            (sx :$tooltip-offset---3px)
                                            (tooltip-attrs {:-text      "Enter dev mode"
-                                                           :-placement "block-start inline-start corner"}))
+                                                           :-placement [:block-start :inline-start :corner]}))
                                    [icon :fullscreen]]
 
                                   (when (and (state/focused? nm) @*dev-mode?)
@@ -359,7 +360,7 @@
                                    [:div (sx :.absolute-fill)]
 
                                    [copy-to-clipboard-button
-                                    (sx :.northeast-inside!
+                                    (sx :.top-right-corner-inside!
                                         {:-text-to-copy @current-snippet})]]
 
 

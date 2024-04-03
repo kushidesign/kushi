@@ -1,7 +1,7 @@
 (ns kushi.playground.state
   (:require
    [kushi.core :refer [breakpoints]]
-   [kushi.ui.dom :as dom]
+   [domo.core :as domo]
    [applied-science.js-interop :as j]
    [reagent.core :as r]))
 
@@ -48,8 +48,8 @@
 
 (defn nav! [x]
   #_(js/console.log :nav! x)
-  (let [el (dom/el-by-id x)
-        expanded? (dom/has-class? el "kushi-collapse-expanded")]
+  (let [el (domo/el-by-id x)
+        expanded? (domo/has-class? el "kushi-collapse-expanded")]
     (swap! *expanded-sections (if expanded? conj disj) x)
     #_(js/console.log @*expanded-sections))
   (when (when-not (focused? x) x)

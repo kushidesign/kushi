@@ -1,7 +1,7 @@
 (ns ^dev-always kushi.playground.demobox.devmode
   (:require
    [kushi.core :refer (sx merge-attrs)]
-   [kushi.ui.dom :as dom]
+   [domo.core :as domo]
    [kushi.ui.input.slider.css]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.icon.core :refer (icon)]
@@ -31,19 +31,19 @@
     (sx
      :.kushi-playground-demobox-ui-icon
      :.kushi-playground-demobox-ui-icon-stage-control
-     {:on-click #(let [clicked (dom/et %)]
-                   (when-let [stage-settings (dom/nearest-ancestor clicked ".dev-mode-stage-settings") ]
+     {:on-click #(let [clicked (domo/et %)]
+                   (when-let [stage-settings (domo/nearest-ancestor clicked ".dev-mode-stage-settings") ]
                      (let [stage           (.-previousSibling stage-settings)
                            cls             ".kushi-playground-demobox-ui-icon-stage-control"
-                           button-group    (dom/nearest-ancestor clicked ".stage-control-button-group")
+                           button-group    (domo/nearest-ancestor clicked ".stage-control-button-group")
                            buttons-checked (.querySelectorAll button-group (str cls "[aria-selected='true']"))
-                           ctrl-button     (if (dom/has-class? clicked cls)
+                           ctrl-button     (if (domo/has-class? clicked cls)
                                              clicked
-                                             (dom/nearest-ancestor clicked cls))]
+                                             (domo/nearest-ancestor clicked cls))]
                        (doseq [el buttons-checked]
-                         (dom/set-attribute! el "aria-selected" false))
-                       (dom/set-attribute! ctrl-button "aria-selected" true)
-                       (dom/set-style! stage (name prop) (name value)))))
+                         (domo/set-attribute! el "aria-selected" false))
+                       (domo/set-attribute! ctrl-button "aria-selected" true)
+                       (domo/set-style! stage (name prop) (name value)))))
       :aria-selected (str active?)})
     (tooltip-attrs {:-text      tooltip-text
                     :-placement :top}))
@@ -125,7 +125,7 @@
 
     [exit-dev-mode-button
      {:on-click           (fn [_]
-                            (dom/remove-class js/document.body "kushi-playground-dev-mode-hidden")
+                            (domo/remove-class! js/document.body "kushi-playground-dev-mode-hidden")
                             (reset! *dev-mode? false)
-                            (dom/remove-class js/document.body "kushi-playground-dev-mode"))
-      :-tooltip-placement "inline-start"}]]])
+                            (domo/remove-class! js/document.body "kushi-playground-dev-mode"))
+      :-tooltip-placement [:inline-start :block-start]}]]])

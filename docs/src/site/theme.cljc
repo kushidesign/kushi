@@ -44,48 +44,55 @@
    })
 
 (def my-theme
-    ;; (typescale/create-type-scale {:size-limit "xxx" :shift 0})
     {:design-tokens    [:$sans-serif-font-stack                  "Inter, system-ui, sans-serif"
                         :$primary-font-family                    :$sans-serif-font-stack
+                        :$code-color                             :$accent-750
+                        :$code-background-color                  :$accent-50
+                        :$code-color-inverse                     :$accent-100
+                        :$code-background-color-inverse          :$accent-900
 
                         :$button-with-icon-padding-inline-offset :0.8em
                         :$button-border-width                    :1.5px
-
                         :$kushi-playground-mobile-header-height  :46px]
 
-     :typescale        (create-typescale {:size-limit "xxx"
-                                          :shift      0})
+     :typescale        (create-typescale {:size-limit "xxx" :shift 0})
      :type-scale-shift 1
-
      :font-loading     font-loading
-
      :ui               ["body"
                         ;; this should be :--primary-font-family ?
                         {
                          ;; :color       :$gray-950
                          }
 
+                        "code, .code"
+                        {:bgc :$code-background-color
+                         :c   :$code-color}
+
+                        ".dark code, .dark .code"
+                        {:bgc :$code-background-color-inverse
+                         :c   :$code-color-inverse}
+
    ;; Override .styled-scrollbars (defined in basetheme) so that scrollbars only appear on hover
    ;; Put this back in when you can use mq to isolate pointer devices
   ;;  ".styled-scrollbars:hover"
   ;;  {:scrollbar-color      :$scrollbar-thumb-color
   ;;   :dark:scrollbar-color :$scrollbar-thumb-color-inverse}
-
+                        
   ;;  ".styled-scrollbars"
   ;;  {:scrollbar-color :transparent
   ;;   :dark:scrollbar-color :transparent
   ;;   :scrollbar-width :thin}
-
+                        
   ;;  ".styled-scrollbars:hover::-webkit-scrollbar-thumb"
   ;;  {:background    :$scrollbar-thumb-color
   ;;   :dark:background :$scrollbar-thumb-color-inverse}
-
+                        
   ;;  ".styled-scrollbars::-webkit-scrollbar-thumb"
   ;;  {:background    :transparent
   ;;   :dark:background :transparent
   ;;   :border-radius :9999px
   ;;   :border        "0px solid var(--scrollbar-background-color)"
   ;;   :dark:border   "0px solid var(--scrollbar-background-color-inverse)"}
-
+                        
 
                         ]})

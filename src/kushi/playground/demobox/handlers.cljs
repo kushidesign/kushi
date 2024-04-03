@@ -1,6 +1,6 @@
 (ns kushi.playground.demobox.handlers
   (:require
-   [kushi.ui.dom :as dom]
+   [domo.core :as domo]
    [kushi.playground.state :refer [*state]]))
 
 (defn variant-change
@@ -54,7 +54,7 @@
            flavors]}
    event]
 
-  (let [val  (dom/etv->int event)
+  (let [val  (domo/etv->int event)
         step (name (nth flavors val))
         {:keys [component-id nm active-controls-by-type]} @*demostate]
     (when-let [els (.querySelectorAll (js/document.getElementById component-id)
@@ -80,8 +80,8 @@
           #_(when class-to-add
               (js/console.log "adding class: " class-to-add))
           (when (and class-to-add class-to-remove)
-            (apply dom/remove-class (concat [el] flavors))
-            (dom/add-class el class-to-add))
+            (apply domo/remove-class! (concat [el] flavors))
+            (domo/add-class! el class-to-add))
 
           (swap! *demostate
                  assoc-in
