@@ -1,6 +1,5 @@
 (ns kushi.ui.tooltip.core
   (:require
-   [fireworks.core :refer [??? !? ?> !?>]]
    [applied-science.js-interop :as j]
    [clojure.string :as string]
    [goog.string]
