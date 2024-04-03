@@ -46,6 +46,11 @@
 (def my-theme
     {:design-tokens    [:$sans-serif-font-stack                  "Inter, system-ui, sans-serif"
                         :$primary-font-family                    :$sans-serif-font-stack
+                        :$code-color                             :$accent-750
+                        :$code-background-color                  :$accent-50
+                        :$code-color-inverse                     :$accent-100
+                        :$code-background-color-inverse          :$accent-900
+
                         :$fune-z-index                           1000
                         :$button-with-icon-padding-inline-offset :0.8em
                         :$button-border-width                    :1.5px
@@ -57,8 +62,16 @@
                         :$tooltip-auto-placement-y-threshold     0.1
                         :$tooltip-arrow-depth                    :4px
                         :$tooltip-text-on-click-duration         :2000ms
-                        :$modal-transition-duration              :$xxxfast
+
+
+                        ;; these are set in tokens
+                        ;; ok to comment out
                         :$modal-backdrop-color                   :$black-transparent-40
+                        :$modal-transition-duration              :$xfast
+                        :$modal-padding                          :2rem
+                        :$modal-padding-inline                   :$modal-padding
+                        :$modal-padding-block                    :$modal-padding
+
                         :$text-input-border-radius               :0.3em
                         :$fune-min-width                         :150px
                         :$fune-min-height                        :75px
@@ -112,27 +125,35 @@
                          ;; :color       :$gray-950
                          }
 
+                        "code, .code"
+                        {:bgc :$code-background-color
+                         :c   :$code-color}
+
+                        ".dark code, .dark .code"
+                        {:bgc :$code-background-color-inverse
+                         :c   :$code-color-inverse}
+
    ;; Override .styled-scrollbars (defined in basetheme) so that scrollbars only appear on hover
    ;; Put this back in when you can use mq to isolate pointer devices
   ;;  ".styled-scrollbars:hover"
   ;;  {:scrollbar-color      :$scrollbar-thumb-color
   ;;   :dark:scrollbar-color :$scrollbar-thumb-color-inverse}
-
+                        
   ;;  ".styled-scrollbars"
   ;;  {:scrollbar-color :transparent
   ;;   :dark:scrollbar-color :transparent
   ;;   :scrollbar-width :thin}
-
+                        
   ;;  ".styled-scrollbars:hover::-webkit-scrollbar-thumb"
   ;;  {:background    :$scrollbar-thumb-color
   ;;   :dark:background :$scrollbar-thumb-color-inverse}
-
+                        
   ;;  ".styled-scrollbars::-webkit-scrollbar-thumb"
   ;;  {:background    :transparent
   ;;   :dark:background :transparent
   ;;   :border-radius :9999px
   ;;   :border        "0px solid var(--scrollbar-background-color)"
   ;;   :dark:border   "0px solid var(--scrollbar-background-color-inverse)"}
-
+                        
 
                         ]})
