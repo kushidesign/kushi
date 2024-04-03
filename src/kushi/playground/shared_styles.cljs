@@ -57,8 +57,10 @@
   :.transition
   ;; :&.codebox-flashing.bisc--$purple-600
   {:p                         :20px:50px:20px:20px
-   :bgc                       :$gray-50
-   "has-ancestor(.dark):bgc"  :$gray-900
+   :bgc                       :$accent-50
+   "has-ancestor(.dark):bgc"  :$accent-800
+   :c                         :$accent-750
+   "has-ancestor(.dark):c"    :$accent-100
    :mbs                       :7px
    :fs                        :$kushi-playground-codebox-snippet_font-size||$xsmall
    :&_.code:fs                :$kushi-playground-codebox-snippet_font-size||$xsmall
@@ -68,9 +70,8 @@
    :fw                        400
    :bisw                      :5px
    :biss                      :solid
-   :bisc                      :$gray-300
-   "has-ancestor(.dark):bisc" :$gray-700}
-  )
+   :bisc                      :$accent-250
+   "has-ancestor(.dark):bisc" :$accent-800})
 
 (defclass kushi-treenav-section-level-1
   :mbs--1em
