@@ -150,47 +150,47 @@
 
 
 
-   ;; Fune - floating layer abstraction
+   ;; pane - floating layer abstraction
    ;; ------------------------------------------------------
 
-   ;; fune colors and images
-   :$fune-background-color                 :$body-background-color
-   :$fune-background-color-inverse         :$body-background-color-inverse
-   :$fune-background-image                 :white
-   :$fune-box-shadow                       :$elevated-5
-   :$fune-box-shadow-inverse               :$elevated-5-inverse
-   :$fune-border-width                     :0px
-   :$fune-border-style                     :solid
-   :$fune-border-color                     :transparent
-   :$fune-border-color-inverse             :transparent
+   ;; pane colors and images
+   :$pane-background-color                 :$body-background-color
+   :$pane-background-color-inverse         :$body-background-color-inverse
+   :$pane-background-image                 :white
+   :$pane-box-shadow                       :$elevated-5
+   :$pane-box-shadow-inverse               :$elevated-5-inverse
+   :$pane-border-width                     :0px
+   :$pane-border-style                     :solid
+   :$pane-border-color                     :transparent
+   :$pane-border-color-inverse             :transparent
 
-   ;; fune geometry
-   :$fune-min-width                        :150px
-   :$fune-min-height                       :75px
-   :$fune-padding-inline                   :1em
-   :$fune-padding-block                    :0.5em
-   :$fune-border-radius                    :$rounded
-   :$fune-offset                           :7px
-   :$fune-viewport-padding                 :5px 
-   :$fune-flip-viewport-edge-threshold     :32px 
-   :$fune-auto-placement-y-threshold       :0.1 
+   ;; pane geometry
+   :$pane-min-width                        :150px
+   :$pane-min-height                       :75px
+   :$pane-padding-inline                   :1em
+   :$pane-padding-block                    :0.5em
+   :$pane-border-radius                    :$rounded
+   :$pane-offset                           :7px
+   :$pane-viewport-padding                 :5px 
+   :$pane-flip-viewport-edge-threshold     :32px 
+   :$pane-auto-placement-y-threshold       :0.1 
 
-   ;; fune choreography
-   :$fune-offset-start                     "calc(var(--fune-offset) + 5px)"
-   :$fune-z-index                          :auto
-   :$fune-delay-duration                   :0ms
-   :$fune-transition-duration              :$xfast 
-   :$fune-transition-timing-function       :$timing-ease-out-curve 
+   ;; pane choreography
+   :$pane-offset-start                     "calc(var(--pane-offset) + 5px)"
+   :$pane-z-index                          :auto
+   :$pane-delay-duration                   :0ms
+   :$pane-transition-duration              :$xfast 
+   :$pane-transition-timing-function       :$timing-ease-out-curve 
 
-   ;; fune arrows
-   :$fune-arrow-inline-inset               :7px
-   :$fune-arrow-block-inset                :2px
-   :$fune-arrow-depth                      :7px
+   ;; pane arrows
+   :$pane-arrow-inline-inset               :7px
+   :$pane-arrow-block-inset                :2px
+   :$pane-arrow-depth                      :7px
 
 
    ;; Modals
    ;; ------------------------------------------------------
-   :$modal-border-radius                    :$fune-border-radius
+   :$modal-border-radius                    :$pane-border-radius
    :$modal-border                           :none
    :$modal-padding                          :1.75rem
    :$modal-padding-inline                   :$modal-padding
@@ -198,7 +198,7 @@
    :$modal-backdrop-color                   :$black-transparent-50
    :$modal-margin                           :1rem
    :$modal-min-width                        :450px
-   :$modal-transition-duration              :$fune-transition-duration
+   :$modal-transition-duration              :$pane-transition-duration
 
 
 
@@ -213,12 +213,12 @@
    :$tooltip-background-image                 :none
    :$tooltip-box-shadow                       :none
    :$tooltip-box-shadow-inverse               :none
-   :$tooltip-border-width                     :$fune-border-width
-   :$tooltip-border-style                     :$fune-border-style
-   :$tooltip-border-color                     :$fune-border-color
-   :$tooltip-border-color-inverse             :$fune-border-color-inverse
+   :$tooltip-border-width                     :$pane-border-width
+   :$tooltip-border-style                     :$pane-border-style
+   :$tooltip-border-color                     :$pane-border-color
+   :$tooltip-border-color-inverse             :$pane-border-color-inverse
 
-   ;; fune typography
+   ;; pane typography
    :$tooltip-line-height                      1.25
    :$tooltip-font-family                      :$sans-serif-font-stack
    :$tooltip-font-size                        :$xsmall
@@ -228,26 +228,26 @@
    ;; tooltip geometry
    :$tooltip-min-width                        :1rem
    :$tooltip-min-height                       :1rem
-   :$tooltip-padding-inline                   :$fune-padding-inline
-   :$tooltip-padding-block                    :$fune-padding-block
+   :$tooltip-padding-inline                   :$pane-padding-inline
+   :$tooltip-padding-block                    :$pane-padding-block
    :$tooltip-border-radius                    :5px
-   :$tooltip-offset                           :$fune-offset
-   :$tooltip-viewport-padding                 :$fune-viewport-padding 
-   :$tooltip-flip-viewport-edge-threshold     :$fune-flip-viewport-edge-threshold 
-   :$tooltip-auto-placement-y-threshold       :$fune-auto-placement-y-threshold 
+   :$tooltip-offset                           :$pane-offset
+   :$tooltip-viewport-padding                 :$pane-viewport-padding 
+   :$tooltip-flip-viewport-edge-threshold     :$pane-flip-viewport-edge-threshold 
+   :$tooltip-auto-placement-y-threshold       :$pane-auto-placement-y-threshold 
 
    ;; tooltip choreography
-   :$tooltip-offset-start                     :$fune-offset-start
-   :$tooltip-z-index                          :$fune-z-index
+   :$tooltip-offset-start                     :$pane-offset-start
+   :$tooltip-z-index                          :$pane-z-index
    :$tooltip-delay-duration                   :550ms
    :$tooltip-text-on-click-duration           :2000ms
    :$tooltip-initial-scale                    1
-   :$tooltip-transition-duration              :$fune-transition-duration 
-   :$tooltip-transition-timing-function       :$fune-transition-timing-function 
+   :$tooltip-transition-duration              :$pane-transition-duration 
+   :$tooltip-transition-timing-function       :$pane-transition-timing-function 
 
    ;; tooltip arrows
-   :$tooltip-arrow-inline-inset               :$fune-arrow-inline-inset
-   :$tooltip-arrow-block-inset                :$fune-arrow-inline-inset
+   :$tooltip-arrow-inline-inset               :$pane-arrow-inline-inset
+   :$tooltip-arrow-block-inset                :$pane-arrow-inline-inset
    :$tooltip-arrow-depth                      :5px
 
 
@@ -258,37 +258,37 @@
    ;; ------------------------------------------------------
 
    ;; popover colors and images
-   :$popover-background-color                 :$fune-background-color
-   :$popover-background-color-inverse         :$fune-background-color-inverse
+   :$popover-background-color                 :$pane-background-color
+   :$popover-background-color-inverse         :$pane-background-color-inverse
    :$popover-background-image                 :none
-   :$popover-box-shadow                       :$fune-box-shadow
-   :$popover-box-shadow-inverse               :$fune-box-shadow-inverse
+   :$popover-box-shadow                       :$pane-box-shadow
+   :$popover-box-shadow-inverse               :$pane-box-shadow-inverse
    :$popover-border-width                     :1px
    :$popover-border-style                     :solid
    :$popover-border-color                     :$neutral-300
    :$popover-border-color-inverse             :$neutral-500
 
    ;; popover geometry
-   :$popover-min-width                        :$fune-min-width
-   :$popover-min-height                       :$fune-min-height
-   :$popover-border-radius                    :$fune-border-radius
-   :$popover-offset                           :$fune-offset
-   :$popover-viewport-padding                 :$fune-viewport-padding 
-   :$popover-flip-viewport-edge-threshold     :$fune-flip-viewport-edge-threshold 
-   :$popover-auto-placement-y-threshold       :$fune-auto-placement-y-threshold 
+   :$popover-min-width                        :$pane-min-width
+   :$popover-min-height                       :$pane-min-height
+   :$popover-border-radius                    :$pane-border-radius
+   :$popover-offset                           :$pane-offset
+   :$popover-viewport-padding                 :$pane-viewport-padding 
+   :$popover-flip-viewport-edge-threshold     :$pane-flip-viewport-edge-threshold 
+   :$popover-auto-placement-y-threshold       :$pane-auto-placement-y-threshold 
 
    ;; popover choreography
-   :$popover-offset-start                     :$fune-offset-start
-   :$popover-z-index                          :$fune-z-index
+   :$popover-offset-start                     :$pane-offset-start
+   :$popover-z-index                          :$pane-z-index
    :$popover-delay-duration                   :0ms
    :$popover-initial-scale                    1
-   :$popover-transition-duration              :$fune-transition-duration 
-   :$popover-transition-timing-function       :$fune-transition-timing-function 
+   :$popover-transition-duration              :$pane-transition-duration 
+   :$popover-transition-timing-function       :$pane-transition-timing-function 
    :$popover-auto-dismiss-duration            :5000ms
 
    ;; popover arrows
-   :$popover-arrow-inline-inset               :$fune-arrow-inline-inset
-   :$popover-arrow-block-inset                :$fune-arrow-inline-inset
+   :$popover-arrow-inline-inset               :$pane-arrow-inline-inset
+   :$popover-arrow-block-inset                :$pane-arrow-inline-inset
    :$popover-arrow-depth                      :7px
 
    
@@ -296,18 +296,18 @@
    ;; ------------------------------------------------------
 
    ;; toast colors and images
-   :$toast-background-color                 :$fune-background-color
-   :$toast-background-color-inverse         :$fune-background-color-inverse
+   :$toast-background-color                 :$pane-background-color
+   :$toast-background-color-inverse         :$pane-background-color-inverse
    :$toast-background-image                 :none
-   :$toast-box-shadow                       :$fune-box-shadow
-   :$toast-box-shadow-inverse               :$fune-box-shadow-inverse
+   :$toast-box-shadow                       :$pane-box-shadow
+   :$toast-box-shadow-inverse               :$pane-box-shadow-inverse
    :$toast-border-width                     :1px
    :$toast-border-style                     :solid
    :$toast-border-color                     :$gray-150
    :$toast-border-color-inverse             :$gray-700
 
    ;; toast geometry
-   :$toast-border-radius                    :$fune-border-radius
+   :$toast-border-radius                    :$pane-border-radius
    :$toast-slot-padding-inline              :1rem
    :$toast-slot-padding-block               :1rem
    :$toast-slot-gap                         :1rem
@@ -316,8 +316,8 @@
    ;; toast choreography
    :$toast-delay-duration                   :200ms
    :$toast-initial-scale                    1
-   :$toast-transition-duration              :$fune-transition-duration 
-   :$toast-transition-timing-function       :$fune-transition-timing-function 
+   :$toast-transition-duration              :$pane-transition-duration 
+   :$toast-transition-timing-function       :$pane-transition-timing-function 
    :$toast-auto-dismiss-duration            :5000ms
    
 

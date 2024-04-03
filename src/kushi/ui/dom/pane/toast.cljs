@@ -1,11 +1,11 @@
-(ns kushi.ui.dom.fune.toast
+(ns kushi.ui.dom.pane.toast
   (:require
    [clojure.string :as string]
    [goog.string]
    [domo.core :as domo]
    [kushi.ui.util :as util :refer [as-str]]
-   [kushi.ui.dom.fune.placement :refer [placement-kws-hydrated]]
-   [kushi.ui.dom.fune.shared :refer [fune-classes]]
+   [kushi.ui.dom.pane.placement :refer [placement-kws-hydrated]]
+   [kushi.ui.dom.pane.shared :refer [pane-classes]]
    [goog.functions]))
 
 (defn- toast-slot-calc [op x?]
@@ -155,7 +155,7 @@
         toast-slot-el    (or existing 
                              (toast-slot-el opts placement-as-str))
         toast-el         (js/document.createElement "li")
-        fune-classes     (fune-classes  opts)]
+        pane-classes     (pane-classes  opts)]
 
     (when-not existing
       (.addEventListener js/window
@@ -166,7 +166,7 @@
       (.setAttribute "data-kushi-ui" "toast")
 
       ;; TODO swap this in once kushi.core/defcss is ready
-      ;; (.setAttribute "data-kushi-ui-fune-placement" placement)
+      ;; (.setAttribute "data-kushi-ui-pane-placement" placement)
       (.setAttribute "id" id)
       (.setAttribute "style"
                      (domo/css-style-string
@@ -176,7 +176,7 @@
                        :--_ty (if slide-in?
                                 (toast-slot-ty placement-kw)
                                 "0px")}))
-      (.setAttribute "class" fune-classes))
+      (.setAttribute "class" pane-classes))
 
     (.appendChild toast-slot-el toast-el)
     

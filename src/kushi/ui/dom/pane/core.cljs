@@ -1,4 +1,4 @@
-(ns kushi.ui.dom.fune.core
+(ns kushi.ui.dom.pane.core
   (:require
    [applied-science.js-interop :as j]
    [clojure.string :as string]
@@ -8,11 +8,11 @@
    ;; Import this to create defclasses
    [kushi.core :refer (keyed)]
    [kushi.ui.util :as util :refer [maybe nameable? as-str]]
-   [kushi.ui.dom.fune.toast :refer [append-toast!]]
-   [kushi.ui.dom.fune.shared :refer [stock-fune-types fune-classes]]
-   [kushi.ui.dom.fune.placement :refer [el-plc
-                                        fune-plc
-                                        updated-fune-placement
+   [kushi.ui.dom.pane.toast :refer [append-toast!]]
+   [kushi.ui.dom.pane.shared :refer [stock-pane-types pane-classes]]
+   [kushi.ui.dom.pane.placement :refer [el-plc
+                                        pane-plc
+                                        updated-pane-placement
                                         og-placement
                                         placement-css-custom-property
                                         owning-el-rect-cp]]))
@@ -38,7 +38,7 @@
                 (placement-css-custom-property
                  (merge append-tt-opts
                         {:corner-plc?  (:corner-plc? tt-pos-og)
-                         :fune-el      el
+                         :pane-el      el
                          :placement-kw placement-kw})))]
     (str txy
          "; "
@@ -79,10 +79,10 @@
            (keyed top left bottom right x-center y-center))))
 
 
-(defn- append-fune-el!
+(defn- append-pane-el!
   [{:keys [el 
            id
-           fune-type 
+           pane-type 
            user-rendering-fn
            owning-el
            dialog-el
@@ -92,31 +92,31 @@
     :as append-tt-opts}]
 
   ;; Set the innerHTML / or tooltip text
-  (cond (= fune-type :tooltip)
+  (cond (= pane-type :tooltip)
         (tooltip-text-html! append-tt-opts))
 
   (let [txy          (txy append-tt-opts)
-        fune-classes (fune-classes append-tt-opts)]
+        pane-classes (pane-classes append-tt-opts)]
     (doto el
-      (.setAttribute "data-kushi-ui" "fune")
+      (.setAttribute "data-kushi-ui" "pane")
 
       ;; TODO swap this in once kushi.core/defcss is ready
-      ;; (.setAttribute "data-kushi-ui-fune-placement" placement)
+      ;; (.setAttribute "data-kushi-ui-pane-placement" placement)
 
       (.setAttribute "id" id)
       (.setAttribute "style" txy)
-      (.setAttribute "class" fune-classes)))
+      (.setAttribute "class" pane-classes)))
   
-  ;; Append fune el to the <body> 
+  ;; Append pane el to the <body> 
   (.appendChild (or dialog-el js/document.body) el)
   
   ;; Render contents if popover
-  (when (contains? #{:popover} fune-type)
+  (when (contains? #{:popover} pane-type)
     (user-rendering-fn el)))
 
 
-(defn- append-fune!*
-  "A fune is given an initial position based on screen-quadrant of the owning
+(defn- append-pane!*
+  "A pane is given an initial position based on screen-quadrant of the owning
    element, or user-supplied `-placement` attr. If it is offscreen, it is then
    given a new placement and position which may include a shift on the x or y
    axis in order to keep it wholly in the veiwport."
@@ -125,22 +125,22 @@
     arrow?       :arrow?
     owning-el    :owning-el
     dialog-el    :dialog-el
-    fune-type    :fune-type
-    :or          {fune-type :fune}
+    pane-type    :pane-type
+    :or          {pane-type :pane}
     :as          opts}
    id]
 
-  ;; 1) Pre-calculate and append fune
-  ;; Calculate an initial placment and append a fune element to the
-  ;; dom. If the owning element is beyond the edge-threshold, the fune will
-  ;; be assigned a new placement, but only if the value of :-fune-placement
+  ;; 1) Pre-calculate and append pane
+  ;; Calculate an initial placment and append a pane element to the
+  ;; dom. If the owning element is beyond the edge-threshold, the pane will
+  ;; be assigned a new placement, but only if the value of :-pane-placement
   ;; is something other than :auto.
 
   ;; TODO - optimize for auto placement
   ;; --------------------------------------------------------------------------------
-  (let [fune-type       (or (maybe fune-type stock-fune-types)
-                            (maybe fune-type nameable?)
-                            :fune)
+  (let [pane-type       (or (maybe pane-type stock-pane-types)
+                            (maybe pane-type nameable?)
+                            :pane)
         arrow?          (if (false? arrow?) false true)
         owning-el-rect* (domo/client-rect owning-el)
         owning-el-rect  (or (some->> dialog-el
@@ -148,8 +148,8 @@
                             owning-el-rect*)
 
         opts            (assoc opts
-                               :fune-type
-                               fune-type
+                               :pane-type
+                               pane-type
                                :owning-el-rect
                                owning-el-rect)
         viewport        (domo/viewport)
@@ -157,7 +157,7 @@
         ;; Convert to px if user supplies ems or rems.
         edge-threshold  (some-> owning-el
                                 (domo/css-custom-property-value
-                                 "--fune-flip-viewport-edge-threshold")
+                                 "--pane-flip-viewport-edge-threshold")
                                 js/parseInt)
         owning-el-vpp   (el-plc viewport
                                 owning-el
@@ -165,7 +165,7 @@
         placement-kw    (og-placement placement-kw
                                       owning-el
                                       owning-el-vpp)
-        tt-pos-og       (fune-plc placement-kw)
+        tt-pos-og       (pane-plc placement-kw)
         el              (js/document.createElement "div")
         append-tt-opts  (merge opts
                                (keyed el
@@ -173,13 +173,13 @@
                                       placement-kw
                                       tt-pos-og 
                                       arrow?))]
-    (append-fune-el! (merge append-tt-opts
+    (append-pane-el! (merge append-tt-opts
                                {:metrics? true
                                 :id       (str "_kushi-metrics_" id)}))
 
     ;; 2) Measure and adjust
-    ;; Second, detect if the fune falls outside the viewport
-    ;; If the fune needs to be "shifted" along x or y axis to move it
+    ;; Second, detect if the pane falls outside the viewport
+    ;; If the pane needs to be "shifted" along x or y axis to move it
     ;; back inside viewport, get an updated style value and reset the style.
     
     ;; TODO - if needed, viewport-padding should be handled in css-land.
@@ -188,11 +188,11 @@
     ;; -----------------------------------------------------------------------------
     (let [
           vpp                  (el-plc viewport el 0)
-          new-placement-kw     (updated-fune-placement
+          new-placement-kw     (updated-pane-placement
                                 (merge tt-pos-og
                                        (keyed vpp placement-kw)))
 
-          tt-pos               (fune-plc new-placement-kw)
+          tt-pos               (pane-plc new-placement-kw)
 
           new-placement?       (not= placement-kw new-placement-kw)    
 
@@ -232,7 +232,7 @@
                                              ))
           ]
 
-      (append-fune-el! append-tt-opts-part2)
+      (append-pane-el! append-tt-opts-part2)
       
       ;; leave off for now?
       #_(when adjust?
@@ -240,27 +240,27 @@
       
 
       ;; 4) Display
-      ;; Remove `.invisible` class, which will fade-in the fune via
+      ;; Remove `.invisible` class, which will fade-in the pane via
       ;; css transition setting, if desired. 
       (let [arrow-el (when (and arrow?
                                 (not (:corner-plc? tt-pos)))
                        (let [arrow-el (js/document.createElement "div")]
                          (doto arrow-el
-                           (.setAttribute "class" "kushi-fune-arrow"))
+                           (.setAttribute "class" "kushi-pane-arrow"))
                          (.appendChild el arrow-el)))]
         (js/window.requestAnimationFrame
          (fn [_]
-           (let [t      (-> opts :fune-type as-str)
+           (let [t      (-> opts :pane-type as-str)
                  offset (str "max(var(--" t "-offset), 0px)")]
              el
              (domo/remove-class! el "invisible")
              (domo/set-css-var! el "--offset" offset)
              (domo/set-style! el "scale" "1")) ))))))
 
-(declare remove-fune!)
+(declare remove-pane!)
 
-(defn remove-fune-if-clicked-outside!
-  [owning-el fune-id fune-type e] 
+(defn remove-pane-if-clicked-outside!
+  [owning-el pane-id pane-type e] 
   (let [skip? (let [el (domo/et e)]
                 (boolean (or (domo/has-class?
                               el 
@@ -269,35 +269,35 @@
                               el
                               ".kushi-popover"))))]  
     (when-not skip?
-      (remove-fune! owning-el fune-id fune-type e))))
+      (remove-pane! owning-el pane-id pane-type e))))
 
-(defn update-fune-placement-class!
-  [fune-el placement-class placement-kw _]
+(defn update-pane-placement-class!
+  [pane-el placement-class placement-kw _]
   (js/window.requestAnimationFrame
    (fn []
-     (let [vpp                 (el-plc (domo/viewport) fune-el 0)
-           tt-pos-og           (fune-plc placement-kw)
-           new-placement-kw    (updated-fune-placement
+     (let [vpp                 (el-plc (domo/viewport) pane-el 0)
+           tt-pos-og           (pane-plc placement-kw)
+           new-placement-kw    (updated-pane-placement
                                 (merge tt-pos-og
                                        (keyed vpp placement-kw)))
            new-placement-class (some->> new-placement-kw
                                         name
-                                        (str "kushi-fune-"))]
+                                        (str "kushi-pane-"))]
        (when (and placement-class
                   new-placement-class
                   (not= placement-class
                         new-placement-class))
-         (domo/remove-class! fune-el placement-class)
-         (domo/add-class! fune-el new-placement-class))))))
+         (domo/remove-class! pane-el placement-class)
+         (domo/add-class! pane-el new-placement-class))))))
 
 
 ;; TODO  - Make sure this is getting removed properly
-(def update-fune-placement!
+(def update-pane-placement!
   (goog.functions.debounce
-   (fn [owning-el fune-id dialog-el]
-      (when-let [fune-el (domo/el-by-id fune-id)]
-       (if-not (domo/qs (str "[aria-controls=\"" fune-id "\"]")) 
-         (domo/set-style! fune-el "display" "none")
+   (fn [owning-el pane-id dialog-el]
+      (when-let [pane-el (domo/el-by-id pane-id)]
+       (if-not (domo/qs (str "[aria-controls=\"" pane-id "\"]")) 
+         (domo/set-style! pane-el "display" "none")
          (let [
                owning-el-rect* (domo/client-rect owning-el)
                owning-el-rect  (or (some->> dialog-el
@@ -307,11 +307,11 @@
                (owning-el-rect-cp owning-el-rect)
 
                ms      
-               (domo/duration-property-ms fune-el "transition-duration")
+               (domo/duration-property-ms pane-el "transition-duration")
 
                coll   
-               (keep #(re-find #"^kushi-fune-([a-z]*)$" %)
-                     (.-classList fune-el))
+               (keep #(re-find #"^kushi-pane-([a-z]*)$" %)
+                     (.-classList pane-el))
                [placement-class placement-kw*]
                (some-> coll (nth 0 nil))
 
@@ -319,104 +319,104 @@
                (some->  placement-kw* keyword)]
 
            (doseq [[k v] m]
-             (domo/set-css-var! fune-el k v))
+             (domo/set-css-var! pane-el k v))
 
-           (js/setTimeout (partial update-fune-placement-class!
-                                   fune-el
+           (js/setTimeout (partial update-pane-placement-class!
+                                   pane-el
                                    placement-class
                                    placement-kw)
                           ms)))))
    100))
 
-(defn- escape-fune!
-  "If Escape key is pressed when fune is active, dispatch `remove-fune`.
-   to remove fune element from DOM.
+(defn- escape-pane!
+  "If Escape key is pressed when pane is active, dispatch `remove-pane`.
+   to remove pane element from DOM.
    Also removes the `mouseleave` event listener on owning element."
-  [owning-el fune-id fune-type e]
+  [owning-el pane-id pane-type e]
   ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; Add conditionality around fune-type for dismissal
+  ;; Add conditionality around pane-type for dismissal
   (when-not e.defaultPrevented
-    (when (or (and (= :tooltip fune-type)
+    (when (or (and (= :tooltip pane-type)
                    (= e.type "scroll")) 
               (= e.key "Escape"))
       (when owning-el
-        (remove-fune! owning-el fune-id fune-type nil)
-        (when (= :tooltip fune-type)
+        (remove-pane! owning-el pane-id pane-type nil)
+        (when (= :tooltip pane-type)
          (.removeEventListener owning-el
                                "mouseleave"
-                               (partial remove-fune!
+                               (partial remove-pane!
                                         owning-el
-                                        fune-id
-                                        fune-type)
+                                        pane-id
+                                        pane-type)
                                #js {"once" true}))))))
 
 
-(defn remove-fune!
-  "Removes fune from dom.
+(defn remove-pane!
+  "Removes pane from dom.
    Removes :aria-describedby on owning element.
-   Removes the fune instance-specific `keydown` event on window."
-  [owning-el fune-id fune-type e]
+   Removes the pane instance-specific `keydown` event on window."
+  [owning-el pane-id pane-type e]
   ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; Add conditionality around fune-type for dismissal, if necessary
+  ;; Add conditionality around pane-type for dismissal, if necessary
   
   (let [dialog-el (domo/nearest-ancestor owning-el "dialog")]
-    (some->> fune-id
+    (some->> pane-id
              domo/el-by-id
              (.removeChild (or dialog-el js/document.body)))
-    (when (= :popover fune-type)
-      (let [update-placement-fn #(update-fune-placement!
+    (when (= :popover pane-type)
+      (let [update-placement-fn #(update-pane-placement!
                                   owning-el
-                                  fune-id
+                                  pane-id
                                   dialog-el)]
         (.removeEventListener js/window
                               "click"
-                              (partial remove-fune-if-clicked-outside!
+                              (partial remove-pane-if-clicked-outside!
                                        owning-el
-                                       fune-id
-                                       fune-type))
+                                       pane-id
+                                       pane-type))
         (.removeEventListener js/window "resize" update-placement-fn)
         (.removeEventListener js/window "scroll" update-placement-fn))
 
-      (when-let [owning-el (domo/qs (str "[aria-controls=\"" fune-id "\"]"))]
+      (when-let [owning-el (domo/qs (str "[aria-controls=\"" pane-id "\"]"))]
         (domo/remove-attribute! owning-el :aria-controls)
         (domo/remove-attribute! owning-el :aria-haspopup)
         (domo/remove-attribute! owning-el :aria-expanded)))
 
-    (when (= :tooltip fune-type)
+    (when (= :tooltip pane-type)
       (domo/remove-attribute! owning-el :aria-describedby)
       (.removeEventListener owning-el
                             "mouseleave"
-                            (partial remove-fune! owning-el fune-id fune-type)
+                            (partial remove-pane! owning-el pane-id pane-type)
                             #js {"once" true}))
     (.removeEventListener js/window
                           "keydown"
-                          (partial escape-fune! owning-el fune-id fune-type)
+                          (partial escape-pane! owning-el pane-id pane-type)
                           #js {"once" true})
     (.removeEventListener js/window
                           "scroll"
-                          (partial escape-fune! owning-el fune-id fune-type)
+                          (partial escape-pane! owning-el pane-id pane-type)
                           #js {"once" true})))
 
 
-(defn observe-fune! [fune-id]
+(defn observe-pane! [pane-id]
   (goog.functions.debounce
    (fn [_ observer]
-     (when-not (domo/qs (str "[aria-controls=\"" fune-id "\"]"))
+     (when-not (domo/qs (str "[aria-controls=\"" pane-id "\"]"))
        (.disconnect observer)
-       (.remove (domo/el-by-id fune-id))))
+       (.remove (domo/el-by-id pane-id))))
    30))
 
-(defn set-popover-focus! [fune-id]
+(defn set-popover-focus! [pane-id]
   (let [focusables*     "button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])"
-        fune            (domo/el-by-id fune-id)
-        focusables      (.querySelectorAll fune focusables*)
+        pane            (domo/el-by-id pane-id)
+        focusables      (.querySelectorAll pane focusables*)
         focusables-len  (.-length focusables)
         first-focusable (j/get focusables 0)
         last-focusable  (j/get focusables (dec focusables-len))
         second-to-last-focusable  (when (> focusables-len 2)
                                     (j/get focusables (- (.-length focusables) 2)))]
     (when (pos? focusables-len)
-      (.addEventListener fune
+      (.addEventListener pane
                          "keydown"
                          (fn [e]
                            (when (or (= "Tab" e.key) (= 9 e.keyCode))
@@ -437,86 +437,86 @@
                                    (.preventDefault e))))))
       (.focus first-focusable))))
 
-(defn append-fune!
+(defn append-pane!
   ([opts e]
-  (append-fune! opts nil e))
-  ([opts fune-id e]
+  (append-pane! opts nil e))
+  ([opts pane-id e]
    ;; We need to use cet here (.currentEventTarget), in order
-   ;; To prevent mis-assignment of ownership of the fune to
+   ;; To prevent mis-assignment of ownership of the pane to
    ;; A child element of the intended owning el. 
    (let [owning-el        (domo/cet e)
          dialog-el        (domo/nearest-ancestor owning-el "dialog")
-         ;; TODO - should this be "kushi-fune-*" ?
-         fune-id          (or fune-id (str "kushi-" (gensym)))
-         fune-type        (:fune-type opts)
-         existing-popover (and (= fune-type :popover)
+         ;; TODO - should this be "kushi-pane-*" ?
+         pane-id          (or pane-id (str "kushi-" (gensym)))
+         pane-type        (:pane-type opts)
+         existing-popover (and (= pane-type :popover)
                                (j/get owning-el "ariaHasPopup"))
          opts             (merge opts (keyed owning-el dialog-el))]
 
      (when-not existing-popover
        
        ;; Adding `aria-describedby` for tooltips
-       (when (= fune-type :tooltip)
-         (domo/set-attribute! owning-el :aria-describedby fune-id))
+       (when (= pane-type :tooltip)
+         (domo/set-attribute! owning-el :aria-describedby pane-id))
 
-       ;; Appending fune
-       (if (= fune-type :toast)
+       ;; Appending pane
+       (if (= pane-type :toast)
          (append-toast! (assoc opts :owning-el owning-el)
-                        fune-id)
-         (append-fune!* (assoc opts :owning-el owning-el)
-                        fune-id))
+                        pane-id)
+         (append-pane!* (assoc opts :owning-el owning-el)
+                        pane-id))
 
 
        ;; Tooltip-specific mouseleave
-       (when (= fune-type :tooltip)
+       (when (= pane-type :tooltip)
          (.addEventListener owning-el
                             "mouseleave"
-                            (partial remove-fune! owning-el fune-id fune-type)
+                            (partial remove-pane! owning-el pane-id pane-type)
                             #js {"once" true}))
 
        ;; Popover-specific aria attributes, listeners, and focus-trap
-       (when (= fune-type :popover)
-         (domo/set-attribute! owning-el :aria-controls fune-id)
+       (when (= pane-type :popover)
+         (domo/set-attribute! owning-el :aria-controls pane-id)
          (domo/set-attribute! owning-el :aria-haspopup "dialog")
          (domo/set-attribute! owning-el :aria-expanded true)
          (js/window.requestAnimationFrame 
           #(.addEventListener js/window
                               "click"
-                              (partial remove-fune-if-clicked-outside!
+                              (partial remove-pane-if-clicked-outside!
                                        owning-el
-                                       fune-id
-                                       fune-type))
+                                       pane-id
+                                       pane-type))
           (.addEventListener js/window
                              "scroll"
-                             #(update-fune-placement! owning-el fune-id dialog-el))
+                             #(update-pane-placement! owning-el pane-id dialog-el))
           (.addEventListener js/window
                              "resize"
-                             #(update-fune-placement! owning-el fune-id dialog-el))
+                             #(update-pane-placement! owning-el pane-id dialog-el))
 
 
-          ;; This will set focus on first focusable element within fune
-          (set-popover-focus! fune-id)
+          ;; This will set focus on first focusable element within pane
+          (set-popover-focus! pane-id)
 
-          ;; This will remove fune from dom if owning element goes away
-          (let [mo (new js/MutationObserver (observe-fune! fune-id))]
+          ;; This will remove pane from dom if owning element goes away
+          (let [mo (new js/MutationObserver (observe-pane! pane-id))]
             (.observe mo
-                      (domo/el-by-id fune-id)
+                      (domo/el-by-id pane-id)
                       #js{:attributes true}))))
 
-       ;; This will auto-dismiss fune, for toasts (default) and popovers (opt-in).
+       ;; This will auto-dismiss pane, for toasts (default) and popovers (opt-in).
        (js/window.requestAnimationFrame 
         #(when (:auto-dismiss? opts)
-           (js/setTimeout (partial remove-fune! owning-el fune-id fune-type)
+           (js/setTimeout (partial remove-pane! owning-el pane-id pane-type)
                           #_(domo/duration-property-ms  "popover-auto-dismiss-duration")
                           5000)))
 
-       ;; Additional listeners for escaping funes
-       (when-not (= fune-type :toast)
+       ;; Additional listeners for escaping panes
+       (when-not (= pane-type :toast)
          (.addEventListener js/window
                             "keydown"
-                            (partial escape-fune! owning-el fune-id fune-type)
+                            (partial escape-pane! owning-el pane-id pane-type)
                             #js {"once" true})
          (.addEventListener js/window
                             "scroll"
-                            (partial escape-fune! owning-el fune-id fune-type)
+                            (partial escape-pane! owning-el pane-id pane-type)
                             #js {"once" true}))))))

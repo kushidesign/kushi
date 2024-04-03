@@ -5,10 +5,10 @@
    [domo.core :as domo]
    [kushi.core :refer (keyed)]
    [kushi.ui.util :as util :refer [maybe]]
-   [kushi.ui.dom.fune.core :as fune]
-   [kushi.ui.dom.fune.placement :refer [user-placement]]
+   [kushi.ui.dom.pane.core :as pane]
+   [kushi.ui.dom.pane.placement :refer [user-placement]]
    ;; Import this styles ns to create defclasses
-   [kushi.ui.dom.fune.styles]))
+   [kushi.ui.dom.pane.styles]))
 
 (defn popover-attrs
   {:desc ["Popovers provide additional context when hovering or clicking on an"
@@ -205,19 +205,19 @@
                          placement)
           placement-kw (or (maybe placement #(= % :auto))
                            (user-placement placement))
-          fune-type    :popover
+          pane-type    :popover
           opts         (keyed placement-kw
                               arrow?
                               auto-dismiss?
-                              fune-type
+                              pane-type
                               user-rendering-fn)]
       (merge 
-       {:data-kushi-ui-fune (name placement-kw)
-        :on-click           (partial fune/append-fune! opts)}))))
+       {:data-kushi-ui-pane (name placement-kw)
+        :on-click           (partial pane/append-pane! opts)}))))
 
 (defn dismiss-popover! [e]
   (let [el         (domo/et e)
         popover-el (domo/nearest-ancestor el ".kushi-popover")
-        fune-id    (j/get popover-el :id)
-        owning-el  (domo/qs (str "[aria-controls=\"" fune-id "\"]"))]
-    (fune/remove-fune! owning-el fune-id :popover e)))
+        pane-id    (j/get popover-el :id)
+        owning-el  (domo/qs (str "[aria-controls=\"" pane-id "\"]"))]
+    (pane/remove-pane! owning-el pane-id :popover e)))

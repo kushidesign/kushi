@@ -1,4 +1,4 @@
-(ns kushi.ui.dom.fune.placement
+(ns kushi.ui.dom.pane.placement
   (:require
    [clojure.string :as string]
    [goog.string]
@@ -81,13 +81,13 @@
             (:w? vpp) :r)
 
       :else
-      ;; Always auto-place fune on top, unless the owning element falls
+      ;; Always auto-place pane on top, unless the owning element falls
       ;; within the top fraction of the viewport, as defined by the
-      ;; :$fune-auto-placement-y-threshold css custom property.
+      ;; :$pane-auto-placement-y-threshold css custom property.
       (if (< (:y-fraction vpp)
              (some-> owning-el
                      (domo/css-custom-property-value
-                      "--fune-auto-placement-y-threshold")
+                      "--pane-auto-placement-y-threshold")
                      js/parseFloat))
         :b
         :t))
@@ -214,7 +214,7 @@
    :lt  [:left -100 :top    0    "-" nil]
    :ltc [:left -100 :top    -100 "-" "-"]})
 
-(defn- fune-prop [t prop]
+(defn- pane-prop [t prop]
   (str "var(--" t "-" prop ")"))
 
 (defn owning-el-rect-cp [rect]
@@ -227,20 +227,20 @@
 
 (defn placement-css-custom-property
   [opts]
-  (let [t (-> opts :fune-type as-str)]
+  (let [t (-> opts :pane-type as-str)]
     (domo/css-style-string
      (let [tot-off "var(--total-offset)"]
        (merge 
         (owning-el-rect-cp (:owning-el-rect opts))
-        {"--border-width"       (fune-prop t "border-width")
-         "--border-style"       (fune-prop t "border-style")
-         "--border-color"       (fune-prop t "border-color")
-         "--arrow-depth"        (fune-prop t "arrow-depth")
+        {"--border-width"       (pane-prop t "border-width")
+         "--border-style"       (pane-prop t "border-style")
+         "--border-color"       (pane-prop t "border-color")
+         "--arrow-depth"        (pane-prop t "arrow-depth")
          "--offset"             (str "max(var(--" t "-offset-start), 0px)")
          "--total-offset"       (calc "(var(--offset) + var(--arrow-depth))")
-         "--border-radius"      (fune-prop t "border-radius") 
-         "--arrow-inline-inset" (fune-prop t "arrow-inline-inset") 
-         "--arrow-block-inset"  (fune-prop t "arrow-block-inset") 
+         "--border-radius"      (pane-prop t "border-radius") 
+         "--arrow-inline-inset" (pane-prop t "arrow-inline-inset") 
+         "--arrow-block-inset"  (pane-prop t "arrow-block-inset") 
          "--top-plc"            (calc "(var(--oe-top) - 100%) - " tot-off)
          "--bottom-plc"         (calc "var(--oe-bottom) + " tot-off)
          "--right-plc"          (calc "var(--oe-right) + " tot-off)
@@ -324,7 +324,7 @@
     :brc :blc
     :rbc :lbc))
 
-(defn updated-fune-placement
+(defn updated-pane-placement
   [{:keys [corner-plc?
            block-plc?
            inline-plc?
@@ -430,11 +430,11 @@
 
 
 
-;; Functions below deal with calculating the position of the fune based
+;; Functions below deal with calculating the position of the pane based
 ;; on its placement keyword and the position of the owning element relative
 ;; to the viewport.
 
-(defn fune-plc [k]
+(defn pane-plc [k]
   ;; TODO use let-map macro here
   ;; change f to ck?
   (let [f             (partial ck? k)

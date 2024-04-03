@@ -7,10 +7,10 @@
    [domo.core :as domo]
    [kushi.core :refer (keyed token->ms)]
    [kushi.ui.util :as util :refer [maybe]]
-   [kushi.ui.dom.fune.core :as fune]
-   [kushi.ui.dom.fune.placement :refer [user-placement]]
+   [kushi.ui.dom.pane.core :as pane]
+   [kushi.ui.dom.pane.placement :refer [user-placement]]
    ;; Import this styles ns to create defclasses
-   [kushi.ui.dom.fune.styles]))
+   [kushi.ui.dom.pane.styles]))
 
 
 (defn valid-tooltip-text-coll? [x]
@@ -219,22 +219,22 @@
                          placement)
           placement-kw (or (maybe placement #(= % :auto))
                            (user-placement placement))
-          fune-type    :tooltip
+          pane-type    :tooltip
           opts         (keyed tooltip-text
                               placement-kw
                               arrow?
-                              fune-type
+                              pane-type
                               tooltip-class)]
       (merge 
-       {:data-kushi-ui-fune (name placement-kw)
-        :on-mouse-enter     (partial fune/append-fune! opts)}
+       {:data-kushi-ui-pane (name placement-kw)
+        :on-mouse-enter     (partial pane/append-pane! opts)}
 
        ;; Todo use when-let to validate text-on-click and normalize if vector
-       (when-let [text-on-click (fune/maybe-multiline-tooltip-text text-on-click)]
+       (when-let [text-on-click (pane/maybe-multiline-tooltip-text text-on-click)]
          {:on-click
           (fn [_]
             (let [duration           (token->ms :$tooltip-text-on-click-duration)
-                  tt-el              (domo/qs ".kushi-fune")
+                  tt-el              (domo/qs ".kushi-pane")
                   tt-el-text-wrapper (domo/qs tt-el ".kushi-tooltip-text-wrapper")
                   tt-el-text-span    (domo/qs tt-el ".kushi-tooltip-text")
                   text-on-click-el   (js/document.createElement "span")]
