@@ -37,7 +37,7 @@
   [:map
    [:fn fn?]
    [:meta fn?]
-   [:desc {:optional true} [:or vector? strin?]]
+   [:desc {:optional true} [:or vector? string?]]
    [:stage {:optional true} [:map [:style [:map [:min-height keyword?]]]]]
    [:variants {:optional true} [:vector keyword?]]
    [:examples
