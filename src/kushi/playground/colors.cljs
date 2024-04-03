@@ -55,7 +55,10 @@
                 {:on-click #(open-kushi-modal token-name)})
       [:span (sx :sm:d--none) color-level]
       [:span (sx :.code :sm:d--block :d--none) token-name]
-      [icon (sx :.neutral-secondary-fg :mis--0.5em {:-icon-style :outlined}) :help]]
+      [icon (sx :.accent-secondary-fg
+                :mis--0.5em
+                {:-icon-style :outlined})
+       :help]]
      [modal
       {:id token-name}
       [:div
@@ -93,7 +96,8 @@
           [:span.kushi-playground-meta-desc-label "css var"] [copy-color (str "var(" (string/replace token-name #"^\$" "--") ")")]
           [:span.kushi-playground-meta-desc-label "hex"] [copy-color hex]
           [:span.kushi-playground-meta-desc-label "hsl"] [copy-color hsl]
-          [:span.kushi-playground-meta-desc-label "rgb"] [copy-color rgb]])]]]) )
+          [:span.kushi-playground-meta-desc-label "rgb"] [copy-color rgb]])]
+          #_[:div.kushi-fune.kushi-tooltip "hi"]]]) )
 
 
 ;; TODO refactor this into some subcomponents

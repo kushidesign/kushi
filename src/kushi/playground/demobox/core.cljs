@@ -142,13 +142,14 @@
 (defcom copy-to-clipboard-button
   [button
    (merge-attrs
-    (sx :.minimal
+    (sx :.accent
+        :.minimal
         :p--7px
         {:on-click #(copy-to-clipboard! (:text-to-copy &opts))})
     (tooltip-attrs
      {:-text                        "Click to copy"
       :-text-on-click               "Copied!"
-      :-text-on-click-tooltip-class (first (:class (sx :$tooltip-background-color--$positive-filled-background-color)))
+      :-text-on-click-tooltip-class (first (:class (sx :$tooltip-background-color--$accent-filled-background-color)))
       :-placement                   [:block-start :inline-end]})
     &attrs)
    [icon (sx :.medium!) mui.svg/content-copy]])

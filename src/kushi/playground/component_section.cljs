@@ -73,13 +73,20 @@
        'kushi-playground-subsection
        :pb--4.5em:1em
        :&.description&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
+       [:&.description&_p&_b {:fw      :$wee-bold
+                              :mbe     :0.4em
+                              :display :block}]
        :&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
        :&_p:ff--$kushi-playground-main-section-wrapper_font-family||$sans-serif-font-stack
        :&_p:fw--$kushi-playground-main-section-wrapper_font-weight||$normal
        :&_p:lh--$kushi-playground-main-section-wrapper_line-height||1.7
-       :&_p&_code:pb--0.07em
-       :&_p&_code:pi--0.2em
-       :&_p&_code:fs--0.9rem
+       [:&_p&_code {:pb  :0.07em
+                    :pi  :0.2em
+                    :fs  :0.85rem
+                    :c   :$accent-750
+                    :bgc :$accent-50}]
+       [:dark:&_p&_code {:c   :$accent-100
+                         :bgc :$accent-900}]
        :&_.kushi-opt-detail-label:lh--2.05
        :&_.code.opt-type:bgc--transparent)
       &attrs)
@@ -158,7 +165,14 @@
    [:div
     (sx 'kushi-opt-detail-label :min-width--75px)
     [label (sx :.kushi-playground-meta-desc-label :.normal) text]]
-   [:div (sx 'kushi-opt-detail-value)
+   [:div (sx 'kushi-opt-detail-value
+             [:&_.code {:pb       :0.07em
+                        :pi       :0.2em
+                        :fs       :0.85rem
+                        :c        :$accent-750
+                        :bgc      :$accent-50
+                        :dark:c   :$accent-100
+                        :dark:bgc :$accent-900}])
     [f v]]])
 
 (defn component-section-body
@@ -214,7 +228,17 @@
                         [:dark:bbe "1px solid var(--gray-800)"]
                         :pb--1em)
                   [:div (sx :mb--0.7rem)
-                   [:span (sx :.code :.semi-bold) (str ":-" nm)]]
+                   [:span
+                    (sx :.code
+                        :.semi-bold
+                        {:style {:pb       :0.07em
+                                 :pi       :0.2em
+                                 :fs       :0.85rem
+                                 :c        :$accent-750
+                                 :bgc      :$accent-50
+                                 :dark:c   :$accent-100
+                                 :dark:bgc :$accent-900}})
+                    (str ":-" nm)]]
                   [:div (sx :pis--1.4em)
                    (when pred [opt-detail "Pred" pred kushi-opts-grid-type :pred])
                    (when typ [opt-detail "Type" typ kushi-opts-grid-type :type])
