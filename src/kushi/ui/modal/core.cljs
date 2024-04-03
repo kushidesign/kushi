@@ -135,12 +135,13 @@
                    :.fixed-centered
                    :.transition
                    :backdrop:bgc--transparent
+                   :overflow--visible
                    [:transition-duration "var(--modal-transition-duration, var(--fast))"]
                    :bgc--$body-background-color
                    :dark:bgc--$body-background-color-inverse
                    :border-radius--$modal-border-radius
                    :b--$modal-border
-                   :min-width--$kushi-modal-min-width||400px
+                   :min-width--$modal-min-width||450px
                    [:max-width "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
                    [:max-height "calc(100vh - (2 * var(--modal-margin, 1rem)))"]
                    :height--$modal-min-height
@@ -148,7 +149,6 @@
                    [:dark:box-shadow (str elevation-token-inverse "0 0 0 100vmax var(--dark-gray-transparent-90)")]
                    :opacity--0
                    :&.kushi-modal-open:opacity--1
-                   :overflow--auto
                    {:id               id
                     :aria-labelledby  title-id
                     :aria-describedby desc-id})
@@ -160,16 +160,25 @@
                       ["has-parent(.kushi-modal.kushi-modal-open):opacity" 1]
                       ["has-parent(.kushi-modal.kushi-modal-open):transition-delay" "calc(var(--modal-transition-duration, var(--fast)))"]
                       :gap--2em
-                      :pi--$modal-padding-inline
-                      :pb--$modal-padding-block
+                      :pi--$modal-padding-inline||$modal-padding
+                      :pb--$modal-padding-block||$modal-padding
                       :w--100%
-                      :h--100%)
-             (when modal-title [:h2 (sx 'kushi-modal-title
-                                        :.large
-                                        :.semi-bold
-                                        {:id title-id})
-                                modal-title])
-             (when description [:p (sx 'kushi-modal-description
-                                       {:id desc-id})
-                                description])]
+                      :h--100%
+                      :overflow--auto)
+             (when (or modal-title description)
+               [:div (sx 'kushi-modal-title-and-description
+                         :.flex-col-fs
+                         :gap--1em
+                         :.large
+                         {:id title-id})
+                (when modal-title 
+                  [:h2 (sx 'kushi-modal-title
+                           :.semi-bold
+                           {:id title-id})
+                   modal-title])
+                (when description
+                  [:p (sx 'kushi-modal-description
+                          :.small
+                          {:id desc-id})
+                   description])])]
             children)])))
