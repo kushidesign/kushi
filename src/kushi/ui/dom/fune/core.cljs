@@ -17,8 +17,6 @@
                                         placement-css-custom-property
                                         owning-el-rect-cp]]))
 
-(js/console.clear)
-
 
 (defn maybe-multiline-tooltip-text [v]
   (if (or (vector? v)
@@ -66,12 +64,28 @@
                  "</span>"
                "</div>"))))
 
+(defn- adjust-client-rect
+  [{:keys [top bottom left right width height] :as owning-el-rect}
+   dialog-el]
+  (let [{dtop  :top
+         dleft :left} (domo/client-rect dialog-el)
+        top           (- top dtop)
+        bottom        (- bottom dtop)
+        left          (- left dleft)
+        right         (- right dleft)
+        x-center   (domo/round-by-dpr (- right (/ width 2)))
+        y-center   (domo/round-by-dpr (- bottom (/ height 2)))]
+    (merge owning-el-rect
+           (keyed top left bottom right x-center y-center))))
+
 
 (defn- append-fune-el!
   [{:keys [el 
            id
            fune-type 
            user-rendering-fn
+           owning-el
+           dialog-el
            metrics? 
            placement-kw
            new-placement-kw]
@@ -94,7 +108,7 @@
       (.setAttribute "class" fune-classes)))
   
   ;; Append fune el to the <body> 
-  (.appendChild js/document.body el)
+  (.appendChild (or dialog-el js/document.body) el)
   
   ;; Render contents if popover
   (when (contains? #{:popover} fune-type)
@@ -106,9 +120,11 @@
    element, or user-supplied `-placement` attr. If it is offscreen, it is then
    given a new placement and position which may include a shift on the x or y
    axis in order to keep it wholly in the veiwport."
+  ;; use :keys here ?
   [{placement-kw :placement-kw
     arrow?       :arrow?
     owning-el    :owning-el
+    dialog-el    :dialog-el
     fune-type    :fune-type
     :or          {fune-type :fune}
     :as          opts}
@@ -126,11 +142,16 @@
                             (maybe fune-type nameable?)
                             :fune)
         arrow?          (if (false? arrow?) false true)
+        owning-el-rect* (domo/client-rect owning-el)
+        owning-el-rect  (or (some->> dialog-el
+                                     (adjust-client-rect owning-el-rect*))
+                            owning-el-rect*)
+
         opts            (assoc opts
                                :fune-type
                                fune-type
                                :owning-el-rect
-                               (domo/client-rect owning-el))
+                               owning-el-rect)
         viewport        (domo/viewport)
         ;; TOOD - Use some koind of dpi calc for edge-threshold.
         ;; Convert to px if user supplies ems or rems.
@@ -192,7 +213,7 @@
           ;; 3) Remove dummy and append new element
           ;; ----------------------------------------------------------------------
           
-          _                    (.removeChild js/document.body el) ;; move down
+          _                    (.removeChild (or dialog-el js/document.body) el)
           
           el                   (js/document.createElement "div")
 
@@ -231,6 +252,7 @@
          (fn [_]
            (let [t      (-> opts :fune-type as-str)
                  offset (str "max(var(--" t "-offset), 0px)")]
+             el
              (domo/remove-class! el "invisible")
              (domo/set-css-var! el "--offset" offset)
              (domo/set-style! el "scale" "1")) ))))))
@@ -268,16 +290,21 @@
          (domo/remove-class! fune-el placement-class)
          (domo/add-class! fune-el new-placement-class))))))
 
-;; Make sure this is getting removed properly
-;; TODO maybe batch the 2 different adjustments into one
+
+;; TODO  - Make sure this is getting removed properly
 (def update-fune-placement!
   (goog.functions.debounce
-   (fn [el fune-id]
+   (fn [owning-el fune-id dialog-el]
       (when-let [fune-el (domo/el-by-id fune-id)]
        (if-not (domo/qs (str "[aria-controls=\"" fune-id "\"]")) 
          (domo/set-style! fune-el "display" "none")
-         (let [m       
-               (-> el domo/client-rect owning-el-rect-cp)
+         (let [
+               owning-el-rect* (domo/client-rect owning-el)
+               owning-el-rect  (or (some->> dialog-el
+                                            (adjust-client-rect owning-el-rect*))
+                                   owning-el-rect*)
+               m       
+               (owning-el-rect-cp owning-el-rect)
 
                ms      
                (domo/duration-property-ms fune-el "transition-duration")
@@ -331,44 +358,44 @@
   [owning-el fune-id fune-type e]
   ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Add conditionality around fune-type for dismissal, if necessary
-  (some->> fune-id
-           domo/el-by-id
-           (.removeChild js/document.body))
+  
+  (let [dialog-el (domo/nearest-ancestor owning-el "dialog")]
+    (some->> fune-id
+             domo/el-by-id
+             (.removeChild (or dialog-el js/document.body)))
+    (when (= :popover fune-type)
+      (let [update-placement-fn #(update-fune-placement!
+                                  owning-el
+                                  fune-id
+                                  dialog-el)]
+        (.removeEventListener js/window
+                              "click"
+                              (partial remove-fune-if-clicked-outside!
+                                       owning-el
+                                       fune-id
+                                       fune-type))
+        (.removeEventListener js/window "resize" update-placement-fn)
+        (.removeEventListener js/window "scroll" update-placement-fn))
 
-  (when (= :popover fune-type)
+      (when-let [owning-el (domo/qs (str "[aria-controls=\"" fune-id "\"]"))]
+        (domo/remove-attribute! owning-el :aria-controls)
+        (domo/remove-attribute! owning-el :aria-haspopup)
+        (domo/remove-attribute! owning-el :aria-expanded)))
+
+    (when (= :tooltip fune-type)
+      (domo/remove-attribute! owning-el :aria-describedby)
+      (.removeEventListener owning-el
+                            "mouseleave"
+                            (partial remove-fune! owning-el fune-id fune-type)
+                            #js {"once" true}))
     (.removeEventListener js/window
-                          "click"
-                          (partial remove-fune-if-clicked-outside!
-                                   owning-el
-                                   fune-id
-                                   fune-type))
-    (.removeEventListener js/window
-                          "resize"
-                          #(update-fune-placement! owning-el fune-id))
-    
+                          "keydown"
+                          (partial escape-fune! owning-el fune-id fune-type)
+                          #js {"once" true})
     (.removeEventListener js/window
                           "scroll"
-                          #(update-fune-placement! owning-el fune-id))
-
-    (when-let [owning-el (domo/qs (str "[aria-controls=\"" fune-id "\"]"))]
-      (domo/remove-attribute! owning-el :aria-controls)
-      (domo/remove-attribute! owning-el :aria-haspopup)
-      (domo/remove-attribute! owning-el :aria-expanded)))
-
-  (when (= :tooltip fune-type)
-    (domo/remove-attribute! owning-el :aria-describedby)
-    (.removeEventListener owning-el
-                          "mouseleave"
-                          (partial remove-fune! owning-el fune-id fune-type)
-                          #js {"once" true}))
-  (.removeEventListener js/window
-                        "keydown"
-                        (partial escape-fune! owning-el fune-id fune-type)
-                        #js {"once" true})
-  (.removeEventListener js/window
-                        "scroll"
-                        (partial escape-fune! owning-el fune-id fune-type)
-                        #js {"once" true}))
+                          (partial escape-fune! owning-el fune-id fune-type)
+                          #js {"once" true})))
 
 
 (defn observe-fune! [fune-id]
@@ -408,32 +435,7 @@
                                (= js/document.activeElement last-focusable)
                                (do (.focus first-focusable)
                                    (.preventDefault e))))))
-      (.focus first-focusable)))
-
-
-;; document.addEventListener('keydown', function(e) {
-;;   let isTabPressed = e.key === 'Tab' || e.keyCode === 9;
-  
-;;   if (!isTabPressed) {
-;;     return;
-;;   }
-  
-;;   if (e.shiftKey) { // if shift key pressed for shift + tab combination
-;;     if (document.activeElement === firstFocusableElement) {
-;;       lastFocusableElement.focus(); // add focus for the last focusable element
-;;       e.preventDefault();
-;;     }
-;;   } else { // if tab key is pressed
-;;     if (document.activeElement === lastFocusableElement) { // if focused has reached to last focusable element then focus first focusable element after pressing tab
-;;       firstFocusableElement.focus(); // add focus for the first focusable element
-;;       e.preventDefault();
-;;     }
-;;   }
-;; });
-  
-;; firstFocusableElement.focus();
-  
-  )
+      (.focus first-focusable))))
 
 (defn append-fune!
   ([opts e]
@@ -442,14 +444,14 @@
    ;; We need to use cet here (.currentEventTarget), in order
    ;; To prevent mis-assignment of ownership of the fune to
    ;; A child element of the intended owning el. 
-  ;;  (js/console.clear)
    (let [owning-el        (domo/cet e)
+         dialog-el        (domo/nearest-ancestor owning-el "dialog")
          ;; TODO - should this be "kushi-fune-*" ?
          fune-id          (or fune-id (str "kushi-" (gensym)))
          fune-type        (:fune-type opts)
          existing-popover (and (= fune-type :popover)
                                (j/get owning-el "ariaHasPopup"))
-         opts             (assoc opts :owning-el owning-el)]
+         opts             (merge opts (keyed owning-el dialog-el))]
 
      (when-not existing-popover
        
@@ -486,10 +488,10 @@
                                        fune-type))
           (.addEventListener js/window
                              "scroll"
-                             #(update-fune-placement! owning-el fune-id))
+                             #(update-fune-placement! owning-el fune-id dialog-el))
           (.addEventListener js/window
                              "resize"
-                             #(update-fune-placement! owning-el fune-id))
+                             #(update-fune-placement! owning-el fune-id dialog-el))
 
 
           ;; This will set focus on first focusable element within fune
