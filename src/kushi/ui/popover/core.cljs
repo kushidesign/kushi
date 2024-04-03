@@ -48,8 +48,9 @@
           "styled and controlled via the following tokens in your theme:"
           :br
           ;; TODO add documentation for each token
-          :br "Colors and images:"
-          :br "`:$popover-background-color`"                 
+          :br 
+          "__Colors and images:__"
+              "`:$popover-background-color`"                 
           :br "`:$popover-background-color-inverse`"         
           :br "`:$popover-background-image`"                 
           :br "`:$popover-box-shadow`"                 
@@ -57,8 +58,8 @@
           :br "`:$popover-border-style`"                 
           :br "`:$popover-border-color`"                 
           :br
-          :br "Geometry:"
-          :br "`:$popover-min-width`"
+          :br "__Geometry:__"
+              "`:$popover-min-width`"
           :br "`:$popover-min-height`"
           :br "`:$popover-border-radius`"
           :br "`:$popover-offset`"
@@ -66,8 +67,8 @@
           :br "`:$popover-flip-viewport-edge-threshold`"
           :br "`:$popover-auto-placement-y-threshold`"
           :br
-          :br "Choreography:"
-          :br "`:$popover-offset-start`"
+          :br "__Choreography:__"
+              "`:$popover-offset-start`"
           :br "`:$popover-z-index`"             
           :br "`:$popover-delay-duration`"            
           :br "`:$popover-initial-scale`"             
@@ -76,8 +77,8 @@
           :br "`:$popover-transition-timing-function`"
           :br "`:$popover-auto-dismiss-duration`"
           :br
-          :br "Arrows:"
-          :br "`:$popover-arrow-inline-inset`"
+          :br "__Arrows:__"
+              "`:$popover-arrow-inline-inset`"
           :br "`:$popover-arrow-block-inset`"
           :br "`:$popover-arrow-depth`"   
 

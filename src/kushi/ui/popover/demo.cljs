@@ -30,7 +30,7 @@
              :.medium
              :.semi-bold
              :mbe--0.75em)
-     "My Popover Form"]
+     "Example Popover Form"]
     [input
      (sx
       {:placeholder      "100%"

@@ -16,7 +16,13 @@
           :br
           "Specifying placement in various ways can be done with the"
           "`:-placement` option. See the tooltip docs for details on "
-          "`:-placement`."
+          "`:-placement`. You will most likely want to use the `:right-top` "
+          "or `:right-bottom` options, or the logic equivalent to these, "
+          "which would be `[:inline-end :block-start]` and "
+          "`[:inline-end :block-end]`, respectively. In both cases, the toast "
+          "will slide in from outside the viewport, to the right. If you want "
+          "the toast to slide in from the top or bottom, you would use "
+          "`:top-right`, or `:bottom-right` instead."
           :br
           :br
           "You can trigger a toast via an element listener by using "
@@ -34,39 +40,39 @@
           :br
           "You can use the `kushi.ui.toast.core/dismiss-toast!` function if "
           "you want to close the toast from an action within the toast."
-          "If you are using a close button that is potitioned near the edge "
-          "of the toast, it is recommended to give it a `z-index` of `1` or "
-          "higher so that it does not get clipped by the arrow element. See "
-          "the example above."
           :br
           :br
           "Elements and behaviors of the toast containers can be custom "
           "styled and controlled via the following tokens in your theme:"
           :br
-          :br "Colors and images:"
-          :br "`:$toast-background-color`"                 
-          :br "`:$toast-background-color-inverse`"         
-          :br "`:$toast-background-image`"                 
-          :br "`:$toast-box-shadow`"                 
-          :br "`:$toast-box-shadow-inverse`"                 
-          :br "`:$toast-border-width`"                 
-          :br "`:$toast-border-style`"                 
-          :br "`:$toast-border-color`"                 
-          :br "`:$toast-border-color-inverse`"                 
           :br
-          :br "Geometry:"
-          :br "`:$toast-border-radius`"
-          :br "`:$toast-slot-padding-inline`"
-          :br "`:$toast-slot-padding-block`"
-          :br "`:$toast-slot-gap`"
-          :br "`:$toast-slot-z-index`"
+          "__Colors and images:__"
+          "`:$toast-background-color`" :br
+          "`:$toast-background-color-inverse`" :br 
+          "`:$toast-background-image`" :br                  
+          "`:$toast-box-shadow`" :br                  
+          "`:$toast-box-shadow-inverse`" :br                  
+          "`:$toast-border-width`" :br                  
+          "`:$toast-border-style`" :br                  
+          "`:$toast-border-color`" :br                  
+          "`:$toast-border-color-inverse`"
+          :br                  
           :br
-          :br "Choreography:"
-          :br "`:$toast-delay-duration`"            
-          :br "`:$toast-initial-scale`"             
-          :br "`:$toast-transition-duration`"       
-          :br "`:$toast-transition-timing-function`"
-          :br "`:$toast-auto-dismiss-duration`"
+          "__Geometry:__"
+          "`:$toast-border-radius`" :br 
+          "`:$toast-slot-padding-inline`" :br 
+          "`:$toast-slot-padding-block`" :br 
+          "`:$toast-slot-gap`" :br 
+          "`:$toast-slot-z-index`"
+          :br 
+          :br
+          "__Choreography:__"
+          "`:$toast-delay-duration`" :br             
+          "`:$toast-initial-scale`" :br              
+          "`:$toast-transition-duration`" :br        
+          "`:$toast-transition-timing-function`" :br 
+          "`:$toast-auto-dismiss-duration`"
+          :br 
           :br
           "If you want supply the value of any of the above tokens ala-carte, "
           "use the following pattern."
@@ -166,9 +172,11 @@
            {:name    slide-in?
             :pred    boolean?
             :default true
-            :desc    ["Toasts slide into the viewport by default. The timing of "
-                      "this can be controlled by the theme token "
-                      "`:$toast-transition-duration`"]}]}
+            :desc    ["Toasts slide into the viewport by default. The timing "
+                      "of this can be controlled by the theme token "
+                      "`:$toast-transition-duration`. For users prefering "
+                      "reduced motion (an OS-level setting), toasts will never "
+                      "slide in, nor will they scale up or down upon entry."]}]}
 
   [{placement         :-placement
     auto-dismiss?     :-auto-dismiss?

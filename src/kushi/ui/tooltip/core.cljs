@@ -1,5 +1,6 @@
 (ns kushi.ui.tooltip.core
   (:require
+   [fireworks.core :refer [??? !? ?> !?>]]
    [applied-science.js-interop :as j]
    [clojure.string :as string]
    [goog.string]
@@ -57,22 +58,22 @@
           "tokens in your theme:"
           :br
           ;; TODO add documentation for each token
-          :br "Colors and images:"
-          :br "`:$tooltip-color`"                            
+          :br "__Colors and images:__"
+              "`:$tooltip-color`"                            
           :br "`:$tooltip-color-inverse`"                    
           :br "`:$tooltip-background-color`"                 
           :br "`:$tooltip-background-color-inverse`"         
           :br "`:$tooltip-background-image`"                 
           :br
-          :br "Typography:"
-          :br "`:$tooltip-line-height`"
+          :br "__Typography:__"
+              "`:$tooltip-line-height`"
           :br "`:$tooltip-font-family`"
           :br "`:$tooltip-font-size`"
           :br "`:$tooltip-font-weight`"
           :br "`:$tooltip-text-transform`"
           :br
-          :br "Geometry:"
-          :br "`:$tooltip-padding-inline`"
+          :br "__Geometry:__"
+              "`:$tooltip-padding-inline`"
           :br "`:$tooltip-padding-block`"
           :br "`:$tooltip-border-radius`"
           :br "`:$tooltip-offset`"
@@ -80,16 +81,16 @@
           :br "`:$tooltip-flip-viewport-edge-threshold`"
           :br "`:$tooltip-auto-placement-y-threshold`"
           :br
-          :br "Choreography:"
-          :br "`:$tooltip-delay-duration`"            
+          :br "__Choreography:__"
+              "`:$tooltip-delay-duration`"            
           :br "`:$tooltip-reveal-on-click-duration`"  
           :br "`:$tooltip-initial-scale`"             
           :br "`:$tooltip-offset-start`"              
           :br "`:$tooltip-transition-duration`"       
           :br "`:$tooltip-transition-timing-function`"
           :br
-          :br "Arrows:"
-          :br "`:$tooltip-arrow-depth`"   
+          :br "__Arrows:__"
+              "`:$tooltip-arrow-depth`"   
           :br "`:$tooltip-arrow-x-offset`"
           :br "`:$tooltip-arrow-y-offset`"
 
