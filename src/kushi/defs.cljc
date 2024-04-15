@@ -21,8 +21,8 @@
    :first-line
    :grammar-error
    :marker
-   :part
-   :slotted
+   :part    ;;()
+   :slotted ;;()
    :spelling-error
    :-moz-progress-bar
    :-moz-range-progress
@@ -32,6 +32,11 @@
    :-webkit-progress-value
    :-webkit-slider-runnable-track
    :-webkit-slider-thumb])
+
+(def functional-pseudo-elements*
+  [:part    ;;()
+   :slotted ;;()
+   ])
 
 (def pseudo-elements
   (into #{} pseudo-elements*))
@@ -68,17 +73,20 @@
   [:hover
    :active
    :focus
-   :not
+   :not ;;()
    :first-child
    :last-child
-   :nth-child
+   :nth-child ;;()
    :visited
    :checked
    :disabled
-   :nth-of-type
-   :nth-last-child
-   :nth-last-of-type
-   :first-of-type
+   :nth-of-type ;;()
+   :nth-last-child ;;()
+   :nth-last-of-type ;;()
+   :has ;; ()
+   :is ;; ()
+   :where ;; ()
+   :first-of-type 
    :last-of-type
    :only-child
    :required
@@ -94,25 +102,43 @@
    :focus-within
    :any-link
    :blank
-   :current
-   :dir
-   :future
+   :dir ;;()
+   :host ;;()
    :indeterminate
    :in-range
    :invalid
-   :lang
+   :lang ;;()
    :local-link
-   :is
    :only-of-type
    :optional
    :out-of-range
-   :past
+   :current ;;()
+   :past ;;()
+   :future ;;()
    :placeholder-shown
    :playing
    :paused
    :read-only
    :read-write
    :scope])
+
+(def functional-pseudo-classes* 
+  [
+   :not ;;()
+   :nth-child ;;()
+   :nth-of-type ;;()
+   :nth-last-child ;;()
+   :nth-last-of-type ;;()
+   :has ;; ()
+   :is ;; ()
+   :where ;; ()
+   :dir ;;()
+   :host ;;()
+   :lang ;;()
+   :current ;;()
+   :past ;;()
+   :future ;;()
+   ])
 
 (def pseudo-classes
   (into #{} pseudo-classes*))
