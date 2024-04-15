@@ -132,18 +132,23 @@
 
 ;; SPECS -----------------------------------------------------------------
 
+;; nix?
 (s/def ::hex-color
   #(re-find-with hex-color-re %))
 
+;; nix?
 (s/def ::named-css-color
   (s/and ::nameable #(contains? garden.color/color-name->hex (keyword (name %)))))
 
+;; nix?
 (s/def ::token-color
   (s/and ::nameable #(re-find (re-pattern token-color-re) %)))
 
+;; nix?
 (s/def ::maybe-transparent-color
   (s/and ::nameable #(re-find (re-pattern maybe-transparent-color-re) %)))
 
+;; nix?
 ;; ::kushi-trace is for debugging during dev
 (s/def ::kushi-trace
   (s/and #(= % :kushi/trace)))
@@ -220,6 +225,7 @@
   (s/and #(or (list? %) (seq? %))
          #(= 'str (first %))))
 
+;; nix?
 (s/def ::str-sexp-valid
   (s/and ::str-sexp
          (s/coll-of (s/or :string string? :binding symbol?))))
@@ -455,6 +461,8 @@
                               :string? string?
                               :vector? (s/and vector? #(seq %) (s/coll-of string?))))
 
+
+
 ;; TOKENIZED STYLE -------------------------------------------------------
 (s/def ::tokenized-style
   (s/and keyword?
@@ -512,8 +520,6 @@
   #(and (s/valid? ::style-tuple %)
         (not (s/valid? ::style-tuple-value-imbalanced-string
                        (second %)))))
-
-
 
 (s/def ::sx-args
   (s/cat
