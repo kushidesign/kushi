@@ -402,7 +402,7 @@
    :xxxslow       {:transition-duration :$xxxslow}
 
 
-   ;; Surfaces, buttons, containers 2D
+   ;; Surfaces, panes, cards, containers 2D
    ;; ------------------------------------------------------
    :rounded-xxxsmall      {:border-radius :$rounded-xxxsmal}
    :rounded-xxsmall       {:border-radius :$rounded-xxsmall}
@@ -414,8 +414,24 @@
    :rounded-xxlarge       {:border-radius :$rounded-xxlarge}
    :rounded-xxxlarge      {:border-radius :$rounded-xxxlarge}
 
-   ;; This one is used for buttons, tags etc ... The roundedness is always relative to font-size
    :rounded               {:border-radius :$rounded-medium}
+
+
+   ;; Buttons, badges 2D 
+   ;; ------------------------------------------------------
+   :rounded-absolute-xxxsmall      {:border-radius :$rounded-absolute-xxxsmal}
+   :rounded-absolute-xxsmall       {:border-radius :$rounded-absolute-xxsmall}
+   :rounded-absolute-xsmall        {:border-radius :$rounded-absolute-xsmall}
+   :rounded-absolute-small         {:border-radius :$rounded-absolute-small}
+   :rounded-absolute-medium        {:border-radius :$rounded-absolute-medium}
+   :rounded-absolute-large         {:border-radius :$rounded-absolute-large}
+   :rounded-absolute-xlarge        {:border-radius :$rounded-absolute-xlarge}
+   :rounded-absolute-xxlarge       {:border-radius :$rounded-absolute-xxlarge}
+   :rounded-absolute-xxxlarge      {:border-radius :$rounded-absolute-xxxlarge}
+
+   ;; This one is used for buttons, tags etc ... The roundedness is always relative to font-size
+   :rounded-absolute               {:border-radius :$rounded-absolute-medium}
+
 
    :sharp         {:border-radius 0}
    :pill          {:border-radius :9999px}
