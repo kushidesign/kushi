@@ -90,7 +90,13 @@
                  (map (partial component-by-index coll) syms))
          ;; idxs [0 1]
          ;; idxs [13 14]
-         ret   (validated-playground-examples idxs coll)]
+         
+         ;; This just keeps calling validated-playground-examples when switching
+         ;; between components - fix this, for now only use during dev when you
+         ;; are adding new examples.
+        ;;  ret   (validated-playground-examples idxs coll)
+
+         ret  coll]
      ret)))
 
 (defn main-section [s & children]
@@ -149,7 +155,9 @@
             :&_a.kushi-link:after:mi                              :0.2em:0.25em
 
             ;; For dev-mode isolation
-            "&_.kushi-playground-dev-mode>section:not(.kushi-playground-dev-mode-target):display" :none}}))
+            "&_.kushi-playground-dev-mode>section:not(.kushi-playground-dev-mode-target):display" :none
+            
+            }}))
 
 
 (defn desktop-lightswitch []
@@ -197,6 +205,7 @@
                      colorlist)]
     (keyed coll ret)
     ret))
+
 
 
 
@@ -260,7 +269,13 @@
                                            (every? int? idxs*))
                                     idxs*
                                     (map (partial component-by-index coll) []))
-                            ret   (validated-playground-examples idxs coll)]
+
+                            ;; This just keeps calling validated-playground-examples when switching
+                            ;; between components - fix this, for now only use during dev when you
+                            ;; are adding new examples.
+                            ;; ret   (validated-playground-examples idxs coll)
+                            ret   coll
+                            ]
                         ret)})
 
         global-color-scales
