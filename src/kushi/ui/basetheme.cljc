@@ -64,17 +64,17 @@
   [
    ;; Neutral --------------------------------------------------
    ;; default
-   :.neutral:color                                  1000
-   :.neutral:hover:color                            1000
-   :.neutral:active:color                           1000
+   :.neutral:color                                  900
+   :.neutral:hover:color                            900
+   :.neutral:active:color                           900
 
    :.neutral:background-color                       100
    :.neutral:hover:background-color                 200
    :.neutral:active:background-color                300
 
-   :.neutral.info:color                             1000
-   :.neutral.info:hover:color                       1000
-   :.neutral.info:active:color                      1000
+   :.neutral.info:color                             900
+   :.neutral.info:hover:color                       900
+   :.neutral.info:active:color                      900
 
    :.neutral.info:background-color                  100
    :.neutral.info:hover:background-color            100
@@ -82,9 +82,9 @@
 
 
    ;; minimal
-   :.neutral.minimal:color                          1000
-   :.neutral.minimal:hover:color                    1000
-   :.neutral.minimal:active:color                   1000
+   :.neutral.minimal:color                          900
+   :.neutral.minimal:hover:color                    900
+   :.neutral.minimal:active:color                   900
 
    :.neutral.minimal:background-color               :transparent
    :.neutral.minimal:hover:background-color         100
@@ -92,25 +92,25 @@
 
 
    ;; bordered
-   :.neutral.bordered:color                         1000
-   :.neutral.bordered:hover:color                   1000
-   :.neutral.bordered:active:color                  1000
+   :.neutral.bordered:color                         900
+   :.neutral.bordered:hover:color                   900
+   :.neutral.bordered:active:color                  900
 
    :.neutral.bordered:background-color              :transparent
    :.neutral.bordered:hover:background-color        :transparent
    :.neutral.bordered:active:background-color       :transparent
 
-   :.neutral.bordered:border-color                  1000
-   :.neutral.bordered:hover:border-color            1000
-   :.neutral.bordered:active:border-color           1000
+   :.neutral.bordered:border-color                  900
+   :.neutral.bordered:hover:border-color            900
+   :.neutral.bordered:active:border-color           900
 
    :.neutral.bordered.info:background-color         :transparent
    :.neutral.bordered.info:hover:background-color   :transparent
    :.neutral.bordered.info:active:background-color  :transparent
 
-   :.neutral.bordered.info:border-color             1000
-   :.neutral.bordered.info:hover:border-color       1000
-   :.neutral.bordered.info:active:border-color      1000
+   :.neutral.bordered.info:border-color             900
+   :.neutral.bordered.info:hover:border-color       900
+   :.neutral.bordered.info:active:border-color      900
 
 
    ;; filled
@@ -118,13 +118,13 @@
    :.neutral.filled:hover:color                     :white
    :.neutral.filled:active:color                    :white
 
-   :.neutral.filled:background-color                800
-   :.neutral.filled:hover:background-color          900
-   :.neutral.filled:active:background-color         1000
+   :.neutral.filled:background-color                700
+   :.neutral.filled:hover:background-color          800
+   :.neutral.filled:active:background-color         9000
 
-   :.neutral.filled.info:background-color           800
-   :.neutral.filled.info:hover:background-color     800
-   :.neutral-filled.info:active:background-color    800
+   :.neutral.filled.info:background-color           700
+   :.neutral.filled.info:hover:background-color     700
+   :.neutral-filled.info:active:background-color    700
 
 
    ;; NEUTRAL INVERSE
@@ -193,7 +193,7 @@
    ".dark .neutral-filled.info:active:background-color"    250
 
    ;; Accent
-   :.accent:color                                700
+   :.accent:color                                  700
    :.accent:hover:color                            800
    :.accent:active:color                           900
 
@@ -245,13 +245,13 @@
    :.accent.filled:hover:color                     :white
    :.accent.filled:active:color                    :white
 
-   :.accent.filled:background-color                550
-   :.accent.filled:hover:background-color          700
-   :.accent.filled:active:background-color         800
+   :.accent.filled:background-color                600
+   :.accent.filled:hover:background-color          750
+   :.accent.filled:active:background-color         850
 
-   :.accent.filled.info:background-color           550
-   :.accent.filled.info:hover:background-color     550
-   :.accent-filled.info:active:background-color    550
+   :.accent.filled.info:background-color           600
+   :.accent.filled.info:hover:background-color     600
+   :.accent-filled.info:active:background-color    600
 
    ;; ACCENT INVERSE
    ;; default
