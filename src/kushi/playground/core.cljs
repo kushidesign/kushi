@@ -7,6 +7,11 @@
    [kushi.color :refer [colors->tokens]]
    [kushi.colors :as kushi.colors]
    [kushi.ui.examples :as examples]
+   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.button.demo :as button.demo ]
+   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.progress.core :refer (progress spinner propeller thinking)]
+   [kushi.playground.layout :as layout]
    [kushi.playground.nav :as nav]
    [kushi.playground.about :as about]
    [kushi.playground.state :as state :refer [*state]]
@@ -295,13 +300,26 @@
          kushi-about)
 
         page-wrapper-attrs-from-user
-        page-wrapper-attrs]
+        page-wrapper-attrs
+        
+        _comps
+        ["button"
+         "switch"
+         "slider"
+         "toast"
+         "tooltip"
+         "alert"
+         "modal"
+         "badge"
+         "radio"
+         "popover"]]
 
 
 
     ;; Page layout -------------------------------------------------------------------------------
 
-    [:div
+    [layout/layout _comps]
+    #_[:div
      (merge-attrs kushi-playground-page-wrapper-attrs
                   (when hide-lightswitch? {:class [:hide-lightswitch :one-more-thing]})
                   page-wrapper-attrs-from-user)
@@ -327,6 +345,7 @@
                         "px)")]
         (sx
          'kushi-playground-main-section-wrapper
+         :d--none!important
          :.flex-col-fs
          :.grow
          :.no-shrink
@@ -337,7 +356,7 @@
          :fs--$kushi-playground-main-section-wrapper_font-size||$medium
          :transition-property--opacity
          :md:flex-direction--row
-         :md:jc--fe
+         :md:jc--fs
          :md:pie--05vw
          :lg:jc--c
          :lg:pis--4rem
