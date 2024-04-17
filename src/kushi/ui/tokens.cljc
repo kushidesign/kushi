@@ -138,10 +138,10 @@
    ;; Buttons
    ;; ------------------------------------------------------
    :$button-padding-inline-ems              :1.2em
-   :$icon-button-padding-inline-ems         :0.8em
-   :$button-padding-block-ems               :0.8em
-   :$button-with-icon-padding-inline-offset :0.8em
-   :$button-border-width                    :1.5px
+   :$icon-button-padding-inline-ems         :0.69em
+   :$button-padding-block-ems               :0.69em
+   :$button-with-icon-padding-inline-offset :0.69em
+   :$button-border-width                    :1px
 
 
 
@@ -169,7 +169,7 @@
    :$pane-min-height                       :75px
    :$pane-padding-inline                   :1em
    :$pane-padding-block                    :0.5em
-   :$pane-border-radius                    :$rounded
+   :$pane-border-radius                    :$rounded-absolute-large
    :$pane-offset                           :7px
    :$pane-viewport-padding                 :5px 
    :$pane-flip-viewport-edge-threshold     :32px 
@@ -265,7 +265,7 @@
    :$popover-box-shadow-inverse               :$pane-box-shadow-inverse
    :$popover-border-width                     :1px
    :$popover-border-style                     :solid
-   :$popover-border-color                     :$neutral-300
+   :$popover-border-color                     :$neutral-200
    :$popover-border-color-inverse             :$neutral-500
 
    ;; popover geometry
@@ -323,7 +323,7 @@
 
    ;; Modals
    ;; ------------------------------------------------------
-   :$modal-border-radius                    :$rounded-medium
+   :$modal-border-radius                    :$rounded-absolute-large
    :$modal-border                           :none
    :$modal-padding                          :2rem
    :$modal-padding-block                    :$modal-padding
@@ -347,19 +347,31 @@
 
    ;; Intended for css props: border-radius
    ;; ------------------------------------------------------
-   :$rounded-xxxsmall                       :0.625rem         ;; 1px
-   :$rounded-xxsmall                        :0.125rem         ;; 2px
-   :$rounded-xsmall                         :0.25rem          ;; 4px
-   :$rounded-small                          :0.375rem         ;; 6px
-   :$rounded-medium                         :0.5rem           ;; 8px
-   :$rounded-large                          :0.75rem          ;; 12px
-   :$rounded-xlarge                         :0.1rem           ;; 16px
-   :$rounded-xxlarge                        :1.25rem          ;; 20px
-   :$rounded-xxxlarge                       :1.5625rem        ;; 25px
+
+   ;; Absolute versions for panes, cards, etc.
+   :$rounded-absolute-xxxsmall              :0.625rem         ;; 1px
+   :$rounded-absolute-xxsmall               :0.125rem         ;; 2px
+   :$rounded-absolute-xsmall                :0.25rem          ;; 4px
+   :$rounded-absolute-small                 :0.375rem         ;; 6px
+   :$rounded-absolute-medium                :0.5rem           ;; 8px
+   :$rounded-absolute-large                 :0.75rem          ;; 12px
+   :$rounded-absolute-xlarge                :0.1rem           ;; 16px
+   :$rounded-absolute-xxlarge               :1.25rem          ;; 20px
+   :$rounded-absolute-xxxlarge              :1.5625rem        ;; 25px
+
+   ;; Relative (to type size) versions for buttons, badges
+   :$rounded-xxxsmall                       :0.4375em  
+   :$rounded-xxsmall                        :0.0875em  
+   :$rounded-xsmall                         :0.175em   
+   :$rounded-small                          :0.2625em  
+   :$rounded-medium                         :0.35em    
+   :$rounded-large                          :0.525em   
+   :$rounded-xlarge                         :0.7em     
+   :$rounded-xxlarge                        :0.875em   
+   :$rounded-xxxlarge                       :1.09375em 
 
    :$rounded                                :$rounded-medium
 
-   ;; TODO - what
    :$border-weight                          :1px
 
 
