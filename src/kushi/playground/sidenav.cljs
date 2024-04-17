@@ -203,9 +203,11 @@
          :.fixed
          :.flex-col-fs
          :.wee-bold
-         :iis--$kushi-playground-sidenav-inset-inline-start||1.5rem
-         [:xl:iis "calc((100% - 708px) / 4)"]
-         [:xl:transform '(translateX :-50%)]
+        ;;  :iis--$kushi-playground-sidenav-inset-inline-start||1.5rem
+         :iis--unset
+         :iie--0
+        ;;  [:xl:iis "calc((100% - 708px) / 4)"]
+        ;;  [:xl:transform '(translateX :-50%)]
          :ibs--0
          :&_ul:list-style-type--none
          :&_li:list-style-type--none
