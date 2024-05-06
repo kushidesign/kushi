@@ -103,7 +103,7 @@
                        :bgc                                             (when section-focused? :$gray-0)
                        :bisc                                            (if section-focused? "rgba(0, 0, 0, 0.2)" :transparent)
                        :dark:bisc                                       (if section-focused? "rgba(255, 255, 255, 0.4)" :transparent)
-                       "has-ancestor(.mobile-subnav):fs"                  :$xsmall
+                       "has-ancestor(.mobile-subnav):fs"                  :$xxsmall
                        "has-ancestor(.mobile-subnav):tt"                  :capitalize
                        "has-ancestor(.mobile-subnav):bgc"                 (if section-focused? :$gray-100 :transparent)
                        "dark:has-ancestor(.mobile-subnav):bgc"            (if section-focused? :$gray-750 :transparent)
@@ -128,7 +128,8 @@
     [:li (sx 'kushi-treenav-section-level-1
              :mbs--1em
              :>a:mbs--0.5em
-             :first-child:>a:mbs--0em)
+             :first-child:>a:mbs--0em
+             ["sm:has(#kushi-colors-nav-section):display" :none])
      [sidenav-section-header section-opts]
      [sidenav-section-items section-opts items]]))
 
@@ -238,14 +239,18 @@
        :&_.styled-scrollbars>ul:d--flex
        :&_.styled-scrollbars>ul:flex-wrap--wrap
        :&_.styled-scrollbars>ul:pb--0.5em
-
+       :&_.kushi-treenav-section-level-1:fs--$xxsmall
        :&_.kushi-treenav-section-level-1>ul:d--none
        :&_.kushi-treenav-section-level-1>a:mb--0.25em
        :&_.kushi-treenav-section-level-1>span:mb--0.5em:0
        :&_.kushi-treenav-section-level-1>a:pi--0:0em
-       :&_.kushi-treenav-section-level-1>a:mi--0:0.5em
+       :&_.kushi-treenav-section-level-1>a:mi--0:0.0em
        :&_.kushi-treenav-section-level-1>span:pi--0:1.5em
        :&_.collapse-all-control:d--none
+       ["&_ul>li:nth-child(2):d" :none]
+       ["&_ul>li:nth-child(5):d" :none]
+       ["sm:&_ul>li:nth-child(2):d" :list-item]
+       ["sm:&_ul>li:nth-child(5):d" :list-item]
        {:-wrapper-attrs (sx :.fixed
                             :d--block
                             :md:d--none

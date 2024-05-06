@@ -19,6 +19,8 @@
     [:section
      (merge-attrs
       (sx 'playground-generic-intro-section
+          :d--none
+          :sm:d--block
           :.transition
           :bbe--$divisor
           :dark:bbe--$divisor-dark
@@ -51,7 +53,9 @@
            :pbs--2.25em
            :md:pbs--$vp-top-header-padding-with-offset
            {:style {:transform '(translateX :-1.5px)}})
-       header]]
+       (if @state/*md-or-smaller?
+         "Playground"
+         header)]]
      [:section
       (sx 'intro-section-body
           :.normal

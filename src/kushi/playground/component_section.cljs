@@ -83,6 +83,7 @@
        [:&_p&_code {:pb  :0.07em
                     :pi  :0.2em
                     :fs  :0.85rem
+                    :fw  :$wee-bold
                     :c   :$accent-750
                     :bgc :$accent-50}]
        [:dark:&_p&_code {:c   :$accent-100
@@ -166,13 +167,14 @@
     (sx 'kushi-opt-detail-label :min-width--75px)
     [label (sx :.kushi-playground-meta-desc-label :.normal) text]]
    [:div (sx 'kushi-opt-detail-value
-             [:&_.code {:pb       :0.07em
-                        :pi       :0.2em
-                        :fs       :0.85rem
-                        :c        :$accent-750
-                        :bgc      :$accent-50
-                        :dark:c   :$accent-100
-                        :dark:bgc :$accent-900}])
+             :.wee-bold
+             [:&_.code {:pb  :0.07em
+                        :pi  :0.2em
+                        :fs  :0.85rem
+                        :c   :$accent-750
+                        :bgc :$accent-50}]
+             :dark:&_.code:c--$accent-100
+             :dark:&_.code:bgc--$accent-900)
     [f v]]])
 
 (defn component-section-body
@@ -230,7 +232,7 @@
                   [:div (sx :mb--0.7rem)
                    [:span
                     (sx :.code
-                        :.semi-bold
+                        :.wee-bold
                         {:style {:pb       :0.07em
                                  :pi       :0.2em
                                  :fs       :0.85rem
