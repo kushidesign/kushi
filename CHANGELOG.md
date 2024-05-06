@@ -7,6 +7,8 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
 
 ### Added
 - New floating layer abstraction & tooltip implementation. Closes #43. Closes #47.
+- New popover component. Closes #49.
+- New toast component. Closes #46.
 - Dependency on `design.kushi/domo` in place of `kushi.ui.dom`
 
 ### Fixed
