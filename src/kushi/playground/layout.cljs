@@ -29,7 +29,7 @@
                 :pbs--1rem
                 :gap--0.25rem
                 :overflow-y--auto)]
-          (for [comp _comps]
+          (for [{:keys [label]} _comps]
             [:li (sx :.xsmall
                      :.wee-bold
                      :.capitalize
@@ -37,7 +37,7 @@
                      :w--fit-content
                      :p--$padding
                      :first-child:bgc--$blue-100)
-             comp]))])
+             label]))])
 
 (defn header []
   [:div
@@ -56,7 +56,7 @@
    [header]
    [desktop-component-sidenav _comps]
    ;; Main section
-   [:div 
+   #_[:div 
     (sx :.flex-col-fs :gap--1rem :p--100px)
 
     [kushi.button/button
@@ -70,7 +70,7 @@
       :-variant  :filled}
      "Hello"]]
 
-   #_(into [:div
+   (into [:div
           (sx :.flex-col-fs
               :.grow
               ;; :bgc--$brown-00
@@ -81,14 +81,14 @@
               :mie--190px)]
          
          #_[button2 "Hello"]
-
-         #_(for [comp _comps]
+         ;; Cycle through Collection of components  defined in playground.core
+         (for [{:keys [label demo-component] :as opts} _comps]
            [:section
             (sx :min-height--300px)
             [:h1 (sx :.xxlarge
                      :.semi-bold
                      :.capitalize
                      :mbe--2rem)
-             comp]
-            (when (= "button" comp)
-              [button.demo/demo2])]))])
+             label]
+            (when demo-component
+              [demo-component opts])]))])

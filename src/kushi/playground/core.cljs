@@ -9,6 +9,8 @@
    [kushi.ui.examples :as examples]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.button.demo :as button.demo ]
+   [kushi.ui.input.switch.core :refer [switch]]
+   [kushi.ui.input.switch.demo :as switch.demo ]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.progress.core :refer (progress spinner propeller thinking)]
    [kushi.playground.layout :as layout]
@@ -302,16 +304,36 @@
         page-wrapper-attrs
         
         _comps
-        ["button"
-         "switch"
-         "slider"
-         "toast"
-         "tooltip"
-         "alert"
-         "modal"
-         "badge"
-         "radio"
-         "popover"]]
+        [
+         #_{:label          "button"
+            :demo-component button.demo/demo2
+            :component      button
+            :reqs           '[[kushi.ui.button.core :refer [button]]]
+            :variants-base  #{:rounded :filled :bordered}
+            :variants-order [:rounded :filled :bordered :minimal]
+            :variants-attrs {:rounded  (sx :.rounded)
+                             :filled   (sx :.rounded :.filled)
+                             :bordered (sx :.rounded :.bordered)
+                             :minimal  (sx :.rounded :.minimal)}
+            }
+         {:label          "switch" 
+          :demo-component switch.demo/demo2
+          :component      switch
+          :reqs           '[[kushi.ui.input.switch.core :refer [switch]]]
+          :variants-base  #{:on}
+          :variants-order [:off :on]
+          :variants-attrs {:on  {:-on? true}
+                           :off {}}
+          }
+         {:label "slider" }
+        ;;  "toast"
+        ;;  "tooltip"
+        ;;  "alert"
+        ;;  "modal"
+        ;;  "badge"
+        ;;  "radio"
+        ;;  "popover"
+         ]]
 
 
 
