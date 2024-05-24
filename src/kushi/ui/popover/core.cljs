@@ -1,5 +1,6 @@
 (ns kushi.ui.popover.core
   (:require
+   [fireworks.core :refer [? !?]]
    [applied-science.js-interop :as j]
    [goog.string]
    [domo.core :as domo]
@@ -206,7 +207,9 @@
           placement-kw (or (maybe placement #(= % :auto))
                            (user-placement placement))
           pane-type    :popover
+          ;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
           ;; TODO add `popover-class` here, similar to tooltip
+          ;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
           opts         (keyed placement-kw
                               arrow?
                               auto-dismiss?
