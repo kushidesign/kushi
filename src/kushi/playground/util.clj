@@ -19,6 +19,11 @@
     m
     `~m))
 
+(defmacro sx-call 
+  [coll]
+  `{:evaled ~coll
+    :quoted (quote ~coll)})
+
 (defmacro example2
   [coll]
   `{:evaled ~coll
