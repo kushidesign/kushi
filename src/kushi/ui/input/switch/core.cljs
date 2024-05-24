@@ -119,6 +119,7 @@
        :.transition
        :.xxfast!
        :.flex-row-fs
+       :.no-shrink
 
        ["&_.kushi-switch-thumb-content-off:display" :flex]
        ["&_.kushi-switch-thumb-content-on:display" :none]
