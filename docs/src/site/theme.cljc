@@ -50,9 +50,9 @@
                         :$code-background-color                  :$accent-50
                         :$code-color-inverse                     :$accent-100
                         :$code-background-color-inverse          :$accent-900
-
                         :$button-with-icon-padding-inline-offset :0.8em
-                        :$kushi-playground-mobile-header-height  :46px]
+                        :$kushi-playground-mobile-header-height  :46px
+                        :$popover-border-color                   :$neutral-300]
 
      :typescale        (create-typescale {:size-limit "xxx" :shift 0})
      :type-scale-shift 1
