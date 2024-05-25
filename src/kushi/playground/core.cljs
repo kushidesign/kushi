@@ -8,7 +8,9 @@
    [kushi.colors :as kushi.colors]
    [kushi.ui.examples :as examples]
    [kushi.ui.button.core :refer [button]]
+   [kushi.ui.label.core :refer [label]]
    [kushi.ui.button.demo :as button.demo ]
+   [kushi.ui.input.radio.core :refer [radio]]
    [kushi.ui.input.switch.core :refer [switch]]
    [kushi.ui.input.switch.demo :as switch.demo ]
    [kushi.ui.icon.core :refer [icon]]
@@ -25,18 +27,21 @@
    [kushi.playground.util
     :as util
     :refer-macros [keyed]]
-   
+
+   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
+   [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
+   [reagent.dom :as rdom]
+
   ;; leave in, comment out when tweaking typescale
   ;; [kushi.playground.tweak.typescale :refer [type-tweaker]]
-
+   
   ;; ------------------------------------------------------
   ;; TODO figure out how to use as dev-only instrumentation 
-  [malli.dev.pretty :as pretty]
-  [malli.core :as malli]
+   [malli.dev.pretty :as pretty]
+   [malli.core :as malli]
   ;; ------------------------------------------------------
-
+   
    ))
-
 
 ;; --------------------------------------------------------------------------------
 ;; TODO figure how to instrument this for dev-only
@@ -260,72 +265,73 @@
                               :sidenav-header "About"}
            colorlist         [:gray :red :orange :gold :yellow :green :blue :purple :magenta :brown]}
     :as   m}]
-  (let [m                  
-        (merge m (keyed render
-                        mobile-nav
-                        kushi-colors
-                        kushi-user-guide
-                        kushi-clojars
-                        kushi-about))
+  (let [m                            (merge m (keyed render
+                                                     mobile-nav
+                                                     kushi-colors
+                                                     kushi-user-guide
+                                                     kushi-clojars
+                                                     kushi-about))
 
-        kushi-components    
-        (merge kushi-components
-               {:coll (let [coll  examples/components 
-                            idxs* (:kushi-component-indexes @*state)
-                            idxs  (if (and (seq (:kushi-components-indexes @*state))
-                                           (every? int? idxs*))
-                                    idxs*
-                                    (map (partial component-by-index coll) []))
+        kushi-components             (merge kushi-components
+                                            {:coll (let [coll  examples/components 
+                                                         idxs* (:kushi-component-indexes @*state)
+                                                         idxs  (if (and (seq (:kushi-components-indexes @*state))
+                                                                        (every? int? idxs*))
+                                                                 idxs*
+                                                                 (map (partial component-by-index coll) []))
 
                             ;; This just keeps calling validated-playground-examples when switching
                             ;; between components - fix this, for now only use during dev when you
                             ;; are adding new examples.
                             ;; ret   (validated-playground-examples idxs coll)
-                            ret   coll
-                            ]
-                        ret)})
+                                                         ret   coll
+                                                         ]
+                                                     ret)})
 
-        global-color-scales
-        (color-scales2 {:colorlist colorlist})
+        global-color-scales          (color-scales2 {:colorlist colorlist})
 
-        nav-opts            
-        (keyed
-         custom-components
-         kushi-components
-         custom-colors
-         kushi-colors
-         custom-typography
-         kushi-typography
-         kushi-user-guide
-         kushi-clojars
-         kushi-about)
+        nav-opts                     (keyed
+                                      custom-components
+                                      kushi-components
+                                      custom-colors
+                                      kushi-colors
+                                      custom-typography
+                                      kushi-typography
+                                      kushi-user-guide
+                                      kushi-clojars
+                                      kushi-about)
 
-        page-wrapper-attrs-from-user
-        page-wrapper-attrs
+        page-wrapper-attrs-from-user page-wrapper-attrs
         
-        _comps
-        [
-         {:label          "button"
-            :demo-component button.demo/demo2
-            :component      button
-            :reqs           '[[kushi.ui.button.core :refer [button]]]
-            :variants-base  #{:rounded :filled :bordered}
-            :variants-order [:rounded :filled :bordered :minimal]
-            :variants-attrs {:rounded  (sx :.rounded)
-                             :filled   (sx :.rounded :.filled)
-                             :bordered (sx :.rounded :.bordered)
-                             :minimal  (sx :.rounded :.minimal)}
-            }
-         {:label          "switch" 
-          :demo-component switch.demo/demo2
-          :component      switch
-          :reqs           '[[kushi.ui.input.switch.core :refer [switch]]]
-          :variants-base  #{:on :off}
-          :variants-order [:off :on]
-          :variants-attrs {:on  {:-on? true}
-                           :off {}}
-          }
-         {:label "slider" }
+        ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;; TODO  do tooltips
+        ;; row of buttons that show all positions with no delay
+        ;; row of buttons that show various delays 
+        ;; row of buttons that show various animations 
+        ;; row of buttons that show various stylings (no arrow etc)
+        ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        _comps                       [
+                                      {:label          "button"
+                                       :demo-component button.demo/demo2
+                                       :component      button
+                                       :reqs           '[[kushi.ui.button.core :refer [button]]]
+                                       :variants-base  #{:rounded :filled :bordered}
+                                       :variants-order [:rounded :filled :bordered :minimal]
+                                       :variants-attrs {:rounded  (sx :.rounded)
+                                                        :filled   (sx :.rounded :.filled)
+                                                        :bordered (sx :.rounded :.bordered)
+                                                        :minimal  (sx :.rounded :.minimal)}
+                                       }
+                                      {:label          "switch" 
+                                       :demo-component switch.demo/demo2
+                                       :component      switch
+                                       :reqs           '[[kushi.ui.input.switch.core :refer [switch]]]
+                                       :variants-base  #{:on :off}
+                                       :variants-order [:off :on]
+                                       :variants-attrs {:on  {:-on? true}
+                                                        :off {}}
+                                       }
+                                      {:label "slider" }
         ;;  "toast"
         ;;  "tooltip"
         ;;  "alert"
@@ -333,121 +339,152 @@
         ;;  "badge"
         ;;  "radio"
         ;;  "popover"
-         ]]
+                                      ]
+        
+        popover-content              (fn [] [:div.absolute-centered "hi"])]
 
 
 
     ;; Page layout -------------------------------------------------------------------------------
+    
 
-    [layout/layout _comps]
+    ;; loading-example 
+    #_[:div.absolute-centered
+       [button
+        (sx {:-loading? true})
+        [progress [icon :play-arrow] [propeller]] 
+        "Play"]]
+    
+
+    ;; popover example
+    [:div.absolute-centered
+     [button
+      (merge-attrs 
+       (popover-attrs
+        {:-f (fn [popover-el]
+               (rdom/render popover-content
+                            popover-el))})
+       (tooltip-attrs
+        {:-text "My tooltip text"}))
+      "click 4 deets"]]
+
+    ;; radio example
+    [:div.absolute-centered
+     [:section
+      [label (sx :.bold :mbe--0.75em) "Choose an option:"]
+      [radio (sx {:-input-attrs {:name :demo}}) "Yes"]
+      [radio (sx {:-input-attrs {:name :demo}}) "No"]
+      [radio (sx {:-input-attrs {:name :demo}}) "Maybe"]]]
+
+    #_[layout/layout _comps]
     #_[:div
-     (merge-attrs kushi-playground-page-wrapper-attrs
-                  (when hide-lightswitch? {:class [:hide-lightswitch :one-more-thing]})
-                  page-wrapper-attrs-from-user)
+       (merge-attrs kushi-playground-page-wrapper-attrs
+                    (when hide-lightswitch? {:class [:hide-lightswitch :one-more-thing]})
+                    page-wrapper-attrs-from-user)
 
      ;; Auxillary fixed controls
      ;; [type-tweaker]
-     #_[:div.fixed-inline-end
-        [:button {:on-click #(element-tweaker!)} [icon :tune]]]
-     [desktop-lightswitch]
+       #_[:div.fixed-inline-end
+          [:button {:on-click #(element-tweaker!)} [icon :tune]]]
+       [desktop-lightswitch]
 
 
      ;; Mobile nav
-     [mobile-nav (keyed site-header display-kushi-links-in-mobile-nav?)]
-     [mobile-subnav nav-opts]
+       [mobile-nav (keyed site-header display-kushi-links-in-mobile-nav?)]
+       [mobile-subnav nav-opts]
 
      ;; Sidenav
-     [desktop-sidenav (keyed site-header nav-opts)]
+       [desktop-sidenav (keyed site-header nav-opts)]
 
      ;; Main Section
-     [:div
-      (let [md-pbs (str "calc(var(--topnav-height) + "
-                        (:main-view-wrapper-padding-block-start shared-styles/shared-values)
-                        "px)")]
-        (sx
-         'kushi-playground-main-section-wrapper
-         :d--none!important
-         :.flex-col-fs
-         :.grow
-         :.no-shrink
-         :.fast
-         :ai--c
-         :&_p:ff--$kushi-playground-main-section-wrapper_font-family||$sans-serif-font-stack
-         :&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
-         :fs--$kushi-playground-main-section-wrapper_font-size||$medium
-         :transition-property--opacity
-         :md:flex-direction--row
-         :md:jc--fs
-         :md:pie--05vw
-         :lg:jc--c
-         :lg:pis--4rem
-         :pi--$page-padding-inline
-         :pbe--5rem
-         :w--100%
-         [:md:pbs md-pbs]
-         {:id    "#kushi-playground-main-section-wrapper"
-          :style {:md:pbs (str "calc(var(--topnav-height) + "
-                               (:main-view-wrapper-padding-block-start shared-styles/shared-values)
-                               "px)")}}))
+       [:div
+        (let [md-pbs (str "calc(var(--topnav-height) + "
+                          (:main-view-wrapper-padding-block-start shared-styles/shared-values)
+                          "px)")]
+          (sx
+           'kushi-playground-main-section-wrapper
+           :d--none!important
+           :.flex-col-fs
+           :.grow
+           :.no-shrink
+           :.fast
+           :ai--c
+           :&_p:ff--$kushi-playground-main-section-wrapper_font-family||$sans-serif-font-stack
+           :&_p:fs--$kushi-playground-main-section-wrapper_font-size||$medium
+           :fs--$kushi-playground-main-section-wrapper_font-size||$medium
+           :transition-property--opacity
+           :md:flex-direction--row
+           :md:jc--fs
+           :md:pie--05vw
+           :lg:jc--c
+           :lg:pis--4rem
+           :pi--$page-padding-inline
+           :pbe--5rem
+           :w--100%
+           [:md:pbs md-pbs]
+           {:id    "#kushi-playground-main-section-wrapper"
+            :style {:md:pbs (str "calc(var(--topnav-height) + "
+                                 (:main-view-wrapper-padding-block-start shared-styles/shared-values)
+                                 "px)")}}))
 
-      (case @state/*focused-section
+        (case @state/*focused-section
 
-        :custom-components
-        [apply main-section
-         (into ["custom-components"
-                [about/component-playground-about
-                 {:header (:header custom-components)}]]
-               (do
-                 (swap! state/*state assoc :custom-components custom-components)
-                 (for [m (:coll custom-components)]
-                   [component-section m])))]
+          :custom-components
+          [apply main-section
+           (into ["custom-components"
+                  [about/component-playground-about
+                   {:header (:header custom-components)}]]
+                 (do
+                   (swap! state/*state assoc :custom-components custom-components)
+                   (for [m (:coll custom-components)]
+                     [component-section m])))]
 
 
-        :kushi-components
-        [apply main-section
-         (into ["kushi-components"
-                [about/component-playground-about
-                 {:header (:header kushi-components)}]]
-               (do
-                 (swap! state/*state assoc :components (:coll kushi-components))
-                 (for [m (:coll kushi-components)]
-                   [component-section m])))]
+          :kushi-components
+          [apply main-section
+           (into ["kushi-components"
+                  [about/component-playground-about
+                   {:header (:header kushi-components)}]]
+                 (do
+                   (swap! state/*state assoc :components (:coll kushi-components))
+                   (for [m (:coll kushi-components)]
+                     [component-section m])))]
 
-        :custom-colors
-        [main-section
-         "custom-colors"
-         [about/intro-section {:-header (:header custom-colors)}]]
+          :custom-colors
+          [main-section
+           "custom-colors"
+           [about/intro-section {:-header (:header custom-colors)}]]
 
-        :kushi-colors
-        [main-section
-         "kushi-colors"
-         [about/intro-section {:-header (:header kushi-colors)}
-          about/kushi-colors-about]
-         [playground.colors/color-rows global-color-scales]]
+          :kushi-colors
+          [main-section
+           "kushi-colors"
+           [about/intro-section {:-header (:header kushi-colors)}
+            about/kushi-colors-about]
+           [playground.colors/color-rows global-color-scales]]
 
-        :custom-typography
-        [main-section
-         "custom-typography"
-         [about/intro-section {:-header (:header custom-typography)}]]
+          :custom-typography
+          [main-section
+           "custom-typography"
+           [about/intro-section {:-header (:header custom-typography)}]]
 
-        :kushi-typography
-        [main-section
-         "kushi-typography"
-         [about/intro-section
-          {:-header (:header kushi-typography)}
-          [about/kushi-typography-about (keyed use-low-x-type-scale?)]]]
+          :kushi-typography
+          [main-section
+           "kushi-typography"
+           [about/intro-section
+            {:-header (:header kushi-typography)}
+            [about/kushi-typography-about (keyed use-low-x-type-scale?)]]]
 
-        :kushi-about
-        [main-section
-         "kushi-about"
-         [about/intro-section
-          {:-header (:header kushi-about)}
-          about/kushi-about]])]
+          :kushi-about
+          [main-section
+           "kushi-about"
+           [about/intro-section
+            {:-header (:header kushi-about)}
+            about/kushi-about]])]
 
      ;; Placeholder for secondary nav, necessary for symmetrical layout on desktop
-     [:div
-      (sx 'kushi-playground-desktop-secondary-nav-wrapper
-          :.kushi-playground-sidenav-wrapper
-          :h--100vh)]]))
+       [:div
+        (sx 'kushi-playground-desktop-secondary-nav-wrapper
+            :.kushi-playground-sidenav-wrapper
+            :h--100vh)]]))
 
 
