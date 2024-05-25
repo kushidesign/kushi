@@ -1,10 +1,9 @@
 (ns kushi.ui.dom.pane.placement
-  (:require
-   [clojure.string :as string]
-   [goog.string]
-   [kushi.core :refer (keyed)]
-   [domo.core :as domo]
-   [kushi.ui.util :refer [ck? maybe as-str calc]]))
+  (:require [clojure.string :as string]
+            [domo.core :as domo]
+            [goog.string]
+            [kushi.core :refer (keyed)]
+            [kushi.ui.util :refer [as-str calc ck? maybe]]))
 
 (def ^:private non-corner-placements
   {:top-left     :tl  
