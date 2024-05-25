@@ -181,10 +181,10 @@
        ["dark:&.negative.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-negative-background-color-hover-inverse]
 
        [:$thumb-height "calc(var(--switch-thumb-scale-factor, 1) * (1em - (var(--switch-border-width) * 2)))"]
-       {:disabled     disabled?
-        :role         :switch
-        :aria-checked (if on? true false)
-        :on-click     #(when-not disable-events? (toggle-switch %))})
+       {:disabled      disabled?
+        :role          :switch
+        :aria-checked  (if on? true false)
+        :on-mouse-down #(when-not disable-events? (toggle-switch %))})
 
       attrs)
 

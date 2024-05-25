@@ -1,6 +1,6 @@
 (ns kushi.playground.snippet
   (:require
-   [fireworks.core :refer [? !? ?pp pprint]]
+   [fireworks.core :refer [!? pprint]]
    [clojure.string :as string]
    [clojure.walk :as walk]
    [kushi.core :refer (sx keyed)]
