@@ -2,14 +2,13 @@
   (:require
    [applied-science.js-interop :as j]
    [clojure.string :as string]
-   [goog.string]
    [domo.core :as domo]
+   [goog.string]
    [kushi.core :refer (keyed token->ms)]
-   [kushi.ui.util :as util :refer [maybe]]
    [kushi.ui.dom.pane.core :as pane]
-   [kushi.ui.dom.pane.placement :refer [user-placement]]
-   ;; Import this styles ns to create defclasses
-   [kushi.ui.dom.pane.styles]))
+   [kushi.ui.dom.pane.placement :refer [user-placement]] ;; Import this styles ns to create defclasses
+   [kushi.ui.dom.pane.styles]
+   [kushi.ui.util :as util :refer [maybe]]))
 
 
 (defn valid-tooltip-text-coll? [x]
@@ -227,7 +226,6 @@
       (merge 
        {:data-kushi-ui-pane (name placement-kw)
         :on-mouse-enter     (partial pane/append-pane! opts)}
-
        ;; Todo use when-let to validate text-on-click and normalize if vector
        (when-let [text-on-click (pane/maybe-multiline-tooltip-text text-on-click)]
          {:on-click
