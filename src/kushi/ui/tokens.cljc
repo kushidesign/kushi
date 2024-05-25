@@ -165,8 +165,8 @@
    :$pane-border-color-inverse             :transparent
 
    ;; pane geometry
-   :$pane-min-width                        :150px
-   :$pane-min-height                       :75px
+   :$pane-min-width                        :70px
+   :$pane-min-height                       :35px
    :$pane-padding-inline                   :1em
    :$pane-padding-block                    :0.5em
    :$pane-border-radius                    :$rounded-absolute-large
