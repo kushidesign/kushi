@@ -484,7 +484,7 @@
          (domo/set-attribute! owning-el :aria-expanded true)
          (js/window.requestAnimationFrame 
           #(.addEventListener js/window
-                              "click"
+                              "mousedown"
                               (partial remove-pane-if-clicked-outside!
                                        owning-el
                                        pane-id
