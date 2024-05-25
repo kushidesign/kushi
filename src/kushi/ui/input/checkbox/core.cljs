@@ -1,9 +1,28 @@
 (ns kushi.ui.input.checkbox.core
   (:require-macros
    [kushi.core :refer (sx)])
-  (:require
-   [kushi.core :refer (merge-attrs)]
-   [kushi.ui.core :refer (opts+children)]))
+  (:require [domo.core :as domo]
+            [fireworks.core :refer [?]]
+            [kushi.core :refer (merge-attrs)]
+            [kushi.ui.core :refer (opts+children)]))
+
+(defn on-click [e]
+  (let [el         (domo/cet e)
+        input-el   (.-firstChild el)
+        nm         "data-kushi-radio-input-mousedown"
+        mousedown? (domo/attribute-true? el nm)
+        checked?   (domo/has-attribute? input-el "checked")]
+    (when-not (or mousedown? (? checked?)) (.preventDefault e))
+    (if mousedown?
+      (domo/remove-attribute! el nm)
+      (domo/set-attribute! el nm true))))
+
+(defn- on-mouse-down [e]
+  (let [el       (domo/cet e)
+        input-el (.-firstChild el)
+        nm       "data-kushi-radio-input-mousedown"]
+    (domo/set-attribute! el nm true)
+    (.click input-el)))
 
 ;; TODO outlines for ally
 (defn checkbox
@@ -50,15 +69,16 @@
         :checked:bgc--currentColor
         :checked:o--1
         :o--0.6
-        {:style {:before:content           "\"\""
-                 :before:width             :0.65em
-                 :before:height            :0.65em
-                 :before:transform         "scale(0) rotate(15deg)"
-                 :checked:before:transform "scale(1) rotate(15deg)"
-                 :before:transition        :120ms:transform:ease-in-out
-                 :before:box-shadow        "inset 1em 1em white"
-                 :before:transform-origin  :center:center
-                 :before:clip-path         "polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%)"}
-         :type  :checkbox})
+        {:style         {:before:content           "\"\""
+                         :before:width             :0.65em
+                         :before:height            :0.65em
+                         :before:transform         "scale(0) rotate(15deg)"
+                         :checked:before:transform "scale(1) rotate(15deg)"
+                         :before:transition        :120ms:transform:ease-in-out
+                         :before:box-shadow        "inset 1em 1em white"
+                         :before:transform-origin  :center:center
+                         :before:clip-path         "polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%)"}
+         :type          :checkbox})
        attrs)]
      (into [:span] children)]))
+
