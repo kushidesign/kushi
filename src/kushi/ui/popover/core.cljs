@@ -217,7 +217,7 @@
                               user-rendering-fn)]
       (merge 
        {:data-kushi-ui-pane (name placement-kw)
-        :on-click           (partial pane/append-pane! opts)}))))
+        :on-mouse-down      (partial pane/append-pane! opts)}))))
 
 (defn dismiss-popover! [e]
   (let [el         (domo/et e)
