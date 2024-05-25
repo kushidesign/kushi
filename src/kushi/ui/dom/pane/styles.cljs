@@ -58,6 +58,8 @@
   kushi-popover
   :.kushi-pane
   :p--0
+  :min-width--$popover-min-width
+  :min-height--$popover-min-height
   :border-width--$popover-border-width
   :border-style--$popover-border-style
   :border-color--$popover-border-color
