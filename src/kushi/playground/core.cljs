@@ -10,9 +10,11 @@
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.label.core :refer [label]]
    [kushi.ui.button.demo :as button.demo ]
+   [kushi.ui.input.text.core :refer [input]]
    [kushi.ui.input.radio.core :refer [radio]]
    [kushi.ui.input.switch.core :refer [switch]]
    [kushi.ui.input.switch.demo :as switch.demo ]
+   [kushi.ui.input.checkbox.core :refer [checkbox]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.progress.core :refer (progress spinner propeller thinking)]
    [kushi.playground.layout :as layout]
@@ -23,6 +25,7 @@
    [kushi.playground.sidenav :refer [mobile-subnav desktop-sidenav]]
    [kushi.playground.ui :refer [light-dark-mode-switch]]
    [kushi.playground.colors :as playground.colors]
+   [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal]]
    [kushi.playground.shared-styles :as shared-styles]
    [kushi.playground.util
     :as util
@@ -353,24 +356,54 @@
     
 
     ;; popover example
-    [:div.absolute-centered
-     [button
-      (merge-attrs 
-       (popover-attrs
-        {:-f (fn [popover-el]
-               (rdom/render popover-content
-                            popover-el))})
-       (tooltip-attrs
-        {:-text "My tooltip text"}))
-      "click 4 deets"]]
+    #_[:div.absolute-centered
+       [button
+        (merge-attrs 
+         (popover-attrs
+          {:-f (fn [popover-el]
+                 (rdom/render popover-content
+                              popover-el))})
+         (tooltip-attrs
+          {:-text "My tooltip text"}))
+        "click 4 deets"]]
 
     ;; radio example
-    [:div.absolute-centered
-     [:section
-      [label (sx :.bold :mbe--0.75em) "Choose an option:"]
-      [radio (sx {:-input-attrs {:name :demo}}) "Yes"]
-      [radio (sx {:-input-attrs {:name :demo}}) "No"]
-      [radio (sx {:-input-attrs {:name :demo}}) "Maybe"]]]
+    #_[:div.absolute-centered
+       [:section
+        [label (sx :.bold :mbe--0.75em) "Choose an option:"]
+        [radio (sx {:-input-attrs {:name :demo}}) "Yes"]
+        [radio (sx {:-input-attrs {:name :demo}}) "No"]
+        [radio (sx {:-input-attrs {:name :demo}}) "Maybe"]]]
+
+    ;; radio example
+    [:div.absolute-centered [checkbox "wtf"]]
+    
+    ;; modal example
+    #_[:div.absolute-centered
+     [button
+      {:on-mouse-down (fn* [] (open-kushi-modal "my-modal"))}
+      "Click to open modal"]
+     [modal
+      (sx
+       :min-width--450px
+       :&_.kushi-modal-description:fs--$small
+       {:-modal-title "Example modal"
+        :-description "Example modal description goes here."
+        :id           "my-modal"})
+      [:div
+       (sx :.flex-col-fs :gap--1em)
+       [input (sx {:placeholder "Puffy"
+                   :-label      "Screen name"})]
+       [input (sx {:placeholder "Executive"
+                   :-label      "Occupation"})]]
+      [:div
+       (sx :.flex-row-fe :gap--1em)
+       [button {:on-mouse-down close-kushi-modal} "Cancel"]
+       [button (sx :.filled) "Submit"]]]]
+
+
+
+
 
     #_[layout/layout _comps]
     #_[:div
