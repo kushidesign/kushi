@@ -68,3 +68,18 @@
   (some->> coll
            kushi-component-desc->md
            md->component))
+
+(defn backtics->hiccup
+  [s]
+  (if (re-find #"`" s)
+    (->> (string/split s #" ")
+         (map #(if (re-find #"^`.+`$" %)
+                 [:span.code (->> % rest drop-last string/join)]
+                 %))
+         (map-indexed (fn [idx v]
+                        (if (string? v)
+                          (if (= idx 0) (str v " ") (str " " v))
+                          v)))
+         (cons :span)
+         (into []))
+    s))
