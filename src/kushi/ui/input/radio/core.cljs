@@ -1,9 +1,9 @@
 (ns kushi.ui.input.radio.core
   (:require-macros
    [kushi.core :refer (sx)])
-  (:require
-   [kushi.core :refer (merge-attrs)]
-   [kushi.ui.core :refer (opts+children)]))
+  (:require [domo.core :as domo]
+            [kushi.core :refer (merge-attrs)]
+            [kushi.ui.core :refer (opts+children)]))
 
 (defn radio
   {:desc ["Radio buttons are used in groups of 2 or more, when only one choice may be selected from an array of options."]
@@ -57,6 +57,19 @@
             :o--0.6
             :border-radius--50%
             {:data-kushi-ui :input.radio
-             :type          :radio})
+             :type          :radio
+             :on-click      #(let [el         (domo/et %)
+                                   nm         "data-kushi-radio-input-mousedown"
+                                   mousedown? (domo/attribute-true? el nm)]
+
+                               (when-not mousedown? (.preventDefault %))
+                               (if mousedown?
+                                 (domo/remove-attribute! el nm)
+                                 (domo/set-attribute! (domo/et %) nm true)))
+             :on-mouse-down #(let [el (domo/et %)
+                                   nm "data-kushi-radio-input-mousedown"]
+                               (domo/set-attribute! el nm true)
+                               (.click el))
+             })
         input-attrs)]]
      children)))
