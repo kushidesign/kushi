@@ -15,13 +15,11 @@
              {:class [(when dark? :dark)]})]
         (for [semantic [:foo
                         :neutral :accent
-                        :positive :warning :negative
-                        ]]
+                        :positive :warning :negative]]
           [:div (sx :.flex-row-fs :gap--0.5em)
            [switch (sx {:-disabled? false
                         :class      [semantic]})]
            [switch (sx {:-disabled? false
-                          ;; :-disable-events? true
                         :-on?       true
                         :class      [semantic]})]])))
 
