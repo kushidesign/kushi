@@ -434,9 +434,20 @@
 ;; on its placement keyword and the position of the owning element relative
 ;; to the viewport.
 
-(defn pane-plc [k]
-  ;; TODO use let-map macro here
-  ;; change f to ck?
+(defn pane-plc 
+"Returns a map of boolean k/vs describing the placement of the pane.
+
+ Example return value for a pane that uses
+ `:block-end` (or `[:bottom :center]`) positioning:
+  {:block-start?  false
+   :block-end?    true
+   :block-plc?    true
+   :inline-start? false
+   :inline-end?   false
+   :inline-plc?   false
+   :corner-plc?   false}"
+  [k]
+  ;; TODO rename f to ck?
   (let [f             (partial ck? k)
         block-start?  (f #{:tl :t :tr})
         block-end?    (f #{:bl :b :br})
@@ -457,6 +468,35 @@
            corner-plc?)))
 
 (defn el-plc
+  "Returns a map describing placement metrics of pane,
+   relative to the viewport.
+   
+   If the top of the pane falls out of viewport,
+   the value of the `:n?` (north) entry would be `true`.
+
+   If the top and left side of the pane falls out of viewport,
+   the value of the `:n?`, `:w?`, and `:nw?` entries would all be `true`.
+
+   Example return value:
+   {:bottom     226.8828125
+    :center     nil
+    :e?         false
+    :left       97.1015625
+    :n?         true
+    :ne?        false
+    :nw?        false 
+    :on-corner? false 
+    :on-edge?   true 
+    :right      529.8984375 
+    :s?         false 
+    :se?        false 
+    :sw?        false 
+    :top        -34.515625 
+    :w?         false 
+    :x-fraction 0.1317524592944369 
+    :y-center   96 
+    :y-fraction -0.02667358964451314}"
+
   [viewport el edge-threshold]
   (let [{:keys [top
                 bottom
