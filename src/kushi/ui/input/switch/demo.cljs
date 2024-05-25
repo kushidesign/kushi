@@ -39,9 +39,9 @@
 (defn demo2 [component-opts]
   (into [:<>]
         (for [
-              example-opts (take 1 switch-examples)
-              ;; example-opts switch-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{0} idx) m)) switch-examples)
+              ;; example-opts (take 1 switch-examples)
+              example-opts switch-examples
+              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) switch-examples)
               ]
           [component-examples/examples-section component-opts example-opts])))
 
@@ -61,7 +61,7 @@
   [
    {:desc      "Sizes from `xxsmall` to `xlarge`"      
     :sx-attrs  (sx-call (sx :.xxlarge))
-    :examples  (for [s (take 1 component-examples/colors)]
+    :examples  (for [s (take 4 component-examples/colors)]
                  {:label (name s)
                   :attrs {:class [s]}})}
 
@@ -121,7 +121,6 @@
                      :attrs {:class [sz]}})}
 
    {:desc        "With labeled thumb"
-    :reqs         '[[kushi.ui.icon.core :refer [icon]]]
     :row-attrs    (sx :ai--fe)
     :sx-attrs     (sx-call (sx {:-thumb-content-on  [:span (sx :.semi-bold :fs--0.325em) "ON"]
                                 :-thumb-content-off [:span (sx :.semi-bold :fs--0.325em) "OFF"]}))
@@ -154,7 +153,13 @@
     :examples     (for [sz switch-sizes]
                     {:label (name sz)
                      :attrs {:class [sz]}})}
-   
+
+   {:desc         "Disabled states"
+    :row-attrs    (sx :ai--fe)
+    :examples     (for [sz switch-sizes]
+                    {:label (name sz)
+                     :attrs {:disabled true
+                             :class    [sz]}})}
 
 
   ;;  {:title       "shape variants"
