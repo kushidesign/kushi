@@ -1,8 +1,8 @@
 (ns ^:dev/always kushi.playground.component-examples
-  (:require [clojure.string :as string]
-            [fireworks.core :refer [!? ?]]
+  (:require [fireworks.core :refer [!?]]
             [kushi.core :refer (sx merge-attrs keyed)]
             [kushi.playground.snippet :refer (component-details-popover)]
+            [kushi.playground.util :as playground.util]
             [kushi.ui.popover.core :refer [popover-attrs]]
             [kushi.ui.util :refer [maybe]]
             [reagent.dom :as rdom]))
@@ -34,7 +34,10 @@
                                         {:class "dark"
                                          :-f    (fn [popover-el]
                                                   (rdom/render
-                                                   [component-details-popover merged-attrs* quoted-attrs]
+                                                   [component-details-popover 
+                                                    component
+                                                    merged-attrs*
+                                                    quoted-attrs]
                                                    popover-el))}))
                     merged-attrs  (merge-attrs variant-attrs
                                                sx-attrs
@@ -82,20 +85,6 @@
            seq
            (apply merge)))
 
-(defn backtics->hiccup
-  [s]
-  (if (re-find #"`" s)
-    (->> (string/split s #" ")
-         (map #(if (re-find #"^`.+`$" %)
-                 [:span.code (->> % rest drop-last string/join)]
-                 %))
-         (map-indexed (fn [idx v]
-                        (if (string? v)
-                          (if (= idx 0) (str v " ") (str " " v))
-                          v)))
-         (cons :span)
-         (into []))
-    s))
 
 (defn section-label [s]
   [:p (sx :.small
@@ -119,7 +108,9 @@
                              (concat component-reqs
                                      example-reqs))
         reqs-by-refers (reqs-by-refers all-reqs)
-        label          (-> desc backtics->hiccup section-label)]
+        label          (-> desc
+                           playground.util/backtics->hiccup
+                           section-label)]
     (into [:section (sx :pb--1.5rem)
            label]
           (for [variant-attrs (resolve-variants-attrs component-opts
