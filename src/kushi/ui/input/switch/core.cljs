@@ -217,8 +217,16 @@
         :w--$width
         [:bgc :$white-transparent-100]
         [:box-shadow "0 2px 6px 0 var(--black-transparent-15)"]
-        ["has-parent(.kushi-switch[aria-checked='true']):inset-inline-start" "calc(100% - var(--width))"])
+        ["has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start" "calc(100% - var(--width))"]
+        ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed]
+        )
        thumb-attrs)
-      [:div (sx 'kushi-switch-thumb-content-on :.kushi-switch-thumb-content) thumb-content-on]
-      [:div (sx 'kushi-switch-thumb-content-off :.kushi-switch-thumb-content) thumb-content-off]
+      [:div (sx 'kushi-switch-thumb-content-on
+                :.kushi-switch-thumb-content
+                ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
+       thumb-content-on]
+      [:div (sx 'kushi-switch-thumb-content-off
+                :.kushi-switch-thumb-content
+                ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
+       thumb-content-off]
       ]]))

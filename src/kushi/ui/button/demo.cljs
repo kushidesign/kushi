@@ -1,9 +1,12 @@
 (ns kushi.ui.button.demo
   (:require
    [kushi.core :refer (sx merge-attrs)]
+   [kushi.playground.component-examples :as component-examples :refer [section-label]]
+   [kushi.ui.progress.core :refer (progress spinner propeller thinking)]
+   [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.button.core :refer (button)]
-   [kushi.playground.component-examples :as component-examples :refer [section-label]]))
+   ))
 
 
 (defn info-sections [style-class]
@@ -63,7 +66,11 @@
 
 (defn demo2 [component-opts]
   (into [:<>]
-        (for [example-opts button-examples]
+        (for [
+              ;; example-opts (take 1 button-examples)
+              example-opts button-examples
+              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{3} idx) m)) button-examples)
+              ]
           [component-examples/examples-section component-opts example-opts])))
 
 
@@ -79,27 +86,14 @@
 
 (def button-examples
   [
-   {:title      "Sizes from xxsmall to xlarge"
-    :label      [section-label [:span "Showing sizes "
-                                [:span.code (first button-sizes)]
-                                " ~ "
-                                [:span.code (last button-sizes)]]]
-    :desc       "Sizes from `xxsmall` to `xlarge`"      
-    :component  button
+   {:desc      "Sizes from `xxsmall` to `xlarge`"
     :row-attrs  (sx :ai--fe)
     :examples   (for [sz component-examples/sizes]
                   {:label (name sz)
                    :attrs {:class sz}
                    :args  ["Play"]})}
    
-   #_
-   #_
-   #_
-   #_
-   #_
-   {:title       "semantic variants"
-    :label       [section-label [:span "" [:span.code "semantic"] " variants"]]
-    :component   button
+   {:desc       "semantic variants"
     :sx-attrs (sx :.small)
     :variants+   [:minimal]
     :examples    (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
@@ -111,9 +105,7 @@
                                              (sx [:color (str "var(--" s "-600)")]
                                                  [:background-color (str "var(--" s "-100)")])))}))}
 
-   {:title       "shape variants"
-    :label       [section-label [:span "" [:span.code "shape"] " variants"]]
-    :component   button
+   {:desc       "shape variants"
     :sx-attrs (sx :.small)
     :variants+   [:minimal]
     :examples    (for [s [:rounded :pill :sharp]]
@@ -121,9 +113,7 @@
                     :args  ["Play"]
                     :attrs {:class [s]}})}
 
-   {:title       "With icons"
-    :label       [section-label "With icons"]
-    :component   button
+   {:desc       "With `icons`"
     :reqs        '[[kushi.ui.icon.core :refer [icon]]]
     :sx-attrs (sx :.small)
     :examples    [{:label "Icon button"
@@ -139,18 +129,15 @@
                   {:label "2 icons"
                    :args  [[icon :auto-awesome] "Play" [icon :auto-awesome]]}]}
 
-   {:title       "weight variants"
-    :label       [section-label [:span "" [:span.code "weight"] " variants"]]
-    :component   button
-    :sx-attrs (sx :.small)
+   {:desc       "weight variants"
+    :sx-attrs    (sx :.small)
     :examples    (for [s (rest component-examples/type-weights)]
                    {:label (name s)
                     :args  ["Play" [icon :auto-awesome]]
                     :attrs {:class [s]}})}
 
-   {:title       "Loading and disabled states"
+   {:desc       "Loading and disabled states"
     :label       [section-label "Loading and disabled states"]
-    :component   button
     :reqs        '[[kushi.ui.button.core :refer [button]]
                    [kushi.ui.icon.core :refer [icon]]
                    [kushi.ui.progress.core :refer [progress spinner propeller thinking]]]

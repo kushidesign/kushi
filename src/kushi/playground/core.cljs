@@ -305,7 +305,7 @@
         
         _comps
         [
-         #_{:label          "button"
+         {:label          "button"
             :demo-component button.demo/demo2
             :component      button
             :reqs           '[[kushi.ui.button.core :refer [button]]]
@@ -320,7 +320,7 @@
           :demo-component switch.demo/demo2
           :component      switch
           :reqs           '[[kushi.ui.input.switch.core :refer [switch]]]
-          :variants-base  #{:on}
+          :variants-base  #{:on :off}
           :variants-order [:off :on]
           :variants-attrs {:on  {:-on? true}
                            :off {}}
