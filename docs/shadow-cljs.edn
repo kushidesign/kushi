@@ -2,6 +2,7 @@
 {
  :source-paths   ["src"
                   "../src"
+                  "../../../kushi/domo/src"
                   ;; "../../../cljc/fireworks/src"
                   ]
 
