@@ -1,21 +1,17 @@
 (ns kushi.ui.dom.pane.core
-  (:require
-   [applied-science.js-interop :as j]
-   [clojure.string :as string]
-   [goog.string]
-   [goog.functions]
-   [domo.core :as domo]
-   ;; Import this to create defclasses
-   [kushi.core :refer (keyed)]
-   [kushi.ui.util :as util :refer [maybe nameable? as-str]]
-   [kushi.ui.dom.pane.toast :refer [append-toast!]]
-   [kushi.ui.dom.pane.shared :refer [stock-pane-types pane-classes]]
-   [kushi.ui.dom.pane.placement :refer [el-plc
-                                        pane-plc
-                                        updated-pane-placement
-                                        og-placement
-                                        placement-css-custom-property
-                                        owning-el-rect-cp]]))
+  (:require [applied-science.js-interop :as j]
+            [clojure.string :as string]
+            [domo.core :as domo] ;; Import this to create defclasses
+            [goog.functions]
+            [goog.string]
+            [kushi.core :refer (keyed)]
+            [kushi.ui.dom.pane.placement :refer [el-plc og-placement
+                                                 owning-el-rect-cp pane-plc
+                                                 placement-css-custom-property
+                                                 updated-pane-placement]]
+            [kushi.ui.dom.pane.shared :refer [pane-classes stock-pane-types]]
+            [kushi.ui.dom.pane.toast :refer [append-toast!]]
+            [kushi.ui.util :as util :refer [as-str maybe nameable?]]))
 
 
 (defn maybe-multiline-tooltip-text [v]
@@ -444,16 +440,21 @@
    ;; We need to use cet here (.currentEventTarget), in order
    ;; To prevent mis-assignment of ownership of the pane to
    ;; A child element of the intended owning el. 
-   (let [owning-el        (domo/cet e)
-         dialog-el        (domo/nearest-ancestor owning-el "dialog")
+   (let [owning-el           (domo/cet e)
+         dialog-el           (domo/nearest-ancestor owning-el "dialog")
          ;; TODO - should this be "kushi-pane-*" ?
-         pane-id          (or pane-id (str "kushi-" (gensym)))
-         pane-type        (:pane-type opts)
-         existing-popover (and (= pane-type :popover)
-                               (j/get owning-el "ariaHasPopup"))
-         opts             (merge opts (keyed owning-el dialog-el))]
+         pane-id             (or pane-id (str "kushi-" (gensym)))
+         pane-type           (:pane-type opts)
+         existing-popover    (j/get owning-el "ariaHasPopup")
+         existing-tooltip-id (.getAttribute owning-el "aria-describedby")
+         existing-tooltip?   (domo/has-class? (domo/el-by-id existing-tooltip-id)
+                                              "kushi-tooltip")
+         opts                (merge opts (keyed owning-el dialog-el))]
 
-     (when-not existing-popover
+     (when-not (or (and (= pane-type :tooltip)
+                        existing-popover)
+                   (and (= pane-type :popover)
+                        existing-popover))
        
        ;; Adding `aria-describedby` for tooltips
        (when (= pane-type :tooltip)
@@ -476,6 +477,8 @@
 
        ;; Popover-specific aria attributes, listeners, and focus-trap
        (when (= pane-type :popover)
+         (when existing-tooltip?
+           (remove-pane! owning-el existing-tooltip-id :tooltip nil))
          (domo/set-attribute! owning-el :aria-controls pane-id)
          (domo/set-attribute! owning-el :aria-haspopup "dialog")
          (domo/set-attribute! owning-el :aria-expanded true)
