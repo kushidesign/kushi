@@ -18,7 +18,7 @@
     (when (gdom/isElement dialog)
       (let [duration* (.-transitionDuration (js/window.getComputedStyle dialog))
             duration  (js/Math.round (* 1000 (js/parseFloat (string/replace duration* #"s$" ""))))]
-        (.removeEventListener dialog "click" close-on-backdrop-click)
+        (.removeEventListener dialog "mousedown" close-on-backdrop-click)
         (domo/remove-class! dialog "kushi-modal-open")
         (js/setTimeout #(.close dialog) duration)))))
 
@@ -29,7 +29,7 @@
 (defn open-kushi-modal [id]
   (if-let [dialog (domo/el-by-id id)]
     (do (.addEventListener dialog
-                           "click"
+                           "mousedown"
                            close-on-backdrop-click)
         (.showModal dialog)
         (domo/add-class! dialog "kushi-modal-open"))
@@ -63,12 +63,12 @@
           :.pill
           :.large
           :padding--0.5rem
-          {:on-click close-kushi-modal
-           :style    {:position           :absolute
-                      :inset-block-start  :0.5rem
-                      :inset-block-end    :unset
-                      :inset-inline-end   :0.5rem
-                      :inset-inline-start :unset}})
+          {:on-mouse-down close-kushi-modal
+           :style         {:position           :absolute
+                           :inset-block-start  :0.5rem
+                           :inset-block-end    :unset
+                           :inset-inline-end   :0.5rem
+                           :inset-inline-start :unset}})
       attrs)
      (if icon-svg
        [icon {:icon-svg icon-svg}]
