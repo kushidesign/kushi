@@ -339,7 +339,7 @@
             :l  :rb
             :lb :rb
             :bl :tl
-            :b  :t
+            :b  :tl
             :br :tr))
 
         nw?
@@ -350,7 +350,7 @@
             :l  :rt
             :lb :rt
             :tl :bl
-            :t  :b
+            :t  :bl
             :tr :bt))
 
         ne?
@@ -361,7 +361,7 @@
             :r  :lt
             :rb :lt
             :tr :br
-            :t  :b
+            :t  :br
             :tl :bl))
 
         se?
@@ -372,7 +372,7 @@
             :r  :lb
             :rb :lb
             :bl :tl
-            :b  :t
+            :b  :tr
             :br :tr))
 
         (or n? s?)
