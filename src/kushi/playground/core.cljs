@@ -32,6 +32,7 @@
     :refer-macros [keyed]]
 
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
+   [kushi.ui.tooltip.demo :as tooltip.demo]
    [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
    [reagent.dom :as rdom]
 
@@ -78,7 +79,6 @@
 
 (defn validated-playground-examples
   [idxs coll]
-  (println "HI")
   (cond-> coll
     (seq idxs) (filter-by-index idxs)
     true validated-components))
@@ -308,9 +308,23 @@
         ;; row of buttons that show various delays 
         ;; row of buttons that show various animations 
         ;; row of buttons that show various stylings (no arrow etc)
+
+        ;; TODO UI
+        ;; option to get popover from single icon button for disabled examples
+
+        ;; TODO layout
+        ;; sticky header
+        ;; add cta to sticky header
+
+
+        ;; TODO 
+        ;; Make sidenav work
+
+        ;; TODO 
+        ;; mobile layouts
         ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         _comps                       [
-                                      {:label          "button"
+                                      #_{:label          "button"
                                        :demo-component button.demo/demo2
                                        :component      button
                                        :reqs           '[[kushi.ui.button.core :refer [button]]]
@@ -321,18 +335,24 @@
                                                         :bordered (sx :.rounded :.bordered)
                                                         :minimal  (sx :.rounded :.minimal)}
                                        }
-                                      {:label          "switch" 
+                                      #_{:label          "switch" 
                                        :demo-component switch.demo/demo2
                                        :component      switch
                                        :reqs           '[[kushi.ui.input.switch.core :refer [switch]]]
-                                       :variants-base  #{:on :off}
+                                       :variants-base  #{:on #_:off}
                                        :variants-order [:off :on]
                                        :variants-attrs {:on  {:-on? true}
                                                         :off {}}
                                        }
+                                      {:label          "tooltip" 
+                                       :demo-component tooltip.demo/demo2
+                                       :component      :span
+                                       :reqs           '[[kushi.ui.tooltip.core :refer [tooltip-attrs]] ]
+                                       :variants-base  #{:positions}
+                                       :variants-attrs {:positions {}}
+                                       }
                                       {:label "slider" }
         ;;  "toast"
-        ;;  "tooltip"
         ;;  "alert"
         ;;  "modal"
         ;;  "badge"
@@ -343,6 +363,10 @@
         popover-content              (fn [] [:div.absolute-centered "hi"])]
 
 
+#_[button
+ (tooltip-attrs
+  {:-text "My tooltip text" :-placement :right-top-corner})
+ "Hover me to reveal tooltip"]
 
     ;; Page layout -------------------------------------------------------------------------------
     
@@ -376,7 +400,7 @@
         [radio (sx {:-input-attrs {:name :demo}}) "Maybe"]]]
 
     ;; radio example
-    [:div.absolute-centered [checkbox "wtf"]]
+    #_[:div.absolute-centered [checkbox "wtf"]]
     
     ;; modal example
     #_[:div.absolute-centered
@@ -402,10 +426,8 @@
        [button (sx :.filled) "Submit"]]]]
 
 
+    [layout/layout _comps]
 
-
-
-    #_[layout/layout _comps]
     #_[:div
        (merge-attrs kushi-playground-page-wrapper-attrs
                     (when hide-lightswitch? {:class [:hide-lightswitch :one-more-thing]})
