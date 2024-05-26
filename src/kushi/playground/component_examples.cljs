@@ -1,8 +1,7 @@
 (ns ^:dev/always kushi.playground.component-examples
-  (:require [fireworks.core :refer [!?]]
+  (:require [fireworks.core :refer [!? ?]]
             [kushi.core :refer (sx merge-attrs keyed)]
             [kushi.playground.snippet :refer (component-details-popover)]
-            [kushi.playground.util :as playground.util]
             [kushi.ui.popover.core :refer [popover-attrs]]
             [kushi.ui.util :refer [maybe]]
             [reagent.dom :as rdom]))
@@ -13,7 +12,7 @@
                                               variant-attrs
                                               examples]
     {sx-attrs     :evaled
-     quoted-attrs :quoted} :sx-attrs
+     quoted-attrs :quoted}                   :sx-attrs
     :as                                      example-opts}]
   (!? example-opts)
   (into [:section (merge-attrs
@@ -21,24 +20,32 @@
                        :gap--1rem
                        :pb--0.5rem)
                    row-attrs)]
-        (for [{instance-args  :args
-               instance-attrs :attrs
-               :as            m} examples
-              :let [merged-attrs* (merge-attrs variant-attrs
+        (for [{instance-args                  :args
+               instance-attrs                 :attrs
+              {instance-sx-attrs     :evaled
+               instance-quoted-attrs :quoted} :sx-attrs
+               :as          m}                examples
+              :let [sx-attrs      (or instance-sx-attrs sx-attrs)
+                    quoted-attrs  (or instance-quoted-attrs quoted-attrs)
+                    merged-attrs* (merge-attrs variant-attrs
                                                sx-attrs
                                                quoted-attrs
-                                               instance-attrs
+                                               (when-not instance-sx-attrs
+                                                 instance-attrs)
+                                               (when instance-sx-attrs
+                                                 {:instance-sx-attrs? true})
                                                example-opts
                                                m)
-                    poa (popover-attrs (merge-attrs
-                                        {:class "dark"
-                                         :-f    (fn [popover-el]
-                                                  (rdom/render
-                                                   [component-details-popover 
-                                                    component
-                                                    merged-attrs*
-                                                    quoted-attrs]
-                                                   popover-el))}))
+                    poa           (popover-attrs
+                                   (merge-attrs
+                                    {:class "dark"
+                                     :-f    (fn [popover-el]
+                                              (rdom/render
+                                               [component-details-popover 
+                                                component
+                                                merged-attrs*
+                                                quoted-attrs]
+                                               popover-el))}))
                     merged-attrs  (merge-attrs variant-attrs
                                                sx-attrs
                                                instance-attrs
@@ -102,14 +109,16 @@
     :as   component-opts}
    {:keys        [desc]
     example-reqs :reqs
+    example-component :component
     :or          {example-reqs []}
     :as          example-opts}]
-  (let [all-reqs       (into []
+  (let [component (or example-component component)
+        all-reqs       (into []
                              (concat component-reqs
                                      example-reqs))
         reqs-by-refers (reqs-by-refers all-reqs)
         label          (-> desc
-                           playground.util/backtics->hiccup
+                           kushi.ui.util/backtics->hiccup
                            section-label)]
     (into [:section (sx :pb--1.5rem)
            label]
