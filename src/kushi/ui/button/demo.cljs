@@ -69,7 +69,7 @@
         (for [
               ;; example-opts (take 1 button-examples)
               ;; example-opts button-examples
-              example-opts (keep-indexed (fn [idx m] (when (contains? #{5} idx) m)) button-examples)
+              example-opts (keep-indexed (fn [idx m] (when (contains? #{1} idx) m)) button-examples)
               ]
           [component-examples/examples-section component-opts example-opts])))
 
@@ -87,78 +87,74 @@
 (def button-examples
   [
    {:desc      "Sizes from `xxsmall` to `xlarge`"
-    :row-attrs  (sx-call (sx :ai--fe))
-    :examples   (for [sz component-examples/sizes]
-                  {:label (name sz)
-                   :attrs {:class sz}
-                   :args  ["Play"]})}
+    :row-attrs (sx-call (sx :ai--fe))
+    :examples  (for [sz component-examples/sizes]
+                 {:label (name sz)
+                  :attrs {:class sz}
+                  :args  ["Play"]})}
    
-   {:desc       "semantic variants"
-    :sx-attrs (sx-call (sx :.small))
-    :variants+   [:minimal]
-    :examples    (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
-                   (for [s component-examples/colors]
-                     {:label (name s)
-                      :args  ["Play"]
-                      :attrs (merge-attrs  {:class [s]}
-                                           (when-not  (contains? semantics s)
-                                             (sx [:color (str "var(--" s "-600)")]
-                                                 [:background-color (str "var(--" s "-100)")])))}))}
-
-   {:desc       "shape variants"
-    :sx-attrs (sx-call (sx :.small))
-    :variants+   [:minimal]
-    :examples    (for [s [:rounded :pill :sharp]]
+   {:desc      "semantic variants"
+    :sx-attrs  (sx-call (sx :.small))
+    :variants+ [:minimal]
+    :examples  (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
+                 (for [s component-examples/colors]
                    {:label (name s)
                     :args  ["Play"]
-                    :attrs {:class [s]}})}
+                    :attrs {:class [s]}}))}
 
-   {:desc       "With `icons`"
-    :reqs        '[[kushi.ui.icon.core :refer [icon]]]
+   {:desc      "shape variants"
+    :sx-attrs  (sx-call (sx :.small))
+    :variants+ [:minimal]
+    :examples  (for [s [:rounded :pill :sharp]]
+                 {:label (name s)
+                  :args  ["Play"]
+                  :attrs {:class [s]}})}
+
+   {:desc     "With `icons`"
+    :reqs     '[[kushi.ui.icon.core :refer [icon]]]
     :sx-attrs (sx-call (sx :.small))
-    :examples    [{:label "Icon button"
-                   :args  [[icon :favorite]]}
-                  {:label "Icon button"
-                   :args  [[icon :star]]}
-                  {:label "Icon button"
-                   :args  [[icon :play-arrow]]}
-                  {:label "Leading icon"
-                   :args  [[icon :play-arrow] "Play"]}
-                  {:label "Trailing icon"
-                   :args  [[icon :auto-awesome]]}
-                  {:label "2 icons"
-                   :args  [[icon :auto-awesome] "Play" [icon :auto-awesome]]}]}
+    :examples [{:label "Icon button"
+                :args  [[icon :favorite]]}
+               {:label "Icon button"
+                :args  [[icon :star]]}
+               {:label "Icon button"
+                :args  [[icon :play-arrow]]}
+               {:label "Leading icon"
+                :args  [[icon :play-arrow] "Play"]}
+               {:label "Trailing icon"
+                :args  [[icon :auto-awesome]]}
+               {:label "2 icons"
+                :args  [[icon :auto-awesome] "Play" [icon :auto-awesome]]}]}
 
-   {:desc       "weight variants"
-    :sx-attrs    (sx-call (sx :.small))
-    :examples    (for [s (rest component-examples/type-weights)]
-                   {:label (name s)
-                    :args  ["Play" [icon :auto-awesome]]
-                    :attrs {:class [s]}})}
+   {:desc     "weight variants"
+    :sx-attrs (sx-call (sx :.small))
+    :examples (for [s (rest component-examples/type-weights)]
+                {:label (name s)
+                 :args  ["Play" [icon :auto-awesome]]
+                 :attrs {:class [s]}})}
 
-   {:desc       "Loading and disabled states"
-    :label       [section-label "Loading and disabled states"]
-    :variants-   [:bordered :filled]
-    :reqs        '[[kushi.ui.button.core :refer [button]]
-                   [kushi.ui.icon.core :refer [icon]]
-                   [kushi.ui.progress.core :refer [progress spinner propeller thinking]]]
-    :sx-attrs    (sx-call (sx :.small {:-loading? true}))
-    :examples    [{:label "Loading state, propeller"
-                   :args  [[progress [icon :play-arrow] [propeller]] "Play"]}
-                  {:label "Loading state, dots"
-                   :args  [[progress "Play" [thinking]]]}
-                  {:label "Loading state, spinner"
-                   :args  [[progress "Play" [spinner]]]}
-                  {:label "Loading state, spinner, fast"
-                   :args  [[progress "Play" [spinner (sx :animation-duration--325ms)]]]}
-                  {:label "Loading state, spinner on icon"
-                   :args  [[progress [icon :play-arrow] [spinner]] "Play"]}
-                  {:label "Loading state, propeller on icon"
-                   :attrs {:disabled true}
-                   :args  [[progress [icon :play-arrow] [spinner]] "Play"]}
-                  {:label "Disabled"
-                   :attrs {:disabled true}
-                   :args  ["Play"]}]}])
+   {:desc      "Loading and disabled states"
+    :variants- [:bordered :filled]
+    :reqs      '[[kushi.ui.button.core :refer [button]]
+                 [kushi.ui.icon.core :refer [icon]]
+                 [kushi.ui.progress.core :refer [progress spinner propeller thinking]]]
+    :sx-attrs  (sx-call (sx :.small {:-loading? true}))
+    :examples  [{:label "Loading state, propeller"
+                 :args  [[progress [icon :play-arrow] [propeller]] "Play"]}
+                {:label "Loading state, dots"
+                 :args  [[progress "Play" [thinking]]]}
+                {:label "Loading state, spinner"
+                 :args  [[progress "Play" [spinner]]]}
+                {:label "Loading state, spinner, fast"
+                 :args  [[progress "Play" [spinner (sx :animation-duration--325ms)]]]}
+                {:label "Loading state, spinner on icon"
+                 :args  [[progress [icon :play-arrow] [spinner]] "Play"]}
+                {:label "Loading state, propeller on icon"
+                 :attrs {:disabled true}
+                 :args  [[progress [icon :play-arrow] [spinner]] "Play"]}
+                {:label "Disabled"
+                 :attrs {:disabled true}
+                 :args  ["Play"]}]}])
 
 
 #_(defn section-label

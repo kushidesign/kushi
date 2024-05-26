@@ -38,8 +38,8 @@
   (into [:<>]
         (for [
               ;; example-opts (take 1 switch-examples)
-              example-opts switch-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) switch-examples)
+              ;; example-opts switch-examples
+              example-opts (keep-indexed (fn [idx m] (when (contains? #{3} idx) m)) switch-examples)
               ]
           [component-examples/examples-section component-opts example-opts])))
 
@@ -158,70 +158,6 @@
                     {:label (name sz)
                      :attrs {:disabled true
                              :class    [sz]}})}
-
-
-  ;;  {:title       "shape variants"
-  ;;   :label       [section-label-2 [:span "" [:span.code "shape"] " variants"]]
-  ;;   :component   button
-  ;;   :sx-attrs (sx :.small)
-  ;;   :variants+   [:minimal]
-  ;;   :examples    (for [s [:rounded :pill :sharp]]
-  ;;                  {:label (name s)
-  ;;                   :args  ["Play"]
-  ;;                   :attrs {:class [s]}})}
-   
-  ;;  {:title       "With icons"
-  ;;   :label       [section-label-2 "With icons"]
-  ;;   :component   button
-  ;;   :reqs        '[[kushi.ui.icon.core :refer [icon]]]
-  ;;   :sx-attrs (sx :.small)
-  ;;   :examples    [{:label "Icon button"
-  ;;                  :args  [[icon :favorite]]}
-  ;;                 {:label "Icon button"
-  ;;                  :args  [[icon :star]]}
-  ;;                 {:label "Icon button"
-  ;;                  :args  [[icon :play-arrow]]}
-  ;;                 {:label "Leading icon"
-  ;;                  :args  [[icon :play-arrow] "Play"]}
-  ;;                 {:label "Trailing icon"
-  ;;                  :args  [[icon :auto-awesome]]}
-  ;;                 {:label "2 icons"
-  ;;                  :args  [[icon :auto-awesome] "Play" [icon :auto-awesome]]}]}
-   
-  ;;  {:title       "weight variants"
-  ;;   :label       [section-label-2 [:span "" [:span.code "weight"] " variants"]]
-  ;;   :component   button
-  ;;   :sx-attrs (sx :.small)
-  ;;   :examples    (for [s (rest component-examples/type-weights)]
-  ;;                  {:label (name s)
-  ;;                   :args  ["Play" [icon :auto-awesome]]
-  ;;                   :attrs {:class [s]}})}
-   
-  ;;  {:title       "Loading and disabled states"
-  ;;   :label       [section-label-2 "Loading and disabled states"]
-  ;;   :component   button
-  ;;   :reqs        '[[kushi.ui.button.core :refer [button]]
-  ;;                  [kushi.ui.icon.core :refer [icon]]
-  ;;                  [kushi.ui.progress.core :refer [progress spinner propeller thinking]]]
-  ;;   :sx-attrs (sx :.small {:-loading? true})
-  ;;   :examples    [{:label "Loading state, propeller"
-  ;;                  :args  [[progress "Play" [propeller]]]}
-  ;;                 {:label "Loading state, dots"
-  ;;                  :args  [[progress "Play" [thinking]]]}
-  ;;                 {:label "Loading state, spinner"
-  ;;                  :args  [[progress "Play" [spinner]]]}
-  ;;                 {:label "Loading state, spinner, fast"
-  ;;                  :args  [[progress "Play" [spinner (sx :animation-duration--325ms)]]]}
-  ;;                 {:label "Loading state, spinner on icon"
-  ;;                  :args  [[progress [icon :play-arrow] [spinner]] "Play"]}
-  ;;                 {:label "Loading state, propeller on icon"
-  ;;                  :args  [[progress [icon :play-arrow] [spinner]] "Play"]}
-  ;;                 {:label "Loading state, propeller on icon"
-  ;;                  :attrs {:disabled true}
-  ;;                  :args  [[progress [icon :play-arrow] [spinner]] "Play"]}
-  ;;                 {:label "Loading state, propeller on icon"
-  ;;                  :attrs {:disabled true}
-  ;;                  :args  ["Play"]}]}
    ])
 
 
