@@ -1,11 +1,10 @@
 (ns kushi.playground.snippet
-  (:require
-   [fireworks.core :refer [!? pprint]]
-   [clojure.string :as string]
-   [clojure.walk :as walk]
-   [kushi.core :refer (sx keyed)]
-   [kushi.playground.demobox.core :refer (copy-to-clipboard-button)]
-   [kushi.playground.util :as playground.util]))
+  (:require [clojure.string :as string]
+            [clojure.walk :as walk]
+            [fireworks.core :refer [!? ? pprint]]
+            [kushi.core :refer (sx keyed)]
+            [kushi.playground.demobox.core :refer (copy-to-clipboard-button)]
+            [kushi.ui.util]))
 
 (defn- component->sym [f]
   (-> f
@@ -18,12 +17,14 @@
       string/join
       symbol))
 
+
 (defn- formatted-code [s]
   [:pre
    [:code {:class :language-clojure
            :style {:white-space :pre
                    :line-height 1.5}}
     s]])
+
 
 (defn- snippet-section-header [header]
   [:h3 (sx 'snippet-section-header
@@ -34,6 +35,7 @@
            :mbe--0.75em)
    header])
 
+
 (defn- code-snippet-args
   "This normalizes args for display, turning component references into symbols"
   [coll]
@@ -43,6 +45,7 @@
                    %)
                  coll))
 
+
 (defn select-keys-re
   [m re]
   (->> m
@@ -51,8 +54,9 @@
                  [k v])))
        (into {})))
 
-(defn- sx-args [m]
-  (->> m
+
+(defn- sx-args [merged-attrs*]
+  (->> merged-attrs*
        :class
        (keep #(some->> % 
                        name
@@ -60,6 +64,19 @@
                        (str ".")
                        keyword))
        seq))
+
+
+(defn- sx-call
+  [ma qa]
+  (if (:instance-sx-attrs? ma)
+    (if (not= 'sx (first qa))
+      qa
+      (concat '(sx) [qa]))
+    (let [sx-args (sx-args ma)]
+      (concat '(sx)
+              sx-args
+              (some-> qa rest)))))
+
 
 (defn- code-snippet 
   "Returns something like this:
@@ -70,17 +87,15 @@
         :style {:white-space :pre, :line-height 1.5}}
       \"[button (sx :.rounded :.small) [icon :play-arrow] \\\"Play\\\"]\n\"]]]}"
   [component
-   {:keys [args] :as m}
+   {:keys [args] :as merged-attrs*}
    quoted-attrs]
-  (let [sx-args              (sx-args m)
-        sx-args-quoted-attrs (some-> quoted-attrs rest)
-        sx-call              (concat '(sx) sx-args sx-args-quoted-attrs)
-        component            (component->sym component)
-        args                 (code-snippet-args args)
-        code-snippet         (formatted-code
-                              (with-out-str
-                                (pprint (into [component sx-call] args)
-                                        {:max-width 50})))]
+  (let [sx-call      (sx-call merged-attrs* quoted-attrs)
+        component    (component->sym component)
+        args         (code-snippet-args args)
+        code-snippet (formatted-code
+                      (with-out-str
+                        (pprint (into [component sx-call] args)
+                                {:max-width 50})))]
     code-snippet))
 
 
@@ -88,13 +103,13 @@
   "Returns something like this:
    '[[kushi.ui.button.core  :refer  [button]]
      [kushi.ui.icon.core  :refer  [icon]]]"
-  [m]
-  (some->> m
+  [merged-attrs*]
+  (some->> merged-attrs*
            :reqs-by-refers
            keys
            distinct
            (reduce (fn [acc v]
-                     (let [_ns    (get (:reqs-by-refers m) v)
+                     (let [_ns    (get (:reqs-by-refers merged-attrs*) v)
                            refers (or (get acc _ns) [])]
                        (assoc acc _ns (conj refers v))))
                    {})
@@ -103,10 +118,10 @@
                       [])))
 
 (defn- snippets
-  [component m quoted-attrs]
-  (!? 'snipptes (keyed component m quoted-attrs))
-  (let [code-snippet   (code-snippet component m quoted-attrs)
-        reqs-coll      (reqs-coll m)
+  [component merged-attrs* quoted-attrs]
+  ;; (!? 'snipptes (keyed component merged-attrs* quoted-attrs))
+  (let [code-snippet   (code-snippet component merged-attrs* quoted-attrs)
+        reqs-coll      (reqs-coll merged-attrs*)
         reqs-snippet*  (string/join "\n" reqs-coll)
         reqs-snippet   (map #(formatted-code (with-out-str (pprint %)))
                             reqs-coll)]
@@ -158,7 +173,7 @@
                                             quoted-attrs)]
         [:div (sx :.flex-col-fs :gap--1rem)
          [snippet-section
-          (playground.util/backtics->hiccup "Paste into the `:require` section of your `:ns` form:")
+          (kushi.ui.util/backtics->hiccup "Paste into the `:require` section of your `:ns` form:")
           (:reqs-snippet snippets)]
 
          [snippet-section
