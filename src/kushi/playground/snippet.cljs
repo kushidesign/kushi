@@ -6,16 +6,20 @@
             [kushi.playground.demobox.core :refer (copy-to-clipboard-button)]
             [kushi.ui.util]))
 
-(defn- component->sym [f]
-  (-> f
-      pprint
-      with-out-str
-      (string/split #"\$")
-      last
-      string/trim
-      drop-last
-      string/join
-      symbol))
+(defn- component->sym [x]
+  (if (keyword? x)
+    (-> x
+        str
+        symbol)
+    (-> x
+        pprint
+        with-out-str
+        (string/split #"\$")
+        last
+        string/trim
+        drop-last
+        string/join
+        symbol)))
 
 
 (defn- formatted-code [s]
