@@ -41,6 +41,7 @@
   :dark:box-shadow--$tooltip-box-shadow-inverse||none
   :fs--$tooltip-font-size
   :fw--$tooltip-font-weight
+  :line-height--$tooltip-line-height
   :border-radius--$tooltip-border-radius
   :transition-duration--$tooltip-transition-duration
   :transition-timing-function--$tooltip-transition-timing-function
@@ -51,7 +52,14 @@
   :dark:c--$tooltip-color-inverse
   :bgc--$tooltip-background-color
   :dark:bgc--$tooltip-background-color-inverse
-  :p--$tooltip-padding-block:$tooltip-padding-inline)
+  :p--$tooltip-padding-block:$tooltip-padding-inline
+  ;; span.code
+  :&_span.code:fs--$tooltip-font-size
+  :dark:&_span.code:bgc--$code-background-color
+  :dark:&_span.code:c--$code-color
+  :&_span.code:bgc--$code-background-color-inverse
+  :&_span.code:c--$code-color-inverse
+  )
 
 ;; TODO maybe move to popover.styles
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}

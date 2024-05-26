@@ -15,12 +15,13 @@
 
 
 (defn maybe-multiline-tooltip-text [v]
-  (if (or (vector? v)
-          (array? v)
-          (and (not (string? v))
-               (seq v)))
-    (string/join "<br>" v)
-    v))
+  (let [ret (if (or (vector? v)
+                    (array? v)
+                    (and (not (string? v))
+                         (seq v)))
+              (string/join "<br>" v)
+              v)]
+    ret))
 
 
 (defn- txy 
@@ -43,7 +44,6 @@
             {:scale               :1!important
              :transition-property :none!important})))))
 
-
 (defn- tooltip-text-html!
   [{:keys [el tooltip-text]}]
   (let [style (domo/css-style-string
@@ -53,12 +53,13 @@
                 :align-items     :center
                 :width           :fit-content})]
     (set! (.-innerHTML el)
-          (str "<div class=\"kushi-tooltip-text-wrapper\""
-                    "style=\"" style "\">"
-                 "<span class=\"kushi-tooltip-text\">"
-                   (maybe-multiline-tooltip-text tooltip-text)
-                 "</span>"
-               "</div>"))))
+          (util/backtics->stringified-html
+           (str "<div class=\"kushi-tooltip-text-wrapper\""
+                "style=\"" style "\">"
+                "<span class=\"kushi-tooltip-text\">"
+                (maybe-multiline-tooltip-text tooltip-text)
+                "</span>"
+                "</div>")))))
 
 (defn- adjust-client-rect
   [{:keys [top bottom left right width height] :as owning-el-rect}
