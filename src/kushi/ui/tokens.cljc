@@ -41,7 +41,7 @@
 
    ;; Typography
    ;; ------------------------------------------------------
-
+   
 
    ;; font-family
    ;; TODO should this live in basetheme?
@@ -152,7 +152,7 @@
 
    ;; pane - floating layer abstraction
    ;; ------------------------------------------------------
-
+   
    ;; pane colors and images
    :$pane-background-color                 :$body-background-color
    :$pane-background-color-inverse         :$body-background-color-inverse
@@ -204,7 +204,7 @@
 
    ;; Tooltips
    ;; ------------------------------------------------------
-
+   
    ;; tooltip colors and images
    :$tooltip-color                            :$body-color-inverse
    :$tooltip-color-inverse                    :$body-color
@@ -219,7 +219,7 @@
    :$tooltip-border-color-inverse             :$pane-border-color-inverse
 
    ;; pane typography
-   :$tooltip-line-height                      1.25
+   :$tooltip-line-height                      1.45
    :$tooltip-font-family                      :$sans-serif-font-stack
    :$tooltip-font-size                        :$xsmall
    :$tooltip-font-weight                      :$wee-bold
@@ -228,8 +228,8 @@
    ;; tooltip geometry
    :$tooltip-min-width                        :1rem
    :$tooltip-min-height                       :1rem
-   :$tooltip-padding-inline                   :$pane-padding-inline
-   :$tooltip-padding-block                    :$pane-padding-block
+   :$tooltip-padding-inline                   :1.2em
+   :$tooltip-padding-block                    :0.65em
    :$tooltip-border-radius                    :5px
    :$tooltip-offset                           :$pane-offset
    :$tooltip-viewport-padding                 :$pane-viewport-padding 
@@ -256,7 +256,7 @@
 
    ;; Popovers
    ;; ------------------------------------------------------
-
+   
    ;; popover colors and images
    :$popover-background-color                 :$pane-background-color
    :$popover-background-color-inverse         :$pane-background-color-inverse
@@ -294,7 +294,7 @@
    
    ;; toasts
    ;; ------------------------------------------------------
-
+   
    ;; toast colors and images
    :$toast-background-color                 :$pane-background-color
    :$toast-background-color-inverse         :$pane-background-color-inverse
@@ -347,7 +347,7 @@
 
    ;; Intended for css props: border-radius
    ;; ------------------------------------------------------
-
+   
    ;; Absolute versions for panes, cards, etc.
    :$rounded-absolute-xxxsmall              :0.625rem         ;; 1px
    :$rounded-absolute-xxsmall               :0.125rem         ;; 2px
@@ -358,7 +358,7 @@
    :$rounded-absolute-xlarge                :0.1rem           ;; 16px
    :$rounded-absolute-xxlarge               :1.25rem          ;; 20px
    :$rounded-absolute-xxxlarge              :1.5625rem        ;; 25px
-
+   
    ;; Relative (to type size) versions for buttons, badges
    :$rounded-xxxsmall                       :0.4375em  
    :$rounded-xxsmall                        :0.0875em  
@@ -377,7 +377,7 @@
 
     ;; Intended for css props: box-shadow
     ;; ------------------------------------------------------
-
+   
    :$elevated-0
    :none
 
@@ -399,7 +399,7 @@
     [:0px :3px :4px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
     [:0px :1px :8px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px 0px, rgb(0 0 0 / 12%) 0px 1px 3px 0px"
-
+   
 
    ;; maps to MUI2 level 3
    :$elevated-2
@@ -411,7 +411,7 @@
     [:0px :3px :4px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
     [:0px :1px :8px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 14%) 0px 3px 4px 0px, rgb(0 0 0 / 12%) 0px 1px 8px 0px"
-
+   
 
    ;; maps to MUI2 level 6
    :$elevated-3
@@ -424,7 +424,7 @@
     [:0px :6px :10px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
     [:0px :1px :18px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 3px 5px -1px, rgb(0 0 0 / 14%) 0px 6px 10px 0px, rgb(0 0 0 / 12%) 0px 1px 18px 0px"
-
+   
    ;; maps to MUI2 level 8
    :$elevated-4
    [[:0px :5px :5px :-3px  "var(--elevation-shadow-layer-1-color)"]
@@ -435,7 +435,7 @@
     [:0px :8px :18px :1px "var(--elevation-shadow-layer-2-color-inverse)"]
     [:0px :6px :20px :2px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px"
-
+   
    ;; maps to MUI2 level 12
    :$elevated-5
    [[:0px :7px :14px :-2px  "var(--elevation-shadow-layer-1-color)"]
@@ -447,7 +447,7 @@
     [:0px :6px :26px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
     [:0px :8px :27px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 7px 8px -4px, rgb(0 0 0 / 14%) 0px 12px 17px 2px, rgb(0 0 0 / 12%) 0px 5px 22px 4px"
-
+   
 
    :$elevated
    :$elevated-4
