@@ -52,7 +52,7 @@
                         :$code-background-color-inverse          :$accent-900
                         :$button-with-icon-padding-inline-offset :0.8em
                         :$kushi-playground-mobile-header-height  :46px
-                        :$popover-border-color                   :$neutral-300]
+                        :$popover-border-color                   :$neutral-300 ]
 
      :typescale        (create-typescale {:size-limit "xxx" :shift 0})
      :type-scale-shift 1
