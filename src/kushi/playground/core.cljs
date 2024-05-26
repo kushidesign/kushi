@@ -330,39 +330,51 @@
         ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         _comps                       [
                                       #_{:label          "button"
-                                       :demo-component button.demo/demo2
-                                       :component      button
-                                       :reqs           '[[kushi.ui.button.core :refer [button]]]
-                                       :variants-base  #{:rounded :filled :bordered}
-                                       :variants-order [:rounded :filled :bordered :minimal]
-                                       :variants-attrs {:rounded  (sx :.rounded)
-                                                        :filled   (sx :.rounded :.filled)
-                                                        :bordered (sx :.rounded :.bordered)
-                                                        :minimal  (sx :.rounded :.minimal)}
-                                       }
+                                         :demo-component button.demo/demo2
+                                         :component      button
+                                         :reqs           '[[kushi.ui.button.core :refer [button]]]
+                                         :variants-base  #{:rounded :filled :bordered}
+                                         :variants-order [:rounded :filled :bordered :minimal]
+                                         :variants-attrs {:rounded  (sx :.rounded)
+                                                          :filled   (sx :.rounded :.filled)
+                                                          :bordered (sx :.rounded :.bordered)
+                                                          :minimal  (sx :.rounded :.minimal)}
+                                         }
                                       #_{:label          "switch" 
-                                       :demo-component switch.demo/demo2
-                                       :component      switch
-                                       :reqs           '[[kushi.ui.input.switch.core :refer [switch]]]
-                                       :variants-base  #{:on #_:off}
-                                       :variants-order [:off :on]
-                                       :variants-attrs {:on  {:-on? true}
-                                                        :off {}}
-                                       }
+                                         :demo-component switch.demo/demo2
+                                         :component      switch
+                                         :reqs           '[[kushi.ui.input.switch.core :refer [switch]]]
+                                         :variants-base  #{:on #_:off}
+                                         :variants-order [:off :on]
+                                         :variants-attrs {:on  {:-on? true}
+                                                          :off {}}
+                                         }
                                       {:label          "tooltip" 
                                        :demo-component tooltip.demo/demo2
                                        :component      :span
                                        :reqs           '[[kushi.ui.tooltip.core :refer [tooltip-attrs]] ]
                                        :variants-base  #{:positions}
-                                       :variants-attrs {:positions {}}
-                                       }
-                                      {:label "slider" }
-        ;;  "toast"
-        ;;  "alert"
-        ;;  "modal"
-        ;;  "badge"
-        ;;  "radio"
-        ;;  "popover"
+                                       :variants-attrs {:positions {}}}
+
+                                      {:label "modal" }
+
+
+                                      "radio"
+                                      "checkbox"
+                                      "input"
+                                      "slider"
+                                      "popover"
+                                      "toast"
+                                      "icons"
+                                      "tag"
+                                      "label"
+                                      "card"
+                                      "alert"
+                                      "collapse"
+                                      "accordion"
+                                      "grid"
+
+
                                       ]
         
         popover-content              (fn [] [:div.absolute-centered "hi"])]

@@ -171,8 +171,13 @@
        first))
 
 (defn current-snippet [st opts]
-  (r/reaction (let [{:keys [hide-default-classes? active-controls-by-type]} @st
-                    st-opts (keyed hide-default-classes? active-controls-by-type)]
+  (r/reaction (let [{:keys [hide-default-classes?
+                            active-controls-by-type]}
+                    @st
+
+                    st-opts
+                    (keyed hide-default-classes?
+                           active-controls-by-type)]
                 (-> @st
                     :active-example
                     :example
@@ -219,9 +224,14 @@
              :selector                selector
              :hide-default-classes?   true
              :examples                examples
-             :active-example          (or (when-let [active (get-in @*state [:demo component-id :active-example])]
-                                            (get-example examples (:label active)))
-                                          (get-example examples (:examples defaults)))})))
+             :active-example          (or (when-let [active (get-in @*state
+                                                                    [:demo
+                                                                     component-id
+                                                                     :active-example])]
+                                            (get-example examples
+                                                         (:label active)))
+                                          (get-example examples
+                                                       (:examples defaults)))})))
 
 
 (defn demobox2
@@ -277,69 +287,98 @@
                               (update-classes this))
       :component-did-update update-classes
       :reagent-render       (fn []
-                              (let [dev-mode-stage-ai (or (-> @*demostate :layout :justify-content) :center)
-                                    dev-mode-stage-jc (or (-> @*demostate :layout :align-items) :center)]
+                              (let [dev-mode-stage-ai (or (-> @*demostate
+                                                              :layout
+                                                              :justify-content)
+                                                          :center)
+                                    dev-mode-stage-jc (or (-> @*demostate
+                                                              :layout
+                                                              :align-items)
+                                                          :center)]
                                 [:section (sx :.kushi-playground-demobox)
 
-                                   ;; Component preview stage
-                                   ;; ------------------------------------
+                                 ;; Component preview stage
+                                 ;; ------------------------------------
                                  [:div.flex-row-c.relative
                                   (merge-attrs stage-attr
-                                               (sx 'kushi-demo-stage {:id  component-id
-                                                                      :key (-> @*demostate
-                                                                               :active-example
-                                                                               :example
-                                                                               :quoted)}))
+                                               (sx 'kushi-demo-stage
+                                                   {:id  component-id
+                                                    :key (-> @*demostate
+                                                             :active-example
+                                                             :example
+                                                             :quoted)}))
                                   @current-stage
 
                                   [button (merge-attrs
                                            (sx :.bottom-right-corner-inside
                                                :.kushi-playground-demobox-ui-icon
-                                               {:on-click (fn [_]
-                                                            (domo/add-class! js/document.body
-                                                                           "kushi-playground-dev-mode")
-                                                            (js/setTimeout (fn [_]
-                                                                             (domo/add-class! js/document.body
-                                                                                            "kushi-playground-dev-mode-hidden")
-                                                                             (reset! *dev-mode? true))
-                                                                           500))})
+                                               {:on-click
+                                                (fn [_]
+                                                  (domo/add-class! js/document.body
+                                                                   "kushi-playground-dev-mode")
+                                                  (js/setTimeout (fn [_]
+                                                                   (domo/add-class!
+                                                                    js/document.body
+                                                                    "kushi-playground-dev-mode-hidden")
+                                                                   (reset! *dev-mode? true))
+                                                                 500))})
                                            (sx :$tooltip-offset---3px)
-                                           (tooltip-attrs {:-text      "Enter dev mode"
-                                                           :-placement [:block-start :inline-start :corner]}))
+                                           (tooltip-attrs
+                                            {:-text      "Enter dev mode"
+                                             :-placement [:block-start :inline-start :corner]}))
                                    [icon :fullscreen]]
 
-                                  (when (and (state/focused? nm) @*dev-mode?)
+                                  (when (and (state/focused? nm)
+                                             @*dev-mode?)
                                     (react-dom/createPortal
-                                     (r/as-element [dev-mode-view *demostate current-stage component-id])
-                                     (.. js/document (getElementById "kushi-playground-dev-mode-portal"))))]
+                                     (r/as-element [dev-mode-view
+                                                    *demostate
+                                                    current-stage
+                                                    component-id])
+                                     (.. js/document
+                                         (getElementById "kushi-playground-dev-mode-portal"))))]
 
 
                                  ;; Examples radio group
                                  ;; ------------------------------------
                                  (into [input-row {:-label "Examples"
                                                    :-nm    nm}]
-                                       (for [{:keys [label radio-label example]} examples
-                                             :let                                [id (if (vector? label)
-                                                                                       (str (last label) ":" (-> example :quoted first name))
-                                                                                       label)
-                                                                                  label       (name label)
-                                                                                  radio-label (or radio-label label)]]
+                                       (for [{:keys [label
+                                                     radio-label
+                                                     example]}   examples
+                                             :let                [id (if (vector? label)
+                                                                       (str (last label)
+                                                                            ":"
+                                                                            (-> example
+                                                                                :quoted
+                                                                                first name))
+                                                                       label)
+                                                                  label       (name label)
+                                                                  radio-label (or radio-label
+                                                                                  label)]]
                                          [radio
                                           (sx
-                                           {:-input-attrs {:id        id
-                                                           :value     id
-                                                           :name      (str nm "-example:content")
-                                                           :checked   (= label (-> @*demostate :active-example :label))
-                                                           :on-change (fn [_]
-                                                                        (swap! *state
-                                                                               assoc-in
-                                                                               [:demo component-id :active-example]
-                                                                               (get-example (:examples @*demostate) label))
-                                                                        (swap! *demostate
-                                                                               assoc
-                                                                               :active-example
-                                                                               (get-example (:examples @*demostate) label)))}})
-                                          (if (keyword? radio-label) (name radio-label) radio-label)]))
+                                           {:-input-attrs
+                                            {:id        id
+                                             :value     id
+                                             :name      (str nm "-example:content")
+                                             :checked   (= label (-> @*demostate
+                                                                     :active-example
+                                                                     :label))
+                                             :on-change (fn [_]
+                                                          (swap! *state
+                                                                 assoc-in
+                                                                 [:demo component-id :active-example]
+                                                                 (get-example (:examples @*demostate)
+                                                                              label))
+                                                          (swap! *demostate
+                                                                 assoc
+                                                                 :active-example
+                                                                 (get-example (:examples @*demostate)
+                                                                              label)))}})
+                                          (if (keyword? radio-label)
+                                            (name radio-label)
+                                            radio-label)]))
 
 
                                  ;; Variant controls section, radio groups and sliders

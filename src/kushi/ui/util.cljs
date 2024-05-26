@@ -1,6 +1,5 @@
 (ns kushi.ui.util
   (:require [clojure.string :as string]
-            [fireworks.core :refer [? ?pp]]
             [kushi.core :refer [keyed]]))
 
 ;; Generic
@@ -93,6 +92,6 @@
           spans       (conj (into [] spans) nil)
           splits      (string/split s #"`")
           interleaved (interleave splits spans)]
-      (?pp (keyed spans splits interleaved))
+      (keyed spans splits interleaved)
       (string/join interleaved))
     s))
