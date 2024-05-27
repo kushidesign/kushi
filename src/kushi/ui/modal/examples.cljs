@@ -30,8 +30,8 @@
      (sx
       {:placeholder      "75px"
        :-label           "Depth"
-       :-label-placement :inline})]
-    ]
+       :-label-placement :inline})]]
+
 (def modal-examples
   [
    {:label   "With title and description"
@@ -220,5 +220,33 @@
                          {:id "my-modal"}
                          [:div
                           [icon (sx :.xxlarge) :emoticon]]]])}])
+
+
+{:label   "With title and description"
+ :example (example2 [:div
+                     [button
+                      {:on-click #(open-kushi-modal "my-modal")}
+                      "Click to open modal"]
+                     [modal
+                      (sx 
+                       :min-width--450px
+                       :&_.kushi-modal-description:fs--$small
+                       {:-modal-title "Example modal"
+                        :-description "Example modal description goes here."
+                        :id           "my-modal"})
+                      [:div 
+                       (sx :.flex-col-fs
+                           :gap--1em)
+                       [input
+                        (sx
+                         {:placeholder "Puffy"
+                          :-label      "Screen name"})]
+                       [input
+                        (sx
+                         {:placeholder "Executive"
+                          :-label      "Occupation"})]]
+                      [:div (sx :.flex-row-fe :gap--1em)
+                       [button {:on-click close-kushi-modal} "Cancel"]
+                       [button (sx :.filled) "Submit"]]]])}
 
 

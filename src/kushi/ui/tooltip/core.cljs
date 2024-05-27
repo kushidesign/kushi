@@ -1,14 +1,13 @@
 (ns kushi.ui.tooltip.core
-  (:require
-   [applied-science.js-interop :as j]
-   [clojure.string :as string]
-   [domo.core :as domo]
-   [goog.string]
-   [kushi.core :refer (keyed token->ms)]
-   [kushi.ui.dom.pane.core :as pane]
-   [kushi.ui.dom.pane.placement :refer [user-placement]] ;; Import this styles ns to create defclasses
-   [kushi.ui.dom.pane.styles]
-   [kushi.ui.util :as util :refer [maybe]]))
+  (:require [applied-science.js-interop :as j]
+            [clojure.string :as string]
+            [domo.core :as domo]
+            [goog.string]
+            [kushi.core :refer (keyed token->ms)]
+            [kushi.ui.dom.pane.core :as pane]
+            [kushi.ui.dom.pane.placement :refer [user-placement]] ;; Import this styles ns to create defclasses
+            [kushi.ui.dom.pane.styles]
+            [kushi.ui.util :as util :refer [maybe]]))
 
 
 (defn valid-tooltip-text-coll? [x]
@@ -228,21 +227,22 @@
         :on-mouse-enter     (partial pane/append-pane! opts)}
        ;; Todo use when-let to validate text-on-click and normalize if vector
        (when-let [text-on-click (pane/maybe-multiline-tooltip-text text-on-click)]
-         {:on-click
+         {:on-mouse-down
           (fn [_]
-            (let [duration           (token->ms :$tooltip-text-on-click-duration)
-                  tt-el              (domo/qs ".kushi-pane")
-                  tt-el-text-wrapper (domo/qs tt-el ".kushi-tooltip-text-wrapper")
-                  tt-el-text-span    (domo/qs tt-el ".kushi-tooltip-text")
-                  text-on-click-el   (js/document.createElement "span")]
-              (j/assoc! text-on-click-el "innerText" text-on-click)
-              (domo/add-class! text-on-click-el "absolute-centered")
+            (let [duration              (token->ms :$tooltip-text-on-click-duration)
+                  tt-el                 (domo/qs ".kushi-tooltip")
+                  tt-el-text-wrapper    (domo/qs tt-el ".kushi-tooltip-text-wrapper")
+                  tt-el-text-span       (domo/qs tt-el ".kushi-tooltip-text")
+                  text-on-mouse-down-el (js/document.createElement "span")]
+
+              (j/assoc! text-on-mouse-down-el "innerText" text-on-click)
+              (domo/add-class! text-on-mouse-down-el "absolute-centered")
               (some->> text-on-click-tooltip-class (domo/add-class! tt-el))
-              (.appendChild tt-el-text-wrapper text-on-click-el)
+              (.appendChild tt-el-text-wrapper text-on-mouse-down-el)
               (domo/add-class! tt-el-text-span "invisible")
               (js/setTimeout (fn [_] 
                                (.removeChild tt-el-text-wrapper
-                                             text-on-click-el)
+                                             text-on-mouse-down-el)
                                (some->> text-on-click-tooltip-class
                                         (domo/remove-class! tt-el))
                                (domo/remove-class! tt-el-text-span

@@ -33,7 +33,9 @@
 
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
    [kushi.ui.tooltip.demo :as tooltip.demo]
+   [kushi.ui.modal.demo :as modal.demo]
    [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
+   [kushi.ui.popover.demo :as popover.demo]
    [reagent.dom :as rdom]
 
   ;; leave in, comment out when tweaking typescale
@@ -349,14 +351,29 @@
                                          :variants-attrs {:on  {:-on? true}
                                                           :off {}}
                                          }
-                                      {:label          "tooltip" 
-                                       :demo-component tooltip.demo/demo2
+                                      #_{:label          "tooltip" 
+                                         :demo-component tooltip.demo/demo2
+                                         :component      :span
+                                         :reqs           '[[kushi.ui.tooltip.core :refer [tooltip-attrs]] ]
+                                         :variants-base  #{:positions}
+                                         :variants-attrs {:positions {}}}
+
+                                      {:label          "modal" 
+                                       :demo-component modal.demo/demo
                                        :component      :span
-                                       :reqs           '[[kushi.ui.tooltip.core :refer [tooltip-attrs]] ]
+                                       :reqs           '[[kushi.ui.modal.core :refer [modal
+                                                                                      modal-close-button
+                                                                                      open-kushi-modal
+                                                                                      close-kushi-modal]] ]
                                        :variants-base  #{:positions}
                                        :variants-attrs {:positions {}}}
-
-                                      {:label "modal" }
+                                      
+                                      {:label          "popover" 
+                                       :demo-component popover.demo/demo
+                                       :component      :span
+                                       :reqs           '[[kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]]
+                                       :variants-base  #{:positions}
+                                       :variants-attrs {:positions {}}}
 
 
                                       "radio"
