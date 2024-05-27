@@ -1,11 +1,10 @@
 (ns kushi.ui.tooltip.demo
   (:require 
-            [kushi.core :refer (sx merge-attrs)]
-            [kushi.playground.component-examples :as component-examples]
-            [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.button.core :refer [button]]
-            ;; [kushi.ui.dom.pane.placement :refer [placement-kws-hydrated]]
-            [kushi.ui.tooltip.core :refer [tooltip-attrs]]))
+   [kushi.core :refer (sx merge-attrs)]
+   [kushi.playground.component-examples :as component-examples]
+   [kushi.playground.util :refer-macros [sx-call]]
+   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.tooltip.core :refer [tooltip-attrs]]))
 
 (defn demo []
   (into
@@ -112,6 +111,7 @@
                 :gap--1rem
                 :w--333px
                 :h--333px
+                :&_span.kushi-tooltip-text:ta--c
                 [:>span {:ta             :c
                          :ff             :$code-font-stack
                          :fs             :$xsmall
