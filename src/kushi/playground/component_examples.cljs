@@ -1,8 +1,10 @@
 (ns ^:dev/always kushi.playground.component-examples
-  (:require [fireworks.core :refer [!? ?]]
-            [kushi.core :refer (sx merge-attrs keyed)]
+  (:require [kushi.core :refer (sx merge-attrs keyed)]
             [kushi.playground.snippet :refer (component-details-popover)]
+            [kushi.ui.button.core :refer [button]]
+            [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.popover.core :refer [popover-attrs]]
+            [kushi.ui.tooltip.core :refer [tooltip-attrs]]
             [kushi.ui.util :refer [maybe]]
             [reagent.dom :as rdom]))
 
@@ -14,7 +16,6 @@
     {sx-attrs     :evaled
      quoted-attrs :quoted}                   :sx-attrs
     :as                                      example-opts}]
-  (!? example-opts)
   (into [:section (merge-attrs
                    (sx :.flex-row-fs
                        :gap--1rem
@@ -22,8 +23,10 @@
                    row-attrs)]
         (for [{instance-args                  :args
                instance-attrs                 :attrs
-              {instance-sx-attrs     :evaled
-               instance-quoted-attrs :quoted} :sx-attrs
+               {instance-sx-attrs     :evaled
+                instance-quoted-attrs :quoted} :sx-attrs
+               {instance-code        :evaled
+                instance-code-quoted :quoted}  :code
                :as          m}                examples
               :let [sx-attrs      (or instance-sx-attrs sx-attrs)
                     quoted-attrs  (or instance-quoted-attrs quoted-attrs)
@@ -50,10 +53,19 @@
                                                sx-attrs
                                                instance-attrs
                                                poa)]]
-          (do 
-            (when (= (:class merged-attrs) '(:xlarge))
-                (!? (keyed variant-attrs merged-attrs)))
-            (!? variant-attrs)
+          (if instance-code 
+            [:div 
+             (sx :.flex-row-fs :gap--1rem)
+             instance-code
+             [button
+              (merge-attrs
+               (sx :.accent
+                   :.pill
+                   :.xxsmall
+                   :.bold) 
+               poa
+               (tooltip-attrs {:-text "Click to view code" :-placement :r}))
+              [icon :code]]]
             (into [component merged-attrs] instance-args)))))
 
 (defn resolve-variants-attrs
@@ -112,14 +124,14 @@
     example-component :component
     :or          {example-reqs []}
     :as          example-opts}]
-  (let [component (or example-component component)
+  (let [component      (or example-component component)
         all-reqs       (into []
                              (concat component-reqs
                                      example-reqs))
         reqs-by-refers (reqs-by-refers all-reqs)
-        label          (-> desc
-                           kushi.ui.util/backtics->hiccup
-                           section-label)]
+        label          (some-> desc
+                               kushi.ui.util/backtics->hiccup
+                               section-label)]
     (into [:section (sx :pb--1.5rem)
            label]
           (for [variant-attrs (resolve-variants-attrs component-opts
