@@ -1,59 +1,26 @@
 ;; TODO - test Malli validation
+;; TODO - type-tweaker require commented out
 
 (ns ^:dev/always kushi.playground.core
-  (:require ;; ------------------------------------------------------
- ;; TODO figure out how to use as dev-only instrumentation 
- ;; [kushi.playground.tweak.typescale :refer [type-tweaker]]
- ;; ------------------------------------------------------
- ;; leave in, comment out when tweaking typescale
- ;; [kushi.playground.tweak.typescale :refer [type-tweaker]]
+  (:require [kushi.ui.card.demo :as card.demo]
             [garden.color]
             [kushi.color :refer [colors->tokens]]
             [kushi.colors :as kushi.colors]
-            [kushi.core :refer [merge-attrs sx]]
-            [kushi.playground.about :as about]
-            [kushi.playground.colors :as playground.colors]
-            [kushi.playground.component-section :refer [component-section]]
+            [kushi.core :refer [sx]]
             [kushi.playground.layout :as layout]
             [kushi.playground.nav :as nav]
             [kushi.playground.shared-styles :as shared-styles]
-            [kushi.playground.sidenav :refer [desktop-sidenav mobile-subnav]]
             [kushi.playground.state :as state :refer [*state]]
             [kushi.playground.ui :refer [light-dark-mode-switch]]
             [kushi.playground.util
-    :as util
-    :refer-macros [keyed]]
-            [kushi.ui.button.core :refer [button]]
-            [kushi.ui.button.demo :as button.demo ]
+             :as util
+             :refer-macros [keyed]]
+            [kushi.ui.card.core :refer [card]]
             [kushi.ui.examples :as examples]
-            [kushi.ui.icon.core :refer [icon]]
-            [kushi.ui.input.checkbox.core :refer [checkbox]]
-            [kushi.ui.input.radio.core :refer [radio]]
-            [kushi.ui.input.radio.core :refer [radio]]
-            [kushi.ui.input.radio.demo :as radio.demo]
-            [kushi.ui.input.checkbox.core :refer [checkbox]]
-            [kushi.ui.input.checkbox.demo :as checkbox.demo]
-            [kushi.ui.input.switch.core :refer [switch]]
-            [kushi.ui.input.switch.demo :as switch.demo ]
-            [kushi.ui.input.text.core :refer [input]]
-            [kushi.ui.input.text.demo :as input.demo]
-            [kushi.ui.label.core :refer [label]]
-            [kushi.ui.modal.core :refer [close-kushi-modal modal
-                                         open-kushi-modal]]
-            [kushi.ui.modal.demo :as modal.demo]
-            [kushi.ui.popover.core :refer [dismiss-popover! popover-attrs]]
-            [kushi.ui.popover.demo :as popover.demo]
-            [kushi.ui.progress.core :refer (progress spinner propeller thinking)]
-            [kushi.ui.toast.demo :as toast.demo]
-            [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-            [kushi.ui.tooltip.demo :as tooltip.demo]
-            [malli.core :as malli] ;; ------------------------------------------------------
+            [malli.core :as malli]
             [malli.dev.pretty :as pretty]
-            [reagent.dom :as rdom] ;; leave in, comment out when tweaking typescale
-))
+            ))
 
-;; --------------------------------------------------------------------------------
-;; TODO figure how to instrument this for dev-only
 (def Example
   [:map
    [:fn fn?]
@@ -335,16 +302,16 @@
         ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         _comps                       [
                                       #_{:label          "button"
-                                         :demo-component button.demo/demo2
-                                         :component      button
-                                         :reqs           '[[kushi.ui.button.core :refer [button]]]
-                                         :variants-base  #{:rounded :filled :bordered}
-                                         :variants-order [:rounded :filled :bordered :minimal]
-                                         :variants-attrs {:rounded  (sx :.rounded)
-                                                          :filled   (sx :.rounded :.filled)
-                                                          :bordered (sx :.rounded :.bordered)
-                                                          :minimal  (sx :.rounded :.minimal)}
-                                         }
+                                       :demo-component button.demo/demo2
+                                       :component      button
+                                       :reqs           '[[kushi.ui.button.core :refer [button]]]
+                                       :variants-base  #{:rounded :filled :bordered}
+                                       :variants-order [:rounded :filled :bordered :minimal]
+                                       :variants-attrs {:rounded  (sx :.rounded)
+                                                        :filled   (sx :.rounded :.filled)
+                                                        :bordered (sx :.rounded :.bordered)
+                                                        :minimal  (sx :.rounded :.minimal)}
+                                       }
                                       #_{:label          "switch" 
                                          :demo-component switch.demo/demo2
                                          :component      switch
@@ -401,23 +368,37 @@
                                          :variants-attrs {:positions {}}}
 
                                       #_{:label          "input" 
-                                       :demo-component input.demo/demo
-                                       :component      input
-                                       :reqs           '[[kushi.ui.input.text.core :refer [input]]]
-                                       :variants-base  #{:positions}
-                                       :variants-attrs {:positions {}}}
+                                         :demo-component input.demo/demo
+                                         :component      input
+                                         :reqs           '[[kushi.ui.input.text.core :refer [input]]]
+                                         :variants-base  #{:positions}
+                                         :variants-attrs {:positions {}}}
 
-                                      "tag"
+                                      #_{:label          "tag"
+                                         :demo-component tag.demo/demo2
+                                         :component      tag
+                                         :reqs           '[[kushi.ui.tag.core :refer [tag]]]
+                                         :variants-base  #{:rounded :filled :bordered}
+                                         :variants-order [:rounded :filled :bordered :minimal]
+                                         :variants-attrs {:rounded  (sx :.rounded)
+                                                          :filled   (sx :.rounded :.filled)
+                                                          :bordered (sx :.rounded :.bordered)
+                                                          :minimal  (sx :.rounded :.minimal)}}
+
+                                      #_{:label          "card"
+                                       :demo-component card.demo/demo
+                                       :component      card
+                                       :reqs           '[[kushi.ui.card.core :refer [card]]]
+                                       :variants-base  #{:rounded}
+                                       :variants-order [:rounded]
+                                       :variants-attrs {:rounded  (sx :.rounded)}}
+
                                       "slider"
                                       "icons"
-                                      "tag"
-                                      "label"
-                                      "card"
                                       "alert"
                                       "collapse"
                                       "accordion"
-                                      "grid"
-                                      ]
+                                      "grid"]
         
         popover-content              (fn [] [:div.absolute-centered "hi"])]
 

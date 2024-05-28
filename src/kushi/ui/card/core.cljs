@@ -12,7 +12,7 @@
             (sx 'kushi-card
                 :.relative
                 :w--100%
-                :p--2rem
+                :p--1.25em
                 :bgc--white
                 :dark:bgc--$gray-1000
                 {:data-kushi-ui :card})
