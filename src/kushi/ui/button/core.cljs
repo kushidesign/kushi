@@ -99,7 +99,7 @@
                 [:pie pie]
                 :pb--$button-padding-block-ems
                 [:&.bordered:pb "calc(var(--button-padding-block-ems) - var(--button-border-width))"]
-                [:&.bordered:pb "calc(var(--button-padding-block-ems) - var(--button-border-width))"]
+                [:&.bordered:pi "calc(var(--button-padding-inline-ems) - var(--button-border-width))"]
                 {:data-kushi-ui       :button
                  :data-kushi-size     size
                  :data-kushi-variant  variant
