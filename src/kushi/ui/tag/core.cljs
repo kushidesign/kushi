@@ -18,6 +18,8 @@
              :line-height--1.25
              :padding--0.4em:0.6em:0.4em
              :&.lowercase:padding--0.35em:0.6em:0.45em
+             [:&.bordered:pb "calc(0.4em - var(--button-border-width))"]
+             [:&.bordered:pi "calc(0.6em - var(--button-border-width))"]
              {:data-kushi-ui :tag})
             attrs)]
           children)))
