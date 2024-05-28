@@ -2,6 +2,7 @@
   (:require [applied-science.js-interop :as j]
             [clojure.string :as string]
             [domo.core :as domo] ;; Import this to create defclasses
+            [fireworks.core :refer [?]]
             [goog.functions]
             [goog.string]
             [kushi.core :refer (keyed)]
@@ -350,16 +351,30 @@
 
 (defn remove-pane!
   "Removes pane from dom.
-   Removes :aria-describedby on owning element.
-   Removes the pane instance-specific `keydown` event on window."
+
+   For tooltips, removes :aria-describedby on owning element
+
+   For tooltips, removes the pane instance-specific `keydown`
+   and scroll events on window.
+   
+   For popovers,  removes the pane instance-specific `click`,
+   `resize`, and `scroll` events on window."
   [owning-el pane-id pane-type e]
   ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Add conditionality around pane-type for dismissal, if necessary
-  
-  (let [dialog-el (domo/nearest-ancestor owning-el "dialog")]
-    (some->> pane-id
-             domo/el-by-id
-             (.removeChild (or dialog-el js/document.body)))
+
+  (let [dialog-el        (domo/nearest-ancestor owning-el "dialog")
+        el-to-be-removed (some->> pane-id domo/el-by-id)
+        toast?           (= pane-type :toast)
+        toast-slot       (when toast? (.-parentNode el-to-be-removed))]
+
+    ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Document the use case for removing child from dialog-el
+    (.removeChild (or toast-slot 
+                      (or dialog-el js/document.body))
+                  el-to-be-removed)
+
+    ;; Popovers
     (when (= :popover pane-type)
       (let [update-placement-fn #(update-pane-placement!
                                   owning-el
@@ -379,6 +394,8 @@
         (domo/remove-attribute! owning-el :aria-haspopup)
         (domo/remove-attribute! owning-el :aria-expanded)))
 
+
+    ;; Tooltips
     (when (= :tooltip pane-type)
       (domo/remove-attribute! owning-el :aria-describedby)
       (.removeEventListener owning-el
@@ -441,86 +458,91 @@
    ;; We need to use cet here (.currentEventTarget), in order
    ;; To prevent mis-assignment of ownership of the pane to
    ;; A child element of the intended owning el. 
-   (let [owning-el           (domo/cet e)
-         dialog-el           (domo/nearest-ancestor owning-el "dialog")
+   (when true
+     #_(or (and (= "mousedown" (.-type e))
+                (= 0 (.-button e)))
+           #_(= "click" (.-type e)))
+     (let [owning-el           (domo/cet e)
+           dialog-el           (domo/nearest-ancestor owning-el "dialog")
          ;; TODO - should this be "kushi-pane-*" ?
-         pane-id             (or pane-id (str "kushi-" (gensym)))
-         pane-type           (:pane-type opts)
-         existing-popover    (j/get owning-el "ariaHasPopup")
-         existing-tooltip-id (.getAttribute owning-el "aria-describedby")
-         existing-tooltip?   (domo/has-class? (domo/el-by-id existing-tooltip-id)
-                                              "kushi-tooltip")
-         opts                (merge opts (keyed owning-el dialog-el))]
+           pane-id             (or pane-id (str "kushi-" (gensym)))
+           pane-type           (:pane-type opts)
+           existing-popover    (j/get owning-el "ariaHasPopup")
+           existing-tooltip-id (.getAttribute owning-el "aria-describedby")
+           existing-tooltip?   (domo/has-class? (domo/el-by-id existing-tooltip-id)
+                                                "kushi-tooltip")
+           opts                (merge opts (keyed owning-el dialog-el))]
 
-     (when-not (or (and (= pane-type :tooltip)
-                        existing-popover)
-                   (and (= pane-type :popover)
-                        existing-popover))
-       
+       (when-not (or (and (= pane-type :tooltip)
+                          existing-popover)
+                     (and (= pane-type :popover)
+                          existing-popover))
+         
        ;; Adding `aria-describedby` for tooltips
-       (when (= pane-type :tooltip)
-         (domo/set-attribute! owning-el :aria-describedby pane-id))
+         (when (= pane-type :tooltip)
+           (domo/set-attribute! owning-el :aria-describedby pane-id))
 
        ;; Appending pane
-       (if (= pane-type :toast)
-         (append-toast! (assoc opts :owning-el owning-el)
-                        pane-id)
-         (append-pane!* (assoc opts :owning-el owning-el)
-                        pane-id))
+         (if (= pane-type :toast)
+           (append-toast! (assoc opts :owning-el owning-el)
+                          pane-id)
+           (append-pane!* (assoc opts :owning-el owning-el)
+                          pane-id))
 
 
        ;; Tooltip-specific mouseleave
-       (when (= pane-type :tooltip)
-         (.addEventListener owning-el
-                            "mouseleave"
-                            (partial remove-pane! owning-el pane-id pane-type)
-                            #js {"once" true}))
+         (when (= pane-type :tooltip)
+           (.addEventListener owning-el
+                              "mouseleave"
+                              (partial remove-pane! owning-el pane-id pane-type)
+                              #js {"once" true}))
 
        ;; Popover-specific aria attributes, listeners, and focus-trap
-       (when (= pane-type :popover)
-         (when existing-tooltip?
-           (remove-pane! owning-el existing-tooltip-id :tooltip nil))
-         (domo/set-attribute! owning-el :aria-controls pane-id)
-         (domo/set-attribute! owning-el :aria-haspopup "dialog")
-         (domo/set-attribute! owning-el :aria-expanded true)
-         (js/window.requestAnimationFrame 
-          #(.addEventListener js/window
-                              "mousedown"
-                              (partial remove-pane-if-clicked-outside!
-                                       owning-el
-                                       pane-id
-                                       pane-type))
-          (.addEventListener js/window
-                             "scroll"
-                             #(update-pane-placement! owning-el pane-id dialog-el))
-          (.addEventListener js/window
-                             "resize"
-                             #(update-pane-placement! owning-el pane-id dialog-el))
+         (when (= pane-type :popover)
+           (when existing-tooltip?
+             (remove-pane! owning-el existing-tooltip-id :tooltip nil))
+           (domo/set-attribute! owning-el :aria-controls pane-id)
+           (domo/set-attribute! owning-el :aria-haspopup "dialog")
+           (domo/set-attribute! owning-el :aria-expanded true)
+           (js/window.requestAnimationFrame 
+            #(.addEventListener js/window
+                                "click"
+                                (partial remove-pane-if-clicked-outside!
+                                         owning-el
+                                         pane-id
+                                         pane-type))
+            (.addEventListener js/window
+                               "scroll"
+                               #(update-pane-placement! owning-el pane-id dialog-el))
+            (.addEventListener js/window
+                               "resize"
+                               #(update-pane-placement! owning-el pane-id dialog-el))
 
 
           ;; This will set focus on first focusable element within pane
-          (set-popover-focus! pane-id)
+            (set-popover-focus! pane-id)
 
           ;; This will remove pane from dom if owning element goes away
-          (let [mo (new js/MutationObserver (observe-pane! pane-id))]
-            (.observe mo
-                      (domo/el-by-id pane-id)
-                      #js{:attributes true}))))
+            (let [mo (new js/MutationObserver (observe-pane! pane-id))]
+              (.observe mo
+                        (domo/el-by-id pane-id)
+                        #js{:attributes true}))))
 
        ;; This will auto-dismiss pane, for toasts (default) and popovers (opt-in).
-       (js/window.requestAnimationFrame 
-        #(when (:auto-dismiss? opts)
-           (js/setTimeout (partial remove-pane! owning-el pane-id pane-type)
-                          #_(domo/duration-property-ms  "popover-auto-dismiss-duration")
-                          5000)))
+         (js/window.requestAnimationFrame 
+          #(when (:auto-dismiss? opts)
+             (js/setTimeout (partial remove-pane! owning-el pane-id pane-type)
+                            #_(domo/duration-property-ms  "popover-auto-dismiss-duration")
+                            5000)))
 
        ;; Additional listeners for escaping panes
-       (when-not (= pane-type :toast)
-         (.addEventListener js/window
-                            "keydown"
-                            (partial escape-pane! owning-el pane-id pane-type)
-                            #js {"once" true})
-         (.addEventListener js/window
-                            "scroll"
-                            (partial escape-pane! owning-el pane-id pane-type)
-                            #js {"once" true}))))))
+         (when-not (= pane-type :toast)
+           (.addEventListener js/window
+                              "keydown"
+                              (partial escape-pane! owning-el pane-id pane-type)
+                              #js {"once" true})
+           (.addEventListener js/window
+                              "scroll"
+                              (partial escape-pane! owning-el pane-id pane-type)
+                              #js {"once" true})))))))
+

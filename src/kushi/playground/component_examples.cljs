@@ -17,7 +17,8 @@
      quoted-attrs :quoted}                   :sx-attrs
     :as                                      example-opts}]
   (into [:section (merge-attrs
-                   (sx :.flex-row-fs
+                   (sx :.playground-component-example-row-variant-section
+                       :.flex-row-fs
                        :gap--1rem
                        :pb--0.5rem)
                    row-attrs)]
@@ -39,33 +40,37 @@
                                                  {:instance-sx-attrs? true})
                                                example-opts
                                                m)
-                    poa           (popover-attrs
-                                   (merge-attrs
-                                    {:class "dark"
-                                     :-f    (fn [popover-el]
-                                              (rdom/render
-                                               [component-details-popover 
-                                                component
-                                                merged-attrs*
-                                                quoted-attrs]
-                                               popover-el))}))
+                    ;; poa           (popover-attrs
+                    ;;                (merge-attrs
+                    ;;                 {:class "dark"
+                    ;;                  :-f    (fn [popover-el]
+                    ;;                           (rdom/render
+                    ;;                            [component-details-popover 
+                    ;;                             component
+                    ;;                             merged-attrs*
+                    ;;                             quoted-attrs]
+                    ;;                            popover-el))}))
                     merged-attrs  (merge-attrs variant-attrs
                                                sx-attrs
                                                instance-attrs
-                                               poa)]]
+                                              ;;  poa
+                                               )]]
           (if instance-code 
             [:div 
-             (sx :.flex-row-fs :gap--1rem)
+             (sx :.playground-component-example-row-instance-code
+                 :.flex-row-fs
+                 :gap--1rem)
              instance-code
-             [button
-              (merge-attrs
-               (sx :.accent
-                   :.pill
-                   :.xxsmall
-                   :.bold) 
-               poa
-               (tooltip-attrs {:-text "Click to view code" :-placement :r}))
-              [icon :code]]]
+            ;;  [button
+            ;;   (merge-attrs
+            ;;    (sx :.accent
+            ;;        :.pill
+            ;;        :.xxsmall
+            ;;        :.bold) 
+            ;;    poa
+            ;;    (tooltip-attrs {:-text "Click to view code" :-placement :r}))
+            ;;   [icon :code]]
+             ]
             (into [component merged-attrs] instance-args)))))
 
 (defn resolve-variants-attrs
@@ -132,7 +137,7 @@
         label          (some-> desc
                                kushi.ui.util/backtics->hiccup
                                section-label)]
-    (into [:section (sx :pb--1.5rem)
+    (into [:section (sx :.playground-example-row :pb--1.5rem)
            label]
           (for [variant-attrs (resolve-variants-attrs component-opts
                                                       example-opts)]

@@ -1,17 +1,15 @@
 (ns kushi.ui.popover.demo
   (:require
-   [goog.string]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg ]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.popover.core :refer [dismiss-popover!]]
    [kushi.ui.input.text.core :refer [input]]
-   [kushi.core :refer (sx merge-attrs)]
+   [kushi.core :refer (sx)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.popover.core :refer [popover-attrs]]
-   
    [reagent.dom :as rdom]))
 
 (defn popover-content []
