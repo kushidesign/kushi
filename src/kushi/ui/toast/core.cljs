@@ -1,12 +1,12 @@
 (ns kushi.ui.toast.core
-  (:require
-   [domo.core :as domo]
-   [kushi.core :refer (keyed)]
-   [kushi.ui.dom.pane.core :as pane]
-   [kushi.ui.dom.pane.toast :refer [update-toast-slot-dimensions!
-                                    toast-slot-cleanup!]]
-   [kushi.ui.dom.pane.placement :refer [user-placement]]
-   [kushi.ui.dom.pane.styles]))
+  (:require [domo.core :as domo]
+            [fireworks.core :refer [?]]
+            [kushi.core :refer (keyed)]
+            [kushi.ui.dom.pane.core :as pane]
+            [kushi.ui.dom.pane.placement :refer [user-placement]]
+            [kushi.ui.dom.pane.styles]
+            [kushi.ui.dom.pane.toast :refer [toast-slot-cleanup!
+                                             update-toast-slot-dimensions!]]))
 
 
 (defn toast-attrs
@@ -203,11 +203,11 @@
           reduced-motion? (domo/prefers-reduced-motion?)
           slide-in?       (if reduced-motion? false slide-in?)
           opts            (keyed placement-kw
-                                 auto-dismiss?
-                                 pane-type
-                                 user-rendering-fn
-                                 slide-in?
-                                 reduced-motion?)]
+                                    auto-dismiss?
+                                    pane-type
+                                    user-rendering-fn
+                                    slide-in?
+                                    reduced-motion?)]
       (merge 
        ;; TODO should be :data-kushi-ui-pane-placement = se
        ;; and :data-kushi-ui-pane-type = toast

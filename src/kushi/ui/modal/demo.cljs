@@ -29,42 +29,72 @@
 ;; rest
 
 (def modal-examples
-  [{:desc      "Basic"
-    :component button
-    :reqs      '[[kushi.ui.button.core :refer [button]]]
-    :examples  [{:label "right"
-                 :args  ["Hover me"]
-                 :code  (sx-call [:div
+  (take 1 [{:desc      "Basic"
+            :component button
+            :reqs      '[[kushi.ui.button.core :refer [button]]]
+            :examples  [{:label "right"
+                         :args  ["Hover me"]
+                         :code  (sx-call [:div
+                                          [button
+                                           {:on-click (fn* [] (open-kushi-modal "my-modal-basic"))}
+                                           "Click to open modal"]
+                                          [modal
+                                           (sx
+                                            :min-width--450px
+                                            :&_.kushi-modal-description:fs--$small
+                                            {:id "my-modal-basic"})
+                                           [:div
+                                            (sx :.xxxlarge :.flex-row-c)
+                                            "💃"] ]])}]}
+           
+           {:desc      "With modal title, description, and form with fields"
+            :component button
+            :reqs      '[[kushi.ui.button.core :refer [button]]]
+            :examples  [{:label "Basic, form with fields."
+                         :args  ["Hover me"]
+                         :code  (sx-call [:div
+                                          [button
+                                           {:on-click (fn* []
+                                                           (open-kushi-modal
+                                                            "my-modal-with-title-description-and-forms"))}
+                                           "Click to open modal"]
+                                          [modal
+                                           (sx
+                                            :min-width--450px
+                                            :&_.kushi-modal-description:fs--$small
+                                            {:-modal-title "Example modal"
+                                             :-description "Example modal description goes here."
+                                             :id           "my-modal-with-title-description-and-forms"})
+                                           [:div
+                                            (sx :.flex-col-fs :gap--1em)
+                                            [input (sx {:placeholder "Puffy"
+                                                        :-label      "Screen name"})]
+                                            [input (sx {:placeholder "Executive"
+                                                        :-label      "Occupation"})]]
+                                           [:div
+                                            (sx :.flex-row-fe :gap--1em)
+                                            [button {:on-click close-kushi-modal} "Cancel"]
+                                            [button (sx :.filled) "Submit"]]]])}]}
+           
+           {:desc      "Animated"
+            :component button
+            :reqs      '[[kushi.ui.button.core :refer [button]]]
+            :examples  [{:label "Basic, form with fields."
+                         :args  ["Hover me"]
+                         :code  (sx-call
+                                 [:div
                                   [button
-                                   {:on-mouse-down (fn* [] (open-kushi-modal "my-modal-basic"))}
+                                   {:on-click (fn* []
+                                                   (open-kushi-modal
+                                                    "my-modal-with-title-description-and-forms-animated"))}
                                    "Click to open modal"]
                                   [modal
                                    (sx
-                                    :min-width--450px
-                                    :&_.kushi-modal-description:fs--$small
-                                    {:id "my-modal-basic"})
-                                   [:div
-                                    (sx :.xxxlarge :.flex-row-c)
-                                    "💃"] ]])}]}
-   
-   {:desc      "With modal title, description, and form with fields"
-    :component button
-    :reqs      '[[kushi.ui.button.core :refer [button]]]
-    :examples  [{:label "Basic, form with fields."
-                 :args  ["Hover me"]
-                 :code  (sx-call [:div
-                                  [button
-                                   {:on-mouse-down (fn* []
-                                                        (open-kushi-modal
-                                                         "my-modal-with-title-description-and-forms"))}
-                                   "Click to open modal"]
-                                  [modal
-                                   (sx
-                                    :min-width--450px
-                                    :&_.kushi-modal-description:fs--$small
+                                    [:translate "-50% calc(-50% + 30px)"]
+                                    [:&.kushi-modal-open:translate "-50% -50%"]
                                     {:-modal-title "Example modal"
                                      :-description "Example modal description goes here."
-                                     :id           "my-modal-with-title-description-and-forms"})
+                                     :id           "my-modal-with-title-description-and-forms-animated"})
                                    [:div
                                     (sx :.flex-col-fs :gap--1em)
                                     [input (sx {:placeholder "Puffy"
@@ -73,64 +103,34 @@
                                                 :-label      "Occupation"})]]
                                    [:div
                                     (sx :.flex-row-fe :gap--1em)
-                                    [button {:on-mouse-down close-kushi-modal} "Cancel"]
+                                    [button {:on-click close-kushi-modal} "Cancel"]
                                     [button (sx :.filled) "Submit"]]]])}]}
-   
-   {:desc      "Animated"
-    :component button
-    :reqs      '[[kushi.ui.button.core :refer [button]]]
-    :examples  [{:label "Basic, form with fields."
-                 :args  ["Hover me"]
-                 :code  (sx-call
-                         [:div
-                          [button
-                           {:on-mouse-down (fn* []
-                                                (open-kushi-modal
-                                                 "my-modal-with-title-description-and-forms-animated"))}
-                           "Click to open modal"]
-                          [modal
-                           (sx
-                            [:translate "-50% calc(-50% + 30px)"]
-                            [:&.kushi-modal-open:translate "-50% -50%"]
-                            {:-modal-title "Example modal"
-                             :-description "Example modal description goes here."
-                             :id           "my-modal-with-title-description-and-forms-animated"})
-                           [:div
-                            (sx :.flex-col-fs :gap--1em)
-                            [input (sx {:placeholder "Puffy"
-                                        :-label      "Screen name"})]
-                            [input (sx {:placeholder "Executive"
-                                        :-label      "Occupation"})]]
-                           [:div
-                            (sx :.flex-row-fe :gap--1em)
-                            [button {:on-click close-kushi-modal} "Cancel"]
-                            [button (sx :.filled) "Submit"]]]])}]}
 
-   {:desc      "Animated from top"
-    :component button
-    :reqs      '[[kushi.ui.button.core :refer [button]]]
-    :examples  [{:label "Basic, form with fields."
-                 :args  ["Hover me"]
-                 :code  (sx-call
-                         [:div
-                          [button
-                           {:on-click (fn* [] (open-kushi-modal "With modal title, description, and form with fields, animated from top."))}
-                           "Click to open modal"]
-                          [modal
-                           (sx
-                            :.fixed-block-start-inside
-                            [:translate "-50% -50px"]
-                            [:&.kushi-modal-open:translate "-50% 50px"]
-                            {:-modal-title "Example modal"
-                             :-description "Example modal description goes here."
-                             :id           "With modal title, description, and form with fields, animated from top."})
-                           [:div
-                            (sx :.flex-col-fs :gap--1em)
-                            [input (sx {:placeholder "Puffy"
-                                        :-label      "Screen name"})]
-                            [input (sx {:placeholder "Executive"
-                                        :-label      "Occupation"})]]
-                           [:div
-                            (sx :.flex-row-fe :gap--1em)
-                            [button {:on-click close-kushi-modal} "Cancel"]
-                            [button (sx :.filled) "Submit"]]]])}]}])
+           {:desc      "Animated from top"
+            :component button
+            :reqs      '[[kushi.ui.button.core :refer [button]]]
+            :examples  [{:label "Basic, form with fields."
+                         :args  ["Hover me"]
+                         :code  (sx-call
+                                 [:div
+                                  [button
+                                   {:on-click (fn* [] (open-kushi-modal "With modal title, description, and form with fields, animated from top."))}
+                                   "Click to open modal"]
+                                  [modal
+                                   (sx
+                                    :.fixed-block-start-inside
+                                    [:translate "-50% -50px"]
+                                    [:&.kushi-modal-open:translate "-50% 50px"]
+                                    {:-modal-title "Example modal"
+                                     :-description "Example modal description goes here."
+                                     :id           "With modal title, description, and form with fields, animated from top."})
+                                   [:div
+                                    (sx :.flex-col-fs :gap--1em)
+                                    [input (sx {:placeholder "Puffy"
+                                                :-label      "Screen name"})]
+                                    [input (sx {:placeholder "Executive"
+                                                :-label      "Occupation"})]]
+                                   [:div
+                                    (sx :.flex-row-fe :gap--1em)
+                                    [button {:on-click close-kushi-modal} "Cancel"]
+                                    [button (sx :.filled) "Submit"]]]])}]}]))

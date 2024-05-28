@@ -1,53 +1,56 @@
 ;; TODO - test Malli validation
 
 (ns ^:dev/always kushi.playground.core
-  (:require
-   [garden.color]
-   [kushi.core :refer [sx merge-attrs #_breakpoints]]
-   [kushi.color :refer [colors->tokens]]
-   [kushi.colors :as kushi.colors]
-   [kushi.ui.examples :as examples]
-   [kushi.ui.button.core :refer [button]]
-   [kushi.ui.label.core :refer [label]]
-   [kushi.ui.button.demo :as button.demo ]
-   [kushi.ui.input.text.core :refer [input]]
-   [kushi.ui.input.radio.core :refer [radio]]
-   [kushi.ui.input.switch.core :refer [switch]]
-   [kushi.ui.input.switch.demo :as switch.demo ]
-   [kushi.ui.input.checkbox.core :refer [checkbox]]
-   [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.progress.core :refer (progress spinner propeller thinking)]
-   [kushi.playground.layout :as layout]
-   [kushi.playground.nav :as nav]
-   [kushi.playground.about :as about]
-   [kushi.playground.state :as state :refer [*state]]
-   [kushi.playground.component-section :refer [component-section]]
-   [kushi.playground.sidenav :refer [mobile-subnav desktop-sidenav]]
-   [kushi.playground.ui :refer [light-dark-mode-switch]]
-   [kushi.playground.colors :as playground.colors]
-   [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal]]
-   [kushi.playground.shared-styles :as shared-styles]
-   [kushi.playground.util
+  (:require ;; ------------------------------------------------------
+ ;; TODO figure out how to use as dev-only instrumentation 
+ ;; [kushi.playground.tweak.typescale :refer [type-tweaker]]
+ ;; ------------------------------------------------------
+ ;; leave in, comment out when tweaking typescale
+ ;; [kushi.playground.tweak.typescale :refer [type-tweaker]]
+            [garden.color]
+            [kushi.color :refer [colors->tokens]]
+            [kushi.colors :as kushi.colors]
+            [kushi.core :refer [merge-attrs sx]]
+            [kushi.playground.about :as about]
+            [kushi.playground.colors :as playground.colors]
+            [kushi.playground.component-section :refer [component-section]]
+            [kushi.playground.layout :as layout]
+            [kushi.playground.nav :as nav]
+            [kushi.playground.shared-styles :as shared-styles]
+            [kushi.playground.sidenav :refer [desktop-sidenav mobile-subnav]]
+            [kushi.playground.state :as state :refer [*state]]
+            [kushi.playground.ui :refer [light-dark-mode-switch]]
+            [kushi.playground.util
     :as util
     :refer-macros [keyed]]
-
-   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-   [kushi.ui.tooltip.demo :as tooltip.demo]
-   [kushi.ui.modal.demo :as modal.demo]
-   [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
-   [kushi.ui.popover.demo :as popover.demo]
-   [reagent.dom :as rdom]
-
-  ;; leave in, comment out when tweaking typescale
-  ;; [kushi.playground.tweak.typescale :refer [type-tweaker]]
-   
-  ;; ------------------------------------------------------
-  ;; TODO figure out how to use as dev-only instrumentation 
-   [malli.dev.pretty :as pretty]
-   [malli.core :as malli]
-  ;; ------------------------------------------------------
-   
-   ))
+            [kushi.ui.button.core :refer [button]]
+            [kushi.ui.button.demo :as button.demo ]
+            [kushi.ui.examples :as examples]
+            [kushi.ui.icon.core :refer [icon]]
+            [kushi.ui.input.checkbox.core :refer [checkbox]]
+            [kushi.ui.input.radio.core :refer [radio]]
+            [kushi.ui.input.radio.core :refer [radio]]
+            [kushi.ui.input.radio.demo :as radio.demo]
+            [kushi.ui.input.checkbox.core :refer [checkbox]]
+            [kushi.ui.input.checkbox.demo :as checkbox.demo]
+            [kushi.ui.input.switch.core :refer [switch]]
+            [kushi.ui.input.switch.demo :as switch.demo ]
+            [kushi.ui.input.text.core :refer [input]]
+            [kushi.ui.input.text.demo :as input.demo]
+            [kushi.ui.label.core :refer [label]]
+            [kushi.ui.modal.core :refer [close-kushi-modal modal
+                                         open-kushi-modal]]
+            [kushi.ui.modal.demo :as modal.demo]
+            [kushi.ui.popover.core :refer [dismiss-popover! popover-attrs]]
+            [kushi.ui.popover.demo :as popover.demo]
+            [kushi.ui.progress.core :refer (progress spinner propeller thinking)]
+            [kushi.ui.toast.demo :as toast.demo]
+            [kushi.ui.tooltip.core :refer [tooltip-attrs]]
+            [kushi.ui.tooltip.demo :as tooltip.demo]
+            [malli.core :as malli] ;; ------------------------------------------------------
+            [malli.dev.pretty :as pretty]
+            [reagent.dom :as rdom] ;; leave in, comment out when tweaking typescale
+))
 
 ;; --------------------------------------------------------------------------------
 ;; TODO figure how to instrument this for dev-only
@@ -358,30 +361,54 @@
                                          :variants-base  #{:positions}
                                          :variants-attrs {:positions {}}}
 
-                                      {:label          "modal" 
-                                       :demo-component modal.demo/demo
-                                       :component      :span
-                                       :reqs           '[[kushi.ui.modal.core :refer [modal
-                                                                                      modal-close-button
-                                                                                      open-kushi-modal
-                                                                                      close-kushi-modal]] ]
-                                       :variants-base  #{:positions}
-                                       :variants-attrs {:positions {}}}
+                                      #_{:label          "modal" 
+                                         :demo-component modal.demo/demo
+                                         :component      :span
+                                         :reqs           '[[kushi.ui.modal.core :refer [modal
+                                                                                        modal-close-button
+                                                                                        open-kushi-modal
+                                                                                        close-kushi-modal]] ]
+                                         :variants-base  #{:positions}
+                                         :variants-attrs {:positions {}}}
                                       
-                                      {:label          "popover" 
-                                       :demo-component popover.demo/demo
-                                       :component      :span
-                                       :reqs           '[[kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]]
+                                      #_{:label          "popover" 
+                                         :demo-component popover.demo/demo
+                                         :component      :span
+                                         :reqs           '[[kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]]
+                                         :variants-base  #{:positions}
+                                         :variants-attrs {:positions {}}}
+
+                                      #_{:label          "toast" 
+                                         :demo-component toast.demo/demo
+                                         :component      :span
+                                         :reqs           '[[kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]]
+                                         :variants-base  #{:positions}
+                                         :variants-attrs {:positions {}}}
+
+                                      #_{:label          "radio" 
+                                         :demo-component radio.demo/demo
+                                         :component      radio
+                                         :reqs           '[[kushi.ui.input.radio.core :refer [radio]]]
+                                         :variants-base  #{:positions}
+                                         :variants-attrs {:positions {}}
+                                         }
+
+                                      #_{:label          "checkbox" 
+                                         :demo-component checkbox.demo/demo
+                                         :component      checkbox
+                                         :reqs           '[[kushi.ui.input.radio.core :refer [radio]]]
+                                         :variants-base  #{:positions}
+                                         :variants-attrs {:positions {}}}
+
+                                      #_{:label          "input" 
+                                       :demo-component input.demo/demo
+                                       :component      input
+                                       :reqs           '[[kushi.ui.input.text.core :refer [input]]]
                                        :variants-base  #{:positions}
                                        :variants-attrs {:positions {}}}
 
-
-                                      "radio"
-                                      "checkbox"
-                                      "input"
+                                      "tag"
                                       "slider"
-                                      "popover"
-                                      "toast"
                                       "icons"
                                       "tag"
                                       "label"
@@ -390,8 +417,6 @@
                                       "collapse"
                                       "accordion"
                                       "grid"
-
-
                                       ]
         
         popover-content              (fn [] [:div.absolute-centered "hi"])]

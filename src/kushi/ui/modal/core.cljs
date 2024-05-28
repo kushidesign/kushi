@@ -18,7 +18,7 @@
     (when (gdom/isElement dialog)
       (let [duration* (.-transitionDuration (js/window.getComputedStyle dialog))
             duration  (js/Math.round (* 1000 (js/parseFloat (string/replace duration* #"s$" ""))))]
-        (.removeEventListener dialog "mousedown" close-on-backdrop-click)
+        (.removeEventListener dialog "click" close-on-backdrop-click)
         (domo/remove-class! dialog "kushi-modal-open")
         (js/setTimeout #(.close dialog) duration)))))
 
@@ -29,7 +29,7 @@
 (defn open-kushi-modal [id]
   (if-let [dialog (domo/el-by-id id)]
     (do (.addEventListener dialog
-                           "mousedown"
+                           "click"
                            close-on-backdrop-click)
         (.showModal dialog)
         (domo/add-class! dialog "kushi-modal-open"))
@@ -109,11 +109,11 @@
            ;; TODO -- add y
            ]}
   [& args]
-  (let [[opts attrs & children]   (opts+children args)
+  (let [[opts attrs & children] (opts+children args)
         {:keys [modal-title
                 description
                 elevation
-                expanded?]}   opts
+                expanded?]}     opts
         {:keys [id]}              attrs
         desc-id                   (str id "-description")
         title-id                  (str id "-title")
