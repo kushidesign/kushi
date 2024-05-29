@@ -914,12 +914,10 @@
 ;; User would probably want to change from wee-bold for button and tag
 ;; Add to docs
 (def ui*
-  [".kushi-button"                                                   {"font-weight" :$wee-bold
-                                                                      "font-family" :$primary-font-family}
+  [".kushi-button"                                                   {"font-family" :$primary-font-family}
    ".kushi-button.bordered"                                          {"border-width" :$button-border-width}
    ".kushi-tag.bordered"                                             {"border-width" :$tag-border-width}
-   ".kushi-tag"                                                      {"font-weight" :$wee-bold
-                                                                      "font-family" :$primary-font-family}
+   ".kushi-tag"                                                      {"font-family" :$primary-font-family}
    ".dark .kushi-radio-input"                                        {:bgc :black}
    ".dark .kushi-checkbox-input"                                     {:bgc :black}
    ".dark .kushi-checkbox-input:before"                              {:box-shadow :inset:1em:1em:black}
