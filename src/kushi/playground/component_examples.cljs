@@ -1,12 +1,7 @@
 (ns ^:dev/always kushi.playground.component-examples
-  (:require [kushi.core :refer (sx merge-attrs keyed)]
-            [kushi.playground.snippet :refer (component-details-popover)]
-            [kushi.ui.button.core :refer [button]]
-            [kushi.ui.icon.core :refer [icon]]
-            [kushi.ui.popover.core :refer [popover-attrs]]
-            [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-            [kushi.ui.util :refer [maybe]]
-            [reagent.dom :as rdom]))
+  (:require [fireworks.core :refer [?]]
+            [kushi.core :refer (sx merge-attrs keyed)]
+            [kushi.ui.util :refer [maybe]]))
 
 (defn- example-row-variant
   [component
@@ -56,11 +51,15 @@
                                               ;;  poa
                                                )]]
           (if instance-code 
-            [:div 
-             (sx :.playground-component-example-row-instance-code
-                 :.flex-row-fs
-                 :gap--1rem)
-             instance-code
+            (let [attrs (sx :.playground-component-example-row-instance-code
+                            :.flex-row-fs
+                            :gap--1rem)]
+              (if (and 
+                   (seq? instance-code)
+                   (every? vector? instance-code))
+                (into [:div attrs] instance-code)
+                [:div attrs
+                 instance-code
             ;;  [button
             ;;   (merge-attrs
             ;;    (sx :.accent
@@ -70,7 +69,7 @@
             ;;    poa
             ;;    (tooltip-attrs {:-text "Click to view code" :-placement :r}))
             ;;   [icon :code]]
-             ]
+                 ]))
             (into [component merged-attrs] instance-args)))))
 
 (defn resolve-variants-attrs
