@@ -20,7 +20,7 @@
        :pi--0.375em )
    x])
 
-(defn- input* [& args]
+(defn- text-field* [& args]
   (let [[opts attrs & _]       (opts+children args)
         {:keys [wrapper-attrs
                 start-enhancer
@@ -78,7 +78,7 @@
                 (not textarea?))
        [enhancer end-enhancer])]))
 
-(defn input
+(defn text-field
   {:desc ["An input enables the entry of text. By default, this component will use an `<input>` element of type `text`. If the option `:-textarea?` is set to `true`, a `<textarea>` element will be used instead."]
    :opts '[{:name    textarea?
             :pred    boolean?
@@ -177,7 +177,7 @@
                                   :fw--$normal
                                   :mbs--$text-input-helper-margin-block-start||0.3em)))
 
-        wrapped-input [input* (merge attrs
+        wrapped-input [text-field* (merge attrs
                                      {:-wrapper-attrs  wrapper-attrs
                                       :-start-enhancer start-enhancer
                                       :-end-enhancer   end-enhancer
