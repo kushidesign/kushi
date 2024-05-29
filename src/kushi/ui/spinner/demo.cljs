@@ -1,24 +1,24 @@
-(ns kushi.ui.progress.demo
+(ns kushi.ui.spinner.demo
   (:require [fireworks.core :refer [?]]
             [kushi.core :refer (sx merge-attrs)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.icon.core :refer [icon]]
-            [kushi.ui.progress.core :refer [progress
+            [kushi.ui.spinner.core :refer [spinner
                                             propeller
                                             donut
                                             thinking]]))
 
 
-(declare progress-examples)
+(declare spinner-examples)
 
 (defn demo [component-opts]
   (into [:<>]
         (for [
-              ;; example-opts (take 1 progress-examples)
-              example-opts progress-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) progress-examples)
+              ;; example-opts (take 1 spinner-examples)
+              example-opts spinner-examples
+              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) spinner-examples)
               ]
           [component-examples/examples-section
            component-opts
@@ -34,7 +34,7 @@
    :xxlarge
    :xxxlarge])
 
-(def progress-examples
+(def spinner-examples
   (let [row-attrs
         (sx [:&_.playground-component-example-row-instance-code
              {:pis        :0.5em
@@ -57,14 +57,14 @@
                                                           loading? (= "loading" (.-ariaLabel el))] 
                                                       (if loading?
                                                         (do (.removeAttribute el "aria-label")
-                                                            (.removeAttribute el "data-kushi-ui-progress"))
+                                                            (.removeAttribute el "data-kushi-ui-spinner"))
                                                         (do (.setAttribute el
                                                                            "aria-label"
                                                                            "loading")
                                                             (.setAttribute el
-                                                                           "data-kushi-ui-progress"
+                                                                           "data-kushi-ui-spinner"
                                                                            true)))))})
-                                   [progress 
+                                   [spinner 
                                     [icon :play-arrow] [donut]]
                                    "Activate"])}]}
      

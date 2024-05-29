@@ -1,4 +1,4 @@
-(ns kushi.ui.progress.core
+(ns kushi.ui.spinner.core
   (:require-macros
    [kushi.core :refer (sx defkeyframes)])
   (:require
@@ -19,12 +19,12 @@
                          :.pill
                          :w--0.29em
                          :h--0.29em
-                         [:animation [["var(--progress-animation-duration)" :linear :infinite :pulsing]]]
-                         ["nth-child(2):animation-delay" "calc(var(--progress-animation-duration) / 4)"]
-                         ["nth-child(3):animation-delay" "calc(var(--progress-animation-duration) / 2)"]
+                         [:animation [["var(--spinner-animation-duration)" :linear :infinite :pulsing]]]
+                         ["nth-child(2):animation-delay" "calc(var(--spinner-animation-duration) / 4)"]
+                         ["nth-child(3):animation-delay" "calc(var(--spinner-animation-duration) / 2)"]
                          :bgc--currentColor)]]
     [:div (merge-attrs
-           (sx 'kushi-progress-thinking
+           (sx 'kushi-spinner-thinking
                :.flex-row-c
                :gap--0.333em
                {:aria-hidden true})
@@ -36,8 +36,8 @@
 (defn propeller [& args]
   (let [[_ attrs & _] (opts+children args)]
     [:div (merge-attrs
-           (sx 'kushi-progress-propeller
-               [:animation [["var(--progress-animation-duration)" :linear :infinite :spin]]]
+           (sx 'kushi-spinner-propeller
+               [:animation [["var(--spinner-animation-duration)" :linear :infinite :spin]]]
                :h--$loading-spinner-height
                :w--0px
                [:b "max(0.055em, 1px) solid currentColor"]
@@ -47,9 +47,9 @@
 (defn donut [& args]
   (let [[_ attrs & _] (opts+children args)]
     [:div (merge-attrs
-           (sx 'kushi-progress-donut
+           (sx 'kushi-spinner-donut
                :.relative
-               [:animation [["var(--progress-animation-duration)" :linear :infinite :spin]]]
+               [:animation [["var(--spinner-animation-duration)" :linear :infinite :spin]]]
                :w--$loading-spinner-height
                :h--$loading-spinner-height
 
@@ -69,23 +69,23 @@
                {:aria-hidden true})
            attrs)]))
 
-(defn progress
+(defn spinner
   [& args]
   (let [[_ attrs & children] (opts+children args)
         [content component] children]
     [:span
      (merge-attrs
-      (sx 'kushi-progress-wrapper :.relative)
+      (sx 'kushi-spinner-wrapper :.relative)
       attrs)
      [:span
-      (sx :.kushi-progress-content
-          ["has-ancestor([data-kushi-ui-progress='true']):visibility" :hidden])
+      (sx :.kushi-spinner-content
+          ["has-ancestor([data-kushi-ui-spinner='true']):visibility" :hidden])
       content]
      [:div
-      (sx 'kushi-progress
+      (sx 'kushi-spinner
           :.absolute-centered
           :d--none
-          ["has-ancestor([data-kushi-ui-progress='true']):d" :block])
+          ["has-ancestor([data-kushi-ui-spinner='true']):d" :block])
       (cond
         (fn? component)
         [component]

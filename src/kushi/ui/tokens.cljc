@@ -475,7 +475,7 @@
    :$xxslow                        :2s
    :$xxxslow                       :4s
 
-   :$progress-animation-duration   :900ms
+   :$spinner-animation-duration   :900ms
    :$loading-spinner-height        :0.8em
 
 

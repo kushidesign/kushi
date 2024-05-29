@@ -2,14 +2,14 @@
   (:require
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.button.core :refer (button)]
-   [kushi.ui.progress.core :refer (progress donut propeller thinking)]
+   [kushi.ui.spinner.core :refer (spinner donut propeller thinking)]
    [kushi.ui.button.demo :as button-demo]
    [kushi.ui.input.radio.core :refer (radio)]
    [kushi.ui.input.checkbox.core :refer (checkbox)]
-   [kushi.ui.input.text.core :refer (input)]
+   [kushi.ui.input.text.core :refer (text-field)]
    [kushi.ui.input.switch.core :refer (switch)]
    [kushi.ui.input.slider.core :refer (slider)]
-   [kushi.ui.alert.core :refer (alert)]
+   [kushi.ui.callout.core :refer (callout)]
    [kushi.ui.grid.core :refer (grid)]
    [kushi.ui.tag.core :refer (tag)]
    [kushi.ui.label.core :refer (label)]
@@ -39,7 +39,7 @@
                 "            ;; Optional, for icons\n"
                 "            [kushi.ui.icon.core :refer [icon]]\n"
                 "            ;; Optional, for loading animations\n"
-                "            [kushi.ui.progress.core :refer [progress\n"
+                "            [kushi.ui.spinner.core :refer [spinner\n"
                 "                                            donut\n"
                 "                                            propeller\n"
                 "                                            thinking]]")
@@ -62,17 +62,17 @@
                 {:label   "on-click"
                  :example [button {:on-click (fn [e] (js/alert "Clicked!"))} "Play"]}
                 {:label   "Loading state, propeller"
-                 :example [button {:-loading? true} [progress "Play" [propeller]]]}
+                 :example [button {:-loading? true} [spinner "Play" [propeller]]]}
                 {:label   "Loading state, dots"
-                 :example [button {:-loading? true} [progress "Play" [thinking]]]}
+                 :example [button {:-loading? true} [spinner "Play" [thinking]]]}
                 {:label   "Loading state, donut"
-                 :example [button {:-loading? true} [progress "Play" [donut]]]}
+                 :example [button {:-loading? true} [spinner "Play" [donut]]]}
                 {:label   "Loading state, donut, fast"
-                 :example [button {:-loading? true} [progress "Play" [donut (sx :animation-duration--325ms)]]]}
+                 :example [button {:-loading? true} [spinner "Play" [donut (sx :animation-duration--325ms)]]]}
                 {:label   "Loading state, donut on icon"
-                 :example [button {:-loading? true} [progress [icon :play-arrow] [donut]] "Play"]}
+                 :example [button {:-loading? true} [spinner [icon :play-arrow] [donut]] "Play"]}
                 {:label   "Loading state, propeller on icon"
-                 :example [button {:-loading? true} [progress [icon :play-arrow] [propeller]] "Play"]}
+                 :example [button {:-loading? true} [spinner [icon :play-arrow] [propeller]] "Play"]}
                 #_{:label   "Custom"
                    :example [button (sx :.heavy
                                         :.xxxloose
@@ -198,53 +198,53 @@
                                                          )})]}]})
 
    (feature
-    input
+    text-field
     {:stage    {:style {:min-height :170px}}
      :variants [:size :weight]
      :defaults {:size     :medium
                 :weight   :normal
                 :examples "Simple"}
      :examples [{:label   "Simple"
-                 :example [input (sx {:placeholder "Your text here"
+                 :example [text-field (sx {:placeholder "Your text here"
                                       :-label      "Input label"
                                       :-helper     "My helper text"})]}
 
                 {:label   "Required"
-                 :example [input (sx {:placeholder "Your text here"
+                 :example [text-field (sx {:placeholder "Your text here"
                                       :required    true
                                       :-label      "Input label"})]}
                 {:label   "Disabled"
-                 :example [input (sx {:placeholder "Your text here"
+                 :example [text-field (sx {:placeholder "Your text here"
                                       :disabled    true
                                       :-label      "Input label"})]}
                 {:label   "With helper"
-                 :example [input (sx {:placeholder "Your text here"
+                 :example [text-field (sx {:placeholder "Your text here"
                                       :-label      "Input label"
                                       :-helper     "Your helper text here"})]}
                 {:label   "With start enhancer"
-                 :example [input (sx {:placeholder     "Monetary value"
+                 :example [text-field (sx {:placeholder     "Monetary value"
                                       :-start-enhancer "$"
                                       :-label          "Input label"})]}
                 {:label   "With end enhancer"
-                 :example [input (sx {:placeholder   "Your text here"
+                 :example [text-field (sx {:placeholder   "Your text here"
                                       :-end-enhancer [icon :star]
                                       :-label        "Input label"})]}
                 {:label   "Inline label"
-                 :example [input (sx {:placeholder      "Your text here"
+                 :example [text-field (sx {:placeholder      "Your text here"
                                       :-label           "Input label"
                                       :-label-placement :inline})]}
                 {:label   "Inline label with helper"
-                 :example [input (sx {:placeholder      "Your text here"
+                 :example [text-field (sx {:placeholder      "Your text here"
                                       :-label           "Input label"
                                       :-label-placement :inline
                                       :-helper          "Your helper text here"})]}
                 {:label   "With semantic class"
-                 :example [input (sx {:placeholder "Your text here"
+                 :example [text-field (sx {:placeholder "Your text here"
                                       :-label      "Input label"
                                       :-helper     "Your helper text here"
                                       :-semantic   :negative})]}
                 {:label   "All options"
-                 :example [input (sx {:placeholder          "Your text here"
+                 :example [text-field (sx {:placeholder          "Your text here"
                                       :required             false
                                       :disabled             false
                                       :-start-enhancer      "$"
@@ -260,7 +260,7 @@
                                       :-wrapper-attrs       (sx :box-shadow--4px:4px:7px:#f2baf9ab
                                                                 {:class :my-input-wrapper-name})})]}
                 {:label   "With textarea element"
-                 :example [input (sx {:placeholder "Your text here"
+                 :example [text-field (sx {:placeholder "Your text here"
                                       :-textarea?  true
                                       :-label      "Input label"
                                       :-helper     "My helper text"})]}]})
@@ -628,7 +628,7 @@
 
 
    (feature
-    alert
+    callout
     {:stage    {:style {:min-height :220px}}
      :variants [:shape :size :weight]
      :defaults {:shape    :sharp
@@ -636,44 +636,44 @@
                 :weight   :wee-bold
                 :examples "Default"}
      :examples [{:label   "Default"
-                 :example [alert
+                 :example [callout
                            (sx :.neutral
-                               {:-header-text "Alert header text goes here." })]}
+                               {:-header-text "callout header text goes here." })]}
 
                 {:label   "With close button"
-                 :example [alert
+                 :example [callout
                            (sx :.neutral
-                               {:-header-text  "Alert header text goes here."
+                               {:-header-text  "callout header text goes here."
                                 :-close-button [button (sx :.pill
                                                            :p--0.25em
                                                            {:on-click #(js/alert "Example close-icon click event.")})
                                                 [icon :clear]]})]}
 
                 {:label   "With close button and icon"
-                 :example [alert
+                 :example [callout
                            (sx :.neutral
                                {:-icon         [icon :info]
-                                :-header-text  "Alert header text goes here."
+                                :-header-text  "callout header text goes here."
                                 :-close-button [button (sx :.pill
                                                            :p--0.25em
                                                            {:on-click #(js/alert "Example close-icon click event.")})
                                                 [icon :clear]]})]}
                 {:label   "Accent"
-                 :example [alert
+                 :example [callout
                            (sx :.accent
                                {:-icon         [icon :info]
-                                :-header-text  "Alert header text goes here."
+                                :-header-text  "callout header text goes here."
                                 :-close-button [button (sx :.accent
                                                            :.pill
                                                            :p--0.25em
                                                            {:on-click #(js/alert "Example close-icon click event.")})
                                                 [icon :clear]]})]}
                 {:label   "Accented, filled"
-                 :example [alert
+                 :example [callout
                            (sx :.accent
                                :.filled
                                {:-icon         [icon :info]
-                                :-header-text  "Alert header text goes here."
+                                :-header-text  "callout header text goes here."
                                 :-close-button [button (sx :.accent
                                                            :.filled
                                                            :.pill
@@ -681,22 +681,22 @@
                                                            {:on-click #(js/alert "Example close-icon click event.")})
                                                 [icon :clear]]})]}
                 {:label   "Positive, filled"
-                 :example [alert
+                 :example [callout
                            (sx :.positive
                                {:-icon         [icon :info]
-                                :-header-text  "Alert header text goes here."
+                                :-header-text  "callout header text goes here."
                                 :-close-button [button (sx :.positive
                                                            :.pill
                                                            :p--0.25em
                                                            {:on-click #(js/alert "Example close-icon click event.")})
                                                 [icon :clear]]})]}
                 {:label   "Negative, bordered"
-                 :example [alert
+                 :example [callout
                            (sx :.negative
                                :.bordered
                                :bw--2px
                                {:-icon         [icon (sx :.bold) :info]
-                                :-header-text  "Alert header text goes here."
+                                :-header-text  "callout header text goes here."
                                 :-close-button [button (sx :.negative
                                                            :.minimal
                                                            :.pill
@@ -704,17 +704,17 @@
                                                            {:on-click #(js/alert "Example close-icon click event.")})
                                                 [icon (sx :.bold) :clear]]})]}
                 {:label   "Warning, with body"
-                 :example [alert
+                 :example [callout
                            (sx :.warning
                                {:-icon         [icon :warning]
-                                :-header-text  "Alert header text goes here."
+                                :-header-text  "callout header text goes here."
                                 :-close-button [button (sx :.warning
                                                            :.pill
                                                            :p--0.25em
                                                            {:on-click #(js/alert "Example close-icon click event.")})
                                                 [icon :clear]]})
                            [:div (sx :.flex-col-c :ai--c)
-                            "Alert body"
+                            "callout body"
                             [label (sx :.xxxlarge) "👻"]]]}]})
 
    ;; We are passing in the examples as a var, so we are not using the `kushi.playground.util/feature` macro here

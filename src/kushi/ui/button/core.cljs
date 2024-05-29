@@ -59,7 +59,7 @@
                 {:data-kushi-ui :button
                  :aria-busy     loading?
                  :aria-label    (when loading? "loading")})
-            (when loading? {:data-kushi-ui-progress true})
+            (when loading? {:data-kushi-ui-spinner true})
             attrs)]
           children)))
 
@@ -109,7 +109,7 @@
 ;;                  :aria-busy           loading?
 ;;                  :aria-label          (when loading? "loading")
 ;;                  :class [size variant shape semantic]})
-;;             (when loading? {:data-kushi-ui-progress true})
+;;             (when loading? {:data-kushi-ui-spinner true})
 ;;             attrs)]
 ;;           children)))
 
