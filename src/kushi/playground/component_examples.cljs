@@ -109,9 +109,10 @@
            seq
            (apply merge)))
 
-
 (defn section-label [s]
-  [:p (sx :.small
+  [:p (sx :.serif
+          :.wee-bold
+          :fs--16.75px
           :c--$neutral-secondary-fg
           :min-width--55px
           :w--fit-content
@@ -173,6 +174,15 @@
   ;;  "orange"
    "negative"
   ;;  "magenta"
+   ])
+
+(def non-semantic-colors
+  [
+   "purple"
+   "lime"
+   "brown"
+   "orange"
+   "magenta"
    ])
 
 (def sizes

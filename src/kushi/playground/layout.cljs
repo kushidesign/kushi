@@ -73,6 +73,7 @@
    (into [:div
           (sx :.flex-col-fs
               :.grow
+              :max-width--800px
               ;; :bgc--$brown-00
               :mbs--50px
               :gap--2rem

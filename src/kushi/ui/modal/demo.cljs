@@ -22,16 +22,11 @@
            component-opts
            example-opts])))
 
-;; code button
-
-;; Super basic
-;; form with fields
-;; rest
-
 (def modal-examples
   (take 1 [{:desc      "Basic"
             :component button
             :reqs      '[[kushi.ui.button.core :refer [button]]]
+            :row-attrs (sx :&_.kushi-button:fs--$small)
             :examples  [{:label "right"
                          :args  ["Hover me"]
                          :code  (sx-call [:div
@@ -39,10 +34,9 @@
                                            {:on-click (fn* [] (open-kushi-modal "my-modal-basic"))}
                                            "Click to open modal"]
                                           [modal
-                                           (sx
-                                            :min-width--450px
-                                            :&_.kushi-modal-description:fs--$small
-                                            {:id "my-modal-basic"})
+                                           (sx :min-width--450px
+                                               :&_.kushi-modal-description:fs--$small
+                                               {:id "my-modal-basic"})
                                            [:div
                                             (sx :.xxxlarge :.flex-row-c)
                                             "💃"] ]])}]}

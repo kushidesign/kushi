@@ -28,75 +28,64 @@
    :xxxlarge])
 
 (def radio-examples
-  [{:desc      "Showing sizes from `xsmall` to `xxxlarge`"
-    :row-attrs (sx :ai--fe
-                   :&_.playground-component-example-row-instance-code:ai--fe
-                   :&_label:pbe--0
-                   :&_label:pie--0.35em)
-    :examples  [{:code (sx-call (into [:<>] 
-                                      (for [sz switch-sizes]
-                                        [:div (sx :.flex-col-fs) 
-                                         [radio {:class        [sz]
-                                                 :-input-attrs {:name           sz
-                                                                :defaultChecked true}}]
-                                         [radio {:class        [sz]
-                                                 :-input-attrs {:name sz}}]])))}]}
-   {:desc     "Radio group with labels"
-    :examples [{:code (sx-call [:section (sx :.rounded
-                                             :p--1em
-                                             :b--1px:solid:$neutral-100
-                                             :dark:b--1px:solid:$neutral-900
-                                             :bgc--$neutral-50
-                                             :dark:bgc--$neutral-950)
-                                [label (sx :.bold :mbe--0.75em) "Choose an option:"]
-                                [:section 
-                                 (sx :.flex-row-fs)
-                                 [radio (sx {:-input-attrs {:name :demo}}) "Yes"]
-                                 [radio (sx {:-input-attrs {:name :demo}}) "No"]
-                                 [radio (sx {:-input-attrs {:name :demo}}) "Maybe"]]])}]}
+  (let [row-attrs {:class ["playground-example-row-bounded"]} ]
+    [{:desc      "Showing sizes from xsmall to xxxlarge"
+      :row-attrs (sx :ai--fe
+                     :&_.playground-component-example-row-instance-code:ai--fe
+                     :&_label:pbe--0
+                     :&_label:pie--0.35em)
+      :examples  [{:code (sx-call (into [:<>] 
+                                        (for [sz switch-sizes]
+                                          [:div (sx :.flex-col-fs) 
+                                           [radio {:class        [sz]
+                                                   :-input-attrs {:name           sz
+                                                                  :defaultChecked true}}]
+                                           [radio {:class        [sz]
+                                                   :-input-attrs {:name sz}}]])))}]}
+     {:desc     "Radio group with labels"
+      :row-attrs row-attrs
+      :examples [{:code (sx-call [:section 
+                                  (sx :.flex-row-fs)
+                                  [radio (sx {:-input-attrs {:name :demo}}) "Yes"]
+                                  [radio (sx {:-input-attrs {:name :demo}}) "No"]
+                                  [radio (sx {:-input-attrs {:name :demo}}) "Maybe"]])}]}
 
-   {:desc     "Radio group with labels, inherited color"
-    :examples [{:code (sx-call [:section (sx :.rounded
-                                             :p--1em
-                                             :b--1px:solid:$neutral-100
-                                             :dark:b--1px:solid:$neutral-900
-                                             :bgc--$neutral-50
-                                             :dark:bgc--$neutral-950
-                                             :c--$purple-500
-                                             :dark:c--$purple-300)
-                                [label (sx :.bold :mbe--0.75em) "Choose an option:"]
-                                [:section 
-                                 (sx :.flex-row-fs)
-                                 [radio (sx {:-input-attrs {:name :demo}}) "Yes"]
-                                 [radio (sx {:-input-attrs {:name :demo}}) "No"]
-                                 [radio (sx {:-input-attrs {:name :demo}}) "Maybe"]]])}]}
-   
-   {:desc     "Custom, with default checked"
-    :examples [{:code (sx-call [:span
-                                (sx
-                                 :.large
-                                 :d--grid
-                                 :gtc--1fr:1fr
-                                 :&_.emoji:fs--28px
-                                 :&_.emoji:mi--0.3em:0.6em
-                                 :&_.kushi-radio:mbe--0.95em
-                                 {:style {"&_.kushi-radio:nth-child(even):mis"                        :1em
-                                          :&_.emoji:filter                                            "grayscale(1)"
-                                          :&_.emoji:transition-property                               :transform
-                                          :&_.emoji:transition-duration                               :500ms
-                                          :&_.kushi-radio-input:checked+.kushi-label>.emoji:filter    :none
-                                          :&_.kushi-radio-input:checked+.kushi-label>.emoji:transform "scale(1.5)"
-                                          :&_.kushi-radio-input:checked+.kushi-label>.emoji:animation :jiggle2:0.5s}})
-                                [radio
-                                 (sx :.normal {:-input-attrs {:name           :demo
-                                                              :defaultChecked true}})
-                                 [label [:span.emoji "🦑"] "Squid"]]
-                                [radio
-                                 (sx :.normal {:-input-attrs {:name :demo}})
-                                 [label [:span.emoji "🐋"] "Whale"]]
-                                [radio
-                                 (sx :.normal {:-input-attrs {:name :demo}})
-                                 [label [:span.emoji "🦈 "] "Shark"]]
-                                [radio
-                                 (sx :.normal {:-input-attrs {:name :demo}})
-                                 [label [:span.emoji "🐊"] "Croc"]]])}]}])
+     {:desc     "Radio group with labels, inherited color"
+      :row-attrs row-attrs
+      :examples [{:code (sx-call [:section 
+                                  (sx :.flex-row-fs)
+                                  [radio (sx {:-input-attrs {:name :demo-color}}) "Yes"]
+                                  [radio (sx {:-input-attrs {:name :demo-color}}) "No"]
+                                  [radio (sx {:-input-attrs {:name :demo-color}}) "Maybe"]])}]}
+     
+     {:desc     "Custom, with default checked"
+      :row-attrs row-attrs
+      :examples [{:code (sx-call [:section
+                                  (sx
+                                   :dark:c--$purple-300
+                                   :d--grid
+                                   :gtc--1fr:1fr
+                                   :row-gap--1em
+                                   :column-gap--2em
+                                   [:&_.emoji
+                                    {:fs                  :28px
+                                     :mi                  :0.33em
+                                     :filter              "grayscale(1)"
+                                     :transition-property :transform
+                                     :transition-duration :500ms}]
+                                   [:&_.kushi-radio-input:checked+.kushi-label>.emoji
+                                    {:filter    :none
+                                     :transform "scale(1.5)"
+                                     :animation :jiggle2:0.5s}])
+                                  [radio
+                                   (sx :.normal {:-input-attrs {:name :demo-custom :defaultChecked true}})
+                                   [label [:span.emoji "🦑"] "Squid"]]
+                                  [radio
+                                   (sx :.normal {:-input-attrs {:name :demo-custom}})
+                                   [label [:span.emoji "🐋"] "Whale"]]
+                                  [radio
+                                   (sx :.normal {:-input-attrs {:name :demo-custom}})
+                                   [label [:span.emoji "🦈 "] "Shark"]]
+                                  [radio
+                                   (sx :.normal {:-input-attrs {:name :demo-custom}})
+                                   [label [:span.emoji "🐊"] "Croc"]]])}]}]))

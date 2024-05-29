@@ -12,8 +12,8 @@
 (defn demo [component-opts]
   (into [:<>]
         (for [
-              example-opts (take 5 card-examples)
-              ;; example-opts card-examples
+              ;; example-opts (take 1 card-examples)
+              example-opts card-examples
               ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{1} idx) m)) card-examples)
               ]
           [component-examples/examples-section component-opts example-opts])))
@@ -30,7 +30,7 @@
 
 (def card-examples
   [
-   {:desc      "Sizes from `xxsmall` to `large`"
+   {:desc      "Sizes from xxsmall to large"
     :row-attrs (sx :ai--fs
                    :flex-direction--column
                    :&_.kushi-card:w--fit-content
@@ -57,7 +57,7 @@
                             [:p (sx :fs--1.25em :.wee-bold) "Polar Bear"] 
                             [:p (sx :c--$neutral-secondary-fg) "polar.bear@example.com"]]]]})}
    
-   {:desc      "`elevated` levels from `0` to `5`"
+   {:desc      "Elevated levels from 0 to 5"
     :row-attrs (sx :ai--fs
                    :flex-direction--column
                    :gap--2rem
@@ -109,11 +109,7 @@
                                    :b--1px:solid:#9eef00
                                    :text-shadow--1px:1px:5px:#9eef00b5
                                    :box-shadow--inset:0px:0px:40px:#9eef0073)
-                                  [:span (sx :pis--7ex :letter-spacing--7ex) "alien"]])
-                 }]}
-   
-
-   ])
+                                 [:span (sx :pis--7ex :letter-spacing--7ex) "alien"]])}]}])
 
 
 

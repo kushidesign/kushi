@@ -82,43 +82,47 @@
            example-opts])))
 
 (def popover-examples
-  [{:desc      "Basic"
-    :component button
-    :reqs      '[[kushi.ui.button.core :refer [button]]]
-    :examples  [{:label    "Basic"
-                 :args     ["Click to open popover"]
-                 :sx-attrs (sx-call (popover-attrs
-                                     {:-f (fn [popover-el]
-                                            (rdom/render (fn [] [:div
-                                                                 (sx :.xxxlarge
-                                                                     :.flex-row-c
-                                                                     :padding--0.25em)
-                                                                 "💃"])
-                                                         popover-el))}))}]}
-   
-   {:desc      "With manual placement"
-    :component button
-    :reqs      '[[kushi.ui.button.core :refer [button]]]
-    :examples  [{:label    "Basic"
-                 :args     ["Click to open popover"]
-                 :sx-attrs (sx-call (popover-attrs
-                                     {:-f         (fn [popover-el]
-                                                    (rdom/render (fn [] [:div
-                                                                         (sx :.xxxlarge
-                                                                             :.flex-row-c
-                                                                             :padding--0.25em)
-                                                                         "💃"])
-                                                                 popover-el))
-                                      :-placement :r}))}]}
-   {:desc      "With form"
-    :component button
-    :reqs      '[[kushi.ui.button.core :refer [button]]]
-    :examples  [{:label    "With form"
-                 :args     ["Click to open popover"]
-                 :sx-attrs (sx-call (popover-attrs
-                                     {:-f (fn [popover-el]
-                                            (rdom/render popover-content
-                                                         popover-el))}))}]}
-   ])
+  (let [row-attrs (sx :&_.kushi-button:fs--$small)]
+    [{:desc      "Basic"
+      :component button
+      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :row-attrs row-attrs
+      :examples  [{:label    "Basic"
+                   :args     ["Click to open popover"]
+                   :sx-attrs (sx-call (popover-attrs
+                                       {:-f (fn [popover-el]
+                                              (rdom/render (fn [] [:div
+                                                                   (sx :.xxxlarge
+                                                                       :.flex-row-c
+                                                                       :padding--0.25em)
+                                                                   "💃"])
+                                                           popover-el))}))}]}
+     
+     {:desc      "With manual placement"
+      :component button
+      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :row-attrs row-attrs
+      :examples  [{:label    "Basic"
+                   :args     ["Click to open popover"]
+                   :sx-attrs (sx-call (popover-attrs
+                                       {:-f         (fn [popover-el]
+                                                      (rdom/render (fn [] [:div
+                                                                           (sx :.xxxlarge
+                                                                               :.flex-row-c
+                                                                               :padding--0.25em)
+                                                                           "💃"])
+                                                                   popover-el))
+                                        :-placement :r}))}]}
+     {:desc      "With form"
+      :component button
+      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :row-attrs row-attrs
+      :examples  [{:label    "With form"
+                   :args     ["Click to open popover"]
+                   :sx-attrs (sx-call (popover-attrs
+                                       {:-f (fn [popover-el]
+                                              (rdom/render popover-content
+                                                           popover-el))}))}]}
+     ]))
 
 

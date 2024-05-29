@@ -38,8 +38,8 @@
   (into [:<>]
         (for [
               ;; example-opts (take 1 switch-examples)
-              ;; example-opts switch-examples
-              example-opts (keep-indexed (fn [idx m] (when (contains? #{3} idx) m)) switch-examples)
+              example-opts switch-examples
+              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{3} idx) m)) switch-examples)
               ]
           [component-examples/examples-section component-opts example-opts])))
 
@@ -56,13 +56,13 @@
    :xxxlarge])
 
 (def switch-examples
-  [{:desc     "`semantic` variants"
+  [{:desc     "Semantic variants"
     :sx-attrs (sx-call (sx :.xxlarge))
     :examples (for [s (take 4 component-examples/colors)]
                 {:label (name s)
                  :attrs {:class [s]}})}
 
-   {:desc     "`semantic` variants, outline styling"
+   {:desc     "Semantic variants, outline styling"
     :sx-attrs (sx-call (sx
                         :.xxlarge
                         :$switch-border-color--$gray-400
@@ -84,7 +84,7 @@
                 {:label (name s)
                  :attrs {:class [s]}})}
 
-   {:desc      "Showing sizes from `small` to `xxxlarge`"
+   {:desc      "Showing sizes from small to xxxlarge"
     :row-attrs (sx :ai--fe)
     :examples  (for [sz switch-sizes]
                  {:label (name sz)
@@ -156,8 +156,8 @@
     :examples  (for [sz switch-sizes]
                  {:label (name sz)
                   :attrs {:disabled true
-                          :class    [sz]}})}
-   ])
+                          :class    [sz]}})}])
+
 
 
 #_(defn section-label
