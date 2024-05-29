@@ -40,7 +40,7 @@
                [:animation [["var(--progress-animation-duration)" :linear :infinite :spin]]]
                :h--$loading-spinner-height
                :w--0px
-               :b--1px:solid:currentColor
+               [:b "max(0.055em, 1px) solid currentColor"]
                {:aria-hidden true})
            attrs)]))
 
@@ -55,7 +55,7 @@
 
                :.before-absolute-fill
                :before:border-radius--9999px
-               :before:bw--2.5px
+               [:before:bw "max(2.5px, 0.125em)"]
                :before:bs--solid
                :before:bc--transparent
                :before:bbsc--currentColor
@@ -63,7 +63,7 @@
                :.after-absolute-fill
                :after:border-radius--9999px
                :after:o--0.2
-               :after:bw--2.5px
+               [:after:bw "max(2.5px, 0.125em)"]
                :after:bs--solid
                :after:bc--currentColor
                {:aria-hidden true})
