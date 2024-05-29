@@ -5,7 +5,9 @@
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.icon.core :refer [icon]]
-            [kushi.ui.progress.core :refer [progress propeller spinner
+            [kushi.ui.progress.core :refer [progress
+                                            propeller
+                                            donut
                                             thinking]]))
 
 
@@ -34,29 +36,36 @@
 
 (def progress-examples
   (let [row-attrs
-        (sx [:&_.playground-component-example-row-instance-code {:pis        :0.5em
-                                                                 :column-gap :5rem
-                                                                 :row-gap    :2rem
-                                                                 :display    :grid
-                                                                 :gtc        :1fr:1fr:1fr:1fr}])
+        (sx [:&_.playground-component-example-row-instance-code
+             {:pis        :0.5em
+              :column-gap :5rem
+              :row-gap    :2rem
+              :display    :grid
+              :gtc        :1fr:1fr:1fr:1fr}])
         row-attrs-all-colors
-        (sx [:&_.playground-component-example-row-instance-code {:pis            :0.5em
-                                                                 :gap            :1rem
-                                                                 :flex-direction :column}])]
+        (sx [:&_.playground-component-example-row-instance-code
+             {:pis            :0.5em
+              :gap            :1rem
+              :flex-direction :column}])]
 
     [{:desc      "Usage with a button."
       :row-attrs row-attrs
       :examples  [{:code (sx-call [button 
-                                    (sx :.accent
-                                        :.small
-                                        :on-click (fn [e]
-                                                    (? e)
-                                                    (.setAttribute
-                                                     (? (-> e .-target))
-                                                     "aria-label"
-                                                     "loading")))
-                                    [progress 
-                                     [icon :play-arrow] [propeller]]
+                                   (sx :.small
+                                       {:on-click (fn [e]
+                                                    (let [el       (-> e .-target)
+                                                          loading? (= "loading" (.-ariaLabel el))] 
+                                                      (if loading?
+                                                        (do (.removeAttribute el "aria-label")
+                                                            (.removeAttribute el "data-kushi-ui-progress"))
+                                                        (do (.setAttribute el
+                                                                           "aria-label"
+                                                                           "loading")
+                                                            (.setAttribute el
+                                                                           "data-kushi-ui-progress"
+                                                                           true)))))})
+                                   [progress 
+                                    [icon :play-arrow] [donut]]
                                    "Activate"])}]}
      
      {:desc      "Propeller, xxsmall to xxxlarge"
@@ -81,7 +90,7 @@
       :row-attrs (merge-attrs row-attrs
                               (sx :&_.playground-component-example-row-instance-code:column-gap--4.5rem))
       :examples  [{:code (sx-call (for [sz spinner-sizes]
-                                    [spinner {:class [sz]}]))}]}
+                                    [donut {:class [sz]}]))}]}
      
      
      {:desc      "Spinner, all the colors"
@@ -94,7 +103,7 @@
                                             :gap--1.33rem)]
                                   (for [val (range 100 1100 100)]
                                     [:div (sx :.flex-col-fs)
-                                     [spinner {:class [:large]
+                                     [donut {:class [:large]
                                                :style {:color (str "var(--" color "-" val ")")}}]]))))}]}
 
      {:desc      "Thinking, xxsmall to xxxlarge"

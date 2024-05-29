@@ -317,7 +317,6 @@
         ;; Create sci-fi variant
         ;; Create gel variant
         
-        ;; Finish components last 3 components
         
         ;; Rename alert -> callout
         ;; finish input text examples
@@ -359,9 +358,9 @@
                                                     ;; "input"
                                                     ;; "collapse"
                                                     ;; "checkbox"
-                                                    } (:label %))
-                                      [
-                                       {:label          "button"
+                                                    }
+                                                  (:label %))
+                                      [{:label          "button"
                                         :demo-component button.demo/demo2
                                         :component      button
                                         :reqs           '[[kushi.ui.button.core :refer [button]]]
@@ -370,8 +369,8 @@
                                         :variants-attrs {:rounded  (sx :.rounded)
                                                          :filled   (sx :.rounded :.filled)
                                                          :bordered (sx :.rounded :.bordered)
-                                                         :minimal  (sx :.rounded :.minimal)}
-                                        }
+                                                         :minimal  (sx :.rounded :.minimal)}}
+
                                        {:label          "switch" 
                                         :demo-component switch.demo/demo2
                                         :component      switch
@@ -379,8 +378,8 @@
                                         :variants-base  #{:on :off}
                                         :variants-order [:off :on]
                                         :variants-attrs {:on  {:-on? true}
-                                                         :off {}}
-                                        }
+                                                         :off {}}}
+
                                        {:label          "tooltip" 
                                         :demo-component tooltip-demo/demo2
                                         :component      :span
@@ -502,26 +501,8 @@
                                         :reqs           '[[kushi.ui.progress.core :refer [progress
                                                                                           spinner
                                                                                           propeller
-                                                                                          thinking]]]}
-                                       
-                                       [kushi.ui.button.core :refer [button]]
-                                       ;; dropdown
-                                       ;; kbd
-                                       ;; coming soon
-                                       ;; avz
-                                       ;; quote
-                                       ;; code
-                                       ;; select
-                                       ;; skeleton
-                                       ;; table
-                                      ;; "progress bar"
-                                       ;; tabs
-                                       
+                                                                                          thinking]]]}])
 
-
-
-                                       ])
-        
         popover-content              (fn [] [:div.absolute-centered "hi"])]
 
 

@@ -2,7 +2,7 @@
   (:require
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.button.core :refer (button)]
-   [kushi.ui.progress.core :refer (progress spinner propeller thinking)]
+   [kushi.ui.progress.core :refer (progress donut propeller thinking)]
    [kushi.ui.button.demo :as button-demo]
    [kushi.ui.input.radio.core :refer (radio)]
    [kushi.ui.input.checkbox.core :refer (checkbox)]
@@ -40,7 +40,7 @@
                 "            [kushi.ui.icon.core :refer [icon]]\n"
                 "            ;; Optional, for loading animations\n"
                 "            [kushi.ui.progress.core :refer [progress\n"
-                "                                            spinner\n"
+                "                                            donut\n"
                 "                                            propeller\n"
                 "                                            thinking]]")
      :defaults {:kind     :default
@@ -65,12 +65,12 @@
                  :example [button {:-loading? true} [progress "Play" [propeller]]]}
                 {:label   "Loading state, dots"
                  :example [button {:-loading? true} [progress "Play" [thinking]]]}
-                {:label   "Loading state, spinner"
-                 :example [button {:-loading? true} [progress "Play" [spinner]]]}
-                {:label   "Loading state, spinner, fast"
-                 :example [button {:-loading? true} [progress "Play" [spinner (sx :animation-duration--325ms)]]]}
-                {:label   "Loading state, spinner on icon"
-                 :example [button {:-loading? true} [progress [icon :play-arrow] [spinner]] "Play"]}
+                {:label   "Loading state, donut"
+                 :example [button {:-loading? true} [progress "Play" [donut]]]}
+                {:label   "Loading state, donut, fast"
+                 :example [button {:-loading? true} [progress "Play" [donut (sx :animation-duration--325ms)]]]}
+                {:label   "Loading state, donut on icon"
+                 :example [button {:-loading? true} [progress [icon :play-arrow] [donut]] "Play"]}
                 {:label   "Loading state, propeller on icon"
                  :example [button {:-loading? true} [progress [icon :play-arrow] [propeller]] "Play"]}
                 #_{:label   "Custom"
