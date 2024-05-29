@@ -139,8 +139,8 @@
    ;; ------------------------------------------------------
    :$button-padding-inline-ems              :1.2em
    :$icon-button-padding-inline-ems         :0.69em
-   :$button-padding-block-ems               :0.69em
-   :$button-with-icon-padding-inline-offset :0.69em
+   :$button-padding-block-ems               :0.67em
+   :$button-with-icon-padding-inline-offset :0.9em
    :$button-border-width                    :1px
 
 
