@@ -68,8 +68,8 @@
   (into [:<>]
         (for [
               ;; example-opts (take 1 button-examples)
-              ;; example-opts button-examples
-              example-opts (keep-indexed (fn [idx m] (when (contains? #{1} idx) m)) button-examples)
+              example-opts button-examples
+              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{1} idx) m)) button-examples)
               ]
           [component-examples/examples-section component-opts example-opts])))
 
@@ -86,31 +86,31 @@
 
 (def button-examples
   [
-   {:desc      "Sizes from `xxsmall` to `xlarge`"
-    :row-attrs (sx-call (sx :ai--fe))
+   {:desc      "Sizes from xxsmall to xlarge"
+    :row-attrs (sx :ai--fe)
     :examples  (for [sz component-examples/sizes]
                  {:label (name sz)
                   :attrs {:class sz}
-                  :args  ["Play"]})}
+                  :args  ["Pets" [icon :pets]]})}
    
-   {:desc      "semantic variants"
+   {:desc      "Semantic variants"
     :sx-attrs  (sx-call (sx :.small))
     :variants+ [:minimal]
     :examples  (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
                  (for [s component-examples/colors]
                    {:label (name s)
-                    :args  ["Play"]
+                    :args  ["Pets" [icon :pets]]
                     :attrs {:class [s]}}))}
 
-   {:desc      "shape variants"
+   {:desc      "Shape variants"
     :sx-attrs  (sx-call (sx :.small))
     :variants+ [:minimal]
     :examples  (for [s [:rounded :pill :sharp]]
                  {:label (name s)
-                  :args  ["Play"]
+                  :args  ["Pets" [icon :pets]]
                   :attrs {:class [s]}})}
 
-   {:desc     "With `icons`"
+   {:desc     "With icons"
     :reqs     '[[kushi.ui.icon.core :refer [icon]]]
     :sx-attrs (sx-call (sx :.small))
     :examples [{:label "Icon button"
@@ -122,15 +122,15 @@
                {:label "Leading icon"
                 :args  [[icon :play-arrow] "Play"]}
                {:label "Trailing icon"
-                :args  [[icon :auto-awesome]]}
+                :args  ["Play" [icon :play-arrow]]}
                {:label "2 icons"
-                :args  [[icon :auto-awesome] "Play" [icon :auto-awesome]]}]}
+                :args  [[icon :auto-awesome] "Sparkle" [icon :auto-awesome]]}]}
 
-   {:desc     "weight variants"
+   {:desc     "Weight variants"
     :sx-attrs (sx-call (sx :.small))
     :examples (for [s (rest component-examples/type-weights)]
                 {:label (name s)
-                 :args  ["Play" [icon :auto-awesome]]
+                 :args  ["Wow" [icon :auto-awesome]]
                  :attrs {:class [s]}})}
 
    {:desc      "Loading and disabled states"

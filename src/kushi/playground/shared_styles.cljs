@@ -227,3 +227,17 @@
   [:w "calc(100% - (708px / 2))"]
   [:max-width :$kushi-playground-sidenav-max-width]
   [:xl:max-width :unset])
+
+
+;; New May 2024
+(defclass playground-example-row-bounded
+  [:&_.playground-component-example-row-instance-code
+   {:border-radius :$rounded
+    :w             :fit-content
+    :bgc           :$neutral-50
+    :p             :1em
+    :pie           :1.5em
+    :b             :1px:solid:$neutral-100}]
+  [:dark:&_.playground-component-example-row-instance-code
+   {:bgc :$neutral-950
+    :b   :1px:solid:$neutral-900}])

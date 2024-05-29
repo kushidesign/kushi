@@ -74,17 +74,16 @@
                                                             "🍞"])
                                                          popover-el))}))}]}
 
-   ;; TODO -  Why being called twice?
    {:desc      "With notification with manual dismiss cta"
     :component button
     :reqs      '[[kushi.ui.button.core :refer [button]]]
+    :row-attrs (sx :&_.kushi-button:fs--$small)
     :examples  [{:label    "Basic"
                  :args     ["Save for later"]
                  :sx-attrs (sx-call (toast-attrs
                                      {:-auto-dismiss? false
-                                      :-f (fn [toast-el]
-                                            (rdom/render toast-content toast-el))}))}]}
+                                      :-f             (fn [toast-el]
+                                                        (rdom/render toast-content
+                                                                     toast-el))}))}]}
    
-   ;; TODO - Add examples for different positions
-
    ])

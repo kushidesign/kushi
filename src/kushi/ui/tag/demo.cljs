@@ -33,15 +33,14 @@
    :xlarge])
 
 (def tag-examples
-  [
-   {:desc      "Sizes from `xxsmall` to `xlarge`"
-    :row-attrs (sx-call (sx :ai--fe))
-    :examples  (for [sz component-examples/sizes]
+  [{:desc      "Sizes from xxsmall to xlarge"
+    :row-attrs (sx :ai--fe)
+    :examples  (for [sz tag-sizes]
                  {:label (name sz)
                   :attrs {:class sz}
                   :args  ["Play"]})}
    
-   {:desc      "semantic variants"
+   {:desc      "Semantic variants"
     :sx-attrs  (sx-call (sx :.small))
     :variants+ [:minimal]
     :examples  (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
@@ -50,7 +49,7 @@
                     :args  ["Play"]
                     :attrs {:class [s]}}))}
 
-   {:desc      "shape variants"
+   {:desc      "Shape variants"
     :sx-attrs  (sx-call (sx :.small))
     :variants+ [:minimal]
     :examples  (for [s [:rounded :pill :sharp]]
@@ -58,7 +57,7 @@
                   :args  ["Play"]
                   :attrs {:class [s]}})}
 
-   {:desc     "With `icons`"
+   {:desc     "With icons"
     :reqs     '[[kushi.ui.icon.core :refer [icon]]]
     :sx-attrs (sx-call (sx :.small))
     :variants+ [:minimal]
@@ -73,7 +72,7 @@
                {:label "Trailing icon"
                 :args  [[icon :pets] "Pet friendly"]} ]}
 
-   {:desc     "weight variants"
+   {:desc     "Weight variants"
     :sx-attrs (sx-call (sx :.small))
     :variants+ [:minimal]
     :examples (for [s (rest component-examples/type-weights)]

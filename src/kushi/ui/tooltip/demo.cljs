@@ -98,6 +98,7 @@
   [{:desc      "Basic, auto-placement."
     :component button
     :reqs      '[[kushi.ui.button.core :refer [button]]]
+    :row-attrs (sx :&_.kushi-button:fs--$small)
     :examples  [{:label    "right"
                  :args     ["Hover me"]
                  :sx-attrs (sx-call (tooltip-attrs {:-text "Click to view code"}))}]}

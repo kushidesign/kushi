@@ -30,20 +30,8 @@
    :xxxlarge])
 
 (def checkbox-examples
-  (let [row-attrs
-        (sx
-         [:&_.playground-component-example-row-instance-code
-          {:border-radius :$rounded
-           :w             :fit-content
-           :bgc           :$neutral-50
-           :p             :1em
-           :b             :1px:solid:$neutral-100}]
-         [:dark:&_.playground-component-example-row-instance-code
-          {:w   :fit-content
-           :bgc :$neutral-950
-           :p   :1em
-           :b   :1px:solid:$neutral-900}])]
-    [{:desc      "Showing sizes from `xsmall` to `xxxlarge`"
+  (let [row-attrs {:class ["playground-example-row-bounded"]}]
+    [{:desc      "Showing sizes from xsmall to xxxlarge"
       :row-attrs (sx :ai--fe
                      :&_.playground-component-example-row-instance-code:ai--fe
                      ["&_label:first-child:pbe" :0.75em]
@@ -60,6 +48,25 @@
 
      {:desc      "With label and trailing icon"
       :row-attrs row-attrs
-      :examples  [{:code (sx-call [checkbox (sx :.large) [label "Make it shiny" [icon :auto-awesome]]])}]}]))
+      :examples  [{:code (sx-call [checkbox (sx :.large) [label "Make it shiny" [icon :auto-awesome]]])}]}
+     
+     (let [weights component-examples/type-weights]
+       {:desc      (str "Weight variants " (name (first weights)) " to " (name (last weights)))
+        :row-attrs (sx :.flex-col-fs
+                       :ai--fs
+                       :gap--2rem
+                       :w--fit-content
+                       :border-radius--$rounded
+                       :p--1em
+                       :bgc--$neutral-50
+                       :b--1px:solid:$neutral-100
+                       :dark:bgc--$neutral-950
+                       :dark:b--1px:solid:$neutral-900)
+        :sx-attrs  (sx-call (sx :.large))
+        :examples  (for [s weights]
+                     {:label (name s)
+                      :attrs {:-label-attrs {:class [s]}}
+                      :args  [[label "Make it shiny" [icon :auto-awesome]]]} )})
+     ]))
 
 
