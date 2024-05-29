@@ -272,31 +272,7 @@
                             (tooltip-attrs
                              {:-text      ["`:top-left-corner`" "Click to view code"],
                               :-placement :tlc})
-                            {:style {:grid-area "tlc"}}))}]
-    #_[{:label "right"
-                :args  [(str :r)]
-                :attrs (tooltip-attrs {:-text      ["Tooltip with right placement"
-                                                    "Click to view code"]
-                                       :-placement :r})}
-               {:label "bottom left"
-                :args  [(str :bl)]
-                :attrs (tooltip-attrs {:-text      ["Tooltip with bottom-left placement"
-                                                    "Click to view code"]
-                                       :-placement :bl})}
-
-                ;; {:label "Loading state, spinner"
-                ;;  :args  [[progress "Play" [spinner]]]}
-                ;; {:label "Loading state, spinner, fast"
-                ;;  :args  [[progress "Play" [spinner (sx :animation-duration--325ms)]]]}
-                ;; {:label "Loading state, spinner on icon"
-                ;;  :args  [[progress [icon :play-arrow] [spinner]] "Play"]}
-                ;; {:label "Loading state, propeller on icon"
-                ;;  :attrs {:disabled true}
-                ;;  :args  [[progress [icon :play-arrow] [spinner]] "Play"]}
-                ;; {:label "Disabled"
-                ;;  :attrs {:disabled true}
-                ;;  :args  ["Play"]}
-               ]}
+                            {:style {:grid-area "tlc"}}))}]}
 
   ;;  {:desc      "Tooltips in various positions"      
   ;;   :sx-attrs  (sx-call (sx :.xxlarge))

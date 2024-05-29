@@ -44,10 +44,10 @@
                {:aria-hidden true})
            attrs)]))
 
-(defn spinner [& args]
+(defn donut [& args]
   (let [[_ attrs & _] (opts+children args)]
     [:div (merge-attrs
-           (sx 'kushi-progress-spinner
+           (sx 'kushi-progress-donut
                :.relative
                [:animation [["var(--progress-animation-duration)" :linear :infinite :spin]]]
                :w--$loading-spinner-height
