@@ -51,15 +51,15 @@
 
 
 ;; Prod 
-;; (defn validated-components [coll]
-;;   coll)
+(defn validated-components [coll]
+  coll)
 
 ;; Dev
-(defn validated-components [coll]
-  (filter #(let [valid? (malli/validate Example %)]
-             (when-not valid? (js/console.log (with-out-str (pretty/explain Example %))))
-             valid?)
-          coll))
+;; (defn validated-components [coll]
+;;   (filter #(let [valid? (malli/validate Example %)]
+;;              (when-not valid? (js/console.log (with-out-str (pretty/explain Example %))))
+;;              valid?)
+;;           coll))
 ;; --------------------------------------------------------------------------------
 
 (defn filter-by-index [coll idxs]
@@ -68,7 +68,6 @@
 
 (defn validated-playground-examples
   [idxs coll]
-  (println "HI")
   (cond-> coll
     (seq idxs) (filter-by-index idxs)
     true validated-components))
