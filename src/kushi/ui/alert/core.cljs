@@ -1,7 +1,7 @@
 (ns kushi.ui.alert.core
   (:require [kushi.core :refer (merge-attrs) :refer-macros [sx]]
-            [kushi.ui.icon.core]
-            [kushi.ui.core :refer (opts+children)]))
+            [kushi.ui.core :refer (opts+children)]
+            [kushi.ui.icon.core]))
 
 (defn alert
   {:desc ["Alerts provide contextual feedback information for the user"
@@ -22,7 +22,11 @@
             :default nil
             :desc    ["Hiccup to render a close button."
                       "Optional."]}
-
+           {:name    header-text
+            :pred    string
+            :default nil
+            :desc    ["The header text to render in the alert."
+                      "Optional."]}
           ;;  Leave this out for now
           ;;   {:name    duration
           ;;    :pred    pos-int?
@@ -63,7 +67,7 @@
      [:div (sx 'kushi-alert-header-wrap
                :.flex-row-sb
                :.relative
-               :p--0.75rem:1rem
+               :p--0.85em:0.75em
                :w--100%)
       [:div (sx 'kushi-alert-header-icon-wrap :min-width--1em) icon]
       header-text
