@@ -2,7 +2,6 @@
   (:require [applied-science.js-interop :as j]
             [clojure.string :as string]
             [domo.core :as domo] ;; Import this to create defclasses
-            [fireworks.core :refer [?]]
             [goog.functions]
             [goog.string]
             [kushi.core :refer (keyed)]
@@ -370,9 +369,17 @@
 
     ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Document the use case for removing child from dialog-el
-    (.removeChild (or toast-slot 
-                      (or dialog-el js/document.body))
-                  el-to-be-removed)
+    
+    ;; TODO - this warning should fire if event listener has not been properly removed
+    ;; Leave this commented out:
+    ;; (when-not el-to-be-removed
+    ;;   (js/console.warn "[kushi.ui.dom.pane.core/remove-pane!]\nAttempt to .removeChild with a non-existing child element."))
+
+    (some->> el-to-be-removed
+             (.removeChild  (or toast-slot 
+                                (or dialog-el
+                                    js/document.body))
+                            el-to-be-removed))
 
     ;; Popovers
     (when (= :popover pane-type)
@@ -380,12 +387,14 @@
                                   owning-el
                                   pane-id
                                   dialog-el)]
-        (.removeEventListener js/window
-                              "click"
-                              (partial remove-pane-if-clicked-outside!
-                                       owning-el
-                                       pane-id
-                                       pane-type))
+        (do
+          (.removeEventListener js/window
+                                "click"
+                                (partial remove-pane-if-clicked-outside!
+                                            owning-el
+                                            pane-id
+                                            pane-type)
+                                #js {:once true}))
         (.removeEventListener js/window "resize" update-placement-fn)
         (.removeEventListener js/window "scroll" update-placement-fn))
 
@@ -508,9 +517,10 @@
             #(.addEventListener js/window
                                 "click"
                                 (partial remove-pane-if-clicked-outside!
-                                         owning-el
-                                         pane-id
-                                         pane-type))
+                                            owning-el
+                                            pane-id
+                                            pane-type)
+                                #js {:once true})
             (.addEventListener js/window
                                "scroll"
                                #(update-pane-placement! owning-el pane-id dialog-el))
