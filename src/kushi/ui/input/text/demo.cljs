@@ -2,7 +2,8 @@
   (:require [kushi.core :refer (sx merge-attrs)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.input.text.core :refer [input]]))
+            [kushi.ui.icon.core :refer [icon]]
+            [kushi.ui.input.text.core :refer [text-field]]))
 
 (declare checkbox-examples)
 
@@ -30,39 +31,72 @@
 (def checkbox-examples
   (let [row-attrs (merge-attrs {:class ["playground-example-row-bounded"]}
                                (sx [:&_.playground-component-example-row-instance-code 
-                                    {:p                               :1.5em:1.65em
+                                    {:p                               :1.05em:1.65em:1.25em
                                      :&_.kushi-text-input-wrapper:bgc :$body-background-color}]))]
     [{:desc      "Simple"
       :row-attrs row-attrs
-      :examples  [{:code (sx-call [input
+      :examples  [{:code (sx-call [text-field
                                    (sx
                                     {:placeholder "Your text here"
                                      :-label      "Input label" 
                                      :-helper     "My helper text"})]
                                   )}]}
 
-     {:desc      "Inline label with helper"
+     {:desc      "Required"
       :row-attrs row-attrs
-      :examples  [{:code (sx-call [input
+      :examples  [{:code (sx-call [text-field
                                    (sx
-                                    {:placeholder      "Your text here"
-                                     :-label           "Input label"
-                                     :-label-placement :inline 
-                                     :-helper          "Your helper text here"})])}]}
+                                    {:placeholder "Your text here"
+                                     :required    true
+                                     :-label      "Input label" 
+                                     :-helper     "My helper text"})]
+                                  )}]}
+
+     {:desc      "Disabled"
+      :row-attrs row-attrs
+      :examples  [{:code (sx-call [text-field
+                                   (sx
+                                    {:placeholder "Your text here"
+                                     :disabled    true
+                                     :-label      "Input label" 
+                                     :-helper     "My helper text"})])}]}
+
+     {:desc      "With helper"
+      :row-attrs row-attrs
+      :examples  [{:code (sx-call [text-field
+                                   (sx
+                                    {:placeholder "Your text here"
+                                     :-label      "Input label" 
+                                     :-helper     "Your helper text here"})])}]}
+
+     {:desc      "With start enhancer"
+      :row-attrs row-attrs
+      :examples  [{:code (sx-call [text-field
+                                   (sx
+                                    {:placeholder     "Your text here"
+                                     :-start-enhancer "$"
+                                     :-label          "Input label"})])}]}
+
+     {:desc      "With end enhancer (icon)"
+      :row-attrs row-attrs
+      :examples  [{:code (sx-call [text-field
+                                   (sx
+                                    {:placeholder     "Your text here"
+                                     :-end-enhancer   [icon :star]
+                                     :-label          "Input label"})])}]}
 
      {:desc      "With textarea element"
       :row-attrs row-attrs
-      :examples  [{:code (sx-call [input
+      :examples  [{:code (sx-call [text-field
                                    (sx
                                     {:placeholder "Your text here"
                                      :-textarea?  true 
                                      :-label      "Input label" 
                                      :-helper     "My helper text"})])}]}
-     
 
      {:desc      "All the options"
       :row-attrs row-attrs
-      :examples  [{:code (sx-call [input
+      :examples  [{:code (sx-call [text-field
                                    (sx
                                     {:-label-placement     :inline
                                      :-label-attrs         (sx :bgc--yellow)

@@ -1,7 +1,7 @@
 (ns kushi.ui.tag.demo
   (:require
    [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.input.text.core :refer [input]]
+   [kushi.ui.input.text.core :refer [text-field]]
    [kushi.core :refer (sx)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
