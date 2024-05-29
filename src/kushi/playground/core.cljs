@@ -1,6 +1,3 @@
-;; TODO - test Malli validation
-;; TODO - type-tweaker require commented out
-
 (ns ^:dev/always kushi.playground.core
   (:require [garden.color]
             [kushi.color :refer [colors->tokens]]
@@ -14,8 +11,8 @@
             [kushi.playground.util
              :as util
              :refer-macros [keyed]]
-            [kushi.ui.alert.core :refer [alert]]
-            [kushi.ui.alert.demo :as alert.demo]
+            [kushi.ui.callout.core :refer [callout]]
+            [kushi.ui.callout.demo :as callout.demo]
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.button.demo :as button.demo]
             [kushi.ui.card.core :refer [card]]
@@ -35,18 +32,19 @@
             [kushi.ui.input.slider.demo :as slider.demo]
             [kushi.ui.input.switch.core :refer [switch]]
             [kushi.ui.input.switch.demo :as switch.demo]
-            [kushi.ui.input.text.core :refer [input]]
+            [kushi.ui.input.text.core :refer [text-field]]
             [kushi.ui.input.text.demo :as input.demo]
             [kushi.ui.modal.demo :as modal.demo]
             [kushi.ui.popover.demo :as popover.demo]
-            [kushi.ui.progress.core :refer [progress]]
-            [kushi.ui.progress.demo :as progress.demo]
+            [kushi.ui.spinner.core :refer [spinner]]
+            [kushi.ui.spinner.demo :as spinner.demo]
             [kushi.ui.tag.core :refer [tag]]
             [kushi.ui.tag.demo :as tag.demo]
             [kushi.ui.toast.demo :as toast.demo]
             [kushi.ui.tooltip.demo :as tooltip-demo]
             [malli.core :as malli]
             [malli.dev.pretty :as pretty]))
+
 
 (def Example
   [:map
@@ -317,10 +315,6 @@
         ;; Create sci-fi variant
         ;; Create gel variant
         
-        
-        ;; Rename alert -> callout
-        ;; finish input text examples
-        ;; finish modal examples
         ;; finish popover examples
         ;; finish toast positioning
         ;; tag max-width example
@@ -351,11 +345,14 @@
         ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         _comps                       (filter 
                                       #(contains? #{
-                                                    "progress"
+                                                    ;; "callout"
+                                                    ;; "spinner"
                                                     ;; "grid"
                                                     ;; "accordian"
                                                     ;; "radio"
-                                                    ;; "input"
+                                                    ;; "text field"
+                                                    ;; "modal"
+                                                    "popover"
                                                     ;; "collapse"
                                                     ;; "checkbox"
                                                     }
@@ -426,10 +423,10 @@
                                         :variants-base  #{:positions}
                                         :variants-attrs {:positions {}}}
 
-                                       {:label          "input" 
+                                       {:label          "text field" 
                                         :demo-component input.demo/demo
-                                        :component      input
-                                        :reqs           '[[kushi.ui.input.text.core :refer [input]]]
+                                        :component      text-field
+                                        :reqs           '[[kushi.ui.input.text.core :refer [text-field]]]
                                         :variants-base  #{:positions}
                                         :variants-attrs {:positions {}}}
 
@@ -461,10 +458,10 @@
                                         :variants-order [:on]
                                         :variants-attrs {:on {}}}
 
-                                       {:label          "alert"
-                                        :demo-component alert.demo/demo
-                                        :component      alert
-                                        :reqs           '[[kushi.ui.alert.core :refer [alert]]]
+                                       {:label          "callout"
+                                        :demo-component callout.demo/demo
+                                        :component      callout
+                                        :reqs           '[[kushi.ui.callout.core :refer [callout]]]
                                         :variants-base  #{:default :filled :bordered}
                                         :variants-order [:default :filled :bordered]
                                         :variants-attrs {:default  {}
@@ -495,13 +492,13 @@
                                         :component      grid
                                         :reqs           '[[kushi.ui.grid.core :refer [grid]]]}
 
-                                       {:label          "progress"
-                                        :demo-component progress.demo/demo
-                                        :component      progress
-                                        :reqs           '[[kushi.ui.progress.core :refer [progress
-                                                                                          spinner
-                                                                                          propeller
-                                                                                          thinking]]]}])
+                                       {:label          "spinner"
+                                        :demo-component spinner.demo/demo
+                                        :component      spinner
+                                        :reqs           '[[kushi.ui.spinner.core :refer [spinner
+                                                                                         donut
+                                                                                         propeller
+                                                                                         thinking]]]}])
 
         popover-content              (fn [] [:div.absolute-centered "hi"])]
 
@@ -518,7 +515,7 @@
     #_[:div.absolute-centered
        [button
         (sx {:-loading? true})
-        [progress [icon :play-arrow] [propeller]] 
+        [spinner [icon :play-arrow] [propeller]] 
         "Play"]]
     
 

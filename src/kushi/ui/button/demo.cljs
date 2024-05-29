@@ -3,7 +3,7 @@
    [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.component-examples :as component-examples :refer [section-label]]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.progress.core :refer (progress donut propeller thinking)]
+   [kushi.ui.spinner.core :refer (spinner donut propeller thinking)]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.button.core :refer (button)]))
@@ -137,21 +137,21 @@
     :variants- [:bordered :filled]
     :reqs      '[[kushi.ui.button.core :refer [button]]
                  [kushi.ui.icon.core :refer [icon]]
-                 [kushi.ui.progress.core :refer [progress donut propeller thinking]]]
+                 [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]]
     :sx-attrs  (sx-call (sx :.small {:-loading? true}))
     :examples  [{:label "Loading state, propeller"
-                 :args  [[progress [icon :play-arrow] [propeller]] "Play"]}
+                 :args  [[spinner [icon :play-arrow] [propeller]] "Play"]}
                 {:label "Loading state, dots"
-                 :args  [[progress "Play" [thinking]]]}
+                 :args  [[spinner "Play" [thinking]]]}
                 {:label "Loading state, donut"
-                 :args  [[progress "Play" [donut]]]}
+                 :args  [[spinner "Play" [donut]]]}
                 {:label "Loading state, donut, fast"
-                 :args  [[progress "Play" [donut (sx :animation-duration--325ms)]]]}
+                 :args  [[spinner "Play" [donut (sx :animation-duration--325ms)]]]}
                 {:label "Loading state, donut on icon"
-                 :args  [[progress [icon :play-arrow] [donut]] "Play"]}
+                 :args  [[spinner [icon :play-arrow] [donut]] "Play"]}
                 {:label "Loading state, propeller on icon"
                  :attrs {:disabled true}
-                 :args  [[progress [icon :play-arrow] [donut]] "Play"]}
+                 :args  [[spinner [icon :play-arrow] [donut]] "Play"]}
                 {:label "Disabled"
                  :attrs {:disabled true}
                  :args  ["Play"]}]}])
