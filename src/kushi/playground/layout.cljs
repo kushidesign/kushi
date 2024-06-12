@@ -14,14 +14,16 @@
         :ibs--50px
         :min-width--190px
         :p--1rem
-        :pbs--4rem
-        :$padding--0.5em:1em)
+        :pbs--51.5px
+        :$nav-padding--0.5em:1em)
     [:h2 
      (sx :.medium
          :.semi-bold
           ;;  :ta--right
          :ta--center
-         :p--$padding)
+         :p--$nav-padding
+         :pbs--0.25em
+         )
      "Components"]
     (into [:ul (sx 
                 :.flex-col-fs
@@ -35,14 +37,16 @@
                      :.capitalize
                      :.pill
                      :w--fit-content
-                     :p--$padding
+                     :p--$nav-padding
                      :first-child:bgc--$blue-100)
              label]))])
 
 (defn header []
   [:div
-   (sx :bgc--$gray-200
+   (sx :.kushi-playground-all-components-header
        :.fixed
+       :zi--2
+       :bgc--$gray-200
        :w--100%
        :p--1rem)
    "Kushi"])
@@ -71,14 +75,14 @@
      "Hello"]]
 
    (into [:div
-          (sx :.flex-col-fs
+          (sx :.kushi-playground-all-components
+              :>section:first-child:pbs--3rem
+              :.flex-col-fs
               :.grow
               :max-width--800px
-              ;; :bgc--$brown-00
-              :mbs--50px
-              :gap--2rem
+              :gap--5rem
               :pi--4rem
-              :pb--4rem
+              :pb--0:4rem
               :mie--190px)]
          
          #_[button2 "Hello"]
@@ -89,7 +93,14 @@
             [:h1 (sx :.xxlarge
                      :.semi-bold
                      :.capitalize
-                     :mbe--2rem)
+                     :lh--0.75em
+                     :position--sticky
+                     [:top :51.5px]
+                     :zi--1
+                     ;; :inset-block-start--51px
+                     [:bgi "linear-gradient(to bottom, white, white calc(51.5px + 1.25em), transparent)"]
+                     :pb--51.5px:3.5rem
+                     :w--655px)
              label]
             (when demo-component
               [demo-component opts])]))])

@@ -339,19 +339,20 @@
         ;; mobile layouts
         ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         _comps                       (filter 
-                                      #(contains? #{
-                                                    ;; "callout"
-                                                    ;; "spinner"
-                                                    ;; "grid"
-                                                    ;; "accordian"
-                                                    ;; "radio"
-                                                    ;; "text field"
-                                                    ;; "modal"
+                                      :label
+                                      #_#(contains? #{
+                                                    "callout"
+                                                    "spinner"
+                                                    "grid"
+                                                    "accordian"
+                                                    "radio"
+                                                    "text field"
+                                                    "modal"
                                                     "popover"
-                                                    ;; "collapse"
-                                                    ;; "checkbox"
-                                                    }
+                                                    "collapse"
+                                                    "checkbox"}
                                                   (:label %))
+
                                       [{:label          "button"
                                         :demo-component button.demo/demo2
                                         :component      button
@@ -363,6 +364,13 @@
                                                          :bordered (sx :.rounded :.bordered)
                                                          :minimal  (sx :.rounded :.minimal)}}
 
+                                       {:label          "spinner"
+                                        :demo-component spinner.demo/demo
+                                        :component      spinner
+                                        :reqs           '[[kushi.ui.spinner.core :refer [spinner
+                                                                                         donut
+                                                                                         propeller
+                                                                                         thinking]]]}
                                        {:label          "switch" 
                                         :demo-component switch.demo/demo2
                                         :component      switch
@@ -487,13 +495,7 @@
                                         :component      grid
                                         :reqs           '[[kushi.ui.grid.core :refer [grid]]]}
 
-                                       {:label          "spinner"
-                                        :demo-component spinner.demo/demo
-                                        :component      spinner
-                                        :reqs           '[[kushi.ui.spinner.core :refer [spinner
-                                                                                         donut
-                                                                                         propeller
-                                                                                         thinking]]]}])
+                                       ])
 
         popover-content              (fn [] [:div.absolute-centered "hi"])]
 
