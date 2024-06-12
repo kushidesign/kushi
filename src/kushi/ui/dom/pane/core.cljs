@@ -369,7 +369,7 @@
 
     ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Document the use case for removing child from dialog-el
-    
+
     ;; TODO - this warning should fire if event listener has not been properly removed
     ;; Leave this commented out:
     ;; (when-not el-to-be-removed
