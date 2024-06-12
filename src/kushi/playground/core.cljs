@@ -302,10 +302,6 @@
         ;; add cta to sticky header
         ;; hide sidebar on mobile
 
-
-        ;; TODO 
-        ;; Make sidenav work
-
         ;; TODO 
         ;; mobile layouts
         ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

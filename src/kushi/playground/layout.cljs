@@ -44,7 +44,7 @@
                   [:fw (when focused? :$semi-bold)]
                   [:bgc (when focused? :$neutral-650)]
                   [:c (when focused? :white)]
-                  )
+                  {:on-click #(domo/scroll-into-view! (domo/qs-data= "kushi-playground-component" label))})
               label]]))])
 
 (defn header []
