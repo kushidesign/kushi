@@ -137,7 +137,9 @@
         label          (some-> desc
                                kushi.ui.util/backtics->hiccup
                                section-label)]
-    (into [:section (sx :.playground-example-row :pb--1.5rem)
+    (into [:section (sx :.playground-example-row
+                        :pb--1.5rem
+                        :first-of-type:pbs--0)
            label]
           (for [variant-attrs (resolve-variants-attrs component-opts
                                                       example-opts)]
