@@ -166,6 +166,7 @@
    :relative      {:position :relative}
    :absolute      {:position :absolute}
    :fixed         {:position :fixed}
+   :sticky        {:position :sticky}
 
     ;; Combinatorial absolute and fixed positioning utilities
     ;; ------------------------------------------------------
