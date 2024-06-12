@@ -7,45 +7,49 @@
 (defn desktop-component-sidenav
   [_comps]
   [:nav
-    (sx :bgc--$purple-00
-        :.fixed
-        [:h "calc(100vh - 50px)"]
-        :iie--0
-        :ibs--50px
-        :min-width--190px
-        :p--1rem
-        :pbs--51.5px
-        :$nav-padding--0.5em:1em)
-    [:h2 
-     (sx :.medium
-         :.semi-bold
-         :ta--center
-         :p--$nav-padding
-         :pbs--0.25em)
-     "Components"]
-    (into [:ul (sx :.flex-col-fs
-                   :ai--c
-                   :pbs--1rem
-                   :overflow-y--auto)]
-          (for [{:keys [label]} _comps
-                :let [focused? (= label @state/*playground-first-intersecting)
-                      ]]
-            [:li (sx :.xsmall
-                     :.wee-bold
-                     :.capitalize
-                     :.pointer
-                     :w--fit-content
-                     :pb--0.25em
-                     [:hover>span:bgc (if focused? :$neutral-650 :$neutral-100)])
-             [:span 
-              (sx :.pill
-                  :.block
-                  :p--$nav-padding
-                  [:fw (when focused? :$semi-bold)]
-                  [:bgc (when focused? :$neutral-650)]
-                  [:c (when focused? :white)]
-                  {:on-click #(domo/scroll-into-view! (domo/qs-data= "kushi-playground-component" label))})
-              label]]))])
+   (sx :bgc--$purple-00
+       :.fixed
+       :zi--3
+       [:h "calc(100vh - 50px)"]
+       :iie--0
+       :ibs--50px
+       :min-width--160px
+       :md:min-width--190px
+       :p--1rem
+       :pbs--51.5px
+       :$nav-padding--0.5em:1em)
+   [:h2 
+    (sx :.medium
+        :.semi-bold
+        :ta--center
+        :p--$nav-padding
+        :pbs--0.25em)
+    "Components"]
+   (into [:ul (sx :.flex-col-fs
+                  :ai--c
+                  :pbs--1rem
+                  :overflow-y--auto)]
+         (for [{:keys [label]} _comps
+               :let            [focused? (= label @state/*playground-first-intersecting) ]]
+           [:li (sx :.xsmall
+                    :.wee-bold
+                    :.capitalize
+                    :.pointer
+                    :w--fit-content
+                    :pb--0.25em
+                    [:hover>span:bgc (if focused? :$neutral-650 :$neutral-100)])
+            [:span 
+             (sx :.pill
+                 :.block
+                 :p--$nav-padding
+                 [:fw (when focused? :$semi-bold)]
+                 [:bgc (when focused? :$neutral-650)]
+                 [:c (when focused? :white)]
+                 {:on-click (fn []
+                              (domo/scroll-into-view!
+                               (domo/qs-data= "kushi-playground-component" label))
+                              (domo/scroll-by! {:y -100}))})
+             label]]))])
 
 (defn header []
   [:div
@@ -118,7 +122,7 @@
                      [:ibs :51.5px]
                      :zi--1
                      :pbs--51.5px
-                     :w--100%
+                     [:w '(calc :100vw - :4rem)]
                      :bgc--white
                      :box-shadow--0:0:13px:8px:white|0:0:10px:9px:white)
              label]
