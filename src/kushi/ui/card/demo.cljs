@@ -90,25 +90,27 @@
     :row-attrs (sx :ai--fs
                    :flex-direction--column
                    :gap--2rem
+                   :&_.kushi-card:transform-origin--0:0
+                   :&_.kushi-card:scale--0.75
                    :&_.kushi-card:w--fit-content
                    :&_.kushi-card:b--1px:solid:$neutral-200
+                   :md:&_.kushi-card:scale--1
                    :dark&_.kushi-card:b--1px:solid:$neutral-800)
     :examples  [{:label "Alien"
                  :code  (sx-call [card
-                                  (sx
-                                   :.large
-                                   :.extra-bold
-                                   :.flex-col-c
-                                   :.rounded-small
-                                   :p--0
-                                   :height--220px
-                                   :tt--u
-                                   :ta--center
-                                   :bgc--#313131
-                                   :c--white
-                                   :b--1px:solid:#9eef00
-                                   :text-shadow--1px:1px:5px:#9eef00b5
-                                   :box-shadow--inset:0px:0px:40px:#9eef0073)
+                                  (sx :.large
+                                      :.extra-bold
+                                      :.flex-col-c
+                                      :.rounded-small
+                                      :p--0
+                                      :height--220px
+                                      :tt--u
+                                      :ta--center
+                                      :bgc--#313131
+                                      :c--white
+                                      :b--1px:solid:#9eef00
+                                      :text-shadow--1px:1px:5px:#9eef00b5
+                                      :box-shadow--inset:0px:0px:40px:#9eef0073)
                                  [:span (sx :pis--7ex :letter-spacing--7ex) "alien"]])}]}])
 
 

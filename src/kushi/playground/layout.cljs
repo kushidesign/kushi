@@ -1,8 +1,8 @@
 (ns ^:dev/always kushi.playground.layout
-  (:require
-   [kushi.core :refer [sx]]
-   [kushi.ui.button.core :as kushi.button]
-   [kushi.ui.button.demo :as button.demo]))
+  (:require [domo.core :as domo]
+            [fireworks.core :refer [?]]
+            [kushi.core :refer [sx]]
+            [kushi.playground.state :as state]))
 
 (defn desktop-component-sidenav
   [_comps]
@@ -19,27 +19,33 @@
     [:h2 
      (sx :.medium
          :.semi-bold
-          ;;  :ta--right
          :ta--center
          :p--$nav-padding
-         :pbs--0.25em
-         )
+         :pbs--0.25em)
      "Components"]
-    (into [:ul (sx 
-                :.flex-col-fs
-                :ai--c
-                :pbs--1rem
-                :gap--0.25rem
-                :overflow-y--auto)]
-          (for [{:keys [label]} _comps]
+    (into [:ul (sx :.flex-col-fs
+                   :ai--c
+                   :pbs--1rem
+                   :overflow-y--auto)]
+          (for [{:keys [label]} _comps
+                :let [focused? (= label @state/*playground-first-intersecting)
+                      ]]
             [:li (sx :.xsmall
                      :.wee-bold
                      :.capitalize
-                     :.pill
+                     :.pointer
                      :w--fit-content
-                     :p--$nav-padding
-                     :first-child:bgc--$blue-100)
-             label]))])
+                     :pb--0.25em
+                     [:hover>span:bgc (if focused? :$neutral-650 :$neutral-100)])
+             [:span 
+              (sx :.pill
+                  :.block
+                  :p--$nav-padding
+                  [:fw (when focused? :$semi-bold)]
+                  [:bgc (when focused? :$neutral-650)]
+                  [:c (when focused? :white)]
+                  )
+              label]]))])
 
 (defn header []
   [:div
@@ -50,6 +56,11 @@
        :w--100%
        :p--1rem)
    "Kushi"])
+
+
+;; Everytime there is a resize event -
+;; Check if viewport height changes
+;; If so, redo all the intersection observer stuff
 
 (defn layout [_comps]
   [:div (sx :.flex-col-fs
@@ -82,25 +93,35 @@
               :max-width--800px
               :gap--5rem
               :pi--4rem
-              :pb--0:4rem
+              :pb--0:30vh
               :mie--190px)]
          
          #_[button2 "Hello"]
          ;; Cycle through Collection of components  defined in playground.core
          (for [{:keys [label demo-component] :as opts} _comps]
            [:section
-            (sx :min-height--300px)
+            (sx :min-height--300px
+                {:data-kushi-playground-component label
+                 :ref (fn [el]
+                        (when el
+                          (domo/observe-intersection 
+                           {:element          el
+                            :not-intersecting #(swap! state/*playground update-in [:intersecting] disj label)
+                            :intersecting     #(swap! state/*playground update-in [:intersecting] conj label)
+                            ;; :intersecting     #(reset! state/*playground-focused-component-section label)
+                            :root-margin      "51px 0px 0px 0px"})))})
             [:h1 (sx :.xxlarge
                      :.semi-bold
                      :.capitalize
                      :lh--0.75em
                      :position--sticky
-                     [:top :51.5px]
+                     [:ibs :51.5px]
                      :zi--1
-                     ;; :inset-block-start--51px
-                     [:bgi "linear-gradient(to bottom, white, white calc(51.5px + 1.25em), transparent)"]
-                     :pb--51.5px:3.5rem
-                     :w--655px)
+                     :pbs--51.5px
+                     :w--100%
+                     :bgc--white
+                     :box-shadow--0:0:13px:8px:white|0:0:10px:9px:white)
              label]
             (when demo-component
               [demo-component opts])]))])
+

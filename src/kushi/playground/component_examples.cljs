@@ -139,7 +139,7 @@
                                section-label)]
     (into [:section (sx :.playground-example-row
                         :pb--1.5rem
-                        :first-of-type:pbs--0)
+                        :first-of-type:pbs--3.5rem)
            label]
           (for [variant-attrs (resolve-variants-attrs component-opts
                                                       example-opts)]

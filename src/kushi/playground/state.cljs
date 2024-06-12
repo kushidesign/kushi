@@ -1,9 +1,12 @@
 (ns kushi.playground.state
   (:require
+   [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
    [kushi.core :refer [breakpoints]]
+   [kushi.playground.components :refer [playground-components]]
    [domo.core :as domo]
    [applied-science.js-interop :as j]
-   [reagent.core :as r]))
+   [reagent.core :as r]
+   [reagent.ratom]))
 
 (defonce *state
   (r/atom {
@@ -55,4 +58,16 @@
   (when (when-not (focused? x) x)
     (set-focused-component! x)))
 
+
+;; New June 2024 -----------------------------------------
+
+(def ordered-playground-components-labels
+  (mapv :label playground-components))
+
+(def *playground (r/atom {:intersecting #{}}))
+
+(def *playground-first-intersecting
+  (reagent.ratom/reaction
+   (first (sort-by #(.indexOf ordered-playground-components-labels %)
+                   (:intersecting @*playground)))))
 
