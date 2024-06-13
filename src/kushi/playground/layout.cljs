@@ -1,55 +1,76 @@
 (ns ^:dev/always kushi.playground.layout
   (:require [domo.core :as domo]
             [fireworks.core :refer [?]]
-            [kushi.core :refer [sx]]
-            [kushi.playground.state :as state]))
+            [kushi.core :refer [sx merge-attrs]]
+            [kushi.ui.collapse.core :refer [collapse]]
+            [kushi.ui.icon.core :refer [icon]]
+            [kushi.playground.state :as state]
+            [kushi.playground.component-examples :as component-examples]))
+
+
+(defn componenent-sidenav-items [coll]
+  (into [:ul (sx :.flex-col-fs
+                 :ai--c
+                 :pbs--1rem
+                 :bgc--white
+                 :overflow-y--auto)]
+        (for [{:keys [label]} coll
+              :let            [focused? (= label
+                                           @state/*playground-first-intersecting)]]
+          [:li (sx :.xsmall
+                   :.wee-bold
+                   :.capitalize
+                   :.pointer
+                   :w--fit-content
+                   :pb--0.25em
+                   [:hover>span:bgc (if focused? :$neutral-650 :$neutral-100)])
+           [:span 
+            (sx :.pill
+                :.block
+                :p--$nav-padding
+                [:fw (when focused? :$semi-bold)]
+                [:bgc (when focused? :$neutral-650)]
+                [:c (when focused? :white)]
+                {:on-click (fn []
+                             (domo/scroll-into-view!
+                              (domo/qs-data= "kushi-playground-component" label))
+                              (domo/scroll-by! {:y -50}))})
+            label]])))
+
+
+(defn mobile-component-sidenav 
+  [playground-components]
+  [collapse
+   (merge-attrs
+    (sx :.playground-right-sidenav
+        :md:display--none
+        :width--160px
+        :md:width--190px
+        :$nav-padding--0.5em:1em)
+    {:-label         "Components"
+     :-icon          [icon :menu]
+     :-icon-expanded [icon :close]
+     :-speed         250 
+     :-header-attrs  (sx :.playground-right-sidenav-header
+                         :pi--1.25em:0.75em
+                         :pb--0.25em:0.5em)}) 
+   [componenent-sidenav-items playground-components]])
+
 
 (defn desktop-component-sidenav
-  [_comps]
+  [playground-components]
   [:nav
-   (sx :bgc--$purple-00
-       :.fixed
-       :zi--3
-       [:h "calc(100vh - 50px)"]
-       :iie--0
-       :ibs--50px
-       :min-width--160px
-       :md:min-width--190px
-       :p--1rem
-       :pbs--51.5px
+   (sx :.playground-right-sidenav
+       :display--none
+       :md:display--block
+       :width--160px
+       :md:width--190px
        :$nav-padding--0.5em:1em)
    [:h2 
-    (sx :.medium
-        :.semi-bold
-        :ta--center
-        :p--$nav-padding
-        :pbs--0.25em)
+    (sx :.playground-right-sidenav-header
+        :ta--center)
     "Components"]
-   (into [:ul (sx :.flex-col-fs
-                  :ai--c
-                  :pbs--1rem
-                  :overflow-y--auto)]
-         (for [{:keys [label]} _comps
-               :let            [focused? (= label @state/*playground-first-intersecting) ]]
-           [:li (sx :.xsmall
-                    :.wee-bold
-                    :.capitalize
-                    :.pointer
-                    :w--fit-content
-                    :pb--0.25em
-                    [:hover>span:bgc (if focused? :$neutral-650 :$neutral-100)])
-            [:span 
-             (sx :.pill
-                 :.block
-                 :p--$nav-padding
-                 [:fw (when focused? :$semi-bold)]
-                 [:bgc (when focused? :$neutral-650)]
-                 [:c (when focused? :white)]
-                 {:on-click (fn []
-                              (domo/scroll-into-view!
-                               (domo/qs-data= "kushi-playground-component" label))
-                              (domo/scroll-by! {:y -100}))})
-             label]]))])
+   [componenent-sidenav-items playground-components]])
 
 (defn header []
   [:div
@@ -73,6 +94,7 @@
             ;; :outline-offset---2px
             )
    [header]
+   [mobile-component-sidenav _comps]
    [desktop-component-sidenav _comps]
    ;; Main section
    #_[:div 
