@@ -31,10 +31,15 @@
                 [:fw (when focused? :$semi-bold)]
                 [:bgc (when focused? :$neutral-650)]
                 [:c (when focused? :white)]
-                {:on-click (fn []
+                {:on-click (fn [e]
                              (domo/scroll-into-view!
                               (domo/qs-data= "kushi-playground-component" label))
-                              (domo/scroll-by! {:y -50}))})
+                             (domo/scroll-by! {:y -50})
+                             (when-let [collapse (domo/nearest-ancestor (domo/et e)
+                                                                        "#playground-right-sidenav-collapse.kushi-collapse-expanded")]
+                               (some-> collapse
+                                       (domo/qs ".kushi-collapse-header")
+                                       .click)))})
             label]])))
 
 
@@ -46,14 +51,18 @@
         :md:display--none
         :width--160px
         :md:width--190px
-        :$nav-padding--0.5em:1em)
-    {:-label         "Components"
+        :$nav-padding--0.5em:1em
+        {:id "playground-right-sidenav-collapse"})
+    {:-label         "All Components"
      :-icon          [icon :menu]
      :-icon-expanded [icon :close]
      :-speed         250 
      :-header-attrs  (sx :.playground-right-sidenav-header
-                         :pi--1.25em:0.75em
-                         :pb--0.25em:0.5em)}) 
+                         :.small!
+                         ;;  :pi--1.25em:0.75em
+                         :pi--1em
+                         :pb--0.25em:0.5em
+                         {:on-click #(js/console.log (domo/et %))})}) 
    [componenent-sidenav-items playground-components]])
 
 
@@ -69,7 +78,7 @@
    [:h2 
     (sx :.playground-right-sidenav-header
         :ta--center)
-    "Components"]
+    "All Components"]
    [componenent-sidenav-items playground-components]])
 
 (defn header []
@@ -118,7 +127,8 @@
               :.grow
               :max-width--800px
               :gap--5rem
-              :pi--4rem
+              :pi--2rem
+              :md:pi--4rem
               :pb--0:30vh
               :mie--190px)]
          
