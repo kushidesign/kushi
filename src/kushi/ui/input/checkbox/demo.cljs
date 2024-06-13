@@ -33,12 +33,19 @@
   (let [row-attrs {:class ["playground-example-row-bounded"]}]
     [{:desc      "Showing sizes from xsmall to xxxlarge"
       :row-attrs (sx :ai--fe
-                     :&_.playground-component-example-row-instance-code:ai--fe
-                     ["&_label:first-child:pbe" :0.75em]
-                     :&_label:pie--0.75em)
+                     [:md:&_.playground-component-example-row-instance-code
+                      {:ai             :fe
+                       :flex-direction :row}]
+                     [:&_.playground-component-example-row-instance-code
+                      {:ai             :fs
+                       :gap            :2rem
+                       :flex-direction :column}]
+                     :md:&_label:first-child:pbe--0.75em
+                     :md:&_label:pie--0.75em)
       :examples  [{:code (sx-call (into [:<>] 
                                         (for [sz switch-sizes]
-                                          [:div (sx :.flex-col-fs) 
+                                          [:div (sx :.flex-row-fs
+                                                    :md:flex-direction--column) 
                                            [checkbox {:-label-attrs   {:class [sz]}
                                                       :defaultChecked true}]
                                            [checkbox {:-label-attrs {:class [sz]}}]])))}]}
@@ -61,7 +68,8 @@
                        :bgc--$neutral-50
                        :b--1px:solid:$neutral-100
                        :dark:bgc--$neutral-950
-                       :dark:b--1px:solid:$neutral-900)
+                       :dark:b--1px:solid:$neutral-900
+                       )
         :sx-attrs  (sx-call (sx :.large))
         :examples  (for [s weights]
                      {:label (name s)
@@ -69,4 +77,21 @@
                       :args  [[label "Make it shiny" [icon :auto-awesome]]]} )})
      ]))
 
-
+#_{:desc      "Showing sizes from xsmall to xxxlarge"
+ :row-attrs (sx [:md:&_.playground-component-example-row-instance-code
+                 {:ai             :fe
+                  :flex-direction :row}]
+                [:&_.playground-component-example-row-instance-code
+                 {:ai             :fs
+                  :flex-direction :column}]
+                :&_label:pbe--0
+                :&_label:pie--0.35em)
+ :examples  [{:code (sx-call (into [:<>] 
+                                   (for [sz switch-sizes]
+                                     [:div (sx :.flex-row-fs
+                                               :md:flex-direction--column) 
+                                      [radio {:class        [sz]
+                                              :-input-attrs {:name           sz
+                                                             :defaultChecked true}}]
+                                      [radio {:class        [sz]
+                                              :-input-attrs {:name sz}}]])))}]}

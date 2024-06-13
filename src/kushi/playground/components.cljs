@@ -36,21 +36,21 @@
   (filter 
   ;;  :label
    #(contains? #{
-                  "tag"
+                ;;  "tag"
                   ;; "slider"
                   ;; "button"
                   ;;  "callout"
                   ;;  "spinner"
                   ;;  "grid"
                   ;;  "accordian"
-                  ;;  "radio"
+                   "radio"
                   ;;  "text field"
                   ;;  "modal"
                   ;;  "popover"
                   ;;  "collapse"
-                  ;;  "checkbox"
+                   "checkbox"
                  }
-                 (:label %))
+               (:label %))
 
    [{:label          "button"
      :demo-component button.demo/demo2
