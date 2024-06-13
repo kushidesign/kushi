@@ -6,16 +6,20 @@
 (defn- example-row-variant
   [component
    {:keys                                    [row-attrs
+                                              containier-attrs
                                               variant-attrs
                                               examples]
     {sx-attrs     :evaled
      quoted-attrs :quoted}                   :sx-attrs
     :as                                      example-opts}]
+  (? containier-attrs)
   (into [:section (merge-attrs
-                   (sx :.playground-component-example-row-variant-section
-                       :.flex-row-fs
-                       :gap--1rem
-                       :pb--0.5rem)
+                   (sx 'playground-component-example-row-variant-section
+                       :.flex-col-fs
+                       :ai--fs
+                       :md:ai--fe
+                       :md:flex-direction--row
+                       :gap--1rem)
                    row-attrs)]
         (for [{instance-args                  :args
                instance-attrs                 :attrs
@@ -116,7 +120,7 @@
           :min-width--55px
           :w--fit-content
           :lh--1.7
-          :mbe--0.5rem
+          :mbe--1rem
           :&_span.code:mis--0.5ch)
    s])
 
@@ -124,7 +128,7 @@
   [{component      :component
     component-reqs :reqs
     :as   component-opts}
-   {:keys        [desc]
+   {:keys        [desc container-attrs]
     example-reqs :reqs
     example-component :component
     :or          {example-reqs []}
@@ -137,17 +141,29 @@
         label          (some-> desc
                                kushi.ui.util/backtics->hiccup
                                section-label)]
-    (into [:section (sx :.playground-example-row
-                        :pb--1.5rem
-                        :first-of-type:pbs--3.5rem)
-           label]
-          (for [variant-attrs (resolve-variants-attrs component-opts
-                                                      example-opts)]
-            [example-row-variant
-             component
-             (merge example-opts
-                    (keyed variant-attrs
-                           reqs-by-refers))]))))
+    [:section (sx :.playground-example-row
+                  :pb--1.5rem
+                  :first-of-type:pbs--3.5rem)
+     label
+     (into [:div (merge-attrs
+                  (sx :.grid
+                      :gtc--max-content:max-content
+                      :md:gtc--1fr
+                      :gap--1rem)
+                  container-attrs)]
+           (for [variant-attrs (resolve-variants-attrs component-opts
+                                                       example-opts)]
+             [example-row-variant
+              component
+              (merge example-opts
+                     (keyed variant-attrs
+                            reqs-by-refers))]))]
+
+    #_(into [:section (sx :.playground-example-row
+                          :pb--1.5rem
+                          :first-of-type:pbs--3.5rem)
+             label]
+            )))
 
 
 (def type-weights

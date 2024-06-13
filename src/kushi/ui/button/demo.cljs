@@ -87,7 +87,7 @@
 (def button-examples
   [
    {:desc      "Sizes from xxsmall to xlarge"
-    :row-attrs (sx :ai--fe)
+    :row-attrs (sx :md:ai--fe)
     :examples  (for [sz component-examples/sizes]
                  {:label (name sz)
                   :attrs {:class sz}
@@ -124,9 +124,9 @@
                {:label "Trailing icon"
                 :args  ["Play" [icon :play-arrow]]}
                {:label "2 icons"
-                :args  [[icon :auto-awesome] "Sparkle" [icon :auto-awesome]]}]}
+                :args  [[icon :auto-awesome] "Wow" [icon :auto-awesome]]}]}
 
-   {:desc     "Weight variants"
+   {:desc     "Weight variants from light to extra-bold"
     :sx-attrs (sx-call (sx :.small))
     :examples (for [s (rest component-examples/type-weights)]
                 {:label (name s)

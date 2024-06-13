@@ -11,7 +11,7 @@
 (defn componenent-sidenav-items [coll]
   (into [:ul (sx :.flex-col-fs
                  :ai--c
-                 :pbs--1rem
+                 :pb--1rem:2rem
                  :bgc--white
                  :overflow-y--auto)]
         (for [{:keys [label]} coll
@@ -48,7 +48,7 @@
   [collapse
    (merge-attrs
     (sx :.playground-right-sidenav
-        :md:display--none
+        :lg:display--none
         :width--160px
         :md:width--190px
         :$nav-padding--0.5em:1em
@@ -59,7 +59,7 @@
      :-speed         250 
      :-header-attrs  (sx :.playground-right-sidenav-header
                          :.small!
-                         ;;  :pi--1.25em:0.75em
+                         :>span:jc--center
                          :pi--1em
                          :pb--0.25em:0.5em
                          {:on-click #(js/console.log (domo/et %))})}) 
@@ -71,7 +71,7 @@
   [:nav
    (sx :.playground-right-sidenav
        :display--none
-       :md:display--block
+       :lg:display--block
        :width--160px
        :md:width--190px
        :$nav-padding--0.5em:1em)
@@ -98,6 +98,7 @@
 
 (defn layout [_comps]
   [:div (sx :.flex-col-fs
+            [:bgi '(linear-gradient "to right" "white" "white 400px" "#f5f5f5 400px" "#f5f5f5")]
             ;; :.debug-red
             ;; :outline-width--2px
             ;; :outline-offset---2px
@@ -125,12 +126,10 @@
               :>section:first-child:pbs--3rem
               :.flex-col-fs
               :.grow
-              :max-width--800px
               :gap--5rem
-              :pi--2rem
-              :md:pi--4rem
               :pb--0:30vh
-              :mie--190px)]
+              :pi--2rem
+              :md:pi--4rem)]
          
          #_[button2 "Hello"]
          ;; Cycle through Collection of components  defined in playground.core
