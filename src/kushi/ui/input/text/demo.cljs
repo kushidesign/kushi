@@ -98,10 +98,10 @@
       :row-attrs row-attrs
       :examples  [{:code (sx-call [text-field
                                    (sx
-                                    {:-label-placement     :inline
-                                     :-label-attrs         (sx :bgc--yellow)
+                                    {:required             false
                                      :placeholder          "Your text here"
-                                     :disabled             false
+                                     :disabled             false 
+                                     :-label-attrs         (sx :bgc--yellow)
                                      :-semantic            :accent
                                      :-end-enhancer        "🦄"
                                      :-helper              "Your helper text here"
@@ -113,7 +113,6 @@
                                                             :b--1px:solid:yellow
                                                             :box-shadow--8px:8px:17px:#f2baf9ab
                                                             :p--1em) 
-                                     :required             false 
                                      :-label               "Input label"})]
                                   )}]}
      ]))

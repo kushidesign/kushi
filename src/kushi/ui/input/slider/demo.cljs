@@ -1,6 +1,5 @@
 (ns kushi.ui.input.slider.demo
-  (:require [fireworks.core :refer [?]]
-            [kushi.core :refer (sx keyed)]
+  (:require [kushi.core :refer (sx keyed)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.input.slider.core :refer [slider]]))
@@ -30,39 +29,39 @@
                                     :examples [{:label desc
                                                 :code  code}]}]
                             (merge m* m)))]
-    (? [(f "Simple"
-           (sx-call [slider {:min 0
-                             :max 7}]))
-        (f "Labels"
-           (sx-call [slider {:min          0
-                             :max          7
-                             :-step-marker :label}]))
-        (f "Dot markers"
-           (sx-call [slider {:min          0
-                             :max          7
-                             :-step-marker :dot}]) )
-        (f "Bar markers"
-           (sx-call [slider {:min          0
-                             :max          7
-                             :-step-marker :bar}]) )
-        (f "Fractional steps"
-           (sx-call [slider {:min  0
-                             :max  1
-                             :step 0.01}]) )
-        (f "Supplied step values"
-           (sx-call [slider
-                     {:-steps            ["xsmall" "medium" "large" "xlarge"]
-                      :-step-marker      :label 
-                      :-label-size-class :medium}]) )
-        
-        (f "Supplied step values, custom horizontal shift for first and last values"
-           (sx-call [slider
-                     {:-steps            ["First label is long"
-                                          "Second label"
-                                          "Third label"
-                                          "Last label is long"]
-                      :-step-marker      :dot
-                      :-label-size-class :small
-                      :-labels-attrs     (sx
-                                          [:&_.kushi-slider-step-label:first-child>span:translate :-25%:-50%]
-                                          [:&_.kushi-slider-step-label:last-child>span:translate :-75%:-50%])}]))])))
+    [(f "Simple"
+        (sx-call [slider {:min 0
+                          :max 7}]))
+     (f "Labels"
+        (sx-call [slider {:min          0
+                          :max          7
+                          :-step-marker :label}]))
+     (f "Dot markers"
+        (sx-call [slider {:min          0
+                          :max          7
+                          :-step-marker :dot}]) )
+     (f "Bar markers"
+        (sx-call [slider {:min          0
+                          :max          7
+                          :-step-marker :bar}]) )
+     (f "Fractional steps"
+        (sx-call [slider {:min  0
+                          :max  1
+                          :step 0.01}]) )
+     (f "Supplied step values"
+        (sx-call [slider
+                  {:-steps            ["xsmall" "medium" "large" "xlarge"]
+                   :-step-marker      :label 
+                   :-label-size-class :medium}]) )
+     
+     (f "Supplied step values, custom horizontal shift for first and last values"
+        (sx-call [slider
+                  {:-steps            ["First label is long"
+                                       "Second label"
+                                       "Third label"
+                                       "Last label is long"]
+                   :-step-marker      :dot
+                   :-label-size-class :small
+                   :-labels-attrs     (sx
+                                       [:&_.kushi-slider-step-label:first-child>span:translate :-25%:-50%]
+                                       [:&_.kushi-slider-step-label:last-child>span:translate :-75%:-50%])}]))]))

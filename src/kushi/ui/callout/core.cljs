@@ -67,6 +67,7 @@
      [:div (sx 'kushi-callout-header-wrap
                :.flex-row-sb
                :.relative
+               :ta--center
                :gap--0.5em
                :p--0.85em:0.75em
                :w--100%)

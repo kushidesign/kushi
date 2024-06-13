@@ -28,7 +28,7 @@
    :xxxlarge])
 
 (def radio-examples
-  (let [row-attrs {:class ["playground-example-row-bounded"]} ]
+  (let [row-attrs {:class ["playground-example-row-bounded"]}]
     [{:desc      "Showing sizes from xsmall to xxxlarge"
       :row-attrs (sx [:md:&_.playground-component-example-row-instance-code
                       {:ai             :fe
