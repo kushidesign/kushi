@@ -34,25 +34,28 @@
 
 (def playground-components 
   (filter 
-   :label
-   #_#(contains? #{
-                   "callout"
-                   "spinner"
-                   "grid"
-                   "accordian"
-                   "radio"
-                   "text field"
-                   "modal"
-                   "popover"
-                   "collapse"
-                   "checkbox"}
+  ;;  :label
+   #(contains? #{
+                  "slider"
+                  ;; "button"
+                  ;;  "callout"
+                  ;;  "spinner"
+                  ;;  "grid"
+                  ;;  "accordian"
+                  ;;  "radio"
+                  ;;  "text field"
+                  ;;  "modal"
+                  ;;  "popover"
+                  ;;  "collapse"
+                  ;;  "checkbox"
+                 }
                  (:label %))
 
    [{:label          "button"
      :demo-component button.demo/demo2
      :component      button
      :reqs           '[[kushi.ui.button.core :refer [button]]]
-     :variants-base  #{:rounded :filled :bordered}
+     :variants-base  #{:rounded :filled :bordered :minimal}
      :variants-order [:rounded :filled :bordered :minimal]
      :variants-attrs {:rounded  (sx :.rounded)
                       :filled   (sx :.rounded :.filled)
