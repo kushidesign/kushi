@@ -36,7 +36,8 @@
   (filter 
   ;;  :label
    #(contains? #{
-                  "slider"
+                  "tag"
+                  ;; "slider"
                   ;; "button"
                   ;;  "callout"
                   ;;  "spinner"
@@ -135,7 +136,7 @@
      :demo-component tag.demo/demo2
      :component      tag
      :reqs           '[[kushi.ui.tag.core :refer [tag]]]
-     :variants-base  #{:rounded :filled :bordered}
+     :variants-base  #{:rounded :filled :bordered :minimal}
      :variants-order [:rounded :filled :bordered :minimal]
      :variants-attrs {:rounded  (sx :.rounded)
                       :filled   (sx :.rounded :.filled)
