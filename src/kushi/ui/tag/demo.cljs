@@ -34,28 +34,30 @@
 
 (def tag-examples
   [{:desc      "Sizes from xxsmall to xlarge"
-    :row-attrs (sx :ai--fe)
+    :row-attrs (sx :md:ai--fe)
     :examples  (for [sz tag-sizes]
                  {:label (name sz)
                   :attrs {:class sz}
                   :args  ["Play"]})}
    
-   {:desc      "Semantic variants"
-    :sx-attrs  (sx-call (sx :.small))
-    :variants+ [:minimal]
-    :examples  (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
-                 (for [s component-examples/colors]
-                   {:label (name s)
-                    :args  ["Play"]
-                    :attrs {:class [s]}}))}
+   {:desc            "Semantic variants"
+    :sx-attrs        (sx-call (sx :.small))
+    :container-attrs (sx :gtc--max-content:max-content:max-content:max-content)
+    :variants+       [:minimal]
+    :examples        (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
+                       (for [s component-examples/colors]
+                         {:label (name s)
+                          :args  ["Play"]
+                          :attrs {:class [s]}}))}
 
-   {:desc      "Shape variants"
-    :sx-attrs  (sx-call (sx :.small))
-    :variants+ [:minimal]
-    :examples  (for [s [:rounded :pill :sharp]]
-                 {:label (name s)
-                  :args  ["Play"]
-                  :attrs {:class [s]}})}
+   {:desc            "Shape variants"
+    :sx-attrs        (sx-call (sx :.small))
+    :container-attrs (sx :gtc--max-content:max-content:max-content:max-content)
+    :variants+       [:minimal]
+    :examples        (for [s [:rounded :pill :sharp]]
+                       {:label (name s)
+                        :args  ["Play"]
+                        :attrs {:class [s]}})}
 
    {:desc     "With icons"
     :reqs     '[[kushi.ui.icon.core :refer [icon]]]
