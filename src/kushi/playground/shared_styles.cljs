@@ -241,3 +241,24 @@
   [:dark:&_.playground-component-example-row-instance-code
    {:bgc :$neutral-950
     :b   :1px:solid:$neutral-900}])
+
+
+(defclass playground-right-sidenav-header
+  :.medium
+  :.semi-bold
+  :pb--0.25em:0.5em
+  ;; use some class that does light and dark
+  :bgc--white)
+
+
+(defclass playground-right-sidenav
+  :bgc--$purple-00
+  :.fixed
+  :o--0.975
+  :zi--3
+  [:h "calc(100vh - 50px)"]
+  :iie--0
+  :ibs--50px
+  :pb--51.5px:1rem
+  :&_h2:pi--1rem
+  :&_ul:pi--1rem)
