@@ -116,7 +116,7 @@
        )
    [:span (sx :.semi-bold
               :fs--$xlarge
-              :md:fs--$xxlarge
+              ;; :md:fs--$xxlarge
               :o--0.5)
     "Kushi"]])
 
@@ -187,7 +187,7 @@
                   :.flex-col-c
                   :ai--fs
                   :fs--$xlarge
-                  :md:fs--$xxlarge
+                  ;; :md:fs--$xxlarge
                   :lh--0.75em
                   :position--sticky
                   :zi--1

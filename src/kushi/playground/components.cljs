@@ -32,6 +32,13 @@
   [kushi.ui.toast.demo :as toast.demo]
   [kushi.ui.tooltip.demo :as tooltip-demo]))
 
+;; Full-width icon section
+
+;; Fix mobile full-width problem
+;; Fix toast on mobile
+;; Debug popover on mobile
+
+
 (def playground-components 
   (filter 
   ;;  :label
@@ -39,9 +46,9 @@
                 ;;  "switch"
                 ;;  "tag"
                   ;; "slider"
-                  "button"
+                  ;; "button"
                   ;;  "callout"
-                   "spinner"
+                  ;;  "spinner"
                   ;;  "grid"
                   ;;  "tooltip"
                   ;;  "accordian"
@@ -51,6 +58,7 @@
                   ;;  "popover"
                   ;;  "collapse"
                   ;;  "checkbox"
+                  "icon"
                  }
                (:label %))
 
