@@ -34,15 +34,16 @@
 
 (def playground-components 
   (filter 
-   :label
-   #_#(contains? #{
-                 "switch"
-                 "tag"
+  ;;  :label
+  #(contains? #{
+                ;;  "switch"
+                ;;  "tag"
                   ;; "slider"
-                  ;; "button"
+                  "button"
                   ;;  "callout"
                   ;;  "spinner"
                   ;;  "grid"
+                   "tooltip"
                   ;;  "accordian"
                   ;;  "radio"
                   ;;  "text field"
@@ -80,8 +81,19 @@
      :variants-attrs {:on  {:-on? true}
                       :off {}}}
 
+
+
     {:label          "tooltip" 
      :demo-component tooltip-demo/demo2
+     :media-matches  {:matches {"any-hover" "hover"
+                                "hover"     "hover"}
+                      :message [:span
+                                "The Tooltip component is intended only for devices that support the css "
+                                [:code ":hover"]
+                                " pseudo-class. "
+                                [:br]
+                                [:br]
+                                "To view Tooltip demos, please check this page out on a device that supports this feature."] }
      :component      :span
      :reqs           '[[kushi.ui.tooltip.core :refer [tooltip-attrs]] ]
      :variants-base  #{:positions}
