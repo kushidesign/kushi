@@ -149,7 +149,7 @@
                                      :-speed 1000}
                                     [:div (sx :pis--0.5rem) [:p "Child 1"] [:p "Child 2"]]]])}]}
      
-     {:desc      "With slower transition"
+     {:desc      "With block borders"
       :row-attrs row-attrs
       :examples  [{:code (sx-call [accordion
                                    (sx :>section:first-child:bbs--1px:solid:black)
