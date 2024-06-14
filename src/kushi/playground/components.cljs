@@ -32,17 +32,47 @@
   [kushi.ui.toast.demo :as toast.demo]
   [kushi.ui.tooltip.demo :as tooltip-demo]))
 
-;; Full-width icon section
 
-;; Fix mobile full-width problem
+        ;; for surfaces:
+        ;; Create classic variant
+        ;; Create surface variant
+        ;; Create belcher variant
+        ;; Create fantasy variant
+        ;; Create sci-fi variant
+        ;; Create gel variant
+        
+        ;; finish popover examples
+        ;; finish toast positioning
+        ;; tag max-width example
+
+
+        ;; tooltips(delay):
+        ;; row of buttons that show all positions with no delay
+        ;; row of buttons that show various delays 
+        ;; row of buttons that show various animations 
+        ;; row of buttons that show various stylings (no arrow etc)
+
+        ;; TODO UI
+        ;; use modal instead of popover
+        ;; code button right of label
+        ;; chose serif font for labels
+
+        ;; TODO layout
+        ;; sticky header
+        ;; add cta to sticky header
+
+        ;; TODO 
+        ;; mobile layouts
+        ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; Fix toast on mobile
 ;; Debug popover on mobile
 
 
 (def playground-components 
   (filter 
-  ;;  :label
-  #(contains? #{
+   :label
+  #_#(contains? #{
                 ;;  "switch"
                 ;;  "tag"
                   ;; "slider"
@@ -52,13 +82,14 @@
                   ;;  "grid"
                   ;;  "tooltip"
                   ;;  "accordian"
-                  ;;  "radio"
+                   "radio"
                   ;;  "text field"
                   ;;  "modal"
                   ;;  "popover"
                   ;;  "collapse"
-                  ;;  "checkbox"
-                  "icon"
+                   "checkbox"
+                  ;; "card"
+                  ;; "icon"
                  }
                (:label %))
 
@@ -73,6 +104,15 @@
                       :bordered (sx :.rounded :.bordered)
                       :minimal  (sx :.rounded :.minimal)}}
 
+    {:label          "icon"
+     :demo-component icon.demo/demo
+     :component      icon
+     :reqs           '[[kushi.ui.icon.core :refer [icon]]]
+     :variants-base  #{:outlined :filled}
+     :variants-order [:outlined :filled]
+     :variants-attrs {:filled   {:-icon-filled? true}
+                      :outlined {}}}
+
     {:label          "spinner"
      :demo-component spinner.demo/demo
      :component      spinner
@@ -80,6 +120,7 @@
                                                       donut
                                                       propeller
                                                       thinking]]]}
+
     {:label          "switch" 
      :demo-component switch.demo/demo2
      :component      switch
@@ -89,7 +130,35 @@
      :variants-attrs {:on  {:-on? true}
                       :off {}}}
 
+    {:label          "radio" 
+     :demo-component radio.demo/demo
+     :component      radio
+     :reqs           '[[kushi.ui.input.radio.core :refer [radio]]]
+     :variants-base  #{:positions}
+     :variants-attrs {:positions {}}
+     }
+    
+    {:label          "checkbox" 
+     :demo-component checkbox.demo/demo
+     :component      checkbox
+     :reqs           '[[kushi.ui.input.radio.core :refer [radio]]]
+     :variants-base  #{:positions}
+     :variants-attrs {:positions {}}}
 
+    {:label          "slider"
+     :demo-component slider.demo/demo
+     :component      slider
+     :reqs           '[[kushi.ui.input.slider.core :refer [slider]]]
+     :variants-base  #{:on}
+     :variants-order [:on]
+     :variants-attrs {:on {}}}
+
+    {:label          "text field" 
+     :demo-component input.demo/demo
+     :component      text-field
+     :reqs           '[[kushi.ui.input.text.core :refer [text-field]]]
+     :variants-base  #{:positions}
+     :variants-attrs {:positions {}}}
 
     {:label          "tooltip" 
      :demo-component tooltip-demo/demo2
@@ -107,6 +176,13 @@
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}}
 
+    {:label          "popover" 
+     :demo-component popover.demo/demo
+     :component      :span
+     :reqs           '[[kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]]
+     :variants-base  #{:positions}
+     :variants-attrs {:positions {}}}
+
     {:label          "modal" 
      :demo-component modal.demo/demo
      :component      :span
@@ -114,13 +190,6 @@
                                                     modal-close-button
                                                     open-kushi-modal
                                                     close-kushi-modal]] ]
-     :variants-base  #{:positions}
-     :variants-attrs {:positions {}}}
-    
-    {:label          "popover" 
-     :demo-component popover.demo/demo
-     :component      :span
-     :reqs           '[[kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]]
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}}
 
@@ -131,27 +200,14 @@
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}}
 
-    {:label          "radio" 
-     :demo-component radio.demo/demo
-     :component      radio
-     :reqs           '[[kushi.ui.input.radio.core :refer [radio]]]
-     :variants-base  #{:positions}
-     :variants-attrs {:positions {}}
+    {:label          "card"
+     :demo-component card.demo/demo
+     :component      card
+     :reqs           '[[kushi.ui.card.core :refer [card]]]
+     :variants-base  #{:rounded}
+     :variants-order [:rounded]
+     :variants-attrs {:rounded (sx :.rounded)}
      }
-
-    {:label          "checkbox" 
-     :demo-component checkbox.demo/demo
-     :component      checkbox
-     :reqs           '[[kushi.ui.input.radio.core :refer [radio]]]
-     :variants-base  #{:positions}
-     :variants-attrs {:positions {}}}
-
-    {:label          "text field" 
-     :demo-component input.demo/demo
-     :component      text-field
-     :reqs           '[[kushi.ui.input.text.core :refer [text-field]]]
-     :variants-base  #{:positions}
-     :variants-attrs {:positions {}}}
 
     {:label          "tag"
      :demo-component tag.demo/demo2
@@ -164,23 +220,6 @@
                       :bordered (sx :.rounded :.bordered)
                       :minimal  (sx :.rounded :.minimal)}}
 
-    {:label          "card"
-     :demo-component card.demo/demo
-     :component      card
-     :reqs           '[[kushi.ui.card.core :refer [card]]]
-     :variants-base  #{:rounded}
-     :variants-order [:rounded]
-     :variants-attrs {:rounded (sx :.rounded)}
-     }
-
-    {:label          "slider"
-     :demo-component slider.demo/demo
-     :component      slider
-     :reqs           '[[kushi.ui.input.slider.core :refer [slider]]]
-     :variants-base  #{:on}
-     :variants-order [:on]
-     :variants-attrs {:on {}}}
-
     {:label          "callout"
      :demo-component callout.demo/demo
      :component      callout
@@ -190,15 +229,6 @@
      :variants-attrs {:default  {}
                       :filled   (sx :.filled)
                       :bordered (sx :.bordered)}}
-
-    {:label          "icon"
-     :demo-component icon.demo/demo
-     :component      icon
-     :reqs           '[[kushi.ui.icon.core :refer [icon]]]
-     :variants-base  #{:outlined :filled}
-     :variants-order [:outlined :filled]
-     :variants-attrs {:filled   {:-icon-filled? true}
-                      :outlined {}}}
 
     {:label          "collapse"
      :demo-component collapse.demo/demo

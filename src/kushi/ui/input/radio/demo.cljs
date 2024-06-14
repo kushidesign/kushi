@@ -30,18 +30,20 @@
 (def radio-examples
   (let [row-attrs {:class ["playground-example-row-bounded"]}]
     [{:desc      "Showing sizes from xsmall to xxxlarge"
-      :row-attrs (sx [:md:&_.playground-component-example-row-instance-code
+      :row-attrs (sx [:xsm:&_.playground-component-example-row-instance-code
                       {:ai             :fe
                        :flex-direction :row}]
                      [:&_.playground-component-example-row-instance-code
                       {:ai             :fs
-                       :flex-direction :column}]
+                       :flex-direction :column
+                       :w              :100%
+                       :jc             :sb}]
                      :&_label:pbe--0
                      :&_label:pie--0.35em)
       :examples  [{:code (sx-call (into [:<>] 
                                         (for [sz radio-sizes]
                                           [:div (sx :.flex-row-fs
-                                                    :md:flex-direction--column) 
+                                                    :xsm:flex-direction--column) 
                                            [radio {:class        [sz]
                                                    :-input-attrs {:name           sz
                                                                   :defaultChecked true}}]
@@ -69,8 +71,8 @@
                                   (sx
                                    :dark:c--$purple-300
                                    :d--grid
-                                   :md:gtc--1fr
-                                   :md:gtc--1fr:1fr
+                                   :xsm:gtc--1fr
+                                   :xsm:gtc--1fr:1fr
                                    :row-gap--1em
                                    :column-gap--2em
                                    [:&_.emoji

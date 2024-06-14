@@ -34,11 +34,11 @@
                       :flex-direction--column)
         container-attrs (sx :gtc--1fr)
         semantic-variants (for [[s msg]
-                                [["neutral" [:span "Please check out the " [link {:href "#"} "new features"]]]
-                                 ["accent" [:span "Please check out the " [link {:href "#"} "new features"]]]
+                                [["neutral" [:span "Please check out the " [link (sx :ws--n {:href "#"}) "new features"]]]
+                                 ["accent" [:span "Please check out the " [link (sx :ws--n {:href "#"}) "new features"]]]
                                  ["positive" "Your transaction was successful"]
-                                 ["warning" [:span "Your subscription needs to be updated. " [link {:href "#"} "Take action."]]]
-                                 ["negative" [:span "Something went wrong. " [link {:href "#"} "Learn more."]]]]]
+                                 ["warning" [:span "Your subscription needs to be updated. " [link (sx :ws--n {:href "#"}) "Take action."]]]
+                                 ["negative" [:span "Something went wrong. " [link (sx :ws--nw {:href "#"}) "Learn more."]]]]]
                             {:desc            (str (string/capitalize s) " variant")
                              :row-attrs       row-attrs
                              :container-attrs container-attrs

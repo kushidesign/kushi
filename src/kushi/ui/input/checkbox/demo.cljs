@@ -32,20 +32,22 @@
 (def checkbox-examples
   (let [row-attrs {:class ["playground-example-row-bounded"]}]
     [{:desc      "Showing sizes from xsmall to xxxlarge"
-      :row-attrs (sx :ai--fe
-                     [:md:&_.playground-component-example-row-instance-code
+      :row-attrs (sx [:xsm:&_.playground-component-example-row-instance-code
                       {:ai             :fe
                        :flex-direction :row}]
                      [:&_.playground-component-example-row-instance-code
                       {:ai             :fs
-                       :gap            :2rem
-                       :flex-direction :column}]
-                     :md:&_label:first-child:pbe--0.75em
-                     :md:&_label:pie--0.75em)
+                       :flex-direction :column
+                       :w              :100%
+                       :jc             :sb}]
+                    ;;  :&_label:pbe--0
+                    ;;  :&_label:pie--0.35em
+                     :xsm:&_label:first-child:pbe--0.75em
+                     :xsm:&_label:pie--0.75em)
       :examples  [{:code (sx-call (into [:<>] 
                                         (for [sz switch-sizes]
                                           [:div (sx :.flex-row-fs
-                                                    :md:flex-direction--column) 
+                                                    :xsm:flex-direction--column) 
                                            [checkbox {:-label-attrs   {:class [sz]}
                                                       :defaultChecked true}]
                                            [checkbox {:-label-attrs {:class [sz]}}]])))}]}

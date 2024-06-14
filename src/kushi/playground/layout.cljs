@@ -23,7 +23,9 @@
                    :.pointer
                    :w--fit-content
                    :pb--0.25em
-                   [:hover>span:bgc (if focused? :$neutral-650 :$neutral-100)])
+                   [:hover>span:bgc (if focused? 
+                                      :$neutral-650
+                                      :$neutral-100)])
            [:span 
             (sx :.pill
                 :.block
@@ -104,9 +106,13 @@
    (sx :.kushi-playground-all-components-header
        :.fixed
        :.flex-row-sb
+       :top--0
+       :left--0
+       :right--0
        :ai--c
        :zi--5
-       :bgc--$gray-200
+       :bgc--white
+       :bbe--1px:solid:$neutral-150
        :w--100%
        :p--1rem
        :max-height--41.5px
@@ -128,7 +134,8 @@
 (defn layout [_comps]
   
   [:div (sx :.flex-col-fs
-            ;; [:bgi '(linear-gradient "to right" "white" "white 400px" "#f5f5f5 400px" "#f5f5f5")]
+            ;; :pi--4rem
+            ;; [:bgi '(linear-gradient "to right" "white" "white 480px" "#f5f5f5 480px" "#f5f5f5")]
             ;; :.debug-red
             ;; :outline-width--2px
             ;; :outline-offset---2px
@@ -137,37 +144,23 @@
    [mobile-component-sidenav _comps]
    [mobile-component-sidenav-scrim]
    [desktop-component-sidenav _comps]
+
    ;; Main section
-   #_[:div 
-    (sx :.flex-col-fs :gap--1rem :p--100px)
-
-    [kushi.button/button
-     (sx :.xxlarge :.accent :.pill :.filled)
-     "Hello"]
-
-    [kushi.button/button2
-     {:-size     :xxlarge
-      :-semantic :accent
-      :-shape    :pill
-      :-variant  :filled}
-     "Hello"]]
-
    (into [:div
           (sx :.kushi-playground-all-components
-              :>section:first-child:pbs--41.5pxrem
-              :md:>section:first-child:pbs--51.5pxrem
+              :>section:first-child:pbs--41.5px
+              :md:>section:first-child:pbs--51.5px
               :.flex-col-fs
               :.grow
               :gap--5rem
-              :pb--0:30vh
-              :pi--1.25rem
-              :md:pi--4rem)]
-         
-         #_[button2 "Hello"]
+              :pb--0:30vh)]
+        #_[:div "hi"] 
          ;; Cycle through Collection of components  defined in playground.core
          (for [{:keys [label demo-component media-matches] :as opts} _comps]
            [:section
-            (sx :min-height--300px
+            (sx :min-height--200px
+                :>*:pi--1.25rem
+                :md:>*:pi--4rem
                 {:data-kushi-playground-component label
                  :ref (fn [el]
                         (when el
@@ -179,11 +172,15 @@
                              {:element          el
                               :not-intersecting #(f disj label)
                               :intersecting     #(f conj label)
-                              :root-margin      "51px 0px 0px 0px"}))))})
+                              ;; Incorporate into global val for header height
+                              :root-margin      "51px 0px 0px 0px"})))
+                        
+                        
+                        )})
             [:h1 (sx 
                   :.semi-bold
                   :.capitalize
-                  :.playground-pane-box-shadow
+                  ;; :.playground-pane-box-shadow
                   :.flex-col-c
                   :ai--fs
                   :fs--$xlarge
@@ -191,13 +188,13 @@
                   :lh--0.75em
                   :position--sticky
                   :zi--1
-                  :h--41.5px
-                  :md:h--51.5px
-                  [:ibs :41.5px]
-                  [:md:ibs :51.5px]
+                  :h--41px
+                  :md:h--51px
+                  [:top :41px]
+                  [:md:top :51px]
                   ;; [:pbs "calc(41.5px / 3)"]
                   ;; [:md:pbs "calc(51.5px / 3)"]
-                  [:w '(calc :100vw - :4rem)]
+                  [:w :100%]
                   :bgc--white)
              label]
             (when demo-component

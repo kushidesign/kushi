@@ -137,14 +137,13 @@
                                   (into [:div (sx :.flex-row-fs :jc--sb :row-gap--1.25rem)]
                                         (for [val (range 100 1100 100)]
                                           [:div (sx :.flex-col-fs)
-                                           [icon {:class [:xlarge]
+                                           [icon {:class [:xlarge :light]
                                                   :style {:color (str "var(--" color "-" val ")")}}
-                                            :favorite]
-                                           [icon {:class         [:xlarge]
+                                            :star]
+                                           [icon {:class         [:xlarge :light]
                                                   :-icon-filled? true
                                                   :style         {:color (str "var(--" color "-" val ")")}}
-                                            :favorite]
-                                           ]))))}]}
+                                            :star]]))))}]}
 
     {:desc            "Many icons have a filled variant"
      :variants-       [:outlined :filled]
@@ -153,7 +152,8 @@
      :examples        [{:label "Many icons have a filled variant"
                         :code  (sx-call 
                                 (for [icon-name icons-with-filled-variants]
-                                  [:div (sx :.flex-row-fs :row-gap--1.25rem)
+                                  [:div (sx :.flex-row-fs 
+                                            :gap--0.25rem)
                                    [icon {:class [:xlarge :light]} icon-name]
                                    [icon {:class         [:xlarge]
                                           :-icon-filled? true}
