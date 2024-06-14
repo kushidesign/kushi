@@ -56,11 +56,13 @@
    :xxxlarge])
 
 (def switch-examples
-  (let [row-attrs (sx 'kushi-playground-switch-example-row
-                      :md:ai--fe
-                      :ai--fs)]
+  (let [row-attrs       (sx 'kushi-playground-switch-example-row
+                            :md:ai--fe
+                            :ai--fs)
+        container-attrs (sx :gtc--max-content:max-content)]
     [{:desc     "Semantic variants"
       :sx-attrs (sx-call (sx :.xxlarge))
+      :container-attrs container-attrs
       :examples (for [s (take 4 component-examples/colors)]
                   {:label (name s)
                    :attrs {:class [s]}})}
@@ -83,18 +85,22 @@
                                            :$switch-border-color]
                                           ["has-ancestor(.kushi-switch[aria-checked='true']):bgc"
                                            :currentColor])}))
+
+      :container-attrs container-attrs
       :examples (for [s component-examples/colors]
                   {:label (name s)
                    :attrs {:class [s]}})}
 
      {:desc      "Showing sizes from small to xxxlarge"
       :row-attrs row-attrs
+      :container-attrs container-attrs
       :examples  (for [sz switch-sizes]
                    {:label (name sz)
                     :attrs {:class sz}})}
 
      {:desc      "With convex-styled thumb control"
       :row-attrs row-attrs
+      :container-attrs container-attrs
       :sx-attrs  (sx-call (sx {:-thumb-attrs (sx :.convex)}))
       :examples  (for [sz switch-sizes]
                    {:label (name sz)
@@ -102,6 +108,7 @@
 
      {:desc      "With oversized thumb control"
       :row-attrs row-attrs
+      :container-attrs container-attrs
       :sx-attrs  (sx-call (sx
                            :$switch-border-width--0px
                            :$switch-thumb-scale-factor--1.25
@@ -112,6 +119,7 @@
 
      {:desc      "With labeled track"
       :row-attrs row-attrs
+      :container-attrs container-attrs
       :sx-attrs  (sx-call (sx
                            :$switch-width-ratio--2.25
                            {:-track-content-on  "ON"
@@ -122,6 +130,7 @@
 
      {:desc      "With labeled thumb"
       :row-attrs row-attrs
+      :container-attrs container-attrs
       :sx-attrs  (sx-call (sx {:-thumb-content-on  [:span (sx :.semi-bold :fs--0.325em) "ON"]
                                :-thumb-content-off [:span (sx :.semi-bold :fs--0.325em) "OFF"]}))
       :examples  (for [sz switch-sizes]
@@ -131,6 +140,7 @@
      {:desc      "With icon track"
       :reqs      '[[kushi.ui.icon.core :refer [icon]]]
       :row-attrs row-attrs
+      :container-attrs container-attrs
       :sx-attrs  (sx-call (sx {:-track-content-on  [icon (sx :fs--0.55em
                                                              {:-icon-filled? true})
                                                     :visibility]
@@ -144,6 +154,7 @@
      {:desc      "With icon thumb"
       :reqs      '[[kushi.ui.icon.core :refer [icon]]]
       :row-attrs row-attrs
+      :container-attrs container-attrs
       :sx-attrs  (sx-call (sx {:-thumb-content-on  [icon (sx :fs--0.55em
                                                              {:-icon-filled? true})
                                                     :visibility]
@@ -156,6 +167,7 @@
 
      {:desc      "Disabled states"
       :row-attrs row-attrs
+      :container-attrs container-attrs
       :examples  (for [sz switch-sizes]
                    {:label (name sz)
                     :attrs {:disabled true

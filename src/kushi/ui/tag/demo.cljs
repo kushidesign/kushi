@@ -33,53 +33,57 @@
    :xlarge])
 
 (def tag-examples
-  [{:desc      "Sizes from xxsmall to xlarge"
-    :row-attrs (sx :md:ai--fe)
-    :examples  (for [sz tag-sizes]
-                 {:label (name sz)
-                  :attrs {:class sz}
-                  :args  ["Play"]})}
-   
-   {:desc            "Semantic variants"
-    :sx-attrs        (sx-call (sx :.small))
-    :container-attrs (sx :gtc--max-content:max-content:max-content:max-content)
-    :variants+       [:minimal]
-    :examples        (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
-                       (for [s component-examples/colors]
+  (let [container-attrs (sx :gtc--max-content:max-content)]
+    [{:desc      "Sizes from xxsmall to xlarge"
+      :row-attrs (sx :md:ai--fe)
+      :container-attrs container-attrs
+      :examples  (for [sz tag-sizes]
+                   {:label (name sz)
+                    :attrs {:class sz}
+                    :args  ["Play"]})}
+     
+     {:desc            "Semantic variants"
+      :sx-attrs        (sx-call (sx :.small))
+      :container-attrs (sx :gtc--max-content:max-content:max-content:max-content)
+      :variants+       [:minimal]
+      :examples        (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
+                         (for [s component-examples/colors]
+                           {:label (name s)
+                            :args  ["Play"]
+                            :attrs {:class [s]}}))}
+
+     {:desc            "Shape variants"
+      :sx-attrs        (sx-call (sx :.small))
+      :container-attrs (sx :gtc--max-content:max-content:max-content:max-content)
+      :variants+       [:minimal]
+      :examples        (for [s [:rounded :pill :sharp]]
                          {:label (name s)
                           :args  ["Play"]
-                          :attrs {:class [s]}}))}
+                          :attrs {:class [s]}})}
 
-   {:desc            "Shape variants"
-    :sx-attrs        (sx-call (sx :.small))
-    :container-attrs (sx :gtc--max-content:max-content:max-content:max-content)
-    :variants+       [:minimal]
-    :examples        (for [s [:rounded :pill :sharp]]
-                       {:label (name s)
-                        :args  ["Play"]
-                        :attrs {:class [s]}})}
+     {:desc      "With icons"
+      :reqs      '[[kushi.ui.icon.core :refer [icon]]]
+      :sx-attrs  (sx-call (sx :.small))
+      :container-attrs container-attrs
+      :variants+ [:minimal]
+      :examples  [{:label "Icon tag"
+                   :args  [[icon :favorite]]}
+                  {:label "Icon tag"
+                   :args  [[icon :star]]}
+                  {:label "Icon tag"
+                   :args  [[icon :pets]]}
+                  {:label "Leading icon"
+                   :args  [[icon :pets] "Play"]}
+                  {:label "Trailing icon"
+                   :args  [[icon :pets] "Pet friendly"]} ]}
 
-   {:desc     "With icons"
-    :reqs     '[[kushi.ui.icon.core :refer [icon]]]
-    :sx-attrs (sx-call (sx :.small))
-    :variants+ [:minimal]
-    :examples [{:label "Icon tag"
-                :args  [[icon :favorite]]}
-               {:label "Icon tag"
-                :args  [[icon :star]]}
-               {:label "Icon tag"
-                :args  [[icon :pets]]}
-               {:label "Leading icon"
-                :args  [[icon :pets] "Play"]}
-               {:label "Trailing icon"
-                :args  [[icon :pets] "Pet friendly"]} ]}
-
-   {:desc     "Weight variants"
-    :sx-attrs (sx-call (sx :.small))
-    :variants+ [:minimal]
-    :examples (for [s (rest component-examples/type-weights)]
-                {:label (name s)
-                 :args  ["Pets" [icon :pets]]
-                 :attrs {:class [s]}})}])
+     {:desc      "Weight variants"
+      :sx-attrs  (sx-call (sx :.small))
+      :container-attrs container-attrs
+      :variants+ [:minimal]
+      :examples  (for [s (rest component-examples/type-weights)]
+                   {:label (name s)
+                    :args  ["Pets" [icon :pets]]
+                    :attrs {:class [s]}})}]))
 
 

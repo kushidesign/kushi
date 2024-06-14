@@ -1,6 +1,6 @@
 (ns ^:dev/always kushi.playground.layout
   (:require [domo.core :as domo]
-            [fireworks.core :refer [?]]
+            [fireworks.core :refer [? ?--]]
             [kushi.core :refer [sx merge-attrs]]
             [kushi.ui.collapse.core :refer [collapse]]
             [kushi.ui.icon.core :refer [icon]]
@@ -42,34 +42,51 @@
                                        .click)))})
             label]])))
 
+(defn mobile-component-sidenav-scrim []
+  (when (:mobile-sidenav-expanded? @state/*playground)
+    [:div (sx 'mobile-component-sidenav-scrim
+              :.fixed-fill
+              :zi--3
+              :bgc--transparent
+              ;; 160px is width of mobile side menu
+              [:bgi "linear-gradient(to left, white 160px, rgba(255, 255, 255, 0.8) 320px, rgba(255, 255, 255, 0.8))"]
+              :dark:bgc--black)]))
 
 (defn mobile-component-sidenav 
   [playground-components]
-  [collapse
-   (merge-attrs
-    (sx :.playground-right-sidenav
-        :lg:display--none
-        :width--160px
-        :md:width--190px
-        :$nav-padding--0.5em:1em
-        {:id "playground-right-sidenav-collapse"})
-    {:-label         "All Components"
-     :-icon          [icon :menu]
-     :-icon-expanded [icon :close]
-     :-speed         250 
-     :-header-attrs  (sx :.playground-right-sidenav-header
-                         :.small!
-                         :>span:jc--center
-                         :pi--1em
-                         :pb--0.25em:0.5em
-                         {:on-click #(js/console.log (domo/et %))})}) 
-   [componenent-sidenav-items playground-components]])
+  (do
+    [collapse
+     (merge-attrs
+      (sx :.playground-right-sidenav
+          :lg:display--none
+          :width--160px
+          :md:width--190px
+          :$nav-padding--0.5em:1em
+          {:id "playground-right-sidenav-collapse"})
+      {:-label         "All Components"
+       :-icon          [icon :menu]
+       :-icon-expanded [icon :close]
+       :-speed         0 
+       :-header-attrs  (sx :.playground-right-sidenav-header
+                           :.small!
+                           :>span:jc--center
+                           :pi--1em
+                           :pb--0.25em:0.5em
+                           {:on-click #_#(?-- 'User)
+                            #(swap! state/*playground
+                                    assoc-in
+                                    [:mobile-sidenav-expanded?]
+                                    (not (= "true"
+                                            (.getAttribute (domo/cet %)
+                                                           "aria-expanded"))))})}) 
+     [componenent-sidenav-items playground-components]]))
 
 
 (defn desktop-component-sidenav
   [playground-components]
   [:nav
    (sx :.playground-right-sidenav
+       [:h "calc(100vh - 50px)"]
        :display--none
        :lg:display--block
        :width--160px
@@ -85,7 +102,7 @@
   [:div
    (sx :.kushi-playground-all-components-header
        :.fixed
-       :zi--2
+       :zi--5
        :bgc--$gray-200
        :w--100%
        :p--1rem)
@@ -105,6 +122,7 @@
             )
    [header]
    [mobile-component-sidenav _comps]
+   [mobile-component-sidenav-scrim]
    [desktop-component-sidenav _comps]
    ;; Main section
    #_[:div 
@@ -148,14 +166,14 @@
             [:h1 (sx :.xxlarge
                      :.semi-bold
                      :.capitalize
+                     :.playground-pane-box-shadow
                      :lh--0.75em
                      :position--sticky
                      [:ibs :51.5px]
                      :zi--1
                      :pbs--51.5px
                      [:w '(calc :100vw - :4rem)]
-                     :bgc--white
-                     :box-shadow--0:0:13px:8px:white|0:0:10px:9px:white)
+                     :bgc--white)
              label]
             (when demo-component
               [demo-component opts])]))])

@@ -1,5 +1,6 @@
 (ns kushi.ui.collapse.core
   (:require
+   [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
    [kushi.core :refer (sx merge-attrs) :refer-macros (sx)]
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
@@ -57,6 +58,7 @@
           #(let [header   (.closest (-> % .-target) "[aria-expanded][role='button']")
                  collapse (.-parentNode header)]
 
+             (?-- 'Internal)
              ;; First, we make sure the collapse is not already in the process of opening or closing.
              (when-not (domo/has-class collapse "kushi-collapse-transit")
 
