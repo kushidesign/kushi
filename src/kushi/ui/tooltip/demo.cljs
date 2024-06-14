@@ -109,9 +109,11 @@
                 :.grid
                 :gtc--1fr:1fr:1fr:1fr:1fr
                 :gtr--auto
-                :gap--1rem
-                :w--333px
-                :h--333px
+                :gap--0.75rem
+                :xsm:w--333px
+                :xsm:h--333px
+                :w--300px
+                :h--300px
                 :&_span.kushi-tooltip-text:ta--c
                 [:>span {:ta             :c
                          :ff             :$code-font-stack

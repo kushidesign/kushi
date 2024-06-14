@@ -87,6 +87,7 @@
   [:nav
    (sx :.playground-right-sidenav
        [:h "calc(100vh - 50px)"]
+       :bgc--white
        :display--none
        :lg:display--block
        :width--160px
@@ -114,6 +115,7 @@
 ;; If so, redo all the intersection observer stuff
 
 (defn layout [_comps]
+  
   [:div (sx :.flex-col-fs
             [:bgi '(linear-gradient "to right" "white" "white 400px" "#f5f5f5 400px" "#f5f5f5")]
             ;; :.debug-red
@@ -151,7 +153,7 @@
          
          #_[button2 "Hello"]
          ;; Cycle through Collection of components  defined in playground.core
-         (for [{:keys [label demo-component] :as opts} _comps]
+         (for [{:keys [label demo-component media-matches] :as opts} _comps]
            [:section
             (sx :min-height--300px
                 {:data-kushi-playground-component label
@@ -176,5 +178,12 @@
                      :bgc--white)
              label]
             (when demo-component
-              [demo-component opts])]))])
-
+              (let [{:keys [matches
+                            message]} media-matches
+                    unsupported?      (when (and matches message)
+                                        (not (some (fn [[prop val]]
+                                                     (domo/matches-media? prop val))
+                                                   matches)))]
+                (if unsupported? 
+                  [:p (sx :mbs--2rem) message]
+                  [demo-component opts])))]))])

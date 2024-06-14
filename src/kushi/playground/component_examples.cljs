@@ -145,7 +145,9 @@
                   :first-of-type:pbs--3.5rem)
      label
      (into [:div (merge-attrs
-                  (sx :.grid :gtc--max-content :gap--1rem)
+                  (sx :.grid
+                      :gtc--max-content
+                      :gap--1rem)
                   container-attrs)]
            (for [variant-attrs (resolve-variants-attrs component-opts
                                                        example-opts)]

@@ -59,7 +59,10 @@
   (let [row-attrs       (sx 'kushi-playground-switch-example-row
                             :md:ai--fe
                             :ai--fs)
-        container-attrs (sx :gtc--max-content:max-content)]
+        container-attrs (sx 'playground-switch-rows-container
+                            :gtc--max-content:max-content
+                            :md:gtc--max-content
+                            )]
     [{:desc     "Semantic variants"
       :sx-attrs (sx-call (sx :.xxlarge))
       :container-attrs container-attrs
@@ -112,7 +115,7 @@
       :sx-attrs  (sx-call (sx
                            :$switch-border-width--0px
                            :$switch-thumb-scale-factor--1.25
-                           {:-thumb-attrs (sx :outline--1px:solid:currentColor :outline-offset---1px)}))
+                           {:-thumb-attrs (sx :border--1px:solid:currentColor)}))
       :examples  (for [sz switch-sizes]
                    {:label (name sz)
                     :attrs {:class [sz]}})}
@@ -131,9 +134,9 @@
      {:desc      "With labeled thumb"
       :row-attrs row-attrs
       :container-attrs container-attrs
-      :sx-attrs  (sx-call (sx {:-thumb-content-on  [:span (sx :.semi-bold :fs--0.325em) "ON"]
-                               :-thumb-content-off [:span (sx :.semi-bold :fs--0.325em) "OFF"]}))
-      :examples  (for [sz switch-sizes]
+      :sx-attrs  (sx-call (sx {:-thumb-content-on  [:span (sx :.semi-bold :fs--0.3em) "ON"]
+                               :-thumb-content-off [:span (sx :.semi-bold :fs--0.3em) "OFF"]}))
+      :examples  (for [sz (drop 2 switch-sizes)]
                    {:label (name sz)
                     :attrs {:class [sz]}})}
      

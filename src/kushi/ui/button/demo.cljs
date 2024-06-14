@@ -83,7 +83,8 @@
    :xlarge])
 
 (def button-examples
-  (let [container-attrs (sx :gtc--max-content:max-content
+  (let [container-attrs (sx 'playground-button-rows-container
+                            :gtc--max-content:max-content
                             :md:gtc--max-content)]
     [
      {:desc            "Sizes from xxsmall to xlarge"
