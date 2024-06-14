@@ -34,6 +34,7 @@
     :row-attrs (sx :ai--fs
                    :flex-direction--column
                    ["&_.kushi-card:nth-child(5):d" :none]
+                   ["xsm:&_.kushi-card:nth-child(5):d" :block]
                    :&_.kushi-card:w--fit-content
                    :&_.kushi-card:b--1px:solid:$neutral-200
                    :dark&_.kushi-card:b--1px:solid:$neutral-800)

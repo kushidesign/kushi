@@ -34,12 +34,13 @@
 
 (def playground-components 
   (filter 
-   #_:label
-   #(contains? #{
-                ;;  "tag"
+   :label
+   #_#(contains? #{
+                 "switch"
+                 "tag"
                   ;; "slider"
                   ;; "button"
-                   "callout"
+                  ;;  "callout"
                   ;;  "spinner"
                   ;;  "grid"
                   ;;  "accordian"

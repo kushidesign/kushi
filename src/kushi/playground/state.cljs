@@ -64,7 +64,8 @@
 (def ordered-playground-components-labels
   (mapv :label playground-components))
 
-(def *playground (r/atom {:intersecting #{}}))
+(def *playground (r/atom {:intersecting             #{}
+                          :mobile-sidenav-expanded? false}))
 
 (def *playground-first-intersecting
   (reagent.ratom/reaction

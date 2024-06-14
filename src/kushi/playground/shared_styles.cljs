@@ -250,13 +250,13 @@
   ;; use some class that does light and dark
   :bgc--white)
 
+(defclass playground-pane-box-shadow
+  :box-shadow--0:0:13px:8px:white|0:0:10px:9px:white)
 
 (defclass playground-right-sidenav
-  :bgc--$purple-00
   :.fixed
   :o--0.975
-  :zi--3
-  [:h "calc(100vh - 50px)"]
+  :zi--4
   :iie--0
   :ibs--50px
   :pb--51.5px:1rem
