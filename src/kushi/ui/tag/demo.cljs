@@ -40,14 +40,19 @@
         playground-tag-rows-container4
         (sx 'playground-tag-rows-container4
             :md:gtc--max-content
-            :gtc--max-content:max-content:max-content:max-content)]
-    [{:desc      "Sizes from xxsmall to xlarge"
-      :row-attrs (sx :md:ai--fe)
-      :container-attrs playground-tag-rows-container
-      :examples  (for [sz tag-sizes]
-                   {:label (name sz)
-                    :attrs {:class sz}
-                    :args  ["Play"]})}
+            :gtc--max-content:max-content:max-content:max-content)
+        playground-tag-rows-container24
+        (sx 'playground-tag-rows-container24
+            :md:gtc--max-content
+            :xsm:gtc--max-content:max-content:max-content:max-content
+            :gtc--max-content:max-content)]
+    [{:desc            "Sizes from xxsmall to xlarge"
+      :row-attrs       (sx :md:ai--fe)
+      :container-attrs playground-tag-rows-container24
+      :examples        (for [sz tag-sizes]
+                         {:label (name sz)
+                          :attrs {:class sz}
+                          :args  ["Play"]})}
      
      {:desc            "Semantic variants"
       :sx-attrs        (sx-call (sx :.small))
@@ -68,27 +73,27 @@
                           :args  ["Play"]
                           :attrs {:class [s]}})}
 
-     {:desc      "With icons"
-      :reqs      '[[kushi.ui.icon.core :refer [icon]]]
-      :sx-attrs  (sx-call (sx :.small))
+     {:desc            "With icons"
+      :reqs            '[[kushi.ui.icon.core :refer [icon]]]
+      :sx-attrs        (sx-call (sx :.small))
       :container-attrs playground-tag-rows-container4
-      :variants+ [:minimal]
-      :examples  [{:label "Icon tag"
-                   :args  [[icon :favorite]]}
-                  {:label "Icon tag"
-                   :args  [[icon :star]]}
-                  {:label "Icon tag"
-                   :args  [[icon :pets]]}
-                  {:label "Leading icon"
-                   :args  [[icon :pets] "Pets"]}]}
+      :variants+       [:minimal]
+      :examples        [{:label "Icon tag"
+                         :args  [[icon :favorite]]}
+                        {:label "Icon tag"
+                         :args  [[icon :star]]}
+                        {:label "Icon tag"
+                         :args  [[icon :pets]]}
+                        {:label "Leading icon"
+                         :args  [[icon :pets] "Pets"]}]}
 
-     {:desc      "Weight variants"
-      :sx-attrs  (sx-call (sx :.small))
+     {:desc            "Weight variants"
+      :sx-attrs        (sx-call (sx :.small))
       :container-attrs playground-tag-rows-container4
-      :variants+ [:minimal]
-      :examples  (for [s (rest component-examples/type-weights)]
-                   {:label (name s)
-                    :args  ["Pets" [icon :pets]]
-                    :attrs {:class [s]}})}]))
+      :variants+       [:minimal]
+      :examples        (for [s (rest component-examples/type-weights)]
+                         {:label (name s)
+                          :args  ["Pets" [icon :pets]]
+                          :attrs {:class [s]}})}]))
 
 

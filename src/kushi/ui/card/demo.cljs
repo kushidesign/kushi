@@ -30,34 +30,34 @@
 
 (def card-examples
   [
-   {:desc      "Sizes from xxsmall to large"
-    :row-attrs (sx :ai--fs
-                   :flex-direction--column
-                   ["&_.kushi-card:nth-child(5):d" :none]
-                   ["xsm:&_.kushi-card:nth-child(5):d" :block]
-                   :&_.kushi-card:w--fit-content
-                   :&_.kushi-card:b--1px:solid:$neutral-200
-                   :dark&_.kushi-card:b--1px:solid:$neutral-800)
-    :examples  (for [sz card-sizes]
-                 {:label (name sz)
-                  :attrs {:class [sz]}
-                  :args  [[:div (sx :.flex-row-fs
-                                    :ai--stretch
-                                    :gap--0.8em)
-                           [:div (sx :.rounded
-                                     :.relative
-                                     :overflow--hidden
-                                     :bgc--$neutral-200
-                                     :w--3.5em
-                                     :h--3.5em)
-                            [:span (sx :.absolute-centered
-                                       [:transform '(translate 0 :0.045em)]
-                                       :display--block
-                                       :scale--2.55)
-                             "🐻‍❄"]]
-                           [:section (sx :.flex-col-sa) 
-                            [:p (sx :fs--1.25em :.wee-bold) "Polar Bear"] 
-                            [:p (sx :c--$neutral-secondary-fg) "polar.bear@example.com"]]]]})}
+   #_{:desc      "Sizes from xxsmall to large"
+      :row-attrs (sx :ai--fs
+                     :flex-direction--column
+                     ["&_.kushi-card:nth-child(5):d" :none]
+                     ["xsm:&_.kushi-card:nth-child(5):d" :block]
+                     :&_.kushi-card:w--fit-content
+                     :&_.kushi-card:b--1px:solid:$neutral-200
+                     :dark&_.kushi-card:b--1px:solid:$neutral-800)
+      :examples  (for [sz card-sizes]
+                   {:label (name sz)
+                    :attrs {:class [sz]}
+                    :args  [[:div (sx :.flex-row-fs
+                                      :ai--stretch
+                                      :gap--0.8em)
+                             [:div (sx :.rounded
+                                       :.relative
+                                       :overflow--hidden
+                                       :bgc--$neutral-200
+                                       :w--3.5em
+                                       :h--3.5em)
+                              [:span (sx :.absolute-centered
+                                         [:transform '(translate 0 :0.045em)]
+                                         :display--block
+                                         :scale--2.55)
+                               "🐻‍❄"]]
+                             [:section (sx :.flex-col-sa) 
+                              [:p (sx :fs--1.25em :.wee-bold) "Polar Bear"] 
+                              [:p (sx :c--$neutral-secondary-fg) "polar.bear@example.com"]]]]})}
    
    {:desc      "Elevated levels from 0 to 5"
     :row-attrs (sx :ai--fs
@@ -88,25 +88,26 @@
                             [:p (sx :fs--1.25em :.wee-bold) "Polar Bear"] 
                             [:p (sx :c--$neutral-secondary-fg) "polar.bear@example.com"]]]]})}
    
+   
    {:desc      "Alien"
     :row-attrs (sx :ai--fs
                    :flex-direction--column
                    :gap--2rem
-                   :&_.kushi-card:transform-origin--0:0
-                   :&_.kushi-card:scale--0.5
-                   :xsm:&_.kushi-card:scale--0.75
-                   :md:&_.kushi-card:scale--1
                    :&_.kushi-card:w--fit-content
                    :&_.kushi-card:b--1px:solid:$neutral-200
                    :dark&_.kushi-card:b--1px:solid:$neutral-800)
     :examples  [{:label "Alien"
                  :code  (sx-call [card
-                                  (sx :.large
+                                  (sx :fs--$xxsmall
+                                      :xsm:fs--$small
+                                      :sm:fs--$medium
+                                      :md:fs--$large
+                                      :lg:fs--$xlarge
                                       :.extra-bold
                                       :.flex-col-c
                                       :.rounded-small
                                       :p--0
-                                      :height--220px
+                                      :height--12em
                                       :tt--u
                                       :ta--center
                                       :bgc--#313131
@@ -114,4 +115,4 @@
                                       :b--1px:solid:#9eef00
                                       :text-shadow--1px:1px:5px:#9eef00b5
                                       :box-shadow--inset:0px:0px:40px:#9eef0073)
-                                 [:span (sx :pis--7ex :letter-spacing--7ex) "alien"]])}]}])
+                                  [:span (sx :pis--7ex :letter-spacing--7ex) "alien"]])}]}])

@@ -13,7 +13,7 @@
                 :.pointer
                 :td--underline
                 :tup--under
-                [:tdc "color-mix(in oklch, currentColor 50%, transparent)"]
+                [:tdc "color-mix(in oklch, currentColor 60%, transparent)"]
                 [:hover:tdc :currentColor]
                 {:data-kushi-ui :link})
             attrs)]

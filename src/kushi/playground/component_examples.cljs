@@ -140,24 +140,29 @@
         label          (some-> desc
                                kushi.ui.util/backtics->hiccup
                                section-label)]
-    [:section (sx :.playground-example-row
-                  :pb--1.5rem
+    [:div (sx :.playground-example-row-container
+              :pb--1.5rem
+              :first-of-type:pbs--2.5rem
+              )
+     [:section (sx :.playground-example-row
+                  ;;  :pb--1.5rem
                   ;; make this max-width global var
-                  :max-width--605px
-                  :first-of-type:pbs--3.5rem)
-     label
-     (into [:div (merge-attrs
-                  (sx :.grid
-                      :gtc--max-content
-                      :gap--1rem)
-                  container-attrs)]
-           (for [variant-attrs (resolve-variants-attrs component-opts
-                                                       example-opts)]
-             [example-row-variant
-              component
-              (merge example-opts
-                     (keyed variant-attrs
-                            reqs-by-refers))]))]
+                   :max-width--605px
+                  ;;  :first-of-type:pbs--2.5rem
+                   )
+      label
+      (into [:div (merge-attrs
+                   (sx :.grid
+                       :gtc--1fr
+                       :gap--1rem)
+                   container-attrs)]
+            (for [variant-attrs (resolve-variants-attrs component-opts
+                                                        example-opts)]
+              [example-row-variant
+               component
+               (merge example-opts
+                      (keyed variant-attrs
+                             reqs-by-refers))]))]]
 
     #_(into [:section (sx :.playground-example-row
                           :pb--1.5rem
