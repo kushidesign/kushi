@@ -60,15 +60,17 @@
      (let [weights component-examples/type-weights]
        {:desc      (str "Weight variants " (name (first weights)) " to " (name (last weights)))
         :row-attrs (sx :.flex-col-fs
+                       :.playground-example-row-bounded-parent
+                       :md:flex-direction--column
                        :ai--fs
                        :gap--2rem
-                       :w--fit-content
-                       :border-radius--$rounded
-                       :p--1em
-                       :bgc--$neutral-50
-                       :b--1px:solid:$neutral-100
-                       :dark:bgc--$neutral-950
-                       :dark:b--1px:solid:$neutral-900
+                      ;;  :w--fit-content
+                      ;;  :border-radius--$rounded
+                      ;;  :p--1em
+                      ;;  :bgc--transparent
+                      ;;  :b--1px:solid:$neutral-100
+                      ;;  :dark:bgc--$neutral-950
+                      ;;  :dark:b--1px:solid:$neutral-900
                        )
         :sx-attrs  (sx-call (sx :.large))
         :examples  (for [s weights]
