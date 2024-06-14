@@ -142,6 +142,8 @@
                                section-label)]
     [:section (sx :.playground-example-row
                   :pb--1.5rem
+                  ;; make this max-width global var
+                  :max-width--605px
                   :first-of-type:pbs--3.5rem)
      label
      (into [:div (merge-attrs

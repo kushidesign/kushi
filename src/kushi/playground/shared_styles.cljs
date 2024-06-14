@@ -268,7 +268,8 @@
   :o--0.975
   :zi--4
   :iie--0
-  :ibs--50px
-  :pb--51.5px:1rem
+  :ibs--41.5px
+  :md:ibs--51.5px
+  :pb--0:1rem
   :&_h2:pi--1rem
   :&_ul:pi--1rem)

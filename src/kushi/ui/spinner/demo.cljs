@@ -35,18 +35,30 @@
    :xxxlarge])
 
 (def spinner-examples
-  (let [row-attrs
+  (let [container-attrs
+        (sx :gtc--1fr)
+
+        row-attrs
         (sx [:&_.playground-component-example-row-instance-code
-             {:pis        :0.5em
-              :column-gap :5.15rem
-              :row-gap    :2rem
-              :display    :grid
-              :gtc        :1fr:1fr:1fr:1fr}])
+             {:w  :100%
+              :d  :flex
+              :jc :sb
+              :pi :0.75rem}])
+
         row-attrs-all-colors
         (sx [:&_.playground-component-example-row-instance-code
-             {:pis            :0.5em
-              :gap            :1rem
-              :flex-direction :column}])]
+             {:w              :100%
+              :pi             :0.75rem
+              :row-gap        :2rem
+              :flex-direction :column
+              :align-items    :stretch}])
+
+        f
+        (fn [desc row-attrs code]
+          {:desc            desc
+           :container-attrs container-attrs
+           :row-attrs       row-attrs
+           :examples        [{:code code}]})]
 
     [{:desc      "Usage with a button."
       :row-attrs row-attrs
@@ -68,64 +80,52 @@
                                     [icon :play-arrow] [donut]]
                                    "Activate"])}]}
      
-     {:desc      "Propeller, xxsmall to xxxlarge"
-      :row-attrs row-attrs
-      :examples  [{:code (sx-call (for [sz spinner-sizes]
-                                    [propeller {:class [sz]}]))}]}
+     (f "Propeller, xxsmall to xxxlarge"
+        row-attrs
+        (sx-call (for [sz spinner-sizes]
+                   [propeller {:class [sz]}])))
      
-     {:desc      "Propeller, all the colors"
-      :row-attrs row-attrs-all-colors 
-      :examples  [{:code (sx-call 
-                          (for [color (concat component-examples/colors
-                                              component-examples/non-semantic-colors)]
-                            (into [:div (sx :.flex-row-fs
-                                            :ai--fe
-                                            :gap--2.25rem)]
-                                  (for [val (range 300 1100 100)]
-                                    [:div (sx :.flex-col-fs) 
-                                     [propeller {:class [:large]
-                                                 :style {:color (str "var(--" color "-" val ")")}}]]))))}]}
+     (f "Propeller, all the colors"
+        row-attrs-all-colors
+        (sx-call 
+         (for [color (concat component-examples/colors
+                             component-examples/non-semantic-colors)]
+           (into [:div (sx :.flex-row-fs :jc--sb)]
+                 (for [val (range 300 1100 100)]
+                   [:div (sx :.flex-col-fs) 
+                    [propeller {:class [:large]
+                                :style {:color (str "var(--" color "-" val ")")}}]])))))
 
-     {:desc      "Spinner, xxsmall to xxxlarge"
-      :row-attrs (merge-attrs row-attrs
-                              (sx :&_.playground-component-example-row-instance-code:column-gap--3.25rem))
-      :examples  [{:code (sx-call (for [sz spinner-sizes]
-                                    [donut {:class [sz]}]))}]}
+     (f "Spinner, xxsmall to xxxlarge"
+        row-attrs (sx-call (for [sz spinner-sizes]
+                             [donut {:class [sz]}])) )
      
-     
-     {:desc      "Spinner, all the colors"
-      :row-attrs row-attrs-all-colors 
-      :examples  [{:code (sx-call 
-                          (for [color (concat component-examples/colors
-                                              component-examples/non-semantic-colors)]
-                            (into [:div (sx :.flex-row-fs
-                                            :ai--fe
-                                            :gap--1.35rem)]
-                                  (for [val (range 300 1100 100)]
-                                    [:div (sx :.flex-col-fs)
-                                     [donut {:class [:large]
-                                               :style {:color (str "var(--" color "-" val ")")}}]]))))}]}
+     (f "Spinner, all the colors"
+        row-attrs-all-colors 
+        (sx-call 
+         (for [color (concat component-examples/colors
+                             component-examples/non-semantic-colors)]
+           (into [:div (sx :.flex-row-fs :jc--sb)]
+                 (for [val (range 300 1100 100)]
+                   [:div (sx :.flex-col-fs)
+                    [donut {:class [:large]
+                            :style {:color (str "var(--" color "-" val ")")}}]])))) )
 
-     {:desc      "Thinking, xxsmall to xxxlarge"
-      :row-attrs (merge-attrs row-attrs
-                              (sx :&_.playground-component-example-row-instance-code:column-gap--1.25rem
-                                  :&_.playground-component-example-row-instance-code:translate---1rem:0))
-      :examples  [{:code (sx-call (for [sz spinner-sizes]
-                                    [thinking {:class [sz]}]))}]}
+     (f "Thinking, small to xxxlarge"
+        row-attrs
+        (sx-call (for [sz (drop 2 spinner-sizes)]
+                   [thinking {:class [sz]}])))
 
      
-     {:desc      "Thinking, all the colors"
-      :row-attrs (merge-attrs row-attrs-all-colors
-                              (sx :&_.playground-component-example-row-instance-code:row-gap--1.75rem)) 
-      :examples  [{:code (sx-call 
-                          (for [color (concat component-examples/colors
-                                              component-examples/non-semantic-colors)]
-                            (into [:div (sx :.flex-row-fs
-                                            :ai--fe
-                                            :gap--1.6rem)]
-                                  (for [val (range 400 1000 100)]
-                                    [:div (sx :.flex-col-fs)
-                                     [thinking {:class [:medium]
-                                               :style {:color (str "var(--" color "-" val ")")}}]]))))}]}]))
+     (f "Thinking, all the colors"
+        row-attrs-all-colors 
+        (sx-call 
+         (for [color (concat component-examples/colors
+                             component-examples/non-semantic-colors)]
+           (into [:div (sx :.flex-row-fs :jc--sb)]
+                 (for [val (range 400 1000 100)]
+                   [:div (sx :.flex-col-fs)
+                    [thinking {:class [:medium]
+                               :style {:color (str "var(--" color "-" val ")")}}]])))) )]))
 
 
