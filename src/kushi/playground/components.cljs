@@ -34,23 +34,23 @@
 
 (def playground-components 
   (filter 
-   :label
-  #_#(contains? #{
+  ;;  :label
+  #(contains? #{
                 ;;  "switch"
                 ;;  "tag"
                   ;; "slider"
-                  ;; "button"
+                  "button"
                   ;;  "callout"
-                  ;;  "spinner"
+                   "spinner"
                   ;;  "grid"
                   ;;  "tooltip"
                   ;;  "accordian"
-                   "radio"
-                   "text field"
+                  ;;  "radio"
+                  ;;  "text field"
                   ;;  "modal"
                   ;;  "popover"
                   ;;  "collapse"
-                   "checkbox"
+                  ;;  "checkbox"
                  }
                (:label %))
 

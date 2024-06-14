@@ -103,11 +103,22 @@
   [:div
    (sx :.kushi-playground-all-components-header
        :.fixed
+       :.flex-row-sb
+       :ai--c
        :zi--5
        :bgc--$gray-200
        :w--100%
-       :p--1rem)
-   "Kushi"])
+       :p--1rem
+       :max-height--41.5px
+       :md:max-height--51.5px
+       :pi--1.25rem
+       :md:pi--4rem
+       )
+   [:span (sx :.semi-bold
+              :fs--$xlarge
+              :md:fs--$xxlarge
+              :o--0.5)
+    "Kushi"]])
 
 
 ;; Everytime there is a resize event -
@@ -117,7 +128,7 @@
 (defn layout [_comps]
   
   [:div (sx :.flex-col-fs
-            [:bgi '(linear-gradient "to right" "white" "white 400px" "#f5f5f5 400px" "#f5f5f5")]
+            ;; [:bgi '(linear-gradient "to right" "white" "white 400px" "#f5f5f5 400px" "#f5f5f5")]
             ;; :.debug-red
             ;; :outline-width--2px
             ;; :outline-offset---2px
@@ -143,12 +154,13 @@
 
    (into [:div
           (sx :.kushi-playground-all-components
-              :>section:first-child:pbs--3rem
+              :>section:first-child:pbs--41.5pxrem
+              :md:>section:first-child:pbs--51.5pxrem
               :.flex-col-fs
               :.grow
               :gap--5rem
               :pb--0:30vh
-              :pi--2rem
+              :pi--1.25rem
               :md:pi--4rem)]
          
          #_[button2 "Hello"]
@@ -160,22 +172,33 @@
                  :ref (fn [el]
                         (when el
                           (domo/observe-intersection 
-                           {:element          el
-                            :not-intersecting #(swap! state/*playground update-in [:intersecting] disj label)
-                            :intersecting     #(swap! state/*playground update-in [:intersecting] conj label)
-                            ;; :intersecting     #(reset! state/*playground-focused-component-section label)
-                            :root-margin      "51px 0px 0px 0px"})))})
-            [:h1 (sx :.xxlarge
-                     :.semi-bold
-                     :.capitalize
-                     :.playground-pane-box-shadow
-                     :lh--0.75em
-                     :position--sticky
-                     [:ibs :51.5px]
-                     :zi--1
-                     :pbs--51.5px
-                     [:w '(calc :100vw - :4rem)]
-                     :bgc--white)
+                           (let [f (partial swap!
+                                            state/*playground
+                                            update-in
+                                            [:intersecting])]
+                             {:element          el
+                              :not-intersecting #(f disj label)
+                              :intersecting     #(f conj label)
+                              :root-margin      "51px 0px 0px 0px"}))))})
+            [:h1 (sx 
+                  :.semi-bold
+                  :.capitalize
+                  :.playground-pane-box-shadow
+                  :.flex-col-c
+                  :ai--fs
+                  :fs--$xlarge
+                  :md:fs--$xxlarge
+                  :lh--0.75em
+                  :position--sticky
+                  :zi--1
+                  :h--41.5px
+                  :md:h--51.5px
+                  [:ibs :41.5px]
+                  [:md:ibs :51.5px]
+                  ;; [:pbs "calc(41.5px / 3)"]
+                  ;; [:md:pbs "calc(51.5px / 3)"]
+                  [:w '(calc :100vw - :4rem)]
+                  :bgc--white)
              label]
             (when demo-component
               (let [{:keys [matches
