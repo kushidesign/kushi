@@ -18,7 +18,7 @@
            component-opts
            example-opts])))
 
-(def switch-sizes
+(def radio-sizes
   [:xsmall
    :small
    :medium
@@ -39,7 +39,7 @@
                      :&_label:pbe--0
                      :&_label:pie--0.35em)
       :examples  [{:code (sx-call (into [:<>] 
-                                        (for [sz switch-sizes]
+                                        (for [sz radio-sizes]
                                           [:div (sx :.flex-row-fs
                                                     :md:flex-direction--column) 
                                            [radio {:class        [sz]

@@ -38,7 +38,7 @@
   (let [row-attrs
         (sx [:&_.playground-component-example-row-instance-code
              {:pis        :0.5em
-              :column-gap :5rem
+              :column-gap :5.15rem
               :row-gap    :2rem
               :display    :grid
               :gtc        :1fr:1fr:1fr:1fr}])
@@ -81,14 +81,14 @@
                             (into [:div (sx :.flex-row-fs
                                             :ai--fe
                                             :gap--2.25rem)]
-                                  (for [val (range 100 1100 100)]
+                                  (for [val (range 300 1100 100)]
                                     [:div (sx :.flex-col-fs) 
                                      [propeller {:class [:large]
                                                  :style {:color (str "var(--" color "-" val ")")}}]]))))}]}
 
      {:desc      "Spinner, xxsmall to xxxlarge"
       :row-attrs (merge-attrs row-attrs
-                              (sx :&_.playground-component-example-row-instance-code:column-gap--4.5rem))
+                              (sx :&_.playground-component-example-row-instance-code:column-gap--3.25rem))
       :examples  [{:code (sx-call (for [sz spinner-sizes]
                                     [donut {:class [sz]}]))}]}
      
@@ -100,28 +100,30 @@
                                               component-examples/non-semantic-colors)]
                             (into [:div (sx :.flex-row-fs
                                             :ai--fe
-                                            :gap--1.33rem)]
-                                  (for [val (range 100 1100 100)]
+                                            :gap--1.35rem)]
+                                  (for [val (range 300 1100 100)]
                                     [:div (sx :.flex-col-fs)
                                      [donut {:class [:large]
                                                :style {:color (str "var(--" color "-" val ")")}}]]))))}]}
 
      {:desc      "Thinking, xxsmall to xxxlarge"
       :row-attrs (merge-attrs row-attrs
-                              (sx :&_.playground-component-example-row-instance-code:column-gap--2.25rem))
+                              (sx :&_.playground-component-example-row-instance-code:column-gap--1.25rem
+                                  :&_.playground-component-example-row-instance-code:translate---1rem:0))
       :examples  [{:code (sx-call (for [sz spinner-sizes]
                                     [thinking {:class [sz]}]))}]}
 
      
      {:desc      "Thinking, all the colors"
-      :row-attrs row-attrs-all-colors 
+      :row-attrs (merge-attrs row-attrs-all-colors
+                              (sx :&_.playground-component-example-row-instance-code:row-gap--1.75rem)) 
       :examples  [{:code (sx-call 
                           (for [color (concat component-examples/colors
                                               component-examples/non-semantic-colors)]
                             (into [:div (sx :.flex-row-fs
                                             :ai--fe
-                                            :gap--1.4rem)]
-                                  (for [val (range 200 1000 100)]
+                                            :gap--1.6rem)]
+                                  (for [val (range 400 1000 100)]
                                     [:div (sx :.flex-col-fs)
                                      [thinking {:class [:medium]
                                                :style {:color (str "var(--" color "-" val ")")}}]]))))}]}]))

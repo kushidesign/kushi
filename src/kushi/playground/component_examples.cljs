@@ -113,7 +113,7 @@
 
 (defn section-label [s]
   [:p (sx :.serif
-          :.wee-bold
+          :.bold
           :fs--16.75px
           :c--$neutral-secondary-fg
           :min-width--55px

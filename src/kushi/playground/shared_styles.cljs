@@ -234,13 +234,23 @@
   [:&_.playground-component-example-row-instance-code
    {:border-radius :$rounded
     :w             :fit-content
-    :bgc           :$neutral-50
+    :bgc           :transparent
     :p             :1em
     :pie           :1.5em
-    :b             :1px:solid:$neutral-100}]
+    :b             :1px:solid:$neutral-150
+    }]
   [:dark:&_.playground-component-example-row-instance-code
-   {:bgc :$neutral-950
-    :b   :1px:solid:$neutral-900}])
+   {:bgc :transparent
+    :b   :1px:solid:$neutral-850}])
+
+(defclass playground-example-row-bounded-parent
+  {:border-radius :$rounded
+   :w             :fit-content
+   :bgc           :transparent
+   :p             :1em
+   :pie           :1.5em
+   :b             :1px:solid:$neutral-150
+   :dark:b        :1px:solid:$neutral-850})
 
 
 (defclass playground-right-sidenav-header

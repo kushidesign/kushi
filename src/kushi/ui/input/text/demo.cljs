@@ -95,7 +95,9 @@
                                      :-helper     "My helper text"})])}]}
 
      {:desc      "All the options"
-      :row-attrs row-attrs
+      :row-attrs (merge-attrs row-attrs
+                              (sx :max-width--280px
+                                  :xsm:max-width--unset))
       :examples  [{:code (sx-call [text-field
                                    (sx
                                     {:required             false
