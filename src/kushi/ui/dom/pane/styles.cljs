@@ -27,7 +27,8 @@
   :dark:bgc--$pane-background-color-inverse
   :w--max-content
   :h--max-content
-  :p--$pane-padding-block:$pane-padding-inline)
+  :p--$pane-padding-block:$pane-padding-inline
+  :overflow--hidden)
 
 ;; TODO maybe move to tooltip.styles
 (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
