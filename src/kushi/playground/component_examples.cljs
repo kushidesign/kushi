@@ -54,7 +54,7 @@
                                               ;;  poa
                                                )]]
           (if instance-code 
-            (let [attrs (sx :.playground-component-example-row-instance-code
+            (let [attrs (sx :.instance-code
                             :.flex-row-fs
                             :gap--1rem)]
               (if (and 

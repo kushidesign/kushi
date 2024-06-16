@@ -231,7 +231,7 @@
 
 ;; New May 2024
 (defclass playground-example-row-bounded
-  [:&_.playground-component-example-row-instance-code
+  [:&_.instance-code
    {:border-radius :$rounded
     :w             :fit-content
     :bgc           :transparent
@@ -239,7 +239,7 @@
     :pie           :1.5em
     :b             :1px:solid:$neutral-150
     }]
-  [:dark:&_.playground-component-example-row-instance-code
+  [:dark:&_.instance-code
    {:bgc :transparent
     :b   :1px:solid:$neutral-850}])
 

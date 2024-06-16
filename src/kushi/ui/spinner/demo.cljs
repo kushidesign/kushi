@@ -39,14 +39,14 @@
         (sx :gtc--1fr)
 
         row-attrs
-        (sx [:&_.playground-component-example-row-instance-code
+        (sx [:&_.instance-code
              {:w  :100%
               :d  :flex
               :jc :sb
               :pi :0.75rem}])
 
         row-attrs-all-colors
-        (sx [:&_.playground-component-example-row-instance-code
+        (sx [:&_.instance-code
              {:w              :100%
               :pi             :0.75rem
               :row-gap        :2rem

@@ -94,8 +94,8 @@
 
 (def playground-components 
   (filter 
-  ;;  :label
-  #(contains? #{
+   :label
+  #_#(contains? #{
                 ;;  "switch"
                 ;;  "tag"
                   ;; "slider"
