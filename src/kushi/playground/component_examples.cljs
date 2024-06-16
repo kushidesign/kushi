@@ -145,7 +145,9 @@
     [:div (sx :.playground-example-row-container
               :pb--1.5rem
               :first-of-type:pbs--2.5rem
-              )
+              ;; Hack to conditionally hide things here, like if they should not be shown on mobile
+              ["has([data-kushi-playground-example='popover-with-form']):display" :none]
+              ["xsm:has([data-kushi-playground-example='popover-with-form']):display" :block])
      [:section (sx :.playground-example-row
                   ;;  :pb--1.5rem
                   ;; make this max-width global var

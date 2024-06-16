@@ -129,7 +129,7 @@
                                                  cls
                                                  (util/class-coll? cls)
                                                  (string/join " " cls)))
-                                         " invisible absolute offscreen")))]
+                                         " invisible offscreen")))]
     (.appendChild js/document.body el)
     (let [ret (domo/css-custom-property-value el cp)]
       (.removeChild js/document.body el)
