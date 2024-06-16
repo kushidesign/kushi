@@ -31,8 +31,7 @@
 (def checkbox-examples
   (let [row-attrs (merge-attrs {:class ["playground-example-row-bounded"]}
                                (sx [:&_.playground-component-example-row-instance-code 
-                                    {:p                               :1.05em:1.65em:1.25em
-                                     :&_.kushi-text-input-wrapper:bgc :$body-background-color}]))]
+                                    {:p :1.05em:1.65em:1.25em}]))]
     [{:desc      "Simple"
       :row-attrs row-attrs
       :examples  [{:code (sx-call [text-field
@@ -110,10 +109,13 @@
                                      :-start-enhancer      "$"
                                      :-wrapper-attrs       (sx
                                                             :box-shadow--4px:4px:7px:#f2baf9ab
+                                                            :dark:box-shadow--4px:4px:7px:#b000c66e
                                                             {:class :my-input-wrapper-name})
                                      :-outer-wrapper-attrs (sx
                                                             :b--1px:solid:yellow
-                                                            :box-shadow--8px:8px:17px:#f2baf9ab
+                                                            :dark:b--1px:solid:#c419b5
+                                                            :box-shadow--8px:8px:17px:#b000c66e
+                                                            :dark:box-shadow--8px:8px:17px:#b000c66e
                                                             :p--1em) 
                                      :-label               "Input label"})]
                                   )}]}
