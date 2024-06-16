@@ -17,7 +17,12 @@
   [:w "calc(100% - 50% + var(--switch-border-width))"])
 
 (defclass kushi-switch-thumb-content
-  :d--none :w--100% :h--100% :.flex-col-c :ai--c)
+  :c--$neutral-fg
+  :d--none 
+  :w--100%
+  :h--100% 
+  :.flex-col-c 
+  :ai--c)
 
 (defn- toggle-switch [%]
   (let [node* (domo/et %)
@@ -141,8 +146,8 @@
        ["&.kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color]
        ["&.kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover]
 
-       :dark:bgc--$switch-off-background-color-inverse
-       :dark:hover:bgc--$switch-off-background-color-hover-inverse
+       ["dark:&.kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color-inverse]
+       ["dark:&.kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover-inverse]
 
        [".kushi-switch[aria-checked='true']:bgc" :$switch-on-background-color]
        [".kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-background-color-hover]

@@ -6,18 +6,21 @@
 
    ;; Color
    ;; ------------------------------------------------------
+   ;; TODO - change "body" to "foreground"?
    :$body-color                              :$gray-950
    :$body-color-inverse                      :$gray-50
 
+   ;; TODO - drop "body"?
    :$body-background-color                   :white
    :$body-background-color-inverse           :$gray-1000
 
 
+   ;; TODO - change "fg" to "foreground"?
    ;; Neutrals
    :$neutral-fg                              :$neutral-minimal-color
    :$neutral-fg-inverse                      :$neutral-minimal-color-inverse
    :$neutral-secondary-fg                    :$gray-700
-   :$neutral-secondary-fg-inverse            :$gray-300
+   :$neutral-secondary-fg-inverse            :$gray-450
 
    :$accent-fg                               :$accent-minimal-color
    :$accent-fg-inverse                       :$accent-minimal-color-inverse
@@ -375,6 +378,19 @@
    :$border-weight                          :1px
 
 
+    ;; Intended for css props: background-image
+    ;; ------------------------------------------------------
+   
+   :$convex-0      :none
+   :$convex-1      "linear-gradient(180deg, hsl(0deg 0% 100% / 20%), transparent, hsl(0deg 0% 0% / 15%))"
+   :$convex-2     "linear-gradient(180deg, hsl(0deg 0% 100% / 25%), transparent, hsl(0deg 0% 0% / 25%))" 
+   :$convex-3     "linear-gradient(180deg, hsl(0deg 0% 0% / 30%), transparent, hsl(0deg 0% 100% / 35%))"
+   :$convex-4     "linear-gradient(180deg, hsl(0deg 0% 0% / 35%), transparent, hsl(0deg 0% 100% / 45%))"
+   :$convex-5     "linear-gradient(180deg, hsl(0deg 0% 0% / 40%), transparent, hsl(0deg 0% 100% / 50%))"
+
+   :$convex        :$convex-1
+
+
     ;; Intended for css props: box-shadow
     ;; ------------------------------------------------------
    
@@ -598,7 +614,7 @@
 
    ;; Neutral dark
    :$switch-on-background-color-inverse
-   :$neutral-450
+   :$neutral-550
 
    :$switch-on-background-color-hover-inverse
    :$neutral-550
