@@ -3,7 +3,7 @@
  :source-paths   ["src"
                   "../src"
                   "../../../kushi/domo/src"
-                  ;; "../../../cljc/fireworks/src"
+                  "../../../cljc/fireworks/src"
                   ]
 
  :dependencies   [[reagent/reagent    "1.1.1"]
