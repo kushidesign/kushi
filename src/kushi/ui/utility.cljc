@@ -442,8 +442,15 @@
    ;; ------------------------------------------------------
    :debossed      {:text-shadow "0 1px 2px hsl(0deg 0% 100% / 55%), 0 -1px 2px hsl(0deg 0% 0% / 27%)"}
    :embossed      {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}
-   :convex        {:background-image "linear-gradient(180deg, hsl(0deg 0% 100% / 20%), transparent, hsl(0deg 0% 0% / 15%))"}
-   :concave       {:background-image "linear-gradient(180deg, hsl(0deg 0% 0% / 15%), transparent, hsl(0deg 0% 100% / 20%))"}
+
+   ;; TODO convex 0-5 plus inverse
+   :convex        {:background-image :$convex-1}
+   :convex-0      {:background-image :$convex-0}
+   :convex-1      {:background-image :$convex-1}
+   :convex-2      {:background-image :$convex-2}
+   :convex-3      {:background-image :$convex-3}
+   :convex-4      {:background-image :$convex-4}
+   :convex-5      {:background-image :$convex-5}
 
    :elevated-0    {:box-shadow      :$elevated-0}
    :elevated-1    {:box-shadow      :$elevated-1
