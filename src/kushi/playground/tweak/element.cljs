@@ -343,8 +343,8 @@
 
 (defclass tweakable-css-prop-label
   [:after:content "\":\""]
-  [:after:color :$neutral-fg]
-  [:dark:after:color :$neutral-fg-inverse])
+  [:after:color :$neutral-foreground]
+  [:dark:after:color :$neutral-foreground-inverse])
 
 (defclass tweakable-label
   :.xsmall

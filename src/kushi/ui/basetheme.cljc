@@ -808,15 +808,15 @@
    ;; uncomment TEMP
    "body"
    {:font-family                :$sans-serif-font-stack
-    :color                      :$body-color
-    :background-color           :$body-background-color
+    :color                      :$foreground-color
+    :background-color           :$background-color
     :transition-property        :background-color|color
     :transition-duration        :$fast
     :transition-timing-function :$timing-linear-curve}
 
    ".dark, body.dark"
-   {:bgc                        :$body-background-color-inverse
-    :color                      :$body-color-inverse}
+   {:bgc                        :$background-color-inverse
+    :color                      :$foreground-color-inverse}
 
    "code, .code"
    {:font-family                :$code-font-stack
@@ -886,21 +886,21 @@
 
    ;; TODO - Move these to utility? or should then just be here?
    ;; Foreground text that is slightly de-emphasized (such as text input field helper text)
-   :.neutral-secondary-fg {:color      :$neutral-secondary-fg
-                           :dark:color :$neutral-secondary-fg-inverse}
+   :.neutral-secondary-foreground {:color      :$neutral-secondary-foreground
+                           :dark:color :$neutral-secondary-foreground-inverse}
 
    ;; Semantic fg
    ;; TODO -- dark versions of each with *--inverse tokens to match
-   :.neutral-fg {:color :$neutral-fg
-                 :dark:color :$neutral-fg-inverse}
-   :.accent-fg {:color :$accent-fg
-                :dark:color :$accent-fg-inverse}
-   :.positive-fg {:color :$positive-fg
-                  :dark:color :$positive-fg-inverse}
-   :.negative-fg {:color :$negative-fg
-                  :dark:color :$negative-fg-inverse}
-   :.warning-fg {:color :$warning-fg
-                 :dark:color :$warning-fg-inverse}
+   :.neutral-foreground {:color :$neutral-foreground
+                 :dark:color :$neutral-foreground-inverse}
+   :.accent-foreground {:color :$accent-foreground
+                :dark:color :$accent-foreground-inverse}
+   :.positive-foreground {:color :$positive-foreground
+                  :dark:color :$positive-foreground-inverse}
+   :.negative-foreground {:color :$negative-foreground
+                  :dark:color :$negative-foreground-inverse}
+   :.warning-foreground {:color :$warning-foreground
+                 :dark:color :$warning-foreground-inverse}
 
    ;; Semantic bg
    :.neutral-bg {:background-color :$neutral-background-color}

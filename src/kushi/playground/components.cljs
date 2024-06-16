@@ -67,15 +67,15 @@
 
         ;; SATURDAY
 
+        ;; fix active item bg color on sidemenu
         ;; figure out sidemenu on phone
-
-
-        ;; Change instance-code long classnames in demos
         ;; remove input from input namespaces
-        ;; debug errors in fireworks
-        ;; change bg and fg names in tokens
         ;; fix mouse-down-a11y on switches
         ;; fix slider controls on safari
+
+
+        ;; debug errors in fireworks
+
         ;; jiggle animation not work on mobile safari
         ;;  
 

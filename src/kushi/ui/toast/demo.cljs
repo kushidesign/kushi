@@ -28,7 +28,7 @@
     [:h3 (sx :.bold :m--0) "Saved for later"]
     [:p (sx 'my-toast-text
             :.small
-            :.neutral-secondary-fg)
+            :.neutral-secondary-foreground)
      (.format (new js/Intl.DateTimeFormat
                    "en-US"
                    #js{:dateStyle "full" :timeStyle "short"})

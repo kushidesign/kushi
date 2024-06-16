@@ -55,7 +55,7 @@
                 {:on-click #(open-kushi-modal token-name)})
       [:span (sx :sm:d--none) color-level]
       [:span (sx :.code :sm:d--block :d--none) token-name]
-      [icon (sx :.accent-secondary-fg
+      [icon (sx :.accent-secondary-foreground
                 :mis--0.5em
                 {:-icon-style :outlined})
        :help]]

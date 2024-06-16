@@ -54,8 +54,8 @@
                  :pi--1em
                  :pb--0.5em
                  [:fw (when focused? :$wee-bold)]
-                 [:bgc (when focused? :$neutral-650)]
-                 [:c (when focused? :white)])
+                 [:&.neutral.minimal:bgc (when focused? :$neutral-650)]
+                 [:&.neutral.minimal:c (when focused? :white)])
              (mouse-down-a11y sidenav-item-handler label modal?))
             label]])))
 
@@ -157,10 +157,10 @@
     "Kushi"]
    [light-dark-mode-switch]])
 
-      ;;  :bgc--$body-background-color-inverse
-      ;;  :sm:bgc--$body-background-color
-      ;;  :c--$body-color-inverse
-      ;;  :sm:c--$body-color
+      ;;  :bgc--$background-color-inverse
+      ;;  :sm:bgc--$background-color
+      ;;  :c--$foreground-color-inverse
+      ;;  :sm:c--$foreground-color
 
 ;; Everytime there is a resize event -
 ;; Check if viewport height changes
