@@ -1,5 +1,6 @@
 (ns kushi.ui.util
   (:require [clojure.string :as string]
+            [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
             [kushi.core :refer [keyed]]))
 
 ;; Generic
@@ -39,6 +40,10 @@
 
 (defn nameable? [x]
   (or (string? x) (keyword? x) (symbol? x)))
+
+(defn class-coll? [x]
+  (and (seq x)
+       (every? nameable? x))) 
 
 (defn as-str [x]
   (str (if (or (keyword? x) (symbol? x)) (name x) x)))
