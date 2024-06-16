@@ -175,7 +175,7 @@
   "Renders a vertical label"
   [s]
   [:p (sx :.xxsmall
-          :c--$neutral-secondary-fg
+          :c--$neutral-secondary-foreground
           :min-width--55px
           {:style {:writing-mode :vertical-lr
                    :text-orientation :upright

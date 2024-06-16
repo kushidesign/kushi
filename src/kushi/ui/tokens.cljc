@@ -7,32 +7,32 @@
    ;; Color
    ;; ------------------------------------------------------
    ;; TODO - change "body" to "foreground"?
-   :$body-color                              :$gray-950
-   :$body-color-inverse                      :$gray-50
+   :$foreground-color                        :$neutral-950
+   :$foreground-color-inverse                :$neutral-50
 
    ;; TODO - drop "body"?
-   :$body-background-color                   :white
-   :$body-background-color-inverse           :$gray-1000
+   :$background-color                        :white
+   :$background-color-inverse                :$neutral-1000
 
 
    ;; TODO - change "fg" to "foreground"?
    ;; Neutrals
-   :$neutral-fg                              :$neutral-minimal-color
-   :$neutral-fg-inverse                      :$neutral-minimal-color-inverse
-   :$neutral-secondary-fg                    :$gray-700
-   :$neutral-secondary-fg-inverse            :$gray-450
+   :$neutral-foreground                              :$neutral-minimal-color
+   :$neutral-foreground-inverse                      :$neutral-minimal-color-inverse
+   :$neutral-secondary-foreground                    :$neutral-700
+   :$neutral-secondary-foreground-inverse            :$neutral-450
 
-   :$accent-fg                               :$accent-minimal-color
-   :$accent-fg-inverse                       :$accent-minimal-color-inverse
+   :$accent-foreground                               :$accent-minimal-color
+   :$accent-foreground-inverse                       :$accent-minimal-color-inverse
 
-   :$positive-fg                             :$positive-minimal-color
-   :$positive-fg-inverse                     :$positive-minimal-color-inverse
+   :$positive-foreground                             :$positive-minimal-color
+   :$positive-foreground-inverse                     :$positive-minimal-color-inverse
 
-   :$warning-fg                              :$warning-minimal-color
-   :$warning-fg-inverse                      :$warning-minimal-color-inverse
+   :$warning-foreground                              :$warning-minimal-color
+   :$warning-foreground-inverse                      :$warning-minimal-color-inverse
 
-   :$negative-fg                             :$negative-minimal-color
-   :$negative-fg-inverse                     :$negative-minimal-color-inverse
+   :$negative-foreground                             :$negative-minimal-color
+   :$negative-foreground-inverse                     :$negative-minimal-color-inverse
 
 
    ;; Debugging grid
@@ -157,8 +157,8 @@
    ;; ------------------------------------------------------
    
    ;; pane colors and images
-   :$pane-background-color                 :$body-background-color
-   :$pane-background-color-inverse         :$body-background-color-inverse
+   :$pane-background-color                 :$background-color
+   :$pane-background-color-inverse         :$background-color-inverse
    :$pane-background-image                 :white
    :$pane-box-shadow                       :$elevated-5
    :$pane-box-shadow-inverse               :$elevated-5-inverse
@@ -209,10 +209,10 @@
    ;; ------------------------------------------------------
    
    ;; tooltip colors and images
-   :$tooltip-color                            :$body-color-inverse
-   :$tooltip-color-inverse                    :$body-color
-   :$tooltip-background-color                 :$body-background-color-inverse
-   :$tooltip-background-color-inverse         :$body-background-color
+   :$tooltip-color                            :$foreground-color-inverse
+   :$tooltip-color-inverse                    :$foreground-color
+   :$tooltip-background-color                 :$background-color-inverse
+   :$tooltip-background-color-inverse         :$background-color
    :$tooltip-background-image                 :none
    :$tooltip-box-shadow                       :none
    :$tooltip-box-shadow-inverse               :none

@@ -60,7 +60,7 @@
                                "🐻‍❄"]]
                              [:section (sx :.flex-col-sa) 
                               [:p (sx :fs--1.25em :.wee-bold) "Polar Bear"] 
-                              [:p (sx :c--$neutral-secondary-fg) "polar.bear@example.com"]]]]})}
+                              [:p (sx :c--$neutral-secondary-foreground) "polar.bear@example.com"]]]]})}
    
    {:desc      "Elevated levels from 0 to 5"
     :row-attrs (sx :.transition
@@ -92,7 +92,7 @@
                              "🐻‍❄"]]
                            [:section (sx :.flex-col-sa) 
                             [:p (sx :fs--1.25em :.wee-bold) "Polar Bear"] 
-                            [:p (sx :c--$neutral-secondary-fg) "polar.bear@example.com"]]]]})}
+                            [:p (sx :c--$neutral-secondary-foreground) "polar.bear@example.com"]]]]})}
    
    
    {:desc      "Alien"

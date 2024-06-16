@@ -17,7 +17,7 @@
   [:w "calc(100% - 50% + var(--switch-border-width))"])
 
 (defclass kushi-switch-thumb-content
-  :c--$neutral-fg
+  :c--$neutral-foreground
   :d--none 
   :w--100%
   :h--100% 

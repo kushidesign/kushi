@@ -147,8 +147,8 @@
                    :backdrop:bgc--transparent
                    :overflow--visible
                    [:transition-duration "var(--modal-transition-duration, var(--fast))"]
-                   :bgc--$body-background-color
-                   :dark:bgc--$body-background-color-inverse
+                   :bgc--$background-color
+                   :dark:bgc--$background-color-inverse
                    :border-radius--$modal-border-radius
                    :b--$modal-border
                    :min-width--$modal-min-width||450px

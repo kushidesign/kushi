@@ -175,7 +175,7 @@
                              (merge-attrs
                               label-text-attrs
                               (sx 'kushi-text-input-helper
-                                  :.neutral-secondary-fg
+                                  :.neutral-secondary-foreground
                                   :.inline-block
                                   :fw--$normal
                                   :mbs--$text-input-helper-margin-block-start||0.3em)))

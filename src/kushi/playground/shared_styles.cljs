@@ -101,8 +101,8 @@
    :fw         :$kushi-playground-meta-desc-label_font-weight||$wee-bold
    :font-style :$kushi-playground-meta-desc-label_font-style||italic
    :tt         :$kushi-playground-meta-desc-label_text-transform||uppercase
-   :c          :$neutral-secondary-fg
-   :dark:c     :$neutral-secondary-fg-inverse })
+   :c          :$neutral-secondary-foreground
+   :dark:c     :$neutral-secondary-foreground-inverse })
 
 (defclass kushi-treenav-section-header
   :.relative
@@ -267,14 +267,14 @@
 
 (defclass neutralize
   :.transition
-  :bgc--$body-background-color
-  :dark:bgc--$body-background-color-inverse
-  :c--$body-color
-  :dark:c--$body-color-inverse)
+  :bgc--$background-color
+  :dark:bgc--$background-color-inverse
+  :c--$foreground-color
+  :dark:c--$foreground-color-inverse)
 
 (defclass neutralize-secondary
   :.transition
-  :bgc--$body-background-color
-  :dark:bgc--$body-background-color-inverse
-  :c--$neutral-secondary-fg
-  :dark:c--$neutral-secondary-fg-inverse)
+  :bgc--$background-color
+  :dark:bgc--$background-color-inverse
+  :c--$neutral-secondary-foreground
+  :dark:c--$neutral-secondary-foreground-inverse)
