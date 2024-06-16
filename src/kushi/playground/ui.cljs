@@ -14,12 +14,12 @@
                {:on-click #(lightswitch!)})
    [label (sx ["has-ancestor(.dark):display" :none]
               ["has-ancestor(.kushi-playground-mobile-nav):c" :white])
-    [icon mui.svg/dark-mode]]
+    [icon mui.svg/light-mode]]
    [label (sx :d--none
               ["has-ancestor(.dark):display" :block]
               :c--white
               ["has-ancestor(.kushi-playground-mobile-nav):c" :black])
-    [icon mui.svg/light-mode]]])
+    [icon mui.svg/dark-mode]]])
 
 (defn desktop-lightswitch []
   [:div (sx 'kushi-light-dark-switch-desktop
