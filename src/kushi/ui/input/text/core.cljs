@@ -39,11 +39,14 @@
           :bw--1px
           :bs--solid
           :border-radius--$text-input-border-radius
+          :bgc--$white-transparent-70
+          :dark:bgc--$black-transparent-20
           :&_textarea:border-radius--$text-input-border-radius
           :&_input:border-radius--$text-input-border-radius
           [:bc "color-mix(in srgb, currentColor var(--text-input-border-intensity, 75%), transparent)"]
           [:dark:bc "color-mix(in srgb, currentColor var(--text-input-border-intensity-inverse, 55%), transparent)"]
-          [:focus-within:bgc :transparent!important] ;; tmp fix for when semantic class + input is focused
+          ["focus-within:bgc" "var(--white-transparent-70)!important"] ;; tmp fix for when semantic class + input is focused
+          ["dark:focus-within:bgc" "var(--black-transparent-20)!important"] ;; tmp fix for when semantic class + input is focused
           [:focus-within:c :currentColor!important] ;; ["has-ancestor(.error):bc" :$negative-600]
           [:focus-within:bc '(rgba 0 125 250 1)]
           {:class [semantic]})
@@ -163,7 +166,7 @@
                                :.info
                                :.block
                                :.small
-                               :fw--$semi-bold
+                               :fw--$wee-bold
                                :hover:bgc--transparent!important ;; temp fix
                                :active:bgc--transparent!important ;; temp fix
                                {:class [semantic]})
