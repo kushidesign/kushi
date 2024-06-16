@@ -41,7 +41,7 @@
                                            {:id id})
                                        [:div
                                         (sx :.xxxlarge :.flex-row-c)
-                                        "💃"] ]]))}]}
+                                        "💃🏽"] ]]))}]}
      
      {:desc      "With modal title, description, form with fields, and close button"
       :component button

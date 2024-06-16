@@ -67,9 +67,9 @@
 
         ;; SATURDAY
 
-        ;; Attack switches in dark mode
-        ;; tooltip arrows not showing up?
-        ;; create offscreen utility class
+        ;; figure out sidemenu on phone
+
+
         ;; Change instance-code long classnames in demos
         ;; remove input from input namespaces
         ;; debug errors in fireworks
@@ -94,8 +94,8 @@
 
 (def playground-components 
   (filter 
-   :label
-  #_#(contains? #{
+  ;;  :label
+  #(contains? #{
                 ;;  "switch"
                 ;;  "tag"
                   ;; "slider"
@@ -105,12 +105,12 @@
                   ;;  "grid"
                   ;;  "tooltip"
                   ;;  "accordian"
-                   "radio"
+                  ;;  "radio"
                   ;;  "text field"
                   ;;  "modal"
-                  ;;  "popover"
+                   "popover"
                   ;;  "collapse"
-                   "checkbox"
+                  ;;  "checkbox"
                   ;; "card"
                   ;; "icon"
                  }

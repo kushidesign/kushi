@@ -147,6 +147,7 @@
        :ai--c
        :zi--5
        :bbe--1px:solid:$neutral-150
+       :dark:bbe--1px:solid:$neutral-750
        :w--100%
        :p--1rem
        :max-height--$navbar-height
