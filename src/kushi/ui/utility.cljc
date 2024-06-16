@@ -276,17 +276,22 @@
 (def override-classes
   [;; General
    ;; ------------------------------------------------------
-   :invisible     {:opacity 0}
-   :hidden        {:visibility :hidden}
-   :visible       {:visibility :visible}
-   :collapse      {:visibility :collapse}
-
+   :invisible {:opacity 0}
+   :hidden    {:visibility :hidden}
+   :visible   {:visibility :visible}
+   :collapse  {:visibility :collapse}
+   :offscreen {:position :absolute
+               :left     :-10000px
+               :top      :auto
+               :width    :1px
+               :height   :1px
+               :overflow :hidden}
 
    ;; Content
    ;; ------------------------------------------------------
-  ;;  :content-blank {:content "\"\""}
-  ;;  :open-in-new   {:content "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"}
-
+   ;; :content-blank {:content "\"\""}
+   ;; :open-in-new   {:content "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"}
+   
    ;; Cursor
    ;; ------------------------------------------------------
    :pointer       {:cursor :pointer}
@@ -452,7 +457,7 @@
    :convex-4      {:background-image :$convex-4}
    :convex-5      {:background-image :$convex-5}
 
-   :elevated-0    {:box-shadow      :$elevated-0}
+   :elevated-0    {:box-shadow :$elevated-0}
    :elevated-1    {:box-shadow      :$elevated-1
                    :dark:box-shadow :$elevated-1-inverse}
    :elevated-2    {:box-shadow      :$elevated-2
