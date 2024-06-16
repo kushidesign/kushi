@@ -5,7 +5,7 @@
 
   ;;  [kushi.ui.core :refer (opts+children defcom defcom)]
   ;;  [domo.core :as domo]
-  ;;  [kushi.ui.input.slider.core :refer (slider)]
+  ;;  [kushi.ui.slider.core :refer (slider)]
   ;;  [kushi.ui.button.core :refer (button)]
   ;;  [kushi.ui.collapse.core :refer (collapse accordion)]
   ;;  [kushi.ui.tooltip.core :refer (tooltip2 tooltip add-temporary-tooltip!)]

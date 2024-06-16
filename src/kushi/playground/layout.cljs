@@ -44,7 +44,7 @@
                    :.pointer
                    :w--fit-content
                    :pb--0.25em
-                   [:hover>button:bgc (if focused? :$neutral-650 :$neutral-100)])
+                   [:hover>button.neutral.minimal:bgc (if focused? :$neutral-650 :$neutral-100)])
            [button
             (merge-attrs
              (sx :.pill
@@ -55,7 +55,9 @@
                  :pb--0.5em
                  [:fw (when focused? :$wee-bold)]
                  [:&.neutral.minimal:bgc (when focused? :$neutral-650)]
-                 [:&.neutral.minimal:c (when focused? :white)])
+                 [:dark:&.neutral.minimal:bgc (when focused? :$neutral-300)]
+                 [:&.neutral.minimal:c (when focused? :white)]
+                 [:dark:&.neutral.minimal:c (when focused? :black)])
              (mouse-down-a11y sidenav-item-handler label modal?))
             label]])))
 

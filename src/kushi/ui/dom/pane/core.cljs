@@ -151,7 +151,19 @@
    id]
 
 ;; Fireworks error - cannot convert symbol to string
-;; (? opts)
+(? [(:owning-el opts)]
+   #_(select-keys opts 
+                  [
+                ;;  :user-pane-style
+                ;;  :placement-kw
+                ;;  :user-rendering-fn
+                ;;  :auto-dismiss?
+                   :owning-el
+                ;;  :dialog-el
+                ;;  :pane-type
+                ;;  :user-pane-class
+                ;;  :arrow?
+                   ]))
   
 ;; Fireworks error - 1 is not ISeqable
 ;; (?pp (seq [1 2 3]))

@@ -4,7 +4,7 @@
    [kushi.ui.icon.mui.svg :as mui.svg ]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.popover.core :refer [dismiss-popover!]]
-   [kushi.ui.input.text.core :refer [text-field]]
+   [kushi.ui.text-field.core :refer [text-field]]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]

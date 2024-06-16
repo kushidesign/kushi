@@ -1,4 +1,4 @@
-(ns kushi.ui.input.slider.css)
+(ns kushi.ui.slider.css)
 
 (def css
   (str "

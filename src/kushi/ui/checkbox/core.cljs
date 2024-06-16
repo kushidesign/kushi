@@ -1,4 +1,4 @@
-(ns kushi.ui.input.checkbox.core
+(ns kushi.ui.checkbox.core
   (:require-macros
    [kushi.core :refer (sx)])
   (:require

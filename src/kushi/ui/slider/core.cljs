@@ -1,9 +1,9 @@
-(ns kushi.ui.input.slider.core
+(ns kushi.ui.slider.core
   (:require
    [applied-science.js-interop :as j]
    [kushi.core :refer (sx defclass merge-attrs insert-style-tag!)]
    [kushi.ui.core :refer (opts+children)]
-   [kushi.ui.input.slider.css]
+   [kushi.ui.slider.css]
    [kushi.ui.util :refer [range-of-floats find-index]]
    [kushi.playground.shared-styles]
    [kushi.playground.util :as util :refer-macros (keyed)]
@@ -11,7 +11,7 @@
    [domo.core :refer (copy-to-clipboard!)]
    [domo.core :as domo]))
 
-(insert-style-tag! "kushi-slider-styles" kushi.ui.input.slider.css/css)
+(insert-style-tag! "kushi-slider-styles" kushi.ui.slider.css/css)
 
 ;; ----------------------------------------------------------------------------
 ;; Styles for marker-labels

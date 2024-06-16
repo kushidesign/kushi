@@ -1,4 +1,4 @@
-(ns kushi.ui.input.radio.core
+(ns kushi.ui.radio.core
   (:require-macros
    [kushi.core :refer (sx)])
   (:require

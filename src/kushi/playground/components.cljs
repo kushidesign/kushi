@@ -13,16 +13,16 @@
   [kushi.ui.grid.demo :as grid.demo]
   [kushi.ui.icon.core :refer [icon]]
   [kushi.ui.icon.demo :as icon.demo]
-  [kushi.ui.input.checkbox.core :refer [checkbox]]
-  [kushi.ui.input.checkbox.demo :as checkbox.demo]
-  [kushi.ui.input.radio.core :refer [radio]]
-  [kushi.ui.input.radio.demo :as radio.demo]
-  [kushi.ui.input.slider.core :refer [slider]]
-  [kushi.ui.input.slider.demo :as slider.demo]
-  [kushi.ui.input.switch.core :refer [switch]]
-  [kushi.ui.input.switch.demo :as switch.demo]
-  [kushi.ui.input.text.core :refer [text-field]]
-  [kushi.ui.input.text.demo :as input.demo]
+  [kushi.ui.checkbox.core :refer [checkbox]]
+  [kushi.ui.checkbox.demo :as checkbox.demo]
+  [kushi.ui.radio.core :refer [radio]]
+  [kushi.ui.radio.demo :as radio.demo]
+  [kushi.ui.slider.core :refer [slider]]
+  [kushi.ui.slider.demo :as slider.demo]
+  [kushi.ui.switch.core :refer [switch]]
+  [kushi.ui.switch.demo :as switch.demo]
+  [kushi.ui.text-field.core :refer [text-field]]
+  [kushi.ui.text-field.demo :as input.demo]
   [kushi.ui.modal.demo :as modal.demo]
   [kushi.ui.popover.demo :as popover.demo]
   [kushi.ui.spinner.core :refer [spinner]]
@@ -41,10 +41,6 @@
         ;; Create sci-fi variant
         ;; Create gel variant
         
-        ;; finish popover examples
-        ;; finish toast positioning
-        ;; tag max-width example
-
 
         ;; tooltips(delay):
         ;; row of buttons that show all positions with no delay
@@ -52,29 +48,26 @@
         ;; row of buttons that show various animations 
         ;; row of buttons that show various stylings (no arrow etc)
 
-        ;; TODO UI
-        ;; use modal instead of popover
-        ;; code button right of label
-        ;; chose serif font for labels
-
-        ;; TODO layout
-        ;; sticky header
-        ;; add cta to sticky header
-
-        ;; TODO 
-        ;; mobile layouts
-        
 
         ;; SATURDAY
 
-        ;; fix active item bg color on sidemenu
         ;; figure out sidemenu on phone
-        ;; remove input from input namespaces
-        ;; fix mouse-down-a11y on switches
+        ;; For some reason modal and card do not register as intersecting
         ;; fix slider controls on safari
-
+        ;; toast on mobile
 
         ;; debug errors in fireworks
+
+        
+        ;; add view-in docs cta to sticky header
+        ;; docs view
+        ;; impl modal for code snippets
+
+
+        ;; Add color type about sections
+
+        ;; Some koind of splash page?
+
 
         ;; jiggle animation not work on mobile safari
         ;;  
@@ -94,23 +87,24 @@
 
 (def playground-components 
   (filter 
-   :label
-  #_#(contains? #{
+   #_:label
+  #(contains? #{
                 ;;  "switch"
+                ;;   "slider"
+                ;;    "radio"
+                ;;    "text field"
+                ;;    "checkbox"
+
                 ;;  "tag"
-                  ;; "slider"
                   ;; "button"
                   ;;  "callout"
                   ;;  "spinner"
                   ;;  "grid"
                   ;;  "tooltip"
                   ;;  "accordian"
-                  ;;  "radio"
-                  ;;  "text field"
                   ;;  "modal"
                    "popover"
                   ;;  "collapse"
-                  ;;  "checkbox"
                   ;; "card"
                   ;; "icon"
                  }
@@ -147,7 +141,7 @@
     {:label          "switch" 
      :demo-component switch.demo/demo2
      :component      switch
-     :reqs           '[[kushi.ui.input.switch.core :refer [switch]]]
+     :reqs           '[[kushi.ui.switch.core :refer [switch]]]
      :variants-base  #{:on :off}
      :variants-order [:off :on]
      :variants-attrs {:on  {:-on? true}
@@ -156,7 +150,7 @@
     {:label          "radio" 
      :demo-component radio.demo/demo
      :component      radio
-     :reqs           '[[kushi.ui.input.radio.core :refer [radio]]]
+     :reqs           '[[kushi.ui.radio.core :refer [radio]]]
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}
      }
@@ -164,14 +158,14 @@
     {:label          "checkbox" 
      :demo-component checkbox.demo/demo
      :component      checkbox
-     :reqs           '[[kushi.ui.input.radio.core :refer [radio]]]
+     :reqs           '[[kushi.ui.radio.core :refer [radio]]]
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}}
 
     {:label          "slider"
      :demo-component slider.demo/demo
      :component      slider
-     :reqs           '[[kushi.ui.input.slider.core :refer [slider]]]
+     :reqs           '[[kushi.ui.slider.core :refer [slider]]]
      :variants-base  #{:on}
      :variants-order [:on]
      :variants-attrs {:on {}}}
@@ -179,7 +173,7 @@
     {:label          "text field" 
      :demo-component input.demo/demo
      :component      text-field
-     :reqs           '[[kushi.ui.input.text.core :refer [text-field]]]
+     :reqs           '[[kushi.ui.text-field.core :refer [text-field]]]
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}}
 

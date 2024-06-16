@@ -12,8 +12,8 @@
             [kushi.ui.tooltip.core :refer [tooltip-attrs]]
             [domo.core :as domo]
             [kushi.ui.core :refer [defcom]]
-            [kushi.ui.input.slider.core]
-            [kushi.ui.input.switch.core :refer [switch]]
+            [kushi.ui.slider.core]
+            [kushi.ui.switch.core :refer [switch]]
             [kushi.ui.util :refer [find-index]]
             [kushi.playground.demobox.defs :refer [variants-by-category]]
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
@@ -282,7 +282,7 @@
         og-class-idx      (find-index #(= % og-class) family-classes)
         og-class          og-class]
 
-    [kushi.ui.input.slider.core/slider
+    [kushi.ui.slider.core/slider
      {:-copy-to-clipboard-fn copy-to-clipboard-fn
       :-steps                family-classes
       :-step-marker          :dot
@@ -321,7 +321,7 @@
         og-class  "original-tweakable-value"
         tweaked-class  "tweaked-value-row"
         ]
-    [kushi.ui.input.slider.core/slider
+    [kushi.ui.slider.core/slider
      (sx :w--100%
          {:-copy-to-clipboard-fn copy-to-clipboard-fn
           :-step-label-suffix    (name unit-type)

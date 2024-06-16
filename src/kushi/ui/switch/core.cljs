@@ -1,4 +1,4 @@
-(ns kushi.ui.input.switch.core
+(ns kushi.ui.switch.core
   (:require-macros
    [kushi.core :refer (sx defclass)])
   (:require
@@ -186,10 +186,14 @@
        ["dark:&.negative.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-negative-background-color-hover-inverse]
 
        [:$thumb-height "calc(var(--switch-thumb-scale-factor, 1) * (1em - (var(--switch-border-width) * 2)))"]
+
        {:disabled      disabled?
         :role          :switch
         :aria-checked  (if on? true false)
-        :on-mouse-down #(when-not disable-events? (toggle-switch %))})
+        ;; :on-mouse-down #(when-not disable-events? (toggle-switch %))
+        })
+      
+      (domo/mouse-down-a11y #(when-not disable-events? (toggle-switch %)))
 
       attrs)
 
@@ -223,8 +227,7 @@
         [:bgc :$white-transparent-100]
         [:box-shadow "0 2px 6px 0 var(--black-transparent-15)"]
         ["has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start" "calc(100% - var(--width))"]
-        ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed]
-        )
+        ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
        thumb-attrs)
       [:div (sx 'kushi-switch-thumb-content-on
                 :.kushi-switch-thumb-content
