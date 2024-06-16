@@ -1,35 +1,35 @@
 
-{:css-dir                "public/css"
- :log-build-report-style :detailed
+{:css-dir                             "public/css"
+ :log-build-report-style              :detailed
 
  ;; This is optional. The intent of this is to use the words or iconography of your choosing
  ;; to draw more attention to the terminal when there is a problem.
  ;; Needs to be a vector of strings.
- :log-warning-banner     [
-                          "     |\\_/|                  "
-                          "     | @ @                   "
-                          "     |   <>              _   "
-                          "     |  _/\\------____ ((| |))"
-                          "     |               `--' |  "
-                          " ____|_       ___|   |___.'  "
-                          "/_/_____/____/_______|       "
-                          ]
+ :log-warning-banner                  [
+                                       "     |\\_/|                  "
+                                       "     | @ @                   "
+                                       "     |   <>              _   "
+                                       "     |  _/\\------____ ((| |))"
+                                       "     |               `--' |  "
+                                       " ____|_       ___|   |___.'  "
+                                       "/_/_____/____/_______|       "
+                                       ]
 
 
- :theme                  site.theme/my-theme
+ :theme                               site.theme/my-theme
 
 
  ;;  :kushi-ui-variants  {:button {:semantic #{:positive :negative}
  ;;                                :kind     #{:primary :minimal}}
  ;;                       :tag    {:semantic #{:positive :negative}}}
+ 
+ :media                               [:xsm {:min-width :480px}
+                                       :sm {:min-width :640px}
+                                       :md {:min-width :768px}
+                                       :lg {:min-width :1024px}
+                                       :xl {:min-width :1280px}
+                                       :xxl {:min-width :1536px}
+                                       :short {:max-height :800px}]
 
-;;  :media                  [:xsm {:min-width :480px}
-;;                           :sm {:min-width :640px}
-;;                           :md {:min-width :768px}
-;;                           :lg {:min-width :1124px}
-;;                           :xl {:min-width :1280px}
-;;                           :xxl {:min-width :1536px}]
-
- :elide-unused-kushi-utility-classes? false
- }
+ :elide-unused-kushi-utility-classes? false}
 
