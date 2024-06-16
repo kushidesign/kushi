@@ -133,9 +133,9 @@
    ".dark .neutral:hover:color"                            0
    ".dark .neutral:active:color"                           0
 
-   ".dark .neutral:background-color"                       750
-   ".dark .neutral:hover:background-color"                 700
-   ".dark .neutral:active:background-color"                700
+   ".dark .neutral:background-color"                       850
+   ".dark .neutral:hover:background-color"                 800
+   ".dark .neutral:active:background-color"                800
 
    ".dark .neutral.info:color"                             50
    ".dark .neutral.info:hover:color"                       50

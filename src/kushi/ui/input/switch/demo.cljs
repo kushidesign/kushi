@@ -67,11 +67,12 @@
       :sx-attrs        (sx-call (sx :.xxlarge))
       :row-attrs       row-attrs
       :container-attrs container-attrs
-      :examples        (for [s (take 4 component-examples/colors)]
+      :examples        (for [s (take 5 component-examples/colors)]
                          {:label (name s)
                           :attrs {:class [s]}})}
 
-     {:desc            "Semantic variants, outline styling"
+     ;; Leave this off until you figure out dark theme styling w/new color paradigm
+     #_{:desc            "Semantic variants, outline styling"
       :sx-attrs        (sx-call (sx
                                  :.xxlarge
                                  :$switch-border-color--$gray-400
@@ -106,7 +107,8 @@
      {:desc            "With convex-styled thumb control"
       :row-attrs       row-attrs
       :container-attrs container-attrs
-      :sx-attrs        (sx-call (sx {:-thumb-attrs (sx :.convex)}))
+      :sx-attrs        (sx-call (sx {:-thumb-attrs (sx :bgi--$convex
+                                                       :dark:bgi--$convex-3)}))
       :examples        (for [sz switch-sizes]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
