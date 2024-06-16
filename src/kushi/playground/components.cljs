@@ -63,7 +63,30 @@
 
         ;; TODO 
         ;; mobile layouts
+        
+
+        ;; SATURDAY
+
+        ;; Attack switches in dark mode
+        ;; tooltip arrows not showing up?
+        ;; create offscreen utility class
+        ;; Change instance-code long classnames in demos
+        ;; remove input from input namespaces
+        ;; debug errors in fireworks
+        ;; change bg and fg names in tokens
+        ;; fix mouse-down-a11y on switches
+        ;; fix slider controls on safari
+        ;; jiggle animation not work on mobile safari
+        ;;  
+
+        
+
         ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; Tie together nav height
+;; Make utility for fg-bg and border for light/dark
+
 
 ;; Fix toast on mobile
 ;; Debug popover on mobile

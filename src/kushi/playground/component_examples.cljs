@@ -112,10 +112,12 @@
            (apply merge)))
 
 (defn section-label [s]
-  [:p (sx :.serif
+  [:p (sx 'example-section-label
+          :.serif
           :.bold
+          :.neutralize-secondary
+          :dark:fw--$wee-bold
           :fs--16.75px
-          :c--$neutral-secondary-fg
           :min-width--55px
           :w--fit-content
           :lh--1.7
