@@ -19,8 +19,8 @@
 
 
 (def slider-examples
-  (let [row-attrs       (sx :&_.playground-component-example-row-instance-code:w--100%
-                            :&_.playground-component-example-row-instance-code:max-width--500px
+  (let [row-attrs       (sx :&_.instance-code:w--100%
+                            :&_.instance-code:max-width--500px
                             :mb--2rem:1.5rem)
         container-attrs (sx :gtc--1fr)
         m               (keyed row-attrs container-attrs)

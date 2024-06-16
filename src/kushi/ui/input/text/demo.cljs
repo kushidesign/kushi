@@ -30,7 +30,7 @@
 
 (def checkbox-examples
   (let [row-attrs (merge-attrs {:class ["playground-example-row-bounded"]}
-                               (sx [:&_.playground-component-example-row-instance-code 
+                               (sx [:&_.instance-code 
                                     {:p :1.05em:1.65em:1.25em}]))]
     [{:desc      "Simple"
       :row-attrs row-attrs

@@ -30,7 +30,7 @@
           [component-examples/examples-section component-opts example-opts])))
 
 (def callout-examples
-  (let [row-attrs         (sx :&_.playground-component-example-row-instance-code:w--100%
+  (let [row-attrs         (sx :&_.instance-code:w--100%
                               :flex-direction--column)
         container-attrs   (sx :gtc--1fr)
         semantic-variants (for [[s msg]

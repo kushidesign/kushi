@@ -32,10 +32,10 @@
 (def checkbox-examples
   (let [row-attrs {:class ["playground-example-row-bounded"]}]
     [{:desc      "Showing sizes from xsmall to xxxlarge"
-      :row-attrs (sx [:xsm:&_.playground-component-example-row-instance-code
+      :row-attrs (sx [:xsm:&_.instance-code
                       {:ai             :fe
                        :flex-direction :row}]
-                     [:&_.playground-component-example-row-instance-code
+                     [:&_.instance-code
                       {:ai             :fs
                        :flex-direction :column
                        :w              :100%
@@ -81,10 +81,10 @@
      ]))
 
 #_{:desc      "Showing sizes from xsmall to xxxlarge"
- :row-attrs (sx [:md:&_.playground-component-example-row-instance-code
+ :row-attrs (sx [:md:&_.instance-code
                  {:ai             :fe
                   :flex-direction :row}]
-                [:&_.playground-component-example-row-instance-code
+                [:&_.instance-code
                  {:ai             :fs
                   :flex-direction :column}]
                 :&_label:pbe--0

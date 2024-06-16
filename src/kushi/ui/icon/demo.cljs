@@ -84,7 +84,7 @@
        (sx :gtc--1fr)
 
        row-attrs-2
-       (sx [:&_.playground-component-example-row-instance-code
+       (sx [:&_.instance-code
             {:w              :100%
              :d              :flex
              :flex-direction :column
@@ -94,7 +94,7 @@
 
        grid-row-attrs
        (sx 
-        [:&_.playground-component-example-row-instance-code
+        [:&_.instance-code
          {:ai         :fe     
           :display    :grid
           :w          :100%

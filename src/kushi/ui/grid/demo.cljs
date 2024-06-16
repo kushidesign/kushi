@@ -20,7 +20,7 @@
            example-opts])))
 
 (def grid-examples
-  (let [row-attrs (sx :&_.playground-component-example-row-instance-code:w--100%)
+  (let [row-attrs (sx :&_.instance-code:w--100%)
         container-attrs (sx :gtc--1fr)]
     [{:desc            "Basic"
       :row-attrs       row-attrs
