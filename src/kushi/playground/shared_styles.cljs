@@ -253,23 +253,28 @@
    :dark:b        :1px:solid:$neutral-850})
 
 
-(defclass playground-right-sidenav-header
-  :.medium
-  :.semi-bold
-  :pb--0.25em:0.5em
-  ;; use some class that does light and dark
-  :bgc--white)
+
 
 (defclass playground-pane-box-shadow
   :box-shadow--0:0:13px:8px:white|0:0:10px:9px:white)
 
-(defclass playground-right-sidenav
-  :.fixed
-  :o--0.975
-  :zi--4
-  :iie--0
-  :ibs--41.5px
-  :md:ibs--51.5px
-  :pb--0:1rem
-  :&_h2:pi--1rem
-  :&_ul:pi--1rem)
+(defclass all-components-sidenav-header
+  :.flex-col-c
+  :.semi-bold
+  :.neutralize
+  :ai--c
+  :height--$navbar-height)
+
+(defclass neutralize
+  :.transition
+  :bgc--$body-background-color
+  :dark:bgc--$body-background-color-inverse
+  :c--$body-color
+  :dark:c--$body-color-inverse)
+
+(defclass neutralize-secondary
+  :.transition
+  :bgc--$body-background-color
+  :dark:bgc--$body-background-color-inverse
+  :c--$neutral-secondary-fg
+  :dark:c--$neutral-secondary-fg-inverse)

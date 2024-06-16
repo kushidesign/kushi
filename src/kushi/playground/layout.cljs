@@ -1,131 +1,165 @@
 (ns ^:dev/always kushi.playground.layout
   (:require [domo.core :as domo]
-            [fireworks.core :refer [? ?--]]
+            [fireworks.core :refer [? ?-- ?-]]
             [kushi.core :refer [sx merge-attrs]]
+            [kushi.ui.modal.core :refer [open-kushi-modal modal close-kushi-modal]]
+            [kushi.ui.button.core :refer [button]]
             [kushi.ui.collapse.core :refer [collapse]]
             [kushi.ui.icon.core :refer [icon]]
             [kushi.playground.state :as state]
-            [kushi.playground.component-examples :as component-examples]))
+            [kushi.playground.ui :refer [light-dark-mode-switch]]
+            [kushi.playground.component-examples :as component-examples]
+            [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
+            [reagent.dom :as rdom]))
 
+(defn sidenav-item-handler [label modal? e]
+  (domo/scroll-into-view!
+   (domo/qs-data= "kushi-playground-component" label))
+  (domo/scroll-by! {:y -50})
+  (when modal?
+    (dismiss-popover! e)))
 
-(defn componenent-sidenav-items [coll]
+(defn mouse-down-a11y [f & args]
+  {:on-key-down   #(when (contains? #{" " "Enter"} (.-key %))
+                     (apply f (concat args [%])))
+   :on-mouse-down #(when (= 0 (.-button %))
+                     (apply f (concat args [%])))})
+
+(defn all-componenents-sidenav-items
+  [{:keys [coll modal?]}]
   (into [:ul (sx :.flex-col-fs
+                 :.neutralize
                  :ai--c
-                 :pb--1rem:2rem
-                 :bgc--white
+                 :short:d--grid
+                 :short:gtc--max-content:max-content
+                 :short:ji--center
+                 :pb--0rem:2rem
+                 :pi--0.5em
                  :overflow-y--auto)]
         (for [{:keys [label]} coll
               :let            [focused? (= label
                                            @state/*playground-first-intersecting)]]
-          [:li (sx :.xsmall
-                   :.wee-bold
+          [:li (sx :.small
                    :.capitalize
                    :.pointer
                    :w--fit-content
                    :pb--0.25em
-                   [:hover>span:bgc (if focused? 
-                                      :$neutral-650
-                                      :$neutral-100)])
-           [:span 
-            (sx :.pill
-                :.block
-                :p--$nav-padding
-                [:fw (when focused? :$semi-bold)]
-                [:bgc (when focused? :$neutral-650)]
-                [:c (when focused? :white)]
-                {:on-click (fn [e]
-                             (domo/scroll-into-view!
-                              (domo/qs-data= "kushi-playground-component" label))
-                             (domo/scroll-by! {:y -50})
-                             (when-let [collapse (domo/nearest-ancestor (domo/et e)
-                                                                        "#playground-right-sidenav-collapse.kushi-collapse-expanded")]
-                               (some-> collapse
-                                       (domo/qs ".kushi-collapse-header")
-                                       .click)))})
+                   [:hover>button:bgc (if focused? :$neutral-650 :$neutral-100)])
+           [button
+            (merge-attrs
+             (sx :.pill
+                 :.minimal
+                 :.neutral
+                 :.xxxfast
+                 :pi--1em
+                 :pb--0.5em
+                 [:fw (when focused? :$wee-bold)]
+                 [:bgc (when focused? :$neutral-650)]
+                 [:c (when focused? :white)])
+             (mouse-down-a11y sidenav-item-handler label modal?))
             label]])))
 
-(defn mobile-component-sidenav-scrim []
-  (when (:mobile-sidenav-expanded? @state/*playground)
-    [:div (sx 'mobile-component-sidenav-scrim
-              :.fixed-fill
-              :zi--3
-              :bgc--transparent
-              ;; 160px is width of mobile side menu
-              [:bgi "linear-gradient(to left, white 160px, rgba(255, 255, 255, 0.8) 320px, rgba(255, 255, 255, 0.8))"]
-              :dark:bgc--black)]))
 
-(defn mobile-component-sidenav 
+(defn below-breakpoint? [k]
+  (false? (->> (kushi.core/breakpoints)
+               k
+               first
+               (apply domo/matches-media?))))
+
+(defn- all-componenents-sidenav-button [attrs]
+  [:button
+   attrs
+   [:span (sx :.flex-row-c :gap--0.5em :lg:&_.kushi-icon:d--none)
+    [icon :menu]
+    "All Components"]])
+
+(defn all-components-sidenav
   [playground-components]
-  (do
-    [collapse
-     (merge-attrs
-      (sx :.playground-right-sidenav
-          :lg:display--none
-          :width--160px
-          :md:width--190px
-          :$nav-padding--0.5em:1em
-          {:id "playground-right-sidenav-collapse"})
-      {:-label         "All Components"
-       :-icon          [icon :menu]
-       :-icon-expanded [icon :close]
-       :-speed         0 
-       :-header-attrs  (sx :.playground-right-sidenav-header
-                           :.small!
-                           :>span:jc--center
-                           :pi--1em
-                           :pb--0.25em:0.5em
-                           {:on-click #_#(?-- 'User)
-                            #(swap! state/*playground
-                                    assoc-in
-                                    [:mobile-sidenav-expanded?]
-                                    (not (= "true"
-                                            (.getAttribute (domo/cet %)
-                                                           "aria-expanded"))))})}) 
-     [componenent-sidenav-items playground-components]]))
+  (let [modal-id "mobile-sidenav-all-components"]
+    [:nav (sx :.fixed
+              :.small
+              :.flex-col-fs
+              :.neutralize
+              :ai--c
+              [:lg:h "calc(100vh - var(--navbar-height))"]
+              :h--fit-content
+              :width--fit-content
+              :zi--4
+              :iie--1.25rem
+              :md:iie--4rem
+              :ibs--$navbar-height
+              :lg:pb--0:1rem)
+
+     ;; Button for lg and below (mobile)
+     [all-componenents-sidenav-button
+      (merge-attrs 
+       (sx :.all-components-sidenav-header
+           :.pointer
+           :lg:d--none)
+       (popover-attrs
+        {:-f         (fn [popover-el]
+                       (rdom/render (partial all-componenents-sidenav-items 
+                                             {:coll   playground-components
+                                              :modal? true})
+                                    popover-el))
+
+         ;; why not on mobile?
+         :-placement :b
+         :-arrow?    false
+         :class      (:class (sx 'all-components-sidenav-popover-pane
+                                 :.styled-scrollbars
+                                 :$popover-offset--0px
+                                 :$popover-edge-padding--0px
+                                 :$popover-flip-viewport-edge-threshold--0px
+                                 :$popover-border-color--transparent
+                                ;;  :$popover-border-color--red
+                                 :$popover-z-index--2
+                                 :overflow--hidden
+                                 [:$popover-box-shadow 
+                                  "0 0 0px 100vmax var(--white-transparent-70), 0 0 50vw 30vw white"]
+                                 [:h '(calc :100vh - :125px)]))}))]
+
+     ;; Button for lg and above
+     [all-componenents-sidenav-button
+      (sx :.all-components-sidenav-header
+          :d--none
+          :lg:d--flex
+          :cursor--default)]
+
+     ;; Component list for lg and above
+     [:div (sx :d--none
+               :lg:d--block
+               [:h '(calc :100vh - :125px)])
+      [all-componenents-sidenav-items 
+       {:coll playground-components}]]]))
 
 
-(defn desktop-component-sidenav
-  [playground-components]
-  [:nav
-   (sx :.playground-right-sidenav
-       [:h "calc(100vh - 50px)"]
-       :bgc--white
-       :display--none
-       :lg:display--block
-       :width--160px
-       :md:width--190px
-       :$nav-padding--0.5em:1em)
-   [:h2 
-    (sx :.playground-right-sidenav-header
-        :ta--center)
-    "All Components"]
-   [componenent-sidenav-items playground-components]])
 
 (defn header []
   [:div
    (sx :.kushi-playground-all-components-header
        :.fixed
        :.flex-row-sb
+       :.neutralize
        :top--0
        :left--0
        :right--0
        :ai--c
        :zi--5
-       :bgc--white
        :bbe--1px:solid:$neutral-150
        :w--100%
        :p--1rem
-       :max-height--41.5px
-       :md:max-height--51.5px
+       :max-height--$navbar-height
        :pi--1.25rem
-       :md:pi--4rem
-       )
-   [:span (sx :.semi-bold
-              :fs--$xlarge
-              ;; :md:fs--$xxlarge
-              :o--0.5)
-    "Kushi"]])
+       :md:pi--4rem)
+   [:span (sx :.semi-bold :fs--$xlarge)
+    "Kushi"]
+   [light-dark-mode-switch]])
 
+      ;;  :bgc--$body-background-color-inverse
+      ;;  :sm:bgc--$body-background-color
+      ;;  :c--$body-color-inverse
+      ;;  :sm:c--$body-color
 
 ;; Everytime there is a resize event -
 ;; Check if viewport height changes
@@ -134,6 +168,7 @@
 (defn layout [_comps]
   
   [:div (sx :.flex-col-fs
+            :$navbar-height--50px
             ;; :pi--4rem
             ;; [:bgi '(linear-gradient "to right" "white" "white 480px" "#f5f5f5 480px" "#f5f5f5")]
             ;; :.debug-red
@@ -141,15 +176,13 @@
             ;; :outline-offset---2px
             )
    [header]
-   [mobile-component-sidenav _comps]
-   [mobile-component-sidenav-scrim]
-   [desktop-component-sidenav _comps]
+
+   [all-components-sidenav _comps]
 
    ;; Main section
    (into [:div
           (sx :.kushi-playground-all-components
-              :>section:first-child:pbs--41.5px
-              :md:>section:first-child:pbs--51.5px
+              :>section:first-child:pbs--$navbar-height
               :.flex-col-fs
               :.grow
               :gap--5rem
@@ -180,22 +213,16 @@
             [:h1 (sx 
                   :.semi-bold
                   :.capitalize
-                  ;; :.playground-pane-box-shadow
+                  :.neutralize
                   :.flex-col-c
                   :ai--fs
                   :fs--$xlarge
-                  ;; :md:fs--$xxlarge
                   :lh--0.75em
                   :position--sticky
                   :zi--1
-                  :h--41px
-                  :md:h--51px
-                  [:top :41px]
-                  [:md:top :51px]
-                  ;; [:pbs "calc(41.5px / 3)"]
-                  ;; [:md:pbs "calc(51.5px / 3)"]
-                  [:w :100%]
-                  :bgc--white)
+                  :h--50
+                  [:top :$navbar-height]
+                  [:w :100%])
              label]
             (when demo-component
               (let [{:keys [matches

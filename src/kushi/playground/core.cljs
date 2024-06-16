@@ -5,14 +5,17 @@
             [kushi.core :refer [sx]]
             [kushi.playground.components :refer [playground-components]]
             [kushi.playground.layout :as layout]
-            [kushi.playground.nav :as nav]
             [kushi.playground.shared-styles :as shared-styles]
             [kushi.playground.state :as state :refer [*state]]
             [kushi.playground.ui :refer [light-dark-mode-switch]]
             [kushi.playground.util
              :as util
              :refer-macros [keyed]]
-            [kushi.ui.examples :as examples]
+
+            ;; OLD
+            ;; [kushi.ui.examples :as examples]
+            ;; [kushi.playground.nav :as nav]
+
             [malli.core :as malli]
             [malli.dev.pretty :as pretty]))
 
@@ -97,51 +100,51 @@
    #_[:section#kushi-docs (sx :min-height--1000px :flex-grow--0)]])
 
 
-(def kushi-playground-page-wrapper-attrs
-  "Default styling class for kushi playground page wrapper, only child of #app div.
-   This can be augmented by the user-provied :page-wrapper-attrs map."
-  (sx
-   'kushi-playground-page-wrapper-attrs
-   :.flex-row-fs
-   :ai--fs
+;; (def kushi-playground-page-wrapper-attrs
+;;   "Default styling class for kushi playground page wrapper, only child of #app div.
+;;    This can be augmented by the user-provied :page-wrapper-attrs map."
+;;   (sx
+;;    'kushi-playground-page-wrapper-attrs
+;;    :.flex-row-fs
+;;    :ai--fs
 
-   ;; :ff--Inter|system-ui|sans-serif
-   ;; :.wee-bold
-   ;; TODO wire most of these up into theming
-   {:style {:$topnav-height                                      (str (:topnav-height shared-styles/shared-values) "px")
-            :$divisor                                            "var(--kushi-playground-main-section-divisor, 4px solid var(--gray-100))"
-            :$divisor-dark                                       "var(--kushi-playground-main-section-divisor-inverse, 4px solid var(--gray-700))"
-            :$title-margin-block                                 :0.0em:3.5rem
-            :$body-copy-line-height                              :1.5em
-            :$sidebar-width                                      :225px
-            :$sidebar-width-lg                                   :21vw
-            :$components-menu-width                              :660px
-            :$page-padding-inline                                :1.5rem
-            :$vp-top-header-padding                              :0.7em
-            :$vp-top-header-padding-with-offset                  (str "calc( var(--vp-top-header-padding) - "
-                                                                      (:scroll-window-by-px shared-styles/shared-values)
-                                                                      "px)")
-            :$kushi-playground-sidenav-max-width                 :250px
-            :$kushi-playground-mobile-header-height-fallback     :$kushi-playground-mobile-header-height||46px
+;;    ;; :ff--Inter|system-ui|sans-serif
+;;    ;; :.wee-bold
+;;    ;; TODO wire most of these up into theming
+;;    {:style {:$topnav-height                                      (str (:topnav-height shared-styles/shared-values) "px")
+;;             :$divisor                                            "var(--kushi-playground-main-section-divisor, 4px solid var(--gray-100))"
+;;             :$divisor-dark                                       "var(--kushi-playground-main-section-divisor-inverse, 4px solid var(--gray-700))"
+;;             :$title-margin-block                                 :0.0em:3.5rem
+;;             :$body-copy-line-height                              :1.5em
+;;             :$sidebar-width                                      :225px
+;;             :$sidebar-width-lg                                   :21vw
+;;             :$components-menu-width                              :660px
+;;             :$page-padding-inline                                :1.5rem
+;;             :$vp-top-header-padding                              :0.7em
+;;             :$vp-top-header-padding-with-offset                  (str "calc( var(--vp-top-header-padding) - "
+;;                                                                       (:scroll-window-by-px shared-styles/shared-values)
+;;                                                                       "px)")
+;;             :$kushi-playground-sidenav-max-width                 :250px
+;;             :$kushi-playground-mobile-header-height-fallback     :$kushi-playground-mobile-header-height||46px
 
-            "dark:&_.kushi-copy-to-clipboard-button-graphic:filter" '(invert 1)
-            "dark:&_a.kushi-link:after:filter"                      '(invert 1)
+;;             "dark:&_.kushi-copy-to-clipboard-button-graphic:filter" '(invert 1)
+;;             "dark:&_a.kushi-link:after:filter"                      '(invert 1)
 
-            :&_a.kushi-link:td                                    :underline:1px:solid:currentColor
-            :&_a.kushi-link:tuo                                   :-2px
-            :&_.sidenav-primary&_a.kushi-link:td                  :none
-            :&_a.kushi-link:d                                     :inline-flex
-            :&_a.kushi-link:after:content                         "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='12px' viewBox='0 0 24 24' width='12px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"
-            :&_a.kushi-link:after:d                               :flex
-            :&_a.kushi-link:after:flex-direction                  :column
-            :&_a.kushi-link:after:jc                              :center
-            :&_a.kushi-link:after:va                              :middle
-            :&_a.kushi-link:after:mi                              :0.2em:0.25em
+;;             :&_a.kushi-link:td                                    :underline:1px:solid:currentColor
+;;             :&_a.kushi-link:tuo                                   :-2px
+;;             :&_.sidenav-primary&_a.kushi-link:td                  :none
+;;             :&_a.kushi-link:d                                     :inline-flex
+;;             :&_a.kushi-link:after:content                         "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='12px' viewBox='0 0 24 24' width='12px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"
+;;             :&_a.kushi-link:after:d                               :flex
+;;             :&_a.kushi-link:after:flex-direction                  :column
+;;             :&_a.kushi-link:after:jc                              :center
+;;             :&_a.kushi-link:after:va                              :middle
+;;             :&_a.kushi-link:after:mi                              :0.2em:0.25em
 
-            ;; For dev-mode isolation
-            "&_.kushi-playground-dev-mode>section:not(.kushi-playground-dev-mode-target):display" :none
+;;             ;; For dev-mode isolation
+;;             "&_.kushi-playground-dev-mode>section:not(.kushi-playground-dev-mode-target):display" :none
             
-            }}))
+;;             }}))
 
 
 (defn desktop-lightswitch []
@@ -194,92 +197,99 @@
 
 
 (defn main-view
-  [{:keys [
-           site-header
-          ;; desktop-nav ; disable for now
-           mobile-nav
-           custom-components
-           kushi-components
-           custom-colors
-           kushi-colors
-           custom-typography
-           kushi-typography
-           kushi-user-guide
-           kushi-clojars
-           kushi-about
-           render
-          ;;  theme
-           hide-lightswitch?
-           use-low-x-type-scale?
-           display-kushi-links-in-mobile-nav?
-           colorlist
-           page-wrapper-attrs]
-    :or   {render            []
-           mobile-nav        nav/kushi-mobile-nav
-           custom-components nil
-           kushi-components  {:render?        true
-                              :header         "Base Kushi Components"
-                              :sidenav-header "Base Kushi Components"}
-           custom-colors     nil
-           kushi-colors      {:render?        true
-                              :header         "Base Kushi Colors"
-                              :sidenav-header "Base Kushi Colors"}
-           kushi-typography  {:render?        true
-                              :header         "Base Kushi Typography"
-                              :sidenav-header "Base Kushi Typography"}
-           custom-typography nil
-           kushi-user-guide  {:render?        true
-                              :sidenav-header "User Guide"}
-           kushi-clojars     {:render?        true
-                              :sidenav-header "Clojars"}
-           kushi-about       {:render?        true
-                              :header         "About"
-                              :sidenav-header "About"}
-           colorlist         [:gray :red :orange :gold :yellow :green :blue :purple :magenta :brown]}
-    :as   m}]
-  (let [m                            (merge m (keyed render
-                                                     mobile-nav
-                                                     kushi-colors
-                                                     kushi-user-guide
-                                                     kushi-clojars
-                                                     kushi-about))
+  [
+  ;;  {:keys [
+  ;;          site-header
+  ;;         ;; desktop-nav ; disable for now
+  ;;          mobile-nav
+  ;;          custom-components
+  ;;          kushi-components
+  ;;          custom-colors
+  ;;          kushi-colors
+  ;;          custom-typography
+  ;;          kushi-typography
+  ;;          kushi-user-guide
+  ;;          kushi-clojars
+  ;;          kushi-about
+  ;;          render
+  ;;         ;;  theme
+  ;;          hide-lightswitch?
+  ;;          use-low-x-type-scale?
+  ;;          display-kushi-links-in-mobile-nav?
+  ;;          colorlist
+  ;;          page-wrapper-attrs]
+  ;;   :or   {render            []
+  ;;          mobile-nav        nav/kushi-mobile-nav
+  ;;          custom-components nil
+  ;;          kushi-components  {:render?        true
+  ;;                             :header         "Base Kushi Components"
+  ;;                             :sidenav-header "Base Kushi Components"}
+  ;;          custom-colors     nil
+  ;;          kushi-colors      {:render?        true
+  ;;                             :header         "Base Kushi Colors"
+  ;;                             :sidenav-header "Base Kushi Colors"}
+  ;;          kushi-typography  {:render?        true
+  ;;                             :header         "Base Kushi Typography"
+  ;;                             :sidenav-header "Base Kushi Typography"}
+  ;;          custom-typography nil
+  ;;          kushi-user-guide  {:render?        true
+  ;;                             :sidenav-header "User Guide"}
+  ;;          kushi-clojars     {:render?        true
+  ;;                             :sidenav-header "Clojars"}
+  ;;          kushi-about       {:render?        true
+  ;;                             :header         "About"
+  ;;                             :sidenav-header "About"}
+  ;;          colorlist         [:gray :red :orange :gold :yellow :green :blue :purple :magenta :brown]}
+  ;;   :as   m}
+    ]
 
-        kushi-components             (merge kushi-components
-                                            {:coll (let [coll  examples/components 
-                                                         idxs* (:kushi-component-indexes @*state)
-                                                         idxs  (if (and (seq (:kushi-components-indexes @*state))
-                                                                        (every? int? idxs*))
-                                                                 idxs*
-                                                                 (map (partial component-by-index coll) []))
+  (let [
 
-                            ;; This just keeps calling validated-playground-examples when switching
-                            ;; between components - fix this, for now only use during dev when you
-                            ;; are adding new examples.
-                            ;; ret   (validated-playground-examples idxs coll)
-                                                         ret   coll
-                                                         ]
-                                                     ret)})
+        ;; m                            (merge m (keyed render
+        ;;                                              mobile-nav
+        ;;                                              kushi-colors
+        ;;                                              kushi-user-guide
+        ;;                                              kushi-clojars
+        ;;                                              kushi-about))
 
-        global-color-scales          (color-scales2 {:colorlist colorlist})
 
-        nav-opts                     (keyed
-                                      custom-components
-                                      kushi-components
-                                      custom-colors
-                                      kushi-colors
-                                      custom-typography
-                                      kushi-typography
-                                      kushi-user-guide
-                                      kushi-clojars
-                                      kushi-about)
+        ;; kushi-components             (merge kushi-components
+        ;;                                     {:coll (let [coll  examples/components 
+        ;;                                                  idxs* (:kushi-component-indexes @*state)
+        ;;                                                  idxs  (if (and (seq (:kushi-components-indexes @*state))
+        ;;                                                                 (every? int? idxs*))
+        ;;                                                          idxs*
+        ;;                                                          (map (partial component-by-index coll) []))
 
-        page-wrapper-attrs-from-user page-wrapper-attrs
+        ;;                     ;; This just keeps calling validated-playground-examples when switching
+        ;;                     ;; between components - fix this, for now only use during dev when you
+        ;;                     ;; are adding new examples.
+        ;;                     ;; ret   (validated-playground-examples idxs coll)
+        ;;                                                  ret   coll
+        ;;                                                  ]
+        ;;                                              ret)})
+
+        ;; global-color-scales          (color-scales2 {:colorlist colorlist})
+
+        ;; nav-opts                     (keyed
+        ;;                               custom-components
+        ;;                               kushi-components
+        ;;                               custom-colors
+        ;;                               kushi-colors
+        ;;                               custom-typography
+        ;;                               kushi-typography
+        ;;                               kushi-user-guide
+        ;;                               kushi-clojars
+        ;;                               kushi-about)
+
+        ;; page-wrapper-attrs-from-user page-wrapper-attrs
         
-        ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;; ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         
 
 
-        popover-content              (fn [] [:div.absolute-centered "hi"])]
+        ;; popover-content              (fn [] [:div.absolute-centered "hi"])
+        ]
 
 
 #_[button
