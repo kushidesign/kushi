@@ -196,15 +196,17 @@
                       "the popover. "]}
            ]}
 
-  [{placement                   :-placement
-    arrow?                      :-arrow?
-    auto-dismiss?               :-auto-dismiss?
-    use-on-click?               :-use-on-click?
-    user-rendering-fn           :-f
-    :or                         {placement     :auto
-                                 arrow?        true
-                                 auto-dismiss? false
-                                 use-on-click? false}}]
+  [{placement          :-placement
+    arrow?             :-arrow?
+    auto-dismiss?      :-auto-dismiss?
+    use-on-click?      :-use-on-click?
+    user-pane-class    :class
+    user-pane-style    :style
+    user-rendering-fn  :-f
+    :or                {placement     :auto
+                        arrow?        true
+                        auto-dismiss? false
+                        use-on-click? false}}]
   
   (when user-rendering-fn 
     (let [arrow?       (if (false? arrow?) false true)
@@ -216,14 +218,13 @@
           placement-kw (or (maybe placement #(= % :auto))
                            (user-placement placement))
           pane-type    :popover
-          ;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-          ;; TODO add `popover-class` here, similar to tooltip
-          ;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
           opts         (keyed placement-kw
                               arrow?
                               auto-dismiss?
                               pane-type
-                              user-rendering-fn)]
+                              user-rendering-fn
+                              user-pane-class
+                              user-pane-style)]
       (merge 
        {:data-kushi-ui-pane (name placement-kw)}
        {:on-click (partial pane/append-pane! opts)}
