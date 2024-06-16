@@ -30,9 +30,9 @@
           [component-examples/examples-section component-opts example-opts])))
 
 (def callout-examples
-  (let [row-attrs (sx :&_.playground-component-example-row-instance-code:w--100%
-                      :flex-direction--column)
-        container-attrs (sx :gtc--1fr)
+  (let [row-attrs         (sx :&_.playground-component-example-row-instance-code:w--100%
+                              :flex-direction--column)
+        container-attrs   (sx :gtc--1fr)
         semantic-variants (for [[s msg]
                                 [["neutral" [:span "Please check out the " [link (sx :ws--n {:href "#"}) "new features"]]]
                                  ["accent" [:span "Please check out the " [link (sx :ws--n {:href "#"}) "new features"]]]
@@ -46,24 +46,24 @@
                                                         :-icon        [icon :info]
                                                         :class        [s]}}]} )]
 
-    (into [{:desc            "Showing sizes from xxsmall to large, in positive variant"
+    (into [{:desc            "Showing sizes from xxsmall to large, in accent variant"
             :row-attrs       row-attrs
             :container-attrs container-attrs
             :variants-       [:filled :bordered]
             :examples        (for [sz callout-sizes]
                                {:label (name sz)
-                                :attrs {:-header-text "Your transaction was successful."
-                                        :-icon        [icon :check-circle]
-                                        :class        [sz "positive"]}})}
+                                :attrs {:-header-text [:span "Please check out the " [link (sx :ws--n {:href "#"}) "new features"]]
+                                        :-icon        [icon :info]
+                                        :class        [sz "accent"]}})}
 
-           {:desc            "With icon and dismiss button"
+           {:desc            "With icon and dismiss button, in positive variant"
             :row-attrs       row-attrs
             :container-attrs container-attrs
             :variants-       [:filled :bordered]
             :examples        [{:code (sx-call [callout
                                                (sx
                                                 :.positive
-                                                {:-icon         [icon :info]
+                                                {:-icon         [icon :check-circle]
                                                  :-header-text  "Your transaction was successful."
                                                  :-close-button [button
                                                                  (sx
@@ -71,47 +71,5 @@
                                                                   :.positive
                                                                   :p--0.25em
                                                                   {:on-click (fn [] (js/alert "Example close-icon click event."))})
-                                                                 [icon :clear]]})])}]}
-
-          ;;  {:desc            "Neutral variant"
-          ;;   :row-attrs       row-attrs
-          ;;   :container-attrs container-attrs
-          ;;   :examples        [{
-          ;;                      :attrs {:-header-text "Your transaction was successful."
-          ;;                              :-icon        [icon :info]
-          ;;                              :class        ["neutral"]}}]}
-
-          ;;  {:desc            "Accent variant"
-          ;;   :row-attrs       row-attrs
-          ;;   :container-attrs container-attrs
-          ;;   :examples        [{
-          ;;                      :attrs {:-header-text "Please check out the new features."
-          ;;                              :-icon        [icon :info]
-          ;;                              :class        ["accent"]}}]}
-
-          ;;  {:desc            "Positive variant"
-          ;;   :row-attrs       row-attrs
-          ;;   :container-attrs container-attrs
-          ;;   :examples        [{
-          ;;                      :attrs {:-header-text "Please check out the new features."
-          ;;                              :-icon        [icon :check-circle]
-          ;;                              :class        ["positive"]}}]}
-
-          ;;  {:desc            "Warning variant"
-          ;;   :row-attrs       row-attrs
-          ;;   :container-attrs container-attrs
-          ;;   :examples        [{
-          ;;                      :attrs {:-header-text "Please check out the new features."
-          ;;                              :-icon        [icon :warning]
-          ;;                              :class        ["warning"]}}]}
-
-
-          ;;  {:desc            "Negative variant"
-          ;;   :row-attrs       row-attrs
-          ;;   :container-attrs container-attrs
-          ;;   :examples        [{
-          ;;                      :attrs {:-header-text "Please check out the new features."
-          ;;                              :-icon        [icon :error]
-          ;;                              :class        ["negative"]}}]}
-           ]
-                                       semantic-variants)))
+                                                                 [icon :clear]]})])}]}]
+          semantic-variants)))

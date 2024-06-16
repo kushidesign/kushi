@@ -39,9 +39,8 @@
                       {:ai             :fs
                        :flex-direction :column
                        :w              :100%
-                       :jc             :sb}]
-                    ;;  :&_label:pbe--0
-                    ;;  :&_label:pie--0.35em
+                       :jc             :sb
+                       :max-width      :400px}]
                      :xsm:&_label:first-child:pbe--0.75em
                      :xsm:&_label:pie--0.75em)
       :examples  [{:code (sx-call (into [:<>] 

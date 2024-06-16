@@ -30,14 +30,15 @@
 
 (def card-examples
   [
-   #_{:desc      "Sizes from xxsmall to large"
-      :row-attrs (sx :ai--fs
+   {:desc      "Sizes from xxsmall to large"
+      :row-attrs (sx 
+                     :ai--fs
                      :flex-direction--column
                      ["&_.kushi-card:nth-child(5):d" :none]
                      ["xsm:&_.kushi-card:nth-child(5):d" :block]
                      :&_.kushi-card:w--fit-content
                      :&_.kushi-card:b--1px:solid:$neutral-200
-                     :dark&_.kushi-card:b--1px:solid:$neutral-800)
+                     :dark:&_.kushi-card:b--1px:solid:$neutral-800)
       :examples  (for [sz card-sizes]
                    {:label (name sz)
                     :attrs {:class [sz]}
@@ -47,7 +48,9 @@
                              [:div (sx :.rounded
                                        :.relative
                                        :overflow--hidden
+                                       :.transition
                                        :bgc--$neutral-200
+                                       :dark:bgc--$neutral-850
                                        :w--3.5em
                                        :h--3.5em)
                               [:span (sx :.absolute-centered
@@ -60,12 +63,13 @@
                               [:p (sx :c--$neutral-secondary-fg) "polar.bear@example.com"]]]]})}
    
    {:desc      "Elevated levels from 0 to 5"
-    :row-attrs (sx :ai--fs
+    :row-attrs (sx :.transition
+                   :ai--fs
                    :flex-direction--column
                    :gap--2rem
                    :&_.kushi-card:w--fit-content
                    :&_.kushi-card:b--1px:solid:$neutral-200
-                   :dark&_.kushi-card:b--1px:solid:$neutral-800)
+                   :dark:&_.kushi-card:b--1px:solid:$neutral-800)
     :examples  (for [sz   (range 5)
                      :let [class (str "elevated-" sz)]]
                  {:label class
@@ -76,6 +80,8 @@
                            [:div (sx :.rounded
                                      :.relative
                                      :overflow--hidden
+                                     :.transition
+                                     :dark:bgc--$neutral-850
                                      :bgc--$neutral-200
                                      :w--3.5em
                                      :h--3.5em)
@@ -95,7 +101,7 @@
                    :gap--2rem
                    :&_.kushi-card:w--fit-content
                    :&_.kushi-card:b--1px:solid:$neutral-200
-                   :dark&_.kushi-card:b--1px:solid:$neutral-800)
+                   :dark:&_.kushi-card:b--1px:solid:$neutral-800)
     :examples  [{:label "Alien"
                  :code  (sx-call [card
                                   (sx :fs--$xxsmall
@@ -114,5 +120,8 @@
                                       :c--white
                                       :b--1px:solid:#9eef00
                                       :text-shadow--1px:1px:5px:#9eef00b5
-                                      :box-shadow--inset:0px:0px:40px:#9eef0073)
-                                  [:span (sx :pis--7ex :letter-spacing--7ex) "alien"]])}]}])
+                                      :box-shadow--inset:0px:0px:4em:#9eef0073
+                                      :dark:box-shadow--inset:0px:0px:4em:#9eef002e)
+                                  [:span (sx :pis--7ex
+                                             :letter-spacing--7ex)
+                                   "alien"]])}]}])

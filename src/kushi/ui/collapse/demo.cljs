@@ -52,9 +52,11 @@
       :examples  [{
                    :code  (sx-call [collapse
                                     (sx
-                                     :bbe--1px:solid:black
+                                     :bbe--1px:solid:$neutral-800
+                                     :dark:bbe--1px:solid:$neutral-400
                                      {:-label        "Collapsable section label "
-                                      :-header-attrs (sx :bbs--1px:solid:black)})
+                                      :-header-attrs (sx :bbs--1px:solid:$neutral-800
+                                                         :dark:bbs--1px:solid:$neutral-400)})
                                     [:p "Child 1"] 
                                     [:p "Child 2"]]
                                    )}]}
@@ -74,7 +76,9 @@
       :examples  [{
                    :code  (sx-call [collapse
                                     {:-label      "Collapsable section label "
-                                     :-body-attrs (sx :bgc--$accent-100 :pis--1rem)
+                                     :-body-attrs (sx :bgc--$purple-100 
+                                                      :dark:bgc--$purple-900 
+                                                      :pis--1rem)
                                      :-speed      1000}
                                     [:section
                                      (sx :pb--0.5rem)
@@ -90,16 +94,18 @@
       :examples  [{
                    :code  (sx-call [collapse
                                     (sx
-                                     :border-block--3px:solid:$neutral-1000
+                                     :border-block--3px:solid:$purple-100
+                                     :dark:border-block--3px:solid:$purple-850
                                      {:-label        "Collapsable section label "
                                       :-body-attrs   (sx :pis--0.5rem)
                                       :-header-attrs (sx
                                                       :.semi-bold
                                                       :p--10px
-                                                      :bgc--$neutral-1000
-                                                      :dark:bgc--$neutral-200
-                                                      :c--white 
-                                                      :dark:c--black)}) 
+                                                      :bgc--$purple-100
+                                                      :dark:bgc--$purple-850
+                                                      ;; :c--white 
+                                                      ;; :dark:c--black
+                                                      )}) 
                                     [:p "Child 1"] 
                                     [:p "Child 2"]])}]}
      

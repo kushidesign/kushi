@@ -37,7 +37,8 @@
                       {:ai             :fs
                        :flex-direction :column
                        :w              :100%
-                       :jc             :sb}]
+                       :jc             :sb
+                       :max-width      :400px}]
                      :&_label:pbe--0
                      :&_label:pie--0.35em)
       :examples  [{:code (sx-call (into [:<>] 
@@ -60,7 +61,10 @@
      {:desc     "Radio group with labels, inherited color"
       :row-attrs row-attrs
       :examples [{:code (sx-call [:section 
-                                  (sx :.flex-row-fs)
+                                  (sx :.flex-row-fs
+                                      :c--$purple-600
+                                      :dark:c--$purple-300
+                                      )
                                   [radio (sx {:-input-attrs {:name :demo-color}}) "Yes"]
                                   [radio (sx {:-input-attrs {:name :demo-color}}) "No"]
                                   [radio (sx {:-input-attrs {:name :demo-color}}) "Maybe"]])}]}
@@ -69,7 +73,6 @@
       :row-attrs row-attrs
       :examples [{:code (sx-call [:section
                                   (sx
-                                   :dark:c--$purple-300
                                    :d--grid
                                    :xsm:gtc--1fr
                                    :xsm:gtc--1fr:1fr
