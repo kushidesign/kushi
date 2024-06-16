@@ -1,7 +1,7 @@
 (ns kushi.ui.tag.demo
   (:require
    [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.input.text.core :refer [text-field]]
+   [kushi.ui.text-field.core :refer [text-field]]
    [kushi.core :refer (sx)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
@@ -15,9 +15,9 @@
 (defn demo2 [component-opts]
   (into [:<>]
         (for [
-              example-opts (take 5 tag-examples)
-              ;; example-opts tag-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{1} idx) m)) tag-examples)
+              ;; example-opts (take 5 tag-examples)
+              example-opts tag-examples
+              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{5} idx) m)) tag-examples)
               ]
           [component-examples/examples-section component-opts example-opts])))
 
@@ -94,6 +94,15 @@
       :examples        (for [s (rest component-examples/type-weights)]
                          {:label (name s)
                           :args  ["Pets" [icon :pets]]
-                          :attrs {:class [s]}})}]))
+                          :attrs {:class [s]}})}
+
+     {:desc            "Max width"
+      :reqs            '[[kushi.ui.icon.core :refer [icon]]]
+      :sx-attrs        (sx-call (sx :.small))
+      :container-attrs playground-tag-rows-container4
+      :variants+       [:minimal]
+      :examples        [{:label "Max width"
+                         :args  [[:span {:class "truncate" :style {:max-width :130px}}
+                                   "My tag with longer text"]]}]}]))
 
 

@@ -3,7 +3,7 @@
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.button.core :refer [button]]
-   [kushi.ui.input.text.core :refer [text-field]]
+   [kushi.ui.text-field.core :refer [text-field]]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
@@ -84,7 +84,7 @@
        (sx :gtc--1fr)
 
        row-attrs-2
-       (sx [:&_.instance-code
+       (sx [:&_.playground-component-example-row-instance-code
             {:w              :100%
              :d              :flex
              :flex-direction :column
@@ -94,7 +94,7 @@
 
        grid-row-attrs
        (sx 
-        [:&_.instance-code
+        [:&_.playground-component-example-row-instance-code
          {:ai         :fe     
           :display    :grid
           :w          :100%

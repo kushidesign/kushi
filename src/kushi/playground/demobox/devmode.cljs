@@ -2,7 +2,7 @@
   (:require
    [kushi.core :refer (sx merge-attrs)]
    [domo.core :as domo]
-   [kushi.ui.input.slider.css]
+   [kushi.ui.slider.css]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.icon.core :refer (icon)]
    [kushi.ui.icon.mui.svg :as mui.svg]

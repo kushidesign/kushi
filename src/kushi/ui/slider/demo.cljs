@@ -1,8 +1,8 @@
-(ns kushi.ui.input.slider.demo
+(ns kushi.ui.slider.demo
   (:require [kushi.core :refer (sx keyed)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.input.slider.core :refer [slider]]))
+            [kushi.ui.slider.core :refer [slider]]))
 
 
 (declare slider-examples)

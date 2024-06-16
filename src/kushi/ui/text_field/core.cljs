@@ -1,4 +1,4 @@
-(ns kushi.ui.input.text.core
+(ns kushi.ui.text-field.core
   (:require-macros
    [kushi.core :refer (sx defclass)])
   (:require

@@ -1,9 +1,9 @@
-(ns kushi.ui.input.text.demo
+(ns kushi.ui.text-field.demo
   (:require [kushi.core :refer (sx merge-attrs)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.icon.core :refer [icon]]
-            [kushi.ui.input.text.core :refer [text-field]]))
+            [kushi.ui.text-field.core :refer [text-field]]))
 
 (declare checkbox-examples)
 

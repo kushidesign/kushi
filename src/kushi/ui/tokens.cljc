@@ -508,7 +508,7 @@
    ;; ------------------------------------------------------
    :$collapse-transition-duration :$slow
 
-   ;; kushi.ui.input.text.core/input
+   ;; kushi.ui.text-field.core/input
    :$text-input-helper-margin-block-start      :0.3em
    :$text-input-label-inline-margin-inline-end :0.7em
    :$text-input-label-block-margin-block-end   :0.4em

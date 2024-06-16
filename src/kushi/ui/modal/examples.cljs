@@ -2,7 +2,7 @@
   (:require [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.modal.core :refer (modal modal-close-button close-kushi-modal open-kushi-modal)]
             [kushi.ui.button.core :refer [button]]
-            [kushi.ui.input.text.core :refer [text-field]]
+            [kushi.ui.text-field.core :refer [text-field]]
             [kushi.playground.util :refer-macros (example2)]
             [kushi.core :refer-macros (sx)]))
 [:div

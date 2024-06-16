@@ -1,8 +1,8 @@
-(ns kushi.ui.input.radio.demo
+(ns kushi.ui.radio.demo
   (:require [kushi.core :refer (sx)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.input.radio.core :refer [radio]]
+            [kushi.ui.radio.core :refer [radio]]
             [kushi.ui.label.core :refer [label]]))
 
 (declare radio-examples)
