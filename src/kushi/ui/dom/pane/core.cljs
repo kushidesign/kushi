@@ -1,5 +1,6 @@
 (ns kushi.ui.dom.pane.core
   (:require [applied-science.js-interop :as j]
+            [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?let ?let ?trace ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
             [clojure.string :as string]
             [domo.core :as domo] ;; Import this to create defclasses
             [goog.functions]
@@ -106,11 +107,33 @@
   
   ;; Append pane el to the <body> 
   (.appendChild (or dialog-el js/document.body) el)
-  
+
   ;; Render contents if popover
   (when (contains? #{:popover} pane-type)
     (user-rendering-fn el)))
 
+(defn- edge-threshold 
+  [{:keys [pane-type user-pane-class user-pane-style]}]
+        ;; TOOD - Use some koind of dpi calc for edge-threshold.
+        ;; Convert to px if user supplies ems or rems.
+  (let [cp (str "--"
+                (case pane-type
+                  :popover "popover"
+                  :tooltip "tooltip"
+                  "pane")
+                "-flip-viewport-edge-threshold")
+        el (doto (js/document.createElement "div")
+             (.setAttribute "style" user-pane-style)
+             (.setAttribute "class" (str (when-let [cls user-pane-class]
+                                           (cond (string? cls)
+                                                 cls
+                                                 (util/class-coll? cls)
+                                                 (string/join " " cls)))
+                                         " invisible absolute offscreen")))]
+    (.appendChild js/document.body el)
+    (let [ret (domo/css-custom-property-value el cp)]
+      (.removeChild js/document.body el)
+      (some-> ret js/parseInt))))
 
 (defn- append-pane!*
   "A pane is given an initial position based on screen-quadrant of the owning
@@ -127,9 +150,16 @@
     :as          opts}
    id]
 
+;; Fireworks error - cannot convert symbol to string
+;; (? opts)
+  
+;; Fireworks error - 1 is not ISeqable
+;; (?pp (seq [1 2 3]))
+
+
   ;; 1) Pre-calculate and append pane
-  ;; Calculate an initial placment and append a pane element to the
-  ;; dom. If the owning element is beyond the edge-threshold, the pane will
+  ;; Calculate an initial placement and append a pane element to the dom.
+  ;; If the owning element is beyond the edge-threshold, the pane will
   ;; be assigned a new placement, but only if the value of :-pane-placement
   ;; is something other than :auto.
 
@@ -143,19 +173,13 @@
         owning-el-rect  (or (some->> dialog-el
                                      (adjust-client-rect owning-el-rect*))
                             owning-el-rect*)
-
         opts            (assoc opts
                                :pane-type
                                pane-type
                                :owning-el-rect
                                owning-el-rect)
         viewport        (domo/viewport)
-        ;; TOOD - Use some koind of dpi calc for edge-threshold.
-        ;; Convert to px if user supplies ems or rems.
-        edge-threshold  (some-> owning-el
-                                (domo/css-custom-property-value
-                                 "--pane-flip-viewport-edge-threshold")
-                                js/parseInt)
+        edge-threshold  (edge-threshold opts)
         owning-el-vpp   (el-plc viewport
                                 owning-el
                                 edge-threshold)
@@ -171,8 +195,8 @@
                                       tt-pos-og 
                                       arrow?))]
     (append-pane-el! (merge append-tt-opts
-                               {:metrics? true
-                                :id       (str "_kushi-metrics_" id)}))
+                            {:metrics? true
+                             :id       (str "_kushi-metrics_" id)}))
 
     ;; 2) Measure and adjust
     ;; Second, detect if the pane falls outside the viewport
