@@ -41,7 +41,7 @@ input[type=range]::-webkit-slider-runnable-track {
   border-radius: 1px;
   border: 0px solid #000000;
 }
-input[type=range]::-webkit-slider-thumb {
+input[type=\"range\"]::-webkit-slider-thumb {
   box-shadow: 0px 0px 0px #000000;
   outline: var(--kushi-input-slider-thumb-outline);
   outline-offset: var(--kushi-input-slider-thumb-outline-offset);
@@ -52,6 +52,7 @@ input[type=range]::-webkit-slider-thumb {
   cursor: pointer;
   -webkit-appearance: none;
   margin-top: calc( var(--kushi-input-slider-thumb-height) / -2);
+  border-radius: 50%;
 }
 .dark input[type=range]::-webkit-slider-thumb {
   outline: var(--kushi-input-slider-thumb-outline-dark);
