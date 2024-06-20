@@ -23,15 +23,19 @@
   [kushi.ui.switch.core :refer [switch]]
   [kushi.ui.switch.demo :as switch.demo]
   [kushi.ui.text-field.core :refer [text-field]]
-  [kushi.ui.text-field.demo :as input.demo]
+  [kushi.ui.text-field.demo :as text-field.demo]
+  [kushi.ui.modal.core :refer [modal]]
   [kushi.ui.modal.demo :as modal.demo]
+  [kushi.ui.popover.core :refer [popover-attrs]]
   [kushi.ui.popover.demo :as popover.demo]
   [kushi.ui.spinner.core :refer [spinner]]
   [kushi.ui.spinner.demo :as spinner.demo]
   [kushi.ui.tag.core :refer [tag]]
   [kushi.ui.tag.demo :as tag.demo]
+  [kushi.ui.toast.core :refer [toast-attrs]]
   [kushi.ui.toast.demo :as toast.demo]
-  [kushi.ui.tooltip.demo :as tooltip-demo]))
+  [kushi.ui.tooltip.core :refer [tooltip-attrs]]
+  [kushi.ui.tooltip.demo :as tooltip.demo]))
 
 
         ;; for surfaces:
@@ -50,24 +54,31 @@
         ;; row of buttons that show various stylings (no arrow etc)
 
 
-        ;; figure out sidemenu on phone
+        ;; Fix icon and callout demo sizing problems
+
+        ;; code snippet modal
+
+        ;; figure out sidemenu on mobile
         
-        ;; seems fine for now  ;; For some reason modal and card do not register as intersecting
-        
-        ;; toast on mobile
-        ;; add view-in docs cta to sticky header
-        ;; docs view
-        ;; impl modal for code snippets
         ;; Add color type about sections
+
         ;; Some koind of splash page?
+
         ;; jiggle animation not work on mobile safari
 
         ;; Tie together nav height
-        ;; Make utility for fg-bg and border for light/dark
-        
+
+        ;; Make utility for border for light/dark
         
         ;; Fix toast on mobile
+
         ;; Debug popover on mobile
+
+        ;; seems fine for now  ;; For some reason modal and card do not register as intersecting
+
+        ;; test with pulling :examples from fn meta, then merging with examples from demo (later)
+
+        ;; Maybe try to figure out feature macro (later)
 
         
 
@@ -85,26 +96,16 @@
                               :bordered (sx :.rounded :.bordered)
                               :minimal  (sx :.rounded :.minimal)} }
             
-            {
-             :label          "switch" 
-             ;;  :demo-component switch.demo/demo2
-             :examples       switch.demo/examples
-             :component      switch
-             :component-meta (-> switch var meta)
-             :reqs           '[[kushi.ui.switch.core :refer [switch]]]
-             :variants-base  #{:on :off}
-             :variants-order [:off :on]
-             :variants-attrs {:on  {:-on? true}
-                              :off {}}}           
-
-
             {:sym          spinner
              :extra-refers [donut propeller thinking]}
 
-            {:sym               toast 
-             :elide-self-refer? true
+            ;; Uses :refer-sym override
+            ;; Uses :extra reqs
+            ;; Uses :component  - maybe change that name to `render`* something
+            {:sym               toast
+             :refer-sym         toast-attrs
              :component         :span
-             :extra-reqs        [toast-attrs dismiss-toast!]
+             :extra-refers      [toast-attrs dismiss-toast!]
              :variants-base     #{:positions}
              :variants-attrs    {:positions {}}}])
 
@@ -143,31 +144,38 @@
   (filter 
   ;;  :label
   #(contains? #{
-                "switch"
-                  ;; "slider"
-                  ;; "radio"
-                  ;; "text field"
-                  ;; "checkbox"
-                  ;; "tag"
-                  ;; "button"
-                  ;; "callout"
-                  ;; "spinner"
-                  ;; "grid"
-                  ;; "tooltip"
-                  ;; "accordian"
-                  ;; "modal"
-                  ;; "popover"
-                  ;; "collapse"
-                  ;; "card"
-                  ;; "icon"
+                ;; "button"
+                ;; "icon"
+                ;; "spinner"
+                ;; "switch"
+
+                ;; "radio"
+                ;; "checkbox"
+                ;; "slider"
+                ;; "text field"
+
+                ;; "tooltip"
+                ;; "popover"
+                ;; "modal"
+                ;; "toast"
+
+                "card"
+                "callout"
+                "collapse"
+                "accordian"
+
+                ;; "tag"
+                ;; "grid"
+
                 }
                (:label %))
 
    ;; You need to wrap this whole collection in features macro
 
    [{:label          "button"
-     :demo-component button.demo/demo2
      :component      button
+     :examples       button.demo/examples
+     :component-meta (-> button var meta)
      :reqs           '[[kushi.ui.button.core :refer [button]]]
      :variants-base  #{:rounded :filled :bordered :minimal}
      :variants-order [:rounded :filled :bordered :minimal]
@@ -178,8 +186,9 @@
      }
 
     {:label          "icon"
-     :demo-component icon.demo/demo
      :component      icon
+     :examples       icon.demo/examples
+     :component-meta (-> icon var meta)
      :reqs           '[[kushi.ui.icon.core :refer [icon]]]
      :variants-base  #{:outlined :filled}
      :variants-order [:outlined :filled]
@@ -187,17 +196,17 @@
                       :outlined {}}}
 
     {:label          "spinner"
-     :demo-component spinner.demo/demo
      :component      spinner
+     :examples       spinner.demo/examples
+     :component-meta (-> spinner var meta)
      :reqs           '[[kushi.ui.spinner.core :refer [spinner
                                                       donut
                                                       propeller
                                                       thinking]]]}
 
     {:label          "switch" 
-    ;;  :demo-component switch.demo/demo2
-     :examples       switch.demo/examples
      :component      switch
+     :examples       switch.demo/examples
      :component-meta (-> switch var meta)
      :reqs           '[[kushi.ui.switch.core :refer [switch]]]
      :variants-base  #{:on :off}
@@ -206,37 +215,43 @@
                       :off {}}}
 
     {:label          "radio" 
-     :demo-component radio.demo/demo
      :component      radio
+     :examples       radio.demo/examples
+     :component-meta (-> radio var meta)
      :reqs           '[[kushi.ui.radio.core :refer [radio]]]
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}
      }
     
     {:label          "checkbox" 
-     :demo-component checkbox.demo/demo
      :component      checkbox
+     :examples       checkbox.demo/examples
+     :component-meta (-> checkbox var meta)
      :reqs           '[[kushi.ui.radio.core :refer [radio]]]
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}}
 
     {:label          "slider"
-     :demo-component slider.demo/demo
      :component      slider
+     :examples       slider.demo/examples
+     :component-meta (-> slider var meta)
      :reqs           '[[kushi.ui.slider.core :refer [slider]]]
      :variants-base  #{:on}
      :variants-order [:on]
      :variants-attrs {:on {}}}
 
     {:label          "text field" 
-     :demo-component input.demo/demo
      :component      text-field
+     :examples       text-field.demo/examples
+     :component-meta (-> text-field var meta)
      :reqs           '[[kushi.ui.text-field.core :refer [text-field]]]
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}}
 
+
     {:label          "tooltip" 
-     :demo-component tooltip-demo/demo2
+     :examples       tooltip.demo/examples
+     :component-meta (-> tooltip-attrs var meta)
      :media-matches  {:matches {"any-hover" "hover"
                                 "hover"     "hover"}
                       :message [:span
@@ -252,14 +267,16 @@
      :variants-attrs {:positions {}}}
 
     {:label          "popover" 
-     :demo-component popover.demo/demo
+     :examples       popover.demo/examples
+     :component-meta (-> popover-attrs var meta)
      :component      :span
      :reqs           '[[kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]]
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}}
 
     {:label          "modal" 
-     :demo-component modal.demo/demo
+     :examples       modal.demo/examples
+     :component-meta (-> modal var meta)
      :component      :span
      :reqs           '[[kushi.ui.modal.core :refer [modal
                                                     modal-close-button
@@ -269,14 +286,18 @@
      :variants-attrs {:positions {}}}
 
     {:label          "toast" 
-     :demo-component toast.demo/demo
+     :examples       toast.demo/examples
+     :component-meta (-> toast-attrs var meta)
      :component      :span
      :reqs           '[[kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]]
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}}
 
+
+
     {:label          "card"
-     :demo-component card.demo/demo
+     :examples       card.demo/examples
+     :component-meta (-> card var meta)
      :component      card
      :reqs           '[[kushi.ui.card.core :refer [card]]]
      :variants-base  #{:rounded}
@@ -285,7 +306,8 @@
      }
 
     {:label          "tag"
-     :demo-component tag.demo/demo2
+     :examples       tag.demo/examples
+     :component-meta (-> tag var meta)
      :component      tag
      :reqs           '[[kushi.ui.tag.core :refer [tag]]]
      :variants-base  #{:rounded :filled :bordered :minimal}
@@ -296,7 +318,8 @@
                       :minimal  (sx :.rounded :.minimal)}}
 
     {:label          "callout"
-     :demo-component callout.demo/demo
+     :examples       callout.demo/examples
+     :component-meta (-> callout var meta)
      :component      callout
      :reqs           '[[kushi.ui.callout.core :refer [callout]]]
      :variants-base  #{:default :filled :bordered}
@@ -306,17 +329,21 @@
                       :bordered (sx :.bordered)}}
 
     {:label          "collapse"
-     :demo-component collapse.demo/demo
+     :examples       collapse.demo/examples
+     :component-meta (-> collapse var meta)
      :component      collapse
      :reqs           '[[kushi.ui.collapse.core :refer [collapse]]]}
 
-    {:label          "accordian"
-     :demo-component collapse.demo/accordion-demo
-     :component      accordion
-     :reqs           '[[kushi.ui.collapse.core :refer [accordion]]]}
+    ;; TODO - make namespace for this? - move demo out of collapse
+    ;; {:label          "accordian"
+    ;;  :examples       accordian.demo/examples
+    ;;  :component-meta (-> accordian var meta)
+    ;;  :component      accordion
+    ;;  :reqs           '[[kushi.ui.collapse.core :refer [accordion]]]}
 
     {:label          "grid"
-     :demo-component grid.demo/demo
+     :examples       grid.demo/examples
+     :component-meta (-> grid var meta)
      :component      grid
      :reqs           '[[kushi.ui.grid.core :refer [grid]]]}
 

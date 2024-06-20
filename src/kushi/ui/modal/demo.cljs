@@ -8,21 +8,7 @@
             [kushi.playground.component-examples :as component-examples]
             ))
 
-
-(declare modal-examples)
-
-(defn demo [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 modal-examples)
-              example-opts modal-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) modal-examples)
-              ]
-          [component-examples/examples-section
-           component-opts
-           example-opts])))
-
-(def modal-examples
+(def examples
   (let [row-attrs (sx :&_.kushi-button:fs--$small)]
     [{:desc      "Basic"
       :component button

@@ -7,20 +7,20 @@
             [kushi.ui.label.core :refer [label]]))
 
 
-(declare checkbox-examples)
+;; (declare checkbox-examples)
 
-(defn demo [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 checkbox-examples)
-              example-opts checkbox-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) checkbox-examples)
-              ]
-          [component-examples/examples-section
-           component-opts
-           example-opts])))
+;; (defn demo [component-opts]
+;;   (into [:<>]
+;;         (for [
+;;               ;; example-opts (take 1 checkbox-examples)
+;;               example-opts checkbox-examples
+;;               ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) checkbox-examples)
+;;               ]
+;;           [component-examples/examples-section
+;;            component-opts
+;;            example-opts])))
 
-(def switch-sizes
+(def sizes
   [:xsmall
    :small
    :medium
@@ -29,7 +29,7 @@
    :xxlarge
    :xxxlarge])
 
-(def checkbox-examples
+(def examples
   (let [row-attrs {:class ["playground-example-row-bounded"]}]
     [{:desc      "Showing sizes from xsmall to xxxlarge"
       :row-attrs (sx [:xsm:&_.instance-code
@@ -44,7 +44,7 @@
                      :xsm:&_label:first-child:pbe--0.75em
                      :xsm:&_label:pie--0.75em)
       :examples  [{:code (sx-call (into [:<>] 
-                                        (for [sz switch-sizes]
+                                        (for [sz sizes]
                                           [:div (sx :.flex-row-fs
                                                     :xsm:flex-direction--column) 
                                            [checkbox {:-label-attrs   {:class [sz]}
@@ -90,7 +90,7 @@
                 :&_label:pbe--0
                 :&_label:pie--0.35em)
  :examples  [{:code (sx-call (into [:<>] 
-                                   (for [sz switch-sizes]
+                                   (for [sz sizes]
                                      [:div (sx :.flex-row-fs
                                                :md:flex-direction--column) 
                                       [radio {:class        [sz]

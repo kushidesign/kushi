@@ -1,25 +1,10 @@
 (ns kushi.ui.grid.demo
   (:require
    [kushi.core :refer (sx)]
-   [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.grid.core :refer [grid]]))
 
-
-(declare grid-examples)
-
-(defn demo [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 grid-examples)
-              example-opts grid-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) grid-examples)
-              ]
-          [component-examples/examples-section
-           component-opts
-           example-opts])))
-
-(def grid-examples
+(def examples
   (let [row-attrs (sx :&_.instance-code:w--100%)
         container-attrs (sx :gtc--1fr)]
     [{:desc            "Basic"

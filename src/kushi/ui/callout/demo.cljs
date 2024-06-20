@@ -3,33 +3,20 @@
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.link.core :refer [link]]
    [kushi.core :refer (sx)]
-   [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.callout.core :refer [callout]]
    [clojure.string :as string]))
 
-
-(declare callout-examples)
-
-(def callout-sizes
+(def sizes
   [:xxsmall
    :xsmall
    :small
    :medium
    :large])
 
-(defn demo
-  [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 5 callout-examples)
-              example-opts callout-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{1} idx) m)) callout-examples)
-              ]
-          [component-examples/examples-section component-opts example-opts])))
 
-(def callout-examples
+(def examples
   (let [row-attrs         (sx :&_.instance-code:w--100%
                               :flex-direction--column)
         container-attrs   (sx :gtc--1fr)
@@ -50,7 +37,7 @@
             :row-attrs       row-attrs
             :container-attrs container-attrs
             :variants-       [:filled :bordered]
-            :examples        (for [sz callout-sizes]
+            :examples        (for [sz sizes]
                                {:label (name sz)
                                 :attrs {:-header-text [:span "Please check out the " [link (sx :ws--n {:href "#"}) "new features"]]
                                         :-icon        [icon :info]

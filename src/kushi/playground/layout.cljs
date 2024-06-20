@@ -471,9 +471,13 @@
                     :&_code:bgc--$accent-50
                     :dark:&_code:color--$accent-100
                     :dark:&_code:bgc--$accent-900)
+
+           ;; TODO why is this not converting underscores to bold
+           ;; Contrast with component-section/component-section L277
            (some-> desc
                    util/desc->hiccup 
                    docs/add-links)]
+
           (when (seq custom-attributes)
             [:<>
              [:h2 (sx :.large :.semi-bold :mb--0:1.5rem) "Opts"]

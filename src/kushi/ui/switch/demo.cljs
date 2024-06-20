@@ -12,24 +12,22 @@
    [markdown-to-hiccup.core :as md->hc]
    [kushi.playground.component-docs :as docs]))
 
-(defn switch-demo [{dark? :-dark? :or {dark? false}}]
-  (into [:div
-         (sx :.flex-col-fs
-             :gap--0.5em
-             :padding--1rem
-             :.xxxlarge
-             {:class [(when dark? :dark)]})]
-        (for [semantic [:foo
-                        :neutral :accent
-                        :positive :warning :negative]]
-          [:div (sx :.flex-row-fs :gap--0.5em)
-           [switch (sx {:-disabled? false
-                        :class      [semantic]})]
-           [switch (sx {:-disabled? false
-                        :-on?       true
-                        :class      [semantic]})]])))
-
-(declare examples)
+;; (defn switch-demo [{dark? :-dark? :or {dark? false}}]
+;;   (into [:div
+;;          (sx :.flex-col-fs
+;;              :gap--0.5em
+;;              :padding--1rem
+;;              :.xxxlarge
+;;              {:class [(when dark? :dark)]})]
+;;         (for [semantic [:foo
+;;                         :neutral :accent
+;;                         :positive :warning :negative]]
+;;           [:div (sx :.flex-row-fs :gap--0.5em)
+;;            [switch (sx {:-disabled? false
+;;                         :class      [semantic]})]
+;;            [switch (sx {:-disabled? false
+;;                         :-on?       true
+;;                         :class      [semantic]})]])))
 
 (def sizes
   [:small

@@ -4,21 +4,7 @@
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.collapse.core :refer [accordion collapse]]))
 
-
-(declare collapse-examples)
-
-(defn demo [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 collapse-examples)
-              example-opts collapse-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) collapse-examples)
-              ]
-          [component-examples/examples-section
-           component-opts
-           example-opts])))
-
-(def collapse-examples
+(def examples
   (let [row-attrs {:class ["playground-example-row-bounded"]} ]
     [{:desc      "Basic" 
       :row-attrs row-attrs 

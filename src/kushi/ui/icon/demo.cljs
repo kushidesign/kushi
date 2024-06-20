@@ -10,19 +10,6 @@
    [kushi.ui.button.core :refer [button]]))
 
 
-(declare icon-examples)
-
-
-(defn demo [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 icon-examples)
-              example-opts icon-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{1} idx) m)) icon-examples)
-              ]
-          [component-examples/examples-section component-opts example-opts])))
-
-
 (def icons-without-filled-variants
   ["search"
    "playlist_add"
@@ -69,7 +56,7 @@
    "add-circle"
    "delete"])
 
-(def icon-sizes
+(def sizes
   [:xxsmall
    :xsmall
    :small
@@ -79,7 +66,7 @@
    :xxlarge
    :xxxlarge])
 
-(def icon-examples
+(def examples
  (let [container-attrs
        (sx :gtc--1fr)
 
@@ -111,7 +98,7 @@
                         :code  (sx-call 
                                 (for [weight component-examples/type-weights]
                                   (into [:div (sx :.flex-row-sb :row-gap--1.25rem)]
-                                        (for [sz icon-sizes]
+                                        (for [sz sizes]
                                           [icon {:class [sz weight]} :star]))))}]}
     
     {:desc            "Weights from 100 to 700"

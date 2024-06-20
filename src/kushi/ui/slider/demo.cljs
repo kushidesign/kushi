@@ -5,20 +5,17 @@
             [kushi.ui.slider.core :refer [slider]]))
 
 
-(declare slider-examples)
+;; (defn demo [component-opts]
+;;   (into [:<>]
+;;         (for [
+;;               ;; example-opts (take 5 slider-examples)
+;;               example-opts slider-examples
+;;               ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{1} idx) m)) slider-examples)
+;;               ]
+;;           [component-examples/examples-section component-opts example-opts])))
 
 
-(defn demo [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 5 slider-examples)
-              example-opts slider-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{1} idx) m)) slider-examples)
-              ]
-          [component-examples/examples-section component-opts example-opts])))
-
-
-(def slider-examples
+(def examples
   (let [row-attrs       (sx :&_.instance-code:w--100%
                             :&_.instance-code:max-width--500px
                             :mb--2rem:1.5rem)

@@ -59,20 +59,6 @@
       [:span.placement-label (str ":" x)]])))
 
 
-
-(declare tooltip-examples)
-
-
-(defn demo2 [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 switch-examples)
-              example-opts tooltip-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) switch-examples)
-              ]
-          [component-examples/examples-section component-opts example-opts])))
-
-
 ;; Code for generating tooltip placement examples at repl
 ;; (?pp (into []
 ;;            (for [x     [:brc :br  :b   :bl  :blc
@@ -94,7 +80,7 @@
 ;;                                  {:style  {:grid-area (name x)}})
 ;;                                 )}))))
 
-(def tooltip-examples
+(def examples
   [{:desc      "Basic, auto-placement."
     :component button
     :reqs      '[[kushi.ui.button.core :refer [button]]]
