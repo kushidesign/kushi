@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.playground.components
  (:require 
+  [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
   [kushi.core :refer [sx]]
   [kushi.ui.callout.core :refer [callout]]
   [kushi.ui.callout.demo :as callout.demo]
@@ -49,66 +50,120 @@
         ;; row of buttons that show various stylings (no arrow etc)
 
 
-        ;; SATURDAY
-
         ;; figure out sidemenu on phone
-        ;; For some reason modal and card do not register as intersecting
-        ;; fix slider controls on safari
-        ;; toast on mobile
-
-        ;; debug errors in fireworks
-
         
+        ;; seems fine for now  ;; For some reason modal and card do not register as intersecting
+        
+        ;; toast on mobile
         ;; add view-in docs cta to sticky header
         ;; docs view
         ;; impl modal for code snippets
-
-
         ;; Add color type about sections
-
         ;; Some koind of splash page?
-
-
         ;; jiggle animation not work on mobile safari
-        ;;  
+
+        ;; Tie together nav height
+        ;; Make utility for fg-bg and border for light/dark
+        
+        
+        ;; Fix toast on mobile
+        ;; Debug popover on mobile
 
         
 
         ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;; Tie together nav height
-;; Make utility for fg-bg and border for light/dark
+;; Sketch for features macro:
+'(features {:req         [kushi.ui.$.core :refer [$]]
+            :examples    $.demo/examples}
+           [{:sym            button
+             :variants-base  #{:rounded :filled :bordered :minimal}
+             :variants-order [:rounded :filled :bordered :minimal]
+             :variants-attrs {:rounded  (sx :.rounded)
+                              :filled   (sx :.rounded :.filled)
+                              :bordered (sx :.rounded :.bordered)
+                              :minimal  (sx :.rounded :.minimal)} }
+            
+            {
+             :label          "switch" 
+             ;;  :demo-component switch.demo/demo2
+             :examples       switch.demo/examples
+             :component      switch
+             :component-meta (-> switch var meta)
+             :reqs           '[[kushi.ui.switch.core :refer [switch]]]
+             :variants-base  #{:on :off}
+             :variants-order [:off :on]
+             :variants-attrs {:on  {:-on? true}
+                              :off {}}}           
 
 
-;; Fix toast on mobile
-;; Debug popover on mobile
+            {:sym          spinner
+             :extra-refers [donut propeller thinking]}
+
+            {:sym               toast 
+             :elide-self-refer? true
+             :component         :span
+             :extra-reqs        [toast-attrs dismiss-toast!]
+             :variants-base     #{:positions}
+             :variants-attrs    {:positions {}}}])
+
+;=>
+
+'[{:label          "button"
+   :component      button
+   :examples       button.demo/examples
+   :component-meta (-> button var meta)
+   :reqs           '[[kushi.ui.button.core :refer [button]]]
+   :variants-base  #{:rounded :filled :bordered :minimal}
+   :variants-order [:rounded :filled :bordered :minimal]
+   :variants-attrs {:rounded  (sx :.rounded)
+                    :filled   (sx :.rounded :.filled)
+                    :bordered (sx :.rounded :.bordered)
+                    :minimal  (sx :.rounded :.minimal)}}
+
+  {:label          "spinner"
+   :examples       spinner.demo/examples
+   :component-meta (-> spinner var meta)
+   :component      spinner
+   :reqs           '[[kushi.ui.spinner.core :refer [spinner donut propeller thinking ]]]}
+  
+  {:label          "toast" 
+   :examples       toast.demo/examples
+   :component-meta (-> toast var meta)
+   :component      :span
+   :reqs           '[[kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]]
+   :variants-base  #{:positions}
+   :variants-attrs {:positions {}}}
+
+  ]
 
 
 (def playground-components 
   (filter 
-   #_:label
+  ;;  :label
   #(contains? #{
-                ;;  "switch"
-                ;;   "slider"
-                ;;    "radio"
-                ;;    "text field"
-                ;;    "checkbox"
-
-                ;;  "tag"
+                "switch"
+                  ;; "slider"
+                  ;; "radio"
+                  ;; "text field"
+                  ;; "checkbox"
+                  ;; "tag"
                   ;; "button"
-                  ;;  "callout"
-                  ;;  "spinner"
-                  ;;  "grid"
-                  ;;  "tooltip"
-                  ;;  "accordian"
-                  ;;  "modal"
-                   "popover"
-                  ;;  "collapse"
+                  ;; "callout"
+                  ;; "spinner"
+                  ;; "grid"
+                  ;; "tooltip"
+                  ;; "accordian"
+                  ;; "modal"
+                  ;; "popover"
+                  ;; "collapse"
                   ;; "card"
                   ;; "icon"
-                 }
+                }
                (:label %))
+
+   ;; You need to wrap this whole collection in features macro
 
    [{:label          "button"
      :demo-component button.demo/demo2
@@ -119,7 +174,8 @@
      :variants-attrs {:rounded  (sx :.rounded)
                       :filled   (sx :.rounded :.filled)
                       :bordered (sx :.rounded :.bordered)
-                      :minimal  (sx :.rounded :.minimal)}}
+                      :minimal  (sx :.rounded :.minimal)}
+     }
 
     {:label          "icon"
      :demo-component icon.demo/demo
@@ -139,8 +195,10 @@
                                                       thinking]]]}
 
     {:label          "switch" 
-     :demo-component switch.demo/demo2
+    ;;  :demo-component switch.demo/demo2
+     :examples       switch.demo/examples
      :component      switch
+     :component-meta (-> switch var meta)
      :reqs           '[[kushi.ui.switch.core :refer [switch]]]
      :variants-base  #{:on :off}
      :variants-order [:off :on]

@@ -8,7 +8,12 @@
 
 (defmacro feature
   [sym m]
-  (let [examples (mapv (fn [x] (assoc x :example (list 'kushi.playground.util/example2 (:example x)))) (:examples m))
+  (let [examples (mapv (fn [x]
+                         (assoc x
+                                :example
+                                (list 'kushi.playground.util/example2 
+                                      (:example x))))
+                       (:examples m))
         m        (assoc m
                         :examples
                         examples
