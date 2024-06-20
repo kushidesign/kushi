@@ -73,20 +73,9 @@
     [icon mui.svg/close]]])
 
 
-(declare popover-examples)
 
-(defn demo [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 popover-examples)
-              example-opts popover-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) popover-examples)
-              ]
-          [component-examples/examples-section
-           component-opts
-           example-opts])))
 
-(def popover-examples
+(def examples
   (let [row-attrs (sx :&_.kushi-button:fs--$small)]
     (take 1 
           [

@@ -5,20 +5,19 @@
             [kushi.ui.radio.core :refer [radio]]
             [kushi.ui.label.core :refer [label]]))
 
-(declare radio-examples)
 
-(defn demo [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 radio-examples)
-              example-opts radio-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) radio-examples)
-              ]
-          [component-examples/examples-section
-           component-opts
-           example-opts])))
+;; (defn demo [component-opts]
+;;   (into [:<>]
+;;         (for [
+;;               ;; example-opts (take 1 radio-examples)
+;;               example-opts radio-examples
+;;               ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) radio-examples)
+;;               ]
+;;           [component-examples/examples-section
+;;            component-opts
+;;            example-opts])))
 
-(def radio-sizes
+(def sizes
   [:xsmall
    :small
    :medium
@@ -27,7 +26,7 @@
    :xxlarge
    :xxxlarge])
 
-(def radio-examples
+(def examples
   (let [row-attrs {:class ["playground-example-row-bounded"]}]
     [{:desc      "Showing sizes from xsmall to xxxlarge"
       :row-attrs (sx [:xsm:&_.instance-code
@@ -42,7 +41,7 @@
                      :&_label:pbe--0
                      :&_label:pie--0.35em)
       :examples  [{:code (sx-call (into [:<>] 
-                                        (for [sz radio-sizes]
+                                        (for [sz sizes]
                                           [:div (sx :.flex-row-fs
                                                     :xsm:flex-direction--column) 
                                            [radio {:class        [sz]

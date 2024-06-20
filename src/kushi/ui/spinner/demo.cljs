@@ -1,6 +1,6 @@
 (ns kushi.ui.spinner.demo
-  (:require [fireworks.core :refer [?]]
-            [kushi.core :refer (sx merge-attrs)]
+  (:require 
+            [kushi.core :refer (sx)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.button.core :refer [button]]
@@ -10,21 +10,7 @@
                                             donut
                                             thinking]]))
 
-
-(declare spinner-examples)
-
-(defn demo [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 spinner-examples)
-              example-opts spinner-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) spinner-examples)
-              ]
-          [component-examples/examples-section
-           component-opts
-           example-opts])))
-
-(def spinner-sizes
+(def sizes
   [:xxsmall
    :xsmall
    :small
@@ -34,7 +20,7 @@
    :xxlarge
    :xxxlarge])
 
-(def spinner-examples
+(def examples
   (let [container-attrs
         (sx :gtc--1fr)
 
@@ -82,7 +68,7 @@
      
      (f "Propeller, xxsmall to xxxlarge"
         row-attrs
-        (sx-call (for [sz spinner-sizes]
+        (sx-call (for [sz sizes]
                    [propeller {:class [sz]}])))
      
      (f "Propeller, all the colors"
@@ -97,7 +83,7 @@
                                 :style {:color (str "var(--" color "-" val ")")}}]])))))
 
      (f "Spinner, xxsmall to xxxlarge"
-        row-attrs (sx-call (for [sz spinner-sizes]
+        row-attrs (sx-call (for [sz sizes]
                              [donut {:class [sz]}])) )
      
      (f "Spinner, all the colors"
@@ -113,7 +99,7 @@
 
      (f "Thinking, small to xxxlarge"
         row-attrs
-        (sx-call (for [sz (drop 2 spinner-sizes)]
+        (sx-call (for [sz (drop 2 sizes)]
                    [thinking {:class [sz]}])))
 
      

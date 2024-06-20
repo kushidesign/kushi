@@ -5,30 +5,20 @@
             [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.text-field.core :refer [text-field]]))
 
-(declare checkbox-examples)
 
-(defn demo [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 checkbox-examples)
-              example-opts checkbox-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) checkbox-examples)
-              ]
-          [component-examples/examples-section
-           component-opts
-           example-opts])))
-
-(def input-sizes
-  [:xsmall
-   :small
-   :medium
-   :large
-   :xlarge
-   :xxlarge
-   :xxxlarge])
+;; (defn demo [component-opts]
+;;   (into [:<>]
+;;         (for [
+;;               ;; example-opts (take 1 checkbox-examples)
+;;               example-opts checkbox-examples
+;;               ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{9} idx) m)) checkbox-examples)
+;;               ]
+;;           [component-examples/examples-section
+;;            component-opts
+;;            example-opts])))
 
 
-(def checkbox-examples
+(def examples
   (let [row-attrs (merge-attrs {:class ["playground-example-row-bounded"]}
                                (sx [:&_.instance-code 
                                     {:p :1.05em:1.65em:1.25em}]))]

@@ -9,6 +9,7 @@
    [kushi.ui.button.core :refer (button)]))
 
 
+;; Nix
 (defn info-sections [style-class]
   (into [:div.flex-row-fs]
         (for [color-class [:neutral :accent :positive :negative :warning]]
@@ -18,6 +19,7 @@
                {:class [color-class style-class]})
            "info section"])))
 
+;; Nix
 (defn- button-grid [shape minimal?]
   (let [sem    [:neutral :positive :negative :accent :warning]
         kinds  (if minimal?
@@ -59,22 +61,7 @@
 
 ;; New April 2024 ----------------------------------------------------------------------------------
 
-(declare button-examples)
-
-
-(defn demo2 [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 button-examples)
-              example-opts button-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{1} idx) m)) button-examples)
-              ]
-          [component-examples/examples-section component-opts example-opts])))
-
-
-;; TODO remove section-label
-;; TODO hoist reqs up to a higher level
-(def button-sizes
+(def sizes
   [:xxsmall
    :xsmall
    :small
@@ -82,7 +69,7 @@
    :large
    :xlarge])
 
-(def button-examples
+(def examples
   (let [container-attrs
         (sx 'playground-button-rows-container
             :gtc--max-content:max-content

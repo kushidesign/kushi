@@ -5,30 +5,16 @@
             [kushi.ui.card.core :refer [card]]))
 
 
-
-(declare card-examples)
-
-
-(defn demo [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 1 card-examples)
-              example-opts card-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{1} idx) m)) card-examples)
-              ]
-          [component-examples/examples-section component-opts example-opts])))
-
-
 ;; TODO remove section-label
 ;; TODO hoist reqs up to a higher level
-(def card-sizes
+(def sizes
   [:xxsmall
    :xsmall
    :small
    :medium
    :large])
 
-(def card-examples
+(def examples
   [
    {:desc      "Sizes from xxsmall to large"
       :row-attrs (sx 
@@ -39,7 +25,7 @@
                      :&_.kushi-card:w--fit-content
                      :&_.kushi-card:b--1px:solid:$neutral-200
                      :dark:&_.kushi-card:b--1px:solid:$neutral-800)
-      :examples  (for [sz card-sizes]
+      :examples  (for [sz sizes]
                    {:label (name sz)
                     :attrs {:class [sz]}
                     :args  [[:div (sx :.flex-row-fs

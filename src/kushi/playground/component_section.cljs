@@ -117,8 +117,7 @@
    (sx :.kushi-ui-opt-desc
        :.normal
        :&_p:m--0
-       :&_p:fs--$medium
-       )
+       :&_p:fs--$medium)
    (let [ret* (cond
                 (string? v)
                 (->> v md->hc/md->hiccup md->hc/component)

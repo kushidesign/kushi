@@ -9,22 +9,10 @@
    [kushi.ui.tag.core :refer [tag]]
    [reagent.dom :as rdom]))
 
-(declare tag-examples)
-
-
-(defn demo2 [component-opts]
-  (into [:<>]
-        (for [
-              ;; example-opts (take 5 tag-examples)
-              example-opts tag-examples
-              ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{5} idx) m)) tag-examples)
-              ]
-          [component-examples/examples-section component-opts example-opts])))
-
 
 ;; TODO remove section-label
 ;; TODO hoist reqs up to a higher level
-(def tag-sizes
+(def sizes
   [:xxsmall
    :xsmall
    :small
@@ -32,7 +20,7 @@
    :large
    :xlarge])
 
-(def tag-examples
+(def examples
   (let [playground-tag-rows-container
         (sx 'playground-tag-rows-container
             :md:gtc--max-content
@@ -49,7 +37,7 @@
     [{:desc            "Sizes from xxsmall to xlarge"
       :row-attrs       (sx :md:ai--fe)
       :container-attrs playground-tag-rows-container24
-      :examples        (for [sz tag-sizes]
+      :examples        (for [sz sizes]
                          {:label (name sz)
                           :attrs {:class sz}
                           :args  ["Play"]})}
