@@ -150,25 +150,6 @@
     :as          opts}
    id]
 
-;; Fireworks error - cannot convert symbol to string
-(? [(:owning-el opts)]
-   #_(select-keys opts 
-                  [
-                ;;  :user-pane-style
-                ;;  :placement-kw
-                ;;  :user-rendering-fn
-                ;;  :auto-dismiss?
-                   :owning-el
-                ;;  :dialog-el
-                ;;  :pane-type
-                ;;  :user-pane-class
-                ;;  :arrow?
-                   ]))
-  
-;; Fireworks error - 1 is not ISeqable
-;; (?pp (seq [1 2 3]))
-
-
   ;; 1) Pre-calculate and append pane
   ;; Calculate an initial placement and append a pane element to the dom.
   ;; If the owning element is beyond the edge-threshold, the pane will

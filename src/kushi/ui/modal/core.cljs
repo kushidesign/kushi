@@ -9,6 +9,7 @@
 
 (declare close-on-backdrop-click)
 
+;; TODO - Change name to close-modal!
 (defn close-kushi-modal [e]
   (.stopPropagation e)
   (let [el     (domo/et e)
@@ -27,6 +28,7 @@
     (close-kushi-modal e))
   (when f (f)))
 
+;; TODO - Change name to open-modal!
 (defn open-kushi-modal
   "Takes an id of the modal, and an optional callback, which fires on light-dismiss."
   ([id]
@@ -36,7 +38,8 @@
      (do (.addEventListener dialog
                             "click"
                             (partial close-on-backdrop-click f)
-                            #js {"once" true})
+                            ;; #js {"once" true}
+                            )
          (.showModal dialog)
          (domo/add-class! dialog "kushi-modal-open"))
      (js/console.warn (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of: " id)))

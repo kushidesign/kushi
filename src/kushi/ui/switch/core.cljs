@@ -36,13 +36,11 @@
     [:div opts (if (string? x) [:span x] x)]))
 
 (defn switch
-  {:desc ["Switches are used to toggle an individual option on or off."
-          :br
-          :br
-          "Switches can be custom styled via a variety of tokens in your theme."
+  {:summary ["Switches are used to toggle an individual option on or off."]
+   :desc ["Switches can be custom styled via a variety of tokens in your theme."
           :br
           :br "`:$switch-width-ratio`"
-          :br "Setting this to 1.5 will result in a switch that has the aspect switch-switch-switch-switch-ratio of 1.5:1 (width:height). The default value is 2."
+          :br "Setting this to 1.5 will result in a switch that has the aspect ratio of 1.5:1 (width:height). The default value is 2."
           :br
           :br "`:$switch-border-width`"
           :br "The default value is `2px`. If customizing the value, it is recommended to use a `px` or `rem` value, especially if you are using the `:-track-content-on` or `:-track-content-off` options."
@@ -54,7 +52,8 @@
           :br "The default value is `1`. Setting this to a value greater than 1 will result in the thumb height being greater than the track height."
           :br
           ;; TODO add documentation for each token
-          :br "The following tokens control the background color of the switch"
+          :br "The following tokens control the background color of the switch:"
+          :br
           :br "`:$switch-off-background-color`"
           :br "`:$switch-off-background-color-hover`"
           :br "`:$switch-on-background-color`"
