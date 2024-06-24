@@ -154,7 +154,7 @@
                    :dark:bgc--$background-color-inverse
                    :border-radius--$modal-border-radius
                    :b--$modal-border
-                   :min-width--$modal-min-width||450px
+                   :min-width--$modal-min-width||200px
                    [:max-width "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
                    [:max-height "calc(100vh - (2 * var(--modal-margin, 1rem)))"]
                    :height--$modal-min-height
