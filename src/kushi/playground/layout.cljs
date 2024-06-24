@@ -435,9 +435,6 @@
      custom-attributes :opts} :component-meta
     :as                       component-opts}]
 
-  ;; TODO fireworks error :label is not ISeqable
-  ;; (? (keys component-opts))
-
   (into [:<>
          (into [:section
                 (sx :.playground-component-panel

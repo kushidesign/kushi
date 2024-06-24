@@ -2,7 +2,7 @@
   (:require
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.link.core :refer [link]]
-   [kushi.core :refer (sx)]
+   [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.callout.core :refer [callout]]
@@ -18,7 +18,8 @@
 
 (def examples
   (let [row-attrs         (sx :&_.instance-code:w--100%
-                              :flex-direction--column)
+                              :&_.instance-code:flex-direction--column
+                              :md:&_.instance-code:flex-direction--column)
         container-attrs   (sx :gtc--1fr)
         semantic-variants (for [[s msg]
                                 [["neutral" [:span "Please check out the " [link (sx :ws--n {:href "#"}) "new features"]]]
@@ -34,14 +35,15 @@
                                                         :class        [s]}}]} )]
 
     (into [{:desc            "Showing sizes from xxsmall to large, in accent variant"
-            :row-attrs       row-attrs
+            :row-attrs       (merge-attrs row-attrs
+                                          (sx :flex-direction--column
+                                              :md:flex-direction--column))
             :container-attrs container-attrs
             :variants-       [:filled :bordered]
-            :examples        (for [sz sizes]
-                               {:label (name sz)
-                                :attrs {:-header-text [:span "Please check out the " [link (sx :ws--n {:href "#"}) "new features"]]
-                                        :-icon        [icon :info]
-                                        :class        [sz "accent"]}})}
+            :examples        [{:code (sx-call (for [sz sizes]
+                                                [callout (sx {:-header-text [:span "Please check out the " [link (sx :ws--n {:href "#"}) "new features"]]
+                                                              :-icon        [icon :info]
+                                                              :class        [sz "accent"]})]))}]}
 
            {:desc            "With icon and dismiss button, in positive variant"
             :row-attrs       row-attrs
