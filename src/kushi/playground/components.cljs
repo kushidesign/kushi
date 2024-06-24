@@ -163,7 +163,7 @@
   #(contains? #{
                 ;; "button"
                 "icon"
-                "spinner"
+                ;; "spinner"
                 ;; "switch"
 
                 ;; "radio"
@@ -177,7 +177,7 @@
                 ;; "toast"
 
                 ;; "card"
-                "callout"
+                ;; "callout"
                 ;; "collapse"
                 ;; "accordian"
 

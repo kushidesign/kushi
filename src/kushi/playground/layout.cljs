@@ -440,8 +440,8 @@
                 (sx :.playground-component-panel
                     {:id (str "kushi-" label "-examples")})]
                (for [
-                    ;; example-opts (take 1 examples)
-                    example-opts examples
+                    example-opts (take 1 examples)
+                    ;; example-opts examples
                     ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{3} idx) m)) examples)
                      ]
                  [component-examples/examples-section component-opts example-opts]))

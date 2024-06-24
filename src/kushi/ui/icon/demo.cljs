@@ -103,25 +103,37 @@
           :row-gap    :2rem
           :column-gap :unset}])]
 
-   [{:desc            "Sizes from xxsmall to xxxlarge, in weights from thin to bold"
+   [{:desc            "Sizes from xxsmall to xxxlarge, in weights from extra-light to extra-bold"
      :variants-       [:outlined :filled]
      :container-attrs container-attrs
      :row-attrs       row-attrs-all
-     :examples        [{:label "Sizes from xxsmall to xxxlarge, in weights from thin to bold"
+     :snippets-header ["Use the font-size utility classes `:.xxxsmall` ~ `:.xxxlarge` to control the size of the icons."
+                       "You can also use something like `:fs--96px` for specific sizes."
+                       :br
+                       :br
+                       "Use the font-weight utility classes `:.extra-light` ~ `:.extra-bold` to control the weight of the icons."
+                       "This is only applicable to the outline variant of the icon."
+                       :br
+                       :br
+                       "A few examples of different size/weight combos:"]
+     :snippets        '[[icon (sx :.small :.extra-bold)]
+                        [icon (sx :.xxxlarge :.light)]
+                        [icon (sx :.medium :.normal)]]
+     :examples        [{:label "Sizes from xxsmall to xxxlarge, in weights from extra-light to extra-bold"
                         :code  (sx-call 
                                 (for [weight component-examples/type-weights]
                                   (into [:div (sx :.flex-row-sb :row-gap--1.25rem)]
                                         (for [sz sizes]
                                           [icon {:class [sz weight]} :star]))))}]}
     
-    {:desc            "Weights from 100 to 700"
+    {:desc            "Weights from extra-light to bold"
      :variants-       [:outlined :filled]
      :container-attrs container-attrs
      :row-attrs       (merge-attrs #_grid-row-attrs
                                    row-attrs
                                    (sx :&_.kushi-icon:fs--48px
                                        :sm:&_.kushi-icon:fs--64px))
-     :examples        [{:label "Weights from 100 to 700"
+     :examples        [{:label "Weights from extra-light to bold"
                         :code  (sx-call 
                                 (for [weight (drop-last component-examples/type-weights)]
                                   [icon {:class [weight]}
