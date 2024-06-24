@@ -54,25 +54,42 @@
         ;; row of buttons that show various stylings (no arrow etc)
 
 
-        ;; Fix icon and callout demo sizing problems
-
+        
         ;; code snippet modal
 
         ;; figure out sidemenu on mobile
         
-        ;; Add color type about sections
+        ;; Add color & type about sections
 
         ;; Some koind of splash page?
 
-        ;; jiggle animation not work on mobile safari
-
         ;; Tie together nav height
 
-        ;; Make utility for border for light/dark
-        
+        ;; dark mode review
+
+        ;; Make utility for border for light/dark and others (maybe accent fg etc)
+
         ;; Fix toast on mobile
 
         ;; Debug popover on mobile
+
+
+
+        
+
+
+        ;; check size of app etc.
+
+
+
+
+
+        
+
+
+        ;; section that is scrolling up and out , fade it out (later)
+
+        ;; jiggle animation not work on mobile safari (later)
 
         ;; seems fine for now  ;; For some reason modal and card do not register as intersecting
 
@@ -145,8 +162,8 @@
   ;;  :label
   #(contains? #{
                 ;; "button"
-                ;; "icon"
-                ;; "spinner"
+                "icon"
+                "spinner"
                 ;; "switch"
 
                 ;; "radio"
@@ -159,10 +176,10 @@
                 ;; "modal"
                 ;; "toast"
 
-                "card"
+                ;; "card"
                 "callout"
-                "collapse"
-                "accordian"
+                ;; "collapse"
+                ;; "accordian"
 
                 ;; "tag"
                 ;; "grid"

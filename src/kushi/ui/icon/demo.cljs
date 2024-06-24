@@ -24,9 +24,7 @@
    "find_replace"
    "open_in_new"
    "fingerprint"
-   "arrow-forward"
    "refresh"
-   "open-in-new"
    "download"
    "menu"])
 
@@ -54,7 +52,7 @@
    "smartphone"
    "star"
    "add-circle"
-   "delete"])
+   "expand_circle_down"])
 
 (def sizes
   [:xxsmall
@@ -79,6 +77,21 @@
              :row-gap        :1rem
              :ai             :stretch}])
 
+       row-attrs
+       (sx [:&_.instance-code
+            {:w  :100%
+             :d  :flex
+             :jc :sb
+             :pi :0.75rem}])
+
+       row-attrs-all
+       (sx [:&_.instance-code
+            {:w              :100%
+             :pi             :0.75rem
+             :row-gap        :2rem
+             :flex-direction :column
+             :align-items    :stretch}])
+
        grid-row-attrs
        (sx 
         [:&_.playground-component-example-row-instance-code
@@ -93,7 +106,7 @@
    [{:desc            "Sizes from xxsmall to xxxlarge, in weights from thin to bold"
      :variants-       [:outlined :filled]
      :container-attrs container-attrs
-     :row-attrs       row-attrs-2
+     :row-attrs       row-attrs-all
      :examples        [{:label "Sizes from xxsmall to xxxlarge, in weights from thin to bold"
                         :code  (sx-call 
                                 (for [weight component-examples/type-weights]
@@ -104,7 +117,8 @@
     {:desc            "Weights from 100 to 700"
      :variants-       [:outlined :filled]
      :container-attrs container-attrs
-     :row-attrs       (merge-attrs grid-row-attrs
+     :row-attrs       (merge-attrs #_grid-row-attrs
+                                   row-attrs
                                    (sx :&_.kushi-icon:fs--48px
                                        :sm:&_.kushi-icon:fs--64px))
      :examples        [{:label "Weights from 100 to 700"
@@ -116,13 +130,13 @@
     {:desc            "All the colors"
      :variants-       [:outlined :filled]
      :container-attrs container-attrs
-     :row-attrs       row-attrs-2
+     :row-attrs       (merge-attrs row-attrs-all  (sx [:&_.instance-code {:row-gap :1rem}]))
      :examples        [{:label "All the colors"
                         :code  (sx-call 
                                 (for [color (concat component-examples/colors
                                                     component-examples/non-semantic-colors)]
                                   (into [:div (sx :.flex-row-fs :jc--sb :row-gap--1.25rem)]
-                                        (for [val (range 100 1100 100)]
+                                        (for [val (range 200 1000 100)]
                                           [:div (sx :.flex-col-fs)
                                            [icon {:class [:xlarge :light]
                                                   :style {:color (str "var(--" color "-" val ")")}}
@@ -135,22 +149,31 @@
     {:desc            "Many icons have a filled variant"
      :variants-       [:outlined :filled]
      :container-attrs container-attrs
-     :row-attrs       grid-row-attrs
+     :row-attrs       row-attrs-all
      :examples        [{:label "Many icons have a filled variant"
                         :code  (sx-call 
-                                (for [icon-name icons-with-filled-variants]
-                                  [:div (sx :.flex-row-fs 
-                                            :gap--0.25rem)
-                                   [icon {:class [:xlarge :light]} icon-name]
-                                   [icon {:class         [:xlarge]
-                                          :-icon-filled? true}
-                                    (name icon-name)]]) ) }]}
+                                (for [icon-set (partition 8 icons-with-filled-variants)]
+                                  (into [:div (sx :.flex-row-fs :jc--sb :row-gap--1.25rem)]
+                                        (for [icon-name icon-set]
+                                          [:div (sx :.flex-col-fs 
+                                                    :gap--0.25rem)
+                                           [icon {:class [:xlarge :light]} icon-name]
+                                           [icon {:class         [:xlarge]
+                                                  :-icon-filled? true}
+                                            (name icon-name)]]))))}]}
 
-    {:desc      "Some icons do not have a filled variant"
-     :variants- [:outlined :filled]
+    {:desc            "Some icons do not have a filled variant"
+     :variants-       [:outlined :filled]
      :container-attrs container-attrs
-     :row-attrs grid-row-attrs
-     :examples  [{:label "Sizes from xxsmall to xxxlarge"
-                  :code  (sx-call 
-                          (for [icon-name icons-without-filled-variants]
-                            [icon {:class [:xlarge :light]} icon-name]))}]}]))
+     :row-attrs       row-attrs-all
+     :examples        [{:label "Sizes from xxsmall to xxxlarge"
+                        :code  (sx-call 
+                                (for [icon-set (partition 8 icons-without-filled-variants)]
+                                  (into [:div (sx :.flex-row-fs :jc--sb :row-gap--1.25rem)]
+                                        (for [icon-name icon-set]
+                                          [:div (sx :.flex-col-fs 
+                                                    :gap--0.25rem)
+                                           [icon {:class [:xlarge :light]} icon-name]
+                                           #_[icon {:class         [:xlarge]
+                                                  :-icon-filled? true}
+                                            (name icon-name)]]))))}]}]))
