@@ -278,3 +278,9 @@
   :dark:bgc--$background-color-inverse
   :c--$neutral-secondary-foreground
   :dark:c--$neutral-secondary-foreground-inverse)
+
+(defclass component-section-header-label
+  :.semi-bold
+  :.capitalize
+  :lh--0.75em
+  :fs--$xlarge)

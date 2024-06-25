@@ -14,12 +14,14 @@
             [kushi.playground.state :as state]
             [kushi.playground.ui :refer [light-dark-mode-switch]]
             [kushi.playground.util :as util]
+[kushi.ui.radio.core :refer [radio]]
+[kushi.ui.label.core :refer [label]]
             [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
             [reagent.dom :as rdom]))
 
 (defn sidenav-item-handler [label modal? e]
-  (domo/scroll-into-view!
-   (domo/qs-data= "kushi-playground-component" label))
+  ;; TODO these two steps should be shared utility
+  (domo/scroll-into-view! (domo/qs-data= "kushi-playground-component" label))
   (domo/scroll-by! {:y -50})
   (when modal?
     (dismiss-popover! e)))
@@ -164,11 +166,6 @@
     "Kushi"]
    [light-dark-mode-switch]])
 
-(defn add-links [coll]
-  (walk/postwalk #(if (and (map? %) (contains? % :href))
-                    (assoc % :target :_blank :class [:kushi-link] )
-                    %)
-                 coll))
 
 
 ;; make clone of h1 section title
@@ -199,91 +196,14 @@
             attrs)
    label])
 
-(defn docs-modal [modal-id label component-meta]
-  [modal (sx :.fixed-block-start-inside
-             ;; :$modal-backdrop-color--$white-transparent-70
-             :$modal-border-radius--0
-             ;; TODO pin to nav-height
-             :&_.kushi-modal-inner:p--0
-             :&_.kushi-modal-inner:gap--0rem
-            ;;  :&.kushi-modal-open:o--0.5
-             [:translate "-50% 0px"]
-             ;; [:&.kushi-modal-open:translate "-50% 50px"]
-             [:w "calc(100% - (2rem * 2))"]
-             [:w :100vw]
-             [:h :100vh]
-             [:max-width :100vw]
-             [:max-height :100vh]
-             {:id modal-id})
-   [:div (sx :.neutralize
-             :position--sticky
-             :zi--1
-             :h--100px
-             :pi--4rem
-             [:top 0]
-             [:w :100%])
-    [:div (sx :.flex-row-sb
-              :.small
-              :.relative
-              :h--50px
-              :ai--c)
-     [:div 
-      [icon (sx :.medium
-                :.absolute!
-                :inset-inline-end--100%
-                :inset-block-start--50%
-                [:translate "-5px -50%"])
-       :arrow-back]
-      [link-button {:on-click close-kushi-modal} "Back to playground"]]
-     [light-dark-mode-switch]]
-    [:div (sx :.neutralize
-              :.flex-row-sb
-              :ai--c
-              :zi--1
-              :h--50px
-              [:w :100%])
-     [:div (sx :.flex-row-fs
-               :ai--b
-               :gap--1rem)
-      [:h1 (sx :.semi-bold
-               :.capitalize
-               :lh--0.75em
-               :fs--$xlarge)
-       label]]
-     ]]
-
-    ;; summary
-   [:div 
-    (sx :.flex-col-fs
-        :pi--4rem
-        :gap--3rem)
-    [:div 
-     (-> component-meta
-         :summary
-         util/desc->hiccup
-         add-links)]
-    [:div
-     (sx :max-width--660px)
-     [:h2 (sx :.large :.semi-bold :mb--1rem) "Description"]
-     [:p (sx :lh--1.7
-             :&_code:pb--0.07em
-             :&_code:pi--0.2em
-             :&_code:fs--0.85rem
-             :&_code:fw--$wee-bold
-             :&_code:color--$accent-750
-             :&_code:bgc--$accent-50
-             :dark:&_code:color--$accent-100
-             :dark:&_code:bgc--$accent-900
-             )
-
-      (-> component-meta :desc util/desc->hiccup add-links)]]]])
-
 
 (defcom component-sections-tab
   [button (merge-attrs 
            (sx :.minimal
                :pi--0.8em
                :pb--0.4em
+               :&.neutral.minimal:c--$neutral-secondary-foreground
+               :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
                ["&[aria-selected='true']:before"
                 {:box-sizing :border-box
                  :content    "\"\""
@@ -345,6 +265,13 @@
 
    [all-components-sidenav _comps]
 
+
+   ;; Uncomment to try what's inside
+   #_[:div (sx :mbs--100px :p--2rem :.debug-blue)
+
+      ;; Just for trying stuff out - paste here
+      [:div "hi"]]
+
    ;; Main section
    (into [:div
           (sx :.kushi-playground-all-components
@@ -353,30 +280,34 @@
               :.grow
               :gap--5rem
               :pb--0:30vh)]
-        #_[:div "hi"] 
+
+         
+
+         #_[:div "hi"] 
+
          ;; Cycle through Collection of components  defined in playground.core
          (for [{:keys [label
                        media-matches
                        examples]
-                :as component-opts}
+                :as   component-opts}
                _comps]
            [:section
             (sx :min-height--200px
                 :>*:pi--1.25rem
                 :md:>*:pi--4rem
                 {:data-kushi-playground-component label
-                 :ref (fn [el]
-                        (when el
-                          (domo/observe-intersection 
-                           (let [f (partial swap!
-                                            state/*playground
-                                            update-in
-                                            [:intersecting])]
-                             {:element          el
-                              :not-intersecting #(f disj label)
-                              :intersecting     #(f conj label)
+                 :ref                             (fn [el]
+                                                    (when el
+                                                      (domo/observe-intersection 
+                                                       (let [f (partial swap!
+                                                                        state/*playground
+                                                                        update-in
+                                                                        [:intersecting])]
+                                                         {:element          el
+                                                          :not-intersecting #(f disj label)
+                                                          :intersecting     #(f conj label)
                               ;; Incorporate into global val for header height
-                              :root-margin      "51px 0px 0px 0px"}))))})
+                                                          :root-margin      "51px 0px 0px 0px"}))))})
             
             [:div (sx 'component-section-header
                       :.neutralize
@@ -391,10 +322,7 @@
              [:div (sx :.flex-row-fs
                        :ai--c
                        :gap--1rem)
-              [:h1 (sx :.semi-bold
-                       :.capitalize
-                       :lh--0.75em
-                       :fs--$xlarge)
+              [:h1 (sx :.component-section-header-label)
                label]]
              (let [#_component-sections-tab
                    ]
@@ -420,10 +348,10 @@
             (when (seq examples)
               (let [{:keys [matches
                             message]} media-matches
-                    unsupported?      (when (and matches message)
-                                        (not (some (fn [[prop val]]
-                                                     (domo/matches-media? prop val))
-                                                   matches)))]
+                    unsupported?              (when (and matches message)
+                                                (not (some (fn [[prop val]]
+                                                             (domo/matches-media? prop val))
+                                                           matches)))]
                 (if unsupported? 
                   [:p (sx :mbs--2rem) message]
                   [component-section component-opts])))]))])
@@ -440,22 +368,22 @@
                 (sx :.playground-component-panel
                     {:id (str "kushi-" label "-examples")})]
                (for [
-                    example-opts (take 1 examples)
-                    ;; example-opts examples
-                    ;; example-opts (keep-indexed (fn [idx m] (when (contains? #{3} idx) m)) examples)
+                    ;; example-opts (take 2 examples)
+                     example-opts examples
+                    ;;  example-opts (keep-indexed (fn [idx m] (when (contains? #{3} idx) m)) examples)
                      ]
                  [component-examples/examples-section component-opts example-opts]))
          [:div (sx :.playground-component-panel
-                   :max-width--660px
+                   :>div:max-width--605px
                    ;; TODO - tie to navbar
                    :pbs--35px
                    {
                     :hidden "hidden"
                     :id     (str "kushi-" label "-documentation")})
+          [:div (sx :.medium :.wee-bold :mb--0:2rem)
            (some->> summary
                     util/desc->hiccup 
-                    docs/add-links
-                    (into [:div (sx :.medium :.wee-bold :mb--0:2rem)]))
+                    docs/add-links)]
           [:h2 (sx :.large :.semi-bold :mb--0:1.5rem) "Usage"]
           [:div (sx :lh--1.7
                     :mb--2rem

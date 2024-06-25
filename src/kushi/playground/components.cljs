@@ -161,28 +161,27 @@
   (filter 
   ;;  :label
   #(contains? #{
-                ;; "button"
-                "icon"
-                ;; "spinner"
-                ;; "switch"
+                ;; "button"     ;; ✅
+                ;; "icon"       ;; ✅
+                ;; "spinner"    ;; ✅
+                ;; "switch"     ;; ✅
+                ;; "radio"      ;; ✅
+                ;; "checkbox"   ;; ✅ 
+                ;; "slider"     ;; ✅
+                ;; "text field" ;; ✅
 
-                ;; "radio"
-                ;; "checkbox"
-                ;; "slider"
-                ;; "text field"
+                ;; "tooltip"    ;;
+                ;; "popover"    ;; 
+                ;; "modal"      ;;
+                ;; "toast"      ;;
 
-                ;; "tooltip"
-                ;; "popover"
-                ;; "modal"
-                ;; "toast"
+                ;; "card"       ;;
+                ;; "callout"    ;;
+                ;; "collapse"   ;;
+                ;; "accordian"  ;;
 
-                ;; "card"
-                ;; "callout"
-                ;; "collapse"
-                ;; "accordian"
-
-                ;; "tag"
-                ;; "grid"
+                ;; "tag"        ;;
+                ;; "grid"       ;;
 
                 }
                (:label %))
@@ -199,8 +198,7 @@
      :variants-attrs {:rounded  (sx :.rounded)
                       :filled   (sx :.rounded :.filled)
                       :bordered (sx :.rounded :.bordered)
-                      :minimal  (sx :.rounded :.minimal)}
-     }
+                      :minimal  (sx :.rounded :.minimal)}}
 
     {:label          "icon"
      :component      icon

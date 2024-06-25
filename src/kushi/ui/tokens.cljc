@@ -201,6 +201,7 @@
    :$modal-backdrop-color                   :$black-transparent-50
    :$modal-margin                           :1rem
    :$modal-min-width                        :100px
+   :$modal-max-height                       :800px
    :$modal-transition-duration              :$pane-transition-duration
 
 

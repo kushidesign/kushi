@@ -1,5 +1,5 @@
 (ns ^:dev/always kushi.playground.component-examples
-  (:require [fireworks.core :refer [? pprint]]
+  (:require [fireworks.core :refer [? ?flop !? pprint]]
             [clojure.string :as string]
             ;; [clojure.walk :as walk]
             [domo.core :refer (copy-to-clipboard!)]
@@ -129,15 +129,15 @@
           :.bold
           :.neutralize-secondary
           :dark:fw--$wee-bold
-          :fs--16.75px
+          :fs--17.5px
           ;; :min-width--55px
           ;; :w--fit-content
           :lh--1.7
           :&_span.code:mis--0.5ch)
    s])
 
-
 (declare component-snippets)
+(declare reqs-coll)
 
 (defn examples-section
   [{component       :component
@@ -160,38 +160,49 @@
                                section-label)
         modal-id       (str component-label "__" example-desc)]
     [:div (sx :.playground-example-row-container
-              :pb--1.5rem
+              :pb--2.5rem
               :first-of-type:pbs--2.5rem
               ;; Hack to conditionally hide things here, like if they should not be shown on mobile
               ["has([data-kushi-playground-example='popover-with-form']):display" :none]
               ["xsm:has([data-kushi-playground-example='popover-with-form']):display" :block])
+
      [:section (sx :.playground-example-row
                   ;; make this max-width global var
                    :max-width--605px)
       [:div (sx :.flex-row-fs
                 :flex-wrap--wrap
                 :mbe--1rem
-                :gap--1em)
+                :gap--0.5em)
        label
-       [button
-        (sx :.minimal
-            :.pill
-            :.accent
-            :.xxsmall
-            :.wee-bold
-            {:on-click (fn* [] (open-kushi-modal modal-id))})
-        [icon (sx :.small :.extra-bold) :code]
-        "Get the code"]
-       [modal (sx :&_.kushi-modal-inner:pi--1.25em
-                  :xsm:&_.kushi-modal-inner:pi--2.5em
-                  :&_.kushi-modal-inner:pb--1.75em:2em
-                  :xsm:&_.kushi-modal-inner:pb--2.25em:2.75em
-                  :$modal-min-width--200px
-                  :width--605px
-                  {:id modal-id})
-        [component-snippets component-reqs
-         snippets-header
-         snippets]]]
+       (when snippets 
+         [:<> 
+          [button
+           (sx :.minimal
+               :.pill
+               :.accent
+               :.xxsmall
+               :.wee-bold
+               {:on-click (fn* [] (open-kushi-modal modal-id))})
+           [icon (sx :.small :.extra-bold) :code]
+           "Get the code"]
+          [modal (sx :&_.kushi-modal-inner:pi--1.25em
+                     :xsm:&_.kushi-modal-inner:pi--3em
+                     :&_.kushi-modal-inner:pb--1.75em:2em
+                     :xsm:&_.kushi-modal-inner:pb--3em:3.5em
+                     :$modal-min-width--200px
+                     :&_.kushi-modal-inner:gap--0.75rem
+                     [:height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem))))"]
+                     :overflow--hidden
+                     :width--605px
+                     {:id modal-id})
+           [:div (sx :.flex-row-fs :ai--b :gap--1.5em)
+            [:h1 (sx :.component-section-header-label) component-label]
+            label]
+           [:div (sx :h--0 :bbe--1px:solid:$neutral-150)]
+           [component-snippets
+            (reqs-coll reqs-by-refers)
+            snippets-header
+            snippets]]])]
 
       
       (into [:div (merge-attrs
@@ -216,6 +227,22 @@
 
 ;;; New snippet code
 
+(defn- reqs-coll
+  "Returns something like this:
+   '[[kushi.ui.button.core  :refer  [button]]
+     [kushi.ui.icon.core  :refer  [icon]]]"
+  [reqs-by-refers]
+  (some->> reqs-by-refers
+           keys
+           distinct
+           (reduce (fn [acc v]
+                     (let [_ns    (get reqs-by-refers v)
+                           refers (or (get acc _ns) [])]
+                       (assoc acc _ns (conj refers v))))
+                   {})
+           (reduce-kv (fn [acc k v]
+                        (conj acc [k :refer v]))
+                      [])))
 
 (defn- formatted-code [s]
   [:pre
@@ -252,7 +279,8 @@
   [:section (sx 'snippet-section
                 :.flex-col-fs
                 :gap--0.5em
-                :first-of-type:mbe--2.5em) 
+                ;; :first-of-type:mbe--2.5em
+                ) 
    header
    [:section 
     (sx :.relative
@@ -270,6 +298,18 @@
       [copy-to-clipboard-button attrs])
     preformatted]])
 
+(defn- scroll-to-elsewhere-on-page
+  [{href :href}]
+  (when (string/starts-with? href "#")
+    {:target   :_self
+     :on-click (fn [e]
+                 (.preventDefault e)
+                 (close-kushi-modal e)
+                 ;; TODO these two steps should be shared utility
+                 (domo/scroll-into-view!
+                  (domo/qs-data= "kushi-playground-component"
+                                 (subs href 1)))
+                 (domo/scroll-by! {:y -50}))}))
 
 (defn component-snippets
   []
@@ -284,19 +324,24 @@
          :&_code:fs--0.95em
          :&_.code:fs--0.95em
          :&_code:ws--n
+         :&_.code:ws--n
+         :&_pre&_code:p--0
+         :&_pre&_.code:p--0
          :lh--1.7
          :ai--fs
          :min-width--200px
          :min-height--120px)
 
      [:div
-      (sx 
-          :.flex-col-fs
+      (sx :.flex-col-fs
+          :w--100%
           :gap--1em
           :&_.kushi-text-input-label:min-width--7em
           :&_.kushi-input-inline:gtc--36%:64%)
       (let [formatted*    #(-> % (pprint {:max-width 50}) with-out-str) ]
-        (into [:div (sx :.flex-col-fs :gap--1rem)
+        (into [:div (sx :.flex-col-fs 
+                        :gap--2.25rem
+                        :mbs--1.5em)
                [snippet-section
                 {:header       (util/desc->hiccup
                                 ["Paste into the `:require` section of your `:ns` form:"])
@@ -305,21 +350,24 @@
                                    (subs 1)
                                    (drop-last)
                                    string/join
+                                   (string/replace #"\n \[kushi." "\n[kushi.")
                                    formatted-code)
-                 :copyable     (string/join "\n" reqs-coll)}]]
+                 :copyable     (string/join "\n" reqs-coll)}]
+
+               [:div (sx :h--0 :bbe--1px:solid:$neutral-150)]]
 
               (for [[i call] (map-indexed (fn [i call] [i call]) snippets)
                     :let [header (when (zero? i) 
                                    (some-> snippets-header
                                            util/desc->hiccup 
-                                           docs/add-links))]]
+                                           (docs/add-links scroll-to-elsewhere-on-page)))]]
                 [snippet-section
                  {:header       header
                   :preformatted (-> call
                                     formatted*
                                     string/join
                                     formatted-code)
-                  :copyable     (string/join "\n" call)}])))]]))
+                  :copyable     (str "[" (string/join "\n" call) "]")}])))]]))
 
 
 (def type-weights
@@ -370,3 +418,48 @@
    #_:xxxlarge] )
 
 
+
+(def sizes-snippet-header*
+  ["Use the font-size utility classes `:.xxxsmall` ~ `:.xxxlarge` to control the size."
+   "You can also use something like `:fs--96px` for specific sizes."
+   :br
+   :br])
+        
+(defn sizes-snippet-map [sym]
+  {:snippets-header (conj sizes-snippet-header* "A few examples of different sizes:")
+   :snippets        [[sym '(sx :.small)]
+                     [sym '(sx :.large)]
+                     [sym '(sx :.xxxlarge)]]})
+
+(def sizes-snippet-scale-header
+  (conj sizes-snippet-header* "Scale of different sizes:"))
+
+(defn sizes-snippet-scale
+  ([sym]
+   (sizes-snippet-scale sym nil))
+  ([sym arg]
+   {:snippets-header sizes-snippet-scale-header
+    :snippets        [(if arg
+                        [:div
+                         [sym arg]
+                         [sym '(sx :.xxxsmall) arg]
+                         [sym '(sx :.xxsmall) arg]
+                         [sym '(sx :.xsmall) arg]
+                         [sym '(sx :.small) arg]
+                         [sym '(sx :.medium) arg]
+                         [sym '(sx :.large) arg]
+                         [sym '(sx :.xlarge) arg]
+                         [sym '(sx :.xxlarge) arg]
+                         [sym '(sx :.xxxlarge) arg]]
+                        [:div
+                         [sym]
+                         [sym '(sx :.xxxsmall)]
+                         [sym '(sx :.xxsmall)]
+                         [sym '(sx :.xsmall)]
+                         [sym '(sx :.small)]
+                         [sym '(sx :.medium)]
+                         [sym '(sx :.large)]
+                         [sym '(sx :.xlarge)]
+                         [sym '(sx :.xxlarge)]
+                         [sym '(sx :.xxxlarge)]])]})
+  )

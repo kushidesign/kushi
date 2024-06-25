@@ -47,7 +47,7 @@
                                                      semantic
                                                      (when (not= shape :sharp)
                                                        shape)]))}))
-                        "Hello"])))))]))
+                        "Play"])))))]))
 
 
 (defn demo []
@@ -81,37 +81,73 @@
                          :md:gtc--max-content
                          ))]
     [
-     {:desc            "Sizes from xxsmall to xlarge"
-      :row-attrs       (sx :md:ai--fe)
-      :container-attrs container-attrs
-      :examples        (for [sz component-examples/sizes]
-                         {:label (name sz)
-                          :attrs {:class sz}
-                          :args  ["Pets" [icon :pets]]})}
-     
+     {:desc            "Surface variants"
+      :sx-attrs        (sx-call (sx :.small))
+      :container-attrs (merge-attrs container-attrs2
+                                    (sx [:md:gtc '(repeat 4 :max-content)]
+                                        :color--red!important))
+      :variants+       [:minimal]
+      :snippets-header ["Use the utility classes `:.filled`, `:.bordered`, and `:.minimal` to control the surface variant of the button."]
+      :snippets        '[[button "Play"]
+                         [button (sx :.filled) "Play"]
+                         [button (sx :.bordered) "Play"]
+                         [button (sx :.minimal) "Play"]]
+      :examples        (for [s [:rounded]]
+                         {:label (name s)
+                          :args  ["Pets" [icon :pets]]
+                          :attrs {:class [:accent]}})}
+
      {:desc            "Semantic variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
-      :examples        (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
-                         (for [s component-examples/colors]
-                           {:label (name s)
-                            :args  ["Pets" [icon :pets]]
-                            :attrs {:class [s]}}))}
+      :snippets-header ["Use the utility classes `:.neutral`, `:.accent`, `:.positive`, `:.warning`, and `:.negative` to control the semantic color variant."
+                        :br
+                        :br
+                        "The default is `:.neutral`."]                        
+      :snippets        '[[button "Play"]
+                         [button (sx :.neutral) "Play"]
+                         [button (sx :.accent) "Play"]
+                         [button (sx :.positive) "Play"]
+                         [button (sx :.warning) "Play"]
+                         [button (sx :.negative) "Play"]]
+      :examples        (for [s component-examples/colors]
+                         {:label (name s)
+                          :args  ["Pets" [icon :pets]]
+                          :attrs {:class [s]}})}
 
      {:desc            "Shape variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
+      :snippets-header ["Use the utility classes `:.pill`, `:.rounded`, and `:.sharp` to control the surface variant of the button."
+                        :br
+                        :br
+                        "The default is `:.rounded`."]
+      :snippets        '[[button "Play"]
+                         [button (sx :.rounded) "Play"]
+                         [button (sx :.pill) "Play"]
+                         [button (sx :.sharp) "Play"]]
       :examples        (for [s [:rounded :pill :sharp]]
                          {:label (name s)
                           :args  ["Pets" [icon :pets]]
                           :attrs {:class [s]}})}
 
+     ;; get extra reqs working
+     ;; get links working
+
      {:desc            "With icons"
-      :reqs            '[[kushi.ui.icon.core :refer [icon]]]
+      :reqs            '[[kushi.ui.icon.core :refer [icon]]
+                         [kushi.ui.label.core :refer [label]]]
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
+      :snippets-header ["Check out the [icon component](#icon) for detailed info on icon usage"
+                        :br
+                        :br
+                        "Various buttons with icons:"]
+      :snippets        '[[button [icon :play-arrow]]
+                         [button "Play" [icon :play-arrow]]
+                         [button [icon :auto-awesome] "Wow" [icon :auto-awesome]]]
       :examples        [{:label "Icon button"
                          :args  [[icon :favorite]]}
                         {:label "Icon button"
@@ -125,13 +161,41 @@
                         {:label "2 icons"
                          :args  [[icon :auto-awesome] "Wow" [icon :auto-awesome]]}]}
 
+
+     (merge
+      (component-examples/sizes-snippet-scale 'button "Play")
+      {:desc            "Sizes from xxsmall to xlarge"
+       :row-attrs       (sx :md:ai--fe)
+       :container-attrs container-attrs
+       :examples        (for [sz component-examples/sizes]
+                          {:label (name sz)
+                           :attrs {:class sz}
+                           :args  ["Pets" [icon :pets]]})})
+
+
      {:desc            "Weight variants from light to extra-bold"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
+      :snippets-header ["Use the font-weight utility classes `:.thin` ~ `:.heavy` to control the weight."
+                        :br
+                        :br
+                        "Scale of weights:"]
+      :snippets        '[[:div
+                          [button "Play"]
+                          [button (sx :.thin) "Play"]
+                          [button (sx :.extra-light) "Play"]
+                          [button (sx :.light) "Play"]
+                          [button (sx :.normal) "Play"]
+                          [button (sx :.wee-bold) "Play"]
+                          [button (sx :.semi-bold) "Play"]
+                          [button (sx :.bold) "Play"]
+                          [button (sx :.extra-bold) "Play"]
+                          [button (sx :.heavy) "Play"]]]
       :examples        (for [s (rest component-examples/type-weights)]
                          {:label (name s)
                           :args  ["Wow" [icon :auto-awesome]]
                           :attrs {:class [s]}})}
+
 
      {:desc            "Loading and disabled states"
       :variants-       [:bordered :filled]
@@ -140,6 +204,9 @@
                          [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]]
       :sx-attrs        (sx-call (sx :.small {:-loading? true}))
       :container-attrs container-attrs
+      :snippets-header ["Examples:"]
+      :snippets        '[[button (sx {:-loading? true}) [spinner [icon :play-arrow] [propeller]] "Play"]
+                         [button {:disabled true} "Play"]]
       :examples        [{:label "Loading state, propeller"
                          :args  [[spinner [icon :play-arrow] [propeller]] "Play"]}
                         {:label "Loading state, dots"

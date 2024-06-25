@@ -12,22 +12,6 @@
    [markdown-to-hiccup.core :as md->hc]
    [kushi.playground.component-docs :as docs]))
 
-;; (defn switch-demo [{dark? :-dark? :or {dark? false}}]
-;;   (into [:div
-;;          (sx :.flex-col-fs
-;;              :gap--0.5em
-;;              :padding--1rem
-;;              :.xxxlarge
-;;              {:class [(when dark? :dark)]})]
-;;         (for [semantic [:foo
-;;                         :neutral :accent
-;;                         :positive :warning :negative]]
-;;           [:div (sx :.flex-row-fs :gap--0.5em)
-;;            [switch (sx {:-disabled? false
-;;                         :class      [semantic]})]
-;;            [switch (sx {:-disabled? false
-;;                         :-on?       true
-;;                         :class      [semantic]})]])))
 
 (def sizes
   [:small
@@ -49,6 +33,17 @@
       :sx-attrs        (sx-call (sx :.xxlarge))
       :row-attrs       row-attrs
       :container-attrs container-attrs
+      :snippets-header ["Use the utility classes `:.neutral`, `:.accent`, `:.positive`, `:.warning`, and `:.negative` to control the semantic color variant."
+                        :br
+                        :br
+                        "The default is `:.neutral`."]                        
+      :snippets        '[[:div
+                          [switch]
+                          [switch (sx :.neutral)]
+                          [switch (sx :.accent)]
+                          [switch (sx :.positive)]
+                          [switch (sx :.warning)]
+                          [switch (sx :.negative)]]]
       :examples        (for [s (take 5 component-examples/colors)]
                          {:label (name s)
                           :attrs {:class [s]}})}
@@ -79,18 +74,22 @@
                            {:label (name s)
                             :attrs {:class [s]}})}
 
-     {:desc            "Showing sizes from small to xxxlarge"
-      :row-attrs       row-attrs
-      :container-attrs container-attrs
-      :examples        (for [sz sizes]
-                         {:label (name sz)
-                          :attrs {:class sz}})}
+     (merge 
+      (component-examples/sizes-snippet-scale 'switch)
+      {:desc            "Different sizes from small to xxxlarge"
+       :row-attrs       row-attrs
+       :container-attrs container-attrs
+       :examples        (for [sz sizes]
+                          {:label (name sz)
+                           :attrs {:class sz}})})
 
      {:desc            "With convex-styled thumb control"
       :row-attrs       row-attrs
       :container-attrs container-attrs
       :sx-attrs        (sx-call (sx {:-thumb-attrs (sx :bgi--$convex
                                                        :dark:bgi--$convex-3)}))
+      :snippets        '[[switch {:-thumb-attrs (sx :bgi--$convex
+                                                    :dark:bgi--$convex-3)}]]
       :examples        (for [sz sizes]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
@@ -102,6 +101,10 @@
                                  :$switch-border-width--0px
                                  :$switch-thumb-scale-factor--1.25
                                  {:-thumb-attrs (sx :border--1px:solid:currentColor)}))
+      :snippets        '[[switch (sx
+                                 :$switch-border-width--0px
+                                 :$switch-thumb-scale-factor--1.25
+                                 {:-thumb-attrs (sx :border--1px:solid:currentColor)})]]
       :examples        (for [sz sizes]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
@@ -113,6 +116,10 @@
                                  :$switch-width-ratio--2.25
                                  {:-track-content-on  "ON"
                                   :-track-content-off "OFF"}))
+      :snippets        '[[switch (sx
+                                  :$switch-width-ratio--2.25
+                                  {:-track-content-on  "ON"
+                                   :-track-content-off "OFF"})]]
       :examples        (for [sz sizes]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
@@ -122,6 +129,10 @@
       :container-attrs container-attrs
       :sx-attrs        (sx-call (sx {:-thumb-content-on  [:span (sx :.semi-bold :fs--0.3em) "ON"]
                                      :-thumb-content-off [:span (sx :.semi-bold :fs--0.3em) "OFF"]}))
+
+      :snippets        '[[switch (sx
+                                  {:-thumb-content-on  [:span (sx :.semi-bold :fs--0.3em) "ON"]
+                                   :-thumb-content-off [:span (sx :.semi-bold :fs--0.3em) "OFF"]})]]
       :examples        (for [sz (drop 2 sizes)]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
@@ -136,6 +147,13 @@
                                      :-track-content-off [icon (sx :fs--0.55em
                                                                    {:-icon-filled? true})
                                                           :visibility-off]}))
+
+      :snippets        '[[switch (sx {:-track-content-on  [icon (sx :fs--0.55em
+                                                                    {:-icon-filled? true})
+                                                           :visibility]
+                                      :-track-content-off [icon (sx :fs--0.55em
+                                                                    {:-icon-filled? true})
+                                                           :visibility-off]})]]
       :examples        (for [sz sizes]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
@@ -150,19 +168,26 @@
                                      :-thumb-content-off [icon (sx :fs--0.55em
                                                                    {:-icon-filled? true})
                                                           :visibility-off]}))
+
+      :snippets        '[[switch (sx {:-thumb-content-on  [icon (sx :fs--0.55em
+                                                                    {:-icon-filled? true})
+                                                           :visibility]
+                                      :-thumb-content-off [icon (sx :fs--0.55em
+                                                                    {:-icon-filled? true})
+                                                           :visibility-off]})]]
       :examples        (for [sz sizes]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
 
-     {:desc            "Disabled states"
+     {:desc            "Disabled state"
       :row-attrs       row-attrs
       :container-attrs container-attrs
+      :snippets        '[[switch {:disabled true}]]
       :examples        (for [sz sizes]
+
                          {:label (name sz)
                           :attrs {:disabled true
                                   :class    [sz]}})}]))
-
-
 
 #_(defn section-label
   "Renders a vertical label"
