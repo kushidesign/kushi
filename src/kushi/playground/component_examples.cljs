@@ -8,6 +8,7 @@
             [kushi.playground.component-docs :as docs]
             [kushi.ui.button.core :refer (button)]
             [kushi.ui.core :refer (defcom)]
+            [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.icon.mui.svg :as mui.svg]
             [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal]]
@@ -198,7 +199,7 @@
            [:div (sx :.flex-row-fs :ai--b :gap--1.5em)
             [:h1 (sx :.component-section-header-label) component-label]
             label]
-           [:div (sx :h--0 :bbe--1px:solid:$neutral-150)]
+           [divisor]
            [component-snippets
             (reqs-coll reqs-by-refers)
             snippets-header
@@ -331,17 +332,14 @@
          :ai--fs
          :min-width--200px
          :min-height--120px)
-
      [:div
       (sx :.flex-col-fs
           :w--100%
           :gap--1em
           :&_.kushi-text-input-label:min-width--7em
           :&_.kushi-input-inline:gtc--36%:64%)
-      (let [formatted*    #(-> % (pprint {:max-width 50}) with-out-str) ]
-        (into [:div (sx :.flex-col-fs 
-                        :gap--2.25rem
-                        :mbs--1.5em)
+      (let [formatted*    #(-> % (pprint {:max-width 50}) with-out-str)]
+        (into [:div (sx :.flex-col-fs :gap--2.25rem :mbs--1.5em)
                [snippet-section
                 {:header       (util/desc->hiccup
                                 ["Paste into the `:require` section of your `:ns` form:"])
@@ -354,7 +352,7 @@
                                    formatted-code)
                  :copyable     (string/join "\n" reqs-coll)}]
 
-               [:div (sx :h--0 :bbe--1px:solid:$neutral-150)]]
+               [divisor]]
 
               (for [[i call] (map-indexed (fn [i call] [i call]) snippets)
                     :let [header (when (zero? i) 

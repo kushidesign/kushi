@@ -150,13 +150,16 @@
        :.fixed
        :.flex-row-sb
        :.neutralize
+      ;;  :.divisor-block-end
+
+       :bbe--$divisor
+       :dark:bbe--$divisor-inverse
+
        :top--0
        :left--0
        :right--0
        :ai--c
        :zi--5
-       :bbe--1px:solid:$neutral-150
-       :dark:bbe--1px:solid:$neutral-750
        :w--100%
        :p--1rem
        :max-height--$navbar-height
@@ -212,36 +215,37 @@
                  :bottom     :-0.5em
                  :left       0
                  :right      0
-                 :bgc        :$accent-600
-                 :dark:bgc   :$accent-300}]
-               {:role     :tab
+                 :bgc        :$accent-600}]
+               ["dark:&[aria-selected='true']:before"
+                {:dark:bgc   :$accent-300}]              
+               {:role      :tab
                 :tab-index (if (contains? #{true "true"} (:aria-selected &attrs))
                              0
                              -1)
-                :on-click #(let [el       (domo/et %)
-                                 panel-id (:aria-controls &attrs)]
-                             (domo/toggle-boolean-attribute-sibling el "aria-selected")
-                             (domo/toggle-attribute-sibling el "tabindex" 0 -1)
+                :on-click  #(let [el       (domo/et %)
+                                  panel-id (:aria-controls &attrs)]
+                              (domo/toggle-boolean-attribute-sibling el "aria-selected")
+                              (domo/toggle-attribute-sibling el "tabindex" 0 -1)
 
                              ;; Switching the visibility of the panel
-                             (when-let [panel-el (domo/el-by-id panel-id) ]
-                               (when-let [parent (domo/parent panel-el)]
+                              (when-let [panel-el (domo/el-by-id panel-id) ]
+                                (when-let [parent (domo/parent panel-el)]
                                  ;; Hide the currently active panel
-                                 (some-> parent
-                                         (domo/qs ".playground-component-panel:not([hidden])")
-                                         (.setAttribute "hidden" "hidden"))
+                                  (some-> parent
+                                          (domo/qs ".playground-component-panel:not([hidden])")
+                                          (.setAttribute "hidden" "hidden"))
                                  ;; Reveal the target panel
-                                 (.removeAttribute panel-el "hidden")
-                                 
+                                  (.removeAttribute panel-el "hidden")
+                                  
                                  ;;Scroll to the top of the target panel
-                                 (domo/scroll-into-view! panel-el)
-                                 (domo/scroll-by! (-> el
-                                                      (domo/nearest-ancestor ".component-section-header")
-                                                      domo/client-rect
-                                                      :bottom
-                                                      -
-                                                      (->> (hash-map :y)))))
-                               ))})
+                                  (domo/scroll-into-view! panel-el)
+                                  (domo/scroll-by! (-> el
+                                                       (domo/nearest-ancestor ".component-section-header")
+                                                       domo/client-rect
+                                                       :bottom
+                                                       -
+                                                       (->> (hash-map :y)))))
+                                ))})
            &attrs)
    &children])
 
@@ -267,7 +271,7 @@
 
 
    ;; Uncomment to try what's inside
-   #_[:div (sx :mbs--100px :p--2rem :.debug-blue)
+   [:div (sx :mbs--100px :p--2rem :.debug-blue)
 
       ;; Just for trying stuff out - paste here
       [:div "hi"]]
@@ -328,9 +332,9 @@
                    ]
                [:div (sx :.flex-row-fs
                          :.small
+                         :.divisor-block-end
                          :ai--fe
                          :gap--0.75em
-                         :bbe--1px:solid:$neutral-150
                          :pbe--0.5em
                          {:role :tablist})
                 [component-sections-tab

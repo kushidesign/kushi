@@ -132,6 +132,58 @@
    :$border-width                           :1px
    :$border-style                           :solid
 
+   ;; Intended for divisors and divisor-like borders
+   :$divisor-thickness                      :1px
+   :$divisor-style                          :solid
+   :$divisor-color-0                        :transparent
+   :$divisor-color-1                        :$neutral-50
+   :$divisor-color-2                        :$neutral-100
+   :$divisor-color-3                        :$neutral-150
+   :$divisor-color-4                        :$neutral-200
+   :$divisor-color-5                        :$neutral-250
+   :$divisor-color-6                        :$neutral-300
+   :$divisor-color-7                        :$neutral-350
+   :$divisor-color-8                        :$neutral-450
+   :$divisor-color-9                        :$neutral-500
+   :$divisor-color-10                       :$neutral-550
+   :$divisor-color-1-inverse                :$neutral-950
+   :$divisor-color-2-inverse                :$neutral-900
+   :$divisor-color-3-inverse                :$neutral-850
+   :$divisor-color-4-inverse                :$neutral-800
+   :$divisor-color-5-inverse                :$neutral-750
+   :$divisor-color-6-inverse                :$neutral-700
+   :$divisor-color-7-inverse                :$neutral-650
+   :$divisor-color-8-inverse                :$neutral-600
+   :$divisor-color-9-inverse                :$neutral-550
+   :$divisor-color-10-inverse               :$neutral-500
+
+   :$divisor-color                          :$divisor-color-3
+   :$divisor-color-inverse                  :$divisor-color-5-inverse
+
+   :$divisor-0                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-0)"
+   :$divisor-1                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-1)"
+   :$divisor-2                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-2)"
+   :$divisor-3                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-3)"
+   :$divisor-4                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-4)"
+   :$divisor-5                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-5)"
+   :$divisor-6                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-6)"
+   :$divisor-7                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-7)"
+   :$divisor-8                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-8)"
+   :$divisor-9                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-9)"
+   :$divisor-10                             "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-10)"
+   :$divisor-1-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-1-inverse)"
+   :$divisor-2-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-2-inverse)"
+   :$divisor-3-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-3-inverse)"
+   :$divisor-4-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-4-inverse)"
+   :$divisor-5-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-5-inverse)"
+   :$divisor-6-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-6-inverse)"
+   :$divisor-7-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-7-inverse)"
+   :$divisor-8-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-8-inverse)"
+   :$divisor-9-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-9-inverse)"
+   :$divisor-10-inverse                     "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-10-inverse)"
+
+   :$divisor                                :$divisor-3
+   :$divisor-inverse                        :$divisor-5-inverse
 
 
    ;; Intended for overlay placement
