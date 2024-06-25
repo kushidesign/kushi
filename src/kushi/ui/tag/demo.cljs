@@ -34,13 +34,15 @@
             :md:gtc--max-content
             :xsm:gtc--max-content:max-content:max-content:max-content
             :gtc--max-content:max-content)]
-    [{:desc            "Sizes from xxsmall to xlarge"
-      :row-attrs       (sx :md:ai--fe)
-      :container-attrs playground-tag-rows-container24
-      :examples        (for [sz sizes]
-                         {:label (name sz)
-                          :attrs {:class sz}
-                          :args  ["Play"]})}
+    [(merge
+      {:desc            "Sizes from xxsmall to xlarge"
+       :row-attrs       (sx :md:ai--fe)
+       :container-attrs playground-tag-rows-container24
+       :examples        (for [sz sizes]
+                          {:label (name sz)
+                           :attrs {:class sz}
+                           :args  ["Done"]})}
+      (component-examples/sizes-snippet-scale 'tag "Done"))
      
      {:desc            "Semantic variants"
       :sx-attrs        (sx-call (sx :.small))
@@ -49,7 +51,7 @@
       :examples        (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
                          (for [s component-examples/colors]
                            {:label (name s)
-                            :args  ["Play"]
+                            :args  ["Done"]
                             :attrs {:class [s]}}))}
 
      {:desc            "Shape variants"
@@ -58,7 +60,7 @@
       :variants+       [:minimal]
       :examples        (for [s [:rounded :pill :sharp]]
                          {:label (name s)
-                          :args  ["Play"]
+                          :args  ["Done"]
                           :attrs {:class [s]}})}
 
      {:desc            "With icons"

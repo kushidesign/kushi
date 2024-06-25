@@ -170,17 +170,15 @@
                 ;; "slider"     ;; ✅
                 ;; "text field" ;; ✅
 
-                ;; "tooltip"    ;;
-                ;; "popover"    ;; 
-                ;; "modal"      ;;
-                ;; "toast"      ;;
-
-                ;; "card"       ;;
-                ;; "callout"    ;;
-                ;; "collapse"   ;;
-                ;; "accordian"  ;;
-
-                ;; "tag"        ;;
+                ;; "tooltip"    ;; ✅
+                ;; "popover"    ;; PS
+                ;; "modal"      ;; PS
+                ;; "toast"      ;; PS
+                ;; "card"       ;; PS
+                ;; "callout"    ;; PS
+                ;; "collapse"   ;; PS
+                ;; "accordian"  ;; PS
+                ;; "tag"        ;; PS
                 ;; "grid"       ;;
 
                 }

@@ -75,7 +75,7 @@
 ;;                                  'merge-attrs
 ;;                                  (list 'tooltip-attrs
 ;;                                        {:-text      [(str "`:" hydrated "`")
-;;                                                      "Click to view code"]
+;;                                                      "This is a tooltip"]
 ;;                                         :-placement x})
 ;;                                  {:style  {:grid-area (name x)}})
 ;;                                 )}))))
@@ -85,9 +85,10 @@
     :component button
     :reqs      '[[kushi.ui.button.core :refer [button]]]
     :row-attrs (sx :&_.kushi-button:fs--$small)
+    :snippets  '[[button (tooltip-attrs {:-text "This is a tooltip"})]]
     :examples  [{:label    "right"
                  :args     ["Hover me"]
-                 :sx-attrs (sx-call (tooltip-attrs {:-text "Click to view code"}))}]}
+                 :sx-attrs (sx-call (tooltip-attrs {:-text "This is a tooltip"}))}]}
 
    {:desc     "Tooltips with specific placements"      
     :row-attrs (sx
@@ -138,7 +139,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:bottom-right-corner`" "Click to view code"],
+                             {:-text      ["`:bottom-right-corner`" "This is a tooltip"],
                               :-placement :brc})
                             {:style {:grid-area "brc"}}))}
                {:label    "bottom-right",
@@ -146,7 +147,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:bottom-right`" "Click to view code"]
+                             {:-text      ["`:bottom-right`" "This is a tooltip"]
                               :-placement :br})
                             {:style {:grid-area "br"}}))}
                {:label    "bottom",
@@ -154,7 +155,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:bottom`" "Click to view code"]
+                             {:-text      ["`:bottom`" "This is a tooltip"]
                               :-placement :b})
                             {:style {:grid-area "b"}}))}
                {:label    "bottom-left",
@@ -162,7 +163,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:bottom-left`" "Click to view code"]
+                             {:-text      ["`:bottom-left`" "This is a tooltip"]
                               :-placement :bl})
                             {:style {:grid-area "bl"}}))}
                {:label    "bottom-left-corner",
@@ -170,7 +171,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:bottom-left-corner`" "Click to view code"],
+                             {:-text      ["`:bottom-left-corner`" "This is a tooltip"],
                               :-placement :blc})
                             {:style {:grid-area "blc"}}))}
                {:label    "right-top",
@@ -178,7 +179,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:right-top`" "Click to view code"]
+                             {:-text      ["`:right-top`" "This is a tooltip"]
                               :-placement :rt})
                             {:style {:grid-area "rt"}}))}
                {:label    "left-top",
@@ -186,7 +187,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:left-top`" "Click to view code"]
+                             {:-text      ["`:left-top`" "This is a tooltip"]
                               :-placement :lt})
                             {:style {:grid-area "lt"}}))}
                {:label    "right",
@@ -194,7 +195,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:right`" "Click to view code"]
+                             {:-text      ["`:right`" "This is a tooltip"]
                               :-placement :r})
                             {:style {:grid-area "r"}}))}
                {:label    "left",
@@ -202,7 +203,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:left`" "Click to view code"]
+                             {:-text      ["`:left`" "This is a tooltip"]
                               :-placement :l})
                             {:style {:grid-area "l"}}))}
                {:label    "right-bottom",
@@ -210,7 +211,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:right-bottom`" "Click to view code"]
+                             {:-text      ["`:right-bottom`" "This is a tooltip"]
                               :-placement :rb})
                             {:style {:grid-area "rb"}}))}
                {:label    "left-bottom",
@@ -218,7 +219,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:left-bottom`" "Click to view code"]
+                             {:-text      ["`:left-bottom`" "This is a tooltip"]
                               :-placement :lb})
                             {:style {:grid-area "lb"}}))}
                {:label    "top-right-corner",
@@ -226,7 +227,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:top-right-corner`" "Click to view code"],
+                             {:-text      ["`:top-right-corner`" "This is a tooltip"],
                               :-placement :trc})
                             {:style {:grid-area "trc"}}))}
                {:label    "top-right",
@@ -234,7 +235,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:top-right`" "Click to view code"]
+                             {:-text      ["`:top-right`" "This is a tooltip"]
                               :-placement :tr})
                             {:style {:grid-area "tr"}}))}
                {:label    "top",
@@ -242,7 +243,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:top`" "Click to view code"]
+                             {:-text      ["`:top`" "This is a tooltip"]
                               :-placement :t})
                             {:style {:grid-area "t"}}))}
                {:label    "top-left",
@@ -250,7 +251,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:top-left`" "Click to view code"]
+                             {:-text      ["`:top-left`" "This is a tooltip"]
                               :-placement :tl})
                             {:style {:grid-area "tl"}}))}
                {:label    "top-left-corner",
@@ -258,7 +259,7 @@
                 :sx-attrs (sx-call
                            (merge-attrs
                             (tooltip-attrs
-                             {:-text      ["`:top-left-corner`" "Click to view code"],
+                             {:-text      ["`:top-left-corner`" "This is a tooltip"],
                               :-placement :tlc})
                             {:style {:grid-area "tlc"}}))}]}
 
