@@ -407,7 +407,7 @@
    ;; ------------------------------------------------------
    
    ;; Absolute versions for panes, cards, etc.
-   :$rounded-absolute-xxxsmall              :0.625rem         ;; 1px
+   :$rounded-absolute-xxxsmall              :0.0625rem         ;; 1px
    :$rounded-absolute-xxsmall               :0.125rem         ;; 2px
    :$rounded-absolute-xsmall                :0.25rem          ;; 4px
    :$rounded-absolute-small                 :0.375rem         ;; 6px
@@ -418,7 +418,7 @@
    :$rounded-absolute-xxxlarge              :1.5625rem        ;; 25px
    
    ;; Relative (to type size) versions for buttons, badges
-   :$rounded-xxxsmall                       :0.4375em  
+   :$rounded-xxxsmall                       :0.04375em  
    :$rounded-xxsmall                        :0.0875em  
    :$rounded-xsmall                         :0.175em   
    :$rounded-small                          :0.2625em  
@@ -519,7 +519,6 @@
     [:0px :8px :27px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 7px 8px -4px, rgb(0 0 0 / 14%) 0px 12px 17px 2px, rgb(0 0 0 / 12%) 0px 5px 22px 4px"
    
-
    :$elevated
    :$elevated-4
 
@@ -534,6 +533,9 @@
    :$timing-ease-in-curve          "cubic-bezier(.8, .2, .6, 1)"
    :$timing-ease-in-out-curve      "cubic-bezier(0.4, 0, 0.2, 1)"
    :$timing-ease-out-curve-extreme "cubic-bezier(0.190, 0.510, 0.125, 0.905)"
+
+   :$transition-timing-function    :$timing-linear-curve
+   :$transition-duration           :$fast
 
    :$instant                       :0ms
    :$xxxfast                       :50ms
