@@ -51,6 +51,8 @@
    :$sans-serif-font-stack                  "Inter, system-ui, sans-serif"
    :$serif-font-stack                       "Cormorant, Times, serif"
    :$code-font-stack                        "Fira Code, monospace"
+   :$sans                                   :$sans-serif-font-stack
+   :$serif                                  :$serif-font-stack
 
 
    ;; code
