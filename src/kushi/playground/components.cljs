@@ -55,7 +55,8 @@
 
 
         
-        ;; code snippet modal
+        ;; code snippet modal dark mode
+              ;; Make utility for border for light/dark and others (maybe accent fg etc)
 
         ;; figure out sidemenu on mobile
         
@@ -67,25 +68,17 @@
 
         ;; dark mode review
 
-        ;; Make utility for border for light/dark and others (maybe accent fg etc)
-
         ;; Fix toast on mobile
 
         ;; Debug popover on mobile
 
 
 
-        
-
-
         ;; check size of app etc.
 
 
 
-
-
-        
-
+        ;; finish rest of snippets
 
         ;; section that is scrolling up and out , fade it out (later)
 
@@ -96,6 +89,11 @@
         ;; test with pulling :examples from fn meta, then merging with examples from demo (later)
 
         ;; Maybe try to figure out feature macro (later)
+
+
+        ;; Figure out interactive modal (later)
+
+        ;; Add link and divisor components to doc (later)
 
         
 
@@ -162,11 +160,11 @@
   ;;  :label
   #(contains? #{
                 ;; "button"     ;; ✅
-                ;; "icon"       ;; ✅
+                "icon"       ;; ✅
                 ;; "spinner"    ;; ✅
                 ;; "switch"     ;; ✅
                 ;; "radio"      ;; ✅
-                ;; "checkbox"   ;; ✅ 
+                "checkbox"   ;; ✅ 
                 ;; "slider"     ;; ✅
                 ;; "text field" ;; ✅
 
@@ -179,7 +177,7 @@
                 ;; "collapse"   ;; PS
                 ;; "accordian"  ;; PS
                 ;; "tag"        ;; PS
-                ;; "grid"       ;;
+                "grid"       ;; PS
 
                 }
                (:label %))
