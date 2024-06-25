@@ -38,23 +38,19 @@
      (f "Labels"
         (sx-call [slider {:min          0
                           :max          7
-                          :-step-marker :label}])
-        #_{:snippets '[[slider {:min          0
-                              :max          7
-                              :-step-marker :label}]]})
+                          :-step-marker :label}]))
      (f "Dot markers"
         (sx-call [slider {:min          0
                           :max          7
-                          :-step-marker :dot}])
-        #_{:snippets '[[slider {:min 0 :max 7}]]})
+                          :-step-marker :dot}]))
      (f "Bar markers"
         (sx-call [slider {:min          0
                           :max          7
-                          :-step-marker :bar}]) )
+                          :-step-marker :bar}]))
      (f "Fractional steps"
         (sx-call [slider {:min  0
                           :max  1
-                          :step 0.01}]) )
+                          :step 0.01}]))
      (f "Supplied step values"
         (sx-call [slider
                   {:-steps            ["xsmall" "medium" "large" "xlarge"]

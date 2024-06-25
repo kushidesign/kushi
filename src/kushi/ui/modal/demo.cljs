@@ -10,24 +10,26 @@
 
 (def examples
   (let [row-attrs (sx :&_.kushi-button:fs--$small)]
-    [{:desc      "Basic"
-      :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
-      :row-attrs (sx :&_.kushi-button:fs--$small)
-      :examples  [{:label "right"
-                   :args  ["Hover me"]
-                   :code  (sx-call (let [id "my-modal-basic"]
-                                     [:div
-                                      [button
-                                       {:on-click (fn* [] (open-kushi-modal id))}
-                                       "Click to open modal"]
-                                      [modal
-                                       (sx :min-width--450px
-                                           :&_.kushi-modal-description:fs--$small
-                                           {:id id})
-                                       [:div
-                                        (sx :.xxxlarge :.flex-row-c)
-                                        "💃🏽"] ]]))}]}
+    [(let [code (sx-call (let [id "my-modal-basic"]
+                           [:div
+                            [button
+                             {:on-click (fn* [] (open-kushi-modal id))}
+                             "Click to open modal"]
+                            [modal
+                             (sx :min-width--450px
+                                 :&_.kushi-modal-description:fs--$small
+                                 {:id id})
+                             [:div
+                              (sx :.xxxlarge :.flex-row-c)
+                              "💃🏽"] ]]))] 
+       {:desc      "Basic"
+        :component button
+        :reqs      '[[kushi.ui.button.core :refer [button]]]
+        :row-attrs (sx :&_.kushi-button:fs--$small)
+        :snippets  [(:quoted code)]
+        :examples  [{:label "right"
+                     :args  ["Hover me"]
+                     :code  code}]})
      
      {:desc      "With modal title, description, form with fields, and close button"
       :component button
