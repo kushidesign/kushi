@@ -122,8 +122,6 @@
               flex-justify-content-options))
            ["row" "col"]))
 
-
-   
 (def debug-outline-classes
   (mapcatv 
    (fn [c]
@@ -539,7 +537,9 @@
 
 
 (def geometry-classes
-  [:top-left-corner-outside
+  [
+   
+   :top-left-corner-outside
    {:position  :absolute,
     :top       "0%",
     :bottom    :unset,
@@ -574,6 +574,8 @@
     :left      "0%",
     :right     :unset,
     :translate "0% -50%"}
+
+
    :top-outside
    {:position  :absolute,
     :top       "0%",
@@ -595,6 +597,8 @@
     :left      "50%",
     :right     :unset,
     :translate "-50% 0%"}
+
+
    :top-right-outside
    {:position  :absolute,
     :top       "0%",
@@ -644,6 +648,8 @@
     :left      :unset,
     :right     "0%",
     :translate "50% 0%"}
+   
+
    :right-inside
    {:position  :absolute,
     :top       "50%",

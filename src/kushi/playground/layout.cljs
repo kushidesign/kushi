@@ -271,10 +271,19 @@
 
 
    ;; Uncomment to try what's inside
-   [:div (sx :mbs--100px :p--2rem :.debug-blue)
+   [:div (sx :mbs--100px :p--4rem :.debug-blue)
 
       ;; Just for trying stuff out - paste here
-      [:div "hi"]]
+    (into [:div (sx :w--400px :h--400px)
+           [:div.absolute-centered.capitalize "outside"]]
+          #_(for ))
+    (into [:div (sx :w--400px :h--400px)
+           [:div.absolute-centered.capitalize "line"]]
+          #_(for ))
+    (into [:div (sx :w--400px :h--400px)
+           [:div.absolute-centered.capitalize "inside"]]
+          #_(for [] ))
+    ]
 
    ;; Main section
    (into [:div
