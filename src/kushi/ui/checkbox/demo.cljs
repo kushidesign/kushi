@@ -31,27 +31,31 @@
 
 (def examples
   (let [row-attrs {:class ["playground-example-row-bounded"]}]
-    [{:desc      "Showing sizes from xsmall to xxxlarge"
-      :row-attrs (sx [:xsm:&_.instance-code
-                      {:ai             :fe
-                       :flex-direction :row}]
-                     [:&_.instance-code
-                      {:ai             :fs
-                       :flex-direction :column
-                       :w              :100%
-                       :jc             :sb
-                       :max-width      :400px}]
-                     :xsm:&_label:first-child:pbe--0.75em
-                     :xsm:&_label:pie--0.75em)
-      :examples  [{:code (sx-call (into [:<>] 
-                                        (for [sz sizes]
-                                          [:div (sx :.flex-row-fs
-                                                    :xsm:flex-direction--column) 
-                                           [checkbox {:-label-attrs   {:class [sz]}
-                                                      :defaultChecked true}]
-                                           [checkbox {:-label-attrs {:class [sz]}}]])))}]}
+    [{:desc            "Different sizes"
+      :row-attrs       (sx [:xsm:&_.instance-code
+                            {:ai             :fe
+                             :flex-direction :row}]
+                           [:&_.instance-code
+                            {:ai             :fs
+                             :flex-direction :column
+                             :w              :100%
+                             :jc             :sb
+                             :max-width      :400px}]
+                           :xsm:&_label:first-child:pbe--0.75em
+                           :xsm:&_label:pie--0.75em)
+      :snippets-header component-examples/sizes-snippet-header*
+      :snippets        '[[checkbox (sx :.xxxlarge {:-input-attrs {:name           :xxxlarge-sample
+                                                                  :defaultChecked true}})]]
+      :examples        [{:code (sx-call (into [:<>] 
+                                              (for [sz sizes]
+                                                [:div (sx :.flex-row-fs
+                                                          :xsm:flex-direction--column) 
+                                                 [checkbox {:-label-attrs   {:class [sz]}
+                                                            :defaultChecked true}]
+                                                 [checkbox {:-label-attrs {:class [sz]}}]])))}]}
      {:desc      "With label"
       :row-attrs row-attrs
+      :snippets  '[[checkbox (sx :.large) [label "Sign me up"]]]
       :examples  [{:code (sx-call [checkbox (sx :.large) [label "Sign me up"]])}]}
 
      {:desc      "With label and trailing icon"

@@ -156,8 +156,8 @@
                    :b--$modal-border
                    :min-width--$modal-min-width||200px
                    [:max-width "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
-                   [:max-height "calc(100vh - (2 * var(--modal-margin, 1rem)))"]
-                   :height--$modal-min-height
+                   ;;[:max-height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem)))"]
+                   :height--fit-content
                    [:box-shadow (str elevation-token "0 0 0 100vmax var(--modal-backdrop-color)")]
                    [:dark:box-shadow (str elevation-token-inverse "0 0 0 100vmax var(--dark-gray-transparent-90)")]
                    :opacity--0

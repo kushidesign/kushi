@@ -102,7 +102,16 @@
            {:name    thumb-content-on
             :pred    #{string? vector?}
             :default nil
-            :desc    "String or element that will be placed in center of thumb, when in the \"on\" position"}]}
+            :desc    "String or element that will be placed in center of thumb, when in the \"on\" position"}
+           {:name    track-content-off
+            :pred    #{string? vector?}
+            :default nil
+            :desc    "String or element that will be placed in the track, when in the \"off\" position"}
+           {:name    track-content-on
+            :pred    #{string? vector?}
+            :default nil
+            :desc    "String or element that will be placed in the track, when in the \"on\" position"}
+           ]}
   [& args]
   (let [[opts attrs & _]           (opts+children args)
         {:keys [disable-events?

@@ -1,16 +1,27 @@
 (ns kushi.playground.component-docs
-  (:require
-   [clojure.walk :as walk]
-   [kushi.playground.util :as util]
-   [kushi.core :refer (sx)]
-   [kushi.ui.label.core :refer [label]]
-   [markdown-to-hiccup.core :as md->hc]))
+  (:require [clojure.string :as string]
+            [clojure.walk :as walk]
+            [kushi.core :refer (sx)]
+            [kushi.playground.util :as util]
+            [kushi.ui.label.core :refer [label]]
+            [kushi.ui.modal.core :refer [close-kushi-modal]]
+            [markdown-to-hiccup.core :as md->hc]
+            [domo.core :as domo]))
 
-(defn add-links [coll]
-  (walk/postwalk #(if (and (map? %) (contains? % :href))
-                    (assoc % :target :_blank :class [:kushi-link])
-                    %)
-                 coll))
+(defn add-links
+  ([coll]
+   (add-links coll nil))
+  ([coll f]
+   (walk/postwalk #(if (and (map? %) (contains? % :href))
+                     (merge (assoc %
+                                   :target 
+                                   (if (string/starts-with? (:href %) "#")
+                                     :_self
+                                     :_blank)
+                                   :class [:kushi-link])
+                            (when f (f %)))
+                     %)
+                  coll)))
 
 (defn kushi-opts-grid-desc [v m]
   [:span

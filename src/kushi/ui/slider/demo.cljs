@@ -21,22 +21,32 @@
                             :mb--2rem:1.5rem)
         container-attrs (sx :gtc--1fr)
         m               (keyed row-attrs container-attrs)
-        f               (fn [desc code] 
-                          (let [m* {:desc     desc
-                                    :examples [{:label desc
-                                                :code  code}]}]
-                            (merge m* m)))]
+        f               (fn example-map 
+                          ([desc code]
+                           (example-map desc code nil))
+                          ([desc code snippets-map] 
+                           (let [m* {:desc     desc
+                                     :examples [{:label desc
+                                                 :code  code}]}]
+                             (merge m*
+                                    m
+                                    (or snippets-map
+                                        {:snippets [(:quoted code)]})))))]
     [(f "Simple"
         (sx-call [slider {:min 0
                           :max 7}]))
      (f "Labels"
         (sx-call [slider {:min          0
                           :max          7
-                          :-step-marker :label}]))
+                          :-step-marker :label}])
+        #_{:snippets '[[slider {:min          0
+                              :max          7
+                              :-step-marker :label}]]})
      (f "Dot markers"
         (sx-call [slider {:min          0
                           :max          7
-                          :-step-marker :dot}]) )
+                          :-step-marker :dot}])
+        #_{:snippets '[[slider {:min 0 :max 7}]]})
      (f "Bar markers"
         (sx-call [slider {:min          0
                           :max          7
