@@ -295,6 +295,9 @@
             [1000 40 11]]}
    ])
 
+(def color-names
+  (mapv #(nth % 0 nil) (partition 2 colors)))
+
 (def colors-by-alias
   (into {}
         (keep (fn [[k v]]
