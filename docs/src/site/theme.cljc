@@ -15,10 +15,12 @@
                     ;; {:family "Public Sans"
                     ;;  :styles {:normal [100]
                     ;;           :italic [300]}}
+                    {:family "Source Serif 4"
+                     :styles {:normal [400 500 600]
+                              :italic [400 500 600]}}
                     {:family "JetBrains Mono"
                      :styles {:normal [400]
-                              :italic []}}
-                    ]
+                              :italic []}}]
 
 
    ;;  Google Material Symbols
@@ -49,7 +51,8 @@
 
 (def my-theme
     {:design-tokens    [:$sans-serif-font-stack                  "Inter, system-ui, sans-serif"
-                        :$code-font-stack                        "JetBrains Mono, Fira Code, monospace"
+                        :$serif-font-stack                       "'Source Serif 4', Times, serif"
+                        :$code-font-stack                        "'JetBrains Mono', 'Fira Code', monospace"
                         :$primary-font-family                    :$sans-serif-font-stack
                         :$code-color                             :$accent-750
                         :$code-background-color                  :$accent-50

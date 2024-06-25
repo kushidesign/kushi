@@ -125,16 +125,24 @@
            (apply merge)))
 
 (defn section-label [s]
-  [:p (sx 'example-section-label
-          :.serif
-          :.bold
-          :.neutralize-secondary
-          :dark:fw--$wee-bold
-          :fs--17.5px
-          ;; :min-width--55px
-          ;; :w--fit-content
-          :lh--1.7
-          :&_span.code:mis--0.5ch)
+  [:p 
+  ;;  ;; Cormorant
+  ;;  (sx 'example-section-label
+  ;;      :.serif
+  ;;      :.bold
+  ;;      :.neutralize-secondary
+  ;;      :dark:fw--$wee-bold
+  ;;      :fs--17.5px
+  ;;      :lh--1.7
+  ;;      :&_span.code:mis--0.5ch)
+
+   ;; Source Serif 4
+   (sx 'example-section-label
+       :.serif
+       :.neutralize-secondary
+      ;;  :dark:fw--$wee-bold
+       :lh--1.7
+       :&_span.code:mis--0.5ch)
    s])
 
 (declare component-snippets)
