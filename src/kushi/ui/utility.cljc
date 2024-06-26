@@ -88,6 +88,16 @@
 ;; Combinatorial flexbox utilities
 ;; ------------------------------------------------------
 
+;; TODO - Analyze performance tradeoffs with writing selectors like these:
+;; first need to fix compiler to not prepend a "." in front of selector.
+;; "[class^='flex-row-']" {:flex-direction  :row
+;;                         :align-items     :center
+;;                         :display         :flex}
+;; "[class^='flex-row-']" {:flex-direction  :col
+;;                         :display         :flex}
+;; "[class$='c']"     {:justify-content :center}
+;; "[class$='fs']"    {:justify-content :flex-start}
+;; "[class$='fe']"    {:justify-content :flex-end}
 
 (def flex-row-base {:flex-direction  :row
                     :align-items     :center
@@ -122,6 +132,15 @@
               flex-justify-content-options))
            ["row" "col"]))
 
+
+
+   ;; TODO - after string-based selector is working, use something like this instead
+  ;;  "[class^='debug-']" {:outline-color  :silver
+  ;;                       :outline-style  :solid
+  ;;                       :outline-width  :1px
+  ;;                       :outline-offset :-1px}
+  ;;  :debug-red {:outline-color :$red-500}
+   
 (def debug-outline-classes
   (mapcatv 
    (fn [c]
@@ -490,40 +509,157 @@
    [:font-size]))
 
 
-;; Border weights for radios and checkbox sync with type weight
-;; ------------------------------------------------------
-(def ui-theming-classes
-  (scale-of-utility-defs
-   type-weights
-   [">.kushi-radio-input:outline-width"
-    ">.kushi-checkbox-input:bw"]
-   {:val-prefix "input-border-weight"
-    :acc-f      (fn [k]
-                  {:font-weight (->> k
-                                     util/stringify
-                                     (str "$")
-                                     keyword)})}))
+  ;; Border weights for radios and checkbox sync with type weight
+  ;; ------------------------------------------------------
+ (def ui-theming-classes
+   (scale-of-utility-defs
+    type-weights
+    [">.kushi-radio-input:outline-width"
+     ">.kushi-checkbox-input:bw"]
+    {:val-prefix "input-border-weight"
+     :acc-f      (fn [k]
+                   {:font-weight (->> k
+                                      util/stringify
+                                      (str "$")
+                                      keyword)})}))
 
-(declare geometry-classes)
-;; (declare geometry-classes-fixed)
+(defn geometries [coll m]
+  (into [] (mapcat (fn [[k v]]
+                     [k (assoc m :translate v)])
+                   coll)))
+
+(def geom-top-base 
+  {:position :absolute
+   :top      "0%"
+   :bottom   :unset})
 
 
-;; Rollup all the classes and merge them
-;; ------------------------------------------------------
+(def geom-top-right-corners
+  (geometries
+    [[:top-right-outside "0% -100%"]
+     [:top-right "0% -50%"]
+     [:top-right-corner-outside "100% -100%"]
+     [:top-right-corner "50% -50%"]
+     [:top-right-corner-inside "0% 0%"]
+     [:right-top-outside "100% 0%"]
+     [:right-top "50% 0%"]]
+    (merge geom-top-base
+           {:left  :unset
+            :right "0%"})))
+
+(def geom-top-left-corners
+  (geometries
+   [[:top-left-corner-outside "-100% -100%"]
+    [:top-left-corner "-50% -50%"]
+    [:top-left-corner-inside "0% 0%"]
+    [:top-left-outside "0% -100%"]
+    [:top-left "0% -50%"]
+    [:left-top-outside "-100% 0%"]
+    [:left-top "-50% 0%"]]
+   (merge geom-top-base
+          {:left  "0%"
+           :right :unset})))
+
+(def geom-bottom-left-corners
+  (geometries
+   [[:bottom-left-outside "0% 100%"]
+    [:bottom-left "0% 50%"]
+    [:bottom-left-corner-outside "-100% 100%"]
+    [:bottom-left-corner "-50% 50%"]
+    [:bottom-left-corner-inside "0% 0%"]
+    [:left-bottom-outside "-100% 0%"]
+    [:left-bottom "-50% 0%"]]
+   {:position :absolute
+    :top      :unset
+    :bottom   "0%"
+    :left     "0%"
+    :right    :unset}))
+
+(def geom-bottom-right-corners
+  (geometries
+   [[:right-bottom-outside "100% 0%"]
+    [:right-bottom "50% 0%"]
+    [:bottom-right-corner-outside
+     "100% 100%"]
+    [:bottom-right-corner "50% 50%"]
+    [:bottom-right-corner-inside
+     "0% 0%"]
+    [:bottom-right-outside "0% 100%"]
+    [:bottom-right "0% 50%"]]
+   {:position :absolute
+    :top      :unset
+    :bottom   "0%"
+    :left     :unset
+    :right    "0%"}))
+
+(def geom-right-left-side-base 
+  {:position :absolute,
+   :top      "50%"
+   :bottom   :unset})
+
+(def geom-right-side
+  (geometries
+   [[:right-inside "0% -50%"]
+    [:right "50% -50%"]
+    [:right-outside "100% -50%"]]
+   (merge geom-right-left-side-base
+          {:left  :unset
+           :right "0%"})))
+
+ (def geom-left-side
+  (geometries
+   [[:left-inside "0% -50%"]
+    [:left "-50% -50%"]
+    [:left-outside "-100% -50%"]]
+   (merge geom-right-left-side-base
+          {:right :unset
+           :left  "0%"})))  
+
+(def geom-top-bottom-side-base 
+  {:position  :absolute
+   :left      "50%"
+   :right     :unset})
+
+ 
+ (def geom-top-side
+   (geometries 
+    [[:top-outside "-50% -100%"]
+     [:top "-50% -50%"]
+     [:top-inside "-50% 0%"]]
+    (merge geom-top-bottom-side-base
+           {:bottom :unset
+            :top    "0%"})))
+
+(def geom-bottom-side
+   (geometries 
+    [[:bottom-inside "-50% 0%"]
+     [:bottom "-50% 50%"]
+     [:bottom-outside "-50% 100%"]]
+    (merge geom-top-bottom-side-base
+           {:top    :unset
+            :bottom "0%"})))
+
+
 (def all-the-classes 
   [combo-flex-utility-classes
    debug-outline-classes
    base-classes
-   geometry-classes
-   ;; geometry-classes-fixed
+   geom-top-left-corners
+   geom-top-right-corners
+   geom-bottom-left-corners
+   geom-bottom-right-corners
+   geom-left-side
+   geom-right-side
+   geom-top-side
+   geom-bottom-side
 
-   ;; Override classes start
+   ;; geometry-classes-fixed
    type-weight-override-classes
+
    override-classes
    rounded-absolute-radius-classes
    rounded-radius-classes
    type-size-classes
-   ;; Override classes end
 
    ui-theming-classes])
 
@@ -533,298 +669,6 @@
 (def utility-classes
   (apply deep-merge
          (map #(apply hash-map %) all-the-classes)))
-
-
-
-(def geometry-classes
-  [
-   
-   :top-left-corner-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% -100%"}
-   :top-left-corner
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :top-left-corner-inside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 0%"}
-   :top-left-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -100%"}
-   :top-left
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -50%"}
-
-
-   :top-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% -100%"}
-   :top
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :top-inside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 0%"}
-
-
-   :top-right-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -100%"}
-   :top-right
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -50%"}
-   :top-right-corner-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% -100%"}
-   :top-right-corner
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% -50%"}
-   :top-right-corner-inside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 0%"}
-   :right-top-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 0%"}
-   :right-top
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 0%"}
-   
-
-   :right-inside
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -50%"}
-   :right
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% -50%"}
-   :right-outside
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% -50%"}
-   :right-bottom-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 0%"}
-   :right-bottom
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 0%"}
-   :bottom-right-corner-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 100%"}
-   :bottom-right-corner
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 50%"}
-   :bottom-right-corner-inside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 0%"}
-   :bottom-right-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 100%"}
-   :bottom-right
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 50%"}
-   :bottom-inside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 0%"}
-   :bottom
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 50%"}
-   :bottom-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 100%"}
-   :bottom-left-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 100%"}
-   :bottom-left
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 50%"}
-   :bottom-left-corner-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 100%"}
-   :bottom-left-corner
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 50%"}
-   :bottom-left-corner-inside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 0%"}
-   :left-bottom-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 0%"}
-   :left-bottom
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 0%"}
-   :left-inside
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -50%"}
-   :left
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :left-outside
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% -50%"}
-   :left-top-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 0%"}
-   :left-top
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 0%"}])
 
 #_(def geometry-classes-fixed
   [:top-left-corner-outside-fixed
@@ -1107,5 +951,3 @@
     :left      "0%",
     :right     :unset,
     :translate "-50% 0%"} ])
-
-
