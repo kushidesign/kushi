@@ -126,21 +126,13 @@
 
 (defn section-label [s]
   [:p 
-  ;;  ;; Cormorant
-  ;;  (sx 'example-section-label
-  ;;      :.serif
-  ;;      :.bold
-  ;;      :.neutralize-secondary
-  ;;      :dark:fw--$wee-bold
-  ;;      :fs--17.5px
-  ;;      :lh--1.7
-  ;;      :&_span.code:mis--0.5ch)
-
-   ;; Source Serif 4
    (sx 'example-section-label
        :.serif
+      ;; Include this if using cormorant serif face in :$serif-font-stack
+      ;;  :.cormorant-section-label
+      ;; Comment fs below if using cormorant serif face in :$serif-font-stack
+       :fs--$small-b
        :.neutralize-secondary
-      ;;  :dark:fw--$wee-bold
        :lh--1.7
        :&_span.code:mis--0.5ch)
    s])
@@ -180,6 +172,7 @@
                    :max-width--605px)
       [:div (sx :.flex-row-fs
                 :flex-wrap--wrap
+                :ai--c
                 :mbe--1rem
                 :gap--0.5em)
        label

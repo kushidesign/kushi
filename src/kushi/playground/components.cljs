@@ -55,9 +55,6 @@
 
 
         
-        ;; code snippet modal dark mode
-              ;; Make utility for border for light/dark and others (maybe accent fg etc)
-
         ;; figure out sidemenu on mobile
         
         ;; Add color & type about sections
@@ -78,7 +75,7 @@
 
 
 
-        ;; finish rest of snippets
+        ;; finish rest of snippets (later)
 
         ;; section that is scrolling up and out , fade it out (later)
 
@@ -157,18 +154,18 @@
 
 (def playground-components 
   (filter 
-  ;;  :label
+  ;; :label
   #(contains? #{
                 ;; "button"     ;; ✅
-                "icon"       ;; ✅
+                ;; "icon"       ;; ✅
                 ;; "spinner"    ;; ✅
-                ;; "switch"     ;; ✅
+                "switch"     ;; ✅
                 ;; "radio"      ;; ✅
                 "checkbox"   ;; ✅ 
                 ;; "slider"     ;; ✅
                 ;; "text field" ;; ✅
 
-                ;; "tooltip"    ;; ✅
+                "tooltip"    ;; ✅
                 ;; "popover"    ;; PS
                 ;; "modal"      ;; PS
                 ;; "toast"      ;; PS
@@ -177,8 +174,7 @@
                 ;; "collapse"   ;; PS
                 ;; "accordian"  ;; PS
                 ;; "tag"        ;; PS
-                "grid"       ;; PS
-
+                ;; "grid"       ;; PS
                 }
                (:label %))
 
