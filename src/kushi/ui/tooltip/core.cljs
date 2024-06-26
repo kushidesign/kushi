@@ -33,7 +33,7 @@
 
 
 (defn tooltip-attrs
-  {:desc ["tooltips provide additional context when hovering or clicking on an"
+  {:desc ["Tooltips provide additional context when hovering or clicking on an"
           "element. They are intended to be ephemeral, containing only"
           "non-interactive content."
           :br

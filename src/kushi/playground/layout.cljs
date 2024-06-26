@@ -1,29 +1,21 @@
 (ns ^:dev/always kushi.playground.layout
   (:require [domo.core :as domo]
-            [clojure.walk :as walk]
             [fireworks.core :refer [? ?-- ?- ?trace ?log]]
             [kushi.core :refer [sx merge-attrs]]
-            [kushi.utils :as kushi.utils]
             [kushi.ui.core :refer [defcom]]
-            [kushi.ui.modal.core :refer [open-kushi-modal modal close-kushi-modal]]
             [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal]]
             [kushi.ui.button.core :refer [button]]
-            [kushi.ui.collapse.core :refer [collapse]]
             [kushi.ui.icon.core :refer [icon]]
             [kushi.playground.component-docs :as docs]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.state :as state]
             [kushi.playground.ui :refer [light-dark-mode-switch]]
             [kushi.playground.util :as util]
-[kushi.ui.radio.core :refer [radio]]
-[kushi.ui.label.core :refer [label]]
             [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
             [reagent.dom :as rdom]))
 
 (defn sidenav-item-handler [label modal? e]
-  ;; TODO these two steps should be shared utility
-  (domo/scroll-into-view! (domo/qs-data= "kushi-playground-component" label))
-  (domo/scroll-by! {:y -50})
+  (component-examples/scroll-to-playground-component! label)
   (when modal?
     (dismiss-popover! e)))
 
@@ -70,11 +62,6 @@
             label]])))
 
 
-(defn below-breakpoint? [k]
-  (false? (->> (kushi.core/breakpoints)
-               k
-               first
-               (apply domo/matches-media?))))
 
 (defn- all-componenents-sidenav-button [attrs]
   [:button
@@ -146,9 +133,8 @@
 
 
 (defn header []
-  [:div
-   (sx :.kushi-playground-all-components-header
-       :.fixed
+  [:div#header-navbar
+   (sx :.fixed
        :.flex-row-sb
        :.neutralize
       ;;  :.divisor-block-end
@@ -258,103 +244,21 @@
 ;; If so, redo all the intersection observer stuff
 (defn layout [_comps]
   
-  [:div (sx :.flex-col-fs
-            :$navbar-height--50px
-            ;; :pi--4rem
-            ;; [:bgi '(linear-gradient "to right" "white" "white 480px" "#f5f5f5 480px" "#f5f5f5")]
-            ;; :.debug-red
-            ;; :outline-width--2px
-            ;; :outline-offset---2px
-            )
+  [:div (sx :.flex-col-fs)
    [header]
 
    [all-components-sidenav _comps]
 
 
    ;; Uncomment to try what's inside
-   (let [spot (fn [k]
-                [:div.spot.relative.xxxsmall.semi-bold.code #_.uppercase
-                 {:class [k :wireframe]}
-                 [:span.absolute-centered (kushi.utils/kebab->shorthand k)]])]
-     [:div (sx :.debug-blue
+   #_[:div (sx :.debug-blue
                :.flex-col-fs
                :gap--6rem
                :mbs--100px
-               :p--4rem
-               :$sz--300px
-               :>div:w--$sz
-               :>div:h--$sz
-               :$spot-sz--50px
-               :&_.spot:w--$spot-sz
-               :&_.spot:h--$spot-sz
-               :&_.spot:bgc--transparent!important
-               )
+               :p--2rem)
 
       ;; Just for trying stuff out - paste here
-      (into [:div (sx :.debug-yellow :.relative )
-             [:div.absolute-centered.capitalize "boba"]]
-            (for [k [
-                     :top-right-outside
-                     :top-right-corner-outside
-                     :right-top-outside
-                     :top-left-corner-outside
-                     :top-left-outside
-                     :left-top-outside
-
-                     :bottom-right-outside
-                     :bottom-right-corner-outside
-                     :right-bottom-outside
-                     :bottom-left-corner-outside
-                     :bottom-left-outside
-                     :left-bottom-outside
-
-                     :left-outside
-                     :right-outside
-                     :top-outside
-                     :bottom-outside
-                     ]]
-              [spot k]))
-
-      (into [:div (sx :.debug-lime :.relative )
-             [:div.absolute-centered.capitalize "line"]]
-            (for [k [:top-right
-                     :top-right-corner
-                     :right-top
-
-                     :top-left-corner
-                     :top-left
-                     :left-top
-
-                     :bottom-right
-                     :bottom-right-corner
-                     :right-bottom
-
-                     :bottom-left-corner
-                     :bottom-left
-                     :left-bottom
-                     
-                     :left
-                     :right
-                     :top
-                     :bottom
-                     ]]
-              [spot k]))
-      (into [:div (sx :.debug-orange :.relative )
-             [:div.absolute-centered.capitalize "inside"]]
-            (for [k [
-
-                     :top-right-corner-inside
-                     :top-left-corner-inside
-                     :bottom-right-corner-inside
-                     :bottom-left-corner-inside
-                     
-                     :left-inside
-                     :right-inside
-                     :top-inside
-                     :bottom-inside
-                     ]]
-              [spot k]))
-      ])
+      [:div "hi"]]
 
    ;; Main section
    (into [:div
@@ -441,6 +345,45 @@
                   [component-section component-opts])))]))])
 
 
+(defn custom-attributes-section
+  [custom-attributes]
+  [:<>
+   [:h2 (sx :.large :.semi-bold :mb--0:1.5rem) "Opts"]
+   (into [:div]
+         (for [{nm      :name
+                typ     :type
+                pred    :pred
+                desc    :desc
+                default :default} (second custom-attributes)]
+           (when nm
+             [:div (sx
+                    :.small
+                    :first-child:bbs--1px:solid:$gray-200
+                    :dark:first-child:bbs--1px:solid:$gray-800
+                    :bbe--1px:solid:$gray-200
+                    :dark:bbe--1px:solid:$gray-800
+                    :pb--1em)
+              [:div (sx :mb--0.7rem)
+               [:span
+                (sx :.code
+                    :.semi-bold
+                    :pb--0.07em
+                    :pi--0.2em
+                    :fs--0.85rem
+
+                    ;; TODO use neutralize utilities here
+                    :c--$accent-750
+                    :bgc--$accent-50
+                    :dark:c--$accent-100
+                    :dark:bgc--$accent-900)
+                (str ":-" nm)]]
+              [:div (sx :pis--1.4em)
+               (when pred [docs/opt-detail "Pred" pred docs/kushi-opts-grid-type :pred])
+               (when typ [docs/opt-detail "Type" typ docs/kushi-opts-grid-type :type])
+               [docs/opt-detail "Default" default docs/kushi-opts-grid-default :default]
+               (when desc [docs/opt-detail "Desc." desc docs/kushi-opts-grid-desc :desc])]])))])
+
+
 (defn component-section
   [{:keys                     [examples label]
     {:keys [desc summary]
@@ -459,15 +402,15 @@
                  [component-examples/examples-section component-opts example-opts]))
          [:div (sx :.playground-component-panel
                    :>div:max-width--605px
-                   ;; TODO - tie to navbar
                    :pbs--35px
                    {
                     :hidden "hidden"
                     :id     (str "kushi-" label "-documentation")})
-          [:div (sx :.medium :.wee-bold :mb--0:2rem)
-           (some->> summary
-                    util/desc->hiccup 
-                    docs/add-links)]
+          (when summary
+            [:div (sx :.medium :.wee-bold :mb--0:2rem)
+             (->> summary
+                  util/desc->hiccup 
+                  docs/add-links)])
           [:h2 (sx :.large :.semi-bold :mb--0:1.5rem) "Usage"]
           [:div (sx :lh--1.7
                     :mb--2rem
@@ -479,7 +422,10 @@
                     :&_code:color--$accent-750
                     :&_code:bgc--$accent-50
                     :dark:&_code:color--$accent-100
-                    :dark:&_code:bgc--$accent-900)
+                    :dark:&_code:bgc--$accent-900
+                    [:&_p&_b {:fw      :$wee-bold
+                              :mbe     :0.4em
+                              :display :block}])
 
            ;; TODO why is this not converting underscores to bold
            ;; Contrast with component-section/component-section L277
@@ -488,36 +434,4 @@
                    docs/add-links)]
 
           (when (seq custom-attributes)
-            [:<>
-             [:h2 (sx :.large :.semi-bold :mb--0:1.5rem) "Opts"]
-             (into [:div]
-                   (for [{nm      :name
-                          typ     :type
-                          pred    :pred
-                          desc    :desc
-                          default :default} (second custom-attributes)]
-                     (when nm
-                       [:div (sx
-                              :.small
-                              [:first-child:bbs "1px solid var(--gray-200)"]
-                              [:dark:first-child:bbs "1px solid var(--gray-800)"]
-                              [:bbe "1px solid var(--gray-200)"]
-                              [:dark:bbe "1px solid var(--gray-800)"]
-                              :pb--1em)
-                        [:div (sx :mb--0.7rem)
-                         [:span
-                          (sx :.code
-                              :.semi-bold
-                              {:style {:pb       :0.07em
-                                       :pi       :0.2em
-                                       :fs       :0.85rem
-                                       :c        :$accent-750
-                                       :bgc      :$accent-50
-                                       :dark:c   :$accent-100
-                                       :dark:bgc :$accent-900}})
-                          (str ":-" nm)]]
-                        [:div (sx :pis--1.4em)
-                         (when pred [docs/opt-detail "Pred" pred docs/kushi-opts-grid-type :pred])
-                         (when typ [docs/opt-detail "Type" typ docs/kushi-opts-grid-type :type])
-                         [docs/opt-detail "Default" default docs/kushi-opts-grid-default :default]
-                         (when desc [docs/opt-detail "Desc." desc docs/kushi-opts-grid-desc :desc])]])))])]]))
+            [custom-attributes-section custom-attributes])]]))

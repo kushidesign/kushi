@@ -1,6 +1,7 @@
 (ns kushi.ui.util
   (:require [clojure.string :as string]
             [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
+            [domo.core :as domo]
             [kushi.core :refer [keyed]]))
 
 ;; Generic
@@ -100,3 +101,9 @@
       (keyed spans splits interleaved)
       (string/join interleaved))
     s))
+
+(defn below-breakpoint? [k]
+  (false? (->> (kushi.core/breakpoints)
+               k
+               first
+               (apply domo/matches-media?))))

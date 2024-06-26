@@ -436,7 +436,8 @@
 
 
    ;; This one is used for buttons, tags etc ... The roundedness is always relative to font-size
-   :rounded-absolute               {:border-radius :$rounded-absolute-medium}
+   :rounded-absolute {:border-radius :$rounded-absolute-medium}
+   :rounded          {:border-radius :$rounded}
 
 
    :sharp         {:border-radius 0}
@@ -523,10 +524,20 @@
                                       (str "$")
                                       keyword)})}))
 
+(def fixed-geometries? true)
+
 (defn geometries [coll m]
-  (into [] (mapcat (fn [[k v]]
-                     [k (assoc m :translate v)])
-                   coll)))
+  (mapcatv (fn [[k v]]
+             (let [m+    (assoc m :translate v)
+                   k-str (util/stringify k)]
+               (concat [k m+]
+                       (when (and fixed-geometries?
+                                  (re-find #"-inside$" k-str))
+                         [(-> k-str
+                              (str "-fixed")
+                              keyword)
+                          (assoc m+ :position :fixed)]))))
+           coll))
 
 (def geom-top-base 
   {:position :absolute
@@ -640,7 +651,7 @@
             :bottom "0%"})))
 
 
-(def all-the-classes 
+(def all-classes 
   [combo-flex-utility-classes
    debug-outline-classes
    base-classes
@@ -653,9 +664,7 @@
    geom-top-side
    geom-bottom-side
 
-   ;; geometry-classes-fixed
    type-weight-override-classes
-
    override-classes
    rounded-absolute-radius-classes
    rounded-radius-classes
@@ -664,290 +673,8 @@
    ui-theming-classes])
 
 (def utility-class-ks
-  (mapcat util/kwargs-keys all-the-classes))
+  (mapcat util/kwargs-keys all-classes))
 
 (def utility-classes
   (apply deep-merge
-         (map #(apply hash-map %) all-the-classes)))
-
-#_(def geometry-classes-fixed
-  [:top-left-corner-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% -100%"}
-   :top-left-corner-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :top-left-corner-inside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 0%"}
-   :top-left-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -100%"}
-   :top-left-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -50%"}
-   :top-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% -100%"}
-   :top-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :top-inside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 0%"}
-   :top-right-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -100%"}
-   :top-right-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -50%"}
-   :top-right-corner-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% -100%"}
-   :top-right-corner-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% -50%"}
-   :top-right-corner-inside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 0%"}
-   :right-top-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 0%"}
-   :right-top-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 0%"}
-   :right-inside-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -50%"}
-   :right-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% -50%"}
-   :right-outside-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% -50%"}
-   :right-bottom-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 0%"}
-   :right-bottom-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 0%"}
-   :bottom-right-corner-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 100%"}
-   :bottom-right-corner-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 50%"}
-   :bottom-right-corner-inside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 0%"}
-   :bottom-right-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 100%"}
-   :bottom-right-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 50%"}
-   :bottom-inside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 0%"}
-   :bottom-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 50%"}
-   :bottom-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 100%"}
-   :bottom-left-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 100%"}
-   :bottom-left-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 50%"}
-   :bottom-left-corner-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 100%"}
-   :bottom-left-corner-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 50%"}
-   :bottom-left-corner-inside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 0%"}
-   :left-bottom-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 0%"}
-   :left-bottom-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 0%"}
-   :left-inside-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -50%"}
-   :left-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :left-outside-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% -50%"}
-   :left-top-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 0%"}
-   :left-top-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 0%"} ])
+         (map #(apply hash-map %) all-classes)))

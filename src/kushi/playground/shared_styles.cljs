@@ -284,3 +284,8 @@
   :.capitalize
   :lh--0.75em
   :fs--$xlarge)
+
+(defclass cormorant-section-label 
+  :.bold
+  :dark:fw--$wee-bold
+  :fs--17.5px)
