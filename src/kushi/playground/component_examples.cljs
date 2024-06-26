@@ -307,6 +307,17 @@
       [copy-to-clipboard-button attrs])
     preformatted]])
 
+(defn scroll-to-playground-component! [id]
+  (domo/scroll-into-view!
+   (domo/qs-data= "kushi-playground-component" id ))
+  (domo/scroll-by!
+   ;; This is dependent on the existance of `#header-navbar`
+   {:y (or (-> "header-navbar" 
+               domo/el-by-id
+               .-offsetHeight
+               -)
+           -50)}))
+
 (defn- scroll-to-elsewhere-on-page
   [{href :href}]
   (when (string/starts-with? href "#")
@@ -314,11 +325,8 @@
      :on-click (fn [e]
                  (.preventDefault e)
                  (close-kushi-modal e)
-                 ;; TODO these two steps should be shared utility
-                 (domo/scroll-into-view!
-                  (domo/qs-data= "kushi-playground-component"
-                                 (subs href 1)))
-                 (domo/scroll-by! {:y -50}))}))
+                 (scroll-to-playground-component! (subs href 1))
+                 )}))
 
 (defn component-snippets
   []
