@@ -187,6 +187,7 @@
    ;; TODO - use scale-of-utility-defs
    ;; Divisors
    ;; need defclass-like merging here - maybe with metadata on map?
+   ;; TODO -really need transition property on these?
    :divisor-block-start  {:border-block-start         :$divisor
                           :dark:border-block-start    :$divisor-inverse
                           :transition-property        :all
@@ -311,21 +312,21 @@
                                :inset-inline-start "50%"
                                :translate          "-50%"}
 
-    ;; Surfaces, buttons, containers
-    ;; ------------------------------------------------------
-   :bgi-cover             {:background-position "center center"
-                           :background-repeat   :no-repeat
-                           :width               "100%"}
+   ;; Surfaces, buttons, containers
+   ;; ------------------------------------------------------
+   :bgi-cover                 {:background-position "center center"
+                               :background-repeat   :no-repeat
+                               :width               "100%"}
 
-   :bgi-contain           {:background-position "center center"
-                           :background-size     :contain
-                           :background-repeat   :no-repeat
-                           :width               "100%"
-                           :height              "100%"}
+   :bgi-contain               {:background-position "center center"
+                               :background-size     :contain
+                               :background-repeat   :no-repeat
+                               :width               "100%"
+                               :height              "100%"}
 
 
-    ;; Combinatorial transition utility
-    ;; ------------------------------------------------------
+   ;; Combinatorial transition utility
+   ;; ------------------------------------------------------
    :transition            {:transition-property        :all
                            :transition-timing-function :$transition-timing-function
                            :transition-duration        :$transition-duration}])

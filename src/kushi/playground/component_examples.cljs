@@ -127,11 +127,12 @@
 (defn section-label [s]
   [:p 
    (sx 'example-section-label
-       :.serif
+      ;;  :.serif
       ;; Include this if using cormorant serif face in :$serif-font-stack
       ;;  :.cormorant-section-label
       ;; Comment fs below if using cormorant serif face in :$serif-font-stack
-       :fs--$small-b
+       :fs--$small
+      ;;  :fs--$small-b
        :.neutralize-secondary
        :lh--1.7
        :&_span.code:mis--0.5ch)
@@ -140,22 +141,100 @@
 (declare component-snippets)
 (declare reqs-coll)
 
+(defcom link-button 
+  [:button (merge-attrs 
+            (sx :.flex-row-fs
+                :.minimal
+                :.xsmall
+                :.normal
+                :.xxxfast
+                :.pointer
+                :lh--0.8em
+                :p--0
+                :c--$neutral-secondary-foreground
+                :hover:c--$neutral-foreground
+                :hover:bgc--transparent
+                :hover:td--underline
+                :hover:tds--underline
+                :hover:tdt--1.5px
+                :hover:tup--under
+                :hover:tuo--0.075em
+                :active:bgc--transparent
+                [:tdc "color-mix(in oklch, currentColor 10%, transparent)"]
+                [:hover:tdc "color-mix(in oklch, currentColor 40%, transparent)"])
+            &attrs)
+   &children])
+
+(defn example-modal
+  [{:keys [modal-id
+           label
+           component-label
+           component-reqs
+           snippets-header
+           snippets
+           example-reqs]}]
+  (let [all-reqs       (into []
+                             (concat component-reqs
+                                     example-reqs))
+        reqs-by-refers (reqs-by-refers all-reqs)]
+    [modal (sx :&_.kushi-modal-inner:pi--1.25em
+               :xsm:&_.kushi-modal-inner:pi--3em
+               :&_.kushi-modal-inner:pb--1.75em:2em
+               :xsm:&_.kushi-modal-inner:pb--3em:3.5em
+               :$modal-min-width--200px
+               :&_.kushi-modal-inner:gap--0.75rem
+               [:height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem))))"]
+               :overflow--hidden
+               :width--$main-content-max-width
+               {:id modal-id})
+     [:div (sx :.flex-row-fs :ai--b :gap--1.5em)
+      [:h1 (sx :.component-section-header-label) component-label]
+      label]
+     [divisor]
+     [component-snippets
+      (reqs-coll reqs-by-refers)
+      snippets-header
+      snippets]]))
+
+(defn example-modal-trigger [modal-id]
+  [button
+   (sx :.minimal
+       :.accent
+       :.xxsmall
+       :.wee-bold
+       :.pill
+       :pb--0.4em
+       :&.accent.minimal:hover:background-color--$accent-50
+       :dark&.accent.minimal:hover:background-color--$accent-800
+
+       ;; Next 3 styles will give it a link-button style
+       #_:p--0
+       #_:hover&.accent.minimal:bgc--transparent
+       #_[:hover:after {:content  "\"\""
+                        :position :absolute
+                        :w        :100%
+                        :h        :1px
+                        :o        0.5
+                        :bgc      :$accent-foreground
+                        :top      "calc(100% + 2px)"}]
+       {:on-click (fn* [] (open-kushi-modal modal-id))})
+   [icon (sx :.small :.extra-bold) :code]
+   "Get the code"])
+
 (defn examples-section
   [{component       :component
     component-reqs  :reqs
     component-label :label
     :as             component-opts}
-   {:keys             [desc container-attrs snippets-header snippets]
+   {:keys             [container-attrs 
+                       snippets-header
+                       snippets]
     example-desc      :desc
     example-reqs      :reqs
     example-component :component
     :or          {example-reqs []}
     :as          example-opts}]
   (let [component      (or example-component component)
-        all-reqs       (into []
-                             (concat component-reqs
-                                     example-reqs))
-        reqs-by-refers (reqs-by-refers all-reqs)
         label          (some-> example-desc
                                kushi.ui.util/backtics->hiccup
                                section-label)
@@ -163,54 +242,35 @@
     [:div (sx :.playground-example-row-container
               :pb--2.5rem
               :first-of-type:pbs--2.5rem
-              ;; Hack to conditionally hide things here, like if they should not be shown on mobile
+
+              ;; Hack to conditionally hide things here,
+              ;; like if they should not be shown on mobile
               ["has([data-kushi-playground-example='popover-with-form']):display" :none]
               ["xsm:has([data-kushi-playground-example='popover-with-form']):display" :block])
 
      [:section (sx :.playground-example-row
                   ;; make this max-width global var
-                   :max-width--605px)
+                   :max-width--$main-content-max-width)
       [:div (sx :.flex-row-fs
                 :flex-wrap--wrap
                 :ai--c
-                :mbe--1rem
-                :gap--0.5em)
+                :mbe--1.75rem
+                :gap--2rem)
        label
        (when snippets 
          [:<> 
-          [button
-           (sx :.minimal
-               :.pill
-               :.accent
-               :.xxsmall
-               :.wee-bold
-               {:on-click (fn* [] (open-kushi-modal modal-id))})
-           [icon (sx :.small :.extra-bold) :code]
-           "Get the code"]
-          [modal (sx :&_.kushi-modal-inner:pi--1.25em
-                     :xsm:&_.kushi-modal-inner:pi--3em
-                     :&_.kushi-modal-inner:pb--1.75em:2em
-                     :xsm:&_.kushi-modal-inner:pb--3em:3.5em
-                     :$modal-min-width--200px
-                     :&_.kushi-modal-inner:gap--0.75rem
-                     [:height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem))))"]
-                     :overflow--hidden
-                     :width--605px
-                     {:id modal-id})
-           [:div (sx :.flex-row-fs :ai--b :gap--1.5em)
-            [:h1 (sx :.component-section-header-label) component-label]
-            label]
-           [divisor]
-           [component-snippets
-            (reqs-coll reqs-by-refers)
-            snippets-header
-            snippets]]])]
+          [example-modal-trigger modal-id]
+          [example-modal (keyed modal-id
+                                component-label
+                                label
+                                snippets-header
+                                snippets
+                                component-reqs
+                                example-reqs)]])]
 
       
       (into [:div (merge-attrs
-                   (sx :.grid
-                       :gtc--1fr
-                       :gap--1rem)
+                   (sx :.grid :gtc--1fr :gap--1rem)
                    container-attrs)]
             (for [variant-attrs (resolve-variants-attrs component-opts
                                                         example-opts)]
@@ -218,13 +278,7 @@
                component
                (merge example-opts
                       (keyed variant-attrs
-                             reqs-by-refers))]))]]
-
-    #_(into [:section (sx :.playground-example-row
-                          :pb--1.5rem
-                          :first-of-type:pbs--3.5rem)
-             label]
-            )))
+                             reqs-by-refers))]))]]))
 
 
 ;;; New snippet code
@@ -348,7 +402,10 @@
           :&_.kushi-text-input-label:min-width--7em
           :&_.kushi-input-inline:gtc--36%:64%)
       (let [formatted*    #(-> % (pprint {:max-width 50}) with-out-str)]
-        (into [:div (sx :.flex-col-fs :gap--2.25rem :mbs--1.5em)
+        (into [:div (sx :.flex-col-fs
+                        :gap--2.25rem
+                        :mbs--1.5em
+                        :pbe--2rem)
                [snippet-section
                 {:header       (util/desc->hiccup
                                 ["Paste into the `:require` section of your `:ns` form:"])

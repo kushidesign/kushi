@@ -17,22 +17,22 @@
 
    ;; TODO - change "fg" to "foreground"?
    ;; Neutrals
-   :$neutral-foreground                              :$neutral-minimal-color
-   :$neutral-foreground-inverse                      :$neutral-minimal-color-inverse
-   :$neutral-secondary-foreground                    :$neutral-700
-   :$neutral-secondary-foreground-inverse            :$neutral-450
+   :$neutral-foreground                      :$neutral-minimal-color
+   :$neutral-foreground-inverse              :$neutral-minimal-color-inverse
+   :$neutral-secondary-foreground            :$neutral-700
+   :$neutral-secondary-foreground-inverse    :$neutral-350
 
-   :$accent-foreground                               :$accent-minimal-color
-   :$accent-foreground-inverse                       :$accent-minimal-color-inverse
+   :$accent-foreground                       :$accent-minimal-color
+   :$accent-foreground-inverse               :$accent-minimal-color-inverse
 
-   :$positive-foreground                             :$positive-minimal-color
-   :$positive-foreground-inverse                     :$positive-minimal-color-inverse
+   :$positive-foreground                     :$positive-minimal-color
+   :$positive-foreground-inverse             :$positive-minimal-color-inverse
 
-   :$warning-foreground                              :$warning-minimal-color
-   :$warning-foreground-inverse                      :$warning-minimal-color-inverse
+   :$warning-foreground                      :$warning-minimal-color
+   :$warning-foreground-inverse              :$warning-minimal-color-inverse
 
-   :$negative-foreground                             :$negative-minimal-color
-   :$negative-foreground-inverse                     :$negative-minimal-color-inverse
+   :$negative-foreground                     :$negative-minimal-color
+   :$negative-foreground-inverse             :$negative-minimal-color-inverse
 
 
    ;; Debugging grid
@@ -76,7 +76,7 @@
    :$extra-bold                             800
    :$heavy                                  900
 
-   :$root-font-size                   :1rem
+   :$root-font-size                         :1rem
 
 
    ;; Intended for css prop `font-size`

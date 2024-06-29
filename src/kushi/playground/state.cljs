@@ -74,3 +74,4 @@
    (first (sort-by #(.indexOf ordered-playground-components-labels %)
                    (:intersecting @*playground)))))
 
+(def *focused-page (r/atom "components"))

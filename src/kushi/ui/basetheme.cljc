@@ -147,12 +147,12 @@
 
    ;; minimal
    ".dark .neutral.minimal:color"                          150
-   ".dark .neutral.minimal:hover:color"                    100
-   ".dark .neutral.minimal:active:color"                   50
+   ".dark .neutral.minimal:hover:color"                    50
+   ".dark .neutral.minimal:active:color"                   0
 
    ".dark .neutral.minimal:background-color"               :transparent
-   ".dark .neutral.minimal:hover:background-color"         750
-   ".dark .neutral.minimal:active:background-color"        700
+   ".dark .neutral.minimal:hover:background-color"         850
+   ".dark .neutral.minimal:active:background-color"        800
 
    ;; bordered
    ".dark .neutral.bordered:color"                         150
@@ -215,7 +215,7 @@
 
    :.accent.minimal:background-color               :transparent
    :.accent.minimal:hover:background-color         100
-   :.accent.minimal:active:background-color        200
+   :.accent.minimal:active:background-color        150
 
    :.accent.bordered:color                         600
    :.accent.bordered:hover:color                   700

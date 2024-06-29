@@ -54,14 +54,13 @@
         ;; row of buttons that show various stylings (no arrow etc)
 
 
-        
+        ;; Components playground intro section at top 
+
+        ;; routing
+
+        ;; Add :summary and :usage info to all component docs
+
         ;; figure out sidemenu on mobile
-        
-        ;; Add color & type about sections
-
-        ;; Some koind of splash page?
-
-        ;; Tie together nav height
 
         ;; dark mode review
 
@@ -69,11 +68,21 @@
 
         ;; Debug popover on mobile
 
+        ;; switch tab back to `Examples` when component section goes offscreen
+
+
 
 
         ;; check size of app etc.
 
 
+        ;; Smoother transition between Examples and Docs section
+        ;; - fade-in, fade-out
+        ;; - hightlight blink on tab header
+
+        ;; Activate side components mobile menu on hover (for small desktops)
+
+        ;; Some koind of splash page? (later)
 
         ;; finish rest of snippets (later)
 
@@ -91,6 +100,14 @@
         ;; Figure out interactive modal (later)
 
         ;; Add link and divisor components to doc (later)
+
+        ;; Add tablist and tabs component
+
+        ;; Redo color section design (later)
+
+        ;; Add APCA-based color checks
+
+        ;;
 
         
 
@@ -156,16 +173,16 @@
   (filter 
   ;; :label
   #(contains? #{
-                ;; "button"     ;; ✅
+                "button"     ;; ✅
                 ;; "icon"       ;; ✅
-                ;; "spinner"    ;; ✅
+                "spinner"    ;; ✅
                 "switch"     ;; ✅
                 ;; "radio"      ;; ✅
-                "checkbox"   ;; ✅ 
+                ;; "checkbox"   ;; ✅ 
                 ;; "slider"     ;; ✅
                 ;; "text field" ;; ✅
 
-                "tooltip"    ;; ✅
+                ;; "tooltip"    ;; ✅
                 ;; "popover"    ;; PS
                 ;; "modal"      ;; PS
                 ;; "toast"      ;; PS
