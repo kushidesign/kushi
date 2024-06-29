@@ -73,7 +73,6 @@
 (defn opt-detail [text v f kw]
   [:div
    (sx :.flex-row-fs
-       :pb--0.5em
        {:style {:ai (if (= text "Desc.") :flex-start :center)}})
    [:div
     (sx 'kushi-opt-detail-label :min-width--75px)
@@ -84,9 +83,10 @@
    [:div (sx 'kushi-opt-detail-value
              [:&_.code {:pb       :0.07em
                         :pi       :0.2em
-                        :fs       :0.85rem
-                        :c        :$accent-750
-                        :bgc      :$accent-50
-                        :dark:c   :$accent-100
-                        :dark:bgc :$accent-900}])
+                        ;; :fs       :0.85rem
+                        ;; :c        :$accent-750
+                        ;; :bgc      :$accent-50
+                        ;; :dark:c   :$accent-100
+                        ;; :dark:bgc :$accent-900
+                        }])
     [f v]]])

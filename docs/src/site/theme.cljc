@@ -54,13 +54,19 @@
                         :$serif-font-stack                       "'Source Serif 4', Times, serif"
                         :$code-font-stack                        "'JetBrains Mono', 'Fira Code', monospace"
                         :$primary-font-family                    :$sans-serif-font-stack
-                        :$code-color                             :$accent-750
+                        ;; :$code-color                             :$accent-750
+                        :$code-font-size                         :0.875em
+                        :$code-color                             :$accent-850
                         :$code-background-color                  :$accent-50
-                        :$code-color-inverse                     :$accent-100
+                        ;; :$code-color-inverse                     :$accent-100
+                        :$code-color-inverse                     :$neutral-100
                         :$code-background-color-inverse          :$accent-900
                         :$kushi-playground-mobile-header-height  :46px
                         :$popover-border-color                   :$neutral-300
-                        :$navbar-height                          :50px]
+                        :$navbar-height                          :50px
+                        :$tooltip-delay-duration                 :250ms
+                        :$main-content-max-width                 :605px
+                        ]
 
      :typescale        (create-typescale {:size-limit "xxx" :shift 0})
      :type-scale-shift 1
