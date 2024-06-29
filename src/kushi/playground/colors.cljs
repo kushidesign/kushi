@@ -116,11 +116,14 @@
         ^{:key color-name}
         [:div (sx 'color-scale-wrapper
                   :.transition
+                  :max-width--$main-content-max-width
                   :mbs--4.5rem)
-         [:h3 (sx :.xxlarge
-                  :mbe--2rem
-                  :.wee-bold
-                  :tt--capitalize)
+         [:h2 (sx 
+               :.xlarge
+               :.semi-bold
+               :.capitalize
+               :pbs--2em
+               :mb--5rem:1.5rem)
           color-name]
          (when semantic-alias
            [:p (sx :.normal
@@ -186,7 +189,9 @@
            (merge-attrs
             (sx :.flex-row-fs
                 :.rounded-large
-                [:gap column-gap])
+                :jc--sb
+                ;; [:gap column-gap]
+                )
             &attrs)]
           (for [[color _] (partition 2 kushi.colors/colors)
                 :when (or (not (seq select-colors))
