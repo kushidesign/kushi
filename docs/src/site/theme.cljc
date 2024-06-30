@@ -75,6 +75,7 @@
                         ;; this should be :--primary-font-family ?
                         {
                          ;; :color       :$gray-950
+                         :overflow-y :scroll
                          }
 
                         "code, .code"
