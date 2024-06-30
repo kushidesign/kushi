@@ -1,6 +1,5 @@
 ;; shadow-cljs configuration
-{
- :source-paths   ["src"
+{:source-paths   ["src"
                   "../src"
                   "../../../kushi/domo/src"
                   "../../../cljc/fireworks/src"
@@ -10,8 +9,7 @@
  :dependencies   [[reagent/reagent    "1.1.1"]
                   [binaryage/devtools "1.0.6"]
                   [design.kushi/kushi "1.0.0-a.20"]
-                  [io.github.paintparty/fireworks "0.4.0"]
-                  ]
+                  [io.github.paintparty/fireworks "0.4.0"]]
 
  :dev-http       {7777 "public"}
 
@@ -19,7 +17,8 @@
 
  :builds         {:demo {:devtools         {:log             false
                                             :reload-strategy :full
-                                            :watch-dir       "public"}
+                                            :watch-dir       "public"
+                                            :preloads        [day8.re-frame-10x.preload]}
                          :target           :browser
                          :compiler-options {:output-feature-set :es8
                                             :warnings           {:redef false}}
@@ -28,4 +27,6 @@
                                             (kushi.stylesheet/create-css-file)
                                             (shadow.cljs.build-report/hook
                                              {:output-to "tmp/report.html"})]
-                         :modules          {:main {:init-fn site.browser/init}}}}}
+                         :modules          {:main {:init-fn site.browser/init}}
+                         :dev              {:compiler-options {:closure-defines {re-frame.trace.trace-enabled?        true
+                                                                                 day8.re-frame.tracing.trace-enabled? true}}}}}}

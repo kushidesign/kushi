@@ -118,12 +118,11 @@
                   :.transition
                   :max-width--$main-content-max-width
                   :mbs--4.5rem)
-         [:h2 (sx 
-               :.xlarge
-               :.semi-bold
-               :.capitalize
-               :pbs--2em
-               :mb--5rem:1.5rem)
+         [:h2 (sx :.xlarge
+                  :.semi-bold
+                  :.capitalize
+                  :pbs--2em
+                  :mb--2rem:1.5rem)
           color-name]
          (when semantic-alias
            [:p (sx :.normal
@@ -197,6 +196,7 @@
                 :when (or (not (seq select-colors))
                           (contains? (into #{} select-colors) color))]
             (into [:div (sx :.flex-col-fs
+                            :.transition
                             :bgc--white
                             :dark:bgc--black
                             :outline--7px:solid:white

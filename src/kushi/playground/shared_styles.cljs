@@ -294,3 +294,7 @@
   {:bgi      '(linear-gradient "to bottom" "var(--background-color) 20%" "color-mix(in srgb, var(--background-color), transparent 75%)") 
    :dark:bgi '(linear-gradient "to bottom" "var(--background-color-inverse) 20%" "color-mix(in srgb, var(--background-color-inverse), transparent 75%)")})
              
+(defclass header-menu-transition-group
+  ;; :.xxxslow
+  ;; :.debug-blue
+  )
