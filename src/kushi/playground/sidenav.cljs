@@ -1,294 +1,132 @@
 (ns kushi.playground.sidenav
   (:require
-   [clojure.string :as string]
-   [kushi.core :refer (sx merge-attrs token->ms)]
-   [kushi.ui.core :refer (defcom)]
-   [domo.core :as domo]
-   [kushi.playground.component-section :refer [collapse-all-component-sections
-                                               collapse-all-handler
-                                               scroll-menu-item-into-view]]
+   [kushi.core :refer (sx merge-attrs)]
+   [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
+   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.icon.core :refer [icon]]
+   [kushi.playground.component-examples :as component-examples]
    [kushi.playground.state :as state]
-   [kushi.playground.util :as util :refer-macros (keyed)]))
-
-(defn nav-section-id->base-id [s]
-  (string/replace s #"-nav-section$" ""))
+   [reagent.dom :as rdom]))
 
 
-(defn transition-between-focused-components
-  [fname]
-  (let [wrapper (domo/el-by-id "#kushi-playground-main-section-wrapper")]
-    (when wrapper (domo/add-class! wrapper "invisible"))
-    (js/setTimeout
-     #(do (domo/scroll-to-top!)
-          (reset! state/*focused-component fname)
-          (when wrapper (domo/remove-class! wrapper "invisible")))
-     (token->ms :$fast))))
+(defn sidenav-item-handler [label modal? e]
+  (component-examples/scroll-to-playground-component! label)
+  (when modal?
+    (dismiss-popover! e)))
 
 
-(defn section-item-on-click [href fname e]
-  (let [section            (domo/nearest-ancestor (domo/et e) ".kushi-treenav-section-level-1")
-        section-id         (some->  section .-firstChild .-id)
-        focused-section-id (keyword (nav-section-id->base-id section-id))]
-
-    (when  focused-section-id
-      (when-not (state/section-focused? focused-section-id)
-        (reset! state/*focused-section focused-section-id)))
-
-    (case  section-id
-
-      "getting-started-nav-section"
-      (when href
-        (let [el   (domo/el-by-id href)]
-          (when el
-            (scroll-menu-item-into-view el)
-            (state/nav! href))))
-
-      "custom-components-nav-section"
-      (transition-between-focused-components fname)
-
-      "kushi-components-nav-section"
-      (transition-between-focused-components fname))))
+(defn mouse-down-a11y [f & args]
+  {:on-key-down   #(when (contains? #{" " "Enter"} (.-key %))
+                     (apply f (concat args [%])))
+   :on-mouse-down #(when (= 0 (.-button %))
+                     (apply f (concat args [%])))})
 
 
-(defn sidenav-section-items
-  [section-opts items]
-  (into [:ul]
-        (for [{:keys [fname
-                      label
-                      href
-                      focused?]} items
-              :let [focused?    (and (:section-focused? section-opts) focused?)
-                    hashed-href (str "#" fname)]]
-          [:li
-           (sx :.kushi-playground-sidenav-section-item-wrapper
-               :.hover-trailing-fade-out-wrapper)
-           [:a (sx
-                'kushi-playground-sidenav-section-item
-                :.hover-trailing-fade-out
-                :.pointer
-                :fw--$kushi-playground-sidenav-section-item_font-weight||$normal
-                :fs--$kushi-playground-sidenav-section-item_font-size||$small
-                :c--black
-                :dark:c--white
-                :d--block
-                :p--9px:12px:9px:48px
-                :border-left--3px:solid:transparent
-                [:hover:o 1]
-                {:style    {:bgc           (if focused? "rgba(0, 0, 0, 0.07)" :transparent)
-                            :dark:bgc      (if focused? :$gray-800 :transparent)
-                            :bisc          (if focused? :black :transparent)
-                            :dark:bisc     (if focused? :white :transparent)}
-                 :href     hashed-href
-                 :on-click (partial section-item-on-click href fname)})
+(defn all-componenents-sidenav-items
+  [{:keys [coll modal?]}]
+  (into [:ul (sx :.flex-col-fs
+                 :.neutralize
+                 :ai--c
+                 :short:d--grid
+                 :short:gtc--max-content:max-content
+                 :short:ji--center
+                 :pb--0rem:2rem
+                 :pi--0.5em
+                 :overflow-y--auto)]
+        (for [{:keys [label]} coll
+              :let            [focused? (= label
+                                           @state/*playground-first-intersecting)]]
+          [:li (sx :.small
+                   :.capitalize
+                   :.pointer
+                   :w--fit-content
+                   :pb--0.25em
+                   [:hover>button.neutral.minimal:bgc
+                    (if focused? :$neutral-650 :$neutral-100)])
+           [button
+            (merge-attrs
+             (sx :.pill
+                 :.minimal
+                 :.neutral
+                 :.xxxfast
+                 :pi--1em
+                 :pb--0.5em
+                 [:fw (when focused? :$wee-bold)]
+                 [:&.neutral.minimal:bgc (when focused? :$neutral-650)]
+                 [:dark:&.neutral.minimal:bgc (when focused? :$neutral-300)]
+                 [:&.neutral.minimal:c (when focused? :white)]
+                 [:dark:&.neutral.minimal:c (when focused? :black)])
+             (mouse-down-a11y sidenav-item-handler label modal?))
             label]])))
 
 
-
-(defn sidenav-section-header
-  [{:keys [section-focused? kw header href target sidenav-header]
-    :as   m}]
-  [:a (merge-attrs
-       (when target {:target target})
-       (sx 'kushi-playground-sidenav-section-header
-           ;; TODO drop this legacy selector
-           :.kushi-treenav-section-level-1-header
-           :.relative
-           :.semi-bold
-           :fs--$kushi-playground-sidenav-section-header_font-size||$medium
-           (when target :.kushi-link)
-           :w--100%
-           {:id       (when (keyword? kw) (str (name kw) "-nav-section"))
-            :href     (or href (when (keyword? kw) (str "#" (name kw))))
-            :style    {:hover:c                                         (when-not section-focused? :$gray-500)
-                       :bgc                                             (when section-focused? :$gray-0)
-                       :bisc                                            (if section-focused? "rgba(0, 0, 0, 0.2)" :transparent)
-                       :dark:bisc                                       (if section-focused? "rgba(255, 255, 255, 0.4)" :transparent)
-                       "has-ancestor(.mobile-subnav):fs"                  :$xxsmall
-                       "has-ancestor(.mobile-subnav):tt"                  :capitalize
-                       "has-ancestor(.mobile-subnav):bgc"                 (if section-focused? :$gray-100 :transparent)
-                       "dark:has-ancestor(.mobile-subnav):bgc"            (if section-focused? :$gray-750 :transparent)
-                       "has-ancestor(.mobile-subnav):border-radius"       :9999px
-                       "has-ancestor(.mobile-subnav):border-inline-style" :solid
-                       "has-ancestor(.mobile-subnav):biw"                 :8px
-                       "has-ancestor(.mobile-subnav):bic"                 (if section-focused? :$gray-100 :transparent)
-                       "dark:has-ancestor(.mobile-subnav):bic"            (if section-focused? :$gray-750 :transparent)
-                       "has-ancestor(.mobile-subnav):tuo"                 :3px}
-            :on-click #(when-not target
-                         (reset! state/*focused-section kw)
-                         (state/set-focused-component! nil)
-                         (domo/scroll-to-top!))}))
-   (or header
-       [:span.kushi-treenav-section-header sidenav-header])])
-
-(defn sidenav-section
-  [{:keys [items kw] :as m}]
-  ^{:key kw}
-  (let [section-focused? (state/section-focused? kw)
-        section-opts     (merge m (keyed section-focused?))]
-    [:li (sx 'kushi-treenav-section-level-1
-             :mbs--1em
-             :>a:mbs--0.5em
-             :first-child:>a:mbs--0em
-             ["sm:has(#kushi-colors-nav-section):display" :none])
-     [sidenav-section-header section-opts]
-     [sidenav-section-items section-opts items]]))
-
-(defn- sidenav-component-section-items
-  [coll]
-  (mapv (fn [{m*         :meta
-              item-title :title}]
-          (let [fname    (util/meta->fname m*)
-                focused? (state/focused? fname)
-                label    (string/capitalize (or item-title fname))]
-            (keyed fname focused? label)))
-        coll))
-
-(defn- sidenav-component-section-opts
-  [{:keys [coll kw title]}]
-  {:header [:span.kushi-treenav-section-header
-            (sx {:on-click (partial collapse-all-handler kw)})
-            [:span (sx :md:mie--0.5em) title]
-            ;; Leave this out for now
-            ;; Maybe place next to sidenav focused sections?
-            #_(when (and (state/section-focused? kw)
-                         (seq @state/*expanded-sections))
-                [collapse-all-component-sections])]
-   :kw     kw
-   :href   (str "#" (string/lower-case title))
-   :items  (sidenav-component-section-items coll)})
-
-(defn xxx [{:keys [render?] :as m} kw]
-  (when render?
-    [sidenav-section (merge m {:kw kw})]))
-
-(defn xxxy [{:keys [render?] :as m} kw fallback-sidenav-header]
-  (when render?
-    [sidenav-section (sidenav-component-section-opts
-                      (assoc m
-                             :kw
-                             kw
-                             :title
-                             (or (:sidenav-header m)
-                                 fallback-sidenav-header)))]))
-
-(defn sidenav-content
-  [{:keys [custom-components
-           kushi-components
-           custom-colors
-           kushi-colors
-           custom-typography
-           kushi-typography
-           kushi-user-guide
-           kushi-clojars
-           kushi-about]}]
-  (into
-   [:ul
-    (sx :md:pbe--50px!important)
-    (xxxy custom-components :custom-components "Custom Components")
-    (xxxy kushi-components :kushi-components "Base Kushi Components")
-    (xxx custom-colors :custom-colors)
-    (xxx kushi-colors :kushi-colors)
-    (xxx custom-typography :custom-typography)
-    (xxx kushi-typography :kushi-typography)
-    (xxx kushi-user-guide :kushi-user-guide)
-    (xxx kushi-clojars :kushi-clojars)
-    (xxx kushi-about :kushi-about)]))
-
-(defcom sidenav
-  [:div.sidenav-wrapper.kushi-playground-sidenav-wrapper
-   (:wrapper-attrs &opts)
-   [:nav
-    (merge-attrs
-     (sx 'sidenav-primary
-         :.small
-         :.fixed
-         :.flex-col-fs
-         :.wee-bold
-        ;;  :iis--$kushi-playground-sidenav-inset-inline-start||1.5rem
-         :iis--unset
-         :iie--0
-        ;;  [:xl:iis "calc((100% - 708px) / 4)"]
-        ;;  [:xl:transform '(translateX :-50%)]
-         :ibs--0
-         :&_ul:list-style-type--none
-         :&_li:list-style-type--none
-         :&_ul:p--0
-         :&_li:p--0
-         :&_ul:m--0
-         :&_li:m--0
-         :h--100vh)
-     &attrs)
-    &children]])
-
-(defn mobile-subnav
-  [opts]
-  [sidenav
-   (sx 'mobile-subnav
-       :.flex-row-c!
-       :.relative!
-       :iis--0
-       :h--auto
-       [:pis "calc(var(--page-padding-inline) - 12px)"]
-       :pie--$page-padding-inline
-       :max-width--100%
-
-       :&_.styled-scrollbars:flex-shrink--1
-       :&_.styled-scrollbars:flex-grow--0
-       :&_.styled-scrollbars:overflow-y--auto
-       [:&_.styled-scrollbars:max-height "calc(100vh - 114px)"]
-       :&_.styled-scrollbars:max-height--unset
-       :&_.styled-scrollbars:max-width--$components-menu-width
-       :&_.styled-scrollbars>ul:d--flex
-       :&_.styled-scrollbars>ul:flex-wrap--wrap
-       :&_.styled-scrollbars>ul:pb--0.5em
-       :&_.kushi-treenav-section-level-1:fs--$xxsmall
-       :&_.kushi-treenav-section-level-1>ul:d--none
-       :&_.kushi-treenav-section-level-1>a:mb--0.25em
-       :&_.kushi-treenav-section-level-1>span:mb--0.5em:0
-       :&_.kushi-treenav-section-level-1>a:pi--0:0em
-       :&_.kushi-treenav-section-level-1>a:mi--0:0.0em
-       :&_.kushi-treenav-section-level-1>span:pi--0:1.5em
-       :&_.collapse-all-control:d--none
-       ["&_ul>li:nth-child(2):d" :none]
-       ["&_ul>li:nth-child(5):d" :none]
-       ["sm:&_ul>li:nth-child(2):d" :list-item]
-       ["sm:&_ul>li:nth-child(5):d" :list-item]
-       {:-wrapper-attrs (sx :.fixed
-                            :d--block
-                            :md:d--none
-                            :top--$kushi-playground-mobile-header-height-fallback
-                            :max-width--unset
-                            :h--auto
-                            :w--100%
-                            :bgc--white
-                            :dark:bgc--$gray-1000
-                            :zi--100
-                            :bbe--1px:solid:black
-                            :dark:bbe--1px:solid:white)})
-   [:div (sx :.styled-scrollbars
-             :flex-shrink--1
-             :flex-grow--0
-             :overflow-y--auto
-             :w--100%
-             [:max-height "calc(100vh - 114px)"])
-    [sidenav-content opts ]]])
+(defn- all-componenents-sidenav-button [attrs]
+  [:button
+   attrs
+   [:span (sx :.flex-row-c :gap--0.5em :lg:&_.kushi-icon:d--none)
+    [icon :menu]
+    "Components"]])
 
 
-(defn desktop-sidenav
-  [{:keys [site-header nav-opts]}]
-  [sidenav
-   {:-wrapper-attrs (sx :md:d--flex :zi--1000)}
-   [:div
-    (sx :.relative
-        :w--100%
-        :padding-block--$title-margin-block)
-    (when site-header [site-header])]
-   [:div (sx 'sidenav-inner
-             :.styled-scrollbars
-             :flex-shrink--1
-             :flex-grow--0
-             :overflow-y--auto
-             :min-width--190px
-             [:max-height "calc(100vh - 114px)"]
-             [:max-width :$kushi-playground-sidenav-max-width])
-    [sidenav-content nav-opts]]])
+(defn all-components-sidenav
+  [playground-components]
+  [:nav (sx :.fixed
+            :.small
+            :.flex-col-fs
+            :.neutralize
+            :ai--c
+            [:box-shadow "-30px 0 30px var(--background-color)"]
+            [:dark:box-shadow "-30px 0 30px var(--background-color-inverse)"]
+            [:lg:h "calc(100vh - var(--navbar-height))"]
+            :h--fit-content
+            :width--fit-content
+            :zi--4
+            :iie--1.25rem
+            :md:iie--4rem
+            :ibs--$navbar-height
+            :lg:pb--0:1rem
+
+            {:data-kushi-playground-sidenav "true"})
+
+     ;; Button for lg and below (mobile)
+   [all-componenents-sidenav-button
+    (merge-attrs 
+     (sx :.all-components-sidenav-header
+         :.pointer
+         :lg:d--none)
+     (popover-attrs
+      {:-f         (fn [popover-el]
+                     (rdom/render (partial all-componenents-sidenav-items 
+                                           {:coll   playground-components
+                                            :modal? true})
+                                  popover-el))
+
+         ;; why not on mobile?
+       :-placement :b
+       :-arrow?    false
+       :class      (:class (sx 'all-components-sidenav-popover-pane
+                               :.styled-scrollbars
+                               :$popover-offset--0px
+                               :$popover-edge-padding--0px
+                               :$popover-flip-viewport-edge-threshold--0px
+                               :$popover-border-color--transparent
+                                 ;; :$popover-border-color--red
+                               :$popover-z-index--2
+                               :overflow--hidden
+                               [:$popover-box-shadow 
+                                "0 0 0px 100vmax var(--white-transparent-70), 0 0 50vw 30vw white"]
+                               [:h '(calc :100vh - :125px)]))}))]
+
+     ;; Button for lg and above
+   [all-componenents-sidenav-button
+    (sx :.all-components-sidenav-header
+        :d--none
+        :lg:d--flex
+        :cursor--default)]
+
+     ;; Component list for lg and above
+   [:div (sx :d--none
+             :lg:d--block
+             [:h '(calc :100vh - :125px)])
+    [all-componenents-sidenav-items 
+     {:coll playground-components}]]])

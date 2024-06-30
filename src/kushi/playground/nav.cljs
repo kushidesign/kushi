@@ -1,38 +1,174 @@
 (ns kushi.playground.nav
   (:require
-   [kushi.playground.links :refer [links]]
+   [clojure.string :as string]
+   [domo.core :as domo]
+   [kushi.playground.state :as state]
    [kushi.playground.ui :refer [light-dark-mode-switch]]
-   [kushi.core :refer [sx]]
-   [kushi.ui.flex.core :as flex]))
+   [kushi.core :refer [sx merge-attrs defclass]]
+   [kushi.ui.core :refer [defcom]]
+   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.button.core :refer [button]]))
 
-(defn kushi-mobile-nav [{:keys [site-header display-kushi-links-in-mobile-nav?]}]
-  [:div (sx
-         'kushi-playground-mobile-nav
-         :.transition
-         :.xlarge
-         :.flex-row-c
-         :.fixed
-         :zi--100
-         :md:d--none
-         :w--100%
-         :padding-inline--$page-padding-inline
-         :h--$kushi-playground-mobile-header-height-fallback
-         :bb--$divisor
-         :bc--black
-         :dark:bc--white
-         :bgc--black
-         :dark:bgc--white
-         :&_.playground-title:c--white
-         :dark:&_.playground-title:c--black
-         [:&_.project-links:filter "invert() brightness(2)"]
-         [:dark:&_.project-links:filter "invert(0) brightness(2)"])
-   [:div
-    (sx :.extra :.flex-row-sb :w--$components-menu-width)
-    [site-header]
-    [flex/row-fs
-     (when display-kushi-links-in-mobile-nav?
-       [links])
-     [:span
-      (sx :mis--0.75rem
-          ["has-ancestor(.hide-lightswitch):d" :none])
-      [light-dark-mode-switch]]]]])
+(defn route! [menu-id guide? e]
+  (let [e (or e js/window.event)
+        app (domo/el-by-id "app")]
+    (domo/remove-class! (domo/el-by-id menu-id) "has-hover")
+    ;; (domo/add-class! app "path-transitioning")
+    ;; (js/setTimeout #(domo/remove-class! (domo/el-by-id "app")
+    ;;                                     "path-transitioning")
+                  ;;  5000)
+    (when-not guide?
+      (.preventDefault e)
+      (let [el         (domo/cet e)
+            href       (.-href el)
+            path-label (-> (.parse js/URL href)
+                           .-pathname
+                           (string/replace #"^/" "")
+                           (string/split #"/")
+                           last)]
+        (.setAttribute app
+                       "data-kushi-playground-active-path"
+                       path-label)
+        (.pushState (.-history js/window) 
+                    #js{}
+                    ""
+                    href)
+        ;; This is key!
+        (js/setTimeout #(state/set-focused-path! (into [] path-label))
+                       250)))))
+
+
+(defcom header-nav-button
+  [button 
+   (let [focused? (:focused? &opts)]
+     (merge-attrs 
+      (sx :.xlarge
+          :.minimal
+          :.pill
+          :.capitalize
+          :pi--0.7em
+          :pb--0.3em
+          ;; Remove these when theming gets revamped
+          :&.neutral.minimal:c--$neutral-secondary-foreground
+          :&.neutral.minimal:hover:c--$neutral-950
+          :&.neutral.minimal:active:c--$neutral-1000
+          :&.neutral.minimal:hover:bgc--$neutral-100
+          :&.neutral.minimal:active:bgc--$neutral-0
+
+          :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
+          :dark:&.neutral.minimal:hover:c--$neutral-50
+          :dark:&.neutral.minimal:active:c--$neutral-0
+          :dark:&.neutral.minimal:hover:bgc--$neutral-850
+          :dark:&.neutral.minimal:active:bgc--$neutral-900
+
+          ["&.neutral.minimal[aria-selected='true']:c" :black]
+          ["dark:&.neutral.minimal[aria-selected='true']:c" :white])
+      &attrs))
+   &children])
+
+
+(defn header-menu
+  [menu-id]
+  (into [:nav (sx :.flex-col-c
+                  :.semi-bold
+                  :.transition
+                  :.header-menu-transition-group
+                  :ai--c
+                  :lg:flex-direction--row
+                  :gap--1.5rem
+                  :lg:gap--2rem
+                  :mbs--2rem
+                  :lg:mbs--3rem)]
+         (for [label ["intro" "components" "colors" "typography" "guide"]
+               :let [guide? (= label "guide")
+                     href   (if guide?
+                              "https://github.com/kushidesign/kushi"
+                              (str "/" label))
+                     target (if guide? :_blank :_self)]]
+           [:a
+            (sx :d--none
+                {:href     href
+                 :target   target
+                 :on-click (partial route! menu-id guide?)})
+            [header-nav-button
+             (sx [:translate (when guide? "0.66ch")]
+                 {:aria-selected false})
+             label
+             (when guide?
+               [icon (sx :fs--0.75em)
+                :open-in-new])]])))
+
+
+(defn header []
+  [:div#header-navbar
+   (sx [:$overlay-width "calc(100vw + 40px)"]
+       :.fixed
+       :.flex-row-sb
+       :.neutralize
+       :.divisor-block-end
+       :top--0
+       :left--0
+       :right--0
+       :ai--c
+       :zi--5
+       :w--100%
+       :p--1rem
+       :max-height--$navbar-height
+       :pi--1.25rem
+       :md:pi--4rem )
+   [:span (sx :.semi-bold :fs--$xlarge)
+    "Kushi"]
+
+
+   (let [menu-id "kushi-playground-menu"]
+     [:div
+      (merge-attrs
+       (sx :.relative
+           :&.has-hover&_a:d--block
+           :&.has-hover>div.explore-menu-container:h--500px
+           :lg:&.has-hover>div.explore-menu-container:h--300px
+           :&.has-hover&_nav:mbs--4rem
+           :lg:&.has-hover&_nav:mbs--6rem
+           :&.has-hover>div.explore-menu-container:o--1
+           ["&.has-hover+div.bg-scrim-gradient:height" :100vh]
+           ["&.has-hover+div.bg-scrim-gradient:o" 1]
+           :zi--1
+           :translate---30px
+           {:id menu-id})
+       (domo/hover-class-attrs "has-hover"))
+      [button 
+       (sx 'kushi-explore
+           :.pill
+           :.minimal
+           :.small
+           :pi--0.8em
+           :pb--0.4em
+           :&.neutral.minimal:c--$neutral-secondary-foreground
+           :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse)
+       [icon :keyboard-arrow-down]
+       "Explore"]
+      [:div (sx 'explore-menu-container
+                :.bottom-outside
+                :.flex-col-fs
+                :.transition
+                :.neutralize
+                :.header-menu-transition-group
+                :bgc--$background-color
+                :o--0
+                :w--$overlay-width
+                [:transform "translateX(7px)"]
+                :h--0
+                :overflow--hidden)
+       [header-menu menu-id]]])
+
+   [:div (sx :.bg-scrim-gradient
+             :.bottom-outside
+             :.transition
+             :.header-menu-transition-group
+             :o--0
+             :w--$overlay-width
+             :h--0)]
+
+   
+   [light-dark-mode-switch]])
+

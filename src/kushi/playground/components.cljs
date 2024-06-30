@@ -54,9 +54,6 @@
         ;; row of buttons that show various stylings (no arrow etc)
 
 
-        ;; Components playground intro section at top 
-
-        ;; routing
 
         ;; Add :summary and :usage info to all component docs
 
@@ -70,7 +67,7 @@
 
         ;; switch tab back to `Examples` when component section goes offscreen
 
-
+        ;; upgrade tinycolor2
 
 
         ;; check size of app etc.
@@ -171,8 +168,8 @@
 
 (def playground-components 
   (filter 
-  ;; :label
-  #(contains? #{
+  :label
+  #_#(contains? #{
                 "button"     ;; ✅
                 ;; "icon"       ;; ✅
                 "spinner"    ;; ✅

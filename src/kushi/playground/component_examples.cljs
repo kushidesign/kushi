@@ -219,7 +219,7 @@
                         :top      "calc(100% + 2px)"}]
        {:on-click (fn* [] (open-kushi-modal modal-id))})
    [icon (sx :.small :.extra-bold) :code]
-   "Get the code"])
+   "Code"])
 
 (defn examples-section
   [{component       :component

@@ -2,266 +2,35 @@
   (:require [domo.core :as domo]
             [clojure.string :as string]
             [fireworks.core :refer [? ?-- ?- ?trace ?log]]
+            [kushi.ui.divisor.core :refer (divisor)]
             [kushi.core :refer [sx merge-attrs defclass]]
-            [kushi.ui.link.core :refer [link]]
+            ;; [kushi.ui.link.core :refer [link]]
             [kushi.ui.core :refer [defcom]]
-            [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal]]
+            ;; [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal]]
             [kushi.ui.button.core :refer [button]]
-            [kushi.ui.icon.core :refer [icon]]
+            ;; [kushi.ui.icon.core :refer [icon]]
+            [kushi.ui.spinner.core :refer [propeller]]
             [kushi.playground.about :as about]
             [kushi.playground.component-docs :as docs]
             [kushi.playground.component-examples :as component-examples]
+            [kushi.playground.sidenav :as sidenav]
             [kushi.playground.state :as state]
-            [kushi.playground.ui :refer [light-dark-mode-switch]]
             [kushi.playground.util :as util]
-            [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
-            [reagent.dom :as rdom]))
+            ;; [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
+            ))
 
-(defn sidenav-item-handler [label modal? e]
-  (component-examples/scroll-to-playground-component! label)
-  (when modal?
-    (dismiss-popover! e)))
-
-(defn mouse-down-a11y [f & args]
-  {:on-key-down   #(when (contains? #{" " "Enter"} (.-key %))
-                     (apply f (concat args [%])))
-   :on-mouse-down #(when (= 0 (.-button %))
-                     (apply f (concat args [%])))})
-
-(defn all-componenents-sidenav-items
-  [{:keys [coll modal?]}]
-  (into [:ul (sx :.flex-col-fs
-                 :.neutralize
-                 :ai--c
-                 :short:d--grid
-                 :short:gtc--max-content:max-content
-                 :short:ji--center
-                 :pb--0rem:2rem
-                 :pi--0.5em
-                 :overflow-y--auto)]
-        (for [{:keys [label]} coll
-              :let            [focused? (= label
-                                           @state/*playground-first-intersecting)]]
-          [:li (sx :.small
-                   :.capitalize
-                   :.pointer
-                   :w--fit-content
-                   :pb--0.25em
-                   [:hover>button.neutral.minimal:bgc (if focused? :$neutral-650 :$neutral-100)])
-           [button
-            (merge-attrs
-             (sx :.pill
-                 :.minimal
-                 :.neutral
-                 :.xxxfast
-                 :pi--1em
-                 :pb--0.5em
-                 [:fw (when focused? :$wee-bold)]
-                 [:&.neutral.minimal:bgc (when focused? :$neutral-650)]
-                 [:dark:&.neutral.minimal:bgc (when focused? :$neutral-300)]
-                 [:&.neutral.minimal:c (when focused? :white)]
-                 [:dark:&.neutral.minimal:c (when focused? :black)])
-             (mouse-down-a11y sidenav-item-handler label modal?))
-            label]])))
-
-
-
-(defn- all-componenents-sidenav-button [attrs]
-  [:button
-   attrs
-   [:span (sx :.flex-row-c :gap--0.5em :lg:&_.kushi-icon:d--none)
-    [icon :menu]
-    "Components"]])
-
-(defn all-components-sidenav
-  [playground-components]
-  (let [modal-id "mobile-sidenav-all-components"]
-    [:nav (sx :.fixed
-              :.small
-              :.flex-col-fs
-              :.neutralize
-              :ai--c
-              [:lg:h "calc(100vh - var(--navbar-height))"]
-              :h--fit-content
-              :width--fit-content
-              :zi--4
-              :iie--1.25rem
-              :md:iie--4rem
-              :ibs--$navbar-height
-              :lg:pb--0:1rem)
-
-     ;; Button for lg and below (mobile)
-     [all-componenents-sidenav-button
-      (merge-attrs 
-       (sx :.all-components-sidenav-header
-           :.pointer
-           :lg:d--none)
-       (popover-attrs
-        {:-f         (fn [popover-el]
-                       (rdom/render (partial all-componenents-sidenav-items 
-                                             {:coll   playground-components
-                                              :modal? true})
-                                    popover-el))
-
-         ;; why not on mobile?
-         :-placement :b
-         :-arrow?    false
-         :class      (:class (sx 'all-components-sidenav-popover-pane
-                                 :.styled-scrollbars
-                                 :$popover-offset--0px
-                                 :$popover-edge-padding--0px
-                                 :$popover-flip-viewport-edge-threshold--0px
-                                 :$popover-border-color--transparent
-                                ;;  :$popover-border-color--red
-                                 :$popover-z-index--2
-                                 :overflow--hidden
-                                 [:$popover-box-shadow 
-                                  "0 0 0px 100vmax var(--white-transparent-70), 0 0 50vw 30vw white"]
-                                 [:h '(calc :100vh - :125px)]))}))]
-
-     ;; Button for lg and above
-     [all-componenents-sidenav-button
-      (sx :.all-components-sidenav-header
-          :d--none
-          :lg:d--flex
-          :cursor--default)]
-
-     ;; Component list for lg and above
-     [:div (sx :d--none
-               :lg:d--block
-               [:h '(calc :100vh - :125px)])
-      [all-componenents-sidenav-items 
-       {:coll playground-components}]]]))
-
-
-(defcom header-nav-button
-  [button 
-   (let [focused? (:focused? &opts)]
-     (merge-attrs 
-      (sx :.xlarge
-          :.minimal
-          :.pill
-          :.capitalize
-          :pi--0.7em
-          :pb--0.3em
-          :&.neutral.minimal:c--$neutral-secondary-foreground
-          :&.neutral.minimal:hover:c--$neutral-950
-          :&.neutral.minimal:active:c--$neutral-1000
-          :&.neutral.minimal:hover:bgc--$neutral-100
-          :&.neutral.minimal:active:bgc--$neutral-0
-
-          :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
-          :dark:&.neutral.minimal:hover:c--$neutral-50
-          :dark:&.neutral.minimal:active:c--$neutral-0
-          :dark:&.neutral.minimal:hover:bgc--$neutral-850
-          :dark:&.neutral.minimal:active:bgc--$neutral-900
-
-          ["&.neutral.minimal[aria-selected='true']:c" :black]
-          ["dark:&.neutral.minimal[aria-selected='true']:c" :white])
-      &attrs))
-   &children])
-
-
-(defn header-menu []
-  (into [:nav (sx :.flex-col-c
-                  :.semi-bold
-                  :ai--c
-                  :lg:flex-direction--row
-                  :gap--1.5rem
-                  :lg:gap--2rem
-                  :mbs--2rem
-                  :lg:mbs--3rem
-                  :.transition)]
-         (for [label ["intro" "components" "colors" "typography" "guide"]
-               :let [guide? (= label "guide")
-                     href (if guide?
-                            "https://github.com/kushidesign/kushi"
-                            (str "/" label))
-                     target (if guide? :_blank :_self)]]
-           [:a {:href href :target target}
-            [header-nav-button
-             (sx [:translate (when guide? "0.66ch")]
-                 {:aria-selected (= label @state/*focused-page)})
-             label
-             (when guide?
-               [icon (sx :fs--0.75em) :open-in-new])]] )))
-
-
-(defn header []
-  [:div#header-navbar
-   (sx 
-    [:$overlay-width "calc(100vw + 40px)"]
-    :.fixed
-    :.flex-row-sb
-    :.neutralize
-    :.divisor-block-end
-    :top--0
-    :left--0
-    :right--0
-    :ai--c
-    :zi--5
-    :w--100%
-    :p--1rem
-    :max-height--$navbar-height
-    :pi--1.25rem
-    :md:pi--4rem )
-   [:span (sx :.semi-bold :fs--$xlarge)
-    "Kushi"]
-
-
-   [:div.relative
-    (sx :.relative
-        :hover>div.explore-menu-container:h--500px
-        :lg:hover>div.explore-menu-container:h--300px
-        :hover&_nav:mbs--4rem
-        :lg:hover&_nav:mbs--6rem
-        :hover>div.explore-menu-container:o--1
-        ["hover+div.bg-scrim-gradient:height" :100vh]
-        ["hover+div.bg-scrim-gradient:o" 1]
-        :zi--1
-        :translate---30px)
-    [button 
-     (sx 'kushi-explore
-         :.pill
-         :.minimal
-         :.small
-         :pi--0.8em
-         :pb--0.4em
-         :&.neutral.minimal:c--$neutral-secondary-foreground
-         :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse)
-     [icon :keyboard-arrow-down]
-     "Explore"]
-    [:div (sx 'explore-menu-container
-              :.bottom-outside
-              :.flex-col-fs
-              :.transition
-              :.neutralize
-              :bgc--$background-color
-              :o--0
-              :w--$overlay-width
-              [:transform "translateX(7px)"]
-              :h--0
-              :overflow--hidden
-              
-              ;; :h--200px
-              ;; :mbs--6rem
-              ;; :o--1
-              ;; ["height" :100vh]
-              ;; ["o" 1]
-              )
-     [header-menu]]]
-   [:div (sx :.bg-scrim-gradient
-             :.bottom-outside
-             :.transition
-             :w--$overlay-width
-             :o--0
-             :h--0)]
-
-   
-   [light-dark-mode-switch]])
-
-
-
+(defn loading-spinner []
+  [:div (sx :.xxlarge
+            :.flex-col-c
+            :position--fixed
+            :pi--1.25rem
+            :pi--4rem
+            :h--50px
+            :d--none
+            ["has-ancestor(.path-transitioning):display" :flex]
+            :top--$navbar-height)
+   [propeller (sx :translate--0.5em
+                  :$spinner-animation-duration--700ms)]])
 
 (defn link-button [attrs label]
   [:button (merge-attrs 
@@ -285,6 +54,7 @@
                 [:hover:tdc "color-mix(in oklch, currentColor 40%, transparent)"])
             attrs)
    label])
+
 
 (defcom tab
   [button (merge-attrs 
@@ -310,17 +80,17 @@
     (domo/toggle-boolean-attribute-sibling el "aria-selected")
     (domo/toggle-attribute-sibling el "tabindex" 0 -1)
 
-                       ;; Switching the visibility of the panel
+    ;; Switching the visibility of the panel
     (when-let [panel-el (domo/el-by-id panel-id) ]
       (when-let [parent (domo/parent panel-el)]
-                           ;; Hide the currently active panel
+        ;; Hide the currently active panel
         (some-> parent
                 (domo/qs ".playground-component-panel:not([hidden])")
                 (.setAttribute "hidden" "hidden"))
-                           ;; Reveal the target panel
+        ;; Reveal the target panel
         (.removeAttribute panel-el "hidden")
         
-                           ;;Scroll to the top of the target panel
+        ;; Scroll to the top of the target panel
         (domo/scroll-into-view! panel-el)
         (domo/scroll-by! (-> el
                              (domo/nearest-ancestor ".component-section-header")
@@ -328,6 +98,7 @@
                              :bottom
                              -
                              (->> (hash-map :y))))))))
+
 
 (defn component-section-tab
   [{:keys [aria-selected
@@ -343,13 +114,7 @@
               :on-click      (partial tab-click-handler panel-id)}))
    (string/capitalize tab-label)])
 
-
 (declare kushi-about)
-
-(defclass playground-section
-  :min-height--200px
-  :>*:pi--1.25rem
-  :md:>*:pi--4rem)
 
 (defclass component-section-header
   :.neutralize
@@ -361,170 +126,141 @@
   [:top :$navbar-height]
   [:w :100%])
 
+(defn style-tag [path]
+  [:style {:type "text/css"}
+   (str "#app[data-kushi-playground-active-path=\"" path "\"]"
+        " [data-kushi-path=\"" path "\"]{display: flex}")])
+
 (defn generic-section
-  [label content-component]
-  [:div (sx :>section:first-child:pbs--$navbar-height
-            :.flex-col-fs
-            :.grow
-            :gap--5rem
-            :pb--0:30vh)
-   [:section 
-    (sx :min-height--200px
-        :>*:pi--1.25rem
-        :md:>*:pi--4rem
-        :>section>p:max-width--605px
-        :>section:pbs--1rem
-        {:data-kushi-playground-section "about"})
-    [:div (sx :.component-section-header
-              :h--50px
-              :>div:h--$navbar-height)
-     [:div (sx :.flex-row-fs :ai--c :gap--1rem)
-      [:h1 (sx :.component-section-header-label)
-       label]]]
-    [content-component]]])
+  ;; content is a component
+  [{:keys [path label content args]}]
+  [:<> 
+   [style-tag path]
+   [:div (sx 
+          :.transition
+          :.flex-col-fs
+          :.grow
+          :d--none
+          :gap--5rem
+          ;; ["has-ancestor(.path-transitioning):opacity" 0]
+          :pb--0:30vh
+          {:data-kushi-path path
+           :ref             (fn [el]
+                              (when el
+                                (js/requestAnimationFrame
+                                 #(domo/remove-class! (domo/el-by-id "app")
+                                                      "path-transitioning"))))})
+    [:section 
+     (sx :min-height--200px
+         [">*:not([data-kushi-playground-sidenav]):pi" "1.25rem"]
+         ["md:>*:not([data-kushi-playground-sidenav]):pi" "4rem"]
+         :>section>p:max-width--605px
+         :>section:pbs--1rem
+         ;; why this data-attr?
+         {:data-kushi-playground-section "about"})
+     [:div (sx :.component-section-header
+               :position--relative
+               :top--unset
+               :mbs--$navbar-height
+               ["~section:pbs" :1.5rem])
+      [:div (sx :.flex-col-c :mbs--50px :h--50px)
+       [:h1 (sx :.component-section-header-label)
+        (string/capitalize label)]]]
+     (if args
+       [content args]
+       [content])]]])
 
 
 ;; Everytime there is a resize event -
 ;; Check if viewport height changes
 ;; If so, redo all the intersection observer stuff
-(defn layout [_comps]
-
-  [:div (sx :.flex-col-fs) [header]
-
-   [all-components-sidenav _comps]
-
-   ;; Uncomment to try what's inside
-   #_[:div (sx :.debug-blue
-               :.flex-col-fs
-               :gap--6rem
-               :mbs--100px
-               :p--2rem)
-
-      ;; Just for trying stuff out - paste here
-      [:div "hi"]]
-
-   ;; Main section
-   ;; [generic-section "About" kushi-about]
-
-   ;; Main section
-  ;;  [generic-section "Typography" about/kushi-typography-about]
-   #_[generic-section "Colors" about/kushi-colors-about]
-
-   (into [:div
-          (sx :.kushi-playground-all-components
-              :>section:first-child:pbs--$navbar-height
-              :.flex-col-fs
-              :.grow
-              :gap--5rem
-              :pb--0:30vh)
-          [:section
-           (sx :.playground-section)
-           [:div (sx :.component-section-header)
-            [:div (sx :mbs--50px :h--50px)
-             [:h1 (sx :.component-section-header-label)
-              "Components Playground"]]]
-           [:section
-            (sx :>p:lh--1.7)
-            [:p
-             "Kushi is a base for building web UI with "
-             [link (sx {:href   "https://clojurescript.org/"
-                        :target :_blank}) "ClojureScript"] "."]
-            [:br]
-            [:p "For detailed docs, check out the "
-             [link {:href   "https://github.com/kushidesign/kushi"
-                    :target :_blank} "Readme"]
-             " and the "
-             [link {:href   "https://github.com/kushidesign/kushi-quickstart"
-                    :target :_blank}
-              "Quickstart repo"] "."]
-            [:br]
-            [:p
-             "In addition to providing a css-in-cljs solution, Kushi offers "
-             "a basic suite of themeable, headless UI components for free. "
-             "This set of building blocks consitutes a base for rolling "
-             "your own design system."]
-            [:br]
-            [:p
-             (str "The components menu on this site provides interactive documentation, "
-                  "detailed usage options, and snippet generation for easy inclusion of "
-                  "Kushi UI components in your own project.")]]]]
+(defn component-playground-content
+  [playground-components]
+  (into [:<> 
+         [sidenav/all-components-sidenav playground-components]
+         [about/kushi-about]
+         [:div (sx :md:pi--4rem
+                   :pi--1.25rem
+                   :mbe--2rem)
+          [divisor]]]
 
          ;; Cycle through collection of components defined in playground.core
-         (for [{:keys [label
-                       media-matches
-                       examples]
-                :as   component-opts}
-               _comps]
-           [:section
-            (sx :.playground-section
-                {:data-kushi-playground-component label
-                 :ref                             (fn [el]
-                                                    (when el
-                                                      (domo/observe-intersection 
-                                                       (let [f (partial swap!
-                                                                        state/*playground
-                                                                        update-in
-                                                                        [:intersecting])]
-                                                         {:element          el
-                                                          :not-intersecting #(f disj label)
-                                                          :intersecting     #(f conj label)
+        (for [{:keys [label
+                      media-matches
+                      examples]
+               :as   component-opts}
+              playground-components]
+          [:section
+           (sx :.playground-section
+               :min-height--200px
+               {:data-kushi-playground-component label
+                :ref                             (fn [el]
+                                                   (when el
+                                                     (domo/observe-intersection 
+                                                      (let [f (partial swap!
+                                                                       state/*playground
+                                                                       update-in
+                                                                       [:intersecting])]
+                                                        {:element          el
+                                                         :not-intersecting #(f disj label)
+                                                         :intersecting     #(f conj label)
                                                           ;; Incorporate into global val for header height
-                                                          :root-margin      "51px 0px 0px 0px"}))))})
-            
-            [:div (sx :.component-section-header)
-             [:div (sx :.flex-row-fs :ai--c :gap--1rem)
-              [:h1 (sx :.component-section-header-label) label]]
-             [:div (sx 
-                    :$tablist-selected-tab-underline-color--$accent-600
-                    :$tablist-selected-tab-underline-color-inverse--$accent-300
-                    :$tablist-selected-tab-underline-thickness--2px
-                    :$tablist-border-end-color--$divisor-color
-                    :$tablist-border-end-color-inverse--$divisor-color-inverse
-                    :$tablist-border-end-width--$divisor-thickness
-                    :$tablist-border-end-style--$divisor-style
-                    :$tablist-padding-end--0.5rem
-                    :.flex-row-fs
-                    :.transition
-                    :bbew--$tablist-border-end-width
-                    :bbec--$tablist-border-end-color
-                    :bbes--$tablist-border-end-style
-                    :dark:bbec--$tablist-border-end-color-inverse
-                    :ai--fe
-                    :gap--0.75em
-                    :pbe--$tablist-padding-end
+                                                         :root-margin      "51px 0px 0px 0px"}))))})
+           
+           [:div (sx :.component-section-header)
+            [:div (sx :.flex-row-fs :ai--c :gap--1rem)
+             [:h1 (sx :.component-section-header-label) label]]
+            [:div (sx 
+                   :$tablist-selected-tab-underline-color--$accent-600
+                   :$tablist-selected-tab-underline-color-inverse--$accent-300
+                   :$tablist-selected-tab-underline-thickness--2px
+                   :$tablist-border-end-color--$divisor-color
+                   :$tablist-border-end-color-inverse--$divisor-color-inverse
+                   :$tablist-border-end-width--$divisor-thickness
+                   :$tablist-border-end-style--$divisor-style
+                   :$tablist-padding-end--0.5rem
+                   :.flex-row-fs
+                   :.transition
+                   :bbew--$tablist-border-end-width
+                   :bbec--$tablist-border-end-color
+                   :bbes--$tablist-border-end-style
+                   :dark:bbec--$tablist-border-end-color-inverse
+                   :ai--fe
+                   :gap--0.75em
+                   :pbe--$tablist-padding-end
                     ;; TODO - data-orientation
-                    [">[role='tab'][aria-selected='true']:before"
-                     {:box-sizing :border-box
-                      :content    "\"\""
-                      :h          :$tablist-selected-tab-underline-thickness
-                      :position   :absolute
-                      :bottom     "calc(0px - (var(--tablist-padding-end) + 1px))"
-                      :left       0
-                      :right      0
-                      :bgc        :$tablist-selected-tab-underline-color}]
-                    ["dark:>[role='tab'][aria-selected='true']:before"
-                     {:bgc :$tablist-selected-tab-underline-color-inverse}]              
-                    {:role             :tablist
-                     :aria-orientation "horizontal"})
+                   [">[role='tab'][aria-selected='true']:before"
+                    {:box-sizing :border-box
+                     :content    "\"\""
+                     :h          :$tablist-selected-tab-underline-thickness
+                     :position   :absolute
+                     :bottom     "calc(0px - (var(--tablist-padding-end) + 1px))"
+                     :left       0
+                     :right      0
+                     :bgc        :$tablist-selected-tab-underline-color}]
+                   ["dark:>[role='tab'][aria-selected='true']:before"
+                    {:bgc :$tablist-selected-tab-underline-color-inverse}]              
+                   {:role             :tablist
+                    :aria-orientation "horizontal"})
 
-              [component-section-tab {:aria-selected   true
-                                      :component-label label
-                                      :tab-label       "examples"}]
-              [component-section-tab {:component-label label
-                                      :tab-label       "documentation"}]]]
+             [component-section-tab {:aria-selected   true
+                                     :component-label label
+                                     :tab-label       "examples"}]
+             [component-section-tab {:component-label label
+                                     :tab-label       "documentation"}]]]
 
             ;; For conditionally hiding based on device features
             ;; e.g. Do not show tooltip examples on mobile/touch
-            (when (seq examples)
-              (let [{:keys [matches
-                            message]} media-matches
-                    unsupported?              (when (and matches message)
-                                                (not (some (fn [[prop val]]
-                                                             (domo/matches-media? prop val))
-                                                           matches)))]
-                (if unsupported? 
-                  [:p (sx :mbs--2rem) message]
-                  [component-section component-opts])))]))])
+           (when (seq examples)
+             (let [{:keys [matches
+                           message]} media-matches
+                   unsupported?              (when (and matches message)
+                                               (not (some (fn [[prop val]]
+                                                            (domo/matches-media? prop val))
+                                                          matches)))]
+               (if unsupported? 
+                 [:p (sx :mbs--2rem) message]
+                 [component-section component-opts])))])))
 
 
 (defn custom-attributes-section
@@ -577,7 +313,9 @@
   (into [:<>
          (into [:section
                 (sx :.playground-component-panel
-                    {:id (str "kushi-" label "-examples")})]
+                    {:id (str "kushi-" label "-examples")
+                    ;;  :hidden "hidden"
+                     })]
                (for [
                     ;; example-opts (take 2 examples)
                      example-opts examples
@@ -601,18 +339,10 @@
                     :&_code:lh--1.9
                     :&_code:pb--0.07em
                     :&_code:pi--0.2em
-                    ;; :&_code:fs--0.85rem
-                    ;; :&_code:fw--$wee-bold
-                    ;; :&_code:color--$accent-850
-                    ;; :&_code:bgc--$accent-50
-                    ;; :dark:&_code:color--$accent-100
-                    ;; :dark:&_code:bgc--$accent-900
                     [:&_p&_b {:fw      :$wee-bold
                               :mbe     :0.4em
                               :display :block}])
 
-           ;; TODO why is this not converting underscores to bold
-           ;; Contrast with component-section/component-section L277
            (some-> desc
                    util/desc->hiccup 
                    docs/add-links)]
@@ -622,28 +352,7 @@
 
 
 
- (defn kushi-about []
-  [:section
-   (sx :>*:max-width--$main-content-max-width
-       :>p:first-child:mbs--0
-       :>p:mb--2em
-       :>p:lh--1.7)
-   [:p
-    "Kushi is a base for building web UI with "
-    [link (sx {:href   "https://clojurescript.org/"
-               :target :_blank}) "ClojureScript"] "."]
-   [:p "For detailed docs, check out the "
-    [link {:href   "https://github.com/kushidesign/kushi"
-           :target :_blank} "Readme"]
-    " and the "
-    [link {:href   "https://github.com/kushidesign/kushi-quickstart"
-           :target :_blank}
-     "Quickstart repo"] "."]
-   [:p
-    "In addition to providing a css-in-cljs solution, Kushi offers a basic suite of themeable, headless UI components for free. "
-    "This set of building blocks consitutes a base for rolling your own design system."]
-   [:p
-    "The components menu on this site provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]])  
+ 
 
 
 

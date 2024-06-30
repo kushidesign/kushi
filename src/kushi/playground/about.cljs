@@ -294,8 +294,12 @@
    [type-scale {:label "Tracking"
                 :coll  [:xxxtight :xxtight :xtight :tight :loose :xloose :xxloose :xxxloose]}] ])
 
-(def kushi-about
-  [:span
+(defn kushi-about []
+  [:section
+   (sx :>*:max-width--550px
+       :>p:first-child:mbs--0
+       :>p:mb--2em
+       :>p:lh--1.7)
    [:p
     "Kushi is a base for building web UI with "
     [link (sx {:href   "https://clojurescript.org/"
@@ -311,7 +315,7 @@
     "In addition to providing a css-in-cljs solution, Kushi offers a basic suite of themeable, headless UI components for free. "
     "This set of building blocks consitutes a base for rolling your own design system."]
    [:p
-    "The components menu on this site provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]])
+    "This site provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]])
 
 
 (defn component-playground-about [{:keys [header]}]
