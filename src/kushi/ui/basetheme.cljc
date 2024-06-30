@@ -828,6 +828,7 @@
     :bgc                        :$code-background-color
     :h                          :fit-content
     :w                          :fit-content
+    :ws                         :nowrap
     :transition-property        :all
     :transition-duration        :$fast
     :transition-timing-function "cubic-bezier(0, 0, 1, 1)"}
