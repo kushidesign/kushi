@@ -1,5 +1,7 @@
 (ns kushi.playground.state
   (:require
+   [clojure.string :as string]
+   [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
    [kushi.core :refer [breakpoints]]
    [kushi.playground.components :refer [playground-components]]
    [domo.core :as domo]
@@ -74,4 +76,7 @@
    (first (sort-by #(.indexOf ordered-playground-components-labels %)
                    (:intersecting @*playground)))))
 
-(def *focused-page (r/atom "components"))
+
+(def *focused-path (r/atom ["components"]))
+(defn set-focused-path! [s] (reset! *focused-path s))
+(defn get-focused-path [] @*focused-path)
