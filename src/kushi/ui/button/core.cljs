@@ -26,8 +26,30 @@
         (some icon-child? x))))
 
 (defn button
-  {:desc ["Buttons provide cues for actions and events."
-          "These fundamental components allow users to process actions or navigate an experience."]}
+  {:summary ["Buttons provide cues for actions and events."]
+   :desc ["Buttons are fundamental components allow users to process actions or navigate an experience."
+          :br
+          "They can be custom styled via a variety of tokens in your theme."
+          :br
+          :br "`:$button-padding-inline-ems`"
+          :br "The default value is `:1.2em`"
+          :br
+          :br "`:$icon-button-padding-inline-ems`"
+          :br "The default value is `:0.69em`"
+          :br
+          :br "`:$button-padding-block-ems`"
+          :br "The default value is `:0.67em`"
+          :br
+          :br "`:$button-with-icon-padding-inline-offset`"
+          :br "The default value is `:0.9em`"
+          :br
+          :br "`:$button-border-width`"
+          :br "The default value is `:1px`"
+          :br]
+   :opts '[{:name    loading?
+            :pred    boolean?
+            :default false
+            :desc    "When `true`, this will set the appropriate values for `aria-busy` and `aria-label`"}]}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys [loading?]}   opts
