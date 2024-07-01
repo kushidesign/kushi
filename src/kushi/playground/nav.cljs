@@ -74,11 +74,8 @@
                   :.transition
                   :.header-menu-transition-group
                   :ai--c
-                  :lg:flex-direction--row
                   :gap--1.5rem
-                  :lg:gap--2rem
-                  :mbs--2rem
-                  :lg:mbs--3rem)]
+                  :mbs--2rem)]
          (for [label ["intro" "components" "colors" "typography" "guide"]
                :let [guide? (= label "guide")
                      href   (if guide?
@@ -91,12 +88,25 @@
                  :target   target
                  :on-click (partial route! menu-id guide?)})
             [header-nav-button
-             (sx [:translate (when guide? "0.66ch")]
+             (sx [:translate (when guide? "-0.33ch")]
                  {:aria-selected false})
-             label
              (when guide?
-               [icon (sx :fs--0.75em)
-                :open-in-new])]])))
+               [:img (merge-attrs
+                      (sx 'grayscale-icon-image
+                          :max-height--100%
+                          :max-width--100%
+                          :object-fit--contain
+                          :o--0.65
+                          :w--0.75em
+                          :w--0.75em
+                          
+                          :h--0.75em)
+                      {:src "graphics/github.svg"})]
+
+               #_[icon (sx :fs--0.75em)
+                  :open-in-new])
+
+             label]])))
 
 
 (defn header []
@@ -124,11 +134,14 @@
      [:div
       (merge-attrs
        (sx :.relative
+
+           :.has-hover
+
            :&.has-hover&_a:d--block
            :&.has-hover>div.explore-menu-container:h--500px
-           :lg:&.has-hover>div.explore-menu-container:h--300px
+          ;;  :lg:&.has-hover>div.explore-menu-container:h--300px
            :&.has-hover&_nav:mbs--4rem
-           :lg:&.has-hover&_nav:mbs--6rem
+          ;;  :lg:&.has-hover&_nav:mbs--6rem
            :&.has-hover>div.explore-menu-container:o--1
            ["&.has-hover+div.bg-scrim-gradient:height" :100vh]
            ["&.has-hover+div.bg-scrim-gradient:o" 1]
