@@ -189,5 +189,5 @@
              :h--0)]
 
    
-   [light-dark-mode-switch]])
+   [light-dark-mode-switch (sx :.light)]])
 

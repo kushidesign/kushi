@@ -260,7 +260,8 @@
 
 (defclass all-components-sidenav-header
   :.flex-col-c
-  :.semi-bold
+  ;; :.semi-bold
+  :.foreground-secondary
   :.neutralize
   :ai--c
   :height--$navbar-height)
