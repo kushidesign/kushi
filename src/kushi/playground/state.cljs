@@ -73,8 +73,12 @@
 
 (def *playground-first-intersecting
   (reagent.ratom/reaction
-   (first (sort-by #(.indexOf ordered-playground-components-labels %)
-                   (:intersecting @*playground)))))
+   (let [ret (first (sort-by #(.indexOf ordered-playground-components-labels %)
+                             (:intersecting @*playground)))]
+     (.setAttribute (domo/el-by-id "app")
+                    "data-kushi-playground-first-intersecting"
+                    ret)
+     ret)))
 
 
 (def *focused-path (r/atom ["components"]))

@@ -114,7 +114,9 @@
               :on-click      (partial tab-click-handler panel-id)}))
    (string/capitalize tab-label)])
 
+
 (declare kushi-about)
+
 
 (defclass component-section-header
   :.neutralize
@@ -126,16 +128,19 @@
   [:top :$navbar-height]
   [:w :100%])
 
-(defn style-tag [path]
+
+(defn style-tag-active-path [path]
   [:style {:type "text/css"}
    (str "#app[data-kushi-playground-active-path=\"" path "\"]"
         " [data-kushi-path=\"" path "\"]{display: flex}")])
+
+
 
 (defn generic-section
   ;; content is a component
   [{:keys [path label content args]}]
   [:<> 
-   [style-tag path]
+   [style-tag-active-path path]
    [:div (sx 
           :.transition
           :.flex-col-fs
@@ -162,7 +167,10 @@
                :position--relative
                :top--unset
                :mbs--$navbar-height
-               ["~section:pbs" :1.5rem])
+               ["~section:pbs" :1.5rem]
+               ;; Maybe smaller division for mobile?
+               ;; ["~section[data-kushi-playground-component]:pbs" :6rem]
+               )
       [:div (sx :.flex-col-c :mbs--50px :h--50px)
        [:h1 (sx :.component-section-header-label)
         (string/capitalize label)]]]
@@ -171,96 +179,120 @@
        [content])]]])
 
 
+
+(defn style-tag-first-intersecting [x]
+  [:style {:type "text/css"}
+   (str "#app[data-kushi-playground-first-intersecting=\"" x "\"]"
+        " [data-kushi-playground-component=\"" x "\"]{opacity: 1; filter: none}")])
+
+
 ;; Everytime there is a resize event -
 ;; Check if viewport height changes
 ;; If so, redo all the intersection observer stuff
 (defn component-playground-content
   [playground-components]
-  (into [:<> 
-         [sidenav/all-components-sidenav playground-components]
-         [about/kushi-about]
-         [:div (sx :md:pi--4rem
-                   :pi--1.25rem
-                   :mbe--2rem)
-          [divisor]]]
+  [:<> 
+   [sidenav/all-components-sidenav playground-components]
+   [about/kushi-about]
+   [:div (sx :md:pi--4rem
+             :pi--1.25rem
+             :mbe--2rem)
+    [divisor]]
 
-         ;; Cycle through collection of components defined in playground.core
-        (for [{:keys [label
-                      media-matches
-                      examples]
-               :as   component-opts}
-              playground-components]
-          [:section
-           (sx :.playground-section
-               :min-height--200px
-               {:data-kushi-playground-component label
-                :ref                             (fn [el]
-                                                   (when el
-                                                     (domo/observe-intersection 
-                                                      (let [f (partial swap!
-                                                                       state/*playground
-                                                                       update-in
-                                                                       [:intersecting])]
-                                                        {:element          el
-                                                         :not-intersecting #(f disj label)
-                                                         :intersecting     #(f conj label)
+   ;; Cycle through collection of components defined in playground.core
+   (into [:section] 
+         (for [{:keys [label
+                       media-matches
+                       examples]
+                :as   component-opts}
+               playground-components]
+           [:<> 
+            [style-tag-first-intersecting label]
+            [:section
+             (sx :min-height--200px
+                 :pbs--6rem
+                 :first-child:pbs--3rem
+
+                ;; de-emphasizing unfocused --------------
+                 :o--0.3
+                ;;  [:filter "blur(0px)"]
+                ;; ---------------------------------------
+
+                 {:data-kushi-playground-component label
+                  :ref                             (fn [el]
+                                                     (when el
+                                                       (domo/observe-intersection 
+                                                        (let [f (partial swap!
+                                                                         state/*playground
+                                                                         update-in
+                                                                         [:intersecting])]
+                                                          {:element          el
+                                                           :not-intersecting #(f disj label)
+                                                           :intersecting     #(f conj label)
                                                           ;; Incorporate into global val for header height
-                                                         :root-margin      "51px 0px 0px 0px"}))))})
-           
-           [:div (sx :.component-section-header)
-            [:div (sx :.flex-row-fs :ai--c :gap--1rem)
-             [:h1 (sx :.component-section-header-label) label]]
-            [:div (sx 
-                   :$tablist-selected-tab-underline-color--$accent-600
-                   :$tablist-selected-tab-underline-color-inverse--$accent-300
-                   :$tablist-selected-tab-underline-thickness--2px
-                   :$tablist-border-end-color--$divisor-color
-                   :$tablist-border-end-color-inverse--$divisor-color-inverse
-                   :$tablist-border-end-width--$divisor-thickness
-                   :$tablist-border-end-style--$divisor-style
-                   :$tablist-padding-end--0.5rem
-                   :.flex-row-fs
-                   :.transition
-                   :bbew--$tablist-border-end-width
-                   :bbec--$tablist-border-end-color
-                   :bbes--$tablist-border-end-style
-                   :dark:bbec--$tablist-border-end-color-inverse
-                   :ai--fe
-                   :gap--0.75em
-                   :pbe--$tablist-padding-end
+                                                           :root-margin      "51px 0px 0px 0px"}))))})
+             
+             [:div (sx :.component-section-header)
+              [:div (sx :.flex-row-fs :ai--c :gap--1rem)
+               [:h1 (sx :.component-section-header-label) 
+                [:a (sx :.pointer 
+                        {:href     (str "#" label)
+                         :on-click (fn [e] 
+                                     (.preventDefault e)
+                                     ;; TODO - try a fast smooth transition here
+                                     (component-examples/scroll-to-playground-component! label))}) 
+                 label]]]
+              [:div (sx 
+                     :$tablist-selected-tab-underline-color--$accent-600
+                     :$tablist-selected-tab-underline-color-inverse--$accent-300
+                     :$tablist-selected-tab-underline-thickness--2px
+                     :$tablist-border-end-color--$divisor-color
+                     :$tablist-border-end-color-inverse--$divisor-color-inverse
+                     :$tablist-border-end-width--$divisor-thickness
+                     :$tablist-border-end-style--$divisor-style
+                     :$tablist-padding-end--0.5rem
+                     :.flex-row-fs
+                     :.transition
+                     :bbew--$tablist-border-end-width
+                     :bbec--$tablist-border-end-color
+                     :bbes--$tablist-border-end-style
+                     :dark:bbec--$tablist-border-end-color-inverse
+                     :ai--fe
+                     :gap--0.75em
+                     :pbe--$tablist-padding-end
                     ;; TODO - data-orientation
-                   [">[role='tab'][aria-selected='true']:before"
-                    {:box-sizing :border-box
-                     :content    "\"\""
-                     :h          :$tablist-selected-tab-underline-thickness
-                     :position   :absolute
-                     :bottom     "calc(0px - (var(--tablist-padding-end) + 1px))"
-                     :left       0
-                     :right      0
-                     :bgc        :$tablist-selected-tab-underline-color}]
-                   ["dark:>[role='tab'][aria-selected='true']:before"
-                    {:bgc :$tablist-selected-tab-underline-color-inverse}]              
-                   {:role             :tablist
-                    :aria-orientation "horizontal"})
+                     [">[role='tab'][aria-selected='true']:before"
+                      {:box-sizing :border-box
+                       :content    "\"\""
+                       :h          :$tablist-selected-tab-underline-thickness
+                       :position   :absolute
+                       :bottom     "calc(0px - (var(--tablist-padding-end) + 1px))"
+                       :left       0
+                       :right      0
+                       :bgc        :$tablist-selected-tab-underline-color}]
+                     ["dark:>[role='tab'][aria-selected='true']:before"
+                      {:bgc :$tablist-selected-tab-underline-color-inverse}]              
+                     {:role             :tablist
+                      :aria-orientation "horizontal"})
 
-             [component-section-tab {:aria-selected   true
-                                     :component-label label
-                                     :tab-label       "examples"}]
-             [component-section-tab {:component-label label
-                                     :tab-label       "documentation"}]]]
+               [component-section-tab {:aria-selected   true
+                                       :component-label label
+                                       :tab-label       "examples"}]
+               [component-section-tab {:component-label label
+                                       :tab-label       "documentation"}]]]
 
             ;; For conditionally hiding based on device features
             ;; e.g. Do not show tooltip examples on mobile/touch
-           (when (seq examples)
-             (let [{:keys [matches
-                           message]} media-matches
-                   unsupported?              (when (and matches message)
-                                               (not (some (fn [[prop val]]
-                                                            (domo/matches-media? prop val))
-                                                          matches)))]
-               (if unsupported? 
-                 [:p (sx :mbs--2rem) message]
-                 [component-section component-opts])))])))
+             (when (seq examples)
+               (let [{:keys [matches
+                             message]} media-matches
+                     unsupported?              (when (and matches message)
+                                                 (not (some (fn [[prop val]]
+                                                              (domo/matches-media? prop val))
+                                                            matches)))]
+                 (if unsupported? 
+                   [:p (sx :mbs--2rem) message]
+                   [component-section component-opts])))]]))])
 
 
 (defn custom-attributes-section
@@ -329,7 +361,7 @@
                     :hidden "hidden"
                     :id     (str "kushi-" label "-documentation")})
           (when summary
-            [:div (sx :.medium :.wee-bold :mb--0:2rem)
+            [:div (sx :.medium :.wee-bold :mb--0:2rem :&_p:lh--1.7)
              (->> summary
                   util/desc->hiccup 
                   docs/add-links)])

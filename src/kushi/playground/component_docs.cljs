@@ -29,7 +29,7 @@
        :.normal
        :&_p:m--0
        :&_p:fs--$medium
-       :&_p:lh--1.5)
+       :&_p:lh--1.7)
    (let [ret* (cond
                 (string? v)
                 (->> v md->hc/md->hiccup md->hc/component)

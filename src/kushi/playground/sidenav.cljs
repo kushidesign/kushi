@@ -75,8 +75,16 @@
             :.flex-col-fs
             :.neutralize
             :ai--c
-            [:box-shadow "-30px 0 30px var(--background-color)"]
-            [:dark:box-shadow "-30px 0 30px var(--background-color-inverse)"]
+            [:box-shadow
+             "-30px 0 30px var(--background-color), -30px -30px 30px var(--background-color), -30px 0 30px 10px var(--background-color), -30px -30px 30px 10px var(--background-color)"]
+            [:dark:box-shadow
+             "-30px 0 30px var(--background-color-inverse), -30px -30px 30px var(--background-color-inverse), -30px 0 30px 10px var(--background-color-inverse), -30px -30px 30px 10px var(--background-color-inverse)"]
+
+            ;; So that our box-shadow does not taint popup on mobile -----
+            ["has(>button[aria-expanded]):box-shadow" :none]
+            ["has(>button[aria-expanded]):dark:box-shadow" :none]
+            ;; -----------------------------------------------------------
+
             [:lg:h "calc(100vh - var(--navbar-height))"]
             :h--fit-content
             :width--fit-content
