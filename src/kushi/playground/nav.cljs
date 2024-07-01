@@ -9,14 +9,17 @@
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.button.core :refer [button]]))
 
+(defn path-transitioning! [app]
+    (domo/add-class! app "path-transitioning")
+    (js/setTimeout #(domo/remove-class! (domo/el-by-id "app")
+                                        "path-transitioning")
+                   5000))
+
 (defn route! [menu-id guide? e]
   (let [e (or e js/window.event)
         app (domo/el-by-id "app")]
     (domo/remove-class! (domo/el-by-id menu-id) "has-hover")
-    ;; (domo/add-class! app "path-transitioning")
-    ;; (js/setTimeout #(domo/remove-class! (domo/el-by-id "app")
-    ;;                                     "path-transitioning")
-                  ;;  5000)
+    #_(path-transitioning! app)
     (when-not guide?
       (.preventDefault e)
       (let [el         (domo/cet e)
@@ -29,6 +32,7 @@
         (.setAttribute app
                        "data-kushi-playground-active-path"
                        path-label)
+        (js/requestAnimationFrame domo/scroll-to-top!)
         (.pushState (.-history js/window) 
                     #js{}
                     ""
@@ -112,6 +116,7 @@
 (defn header []
   [:div#header-navbar
    (sx [:$overlay-width "calc(100vw + 40px)"]
+       :$menu-height--415px
        :.fixed
        :.flex-row-sb
        :.neutralize
@@ -126,7 +131,7 @@
        :max-height--$navbar-height
        :pi--1.25rem
        :md:pi--4rem )
-   [:span (sx :.semi-bold :fs--$xlarge)
+   [:span (sx :.semi-bold :fs--$xlarge :o--0.5)
     "Kushi"]
 
 
@@ -135,10 +140,9 @@
       (merge-attrs
        (sx :.relative
 
-           :.has-hover
 
            :&.has-hover&_a:d--block
-           :&.has-hover>div.explore-menu-container:h--500px
+           :&.has-hover>div.explore-menu-container:h--$menu-height
           ;;  :lg:&.has-hover>div.explore-menu-container:h--300px
            :&.has-hover&_nav:mbs--4rem
           ;;  :lg:&.has-hover&_nav:mbs--6rem
@@ -161,17 +165,19 @@
        [icon :keyboard-arrow-down]
        "Explore"]
       [:div (sx 'explore-menu-container
+                :.header-menu-transition-group
                 :.bottom-outside
                 :.flex-col-fs
                 :.transition
                 :.neutralize
-                :.header-menu-transition-group
                 :bgc--$background-color
-                :o--0
                 :w--$overlay-width
-                [:transform "translateX(7px)"]
+                :o--0
                 :h--0
-                :overflow--hidden)
+                :overflow--hidden
+                [:box-shadow "0  calc(var(--menu-height) / 2) calc(100vh - var(--menu-height)) var(--background-color)"]
+                [:dark:box-shadow "0  calc(var(--menu-height) / 2) calc(100vh - var(--menu-height)) var(--background-color-inverse)"]
+                [:transform "translateX(7px)"])
        [header-menu menu-id]]])
 
    [:div (sx :.bg-scrim-gradient

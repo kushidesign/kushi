@@ -211,7 +211,7 @@
             [:section
              (sx :min-height--200px
                  :pbs--6rem
-                 :first-child:pbs--3rem
+                 ["nth-child(2):pbs" :3rem]
 
                 ;; de-emphasizing unfocused --------------
                  :o--0.3

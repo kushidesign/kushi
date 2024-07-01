@@ -291,8 +291,8 @@
   :fs--17.5px)
 
 (defclass bg-scrim-gradient
-  {:bgi      '(linear-gradient "to bottom" "var(--background-color) 20%" "color-mix(in srgb, var(--background-color), transparent 75%)") 
-   :dark:bgi '(linear-gradient "to bottom" "var(--background-color-inverse) 20%" "color-mix(in srgb, var(--background-color-inverse), transparent 75%)")})
+  {:bgi                  '(linear-gradient "to bottom" "var(--background-color) var(--menu-height)" "color-mix(in srgb, var(--background-color), transparent calc(100% - var(--transparency-at-end, 65%)))") 
+   :dark:bgi             '(linear-gradient "to bottom" "var(--background-color-inverse) var(--menu-height)" "color-mix(in srgb, var(--background-color-inverse), transparent calc(100% - var(--transparency-at-end, 65%)))")})
              
 (defclass header-menu-transition-group
   ;; :.xxxslow
