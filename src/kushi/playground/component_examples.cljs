@@ -127,12 +127,13 @@
 (defn section-label [s]
   [:p 
    (sx 'example-section-label
-      ;;  :.serif
+       :.serif
       ;; Include this if using cormorant serif face in :$serif-font-stack
       ;;  :.cormorant-section-label
       ;; Comment fs below if using cormorant serif face in :$serif-font-stack
-       :fs--$small
-      ;;  :fs--$small-b
+      ;;  :fs--$small
+       :fs--$small-b
+       :.oblique
        :.neutralize-secondary
        :lh--1.7
        :&_span.code:mis--0.5ch)
@@ -255,7 +256,7 @@
                 :flex-wrap--wrap
                 :ai--c
                 :mbe--1rem
-                :gap--2rem)
+                :gap--1rem)
        label
        (when snippets 
          [:<> 

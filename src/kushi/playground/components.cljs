@@ -58,9 +58,6 @@
   (and shirt shoes))
 
 
-        ;; scroll to top when switching views
-
-        ;; 
 
         ;; figure out sidemenu on mobile
 
@@ -72,11 +69,11 @@
 
         ;; switch tab back to `Examples` when component section goes offscreen
 
-        ;; upgrade tinycolor2
-
 
         ;; check size of app etc.
 
+
+        ;; upgrade tinycolor2
 
         ;; Smoother transition between Examples and Docs section
         ;; - fade-in, fade-out
@@ -106,6 +103,12 @@
         ;; Add tablist and tabs component
 
         ;; Redo color section design (later)
+
+        ;; Add :.text-xxlarge utility scale (later)
+
+        ;; Add :.tracking-xxloose utility scale (later)
+        
+        ;; Add :.leading-xxloose utility scale (later)
 
         ;; Add APCA-based color checks
 
