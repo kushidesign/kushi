@@ -1,19 +1,18 @@
 (ns kushi.playground.about
-  (:require
-   [kushi.ui.divisor.core :refer (divisor)]
-   [kushi.color :refer [colors->tokens]]
-   [kushi.ui.label.core :refer [label]]
-   [kushi.ui.link.core :refer [link]]
-   [domo.core :as domo]
-   [kushi.ui.core :refer [defcom]]
-   [kushi.core :refer (sx merge-attrs keyed)]
-   [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-   [domo.core :refer (copy-to-clipboard!)]
-   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-   [kushi.playground.state :as state]
-   [kushi.playground.util :as util]
-   [kushi.playground.colors :as playground.colors]
-   [kushi.playground.shared-styles]))
+  (:require [clojure.string :as string]
+            [domo.core :refer (copy-to-clipboard!)]
+            [kushi.color :refer [colors->tokens]]
+            [kushi.core :refer (sx merge-attrs keyed)]
+            [kushi.playground.colors :as playground.colors]
+            [kushi.playground.shared-styles]
+            [kushi.playground.state :as state]
+            [kushi.playground.util :as util]
+            [kushi.ui.core :refer [defcom]]
+            [kushi.ui.divisor.core :refer (divisor)]
+            [kushi.ui.label.core :refer [label]]
+            [kushi.ui.link.core :refer [link]]
+            [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
+            [kushi.ui.tooltip.core :refer [tooltip-attrs]]))
 
 
 (defcom intro-section
@@ -187,7 +186,7 @@
                :mb--5rem:1.5rem
                [:bbs "1px solid var(--gray-300)"]
                [:dark:bbs "1px solid var(--gray-700)"])
-          (str "Type " label " Scale")]
+          (str "Type " (string/lower-case label) " scale")]
          (let [[kind-of-scale
                 start
                 end] (case label

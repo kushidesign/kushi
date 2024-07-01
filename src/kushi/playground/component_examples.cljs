@@ -254,7 +254,7 @@
       [:div (sx :.flex-row-fs
                 :flex-wrap--wrap
                 :ai--c
-                :mbe--1.75rem
+                :mbe--1rem
                 :gap--2rem)
        label
        (when snippets 
@@ -355,15 +355,14 @@
     preformatted]])
 
 (defn scroll-to-playground-component! [id]
-  (domo/scroll-into-view!
-   (domo/qs-data= "kushi-playground-component" id ))
-  (domo/scroll-by!
+  (let [el (domo/qs-data= "kushi-playground-component" id)]
+   (domo/scroll-into-view! el)
    ;; This is dependent on the existance of `#header-navbar`
-   {:y (or (-> "header-navbar" 
-               domo/el-by-id
-               .-offsetHeight
-               -)
-           -50)}))
+   (let [navbar-height (some-> "header-navbar" domo/el-by-id .-offsetHeight)]
+     (when (int? navbar-height)
+       (js/requestAnimationFrame 
+        #(domo/scroll-by!
+          {:y navbar-height}))))))
 
 (defn- scroll-to-elsewhere-on-page
   [{href :href}]
