@@ -23,9 +23,10 @@
                  "components")
   (into 
    [:div (sx :.flex-col-fs)
+    #_[:h1.xxxlarge "DUH" ]
     [nav/header]
     #_[layout/loading-spinner]]
-    (for [[view {:keys [content label] :as route}] routes
+    #_(for [[view {:keys [content label] :as route}] routes
           :let [label (or label (->> view last))
                 path  (string/join "/" view)]
           :when content]

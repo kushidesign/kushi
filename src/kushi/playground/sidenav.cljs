@@ -63,9 +63,13 @@
 (defn- all-componenents-sidenav-button [attrs]
   [:button
    attrs
-   [:span (sx :.flex-row-c :gap--0.5em :lg:&_.kushi-icon:d--none)
+   [:span (sx :.flex-row-c
+              :gap--0.5em
+              :lg:&_.kushi-icon:d--none
+              :c--$neutral-secondary-foreground
+              :dark:c--$neutral-secondary-foreground-inverse)
     [icon :menu]
-    "Components"]])
+    "All Components"]])
 
 
 (defn all-components-sidenav
@@ -96,12 +100,15 @@
 
             {:data-kushi-playground-sidenav "true"})
 
-     ;; Button for lg and below (mobile)
+   ;; Button for lg and below (mobile)
    [all-componenents-sidenav-button
     (merge-attrs 
      (sx :.all-components-sidenav-header
          :.pointer
-         :lg:d--none)
+         :lg:d--none
+         :&.neutral.minimal:c--$neutral-secondary-foreground
+         :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse)
+  
      (popover-attrs
       {:-f         (fn [popover-el]
                      (rdom/render (partial all-componenents-sidenav-items 

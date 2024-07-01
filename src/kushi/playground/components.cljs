@@ -54,11 +54,6 @@
         ;; row of buttons that show various stylings (no arrow etc)
 
 
-(defn dice? [{:keys [:wearing/shirt :wearing/shoes]}]
-  (and shirt shoes))
-
-
-
         ;; figure out sidemenu on mobile
 
         ;; dark mode review
