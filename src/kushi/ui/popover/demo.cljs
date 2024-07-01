@@ -152,7 +152,7 @@
                                             el))}) 
                                    "Open"])}]}
      
-     {:desc      "auto-dismissing"
+     {:desc      "Auto-dismissing, with manual placement"
       :component button
       :reqs      '[[kushi.ui.button.core :refer [button]]]
       :row-attrs row-attrs
@@ -168,7 +168,8 @@
                                                           [:br]
                                                           "after 5000ms"]]
                                                         el)) 
-                                     :-auto-dismiss? true}) 
+                                     :-auto-dismiss? true
+                                     :-placement     :r}) 
                                    "Open"])}]}]))
 
 

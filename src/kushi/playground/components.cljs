@@ -54,8 +54,13 @@
         ;; row of buttons that show various stylings (no arrow etc)
 
 
+(defn dice? [{:keys [:wearing/shirt :wearing/shoes]}]
+  (and shirt shoes))
 
-        ;; Add :summary and :usage info to all component docs
+
+        ;; scroll to top when switching views
+
+        ;; 
 
         ;; figure out sidemenu on mobile
 
