@@ -3,6 +3,7 @@
    [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp- ?trace]]
    [domo.core :as d]
    [kushi.core :refer (sx merge-attrs)]
+   [kushi.ui.util :refer [as-str]]
    [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.icon.core :refer [icon]]
@@ -13,20 +14,16 @@
 
 (defn sidenav-item-handler [label e]
   (component-examples/scroll-to-playground-component! label)
-  (let [nav (some-> e d/cet (d/nearest-ancestor "nav"))]
+  (when-let [nav (some-> e
+                         d/cet 
+                         (d/nearest-ancestor
+                          "nav[data-kushi-playground-sidenav-mobile]"))]
     (d/toggle-boolean-attribute nav "aria-expanded")))
 
 
-(defn mouse-down-a11y [f & args]
-  {:on-key-down   #(when (contains? #{" " "Enter"} (.-key %))
-                     (apply f (concat args [%])))
-   :on-mouse-down #(when (= 0 (.-button %))
-                     (apply f (concat args [%])))})
-
 (defn all-componenents-sidenav-items
-  [{:keys [coll modal?]}]
+  [{:keys [coll]}]
   (into [:ul (sx :.flex-col-fs
-                 :.neutralize
                  :short:d--grid
                  :short:gtc--max-content:max-content
                  :short:ji--center
@@ -78,8 +75,56 @@
                  ;; [:&.neutral.minimal:c (when focused? :white)]
                  ;; [:dark:&.neutral.minimal:c (when focused? :black)]
                  )
-             (mouse-down-a11y sidenav-item-handler label))
+             (d/mouse-down-a11y sidenav-item-handler label))
             label]])))
+
+
+(defn- all-componenents-sidenav-button [attrs]
+  [:button
+   attrs
+   [:span (sx :.flex-row-c
+              :gap--0.5em
+              :c--$neutral-secondary-foreground
+              :dark:c--$neutral-secondary-foreground-inverse)
+    "All Components"]])
+
+
+(defn all-components-sidenav
+  [playground-components]
+  [:nav (sx 
+         :.small
+         :.flex-col-fs
+         :.neutralize
+         :d--none
+         :lg:d--flex
+         [:iie       :1.25rem]
+         [:position  :fixed]
+         [:ai        :c]
+         [:w         :fit-content]
+         [:h         "calc(100vh - var(--navbar-height))"]
+         [:pi        0]
+         [:ibs       :$navbar-height]
+         [:translate :unset]
+         [:pb        :0:1rem]
+         [:jc        :flex-start]
+         :zi--4
+         [:box-shadow
+          "-30px 0 30px var(--background-color), -30px -30px 30px var(--background-color), -30px 0 30px 10px var(--background-color), -30px -30px 30px 10px var(--background-color)"]
+         [:dark:box-shadow
+          "-30px 0 30px var(--background-color-inverse), -30px -30px 30px var(--background-color-inverse), -30px 0 30px 10px var(--background-color-inverse), -30px -30px 30px 10px var(--background-color-inverse)"]
+         {:data-kushi-playground-sidenav "true"})
+
+   [all-componenents-sidenav-button
+    (sx :.all-components-sidenav-header
+        :.flex-row-fs
+        :cursor--default
+        )]
+
+   [:div (sx 
+          :w--fit-content
+          [:h "calc(100vh - (var(--navbar-height) * 2))"])
+    [all-componenents-sidenav-items 
+     {:coll playground-components}]]])
 
 
 (defn all-componenents-sidenav-items-mobile
@@ -130,11 +175,10 @@
                  ;; [:&.neutral.minimal:c (when focused? :white)]
                  ;; [:dark:&.neutral.minimal:c (when focused? :black)]
                  )
-             (mouse-down-a11y sidenav-item-handler label))
+             (d/mouse-down-a11y sidenav-item-handler label))
             label]])))
 
-
-(defn- all-componenents-sidenav-button [attrs]
+(defn- all-componenents-sidenav-button-mobile [attrs]
   [:button
    attrs
    [:span (sx :.flex-row-c
@@ -153,51 +197,6 @@
     [icon (sx :.sidenav-close-icon) :close]
     "All Components"]])
 
-(defn all-components-sidenav
-  [playground-components]
-  [:nav (sx 
-         :.small
-         :.flex-col-fs
-         :.neutralize
-         :d--none
-         :lg:d--flex
-         ;;  :iie--4rem
-         [:iie    :1.25rem]
-         [:position  :fixed]
-         [:ai        :c]
-         [:w         :fit-content]
-         [:h         "calc(100vh - var(--navbar-height))"]
-         [:pi        0]
-         [:ibs       :$navbar-height]
-         [:translate :unset]
-         [:pb        :0:1rem]
-         [:jc        :flex-start]
-         :zi--4
-         [:box-shadow
-          "-30px 0 30px var(--background-color), -30px -30px 30px var(--background-color), -30px 0 30px 10px var(--background-color), -30px -30px 30px 10px var(--background-color)"]
-         [:dark:box-shadow
-          "-30px 0 30px var(--background-color-inverse), -30px -30px 30px var(--background-color-inverse), -30px 0 30px 10px var(--background-color-inverse), -30px -30px 30px 10px var(--background-color-inverse)"]
-
-         ;; So that our box-shadow does not taint popup on mobile -----
-         ;; maybe nix?
-         ;; ["has(>button[aria-expanded]):box-shadow" :none]
-         ;; ["has(>button[aria-expanded]):dark:box-shadow" :none]
-         ;; -----------------------------------------------------------
-         
-         {:data-kushi-playground-sidenav "true"})
-
-   [all-componenents-sidenav-button
-    (sx :.all-components-sidenav-header
-        :.flex-row-fs
-        :cursor--default
-        )]
-
-   [:div (sx 
-          :w--fit-content
-          [:h "calc(100vh - (var(--navbar-height) * 2))"])
-    [all-componenents-sidenav-items 
-     {:coll playground-components}]]])
-
 
 (defn all-components-sidenav-mobile
   [playground-components]
@@ -212,16 +211,18 @@
          :h--$navbar-height
          :h--fit-content
          :pi--1.25rem
+         :md:pi--4rem
          :ibs--0
          :md:iie--4rem
          [:translate "0 calc(var(--navbar-height) + 0em)"] ;; was 0.25
          :box-shadow--none
          :zi--4
          ["&[aria-expanded=\"false\"]:bgc" :transparent]
-         {:data-kushi-playground-sidenav "true"
-          :aria-expanded                 false})
+         {:data-kushi-playground-sidenav        true
+          :data-kushi-playground-sidenav-mobile true
+          :aria-expanded                        false})
 
-   [all-componenents-sidenav-button
+   [all-componenents-sidenav-button-mobile
     (merge-attrs 
      (sx :.all-components-sidenav-header
          :.pointer
