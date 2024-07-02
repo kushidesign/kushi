@@ -1,5 +1,6 @@
 (ns kushi.playground.about
   (:require [clojure.string :as string]
+            [fireworks.pp :refer [pprint]]
             [domo.core :refer (copy-to-clipboard!)]
             [kushi.color :refer [colors->tokens]]
             [kushi.core :refer (sx merge-attrs keyed)]
@@ -217,13 +218,22 @@
                               :-tooltip-class "code wee-bold"}))
              "The quick brown fox."]]])))
 
+(defn- formatted-code [s]
+  [:pre
+   [:code {:class :language-clojure
+           :style {:white-space :pre
+                   :line-height 1.5}}
+    s]])
 
 (defn typography-snippet [s]
   [:div
    (sx :.relative :mbe--2em)
    [:div
     (sx :.codebox :.code :w--100%)
-    [util/formatted-code s]]
+    (-> s
+        (pprint {:max-width 50}) 
+        with-out-str
+        formatted-code)]
    [:div (sx :.absolute-fill)]
    [copy-to-clipboard-button
     (sx :.absolute
@@ -233,15 +243,15 @@
 
 
 (def typography-tokens-snippet
-  "[:span
-  (sx :fs--$xxlarge
-      :fw--$bold
-      :letter-spacing--$xloose)
-  \"My text\"]" )
+  '[:span
+    (sx :fs--$xxlarge
+        :fw--$bold
+        :letter-spacing--$xloose)
+    "My text "])
 
 
 (def typography-utility-classes-snippet
-  "[:span \n  (sx :.xxlarge :.bold :.xloose :.uppercase :.italic) \n  \"My text\"]" )
+  '[:span (sx :.xxlarge :.bold :.xloose :.uppercase :.italic) "My text"] )
 
 
 (def typescale [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge :xxxxlarge])

@@ -68,8 +68,13 @@
 (def ordered-playground-components-labels
   (mapv :label playground-components))
 
-(def *playground (r/atom {:intersecting             #{}
-                          :mobile-sidenav-expanded? false}))
+(def *playground (r/atom {:intersecting                   #{}
+                          :playground-intro-intersecting? true
+                          :mobile-sidenav-expanded?       false}))
+
+(def playground-intro-intersecting?
+  (reagent.ratom/reaction
+   (!? (:playground-intro-intersecting? @*playground))))
 
 (def *playground-first-intersecting
   (reagent.ratom/reaction
@@ -77,7 +82,7 @@
                              (:intersecting @*playground)))]
      (.setAttribute (domo/el-by-id "app")
                     "data-kushi-playground-first-intersecting"
-                    ret)
+                    (!? ret))
      ret)))
 
 

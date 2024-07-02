@@ -13,7 +13,10 @@
                 :.pointer
                 :td--underline
                 :tup--under
-                [:tdc "color-mix(in oklch, currentColor 60%, transparent)"]
+                ;; TODO - On older browsers, (older iPhones) this won't work.
+                ;; See if lightning css can fix this...
+                ;; Otherwise, it defaults to currentColor, so NBD.
+                [:tdc "color-mix(in oklch, currentColor 40%, transparent)"]
                 [:hover:tdc :currentColor]
                 {:data-kushi-ui :link})
             attrs)]

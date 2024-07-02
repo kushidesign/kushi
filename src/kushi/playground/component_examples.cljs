@@ -13,7 +13,7 @@
             [kushi.ui.icon.mui.svg :as mui.svg]
             [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal]]
             [kushi.ui.tooltip.core :refer (tooltip-attrs)]
-            [kushi.ui.util :refer [maybe]]
+            [kushi.ui.util :refer [maybe as-str]]
             [domo.core :as domo]))
 
 (defn- example-row-variant
@@ -142,30 +142,6 @@
 (declare component-snippets)
 (declare reqs-coll)
 
-(defcom link-button 
-  [:button (merge-attrs 
-            (sx :.flex-row-fs
-                :.minimal
-                :.xsmall
-                :.normal
-                :.xxxfast
-                :.pointer
-                :lh--0.8em
-                :p--0
-                :c--$neutral-secondary-foreground
-                :hover:c--$neutral-foreground
-                :hover:bgc--transparent
-                :hover:td--underline
-                :hover:tds--underline
-                :hover:tdt--1.5px
-                :hover:tup--under
-                :hover:tuo--0.075em
-                :active:bgc--transparent
-                [:tdc "color-mix(in oklch, currentColor 10%, transparent)"]
-                [:hover:tdc "color-mix(in oklch, currentColor 40%, transparent)"])
-            &attrs)
-   &children])
-
 (defn example-modal
   [{:keys [modal-id
            label
@@ -188,14 +164,18 @@
                :overflow--hidden
                :width--$main-content-max-width
                {:id modal-id})
-     [:div (sx :.flex-row-fs :ai--b :gap--1.5em)
-      [:h1 (sx :.component-section-header-label) component-label]
-      label]
+     [:div (sx :.flex-row-sb :ai--b :gap--1.5em )
+      [:div
+       (sx :.flex-row-fs :ai--b :gap--1.5em )
+       [:h1 (sx :.component-section-header-label) component-label]
+       label]
+      [button (sx :.extra-light :.xxxlarge :.minimal :mis--3rem :p--0) [icon :close]]]
      [divisor]
      [component-snippets
       (reqs-coll reqs-by-refers)
       snippets-header
       snippets]]))
+
 
 (defn example-modal-trigger [modal-id]
   [button
@@ -383,8 +363,8 @@
     [:div
      (sx :.relative
          :.flex-row-fs
-         :fs--small
-         :xsm:fs--medium
+        ;;  :fs--small
+        ;;  :xsm:fs--medium
          :&_code:fs--0.95em
          :&_.code:fs--0.95em
          :&_code:ws--n
@@ -401,7 +381,11 @@
           :gap--1em
           :&_.kushi-text-input-label:min-width--7em
           :&_.kushi-input-inline:gtc--36%:64%)
-      (let [formatted*    #(-> % (pprint {:max-width 50}) with-out-str)]
+      (let [max-width   (or (when-let [[p v] (some-> (kushi.core/breakpoints) :sm first)]
+                              (when-not (domo/matches-media? p (as-str v))
+                                27))
+                            50)
+            formatted*  #(-> % (pprint {:max-width max-width}) with-out-str)]
         (into [:div (sx :.flex-col-fs
                         :gap--2.25rem
                         :mbs--1.5em

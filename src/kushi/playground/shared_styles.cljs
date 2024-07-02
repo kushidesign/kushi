@@ -291,10 +291,17 @@
   :dark:fw--$wee-bold
   :fs--17.5px)
 
+;; TODO - This version won't work with out-dated browsers because of color-mix
+;; (defclass bg-scrim-gradient
+;;   {:bgi                  '(linear-gradient "to bottom" "var(--background-color) var(--menu-height)" "color-mix(in srgb, var(--background-color), transparent calc(100% - var(--transparency-at-end, 65%)))") 
+;;    :dark:bgi             '(linear-gradient "to bottom" "var(--background-color-inverse) var(--menu-height)" "color-mix(in srgb, var(--background-color-inverse), transparent calc(100% - var(--transparency-at-end, 65%)))")})
+
+;; TODO - This version will
 (defclass bg-scrim-gradient
-  {:bgi                  '(linear-gradient "to bottom" "var(--background-color) var(--menu-height)" "color-mix(in srgb, var(--background-color), transparent calc(100% - var(--transparency-at-end, 65%)))") 
-   :dark:bgi             '(linear-gradient "to bottom" "var(--background-color-inverse) var(--menu-height)" "color-mix(in srgb, var(--background-color-inverse), transparent calc(100% - var(--transparency-at-end, 65%)))")})
-             
+  {:bgi                  '(linear-gradient "to bottom" "var(--background-color) var(--menu-height)" "rgba(255 255 255 / 0.65)") 
+   :dark:bgi             '(linear-gradient "to bottom" "var(--background-color-inverse) var(--menu-height)" "rgba(0 0 0 / 0.65)")})
+
+
 (defclass header-menu-transition-group
   ;; :.xxxslow
   ;; :.debug-blue

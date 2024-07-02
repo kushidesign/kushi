@@ -88,7 +88,8 @@
        row-attrs-all
        (sx [:&_.instance-code
             {:w              :100%
-             :pi             :0.75rem
+            ;;  :pi             :0.75rem
+             :pi             :0rem
              :row-gap        :2rem
              :flex-direction :column
              :align-items    :stretch}])
@@ -135,8 +136,12 @@
      :container-attrs container-attrs
      :row-attrs       (merge-attrs #_grid-row-attrs
                                    row-attrs
-                                   (sx :&_.kushi-icon:fs--48px
-                                       :sm:&_.kushi-icon:fs--64px))
+                                   (sx 
+                                    :&_.kushi-icon:fs--36px
+                                    :xsm:&_.kushi-icon:fs--48px
+                                    :sm:&_.kushi-icon:fs--64px
+                                    [:&_.instance-code {:gap 0
+                                                        :pi  0}] ))
 
      :snippets-header ["Use the font-weight utility classes `:.thin` ~ `:.bold` to control the weight of the icons."
                        :br
