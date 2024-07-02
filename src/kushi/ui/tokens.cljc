@@ -388,7 +388,7 @@
    :$modal-padding-inline                   :$modal-padding
    :$modal-backdrop-color                   :$black-transparent-40
    :$modal-margin                           :1rem
-   :$modal-min-width                        :500px
+   :$modal-min-width                        :200px
    :$modal-transition-duration              :$xfast
 
 

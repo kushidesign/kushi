@@ -14,9 +14,12 @@
        :.flex-row-fs
        :.medium
        :ai--c
-       :gap--1.5em
-       :pi--1.5em
-       :pb--1.25em)
+       :gap--1.25em
+       :xsm:gap--1.5em
+       :pi--1.25em
+       :xsm:pi--1.5em
+       :pb--1em
+       :xsm:pb--1.25em )
    [:div
     (sx 'my-toast-content-wrapper
         :.flex-col-c
@@ -35,6 +38,7 @@
    [button
     (sx 'kushi-toast-close-button
         :.semi-bold
+        :.no-shrink
         :.rounded
         :.xxsmall
         :.loose
@@ -66,7 +70,7 @@
                          :-f             (fn [toast-el]
                                            (rdom/render toast-content
                                                         toast-el))}))]
-     {:desc      "With notification with manual dismiss cta"
+     {:desc      "With notification, and manual dismiss cta"
       :component button
       :reqs      '[[kushi.ui.button.core :refer [button]]]
       :row-attrs (sx :&_.kushi-button:fs--$small)

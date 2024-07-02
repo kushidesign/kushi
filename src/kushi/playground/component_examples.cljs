@@ -164,14 +164,13 @@
                {:id modal-id})
      [:div (sx :.flex-row-sb :ai--fs :gap--1.5em)
       [:div
-       (sx :.flex-row-fs :ai--b :gap--1.5em )
+       (sx :.flex-col-fs :ai--b :gap--1rem )
        [:h1 (sx :.component-section-header-label) component-label]
        label]
       [button (sx :.extra-light
                   :.xxxlarge 
                   :.minimal 
                   :.pill
-                  :mis--2rem
                   :p--0
                   :translate--0:-10px
                   {:on-click close-kushi-modal})

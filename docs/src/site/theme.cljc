@@ -66,6 +66,7 @@
                         :$navbar-height                          :50px
                         :$tooltip-delay-duration                 :250ms
                         :$main-content-max-width                 :605px
+                        :$toast-slot-z-index                     1
                         ]
 
      :typescale        (create-typescale {:size-limit "xxx" :shift 0})

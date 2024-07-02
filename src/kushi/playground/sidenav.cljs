@@ -12,10 +12,12 @@
    [reagent.dom :as rdom]))
 
 
-(defn sidenav-item-handler [label e]
+(defn sidenav-item-handler [opts e]
   (component-examples/scroll-to-playground-component!
-   {:component-label label
-    :scroll-y        16})
+   (merge opts
+          (when-let [[p v] (some-> (kushi.core/breakpoints) :sm first)]
+            (when-not (d/matches-media? p (as-str v))
+              {:scroll-y 16}))))
   (when-let [nav (some-> e
                          d/cet 
                          (d/nearest-ancestor
@@ -27,7 +29,8 @@
   [{:keys [coll]}]
   (into [:ul (sx :.flex-col-fs
                  :short:d--grid
-                 :short:gtc--max-content:max-content
+                 :short:gtc--1fr:1fr
+                 :short:gar--40px
                  :short:ji--center
                  :bgc--transparent
                  :overflow-y--auto
@@ -36,8 +39,7 @@
                  :ai--c
                  :pb--0rem:2rem
                  :pi--0.5em
-                 :column-gap--normal
-                 )]
+                 :column-gap--normal)]
         (for [{:keys [label]} coll
               :let            [focused? (= label
                                            @state/*playground-first-intersecting)]]
@@ -77,7 +79,7 @@
                  ;; [:&.neutral.minimal:c (when focused? :white)]
                  ;; [:dark:&.neutral.minimal:c (when focused? :black)]
                  )
-             (d/mouse-down-a11y sidenav-item-handler label))
+             (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
             label]])))
 
 
@@ -132,24 +134,30 @@
 
 (defn all-components-sidenav-mobile
   [playground-components]
+  ;; TODO sync 4rem and 6rem with elsewhere
   [:nav (sx 
          :.small
          :.flex-col-fs
          :.neutralize
+         :$translate-y--20px
          :lg:d--none
          :position--sticky
          :ai--fe
          :w--100%
-         :h--$navbar-height
-         :h--fit-content
+;;         :h--0
          :pi--1.25rem
          :md:pi--4rem
-         :ibs--0
+         ;;[:ibs "calc(0px - 4rem + 0.25em)"]
+         [:ibs "calc(0px - 4rem)"]
+         ;;[:lg:ibs "calc(0px - 4rem)"]
+         [:xsm:ibs "calc(0px - 6rem)"]
          :md:iie--4rem
-         [:translate "0 calc(var(--navbar-height) + 0em)"] ;; was 0.25
+         [:translate "0 calc(4rem + 0.25em + var(--navbar-height))"]
+         [:xsm:translate "0 calc(6rem + 0.25em + var(--navbar-height))"]
          :box-shadow--none
          :zi--4
-         ["&[aria-expanded=\"false\"]:bgc" :transparent]
+         ["&[aria-expanded=\"false\"]" {:bgc :transparent}]
+ ;;        ["&[aria-expanded=\"true\"]"  {:h   :fit-content}]
          {:data-kushi-playground-sidenav        true
           :data-kushi-playground-sidenav-mobile true
           :aria-expanded                        false})
@@ -256,5 +264,5 @@
                  ;; [:&.neutral.minimal:c (when focused? :white)]
                  ;; [:dark:&.neutral.minimal:c (when focused? :black)]
                    )
-               (d/mouse-down-a11y sidenav-item-handler label))
+               (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
               label]]))]])

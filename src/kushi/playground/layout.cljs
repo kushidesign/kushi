@@ -232,7 +232,8 @@
                                      (.preventDefault e)
                                      ;; TODO - try a fast smooth transition here
                                      (component-examples/scroll-to-playground-component!
-                                      {:component-label label}))}) 
+                                      {:component-label label
+                                       :scroll-y        16}))}) 
                  label]]]
               [:div (sx 
                      :$tablist-selected-tab-underline-color--$accent-600
@@ -283,7 +284,7 @@
                                                               (domo/matches-media? prop val))
                                                             matches)))]
                  (if unsupported? 
-                   [:p (sx :mbs--2rem) message]
+                   [:p (sx :mbs--2rem :lh--1.7) message]
                    [component-section component-opts])))]]))])
 
 

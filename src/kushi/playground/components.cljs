@@ -71,8 +71,8 @@
         ;; deploy new kushi site
 
 
+
         ;; resume
-        ;; 
 
 
         ;; upgrade tinycolor2
@@ -84,7 +84,6 @@
         ;; Smoother transition between Examples and Docs section
         ;; - fade-in, fade-out
         ;; - hightlight blink on tab header
-
 
 
         ;; Activate side components mobile menu on hover (for small desktops)
@@ -112,11 +111,19 @@
 
         ;; Redo color section design (later)
 
+
+        ;; Make a p-like component for consistent body copy maybe call it text
+        ;;   - Use text sizes for this 
+
         ;; Add :.text-xxlarge utility scale (later)
 
         ;; Add :.tracking-xxloose utility scale (later)
         
         ;; Add :.leading-xxloose utility scale (later)
+
+
+        ;; Add 
+
 
         ;; Add APCA-based color checks
 

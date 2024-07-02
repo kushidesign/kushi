@@ -16,7 +16,7 @@
                              {:on-click (fn* [] (open-kushi-modal id))}
                              "Click to open modal"]
                             [modal
-                             (sx :min-width--450px
+                             (sx :min-width--300px
                                  :&_.kushi-modal-description:fs--$small
                                  {:id id})
                              [:div
@@ -44,7 +44,7 @@
                                        "Click to open modal"]
                                       [modal
                                        (sx
-                                        :min-width--450px
+                                        :min-width--300px
                                         :&_.kushi-modal-description:fs--$small
                                         {:-modal-title "Example modal"
                                          :-description "Example modal description goes here."
@@ -75,6 +75,7 @@
                                "Click to open modal"]
                               [modal
                                (sx
+                                :min-width--300px
                                 [:translate "-50% calc(-50% + 30px)"]
                                 [:&.kushi-modal-open:translate "-50% -50%"]
                                 {:-modal-title "Example modal"
@@ -107,6 +108,7 @@
                               [modal
                                (sx
                                 :.fixed-block-start-inside
+                                :min-width--300px
                                 [:translate "-50% -50px"]
                                 [:&.kushi-modal-open:translate "-50% 50px"]
                                 {:-modal-title "Example modal"
@@ -138,6 +140,7 @@
                                "Click to open modal"]
                               [modal
                                (sx
+                                :min-width--300px
                                 :border-radius--24px
                                 :b--2px:solid:$gray-900
                                 :$modal-backdrop-color--$white-transparent-70
@@ -174,6 +177,7 @@
                                "Click to open modal"]
                               [modal
                                (sx
+                                :min-width--300px
                                 :border-radius--24px
                                 :$modal-backdrop-color--$light-gray-transparent-50
                                 {:-modal-title "Example modal"
@@ -193,13 +197,4 @@
                                  "Cancel"]
                                 [button
                                  (sx :.filled :.pill {:on-click close-kushi-modal}) 
-                                 "Submit"]]]]
-
-                             ))}]}
-  
-     
-     
-     
-
-     
-     ]))
+                                 "Submit"]]]]))}]}]))

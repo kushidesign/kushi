@@ -138,7 +138,8 @@
   :transition-delay--$toast-delay-duration
   :bgc--$toast-background-color
   :dark:bgc--$toast-background-color-inverse
-  :$_auto-dismiss-duration--$toast-auto-dismiss-duration)
+  :$_auto-dismiss-duration--$toast-auto-dismiss-duration
+  [:max-width "calc(100vw - (2 * var(--toast-slot-padding-inline)))"])
 
 
 ;; block mixins

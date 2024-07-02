@@ -184,6 +184,7 @@
                       "reduced motion (an OS-level setting), toasts will never "
                       "slide in, nor will they scale up or down upon entry."]}]}
 
+  ;; TODO -- add :class opts so you can ala-carte try things like :$toast-slot-z-index
   [{placement         :-placement
     auto-dismiss?     :-auto-dismiss?
     slide-in?         :-slide-in?
@@ -203,11 +204,11 @@
           reduced-motion? (domo/prefers-reduced-motion?)
           slide-in?       (if reduced-motion? false slide-in?)
           opts            (keyed placement-kw
-                                    auto-dismiss?
-                                    pane-type
-                                    user-rendering-fn
-                                    slide-in?
-                                    reduced-motion?)]
+                                 auto-dismiss?
+                                 pane-type
+                                 user-rendering-fn
+                                 slide-in?
+                                 reduced-motion?)]
       (merge 
        ;; TODO should be :data-kushi-ui-pane-placement = se
        ;; and :data-kushi-ui-pane-type = toast
