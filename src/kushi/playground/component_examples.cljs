@@ -142,6 +142,7 @@
 (declare component-snippets)
 (declare reqs-coll)
 
+
 (defn example-modal
   [{:keys [modal-id
            label
@@ -150,13 +151,11 @@
            snippets-header
            snippets
            example-reqs]}]
-  (let [all-reqs       (into []
-                             (concat component-reqs
-                                     example-reqs))
+  (let [all-reqs       (into [] (concat component-reqs example-reqs))
         reqs-by-refers (reqs-by-refers all-reqs)]
     [modal (sx :&_.kushi-modal-inner:pi--1.25em
                :xsm:&_.kushi-modal-inner:pi--3em
-               :&_.kushi-modal-inner:pb--1.75em:2em
+               :&_.kushi-modal-inner:pb--1.5rem:2em
                :xsm:&_.kushi-modal-inner:pb--3em:3.5em
                :$modal-min-width--200px
                :&_.kushi-modal-inner:gap--0.75rem
@@ -164,12 +163,20 @@
                :overflow--hidden
                :width--$main-content-max-width
                {:id modal-id})
-     [:div (sx :.flex-row-sb :ai--b :gap--1.5em )
+     [:div (sx :.flex-row-sb :ai--fs :gap--1.5em)
       [:div
        (sx :.flex-row-fs :ai--b :gap--1.5em )
        [:h1 (sx :.component-section-header-label) component-label]
        label]
-      [button (sx :.extra-light :.xxxlarge :.minimal :mis--3rem :p--0) [icon :close]]]
+      [button (sx :.extra-light
+                  :.xxxlarge 
+                  :.minimal 
+                  :.pill
+                  :mis--2rem
+                  :p--0
+                  :translate--0:-10px
+                  {:on-click close-kushi-modal})
+       [icon :close]]]
      [divisor]
      [component-snippets
       (reqs-coll reqs-by-refers)
