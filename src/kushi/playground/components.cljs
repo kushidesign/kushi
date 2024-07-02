@@ -70,9 +70,13 @@
 
         ;; upgrade tinycolor2
 
+
+
         ;; Smoother transition between Examples and Docs section
         ;; - fade-in, fade-out
         ;; - hightlight blink on tab header
+
+
 
         ;; Activate side components mobile menu on hover (for small desktops)
 
@@ -173,14 +177,14 @@
   (filter 
   :label
   #_#(contains? #{
-                "button"     ;; ✅
+                ;; "button"     ;; ✅
                 ;; "icon"       ;; ✅
-                "spinner"    ;; ✅
-                "switch"     ;; ✅
+                ;; "spinner"    ;; ✅
+                ;; "switch"     ;; ✅
                 ;; "radio"      ;; ✅
                 ;; "checkbox"   ;; ✅ 
                 ;; "slider"     ;; ✅
-                ;; "text field" ;; ✅
+                "text field" ;; ✅
 
                 ;; "tooltip"    ;; ✅
                 ;; "popover"    ;; PS

@@ -58,9 +58,13 @@
             ;; :checked:outline-offset---0.333em
             :checked:border-width--0.333em
             :checked:border-offset---0.333em
+
+            ;; TODO - On older browsers, (older iPhones) this won't work.
+            ;; See if lightning css can fix this...
+            ;; Otherwise, it defaults to currentColor, so NBD.
             [:border-color '(color-mix "in hsl" "currentColor 55%" :transparent)]
+
             [:checked:border-color :currentColor]
-            ;; :checked:o--1
             :o--1
             :border-radius--50%
             {:data-kushi-ui :input.radio

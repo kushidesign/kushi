@@ -57,10 +57,10 @@
                     :-helper     "Your helper text here"})]) )
 
      (f "With start enhancer"
-        (sx
-         {:placeholder     "Your text here"
-          :-start-enhancer "$"
-          :-label          "Input label"}) )
+        (sx-call [text-field (sx
+                              {:placeholder     "Your text here"
+                               :-start-enhancer "$"
+                               :-label          "Input label"})]) )
 
      (f "With end enhancer (icon)"
         (sx-call [text-field

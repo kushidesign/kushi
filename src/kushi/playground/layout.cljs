@@ -32,29 +32,6 @@
    [propeller (sx :translate--0.5em
                   :$spinner-animation-duration--700ms)]])
 
-(defn link-button [attrs label]
-  [:button (merge-attrs 
-            (sx :.minimal
-                :.xsmall
-                :.normal
-                :.xxxfast
-                :.pointer
-                :lh--0.8em
-                :p--0
-                :c--$neutral-secondary-foreground
-                :hover:c--$neutral-foreground
-                :hover:bgc--transparent
-                :hover:td--underline
-                :hover:tds--underline
-                :hover:tdt--1.5px
-                :hover:tup--under
-                :hover:tuo--0.075em
-                :active:bgc--transparent
-                [:tdc "color-mix(in oklch, currentColor 10%, transparent)"]
-                [:hover:tdc "color-mix(in oklch, currentColor 40%, transparent)"])
-            attrs)
-   label])
-
 
 (defcom tab
   [button (merge-attrs 
@@ -157,17 +134,16 @@
                                                       "path-transitioning"))))})
     [:section 
      (sx :min-height--200px
-         [">*:not([data-kushi-playground-sidenav]):pi" "1.25rem"]
+         [">*:not([data-kushi-playground-sidenav])" {:pi  :1.25rem}]
          ["md:>*:not([data-kushi-playground-sidenav]):pi" "4rem"]
          :>section>p:max-width--605px
-         :>section:pbs--1rem
          ;; why this data-attr?
          {:data-kushi-playground-section "about"})
      [:div (sx :.component-section-header
                :position--relative
                :top--unset
                :mbs--$navbar-height
-               ["~section:pbs" :1.5rem]
+               ["+*:pbs" :1.5rem]
                ;; Maybe smaller division for mobile?
                ;; ["~section[data-kushi-playground-component]:pbs" :6rem]
                )
@@ -192,12 +168,22 @@
 (defn component-playground-content
   [playground-components]
   [:<> 
+   [:div
+    {:ref (fn [el]
+            (when el
+              (domo/observe-intersection 
+               (let [f (partial swap!
+                                state/*playground
+                                assoc
+                                :playground-intro-intersecting?)]
+                 {:element          el
+                  :not-intersecting #(f false)
+                  :intersecting     #(f true)}))))}
+    [about/kushi-about]
+    [:div (sx :mbe--2rem)
+     [divisor]]]
+
    [sidenav/all-components-sidenav playground-components]
-   [about/kushi-about]
-   [:div (sx :md:pi--4rem
-             :pi--1.25rem
-             :mbe--2rem)
-    [divisor]]
 
    ;; Cycle through collection of components defined in playground.core
    (into [:section] 
@@ -207,17 +193,21 @@
                 :as   component-opts}
                playground-components]
            [:<> 
-            [style-tag-first-intersecting label]
+            ;; Injects a style tag to turn opacity to 1 when section is intersecting
+            ;; Leave off for now
+            #_[style-tag-first-intersecting label]
             [:section
              (sx :min-height--200px
-                 :pbs--6rem
-                 ["nth-child(2):pbs" :1rem]
+                 :pbs--4rem
+                 :xsm:pbs--6rem
+                 :first-child:pbs--0rem
 
-                ;; de-emphasizing unfocused --------------
-                 :o--0.3
+                ;; De-emphasizing unfocused ---------------------------------------
+                ;; Leave off for now til you figure out intersection --------------
+                ;;  :o--0.3
                 ;;  [:filter "blur(0px)"]
                 ;; ---------------------------------------
-
+                 
                  {:data-kushi-playground-component label
                   :ref                             (fn [el]
                                                      (when el

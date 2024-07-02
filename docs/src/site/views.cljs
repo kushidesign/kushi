@@ -26,7 +26,7 @@
     #_[:h1.xxxlarge "DUH" ]
     [nav/header]
     #_[layout/loading-spinner]]
-    #_(for [[view {:keys [content label] :as route}] routes
+    (for [[view {:keys [content label] :as route}] routes
           :let [label (or label (->> view last))
                 path  (string/join "/" view)]
           :when content]

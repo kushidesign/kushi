@@ -112,10 +112,30 @@
                                                        popover-el))
                                         :-placement :r}))}]}
 
+
+     {:desc      "Arrowless"
+      :component button
+      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :row-attrs row-attrs
+      :examples  [{:args     ["Open"]
+                   :sx-attrs (sx-call (popover-attrs
+                                       {:-f         (fn [popover-el]
+                                                      (rdom/render 
+                                                       (fn [] 
+                                                         [:div
+                                                          (sx :.xxxlarge
+                                                              :.flex-row-c
+                                                              :padding--0.25em)
+                                                          "💃🏽"])
+                                                       popover-el))
+                                        :-arrow?    false
+                                        :-placement :r}))}]}
+
      {:desc            "With form"
       :component       button
       :reqs            '[[kushi.ui.button.core :refer [button]]]
-      :container-attrs {:data-kushi-playground-example "popover-with-form"}
+      :container-attrs (sx :d--none :xsm:d--block
+                           {:data-kushi-playground-example "popover-with-form"})
       :row-attrs       row-attrs
       :examples        [{:args     ["Open"]
                          :sx-attrs (sx-call (popover-attrs
@@ -125,17 +145,6 @@
                                         ;; :class (:class (sx :max-width--200px))
                                               }))}]}
      
-     {:desc      "Arrowless"
-      :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
-      :row-attrs row-attrs
-      :examples  [{:args     ["Open"]
-                   :sx-attrs (sx-call (popover-attrs
-                                       {:-f         (fn [popover-el]
-                                                      (rdom/render popover-content
-                                                                   popover-el))
-                                        :-placement :bl
-                                        :-arrow?    false}))}]}
      
      {:desc      "With dismiss action"
       :component button

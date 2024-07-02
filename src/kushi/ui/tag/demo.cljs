@@ -89,7 +89,7 @@
      {:desc            "Max width"
       :reqs            '[[kushi.ui.icon.core :refer [icon]]]
       :sx-attrs        (sx-call (sx :.small))
-      :container-attrs playground-tag-rows-container4
+      :container-attrs (sx :gtc--max-content)
       :variants+       [:minimal]
       :examples        [{:label "Max width"
                          :args  [[:span {:class "truncate" :style {:max-width :130px}}
