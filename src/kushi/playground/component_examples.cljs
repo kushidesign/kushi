@@ -2,7 +2,6 @@
   (:require [fireworks.core :refer [? ?flop !? pprint]]
             [clojure.string :as string]
             ;; [clojure.walk :as walk]
-            [domo.core :refer (copy-to-clipboard!)]
             [kushi.core :refer (sx merge-attrs keyed)]
             [kushi.playground.util :as util]
             [kushi.playground.component-docs :as docs]
@@ -14,7 +13,7 @@
             [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal]]
             [kushi.ui.tooltip.core :refer (tooltip-attrs)]
             [kushi.ui.util :refer [maybe as-str]]
-            [domo.core :as domo]))
+            [domo.core :as d]))
 
 (defn- example-row-variant
   [component
@@ -23,7 +22,7 @@
                                               variant-attrs
                                               examples]
     {sx-attrs     :evaled
-     quoted-attrs :quoted}                   :sx-attrs
+     quoted-attrs :quoted} :sx-attrs
     :as                                      example-opts}]
   (into [:section (merge-attrs
                    (sx 'playground-component-example-row-variant-section
@@ -301,10 +300,10 @@
     (sx :.accent
         :.minimal
         :p--7px
-        {:on-click #(copy-to-clipboard!
+        {:on-click #(d/copy-to-clipboard!
                      (or (some->> &opts 
                                   :clipboard-parent-sel
-                                  (domo/nearest-ancestor (domo/et %)))
+                                  (d/nearest-ancestor (d/et %)))
                          js/document.body) 
                      (:text-to-copy &opts))})
     (tooltip-attrs
@@ -342,15 +341,14 @@
       [copy-to-clipboard-button attrs])
     preformatted]])
 
-(defn scroll-to-playground-component! [id]
-  (let [el (domo/qs-data= "kushi-playground-component" id)]
-   (domo/scroll-into-view! el)
-   ;; This is dependent on the existance of `#header-navbar`
-   (let [navbar-height (some-> "header-navbar" domo/el-by-id .-offsetHeight)]
-     (when (int? navbar-height)
-       (js/requestAnimationFrame 
-        #(domo/scroll-by!
-          {:y navbar-height}))))))
+(defn scroll-to-playground-component! [{:keys [component-label scroll-y]}]
+  (let [el (d/qs-data= "kushi-playground-component" component-label)]
+    (d/scroll-into-view! el)
+    ;; This is dependent on the existance of `#header-navbar`
+    (when scroll-y
+      (d/raf
+       #(d/scroll-by!
+         {:y scroll-y})))))
 
 (defn- scroll-to-elsewhere-on-page
   [{href :href}]
@@ -359,8 +357,8 @@
      :on-click (fn [e]
                  (.preventDefault e)
                  (close-kushi-modal e)
-                 (scroll-to-playground-component! (subs href 1))
-                 )}))
+                 (scroll-to-playground-component!
+                  {:component-label (subs href 1)}))}))
 
 (defn component-snippets
   []
@@ -389,7 +387,7 @@
           :&_.kushi-text-input-label:min-width--7em
           :&_.kushi-input-inline:gtc--36%:64%)
       (let [max-width   (or (when-let [[p v] (some-> (kushi.core/breakpoints) :sm first)]
-                              (when-not (domo/matches-media? p (as-str v))
+                              (when-not (d/matches-media? p (as-str v))
                                 27))
                             50)
             formatted*  #(-> % (pprint {:max-width max-width}) with-out-str)]

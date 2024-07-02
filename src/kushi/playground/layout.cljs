@@ -201,7 +201,7 @@
              (sx :min-height--200px
                  :pbs--4rem
                  :xsm:pbs--6rem
-                 :first-child:pbs--0rem
+                ;;  :first-child:pbs--0rem
 
                 ;; De-emphasizing unfocused ---------------------------------------
                 ;; Leave off for now til you figure out intersection --------------
@@ -231,7 +231,8 @@
                          :on-click (fn [e] 
                                      (.preventDefault e)
                                      ;; TODO - try a fast smooth transition here
-                                     (component-examples/scroll-to-playground-component! label))}) 
+                                     (component-examples/scroll-to-playground-component!
+                                      {:component-label label}))}) 
                  label]]]
               [:div (sx 
                      :$tablist-selected-tab-underline-color--$accent-600

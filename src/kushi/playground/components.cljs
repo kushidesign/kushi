@@ -54,22 +54,31 @@
         ;; row of buttons that show various stylings (no arrow etc)
 
 
-        ;; figure out sidemenu on mobile
+        
 
-        ;; dark mode review
+
 
         ;; Fix toast on mobile
-
-        ;; Debug popover on mobile
-
-        ;; switch tab back to `Examples` when component section goes offscreen
 
 
         ;; check size of app etc.
 
 
+        ;; upgrade lasertag clojars
+        ;; upgrade fireworks clojars
+        ;; upgrade kushi quickstart       
+        ;; upgrade kushi clojars
+        ;; deploy new kushi site
+
+
+        ;; resume
+        ;; 
+
+
         ;; upgrade tinycolor2
 
+
+        ;; switch tab back to `Examples` when component section goes offscreen (later)
 
 
         ;; Smoother transition between Examples and Docs section

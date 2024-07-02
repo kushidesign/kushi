@@ -13,7 +13,9 @@
 
 
 (defn sidenav-item-handler [label e]
-  (component-examples/scroll-to-playground-component! label)
+  (component-examples/scroll-to-playground-component!
+   {:component-label label
+    :scroll-y        16})
   (when-let [nav (some-> e
                          d/cet 
                          (d/nearest-ancestor
@@ -127,76 +129,6 @@
      {:coll playground-components}]]])
 
 
-(defn all-componenents-sidenav-items-mobile
-  [{:keys [coll modal?]}]
-  (into [:ul (sx :.flex-col-fs
-                 :.neutralize
-                 :bgc--transparent
-                 :overflow-y--auto
-                 :h--80%
-                 :w--100%
-                 :ai--fs
-                 :pb--0rem:12rem
-                 :pi--0
-                 :flex-wrap--wrap
-                 :column-gap--2.75rem
-                 :align-content--flex-start)]
-        (for [{:keys [label]} coll
-              :let            [focused? (= label
-                                           @state/*playground-first-intersecting)]]
-          [:li (sx :.capitalize
-                   :.pointer
-                   :.flex-col-c
-                   :fs--$xlarge
-                   :min-height--50px
-                   :fw--$semi-bold
-                   :w--fit-content
-                   :pb--0.25em
-                   [:hover>button.neutral.minimal:bgc :transparent])
-           [button
-            (merge-attrs
-             (sx :.pill
-                 :.minimal
-                 :.neutral
-                 :.xxxfast
-                 :pi--0
-                 :pb--0
-                 :hover:td--u
-                 :hover:tuo--0.1em
-                 [:&.neutral.minimal:bgc :transparent]
-                 [:&.neutral.minimal:bgc:hover :transparent]
-                 [:&.neutral.minimal:bgc:active :transparent]
-                 [:dark:&.neutral.minimal:bgc :transparent]
-                 [:dark:&.neutral.minimal:hover:bgc :transparent]
-                 [:dark:&.neutral.minimal:active:bgc :transparent]
-                 ;; [:fw (when focused? :$wee-bold)]
-                 ;; [:&.neutral.minimal:bgc (when focused? :$neutral-650)]
-                 ;; [:dark:&.neutral.minimal:bgc (when focused? :$neutral-300)]
-                 ;; [:&.neutral.minimal:c (when focused? :white)]
-                 ;; [:dark:&.neutral.minimal:c (when focused? :black)]
-                 )
-             (d/mouse-down-a11y sidenav-item-handler label))
-            label]])))
-
-(defn- all-componenents-sidenav-button-mobile [attrs]
-  [:button
-   attrs
-   [:span (sx :.flex-row-c
-              :gap--0.5em
-              :lg:&_.kushi-icon:d--none
-              :&_.kushi-icon.sidenav-close-icon:d--none
-              ["has-ancestor(nav[data-kushi-playground-sidenav][aria-expanded=\"true\"])"
-               {:>.sidenav-menu-icon:d :none
-                :>.sidenav-close-icon:d :inline-flex
-                :>ul:h                 "calc((100vh - (var(--navbar-height) * 2)) * 1)"
-                :h                     :fit-content
-                :o                     1}]
-              :c--$neutral-secondary-foreground
-              :dark:c--$neutral-secondary-foreground-inverse)
-    [icon (sx :.sidenav-menu-icon) :menu]
-    [icon (sx :.sidenav-close-icon) :close]
-    "All Components"]])
-
 
 (defn all-components-sidenav-mobile
   [playground-components]
@@ -222,7 +154,8 @@
           :data-kushi-playground-sidenav-mobile true
           :aria-expanded                        false})
 
-   [all-componenents-sidenav-button-mobile
+   ;; Button for toggling open nav 
+   [:button
     (merge-attrs 
      (sx :.all-components-sidenav-header
          :.pointer
@@ -235,10 +168,28 @@
                         diff (some-> nav
                                      d/client-rect
                                      :top
+                                     ;; Tie to global
                                      (- 50))]
                     (when (pos? diff) (d/scroll-by! {:y diff}))
-                    (d/toggle-boolean-attribute nav "aria-expanded")))})]
-
+                    (d/toggle-boolean-attribute nav "aria-expanded")))})
+    [:span (sx :.flex-row-c
+               :gap--0.5em
+               :lg:&_.kushi-icon:d--none
+               :&_.kushi-icon.sidenav-close-icon:d--none
+               ["has-ancestor(nav[data-kushi-playground-sidenav][aria-expanded=\"true\"])"
+                {:>.sidenav-menu-icon:d  :none
+                 :>.sidenav-close-icon:d :inline-flex
+                 :>ul:h                  "calc((100vh - (var(--navbar-height) * 2)) * 1)"
+                 :h                      :fit-content
+                 :o                      1}]
+               :c--$neutral-secondary-foreground
+               :dark:c--$neutral-secondary-foreground-inverse)
+     [icon (sx :.sidenav-menu-icon) :menu]
+     [icon (sx :.sidenav-close-icon) :close]
+     "All Components"]]
+   
+   
+   ;; Container for list of playground components
    [:div (sx :.flex-col-fs
              :ai--fs
              :.transition
@@ -252,7 +203,58 @@
              :o--0
              ["has-ancestor(nav[data-kushi-playground-sidenav][aria-expanded=\"true\"])"
               {:>ul:h "calc((100vh - (var(--navbar-height) * 2)) * 1)"
-               :h :fit-content
-               :o 1}])
-    [all-componenents-sidenav-items-mobile 
-     {:coll playground-components}]]])
+               :>ul:o 1
+               :h     :fit-content
+               :o     1}])
+
+    ;; List of playground components
+    (into [:ul (sx :.flex-col-fs
+                   :.neutralize
+                   :o--0
+                   :transition-property--opacity
+                   :transition-delay--$transition-duration
+                   :bgc--transparent
+                   :overflow-y--auto
+                   :w--100%
+                   :ai--fs
+                   :pb--0rem:12rem
+                   :pi--0
+                   :flex-wrap--wrap
+                   :column-gap--2.75rem
+                   :align-content--flex-start)]
+          (for [{:keys [label]} playground-components
+                :let            [focused? (= label
+                                             @state/*playground-first-intersecting)]]
+            [:li (sx :.capitalize
+                     :.pointer
+                     :.flex-col-c
+                     :fs--$xlarge
+                     :min-height--50px
+                     :fw--$semi-bold
+                     :w--fit-content
+                     :pb--0.25em
+                     [:hover>button.neutral.minimal:bgc :transparent])
+             [button
+              (merge-attrs
+               (sx :.pill
+                   :.minimal
+                   :.neutral
+                   :.xxxfast
+                   :pi--0
+                   :pb--0
+                   :hover:td--u
+                   :hover:tuo--0.1em
+                   [:&.neutral.minimal:bgc :transparent]
+                   [:&.neutral.minimal:bgc:hover :transparent]
+                   [:&.neutral.minimal:bgc:active :transparent]
+                   [:dark:&.neutral.minimal:bgc :transparent]
+                   [:dark:&.neutral.minimal:hover:bgc :transparent]
+                   [:dark:&.neutral.minimal:active:bgc :transparent]
+                 ;; [:fw (when focused? :$wee-bold)]
+                 ;; [:&.neutral.minimal:bgc (when focused? :$neutral-650)]
+                 ;; [:dark:&.neutral.minimal:bgc (when focused? :$neutral-300)]
+                 ;; [:&.neutral.minimal:c (when focused? :white)]
+                 ;; [:dark:&.neutral.minimal:c (when focused? :black)]
+                   )
+               (d/mouse-down-a11y sidenav-item-handler label))
+              label]]))]])
