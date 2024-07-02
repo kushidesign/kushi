@@ -162,23 +162,24 @@
         :zi--5
         :w--100%
         :p--1rem
-        :max-height--$navbar-height
+        :height--$navbar-height
         :pi--1.25rem
         :md:pi--4rem
         
-       #_["has(~&_div&_nav[aria-expanded][data-kushi-playground-sidenav])>*:display"
-        :none]
+       ["has(~&_div&_nav[aria-expanded=\"true\"][data-kushi-playground-sidenav])>*:opacity"
+        0]
         
         
         )
     (when (domo/media-supports-touch?)
       {:on-touch-start (partial header-touchstart-handler menu-id)}))
 
-   [:span (sx :.semi-bold :fs--$xlarge :o--0.5)
+   [:span (sx :.transition :.semi-bold :fs--$xlarge :o--0.5)
     "Kushi"]
    [:div
     (merge-attrs
      (sx :.relative
+         :.transition
          :&.has-hover&_a:d--flex
          :&.has-hover>div.explore-menu-container:h--$menu-height
          :&.has-hover&_nav:mbs--4rem
@@ -225,6 +226,6 @@
              :w--$overlay-width
              :h--0)]
 
-   
-   [light-dark-mode-switch (sx :.light)]]))
+   [light-dark-mode-switch (sx :.light :.transition)]]))
+         
 
