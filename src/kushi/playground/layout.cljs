@@ -184,6 +184,7 @@
      [divisor]]]
 
    [sidenav/all-components-sidenav playground-components]
+   [sidenav/all-components-sidenav-mobile playground-components]
 
    ;; Cycle through collection of components defined in playground.core
    (into [:section] 
