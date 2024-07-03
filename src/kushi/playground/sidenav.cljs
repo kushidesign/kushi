@@ -203,8 +203,8 @@
                :c--$neutral-secondary-foreground
                :dark:c--$neutral-secondary-foreground-inverse
                )
-     [icon (sx :.sidenav-menu-icon :.extra-light :.xlarge) :menu]
-     [icon (sx :.sidenav-close-icon :.extra-light :.xlarge) :close]
+     [icon (sx :.sidenav-menu-icon :.extra-light :.large) :menu]
+     [icon (sx :.sidenav-close-icon :.extra-light :.large) :close]
      "All Components"]]
    
    

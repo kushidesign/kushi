@@ -1,6 +1,6 @@
 (ns kushi.playground.nav
   (:require
-   [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
+   
    [clojure.string :as string]
    [domo.core :as domo]
    [kushi.playground.state :as state]
@@ -134,15 +134,15 @@
                        et
                        "button.kushi-explore" )]
     (if menu-trigger?
-      (!? 'menu-trigger:toggling-class
-          (domo/toggle-class! menu-el "has-hover"))
-      (if (domo/matches-or-nearest-ancestor?
-           et
-           (str "#" menu-id " a"))
-        (!?-- "do nothing")
-        (!? 'menu-dead-zone:removing-class
-            (when (domo/has-class? menu-el "has-hover") 
-              (domo/remove-class! menu-el "has-hover")))))))
+      ;; (!? 'menu-trigger:toggling-class
+      ;;     (domo/toggle-class! menu-el "has-hover"))
+      nil
+      (if (domo/matches-or-nearest-ancestor? et (str "#" menu-id " a"))
+        ;; (!?-- "do nothing")
+        nil
+        (when (domo/has-class? menu-el "has-hover") 
+          (domo/remove-class! menu-el "has-hover"))
+        ))))
 
 (defn header []
  (let [menu-id "kushi-playground-menu"]

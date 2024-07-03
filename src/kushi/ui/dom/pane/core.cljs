@@ -1,6 +1,5 @@
 (ns kushi.ui.dom.pane.core
   (:require [applied-science.js-interop :as j]
-            [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?let ?let ?trace ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
             [clojure.string :as string]
             [domo.core :as domo] ;; Import this to create defclasses
             [goog.functions]

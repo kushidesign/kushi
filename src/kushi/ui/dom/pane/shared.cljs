@@ -1,6 +1,6 @@
 (ns kushi.ui.dom.pane.shared
   (:require
-   [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
+   
    [clojure.string :as string]
    [goog.string]
    [kushi.ui.util :as util :refer [maybe nameable? as-str]]))

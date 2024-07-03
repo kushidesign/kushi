@@ -1,7 +1,7 @@
 (ns kushi.playground.state
   (:require
    [clojure.string :as string]
-   [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
+   
    [kushi.core :refer [breakpoints]]
    [kushi.playground.components :refer [playground-components]]
    [domo.core :as domo]
@@ -74,7 +74,7 @@
 
 (def playground-intro-intersecting?
   (reagent.ratom/reaction
-   (!? (:playground-intro-intersecting? @*playground))))
+   (:playground-intro-intersecting? @*playground)))
 
 (defn set-first-intersecting! [m]
   (some->> m

@@ -1,6 +1,5 @@
 (ns kushi.ui.popover.core
   (:require
-   [fireworks.core :refer [? !?]]
    [applied-science.js-interop :as j]
    [goog.string]
    [domo.core :as domo]

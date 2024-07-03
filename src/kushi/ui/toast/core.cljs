@@ -1,6 +1,5 @@
 (ns kushi.ui.toast.core
   (:require [domo.core :as domo]
-            [fireworks.core :refer [?]]
             [kushi.core :refer (keyed)]
             [kushi.ui.dom.pane.core :as pane]
             [kushi.ui.dom.pane.placement :refer [user-placement]]

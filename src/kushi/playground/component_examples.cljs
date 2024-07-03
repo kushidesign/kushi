@@ -1,5 +1,5 @@
 (ns ^:dev/always kushi.playground.component-examples
-  (:require [fireworks.core :refer [? ?flop !? pprint]]
+  (:require [fireworks.pp :refer [pprint]]
             [clojure.string :as string]
             ;; [clojure.walk :as walk]
             [kushi.core :refer (sx merge-attrs keyed)]
