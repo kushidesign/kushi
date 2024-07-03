@@ -1,15 +1,11 @@
 (ns kushi.playground.sidenav
   (:require
-   [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp- ?trace]]
    [domo.core :as d]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.util :refer [as-str]]
-   [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.icon.core :refer [icon]]
-   [kushi.playground.component-examples :as component-examples]
-   [kushi.playground.state :as state]
-   [reagent.dom :as rdom]))
+   [kushi.playground.component-examples :as component-examples]))
 
 
 (defn sidenav-item-handler [opts e]
@@ -36,6 +32,13 @@
     "background-color: var(--neutral-minimal-background-color-hover);"
     "}"
 
+    ".dark #app[data-kushi-playground-first-intersecting=\"" x "\"] "
+    "[data-kushi-playground-sidenav-button=\"" x "\"]"
+    "{"
+    "color: var(--neutral-minimal-color-hover-inverse);"
+    "background-color: var(--neutral-minimal-background-color-hover-inverse);"
+    "}"
+
     ;; "#app[data-kushi-playground-first-intersecting=\"" x "\"] "
     ;; "[data-kushi-playground-sidenav-button=\"" x "\"]:hover"
     ;; "{"
@@ -49,7 +52,6 @@
     ;; "color: var(--foreground-color-inverse);"
     ;; "background-color: var(--background-color-inverse);"
     ;; "}"
-
     )])
 
 
@@ -84,9 +86,8 @@
         :cursor--default)
     [:span (sx :.flex-row-c
                :gap--0.5em
-              ;;  :c--$neutral-secondary-foreground
-              ;;  :dark:c--$neutral-secondary-foreground-inverse
-               )
+               :c--$neutral-secondary-foreground
+               :dark:c--$neutral-secondary-foreground-inverse)
      "All Components"]]
 
    [:div (sx 
@@ -105,9 +106,7 @@
                    :pb--0rem:2rem
                    :pi--0em
                    :column-gap--normal
-                   :fs--$small
-                  ;;  :row-gap--1em
-                   )]
+                   :fs--$small)]
           (for [{:keys [label]} playground-components]
             [:<>
              [style-tag-first-intersecting label]
@@ -115,11 +114,7 @@
                       :.pointer
                       :.flex-col-c
                       :w--fit-content
-                      :pb--0.25em
-                      #_[:hover>button.neutral.minimal:bgc
-                         (if focused? :$neutral-650 :$neutral-100)]
-                      ;; [:hover>button.neutral.minimal:bgc :transparent]
-                      )
+                      :pb--0.25em)
               [button
                (merge-attrs
                 (sx :.pill
@@ -128,21 +123,10 @@
                     :.xxxfast
                    :pi--1em
                    :pb--0.5em
-                    ;; :pb--0em
-                    ;; :pi--0
-                    ;; :hover:td--u
-                    ;; :hover:tuo--0.1em
-                    ;; [:&.neutral.minimal:bgc :transparent]
-                    ;; [:&.neutral.minimal:bgc:hover :transparent]
-                    ;; [:&.neutral.minimal:bgc:active :transparent]
-                    ;; [:dark:&.neutral.minimal:bgc :transparent]
-                    ;; [:dark:&.neutral.minimal:hover:bgc :transparent]
-                    ;; [:dark:&.neutral.minimal:active:bgc :transparent]
-                    ;; [:fw (when focused? :$wee-bold)]
-                    ;; [:&.neutral.minimal:bgc (when focused? :$neutral-650)]
-                    ;; [:dark:&.neutral.minimal:bgc (when focused? :$neutral-300)]
-                    ;; [:&.neutral.minimal:c (when focused? :white)]
-                    ;; [:dark:&.neutral.minimal:c (when focused? :black)]
+                   :&.neutral.minimal:c--$neutral-secondary-foreground
+                   :&.neutral.minimal:hover:c--black
+                   :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
+                   :dark:&.neutral.minimal:hover:c--white
                     {:data-kushi-playground-sidenav-button label})
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
                label]]]))]])
@@ -164,9 +148,7 @@
          ;; :h--0
          :pi--1.25rem
          :md:pi--4rem
-         ;; [:ibs "calc(0px - 4rem + 0.25em)"]
          [:ibs "calc(0px - 4rem)"]
-         ;; [:lg:ibs "calc(0px - 4rem)"]
          [:xsm:ibs "calc(0px - 6rem)"]
          :md:iie--4rem
          [:translate "0 calc(4rem + 0.25em + var(--navbar-height))"]
@@ -190,8 +172,10 @@
     (merge-attrs 
      (sx :.all-components-sidenav-header
          :.pointer
-        ;;  :&.neutral.minimal:c--$neutral-secondary-foreground
-        ;;  :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
+
+        ;; To use softer color 
+         :&.neutral.minimal:c--$neutral-secondary-foreground
+         :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
          )
      {:on-click (fn [e] 
                   (let [nav  (some-> e
@@ -214,8 +198,10 @@
                  :>ul:h                  "calc((100vh - (var(--navbar-height) * 2)) * 1)"
                  :h                      :fit-content
                  :o                      1}]
-              ;;  :c--$neutral-secondary-foreground
-              ;;  :dark:c--$neutral-secondary-foreground-inverse
+
+              ;; To use softer color 
+               :c--$neutral-secondary-foreground
+               :dark:c--$neutral-secondary-foreground-inverse
                )
      [icon (sx :.sidenav-menu-icon :.extra-light :.xlarge) :menu]
      [icon (sx :.sidenav-close-icon :.extra-light :.xlarge) :close]
@@ -256,9 +242,7 @@
                    :flex-wrap--wrap-reverse
                    :column-gap--2.75rem
                    :align-content--center
-                   :fs--$small
-                  ;;  :fw--$semi-bold
-                   )]
+                   :fs--$small)]
           (for [{:keys [label]} playground-components]
             [:<> 
              [style-tag-first-intersecting label]
@@ -266,8 +250,7 @@
                       :.pointer
                       :.flex-col-c
                       :w--fit-content
-                      :pb--0.25em
-                      #_[:hover>button.neutral.minimal:bgc :transparent])
+                      :pb--0.25em)
               [button
                (merge-attrs
                 (sx :.pill
@@ -276,19 +259,10 @@
                     :.xxxfast
                     :pi--1em
                     :pb--0.5em
-                    ;; :hover:td--u
-                    ;; :hover:tuo--0.1em
-                    ;; [:&.neutral.minimal:bgc :transparent]
-                    ;; [:&.neutral.minimal:bgc:hover :transparent]
-                    ;; [:&.neutral.minimal:bgc:active :transparent]
-                    ;; [:dark:&.neutral.minimal:bgc :transparent]
-                    ;; [:dark:&.neutral.minimal:hover:bgc :transparent]
-                    ;; [:dark:&.neutral.minimal:active:bgc :transparent]
-                    ;; [:fw (when focused? :$wee-bold)]
-                    ;; [:&.neutral.minimal:bgc (when focused? :$neutral-650)]
-                    ;; [:dark:&.neutral.minimal:bgc (when focused? :$neutral-300)]
-                    ;; [:&.neutral.minimal:c (when focused? :white)]
-                    ;; [:dark:&.neutral.minimal:c (when focused? :black)]
+                    :&.neutral.minimal:c--$neutral-secondary-foreground
+                    :&.neutral.minimal:hover:c--black
+                    :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
+                    :dark:&.neutral.minimal:hover:c--white
                     {:data-kushi-playground-sidenav-button label})
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
                label]]]))]])

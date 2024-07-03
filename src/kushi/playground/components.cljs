@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.playground.components
  (:require 
-  [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
   [kushi.core :refer [sx]]
   [kushi.ui.callout.core :refer [callout]]
   [kushi.ui.callout.demo :as callout.demo]
@@ -8,7 +7,7 @@
   [kushi.ui.button.demo :as button.demo]
   [kushi.ui.card.core :refer [card]]
   [kushi.ui.card.demo :as card.demo]
-  [kushi.ui.collapse.core :refer [accordion collapse]]
+  [kushi.ui.collapse.core :refer [collapse]]
   [kushi.ui.collapse.demo :as collapse.demo]
   [kushi.ui.grid.core :refer [grid]]
   [kushi.ui.grid.demo :as grid.demo]
@@ -80,6 +79,7 @@
 
         ;; switch tab back to `Examples` when component section goes offscreen (later)
 
+        ;; make mobile All components menu work on hover for desktop (later)
 
         ;; Smoother transition between Examples and Docs section
         ;; - fade-in, fade-out

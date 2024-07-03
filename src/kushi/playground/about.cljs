@@ -1,15 +1,17 @@
 (ns kushi.playground.about
   (:require [clojure.string :as string]
-            [fireworks.pp :refer [pprint]]
             [domo.core :refer (copy-to-clipboard!)]
+            [fireworks.pp :refer [pprint]]
             [kushi.color :refer [colors->tokens]]
             [kushi.core :refer (sx merge-attrs keyed)]
             [kushi.playground.colors :as playground.colors]
+            [kushi.playground.nav :refer [route!]]
             [kushi.playground.shared-styles]
             [kushi.playground.state :as state]
-            [kushi.playground.util :as util]
+            [kushi.ui.button.core :refer [button]]
             [kushi.ui.core :refer [defcom]]
             [kushi.ui.divisor.core :refer (divisor)]
+            [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.label.core :refer [label]]
             [kushi.ui.link.core :refer [link]]
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
@@ -308,7 +310,9 @@
    (sx :>*:max-width--550px
        :>p:first-child:mbs--0
        :>p:mb--2em
-       :>p:lh--1.7)
+       :>p:last-of-type:mbe--2.5em
+       :>p:lh--1.7
+       :pbe--2.25rem)
    [:p
     "Kushi is a base for building web UI with "
     [link (sx {:href   "https://clojurescript.org/"
@@ -323,11 +327,38 @@
    [:p
     "In addition to providing a css-in-cljs solution, Kushi offers a basic suite of themeable, headless UI components for free. "
     "This set of building blocks consitutes a base for rolling your own design system."]
-   [:p
-    "This site provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]])
+   #_[:p 
+    "This site provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]
+   [:a {:href     "/components"
+        :on-click (fn [e]
+                    (route! "kushi-playground-menu" false e)
+                    #_(component-examples/scroll-to-playground-component!
+                     {:component-label "button"
+                      :scroll-y        16}))}
+    [button 
+     (sx  :.filled :.rounded :.semi-bold )
+     "Explore components"
+     [icon :arrow-right-alt]]]])
 
 
-(defn component-playground-about [{:keys [header]}]
-  (when (or @state/*md-or-smaller?
-            (not @state/*focused-component))
-    [intro-section {:-header header}]))
+(defn component-playground-about []
+  [:section
+   (sx :>*:max-width--550px
+       :>p:first-child:mbs--0
+       :>p:mb--2em
+      ;;  :>p:last-of-type:mbe--2.5em
+       :>p:lh--1.7
+      ;;  :pbe--2.25rem
+       )
+   [:p 
+    "This page provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]
+   [:a {:href     "/components"
+        :on-click (fn [e]
+                    (route! "kushi-playground-menu" false e)
+                    #_(component-examples/scroll-to-playground-component!
+                     {:component-label "button"
+                      :scroll-y        16}))}
+    #_[button 
+     (sx  :.filled :.rounded :.semi-bold )
+     "Explore components"
+     [icon :arrow-right-alt]]]])

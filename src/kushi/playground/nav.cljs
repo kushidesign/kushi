@@ -198,8 +198,8 @@
          :.small
          :pi--0.8em
          :pb--0.4em
-        ;;  :&.neutral.minimal:c--$neutral-secondary-foreground
-        ;;  :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
+         :&.neutral.minimal:c--$neutral-secondary-foreground
+         :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
          )
      [icon :keyboard-arrow-down]
      "Explore"]

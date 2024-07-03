@@ -1,7 +1,6 @@
 (ns site.views
   (:require
-   [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
-   [kushi.core :refer [sx inject!]]
+   [kushi.core :refer [sx]]
    [kushi.playground.layout :as layout]
    [kushi.playground.nav :as nav]
    [kushi.playground.components :refer [playground-components]]
@@ -23,9 +22,11 @@
                  "components")
   (into 
    [:div (sx :.flex-col-fs)
-    #_[:h1.xxxlarge "DUH" ]
     [nav/header]
-    #_[layout/loading-spinner]]
+    ;; Spinner between page transitions
+    ;; Leave out for now as transitions are instant
+    #_[layout/loading-spinner]
+    ]
     (for [[view {:keys [content label] :as route}] routes
           :let [label (or label (->> view last))
                 path  (string/join "/" view)]

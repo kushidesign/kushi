@@ -1,23 +1,17 @@
 (ns ^:dev/always kushi.playground.layout
   (:require [domo.core :as domo]
             [clojure.string :as string]
-            [fireworks.core :refer [? ?-- ?- ?trace ?log]]
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.core :refer [sx merge-attrs defclass]]
-            ;; [kushi.ui.link.core :refer [link]]
             [kushi.ui.core :refer [defcom]]
-            ;; [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal]]
             [kushi.ui.button.core :refer [button]]
-            ;; [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.spinner.core :refer [propeller]]
             [kushi.playground.about :as about]
             [kushi.playground.component-docs :as docs]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.sidenav :as sidenav]
             [kushi.playground.state :as state]
-            [kushi.playground.util :as util]
-            ;; [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
-            ))
+            [kushi.playground.util :as util]))
 
 (defn loading-spinner []
   [:div (sx :.xxlarge
@@ -92,9 +86,6 @@
    (string/capitalize tab-label)])
 
 
-(declare kushi-about)
-
-
 (defclass component-section-header
   :.neutralize
   :.flex-col-fs
@@ -140,6 +131,7 @@
          ;; why this data-attr?
          {:data-kushi-playground-section "about"})
      [:div (sx :.component-section-header
+              ;;  :d--none
                :position--relative
                :top--unset
                :mbs--$navbar-height
@@ -162,7 +154,7 @@
         " [data-kushi-playground-component=\"" x "\"]{opacity: 1; filter: none}")])
 
 
-;; Everytime there is a resize event -
+;; Everytime there is a resize event
 ;; Check if viewport height changes
 ;; If so, redo all the intersection observer stuff
 (defn component-playground-content
@@ -179,9 +171,8 @@
                  {:element          el
                   :not-intersecting #(f false)
                   :intersecting     #(f true)}))))}
-    [about/kushi-about]
-    [:div (sx :mbe--2rem)
-     [divisor]]]
+    [about/component-playground-about]
+    [:div [divisor]]]
 
    [sidenav/all-components-sidenav playground-components]
    [sidenav/all-components-sidenav-mobile playground-components]
@@ -220,18 +211,12 @@
                                         update-in
                                         [:intersecting])]
                          {:element          el
-                          :not-intersecting #(do 
-                                              ;;  (!?-- (str label " is NOT intersecting"))
-                                              ;;  (!? (f disj label))
-                                               (->> label
-                                                    (f disj)
-                                                    state/set-first-intersecting!))
-                          :intersecting     #(do 
-                                              ;;  (!?-- (str label " is NOT intersecting"))
-                                              ;;  (!? (f disj label))
-                                               (->> label
-                                                    (f conj)
-                                                    state/set-first-intersecting!))
+                          :not-intersecting #(->> label
+                                                  (f disj)
+                                                  state/set-first-intersecting!)
+                          :intersecting     #(->> label
+                                                  (f conj)
+                                                  state/set-first-intersecting!)
 
                           ;; Incorporate into global val for header height
                           :root-margin      "51px 0px 0px 0px"}))))})
@@ -250,6 +235,7 @@
                                       {:component-label label
                                        :scroll-y        16}))}) 
                  label]]]
+              ;; TODO - break this out into tabs component
               [:div (sx 
                      :$tablist-selected-tab-underline-color--$accent-600
                      :$tablist-selected-tab-underline-color-inverse--$accent-300
