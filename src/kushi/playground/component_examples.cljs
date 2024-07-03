@@ -10,7 +10,7 @@
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.icon.mui.svg :as mui.svg]
-            [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal]]
+            [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal modal-close-button]]
             [kushi.ui.tooltip.core :refer (tooltip-attrs)]
             [kushi.ui.util :refer [maybe as-str]]
             [domo.core :as d]))
@@ -162,13 +162,14 @@
                :overflow--hidden
                :width--$main-content-max-width
                {:id modal-id})
+     [modal-close-button {:-modal-id modal-id}]
      [:div (sx :.flex-row-sb :ai--fs :gap--1.5em)
       [:div
        (sx :.flex-col-fs :ai--b :gap--1rem )
        [:h1 (sx :.component-section-header-label) component-label]
        label]
-      [button (sx :.extra-light
-                  :.xxxlarge 
+      #_[button (sx :.extra-light
+                  :.xxlarge 
                   :.minimal 
                   :.pill
                   :p--0
@@ -181,7 +182,6 @@
       snippets-header
       snippets]]))
 
-
 (defn example-modal-trigger [modal-id]
   [button
    (sx :.minimal
@@ -191,7 +191,7 @@
        :.pill
        :pb--0.4em
        :&.accent.minimal:hover:background-color--$accent-50
-       :dark&.accent.minimal:hover:background-color--$accent-800
+       :dark:&.accent.minimal:hover:background-color--$accent-800
 
        ;; Next 3 styles will give it a link-button style
        #_:p--0
@@ -327,6 +327,7 @@
    [:section 
     (sx :.relative
         :.code
+        :.xsmall
         :xsm:p--1.5em
         :p--1.0em
         :pie--3.5em
@@ -367,14 +368,14 @@
     [:div
      (sx :.relative
          :.flex-row-fs
-        ;;  :fs--small
-        ;;  :xsm:fs--medium
          :&_code:fs--0.95em
          :&_.code:fs--0.95em
          :&_code:ws--n
          :&_.code:ws--n
          :&_pre&_code:p--0
          :&_pre&_.code:p--0
+         :&_pre&_code:fs--$xsmall
+         :&_pre&_.code:fs--$xsmall
          :lh--1.7
          :ai--fs
          :min-width--200px

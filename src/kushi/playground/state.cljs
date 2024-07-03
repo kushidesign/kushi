@@ -76,13 +76,24 @@
   (reagent.ratom/reaction
    (!? (:playground-intro-intersecting? @*playground))))
 
-(def *playground-first-intersecting
+(defn set-first-intersecting! [m]
+  (some->> m
+           :intersecting
+           (sort-by #(.indexOf ordered-playground-components-labels %))
+           first
+           (.setAttribute (domo/el-by-id "app") "data-kushi-playground-first-intersecting")))
+
+#_(def *playground-first-intersecting
   (reagent.ratom/reaction
-   (let [ret (first (sort-by #(.indexOf ordered-playground-components-labels %)
+   (let [_ (?-- :HIII)
+         ret (first (sort-by #(.indexOf ordered-playground-components-labels %)
                              (:intersecting @*playground)))]
+
+     (? "first intersecting is " ret)
+
      (.setAttribute (domo/el-by-id "app")
                     "data-kushi-playground-first-intersecting"
-                    (!? ret))
+                    ret)
      ret)))
 
 

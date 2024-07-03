@@ -24,13 +24,14 @@
                 ["xsm:&_.kushi-card:nth-child(5):d" :block]
                 :&_.kushi-card:w--fit-content
                 :&_.kushi-card:b--1px:solid:$neutral-200
-                :dark:&_.kushi-card:b--1px:solid:$neutral-800)
+                :dark:&_.kushi-card:b--1px:solid:$neutral-700)
     :snippets-header component-examples/sizes-snippet-header*
     :snippets ['[card (sx :.xxlarge) "My content"]]
     :examples  (for [sz sizes]
                  {:label (name sz)
                   :attrs {:class [sz]}
                   :args  [[:div (sx :.flex-row-fs
+                                    :.neutralize
                                     :ai--stretch
                                     :gap--0.8em)
                            [:div (sx :.rounded
@@ -38,7 +39,7 @@
                                      :overflow--hidden
                                      :.transition
                                      :bgc--$neutral-200
-                                     :dark:bgc--$neutral-850
+                                     :dark:bgc--$neutral-800
                                      :w--3.5em
                                      :h--3.5em)
                             [:span (sx :.absolute-centered
@@ -48,7 +49,9 @@
                              "🐻‍❄"]]
                            [:section (sx :.flex-col-sa) 
                             [:p (sx :fs--1.25em :.wee-bold) "Polar Bear"] 
-                            [:p (sx :c--$neutral-secondary-foreground) "polar.bear@example.com"]]]]})}
+                            [:p (sx :c--$neutral-secondary-foreground
+                                    :dark:c--$neutral-secondary-foreground-inverse)
+                             "polar.bear@example.com"]]]]})}
    
    {:desc      "Elevated levels from 0 to 5"
     :row-attrs (sx :.transition

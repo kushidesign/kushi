@@ -169,8 +169,8 @@
   [playground-components]
   [:<> 
    [:div
-    {:ref (fn [el]
-            (when el
+    #_{:ref (fn [el]
+            (when (? el)
               (domo/observe-intersection 
                (let [f (partial swap!
                                 state/*playground
@@ -209,21 +209,36 @@
                 ;;  [:filter "blur(0px)"]
                 ;; ---------------------------------------
                  
-                 {:data-kushi-playground-component label
-                  :ref                             (fn [el]
-                                                     (when el
-                                                       (domo/observe-intersection 
-                                                        (let [f (partial swap!
-                                                                         state/*playground
-                                                                         update-in
-                                                                         [:intersecting])]
-                                                          {:element          el
-                                                           :not-intersecting #(f disj label)
-                                                           :intersecting     #(f conj label)
-                                                          ;; Incorporate into global val for header height
-                                                           :root-margin      "51px 0px 0px 0px"}))))})
+                 {:data-kushi-playground-component
+                  label
+                  :ref                             
+                  (fn [el]
+                    (when el
+                      (domo/observe-intersection 
+                       (let [f (partial swap!
+                                        state/*playground
+                                        update-in
+                                        [:intersecting])]
+                         {:element          el
+                          :not-intersecting #(do 
+                                              ;;  (!?-- (str label " is NOT intersecting"))
+                                              ;;  (!? (f disj label))
+                                               (->> label
+                                                    (f disj)
+                                                    state/set-first-intersecting!))
+                          :intersecting     #(do 
+                                              ;;  (!?-- (str label " is NOT intersecting"))
+                                              ;;  (!? (f disj label))
+                                               (->> label
+                                                    (f conj)
+                                                    state/set-first-intersecting!))
+
+                          ;; Incorporate into global val for header height
+                          :root-margin      "51px 0px 0px 0px"}))))})
              
-             [:div (sx :.component-section-header)
+             [:div (sx :.component-section-header
+                       [:box-shadow "-20px -20px 0px 20px var(--background-color), -10px 10px 20px 1px var(--background-color)"]
+                       [:dark:box-shadow "-20px -20px 0px 20px var(--background-color-inverse), -10px 10px 20px 1px var(--background-color-inverse)"] )
               [:div (sx :.flex-row-fs :ai--c :gap--1rem)
                [:h1 (sx :.component-section-header-label) 
                 [:a (sx :.pointer 

@@ -166,7 +166,7 @@
         :pi--1.25rem
         :md:pi--4rem
         
-       ["has(~&_div&_nav[aria-expanded=\"true\"][data-kushi-playground-sidenav])>*:opacity"
+       #_["has(~&_div&_nav[aria-expanded=\"true\"][data-kushi-playground-sidenav])>*:opacity"
         0]
         
         
@@ -174,12 +174,12 @@
     (when (domo/media-supports-touch?)
       {:on-touch-start (partial header-touchstart-handler menu-id)}))
 
-   [:span (sx :.transition :.semi-bold :fs--$xlarge :o--0.5)
+   [:span (sx #_:.transition :.semi-bold :fs--$xlarge :o--0.5)
     "Kushi"]
    [:div
     (merge-attrs
      (sx :.relative
-         :.transition
+         #_:.transition
          :&.has-hover&_a:d--flex
          :&.has-hover>div.explore-menu-container:h--$menu-height
          :&.has-hover&_nav:mbs--4rem
@@ -198,8 +198,9 @@
          :.small
          :pi--0.8em
          :pb--0.4em
-         :&.neutral.minimal:c--$neutral-secondary-foreground
-         :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse)
+        ;;  :&.neutral.minimal:c--$neutral-secondary-foreground
+        ;;  :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
+         )
      [icon :keyboard-arrow-down]
      "Explore"]
     [:div (sx 'explore-menu-container

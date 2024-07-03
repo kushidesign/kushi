@@ -191,7 +191,7 @@
 
 (def playground-components 
   (filter 
-  :label
+   :label
   #_#(contains? #{
                 ;; "button"     ;; ✅
                 ;; "icon"       ;; ✅
