@@ -36,176 +36,20 @@
   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
   [kushi.ui.tooltip.demo :as tooltip.demo]))
 
-
-        ;; for surfaces:
-        ;; Create classic variant
-        ;; Create surface variant
-        ;; Create belcher variant
-        ;; Create fantasy variant
-        ;; Create sci-fi variant
-        ;; Create gel variant
-        
-
-        ;; tooltips(delay):
-        ;; row of buttons that show all positions with no delay
-        ;; row of buttons that show various delays 
-        ;; row of buttons that show various animations 
-        ;; row of buttons that show various stylings (no arrow etc)
-
-
-        
-
-
-
-        ;; Fix toast on mobile
-
-
-        ;; check size of app etc.
-
-
-        ;; upgrade lasertag clojars
-        ;; upgrade fireworks clojars
-        ;; upgrade kushi quickstart       
-        ;; upgrade kushi clojars
-        ;; deploy new kushi site
-
-
-
-        ;; resume
-
-
-        ;; upgrade tinycolor2
-
-
-        ;; switch tab back to `Examples` when component section goes offscreen (later)
-
-        ;; make mobile All components menu work on hover for desktop (later)
-
-        ;; Smoother transition between Examples and Docs section
-        ;; - fade-in, fade-out
-        ;; - hightlight blink on tab header
-
-
-        ;; Activate side components mobile menu on hover (for small desktops)
-
-        ;; Some koind of splash page? (later)
-
-        ;; finish rest of snippets (later)
-
-        ;; section that is scrolling up and out , fade it out (later)
-
-        ;; jiggle animation not work on mobile safari (later)
-
-        ;; seems fine for now  ;; For some reason modal and card do not register as intersecting
-
-        ;; test with pulling :examples from fn meta, then merging with examples from demo (later)
-
-        ;; Maybe try to figure out feature macro (later)
-
-
-        ;; Figure out interactive modal (later)
-
-        ;; Add link and divisor components to doc (later)
-
-        ;; Add tablist and tabs component
-
-        ;; Redo color section design (later)
-
-
-        ;; Make a p-like component for consistent body copy maybe call it text
-        ;;   - Use text sizes for this 
-
-        ;; Add :.text-xxlarge utility scale (later)
-
-        ;; Add :.tracking-xxloose utility scale (later)
-        
-        ;; Add :.leading-xxloose utility scale (later)
-        
-
-        ;; Remove pretty dep, swap in grquick (later)
-
-
-        ;; Add 
-
-
-        ;; Add APCA-based color checks
-
-        ;;
-
-        
-
-        ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;; Sketch for features macro:
-'(features {:req         [kushi.ui.$.core :refer [$]]
-            :examples    $.demo/examples}
-           [{:sym            button
-             :variants-base  #{:rounded :filled :bordered :minimal}
-             :variants-order [:rounded :filled :bordered :minimal]
-             :variants-attrs {:rounded  (sx :.rounded)
-                              :filled   (sx :.rounded :.filled)
-                              :bordered (sx :.rounded :.bordered)
-                              :minimal  (sx :.rounded :.minimal)} }
-            
-            {:sym          spinner
-             :extra-refers [donut propeller thinking]}
-
-            ;; Uses :refer-sym override
-            ;; Uses :extra reqs
-            ;; Uses :component  - maybe change that name to `render`* something
-            {:sym               toast
-             :refer-sym         toast-attrs
-             :component         :span
-             :extra-refers      [toast-attrs dismiss-toast!]
-             :variants-base     #{:positions}
-             :variants-attrs    {:positions {}}}])
-
-;=>
-
-'[{:label          "button"
-   :component      button
-   :examples       button.demo/examples
-   :component-meta (-> button var meta)
-   :reqs           '[[kushi.ui.button.core :refer [button]]]
-   :variants-base  #{:rounded :filled :bordered :minimal}
-   :variants-order [:rounded :filled :bordered :minimal]
-   :variants-attrs {:rounded  (sx :.rounded)
-                    :filled   (sx :.rounded :.filled)
-                    :bordered (sx :.rounded :.bordered)
-                    :minimal  (sx :.rounded :.minimal)}}
-
-  {:label          "spinner"
-   :examples       spinner.demo/examples
-   :component-meta (-> spinner var meta)
-   :component      spinner
-   :reqs           '[[kushi.ui.spinner.core :refer [spinner donut propeller thinking ]]]}
-  
-  {:label          "toast" 
-   :examples       toast.demo/examples
-   :component-meta (-> toast var meta)
-   :component      :span
-   :reqs           '[[kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]]
-   :variants-base  #{:positions}
-   :variants-attrs {:positions {}}}
-
-  ]
-
-
 (def playground-components 
   (filter 
    :label
   #_#(contains? #{
-                ;; "button"     ;; ✅
-                ;; "icon"       ;; ✅
-                ;; "spinner"    ;; ✅
-                ;; "switch"     ;; ✅
-                ;; "radio"      ;; ✅
-                ;; "checkbox"   ;; ✅ 
-                ;; "slider"     ;; ✅
-                "text field" ;; ✅
+                ;; "button"     
+                ;; "icon"       
+                ;; "spinner"    
+                ;; "switch"     
+                ;; "radio"      
+                ;; "checkbox"   
+                ;; "slider"     
+                "text field" 
 
-                ;; "tooltip"    ;; ✅
+                ;; "tooltip"    
                 ;; "popover"    ;; PS
                 ;; "modal"      ;; PS
                 ;; "toast"      ;; PS
