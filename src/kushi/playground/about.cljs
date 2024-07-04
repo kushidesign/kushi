@@ -1,7 +1,7 @@
 (ns kushi.playground.about
   (:require [clojure.string :as string]
             [domo.core :refer (copy-to-clipboard!)]
-            [fireworks.pp :refer [pprint]]
+            [me.flowthing.pp :refer [pprint]]
             [kushi.color :refer [colors->tokens]]
             [kushi.core :refer (sx merge-attrs keyed)]
             [kushi.playground.colors :as playground.colors]
