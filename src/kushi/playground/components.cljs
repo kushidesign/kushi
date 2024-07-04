@@ -120,6 +120,9 @@
         ;; Add :.tracking-xxloose utility scale (later)
         
         ;; Add :.leading-xxloose utility scale (later)
+        
+
+        ;; Remove pretty dep, swap in grquick (later)
 
 
         ;; Add 

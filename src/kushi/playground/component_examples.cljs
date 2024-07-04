@@ -1,19 +1,19 @@
 (ns ^:dev/always kushi.playground.component-examples
-  (:require [fireworks.pp :refer [pprint]]
-            [clojure.string :as string]
-            ;; [clojure.walk :as walk]
+  (:require [clojure.string :as string] ;; [clojure.walk :as walk]
+            [domo.core :as d]
             [kushi.core :refer (sx merge-attrs keyed)]
-            [kushi.playground.util :as util]
             [kushi.playground.component-docs :as docs]
+            [kushi.playground.util :as util]
             [kushi.ui.button.core :refer (button)]
             [kushi.ui.core :refer (defcom)]
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.icon.mui.svg :as mui.svg]
-            [kushi.ui.modal.core :refer [modal open-kushi-modal close-kushi-modal modal-close-button]]
+            [kushi.ui.modal.core :refer [close-kushi-modal modal
+                                         modal-close-button open-kushi-modal]]
             [kushi.ui.tooltip.core :refer (tooltip-attrs)]
-            [kushi.ui.util :refer [maybe as-str]]
-            [domo.core :as d]))
+            [kushi.ui.util :refer [as-str maybe]]
+            [me.flowthing.pp :refer [pprint]]))
 
 (defn- example-row-variant
   [component
