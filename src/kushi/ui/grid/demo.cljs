@@ -29,7 +29,7 @@
                                :-gap              :15px
                                :-aspect-ratio     :2:3})
                           (for
-                           [x (range 15)]
+                           [x (range 18)]
                             [:div [:div (sx :.absolute-fill
                                             :.flex-col-c :ai--c)
                                    (inc x)]])])]
