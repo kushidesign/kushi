@@ -47,8 +47,7 @@
                 ;; "radio"      
                 ;; "checkbox"   
                 ;; "slider"     
-                "text field" 
-
+                ;; "text field" 
                 ;; "tooltip"    
                 ;; "popover"    ;; PS
                 ;; "modal"      ;; PS

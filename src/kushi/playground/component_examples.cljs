@@ -1,6 +1,7 @@
 (ns ^:dev/always kushi.playground.component-examples
   (:require [clojure.string :as string] ;; [clojure.walk :as walk]
             [domo.core :as d]
+            [fireworks.core :refer [!?log ?log]]
             [kushi.core :refer (sx merge-attrs keyed)]
             [kushi.playground.component-docs :as docs]
             [kushi.playground.util :as util]
@@ -439,7 +440,14 @@
                                     formatted*
                                     string/join
                                     formatted-code)
-                  :copyable     (str "[" (string/join "\n" call) "]")}])))]]))
+                  :copyable     (let [[ob cb] (if (list? call) ["(" ")"] ["[" "]"])]
+                                  (str ob
+                                       (string/join "\n" 
+                                                    (map #(if (string? %)
+                                                            (str "\"" % "\"")
+                                                            %)
+                                                         call))
+                                       cb))}])))]]))
 
 
 (def type-weights

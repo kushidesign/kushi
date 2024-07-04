@@ -22,6 +22,7 @@
             [applied-science.js-interop :as j]
             [reagent.dom :as rdom]))
 
+
 (def variants-by-category
   {
    :size          [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge #_:xxlarge #_:xxxlarge]

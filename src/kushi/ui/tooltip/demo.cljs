@@ -80,12 +80,15 @@
 ;;                                  {:style  {:grid-area (name x)}})
 ;;                                 )}))))
 
+
 (def examples
   [{:desc      "Basic, auto-placement."
     :component button
     :reqs      '[[kushi.ui.button.core :refer [button]]]
     :row-attrs (sx :&_.kushi-button:fs--$small)
-    :snippets  '[[button (tooltip-attrs {:-text "This is a tooltip"})]]
+    :snippets  '[[button
+                  (tooltip-attrs {:-text "This is a tooltip"})
+                  "Hover me"]]
     :examples  [{:label    "right"
                  :args     ["Hover me"]
                  :sx-attrs (sx-call (tooltip-attrs {:-text "This is a tooltip"}))}]}
