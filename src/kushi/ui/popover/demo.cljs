@@ -75,17 +75,16 @@
 
 (def examples
   (let [row-attrs (sx :&_.kushi-button:fs--$small)]
-    [(let [code (sx-call [button (popover-attrs
-                                  {:-f (fn [popover-el]
-                                         (rdom/render 
-                                          (fn [] 
-                                            [:div
-                                             (sx :.xxxlarge
-                                                 :.flex-row-c
-                                                 :padding--0.25em)
-                                             "💃🏽"])
-                                          popover-el))})
-                          "Open"])]
+    [(let [code (sx-call (popover-attrs
+                          {:-f (fn [popover-el]
+                                 (rdom/render 
+                                  (fn [] 
+                                    [:div
+                                     (sx :.xxxlarge
+                                         :.flex-row-c
+                                         :padding--0.25em)
+                                     "💃🏽"])
+                                  popover-el))}))]
        {:desc      "Basic"
         :component button
         :reqs      '[[kushi.ui.button.core :refer [button]]

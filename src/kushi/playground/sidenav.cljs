@@ -175,8 +175,7 @@
 
         ;; To use softer color 
          :&.neutral.minimal:c--$neutral-secondary-foreground
-         :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
-         )
+         :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse)
      {:on-click (fn [e] 
                   (let [nav  (some-> e
                                      d/cet

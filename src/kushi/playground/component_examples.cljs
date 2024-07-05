@@ -1,7 +1,6 @@
 (ns ^:dev/always kushi.playground.component-examples
   (:require [clojure.string :as string] ;; [clojure.walk :as walk]
             [domo.core :as d]
-            [fireworks.core :refer [!?log ?log]]
             [kushi.core :refer (sx merge-attrs keyed)]
             [kushi.playground.component-docs :as docs]
             [kushi.playground.util :as util]
@@ -9,10 +8,10 @@
             [kushi.ui.core :refer (defcom)]
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer (icon)]
+            [kushi.ui.tooltip.core :refer (tooltip-attrs)]
             [kushi.ui.icon.mui.svg :as mui.svg]
             [kushi.ui.modal.core :refer [close-kushi-modal modal
                                          modal-close-button open-kushi-modal]]
-            [kushi.ui.tooltip.core :refer (tooltip-attrs)]
             [kushi.ui.util :refer [as-str maybe]]
             [me.flowthing.pp :refer [pprint]]))
 

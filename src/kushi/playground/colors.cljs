@@ -1,17 +1,11 @@
 (ns kushi.playground.colors
-  (:require
-   [clojure.string :as string]
-   ["tinycolor2" :as tinycolor]
-   [kushi.playground.util :as util :refer-macros (keyed)]
-   [kushi.core :refer (sx merge-attrs)]
-   [kushi.ui.modal.core :refer [modal open-kushi-modal]]
-   [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-   [domo.core :refer (copy-to-clipboard!)]
-   [kushi.ui.core :refer [defcom]]
-   [kushi.ui.icon.core :refer [icon]]
-   [kushi.color :refer [base-color-map]]
-   [kushi.colors :as kushi.colors]
-   [kushi.ui.label.core :refer [label]]))
+  (:require 
+            ;; ["tinycolor2" :as tinycolor]
+            [kushi.colors :as kushi.colors]
+            [kushi.core :refer (sx merge-attrs)] ;;  [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
+            [kushi.playground.util :as util :refer-macros (keyed)]
+            [kushi.ui.core :refer [defcom]]
+            [kushi.ui.label.core :refer [label]]))
 
 (defcom text-sample-sticker
   (let [{:keys [color bgc]} &opts]
@@ -30,13 +24,14 @@
              &attrs)
       "Text"]]))
 
-(defn copy-color [s]
-  [:span (sx :.flex-row-fs
-             [:&_.kushi-button>img:transform '(scale 0.75)])
-   [:code s]
-   [copy-to-clipboard-button
-    {:-placement :right
-     :on-click   #(copy-to-clipboard! s)}]])
+;; (defn copy-color [s]
+;;   [:span (sx :.flex-row-fs
+;;              [:&_.kushi-button>img:transform '(scale 0.75)])
+;;    [:code s]
+;;    [copy-to-clipboard-button
+;;     {:-placement :right
+;;      :on-click   #(copy-to-clipboard! s)}]])
+
 
 (defn color-modal
   [{:keys [k
@@ -46,57 +41,70 @@
     :as m}]
   (let [token-name (name k)]
     [:<>
-     [label (sx :.pointer
-                :.code
-                :&.code:bgc--transparent
-                :fs--0.7em
-                :sm:fs--0.9em
-                :ws--n
-                {:on-click #(open-kushi-modal token-name)})
-      [:span (sx :sm:d--none) color-level]
-      [:span (sx :.code :sm:d--block :d--none) token-name]
-      [icon (sx :.accent-secondary-foreground
-                :mis--0.5em
-                {:-icon-style :outlined})
-       :help]]
-     [modal
-      {:id token-name}
-      [:div
-       (sx :.flex-col-sa
-           :ai--c
-           :gap--50px
-           :pb--2rem
-           :h--100%
-           :w--100%)
-       [:div (sx :.huge
-                 :.normal
-                 :w--100px
-                 :h--100px
-                 [:bgc hsl])]
-       (let [[s l]     (map #(-> % (string/replace #"\)$" "") string/trim)
-                            (rest (string/split hsl #",")))
-             hue-key   (as-> color-name $
-                         (name $)
-                         (str "--" $ "-hue")
-                         (keyword $))
-             color-obj (tinycolor #js {:h (hue-key base-color-map)
-                                       :s s
-                                       :l l})
-             hex       (.toHexString color-obj)
-             hsl       (.toHslString color-obj)
-             rgb       (.toRgbString color-obj)]
-         [:div
-          (sx :d--grid
-              :ai--c
-              :grid-gap--20px
-              :gtc--1fr:3fr
-              :&_.kushi-copy-to-clipboard-button-graphic:width--13px)
-          [:span.kushi-playground-meta-desc-label "name"] [copy-color (string/replace token-name #"^\$" "")]
-          [:span.kushi-playground-meta-desc-label "token"] [copy-color (str ":" token-name)]
-          [:span.kushi-playground-meta-desc-label "css var"] [copy-color (str "var(" (string/replace token-name #"^\$" "--") ")")]
-          [:span.kushi-playground-meta-desc-label "hex"] [copy-color hex]
-          [:span.kushi-playground-meta-desc-label "hsl"] [copy-color hsl]
-          [:span.kushi-playground-meta-desc-label "rgb"] [copy-color rgb]])]]]) )
+      ;;  [label (sx :.pointer
+      ;;             :.code
+      ;;             :&.code:bgc--transparent
+      ;;             :fs--0.7em
+      ;;             :sm:fs--0.9em
+      ;;             :ws--n
+      ;;             {:on-click #(open-kushi-modal token-name)})
+      [label (sx :.code
+                 :&.code:bgc--transparent
+                 :fs--0.7em
+                 :sm:fs--0.9em
+                 :ws--n)
+       [:span (sx :sm:d--none) color-level]
+       [:span (sx :.code :sm:d--block :d--none) token-name]
+
+      ;; [icon (sx :.accent-secondary-foreground
+      ;;           :mis--0.5em
+      ;;           {:-icon-style :outlined})
+      ;;  :help]
+       
+       ]
+
+    ;; Leave this out until copy to clip is redone
+
+    ;;  [modal
+    ;;   {:id token-name}
+    ;;   [:div
+    ;;    (sx :.flex-col-sa
+    ;;        :ai--c
+    ;;        :gap--50px
+    ;;        :pb--2rem
+    ;;        :h--100%
+    ;;        :w--100%)
+    ;;    [:div (sx :.huge
+    ;;              :.normal
+    ;;              :w--100px
+    ;;              :h--100px
+    ;;              [:bgc hsl])]
+    ;;    (let [[s l]     (map #(-> % (string/replace #"\)$" "") string/trim)
+    ;;                         (rest (string/split hsl #",")))
+    ;;          hue-key   (as-> color-name $
+    ;;                      (name $)
+    ;;                      (str "--" $ "-hue")
+    ;;                      (keyword $))
+    ;;          color-obj (tinycolor #js {:h (hue-key base-color-map)
+    ;;                                    :s s
+    ;;                                    :l l})
+    ;;          hex       (.toHexString color-obj)
+    ;;          hsl       (.toHslString color-obj)
+    ;;          rgb       (.toRgbString color-obj)]
+    ;;      [:div
+    ;;       (sx :d--grid
+    ;;           :ai--c
+    ;;           :grid-gap--20px
+    ;;           :gtc--1fr:3fr
+    ;;           :&_.kushi-copy-to-clipboard-button-graphic:width--13px)
+    ;;       [:span.kushi-playground-meta-desc-label "name"] [copy-color (string/replace token-name #"^\$" "")]
+    ;;       [:span.kushi-playground-meta-desc-label "token"] [copy-color (str ":" token-name)]
+    ;;       [:span.kushi-playground-meta-desc-label "css var"] [copy-color (str "var(" (string/replace token-name #"^\$" "--") ")")]
+    ;;       [:span.kushi-playground-meta-desc-label "hex"] [copy-color hex]
+    ;;       [:span.kushi-playground-meta-desc-label "hsl"] [copy-color hsl]
+    ;;       [:span.kushi-playground-meta-desc-label "rgb"] [copy-color rgb]])]]
+          
+          ]) )
 
 
 ;; TODO refactor this into some subcomponents
@@ -158,8 +166,7 @@
                      :bbew--1px
                      [:bbec hsl])
             [color-modal (keyed k hsl color-name color-level)]
-            [:div (sx :.flex-row-fe
-                      :.wee-bold)
+            [:div (sx :.flex-row-fe :.wee-bold)
              [text-sample-sticker (sx {:-color :white
                                        :-bgc   hsl})]
              [text-sample-sticker (sx {:-color :black

@@ -1,16 +1,11 @@
 (ns kushi.ui.switch.demo
   (:require
-   
-   [clojure.walk :as walk]
    [kushi.playground.util :as util]
    [kushi.core :refer (sx)]
    [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.label.core :refer [label]]
    [kushi.ui.switch.core :refer [switch]]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.playground.component-examples :as component-examples :refer [section-label]]
-   [markdown-to-hiccup.core :as md->hc]
-   [kushi.playground.component-docs :as docs]))
+   [kushi.playground.component-examples :as component-examples]))
 
 
 (def sizes
@@ -188,21 +183,3 @@
                          {:label (name sz)
                           :attrs {:disabled true
                                   :class    [sz]}})}]))
-
-#_(defn section-label
-  "Renders a vertical label"
-  [s]
-  [:p (sx :.xxsmall
-          :c--$neutral-secondary-foreground
-          :min-width--55px
-          {:style {:writing-mode :vertical-lr
-                   :text-orientation :upright
-                   :text-transform :uppercase
-                   :font-weight :800
-                   :color :#7d7d7d
-                   :font-family "JetBrains Mono"
-                   :text-align :center
-                   :background-image "linear-gradient(90deg, #e3e3e3, #e3e3d3 1px, transparent 1px)"
-                   :background-position-x :1ch}})
-   [:span (sx :bgc--white :pi--0.5em) s]])
-
