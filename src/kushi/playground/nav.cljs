@@ -1,5 +1,6 @@
 (ns kushi.playground.nav
   (:require
+   [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp- ?trace]]
    [clojure.string :as string]
    [domo.core :as domo]
    [kushi.playground.state :as state]
@@ -15,20 +16,23 @@
                                         "path-transitioning")
                    5000))
 
-(defn route! [menu-id guide? e]
-  (let [e (or e js/window.event)
-        app (domo/el-by-id "app")]
+(defn route! [menu-id href e]
+  ;; (.preventDefault e)
+  ;; (? (string/starts-with? (? href) "/"))
+  (let [e          (or e js/window.event)
+        app        (domo/el-by-id "app")
+        path-label (when (string/starts-with? href "/")
+                     (subs href 1))]
     (domo/remove-class! (domo/el-by-id menu-id) "has-hover")
-    #_(path-transitioning! app)
-    (when-not guide?
+    (when path-label
       (.preventDefault e)
-      (let [el         (domo/cet e)
-            href       (.-href el)
-            path-label (-> (new js/URL href)
-                           .-pathname
-                           (string/replace #"^/" "")
-                           (string/split #"/")
-                           last)]
+      (let [
+            ;; path-label (some-> (new js/URL href)
+            ;;                    .-pathname
+            ;;                    (string/replace #"^/" "")
+            ;;                    (string/split #"/")
+            ;;                    last)
+            ]
         (.setAttribute app
                        "data-kushi-playground-active-path"
                        path-label)
@@ -110,10 +114,7 @@
                  :dark:active>button.neutral.minimal:bgc--$neutral-900
                  {:href   href
                   :target target})
-             {:on-click (partial route! menu-id guide?)}
-
-
-             )
+             {:on-click (partial route! menu-id href)})
             [header-nav-button
              (sx [:translate (when guide? "-0.33ch")]
                  :>svg:w--20px
@@ -122,10 +123,12 @@
                  :dark:>svg:o--0.86
                  ["dark:>svg:filter" "invert(1)"]
                  {:aria-selected false})
-             (when guide?
-               octocat-svg
-               )
+             (when guide? octocat-svg)
              label]])))
+
+(defn remove-hover! [menu-el]
+  (when (domo/has-class? menu-el "has-hover") 
+    (domo/remove-class! menu-el "has-hover")))
 
 (defn header-touchstart-handler [menu-id e]
   (let [menu-el       (domo/el-by-id menu-id)
@@ -134,15 +137,20 @@
                        et
                        "button.kushi-explore" )]
     (if menu-trigger?
-      ;; (!? 'menu-trigger:toggling-class
-      ;;     (domo/toggle-class! menu-el "has-hover"))
-      nil
+      (domo/toggle-class! menu-el "has-hover")
       (if (domo/matches-or-nearest-ancestor? et (str "#" menu-id " a"))
-        ;; (!?-- "do nothing")
-        nil
+        (let [href (->> (str "#" menu-id " a")
+                        (domo/nearest-ancestor et)
+                        .-href)
+              href (-> href 
+                       (string/split href #"/")
+                       last
+                       (str "/"))]
+          (route! menu-id (? href) e)
+          (remove-hover! menu-el))
         (when (domo/has-class? menu-el "has-hover") 
-          (domo/remove-class! menu-el "has-hover"))
-        ))))
+          (remove-hover! menu-el))))))
+
 
 (defn header []
  (let [menu-id "kushi-playground-menu"]
@@ -165,12 +173,10 @@
         :height--$navbar-height
         :pi--1.25rem
         :md:pi--4rem
-        
        #_["has(~&_div&_nav[aria-expanded=\"true\"][data-kushi-playground-sidenav])>*:opacity"
         0]
-        
-        
         )
+
     (when (domo/media-supports-touch?)
       {:on-touch-start (partial header-touchstart-handler menu-id)}))
 
