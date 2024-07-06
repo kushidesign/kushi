@@ -225,7 +225,8 @@
                :o     1}])
 
     ;; List of playground components
-    (into [:ul (sx :.flex-col-fs
+    (into [:ul (sx 'mobile-sidenav-list
+                   :.flex-col-fs
                    :.neutralize
                    :o--0
                    :transition-property--opacity
@@ -233,13 +234,12 @@
                    :bgc--transparent
                    :overflow-y--auto
                    :w--fit-content
-                  ;;  :min-width--133px
                    :ai--center
                    :pb--0rem:20vh
                    :pi--0
                    :flex-wrap--wrap-reverse
-                   :column-gap--2.75rem
-                   :align-content--center
+                   :column-gap--0.75rem
+                   :align-content--inherit
                    :fs--$small
                    :min-width--50vw
                    :xsm:min-width--unset)]
