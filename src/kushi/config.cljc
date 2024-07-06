@@ -115,7 +115,7 @@
 
    ;; Set this to false to leave out dark theme variants for kushi.ui related
    ;; classes.
-   :add-kushi-ui-dark-theming?          false
+   :add-kushi-ui-dark-theming?          true
 
    ;; Set this to false to leave out light theme variants for kushi.ui related
    ;; classes.

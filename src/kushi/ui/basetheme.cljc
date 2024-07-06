@@ -995,7 +995,7 @@
 
 (defn- maybe-remove-some-variants [coll leading-str]
   (->> coll
-       maybe-remove-lights-or-darks
+      ;;  maybe-remove-lights-or-darks
        (maybe-remove-semantic-or-style-variants leading-str)))
 
 (defn base-theme-map
@@ -1019,7 +1019,8 @@
                                   semantic-aliases 
                                   {:expanded? true})
               alias-color-tokens (maybe-remove-some-variants alias-color-tokens "^\\$")
-              variant-tokens     (maybe-remove-some-variants variant-tokens "^--")]
+              variant-tokens     (maybe-remove-some-variants variant-tokens "^--")
+              ]
 
           (into []
                 (concat color-tokens
