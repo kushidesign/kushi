@@ -82,7 +82,8 @@
        [enhancer end-enhancer])]))
 
 (defn text-field
-  {:desc ["An input enables the entry of text. By default, this component will use an `<input>` element of type `text`. If the option `:-textarea?` is set to `true`, a `<textarea>` element will be used instead."]
+  {:summary ["A text-field enables the entry of text."]
+   :desc ["An input enables the entry of text. By default, this component will use an `<input>` element of type `text`. If the option `:-textarea?` is set to `true`, a `<textarea>` element will be used instead."]
    :opts '[{:name    textarea?
             :pred    boolean?
             :default false

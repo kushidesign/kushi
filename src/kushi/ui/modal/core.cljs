@@ -85,11 +85,9 @@
        [icon icon-name])]))
 
 (defn modal
-  {:desc ["Modal dialogs create a new floating layer over the current view "
-          "to get user feedback or display information."
-          :br
-          :br
-          "Elements and behaviors of modals can be custom styled and "
+  {:summary ["Modal dialogs create a new floating layer over the current view "
+             "to get user feedback or display information."]
+   :desc ["Elements and behaviors of modals can be custom styled and "
           "controlled via the following tokens in your theme:"
           :br
           :br "`:$modal-border-radius`"      

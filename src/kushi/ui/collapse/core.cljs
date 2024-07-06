@@ -143,7 +143,7 @@
             children))))
 
 (defn collapse
-  {:desc ["A section of content which can be collapsed and expanded."]
+  {:summary ["A collapse is a section of content which can be collapsed and expanded."]
    :opts '[{:name    label
             :pred    string?
             :default nil

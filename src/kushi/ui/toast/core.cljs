@@ -9,8 +9,9 @@
 
 
 (defn toast-attrs
-  {:desc ["Toasts provide notifications to the user based on application "
-          "state. They can be interactive and are sometimes auto-dismissing. "
+  {:summary ["Toasts provide notifications to the user based on application "
+              "state."]
+   :desc ["Toasts can be interactive and are sometimes auto-dismissing."
           :br
           :br
           "Specifying placement in various ways can be done with the"

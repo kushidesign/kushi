@@ -3,7 +3,7 @@
             [kushi.ui.core :refer (opts+children)]))
 
 (defn tag
-  {:desc ["A tag is typically used for concise information, often in a group with other tags."]}
+  {:summary ["A tag is typically used for concise information, often in a group with other tags."]}
   [& args]
   (let [[_ attrs & children] (opts+children args)]
     (into [:div

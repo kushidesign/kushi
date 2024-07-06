@@ -11,8 +11,8 @@
    [kushi.ui.dom.pane.styles]))
 
 (defn popover-attrs
-  {:desc ["Popovers provide additional context when hovering or clicking on an"
-          "element. They can be interactive and are typically dismissed"
+  {:summary ["Popovers provide additional context when clicking on an element."]
+   :desc ["They can be interactive and are typically dismissed"
           "manually by the user."
           :br
           :br

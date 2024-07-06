@@ -5,7 +5,8 @@
             [goog.string]
             [kushi.core :refer (keyed token->ms)]
             [kushi.ui.dom.pane.core :as pane]
-            [kushi.ui.dom.pane.placement :refer [user-placement]] ;; Import this styles ns to create defclasses
+            ;; Import this styles ns to create defclasses
+            [kushi.ui.dom.pane.placement :refer [user-placement]]
             [kushi.ui.dom.pane.styles]
             [kushi.ui.util :as util :refer [maybe]]))
 
@@ -33,8 +34,9 @@
 
 
 (defn tooltip-attrs
-  {:desc ["Tooltips provide additional context when hovering or clicking on an"
-          "element. They are intended to be ephemeral, containing only"
+  {:summary ["Tooltips provide additional context when hovering or clicking "
+             "on an element."]
+   :desc ["Tooltips are intended to be ephemeral, containing only"
           "non-interactive content."
           :br
           :br

@@ -177,8 +177,8 @@
     #_(domo/set-attribute! (domo/el-by-id label-id) "textContent" (.-textContent label-node))))
 
 (defn slider
-  {:desc ["A slider is a ui element which allows the user to specify a numeric value which must be no less than a given value, and no more than another given value."
-          "By default, values are represented as a numeric scale with a `min` and a `max`."
+  {:summary ["A slider is a ui element which allows the user to specify a numeric value which must be no less than a given value, and no more than another given value." ]
+   :desc ["By default, values are represented as a numeric scale with a `min` and a `max`."
           "Note that `:min`, `:max` and `:step` are passed down to the underlying `<input type=range>` element, and do not need to be written with the custom opts syntax."
           "Checkout [input range docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range) for info on how `min`, `max`, and `step` work."
           "Alternately, a scale of named, stepped values may be provided with the custom `:-steps` option."]

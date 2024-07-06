@@ -4,10 +4,8 @@
             [kushi.ui.icon.core]))
 
 (defn callout
-  {:desc ["callouts provide contextual feedback information for the user"
-          :br
-          :br
-          "To position the callout at the top of the viewport, use the "
+  {:summary ["Callouts provide contextual feedback information for the user."]
+   :desc ["To position the callout at the top of the viewport, use the "
           "`:.fixed-block-start-inside` utility class, or the "
           "`:.fixed-block-end-inside` utility class for positioning "
           "at the bottom of the viewport."]

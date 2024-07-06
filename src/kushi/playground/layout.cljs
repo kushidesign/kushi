@@ -292,7 +292,7 @@
 (defn custom-attributes-section
   [custom-attributes]
   [:<>
-   [:h2 (sx :.large :.semi-bold :mb--0:1.5rem) "Opts"]
+   [:h2 (sx :.large :.semi-bold :mb--0:0.5rem) "Opts"]
    (into [:div]
          (for [{nm      :name
                 typ     :type
@@ -340,7 +340,7 @@
          (into [:section
                 (sx :.playground-component-panel
                     {:id (str "kushi-" label "-examples")
-                    ;;  :hidden "hidden"
+                     :hidden "hidden"
                      })]
                (for [
                     ;; example-opts (take 2 examples)
@@ -352,26 +352,34 @@
                    :>div:max-width--$main-content-max-width
                    :pbs--35px
                    {
-                    :hidden "hidden"
+                    ;; :hidden "hidden"
                     :id     (str "kushi-" label "-documentation")})
           (when summary
             [:div (sx :.medium :.wee-bold :mb--0:2rem :&_p:lh--1.7)
              (->> summary
                   util/desc->hiccup 
                   docs/add-links)])
-          [:h2 (sx :.large :.semi-bold :mb--0:1.5rem) "Usage"]
-          [:div (sx :lh--1.7
-                    :mb--2rem
-                    :&_code:lh--1.9
-                    :&_code:pb--0.07em
-                    :&_code:pi--0.2em
-                    [:&_p&_b {:fw      :$wee-bold
-                              :mbe     :0.4em
-                              :display :block}])
+          (when desc
+            [:<> 
+             [:h2 (sx :.large 
+                      :.semi-bold
+                      :pbe--0.5rem
+                      :bbe--1px:solid:$gray-200
+                      :dark:bbe--1px:solid:$gray-800
+                      :mb--0:1.5rem)
+              "Usage"]
+             [:div (sx :lh--1.7
+                       :mb--0:2rem
+                       :&_code:lh--1.9
+                       :&_code:pb--0.07em
+                       :&_code:pi--0.2em
+                       [:&_p&_b {:fw      :$wee-bold
+                                 :mbe     :0.4em
+                                 :display :block}])
 
-           (some-> desc
-                   util/desc->hiccup 
-                   docs/add-links)]
+              (-> desc
+                  util/desc->hiccup 
+                  docs/add-links)]])
 
           (when (seq custom-attributes)
             [custom-attributes-section custom-attributes])]]))
