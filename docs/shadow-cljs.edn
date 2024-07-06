@@ -3,8 +3,7 @@
 
  :dependencies   [[reagent/reagent    "1.1.1"]
                   [binaryage/devtools "1.0.6"]
-                  [design.kushi/kushi "1.0.0-a.21-SNAPSHOT"]
-                  [io.github.paintparty/fireworks "0.4.0"]]
+                  [design.kushi/kushi "1.0.0-a.21"]]
 
  :dev-http       {7777 "public"}
 
