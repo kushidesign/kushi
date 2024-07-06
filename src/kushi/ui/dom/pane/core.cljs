@@ -392,6 +392,7 @@
     ;;   (js/console.warn "[kushi.ui.dom.pane.core/remove-pane!]\nAttempt to .removeChild with a non-existing child element."))
 
     (some->> el-to-be-removed
+             ;; DEV - commment out this .removeChild op to leave pane in dom for debugging
              (.removeChild  (or toast-slot 
                                 (or dialog-el
                                     js/document.body))
