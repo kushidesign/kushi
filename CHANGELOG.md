@@ -2,6 +2,57 @@
 All notable changes to this project will be documented in this file.<br>
 This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+
+
+
+<br>
+
+## 1.0.0-a.21
+2024-7-6
+
+### Added
+- New `kushi.ui.playground` design and implementation, which drives the `design.kushi` interactive site running on Github Pages.
+- Enhanced docs on all UI components.
+- New utility classes:
+  - `:.offscreen`
+  - `:.neutralize`
+  - `:.convex`, `:.convex-0` ~ `convex-5`
+  - `:.sans` and `:.serif`
+- New `kushi.ui.divisor.core/divisor` component and related `$:divisor-*` tokens and `:.divisor-*` utility classes.
+
+### Fixed
+- Updated `kushi.ui.link` component
+- Updated `kushi.ui.switch.core/switch` to use `:.no-shrink` class
+- Positioning bug in popover pane placement logic #530b005
+
+### Breaking changes
+- The following components have been renamed:
+  `kushi.ui.alert.core/alert`  -> `kushi.ui.callout.core/callout`
+  `kushi.ui.progress.core/progress` -> `kushi.ui.progress.core/spinner`   
+  `kushi.ui.progress.core/spinner` -> `kushi.ui.progress.core/donut`   
+  `kushi.ui.input.text.core/input` -> `kushi.ui.text-field.core/text-field`
+
+- All `<input>` related component namespaces have been simplified:
+  `kushi.ui.input.checkbox.core`   -> `kushi.ui.checkbox.core`
+  `kushi.ui.input.radio.core`      -> `kushi.ui.radio.core`
+  `kushi.ui.input.slider.core`     -> `kushi.ui.slider.core`
+  `kushi.ui.input.switch.core`     -> `kushi.ui.switch.core`
+  `kushi.ui.input.text.core/input` -> `kushi.ui.text-field.core/text-field`
+
+- All uses of `fg` in token and utility class names has been hydrated to `foreground`:<br>
+  `$neutral-fg` -> `$neutral-foreground`<br>
+  `:.neutral-fg` ->  `:.neutral-foreground`
+
+- `:$progress-animation-duration` -> `:$spinner-animation-duration`
+
+- Default value of `$pane-min-width` is now `70px`
+- Default value of `$pane-min-height` is now `35px`
+
+
+
+
+<br>
+
 ## 1.0.0-a.20
 2024-3-21
 
@@ -17,6 +68,12 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
 ### Breaking changes
 - Removed `:-reveal-on-click?` `:-reveal-on-click-duration` from tooltip. These will resurface in upcoming toggle tip or popover component.
 - Removed `kushi.dom.ui` namespace. Replaced by dependency `design.kushi/domo`
+
+
+
+
+
+<br>
 
 ## 1.0.0-a.19
 2023-5-17
@@ -36,6 +93,8 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
 
 
 
+
+<br>
 
 ## 1.0.0-a.18
 
