@@ -1,10 +1,5 @@
 ;; shadow-cljs configuration
-{:source-paths   ["src"
-                  "../src"
-                  "../../../kushi/domo/src"
-                  ;; "../../../cljc/fireworks/src"
-                  ;; "../../../cljc/lasertag/src"
-                  ]
+{:source-paths   ["src"]
 
  :dependencies   [[reagent/reagent    "1.1.1"]
                   [binaryage/devtools "1.0.6"]
