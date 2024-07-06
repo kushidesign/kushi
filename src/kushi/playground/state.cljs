@@ -1,9 +1,16 @@
 (ns kushi.playground.state
   (:require
+   [clojure.string :as string]
+   
    [kushi.core :refer [breakpoints]]
+   [kushi.playground.components :refer [playground-components]]
    [domo.core :as domo]
    [applied-science.js-interop :as j]
-   [reagent.core :as r]))
+   [reagent.core :as r]
+   [reagent.ratom]))
+
+;; (?trace (let [a 1 b 3]
+;;           a))
 
 (defonce *state
   (r/atom {
@@ -56,3 +63,40 @@
     (set-focused-component! x)))
 
 
+;; New June 2024 -----------------------------------------
+
+(def ordered-playground-components-labels
+  (mapv :label playground-components))
+
+(def *playground (r/atom {:intersecting                   #{}
+                          :playground-intro-intersecting? true
+                          :mobile-sidenav-expanded?       false}))
+
+(def playground-intro-intersecting?
+  (reagent.ratom/reaction
+   (:playground-intro-intersecting? @*playground)))
+
+(defn set-first-intersecting! [m]
+  (some->> m
+           :intersecting
+           (sort-by #(.indexOf ordered-playground-components-labels %))
+           first
+           (.setAttribute (domo/el-by-id "app") "data-kushi-playground-first-intersecting")))
+
+#_(def *playground-first-intersecting
+  (reagent.ratom/reaction
+   (let [_ (?-- :HIII)
+         ret (first (sort-by #(.indexOf ordered-playground-components-labels %)
+                             (:intersecting @*playground)))]
+
+     (? "first intersecting is " ret)
+
+     (.setAttribute (domo/el-by-id "app")
+                    "data-kushi-playground-first-intersecting"
+                    ret)
+     ret)))
+
+
+(def *focused-path (r/atom ["components"]))
+(defn set-focused-path! [s] (reset! *focused-path s))
+(defn get-focused-path [] @*focused-path)

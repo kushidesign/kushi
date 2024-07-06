@@ -6,7 +6,9 @@
    [kushi.ui.core :refer (defcom opts+children)]
    [domo.core :as domo]))
 
+;; TODO - How to tie children to id of collapse?
 ;TODO refactor this out
+
 (defcom collapse-body
   [:section
    (merge-attrs (sx 'kushi-collapse-body-wrapper :overflow--hidden) &attrs)

@@ -1,6 +1,6 @@
 {
   "name": "kushi.design",
-  "version": "1.0.0-a.20",
+  "version": "1.0.0-a.21",
   "private": true,
   "devDependencies": {
     "shadow-cljs": "^2.27.5"
@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "tinycolor2": "^1.4.2"
+    "react-dom": "17.0.2"
   }
 }

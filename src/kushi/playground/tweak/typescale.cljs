@@ -7,7 +7,7 @@
             [kushi.ui.button.core :refer [ button]]
             [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.typescale :refer [create-typescale scale-a scale-b]]
-            [kushi.playground.demobox.core :refer [copy-to-clipboard-button]]
+            [kushi.playground.component-examples :refer [copy-to-clipboard-button]]
             [reagent.core :as r]))
 
 (defn scale-syntax

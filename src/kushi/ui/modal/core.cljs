@@ -9,6 +9,7 @@
 
 (declare close-on-backdrop-click)
 
+;; TODO - Change name to close-modal!
 (defn close-kushi-modal [e]
   (.stopPropagation e)
   (let [el     (domo/et e)
@@ -22,18 +23,27 @@
         (domo/remove-class! dialog "kushi-modal-open")
         (js/setTimeout #(.close dialog) duration)))))
 
-(defn close-on-backdrop-click  [e]
+(defn close-on-backdrop-click  [f e]
   (when (= "DIALOG" (.-nodeName (domo/et e)))
-    (close-kushi-modal e)))
+    (close-kushi-modal e))
+  (when f (f)))
 
-(defn open-kushi-modal [id]
-  (if-let [dialog (domo/el-by-id id)]
-    (do (.addEventListener dialog
-                           "click"
-                           close-on-backdrop-click)
-        (.showModal dialog)
-        (domo/add-class! dialog "kushi-modal-open"))
-    (js/console.warn (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of: " id))))
+;; TODO - Change name to open-modal!
+(defn open-kushi-modal
+  "Takes an id of the modal, and an optional callback, which fires on light-dismiss."
+  ([id]
+   (open-kushi-modal id nil))
+  ([id f]
+   (if-let [dialog (domo/el-by-id id)]
+     (do (.addEventListener dialog
+                            "click"
+                            (partial close-on-backdrop-click f)
+                            ;; #js {"once" true}
+                            )
+         (.showModal dialog)
+         (domo/add-class! dialog "kushi-modal-open"))
+     (js/console.warn (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of: " id)))
+   ))
 
 (defn modal-close-button
   {:desc ["The `modal-close-button` is meant to be a cta for closing a modal that is independant of other button groups that may be in the modal."
@@ -63,12 +73,12 @@
           :.pill
           :.large
           :padding--0.5rem
-          {:on-click close-kushi-modal
-           :style    {:position           :absolute
-                      :inset-block-start  :0.5rem
-                      :inset-block-end    :unset
-                      :inset-inline-end   :0.5rem
-                      :inset-inline-start :unset}})
+          {:on-mouse-down close-kushi-modal
+           :style         {:position           :absolute
+                           :inset-block-start  :0.5rem
+                           :inset-block-end    :unset
+                           :inset-inline-end   :0.5rem
+                           :inset-inline-start :unset}})
       attrs)
      (if icon-svg
        [icon {:icon-svg icon-svg}]
@@ -102,18 +112,20 @@
             :pred    #(< -1 % 6)
             :default nil
             :desc    "Optional. The kushi utility class in the elevation family that will be used to create a drop-shadow for the modal panel"}
-           ;; TODO -- add on-close callback option (for calling function with on backdrop click)
+
+           ;; TODO -- add on-dismiss callback option (for calling function with on backdrop click)
+
            ;; TODO -- add option for disabling auto close-on-background click
            ;; TODO -- add option for naive BSL
            ;; TODO -- add x
            ;; TODO -- add y
            ]}
   [& args]
-  (let [[opts attrs & children]   (opts+children args)
+  (let [[opts attrs & children] (opts+children args)
         {:keys [modal-title
                 description
                 elevation
-                expanded?]}   opts
+                expanded?]}      opts
         {:keys [id]}              attrs
         desc-id                   (str id "-description")
         title-id                  (str id "-title")
@@ -127,6 +139,7 @@
                                       (str "var(--elevated-" elevation "-inverse), ")
                                       (str "var(--elevated-inverse), ")))]
 
+    ;; TODO document the how and why of this
     (when expanded? (js/setTimeout #(open-kushi-modal id) 100))
 
     (into
@@ -137,14 +150,14 @@
                    :backdrop:bgc--transparent
                    :overflow--visible
                    [:transition-duration "var(--modal-transition-duration, var(--fast))"]
-                   :bgc--$body-background-color
-                   :dark:bgc--$body-background-color-inverse
+                   :bgc--$background-color
+                   :dark:bgc--$background-color-inverse
                    :border-radius--$modal-border-radius
                    :b--$modal-border
-                   :min-width--$modal-min-width||450px
+                   :min-width--$modal-min-width||200px
                    [:max-width "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
-                   [:max-height "calc(100vh - (2 * var(--modal-margin, 1rem)))"]
-                   :height--$modal-min-height
+                   ;;[:max-height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem)))"]
+                   :height--fit-content
                    [:box-shadow (str elevation-token "0 0 0 100vmax var(--modal-backdrop-color)")]
                    [:dark:box-shadow (str elevation-token-inverse "0 0 0 100vmax var(--dark-gray-transparent-90)")]
                    :opacity--0

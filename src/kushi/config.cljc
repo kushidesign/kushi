@@ -115,7 +115,7 @@
 
    ;; Set this to false to leave out dark theme variants for kushi.ui related
    ;; classes.
-   :add-kushi-ui-dark-theming?          false
+   :add-kushi-ui-dark-theming?          true
 
    ;; Set this to false to leave out light theme variants for kushi.ui related
    ;; classes.
@@ -267,7 +267,7 @@
        (or (:css-filename user-config) "kushi.css")))
 
 ;; ! Update kushi version here for console printing and cache file path generation
-(def version* "1.0.0-a.20")
+(def version* "1.0.0-a.21-SNAPSHOT")
 
 ;; Optionally unsilence the ":LOCAL" bit when developing kushi from local filesystem (for visual feedback sanity check).
 (def version (str version* #_":LOCAL"))

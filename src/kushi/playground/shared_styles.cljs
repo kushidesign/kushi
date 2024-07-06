@@ -101,8 +101,8 @@
    :fw         :$kushi-playground-meta-desc-label_font-weight||$wee-bold
    :font-style :$kushi-playground-meta-desc-label_font-style||italic
    :tt         :$kushi-playground-meta-desc-label_text-transform||uppercase
-   :c          :$neutral-secondary-fg
-   :dark:c     :$neutral-secondary-fg-inverse })
+   :c          :$neutral-secondary-foreground
+   :dark:c     :$neutral-secondary-foreground-inverse })
 
 (defclass kushi-treenav-section-header
   :.relative
@@ -227,3 +227,82 @@
   [:w "calc(100% - (708px / 2))"]
   [:max-width :$kushi-playground-sidenav-max-width]
   [:xl:max-width :unset])
+
+
+;; New May 2024
+(defclass playground-example-row-bounded
+  [:&_.instance-code
+   {:border-radius :$rounded
+    :w             :fit-content
+    :bgc           :transparent
+    :p             :1em
+    :pie           :1.5em
+    :b             :1px:solid:$neutral-150
+    }]
+  [:dark:&_.instance-code
+   {:bgc :transparent
+    :b   :1px:solid:$neutral-850}])
+
+(defclass playground-example-row-bounded-parent
+  {:border-radius :$rounded
+   :w             :fit-content
+   :bgc           :transparent
+   :p             :1em
+   :pie           :1.5em
+   :b             :1px:solid:$neutral-150
+   :dark:b        :1px:solid:$neutral-850})
+
+
+
+
+(defclass playground-pane-box-shadow
+  :box-shadow--0:0:13px:8px:white|0:0:10px:9px:white)
+
+(defclass all-components-sidenav-header
+  :.flex-col-c
+  ;; :.semi-bold
+  :.foreground-secondary
+  :.neutralize
+  :ai--c
+  :height--$navbar-height)
+
+(defclass neutralize
+  :.transition
+  :bgc--$background-color
+  :dark:bgc--$background-color-inverse
+  :c--$foreground-color
+  :dark:c--$foreground-color-inverse)
+
+(defclass neutralize-secondary
+  :.transition
+  :bgc--$background-color
+  :dark:bgc--$background-color-inverse
+  :c--$neutral-secondary-foreground
+  :dark:c--$neutral-secondary-foreground-inverse)
+
+(defclass component-section-header-label
+  :.semi-bold
+  :.capitalize
+  :lh--0.75em
+  :fs--$xlarge)
+
+(defclass cormorant-section-label 
+  :.bold
+  :dark:fw--$wee-bold
+  :fs--17.5px)
+
+;; TODO - This version won't work with out-dated browsers because of color-mix
+;; (defclass bg-scrim-gradient
+;;   {:bgi                  '(linear-gradient "to bottom" "var(--background-color) var(--menu-height)" "color-mix(in srgb, var(--background-color), transparent calc(100% - var(--transparency-at-end, 65%)))") 
+;;    :dark:bgi             '(linear-gradient "to bottom" "var(--background-color-inverse) var(--menu-height)" "color-mix(in srgb, var(--background-color-inverse), transparent calc(100% - var(--transparency-at-end, 65%)))")})
+
+;; TODO - This version will
+(defclass bg-scrim-gradient
+  {:bgi                  '(linear-gradient "to bottom" "var(--background-color) var(--menu-height)" "rgba(255 255 255 / 0.65)") 
+   :dark:bgi             '(linear-gradient "to bottom" "var(--background-color-inverse) var(--menu-height)" "rgba(0 0 0 / 0.65)")})
+
+
+(defclass header-menu-transition-group
+  ;; :.xxxslow
+  ;; :.debug-blue
+  )

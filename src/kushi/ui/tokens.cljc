@@ -6,30 +6,33 @@
 
    ;; Color
    ;; ------------------------------------------------------
-   :$body-color                              :$gray-950
-   :$body-color-inverse                      :$gray-50
+   ;; TODO - change "body" to "foreground"?
+   :$foreground-color                        :$neutral-950
+   :$foreground-color-inverse                :$neutral-50
 
-   :$body-background-color                   :white
-   :$body-background-color-inverse           :$gray-1000
+   ;; TODO - drop "body"?
+   :$background-color                        :white
+   :$background-color-inverse                :$neutral-1000
 
 
+   ;; TODO - change "fg" to "foreground"?
    ;; Neutrals
-   :$neutral-fg                              :$neutral-minimal-color
-   :$neutral-fg-inverse                      :$neutral-minimal-color-inverse
-   :$neutral-secondary-fg                    :$gray-700
-   :$neutral-secondary-fg-inverse            :$gray-300
+   :$neutral-foreground                      :$neutral-minimal-color
+   :$neutral-foreground-inverse              :$neutral-minimal-color-inverse
+   :$neutral-secondary-foreground            :$neutral-700
+   :$neutral-secondary-foreground-inverse    :$neutral-350
 
-   :$accent-fg                               :$accent-minimal-color
-   :$accent-fg-inverse                       :$accent-minimal-color-inverse
+   :$accent-foreground                       :$accent-minimal-color
+   :$accent-foreground-inverse               :$accent-minimal-color-inverse
 
-   :$positive-fg                             :$positive-minimal-color
-   :$positive-fg-inverse                     :$positive-minimal-color-inverse
+   :$positive-foreground                     :$positive-minimal-color
+   :$positive-foreground-inverse             :$positive-minimal-color-inverse
 
-   :$warning-fg                              :$warning-minimal-color
-   :$warning-fg-inverse                      :$warning-minimal-color-inverse
+   :$warning-foreground                      :$warning-minimal-color
+   :$warning-foreground-inverse              :$warning-minimal-color-inverse
 
-   :$negative-fg                             :$negative-minimal-color
-   :$negative-fg-inverse                     :$negative-minimal-color-inverse
+   :$negative-foreground                     :$negative-minimal-color
+   :$negative-foreground-inverse             :$negative-minimal-color-inverse
 
 
    ;; Debugging grid
@@ -41,13 +44,15 @@
 
    ;; Typography
    ;; ------------------------------------------------------
-
+   
 
    ;; font-family
    ;; TODO should this live in basetheme?
    :$sans-serif-font-stack                  "Inter, system-ui, sans-serif"
    :$serif-font-stack                       "Cormorant, Times, serif"
-   :$code-font-stack                        "Fira Code, monospace"
+   :$code-font-stack                        "'Fira Code', monospace"
+   :$sans                                   :$sans-serif-font-stack
+   :$serif                                  :$serif-font-stack
 
 
    ;; code
@@ -71,7 +76,7 @@
    :$extra-bold                             800
    :$heavy                                  900
 
-   :$root-font-size                   :1rem
+   :$root-font-size                         :1rem
 
 
    ;; Intended for css prop `font-size`
@@ -127,6 +132,58 @@
    :$border-width                           :1px
    :$border-style                           :solid
 
+   ;; Intended for divisors and divisor-like borders
+   :$divisor-thickness                      :1px
+   :$divisor-style                          :solid
+   :$divisor-color-0                        :transparent
+   :$divisor-color-1                        :$neutral-50
+   :$divisor-color-2                        :$neutral-100
+   :$divisor-color-3                        :$neutral-150
+   :$divisor-color-4                        :$neutral-200
+   :$divisor-color-5                        :$neutral-250
+   :$divisor-color-6                        :$neutral-300
+   :$divisor-color-7                        :$neutral-350
+   :$divisor-color-8                        :$neutral-450
+   :$divisor-color-9                        :$neutral-500
+   :$divisor-color-10                       :$neutral-550
+   :$divisor-color-1-inverse                :$neutral-950
+   :$divisor-color-2-inverse                :$neutral-900
+   :$divisor-color-3-inverse                :$neutral-850
+   :$divisor-color-4-inverse                :$neutral-800
+   :$divisor-color-5-inverse                :$neutral-750
+   :$divisor-color-6-inverse                :$neutral-700
+   :$divisor-color-7-inverse                :$neutral-650
+   :$divisor-color-8-inverse                :$neutral-600
+   :$divisor-color-9-inverse                :$neutral-550
+   :$divisor-color-10-inverse               :$neutral-500
+
+   :$divisor-color                          :$divisor-color-3
+   :$divisor-color-inverse                  :$divisor-color-5-inverse
+
+   :$divisor-0                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-0)"
+   :$divisor-1                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-1)"
+   :$divisor-2                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-2)"
+   :$divisor-3                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-3)"
+   :$divisor-4                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-4)"
+   :$divisor-5                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-5)"
+   :$divisor-6                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-6)"
+   :$divisor-7                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-7)"
+   :$divisor-8                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-8)"
+   :$divisor-9                              "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-9)"
+   :$divisor-10                             "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-10)"
+   :$divisor-1-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-1-inverse)"
+   :$divisor-2-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-2-inverse)"
+   :$divisor-3-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-3-inverse)"
+   :$divisor-4-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-4-inverse)"
+   :$divisor-5-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-5-inverse)"
+   :$divisor-6-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-6-inverse)"
+   :$divisor-7-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-7-inverse)"
+   :$divisor-8-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-8-inverse)"
+   :$divisor-9-inverse                      "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-9-inverse)"
+   :$divisor-10-inverse                     "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-10-inverse)"
+
+   :$divisor                                :$divisor-3
+   :$divisor-inverse                        :$divisor-5-inverse
 
 
    ;; Intended for overlay placement
@@ -138,10 +195,10 @@
    ;; Buttons
    ;; ------------------------------------------------------
    :$button-padding-inline-ems              :1.2em
-   :$icon-button-padding-inline-ems         :0.8em
-   :$button-padding-block-ems               :0.8em
-   :$button-with-icon-padding-inline-offset :0.8em
-   :$button-border-width                    :1.5px
+   :$icon-button-padding-inline-ems         :0.69em
+   :$button-padding-block-ems               :0.67em
+   :$button-with-icon-padding-inline-offset :0.9em
+   :$button-border-width                    :1px
 
 
 
@@ -152,10 +209,10 @@
 
    ;; pane - floating layer abstraction
    ;; ------------------------------------------------------
-
+   
    ;; pane colors and images
-   :$pane-background-color                 :$body-background-color
-   :$pane-background-color-inverse         :$body-background-color-inverse
+   :$pane-background-color                 :$background-color
+   :$pane-background-color-inverse         :$background-color-inverse
    :$pane-background-image                 :white
    :$pane-box-shadow                       :$elevated-5
    :$pane-box-shadow-inverse               :$elevated-5-inverse
@@ -165,11 +222,11 @@
    :$pane-border-color-inverse             :transparent
 
    ;; pane geometry
-   :$pane-min-width                        :150px
-   :$pane-min-height                       :75px
+   :$pane-min-width                        :70px
+   :$pane-min-height                       :35px
    :$pane-padding-inline                   :1em
    :$pane-padding-block                    :0.5em
-   :$pane-border-radius                    :$rounded
+   :$pane-border-radius                    :$rounded-absolute-large
    :$pane-offset                           :7px
    :$pane-viewport-padding                 :5px 
    :$pane-flip-viewport-edge-threshold     :32px 
@@ -197,19 +254,20 @@
    :$modal-padding-block                    :$modal-padding
    :$modal-backdrop-color                   :$black-transparent-50
    :$modal-margin                           :1rem
-   :$modal-min-width                        :450px
+   :$modal-min-width                        :100px
+   :$modal-max-height                       :800px
    :$modal-transition-duration              :$pane-transition-duration
 
 
 
    ;; Tooltips
    ;; ------------------------------------------------------
-
+   
    ;; tooltip colors and images
-   :$tooltip-color                            :$body-color-inverse
-   :$tooltip-color-inverse                    :$body-color
-   :$tooltip-background-color                 :$body-background-color-inverse
-   :$tooltip-background-color-inverse         :$body-background-color
+   :$tooltip-color                            :$foreground-color-inverse
+   :$tooltip-color-inverse                    :$foreground-color
+   :$tooltip-background-color                 :$background-color-inverse
+   :$tooltip-background-color-inverse         :$background-color
    :$tooltip-background-image                 :none
    :$tooltip-box-shadow                       :none
    :$tooltip-box-shadow-inverse               :none
@@ -219,7 +277,7 @@
    :$tooltip-border-color-inverse             :$pane-border-color-inverse
 
    ;; pane typography
-   :$tooltip-line-height                      1.25
+   :$tooltip-line-height                      1.45
    :$tooltip-font-family                      :$sans-serif-font-stack
    :$tooltip-font-size                        :$xsmall
    :$tooltip-font-weight                      :$wee-bold
@@ -228,8 +286,8 @@
    ;; tooltip geometry
    :$tooltip-min-width                        :1rem
    :$tooltip-min-height                       :1rem
-   :$tooltip-padding-inline                   :$pane-padding-inline
-   :$tooltip-padding-block                    :$pane-padding-block
+   :$tooltip-padding-inline                   :1.2em
+   :$tooltip-padding-block                    :0.65em
    :$tooltip-border-radius                    :5px
    :$tooltip-offset                           :$pane-offset
    :$tooltip-viewport-padding                 :$pane-viewport-padding 
@@ -256,7 +314,7 @@
 
    ;; Popovers
    ;; ------------------------------------------------------
-
+   
    ;; popover colors and images
    :$popover-background-color                 :$pane-background-color
    :$popover-background-color-inverse         :$pane-background-color-inverse
@@ -265,7 +323,7 @@
    :$popover-box-shadow-inverse               :$pane-box-shadow-inverse
    :$popover-border-width                     :1px
    :$popover-border-style                     :solid
-   :$popover-border-color                     :$neutral-300
+   :$popover-border-color                     :$neutral-200
    :$popover-border-color-inverse             :$neutral-500
 
    ;; popover geometry
@@ -294,7 +352,7 @@
    
    ;; toasts
    ;; ------------------------------------------------------
-
+   
    ;; toast colors and images
    :$toast-background-color                 :$pane-background-color
    :$toast-background-color-inverse         :$pane-background-color-inverse
@@ -323,14 +381,14 @@
 
    ;; Modals
    ;; ------------------------------------------------------
-   :$modal-border-radius                    :$rounded-medium
+   :$modal-border-radius                    :$rounded-absolute-large
    :$modal-border                           :none
    :$modal-padding                          :2rem
    :$modal-padding-block                    :$modal-padding
    :$modal-padding-inline                   :$modal-padding
    :$modal-backdrop-color                   :$black-transparent-40
    :$modal-margin                           :1rem
-   :$modal-min-width                        :500px
+   :$modal-min-width                        :200px
    :$modal-transition-duration              :$xfast
 
 
@@ -347,25 +405,50 @@
 
    ;; Intended for css props: border-radius
    ;; ------------------------------------------------------
-   :$rounded-xxxsmall                       :0.625rem         ;; 1px
-   :$rounded-xxsmall                        :0.125rem         ;; 2px
-   :$rounded-xsmall                         :0.25rem          ;; 4px
-   :$rounded-small                          :0.375rem         ;; 6px
-   :$rounded-medium                         :0.5rem           ;; 8px
-   :$rounded-large                          :0.75rem          ;; 12px
-   :$rounded-xlarge                         :0.1rem           ;; 16px
-   :$rounded-xxlarge                        :1.25rem          ;; 20px
-   :$rounded-xxxlarge                       :1.5625rem        ;; 25px
+   
+   ;; Absolute versions for panes, cards, etc.
+   :$rounded-absolute-xxxsmall              :0.0625rem         ;; 1px
+   :$rounded-absolute-xxsmall               :0.125rem         ;; 2px
+   :$rounded-absolute-xsmall                :0.25rem          ;; 4px
+   :$rounded-absolute-small                 :0.375rem         ;; 6px
+   :$rounded-absolute-medium                :0.5rem           ;; 8px
+   :$rounded-absolute-large                 :0.75rem          ;; 12px
+   :$rounded-absolute-xlarge                :0.1rem           ;; 16px
+   :$rounded-absolute-xxlarge               :1.25rem          ;; 20px
+   :$rounded-absolute-xxxlarge              :1.5625rem        ;; 25px
+   
+   ;; Relative (to type size) versions for buttons, badges
+   :$rounded-xxxsmall                       :0.04375em  
+   :$rounded-xxsmall                        :0.0875em  
+   :$rounded-xsmall                         :0.175em   
+   :$rounded-small                          :0.2625em  
+   :$rounded-medium                         :0.35em    
+   :$rounded-large                          :0.525em   
+   :$rounded-xlarge                         :0.7em     
+   :$rounded-xxlarge                        :0.875em   
+   :$rounded-xxxlarge                       :1.09375em 
 
    :$rounded                                :$rounded-medium
 
-   ;; TODO - what
    :$border-weight                          :1px
+
+
+    ;; Intended for css props: background-image
+    ;; ------------------------------------------------------
+   
+   :$convex-0      :none
+   :$convex-1      "linear-gradient(180deg, hsl(0deg 0% 100% / 20%), transparent, hsl(0deg 0% 0% / 15%))"
+   :$convex-2     "linear-gradient(180deg, hsl(0deg 0% 100% / 25%), transparent, hsl(0deg 0% 0% / 25%))" 
+   :$convex-3     "linear-gradient(180deg, hsl(0deg 0% 0% / 30%), transparent, hsl(0deg 0% 100% / 35%))"
+   :$convex-4     "linear-gradient(180deg, hsl(0deg 0% 0% / 35%), transparent, hsl(0deg 0% 100% / 45%))"
+   :$convex-5     "linear-gradient(180deg, hsl(0deg 0% 0% / 40%), transparent, hsl(0deg 0% 100% / 50%))"
+
+   :$convex        :$convex-1
 
 
     ;; Intended for css props: box-shadow
     ;; ------------------------------------------------------
-
+   
    :$elevated-0
    :none
 
@@ -387,7 +470,7 @@
     [:0px :3px :4px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
     [:0px :1px :8px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 2px 1px -1px, rgb(0 0 0 / 14%) 0px 1px 1px 0px, rgb(0 0 0 / 12%) 0px 1px 3px 0px"
-
+   
 
    ;; maps to MUI2 level 3
    :$elevated-2
@@ -399,7 +482,7 @@
     [:0px :3px :4px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
     [:0px :1px :8px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 14%) 0px 3px 4px 0px, rgb(0 0 0 / 12%) 0px 1px 8px 0px"
-
+   
 
    ;; maps to MUI2 level 6
    :$elevated-3
@@ -412,7 +495,7 @@
     [:0px :6px :10px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
     [:0px :1px :18px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 3px 5px -1px, rgb(0 0 0 / 14%) 0px 6px 10px 0px, rgb(0 0 0 / 12%) 0px 1px 18px 0px"
-
+   
    ;; maps to MUI2 level 8
    :$elevated-4
    [[:0px :5px :5px :-3px  "var(--elevation-shadow-layer-1-color)"]
@@ -423,7 +506,7 @@
     [:0px :8px :18px :1px "var(--elevation-shadow-layer-2-color-inverse)"]
     [:0px :6px :20px :2px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 5px 5px -3px, rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px"
-
+   
    ;; maps to MUI2 level 12
    :$elevated-5
    [[:0px :7px :14px :-2px  "var(--elevation-shadow-layer-1-color)"]
@@ -435,8 +518,7 @@
     [:0px :6px :26px :0px "var(--elevation-shadow-layer-2-color-inverse)"]
     [:0px :8px :27px :0px  "var(--elevation-shadow-layer-3-color-inverse)"]]
    ;; "rgb(0 0 0 / 20%) 0px 7px 8px -4px, rgb(0 0 0 / 14%) 0px 12px 17px 2px, rgb(0 0 0 / 12%) 0px 5px 22px 4px"
-
-
+   
    :$elevated
    :$elevated-4
 
@@ -452,6 +534,9 @@
    :$timing-ease-in-out-curve      "cubic-bezier(0.4, 0, 0.2, 1)"
    :$timing-ease-out-curve-extreme "cubic-bezier(0.190, 0.510, 0.125, 0.905)"
 
+   :$transition-timing-function    :$timing-linear-curve
+   :$transition-duration           :$fast
+
    :$instant                       :0ms
    :$xxxfast                       :50ms
    :$xxfast                        :100ms
@@ -463,7 +548,7 @@
    :$xxslow                        :2s
    :$xxxslow                       :4s
 
-   :$progress-animation-duration   :900ms
+   :$spinner-animation-duration   :900ms
    :$loading-spinner-height        :0.8em
 
 
@@ -480,7 +565,7 @@
    ;; ------------------------------------------------------
    :$collapse-transition-duration :$slow
 
-   ;; kushi.ui.input.text.core/input
+   ;; kushi.ui.text-field.core/input
    :$text-input-helper-margin-block-start      :0.3em
    :$text-input-label-inline-margin-inline-end :0.7em
    :$text-input-label-block-margin-block-end   :0.4em
@@ -586,7 +671,7 @@
 
    ;; Neutral dark
    :$switch-on-background-color-inverse
-   :$neutral-450
+   :$neutral-550
 
    :$switch-on-background-color-hover-inverse
    :$neutral-550

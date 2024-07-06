@@ -30,6 +30,13 @@
       (or (string/starts-with? nm "--")
           (string/starts-with? nm "$")))))
 
+(defn kebab->shorthand [x] 
+  (->> (-> x
+           stringify
+           (string/split #"-"))
+       (map #(nth % 0 nil))
+       string/join))
+
 (defn cssfn-string
   "(cssfn-string \"hsla\" \"100deg\" \"50%\" \"33%\" \"0.8\")
    => \"hsla(100deg, 50%, 33%, 0.8)\"

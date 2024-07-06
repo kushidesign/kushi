@@ -1,4 +1,4 @@
-(ns kushi.ui.input.text.core
+(ns kushi.ui.text-field.core
   (:require-macros
    [kushi.core :refer (sx defclass)])
   (:require
@@ -20,7 +20,7 @@
        :pi--0.375em )
    x])
 
-(defn- input* [& args]
+(defn- text-field* [& args]
   (let [[opts attrs & _]       (opts+children args)
         {:keys [wrapper-attrs
                 start-enhancer
@@ -39,11 +39,14 @@
           :bw--1px
           :bs--solid
           :border-radius--$text-input-border-radius
+          :bgc--$white-transparent-70
+          :dark:bgc--$black-transparent-20
           :&_textarea:border-radius--$text-input-border-radius
           :&_input:border-radius--$text-input-border-radius
           [:bc "color-mix(in srgb, currentColor var(--text-input-border-intensity, 75%), transparent)"]
           [:dark:bc "color-mix(in srgb, currentColor var(--text-input-border-intensity-inverse, 55%), transparent)"]
-          [:focus-within:bgc :transparent!important] ;; tmp fix for when semantic class + input is focused
+          ["focus-within:bgc" "var(--white-transparent-70)!important"] ;; tmp fix for when semantic class + input is focused
+          ["dark:focus-within:bgc" "var(--black-transparent-20)!important"] ;; tmp fix for when semantic class + input is focused
           [:focus-within:c :currentColor!important] ;; ["has-ancestor(.error):bc" :$negative-600]
           [:focus-within:bc '(rgba 0 125 250 1)]
           {:class [semantic]})
@@ -78,7 +81,7 @@
                 (not textarea?))
        [enhancer end-enhancer])]))
 
-(defn input
+(defn text-field
   {:desc ["An input enables the entry of text. By default, this component will use an `<input>` element of type `text`. If the option `:-textarea?` is set to `true`, a `<textarea>` element will be used instead."]
    :opts '[{:name    textarea?
             :pred    boolean?
@@ -163,7 +166,7 @@
                                :.info
                                :.block
                                :.small
-                               :fw--$semi-bold
+                               :fw--$wee-bold
                                :hover:bgc--transparent!important ;; temp fix
                                :active:bgc--transparent!important ;; temp fix
                                {:class [semantic]})
@@ -172,12 +175,12 @@
                              (merge-attrs
                               label-text-attrs
                               (sx 'kushi-text-input-helper
-                                  :.neutral-secondary-fg
+                                  :.neutral-secondary-foreground
                                   :.inline-block
                                   :fw--$normal
                                   :mbs--$text-input-helper-margin-block-start||0.3em)))
 
-        wrapped-input [input* (merge attrs
+        wrapped-input [text-field* (merge attrs
                                      {:-wrapper-attrs  wrapper-attrs
                                       :-start-enhancer start-enhancer
                                       :-end-enhancer   end-enhancer

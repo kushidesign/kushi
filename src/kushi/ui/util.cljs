@@ -1,6 +1,8 @@
 (ns kushi.ui.util
-  (:require
-   [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            
+            [domo.core :as domo]
+            [kushi.core :refer [keyed]]))
 
 ;; Generic
 ;; --------------------------------------------------------------------------
@@ -40,6 +42,10 @@
 (defn nameable? [x]
   (or (string? x) (keyword? x) (symbol? x)))
 
+(defn class-coll? [x]
+  (and (seq x)
+       (every? nameable? x))) 
+
 (defn as-str [x]
   (str (if (or (keyword? x) (symbol? x)) (name x) x)))
 
@@ -67,3 +73,37 @@
  [k keyset]
  (contains? keyset k))
 
+
+(defn backtics->hiccup
+  [s]
+  (if (re-find #"`" s)
+    (->> (string/split s #" ")
+         (map #(if (re-find #"^`.+`$" %)
+                 [:span.code (->> % rest drop-last string/join)]
+                 %))
+         (map-indexed (fn [idx v]
+                        (if (string? v)
+                          (if (= idx 0) (str v " ") (str " " v))
+                          v)))
+         (cons :span)
+         (into []))
+    s))
+
+(defn backtics->stringified-html
+  [s]
+  (if (re-find #"`" s)
+    (let [spans       (for [i    (-> (re-seq #"`" s) count range)
+                            :let [tag (if (even? i) "<span class=\"code\">" "</span>")]]
+                        tag)
+          spans       (conj (into [] spans) nil)
+          splits      (string/split s #"`")
+          interleaved (interleave splits spans)]
+      (keyed spans splits interleaved)
+      (string/join interleaved))
+    s))
+
+(defn below-breakpoint? [k]
+  (false? (->> (kushi.core/breakpoints)
+               k
+               first
+               (apply domo/matches-media?))))

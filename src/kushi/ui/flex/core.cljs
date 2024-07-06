@@ -1,3 +1,5 @@
+;; TODO - use :-as option to provide alternate tag
+
 (ns kushi.ui.flex.core
   (:require
    [kushi.core :refer (sx merge-attrs)]

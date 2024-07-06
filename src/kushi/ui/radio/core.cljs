@@ -1,4 +1,4 @@
-(ns kushi.ui.input.radio.core
+(ns kushi.ui.radio.core
   (:require-macros
    [kushi.core :refer (sx)])
   (:require
@@ -47,14 +47,25 @@
             :color--currentColor
             :width--1em
             :height--1em
-            :outline-style--solid
-            :outline-width--$input-border-weight-normal
-            :outline-color--currentColor
-            :outline-offset---0.15em
-            :checked:outline-width--0.333em
-            :checked:outline-offset---0.333em
-            :checked:o--1
-            :o--0.6
+            ;; :outline-style--solid
+            ;; :outline-width--$input-border-weight-normal
+            ;; :outline-color--currentColor
+            ;; :outline-offset---0.15em
+            :border-style--solid
+            :border-width--$input-border-weight-normal
+            :border-color--currentColor
+            ;; :checked:outline-width--0.333em
+            ;; :checked:outline-offset---0.333em
+            :checked:border-width--0.333em
+            :checked:border-offset---0.333em
+
+            ;; TODO - On older browsers, (older iPhones) this won't work.
+            ;; See if lightning css can fix this...
+            ;; Otherwise, it defaults to currentColor, so NBD.
+            [:border-color '(color-mix "in hsl" "currentColor 55%" :transparent)]
+
+            [:checked:border-color :currentColor]
+            :o--1
             :border-radius--50%
             {:data-kushi-ui :input.radio
              :type          :radio})

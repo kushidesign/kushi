@@ -1,6 +1,9 @@
 (ns ^:dev/always kushi.colors
   (:require [clojure.set :as set :refer [map-invert]]))
 
+
+;; TODO - consider changing these to `:$transparent-white-03`
+
 (def transparent-neutrals
   [
    :$white-transparent-01 "hsla(0, 0%, 100%, 0.01)"
@@ -291,6 +294,9 @@
             [900 37 24]
             [1000 40 11]]}
    ])
+
+(def color-names
+  (mapv #(nth % 0 nil) (partition 2 colors)))
 
 (def colors-by-alias
   (into {}

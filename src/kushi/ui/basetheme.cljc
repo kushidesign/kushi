@@ -64,17 +64,17 @@
   [
    ;; Neutral --------------------------------------------------
    ;; default
-   :.neutral:color                                  1000
-   :.neutral:hover:color                            1000
-   :.neutral:active:color                           1000
+   :.neutral:color                                  900
+   :.neutral:hover:color                            900
+   :.neutral:active:color                           900
 
    :.neutral:background-color                       100
    :.neutral:hover:background-color                 200
    :.neutral:active:background-color                300
 
-   :.neutral.info:color                             1000
-   :.neutral.info:hover:color                       1000
-   :.neutral.info:active:color                      1000
+   :.neutral.info:color                             900
+   :.neutral.info:hover:color                       900
+   :.neutral.info:active:color                      900
 
    :.neutral.info:background-color                  100
    :.neutral.info:hover:background-color            100
@@ -82,9 +82,9 @@
 
 
    ;; minimal
-   :.neutral.minimal:color                          1000
-   :.neutral.minimal:hover:color                    1000
-   :.neutral.minimal:active:color                   1000
+   :.neutral.minimal:color                          900
+   :.neutral.minimal:hover:color                    900
+   :.neutral.minimal:active:color                   900
 
    :.neutral.minimal:background-color               :transparent
    :.neutral.minimal:hover:background-color         100
@@ -92,25 +92,25 @@
 
 
    ;; bordered
-   :.neutral.bordered:color                         1000
-   :.neutral.bordered:hover:color                   1000
-   :.neutral.bordered:active:color                  1000
+   :.neutral.bordered:color                         900
+   :.neutral.bordered:hover:color                   900
+   :.neutral.bordered:active:color                  900
 
    :.neutral.bordered:background-color              :transparent
    :.neutral.bordered:hover:background-color        :transparent
    :.neutral.bordered:active:background-color       :transparent
 
-   :.neutral.bordered:border-color                  1000
-   :.neutral.bordered:hover:border-color            1000
-   :.neutral.bordered:active:border-color           1000
+   :.neutral.bordered:border-color                  900
+   :.neutral.bordered:hover:border-color            900
+   :.neutral.bordered:active:border-color           900
 
    :.neutral.bordered.info:background-color         :transparent
    :.neutral.bordered.info:hover:background-color   :transparent
    :.neutral.bordered.info:active:background-color  :transparent
 
-   :.neutral.bordered.info:border-color             1000
-   :.neutral.bordered.info:hover:border-color       1000
-   :.neutral.bordered.info:active:border-color      1000
+   :.neutral.bordered.info:border-color             900
+   :.neutral.bordered.info:hover:border-color       900
+   :.neutral.bordered.info:active:border-color      900
 
 
    ;; filled
@@ -118,13 +118,13 @@
    :.neutral.filled:hover:color                     :white
    :.neutral.filled:active:color                    :white
 
-   :.neutral.filled:background-color                800
-   :.neutral.filled:hover:background-color          900
-   :.neutral.filled:active:background-color         1000
+   :.neutral.filled:background-color                700
+   :.neutral.filled:hover:background-color          800
+   :.neutral.filled:active:background-color         9000
 
-   :.neutral.filled.info:background-color           800
-   :.neutral.filled.info:hover:background-color     800
-   :.neutral-filled.info:active:background-color    800
+   :.neutral.filled.info:background-color           700
+   :.neutral.filled.info:hover:background-color     700
+   :.neutral-filled.info:active:background-color    700
 
 
    ;; NEUTRAL INVERSE
@@ -133,9 +133,9 @@
    ".dark .neutral:hover:color"                            0
    ".dark .neutral:active:color"                           0
 
-   ".dark .neutral:background-color"                       750
-   ".dark .neutral:hover:background-color"                 700
-   ".dark .neutral:active:background-color"                700
+   ".dark .neutral:background-color"                       850
+   ".dark .neutral:hover:background-color"                 800
+   ".dark .neutral:active:background-color"                800
 
    ".dark .neutral.info:color"                             50
    ".dark .neutral.info:hover:color"                       50
@@ -147,12 +147,12 @@
 
    ;; minimal
    ".dark .neutral.minimal:color"                          150
-   ".dark .neutral.minimal:hover:color"                    100
-   ".dark .neutral.minimal:active:color"                   50
+   ".dark .neutral.minimal:hover:color"                    50
+   ".dark .neutral.minimal:active:color"                   0
 
    ".dark .neutral.minimal:background-color"               :transparent
-   ".dark .neutral.minimal:hover:background-color"         750
-   ".dark .neutral.minimal:active:background-color"        700
+   ".dark .neutral.minimal:hover:background-color"         850
+   ".dark .neutral.minimal:active:background-color"        800
 
    ;; bordered
    ".dark .neutral.bordered:color"                         150
@@ -193,7 +193,7 @@
    ".dark .neutral-filled.info:active:background-color"    250
 
    ;; Accent
-   :.accent:color                                700
+   :.accent:color                                  700
    :.accent:hover:color                            800
    :.accent:active:color                           900
 
@@ -215,7 +215,7 @@
 
    :.accent.minimal:background-color               :transparent
    :.accent.minimal:hover:background-color         100
-   :.accent.minimal:active:background-color        200
+   :.accent.minimal:active:background-color        150
 
    :.accent.bordered:color                         600
    :.accent.bordered:hover:color                   700
@@ -245,13 +245,13 @@
    :.accent.filled:hover:color                     :white
    :.accent.filled:active:color                    :white
 
-   :.accent.filled:background-color                550
-   :.accent.filled:hover:background-color          700
-   :.accent.filled:active:background-color         800
+   :.accent.filled:background-color                600
+   :.accent.filled:hover:background-color          750
+   :.accent.filled:active:background-color         850
 
-   :.accent.filled.info:background-color           550
-   :.accent.filled.info:hover:background-color     550
-   :.accent-filled.info:active:background-color    550
+   :.accent.filled.info:background-color           600
+   :.accent.filled.info:hover:background-color     600
+   :.accent-filled.info:active:background-color    600
 
    ;; ACCENT INVERSE
    ;; default
@@ -808,15 +808,15 @@
    ;; uncomment TEMP
    "body"
    {:font-family                :$sans-serif-font-stack
-    :color                      :$body-color
-    :background-color           :$body-background-color
+    :color                      :$foreground-color
+    :background-color           :$background-color
     :transition-property        :background-color|color
     :transition-duration        :$fast
     :transition-timing-function :$timing-linear-curve}
 
    ".dark, body.dark"
-   {:bgc                        :$body-background-color-inverse
-    :color                      :$body-color-inverse}
+   {:bgc                        :$background-color-inverse
+    :color                      :$foreground-color-inverse}
 
    "code, .code"
    {:font-family                :$code-font-stack
@@ -828,6 +828,7 @@
     :bgc                        :$code-background-color
     :h                          :fit-content
     :w                          :fit-content
+    :ws                         :nowrap
     :transition-property        :all
     :transition-duration        :$fast
     :transition-timing-function "cubic-bezier(0, 0, 1, 1)"}
@@ -886,21 +887,21 @@
 
    ;; TODO - Move these to utility? or should then just be here?
    ;; Foreground text that is slightly de-emphasized (such as text input field helper text)
-   :.neutral-secondary-fg {:color      :$neutral-secondary-fg
-                           :dark:color :$neutral-secondary-fg-inverse}
+   :.neutral-secondary-foreground {:color      :$neutral-secondary-foreground
+                           :dark:color :$neutral-secondary-foreground-inverse}
 
    ;; Semantic fg
    ;; TODO -- dark versions of each with *--inverse tokens to match
-   :.neutral-fg {:color :$neutral-fg
-                 :dark:color :$neutral-fg-inverse}
-   :.accent-fg {:color :$accent-fg
-                :dark:color :$accent-fg-inverse}
-   :.positive-fg {:color :$positive-fg
-                  :dark:color :$positive-fg-inverse}
-   :.negative-fg {:color :$negative-fg
-                  :dark:color :$negative-fg-inverse}
-   :.warning-fg {:color :$warning-fg
-                 :dark:color :$warning-fg-inverse}
+   :.neutral-foreground {:color :$neutral-foreground
+                 :dark:color :$neutral-foreground-inverse}
+   :.accent-foreground {:color :$accent-foreground
+                :dark:color :$accent-foreground-inverse}
+   :.positive-foreground {:color :$positive-foreground
+                  :dark:color :$positive-foreground-inverse}
+   :.negative-foreground {:color :$negative-foreground
+                  :dark:color :$negative-foreground-inverse}
+   :.warning-foreground {:color :$warning-foreground
+                 :dark:color :$warning-foreground-inverse}
 
    ;; Semantic bg
    :.neutral-bg {:background-color :$neutral-background-color}
@@ -914,12 +915,10 @@
 ;; User would probably want to change from wee-bold for button and tag
 ;; Add to docs
 (def ui*
-  [".kushi-button"                                                   {"font-weight" :$wee-bold
-                                                                      "font-family" :$primary-font-family}
+  [".kushi-button"                                                   {"font-family" :$primary-font-family}
    ".kushi-button.bordered"                                          {"border-width" :$button-border-width}
    ".kushi-tag.bordered"                                             {"border-width" :$tag-border-width}
-   ".kushi-tag"                                                      {"font-weight" :$wee-bold
-                                                                      "font-family" :$primary-font-family}
+   ".kushi-tag"                                                      {"font-family" :$primary-font-family}
    ".dark .kushi-radio-input"                                        {:bgc :black}
    ".dark .kushi-checkbox-input"                                     {:bgc :black}
    ".dark .kushi-checkbox-input:before"                              {:box-shadow :inset:1em:1em:black}
@@ -928,8 +927,6 @@
 
   ;;  ".dark .kushi-slider-step-label"                               {:c :$gray-300}
    ])
-
-
 
 (defn- styles-transform-report
   ([coll ret]
@@ -973,49 +970,68 @@
         :else
         variant-values))
 
-(defn- variant-elision-re [key-set]
+(defn- variant-elision-re [key-set leading-str]
   (->> key-set
-       (map #(str  "\\." (name %)))
+       (map #(str leading-str (name %)))
        (string/join "|")
        re-pattern))
 
 (defn- maybe-remove-semantic-or-style-variants
-  [coll]
+  [leading-str coll]
   (let [elided (set/union (:elide-ui-variants-semantic user-config)
                           (:elide-ui-variants-style    user-config))]
-    (if (and (set? elided)
-             (seq elided))
-      (let [re  (variant-elision-re elided)
+    (if (and (set? elided) (seq elided))
+      (let [re  (variant-elision-re elided leading-str)
             ret (filter-flatmap coll #(not (re-find re (name %))))]
-
-      ;;  (println "Removing styles from unused variants" (styles-transform-report coll ret :variants-to-elide elided))
+        #_(println "Removing styles from unused variants"
+                   (styles-transform-report coll
+                                            ret
+                                            :variants-to-elide
+                                            elided))
 
         ret)
       coll)))
 
-(defn- maybe-remove-some-variants [coll]
+
+(defn- maybe-remove-some-variants [coll leading-str]
   (->> coll
-       maybe-remove-lights-or-darks
-       maybe-remove-semantic-or-style-variants))
-
-
+      ;;  maybe-remove-lights-or-darks
+       (maybe-remove-semantic-or-style-variants leading-str)))
 
 (defn base-theme-map
   []
   (let [{ui2            :styles
-         variant-tokens :token-pairs} (tokenizer variant-values)
-        ui                            (into [] (concat ui ui2 ui*))
-        ]
+         variant-tokens :token-pairs}
+        (tokenizer variant-values)
+
+        ui                            
+        (into [] (concat ui ui2 ui*))
+
+        ui
+        (maybe-remove-some-variants ui "\\.")
+
+        design-tokens
+        (let [color-tokens       (colors->tokens
+                                  colors
+                                  {:format    :css
+                                   :expanded? true})
+              alias-color-tokens (colors->alias-tokens
+                                  semantic-aliases 
+                                  {:expanded? true})
+              alias-color-tokens (maybe-remove-some-variants alias-color-tokens "^\\$")
+              variant-tokens     (maybe-remove-some-variants variant-tokens "^--")
+              ]
+
+          (into []
+                (concat color-tokens
+                        transparent-neutrals
+                        alias-color-tokens
+                        variant-tokens
+                        design-tokens)))]
+
     {:css-reset       css-reset
      :utility-classes utility-classes
-     :design-tokens   (let [color-tokens       (colors->tokens colors {:format :css :expanded? true})
-                            alias-color-tokens (colors->alias-tokens semantic-aliases {:expanded? true})]
-                        (into []
-                              (concat color-tokens
-                                      transparent-neutrals
-                                      alias-color-tokens
-                                      variant-tokens
-                                      design-tokens)))
+     :design-tokens   design-tokens
      :ui              ui
      :font-loading    {:add-default-sans-font-family?  true
                        :add-default-code-font-family?  true
@@ -1027,4 +1043,3 @@
                        ;;                   :styles {:normal [100]
                        ;;                            :italic [300]}}]
                        }}))
-

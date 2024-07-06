@@ -1,30 +1,27 @@
 (ns kushi.ui.dom.pane.core
-  (:require
-   [applied-science.js-interop :as j]
-   [clojure.string :as string]
-   [goog.string]
-   [goog.functions]
-   [domo.core :as domo]
-   ;; Import this to create defclasses
-   [kushi.core :refer (keyed)]
-   [kushi.ui.util :as util :refer [maybe nameable? as-str]]
-   [kushi.ui.dom.pane.toast :refer [append-toast!]]
-   [kushi.ui.dom.pane.shared :refer [stock-pane-types pane-classes]]
-   [kushi.ui.dom.pane.placement :refer [el-plc
-                                        pane-plc
-                                        updated-pane-placement
-                                        og-placement
-                                        placement-css-custom-property
-                                        owning-el-rect-cp]]))
+  (:require [applied-science.js-interop :as j]
+            [clojure.string :as string]
+            [domo.core :as domo] ;; Import this to create defclasses
+            [goog.functions]
+            [goog.string]
+            [kushi.core :refer (keyed)]
+            [kushi.ui.dom.pane.placement :refer [el-plc og-placement
+                                                 owning-el-rect-cp pane-plc
+                                                 placement-css-custom-property
+                                                 updated-pane-placement]]
+            [kushi.ui.dom.pane.shared :refer [pane-classes stock-pane-types]]
+            [kushi.ui.dom.pane.toast :refer [append-toast!]]
+            [kushi.ui.util :as util :refer [as-str maybe nameable?]]))
 
 
 (defn maybe-multiline-tooltip-text [v]
-  (if (or (vector? v)
-          (array? v)
-          (and (not (string? v))
-               (seq v)))
-    (string/join "<br>" v)
-    v))
+  (let [ret (if (or (vector? v)
+                    (array? v)
+                    (and (not (string? v))
+                         (seq v)))
+              (string/join "<br>" v)
+              v)]
+    ret))
 
 
 (defn- txy 
@@ -47,7 +44,6 @@
             {:scale               :1!important
              :transition-property :none!important})))))
 
-
 (defn- tooltip-text-html!
   [{:keys [el tooltip-text]}]
   (let [style (domo/css-style-string
@@ -57,12 +53,13 @@
                 :align-items     :center
                 :width           :fit-content})]
     (set! (.-innerHTML el)
-          (str "<div class=\"kushi-tooltip-text-wrapper\""
-                    "style=\"" style "\">"
-                 "<span class=\"kushi-tooltip-text\">"
-                   (maybe-multiline-tooltip-text tooltip-text)
-                 "</span>"
-               "</div>"))))
+          (util/backtics->stringified-html
+           (str "<div class=\"kushi-tooltip-text-wrapper\""
+                "style=\"" style "\">"
+                "<span class=\"kushi-tooltip-text\">"
+                (maybe-multiline-tooltip-text tooltip-text)
+                "</span>"
+                "</div>")))))
 
 (defn- adjust-client-rect
   [{:keys [top bottom left right width height] :as owning-el-rect}
@@ -109,11 +106,33 @@
   
   ;; Append pane el to the <body> 
   (.appendChild (or dialog-el js/document.body) el)
-  
+
   ;; Render contents if popover
   (when (contains? #{:popover} pane-type)
     (user-rendering-fn el)))
 
+(defn- edge-threshold 
+  [{:keys [pane-type user-pane-class user-pane-style]}]
+        ;; TOOD - Use some koind of dpi calc for edge-threshold.
+        ;; Convert to px if user supplies ems or rems.
+  (let [cp (str "--"
+                (case pane-type
+                  :popover "popover"
+                  :tooltip "tooltip"
+                  "pane")
+                "-flip-viewport-edge-threshold")
+        el (doto (js/document.createElement "div")
+             (.setAttribute "style" user-pane-style)
+             (.setAttribute "class" (str (when-let [cls user-pane-class]
+                                           (cond (string? cls)
+                                                 cls
+                                                 (util/class-coll? cls)
+                                                 (string/join " " cls)))
+                                         " invisible offscreen")))]
+    (.appendChild js/document.body el)
+    (let [ret (domo/css-custom-property-value el cp)]
+      (.removeChild js/document.body el)
+      (some-> ret js/parseInt))))
 
 (defn- append-pane!*
   "A pane is given an initial position based on screen-quadrant of the owning
@@ -131,8 +150,8 @@
    id]
 
   ;; 1) Pre-calculate and append pane
-  ;; Calculate an initial placment and append a pane element to the
-  ;; dom. If the owning element is beyond the edge-threshold, the pane will
+  ;; Calculate an initial placement and append a pane element to the dom.
+  ;; If the owning element is beyond the edge-threshold, the pane will
   ;; be assigned a new placement, but only if the value of :-pane-placement
   ;; is something other than :auto.
 
@@ -146,19 +165,13 @@
         owning-el-rect  (or (some->> dialog-el
                                      (adjust-client-rect owning-el-rect*))
                             owning-el-rect*)
-
         opts            (assoc opts
                                :pane-type
                                pane-type
                                :owning-el-rect
                                owning-el-rect)
         viewport        (domo/viewport)
-        ;; TOOD - Use some koind of dpi calc for edge-threshold.
-        ;; Convert to px if user supplies ems or rems.
-        edge-threshold  (some-> owning-el
-                                (domo/css-custom-property-value
-                                 "--pane-flip-viewport-edge-threshold")
-                                js/parseInt)
+        edge-threshold  (edge-threshold opts)
         owning-el-vpp   (el-plc viewport
                                 owning-el
                                 edge-threshold)
@@ -174,8 +187,8 @@
                                       tt-pos-og 
                                       arrow?))]
     (append-pane-el! (merge append-tt-opts
-                               {:metrics? true
-                                :id       (str "_kushi-metrics_" id)}))
+                            {:metrics? true
+                             :id       (str "_kushi-metrics_" id)}))
 
     ;; 2) Measure and adjust
     ;; Second, detect if the pane falls outside the viewport
@@ -353,27 +366,52 @@
 
 (defn remove-pane!
   "Removes pane from dom.
-   Removes :aria-describedby on owning element.
-   Removes the pane instance-specific `keydown` event on window."
+
+   For tooltips, removes :aria-describedby on owning element
+
+   For tooltips, removes the pane instance-specific `keydown`
+   and scroll events on window.
+   
+   For popovers,  removes the pane instance-specific `click`,
+   `resize`, and `scroll` events on window."
   [owning-el pane-id pane-type e]
   ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Add conditionality around pane-type for dismissal, if necessary
-  
-  (let [dialog-el (domo/nearest-ancestor owning-el "dialog")]
-    (some->> pane-id
-             domo/el-by-id
-             (.removeChild (or dialog-el js/document.body)))
+
+  (let [dialog-el        (domo/nearest-ancestor owning-el "dialog")
+        el-to-be-removed (some->> pane-id domo/el-by-id)
+        toast?           (= pane-type :toast)
+        toast-slot       (when toast? (.-parentNode el-to-be-removed))]
+
+    ;; TODO ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Document the use case for removing child from dialog-el
+
+    ;; TODO - this warning should fire if event listener has not been properly removed
+    ;; Leave this commented out:
+    ;; (when-not el-to-be-removed
+    ;;   (js/console.warn "[kushi.ui.dom.pane.core/remove-pane!]\nAttempt to .removeChild with a non-existing child element."))
+
+    (some->> el-to-be-removed
+             ;; DEV - commment out this .removeChild op to leave pane in dom for debugging
+             (.removeChild  (or toast-slot 
+                                (or dialog-el
+                                    js/document.body))
+                            el-to-be-removed))
+
+    ;; Popovers
     (when (= :popover pane-type)
       (let [update-placement-fn #(update-pane-placement!
                                   owning-el
                                   pane-id
                                   dialog-el)]
-        (.removeEventListener js/window
-                              "click"
-                              (partial remove-pane-if-clicked-outside!
-                                       owning-el
-                                       pane-id
-                                       pane-type))
+        (do
+          (.removeEventListener js/window
+                                "click"
+                                (partial remove-pane-if-clicked-outside!
+                                            owning-el
+                                            pane-id
+                                            pane-type)
+                                #js {:once true}))
         (.removeEventListener js/window "resize" update-placement-fn)
         (.removeEventListener js/window "scroll" update-placement-fn))
 
@@ -382,6 +420,8 @@
         (domo/remove-attribute! owning-el :aria-haspopup)
         (domo/remove-attribute! owning-el :aria-expanded)))
 
+
+    ;; Tooltips
     (when (= :tooltip pane-type)
       (domo/remove-attribute! owning-el :aria-describedby)
       (.removeEventListener owning-el
@@ -444,79 +484,92 @@
    ;; We need to use cet here (.currentEventTarget), in order
    ;; To prevent mis-assignment of ownership of the pane to
    ;; A child element of the intended owning el. 
-   (let [owning-el        (domo/cet e)
-         dialog-el        (domo/nearest-ancestor owning-el "dialog")
+   (when true
+     #_(or (and (= "mousedown" (.-type e))
+                (= 0 (.-button e)))
+           #_(= "click" (.-type e)))
+     (let [owning-el           (domo/cet e)
+           dialog-el           (domo/nearest-ancestor owning-el "dialog")
          ;; TODO - should this be "kushi-pane-*" ?
-         pane-id          (or pane-id (str "kushi-" (gensym)))
-         pane-type        (:pane-type opts)
-         existing-popover (and (= pane-type :popover)
-                               (j/get owning-el "ariaHasPopup"))
-         opts             (merge opts (keyed owning-el dialog-el))]
+           pane-id             (or pane-id (str "kushi-" (gensym)))
+           pane-type           (:pane-type opts)
+           existing-popover    (j/get owning-el "ariaHasPopup")
+           existing-tooltip-id (.getAttribute owning-el "aria-describedby")
+           existing-tooltip?   (domo/has-class? (domo/el-by-id existing-tooltip-id)
+                                                "kushi-tooltip")
+           opts                (merge opts (keyed owning-el dialog-el))]
 
-     (when-not existing-popover
-       
+       (when-not (or (and (= pane-type :tooltip)
+                          existing-popover)
+                     (and (= pane-type :popover)
+                          existing-popover))
+         
        ;; Adding `aria-describedby` for tooltips
-       (when (= pane-type :tooltip)
-         (domo/set-attribute! owning-el :aria-describedby pane-id))
+         (when (= pane-type :tooltip)
+           (domo/set-attribute! owning-el :aria-describedby pane-id))
 
        ;; Appending pane
-       (if (= pane-type :toast)
-         (append-toast! (assoc opts :owning-el owning-el)
-                        pane-id)
-         (append-pane!* (assoc opts :owning-el owning-el)
-                        pane-id))
+         (if (= pane-type :toast)
+           (append-toast! (assoc opts :owning-el owning-el)
+                          pane-id)
+           (append-pane!* (assoc opts :owning-el owning-el)
+                          pane-id))
 
 
        ;; Tooltip-specific mouseleave
-       (when (= pane-type :tooltip)
-         (.addEventListener owning-el
-                            "mouseleave"
-                            (partial remove-pane! owning-el pane-id pane-type)
-                            #js {"once" true}))
+         (when (= pane-type :tooltip)
+           (.addEventListener owning-el
+                              "mouseleave"
+                              (partial remove-pane! owning-el pane-id pane-type)
+                              #js {"once" true}))
 
        ;; Popover-specific aria attributes, listeners, and focus-trap
-       (when (= pane-type :popover)
-         (domo/set-attribute! owning-el :aria-controls pane-id)
-         (domo/set-attribute! owning-el :aria-haspopup "dialog")
-         (domo/set-attribute! owning-el :aria-expanded true)
-         (js/window.requestAnimationFrame 
-          #(.addEventListener js/window
-                              "click"
-                              (partial remove-pane-if-clicked-outside!
-                                       owning-el
-                                       pane-id
-                                       pane-type))
-          (.addEventListener js/window
-                             "scroll"
-                             #(update-pane-placement! owning-el pane-id dialog-el))
-          (.addEventListener js/window
-                             "resize"
-                             #(update-pane-placement! owning-el pane-id dialog-el))
+         (when (= pane-type :popover)
+           (when existing-tooltip?
+             (remove-pane! owning-el existing-tooltip-id :tooltip nil))
+           (domo/set-attribute! owning-el :aria-controls pane-id)
+           (domo/set-attribute! owning-el :aria-haspopup "dialog")
+           (domo/set-attribute! owning-el :aria-expanded true)
+           (js/window.requestAnimationFrame 
+            #(.addEventListener js/window
+                                "click"
+                                (partial remove-pane-if-clicked-outside!
+                                            owning-el
+                                            pane-id
+                                            pane-type)
+                                #js {:once true})
+            (.addEventListener js/window
+                               "scroll"
+                               #(update-pane-placement! owning-el pane-id dialog-el))
+            (.addEventListener js/window
+                               "resize"
+                               #(update-pane-placement! owning-el pane-id dialog-el))
 
 
           ;; This will set focus on first focusable element within pane
-          (set-popover-focus! pane-id)
+            (set-popover-focus! pane-id)
 
           ;; This will remove pane from dom if owning element goes away
-          (let [mo (new js/MutationObserver (observe-pane! pane-id))]
-            (.observe mo
-                      (domo/el-by-id pane-id)
-                      #js{:attributes true}))))
+            (let [mo (new js/MutationObserver (observe-pane! pane-id))]
+              (.observe mo
+                        (domo/el-by-id pane-id)
+                        #js{:attributes true}))))
 
        ;; This will auto-dismiss pane, for toasts (default) and popovers (opt-in).
-       (js/window.requestAnimationFrame 
-        #(when (:auto-dismiss? opts)
-           (js/setTimeout (partial remove-pane! owning-el pane-id pane-type)
-                          #_(domo/duration-property-ms  "popover-auto-dismiss-duration")
-                          5000)))
+         (js/window.requestAnimationFrame 
+          #(when (:auto-dismiss? opts)
+             (js/setTimeout (partial remove-pane! owning-el pane-id pane-type)
+                            #_(domo/duration-property-ms  "popover-auto-dismiss-duration")
+                            5000)))
 
        ;; Additional listeners for escaping panes
-       (when-not (= pane-type :toast)
-         (.addEventListener js/window
-                            "keydown"
-                            (partial escape-pane! owning-el pane-id pane-type)
-                            #js {"once" true})
-         (.addEventListener js/window
-                            "scroll"
-                            (partial escape-pane! owning-el pane-id pane-type)
-                            #js {"once" true}))))))
+         (when-not (= pane-type :toast)
+           (.addEventListener js/window
+                              "keydown"
+                              (partial escape-pane! owning-el pane-id pane-type)
+                              #js {"once" true})
+           (.addEventListener js/window
+                              "scroll"
+                              (partial escape-pane! owning-el pane-id pane-type)
+                              #js {"once" true})))))))
+

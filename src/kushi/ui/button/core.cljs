@@ -26,8 +26,30 @@
         (some icon-child? x))))
 
 (defn button
-  {:desc ["Buttons provide cues for actions and events."
-          "These fundamental components allow users to process actions or navigate an experience."]}
+  {:summary ["Buttons provide cues for actions and events."]
+   :desc ["Buttons are fundamental components allow users to process actions or navigate an experience."
+          :br
+          "They can be custom styled via a variety of tokens in your theme."
+          :br
+          :br "`:$button-padding-inline-ems`"
+          :br "The default value is `:1.2em`"
+          :br
+          :br "`:$icon-button-padding-inline-ems`"
+          :br "The default value is `:0.69em`"
+          :br
+          :br "`:$button-padding-block-ems`"
+          :br "The default value is `:0.67em`"
+          :br
+          :br "`:$button-with-icon-padding-inline-offset`"
+          :br "The default value is `:0.9em`"
+          :br
+          :br "`:$button-border-width`"
+          :br "The default value is `:1px`"
+          :br]
+   :opts '[{:name    loading?
+            :pred    boolean?
+            :default false
+            :desc    "When `true`, this will set the appropriate values for `aria-busy` and `aria-label`"}]}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys [loading?]}   opts
@@ -48,7 +70,9 @@
                 :.relative
                 :.neutral
                 :.enhanceable
+                :.rounded
                 :ai--c
+                :w--fit-content
                 [:pis pis]
                 [:pie pie]
                 :pb--$button-padding-block-ems
@@ -57,7 +81,64 @@
                 {:data-kushi-ui :button
                  :aria-busy     loading?
                  :aria-label    (when loading? "loading")})
-            (when loading? {:data-kushi-ui-progress true})
+            (when loading? {:data-kushi-ui-spinner true})
             attrs)]
           children)))
+
+;; (defn button2
+;;   {:desc ["Buttons provide cues for actions and events."
+;;           "These fundamental components allow users to process actions or navigate an experience."]}
+;;   [& args]
+;;   (let [[opts attrs & children] (opts+children args)
+;;         {:keys [loading?
+;;                 size
+;;                 variant
+;;                 shape
+;;                 semantic]
+;;          :or   {size     "medium"
+;;                 variant  "soft"
+;;                 shape    "rounded"
+;;                 semantic "neutral"}}  opts
+;;         only-icons?             (every? icon-child? children)
+;;         icon-inline-start?      (some-> children first icon-child?)
+;;         icon-inline-end?        (some-> children last icon-child?)
+;;         bordered?               (some->> attrs :class seq (some #{:bordered "bordered"}))
+;;         pi-opts                 (keyed only-icons? bordered?)
+;;         pis                     (resolve-inline-offset (assoc pi-opts :icon-inline-*? icon-inline-start?))
+;;         pie                     (resolve-inline-offset (assoc pi-opts :icon-inline-*? icon-inline-end?))]
+
+;;     (into [:button
+;;            (merge-attrs
+;;             (sx 'kushi-button
+;;                 :.flex-row-c
+;;                 :.transition
+;;                 :.pointer
+;;                 :.relative
+;;                 :.enhanceable
+;;                 :.rounded
+;;                 :ai--c
+;;                 :w--fit-content
+;;                 [:pis pis]
+;;                 [:pie pie]
+;;                 :pb--$button-padding-block-ems
+;;                 [:&.bordered:pb "calc(var(--button-padding-block-ems) - var(--button-border-width))"]
+;;                 [:&.bordered:pi "calc(var(--button-padding-inline-ems) - var(--button-border-width))"]
+;;                 {:data-kushi-ui       :button
+;;                  :data-kushi-size     size
+;;                  :data-kushi-variant  variant
+;;                  :data-kushi-shape    shape
+;;                  :data-kushi-semantic semantic
+;;                  :aria-busy           loading?
+;;                  :aria-label          (when loading? "loading")
+;;                  :class [size variant shape semantic]})
+;;             (when loading? {:data-kushi-ui-spinner true})
+;;             attrs)]
+;;           children)))
+
+
+
+
+
+
+
 

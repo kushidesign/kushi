@@ -1,5 +1,6 @@
-;; Experimental ns
-;; TODO rewrite this ns with reframe
+;; Experimental, unused !!!
+;; TODO - rewrite this ns with reframe
+
 (ns kushi.playground.tweak.element
   (:require [clojure.string :as string]
             [clojure.edn :as edn]
@@ -12,10 +13,9 @@
             [kushi.ui.tooltip.core :refer [tooltip-attrs]]
             [domo.core :as domo]
             [kushi.ui.core :refer [defcom]]
-            [kushi.ui.input.slider.core]
-            [kushi.ui.input.switch.core :refer [switch]]
+            [kushi.ui.slider.core]
+            [kushi.ui.switch.core :refer [switch]]
             [kushi.ui.util :refer [find-index]]
-            [kushi.playground.demobox.defs :refer [variants-by-category]]
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
             [domo.core :refer (copy-to-clipboard!)]
             [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
@@ -23,6 +23,66 @@
             [reagent.dom :as rdom]))
 
 
+(def variants-by-category
+  {
+   :size          [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge #_:xxlarge #_:xxxlarge]
+   :size-expanded [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge :xxxxlarge]
+   :tracking      [:xxxtight
+                   :xxtight
+                   :xtight
+                   :tight
+                   :default-tracking
+                   :loose
+                   :xloose
+                   :xxloose
+                   :xxxloose]
+   :elevation     [:elevated-0
+                   :elevated-1
+                   :elevated-2
+                   :elevated-3
+                   :elevated-4
+                   :elevated-5]
+   :kind          [:default :minimal :bordered :filled]
+   :kind2         [:default :bordered :filled]
+  ;;  :status   [:disabled]
+   :shape         [:pill :rounded :sharp]
+   :weight        [:thin
+                   :extra-light
+                   :light
+                   :normal
+                   :wee-bold
+                   :semi-bold
+                   :bold
+                   :extra-bold]
+   :semantic      [:neutral
+                   :accent
+                   :positive
+                   :negative
+                   :warning]
+
+   :flex          [:flex-row-fs
+                   :flex-row-c
+                   :flex-row-fe
+                   :flex-row-sa
+                   :flex-row-se
+                   :flex-row-sb
+                   :flex-col-fs
+                   :flex-col-c
+                   :flex-col-fe
+                   :flex-col-sa
+                   :flex-col-se
+                   :flex-col-sb]
+
+   :display       [:block
+                   :inline
+                   :inline-block
+                   :flex
+                   :inline-flex
+                   :grid
+                   :inline-grid
+                   :flow-root
+                   :contents]
+   })
 
 ;; (defclass kushi-devtools-guide
 ;;   :outline--2px:dashed:$purple-500
@@ -282,7 +342,7 @@
         og-class-idx      (find-index #(= % og-class) family-classes)
         og-class          og-class]
 
-    [kushi.ui.input.slider.core/slider
+    [kushi.ui.slider.core/slider
      {:-copy-to-clipboard-fn copy-to-clipboard-fn
       :-steps                family-classes
       :-step-marker          :dot
@@ -321,7 +381,7 @@
         og-class  "original-tweakable-value"
         tweaked-class  "tweaked-value-row"
         ]
-    [kushi.ui.input.slider.core/slider
+    [kushi.ui.slider.core/slider
      (sx :w--100%
          {:-copy-to-clipboard-fn copy-to-clipboard-fn
           :-step-label-suffix    (name unit-type)
@@ -343,8 +403,8 @@
 
 (defclass tweakable-css-prop-label
   [:after:content "\":\""]
-  [:after:color :$neutral-fg]
-  [:dark:after:color :$neutral-fg-inverse])
+  [:after:color :$neutral-foreground]
+  [:dark:after:color :$neutral-foreground-inverse])
 
 (defclass tweakable-label
   :.xsmall

@@ -56,7 +56,7 @@
           :.flex-row-fs
           :w--100%
           :d--none
-          ["has-parent([aria-expanded='true']):display" :block])
+          ["has-parent([aria-expanded='true']):display" :flex])
       (if (string? label-expanded)
         [header-title (assoc opts :label label-expanded :icon icon-expanded)]
         label-expanded)]]))

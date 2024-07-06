@@ -1,4 +1,4 @@
-(ns kushi.ui.input.checkbox.core
+(ns kushi.ui.checkbox.core
   (:require-macros
    [kushi.core :refer (sx)])
   (:require
@@ -8,10 +8,10 @@
 ;; TODO outlines for ally
 (defn checkbox
   {:desc ["Checkboxes are used to provide multiple options for selection. One or more checkboxes can be checked at a time."]
-   :opts '[{:name    input-attrs
+   :opts '[{:name    label-attrs
             :pred    map?
             :default nil
-            :desc    "HTML attributes map applied to the underlying `input` div."}]}
+            :desc    "HTML attributes map applied to the wrapping `label` div."}]}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys [label-attrs]}   opts]

@@ -10,11 +10,17 @@
 
 
    ;;  Google Fonts
-   ;;  :google-fonts  [
-   ;;                  "Roboto"
-   ;;                  {:family "Public Sans"
-   ;;                   :styles {:normal [100]
-   ;;                            :italic [300]}}]
+    :google-fonts  [
+                    ;; "Roboto"
+                    ;; {:family "Public Sans"
+                    ;;  :styles {:normal [100]
+                    ;;           :italic [300]}}
+                    {:family "Source Serif 4"
+                     :styles {:normal [400 500 600]
+                              :italic [400 500 600]}}
+                    {:family "JetBrains Mono"
+                     :styles {:normal [400]
+                              :italic []}}]
 
 
    ;;  Google Material Symbols
@@ -45,15 +51,23 @@
 
 (def my-theme
     {:design-tokens    [:$sans-serif-font-stack                  "Inter, system-ui, sans-serif"
+                        :$serif-font-stack                       "'Source Serif 4', Times, serif"
+                        :$code-font-stack                        "'JetBrains Mono', 'Fira Code', monospace"
                         :$primary-font-family                    :$sans-serif-font-stack
-                        :$code-color                             :$accent-750
+                        ;; :$code-color                             :$accent-750
+                        :$code-font-size                         :0.875em
+                        :$code-color                             :$accent-850
                         :$code-background-color                  :$accent-50
-                        :$code-color-inverse                     :$accent-100
+                        ;; :$code-color-inverse                     :$accent-100
+                        :$code-color-inverse                     :$neutral-100
                         :$code-background-color-inverse          :$accent-900
-
-                        :$button-with-icon-padding-inline-offset :0.8em
-                        :$button-border-width                    :1.5px
-                        :$kushi-playground-mobile-header-height  :46px]
+                        :$kushi-playground-mobile-header-height  :46px
+                        :$popover-border-color                   :$neutral-300
+                        :$navbar-height                          :50px
+                        :$tooltip-delay-duration                 :250ms
+                        :$main-content-max-width                 :605px
+                        :$toast-slot-z-index                     1
+                        ]
 
      :typescale        (create-typescale {:size-limit "xxx" :shift 0})
      :type-scale-shift 1
@@ -62,6 +76,7 @@
                         ;; this should be :--primary-font-family ?
                         {
                          ;; :color       :$gray-950
+                         :overflow-y :scroll
                          }
 
                         "code, .code"

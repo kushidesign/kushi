@@ -1,4 +1,4 @@
-(ns kushi.ui.input.switch.core
+(ns kushi.ui.switch.core
   (:require-macros
    [kushi.core :refer (sx defclass)])
   (:require
@@ -17,7 +17,12 @@
   [:w "calc(100% - 50% + var(--switch-border-width))"])
 
 (defclass kushi-switch-thumb-content
-  :d--none :w--100% :h--100% :.flex-col-c :ai--c)
+  :c--$neutral-foreground
+  :d--none 
+  :w--100%
+  :h--100% 
+  :.flex-col-c 
+  :ai--c)
 
 (defn- toggle-switch [%]
   (let [node* (domo/et %)
@@ -31,13 +36,11 @@
     [:div opts (if (string? x) [:span x] x)]))
 
 (defn switch
-  {:desc ["Switches are used to toggle an individual option on or off."
-          :br
-          :br
-          "Switches can be custom styled via a variety of tokens in your theme."
+  {:summary ["Switches are used to toggle an individual option on or off."]
+   :desc ["Switches can be custom styled via a variety of tokens in your theme."
           :br
           :br "`:$switch-width-ratio`"
-          :br "Setting this to 1.5 will result in a switch that has the aspect switch-switch-switch-switch-ratio of 1.5:1 (width:height). The default value is 2."
+          :br "Setting this to 1.5 will result in a switch that has the aspect ratio of 1.5:1 (width:height). The default value is 2."
           :br
           :br "`:$switch-border-width`"
           :br "The default value is `2px`. If customizing the value, it is recommended to use a `px` or `rem` value, especially if you are using the `:-track-content-on` or `:-track-content-off` options."
@@ -49,7 +52,8 @@
           :br "The default value is `1`. Setting this to a value greater than 1 will result in the thumb height being greater than the track height."
           :br
           ;; TODO add documentation for each token
-          :br "The following tokens control the background color of the switch"
+          :br "The following tokens control the background color of the switch:"
+          :br
           :br "`:$switch-off-background-color`"
           :br "`:$switch-off-background-color-hover`"
           :br "`:$switch-on-background-color`"
@@ -98,7 +102,16 @@
            {:name    thumb-content-on
             :pred    #{string? vector?}
             :default nil
-            :desc    "String or element that will be placed in center of thumb, when in the \"on\" position"}]}
+            :desc    "String or element that will be placed in center of thumb, when in the \"on\" position"}
+           {:name    track-content-off
+            :pred    #{string? vector?}
+            :default nil
+            :desc    "String or element that will be placed in the track, when in the \"off\" position"}
+           {:name    track-content-on
+            :pred    #{string? vector?}
+            :default nil
+            :desc    "String or element that will be placed in the track, when in the \"on\" position"}
+           ]}
   [& args]
   (let [[opts attrs & _]           (opts+children args)
         {:keys [disable-events?
@@ -119,6 +132,7 @@
        :.transition
        :.xxfast!
        :.flex-row-fs
+       :.no-shrink
 
        ["&_.kushi-switch-thumb-content-off:display" :flex]
        ["&_.kushi-switch-thumb-content-on:display" :none]
@@ -140,8 +154,8 @@
        ["&.kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color]
        ["&.kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover]
 
-       :dark:bgc--$switch-off-background-color-inverse
-       :dark:hover:bgc--$switch-off-background-color-hover-inverse
+       ["dark:&.kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color-inverse]
+       ["dark:&.kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover-inverse]
 
        [".kushi-switch[aria-checked='true']:bgc" :$switch-on-background-color]
        [".kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-background-color-hover]
@@ -180,10 +194,14 @@
        ["dark:&.negative.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-negative-background-color-hover-inverse]
 
        [:$thumb-height "calc(var(--switch-thumb-scale-factor, 1) * (1em - (var(--switch-border-width) * 2)))"]
-       {:disabled     disabled?
-        :role         :switch
-        :aria-checked (if on? true false)
-        :on-click     #(when-not disable-events? (toggle-switch %))})
+
+       {:disabled      disabled?
+        :role          :switch
+        :aria-checked  (if on? true false)
+        ;; :on-mouse-down #(when-not disable-events? (toggle-switch %))
+        })
+      
+      (domo/mouse-down-a11y #(when-not disable-events? (toggle-switch %)))
 
       attrs)
 
@@ -216,8 +234,15 @@
         :w--$width
         [:bgc :$white-transparent-100]
         [:box-shadow "0 2px 6px 0 var(--black-transparent-15)"]
-        ["has-parent(.kushi-switch[aria-checked='true']):inset-inline-start" "calc(100% - var(--width))"])
+        ["has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start" "calc(100% - var(--width))"]
+        ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
        thumb-attrs)
-      [:div (sx 'kushi-switch-thumb-content-on :.kushi-switch-thumb-content) thumb-content-on]
-      [:div (sx 'kushi-switch-thumb-content-off :.kushi-switch-thumb-content) thumb-content-off]
+      [:div (sx 'kushi-switch-thumb-content-on
+                :.kushi-switch-thumb-content
+                ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
+       thumb-content-on]
+      [:div (sx 'kushi-switch-thumb-content-off
+                :.kushi-switch-thumb-content
+                ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
+       thumb-content-off]
       ]]))

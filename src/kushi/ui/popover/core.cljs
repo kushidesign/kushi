@@ -186,15 +186,26 @@
             :default false
             :desc    ["Setting to true will auto-dismiss the popover. "
                       "The time of display before display is controlled "
-                      "by the theme token `:$popover-auto-dismiss-duration`"]}]}
+                      "by the theme token `:$popover-auto-dismiss-duration`"]}
+           #_{:name    use-on-click?
+            :pred    boolean?
+            :default false
+            :desc    ["By default, the popover is triggered on the mousedown event. "
+                      "Setting to true will instead use the click event to trigger "
+                      "the popover. "]}
+           ]}
 
-  [{placement                   :-placement
-    arrow?                      :-arrow?
-    auto-dismiss?               :-auto-dismiss?
-    user-rendering-fn           :-f
-    :or                         {placement     :auto
-                                 arrow?        true
-                                 auto-dismiss? false}}]
+  [{placement          :-placement
+    arrow?             :-arrow?
+    auto-dismiss?      :-auto-dismiss?
+    use-on-click?      :-use-on-click?
+    user-pane-class    :class
+    user-pane-style    :style
+    user-rendering-fn  :-f
+    :or                {placement     :auto
+                        arrow?        true
+                        auto-dismiss? false
+                        use-on-click? false}}]
   
   (when user-rendering-fn 
     (let [arrow?       (if (false? arrow?) false true)
@@ -210,10 +221,14 @@
                               arrow?
                               auto-dismiss?
                               pane-type
-                              user-rendering-fn)]
+                              user-rendering-fn
+                              user-pane-class
+                              user-pane-style)]
       (merge 
-       {:data-kushi-ui-pane (name placement-kw)
-        :on-click           (partial pane/append-pane! opts)}))))
+       {:data-kushi-ui-pane (name placement-kw)}
+       {:on-click (partial pane/append-pane! opts)}
+       #_{(if use-on-click? :on-click :on-mouse-down)
+        (partial pane/append-pane! opts)}))))
 
 (defn dismiss-popover! [e]
   (let [el         (domo/et e)

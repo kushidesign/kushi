@@ -10,11 +10,10 @@
     (into
      [:div (merge-attrs
             (sx 'kushi-card
+                :.neutralize
                 :.relative
                 :w--100%
-                :p--2rem
-                :bgc--white
-                :dark:bgc--$gray-1000
+                :p--1.25em
                 {:data-kushi-ui :card})
             attrs)]
      children)))

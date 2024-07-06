@@ -1,4 +1,4 @@
-(ns kushi.ui.progress.core
+(ns kushi.ui.spinner.core
   (:require-macros
    [kushi.core :refer (sx defkeyframes)])
   (:require
@@ -19,12 +19,12 @@
                          :.pill
                          :w--0.29em
                          :h--0.29em
-                         [:animation [["var(--progress-animation-duration)" :linear :infinite :pulsing]]]
-                         ["nth-child(2):animation-delay" "calc(var(--progress-animation-duration) / 4)"]
-                         ["nth-child(3):animation-delay" "calc(var(--progress-animation-duration) / 2)"]
+                         [:animation [["var(--spinner-animation-duration)" :linear :infinite :pulsing]]]
+                         ["nth-child(2):animation-delay" "calc(var(--spinner-animation-duration) / 4)"]
+                         ["nth-child(3):animation-delay" "calc(var(--spinner-animation-duration) / 2)"]
                          :bgc--currentColor)]]
     [:div (merge-attrs
-           (sx 'kushi-progress-thinking
+           (sx 'kushi-spinner-thinking
                :.flex-row-c
                :gap--0.333em
                {:aria-hidden true})
@@ -36,26 +36,26 @@
 (defn propeller [& args]
   (let [[_ attrs & _] (opts+children args)]
     [:div (merge-attrs
-           (sx 'kushi-progress-propeller
-               [:animation [["var(--progress-animation-duration)" :linear :infinite :spin]]]
+           (sx 'kushi-spinner-propeller
+               [:animation [["var(--spinner-animation-duration)" :linear :infinite :spin]]]
                :h--$loading-spinner-height
                :w--0px
-               :b--1px:solid:currentColor
+               [:b "max(0.055em, 1px) solid currentColor"]
                {:aria-hidden true})
            attrs)]))
 
-(defn spinner [& args]
+(defn donut [& args]
   (let [[_ attrs & _] (opts+children args)]
     [:div (merge-attrs
-           (sx 'kushi-progress-spinner
+           (sx 'kushi-spinner-donut
                :.relative
-               [:animation [["var(--progress-animation-duration)" :linear :infinite :spin]]]
+               [:animation [["var(--spinner-animation-duration)" :linear :infinite :spin]]]
                :w--$loading-spinner-height
                :h--$loading-spinner-height
 
                :.before-absolute-fill
                :before:border-radius--9999px
-               :before:bw--2.5px
+               [:before:bw "max(2.5px, 0.125em)"]
                :before:bs--solid
                :before:bc--transparent
                :before:bbsc--currentColor
@@ -63,29 +63,33 @@
                :.after-absolute-fill
                :after:border-radius--9999px
                :after:o--0.2
-               :after:bw--2.5px
+               [:after:bw "max(2.5px, 0.125em)"]
                :after:bs--solid
                :after:bc--currentColor
                {:aria-hidden true})
            attrs)]))
 
-(defn progress
+(defn spinner
+  {:summary ["Spinners indicate the in-progress status of an operation such as loading or processing."]
+   :desc ["The spinner is component is meant to be used in conjuction with a"
+          " component such as `spinner.core/donut`,  `spinner.core/propeller`,"
+          " or `spinner.core/propeller`. See the \"Usage with a button\" in the Spinner > Examples section"]}
   [& args]
   (let [[_ attrs & children] (opts+children args)
         [content component] children]
     [:span
      (merge-attrs
-      (sx 'kushi-progress-wrapper :.relative)
+      (sx 'kushi-spinner-wrapper :.relative)
       attrs)
      [:span
-      (sx :.kushi-progress-content
-          ["has-ancestor([data-kushi-ui-progress='true']):visibility" :hidden])
+      (sx :.kushi-spinner-content
+          ["has-ancestor([data-kushi-ui-spinner='true']):visibility" :hidden])
       content]
      [:div
-      (sx 'kushi-progress
+      (sx 'kushi-spinner
           :.absolute-centered
           :d--none
-          ["has-ancestor([data-kushi-ui-progress='true']):d" :block])
+          ["has-ancestor([data-kushi-ui-spinner='true']):d" :block])
       (cond
         (fn? component)
         [component]

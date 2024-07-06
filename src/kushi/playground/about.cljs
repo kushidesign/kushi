@@ -1,17 +1,21 @@
 (ns kushi.playground.about
-  (:require
-   [kushi.ui.label.core :refer [label]]
-   [kushi.ui.link.core :refer [link]]
-   [domo.core :as domo]
-   [kushi.ui.core :refer [defcom]]
-   [kushi.core :refer (sx merge-attrs)]
-   [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-   [domo.core :refer (copy-to-clipboard!)]
-   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-   [kushi.playground.state :as state]
-   [kushi.playground.util :as util]
-   [kushi.playground.colors :as playground.colors]
-   [kushi.playground.shared-styles]))
+  (:require [clojure.string :as string]
+            [domo.core :refer (copy-to-clipboard!)]
+            [me.flowthing.pp :refer [pprint]]
+            [kushi.color :refer [colors->tokens]]
+            [kushi.core :refer (sx merge-attrs keyed)]
+            [kushi.playground.colors :as playground.colors]
+            [kushi.playground.nav :refer [route!]]
+            [kushi.playground.shared-styles]
+            [kushi.playground.state :as state]
+            [kushi.ui.button.core :refer [button]]
+            [kushi.ui.core :refer [defcom]]
+            [kushi.ui.divisor.core :refer (divisor)]
+            [kushi.ui.icon.core :refer [icon]]
+            [kushi.ui.label.core :refer [label]]
+            [kushi.ui.link.core :refer [link]]
+            [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
+            [kushi.ui.tooltip.core :refer [tooltip-attrs]]))
 
 
 (defcom intro-section
@@ -73,31 +77,70 @@
    [:code (sx :.code) (str "--" g)]])
 
 
-(def kushi-colors-about
-  [:span
-   [:p "Kushi includes a foundation of global and alias color token scales."]
+(defn color-scales2
+  [{:keys [colorlist]}]
+  (let [tokens (colors->tokens kushi.colors/colors {:format :css})
+        coll   (keep (fn [[k v]]
+                       (let [color*       (or (->> k name (re-find #"^--([a-zAZ-_]+)-([0-9]+)$"))
+                                              (->> k name (re-find #"^\$([a-zAZ-_]+)-([0-9]+)$")))
+                             color-name   (some-> color* second)
+                             color-level  (some-> color* last js/parseInt)
+                             color-token? (contains? (into #{} colorlist) (keyword color-name))]
+                         (name k) #_(keyed color*)
+                         (when color-token?
+                           {:color*      color*
+                            :color-name  color-name
+                            :color-level color-level
+                            :value       v
+                            :token       k})))
+                     (partition 2 tokens))
+        ret    (mapv #(let [scale (into []
+                                        (keep (fn [{:keys [color-name token value color-level]}]
+                                                (when (= color-name (name %))
+                                                  [token value color-level]))
+                                              coll))]
+                        {:color-name %
+                         :scale      scale})
+                     colorlist)]
+    (keyed coll ret)
+    ret))
+
+(defn kushi-colors-about []
+  [:section
+   (sx 
+    :>p:max-width--$main-content-max-width
+    :>p:first-child:mbs--0
+    :>p:mb--2em
+    :>p:lh--1.7)
+   [:p "Kushi includes a foundation of global and alias color tokens."]
 
    [:div
     (sx
-     :sm:d--none
+     :xsm:d--none
      :pb--1rem:2.5rem
      :pis--0)
     [playground.colors/color-grid
-     {:-row-gap     :4px
-      :-column-gap  :8px
-      :-labels?     false
+     {:-row-gap      :4px
+      :-column-gap   :8px
+      :-labels?      false
       :-swatch-attrs (sx :w--23px :h--23px)}]]
 
    [:div
     (sx
      :d--none
-     :sm:d--block
+     :max-width--$main-content-max-width
+     :xsm:d--block
      :pb--2rem:4.5rem
      :pis--2.5rem)
     [playground.colors/color-grid
      {:-row-gap      :7px
       :-column-gap   :14px
-      :-swatch-attrs (sx :w--34px :h--34px)}]]
+      :-swatch-attrs (sx :sm:w--34px
+                         :sm:h--34px
+                         :xsm:w--29px
+                         :xsm:h--29px
+                         :w--26px
+                         :h--26px)}]]
 
    [:p.alias-token-scales
     "Semantic alias tokens map to global tokens like so:"
@@ -126,25 +169,42 @@
     [:code (sx :.warning) ":.warning"]
     ", and "
     [:code (sx :.accent) ":.accent"]
-    " will decorate the element with the corresponding foreground and background colors."]])
+    " will decorate the element with the corresponding foreground and background colors."]
+   
+   [divisor]
+
+   [playground.colors/color-rows 
+    (color-scales2 
+     {:colorlist [:gray :red :orange :gold :yellow :green :blue :purple :magenta :brown]})]
+   ])
 
 
 (defn type-scale [{:keys [coll label]}]
   (into [:div
-         [:h3 (sx :fs--$kushi-playground-main-section-header_font-size||$xxlarge
-                  :.wee-bold
-                  :mbs--3em
-                  :pbs--1.5em
-                  [:bbs "1px solid var(--gray-300)"]
-                  [:dark:bbs "1px solid var(--gray-700)"])
-          (str "Type " label " Scale")]
-         (when (= "Size" label)
+         (sx :>p:lh--1.7)
+         [:h2 (sx 
+               :.large
+               :.semi-bold
+               :pbs--2em
+               :mb--5rem:1.5rem
+               [:bbs "1px solid var(--gray-300)"]
+               [:dark:bbs "1px solid var(--gray-700)"])
+          (str "Type " (string/lower-case label) " scale")]
+         (let [[kind-of-scale
+                start
+                end] (case label
+                       "Size"     ["sizing" "xxxsmall" "xxxxlarge"]
+                       "Weight"   ["weight" "thin" "heavy"]
+                       "Tracking" ["tracking" "xxxtight" "xxxxloose"])]
            [:p
             (sx :>code:mi--0.25em :>code:ws--n)
-            "Kushi offers a typographic scale with t-shirt sizing from"
-            [:code "xxxsmall"]
+            (str "Kushi offers a typographic "
+                 kind-of-scale
+                 " scale with t-shirt sizing from")
+            [:code start]
             "up to"
-            [:code "xxxxlarge"]])]
+            [:code end]
+            "."])]
         (for [x coll]
           [:div
            (sx :.flex-col-fs :mb--24px)
@@ -160,13 +220,22 @@
                               :-tooltip-class "code wee-bold"}))
              "The quick brown fox."]]])))
 
+(defn- formatted-code [s]
+  [:pre
+   [:code {:class :language-clojure
+           :style {:white-space :pre
+                   :line-height 1.5}}
+    s]])
 
 (defn typography-snippet [s]
   [:div
    (sx :.relative :mbe--2em)
    [:div
     (sx :.codebox :.code :w--100%)
-    [util/formatted-code s]]
+    (-> s
+        (pprint {:max-width 50}) 
+        with-out-str
+        formatted-code)]
    [:div (sx :.absolute-fill)]
    [copy-to-clipboard-button
     (sx :.absolute
@@ -176,21 +245,27 @@
 
 
 (def typography-tokens-snippet
-  "[:span
-  (sx :fs--$xxlarge
-      :fw--$bold
-      :letter-spacing--$xloose)
-  \"My text\"]" )
+  '[:span
+    (sx :fs--$xxlarge
+        :fw--$bold
+        :letter-spacing--$xloose)
+    "My text "])
 
 
 (def typography-utility-classes-snippet
-  "[:span \n  (sx :.xxlarge :.bold :.xloose :.uppercase :.italic) \n  \"My text\"]" )
+  '[:span (sx :.xxlarge :.bold :.xloose :.uppercase :.italic) "My text"] )
+
 
 (def typescale [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge :xxxxlarge])
 
+
 (defn kushi-typography-about
   [m]
-  [:span
+  [:section (sx :>*:max-width--$main-content-max-width
+                :>p:first-child:mbs--0
+                :>p:mb--2em
+                :>p:lh--1.7)
+
    [:p "Kushi includes a foundation of global tokens and utility class scales for type size, weight, letter-spacing, sizing, and capitalization."]
 
    [:div (sx :mbe--0.8em) "Utility classes can be used like this:"]
@@ -230,8 +305,14 @@
    [type-scale {:label "Tracking"
                 :coll  [:xxxtight :xxtight :xtight :tight :loose :xloose :xxloose :xxxloose]}] ])
 
-(def kushi-about
-  [:span
+(defn kushi-about []
+  [:section
+   (sx :>*:max-width--550px
+       :>p:first-child:mbs--0
+       :>p:mb--2em
+       :>p:last-of-type:mbe--2.5em
+       :>p:lh--1.7
+       :pbe--2.25rem)
    [:p
     "Kushi is a base for building web UI with "
     [link (sx {:href   "https://clojurescript.org/"
@@ -246,11 +327,38 @@
    [:p
     "In addition to providing a css-in-cljs solution, Kushi offers a basic suite of themeable, headless UI components for free. "
     "This set of building blocks consitutes a base for rolling your own design system."]
-   [:p
-    "The components menu on this site provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]])
+   #_[:p 
+    "This site provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]
+   [:a {:href     "/components"
+        :on-click (fn [e]
+                    (route! "kushi-playground-menu" false e)
+                    #_(component-examples/scroll-to-playground-component!
+                     {:component-label "button"
+                      :scroll-y        16}))}
+    [button 
+     (sx  :.filled :.rounded :.semi-bold )
+     "Explore components"
+     [icon :arrow-right-alt]]]])
 
 
-(defn component-playground-about [{:keys [header]}]
-  (when (or @state/*md-or-smaller?
-            (not @state/*focused-component))
-    [intro-section {:-header header}]))
+(defn component-playground-about []
+  [:section
+   (sx :>*:max-width--550px
+       :>p:first-child:mbs--0
+       :>p:mb--2em
+      ;;  :>p:last-of-type:mbe--2.5em
+       :>p:lh--1.7
+      ;;  :pbe--2.25rem
+       )
+   [:p 
+    "This page provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]
+   [:a {:href     "/components"
+        :on-click (fn [e]
+                    (route! "kushi-playground-menu" false e)
+                    #_(component-examples/scroll-to-playground-component!
+                     {:component-label "button"
+                      :scroll-y        16}))}
+    #_[button 
+     (sx  :.filled :.rounded :.semi-bold )
+     "Explore components"
+     [icon :arrow-right-alt]]]])

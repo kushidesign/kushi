@@ -2,7 +2,7 @@
   (:require [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.modal.core :refer (modal modal-close-button close-kushi-modal open-kushi-modal)]
             [kushi.ui.button.core :refer [button]]
-            [kushi.ui.input.text.core :refer [input]]
+            [kushi.ui.text-field.core :refer [text-field]]
             [kushi.playground.util :refer-macros (example2)]
             [kushi.core :refer-macros (sx)]))
 [:div
@@ -16,22 +16,22 @@
              :.semi-bold
              :mbe--0.75em)
      "Example Popover Form"]
-    [input
+    [text-field
      (sx
       {:placeholder      "100%"
        :-label           "Height"
        :-label-placement :inline})]
-    [input
+    [text-field
      (sx
       {:placeholder      "335px"
        :-label           "Min Width"
        :-label-placement :inline})]
-    [input
+    [text-field
      (sx
       {:placeholder      "75px"
        :-label           "Depth"
-       :-label-placement :inline})]
-    ]
+       :-label-placement :inline})]]
+
 (def modal-examples
   [
    {:label   "With title and description"
@@ -49,11 +49,11 @@
                          [:div 
                           (sx :.flex-col-fs
                               :gap--1em)
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Puffy"
                              :-label      "Screen name"})]
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Executive"
                              :-label      "Occupation"})]]
@@ -75,11 +75,11 @@
                          [:div 
                           (sx :.flex-col-fs
                               :gap--1em)
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Puffy"
                              :-label      "Screen name"})]
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Executive"
                              :-label      "Occupation"})]]
@@ -102,11 +102,11 @@
                          [:div 
                           (sx :.flex-col-fs
                               :gap--1em)
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Puffy"
                              :-label      "Screen name"})]
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Executive"
                              :-label      "Occupation"})]]
@@ -129,11 +129,11 @@
                          [:div 
                           (sx :.flex-col-fs
                               :gap--1em)
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Puffy"
                              :-label      "Screen name"})]
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Executive"
                              :-label      "Occupation"})]]
@@ -154,11 +154,11 @@
                          [:div 
                           (sx :.flex-col-fs
                               :gap--1em)
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Puffy"
                              :-label      "Screen name"})]
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Executive"
                              :-label      "Occupation"})]]
@@ -181,11 +181,11 @@
                          [:div 
                           (sx :.flex-col-fs
                               :gap--1em)
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Puffy"
                              :-label      "Screen name"})]
-                          [input
+                          [text-field
                            (sx
                             {:placeholder "Executive"
                              :-label      "Occupation"})]]
@@ -220,5 +220,33 @@
                          {:id "my-modal"}
                          [:div
                           [icon (sx :.xxlarge) :emoticon]]]])}])
+
+
+{:label   "With title and description"
+ :example (example2 [:div
+                     [button
+                      {:on-click #(open-kushi-modal "my-modal")}
+                      "Click to open modal"]
+                     [modal
+                      (sx 
+                       :min-width--450px
+                       :&_.kushi-modal-description:fs--$small
+                       {:-modal-title "Example modal"
+                        :-description "Example modal description goes here."
+                        :id           "my-modal"})
+                      [:div 
+                       (sx :.flex-col-fs
+                           :gap--1em)
+                       [text-field
+                        (sx
+                         {:placeholder "Puffy"
+                          :-label      "Screen name"})]
+                       [text-field
+                        (sx
+                         {:placeholder "Executive"
+                          :-label      "Occupation"})]]
+                      [:div (sx :.flex-row-fe :gap--1em)
+                       [button {:on-click close-kushi-modal} "Cancel"]
+                       [button (sx :.filled) "Submit"]]]])}
 
 

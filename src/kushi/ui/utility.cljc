@@ -1,84 +1,137 @@
 (ns kushi.ui.utility
   (:require
+   
+   [clojure.string :as string]
+   [kushi.colors :refer [color-names]]
    [kushi.utils :as util :refer [deep-merge]]))
 
+
+;; Helper fns
+;; ------------------------------------------------------
+(defn trim-vec
+  "Trims n number of things of both sides of vector.
+   Safety checks first, if bad will just return collection."
+  [n v]
+  (if (vector? v)
+    (let [cnt (count v)]
+      (if (and (pos-int? n)
+               (<= (* n 2) cnt))
+        (subvec v n (- cnt n))
+        v))
+    v))
+
+(defn mapcatv [f coll]
+  (into [] (mapcat f coll)))
+
+(defn scale-of-utility-defs
+  ([coll ks]
+   (scale-of-utility-defs coll ks {}))
+  ([coll ks {:keys [key-prefix val-prefix acc-f]}]
+   (mapcatv (fn [k]
+              (let [pf #(some-> % (str "-"))]
+                [(keyword (str (pf key-prefix)
+                               (util/stringify k)))
+                 (let [v (->> k
+                              util/stringify
+                              (str "$" (pf val-prefix))
+                              keyword)]
+                   (reduce (fn [acc k] (assoc acc k v))
+                           (if acc-f
+                             (acc-f k)
+                             {})
+                           ks))]))
+            coll)) )
+
+
+;; Scale defs
+;; ------------------------------------------------------
+
+(def type-sizes
+  [:xxxxsmall
+   :xxxsmall
+   :xxsmall
+   :xsmall
+   :small
+   :medium
+   :large
+   :xlarge
+   :xxlarge
+   :xxxlarge
+   :xxxxlarge])
+
+(def radius-sizes
+  (trim-vec 1 type-sizes))
+
+(def type-weights-by-name
+  (array-map
+   :thin 100
+   :extra-light 200
+   :light 300
+   :normal 400
+   :wee-bold 500
+   :semi-bold 600
+   :bold 700
+   :extra-bold 800
+   :heavy 900))
+
+(def type-weights (keys type-weights-by-name))
+
+
+
+
+;; Disabled
+;; ------------------------------------------------------
 (def disabled {:opacity :45%!important
                :cursor  :not-allowed!important})
 
+
+;; Combinatorial flexbox utilities
+;; ------------------------------------------------------
+
+;; TODO - Analyze performance tradeoffs with writing selectors like these:
+;; first need to fix compiler to not prepend a "." in front of selector.
+;; "[class^='flex-row-']" {:flex-direction  :row
+;;                         :align-items     :center
+;;                         :display         :flex}
+;; "[class^='flex-row-']" {:flex-direction  :col
+;;                         :display         :flex}
+;; "[class$='c']"     {:justify-content :center}
+;; "[class$='fs']"    {:justify-content :flex-start}
+;; "[class$='fe']"    {:justify-content :flex-end}
+
+(def flex-row-base {:flex-direction  :row
+                    :align-items     :center
+                    :display         :flex})
+
+(def flex-col-base {:flex-direction  :column
+                    :display         :flex})
+
+(def flex-justify-content-options 
+  ["flex-start"
+   "center"
+   "flex-end"
+   "space-between"
+   "space-around"
+   "space-evenly"
+   "left"
+   "right"
+   "normal"
+   "stretch"])
+
 (def combo-flex-utility-classes
-  ;; Combinatorial flexbox utilities
-  ;; ------------------------------------------------------
-  [
-   ;; TODO - Analyze performance tradeoffs with writing selectors like these:
-   ;; first need to fix compiler to not prepend a "." in front of selector.
-   ;; "[class^='flex-row-']" {:flex-direction  :row
-   ;;                         :align-items     :center
-   ;;                         :display         :flex}
-   ;; "[class^='flex-row-']" {:flex-direction  :col
-   ;;                         :display         :flex}
-   ;; "[class$='c']"     {:justify-content :center}
-   ;; "[class$='fs']"    {:justify-content :flex-start}
-   ;; "[class$='fe']"    {:justify-content :flex-end}
+  (mapcatv (fn [fd]
+             (mapcat 
+              (fn [jc]
+                [(->> jc
+                      util/kebab->shorthand
+                      (conj ["flex" fd])
+                      (string/join "-")
+                      keyword)
+                 (merge (if (= fd "row") flex-row-base flex-col-base)
+                        {:justify-content (keyword jc)})])
+              flex-justify-content-options))
+           ["row" "col"]))
 
-
-   :flex-row-c        {:flex-direction  :row
-                       :justify-content :center
-                       :align-items     :center
-                       :display         :flex}
-   :flex-row-sa       {:flex-direction  :row
-                       :justify-content :space-around
-                       :align-items     :center
-                       :display         :flex}
-   :flex-col-se       {:flex-direction  :column
-                       :justify-content :space-evenly
-                       :display         :flex}
-   :flex-row-fs       {:flex-direction  :row
-                       :justify-content :flex-start
-                       :align-items     :center
-                       :display         :flex}
-   :flex-col-c        {:flex-direction  :column
-                       :justify-content :center
-                       :display         :flex}
-   :flex-row-se       {:flex-direction  :row
-                       :justify-content :space-evenly
-                       :align-items     :center
-                       :display         :flex}
-   :flex-col-fe       {:flex-direction  :column
-                       :justify-content :flex-end
-                       :display         :flex}
-   :flex-col-fs       {:flex-direction  :column
-                       :justify-content :flex-start
-                       :display         :flex}
-   :flex-row-fe       {:flex-direction  :row
-                       :justify-content :flex-end
-                       :align-items     :center
-                       :display         :flex}
-   :flex-col-sa       {:flex-direction  :column
-                       :justify-content :space-around
-                       :display         :flex}
-   :flex-col-sb       {:flex-direction  :column
-                       :justify-content :space-between
-                       :display         :flex}
-   :flex-row-sb       {:flex-direction  :row
-                       :justify-content :space-between
-                       :align-items     :center
-                       :display         :flex}])
-
-
-(def base-classes
-  [
-   ;; Visual debugging utilities
-   ;; ------------------------------------------------------
-   :debug-grid            {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
-   :debug-grid-8          {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
-                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px))")}
-   :debug-grid-16         {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
-                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px))")}
 
 
    ;; TODO - after string-based selector is working, use something like this instead
@@ -88,56 +141,31 @@
   ;;                       :outline-offset :-1px}
   ;;  :debug-red {:outline-color :$red-500}
    
+(def debug-outline-classes
+  (mapcatv 
+   (fn [c]
+     [(->> c (str "debug-") keyword)
+      (assoc {:outline-style  :solid
+              :outline-offset :-1px
+              :outline-width  :1px}
+             :outline-color
+             (keyword (str "$" c "-500||" c)))])
+   color-names))
 
-   :debug-red          {:outline-color :$red-500||red
-                        :outline-style :solid
-                        :outline-offset :-1px
-                        :outline-width :1px}
-
-   :debug-blue         {:outline-color  :$blue-500||blue
-                        :outline-style  :solid
-                        :outline-offset :-1px
-                        :outline-width  :1px}
-
-   :debug-green        {:outline-color  :$green-500||green
-                        :outline-style  :solid
-                        :outline-offset :-1px
-                        :outline-width  :1px}
-
-   :debug-yellow       {:outline-color  :$yellow-500||yellow
-                        :outline-style  :solid
-                        :outline-offset :-1px
-                        :outline-width  :1px}
-
-   :debug-orange       {:outline-color  :$orange-500||orange
-                        :outline-style  :solid
-                        :outline-offset :-1px
-                        :outline-width  :1px}
-
-   :debug-purple       {:outline-color  :$purple-500||purple
-                        :outline-style  :solid
-                        :outline-offset :-1px
-                        :outline-width  :1px}
-
-   :debug-magenta      {:outline-color  :$magenta-500||magenta
-                        :outline-style  :solid
-                        :outline-offset :-1px
-                        :outline-width  :1px}
-
-   :debug-gray         {:outline-color  :$gray-500||gray
-                        :outline-style  :solid
-                        :outline-offset :-1px
-                        :outline-width  :1px}
-
-   :debug-black        {:outline-color  "black"
-                        :outline-style  :solid
-                        :outline-offset :-1px
-                        :outline-width  :1px}
-
-   :debug-white       {:outline-color  "white"
-                       :outline-style  :solid
-                       :outline-offset :-1px
-                       :outline-width  :1px}
+(def base-classes
+  [
+   ;; Visual debugging utilities
+   ;; ------------------------------------------------------
+   :debug-grid            {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px)), "
+                                                  "repeating-linear-gradient(to right,  transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
+   :debug-grid-8          {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
+                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px))")}
+   :debug-grid-16         {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
+                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px)), "
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px))")}
 
    :wireframe         {:outline-color  :silver
                        :outline-style  :solid
@@ -147,13 +175,43 @@
    
 
    ;; Borders
-   :outlined              {:outline-color :currentColor
-                           :outline-style :solid
-                           :outline-width :1px
+   :outlined              {:outline-color  :currentColor
+                           :outline-style  :solid
+                           :outline-width  :1px
                            :outline-offset :-1px}
    :bordered              {:border-color :currentColor
                            :border-style :solid
                            :border-width :1px}
+   
+
+   ;; TODO - use scale-of-utility-defs
+   ;; Divisors
+   ;; need defclass-like merging here - maybe with metadata on map?
+   ;; TODO -really need transition property on these?
+   :divisor-block-start  {:border-block-start         :$divisor
+                          :dark:border-block-start    :$divisor-inverse
+                          :transition-property        :all
+                          :transition-timing-function :$transition-timing-function
+                          :transition-duration        :$transition-duration}
+
+   :divisor-block-end    {:border-block-end           :$divisor
+                          :dark:border-block-end      :$divisor-inverse
+                          :transition-property        :all
+                          :transition-timing-function :$transition-timing-function
+                          :transition-duration        :$transition-duration}
+
+   :divisor-inline-start {:border-inline-start        :$divisor
+                          :dark:border-inline-start   :$divisor-inverse
+                          :transition-property        :all
+                          :transition-timing-function :$transition-timing-function
+                          :transition-duration        :$transition-duration}
+
+   :divisor-inline-end  {:border-inline-end          :$divisor
+                         :dark:border-inline-end     :$divisor-inverse
+                         :transition-property        :all
+                         :transition-timing-function :$transition-timing-function
+                         :transition-duration        :$transition-duration}
+
 
     ;; Non-combo flex utility classes
    :shrink               {:flex-shrink 1}
@@ -166,6 +224,7 @@
    :relative      {:position :relative}
    :absolute      {:position :absolute}
    :fixed         {:position :fixed}
+   :sticky        {:position :sticky}
 
     ;; Combinatorial absolute and fixed positioning utilities
     ;; ------------------------------------------------------
@@ -253,43 +312,63 @@
                                :inset-inline-start "50%"
                                :translate          "-50%"}
 
-    ;; Surfaces, buttons, containers
-    ;; ------------------------------------------------------
-   :bgi-cover             {:background-position "center center"
-                           :background-repeat   :no-repeat
-                           :width               "100%"}
+   ;; Surfaces, buttons, containers
+   ;; ------------------------------------------------------
+   :bgi-cover                 {:background-position "center center"
+                               :background-repeat   :no-repeat
+                               :width               "100%"}
 
-   :bgi-contain           {:background-position "center center"
-                           :background-size     :contain
-                           :background-repeat   :no-repeat
-                           :width               "100%"
-                           :height              "100%"}
+   :bgi-contain               {:background-position "center center"
+                               :background-size     :contain
+                               :background-repeat   :no-repeat
+                               :width               "100%"
+                               :height              "100%"}
 
 
-    ;; Combinatorial transition utility
-    ;; ------------------------------------------------------
+   ;; Combinatorial transition utility
+   ;; ------------------------------------------------------
    :transition            {:transition-property        :all
-                           :transition-timing-function :$timing-linear-curve
-                           :transition-duration        :$fast}])
+                           :transition-timing-function :$transition-timing-function
+                           :transition-duration        :$transition-duration}])
+
+(def type-weight-override-classes
+  "Creates an ordered vector of pairs, thin ~ heavy (100 ~ 900):
+   [:thin 
+    {:font-weight                           :$thin
+     :&_.kushi-icon:font-variation-settings \"'wght' 100\"
+     :&.kushi-icon:font-variation-settings  \"'wght' 100\"}
+   ...]"
+  (mapcatv
+   (fn [[k weight]]
+     [k
+      (let [v (str "'wght' " weight)]
+        {:font-weight                           (->> k util/stringify (str "$"))
+         :&_.kushi-icon:font-variation-settings v
+         :&.kushi-icon:font-variation-settings  v})])
+   type-weights-by-name))
 
 (def override-classes
   [;; General
    ;; ------------------------------------------------------
-   :invisible     {:opacity 0}
-   :hidden        {:visibility :hidden}
-   :visible       {:visibility :visible}
-   :collapse      {:visibility :collapse}
+   :invisible {:opacity 0}
+   :hidden    {:visibility :hidden}
+   :visible   {:visibility :visible}
+   :collapse  {:visibility :collapse}
+   :offscreen {:position :absolute
+               :left     :-10000px
+               :top      :auto
+               :width    :1px
+               :height   :1px
+               :overflow :hidden}
 
-
-   ;; Content
-   ;; ------------------------------------------------------
-  ;;  :content-blank {:content "\"\""}
-  ;;  :open-in-new   {:content "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 0 24 24' width='24px' fill='%23000000'%3E%3Cpath d='M0 0h24v24H0V0z' fill='none'/%3E%3Cpath d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z'/%3E%3C/svg%3E\")"}
-
+   
    ;; Cursor
    ;; ------------------------------------------------------
    :pointer       {:cursor :pointer}
 
+
+   ;; TODO - use scale-of-utility-defs
+   ;; TODO - Maybe Nix these?
    ;; Display
    ;; ------------------------------------------------------
    :block         {:display :block}
@@ -321,75 +400,29 @@
    ;; ------------------------------------------------------
    :enhanceable   {:gap :$icon-enhanceable-gap}
 
-   ;; Type sizing
-   ;; ------------------------------------------------------
-   :xxxsmall      {:fs :$xxxsmall}
-   :xxsmall       {:fs :$xxsmall}
-   :xsmall        {:fs :$xsmall}
-   :small         {:fs :$small}
-   :medium        {:fs :$medium}
-   :large         {:fs :$large}
-   :xlarge        {:fs :$xlarge}
-   :xxlarge       {:fs :$xxlarge}
-   :xxxlarge      {:fs :$xxxlarge}
-   :xxxxlarge     {:fs :$xxxxlarge}
 
-   ;; Type weight
-   ;; ------------------------------------------------------
-   :thin          {:fw                                    :$thin
-                   :&_.kushi-icon:font-variation-settings "'wght' 100"
-                   :&.kushi-icon:font-variation-settings  "'wght' 100"
-                   }
-   :extra-light   {:fw                                    :$extra-light
-                   :&_.kushi-icon:font-variation-settings "'wght' 200"
-                   :&.kushi-icon:font-variation-settings  "'wght' 200"
-                   }
-   :light         {:fw                                    :$light
-                   :&_.kushi-icon:font-variation-settings "'wght' 300"
-                   :&.kushi-icon:font-variation-settings  "'wght' 300"
-                   }
-   :normal        {:fw                                    :$normal
-                   :&_.kushi-icon:font-variation-settings "'wght' 400"
-                   :&.kushi-icon:font-variation-settings  "'wght' 400"
-                   }
-   :wee-bold      {:fw                                    :$wee-bold
-                   :&_.kushi-icon:font-variation-settings "'wght' 500"
-                   :&.kushi-icon:font-variation-settings  "'wght' 500"
-                   }
-   :semi-bold     {:fw                                    :$semi-bold
-                   :&_.kushi-icon:font-variation-settings "'wght' 600"
-                   :&.kushi-icon:font-variation-settings  "'wght' 600"
-                   }
-   :bold          {:fw                                    :$bold
-                   :&_.kushi-icon:font-variation-settings "'wght' 700"
-                   :&.kushi-icon:font-variation-settings  "'wght' 700"
-                   }
-   :extra-bold    {:fw                                    :$extra-bold
-                   :&_.kushi-icon:font-variation-settings "'wght' 700"
-                   :&.kushi-icon:font-variation-settings  "'wght' 700"
-                   }
-   :heavy         {:fw                                    :$heavy
-                   :&_.kushi-icon:font-variation-settings "'wght' 700"
-                   :&.kushi-icon:font-variation-settings  "'wght' 700"
-                   }
-
-
+   ;; TODO - use scale-of-utility-defs
+   ;; TODO - Maybe Nix this?
    ;; Tracking (aka letter-spacing)
    ;; ------------------------------------------------------
    :xxxtight      {:letter-spacing :$xxxtight}
    :xxtight       {:letter-spacing :$xxtight}
    :xtight        {:letter-spacing :$xtight}
    :tight         {:letter-spacing :$tight}
+
+   ;; TODO - lose this default-tracking?
    :default-tracking {:letter-spacing 0}
+
    :loose         {:letter-spacing :$loose}
    :xloose        {:letter-spacing :$xloose}
    :xxloose       {:letter-spacing :$xxloose}
    :xxxloose      {:letter-spacing :$xxxloose}
 
 
+
+   ;; TODO - use scale-of-utility-defs
    ;; Animations
    ;; ------------------------------------------------------
-   ;; TODO - change these to t-shirt sizing
    :instant       {:transition-duration :$instant}
    :xxxfast       {:transition-duration :$xxxfast}
    :xxfast        {:transition-duration :$xxfast}
@@ -402,20 +435,11 @@
    :xxxslow       {:transition-duration :$xxxslow}
 
 
-   ;; Surfaces, buttons, containers 2D
-   ;; ------------------------------------------------------
-   :rounded-xxxsmall      {:border-radius :$rounded-xxxsmal}
-   :rounded-xxsmall       {:border-radius :$rounded-xxsmall}
-   :rounded-xsmall        {:border-radius :$rounded-xsmall}
-   :rounded-small         {:border-radius :$rounded-small}
-   :rounded-medium        {:border-radius :$rounded-medium}
-   :rounded-large         {:border-radius :$rounded-large}
-   :rounded-xlarge        {:border-radius :$rounded-xlarge}
-   :rounded-xxlarge       {:border-radius :$rounded-xxlarge}
-   :rounded-xxxlarge      {:border-radius :$rounded-xxxlarge}
 
    ;; This one is used for buttons, tags etc ... The roundedness is always relative to font-size
-   :rounded               {:border-radius :$rounded-medium}
+   :rounded-absolute {:border-radius :$rounded-absolute-medium}
+   :rounded          {:border-radius :$rounded}
+
 
    :sharp         {:border-radius 0}
    :pill          {:border-radius :9999px}
@@ -425,10 +449,21 @@
    ;; ------------------------------------------------------
    :debossed      {:text-shadow "0 1px 2px hsl(0deg 0% 100% / 55%), 0 -1px 2px hsl(0deg 0% 0% / 27%)"}
    :embossed      {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}
-   :convex        {:background-image "linear-gradient(180deg, hsl(0deg 0% 100% / 20%), transparent, hsl(0deg 0% 0% / 15%))"}
-   :concave       {:background-image "linear-gradient(180deg, hsl(0deg 0% 0% / 15%), transparent, hsl(0deg 0% 100% / 20%))"}
 
-   :elevated-0    {:box-shadow      :$elevated-0}
+
+   ;; TODO - use scale-of-utility-defs
+   ;; TODO convex 0-5 plus inverse
+   :convex        {:background-image :$convex-1}
+   :convex-0      {:background-image :$convex-0}
+   :convex-1      {:background-image :$convex-1}
+   :convex-2      {:background-image :$convex-2}
+   :convex-3      {:background-image :$convex-3}
+   :convex-4      {:background-image :$convex-4}
+   :convex-5      {:background-image :$convex-5}
+
+   ;; TODO - use scale-of-utility-defs
+   :elevated-0    {:box-shadow :$elevated-0}
+
    :elevated-1    {:box-shadow      :$elevated-1
                    :dark:box-shadow :$elevated-1-inverse}
    :elevated-2    {:box-shadow      :$elevated-2
@@ -447,609 +482,200 @@
    ;; ------------------------------------------------------
    :disabled      disabled])
 
-(def ui-theming-classes
-  ;; Type weight
+
+;; Buttons, badges 2D 
+;; ------------------------------------------------------
+(def rounded-absolute-radius-classes
+  (scale-of-utility-defs
+   radius-sizes
+   [:border-radius]
+   {:key-prefix "rounded-absolute"
+    :val-prefix "rounded-absolute"}))
+
+
+;; Surfaces, panes, cards, containers 2D
+;; ------------------------------------------------------
+(def rounded-radius-classes
+  (scale-of-utility-defs
+   radius-sizes
+   [:border-radius]
+   {:key-prefix "rounded"
+    :val-prefix "rounded"}))
+
+
+;; Type sizes
+;; ------------------------------------------------------
+(def type-size-classes
+  (scale-of-utility-defs
+   type-sizes
+   [:font-size]))
+
+
+  ;; Border weights for radios and checkbox sync with type weight
   ;; ------------------------------------------------------
-  [:thin        {">.kushi-radio-input:outline-width" :$input-border-weight-thin
-                 ">.kushi-checkbox-input:bw"         :$input-border-weight-thin}
-   :extra-light {">.kushi-radio-input:outline-width" :$input-border-weight-extra-light
-                 ">.kushi-checkbox-input:bw"         :$input-border-weight-extra-light}
-   :light       {">.kushi-radio-input:outline-width" :$input-border-weight-light
-                 ">.kushi-checkbox-input:bw"         :$input-border-weight-light}
-   :normal      {">.kushi-radio-input:outline-width" :$input-border-weight-normal
-                 ">.kushi-checkbox-input:bw"         :$input-border-weight-normal}
-   :wee-bold    {">.kushi-radio-input:outline-width" :$input-border-weight-wee-bold
-                 ">.kushi-checkbox-input:bw"         :$input-border-weight-wee-bold}
-   :semi-bold   {">.kushi-radio-input:outline-width" :$input-border-weight-semi-bold
-                 ">.kushi-checkbox-input:bw"         :$input-border-weight-semi-bold}
-   :bold        {">.kushi-radio-input:outline-width" :$input-border-weight-bold
-                 ">.kushi-checkbox-input:bw"         :$input-border-weight-bold}
-   :extra-bold  {">.kushi-radio-input:outline-width" :$input-border-weight-extra-bold
-                 ">.kushi-checkbox-input:bw"         :$input-border-weight-extra-bold}
-   :heavy       {">.kushi-radio-input:outline-width" :$input-border-weight-heavy
-                 ">.kushi-checkbox-input:bw"         :$input-border-weight-heavy}])
+ (def ui-theming-classes
+   (scale-of-utility-defs
+    type-weights
+    [">.kushi-radio-input:outline-width"
+     ">.kushi-checkbox-input:bw"]
+    {:val-prefix "input-border-weight"
+     :acc-f      (fn [k]
+                   {:font-weight (->> k
+                                      util/stringify
+                                      (str "$")
+                                      keyword)})}))
 
-(def geometry-classes
-  [:top-left-corner-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% -100%"}
-   :top-left-corner
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :top-left-corner-inside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 0%"}
-   :top-left-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -100%"}
-   :top-left
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -50%"}
-   :top-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% -100%"}
-   :top
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :top-inside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 0%"}
-   :top-right-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -100%"}
-   :top-right
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -50%"}
-   :top-right-corner-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% -100%"}
-   :top-right-corner
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% -50%"}
-   :top-right-corner-inside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 0%"}
-   :right-top-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 0%"}
-   :right-top
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 0%"}
-   :right-inside
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -50%"}
-   :right
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% -50%"}
-   :right-outside
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% -50%"}
-   :right-bottom-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 0%"}
-   :right-bottom
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 0%"}
-   :bottom-right-corner-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 100%"}
-   :bottom-right-corner
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 50%"}
-   :bottom-right-corner-inside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 0%"}
-   :bottom-right-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 100%"}
-   :bottom-right
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 50%"}
-   :bottom-inside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 0%"}
-   :bottom
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 50%"}
-   :bottom-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 100%"}
-   :bottom-left-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 100%"}
-   :bottom-left
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 50%"}
-   :bottom-left-corner-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 100%"}
-   :bottom-left-corner
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 50%"}
-   :bottom-left-corner-inside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 0%"}
-   :left-bottom-outside
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 0%"}
-   :left-bottom
-   {:position  :absolute,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 0%"}
-   :left-inside
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -50%"}
-   :left
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :left-outside
-   {:position  :absolute,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% -50%"}
-   :left-top-outside
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 0%"}
-   :left-top
-   {:position  :absolute,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 0%"} ])
+(def fixed-geometries? true)
 
-(def geometry-classes-fixed
-  [:top-left-corner-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% -100%"}
-   :top-left-corner-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :top-left-corner-inside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 0%"}
-   :top-left-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -100%"}
-   :top-left-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -50%"}
-   :top-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% -100%"}
-   :top-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :top-inside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 0%"}
-   :top-right-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -100%"}
-   :top-right-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -50%"}
-   :top-right-corner-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% -100%"}
-   :top-right-corner-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% -50%"}
-   :top-right-corner-inside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 0%"}
-   :right-top-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 0%"}
-   :right-top-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 0%"}
-   :right-inside-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "0% -50%"}
-   :right-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "50% -50%"}
-   :right-outside-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      :unset,
-    :right     "0%",
-    :translate "100% -50%"}
-   :right-bottom-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 0%"}
-   :right-bottom-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 0%"}
-   :bottom-right-corner-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "100% 100%"}
-   :bottom-right-corner-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "50% 50%"}
-   :bottom-right-corner-inside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 0%"}
-   :bottom-right-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 100%"}
-   :bottom-right-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      :unset,
-    :right     "0%",
-    :translate "0% 50%"}
-   :bottom-inside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 0%"}
-   :bottom-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 50%"}
-   :bottom-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "50%",
-    :right     :unset,
-    :translate "-50% 100%"}
-   :bottom-left-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 100%"}
-   :bottom-left-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 50%"}
-   :bottom-left-corner-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 100%"}
-   :bottom-left-corner-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 50%"}
-   :bottom-left-corner-inside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "0% 0%"}
-   :left-bottom-outside-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 0%"}
-   :left-bottom-fixed
-   {:position  :fixed,
-    :top       :unset,
-    :bottom    "0%",
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 0%"}
-   :left-inside-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "0% -50%"}
-   :left-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% -50%"}
-   :left-outside-fixed
-   {:position  :fixed,
-    :top       "50%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% -50%"}
-   :left-top-outside-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-100% 0%"}
-   :left-top-fixed
-   {:position  :fixed,
-    :top       "0%",
-    :bottom    :unset,
-    :left      "0%",
-    :right     :unset,
-    :translate "-50% 0%"} ])
+(defn geometries [coll m]
+  (mapcatv (fn [[k v]]
+             (let [m+    (assoc m :translate v)
+                   k-str (util/stringify k)]
+               (concat [k m+]
+                       (when (and fixed-geometries?
+                                  (re-find #"-inside$" k-str))
+                         [(-> k-str
+                              (str "-fixed")
+                              keyword)
+                          (assoc m+ :position :fixed)]))))
+           coll))
+
+(def geom-top-base 
+  {:position :absolute
+   :top      "0%"
+   :bottom   :unset})
+
+
+(def geom-top-right-corners
+  (geometries
+    [[:top-right-outside "0% -100%"]
+     [:top-right "0% -50%"]
+     [:top-right-corner-outside "100% -100%"]
+     [:top-right-corner "50% -50%"]
+     [:top-right-corner-inside "0% 0%"]
+     [:right-top-outside "100% 0%"]
+     [:right-top "50% 0%"]]
+    (merge geom-top-base
+           {:left  :unset
+            :right "0%"})))
+
+(def geom-top-left-corners
+  (geometries
+   [[:top-left-corner-outside "-100% -100%"]
+    [:top-left-corner "-50% -50%"]
+    [:top-left-corner-inside "0% 0%"]
+    [:top-left-outside "0% -100%"]
+    [:top-left "0% -50%"]
+    [:left-top-outside "-100% 0%"]
+    [:left-top "-50% 0%"]]
+   (merge geom-top-base
+          {:left  "0%"
+           :right :unset})))
+
+(def geom-bottom-left-corners
+  (geometries
+   [[:bottom-left-outside "0% 100%"]
+    [:bottom-left "0% 50%"]
+    [:bottom-left-corner-outside "-100% 100%"]
+    [:bottom-left-corner "-50% 50%"]
+    [:bottom-left-corner-inside "0% 0%"]
+    [:left-bottom-outside "-100% 0%"]
+    [:left-bottom "-50% 0%"]]
+   {:position :absolute
+    :top      :unset
+    :bottom   "0%"
+    :left     "0%"
+    :right    :unset}))
+
+(def geom-bottom-right-corners
+  (geometries
+   [[:right-bottom-outside "100% 0%"]
+    [:right-bottom "50% 0%"]
+    [:bottom-right-corner-outside
+     "100% 100%"]
+    [:bottom-right-corner "50% 50%"]
+    [:bottom-right-corner-inside
+     "0% 0%"]
+    [:bottom-right-outside "0% 100%"]
+    [:bottom-right "0% 50%"]]
+   {:position :absolute
+    :top      :unset
+    :bottom   "0%"
+    :left     :unset
+    :right    "0%"}))
+
+(def geom-right-left-side-base 
+  {:position :absolute,
+   :top      "50%"
+   :bottom   :unset})
+
+(def geom-right-side
+  (geometries
+   [[:right-inside "0% -50%"]
+    [:right "50% -50%"]
+    [:right-outside "100% -50%"]]
+   (merge geom-right-left-side-base
+          {:left  :unset
+           :right "0%"})))
+
+ (def geom-left-side
+  (geometries
+   [[:left-inside "0% -50%"]
+    [:left "-50% -50%"]
+    [:left-outside "-100% -50%"]]
+   (merge geom-right-left-side-base
+          {:right :unset
+           :left  "0%"})))  
+
+(def geom-top-bottom-side-base 
+  {:position  :absolute
+   :left      "50%"
+   :right     :unset})
+
+ 
+ (def geom-top-side
+   (geometries 
+    [[:top-outside "-50% -100%"]
+     [:top "-50% -50%"]
+     [:top-inside "-50% 0%"]]
+    (merge geom-top-bottom-side-base
+           {:bottom :unset
+            :top    "0%"})))
+
+(def geom-bottom-side
+   (geometries 
+    [[:bottom-inside "-50% 0%"]
+     [:bottom "-50% 50%"]
+     [:bottom-outside "-50% 100%"]]
+    (merge geom-top-bottom-side-base
+           {:top    :unset
+            :bottom "0%"})))
+
+
+(def all-classes 
+  [combo-flex-utility-classes
+   debug-outline-classes
+   base-classes
+   geom-top-left-corners
+   geom-top-right-corners
+   geom-bottom-left-corners
+   geom-bottom-right-corners
+   geom-left-side
+   geom-right-side
+   geom-top-side
+   geom-bottom-side
+
+   type-weight-override-classes
+   override-classes
+   rounded-absolute-radius-classes
+   rounded-radius-classes
+   type-size-classes
+
+   ui-theming-classes])
 
 (def utility-class-ks
-  (mapcat util/kwargs-keys
-          [combo-flex-utility-classes
-           base-classes
-           geometry-classes
-          ;;  geometry-classes-fixed
-           override-classes
-           ui-theming-classes]))
+  (mapcat util/kwargs-keys all-classes))
 
 (def utility-classes
   (apply deep-merge
-         (map #(apply hash-map %)
-              [combo-flex-utility-classes
-               base-classes
-               geometry-classes
-              ;;  geometry-classes-fixed
-               override-classes
-               ui-theming-classes])))
-
-
+         (map #(apply hash-map %) all-classes)))

@@ -1,12 +1,11 @@
 (ns kushi.ui.toast.core
-  (:require
-   [domo.core :as domo]
-   [kushi.core :refer (keyed)]
-   [kushi.ui.dom.pane.core :as pane]
-   [kushi.ui.dom.pane.toast :refer [update-toast-slot-dimensions!
-                                    toast-slot-cleanup!]]
-   [kushi.ui.dom.pane.placement :refer [user-placement]]
-   [kushi.ui.dom.pane.styles]))
+  (:require [domo.core :as domo]
+            [kushi.core :refer (keyed)]
+            [kushi.ui.dom.pane.core :as pane]
+            [kushi.ui.dom.pane.placement :refer [user-placement]]
+            [kushi.ui.dom.pane.styles]
+            [kushi.ui.dom.pane.toast :refer [toast-slot-cleanup!
+                                             update-toast-slot-dimensions!]]))
 
 
 (defn toast-attrs
@@ -20,7 +19,7 @@
           "or `:right-bottom` options, or the logic equivalent to these, "
           "which would be `[:inline-end :block-start]` and "
           "`[:inline-end :block-end]`, respectively. In both cases, the toast "
-          "will slide in from outside the viewport, to the right. If you want "
+          "will slide in, horizontally, from outside the viewport. If you want "
           "the toast to slide in from the top or bottom, you would use "
           "`:top-right`, or `:bottom-right` instead."
           :br
@@ -29,6 +28,8 @@
           "`kushi.ui.toast.core/toast-attrs`. You can compose this map to "
           "an existing element's attributes map with `kushi.core/merge-attrs` "
           "using the pattern:"
+          ;; TODO make this like a code block with a couple versions of this
+          ;; pattern e.g. `(merge-attrs {:id "foo" :class "bar"} (toast-attrs {...}))`
           :br
           :br "`(merge-attrs (sx ...) (toast-attrs {...}))`"
           :br
@@ -78,6 +79,8 @@
           "use the following pattern."
           :br
           :br
+          ;; TODO make this like a code block with a couple versions of this
+          ;; pattern e.g.`
           "`(merge-attrs (sx :$toast-border-radius--5px ...) (toast-attrs {...}))`"
           :br
           :br
@@ -91,8 +94,10 @@
                       "content into it."
                       :br
                       :br
-                      "The example above uses reagent, but you could do "
+                      "The example in this documentation framework (created with "
+                      "`kushi.playground`) uses reagent, but you could do "
                       "something similar with another rendering library:"
+                      :br
                       :br
                       "`(fn [el] (rdom/render [my-toast-content] el))`"]}
            {:name    placement
@@ -178,6 +183,7 @@
                       "reduced motion (an OS-level setting), toasts will never "
                       "slide in, nor will they scale up or down upon entry."]}]}
 
+  ;; TODO -- add :class opts so you can ala-carte try things like :$toast-slot-z-index
   [{placement         :-placement
     auto-dismiss?     :-auto-dismiss?
     slide-in?         :-slide-in?

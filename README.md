@@ -18,7 +18,7 @@
 
 - **Shorthand styling syntax shadows CSS standard**
 
-- **Minimal set of headless UI components**
+- **Suite of accessible,  headless UI components**
 
 - **Themeable design system foundation**
 
@@ -28,7 +28,7 @@
 
 - **Composable, user-defined shared classes**
 
-- **A collection of useful CSS utility classes**
+- **Many useful CSS utility classes**
 
 - **Default industry-standard breakpoint scale**
 
@@ -328,6 +328,38 @@ When constructing a value using css function syntax:
 You can likewise locate these as entries in the `:style` entry of the attributes map:
 ```Clojure
 (sx {:style {:transform '(translateY :-100px)}}])
+```
+
+<br>
+
+### Nested syntax
+You can also you the 2-element vector form to "nest" styles, which is really just a way to dry up code and avoid repetition of the left half of the style:
+```Clojure
+(sx ["has-ancestor(nav[data-foo-bar-sidenav][aria-expanded=\"true\"])"
+     {:>.sidenav-menu-icon:d  :none
+      :>.sidenav-close-icon:d :inline-flex
+      :>ul:h                  "calc((100vh - (var(--navbar-height) * 2)) * 1)"
+      :h                      :fit-content
+      :o                      1}])
+```
+The above would result in the following css:
+```css
+ nav[data-foo-bar-sidenav][aria-expanded="true"] ._1209178574>.sidenav-menu-icon {
+  display: none;
+}
+
+ nav[data-foo-bar-sidenav][aria-expanded="true"] ._1209178574>.sidenav-close-icon {
+  display: inline-flex;
+}
+
+ nav[data-foo-bar-sidenav][aria-expanded="true"] ._1209178574>ul {
+  height: calc((100vh - (var(--navbar-height) * 2)) * 1);
+}
+
+ nav[data-foo-bar-sidenav][aria-expanded="true"] ._1209178574 {
+  height: fit-content;
+  opacity: 1;
+}
 ```
 
 <br>
@@ -777,7 +809,7 @@ CSS resulting from the above example:
 ```
 
 ### Parents and ancestors
-Kushi provides a special sugar token in the form of `has-parent()` and `has-ancestor()` to achieve further specificity with regards to parents and ancestors of the element that you are styling. This is useful when you want to use styles that might change when, for example, a class is toggled or changed further up in the DOM.
+Kushi provides 2 fake css pseudo-classes in the form of `has-parent()` and `has-ancestor()`. With these, you to achieve further specificity with regards to parents and ancestors of the element that you are styling. This is useful when you want to use styles that might change when a class is toggled or changed further up in the DOM.
 
 
 ```Clojure
@@ -1034,82 +1066,10 @@ This file must live in your project's root directory.
 
 The only required entry in this map is `:css-dir`.
 
-Below is a full map of all the options available. The values shown in the map below correspond to the default values.
-If you are looking for a well commented starting point for your own config, [the sample `kushi.edn` config from the Kushi Quickstart template](https://github.com/kushidesign/kushi-quickstart/blob/main/kushi.edn) (similar to below) is recommended.
-```Clojure
-{
- ;; REQUIRED
-
- ;; Needs to be a path to a dir, e.g. "public/css"
- ;; The example above would write to "public/css/kushi.css"
- :css-dir                nil
-
-
- ;; OPTIONAL
-
- ;; You can specify your own filename, e.g. "mystyles.css"
- :css-filename           "kushi.css"
-
- ;; Fully qualified name of user theming map.
- ;; This needs to be defined in a clj namespace, and saved as a `.clj` file.
- ;; e.g. `myproject.theme/theme`
- :theme                   nil
-
- ;; Optionally defined your own breakpoint scale to override
- ;; kushi's default breakpoint scale.
- ;; This must be a vector of kwargs, not a map.
- :media [:2xl {:max-width :1536px}
-         :xl {:max-width :1280px}
-         :lg {:max-width :1024px}
-         :md {:max-width :768px}
-         :sm {:max-width :640px}]
-
- ;; Optionally disable build caching.
- :caching?                true
-
- ;; Prepend to generated selectors, useful for narrowing scope.
- ;; Usually would be the id of the "app" container, e.g "#app".
- :selector-prepend        nil
-
- ;; Optionally narrow the scope of generated design tokens.
- ;; Usually would be the id of the "app" container, e.g "#app".
- ;; If nil, defaults to using ":root"
- :design-tokens-root      nil
- :data-attr-name          :sx
-
- ;; Runtime injection
- :inject-at-runtime-prod? false
- :inject-at-runtime-dev?  true
-
- ;; Logging
- :log-build-report?       true
- :log-build-report-style  :simple ;; or :detailed
- :log-kushi-version?      true
- :log-updates-to-cache?   false
- :log-cache-call-sites?   false
-
-
- ;; ADVANCED
-
- ;; For leaving specific things out of css, set individual options below to `false`.
- ;; You probably don't want to override these unless you are only using
- ;; Kushi's styling engine (`sx`, `defclass`, etc.) and not using any prebuilt
- ;; kushi.ui lib components or kushi's design tokens, etc.
- :add-stylesheet-prod?    true
- :add-stylesheet-dev?     true
- :add-css-reset?          true
- :add-design-tokens?      true
- ;; If :add-kushi-ui-theming? is set to false, it will not include
- ;; theming classes for for kushi ui components such as buttons, tags, etc.
- :add-kushi-ui-theming?   true
- :add-ui-theming?         true
- :add-kushi-defclass?      true
- :add-user-defclass?      true
- :add-user-sx?            true}
-```
+For a well commented starting point to build your own config, [the sample `kushi.edn` config from the Kushi Quickstart template](https://github.com/kushidesign/kushi-quickstart/blob/main/kushi.edn) (similar to below) is recommended.
 
 <br>
-
+<br>
 
 
 ## Actionable Warnings
@@ -1233,8 +1193,9 @@ The example above assumes the following:
 The helper function `kushi.ui.core/opts+children` will pull any keys prefixed with `:-` out of the attributes map and into a user `opts` map. `opts+children` always returns a vector in the form of `[user-opts attr child & more-children]`.
 
 <br>
+<br>
 
-## Theming
+<!-- ## Theming
 Detailed docs on theming coming soon...
 <br>
 
@@ -1245,7 +1206,7 @@ The `kushi.playground` namespace exists to enable the generation of a clean, int
 
 Detailed documentation for this feature is coming soon. In the meantime, you can peruse the `docs` dir in this repo which is the setup for the Kushi UI documentation site linked above.
 
-<br>
+<br> -->
 
 ## Usage with Build Tools
 Although Kushi is designed to be build-tool and framework agnostic, thus far it has only been used in production with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs).
@@ -1258,7 +1219,6 @@ See the [kushi-quickstart](https://github.com/kushidesign/kushi-quickstart) temp
 ## Helping
 Feel free to file issues or initiate discussion in <a href="https://github.com/kushidesign/kushi/issues" target="_blank">Issues</a>.
 
-More details on ways to contribute coming soon...
 
 <br>
 
@@ -1275,6 +1235,6 @@ More details on ways to contribute coming soon...
 -->
 ## License
 
-Copyright © 2021-2022 Jeremiah Coyle
+Copyright © 2021-2024 Jeremiah Coyle
 
 Distributed under the EPL License. See LICENSE.
