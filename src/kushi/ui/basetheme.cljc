@@ -928,8 +928,6 @@
   ;;  ".dark .kushi-slider-step-label"                               {:c :$gray-300}
    ])
 
-
-
 (defn- styles-transform-report
   ([coll ret]
    (styles-transform-report coll ret nil nil))
@@ -972,49 +970,67 @@
         :else
         variant-values))
 
-(defn- variant-elision-re [key-set]
+(defn- variant-elision-re [key-set leading-str]
   (->> key-set
-       (map #(str  "\\." (name %)))
+       (map #(str leading-str (name %)))
        (string/join "|")
        re-pattern))
 
 (defn- maybe-remove-semantic-or-style-variants
-  [coll]
+  [leading-str coll]
   (let [elided (set/union (:elide-ui-variants-semantic user-config)
                           (:elide-ui-variants-style    user-config))]
-    (if (and (set? elided)
-             (seq elided))
-      (let [re  (variant-elision-re elided)
+    (if (and (set? elided) (seq elided))
+      (let [re  (variant-elision-re elided leading-str)
             ret (filter-flatmap coll #(not (re-find re (name %))))]
-
-      ;;  (println "Removing styles from unused variants" (styles-transform-report coll ret :variants-to-elide elided))
+        #_(println "Removing styles from unused variants"
+                   (styles-transform-report coll
+                                            ret
+                                            :variants-to-elide
+                                            elided))
 
         ret)
       coll)))
 
-(defn- maybe-remove-some-variants [coll]
+
+(defn- maybe-remove-some-variants [coll leading-str]
   (->> coll
        maybe-remove-lights-or-darks
-       maybe-remove-semantic-or-style-variants))
-
-
+       (maybe-remove-semantic-or-style-variants leading-str)))
 
 (defn base-theme-map
   []
   (let [{ui2            :styles
-         variant-tokens :token-pairs} (tokenizer variant-values)
-        ui                            (into [] (concat ui ui2 ui*))
-        ]
+         variant-tokens :token-pairs}
+        (tokenizer variant-values)
+
+        ui                            
+        (into [] (concat ui ui2 ui*))
+
+        ui
+        (maybe-remove-some-variants ui "\\.")
+
+        design-tokens
+        (let [color-tokens       (colors->tokens
+                                  colors
+                                  {:format    :css
+                                   :expanded? true})
+              alias-color-tokens (colors->alias-tokens
+                                  semantic-aliases 
+                                  {:expanded? true})
+              alias-color-tokens (maybe-remove-some-variants alias-color-tokens "^\\$")
+              variant-tokens     (maybe-remove-some-variants variant-tokens "^--")]
+
+          (into []
+                (concat color-tokens
+                        transparent-neutrals
+                        alias-color-tokens
+                        variant-tokens
+                        design-tokens)))]
+
     {:css-reset       css-reset
      :utility-classes utility-classes
-     :design-tokens   (let [color-tokens       (colors->tokens colors {:format :css :expanded? true})
-                            alias-color-tokens (colors->alias-tokens semantic-aliases {:expanded? true})]
-                        (into []
-                              (concat color-tokens
-                                      transparent-neutrals
-                                      alias-color-tokens
-                                      variant-tokens
-                                      design-tokens)))
+     :design-tokens   design-tokens
      :ui              ui
      :font-loading    {:add-default-sans-font-family?  true
                        :add-default-code-font-family?  true
@@ -1026,4 +1042,3 @@
                        ;;                   :styles {:normal [100]
                        ;;                            :italic [300]}}]
                        }}))
-
