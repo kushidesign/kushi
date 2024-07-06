@@ -17,59 +17,6 @@
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
             [kushi.ui.tooltip.core :refer [tooltip-attrs]]))
 
-
-(defcom intro-section
-  (let [{:keys [header]} &opts]
-    [:section
-     (merge-attrs
-      (sx 'playground-generic-intro-section
-          :d--none
-          :sm:d--block
-          :.transition
-          :bbe--$divisor
-          :dark:bbe--$divisor-dark
-          :pbe--0.5rem
-          :md:pbe--0.6rem
-
-         ;; typography
-          ["has-ancestor(.kushi-typography):bbe" :none]
-          ["has-ancestor(.custom-typography):bbe" :none]
-          ["has-ancestor(.kushi-typography)&_.code:h" :fit-content]
-          ["has-ancestor(.kushi-typography)&_code:h" :fit-content]
-          ["has-ancestor(.kushi-typography)&_.code:lh" :initial]
-          ["has-ancestor(.kushi-typography)&_code:lh" :initial]
-
-         ;; colors
-          ["has-ancestor(.kushi-colors):bbe" :none]
-          ["has-ancestor(.custom-colors):bbe" :none]
-          ["has-ancestor(.kushi-colors)&_p.alias-token-scales:mbe" :0.3em])
-      &attrs)
-     [:div (sx
-            'intro-section-title-wrapper
-            :.flex-col-fs
-            :.wee-bold
-            :.relative
-            :w--100%
-            :mbe--4.25rem)
-      [label
-       (sx 'intro-section-title
-           :fs--$kushi-playground-main-section-header_font-size||$xxlarge
-           :pbs--2.25em
-           :md:pbs--$vp-top-header-padding-with-offset
-           {:style {:transform '(translateX :-1.5px)}})
-       (if @state/*md-or-smaller?
-         "Playground"
-         header)]]
-     [:section
-      (sx 'intro-section-body
-          :.normal
-          :.transition
-          :pie--2rem
-          :&_p:line-height--$body-copy-line-height
-          :&_p:margin-block--2em)
-      &children]]))
-
-
 (defn alias-global-mapping-row [a g]
   [:<>
    [:code (sx :.code) (str "--" a)]
@@ -327,11 +274,9 @@
    [:p
     "In addition to providing a css-in-cljs solution, Kushi offers a basic suite of themeable, headless UI components for free. "
     "This set of building blocks consitutes a base for rolling your own design system."]
-   #_[:p 
-    "This site provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]
    [:a {:href     "/components"
         :on-click (fn [e]
-                    (route! "kushi-playground-menu" false e)
+                    (route! "kushi-playground-menu" "/components" e)
                     #_(component-examples/scroll-to-playground-component!
                      {:component-label "button"
                       :scroll-y        16}))}
@@ -346,19 +291,6 @@
    (sx :>*:max-width--550px
        :>p:first-child:mbs--0
        :>p:mb--2em
-      ;;  :>p:last-of-type:mbe--2.5em
-       :>p:lh--1.7
-      ;;  :pbe--2.25rem
-       )
+       :>p:lh--1.7)
    [:p 
-    "This page provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."]
-   [:a {:href     "/components"
-        :on-click (fn [e]
-                    (route! "kushi-playground-menu" false e)
-                    #_(component-examples/scroll-to-playground-component!
-                     {:component-label "button"
-                      :scroll-y        16}))}
-    #_[button 
-     (sx  :.filled :.rounded :.semi-bold )
-     "Explore components"
-     [icon :arrow-right-alt]]]])
+    "This page provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."] ])

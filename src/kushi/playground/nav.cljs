@@ -1,6 +1,5 @@
 (ns kushi.playground.nav
   (:require
-   [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp- ?trace]]
    [clojure.string :as string]
    [domo.core :as domo]
    [kushi.playground.state :as state]
@@ -17,22 +16,13 @@
                    5000))
 
 (defn route! [menu-id href e]
-  ;; (.preventDefault e)
-  ;; (? (string/starts-with? (? href) "/"))
   (let [e          (or e js/window.event)
         app        (domo/el-by-id "app")
         path-label (when (string/starts-with? href "/")
                      (subs href 1))]
     (domo/remove-class! (domo/el-by-id menu-id) "has-hover")
     (when path-label
-      (.preventDefault e)
-      (let [
-            ;; path-label (some-> (new js/URL href)
-            ;;                    .-pathname
-            ;;                    (string/replace #"^/" "")
-            ;;                    (string/split #"/")
-            ;;                    last)
-            ]
+        (.preventDefault e)
         (.setAttribute app
                        "data-kushi-playground-active-path"
                        path-label)
@@ -43,7 +33,7 @@
                     href)
         ;; This is key!
         (js/setTimeout #(state/set-focused-path! (into [] path-label))
-                       250)))))
+                       250))))
 
 
 (defcom header-nav-button
@@ -146,7 +136,7 @@
                        (string/split href #"/")
                        last
                        (str "/"))]
-          (route! menu-id (? href) e)
+          (route! menu-id href e)
           (remove-hover! menu-el))
         (when (domo/has-class? menu-el "has-hover") 
           (remove-hover! menu-el))))))

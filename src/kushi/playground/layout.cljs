@@ -340,7 +340,7 @@
          (into [:section
                 (sx :.playground-component-panel
                     {:id (str "kushi-" label "-examples")
-                     :hidden "hidden"
+                    ;;  :hidden "hidden"
                      })]
                (for [
                     ;; example-opts (take 2 examples)
@@ -351,8 +351,7 @@
          [:div (sx :.playground-component-panel
                    :>div:max-width--$main-content-max-width
                    :pbs--35px
-                   {
-                    ;; :hidden "hidden"
+                   {:hidden "hidden"
                     :id     (str "kushi-" label "-documentation")})
           (when summary
             [:div (sx :.medium :.wee-bold :mb--0:2rem :&_p:lh--1.7)
