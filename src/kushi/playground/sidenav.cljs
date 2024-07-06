@@ -158,10 +158,10 @@
          ["&[aria-expanded=\"false\"]"
           {:bgc :transparent}]
          ["&[aria-expanded=\"true\"]" 
-          {:bgc :$white-transparent-70
+          {:bgc :$white-transparent-90
            :bgi "linear-gradient(to left, var(--background-color), var(--background-color) 50%, transparent)"}]
          ["dark:&[aria-expanded=\"true\"]" 
-          {:bgc :$black-transparent-70
+          {:bgc :$black-transparent-90
            :bgi "linear-gradient(to left, var(--background-color-inverse), var(--background-color-inverse) 50%, transparent)"}]
          {:data-kushi-playground-sidenav        true
           :data-kushi-playground-sidenav-mobile true
@@ -234,14 +234,16 @@
                    :bgc--transparent
                    :overflow-y--auto
                    :w--fit-content
-                   :min-width--133px
+                  ;;  :min-width--133px
                    :ai--center
-                   :pb--0rem:0rem
+                   :pb--0rem:20vh
                    :pi--0
                    :flex-wrap--wrap-reverse
                    :column-gap--2.75rem
                    :align-content--center
-                   :fs--$small)]
+                   :fs--$small
+                   :min-width--50vw
+                   :xsm:min-width--unset)]
           (for [{:keys [label]} playground-components]
             [:<> 
              [style-tag-first-intersecting label]
