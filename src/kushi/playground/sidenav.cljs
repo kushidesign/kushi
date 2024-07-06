@@ -198,10 +198,9 @@
                  :h                      :fit-content
                  :o                      1}]
 
-              ;; To use softer color 
+               ;; To use softer color 
                :c--$neutral-secondary-foreground
-               :dark:c--$neutral-secondary-foreground-inverse
-               )
+               :dark:c--$neutral-secondary-foreground-inverse)
      [icon (sx :.sidenav-menu-icon :.extra-light :.large) :menu]
      [icon (sx :.sidenav-close-icon :.extra-light :.large) :close]
      "All Components"]]
