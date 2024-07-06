@@ -29,6 +29,7 @@
   {:summary ["Buttons provide cues for actions and events."]
    :desc ["Buttons are fundamental components allow users to process actions or navigate an experience."
           :br
+          :br
           "They can be custom styled via a variety of tokens in your theme."
           :br
           :br "`:$button-padding-inline-ems`"
