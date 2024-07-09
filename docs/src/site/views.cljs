@@ -1,12 +1,11 @@
 (ns site.views
-  (:require
-   [kushi.core :refer [sx]]
-   [kushi.playground.layout :as layout]
-   [kushi.playground.nav :as nav]
-   [kushi.playground.components :refer [playground-components]]
-   [domo.core :as domo]
-   [kushi.playground.about :as about]
-   [clojure.string :as string]))
+  (:require [domo.core :as domo]
+            [kushi.core :refer [sx]]
+            [kushi.playground.about :as about]
+            [kushi.playground.components :refer [playground-components]]
+            [kushi.playground.layout :as layout]
+            [kushi.playground.nav :as nav]
+            [kushi.ui.button.core :refer [button]]))
 
 (def routes 
   {["components"] {:content layout/component-playground-content
@@ -20,15 +19,25 @@
   (.setAttribute (domo/el-by-id "app")
                  "data-kushi-playground-active-path"
                  "components")
+  
   (into 
-   [:div (sx :.flex-col-fs)
-    [nav/header]
-    ;; Spinner between page transitions
-    ;; Leave out for now as transitions are instant
-    #_[layout/loading-spinner]
-    ]
-    (for [[view {:keys [content label] :as route}] routes
-          :let [label (or label (->> view last))
-                path  (string/join "/" view)]
-          :when content]
-      [layout/generic-section (assoc route :path path :label label)])))
+     [:div (sx :.flex-col-fs)
+      [nav/header]
+      ;; Spinner between page transitions
+      ;; Leave out for now as transitions are instant
+      #_[layout/loading-spinner]
+      [:div (sx :mbs--100px)
+       [button (sx 
+                ;; :c--red
+                ;; :bgc--black
+                {:-semantic :accent
+                 :-surface  :soft})
+        "Accent"]]
+      ]
+
+     #_(for [[view {:keys [content label]
+                  :as   route}] routes
+           :let                                      [label (or label (->> view last))
+                                                      path  (string/join "/" view)]
+           :when                                     content]
+       [layout/generic-section (assoc route :path path :label label)])))

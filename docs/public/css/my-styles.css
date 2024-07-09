@@ -1,0 +1,224 @@
+
+html {
+ --semantic-element-decorative-outline-width: 0px;
+ --semantic-element-outer-box-shadow-blur-length: 0px;
+ --semantic-element-box-outer-box-shadow-strength: 30%;
+ --semantic-element-outer-box-shadow-2-blur-length: 20px;
+ --semantic-element-box-outer-box-shadow-2-strength: 00%;
+ --debug-grid-size: 107px;
+ --debug-grid-color: #eee;
+
+ --green-hue: 145;
+  
+ --red-hue: 20;
+ --red-lightness-shift: -7%;
+  
+ --yellow-hue: 94;
+ --yellow-lightness-shift: 5%;
+  
+ --blue-hue: 265;
+ --blue-c-shift: 0.08;
+  
+ --positive-hue: var(--green-hue);
+ 
+ --negative-hue: var(--red-hue);
+ --negative-lightness-shift: var(--red-lightness-shift);
+ 
+ --warning-hue: var(--yellow-hue);
+ --warning-lightness-shift: var(--yellow-lightness-shift);
+ 
+ --accent-hue: var(--blue-hue);
+ --accent-c-shift: -0.08;
+}
+
+
+
+/* Next step with color:
+
+- Write out nested syntax for legacy
+- Figure out lightning, for syntax-lowering
+- Write new-fangled, using same selectors
+- Figure out @supports for using one or the other
+
+*/
+
+
+/* not supports color-mix with oklch START */
+/*
+._kushi_neutral_soft_ia, ._kushi_neutral_soft {
+  color: var(--neutral-900);
+  background-color: var(--neutral-100);
+  .dark & {
+    color: var(--neutral-50);
+    background-color: var(--neutral-850);
+  }
+}
+
+._kushi_neutral_soft_ia {
+  &:hover {
+    color: var(--neutral-900);
+    background-color: var(--neutral-150);
+  }
+  &:active {
+    color: var(--neutral-900);
+    background-color: var(--neutral-200);
+  }
+  .dark & {
+    &:hover {
+      color: var(--neutral-50);
+      background-color: var(--neutral-800);
+    }
+    &:active {
+      color: white;
+      background-color: var(--neutral-800);
+    }
+  }
+}
+
+._kushi_accent_soft_ia, ._kushi_accent_soft {
+  color: var(--accent-700);
+  background-color: var(--accent-100);
+  .dark & {
+    color: var(--accent-100);
+    background-color: var(--accent-750);
+  }
+}
+
+._kushi_accent_soft_ia {
+  &:hover {
+    color: var(--accent-800);
+    background-color: var(--accent-150);
+  }
+  &:active {
+    color: var(--accent-900);
+    background-color: var(--accent-200);
+  }
+  .dark & {
+    &:hover {
+      color: var(--accent-50);
+      background-color: var(--accent-650);
+    }
+    &:active {
+      color: white;
+      background-color: var(--accent-600);
+    }
+  }
+}
+*/
+/* not supports color-mix with oklch END */
+
+
+/* supports color-mix with oklch */
+/* ._kushi_accent_outline,
+._kushi_accent_minimal,
+._kushi_accent_solid, */
+
+/* ._kushi_positive_soft,
+._kushi_positive_outline,
+._kushi_positive_minimal,
+._kushi_positive_solid,
+
+._kushi_negative_soft,
+._kushi_negative_outline,
+._kushi_negative_minimal,
+._kushi_negative_solid,
+
+._kushi_neutral_soft,
+._kushi_neutral_outline,
+._kushi_neutral_minimal,
+._kushi_neutral_solid,
+
+._kushi_warning_soft,
+._kushi_warning_outline,
+._kushi_warning_minimal,
+._kushi_warning_solid */
+
+._kushi_accent_soft,
+._kushi_accent_soft_ia
+ {
+  --_color:
+  oklch(
+    calc(var(--_fg-lightness) + var(--_fg-lightness-shift, 0%) + var(--_fg-lightness-shift-state, 0%))
+    calc(var(--_fg-chroma, 0) + var(--_fg-chroma-shift, 0) + var(--_fg-chroma-shift-state, 0))
+    var(--_semantic-hue, 0)
+  );
+  color: var(--_color);
+
+  --_background-color:
+  oklch(
+    calc(var(--_bg-lightness) + var(--_bg-lightness-shift, 0%) + var(--_bg-lightness-shift-state, 0%))
+    calc(var(--_bg-chroma, 0) + var(--_bg-chroma-shift, 0) + var(--_bg-chroma-shift-state, 0))
+    var(--_semantic-hue, 0) / var(--_bgc-alpha, 1)
+  );
+  background-color: var(--_background-color);
+
+  box-shadow:
+  inset
+  0
+  0
+  0
+  var(--_decorative-outline-width)
+  var(--_color),
+
+  4px
+  4px
+  var(--_box-shadow-blur-length)
+  0px 
+  color-mix(in oklch, var(--_color) var(--_box-shadow-strength), transparent),
+
+  2px
+  2px
+  var(--_box-shadow-2-blur-length)
+  0px 
+  color-mix(in oklch, var(--_color) var(--_box-shadow-2-strength), transparent);
+}
+
+
+._kushi_accent_soft,
+._kushi_accent_soft_ia {
+  --_semantic-hue: var(--accent-hue);
+  --_bgc-alpha: 0.5;
+  --_bg-chroma: 0.05;
+  --_fg-chroma: 0.24;
+  --_bg-lightness: 94%;
+  --_fg-lightness: 44%;
+}
+._kushi_accent_soft_ia {
+  &:is(button):hover {
+    --_fg-lightness-shift-state: -13%;
+    --_fg-chroma-shift-state: 0.06; 
+    --_bg-lightness-shift-state: -3%;
+    --_bg-chroma-shift-state: 0.03;
+  }
+  &:is(button):active {
+    --_fg-lightness-shift-state: -23%;
+    --_fg-chroma-shift-state: 0.13;
+    --_bg-lightness-shift-state: -8%; 
+    --_bg-chroma-shift-state: 0.07; 
+  }
+}
+
+[data-ksi-semantic="positive"]{
+    --_semantic-hue: var(--positive-hue);
+}
+
+[data-ksi-semantic="negative"]{
+    --_semantic-hue: var(--negative-hue);
+    /*--_l-shift-base: var(--negative-lightness-shift);*/
+}
+
+[data-ksi-semantic="warning"]{
+    --_semantic-hue: var(--warning-hue);
+   /* --_l-shift-base: var(--warning-lightness-shift);*/
+}
+
+[data-ksi-semantic="accent"]{
+    --_semantic-hue: var(--accent-hue);
+/*    --_c-shift-base: var(--accent-c-shift);*/
+}
+
+
+._kushi_rounded {
+    border-radius: 0.3em;
+}
+

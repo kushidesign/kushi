@@ -159,6 +159,8 @@
 ;; If so, redo all the intersection observer stuff
 (defn component-playground-content
   [playground-components]
+
+  
   [:<> 
    [:div
     #_{:ref (fn [el]

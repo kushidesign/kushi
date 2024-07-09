@@ -120,7 +120,7 @@
 
    :.neutral.filled:background-color                700
    :.neutral.filled:hover:background-color          800
-   :.neutral.filled:active:background-color         9000
+   :.neutral.filled:active:background-color         900
 
    :.neutral.filled.info:background-color           700
    :.neutral.filled.info:hover:background-color     700
