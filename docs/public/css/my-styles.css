@@ -8,6 +8,8 @@ html {
  --debug-grid-size: 107px;
  --debug-grid-color: #eee;
 
+ --purple-hue: 330;
+
  --green-hue: 145;
   
  --red-hue: 20;
@@ -28,6 +30,8 @@ html {
  --warning-lightness-shift: var(--yellow-lightness-shift);
  
  --accent-hue: var(--blue-hue);
+ --neutral-hue: var(--blue-hue);
+
  --accent-c-shift: -0.08;
 }
 
@@ -109,32 +113,39 @@ html {
 
 
 /* supports color-mix with oklch */
-/* ._kushi_accent_outline,
-._kushi_accent_minimal,
-._kushi_accent_solid, */
 
-/* ._kushi_positive_soft,
-._kushi_positive_outline,
-._kushi_positive_minimal,
-._kushi_positive_solid,
 
-._kushi_negative_soft,
-._kushi_negative_outline,
-._kushi_negative_minimal,
-._kushi_negative_solid,
+._ks_accent
+{
+  --_semantic-hue: var(--accent-hue);
+}
 
-._kushi_neutral_soft,
-._kushi_neutral_outline,
-._kushi_neutral_minimal,
-._kushi_neutral_solid,
 
-._kushi_warning_soft,
-._kushi_warning_outline,
-._kushi_warning_minimal,
-._kushi_warning_solid */
 
-._kushi_accent_soft,
-._kushi_accent_soft_ia
+._ks_positive
+{
+  --_semantic-hue: var(--positive-hue);
+}
+
+
+._ks_negative
+{
+  --_semantic-hue: var(--negative-hue);
+}
+
+._ks_neutral
+{
+  --_semantic-hue: var(--neutral-hue);
+}
+
+
+._ks_warning
+{
+  --_semantic-hue: var(--warning-hue);
+}
+
+
+._ks_semantic
  {
   --_color:
   oklch(
@@ -152,6 +163,7 @@ html {
   );
   background-color: var(--_background-color);
 
+  /* This is the decorative outline, aka `border` */
   box-shadow:
   inset
   0
@@ -160,37 +172,31 @@ html {
   var(--_decorative-outline-width)
   var(--_color),
 
+  /* This is first shadow */
   4px
   4px
-  var(--_box-shadow-blur-length)
+  var(--_box-shadow-blur-length, 0)
   0px 
-  color-mix(in oklch, var(--_color) var(--_box-shadow-strength), transparent),
+  color-mix(in oklch, var(--_color) var(--_box-shadow-strength, 0%), transparent),
 
+  /* This is second shadow */
   2px
   2px
-  var(--_box-shadow-2-blur-length)
+  var(--_box-shadow-2-blur-length, 0)
   0px 
-  color-mix(in oklch, var(--_color) var(--_box-shadow-2-strength), transparent);
+  color-mix(in oklch, var(--_color) var(--_box-shadow-2-strength, 0%), transparent);
 }
 
 
-._kushi_accent_soft,
-._kushi_accent_soft_ia {
-  --_semantic-hue: var(--accent-hue);
-  --_bgc-alpha: 0.5;
-  --_bg-chroma: 0.05;
-  --_fg-chroma: 0.24;
-  --_bg-lightness: 94%;
-  --_fg-lightness: 44%;
-}
-._kushi_accent_soft_ia {
-  &:is(button):hover {
+._ks_ia
+{
+  &:hover {
     --_fg-lightness-shift-state: -13%;
     --_fg-chroma-shift-state: 0.06; 
     --_bg-lightness-shift-state: -3%;
     --_bg-chroma-shift-state: 0.03;
   }
-  &:is(button):active {
+  &:active {
     --_fg-lightness-shift-state: -23%;
     --_fg-chroma-shift-state: 0.13;
     --_bg-lightness-shift-state: -8%; 
@@ -198,27 +204,95 @@ html {
   }
 }
 
-[data-ksi-semantic="positive"]{
-    --_semantic-hue: var(--positive-hue);
+/* SOFT */
+._ks_soft
+ {
+  --_bgc-alpha: 0.5;
+  --_bg-chroma: 0.05;
+  --_fg-chroma: 0.24;
+  --_bg-lightness: 94%;
+  --_fg-lightness: 44%;
+  &._ks_ia {
+    &:hover {
+    }
+    &:active {
+    }
+  }
 }
 
-[data-ksi-semantic="negative"]{
-    --_semantic-hue: var(--negative-hue);
-    /*--_l-shift-base: var(--negative-lightness-shift);*/
+/* SOLID */
+._ks_solid
+ {
+  color: white;
+  --_bg-chroma: 0.27;
+  --_fg-chroma: 0.24;
+  --_bg-lightness: 53%;
+  --_fg-lightness: 44%;
+  --_decorative-outline-width: 0;
+  &._ks_ia {
+    &:hover {
+      --_bg-lightness-shift-state: -5%;
+    }
+    &:active {
+      --_bg-lightness-shift-state: -10%; 
+    }
+  }
 }
 
-[data-ksi-semantic="warning"]{
-    --_semantic-hue: var(--warning-hue);
-   /* --_l-shift-base: var(--warning-lightness-shift);*/
+/* OUTLINE */
+._ks_outline {
+    --_bgc-alpha: 0.5;
+    --_bg-chroma: 0.05;
+    --_fg-chroma: 0.24;
+    --_bg-lightness: 94%;
+    --_fg-lightness: 44%;
+    --_decorative-outline-width: 1.5px;
+    --_bgc-alpha: 0;
+  &._ks_ia {
+    &:hover {
+      --_bgc-alpha: 0.17;
+    }
+    &:active {
+      --_bgc-alpha: 0.23;
+    }
+  }
 }
 
-[data-ksi-semantic="accent"]{
-    --_semantic-hue: var(--accent-hue);
-/*    --_c-shift-base: var(--accent-c-shift);*/
+
+/* MINIMAL */
+._ks_minimal {
+    --_bgc-alpha: 0.0;
+    --_bg-chroma: 0.05;
+    --_fg-chroma: 0.24;
+    --_bg-lightness: 94%;
+    --_fg-lightness: 44%;
+  &._ks_ia {
+    &:is(button):hover {
+      --_bgc-alpha: 0.25;
+    }
+    &:is(button):active {
+      --_bgc-alpha: 0.35;
+    }
+  }
 }
 
+/* SHOULD WE USE :not */
+._ks_neutral
+{
+  --_bg-chroma: 0.0;
+  --_fg-chroma: 0.0;
+  &:hover {
+    --_fg-chroma-shift-state: 0.0; 
+    --_bg-chroma-shift-state: 0.0; 
+  }
+  &:active {
+    --_fg-chroma-shift-state: 0.0;
+    --_bg-chroma-shift-state: 0.0;
+  }
+}
 
-._kushi_rounded {
+/* SHAPE */
+._ks_rounded {
     border-radius: 0.3em;
 }
 

@@ -1,31 +1,12 @@
 (ns kushi.ui.button.core
   (:require-macros
    [kushi.core :refer (sx)])
-  (:require [clojure.string :as string]
-            [fireworks.core :refer [?]]
-            [kushi.core :refer (merge-attrs)]
-            [kushi.playground.util :as util :refer-macros (keyed)]
+  (:require [kushi.core :refer (merge-attrs)]
+            [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.ui.icon.core :refer (icon)]
-            [kushi.ui.util :refer [as-str maybe nameable?]]))
+            [kushi.ui.util :refer [as-str maybe nameable?]]
+            [clojure.string :as string]))
 
-
-(defn resolve-inline-offset
-  [{:keys [only-icons? icon-inline-*? bordered?]}]
-  (let [base (cond only-icons?
-                   "var(--icon-button-padding-inline-ems)"
-                   icon-inline-*?
-                   "var(--button-with-icon-padding-inline-offset)"
-                   :else
-                   "var(--button-padding-inline-ems)")]
-    (if bordered?
-      (str "calc(" base " - var(--button-border-width))")
-      base)))
-
-(defn icon-child? [x]
-  (when (and (coll? x) (seq x) )
-    (or (= (first x) icon)
-        (some icon-child? x))))
 
 (def variants
   {:shape    #{"rounded" "sharp" "pill"}
@@ -43,15 +24,8 @@
           (maybe (get variants k nil))
           (->> (hash-map (keyword (str "data-kushi-" (name k)))))))
 
-(def color-mix-support? (? (.supports js/window.CSS "(color: color-mix(in oklch, red, transparent)")))
-(def oklch-support? (? (.supports js/window.CSS "(color: oklch(40.1% 0.123 21.57))")))
-
-(defn- semantics [{:keys [semantic surface ia shape]}]
- (merge (data-kushi- shape :shape)
-        (data-kushi- surface :surface)
-        (data-kushi- semantic :semantic)
-        {:class (str "_" (string/join "_" ["kushi" semantic surface ia]))}))
-
+;; (def color-mix-support? (? (.supports js/window.CSS "(color: color-mix(in oklch, red, transparent)")))
+;; (def oklch-support? (? (.supports js/window.CSS "(color: oklch(40.1% 0.123 21.57))")))
 
 (defn- get-variants [opts]
   (reduce-kv (fn [acc k v]
@@ -65,6 +39,12 @@
                           v)))
              {}
              variant-defaults))
+
+(defn- hue-style-map [x]
+  {:style {"--_semantic-hue" (or (let [s (some-> x (maybe nameable?) as-str)]
+                                   (when (string/starts-with? s "$")
+                                     (str "var(--" (subs s 1) ")")))
+                                 x)}})
 
 (defn button
   {:summary ["Buttons provide cues for actions and events."]
@@ -95,92 +75,49 @@
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys [loading?
-                shape]}         opts
-        only-icons?             (every? icon-child? children)
-        icon-inline-start?      (some-> children first icon-child?)
-        icon-inline-end?        (some-> children last icon-child?)
-        bordered?               (some->> attrs :class seq (some #{:bordered "bordered"}))
-        pi-opts                 (keyed only-icons? bordered?)
-        pis                     (resolve-inline-offset (assoc pi-opts :icon-inline-*? icon-inline-start?))
-        pie                     (resolve-inline-offset (assoc pi-opts :icon-inline-*? icon-inline-end?))
-        variants                (get-variants opts)]
-
+                start-enhancer
+                end-enhancer
+                hue]}           opts
+        {:keys [shape
+                surface
+                semantic]}      (get-variants opts)]
     (into [:button
            (merge-attrs
-            (sx 'kushi-button
-                :.flex-row-c
-                :.transition
-                :.pointer
-                :.relative
-                ;; :.neutral
-                :.enhanceable
-                ;; :.rounded
+            (sx '_ks_button
+                :d--flex
+                :flex-direction--row
+                :jc--c
                 :ai--c
                 :w--fit-content
-                [:pis pis]
-                [:pie pie]
+                :gap--$icon-enhanceable-gap
+                :cursor--pointer
+                :transition-property--all
+                :transition-timing-function--$transition-timing-function
+                :transition-duration--$transition-duration
+                ["&._ks_with-start-enhancer:pis" :$button-with-icon-padding-inline-offset]
+                ["&._ks_with-end-enhancer:pie" :$button-with-icon-padding-inline-offset]
+                :pi--$button-padding-inline-ems
                 :pb--$button-padding-block-ems
-                [:&.bordered:pb "calc(var(--button-padding-block-ems) - var(--button-border-width))"]
-                [:&.bordered:pb "calc(var(--button-padding-block-ems) - var(--button-border-width))"]
-                {:data-kushi-ui :button
-                 :aria-busy     loading?
+                {:aria-busy     loading?
                  :aria-label    (when loading? "loading")})
             (when loading? {:data-kushi-ui-spinner true})
-            {:class (str "_kushi_" (or (some-> shape as-str) "rounded"))}
-            (semantics (assoc variants :ia "ia"))
+            {:class ["_ks_ia"
+                     ;; TODO - maybe change this cos if user passes :-hue, it still needs this,
+                     ;; but then its not necessarily a semantic thing
+                     "_ks_semantic"
+                     (when start-enhancer "_ks_with-start-enhancer")
+                     (when end-enhancer "_ks_with-end-enhancer")
+                     (str "_ks_" shape)
+                     (str "_ks_" surface)
+                     (when-not hue (str "_ks_" semantic))]}
+            (some-> hue hue-style-map)
             attrs)]
-          children)))
-
-;; (defn button2
-;;   {:desc ["Buttons provide cues for actions and events."
-;;           "These fundamental components allow users to process actions or navigate an experience."]}
-;;   [& args]
-;;   (let [[opts attrs & children] (opts+children args)
-;;         {:keys [loading?
-;;                 size
-;;                 variant
-;;                 shape
-;;                 semantic]
-;;          :or   {size     "medium"
-;;                 variant  "soft"
-;;                 shape    "rounded"
-;;                 semantic "neutral"}}  opts
-;;         only-icons?             (every? icon-child? children)
-;;         icon-inline-start?      (some-> children first icon-child?)
-;;         icon-inline-end?        (some-> children last icon-child?)
-;;         bordered?               (some->> attrs :class seq (some #{:bordered "bordered"}))
-;;         pi-opts                 (keyed only-icons? bordered?)
-;;         pis                     (resolve-inline-offset (assoc pi-opts :icon-inline-*? icon-inline-start?))
-;;         pie                     (resolve-inline-offset (assoc pi-opts :icon-inline-*? icon-inline-end?))]
-
-;;     (into [:button
-;;            (merge-attrs
-;;             (sx 'kushi-button
-;;                 :.flex-row-c
-;;                 :.transition
-;;                 :.pointer
-;;                 :.relative
-;;                 :.enhanceable
-;;                 :.rounded
-;;                 :ai--c
-;;                 :w--fit-content
-;;                 [:pis pis]
-;;                 [:pie pie]
-;;                 :pb--$button-padding-block-ems
-;;                 [:&.bordered:pb "calc(var(--button-padding-block-ems) - var(--button-border-width))"]
-;;                 [:&.bordered:pi "calc(var(--button-padding-inline-ems) - var(--button-border-width))"]
-;;                 {:data-kushi-ui       :button
-;;                  :data-kushi-size     size
-;;                  :data-kushi-variant  variant
-;;                  :data-kushi-shape    shape
-;;                  :data-kushi-semantic semantic
-;;                  :aria-busy           loading?
-;;                  :aria-label          (when loading? "loading")
-;;                  :class [size variant shape semantic]})
-;;             (when loading? {:data-kushi-ui-spinner true})
-;;             attrs)]
-;;           children)))
-
+          (cond start-enhancer 
+                (cons start-enhancer children)
+                end-enhancer
+                (concat children [end-enhancer])
+                :else
+                children))))
 
 
 
