@@ -9,6 +9,8 @@
                :default false
                :desc    "When `true`, this will set the appropriate values for `aria-busy` and `aria-label`"}]}
   ([icon]
-   [button {:-icon icon}])
+   [button {:data-kui-icon-button ""} icon])
   ([opts icon]
-   [button (assoc opts :-icon icon)]))
+   [button
+    (assoc opts :data-kui-icon-button "") 
+    icon]))

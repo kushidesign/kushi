@@ -6,6 +6,7 @@
             [kushi.playground.layout :as layout]
             [kushi.playground.nav :as nav]
             [kushi.ui.button.core :refer [button]]
+            [kushi.ui.icon-button.core :refer [icon-button]]
             [kushi.ui.icon.core :refer [icon]]
             [clojure.string :as string]))
 
@@ -31,7 +32,7 @@
                  "components")
   (into 
      [:div (sx :.flex-col-fs)
-      #_[nav/header]
+      [nav/header]
       ;; Spinner between page transitions
       ;; Leave out for now as transitions are instant
       #_[layout/loading-spinner]
@@ -70,22 +71,20 @@
                      :-end-enhancer [icon :arrow-forward]})
          "Nexgt"]
         
-        [button (sx {:-colorway     :accent
-                     :-surface      :solid
-                     :-packing      :compact
-                     :-icon         :star})
-         "Next"]
+        [icon-button (sx {:-colorway :accent
+                          :-surface  :solid
+                          :-packing  :compact})
+         [icon {:-icon-filled? true} :star]]
         
-        [button (sx {:-colorway     :accent
-                     :-surface      :solid
-                     :-icon         :star})
-         "Next"]
+        [icon-button (sx {:-colorway :accent
+                          :-surface  :solid})
+         [icon {:-icon-filled? true} :star]]
 
-        [button (sx {:-colorway     :accent
-                     :-surface      :solid
-                     :-packing      :roomy
-                     :-icon         :star})
-         "Next"]
+        [icon-button (sx {:-colorway :accent
+                          :-surface  :solid
+                          :-packing  :roomy})
+         [icon {:-icon-filled? true} :star]]
+
         ]
 
       ;;  [button (sx {:-surface  :soft})
@@ -102,9 +101,14 @@
                  :-colorway :$green-hue})
         "Accent"]]]
 
-     #_(for [[view {:keys [content label]
-                  :as   route}] routes
-           :let                                      [label (or label (->> view last))
-                                                      path  (string/join "/" view)]
-           :when                                     content]
+     #_(for [[view
+            {:keys [content label]
+             :as   route}] routes
+
+           :let                         
+           [label (or label (->> view last))
+            path  (string/join "/" view)]
+
+           :when                                     
+           content]
        [layout/generic-section (assoc route :path path :label label)])))

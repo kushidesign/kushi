@@ -83,7 +83,8 @@
                :default false
                :desc    "When `true`, this will set the appropriate values for `aria-busy` and `aria-label`"}]}
   [& args]
-  (let [[opts attrs & children]
+  (let [
+        [opts attrs & children]
         (opts+children args)
 
         {:keys [loading?
@@ -126,7 +127,7 @@
             {:class ["kui-surface" (str "kui-" shape)]}
             (when (and (not icon) end-enhancer) (data-kui- "" :end-enhancer))
             (when (and (not icon) start-enhancer) (data-kui- "" :start-enhancer))
-            (when icon (data-kui- "" :icon-button))
+            #_(when icon (data-kui- "" :icon-button))
             (some-> stroke-align 
                     (maybe #{:outside "outside"})
                     (data-kui- :stroke-align))

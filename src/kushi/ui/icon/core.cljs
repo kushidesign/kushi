@@ -1,3 +1,5 @@
+;; TODO use surface concept? Or something specific to icons?
+
 (ns kushi.ui.icon.core
   (:require
    [clojure.string :as string]
