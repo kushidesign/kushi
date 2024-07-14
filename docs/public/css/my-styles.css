@@ -44,8 +44,6 @@ html {
 
 }
 
-
-
 /* Next step with color:
 
 - Write out nested syntax for legacy
@@ -136,14 +134,11 @@ html {
   --_hue: var(--negative-hue);
 }
 
-/* [data-kui-colorway="neutral"] {
-  --_hue: var(--neutral-hue);
-} */
-
 [data-kui-colorway="warning"] {
   --_hue: var(--warning-hue);
 }
 
+/* change `-state*` to `-ia*` */
 
 .kui-surface
  {
@@ -281,7 +276,6 @@ html {
   }
 }
 
-
 /* MINIMAL */
 [data-kui-surface="minimal"]
 {
@@ -301,21 +295,6 @@ html {
     }
   }
 }
-
-/* SHOULD WE USE :not */
-/* ._ks_neutral
-{
-  --_bg-chroma: 0.0;
-  --_fg-chroma: 0.0;
-  &:hover {
-    --_fg-chroma-shift-state: 0.0; 
-    --_bg-chroma-shift-state: 0.0; 
-  }
-  &:active {
-    --_fg-chroma-shift-state: 0.0;
-    --_bg-chroma-shift-state: 0.0;
-  }
-} */
 
 /* SHAPE */
 .kui-rounded {

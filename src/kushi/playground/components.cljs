@@ -38,8 +38,8 @@
 
 (def playground-components 
   (filter 
-  ;;  :label
-  #(contains? #{
+  :label
+  #_#(contains? #{
                 "button"     
                 ;; "icon"       
                 ;; "spinner"    

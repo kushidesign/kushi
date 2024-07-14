@@ -37,22 +37,19 @@
       ;; Leave out for now as transitions are instant
       #_[layout/loading-spinner]
 
-      [:div (sx :mbs--100px :&_button:m--20px)
+      #_[:div (sx :mbs--100px :&_button:m--20px)
 
-      ;;  [button-row [:minimal :outline :solid :soft] :accent]
-      ;;  [button-row [:minimal :outline :solid :soft] :warning]
-      ;;  [button-row [:minimal :outline :solid :soft] :negative]
-      ;;  [button-row [:minimal :outline :solid :soft] :positive]
+      ;; [button-row [:minimal :outline :solid :soft] :accent]
+      ;; [button-row [:minimal :outline :solid :soft] :warning]
+      ;; [button-row [:minimal :outline :solid :soft] :negative]
+      ;; [button-row [:minimal :outline :solid :soft] :positive]
+      ;; [button-row [:minimal :outline :solid :soft] :neutral]
+      ;; [button (sx {:-surface        :solid
+      ;;              :-start-enhancer [icon {:-icon-filled? true} :star]})
+      ;;  "Neutral"]
+      ;; [button [icon {:-icon-filled? true} :star]]
 
-      ;;  [button-row [:minimal :outline :solid :soft] :neutral]
-
-      ;;  [button (sx {:-surface        :solid
-      ;;               :-start-enhancer [icon {:-icon-filled? true} :star]})
-      ;;   "Neutral"]
-
-      ;;  [button [icon {:-icon-filled? true} :star]]
-
-       [:div.flex-row-fs
+       #_[:div.flex-row-fs
         #_[button (sx {:-colorway :accent
                      :-surface  :solid
                      :-packing  :compact
@@ -101,7 +98,7 @@
                  :-colorway :$green-hue})
         "Accent"]]]
 
-     #_(for [[view
+     (for [[view
             {:keys [content label]
              :as   route}] routes
 

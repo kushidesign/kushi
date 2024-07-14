@@ -1,6 +1,7 @@
 (ns kushi.ui.icon-button.core
   (:require [kushi.ui.button.core :refer [button]]))
 
+;; TODO maybe use :data-kui-name "button"
 (defn icon-button
   {:summary ["Icons buttons provide cues for actions and events."]
    :desc    ["Buttons are fundamental components allow users to process actions or navigate an experience."]

@@ -1,6 +1,6 @@
 (ns kushi.ui.button.core
   (:require-macros
-   [kushi.core :refer (sx)])
+   [kushi.core :refer (sx defclass)])
   (:require [kushi.core :refer (merge-attrs)]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.icon.core]
@@ -11,7 +11,7 @@
 (def variants
   {:shape    #{"rounded" "sharp" "pill"}
    :surface  #{"minimal" "outline" "solid" "soft"}
-  ;;  :semantic #{"neutral" "accent" "positive" "negative" "warning"}
+   ;; :semantic #{"neutral" "accent" "positive" "negative" "warning"}
    :colorway #{"accent" "positive" "negative" "warning"}
    })
 
@@ -104,9 +104,15 @@
         (when-not semantic-colorway 
           (some-> colorway
                   hue-style-map))]
+    ;; TODO maybe use :data-kui-name "button"
     (into [:button
            (merge-attrs
             (sx 'kui-button
+
+                ;; Take it out
+                :.neutral
+
+                :position--relative
                 :d--flex
                 :flex-direction--row
                 :jc--c
@@ -117,6 +123,8 @@
                 :transition-property--all
                 :transition-timing-function--$transition-timing-function
                 :transition-duration--$transition-duration
+                [:$_padding-block :$button-padding-block-ems]
+                [:$_padding-inline :$button-padding-inline-ems]
                 :pi--$_padding-inline
                 :pb--$_padding-block
                 {:aria-busy        loading?
@@ -127,7 +135,6 @@
             {:class ["kui-surface" (str "kui-" shape)]}
             (when (and (not icon) end-enhancer) (data-kui- "" :end-enhancer))
             (when (and (not icon) start-enhancer) (data-kui- "" :start-enhancer))
-            #_(when icon (data-kui- "" :icon-button))
             (some-> stroke-align 
                     (maybe #{:outside "outside"})
                     (data-kui- :stroke-align))
