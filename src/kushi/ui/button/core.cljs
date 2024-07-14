@@ -2,7 +2,6 @@
   (:require-macros
    [kushi.core :refer (sx)])
   (:require [kushi.core :refer (merge-attrs)]
-            [fireworks.core :refer [? !? ?- !?- ?-- !?-- ?> !?> ?i !?i ?l !?l ?log !?log ?log- !?log- ?pp !?pp ?pp- !?pp-]]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.icon.core]
             [kushi.ui.util :refer [as-str maybe nameable?]]
@@ -43,21 +42,6 @@
              {}
              variant-defaults))
 
-(defn- get-colorway [x]
-  )
-
-(defn- get-variants2 [opts]
-  (reduce-kv (fn [acc k v]
-               (or (some-> k
-                           opts
-                           (maybe nameable?)
-                           as-str
-                           (maybe (k variants))
-                           (->> (assoc acc
-                                       (str "data-kui-" (name k)))))
-                   acc))
-             {}
-             variant-defaults))
 
 (defn valid-hue? [x]
   (and (number? x) (<= 0 x 360)))
@@ -71,7 +55,6 @@
                    (some-> x (maybe nameable?) js/parseInt valid-hue?))]
     {:style {"--_hue" v}}))
 
-(js/console.clear)
 
 (defn button
   {:summary ["Buttons provide cues for actions and events."]
@@ -162,10 +145,3 @@
                 start-enhancer (cons start-enhancer children)
                 end-enhancer   (concat children [end-enhancer])
                 :else          children))))
-
-
-
-
-
-
-
