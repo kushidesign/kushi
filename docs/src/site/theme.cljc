@@ -24,9 +24,9 @@
 
 
    ;;  Google Material Symbols
-  ;;  :google-material-symbols ["Material Symbols Outlined"
-  ;;                            "Material Symbols Rounded"
-  ;;                            "Material Symbols Sharp"]
+   ;;  :google-material-symbols ["Material Symbols Outlined"
+   ;;                            "Material Symbols Rounded"
+   ;;                            "Material Symbols Sharp"]
 
    ;; Because all three requests above (for Material Symbols font-families)
    ;; do not contain an entry for :axes, they will load fonts with all the variable axes included.
@@ -42,11 +42,11 @@
    ;; in your project, you can load the symbols font of your choice as a
    ;; static icon font instead of a variable one:
 
-  ;;  :google-material-symbols [{:family "Material Symbols Outlined"
-  ;;                             :axes   {:opsz 24
-  ;;                                      :wght 400
-  ;;                                      :grad 0
-  ;;                                      :fill 0}}]
+   ;;  :google-material-symbols [{:family "Material Symbols Outlined"
+   ;;                             :axes   {:opsz 24
+   ;;                                      :wght 400
+   ;;                                      :grad 0
+   ;;                                      :fill 0}}]
    })
 
 (def my-theme
@@ -54,11 +54,11 @@
                         :$serif-font-stack                       "'Source Serif 4', Times, serif"
                         :$code-font-stack                        "'JetBrains Mono', 'Fira Code', monospace"
                         :$primary-font-family                    :$sans-serif-font-stack
-                        ;; :$code-color                             :$accent-750
+                        ;; :$code-color                          :$accent-750
                         :$code-font-size                         :0.875em
                         :$code-color                             :$accent-850
                         :$code-background-color                  :$accent-50
-                        ;; :$code-color-inverse                     :$accent-100
+                        ;; :$code-color-inverse                  :$accent-100
                         :$code-color-inverse                     :$neutral-100
                         :$code-background-color-inverse          :$accent-900
                         :$kushi-playground-mobile-header-height  :46px
@@ -66,8 +66,7 @@
                         :$navbar-height                          :50px
                         :$tooltip-delay-duration                 :250ms
                         :$main-content-max-width                 :605px
-                        :$toast-slot-z-index                     1
-                        ]
+                        :$toast-slot-z-index                     1]
 
      :typescale        (create-typescale {:size-limit "xxx" :shift 0})
      :type-scale-shift 1
