@@ -369,7 +369,7 @@
    :$toast-slot-padding-inline              :1rem
    :$toast-slot-padding-block               :1rem
    :$toast-slot-gap                         :1rem
-   :$toast-slot-z-index                     :auto
+   :$toast-slot-z-index                     100000
 
    ;; toast choreography
    :$toast-delay-duration                   :200ms
