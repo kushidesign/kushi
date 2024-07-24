@@ -50,16 +50,16 @@
       ;; [button [icon {:-icon-filled? true} :star]]
 
        #_[:div.flex-row-fs
-        #_[button (sx {:-colorway :accent
-                     :-surface  :solid
-                     :-packing  :compact
-                     :-end-enhancer [icon :arrow-forward]})
+        #_[button (sx {:-colorway     :accent
+                       :-surface      :solid
+                       :-packing      :compact
+                       :-end-enhancer [icon :arrow-forward]})
          "Next"]
 
         #_[button (sx {:-colorway       :accent
-                     :-surface        :solid
-                     :-packing        :default
-                     :-start-enhancer [icon {:-icon-filled? true} :star]})
+                       :-surface        :solid
+                       :-packing        :default
+                       :-start-enhancer [icon {:-icon-filled? true} :star]})
          "Next"]
 
         [button (sx {:-colorway     :accent
