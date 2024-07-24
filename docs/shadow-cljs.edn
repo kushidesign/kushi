@@ -1,6 +1,6 @@
 ;; shadow-cljs configuration
 {:source-paths   ["src"
-                  ;; "../src"
+                  "../src"
                   ;; "../../../cljc/get-rich/src"
                   ;; "../../../cljc/fireworks/src"
                   ]
