@@ -32,11 +32,26 @@
   [children* f]
   (let [children (unwrapped-children children*)
         fragment? (-> children* first (= :<>))]
-    (into (if fragment? [] [:<>]) (if f (map f children) children))))
+    (into (if fragment? [] [:<>])
+          (if f (map f children) children))))
 
 (defn opts+children
-  "Reorganizes arguments to component and returns:
-   [map-of-user-opts attr child1 child2 ...]"
+  {:doc
+   "Reorganizes the arguments to the component and returns a vector
+    starting with a user opts map, followed by an html attributes map,
+    followed by any number of children."
+   :examples
+   [{:label  "Single custom attribute, 2 html attributes, and 2 children."
+     :input  '[{:-colorway :accent
+                :id        "foo"
+                :aria-busy ""}
+               "Child text node"
+               [:div "Child element"]]
+     :output '[{:colorway "accent"}
+               {:id        "foo"
+                :aria-busy ""}
+               "Child text node"
+               [:div "Child element"]]}]}
   [coll]
   (when (coll? coll)
     (let [[attr* children]    (attr+children coll)
@@ -44,15 +59,18 @@
                                        keys
                                        (filter user-attr?)
                                        (into #{}))
-          {:keys [attr opts]} (some->> attr*
+          {html-attrs :attr
+           user-opts  :opts}  (some->> attr*
                                        (group-by #(contains? user-ks (first %)))
-                                       (map (fn [[k v]] {(if k :opts :attr) (into {} v)}))
+                                       (map (fn [[k v]]
+                                              {(if k :opts :attr) (into {} v)}))
                                        (apply merge))
-          opts-w-normal-keys  (->> opts
-                                   (map (fn [[k v]] [(-> k name (subs 1) keyword) v]))
+          user-opts           (->> user-opts
+                                   (map (fn [[k v]]
+                                          [(-> k name (subs 1) keyword) v]))
                                    (into {}))]
       (into []
-            (concat [opts-w-normal-keys attr]
+            (concat [user-opts html-attrs]
                     (->> children (remove nil?) unwrapped-children))))))
 
 (defn hiccup? [x]
