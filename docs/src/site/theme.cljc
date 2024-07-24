@@ -65,9 +65,7 @@
                         :$popover-border-color                   :$neutral-300
                         :$navbar-height                          :50px
                         :$tooltip-delay-duration                 :250ms
-                        :$main-content-max-width                 :605px
-                        :$toast-slot-z-index                     1
-                        ]
+                        :$main-content-max-width                 :605px]
 
      :typescale        (create-typescale {:size-limit "xxx" :shift 0})
      :type-scale-shift 1
