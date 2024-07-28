@@ -148,9 +148,9 @@
           (try
             (or cached (mapv keyframe frames*))
             (catch Exception ex
-              (let [m       (assoc m :ex ex)
+              (let [m       (assoc m :ex ex :re #"defkeyframes")
                     ex-args (merge m (util/exception-args m))]
-                (printing2/caught-exception ex-args)))))]
+                (printing2/caught-exception2 ex-args)))))]
     (swap! state2/user-defined-keyframes assoc (keyword nm) frames)
     (update-cache! frames cache-map)))
 
@@ -246,7 +246,7 @@
                                    {:kushi/chunk chunk})]
 
       ;; debugging
-      ;; (when (= sym 'foo) (? clean))
+      ;; (when (= sym 'foo) (+ 1 true))
 
       (swap! state2/css conj clean)
 
@@ -496,8 +496,8 @@
   {:shadow.build/stage :compile-prepare}
   [{:keys [:shadow.build/build-id] :as build-state}]
   (reset! state2/shadow-build-id build-id)
-  (when (and @state2/initial-build? (:log-kushi-version? user-config))
-    (println (str "[" build-id "] Using Kushi v" config/version)))
+  ;; (when (and @state2/initial-build? (:log-kushi-version? user-config))
+  ;;   println)
   (when-not (:css-dir user-config)
     (printing2/build-failure))
   (let [mode (:shadow.build/mode build-state)]

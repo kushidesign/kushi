@@ -11,6 +11,7 @@
                         [io.aviso/pretty "1.1"]
                         [expound "0.9.0"]
                         [markdown-to-hiccup/markdown-to-hiccup "0.6.2"]
+                        [io.github.paintparty/get-rich "0.2.0"]
                         [me.flowthing/pp "2024-01-04.60"]]
   :repl-options        {:init-ns kushi.core}
   :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"

@@ -1,12 +1,13 @@
 ;; shadow-cljs configuration
 {:source-paths   ["src"
                   "../src"
-                  ;; "../../../cljc/get-rich/src"
+                  "../../../cljc/get-rich/src"
                   ;; "../../../cljc/fireworks/src"
                   ]
 
  :dependencies   [[reagent/reagent    "1.1.1"]
-                  ;; [io.github.paintparty/fireworks "0.5.0"]
+                  [io.github.paintparty/fireworks "0.6.0-SNAPSHOT"]
+                  ;; [io.github.paintparty/fireworks-stubs "0.6.0-SNAPSHOT"]
                   [binaryage/devtools "1.0.6"]
                   [design.kushi/kushi "1.0.0-a.21"]]
 

@@ -1,11 +1,12 @@
 (ns kushi.printing2
   #?(:clj (:require [io.aviso.ansi :as ansi]))
   (:require
+   [get-rich.core :refer [callout enriched user-friendly-clj-stack-trace]]
    [clojure.string :as string]
    [clojure.edn]
    [clojure.pprint :as pp :refer [pprint]]
    [expound.alpha :as expound]
-   [kushi.config :as config :refer [user-config]] ))
+   [kushi.config :as config :refer [user-config]]))
 
 (defn re-seq-pos [pattern string]
   (let [m (re-matcher pattern string)]
@@ -37,30 +38,6 @@
         lnum     (:line form-meta)]
     {:pprinted pprinted :lnum lnum}))
 
-(defn with-line-numbers
-  [{:keys [pprinted lnum]}]
-  (if lnum
-    (let [linenums   (->> pprinted (re-seq #"\n") count (+ lnum) (range lnum) (map inc))
-          pos        (map (fn [n pos] (dissoc (assoc pos :ln n) :group)) linenums (re-seq-pos #"\n" pprinted))
-          max-digits (-> linenums last str count)
-          spaces     (fn [ln]
-                       (let [num-digits (-> ln str count)
-                             spaces     (string/join (repeat (inc (- max-digits num-digits)) " "))]
-                         spaces))
-          borderchar "|"  #_"│"
-          numbered   (reduce (fn [acc {:keys [start ln]}]
-                               (let [spaces      (spaces ln)
-                                     spaces-for-squiqqly (count (str ln spaces borderchar "  "))]
-                                 (replace-in-str (fn [_] (str "\n"  ln spaces borderchar "  ")) acc start 1 spaces-for-squiqqly)))
-                             pprinted
-                             (reverse pos))
-          result*    (str lnum (spaces (first linenums)) borderchar "  " numbered)
-
-          result     (-> result*
-                         (string/replace #"\"__bold__" ansi/bold-font)
-                         (string/replace #"__bold__\"" ansi/reset-font))]
-      result)
-    pprinted))
 
 (defn with-line-numbers2
   [{:keys [pprinted lnum]}]
@@ -79,6 +56,50 @@
                            pprinted
                            (reverse pos))
         result     (str #_ansi/bold-font lnum (spaces (first linenums)) borderchar "  " numbered #_ansi/reset-font)]
+
+    result))
+
+(defn with-line-numbers3
+  [{:keys [pprinted lnum]}]
+  (let [linenums   (->> pprinted
+                        (re-seq #"\n")
+                        count
+                        (+ lnum)
+                        (range lnum)
+                        (map inc))
+        pos        (map (fn [n pos] (dissoc (assoc pos :ln n) :group))
+                        linenums
+                        (re-seq-pos #"\n" pprinted))
+        max-digits (-> linenums last str count)
+        spaces     (fn [ln]
+                     (let [num-digits (-> ln str count)
+                           spaces     (string/join (repeat (inc (- max-digits
+                                                                   num-digits))
+                                                           " "))]
+                       spaces))
+        borderchar (enriched [:subtle "|"])  #_"│"
+        numbered   (reduce (fn [acc {:keys [start ln]}]
+                             (let [spaces      (spaces ln)
+                                   spaces-for-squiqqly (count (str ln
+                                                                   spaces
+                                                                   borderchar
+                                                                   "  "))]
+                               (replace-in-str (fn [_] (str "\n"  
+                                                            (enriched [:subtle ln])
+                                                            spaces
+                                                            borderchar
+                                                            "  "))
+                                               acc
+                                               start
+                                               1
+                                               spaces-for-squiqqly)))
+                           pprinted
+                           (reverse pos))
+        result     (str (enriched [:subtle lnum])
+                        (spaces (first linenums))
+                        borderchar
+                        "  "
+                        numbered)]
 
     result))
 
@@ -201,6 +222,49 @@
           unbroken-border
           ansi/reset-font))))
 
+#?(:clj
+   (defn caught-exception2
+     [{:keys [ex
+              re
+              sym
+              args
+              form-meta
+              commentary]
+       :as   m}]
+
+     (let [file-info-str                   (file+line+col-str form-meta)
+           args                            (if sym (cons sym args) args)
+           {:keys [lnum pprinted]
+            :as   m+} (pprinted (assoc m :args args))
+           with-line-numbers               (if lnum
+                                             (with-line-numbers3 m+)
+                                             pprinted)]
+
+       (callout {:type          :error
+                 :label         "EXCEPTION (CAUGHT)"
+                 :border-weight :heavy}
+
+                (str file-info-str
+                     "\n\n"
+                     (when with-line-numbers
+                       (str with-line-numbers))
+                     (when commentary
+                       (str "\n\n" commentary))
+
+                     (some->
+                      (.getMessage ex)
+                      (string/replace #"\(" "\n(")
+                      (->> (str "\n\n"
+                                (enriched [:subtle.bold.italic "Message from Clojure:"])
+                                "\n")))
+
+                     (some->>
+                      (user-friendly-clj-stack-trace {:error ex :regex re :depth 7})
+                      (str "\n\n"
+                           (enriched [:subtle.bold.italic "StackTrace preview:"])
+                           "\n" )))))))
+
+
 (defn build-failure []
   (throw (Exception.
           (str "\n\n"
@@ -237,7 +301,7 @@
            commentary
            expound-str
            doc
-           :clojure.spec.alpha/problems
+           :clojure.spec.alpha/problem
            :kushi/process]
     weird-entries :entries/weird
     bad-entries :entries/bad
@@ -253,7 +317,7 @@
          :as   m+}              (when (or fname process)
                                   (pprinted (assoc m :args args :fname fname)))
         with-line-numbers       (when m+
-                                  (if lnum (with-line-numbers2 m+) pprinted))
+                                  (if lnum (with-line-numbers3 m+) pprinted))
         doc                     (when doc
                                   (str (subs (str process) 1)
                                        " docs:\n\n"
@@ -272,7 +336,7 @@
                                              :arg)
         ln                      #(when % (str "\n\n" %))]
 
-    (println
+    #_(println
      (str (simple-alert-header2 "WARNING" file-info-str nil)
           (ln commentary)
           (ln with-line-numbers)
@@ -285,7 +349,21 @@
           (ln doc)
           "\n\n"
           unbroken-border
-          "\n"))))
+          "\n"))
+    
+    (callout {:type          :warning
+              :border-weight :heavy }
+          (str file-info-str
+               (ln commentary)
+               (ln with-line-numbers)
+               (ln bad-args)
+               (ln missing-entries)
+               (ln bad-entries)
+               (ln weird-entries)
+               (ln expound-str)
+               (ln hint)
+               (ln doc)))    
+    ))
 
 (defn simple-bad-global-selector-key-warning
   [m*]
