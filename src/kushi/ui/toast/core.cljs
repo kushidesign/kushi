@@ -203,6 +203,10 @@
           pane-type       :toast
           reduced-motion? (domo/prefers-reduced-motion?)
           slide-in?       (if reduced-motion? false slide-in?)
+          ;; TODO - require [kushi.ui.dom.pane.toast :refer [append-toast!]]
+          ;;        in this ns, instead of in kushi.ui.dom.pane.core, then
+          ;;        pass it to append-pane! as an opt in this map maybe with key
+          ;;        of append-toast!
           opts            (keyed placement-kw
                                  auto-dismiss?
                                  pane-type
@@ -212,6 +216,7 @@
       (merge 
        ;; TODO should be :data-kushi-ui-pane-placement = se
        ;; and :data-kushi-ui-pane-type = toast
+
        {:on-click (partial pane/append-pane! opts)}))))
 
 
