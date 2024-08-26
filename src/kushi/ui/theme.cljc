@@ -1,14 +1,13 @@
 (ns ^:dev/always kushi.ui.theme
-  (:require
-   [kushi.config :as config :refer [user-config]]
-   [kushi.utils :as util :refer [keyed]]
-   [kushi.printing2 :as printing2 :refer [kushi-expound]]
-   [kushi.specs2 :as specs2]
-   [kushi.ui.basetheme :as basetheme]
-   [kushi.ui.utility :refer [utility-class-ks]]
-   [clojure.spec.alpha :as s]
-   [clojure.string :as string]
-   [io.aviso.ansi :as ansi]))
+  (:require [clojure.spec.alpha :as s]
+            [clojure.string :as string]
+            [bling.core :refer [bling]]
+            [kushi.config :as config :refer [user-config]]
+            [kushi.printing2 :as printing2 :refer [kushi-expound]]
+            [kushi.specs2 :as specs2]
+            [kushi.ui.basetheme :as basetheme]
+            [kushi.ui.utility :refer [utility-class-ks]]
+            [kushi.utils :as util :refer [keyed]]))
 
 (defn resolve-user-theme
   ([x]
@@ -46,8 +45,9 @@
   "Simple-bad-global-selector-key warning."
   [m]
   (if (and (map? m) (:* m))
-    (do (printing2/simple-bad-global-selector-key-warning {:form-meta    {:file "kushi.ui.theme/theme"}
-                                                           :invalid-args {:ui (:* m)}})
+    (do (printing2/simple-bad-global-selector-key-warning
+         {:form-meta    {:file "kushi.ui.theme/theme"}
+          :invalid-args {:ui (:* m)}})
         (dissoc m :*))
     m))
 
@@ -219,9 +219,11 @@
               (if (s/valid? ::specs2/theme m)
                 m
                 (printing2/simple-warning2
-                 {:commentary  (str  "kushi.ui.theme/theme\n"
-                                     "Invalid value(s) in user theming config:\n"
-                                     ansi/bold-font (:theme user-config) ansi/reset-font)
+                 {:commentary  (bling [:italic "kushi.ui.theme/theme"]
+                                       "\n\n"
+                                       "Invalid value(s) in user theming config:"
+                                       "\n"
+                                       [:bold (:theme user-config)])
                   :expound-str (kushi-expound ::specs2/theme m)})))]
     ret))
 

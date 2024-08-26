@@ -273,9 +273,11 @@
            :fname     "defclass"
            :sym       sym
            :args      args
-           :ex        ex}
+           :ex        ex
+           :re        #"defclass"
+           }
           defclass-exception-args
-          printing2/caught-exception))
+          printing2/caught-exception2))
 
     (finally
       (when @state2/KUSHIDEBUG
@@ -346,7 +348,7 @@
 
     ;; debugging
     ;; (when (= '(quote foo) (first args))
-    ;;   (? :sx2 clean))
+    ;;   (+ 1 true))
 
     (when (:elide-unused-kushi-utility-classes? user-config)
       (register-classes clean))
@@ -396,9 +398,9 @@
                               (sx-dispatch m)
                               (catch Exception ex
                                 (-> m
-                                    (assoc :ex ex)
+                                    (assoc :ex ex :re #"sx")
                                     sx-exception-args
-                                    printing2/caught-exception)))]
+                                    printing2/caught-exception2)))]
         `~attrs))))
 
 (defmacro ^:public sx*
@@ -417,9 +419,9 @@
                               (sx-dispatch m)
                               (catch Exception ex
                                 (-> m
-                                    (assoc :ex ex)
+                                    (assoc :ex ex :re #"sx")
                                     sx-exception-args
-                                    printing2/caught-exception)))]
+                                    printing2/caught-exception2)))]
         `~attrs))))
 
 

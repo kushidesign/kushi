@@ -1,7 +1,8 @@
+;; TODO - Confirm bling fns not being pulled into cljs
 (ns kushi.printing2
-  #?(:clj (:require [io.aviso.ansi :as ansi]))
+  #?(:clj (:require [bling.core :refer [stack-trace-preview]]))
   (:require
-   [get-rich.core :refer [callout enriched user-friendly-clj-stack-trace]]
+   [bling.core :refer [callout bling]]
    [clojure.string :as string]
    [clojure.edn]
    [clojure.pprint :as pp :refer [pprint]]
@@ -19,7 +20,10 @@
   (let [before*         (subs in 0 from)
         [match
          carets]       (re-find #":____(\^+)( \")?$" before*)
-        replacement    (when match (str "\"\n" (string/join (repeat (inc nspaces) " ")) ansi/bold-font carets ansi/reset-font))
+        replacement    (when match
+                         (bling "\"\n"
+                                (string/join (repeat (inc nspaces) " "))
+                                [:bold carets]))
         before         (if match (string/replace before* #":____\^+ \"?$" replacement) before*)
         after          (subs in (+ from len))
         being-replaced (subs in from (+ from len))
@@ -39,26 +43,6 @@
     {:pprinted pprinted :lnum lnum}))
 
 
-(defn with-line-numbers2
-  [{:keys [pprinted lnum]}]
-  (let [linenums   (->> pprinted (re-seq #"\n") count (+ lnum) (range lnum) (map inc))
-        pos        (map (fn [n pos] (dissoc (assoc pos :ln n) :group)) linenums (re-seq-pos #"\n" pprinted))
-        max-digits (-> linenums last str count)
-        spaces     (fn [ln]
-                     (let [num-digits (-> ln str count)
-                           spaces     (string/join (repeat (inc (- max-digits num-digits)) " "))]
-                       spaces))
-        borderchar "|"  #_"│"
-        numbered   (reduce (fn [acc {:keys [start ln]}]
-                             (let [spaces      (spaces ln)
-                                   spaces-for-squiqqly (count (str ln spaces borderchar "  "))]
-                               (replace-in-str (fn [_] (str "\n"  ln spaces borderchar "  ")) acc start 1 spaces-for-squiqqly)))
-                           pprinted
-                           (reverse pos))
-        result     (str #_ansi/bold-font lnum (spaces (first linenums)) borderchar "  " numbered #_ansi/reset-font)]
-
-    result))
-
 (defn with-line-numbers3
   [{:keys [pprinted lnum]}]
   (let [linenums   (->> pprinted
@@ -77,7 +61,7 @@
                                                                    num-digits))
                                                            " "))]
                        spaces))
-        borderchar (enriched [:subtle "|"])  #_"│"
+        borderchar (bling [:subtle "|"])  #_"│"
         numbered   (reduce (fn [acc {:keys [start ln]}]
                              (let [spaces      (spaces ln)
                                    spaces-for-squiqqly (count (str ln
@@ -85,7 +69,7 @@
                                                                    borderchar
                                                                    "  "))]
                                (replace-in-str (fn [_] (str "\n"  
-                                                            (enriched [:subtle ln])
+                                                            (bling [:subtle ln])
                                                             spaces
                                                             borderchar
                                                             "  "))
@@ -95,7 +79,7 @@
                                                spaces-for-squiqqly)))
                            pprinted
                            (reverse pos))
-        result     (str (enriched [:subtle lnum])
+        result     (str (bling [:subtle lnum])
                         (spaces (first linenums))
                         borderchar
                         "  "
@@ -103,51 +87,6 @@
 
     result))
 
-(def border-char "◢◤")
-(defn border-str [n] (string/join (repeat n border-char)))
-(def border-len 50)
-(def alert-indent 4)
-(def unbroken-border (border-str (/ border-len 2)))
-
-(defn simple-alert-header-border-top [header color]
-  (str (when color ansi/bold-red-font)
-       border-char
-       border-char
-       " "
-       ansi/bold-font
-       header
-       ansi/reset-font
-       (when color ansi/bold-red-font)
-       " "
-       (string/join (repeat (/ (- border-len (dec alert-indent) (+ 2 (count header)) 2) 2)
-                            border-char))
-       ansi/reset-font))
-
-
-(defn simple-alert-header*
-  "File info is directly below header"
-  [header file-info-str color lb lb2]
-  (str
-   "\n"
-   (when-let [user-warning-banner (:log-warning-banner user-config)]
-     (when (some->> user-warning-banner seq (every? string?))
-       (str
-        ansi/bold-font
-        "\n"
-        (string/join "\n" user-warning-banner)
-        "\n\n"
-        ansi/reset-font
-        )))
-   (simple-alert-header-border-top header color)
-   (when file-info-str (str lb "File: " file-info-str lb2))))
-
-(defn simple-alert-header3
-  [header file-info-str color]
-  (simple-alert-header* header file-info-str color "\n" "\n\n"))
-
-(defn simple-alert-header2
-  [header file-info-str color]
-  (simple-alert-header* header file-info-str color "\n\n" nil))
 
 (defn file+line+col-str
   [form-meta]
@@ -156,71 +95,8 @@
                 column
                 :printing/normal-font-weight?]} form-meta]
     (when file
-      (str file
-           (when line
-             (if normal-font-weight?
-               (str ":" line ":" column)
-               (str ":" ansi/bold-font line ansi/reset-font ":" ansi/bold-font column ansi/reset-font)))))))
+      (bling [:italic (str file (when line (str ":" line ":" column)))]))))
 
-(defn caught-exception [{:keys [ex
-                                sym
-                                args
-                                fname
-                                form-meta
-                                exception-message
-                                top-of-stack-trace
-                                commentary]
-                         :as   m}]
-  (let [file-info-str (file+line+col-str form-meta)
-        args (if sym (cons sym args) args)
-        {:keys [lnum pprinted]
-         :as   m+}                      (pprinted (assoc m :args args))
-        with-line-numbers               (if lnum
-                                          (with-line-numbers2 m+)
-                                          pprinted)]
-    (println
-     #_(simple-alert-header3 "EXCEPTION CAUGHT" file-info-str :red)
-     (str (simple-alert-header3 "EXCEPTION CAUGHT" file-info-str :red)
-          (when with-line-numbers
-            (str "\n\n" with-line-numbers))
-          (when commentary
-            (str "\n\n" commentary))
-          (when exception-message
-            (str "\n\n"
-                 ansi/italic-font
-                 ansi/cyan-font
-                 "(.getMessage ex) =>\n"
-                 ansi/reset-font
-                 exception-message))
-
-          (when top-of-stack-trace
-            (str "\n\n"
-                 ansi/italic-font
-                 ansi/cyan-font
-                 "StackTraceElement[0] =>\n"
-                 ansi/reset-font
-                 top-of-stack-trace))
-
-          (when-let [stack-trace (.getStackTrace ex)]
-            (str "\n\n"
-                 ansi/italic-font
-                 ansi/cyan-font
-                 "StackTrace =>\n"
-                 ansi/reset-font
-                 (with-out-str (pprint stack-trace))))
-
-          (when-not (or exception-message top-of-stack-trace)
-            (str "\n\n"
-                 ansi/italic-font
-                 ansi/cyan-font
-                 "Clojure says:\n"
-                 ansi/reset-font
-                 (with-out-str (pprint ex))))
-
-          "\n\n"
-          ansi/bold-red-font
-          unbroken-border
-          ansi/reset-font))))
 
 #?(:clj
    (defn caught-exception2
@@ -235,14 +111,13 @@
      (let [file-info-str                   (file+line+col-str form-meta)
            args                            (if sym (cons sym args) args)
            {:keys [lnum pprinted]
-            :as   m+} (pprinted (assoc m :args args))
+            :as   m+}                      (pprinted (assoc m :args args))
            with-line-numbers               (if lnum
                                              (with-line-numbers3 m+)
                                              pprinted)]
 
        (callout {:type          :error
-                 :label         "EXCEPTION (CAUGHT)"
-                 :border-weight :heavy}
+                 :label         "EXCEPTION (CAUGHT)"}
 
                 (str file-info-str
                      "\n\n"
@@ -255,28 +130,41 @@
                       (.getMessage ex)
                       (string/replace #"\(" "\n(")
                       (->> (str "\n\n"
-                                (enriched [:subtle.bold.italic "Message from Clojure:"])
+                                (bling [:italic.bold
+                                        "Message from Clojure:"])
                                 "\n")))
 
-                     (some->>
-                      (user-friendly-clj-stack-trace {:error ex :regex re :depth 7})
-                      (str "\n\n"
-                           (enriched [:subtle.bold.italic "StackTrace preview:"])
-                           "\n" )))))))
+                     "\n\n"
+                     (some->> (stack-trace-preview
+                               {:error  ex
+                                :regex  re
+                                :depth  7
+                                :header (bling [:italic.bold
+                                                "StackTrace preview:"])})
+                              #_(str "\n\n"
+                                   (bling [:subtle.bold.italic
+                                           "StackTrace preview:"])
+                                   "\n" )))))))
 
 
 (defn build-failure []
   (throw (Exception.
-          (str "\n\n"
-               (simple-alert-header2 "EXCEPTION" "[kushi.core/kushi-debug]" nil)
-               "The required entry `:css-dir` is missing from your kushi.edn config"
-               "\n\n"
-               "Its value must be a path relative to proj root e.g \"public/css\" or \"resources/public/css\"."
-               "\n\n"
-               "https://github.com/kushidesign/kushi#configuration-options"
-               "\n\n"
-               unbroken-border
-               "\n\n\n"))))
+          (callout {:type :error}
+                   (bling  "[kushi.core/kushi-debug]"
+                           "\n\n"
+                           "The required entry:\n"
+                           [:bold ":css-dir"]
+                           "\n"
+                           "is missing from your project's " [:bold "kushi.edn"] " config."
+                           "\n\n"
+                           "Its value must be a path relative to proj root e.g:"
+                           "\n"
+                           [:bold "\"public/css\""]
+                           " or "
+                           [:bold "\"resources/public/css\"."]
+                           "\n\n"
+                           "https://github.com/kushidesign/kushi#configuration-options"
+                           )))))
 
 (defn entries-msg [coll msg k]
   (when coll
@@ -285,7 +173,7 @@
                        (map k)
                        (map #(if (string? %) (str "\"" % "\"") %))
                        (string/join "\n"))
-          msg     (str msg ansi/bold-font args ansi/reset-font)
+          msg     (bling msg [:bold args])
           matches (re-seq #"\b([a-zA-Z]*)\|([a-zA-Z]*)\b" msg)
           ret     (reduce (fn [acc [match plural singular]]
                             (string/replace acc match (if plural? plural singular)))
@@ -335,26 +223,9 @@
                                              "Invalid args:\n"
                                              :arg)
         ln                      #(when % (str "\n\n" %))]
-
-    #_(println
-     (str (simple-alert-header2 "WARNING" file-info-str nil)
-          (ln commentary)
-          (ln with-line-numbers)
-          (ln bad-args)
-          (ln missing-entries)
-          (ln bad-entries)
-          (ln weird-entries)
-          (ln expound-str)
-          (ln hint)
-          (ln doc)
-          "\n\n"
-          unbroken-border
-          "\n"))
-    
-    (callout {:type          :warning
-              :border-weight :heavy }
+    (callout {:type :warning}
           (str file-info-str
-               (ln commentary)
+               commentary
                (ln with-line-numbers)
                (ln bad-args)
                (ln missing-entries)

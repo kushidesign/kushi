@@ -1,6 +1,6 @@
 (ns ^:dev/always kushi.reporting
   (:require
-   [get-rich.core :refer [callout]]
+   [bling.core :refer [callout]]
    [clojure.string :as string]
    [kushi.config :refer [user-config version]]))
 
@@ -38,14 +38,16 @@
            build-state]
     :as   m}]
   (if (= :detailed (:log-build-report-style user-config))
-      ;; With individual counts
-    (callout {:type  :subtle
-              :label (str "[Kushi v" version "]" )}
-             (str "\n"
-                  (format-line-items to-be-printed+)
-                  "\n"
-                  (str "Wrote " num-rules " rules and " num-tokens " tokens.")))
-      ;; Simple version
+    ;; With individual counts
+    (println
+     (callout {:type  :subtle
+               :label (str "[Kushi v" version "]" )
+               :data? true}
+              (str "\n"
+                   (format-line-items to-be-printed+)
+                   "\n"
+                   (str "Wrote " num-rules " rules and " num-tokens " tokens."))))
+    ;; Simple version
     (println
      (str (kushi-logging-prefix (:shadow.build/build-id build-state) version)
           " - "
