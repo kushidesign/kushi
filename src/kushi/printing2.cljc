@@ -173,7 +173,13 @@
                        (map k)
                        (map #(if (string? %) (str "\"" % "\"") %))
                        (string/join "\n"))
-          msg     (bling msg [:bold args])
+          msg     (apply bling
+                         (cons msg 
+                               (interpose 
+                                "\n"
+                                (map (fn [s]
+                                       [:bold s])
+                                     (string/split args #"\n")))))
           matches (re-seq #"\b([a-zA-Z]*)\|([a-zA-Z]*)\b" msg)
           ret     (reduce (fn [acc [match plural singular]]
                             (string/replace acc match (if plural? plural singular)))
