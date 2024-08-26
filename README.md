@@ -1077,37 +1077,20 @@ It is highly recommended to keep the terminal (that is running the `cljs-shadow`
 
 Given the following:
 ```Clojure
-(sx :.relative
-    :ta--center
-    :.sans
-    :p--10px
+(sx :.flex-col-c
+    :.absolute-fill
+    :h--100%
+    "badstring"
+    :m-10px
     12
-    :fs--18px
-    :c--#efefef)
+    :ai--c
+    :bgc--black)
 ```
 
 You would receive warnings about invalid args in the terminal:
 
-```
-◢◤◢◤ WARNING ◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+<div align="center"><img src="docs/public/graphics/kushi-sx-bad-args-warnings.png" width="654px"/></div>
 
-File: collage/compound_rules_editor/ui/nav.cljs:65:9
-
-65 |  (sx
-66 |   :.relative
-67 |   :ta--center
-68 |   "badstring"
-69 |   :p--10px
-70 |   :m-10px
-71 |   12
-72 |   :border-radius--18px)
-
-Invalid args:
-:m-10px
-12
-
-◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
-```
 <br>
 <br>
 
