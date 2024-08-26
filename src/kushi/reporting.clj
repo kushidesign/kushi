@@ -40,8 +40,7 @@
   (if (= :detailed (:log-build-report-style user-config))
     ;; With individual counts
     (println
-     (callout {:type  :subtle
-               :label (str "[Kushi v" version "]" )
+     (callout {:label (str "[Kushi v" version "]" )
                :data? true}
               (str "\n"
                    (format-line-items to-be-printed+)
