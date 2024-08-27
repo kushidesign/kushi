@@ -147,6 +147,9 @@
            slide-in?]
     :as   opts} 
    id]
+
+  ;; TODO move kushi.ui.dom.pane.placement/placement-kws-hydrated into this ns?
+  ;; It is not used anywhere else
   (let [placement-as-str (as-str (get placement-kws-hydrated
                                       placement-kw
                                       nil))
