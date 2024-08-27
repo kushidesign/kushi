@@ -3,8 +3,19 @@ All notable changes to this project will be documented in this file.<br>
 This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
 
+<br>
 
+## 1.0.0-a.22
+2024-8-26
 
+### Changed
+- Refactor of all reporting, warning, and error messaging
+- Uses `io.github.paintparty/bling` for warning and error templating and printing
+
+### Removed
+- `io.aviso/pretty` dep removed.
+
+<br>
 <br>
 
 ## 1.0.0-a.21
@@ -50,7 +61,7 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
 
 
 
-
+<br>
 <br>
 
 ## 1.0.0-a.20
@@ -71,8 +82,7 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
 
 
 
-
-
+<br>
 <br>
 
 ## 1.0.0-a.19
