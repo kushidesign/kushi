@@ -53,6 +53,8 @@
 <br>
 
 ## Table of Contents
+- [Introduction](#introduction)<br>
+- [Project Status](#project-status)<br>
 - [Setup and usage](#setup-and-usage)<br>
 - [Kushi styling syntax](#kushi-styling-syntax)<br>
 - [Shared styles](#shared-styles)<br>
@@ -67,6 +69,7 @@
 - [Defining components](#defining-components)<br>
 - [Kushi Playground](#kushi-playground)
 - [Usage with build tools](#usage-with-build-tools)<br>
+- [Contributing](#contributing)<br>
 - [License](#license)
 
 <br>
@@ -81,6 +84,13 @@ The following features work in concert, making it easy to roll your own design s
 - Configurable theming
 
 Usage of Kushi's design system and component library is completly optional. You can just use the functional styling engine for a lightweight compile-time css-in-cljs solution.
+
+<br>
+
+## Project status
+Current version is pre-release intended for early adopters and anyone who would like to provide feedback. New 1.0 alphas will be released frequently, while I continue to make improvements/changes/additions. Working towards a stable 1.0 release by end of 2024 or Q1 of 2025.
+
+Please report anything unexpected on GitHub Issues.
 
 <br>
 
@@ -1199,7 +1209,7 @@ See the [kushi-quickstart](https://github.com/kushidesign/kushi-quickstart) temp
 
 <br>
 
-## Helping
+## Contributing
 Feel free to file issues or initiate discussion in <a href="https://github.com/kushidesign/kushi/issues" target="_blank">Issues</a>.
 
 
