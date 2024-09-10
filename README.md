@@ -12,15 +12,13 @@
 ## Features
 - **100% Clojure(Script)**
 
-- **Compile-time macros generate static CSS**
+- **Suite of accessible,  headless UI components**
+
+- **Themeable design system foundation**
 
 - **Co-location of styling at the element level**
 
 - **Shorthand styling syntax shadows CSS standard**
-
-- **Suite of accessible,  headless UI components**
-
-- **Themeable design system foundation**
 
 - **Supports media-queries, psuedos, and combo selectors**
 
@@ -36,7 +34,7 @@
 
 - **Flexible selector prefixing options**
 
-- **Helpers for typography, keyframes, and more**
+- **Helpers for typography, keyframe animations, and more**
 
 - **Enhanced debugging via metadata**
 
@@ -79,11 +77,11 @@ Kushi provides a comprehensive solution for creating and evolving web-based UI p
 
 The following features work in concert, making it easy to roll your own design system:
 - A set of professionally designed, themeable, headless UI components
-- Solid foundation of hand-tuned global + alias design tokens
+- Solid foundation of hand-tuned global design tokens
 - Functional styling engine
 - Configurable theming
 
-Usage of Kushi's design system and component library is completly optional. You can just use the functional styling engine for a lightweight compile-time css-in-cljs solution.
+Usage of Kushi's design system and component library is completly optional. You can just use the functional styling engine as a pure ClojureScript alternative to mainstream JS solutions such as Tailwind, Emotion, etc.
 
 <br>
 
@@ -110,94 +108,206 @@ Please check out [Kushi Quickstart](https://github.com/kushidesign/kushi-quickst
 
 <!--TODO reverse examples -->
 ## Kushi Styling Syntax
-Styles are co-located at the element level.
-The macro `kushi.core/sx` takes any number of styles followed by an (optional) attributes map :
+
+
+### Basic usage of the `css` macro
+
+Styles are co-located at the element level. You don't need to think about choosing an appropriate classname, as it is generated automatically. The macro `kushi.core/css` takes any number of styles:
 ```Clojure
 (ns myns.core
   (:require
-   [kushi.core :refer [sx]]))
- 
+   [kushi.core :refer [css]]))
+
 (defn my-component []
  [:div
-  (sx :c--red
-      :ta--c
-      :fs--18px
-      {:id :my-id})])
+  {:class (css :c--red
+               :ta--c
+               :fs--18px)}])
 
-;; html attribute map is (optional) last arg to sx
 ```
 
-As you can see in the above example, Kushi promotes a simple tokenized-keyword-based shorthand grammer which shadows standard CSS. This approach is similar to Tachyons (and its follow-on called Tailwind), but much more helpful in learning actual CSS, and much more intuitive if you are an existing CSS expert.
+As you can see in the above example, Kushi promotes a simple tokenized-keyword-based shorthand grammar which shadows standard CSS. This approach is similar solutions such as Tachyons and Tailwind, but much more helpful in learning actual CSS, and much more intuitive if you are an existing CSS expert.
 
-The above could also be written (verbosely) like this:
+
+In the example above, the `css` macro would expand to the following (shown in context):
 
 ```Clojure
 (defn my-component []
  [:div
-  (sx {:id    :my-id
-       :style {:color      :red
-               :text-align :center
-               :font-size  :18px}})])
-```
-You could also use shorthand syntax with style maps, and mix in tokenized keywords.
-
-```Clojure
-(defn my-component []
- [:div
-  (sx :c--red
-      {:style {:ta :c
-               :fs :18px}
-       :id :my-id})])
-```
-
-In all three examples above, the `sx` macro would return the following attribute map with an auto-generated, hashed value for the `class` attribute:
-
-```Clojure
-{:class "_680769808"
- :id    :my-id}
+  {:class "myns_core__L7C11"}])
 ```
 
 When your build finishes, the following css will be written to disk:
 
 ```css
- ._680769808 { color: red; text-align: center; font-size: 18px; }
+.myns_core__L7C11 {
+  color: red;
+  text-align: center;
+  font-size: 18px;
+}
 ```
 
-If you need or want to define your own classnames, you can supply your own classname by passing a quoted symbol as the first argument to sx:
+<br>
+
+### Supplying additional classes to the `css` macro
+
+You can supply additional classes as needed. These classes might be shared classes that you have defined, utility classes that ship with Kushi, or classes from 3rd party libraries. They must take the form of a keyword prefixed with a dot: 
 
 ```Clojure
 (defn my-component []
  [:div
-  (sx 'foobar
-      :c--red
-      :ta--c
-      :fs--18px)])
+  {:class (css :.absolute
+               :.text-large
+               :c--red
+               :ta--c
+               :fs--18px)])
 ```
-The above call to `sx` would generate the following attribute map:
+The above call to `css` would expand to the following class string:
 ```Clojure
-{:class "foobar"}
+"myns_core__L7C11 absolute text-large"
 ```
 
+<br>
 
-And the following css will be written to disk:
+### Supplying dynamic classes to the `css` macro
+
+If you want to supply classes conditionally, based on runtime logic, you can do so like this:
+
+```Clojure
+(defn my-component [font-size-class]
+ [:div
+  {:class (css :.absolute
+               font-size-class
+               :c--red
+               :ta--c
+               :fs--18px)])
+
+;; At call site
+[my-component "text-small"]
+```
+
+The above call to `css` would expand to the following:
+```Clojure
+(str "myns_core__L7C11 absolute " font-size-class)
+
+;; At runtime, based on the example call-site value, this would resolve to:
+"myns_core__L7C11 absolute text-small" 
+```
+
+Another example of supplying classes conditionally:
+
+```Clojure
+(defn my-component [font-size-class]
+ (let [a (when (= font-size-class "text-xlarge")
+           "absolute")]
+   [:div
+    {:class (css a
+                 font-size-class
+                 :c--red
+                 :ta--c
+                 :fs--18px)])
+
+;; At call site
+[my-component "text-xlarge"]
+```
+The above call to `css` would expand to the following:
+```Clojure
+(str "myns_core__L7C11 " a " " font-size-class)
+
+;; At runtime, based on the example call-site value, this would resolve to:
+"myns_core__L7C11 absolute text-xsmall"
+```
+
+<br>
+
+### Using css custom properties (aka css variables) with the `css` macro.
+The syntax for css custom properties is like so:<br>
+`$foo => var(--foo)`
+
+The example below uses `:c--$red-500`, which will set the `color` property to `var(--red-500)`. In this case, `var(--red-500)` is a global variable that is predefined within the design token system that ships with Kushi.
+```Clojure
+(defn my-component []
+ [:div
+  {:class (css :.absolute
+               font-size-class
+               :c--$red-500
+               :ta--c
+               :fs--18px)])
+```
+<br>
+
+### Supplying dynamic values for individual css properties with the `css` macro.
+If you want to supply dynamic values for individual css properties, you can utilize the `kushi.core/css-vars` macro, or the `kushi.core/css-vars-map` macro (if you are using React under the hood). This will create a "local" custom css property in the `style` attribute that you will then reference within your call to `css` using the `$` css variable syntax:
+
+```Clojure
+(defn my-component [text-color]
+ [:div
+  {:style (css-vars text-color)
+   :class (css :.absolute
+               font-size-class
+               :c--$text-color
+               :ta--c
+               :fs--18px)])
+
+;; At call site
+[my-component "red"]
+```
+
+In the example above, the `css` macro, and the `css-vars` macro would expand to the following (shown in context):
+```Clojure
+(defn my-component [text-color]
+ [:div
+  {:style (str "--text-color: " text-color)
+   :class "myns_core__L7C11"}])
+```
+
+When your build finishes, the following css will be written to disk:
+
 ```css
- .foobar { color: red; text-align: center; font-size: 18px; }
+.myns_core__L7C11 {
+  color: var(--text-color);
+  text-align: center;
+  font-size: 18px;
+}
 ```
+
+If you are using Kushi with a React abstraction such as reagent, you will probably want use the `kushi.core/css-vars-map` macro instead, which would expand to this:
+
+```Clojure
+(defn my-component [text-color]
+ [:div
+  {:style {"--text-color" text-color}
+   :class "myns_core__L7C11"}])
+```
+
 <br>
 
-In summary, the `kushi.core/sx` is a macro that returns an attribute map which contains the following:
+### Reducing ceremony with the `sx` macro
+If you don't need to use dynamic values as in the example above, and you don't need to supply html attributes other than `class`, you can use use the `kushi.core/sx` macro to style elements and reduce some of the boilerplate. It works the same as the `css` macro, but returns a map with a `:class` entry instead of a string:
 
-  - A `class` property containing the correct auto-generated (or prefixed) classnames.
-  - If necessary, a `style` property containing the correct auto-generated css variable names.
-  - All the other attributes you specify in your attributes map (supplied as an optional last arg to `sx`).
-  - A dev-build-only `data-sx` attribute for browser debugging. See [Helpful metadata](#helpful-metadata).
+```Clojure
+(ns myns.core
+  (:require
+   [kushi.core :refer [css sx]]))
 
-All your css is written to a static file, via a build hook for the `:compile-finish` stage (assuming shadow-cljs).
-<!---You can optionally disable writing styles to disk and enable producton builds to [inject styles at runtime](#runtime-injection).
--->
-<br>
+(defn my-component []
+ [:div
+  (sx :c--red
+      :ta--c
+      :fs--18px)}])
 
-### Styles as Keywords
+```
+
+Which would expand to the following (shown in context):
+
+```Clojure
+(defn my-component []
+ [:div
+  {:class "myns_core__L7C11"}])
+```
+
+
+## Styles as tokenized keywords
 
 Keywords containing `--` represent a css prop and value pair (split on `--`).
 
