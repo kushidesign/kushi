@@ -81,12 +81,13 @@ The following features work in concert, making it easy to roll your own design s
 - Functional styling engine
 - Configurable theming
 
-Usage of Kushi's design system and component library is completly optional. You can just use the functional styling engine as a pure ClojureScript alternative to mainstream JS solutions such as Tailwind, Emotion, etc.
+Usage of Kushi's design system and component library is completly optional. You can just use the styling engine as a pure ClojureScript alternative to mainstream JS solutions such as Tailwind, Emotion, etc.
 
 <br>
 
 ## Project status
 Current version is pre-release intended for early adopters and anyone who would like to provide feedback. New 1.0 alphas will be released frequently, while I continue to make improvements/changes/additions. Working towards a stable 1.0 release by end of 2024 or Q1 of 2025.
+
 
 Please report anything unexpected on GitHub Issues.
 
@@ -105,10 +106,12 @@ Please check out [Kushi Quickstart](https://github.com/kushidesign/kushi-quickst
 
 <!--Intro section for ui lib vs user guide -->
 
+## Build System basics
+From version 1.0.0.a.23, Kushi has adopted a modified version of the build-system used by [`shadow-css`](https://github.com/thheller/shadow-css). This represents a transition away from Kushi's initial approach of using the side-effecting `sx` macro to generate an html attributes map with a hashed classname and then producing all relevant css via a `shadow-cljs` build hook. Using the build mechanics of `shadow-css` makes Kushi's incremental build times much faster, as it can now leveraging the caching features of `shadow-cljs`, which were previously unavailable due to the nature of using side-effecting macros.
 
-<!--TODO reverse examples -->
+<br>
+
 ## Kushi Styling Syntax
-
 
 ### Basic usage of the `css` macro
 
@@ -146,6 +149,18 @@ When your build finishes, the following css will be written to disk:
   font-size: 18px;
 }
 ```
+Check out the [Styles as tokenized keywords](#styles-as-tokenized-keywords) section for more details on Kushi's shorthand grammar.
+
+Note that the shorthand grammar is totally optional - you can also write these tokenized keywords with fully hydrated props and values.
+```Clojure
+(defn my-component []
+ [:div
+  {:class (css :color--red
+               :text-align--center
+               :font-size--18px)}])
+```
+
+If you have an aversion to the tokenized keyword approach, you can also just use a map - check out the [Using maps](#using-maps) section. 
 
 <br>
 
@@ -218,11 +233,33 @@ The above call to `css` would expand to the following:
 "myns_core__L7C11 absolute text-xsmall"
 ```
 
+You can also define more than one class using `css` and apply one conditionally:
+
+```Clojure
+(defn my-component [k]
+ (let [foo-class (css :c--red :bgc--black :fs--48px)
+       bar-class (css :c--blue :bgc--gray :fs--28px)
+       baz-class (css :c--orange :bgc--beige :fs--18px)
+       my-class (case k
+                  :foo foo-class
+                  :bar bar-class
+                  :baz baz-class
+                  nil)]
+   [:div
+    {:class my-class}])
+
+;; At call site
+[my-component :foo]
+```
+
 <br>
 
 ### Using css custom properties (aka css variables) with the `css` macro.
-The syntax for css custom properties is like so:<br>
-`$foo => var(--foo)`
+In the tradition of Sass and Less, Kushi uses a leading `$` syntax for css custom properties:<br>
+```Clojure
+$foo
+;; => var(--foo)
+```
 
 The example below uses `:c--$red-500`, which will set the `color` property to `var(--red-500)`. In this case, `var(--red-500)` is a global variable that is predefined within the design token system that ships with Kushi.
 ```Clojure
@@ -242,7 +279,7 @@ If you want to supply dynamic values for individual css properties, you can util
 ```Clojure
 (defn my-component [text-color]
  [:div
-  {:style (css-vars text-color)
+  {:style (cssvar text-color)
    :class (css :.absolute
                font-size-class
                :c--$text-color
@@ -295,7 +332,6 @@ If you don't need to use dynamic values as in the example above, and you don't n
   (sx :c--red
       :ta--c
       :fs--18px)}])
-
 ```
 
 Which would expand to the following (shown in context):
@@ -307,9 +343,459 @@ Which would expand to the following (shown in context):
 ```
 
 
-## Styles as tokenized keywords
+<br>
 
-Keywords containing `--` represent a css prop and value pair (split on `--`).
+### Modifier syntax: pseudo-classes 
+Kushi offers a modifier syntax for conveniently describing things like pseudo-classes:
+
+```Clojure
+(css :c--red
+     :hover:c--blue
+     :hover:td--u)
+```
+
+The above example produces the following css:
+```css
+.myns_core__L7C11 {
+  color: red;
+  &:hover {
+    color: blue;
+    text-decoration: underline;
+  }
+}
+```
+
+<br>
+
+### Modifier syntax: nested selectors
+You can use the same modifier syntax for nested selectors. Underscore chars `_` are transformed to a spaces:
+
+```Clojure
+(css :c--red
+     :>p:c--teal
+     :>p.foo:c--orange
+     :_a:c--purple)
+```
+
+The above example produces the following css:
+```css
+.myns_core__L7C11 {
+  color: red;
+  &>p {
+    color: teal;
+    &.foo {
+      color: orange;
+    }
+  }
+  & a {
+    color: purple;
+  }
+}
+```
+
+<br>
+
+### Modifier syntax: breakpoints 
+
+You can use the same modifier syntax for media queries:
+
+```Clojure
+(css :fs--18px
+     :lg:fs--22px)
+```
+The above example produces the following css:
+```css
+.myns_core__L7C11 {
+  font-size: 18px;
+  @media (min-width: 1024px) {
+    font-size: 22px;
+  }
+}
+```
+See the [Working with media queries](#working-with-media-queries) section for more details on media queries and Kushi's default breakpoint scale.
+
+<br>
+
+### Modifier syntax: dark-mode 
+Using the modifier syntax for dark-mode styling:
+
+```Clojure
+(css :c--black
+     :dark:c--white)
+```
+The above example produces the following css:
+```css
+.myns_core__L7C11 {
+  color: black; 
+  .dark & {
+    color: white;
+  }
+}
+```
+See the [Working with dark-mode](#working-with-dark-mode) section for more details on media queries and Kushi's built-in functionality for dark-mode.
+
+<br>
+
+### Modifier syntax: stacking
+
+These modifiers are designed to be "stacked". They must be separated with a colon and the order must be media-query, dark-mode, then any sequence of selectors and pseudo-class/pseudo-elements:
+
+```Clojure
+(css :c--black
+     :hover:c--red
+     :lg:hover:c--orange
+     :dark:c--white
+     :dark:hover:c--hotpink
+     :lg:dark:hover:c--yellow
+     :lg:dark:hover:>div.foo:c--silver)
+```
+The above example produces the following css:
+```css
+
+.myns_core__L7C11 {
+  color: black;
+  @media(min-width: 1024px) {
+    .dark & {
+      &:hover {
+        color: yellow;
+        &>div.foo {
+          color: silver;
+        }
+      }
+    }
+    &:hover {
+      color: orange;
+    }
+  }
+  .dark & {
+    color: white;
+    &:hover {
+      color: hotpink;
+    }
+  }
+  &:hover {
+    color: red;
+  }
+}
+```
+
+<br>
+
+### Using maps 
+If Kushi's tokenized keyword syntax isn't your speed, your can also just use maps to describe your all your styles:
+
+```Clojure
+(css {:color      :red
+      :text-align :center
+      :font-size  :18px})
+```
+
+
+You can also mix in maps with tokenized keywords. Maps are very useful when you want to use nesting to avoid repetition:
+
+```Clojure
+(css :c--red
+     {:hover {:c   :blue
+              :td  :underline
+              :bgc :yellow}})
+```
+
+The above example produces the following css:
+```css
+.myns_core__L7C11 {
+  color: red;
+  &:hover {
+    color: blue;
+    text-decoration: underline;
+    background-color: yellow;
+  }
+}
+```
+
+You can nest as deep as you want:
+```Clojure
+(css :c--red
+     {:>p {:hover {:c   :blue
+                   :td  :underline
+                   :bgc :yellow
+                   :_a  {:c   :purple
+                         :td  :none
+                         :bgc :pink}}})
+```
+
+The above example produces the following css:
+```css
+.myns_core__L7C11 {
+  color: red;
+  &>p {
+    &:hover {
+      color: blue;
+      text-decoration: underline;
+      background-color: yellow;
+      & a {
+        color: purple;
+        text-decoration: none;
+        background-color: pink;
+      }
+    }
+  }
+}
+```
+
+<br>
+
+This is a more complex example taken from a working codebase.
+There is a single map entry that defines styles for some direct descendant
+elements in a sidenav. The styles only apply, however, if the element targeted
+by the selector has an ancestor that matches `"nav[data-foo-bar-sidenav][aria-expanded=\"true\"]`. This works because of the appended `&` character:
+
+```Clojure
+(css {"nav[data-foo-bar-sidenav][aria-expanded=\"true\"] &"
+      {:>.sidenav-menu-icon:d  :none
+       :>.sidenav-close-icon:d :inline-flex
+       :>ul:h                  "calc((100vh - (var(--navbar-height) * 2)) * 1)"
+       :o                      1}}
+```
+
+The above example produces the following css:
+
+```css
+.myns_core__L7C11 {
+  nav[data-foo-bar-sidenav][aria-expanded="true"] & {
+    &>.sidenav-menu-icon {
+      display: none;
+    }
+    &>.sidenav-close-icon {
+      display: inline-flex;
+    }
+    &>ul {
+      height: calc((100vh - (var(--navbar-height) * 2)) * 1);
+    }
+    opacity: 1;
+  }
+}
+```
+
+<br>
+
+<!-- ### Using vectors
+You may want or need to express a style as a 2-element vector.
+
+When a string is desired, or necessary:
+```Clojure
+(sx [:before:content "\"$\""]
+    [:width "calc((100vw / 3) + 12px)"])
+```
+When constructing a value using css function syntax:
+```Clojure
+(sx [:transform '(translateY :-100px)]])
+``` -->
+
+<br>
+
+### CSS Shorthand Properties
+[CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are a fundamental feature of CSS. They are properties that let you set the values of multiple other CSS properties simultaneously. With Kushi, you can write them like this:
+
+```Clojure
+;; with tokenized keyword
+(css :b--1px:solid:black)
+
+;; if using a map
+(css {:b :1px:solid:black})
+
+;; same as above, with string
+(css {:b "1px solid black"})
+
+
+```
+
+All of the above examples will resolve to the following css declaration:
+```css
+border: 1px solid black;
+```
+<br>
+
+### CSS Value Lists
+In css, sometimes multiple values are seperated by commas to indicate they are ordered, or that there are ordered alternatives. With Kushi, you can write them like this:
+```Clojure
+(css :ff--FiraCodeRegular|Consolas|monospace)
+```
+The above will resolve to the following css declaration:
+```css
+font-family: FiraCodeRegular, Consolas, monospace;
+```
+The example below uses a list of css shorthand values in order to render multiple text-shadows in different colors:
+```Clojure
+(css :text-shadow--5px:5px:10px:red|-5px:-5px:10px:blue)
+```
+The above will resolve to the following css declaration:
+```css
+text-shadow: 5px 5px 10px red, -5px -5px 10px blue;
+```
+
+<br>
+<br>
+
+## Shared Styles
+`kushi.core/cssrule` is intended for the creation of shared styles.
+
+These shared styles should be defined in a dedicated namespace, or set of dedicated namespaces, and required once in your core or main ns.
+
+`cssrule` takes a selector (string) as the first argument, followed by any number of style arguments. Any style argument that is valid for `css` macro is valid for `cssrule`.
+
+```Clojure
+(ns myapp.shared-styles
+  (:require
+   [kushi.core :refer [cssrule]]))
+
+
+;; using tokenized keywords
+(cssrule ".headline"
+  :ta--left
+  :w--100%
+  :ff--Inter|system-ui|sans-serif
+  :fw--900
+  :fs--24px
+  :tt--u
+  :mix-blend-mode--darken)
+
+
+;; tokenized-keywords + usage of a map for css-fn syntax
+(cssrule ".headline2"
+  :top--0
+  :left--0
+  :b--1px:solid:black
+  :fs--200px
+  :tt--u
+  :mix-blend-mode--darken
+  {:c "rgba(155 155 155 / 0.8)"})
+
+
+;; Example using a single map.
+(cssrule ".headline3"
+  {:top               0
+   :left              0
+   :b                 :1px:solid:black
+   :fs                :200px
+   :tt                :u
+   :mix-blend-mode    :darken
+   :c                 "rgba(155 155 155 / 0.8)"})
+```
+
+By authoring your shared styles in a dedicated ns (or namespaces), you only need to require once in your main or core ns, and all the styles from that ns will be available globally.
+```Clojure
+(ns myapp.core
+  (:require
+   [kushi.core :refer [sx]]
+   [myapp.shared-styles]))
+
+  (defn my-headline [text]
+    [:h1 (sx :.headline :mt--5px) text])
+```
+
+
+<!-- With `defclass`, you can mix-in any other defined classes:<br>
+```Clojure
+(defclass headline
+  :.flex-row-fs
+  :top--0
+  :left--0
+  :b--1px:solid:black
+  :fs--200px
+  :tt--u
+  :fs--italic
+  :mix-blend-mode--darken)
+```
+
+
+(defclass headline-colored
+  :.headline
+  :c--red
+  :b--1px:solid:pink)
+```
+
+In the example above, the `:.headline` class is one of several predefined classes that ships with kushi. -->
+
+<br>
+
+### Kushi's predefined utility classes:
+
+```Clojure
+;; positioning
+:.absolute
+:.absolute-centered
+:.absolute-fill
+:.relative
+:.fixed
+:.fixed-fill
+
+;; background-images
+:.bgi-contain
+:.bgi-cover
+:.debug-grid
+:.debug-grid-16
+:.debug-grid-16-solid
+:.debug-grid-8-solid
+
+;; flex layouts
+:.flex-col-c
+:.flex-col-fe
+:.flex-col-fs
+:.flex-col-sa
+:.flex-col-sb
+:.flex-col-se
+:.flex-row-c
+:.flex-row-fe
+:.flex-row-fs
+:.flex-row-sa
+:.flex-row-sb
+:.flex-row-se
+
+;; borders & outlines
+:.bordered
+:.outlined
+:.pill
+
+;; type styling
+:.sans
+:.italic
+:.oblique
+:.uppercase
+:.lowercase
+:.capitalize
+:.full-width
+:.full-width-kana
+
+;; type weight
+:.thin
+:.extra-light
+:.light
+:.regular
+:.medium
+:.semi-bold
+:.bold
+:.extra-bold
+:.heavy
+
+;; cursor
+:.pointer
+
+;; transitions
+:.transition
+
+
+```
+<!-- TODO add debug grid helpers to above list -->
+
+Checkout <a href="https://github.com/kushidesign/kushi/blob/main/src/kushi/ui/utility.cljc" target="_blank">this source file</a>
+ for a complete reference of all current pre-defined utility classes.
+<br>
+
+<br>
+
+## Styles as tokenized keywords
+With the `css`, `sx`, and `cssrule` macros, the simplest and most convenient way to describe styles is the usage of tokenized keywords.
+These keywords contain a `--`, and represent a css prop and value pair (split on `--`).
 
 
 ```Clojure
@@ -409,50 +895,7 @@ See the complete list of supported enum values [here](https://github.com/kushide
 
 <br>
 
-### Expressing dynamic values
-
-Sometimes you need to use dynamic values based on application state.
-
-```Clojure
-;; Assuming there is a binding to `mycolor` with a value of `:red`
-
-;; Expressed as a 2-element vector
-(sx :fs--36px [:c mycolor])
-
-;; You could also write this as:
-(sx :fs--36px {:style {:color mycolor})
-```
-
-Both examples above would result in the following attribute map.
-```Clojure
-{:class "_617784030" :style "--mycolor:red"}
-```
-And the following css would be written to disk:
-```css
-._617784030 {color: var(--mycolor); font-size: 36px}
-```
-<br>
-
-### Expressing complex values
-Sometimes, css syntax is inherently convoluted. In these cases, you may want or need to express a style as a 2-element vector.
-
-When a string is desired, or necessary:
-```Clojure
-(sx [:before:content "\"$\""]
-    [:width "calc((100vw / 3) + 12px)"])
-```
-When constructing a value using css function syntax:
-```Clojure
-(sx [:transform '(translateY :-100px)]])
-```
-You can likewise locate these as entries in the `:style` entry of the attributes map:
-```Clojure
-(sx {:style {:transform '(translateY :-100px)}}])
-```
-
-<br>
-
-### Nested syntax
+<!-- ### Nested syntax
 You can also you the 2-element vector form to "nest" styles, which is really just a way to dry up code and avoid repetition of the left half of the style:
 ```Clojure
 (sx ["has-ancestor(nav[data-foo-bar-sidenav][aria-expanded=\"true\"])"
@@ -480,367 +923,12 @@ The above would result in the following css:
   height: fit-content;
   opacity: 1;
 }
-```
+``` -->
 
-<br>
 
-### Using css function syntax
-As seen in the example above, you can use a quoted list to convey css function values.
-```Clojure
-(sx [:color '(rgba 0 200 100 0.4)])
 
-;; The above example is equivalent to:
-"rgba(0, 200, 100, 0.4)"
-```
 
-<br>
-
-### Using CSS custom properties
-
-The following sugar is supported for css variables values:
-
-```Clojure
-(sx :border-radius--$mycssvarname)
-
-(sx [:border-radius :$mycssvarname)
-
-(sx {:style {:border-radius :$mycssvarname})
-```
-All of the above would generate the following css value:
-
-```css
-border-radius: var(--mycssvarname);
-```
-
-Up to 2 additional fallback values can be supplied using the `||` syntax:
-
-```Clojure
-(sx :border-radius--$mycssvarname||$myfallback||10px)
-```
-The above would generate the following css value:
-
-```css
-border-radius: var(--mycssvarname, var(--myfallback, 10px));
-```
-
-css custom properties can be defined (on the element level) like this:
-
-```Clojure
-(sx $mycustomprop--10px)
-
-(sx [$mycustomprop :10px])
-
-(sx {:style {$mycustomprop :10px})
-```
-All of the above would generate the an attribute map looking something like this:
-
-```css
-{:class ["_897766778"]
- :style {"--mycustomprop" "10px"}}
-```
-
-
-<br>
-
-
-### CSS Shorthand Properties
-[CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are a fundamental feature of CSS. They are properties that let you set the values of multiple other CSS properties simultaneously. With Kushi, you can write them like this:
-
-```Clojure
-;; with tokenized keyword
-(sx :b--1px:solid:black)
-
-;; with style tuple
-(sx [:b :1px:solid:black])
-
-;; With string
-(sx [:b "1px solid black"])
-
-;; with style map
-(sx {:style {:b :1px:solid:black}})
-
-```
-
-All of the above examples will resolve to the following css declaration:
-```css
-border: 1px solid black;
-```
-<br>
-
-### CSS Value Lists
-In css, sometimes multiple values are seperated by commas to indicate they are ordered, or that there are ordered alternatives. With Kushi, you can write them like this:
-```Clojure
-(sx :ff--FiraCodeRegular|Consolas|monospace)
-```
-The above will resolve to the following css declaration:
-```css
-font-family: FiraCodeRegular, Consolas, monospace;
-```
-The example below uses a list of css shorthand values in order to render multiple text-shadows in different colors:
-```Clojure
-(sx :text-shadow--5px:5px:10px:red|-5px:-5px:10px:blue)
-```
-The above will resolve to the following css declaration:
-```css
-text-shadow: 5px 5px 10px red, -5px -5px 10px blue;
-```
-
-<br>
-
-## Shared Styles
-`kushi.core/defclass` is intended for the creation of shared styles.
-
-These shared styles should be defined in a dedicated namespace, or set of dedicated namespaces, and required once in your core or main ns.
-
-Unlike the `sx` macro, defclass does not support runtime bindings.
-
- <!-- This css class is only written to disk if a component references it. -->
-
-```Clojure
-(ns myapp.shared-styles
-  (:require
-   [kushi.core :refer [defclass]]))
-
-
-;; using tokenized keywords
-(defclass headline
-  :ta--left
-  :w--100%
-  :ff--Inter|system-ui|sans-serif
-  :fw--900
-  :fs--24px
-  :tt--u
-  :mix-blend-mode--darken)
-
-
-;; tokenized-keywords + usage of 2-element vectors for css-fn syntax
-(defclass headline2
-  :top--0
-  :left--0
-  :b--1px:solid:black
-  :fs--200px
-  :tt--u
-  :mix-blend-mode--darken
-  [:c '(rgba 155 155 155 0.8)])
-
-
-;; Example using a single map.
-;; Note that when using a map, unlike the sx macro it
-;; does not need to be a nested `:style` entry.
-(defclass headline3
-  {:top               0
-   :left              0
-   :b                 :1px:solid:black
-   :fs                :200px
-   :tt                :u
-   :mix-blend-mode    :darken
-   :c                 '(rgba 155 155 155 0.8)})
-
-
-;; Unlike the `sx` macro, defclass does not support runtime bindings.
-;; The following will NOT work.
-(def mycolor :red)
-
-(defclass headline-alert
-  {:c mycolor})
-```
-By authoring your shared styles in a dedicated ns (or namespaces), you only need to require once in your main or core ns, and all the styles from that ns will be available globally.
-```Clojure
-(ns myapp.core
-  (:require
-   [kushi.core :refer [sx]]
-   [myapp.shared-styles]))
-
-  (defn my-headline [text]
-    [:h1 (sx :.headline :mt--5px) text])
-
-;; The above call to the sx macro will return attribute map like this:
-;; {:class "headline _887777949"}
-
-;; The resulting css would be:
-
-;; .headline {
-;;     top: 0px;
-;;     left: 0px;
-;;     border: 1px solid black;
-;;     font-size: 200px;
-;;     text-transform: uppercase;
-;;     mix-blend-mode: darken;
-;; }
-
-;; ._887777949 {
-;;     margin-top: 5px;
-;; }
-
-;; The `.headline` selector is the shared class,
-;; and the `._887777949` is the autogenerated selector for margin-top rule.
-```
-As arguments to `sx`, classes are distinguished from other prop-styles by using a keyword beginning with a `.`, e.g. `:.headline`, as in the example above.
-
-With `defclass`, you can mix-in any other defined classes:<br>
-```Clojure
-(defclass headline
-  :.flex-row-fs
-  :top--0
-  :left--0
-  :b--1px:solid:black
-  :fs--200px
-  :tt--u
-  :fs--italic
-  :mix-blend-mode--darken)
-
-;; The above example will mix-in the individual declarations
-;; of the :.flex-row-fs class and result in the following css:
-
-;; .headline {
-;;   display: flex;
-;;   flex-direction: row;
-;;   justify-content: center;
-;;   align-items: center;
-;;   top: 0px;
-;;   left: 0px;
-;;   border: 1px solid black;
-;;   font-size: 200px;
-;;   text-transform: uppercase;
-;;   mix-blend-mode: darken;
-;; }
-
-(defclass headline-colored
-  :.headline
-  :c--red
-  :b--1px:solid:pink)
-
-;; The above example will mix-in the individual declarations
-;; of the :.headline class and result in the following css:
-
-;; .headline {
-;;   display: flex;
-;;   flex-direction: row;
-;;   justify-content: center;
-;;   align-items: center;
-;;   top: 0px;
-;;   left: 0px;
-;;   font-size: 200px;
-;;   text-transform: uppercase;
-;;   mix-blend-mode: darken;
-;;   c--red
-;;   border: 1px solid pink;
-;; }
-```
-In the example above, the `:.headline` class is one of several predefined classes that ships with kushi.
-
-Other predefined classes:
-
-```Clojure
-;; positioning
-:.absolute
-:.absolute-centered
-:.absolute-fill
-:.relative
-:.fixed
-:.fixed-fill
-
-;; background-images
-:.bgi-contain
-:.bgi-cover
-:.debug-grid
-:.debug-grid-16
-:.debug-grid-16-solid
-:.debug-grid-8-solid
-
-;; flex layouts
-:.flex-col-c
-:.flex-col-fe
-:.flex-col-fs
-:.flex-col-sa
-:.flex-col-sb
-:.flex-col-se
-:.flex-row-c
-:.flex-row-fe
-:.flex-row-fs
-:.flex-row-sa
-:.flex-row-sb
-:.flex-row-se
-
-;; borders & outlines
-:.bordered
-:.outlined
-:.pill
-
-;; type styling
-:.sans
-:.italic
-:.oblique
-:.uppercase
-:.lowercase
-:.capitalize
-:.full-width
-:.full-width-kana
-
-;; type weight
-:.thin
-:.extra-light
-:.light
-:.regular
-:.medium
-:.semi-bold
-:.bold
-:.extra-bold
-:.heavy
-
-;; cursor
-:.pointer
-
-;; transitions
-:.transition
-
-
-```
-<!-- TODO add debug grid helpers to above list -->
-
-Checkout <a href="https://github.com/kushidesign/kushi/blob/main/src/kushi/ui/utility.cljc" target="_blank">this source file</a>
- for a complete reference of all current pre-defined utility classes.
-<br>
-
-### Applying Classes Conditionally
-
-You can apply classes conditionally within the `sx` macro using the following constructs: `if`, `when`, `cond`, `if-let`, `when-let`, `if-not`, and `when-not`.<br>
-```Clojure
-;; In your ns for shared styles
-(defclass active-link :color--red)
-
-;; In some other ns
-(defn link [opts]
- [:a
-  (sx 'mylink
-      (when (:active? opts) :.active-link)
-      :bb--1px:solid:black))
-  "Go"])
-
-;; Somewhere else in your code, calling above component
-
-[link {:active? true}]
-; => [:a {:class ["active-link" "mylink"]}]
-
-;; "active-link" is the selector for your custom defclass.
-```
-The class to be returned cannot be nested. For example, the following will not work:
-```Clojure
-;; This will NOT work.
-
-(def foo true)
-
-(defn link [opts]
- [:a
-  (sx (when (:active? opts)
-        (if foo :.active-link :.some-other-class))
-      :bb--1px:solid:black))
-  "Go"])
-
-```
-<br>
-
-## Media Queries
+## Working with media queries
 ```Clojure
 ;; Specify the font-size of an <h1> element across breakpoints
 [:h1
