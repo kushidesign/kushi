@@ -255,11 +255,7 @@ You can also define more than one class using `css` and apply one conditionally:
 <br>
 
 ### Using css custom properties (aka css variables) with the `css` macro.
-In the tradition of Sass and Less, Kushi uses a leading `$` syntax for css custom properties:<br>
-```Clojure
-$foo
-;; => var(--foo)
-```
+In the tradition of Sass and Less, Kushi uses a leading `$` syntax for css custom properties
 
 The example below uses `:c--$red-500`, which will set the `color` property to `var(--red-500)`. In this case, `var(--red-500)` is a global variable that is predefined within the design token system that ships with Kushi.
 ```Clojure
@@ -438,7 +434,7 @@ See the [Working with dark-mode](#working-with-dark-mode) section for more detai
 
 ### Modifier syntax: stacking
 
-These modifiers are designed to be "stacked". They must be separated with a colon and the order must be media-query, dark-mode, then any sequence of selectors and pseudo-class/pseudo-elements:
+These modifiers are designed to be "stacked". They must be separated with a colon and the order must be media-query (optional), dark-mode (optional), then any sequence of selectors and pseudo-class/pseudo-elements:
 
 ```Clojure
 (css :c--black
