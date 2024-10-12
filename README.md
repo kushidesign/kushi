@@ -107,7 +107,7 @@ Please check out [Kushi Quickstart](https://github.com/kushidesign/kushi-quickst
 <!--Intro section for ui lib vs user guide -->
 
 ## Build System basics
-From version 1.0.0.a.23, Kushi has adopted a modified version of the build-system used by [`shadow-css`](https://github.com/thheller/shadow-css). This represents a transition away from Kushi's initial approach of using the side-effecting `sx` macro to generate an html attributes map with a hashed classname and then producing all relevant css via a `shadow-cljs` build hook. Using the build mechanics of `shadow-css` makes Kushi's incremental build times much faster, as it can now leveraging the caching features of `shadow-cljs`, which were previously unavailable due to the nature of using side-effecting macros.
+From version 1.0.0.a.23, Kushi has adopted a modified version of the build-system used by [`shadow-css`](https://github.com/thheller/shadow-css). This represents a transition away from Kushi's initial approach of using the side-effecting `sx` macro to generate an html attributes map with a hashed classname and then producing all relevant css via a `shadow-cljs` build hook. Using the build mechanics of `shadow-css` makes Kushi's incremental build times much faster, as it can now leveraging the caching features of `shadow-cljs`, which were previously unavailable due to the side-effecting macros necessitating the use of `cache-blockers` in `shadow-cljs`.
 
 <br>
 
@@ -587,8 +587,6 @@ When constructing a value using css function syntax:
 (sx [:transform '(translateY :-100px)]])
 ``` -->
 
-<br>
-
 ### CSS Shorthand Properties
 [CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are a fundamental feature of CSS. They are properties that let you set the values of multiple other CSS properties simultaneously. With Kushi, you can write them like this:
 
@@ -633,20 +631,20 @@ text-shadow: 5px 5px 10px red, -5px -5px 10px blue;
 <br>
 
 ## Shared Styles
-`kushi.core/cssrule` is intended for the creation of shared styles.
+`kushi.core/defcss` is intended for the creation of shared styles.
 
 These shared styles should be defined in a dedicated namespace, or set of dedicated namespaces, and required once in your core or main ns.
 
-`cssrule` takes a selector (string) as the first argument, followed by any number of style arguments. Any style argument that is valid for `css` macro is valid for `cssrule`.
+`defcss` takes a selector (string) as the first argument, followed by any number of style arguments. Any style argument that is valid for `css` macro is valid for `defcss`.
 
 ```Clojure
 (ns myapp.shared-styles
   (:require
-   [kushi.core :refer [cssrule]]))
+   [kushi.core :refer [defcss]]))
 
 
-;; using tokenized keywords
-(cssrule ".headline"
+;; Using tokenized keywords
+(defcss ".headline"
   :ta--left
   :w--100%
   :ff--Inter|system-ui|sans-serif
@@ -656,8 +654,8 @@ These shared styles should be defined in a dedicated namespace, or set of dedica
   :mix-blend-mode--darken)
 
 
-;; tokenized-keywords + usage of a map for css-fn syntax
-(cssrule ".headline2"
+;; Tokenized-keywords + usage of a map for css-fn syntax
+(defcss ".headline2"
   :top--0
   :left--0
   :b--1px:solid:black
@@ -668,7 +666,7 @@ These shared styles should be defined in a dedicated namespace, or set of dedica
 
 
 ;; Example using a single map.
-(cssrule ".headline3"
+(defcss ".headline3"
   {:top               0
    :left              0
    :b                 :1px:solid:black
@@ -717,7 +715,8 @@ In the example above, the `:.headline` class is one of several predefined classe
 ### Kushi's predefined utility classes:
 
 ```Clojure
-;; positioning
+;; Positioning
+
 :.absolute
 :.absolute-centered
 :.absolute-fill
@@ -725,7 +724,9 @@ In the example above, the `:.headline` class is one of several predefined classe
 :.fixed
 :.fixed-fill
 
-;; background-images
+
+;; Background-images
+
 :.bgi-contain
 :.bgi-cover
 :.debug-grid
@@ -733,7 +734,9 @@ In the example above, the `:.headline` class is one of several predefined classe
 :.debug-grid-16-solid
 :.debug-grid-8-solid
 
-;; flex layouts
+
+;; Flex layouts
+
 :.flex-col-c
 :.flex-col-fe
 :.flex-col-fs
@@ -747,12 +750,16 @@ In the example above, the `:.headline` class is one of several predefined classe
 :.flex-row-sb
 :.flex-row-se
 
-;; borders & outlines
+
+;; Borders & outlines
+
 :.bordered
 :.outlined
 :.pill
 
-;; type styling
+
+;; Type styling
+
 :.sans
 :.italic
 :.oblique
@@ -762,7 +769,9 @@ In the example above, the `:.headline` class is one of several predefined classe
 :.full-width
 :.full-width-kana
 
-;; type weight
+
+;; Type weight
+
 :.thin
 :.extra-light
 :.light
@@ -773,10 +782,14 @@ In the example above, the `:.headline` class is one of several predefined classe
 :.extra-bold
 :.heavy
 
-;; cursor
+
+;; Cursor
+
 :.pointer
 
-;; transitions
+
+;; Transitions
+
 :.transition
 
 
@@ -790,7 +803,7 @@ Checkout <a href="https://github.com/kushidesign/kushi/blob/main/src/kushi/ui/ut
 <br>
 
 ## Styles as tokenized keywords
-With the `css`, `sx`, and `cssrule` macros, the simplest and most convenient way to describe styles is the usage of tokenized keywords.
+With the `css`, `sx`, and `defcss` macros, the simplest and most convenient way to describe styles is the usage of tokenized keywords.
 These keywords contain a `--`, and represent a css prop and value pair (split on `--`).
 
 
@@ -944,7 +957,7 @@ Kushi ships with the following, industry-standard, mobile-first breakpoint scale
  :xl {:min-width :1280px}
  :xxl {:min-width :1536px}]
 ```
-Both the names and values can be customized via supplying a kwargs vector (not a map) as the `:media` entry in your `kushi.edn` config file. Becuase CSS Media Queries must be explicity ordered, this scale must be written as a vector of kwargs. See [Configuration Options](#configuration-options).
+Both the names and values can be customized via supplying a kwargs vector (not a map) as the `:media` entry in your `kushi.edn` config file. Because CSS Media Queries must be explicity ordered, this scale must be written as a vector of kwargs. See [Configuration Options](#configuration-options).
 
 Below is an example of a scale that is desktop-first and uses different names.<br>
 Note that in the case of desktop-first (`max-width`), the order is reversed (relative to mobile-first / `min-width`).
@@ -964,8 +977,7 @@ When "stacking" other modifiers (such as psuedo-classes) in front of css props, 
 ## Pseudos and Combo Selectors
 Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers:
 ```Clojure
-[:div (sx 'foo
-          :hover:c--blue
+[:div (sx :hover:c--blue
           :>a:hover:c--red
           :&_a:hover:c--gold ; The "_" gets converted to " "
           :&.bar:hover:c--pink
@@ -978,37 +990,40 @@ Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers
 ```
 CSS resulting from the above example:
 ```css
-.foo:hover {
-  color: blue;
-}
-
-.foo > a:hover {
-  color: red;
-}
-
-.foo a:hover {
-  color: gold;
-}
-
-.foo.bar:hover {
-  color: pink;
-}
-
-.foo::before {
-  font-weight: bold;
-  content: "⌫";
-}
-
-.foo::after {
-  margin-inline-end: 5px;
-}
-
-.foo ~ a:hover {
-  color: blue;
-}
-
-.foo:nth-child(2) {
-  color: red;
+.myns_core__L7C11 {
+  &>a {
+    &:hover {
+      color: red;
+    }
+  }
+  & a {
+    &:hover {
+      color: gold;
+    }
+  }
+  &.bar {
+    &:hover {
+      color: pink;
+    }
+  }
+  &::after {
+    margin-inline-end: 5px;
+  }
+  &~a {
+    &:hover {
+      color: blue;
+    }
+  }
+  &:nth-child(2) {
+    color: red;
+  }
+  &::before {
+    font-weight: bold;
+    content: "⌫";
+  }
+  &:hover {
+    color: blue;
+  }
 }
 ```
 
@@ -1019,8 +1034,7 @@ Kushi provides 2 fake css pseudo-classes in the form of `has-parent()` and `has-
 ```Clojure
 (defn my-button [text]
   [:button
-   (sx 'foo
-       ["has-ancestor(section.baz):color" :blue]
+   (sx ["has-ancestor(section.baz):color" :blue]
        ["has-parent(section.dark):color" :white]
        {:on-click #(prn "clicked!")})
      text])
@@ -1028,8 +1042,8 @@ Kushi provides 2 fake css pseudo-classes in the form of `has-parent()` and `has-
 ```
 The above would result in the following css:
 ```css
-section.baz .foo {color: blue}
-section.dark > .foo {color: white}
+section.baz .myns_core__L7C11 {color: blue}
+section.dark > .myns_core__L7C11 {color: white}
 ```
 
 ### Targeting dark mode
@@ -1038,8 +1052,7 @@ You can use the `dark` modifier to define styles that are scoped to the dark the
 ```Clojure
 (defn my-button [text]
   [:button
-   (sx 'foo
-       :dark:color--hotpink
+   (sx :dark:color--hotpink
        :dark:b--2px:solid:hotpink
        :dark:&_.some-other-class:c--white
        {:on-click #(prn "clicked!")})
@@ -1048,8 +1061,8 @@ You can use the `dark` modifier to define styles that are scoped to the dark the
 ```
 The above would result in the following css:
 ```css
-.dark .foo {color: hotpink; border: 2px solid hotpink}
-.dark .foo .some-other-class {color: white}
+.dark .myns_core__L7C11 {color: hotpink; border: 2px solid hotpink}
+.dark .myns_core__L7C11 .some-other-class {color: white}
 ```
 
 You can use `kushi.ui.core/lightswitch!` to toggle a `.dark` class on the body, or a specific element of your choice.
@@ -1070,7 +1083,7 @@ You can use `kushi.ui.core/lightswitch!` to toggle a `.dark` class on the body, 
 ```
 <br>
 
-## Transparent Colors
+<!-- ## Transparent Colors
 Kushi offers a special syntax for adding transparency to colors. This will work with any named css colors, hex colors, or any color that is part of Kushi's built-in color scale (click on the "Color" section in sidemenu of the [interactive docs page](kushi.design) to view color scale).
 
 ```Clojure
@@ -1082,35 +1095,35 @@ Kushi offers a special syntax for adding transparency to colors. This will work 
 
 ;; With a color from Kushi's design tokens color scale ...
 (sx :bgc--$purple-500/alpha-79)
-```
+``` -->
 
 ## Selector Prefixing Options
-You can narrow the specicifity of you selectors by globally prepending a class or id (or any valid selector) of an ancestor element. Typically this would be something like the id of your "app" container.
+You can narrow the specificity of you selectors by globally prepending a class or id (or any valid selector) of an ancestor element. Typically this would be something like the id of your "app" container.
+
 ```Clojure
 ;; In your kushi.edn map ...
 {:selector-prepend "#my-app"}
 
 ;; In one of your component namespaces ...
 [:div
- (sx '-my-el :c--red)]
+ (sx :c--red)]
 
 ;; The above example would write the following rule to the css file:
-;; #my-app .my-el {
+;; #my-app .myns_core__L7C11 {
 ;;    color: red;
 ;;}
 ```
-
 
 <br>
 
 ## Defining Animations
 
-Use `kushi.core/defkeyframes` to define css keyframes.
+Use `kushi.core/defcss-keyframes` to define css keyframes.
 ```Clojure
 ;; This will twirl something on its y-axis
-(defkeyframes yspinner
-  [:0% {:transform (cssfn :rotateY :0deg)}]
-  [:100% {:transform (cssfn :rotateY :360deg)}])
+(defcss-keyframes "yspinner"
+  [:0% {:transform "rotateY(0deg)"}]
+  [:100% {:transform "rotateY(360deg)"}])
 
 
 ;; Somewhere in your component code...
@@ -1161,25 +1174,29 @@ View all the scale values [here](https://github.com/kushidesign/kushi/blob/main/
 -->
 
 ## Injecting Stylesheets
-You can also use `kushi.core/inject-stylesheet` to inject a stylesheet, or a third-party style library.
+You can also use `kushi.inject/inject-stylesheet` to inject a stylesheet, or a third-party style library.
 This is more of an edge case, as you would typically just do this with a `<link>` in your index.html.
 However, if your project uses a clj file to generate the contents of your `<head>` at build time,
 it may be handy to use this during development to inject new stylesheets without restarting your build.
 
 ```Clojure
-(inject-stylesheet {:rel "stylesheet"
-                    :href "css/my-global-styles.css"})
+(ns myapp.core
+  (:require
+   [kushi.inject :refer [inject-stylesheet!]]))
+
+(inject-stylesheet! {:rel "stylesheet"
+                     :href "css/my-global-styles.css"})
 ```
 ### Loading Google Fonts
 A more common use case for injecting a stylesheet would the loading of webfonts via stylesheets, ala Google Fonts, or another similar webfonts service.
 
-You can leverage `kushi.core/add-google-font!` to simplify the process of adding Google fonts to your project.
+You can leverage `kushi.inject/add-google-fonts!` to simplify the process of adding Google fonts to your project.
 
 The example below is a typical use case which loads a stylesheet from Google Fonts.
 ```Clojure
 (ns myapp.core
   (:require
-   [kushi.core :refer [add-google-fonts!]]))
+   [kushi.inject :refer [add-google-fonts!]]))
 
 (add-google-fonts! {:family "Playfair Display"
                     :styles {:normal [400 700]
@@ -1200,10 +1217,14 @@ The example below is a typical use case which loads a stylesheet from Google Fon
 ;;                     :href "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"})
 
 ```
-`kushi.core/add-google-font!` accepts any number of args, each one a single map that represents a font-family and associated weights & styles. You can as many different families as you want in a single go (although be mindful of performance!):
+`kushi.inject/add-google-fonts!` accepts any number of args, each one a single map that represents a font-family and associated weights & styles. You can as many different families as you want in a single go (although be mindful of performance!):
 
 
 ```Clojure
+(ns myapp.core
+  (:require
+   [kushi.inject :refer [add-google-fonts!]]))
+
 (add-google-fonts! {:family "Playfair Display"
                     :styles {:normal [400 700] :italic [400 700]}}
                    {:family "Lato"
@@ -1214,7 +1235,7 @@ The example below is a typical use case which loads a stylesheet from Google Fon
 <br>
 
 ## Adding Font Resources
-You can use the `kushi.core/add-font-face` macro to load a local font from a file.
+You can use `kushi.core/at-rule` to load a local font from a file.
 
 This will add an `@font-face` block to the css file generated by kushi.
 
@@ -1223,42 +1244,18 @@ The `:src` entry must be a path (string), or vector of paths if you want to spec
 The path(s) must be relative to the location of the generated css file.
 
 You could also use a remote url to load a hosted font file.
-```Clojure
-(add-font-face {:font-family "FiraCodeRegular"
-                :font-weight "400"
-                :font-style "normal"
-                :src ["url(../fonts/FiraCode-Regular.woff)"]})
-```
 
-<br>
-<br>
-
-## Helpful Metadata
-Relative to using vanilla css or sass, Kushi will obviate the need to write your styles in a separate location and/or language. In turn, you will not need to worry about keeping selector names in css files synced with classnames in your markup code.
-
-During development builds, the `sx` macro will automatically attach a `data-sx` attribute to the DOM element. The value of this is the file name, line number, and column number of the source.
 ```Clojure
 (ns myapp.core
   (:require
-   [kushi.core :refer [sx]]))
+   [kushi.core :refer [at-rule]]))
 
-;; A component defined, for example, on line 170
-(defn my-button [text]
-  [:button
-   (sx :c--white
-       :bgi--none
-       :bgc--blue
-       :border-radius--5px
-       :cursor--pointer)
-     text])
+(at-rule "@font-face"
+  {:font-family "FiraCodeRegular"
+   :font-weight "400"
+   :font-style "normal"
+   :src ["url(../fonts/FiraCode-Regular.woff)"]})
 ```
-You would see something like this in the browser console, when inspecting an element rendered from this function:
-```html
-<div data-sx="myapp.core.cljs:172:4" class="_617784030">
-  Button Text
-</div>
-```
-If you would like to change the name of this attribute to something else (for example, `data-foo`), simply supply a `:data-attr-name` entry with a value of `:foo` or `"foo"` in your `kushi.edn` config map.
 
 <br>
 <br>
@@ -1334,14 +1331,12 @@ Assuming your are using something like Reagent, you can use the resulting `my-se
 
 ;; With all the options and additional styling
 [my-section
- (sx
-  'my-section-wrapper    ; Provides custom classname (instead of auto-generated).
-  :.xsmall               ; Font-size utility class.
-  :p--1rem               ; Padding inside component.
-  :b--1px:solid-black    ; Border around component.
-  {:-label "My Label"
-   :-label-attrs (sx :.huge :c--red)
-   :-body-attrs (sx :bgc--#efefef)})
+ (sx :.xsmall               ; Font-size utility class.
+     :p--1rem               ; Padding inside component.
+     :b--1px:solid-black    ; Border around component.
+     {:-label "My Label"
+      :-label-attrs (sx :.huge :c--red)
+      :-body-attrs (sx :bgc--#efefef)})
  [:p "Child one"]
  [:p "Child two"]]
 
@@ -1366,8 +1361,7 @@ The `my-section` function below would result in the exact same component as the 
         {:keys [label label-attrs body-attrs]} opts]
     [:section
      attrs
-     (when label
-       [:div label-attrs label])
+     (when label [:div label-attrs label])
      (into [:div body-attrs] children)]))
 ```
 
