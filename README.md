@@ -73,20 +73,27 @@
 <br>
 
 ## Introduction
-Kushi provides a comprehensive solution for creating and evolving web-based UI projects in ClojureScript.
+Kushi provides a comprehensive solution for creating and evolving web-based UI
+projects in ClojureScript.
 
-The following features work in concert, making it easy to roll your own design system:
+The following features work in concert, making it easy to roll your own design
+system:
 - A set of professionally designed, themeable, headless UI components
 - Solid foundation of hand-tuned global design tokens
 - Functional styling engine
 - Configurable theming
 
-Usage of Kushi's design system and component library is completly optional. You can just use the styling engine as a pure ClojureScript alternative to mainstream JS solutions such as Tailwind, Emotion, etc.
+Usage of Kushi's design system and component library is completly optional. You
+can just use the styling engine as a pure ClojureScript alternative to
+mainstream JS solutions such as Tailwind, Emotion, etc.
 
 <br>
 
 ## Project status
-Current version is pre-release intended for early adopters and anyone who would like to provide feedback. New 1.0 alphas will be released frequently, while I continue to make improvements/changes/additions. Working towards a stable 1.0 release by end of 2024 or Q1 of 2025.
+Current version is pre-release intended for early adopters and anyone who would
+like to provide feedback. New 1.0 alphas will be released frequently, while I
+continue to make improvements/changes/additions. Working towards a stable 1.0
+release by end of 2024 or Q1 of 2025.
 
 
 Please report anything unexpected on GitHub Issues.
@@ -96,18 +103,30 @@ Please report anything unexpected on GitHub Issues.
 ## Setup and Usage
 [![Clojars Project](https://img.shields.io/clojars/v/design.kushi/kushi.svg)](https://clojars.org/design.kushi/kushi)
 
-Usage with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs) is currently recommended.
+Usage with [Reagent](https://reagent-project.github.io/) +
+[Shadow-CLJS](https://github.com/thheller/shadow-cljs) is currently recommended.
 
-Please check out [Kushi Quickstart](https://github.com/kushidesign/kushi-quickstart) for a well commented, feature-complete minimal project template. This is probably the easiest way to get started with Kushi.
+Please check out
+[Kushi Quickstart](https://github.com/kushidesign/kushi-quickstart) for a well
+commented, feature-complete minimal project template. This is probably the
+easiest way to get started with Kushi.
 
-<!--[Checkout interactive playground of pre-built headless UI components from the `kushi.ui` namespace](https://kushidesign.github.io/kushi/public/index.html).-->
+[Checkout interactive playground of pre-built headless UI components](https://kushidesign.github.io/kushi/public/index.html).-->
 <br>
 
 
 <!--Intro section for ui lib vs user guide -->
 
 ## Build System basics
-From version 1.0.0.a.23, Kushi has adopted a modified version of the build-system used by [`shadow-css`](https://github.com/thheller/shadow-css). This represents a transition away from Kushi's initial approach of using the side-effecting `sx` macro to generate an html attributes map with a hashed classname and then producing all relevant css via a `shadow-cljs` build hook. Using the build mechanics of `shadow-css` makes Kushi's incremental build times much faster, as it can now leveraging the caching features of `shadow-cljs`, which were previously unavailable due to the side-effecting macros necessitating the use of `cache-blockers` in `shadow-cljs`.
+From version 1.0.0.a.23, Kushi has adopted a modified version of the
+build-system used by [`shadow-css`](https://github.com/thheller/shadow-css).
+This represents a transition away from Kushi's initial approach of using the
+side-effecting `sx` macro to generate an html attributes map with a hashed
+classname and then producing all relevant css via a `shadow-cljs` build hook.
+Using the build mechanics of `shadow-css` makes Kushi's incremental build times
+much faster, as it can now leveraging the caching features of `shadow-cljs`,
+which were previously unavailable due to the side-effecting macros necessitating
+the use of `cache-blockers` in `shadow-cljs`.
 
 <br>
 
@@ -115,7 +134,10 @@ From version 1.0.0.a.23, Kushi has adopted a modified version of the build-syste
 
 ### Basic usage of the `css` macro
 
-Styles are co-located at the element level. You don't need to think about choosing an appropriate classname, as it is generated automatically. The macro `kushi.core/css` takes any number of styles:
+Styles are co-located at the element level. You don't need to think about
+choosing an appropriate classname, as it is generated automatically. The macro
+`kushi.core/css` takes any number of styles:
+
 ```Clojure
 (ns myns.core
   (:require
@@ -129,10 +151,15 @@ Styles are co-located at the element level. You don't need to think about choosi
 
 ```
 
-As you can see in the above example, Kushi promotes a simple tokenized-keyword-based shorthand grammar which shadows standard CSS. This approach is similar solutions such as Tachyons and Tailwind, but much more helpful in learning actual CSS, and much more intuitive if you are an existing CSS expert.
+As you can see in the above example, Kushi promotes a simple
+tokenized-keyword-based shorthand grammar which shadows standard CSS. This
+approach is similar solutions such as Tachyons and Tailwind, but much more
+helpful in learning actual CSS, and much more intuitive if you are an existing
+CSS expert.
 
 
-In the example above, the `css` macro would expand to the following (shown in context):
+In the example above, the `css` macro would expand to the following (shown in
+context):
 
 ```Clojure
 (defn my-component []
@@ -149,9 +176,11 @@ When your build finishes, the following css will be written to disk:
   font-size: 18px;
 }
 ```
-Check out the [Styles as tokenized keywords](#styles-as-tokenized-keywords) section for more details on Kushi's shorthand grammar.
+Check out the [Styles as tokenized keywords](#styles-as-tokenized-keywords)
+section for more details on Kushi's shorthand grammar.
 
-Note that the shorthand grammar is totally optional - you can also write these tokenized keywords with fully hydrated props and values.
+Note that the shorthand grammar is totally optional - you can also write these
+tokenized keywords with fully hydrated props and values.
 ```Clojure
 (defn my-component []
  [:div
@@ -160,13 +189,17 @@ Note that the shorthand grammar is totally optional - you can also write these t
                :font-size--18px)}])
 ```
 
-If you have an aversion to the tokenized keyword approach, you can also just use a map - check out the [Using maps](#using-maps) section. 
+If you have an aversion to the tokenized keyword approach, you can also just use
+a map - check out the [Using maps](#using-maps) section. 
 
 <br>
 
 ### Supplying additional classes to the `css` macro
 
-You can supply additional classes as needed. These classes might be shared classes that you have defined, utility classes that ship with Kushi, or classes from 3rd party libraries. They must take the form of a keyword prefixed with a dot: 
+You can supply additional classes as needed. These classes might be shared
+classes that you have defined, utility classes that ship with Kushi, or classes
+from 3rd party libraries. They must take the form of a keyword prefixed with a
+dot: 
 
 ```Clojure
 (defn my-component []
@@ -186,7 +219,8 @@ The above call to `css` would expand to the following class string:
 
 ### Supplying dynamic classes to the `css` macro
 
-If you want to supply classes conditionally, based on runtime logic, you can do so like this:
+If you want to supply classes conditionally, based on runtime logic, you can do
+so like this:
 
 ```Clojure
 (defn my-component [font-size-class]
@@ -255,9 +289,13 @@ You can also define more than one class using `css` and apply one conditionally:
 <br>
 
 ### Using css custom properties (aka css variables) with the `css` macro.
-In the tradition of Sass and Less, Kushi uses a leading `$` syntax for css custom properties
+In the tradition of Sass and Less, Kushi uses a leading `$` syntax for css
+custom properties
 
-The example below uses `:c--$red-500`, which will set the `color` property to `var(--red-500)`. In this case, `var(--red-500)` is a global variable that is predefined within the design token system that ships with Kushi.
+The example below uses `:c--$red-500`, which will set the `color` property to
+`var(--red-500)`. In this case, `var(--red-500)` is a global variable that is
+predefined within the design token system that ships with Kushi.
+
 ```Clojure
 (defn my-component []
  [:div
@@ -270,7 +308,11 @@ The example below uses `:c--$red-500`, which will set the `color` property to `v
 <br>
 
 ### Supplying dynamic values for individual css properties with the `css` macro.
-If you want to supply dynamic values for individual css properties, you can utilize the `kushi.core/css-vars` macro, or the `kushi.core/css-vars-map` macro (if you are using React under the hood). This will create a "local" custom css property in the `style` attribute that you will then reference within your call to `css` using the `$` css variable syntax:
+If you want to supply dynamic values for individual css properties, you can
+utilize the `kushi.core/css-vars` macro, or the `kushi.core/css-vars-map` macro
+(if you are using React under the hood). This will create a "local" custom css
+property in the `style` attribute that you will then reference within your call
+to `css` using the `$` css variable syntax:
 
 ```Clojure
 (defn my-component [text-color]
@@ -286,7 +328,8 @@ If you want to supply dynamic values for individual css properties, you can util
 [my-component "red"]
 ```
 
-In the example above, the `css` macro, and the `css-vars` macro would expand to the following (shown in context):
+In the example above, the `css` macro, and the `css-vars` macro would expand to
+the following (shown in context):
 ```Clojure
 (defn my-component [text-color]
  [:div
@@ -304,7 +347,9 @@ When your build finishes, the following css will be written to disk:
 }
 ```
 
-If you are using Kushi with a React abstraction such as reagent, you will probably want use the `kushi.core/css-vars-map` macro instead, which would expand to this:
+If you are using Kushi with a React abstraction such as reagent, you will
+probably want use the `kushi.core/css-vars-map` macro instead, which would
+expand to this:
 
 ```Clojure
 (defn my-component [text-color]
@@ -316,7 +361,11 @@ If you are using Kushi with a React abstraction such as reagent, you will probab
 <br>
 
 ### Reducing ceremony with the `sx` macro
-If you don't need to use dynamic values as in the example above, and you don't need to supply html attributes other than `class`, you can use use the `kushi.core/sx` macro to style elements and reduce some of the boilerplate. It works the same as the `css` macro, but returns a map with a `:class` entry instead of a string:
+If you don't need to use dynamic values as in the example above, and you don't
+need to supply html attributes other than `class`, you can use use the
+`kushi.core/sx` macro to style elements and reduce some of the boilerplate.
+It works the same as the `css` macro, but returns a map with a `:class` entry
+instead of a string:
 
 ```Clojure
 (ns myns.core
@@ -342,7 +391,8 @@ Which would expand to the following (shown in context):
 <br>
 
 ### Modifier syntax: pseudo-classes 
-Kushi offers a modifier syntax for conveniently describing things like pseudo-classes:
+Kushi offers a modifier syntax for conveniently describing things like
+pseudo-classes:
 
 ```Clojure
 (css :c--red
@@ -364,7 +414,8 @@ The above example produces the following css:
 <br>
 
 ### Modifier syntax: nested selectors
-You can use the same modifier syntax for nested selectors. Underscore chars `_` are transformed to a spaces:
+You can use the same modifier syntax for nested selectors. Underscore chars `_`
+are transformed to a spaces:
 
 ```Clojure
 (css :c--red
@@ -408,7 +459,8 @@ The above example produces the following css:
   }
 }
 ```
-See the [Working with media queries](#working-with-media-queries) section for more details on media queries and Kushi's default breakpoint scale.
+See the [Working with media queries](#working-with-media-queries) section for
+more details on media queries and Kushi's default breakpoint scale.
 
 <br>
 
@@ -428,13 +480,16 @@ The above example produces the following css:
   }
 }
 ```
-See the [Working with dark-mode](#working-with-dark-mode) section for more details on media queries and Kushi's built-in functionality for dark-mode.
+See the [Working with dark-mode](#working-with-dark-mode) section for more
+details on media queries and Kushi's built-in functionality for dark-mode.
 
 <br>
 
 ### Modifier syntax: stacking
 
-These modifiers are designed to be "stacked". They must be separated with a colon and the order must be media-query (optional), dark-mode (optional), then any sequence of selectors and pseudo-class/pseudo-elements:
+These modifiers are designed to be "stacked". They must be separated with a
+colon and the order must be media-query (optional), dark-mode (optional), then
+ any sequence of selectors and pseudo-class/pseudo-elements:
 
 ```Clojure
 (css :c--black
@@ -478,7 +533,8 @@ The above example produces the following css:
 <br>
 
 ### Using maps 
-If Kushi's tokenized keyword syntax isn't your speed, your can also just use maps to describe your all your styles:
+If Kushi's tokenized keyword syntax isn't your speed, your can also just use
+maps to describe your all your styles:
 
 ```Clojure
 (css {:color      :red
@@ -487,7 +543,8 @@ If Kushi's tokenized keyword syntax isn't your speed, your can also just use map
 ```
 
 
-You can also mix in maps with tokenized keywords. Maps are very useful when you want to use nesting to avoid repetition:
+You can also mix in maps with tokenized keywords. Maps are very useful when you
+want to use nesting to avoid repetition:
 
 ```Clojure
 (css :c--red
@@ -543,7 +600,9 @@ The above example produces the following css:
 This is a more complex example taken from a working codebase.
 There is a single map entry that defines styles for some direct descendant
 elements in a sidenav. The styles only apply, however, if the element targeted
-by the selector has an ancestor that matches `"nav[data-foo-bar-sidenav][aria-expanded=\"true\"]`. This works because of the appended `&` character:
+by the selector has an ancestor that matches
+`"nav[data-foo-bar-sidenav][aria-expanded=\"true\"]`.
+This works because of the appended `&` character:
 
 ```Clojure
 (css {"nav[data-foo-bar-sidenav][aria-expanded=\"true\"] &"
@@ -588,7 +647,10 @@ When constructing a value using css function syntax:
 ``` -->
 
 ### CSS Shorthand Properties
-[CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties) are a fundamental feature of CSS. They are properties that let you set the values of multiple other CSS properties simultaneously. With Kushi, you can write them like this:
+[CSS shorthand properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties)
+are a fundamental feature of CSS. They are properties that let you set the
+values of multiple other CSS properties simultaneously. With Kushi, you can
+write them like this:
 
 ```Clojure
 ;; with tokenized keyword
@@ -610,7 +672,9 @@ border: 1px solid black;
 <br>
 
 ### CSS Value Lists
-In css, sometimes multiple values are seperated by commas to indicate they are ordered, or that there are ordered alternatives. With Kushi, you can write them like this:
+In css, sometimes multiple values are seperated by commas to indicate they are
+ordered, or that there are ordered alternatives. With Kushi, you can write them
+like this:
 ```Clojure
 (css :ff--FiraCodeRegular|Consolas|monospace)
 ```
@@ -618,7 +682,8 @@ The above will resolve to the following css declaration:
 ```css
 font-family: FiraCodeRegular, Consolas, monospace;
 ```
-The example below uses a list of css shorthand values in order to render multiple text-shadows in different colors:
+The example below uses a list of css shorthand values in order to render
+multiple text-shadows in different colors:
 ```Clojure
 (css :text-shadow--5px:5px:10px:red|-5px:-5px:10px:blue)
 ```
@@ -633,9 +698,12 @@ text-shadow: 5px 5px 10px red, -5px -5px 10px blue;
 ## Shared Styles
 `kushi.core/defcss` is intended for the creation of shared styles.
 
-These shared styles should be defined in a dedicated namespace, or set of dedicated namespaces, and required once in your core or main ns.
+These shared styles should be defined in a dedicated namespace, or set of
+dedicated namespaces, and required once in your core or main ns.
 
-`defcss` takes a selector (string) as the first argument, followed by any number of style arguments. Any style argument that is valid for `css` macro is valid for `defcss`.
+`defcss` takes a selector (string) as the first argument, followed by any number
+of style arguments. Any style argument that is valid for `css` macro is valid
+for `defcss`.
 
 ```Clojure
 (ns myapp.shared-styles
@@ -654,7 +722,7 @@ These shared styles should be defined in a dedicated namespace, or set of dedica
   :mix-blend-mode--darken)
 
 
-;; Tokenized-keywords + usage of a map for css-fn syntax
+;; Tokenized-keywords + usage of a map for css function syntax
 (defcss ".headline2"
   :top--0
   :left--0
@@ -676,7 +744,9 @@ These shared styles should be defined in a dedicated namespace, or set of dedica
    :c                 "rgba(155 155 155 / 0.8)"})
 ```
 
-By authoring your shared styles in a dedicated ns (or namespaces), you only need to require once in your main or core ns, and all the styles from that ns will be available globally.
+By authoring your shared styles in a dedicated ns (or namespaces), you only need
+to require once in your main or core ns, and all the styles from that ns will be
+available globally.
 ```Clojure
 (ns myapp.core
   (:require
@@ -708,7 +778,8 @@ By authoring your shared styles in a dedicated ns (or namespaces), you only need
   :b--1px:solid:pink)
 ```
 
-In the example above, the `:.headline` class is one of several predefined classes that ships with kushi. -->
+In the example above, the `:.headline` class is one of several predefined
+classes that ships with kushi. -->
 
 <br>
 
@@ -796,15 +867,18 @@ In the example above, the `:.headline` class is one of several predefined classe
 ```
 <!-- TODO add debug grid helpers to above list -->
 
-Checkout <a href="https://github.com/kushidesign/kushi/blob/main/src/kushi/ui/utility.cljc" target="_blank">this source file</a>
+Checkout
+<a href="https://github.com/kushidesign/kushi/blob/main/src/kushi/ui/utility.cljc"
+   target="_blank">this source file</a>
  for a complete reference of all current pre-defined utility classes.
 <br>
 
 <br>
 
 ## Styles as tokenized keywords
-With the `css`, `sx`, and `defcss` macros, the simplest and most convenient way to describe styles is the usage of tokenized keywords.
-These keywords contain a `--`, and represent a css prop and value pair (split on `--`).
+With the `css`, `sx`, and `defcss` macros, the simplest and most convenient way
+to describe styles is the usage of tokenized keywords. These keywords contain a
+`--`, and represent a css prop and value pair (split on `--`).
 
 
 ```Clojure
@@ -864,7 +938,9 @@ This shorthand grammer is available for the most commonly used props:
 ```
 
 <!-- TODO maybe just link to source? -->
-See the complete list of supported css properties <a href="https://github.com/kushidesign/kushi/blob/main/docs/kushi-shorthand-reference.md" target="_blank">here</a>.
+See the complete list of supported css properties
+<a href="https://github.com/kushidesign/kushi/blob/main/docs/kushi-shorthand-reference.md"
+target="_blank">here</a>.
 
 Shorthand grammer extends to cover enumerated values:
 ```Clojure
@@ -890,7 +966,9 @@ Shorthand grammer extends to cover enumerated values:
 :ai--b   ; align-items--baseline
 ```
 
-Note that the enumerated value `none`, as well as global properties such as `inherit`, `initial`, `revert`, `unset`, etc. are intentially not supported with shorthand syntax:
+Note that the enumerated value `none`, as well as global properties such as
+`inherit`, `initial`, `revert`, `unset`, etc. are intentially not supported with
+shorthand syntax:
 
 ```Clojure
 ;; This will NOT work
@@ -900,12 +978,14 @@ Note that the enumerated value `none`, as well as global properties such as `inh
 :td--revert ; => text-decoration: revert;
 ```
 <!-- TODO maybe just link to source? -->
-See the complete list of supported enum values [here](https://github.com/kushidesign/kushi/blob/main/doc/kushi-shorthand-reference.md).
+See the complete list of supported enum values
+[here](https://github.com/kushidesign/kushi/blob/main/doc/kushi-shorthand-reference.md).
 
 <br>
 
 <!-- ### Nested syntax
-You can also you the 2-element vector form to "nest" styles, which is really just a way to dry up code and avoid repetition of the left half of the style:
+You can also you the 2-element vector form to "nest" styles, which is really
+just a way to dry up code and avoid repetition of the left half of the style:
 ```Clojure
 (sx ["has-ancestor(nav[data-foo-bar-sidenav][aria-expanded=\"true\"])"
      {:>.sidenav-menu-icon:d  :none
@@ -946,7 +1026,8 @@ The above would result in the following css:
      :lg:fs--1.75rem
      :xl:fs--2rem)]
 ```
-As in the example above, you can use preceding modifiers to set different values for a property at different breakpoints.
+As in the example above, you can use preceding modifiers to set different values
+for a property at different breakpoints.
 
 Kushi ships with the following, industry-standard, mobile-first breakpoint scale:
 ```Clojure
@@ -957,19 +1038,25 @@ Kushi ships with the following, industry-standard, mobile-first breakpoint scale
  :xl {:min-width :1280px}
  :xxl {:min-width :1536px}]
 ```
-Both the names and values can be customized via supplying a kwargs vector (not a map) as the `:media` entry in your `kushi.edn` config file. Because CSS Media Queries must be explicity ordered, this scale must be written as a vector of kwargs. See [Configuration Options](#configuration-options).
+Both the names and values can be customized via supplying a kwargs vector (not a
+map) as the `:media` entry in your `kushi.edn` config file. Because CSS Media
+Queries must be explicity ordered, this scale must be written as a vector of
+kwargs. See [Configuration Options](#configuration-options).
 
 Below is an example of a scale that is desktop-first and uses different names.<br>
-Note that in the case of desktop-first (`max-width`), the order is reversed (relative to mobile-first / `min-width`).
+Note that in the case of desktop-first (`max-width`), the order is reversed
+(relative to mobile-first / `min-width`).
 ```Clojure
 [:desktop {:max-width :1280px}
  :tablet {:max-width :1024px}
  :mobile {:max-width :768px}
  :small {:max-width :640px}]
 ```
-Any media-query modifier that you use must correspond to a key in the breakpoint map.
+Any media-query modifier that you use must correspond to a key in the breakpoint
+map.
 
-When "stacking" other modifiers (such as psuedo-classes) in front of css props, the media queries must always come first.
+When "stacking" other modifiers (such as psuedo-classes) in front of css props,
+the media queries must always come first.
 <!-- TODO: Provide example of such stacking -->
 
 <br>
@@ -1028,7 +1115,10 @@ CSS resulting from the above example:
 ```
 
 ### Parents and ancestors
-Kushi provides 2 fake css pseudo-classes in the form of `has-parent()` and `has-ancestor()`. With these, you to achieve further specificity with regards to parents and ancestors of the element that you are styling. This is useful when you want to use styles that might change when a class is toggled or changed further up in the DOM.
+Kushi provides 2 fake css pseudo-classes in the form of `has-parent()` and
+`has-ancestor()`. With these, you to achieve further specificity with regards to parents and ancestors of the element that you are styling. This is useful when
+you want to use styles that might change when a class is toggled or changed
+further up in the DOM.
 
 
 ```Clojure
@@ -1047,7 +1137,10 @@ section.dark > .myns_core__L7C11 {color: white}
 ```
 
 ### Targeting dark mode
-You can use the `dark` modifier to define styles that are scoped to the dark themes. This is sugar for `has-ancestor(.dark)`. It is assumed there will potentially be a class of `.dark` on an ancestor element in the DOM. This would typically be the `<body>` or the target element for the app.
+You can use the `dark` modifier to define styles that are scoped to the dark
+themes. This is sugar for `has-ancestor(.dark)`. It is assumed there will
+potentially be a class of `.dark` on an ancestor element in the DOM. This would
+typically be the `<body>` or the target element for the app.
 
 ```Clojure
 (defn my-button [text]
@@ -1065,7 +1158,8 @@ The above would result in the following css:
 .dark .myns_core__L7C11 .some-other-class {color: white}
 ```
 
-You can use `kushi.ui.core/lightswitch!` to toggle a `.dark` class on the body, or a specific element of your choice.
+You can use `kushi.ui.core/lightswitch!` to toggle a `.dark` class on the body,
+or a specific element of your choice.
 ```Clojure
 (ns myns.core
   (:require [kushi.ui.core :refer [lightswitch!]]))
@@ -1084,7 +1178,10 @@ You can use `kushi.ui.core/lightswitch!` to toggle a `.dark` class on the body, 
 <br>
 
 <!-- ## Transparent Colors
-Kushi offers a special syntax for adding transparency to colors. This will work with any named css colors, hex colors, or any color that is part of Kushi's built-in color scale (click on the "Color" section in sidemenu of the [interactive docs page](kushi.design) to view color scale).
+Kushi offers a special syntax for adding transparency to colors. This will work
+with any named css colors, hex colors, or any color that is part of Kushi's
+built-in color scale (click on the "Color" section in sidemenu of the
+[interactive docs page](kushi.design) to view color scale).
 
 ```Clojure
 ;; With a css named color ...
@@ -1098,7 +1195,9 @@ Kushi offers a special syntax for adding transparency to colors. This will work 
 ``` -->
 
 ## Selector Prefixing Options
-You can narrow the specificity of you selectors by globally prepending a class or id (or any valid selector) of an ancestor element. Typically this would be something like the id of your "app" container.
+You can narrow the specificity of you selectors by globally prepending a class
+or id (or any valid selector) of an ancestor element. Typically this would be
+something like the id of your "app" container.
 
 ```Clojure
 ;; In your kushi.edn map ...
@@ -1116,12 +1215,23 @@ You can narrow the specificity of you selectors by globally prepending a class o
 
 <br>
 
-## Defining Animations
+## Defining CSS at-rules
+[at-rules](https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule) are CSS 
+statements that instruct CSS how to behave. You can define any at-rule with 
+ `kushi.core/at-rule`.
 
-Use `kushi.core/defcss-keyframes` to define css keyframes.
+Note - `@media` rules should not be created with `at-rule`. Instead they are
+defined within `defcss`, `css`, and `sx`. Refer to the
+[Media queries](#media-queries) section for more details.
+
+<br>
+
+### Defining @keyframes animations
+
+Use `kushi.core/at-rule` to define css @keyframes animations.
 ```Clojure
 ;; This will twirl something on its y-axis
-(defcss-keyframes "yspinner"
+(at-rule "@keyframes yspinner"
   [:0% {:transform "rotateY(0deg)"}]
   [:100% {:transform "rotateY(360deg)"}])
 
@@ -1134,13 +1244,44 @@ Use `kushi.core/defcss-keyframes` to define css keyframes.
 ```
 <br>
 
+
+### Adding Font Resources with @font-face
+You can use `kushi.core/at-rule` to load a local font from a file.
+
+This will add an `@font-face` block to the css file generated by kushi.
+
+The `:src` entry must be a path (string), or vector of paths if you want to
+specify multiple urls.
+
+The path(s) must be relative to the location of the generated css file.
+
+You could also use a remote url to load a hosted font file.
+
+```Clojure
+(ns myapp.core
+  (:require
+   [kushi.core :refer [at-rule]]))
+
+(at-rule "@font-face"
+  {:font-family "FiraCodeRegular"
+   :font-weight "400"
+   :font-style "normal"
+   :src ["url(../fonts/FiraCode-Regular.woff)"]})
+```
+
+<br>
+
 <!--
 ## Using Scales
-Kushi ships with two different predefined scaling systems, which provide a scale of values for `width`, `font-size`, `padding`, `margin`, and `border-widths`.
+Kushi ships with two different predefined scaling systems, which provide a scale
+of values for `width`, `font-size`, `padding`, `margin`, and `border-widths`.
 
-These two systems shadow the scales provided by [Tachyons](http://tachyons.io/docs/typography/scale/) and [Tailwindcss](https://tailwindcss.com/docs/font-size).
+These two systems shadow the scales provided by
+[Tachyons](http://tachyons.io/docs/typography/scale/) and
+ [Tailwindcss](https://tailwindcss.com/docs/font-size).
 
-You must explicitly opt-in to use one of the scales in your `kushi.edn` config file:
+You must explicitly opt-in to use one of the scales in your `kushi.edn` config
+file:
 ```Clojure
 {...
  :scaling-system :tachyons
@@ -1153,7 +1294,8 @@ You must explicitly opt-in to use one of the scales in your `kushi.edn` config f
  ...}
 ```
 
-To use values from these scales, supply a value affixed with an `*` to one of the applicable css properties:
+To use values from these scales, supply a value affixed with an `*` to one of
+the applicable css properties:
 ```Clojure
 (sx :w--1*
     :bw--2*
@@ -1169,15 +1311,18 @@ To use values from these scales, supply a value affixed with an `*` to one of th
     :padding--.5rem
     :margin--1rem)
 ```
-View all the scale values [here](https://github.com/kushidesign/kushi/blob/main/src/kushi/scales.cljc).
+View all the scale values
+[here](https://github.com/kushidesign/kushi/blob/main/src/kushi/scales.cljc).
 <br>
 -->
 
 ## Injecting Stylesheets
-You can also use `kushi.inject/inject-stylesheet` to inject a stylesheet, or a third-party style library.
-This is more of an edge case, as you would typically just do this with a `<link>` in your index.html.
-However, if your project uses a clj file to generate the contents of your `<head>` at build time,
-it may be handy to use this during development to inject new stylesheets without restarting your build.
+You can also use `kushi.inject/inject-stylesheet` to inject a stylesheet, or a
+third-party style library. This is more of an edge case, as you would typically
+just do this with a `<link>` in your index.html. However, if your project uses a
+clj file to generate the contents of your `<head>` at build time, it may be
+ handy to use this during development to inject new stylesheets without
+ restarting your build.
 
 ```Clojure
 (ns myapp.core
@@ -1188,11 +1333,14 @@ it may be handy to use this during development to inject new stylesheets without
                      :href "css/my-global-styles.css"})
 ```
 ### Loading Google Fonts
-A more common use case for injecting a stylesheet would the loading of webfonts via stylesheets, ala Google Fonts, or another similar webfonts service.
+A more common use case for injecting a stylesheet would the loading of webfonts
+via stylesheets, ala Google Fonts, or another similar webfonts service.
 
-You can leverage `kushi.inject/add-google-fonts!` to simplify the process of adding Google fonts to your project.
+You can leverage `kushi.inject/add-google-fonts!` to simplify the process of
+adding Google fonts to your project.
 
-The example below is a typical use case which loads a stylesheet from Google Fonts.
+The example below is a typical use case which loads a stylesheet from Google
+Fonts.
 ```Clojure
 (ns myapp.core
   (:require
@@ -1217,7 +1365,10 @@ The example below is a typical use case which loads a stylesheet from Google Fon
 ;;                     :href "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap"})
 
 ```
-`kushi.inject/add-google-fonts!` accepts any number of args, each one a single map that represents a font-family and associated weights & styles. You can as many different families as you want in a single go (although be mindful of performance!):
+`kushi.inject/add-google-fonts!` accepts any number of args, each one a single
+map that represents a font-family and associated weights & styles. You can as
+many different families as you want in a single go (although be mindful of
+performance!):
 
 
 ```Clojure
@@ -1234,31 +1385,6 @@ The example below is a typical use case which loads a stylesheet from Google Fon
 ```
 <br>
 
-## Adding Font Resources
-You can use `kushi.core/at-rule` to load a local font from a file.
-
-This will add an `@font-face` block to the css file generated by kushi.
-
-The `:src` entry must be a path (string), or vector of paths if you want to specify multiple urls.
-
-The path(s) must be relative to the location of the generated css file.
-
-You could also use a remote url to load a hosted font file.
-
-```Clojure
-(ns myapp.core
-  (:require
-   [kushi.core :refer [at-rule]]))
-
-(at-rule "@font-face"
-  {:font-family "FiraCodeRegular"
-   :font-weight "400"
-   :font-style "normal"
-   :src ["url(../fonts/FiraCode-Regular.woff)"]})
-```
-
-<br>
-<br>
 
 ## Configuration Options
 Various options are configurable via a required `kushi.edn` file.
@@ -1267,14 +1393,17 @@ This file must live in your project's root directory.
 
 The only required entry in this map is `:css-dir`.
 
-For a well commented starting point to build your own config, [the sample `kushi.edn` config from the Kushi Quickstart template](https://github.com/kushidesign/kushi-quickstart/blob/main/kushi.edn) (similar to below) is recommended.
+For a well commented starting point to build your own config,
+[the sample `kushi.edn` config from the Kushi Quickstart template](https://github.com/kushidesign/kushi-quickstart/blob/main/kushi.edn) (similar to below) is recommended.
 
 <br>
 <br>
 
 
 ## Actionable Warnings
-It is highly recommended to keep the terminal (that is running the `cljs-shadow` build process) visible so that you can catch warnings for malformed arguments to Kushi functions.
+It is highly recommended to keep the terminal (that is running the `cljs-shadow`
+build process) visible so that you can catch warnings for malformed arguments to
+Kushi functions.
 
 Given the following:
 ```Clojure
@@ -1290,13 +1419,15 @@ Given the following:
 
 You would receive warnings about invalid args in the terminal:
 
-<div align="center"><img src="docs/public/graphics/kushi-sx-bad-args-warnings.png" width="654px"/></div>
+<div align="center"><img src="docs/public/graphics/kushi-sx-bad-args-warnings.png"
+ width="654px"/></div>
 
 <br>
 <br>
 
 ## Defining Components
-Below is a contrived example of creating a reusable, stateless, and composable component using `kushi.ui.core/defcom`.
+Below is a contrived example of creating a reusable, stateless, and composable
+component using `kushi.ui.core/defcom`.
 
 
 ```Clojure
@@ -1314,13 +1445,23 @@ Below is a contrived example of creating a reusable, stateless, and composable c
      [:div body-attrs &children]]))
 ```
 
-`defcom` is a macro that returns a component rendering function which accepts an optional attributes map, plus any number of children. The signature at the call site mirrros hiccup itself.
+`defcom` is a macro that returns a component rendering function which accepts an
+optional attributes map, plus any number of children. The signature at the call
+site mirrros hiccup itself.
 
-Under the hood, `defcom` pulls out any keys in attr map that start with `:-` and puts them in a separate `opts` map. This allows passing in various custom options within the attributes map that will not clash with existing html attributes. This opts map can be referenced in the `defcom` body with the `&opts` binding. `&attrs` and `&children` are also available. This ampersand-leading naming convention takes its cue from the special `&form` and `&env` bindings used by Clojure's own `defmacro`.
+Under the hood, `defcom` pulls out any keys in attr map that start with `:-` and
+puts them in a separate `opts` map. This allows passing in various custom
+options within the attributes map that will not clash with existing html
+attributes. This opts map can be referenced in the `defcom` body with the
+`&opts` binding. `&attrs` and `&children` are also available. This
+ampersand-leading naming convention takes its cue from the special `&form` and
+`&env` bindings used by Clojure's own `defmacro`.
 
-The example above also uses `kushi.core/merge-attrs` to carefully merge attribute maps that are created with `kushi.core/sx`.
+The example above also uses `kushi.core/merge-attrs` to carefully merge
+attribute maps that are created with `kushi.core/sx`.
 
-Assuming your are using something like Reagent, you can use the resulting `my-section` component (from the above example) in your application code like so:
+Assuming your are using something like Reagent, you can use the resulting
+`my-section` component (from the above example) in your application code like so:
 
 ```Clojure
 ;; Basic, no label
@@ -1345,9 +1486,15 @@ Assuming your are using something like Reagent, you can use the resulting `my-se
 
 ### Manually defining complex components
 
- If, for some reason, you don't want use the `defcom` to define your complex components, you can use the same underlying pattern that `defcom` abstracts. This component definition pattern relies on using the `kushi.ui.core/opts+children` helper fn. It optionally makes use of `kushi.core/merge-attrs` to enable decoration, and also uses the `(into [:div ] ...)` for the parent node of the `children`.
+ If, for some reason, you don't want use the `defcom` to define your complex
+ components, you can use the same underlying pattern that `defcom` abstracts.
+ This component definition pattern relies on using the
+ `kushi.ui.core/opts+children` helper fn. It optionally makes use of
+ `kushi.core/merge-attrs` to enable decoration, and also uses the
+ `(into [:div ] ...)` for the parent node of the `children`.
 
-The `my-section` function below would result in the exact same component as the previous example (that used `defmacro`).
+The `my-section` function below would result in the exact same component as the
+previous example (that used `defmacro`).
 
 ```Clojure
 (ns myapp.core
@@ -1368,10 +1515,13 @@ The `my-section` function below would result in the exact same component as the 
 The example above assumes the following:
 
 - The args list in the function definition is variadic
-- The optional attributes map may contain the custom attributes `:-label`, `:-label-attrs`, `:-body-attrs`.
+- The optional attributes map may contain the custom attributes `:-label`,
+`:-label-attrs`, `:-body-attrs`.
 - The values of `:-label-attrs` and `:-body-attrs` are html attribute maps.
 
-The helper function `kushi.ui.core/opts+children` will pull any keys prefixed with `:-` out of the attributes map and into a user `opts` map. `opts+children` always returns a vector in the form of `[user-opts attr child & more-children]`.
+The helper function `kushi.ui.core/opts+children` will pull any keys prefixed
+with `:-` out of the attributes map and into a user `opts` map. `opts+children`
+always returns a vector in the form of `[user-opts attr child & more-children]`.
 
 <br>
 <br>
@@ -1383,22 +1533,34 @@ Detailed docs on theming coming soon...
 <br>
 
 ## Kushi Playground
-The `kushi.playground` namespace exists to enable the generation of a clean, interactive documentation site for all the UI in your project. You can customize this with all your own custom components, branding, typography, colors and more. Playground can be thought of as a lighter weight, ClojureScript-specific alternative to something like Storybook. Kushi's own UI documentation site at <a href="https://kushi.design">kushi.design</a> is built using Playground.
+The `kushi.playground` namespace exists to enable the generation of a clean,
+interactive documentation site for all the UI in your project. You can customize
+this with all your own custom components, branding, typography, colors and more.
+Playground can be thought of as a lighter weight, ClojureScript-specific
+alternative to something like Storybook. Kushi's own UI documentation site at
+<a href="https://kushi.design">kushi.design</a> is built using Playground.
 
-Detailed documentation for this feature is coming soon. In the meantime, you can peruse the `docs` dir in this repo which is the setup for the Kushi UI documentation site linked above.
+Detailed documentation for this feature is coming soon. In the meantime, you can
+peruse the `docs` dir in this repo which is the setup for the Kushi UI
+documentation site linked above.
 
 <br> -->
 
 ## Usage with Build Tools
-Although Kushi is designed to be build-tool and framework agnostic, thus far it has only been used in production with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https://github.com/thheller/shadow-cljs).
+Although Kushi is designed to be build-tool and framework agnostic, thus far it
+has only been used in production with
+[Reagent](https://reagent-project.github.io/) +
+[Shadow-CLJS](https://github.com/thheller/shadow-cljs).
 
 ### shadow-cljs
-See the [kushi-quickstart](https://github.com/kushidesign/kushi-quickstart) template for a detailed example of using Kushi in a shadow-cljs project.
+See the [kushi-quickstart](https://github.com/kushidesign/kushi-quickstart)
+template for a detailed example of using Kushi in a shadow-cljs project.
 
 <br>
 
 ## Contributing
-Feel free to file issues or initiate discussion in <a href="https://github.com/kushidesign/kushi/issues" target="_blank">Issues</a>.
+Feel free to file issues or initiate discussion in
+<a href="https://github.com/kushidesign/kushi/issues" target="_blank">Issues</a>.
 
 
 <br>
