@@ -7,8 +7,6 @@
 <h5><a href="https://kushi.design" target="_blank"><strong>Explore Kushi UI Playground »</strong></a></h5>
 <h5><a href="https://github.com/kushidesign/kushi-quickstart" target="_blank"><strong>Kushi Quickstart »</strong></a></h5>
 
-
-
 <br>
 
 ## Features
@@ -103,7 +101,10 @@ Usage with [Reagent](https://reagent-project.github.io/) + [Shadow-CLJS](https:/
 
 Please check out [Kushi Quickstart](https://github.com/kushidesign/kushi-quickstart) for a well commented, feature-complete minimal project template. This is probably the easiest way to get started with Kushi.
 
-<!--[Checkout interactive playground of pre-built headless UI components from the `kushi.ui` namespace](https://kushidesign.github.io/kushi/public/index.html).-->
+Checkout the
+<a href="https://kushidesign.github.io/kushi/public/index.html" target="_blank">
+interactive playground</a> of pre-built headless UI components.
+
 <br>
 
 
