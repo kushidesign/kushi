@@ -1,3 +1,5 @@
+<p><sub>Many thanks to <a href="https://www.clojuriststogether.org/">Clojurists Together</a> for generously supporting this project!</sub></p>
+
 <br>
 
 # Kushi
