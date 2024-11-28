@@ -11,7 +11,8 @@
                         [expound "0.9.0"]
                         [markdown-to-hiccup/markdown-to-hiccup "0.6.2"]
                         [io.github.paintparty/bling "0.1.1"]
-                        [me.flowthing/pp "2024-01-04.60"]]
+                        [io.github.paintparty/fireworks "0.10.4"]
+                        [me.flowthing/pp "2024-01-04.60"] ]
   :repl-options        {:init-ns kushi.core}
   :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
                                     :sign-releases false}]])
