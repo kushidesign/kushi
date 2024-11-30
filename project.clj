@@ -10,9 +10,13 @@
                         [applied-science/js-interop "0.3.3"]
                         [expound "0.9.0"]
                         [markdown-to-hiccup/markdown-to-hiccup "0.6.2"]
-                        [io.github.paintparty/bling "0.1.1"]
+                        [io.github.paintparty/bling "0.4.2"]
                         [io.github.paintparty/fireworks "0.10.4"]
-                        [me.flowthing/pp "2024-01-04.60"] ]
+                        [me.flowthing/pp "2024-01-04.60"]
+                        [babashka/process "0.5.22"]
+                        ;; for testing & profiling
+                        #_[com.taoensso/tufte "2.6.3"]                
+                        ]
   :repl-options        {:init-ns kushi.core}
   :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
                                     :sign-releases false}]])
