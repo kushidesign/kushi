@@ -218,37 +218,41 @@
             "")
           req))
 
+(defn- tokens-css [req coll comment]
+  (when-let [tokens
+             (if (and release? (set? req))
+               (when (seq req)
+                 (->> coll
+                      (partition 2)
+                      (filter (fn [[k _]] (contains? req k)))
+                      (apply concat)
+                      (apply array-map)))
+               (apply array-map coll))]
+    (str (css-section-comment comment)
+         (kushi.css/css-rule* ":root" (list tokens) nil nil))))
+
 (defn- design-tokens-css
   "CSS for all the design tokens, or just a select few based on usage."
   [req {:keys [all-design-tokens]}] 
-  (when-let [tokens
-             (if (and release? (set? req))
-               (when (seq req)
-                 (->> all-design-tokens
-                      (partition 2)
-                      (filter (fn [[k _]] (contains? req k)))
-                      (apply concat)
-                      (apply array-map)))
-               (apply array-map all-design-tokens))]
-    (str (css-section-comment "Kushi design tokens")
-         (kushi.css/css-rule* ":root" (list tokens) nil nil))))
+  (tokens-css req all-design-tokens "Kushi design tokens"))
 
-;; TODO - get this working
-;; TODO - dry this up with above
 (defn- user-design-tokens-css
-  "CSS for all the design tokens, or just a select few based on usage."
+  "CSS for user all design tokens, or just a select few based on usage."
   [req {{{:keys [design-tokens]} :theme} :user-config}] 
-  (when-let [tokens
-             (if (and release? (set? req))
-               (when (seq req)
-                 (->> design-tokens
-                      (partition 2)
-                      (filter (fn [[k _]] (contains? req k)))
-                      (apply concat)
-                      (apply array-map)))
-               (apply array-map design-tokens))]
-    (str (css-section-comment "User design tokens")
-         (kushi.css/css-rule* ":root" (list tokens) nil nil))))
+  (tokens-css req design-tokens "User design tokens"))
+
+(defn- user-theming-classes-css
+  "CSS for user theming"
+  [req {{{:keys [ui]} :theme} :user-config}] 
+  (when-let [classes
+             (when (seq ui)
+               (->> ui
+                    (partition 2)
+                    (map (fn [[sel m]]
+                           (kushi.css/css-rule* sel (list m) nil nil)))))]
+    (str (css-section-comment "User theming classes")
+         "\n"
+         (str/join "\n" classes))))
 
 (defn emits
   #?(:clj
@@ -336,7 +340,8 @@
                  classpath-includes
                  utility-classes-css
                  design-tokens-css
-                ;;  user-design-tokens-css
+                 user-design-tokens-css
+                 user-theming-classes-css
                  ]
           :as chunk}]
       ;; (ff chunk)
@@ -347,35 +352,33 @@
                  (when-let [pre (:preflight-src build-state)]
                    (emitln sw pre))
 
-                 ;; NEW -----------------------------------
+                 ;; kushi design tokens ----------------------------------------
                  (some->> design-tokens-css (emitln sw))
 
-                 ;; TODO - Add theming design tokens
-                 
-                 ;; TODO - Kushi Animations
-                 
-                 ;; TODO - User Animations
-                 
-                 ;; /* kushi.ui component theming rules */
-                 
-                 ;; /* kushi.ui component theming rules (shared, via defclass or defclass-with-override) */
-                 
-                 ;; /* User-defined shared classes (via defclass) */
-                 
-                 ;; /* User styles generated from kushi.core/sx */
-                 
-                 ;; /* Kushi base utility classes, override versions */
-                 
-                 
+                 ;; user design tokens via user theme --------------------------
+                 (some->> user-design-tokens-css (emitln sw))
 
-                 (some->> utility-classes-css (emitln sw)))
-                 ;; NEW -----------------------------------
+                 ;; TODO - kushi animations (move from kushi utility classes) --
+
+                 ;; TODO - user animations (move from user utility classes) ----
+
+                 ;; kushi utility classes
+                 (some->> utility-classes-css (emitln sw))
+
+                 ;; TODO - kushi.ui component theming rules (what is this?) ----
+
+                 ;; TODO - user theming rules via [:theme :ui] -----------------
+                 (some->> user-theming-classes-css (emitln sw))
+
+                 ;; TODO - kushi.ui component theming rules
+                 ;;        (shared, via defclass or defclass-with-override) ---- 
+                 
                
                #?@(:clj
                    [(doseq [inc classpath-includes]
                       (emitln sw (slurp (io/resource inc))))])
 
-               ;; NEW -----------------------------------
+               ;;  user-defined shared classes (via defcss)
                (when (seq defcss)
                  (emitln sw (css-section-comment "User shared classes")))
                (doseq [def defcss]
@@ -385,12 +388,16 @@
                                      :defcss-by-selector
                                      defcss-by-selector)))
 
+               ;; user styles generated from kushi.core/css or kushi.core/sx ---
                (when (seq rules)
                  (emitln sw (css-section-comment "User styling")))
                ;; NEW -----------------------------------
                (doseq [def rules]
                  (emit-def sw def))
-               (.toString sw))))))
+               
+               ;; TODO - Add kushi base utility classes, override versions -----
+
+               (.toString sw)))))))
 
 
 (defn collect-namespaces-for-chunk
@@ -538,8 +545,14 @@
             design-tokens-css
             (design-tokens-css required-design-tokens build-state)
 
-            ;; user-design-tokens-css
-            ;; (user-design-tokens-css required-design-tokens build-state)
+            required-user-design-tokens
+            :all ;; <- creating harvesting fn here
+
+            user-design-tokens-css
+            (user-design-tokens-css required-user-design-tokens build-state)
+
+            user-theming-classes-css
+            (user-theming-classes-css :all build-state)
             ;; NEW --------------------------------------------
             
             ]
@@ -557,15 +570,16 @@
               :classpath-includes cp-includes
               :rules all-rules
 
-            ;; NEW --------------------------------------------
+              ;; NEW --------------------------------------------
               :defcss all-defcss
               :defcss-by-selector defcss-by-selector
               :required-utility-classes required-utility-classes
               :utility-classes-css utility-classes-css
               :required-design-tokens required-design-tokens
               :design-tokens-css design-tokens-css
-              ;; :user-design-tokens-css user-design-tokens-css
-            ;; NEW --------------------------------------------
+              :user-design-tokens-css user-design-tokens-css
+              :user-theming-classes-css user-theming-classes-css
+              ;; NEW --------------------------------------------
 
                        )
             (build-css-for-chunk chunk-id))))
@@ -706,132 +720,15 @@
       (assoc-in build-state [:namespaces ns] contents))))
 
 (defn init []
-  (merge
-   {:namespaces               {}
-    :alias-groups             {}
-    :aliases                  {}
-    :spacing                  {}
-    ;; NEW ----------------------------------------------
-    :all-utility-classes      utility-classes/utility-classes
-    :all-utility-classes-keys utility-classes/utility-class-ks
-    :all-design-tokens        tokens/design-tokens
-    ;; NEW ----------------------------------------------
-    }
-   )
-
-  #_{:namespaces   {}
-
-     :alias-groups ;; same naming patterns tailwind uses
-     {:color   {"bg-"      :background-color
-                "border-"  :border-color
-                "outline-" :outline-color
-                "text-"    :color
-                "divide-"  (fn [color]
-                             [["& > * + *" {:border-color color}]])}
-
-      :spacing ;; padding
-      {"p-"                       [:padding]
-       "px-"                      [:padding-left :padding-right]
-       "py-"                      [:padding-top :padding-bottom]
-       "pt-"                      [:padding-top]
-       "pb-"                      [:padding-bottom]
-       "pl-"                      [:padding-left]
-       "pr-"                      [:padding-right]
-
-     ;; margin
-       "m-"                       [:margin]
-       "mx-"                      [:margin-left :margin-right]
-       "my-"                      [:margin-top :margin-bottom]
-       "mt-"                      [:margin-top]
-       "mb-"                      [:margin-bottom]
-       "ml-"                      [:margin-left]
-       "mr-"                      [:margin-right]
-
-     ;; positions
-       "top-"                     [:top]
-       "right-"                   [:right]
-       "bottom-"                  [:bottom]
-       "left-"                    [:left]
-       "-top-"                    [:top]
-       "-right-"                  [:right]
-       "-bottom-"                 [:bottom]
-       "-left-"                   [:left]
-
-       "inset-x-"                 [:left :right]
-       "inset-y-"                 [:top :bottom]
-       "inset-"                   [:top :right :bottom :left]
-       "-inset-x-"                [:left :right]
-       "-inset-y-"                [:top :bottom]
-       "-inset-"                  [:top :right :bottom :left]
-
-     ;; width
-       "w-"                       [:width]
-       "max-w-"                   [:max-width]
-       "min-w-"                   [:min-width]
-
-     ;; height
-       "h-"                       [:height]
-       "max-h-"                   [:max-height]
-       "min-h-"                   [:min-height]
-
-     ;; flex
-       "basis-"                   [:flex-basis]
-
-     ;; grid
-       "gap-"                     [:gap]
-       "gap-x-"                   [:column-gap]
-       "gap-y-"                   [:row-gap]
-
-       ["space-x-" "& > * + *"] [:padding-left :padding-right]
-       ["space-y-" "& > * + *"] [:padding-top :padding-bottom]}}
-
-     :aliases      {}
-
-   ;; https://tailwindcss.com/docs/customizing-spacing#default-spacing-scale
-     :spacing      {0   "0"
-                    0.5 "0.125rem"
-                    1   "0.25rem"
-                    1.5 "0.375rem"
-                    2   "0.5rem"
-                    2.5 "0.625rem"
-                    3   "0.75rem"
-                    3.5 "0.875rem"
-                    4   "1rem"
-                    5   "1.25rem"
-                    6   "1.5rem"
-                    7   "1.75rem"
-                    8   "2rem"
-                    9   "2.25rem"
-                    10  "2.5rem"
-                    11  "2.75rem"
-                    12  "3rem"
-                    13  "3.25rem"
-                    14  "3.5rem"
-                    15  "3.75rem"
-                    16  "4rem"
-                    17  "4.25rem"
-                    18  "4.5rem"
-                    19  "4.75rem"
-                    20  "5rem"
-                    24  "6rem"
-                    28  "7rem"
-                    32  "8rem"
-                    36  "9rem"
-                    40  "10rem"
-                    44  "11rem"
-                    48  "12rem"
-                    52  "13rem"
-                    56  "14rem"
-                    60  "15rem"
-                    64  "16rem"
-                    68  "17rem"
-                    72  "18rem"
-                    76  "19rem"
-                    80  "20rem"
-                    96  "24rem"}})
+  {:namespaces               {}
+   :alias-groups             {}
+   :aliases                  {}
+   :spacing                  {}
+   :all-utility-classes      utility-classes/utility-classes
+   :all-utility-classes-keys utility-classes/utility-class-ks
+   :all-design-tokens        tokens/design-tokens})
 
 ;; IO stuff not available in CLJS environments
-
 #?(:clj
    (do (defn clj-file? [filename]
          ;; .clj .cljs .cljc .cljd
@@ -962,36 +859,6 @@
                  (edn/read-string
                   (slurp (io/resource "kushi/css/build/aliases.edn")))))
 
-       #_(defn load-colors-from-classpath [build-state]
-         (co "load-colors-from-classpath"
-             (bling "Adding "
-                    [:blue ":colors"]
-                    ", from "
-                    [:green " \"kushi/css/build/colors.edn\""]))
-         (update build-state
-                 :colors
-                 merge-left
-                 (edn/read-string (slurp (io/resource "kushi/css/build/colors.edn")))))
-
-       ;; TODO - maybe theme
-       #_(defn load-colors-from-classpath [build-state]
-         (update build-state
-                 :colors
-                 merge-left
-                 (edn/read-string (slurp (io/resource "kushi/css/build/colors.edn")))))
-
-       ;; TODO - fill this in
-       #_(defn load-user-utility-classes-from-classpath [build-state]
-         ;; get path from user-config
-         (co "load-user-utility-classes-from-classpath"
-             (bling "Adding "
-                    [:blue ":user-utility-classes"]
-                    ", from "
-                    [:green " \"utility-classes.css\""]))
-         #_(assoc build-state
-                :preflight-src
-                (slurp (io/resource "utility-classes.css"))))
-
        (defn load-preflight-from-classpath [build-state]
          (co "load-preflight-from-classpath"
              (bling "Adding "
@@ -1008,15 +875,5 @@
           (start (init)))
          ([build-state]
           (-> build-state
-
               (load-preflight-from-classpath)
-
-              #_(load-default-aliases-from-classpath)
-              
-              #_(load-colors-from-classpath)
-
-              (load-indexes-from-classpath)
-
-              #_(generate-color-aliases)
-
-              #_(generate-spacing-aliases))))))
+              (load-indexes-from-classpath) )))))
