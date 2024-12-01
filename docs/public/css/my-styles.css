@@ -259,7 +259,7 @@ html {
   --_bgc-alpha: 0.5;
   --_bg-lightness: 94%;
   --_fg-lightness: 44%;
-  --stroke-width: 1.5px;
+  --stroke-width: 1px;
   --stroke-align: "inside";
   --_bgc-alpha: 0;
   &[data-kui-colorway] {
