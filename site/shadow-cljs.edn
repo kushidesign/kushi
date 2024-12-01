@@ -1,0 +1,17 @@
+;; shadow-cljs configuration
+{:deps
+ {:aliases [:local-dev]}
+
+ :dev-http
+ {5001 "public"}
+
+ :builds
+ {:app
+  {:devtools   {:log             false
+                :reload-strategy :full
+                :watch-dir       "public"}
+   :target     :browser
+   :modules    {:main {:init-fn  mvp.browser/init}}
+
+   :output-dir "public/js"
+   }}}

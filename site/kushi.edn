@@ -1,0 +1,50 @@
+
+{:theme
+ {:design-tokens
+  [:--sans-serif-font-stack                 "Inter, system-ui, sans-serif"
+   :--serif-font-stack                      "'Source Serif 4', Times, serif"
+   :--code-font-stack                       "'JetBrains Mono', 'Fira Code', monospace"
+   :--primary-font-family                   :$sans-serif-font-stack
+   ;; :$code-color                          :$accent-750
+   :--code-font-size                        :0.875em
+   :--code-color                            :$accent-850
+   :--code-background-color                 :$accent-50
+   ;; :$code-color-inverse                  :$accent-100
+   :--code-color-inverse                    :$neutral-100
+   :--code-background-color-inverse         :$accent-900
+   :--kushi-playground-mobile-header-height :46px
+   :--popover-border-color                  :$neutral-300
+   :--navbar-height                         :50px
+   :--tooltip-delay-duration                :250ms
+   :--main-content-max-width                :605px]
+  
+  :ui
+  ["body"
+   ;; this should be :--primary-font-family ?
+   {
+     ;; :color       :$gray-950
+     :overflow-y :scroll
+     }
+ 
+   "code, .code"
+   {:bgc :$code-background-color
+    :c   :$code-color}
+ 
+   ".dark code, .dark .code"
+   {:bgc :$code-background-color-inverse
+    :c   :$code-color-inverse}]
+  }
+
+;; TODO - incorporate these
+;;  :css-dir                             "public/css"
+;;  :log-build-report-style              :detailed
+;;  :media                               [:xsm {:min-width :480px}
+;;                                        :sm {:min-width :640px}
+;;                                        :md {:min-width :768px}
+;;                                        :lg {:min-width :1024px}
+;;                                        :xl {:min-width :1280px}
+;;                                        :xxl {:min-width :1536px}
+;;                                        :short {:max-height :800px}]
+
+ }
+
