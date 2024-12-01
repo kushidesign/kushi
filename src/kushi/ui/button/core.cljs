@@ -110,7 +110,7 @@
             (sx 'kui-button
 
                 ;; Take it out
-                :.neutral
+                ;; :.neutral
 
                 :position--relative
                 :d--flex
