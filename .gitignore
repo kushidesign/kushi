@@ -17,6 +17,7 @@ pom.xml.asc
 .calva
 .vscode
 .idea
+.portal
 kushi.workspace.code-workspace
 
 
