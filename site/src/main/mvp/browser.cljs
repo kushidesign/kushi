@@ -10,6 +10,10 @@
     [:0% {:transform "rotateY(0deg)"}]
     [:100% {:transform "rotateY(360deg)"}])
 
+(defcss "@keyframes xspinner"
+    [:0% {:transform "rotateX(0deg)"}]
+    [:100% {:transform "rotateX(360deg)"}])
+
 (defcss ".aliceblue-bg" :bgc--aliceblue)
 
 (defn main-view []
@@ -17,8 +21,8 @@
                      :.divisor-block-end
                      :animation--yspinner:10s:infinite
                      :c--magenta
-                     :fs--$xxxlarge)}
-   "hi"])
+                     :fs--100px)}
+   [:div {:class (css :animation--xspinner:5s:infinite)} "串"]])
 
 (defn ^:dev/after-load mount-root []
   (let [root-el (.getElementById js/document "app")]
