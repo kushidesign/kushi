@@ -3,7 +3,8 @@
   ;;  [site.theme]
    [reagent.dom :as rdom]
   ;;  [site.views :as views]
-   [kushi.css.core :refer [css defcss]]
+   [mvp.button :refer [my-button]]
+   [kushi.css.core :refer [css sx defcss]]
    ))
 
 (defcss "@keyframes yspinner"
@@ -17,12 +18,13 @@
 (defcss ".aliceblue-bg" :bgc--aliceblue)
 
 (defn main-view []
-  [:div {:class (css :.aliceblue-bg
-                     :.divisor-block-end
-                     :animation--yspinner:10s:infinite
-                     :c--magenta
-                     :fs--100px)}
-   [:div {:class (css :animation--xspinner:5s:infinite)} "串"]])
+  [:div [:div {:class (css :.aliceblue-bg
+                           :.divisor-block-end
+                           :animation--yspinner:10s:infinite
+                           :c--magenta
+                           :fs--100px)}
+         [:div {:class (css :animation--xspinner:5s:infinite)} "串"]]
+   [:div (sx :.absolute-centered) [my-button]]])
 
 (defn ^:dev/after-load mount-root []
   (let [root-el (.getElementById js/document "app")]

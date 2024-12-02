@@ -312,7 +312,17 @@
                   ;; want [:px-4] instead of (css :px-4)
                   ;; don't really care about the (css ...) part later
                   ;; other forms also maybe won't have this
-                  (assoc :form (vec (rest form)))))
+                  (assoc :form (with-meta (vec (rest form))
+                                 {:macro 'kushi.css/css}))))
+
+      sx
+      (update state 
+              :css
+              conj
+              (-> (meta form)
+                  (dissoc :source)
+                  (assoc :form (with-meta (vec (rest form))
+                                 {:macro 'kushi.css/sx}))))
 
       defcss
       (update state :defcss conj
@@ -333,6 +343,7 @@
 (defn find-css-in-source [src]
   ;; shortcut if src doesn't contain any css, faster than parsing all forms
   (let [has-css? (or (str/index-of src "(css")
+                     (str/index-of src "(sx")
                      (str/index-of src "(defcss"))
         reader (reader-types/source-logging-push-back-reader src)
         eof #?(:clj (Object.) :cljs (js-obj))]

@@ -289,39 +289,53 @@
 ;; TODO - figure out how to do recursively expand defclasses without going into infinite loop
 ;;      - maybe this should happen in build-css-for-chunks. Look at how this is currently done in kushi
 (defn emit-def [w {:keys [sel form line column ns kind defcss-by-selector]}]
-  (let [form+ (if-not (= kind :defcss)
-                form
-                (reduce 
-                 (fn [acc x]
-                   (let [class-kw?
-                         (clojure.spec.alpha/valid? ::kushi-specs/class-kw x)
+  (let [defcss?
+        (= kind :defcss)
 
-                         utility-class
-                         (when class-kw?
-                           (some->> x
-                                    name
-                                    (get utility-classes/utility-classes)))
+        sx?
+        (some-> form meta :macro (= 'kushi.css/sx))
 
-                         user-defclass
-                         (when (and (not utility-class) class-kw?)
-                           (some->> x
-                                    name
-                                    (get defcss-by-selector)))]
-                     (if user-defclass 
-                       (apply conj acc user-defclass)
-                       (conj acc (or utility-class x)))))
-                 []
-                 form))]
+        kushi-macro-sym
+        (cond 
+          defcss?
+          'defcss
+
+          sx?
+          'sx
+
+          :else 'css)
+
+        form+ 
+        (if-not defcss?
+          form
+          (reduce 
+            (fn [acc x]
+              (let [class-kw?
+                    (clojure.spec.alpha/valid? ::kushi-specs/class-kw x)
+
+                    utility-class
+                    (when class-kw?
+                      (some->> x
+                              name
+                              (get utility-classes/utility-classes)))
+
+                    user-defclass
+                    (when (and (not utility-class) class-kw?)
+                      (some->> x
+                              name
+                              (get defcss-by-selector)))]
+                (if user-defclass 
+                  (apply conj acc user-defclass)
+                  (conj acc (or utility-class x)))))
+            []
+            form))]
     
     #_(ff (keyed [sel form+]))
     (emitln w
             (kushi.css/css-rule*
              sel
              form+
-             (with-meta (cons (if (= kind :defcss) 
-                                'defcss 
-                                'css) 
-                              (into '() form))
+             (with-meta (cons kushi-macro-sym (into '() form))
                {:line   line
                 :column column
                 :file   (str ns)})
