@@ -10,6 +10,7 @@
    [kushi.css.build.tokens :as tokens]
    [kushi.css.build.specs :as s]
    [kushi.css.build.analyzer :as ana]
+   [kushi.utils :refer [partition-by-spec]]
    [clojure.spec.alpha]
    [clojure.set :as set]
    [clojure.string :as str]
@@ -307,7 +308,14 @@
 
         form+ 
         (if-not defcss?
-          form
+          ;; When css or sx macro, check that args are NOT only classes (kushi
+          ;; utility classes or user-defined shared classes). If args are only
+          ;; classes, we can avoid writing an empty rule to css file.
+          (let [[class-kws other]
+                (partition-by-spec ::kushi-specs/class-kw form)
+                skip? (boolean (and (seq class-kws)
+                                    (empty? other)))]
+            (when-not skip? form))
           (reduce 
             (fn [acc x]
               (let [class-kw?
@@ -316,30 +324,30 @@
                     utility-class
                     (when class-kw?
                       (some->> x
-                              name
-                              (get utility-classes/utility-classes)))
+                               name
+                               (get utility-classes/utility-classes)))
 
                     user-defclass
                     (when (and (not utility-class) class-kw?)
                       (some->> x
-                              name
-                              (get defcss-by-selector)))]
+                               name
+                               (get defcss-by-selector)))]
                 (if user-defclass 
                   (apply conj acc user-defclass)
                   (conj acc (or utility-class x)))))
             []
             form))]
     
-    #_(ff (keyed [sel form+]))
-    (emitln w
-            (kushi.css/css-rule*
-             sel
-             form+
-             (with-meta (cons kushi-macro-sym (into '() form))
-               {:line   line
-                :column column
-                :file   (str ns)})
-             nil))))
+    (when form+ 
+      (emitln w
+              (kushi.css/css-rule*
+               sel
+               form+
+               (with-meta (cons kushi-macro-sym (into '() form))
+                 {:line   line
+                  :column column
+                  :file   (str ns)})
+               nil)))))
 
 ;; NEW -------------------------------------------------------------------------
 ;; -----------------------------------------------------------------------------

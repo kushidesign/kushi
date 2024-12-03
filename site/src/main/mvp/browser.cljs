@@ -24,7 +24,9 @@
                            :c--magenta
                            :fs--100px)}
          [:div {:class (css :animation--xspinner:5s:infinite)} "串"]]
-   [:div (sx :.absolute-centered) [my-button]]])
+   [:div (sx :.absolute-centered)
+    [my-button]
+    [:span (sx :c--red) "red"]]])
 
 (defn ^:dev/after-load mount-root []
   (let [root-el (.getElementById js/document "app")]
