@@ -4,11 +4,6 @@
    [kushi.css.build.specs :as s]
    [clojure.string :as str]))
 
-(defn ? [& args]
-  (last args))
-
-(? :comment 'shadow.css.clj)
-
 (def class-defs-ref
   (atom {}))
 
