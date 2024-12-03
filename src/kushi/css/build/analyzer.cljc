@@ -3,8 +3,7 @@
    [fireworks.core :refer [? !?] :rename {? ff}]
    [clojure.string :as str]
    [clojure.tools.reader :as reader]
-   [clojure.tools.reader.reader-types :as reader-types]
-   ))
+   [clojure.tools.reader.reader-types :as reader-types]))
 
 (defn ? [& args]
   (last args))
@@ -326,9 +325,22 @@
 
       defcss
       (update state :defcss conj
-              (-> (meta form)
-                  (dissoc :source)
-                  (assoc :form (vec (rest form)))))
+              (let [[_ sel & rest-of-form] form
+                    enable-css-layers?     false
+                    at-layer?              (str/starts-with? sel "@layer ")]
+                (-> (meta form)
+                    (dissoc :source)
+                    (assoc :sel (if enable-css-layers?
+                                  sel
+                                  (if at-layer?
+                                    (-> sel (str/split #" ") last)
+                                    sel)))
+                    (assoc :layer (when-not enable-css-layers?
+                                    (-> sel
+                                        (str/split #" ")
+                                        second
+                                        keyword)))
+                    (assoc :form (vec rest-of-form)))))
 
       ;; any other list
       (reduce find-css-calls state form))

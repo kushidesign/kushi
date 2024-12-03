@@ -84,6 +84,17 @@
                    "\"@keyframes <your-animation-name>\"\n"
                    (str ::specs/keyframe-selector))}))
 
+(defn bad-at-layer-name-warning [sel &form]
+  (generic-warning
+   {:form   &form
+    :header (bling
+             "Bad @layer name:\n"
+             [:bold (str "\"" sel "\"")])
+    :body   (bling "When constructing an @layer rule with\n"
+                   [:bold 'kushi.core/defcss] ", the first argument should be:\n"
+                   "\"@layer <your-layer-name> <your-selector>\"\n\n"
+                   (str ::specs/layer-selector))}))
+
 (defn rule-selector-warning
   "Prints warning"
   [sel form]
@@ -806,10 +817,15 @@
 
      ;; CSS at-rule -----------------------------------------------
      (let [f (fn [sel args]
-               (str sel " "
-                    (nested-css-block args &form &env "kushi.css.core/at-rule" sel)))]
+               (str sel 
+                    " "
+                    (nested-css-block args
+                                      &form
+                                      &env
+                                      "kushi.css.core/at-rule"
+                                      sel)))]
        (cond
-         ;; @ keyframes --------------------------
+         ;; @ keyframes ---------------------------
          (string/starts-with? sel "@keyframes")
          (if-not (s/valid? ::specs/keyframe-selector sel)
            (bad-at-keyframes-name-warning sel &form)
@@ -819,8 +835,26 @@
                (let [blocks (for [[nested-sel m] vecs]
                               (f (name nested-sel) [m]))]
                  (double-nested-rule sel blocks)))))
+
+         ;; @ layers ------------------------------
+         (string/starts-with? sel "@layer")
+         (if-not (s/valid? ::specs/layer-selector sel)
+           (bad-at-layer-name-warning sel &form)
+           (let [enable-css-layers?
+                 ;; TODO - boolean you can pull out of the args to css-rule*
+                 ;;        passed from within kushi.css.build/build, based on
+                 ;;        user config option to enable actual CSS layers.
+                 false
+
+                 sel
+                 (if enable-css-layers?
+                   sel
+                   (-> sel
+                       (string/split #" ")
+                       last))]
+             (f sel args)))
          
-         ;; CSS at-rule with nested css rules ----
+         ;; CSS at-rule with nested css rules ------
          ;; TODO
          ;;  - created ::nested-css-rule spec
          ;;  - then use partition-by-spec to remove bad ones and warn
@@ -829,19 +863,23 @@
                         (f nested-sel style-args))]
            (double-nested-rule sel blocks))
          
-         ;; @ CSS rule with no nested rules ------
+         ;; @ CSS rule with no nested rules --------
          :else
          (do (f sel args))))
 
     ;; Normal css-rule -------------------------------------------
      (if-not (s/valid? ::specs/css-selector sel)
-       (rule-selector-warning sel &form)
-       (when-let [css-str (nested-css-block args
-                                            &form
-                                            &env
-                                            "kushi.css.core/css-rule"
-                                            sel)]
-         (str sel " " css-str))))))
+       (rule-selector-warning (if (map? sel)
+                                (:selector sel)
+                                sel)
+                              &form)
+       (let [sel (if (map? sel) (:selector sel) sel)]
+         (when-let [css-str (nested-css-block args
+                                              &form
+                                              &env
+                                              "kushi.css.core/css-rule"
+                                              sel)]
+           (str sel " " css-str)))))))
 
 
 (defmacro ^:public css-rule
@@ -866,6 +904,7 @@
   [sel & args]
   (if-not (or (s/valid? ::specs/css-selector sel)
               (s/valid? ::specs/at-selector sel))
+    ;; TODO - unwrap if sel is map
     (rule-selector-warning sel &form)
     (let [block (css-rule* sel args &form &env)]
       (print-css-block (assoc (keyed [args &form &env block])

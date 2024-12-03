@@ -351,6 +351,16 @@
 
 ;; NEW -------------------------------------------------------------------------
 ;; -----------------------------------------------------------------------------
+(defn defcss-layers [coll]
+  (reduce (fn [acc m]
+            (update
+             acc
+             (or (:layer m) :defcss)
+             (fn [coll]
+               (conj coll m))))
+          {:defcss           []
+           :kushi-ui-theming []}
+          coll))
 
 (defn build-css-for-chunk [build-state chunk-id]
   (!? build-css-for-chunk)
@@ -366,10 +376,11 @@
                  user-theming-classes-css
                  ]
           :as chunk}]
-      ;; (ff chunk)
+
       (assoc chunk
              :css
-             (let [sw #?(:clj (StringWriter.) :cljs (StringBuffer.))]
+             (let [sw #?(:clj (StringWriter.) :cljs (StringBuffer.))
+                   {:keys [defcss kushi-ui-theming]} (defcss-layers defcss)]
                (when base
                  (when-let [pre (:preflight-src build-state)]
                    (emitln sw pre))
@@ -381,45 +392,61 @@
                  (some->> user-design-tokens-css (emitln sw))
 
                  ;; TODO - kushi animations (move from kushi utility classes) --
-
+                 
                  ;; TODO - user animations (move from user utility classes) ----
+                 
+                 ;; kushi.ui component theming rules ---------------------------
+                 ;; Temp, pulled in from legacy css source
+                 (when-let [ui-theming
+                            (:kush-ui-component-theming-src build-state)]
+                   (emitln sw ui-theming))
 
-                 ;; kushi utility classes
-                 (some->> utility-classes-css (emitln sw))
+                 ;; kushi.ui component shared classes
+                 ;; (shared via defclass or defclass-with-override) ------------
+                 ;; implemented with new @layer selector
+                 (when (seq kushi-ui-theming)
+                   (emitln sw (css-section-comment "kushi.ui shared classes")))
 
-                 ;; TODO - kushi.ui component theming rules (what is this?) ----
-
+                 (doseq [def kushi-ui-theming]
+                   (emit-def sw (assoc def
+                                       :kind
+                                       :defcss
+                                       :defcss-by-selector
+                                       defcss-by-selector)))
+                 
                  ;; TODO - user theming rules via [:theme :ui] -----------------
                  (some->> user-theming-classes-css (emitln sw))
 
-                 ;; TODO - kushi.ui component theming rules
-                 ;;        (shared, via defclass or defclass-with-override) ---- 
+                 ;; kushi base utility classes
+                 (some->> utility-classes-css (emitln sw))
                  
-               
-               #?@(:clj
-                   [(doseq [inc classpath-includes]
-                      (emitln sw (slurp (io/resource inc))))])
+                 ;; TODO - figure out intent of this and maybe leverage it
+                 #?@(:clj
+                     [(doseq [inc classpath-includes]
+                        (emitln sw (slurp (io/resource inc))))])
 
-               ;;  user-defined shared classes (via defcss)
-               (when (seq defcss)
-                 (emitln sw (css-section-comment "User shared classes")))
-               (doseq [def defcss]
-                 (emit-def sw (assoc def
-                                     :kind
-                                     :defcss
-                                     :defcss-by-selector
-                                     defcss-by-selector)))
+                 ;; user-defined shared classes (via defcss)
+                 (when (seq defcss)
+                   (emitln sw (css-section-comment "User shared classes")))
 
-               ;; user styles generated from kushi.core/css or kushi.core/sx ---
-               (when (seq rules)
-                 (emitln sw (css-section-comment "User styling")))
-               ;; NEW -----------------------------------
-               (doseq [def rules]
-                 (emit-def sw def))
-               
-               ;; TODO - Add kushi base utility classes, override versions -----
+                 (doseq [def defcss]
+                   (emit-def sw (assoc def
+                                       :kind
+                                       :defcss
+                                       :defcss-by-selector
+                                       defcss-by-selector)))
 
-               (.toString sw)))))))
+                 ;; user styles generated from kushi.core/css or kushi.core/sx -
+                 (when (seq rules)
+                   (emitln sw (css-section-comment "User styling")))
+
+                 ;; NEW -----------------------------------
+                 (doseq [def rules]
+                   (emit-def sw def))
+                 
+                 ;; TODO - Add kushi base utility classes, override versions ---
+                 
+                 (.toString sw)))))))
 
 
 (defn collect-namespaces-for-chunk
@@ -488,19 +515,15 @@
 
     (assoc chunk :namespaces included-namespaces)))
 
+
 (defn build-css-for-chunks
   [{:keys [namespaces] :as build-state}]
 
-  ;;------------------------;;
-  ;; DEBUG THIS IN FW       ;;
-  ;; (ff build-state)       ;;
-  ;;------------------------;;
+  ;;-------------------------;;
+  ;;    DEBUG THIS IN FW     ;;
+  ;;    (ff build-state)     ;;
+  ;;-------------------------;;
 
-  #_(ff (keys build-state))
-
-  ;; (ff :pp (:namespaces build-state))
-  ;; (ff :pp (:colors build-state))
-  ;; (ff :pp (:chunks build-state))
   (reduce-kv
     (fn [build-state chunk-id chunk]
       (let [all-rules
@@ -512,7 +535,8 @@
                        (assoc
                         :ns ns
                         :css-id css-id
-                        ;; FIXME: when adding optimization pass selector won't be based on css-id anymore
+                        ;; FIXME: when adding optimization pass selector won't
+                        ;;        be based on css-id anymore
                         :sel (str "." css-id))))
                  (into []))
 
@@ -520,16 +544,18 @@
             all-defcss
             (->> (for [ns (:chunk-namespaces chunk)
                        :let [{:keys [ns defcss] :as ns-info} (get namespaces ns)]
-                       {:keys [line column form] :as form-info} defcss
-                       :let [css-id (s/generate-id ns line column)
-                             [sel]  form]]
+                       {:keys [line column form sel layer] :as form-info} defcss
+                       :let [css-id (s/generate-id ns line column)]]
                    (-> (ana/process-form build-state form-info)
+                       ;; TODO use (merge (keyed [ns css-id ...]))
                        (assoc
                         :ns     ns
                         :css-id css-id
-                        :form   (rest form) ; <- TODO - Use subvec here?
-                        ;; FIXME: when adding optimization pass selector won't be based on css-id anymore
-                        :sel    sel)))
+                        :form   form
+                        ;; FIXME: when adding optimization pass selector
+                        ;;        won't be based on css-id anymore
+                        :sel    sel
+                        :layer  layer)))
                  (into []))
 
             defcss-by-selector
@@ -569,7 +595,7 @@
 
             required-user-design-tokens
             :all ;; <- creating harvesting fn here
-
+            
             user-design-tokens-css
             (user-design-tokens-css required-user-design-tokens build-state)
 
@@ -892,10 +918,24 @@
                 :preflight-src
                 (slurp (io/resource "kushi/css/build/kushi-reset.css"))))
 
+       ;; Temp
+       (defn load-kush-ui-component-theming-from-classpath [build-state]
+         (co "load-kush-ui-component-theming-from-classpath"
+             (bling "Adding "
+                    [:blue ":kush-ui-component-theming-src"]
+                    ", from "
+                    [:green " \"kushi/css/build/kush-ui-component-theming.css\""]))
+         
+         (assoc build-state
+                :kush-ui-component-theming-src
+                (slurp (io/resource "kushi/css/build/kushi-ui-component-theming.css"))))
+
        (defn start
          ([]
           (start (init)))
          ([build-state]
           (-> build-state
               (load-preflight-from-classpath)
+              ;; Temp
+              (load-kush-ui-component-theming-from-classpath)
               (load-indexes-from-classpath) )))))
