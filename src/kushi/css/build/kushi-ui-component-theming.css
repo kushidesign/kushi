@@ -1,0 +1,1266 @@
+
+/* kushi.ui component theming rules */
+
+body {
+  font-family: var(--sans-serif-font-stack);
+  color: var(--foreground-color);
+  background-color: var(--background-color);
+  transition-property: background-color, color;
+  transition-duration: var(--fast);
+  transition-timing-function: var(--timing-linear-curve);
+  overflow-y: scroll;
+}
+
+.dark, body.dark {
+  background-color: var(--background-color-inverse);
+  color: var(--foreground-color-inverse);
+}
+
+code, .code {
+  width: fit-content;
+  transition-duration: var(--fast);
+  transition-property: all;
+  font-family: var(--code-font-stack);
+  height: fit-content;
+  white-space: nowrap;
+  padding-inline: var(--code-padding-inline);
+  transition-timing-function: cubic-bezier(0, 0, 1, 1);
+  font-size: var(--code-font-size);
+  background-color: var(--code-background-color);
+  border-radius: var(--code-border-radius);
+  padding-block: var(--code-padding-block);
+  color: var(--code-color);
+}
+
+.dark code, .dark .code {
+  background-color: var(--code-background-color-inverse);
+  color: var(--code-color-inverse);
+}
+
+.styled-scrollbars {
+  scrollbar-color: var(--scrollbar-thumb-color);
+  scrollbar-width: thin;
+}
+
+.dark .styled-scrollbars {
+  scrollbar-color: var(--scrollbar-thumb-color-inverse);
+}
+
+.styled-scrollbars::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+.styled-scrollbars::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-color);
+  border-radius: 9999px;
+  border: 0px solid var(--scrollbar-background-color);
+}
+
+.dark .styled-scrollbars::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-color-inverse);
+  border: 0px solid var(--scrollbar-background-color-inverse);
+}
+
+.styled-scrollbars::-webkit-scrollbar-track {
+  background: var(--scrollbar-background-color);
+}
+
+.dark .styled-scrollbars::-webkit-scrollbar-track {
+  background: var(--scrollbar-background-color-inverse);
+}
+
+*:focus-visible {
+  outline: 4px solid rgba(0, 125, 250, 0.6);
+  outline-offset: 1px;
+}
+
+*:disabled {
+  opacity: 45%!important;
+  cursor: not-allowed!important;
+}
+
+.kushi-radio-input:focus-visible {
+  box-shadow: 0 0 0 4px rgba(0, 125, 250, 0.6);
+}
+
+.neutral-secondary-foreground {
+  color: var(--neutral-secondary-foreground);
+}
+
+.dark .neutral-secondary-foreground {
+  color: var(--neutral-secondary-foreground-inverse);
+}
+
+.neutral-foreground {
+  color: var(--neutral-foreground);
+}
+
+.dark .neutral-foreground {
+  color: var(--neutral-foreground-inverse);
+}
+
+.accent-foreground {
+  color: var(--accent-foreground);
+}
+
+.dark .accent-foreground {
+  color: var(--accent-foreground-inverse);
+}
+
+.positive-foreground {
+  color: var(--positive-foreground);
+}
+
+.dark .positive-foreground {
+  color: var(--positive-foreground-inverse);
+}
+
+.negative-foreground {
+  color: var(--negative-foreground);
+}
+
+.dark .negative-foreground {
+  color: var(--negative-foreground-inverse);
+}
+
+.warning-foreground {
+  color: var(--warning-foreground);
+}
+
+.dark .warning-foreground {
+  color: var(--warning-foreground-inverse);
+}
+
+.neutral-bg {
+  background-color: var(--neutral-background-color);
+}
+
+.accent-bg {
+  background-color: var(--accent-background-color);
+}
+
+.positive-bg {
+  background-color: var(--positive-background-color);
+}
+
+.negative-bg {
+  background-color: var(--negative-background-color);
+}
+
+.warning-bg {
+  background-color: var(--warning-background-color);
+}
+
+.neutral {
+  color: var(--neutral-color);
+  background-color: var(--neutral-background-color);
+}
+
+.neutral:hover {
+  color: var(--neutral-color-hover);
+  background-color: var(--neutral-background-color-hover);
+}
+
+.neutral:active {
+  color: var(--neutral-color-active);
+  background-color: var(--neutral-background-color-active);
+}
+
+.neutral.info {
+  color: var(--neutral-info-color);
+  background-color: var(--neutral-info-background-color);
+}
+
+.neutral.info:hover {
+  color: var(--neutral-info-color-hover);
+  background-color: var(--neutral-info-background-color-hover);
+}
+
+.neutral.info:active {
+  color: var(--neutral-info-color-active);
+  background-color: var(--neutral-info-background-color-active);
+}
+
+.neutral.minimal {
+  color: var(--neutral-minimal-color);
+  background-color: var(--neutral-minimal-background-color);
+}
+
+.neutral.minimal:hover {
+  color: var(--neutral-minimal-color-hover);
+  background-color: var(--neutral-minimal-background-color-hover);
+}
+
+.neutral.minimal:active {
+  color: var(--neutral-minimal-color-active);
+  background-color: var(--neutral-minimal-background-color-active);
+}
+
+.neutral.bordered:active {
+  background-color: var(--neutral-bordered-background-color-active);
+  border-color: var(--neutral-bordered-border-color-active);
+  color: var(--neutral-bordered-color-active);
+}
+
+.neutral.bordered {
+  border-color: var(--neutral-bordered-border-color);
+  background-color: var(--neutral-bordered-background-color);
+  color: var(--neutral-bordered-color);
+}
+
+.neutral.bordered:hover {
+  color: var(--neutral-bordered-color-hover);
+  border-color: var(--neutral-bordered-border-color-hover);
+  background-color: var(--neutral-bordered-background-color-hover);
+}
+
+.neutral.bordered.info {
+  background-color: var(--neutral-bordered-info-background-color);
+  border-color: var(--neutral-bordered-info-border-color);
+}
+
+.neutral.bordered.info:hover {
+  background-color: var(--neutral-bordered-info-background-color-hover);
+  border-color: var(--neutral-bordered-info-border-color-hover);
+}
+
+.neutral.bordered.info:active {
+  background-color: var(--neutral-bordered-info-background-color-active);
+  border-color: var(--neutral-bordered-info-border-color-active);
+}
+
+.neutral.filled {
+  color: var(--neutral-filled-color);
+  background-color: var(--neutral-filled-background-color);
+}
+
+.neutral.filled:hover {
+  color: var(--neutral-filled-color-hover);
+  background-color: var(--neutral-filled-background-color-hover);
+}
+
+.neutral.filled:active {
+  color: var(--neutral-filled-color-active);
+  background-color: var(--neutral-filled-background-color-active);
+}
+
+.neutral.filled.info {
+  background-color: var(--neutral-filled-info-background-color);
+}
+
+.neutral.filled.info:hover {
+  background-color: var(--neutral-filled-info-background-color-hover);
+}
+
+.neutral-filled.info:active {
+  background-color: var(--info-background-color-active);
+}
+
+.dark .neutral {
+  color: var(--neutral-color-inverse);
+  background-color: var(--neutral-background-color-inverse);
+}
+
+.dark .neutral:hover {
+  color: var(--neutral-color-hover-inverse);
+  background-color: var(--neutral-background-color-hover-inverse);
+}
+
+.dark .neutral:active {
+  color: var(--neutral-color-active-inverse);
+  background-color: var(--neutral-background-color-active-inverse);
+}
+
+.dark .neutral.info {
+  color: var(--neutral-info-color-inverse);
+  background-color: var(--neutral-info-background-color-inverse);
+}
+
+.dark .neutral.info:hover {
+  color: var(--neutral-info-color-hover-inverse);
+  background-color: var(--neutral-info-background-color-hover-inverse);
+}
+
+.dark .neutral.info:active {
+  color: var(--neutral-info-color-active-inverse);
+  background-color: var(--neutral-info-background-color-active-inverse);
+}
+
+.dark .neutral.minimal {
+  color: var(--neutral-minimal-color-inverse);
+  background-color: var(--neutral-minimal-background-color-inverse);
+}
+
+.dark .neutral.minimal:hover {
+  color: var(--neutral-minimal-color-hover-inverse);
+  background-color: var(--neutral-minimal-background-color-hover-inverse);
+}
+
+.dark .neutral.minimal:active {
+  color: var(--neutral-minimal-color-active-inverse);
+  background-color: var(--neutral-minimal-background-color-active-inverse);
+}
+
+.dark .neutral.bordered:active {
+  background-color: var(--neutral-bordered-background-color-active-inverse);
+  border-color: var(--neutral-bordered-border-color-active-inverse);
+  color: var(--neutral-bordered-color-active-inverse);
+}
+
+.dark .neutral.bordered {
+  border-color: var(--neutral-bordered-border-color-inverse);
+  background-color: var(--neutral-bordered-background-color-inverse);
+  color: var(--neutral-bordered-color-inverse);
+}
+
+.dark .neutral.bordered:hover {
+  color: var(--neutral-bordered-color-hover-inverse);
+  border-color: var(--neutral-bordered-border-color-hover-inverse);
+  background-color: var(--neutral-bordered-background-color-hover-inverse);
+}
+
+.dark .neutral.bordered.info:active {
+  background-color: var(--neutral-bordered-info-background-color-active-inverse);
+  border-color: var(--neutral-bordered-info-border-color-active-inverse);
+  color: var(--neutral-bordered-info-color-active-inverse);
+}
+
+.dark .neutral.bordered.info {
+  border-color: var(--neutral-bordered-info-border-color-inverse);
+  background-color: var(--neutral-bordered-info-background-color-inverse);
+  color: var(--neutral-bordered-info-color-inverse);
+}
+
+.dark .neutral.bordered.info:hover {
+  color: var(--neutral-bordered-info-color-hover-inverse);
+  border-color: var(--neutral-bordered-info-border-color-hover-inverse);
+  background-color: var(--neutral-bordered-info-background-color-hover-inverse);
+}
+
+.dark .neutral.filled {
+  color: var(--neutral-filled-color-inverse);
+  background-color: var(--neutral-filled-background-color-inverse);
+}
+
+.dark .neutral.filled:hover {
+  color: var(--neutral-filled-color-hover-inverse);
+  background-color: var(--neutral-filled-background-color-hover-inverse);
+}
+
+.dark .neutral.filled:active {
+  color: var(--neutral-filled-color-active-inverse);
+  background-color: var(--neutral-filled-background-color-active-inverse);
+}
+
+.dark .neutral.filled.info {
+  background-color: var(--neutral-filled-info-background-color-inverse);
+}
+
+.dark .neutral.filled.info:hover {
+  background-color: var(--neutral-filled-info-background-color-hover-inverse);
+}
+
+.dark .neutral-filled.info:active {
+  background-color: var(--info-background-color-active-inverse);
+}
+
+.accent {
+  color: var(--accent-color);
+  background-color: var(--accent-background-color);
+}
+
+.accent:hover {
+  color: var(--accent-color-hover);
+  background-color: var(--accent-background-color-hover);
+}
+
+.accent:active {
+  color: var(--accent-color-active);
+  background-color: var(--accent-background-color-active);
+}
+
+.accent.info {
+  color: var(--accent-info-color);
+  background-color: var(--accent-info-background-color);
+}
+
+.accent.info:hover {
+  color: var(--accent-info-color-hover);
+  background-color: var(--accent-info-background-color-hover);
+}
+
+.accent.info:active {
+  color: var(--accent-info-color-active);
+  background-color: var(--accent-info-background-color-active);
+}
+
+.accent.minimal {
+  color: var(--accent-minimal-color);
+  background-color: var(--accent-minimal-background-color);
+}
+
+.accent.minimal:hover {
+  color: var(--accent-minimal-color-hover);
+  background-color: var(--accent-minimal-background-color-hover);
+}
+
+.accent.minimal:active {
+  color: var(--accent-minimal-color-active);
+  background-color: var(--accent-minimal-background-color-active);
+}
+
+.accent.bordered:active {
+  background-color: var(--accent-bordered-background-color-active);
+  border-color: var(--accent-bordered-border-color-active);
+  color: var(--accent-bordered-color-active);
+}
+
+.accent.bordered {
+  border-color: var(--accent-bordered-border-color);
+  background-color: var(--accent-bordered-background-color);
+  color: var(--accent-bordered-color);
+}
+
+.accent.bordered:hover {
+  color: var(--accent-bordered-color-hover);
+  border-color: var(--accent-bordered-border-color-hover);
+  background-color: var(--accent-bordered-background-color-hover);
+}
+
+.accent.bordered.info:active {
+  background-color: var(--accent-bordered-info-background-color-active);
+  border-color: var(--accent-bordered-info-border-color-active);
+  color: var(--accent-bordered-info-color-active);
+}
+
+.accent.bordered.info {
+  border-color: var(--accent-bordered-info-border-color);
+  background-color: var(--accent-bordered-info-background-color);
+  color: var(--accent-bordered-info-color);
+}
+
+.accent.bordered.info:hover {
+  color: var(--accent-bordered-info-color-hover);
+  border-color: var(--accent-bordered-info-border-color-hover);
+  background-color: var(--accent-bordered-info-background-color-hover);
+}
+
+.accent.filled {
+  color: var(--accent-filled-color);
+  background-color: var(--accent-filled-background-color);
+}
+
+.accent.filled:hover {
+  color: var(--accent-filled-color-hover);
+  background-color: var(--accent-filled-background-color-hover);
+}
+
+.accent.filled:active {
+  color: var(--accent-filled-color-active);
+  background-color: var(--accent-filled-background-color-active);
+}
+
+.accent.filled.info {
+  background-color: var(--accent-filled-info-background-color);
+}
+
+.accent.filled.info:hover {
+  background-color: var(--accent-filled-info-background-color-hover);
+}
+
+.accent-filled.info:active {
+  background-color: var(--info-background-color-active);
+}
+
+.dark .accent {
+  color: var(--accent-color-inverse);
+  background-color: var(--accent-background-color-inverse);
+}
+
+.dark .accent:hover {
+  color: var(--accent-color-hover-inverse);
+  background-color: var(--accent-background-color-hover-inverse);
+}
+
+.dark .accent:active {
+  color: var(--accent-color-active-inverse);
+  background-color: var(--accent-background-color-active-inverse);
+}
+
+.dark .accent.info {
+  color: var(--accent-info-color-inverse);
+  background-color: var(--accent-info-background-color-inverse);
+}
+
+.dark .accent.info:hover {
+  color: var(--accent-info-color-hover-inverse);
+  background-color: var(--accent-info-background-color-hover-inverse);
+}
+
+.dark .accent.info:active {
+  color: var(--accent-info-color-active-inverse);
+  background-color: var(--accent-info-background-color-active-inverse);
+}
+
+.dark .accent.minimal {
+  color: var(--accent-minimal-color-inverse);
+  background-color: var(--accent-minimal-background-color-inverse);
+}
+
+.dark .accent.minimal:hover {
+  color: var(--accent-minimal-color-hover-inverse);
+  background-color: var(--accent-minimal-background-color-hover-inverse);
+}
+
+.dark .accent.minimal:active {
+  color: var(--accent-minimal-color-active-inverse);
+  background-color: var(--accent-minimal-background-color-active-inverse);
+}
+
+.dark .accent.bordered:active {
+  background-color: var(--accent-bordered-background-color-active-inverse);
+  border-color: var(--accent-bordered-border-color-active-inverse);
+  color: var(--accent-bordered-color-active-inverse);
+}
+
+.dark .accent.bordered {
+  border-color: var(--accent-bordered-border-color-inverse);
+  background-color: var(--accent-bordered-background-color-inverse);
+  color: var(--accent-bordered-color-inverse);
+}
+
+.dark .accent.bordered:hover {
+  color: var(--accent-bordered-color-hover-inverse);
+  border-color: var(--accent-bordered-border-color-hover-inverse);
+  background-color: var(--accent-bordered-background-color-hover-inverse);
+}
+
+.dark .accent.bordered.info:active {
+  background-color: var(--accent-bordered-info-background-color-active-inverse);
+  border-color: var(--accent-bordered-info-border-color-active-inverse);
+  color: var(--accent-bordered-info-color-active-inverse);
+}
+
+.dark .accent.bordered.info {
+  border-color: var(--accent-bordered-info-border-color-inverse);
+  background-color: var(--accent-bordered-info-background-color-inverse);
+  color: var(--accent-bordered-info-color-inverse);
+}
+
+.dark .accent.bordered.info:hover {
+  color: var(--accent-bordered-info-color-hover-inverse);
+  border-color: var(--accent-bordered-info-border-color-hover-inverse);
+  background-color: var(--accent-bordered-info-background-color-hover-inverse);
+}
+
+.dark .accent.filled {
+  color: var(--accent-filled-color-inverse);
+  background-color: var(--accent-filled-background-color-inverse);
+}
+
+.dark .accent.filled:hover {
+  color: var(--accent-filled-color-hover-inverse);
+  background-color: var(--accent-filled-background-color-hover-inverse);
+}
+
+.dark .accent.filled:active {
+  color: var(--accent-filled-color-active-inverse);
+  background-color: var(--accent-filled-background-color-active-inverse);
+}
+
+.dark .accent.filled.info {
+  background-color: var(--accent-filled-info-background-color-inverse);
+}
+
+.dark .accent.filled.info:hover {
+  background-color: var(--accent-filled-info-background-color-hover-inverse);
+}
+
+.dark .accent-filled.info:active {
+  background-color: var(--info-background-color-active-inverse);
+}
+
+.positive {
+  color: var(--positive-color);
+  background-color: var(--positive-background-color);
+}
+
+.positive:hover {
+  color: var(--positive-color-hover);
+  background-color: var(--positive-background-color-hover);
+}
+
+.positive:active {
+  color: var(--positive-color-active);
+  background-color: var(--positive-background-color-active);
+}
+
+.positive.info {
+  color: var(--positive-info-color);
+  background-color: var(--positive-info-background-color);
+}
+
+.positive.info:hover {
+  color: var(--positive-info-color-hover);
+  background-color: var(--positive-info-background-color-hover);
+}
+
+.positive.info:active {
+  color: var(--positive-info-color-active);
+  background-color: var(--positive-info-background-color-active);
+}
+
+.positive.minimal {
+  color: var(--positive-minimal-color);
+  background-color: var(--positive-minimal-background-color);
+}
+
+.positive.minimal:hover {
+  color: var(--positive-minimal-color-hover);
+  background-color: var(--positive-minimal-background-color-hover);
+}
+
+.positive.minimal:active {
+  color: var(--positive-minimal-color-active);
+  background-color: var(--positive-minimal-background-color-active);
+}
+
+.positive.bordered:active {
+  background-color: var(--positive-bordered-background-color-active);
+  border-color: var(--positive-bordered-border-color-active);
+  color: var(--positive-bordered-color-active);
+}
+
+.positive.bordered {
+  border-color: var(--positive-bordered-border-color);
+  background-color: var(--positive-bordered-background-color);
+  color: var(--positive-bordered-color);
+}
+
+.positive.bordered:hover {
+  color: var(--positive-bordered-color-hover);
+  border-color: var(--positive-bordered-border-color-hover);
+  background-color: var(--positive-bordered-background-color-hover);
+}
+
+.positive.bordered.info:active {
+  background-color: var(--positive-bordered-info-background-color-active);
+  border-color: var(--positive-bordered-info-border-color-active);
+  color: var(--positive-bordered-info-color-active);
+}
+
+.positive.bordered.info {
+  border-color: var(--positive-bordered-info-border-color);
+  background-color: var(--positive-bordered-info-background-color);
+  color: var(--positive-bordered-info-color);
+}
+
+.positive.bordered.info:hover {
+  color: var(--positive-bordered-info-color-hover);
+  border-color: var(--positive-bordered-info-border-color-hover);
+  background-color: var(--positive-bordered-info-background-color-hover);
+}
+
+.positive.filled {
+  color: var(--positive-filled-color);
+  background-color: var(--positive-filled-background-color);
+}
+
+.positive.filled:hover {
+  color: var(--positive-filled-color-hover);
+  background-color: var(--positive-filled-background-color-hover);
+}
+
+.positive.filled:active {
+  color: var(--positive-filled-color-active);
+  background-color: var(--positive-filled-background-color-active);
+}
+
+.positive.filled.info {
+  background-color: var(--positive-filled-info-background-color);
+}
+
+.positive.filled.info:hover {
+  background-color: var(--positive-filled-info-background-color-hover);
+}
+
+.positive-filled.info:active {
+  background-color: var(--info-background-color-active);
+}
+
+.dark .positive {
+  color: var(--positive-color-inverse);
+  background-color: var(--positive-background-color-inverse);
+}
+
+.dark .positive:hover {
+  color: var(--positive-color-hover-inverse);
+  background-color: var(--positive-background-color-hover-inverse);
+}
+
+.dark .positive:active {
+  color: var(--positive-color-active-inverse);
+  background-color: var(--positive-background-color-active-inverse);
+}
+
+.dark .positive.info {
+  color: var(--positive-info-color-inverse);
+  background-color: var(--positive-info-background-color-inverse);
+}
+
+.dark .positive.info:hover {
+  color: var(--positive-info-color-hover-inverse);
+  background-color: var(--positive-info-background-color-hover-inverse);
+}
+
+.dark .positive.info:active {
+  color: var(--positive-info-color-active-inverse);
+  background-color: var(--positive-info-background-color-active-inverse);
+}
+
+.dark .positive.minimal {
+  color: var(--positive-minimal-color-inverse);
+  background-color: var(--positive-minimal-background-color-inverse);
+}
+
+.dark .positive.minimal:hover {
+  color: var(--positive-minimal-color-hover-inverse);
+  background-color: var(--positive-minimal-background-color-hover-inverse);
+}
+
+.dark .positive.minimal:active {
+  color: var(--positive-minimal-color-active-inverse);
+  background-color: var(--positive-minimal-background-color-active-inverse);
+}
+
+.dark .positive.bordered:active {
+  background-color: var(--positive-bordered-background-color-active-inverse);
+  border-color: var(--positive-bordered-border-color-active-inverse);
+  color: var(--positive-bordered-color-active-inverse);
+}
+
+.dark .positive.bordered {
+  border-color: var(--positive-bordered-border-color-inverse);
+  background-color: var(--positive-bordered-background-color-inverse);
+  color: var(--positive-bordered-color-inverse);
+}
+
+.dark .positive.bordered:hover {
+  color: var(--positive-bordered-color-hover-inverse);
+  border-color: var(--positive-bordered-border-color-hover-inverse);
+  background-color: var(--positive-bordered-background-color-hover-inverse);
+}
+
+.dark .positive.bordered.info:active {
+  background-color: var(--positive-bordered-info-background-color-active-inverse);
+  border-color: var(--positive-bordered-info-border-color-active-inverse);
+  color: var(--positive-bordered-info-color-active-inverse);
+}
+
+.dark .positive.bordered.info {
+  border-color: var(--positive-bordered-info-border-color-inverse);
+  background-color: var(--positive-bordered-info-background-color-inverse);
+  color: var(--positive-bordered-info-color-inverse);
+}
+
+.dark .positive.bordered.info:hover {
+  color: var(--positive-bordered-info-color-hover-inverse);
+  border-color: var(--positive-bordered-info-border-color-hover-inverse);
+  background-color: var(--positive-bordered-info-background-color-hover-inverse);
+}
+
+.dark .positive.filled {
+  color: var(--positive-filled-color-inverse);
+  background-color: var(--positive-filled-background-color-inverse);
+}
+
+.dark .positive.filled:hover {
+  color: var(--positive-filled-color-hover-inverse);
+  background-color: var(--positive-filled-background-color-hover-inverse);
+}
+
+.dark .positive.filled:active {
+  color: var(--positive-filled-color-active-inverse);
+  background-color: var(--positive-filled-background-color-active-inverse);
+}
+
+.dark .positive.filled.info {
+  background-color: var(--positive-filled-info-background-color-inverse);
+}
+
+.dark .positive.filled.info:hover {
+  background-color: var(--positive-filled-info-background-color-hover-inverse);
+}
+
+.dark .positive-filled.info:active {
+  background-color: var(--info-background-color-active-inverse);
+}
+
+.negative {
+  color: var(--negative-color);
+  background-color: var(--negative-background-color);
+}
+
+.negative:hover {
+  color: var(--negative-color-hover);
+  background-color: var(--negative-background-color-hover);
+}
+
+.negative:active {
+  color: var(--negative-color-active);
+  background-color: var(--negative-background-color-active);
+}
+
+.negative.info {
+  color: var(--negative-info-color);
+  background-color: var(--negative-info-background-color);
+}
+
+.negative.info:hover {
+  color: var(--negative-info-color-hover);
+  background-color: var(--negative-info-background-color-hover);
+}
+
+.negative.info:active {
+  color: var(--negative-info-color-active);
+  background-color: var(--negative-info-background-color-active);
+}
+
+.negative.minimal {
+  color: var(--negative-minimal-color);
+  background-color: var(--negative-minimal-background-color);
+}
+
+.negative.minimal:hover {
+  color: var(--negative-minimal-color-hover);
+  background-color: var(--negative-minimal-background-color-hover);
+}
+
+.negative.minimal:active {
+  color: var(--negative-minimal-color-active);
+  background-color: var(--negative-minimal-background-color-active);
+}
+
+.negative.bordered:active {
+  background-color: var(--negative-bordered-background-color-active);
+  border-color: var(--negative-bordered-border-color-active);
+  color: var(--negative-bordered-color-active);
+}
+
+.negative.bordered {
+  border-color: var(--negative-bordered-border-color);
+  background-color: var(--negative-bordered-background-color);
+  color: var(--negative-bordered-color);
+}
+
+.negative.bordered:hover {
+  color: var(--negative-bordered-color-hover);
+  border-color: var(--negative-bordered-border-color-hover);
+  background-color: var(--negative-bordered-background-color-hover);
+}
+
+.negative.bordered.info:active {
+  background-color: var(--negative-bordered-info-background-color-active);
+  border-color: var(--negative-bordered-info-border-color-active);
+  color: var(--negative-bordered-info-color-active);
+}
+
+.negative.bordered.info {
+  border-color: var(--negative-bordered-info-border-color);
+  background-color: var(--negative-bordered-info-background-color);
+  color: var(--negative-bordered-info-color);
+}
+
+.negative.bordered.info:hover {
+  color: var(--negative-bordered-info-color-hover);
+  border-color: var(--negative-bordered-info-border-color-hover);
+  background-color: var(--negative-bordered-info-background-color-hover);
+}
+
+.negative.filled {
+  color: var(--negative-filled-color);
+  background-color: var(--negative-filled-background-color);
+}
+
+.negative.filled:hover {
+  color: var(--negative-filled-color-hover);
+  background-color: var(--negative-filled-background-color-hover);
+}
+
+.negative.filled:active {
+  color: var(--negative-filled-color-active);
+  background-color: var(--negative-filled-background-color-active);
+}
+
+.negative.filled.info {
+  background-color: var(--negative-filled-info-background-color);
+}
+
+.negative.filled.info:hover {
+  background-color: var(--negative-filled-info-background-color-hover);
+}
+
+.negative-filled.info:active {
+  background-color: var(--info-background-color-active);
+}
+
+.dark .negative {
+  color: var(--negative-color-inverse);
+  background-color: var(--negative-background-color-inverse);
+}
+
+.dark .negative:hover {
+  color: var(--negative-color-hover-inverse);
+  background-color: var(--negative-background-color-hover-inverse);
+}
+
+.dark .negative:active {
+  color: var(--negative-color-active-inverse);
+  background-color: var(--negative-background-color-active-inverse);
+}
+
+.dark .negative.info {
+  color: var(--negative-info-color-inverse);
+  background-color: var(--negative-info-background-color-inverse);
+}
+
+.dark .negative.info:hover {
+  color: var(--negative-info-color-hover-inverse);
+  background-color: var(--negative-info-background-color-hover-inverse);
+}
+
+.dark .negative.info:active {
+  color: var(--negative-info-color-active-inverse);
+  background-color: var(--negative-info-background-color-active-inverse);
+}
+
+.dark .negative.minimal {
+  color: var(--negative-minimal-color-inverse);
+  background-color: var(--negative-minimal-background-color-inverse);
+}
+
+.dark .negative.minimal:hover {
+  color: var(--negative-minimal-color-hover-inverse);
+  background-color: var(--negative-minimal-background-color-hover-inverse);
+}
+
+.dark .negative.minimal:active {
+  color: var(--negative-minimal-color-active-inverse);
+  background-color: var(--negative-minimal-background-color-active-inverse);
+}
+
+.dark .negative.bordered:active {
+  background-color: var(--negative-bordered-background-color-active-inverse);
+  border-color: var(--negative-bordered-border-color-active-inverse);
+  color: var(--negative-bordered-color-active-inverse);
+}
+
+.dark .negative.bordered {
+  border-color: var(--negative-bordered-border-color-inverse);
+  background-color: var(--negative-bordered-background-color-inverse);
+  color: var(--negative-bordered-color-inverse);
+}
+
+.dark .negative.bordered:hover {
+  color: var(--negative-bordered-color-hover-inverse);
+  border-color: var(--negative-bordered-border-color-hover-inverse);
+  background-color: var(--negative-bordered-background-color-hover-inverse);
+}
+
+.dark .negative.bordered.info:active {
+  background-color: var(--negative-bordered-info-background-color-active-inverse);
+  border-color: var(--negative-bordered-info-border-color-active-inverse);
+  color: var(--negative-bordered-info-color-active-inverse);
+}
+
+.dark .negative.bordered.info {
+  border-color: var(--negative-bordered-info-border-color-inverse);
+  background-color: var(--negative-bordered-info-background-color-inverse);
+  color: var(--negative-bordered-info-color-inverse);
+}
+
+.dark .negative.bordered.info:hover {
+  color: var(--negative-bordered-info-color-hover-inverse);
+  border-color: var(--negative-bordered-info-border-color-hover-inverse);
+  background-color: var(--negative-bordered-info-background-color-hover-inverse);
+}
+
+.dark .negative.filled {
+  color: var(--negative-filled-color-inverse);
+  background-color: var(--negative-filled-background-color-inverse);
+}
+
+.dark .negative.filled:hover {
+  color: var(--negative-filled-color-hover-inverse);
+  background-color: var(--negative-filled-background-color-hover-inverse);
+}
+
+.dark .negative.filled:active {
+  color: var(--negative-filled-color-active-inverse);
+  background-color: var(--negative-filled-background-color-active-inverse);
+}
+
+.dark .negative.filled.info {
+  background-color: var(--negative-filled-info-background-color-inverse);
+}
+
+.dark .negative.filled.info:hover {
+  background-color: var(--negative-filled-info-background-color-hover-inverse);
+}
+
+.dark .negative-filled.info:active {
+  background-color: var(--info-background-color-active-inverse);
+}
+
+.warning {
+  color: var(--warning-color);
+  background-color: var(--warning-background-color);
+}
+
+.warning:hover {
+  color: var(--warning-color-hover);
+  background-color: var(--warning-background-color-hover);
+}
+
+.warning:active {
+  color: var(--warning-color-active);
+  background-color: var(--warning-background-color-active);
+}
+
+.warning.info {
+  color: var(--warning-info-color);
+  background-color: var(--warning-info-background-color);
+}
+
+.warning.info:hover {
+  color: var(--warning-info-color-hover);
+  background-color: var(--warning-info-background-color-hover);
+}
+
+.warning.info:active {
+  color: var(--warning-info-color-active);
+  background-color: var(--warning-info-background-color-active);
+}
+
+.warning.minimal {
+  color: var(--warning-minimal-color);
+  background-color: var(--warning-minimal-background-color);
+}
+
+.warning.minimal:hover {
+  color: var(--warning-minimal-color-hover);
+  background-color: var(--warning-minimal-background-color-hover);
+}
+
+.warning.minimal:active {
+  color: var(--warning-minimal-color-active);
+  background-color: var(--warning-minimal-background-color-active);
+}
+
+.warning.bordered:active {
+  background-color: var(--warning-bordered-background-color-active);
+  border-color: var(--warning-bordered-border-color-active);
+  color: var(--warning-bordered-color-active);
+}
+
+.warning.bordered {
+  border-color: var(--warning-bordered-border-color);
+  background-color: var(--warning-bordered-background-color);
+  color: var(--warning-bordered-color);
+}
+
+.warning.bordered:hover {
+  color: var(--warning-bordered-color-hover);
+  border-color: var(--warning-bordered-border-color-hover);
+  background-color: var(--warning-bordered-background-color-hover);
+}
+
+.warning.bordered.info:active {
+  background-color: var(--warning-bordered-info-background-color-active);
+  border-color: var(--warning-bordered-info-border-color-active);
+  color: var(--warning-bordered-info-color-active);
+}
+
+.warning.bordered.info {
+  border-color: var(--warning-bordered-info-border-color);
+  background-color: var(--warning-bordered-info-background-color);
+  color: var(--warning-bordered-info-color);
+}
+
+.warning.bordered.info:hover {
+  color: var(--warning-bordered-info-color-hover);
+  border-color: var(--warning-bordered-info-border-color-hover);
+  background-color: var(--warning-bordered-info-background-color-hover);
+}
+
+.warning.filled {
+  color: var(--warning-filled-color);
+  background-color: var(--warning-filled-background-color);
+}
+
+.warning.filled:hover {
+  color: var(--warning-filled-color-hover);
+  background-color: var(--warning-filled-background-color-hover);
+}
+
+.warning.filled:active {
+  color: var(--warning-filled-color-active);
+  background-color: var(--warning-filled-background-color-active);
+}
+
+.warning.filled.info {
+  background-color: var(--warning-filled-info-background-color);
+}
+
+.warning.filled.info:hover {
+  background-color: var(--warning-filled-info-background-color-hover);
+}
+
+.warning-filled.info:active {
+  background-color: var(--info-background-color-active);
+}
+
+.dark .warning {
+  color: var(--warning-color-inverse);
+  background-color: var(--warning-background-color-inverse);
+}
+
+.dark .warning:hover {
+  color: var(--warning-color-hover-inverse);
+  background-color: var(--warning-background-color-hover-inverse);
+}
+
+.dark .warning:active {
+  color: var(--warning-color-active-inverse);
+  background-color: var(--warning-background-color-active-inverse);
+}
+
+.dark .warning.info {
+  color: var(--warning-info-color-inverse);
+  background-color: var(--warning-info-background-color-inverse);
+}
+
+.dark .warning.info:hover {
+  color: var(--warning-info-color-hover-inverse);
+  background-color: var(--warning-info-background-color-hover-inverse);
+}
+
+.dark .warning.info:active {
+  color: var(--warning-info-color-active-inverse);
+  background-color: var(--warning-info-background-color-active-inverse);
+}
+
+.dark .warning.minimal {
+  color: var(--warning-minimal-color-inverse);
+  background-color: var(--warning-minimal-background-color-inverse);
+}
+
+.dark .warning.minimal:hover {
+  color: var(--warning-minimal-color-hover-inverse);
+  background-color: var(--warning-minimal-background-color-hover-inverse);
+}
+
+.dark .warning.minimal:active {
+  color: var(--warning-minimal-color-active-inverse);
+  background-color: var(--warning-minimal-background-color-active-inverse);
+}
+
+.dark .warning.bordered:active {
+  background-color: var(--warning-bordered-background-color-active-inverse);
+  border-color: var(--warning-bordered-border-color-active-inverse);
+  color: var(--warning-bordered-color-active-inverse);
+}
+
+.dark .warning.bordered {
+  border-color: var(--warning-bordered-border-color-inverse);
+  background-color: var(--warning-bordered-background-color-inverse);
+  color: var(--warning-bordered-color-inverse);
+}
+
+.dark .warning.bordered:hover {
+  color: var(--warning-bordered-color-hover-inverse);
+  border-color: var(--warning-bordered-border-color-hover-inverse);
+  background-color: var(--warning-bordered-background-color-hover-inverse);
+}
+
+.dark .warning.bordered.info:active {
+  background-color: var(--warning-bordered-info-background-color-active-inverse);
+  border-color: var(--warning-bordered-info-border-color-active-inverse);
+  color: var(--warning-bordered-info-color-active-inverse);
+}
+
+.dark .warning.bordered.info {
+  border-color: var(--warning-bordered-info-border-color-inverse);
+  background-color: var(--warning-bordered-info-background-color-inverse);
+  color: var(--warning-bordered-info-color-inverse);
+}
+
+.dark .warning.bordered.info:hover {
+  color: var(--warning-bordered-info-color-hover-inverse);
+  border-color: var(--warning-bordered-info-border-color-hover-inverse);
+  background-color: var(--warning-bordered-info-background-color-hover-inverse);
+}
+
+.dark .warning.filled {
+  color: var(--warning-filled-color-inverse);
+  background-color: var(--warning-filled-background-color-inverse);
+}
+
+.dark .warning.filled:hover {
+  color: var(--warning-filled-color-hover-inverse);
+  background-color: var(--warning-filled-background-color-hover-inverse);
+}
+
+.dark .warning.filled:active {
+  color: var(--warning-filled-color-active-inverse);
+  background-color: var(--warning-filled-background-color-active-inverse);
+}
+
+.dark .warning.filled.info {
+  background-color: var(--warning-filled-info-background-color-inverse);
+}
+
+.dark .warning.filled.info:hover {
+  background-color: var(--warning-filled-info-background-color-hover-inverse);
+}
+
+.dark .warning-filled.info:active {
+  background-color: var(--info-background-color-active-inverse);
+}
+
+.kushi-button {
+  font-family: var(--primary-font-family);
+}
+
+.kushi-button.bordered {
+  border-width: var(--button-border-width);
+}
+
+.kushi-tag.bordered {
+  border-width: var(--tag-border-width);
+}
+
+.kushi-tag {
+  font-family: var(--primary-font-family);
+}
+
+.dark .kushi-radio-input {
+  background-color: black;
+}
+
+.dark .kushi-checkbox-input {
+  background-color: black;
+}
+
+.dark .kushi-checkbox-input:before {
+  box-shadow: inset 1em 1em black;
+}
+
+.dark .kushi-slider-step-label.kushi-slider-step-label-selected {
+  color: white;
+}
+
+.dark .kushi-slider-step-label {
+  color: var(--gray-300);
+}
