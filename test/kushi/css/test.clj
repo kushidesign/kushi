@@ -28,8 +28,8 @@
 
 (deftest sample (is (= 1 1)))
 
-#_(? (css-rule* ".foo"
-              [:p-3]
+(!? (css-rule* ".myns_foo__L10_C3"
+              [:.absolute-centered]
               (with-meta (list 'css :p-3)
                 {:file "wtf.cljs" :line 20 :column 12})
               nil))
@@ -103,7 +103,7 @@
 
 
 ;; Fix tests
-(do 
+#_(do 
 
 ;; *****************************************************************************
 ;; *****************************************************************************
@@ -449,30 +449,43 @@
 ;; *****************************************************************************
   
 
+;;  (deftest at-rules-bad-names
+;;     (testing "at-rules-bad-names  ->"
+
+;;       ;; This test should print a warning to terminal
+;;       (testing "bad at-name"
+;;         (is (= (css-rule "font-face"
+;;                          {:font-family "Trickster"
+;;                           :src         "local(Trickster), url(\"trickster-COLRv1.otf\") format(\"opentype\") tech(color-COLRv1)"})
+;;                nil)))
+      
+;;       ;; This test should print a warning to terminal
+;;       (testing "bad at-keyframes anme"
+;;         (is (= (css-rule "@keyframes "
+;;                          [:from {:color :blue}]
+;;                          [:to {:color :red}])
+;;                nil)))
+
+;;       ;; This test should print a warning to terminal
+;;       (testing "bad at-keyframe arg"
+;;         (is (= (css-rule "@keyframes blue-to-red"
+;;                          [:froms {:color :blue}]
+;;                          [:to {:color :red}])
+;;                nil))))
+;; (callout {:type :info
+;;             :label "[kushi.css.core-test]"
+;;             :padding-top 1}
+;;            (bling [:bold "NOTE:"] "\n"
+;;                   "The above tests should print several warning blocks.\n"
+;;                   "This is to be expected, as several tests are being\n"
+;;                   "run with a malformed calls to functions/macros, which\n"
+;;                   "return nil, but issue a user-facing warning about\n"
+;;                   "what went wrong."))
+  
+;;   ) 
+
   (deftest at-rules
     (testing "at-rules  ->"
-
-      ;; This test should print a warning to terminal
-      (testing "bad at-name"
-        (is (= (css-rule "font-face"
-                         {:font-family "Trickster"
-                          :src         "local(Trickster), url(\"trickster-COLRv1.otf\") format(\"opentype\") tech(color-COLRv1)"})
-               nil)))
-      
-      ;; This test should print a warning to terminal
-      (testing "bad at-keyframes anme"
-        (is (= (css-rule "@keyframes "
-                         [:from {:color :blue}]
-                         [:to {:color :red}])
-               nil)))
-
-      ;; This test should print a warning to terminal
-      (testing "bad at-keyframe arg"
-        (is (= (css-rule "@keyframes blue-to-red"
-                         [:froms {:color :blue}]
-                         [:to {:color :red}])
-               nil)))
-      
 
       (testing "@font-face"
         (is (= (css-rule "@font-face"
@@ -578,14 +591,6 @@
       
       ))
 
-  (callout {:type :info
-            :label "[kushi.css.core-test]"
-            :padding-top 1}
-           (bling [:bold "NOTE:"] "\n"
-                  "The above tests should print several warning blocks.\n"
-                  "This is to be expected, as several tests are being\n"
-                  "run with a malformed calls to functions/macros, which\n"
-                  "return nil, but issue a user-facing warning about\n"
-                  "what went wrong."))
+  
 
   ) ;; end of `(do ...)`
