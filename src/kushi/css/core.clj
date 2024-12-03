@@ -644,10 +644,6 @@
         (some->> conformed-args
                  css-block*
                  :css-block)]
-
-    #_(when (= sel ".my-global-style")
-      (? (keyed [sel args])))
-
     (!? (keyed [args &form &env fname sel invalid-args]))
     (when (seq invalid-args)
       (cssrule-args-warning
@@ -835,19 +831,17 @@
          
          ;; @ CSS rule with no nested rules ------
          :else
-         (f sel args)))
+         (do (f sel args))))
 
     ;; Normal css-rule -------------------------------------------
      (if-not (s/valid? ::specs/css-selector sel)
        (rule-selector-warning sel &form)
-       (do 
-         (str sel
-              " "
-              (nested-css-block args
-                                &form
-                                &env
-                                "kushi.css.core/css-rule"
-                                sel)))))))
+       (when-let [css-str (nested-css-block args
+                                            &form
+                                            &env
+                                            "kushi.css.core/css-rule"
+                                            sel)]
+         (str sel " " css-str))))))
 
 
 (defmacro ^:public css-rule
@@ -879,8 +873,12 @@
                               '?defcss))
       nil)))
 
-;; TODO
-;; - conditionally check for build state
+;; TODO - For release builds we might want to elide the inclusion of the
+;;        auto-generated classname (e.g. myns_foo__L20_C11), if that ruleset
+;;        does not contain any rules. This happens when css or sx is called with
+;;        only kushi utility or shared classes e.g. (sx :.absolute-centered).
+;;        It is probably preferrable to include these in dev for debugging.
+;;        This release build elision could be turned off with config option.
 (defmacro ^:public css
   "Returns classlist string consisting of auto-generated classname and
    user-supplied classnames.
@@ -933,6 +931,12 @@
       (string/join " " classes))))
 
 
+;; TODO - For release builds we might want to elide the inclusion of the
+;;        auto-generated classname (e.g. myns_foo__L20_C11), if that ruleset
+;;        does not contain any rules. This happens when css or sx is called with
+;;        only kushi utility or shared classes e.g. (sx :.absolute-centered).
+;;        It is probably preferrable to include these in dev for debugging.
+;;        This release build elision could be turned off with config option.
 (defmacro ^:public sx
   "Returns a map with a :class string. Sugar for `{:class (css ...)}`, to avoid
    boilerplate when you are only applying styling to an element and therefore do
