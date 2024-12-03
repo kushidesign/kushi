@@ -327,7 +327,8 @@
       (update state :defcss conj
               (let [[_ sel & rest-of-form] form
                     enable-css-layers?     false
-                    at-layer?              (str/starts-with? sel "@layer ")]
+                    at-layer?              (str/starts-with? sel "@layer ")
+                    keyframes?             (str/starts-with? sel "@keyframes")]
                 (-> (meta form)
                     (dissoc :source)
                     (assoc :sel (if enable-css-layers?
@@ -335,11 +336,19 @@
                                   (if at-layer?
                                     (-> sel (str/split #" ") last)
                                     sel)))
-                    (assoc :layer (when-not enable-css-layers?
-                                    (-> sel
-                                        (str/split #" ")
-                                        second
-                                        keyword)))
+                    (assoc :layer (cond 
+                                    keyframes?
+                                    :keyframes
+
+                                    (and at-layer?
+                                         (not enable-css-layers?))
+                                    (some-> sel
+                                            (str/split #" ")
+                                            second
+                                            keyword)
+
+                                    :else
+                                    :defcss))
                     (assoc :form (vec rest-of-form)))))
 
       ;; any other list

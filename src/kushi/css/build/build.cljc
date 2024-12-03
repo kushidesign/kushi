@@ -349,18 +349,29 @@
                   :file   (str ns)})
                nil)))))
 
+(defn- emit-defcss-layer
+  [{:keys [coll sw comment defcss-by-selector]}]
+  (when (seq coll)
+    (emitln sw (css-section-comment comment))
+    (doseq [def coll]
+      (emit-def sw (assoc def
+                          :kind
+                          :defcss
+                          :defcss-by-selector
+                          defcss-by-selector)))))
+
 ;; NEW -------------------------------------------------------------------------
 ;; -----------------------------------------------------------------------------
 (defn defcss-layers [coll]
   (reduce (fn [acc m]
-            (update
-             acc
-             (or (:layer m) :defcss)
-             (fn [coll]
-               (conj coll m))))
+            (update acc
+                    (or (:layer m) :defcss)
+                    (fn [coll] (conj coll m))))
           {:defcss           []
-           :kushi-ui-theming []}
+           :kushi-ui-theming []
+           :keyframes        []}
           coll))
+
 
 (defn build-css-for-chunk [build-state chunk-id]
   (!? build-css-for-chunk)
@@ -376,11 +387,12 @@
                  user-theming-classes-css
                  ]
           :as chunk}]
-
       (assoc chunk
              :css
              (let [sw #?(:clj (StringWriter.) :cljs (StringBuffer.))
-                   {:keys [defcss kushi-ui-theming]} (defcss-layers defcss)]
+                   {:keys [defcss
+                           kushi-ui-theming
+                           keyframes]}      (defcss-layers defcss)]
                (when base
                  (when-let [pre (:preflight-src build-state)]
                    (emitln sw pre))
@@ -391,10 +403,12 @@
                  ;; user design tokens via user theme --------------------------
                  (some->> user-design-tokens-css (emitln sw))
 
-                 ;; TODO - kushi animations (move from kushi utility classes) --
-                 
-                 ;; TODO - user animations (move from user utility classes) ----
-                 
+                 ;; TODO - maybe separate kushi animations from user animations 
+                 (emit-defcss-layer {:comment            "keyframe animations"
+                                     :sw                 sw
+                                     :defcss-by-selector defcss-by-selector
+                                     :coll               keyframes})
+
                  ;; kushi.ui component theming rules ---------------------------
                  ;; Temp, pulled in from legacy css source
                  (when-let [ui-theming
@@ -404,17 +418,12 @@
                  ;; kushi.ui component shared classes
                  ;; (shared via defclass or defclass-with-override) ------------
                  ;; implemented with new @layer selector
-                 (when (seq kushi-ui-theming)
-                   (emitln sw (css-section-comment "kushi.ui shared classes")))
+                 (emit-defcss-layer {:comment            "kushi.ui shared classes"
+                                     :sw                 sw
+                                     :defcss-by-selector defcss-by-selector
+                                     :coll               kushi-ui-theming})
 
-                 (doseq [def kushi-ui-theming]
-                   (emit-def sw (assoc def
-                                       :kind
-                                       :defcss
-                                       :defcss-by-selector
-                                       defcss-by-selector)))
-                 
-                 ;; TODO - user theming rules via [:theme :ui] -----------------
+                 ;; user theming rules via [:theme :ui] -----------------
                  (some->> user-theming-classes-css (emitln sw))
 
                  ;; kushi base utility classes
@@ -426,15 +435,10 @@
                         (emitln sw (slurp (io/resource inc))))])
 
                  ;; user-defined shared classes (via defcss)
-                 (when (seq defcss)
-                   (emitln sw (css-section-comment "User shared classes")))
-
-                 (doseq [def defcss]
-                   (emit-def sw (assoc def
-                                       :kind
-                                       :defcss
-                                       :defcss-by-selector
-                                       defcss-by-selector)))
+                 (emit-defcss-layer {:comment            "User shared classes"
+                                     :sw                 sw
+                                     :defcss-by-selector defcss-by-selector
+                                     :coll               defcss})
 
                  ;; user styles generated from kushi.core/css or kushi.core/sx -
                  (when (seq rules)
