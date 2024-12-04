@@ -419,10 +419,22 @@
    Pseudo-classes are ordered according to defs/lvfha-pseudos-order."
   ;; TODO - make pseudo-ordering override-able.
   [v all-nested-sels dupe-nested-sels]
+
   (let [
+        ;; debug?
+        ;; (= v [:a :b])
+
         ;; If there are any duplicate selectors, partition them from others
         [dupe-vecs others]
         (partition-by-pred #(contains? dupe-nested-sels (nth % 0 nil)) v)
+
+        ;; Partition nested and non-nested
+        [others-nested others2]
+        (partition-by-pred sel-and-vec-of-vecs?2 others)
+
+        ;; Order nested and non-nested
+        others
+        (apply conj others2 others-nested)
 
         ;; Potentially group and reduce duplicates
         grouped-dupes
@@ -436,15 +448,14 @@
         ;; Optionally resort based on selectors with lvfha pseudoclasses
         ret (lvfha-order ret* all-nested-sels)]
 
-   #_(? (keyed [dupe-nested-sels
-              dupe-vecs
-              others
-              grouped-dupes
-              some-lvfha?
-              ret*
-              ret]))
+   #_(when debug? (? (keyed [dupe-nested-sels
+                          dupe-vecs
+                          others
+                          grouped-dupes
+                          ;; ret*
+                          ;; ret
+                           ])))
         ret))
-
 
 (defn- order-nested-rules
   [v all-nested-sels nested-rules]
@@ -455,21 +466,24 @@
         ret*            (into [] (concat non-nested nested-rules))]
     (lvfha-order ret* all-nested-sels)))
 
-
 (defn group-shared
   [v]
-  (if-let [nested-rules (seq (filter sel-and-vec-of-vecs?2 v))]
-    (let [all-nested-sels  (map first nested-rules)]
-      (if (more-than-one? nested-rules)
-        (let [dupe-nested-sels (->> all-nested-sels
-                                    frequencies
-                                    (keep (fn [[sel n]] (when (> n 1) sel)))
-                                    (into #{}))]
-          (if (seq dupe-nested-sels)
-            (group-shared* v all-nested-sels dupe-nested-sels)
-            (order-nested-rules v all-nested-sels nested-rules)))
-        (order-nested-rules v all-nested-sels nested-rules)))
-    v))
+  (let [debug? false #_(= v [:a :b])]
+   (if-let [nested-rules (seq (filter sel-and-vec-of-vecs?2 v))]
+     (let [all-nested-sels  (map first nested-rules)]
+      ;;  (when debug? (!? all-nested-sels))
+      ;;  (when debug? (!? (more-than-one? nested-rules)))
+       (if (more-than-one? nested-rules)
+         (let [dupe-nested-sels (->> all-nested-sels
+                                     frequencies
+                                     (keep (fn [[sel n]] (when (> n 1) sel)))
+                                     (into #{}))]
+          ;;  (when debug? (!? dupe-nested-sels))
+           (if (seq dupe-nested-sels)
+             (group-shared* v all-nested-sels dupe-nested-sels)
+             (order-nested-rules v all-nested-sels nested-rules)))
+         (order-nested-rules v all-nested-sels nested-rules)))
+     v)))
 
 
 ;; HHHHHHHHH     HHHHHHHHHLLLLLLLLLLL             PPPPPPPPPPPPPPPPP   
