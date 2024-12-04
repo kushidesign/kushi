@@ -334,7 +334,9 @@
                     (assoc :sel (if enable-css-layers?
                                   sel
                                   (if at-layer?
-                                    (-> sel (str/split #" ") last)
+                                    (-> sel
+                                        (str/split #"[\t\n\r\s]+")
+                                        last)
                                     sel)))
                     (assoc :layer (cond 
                                     keyframes?
@@ -343,7 +345,7 @@
                                     (and at-layer?
                                          (not enable-css-layers?))
                                     (some-> sel
-                                            (str/split #" ")
+                                            (str/split #"[\t\n\r\s]+")
                                             second
                                             keyword)
 

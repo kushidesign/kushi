@@ -859,8 +859,9 @@
                  sel
                  (if enable-css-layers?
                    sel
+                   ;; TODO - dry this up with code in analyzer
                    (-> sel
-                       (string/split #" ")
+                       (string/split #"[\t\n\r\s]+")
                        last))]
              (f sel args)))
          
