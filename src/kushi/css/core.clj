@@ -700,12 +700,11 @@
                 (bling [:blue (or (some-> sel (str " "))
                                   (str "." (loc-id &env &form) " "))]))
         block (or block
-                  (do (? :comment "calling nested-css-block")
-                      (nested-css-block args
-                                        &form
-                                        &env
-                                        "kushi.css.core/css-block"
-                                        sel)))
+                  (nested-css-block args
+                                    &form
+                                    &env
+                                    "kushi.css.core/css-block"
+                                    sel))
         blue  #(bling [:blue (second %)] " {")
         block (-> block 
                   (sr #";" #(bling [:gray %]))
@@ -715,13 +714,24 @@
     (str sel block)))
 
 
-(defn- print-css-block [{:keys [sym] :as m}]
-  (println 
-   (if (= sym '?defcss)
-     (print-as-def m)
-     (print-as-fcall m)))
-  (println "=>")
-  (println (ansi-colorized-css-block m)))
+(defn- print-css-block [{:keys [sym &form expands-to]
+                         :as   m}]
+  (callout 
+   {:label       (let [{:keys [file line column]} (meta &form)]
+                   (str file ":" line ":" column))
+    :type        :info
+    :padding-top 1}
+   (bling (if (= sym '?defcss)
+            (print-as-def m)
+            (print-as-fcall m))
+          "\n\n"
+          [:italic.subtle.bold "Expands to:"]
+          "\n"
+          (with-out-str (pprint expands-to))
+          "\n"
+          [:italic.subtle.bold "Emits css ruleset:"]
+          "\n"
+          (ansi-colorized-css-block m))))
 
 
 (defn double-nested-rule [nm blocks]
@@ -904,7 +914,6 @@
   [sel & args]
   (if-not (or (s/valid? ::specs/css-selector sel)
               (s/valid? ::specs/at-selector sel))
-    ;; TODO - unwrap if sel is map
     (rule-selector-warning sel &form)
     (let [block (css-rule* sel args &form &env)]
       (print-css-block (assoc (keyed [args &form &env block])
@@ -941,8 +950,7 @@
    .foo_core__L102_C11 {
      color:     red;
      font-size: 48px;
-   }
-   "
+   }"
   [& args]
   (let [
         ;; If calling from a test namespace, it might not resolve a
@@ -963,8 +971,11 @@
 (defmacro ^:public ?css
   "Tapping version of `css`"
   [& args]
-  (print-css-block (assoc (keyed [args &form &env]) :sym '?css))
-  (let [{:keys [classes class-binding]} (classes+class-binding args &form &env)]
+  (let [{:keys [classes class-binding]} (classes+class-binding args &form &env)
+        expands-to (if (seq class-binding) 
+                     `{:class (string/join " " ~classes)}
+                     {:class (string/join " " classes)})]
+    (print-css-block (assoc (keyed [args &form &env expands-to]) :sym '?css))
     (if (seq class-binding) 
       `(string/join " " ~classes)
       (string/join " " classes))))
@@ -987,11 +998,15 @@
       {:class (string/join " " classes)})))
 
 
+;; TODO - maybe dry this up with ?css
 (defmacro ^:public ?sx
   "Tapping version of `sx`"
   [& args]
-  (print-css-block (assoc (keyed [args &form &env]) :sym '?sx))
-  (let [{:keys [classes class-binding]} (classes+class-binding args &form &env)]
+  (let [{:keys [classes class-binding]} (classes+class-binding args &form &env)
+        expands-to (if (seq class-binding) 
+                     `{:class (string/join " " ~classes)}
+                     {:class (string/join " " classes)})]
+    (print-css-block (assoc (keyed [args &form &env expands-to]) :sym '?sx))
     (if (seq class-binding) 
       `{:class (string/join " " ~classes)}
       {:class (string/join " " classes)})))
