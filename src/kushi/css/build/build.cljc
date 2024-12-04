@@ -416,21 +416,21 @@
                    emit-defcss-layer*
                    (partial emit-defcss-layer defcss-by-selector)]
                (when base
-                 (when-let [pre (:preflight-src build-state)]
+                 #_(when-let [pre (:preflight-src build-state)]
                    (emitln sw pre))
 
                  ;; kushi design tokens ----------------------------------------
-                 (some->> design-tokens-css (emitln sw))
+                 #_(some->> design-tokens-css (emitln sw))
 
                  ;; user design tokens via user theme --------------------------
-                 (some->> user-design-tokens-css (emitln sw))
+                 #_(some->> user-design-tokens-css (emitln sw))
 
                  ;; TODO - maybe separate kushi animations from user animations 
-                 (emit-defcss-layer* sw keyframes "keyframe animations")
+                 #_(emit-defcss-layer* sw keyframes "keyframe animations")
 
                  ;; kushi.ui component theming rules ---------------------------
                  ;; Temp, pulled in from legacy css source
-                 (when-let [ui-theming
+                 #_(when-let [ui-theming
                             (:kush-ui-component-theming-src build-state)]
                    (emitln sw ui-theming))
 
@@ -440,7 +440,7 @@
                  (emit-defcss-layer* sw kushi-ui-theming "kushi.ui shared classes")
 
                  ;; user theming rules via [:theme :ui] -----------------
-                 (some->> user-theming-classes-css (emitln sw))
+                 #_(some->> user-theming-classes-css (emitln sw))
 
                  ;; kushi base utility classes
                  (some->> utility-classes-css (emitln sw))
@@ -462,7 +462,7 @@
                    (emit-def sw def))
                  
                  ;; kushi base utility classes, override versions
-                 (some->> utility-classes-overrides-css (emitln sw))
+                 #_(some->> utility-classes-overrides-css (emitln sw))
 
                  (.toString sw)))))))
 

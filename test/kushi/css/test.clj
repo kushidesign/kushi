@@ -20,15 +20,34 @@
                                     css-vars-map
                                     lightning-opts
                                     lightning]]
+            [clojure.string :as string]
             [kushi.css.specs :as specs]
             [clojure.spec.alpha :as s]
             [clojure.walk :as walk]
             ;; [taoensso.tufte :as tufte :refer [p profile]]
             [kushi.css.defs :as defs]))
 
+(? (css-rule
+ ".foo"
+ {:ta                                          :c
+  :w                                           0
+  :h                                           0
+  :.kushi-slider-step-label-selected:transform "scale(1)"
+  :.kushi-slider-step-label-selected:o         1
+  :.kushi-slider-step-label-selected:c         :currentColor
+  :.kushi-slider-step-label-selected>span:v    :visible
+  :transform                                   :$label-scale-factor
+  :before:content                              :$step-marker-content}))
+
+
 (deftest sample (is (= 1 1)))
 
-(!? (css-rule* ".myns_foo__L10_C3"
+(!? (string/split
+    "@layer mylayer
+     .foobar"
+    #"[\t\n\r\s]+"))
+
+#_(!? (css-rule* ".myns_foo__L10_C3"
               [:.absolute-centered]
               (with-meta (list 'css :p-3)
                 {:file "wtf.cljs" :line 20 :column 12})
