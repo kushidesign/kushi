@@ -219,6 +219,21 @@
             "")
           req))
 
+(defn- utility-classes-overrides-css
+  [req {:keys [all-utility-classes]}]
+  (reduce (fn [acc kw]
+            (str acc
+                 (let [sel (name kw)
+                       m   (get all-utility-classes sel)
+                       ;; TODO - provide values for &env &form (nil and nil) 
+                       sel (str sel "\\!")
+                       css (kushi.css/css-rule* sel (list m) nil nil)]
+                   (some->> css (str "\n")))))
+          (if (and (not release?) (seq req))
+            (css-section-comment "Kushi utility classes, override versions")
+            "")
+          req))
+
 (defn- tokens-css [req coll comment]
   (when-let [tokens
              (if (and release? (set? req))
@@ -350,7 +365,7 @@
                nil)))))
 
 (defn- emit-defcss-layer
-  [{:keys [coll sw comment defcss-by-selector]}]
+  [defcss-by-selector sw coll comment]
   (when (seq coll)
     (emitln sw (css-section-comment comment))
     (doseq [def coll]
@@ -382,6 +397,7 @@
                  defcss-by-selector
                  classpath-includes
                  utility-classes-css
+                 utility-classes-overrides-css
                  design-tokens-css
                  user-design-tokens-css
                  user-theming-classes-css
@@ -389,10 +405,16 @@
           :as chunk}]
       (assoc chunk
              :css
-             (let [sw #?(:clj (StringWriter.) :cljs (StringBuffer.))
+             (let [sw
+                   #?(:clj (StringWriter.) :cljs (StringBuffer.))
+
                    {:keys [defcss
                            kushi-ui-theming
-                           keyframes]}      (defcss-layers defcss)]
+                           keyframes]}      
+                   (defcss-layers defcss)
+
+                   emit-defcss-layer*
+                   (partial emit-defcss-layer defcss-by-selector)]
                (when base
                  (when-let [pre (:preflight-src build-state)]
                    (emitln sw pre))
@@ -404,10 +426,7 @@
                  (some->> user-design-tokens-css (emitln sw))
 
                  ;; TODO - maybe separate kushi animations from user animations 
-                 (emit-defcss-layer {:comment            "keyframe animations"
-                                     :sw                 sw
-                                     :defcss-by-selector defcss-by-selector
-                                     :coll               keyframes})
+                 (emit-defcss-layer* sw keyframes "keyframe animations")
 
                  ;; kushi.ui component theming rules ---------------------------
                  ;; Temp, pulled in from legacy css source
@@ -418,10 +437,7 @@
                  ;; kushi.ui component shared classes
                  ;; (shared via defclass or defclass-with-override) ------------
                  ;; implemented with new @layer selector
-                 (emit-defcss-layer {:comment            "kushi.ui shared classes"
-                                     :sw                 sw
-                                     :defcss-by-selector defcss-by-selector
-                                     :coll               kushi-ui-theming})
+                 (emit-defcss-layer* sw kushi-ui-theming "kushi.ui shared classes")
 
                  ;; user theming rules via [:theme :ui] -----------------
                  (some->> user-theming-classes-css (emitln sw))
@@ -435,10 +451,7 @@
                         (emitln sw (slurp (io/resource inc))))])
 
                  ;; user-defined shared classes (via defcss)
-                 (emit-defcss-layer {:comment            "User shared classes"
-                                     :sw                 sw
-                                     :defcss-by-selector defcss-by-selector
-                                     :coll               defcss})
+                 (emit-defcss-layer* sw defcss "User shared classes")
 
                  ;; user styles generated from kushi.core/css or kushi.core/sx -
                  (when (seq rules)
@@ -448,8 +461,9 @@
                  (doseq [def rules]
                    (emit-def sw def))
                  
-                 ;; TODO - Add kushi base utility classes, override versions ---
-                 
+                 ;; kushi base utility classes, override versions
+                 (some->> utility-classes-overrides-css (emitln sw))
+
                  (.toString sw)))))))
 
 
@@ -591,6 +605,11 @@
                     seq
                     (utility-classes-css build-state))
 
+            utility-classes-overrides-css
+            (some-> required-utility-classes 
+                    seq
+                    (utility-classes-overrides-css build-state))
+
             required-design-tokens
             :all ;; <- creating harvesting fn here
             
@@ -627,6 +646,7 @@
               :defcss-by-selector defcss-by-selector
               :required-utility-classes required-utility-classes
               :utility-classes-css utility-classes-css
+              :utility-classes-overrides-css utility-classes-overrides-css
               :required-design-tokens required-design-tokens
               :design-tokens-css design-tokens-css
               :user-design-tokens-css user-design-tokens-css
