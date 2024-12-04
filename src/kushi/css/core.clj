@@ -963,21 +963,27 @@
     ;; `[(when my-runtime-var "foo") my-classname "bar"]`
     ;;
     ;; If no conditional class forms, we can string/join it at compile time
+
+
     (if (seq class-binding) 
-      `(string/join " " ~classes)
+       `(kushi.css.core/class-str ~classes)
       (string/join " " classes))))
 
 
 (defmacro ^:public ?css
   "Tapping version of `css`"
   [& args]
-  (let [{:keys [classes class-binding]} (classes+class-binding args &form &env)
-        expands-to (if (seq class-binding) 
-                     `{:class (string/join " " ~classes)}
-                     {:class (string/join " " classes)})]
+  (let [{:keys [classes class-binding]}
+        (classes+class-binding args &form &env)
+
+        expands-to
+        (if (seq class-binding) 
+          `{:class (kushi.css.core/class-str ~classes)}
+          {:class (string/join " " classes)})]
+
     (print-css-block (assoc (keyed [args &form &env expands-to]) :sym '?css))
     (if (seq class-binding) 
-      `(string/join " " ~classes)
+      `(kushi.css.core/class-str ~classes)
       (string/join " " classes))))
 
 
@@ -992,9 +998,10 @@
    boilerplate when you are only applying styling to an element and therefore do
    not need to supply any html attributes other than :class."
   [& args]
-  (let [{:keys [classes class-binding]} (classes+class-binding args &form &env)]
+  (let [{:keys [classes class-binding]}
+        (classes+class-binding args &form &env)]
     (if (seq class-binding) 
-      `{:class (string/join " " ~classes)}
+      `{:class (kushi.css.core/class-str ~classes)}
       {:class (string/join " " classes)})))
 
 
@@ -1002,13 +1009,17 @@
 (defmacro ^:public ?sx
   "Tapping version of `sx`"
   [& args]
-  (let [{:keys [classes class-binding]} (classes+class-binding args &form &env)
-        expands-to (if (seq class-binding) 
-                     `{:class (string/join " " ~classes)}
-                     {:class (string/join " " classes)})]
+  (let [{:keys [classes class-binding]}
+        (classes+class-binding args &form &env)
+
+        expands-to
+        (if (seq class-binding) 
+          `{:class (kushi.css.core/class-str ~classes)}
+          {:class (string/join " " classes)})]
+
     (print-css-block (assoc (keyed [args &form &env expands-to]) :sym '?sx))
     (if (seq class-binding) 
-      `{:class (string/join " " ~classes)}
+      `{:class (kushi.css.core/class-str ~classes)}
       {:class (string/join " " classes)})))
 
 
