@@ -65,7 +65,9 @@
 
               ;; {:thing 4}
               (number? val)
-              [form (convert-num-val svc prop val)]
+              ;; Kushi - we don't want to do this conversion
+              [form val #_(convert-num-val svc prop val)]
+              
 
               ;; {:thing :alias}
               (keyword? val)
@@ -82,7 +84,8 @@
                   [form alias-value]
 
                   (number? alias-value)
-                  [form (convert-num-val form prop alias-value)]
+                  ;; Kushi - we don't want to do this conversion
+                  [form alias-value #_(convert-num-val form prop alias-value)]
 
                   :else
                   [(add-warning svc form ::invalid-map-val {:prop prop :val val})
