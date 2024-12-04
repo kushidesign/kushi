@@ -1,6 +1,7 @@
+;; TODO - determine how much in this namespace can be done in macro-land
+
 (ns kushi.css.inject
   (:require [clojure.string :as string]))
-
 
 ;; -----------------------------------------------------------------------------
 ;; Public function for injecting 3rd party stylesheets
@@ -42,10 +43,11 @@
           (.setAttribute link (name attr) (name val)))
         (try
           (do (.appendChild js/document.head link)
-              (js/console.log 
-               (str "kushi.css.inject/add-stylesheet!\n"
-                    "   Appended stylesheet to <head>\n")
-               link))
+              (when ^boolean js/goog.DEBUG 
+                (js/console.log 
+                 (str "(kushi.css.inject/add-stylesheet! ...)\n\n"
+                      "   Appended stylesheet to <head>\n")
+                 link)))
           (catch :default e
             (when ^boolean js/goog.DEBUG
               (js/console.warn
@@ -143,19 +145,24 @@
   [acc
    {:keys [family axes]
     :as   m}]
-
   (if-not (contains? material-symbols-font-families family)
     (do (material-symbols-bad-option-warning! family)
         acc)
     (let [axes*     (into {}
                           (map (fn [[k v]]
-                                 (let [k (case k :grad "GRAD" :fill "FILL" (name k))
-                                       v (cond (vector? v)
-                                               (axis->str k v)
-                                               (keyword? v)
-                                               (name v)
-                                               :else
-                                               (str v))]
+                                 (let [k (case k
+                                           :grad "GRAD"
+                                           :fill "FILL"
+                                           (name k))
+                                       v (cond
+                                           (vector? v)
+                                           (axis->str k v)
+
+                                           (keyword? v)
+                                           (name v)
+
+                                           :else
+                                           (str v))]
                                    [k v]))
                                axes))
           f         #(when-let [v (get axes* %)] [% v])

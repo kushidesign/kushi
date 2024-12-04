@@ -8,7 +8,7 @@
 (def class-binding "foo")
 
 (defn my-button []
-  [:button (?sx #_class-binding
+  [:button (sx #_class-binding
                 :bgc--blue
                 :c--white
                 :p--15px

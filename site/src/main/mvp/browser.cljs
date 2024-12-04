@@ -1,11 +1,30 @@
 (ns mvp.browser
   (:require
-  ;;  [site.theme]
    [reagent.dom :as rdom]
-  ;;  [site.views :as views]
+   ;; [site.views :as views]
    [mvp.button :refer [my-button]]
    [kushi.css.core :refer [css sx defcss]]
-   ))
+   [kushi.css.inject :as inject]))
+
+;; required for default fonts used in kushi.ui
+(inject/add-google-fonts!
+ {:family "Inter"
+  :styles {:normal :all #_[400 500 600]
+           :italic :all #_[400 500 600]}}
+ {:family "JetBrains Mono"
+  :styles {:normal :all #_[400 500 600]
+           :italic :all #_[400 500 600]}}
+ {:family "Cormorant"
+  :styles {:normal :all #_[400 500 600]
+           :italic :all #_[400 500 600]}})
+
+;; required for default icons used in kushi.ui
+(inject/add-google-material-symbols!
+ {:family "Material Symbols Outlined"
+  :axes   {:opsz :20..48
+           :wght :100..700
+           :grad :-50..200
+           :fill :0..1}})
 
 (defcss "@keyframes yspinner"
     [:0% {:transform "rotateY(0deg)"}]
