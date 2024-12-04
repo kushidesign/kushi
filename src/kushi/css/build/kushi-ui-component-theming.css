@@ -1,6 +1,8 @@
 
 /* kushi.ui component theming rules */
 
+
+/* Start of things from legacy, kushi.ui.basetheme/ui ------------------------*/
 body {
   font-family: var(--sans-serif-font-stack);
   color: var(--foreground-color);
@@ -151,7 +153,10 @@ code, .code {
 .warning-bg {
   background-color: var(--warning-background-color);
 }
+/* End of things from legacy, kushi.ui.basetheme/ui -------------------------*/
 
+
+/* Beginning of legacy, hsl-based theming system ----------------------------*/
 .neutral {
   color: var(--neutral-color);
   background-color: var(--neutral-background-color);
@@ -1229,6 +1234,13 @@ code, .code {
   background-color: var(--info-background-color-active-inverse);
 }
 
+/* End of legacy, hsl-based theming system -----------------------------------*/
+
+
+
+/* Start of things from legacy, kushi.ui.basetheme/ui*, probably should live 
+   in their respective component namespaces ---------------------------------*/
+
 .kushi-button {
   font-family: var(--primary-font-family);
 }
@@ -1264,3 +1276,5 @@ code, .code {
 .dark .kushi-slider-step-label {
   color: var(--gray-300);
 }
+
+/* End of things from legacy, kushi.ui.basetheme/ui* ------------------------*/
