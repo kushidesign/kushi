@@ -1,5 +1,6 @@
 (ns kushi.css.hydrated
   (:require [clojure.spec.alpha :as s]
+            [fireworks.core :refer [? !? ?> !?>]]
             [clojure.string :as string]
             [clojure.walk :refer [prewalk]]
             [kushi.css.defs :as defs]
@@ -109,6 +110,13 @@
    
    })
 
+(defn- string-starts-with-pseudo-class? [s]
+  (-> s
+      (string/split #"[ \:\.\+\>\~]" 2)
+      first
+      string/trim
+      (pseudo? defs/pseudo-classes*
+               defs/functional-pseudo-classes*)))
 
 (defn modf
   [last-index prop? i s]
@@ -139,8 +147,21 @@
 
             :else
             :query-selector)]
+    ;; (!? (keyed [last-index prop? i s t]))
     (if t
-      (with-meta (symbol s) {:mod-type t})
+      (let [;; The first branch of this `if` is a check to see
+            ;; if we are dealing with something like:
+            ;; "checked+.kushi-label>.emoji"
+
+            ;; which would have been split from something like:
+            ;; " .kushi-radio-input:checked+.kushi-label>.emoji"
+            
+            ;; If first bit is a css pseudoclass like ":checked", we need to
+            ;; prepend a ":" 
+            s (if (string-starts-with-pseudo-class? s)
+                (str ":" s)
+                s)]
+        (with-meta (symbol s) {:mod-type t}))
       s)))
 
 
