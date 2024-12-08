@@ -1,6 +1,6 @@
 (ns kushi.css.hydrated
   (:require [clojure.spec.alpha :as s]
-            [fireworks.core :refer [? !? ?> !?>]]
+            ;; [fireworks.core :refer [? !? ?> !?>]]
             [clojure.string :as string]
             [clojure.walk :refer [prewalk]]
             [kushi.css.defs :as defs]
@@ -147,7 +147,7 @@
 
             :else
             :query-selector)]
-    ;; (!? (keyed [last-index prop? i s t]))
+    ;; (? (keyed [last-index prop? i s t]))
     (if t
       (let [;; The first branch of this `if` is a check to see
             ;; if we are dealing with something like:
@@ -158,9 +158,11 @@
             
             ;; If first bit is a css pseudoclass like ":checked", we need to
             ;; prepend a ":" 
-            s (if (string-starts-with-pseudo-class? s)
+            s (if (and (pos? i)
+                       (string-starts-with-pseudo-class? s))
                 (str ":" s)
-                s)]
+                s)
+            ]
         (with-meta (symbol s) {:mod-type t}))
       s)))
 
