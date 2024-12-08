@@ -79,7 +79,8 @@
                   (alts-exactly-one css-prop-stack-first-char-allowables)
                   css-prop-stack-re-base
                   "--"
-                  css-value-re-base)))
+                  css-value-re-base
+                  "(?:!important)?")))
 
 
 ;; ## Tokenized keywords regexps ----------------------------------------------
@@ -101,7 +102,8 @@
                   (alts-exactly-one css-prop-stack-first-char-allowables)
                   tok-kw-css-prop-stack-re-base
                   "--"
-                  tok-kw-css-value-re-base)))
+                  tok-kw-css-value-re-base
+                  "(?:!important)?")))
 
 
 
@@ -205,6 +207,9 @@
   (s/and keyword?
          #(re-find classname-with-dot-re (name %))))
 
+(s/def ::supplied-classname
+  (s/and string?
+         #(re-find classname-with-dot-re (name %))))
 
 
 ;; ## Specs for keyframes ------------------------------------------------------
@@ -286,12 +291,13 @@
 
 (s/def ::valid-sx-arg
   (s/or 
-   :class-kw      ::class-kw
-   :tokenized     ::tokenized
-   :style-vec     ::style-vec
-   :style-map     ::style-map
-   :css-rule-call ::css-rule-call
-   :class-binding symbol?  ;; <- intended for dynamic classnames (maybe remove?)
+   :supplied-classname ::supplied-classname
+   :class-kw           ::class-kw
+   :tokenized          ::tokenized
+   :style-vec          ::style-vec
+   :style-map          ::style-map
+   :css-rule-call      ::css-rule-call
+   :class-binding      symbol?  ;; <- intended for dynamic classnames (maybe remove?)
 
    ;; ! removed :logic-sexp
    ;; :logic-sexp    ::logic-sexp
