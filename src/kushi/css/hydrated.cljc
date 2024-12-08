@@ -97,8 +97,17 @@
    ;; Prepends "&", unless selector has " &" appended, which makes it an 
    ;; ancestor selector in nested css
    :query-selector
+
+   ;; TODO - need a regex that will remove underscores, but only if they are not
+   ;;        inside single or double quotes
    #(str (when-not (string/ends-with? % " &") "&")
-         (string/replace % #"^_" " "))})
+         (string/replace % #"_" " "))
+
+  ;; TODO - you can probably remove this
+  ;;  #(str (when-not (string/ends-with? % " &") "&")
+  ;;        (string/replace % #"^_" " "))
+   
+   })
 
 
 (defn modf
