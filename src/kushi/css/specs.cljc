@@ -45,7 +45,7 @@
 (def css-prop-stack-allowables
   (str ":" css-prop-stack-first-char-allowables))
 
-(def css-value-shared-re-base "0-9a-zA-Z%_:\\+\\/\\*\\ \\|\\(\\)\\.\\-\\$")
+(def css-value-shared-re-base "0-9a-zA-Z#%_:\\+\\/\\*\\ \\|\\(\\)\\.\\-\\$")
 
 
 
