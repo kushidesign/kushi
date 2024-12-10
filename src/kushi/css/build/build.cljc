@@ -4,7 +4,7 @@
   (:require
    [kushi.css.core :as kushi.css]
    [kushi.css.specs :as kushi-specs]
-   [fireworks.core :refer [? !?] :rename {? ff}]
+   [fireworks.core :refer [? !? pprint] :rename {? ff}]
    [bling.core :refer [callout bling]]
    [kushi.css.build.utility-classes :as utility-classes]
    [kushi.css.build.tokens :as tokens]
@@ -20,7 +20,8 @@
         [fireworks.macros :refer [keyed]]]
        :cljs
        [[cljs.reader :as edn]
-        [fireworks.macros :refer-macros [keyed]]]))
+        [fireworks.macros :refer-macros [keyed]]])
+   [clojure.string :as string])
   #?(:clj
      (:import [java.io File StringWriter Writer])
      :cljs
@@ -91,7 +92,11 @@
                               (let [[prefix sub-sel] prefix]
                                 (assoc aliases
                                        (keyword (str prefix space-num))
-                                       [[sub-sel (reduce #(assoc %1 %2 space-val) {} props)]]))))
+                                       [[sub-sel (reduce #(assoc %1
+                                                                 %2
+                                                                 space-val)
+                                                         {}
+                                                         props)]]))))
                           aliases
                           (:spacing alias-groups)))
                        aliases
@@ -387,9 +392,41 @@
            :keyframes        []}
           coll))
 
+(defn css-layers [coll]
+  (reduce (fn [acc {:keys [ns form sel] :as m}]
+            ;; (ff (name ns))
+            ;; (ff (str ns))
+            (let [kui? (-> ns name (string/starts-with? "kushi.ui."))]
+              (update acc
+                      (if kui? :kushi-ui-component :css)
+                      (fn [coll]
+                        ;; TODO - potentially dry this up with what is in
+                        ;;        kushi.css.core
+                        (let [fa                 
+                              (first form)
+
+                              supplied-classname 
+                              (when (and (string? fa)
+                                         (re-find #"^\.[^\.]" fa))
+                                fa)
+                              
+                              new-form
+                              (if supplied-classname
+                                (with-meta (subvec form 1) (meta form))
+                                form)
+
+                              sel                
+                              (or supplied-classname sel)
+
+                              m+                  
+                              {:form new-form
+                               :sel  sel}]
+                          (conj coll (merge m m+)))))))
+          {:css                []
+           :kushi-ui-component []}
+          coll))
 
 (defn build-css-for-chunk [build-state chunk-id]
-  (!? build-css-for-chunk)
   (update-in build-state [:chunks chunk-id]
     (fn [{:keys [base
                  rules
@@ -400,8 +437,7 @@
                  utility-classes-overrides-css
                  design-tokens-css
                  user-design-tokens-css
-                 user-theming-classes-css
-                 ]
+                 user-theming-classes-css]
           :as chunk}]
       (assoc chunk
              :css
@@ -413,34 +449,39 @@
                            keyframes]}      
                    (defcss-layers defcss)
 
+                   {:keys [css kushi-ui-component]}
+                   (css-layers rules)
+
                    emit-defcss-layer*
                    (partial emit-defcss-layer defcss-by-selector)]
                (when base
-                 #_(when-let [pre (:preflight-src build-state)]
+                 (when-let [pre (:preflight-src build-state)]
                    (emitln sw pre))
 
                  ;; kushi design tokens ----------------------------------------
-                 #_(some->> design-tokens-css (emitln sw))
+                 (some->> design-tokens-css (emitln sw))
 
                  ;; user design tokens via user theme --------------------------
-                 #_(some->> user-design-tokens-css (emitln sw))
+                 (some->> user-design-tokens-css (emitln sw))
 
                  ;; TODO - maybe separate kushi animations from user animations 
-                 #_(emit-defcss-layer* sw keyframes "keyframe animations")
+                 (emit-defcss-layer* sw keyframes "keyframe animations")
 
                  ;; kushi.ui component theming rules ---------------------------
                  ;; Temp, pulled in from legacy css source
-                 #_(when-let [ui-theming
-                            (:kush-ui-component-theming-src build-state)]
+                 (when-let [ui-theming
+                            (:kushi-ui-component-theming-src build-state)]
                    (emitln sw ui-theming))
 
                  ;; kushi.ui component shared classes
                  ;; (shared via defclass or defclass-with-override) ------------
                  ;; implemented with new @layer selector
-                 (emit-defcss-layer* sw kushi-ui-theming "kushi.ui shared classes")
+                 (emit-defcss-layer* sw
+                                     kushi-ui-theming
+                                     "kushi.ui shared classes")
 
                  ;; user theming rules via [:theme :ui] -----------------
-                 #_(some->> user-theming-classes-css (emitln sw))
+                 (some->> user-theming-classes-css (emitln sw))
 
                  ;; kushi base utility classes
                  (some->> utility-classes-css (emitln sw))
@@ -453,16 +494,23 @@
                  ;; user-defined shared classes (via defcss)
                  (emit-defcss-layer* sw defcss "User shared classes")
 
-                 ;; user styles generated from kushi.core/css or kushi.core/sx -
-                 (when (seq rules)
-                   (emitln sw (css-section-comment "User styling")))
+                 ;; kushi.ui component styles
+                 (when (seq kushi-ui-component)
+                   (emitln sw (css-section-comment "kushi.ui component styles"))
+                   (doseq [def kushi-ui-component] (emit-def sw def)))
 
-                 ;; NEW -----------------------------------
-                 (doseq [def rules]
-                   (emit-def sw def))
-                 
+                 ;; user styles generated from kushi.core/css or kushi.core/sx -
+                 (when (seq css)
+                   (emitln sw (css-section-comment "User styling"))
+                   (doseq [def css] (emit-def sw def)))
+
                  ;; kushi base utility classes, override versions
-                 #_(some->> utility-classes-overrides-css (emitln sw))
+                 (some->> utility-classes-overrides-css (emitln sw))
+
+                 ;; kushi legacy override classes
+                 (when-let [legacy-overrides
+                            (:kushi-overrides-src build-state)]
+                   (emitln sw legacy-overrides))
 
                  (.toString sw)))))))
 
@@ -543,121 +591,121 @@
   ;;-------------------------;;
 
   (reduce-kv
-    (fn [build-state chunk-id chunk]
-      (let [all-rules
-            (->> (for [ns (:chunk-namespaces chunk)
-                       :let [{:keys [ns css] :as ns-info} (get namespaces ns)]
-                       {:keys [line column] :as form-info} css
-                       :let [css-id (s/generate-id ns line column)]]
-                   (-> (ana/process-form build-state form-info)
-                       (assoc
-                        :ns ns
-                        :css-id css-id
+   (fn [build-state chunk-id chunk]
+     (let [all-rules
+           (->> (for [ns (:chunk-namespaces chunk)
+                      :let [{:keys [ns css] :as ns-info} (get namespaces ns)]
+                      {:keys [line column] :as form-info} css
+                      :let [css-id (s/generate-id ns line column)]]
+                  (-> (ana/process-form build-state form-info)
+                      (assoc
+                       :ns ns
+                       :css-id css-id
                         ;; FIXME: when adding optimization pass selector won't
                         ;;        be based on css-id anymore
-                        :sel (str "." css-id))))
-                 (into []))
+                       :sel (str "." css-id))))
+                (into []))
 
             ;; NEW --------------------------------------------
-            all-defcss
-            (->> (for [ns (:chunk-namespaces chunk)
-                       :let [{:keys [ns defcss] :as ns-info} (get namespaces ns)]
-                       {:keys [line column form sel layer] :as form-info} defcss
-                       :let [css-id (s/generate-id ns line column)]]
-                   (-> (ana/process-form build-state form-info)
+           all-defcss
+           (->> (for [ns (:chunk-namespaces chunk)
+                      :let [{:keys [ns defcss] :as ns-info} (get namespaces ns)]
+                      {:keys [line column form sel layer] :as form-info} defcss
+                      :let [css-id (s/generate-id ns line column)]]
+                  (-> (ana/process-form build-state form-info)
                        ;; TODO use (merge (keyed [ns css-id ...]))
-                       (assoc
-                        :ns     ns
-                        :css-id css-id
-                        :form   form
+                      (assoc
+                       :ns     ns
+                       :css-id css-id
+                       :form   form
                         ;; FIXME: when adding optimization pass selector
                         ;;        won't be based on css-id anymore
-                        :sel    sel
-                        :layer  layer)))
-                 (into []))
+                       :sel    sel
+                       :layer  layer)))
+                (into []))
 
-            defcss-by-selector
-            (reduce (fn [acc {:keys [sel form]}]
-                      (assoc acc sel form))
-                    {} 
-                    all-defcss)
+           defcss-by-selector
+           (reduce (fn [acc {:keys [sel form]}]
+                     (assoc acc sel form))
+                   {} 
+                   all-defcss)
             ;; NEW --------------------------------------------
-            
-            cp-includes
-            (into #{} (for [ns (:chunk-namespaces chunk)
-                            :let [{:keys [ns-meta]} (get namespaces ns)]
-                            include (:kushi.css.build/include ns-meta)]
-                        include))
+           
+           cp-includes
+           (into #{} (for [ns (:chunk-namespaces chunk)
+                           :let [{:keys [ns-meta]} (get namespaces ns)]
+                           include (:kushi.css.build/include ns-meta)]
+                       include))
 
-            warnings
-            (vec
-             (for [{:keys [warnings ns line column]} all-rules
-                   warning warnings]
-               (assoc warning :ns ns :line line :column column)))
+           warnings
+           (vec
+            (for [{:keys [warnings ns line column]} all-rules
+                  warning warnings]
+              (assoc warning :ns ns :line line :column column)))
 
 
             ;; NEW --------------------------------------------
-            required-utility-classes
-            (reduce-utility-classes-from-rules all-rules)
+           required-utility-classes
+           (reduce-utility-classes-from-rules all-rules)
 
-            utility-classes-css
-            (some-> required-utility-classes 
-                    seq
-                    (utility-classes-css build-state))
+           utility-classes-css
+           (some-> required-utility-classes 
+                   seq
+                   (utility-classes-css build-state))
 
-            utility-classes-overrides-css
-            (some-> required-utility-classes 
-                    seq
-                    (utility-classes-overrides-css build-state))
+           utility-classes-overrides-css
+           (some-> required-utility-classes 
+                   seq
+                   (utility-classes-overrides-css build-state))
 
-            required-design-tokens
-            :all ;; <- creating harvesting fn here
-            
-            design-tokens-css
-            (design-tokens-css required-design-tokens build-state)
+           required-design-tokens
+           :all ;; <- creating harvesting fn here
+           
+           design-tokens-css
+           (design-tokens-css required-design-tokens build-state)
 
-            required-user-design-tokens
-            :all ;; <- creating harvesting fn here
-            
-            user-design-tokens-css
-            (user-design-tokens-css required-user-design-tokens build-state)
+           required-user-design-tokens
+           :all ;; <- creating harvesting fn here
+           
+           user-design-tokens-css
+           (user-design-tokens-css required-user-design-tokens build-state)
 
-            user-theming-classes-css
-            (user-theming-classes-css :all build-state)
+           user-theming-classes-css
+           (user-theming-classes-css :all build-state)
             ;; NEW --------------------------------------------
-            
-            ]
-        (co 'build-css-for-chunks
-            (-> (? :data
-                   {:display-metadata? false}
-                   {:all-rules   all-rules
-                    :cp-includes cp-includes
-                    :warnings    warnings})
-                :formatted
-                :string))
-        (-> build-state
-            (update-in [:chunks chunk-id] assoc
-              :warnings warnings
-              :classpath-includes cp-includes
-              :rules all-rules
+           
+           ]
+       (co 'build-css-for-chunks
+           (-> (? :data
+                  {:display-metadata? false}
+                  {:all-rules   all-rules
+                   :cp-includes cp-includes
+                   :warnings    warnings})
+               :formatted
+               :string))
+       (-> build-state
+           (update-in [:chunks chunk-id] assoc
+                      :warnings warnings
+                      :classpath-includes cp-includes
+                      :rules all-rules
 
-              ;; NEW --------------------------------------------
-              :defcss all-defcss
-              :defcss-by-selector defcss-by-selector
-              :required-utility-classes required-utility-classes
-              :utility-classes-css utility-classes-css
-              :utility-classes-overrides-css utility-classes-overrides-css
-              :required-design-tokens required-design-tokens
-              :design-tokens-css design-tokens-css
-              :user-design-tokens-css user-design-tokens-css
-              :user-theming-classes-css user-theming-classes-css
-              ;; NEW --------------------------------------------
+                      ;; NEW --------------------------------------------
+                      :defcss all-defcss
+                      :defcss-by-selector defcss-by-selector
+                      :required-utility-classes required-utility-classes
+                      :utility-classes-css utility-classes-css
+                      :utility-classes-overrides-css utility-classes-overrides-css
+                      :required-design-tokens required-design-tokens
+                      :design-tokens-css design-tokens-css
+                      :user-design-tokens-css user-design-tokens-css
+                      :user-theming-classes-css user-theming-classes-css
+                      ;; NEW --------------------------------------------
+                      
+                      )
+           (build-css-for-chunk chunk-id))))
 
-                       )
-            (build-css-for-chunk chunk-id))))
-
-    build-state
-    (:chunks build-state)))
+   build-state
+   (:chunks build-state)))
 
 
 (defn trim-chunks [build-state]
@@ -677,34 +725,45 @@
                   :string))
           (let [chunk-set
                 (if-not (seq depends-on)
-                  (set namespaces)
-                  (let [provided-by-deps (reduce
-                                          (fn step-fn [ns-set module-id]
-                                            (let [{:keys [namespaces]
-                                                   :as   other} (get chunks module-id)]
-                                              (co2 'inside-provided-by-deps-reduce
-                                                   (-> (? :data
-                                                          {:coll-limit 5}
-                                                          {:ns-set     ns-set
-                                                           :chunk-id   module-id
-                                                           :namespaces namespaces})
-                                                       :formatted
-                                                       :string))
+                  (distinct namespaces)
+                  #_(set namespaces)
+                  (do (callout {:type :warning}
+                               (bling [:blue "kushi.css.build.build/trim-chunks"]
+                                      "\n"
+                                      [:blue ":depends-on"]
+                                      " branch, this will created a set for "
+                                      [:blue ":chunk-namespaces"]
+                                      " value"
+                                      "\n"
+                                      "You'll probably want to change this so that it creates a ordered sequence of some koind.")
+                               )
+                      (let [provided-by-deps (reduce
+                                              (fn step-fn [ns-set module-id]
+                                                (let [{:keys [namespaces]
+                                                       :as   other} (get chunks module-id)]
+                                                  (co2 'inside-provided-by-deps-reduce
+                                                       (-> (? :data
+                                                              {:coll-limit 5}
+                                                              {:ns-set     ns-set
+                                                               :chunk-id   module-id
+                                                               :namespaces namespaces})
+                                                           :formatted
+                                                           :string))
 
-                                              (co2 'inside-provided-by-deps-reduce
-                                                   (-> (? :trace (-> ns-set
-                                                                     (set/union (set namespaces))
-                                                                     (ana/reduce-> step-fn (:depends-on other))))
-                                                       :formatted
-                                                       :string))
+                                                  (co2 'inside-provided-by-deps-reduce
+                                                       (-> (? :trace (-> ns-set
+                                                                         (set/union (set namespaces))
+                                                                         (ana/reduce-> step-fn (:depends-on other))))
+                                                           :formatted
+                                                           :string))
 
-                                              (-> ns-set
-                                                  (set/union (set namespaces))
-                                                  (ana/reduce-> step-fn (:depends-on other)))))
-                                          #{}
-                                          depends-on)
-                        set-diff         (!? (set/difference (set namespaces) provided-by-deps))]
-                    set-diff))]
+                                                  (-> ns-set
+                                                      (set/union (set namespaces))
+                                                      (ana/reduce-> step-fn (:depends-on other)))))
+                                              #{}
+                                              depends-on)
+                            set-diff         (!? (set/difference (set namespaces) provided-by-deps))]
+                        set-diff)))]
             (co2 'trim-chunks
                  (str "Associng\n"
                       [:main :chunk-namespaces]
@@ -784,6 +843,7 @@
 (defn index-source [build-state src]
   (let [{:keys [ns] :as contents}
         (ana/find-css-in-source src)]
+    #_(ff 'index-source:ns ns)
     (if (not contents)
       build-state
       ;; index every namespace so we can follow requires properly
@@ -815,7 +875,9 @@
          #_(ff build-state)
          (let [files
                (->> root
+                    #_ff
                     (file-seq)
+                    #_ff
                     (filter #(clj-file? (.getName ^File %)))
                     (remove #(.isHidden ^File %)))]
 
@@ -823,7 +885,9 @@
            ;; takes ~80ms for entire shadow-cljs codebase which is fine
            ;; but also doesn't contain many sources with css, could be slow on bigger frontend projects
            ;; this can easily spread work in threads, just needs to merge namespaces after
-           (reduce index-file build-state files)))
+           (reduce index-file build-state files)
+           #_(reduce index-file build-state files)
+           ))
 
 
        (defn safe-pr-str
@@ -904,7 +968,13 @@
                 context-class-loader (.getContextClassLoader current-thread)
                 resources            (.getResources context-class-loader "shadow-css-index.edn")
                 enum-seq             (enumeration-seq resources)]
-            (log-enum-seq {:current-thread       current-thread              
+            ;; (println "\nresources:")
+            ;; (pprint resources)
+            ;; (println "\n")
+            ;; (println "\nenum-seq:")
+            ;; (pprint enum-seq)
+            ;; (println "\n")
+            #_(log-enum-seq {:current-thread       current-thread              
                            :context-class-loader context-class-loader  
                            :resources            resources                        
                            :enum-seq             enum-seq
@@ -943,17 +1013,28 @@
                 (slurp (io/resource "kushi/css/build/kushi-reset.css"))))
 
        ;; Temp
-       (defn load-kush-ui-component-theming-from-classpath [build-state]
-         (co "load-kush-ui-component-theming-from-classpath"
+       (defn load-kushi-ui-component-theming-from-classpath [build-state]
+         (co "load-kushi-ui-component-theming-from-classpath"
              (bling "Adding "
-                    [:blue ":kush-ui-component-theming-src"]
+                    [:blue ":kushi-ui-component-theming-src"]
                     ", from "
-                    [:green " \"kushi/css/build/kush-ui-component-theming.css\""]))
+                    [:green " \"kushi/css/build/kushi-ui-component-theming.css\""]))
          
          (assoc build-state
-                :kush-ui-component-theming-src
+                :kushi-ui-component-theming-src
                 (slurp (io/resource "kushi/css/build/kushi-ui-component-theming.css"))))
 
+       ;; Temp
+       (defn load-kushi-overrides-from-classpath [build-state]
+         (co "load-kushi-overrides-from-classpath"
+             (bling "Adding "
+                    [:blue ":kushi-overrides-src"]
+                    ", from "
+                    [:green " \"kushi/css/build/kushi-overrides.css\""]))
+         
+         (assoc build-state
+                :kushi-overrides-src
+                (slurp (io/resource "kushi/css/build/kushi-overrides.css"))))
        (defn start
          ([]
           (start (init)))
@@ -961,5 +1042,6 @@
           (-> build-state
               (load-preflight-from-classpath)
               ;; Temp
-              (load-kush-ui-component-theming-from-classpath)
+              (load-kushi-ui-component-theming-from-classpath)
+              (load-kushi-overrides-from-classpath)
               (load-indexes-from-classpath) )))))

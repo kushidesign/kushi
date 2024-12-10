@@ -1,46 +1,47 @@
 (ns ^:dev/always kushi.playground.components
  (:require 
   [kushi.core :refer [sx]]
-  [kushi.ui.callout.core :refer [callout]]
-  [kushi.ui.callout.demo :as callout.demo]
   [kushi.ui.button.core :refer [button]]
   [kushi.ui.button.demo :as button.demo]
-  [kushi.ui.card.core :refer [card]]
-  [kushi.ui.card.demo :as card.demo]
-  [kushi.ui.collapse.core :refer [collapse]]
-  [kushi.ui.collapse.demo :as collapse.demo]
-  [kushi.ui.grid.core :refer [grid]]
-  [kushi.ui.grid.demo :as grid.demo]
-  [kushi.ui.icon.core :refer [icon]]
-  [kushi.ui.icon.demo :as icon.demo]
-  [kushi.ui.checkbox.core :refer [checkbox]]
-  [kushi.ui.checkbox.demo :as checkbox.demo]
-  [kushi.ui.radio.core :refer [radio]]
-  [kushi.ui.radio.demo :as radio.demo]
-  [kushi.ui.slider.core :refer [slider]]
-  [kushi.ui.slider.demo :as slider.demo]
-  [kushi.ui.switch.core :refer [switch]]
-  [kushi.ui.switch.demo :as switch.demo]
-  [kushi.ui.text-field.core :refer [text-field]]
-  [kushi.ui.text-field.demo :as text-field.demo]
-  [kushi.ui.modal.core :refer [modal]]
-  [kushi.ui.modal.demo :as modal.demo]
-  [kushi.ui.popover.core :refer [popover-attrs]]
-  [kushi.ui.popover.demo :as popover.demo]
-  [kushi.ui.spinner.core :refer [spinner]]
-  [kushi.ui.spinner.demo :as spinner.demo]
-  [kushi.ui.tag.core :refer [tag]]
-  [kushi.ui.tag.demo :as tag.demo]
-  [kushi.ui.toast.core :refer [toast-attrs]]
-  [kushi.ui.toast.demo :as toast.demo]
-  [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-  [kushi.ui.tooltip.demo :as tooltip.demo]))
+  ;; [kushi.ui.callout.core :refer [callout]]
+  ;; [kushi.ui.callout.demo :as callout.demo]
+  ;; [kushi.ui.card.core :refer [card]]
+  ;; [kushi.ui.card.demo :as card.demo]
+  ;; [kushi.ui.collapse.core :refer [collapse]]
+  ;; [kushi.ui.collapse.demo :as collapse.demo]
+  ;; [kushi.ui.grid.core :refer [grid]]
+  ;; [kushi.ui.grid.demo :as grid.demo]
+  ;; [kushi.ui.icon.core :refer [icon]]
+  ;; [kushi.ui.icon.demo :as icon.demo]
+  ;; [kushi.ui.checkbox.core :refer [checkbox]]
+  ;; [kushi.ui.checkbox.demo :as checkbox.demo]
+  ;; [kushi.ui.radio.core :refer [radio]]
+  ;; [kushi.ui.radio.demo :as radio.demo]
+  ;; [kushi.ui.slider.core :refer [slider]]
+  ;; [kushi.ui.slider.demo :as slider.demo]
+  ;; [kushi.ui.switch.core :refer [switch]]
+  ;; [kushi.ui.switch.demo :as switch.demo]
+  ;; [kushi.ui.text-field.core :refer [text-field]]
+  ;; [kushi.ui.text-field.demo :as text-field.demo]
+  ;; [kushi.ui.modal.core :refer [modal]]
+  ;; [kushi.ui.modal.demo :as modal.demo]
+  ;; [kushi.ui.popover.core :refer [popover-attrs]]
+  ;; [kushi.ui.popover.demo :as popover.demo]
+  ;; [kushi.ui.spinner.core :refer [spinner]]
+  ;; [kushi.ui.spinner.demo :as spinner.demo]
+  ;; [kushi.ui.tag.core :refer [tag]]
+  ;; [kushi.ui.tag.demo :as tag.demo]
+  ;; [kushi.ui.toast.core :refer [toast-attrs]]
+  ;; [kushi.ui.toast.demo :as toast.demo]
+  ;; [kushi.ui.tooltip.core :refer [tooltip-attrs]]
+  ;; [kushi.ui.tooltip.demo :as tooltip.demo]
+  ))
 
 (def playground-components 
   (filter 
-   :label
-  #_#(contains? #{
-                ;; "button"     
+  ;;  :label
+  #(contains? #{
+                "button"     
                 ;; "icon"       
                 ;; "spinner"    
                 ;; "switch"     
@@ -62,8 +63,20 @@
                (:label %))
 
    ;; You need to wrap this whole collection in features macro
-
-   [{:label          "button"
+     [
+      {:label          "button"
+       :component      button
+       :examples       button.demo/examples
+       :component-meta (-> button var meta)
+       :reqs           '[[kushi.ui.button.core :refer [button]]]
+       :variants-base  #{:rounded :filled :bordered :minimal}
+       :variants-order [:rounded :filled :bordered :minimal]
+       :variants-attrs {:rounded  (sx :.rounded)
+                        :filled   (sx :.rounded :.filled)
+                        :bordered (sx :.rounded :.bordered)
+                        :minimal  (sx :.rounded :.minimal)}}
+      ]
+   #_[{:label          "button"
      :component      button
      :examples       button.demo/examples
      :component-meta (-> button var meta)

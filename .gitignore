@@ -19,6 +19,7 @@ pom.xml.asc
 .idea
 kushi.workspace.code-workspace
 .portal
+/site/tmp
 
 
 /docs/public/js/cljs-runtime

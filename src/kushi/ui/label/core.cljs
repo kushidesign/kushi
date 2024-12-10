@@ -1,5 +1,6 @@
 (ns kushi.ui.label.core
   (:require-macros
+   [kushi.css.core :refer (css)]
    [kushi.core :refer (sx)])
   (:require
    [kushi.ui.core :refer (opts+children)]
@@ -15,13 +16,14 @@
                       children)]
     (into [:span
            (merge-attrs
-            (sx 'kushi-label
-                :.flex-row-c
-                :jc--fs
-                :.enhanceable
-                :.transition
-                :d--inline-flex
-                :w--fit-content
-                {:data-kushi-ui :label})
+            {:class         (css
+                             ".kushi-label"
+                             :.flex-row-c
+                             :.enhanceable-with-icon
+                             :.transition
+                             :jc--fs
+                             :d--inline-flex
+                             :w--fit-content)
+             :data-kushi-ui :label}
             attrs)]
           children)))

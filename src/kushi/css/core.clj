@@ -5,6 +5,7 @@
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as specs]
    [kushi.css.util :refer [keyed]]
+   [kushi.specs2 :as specs2]
    [clojure.walk :as walk :refer [prewalk postwalk]]
    [clojure.string :as string :refer [replace] :rename {replace sr}]
    [clojure.spec.alpha :as s]
@@ -559,15 +560,19 @@
    classes, as well as auto-generated, namespace-derived classname from `css`
    macro."
   ([form args]
-   (classlist {:ns {:name "some.test"}} form args))
+   (classlist {:ns {:name "ns.unknown"}} form args))
   ([env form args]
-   (let [loc-id (some-> env (loc-id form))
-         m      (-> args
-                    conformed-args
-                    :conformed-args
-                    vectorized*
-                    :conformed-map)]
-     (user-classlist m loc-id))))
+   (let [fa                 (first args)
+         supplied-classname (when (and (string? fa) (re-find #"^\.[^\.]" fa))
+                              (subs fa 1))
+         sel                (or supplied-classname (some-> env (loc-id form)))
+         args               (if supplied-classname (rest args) args)
+         m                  (-> args
+                                conformed-args
+                                :conformed-args
+                                vectorized*
+                                :conformed-map)]
+     (user-classlist m sel))))
 
 (defn- spaces [n] (string/join (repeat n " ")))
 
@@ -1204,3 +1209,167 @@
                     (merge opts {:type :error
                                  :body body}))))))
          css-str))))
+
+(defmacro trans
+  "Macro for converting from legacy kushi.core/sx to {:class (css ...) ...}
+   For internal use in dev environment."
+  [coll]
+  (let [{:keys [assigned-class
+                tokenized-style               
+                cssvar-tokenized              
+                cssvar-tuple                  
+                style-tuple                   
+                class                         
+                conditional-class             
+                sx-attrs-map]}
+        (->> coll
+             rest
+             (s/conform ::specs2/sx-args-conformance)
+             (group-by first)
+             (reduce-kv (fn [acc k v]
+                          (assoc acc k (mapv second v)))
+                        {}))
+
+        sx-attrs-map
+        (first sx-attrs-map)
+
+        style-map
+        (some->> (:style sx-attrs-map)
+                 (reduce-kv (fn [acc k v]
+                              (assoc acc
+                                     (-> k
+                                         name
+                                         (string/replace #"\&" "")
+                                         keyword)
+                                     v))
+                            {}))
+
+        sx-attrs-map
+        (dissoc sx-attrs-map :style)
+
+        class->kw
+        (fn [c s]
+          (-> c
+              name
+              (subs 1)
+              (->> (str s "--"))
+              keyword))
+
+        remove-amp
+        #(let [s (-> % name (string/replace #"\&" ""))]
+           (if (string? %) s (keyword s)))
+
+        stringify-double-vectors
+        #(string/join ", "
+                     (map (fn [x]
+                            (cond 
+                              (vector? x)
+                              (string/join " "
+                                           (map 
+                                            (fn [xx]
+                                              (cond
+                                                (symbol? xx)
+                                                (str "var(--" xx ")")
+
+                                                (keyword? xx)
+                                                (name xx)
+
+                                                :else
+                                                xx))
+                                            x))
+
+                              (symbol? x)
+                              (str "var(--" x ")")
+
+                              (keyword? x)
+                              (name x)
+
+                              :else x))
+                          %))       
+
+        [css-vars-from-style-map style-map-no-css-vars]
+        (partition-by-pred (fn [[k _]]
+                             (boolean (when (or (string? k) (keyword? k))
+                                        (-> k name (string/starts-with? "$")))))
+                           style-map)
+
+        style-map-no-css-vars
+        (into {} style-map-no-css-vars)
+
+        reformatted
+        (remove nil?
+                (concat (list (some-> assigned-class
+                                      first 
+                                      second
+                                      name
+                                      (->> (str "."))))
+                        (for [c class]
+                          (cond
+                            (s/valid? ::specs/class-kw c)
+                            (cond 
+                              (contains? #{:.neutral} c)
+                              nil
+
+                              (contains? #{:.absolute :.relative :.fixed} c)
+                              (class->kw c "position")
+
+                              (contains? #{:.block :.flex :.grid} c)
+                              (class->kw c "d")
+
+                              (contains? #{:.not-allowed :.pointer} c)
+                              (class->kw c "cursor")
+
+                              (contains? #{:.enhanceable} c)
+                              :.enhanceable-with-icon
+
+                              :else c)
+                            :else
+                            c))
+                        
+                        (for [[p v] style-tuple]
+                          [(remove-amp p) 
+                           (if (vector? v)
+                             (stringify-double-vectors v)
+                             (if (symbol? v)
+                               (->> v (str "$") keyword)
+                               v))])
+
+                        (for [kw tokenized-style]
+                          (remove-amp kw))
+                        
+                        conditional-class
+
+                        (when (seq style-map-no-css-vars)
+                          [style-map-no-css-vars])))]
+
+     (? {:display-metadata?            false
+         :coll-limit                   100
+         :non-coll-mapkey-length-limit 80
+         :non-coll-length-limit        80}
+
+      (if sx-attrs-map
+        (merge (let [convert-cssvar-name
+                     #(keyword (string/replace (name %) #"^\$" "--"))
+
+                     style-map           
+                     (merge (or (:style sx-attrs-map) {})
+                            (reduce (fn [acc kw]
+                                      (let [[k v]
+                                            (string/split (name kw) #"--")]
+                                        (assoc acc (convert-cssvar-name k) v)))
+                                    {}
+                                    cssvar-tokenized)
+
+                            (reduce (fn [acc [k v]]
+                                      (assoc acc (convert-cssvar-name k) v))
+                                    {}
+                                    cssvar-tuple)
+
+                            (reduce (fn [acc [k v]]
+                                      (assoc acc (convert-cssvar-name k) v))
+                                    {}
+                                    css-vars-from-style-map))]
+                 (when (seq style-map) {:style style-map}))
+               {:class (cons (symbol "css") reformatted)}
+               sx-attrs-map)
+        (cons (symbol "sx") reformatted)))))

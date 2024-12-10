@@ -287,6 +287,7 @@
                        "p"   "padding",
                        "gtr" "grid-template-rows",
                        "bw"  "border-width",
+                       "br"  "border-radius",
                        "fv"  "font-variant",
                        "bgc" "background-color",
                        "jc"  "justify-content",

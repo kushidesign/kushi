@@ -1,11 +1,12 @@
 (ns kushi.ui.icon.core
   (:require
    [clojure.string :as string]
-   [kushi.core :refer (merge-attrs sx defclass)]
+   [kushi.css.core :refer (sx css defcss)]
+   [kushi.core :refer (merge-attrs )]
    [kushi.ui.core :refer (opts+children material-symbol-or-icon-span)]))
 
-(defclass kushi-icon
-  :.relative
+(defcss "@layer kushi-ui-component .kushi-icon"
+  :position--relative
   :d--inline-flex
   :flex-direction--row
   :jc--c
@@ -13,7 +14,7 @@
   :ai--c
   [:>span:fs "var(--mui-icon-relative-font-size, inherit)"])
 
-(defclass material-symbols-icon-filled
+(defcss "@layer kushi-ui-component .material-symbols-icon-filled" 
   [:font-variation-settings "'FILL' 1"])
 
 (defn icon-name->snake-case-string [coll]
@@ -67,11 +68,18 @@
         [icon*]                           children]
     [:div
      (merge-attrs
-      (sx
-       'kushi-icon
-       :&_svg:height--1em
-       :&_svg>path:fill--currentColor
-       {:data-kushi-ui :icon})
+      (sx ".kushi-icon"
+          :position--relative
+          :d--inline-flex
+          :flex-direction--row
+          :jc--c
+          :ta--center
+          :ai--c
+          ;; TODO - use tokenized syntax here
+          [:>span:fs "var(--mui-icon-relative-font-size, inherit)"]
+          :_svg:height--1em
+          :_svg>path:fill--currentColor)
+      {:data-kushi-ui :icon}
       attrs)
      (cond
        (and (vector? icon*) (= :svg (first icon*)))

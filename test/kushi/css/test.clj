@@ -27,39 +27,79 @@
             ;; [taoensso.tufte :as tufte :refer [p profile]]
             [kushi.css.defs :as defs]))
 
-(? (css-rule
- ".foo"
- {:ta                                          :c
-  :w                                           0
-  :h                                           0
-  :.kushi-slider-step-label-selected:transform "scale(1)"
-  :.kushi-slider-step-label-selected:o         1
-  :.kushi-slider-step-label-selected:c         :currentColor
-  :.kushi-slider-step-label-selected>span:v    :visible
-  :transform                                   :$label-scale-factor
-  :before:content                              :$step-marker-content}))
 
+#_(let [myclass :.gall]
+  (?css :.wtf
+        myclass
+        {:ta                                          :c
+         :w                                           0
+         :h                                           0
+         :.kushi-slider-step-label-selected:transform "scale(1)"
+         :.kushi-slider-step-label-selected:o         1
+         :.kushi-slider-step-label-selected:c         :currentColor
+         :.kushi-slider-step-label-selected>span:v    :visible
+         :transform                                   :$label-scale-factor
+         :before:content                              :$step-marker-content}))
 
 (deftest sample (is (= 1 1)))
 
-(!? (string/split
-    "@layer mylayer
-     .foobar"
-    #"[\t\n\r\s]+"))
 
-#_(!? (css-rule* ".myns_foo__L10_C3"
-              [:.absolute-centered]
-              (with-meta (list 'css :p-3)
-                {:file "wtf.cljs" :line 20 :column 12})
-              nil))
 
-#_(? (css-block {" .foo:color" :red}))
 
-#_(? (css-rule ".foo" {:c "blue"} :c--red))
+#_(? (css-rule*
+    ".kushi-link"
+    [
+     :cursor--pointer
+     :td--underline
+     :tup--under
+     [:tdc "color-mix(in oklch, currentColor 40%, transparent)"]
+     [:hover:tdc :currentColor]
+     ]
+    nil
+    nil))
+#_(? (css-rule*
+    ".kushi-switch"
+    [
+    ;;  [:hover:bgc :transparent!important]
+     :c--red!important
+     "bgc--blue!important"
+     [:hover:bgc "transparent!important"]
+     { :hover:bgc "transparent!important" }
+     ]
+    nil
+    nil))
+#_(? (css-rule*
+    ".kushi-switch"
+    [[" .kushi-radio-input:checked+.kushi-label>.emoji"
+      {:filter    :none
+       :transform "scale(1.5)"
+       :animation :jiggle2:0.5s}]]
+    nil
+    nil))
 
-#_(? (css-rule "@keyframes yspinner"
-     [:0% {:transform "rotateY(0deg)"}]
-     [:100% {:transform "rotateY(360deg)"}]))
+;; (? (distinct [1 2 1 5 3 1 4 1]))
+
+
+;; (!? (string/split
+;;     "@layer mylayer
+;;      .foobar"
+;;     #"[\t\n\r\s]+"))
+
+;; (? (css ".foos" :w--100% [:h :30px]))
+
+;; (? (css-rule* ".foos"
+;;               [:w--100% [:h :30px]]
+;;               (with-meta (list 'css :w--100%)
+;;                 {:file "wtf.cljs" :line 20 :column 12})
+;;               nil))
+
+;; #_(? (css-block {" .foo:color" :red}))
+
+;; #_(? (css-rule ".foo" {:c "blue"} :c--red))
+
+;; #_(? (css-rule "@keyframes yspinner"
+;;      [:0% {:transform "rotateY(0deg)"}]
+;;      [:100% {:transform "rotateY(360deg)"}]))
 
 #_(? (css-rule "p" {:c :red :bgc :blue}))
 ;; (? (css-rule* "p" (list {:c :red :bgc :blue}) nil nil))

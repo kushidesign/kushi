@@ -394,7 +394,7 @@
 
     (some->> el-to-be-removed
              ;; DEV - commment out this .removeChild op to leave pane in dom for debugging
-             (.removeChild  (or toast-slot 
+             #_(.removeChild  (or toast-slot 
                                 (or dialog-el
                                     js/document.body))
                             el-to-be-removed))

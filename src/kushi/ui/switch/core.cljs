@@ -1,13 +1,13 @@
 (ns kushi.ui.switch.core
   (:require-macros
-   [kushi.core :refer (sx defclass)])
+   [kushi.css.core :refer (sx defcss)])
   (:require
    [kushi.core :refer (merge-attrs)]
    [domo.core :as domo]
    [kushi.ui.util :as util]
    [kushi.ui.core :refer (opts+children)]))
 
-(defclass kushi-switch-track-content
+(defcss "@layer kushi-ui-theming .kushi-switch-track-content"
   :.flex-row-c
   :.semi-bold
   :.transition
@@ -16,7 +16,7 @@
   :c--white
   [:w "calc(100% - 50% + var(--switch-border-width))"])
 
-(defclass kushi-switch-thumb-content
+(defcss "@layer kushi-ui-theming .kushi-switch-thumb-content"
   :c--$neutral-foreground
   :d--none 
   :w--100%
@@ -125,94 +125,95 @@
     [:button
      (merge-attrs
       (sx
-       'kushi-switch
-       :.relative
+       ".kushi-switch"
+       {:--thumb-height "calc(var(--switch-thumb-scale-factor, 1) * (1em - (var(--switch-border-width) * 2)))"
+        :--height       :1em}
        :.pill
-       :.pointer
        :.transition
        :.xxfast!
        :.flex-row-fs
        :.no-shrink
+       :position--relative
+       :cursor--pointer
 
-       ["&_.kushi-switch-thumb-content-off:display" :flex]
-       ["&_.kushi-switch-thumb-content-on:display" :none]
-       ["&.kushi-switch[aria-checked='true']&_.kushi-switch-thumb-content-on:display" :flex]
-       ["&.kushi-switch[aria-checked='true']&_.kushi-switch-thumb-content-off:display" :none]
+       ["_.kushi-switch-thumb-content-off:display" :flex]
+       ["_.kushi-switch-thumb-content-on:display" :none]
+       [".kushi-switch[aria-checked='true']_.kushi-switch-thumb-content-on:display" :flex]
+       [".kushi-switch[aria-checked='true']_.kushi-switch-thumb-content-off:display" :none]
 
-       ["&.kushi-switch&_.kushi-switch-track-content-on:opacity" 0]
-       ["&.kushi-switch[aria-checked='true']&_.kushi-switch-track-content-off:opacity" 0]
-       ["&.kushi-switch[aria-checked='true']&_.kushi-switch-track-content-on:opacity" 1]
+       [".kushi-switch_.kushi-switch-track-content-on:opacity" 0]
+       [".kushi-switch[aria-checked='true']_.kushi-switch-track-content-off:opacity" 0]
+       [".kushi-switch[aria-checked='true']_.kushi-switch-track-content-on:opacity" 1]
 
        [".kushi-switch[aria-checked='true']:jc" :fe]
-       :$height--1em
        [:w "calc((var(--height) *  max(1.25, var(--switch-width-ratio, 2))) - var(--switch-border-width))"]
        :h--$height
        :bc--$switch-border-color
        :bw--$switch-border-width
        :bs--solid
 
-       ["&.kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color]
-       ["&.kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover]
+       [".kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color]
+       [".kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover]
 
-       ["dark:&.kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color-inverse]
-       ["dark:&.kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover-inverse]
+       ["dark:.kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color-inverse]
+       ["dark:.kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover-inverse]
 
        [".kushi-switch[aria-checked='true']:bgc" :$switch-on-background-color]
        [".kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-background-color-hover]
 
-       [".kushi-switch[aria-checked='false']&_.kushi-switch-thumb:color" :$neutral-500]
-       [".kushi-switch[aria-checked='false']:hover&_.kushi-switch-thumb:color" :$neutral-600]
+       [".kushi-switch[aria-checked='false']_.kushi-switch-thumb:color" :$neutral-500]
+       [".kushi-switch[aria-checked='false']:hover_.kushi-switch-thumb:color" :$neutral-600]
 
-       ["&.accent.kushi-switch[aria-checked='true']:bgc" :$switch-on-accent-background-color]
-       ["&.accent.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-accent-background-color-hover]
+       [".accent.kushi-switch[aria-checked='true']:bgc" :$switch-on-accent-background-color]
+       [".accent.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-accent-background-color-hover]
 
-       ["&.positive.kushi-switch[aria-checked='true']:bgc" :$switch-on-positive-background-color]
-       ["&.positive.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-positive-background-color-hover]
+       [".positive.kushi-switch[aria-checked='true']:bgc" :$switch-on-positive-background-color]
+       [".positive.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-positive-background-color-hover]
 
-       ["&.warning.kushi-switch[aria-checked='true']:bgc" :$switch-on-warning-background-color]
-       ["&.warning.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-warning-background-color-hover]
+       [".warning.kushi-switch[aria-checked='true']:bgc" :$switch-on-warning-background-color]
+       [".warning.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-warning-background-color-hover]
 
-       ["&.negative.kushi-switch[aria-checked='true']:bgc" :$switch-on-negative-background-color]
-       ["&.negative.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-negative-background-color-hover]
+       [".negative.kushi-switch[aria-checked='true']:bgc" :$switch-on-negative-background-color]
+       [".negative.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-negative-background-color-hover]
 
        ["dark:.kushi-switch[aria-checked='true']:bgc" :$switch-on-background-color-inverse]
        ["dark:.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-background-color-hover-inverse]
 
-       ["dark:&.accent.kushi-switch[aria-checked='true']:bgc" :$switch-on-accent-background-color-inverse]
-       ["dark:&.accent.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-accent-background-color-hover-inverse]
+       ["dark:.accent.kushi-switch[aria-checked='true']:bgc" :$switch-on-accent-background-color-inverse]
+       ["dark:.accent.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-accent-background-color-hover-inverse]
 
-       ["dark:&.positive.kushi-switch[aria-checked='true']:bgc" :$switch-on-positive-background-color-inverse]
-       ["dark:&.positive.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-positive-background-color-hover-inverse]
+       ["dark:.positive.kushi-switch[aria-checked='true']:bgc" :$switch-on-positive-background-color-inverse]
+       ["dark:.positive.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-positive-background-color-hover-inverse]
 
-       ["dark:&.warning.kushi-switch[aria-checked='true']:bgc" :$switch-on-warning-background-color-inverse]
-       ["dark:&.warning.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-warning-background-color-hover-inverse]
+       ["dark:.warning.kushi-switch[aria-checked='true']:bgc" :$switch-on-warning-background-color-inverse]
+       ["dark:.warning.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-warning-background-color-hover-inverse]
 
-       ["&.warning.kushi-switch[aria-checked='true']&_.kushi-switch-thumb:color" :$switch-thumb-on-warning-color]
-       ["&.warning.kushi-switch[aria-checked='true']&_.kushi-switch-thumb:hover:color" :$switch-thumb-on-warning-color-hover]
+       [".warning.kushi-switch[aria-checked='true']_.kushi-switch-thumb:color" :$switch-thumb-on-warning-color]
+       [".warning.kushi-switch[aria-checked='true']_.kushi-switch-thumb:hover:color" :$switch-thumb-on-warning-color-hover]
 
-       ["dark:&.negative.kushi-switch[aria-checked='true']:bgc" :$switch-on-negative-background-color-inverse]
-       ["dark:&.negative.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-negative-background-color-hover-inverse]
+       ["dark:.negative.kushi-switch[aria-checked='true']:bgc" :$switch-on-negative-background-color-inverse]
+       ["dark:.negative.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-negative-background-color-hover-inverse]
 
-       [:$thumb-height "calc(var(--switch-thumb-scale-factor, 1) * (1em - (var(--switch-border-width) * 2)))"]
+       )
 
-       {:disabled      disabled?
-        :role          :switch
-        :aria-checked  (if on? true false)
-        ;; :on-mouse-down #(when-not disable-events? (toggle-switch %))
-        })
+      {:disabled     disabled?
+       :role         :switch
+       :aria-checked (if on? true false)
+       ;; :on-mouse-down #(when-not disable-events? (toggle-switch %))
+       }
       
       (domo/mouse-down-a11y #(when-not disable-events? (toggle-switch %)))
 
       attrs)
 
      [track-content
-      (sx 'kushi-switch-track-content-on
+      (sx ".kushi-switch-track-content-on"
           :.absolute-inline-start-inside
           :.kushi-switch-track-content)
       track-content-on]
 
      [track-content
-      (sx 'kushi-switch-track-content-off
+      (sx ".kushi-switch-track-content-off"
           :.absolute-inline-end-inside
           :.kushi-switch-track-content)
       track-content-off]
@@ -220,28 +221,49 @@
      [:div
       (merge-attrs
        (sx
-        'kushi-switch-thumb
+        ".kushi-switch-thumb"
+        {:--width :$thumb-height}
         :.transition
         :.xxfast!
         :.pill
-        :.pointer
+        :cursor--pointer
+        [:transform "translate(0, -50%)"]
+        [:bgc :$white-transparent-100]
+        [:box-shadow
+         "0 2px 6px 0 var(--black-transparent-15)"]
+        ["has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start"
+         "calc(100% - var(--width))"]
+        ["has-ancestor(.kushi-switch[disabled]):cursor"
+         :not-allowed]
         :position--absolute
         :top--50%
-        [:transform '(translate 0 :-50%)]
         :inset-inline-start--0
         :h--$thumb-height
-        [:$width :$thumb-height]
-        :w--$width
-        [:bgc :$white-transparent-100]
-        [:box-shadow "0 2px 6px 0 var(--black-transparent-15)"]
-        ["has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start" "calc(100% - var(--width))"]
-        ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
+        :w--$width)
+       #_(trans (sx
+               'kushi-switch-thumb
+               :.transition
+               :.xxfast!
+               :.pill
+               :.pointer
+               :position--absolute
+               :top--50%
+               [:transform '(translate 0 :-50%)]
+               :inset-inline-start--0
+               :h--$thumb-height
+               [:$width :$thumb-height]
+               :w--$width
+               [:bgc :$white-transparent-100]
+               [:box-shadow "0 2px 6px 0 var(--black-transparent-15)"]
+               ["has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start" "calc(100% - var(--width))"]
+               ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed]
+               ))
        thumb-attrs)
-      [:div (sx 'kushi-switch-thumb-content-on
+      [:div (sx ".kushi-switch-thumb-content-on"
                 :.kushi-switch-thumb-content
                 ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
        thumb-content-on]
-      [:div (sx 'kushi-switch-thumb-content-off
+      [:div (sx ".kushi-switch-thumb-content-off"
                 :.kushi-switch-thumb-content
                 ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
        thumb-content-off]

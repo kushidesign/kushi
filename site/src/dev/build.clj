@@ -1,6 +1,6 @@
 (ns build
   (:require
-    [fireworks.core :refer [? !? ?> !?>]]
+    [fireworks.core :refer [? !? ?> !?> pprint]]
     [kushi.css.build.build :as cb]
     [shadow.cljs.devtools.api :as shadow]
     [clojure.edn :as edn]
@@ -22,6 +22,13 @@
 ;; maybe with shadow-cljs build-hooks?
 
 (defn css-release [& args]
+  #_(let [bs (cb/index-path {:namespaces   {}
+                           :alias-groups {}
+                           :aliases      {}
+                           :spacing      {}}
+                          (io/file "../src" "kushi" "ui" "slider") {})]
+    (println "BS")
+    (pprint (get (-> bs :namespaces) 'kushi.ui.slider.core)))
   (let [user-config
         (with-open [r (clojure.java.io/reader "kushi.edn")]
           (edn/read {:default (fn [tag value] value)}
@@ -29,6 +36,34 @@
 
         build-state
         (-> (cb/start)
+
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "slider") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "text_field") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "radio") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "checkbox") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "label") {})
+            (cb/index-path (io/file "../src" "kushi" "ui" "button") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "icon") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "spinner") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "switch") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "card") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "tag") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "spinner") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "grid") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "callout") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "link") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "collapse") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "modal") {})
+            (cb/index-path (io/file "../src" "kushi" "ui" "tooltip") {})
+            (cb/index-path (io/file "../src" "kushi" "ui" "dom" "pane" "styles") {})
+
+            ;; remaining
+            ;; floating panes - refactor pane prior to these
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "toast") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "popover") {})
+
+
+
             (cb/index-path (io/file "src" "main") {})
             (assoc :user-config user-config)
             (cb/generate

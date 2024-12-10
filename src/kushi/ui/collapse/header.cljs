@@ -1,8 +1,9 @@
 (ns kushi.ui.collapse.header
-  (:require [kushi.core :refer (sx)]
-            [clojure.string :as string]
-            [kushi.ui.icon.core]
-            [kushi.ui.label.core]))
+  (:require 
+   [kushi.css.core :refer [css sx css-vars-map]]
+   [clojure.string :as string]
+   [kushi.ui.icon.core]
+   [kushi.ui.label.core]))
 
 (defn readable-string? [label]
   (and (string? label) (not (string/blank? label))))
@@ -20,10 +21,14 @@
            icon]
     :as   opts}]
   (if (string? label)
-    (let [attrs (sx
-                 'kushi-collapse-header-title-contents
-                 {:style {:w  (when icon-opposite? :100%)
-                          :jc (when icon-opposite? :space-between)}})]
+    (let [w (when icon-opposite? "100%")
+          jc (when icon-opposite? "space-between")
+          attrs
+          {:style (css-vars-map w jc)
+           :class (css
+                   ".kushi-collapse-header-title-contents"
+                   :w--$w
+                   :jc--$jc)}]
       (if icon-opposite?
         [kushi.ui.label.core/label attrs label icon]
         [kushi.ui.label.core/label attrs icon label]))
@@ -44,19 +49,17 @@
                            :icon-opposite? icon-opposite?}]
     [:<>
      [:span
-      (sx 'kushi-collapse-header-label-collapsed
+      (sx ".kushi-collapse-header-label-collapsed"
           :.flex-row-fs
-          :w--100%
-          ["has-parent([aria-expanded='true']):display" :none])
+          :w--100% )
       (if (string? label)
         [header-title opts]
         label)]
      [:span
-      (sx 'kushi-collapse-header-label-expanded
+      (sx ".kushi-collapse-header-label-expanded"
           :.flex-row-fs
           :w--100%
-          :d--none
-          ["has-parent([aria-expanded='true']):display" :flex])
+          :d--none)
       (if (string? label-expanded)
         [header-title (assoc opts :label label-expanded :icon icon-expanded)]
         label-expanded)]]))

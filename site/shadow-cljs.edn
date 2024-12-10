@@ -7,11 +7,15 @@
 
  :builds
  {:app
-  {:devtools   {:log             false
-                :reload-strategy :full
-                :watch-dir       "public"}
-   :target     :browser
-   :modules    {:main {:init-fn  mvp.browser/init}}
-
-   :output-dir "public/js"
+  {:devtools         {:log             false
+                      :reload-strategy :full
+                      :watch-dir       "public"}
+   :target           :browser
+   :compiler-options {:output-feature-set :es8
+                      :warnings           {:redef false}}
+   :modules          {:main {:init-fn mvp.browser/init}}
+   :output-dir       "public/js"
+   :build-hooks      [(shadow.build/tap-hook)
+                      (shadow.cljs.build-report/hook
+                       {:output-to "tmp/report.html"})]
    }}}

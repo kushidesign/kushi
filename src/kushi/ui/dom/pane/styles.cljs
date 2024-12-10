@@ -1,10 +1,9 @@
 (ns kushi.ui.dom.pane.styles
   (:require
    [goog.string]
-   [kushi.core :refer (defclass)]))
+   [kushi.css.core :refer (defcss)]))
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane
+(defcss "@layer kushi.ui.theming .kushi-pane"
   :.fixed
   :border-width--$pane-border-width
   :border-style--$pane-border-style
@@ -30,8 +29,7 @@
   :p--$pane-padding-block:$pane-padding-inline)
 
 ;; TODO maybe move to tooltip.styles
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-tooltip
+(defcss "@layer kushi.ui.theming .kushi-tooltip"
   :.kushi-pane
   :border-width--$tooltip-border-width
   :border-style--$tooltip-border-style
@@ -58,12 +56,10 @@
   :dark:&_span.code:bgc--$code-background-color
   :dark:&_span.code:c--$code-color
   :&_span.code:bgc--$code-background-color-inverse
-  :&_span.code:c--$code-color-inverse
-  )
+  :&_span.code:c--$code-color-inverse)
 
 ;; TODO maybe move to popover.styles
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-popover
+(defcss "@layer kushi.ui.theming .kushi-popover"
   :.kushi-pane
   :p--0
   :min-width--$popover-min-width
@@ -86,8 +82,7 @@
   :$_auto-dismiss-duration--$popover-auto-dismiss-duration)
 
 ;; TODO maybe move to toast.styles
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-toast-slot
+(defcss "@layer kushi.ui.theming .kushi-toast-slot"
   :.flex-col-c
   :transition-duration--$toast-transition-duration||$pane-transition-duration
   ;; :.xxxslow
@@ -118,11 +113,10 @@
   ;; ["&[data-kushi-ui-toast-slot='left-bottom']:p" :0:0:$_pb:$_pi]
   )
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-toast
+(defcss "@layer kushi.ui.theming .kushi-toast"
   :.kushi-pane
-  :position--relative
   :.relative!
+  :position--relative
   :p--0
   :translate--$_tx:$_ty
   :border-width--$toast-border-width
@@ -145,24 +139,22 @@
 ;; block mixins
 ;; ------------------------------------------------
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-block-arrow-offset-mixin
+(defcss "@layer kushi.ui.theming .kushi-pane-block-arrow-offset-mixin"
   [:$arrow-plus-radius "calc(var(--arrow-inline-inset) + var(--border-radius))"])
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-block-right-mixin
+(defcss "@layer kushi.ui.theming .kushi-pane-block-right-mixin"
   [:$tx "calc((var(--oe-right) - 100%))"]
   [:$arrow-tx "calc(0px - (100% + var(--arrow-plus-radius)))"]
   :&_.kushi-pane-arrow:left--100%)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-block-left-mixin
+(defcss "@layer kushi.ui.theming .kushi-pane-block-left-mixin"
   :$tx--$oe-left
   [:$arrow-tx "calc(0px + var(--arrow-plus-radius))"]
   :&_.kushi-pane-arrow:left--0%)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-block-center-mixin
+(defcss 
+ "@layer kushi.ui.theming .kushi-pane-block-center-mixin
+  .kushi-pane-block-center-mixin"
   [:$tx "calc(var(--oe-x-center) - 50%)"]
   [:$arrow-tx :-50%]
   :&_.kushi-pane-arrow:left--50%)
@@ -172,28 +164,28 @@
 ;; Top
 ;; ------------------------------------------------
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-top-mixin
+(defcss
+ "@layer kushi.ui.theming .kushi-pane-top-mixin"
   :.kushi-pane-block-arrow-offset-mixin
   :translate--$tx:$ty
   :$ty--$top-plc
   [:$_arrow-gradient-direction "to top left"]
   [:$arrow-ty "calc(-50% + (var(--border-width) * 0.7))"]
   [:&_.kushi-pane-arrow {:top :100%} ])
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-tl 
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-tl" 
   :.kushi-pane-top-mixin
   :.kushi-pane-block-left-mixin
   :transform-origin--bottom:left)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-pane-t 
+(defcss 
+  "@layer kushi.ui.theming .kushi-pane-t" 
   :.kushi-pane-top-mixin
   :.kushi-pane-block-center-mixin
   :transform-origin--bottom:center)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-pane-tr
+(defcss 
+  "@layer kushi.ui.theming .kushi-pane-tr"
   :.kushi-pane-top-mixin
   :.kushi-pane-block-right-mixin
   :transform-origin--bottom:right)
@@ -201,8 +193,8 @@
 
 ;; Bottom
 ;; ------------------------------------------------
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-bottom-mixin
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-bottom-mixin"
   :.kushi-pane-block-arrow-offset-mixin
   :translate--$tx:$ty
   :$ty--$bottom-plc
@@ -210,15 +202,15 @@
   [:$arrow-ty "calc(50% - (var(--border-width) * 0.7))"]
   [:&_.kushi-pane-arrow {:bottom :100%}])
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-bl
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-bl"
   :.kushi-pane-bottom-mixin
   :.kushi-pane-block-left-mixin
   :transform-origin--top:left
   )
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-b
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-b"
   :.kushi-pane-bottom-mixin
   :.kushi-pane-block-center-mixin
   :transform-origin--top:center
@@ -226,8 +218,8 @@
   [:$arrow-tx :-50%]
   :&_.kushi-pane-arrow:left--50%)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-br
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-br"
   :.kushi-pane-bottom-mixin
   :.kushi-pane-block-right-mixin
   :transform-origin--top:right)
@@ -236,24 +228,24 @@
 ;; Inline mixins
 ;; ------------------------------------------------
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-inline-arrow-offset-mixin
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-inline-arrow-offset-mixin"
   [:$arrow-plus-radius "calc(var(--arrow-inline-inset) + var(--pane-border-radius))"])
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-inline-top-mixin
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-inline-top-mixin"
   :$ty--$oe-top
   [:$arrow-ty "var(--arrow-plus-radius)"]
   :&_.kushi-pane-arrow:top--0%)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-inline-center-mixin
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-inline-center-mixin"
   [:$ty "calc(var(--oe-y-center) - 50%)"]
   [:$arrow-ty :-50%]
   :&_.kushi-pane-arrow:top--50%)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-inline-bottom-mixin
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-inline-bottom-mixin"
   [:$ty "calc(var(--oe-bottom) - 100%)"]
   [:$arrow-ty "calc(0px - var(--arrow-plus-radius))"]
   :&_.kushi-pane-arrow:bottom--0)
@@ -261,8 +253,8 @@
 
 ;; Right 
 ;; ------------------------------------------------
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-right-mixin
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-right-mixin"
   :.kushi-pane-inline-arrow-offset-mixin
   :translate--$tx:$ty
   :$tx--$right-plc
@@ -272,26 +264,26 @@
                         ;; :translate :$arrow-tx:$arrow-ty
                          }])
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-pane-rt
+(defcss 
+  "@layer kushi.ui.theming .kushi-pane-rt"
   :.kushi-pane-right-mixin
   :.kushi-pane-inline-top-mixin
   :transform-origin--top:left)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-pane-r 
+(defcss 
+  "@layer kushi.ui.theming .kushi-pane-r" 
   :.kushi-pane-right-mixin
   :.kushi-pane-inline-center-mixin
   :transform-origin--center:left)
 
-;; (defclass
+;; (defcss
 ;;   ["[kushi-ui-pane-placement=\"r\"]"] 
 ;;   :.kushi-pane-right-mixin
 ;;   :.kushi-pane-inline-center-mixin
 ;;   :transform-origin--center:left)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-rb
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-rb"
   :.kushi-pane-right-mixin
   :.kushi-pane-inline-bottom-mixin
   :transform-origin--bottom:left)
@@ -299,8 +291,8 @@
 
 ;; Left
 ;; ------------------------------------------------
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-left-mixin
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-left-mixin"
   :.kushi-pane-inline-arrow-offset-mixin
   :translate--$tx:$ty
   :$tx--$left-plc
@@ -310,83 +302,83 @@
                         ;;  :translate :$arrow-tx:$arrow-ty
                          }])
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-pane-lt
+(defcss 
+  "@layer kushi.ui.theming .kushi-pane-lt"
   :transform-origin--top:right
   :.kushi-pane-left-mixin
   :.kushi-pane-inline-top-mixin )
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-pane-l 
+(defcss 
+  "@layer kushi.ui.theming .kushi-pane-l" 
   :transform-origin--center:right
   :.kushi-pane-left-mixin
   :.kushi-pane-inline-center-mixin )
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-lb
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-lb"
   :transform-origin--bottom:right
   :.kushi-pane-left-mixin
   :.kushi-pane-inline-bottom-mixin )
 
 ;; corner positioning 
 ;; ------------------------------------------------
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-top-corner-mixin 
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-top-corner-mixin" 
   [:$ty "calc(var(--top-plc) + (0.5 * var(--offset)))"]
   :translate--$tx:$ty)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-bottom-corner-mixin 
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-bottom-corner-mixin" 
   [:$ty "calc(var(--bottom-plc) - (0.5 * var(--offset)))"]
   :translate--$tx:$ty)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-right-corner-mixin 
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-right-corner-mixin" 
   [:$tx "calc(var(--oe-right) + (0.5 * var(--offset)))"] )
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-left-corner-mixin 
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-left-corner-mixin" 
   [:$tx "calc((var(--oe-left) - 100%) - (0.5 * var(--offset)))"] )
 
 ;; Top left corner
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-tlc 
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-tlc" 
   :.kushi-pane-top-corner-mixin
   :.kushi-pane-left-corner-mixin
   :beer--0
   :transform-origin--bottom:right)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-pane-trc
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-trc"
   :.kushi-pane-top-corner-mixin
   :.kushi-pane-right-corner-mixin
   :besr--0
   :transform-origin--bottom:left )
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-pane-brc
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-brc"
   :.kushi-pane-bottom-corner-mixin
   :.kushi-pane-right-corner-mixin
   :bssr--0
   :transform-origin--top:left)
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-blc
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-blc"
   :.kushi-pane-bottom-corner-mixin
   :.kushi-pane-left-corner-mixin
   :bser--0
   :transform-origin--top:right)
 
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass}
-  kushi-pane-arrowless
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-arrowless"
   :beer--$pane-border-radius
   :besr--$pane-border-radius
   :bssr--$pane-border-radius
   :bser--$pane-border-radius
   :&>.kushi-pane-arrow:d--none)
 
-;; (defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
+;; (defcss 
 ;;   kushi-pane-arrow
 ;;   :w--0
 ;;   :h--0
@@ -397,8 +389,8 @@
 ;;   :&.hidden:border--0!important
 ;;   [:translate "var(--tx) var(--ty)"])
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-pane-arrow
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-arrow"
   :.absolute
   :bw--inherit
   :bs--inherit
@@ -442,6 +434,6 @@
   ["has-parent(.kushi-pane-lb)" {:border-bottom-width :0!important
                                  :border-left-width :0!important}])
 
-(defclass ^{:kushi/chunk :kushi/kushi-ui-defclass} 
-  kushi-pane-mounting
+(defcss
+  "@layer kushi.ui.theming .kushi-pane-mounting"
   :.hidden)

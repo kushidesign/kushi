@@ -1,11 +1,13 @@
 (ns kushi.ui.modal.core
   (:require [kushi.ui.icon.core :refer (icon)]
+            [fireworks.core :refer [? !? ?> !?>]]
             [kushi.ui.button.core :refer [button]]
             [clojure.string :as string]
             [domo.core :as domo]
             [goog.dom :as gdom]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.core :refer (merge-attrs) :refer-macros (sx)]))
+            [kushi.css.core :refer [sx css]]
+            [kushi.core :refer (merge-attrs)]))
 
 (declare close-on-backdrop-click)
 
@@ -68,17 +70,29 @@
                                    :close))]
     [button
      (merge-attrs
-      (sx 'kushi-modal-close-button
-          :.minimal
-          :.pill
-          :.large
-          :padding--0.5rem
-          {:on-mouse-down close-kushi-modal
-           :style         {:position           :absolute
-                           :inset-block-start  :0.5rem
-                           :inset-block-end    :unset
-                           :inset-inline-end   :0.5rem
-                           :inset-inline-start :unset}})
+      {:class         (css
+                       ".kushi-modal-close-button"
+                       :.minimal
+                       :.pill
+                       :.large
+                       :padding--0.5rem
+                       {:position           :absolute
+                        :inset-block-start  :0.5rem
+                        :inset-block-end    :unset
+                        :inset-inline-end   :0.5rem
+                        :inset-inline-start :unset})
+       :on-mouse-down close-kushi-modal}
+      #_(trans (sx 'kushi-modal-close-button
+                   :.minimal
+                   :.pill
+                   :.large
+                   :padding--0.5rem
+                   {:on-mouse-down close-kushi-modal
+                    :style         {:position           :absolute
+                                    :inset-block-start  :0.5rem
+                                    :inset-block-end    :unset
+                                    :inset-inline-end   :0.5rem
+                                    :inset-inline-start :unset}}))
       attrs)
      (if icon-svg
        [icon {:icon-svg icon-svg}]
@@ -135,61 +149,117 @@
         elevation-token-inverse   (when-not (zero? elevation)
                                     (if valid-elevation?
                                       (str "var(--elevated-" elevation "-inverse), ")
-                                      (str "var(--elevated-inverse), ")))]
+                                      (str "var(--elevated-inverse), ")))
+        ]
 
     ;; TODO document the how and why of this
     (when expanded? (js/setTimeout #(open-kushi-modal id) 100))
 
     (into
-     [:dialog (merge-attrs
-               (sx 'kushi-modal
-                   :.fixed-centered
-                   :.transition
-                   :backdrop:bgc--transparent
-                   :overflow--visible
-                   [:transition-duration "var(--modal-transition-duration, var(--fast))"]
-                   :bgc--$background-color
-                   :dark:bgc--$background-color-inverse
-                   :border-radius--$modal-border-radius
-                   :b--$modal-border
-                   :min-width--$modal-min-width||200px
-                   [:max-width "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
+     [:dialog
+      (merge-attrs
+       {:style            {"--light-box-shadow" (str
+                                                 elevation
+                                                 "0 0 0 100vmax var(--modal-backdrop-color)")
+                           "--dark-box-shadow"  (str
+                                                 elevation-token-inverse
+                                                 "0 0 0 100vmax var(--dark-gray-transparent-90)")
+                           }
+        :class            (css
+                           ".kushi-modal"
+                           :.fixed-centered
+                           :.transition
+                           [:transition-duration
+                            "var(--modal-transition-duration, var(--fast))"]
+                           [:max-width
+                            "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
+                           [".kushi-modal-open>.kushi-modal-inner:opacity" 1]
+                           ["kushi-modal-open>.kushi-modal-inner:transition-delay"  
+                            "calc(var(--modal-transition-duration, var(--fast)))"]
+                           [:box-shadow :$light-box-shadow]
+                           [:dark:box-shadow :$dark-box-shadow]
+                           :backdrop:bgc--transparent
+                           :overflow--visible
+                           :bgc--$background-color
+                           :dark:bgc--$background-color-inverse
+                           :border-radius--$modal-border-radius
+                           :b--$modal-border
+                           :min-width--$modal-min-width||200px
+                           :height--fit-content
+                           :opacity--0
+                           :.kushi-modal-open:opacity--1)
+        :id               id
+        :aria-labelledby  title-id
+        :aria-describedby desc-id}
+       #_(trans (sx 'kushi-modal
+                    :.fixed-centered
+                    :.transition
+                    :backdrop:bgc--transparent
+                    :overflow--visible
+                    [:transition-duration "var(--modal-transition-duration, var(--fast))"]
+                    :bgc--$background-color
+                    :dark:bgc--$background-color-inverse
+                    :border-radius--$modal-border-radius
+                    :b--$modal-border
+                    :min-width--$modal-min-width||200px
+                    [:max-width "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
                    ;;[:max-height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem)))"]
-                   :height--fit-content
-                   [:box-shadow (str elevation-token "0 0 0 100vmax var(--modal-backdrop-color)")]
-                   [:dark:box-shadow (str elevation-token-inverse "0 0 0 100vmax var(--dark-gray-transparent-90)")]
-                   :opacity--0
-                   :&.kushi-modal-open:opacity--1
-                   {:id               id
-                    :aria-labelledby  title-id
-                    :aria-describedby desc-id})
-               attrs)
-      (into [:div (sx 'kushi-modal-inner
-                      :.flex-col-fs
-                      :.transition
-                      :opacity--0
-                      ["has-parent(.kushi-modal.kushi-modal-open):opacity" 1]
-                      ["has-parent(.kushi-modal.kushi-modal-open):transition-delay" "calc(var(--modal-transition-duration, var(--fast)))"]
-                      :gap--2em
-                      :pi--$modal-padding-inline||$modal-padding
-                      :pb--$modal-padding-block||$modal-padding
-                      :w--100%
-                      :h--100%
-                      :overflow--auto)
+                    :height--fit-content
+                    [:box-shadow (str elevation-token "0 0 0 100vmax var(--modal-backdrop-color)")]
+                    [:dark:box-shadow (str elevation-token-inverse "0 0 0 100vmax var(--dark-gray-transparent-90)")]
+                    :opacity--0
+                    :&.kushi-modal-open:opacity--1
+                    {:id               id
+                     :aria-labelledby  title-id
+                     :aria-describedby desc-id}))
+       attrs)
+      (into [:div 
+             (sx
+              ".kushi-modal-inner"
+              :.flex-col-fs
+              :.transition
+              :opacity--0
+              :gap--2em
+              :pi--$modal-padding-inline||$modal-padding
+              :pb--$modal-padding-block||$modal-padding
+              :w--100%
+              :h--100%
+              :overflow--auto)
+             #_(trans (sx 'kushi-modal-inner
+                          :.flex-col-fs
+                          :.transition
+                          :opacity--0
+                          ["has-parent(.kushi-modal.kushi-modal-open):opacity" 1]
+                          ["has-parent(.kushi-modal.kushi-modal-open):transition-delay" "calc(var(--modal-transition-duration, var(--fast)))"]
+                          :gap--2em
+                          :pi--$modal-padding-inline||$modal-padding
+                          :pb--$modal-padding-block||$modal-padding
+                          :w--100%
+                          :h--100%
+                          :overflow--auto))
              (when (or modal-title description)
-               [:div (sx 'kushi-modal-title-and-description
+               [:div 
+                {:class (css
+                         ".kushi-modal-title-and-description"
                          :.flex-col-fs
-                         :gap--1em
                          :.large
-                         {:id title-id})
+                         :gap--1em)
+                 :id    title-id}
+
+                #_(trans (sx 'kushi-modal-title-and-description
+                             :.flex-col-fs
+                             :gap--1em
+                             :.large
+                             {:id title-id}))
                 (when modal-title 
-                  [:h2 (sx 'kushi-modal-title
-                           :.semi-bold
-                           {:id title-id})
+                  [:h2 {:class (css ".kushi-modal-title"
+                                    :.semi-bold)
+                        :id title-id}
                    modal-title])
                 (when description
-                  [:p (sx 'kushi-modal-description
-                          :.small
-                          {:id desc-id})
+                  [:p {:class (css
+                               ".kushi-modal-description"
+                               :.small)
+                       :id    desc-id}
                    description])])]
-            children)])))
+            (? children))])))

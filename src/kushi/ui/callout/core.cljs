@@ -1,5 +1,6 @@
 (ns kushi.ui.callout.core
-  (:require [kushi.core :refer (merge-attrs) :refer-macros [sx]]
+  (:require [kushi.core :refer (merge-attrs)]
+            [kushi.css.core :refer (css sx)]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.icon.core]))
 
@@ -42,7 +43,8 @@
                 header-text
                 ;; Leave this out for now
                 duration
-                ]}opts
+                ]}
+        opts
         callout-id                   (str (.now js/Date))]
 
     ;; Leave this out for now
@@ -53,6 +55,11 @@
 
     [:section
      (merge-attrs
+      {:class (css ".kushi-callout"
+                   :ai--c
+                   :.info
+                   :w--100%)
+       :id callout-id}
       (sx 'kushi-callout
           :ai--c
           :.info
@@ -62,16 +69,20 @@
           ;;  :data-kushi-ui-callout-id callout-id
            })
       attrs)
-     [:div (sx 'kushi-callout-header-wrap
+     [:div (sx ".kushi-callout-header-wrap"
                :.flex-row-sb
-               :.relative
+               :position--relative
                :ta--center
                :gap--0.5em
                :p--0.85em:0.75em
                :w--100%)
-      [:div (sx 'kushi-callout-header-icon-wrap :min-width--1em) icon]
+      [:div (sx ".kushi-callout-header-icon-wrap"
+                :min-width--1em)
+       icon]
       header-text
-      [:div (sx 'kushi-callout-header-close-button-wrap :min-width--1em) close-button]]
+      [:div (sx ".kushi-callout-header-close-button-wrap"
+                :min-width--1em)
+       close-button]]
      (when (seq children)
-       (into [:div (sx :p--1rem)]
+       (into [:div (sx ".kushi-callout-body" :p--1rem)]
              children))]))

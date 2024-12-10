@@ -1278,3 +1278,393 @@ code, .code {
 }
 
 /* End of things from legacy, kushi.ui.basetheme/ui* ------------------------*/
+
+
+/* start of stragglers */
+.rounded-absolute {
+  border-radius: var(--rounded-absolute-medium);
+}
+
+.rounded {
+  border-radius: var(--rounded);
+}
+
+.sharp {
+  border-radius: 0;
+}
+
+.pill {
+  border-radius: 9999px;
+}
+
+.xxxtight {
+  letter-spacing: var(--xxxtight);
+}
+
+.xxtight {
+  letter-spacing: var(--xxtight);
+}
+
+.xtight {
+  letter-spacing: var(--xtight);
+}
+
+.tight {
+  letter-spacing: var(--tight);
+}
+
+.default-tracking {
+  letter-spacing: 0;
+}
+
+.loose {
+  letter-spacing: var(--loose);
+}
+
+.xloose {
+  letter-spacing: var(--xloose);
+}
+
+.xxloose {
+  letter-spacing: var(--xxloose);
+}
+
+.xxxloose {
+  letter-spacing: var(--xxxloose);
+}
+
+.instant {
+  transition-duration: var(--instant);
+}
+
+.xxxfast {
+  transition-duration: var(--xxxfast);
+}
+
+.xxfast {
+  transition-duration: var(--xxfast);
+}
+
+.xfast {
+  transition-duration: var(--xfast);
+}
+
+.fast {
+  transition-duration: var(--fast);
+}
+
+.moderate {
+  transition-duration: var(--moderate);
+}
+
+.slow {
+  transition-duration: var(--slow);
+}
+
+.xslow {
+  transition-duration: var(--xslow);
+}
+
+.xxslow {
+  transition-duration: var(--xxslow);
+}
+
+.xxxslow {
+  transition-duration: var(--xxxslow);
+}
+
+.rounded-absolute-xxsmall {
+  border-radius: var(--rounded-absolute-xxsmall);
+}
+
+.rounded-absolute-xsmall {
+  border-radius: var(--rounded-absolute-xsmall);
+}
+
+.rounded-absolute-small {
+  border-radius: var(--rounded-absolute-small);
+}
+
+.rounded-absolute-medium {
+  border-radius: var(--rounded-absolute-medium);
+}
+
+.rounded-absolute-large {
+  border-radius: var(--rounded-absolute-large);
+}
+
+.rounded-absolute-xlarge {
+  border-radius: var(--rounded-absolute-xlarge);
+}
+
+.rounded-absolute-xxlarge {
+  border-radius: var(--rounded-absolute-xxlarge);
+}
+
+.rounded-absolute-xxxlarge {
+  border-radius: var(--rounded-absolute-xxxlarge);
+}
+
+.rounded-xxxsmall {
+  border-radius: var(--rounded-xxxsmall);
+}
+
+.rounded-xxsmall {
+  border-radius: var(--rounded-xxsmall);
+}
+
+.rounded-xsmall {
+  border-radius: var(--rounded-xsmall);
+}
+
+.rounded-small {
+  border-radius: var(--rounded-small);
+}
+
+.rounded-medium {
+  border-radius: var(--rounded-medium);
+}
+
+.rounded-large {
+  border-radius: var(--rounded-large);
+}
+
+.rounded-xlarge {
+  border-radius: var(--rounded-xlarge);
+}
+
+.rounded-xxlarge {
+  border-radius: var(--rounded-xxlarge);
+}
+
+.rounded-xxxlarge {
+  border-radius: var(--rounded-xxxlarge);
+}
+
+.xxxxsmall {
+  font-size: var(--xxxxsmall);
+}
+
+.xxxsmall {
+  font-size: var(--xxxsmall);
+}
+
+.xxsmall {
+  font-size: var(--xxsmall);
+}
+
+.xsmall {
+  font-size: var(--xsmall);
+}
+
+.small {
+  font-size: var(--small);
+}
+
+.medium {
+  font-size: var(--medium);
+}
+
+.large {
+  font-size: var(--large);
+}
+
+.xlarge {
+  font-size: var(--xlarge);
+}
+
+.xxlarge {
+  font-size: var(--xxlarge);
+}
+
+.xxxlarge {
+  font-size: var(--xxxlarge);
+}
+
+.xxxxlarge {
+  font-size: var(--xxxxlarge);
+}
+
+.thin {
+  font-weight: var(--thin);
+}
+
+.thin .kushi-icon {
+  font-variation-settings: 'wght' 100;
+}
+
+.thin.kushi-icon {
+  font-variation-settings: 'wght' 100;
+}
+
+.thin>.kushi-radio-input {
+  outline-width: var(--input-border-weight-thin);
+}
+
+.thin>.kushi-checkbox-input {
+  border-width: var(--input-border-weight-thin);
+}
+
+.extra-light {
+  font-weight: var(--extra-light);
+}
+
+.extra-light .kushi-icon {
+  font-variation-settings: 'wght' 200;
+}
+
+.extra-light.kushi-icon {
+  font-variation-settings: 'wght' 200;
+}
+
+.extra-light>.kushi-radio-input {
+  outline-width: var(--input-border-weight-extra-light);
+}
+
+.extra-light>.kushi-checkbox-input {
+  border-width: var(--input-border-weight-extra-light);
+}
+
+.light {
+  font-weight: var(--light);
+}
+
+.light .kushi-icon {
+  font-variation-settings: 'wght' 300;
+}
+
+.light.kushi-icon {
+  font-variation-settings: 'wght' 300;
+}
+
+.light>.kushi-radio-input {
+  outline-width: var(--input-border-weight-light);
+}
+
+.light>.kushi-checkbox-input {
+  border-width: var(--input-border-weight-light);
+}
+
+.normal {
+  font-weight: var(--normal);
+}
+
+.normal .kushi-icon {
+  font-variation-settings: 'wght' 400;
+}
+
+.normal.kushi-icon {
+  font-variation-settings: 'wght' 400;
+}
+
+.normal>.kushi-radio-input {
+  outline-width: var(--input-border-weight-normal);
+}
+
+.normal>.kushi-checkbox-input {
+  border-width: var(--input-border-weight-normal);
+}
+
+.wee-bold {
+  font-weight: var(--wee-bold);
+}
+
+.wee-bold .kushi-icon {
+  font-variation-settings: 'wght' 500;
+}
+
+.wee-bold.kushi-icon {
+  font-variation-settings: 'wght' 500;
+}
+
+.wee-bold>.kushi-radio-input {
+  outline-width: var(--input-border-weight-wee-bold);
+}
+
+.wee-bold>.kushi-checkbox-input {
+  border-width: var(--input-border-weight-wee-bold);
+}
+
+.semi-bold {
+  font-weight: var(--semi-bold);
+}
+
+.semi-bold .kushi-icon {
+  font-variation-settings: 'wght' 600;
+}
+
+.semi-bold.kushi-icon {
+  font-variation-settings: 'wght' 600;
+}
+
+.semi-bold>.kushi-radio-input {
+  outline-width: var(--input-border-weight-semi-bold);
+}
+
+.semi-bold>.kushi-checkbox-input {
+  border-width: var(--input-border-weight-semi-bold);
+}
+
+.bold {
+  font-weight: var(--bold);
+}
+
+.bold .kushi-icon {
+  font-variation-settings: 'wght' 700;
+}
+
+.bold.kushi-icon {
+  font-variation-settings: 'wght' 700;
+}
+
+.bold>.kushi-radio-input {
+  outline-width: var(--input-border-weight-bold);
+}
+
+.bold>.kushi-checkbox-input {
+  border-width: var(--input-border-weight-bold);
+}
+
+.extra-bold {
+  font-weight: var(--extra-bold);
+}
+
+.extra-bold .kushi-icon {
+  font-variation-settings: 'wght' 800;
+}
+
+.extra-bold.kushi-icon {
+  font-variation-settings: 'wght' 800;
+}
+
+.extra-bold>.kushi-radio-input {
+  outline-width: var(--input-border-weight-extra-bold);
+}
+
+.extra-bold>.kushi-checkbox-input {
+  border-width: var(--input-border-weight-extra-bold);
+}
+
+.heavy {
+  font-weight: var(--heavy);
+}
+
+.heavy .kushi-icon {
+  font-variation-settings: 'wght' 900;
+}
+
+.heavy.kushi-icon {
+  font-variation-settings: 'wght' 900;
+}
+
+.heavy>.kushi-radio-input {
+  outline-width: var(--input-border-weight-heavy);
+}
+
+.heavy>.kushi-checkbox-input {
+  border-width: var(--input-border-weight-heavy);
+}
+
+
+
+/* end of stragglers */

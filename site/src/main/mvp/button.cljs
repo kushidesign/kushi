@@ -2,13 +2,13 @@
   (:require 
    [kushi.css.core :refer [css ?css sx ?sx defcss ?defcss]]))
 
-(defcss "@layer kushi-ui-theming .wttf"
-         :c--gold :bgc--red)
+;; (defcss "@layer kushi-ui-theming .wttf"
+;;          :c--gold :bgc--green)
 
-(def class-binding "foo")
+;; (def class-binding "foo")
 
 (defn my-button []
-  [:button (sx #_class-binding
+  [:button #_(sx #_class-binding
                 :bgc--blue
                 :c--white
                 :p--15px

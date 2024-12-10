@@ -4,13 +4,14 @@
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.text-field.core :refer [text-field]]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.core :refer-macros (sx)]
+            [kushi.core :refer [merge-attrs] :refer-macros (sx)]
             [kushi.playground.component-examples :as component-examples]
             ))
 
 (def examples
   (let [row-attrs (sx :&_.kushi-button:fs--$small)]
-    [(let [code (sx-call (let [id "my-modal-basic"]
+    [
+     #_(let [code (sx-call (let [id "my-modal-basic"]
                            [:div
                             [button
                              {:on-click (fn* [] (open-kushi-modal id))}
@@ -31,7 +32,7 @@
                      :args  ["Hover me"]
                      :code  code}]})
      
-     {:desc      "With modal title, description, form with fields, and close button"
+     #_{:desc      "With modal title, description, form with fields, and close button"
       :component button
       :reqs      '[[kushi.ui.button.core :refer [button]]]
       :row-attrs row-attrs
@@ -61,7 +62,7 @@
                                         [button {:on-click close-kushi-modal} "Cancel"]
                                         [button (sx :.filled) "Submit"]]]]))}]}
      
-     {:desc      "Animated"
+     #_{:desc      "Animated"
       :component button
       :reqs      '[[kushi.ui.button.core :refer [button]]]
       :row-attrs row-attrs
@@ -93,7 +94,7 @@
                                 [button {:on-click close-kushi-modal} "Cancel"]
                                 [button (sx :.filled) "Submit"]]]]))}]}
 
-     {:desc      "Animated from top"
+     #_{:desc      "Animated from top"
       :component button
       :reqs      '[[kushi.ui.button.core :refer [button]]]
       :row-attrs row-attrs
@@ -139,31 +140,62 @@
                                {:on-click (fn* [] (open-kushi-modal id))}
                                "Click to open modal"]
                               [modal
-                               (sx
-                                :min-width--300px
-                                :border-radius--24px
-                                :b--2px:solid:$gray-900
-                                :$modal-backdrop-color--$white-transparent-70
-                                :&_.kushi-modal-description:fs--$small
-                                {:-modal-title "Example modal"
-                                 :-description "Example modal description goes here."
-                                 :id           id})
+                               (merge-attrs (sx
+                                             :min-width--300px
+                                             :border-radius--24px
+                                             :b--2px:solid:$gray-900
+                                             :$modal-backdrop-color--$white-transparent-70
+                                             :&_.kushi-modal-description:fs--$small)
+                                            {:-modal-title "Example modal"
+                                             :-description "Example modal description goes here."
+                                             :id           id})
                                [:div
                                 (sx :.flex-col-fs :gap--1em)
-                                [text-field (sx {:placeholder "Puffy"
-                                                 :-label      "Screen name"})]
-                                [text-field (sx {:placeholder "Executive"
-                                                 :-label      "Occupation"})]]
+                                [text-field {:placeholder "Puffy"
+                                             :-label      "Screen name"}]
+                                [text-field {:placeholder "Executive"
+                                             :-label      "Occupation"}]]
                                [:div
                                 (sx :.flex-row-fe :gap--1em)
                                 [button
-                                 (sx :.minimal :.pill {:on-click close-kushi-modal})
+                                 (merge-attrs (sx :.minimal :.pill)
+                                              {:on-click close-kushi-modal})
                                  "Cancel"]
                                 [button
-                                 (sx :.filled :.pill {:on-click close-kushi-modal}) 
-                                 "Submit"]]]]
-                             ))}]}
-  {:desc      "No drop shadow"
+                                 (merge-attrs (sx :.filled :.pill)
+                                              {:on-click close-kushi-modal}) 
+                                 "Submit"]]]])
+                           #_(let [id "Rounded, with white backdrop"]
+                               [:div
+                                [button
+                                 {:on-click (fn* [] (open-kushi-modal id))}
+                                 "Click to open modal"]
+                                [modal
+                                 (sx
+                                  :min-width--300px
+                                  :border-radius--24px
+                                  :b--2px:solid:$gray-900
+                                  :$modal-backdrop-color--$white-transparent-70
+                                  :&_.kushi-modal-description:fs--$small
+                                  {:-modal-title "Example modal"
+                                   :-description "Example modal description goes here."
+                                   :id           id})
+                                 [:div
+                                  (sx :.flex-col-fs :gap--1em)
+                                  [text-field (sx {:placeholder "Puffy"
+                                                   :-label      "Screen name"})]
+                                  [text-field (sx {:placeholder "Executive"
+                                                   :-label      "Occupation"})]]
+                                 [:div
+                                  (sx :.flex-row-fe :gap--1em)
+                                  [button
+                                   (sx :.minimal :.pill {:on-click close-kushi-modal})
+                                   "Cancel"]
+                                  [button
+                                   (sx :.filled :.pill {:on-click close-kushi-modal}) 
+                                   "Submit"]]]]
+                               ))}]}
+  #_{:desc      "No drop shadow"
       :component button
       :reqs      '[[kushi.ui.button.core :refer [button]]]
       :row-attrs row-attrs
