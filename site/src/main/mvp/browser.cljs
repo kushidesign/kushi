@@ -1,15 +1,16 @@
 (ns mvp.browser
   (:require
    [reagent.dom :as rdom]
+   [kushi.ui.icon.mui.svg :as mui.svg ]
    [kushi.core :refer [merge-attrs]]
-   [kushi.css.core :refer [css sx defcss ?css css-vars css-vars-map]]
+   [kushi.css.core :refer [css sx defcss ?css css-vars css-vars-map grid-template-areas]]
    ;; [mvp.views :as views]
    ;; [mvp.button :refer [my-button]]
    ;; [kushi.ui.slider.core :refer [slider]]
    ;; [kushi.ui.radio.core :refer [radio]]
    ;; [kushi.ui.checkbox.core :refer [checkbox]]
    ;; [kushi.ui.label.core :refer [label]]
-   ;; [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.text-field.core :refer [text-field]]
    ;; [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]
    ;; [kushi.ui.grid.core :refer [grid]]
@@ -19,14 +20,18 @@
    ;; [kushi.ui.switch.core :refer [switch]]
    ;; [kushi.ui.card.core :refer [card]]
    ;; [kushi.ui.tag.core :refer [tag]]
-   [kushi.ui.modal.core :refer [modal
-                                modal-close-button
-                                open-kushi-modal
-                                close-kushi-modal]]
+  ;;  [kushi.ui.modal.core :refer [modal
+  ;;                               modal-close-button
+  ;;                               open-kushi-modal
+  ;;                               close-kushi-modal]]
+   
+   [kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]
+   [kushi.ui.button.core :refer [button]]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
    [kushi.ui.button.core :refer [button]]
-   [kushi.ui.dom.pane.styles]
-   ))
+   [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
+   [reagent.dom :refer [render]]))
+
 
 (defcss "@keyframes jiggle2"
   [:0% {:transform "rotate(0deg) scale(1.55)"}]
@@ -37,11 +42,109 @@
   [:90% {:transform "rotate(-5deg) scale(1.55)"}]
   [:100% {:transform "rotate(0deg) scale(1.55)"}])
 
+
+(defn popover-content []
+  [:div
+   (sx :.flex-row-fs
+       :.small
+       :position--relative
+       :ai--fs
+       :pi--1.5em
+       :xsm:pi--2.5em
+       :pb--1.25em:1.75em
+       :xsm:pb--2.25em:2.75em
+       :min-width--200px
+       :xsm:max-width--90vw
+       :max-width--250px
+       :min-height--120px)
+   [:div
+    (sx :.flex-col-fs
+        :gap--1em
+        :_.kushi-text-input-label:min-width--7em
+        :_.kushi-input-inline:gtc--36%:64%
+        :_.kushi-input-inline:d--grid)
+    [:h2 (sx :fs--$medium
+             :fw--$semi-bold
+             :mbe--0.75em)
+     "Example Popover Form"]
+    [text-field
+     {:placeholder      "100%"
+      :-label           "Height"
+      :-label-placement :inline}]
+    [text-field
+     {:placeholder      "335px"
+      :-label           "Min Width"
+      :-label-placement :inline}]
+    [text-field
+     {:placeholder      "75px"
+      :-label           "Depth"
+      :-label-placement :inline}]]
+   [button
+    {:class
+     (css :.top-right-corner-inside
+          :.neutral
+          :.minimal
+          :.pill
+          :zi--1
+          :fs--$small
+          ["--icon-button-padding-inline-ems"
+           :0.4em]
+          [:opacity                         
+           :$popover-close-button-opacity]
+          ["--button-padding-block-ems"     
+           :$icon-button-padding-inline-ems]
+          [:margin-inline                   
+           :$popover-close-button-margin-inline||$icon-button-padding-inline-ems]
+          [:margin-block                    
+           :$popover-close-button-margin-block||$icon-button-padding-inline-ems])
+     :on-click dismiss-popover!}
+    [icon mui.svg/close]]])
+
+
+(defn toast-content []
+  [:div
+   (sx ".my-toast-content"
+       :.flex-row-fs
+       :position--relative
+       :fs--$medium
+       :ai--c
+       :gap--1.25em
+       :xsm:gap--1.5em
+       :pi--1.25em
+       :xsm:pi--1.5em
+       :pb--1em
+       :xsm:pb--1.25em )
+   [:div
+    (sx ".my-toast-content-wrapper"
+        :.flex-col-c
+        :ai--fs
+        :gap--0.5em
+        :_.kushi-text-input-label:min-width--7em
+        :_.kushi-input-inline:gtc--36%:64%)
+    [:h3 (sx :fw--$bold :m--0) "Saved for later"]
+    [:p (sx ".my-toast-text"
+            :fs--$small
+            :.neutral-secondary-foreground)
+     (.format (new js/Intl.DateTimeFormat
+                   "en-US"
+                   #js{:dateStyle "full" :timeStyle "short"})
+              (new js/Date))]]
+   [button
+    {:class (css ".kushi-toast-close-button"
+                 :fw--$semi-bold
+                 :.no-shrink
+                 :br--$rounded
+                 :fs--$xxsmall
+                 :letter-spacing--$loose
+                 :zi--1
+                 [:opacity  :$popover-close-button-opacity])
+     :on-click dismiss-toast!}
+    "Undo Save" ]])
+
+
 (defn main-view []
-  [:div (sx #_:.absolute-centered
-            :p--5rem
-            :.flex-col-c)
-   
+  [:div (sx :.flex-col-c
+            :p--5rem)
 
   ;;  (let [id "my-modal-basic"]
   ;;    [:div [button {:on-click (fn* [] (open-kushi-modal id))}
@@ -50,9 +153,118 @@
   ;;                         :_.kushi-modal-description:fs--$small)
   ;;             :id    id}
   ;;      [:div (sx :.xxxlarge :.flex-row-c) "💃🏽"]]])
-   
 
-   [button (tooltip-attrs {:-text "This is a tooltip"})
+  [button
+   (toast-attrs {:-auto-dismiss? false
+                 :-f             (fn [toast-el]
+                                   (rdom/render toast-content toast-el))})
+   "Save for later"]
+   
+  #_[button  
+   (popover-attrs
+    {:-placement     :r
+     :-arrow?        false
+     :-auto-dismiss? true
+     :-f             (fn
+                       [el]
+                       (rdom/render
+                        [:div
+                         (sx :.flex-col-c :ai--c :min-height--100% :p--1rem)
+                         [:p (sx :.small)
+                          "I will close automatically,"
+                          [:br]
+                          "after 5000ms"]]
+                        el))})
+   "Open"]
+
+  #_[button  
+   (popover-attrs
+    {:-placement :r
+     :-arrow?    false
+     :-f         (fn [popover-el]
+                   (rdom/render (fn []
+                                  [:div
+                                   (sx :.flex-col-c
+                                       :ai--c
+                                       :min-height--100%
+                                       :p--1rem)
+                                   [button {:class "small"
+                                            :on-click dismiss-popover!}
+                                    "Close"]])
+                                popover-el))})
+   "Open"]
+
+  #_[button  
+   (popover-attrs
+    {:-placement :r
+     :-arrow?    :false
+     :-f         (fn [popover-el]
+                   (rdom/render (fn []
+                                  [:div (sx :.xxxlarge 
+                                            :.flex-row-c
+                                            :padding--0.25em)
+                                   "💃🏽"])
+                                popover-el))})
+   "Open"]
+
+#_(into
+   [:div
+    {:style (let [gta (grid-template-areas
+                       "brc br b  bl blc"
+                       "rt  .  .  .  lt"
+                       "r   .  .  .  l"
+                       "rb  .  .  .  lb"
+                       "trc tr t  tl tlc")
+                  tooltip-delay-duration 0]
+              (css-vars-map gta tooltip-delay-duration))
+     :class (css
+             :d--grid
+             :gtc--1fr:1fr:1fr:1fr:1fr
+             :gtr--auto
+             :gap--1rem
+             :w--400px
+             :h--400px
+             [:gta :$gta])}]
+
+   (for [x     ["brc" "br" "b"  "bl" "blc"
+                "rt"  nil  nil  nil  "lt"
+                "r"   nil  nil  nil  "l"
+                "rb"  nil  nil  nil  "lb"
+                "trc" "tr" "t"  "tl" "tlc"]
+         :when (not (nil? x))]
+
+     [:button (merge-attrs
+               {:style
+                (css-vars-map x)
+                :class     
+                (css 'kushi-playground-tooltip-demo-button
+                     :.flex-row-c
+                     :.pointer
+                     :.relative
+                     :b--1px:solid:$neutral-600
+                     :dark:b--1px:solid:$neutral-400
+                     :hover:b--1px:solid:black
+                     :dark:hover:b--1px:solid:white
+                     :>span.placement-label:ff--$code-font-stack
+                     :fs--0.9em
+                     :c--$neutral-600
+                     :dark:c--$neutral-400
+                     :hover:c--black
+                     :dark:hover:c--white
+                     :_.kushi-pseudo-tooltip-revealed:bc--$accent-color
+                     :dark:&.kushi-pseudo-tooltip-revealed:bc--$accent-color-inverse
+                     :_.kushi-pseudo-tooltip-revealed:c--$accent-color
+                     :dark:&.kushi-pseudo-tooltip-revealed:c--$accent-color-inverse
+                     :_.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color
+                     :dark:_.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color-inverse
+                     [:grid-area :$x])
+                :tab-index 0}
+               (tooltip-attrs {:-text      [(str "`:" x "`")]#_["Tooltip Line 1" "Tooltip Line 2" ]
+                               ;; :-reveal-on-click?         true
+                               :-placement (keyword x)}))
+      [:span.placement-label (str ":" x)]]))
+
+   #_[button (tooltip-attrs {:-text "This is a tooltip"})
     "Hover me"]
 
 

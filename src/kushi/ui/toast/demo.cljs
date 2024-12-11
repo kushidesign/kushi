@@ -7,6 +7,7 @@
    [kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]
    [reagent.dom :as rdom]))
 
+
 (defn toast-content []
   [:div
    (sx 'my-toast-content
@@ -45,7 +46,7 @@
         :zi--1
         [:opacity  :$popover-close-button-opacity]
         {:on-click dismiss-toast!})
-    "Undo Save" ]])
+    "Undo Save"]])
 
 
 

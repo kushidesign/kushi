@@ -1,9 +1,13 @@
 (ns kushi.css.build.analyzer
   (:require
-   [fireworks.core :refer [? !?] :rename {? ff}]
+   [clojure.spec.alpha]
    [clojure.string :as str]
    [clojure.tools.reader :as reader]
-   [clojure.tools.reader.reader-types :as reader-types]))
+   [clojure.tools.reader.reader-types :as reader-types]
+   [clojure.walk :as walk]
+   [fireworks.core :refer [? !?] :rename {? ff}]
+   [kushi.css.specs :as kushi-specs]
+   [kushi.css.build.utility-classes :as utility-classes]))
 
 (defn ? [& args]
   (last args))
@@ -326,8 +330,27 @@
                   (assoc :form (with-meta (vec (rest form))
                                  {:macro 'kushi.css/sx}))))
 
+      utilize
+      (let [reqs (volatile! #{})]
+        (walk/postwalk
+         (fn [x]
+           (when-let [cn (when (or (string? x) (keyword? x))
+                           (let [nm (name x)]
+                             (if (str/starts-with? nm ".")
+                               nm
+                               (str "." nm))))]
+             (when (contains? utility-classes/utility-class-ks-set cn)
+               (vswap! reqs conj (keyword cn)))))
+         form)
+        (update state
+                :utilized
+                conj
+                (-> @reqs)))
+
       defcss
-      (update state :defcss conj
+      (update state
+              :defcss
+              conj
               (let [[_ sel & rest-of-form] form
                     enable-css-layers?     false
                     at-layer?              (str/starts-with? sel "@layer ")
@@ -370,7 +393,8 @@
   ;; shortcut if src doesn't contain any css, faster than parsing all forms
   (let [has-css? (or (str/index-of src "(css")
                      (str/index-of src "(sx")
-                     (str/index-of src "(defcss"))
+                     (str/index-of src "(defcss")
+                     (str/index-of src "(utilize"))
         reader (reader-types/source-logging-push-back-reader src)
         eof #?(:clj (Object.) :cljs (js-obj))]
 
@@ -378,6 +402,7 @@
            state
            {:css []
             :defcss []
+            :utilize []
             :ns nil
             :ns-meta {}
             :require-aliases {}

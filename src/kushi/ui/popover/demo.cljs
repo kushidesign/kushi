@@ -149,16 +149,22 @@
       :component button
       :reqs      '[[kushi.ui.button.core :refer [button]]]
       :row-attrs row-attrs
-      :examples  [{:code (sx-call [button
-                                   (popover-attrs
-                                    {:-f (fn
-                                           [el]
-                                           (rdom/render
-                                            [:div
-                                             (sx :.flex-col-c :ai--c :min-height--100% :p--1rem)
-                                             [button (sx :.small {:on-click dismiss-popover!}) "Close"]]
-                                            el))}) 
-                                   "Open"])}]}
+      :examples  [{:code (sx-call 
+                          [button
+                           (popover-attrs
+                            {:-f (fn
+                                   [el]
+                                   (rdom/render
+                                    [:div
+                                     (sx :.flex-col-c
+                                         :ai--c
+                                         :min-height--100%
+                                         :p--1rem)
+                                     [button (sx :.small
+                                                 {:on-click dismiss-popover!})
+                                      "Close"]]
+                                    el))}) 
+                           "Open"])}]}
      
      {:desc      "Auto-dismissing, with manual placement"
       :component button

@@ -394,8 +394,6 @@
 
 (defn css-layers [coll]
   (reduce (fn [acc {:keys [ns form sel] :as m}]
-            ;; (ff (name ns))
-            ;; (ff (str ns))
             (let [kui? (-> ns name (string/starts-with? "kushi.ui."))]
               (update acc
                       (if kui? :kushi-ui-component :css)
@@ -585,10 +583,10 @@
 (defn build-css-for-chunks
   [{:keys [namespaces] :as build-state}]
 
-  ;;-------------------------;;
-  ;;    DEBUG THIS IN FW     ;;
-  ;;    (ff build-state)     ;;
-  ;;-------------------------;;
+  ;;------------------------------------------;;
+  ;;            DEBUG THIS IN FW              ;;
+  ;;            (ff build-state)              ;;
+  ;;------------------------------------------;;
 
   (reduce-kv
    (fn [build-state chunk-id chunk]
@@ -597,16 +595,16 @@
                       :let [{:keys [ns css] :as ns-info} (get namespaces ns)]
                       {:keys [line column] :as form-info} css
                       :let [css-id (s/generate-id ns line column)]]
-                  (-> (ana/process-form build-state form-info)
-                      (assoc
-                       :ns ns
-                       :css-id css-id
+                    (-> (ana/process-form build-state form-info)
+                        (assoc
+                         :ns ns
+                         :css-id css-id
                         ;; FIXME: when adding optimization pass selector won't
                         ;;        be based on css-id anymore
-                       :sel (str "." css-id))))
+                         :sel (str "." css-id))))
                 (into []))
 
-            ;; NEW --------------------------------------------
+           ;; NEW --------------------------------------------
            all-defcss
            (->> (for [ns (:chunk-namespaces chunk)
                       :let [{:keys [ns defcss] :as ns-info} (get namespaces ns)]
@@ -618,8 +616,8 @@
                        :ns     ns
                        :css-id css-id
                        :form   form
-                        ;; FIXME: when adding optimization pass selector
-                        ;;        won't be based on css-id anymore
+                       ;; FIXME: when adding optimization pass selector
+                       ;;        won't be based on css-id anymore
                        :sel    sel
                        :layer  layer)))
                 (into []))
@@ -629,7 +627,7 @@
                      (assoc acc sel form))
                    {} 
                    all-defcss)
-            ;; NEW --------------------------------------------
+           ;; NEW --------------------------------------------
            
            cp-includes
            (into #{} (for [ns (:chunk-namespaces chunk)
@@ -644,9 +642,13 @@
               (assoc warning :ns ns :line line :column column)))
 
 
-            ;; NEW --------------------------------------------
+           ;; NEW --------------------------------------------
            required-utility-classes
-           (reduce-utility-classes-from-rules all-rules)
+           (let [ret (reduce-utility-classes-from-rules all-rules)
+                 utilized (? (:utilized build-state))]
+             (keys chunk)
+             (or (some->> utilized (conj ret))
+                 ret))
 
            utility-classes-css
            (some-> required-utility-classes 
@@ -672,9 +674,9 @@
 
            user-theming-classes-css
            (user-theming-classes-css :all build-state)
-            ;; NEW --------------------------------------------
-           
+           ;; NEW --------------------------------------------
            ]
+
        (co 'build-css-for-chunks
            (-> (? :data
                   {:display-metadata? false}
@@ -683,6 +685,7 @@
                    :warnings    warnings})
                :formatted
                :string))
+
        (-> build-state
            (update-in [:chunks chunk-id] assoc
                       :warnings warnings
@@ -788,6 +791,7 @@
   ;; FIXME: actually support chunks, similar to CLJS with :depends-on #{:other-chunk}
   ;; so chunks don't repeat everything, for that needs to analyze chunks first
   ;; then produce output
+  (keys build-state)
   (-> build-state
       (assoc :chunks {})
       (ana/reduce-kv->
@@ -809,7 +813,7 @@
            (assoc-in build-state [:chunks chunk-id] chunk)))
        chunks)
       (trim-chunks)
-      (build-css-for-chunks) ))
+      (build-css-for-chunks)))
 
 ;; simplistic regexp based css minifier
 ;; it'll destroy some stuff for sure
@@ -843,7 +847,6 @@
 (defn index-source [build-state src]
   (let [{:keys [ns] :as contents}
         (ana/find-css-in-source src)]
-    #_(ff 'index-source:ns ns)
     (if (not contents)
       build-state
       ;; index every namespace so we can follow requires properly
@@ -872,7 +875,6 @@
 
        (defn index-path
          [build-state ^File root config]
-         #_(ff build-state)
          (let [files
                (->> root
                     #_ff

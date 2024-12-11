@@ -4,7 +4,7 @@
    [fireworks.core :refer [? !? ?> !?>]]  
    [clojure.string :as string]))
 
-;; from kushi.colors/colornames ------------------------------------------------
+;; From kushi.colors/colornames ------------------------------------------------
 (def color-names
   ["gray"
    "purple"
@@ -19,10 +19,8 @@
    "brown"])
 
 
-
-
 ;; Helper fns
-;; ------------------------------------------------------
+;; -----------------------------------------------------------------------------
 
 (defn as-classname [x]
   (str "." x)
@@ -79,10 +77,8 @@
                            ks))]))
             coll)) )
 
-
 ;; Scale defs
-;; ------------------------------------------------------
-
+;; -----------------------------------------------------------------------------
 (def type-weights-by-name
   (array-map
    :thin 100
@@ -104,7 +100,7 @@
 
 
 ;; Combinatorial flexbox utilities
-;; ------------------------------------------------------
+;; -----------------------------------------------------------------------------
 
 ;; TODO - Analyze performance tradeoffs with writing selectors like these:
 ;; first need to fix compiler to not prepend a "." in front of selector.
@@ -153,12 +149,12 @@
 
 
 
-   ;; TODO - after string-based selector is working, use something like this instead
-  ;;  "[class^='debug-']" {:outline-color  :silver
-  ;;                       :outline-style  :solid
-  ;;                       :outline-width  :1px
-  ;;                       :outline-offset :-1px}
-  ;;  :debug-red {:outline-color :$red-500}
+;; TODO - after string-based selector is working, use something like this instead
+;;  "[class^='debug-']" {:outline-color  :silver
+;;                       :outline-style  :solid
+;;                       :outline-width  :1px
+;;                       :outline-offset :-1px}
+;;  :debug-red {:outline-color :$red-500}
    
 (def debug-outline-classes
   (mapcatv 
@@ -174,7 +170,7 @@
 (def base-classes
   [
    ;; Visual debugging utilities
-   ;; ------------------------------------------------------
+   ;; --------------------------------------------------------------------------
    :debug-grid            {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px)), "
                                                   "repeating-linear-gradient(to right,  transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
    :debug-grid-8          {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
@@ -240,7 +236,7 @@
 
 
    ;; Combinatorial absolute and fixed positioning utilities
-   ;; ------------------------------------------------------
+   ;; --------------------------------------------------------------------------
    :absolute-centered            {:position           :absolute
                                   :inset-inline-start "50%"
                                   :inset-block-start  "50%"
@@ -327,7 +323,7 @@
 
 
    ;; Surfaces, buttons, containers
-   ;; ------------------------------------------------------
+   ;; --------------------------------------------------------------------------
    :bg-image-cover            {:background-position "center center"
                                :background-repeat   :no-repeat
                                :width               "100%"}
@@ -340,7 +336,7 @@
 
 
    ;; Combinatorial transition utility
-   ;; ------------------------------------------------------
+   ;; --------------------------------------------------------------------------
    :transition            {:transition-property        :all
                            :transition-timing-function :$transition-timing-function
                            :transition-duration        :$transition-duration}
@@ -376,7 +372,7 @@
 
 (def override-classes
   [;; General
-   ;; ------------------------------------------------------
+   ;; --------------------------------------------------------------------------
    ;; TODO - consider [data-kushi-offscreen]
    :offscreen {:position :absolute
                :left     :-10000px
@@ -388,7 +384,7 @@
 
    ;; Icon enhancement - maybe you don't need if you make a 
    ;; label component that has this built-in?
-   ;; ------------------------------------------------------
+   ;; --------------------------------------------------------------------------
    :enhanceable-with-icon {:gap :$icon-enhanceable-gap}
 
 
@@ -397,7 +393,7 @@
    ;;      - Maybe make scale like convex and elevation 0-5?
    ;; TODO - consider using data-kushi-debossed-text-level
    ;;        and maybe also :-debossed-level on lib components
-   ;; ------------------------------------------------------
+   ;; --------------------------------------------------------------------------
    :debossed-text {:text-shadow "0 1px 2px hsl(0deg 0% 100% / 55%), 0 -1px 2px hsl(0deg 0% 0% / 27%)"}
    :embossed-text {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}
 
@@ -437,7 +433,7 @@
 
 
 ;; Border weights for radios and checkbox sync with type weight
-;; ------------------------------------------------------
+;; -----------------------------------------------------------------------------
 (def radio-and-checkbox-synced-border-weights
   (scale-of-utility-defs
    type-weights
@@ -602,6 +598,7 @@
         (map-indexed (fn [i x] 
                        (if (odd? i) x (->> x name (str "."))))
                      coll)))
+
 (def all-classes 
   [
    ;; flex-utility classes e.g. :.flex-row-fe
@@ -660,13 +657,24 @@
    
    data-kushi-weight-synced])
 
+
 (def utility-class-ks
   (mapcat util/kwargs-keys all-classes))
 
+
 (!? utility-class-ks)
+
 
 (def utility-class-ks-set
   (into #{} utility-class-ks))
+;; #{".no-shrink"
+;;   ".divisor-block-start"
+;;   ".top-left-corner"
+;;   ".left-inside-fixed"
+;;   ".bottom-outside"
+;;   ".flex-col-se"
+;;   ...}
+
 
 (def utility-classes
   (apply util/deep-merge

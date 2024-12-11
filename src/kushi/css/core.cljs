@@ -16,3 +16,15 @@
                             (subs s 1)
                             s)))
                      classes)))
+
+;; move into macro-land?
+(defn grid-template-areas
+  "Use like this:
+   (kushi/grid-template-areas
+    \"brc br b  bl blc\"
+    \"rt  .  .  .  lt\"
+    \"r   .  .  .  l\"
+    \"rb  .  .  .  lb\"
+    \"trc tr t  tl tlc\")"
+  [& rows]
+  (string/join " " (map #(str "\"" % "\"") rows)))

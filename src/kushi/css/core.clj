@@ -807,6 +807,9 @@
 ;; -----------------------------------------------------------------------------
 
 
+(defmacro ^:public utilize [x]
+  `~x)
+
 (defmacro ^:public css-block-data
   "Returns a map with following keys:
    :nested-vector    ->  vector representation of nested css.
@@ -1127,7 +1130,6 @@
   ;;  :version                    nil
    })
 
-
 (defn lightning
   "Transforms a string of CSS using lightningcss. An (optional) user config map
    is merged with kushi.css.core/lightning-opts, which is transformed into a
@@ -1209,6 +1211,8 @@
                     (merge opts {:type :error
                                  :body body}))))))
          css-str))))
+
+
 
 (defmacro trans
   "Macro for converting from legacy kushi.core/sx to {:class (css ...) ...}
@@ -1373,3 +1377,5 @@
                {:class (cons (symbol "css") reformatted)}
                sx-attrs-map)
         (cons (symbol "sx") reformatted)))))
+
+

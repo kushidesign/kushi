@@ -1,11 +1,31 @@
 (ns kushi.ui.toast.core
   (:require [domo.core :as domo]
+            [kushi.css.core :refer [utilize]]
             [kushi.core :refer (keyed)]
             [kushi.ui.dom.pane.core :as pane]
             [kushi.ui.dom.pane.placement :refer [user-placement]]
             [kushi.ui.dom.pane.styles]
             [kushi.ui.dom.pane.toast :refer [toast-slot-cleanup!
                                              update-toast-slot-dimensions!]]))
+
+
+(utilize 
+ {:lt  "top-left-corner-inside"
+  :tlc "top-left-corner-inside"
+  :tl  "top-left-corner-inside"
+  :t   "top-inside"
+  :tr  "top-right-corner-inside"
+  :trc "top-right-corner-inside"
+  :rt  "top-right-corner-inside"
+  :r   "right-inside"
+  :rb  "bottom-right-corner-inside"
+  :brc "bottom-right-corner-inside"
+  :br  "bottom-right-corner-inside"
+  :b   "bottom-inside"
+  :bl  "bottom-left-corner-inside"
+  :blc "bottom-left-corner-inside"
+  :lb  "bottom-left-corner-inside"
+  :l   "left-inside"})
 
 
 (defn toast-attrs

@@ -54,15 +54,16 @@
             ;; (cb/index-path (io/file "../src" "kushi" "ui" "link") {})
             ;; (cb/index-path (io/file "../src" "kushi" "ui" "collapse") {})
             ;; (cb/index-path (io/file "../src" "kushi" "ui" "modal") {})
-            (cb/index-path (io/file "../src" "kushi" "ui" "tooltip") {})
-            (cb/index-path (io/file "../src" "kushi" "ui" "dom" "pane" "styles") {})
-
-            ;; remaining
-            ;; floating panes - refactor pane prior to these
-            ;; (cb/index-path (io/file "../src" "kushi" "ui" "toast") {})
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "tooltip") {})
             ;; (cb/index-path (io/file "../src" "kushi" "ui" "popover") {})
 
+            (cb/index-path (io/file "../src" "kushi" "ui" "label") {})
+            ;; Check popover with form ^^^
 
+            (cb/index-path (io/file "../src" "kushi" "ui" "toast") {})
+
+            ;; (cb/index-path (io/file "../src" "kushi" "ui" "dom" "pane" "toast") {})
+            ;; Done!
 
             (cb/index-path (io/file "src" "main") {})
             (assoc :user-config user-config)
