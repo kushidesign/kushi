@@ -115,7 +115,7 @@
   (when-not e.defaultPrevented
     (when (= e.key "Escape")
       (when-let [slot (domo/qs ".kushi-toast-slot")]
-        .remove
+        (-> slot .-firstChild .remove)
         (toast-slot-cleanup! slot)))))
 
 
