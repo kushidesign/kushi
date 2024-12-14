@@ -869,23 +869,15 @@
                  (double-nested-rule sel blocks)))))
 
          ;; @ layers ------------------------------
+         ;; TODO make work with @layer to define multiple rules
          (string/starts-with? sel "@layer")
          (if-not (s/valid? ::specs/layer-selector sel)
            (bad-at-layer-name-warning sel &form)
-           (let [enable-css-layers?
-                 ;; TODO - boolean you can pull out of the args to css-rule*
-                 ;;        passed from within kushi.css.build/build, based on
-                 ;;        user config option to enable actual CSS layers.
-                 false
-
-                 sel
-                 (if enable-css-layers?
-                   sel
-                   ;; TODO - dry this up with code in analyzer
-                   (-> sel
-                       (string/split #"[\t\n\r\s]+")
-                       last))]
-             (f sel args)))
+           (let [[_ layer sel]
+                 (string/split sel #"[\t\n\r\s]+")]
+             (str "@layer " layer " {\n  "
+                  (string/replace (f sel args) #"\n" "\n  ")
+                  "\n}")))
          
          ;; CSS at-rule with nested css rules ------
          ;; TODO
