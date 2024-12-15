@@ -101,8 +101,10 @@
 
    ;; TODO - need a regex that will remove underscores, but only if they are not
    ;;        inside single or double quotes
-   #(str (when-not (string/ends-with? % " &") "&")
-         (string/replace % #"_" " "))
+   #(let [guarded        (string/replace % #"--_" "____PRIVATE_CSSVAR____")
+          no-underscores (str (when-not (string/ends-with? guarded " &") "&")
+                              (string/replace guarded #"_" " "))]
+      (string/replace no-underscores #"____PRIVATE_CSSVAR____" "--_"))
 
   ;; TODO - you can probably remove this
   ;;  #(str (when-not (string/ends-with? % " &") "&")
@@ -313,7 +315,9 @@
     ;; Will work for things like:
     ;; `{:.foo:last-child:c :red}`
     ;; `{:.foo:last-child {:c :red}}`
-    (when-not (s/valid? ::specs/at-rule s)
+    ;; TODO - what to do about something css-vars like [":_.foo:--_x" "2"] ?
+    (when-not (or (re-find #"^--_.*" s)
+                  (s/valid? ::specs/at-rule s))
       (when (re-find #"[:_\. ]" s)
         (string/split s #":")))))
 
