@@ -20,6 +20,11 @@ pom.xml.asc
 kushi.workspace.code-workspace
 .portal
 /site/tmp
+public/css/*
+site/public/css/*
+.public/css/*
+.site/public/css/*
+
 
 
 /docs/public/js/cljs-runtime

@@ -1,6 +1,10 @@
 node_modules/
 public/js
 public/css
+public/css/*
+site/public/css/*
+.public/css/*
+.site/public/css/*
 
 /target
 /checkouts
