@@ -14,6 +14,7 @@
                         [io.github.paintparty/fireworks "0.10.4"]
                         [me.flowthing/pp "2024-01-04.60"]
                         [babashka/process "0.5.22"]
+                        [borkdude/edamame "1.4.27"]
                         ;; for testing & profiling
                         #_[com.taoensso/tufte "2.6.3"]                
                         ]
