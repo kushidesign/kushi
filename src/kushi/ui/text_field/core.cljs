@@ -5,7 +5,7 @@
    [kushi.core :refer (merge-attrs)]
    [kushi.ui.core :refer (opts+children)]))
 
-(defcss "@layer kushi-ui-theming kushi-text-input-enhancer"
+(defcss "@layer kushi-ui-component kushi-text-input-enhancer"
   :d--if
   :ai--center
   :jc--c

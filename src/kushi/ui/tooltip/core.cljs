@@ -10,7 +10,6 @@
             [kushi.ui.dom.pane.styles]
             [kushi.ui.util :as util :refer [maybe]]))
 
-
 (defn valid-tooltip-text-coll? [x]
   (and (seq x) 
        (every? #(or (and (string? %)
@@ -31,7 +30,6 @@
         (let [v (js->clj text)]
           (when (valid-tooltip-text-coll? v)
             v))))
-
 
 (defn tooltip-attrs
   {:summary ["Tooltips provide additional context when hovering or clicking "

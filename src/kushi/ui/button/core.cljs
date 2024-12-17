@@ -48,10 +48,10 @@
           :br "`:$button-border-width`"
           :br "The default value is `:1px`"
           :br]
-   :opts '[{:name    loading?
-            :pred    boolean?
-            :default false
-            :desc    "When `true`, this will set the appropriate values for `aria-busy` and `aria-label`"}]}
+   :opts (quote [{:name    loading?
+                  :pred    boolean?
+                  :default false
+                  :desc    "When `true`, this will set the appropriate values for `aria-busy` and `aria-label`"}])}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys [loading?]}      opts

@@ -7,7 +7,7 @@
    [kushi.ui.util :as util]
    [kushi.ui.core :refer (opts+children)]))
 
-(defcss "@layer kushi-ui-theming .kushi-switch-track-content"
+(defcss "@layer kushi-ui-component .kushi-switch-track-content"
   :.flex-row-c
   :.semi-bold
   :.transition
@@ -16,7 +16,7 @@
   :c--white
   [:w "calc(100% - 50% + var(--switch-border-width))"])
 
-(defcss "@layer kushi-ui-theming .kushi-switch-thumb-content"
+(defcss "@layer kushi-ui-component .kushi-switch-thumb-content"
   :c--$neutral-foreground
   :d--none 
   :w--100%

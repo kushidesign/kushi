@@ -20,7 +20,7 @@
 ;; ----------------------------------------------------------------------------
 
 (defcss
-  "@layer kushi-ui-theming .kushi-slider-step-label-marker"
+  "@layer kushi-ui-component .kushi-slider-step-label-marker"
   {:>span:v                                           :hidden
    :before:fw                                         :800
    :before:fs                                         :1.2rem
@@ -32,21 +32,21 @@
    :.kushi-slider-step-label-selected:before:content :unset})
 
 (defcss
-  "@layer kushi-ui-theming .kushi-slider-step-label-marker-dot"
+  "@layer kushi-ui-component .kushi-slider-step-label-marker-dot"
   :.kushi-slider-step-label-marker
   {:before:fw :800
    :before:fs :1.2rem
    :before:o  :0.7})
 
 (defcss
-  "@layer kushi-ui-theming .kushi-slider-step-label-marker-bar"
+  "@layer kushi-ui-component .kushi-slider-step-label-marker-bar"
   :.kushi-slider-step-label-marker
   {:before:fw :300
    :before:fs :0.8em
    :before:o  :1})
 
 (defcss
-  "@layer kushi-ui-theming .kushi-slider-step-label-marker-none"
+  "@layer kushi-ui-component .kushi-slider-step-label-marker-none"
   :.kushi-slider-step-label-marker
   {:before:fw :300
    :before:fs :0.8em
