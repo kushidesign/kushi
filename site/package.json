@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "npx shadow-cljs run repl/start",
-    "release": "npx shadow-cljs run build/all"
+    "dev": "npx shadow-cljs watch app",
+    "release": "npx shadow-cljs release app",
+    "clean": "rm -rf public/js .shadow-cljs .cpcache"
   },
   "devDependencies": {
     "shadow-cljs": "2.28.6"
