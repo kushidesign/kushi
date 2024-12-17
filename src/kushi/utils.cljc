@@ -248,3 +248,9 @@
           m)))
     c1)))
 
+
+(defn maybe [x pred]
+  (when (if (set? pred)
+          (contains? pred x)
+          (pred x))
+    x))
