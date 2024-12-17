@@ -42,6 +42,8 @@
   [:90% {:transform "rotate(-5deg) scale(1.55)"}]
   [:100% {:transform "rotate(0deg) scale(1.55)"}])
 
+(defcss ".duh"
+  :c--red)
 
 (defn popover-content []
   [:div
