@@ -3,6 +3,7 @@
             [kushi.css.sandbox]
             [fireworks.core :refer [? !? ?> !?>]]
             [bling.core :refer [bling callout]]
+            [kushi.utils :refer [keyed]]
             [kushi.css.defs]
             [kushi.css.core :refer [ansi-colorized-css-block
                                     css-block-data
@@ -22,10 +23,13 @@
                                     lightning]]
             [clojure.string :as string]
             [kushi.css.specs :as specs]
+            [clojure.set :as set]
             [clojure.spec.alpha :as s]
             [clojure.walk :as walk]
             ;; [taoensso.tufte :as tufte :refer [p profile]]
-            [kushi.css.defs :as defs]))
+            [kushi.css.defs :as defs]
+            [edamame.core :as e :refer [parse-string parse-string-all]]
+            ))
 
 
 #_(let [myclass :.gall]
@@ -44,7 +48,112 @@
 (deftest sample (is (= 1 1)))
 
 
-  
+#_(? (s/valid? ::specs/style-vec
+          [:--_arrow-stop "calc(50% + max(1px, (var(--border-width) * 0.72)))"]))
+
+;; TODO - fix or catch this
+;; (?css :--_x--2)
+
+;; TODO - Fix spec to issue warning
+;; (?css [:$f 2])
+
+;; TODO - Fix spec to issue warning
+;; (?css :$f--2)
+
+;; TODO - Fix spec to issue warning, or fix overflow error
+;; (?css :$_f--2)
+;; (? {["wtf" "OH yeah"] '(1 2 3)})
+;; (? (array-map ["wtf" "OH yeah"] '(1 2 3)))
+
+#_(?defcss
+  ".kushi-pane-arrow"
+  ;; :c--red
+  ;; :.absolute
+  ;; :bw--inherit
+  ;; :bs--inherit
+  ;; :bc--inherit
+  ;; [:--sz "calc(sqrt(2)* var(--arrow-depth))"]
+  ;; :w--$sz
+  ;; :h--$sz
+  ;; [:--arrow-inline-inset :-50%]
+  ;; [:--arrow-block-inset :-50%]
+  ;; :bgc--inherit
+  ;; :h--$sz
+  [:--_arrow-stop "calc(50% + max(1px, (var(--border-width) * 0.72)))"]
+  ;; [:mask-image "linear-gradient(var(--_arrow-gradient-direction), black var(--_arrow-stop), transparent var(--_arrow-stop))"]
+  ;; [:transform "translate(var(--arrow-tx), var(--arrow-ty)) rotate(45deg)"]
+
+  ;; [".kushi-pane-tl &" {:border-top-width :0!important
+  ;;                                :border-left-width :0!important}]
+  ;; [".kushi-pane-t &" {:border-top-width :0!important
+  ;;                               :border-left-width :0!important}]
+  ;; [".kushi-pane-tr &" {:border-top-width :0!important
+  ;;                                :border-left-width :0!important}]
+
+  ;; [".kushi-pane-rt &" {:border-top-width :0!important
+  ;;                                :border-right-width :0!important}]
+  ;; [".kushi-pane-r &" {:border-top-width :0!important
+  ;;                               :border-right-width :0!important}]
+  ;; [".kushi-pane-rb &" {:border-top-width :0!important
+  ;;                                :border-right-width :0!important}]
+
+  ;; [".kushi-pane-br &" {:border-bottom-width :0!important
+  ;;                                :border-right-width :0!important}]
+  ;; [".kushi-pane-b &" {:border-bottom-width :0!important
+  ;;                               :border-right-width :0!important}]
+  ;; [".kushi-pane-bl &" {:border-bottom-width :0!important
+  ;;                                :border-right-width :0!important}]
+
+  ;; [".kushi-pane-l &" {:border-bottom-width :0!important
+  ;;                               :border-left-width :0!important}]
+  ;; [".kushi-pane-lt &" {:border-bottom-width :0!important
+  ;;                                :border-left-width :0!important}]
+  ;; [".kushi-pane-lb &" {:border-bottom-width :0!important
+  ;;                                :border-left-width :0!important}]
+  )
+
+(!? (update-in {} ["new vector"] conj {:a 1}))
+
+(!? (css-rule* "@layer bang .foo_bar__L12_C11" [:c--red]
+              (with-meta (list 'css :w--100%)
+                {:file "wtf.cljs" :line 20 :column 12})
+              nil))
+
+(!? (css-rule* ".foo_bar__L12_C11" [:c--red]
+              (with-meta (list 'css :w--100%)
+                {:file "wtf.cljs" :line 20 :column 12})
+              nil))
+
+;;  (def css-data (volatile! {:defcss [] :css []}))
+
+;;  #_(? (vswap! css-data update-in [:defcss] conj 1))
+
+;;  (def form '(let [a 1]
+;;               '(css :c--red)
+;;               :foo
+;;               '(defcss ".foo" :c--blue))) 
+
+;; (walk/postwalk (fn [x] 
+;;                  (when-let [sym (when (list? x) (first x))]
+;;                    (case sym
+;;                      defcss
+;;                      (vswap! css-data
+;;                              update-in
+;;                              [:defcss]
+;;                              conj
+;;                              {:kushi/macro 'defcss
+;;                               :args (rest x)})
+;;                      css
+;;                      (vswap! css-data
+;;                              update-in
+;;                              [:css]
+;;                              conj
+;;                              {:kushi/macro 'css
+;;                               :args (rest x)})
+;;                      nil))
+;;                  x)
+;;                form)
+;;  (? css-data)
 
 #_(? (css-rule*
     ".kushi-link"
@@ -653,3 +762,4 @@
   
 
   ) ;; end of `(do ...)`
+
