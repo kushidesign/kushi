@@ -1,7 +1,7 @@
 (ns kushi.ui.slider.core
   (:require
    [applied-science.js-interop :as j]
-   [kushi.core :refer (sx defclass merge-attrs insert-style-tag!)]
+   [kushi.core :refer (sx defclass merge-attrs insert-style-tag! css-include)]
    [kushi.css.core :refer (css defcss css-vars-map)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.slider.css]
@@ -14,6 +14,8 @@
    [domo.core :as domo]))
 
 (insert-style-tag! "kushi-slider-styles" kushi.ui.slider.css/css)
+
+(css-include "@layer kushi-ui-component kushi/ui/slider.css")
 
 ;; ----------------------------------------------------------------------------
 ;; Styles for marker-labels
