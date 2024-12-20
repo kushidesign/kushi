@@ -132,7 +132,7 @@
                    #js{:dateStyle "full" :timeStyle "short"})
               (new js/Date))]]
    [button
-    {:class (css ".kushi-toast-close-button"
+    {:class (css ".toast-close-button"
                  :fw--$semi-bold
                  :.no-shrink
                  :br--$rounded
