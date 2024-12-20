@@ -400,13 +400,13 @@
 
     (loop [ns-found false
            state
-           {:css []
-            :defcss []
-            :utilize []
-            :ns nil
-            :ns-meta {}
+           {:css             []
+            :defcss          []
+            :utilize         []
+            :ns              nil
+            :ns-meta         {}
             :require-aliases {}
-            :requires []}]
+            :requires        []}]
 
       (let [form
             (binding

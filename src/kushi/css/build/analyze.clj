@@ -12,17 +12,21 @@
    [clojure.string :as string]
    [clojure.java.io :as io]
    [clojure.set :as set]
-   [clojure.spec.alpha]
-
-   ))
+   [clojure.spec.alpha]))
 
 
 ;; NEW shadow-css-build-hook-based approach ------------------------------------
 
-(def narrative? true)
+(def debugging 
+  #{
+    :narrative
+    ;; :macro-hydration
+    })
+
 
 (def kushi-macros
-  '#{defcss 
+  '#{css-include
+     defcss 
      css
      sx
      ?css
@@ -46,8 +50,9 @@
    "kushi-ui-theming" 
    "Theming rules for kushi.ui components"
 
-   "kushi-ui-shared"
-   "Styles to be shared across families of kushi ui components such as tooltips, popovers, etc"
+   "kushi-ui-shared" ;; <- determine if anything shares styles outside of popovers, tooltips, toasts etc.
+   (str "Styles to be shared across or within families of kushi ui components "
+         "such as tooltips, popovers, etc")
 
    "kushi-ui-styles"
    "Styles defined for elements of kushi ui components."
@@ -62,23 +67,30 @@
    "User-defined styles, via kushi.core/css or kushi.core/sx"
    
    "kushi-utility-overrides"
-   "Baseline utility classes defined by kushi"
+   "Baseline utility classes defined by kushi, override versions"
    
    "user-shared-overrides"
-   "Baseline utility classes defined by kushi"))
+   "Baseline utility classes defined by kushi, override versions"))
 
 
 (defn namespaces-with-matching-path [[_ s]]
-  ;; get this mvp from project entry point
-  (or (string/starts-with? s "mvp/")
-      (string/starts-with? s "kushi/ui")))
+  ;; TODO  get this "mvp/" from project entry point
+  #_(when (string/starts-with? s "kushi")
+    (? s))
+  (or (string/starts-with? s "mvp/") 
+      (string/starts-with? s "kushi/ui")
+      (= s "kushi/css/core.cljs");; <- this is for using css-include to pull in
+                                 ;;    build/kushi-reset.css (or others for dev)
+      
+      ))
 
 (defn gather-macros [m1 m2 f]
   (->> m1 (merge m2) f (into #{})))
 
 (defn namespaces-with-macro-usage
   [[[_ path]
-    {{:keys [uses use-macros rename-macros renames]} :ns-info}]]
+    {{:keys [uses use-macros rename-macros renames] :as m} :ns-info}]]
+  (!? 'namespaces-with-macro-usage m)
   (let [used-renamed-macros (gather-macros rename-macros renames vals)
         used-macros         (gather-macros uses use-macros keys)
         used-macros         (->> used-macros
@@ -88,11 +100,6 @@
       (? {:display-metadata? false :label path} used-macros))
     (seq used-macros)))
 
-
-;; figure out css includes
-;; figure out "dirty" namespaces with caching
-;; can you load if not using kushi locally e.g. from m2
-;; branch to thread, so as not to hold-up shadow
 
 (defn- layer+sel [sel-og]
   (if (string/starts-with? sel-og "@layer")
@@ -107,14 +114,12 @@
         sel (str "." (string/replace ns-str #"/" "_") "__L" line "_C" col)]
     {:sel sel}))
 
+(defn maybe-kushi-ui-styles [ns-str]
+  (when (re-find #"^kushi_ui" ns-str) "kushi-ui-styles"))
 
 (defn css-call-data
-  [{:keys [form ns-str args] :as m} 
-   css-data
-   req-util] 
-
-  
-
+  [{:keys [form ns-str ns args] :as m} 
+   css-new] 
   (let [sel-og
         (-> args first (maybe string?))
         
@@ -124,9 +129,7 @@
           (loc-sel form ns-str))
 
         layer
-        (or layer
-            (when (re-find #"^kushi_ui" ns-str) "kushi-ui-styles")
-            "user-styles")
+        (or layer (maybe-kushi-ui-styles ns-str) "user-styles")
 
         kushi-utils
         (filter #(when (clojure.spec.alpha/valid? ::kushi-specs/class-kw %)
@@ -141,40 +144,82 @@
 
     (some->> kushi-utils
              seq
-             (vswap! req-util
+             (vswap! css-new
                      update-in
-                     [:used-base-utility-classes]
+                     [:utils :used/kushi-utility]
                      conj))
 
-    (vswap! css-data
+    (vswap! css-new
             update-in
-            [layer]
+            [:sources ns layer]
             conj
             result)
+
     nil))
 
+(defn- hydrated-class-kw-callout
+  [class-kw? util-args x css-new rel-path form]
+  (when class-kw?
+    (if (seq util-args)
+      (let [s    (name x)
+            kind (cond (get utility-classes/utility-classes s)
+                       :kushi-utility
+                       (get-in @css-new [:utils :kushi-ui-shared s])
+                       :kushi-ui-shared
+                       (get-in  @css-new [:utils :user-shared s])
+                       :user-shared
+                       :else
+                       :unknown)]
+        (callout {:type  :white
+                  :label (bling [:neutral "Hydrating "]
+                                [:olive.bold x]
+                                " from "
+                                [:blue.italic kind])}))
+
+      ;; TODO - augment this callout and make standard for dev
+      (callout {:type        :warning
+                :padding-top 1}
+               (bling [:italic.neutral (str rel-path
+                                            ":"
+                                            (-> form meta :row)
+                                            ":"
+                                            (-> form meta :col))]
+                      "\n\n"
+                      [:neutral "No utility or shared class found for "]
+                      [:olive.bold x])))))
+
 (defn- hydrated-util-args
-  [args req-util]
-  (!? (:kushi-ui-shared @req-util))
+  [args css-new rel-path form]
   (reduce 
    (fn [acc x]
      (let [class-kw? (clojure.spec.alpha/valid? ::kushi-specs/class-kw x)
            util-args (when class-kw?
                        (let [s (name x)]
                          (or (get utility-classes/utility-classes s)
-                             (get (:kushi-ui-shared @req-util) s)
-                             (get (:user-shared @req-util) s))))]
+                             (get-in @css-new [:utils :kushi-ui-shared s])
+                             (get-in  @css-new [:utils :user-shared s]))))]
+
+       (when (contains? debugging :macro-hydration)
+         (hydrated-class-kw-callout class-kw? util-args x css-new rel-path form))
        (if (seq util-args)
          (apply conj acc util-args)
          (conj acc x))))
    []
    args))
 
+(defn- defcss-callout [sel k]
+  (callout {:type          :neutral
+            :border-weight :medium
+            :margin-top    2
+            :label         (bling [:bold.italic "defcss "]
+                                  [:bold.magenta sel]
+                                  " "
+                                  [:italic.blue k])}))
+
 (defn defcss-call-data
-  [{:keys [args form ns-str] :as m}
-   css-data
-   req-util]
-  (let [[sel-og & args]     (!? args)
+  [{:keys [args form ns-str ns rel-path] :as m}
+   css-new]
+  (let [[sel-og & args]     args
         {:keys [layer sel]} (layer+sel sel-og)
         layer               (or layer "user-shared-styles")
         _                   (when (string/starts-with? sel ".")
@@ -182,27 +227,17 @@
                                                                "kushi_ui")
                                         :kushi-ui-shared
                                         :user-shared)]
-                                (vswap! req-util
-                                        update-in
-                                        [k]
-                                        assoc
-                                        sel
-                                        args)
-                                (vswap! req-util update-in [k] assoc sel args)))
-        args                (hydrated-util-args args req-util)
+                                (when (contains? debugging :macro-hydration)
+                                  (defcss-callout sel k))
+                                (vswap! css-new update-in [:utils k] assoc sel args)))
+        args                (hydrated-util-args args css-new rel-path form)
         result              (merge m
                                    (meta form)
                                    (keyed sel-og sel args layer))]
 
-    ;; (vswap! req-util apply conj kushi-utils)
-    #_{:user-shared          {}
-     :kushi-ui-shared      {}
-     :used/kushi-utility   []
-     :used/kushi-ui-shared []
-     :used/user-shared     []}
-    (vswap! css-data
+    (vswap! css-new
             update-in
-            [layer]
+            [:sources ns layer]
             conj
             result)
     nil
@@ -229,26 +264,6 @@
        (sequence cat)
        (apply array-map)))
 
-(defn spit-css-imports [coll]
- ;; TODO - grab  skip <public> folder dynamically here
- (spit "./public/css/main2.css"
-       (str "/* Kushi build system - dev */\n\n"
-            (string/join 
-             "\n\n"
-             (map (fn [[[layer layer-desc] css-files]]
-                    (str 
-                     "/* " layer " -- " layer-desc "*/\n"
-                     (string/join
-                      "\n"
-                      (map #(str "@import \""
-                                 (string/replace % #"^\./public/css/" "")
-                                 "\";")
-                           css-files))))
-                  coll)))
-       :append false) )
-
-
-
 (defn- css-file-path [layer ns-str]
   (let [path (str "./public/css/" layer "/" ns-str ".css")]
     (io/make-parents path)
@@ -264,137 +279,151 @@
                    attrs)
             (bling [:italic.magenta.bold (str label)]))))
 
+(defn- css-includes-block [css-includes ns]
+  (when-let [css-includes (seq css-includes)]
+    (str "/* css-includes via " (str ns) " start --------- */\n\n"
+         (string/join "\n\n" css-includes)
+         "/* css-includes via " (str ns) " end --------- */\n\n")))
+
 (defn- spit-css-file [css-fp rulesets]
-  (spit css-fp
-        (string/join 
-         "\n\n"
-         (for [r rulesets]
-           (let [{:keys [sel args form row col rel-path]} r]
-             (css-rule* sel
-                        args
-                        (with-meta form {:line   row
-                                         :column col
-                                         :file   rel-path})
-                        nil))))
-        :append false))
- 
+  (let [ns 
+        (some-> rulesets seq first :ns)
 
+        {:keys [css-includes others]}
+        (reduce
+         (fn [acc {:keys [css] :as ruleset}]
+           #_(when css (? ruleset))
+           (or 
+             (some->> css (update-in acc [:css-includes] conj))
+             (let [{:keys [sel args form row col rel-path]}
+                   ruleset
 
-(defn add-base-utility-classes
-  [req-util ret]
-  (let [reified (reduce (fn [acc coll]
-                          (apply conj acc coll))
-                        #{}
-                        (:used-base-utility-classes @req-util))] 
-    (when narrative?
-      ;; TODO - Add callout here 
-      nil)
-    (if (seq reified)
-      (let [path "./public/css/kushi-base-utility/utility.css"
-            css  (string/join 
-                  "\n\n"
-                  (for [class reified
-                        :let  [classname (name class)]]
-                    (css-rule* classname
-                               [(get utility-classes/utility-classes
-                                     classname)]
-                               nil
-                               nil)))]
-        (io/make-parents path)
-        (spit path css :append false)
-        (conj ret {"kushi-base-utility" path}))
-      ret)))
-
-
-#_(defn add-user-shared-classes
-  [req-util ret]
-  (let [reified (reduce (fn [acc coll]
-                          (apply conj acc coll))
-                        #{}
-                        @req-util)] 
-    (if (? (seq reified))
-      (let [path "./public/css/kushi-base-utility/utility.css"
-            css  (string/join 
-                  "\n\n"
-                  (for [class reified
-                        :let  [classname (name class)]]
-                    (css-rule* classname
-                               [(get utility-classes/utility-classes
-                                     classname)]
-                               nil
-                               nil)))]
-        (io/make-parents path)
-        (spit path css :append false)
-        (conj ret {"kushi-base-utility" path}))
-      ret)))
+                   css                                      
+                   (css-rule* sel
+                              args
+                              (with-meta form {:line   row
+                                               :column col
+                                               :file   rel-path})
+                              nil)]
+               (update-in acc [:others] conj css))))
+         {:css-includes []
+          :others       []}
+         rulesets)]
+    (spit css-fp
+          (str (css-includes-block css-includes ns)
+               (string/join "\n\n" others))
+          :append false)))
 
 (defn bs-epoch [build-state]
   (let [init? true
-        ;; Check if files are new or deleted ;; Check if any css imports within namespaces added or deleted
+        ;; Check if files are new or deleted
+        ;; Check if any css imports within namespaces added or deleted
         deleted? false
         added? false
-        ;; Check if files are new or deleted ;; Check if any css imports within namespaces added or deleted
+        ;; Check if files are new or deleted
+        ;; Check if any css imports within namespaces added or deleted
         new-or-deleted? true #_(or deleted? added?)
-        ;; Check if any css imports within namespaces changed ;; Check if any css namespaces changed
+        ;; Check if any css imports within namespaces changed
+        ;; Check if any css namespaces changed
         existing-css-changed? true]
     (keyed init? deleted? added? new-or-deleted? existing-css-changed?)))
 
+(defn css-include-call-data
+  [{:keys [args form ns-str ns file] :as m}
+   css-new]
+  (let [sel-og (first args)
+        {css-file-path :sel
+         layer         :layer} (layer+sel sel-og)
+        ;; TODO - Currently assumes css is file in same dir as current
+        ;;        ns of form. Check for relative filepath.
+        layer (or layer
+                  (maybe-kushi-ui-styles ns-str)
+                  "user-shared-styles")
+        ;; TODO - is there a more efficient way to do this path manipulation?
+        css-fp (-> file
+                   .getPath
+                   (string/split #"/")
+                   drop-last
+                   (->> (string/join "/"))
+                   (str "/" css-file-path))
+        ;; TODO - add try/catch to this slurp + issue warning if file-not-found
+        css    (slurp css-fp)
+        result (merge m
+                      (meta form) 
+                      (keyed sel-og css css-fp args layer))]
+               (vswap! css-new
+                       update-in
+                       [:sources ns layer]
+                       conj
+                       result)
+               nil))
+
 (defn- analyze-forms
   [tl-form
-   {:keys [css-data req-util ns-str rel-path]}]
+   {:keys [css-new ns-str rel-path ns file] :as tl-form-data}]
   (walk/prewalk
    (fn [form] 
      (let [[macro-sym & args] (when (list? form) form)
            kushi-macro?       (contains? kushi-macros macro-sym)]
        (if kushi-macro? 
-         (let [m (keyed form ns-str rel-path macro-sym args)]
-           (if (contains? '#{defcss ?defcss} macro-sym)
-             (defcss-call-data m css-data req-util)
-             (css-call-data m css-data req-util))
+         (let [m (keyed form ns-str ns rel-path file macro-sym args)]
+           (cond 
+             (contains? '#{?css-include css-include} macro-sym)
+             (css-include-call-data m css-new)
+
+             (contains? '#{?defcss defcss} macro-sym)
+             (defcss-call-data m css-new)
+
+             (contains? '#{?css css ?sx sx} macro-sym)
+             (css-call-data m css-new))
            ;; prewalk return nil for perf
            nil)
          form)))
    tl-form))
 
 (defn- write-css-files+layer-profile
-  [{:keys [css-data ns ns-str msg]}]
-  (let [reified-css-data @css-data]
-    (reduce (fn [acc layer]
-              (if-let [rulesets (get reified-css-data layer)]
-                (let [css-fp (css-file-path layer ns-str)]
-                  (!? :result (symbol css-fp))
-                  (spit-css-file css-fp rulesets)
-                  (vswap! msg 
-                          str
-                          "\nWriting "
-                          (bling [:blue layer])
-                          " to "
-                          (bling [:olive css-fp]))
-                  (update-in acc [layer] merge (keyed css-fp ns rulesets)))
-                acc))
-            {}
-            (keys kushi-layers))))
+  [{:keys [css-new ns ns-str msg]}]
+  (let [reified-css-new
+        @css-new
+
+        ret-new
+        (reduce 
+         (fn [acc layer]
+           (if-let [rulesets (get-in reified-css-new [:sources ns layer])]
+             (do #_(when (= ns 'kushi.ui.text-field.core)
+                     (? rulesets))
+                 (let [css-fp (css-file-path layer ns-str)]
+                   (spit-css-file css-fp rulesets)
+                   (vswap! msg 
+                           str
+                           "\nWriting "
+                           (bling [:blue layer])
+                           " to "
+                           (bling [:olive css-fp]))
+                   (update-in acc [layer] merge (keyed css-fp ns rulesets))))
+             acc))
+                {}
+                (keys kushi-layers))]
+    ret-new))
 
 (defn- analyze-sources
-  [req-util
+  [css-new
    acc
    [[_ rel-path] {:keys [ns file]}]]
   (let [ns-str    (string/replace (str ns) #"\." "_")
         all-forms (parse-all-forms file)
-        css-data  (volatile! {})
-        m         (keyed css-data req-util ns ns-str rel-path)]
+        m         (keyed css-new ns ns-str rel-path file)]
 
     #_(stage-callout ns)
 
     ;; Currently can't build up state because we are using prewalk in
-    ;; analyze-forms to mutate both css-data & req-util volatiles.
+    ;; analyze-forms to mutate css-data.
     (doseq [tl-form all-forms]
       (analyze-forms tl-form m))
 
-    (!? (keys @css-data))
     ;; TODO - maybe this should be broken out into another step and
     ;; anaylze-sources should just return mutated css-data volatile
-    ;; should css-data and req-util be the same thing?
+    ;; should css-data and css-new be the same thing?
     ;; css-data could be map like this, forget about ordering:
     ;; {:sources {mvp.browser {"user-styles"        {...}
     ;;                         "user-shared-styles" {...}}}
@@ -408,156 +437,207 @@
     ;; public/css/user-styles/mvp_browser.css
     (let [msg (volatile! (str "Analyzing source for " ns "..."))
           ret (conj acc (write-css-files+layer-profile (assoc m :msg msg)))]
-      (when narrative?
+      #_(when (= ns 'kushi.ui.text-field.core)
+        (? 'analyze-sources/ret ret))
+      (when (contains? debugging :narrative)
         (callout {:margin-top    0
                   :margin-bottom 0}
                  (bling @msg)))
       ret)))
 
+
+(defn kushi-utility-classes-profile
+  [css-new]
+  (let [reified (reduce (fn [acc coll]
+                          (apply conj acc coll))
+                        #{}
+                        (-> @css-new :utils :used/kushi-utility))]
+
+    (when (contains? debugging :narrative)
+      ;; TODO - Add callout here 
+      nil)
+
+    (when (? :used/kushi-utility (seq reified))
+      (let [path "./public/css/kushi-utility/utility.css"
+            css  (string/join 
+                  "\n\n"
+                  (for [class reified
+                        :let  [classname (name class)]]
+                    (css-rule* classname
+                               [(get utility-classes/utility-classes
+                                     classname)]
+                               nil
+                               nil)))]
+        (io/make-parents path)
+        (spit path css :append false)
+        {"kushi-utility" {:css-fp path}}))))
+
+
+#_(defn add-user-shared-classes
+  [css-new ret]
+  (let [reified (reduce (fn [acc coll]
+                          (apply conj acc coll))
+                        #{}
+                        @css-new)] 
+    (if (? (seq reified))
+      (let [path "./public/css/kushi-utility/utility.css"
+            css  (string/join 
+                  "\n\n"
+                  (for [class reified
+                        :let  [classname (name class)]]
+                    (css-rule* classname
+                               [(get utility-classes/utility-classes
+                                     classname)]
+                               nil
+                               nil)))]
+        (io/make-parents path)
+        (spit path css :append false)
+        (conj ret {"kushi-utility" path}))
+      ret)))
+
+(defn spit-css-imports [coll]
+ ;; TODO - grab  skip <public> folder dynamically here or user-supplied filename
+ ;; form kushi.edn
+ (spit "./public/css/main2.css"
+       (str "/* Kushi build system - development build */\n\n"
+            (string/join 
+             "\n\n"
+             (map (fn [[[layer layer-desc] css-files]]
+                    #_(when (= layer "kushi-utility") 
+                      (? layer css-files))
+                    (str 
+                     "/* " layer "\n   " layer-desc "\n*/\n"
+                     (string/join
+                      "\n"
+                      (map (fn [m]
+                             (str "@import \""
+                                  (string/replace (:css-fp m)
+                                                  #"^\./public/css/"
+                                                  "")
+                                  "\";"))
+                           css-files))))
+                  coll)))
+       :append false) )
+
+
 (defn write-css-imports [coll]
   (->> kushi-layers
-       (reduce (fn [acc [layer :as kv]]
-                 (conj acc kv (keep #(get % layer) coll)))
+       (reduce (fn [acc [layer layer-desc]]
+                 (conj acc [layer layer-desc] (keep #(get % layer) coll)))
                [])
        (apply array-map)
        spit-css-imports))
 
 
-(defn- spit-filtered-build-sources-with-paths 
-  [filtered-build-sources]
-  (let [filtered-build-sources-with-paths
-        (->> filtered-build-sources
-             (reduce (fn [acc [k v]]
-                       (conj acc
-                             [k (-> v
-                                    (assoc :file (-> v :file .getPath))
-                                    (dissoc :url))]))
-                     [])
-             (sequence cat)
-             (apply array-map))
+;; just for dev start --------------------------------
+(declare build-sources-callout)
+(declare analyzed-callout)
+(declare spit-filtered-build-sources-with-paths)
+;; just for dev end ----------------------------------
 
-        _                                 
-        (spit "./filtered-build-sources.edn"
-              (with-out-str (pprint filtered-build-sources-with-paths))
-              :append false)])
 
-  )
+(defn hook* [filtered-build-sources]
+  (let [css-new
+        (volatile! {:user-shared          {}
+                    :kushi-ui-shared      {}
+                    :used/kushi-utility   []
+                    :used/kushi-ui-shared []
+                    :used/user-shared     []
+                    :used/design-tokens   #{}
+                    })
+
+        ;; just for creating a new mock build-state
+        ;; _ (spit-filtered-build-sources-with-paths filtered-build-sources)
+
+        reduced-sources
+        (reduce (partial analyze-sources css-new)
+                []
+                filtered-build-sources)
+
+        ;; just for dev
+        _ (analyzed-callout reduced-sources css-new)
+
+        kushi-utility-classes-profile
+        (kushi-utility-classes-profile css-new) 
+
+        ;; user-shared-classes-profile
+        ;; (user-shared-classes-profile css-new) 
+
+        ret
+        (conj reduced-sources
+              kushi-utility-classes-profile
+              #_user-shared-classes-profile)]
+    ret))
+
 (defn hook
   {:shadow.build/stage :compile-prepare}
   [{:keys [:shadow.build/build-id] :as build-state}]
   ;; TODO maybe deleted? and added? should be seqs or nils
-  (let [{:keys [init?
-                deleted?
-                added?
-                new-or-deleted?
-                existing-css-changed?]}
+  (let [{:keys [init? new-or-deleted? existing-css-changed?]}
         (bs-epoch build-state)]
-    
-    (when (or existing-css-changed? new-or-deleted? init?)
-      (let [req-util
-            (volatile! {:user-shared          {}
-                        :kushi-ui-shared      {}
-                        :used/kushi-utility   []
-                        :used/kushi-ui-shared []
-                        :used/user-shared     []})
 
-            filtered-build-sources
+    (when (or existing-css-changed? new-or-deleted? init?)
+      (let [filtered-build-sources
             (filter-build-sources build-state)
             
-            _ (spit-filtered-build-sources-with-paths filtered-build-sources)
-
             ret
-            (->> filtered-build-sources
-                 (reduce (partial analyze-sources req-util)
-                         [])
-                 (add-base-utility-classes req-util)
-                 #_(add-user-shared-classes req-util))]
-        (!? (-> @req-util :user-shared))
+            (hook* filtered-build-sources)]
+
         ;; If necessary write the css imports chain
         (when (or init? new-or-deleted?)
           (write-css-imports ret))))
-
   build-state))
 
-(declare build-sources-callout)
-(declare analyzed-callout)
 
+(defn hook-dev
+  "Just for dev"
+  [filtered-build-sources]
+  ;; TODO maybe deleted? and added? should be seqs or nils
+  (let [css-new
+        (volatile! {:utils {:user-shared          {}
+                            :kushi-ui-shared      {}
+                            :used/kushi-utility   []
+                            :used/kushi-ui-shared []
+                            :used/user-shared     []
+                            :used/design-tokens   #{}}})
+        reduced-sources
+        (reduce (partial analyze-sources css-new)
+                []
+                filtered-build-sources)
+
+            ;; just for dev
+        _ (analyzed-callout reduced-sources css-new)
+
+        ret
+        (kushi-utility-classes-profile css-new)]
+
+    (!? ret)
+    (!? (-> @css-new :utils :user-shared))
+        ;; If necessary write the css imports chain
+    (write-css-imports ret)))
 
 ;; TODO 
 
-;; 1xtra) Checkout TODO in analyze-sources
+;; 1) Figure out how to pull in css from sources with relative file path 
 
+;; 2) Keep track of changes or deletions in proj - shadow
 
-;; 2) Do naive approach of hydration, assuming that style was defined first and is in the user-shared entry
-
-;;      2b) later
+;;      Later:
+;;      3b) 
 ;;          - Figure out how to index and save non-base shared styles in .edn or smthg
 ;;          - kushi-theming
 ;;          - kushi-ui-shared
 ;;          - user-shared
 
-;;      2d) Hydrate args that use shared sources
-;;      2e) Maybe resave hydrated shared sources without infinite loop?
-;;      2f) Write styles
+;;      3d) Hydrate args that use shared sources
+;;      3e) Maybe resave hydrated shared sources without infinite loop?
+;;      3f) Write styles
 
 
-;; 3) Figure out how to pull in css from sources
-
-
-;; 4) Keep track of changes or deletions in proj - shadow
-
-
-(defn hook-dev
-  [filtered-build-sources]
-  ;; TODO maybe deleted? and added? should be seqs or nils
-  (let [{:keys [init?
-                deleted?
-                added?
-                new-or-deleted?
-                existing-css-changed?]}
-        (bs-epoch {})]
-
-    #_(build-sources-callout filtered-build-sources)
-
-    (when (or existing-css-changed? new-or-deleted? init?)
-      (let [req-util
-            (volatile! {:user-shared          {}
-                        :kushi-ui-shared      {}
-                        :used/kushi-utility   []
-                        :used/kushi-ui-shared []
-                        :used/user-shared     []})
-            reduced-sources
-            (reduce (partial analyze-sources req-util)
-                    []
-                    filtered-build-sources)
-
-            _ (analyzed-callout reduced-sources)
-            _ (? (-> reduced-sources (nth 2) (get "kushi-ui-shared") :rulesets))
-            ret
-            (add-base-utility-classes req-util reduced-sources)]
-        #_(doseq [m ret
-                :let [k "kushi.ui.component"]]
-          (? (keys m))
-          (? (str (-> m 
-                      (get k)
-                      :css-fp) 
-                  " has "
-                  (-> m 
-                      (get k)
-                      :rulesets
-                      count)
-                  " shared styles")))
-
-        (!? ret)
-        (!? (-> @req-util :user-shared))
-        ;; If necessary write the css imports chain
-        (when (or init? new-or-deleted?)
-          (write-css-imports ret))))
-
-  nil))
-
-(defn analyzed-callout [reduced-sources]
-  (when narrative?  
+(defn analyzed-callout
+  "Just for dev"
+  [reduced-sources css-new]
+  (when (contains? debugging :narrative)  
     (do (stage-callout "ANALYZED SOURCES" {:margin-top    1
                                            :margin-bottom 1})
         (? {:label
@@ -565,18 +645,19 @@
              "Each source has been analyzed and produces a map with entries\n"
              "corresponding to a named CSS layer, defined in `kushi-layers`.\n\n"
              "Each of these entries has a `:rulesets` entry, which contains\n"
-             "data from the macros calls that was used to write the css rules."
-             )}
+             "data from the macros calls that was used to write the css rules.")}
            (->> reduced-sources
                 (reduce (fn [acc m]
                           (conj acc
                                 (walk/postwalk (fn [x]
                                                  (if (seq? x) '(...) x))
                                                m)))
-                        [])
-                )))))
+                        [])))
+        (!? (get-in @css-new [:sources 'mvp.browser])))))
 
-(defn build-sources-callout [filtered-build-sources]
+(defn build-sources-callout
+  "Just for dev"
+  [filtered-build-sources]
   (stage-callout "FILTERED BUILD SOURCES" {:margin-top 1 :margin-bottom 1})
   (? {:label
       (str 
@@ -592,7 +673,9 @@
           (sequence cat)
           (apply array-map))))
 
-(defn hydrate-paths-into-files [m]
+(defn hydrate-paths-into-files
+  "Just for dev"
+  [m]
   (->> m
        (reduce (fn [acc [k v]]
                  (conj acc
@@ -603,12 +686,31 @@
        (apply array-map)))
 
 ;; Dev
-(let [filtered-build-sources (-> "./site/filtered-build-sources.edn"
+#_(let [filtered-build-sources (-> "./site/filtered-build-sources.edn"
                                  slurp
                                  read-string
                                  hydrate-paths-into-files
                                  hook-dev)]
   )
+
+(defn- spit-filtered-build-sources-with-paths 
+  "Just for dev"
+  [filtered-build-sources]
+  (let [filtered-build-sources-with-paths
+        (->> filtered-build-sources
+             (reduce (fn [acc [k v]]
+                       (conj acc
+                             [k (-> v
+                                    (assoc :file (-> v :file .getPath))
+                                    (dissoc :url))]))
+                     [])
+             (sequence cat)
+             (apply array-map))
+
+        _                                 
+        (spit "./filtered-build-sources.edn"
+              (with-out-str (pprint filtered-build-sources-with-paths))
+              :append false)]))
 
 ;; namespaces-using-kushi-macros is an array-map, produced by filtering
 ;; the build-state for namespaces which pull in kushi.css.core macros
