@@ -913,6 +913,19 @@
   [sel & args]
   (css-rule* sel args &form &env))
 
+(defmacro ^:public css-include
+  "Used to pull in .css resources. Expands to nil.
+
+   `sel` must be a string and a valid classpath resource, and can be optionally
+   proceeded by a layer declaration, e.g.:
+   \"@layer my-layer-name my/path/to/style.css\".
+
+   If no @layer info is supplied, the css that is imported will be assigned to
+   the \"user-shared-styles\" layer, same as styles produced with defcss.
+
+   The information about the layer and resource will get included in the build."
+  [sel]
+  nil)
 
 (defmacro ^:public defcss
   "Used to define shared css rulesets.
