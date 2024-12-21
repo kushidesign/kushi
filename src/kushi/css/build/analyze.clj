@@ -22,6 +22,7 @@
   #{
     :narrative
     ;; :macro-hydration
+    ;; :design-token-registration
     })
 
 
@@ -280,16 +281,22 @@
                    attrs)
             (bling [:italic.magenta.bold (str label)]))))
 
-(defn- register-design-tokens! [css css-new]
+(defn- css-vars-re-seq [s]
+  (re-seq #"var\((--[^_][^\)\, ]+)" s))
+
+(defn- register-design-tokens!
+  [css css-new ns]
   (when true #_(string/starts-with? css ".mvp_browser__L_C6")
-        (some->> css
-                 (re-seq #"var\((--[^_][^\)\, ]+)")
-                 (map #(nth % 1 nil))
-                 seq
-                 (vswap! css-new
-                         update-in 
-                         [:used/design-tokens] 
-                         (fn [coll args] (apply conj coll args))))))
+        (let [toks 
+              (some->> css
+                       css-vars-re-seq
+                       (map #(nth % 1 nil))
+                       seq)]
+          (some->> toks 
+                   (vswap! css-new
+                           update-in 
+                           [:used/design-tokens] 
+                           (fn [coll args] (apply conj coll args)))) )))
 
 (defn- css-includes-block [css-includes ns]
   (when-let [css-includes (seq css-includes)]
@@ -309,9 +316,33 @@
                        nil)]
     [css :others]))
 
-(defn- spit-css-file [css-fp rulesets css-new]
-  (let [ns 
+(defn new-toks-callout-template [s ns layer]
+  (callout {:type          :subtle
+            :margin-bottom 0
+            :label         (bling [:italic.neutral s]
+                                  [:orange.italic ns]
+                                  ", "
+                                  [:blue.italic layer]
+                                  "\n ")}))
+
+(defn new-toks-callout [ns layer used-toks css-new]
+  (let [new-toks
+        (set/difference (:used/design-tokens @css-new)
+                        used-toks)]
+    (if (seq new-toks) 
+      (do (new-toks-callout-template "Registering design tokens for " ns layer)
+          (? :result new-toks))
+      (new-toks-callout-template  "No design tokens for " ns layer))))
+
+(defn- spit-css-file [css-fp layer rulesets css-new]
+  (let [debug?
+        (contains? debugging :design-token-registration)
+
+        ns 
         (some-> rulesets seq first :ns)
+
+        used-toks
+        (when debug? (:used/design-tokens @css-new))
 
         {:keys [css-includes others]}
         (reduce (fn [acc {:keys [css]
@@ -319,11 +350,18 @@
                   (let [[css k]
                         (or (some-> css (vector :css-includes))
                             (ruleset->css ruleset))]
-                    (register-design-tokens! css css-new)
+                    
                     (update-in acc [k] conj css)))
                 {:css-includes []
                  :others       []}
-                rulesets)]
+                rulesets)
+
+        css-str
+        (str (css-includes-block css-includes ns)
+             (string/join "\n\n" others))]
+
+    (register-design-tokens! css-str css-new ns)
+    (when debug? (new-toks-callout ns layer used-toks css-new))
     (spit css-fp
           (str (css-includes-block css-includes ns)
                (string/join "\n\n" others))
@@ -408,7 +446,7 @@
              (do #_(when (= ns 'kushi.ui.text-field.core)
                      (? rulesets))
                  (let [css-fp (css-file-path layer ns-str)]
-                   (spit-css-file css-fp rulesets css-new)
+                   (spit-css-file css-fp layer rulesets css-new)
                    (vswap! msg 
                            str
                            "\nWriting "
@@ -460,27 +498,68 @@
                  (bling @msg)))
       ret)))
 
+(defn css-var-kw? [x]
+  (and (keyword? x) (string/starts-with? (name x) "$")))
+
 (defn css-var-str [v]
-  (if (and (keyword? v) (string/starts-with? (name v) "$"))
+  (if (css-var-kw? v)
     (str "var(--" (subs (name v) 1) ")")
     v))
+
+(defn get-token-depencies
+  "Gets token deps in kushi.css.build.tokens/design-tokens-by-token,
+   and user-defined tokens via theme. Is called recursively."
+  [acc v tok]
+  ;; TODO - recursive call from here with if branch 
+  ;;        maybe just return acc if token is already in
+  ;;        :required/kushi-design-tokens
+  (let [
+        #_toks-in-value
+        #_(cond
+          (css-var-kw? v)
+          [(-> v
+               name
+               (string/replace-first #"^\$" "--"))]
+          (string? v)
+          (some->> v
+                   css-vars-re-seq
+                   (mapv second)))]
+    #_(some->> toks-in-value (? :result))
+
+    (assoc-in acc
+              [:required/kushi-design-tokens tok]
+              (css-var-str v))))
 
 (defn design-tokens-profile
   [css-new]
   (let [path "./public/css/tokens/tokens.css"
         toks (:used/design-tokens @css-new)
-        args (reduce (fn [acc tok]
-                 (if-let [v (get kushi.css.build.tokens/design-tokens-by-token
-                                 (keyword tok))]
-                   ;; TODO - need to get all refs, recursively, and add to map
-                   (assoc acc tok (css-var-str v))
-                   acc))
-               {}
-               toks)
-        css (css-rule* ":root" 
-                       [args]
-                       nil
-                       nil)]
+
+        ;; Temp for testing
+        toks (conj toks "--divisor-1")
+
+        ;; TODO add check for token in user theme
+        args (reduce
+              (fn [acc tok]
+                (:required/kushi-design-tokens acc)
+                (if-let [v (get kushi.css.build.tokens/design-tokens-by-token
+                                (keyword tok))]
+
+                  ;; TODO - need to get all refs, recursively, and add to map
+                  (get-token-depencies acc v tok)
+                  (update-in acc
+                             [:not-found/design-tokens]
+                             conj
+                             tok)))
+              {:required/kushi-design-tokens {}
+               :required/user-theme-tokens   {}
+               :not-found/design-tokens      #{}}
+              toks)
+        css  (css-rule* ":root" 
+                        [(:required/kushi-design-tokens args)]
+                        nil
+                        nil)]
+    (vswap! css-new merge args)
     (io/make-parents path)
     (spit path css :append false)
     {"design-tokens" {:css-fp path}}))
@@ -497,18 +576,28 @@
       ;; TODO - Add callout here 
       nil)
 
-    (when (? :used/kushi-utility (seq reified))
-      (let [path "./public/css/kushi-utility/utility.css"
-            css  (string/join 
-                  "\n\n"
-                  (for [class reified
-                        :let  [classname (name class)]]
-                    (css-rule* classname
-                               [(get utility-classes/utility-classes
-                                     classname)]
-                               nil
-                               nil)))]
-        (register-design-tokens! css css-new)
+    (when (!? :used/kushi-utility (seq reified))
+      (let [path        "./public/css/kushi-utility/utility.css"
+            css         (string/join 
+                         "\n\n"
+                         (for [class reified
+                               :let  [classname (name class)]]
+                           (css-rule* classname
+                                      [(get utility-classes/utility-classes
+                                            classname)]
+                                      nil
+                                      nil)))
+            
+            debug-toks? (contains? debugging :design-token-registration)
+            used-toks   (when debug-toks?
+                          (:used/design-tokens @css-new))]
+
+        (register-design-tokens! css css-new :kushi-utility)
+        (when debug-toks? (new-toks-callout "kushi-utility"
+                                            nil
+                                            used-toks
+                                            css-new))
+
         (io/make-parents path)
         (spit path css :append false)
         {"kushi-utility" {:css-fp path}}))))
@@ -573,6 +662,7 @@
 ;; just for dev start --------------------------------
 (declare build-sources-callout)
 (declare analyzed-callout)
+(declare design-token-summary-callout)
 (declare spit-filtered-build-sources-with-paths)
 ;; just for dev end ----------------------------------
 
@@ -598,11 +688,11 @@
         ;; just for dev
         _ (analyzed-callout reduced-sources css-new)
 
-        design-tokens-profile
-        (design-tokens-profile css-new)
-
         kushi-utility-classes-profile
         (kushi-utility-classes-profile css-new) 
+
+        design-tokens-profile
+        (design-tokens-profile css-new)
 
         ;; user-shared-classes-profile
         ;; (user-shared-classes-profile css-new) 
@@ -613,12 +703,11 @@
               kushi-utility-classes-profile
               #_user-shared-classes-profile)]
 
-    (!? {:coll-limit 7} ret)
-    (!? {:coll-limit 7} (-> @css-new :used/design-tokens))
+    (when (contains? debugging :design-token-registration)
+      (design-token-summary-callout css-new))
 
     ret))
 
-(!? (update-in {:used []} [:used] (fn [coll args] (apply conj coll args)) '(1 2 3)))
 
 (defn hook
   {:shadow.build/stage :compile-prepare}
@@ -665,6 +754,34 @@
 ;;      3e) Maybe resave hydrated shared sources without infinite loop?
 ;;      3f) Write styles
 
+(defn- design-token-summary-callout [css-new]
+  (callout {:type  :subtle
+            :label (bling 
+                    [:italic "Total number of registered design-tokens"])} 
+           (bling [:orange.bold (-> @css-new :used/design-tokens count)]))
+  (callout {:type  :subtle
+            :label (bling 
+                    [:italic "Total number of kushi design-tokens"])} 
+           (bling [:orange.bold (-> @css-new
+                                    :required/kushi-design-tokens
+                                    count)]))
+  (callout {:type  :subtle
+            :label (bling 
+                    [:italic "Total number of design tokens not found"])} 
+           (bling 
+            [:orange.bold (count (:not-found/design-tokens @css-new))]
+            "\n\n"
+            [:italic
+             "These design tokens do not reference kushi library tokens,\n"]
+            [:italic
+             "or design tokens from the user theme. They are most likely\n"]
+            [:italic
+             "referencing locally scoped css-vars.\n"]
+            "\n"
+            (-> (? :data (:not-found/design-tokens @css-new))
+                :formatted
+                :string)))
+  )
 
 (defn analyzed-callout
   "Just for dev"
