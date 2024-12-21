@@ -4,7 +4,7 @@
    [kushi.css.core :refer (defcss)]))
 
 (defcss "@layer kushi-ui-shared .kushi-pane"
-  :.fixed
+  :position--fixed
   :border-width--$pane-border-width
   :border-style--$pane-border-style
   :border-color--$pane-border-color
@@ -115,8 +115,7 @@
 
 (defcss "@layer kushi-ui-shared .kushi-toast"
   :.kushi-pane
-  :.relative!
-  :position--relative
+  :position--relative!important ;; <- do we need this !important?
   :p--0
   :translate--$_tx:$_ty
   :border-width--$toast-border-width
@@ -391,7 +390,7 @@
 
 (defcss
   "@layer kushi-ui-shared .kushi-pane-arrow"
-  :.absolute
+  :position--absolute
   :bw--inherit
   :bs--inherit
   :bc--inherit
@@ -435,5 +434,5 @@
                                  :border-left-width :0!important}])
 
 (defcss
-  "@layer kushi-ui-shared .kushi-pane-mounting"
-  :.hidden)
+  "@layer kushi-ui-shared .kushi-pane-mounting" ;; TODO is this even used?
+  :visibility--hidden)
