@@ -1,7 +1,8 @@
 (ns kushi.css.core
   (:require [clojure.string :as string])
-  (:require-macros [kushi.css.core]))
+  (:require-macros [kushi.css.core :refer [css-include]]))
 
+(css-include "@layer css-reset build/kushi-reset.css")
 
 (defn ^:public class-str
   "Takes a coll of class strings or keywords, at least one of which is a
