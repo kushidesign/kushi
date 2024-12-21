@@ -284,6 +284,14 @@
 (defn- css-vars-re-seq [s]
   (re-seq #"var\((--[^_][^\)\, ]+)" s))
 
+(defn- css-var-kw? [x]
+  (and (keyword? x) (string/starts-with? (name x) "$")))
+
+(defn- css-var-str [v]
+  (if (css-var-kw? v)
+    (str "var(--" (subs (name v) 1) ")")
+    v))
+
 (defn- register-design-tokens!
   [css css-new ns]
   (when true #_(string/starts-with? css ".mvp_browser__L_C6")
@@ -297,6 +305,8 @@
                            update-in 
                            [:used/design-tokens] 
                            (fn [coll args] (apply conj coll args)))) )))
+
+
 
 (defn- css-includes-block [css-includes ns]
   (when-let [css-includes (seq css-includes)]
@@ -498,13 +508,6 @@
                  (bling @msg)))
       ret)))
 
-(defn css-var-kw? [x]
-  (and (keyword? x) (string/starts-with? (name x) "$")))
-
-(defn css-var-str [v]
-  (if (css-var-kw? v)
-    (str "var(--" (subs (name v) 1) ")")
-    v))
 
 (defn get-token-depencies
   "Gets token deps in kushi.css.build.tokens/design-tokens-by-token,
@@ -529,6 +532,39 @@
     (assoc-in acc
               [:required/kushi-design-tokens tok]
               (css-var-str v))))
+
+;; NEW REGISTER DESIGN TOKENS + dep tokens STUFF
+;; (defn dep-toks-seq [v]
+;;   (some->> (or (css-var-str v)
+;;                (when (string? v) v))
+;;            css-vars-re-seq
+;;            (map second)
+;;            seq))
+
+;; (defn unique-toks [tok]
+;;   (some-> (some->> tok
+;;                    (get uc)
+;;                    (dep-toks-seq)
+;;                    (into #{}))
+;;           (set/difference (:required/kushi-design-tokens @css-new))
+;;           seq))
+
+;; (defn register-toks [tok css-new] 
+;;   (when (contains? uc tok)
+;;     (vswap! css-new
+;;             update-in
+;;             [:required/kushi-design-tokens]
+;;             conj
+;;             tok))
+;;     (when-let [uniques (unique-toks tok)]
+;;       (doseq [dep-tok uniques]
+;;         (register-toks dep-tok css-new))))
+
+;; (doseq [tok
+;;         ["--baz" "--bat" "--guh"]]
+;;   (register-toks tok css-new))
+
+
 
 (defn design-tokens-profile
   [css-new]
@@ -739,10 +775,27 @@
 
 ;; TODO 
 
-;; 1) Figure out how to pull in css from sources with relative file path 
+;; 0) Get recursive token thing working
+;;    - Maybe figure out how to order tokens in output? At least for dev...
+;;    - Do map version of tokens definitions
+;;    
+;; 0) Lightning css POC
 
-;; 2) Keep track of changes or deletions in proj - shadow
+;; 0) All tokens and utilities for dev
 
+;; 0) Figure out how to pull in css from sources with relative file path 
+
+;; 0) Get kushi.design working with new changes
+
+;; 0) Keep track of changes or deletions in proj via shadow build-state
+
+;; 0) New build reporting system
+
+;; 0) New color system based on oklch
+
+;; 0) New theming system
+
+;; 5)  
 ;;      Later:
 ;;      3b) 
 ;;          - Figure out how to index and save non-base shared styles in .edn or smthg
