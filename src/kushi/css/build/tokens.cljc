@@ -1684,3 +1684,6 @@
    :--switch-thumb-on-negative-color-hover-inverse
    :$negative-minimal-color-hover-inverse
    ])
+
+ (def design-tokens-by-token
+   (apply hash-map design-tokens))

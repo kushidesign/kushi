@@ -5,6 +5,7 @@
    [bling.core :refer [callout bling]]
    [edamame.core :as e]
    [kushi.css.build.utility-classes :as utility-classes]
+   [kushi.css.build.tokens]
    [kushi.css.core :refer [css-rule*]]
    [kushi.css.specs :as kushi-specs]
    [kushi.utils :refer [maybe keyed]]
@@ -279,36 +280,50 @@
                    attrs)
             (bling [:italic.magenta.bold (str label)]))))
 
+(defn- register-design-tokens! [css css-new]
+  (when true #_(string/starts-with? css ".mvp_browser__L_C6")
+        (some->> css
+                 (re-seq #"var\((--[^_][^\)\, ]+)")
+                 (map #(nth % 1 nil))
+                 seq
+                 (vswap! css-new
+                         update-in 
+                         [:used/design-tokens] 
+                         (fn [coll args] (apply conj coll args))))))
+
 (defn- css-includes-block [css-includes ns]
   (when-let [css-includes (seq css-includes)]
     (str "/* css-includes via " (str ns) " start --------- */\n\n"
          (string/join "\n\n" css-includes)
          "/* css-includes via " (str ns) " end --------- */\n\n")))
 
-(defn- spit-css-file [css-fp rulesets]
+
+(defn- ruleset->css
+  [{:keys [sel args form row col rel-path]}]
+  (let [css (css-rule* sel
+                       args
+                       (with-meta form
+                         {:line   row
+                          :column col
+                          :file   rel-path})
+                       nil)]
+    [css :others]))
+
+(defn- spit-css-file [css-fp rulesets css-new]
   (let [ns 
         (some-> rulesets seq first :ns)
 
         {:keys [css-includes others]}
-        (reduce
-         (fn [acc {:keys [css] :as ruleset}]
-           #_(when css (? ruleset))
-           (or 
-             (some->> css (update-in acc [:css-includes] conj))
-             (let [{:keys [sel args form row col rel-path]}
-                   ruleset
-
-                   css                                      
-                   (css-rule* sel
-                              args
-                              (with-meta form {:line   row
-                                               :column col
-                                               :file   rel-path})
-                              nil)]
-               (update-in acc [:others] conj css))))
-         {:css-includes []
-          :others       []}
-         rulesets)]
+        (reduce (fn [acc {:keys [css]
+                          :as   ruleset}]
+                  (let [[css k]
+                        (or (some-> css (vector :css-includes))
+                            (ruleset->css ruleset))]
+                    (register-design-tokens! css css-new)
+                    (update-in acc [k] conj css)))
+                {:css-includes []
+                 :others       []}
+                rulesets)]
     (spit css-fp
           (str (css-includes-block css-includes ns)
                (string/join "\n\n" others))
@@ -393,7 +408,7 @@
              (do #_(when (= ns 'kushi.ui.text-field.core)
                      (? rulesets))
                  (let [css-fp (css-file-path layer ns-str)]
-                   (spit-css-file css-fp rulesets)
+                   (spit-css-file css-fp rulesets css-new)
                    (vswap! msg 
                            str
                            "\nWriting "
@@ -445,6 +460,31 @@
                  (bling @msg)))
       ret)))
 
+(defn css-var-str [v]
+  (if (and (keyword? v) (string/starts-with? (name v) "$"))
+    (str "var(--" (subs (name v) 1) ")")
+    v))
+
+(defn design-tokens-profile
+  [css-new]
+  (let [path "./public/css/tokens/tokens.css"
+        toks (:used/design-tokens @css-new)
+        args (reduce (fn [acc tok]
+                 (if-let [v (get kushi.css.build.tokens/design-tokens-by-token
+                                 (keyword tok))]
+                   ;; TODO - need to get all refs, recursively, and add to map
+                   (assoc acc tok (css-var-str v))
+                   acc))
+               {}
+               toks)
+        css (css-rule* ":root" 
+                       [args]
+                       nil
+                       nil)]
+    (io/make-parents path)
+    (spit path css :append false)
+    {"design-tokens" {:css-fp path}}))
+
 
 (defn kushi-utility-classes-profile
   [css-new]
@@ -468,6 +508,7 @@
                                      classname)]
                                nil
                                nil)))]
+        (register-design-tokens! css css-new)
         (io/make-parents path)
         (spit path css :append false)
         {"kushi-utility" {:css-fp path}}))))
@@ -557,6 +598,9 @@
         ;; just for dev
         _ (analyzed-callout reduced-sources css-new)
 
+        design-tokens-profile
+        (design-tokens-profile css-new)
+
         kushi-utility-classes-profile
         (kushi-utility-classes-profile css-new) 
 
@@ -565,9 +609,16 @@
 
         ret
         (conj reduced-sources
+              design-tokens-profile
               kushi-utility-classes-profile
               #_user-shared-classes-profile)]
+
+    (!? {:coll-limit 7} ret)
+    (!? {:coll-limit 7} (-> @css-new :used/design-tokens))
+
     ret))
+
+(!? (update-in {:used []} [:used] (fn [coll args] (apply conj coll args)) '(1 2 3)))
 
 (defn hook
   {:shadow.build/stage :compile-prepare}
@@ -593,28 +644,9 @@
   "Just for dev"
   [filtered-build-sources]
   ;; TODO maybe deleted? and added? should be seqs or nils
-  (let [css-new
-        (volatile! {:utils {:user-shared          {}
-                            :kushi-ui-shared      {}
-                            :used/kushi-utility   []
-                            :used/kushi-ui-shared []
-                            :used/user-shared     []
-                            :used/design-tokens   #{}}})
-        reduced-sources
-        (reduce (partial analyze-sources css-new)
-                []
-                filtered-build-sources)
-
-            ;; just for dev
-        _ (analyzed-callout reduced-sources css-new)
-
-        ret
-        (kushi-utility-classes-profile css-new)]
-
-    (!? ret)
-    (!? (-> @css-new :utils :user-shared))
-        ;; If necessary write the css imports chain
+  (let [ret (hook* filtered-build-sources)]
     (write-css-imports ret)))
+
 
 ;; TODO 
 
@@ -686,7 +718,7 @@
        (apply array-map)))
 
 ;; Dev
-#_(let [filtered-build-sources (-> "./site/filtered-build-sources.edn"
+(let [filtered-build-sources (-> "./site/filtered-build-sources.edn"
                                  slurp
                                  read-string
                                  hydrate-paths-into-files
