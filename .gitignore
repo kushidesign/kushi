@@ -24,6 +24,7 @@ public/css/*
 site/public/css/*
 .public/css/*
 .site/public/css/*
+site/filtered-build-sources.edn
 
 
 
