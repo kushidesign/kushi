@@ -3,6 +3,7 @@
   (:require-macros [kushi.css.core :refer [css-include]]))
 
 (css-include "@layer css-reset build/kushi-reset.css")
+(css-include "@layer kushi-ui-theming build/kushi-ui-component-theming.css")
 
 (defn ^:public class-str
   "Takes a coll of class strings or keywords, at least one of which is a
