@@ -1,6 +1,5 @@
 (ns kushi.css.build.analyze
   (:require
-
    [fireworks.core :refer [? !? ?> !?> pprint]]
    [bling.core :refer [callout bling]]
    [edamame.core :as e]
@@ -288,9 +287,8 @@
   (and (keyword? x) (string/starts-with? (name x) "$")))
 
 (defn- css-var-str [v]
-  (if (css-var-kw? v)
-    (str "var(--" (subs (name v) 1) ")")
-    v))
+  (when (css-var-kw? v)
+    (str "var(--" (subs (name v) 1) ")")))
 
 (defn- register-design-tokens!
   [css css-new ns]
@@ -371,7 +369,7 @@
              (string/join "\n\n" others))]
 
     (register-design-tokens! css-str css-new ns)
-    (when debug? (new-toks-callout ns layer used-toks css-new))
+    #_(when debug? (new-toks-callout ns layer used-toks css-new))
     (spit css-fp
           (str (css-includes-block css-includes ns)
                (string/join "\n\n" others))
@@ -508,63 +506,40 @@
                  (bling @msg)))
       ret)))
 
+(defn dep-toks-seq [v]
+  (some->> (or (css-var-str v)
+               (when (string? v) v))
+           css-vars-re-seq
+           (map second)
+           seq))
 
-(defn get-token-depencies
-  "Gets token deps in kushi.css.build.tokens/design-tokens-by-token,
-   and user-defined tokens via theme. Is called recursively."
-  [acc v tok]
-  ;; TODO - recursive call from here with if branch 
-  ;;        maybe just return acc if token is already in
-  ;;        :required/kushi-design-tokens
-  (let [
-        #_toks-in-value
-        #_(cond
-          (css-var-kw? v)
-          [(-> v
-               name
-               (string/replace-first #"^\$" "--"))]
-          (string? v)
-          (some->> v
-                   css-vars-re-seq
-                   (mapv second)))]
-    #_(some->> toks-in-value (? :result))
+(defn unique-toks [tok css-new]
+  (when-not (contains? (:required/kushi-design-tokens @css-new) tok)
+   (some-> (some->> tok
+                    keyword
+                    (get kushi.css.build.tokens/design-tokens-by-token)
+                    (dep-toks-seq)
+                    (into #{}))
+           (set/difference (:required/kushi-design-tokens @css-new))
+           seq)))
 
-    (assoc-in acc
-              [:required/kushi-design-tokens tok]
-              (css-var-str v))))
-
-;; NEW REGISTER DESIGN TOKENS + dep tokens STUFF
-;; (defn dep-toks-seq [v]
-;;   (some->> (or (css-var-str v)
-;;                (when (string? v) v))
-;;            css-vars-re-seq
-;;            (map second)
-;;            seq))
-
-;; (defn unique-toks [tok]
-;;   (some-> (some->> tok
-;;                    (get uc)
-;;                    (dep-toks-seq)
-;;                    (into #{}))
-;;           (set/difference (:required/kushi-design-tokens @css-new))
-;;           seq))
-
-;; (defn register-toks [tok css-new] 
-;;   (when (contains? uc tok)
-;;     (vswap! css-new
-;;             update-in
-;;             [:required/kushi-design-tokens]
-;;             conj
-;;             tok))
-;;     (when-let [uniques (unique-toks tok)]
-;;       (doseq [dep-tok uniques]
-;;         (register-toks dep-tok css-new))))
-
-;; (doseq [tok
-;;         ["--baz" "--bat" "--guh"]]
-;;   (register-toks tok css-new))
-
-
+(defn register-toks+deps [tok css-new] 
+  (if-let [tok-val (get kushi.css.build.tokens/design-tokens-by-token
+                        (keyword tok))]
+    ;; TODO - make sure this order of doseq then vswap! is correct
+    (do (when-let [uniques (unique-toks tok css-new)]
+          (doseq [dep-tok uniques]
+            (register-toks+deps dep-tok css-new)))
+        (vswap! css-new
+                update-in
+                [:required/kushi-design-tokens]
+                conj
+                [tok tok-val]))
+    (vswap! css-new
+            update-in
+            [:not-found/design-tokens]
+            conj
+            tok)))
 
 (defn design-tokens-profile
   [css-new]
@@ -572,32 +547,14 @@
         toks (:used/design-tokens @css-new)
 
         ;; Temp for testing
-        toks (conj toks "--divisor-1")
-
-        ;; TODO add check for token in user theme
-        args (reduce
-              (fn [acc tok]
-                (:required/kushi-design-tokens acc)
-                (if-let [v (get kushi.css.build.tokens/design-tokens-by-token
-                                (keyword tok))]
-
-                  ;; TODO - need to get all refs, recursively, and add to map
-                  (get-token-depencies acc v tok)
-                  (update-in acc
-                             [:not-found/design-tokens]
-                             conj
-                             tok)))
-              {:required/kushi-design-tokens {}
-               :required/user-theme-tokens   {}
-               :not-found/design-tokens      #{}}
-              toks)
-        css  (css-rule* ":root" 
-                        [(:required/kushi-design-tokens args)]
-                        nil
-                        nil)]
-    (vswap! css-new merge args)
+        toks (conj toks "--divisor-1")]
+    (doseq [tok toks]
+      (register-toks+deps tok css-new))
     (io/make-parents path)
-    (spit path css :append false)
+    (spit path
+          (css-rule* ":root" (:required/kushi-design-tokens @css-new) nil nil)
+          :append
+          false)
     {"design-tokens" {:css-fp path}}))
 
 
@@ -629,7 +586,7 @@
                           (:used/design-tokens @css-new))]
 
         (register-design-tokens! css css-new :kushi-utility)
-        (when debug-toks? (new-toks-callout "kushi-utility"
+        #_(when debug-toks? (new-toks-callout "kushi-utility"
                                             nil
                                             used-toks
                                             css-new))
@@ -705,12 +662,15 @@
 
 (defn hook* [filtered-build-sources]
   (let [css-new
-        (volatile! {:user-shared          {}
-                    :kushi-ui-shared      {}
-                    :used/kushi-utility   []
-                    :used/kushi-ui-shared []
-                    :used/user-shared     []
-                    :used/design-tokens   #{}
+        (volatile! {:user-shared                  {}
+                    :kushi-ui-shared              {}
+                    :used/kushi-utility           []
+                    :used/kushi-ui-shared         []
+                    :used/user-shared             []
+                    :used/design-tokens           #{}
+                    :required/kushi-design-tokens #{}
+                    :required/user-theme-tokens   #{}
+                    :not-found/design-tokens      #{}
                     })
 
         ;; just for creating a new mock build-state
@@ -775,10 +735,9 @@
 
 ;; TODO 
 
-;; 0) Get recursive token thing working
-;;    - Maybe figure out how to order tokens in output? At least for dev...
+;; 0) Maybe figure out how to order tokens in output? At least for dev...
 ;;    - Do map version of tokens definitions
-;;    
+
 ;; 0) Lightning css POC
 
 ;; 0) All tokens and utilities for dev
