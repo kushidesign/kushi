@@ -21,8 +21,7 @@
   #{
     :narrative
     ;; :macro-hydration
-    ;; :design-token-registration
-    })
+    ;; :design-token-registration})
 
 
 (def kushi-macros
