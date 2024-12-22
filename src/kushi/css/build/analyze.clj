@@ -735,26 +735,23 @@
 
 ;; TODO 
 
-;; 0) Maybe figure out how to order tokens in output? At least for dev...
-;;    - Do map version of tokens definitions
+;; 1) Lightning css POC
 
-;; 0) Lightning css POC
+;; 2) All tokens and utilities for dev
 
-;; 0) All tokens and utilities for dev
+;; 3) Figure out how to pull in css from sources with relative file path 
 
-;; 0) Figure out how to pull in css from sources with relative file path 
+;; 4) Get kushi.design working with new changes
 
-;; 0) Get kushi.design working with new changes
+;; 5) Keep track of changes or deletions in proj via shadow build-state
 
-;; 0) Keep track of changes or deletions in proj via shadow build-state
+;; 6) New build reporting system
 
-;; 0) New build reporting system
+;; 8) New color system based on oklch
 
-;; 0) New color system based on oklch
+;; 9) New theming system
 
-;; 0) New theming system
-
-;; 5)  
+;; 10)  
 ;;      Later:
 ;;      3b) 
 ;;          - Figure out how to index and save non-base shared styles in .edn or smthg
