@@ -901,11 +901,11 @@
          design-tokens))
 
 (def enriched-tokens-array-map
-  (!? (apply array-map
+  (apply array-map
          (reduce (fn [acc m]
                    (conj acc (:name m) m))
                  []
-                 enriched-tokens-ordered))))
+                 enriched-tokens-ordered)))
 
  #_(def design-tokens-by-token
    (->> design-tokens
@@ -915,7 +915,7 @@
 
 ;; This version has css-var-keywords cast to strs e.g. :$bold -> "var(--bold)"
 (def design-tokens-by-token
-  (? (reduce-kv (fn [m k v] (assoc m k (:value v))) {} enriched-tokens-array-map)))
+  (!? (reduce-kv (fn [m k v] (assoc m k (:value v))) {} enriched-tokens-array-map)))
 
 #_{:name         "divisor-inverse",
  :value        :$divisor-5-inverse,
