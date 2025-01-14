@@ -112,6 +112,11 @@
   ;;                                :border-left-width :0!important}]
   )
 
+(!? (-> (css-rule ".bar"
+                  :c--red
+                  :_.bar:c--green)
+        lightning))
+
 (!? (update-in {} ["new vector"] conj {:a 1}))
 
 (!? (css-rule* "@layer bang .foo_bar__L12_C11" [:c--red]
