@@ -148,6 +148,9 @@
 
 ;; ## Specs for shared use -----------------------------------------------------
 
+(s/def ::css-file-path 
+  (s/and string? #(re-find #"\.css$" %)))
+
 (s/def ::nameable 
   #(or (keyword? %) (string? %) (symbol? %)))
 
