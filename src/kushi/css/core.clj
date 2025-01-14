@@ -1135,6 +1135,51 @@
   ;;  :version                    nil
    })
 
+
+(defn lightning-cli-flags
+  "Returns even-count seq of lightning flags followed by values
+   Example output:
+   '(\"--flag-name\" \"flag-value\")"
+  [opts default-opts]
+  (some->> (merge default-opts
+                  (when (or (nil? opts) (map? opts))
+                    opts))
+           (keep (fn [[flag v]] 
+                   (when v 
+                     [(str "--" (name flag))
+                      (when-not (true? v) v)])))
+           (apply concat)
+           (remove nil?)))
+
+
+(defn lightning-warning [e css-str flags opts]
+  (let [body (bling "Error when shelling out to lightningcss."
+                    "\n\n"
+                    [:italic.subtle.bold "CSS:"]
+                    "\n"
+                    css-str
+                    "\n\n"
+                    [:italic.subtle.bold
+                     "Flags passed to lightningcss:\n"]
+                    (with-out-str (fireworks.core/pprint flags))
+                    "\n\n"
+                    [:italic.subtle.bold
+                     "The following css will be returned:\n"]
+                    css-str)] 
+                  (callout
+                   (merge opts
+                          {:type        :error
+                           :label       (str "ERROR: "
+                                             (string/replace (type e)
+                                                             #"^class "
+                                                             "" )
+                                             " (Caught)")
+                           :padding-top 0})
+                   (point-of-interest
+                    (merge opts {:type :error
+                                 :body body})))))
+
+
 (defn lightning
   "Transforms a string of CSS using lightningcss. An (optional) user config map
    is merged with kushi.css.core/lightning-opts, which is transformed into a
@@ -1174,49 +1219,16 @@
   ([css-str]
    (lightning css-str nil))
   ([css-str opts]
-   (let [flags (some->> (merge lightning-opts
-                               (when (or (nil? opts)
-                                         (map? opts))
-                                 opts))
-                        (keep (fn [[flag v]] 
-                                (when v 
-                                  [(str "--" (name flag))
-                                   (when-not (true? v) v)])))
-                        (apply concat)
-                        (remove nil?)
+   (let [flags (some->> lightning-opts
+                        (lightning-cli-flags opts)
                         (into [{:in css-str :out :string}
                                "npx"
                                "lightningcss"]))]
 
      (or (try (:out (apply shell flags))
               (catch Exception e
-                (let [body (bling "Error when shelling out to lightningcss."
-                                  "\n\n"
-                                  [:italic.subtle.bold "CSS:"]
-                                  "\n"
-                                  css-str
-                                  "\n\n"
-                                  [:italic.subtle.bold
-                                   "Flags passed to lightningcss:\n"]
-                                  (with-out-str (fireworks.core/pprint flags))
-                                  "\n\n"
-                                  [:italic.subtle.bold
-                                   "The following css will be returned:\n"]
-                                  css-str)] 
-                  (callout
-                   (merge opts
-                          {:type        :error
-                           :label       (str "ERROR: "
-                                             (string/replace (type e)
-                                                             #"^class "
-                                                             "" )
-                                             " (Caught)")
-                           :padding-top 0})
-                   (point-of-interest
-                    (merge opts {:type :error
-                                 :body body}))))))
+                (lightning-warning e css-str flags opts)))
          css-str))))
-
 
 
 (defmacro trans

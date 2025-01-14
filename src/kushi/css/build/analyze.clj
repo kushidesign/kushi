@@ -1,6 +1,7 @@
 (ns kushi.css.build.analyze
   (:require
    [fireworks.core :refer [? !? ?> !?> pprint]]
+   [babashka.process :refer [shell]]
    [bling.core :refer [callout bling]]
    [edamame.core :as e]
    [kushi.css.build.utility-classes :as utility-classes]
@@ -12,7 +13,9 @@
    [clojure.string :as string]
    [clojure.java.io :as io]
    [clojure.set :as set]
-   [clojure.spec.alpha]))
+   [clojure.spec.alpha]
+   [kushi.css.build.tokens :as tokens]
+   [clojure.spec.alpha :as s]))
 
 
 ;; NEW shadow-css-build-hook-based approach ------------------------------------
@@ -293,16 +296,15 @@
 (defn- register-design-tokens!
   [css css-new ns]
   (when true #_(string/starts-with? css ".mvp_browser__L_C6")
-        (let [toks 
-              (some->> css
-                       css-vars-re-seq
-                       (map #(nth % 1 nil))
-                       seq)]
+        (let [toks (some->> css
+                            css-vars-re-seq
+                            (map #(nth % 1 nil))
+                            seq)]
           (some->> toks 
                    (vswap! css-new
                            update-in 
                            [:used/design-tokens] 
-                           (fn [coll args] (apply conj coll args)))) )))
+                           (fn [coll args] (apply conj coll args)))))))
 
 
 
@@ -368,6 +370,8 @@
         (str (css-includes-block css-includes ns)
              (string/join "\n\n" others))]
 
+    ;; This is where design tokens get registered
+    ;; They are identified based on the the actual css-rules produced
     (register-design-tokens! css-str css-new ns)
     #_(when debug? (new-toks-callout ns layer used-toks css-new))
     (spit css-fp
@@ -506,6 +510,7 @@
                  (bling @msg)))
       ret)))
 
+
 (defn dep-toks-seq [v]
   (some->> (or (css-var-str v)
                (when (string? v) v))
@@ -513,19 +518,34 @@
            (map second)
            seq))
 
+
+(defn- dep-toks-set [tok m]
+  (some->> tok m (dep-toks-seq) (into #{})))
+
+
+;; Need to figure out policy for keys of the design maps
+;; Should they be strings or keywords, probably strings
 (defn unique-toks [tok css-new]
-  (when-not (contains? (:required/kushi-design-tokens @css-new) tok)
-   (some-> (some->> tok
-                    keyword
-                    (get kushi.css.build.tokens/design-tokens-by-token)
-                    (dep-toks-seq)
-                    (into #{}))
-           (set/difference (:required/kushi-design-tokens @css-new))
-           seq)))
+  (when-not (or (contains? (:required/kushi-design-tokens @css-new) tok)
+                (contains? (:required/user-theme-tokens @css-new) tok))
+   (let [dep-toks
+         (or (dep-toks-set tok kushi.css.build.tokens/design-tokens-by-token)
+             (dep-toks-set tok (:theme/user-design-tokens @css-new)))]
+     (some-> dep-toks
+             (set/difference (:required/kushi-design-tokens @css-new))
+             seq))))
+
 
 (defn register-toks+deps [tok css-new] 
-  (if-let [tok-val (get kushi.css.build.tokens/design-tokens-by-token
-                        (keyword tok))]
+  (if-let [[tok-val k]
+           (let [kushi-tok
+                         (get kushi.css.build.tokens/design-tokens-by-token tok)
+                         
+                         user-tok
+                         (get (:theme/user-design-tokens @css-new) tok)]
+                     (or (some-> kushi-tok (vector :kushi))
+                         (some-> user-tok (vector :user))))]
+
     ;; TODO - make sure this order of doseq then vswap! is correct
     (do (when-let [uniques (unique-toks tok css-new)]
           (doseq [dep-tok uniques]
@@ -541,15 +561,18 @@
             conj
             tok)))
 
+
 (defn design-tokens-profile
   [css-new]
-  (let [path "./public/css/tokens/tokens.css"
-        toks (:used/design-tokens @css-new)
+  (let [path      "./public/css/tokens/tokens.css"
+        path-user "./public/css/tokens/user-tokens.css"
+        toks      (:used/design-tokens @css-new)
 
         ;; Temp for testing
-        toks (conj toks "--divisor-1")]
+        toks      (conj toks "--divisor-1")]
     (doseq [tok toks]
       (register-toks+deps tok css-new))
+    (? (count (:required/kushi-design-tokens @css-new)))
     (io/make-parents path)
     (spit path
           (css-rule* ":root" (:required/kushi-design-tokens @css-new) nil nil)
@@ -585,6 +608,8 @@
             used-toks   (when debug-toks?
                           (:used/design-tokens @css-new))]
 
+        ;; This is where design tokens for utility classes get registered.
+        ;; They are identified based on the the actual css-rules produced.
         (register-design-tokens! css css-new :kushi-utility)
         #_(when debug-toks? (new-toks-callout "kushi-utility"
                                             nil
@@ -643,15 +668,6 @@
        :append false) )
 
 
-(defn write-css-imports [coll]
-  (->> kushi-layers
-       (reduce (fn [acc [layer layer-desc]]
-                 (conj acc [layer layer-desc] (keep #(get % layer) coll)))
-               [])
-       (apply array-map)
-       spit-css-imports))
-
-
 ;; just for dev start --------------------------------
 (declare build-sources-callout)
 (declare analyzed-callout)
@@ -659,10 +675,76 @@
 (declare spit-filtered-build-sources-with-paths)
 ;; just for dev end ----------------------------------
 
+(defn- user-design-tokens [theme]
+  (some->> theme
+           :design-tokens
+           (map-indexed (fn [i v]
+                          (if (even? i)
+                            (name v)
+                            (or (css-var-str v)
+                                (some-> v (maybe keyword?) name)
+                                v))))
+           (apply hash-map)))
 
-(defn hook* [filtered-build-sources]
-  (let [css-new
-        (volatile! {:user-shared                  {}
+
+{:avail/kushi-design-tokens      tokens/design-tokens-by-token
+ :avail/user-theme-design-tokens user-design-tokens
+ :avail/user-theme-ui            {}
+ :user-shared                    {}
+ :kushi-ui-shared                {}
+ :used/kushi-utility             []
+ :used/kushi-ui-shared           []
+ :used/user-shared               []
+ :used/design-tokens             #{}
+ :required/kushi-design-tokens   #{}
+ :required/user-theme-tokens     #{}
+ :not-found/design-tokens        #{}}
+
+{
+ ;; Global CSS rules defined in user's kushi.edn map via [:theme :ui].
+ ;; These could be overrides for global rules defined by kushi.ui, or the user's
+ ;; own custom global rules.
+ :shared/user-theme          {}
+
+ ;; CSS utility rules, from kushi.css.build.utility-classes.
+ :shared/kushi-utility       {}
+
+ ;; CSS rules defined by user, to be shared across namespaces.
+ :shared/user                {}
+
+ ;; Base design tokens defined in Kushi lib. See kushi.css.build.tokens ns.
+ :tokens/kushi-base          {}
+
+ ;; Design tokens defined in user theme. These could be overrides for tokens in
+ ;; :tokens/kushi-base, or the user's own custom global design tokens. 
+ :tokens/user-theme          {}
+
+ ;; All the tokens via (merge (:tokens/kushi-base) (:tokens/user-theme))
+ :tokens/all                 {} 
+
+ ;; Tokens actually used
+ :tokens/used                #{}
+
+ ;; Kushi base design-tokens required (desc) 
+ :tokens/kushi-base-required #{}
+
+ ;; User theme design-tokens required (desc) 
+ :tokens/user-theme-required #{}
+
+ :tokens/not-found           #{}}
+
+        
+        
+(defn hook* [config filtered-build-sources]
+  (!? 'kushi.css.core/hook*:config config)
+  (let [user-design-tokens
+        (user-design-tokens (:theme config))
+
+        css-new
+        (volatile! {:base/kushi-design-tokens     tokens/design-tokens-by-token
+                    :theme/user-design-tokens     user-design-tokens
+                    :theme/user-ui                {}
+                    :user-shared                  {}
                     :kushi-ui-shared              {}
                     :used/kushi-utility           []
                     :used/kushi-ui-shared         []
@@ -704,6 +786,120 @@
 
     ret))
 
+(defn- lightning-bundle
+  [{:keys [input-path output-path]}
+   flags]
+  (apply shell (concat ["npx"
+                        "lightningcss"]
+                       flags
+                       [input-path
+                        "-o"
+                        output-path])))
+
+(defn lightning-bundle-warning [e flags opts]
+  (let [body (bling "Error when creating CSS bundle via lightningcss-cli."
+                    "\n\n"
+                    [:italic.subtle.bold "User options from kushi.edn:"]
+                    "\n"
+                    (with-out-str (fireworks.core/pprint opts))
+                    "\n\n"
+                    [:italic.subtle.bold
+                     "Flags passed to lightningcss:\n"]
+                    (with-out-str (fireworks.core/pprint flags))
+                    "\n\n"
+                    [:italic.subtle.bold
+                     "No css bundle was written."])] 
+    (callout
+     (merge opts
+            {:type        :error
+             :label       (str "ERROR: "
+                               (string/replace (type e)
+                                               #"^class "
+                                               "" )
+                               " (Caught)")
+             :padding-top 0})
+     body)))
+
+(def lightning-options-via-user-config
+  {:input-path  "./public/css/main2.css"
+   :output-path "./public/css/bundle.css"
+   :targets     ">= 0.25%"})
+
+(defn bad-bundle-path-warning
+  [{:keys [k must-be supplied extra]
+    :or {k :input-path}}]
+  (bling "The value of "
+         [:bold (str k)]
+         (or must-be " must be a string, and a valid file path.")
+         "\n\n"
+         [:italic.subtle.bold "Supplied value:\n"]
+         supplied
+         extra))
+
+(defn- create-css-bundle []
+  (let [opts  lightning-options-via-user-config
+        flags (kushi.css.core/lightning-cli-flags
+               (dissoc opts :input-path :output-path)
+               (-> kushi.css.core/lightning-opts
+                   (dissoc :browserslist)
+                   (assoc :bundle true)))
+        in    (:input-path opts)
+        out   (:output-path opts)
+        fp?   #(s/valid? ::kushi-specs/css-file-path %)]
+    (if (and (fp? in) (fp? out))
+      (try (lightning-bundle opts flags)
+           ;; TODO - test this exception handler
+           (catch Exception e
+             (lightning-bundle-warning e flags opts)))
+      (let [body
+            (cond
+              (not (fp? in))
+              (bad-bundle-path-warning
+               {:supplied [:bold (if (string? in) (str "\"" in "\"") in)]})
+              
+              (not (.exists? (io/as-file in)))
+              (bad-bundle-path-warning
+               {:must-be  "must be a path to an existing css file."
+                :supplied in
+                :extra    (str "\n\n" "File not found")})
+              
+              (not (fp? out))
+              (bad-bundle-path-warning
+               {:k        :output-path
+                :supplied out
+                :extra    (str "\n\n" "File not found")})
+
+              :else
+              (bling "Problem with"
+                     [:bold " :input-path"]
+                     "entry or"
+                     [:bold " :output-path"]
+                     "entry."))]
+        (callout {:type :warning}
+                 (bling [:yellow.bold "[kushi.css.build/create-css-bundle]"]
+                        "\n\n"
+                        body))))))
+
+
+(defn- user-config [path]
+  (some-> path slurp read-string))
+
+
+(defn write-css-imports* [coll]
+  (->> kushi-layers
+       (reduce (fn [acc [layer layer-desc]]
+                 (conj acc [layer layer-desc] (keep #(get % layer) coll)))
+               [])
+       (apply array-map)
+       spit-css-imports))
+
+
+(defn write-css-imports [path filtered-build-sources]
+  (->  path
+       user-config
+       (hook* filtered-build-sources)
+       write-css-imports*))
+
 
 (defn hook
   {:shadow.build/stage :compile-prepare}
@@ -711,17 +907,14 @@
   ;; TODO maybe deleted? and added? should be seqs or nils
   (let [{:keys [init? new-or-deleted? existing-css-changed?]}
         (bs-epoch build-state)]
-
     (when (or existing-css-changed? new-or-deleted? init?)
       (let [filtered-build-sources
-            (filter-build-sources build-state)
-            
-            ret
-            (hook* filtered-build-sources)]
+            (filter-build-sources build-state)]
 
         ;; If necessary write the css imports chain
         (when (or init? new-or-deleted?)
-          (write-css-imports ret))))
+          (write-css-imports "./kushi.edn" filtered-build-sources)
+          (create-css-bundle))))
   build-state))
 
 
@@ -729,17 +922,22 @@
   "Just for dev"
   [filtered-build-sources]
   ;; TODO maybe deleted? and added? should be seqs or nils
-  (let [ret (hook* filtered-build-sources)]
-    (write-css-imports ret)))
+  (write-css-imports "./site/kushi.edn" filtered-build-sources)
+  (create-css-bundle))
 
 
 ;; TODO 
 
 ;; 1) Lightning css POC
 
-;; 2) All tokens and utilities for dev
+;; 1)
+
+;; 2) All tokens and utilities for dev. Not just filtered as in release.
 
 ;; 3) Figure out how to pull in css from sources with relative file path 
+
+
+
 
 ;; 4) Get kushi.design working with new changes
 
@@ -844,11 +1042,12 @@
        (apply array-map)))
 
 ;; Dev
-(let [filtered-build-sources (-> "./site/filtered-build-sources.edn"
+#_(let [filtered-build-sources (-> "./site/filtered-build-sources.edn"
                                  slurp
                                  read-string
                                  hydrate-paths-into-files
-                                 hook-dev)]
+                                 hook-dev
+                                 )]
   )
 
 (defn- spit-filtered-build-sources-with-paths 

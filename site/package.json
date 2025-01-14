@@ -8,6 +8,7 @@
     "clean": "rm -rf public/js .shadow-cljs .cpcache"
   },
   "devDependencies": {
+    "lightningcss-cli": "^1.28.2",
     "shadow-cljs": "2.28.6"
   },
   "dependencies": {
