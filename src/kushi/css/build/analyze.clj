@@ -527,7 +527,7 @@
 ;; Should they be strings or keywords, probably strings
 (defn unique-toks [tok css-new]
   (when-not (or (contains? (:required/kushi-design-tokens @css-new) tok)
-                (contains? (:required/user-theme-tokens @css-new) tok))
+                (contains? (:required/user-design-tokens @css-new) tok))
    (let [dep-toks
          (or (dep-toks-set tok kushi.css.build.tokens/design-tokens-by-token)
              (dep-toks-set tok (:theme/user-design-tokens @css-new)))]
@@ -539,10 +539,10 @@
 (defn register-toks+deps [tok css-new] 
   (if-let [[tok-val k]
            (let [kushi-tok
-                         (get kushi.css.build.tokens/design-tokens-by-token tok)
-                         
-                         user-tok
-                         (get (:theme/user-design-tokens @css-new) tok)]
+                 (get kushi.css.build.tokens/design-tokens-by-token tok)
+                 
+                 user-tok
+                 (get (:theme/user-design-tokens @css-new) tok)]
                      (or (some-> kushi-tok (vector :kushi))
                          (some-> user-tok (vector :user))))]
 
@@ -562,29 +562,132 @@
             tok)))
 
 
+(defn- spit-css-layer+profile [path css k]
+  (io/make-parents path)
+  (spit path css :append false)
+  {k {:css-fp path}})
+
+
+;; TODO - maybe unite this with fn below and pass a map with :release? and :init?
+(defn user-design-tokens-profile-all
+  [css-new]
+  (let [path "./public/css/tokens/user-design-tokens.css"]
+    ;; TODO - put this back in for stats?
+    #_(let [toks (:used/design-tokens @css-new)]
+      (doseq [tok toks]
+        (register-toks+deps tok css-new)))
+    (spit-css-layer+profile
+     path 
+     (css-rule* ":root"
+                [(:theme/user-design-tokens @css-new)]
+                nil
+                nil)
+     "user-design-tokens")))
+
+
+(defn user-design-tokens-profile
+  [css-new]
+  (let [path "./public/css/tokens/user-design-tokens.css"]
+    (let [toks (:used/design-tokens @css-new)]
+      (doseq [tok toks]
+        (register-toks+deps tok css-new)))
+    (spit-css-layer+profile 
+     path 
+     (css-rule* ":root"
+                (:required/kushi-design-tokens @css-new)
+                nil
+                nil)
+     "user-design-tokens")))
+
+
+;; TODO - maybe unite this with fn below and pass a map with :release? and :init?
+(defn design-tokens-profile-all
+  [css-new]
+  (let [path      "./public/css/tokens/tokens.css"
+        ;; TODO - need this path-user?
+        ;; path-user "./public/css/tokens/user-tokens.css"
+        ]
+    ;; TODO - put this back in for stats?
+    #_(let [toks (:used/design-tokens @css-new)]
+      (doseq [tok toks]
+        (register-toks+deps tok css-new)))
+    (spit-css-layer+profile
+     path 
+     (css-rule* ":root"
+                [kushi.css.build.tokens/design-tokens-by-token-array-map]
+                nil
+                nil)
+     "design-tokens")))
+
+
 (defn design-tokens-profile
   [css-new]
   (let [path      "./public/css/tokens/tokens.css"
-        path-user "./public/css/tokens/user-tokens.css"
-        toks      (:used/design-tokens @css-new)
+        ;; TODO - need this path-user?
+        ;; path-user "./public/css/tokens/user-tokens.css"
+        ]
+    (let [toks (:used/design-tokens @css-new)]
+      (doseq [tok toks]
+        (register-toks+deps tok css-new)))
+    (spit-css-layer+profile 
+     path 
+     (css-rule* ":root"
+                (:required/kushi-design-tokens @css-new)
+                nil
+                nil)
+     "design-tokens")))
 
-        ;; Temp for testing
-        toks      (conj toks "--divisor-1")]
-    (doseq [tok toks]
-      (register-toks+deps tok css-new))
-    (? (count (:required/kushi-design-tokens @css-new)))
-    (io/make-parents path)
-    (spit path
-          (css-rule* ":root" (:required/kushi-design-tokens @css-new) nil nil)
-          :append
-          false)
-    {"design-tokens" {:css-fp path}}))
+
+(defn kushi-utility-classes-overrides-profile-all
+  []
+  (let [path         "./public/css/kushi-utility/utility-overrides.css"
+        util-classes (apply array-map
+                            (apply concat 
+                                   utility-classes/all-classes))     
+        css          (string/join 
+                      "\n\n"
+                      (for [[class v] util-classes
+                            :let      [classname (str (name class) "\\!")]]
+                        (css-rule* classname
+                                   [v]
+                                   nil
+                                   nil)))]
+    (spit-css-layer+profile path css "kushi-utility-overrides")))
 
 
-(defn- spit-css-layer+profile [path css]
-  (io/make-parents path)
-  (spit path css :append false)
-  {"kushi-utility" {:css-fp path}})
+(defn kushi-utility-classes-overrides-profile
+  [css-new]
+  (let [reified (reduce (fn [acc coll]
+                          (apply conj acc coll))
+                        #{}
+                        (-> @css-new :utils :used/kushi-utility))]
+    (when (contains? debugging :narrative)
+      ;; TODO - Add callout here 
+      nil)
+
+    (when (!? :used/kushi-utility (seq reified))
+      (let [path        "./public/css/kushi-utility/utility-overrides.css"
+            css         (string/join 
+                         "\n\n"
+                         (for [class reified
+                               :let  [classname (name class)]]
+                           (css-rule* classname
+                                      [(get utility-classes/utility-classes
+                                            classname)]
+                                      nil
+                                      nil)))
+            debug-toks? (contains? debugging :design-token-registration)
+            used-toks   (when debug-toks?
+                          (:used/design-tokens @css-new))]
+
+        ;; This is where design tokens for utility classes get registered.
+        ;; They are identified based on the the actual css-rules produced.
+        (register-design-tokens! css css-new :kushi-utility)
+        #_(when debug-toks? (new-toks-callout "kushi-utility"
+                                              nil
+                                              used-toks
+                                              css-new))
+        (spit-css-layer+profile path css "kushi-utility-overrides")))))
 
 
 (defn kushi-utility-classes-profile-all
@@ -601,7 +704,7 @@
                                    [v]
                                    nil
                                    nil)))]
-    (spit-css-layer+profile path css)))
+    (spit-css-layer+profile path css "kushi-utility")))
 
 
 (defn kushi-utility-classes-profile
@@ -636,30 +739,8 @@
                                               nil
                                               used-toks
                                               css-new))
-        (spit-css-layer+profile path css)))))
+        (spit-css-layer+profile path css "kushi-utility")))))
 
-
-#_(defn add-user-shared-classes
-  [css-new ret]
-  (let [reified (reduce (fn [acc coll]
-                          (apply conj acc coll))
-                        #{}
-                        @css-new)] 
-    (if (? (seq reified))
-      (let [path "./public/css/kushi-utility/utility.css"
-            css  (string/join 
-                  "\n\n"
-                  (for [class reified
-                        :let  [classname (name class)]]
-                    (css-rule* classname
-                               [(get utility-classes/utility-classes
-                                     classname)]
-                               nil
-                               nil)))]
-        (io/make-parents path)
-        (spit path css :append false)
-        (conj ret {"kushi-utility" path}))
-      ret)))
 
 (defn spit-css-imports [coll]
  ;; TODO - grab  skip <public> folder dynamically here or user-supplied filename
@@ -705,51 +786,56 @@
            (apply hash-map)))
 
 
-{:avail/kushi-design-tokens      tokens/design-tokens-by-token
- :avail/user-theme-design-tokens user-design-tokens
- :avail/user-theme-ui            {}
- :user-shared                    {}
- :kushi-ui-shared                {}
- :used/kushi-utility             []
- :used/kushi-ui-shared           []
- :used/user-shared               []
- :used/design-tokens             #{}
- :required/kushi-design-tokens   #{}
- :required/user-theme-tokens     #{}
- :not-found/design-tokens        #{}}
+;; TODO - is there a difference between :used/ and :required/
+(def css-new* 
+  (array-map
+   :base/kushi-design-tokens
+   {:desc  "Base design tokens defined in Kushi lib. See kushi.css.build.tokens ns."
+    :value tokens/design-tokens-by-token}
 
-{
- ;; Global CSS rules defined in user's kushi.edn map via [:theme :ui].
- ;; These could be overrides for global rules defined by kushi.ui, or the user's
- ;; own custom global rules.
- :shared/user-theme          {}
+   :theme/user-design-tokens 
+   {:desc  "Design tokens defined in user theme. These could be overrides for tokens in :tokens/kushi-base, or the user's own custom global design tokens."
+    :value {}}
 
- ;; CSS utility rules, from kushi.css.build.utility-classes.
- :shared/kushi-utility       {}
+   :theme/user-ui
+   {:value {}}
 
- ;; CSS rules defined by user, to be shared across namespaces.
- :shared/user                {}
+   :user-shared                  
+   {:desc "CSS rules defined by user, to be shared across namespaces."
+    :value {}}
 
- ;; Base design tokens defined in Kushi lib. See kushi.css.build.tokens ns.
- :tokens/kushi-base          {}
+   :kushi-ui-shared             
+   {:desc "CSS rules defined within kushi.ui.*, to be shared across namespaces."
+    :value {}}
 
- ;; Design tokens defined in user theme. These could be overrides for tokens in
- ;; :tokens/kushi-base, or the user's own custom global design tokens. 
- :tokens/user-theme          {}
+   :used/kushi-utility           
+   {:desc ""
+    :value []}
 
- ;; All the tokens via (merge (:tokens/kushi-base) (:tokens/user-theme))
- :tokens/all                 {} 
+   :used/kushi-ui-shared         
+   {:desc ""
+    :value []}
 
- ;; Tokens actually used
- :tokens/used                #{}
+   :used/user-shared             
+   {:desc ""
+    :value []}
 
- ;; Kushi base design-tokens required (desc) 
- :tokens/kushi-base-required #{}
+   :used/design-tokens           
+   {:desc ""
+    :value #{}}
 
- ;; User theme design-tokens required (desc) 
- :tokens/user-theme-required #{}
+   :required/kushi-design-tokens 
+   {:desc ""
+    :value #{}}
 
- :tokens/not-found           #{}}
+   :required/user-design-tokens   
+   {:desc ""
+    :value #{}}
+
+   :not-found/design-tokens      
+   {:desc "Design tokens referenced in styling, but not defined."
+    :value #{}}
+    ))
 
         
 
@@ -759,19 +845,10 @@
         (user-design-tokens (:theme config))
 
         css-new
-        (volatile! {:base/kushi-design-tokens     tokens/design-tokens-by-token
-                    :theme/user-design-tokens     user-design-tokens
-                    :theme/user-ui                {}
-                    :user-shared                  {}
-                    :kushi-ui-shared              {}
-                    :used/kushi-utility           []
-                    :used/kushi-ui-shared         []
-                    :used/user-shared             []
-                    :used/design-tokens           #{}
-                    :required/kushi-design-tokens #{}
-                    :required/user-theme-tokens   #{}
-                    :not-found/design-tokens      #{}
-                    })
+        (volatile!
+         (assoc (reduce-kv (fn [m k v] (assoc m k (:value v))) {} css-new*)
+                :theme/user-design-tokens
+                user-design-tokens))
 
         ;; just for creating a new mock build-state
         ;; _ (spit-filtered-build-sources-with-paths filtered-build-sources)
@@ -789,16 +866,27 @@
           (kushi-utility-classes-profile css-new)
           (kushi-utility-classes-profile-all)) 
 
-        design-tokens-profile
-        (design-tokens-profile css-new)
+        ;; kushi-utility-classes-overrides-profile
+        ;; (if release?
+        ;;   (kushi-utility-classes-overrides-profile css-new)
+        ;;   (kushi-utility-classes-overrides-profile-all)) 
 
-        ;; user-shared-classes-profile
-        ;; (user-shared-classes-profile css-new) 
+        design-tokens-profile
+        (if release? 
+          (design-tokens-profile css-new)
+          (design-tokens-profile-all css-new))
+
+        user-design-tokens-profile
+        (if release? 
+          (user-design-tokens-profile css-new)
+          (user-design-tokens-profile-all css-new))
 
         ret
         (conj reduced-sources
               design-tokens-profile
               kushi-utility-classes-profile
+              ;; kushi-utility-classes-overrides-profile
+              user-design-tokens-profile
               #_user-shared-classes-profile)]
 
     (when (contains? debugging :design-token-registration)
@@ -951,10 +1039,8 @@
 
 ;; TODO 
 
-;; 2) All tokens and utilities for dev. Not just filtered as in release.
-;;    - find or insert mode (dev vs release) from build-state
-;;    - comp-time statics?
-;;    - if-else logic for filtering
+;; 2) Get overrides working 
+;;    (problem with lightning not supporting ".wtf\!", or ".wtf!")
 
 ;; 3) Figure out how to pull in css from sources with relative file path 
 

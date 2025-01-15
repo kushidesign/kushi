@@ -914,8 +914,18 @@
         (apply hash-map)))
 
 ;; This version has css-var-keywords cast to strs e.g. :$bold -> "var(--bold)"
+(def design-tokens-by-token-array-map
+  (apply array-map
+         (reduce-kv (fn [acc k v]
+                      (conj acc k (:value v)))
+                    []
+                    enriched-tokens-array-map)))
+
 (def design-tokens-by-token
-  (!? (reduce-kv (fn [m k v] (assoc m k (:value v))) {} enriched-tokens-array-map)))
+  (reduce-kv (fn [m k v]
+               (assoc m k (:value v)))
+             {}
+             enriched-tokens-array-map))
 
 #_{:name         "divisor-inverse",
  :value        :$divisor-5-inverse,
