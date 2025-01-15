@@ -581,13 +581,35 @@
     {"design-tokens" {:css-fp path}}))
 
 
+(defn- spit-css-layer+profile [path css]
+  (io/make-parents path)
+  (spit path css :append false)
+  {"kushi-utility" {:css-fp path}})
+
+
+(defn kushi-utility-classes-profile-all
+  []
+  (let [path         "./public/css/kushi-utility/utility.css"
+        util-classes (apply array-map
+                            (apply concat 
+                                   utility-classes/all-classes))     
+        css          (string/join 
+                      "\n\n"
+                      (for [[class v] util-classes
+                            :let      [classname (name class)]]
+                        (css-rule* classname
+                                   [v]
+                                   nil
+                                   nil)))]
+    (spit-css-layer+profile path css)))
+
+
 (defn kushi-utility-classes-profile
   [css-new]
   (let [reified (reduce (fn [acc coll]
                           (apply conj acc coll))
                         #{}
                         (-> @css-new :utils :used/kushi-utility))]
-
     (when (contains? debugging :narrative)
       ;; TODO - Add callout here 
       nil)
@@ -603,7 +625,6 @@
                                             classname)]
                                       nil
                                       nil)))
-            
             debug-toks? (contains? debugging :design-token-registration)
             used-toks   (when debug-toks?
                           (:used/design-tokens @css-new))]
@@ -612,13 +633,10 @@
         ;; They are identified based on the the actual css-rules produced.
         (register-design-tokens! css css-new :kushi-utility)
         #_(when debug-toks? (new-toks-callout "kushi-utility"
-                                            nil
-                                            used-toks
-                                            css-new))
-
-        (io/make-parents path)
-        (spit path css :append false)
-        {"kushi-utility" {:css-fp path}}))))
+                                              nil
+                                              used-toks
+                                              css-new))
+        (spit-css-layer+profile path css)))))
 
 
 #_(defn add-user-shared-classes
@@ -734,8 +752,8 @@
  :tokens/not-found           #{}}
 
         
-        
-(defn hook* [config filtered-build-sources]
+
+(defn hook* [config filtered-build-sources release?]
   (!? 'kushi.css.core/hook*:config config)
   (let [user-design-tokens
         (user-design-tokens (:theme config))
@@ -767,7 +785,9 @@
         _ (analyzed-callout reduced-sources css-new)
 
         kushi-utility-classes-profile
-        (kushi-utility-classes-profile css-new) 
+        (if release?
+          (kushi-utility-classes-profile css-new)
+          (kushi-utility-classes-profile-all)) 
 
         design-tokens-profile
         (design-tokens-profile css-new)
@@ -894,10 +914,10 @@
        spit-css-imports))
 
 
-(defn write-css-imports [path filtered-build-sources]
+(defn write-css-imports [path filtered-build-sources build-state]
   (->  path
        user-config
-       (hook* filtered-build-sources)
+       (hook* filtered-build-sources build-state)
        write-css-imports*))
 
 
@@ -909,35 +929,34 @@
         (bs-epoch build-state)]
     (when (or existing-css-changed? new-or-deleted? init?)
       (let [filtered-build-sources
-            (filter-build-sources build-state)]
+            (filter-build-sources build-state)
+            
+            release?
+            (not= :dev (:shadow.build/mode build-state))]
 
         ;; If necessary write the css imports chain
         (when (or init? new-or-deleted?)
-          (write-css-imports "./kushi.edn" filtered-build-sources)
+          (write-css-imports "./kushi.edn" filtered-build-sources release?)
           (create-css-bundle))))
   build-state))
 
 
 (defn hook-dev
   "Just for dev"
-  [filtered-build-sources]
+  [filtered-build-sources release?]
   ;; TODO maybe deleted? and added? should be seqs or nils
-  (write-css-imports "./site/kushi.edn" filtered-build-sources)
+  (write-css-imports "./site/kushi.edn" filtered-build-sources release?)
   (create-css-bundle))
 
 
 ;; TODO 
 
-;; 1) Lightning css POC
-
-;; 1)
-
 ;; 2) All tokens and utilities for dev. Not just filtered as in release.
+;;    - find or insert mode (dev vs release) from build-state
+;;    - comp-time statics?
+;;    - if-else logic for filtering
 
 ;; 3) Figure out how to pull in css from sources with relative file path 
-
-
-
 
 ;; 4) Get kushi.design working with new changes
 
@@ -987,8 +1006,7 @@
             "\n"
             (-> (? :data (:not-found/design-tokens @css-new))
                 :formatted
-                :string)))
-  )
+                :string))))
 
 (defn analyzed-callout
   "Just for dev"
@@ -1042,13 +1060,13 @@
        (apply array-map)))
 
 ;; Dev
-#_(let [filtered-build-sources (-> "./site/filtered-build-sources.edn"
+;; TODO - create a fake :build.state/mode here?
+(let [release?               false
+      filtered-build-sources (-> "./site/filtered-build-sources.edn"
                                  slurp
                                  read-string
                                  hydrate-paths-into-files
-                                 hook-dev
-                                 )]
-  )
+                                 (hook-dev release?))])
 
 (defn- spit-filtered-build-sources-with-paths 
   "Just for dev"
