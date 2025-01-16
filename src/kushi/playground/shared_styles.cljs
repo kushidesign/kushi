@@ -1,9 +1,9 @@
 (ns kushi.playground.shared-styles
   (:require
    [kushi.playground.util :as util :refer-macros (let-map)]
-   [kushi.core :refer (defclass defkeyframes)]))
+   [kushi.css.core :refer [defcss]]))
 
-(defkeyframes jiggle
+(defcss "@keyframes jiggle"
   [:0% {:transform "translate(1px, 1px) rotate(0deg) scale(1.55)"}]
   [:10% {:transform "translate(-1px, -2px) rotate(-1deg) scale(1.55)"}]
   [:20% {:transform "translate(-3px, 0px) rotate(1deg) scale(1.55)"}]
@@ -16,7 +16,7 @@
   [:90% {:transform "translate(1px, 2px) rotate(0deg) scale(1.55)"}]
   [:100% {:transform "translate(1px, -2px) rotate(-1deg) scale(1.55)"}])
 
-(defkeyframes jiggle2
+(defcss "@keyframes jiggle2"
   [:0% {:transform "rotate(0deg) scale(1.55)"}]
   [:18% {:transform "rotate(-5deg) scale(1.55)"}]
   [:36% {:transform "rotate(5deg) scale(1.55)"}]
@@ -32,27 +32,28 @@
             scroll-to-component-menu-item-y       (- (+ topnav-height main-view-wrapper-padding-block-start))
             scroll-window-by-px                   2]))
 
-(defclass twirl
+(defcss ".twirl"
   :animation--y-axis-spinner:12s:linear:infinite)
 
-(defclass twirl2x
+(defcss ".twirl2x"
   :animation--y-axis-spinner:12s:linear:infinite)
 
-(defclass twirl4x
+(defcss ".twirl4x"
   :animation--y-axis-spinner:12s:linear:infinite)
 
-(defclass section-focused
+(defcss ".section-focused"
   :bgc--#fafafa)
 
-(defclass kushi-opts-grid-row-item
+(defcss ".kushi-opts-grid-row-item"
   :padding-block--1.5em
   :bbe--1px:solid:#efefef
   :bc--$gray-200
-  :&_p:margin-block--0
-  :&_.kushi-ui-opt-desc&_p:fs--0.775rem
-  :&_a:td--underline)
+  :_p:margin-block--0
+  :_.kushi-ui-opt-desc_p:fs--0.775rem
+  :_a:td--underline)
 
-(defclass codebox
+;; TODO use :dark stack?
+(defcss ".codebox"
   :.transition
   {:p                         :20px:50px:20px:20px
    :bgc                       :$accent-50
@@ -61,23 +62,23 @@
    "has-ancestor(.dark):c"    :$accent-100
    :mbs                       :7px
    :fs                        :$kushi-playground-codebox-snippet_font-size||$xsmall
-   :&_.code:fs                :$kushi-playground-codebox-snippet_font-size||$xsmall
-   :&_code:fs                 :$kushi-playground-codebox-snippet_font-size||$xsmall
-   :&_.code:bgc               :transparent
-   :&_code:bgc                :transparent
+   :_.code:fs                :$kushi-playground-codebox-snippet_font-size||$xsmall
+   :_code:fs                 :$kushi-playground-codebox-snippet_font-size||$xsmall
+   :_.code:bgc               :transparent
+   :_code:bgc                :transparent
    :fw                        400
    :bisw                      :5px
    :biss                      :solid
    :bisc                      :$accent-200
    "has-ancestor(.dark):bisc" :$accent-750})
 
-(defclass kushi-treenav-section-level-1
+(defcss ".kushi-treenav-section-level-1"
   :mbs--1em
   :>span:mbs--0.5em
   :first-child:>span:mbs--0em)
 
-(defclass kushi-treenav-section-level-1-header
-  :.pointer
+(defcss ".kushi-treenav-section-level-1-header"
+  :cursor--pointer
   :fs--$kushi-playground-sidenav-section-header_font-size
   :d--block
   :line-height--$body-copy-line-height
@@ -88,7 +89,7 @@
   :biss--solid
   :bisc--transparent)
 
-(defclass kushi-playground-main-section
+(defcss ".kushi-playground-main-section"
   {:flex-grow 0
    :bgc       :transparent
    :w         :100%
@@ -96,7 +97,7 @@
    :md:w      "calc(var(--components-menu-width) - 80px)"
    :xl:w      :$components-menu-width})
 
-(defclass kushi-playground-meta-desc-label
+(defcss ".kushi-playground-meta-desc-label"
   {:fs         :$kushi-playground-meta-desc-label_font-size||$xsmall
    :fw         :$kushi-playground-meta-desc-label_font-weight||$wee-bold
    :font-style :$kushi-playground-meta-desc-label_font-style||italic
@@ -104,49 +105,51 @@
    :c          :$neutral-secondary-foreground
    :dark:c     :$neutral-secondary-foreground-inverse })
 
-(defclass kushi-treenav-section-header
+(defcss ".kushi-treenav-section-header"
   :.relative
   :.flex-row-c
   :md:jc--fs)
 
-(defclass hover-trailing-fade-out
+(defcss ".hover-trailing-fade-out"
   :transition-duration--350ms
   :hover:transition-duration--0ms)
 
-(defclass kushi-playground-with-rainbow-keys
 
+;; TODO maybe remove this class?
+
+(defcss ".kushi-playground-with-rainbow-keys"
   ;trailing fade out rainbow keys
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out:hover" {:bgc :$gold-50 :color :$gold-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :color :$neutral-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out:hover" {:bgc :$orange-50 :c :$orange-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out:hover" {:bgc :$red-50 :c :$red-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out:hover" {:bgc :$magenta-50 :c :$magenta-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out:hover" {:bgc :$purple-50 :c :$purple-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out:hover" {:bgc :$blue-50 :c :$blue-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out:hover" {:bgc :$green-50 :c :$green-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out:hover" {:bgc :$yellow-50 :c :$yellow-1000}]
-  ["&_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out:hover" {:bgc :$gold-50 :color :$gold-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :color :$neutral-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out:hover" {:bgc :$orange-50 :c :$orange-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out:hover" {:bgc :$red-50 :c :$red-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out:hover" {:bgc :$magenta-50 :c :$magenta-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out:hover" {:bgc :$purple-50 :c :$purple-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out:hover" {:bgc :$blue-50 :c :$blue-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out:hover" {:bgc :$green-50 :c :$green-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out:hover" {:bgc :$yellow-50 :c :$yellow-1000}]
+  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
 
   ;; Inverse (dark-theme) trailing fade out rainbow keys
-  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out:hover" {:bgc :$gold-950 :color :$gold-50}]
-  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out:hover" {:bgc :$orange-950 :c :$orange-50}]
-  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out:hover" {:bgc :$red-950 :c :$red-50}]
-  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out:hover" {:bgc :$magenta-950 :c :$magenta-50}]
-  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out:hover" {:bgc :$purple-950 :c :$purple-50}]
-  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out:hover" {:bgc :$blue-950 :c :$blue-50}]
-  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out:hover" {:bgc :$green-950 :c :$green-50}]
-  ["dark:&_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out:hover" {:bgc :$yellow-950 :c :$yellow-50}]
+  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out:hover" {:bgc :$gold-950 :color :$gold-50}]
+  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out:hover" {:bgc :$orange-950 :c :$orange-50}]
+  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out:hover" {:bgc :$red-950 :c :$red-50}]
+  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out:hover" {:bgc :$magenta-950 :c :$magenta-50}]
+  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out:hover" {:bgc :$purple-950 :c :$purple-50}]
+  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out:hover" {:bgc :$blue-950 :c :$blue-50}]
+  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out:hover" {:bgc :$green-950 :c :$green-50}]
+  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out:hover" {:bgc :$yellow-950 :c :$yellow-50}]
   )
 
-(defclass no-hover-bgc :bgc--transparent!important)
+(defcss ".no-hover-bgc" :bgc--transparent!important)
 
-(defclass kushi-demo-stage
+(defcss ".kushi-demo-stage"
   :min-height--135px
   :p--30px:15px
   :bw--1px
@@ -154,17 +157,17 @@
   :bc--$gray-300
   :dark:bc--$gray-700
   :mb--10px
-  :&_.kushi-input:min-width--220px)
+  :_.kushi-input:min-width--220px)
 
-(defclass kushi-playground-demobox
-  :&_.kushi-playground-examples-input-row-wrapper:bbe--0px:solid:#eee
-  :&_.kushi-playground-examples-input-row-wrapper:min-height--50px
-  :&_.kushi-playground-examples-input-row-wrapper:padding-block--0.75em
+(defcss ".kushi-playground-demobox"
+  :_.kushi-playground-examples-input-row-wrapper:bbe--0px:solid:#eee
+  :_.kushi-playground-examples-input-row-wrapper:min-height--50px
+  :_.kushi-playground-examples-input-row-wrapper:padding-block--0.75em
   :md:&_.kushi-playground-examples-input-row-wrapper:padding-block--0.5em
-  :&_.kushi-radio-button-wrapper:margin-inline--0:0.666em
-  :&_.kushi-radio-button-wrapper:margin-block--0.125em)
+  :_.kushi-radio-button-wrapper:margin-inline--0:0.666em
+  :_.kushi-radio-button-wrapper:margin-block--0.125em)
 
-(defclass kushi-playground-demobox-ui-icon
+(defcss ".kushi-playground-demobox-ui-icon"
   :fs--1rem!important
   :>div.kushi-icon>span:fs--1rem!important
   :b--none!important
@@ -176,25 +179,25 @@
   :hover:bgc--transparent!important
   :active:bgc--transparent!important)
 
-(defclass kushi-playground-demobox-ui-icon-stage-control
+(defcss ".kushi-playground-demobox-ui-icon-stage-control"
   :p--0.5em!important
   :hover:bgc--$neutral-200!important
   :dark:hover:bgc--$neutral-750!important
   :active:bgc--$neutral-300!important
   :dark:active:bgc--$neutral-650!important
-  ["&[aria-selected='true']:bgc" :$neutral-100!important]
-  ["dark:&[aria-selected='true']:bgc" :$neutral-750!important]
+  ["[aria-selected='true']:bgc" :$neutral-100!important]
+  ["dark:[aria-selected='true']:bgc" :$neutral-750!important]
   )
 
-(defclass truncate
+(defcss ".truncate"
   :overflow--hidden
   :text-overflow--ellipsis
   :white-space--nowrap)
 
-(defclass kushi-playground-dev-mode-portal
-  :.fixed
+(defcss ".kushi-playground-dev-mode-portal"
   :.transition
-  :.xxslow!
+  :position--fixed
+  :transition-duration--$xxslow
   :transition-property--opacity
   :w--0
   :h--0
@@ -204,11 +207,11 @@
   :zi--10000)
 
 
-(defclass kushi-playground-dev-mode-hidden
+(defcss ".kushi-playground-dev-mode-hidden"
   :overflow--hidden)
 
 
-(defclass kushi-playground-dev-mode
+(defcss ".kushi-playground-dev-mode"
   :>#app:o--0
   :>#app:transition--all
   :>#app:transition-duration--500ms
@@ -217,9 +220,9 @@
   :>#kushi-playground-dev-mode-portal:h--100vh)
 
 
-(defclass kushi-playground-sidenav-wrapper
-  :h--100vh
+(defcss ".kushi-playground-sidenav-wrapper"
   :.grow
+  :h--100vh
   :d--none
   :xl:d--flex
   :xl:jc--c
@@ -230,20 +233,17 @@
 
 
 ;; New May 2024
-(defclass playground-example-row-bounded
-  [:&_.instance-code
-   {:border-radius :$rounded
-    :w             :fit-content
-    :bgc           :transparent
-    :p             :1em
-    :pie           :1.5em
-    :b             :1px:solid:$neutral-150
-    }]
-  [:dark:&_.instance-code
-   {:bgc :transparent
-    :b   :1px:solid:$neutral-850}])
+(defcss ".playground-example-row-bounded"
+  [:_.instance-code {:border-radius :$rounded
+                     :w             :fit-content
+                     :bgc           :transparent
+                     :p             :1em
+                     :pie           :1.5em
+                     :b             :1px:solid:$neutral-150}]
+  [:dark:_.instance-code {:bgc :transparent
+                          :b   :1px:solid:$neutral-850}])
 
-(defclass playground-example-row-bounded-parent
+(defcss ".playground-example-row-bounded-parent"
   {:border-radius :$rounded
    :w             :fit-content
    :bgc           :transparent
@@ -253,12 +253,10 @@
    :dark:b        :1px:solid:$neutral-850})
 
 
-
-
-(defclass playground-pane-box-shadow
+(defcss ".playground-pane-box-shadow"
   :box-shadow--0:0:13px:8px:white|0:0:10px:9px:white)
 
-(defclass all-components-sidenav-header
+(defcss ".all-components-sidenav-header"
   :.flex-col-c
   ;; :.semi-bold
   :.foreground-secondary
@@ -266,43 +264,43 @@
   :ai--c
   :height--$navbar-height)
 
-(defclass neutralize
+(defcss ".neutralize"
   :.transition
   :bgc--$background-color
   :dark:bgc--$background-color-inverse
   :c--$foreground-color
   :dark:c--$foreground-color-inverse)
 
-(defclass neutralize-secondary
+(defcss ".neutralize-secondary"
   :.transition
   :bgc--$background-color
   :dark:bgc--$background-color-inverse
   :c--$neutral-secondary-foreground
   :dark:c--$neutral-secondary-foreground-inverse)
 
-(defclass component-section-header-label
-  :.semi-bold
-  :.capitalize
-  :lh--0.75em
-  :fs--$xlarge)
+(defcss ".component-section-header-label"
+  :fs--$semi-bold
+  :fs--$xlarge
+  :tt--capitalize
+  :lh--0.75em)
 
-(defclass cormorant-section-label 
-  :.bold
+(defcss ".cormorant-section-label" 
+  :fw--$bold
   :dark:fw--$wee-bold
   :fs--17.5px)
 
 ;; TODO - This version won't work with out-dated browsers because of color-mix
-;; (defclass bg-scrim-gradient
+;; (defcss ".bg-scrim-gradient
 ;;   {:bgi                  '(linear-gradient "to bottom" "var(--background-color) var(--menu-height)" "color-mix(in srgb, var(--background-color), transparent calc(100% - var(--transparency-at-end, 65%)))") 
 ;;    :dark:bgi             '(linear-gradient "to bottom" "var(--background-color-inverse) var(--menu-height)" "color-mix(in srgb, var(--background-color-inverse), transparent calc(100% - var(--transparency-at-end, 65%)))")})
 
 ;; TODO - This version will
-(defclass bg-scrim-gradient
-  {:bgi                  '(linear-gradient "to bottom" "var(--background-color) var(--menu-height)" "rgba(255 255 255 / 0.65)") 
-   :dark:bgi             '(linear-gradient "to bottom" "var(--background-color-inverse) var(--menu-height)" "rgba(0 0 0 / 0.65)")})
+(defcss ".bg-scrim-gradient"
+  {:bgi      "linear-gradient(to bottom, var(--background-color) var(--menu-height), rgba(255 255 255 / 0.65)" 
+   :dark:bgi "linear-gradient(to bottom, var(--background-color-inverse) var(--menu-height), rgba(0 0 0 / 0.65)"})
 
 
-(defclass header-menu-transition-group
+(defcss ".header-menu-transition-group"
   ;; :.xxxslow
   ;; :.debug-blue
   )
