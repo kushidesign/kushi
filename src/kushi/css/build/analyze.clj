@@ -55,14 +55,20 @@
    "Theming rules for kushi.ui components"
 
    "kushi-ui-shared" ;; <- determine if anything shares styles outside of popovers, tooltips, toasts etc.
-   (str "Styles to be shared across or within families of kushi ui components "
-         "such as tooltips, popovers, etc")
+   "Styles to be shared across or within families of kushi ui components such as tooltips, popovers, etc"
 
    "kushi-ui-styles"
    "Styles defined for elements of kushi ui components."
 
+   ;; TODO - should this go up above kushi-ui stuff?
    "kushi-utility"
    "Baseline utility classes defined by kushi"
+
+   "kushi-playground-shared" 
+   "Styles to be shared across or within families of kushi.playground namespaces."
+
+   "kushi-playground-styles"
+   "Styles defined for elements of kushi.playground components."
 
    "user-shared-styles"
    "User-defined shared styles"
@@ -83,13 +89,15 @@
     (? s))
   (or (string/starts-with? s "mvp/") 
       (string/starts-with? s "kushi/ui")
+      (string/starts-with? s "kushi/playground")
       (= s "kushi/css/core.cljs");; <- this is for using css-include to pull in
                                  ;;    build/kushi-reset.css (or others for dev)
-      
       ))
+
 
 (defn gather-macros [m1 m2 f]
   (->> m1 (merge m2) f (into #{})))
+
 
 (defn namespaces-with-macro-usage
   [[[_ path]
@@ -113,13 +121,28 @@
        :sel   sel})
     {:sel sel-og})  )
 
+
 (defn- loc-sel [x ns-str]
-  (let [{:keys [line col]} (meta x)
-        sel (str "." (string/replace ns-str #"/" "_") "__L" line "_C" col)]
+  #_(when (= ns-str "mvp_views")
+    (? 'mvp_views (meta x)))
+  (let [{:keys [row col]} (meta x)
+        sel (str "."
+                 (string/replace ns-str #"/" "_")
+                 "__L"
+                 row
+                 "_C"
+                 col)]
     {:sel sel}))
 
-(defn maybe-kushi-ui-styles [ns-str]
-  (when (re-find #"^kushi_ui" ns-str) "kushi-ui-styles"))
+
+(defn resolve-css-layer-for-shared-classes [ns-str]
+  (cond (re-find #"^kushi_ui" ns-str)
+        "kushi-ui-styles"
+        
+        (re-find #"^kushi_playground" ns-str)
+        "kushi-playground-styles"))
+  
+
 
 (defn css-call-data
   [{:keys [form ns-str ns args] :as m} 
@@ -133,7 +156,9 @@
           (loc-sel form ns-str))
 
         layer
-        (or layer (maybe-kushi-ui-styles ns-str) "user-styles")
+        (or layer
+            (resolve-css-layer-for-shared-classes ns-str)
+            "user-styles")
 
         kushi-utils
         (filter #(when (clojure.spec.alpha/valid? ::kushi-specs/class-kw %)
@@ -221,40 +246,56 @@
                                   [:italic.blue k])}))
 
 (defn defcss-call-data
-  [{:keys [args form ns-str ns rel-path] :as m}
+  [{:keys [args form ns-str ns rel-path]
+    :as m}
    css-new]
-  (let [[sel-og & args]     args
-        {:keys [layer sel]} (layer+sel sel-og)
-        layer               (or layer "user-shared-styles")
-        _                   (when (string/starts-with? sel ".")
-                              (let [k (if (string/starts-with? (!? ns-str)
-                                                               "kushi_ui")
-                                        :kushi-ui-shared
-                                        :user-shared)]
-                                (when (contains? debugging :macro-hydration)
-                                  (defcss-callout sel k))
-                                (vswap! css-new update-in [:utils k] assoc sel args)))
-        args                (hydrated-util-args args css-new rel-path form)
-        result              (merge m
-                                   (meta form)
-                                   (keyed sel-og sel args layer))]
+  (let [[sel-og & args]
+        args
+
+        {:keys [layer sel]}
+        (layer+sel sel-og)
+
+        layer
+        (or layer "user-shared-styles")
+
+        _
+        (when (string/starts-with? sel ".")
+          (let [k (cond (string/starts-with? ns-str "kushi_ui")
+                        :kushi-ui-shared
+
+                        (string/starts-with? ns-str "kushi_playground")
+                        :kushi-playground-shared
+
+                        :else
+                        :user-shared)]
+            (when (contains? debugging :macro-hydration)
+              (defcss-callout sel k))
+            (vswap! css-new update-in [:utils k] assoc sel args)))
+
+        args
+        (hydrated-util-args args css-new rel-path form)
+
+        result
+        (merge m
+               (meta form)
+               (keyed sel-og sel args layer))]
 
     (vswap! css-new
             update-in
             [:sources ns layer]
             conj
             result)
-    nil
-    ))
+    nil))
 
 
 (defn parse-all-forms [file]
   (-> file
       slurp
-      (e/parse-string-all {:fn      true
-                           :regex   true
-                           :quote   true
-                           :readers {'js (fn [v] (list 'js v))}})
+      (e/parse-string-all {:fn           true
+                           :regex        true
+                           :quote        true
+                           :syntax-quote true
+                           :readers      {'js (fn [v] (list 'js v))}})
       rest))
 
 (defn filter-build-sources [bs]
@@ -402,7 +443,7 @@
         ;; TODO - Currently assumes css is file in same dir as current
         ;;        ns of form. Check for relative filepath.
         layer (or layer
-                  (maybe-kushi-ui-styles ns-str)
+                  (resolve-css-layer-for-shared-classes ns-str)
                   "user-shared-styles")
         ;; TODO - is there a more efficient way to do this path manipulation?
         css-fp (-> file
@@ -571,7 +612,7 @@
 ;; TODO - maybe unite this with fn below and pass a map with :release? and :init?
 (defn user-design-tokens-profile-all
   [css-new]
-  (let [path "./public/css/tokens/user-design-tokens.css"]
+  (let [path "./public/css/user-design-tokens/user-design-tokens.css"]
     ;; TODO - put this back in for stats?
     #_(let [toks (:used/design-tokens @css-new)]
       (doseq [tok toks]
@@ -587,7 +628,7 @@
 
 (defn user-design-tokens-profile
   [css-new]
-  (let [path "./public/css/tokens/user-design-tokens.css"]
+  (let [path "./public/css/user-design-tokens/user-design-tokens.css"]
     (let [toks (:used/design-tokens @css-new)]
       (doseq [tok toks]
         (register-toks+deps tok css-new)))
@@ -603,7 +644,7 @@
 ;; TODO - maybe unite this with fn below and pass a map with :release? and :init?
 (defn design-tokens-profile-all
   [css-new]
-  (let [path      "./public/css/tokens/tokens.css"
+  (let [path      "./public/css/design-tokens/design-tokens.css"
         ;; TODO - need this path-user?
         ;; path-user "./public/css/tokens/user-tokens.css"
         ]
@@ -851,7 +892,7 @@
                 user-design-tokens))
 
         ;; just for creating a new mock build-state
-        ;; _ (spit-filtered-build-sources-with-paths filtered-build-sources)
+        _ (spit-filtered-build-sources-with-paths filtered-build-sources)
 
         reduced-sources
         (reduce (partial analyze-sources css-new)
@@ -1025,7 +1066,7 @@
         ;; If necessary write the css imports chain
         (when (or init? new-or-deleted?)
           (write-css-imports "./kushi.edn" filtered-build-sources release?)
-          (create-css-bundle))))
+          #_(create-css-bundle))))
   build-state))
 
 
@@ -1039,12 +1080,18 @@
 
 ;; TODO 
 
+
+;; 1) Get kushi.design working with new changes
+
+;; 1a) Sort out core fns from kushi.css into kushi.core
+
 ;; 2) Get overrides working 
 ;;    (problem with lightning not supporting ".wtf\!", or ".wtf!")
 
 ;; 3) Figure out how to pull in css from sources with relative file path 
 
-;; 4) Get kushi.design working with new changes
+
+
 
 ;; 5) Keep track of changes or deletions in proj via shadow build-state
 
@@ -1147,7 +1194,7 @@
 
 ;; Dev
 ;; TODO - create a fake :build.state/mode here?
-(let [release?               false
+#_(let [release?               false
       filtered-build-sources (-> "./site/filtered-build-sources.edn"
                                  slurp
                                  read-string

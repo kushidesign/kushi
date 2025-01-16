@@ -3,7 +3,8 @@
             [clojure.string :as string]
             [domo.core :as domo]
             [goog.string]
-            [kushi.core :refer (keyed token->ms)]
+            [kushi.css.core :refer (token->ms)]
+            [kushi.ui.core :refer (keyed)]
             [kushi.ui.dom.pane.core :as pane]
             ;; Import this styles ns to create defclasses
             [kushi.ui.dom.pane.placement :refer [user-placement]]

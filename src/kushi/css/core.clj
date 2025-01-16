@@ -1,6 +1,7 @@
 (ns kushi.css.core
   (:require 
    [fireworks.core :refer [? !? ?> !?> pprint]]
+   [fireworks.sample]
    [kushi.css.defs :as defs]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as specs]
@@ -14,8 +15,8 @@
    [babashka.process :refer [shell]]
   ;; for testing
   ;;  [taoensso.tufte :as tufte]
-   ))
-
+   
+   [kushi.css.build.tokens :as tokens]))
 
 ;; EEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR   RRRRRRRRRRRRRRRRR   
 ;; E::::::::::::::::::::ER::::::::::::::::R  R::::::::::::::::R  
@@ -40,6 +41,13 @@
 
 (declare ansi-colorized-css-block)
 
+(defn- unwrap-quoted-symbol [x]
+  (if (and (list? x)
+           (= 2 (count x))
+           (symbol? (second x)))
+    (->> x second name (str "'") symbol)
+    x))
+
 (def use-at-keyframes-body 
   (bling "You can use " [:bold 'kushi.core/at-keyframes] " to \n" 
          "create CSS @keyframes animations.\n"
@@ -54,7 +62,7 @@
          "No css ruleset will be created."))
 
 (defn generic-warning
-  [{:keys [form header body]}]
+  [{:keys [form header body unwrap-quoted-symbols?]}]
   (callout {:type        :warning
             :padding-top 1}
            (point-of-interest
@@ -63,7 +71,9 @@
                     :header header
                     :body   body}
                    (meta form)
-                   {:form form}))))
+                   {:form (if unwrap-quoted-symbols?
+                            (apply list (map unwrap-quoted-symbol form))
+                            form)}))))
 
 (defn bad-at-rule-name-warning [sel &form]
   (generic-warning 
@@ -187,7 +197,6 @@
               bad-keyframe-warning-body
               bad-at-rule-arg-warning-body)})))
 
-
 (defn cssrule-args-warning
   "Prints warning"
   [{:keys [fname          
@@ -195,47 +204,55 @@
            &form]
     :as m}]
   (generic-warning
-   {:form   &form
-    :header (apply
-             bling
-             (concat ["Bad args to " [:italic fname] ":"
-                      "\n"]
-                     (interpose "\n"
-                                (map (fn [arg] [:bold arg])
-                                     invalid-args))))
-    :body   (let [spec-data (s/form ::specs/valid-sx-arg)]
-              (apply
-               bling
-               (concat
-                [(if (contains? #{"kushi.core/css-rule"}
-                                fname)
-                   "All args beyond the first are validated with:"
-                   "All args are validated with:")
-                 "\n"
-                 [:bold.italic (str ::specs/valid-sx-arg)]
-                 "\n\n"
-                 [:italic (-> (? :data
-                                 {:theme "Neutral Light"}
-                                 (nth spec-data 0 nil))
-                              :formatted
-                              :string)]
-                 "\n"
-                 (-> (? :data
-                        {:theme             "Neutral Light"
-                         :display-metadata? false}
-                        (with-meta (apply hash-map (rest spec-data))
-                          {:fw/hide-brackets? true}))
-                     :formatted
-                     :string)
-                 
-                 "\n\n"
-                 "The bad arguments will be discarded, and"
-                 "\n"
-                 "the following css ruleset will be created"
-                 "\n"
-                 "from the remaining valid arguments:"
-                 "\n\n"]
-                (ansi-colorized-css-block m))))}))
+   {:form
+    &form
+
+    :unwrap-quoted-symbols?
+    true
+
+    :header
+    (apply
+     bling
+     (concat ["Bad args to " [:italic fname] ":"
+              "\n"]
+             (interpose "\n"
+                        (map (fn [arg]
+                               [:bold (unwrap-quoted-symbol arg)])
+                             invalid-args))))
+    :body   
+    (let [spec-data (s/form ::specs/valid-sx-arg)]
+      (apply
+       bling
+       (concat
+        [(if (contains? #{"kushi.core/css-rule"}
+                        fname)
+           "All args beyond the first are validated with:"
+           "All args are validated with:")
+         "\n"
+         [:bold.italic (str ::specs/valid-sx-arg)]
+         "\n\n"
+         [:italic (-> (? :data
+                         {:theme "Neutral Light"}
+                         (nth spec-data 0 nil))
+                      :formatted
+                      :string)]
+         "\n"
+         (-> (? :data
+                {:theme             "Neutral Light"
+                 :display-metadata? false}
+                (with-meta (apply hash-map (rest spec-data))
+                  {:fw/hide-brackets? true}))
+             :formatted
+             :string)
+         
+         "\n\n"
+         "The bad arguments will be discarded, and"
+         "\n"
+         "the following css ruleset will be created"
+         "\n"
+         "from the remaining valid arguments:"
+         "\n\n"]
+        (ansi-colorized-css-block m))))}))
 
 ;; -----------------------------------------------------------------------------
 ;; Utilities
@@ -509,10 +526,14 @@
 
 (defn- loc-id
   "Returns classname based on namespace and line + column.
-   e.g. \"starter_browser__41_6\""
+   e.g. \"starter_browser__L41_C6\""
   [env form]
+  (!? :result (some-> env :ns :name))
   (when-let [ns* (some-> env :ns :name (sr #"\." "_"))]
     (let [fm (meta form)]
+     (!? :result ns*)
+     (when (= ns* "mvp_browser")
+       (!? fm))
      (str ns* "__L" (:line fm) "_C" (:column fm)))))
 
 
@@ -1394,5 +1415,3 @@
                {:class (cons (symbol "css") reformatted)}
                sx-attrs-map)
         (cons (symbol "sx") reformatted)))))
-
-

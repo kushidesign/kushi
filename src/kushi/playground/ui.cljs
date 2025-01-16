@@ -1,30 +1,40 @@
 (ns kushi.playground.ui
   (:require
-   [kushi.core :refer [sx merge-attrs]]
+   [kushi.css.core :refer [sx merge-attrs]]
    [kushi.ui.label.core :refer [label]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.core :refer [defcom lightswitch!]]))
 
+(def light-mode-label-attrs
+  (sx ["has-ancestor(.dark):display" :none]
+      ["has-ancestor(.kushi-playground-mobile-nav):c" :white]))
+
+(def dark-mode-label-attrs
+  (sx :d--none
+      ["has-ancestor(.dark):display" :block]
+      :c--white
+      ["has-ancestor(.kushi-playground-mobile-nav):c" :black]))
+
+(def button-attrs
+  (sx :.guh
+      :.minimal
+      :fs--$large
+      :.pointer
+      :pb--0.5rem!important))
+
 (defcom light-dark-mode-switch
   [:button (merge-attrs 
-            (sx :.minimal
-                :.large
-                :.pointer
-                :pb--0.5rem!important
-                {:on-click #(lightswitch!)})
+            button-attrs
+            {:on-click #(lightswitch!)}
             &attrs)
-   [label (sx ["has-ancestor(.dark):display" :none]
-              ["has-ancestor(.kushi-playground-mobile-nav):c" :white])
+   [label light-mode-label-attrs
     [icon :light-mode #_mui.svg/light-mode]]
-   [label (sx :d--none
-              ["has-ancestor(.dark):display" :block]
-              :c--white
-              ["has-ancestor(.kushi-playground-mobile-nav):c" :black])
+   [label dark-mode-label-attrs
     [icon :dark-mode #_mui.svg/dark-mode]]])
 
 (defn desktop-lightswitch []
-  [:div (sx 'kushi-light-dark-switch-desktop
+  [:div (sx :.kushi-light-dark-switch-desktop
             :d--none
             ["md:has-ancestor(.hide-lightswitch):d" :none]
             :md:d--block

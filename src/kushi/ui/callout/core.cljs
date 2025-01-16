@@ -1,6 +1,5 @@
 (ns kushi.ui.callout.core
-  (:require [kushi.core :refer (merge-attrs)]
-            [kushi.css.core :refer (css sx)]
+  (:require [kushi.css.core :refer (css sx merge-attrs)]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.icon.core]))
 

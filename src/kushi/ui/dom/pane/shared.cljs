@@ -1,6 +1,5 @@
 (ns kushi.ui.dom.pane.shared
   (:require
-   
    [clojure.string :as string]
    [goog.string]
    [kushi.ui.util :as util :refer [maybe nameable? as-str]]))

@@ -4,7 +4,7 @@
             [domo.core :as domo] ;; Import this to create defclasses
             [goog.functions]
             [goog.string]
-            [kushi.core :refer (keyed)]
+            [kushi.ui.core :refer (keyed)]
             [kushi.ui.dom.pane.placement :refer [el-plc og-placement
                                                  owning-el-rect-cp pane-plc
                                                  placement-css-custom-property

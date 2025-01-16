@@ -1,5 +1,5 @@
 (ns kushi.ui.divisor.core
-  (:require [kushi.core :refer (merge-attrs) :refer-macros (sx)]
+  (:require [kushi.css.core :refer [sx merge-attrs]]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.util :as util]))
 
@@ -11,11 +11,11 @@
     [:div
      (merge-attrs
       {:data-kushi-ui :divisor}
-      (sx 'kushi-divisor
+      (sx :.kushi-divisor
           :.transition
           :bgc--$divisor-color
           :dark:bgc--$divisor-color-inverse)
       (if (= "vertical" (util/as-str orientation)) 
-        (sx 'kushi-divisor-vertical :w--$divisor-thickness)
-        (sx 'kushi-divisor-horizontal :h--$divisor-thickness))
+        (sx :.kushi-divisor-vertical :w--$divisor-thickness)
+        (sx :.kushi-divisor-horizontal :h--$divisor-thickness))
       attrs)]))

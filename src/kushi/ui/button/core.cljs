@@ -1,10 +1,8 @@
 (ns kushi.ui.button.core
-  (:require-macros
-   [kushi.css.core :refer (css css-vars-map)])
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.playground.util :as util :refer-macros (keyed)]
-   [kushi.core :refer (merge-attrs)]
+   [kushi.css.core :refer (css css-vars-map merge-attrs)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.icon.core :refer (icon)]))
 

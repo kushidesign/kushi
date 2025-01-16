@@ -20,7 +20,8 @@
                                     css-vars
                                     css-vars-map
                                     lightning-opts
-                                    lightning]]
+                                    lightning
+                                    token->ms]]
             [clojure.string :as string]
             [kushi.css.specs :as specs]
             [clojure.set :as set]
@@ -44,6 +45,8 @@
          :.kushi-slider-step-label-selected>span:v    :visible
          :transform                                   :$label-scale-factor
          :before:content                              :$step-marker-content}))
+
+(? (+ 1 1))
 
 (deftest sample (is (= 1 1)))
 

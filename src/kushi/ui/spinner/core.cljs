@@ -1,8 +1,6 @@
 (ns kushi.ui.spinner.core
-  (:require-macros
-   [kushi.css.core :refer (sx css defcss trans)])
   (:require
-   [kushi.core :refer (merge-attrs)]
+   [kushi.css.core :refer (sx css defcss merge-attrs trans)]
    [kushi.ui.core :refer (opts+children)]))
 
 (defcss "@keyframes spin"

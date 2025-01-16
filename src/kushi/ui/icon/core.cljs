@@ -1,8 +1,7 @@
 (ns kushi.ui.icon.core
   (:require
    [clojure.string :as string]
-   [kushi.css.core :refer (sx css defcss)]
-   [kushi.core :refer (merge-attrs )]
+   [kushi.css.core :refer (sx css defcss merge-attrs)]
    [kushi.ui.core :refer (opts+children material-symbol-or-icon-span)]))
 
 (defcss "@layer kushi-ui-component .kushi-icon"

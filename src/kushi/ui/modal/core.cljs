@@ -6,8 +6,7 @@
             [domo.core :as domo]
             [goog.dom :as gdom]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.css.core :refer [sx css]]
-            [kushi.core :refer (merge-attrs)]))
+            [kushi.css.core :refer [sx css merge-attrs]]))
 
 (declare close-on-backdrop-click)
 
