@@ -203,7 +203,7 @@
            invalid-args        
            &form]
     :as m}]
-  (generic-warning
+  #_(generic-warning
    {:form
     &form
 
@@ -1294,40 +1294,54 @@
           (-> c
               name
               (subs 1)
-              (->> (str s "--"))
+              (->> (str s (if (contains? #{"letter-spacing"
+                                           "transition-duration"
+                                           "fw"
+                                           "fs"}
+                                         s)
+                            "--$"
+                            "--")))
               keyword))
 
         remove-amp
         #(let [s (-> % name (string/replace #"\&" ""))]
            (if (string? %) s (keyword s)))
+        
+        css-cp-def 
+        (fn [kw]
+          (if (-> kw name (string/starts-with? "$"))
+            (let [[cp v] (string/split (-> kw name) #"--")]
+              [(keyword (string/replace cp #"^\$" "--"))
+               (keyword v)]) 
+            kw))
 
         stringify-double-vectors
         #(string/join ", "
-                     (map (fn [x]
-                            (cond 
-                              (vector? x)
-                              (string/join " "
-                                           (map 
-                                            (fn [xx]
-                                              (cond
-                                                (symbol? xx)
-                                                (str "var(--" xx ")")
+                      (map (fn [x]
+                             (cond 
+                               (vector? x)
+                               (string/join " "
+                                            (map 
+                                             (fn [xx]
+                                               (cond
+                                                 (symbol? xx)
+                                                 (str "var(--" xx ")")
 
-                                                (keyword? xx)
-                                                (name xx)
+                                                 (keyword? xx)
+                                                 (name xx)
 
-                                                :else
-                                                xx))
-                                            x))
+                                                 :else
+                                                 xx))
+                                             x))
 
-                              (symbol? x)
-                              (str "var(--" x ")")
+                               (symbol? x)
+                               (str "var(--" x ")")
 
-                              (keyword? x)
-                              (name x)
+                               (keyword? x)
+                               (name x)
 
-                              :else x))
-                          %))       
+                               :else x))
+                           %))       
 
         [css-vars-from-style-map style-map-no-css-vars]
         (partition-by-pred (fn [[k _]]
@@ -1351,6 +1365,69 @@
                             (cond 
                               (contains? #{:.neutral} c)
                               nil
+
+                              (contains? #{:.xxxtight      
+                                           :.xxtight       
+                                           :.xtight        
+                                           :.tight         
+                                           :.default-tracking 
+                                           :.loose         
+                                           :.xloose        
+                                           :.xxloose       
+                                           :.xxxloose}
+                                         c)
+                              (class->kw c "letter-spacing")
+
+                              (contains? #{:.instant! 
+                                           :.xxxfast! 
+                                           :.xxfast!  
+                                           :.xfast!   
+                                           :.fast!    
+                                           :.moderate!
+                                           :.slow!    
+                                           :.xslow!   
+                                           :.xxslow!  
+                                           :.xxxslow!}
+                                         c)
+                              (class->kw c "transition-duration")
+
+                              (contains? #{:.instant 
+                                           :.xxxfast 
+                                           :.xxfast  
+                                           :.xfast   
+                                           :.fast    
+                                           :.moderate
+                                           :.slow    
+                                           :.xslow   
+                                           :.xxslow  
+                                           :.xxxslow}
+                                         c)
+                              (class->kw c "transition-duration")
+
+                              (contains? #{:.thin
+                                           :.extra-light
+                                           :.light
+                                           :.normal
+                                           :.wee-bold
+                                           :.semi-bold
+                                           :.bold
+                                           :.extra-bold
+                                           :.heavy}
+                                         c)
+                              (class->kw c "fw")
+
+                              (contains? #{:.xxxsmall
+                                           :.xxsmall
+                                           :.xsmall
+                                           :.small
+                                           :.medium
+                                           :.large
+                                           :.xlarge
+                                           :.xxlarge
+                                           :.xxxlarge
+                                           :.xxxxlarge}
+                                         c)
+                              (class->kw c "fs")
 
                               (contains? #{:.absolute :.relative :.fixed} c)
                               (class->kw c "position")
@@ -1377,7 +1454,9 @@
                                v))])
 
                         (for [kw tokenized-style]
-                          (remove-amp kw))
+                          (-> kw
+                              remove-amp
+                              css-cp-def))
                         
                         conditional-class
 
