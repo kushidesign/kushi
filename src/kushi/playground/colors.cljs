@@ -2,9 +2,9 @@
   (:require 
             ;; ["tinycolor2" :as tinycolor]
             [kushi.colors :as kushi.colors]
-            [kushi.core :refer (sx merge-attrs)] ;;  [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
+            [kushi.css.core :refer (sx css css-vars-map trans merge-attrs)] ;;  [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
             [kushi.playground.util :as util :refer-macros (keyed)]
-            [kushi.ui.core :refer [defcom]]
+            [kushi.ui.core :refer [defcom opts+children]]
             [kushi.ui.label.core :refer [label]]))
 
 (defcom text-sample-sticker
@@ -49,7 +49,7 @@
       ;;             :ws--n
       ;;             {:on-click #(open-kushi-modal token-name)})
       [label (sx :.code
-                 :&.code:bgc--transparent
+                 :_.code:bgc--transparent
                  :fs--0.7em
                  :sm:fs--0.9em
                  :ws--n)
@@ -74,8 +74,8 @@
     ;;        :pb--2rem
     ;;        :h--100%
     ;;        :w--100%)
-    ;;    [:div (sx :.huge
-    ;;              :.normal
+    ;;    [:div (sx :fs--huge
+    ;;              :fw--normal
     ;;              :w--100px
     ;;              :h--100px
     ;;              [:bgc hsl])]
@@ -96,7 +96,7 @@
     ;;           :ai--c
     ;;           :grid-gap--20px
     ;;           :gtc--1fr:3fr
-    ;;           :&_.kushi-copy-to-clipboard-button-graphic:width--13px)
+    ;;           :_.kushi-copy-to-clipboard-button-graphic:width--13px)
     ;;       [:span.kushi-playground-meta-desc-label "name"] [copy-color (string/replace token-name #"^\$" "")]
     ;;       [:span.kushi-playground-meta-desc-label "token"] [copy-color (str ":" token-name)]
     ;;       [:span.kushi-playground-meta-desc-label "css var"] [copy-color (str "var(" (string/replace token-name #"^\$" "--") ")")]
@@ -122,67 +122,154 @@
                                         :alias)]]
        (into
         ^{:key color-name}
-        [:div (sx 'color-scale-wrapper
+        [:div (sx :.color-scale-wrapper
                   :.transition
                   :max-width--$main-content-max-width
                   :mbs--4.5rem)
-         [:h2 (sx :.xlarge
+         [:h2 
+          (sx :fs--$xlarge
+              :fw--$semi-bold
+              :tt--capitalize
+              :pbs--2em
+              :mb--2rem:1.5rem)
+          #_(trans (sx :.xlarge
                   :.semi-bold
                   :.capitalize
                   :pbs--2em
-                  :mb--2rem:1.5rem)
+                  :mb--2rem:1.5rem))
           color-name]
          (when semantic-alias
-           [:p (sx :.normal
-                   :mb--1em:2.5em)
+           [:p (sx :fw--$normal :mb--1em:2.5em)
             "All "
             [:code (str "--" (name color-name) "*")]
             " values on the scale have a corresponding "
             [:code (str "--" semantic-alias "*")]
             " alias token"])]
+
+        ;; TODO - refactor hsl css-var stuff below
         (for [[k v color-level] scale
               :let  [hsl (if (number? v) (str v) (name v))]]
           ^{:key hsl}
-          [:div (sx :.flex-row-fs
-                    :ai--stretch
-                    :bgc--white
-                    :dark:bgc--black
-                    [:h row-height])
-           [:div (sx :sm:flex-basis--150px
-                     :width--66px
-                     :sm:width--unset
-                     :.no-grow
-                     :.no-shrink
-                     [:bgc hsl]
-                    ;;  :.flex-row-c
-                    ;;  :ai--stretch
-                     )
-            #_[:div (sx :w--50% [:bgc hsl])]
-            #_[:div (sx :w--50% :$yellow-hue--59 [:bgc hsl])]]
-           [:div (sx :.flex-row-sb
-                     :.grow
-                     :pis--0.5em
-                     :bbes--solid
-                     :bbew--1px
-                     [:bbec hsl])
+          [:div {:style (css-vars-map row-height)
+                 :class (css :.flex-row-fs
+                             :ai--stretch
+                             :bgc--white
+                             :dark:bgc--black
+                             :h--$row-height)}
+           [:div {:style (css-vars-map hsl)
+                  :class (css :sm:flex-basis--150px
+                              :width--66px
+                              :sm:width--unset
+                              :.no-grow
+                              :.no-shrink
+                              :bgc--$hsl)}
+            #_[:div (sx :w--50% :bgc--$hsl)]
+            #_[:div (sx :w--50% :$yellow-hue--59 :bgc--$hsl)]]
+           [:div {:style (css-vars-map hsl)
+                  :class (css :.flex-row-sb
+                              :.grow
+                              :pis--0.5em
+                              :bbes--solid
+                              :bbew--1px
+                              :bbec--$hsl)}
             [color-modal (keyed k hsl color-name color-level)]
-            [:div (sx :.flex-row-fe :.wee-bold)
-             [text-sample-sticker (sx {:-color :white
-                                       :-bgc   hsl})]
-             [text-sample-sticker (sx {:-color :black
-                                       :-bgc   hsl})]
-             [text-sample-sticker (sx :bs--solid
-                                      :bw--1px
-                                      [:bc hsl]
-                                      {:-color hsl
-                                       :-bgc :white})]
-             [text-sample-sticker (sx [:bc hsl]
-                                      :bs--solid
-                                      :bw--1px
-                                      {:-bgc   :black
-                                       :-color hsl})]]]]))))])
-(defcom color-grid
-  (let [{:keys [row-gap
+            [:div (sx :.flex-row-fe :fw--$wee-bold)
+             [text-sample-sticker {:-color :white
+                                   :-bgc   hsl}]
+             [text-sample-sticker {:-color :black
+                                   :-bgc   hsl}]
+             [text-sample-sticker 
+              {:style (css-vars-map hsl)
+               :class  (css :bs--solid :bw--1px :bc--$hsl)
+               :-color hsl
+               :-bgc   :white}]
+             [text-sample-sticker 
+              {:style (css-vars-map hsl)
+               :class  (css :bs--solid :bw--1px :bc--$hsl)
+               :-color hsl
+               :-bgc   :black}]]]]))))])
+
+(defn color-grid [& args]
+  (let [[opts attrs & children]
+        (opts+children args)
+
+        {:keys [row-gap
+                column-gap
+                labels?
+                select-colors
+                swatch-attrs]
+         :or   {row-gap     :2px
+                column-gap  :2px
+                labels?     true}}
+        opts]
+    (into [:div
+           (merge-attrs
+            (sx :.flex-row-fs
+                :border-radius--$rounded-large
+                :jc--sb
+                ;; [:gap column-gap]
+                )
+            attrs)]
+          (for [[color _] (partition 2 kushi.colors/colors)
+                :when     (or (not (seq select-colors))
+                              (contains? (into #{} select-colors) color))
+                :let [before-content (str "\"" color "\"")
+                      ;; TODO can we use kw here?
+                      before-display (if labels? "block" "none")]]
+            (into [:div 
+                   { :style
+                    (css-vars-map before-content before-display)
+
+                    :class 
+                    (css :.flex-col-fs
+                         :.transition
+                         :bgc--white
+                         :dark:bgc--black
+                         :outline--7px:solid:white
+                         :dark:outline--7px:solid:black
+                         :last-child:beer--$rounded-large
+                         :last-child:bser--$rounded-large
+                         :first-child:bssr--$rounded-large
+                         :first-child:besr--$rounded-large
+                         [:gap :$row-gap]
+                         :.relative
+                         [:before:content :$before-content]
+                         [:before:d :$before-display]
+                         :before:fs--$xsmall
+                         :before:ff--$code-font-stack
+                         :before:fw--$wee-bold
+                         :before:ta--inline-end
+                         :before:position--absolute
+                         :before:top--100%
+                         :before:left--50%
+                         :before:transform-origin--top:left
+                         [:before:transform "translate(0, 0.75em) rotate(45deg)"]
+                         [:first-child>div:before:d :$before-display])}]
+                  (for [n (range 50 1050 50)
+                        :let [bgc (str "var(--" color "-" n ")")]]
+                    [:div (merge-attrs
+                           {:style 
+                            (css-vars-map before-content bgc)
+
+                            :class
+                            (sx
+                             :.pill
+                             :position--relative
+                             :w--26px
+                             :h--26px
+                             [:bgc :$bgc]
+                             [:before:content :$before-content]
+                             :before:d--none
+                             :before:fs--$xsmall
+                             :before:ff--$code-font-stack
+                             :before:fw--$wee-bold
+                             :before:position--absolute
+                             :before:top--50%
+                             :before:right--100%
+                             [:before:transform "translate(-1em, -50%)"])}
+                           swatch-attrs)]))))))
+
+  #_(let [{:keys [row-gap
                 column-gap
                 labels?
                 select-colors
@@ -194,7 +281,7 @@
     (into [:div
            (merge-attrs
             (sx :.flex-row-fs
-                :.rounded-large
+                :border-radius--$rounded-large
                 :jc--sb
                 ;; [:gap column-gap]
                 )
@@ -202,7 +289,7 @@
           (for [[color _] (partition 2 kushi.colors/colors)
                 :when (or (not (seq select-colors))
                           (contains? (into #{} select-colors) color))]
-            (into [:div (sx :.flex-col-fs
+            (into [:div (trans (sx :.flex-col-fs
                             :.transition
                             :bgc--white
                             :dark:bgc--black
@@ -225,7 +312,7 @@
                             :before:left--50%
                             :before:transform-origin--top:left
                             [:before:transform "translate(0, 0.75em) rotate(45deg)"]
-                            [:first-child>div:before:d (if labels? :block :none)])]
+                            [:first-child>div:before:d (if labels? :block :none)]))]
                   (for [n (range 50 1050 50) ]
                     [:div (merge-attrs
                            (sx
@@ -243,5 +330,5 @@
                             :before:top--50%
                             :before:right--100%
                             [:before:transform '(translate :-1em :-50%)])
-                           swatch-attrs)]))))))
+                           swatch-attrs)])))))
 

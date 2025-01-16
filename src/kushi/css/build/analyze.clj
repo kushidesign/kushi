@@ -892,7 +892,7 @@
                 user-design-tokens))
 
         ;; just for creating a new mock build-state
-        _ (spit-filtered-build-sources-with-paths filtered-build-sources)
+        ;; _ (spit-filtered-build-sources-with-paths filtered-build-sources)
 
         reduced-sources
         (reduce (partial analyze-sources css-new)
