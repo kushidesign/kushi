@@ -203,7 +203,7 @@
            invalid-args        
            &form]
     :as m}]
-  #_(generic-warning
+  (generic-warning
    {:form
     &form
 
