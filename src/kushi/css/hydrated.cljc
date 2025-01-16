@@ -1,6 +1,6 @@
 (ns kushi.css.hydrated
   (:require [clojure.spec.alpha :as s]
-            ;; [fireworks.core :refer [? !? ?> !?>]]
+            [fireworks.core :refer [? !? ?> !?>]]
             [clojure.string :as string]
             [clojure.walk :refer [prewalk]]
             [kushi.css.defs :as defs]
@@ -71,7 +71,7 @@
 (defn pseudo-mod-transform
   [{:keys [s t bunch?]}]
    (str (when-not bunch? "&")
-        ":"
+        (when-not (string/starts-with? s ":") ":")
         (when (= t :pseudo-element) ":")
         s))
 
@@ -149,7 +149,7 @@
 
             :else
             :query-selector)]
-    ;; (? (keyed [last-index prop? i s t]))
+    (!? (keyed [last-index prop? i s t]))
     (if t
       (let [;; The first branch of this `if` is a check to see
             ;; if we are dealing with something like:
@@ -162,7 +162,9 @@
             ;; prepend a ":" 
             s (if (and (pos? i)
                        (string-starts-with-pseudo-class? s))
-                (str ":" s)
+                (do 
+                  (!? :result (str "adding a leading \":\" to " s))
+                  (str ":" s))
                 s)
             ]
         (with-meta (symbol s) {:mod-type t}))
@@ -212,6 +214,8 @@
                     :bunch? false}
                    s)
              ret (-> arg f symbol (with-meta {:mod-transformed? true}))]
+         (when (string/starts-with? s ":checked")
+           (!? (keyed [s arg ret f])))
          ret)
        (name v)))
    stack*))
@@ -351,12 +355,13 @@
           ;; An alternate approach would be (stack-with-bunched. 
           nested-stack* (stack-unbunched stack*)
           ret           (nested-stack nested-stack* v prop?)]
-      #_(!?
+      (!?
        (keyed [x
                v
                prop?
                last-index
                f
+               stack
                stack*
                nested-stack*
                ret]))
