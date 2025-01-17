@@ -5,7 +5,7 @@
    [kushi.css.defs :as defs]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as specs]
-   [kushi.css.util :refer [keyed]]
+   [kushi.css.util :refer [keyed vec-of-vecs? more-than-one? partition-by-pred]]
    [kushi.specs2 :as specs2]
    [clojure.walk :as walk :refer [prewalk postwalk]]
    [clojure.string :as string :refer [replace] :rename {replace sr}]
@@ -258,17 +258,6 @@
 ;; Utilities
 ;; -----------------------------------------------------------------------------
 
-(defn- partition-by-pred [pred coll]
-  "Given a coll and a pred, returns a vector of two vectors. The first vector
-   contains all the values from coll that satisfy the pred. The second vector
-   contains all the values from the coll that do not satisfy the pred."
-  (let [ret* (reduce (fn [acc v]
-                       (let [k (if (pred v) :valid :invalid)]
-                         (assoc acc k (conj (k acc) v))))
-                     {:valid [] :invalid []}
-                     coll)]
-    [(:valid ret*) (:invalid ret*)]))
-
 (defn- partition-by-spec
   "Given a coll and a spec, returns a vector of two vectors. The first vector
    contains all the values from coll that satisfy the spec. The second vector
@@ -396,20 +385,10 @@
 ;; Grouping
 ;; -----------------------------------------------------------------------------
 
-(defn- vec-of-vecs? [v]
-  (and (vector? v)
-       (every? vector? v)))
-
-
 (defn- sel-and-vec-of-vecs?2 [x]
   (boolean (and (vector? x)
                 (string? (nth x 0 nil))
                 (vec-of-vecs? (nth x 1 nil)))))
-
-
-(defn- more-than-one? [coll]
-  (> (count coll) 1))
-
 
 (defn- dupe-reduce [grouped]
   (reduce-kv (fn [acc k v]
@@ -422,13 +401,14 @@
 
 
 (defn- lvfha-order [coll all-nested-sels]
-  (if (some #(contains? defs/lvfha-pseudos-strs %) all-nested-sels)
+  (!? [coll all-nested-sels])
+  (!? :ret (if (some #(contains? defs/lvfha-pseudos-strs %) all-nested-sels)
     (into []
           (sort-by #(->> % 
                          first
                          (get defs/lvfha-pseudos-order-strs))
                    coll))
-    coll))
+    coll)))
 
 
 (defn group-shared*
@@ -491,6 +471,7 @@
      (let [all-nested-sels  (map first nested-rules)]
       ;;  (when debug? (!? all-nested-sels))
       ;;  (when debug? (!? (more-than-one? nested-rules)))
+       #_(println "\n\n------------------------------")
        (if (more-than-one? nested-rules)
          (let [dupe-nested-sels (->> all-nested-sels
                                      frequencies
