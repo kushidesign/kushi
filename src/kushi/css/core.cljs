@@ -93,6 +93,7 @@
    :on-webkit-mouse-force-down
    :on-wheel ])
 
+;; TODO fix warnin to be less confusing and use bling
 (defn- merge-attrs-warning
   [v k n]
   (js/console.warn
