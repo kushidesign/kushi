@@ -149,7 +149,6 @@
     :or          {pane-type :pane}
     :as          opts}
    id]
-
   ;; 1) Pre-calculate and append pane
   ;; Calculate an initial placement and append a pane element to the dom.
   ;; If the owning element is beyond the edge-threshold, the pane will
@@ -166,11 +165,17 @@
         owning-el-rect  (or (some->> dialog-el
                                      (adjust-client-rect owning-el-rect*))
                             owning-el-rect*)
+        user-pane-class (case pane-type
+                          :tooltip
+                          (:tooltip-class opts)
+                          nil)
         opts            (assoc opts
                                :pane-type
                                pane-type
                                :owning-el-rect
-                               owning-el-rect)
+                               owning-el-rect
+                               :user-pane-class
+                               user-pane-class)
         viewport        (domo/viewport)
         edge-threshold  (edge-threshold opts)
         owning-el-vpp   (el-plc viewport
@@ -187,6 +192,10 @@
                                       placement-kw
                                       tt-pos-og 
                                       arrow?))]
+
+    ;; TODO - this causes fireworks error
+    ;; (? append-tt-opts)
+
     (append-pane-el! (merge append-tt-opts
                             {:metrics? true
                              :id       (str "_kushi-metrics_" id)}))

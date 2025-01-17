@@ -186,9 +186,11 @@
             [:span.relative
              (merge-attrs
               {:class [x]}
-              (tooltip-attrs {:-text          (str ":." (name x))
+              (tooltip-attrs {:-text          (name x)
                               :-placement     [:inline-end :center]
-                              :-tooltip-class "code wee-bold"}))
+                              :-tooltip-class (css :.code
+                                                   :fw--$wee-bold
+                                                   :fs--$small)}))
              "The quick brown fox."]]])))
 
 (defn- formatted-code [s]
