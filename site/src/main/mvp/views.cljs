@@ -12,12 +12,13 @@
 
 (js/console.clear)
 
+
 (def routes 
   {
   ;;  ["components"] {:content layout/component-playground-content
   ;;                  :args    playground-components
   ;;                  :label   "Components Playground"}
-  ;;  ["colors"]     {:content about/kushi-colors-about}
+   ["colors"]     {:content about/kushi-colors-about}
    ["typography"] {:content about/kushi-typography-about}
   ;;  ["intro"]      {:content about/kushi-about}
    })
@@ -32,7 +33,11 @@
     ;; Spinner between page transitions
     ;; Leave out for now as transitions are instant
     #_[layout/loading-spinner]
-    ]
+    #_[:div (sx :.wireframe 
+              :m--100px
+              [:before:content "\"gold\""])
+     "hi"]]
+    
     (for [[view {:keys [content label] :as route}] routes
           :let [label (or label (->> view last))
                 path  (string/join "/" view)]

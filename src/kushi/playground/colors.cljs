@@ -218,13 +218,17 @@
                       ;; TODO can we use kw here?
                       before-display (if labels? "block" "none")]]
             (into [:div 
-                   { :style
-                    (css-vars-map before-content before-display)
+                   {:style
+                    (css-vars-map before-content
+                                  before-display
+                                  row-gap
+                                  column-gap)
 
                     :class 
                     (css :.flex-col-fs
                          :.transition
                          :bgc--white
+                         :position--relative
                          :dark:bgc--black
                          :outline--7px:solid:white
                          :dark:outline--7px:solid:black
@@ -233,7 +237,6 @@
                          :first-child:bssr--$rounded-large
                          :first-child:besr--$rounded-large
                          [:gap :$row-gap]
-                         :.relative
                          [:before:content :$before-content]
                          [:before:d :$before-display]
                          :before:fs--$xsmall
@@ -247,13 +250,14 @@
                          [:before:transform "translate(0, 0.75em) rotate(45deg)"]
                          [:first-child>div:before:d :$before-display])}]
                   (for [n (range 50 1050 50)
-                        :let [bgc (str "var(--" color "-" n ")")]]
+                        :let [bgc            (str "var(--" color "-" n ")")
+                              before-content (str "\"" n "\"")]]
                     [:div (merge-attrs
                            {:style 
                             (css-vars-map before-content bgc)
 
                             :class
-                            (sx
+                            (css
                              :.pill
                              :position--relative
                              :w--26px

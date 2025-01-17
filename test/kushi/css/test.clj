@@ -45,6 +45,31 @@
          :transform                                   :$label-scale-factor
          :before:content                              :$step-marker-content}))
 
+(def idx-by-mq
+  {:xsm 0
+   :sm  1
+   :md  2
+   :lg  3})
+
+
+#_(? (re-find #"^([^\s:]+):" (? (-> [:sm:c :red] first name))))
+
+;; (? (css-block
+;;     ["first-child#foos:display" :block]))
+
+(? (css-block
+    :first-child#foos:display--block))
+
+(? (css-block
+    :first-child>div:display--block))
+
+#_(? (css-block
+    :sm:w--34px
+    :sm:h--34px
+    :xsm:w--29px
+    :xsm:h--29px
+    :w--26px
+    :h--26px))
 
 ;; (? (css-block "text-shadow--5px:5px:10px:red|-5px:-5px:10px:blue"))
 
@@ -76,8 +101,8 @@
 ;; (? (css-rule* ".wtf" [["input:checked:c" :red]] nil nil))
 
 
-(? (s/valid? ::specs/css-value "\"2||3\""))
-(? (s/valid? ::specs/css-value "2||3"))
+;; (? (s/valid? ::specs/css-value "\"2||3\""))
+;; (? (s/valid? ::specs/css-value "2||3"))
 
 (deftest sample (is (= 1 1)))
 
