@@ -36,7 +36,7 @@
   (str "[" s "]"))
 
 (def css-prop-stack-first-char-allowables
-  " 0-9a-z_\\-\\+\\>\\~\\*\\.\\$\\@")
+  " 0-9a-z_\\-\\+\\>\\~\\*\\.\\#\\$\\@")
 
 (def css-selector-first-char-allowables
   "\\.\\[\\*\\#a-z\\:")
