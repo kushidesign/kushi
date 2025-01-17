@@ -1109,24 +1109,33 @@
 
 
 ;; 1) Get kushi.design working with new changes
+;; TODO
+;; 1a) get colors section working
+;; 1b) get intro section working
+;; 1c) get components section working
 
-;; 1a) Sort out core fns from kushi.css into kushi.core
 
 ;; 2) Get overrides working 
 ;;    (problem with lightning not supporting ".wtf\!", or ".wtf!")
 
-;; 3) Figure out how to pull in css from sources with relative file path 
+;; 3) - Sort out core fns from kushi.css into kushi.core.
+;;    - Rename css-new
 
+;; 4) Keep track of changes or deletions in proj via shadow build-state
 
+;; 5) New build reporting system
 
+;; 6) Add comments, docstrings, reporting.
 
-;; 5) Keep track of changes or deletions in proj via shadow build-state
+;; 7) (stab at) Figure out how to pull in css from sources with relative file path 
 
-;; 6) New build reporting system
+;; Merge branch and BREAK -----------------------------
 
 ;; 8) New color system based on oklch
 
 ;; 9) New theming system
+
+
 
 ;; 10)  
 ;;      Later:
