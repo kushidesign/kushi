@@ -1,6 +1,5 @@
 (ns kushi.ui.modal.core
   (:require [kushi.ui.icon.core :refer (icon)]
-            [fireworks.core :refer [? !? ?> !?>]]
             [kushi.ui.button.core :refer [button]]
             [clojure.string :as string]
             [domo.core :as domo]
@@ -261,4 +260,4 @@
                                :.small)
                        :id    desc-id}
                    description])])]
-            (? children))])))
+            children)])))

@@ -1,6 +1,6 @@
 (ns kushi.ui.snippet.core
   (:require
-   [kushi.css.core :refer (sx merge-attrs)]
+   [kushi.css.core :refer (sx css merge-attrs)]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.icon.core :refer (icon)]
@@ -26,7 +26,7 @@
                         (tooltip-attrs
                          {:-text                        "Click to copy"
                           :-text-on-click               "Copied!"
-                          :-text-on-click-tooltip-class (first (:class (sx :$tooltip-background-color--$accent-filled-background-color)))
+                          :-text-on-click-tooltip-class (css [:--tooltip-background-color :$accent-filled-background-color])
                           :-placement                   :r}))
                        [icon mui.svg/content-copy]]])]
     (into [:div

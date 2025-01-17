@@ -1,16 +1,16 @@
 (ns ^:dev/always kushi.playground.components
  (:require 
   [kushi.css.core :refer [sx]]
-  [kushi.ui.button.core :refer [button]]
-  [kushi.ui.button.demo :as button.demo]
+  ;; [kushi.ui.button.core :refer [button]]
+  ;; [kushi.ui.button.demo :as button.demo]
   ;; [kushi.ui.callout.core :refer [callout]]
   ;; [kushi.ui.callout.demo :as callout.demo]
   ;; [kushi.ui.card.core :refer [card]]
   ;; [kushi.ui.card.demo :as card.demo]
   ;; [kushi.ui.collapse.core :refer [collapse]]
   ;; [kushi.ui.collapse.demo :as collapse.demo]
-  ;; [kushi.ui.grid.core :refer [grid]]
-  ;; [kushi.ui.grid.demo :as grid.demo]
+  [kushi.ui.grid.core :refer [grid]]
+  [kushi.ui.grid.demo :as grid.demo]
   ;; [kushi.ui.icon.core :refer [icon]]
   ;; [kushi.ui.icon.demo :as icon.demo]
   ;; [kushi.ui.checkbox.core :refer [checkbox]]
@@ -41,7 +41,7 @@
   (filter 
   ;;  :label
   #(contains? #{
-                "button"     
+                ;; "button"     
                 ;; "icon"       
                 ;; "spinner"    
                 ;; "switch"     
@@ -58,23 +58,29 @@
                 ;; "collapse"   ;; PS
                 ;; "accordian"  ;; PS
                 ;; "tag"        ;; PS
-                ;; "grid"       ;; PS
+                "grid"       ;; PS
                 }
                (:label %))
 
    ;; You need to wrap this whole collection in features macro
      [
-      {:label          "button"
-       :component      button
-       :examples       button.demo/examples
-       :component-meta (-> button var meta)
-       :reqs           '[[kushi.ui.button.core :refer [button]]]
-       :variants-base  #{:rounded :filled :bordered :minimal}
-       :variants-order [:rounded :filled :bordered :minimal]
-       :variants-attrs {:rounded  (sx :.rounded)
-                        :filled   (sx :.rounded :.filled)
-                        :bordered (sx :.rounded :.bordered)
-                        :minimal  (sx :.rounded :.minimal)}}
+      {:label          "grid"
+       :examples       grid.demo/examples
+       :component-meta (-> grid var meta)
+       :component      grid
+       :reqs           '[[kushi.ui.grid.core :refer [grid]]]}
+
+      ;; #_{:label          "button"
+      ;;  :component      button
+      ;;  :examples       button.demo/examples
+      ;;  :component-meta (-> button var meta)
+      ;;  :reqs           '[[kushi.ui.button.core :refer [button]]]
+      ;;  :variants-base  #{:rounded :filled :bordered :minimal}
+      ;;  :variants-order [:rounded :filled :bordered :minimal]
+      ;;  :variants-attrs {:rounded  (sx :.rounded)
+      ;;                   :filled   (sx :.rounded :.filled)
+      ;;                   :bordered (sx :.rounded :.bordered)
+      ;;                   :minimal  (sx :.rounded :.minimal)}}
       ]
    #_[{:label          "button"
      :component      button

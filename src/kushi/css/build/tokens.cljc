@@ -474,12 +474,24 @@
 
    ;; Tooltips
    ;; ------------------------------------------------------
-   
+
+   {:family     "Tooltip typography"
+    :desc       {:en ""}
+    :categories ["Panes" "Tooltips"]
+    :tags       ["pane" "tooltip" "typography" "floating"]
+    }
+   [:--tooltip-line-height    1.45
+    :--tooltip-font-family    :$sans-serif-font-stack
+    :--tooltip-font-size      :$xsmall
+    :--tooltip-font-weight    :$wee-bold
+    :--tooltip-text-transform :none
+    ]
+
    ;; tooltip colors and images
    {:family     "Tooltip colors and images"
     :desc       {:en ""}
-    :categories ["Panes"]
-    :tags       ["pane" "tooltip" "toast" "floating"]
+    :categories ["Panes" "Tooltips"]
+    :tags       ["pane" "tooltip" "color" "floating"]
     }
    [:--tooltip-color                            :$foreground-color-inverse
     :--tooltip-color-inverse                    :$foreground-color
@@ -498,7 +510,7 @@
    {:family     "tooltip panes geometry"
     :desc       {:en ""}
     :categories ["Panes" "Tooltips"]
-    :tags       ["pane" "tooltip" "toast" "floating"]
+    :tags       ["pane" "tooltip" "floating"]
     }
    [:--tooltip-min-width                        :1rem
     :--tooltip-min-height                       :1rem
@@ -515,7 +527,7 @@
    {:family     "tooltip panes choreography"
     :desc       {:en ""}
     :categories ["Panes" "Tooltips"]
-    :tags       ["pane" "tooltip" "toast" "floating"]
+    :tags       ["pane" "tooltip" "floating"]
     }
    [:--tooltip-offset-start                     :$pane-offset-start
     :--tooltip-z-index                          :$pane-z-index

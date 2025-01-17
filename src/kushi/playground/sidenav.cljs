@@ -1,7 +1,7 @@
 (ns kushi.playground.sidenav
   (:require
    [domo.core :as d]
-   [kushi.css.core :refer (sx merge-attrs)]
+   [kushi.css.core :refer (sx css merge-attrs)]
    [kushi.css.defs]
    [kushi.ui.util :refer [as-str]]
    [kushi.ui.button.core :refer [button]]
@@ -58,29 +58,29 @@
 
 (defn all-components-sidenav
   [playground-components]
-  [:nav (sx 
-         :.small
-         :.flex-col-fs
-         :.neutralize
-         :d--none
-         :lg:d--flex
-         ;; Tie into globals
-         [:iie       :4rem]
-         [:position  :fixed]
-         [:ai        :c]
-         [:w         :fit-content]
-         [:h         "calc(100vh - var(--navbar-height))"]
-         [:pi        0]
-         [:ibs       :$navbar-height]
-         [:translate :unset]
-         [:pb        :0:1rem]
-         [:jc        :flex-start]
-         :zi--4
-         [:box-shadow
-          "-30px 0 30px var(--background-color), -30px -30px 30px var(--background-color), -30px 0 30px 10px var(--background-color), -30px -30px 30px 10px var(--background-color)"]
-         [:dark:box-shadow
-          "-30px 0 30px var(--background-color-inverse), -30px -30px 30px var(--background-color-inverse), -30px 0 30px 10px var(--background-color-inverse), -30px -30px 30px 10px var(--background-color-inverse)"]
-         {:data-kushi-playground-sidenav "true"})
+  [:nav {:class (css 
+                 :.small
+                 :.flex-col-fs
+                 :.neutralize
+                 :d--none
+                 :lg:d--flex
+                 ;; Tie into globals
+                 [:iie       :4rem]
+                 [:position  :fixed]
+                 [:ai        :c]
+                 [:w         :fit-content]
+                 [:h         "calc(100vh - var(--navbar-height))"]
+                 [:pi        0]
+                 [:ibs       :$navbar-height]
+                 [:translate :unset]
+                 [:pb        :0:1rem]
+                 [:jc        :flex-start]
+                 :zi--4
+                 [:box-shadow
+                  "-30px 0 30px var(--background-color), -30px -30px 30px var(--background-color), -30px 0 30px 10px var(--background-color), -30px -30px 30px 10px var(--background-color)"]
+                 [:dark:box-shadow
+                  "-30px 0 30px var(--background-color-inverse), -30px -30px 30px var(--background-color-inverse), -30px 0 30px 10px var(--background-color-inverse), -30px -30px 30px 10px var(--background-color-inverse)"])
+         :data-kushi-playground-sidenav "true"}
    [:button
     (sx :.all-components-sidenav-header
         :.flex-row-fs
@@ -163,10 +163,10 @@
             :bgi "linear-gradient(to left, var(--background-color), var(--background-color) 50%, transparent)"}]
           ["dark:&[aria-expanded=\"true\"]" 
            {:bgc :$black-transparent-90
-            :bgi "linear-gradient(to left, var(--background-color-inverse), var(--background-color-inverse) 50%, transparent)"}]))
-   {:data-kushi-playground-sidenav        true
-    :data-kushi-playground-sidenav-mobile true
-    :aria-expanded                        false}
+            :bgi "linear-gradient(to left, var(--background-color-inverse), var(--background-color-inverse) 50%, transparent)"}])
+         {:data-kushi-playground-sidenav        true
+          :data-kushi-playground-sidenav-mobile true
+          :aria-expanded                        false})
 
    ;; Button for toggling open nav 
    [:button

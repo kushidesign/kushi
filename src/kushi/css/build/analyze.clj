@@ -1110,9 +1110,8 @@
 
 ;; 1) Get kushi.design working with new changes
 ;; TODO
-;; 1a) get colors section working
-;; 1b) get intro section working
 ;; 1c) get components section working
+;;     start from bottom?
 
 
 ;; 2) Get overrides working 

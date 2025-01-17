@@ -230,7 +230,7 @@
        (when-let [text-on-click (pane/maybe-multiline-tooltip-text text-on-click)]
          {:on-mouse-down
           (fn [_]
-            (let [duration              (token->ms :$tooltip-text-on-click-duration)
+            (let [duration              (token->ms :--tooltip-text-on-click-duration)
                   tt-el                 (domo/qs ".kushi-tooltip")
                   tt-el-text-wrapper    (domo/qs tt-el ".kushi-tooltip-text-wrapper")
                   tt-el-text-span       (domo/qs tt-el ".kushi-tooltip-text")

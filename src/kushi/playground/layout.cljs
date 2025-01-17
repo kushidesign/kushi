@@ -107,7 +107,9 @@
   :h--100px
   :>div:h--50%
   :top--$navbar-height
-  :w--100%)
+  :w--100%
+  :bgc--$background-color
+  :c--$foreground-color)
 
 
 (defn style-tag-active-path [path]
@@ -254,8 +256,10 @@
                       :root-margin      "51px 0px 0px 0px"}))))
              
              [:div (sx :.component-section-header
-                       [:box-shadow "-20px -20px 0px 20px var(--background-color), -10px 10px 20px 1px var(--background-color)"]
-                       [:dark:box-shadow "-20px -20px 0px 20px var(--background-color-inverse), -10px 10px 20px 1px var(--background-color-inverse)"] )
+                       [:box-shadow
+                        "-20px -20px 0px 20px var(--background-color), -10px 10px 20px 1px var(--background-color)"]
+                       [:dark:box-shadow
+                        "-20px -20px 0px 20px var(--background-color-inverse), -10px 10px 20px 1px var(--background-color-inverse)"] )
               [:div (sx :.flex-row-fs :ai--c :gap--1rem)
                [:h1 (sx :.component-section-header-label) 
                 [:a 
@@ -281,8 +285,9 @@
               ;; TODO - break this out into tabs component
               [:div 
                {:style            
-                {:--tablist-selected-tab-underline-thickness "2px"
-                 :--tablist-padding-end                      "0.5rem"}
+                ;; TODO - move to global vars
+                {"--tablist-selected-tab-underline-thickness" "2px"
+                 "--tablist-padding-end"                      "0.5rem"}
 
                 :class            
                 (css

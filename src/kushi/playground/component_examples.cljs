@@ -127,7 +127,8 @@
 (defn section-label [s]
   [:p 
    (sx :.example-section-label
-       :.serif
+       :ff--$serif-font-stack
+       :font-style--oblique
       ;; Include this if using cormorant serif face in :$serif-font-stack
       ;;  :.cormorant-section-label
       ;; Comment fs below if using cormorant serif face in :$serif-font-stack
@@ -205,25 +206,26 @@
 
 (defn example-modal-trigger [modal-id]
   [button
-   {:class (sx :.minimal
-               :.accent
-               :.xxsmall
-               :.wee-bold
-               :.pill
-               :pb--0.4em
-               :.accent.minimal:hover:background-color--$accent-50
-               :dark:.accent.minimal:hover:background-color--$accent-800
+   {:class    
+    (css :.minimal
+         :.accent
+         :.pill
+         :pb--0.4em
+         :fw--$wee-bold
+         :fs--$xxsmall
+         :.accent.minimal:hover:background-color--$accent-50
+         :dark:.accent.minimal:hover:background-color--$accent-800
 
                ;; Next 3 styles will give it a link-button style
-               #_:p--0
-               #_:hover&.accent.minimal:bgc--transparent
-               #_[:hover:after {:content  "\"\""
-                                :position :absolute
-                                :w        :100%
-                                :h        :1px
-                                :o        0.5
-                                :bgc      :$accent-foreground
-                                :top      "calc(100% + 2px)"}])
+         #_:p--0
+         #_:hover&.accent.minimal:bgc--transparent
+         #_[:hover:after {:content  "\"\""
+                          :position :absolute
+                          :w        :100%
+                          :h        :1px
+                          :o        0.5
+                          :bgc      :$accent-foreground
+                          :top      "calc(100% + 2px)"}])
     :on-click (fn* [] (open-kushi-modal modal-id))}
    [icon (sx :.small :.extra-bold) :code]
    "Code"])
@@ -317,7 +319,7 @@
 (defcom copy-to-clipboard-button
   [button
    (merge-attrs
-    {:class    (sx :.accent :.minimal :p--7px)
+    {:class    (css :.accent :.minimal :p--7px)
      :on-click #(d/copy-to-clipboard!
                  (or (some->> &opts 
                               :clipboard-parent-sel
@@ -332,15 +334,12 @@
       "Copied!"
 
       :-text-on-click-tooltip-class
-      (first
-       (:class
-        (sx [:--tooltip-background-color :$accent-filled-background-color])))
+      (css [:--tooltip-background-color :$accent-filled-background-color])
 
       :-placement                   
       [:block-start :inline-end]})
     &attrs)
    [icon (sx :fs--medium) mui.svg/content-copy]])
-
 
 (defn- snippet-section
   [{:keys [header
@@ -353,19 +352,20 @@
                 ) 
    header
    [:section 
-    (sx :.relative
-        :.code
+    (sx :.code
         :.xsmall
         :xsm:p--1.5em
+        :position--relative
         :p--1.0em
         :pie--3.5em
         :xsm:pie--2.25em
-        :w--100%)
+        :w--100%
+        :lh--1.2)
     (when-let [attrs (some->> copyable
                               (hash-map :-text-to-copy)
                               (merge-attrs 
-                               ;; TODO - can this be done without !
-                               (sx :.top-right-corner-inside!)
+                               ;; TODO - can this be done without :.top-right-corner-inside!
+                               (sx :.top-right-corner-inside)
                                {:-clipboard-parent-sel ".kushi-modal"}))]
       [copy-to-clipboard-button attrs])
     preformatted]])

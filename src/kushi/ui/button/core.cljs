@@ -66,7 +66,6 @@
             {:style         (css-vars-map pis pie)
              :class         (css
                              ".kushi-button"
-                             :.bang
                              :.neutral
                              :.flex-row-c
                              :.transition

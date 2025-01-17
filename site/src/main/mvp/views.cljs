@@ -4,7 +4,7 @@
    [kushi.css.core :refer [sx token->ms]]
    [kushi.playground.layout :as layout]
    [kushi.playground.nav :as nav]
-  ;;  [kushi.playground.components :refer [playground-components]]
+   [kushi.playground.components :refer [playground-components]]
    [domo.core :as domo]
    [kushi.playground.about :as about]
    [clojure.string :as string]
@@ -15,13 +15,12 @@
 
 (def routes 
   {
-  ;;  ["components"] {:content layout/component-playground-content
-  ;;                  :args    playground-components
-  ;;                  :label   "Components Playground"}
+   ["components"] {:content layout/component-playground-content
+                   :args    playground-components
+                   :label   "Components Playground"}
    ["colors"]     {:content about/kushi-colors-about}
    ["typography"] {:content about/kushi-typography-about}
-  ;;  ["intro"]      {:content about/kushi-about}
-   })
+   ["intro"]      {:content about/kushi-about}})
 
 (defn main-view []
   (.setAttribute (domo/el-by-id "app")

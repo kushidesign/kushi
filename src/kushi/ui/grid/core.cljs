@@ -1,6 +1,5 @@
 (ns kushi.ui.grid.core
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (merge-attrs)]
    [kushi.css.core :refer (css css-vars-map)]
    [kushi.ui.util :refer [aspect-ratio->number]]
@@ -40,7 +39,7 @@
         opts
 
         ar                                         
-        (aspect-ratio->number (? aspect-ratio))
+        (aspect-ratio->number aspect-ratio)
 
         aspect-ratio-pct                           
         (str (* 100 (if (number? ar) (js/Math.abs ar) 1)) "%")
