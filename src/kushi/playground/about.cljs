@@ -3,16 +3,14 @@
             [domo.core :refer (copy-to-clipboard!)]
             [me.flowthing.pp :refer [pprint]]
             [kushi.color :refer [colors->tokens]]
-            [kushi.css.core :refer (sx css merge-attrs css-vars-map trans)]
+            [kushi.css.core :refer (sx css merge-attrs css-vars-map)]
             [kushi.playground.colors :as playground.colors]
             [kushi.playground.nav :refer [route!]]
             [kushi.playground.shared-styles]
-            [kushi.playground.state :as state]
             [kushi.ui.button.core :refer [button]]
-            [kushi.ui.core :refer [defcom keyed]]
+            [kushi.ui.core :refer [keyed]]
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer [icon]]
-            [kushi.ui.label.core :refer [label]]
             [kushi.ui.link.core :refer [link]]
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
             [kushi.ui.tooltip.core :refer [tooltip-attrs]]))
@@ -26,29 +24,44 @@
 
 (defn color-scales2
   [{:keys [colorlist]}]
-  (let [tokens (colors->tokens kushi.colors/colors {:format :css})
-        coll   (keep (fn [[k v]]
-                       (let [color*       (or (->> k name (re-find #"^--([a-zAZ-_]+)-([0-9]+)$"))
-                                              (->> k name (re-find #"^\$([a-zAZ-_]+)-([0-9]+)$")))
-                             color-name   (some-> color* second)
-                             color-level  (some-> color* last js/parseInt)
-                             color-token? (contains? (into #{} colorlist) (keyword color-name))]
-                         (name k) #_(keyed color*)
-                         (when color-token?
-                           {:color*      color*
-                            :color-name  color-name
-                            :color-level color-level
-                            :value       v
-                            :token       k})))
-                     (partition 2 tokens))
-        ret    (mapv #(let [scale (into []
-                                        (keep (fn [{:keys [color-name token value color-level]}]
-                                                (when (= color-name (name %))
-                                                  [token value color-level]))
-                                              coll))]
-                        {:color-name %
-                         :scale      scale})
-                     colorlist)]
+  (let [tokens
+        (colors->tokens kushi.colors/colors {:format :css})
+
+        coll   
+        (keep (fn [[k v]]
+                (let [color*       
+                      (or (->> k name (re-find #"^--([a-zAZ-_]+)-([0-9]+)$"))
+                          (->> k name (re-find #"^\$([a-zAZ-_]+)-([0-9]+)$")))
+
+                      color-name   
+                      (some-> color* second)
+
+                      color-level  
+                      (some-> color* last js/parseInt)
+
+                      color-token? 
+                      (contains? (into #{} colorlist) (keyword color-name))]
+                  #_(name k)
+                  #_(keyed color*)
+                  (when color-token?
+                    {:color*      color*
+                     :color-name  color-name
+                     :color-level color-level
+                     :value       v
+                     :token       k})))
+              (partition 2 tokens))
+
+        ret    
+        (mapv #(let [scale (into []
+                                 (keep (fn [{:keys [color-name
+                                                    token value
+                                                    color-level]}]
+                                         (when (= color-name (name %))
+                                           [token value color-level]))
+                                       coll))]
+                 {:color-name %
+                  :scale      scale})
+              colorlist)]
     (keyed coll ret)
     ret))
 
@@ -196,10 +209,11 @@
         formatted-code)]
    [:div (sx :.absolute-fill)]
    [copy-to-clipboard-button
-    (sx :position--absolute
-        :inset-block-start--0
-        :inset-inline-end--0
-        {:on-click #(copy-to-clipboard! s)})]])
+    (merge-attrs
+     (sx :position--absolute
+         :inset-block-start--0
+         :inset-inline-end--0)
+     {:on-click #(copy-to-clipboard! s)})]])
 
 
 (def typography-tokens-snippet

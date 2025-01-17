@@ -20,8 +20,7 @@
                                     css-vars
                                     css-vars-map
                                     lightning-opts
-                                    lightning
-                                    token->ms]]
+                                    lightning]]
             [clojure.string :as string]
             [kushi.css.specs :as specs]
             [clojure.set :as set]
@@ -46,7 +45,39 @@
          :transform                                   :$label-scale-factor
          :before:content                              :$step-marker-content}))
 
-(? (+ 1 1))
+
+;; (? (css-block "text-shadow--5px:5px:10px:red|-5px:-5px:10px:blue"))
+
+
+;; (def v1 (css-block :box-shadow--0:0:0:12px:$shadow-1||$shadow-1b|0:0:0:5px:$shadow-2||$shadow-2b))
+;; (def v2 (css-block [:box-shadow "0 0 0 12px $shadow-1||$shadow-1b, 0 0 0 5px $shadow-2||$shadow-2b"]))
+;; (? (= v1 (? v2)))
+
+;; (? (css-block [:box-shadow "0 0 0 12px $my-gold||$my-silver"]))
+
+;; (? (-> "$shadow-1||$shadow-2|$shadow-3||$shadow-4"
+;;        (string/replace #"\|\|" "____*DOUBLE-BAR*____")
+;;        (string/split #"\|")
+;;        (->> (map #(string/replace % #"____\*DOUBLE-BAR\*____" "||")))
+;;        ))
+
+;; (? (css-rule* ".wtf"
+;;               ;; [:fs--$large||$small||$xsmall||$no]
+;;               ;; [[:fs "$large||$small||$xsmall||$no"]]
+;;               ;; [[:ff "$large||regular||$gold|$bang"]]
+;;               [[:box-shadow--0:0:0:10px:red|0:0:0:10px:black]]
+;;               nil nil))
+
+;; (? (css-rule* ".wtf" [[">*:not([data-kushi-playground-sidenav]):pi" :1.25rem]] nil nil))
+;; (? (css-rule* ".wtf" [[">*:last-child:pi" :1.25rem]] nil nil))
+;; (? (css-rule* ".wtf" [:>*:last-child:pi--1.25rem] nil nil))
+;; (? (css-rule* ".wtf" [{:.foo:last-child:c :red}] nil nil))
+;; (? (css-rule* ".wtf" [["input:checked+.kushi-label:c" :red]] nil nil))
+;; (? (css-rule* ".wtf" [["input:checked:c" :red]] nil nil))
+
+
+(? (s/valid? ::specs/css-value "\"2||3\""))
+(? (s/valid? ::specs/css-value "2||3"))
 
 (deftest sample (is (= 1 1)))
 
@@ -115,22 +146,22 @@
   ;;                                :border-left-width :0!important}]
   )
 
-(!? (-> (css-rule ".bar"
-                  :c--red
-                  :_.bar:c--green)
-        lightning))
+;; (!? (-> (css-rule ".bar"
+;;                   :c--red
+;;                   :_.bar:c--green)
+;;         lightning))
 
-(!? (update-in {} ["new vector"] conj {:a 1}))
+;; (!? (update-in {} ["new vector"] conj {:a 1}))
 
-(!? (css-rule* "@layer bang .foo_bar__L12_C11" [:c--red]
-              (with-meta (list 'css :w--100%)
-                {:file "wtf.cljs" :line 20 :column 12})
-              nil))
+;; (!? (css-rule* "@layer bang .foo_bar__L12_C11" [:c--red]
+;;               (with-meta (list 'css :w--100%)
+;;                 {:file "wtf.cljs" :line 20 :column 12})
+;;               nil))
 
-(!? (css-rule* ".foo_bar__L12_C11" [:c--red]
-              (with-meta (list 'css :w--100%)
-                {:file "wtf.cljs" :line 20 :column 12})
-              nil))
+;; (!? (css-rule* ".foo_bar__L12_C11" [:c--red]
+;;               (with-meta (list 'css :w--100%)
+;;                 {:file "wtf.cljs" :line 20 :column 12})
+;;               nil))
 
 ;;  (def css-data (volatile! {:defcss [] :css []}))
 

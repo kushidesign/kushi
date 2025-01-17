@@ -25,26 +25,25 @@
   [:90% {:transform "rotate(-5deg) scale(1.55)"}]
   [:100% {:transform "rotate(0deg) scale(1.55)"}])
 
-
 (def shared-values
   (let-map [topnav-height                         0
             main-view-wrapper-padding-block-start 0
             scroll-to-component-menu-item-y       (- (+ topnav-height main-view-wrapper-padding-block-start))
             scroll-window-by-px                   2]))
 
-(defcss ".twirl"
+(defcss "@layer kushi-playground-shared .twirl"
   :animation--y-axis-spinner:12s:linear:infinite)
 
-(defcss ".twirl2x"
+(defcss "@layer kushi-playground-shared .twirl2x"
   :animation--y-axis-spinner:12s:linear:infinite)
 
-(defcss ".twirl4x"
+(defcss "@layer kushi-playground-shared .twirl4x"
   :animation--y-axis-spinner:12s:linear:infinite)
 
-(defcss ".section-focused"
+(defcss "@layer kushi-playground-shared .section-focused"
   :bgc--#fafafa)
 
-(defcss ".kushi-opts-grid-row-item"
+(defcss "@layer kushi-playground-shared .kushi-opts-grid-row-item"
   :padding-block--1.5em
   :bbe--1px:solid:#efefef
   :bc--$gray-200
@@ -53,7 +52,7 @@
   :_a:td--underline)
 
 ;; TODO use :dark stack?
-(defcss ".codebox"
+(defcss "@layer kushi-playground-shared .codebox"
   :.transition
   {:p                         :20px:50px:20px:20px
    :bgc                       :$accent-50
@@ -62,8 +61,8 @@
    "has-ancestor(.dark):c"    :$accent-100
    :mbs                       :7px
    :fs                        :$kushi-playground-codebox-snippet_font-size||$xsmall
-   :_.code:fs                :$kushi-playground-codebox-snippet_font-size||$xsmall
-   :_code:fs                 :$kushi-playground-codebox-snippet_font-size||$xsmall
+   :_.code:fs                 :$kushi-playground-codebox-snippet_font-size||$xsmall
+   :_code:fs                  :$kushi-playground-codebox-snippet_font-size||$xsmall
    :_.code:bgc               :transparent
    :_code:bgc                :transparent
    :fw                        400
@@ -72,12 +71,12 @@
    :bisc                      :$accent-200
    "has-ancestor(.dark):bisc" :$accent-750})
 
-(defcss ".kushi-treenav-section-level-1"
+(defcss "@layer kushi-playground-shared .kushi-treenav-section-level-1"
   :mbs--1em
   :>span:mbs--0.5em
   :first-child:>span:mbs--0em)
 
-(defcss ".kushi-treenav-section-level-1-header"
+(defcss "@layer kushi-playground-shared .kushi-treenav-section-level-1-header"
   :cursor--pointer
   :fs--$kushi-playground-sidenav-section-header_font-size
   :d--block
@@ -89,7 +88,7 @@
   :biss--solid
   :bisc--transparent)
 
-(defcss ".kushi-playground-main-section"
+(defcss "@layer kushi-playground-shared .kushi-playground-main-section"
   {:flex-grow 0
    :bgc       :transparent
    :w         :100%
@@ -97,7 +96,7 @@
    :md:w      "calc(var(--components-menu-width) - 80px)"
    :xl:w      :$components-menu-width})
 
-(defcss ".kushi-playground-meta-desc-label"
+(defcss "@layer kushi-playground-shared .kushi-playground-meta-desc-label"
   {:fs         :$kushi-playground-meta-desc-label_font-size||$xsmall
    :fw         :$kushi-playground-meta-desc-label_font-weight||$wee-bold
    :font-style :$kushi-playground-meta-desc-label_font-style||italic
@@ -105,19 +104,19 @@
    :c          :$neutral-secondary-foreground
    :dark:c     :$neutral-secondary-foreground-inverse })
 
-(defcss ".kushi-treenav-section-header"
+(defcss "@layer kushi-playground-shared .kushi-treenav-section-header"
   :.relative
   :.flex-row-c
   :md:jc--fs)
 
-(defcss ".hover-trailing-fade-out"
+(defcss "@layer kushi-playground-shared .hover-trailing-fade-out"
   :transition-duration--350ms
   :hover:transition-duration--0ms)
 
 
 ;; TODO maybe remove this class?
 
-(defcss ".kushi-playground-with-rainbow-keys"
+(defcss "@layer kushi-playground-shared .kushi-playground-with-rainbow-keys"
   ;trailing fade out rainbow keys
   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out:hover" {:bgc :$gold-50 :color :$gold-1000}]
   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :color :$neutral-1000}]
@@ -147,9 +146,9 @@
   ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out:hover" {:bgc :$yellow-950 :c :$yellow-50}]
   )
 
-(defcss ".no-hover-bgc" :bgc--transparent!important)
+(defcss "@layer kushi-playground-shared .no-hover-bgc" :bgc--transparent!important)
 
-(defcss ".kushi-demo-stage"
+(defcss "@layer kushi-playground-shared .kushi-demo-stage"
   :min-height--135px
   :p--30px:15px
   :bw--1px
@@ -159,15 +158,15 @@
   :mb--10px
   :_.kushi-input:min-width--220px)
 
-(defcss ".kushi-playground-demobox"
+(defcss "@layer kushi-playground-shared .kushi-playground-demobox"
   :_.kushi-playground-examples-input-row-wrapper:bbe--0px:solid:#eee
   :_.kushi-playground-examples-input-row-wrapper:min-height--50px
   :_.kushi-playground-examples-input-row-wrapper:padding-block--0.75em
-  :md:&_.kushi-playground-examples-input-row-wrapper:padding-block--0.5em
+  :md:_.kushi-playground-examples-input-row-wrapper:padding-block--0.5em
   :_.kushi-radio-button-wrapper:margin-inline--0:0.666em
   :_.kushi-radio-button-wrapper:margin-block--0.125em)
 
-(defcss ".kushi-playground-demobox-ui-icon"
+(defcss "@layer kushi-playground-shared .kushi-playground-demobox-ui-icon"
   :fs--1rem!important
   :>div.kushi-icon>span:fs--1rem!important
   :b--none!important
@@ -179,7 +178,7 @@
   :hover:bgc--transparent!important
   :active:bgc--transparent!important)
 
-(defcss ".kushi-playground-demobox-ui-icon-stage-control"
+(defcss "@layer kushi-playground-shared .kushi-playground-demobox-ui-icon-stage-control"
   :p--0.5em!important
   :hover:bgc--$neutral-200!important
   :dark:hover:bgc--$neutral-750!important
@@ -189,12 +188,12 @@
   ["dark:[aria-selected='true']:bgc" :$neutral-750!important]
   )
 
-(defcss ".truncate"
+(defcss "@layer kushi-playground-shared .truncate"
   :overflow--hidden
   :text-overflow--ellipsis
   :white-space--nowrap)
 
-(defcss ".kushi-playground-dev-mode-portal"
+(defcss "@layer kushi-playground-shared .kushi-playground-dev-mode-portal"
   :.transition
   :position--fixed
   :transition-duration--$xxslow
@@ -207,11 +206,11 @@
   :zi--10000)
 
 
-(defcss ".kushi-playground-dev-mode-hidden"
+(defcss "@layer kushi-playground-shared .kushi-playground-dev-mode-hidden"
   :overflow--hidden)
 
 
-(defcss ".kushi-playground-dev-mode"
+(defcss "@layer kushi-playground-shared .kushi-playground-dev-mode"
   :>#app:o--0
   :>#app:transition--all
   :>#app:transition-duration--500ms
@@ -220,7 +219,7 @@
   :>#kushi-playground-dev-mode-portal:h--100vh)
 
 
-(defcss ".kushi-playground-sidenav-wrapper"
+(defcss "@layer kushi-playground-shared .kushi-playground-sidenav-wrapper"
   :.grow
   :h--100vh
   :d--none
@@ -233,7 +232,7 @@
 
 
 ;; New May 2024
-(defcss ".playground-example-row-bounded"
+(defcss "@layer kushi-playground-shared .playground-example-row-bounded"
   [:_.instance-code {:border-radius :$rounded
                      :w             :fit-content
                      :bgc           :transparent
@@ -243,7 +242,7 @@
   [:dark:_.instance-code {:bgc :transparent
                           :b   :1px:solid:$neutral-850}])
 
-(defcss ".playground-example-row-bounded-parent"
+(defcss "@layer kushi-playground-shared .playground-example-row-bounded-parent"
   {:border-radius :$rounded
    :w             :fit-content
    :bgc           :transparent
@@ -253,10 +252,10 @@
    :dark:b        :1px:solid:$neutral-850})
 
 
-(defcss ".playground-pane-box-shadow"
+(defcss "@layer kushi-playground-shared .playground-pane-box-shadow"
   :box-shadow--0:0:13px:8px:white|0:0:10px:9px:white)
 
-(defcss ".all-components-sidenav-header"
+(defcss "@layer kushi-playground-shared .all-components-sidenav-header"
   :.flex-col-c
   ;; :.semi-bold
   :.foreground-secondary
@@ -264,43 +263,43 @@
   :ai--c
   :height--$navbar-height)
 
-(defcss ".neutralize"
+(defcss "@layer kushi-playground-shared .neutralize"
   :.transition
   :bgc--$background-color
   :dark:bgc--$background-color-inverse
   :c--$foreground-color
   :dark:c--$foreground-color-inverse)
 
-(defcss ".neutralize-secondary"
+(defcss "@layer kushi-playground-shared .neutralize-secondary"
   :.transition
   :bgc--$background-color
   :dark:bgc--$background-color-inverse
   :c--$neutral-secondary-foreground
   :dark:c--$neutral-secondary-foreground-inverse)
 
-(defcss ".component-section-header-label"
-  :fs--$semi-bold
+(defcss "@layer kushi-playground-shared .component-section-header-label"
+  :fw--$semi-bold
   :fs--$xlarge
   :tt--capitalize
   :lh--0.75em)
 
-(defcss ".cormorant-section-label" 
+(defcss "@layer kushi-playground-shared .cormorant-section-label" 
   :fw--$bold
   :dark:fw--$wee-bold
   :fs--17.5px)
 
 ;; TODO - This version won't work with out-dated browsers because of color-mix
-;; (defcss ".bg-scrim-gradient
+;; (defcss "@layer kushi-playground-shared .bg-scrim-gradient
 ;;   {:bgi                  '(linear-gradient "to bottom" "var(--background-color) var(--menu-height)" "color-mix(in srgb, var(--background-color), transparent calc(100% - var(--transparency-at-end, 65%)))") 
 ;;    :dark:bgi             '(linear-gradient "to bottom" "var(--background-color-inverse) var(--menu-height)" "color-mix(in srgb, var(--background-color-inverse), transparent calc(100% - var(--transparency-at-end, 65%)))")})
 
 ;; TODO - This version will
-(defcss ".bg-scrim-gradient"
-  {:bgi      "linear-gradient(to bottom, var(--background-color) var(--menu-height), rgba(255 255 255 / 0.65)" 
-   :dark:bgi "linear-gradient(to bottom, var(--background-color-inverse) var(--menu-height), rgba(0 0 0 / 0.65)"})
+(defcss "@layer kushi-playground-shared .bg-scrim-gradient"
+  {:bgi      "linear-gradient(to bottom, var(--background-color) var(--menu-height), rgba(255 255 255 / 0.65))" 
+   :dark:bgi "linear-gradient(to bottom, var(--background-color-inverse) var(--menu-height), rgba(0 0 0 / 0.65))"})
 
 
-(defcss ".header-menu-transition-group"
+(defcss "@layer kushi-playground-shared .header-menu-transition-group"
   ;; :.xxxslow
   ;; :.debug-blue
   )

@@ -1,6 +1,6 @@
 (ns kushi.ui.snippet.core
   (:require
-   [kushi.core :refer (sx merge-attrs) :refer-macros (sx)]
+   [kushi.css.core :refer (sx merge-attrs)]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.icon.core :refer (icon)]
@@ -18,11 +18,11 @@
   (let [children (or children*
                      [[button
                        (merge-attrs
-                        (sx 'kushi-copy-to-clipboard-button
-                            :p--0px
+                        (sx :.kushi-copy-to-clipboard-button
                             :.minimal
                             :.accent
-                            :.small)
+                            :p--0px
+                            :fs--$small)
                         (tooltip-attrs
                          {:-text                        "Click to copy"
                           :-text-on-click               "Copied!"
@@ -31,10 +31,10 @@
                        [icon mui.svg/content-copy]]])]
     (into [:div
            (merge-attrs
-            (sx 'kushi-copy-to-clipboard-button-wrapper
+            (sx :.kushi-copy-to-clipboard-button-wrapper
                 :.flex-row-c
-                :.pointer
                 :.pill
+                :cursor--pointer
                 :ai--center
                 :w--22px
                 :h--22px
@@ -46,9 +46,9 @@
                 :m--0.4rem
                 :hover:bgc--white
                 :bgi--none
-                :bgc--transparent
-                {:type  :text
-                 :value "copy"})
+                :bgc--transparent)
+            {:type  :text
+             :value "copy"}
             (dissoc opts :-placement))]
           children)))
 
@@ -59,12 +59,13 @@
         {:keys [text-to-display text-to-copy on-copy-click]} opts]
     (into [:div
            (merge-attrs
-            (sx 'kushi-snippet
-                :.relative
+            (sx :.kushi-snippet
                 :.codebox
-                {:data-kushi-ui :snippet})
+                :position--relative)
+            {:data-kushi-ui :snippet}
             attrs)
            [:span text-to-display]
            [copy-to-clipboard-button
-            {:on-click (or on-copy-click #(copy-to-clipboard! text-to-copy))}]]
+            {:on-click (or on-copy-click
+                           #(copy-to-clipboard! text-to-copy))}]]
           children)))

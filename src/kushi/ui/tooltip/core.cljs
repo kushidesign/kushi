@@ -6,10 +6,10 @@
             [kushi.css.core :refer (token->ms)]
             [kushi.ui.core :refer (keyed)]
             [kushi.ui.dom.pane.core :as pane]
+            [kushi.ui.util :as util :refer [maybe]]
             ;; Import this styles ns to create defclasses
             [kushi.ui.dom.pane.placement :refer [user-placement]]
-            [kushi.ui.dom.pane.styles]
-            [kushi.ui.util :as util :refer [maybe]]))
+            [kushi.ui.dom.pane.styles]))
 
 (defn valid-tooltip-text-coll? [x]
   (and (seq x) 

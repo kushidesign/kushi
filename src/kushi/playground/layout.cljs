@@ -2,7 +2,7 @@
   (:require [domo.core :as domo]
             [clojure.string :as string]
             [kushi.ui.divisor.core :refer (divisor)]
-            [kushi.css.core :refer [sx css merge-attrs defcss]]
+            [kushi.css.core :refer [?css sx css merge-attrs defcss]]
             [kushi.ui.core :refer [defcom]]
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.spinner.core :refer [propeller]]
@@ -153,7 +153,7 @@
     [:section 
      {:class
       (css :min-height--200px
-           [">*:not([data-kushi-playground-sidenav])" {:pi :1.25rem}]
+           [">*:not([data-kushi-playground-sidenav]):pi" :1.25rem]
            ["md:>*:not([data-kushi-playground-sidenav]):pi" "4rem"]
            :>section>p:max-width--605px)
       :data-kushi-playground-section

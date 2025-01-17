@@ -11,16 +11,17 @@
   (let [{:keys [color bgc]} &opts]
     [label
      [:span (merge-attrs
-             (sx :.flex-row-c
-                 :fs--$kushi-playground-text-sample-sticker_font-size||$small
-                 :sm:w--54px
-                 :sm:h--54px
-                 :w--44px
-                 :h--44px
-                 :border-radius--50%
-                 :mis--10px
-                 [:c color]
-                 [:bgc bgc])
+             {:style (css-vars-map color bgc)
+              :class (css :.flex-row-c
+                          :fs--$kushi-playground-text-sample-sticker_font-size||$small
+                          :sm:w--54px
+                          :sm:h--54px
+                          :w--44px
+                          :h--44px
+                          :border-radius--50%
+                          :mis--10px
+                          :c--$color
+                          :bgc--$bgc)}
              &attrs)
       "Text"]]))
 

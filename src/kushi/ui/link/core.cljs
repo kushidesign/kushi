@@ -1,6 +1,5 @@
 (ns kushi.ui.link.core
-  (:require [kushi.core :refer (merge-attrs)]
-            [kushi.css.core :refer (css)]
+  (:require [kushi.css.core :refer (css merge-attrs)]
             [kushi.ui.core :refer (opts+children)]))
 
 (defn link
