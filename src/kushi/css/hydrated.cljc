@@ -22,6 +22,21 @@
 (defn as-str [x]
   (str (if (or (keyword? x) (symbol? x)) (name x) x)))
 
+(defn hydrated-css-var-fallback [s]
+  (when s
+    (str ", " 
+         (if (string/starts-with? s "$")
+           (str "var(--" (subs s 1) ")")
+           s))))
+
+(defn hydrated-css-var-with-fallbacks [s]
+  (let [[a b c] 
+        (take 3 (string/split s #"\|\|"))]
+    (str "var(--"
+         (subs a 1)
+         (hydrated-css-var-fallback b)
+         (hydrated-css-var-fallback c)
+         ")")))
 
 (defn hydrated-val 
   [p v]
@@ -32,15 +47,26 @@
                             [:enums np]))]
       (get m nv nv)
 
-      (let [vars-hydrated (str+ nv)
-            ret           (->> (string/split vars-hydrated #":")
-                               (map 
-                                #(if (string/starts-with? % "$")
-                                   (str "var(--" (subs % 1) ")")
-                                   %))
-                               (string/join " "))]
-        (string/replace ret #"\|" ", ")))))
+      (let [runtime-vars-hydrated
+            (str+ nv)
 
+            css-comma-separated-coll
+            (-> runtime-vars-hydrated
+                (string/replace #"\|\|" "____*DOUBLE-BAR*____")
+                (string/split #"\|")
+                (->> (map #(string/replace % #"____\*DOUBLE-BAR\*____" "||"))))
+
+            ret                   
+            (->> css-comma-separated-coll
+                 (map 
+                  (fn [s]
+                    (map #(if (string/starts-with? % "$")
+                            (hydrated-css-var-with-fallbacks %)
+                            %)
+                         (string/split s #":"))))
+                 (map #(string/join " " %))
+                 (string/join ", "))]
+        ret))))
 
 (defn hydrated-prop 
   [v]
@@ -352,7 +378,7 @@
           f             (partial modf last-index prop?)
           stack*        (into [] (map-indexed f stack))
           ;; Currently using (stack-unbunched stack*) to create `nested-stack*`.
-          ;; An alternate approach would be (stack-with-bunched. 
+          ;; An alternate approach would be stack-with-bunched. 
           nested-stack* (stack-unbunched stack*)
           ret           (nested-stack nested-stack* v prop?)]
       (!?

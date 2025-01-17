@@ -141,13 +141,25 @@
 (def has-ancestor-re
   #"^has-ancestor\(([^\)]+)\)")
 
-;; ----------------------------------------------------------------------------
+(def css-double-quoted-string-value-re "\"[^\"]*\"")
+
+(def only-valid-in-css-values-supplied-as-keywords
+  ["\\$"
+   "\\|\\|"])
+
+(def only-valid-in-css-values-supplied-as-keywords-re
+  (re-pattern 
+   (string/join
+    "|"
+    only-valid-in-css-values-supplied-as-keywords)))
+
+
+;; -----------------------------------------------------------------------------
 ;; # Specs 
-;; ----------------------------------------------------------------------------
+;; -----------------------------------------------------------------------------
 
 
 ;; ## Specs for shared use -----------------------------------------------------
-
 (s/def ::css-file-path 
   (s/and string? #(re-find #"\.css$" %)))
 
@@ -160,17 +172,19 @@
 (s/def ::s|kw|num
   #(or (keyword? %) (string? %) (number? %)))
 
+(s/def ::css-double-quoted-string-value
+  #(re-find (re-pattern-be css-double-quoted-string-value-re) %))
+
 
 ;; ## Specs for css-selectors --------------------------------------------------
-
 (s/def ::css-selector
   (s/and 
    string?
    #(re-find css-selector-re %)))
 
 
-;; ## Specs for at-rule-selector -----------------------------------------------
 
+;; ## Specs for at-rule-selector -----------------------------------------------
 (s/def ::at-selector
   (s/and 
    string?
@@ -186,16 +200,20 @@
    string?
    #(re-find #"^@layer [a-z_-]+.*$" %)))
 
+
 ;; ## Specs for css-values -----------------------------------------------------
-
-(s/def ::css-value ::s|kw|num)
-
+(s/def ::css-value
+  (s/and ::s|kw|num
+         #(if (and (s/valid? ::s|kw %)
+                   (not (s/valid? ::css-double-quoted-string-value (name %))))
+            (not (re-find 
+                  only-valid-in-css-values-supplied-as-keywords-re
+                  %))
+            %)))
 
 
 ;; ## Specs for css-props ------------------------------------------------------
-
 ;; TODO Do we need another one for just :css-prop ?
-
 (s/def ::css-prop-stack
   (s/and ::s|kw
          #(re-find css-prop-stack-re (name %))))
@@ -231,9 +249,7 @@
   (s/tuple ::keyframe-name ::style-map))
 
 
-
 ;; ## Specs for tokenized keywords ---------------------------------------------
-
 (s/def ::tok-kw
   (s/and keyword? #(re-find tok-kw-re (name %))))
 
