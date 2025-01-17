@@ -203,14 +203,12 @@
 
 ;; ## Specs for css-values -----------------------------------------------------
 (s/def ::css-value
-  (s/and ::s|kw|num
-         #(if (and (s/valid? ::s|kw %)
-                   (not (s/valid? ::css-double-quoted-string-value (name %))))
-            (not (re-find 
-                  only-valid-in-css-values-supplied-as-keywords-re
-                  %))
-            %)))
-
+  ::s|kw|num
+  #_(s/and ::s|kw|num
+         #(if (string? %)
+            (not (re-find only-valid-in-css-values-supplied-as-keywords-re
+                          %))
+            true)))
 
 ;; ## Specs for css-props ------------------------------------------------------
 ;; TODO Do we need another one for just :css-prop ?
@@ -276,6 +274,10 @@
 
 ;; ## Specs for style-vecs -----------------------------------------------------
 
+;; TODO
+;; Adjust spec here for prohibiting things like "$" and "||" in css values
+;; passed as strings.
+;; It is used in kushi.css.hydrated/hydrated-stacks1
 (s/def ::semi-hydrated-style-vec
   (s/tuple ::css-prop-stack ::css-value))
 
