@@ -90,9 +90,11 @@
           peek
           keyword))
 
-
 (defn- pseudo? [s pseudos functional-pseudos]
-  (let [as-kw (keyword s)]
+  (let [as-kw (some-> s
+                      (string/split #"[\+\>\~\.\[\#\*]")
+                      (nth 0 nil)
+                      keyword)]
     (or (some #(= % as-kw) pseudos)
         (when-let [as-kw (functional-pseudo-kw s)]
           (some #(= % as-kw) functional-pseudos)))))
