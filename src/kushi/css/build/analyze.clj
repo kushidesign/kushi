@@ -142,7 +142,12 @@
         (re-find #"^kushi_playground" ns-str)
         "kushi-playground-styles"))
   
-
+(defn initialize-layer-vector! [css-new ns layer]
+  (when-not (get-in @css-new [:sources ns layer])
+    (vswap! css-new
+            assoc-in
+            [:sources ns layer]
+            [])))
 
 (defn css-call-data
   [{:keys [form ns-str ns args] :as m} 
@@ -177,6 +182,8 @@
                      update-in
                      [:utils :used/kushi-utility]
                      conj))
+
+    (initialize-layer-vector! css-new ns layer)
 
     (vswap! css-new
             update-in
@@ -278,7 +285,18 @@
         result
         (merge m
                (meta form)
-               (keyed sel-og sel args layer))]
+               (keyed sel-og sel args layer))
+        
+        ;; dbg?
+        ;; (= ns 'kushi.playground.shared-styles)
+        ]
+
+    ;; (when dbg?
+    ;;   (let [coll (get-in @css-new [:sources ns layer])]
+    ;;     (? :result [sel (some-> coll count)])
+    ;;     (!? :result (get-in @css-new [:sources ns layer]))))
+
+    (initialize-layer-vector! css-new ns layer)
 
     (vswap! css-new
             update-in
@@ -496,20 +514,23 @@
         (reduce 
          (fn [acc layer]
            (if-let [rulesets (get-in reified-css-new [:sources ns layer])]
-             (do #_(when (= ns 'kushi.ui.text-field.core)
-                     (? rulesets))
-                 (let [css-fp (css-file-path layer ns-str)]
-                   (spit-css-file css-fp layer rulesets css-new)
-                   (vswap! msg 
-                           str
-                           "\nWriting "
-                           (bling [:blue layer])
-                           " to "
-                           (bling [:olive css-fp]))
-                   (update-in acc [layer] merge (keyed css-fp ns rulesets))))
+             (let [css-fp (css-file-path layer ns-str)
+                  ;;  dbg? (= ns
+                  ;;          #_'kushi.ui.text-field.core
+                  ;;          'kushi.playground.shared-styles)
+                   ]
+               #_(when dbg? (? rulesets))
+               (spit-css-file css-fp layer rulesets css-new)
+               (vswap! msg 
+                       str
+                       "\nLayer "
+                       (bling [:blue layer])
+                       ", writing "
+                       (bling [:olive css-fp]))
+               (update-in acc [layer] merge (keyed css-fp ns rulesets)))
              acc))
-                {}
-                (keys kushi-layers))]
+         {}
+         (keys kushi-layers))]
     ret-new))
 
 (defn- analyze-sources
@@ -518,7 +539,13 @@
    [[_ rel-path] {:keys [ns file]}]]
   (let [ns-str    (string/replace (str ns) #"\." "_")
         all-forms (parse-all-forms file)
-        m         (keyed css-new ns ns-str rel-path file)]
+        m         (keyed css-new ns ns-str rel-path file)
+         
+        ;; dbg? (= ns
+        ;;         #_'kushi.ui.text-field.core
+        ;;         'kushi.playground.shared-styles)
+        ]
+    #_(when dbg? (? all-forms))
 
     #_(stage-callout ns)
 
@@ -1075,7 +1102,7 @@
   [filtered-build-sources release?]
   ;; TODO maybe deleted? and added? should be seqs or nils
   (write-css-imports "./site/kushi.edn" filtered-build-sources release?)
-  (create-css-bundle))
+  #_(create-css-bundle))
 
 
 ;; TODO 
