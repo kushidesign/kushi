@@ -1,12 +1,16 @@
 (ns kushi.css.hydrated
-  (:require [clojure.spec.alpha :as s]
-            [fireworks.core :refer [? !? ?> !?>]]
-            [clojure.string :as string]
-            [clojure.walk :refer [prewalk]]
-            [kushi.css.defs :as defs]
-            [kushi.css.shorthand :as shorthand]
-            [kushi.css.specs :as specs]
-            [kushi.css.util :refer [keyed]]))
+  (:require
+   [clojure.spec.alpha :as s]
+   [fireworks.core :refer [? !? ?> !?>]]
+   [clojure.string :as string]
+   [clojure.walk :refer [prewalk]]
+   [kushi.css.defs :as defs]
+   [kushi.css.shorthand :as shorthand]
+   [kushi.css.specs :as specs]
+   [kushi.css.util :refer [keyed
+                           vec-of-vecs?
+                           more-than-one?
+                           partition-by-pred]]))
 
 ;; TODO - would there ever be any quoted backticks in css val?
 (defn str+ [s]
@@ -366,6 +370,27 @@
       (string/split (name a) #":"))))
 
 
+(defn- sort-mqs [coll]
+  (sort-by (fn [[k]]
+             (let [[mq] (string/split (name k) #":")]
+               (get defs/index-by-media-query (keyword mq))))
+           coll))
+
+
+(defn- with-ordered-mqs [x] 
+  (and (vec-of-vecs? x)
+       (more-than-one? x)
+       (let [[mq others]
+             (partition-by-pred
+              #(let [[_ k] (re-find #"^([^\s:]+):"
+                                    (some-> % (nth 0) name))]
+                 (when k
+                   (or (get defs/media (keyword k))
+                       (get defs/media k))))
+              x)]
+         (when (more-than-one? mq)
+           (into [] (concat others (sort-mqs x)))))))
+
 ;; TODO make separate version for stack-with-bunched
 (defn hydrated-stacks1
   "If x is vec and first el is string or keyword representing a 'stack' 
@@ -406,7 +431,10 @@
            (hydrated-val hp (nth x 1 nil))])
 
         ;; Return vector of hydrated-style-vecs
-        x))))
+        ;; order media queries here
+        ;; TODO - maybe order media queries in core/order-nested rules, then
+        ;;        A/B test for perf.
+        (or (with-ordered-mqs x) x)))))
 
 (defn first-el-mod [v]
   (when (vector? v)
