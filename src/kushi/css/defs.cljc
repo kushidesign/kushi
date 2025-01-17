@@ -31,6 +31,12 @@
 
 (def media (apply array-map default-kushi-responsive))
 
+(def index-by-media-query
+  (into {}
+        (map-indexed (fn [i [k _]]
+                       [k i])
+                     media)))
+
 (def pseudo-elements*
   [:after
    :before
