@@ -51,6 +51,9 @@
    "user-design-tokens"
    "Global CSS custom properties defined in user's theme"
 
+   "kushi-utility"
+   "Baseline utility classes defined by kushi"
+
    "kushi-ui-theming" 
    "Theming rules for kushi.ui components"
 
@@ -59,10 +62,6 @@
 
    "kushi-ui-styles"
    "Styles defined for elements of kushi ui components."
-
-   ;; TODO - should this go up above kushi-ui stuff?
-   "kushi-utility"
-   "Baseline utility classes defined by kushi"
 
    "kushi-playground-shared" 
    "Styles to be shared across or within families of kushi.playground namespaces."
