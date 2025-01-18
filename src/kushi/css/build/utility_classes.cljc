@@ -188,6 +188,25 @@
                        :outline-offset :-1px}
    ;; End debugging utils 
    
+   :neutralize        {:bgc                        :$background-color
+                       :dark:bgc                   :$background-color-inverse
+                       :c                          :$foreground-color
+                       :dark:c                     :$foreground-color-inverse
+                       ;; TODO - really need these?
+                       :transition-property        :all
+                       :transition-timing-function :$transition-timing-function
+                       :transition-duration        :$transition-duration
+                       }
+
+   :neutralize-secondary {:bgc                        :$background-color
+                          :dark:bgc                   :$background-color-inverse
+                          :c                          :$neutral-secondary-foreground
+                          :dark:c                     :$neutral-secondary-foreground-inverse
+                          ;; TODO - really need these?
+                          :transition-property        :all
+                          :transition-timing-function :$transition-timing-function
+                          :transition-duration        :$transition-duration
+                          }
 
    ;; Borders
    :outlined              {:outline-color  :currentColor
