@@ -149,20 +149,37 @@
             [])))
 
 (defn css-call-data
-  [{:keys [form ns-str ns args] :as m} 
+  [{:keys [form ns-str ns-meta ns args] :as m} 
    css-new] 
   (let [sel-og
         (-> args first (maybe string?))
         
+        ;; debug?  (= ns 'kushi.ui.checkbox.demo)
+
         {:keys [layer sel]}
         (if sel-og
           (layer+sel sel-og)
           (loc-sel form ns-str))
 
+        ;; layer_1
+        ;; layer
+
+        layer-from-ns-info
+        (some-> ns-meta :kushi/layer)
+
         layer
         (or layer
+            layer-from-ns-info ;; <- layer assigned at ns -level
             (resolve-css-layer-for-shared-classes ns-str)
             "user-styles")
+
+        ;; _ (when debug? (? :pp 
+        ;;                   {:layer_1            layer_1
+        ;;                    :layer_2            layer
+        ;;                    :ns-meta            ns-meta
+        ;;                    :layer-from-ns-info layer-from-ns-info
+        ;;                    :macro              (first form)
+        ;;                    :sel-og             sel-og}))
 
         kushi-utils
         (filter #(when (clojure.spec.alpha/valid? ::kushi-specs/class-kw %)
@@ -252,7 +269,7 @@
                                   [:italic.blue k])}))
 
 (defn defcss-call-data
-  [{:keys [args form ns-str ns rel-path]
+  [{:keys [args form ns-str ns-meta ns rel-path]
     :as m}
    css-new]
   (let [[sel-og & args]
@@ -263,6 +280,15 @@
 
         layer
         (or layer "user-shared-styles")
+
+        ;; TODO incorporate this
+        ;; layer-from-ns-info
+        ;; (some-> ns-meta :kushi/layer)
+
+        ;; layer
+        ;; (or layer
+        ;;     layer-from-ns-info ;; <- layer assigned at ns -level
+        ;;     "user-shared-styles")
 
         _
         (when (string/starts-with? sel ".")
@@ -452,16 +478,30 @@
     (keyed init? deleted? added? new-or-deleted? existing-css-changed?)))
 
 (defn css-include-call-data
-  [{:keys [args form ns-str ns file] :as m}
+  [{:keys [args form ns-str ns-meta ns file] :as m}
    css-new]
   (let [sel-og (first args)
         {css-file-path :sel
          layer         :layer} (layer+sel sel-og)
+
+        
+        ;; TODO incorporate this
+        ;; layer-from-ns-info
+        ;; (some-> ns-meta :kushi/layer)
+
+        ;; layer
+        ;; (or layer
+        ;;     layer-from-ns-info ;; <- layer assigned at ns -level
+        ;;     (resolve-css-layer-for-shared-classes ns-str)
+        ;;     "user-shared-styles")
+
+
         ;; TODO - Currently assumes css is file in same dir as current
         ;;        ns of form. Check for relative filepath.
         layer (or layer
                   (resolve-css-layer-for-shared-classes ns-str)
                   "user-shared-styles")
+
         ;; TODO - is there a more efficient way to do this path manipulation?
         css-fp (-> file
                    .getPath
@@ -483,13 +523,22 @@
 
 (defn- analyze-forms
   [tl-form
-   {:keys [css-new ns-str rel-path ns file] :as tl-form-data}]
+   {:keys [css-new ns-str rel-path ns ns-meta file] :as tl-form-data}]
   (walk/prewalk
    (fn [form] 
      (let [[macro-sym & args] (when (list? form) form)
            kushi-macro?       (contains? kushi-macros macro-sym)]
        (if kushi-macro? 
-         (let [m (keyed form ns-str ns rel-path file macro-sym args)]
+         ;; TODO - possibly just (merge tl-form-data (keyed macro-sym args))
+         ;;      - then change sig of fns in cond branch
+         (let [m (keyed form
+                        ns-str
+                        ns
+                        ns-meta
+                        rel-path
+                        file
+                        macro-sym
+                        args)]
            (cond 
              (contains? '#{?css-include css-include} macro-sym)
              (css-include-call-data m css-new)
@@ -535,10 +584,11 @@
 (defn- analyze-sources
   [css-new
    acc
-   [[_ rel-path] {:keys [ns file]}]]
+   [[_ rel-path] {:keys [ns file ns-info] :as m-}]]
   (let [ns-str    (string/replace (str ns) #"\." "_")
+        ns-meta   (:meta ns-info)
         all-forms (parse-all-forms file)
-        m         (keyed css-new ns ns-str rel-path file)
+        m         (keyed css-new ns ns-str ns-meta rel-path file)
          
         ;; dbg? (= ns
         ;;         #_'kushi.ui.text-field.core
@@ -1120,6 +1170,10 @@
 ;;    - Rename css-new
 
 ;; 4) Keep track of changes or deletions in proj via shadow build-state
+
+;; 5) Get layer resolution from ns form working for
+;;    - defcss
+;;    - css-includes
 
 ;; 5) New build reporting system
 
