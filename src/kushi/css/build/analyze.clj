@@ -1187,6 +1187,13 @@
 
 ;; 9) New theming system
 
+;; Add to playground
+;; - link
+;; - divisor
+;; - accordian
+;; - avatar
+;; - label
+
 
 
 ;; 10)  
