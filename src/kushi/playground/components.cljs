@@ -1,8 +1,8 @@
 (ns ^:dev/always kushi.playground.components
  (:require 
   [kushi.css.core :refer [sx]]
-  ;; [kushi.ui.button.core :refer [button]]
-  ;; [kushi.ui.button.demo :as button.demo]
+  [kushi.ui.button.core :refer [button]]
+  [kushi.ui.button.demo :as button.demo]
   [kushi.ui.callout.core :refer [callout]]
   [kushi.ui.callout.demo :as callout.demo]
   [kushi.ui.card.core :refer [card]]
@@ -11,8 +11,8 @@
   [kushi.ui.collapse.demo :as collapse.demo]
   [kushi.ui.grid.core :refer [grid]]
   [kushi.ui.grid.demo :as grid.demo]
-  ;; [kushi.ui.icon.core :refer [icon]]
-  ;; [kushi.ui.icon.demo :as icon.demo]
+  [kushi.ui.icon.core :refer [icon]]
+  [kushi.ui.icon.demo :as icon.demo]
   [kushi.ui.checkbox.core :refer [checkbox]]
   [kushi.ui.checkbox.demo :as checkbox.demo]
   [kushi.ui.radio.core :refer [radio]]
@@ -37,13 +37,15 @@
   [kushi.ui.tooltip.demo :as tooltip.demo]
   ))
 
+
+
 (def playground-components 
   (filter 
   ;;  :label
    #(contains? #{
-                ;; "button"     
-                ;; "icon"       
-                "spinner"    
+            ;;    ;; "button"     
+                "icon"       
+                ;; ;; "spinner"    
                 ;; "switch"     
                 ;; ;; "radio"      
                 ;; ;; "checkbox"   
@@ -64,27 +66,27 @@
 
    ;; You need to wrap this whole collection in features macro
    [
-    ;; {:label          "button"
-    ;;    :component      button
-    ;;    :examples       button.demo/examples
-    ;;    :component-meta (-> button var meta)
-    ;;    :reqs           '[[kushi.ui.button.core :refer [button]]]
-    ;;    :variants-base  #{:rounded :filled :bordered :minimal}
-    ;;    :variants-order [:rounded :filled :bordered :minimal]
-    ;;    :variants-attrs {:rounded  (sx :.rounded)
-    ;;                     :filled   (sx :.rounded :.filled)
-    ;;                     :bordered (sx :.rounded :.bordered)
-    ;;                     :minimal  (sx :.rounded :.minimal)}}
+    {:label          "button"
+     :component      button
+     :examples       button.demo/examples
+     :component-meta (-> button var meta)
+     :reqs           '[[kushi.ui.button.core :refer [button]]]
+     :variants-base  #{:rounded :filled :bordered :minimal}
+     :variants-order [:rounded :filled :bordered :minimal]
+     :variants-attrs {:rounded  (sx :.rounded)
+                      :filled   (sx :.rounded :.filled)
+                      :bordered (sx :.rounded :.bordered)
+                      :minimal  (sx :.rounded :.minimal)}}
 
-    ;;   {:label          "icon"
-    ;;    :component      icon
-    ;;    :examples       icon.demo/examples
-    ;;    :component-meta (-> icon var meta)
-    ;;    :reqs           '[[kushi.ui.icon.core :refer [icon]]]
-    ;;    :variants-base  #{:outlined :filled}
-    ;;    :variants-order [:outlined :filled]
-    ;;    :variants-attrs {:filled   {:-icon-filled? true}
-    ;;                     :outlined {}}}
+      {:label          "icon"
+       :component      icon
+       :examples       icon.demo/examples
+       :component-meta (-> icon var meta)
+       :reqs           '[[kushi.ui.icon.core :refer [icon]]]
+       :variants-base  #{:outlined :filled}
+       :variants-order [:outlined :filled]
+       :variants-attrs {:filled   {:-icon-filled? true}
+                        :outlined {}}}
 
       {:label          "spinner"
        :component      spinner

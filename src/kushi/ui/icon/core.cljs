@@ -1,20 +1,8 @@
 (ns kushi.ui.icon.core
   (:require
    [clojure.string :as string]
-   [kushi.css.core :refer (sx css defcss merge-attrs)]
+   [kushi.css.core :refer (sx merge-attrs)]
    [kushi.ui.core :refer (opts+children material-symbol-or-icon-span)]))
-
-(defcss "@layer kushi-ui-component .kushi-icon"
-  :position--relative
-  :d--inline-flex
-  :flex-direction--row
-  :jc--c
-  :ta--center
-  :ai--c
-  [:>span:fs "var(--mui-icon-relative-font-size, inherit)"])
-
-(defcss "@layer kushi-ui-component .material-symbols-icon-filled" 
-  [:font-variation-settings "'FILL' 1"])
 
 (defn icon-name->snake-case-string [coll]
   (mapv #(cond
@@ -77,6 +65,7 @@
           :ai--c
           ;; TODO - use tokenized syntax here
           [:>span:fs "var(--mui-icon-relative-font-size, inherit)"]
+          [:>span.material-symbols-icon-filled:font-variation-settings "'FILL' 1"]
           :_svg:height--1em
           :_svg>path:fill--currentColor)
       {:data-kushi-ui :icon}

@@ -5,10 +5,11 @@
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.text-field.core :refer [text-field]]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-   [kushi.core :refer (sx merge-attrs)]
+   [kushi.css.core :refer (sx merge-attrs)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]))
+
 
 
 (def icons-without-filled-variants
@@ -70,7 +71,7 @@
        (sx :gtc--1fr)
 
        row-attrs-2
-       (sx [:&_.playground-component-example-row-instance-code
+       (sx [:_.playground-component-example-row-instance-code
             {:w              :100%
              :d              :flex
              :flex-direction :column
@@ -79,14 +80,14 @@
              :ai             :stretch}])
 
        row-attrs
-       (sx [:&_.instance-code
+       (sx [:_.instance-code
             {:w  :100%
              :d  :flex
              :jc :sb
              :pi :0.75rem}])
 
        row-attrs-all
-       (sx [:&_.instance-code
+       (sx [:_.instance-code
             {:w              :100%
             ;;  :pi             :0.75rem
              :pi             :0rem
@@ -96,12 +97,12 @@
 
        grid-row-attrs
        (sx 
-        [:&_.playground-component-example-row-instance-code
+        [:_.playground-component-example-row-instance-code
          {:ai         :fe     
           :display    :grid
           :w          :100%
           :jc         :sb
-          :gtc        '(repeat 6 :max-content)
+          :gtc        "repeat(6, :max-content)"
           :row-gap    :2rem
           :column-gap :unset}])]
 
@@ -137,10 +138,10 @@
      :row-attrs       (merge-attrs #_grid-row-attrs
                                    row-attrs
                                    (sx 
-                                    :&_.kushi-icon:fs--36px
-                                    :xsm:&_.kushi-icon:fs--48px
-                                    :sm:&_.kushi-icon:fs--64px
-                                    [:&_.instance-code {:gap 0
+                                    :_.kushi-icon:fs--36px
+                                    :xsm:_.kushi-icon:fs--48px
+                                    :sm:_.kushi-icon:fs--64px
+                                    [:_.instance-code {:gap 0
                                                         :pi  0}] ))
 
      :snippets-header ["Use the font-weight utility classes `:.thin` ~ `:.bold` to control the weight of the icons."
@@ -161,7 +162,7 @@
     {:desc            "All the colors"
      :variants-       [:outlined :filled]
      :container-attrs container-attrs
-     :row-attrs       (merge-attrs row-attrs-all  (sx [:&_.instance-code {:row-gap :1rem}]))
+     :row-attrs       (merge-attrs row-attrs-all  (sx [:_.instance-code {:row-gap :1rem}]))
      :snippets-header ["The css `color` property controls the color of icons."
                        "Kushi provides color tokens in value ranges from `50` ~ `1000`, in increments of `50`."
                        "E.g. `:c--$blue-50`, `:c--$blue-350`, `:c--$blue-800`, etc."
@@ -196,7 +197,7 @@
                                               :let [color-val (str color "-" val)]]
                                           [:div (merge-attrs
                                                  (sx :.flex-col-fs 
-                                                     :.pointer)
+                                                     :cursor--pointer)
                                                  (tooltip-attrs {:-text color-val}))
                                            [icon {:class [:xlarge :light]
                                                   :style {:color (str "var(--" color-val ")")}}
@@ -222,7 +223,7 @@
                                           [:div (merge-attrs
                                                  (sx :.flex-col-fs 
                                                      :gap--0.25rem
-                                                     :.pointer)
+                                                     :cursor--pointer)
                                                  (tooltip-attrs {:-text icon-name}))
                                            [icon {:class [:xlarge :light]} icon-name]
                                            [icon {:class         [:xlarge]
