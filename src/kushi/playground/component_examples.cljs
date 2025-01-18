@@ -6,7 +6,7 @@
             [kushi.playground.component-docs :as docs]
             [kushi.playground.util :as util]
             [kushi.ui.button.core :refer (button)]
-            [kushi.ui.core :refer (defcom keyed)]
+            [kushi.ui.core :refer (keyed opts+children)]
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.tooltip.core :refer (tooltip-attrs)]
@@ -316,30 +316,31 @@
                    :line-height 1.5}}
     s]])
 
-(defcom copy-to-clipboard-button
-  [button
-   (merge-attrs
-    {:class    (css :.accent :.minimal :p--7px)
-     :on-click #(d/copy-to-clipboard!
-                 (or (some->> &opts 
-                              :clipboard-parent-sel
-                              (d/nearest-ancestor (d/et %)))
-                     js/document.body) 
-                 (:text-to-copy &opts))}
-    (tooltip-attrs
-     {:-text                       
-      "Click to copy"
+(defn copy-to-clipboard-button [& args]
+  (let [[opts attrs] (opts+children args)]
+    [button
+     (merge-attrs
+      {:class    (css :.accent :.minimal :p--7px)
+       :on-click #(d/copy-to-clipboard!
+                   (or (some->> opts 
+                                :clipboard-parent-sel
+                                (d/nearest-ancestor (d/et %)))
+                       js/document.body) 
+                   (:text-to-copy opts))}
+      (tooltip-attrs
+       {:-text                        
+        "Click to copy"
 
-      :-text-on-click               
-      "Copied!"
+        :-text-on-click               
+        "Copied!"
 
-      :-text-on-click-tooltip-class
-      (css [:--tooltip-background-color :$accent-filled-background-color])
+        :-text-on-click-tooltip-class 
+        (css [:--tooltip-background-color :$accent-filled-background-color])
 
-      :-placement                   
-      [:block-start :inline-end]})
-    &attrs)
-   [icon (sx :fs--medium) mui.svg/content-copy]])
+        :-placement                  
+        [:block-start :inline-end]})
+      attrs)
+     [icon (sx :fs--medium) mui.svg/content-copy]]))
 
 (defn- snippet-section
   [{:keys [header
@@ -365,7 +366,9 @@
                               (hash-map :-text-to-copy)
                               (merge-attrs 
                                ;; TODO - can this be done without :.top-right-corner-inside!
-                               (sx :.top-right-corner-inside)
+                               ;; TODO - can this be done without :.top-right-corner-inside!
+                               (sx :.top-right-corner-inside
+                                   :position--absolute)
                                {:-clipboard-parent-sel ".kushi-modal"}))]
       [copy-to-clipboard-button attrs])
     preformatted]])

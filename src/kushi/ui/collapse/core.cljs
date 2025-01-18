@@ -1,7 +1,6 @@
 (ns kushi.ui.collapse.core
   (:require
-   [kushi.core :refer (merge-attrs)]
-   [kushi.css.core :refer [css sx css-vars-map]]
+   [kushi.css.core :refer [css sx css-vars-map merge-attrs]]
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
    [kushi.ui.core :refer (defcom opts+children)]
@@ -10,7 +9,16 @@
 ;; TODO - How to tie children to id of collapse?
 ;TODO refactor this out
 
-(defcom collapse-body
+(defn collapse-body [& args]
+  (let [[_ attrs & children] (opts+children args)]
+    [:section
+     (merge-attrs (sx :.kushi-collapse-body-wrapper :overflow--hidden) attrs)
+     [:div (sx ".kushi-collapse-body"
+               :bbe--1px:solid:transparent
+               :padding-block--0.25em:0.5em)
+      children]]))
+
+#_(defcom collapse-body
   [:section
    (merge-attrs (sx ".kushi-collapse-body-wrapper" :overflow--hidden) &attrs)
    [:div (sx ".kushi-collapse-body"
@@ -218,13 +226,13 @@
 
      ;; collapse body
      [:section
-      (merge-attrs (sx ".kushi-collapse-body-wrapper" :overflow--hidden)
+      (merge-attrs (sx :.kushi-collapse-body-wrapper :overflow--hidden)
                    body-attrs
                    {:style {:display             (if expanded? :block :none)
-                            :transition-duration :$speed}})
-      (into [:div (sx ".kushi-collapse-body"
+                            :transition-duration (str speed "ms")}})
+      (into [:div (sx :.kushi-collapse-body
                       :bbe--1px:solid:transparent
-                      :padding-block--0.25em:0.5em)]
+                      :pb--0.25em:0.5em)]
             children)]]))
 
 
