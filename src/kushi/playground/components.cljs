@@ -17,8 +17,8 @@
   [kushi.ui.checkbox.demo :as checkbox.demo]
   [kushi.ui.radio.core :refer [radio]]
   [kushi.ui.radio.demo :as radio.demo]
-  ;; [kushi.ui.slider.core :refer [slider]]
-  ;; [kushi.ui.slider.demo :as slider.demo]
+  [kushi.ui.slider.core :refer [slider]]
+  [kushi.ui.slider.demo :as slider.demo]
   [kushi.ui.switch.core :refer [switch]]
   [kushi.ui.switch.demo :as switch.demo]
   [kushi.ui.text-field.core :refer [text-field]]
@@ -46,10 +46,10 @@
             ;;    ;; "button"     
                 ;; ;; "icon"       
                 ;; ;; "spinner"    
-                "switch"     
+                ;; "switch"     
                 ;; ;; "radio"      
                 ;; ;; "checkbox"   
-                ;; "slider"     
+                "slider"     
                 ;; ;; "text field" 
                 ;; ;; "tooltip"    
                 ;; ;; "popover"    ;; PS
@@ -124,14 +124,14 @@
        :variants-base  #{:positions}
        :variants-attrs {:positions {}}}
 
-    ;;   {:label          "slider"
-    ;;    :component      slider
-    ;;    :examples       slider.demo/examples
-    ;;    :component-meta (-> slider var meta)
-    ;;    :reqs           '[[kushi.ui.slider.core :refer [slider]]]
-    ;;    :variants-base  #{:on}
-    ;;    :variants-order [:on]
-    ;;    :variants-attrs {:on {}}}
+      {:label          "slider"
+       :component      slider
+       :examples       slider.demo/examples
+       :component-meta (-> slider var meta)
+       :reqs           '[[kushi.ui.slider.core :refer [slider]]]
+       :variants-base  #{:on}
+       :variants-order [:on]
+       :variants-attrs {:on {}}}
 
       {:label          "text field" 
        :component      text-field
