@@ -1,9 +1,6 @@
 (ns kushi.ui.checkbox.core
-  (:require-macros
-   [kushi.css.core :refer (css)]
-   [kushi.core :refer (sx)])
   (:require
-   [kushi.core :refer (merge-attrs)]
+   [kushi.css.core :refer (css sx merge-attrs)]
    [kushi.ui.core :refer (opts+children)]))
 
 ;; TODO outlines for ally
@@ -21,7 +18,7 @@
       {:class (css
                ".kushi-checkbox"
                :.transition
-               :.xxfast!
+               :transition-duration--$xxfast
                :cursor--pointer
                :d--grid
                :gtc--1em:auto
@@ -32,9 +29,9 @@
      [:input
       (merge-attrs
        {:class (css
-                ".kushi-checkbox-input"
+                :.kushi-checkbox-input
                 :.transition
-                :.xxfast!
+                :transition-duration--$xxfast
                 :cursor--pointer
                 :-webkit-appearance--none
                 :appearance--none

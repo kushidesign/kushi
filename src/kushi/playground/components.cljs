@@ -13,8 +13,8 @@
   [kushi.ui.grid.demo :as grid.demo]
   ;; [kushi.ui.icon.core :refer [icon]]
   ;; [kushi.ui.icon.demo :as icon.demo]
-  ;; [kushi.ui.checkbox.core :refer [checkbox]]
-  ;; [kushi.ui.checkbox.demo :as checkbox.demo]
+  [kushi.ui.checkbox.core :refer [checkbox]]
+  [kushi.ui.checkbox.demo :as checkbox.demo]
   ;; [kushi.ui.radio.core :refer [radio]]
   ;; [kushi.ui.radio.demo :as radio.demo]
   ;; [kushi.ui.slider.core :refer [slider]]
@@ -46,7 +46,7 @@
                 ;; "spinner"    
                 ;; "switch"     
                 ;; "radio"      
-                ;; "checkbox"   
+                "checkbox"   
                 ;; "slider"     
                 "text field" 
                 "tooltip"    
@@ -114,13 +114,13 @@
     ;;    :variants-attrs {:positions {}}
     ;;    }
       
-    ;;   {:label          "checkbox" 
-    ;;    :component      checkbox
-    ;;    :examples       checkbox.demo/examples
-    ;;    :component-meta (-> checkbox var meta)
-    ;;    :reqs           '[[kushi.ui.radio.core :refer [radio]]]
-    ;;    :variants-base  #{:positions}
-    ;;    :variants-attrs {:positions {}}}
+      {:label          "checkbox" 
+       :component      checkbox
+       :examples       checkbox.demo/examples
+       :component-meta (-> checkbox var meta)
+       :reqs           '[[kushi.ui.radio.core :refer [radio]]]
+       :variants-base  #{:positions}
+       :variants-attrs {:positions {}}}
 
     ;;   {:label          "slider"
     ;;    :component      slider
