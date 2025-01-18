@@ -780,8 +780,8 @@
     :tags       ["shadow" "elevation" "surfaces"]
     }
    [:--elevated-0       :none
-    :--elevated         :--elevated-4
-    :--elevated-inverse :--elevated-4-inverse]
+    :--elevated         :$elevated-4
+    :--elevated-inverse :$elevated-4-inverse]
 
    ;; Intended for css animations and transitions
    ;; ------------------------------------------------------
