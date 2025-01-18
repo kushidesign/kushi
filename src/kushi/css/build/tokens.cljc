@@ -914,10 +914,10 @@
 
 
 
- (? (get design-tokens {:family "Elevation levels",
-   :desc {:en ""},
-   :categories ["Surfaces" "Shadows"],
-   :tags ["shadow" "elevation" "surfaces"]}))
+ (get design-tokens {:family     "Elevation levels",
+                     :desc       {:en ""},
+                     :categories ["Surfaces" "Shadows"],
+                     :tags       ["shadow" "elevation" "surfaces"]})
 
 
 (def enriched-tokens-array-map
@@ -941,9 +941,8 @@
                     []
                     enriched-tokens-array-map)))
 
-(? :pp
- (filter #(string/starts-with? % "--elevated") 
-         (keys design-tokens-by-token-array-map)))
+(filter #(string/starts-with? % "--elevated") 
+        (keys design-tokens-by-token-array-map))
 
 (def design-tokens-by-token
   (reduce-kv (fn [m k v]
