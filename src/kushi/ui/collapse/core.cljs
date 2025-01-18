@@ -13,7 +13,7 @@
   (let [[_ attrs & children] (opts+children args)]
     [:section
      (merge-attrs (sx :.kushi-collapse-body-wrapper :overflow--hidden) attrs)
-     [:div (sx ".kushi-collapse-body"
+     [:div (sx :.kushi-collapse-body
                :bbe--1px:solid:transparent
                :padding-block--0.25em:0.5em)
       children]]))

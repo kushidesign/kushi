@@ -54,21 +54,13 @@
 
     [:section
      (merge-attrs
-      {:class (css ".kushi-callout"
-                   :ai--c
+      {:class (css :.kushi-callout
                    :.info
+                   :ai--c
                    :w--100%)
        :id callout-id}
-      (sx 'kushi-callout
-          :ai--c
-          :.info
-          :w--100%
-          {:id callout-id
-          ;;  :data-kushi-ui          :callout
-          ;;  :data-kushi-ui-callout-id callout-id
-           })
       attrs)
-     [:div (sx ".kushi-callout-header-wrap"
+     [:div (sx :.kushi-callout-header-wrap
                :.flex-row-sb
                :position--relative
                :ta--center
@@ -79,7 +71,7 @@
                 :min-width--1em)
        icon]
       header-text
-      [:div (sx ".kushi-callout-header-close-button-wrap"
+      [:div (sx :.kushi-callout-header-close-button-wrap
                 :min-width--1em)
        close-button]]
      (when (seq children)
