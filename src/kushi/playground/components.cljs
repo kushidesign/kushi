@@ -19,8 +19,8 @@
   [kushi.ui.radio.demo :as radio.demo]
   ;; [kushi.ui.slider.core :refer [slider]]
   ;; [kushi.ui.slider.demo :as slider.demo]
-  ;; [kushi.ui.switch.core :refer [switch]]
-  ;; [kushi.ui.switch.demo :as switch.demo]
+  [kushi.ui.switch.core :refer [switch]]
+  [kushi.ui.switch.demo :as switch.demo]
   [kushi.ui.text-field.core :refer [text-field]]
   [kushi.ui.text-field.demo :as text-field.demo]
   [kushi.ui.tag.core :refer [tag]]
@@ -44,9 +44,9 @@
   ;;  :label
    #(contains? #{
             ;;    ;; "button"     
-                "icon"       
+                ;; ;; "icon"       
                 ;; ;; "spinner"    
-                ;; "switch"     
+                "switch"     
                 ;; ;; "radio"      
                 ;; ;; "checkbox"   
                 ;; "slider"     
@@ -97,15 +97,15 @@
                                                         propeller
                                                         thinking]]]}
 
-    ;;   {:label          "switch" 
-    ;;    :component      switch
-    ;;    :examples       switch.demo/examples
-    ;;    :component-meta (-> switch var meta)
-    ;;    :reqs           '[[kushi.ui.switch.core :refer [switch]]]
-    ;;    :variants-base  #{:on :off}
-    ;;    :variants-order [:off :on]
-    ;;    :variants-attrs {:on  {:-on? true}
-    ;;                     :off {}}}
+      {:label          "switch" 
+       :component      switch
+       :examples       switch.demo/examples
+       :component-meta (-> switch var meta)
+       :reqs           '[[kushi.ui.switch.core :refer [switch]]]
+       :variants-base  #{:on :off}
+       :variants-order [:off :on]
+       :variants-attrs {:on  {:-on? true}
+                        :off {}}}
 
       {:label          "radio" 
        :component      radio

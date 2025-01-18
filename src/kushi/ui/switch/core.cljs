@@ -1,22 +1,21 @@
 (ns kushi.ui.switch.core
-  (:require-macros
-   [kushi.css.core :refer (sx defcss)])
   (:require
-   [kushi.core :refer (merge-attrs)]
+   [kushi.css.core :refer (sx defcss merge-attrs)]
    [domo.core :as domo]
    [kushi.ui.util :as util]
    [kushi.ui.core :refer (opts+children)]))
 
-(defcss "@layer kushi-ui-component .kushi-switch-track-content"
+(defcss "@layer kushi-ui-styles .kushi-switch-track-content"
   :.flex-row-c
   :.semi-bold
   :.transition
   :.xxfast!
   :>*:fs--0.40em
   :c--white
-  [:w "calc(100% - 50% + var(--switch-border-width))"])
+  [:w "calc(100% - 50% + var(--switch-border-width))"]
+  )
 
-(defcss "@layer kushi-ui-component .kushi-switch-thumb-content"
+(defcss "@layer kushi-ui-styles .kushi-switch-thumb-content"
   :c--$neutral-foreground
   :d--none 
   :w--100%
@@ -129,10 +128,10 @@
        {:--thumb-height "calc(var(--switch-thumb-scale-factor, 1) * (1em - (var(--switch-border-width) * 2)))"
         :--height       :1em}
        :.pill
-       :.transition
-       :.xxfast!
        :.flex-row-fs
        :.no-shrink
+       :.transition
+       :transition-duration--$xxfast
        :position--relative
        :cursor--pointer
 
@@ -224,7 +223,7 @@
         ".kushi-switch-thumb"
         {:--width :$thumb-height}
         :.transition
-        :.xxfast!
+        :transition-duration--$xxfast
         :.pill
         :cursor--pointer
         [:transform "translate(0, -50%)"]
