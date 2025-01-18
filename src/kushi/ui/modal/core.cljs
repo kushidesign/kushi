@@ -1,11 +1,12 @@
 (ns kushi.ui.modal.core
   (:require [kushi.ui.icon.core :refer (icon)]
+            [fireworks.core :refer [? !? ?> !?>]]
             [kushi.ui.button.core :refer [button]]
             [clojure.string :as string]
             [domo.core :as domo]
             [goog.dom :as gdom]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.css.core :refer [sx css merge-attrs]]))
+            [kushi.css.core :refer [sx css merge-attrs css-vars-map]]))
 
 (declare close-on-backdrop-click)
 
@@ -148,7 +149,12 @@
                                     (if valid-elevation?
                                       (str "var(--elevated-" elevation "-inverse), ")
                                       (str "var(--elevated-inverse), ")))
-        ]
+        light-box-shadow (str
+                          elevation-token
+                          "0 0 0 100vmax var(--modal-backdrop-color)")
+        dark-box-shadow (str
+                         elevation-token-inverse
+                         "0 0 0 100vmax var(--dark-gray-transparent-90)")]
 
     ;; TODO document the how and why of this
     (when expanded? (js/setTimeout #(open-kushi-modal id) 100))
@@ -156,13 +162,7 @@
     (into
      [:dialog
       (merge-attrs
-       {:style            {"--light-box-shadow" (str
-                                                 elevation
-                                                 "0 0 0 100vmax var(--modal-backdrop-color)")
-                           "--dark-box-shadow"  (str
-                                                 elevation-token-inverse
-                                                 "0 0 0 100vmax var(--dark-gray-transparent-90)")
-                           }
+       {:style            (css-vars-map light-box-shadow dark-box-shadow)
         :class            (css
                            ".kushi-modal"
                            :.fixed-centered

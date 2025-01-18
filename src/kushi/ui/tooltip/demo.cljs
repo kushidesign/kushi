@@ -1,6 +1,6 @@
 (ns kushi.ui.tooltip.demo
   (:require 
-   [kushi.core :refer (sx merge-attrs)]
+   [kushi.css.core :refer (sx css merge-attrs css-vars-map grid-template-areas)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]
@@ -9,19 +9,20 @@
 (defn demo []
   (into
    [:div
-    (sx
-    :.grid
-     :gtc--1fr:1fr:1fr:1fr:1fr
-     :gtr--auto
-     :gap--1rem
-     :w--400px
-     :h--400px
-     [:gta '(kushi/grid-template-areas
-             "brc br b  bl blc"
-             "rt  .  .  .  lt"
-             "r   .  .  .  l"
-             "rb  .  .  .  lb"
-             "trc tr t  tl tlc")])]
+    (let [gta (grid-template-areas
+               "brc br b  bl blc"
+               "rt  .  .  .  lt"
+               "r   .  .  .  l"
+               "rb  .  .  .  lb"
+               "trc tr t  tl tlc")]
+      {:class (css :.grid
+                   :gtc--1fr:1fr:1fr:1fr:1fr
+                   :gtr--auto
+                   :gap--1rem
+                   :w--400px
+                   :h--400px
+                   :gta--$gta)
+          :style (css-vars-map gta)})]
 
    (for [x     ["brc" "br" "b"  "bl" "blc"
                 "rt"  nil  nil  nil  "lt"
@@ -31,28 +32,29 @@
          :when (not (nil? x))]
 
      [:button (merge-attrs
-               (sx 'kushi-playground-tooltip-demo-button
-                   :.flex-row-c
-                   :.pointer
-                   :.relative
-                   :b--1px:solid:$neutral-600
-                   :dark:b--1px:solid:$neutral-400
-                   :hover:b--1px:solid:black
-                   :dark:hover:b--1px:solid:white
-                   :>span.placement-label:ff--$code-font-stack
-                   :fs--0.9em
-                   :c--$neutral-600
-                   :dark:c--$neutral-400
-                   :hover:c--black
-                   :dark:hover:c--white
-                   :&.kushi-pseudo-tooltip-revealed:bc--$accent-color
-                   :dark:&.kushi-pseudo-tooltip-revealed:bc--$accent-color-inverse
-                   :&.kushi-pseudo-tooltip-revealed:c--$accent-color
-                   :dark:&.kushi-pseudo-tooltip-revealed:c--$accent-color-inverse
-                   :&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color
-                   :dark:&.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color-inverse
-                   [:grid-area x]
-                   {:tab-index 0})
+               {:style (css-vars-map x)
+                :class (css :.kushi-playground-tooltip-demo-button
+                            :.flex-row-c
+                            :cursor--pointer
+                            :position--relative
+                            :b--1px:solid:$neutral-600
+                            :dark:b--1px:solid:$neutral-400
+                            :hover:b--1px:solid:black
+                            :dark:hover:b--1px:solid:white
+                            :>span.placement-label:ff--$code-font-stack
+                            :fs--0.9em
+                            :c--$neutral-600
+                            :dark:c--$neutral-400
+                            :hover:c--black
+                            :dark:hover:c--white
+                            :.kushi-pseudo-tooltip-revealed:bc--$accent-color
+                            :dark:.kushi-pseudo-tooltip-revealed:bc--$accent-color-inverse
+                            :.kushi-pseudo-tooltip-revealed:c--$accent-color
+                            :dark:.kushi-pseudo-tooltip-revealed:c--$accent-color-inverse
+                            :.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color
+                            :dark:.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color-inverse
+                            :grid-area--$x)
+                :tab-index 0}
                (tooltip-attrs {:-text      ["Tooltip Line 1" "Tooltip Line 2" ]
                                ;; :-reveal-on-click?         true
                                :-placement (keyword x)}))
@@ -85,7 +87,7 @@
   [{:desc      "Basic, auto-placement."
     :component button
     :reqs      '[[kushi.ui.button.core :refer [button]]]
-    :row-attrs (sx :&_.kushi-button:fs--$small)
+    :row-attrs (sx :_.kushi-button:fs--$small)
     :snippets  '[[button
                   (tooltip-attrs {:-text "This is a tooltip"})
                   "Hover me"]]
@@ -94,49 +96,54 @@
                  :sx-attrs (sx-call (tooltip-attrs {:-text "This is a tooltip"}))}]}
 
    {:desc     "Tooltips with specific placements"      
-    :row-attrs (sx
-                :$tooltip-delay-duration--0ms
-                :.grid
-                :gtc--1fr:1fr:1fr:1fr:1fr
-                :gtr--auto
-                :gap--0.75rem
-                :xsm:w--333px
-                :xsm:h--333px
-                :w--300px
-                :h--300px
-                :&_span.kushi-tooltip-text:ta--c
-                [:>span {:ta             :c
-                         :ff             :$code-font-stack
-                         :fs             :$xsmall
-                         :fw             :$wee-bold
-                         :cursor         :pointer
-                         :bgc            :$neutral-100
-                         :d              :flex
-                         :border-radius  :$rounded
-                         :border         :1px:dashed:$neutral-400
-                         :hover:border   :1px:dashed:$neutral-600
-                         :flex-direction :column
-                         :jc             :c
-                         :h              :100%}]
-                [:>span:hover {:bgc    :$neutral-200
-                               :border :1px:dashed:$neutral-600}]
-                [:dark:>span {:bgc            :$neutral-800
-                              :hover:bgc      :$neutral-750
-                              :d              :flex
-                              :border-radius  :$rounded
-                              :border         :1px:dashed:$neutral-500
-                              :hover:border   :1px:dashed:$neutral-400
-                              :flex-direction :column
-                              :jc             :c
-                              :h              :100%}]
-                [:dark:>span:hover {:border :1px:dashed:$neutral-400
-                                    :bgc    :$neutral-700}]
-                [:gta '(kushi/grid-template-areas
-                        "brc br b  bl blc"
-                        "rt  .  .  .  lt"
-                        "r   .  .  .  l"
-                        "rb  .  .  .  lb"
-                        "trc tr t  tl tlc")])
+    :row-attrs (let [gta (grid-template-areas
+                          "brc br b  bl blc"
+                          "rt  .  .  .  lt"
+                          "r   .  .  .  l"
+                          "rb  .  .  .  lb"
+                          "trc tr t  tl tlc")]
+                 {:style
+                  (css-vars-map gta)
+                  
+                  :class
+                  (css
+                   [:--tooltip-delay-duration :0ms]
+                   :.grid
+                   :gtc--1fr:1fr:1fr:1fr:1fr
+                   :gtr--auto
+                   :gap--0.75rem
+                   :xsm:w--333px
+                   :xsm:h--333px
+                   :w--300px
+                   :h--300px
+                   :_span.kushi-tooltip-text:ta--c
+                   :gta--$gta
+                   [:>span {:ta             :c
+                            :ff             :$code-font-stack
+                            :fs             :$xsmall
+                            :fw             :$wee-bold
+                            :cursor         :pointer
+                            :bgc            :$neutral-100
+                            :d              :flex
+                            :border-radius  :$rounded
+                            :border         :1px:dashed:$neutral-400
+                            :hover:border   :1px:dashed:$neutral-600
+                            :flex-direction :column
+                            :jc             :c
+                            :h              :100%}]
+                   [:>span:hover {:bgc    :$neutral-200
+                                  :border :1px:dashed:$neutral-600}]
+                   [:dark:>span {:bgc            :$neutral-800
+                                 :hover:bgc      :$neutral-750
+                                 :d              :flex
+                                 :border-radius  :$rounded
+                                 :border         :1px:dashed:$neutral-500
+                                 :hover:border   :1px:dashed:$neutral-400
+                                 :flex-direction :column
+                                 :jc             :c
+                                 :h              :100%}]
+                   [:dark:>span:hover {:border :1px:dashed:$neutral-400
+                                       :bgc    :$neutral-700}])})
     :examples [{:label    "bottom-right-corner",
                 :args     [":brc"],
                 :sx-attrs (sx-call

@@ -21,20 +21,20 @@
   ;; [kushi.ui.slider.demo :as slider.demo]
   ;; [kushi.ui.switch.core :refer [switch]]
   ;; [kushi.ui.switch.demo :as switch.demo]
-  ;; [kushi.ui.text-field.core :refer [text-field]]
-  ;; [kushi.ui.text-field.demo :as text-field.demo]
-  ;; [kushi.ui.modal.core :refer [modal]]
-  ;; [kushi.ui.modal.demo :as modal.demo]
-  ;; [kushi.ui.popover.core :refer [popover-attrs]]
-  ;; [kushi.ui.popover.demo :as popover.demo]
+  [kushi.ui.text-field.core :refer [text-field]]
+  [kushi.ui.text-field.demo :as text-field.demo]
+  [kushi.ui.modal.core :refer [modal]]
+  [kushi.ui.modal.demo :as modal.demo]
+  [kushi.ui.popover.core :refer [popover-attrs]]
+  [kushi.ui.popover.demo :as popover.demo]
   ;; [kushi.ui.spinner.core :refer [spinner]]
   ;; [kushi.ui.spinner.demo :as spinner.demo]
   ;; [kushi.ui.tag.core :refer [tag]]
   ;; [kushi.ui.tag.demo :as tag.demo]
   [kushi.ui.toast.core :refer [toast-attrs]]
   [kushi.ui.toast.demo :as toast.demo]
-  ;; [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-  ;; [kushi.ui.tooltip.demo :as tooltip.demo]
+  [kushi.ui.tooltip.core :refer [tooltip-attrs]]
+  [kushi.ui.tooltip.demo :as tooltip.demo]
   ))
 
 (def playground-components 
@@ -48,10 +48,10 @@
                 ;; "radio"      
                 ;; "checkbox"   
                 ;; "slider"     
-                ;; "text field" 
-                ;; "tooltip"    
-                ;; "popover"    ;; PS
-                ;; "modal"      ;; PS
+                "text field" 
+                "tooltip"    
+                "popover"    ;; PS
+                "modal"      ;; PS
                 "toast"      ;; PS
                 "card"       ;; PS
                 "callout"    ;; PS
@@ -131,50 +131,50 @@
     ;;    :variants-order [:on]
     ;;    :variants-attrs {:on {}}}
 
-    ;;   {:label          "text field" 
-    ;;    :component      text-field
-    ;;    :examples       text-field.demo/examples
-    ;;    :component-meta (-> text-field var meta)
-    ;;    :reqs           '[[kushi.ui.text-field.core :refer [text-field]]]
-    ;;    :variants-base  #{:positions}
-    ;;    :variants-attrs {:positions {}}}
+      {:label          "text field" 
+       :component      text-field
+       :examples       text-field.demo/examples
+       :component-meta (-> text-field var meta)
+       :reqs           '[[kushi.ui.text-field.core :refer [text-field]]]
+       :variants-base  #{:positions}
+       :variants-attrs {:positions {}}}
 
 
-    ;;   {:label          "tooltip" 
-    ;;    :examples       tooltip.demo/examples
-    ;;    :component-meta (-> tooltip-attrs var meta)
-    ;;    :media-matches  {:matches {"any-hover" "hover"
-    ;;                               "hover"     "hover"}
-    ;;                     :message [:span
-    ;;                               "The Tooltip component is intended only for devices that support the css "
-    ;;                               [:code ":hover"]
-    ;;                               " pseudo-class. "
-    ;;                               [:br]
-    ;;                               [:br]
-    ;;                               "To view Tooltip demos, please check this page out on a device that supports this feature."] }
-    ;;    :component      :span
-    ;;    :reqs           '[[kushi.ui.tooltip.core :refer [tooltip-attrs]] ]
-    ;;    :variants-base  #{:positions}
-    ;;    :variants-attrs {:positions {}}}
+      {:label          "tooltip" 
+       :examples       tooltip.demo/examples
+       :component-meta (-> tooltip-attrs var meta)
+       :media-matches  {:matches {"any-hover" "hover"
+                                  "hover"     "hover"}
+                        :message [:span
+                                  "The Tooltip component is intended only for devices that support the css "
+                                  [:code ":hover"]
+                                  " pseudo-class. "
+                                  [:br]
+                                  [:br]
+                                  "To view Tooltip demos, please check this page out on a device that supports this feature."] }
+       :component      :span
+       :reqs           '[[kushi.ui.tooltip.core :refer [tooltip-attrs]] ]
+       :variants-base  #{:positions}
+       :variants-attrs {:positions {}}}
 
-    ;;   {:label          "popover" 
-    ;;    :examples       popover.demo/examples
-    ;;    :component-meta (-> popover-attrs var meta)
-    ;;    :component      :span
-    ;;    :reqs           '[[kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]]
-    ;;    :variants-base  #{:positions}
-    ;;    :variants-attrs {:positions {}}}
+      {:label          "popover" 
+       :examples       popover.demo/examples
+       :component-meta (-> popover-attrs var meta)
+       :component      :span
+       :reqs           '[[kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]]
+       :variants-base  #{:positions}
+       :variants-attrs {:positions {}}}
 
-    ;;   {:label          "modal" 
-    ;;    :examples       modal.demo/examples
-    ;;    :component-meta (-> modal var meta)
-    ;;    :component      :span
-    ;;    :reqs           '[[kushi.ui.modal.core :refer [modal
-    ;;                                                   modal-close-button
-    ;;                                                   open-kushi-modal
-    ;;                                                   close-kushi-modal]] ]
-    ;;    :variants-base  #{:positions}
-    ;;    :variants-attrs {:positions {}}}
+      {:label          "modal" 
+       :examples       modal.demo/examples
+       :component-meta (-> modal var meta)
+       :component      :span
+       :reqs           '[[kushi.ui.modal.core :refer [modal
+                                                      modal-close-button
+                                                      open-kushi-modal
+                                                      close-kushi-modal]] ]
+       :variants-base  #{:positions}
+       :variants-attrs {:positions {}}}
 
       {:label          "toast" 
        :examples       toast.demo/examples
