@@ -112,12 +112,13 @@
     (seq used-macros)))
 
 
+;; TODO - share with kushi.css.core
 (defn- layer+sel [sel-og]
   (if (string/starts-with? sel-og "@layer")
-    (let [[_ layer sel]
+    (let [[_ layer & sel-bits]
           (string/split sel-og #"[\t\n\r\s]+")]
       {:layer layer
-       :sel   sel})
+       :sel   (string/join " " sel-bits)})
     {:sel sel-og})  )
 
 

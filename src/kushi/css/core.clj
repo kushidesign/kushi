@@ -871,14 +871,18 @@
                  (double-nested-rule sel blocks)))))
 
          ;; @ layers ------------------------------
+
          ;; TODO make work with @layer to define multiple rules
+         ;; TODO - share with kushi.css.build.analyze
          (string/starts-with? sel "@layer")
          (if-not (s/valid? ::specs/layer-selector sel)
            (bad-at-layer-name-warning sel &form)
-           (let [[_ layer sel]
+           (let [[_ layer & sel-bits]
                  (string/split sel #"[\t\n\r\s]+")]
              (str "@layer " layer " {\n  "
-                  (string/replace (f sel args) #"\n" "\n  ")
+                  (string/replace (f (string/join " " sel-bits) args)
+                                  #"\n"
+                                  "\n  ")
                   "\n}")))
          
          ;; CSS at-rule with nested css rules ------
