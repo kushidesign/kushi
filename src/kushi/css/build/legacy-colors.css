@@ -901,4 +901,39 @@
   --warning-foreground-inverse: var(--warning-minimal-color-inverse);
   --negative-foreground: var(--negative-minimal-color);
   --negative-foreground-inverse: var(--negative-minimal-color-inverse);
+
+  /* NEW */
+  --foreground-color-accent: var(--accent-650);
+  --foreground-color-warning: var(--warning-650);
+  --foreground-color-positive: var(--positive-650);
+  --foreground-color-negative: var(--negative-650);
+  --foreground-color-gray: var(--gray-650);
+  --foreground-color-purple: var(--purple-650);
+  --foreground-color-blue: var(--blue-650);
+  --foreground-color-green: var(--green-650);
+  --foreground-color-lime: var(--lime-650);
+  --foreground-color-yellow: var(--yellow-650);
+  --foreground-color-gold: var(--gold-650);
+  --foreground-color-orange: var(--orange-650);
+  --foreground-color-red: var(--red-650);
+  --foreground-color-magenta: var(--magenta-650);
+  --foreground-color-brown: var(--brown-650);
+
+  --foreground-color-accent-inverse: var(--accent-350);
+  --foreground-color-warning-inverse: var(--warning-350);
+  --foreground-color-positive-inverse: var(--positive-350);
+  --foreground-color-negative-inverse: var(--negative-350);
+  --foreground-color-gray-inverse: var(--gray-350);
+  --foreground-color-purple-inverse: var(--purple-350);
+  --foreground-color-blue-inverse: var(--blue-350);
+  --foreground-color-green-inverse: var(--green-350);
+  --foreground-color-lime-inverse: var(--lime-350);
+  --foreground-color-yellow-inverse: var(--yellow-350);
+  --foreground-color-gold-inverse: var(--gold-350);
+  --foreground-color-orange-inverse: var(--orange-350);
+  --foreground-color-red-inverse: var(--red-350);
+  --foreground-color-magenta-inverse: var(--magenta-350);
+  --foreground-color-brown-inverse: var(--brown-350);
+
+
 }
