@@ -45,23 +45,17 @@
          :transform                                   :$label-scale-factor
          :before:content                              :$step-marker-content}))
 
-(def idx-by-mq
-  {:xsm 0
-   :sm  1
-   :md  2
-   :lg  3})
-
 
 #_(? (re-find #"^([^\s:]+):" (? (-> [:sm:c :red] first name))))
 
 ;; (? (css-block
 ;;     ["first-child#foos:display" :block]))
 
-(? (css-block
-    :first-child#foos:display--block))
+;; (? (css-block
+;;     :first-child#foos:display--block))
 
-(? (css-block
-    :first-child>div:display--block))
+;; (? (css-block
+;;     :first-child>div:display--block))
 
 #_(? (css-block
     :sm:w--34px

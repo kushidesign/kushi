@@ -5,8 +5,8 @@
   ;; [kushi.ui.button.demo :as button.demo]
   [kushi.ui.callout.core :refer [callout]]
   [kushi.ui.callout.demo :as callout.demo]
-  ;; [kushi.ui.card.core :refer [card]]
-  ;; [kushi.ui.card.demo :as card.demo]
+  [kushi.ui.card.core :refer [card]]
+  [kushi.ui.card.demo :as card.demo]
   [kushi.ui.collapse.core :refer [collapse]]
   [kushi.ui.collapse.demo :as collapse.demo]
   [kushi.ui.grid.core :refer [grid]]
@@ -31,8 +31,8 @@
   ;; [kushi.ui.spinner.demo :as spinner.demo]
   ;; [kushi.ui.tag.core :refer [tag]]
   ;; [kushi.ui.tag.demo :as tag.demo]
-  ;; [kushi.ui.toast.core :refer [toast-attrs]]
-  ;; [kushi.ui.toast.demo :as toast.demo]
+  [kushi.ui.toast.core :refer [toast-attrs]]
+  [kushi.ui.toast.demo :as toast.demo]
   ;; [kushi.ui.tooltip.core :refer [tooltip-attrs]]
   ;; [kushi.ui.tooltip.demo :as tooltip.demo]
   ))
@@ -52,8 +52,8 @@
                 ;; "tooltip"    
                 ;; "popover"    ;; PS
                 ;; "modal"      ;; PS
-                ;; "toast"      ;; PS
-                ;; "card"       ;; PS
+                "toast"      ;; PS
+                "card"       ;; PS
                 "callout"    ;; PS
                  "collapse"   ;; PS
                 ;; "accordian"  ;; PS
@@ -176,25 +176,24 @@
     ;;    :variants-base  #{:positions}
     ;;    :variants-attrs {:positions {}}}
 
-    ;;   {:label          "toast" 
-    ;;    :examples       toast.demo/examples
-    ;;    :component-meta (-> toast-attrs var meta)
-    ;;    :component      :span
-    ;;    :reqs           '[[kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]]
-    ;;    :variants-base  #{:positions}
-    ;;    :variants-attrs {:positions {}}}
+      {:label          "toast" 
+       :examples       toast.demo/examples
+       :component-meta (-> toast-attrs var meta)
+       :component      :span
+       :reqs           '[[kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]]
+       :variants-base  #{:positions}
+       :variants-attrs {:positions {}}}
 
 
-
-    ;;   {:label          "card"
-    ;;    :examples       card.demo/examples
-    ;;    :component-meta (-> card var meta)
-    ;;    :component      card
-    ;;    :reqs           '[[kushi.ui.card.core :refer [card]]]
-    ;;    :variants-base  #{:rounded}
-    ;;    :variants-order [:rounded]
-    ;;    :variants-attrs {:rounded (sx :.rounded)}
-    ;;    }
+      {:label          "card"
+       :examples       card.demo/examples
+       :component-meta (-> card var meta)
+       :component      card
+       :reqs           '[[kushi.ui.card.core :refer [card]]]
+       :variants-base  #{:rounded}
+       :variants-order [:rounded]
+       :variants-attrs {:rounded (sx :.rounded)}
+       }
 
     ;;   {:label          "tag"
     ;;    :examples       tag.demo/examples
@@ -213,9 +212,9 @@
        :component-meta (-> callout var meta)
        :component      callout
        :reqs           '[[kushi.ui.callout.core :refer [callout]]]
-       :variants-base  #{:default :filled :bordered}
-       :variants-order [:default :filled :bordered]
-       :variants-attrs {:default  {}
+       :variants-base  #{:ult :filled :bordered}
+       :variants-order [:ult :filled :bordered]
+       :variants-attrs {:ult  {}
                         :filled   (sx :.filled)
                         :bordered (sx :.bordered)}}
 

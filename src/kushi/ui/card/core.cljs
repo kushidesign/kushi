@@ -1,6 +1,5 @@
 (ns kushi.ui.card.core
-  (:require [kushi.core :refer (sx merge-attrs)]
-            [kushi.css.core :refer (css trans)]
+  (:require [kushi.css.core :refer (css merge-attrs)]
             [kushi.ui.core :refer (opts+children)]))
 
 (defn card

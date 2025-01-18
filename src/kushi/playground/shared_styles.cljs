@@ -263,19 +263,6 @@
   :ai--c
   :height--$navbar-height)
 
-(defcss "@layer kushi-playground-shared .neutralize"
-  :.transition
-  :bgc--$background-color
-  :dark:bgc--$background-color-inverse
-  :c--$foreground-color
-  :dark:c--$foreground-color-inverse)
-
-(defcss "@layer kushi-playground-shared .neutralize-secondary"
-  :.transition
-  :bgc--$background-color
-  :dark:bgc--$background-color-inverse
-  :c--$neutral-secondary-foreground
-  :dark:c--$neutral-secondary-foreground-inverse)
 
 (defcss "@layer kushi-playground-shared .component-section-header-label"
   :fw--$semi-bold
