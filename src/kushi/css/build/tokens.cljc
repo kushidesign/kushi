@@ -10,16 +10,16 @@
 
 (defn- box-shadows->str [coll level suffix]
   (->> coll
-       (mapv (fn [settings]
-               (string/join
-                " "
-                (conj
-                 (mapv #(str % "px") settings)
-                 (str "var(--elevation-shadow-layer-"
-                      level
-                      "-color"
-                      suffix
-                      ")")))))
+       (map-indexed (fn [idx settings]
+                      (string/join
+                       " "
+                       (conj
+                        (mapv #(str % "px") settings)
+                        (str "var(--elevation-shadow-layer-"
+                             (inc idx)
+                             "-color"
+                             suffix
+                             ")")))))
        (string/join ", ")))
 
 (defn- elevation-scale* [elevations]
@@ -36,7 +36,7 @@
 
 ;; These are arguments to css box-shadow
 (def elevation-scale
-  (elevation-scale*
+ (elevation-scale*
    (array-map
     1
     [[0 3 3 -2]
@@ -61,21 +61,21 @@
 
 
 (def elevation-shadow-layer-colors 
-  (flatten
-   (map-indexed 
-    (fn [i n]
-      (let [cf (fn [n color]
-                 (keyword (str "$" color "-transparent-" (subs (str n) 2))))
-            nm (fn [i s] 
-                 (keyword (str "--elevation-shadow-layer-" (inc i) "-" s)))]
-        [(nm i "color")
-         (cf n "black")
-         (nm i "color-inverse")
-         (cf n "white")
-         ]))
+(flatten
+ (map-indexed 
+  (fn [i n]
+    (let [cf (fn [n color]
+               (keyword (str "$" color "-transparent-" (subs (str n) 2))))
+          nm (fn [i s] 
+               (keyword (str "--elevation-shadow-layer-" (inc i) "-" s)))]
+      [(nm i "color")
+       (cf n "black")
+       (nm i "color-inverse")
+       (cf n "white")
+       ]))
 
     ;; These control the level of opacity of the shadow layer
-    [0.08 0.05 0.03])))
+  [0.08 0.05 0.03])))
 
 
 ;; Convex surfaces -------------------------------------------------------------
@@ -474,7 +474,7 @@
 
    ;; Tooltips
    ;; ------------------------------------------------------
-
+   
    {:family     "Tooltip typography"
     :desc       {:en ""}
     :categories ["Panes" "Tooltips"]
@@ -720,26 +720,26 @@
     :--rounded-absolute-xlarge                :0.1rem           ;; 16px
     :--rounded-absolute-xxlarge               :1.25rem          ;; 20px
     :--rounded-absolute-xxxlarge              :1.5625rem        ;; 25px
-   ]
-    
+    ]
+   
    ;; Relative (to type size) versions for buttons, badges
    {:family     "Rounded corners, relative"
     :desc       {:en "Controls the roundedness of corners on panes, cards, etc. Value is relative to font-size"}
     :categories ["Surfaces" "Rounding"]
     :tags       ["border-radius" "corners" "rounded"]
     }
-    [:--rounded-xxxsmall                       :0.04375em  
-     :--rounded-xxsmall                        :0.0875em  
-     :--rounded-xsmall                         :0.175em   
-     :--rounded-small                          :0.2625em  
-     :--rounded-medium                         :0.35em    
-     :--rounded-large                          :0.525em   
-     :--rounded-xlarge                         :0.7em     
-     :--rounded-xxlarge                        :0.875em   
-     :--rounded-xxxlarge                       :1.09375em 
-     :--rounded                                :$rounded-medium
-     :--border-weight                          :1px
-     ]
+   [:--rounded-xxxsmall                       :0.04375em  
+    :--rounded-xxsmall                        :0.0875em  
+    :--rounded-xsmall                         :0.175em   
+    :--rounded-small                          :0.2625em  
+    :--rounded-medium                         :0.35em    
+    :--rounded-large                          :0.525em   
+    :--rounded-xlarge                         :0.7em     
+    :--rounded-xxlarge                        :0.875em   
+    :--rounded-xxxlarge                       :1.09375em 
+    :--rounded                                :$rounded-medium
+    :--border-weight                          :1px
+    ]
 
 
    ;; Intended for css props: background-image
@@ -774,7 +774,7 @@
     }
    elevation-scale
 
-   {:family     "Elevation levels"
+   {:family     "Elevation levels general"
     :desc       {:en ""}
     :categories ["Surfaces" "Shadows"]
     :tags       ["shadow" "elevation" "surfaces"]
@@ -842,7 +842,7 @@
    [:--collapse-transition-duration              :$slow]
 
     ;; kushi.ui.text-field.core/input
-
+   
    {:family     "Text field styling"
     :desc       {:en ""}
     :categories ["Collapse"]
@@ -912,6 +912,14 @@
                 })))
          design-tokens))
 
+
+
+ (? (get design-tokens {:family "Elevation levels",
+   :desc {:en ""},
+   :categories ["Surfaces" "Shadows"],
+   :tags ["shadow" "elevation" "surfaces"]}))
+
+
 (def enriched-tokens-array-map
   (apply array-map
          (reduce (fn [acc m]
@@ -932,6 +940,10 @@
                       (conj acc k (:value v)))
                     []
                     enriched-tokens-array-map)))
+
+(? :pp
+ (filter #(string/starts-with? % "--elevated") 
+         (keys design-tokens-by-token-array-map)))
 
 (def design-tokens-by-token
   (reduce-kv (fn [m k v]
