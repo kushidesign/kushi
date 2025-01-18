@@ -1,4 +1,4 @@
-(ns kushi.ui.grid.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.grid.demo
   (:require
    [kushi.css.core :refer (sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]

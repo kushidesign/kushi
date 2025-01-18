@@ -15,22 +15,22 @@
   ;; [kushi.ui.icon.demo :as icon.demo]
   [kushi.ui.checkbox.core :refer [checkbox]]
   [kushi.ui.checkbox.demo :as checkbox.demo]
-  ;; [kushi.ui.radio.core :refer [radio]]
-  ;; [kushi.ui.radio.demo :as radio.demo]
+  [kushi.ui.radio.core :refer [radio]]
+  [kushi.ui.radio.demo :as radio.demo]
   ;; [kushi.ui.slider.core :refer [slider]]
   ;; [kushi.ui.slider.demo :as slider.demo]
   ;; [kushi.ui.switch.core :refer [switch]]
   ;; [kushi.ui.switch.demo :as switch.demo]
   [kushi.ui.text-field.core :refer [text-field]]
   [kushi.ui.text-field.demo :as text-field.demo]
+  [kushi.ui.tag.core :refer [tag]]
+  [kushi.ui.tag.demo :as tag.demo]
   [kushi.ui.modal.core :refer [modal]]
   [kushi.ui.modal.demo :as modal.demo]
   [kushi.ui.popover.core :refer [popover-attrs]]
   [kushi.ui.popover.demo :as popover.demo]
-  ;; [kushi.ui.spinner.core :refer [spinner]]
-  ;; [kushi.ui.spinner.demo :as spinner.demo]
-  ;; [kushi.ui.tag.core :refer [tag]]
-  ;; [kushi.ui.tag.demo :as tag.demo]
+  [kushi.ui.spinner.core :refer [spinner]]
+  [kushi.ui.spinner.demo :as spinner.demo]
   [kushi.ui.toast.core :refer [toast-attrs]]
   [kushi.ui.toast.demo :as toast.demo]
   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
@@ -43,22 +43,22 @@
    #(contains? #{
                 ;; "button"     
                 ;; "icon"       
-                ;; "spinner"    
+                "spinner"    
                 ;; "switch"     
-                ;; "radio"      
-                "checkbox"   
+                ;; ;; "radio"      
+                ;; ;; "checkbox"   
                 ;; "slider"     
-                "text field" 
-                "tooltip"    
-                "popover"    ;; PS
-                "modal"      ;; PS
-                "toast"      ;; PS
-                "card"       ;; PS
-                "callout"    ;; PS
-                 "collapse"   ;; PS
-                ;; "accordian"  ;; PS
-                ;; "tag"        ;; PS
-                 "grid"       ;; PS
+                ;; ;; "text field" 
+                ;; ;; "tooltip"    
+                ;; ;; "popover"    ;; PS
+                ;; ;; "modal"      ;; PS
+                ;; ;; "toast"      ;; PS
+                ;; ;; "card"       ;; PS
+                ;; ;; "callout"    ;; PS
+                ;; ;;  "collapse"   ;; PS
+                ;; ;; "accordian"  ;; PS
+                ;; ;; "tag"        ;; PS
+                 ;; ;; "grid"       ;; PS
                  }
                (:label %))
 
@@ -86,14 +86,14 @@
     ;;    :variants-attrs {:filled   {:-icon-filled? true}
     ;;                     :outlined {}}}
 
-    ;;   {:label          "spinner"
-    ;;    :component      spinner
-    ;;    :examples       spinner.demo/examples
-    ;;    :component-meta (-> spinner var meta)
-    ;;    :reqs           '[[kushi.ui.spinner.core :refer [spinner
-    ;;                                                     donut
-    ;;                                                     propeller
-    ;;                                                     thinking]]]}
+      {:label          "spinner"
+       :component      spinner
+       :examples       spinner.demo/examples
+       :component-meta (-> spinner var meta)
+       :reqs           '[[kushi.ui.spinner.core :refer [spinner
+                                                        donut
+                                                        propeller
+                                                        thinking]]]}
 
     ;;   {:label          "switch" 
     ;;    :component      switch
@@ -105,14 +105,14 @@
     ;;    :variants-attrs {:on  {:-on? true}
     ;;                     :off {}}}
 
-    ;;   {:label          "radio" 
-    ;;    :component      radio
-    ;;    :examples       radio.demo/examples
-    ;;    :component-meta (-> radio var meta)
-    ;;    :reqs           '[[kushi.ui.radio.core :refer [radio]]]
-    ;;    :variants-base  #{:positions}
-    ;;    :variants-attrs {:positions {}}
-    ;;    }
+      {:label          "radio" 
+       :component      radio
+       :examples       radio.demo/examples
+       :component-meta (-> radio var meta)
+       :reqs           '[[kushi.ui.radio.core :refer [radio]]]
+       :variants-base  #{:positions}
+       :variants-attrs {:positions {}}
+       }
       
       {:label          "checkbox" 
        :component      checkbox
@@ -195,17 +195,17 @@
        :variants-attrs {:rounded (sx :.rounded)}
        }
 
-    ;;   {:label          "tag"
-    ;;    :examples       tag.demo/examples
-    ;;    :component-meta (-> tag var meta)
-    ;;    :component      tag
-    ;;    :reqs           '[[kushi.ui.tag.core :refer [tag]]]
-    ;;    :variants-base  #{:rounded :filled :bordered :minimal}
-    ;;    :variants-order [:rounded :filled :bordered :minimal]
-    ;;    :variants-attrs {:rounded  (sx :.rounded)
-    ;;                     :filled   (sx :.rounded :.filled)
-    ;;                     :bordered (sx :.rounded :.bordered)
-    ;;                     :minimal  (sx :.rounded :.minimal)}}
+      {:label          "tag"
+       :examples       tag.demo/examples
+       :component-meta (-> tag var meta)
+       :component      tag
+       :reqs           '[[kushi.ui.tag.core :refer [tag]]]
+       :variants-base  #{:rounded :filled :bordered :minimal}
+       :variants-order [:rounded :filled :bordered :minimal]
+       :variants-attrs {:rounded  (sx :.rounded)
+                        :filled   (sx :.rounded :.filled)
+                        :bordered (sx :.rounded :.bordered)
+                        :minimal  (sx :.rounded :.minimal)}}
 
       {:label          "callout"
        :examples       callout.demo/examples

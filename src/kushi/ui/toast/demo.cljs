@@ -1,4 +1,4 @@
-(ns kushi.ui.toast.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.toast.demo
   (:require
    [goog.string]
    [kushi.css.core :refer (sx css merge-attrs)]

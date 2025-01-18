@@ -1,4 +1,4 @@
-(ns kushi.ui.button.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.button.demo
   (:require
    [kushi.css.core :refer [sx css css-vars css-vars-map merge-attrs]]
    [kushi.playground.component-examples :as component-examples :refer [section-label]]

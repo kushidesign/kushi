@@ -1,4 +1,4 @@
-(ns kushi.ui.icon.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.icon.demo
   (:require
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg]

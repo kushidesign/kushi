@@ -1,4 +1,4 @@
-(ns kushi.ui.tooltip.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.tooltip.demo
   (:require 
    [kushi.css.core :refer (sx css merge-attrs css-vars-map grid-template-areas)]
    [kushi.playground.component-examples :as component-examples]

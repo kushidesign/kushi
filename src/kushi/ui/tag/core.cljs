@@ -16,6 +16,7 @@
                              :.info
                              :.transition
                              :.rounded
+                             :.neutral
                              [:.bordered:pb
                               "calc(0.4em - var(--button-border-width))"]
                              [:.bordered:pi

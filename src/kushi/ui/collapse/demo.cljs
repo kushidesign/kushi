@@ -1,4 +1,4 @@
-(ns kushi.ui.collapse.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.collapse.demo
   (:require [kushi.css.core :refer (sx css merge-attrs)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]

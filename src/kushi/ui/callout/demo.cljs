@@ -1,4 +1,4 @@
-(ns kushi.ui.callout.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.callout.demo
   (:require
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.link.core :refer [link]]

@@ -3,7 +3,7 @@
    [applied-science.js-interop :as j]
    [goog.string]
    [domo.core :as domo]
-   [kushi.core :refer (keyed)]
+   [kushi.ui.core :refer (keyed)]
    [kushi.ui.util :as util :refer [maybe]]
    [kushi.ui.dom.pane.core :as pane]
    [kushi.ui.dom.pane.placement :refer [user-placement]]

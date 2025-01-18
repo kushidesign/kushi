@@ -1,4 +1,4 @@
-(ns kushi.ui.popover.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.popover.demo
   (:require
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg ]

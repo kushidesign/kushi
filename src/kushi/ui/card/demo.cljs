@@ -1,4 +1,4 @@
-(ns kushi.ui.card.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.card.demo
   (:require [kushi.css.core :refer (sx css)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]

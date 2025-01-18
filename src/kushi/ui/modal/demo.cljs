@@ -1,4 +1,4 @@
-(ns kushi.ui.modal.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.modal.demo
   (:require [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.modal.core :refer (modal modal-close-button close-kushi-modal open-kushi-modal)]
             [kushi.ui.button.core :refer [button]]
