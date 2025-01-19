@@ -167,6 +167,14 @@
              (keyword (str "$" c "-500||" c)))])
    color-names))
 
+(def foreground-color-classes
+  (mapcatv 
+   (fn [c]
+     [(->> c (str "foreground-") as-classname)
+      {:c      (keyword (str "$" c "-650"))
+       :dark:c (keyword (str "$" c "-350"))}])
+   color-names))
+
 (def base-classes
   [
    ;; Visual debugging utilities
@@ -188,6 +196,7 @@
                        :outline-offset :-1px}
    ;; End debugging utils 
    
+   ;; Colorization
    :neutralize        {:bgc                        :$background-color
                        :dark:bgc                   :$background-color-inverse
                        :c                          :$foreground-color
@@ -207,6 +216,10 @@
                           :transition-timing-function :$transition-timing-function
                           :transition-duration        :$transition-duration
                           }
+   
+   :.foreground-color    {:c      :$foreground-color
+                          :dark:c :$foreground-color-inverse}                        
+
 
    ;; Borders
    :outlined              {:outline-color  :currentColor
@@ -626,6 +639,8 @@
    ;; debugging outline helpers  :.outline-red
    debug-outline-classes
 
+   (? foreground-color-classes)
+
    ;; These are combinatorial classes dealing with:
    ;; - abs fixed pos   e.g. :.absolute-block-end-inside 
    ;; - debugging       e.g. :.debug-grid-8, :.wireframe
@@ -681,7 +696,7 @@
   (mapcat util/kwargs-keys all-classes))
 
 
-(!? utility-class-ks)
+(? utility-class-ks)
 
 
 (def utility-class-ks-set
