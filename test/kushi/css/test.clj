@@ -323,8 +323,7 @@
                          nil
                          nil
                          'myfun
-                         nil)
-                   )
+                         nil))
            :sel   ".wtf"}))
 
 
