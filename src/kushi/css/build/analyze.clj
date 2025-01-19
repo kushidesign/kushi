@@ -986,10 +986,10 @@
           (kushi-utility-classes-profile css-new)
           (kushi-utility-classes-profile-all)) 
 
-        ;; kushi-utility-classes-overrides-profile
-        ;; (if release?
-        ;;   (kushi-utility-classes-overrides-profile css-new)
-        ;;   (kushi-utility-classes-overrides-profile-all)) 
+        kushi-utility-classes-overrides-profile
+        (if release?
+          (kushi-utility-classes-overrides-profile css-new)
+          (kushi-utility-classes-overrides-profile-all)) 
 
         design-tokens-profile
         (if release? 
@@ -1005,7 +1005,7 @@
         (conj reduced-sources
               design-tokens-profile
               kushi-utility-classes-profile
-              ;; kushi-utility-classes-overrides-profile
+              kushi-utility-classes-overrides-profile
               user-design-tokens-profile
               #_user-shared-classes-profile)]
 
@@ -1045,7 +1045,7 @@
                                                #"^class "
                                                "" )
                                " (Caught)")
-             :padding-top 0})
+             :padding-top 1})
      body)))
 
 (def lightning-options-via-user-config
@@ -1145,7 +1145,7 @@
         ;; If necessary write the css imports chain
         (when (or init? new-or-deleted?)
           (write-css-imports "./kushi.edn" filtered-build-sources release?)
-          #_(create-css-bundle))))
+          (create-css-bundle))))
   build-state))
 
 
