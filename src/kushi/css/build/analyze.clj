@@ -170,7 +170,7 @@
 
         layer
         (or layer
-            layer-from-ns-info ;; <- layer assigned at ns -level
+            layer-from-ns-info
             (resolve-css-layer-for-shared-classes ns-str)
             "user-styles")
 
@@ -279,17 +279,16 @@
         {:keys [layer sel]}
         (layer+sel sel-og)
 
+        layer-from-defcss-first-arg
         layer
-        (or layer "user-shared-styles")
 
-        ;; TODO incorporate this
-        ;; layer-from-ns-info
-        ;; (some-> ns-meta :kushi/layer)
+        layer-from-ns-info
+        (some-> ns-meta :kushi/layer)
 
-        ;; layer
-        ;; (or layer
-        ;;     layer-from-ns-info ;; <- layer assigned at ns -level
-        ;;     "user-shared-styles")
+        layer
+        (or layer
+            layer-from-ns-info
+            "user-shared-styles")
 
         _
         (when (string/starts-with? sel ".")
@@ -314,11 +313,15 @@
                (keyed sel-og sel args layer))
         
         ;; dbg?
-        ;; (= ns 'kushi.playground.shared-styles)
+        ;; (= sel ".kushi-slider-step-label-marker")
         ]
 
     ;; (when dbg?
-    ;;   (let [coll (get-in @css-new [:sources ns layer])]
+    ;;   (keyed layer-from-defcss-first-arg
+    ;;             layer-from-ns-info
+    ;;             layer)
+
+    ;;   #_(let [coll (get-in @css-new [:sources ns layer])]
     ;;     (? :result [sel (some-> coll count)])
     ;;     (!? :result (get-in @css-new [:sources ns layer]))))
 
@@ -1155,7 +1158,6 @@
   ;; TODO maybe deleted? and added? should be seqs or nils
   (write-css-imports "./site/kushi.edn" filtered-build-sources release?)
   #_(create-css-bundle))
-
 
 
 ;; TODO 
