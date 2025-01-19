@@ -1,4 +1,5 @@
 ;; shadow-cljs configuration
+;; TODO setup :local-dev & :release aliases
 {:deps
  {:aliases [:local-dev]}
 
@@ -16,7 +17,6 @@
    :modules          {:main {:init-fn mvp.browser/init}}
    :output-dir       "public/js"
    :build-hooks      [(kushi.css.build.analyze/hook)
-                      ;; (kushi.css.build.lightningcss/hook)
                       ;; (shadow.build/tap-hook)
                       (shadow.cljs.build-report/hook
                        {:output-to "tmp/report.html"})]}}}
