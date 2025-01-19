@@ -217,9 +217,8 @@
                           :transition-duration        :$transition-duration
                           }
    
-   :.foreground-color    {:c      :$foreground-color
+   :foreground-color    {:c      :$foreground-color
                           :dark:c :$foreground-color-inverse}                        
-
 
    ;; Borders
    :outlined              {:outline-color  :currentColor
