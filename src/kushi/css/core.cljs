@@ -165,6 +165,7 @@
         classes                   (concat class1-coll class2-coll)
         data-sx                 (data-sx m2 data-sx1 data-sx2)
 
+        ;; Is this optimizable ?
         user-event-handlers       (keys (select-keys m2 dom-element-events))
         merged-event-handlers     (apply merge
                                          (map #(handler-concat (% m1) 
