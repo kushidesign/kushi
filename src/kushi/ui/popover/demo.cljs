@@ -61,9 +61,9 @@
          :position--absolute
          :fs--$small
          :zi--1
-         [:$icon-button-padding-inline-ems :0.4em]
+         [:--icon-button-padding-inline-ems :0.4em]
          [:opacity                         :$popover-close-button-opacity]
-         [:$button-padding-block-ems       :$icon-button-padding-inline-ems]
+         [:--button-padding-block-ems       :$icon-button-padding-inline-ems]
          [:margin-inline                   :$popover-close-button-margin-inline||$icon-button-padding-inline-ems]
          [:margin-block                    :$popover-close-button-margin-block||$icon-button-padding-inline-ems])
      {:on-click dismiss-popover!})
