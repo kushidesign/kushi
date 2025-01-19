@@ -116,39 +116,42 @@
 
 ;; TODO maybe remove this class?
 
-(defcss "@layer kushi-playground-shared .kushi-playground-with-rainbow-keys"
-  ;trailing fade out rainbow keys
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out:hover" {:bgc :$gold-50 :color :$gold-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :color :$neutral-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out:hover" {:bgc :$orange-50 :c :$orange-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out:hover" {:bgc :$red-50 :c :$red-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out:hover" {:bgc :$magenta-50 :c :$magenta-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out:hover" {:bgc :$purple-50 :c :$purple-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out:hover" {:bgc :$blue-50 :c :$blue-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out:hover" {:bgc :$green-50 :c :$green-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out:hover" {:bgc :$yellow-50 :c :$yellow-1000}]
-  ["_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+;; (defcss "@layer kushi-playground-shared .kushi-playground-with-rainbow-keys"
+;;   ;trailing fade out rainbow keys
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out:hover" {:bgc :$gold-50 :color :$gold-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :color :$neutral-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out:hover" {:bgc :$orange-50 :c :$orange-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out:hover" {:bgc :$red-50 :c :$red-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out:hover" {:bgc :$magenta-50 :c :$magenta-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out:hover" {:bgc :$purple-50 :c :$purple-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out:hover" {:bgc :$blue-50 :c :$blue-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out:hover" {:bgc :$green-50 :c :$green-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out:hover" {:bgc :$yellow-50 :c :$yellow-1000}]
+;;   ["_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out[aria-expanded='true']:hover" {:bgc :$neutral-50 :c :$neutral-1000}]
 
-  ;; Inverse (dark-theme) trailing fade out rainbow keys
-  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out:hover" {:bgc :$gold-950 :color :$gold-50}]
-  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out:hover" {:bgc :$orange-950 :c :$orange-50}]
-  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out:hover" {:bgc :$red-950 :c :$red-50}]
-  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out:hover" {:bgc :$magenta-950 :c :$magenta-50}]
-  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out:hover" {:bgc :$purple-950 :c :$purple-50}]
-  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out:hover" {:bgc :$blue-950 :c :$blue-50}]
-  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out:hover" {:bgc :$green-950 :c :$green-50}]
-  ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out:hover" {:bgc :$yellow-950 :c :$yellow-50}]
-  )
+;;   ;; Inverse (dark-theme) trailing fade out rainbow keys
+;;   ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+1)>.hover-trailing-fade-out:hover" {:bgc :$gold-950 :color :$gold-50}]
+;;   ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+2)>.hover-trailing-fade-out:hover" {:bgc :$orange-950 :c :$orange-50}]
+;;   ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+3)>.hover-trailing-fade-out:hover" {:bgc :$red-950 :c :$red-50}]
+;;   ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+4)>.hover-trailing-fade-out:hover" {:bgc :$magenta-950 :c :$magenta-50}]
+;;   ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+5)>.hover-trailing-fade-out:hover" {:bgc :$purple-950 :c :$purple-50}]
+;;   ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+6)>.hover-trailing-fade-out:hover" {:bgc :$blue-950 :c :$blue-50}]
+;;   ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+7)>.hover-trailing-fade-out:hover" {:bgc :$green-950 :c :$green-50}]
+;;   ["dark:_.hover-trailing-fade-out-wrapper:nth-child(8n+8)>.hover-trailing-fade-out:hover" {:bgc :$yellow-950 :c :$yellow-50}]
+;;   )
 
-(defcss "@layer kushi-playground-shared .no-hover-bgc" :bgc--transparent!important)
+(defcss "@layer kushi-playground-shared
+         .no-hover-bgc"
+  :bgc--transparent!important)
 
-(defcss "@layer kushi-playground-shared .kushi-demo-stage"
+(defcss "@layer kushi-playground-shared
+         .kushi-demo-stage"
   :min-height--135px
   :p--30px:15px
   :bw--1px
@@ -158,7 +161,8 @@
   :mb--10px
   :_.kushi-input:min-width--220px)
 
-(defcss "@layer kushi-playground-shared .kushi-playground-demobox"
+(defcss "@layer kushi-playground-shared
+         .kushi-playground-demobox"
   :_.kushi-playground-examples-input-row-wrapper:bbe--0px:solid:#eee
   :_.kushi-playground-examples-input-row-wrapper:min-height--50px
   :_.kushi-playground-examples-input-row-wrapper:padding-block--0.75em
@@ -166,34 +170,37 @@
   :_.kushi-radio-button-wrapper:margin-inline--0:0.666em
   :_.kushi-radio-button-wrapper:margin-block--0.125em)
 
-(defcss "@layer kushi-playground-shared .kushi-playground-demobox-ui-icon"
+(defcss "@layer kushi-playground-shared
+         .kushi-playground-demobox-ui-icon"
   :fs--1rem!important
   :>div.kushi-icon>span:fs--1rem!important
   :b--none!important
   :bw--0!important
   :p--0.425em!important
-  :c--$neutral-minimal-color!important
-  :dark:c--$neutral-minimal-color-inverse!important
+  [:c "var(--neutral-minimal-color)!important"]
+  [:dark:c "var(--neutral-minimal-color-inverse)!important"]
   :bgc--transparent!important
   :hover:bgc--transparent!important
   :active:bgc--transparent!important)
 
-(defcss "@layer kushi-playground-shared .kushi-playground-demobox-ui-icon-stage-control"
-  :p--0.5em!important
-  :hover:bgc--$neutral-200!important
-  :dark:hover:bgc--$neutral-750!important
-  :active:bgc--$neutral-300!important
-  :dark:active:bgc--$neutral-650!important
-  ["[aria-selected='true']:bgc" :$neutral-100!important]
-  ["dark:[aria-selected='true']:bgc" :$neutral-750!important]
-  )
+(defcss "@layer kushi-playground-shared
+         .kushi-playground-demobox-ui-icon-stage-control"
+  {:p                                :0.5em!important
+   :hover:bgc                        "var(--neutral-200)!important"
+   :dark:hover:bgc                   "var(--neutral-750)!important"
+   :active:bgc                       "var(--neutral-300)!important"
+   :dark:active:bgc                  "var(--neutral-650)!important"
+   "[aria-selected='true']:bgc"      "var(--neutral-100)!important"
+   "dark:[aria-selected='true']:bgc" "var(--neutral-750)!important"})
 
-(defcss "@layer kushi-playground-shared .truncate"
+(defcss "@layer kushi-playground-shared
+         .truncate"
   :overflow--hidden
   :text-overflow--ellipsis
   :white-space--nowrap)
 
-(defcss "@layer kushi-playground-shared .kushi-playground-dev-mode-portal"
+(defcss "@layer kushi-playground-shared
+         .kushi-playground-dev-mode-portal"
   :.transition
   :position--fixed
   :transition-duration--$xxslow
@@ -206,11 +213,13 @@
   :zi--10000)
 
 
-(defcss "@layer kushi-playground-shared .kushi-playground-dev-mode-hidden"
+(defcss "@layer kushi-playground-shared
+         .kushi-playground-dev-mode-hidden"
   :overflow--hidden)
 
 
-(defcss "@layer kushi-playground-shared .kushi-playground-dev-mode"
+(defcss "@layer kushi-playground-shared
+         .kushi-playground-dev-mode"
   :>#app:o--0
   :>#app:transition--all
   :>#app:transition-duration--500ms
@@ -219,7 +228,8 @@
   :>#kushi-playground-dev-mode-portal:h--100vh)
 
 
-(defcss "@layer kushi-playground-shared .kushi-playground-sidenav-wrapper"
+(defcss "@layer kushi-playground-shared
+         .kushi-playground-sidenav-wrapper"
   :.grow
   :h--100vh
   :d--none
