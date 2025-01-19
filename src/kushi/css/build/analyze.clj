@@ -868,7 +868,7 @@
 (defn spit-css-imports [coll]
  ;; TODO - grab  skip <public> folder dynamically here or user-supplied filename
  ;; form kushi.edn
- (spit "./public/css/main2.css"
+ (spit "./public/css/main.css"
        (str "/* Kushi build system - development build */\n\n"
             (string/join 
              "\n\n"
@@ -1052,7 +1052,7 @@
      body)))
 
 (def lightning-options-via-user-config
-  {:input-path  "./public/css/main2.css"
+  {:input-path  "./public/css/main.css"
    :output-path "./public/css/bundle.css"
    :targets     ">= 0.25%"})
 
