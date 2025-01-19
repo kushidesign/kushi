@@ -5,7 +5,7 @@
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.text-field.core :refer [text-field]]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-   [kushi.css.core :refer (sx merge-attrs)]
+   [kushi.css.core :refer (sx css css-vars-map merge-attrs)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]))
@@ -106,7 +106,8 @@
           :row-gap    :2rem
           :column-gap :unset}])]
 
-   [{:desc            "Sizes from xxsmall to xxxlarge, in weights from extra-light to extra-bold"
+   [
+    {:desc            "Sizes from xxsmall to xxxlarge, in weights from extra-light to extra-bold"
      :variants-       [:outlined :filled]
      :container-attrs container-attrs
      :row-attrs       row-attrs-all
@@ -128,7 +129,12 @@
                                   (into [:div (sx :.flex-row-sb :row-gap--1.25rem)]
                                         (for [sz sizes]
                                           [icon (merge-attrs
-                                                 {:class [sz weight :pointer]}
+                                                 (sx sz
+                                                     weight
+                                                     :cursor--pointer
+                                                     :c--$foreground-color
+                                                     :dark:c--$foreground-color-inverse
+                                                     )
                                                  (tooltip-attrs {:-text [(name sz) (name weight)]}))
                                            :star]))))}]}
     
@@ -156,7 +162,10 @@
      :examples        [{:label "Weights from extra-light to bold"
                         :code  (sx-call 
                                 (for [weight (drop-last component-examples/type-weights)]
-                                  [icon {:class [weight]}
+                                  [icon (sx weight
+                                            :c--$foreground-color
+                                            :dark:c--$foreground-color-inverse
+                                            )
                                    :star]))}]}
 
     {:desc            "All the colors"
@@ -184,28 +193,33 @@
                          [icon (sx :c--$magenta-500) :star]]]
      :examples        [{:label "All the colors"
                         :code  (sx-call 
-                                (for [color (concat component-examples/colors
-                                                    component-examples/non-semantic-colors)
-                                      :let [color-lut {"neutral"  "gray"
-                                                       "positive" "green"
-                                                       "warning"  "yellow"
-                                                       "negative" "red"
-                                                       "accent"   "blue"}
-                                            color (get color-lut color color)]]
-                                  (into [:div (sx :.flex-row-fs :jc--sb :row-gap--1.25rem)]
-                                        (for [val (range 200 1000 100)
-                                              :let [color-val (str color "-" val)]]
-                                          [:div (merge-attrs
-                                                 (sx :.flex-col-fs 
-                                                     :cursor--pointer)
-                                                 (tooltip-attrs {:-text color-val}))
-                                           [icon {:class [:xlarge :light]
-                                                  :style {:color (str "var(--" color-val ")")}}
-                                            :star]
-                                           [icon {:class         [:xlarge :light]
-                                                  :-icon-filled? true
-                                                  :style         {:color (str "var(--" color-val ")")}}
-                                            :star]]))))}]}
+
+                                (into [:div (sx :.flex-row-fs :jc--sb :row-gap--1.25rem)]
+                                      (for [color (concat component-examples/colors
+                                                          component-examples/non-semantic-colors)
+                                            :let  [
+                                                   color (get component-examples/color-lut color color)
+                                                   base             "var(--foreground-color-" 
+                                                   color-token      (str base color ")")
+                                                   color-token-dark (str base color "-inverse)")
+                                                   foreground-color-class (str "foreground-" color)
+                                                   ]]
+                                        [:div (merge-attrs
+                                               (sx :.flex-col-fs 
+                                                   :cursor--pointer)
+                                               (tooltip-attrs {:-text color}))
+                                         [icon (sx :fs--$xlarge
+                                                   :.light
+                                                   foreground-color-class)
+                                          :star]
+                                         [icon (merge-attrs
+                                                (sx :fs--$xlarge
+                                                    foreground-color-class)
+                                                {:-icon-filled? true})
+                                                         
+                                          :star]])))}]}
+
+
 
     {:desc            "Many icons have a filled variant"
      :variants-       [:outlined :filled]
@@ -225,9 +239,20 @@
                                                      :gap--0.25rem
                                                      :cursor--pointer)
                                                  (tooltip-attrs {:-text icon-name}))
-                                           [icon {:class [:xlarge :light]} icon-name]
-                                           [icon {:class         [:xlarge]
-                                                  :-icon-filled? true}
+                                           [icon (merge-attrs
+                                                  (sx :.xlarge 
+                                                      :.light
+                                                      :cursor--pointer
+                                                      :c--$foreground-color
+                                                      :dark:c--$foreground-color-inverse))
+                                            (name icon-name)]
+                                           [icon 
+                                            (merge-attrs
+                                             (sx :.xlarge 
+                                                 :cursor--pointer
+                                                 :c--$foreground-color
+                                                 :dark:c--$foreground-color-inverse)
+                                             {:-icon-filled? true})
                                             (name icon-name)]]))))}]}
 
     {:desc            "Some icons do not have a filled variant"
@@ -259,6 +284,10 @@
                                           [:div (sx :.flex-col-fs 
                                                     :gap--0.25rem)
                                            [icon
-                                            (merge-attrs {:class [:xlarge :light :pointer]}
+                                            (merge-attrs (sx :.xlarge 
+                                                             :.light
+                                                             :cursor--pointer
+                                                             :c--$foreground-color
+                                                             :dark:c--$foreground-color-inverse)
                                                          (tooltip-attrs {:-text icon-name}))
                                             icon-name]]))))}]}]))

@@ -76,7 +76,14 @@
             "You can also use any valid css color value e.g. `$c--#8a8a8a`"
             :br
             :br
-            "Example row, in all the colors:"]
+            "Example rows below, in all the colors."
+            :br
+            :br
+            "The first example sets the `:color` property directly."
+            :br
+            :br
+            "The second example sets a `:.foreground-<color>` class, which provides a different shade of color depending on light or dark mode."
+            ]
 
            :snippets        
            [[:div
@@ -89,10 +96,27 @@
              [sym '(sx :c--$lime-500)]
              [sym '(sx :c--$brown-500)]
              [sym '(sx :c--$orange-500)]
-             [sym '(sx :c--$magenta-500)]]]})
-             
-             
-             ]
+             [sym '(sx :c--$magenta-500)]]
+
+            [:div
+             [sym '(sx :.foreground-gray)]
+             [sym '(sx :.foreground-blue)]
+             [sym '(sx :.foreground-green)]
+             [sym '(sx :.foreground-yellow)]
+             [sym '(sx :.foreground-red)]
+             [sym '(sx :.foreground-purple)]
+             [sym '(sx :.foreground-lime)]
+             [sym '(sx :.foreground-brown)]
+             [sym '(sx :.foreground-orange)]
+             [sym '(sx :.foreground-magenta)]]
+            
+            ]})
+
+         example-colors
+         (map #(->> (get component-examples/color-lut % %)
+                    (str "foreground-"))
+              (concat component-examples/colors
+                      component-examples/non-semantic-colors))]
 
 
     [{:desc      "Usage with a button."
@@ -112,15 +136,8 @@
         (sx-call 
          (into
           [:div (sx :.flex-row-fs :jc--sb)]
-          (for [color (concat component-examples/colors
-                              component-examples/non-semantic-colors)
-                :let [base             "var(--foreground-color-" 
-                      color-token      (str base color ")")
-                      color-token-dark (str base color "-inverse)")]]
-            [propeller {:style (css-vars-map color-token color-token-dark)
-                         :class (css :fs--$large
-                                     :c--$color-token
-                                     :dark:c--$color-token-dark)}])))
+          (for [fg-color-class example-colors]
+            [propeller (sx :fs--$large fg-color-class)])))
 
         (all-the-colors-snippet-map 'propeller))
 
@@ -134,15 +151,8 @@
         row-attrs-all-colors 
         (sx-call 
          (into [:div (sx :.flex-row-fs :jc--sb)]
-               (for [color (concat component-examples/colors
-                                   component-examples/non-semantic-colors)
-                     :let [base             "var(--foreground-color-" 
-                           color-token      (str base color ")")
-                           color-token-dark (str base color "-inverse)")]]
-                 [donut {:style (css-vars-map color-token color-token-dark)
-                         :class (css :fs--$large
-                                     :c--$color-token
-                                     :dark:c--$color-token-dark)}])))
+               (for [fg-color-class example-colors]
+                 [donut (sx :fs--$large fg-color-class)])))
         (all-the-colors-snippet-map 'donut))
 
      (f "Thinking, small to xxxlarge"
@@ -156,15 +166,8 @@
         row-attrs-all-colors 
         (sx-call 
          (into [:div (sx :.flex-row-fs :jc--sb)]
-               (for [color (concat component-examples/colors
-                                   component-examples/non-semantic-colors)
-                     :let [base             "var(--foreground-color-" 
-                           color-token      (str base color ")")
-                           color-token-dark (str base color "-inverse)")]]
-                 [thinking {:style (css-vars-map color-token color-token-dark)
-                            :class (css :fs--$medium
-                                        :c--$color-token
-                                        :dark:c--$color-token-dark)}])))
+               (for [fg-color-class example-colors]
+                 [thinking (sx :fs--$medium fg-color-class)])))
         (all-the-colors-snippet-map 'thinking))]))
 
 

@@ -57,6 +57,7 @@
     [:div
      (merge-attrs
       (sx ".kushi-icon"
+          :.transition
           :position--relative
           :d--inline-flex
           :flex-direction--row
@@ -66,6 +67,9 @@
           ;; TODO - use tokenized syntax here
           [:>span:fs "var(--mui-icon-relative-font-size, inherit)"]
           [:>span.material-symbols-icon-filled:font-variation-settings "'FILL' 1"]
+          ;; [:>span {:transition-property        :all
+          ;;          :transition-timing-function :$transition-timing-function
+          ;;          :transition-duration        :$transition-duration}]
           :_svg:height--1em
           :_svg>path:fill--currentColor)
       {:data-kushi-ui :icon}
