@@ -2,7 +2,7 @@
   (:require [domo.core :as domo]
             [clojure.string :as string]
             [kushi.ui.divisor.core :refer (divisor)]
-            [kushi.css.core :refer [?css sx css merge-attrs defcss]]
+            [kushi.css.core :refer [sx css merge-attrs defcss]]
             [kushi.ui.core :refer [defcom]]
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.spinner.core :refer [propeller]]
@@ -88,14 +88,7 @@
           :name          (str "kushi-" component-label "-tab-group")
           :aria-selected aria-selected
           :aria-controls panel-id
-          :on-click      (partial tab-click-handler panel-id)}
-         #_(trans (sx :.pill
-                      :&.neutral.minimal:c--$neutral-secondary-foreground
-                      :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
-                      {:name          (str "kushi-" component-label "-tab-group")
-                       :aria-selected aria-selected
-                       :aria-controls panel-id
-                       :on-click      (partial tab-click-handler panel-id)})))
+          :on-click      (partial tab-click-handler panel-id)})
    (string/capitalize tab-label)])
 
 
@@ -118,7 +111,6 @@
         " [data-kushi-path=\"" path "\"]{display: flex}")])
 
 
-
 (defn generic-section
   ;; content is a component
   [{:keys [path label content args]}]
@@ -138,20 +130,7 @@
                           (js/requestAnimationFrame
                            #(domo/remove-class! (domo/el-by-id "app")
                                                 "path-transitioning"))))}
-    #_(trans (sx 
-              :.transition
-              :.flex-col-fs
-              :.grow
-              :d--none
-              :gap--5rem
-          ;; ["has-ancestor(.path-transitioning):opacity" 0]
-              :pb--0:30vh
-              {:data-kushi-path path
-               :ref             (fn [el]
-                                  (when el
-                                    (js/requestAnimationFrame
-                                     #(domo/remove-class! (domo/el-by-id "app")
-                                                          "path-transitioning"))))}))
+    
     [:section 
      {:class
       (css :min-height--200px
@@ -225,13 +204,13 @@
                    :pbs--4rem
                    :xsm:pbs--6rem
                    ;;  :first-child:pbs--0rem
-            
+                   
                    ;; De-emphasizing unfocused --------------------------------
                    ;; Leave off for now til you figure out intersection -------
                    ;;  :o--0.3
                    ;;  [:filter "blur(0px)"]
                    ;; ---------------------------------------------------------
-                   )}
+                   )
 
               :data-kushi-playground-component 
               label
@@ -253,7 +232,7 @@
                                               state/set-first-intersecting!)
 
                           ;; Incorporate into global val for header height
-                      :root-margin      "51px 0px 0px 0px"}))))
+                      :root-margin      "51px 0px 0px 0px"}))))}
              
              [:div (sx :.component-section-header
                        [:box-shadow
@@ -330,39 +309,6 @@
                 :aria-orientation 
                 "horizontal"}
 
-               #_(trans (sx 
-                         :$tablist-selected-tab-underline-color--$accent-600
-                         :$tablist-selected-tab-underline-color-inverse--$accent-300
-                         :$tablist-selected-tab-underline-thickness--2px
-                         :$tablist-border-end-color--$divisor-color
-                         :$tablist-border-end-color-inverse--$divisor-color-inverse
-                         :$tablist-border-end-width--$divisor-thickness
-                         :$tablist-border-end-style--$divisor-style
-                         :$tablist-padding-end--0.5rem
-                         :.flex-row-fs
-                         :.transition
-                         :bbew--$tablist-border-end-width
-                         :bbec--$tablist-border-end-color
-                         :bbes--$tablist-border-end-style
-                         :dark:bbec--$tablist-border-end-color-inverse
-                         :ai--fe
-                         :gap--0.75em
-                         :pbe--$tablist-padding-end
-                    ;; TODO - data-orientation
-                         [">[role='tab'][aria-selected='true']:before"
-                          {:box-sizing :border-box
-                           :content    "\"\""
-                           :h          :$tablist-selected-tab-underline-thickness
-                           :position   :absolute
-                           :bottom     "calc(0px - (var(--tablist-padding-end) + 1px))"
-                           :left       0
-                           :right      0
-                           :bgc        :$tablist-selected-tab-underline-color}]
-                         ["dark:>[role='tab'][aria-selected='true']:before"
-                          {:bgc :$tablist-selected-tab-underline-color-inverse}]              
-                         {:role             :tablist
-                          :aria-orientation "horizontal"}))
-
                [component-section-tab {:aria-selected   true
                                        :component-label label
                                        :tab-label       "examples"}]
@@ -417,16 +363,6 @@
                  :bgc--$accent-50
                  :dark:c--$accent-100
                  :dark:bgc--$accent-900)
-                #_(trans (sx :.code
-                           :.semi-bold
-                           :pb--0.07em
-                           :pi--0.2em
-                           :fs--0.85rem
-
-                           :c--$accent-750
-                           :bgc--$accent-50
-                           :dark:c--$accent-100
-                           :dark:bgc--$accent-900))
                 (str ":-" nm)]]
               [:div (sx
                      :.flex-col-fs
@@ -464,21 +400,12 @@
            :hidden "hidden"
            :id     (str "kushi-" label "-documentation")}
 
-          #_(trans (sx :.playground-component-panel
-                       :>div:max-width--$main-content-max-width
-                       :pbs--35px
-                       {:hidden "hidden"
-                        :id     (str "kushi-" label "-documentation")}))
           (when summary
             [:div 
              (sx :fs--$medium
                  :fw--$wee-bold
                  :mb--0:2rem
                  :_p:lh--1.7)
-             #_(trans (sx :.medium
-                          :.wee-bold
-                          :mb--0:2rem
-                          :&_p:lh--1.7))
              (->> summary
                   util/desc->hiccup 
                   docs/add-links)])
@@ -492,12 +419,6 @@
                   :bbe--1px:solid:$gray-200
                   :dark:bbe--1px:solid:$gray-800
                   :mb--0:1.5rem)
-              #_(trans (sx :.large 
-                           :.semi-bold
-                           :pbe--0.5rem
-                           :bbe--1px:solid:$gray-200
-                           :dark:bbe--1px:solid:$gray-800
-                           :mb--0:1.5rem))
               "Usage"]
              [:div (sx :lh--1.7
                        :mb--0:2rem

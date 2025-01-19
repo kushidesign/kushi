@@ -43,24 +43,24 @@
   (filter 
   ;;  :label
    #(contains? #{
-            ;;    ;; "button"     
-                ;; ;; "icon"       
-                ;; ;; "spinner"    
-                ;; "switch"     
-                ;; ;; "radio"      
-                ;; ;; "checkbox"   
-                "slider"     
-                ;; ;; "text field" 
-                ;; ;; "tooltip"    
-                ;; ;; "popover"    ;; PS
-                ;; ;; "modal"      ;; PS
-                ;; ;; "toast"      ;; PS
-                ;; ;; "card"       ;; PS
-                ;; ;; "callout"    ;; PS
-                ;; ;;  "collapse"   ;; PS
-                ;; ;; "accordian"  ;; PS
-                ;; ;; "tag"        ;; PS
-                 ;; ;; "grid"       ;; PS
+                 "button"     
+                 "icon"       
+                 "spinner"    
+                 "switch"     
+                 "radio"      
+                 "checkbox"   
+                 "slider"     
+                 "text field" 
+                 "tooltip"    
+                 "popover"    ;; PS
+                 "modal"      ;; PS
+                 "toast"      ;; PS
+                 "card"       ;; PS
+                 "callout"    ;; PS
+                 "collapse"   ;; PS
+                 "accordian"  ;; PS
+                 "tag"        ;; PS
+                 "grid"       ;; PS
                  }
                (:label %))
 

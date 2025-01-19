@@ -373,7 +373,8 @@
       [copy-to-clipboard-button attrs])
     preformatted]])
 
-(defn scroll-to-playground-component! [{:keys [component-label scroll-y]}]
+(defn scroll-to-playground-component!
+  [{:keys [component-label scroll-y]}]
   (let [el (d/qs-data= "kushi-playground-component" component-label)]
     (d/scroll-into-view! el)
     ;; This is dependent on the existance of `#header-navbar`
@@ -499,6 +500,13 @@
    "orange"
    "magenta"
    ])
+
+(def color-lut
+  {"neutral"  "gray"
+   "positive" "green"
+   "warning"  "yellow"
+   "negative" "red"
+   "accent"   "blue"})
 
 (def sizes
   [#_:xxxsmall

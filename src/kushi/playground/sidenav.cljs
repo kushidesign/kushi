@@ -247,8 +247,8 @@
           (for [{:keys [label]} playground-components]
             [:<> 
              [style-tag-first-intersecting label]
-             [:li (sx :.capitalize
-                      :.pointer
+             [:li (sx :tt--capitalize
+                      :cursor--pointer
                       :.flex-col-c
                       :w--fit-content
                       :pb--0.25em)
