@@ -1159,13 +1159,26 @@
 ;; TODO 
 
 ;; 1) Get kushi.design working with new changes
-;; 1d) get side menu working
 
 ;; 2) Get overrides working 
 ;;    (problem with lightning not supporting ".wtf\!", or ".wtf!")
 
 ;; 3) - Sort out core fns from kushi.css into kushi.core.
 ;;    - Rename css-new
+;;    
+;;    - Convert sx, css
+;;      kushi.playground.tweak.element
+;;      kushi.playground.tweak.typescale
+
+;;    - Maybe delete:
+;;      kushi.ui.icon.mui.core
+;;      kushi.ui.icon.mui.examples
+;;      kushi.ui.icon.helper
+;;      kushi.ui.modal.examples
+;;      examplescustom
+;;      kushi.ui.examples
+;;      kushi.playground.sample
+;;      kushi.ui.theme
 
 ;; 4) Keep track of changes or deletions in proj via shadow build-state
 

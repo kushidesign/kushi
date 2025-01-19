@@ -1,6 +1,5 @@
 (ns kushi.ui.tag.core
-  (:require [kushi.core :refer [merge-attrs] :refer-macros (sx)]
-            [kushi.css.core :refer [css trans]]
+  (:require [kushi.css.core :refer [css merge-attrs]]
             [kushi.ui.core :refer (opts+children)]))
 
 (defn tag

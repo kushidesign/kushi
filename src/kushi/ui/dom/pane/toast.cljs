@@ -169,7 +169,7 @@
     (doto toast-el
       (.setAttribute "data-kushi-ui" "toast")
 
-      ;; TODO swap this in once kushi.core/defcss is ready
+      ;; TODO swap this in once defcss is ready
       ;; (.setAttribute "data-kushi-ui-pane-placement" placement)
       (.setAttribute "id" id)
       (.setAttribute "style"

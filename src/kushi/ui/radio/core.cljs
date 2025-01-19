@@ -1,9 +1,6 @@
 (ns kushi.ui.radio.core
-  (:require-macros
-  ;;  [kushi.core :refer (#_sx )]
-   [kushi.css.core :refer (css sx trans)])
   (:require
-   [kushi.core :refer (merge-attrs)]
+   [kushi.css.core :refer (css sx merge-attrs)]
    [kushi.ui.core :refer (opts+children)]))
 
 (defn radio

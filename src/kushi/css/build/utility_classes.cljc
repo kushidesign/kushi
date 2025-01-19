@@ -639,7 +639,7 @@
    ;; debugging outline helpers  :.outline-red
    debug-outline-classes
 
-   (? foreground-color-classes)
+   foreground-color-classes
 
    ;; These are combinatorial classes dealing with:
    ;; - abs fixed pos   e.g. :.absolute-block-end-inside 
@@ -694,9 +694,6 @@
 
 (def utility-class-ks
   (mapcat util/kwargs-keys all-classes))
-
-
-(? utility-class-ks)
 
 
 (def utility-class-ks-set
