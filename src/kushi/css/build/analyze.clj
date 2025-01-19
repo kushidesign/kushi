@@ -1155,14 +1155,11 @@
   #_(create-css-bundle))
 
 
+
 ;; TODO 
 
-
 ;; 1) Get kushi.design working with new changes
-;; TODO
-;; 1c) get components section working
-;;     start from bottom?
-
+;; 1d) get side menu working
 
 ;; 2) Get overrides working 
 ;;    (problem with lightning not supporting ".wtf\!", or ".wtf!")
@@ -1195,7 +1192,7 @@
 ;; - avatar
 ;; - label
 
-
+;; Make sure styled scrollbars working for modals etc.
 
 ;; 10)  
 ;;      Later:
@@ -1208,6 +1205,7 @@
 ;;      3d) Hydrate args that use shared sources
 ;;      3e) Maybe resave hydrated shared sources without infinite loop?
 ;;      3f) Write styles
+
 
 (defn- design-token-summary-callout [css-new]
   (callout {:type  :subtle
