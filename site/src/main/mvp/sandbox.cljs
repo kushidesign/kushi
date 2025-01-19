@@ -1,4 +1,6 @@
-(ns mvp.browser
+;; For trying stuff out
+
+(ns mvp.sandbox
   (:require
    [reagent.dom :as rdom]
    [kushi.ui.icon.mui.svg :as mui.svg ]
