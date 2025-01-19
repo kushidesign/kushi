@@ -1162,7 +1162,11 @@
 
 ;; TODO 
 
-;; 2 days
+;; Review PR, then merge
+
+
+
+;; 1 day
 ;; branch ----------------------------------------------------------------------
 
 ;; Figure out sx and css calls from ui and playground that were
@@ -1187,6 +1191,9 @@
 
 
 ;; 3) - Sort out core fns from kushi.css into kushi.core.
+
+;;    - Use single version of keyed with vector
+
 ;;    - Rename css-new
 ;;    
 ;;    - Convert sx, css
@@ -1295,8 +1302,7 @@
   "Just for dev"
   [reduced-sources css-new]
   (when (contains? debugging :narrative)  
-    (do (stage-callout "ANALYZED SOURCES" {:margin-top    1
-                                           :margin-bottom 1})
+    (do (stage-callout "ANALYZED SOURCES" {:margin-top 1 :margin-bottom 1})
         (? {:label
             (str 
              "Each source has been analyzed and produces a map with entries\n"
@@ -1345,7 +1351,7 @@
 ;; Dev
 ;; TODO - create a fake :build.state/mode here?
 #_(let [release?               false
-      filtered-build-sources (-> "./site/filtered-build-sources.edn"
+      filtered-build-sources (-> "./site/div/mock/filtered-build-sources.edn"
                                  slurp
                                  read-string
                                  hydrate-paths-into-files
@@ -1366,7 +1372,7 @@
              (apply array-map))
 
         _                                 
-        (spit "./filtered-build-sources.edn"
+        (spit "./div/mock/filtered-build-sources.edn"
               (with-out-str (pprint filtered-build-sources-with-paths))
               :append false)]))
 
