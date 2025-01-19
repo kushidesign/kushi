@@ -765,7 +765,8 @@
         css          (string/join 
                       "\n\n"
                       (for [[class v] util-classes
-                            :let      [classname (str (name class) "\\!")]]
+                            :let      [classname (str (name class) "\\!")]
+                            :when     (not (re-find #"\]$" (name class)))]
                         (css-rule* classname
                                    [v]
                                    nil
@@ -788,7 +789,8 @@
             css         (string/join 
                          "\n\n"
                          (for [class reified
-                               :let  [classname (name class)]]
+                               :let  [classname (name class)]
+                               :when (not (re-find #"\]$" (name class)))]
                            (css-rule* classname
                                       [(get utility-classes/utility-classes
                                             classname)]
