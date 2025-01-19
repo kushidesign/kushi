@@ -1,7 +1,8 @@
-(ns kushi.ui.slider.core
+(ns ^{:kushi/layer "kushi-ui-styles"}
+  kushi.ui.slider.core
   (:require
    [applied-science.js-interop :as j]
-   [kushi.css.core :refer (sx css defcss css-vars-map css-include merge-attrs)]
+   [kushi.css.core :refer (css defcss css-vars-map merge-attrs)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.slider.css]
    [kushi.ui.util :refer [range-of-floats find-index]]
@@ -12,14 +13,12 @@
    [kushi.playground.util :as util :refer-macros (keyed)]
    [domo.core :as domo]))
 
-;; (css-include "@layer kushi-ui-styles kushi/ui/slider.css")
 
 ;; ----------------------------------------------------------------------------
 ;; Styles for marker-labels
 ;; ----------------------------------------------------------------------------
 
-(defcss
-  "@layer kushi-ui-styles .kushi-slider-step-label-marker"
+(defcss ".kushi-slider-step-label-marker"
   {:>span:v                                           :hidden
    :before:fw                                         :800
    :before:fs                                         :1.2rem
@@ -31,21 +30,21 @@
    :.kushi-slider-step-label-selected:before:content :unset})
 
 (defcss
-  "@layer kushi-ui-styles .kushi-slider-step-label-marker-dot"
+  ".kushi-slider-step-label-marker-dot"
   :.kushi-slider-step-label-marker
   {:before:fw :800
    :before:fs :1.2rem
    :before:o  :0.7})
 
 (defcss
-  "@layer kushi-ui-styles .kushi-slider-step-label-marker-bar"
+  ".kushi-slider-step-label-marker-bar"
   :.kushi-slider-step-label-marker
   {:before:fw :300
    :before:fs :0.8em
    :before:o  :1})
 
 (defcss
-  "@layer kushi-ui-styles .kushi-slider-step-label-marker-none"
+  ".kushi-slider-step-label-marker-none"
   :.kushi-slider-step-label-marker
   {:before:fw :300
    :before:fs :0.8em
@@ -56,7 +55,7 @@
 ;; Cross-browser styles for slider track, thumb, outline, background etc.
 ;; ----------------------------------------------------------------------------
 
-(defcss "@layer kushi-ui-styles :root" 
+(defcss ":root" 
   {:--kushi-input-slider-track-background-color      :silver
    :--kushi-input-slider-thumb-width                 :1em
    :--kushi-input-slider-thumb-height                :1em
@@ -74,20 +73,17 @@
    :--kushi-input-slider-thumb-outline-dark          "var(--kushi-input-slider-thumb-outline-width) var(--kushi-input-slider-thumb-outline-style, solid) var(--kushi-input-slider-thumb-outline-color-dark)"})
 
 (defcss
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=range]"
+  "input.kushi-slider-input[type=range]"
   :height--$kushi-input-slider-thumb-height
   ["-webkit-appearance" :none]
   :width--100%)
 
 (defcss 
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=range]:focus"
+  "input.kushi-slider-input[type=range]:focus"
   :outline--none)
 
 (defcss 
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=range]::-webkit-slider-runnable-track"
+  "input.kushi-slider-input[type=range]::-webkit-slider-runnable-track"
   :width--100%
   :height--1px
   :cursor--pointer
@@ -98,8 +94,7 @@
   :border--0px:solid:#000000)
 
 (defcss
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=\"range\"]::-webkit-slider-thumb"
+  "input.kushi-slider-input[type=\"range\"]::-webkit-slider-thumb"
   [:margin-top "calc(var(--kushi-input-slider-thumb-height) / -2)"]
   :box-shadow--0px:0px:0px:#000000
   :outline--$kushi-input-slider-thumb-outline
@@ -113,24 +108,20 @@
   :border-radius--50%)
 
 (defcss 
-  "@layer kushi-ui-styles
-  .dark input.kushi-slider-input[type=range]::-webkit-slider-thumb"
+  ".dark input.kushi-slider-input[type=range]::-webkit-slider-thumb"
   :outline--$kushi-input-slider-thumb-outline-dark
   :background--$kushi-input-slider-thumb-background-color-dark)
 
 (defcss
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=range]:focus::-webkit-slider-runnable-track"
+  "input.kushi-slider-input[type=range]:focus::-webkit-slider-runnable-track"
   :background--#000)
 
 (defcss
-  "@layer kushi-ui-styles
-   .dark input.kushi-slider-input[type=range]:focus::-webkit-slider-runnable-track"
+  ".dark input.kushi-slider-input[type=range]:focus::-webkit-slider-runnable-track"
  :background--#fff)
 
 (defcss
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=range]::-moz-range-track"
+  "input.kushi-slider-input[type=range]::-moz-range-track"
   :width--100%
   :height--1px
   :cursor--pointer
@@ -141,13 +132,11 @@
   :border--0px:solid:#000000)
 
 (defcss
-  "@layer kushi-ui-styles
-   .dark input.kushi-slider-input[type=range]::-moz-range-track"
+  ".dark input.kushi-slider-input[type=range]::-moz-range-track"
   :b--0px:solid:#fff)
 
 (defcss
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=range]::-moz-range-thumb"
+  "input.kushi-slider-input[type=range]::-moz-range-thumb"
   :box-shadow--0px:0px:0px:#000000
   :outline--5px:solid:#000
   :outline-offset---5px
@@ -158,14 +147,12 @@
   :cursor--pointer)
 
 (defcss
-  "@layer kushi-ui-styles
-   .dark input.kushi-slider-input[type=range]::-moz-range-thumb" 
+  ".dark input.kushi-slider-input[type=range]::-moz-range-thumb" 
   :outline--5px:solid:#fff
   :background--#000)
 
 (defcss
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=range]::-ms-track" 
+  "input.kushi-slider-input[type=range]::-ms-track" 
   :width--100%
   :height--1px
   :cursor--pointer
@@ -175,34 +162,29 @@
   :color--transparent)
 
 (defcss 
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=range]::-ms-fill-lower" 
+  "input.kushi-slider-input[type=range]::-ms-fill-lower" 
   :background--$kushi-input-slider-track-background-color
   :border--0px:solid:#000000
   :border-radius--2px
   :box-shadow--0px:0px:0px:#000000)
 
 (defcss
-  "@layer kushi-ui-styles
-   .dark input.kushi-slider-input[type=range]::-ms-fill-lower" 
+  ".dark input.kushi-slider-input[type=range]::-ms-fill-lower" 
   :border--0px:solid:#fff)
 
 (defcss
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=range]::-ms-fill-upper" 
+  "input.kushi-slider-input[type=range]::-ms-fill-upper" 
   :background--$kushi-input-slider-track-background-color
   :border--0px:solid:#000000
   :border-radius--2px
   :box-shadow--0px:0px:0px:#000000)
 
 (defcss
-  "@layer kushi-ui-styles
-   .dark input.kushi-slider-input[type=range]::-ms-fill-upper" 
+  ".dark input.kushi-slider-input[type=range]::-ms-fill-upper" 
   :border--0px:solid:#fff)
 
 (defcss
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=range]::-ms-thumb" 
+  "input.kushi-slider-input[type=range]::-ms-thumb" 
   :margin-top--1px
   :box-shadow--0px:0px:0px:#000000
   :outline--5px:solid:#000
@@ -214,30 +196,25 @@
   :cursor--pointer)
 
 (defcss
-  "@layer kushi-ui-styles
-   .dark input.kushi-slider-input[type=range]::-ms-thumb" 
+  ".dark input.kushi-slider-input[type=range]::-ms-thumb" 
   :margin-top--1px
   :outline--5px:solid:#fff
   :background--#000)
 
 (defcss
-  "@layer kushi-ui-styles
-   input.kushi-slider-input[type=range]:focus::-ms-fill-lower" 
+  "input.kushi-slider-input[type=range]:focus::-ms-fill-lower" 
   :background--#000)
 
 (defcss
-  "@layer kushi-ui-styles
-   .dark input.kushi-slider-input[type=range]:focus::-ms-fill-lower" 
+  ".dark input.kushi-slider-input[type=range]:focus::-ms-fill-lower" 
   :background--#fff)
 
 (defcss
-  "@layer kushi-ui-styles 
-   input.kushi-slider-input[type=range]:focus::-ms-fill-upper" 
+  "input.kushi-slider-input[type=range]:focus::-ms-fill-upper" 
   :background--#000)
 
 (defcss
-  "@layer kushi-ui-styles
-   .dark input.kushi-slider-input[type=range]:focus::-ms-fill-upper" 
+  ".dark input.kushi-slider-input[type=range]:focus::-ms-fill-upper" 
   :background--#fff)
 
 ;; ----------------------------------------------------------------------------
