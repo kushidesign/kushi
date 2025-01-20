@@ -1156,7 +1156,7 @@
   "Just for dev"
   [filtered-build-sources release?]
   ;; TODO maybe deleted? and added? should be seqs or nils
-  (write-css-imports "./site/kushi.edn" filtered-build-sources release?)
+  (write-css-imports "./docs/kushi.edn" filtered-build-sources release?)
   #_(create-css-bundle))
 
 
@@ -1351,7 +1351,7 @@
 ;; Dev
 ;; TODO - create a fake :build.state/mode here?
 #_(let [release?               false
-      filtered-build-sources (-> "./site/div/mock/filtered-build-sources.edn"
+      filtered-build-sources (-> "./docs/dev/mock/filtered-build-sources.edn"
                                  slurp
                                  read-string
                                  hydrate-paths-into-files
@@ -1372,7 +1372,7 @@
              (apply array-map))
 
         _                                 
-        (spit "./div/mock/filtered-build-sources.edn"
+        (spit "./dev/mock/filtered-build-sources.edn"
               (with-out-str (pprint filtered-build-sources-with-paths))
               :append false)]))
 

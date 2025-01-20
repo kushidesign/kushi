@@ -1,29 +1,22 @@
 ;; shadow-cljs configuration
-{:source-paths   ["src"
-                  "../src"
-                  ;; "../../../cljc/bling/src"
-                  ;; "../../../cljc/fireworks/src"
-                  ]
+;; TODO setup :local-dev & :release aliases
+{:deps
+ {:aliases [:local-dev]}
 
- :dependencies   [[reagent/reagent    "1.1.1"]
-                  [io.github.paintparty/fireworks "0.6.2"]
-                  ;; [io.github.paintparty/fireworks-stubs "0.6.2"]
-                  [binaryage/devtools "1.0.6"]
-                  [design.kushi/kushi "1.0.0-a.22"]]
+ :dev-http
+ {5001 "public"}
 
- :dev-http       {7777 "public"}
-
- :cache-blockers #{kushi.core kushi.stylesheet}
-
- :builds         {:demo {:devtools         {:log             false
-                                            :reload-strategy :full
-                                            :watch-dir       "public"}
-                         :target           :browser
-                         :compiler-options {:output-feature-set :es8
-                                            :warnings           {:redef false}}
-                         :build-options    {:cache-level :off}
-                         :build-hooks      [(kushi.core/kushi-debug)
-                                            (kushi.stylesheet/create-css-file)
-                                            (shadow.cljs.build-report/hook
-                                             {:output-to "tmp/report.html"})]
-                         :modules          {:main {:init-fn site.browser/init}}}}}
+ :builds
+ {:app
+  {:devtools         {:log             false
+                      :reload-strategy :full
+                      :watch-dir       "public"}
+   :target           :browser
+   :compiler-options {:output-feature-set :es8
+                      :warnings           {:redef false}}
+   :modules          {:main {:init-fn mvp.browser/init}}
+   :output-dir       "public/js"
+   :build-hooks      [(kushi.css.build.analyze/hook)
+                      ;; (shadow.build/tap-hook)
+                      (shadow.cljs.build-report/hook
+                       {:output-to "tmp/report.html"})]}}}

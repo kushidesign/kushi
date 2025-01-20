@@ -1,14 +1,15 @@
 {
-  "name": "kushi.design",
-  "version": "1.0.0-a.21",
+  "name": "site",
+  "version": "0.0.1",
   "private": true,
-  "devDependencies": {
-    "shadow-cljs": "^2.27.5"
-  },
   "scripts": {
-    "dev": "npx shadow-cljs watch demo",
-    "release": "npx shadow-cljs release demo",
+    "dev": "npx shadow-cljs watch app",
+    "release": "npx shadow-cljs release app",
     "clean": "rm -rf public/js .shadow-cljs .cpcache"
+  },
+  "devDependencies": {
+    "lightningcss-cli": "^1.28.2",
+    "shadow-cljs": "2.28.6"
   },
   "dependencies": {
     "react": "17.0.2",
