@@ -6,7 +6,20 @@
             [domo.core :as domo]
             [goog.dom :as gdom]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.css.core :refer [sx css merge-attrs css-vars-map]]))
+            [kushi.css.core :refer [sx
+                                    css
+                                    merge-attrs
+                                    css-vars-map
+                                    register-design-tokens
+                                    register-design-tokens-by-tag]]))
+
+(register-design-tokens-by-tag
+ "elevation")
+
+(register-design-tokens
+ :--modal-backdrop-color
+ :--dark-gray-transparent-90
+ :--elevated)
 
 (declare close-on-backdrop-click)
 
@@ -158,7 +171,6 @@
 
     ;; TODO document the how and why of this
     (when expanded? (js/setTimeout #(open-kushi-modal id) 100))
-
     (into
      [:dialog
       (merge-attrs

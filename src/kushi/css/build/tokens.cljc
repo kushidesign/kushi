@@ -914,12 +914,6 @@
 
 
 
- (get design-tokens {:family     "Elevation levels",
-                     :desc       {:en ""},
-                     :categories ["Surfaces" "Shadows"],
-                     :tags       ["shadow" "elevation" "surfaces"]})
-
-
 (def enriched-tokens-array-map
   (apply array-map
          (reduce (fn [acc m]
@@ -949,6 +943,21 @@
                (assoc m k (:value v)))
              {}
              enriched-tokens-array-map))
+
+(def design-tokens-by-token-categorized-by-tag 
+  (reduce (fn [acc tag]
+            (assoc acc
+                   tag
+                   (reduce (fn [acc {:keys [tags name value]}]
+                             (if (contains? (into #{} tags) "elevation")
+                               (conj acc name)
+                               acc))
+                           []
+                           enriched-tokens-ordered)))
+          {}
+          ["elevation"]))
+
+
 
 #_{:name         "divisor-inverse",
  :value        :$divisor-5-inverse,

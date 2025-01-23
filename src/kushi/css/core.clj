@@ -808,9 +808,15 @@
 ;; Public API
 ;; -----------------------------------------------------------------------------
 
+(defmacro ^:public register-design-tokens [& args]
+  nil)
+
+(defmacro ^:public register-design-tokens-by-tag [& args]
+  nil)
 
 (defmacro ^:public utilize [x]
   `~x)
+
 
 (defmacro ^:public css-block-data
   "Returns a map with following keys:

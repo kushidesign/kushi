@@ -7,6 +7,7 @@
    [kushi.css.build.utility-classes :as utility-classes]
    [kushi.css.build.tokens]
    [kushi.css.core :refer [css-rule*]]
+   [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as kushi-specs]
    [kushi.utils :refer [maybe keyed]]
    [clojure.walk :as walk]
@@ -24,7 +25,7 @@
   #{
     ;; :narrative
     ;; :macro-hydration
-    ;; :design-token-registration
+    :design-token-registration
     })
 
 
@@ -36,6 +37,8 @@
      ?css
      ?sx
      ?defcss
+     register-design-tokens
+     register-design-tokens-by-tag
      ;; should be register-css-classes
      utilitize})
 
@@ -148,6 +151,33 @@
             assoc-in
             [:sources ns layer]
             [])))
+
+(declare register-design-tokens!)
+(declare vswap-design-tokens!)
+
+
+(defn ^:public css-var [x]
+  (if-let [s (let [nm (name x)]
+               (when (and (keyword? x)
+                          (or (string/starts-with? nm "$")
+                              (string/starts-with? nm "--")))
+                 nm))]
+    (hydrated/hydrated-css-var s)
+    x))
+
+
+(defn css-var-call-data [{:keys [args]} css-new] 
+  (doseq [tok args]
+    (when-let [tok (css-var tok)]
+      (vswap-design-tokens! [tok] css-new) )))
+
+
+(defn css-var-call-data2 [{:keys [args]} css-new] 
+  (doseq [tag args]
+    (when-let [toks (get kushi.css.build.tokens/design-tokens-by-token-categorized-by-tag
+                         tag)]
+      (vswap-design-tokens! toks css-new))))
+
 
 (defn css-call-data
   [{:keys [form ns-str ns-meta ns args] :as m} 
@@ -371,29 +401,43 @@
                    attrs)
             (bling [:italic.magenta.bold (str label)]))))
 
+
 (defn- css-vars-re-seq [s]
   (re-seq #"var\((--[^_][^\)\, ]+)" s))
 
+
 (defn- css-var-kw? [x]
   (and (keyword? x) (string/starts-with? (name x) "$")))
+
 
 (defn- css-var-str [v]
   (when (css-var-kw? v)
     (str "var(--" (subs (name v) 1) ")")))
 
-(defn- register-design-tokens!
-  [css css-new ns]
-  (when true #_(string/starts-with? css ".mvp_browser__L_C6")
-        (let [toks (some->> css
-                            css-vars-re-seq
-                            (map #(nth % 1 nil))
-                            seq)]
-          (some->> toks 
-                   (vswap! css-new
-                           update-in 
-                           [:used/design-tokens] 
-                           (fn [coll args] (apply conj coll args)))))))
 
+(defn print-ns-containing-design-token [design-token css ns]
+  (let [design-token design-token]
+      (when (re-find (re-pattern design-token) css)
+        (? design-token  ns))))
+
+
+(defn vswap-design-tokens! [toks css-new]
+  (vswap! css-new
+          update-in 
+          [:used/design-tokens] 
+          (fn [coll args] (apply conj coll args))
+          toks))
+
+;; could be 
+(defn- register-design-tokens!
+  [css-str css-new ns]
+  #_(when (contains? debugging :design-token-registration)
+      (print-ns-containing-design-token "--button-border-width" css ns))
+  (let [toks (some->> css-str
+                      css-vars-re-seq
+                      (map #(nth % 1 nil))
+                      seq)]
+    (some-> toks (vswap-design-tokens! css-new))))
 
 
 (defn- css-includes-block [css-includes ns]
@@ -427,12 +471,15 @@
   (let [new-toks
         (set/difference (:used/design-tokens @css-new)
                         used-toks)]
-    (if (seq new-toks) 
+    (when (contains? new-toks :$button-border-width)
+      (? new-toks ns))
+    #_(if (seq new-toks) 
       (do (new-toks-callout-template "Registering design tokens for " ns layer)
           (? :result new-toks))
       (new-toks-callout-template  "No design tokens for " ns layer))))
 
-(defn- spit-css-file [css-fp layer rulesets css-new]
+(defn- spit-css-file
+  [css-fp layer rulesets css-new]
   (let [debug?
         (contains? debugging :design-token-registration)
 
@@ -460,8 +507,13 @@
 
     ;; This is where design tokens get registered
     ;; They are identified based on the the actual css-rules produced
+
     (register-design-tokens! css-str css-new ns)
-    #_(when debug? (new-toks-callout ns layer used-toks css-new))
+    (when debug? 
+      (when (= ns 'kushi.ui.button.core)
+        (new-toks-callout ns layer used-toks css-new)))
+    #_(when (re-find #"design-tokens" css-fp)
+      (? :pp css-fp))
     (spit css-fp
           (str (css-includes-block css-includes ns)
                (string/join "\n\n" others))
@@ -484,21 +536,20 @@
 (defn css-include-call-data
   [{:keys [args form ns-str ns-meta ns file] :as m}
    css-new]
-  (let [sel-og (first args)
+  (let [sel-og                 (first args)
         {css-file-path :sel
          layer         :layer} (layer+sel sel-og)
 
-        
         ;; TODO incorporate this
         ;; layer-from-ns-info
         ;; (some-> ns-meta :kushi/layer)
-
+        
         ;; layer
         ;; (or layer
         ;;     layer-from-ns-info ;; <- layer assigned at ns -level
         ;;     (resolve-css-layer-for-shared-classes ns-str)
         ;;     "user-shared-styles")
-
+        
 
         ;; TODO - Currently assumes css is file in same dir as current
         ;;        ns of form. Check for relative filepath.
@@ -513,21 +564,17 @@
                    drop-last
                    (->> (string/join "/"))
                    (str "/" css-file-path))
+
         ;; TODO - add try/catch to this slurp + issue warning if file-not-found
         css    (slurp css-fp)
-        result (merge m
-                      (meta form) 
-                      (keyed sel-og css css-fp args layer))]
-               (vswap! css-new
-                       update-in
-                       [:sources ns layer]
-                       conj
-                       result)
-               nil))
+        result (merge m (meta form) (keyed sel-og css css-fp args layer))]
+     (vswap! css-new update-in [:sources ns layer] conj result)
+     nil))
 
 (defn- analyze-forms
   [tl-form
-   {:keys [css-new ns-str rel-path ns ns-meta file] :as tl-form-data}]
+   {:keys [css-new ns-str rel-path ns ns-meta file]
+    :as tl-form-data}]
   (walk/prewalk
    (fn [form] 
      (let [[macro-sym & args] (when (list? form) form)
@@ -545,10 +592,18 @@
                         args)]
            (cond 
              (contains? '#{?css-include css-include} macro-sym)
-             (css-include-call-data m css-new)
+             (do
+               (!? m)
+               (css-include-call-data m css-new))
 
              (contains? '#{?defcss defcss} macro-sym)
              (defcss-call-data m css-new)
+
+             (contains? '#{register-design-tokens} macro-sym)
+             (css-var-call-data m css-new)
+
+             (contains? '#{register-design-tokens-by-tag} macro-sym)
+             (css-var-call-data2 m css-new)
 
              (contains? '#{?css css ?sx sx} macro-sym)
              (css-call-data m css-new))
@@ -565,6 +620,8 @@
         ret-new
         (reduce 
          (fn [acc layer]
+           #_(when (re-find #"design-tokens" layer)
+             (? :pp layer))
            (if-let [rulesets (get-in reified-css-new [:sources ns layer])]
              (let [css-fp (css-file-path layer ns-str)
                   ;;  dbg? (= ns
@@ -689,10 +746,36 @@
   {k {:css-fp path}})
 
 
+;; TODO - get css-base from user kushi.edn
+(defn layer+css-path
+  ([layer]
+   (layer+css-path layer layer))
+  ([layer filename]
+   (let [css-base "./public/css"]
+     [layer
+      (str css-base "/" layer "/" filename ".css")])))
+
+
+(def design-tokens-layer-name
+  "design-tokens")
+
+
+(def user-design-tokens-layer-name
+  "user-design-tokens")
+
+
+(def kushi-utility-overrides-layer-name
+  "kushi-utility-overrides")
+
+
+(def kushi-utility-classes-layer-name
+  "kushi-utility")
+
+
 ;; TODO - maybe unite this with fn below and pass a map with :release? and :init?
 (defn user-design-tokens-profile-all
   [css-new]
-  (let [path "./public/css/user-design-tokens/user-design-tokens.css"]
+  (let [[layer path] (layer+css-path user-design-tokens-layer-name)]
     ;; TODO - put this back in for stats?
     #_(let [toks (:used/design-tokens @css-new)]
       (doseq [tok toks]
@@ -703,12 +786,12 @@
                 [(:theme/user-design-tokens @css-new)]
                 nil
                 nil)
-     "user-design-tokens")))
+     layer)))
 
 
 (defn user-design-tokens-profile
   [css-new]
-  (let [path "./public/css/user-design-tokens/user-design-tokens.css"]
+  (let [[layer path] (layer+css-path user-design-tokens-layer-name)]
     (let [toks (:used/design-tokens @css-new)]
       (doseq [tok toks]
         (register-toks+deps tok css-new)))
@@ -718,16 +801,12 @@
                 (:required/kushi-design-tokens @css-new)
                 nil
                 nil)
-     "user-design-tokens")))
-
+     layer)))
 
 ;; TODO - maybe unite this with fn below and pass a map with :release? and :init?
 (defn design-tokens-profile-all
   [css-new]
-  (let [path      "./public/css/design-tokens/design-tokens.css"
-        ;; TODO - need this path-user?
-        ;; path-user "./public/css/tokens/user-tokens.css"
-        ]
+  (let [[layer path] (layer+css-path design-tokens-layer-name)]
     ;; TODO - put this back in for stats?
     #_(let [toks (:used/design-tokens @css-new)]
       (doseq [tok toks]
@@ -738,15 +817,15 @@
                 [kushi.css.build.tokens/design-tokens-by-token-array-map]
                 nil
                 nil)
-     "design-tokens")))
+     layer)))
 
 
 (defn design-tokens-profile
   [css-new]
-  (let [path      "./public/css/tokens/tokens.css"
-        ;; TODO - need this path-user?
-        ;; path-user "./public/css/tokens/user-tokens.css"
-        ]
+  (let [[layer path] (layer+css-path design-tokens-layer-name)]
+    ;; TODO - need this path-user?
+    ;; path-user "./public/css/tokens/user-tokens.css"
+    (? :comment 'design-tokens-profile)
     (let [toks (:used/design-tokens @css-new)]
       (doseq [tok toks]
         (register-toks+deps tok css-new)))
@@ -756,12 +835,12 @@
                 (:required/kushi-design-tokens @css-new)
                 nil
                 nil)
-     "design-tokens")))
+     layer)))
 
 
 (defn kushi-utility-classes-overrides-profile-all
   []
-  (let [path         "./public/css/kushi-utility/utility-overrides.css"
+  (let [[layer path] (layer+css-path kushi-utility-overrides-layer-name)
         util-classes (apply array-map
                             (apply concat 
                                    utility-classes/all-classes))     
@@ -774,7 +853,7 @@
                                    [v]
                                    nil
                                    nil)))]
-    (spit-css-layer+profile path css "kushi-utility-overrides")))
+    (spit-css-layer+profile path css layer)))
 
 
 (defn kushi-utility-classes-overrides-profile
@@ -788,17 +867,17 @@
       nil)
 
     (when (!? :used/kushi-utility (seq reified))
-      (let [path        "./public/css/kushi-utility/utility-overrides.css"
-            css         (string/join 
-                         "\n\n"
-                         (for [class reified
-                               :let  [classname (name class)]
-                               :when (not (re-find #"\]$" (name class)))]
-                           (css-rule* classname
-                                      [(get utility-classes/utility-classes
-                                            classname)]
-                                      nil
-                                      nil)))
+      (let [[layer path] (layer+css-path kushi-utility-overrides-layer-name)
+            css          (string/join 
+                          "\n\n"
+                          (for [class reified
+                                :let  [classname (str (name class) "\\!")]
+                                :when (not (re-find #"\]$" (name class)))]
+                            (css-rule* classname
+                                       [(get utility-classes/utility-classes
+                                             (name class))]
+                                       nil
+                                       nil)))
             debug-toks? (contains? debugging :design-token-registration)
             used-toks   (when debug-toks?
                           (:used/design-tokens @css-new))]
@@ -810,12 +889,12 @@
                                               nil
                                               used-toks
                                               css-new))
-        (spit-css-layer+profile path css "kushi-utility-overrides")))))
+        (spit-css-layer+profile path css layer)))))
 
 
 (defn kushi-utility-classes-profile-all
   []
-  (let [path         "./public/css/kushi-utility/utility.css"
+  (let [[layer path] (layer+css-path kushi-utility-classes-layer-name)
         util-classes (apply array-map
                             (apply concat 
                                    utility-classes/all-classes))     
@@ -827,7 +906,7 @@
                                    [v]
                                    nil
                                    nil)))]
-    (spit-css-layer+profile path css "kushi-utility")))
+    (spit-css-layer+profile path css layer)))
 
 
 (defn kushi-utility-classes-profile
@@ -841,19 +920,18 @@
       nil)
 
     (when (!? :used/kushi-utility (seq reified))
-      (let [path        "./public/css/kushi-utility/utility.css"
-            css         (string/join 
-                         "\n\n"
-                         (for [class reified
-                               :let  [classname (name class)]]
-                           (css-rule* classname
-                                      [(get utility-classes/utility-classes
-                                            classname)]
-                                      nil
-                                      nil)))
-            debug-toks? (contains? debugging :design-token-registration)
-            used-toks   (when debug-toks?
-                          (:used/design-tokens @css-new))]
+      (let [[layer path] (layer+css-path kushi-utility-classes-layer-name)
+            css          (string/join 
+                          "\n\n"
+                          (for [class reified
+                                :let  [classname (name class)]]
+                            (css-rule* classname
+                                       [(get utility-classes/utility-classes
+                                             classname)]
+                                       nil
+                                       nil)))
+            debug-toks?  (contains? debugging :design-token-registration)
+            used-toks    (when debug-toks? (:used/design-tokens @css-new))]
 
         ;; This is where design tokens for utility classes get registered.
         ;; They are identified based on the the actual css-rules produced.
@@ -862,7 +940,7 @@
                                               nil
                                               used-toks
                                               css-new))
-        (spit-css-layer+profile path css "kushi-utility")))))
+        (spit-css-layer+profile path css layer)))))
 
 
 (defn spit-css-imports [coll]
@@ -982,7 +1060,7 @@
                 filtered-build-sources)
 
         ;; just for dev
-        _ (analyzed-callout reduced-sources css-new)
+        ;; _ (analyzed-callout reduced-sources css-new)
 
         kushi-utility-classes-profile
         (if release?
@@ -997,7 +1075,8 @@
         design-tokens-profile
         (if release? 
           (design-tokens-profile css-new)
-          (design-tokens-profile-all css-new))
+          (design-tokens-profile css-new)
+          #_(design-tokens-profile-all css-new))
 
         user-design-tokens-profile
         (if release? 
@@ -1348,7 +1427,7 @@
        (sequence cat)
        (apply array-map)))
 
-;; Dev
+;; Dev with lein-refresh
 ;; TODO - create a fake :build.state/mode here?
 #_(let [release?               false
       filtered-build-sources (-> "./docs/dev/mock/filtered-build-sources.edn"
@@ -1372,7 +1451,7 @@
              (apply array-map))
 
         _                                 
-        (spit "./dev/mock/filtered-build-sources.edn"
+        (spit (? "./dev/mock/filtered-build-sources.edn")
               (with-out-str (pprint filtered-build-sources-with-paths))
               :append false)]))
 

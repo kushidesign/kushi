@@ -1,9 +1,17 @@
 (ns kushi.ui.button.core
   (:require
-   [kushi.css.core :refer (css css-vars-map merge-attrs)]
+   [kushi.css.core :refer (css
+                           css-vars-map
+                           merge-attrs
+                           register-design-tokens)]
    [kushi.ui.core :refer (opts+children keyed)]
    [kushi.ui.icon.core :refer (icon)]))
 
+(register-design-tokens
+ :--icon-button-padding-inline-ems
+ :--button-with-icon-padding-inline-offset
+ :--button-padding-inline-ems
+ :--button-border-width)
 
 (defn resolve-inline-offset
   [{:keys [only-icons? icon-inline-*? bordered?]}]
@@ -14,7 +22,7 @@
                    :else
                    "var(--button-padding-inline-ems)")]
     (if bordered?
-      (str "calc(" base " - var(--button-border-width))")
+      (str "calc(" base " - " "var(--button-border-width)" ")")
       base)))
 
 (defn icon-child? [x]
