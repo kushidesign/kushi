@@ -42,6 +42,25 @@
          (hydrated-css-var-fallback c)
          ")")))
 
+(defn hydrated-css-var [s]
+  (let [css-comma-separated-coll
+        (-> s
+            (string/replace #"\|\|" "____*DOUBLE-BAR*____")
+            (string/split #"\|")
+            (->> (map #(string/replace % #"____\*DOUBLE-BAR\*____" "||"))))
+
+        ret                   
+        (->> css-comma-separated-coll
+             (map 
+              (fn [s]
+                (map #(if (string/starts-with? % "$")
+                        (hydrated-css-var-with-fallbacks %)
+                        %)
+                     (string/split s #":"))))
+             (map #(string/join " " %))
+             (string/join ", "))]
+        ret))
+
 (defn hydrated-val 
   [p v]
   (let [nv (as-str v)
@@ -54,22 +73,8 @@
       (let [runtime-vars-hydrated
             (str+ nv)
 
-            css-comma-separated-coll
-            (-> runtime-vars-hydrated
-                (string/replace #"\|\|" "____*DOUBLE-BAR*____")
-                (string/split #"\|")
-                (->> (map #(string/replace % #"____\*DOUBLE-BAR\*____" "||"))))
-
-            ret                   
-            (->> css-comma-separated-coll
-                 (map 
-                  (fn [s]
-                    (map #(if (string/starts-with? % "$")
-                            (hydrated-css-var-with-fallbacks %)
-                            %)
-                         (string/split s #":"))))
-                 (map #(string/join " " %))
-                 (string/join ", "))]
+            ret
+            (hydrated-css-var runtime-vars-hydrated)]
         ret))))
 
 (defn hydrated-prop 
