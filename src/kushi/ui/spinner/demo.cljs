@@ -119,7 +119,8 @@
                       component-examples/non-semantic-colors))]
 
 
-    [{:desc      "Usage with a button."
+    [
+     #_{:desc      "Usage with a button."
       :row-attrs row-attrs
       ;; :reqs     '[[kushi.ui.button.core :refer [button]]]
       :snippets  [(:quoted button-example-code)]
