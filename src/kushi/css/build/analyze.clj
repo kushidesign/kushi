@@ -9,7 +9,8 @@
    [kushi.css.core :refer [css-rule*]]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as kushi-specs]
-   [kushi.utils :refer [maybe keyed]]
+   [kushi.css.util :refer [keyed]]
+   [kushi.utils :refer [maybe]]
    [clojure.walk :as walk]
    [clojure.string :as string]
    [clojure.java.io :as io]
@@ -226,7 +227,7 @@
         result
         (merge m
                (meta form)
-               (keyed sel-og sel args layer kushi-utils))] 
+               (keyed [sel-og sel args layer kushi-utils]))] 
 
     (some->> kushi-utils
              seq
@@ -345,16 +346,16 @@
         result
         (merge m
                (meta form)
-               (keyed sel-og sel args layer))
+               (keyed [sel-og sel args layer]))
         
         ;; dbg?
         ;; (= sel ".kushi-slider-step-label-marker")
         ]
 
     ;; (when dbg?
-    ;;   (keyed layer-from-defcss-first-arg
-    ;;             layer-from-ns-info
-    ;;             layer)
+    ;;   (keyed [layer-from-defcss-first-arg
+    ;;           layer-from-ns-info
+    ;;           layer])
 
     ;;   #_(let [coll (get-in @*css [:sources ns layer])]
     ;;     (? :result [sel (some-> coll count)])
@@ -550,7 +551,7 @@
         ;; Check if any css imports within namespaces changed
         ;; Check if any css namespaces changed
         existing-css-changed? true]
-    (keyed init? deleted? added? new-or-deleted? existing-css-changed?)))
+    (keyed [init? deleted? added? new-or-deleted? existing-css-changed?])))
 
 (defn css-include-call-data
   [{:keys [args form ns-str ns-meta ns file] :as m}
@@ -586,7 +587,7 @@
 
         ;; TODO - add try/catch to this slurp + issue warning if file-not-found
         css    (slurp css-fp)
-        result (merge m (meta form) (keyed sel-og css css-fp args layer))]
+        result (merge m (meta form) (keyed [sel-og css css-fp args layer]))]
      (vswap! *css update-in [:sources ns layer] conj result)
      nil))
 
@@ -601,14 +602,14 @@
        (if kushi-macro? 
          ;; TODO - possibly just (merge tl-form-data (keyed macro-sym args))
          ;;      - then change sig of fns in cond branch
-         (let [m (keyed form
-                        ns-str
-                        ns
-                        ns-meta
-                        rel-path
-                        file
-                        macro-sym
-                        args)]
+         (let [m (keyed [form
+                         ns-str
+                         ns
+                         ns-meta
+                         rel-path
+                         file
+                         macro-sym
+                         args])]
            (cond 
              (contains? '#{?css-include css-include} macro-sym)
              (do
@@ -655,7 +656,7 @@
                        (bling [:blue layer])
                        ", writing "
                        (bling [:olive css-fp]))
-               (update-in acc [layer] merge (keyed css-fp ns rulesets)))
+               (update-in acc [layer] merge (keyed [css-fp ns rulesets])))
              acc))
          {}
          (keys kushi-layers))]
@@ -668,7 +669,7 @@
   (let [ns-str    (string/replace (str ns) #"\." "_")
         ns-meta   (:meta ns-info)
         all-forms (parse-all-forms file)
-        m         (keyed *css ns ns-str ns-meta rel-path file)
+        m         (keyed [*css ns ns-str ns-meta rel-path file])
          
         ;; dbg? (= ns
         ;;         #_'kushi.ui.text-field.core

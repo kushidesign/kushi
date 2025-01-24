@@ -8,6 +8,7 @@
   #?(:clj {:exception-message (.getMessage ex)
            :top-of-stack-trace (get (.getStackTrace ex) 0)}))
 
+;; DELETE THIS
 (defmacro keyed [& ks]
   #?(:clj
      `(let [keys# (quote ~ks)
