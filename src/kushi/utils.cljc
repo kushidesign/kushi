@@ -1,7 +1,5 @@
 (ns ^:dev/always kushi.utils
   (:require
-   [kushi.specs2 :as specs2]
-   [clojure.spec.alpha :as s]
    [clojure.string :as string]))
 
 (defn nameable? [x]
