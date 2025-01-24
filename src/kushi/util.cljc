@@ -8,12 +8,6 @@
 (defn stringify [x]
   (if (nameable? x) (name x) (str x)))
 
-;; (defn token? [x]
-;;   (when (nameable? x)
-;;     (let [nm (name x)]
-;;       (or (string/starts-with? nm "--")
-;;           (string/starts-with? nm "$")))))
-
 (defn kebab->shorthand [x] 
   (->> (-> x
            stringify

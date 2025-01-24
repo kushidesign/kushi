@@ -1,5 +1,4 @@
 (ns kushi.ui.util
-  (:require-macros [kushi.css.util :refer (keyed)])
   (:require [clojure.string :as string]
             [domo.core :as domo]
             [kushi.css.defs]))
@@ -100,12 +99,8 @@
           spans       (conj (into [] spans) nil)
           splits      (string/split s #"`")
           interleaved (interleave splits spans)]
-      (keyed [spans splits interleaved])
+      #_{:spans       spans
+         :splits      splits
+         :interleaved interleaved}
       (string/join interleaved))
     s))
-
-(defn below-breakpoint? [k]
-  (false? (->> kushi.css.defs/media
-               k
-               first
-               (apply domo/matches-media?))))

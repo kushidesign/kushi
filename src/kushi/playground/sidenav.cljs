@@ -3,6 +3,7 @@
    [domo.core :as d]
    [kushi.css.core :refer (sx css merge-attrs)]
    [kushi.css.defs]
+   [kushi.css.media]
    [kushi.ui.util :refer [as-str]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.icon.core :refer [icon]]
@@ -12,7 +13,7 @@
 (defn sidenav-item-handler [opts e]
   (component-examples/scroll-to-playground-component!
    (merge opts
-          (when-let [[p v] (some-> kushi.css.defs/media :sm first)]
+          (when-let [[p v] (some-> kushi.css.media/media :sm first)]
             (when-not (d/matches-media? p (as-str v))
               {:scroll-y 16}))))
   (when-let [nav (some-> e

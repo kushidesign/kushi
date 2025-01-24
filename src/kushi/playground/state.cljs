@@ -1,7 +1,6 @@
 (ns kushi.playground.state
   (:require
-   [clojure.string :as string]
-   [kushi.css.defs :refer [media]]
+   [kushi.css.media :refer [media]]
    [kushi.playground.components :refer [playground-components]]
    [domo.core :as domo]
    [applied-science.js-interop :as j]

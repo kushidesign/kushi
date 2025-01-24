@@ -3,6 +3,7 @@
             [domo.core :as d]
             [kushi.css.core :refer (sx css merge-attrs)]
             [kushi.css.defs]
+            [kushi.css.media]
             [kushi.css.util :refer (keyed)]
             [kushi.playground.component-docs :as docs]
             [kushi.playground.util :as util]
@@ -420,7 +421,7 @@
           :gap--1em
           :_.kushi-text-input-label:min-width--7em
           :_.kushi-input-inline:gtc--36%:64%)
-      (let [max-width  (or (when-let [[p v] (some-> kushi.css.defs/media
+      (let [max-width  (or (when-let [[p v] (some-> kushi.css.media/media
                                                     :sm
                                                     first)]
                              (when-not (d/matches-media? p (as-str v))

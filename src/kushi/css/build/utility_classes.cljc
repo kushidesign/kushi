@@ -1,7 +1,6 @@
 (ns kushi.css.build.utility-classes
   (:require
-   [kushi.css.build.util :as util]
-   [fireworks.core :refer [? !? ?> !?>]]  
+   [kushi.util :as util]
    [clojure.string :as string]))
 
 ;; From kushi.colors/colornames ------------------------------------------------
@@ -710,4 +709,3 @@
   (apply util/deep-merge
          (map #(apply hash-map %) all-classes)))
 
-(!? utility-classes)
