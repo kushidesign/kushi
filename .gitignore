@@ -39,3 +39,4 @@ docs/filtered-build-sources.edn
 /docs/*.iml
 /docs/.nrepl-port
 /docs/.clj-kondo/.cache
+/docs/.cpcache
