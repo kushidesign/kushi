@@ -4,13 +4,6 @@
    [clojure.spec.alpha :as s]
    [clojure.string :as string]))
 
-(defn exception-args [{:keys [ex]}]
-  #?(:clj {:exception-message (.getMessage ex)
-           :top-of-stack-trace (get (.getStackTrace ex) 0)}))
-
-(defn kw-or-sym? [x]
-  (or (keyword? x) (symbol? x)))
-
 (defn nameable? [x]
   (or (string? x) (keyword? x) (symbol? x)))
 
@@ -50,39 +43,6 @@
                          args))
        ")"))
 
-(defn extract-cssvar-name
-  "(extract-cssvar-name \"var(--red-500)\")
-   => \"--red-500\""
-  [%]
-  (when-let [[_ nm] (re-find (re-pattern (str "^"
-                                              specs2/cssvar-in-css-re
-                                              "$"))
-                             %)]
-    nm))
-
-(defn cssvar-dollar-syntax->double-dash
-  [x]
-  (if (nameable? x)
-    (string/replace (name x) #"^\$" "--")
-    x))
-
-(defn s->cssvar
-  ([x] (s->cssvar x nil))
-  ([x fallback]
-   (str "var(--" (name x) (when fallback (str ", " fallback)) ")")))
-
-
-(defn maybe-wrap-cssvar [x]
-  (if (token? x)
-    (str "var(" (cssvar-dollar-syntax->double-dash x) ")")
-    x))
-
-(declare replace-nth)
-
-(defn replace-last [item coll]
-  (replace-nth (dec (count coll))
-               item
-               coll))
 
 (defn deep-merge [& maps]
   (apply merge-with (fn [& args]
@@ -90,55 +50,6 @@
                         (apply deep-merge args)
                         (last args)))
          maps))
-
-(defn partition-by-pred [pred coll]
-  (let [ret* (reduce (fn [acc v]
-                       (let [k (if (pred v) :valid :invalid)]
-                         (assoc acc k (conj (k acc) v))))
-                     {:valid [] :invalid []}
-                     coll)
-        ret [(:valid ret*) (:invalid ret*)]]
-    ret))
-
-(defn partition-by-spec [pred coll]
-  (let [ret* (reduce (fn [acc v]
-                       (let [k (if (s/valid? pred v) :valid :invalid)]
-                         (assoc acc k (conj (k acc) v))))
-                     {:valid [] :invalid []}
-                     coll)
-        ret [(:valid ret*) (:invalid ret*)]]
-    ret))
-
-
-(defn mapj [sep f coll]
-  (string/join sep (map f coll)))
-
-
-(defn shared-class? [kw]
-  (contains? #{:kushi.core/defclass
-               :kushi.core/defclass-override
-               :kushi/utility
-               :kushi/utility-override}
-             kw))
-
-(defn hydrate-css-shorthand+alternations [v]
-  ;; TODO detect if value expresses url for something like a background image via image or svg, and don't split on `:` or `|` within the url() part:
-  ;; "url(https://blah.blah.com/blah.png)"
-  ;; or
-  ;; "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='12px' ...)"
-  (if (string? v)
-    (let [alternations*       (string/split v #"\|")
-          with-css-shorthands (map #(let [coll* (string/split % #"\:")
-                                          coll  (map (fn [%]
-                                                       (if (s/valid? ::specs2/cssvar-name %)
-                                                         (str "var(" (cssvar-dollar-syntax->double-dash %) ")")
-                                                         %))
-                                                     coll*)]
-                                      (string/join " " coll))
-                                   alternations*)
-          alternations         (string/join ", " with-css-shorthands)]
-      alternations)
-    v))
 
 (defn kwargs-keys
   "Expects an even-numbered kwarg-style collection of key/values.
