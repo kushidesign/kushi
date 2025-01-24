@@ -6,7 +6,6 @@
   ;; :source-paths        ["../domo/src"]
   :dependencies        [[design.kushi/domo "0.3.0"]
                         [org.clojure/clojure "1.11.1"]
-                        [garden "1.3.10"]
                         [applied-science/js-interop "0.3.3"]
                         [expound "0.9.0"]
                         [markdown-to-hiccup/markdown-to-hiccup "0.6.2"]
