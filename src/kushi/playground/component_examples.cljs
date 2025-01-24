@@ -3,10 +3,11 @@
             [domo.core :as d]
             [kushi.css.core :refer (sx css merge-attrs)]
             [kushi.css.defs]
+            [kushi.css.util :refer (keyed)]
             [kushi.playground.component-docs :as docs]
             [kushi.playground.util :as util]
             [kushi.ui.button.core :refer (button)]
-            [kushi.ui.core :refer (keyed opts+children)]
+            [kushi.ui.core :refer (opts+children)]
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.tooltip.core :refer (tooltip-attrs)]
@@ -269,13 +270,13 @@
        (when snippets 
          [:<> 
           [example-modal-trigger modal-id]
-          [example-modal (keyed modal-id
-                                component-label
-                                label
-                                snippets-header
-                                snippets
-                                component-reqs
-                                example-reqs)]])]
+          [example-modal (keyed [modal-id
+                                 component-label
+                                 label
+                                 snippets-header
+                                 snippets
+                                 component-reqs
+                                 example-reqs])]])]
 
       
       (into [:div (merge-attrs
@@ -286,8 +287,8 @@
               [example-row-variant
                component
                (merge example-opts
-                      (keyed variant-attrs
-                             reqs-by-refers))]))]]))
+                      (keyed [variant-attrs
+                              reqs-by-refers]))]))]]))
 
 
 ;;; New snippet code

@@ -8,14 +8,6 @@
   #?(:clj {:exception-message (.getMessage ex)
            :top-of-stack-trace (get (.getStackTrace ex) 0)}))
 
-;; DELETE THIS
-(defmacro keyed [& ks]
-  #?(:clj
-     `(let [keys# (quote ~ks)
-            keys# (map keyword keys#)
-            vals# (list ~@ks)]
-        (apply array-map (interleave keys# vals#)))))
-
 (defn kw-or-sym? [x]
   (or (keyword? x) (symbol? x)))
 

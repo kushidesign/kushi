@@ -116,13 +116,13 @@
         inline-then-block? (and p1-inline? p2-block?)
         block-then-inline? (and p1-block? p2-inline?)
         p1+p2              (or inline-then-block? block-then-inline?)]
-    (keyed p1-inline?         
-           p1-block?          
-           p2-inline?         
-           p2-block?          
-           inline-then-block? 
-           block-then-inline? 
-           p1+p2)
+    (keyed [p1-inline?         
+            p1-block?          
+            p2-inline?         
+            p2-block?          
+            inline-then-block? 
+            block-then-inline? 
+            p1+p2])
     (if (or (and (= corner "corner") p1+p2)
             p1+p2
             (and (nil? corner)
@@ -186,7 +186,7 @@
                                 string/join
                                 keyword)
             ret            (get corner-placements-tla ret ret)]
-        (keyed p1 p2 corner corner? placement-vec ret)
+        (keyed [p1 p2 corner corner? placement-vec ret])
         ret))))
 
 (def ^:private translate-xy
@@ -459,13 +459,13 @@
                            :ltc :rtc
                            :blc :brc
                            :lbc :rbc})]
-    (keyed block-start?       
-           block-end?         
-           block-plc? 
-           inline-start?      
-           inline-end?        
-           inline-plc?
-           corner-plc?)))
+    (keyed [block-start?       
+            block-end?         
+            block-plc? 
+            inline-start?      
+            inline-end?        
+            inline-plc?
+            corner-plc?])))
 
 (defn el-plc
   "Returns a map describing placement metrics of pane,
@@ -520,22 +520,22 @@
         ne?        (and n? e?)
         se?        (and s? e?)
         on-corner?      (or ne? se? sw? nw?)]
-        (keyed n?  
-               ne?  
-               e?  
-               se?  
-               s?  
-               sw?  
-               w?  
-               nw?  
-               on-corner?
-               on-edge?
-               top
-               bottom
-               left
-               right
-               y-center
-               center
-               x-fraction
-               y-fraction)))
+        (keyed [n?  
+                ne?  
+                e?  
+                se?  
+                s?  
+                sw?  
+                w?  
+                nw?  
+                on-corner?
+                on-edge?
+                top
+                bottom
+                left
+                right
+                y-center
+                center
+                x-fraction
+                y-fraction])))
  

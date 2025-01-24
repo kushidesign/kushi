@@ -3,7 +3,7 @@
             ;; ["tinycolor2" :as tinycolor]
             [kushi.colors :as kushi.colors]
             [kushi.css.core :refer (sx css css-vars-map trans merge-attrs)] ;;  [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-            [kushi.playground.util :as util :refer-macros (keyed)]
+            [kushi.css.util :refer (keyed)]
             [kushi.ui.core :refer [defcom opts+children]]
             [kushi.ui.label.core :refer [label]]))
 
@@ -173,7 +173,7 @@
                               :bbes--solid
                               :bbew--1px
                               :bbec--$hsl)}
-            [color-modal (keyed k hsl color-name color-level)]
+            [color-modal (keyed [k hsl color-name color-level])]
             [:div (sx :.flex-row-fe :fw--$wee-bold)
              [text-sample-sticker {:-color :white
                                    :-bgc   hsl}]

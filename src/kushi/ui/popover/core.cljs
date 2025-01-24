@@ -15,7 +15,8 @@
                            merge-attrs
                            css-vars-map
                            register-design-tokens
-                           register-design-tokens-by-category]]))
+                           register-design-tokens-by-category]]
+   [kushi.css.util :refer [keyed]]))
 
 (register-design-tokens-by-category
  "elevation"
@@ -236,14 +237,14 @@
           placement-kw (or (maybe placement #(= % :auto))
                            (user-placement placement))
           pane-type    :popover
-          opts         (keyed placement-kw
-                              arrow?
-                              auto-dismiss?
-                              pane-type
-                              user-rendering-fn
-                              user-pane-class
-                              user-pane-style
-                              popover-class)]
+          opts         (keyed [placement-kw
+                               arrow?
+                               auto-dismiss?
+                               pane-type
+                               user-rendering-fn
+                               user-pane-class
+                               user-pane-style
+                               popover-class])]
       (merge 
        {:data-kushi-ui-pane (name placement-kw)}
        {:on-click (partial pane/append-pane! opts)}

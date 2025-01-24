@@ -6,13 +6,14 @@
             [clojure.edn :as edn]
             [clojure.spec.alpha :as s]
             [kushi.css.core :refer [sx defcss merge-attrs]]
+            [kushi.css.util :refer (keyed)]
             [kushi.specs2 :as specs2]
             [kushi.css.shorthand :as shorthand]
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.tooltip.core :refer [tooltip-attrs]]
             [domo.core :as domo]
-            [kushi.ui.core :refer [defcom keyed]]
+            [kushi.ui.core :refer [defcom]]
             [kushi.ui.slider.core]
             [kushi.ui.switch.core :refer [switch]]
             [kushi.ui.util :refer [find-index]]
@@ -731,13 +732,13 @@
                    [control
                     {:-css-prop css-prop
                      :-profile  profile}
-                    [slider (merge (keyed css-prop css-value target-els unit-type))]]
+                    [slider (merge (keyed [css-prop css-value target-els unit-type]))]]
 
                    (= category :class)
                    [control
                     {:-css-prop css-prop
                      :-profile  profile}
-                    [(:control-type profile) (keyed target-els classes profile)]]
+                    [(:control-type profile) (keyed [target-els classes profile])]]
 
                    :else
                    nil))
@@ -746,7 +747,7 @@
                    [
                     [control
                      {:-utility-family "Semantic"}
-                     [semantic-slider (assoc (keyed target-els classes)
+                     [semantic-slider (assoc (keyed [target-els classes])
                                              :css-property
                                              "color"
                                              :default-value
@@ -757,7 +758,7 @@
                     [control
                      {:-utility-family "Flexbox"
                       :-profile        profile}
-                     [semantic-slider (assoc (keyed target-els classes)
+                     [semantic-slider (assoc (keyed [target-els classes])
                                              :css-property
                                              "flex"
                                              :default-value
@@ -768,7 +769,7 @@
                     [control
                      {:-utility-family "Type size"
                       :-profile        profile}
-                     [semantic-slider (assoc (keyed target-els classes)
+                     [semantic-slider (assoc (keyed [target-els classes])
                                              :css-property
                                              "font-size"
                                              :default-value
@@ -779,7 +780,7 @@
                     [control
                      {:-utility-family "Type weight"
                       :-profile        profile}
-                     [semantic-slider (assoc (keyed target-els classes)
+                     [semantic-slider (assoc (keyed [target-els classes])
                                              :css-property
                                              "font-weight"
                                              :default-value
@@ -789,7 +790,7 @@
                     [control
                      {:-utility-family "Elevation"
                       :-profile        profile}
-                     [semantic-slider (assoc (keyed target-els classes)
+                     [semantic-slider (assoc (keyed [target-els classes])
                                              :css-property
                                              "box-shadow"
                                              :default-value
@@ -799,7 +800,7 @@
                     [control
                      {:-utility-family "Type tracking"
                       :-profile        profile}
-                     [semantic-slider (assoc (keyed target-els classes)
+                     [semantic-slider (assoc (keyed [target-els classes])
                                              :css-property
                                              "letter-spacing"
                                              :default-value

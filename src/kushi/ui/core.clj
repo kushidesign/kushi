@@ -2,12 +2,6 @@
   (:require
    [clojure.walk :as walk]))
 
-(defmacro keyed [& ks]
-  `(let [keys# (quote ~ks)
-         keys# (map keyword keys#)
-         vals# (list ~@ks)]
-     (zipmap keys# vals#)))
-
 (defmacro &*->val
   ([opts attrs children coll f]
    (&*->val opts attrs children coll f nil))

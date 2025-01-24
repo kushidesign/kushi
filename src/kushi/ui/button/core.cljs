@@ -4,7 +4,7 @@
                            css-vars-map
                            merge-attrs
                            register-design-tokens)]
-   [kushi.ui.core :refer (opts+children keyed)]
+   [kushi.ui.core :refer (opts+children)]
    [kushi.ui.icon.core :refer (icon)]))
 
 (register-design-tokens
@@ -63,7 +63,7 @@
         icon-inline-start?      (some-> children first icon-child?)
         icon-inline-end?        (some-> children last icon-child?)
         bordered?               (some->> attrs :class seq (some #{:bordered "bordered"}))
-        pi-opts                 (keyed only-icons? bordered?)
+        pi-opts                 {:only-icons? only-icons? :bordered bordered?}
         pis                     (resolve-inline-offset (assoc pi-opts :icon-inline-*? icon-inline-start?))
         pie                     (resolve-inline-offset (assoc pi-opts :icon-inline-*? icon-inline-end?))]
 

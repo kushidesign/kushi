@@ -4,11 +4,11 @@
             [me.flowthing.pp :refer [pprint]]
             [kushi.color :refer [colors->tokens]]
             [kushi.css.core :refer (sx css merge-attrs css-vars-map)]
+            [kushi.css.util :refer (keyed)]
             [kushi.playground.colors :as playground.colors]
             [kushi.playground.nav :refer [route!]]
             [kushi.playground.shared-styles]
             [kushi.ui.button.core :refer [button]]
-            [kushi.ui.core :refer [keyed]]
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.link.core :refer [link]]
@@ -42,7 +42,7 @@
                       color-token? 
                       (contains? (into #{} colorlist) (keyword color-name))]
                   #_(name k)
-                  #_(keyed color*)
+                  #_(keyed [color*])
                   (when color-token?
                     {:color*      color*
                      :color-name  color-name
@@ -62,7 +62,7 @@
                  {:color-name %
                   :scale      scale})
               colorlist)]
-    (keyed coll ret)
+    (keyed [coll ret])
     ret))
 
 (defn kushi-colors-about []

@@ -3,7 +3,6 @@
             [kushi.css.sandbox]
             [fireworks.core :refer [? !? ?> !?>]]
             [bling.core :refer [bling callout]]
-            [kushi.utils :refer [keyed]]
             [kushi.css.defs]
             [kushi.css.core :refer [ansi-colorized-css-block
                                     css-block-data

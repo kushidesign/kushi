@@ -3,14 +3,12 @@
   (:require
    [applied-science.js-interop :as j]
    [kushi.css.core :refer (css defcss css-vars-map merge-attrs)]
+   [kushi.css.util :refer (keyed)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.slider.css]
    [kushi.ui.util :refer [range-of-floats find-index]]
-
    ;; have bearing on slider?
    [kushi.playground.shared-styles]
-
-   [kushi.playground.util :as util :refer-macros (keyed)]
    [domo.core :as domo]))
 
 
@@ -458,16 +456,16 @@
                                     :pi--1em:2em)}
                        wrapper-attrs)
 
-     [slider-labels (keyed steps
-                           supplied-steps?
-                           num-steps
-                           default-index
-                           label-selected-class
-                           label-scale-factor
-                           labels-attrs
-                           step-marker
-                           step-label-suffix
-                           display-step-labels?)]
+     [slider-labels (keyed [steps
+                            supplied-steps?
+                            num-steps
+                            default-index
+                            label-selected-class
+                            label-scale-factor
+                            labels-attrs
+                            step-marker
+                            step-label-suffix
+                            display-step-labels?])]
 
      [:input (merge-attrs
               {:class         (css ".kushi-slider-input" :w--100%)

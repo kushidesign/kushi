@@ -1,8 +1,8 @@
 (ns kushi.ui.util
+  (:require-macros [kushi.css.util :refer (keyed)])
   (:require [clojure.string :as string]
             [domo.core :as domo]
-            [kushi.css.defs]
-            [kushi.ui.core :refer [keyed]]))
+            [kushi.css.defs]))
 
 ;; Generic
 ;; --------------------------------------------------------------------------
@@ -100,7 +100,7 @@
           spans       (conj (into [] spans) nil)
           splits      (string/split s #"`")
           interleaved (interleave splits spans)]
-      (keyed spans splits interleaved)
+      (keyed [spans splits interleaved])
       (string/join interleaved))
     s))
 
