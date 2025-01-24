@@ -2,7 +2,7 @@
   (:require [clojure.string :as string]
             [domo.core :as domo]
             [goog.string]
-            [kushi.ui.core :refer (keyed)]
+            [kushi.css.util :refer (keyed)]
             [kushi.ui.util :refer [as-str calc ck? maybe]]))
 
 (def ^:private non-corner-placements
