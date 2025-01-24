@@ -15,6 +15,8 @@
    [kushi.ui.toast.demo :refer [toast-content]]
    [reagent.dom :refer [render]]
    [kushi.ui.modal.core :refer [modal modal-close-button open-kushi-modal close-kushi-modal]]
+   [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]
+   [kushi.ui.icon.core :refer [icon]]
    ))
 
 (js/console.clear)
@@ -23,6 +25,25 @@
 (defn pane-samples []
   [:div (sx :.absolute-centered :.flex-col-fs :gap--2rem)
    
+   ;; button with spinner example
+   [button
+    (merge-attrs
+     (sx :fs--$xxxlarge)
+     {:on-click (fn [e]
+                  (let [el       (-> e .-target)
+                        loading? (= "loading" (.-ariaLabel el))]
+                    (if loading?
+                      (do (.removeAttribute el "aria-label")
+                          (.removeAttribute el "data-kushi-ui-spinner")) 
+                        (do (.setAttribute el "aria-label" "loading")
+                            (.setAttribute el "data-kushi-ui-spinner" true)))))})
+    [icon (sx ["[aria-label='loading'] &:display" :none]) :play-arrow]
+
+    ;; TODO - Need to use some kind of aspect ration thing based on height
+    [:span (sx :d--none ["[aria-label='loading'] &:display" :block]) [donut]]
+    "Activate"]
+   
+
    ;; toast example
    #_[button
     (toast-attrs {:-auto-dismiss? false
@@ -34,7 +55,7 @@
 
 
    ;; modal example
-   (let
+   #_(let
       [id "my-modal-basic"]
        [:div [button {:on-click (fn* [] (open-kushi-modal id))}
               "Click to open modal"]
@@ -92,8 +113,7 @@
   )
 
 (def routes 
-  {
-   ["components"] {:content layout/component-playground-content
+  {["components"] {:content layout/component-playground-content
                    :args    playground-components
                    :label   "Components Playground"}
    ["colors"]     {:content about/kushi-colors-about}
