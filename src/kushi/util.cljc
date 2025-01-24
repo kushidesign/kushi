@@ -1,4 +1,4 @@
-(ns ^:dev/always kushi.utils
+(ns ^:dev/always kushi.util
   (:require
    [clojure.string :as string]))
 
