@@ -66,8 +66,8 @@
    :slotted ;;()
    ])
 
-;; (def pseudo-elements
-;;   (into #{} pseudo-elements*))
+(def pseudo-elements
+  (into #{} pseudo-elements*))
 
 ;; TODO - should this be defonce?
 ;; These are sorted roughly be most-commonly used, for speeding up for regex (alternations)
