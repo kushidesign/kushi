@@ -1,14 +1,15 @@
-(ns kushi.ui.icon.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.icon.demo
   (:require
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.text-field.core :refer [text-field]]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-   [kushi.core :refer (sx merge-attrs)]
+   [kushi.css.core :refer (sx css css-vars-map merge-attrs)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]))
+
 
 
 (def icons-without-filled-variants
@@ -70,7 +71,7 @@
        (sx :gtc--1fr)
 
        row-attrs-2
-       (sx [:&_.playground-component-example-row-instance-code
+       (sx [:_.playground-component-example-row-instance-code
             {:w              :100%
              :d              :flex
              :flex-direction :column
@@ -79,14 +80,14 @@
              :ai             :stretch}])
 
        row-attrs
-       (sx [:&_.instance-code
+       (sx [:_.instance-code
             {:w  :100%
              :d  :flex
              :jc :sb
              :pi :0.75rem}])
 
        row-attrs-all
-       (sx [:&_.instance-code
+       (sx [:_.instance-code
             {:w              :100%
             ;;  :pi             :0.75rem
              :pi             :0rem
@@ -96,16 +97,17 @@
 
        grid-row-attrs
        (sx 
-        [:&_.playground-component-example-row-instance-code
+        [:_.playground-component-example-row-instance-code
          {:ai         :fe     
           :display    :grid
           :w          :100%
           :jc         :sb
-          :gtc        '(repeat 6 :max-content)
+          :gtc        "repeat(6, :max-content)"
           :row-gap    :2rem
           :column-gap :unset}])]
 
-   [{:desc            "Sizes from xxsmall to xxxlarge, in weights from extra-light to extra-bold"
+   [
+    {:desc            "Sizes from xxsmall to xxxlarge, in weights from extra-light to extra-bold"
      :variants-       [:outlined :filled]
      :container-attrs container-attrs
      :row-attrs       row-attrs-all
@@ -127,7 +129,12 @@
                                   (into [:div (sx :.flex-row-sb :row-gap--1.25rem)]
                                         (for [sz sizes]
                                           [icon (merge-attrs
-                                                 {:class [sz weight :pointer]}
+                                                 (sx sz
+                                                     weight
+                                                     :cursor--pointer
+                                                     :c--$foreground-color
+                                                     :dark:c--$foreground-color-inverse
+                                                     )
                                                  (tooltip-attrs {:-text [(name sz) (name weight)]}))
                                            :star]))))}]}
     
@@ -137,10 +144,10 @@
      :row-attrs       (merge-attrs #_grid-row-attrs
                                    row-attrs
                                    (sx 
-                                    :&_.kushi-icon:fs--36px
-                                    :xsm:&_.kushi-icon:fs--48px
-                                    :sm:&_.kushi-icon:fs--64px
-                                    [:&_.instance-code {:gap 0
+                                    :_.kushi-icon:fs--36px
+                                    :xsm:_.kushi-icon:fs--48px
+                                    :sm:_.kushi-icon:fs--64px
+                                    [:_.instance-code {:gap 0
                                                         :pi  0}] ))
 
      :snippets-header ["Use the font-weight utility classes `:.thin` ~ `:.bold` to control the weight of the icons."
@@ -155,13 +162,16 @@
      :examples        [{:label "Weights from extra-light to bold"
                         :code  (sx-call 
                                 (for [weight (drop-last component-examples/type-weights)]
-                                  [icon {:class [weight]}
+                                  [icon (sx weight
+                                            :c--$foreground-color
+                                            :dark:c--$foreground-color-inverse
+                                            )
                                    :star]))}]}
 
     {:desc            "All the colors"
      :variants-       [:outlined :filled]
      :container-attrs container-attrs
-     :row-attrs       (merge-attrs row-attrs-all  (sx [:&_.instance-code {:row-gap :1rem}]))
+     :row-attrs       (merge-attrs row-attrs-all  (sx [:_.instance-code {:row-gap :1rem}]))
      :snippets-header ["The css `color` property controls the color of icons."
                        "Kushi provides color tokens in value ranges from `50` ~ `1000`, in increments of `50`."
                        "E.g. `:c--$blue-50`, `:c--$blue-350`, `:c--$blue-800`, etc."
@@ -183,28 +193,33 @@
                          [icon (sx :c--$magenta-500) :star]]]
      :examples        [{:label "All the colors"
                         :code  (sx-call 
-                                (for [color (concat component-examples/colors
-                                                    component-examples/non-semantic-colors)
-                                      :let [color-lut {"neutral"  "gray"
-                                                       "positive" "green"
-                                                       "warning"  "yellow"
-                                                       "negative" "red"
-                                                       "accent"   "blue"}
-                                            color (get color-lut color color)]]
-                                  (into [:div (sx :.flex-row-fs :jc--sb :row-gap--1.25rem)]
-                                        (for [val (range 200 1000 100)
-                                              :let [color-val (str color "-" val)]]
-                                          [:div (merge-attrs
-                                                 (sx :.flex-col-fs 
-                                                     :.pointer)
-                                                 (tooltip-attrs {:-text color-val}))
-                                           [icon {:class [:xlarge :light]
-                                                  :style {:color (str "var(--" color-val ")")}}
-                                            :star]
-                                           [icon {:class         [:xlarge :light]
-                                                  :-icon-filled? true
-                                                  :style         {:color (str "var(--" color-val ")")}}
-                                            :star]]))))}]}
+
+                                (into [:div (sx :.flex-row-fs :jc--sb :row-gap--1.25rem)]
+                                      (for [color (concat component-examples/colors
+                                                          component-examples/non-semantic-colors)
+                                            :let  [
+                                                   color (get component-examples/color-lut color color)
+                                                   base             "var(--foreground-color-" 
+                                                   color-token      (str base color ")")
+                                                   color-token-dark (str base color "-inverse)")
+                                                   foreground-color-class (str "foreground-" color)
+                                                   ]]
+                                        [:div (merge-attrs
+                                               (sx :.flex-col-fs 
+                                                   :cursor--pointer)
+                                               (tooltip-attrs {:-text color}))
+                                         [icon (sx :fs--$xlarge
+                                                   :.light
+                                                   foreground-color-class)
+                                          :star]
+                                         [icon (merge-attrs
+                                                (sx :fs--$xlarge
+                                                    foreground-color-class)
+                                                {:-icon-filled? true})
+                                                         
+                                          :star]])))}]}
+
+
 
     {:desc            "Many icons have a filled variant"
      :variants-       [:outlined :filled]
@@ -222,11 +237,22 @@
                                           [:div (merge-attrs
                                                  (sx :.flex-col-fs 
                                                      :gap--0.25rem
-                                                     :.pointer)
+                                                     :cursor--pointer)
                                                  (tooltip-attrs {:-text icon-name}))
-                                           [icon {:class [:xlarge :light]} icon-name]
-                                           [icon {:class         [:xlarge]
-                                                  :-icon-filled? true}
+                                           [icon (merge-attrs
+                                                  (sx :.xlarge 
+                                                      :.light
+                                                      :cursor--pointer
+                                                      :c--$foreground-color
+                                                      :dark:c--$foreground-color-inverse))
+                                            (name icon-name)]
+                                           [icon 
+                                            (merge-attrs
+                                             (sx :.xlarge 
+                                                 :cursor--pointer
+                                                 :c--$foreground-color
+                                                 :dark:c--$foreground-color-inverse)
+                                             {:-icon-filled? true})
                                             (name icon-name)]]))))}]}
 
     {:desc            "Some icons do not have a filled variant"
@@ -258,6 +284,10 @@
                                           [:div (sx :.flex-col-fs 
                                                     :gap--0.25rem)
                                            [icon
-                                            (merge-attrs {:class [:xlarge :light :pointer]}
+                                            (merge-attrs (sx :.xlarge 
+                                                             :.light
+                                                             :cursor--pointer
+                                                             :c--$foreground-color
+                                                             :dark:c--$foreground-color-inverse)
                                                          (tooltip-attrs {:-text icon-name}))
                                             icon-name]]))))}]}]))

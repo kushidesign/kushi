@@ -1,5 +1,8 @@
 (ns kushi.ui.dom.pane.toast
+  (:require-macros
+   [kushi.css.core :refer [utilize]])
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [goog.string]
    [domo.core :as domo]
@@ -67,6 +70,9 @@
    :lb  "bottom-left-corner-inside"
    :l   "left-inside"})
 
+
+
+
 (defn update-toast-slot-dimensions! [toast-slot-el]
   (let [toasts            (.-children toast-slot-el)
         toasts-sum-height (str (apply + (for [t toasts] (.-clientHeight t)))
@@ -110,7 +116,7 @@
   (when-not e.defaultPrevented
     (when (= e.key "Escape")
       (when-let [slot (domo/qs ".kushi-toast-slot")]
-        (-> slot .-firstChild .remove)
+        (.remove (.-firstChild slot))
         (toast-slot-cleanup! slot)))))
 
 
@@ -118,25 +124,21 @@
   [{:keys [placement-kw reduced-motion?]} 
    placement-as-str]
   (let [toast-slot-el    (js/document.createElement "ol")
-        placement-class  (get toast-slot-placement-classes
-                              placement-kw)]
+        placement-class  (get toast-slot-placement-classes placement-kw)]
     (doto toast-slot-el
-      (.setAttribute "data-kushi-ui-toast-slot"
-                     placement-as-str)
+      (.setAttribute "data-kushi-ui-toast-slot" placement-as-str)
       (.setAttribute 
        "style"
        (domo/css-style-string 
-        (merge {:padding        (toast-slot-padding
-                                 placement-kw)
-                :flex-direction (toast-slot-flex-direction
-                                 placement-kw)}
+        (merge {:padding        (toast-slot-padding placement-kw)
+                :position       "fixed"
+                :flex-direction (toast-slot-flex-direction placement-kw)}
                (when reduced-motion?
                  {:scale 1}))))
       (.setAttribute
        "class"
        (string/join " "
                     [placement-class
-                     "fixed!"
                      "kushi-toast-slot"])))
     (.appendChild js/document.body toast-slot-el)))
 
@@ -158,7 +160,7 @@
         toast-slot-el    (or existing 
                              (toast-slot-el opts placement-as-str))
         toast-el         (js/document.createElement "li")
-        pane-classes     (pane-classes  opts)]
+        pane-classes     (pane-classes opts)]
 
     (when-not existing
       (.addEventListener js/window
@@ -168,7 +170,7 @@
     (doto toast-el
       (.setAttribute "data-kushi-ui" "toast")
 
-      ;; TODO swap this in once kushi.core/defcss is ready
+      ;; TODO swap this in once defcss is ready
       ;; (.setAttribute "data-kushi-ui-pane-placement" placement)
       (.setAttribute "id" id)
       (.setAttribute "style"

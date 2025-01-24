@@ -1,7 +1,5 @@
 (ns site.browser
   (:require
-   [kushi.core :refer [inject!]]
-   [site.theme]
    [reagent.dom :as rdom]
    [site.views :as views]))
 
@@ -12,5 +10,3 @@
 (defn init []
   (mount-root))
 
-
-(inject!)

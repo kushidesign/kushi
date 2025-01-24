@@ -1,5 +1,5 @@
-(ns kushi.ui.collapse.demo
-  (:require [kushi.core :refer (sx)]
+(ns ^{:kushi/layer "user-styles"} kushi.ui.collapse.demo
+  (:require [kushi.css.core :refer (sx css merge-attrs)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.collapse.core :refer [accordion collapse]]))
@@ -36,9 +36,10 @@
 
      (f "Borders"
         (sx-call [collapse
-                  (sx
-                   :bbe--1px:solid:$neutral-800
-                   :dark:bbe--1px:solid:$neutral-400
+                  (merge-attrs 
+                   (sx
+                    :bbe--1px:solid:$neutral-800
+                    :dark:bbe--1px:solid:$neutral-400)
                    {:-label        "Collapsable section label "
                     :-header-attrs (sx :bbs--1px:solid:$neutral-800
                                        :dark:bbs--1px:solid:$neutral-400)})
@@ -48,7 +49,7 @@
      (f "Label weight"
         (sx-call [collapse
                   {:-label        "Collapsable section label "
-                   :-header-attrs (sx :.bold)}
+                   :-header-attrs (sx :fw--$bold)}
                   [:p "Child 1"] 
                   [:p "Child 2"]]))
      
@@ -69,16 +70,17 @@
      
      (f "Header color"
         (sx-call [collapse
-                  (sx
-                   :border-block--3px:solid:$purple-100
-                   :dark:border-block--3px:solid:$purple-850
-                   {:-label        "Collapsable section label "
-                    :-body-attrs   (sx :pis--0.5rem)
-                    :-header-attrs (sx
-                                    :.semi-bold
-                                    :p--10px
-                                    :bgc--$purple-100
-                                    :dark:bgc--$purple-850)})
+                  {:class         (css
+                                   :border-block--3px:solid:$purple-100
+                                   :dark:border-block--3px:solid:$purple-850)
+                   
+                   :-label        "Collapsable section label "
+                   :-body-attrs   (sx :pis--0.5rem)
+                   :-header-attrs (sx
+                                   :fw--$semi-bold
+                                   :p--10px
+                                   :bgc--$purple-100
+                                   :dark:bgc--$purple-850)}
                   [:p "Child 1"] 
                   [:p "Child 2"]]))
      
@@ -136,5 +138,6 @@
                                       ["Second section" "Lorem ipsum2"]
                                       ["Third section" "Lorem ipsum3"]]]
                                      [collapse
-                                      (sx :bbe--1px:solid:black {:-label label-text})
+                                      (merge-attrs (sx :bbe--1px:solid:black)
+                                                   {:-label label-text})
                                       [:p content]])])}]}]))

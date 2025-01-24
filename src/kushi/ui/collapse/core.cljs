@@ -1,6 +1,6 @@
 (ns kushi.ui.collapse.core
   (:require
-   [kushi.core :refer (sx merge-attrs) :refer-macros (sx)]
+   [kushi.css.core :refer [css sx css-vars-map merge-attrs]]
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
    [kushi.ui.core :refer (defcom opts+children)]
@@ -9,13 +9,21 @@
 ;; TODO - How to tie children to id of collapse?
 ;TODO refactor this out
 
-(defcom collapse-body
+(defn collapse-body [& args]
+  (let [[_ attrs & children] (opts+children args)]
+    [:section
+     (merge-attrs (sx :.kushi-collapse-body-wrapper :overflow--hidden) attrs)
+     [:div (sx :.kushi-collapse-body
+               :bbe--1px:solid:transparent
+               :padding-block--0.25em:0.5em)
+      children]]))
+
+#_(defcom collapse-body
   [:section
-   (merge-attrs (sx 'kushi-collapse-body-wrapper :overflow--hidden) &attrs)
-   [:div (sx
-          'kushi-collapse-body
-          :bbe--1px:solid:transparent
-          :padding-block--0.25em:0.5em)
+   (merge-attrs (sx ".kushi-collapse-body-wrapper" :overflow--hidden) &attrs)
+   [:div (sx ".kushi-collapse-body"
+             :bbe--1px:solid:transparent
+             :padding-block--0.25em:0.5em)
     &children]])
 
 (defn toggle-class-on-ancestor [node root-class class]
@@ -117,28 +125,31 @@
                                      (+ speed 10))))))))]
       (into [:div
              (merge-attrs
-              (sx
-               'kushi-collapse-header
-               :.flex-row-fs
-               :.pointer
-               {:style         {:ai                                             :center
-                                :padding-block                                  :0.75em
-                                :+section:transition-property                   :height
-                                :+section:transition-timing-function            "cubic-bezier(0.23, 1, 0.32, 1)"
-                                :+section:transition-duration                   :$speed
-                                "&[aria-expanded='false']+section:height"       :0px
-
-                                "&[aria-expanded='false']+section>*:transition" [[:opacity :$speed :linear :10ms]]
-                                "&[aria-expanded='true']+section>*:transition"  [[:opacity :$speed :linear :200ms]]
-
-                                "&[aria-expanded='false']+section>*:opacity"    0
-                                "&[aria-expanded='true']+section>*:opacity"     1}
-                :tabIndex      0
-                :role          :button
-                :aria-expanded expanded?
-                :on-click      on-click
-                :onKeyDown     #(when (or (= "Enter" (.-key %)) (= 13 (.-which %)) (= 13  (.-keyCode %)))
-                                  (-> % .-target .click))})
+              {:style         {:--speed  (str speed "ms") }
+               :class         (css
+                               ".kushi-collapse-header"
+                               :.flex-row-fs
+                               :cursor--pointer
+                               {:ai                                          :center
+                                :padding-block                               :0.75em
+                                :+section:transition-property                :height
+                                :+section:transition-timing-function         "cubic-bezier(0.23, 1, 0.32, 1)"
+                                :+section:transition-duration                :$speed
+                                "[aria-expanded='false']+section:height"       :0px
+                                "[aria-expanded='false']+section>*:transition" :opacity:$speed:linear:10ms
+                                "[aria-expanded='true']+section>*:transition"  :opacity:$speed:linear:200ms
+                                "[aria-expanded='false']+section>*:opacity"    0
+                                "[aria-expanded='true']+section>*:opacity"     1
+                                "[aria-expanded='true']>.kushi-collapse-header-label-collapsed:display" :none
+                                "[aria-expanded='true']>.kushi-collapse-header-label-expanded:display" :flex})
+               :tabIndex      0
+               :role          :button
+               :aria-expanded expanded?
+               :on-click      on-click
+               :onKeyDown     #(when (or (= "Enter" (.-key %))
+                                         (= 13 (.-which %))
+                                         (= 13  (.-keyCode %)))
+                                (-> % .-target .click))}
               attrs)]
             children))))
 
@@ -193,36 +204,35 @@
                 on-click
                 icon-position
                 speed]
-         :or   {speed 250}}    opts]
+         :or   {speed 250}}    opts
+        expanded-class (when expanded? :.kushi-collapse-expanded)]
     [:section
      (merge-attrs
-      (sx
-       'kushi-collapse
-       :.flex-col-fs
-       (when expanded? :.kushi-collapse-expanded)
-       :w--100%
-       [:$speed (str speed "ms")]
-       {:data-kushi-ui :collapse})
+      {:style         (let [speed (str speed "ms")]
+                        (css-vars-map speed))
+       :class         (css ".kushi-collapse"
+                           expanded-class
+                           :.flex-col-fs
+                           :w--100%)
+       :data-kushi-ui :collapse}
       attr)
      [collapse-header
       (merge-attrs header-attrs
-                   (sx {:on-click       on-click
-                        :aria-expanded  (if expanded? "true" "false")
-                        :-icon-position icon-position
-                        :-speed         speed}))
+                   {:on-click       on-click
+                    :aria-expanded  (if expanded? "true" "false")
+                    :-icon-position icon-position
+                    :-speed         speed})
       [collapse-header-contents opts]]
 
      ;; collapse body
      [:section
-      (merge-attrs (sx 'kushi-collapse-body-wrapper
-                       :overflow--hidden)
+      (merge-attrs (sx :.kushi-collapse-body-wrapper :overflow--hidden)
                    body-attrs
                    {:style {:display             (if expanded? :block :none)
-                            :transition-duration :$speed}})
-      (into [:div (sx
-                   'kushi-collapse-body
-                   :bbe--1px:solid:transparent
-                   :padding-block--0.25em:0.5em)]
+                            :transition-duration (str speed "ms")}})
+      (into [:div (sx :.kushi-collapse-body
+                      :bbe--1px:solid:transparent
+                      :pb--0.25em:0.5em)]
             children)]]))
 
 

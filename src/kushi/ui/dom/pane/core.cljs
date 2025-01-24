@@ -4,7 +4,7 @@
             [domo.core :as domo] ;; Import this to create defclasses
             [goog.functions]
             [goog.string]
-            [kushi.core :refer (keyed)]
+            [kushi.ui.core :refer (keyed)]
             [kushi.ui.dom.pane.placement :refer [el-plc og-placement
                                                  owning-el-rect-cp pane-plc
                                                  placement-css-custom-property
@@ -98,7 +98,7 @@
     (doto el
       (.setAttribute "data-kushi-ui" "pane")
 
-      ;; TODO swap this in once kushi.core/defcss is ready
+      ;; TODO swap this in once defcss is ready
       ;; (.setAttribute "data-kushi-ui-pane-placement" placement)
 
       (.setAttribute "id" id)
@@ -141,15 +141,15 @@
    given a new placement and position which may include a shift on the x or y
    axis in order to keep it wholly in the veiwport."
   ;; use :keys here ?
-  [{placement-kw :placement-kw
-    arrow?       :arrow?
-    owning-el    :owning-el
-    dialog-el    :dialog-el
-    pane-type    :pane-type
-    :or          {pane-type :pane}
-    :as          opts}
+  [{placement-kw    :placement-kw
+    arrow?          :arrow?
+    owning-el       :owning-el
+    dialog-el       :dialog-el
+    pane-type       :pane-type
+    user-pane-class :user-pane-class
+    :or             {pane-type :pane}
+    :as             opts}
    id]
-
   ;; 1) Pre-calculate and append pane
   ;; Calculate an initial placement and append a pane element to the dom.
   ;; If the owning element is beyond the edge-threshold, the pane will
@@ -158,19 +158,28 @@
 
   ;; TODO - optimize for auto placement
   ;; --------------------------------------------------------------------------------
-  (let [pane-type       (or (maybe pane-type stock-pane-types)
-                            (maybe pane-type nameable?)
-                            :pane)
+  (let [
         arrow?          (if (false? arrow?) false true)
         owning-el-rect* (domo/client-rect owning-el)
         owning-el-rect  (or (some->> dialog-el
                                      (adjust-client-rect owning-el-rect*))
                             owning-el-rect*)
+        ;; pane-type       (or (maybe pane-type stock-pane-types)
+        ;;                     (maybe pane-type nameable?)
+        ;;                     :pane)
+        ;; user-pane-class (case pane-type
+        ;;                   :tooltip
+        ;;                   (:tooltip-class opts)
+        ;;                   :popover
+        ;;                   (:popover-class opts)
+        ;;                   nil)
         opts            (assoc opts
                                :pane-type
                                pane-type
                                :owning-el-rect
-                               owning-el-rect)
+                               owning-el-rect
+                               :user-pane-class
+                               user-pane-class)
         viewport        (domo/viewport)
         edge-threshold  (edge-threshold opts)
         owning-el-vpp   (el-plc viewport
@@ -187,6 +196,10 @@
                                       placement-kw
                                       tt-pos-og 
                                       arrow?))]
+
+    ;; TODO - this causes fireworks error
+    ;; (? append-tt-opts)
+
     (append-pane-el! (merge append-tt-opts
                             {:metrics? true
                              :id       (str "_kushi-metrics_" id)}))
@@ -394,9 +407,9 @@
 
     (some->> el-to-be-removed
              ;; DEV - commment out this .removeChild op to leave pane in dom for debugging
-             (.removeChild  (or toast-slot 
-                                (or dialog-el
-                                    js/document.body))
+             (.removeChild (or toast-slot 
+                               (or dialog-el
+                                   js/document.body))
                             el-to-be-removed))
 
     ;; Popovers
@@ -493,12 +506,27 @@
            dialog-el           (domo/nearest-ancestor owning-el "dialog")
          ;; TODO - should this be "kushi-pane-*" ?
            pane-id             (or pane-id (str "kushi-" (gensym)))
-           pane-type           (:pane-type opts)
            existing-popover    (j/get owning-el "ariaHasPopup")
            existing-tooltip-id (.getAttribute owning-el "aria-describedby")
            existing-tooltip?   (domo/has-class? (domo/el-by-id existing-tooltip-id)
                                                 "kushi-tooltip")
-           opts                (merge opts (keyed owning-el dialog-el))]
+
+           pane-type           (:pane-type opts)
+           pane-type           (or (maybe pane-type stock-pane-types)
+                                   (maybe pane-type nameable?)
+                                   :pane)
+           user-pane-class     (case pane-type
+                                 :tooltip
+                                 (:tooltip-class opts)
+                                 :popover
+                                 (:popover-class opts)
+                                 :toast
+                                 (:toast-class opts)
+                                 nil)
+           opts                (merge opts (keyed pane-type
+                                                  user-pane-class
+                                                  owning-el
+                                                  dialog-el))]
 
        (when-not (or (and (= pane-type :tooltip)
                           existing-popover)
@@ -510,6 +538,7 @@
            (domo/set-attribute! owning-el :aria-describedby pane-id))
 
        ;; Appending pane
+         ;; TODO - isn't owning-el already in opts?
          (if (= pane-type :toast)
            (append-toast! (assoc opts :owning-el owning-el)
                           pane-id)

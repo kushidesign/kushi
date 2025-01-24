@@ -1,11 +1,11 @@
-(ns kushi.ui.grid.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.grid.demo
   (:require
-   [kushi.core :refer (sx)]
+   [kushi.css.core :refer (sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.grid.core :refer [grid]]))
 
 (def examples
-  (let [row-attrs       (sx :&_.instance-code:w--100%)
+  (let [row-attrs       (sx :_.instance-code:w--100%)
         container-attrs (sx :gtc--1fr)]
     [(let [code (sx-call [grid
                           (sx
@@ -23,11 +23,12 @@
         :snippets        [(:quoted code)]
         :examples        [{:code code} ]})
      (let [code (sx-call [grid
-                          (sx :>div:bgc--$neutral-150
-                              :dark:>div:bgc--$neutral-800
-                              {:-column-min-width :80px
-                               :-gap              :15px
-                               :-aspect-ratio     :2:3})
+                          (merge-attrs
+                           (sx :>div:bgc--$neutral-150
+                               :dark:>div:bgc--$neutral-800)
+                           {:-column-min-width :80px
+                            :-gap              :15px
+                            :-aspect-ratio     :2:3})
                           (for
                            [x (range 18)]
                             [:div [:div (sx :.absolute-fill

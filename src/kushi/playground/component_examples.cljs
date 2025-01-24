@@ -1,11 +1,12 @@
 (ns ^:dev/always kushi.playground.component-examples
   (:require [clojure.string :as string] ;; [clojure.walk :as walk]
             [domo.core :as d]
-            [kushi.core :refer (sx merge-attrs keyed)]
+            [kushi.css.core :refer (sx css merge-attrs)]
+            [kushi.css.defs]
             [kushi.playground.component-docs :as docs]
             [kushi.playground.util :as util]
             [kushi.ui.button.core :refer (button)]
-            [kushi.ui.core :refer (defcom)]
+            [kushi.ui.core :refer (keyed opts+children)]
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.tooltip.core :refer (tooltip-attrs)]
@@ -25,7 +26,7 @@
      quoted-attrs :quoted} :sx-attrs
     :as                                      example-opts}]
   (into [:section (merge-attrs
-                   (sx 'playground-component-example-row-variant-section
+                   (sx :.playground-component-example-row-variant-section
                        :.flex-col-fs
                        :ai--fs
                        :md:ai--fe
@@ -125,8 +126,9 @@
 
 (defn section-label [s]
   [:p 
-   (sx 'example-section-label
-       :.serif
+   (sx :.example-section-label
+       :ff--$serif-font-stack
+       :font-style--oblique
       ;; Include this if using cormorant serif face in :$serif-font-stack
       ;;  :.cormorant-section-label
       ;; Comment fs below if using cormorant serif face in :$serif-font-stack
@@ -135,26 +137,26 @@
        :.oblique
        :.neutralize-secondary
        :lh--1.7
-       :&_span.code:mis--0.5ch)
+       :_span.code:mis--0.5ch)
    s])
 
 
-#_(defn section-label-vertical
-  "Renders a vertical label"
-  [s]
-  [:p (sx :.xxsmall
-          :c--$neutral-secondary-foreground
-          :min-width--55px
-          {:style {:writing-mode :vertical-lr
-                   :text-orientation :upright
-                   :text-transform :uppercase
-                   :font-weight :800
-                   :color :#7d7d7d
-                   :font-family "JetBrains Mono"
-                   :text-align :center
-                   :background-image "linear-gradient(90deg, #e3e3e3, #e3e3d3 1px, transparent 1px)"
-                   :background-position-x :1ch}})
-   [:span (sx :bgc--white :pi--0.5em) s]])
+;; #_(defn section-label-vertical
+;;   "Renders a vertical label"
+;;   [s]
+;;   [:p (sx :.xxsmall
+;;           :c--$neutral-secondary-foreground
+;;           :min-width--55px
+;;           {:style {:writing-mode :vertical-lr
+;;                    :text-orientation :upright
+;;                    :text-transform :uppercase
+;;                    :font-weight :800
+;;                    :color :#7d7d7d
+;;                    :font-family "JetBrains Mono"
+;;                    :text-align :center
+;;                    :background-image "linear-gradient(90deg, #e3e3e3, #e3e3d3 1px, transparent 1px)"
+;;                    :background-position-x :1ch}})
+;;    [:span (sx :bgc--white :pi--0.5em) s]])
 
 
 (declare component-snippets)
@@ -171,30 +173,31 @@
            example-reqs]}]
   (let [all-reqs       (into [] (concat component-reqs example-reqs))
         reqs-by-refers (reqs-by-refers all-reqs)]
-    [modal (sx :&_.kushi-modal-inner:pi--1.25em
-               :xsm:&_.kushi-modal-inner:pi--3em
-               :&_.kushi-modal-inner:pb--1.5rem:2em
-               :xsm:&_.kushi-modal-inner:pb--3em:3.5em
-               :$modal-min-width--200px
-               :&_.kushi-modal-inner:gap--0.75rem
-               [:height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem))))"]
-               :overflow--hidden
-               :width--$main-content-max-width
-               {:id modal-id})
+    [modal {:class (css :_.kushi-modal-inner:pi--1.25em
+                        :xsm:_.kushi-modal-inner:pi--3em
+                        :_.kushi-modal-inner:pb--1.5rem:2em
+                        :xsm:_.kushi-modal-inner:pb--3em:3.5em
+                        [:--modal-min-width :200px]
+                        :_.kushi-modal-inner:gap--0.75rem
+                        [:height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem))))"]
+                        :overflow--hidden
+                        :width--$main-content-max-width)
+            :id    modal-id}
      [modal-close-button {:-modal-id modal-id}]
      [:div (sx :.flex-row-sb :ai--fs :gap--1.5em)
       [:div
        (sx :.flex-col-fs :ai--b :gap--1rem )
        [:h1 (sx :.component-section-header-label) component-label]
        label]
-      #_[button (sx :.extra-light
-                  :.xxlarge 
-                  :.minimal 
-                  :.pill
-                  :p--0
-                  :translate--0:-10px
-                  {:on-click close-kushi-modal})
-       [icon :close]]]
+      ;; #_[button (sx :.extra-light
+      ;;             :.xxlarge 
+      ;;             :.minimal 
+      ;;             :.pill
+      ;;             :p--0
+      ;;             :translate--0:-10px
+      ;;             {:on-click close-kushi-modal})
+      ;;  [icon :close]]
+      ]
      [divisor]
      [component-snippets
       (reqs-coll reqs-by-refers)
@@ -203,26 +206,27 @@
 
 (defn example-modal-trigger [modal-id]
   [button
-   (sx :.minimal
-       :.accent
-       :.xxsmall
-       :.wee-bold
-       :.pill
-       :pb--0.4em
-       :&.accent.minimal:hover:background-color--$accent-50
-       :dark:&.accent.minimal:hover:background-color--$accent-800
+   {:class    
+    (css :.minimal
+         :.accent
+         :.pill
+         :pb--0.4em
+         :fw--$wee-bold
+         :fs--$xxsmall
+         :.accent.minimal:hover:background-color--$accent-50
+         :dark:.accent.minimal:hover:background-color--$accent-800
 
-       ;; Next 3 styles will give it a link-button style
-       #_:p--0
-       #_:hover&.accent.minimal:bgc--transparent
-       #_[:hover:after {:content  "\"\""
-                        :position :absolute
-                        :w        :100%
-                        :h        :1px
-                        :o        0.5
-                        :bgc      :$accent-foreground
-                        :top      "calc(100% + 2px)"}]
-       {:on-click (fn* [] (open-kushi-modal modal-id))})
+               ;; Next 3 styles will give it a link-button style
+         #_:p--0
+         #_:hover&.accent.minimal:bgc--transparent
+         #_[:hover:after {:content  "\"\""
+                          :position :absolute
+                          :w        :100%
+                          :h        :1px
+                          :o        0.5
+                          :bgc      :$accent-foreground
+                          :top      "calc(100% + 2px)"}])
+    :on-click (fn* [] (open-kushi-modal modal-id))}
    [icon (sx :.small :.extra-bold) :code]
    "Code"])
 
@@ -254,7 +258,7 @@
               ["xsm:has([data-kushi-playground-example='popover-with-form']):display" :block])
 
      [:section (sx :.playground-example-row
-                  ;; make this max-width global var
+                   ;; make this max-width global var
                    :max-width--$main-content-max-width)
       [:div (sx :.flex-row-fs
                 :flex-wrap--wrap
@@ -312,55 +316,65 @@
                    :line-height 1.5}}
     s]])
 
-(defcom copy-to-clipboard-button
-  [button
-   (merge-attrs
-    (sx :.accent
-        :.minimal
-        :p--7px
-        {:on-click #(d/copy-to-clipboard!
-                     (or (some->> &opts 
-                                  :clipboard-parent-sel
-                                  (d/nearest-ancestor (d/et %)))
-                         js/document.body) 
-                     (:text-to-copy &opts))})
-    (tooltip-attrs
-     {:-text                        "Click to copy"
-      :-text-on-click               "Copied!"
-      :-text-on-click-tooltip-class (first (:class (sx :$tooltip-background-color--$accent-filled-background-color)))
-      :-placement                   [:block-start :inline-end]})
-    &attrs)
-   [icon (sx :.medium!) mui.svg/content-copy]])
+(defn copy-to-clipboard-button [& args]
+  (let [[opts attrs] (opts+children args)]
+    [button
+     (merge-attrs
+      {:class    (css :.accent :.minimal :p--7px)
+       :on-click #(d/copy-to-clipboard!
+                   (or (some->> opts 
+                                :clipboard-parent-sel
+                                (d/nearest-ancestor (d/et %)))
+                       js/document.body) 
+                   (:text-to-copy opts))}
+      (tooltip-attrs
+       {:-text                        
+        "Click to copy"
 
+        :-text-on-click               
+        "Copied!"
+
+        :-text-on-click-tooltip-class 
+        (css [:--tooltip-background-color :$accent-filled-background-color])
+
+        :-placement                  
+        [:block-start :inline-end]})
+      attrs)
+     [icon (sx :fs--medium) mui.svg/content-copy]]))
 
 (defn- snippet-section
   [{:keys [header
            preformatted
            copyable]}]
-  [:section (sx 'snippet-section
+  [:section (sx :.snippet-section
                 :.flex-col-fs
                 :gap--0.5em
                 ;; :first-of-type:mbe--2.5em
                 ) 
    header
    [:section 
-    (sx :.relative
-        :.code
+    (sx :.code
         :.xsmall
         :xsm:p--1.5em
+        :position--relative
         :p--1.0em
         :pie--3.5em
         :xsm:pie--2.25em
-        :w--100%)
+        :w--100%
+        :lh--1.2)
     (when-let [attrs (some->> copyable
                               (hash-map :-text-to-copy)
                               (merge-attrs 
-                               (sx :.top-right-corner-inside!)
+                               ;; TODO - can this be done without :.top-right-corner-inside!
+                               ;; TODO - can this be done without :.top-right-corner-inside!
+                               (sx :.top-right-corner-inside
+                                   :position--absolute)
                                {:-clipboard-parent-sel ".kushi-modal"}))]
       [copy-to-clipboard-button attrs])
     preformatted]])
 
-(defn scroll-to-playground-component! [{:keys [component-label scroll-y]}]
+(defn scroll-to-playground-component!
+  [{:keys [component-label scroll-y]}]
   (let [el (d/qs-data= "kushi-playground-component" component-label)]
     (d/scroll-into-view! el)
     ;; This is dependent on the existance of `#header-navbar`
@@ -387,14 +401,14 @@
     [:div
      (sx :.relative
          :.flex-row-fs
-         :&_code:fs--0.95em
-         :&_.code:fs--0.95em
-         :&_code:ws--n
-         :&_.code:ws--n
-         :&_pre&_code:p--0
-         :&_pre&_.code:p--0
-         :&_pre&_code:fs--$xsmall
-         :&_pre&_.code:fs--$xsmall
+         :_code:fs--0.95em
+         :_.code:fs--0.95em
+         :_code:ws--n
+         :_.code:ws--n
+         :_pre_code:p--0
+         :_pre_.code:p--0
+         :_pre_code:fs--$xsmall
+         :_pre_.code:fs--$xsmall
          :lh--1.7
          :ai--fs
          :min-width--200px
@@ -403,17 +417,19 @@
       (sx :.flex-col-fs
           :w--100%
           :gap--1em
-          :&_.kushi-text-input-label:min-width--7em
-          :&_.kushi-input-inline:gtc--36%:64%)
-      (let [max-width   (or (when-let [[p v] (some-> (kushi.core/breakpoints) :sm first)]
-                              (when-not (d/matches-media? p (as-str v))
-                                27))
-                            50)
-            formatted*  #(-> % (pprint {:max-width max-width}) with-out-str)]
+          :_.kushi-text-input-label:min-width--7em
+          :_.kushi-input-inline:gtc--36%:64%)
+      (let [max-width  (or (when-let [[p v] (some-> kushi.css.defs/media
+                                                    :sm
+                                                    first)]
+                             (when-not (d/matches-media? p (as-str v))
+                               27))
+                           50)
+            formatted* #(-> % (pprint {:max-width max-width}) with-out-str)]
         (into [:div (sx :.flex-col-fs
                         :gap--2.25rem
                         :mbs--1.5em
-                        :pbe--2rem)
+                        #_:pbe--2rem)
                [snippet-section
                 {:header       (util/desc->hiccup
                                 ["Paste into the `:require` section of your `:ns` form:"])
@@ -484,6 +500,13 @@
    "orange"
    "magenta"
    ])
+
+(def color-lut
+  {"neutral"  "gray"
+   "positive" "green"
+   "warning"  "yellow"
+   "negative" "red"
+   "accent"   "blue"})
 
 (def sizes
   [#_:xxxsmall

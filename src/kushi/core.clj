@@ -17,6 +17,7 @@
    [kushi.ui.theme :as theme]
    [kushi.utils :as util]))
 
+(pprint "KUSHI CORE")
 
 (defmacro keyed [& ks]
   `(let [keys# (quote ~ks)

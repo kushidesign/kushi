@@ -1,8 +1,7 @@
 (ns kushi.playground.state
   (:require
    [clojure.string :as string]
-   
-   [kushi.core :refer [breakpoints]]
+   [kushi.css.defs :refer [media]]
    [kushi.playground.components :refer [playground-components]]
    [domo.core :as domo]
    [applied-science.js-interop :as j]
@@ -23,13 +22,25 @@
 
 (defonce *md-or-smaller?
   (r/atom
-   (not (let [md-breakpoints    (some-> (breakpoints) :md)
+   (not (let [md-breakpoints    (some-> media :md)
               [md-key md-value] (some-> md-breakpoints first)
-              mql               (when-let [[md-key md-value] (when (and (or (string? md-key) (keyword? md-key))
-                                                                        (or (string? md-value) (keyword? md-value)))
-                                                               [(name md-key) (name md-value)])]
-                                  (let [mql (js/window.matchMedia (str "(" md-key ": " md-value  ")"))]
-                                    (j/assoc! mql :onchange #(do (reset! *md-or-smaller? (not (.-matches %)))))))]
+              mql               (when-let
+                                 [[md-key md-value]
+                                  (when (and (or (string? md-key)
+                                                 (keyword? md-key))
+                                             (or (string? md-value)
+                                                 (keyword? md-value)))
+                                    [(name md-key) (name md-value)])]
+                                  (let [mql (js/window.matchMedia (str "("
+                                                                       md-key
+                                                                       ": "
+                                                                       md-value
+                                                                       ")"))]
+                                    (j/assoc!
+                                     mql 
+                                     :onchange
+                                     #(do (reset! *md-or-smaller?
+                                                  (not (.-matches %)))))))]
           (.-matches mql)))))
 
 (defonce *dev-mode? (r/atom false))

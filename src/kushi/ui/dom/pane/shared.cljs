@@ -1,12 +1,12 @@
 (ns kushi.ui.dom.pane.shared
   (:require
-   
    [clojure.string :as string]
    [goog.string]
    [kushi.ui.util :as util :refer [maybe nameable? as-str]]))
 
 
-(def stock-pane-types #{:pane :tooltip :popover :toast #_:hover-board #_:context-menu})
+(def stock-pane-types
+  #{:pane :tooltip :popover :toast #_:hover-board #_:context-menu})
         
 
 (defn pane-classes
@@ -18,26 +18,52 @@
            metrics?
            user-pane-class]
     :as opts}]
-  (let [pane-type-class (some-> pane-type
-                                (maybe #(not= :pane %))
-                                (maybe stock-pane-types)
-                                as-str)
-        toast?          (= pane-type :toast)
-        user-pane-class (cond (string? user-pane-class)
-                              (string/split " " user-pane-class)
-                              
-                              (util/class-coll? user-pane-class)
-                              user-pane-class)]
-    (string/join
-     " "
-     (remove nil? 
-             (concat user-pane-class
-                     ["kushi-pane"
-                      (some->> pane-type-class (str "kushi-"))
-                      "invisible" 
-                      (when-not toast?
-                        (some->> (if metrics? placement-kw new-placement-kw)
-                                 name
-                                 (str "kushi-pane-")))
-                      (when-not arrow? "kushi-pane-arrowless")
-                      (some-> pane-class (maybe nameable?) as-str)])))))
+  
+  ;; TODO debug fireworks - the caught error with popover example from sandbox
+  ;; For some reason it is tripping on :el
+  ;; (?  (dissoc opts
+  ;;             :el
+  ;;             ;; :owning-el-rect
+  ;;             ;; :placement-kw
+  ;;             ;; :tt-pos-og
+  ;;             ;; :tooltip-class
+  ;;             ;; :tooltip-text
+  ;;             ;; :id
+  ;;             ;; :owning-el
+  ;;             ;; :dialog-el
+  ;;             ;; :metrics?
+  ;;             ;; :pane-type
+  ;;             ;; :user-pane-class
+  ;;             ;; :arrow?
+  ;;             ))
+
+  (let [pane-type-class
+        (some-> pane-type
+                (maybe #(not= :pane %))
+                (maybe stock-pane-types)
+                as-str)
+
+        toast?          
+        (= pane-type :toast)
+
+        user-pane-class
+        (cond (string? user-pane-class)
+              (string/split user-pane-class #" ")
+              
+              (util/class-coll? user-pane-class)
+              user-pane-class)
+        ret             
+        (string/join
+         " "
+         (remove nil? 
+                 (concat user-pane-class
+                         ["kushi-pane"
+                          (some->> pane-type-class (str "kushi-"))
+                          "invisible" 
+                          (when-not toast?
+                            (some->> (if metrics? placement-kw new-placement-kw)
+                                     name
+                                     (str "kushi-pane-")))
+                          (when-not arrow? "kushi-pane-arrowless")
+                          (some-> pane-class (maybe nameable?) as-str)])))]
+    ret))

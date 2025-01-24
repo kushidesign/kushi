@@ -4,7 +4,7 @@
    [domo.core :as domo]
    [kushi.playground.state :as state]
    [kushi.playground.ui :refer [light-dark-mode-switch]]
-   [kushi.core :refer [sx merge-attrs defclass]]
+   [kushi.css.core :refer [sx css merge-attrs css-vars-map]]
    [kushi.ui.core :refer [defcom]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.button.core :refer [button]]))
@@ -35,33 +35,34 @@
         (js/setTimeout #(state/set-focused-path! (into [] path-label))
                        250))))
 
+(def header-nav-button-attrs
+  (sx :.minimal
+      :.pill
+      :tt--capitalize
+      :fs--$xlarge
+      :pi--0.7em
+      :pb--0.3em
+      ;; Remove these when theming gets revamped
+      :.neutral.minimal:c--$neutral-secondary-foreground
+      :.neutral.minimal:hover:c--$neutral-950
+      :.neutral.minimal:active:c--$neutral-1000
+      :.neutral.minimal:hover:bgc--$neutral-100
+      :.neutral.minimal:active:bgc--$neutral-0
+
+      :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse
+      :dark:.neutral.minimal:hover:c--$neutral-50
+      :dark:.neutral.minimal:active:c--$neutral-0
+      :dark:.neutral.minimal:hover:bgc--$neutral-850
+      :dark:.neutral.minimal:active:bgc--$neutral-900
+
+      [".neutral.minimal[aria-selected='true']:c" :black]
+          ;; TODO test this one
+      ["dark.neutral.minimal[aria-selected='true']:c" :white]))
 
 (defcom header-nav-button
   [button 
    (let [focused? (:focused? &opts)]
-     (merge-attrs 
-      (sx :.xlarge
-          :.minimal
-          :.pill
-          :.capitalize
-          :pi--0.7em
-          :pb--0.3em
-          ;; Remove these when theming gets revamped
-          :&.neutral.minimal:c--$neutral-secondary-foreground
-          :&.neutral.minimal:hover:c--$neutral-950
-          :&.neutral.minimal:active:c--$neutral-1000
-          :&.neutral.minimal:hover:bgc--$neutral-100
-          :&.neutral.minimal:active:bgc--$neutral-0
-
-          :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
-          :dark:&.neutral.minimal:hover:c--$neutral-50
-          :dark:&.neutral.minimal:active:c--$neutral-0
-          :dark:&.neutral.minimal:hover:bgc--$neutral-850
-          :dark:&.neutral.minimal:active:bgc--$neutral-900
-
-          ["&.neutral.minimal[aria-selected='true']:c" :black]
-          ["dark:&.neutral.minimal[aria-selected='true']:c" :white])
-      &attrs))
+     (merge-attrs header-nav-button-attrs &attrs))
    &children])
 
 
@@ -84,35 +85,36 @@
                   :gap--1.5rem
                   :mbs--2rem)]
          (for [label ["intro" "components" "colors" "typography" "guide"]
-               :let [guide? (= label "guide")
-                     href   (if guide?
-                              "https://github.com/kushidesign/kushi"
-                              (str "/" label))
-                     target (if guide? :_blank :_self)]]
+               :let [guide?    (= label "guide")
+                     href      (if guide?
+                                 "https://github.com/kushidesign/kushi"
+                                 (str "/" label))
+                     target    (if guide? :_blank :_self)
+                     translate (when guide? "-0.33ch")]]
            [:a
-            (merge-attrs 
-             (sx :.flex-row-c
-                 :d--none
-                 :hover>button.neutral.minimal:c--$neutral-950
-                 :active>button.neutral.minimal:c--$neutral-1000
-                 :hover>button.neutral.minimal:bgc--$neutral-100
-                 :active>button.neutral.minimal:bgc--$neutral-0
+            {:class    (css :.flex-row-c
+                            :d--none
+                            :hover>button.neutral.minimal:c--$neutral-950
+                            :active>button.neutral.minimal:c--$neutral-1000
+                            :hover>button.neutral.minimal:bgc--$neutral-100
+                            :active>button.neutral.minimal:bgc--$neutral-0
 
-                 :dark:hover>button.neutral.minimal:c--$neutral-50
-                 :dark:active>button.neutral.minimal:c--$neutral-0
-                 :dark:hover>button.neutral.minimal:bgc--$neutral-850
-                 :dark:active>button.neutral.minimal:bgc--$neutral-900
-                 {:href   href
-                  :target target})
-             {:on-click (partial route! menu-id href)})
+                            :dark:hover>button.neutral.minimal:c--$neutral-50
+                            :dark:active>button.neutral.minimal:c--$neutral-0
+                            :dark:hover>button.neutral.minimal:bgc--$neutral-850
+                            :dark:active>button.neutral.minimal:bgc--$neutral-900)
+             :href     href
+             :target   target
+             :on-click (partial route! menu-id href)}
             [header-nav-button
-             (sx [:translate (when guide? "-0.33ch")]
-                 :>svg:w--20px
-                 :>svg:h--20px
-                 :>svg:o--0.66
-                 :dark:>svg:o--0.86
-                 ["dark:>svg:filter" "invert(1)"]
-                 {:aria-selected false})
+             {:style         (css-vars-map translate)
+              :class         (css [:translate :$translate]
+                                  :>svg:w--20px
+                                  :>svg:h--20px
+                                  :>svg:o--0.66
+                                  :dark:>svg:o--0.86
+                                  ["dark:>svg:filter" "invert(1)"])
+              :aria-selected false}
              (when guide? octocat-svg)
              label]])))
 
@@ -146,12 +148,12 @@
  (let [menu-id "kushi-playground-menu"]
   [:div#header-navbar
    (merge-attrs 
-    (sx [:$overlay-width "calc(100vw + 40px)"]
-        :$menu-height--415px
-        :.fixed
+    (sx ["--overlay-width" "calc(100vw + 40px)"]
+        ["--menu-height" :415px]
         :.flex-row-sb
         :.neutralize
         :.divisor-block-end
+        :position--fixed
         ;; :o--0
         :top--0
         :left--0
@@ -163,8 +165,8 @@
         :height--$navbar-height
         :pi--1.25rem
         :md:pi--4rem
-       #_["has(~&_div&_nav[aria-expanded=\"true\"][data-kushi-playground-sidenav])>*:opacity"
-        0]
+        #_["has(~&_div&_nav[aria-expanded=\"true\"][data-kushi-playground-sidenav])>*:opacity"
+           0]
         )
 
     (when (domo/media-supports-touch?)
@@ -174,32 +176,30 @@
     "Kushi"]
    [:div
     (merge-attrs
-     (sx :.relative
-         #_:.transition
-         :&.has-hover&_a:d--flex
-         :&.has-hover>div.explore-menu-container:h--$menu-height
-         :&.has-hover&_nav:mbs--4rem
-         :&.has-hover>div.explore-menu-container:o--1
-         ["&.has-hover+div.bg-scrim-gradient:height" :100vh]
-         ["&.has-hover+div.bg-scrim-gradient:o" 1]
-         :zi--1
-         :translate---30px
-         {:id menu-id})
+     {:class (css :.relative
+                  :.has-hover_a:d--flex
+                  :.has-hover>div.explore-menu-container:h--$menu-height
+                  :.has-hover_nav:mbs--4rem
+                  :.has-hover>div.explore-menu-container:o--1
+                  [".has-hover+div.bg-scrim-gradient:height" :100vh]
+                  [".has-hover+div.bg-scrim-gradient:o" 1]
+                  :zi--1
+                  :translate---30px)
+      :id    menu-id}
      (when (domo/media-supports-hover?)
        (domo/hover-class-attrs "has-hover")))
     [button 
-     (sx 'kushi-explore
+     (sx :.kushi-explore
          :.pill
          :.minimal
          :.small
          :pi--0.8em
          :pb--0.4em
-         :&.neutral.minimal:c--$neutral-secondary-foreground
-         :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
-         )
+         :.neutral.minimal:c--$neutral-secondary-foreground
+         :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse)
      [icon :keyboard-arrow-down]
      "Explore"]
-    [:div (sx 'explore-menu-container
+    [:div (sx :.explore-menu-container
               :.header-menu-transition-group
               :.bottom-outside
               :.flex-col-fs

@@ -1,8 +1,9 @@
-(ns kushi.ui.tag.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.tag.demo
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.text-field.core :refer [text-field]]
-   [kushi.core :refer (sx)]
+   [kushi.css.core :refer (sx css)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]
@@ -22,15 +23,15 @@
 
 (def examples
   (let [playground-tag-rows-container
-        (sx 'playground-tag-rows-container
+        (sx :.playground-tag-rows-container
             :md:gtc--max-content
             :gtc--max-content:max-content)
         playground-tag-rows-container4
-        (sx 'playground-tag-rows-container4
+        (sx :.playground-tag-rows-container4
             :md:gtc--max-content
             :gtc--max-content:max-content:max-content:max-content)
         playground-tag-rows-container24
-        (sx 'playground-tag-rows-container24
+        (sx :.playground-tag-rows-container24
             :md:gtc--max-content
             :xsm:gtc--max-content:max-content:max-content:max-content
             :gtc--max-content:max-content)]
@@ -45,7 +46,7 @@
       (component-examples/sizes-snippet-scale 'tag "Done"))
      
      {:desc            "Semantic variants"
-      :sx-attrs        (sx-call (sx :.small))
+      :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs playground-tag-rows-container4
       :variants+       [:minimal]
       :examples        (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
@@ -55,7 +56,7 @@
                             :attrs {:class [s]}}))}
 
      {:desc            "Shape variants"
-      :sx-attrs        (sx-call (sx :.small))
+      :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs playground-tag-rows-container4
       :variants+       [:minimal]
       :examples        (for [s [:rounded :pill :sharp]]
@@ -65,7 +66,7 @@
 
      {:desc            "With icons"
       :reqs            '[[kushi.ui.icon.core :refer [icon]]]
-      :sx-attrs        (sx-call (sx :.small))
+      :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs playground-tag-rows-container4
       :variants+       [:minimal]
       :examples        [{:label "Icon tag"
@@ -78,7 +79,7 @@
                          :args  [[icon :pets] "Pets"]}]}
 
      {:desc            "Weight variants"
-      :sx-attrs        (sx-call (sx :.small))
+      :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs playground-tag-rows-container4
       :variants+       [:minimal]
       :examples        (for [s (rest component-examples/type-weights)]
@@ -88,11 +89,12 @@
 
      {:desc            "Max width"
       :reqs            '[[kushi.ui.icon.core :refer [icon]]]
-      :sx-attrs        (sx-call (sx :.small))
+      :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs (sx :gtc--max-content)
       :variants+       [:minimal]
       :examples        [{:label "Max width"
-                         :args  [[:span {:class "truncate" :style {:max-width :130px}}
+                         :args  [[:span {:class "truncate"
+                                         :style {:max-width :130px}}
                                    "My tag with longer text"]]}]}]))
 
 

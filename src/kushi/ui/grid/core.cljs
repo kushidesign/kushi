@@ -1,6 +1,6 @@
 (ns kushi.ui.grid.core
   (:require
-   [kushi.core :refer (sx merge-attrs)]
+   [kushi.css.core :refer (css css-vars-map merge-attrs)]
    [kushi.ui.util :refer [aspect-ratio->number]]
    [kushi.ui.core :refer (opts+children)] ))
 
@@ -28,25 +28,41 @@
                       "Value must be a keyword representing a"
                       "valid CSS value for [`grid-gap`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."]}]}
   [& args]
-  (let [[opts attr & children]                     (opts+children args)
+  (let [[opts attr & children]                     
+        (opts+children args)
+
         {:keys [column-min-width aspect-ratio gap]
          :or   {column-min-width :150px
                 gap              :20px
-                aspect-ratio     :1:1}}            opts
-        ar                                         (aspect-ratio->number aspect-ratio)
-        aspect-ratio-pct                           (str (* 100 (if (number? ar) (js/Math.abs ar) 1)) "%")]
+                aspect-ratio     :1:1}}            
+        opts
+
+        ar                                         
+        (aspect-ratio->number aspect-ratio)
+
+        aspect-ratio-pct                           
+        (str (* 100 (if (number? ar) (js/Math.abs ar) 1)) "%")
+        
+        gtc
+        (str
+         "repeat(auto-fit, minmax("
+         (name
+          column-min-width)
+         ", 1fr))")]
     (into
      [:section
       (merge-attrs
-       (sx 'kushi-grid
-           {:data-kushi-ui :grid
-            :style         {:>*:w        :auto
-                            :>*:h        0
-                            :>*:pbs      aspect-ratio-pct
-                            :>*:position :relative
-                            :d           :grid
-                            :gtc         (str "repeat(auto-fit, minmax(" (name column-min-width) ", 1fr))")
-                            :grid-gap    gap
-                            :width       :100%}})
+       {:style         (css-vars-map aspect-ratio-pct gtc gap)
+        :class         (css
+                        ".kushi-grid"
+                        {:>*:w        :auto
+                         :>*:h        0
+                         :>*:pbs      :$aspect-ratio-pct
+                         :>*:position :relative
+                         :d           :grid
+                         :gtc         :$gtc
+                         :grid-gap    :$gap
+                         :width       :100%})
+        :data-kushi-ui :grid}
        attr)]
      children)))

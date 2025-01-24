@@ -1,7 +1,8 @@
 (ns kushi.playground.sidenav
   (:require
    [domo.core :as d]
-   [kushi.core :refer (sx merge-attrs)]
+   [kushi.css.core :refer (sx css merge-attrs)]
+   [kushi.css.defs]
    [kushi.ui.util :refer [as-str]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.icon.core :refer [icon]]
@@ -11,7 +12,7 @@
 (defn sidenav-item-handler [opts e]
   (component-examples/scroll-to-playground-component!
    (merge opts
-          (when-let [[p v] (some-> (kushi.core/breakpoints) :sm first)]
+          (when-let [[p v] (some-> kushi.css.defs/media :sm first)]
             (when-not (d/matches-media? p (as-str v))
               {:scroll-y 16}))))
   (when-let [nav (some-> e
@@ -57,29 +58,29 @@
 
 (defn all-components-sidenav
   [playground-components]
-  [:nav (sx 
-         :.small
-         :.flex-col-fs
-         :.neutralize
-         :d--none
-         :lg:d--flex
-         ;; Tie into globals
-         [:iie       :4rem]
-         [:position  :fixed]
-         [:ai        :c]
-         [:w         :fit-content]
-         [:h         "calc(100vh - var(--navbar-height))"]
-         [:pi        0]
-         [:ibs       :$navbar-height]
-         [:translate :unset]
-         [:pb        :0:1rem]
-         [:jc        :flex-start]
-         :zi--4
-         [:box-shadow
-          "-30px 0 30px var(--background-color), -30px -30px 30px var(--background-color), -30px 0 30px 10px var(--background-color), -30px -30px 30px 10px var(--background-color)"]
-         [:dark:box-shadow
-          "-30px 0 30px var(--background-color-inverse), -30px -30px 30px var(--background-color-inverse), -30px 0 30px 10px var(--background-color-inverse), -30px -30px 30px 10px var(--background-color-inverse)"]
-         {:data-kushi-playground-sidenav "true"})
+  [:nav {:class (css 
+                 :.small
+                 :.flex-col-fs
+                 :.neutralize
+                 :d--none
+                 :lg:d--flex
+                 ;; Tie into globals
+                 [:iie       :4rem]
+                 [:position  :fixed]
+                 [:ai        :c]
+                 [:w         :fit-content]
+                 [:h         "calc(100vh - var(--navbar-height))"]
+                 [:pi        0]
+                 [:ibs       :$navbar-height]
+                 [:translate :unset]
+                 [:pb        :0:1rem]
+                 [:jc        :flex-start]
+                 :zi--4
+                 [:box-shadow
+                  "-30px 0 30px var(--background-color), -30px -30px 30px var(--background-color), -30px 0 30px 10px var(--background-color), -30px -30px 30px 10px var(--background-color)"]
+                 [:dark:box-shadow
+                  "-30px 0 30px var(--background-color-inverse), -30px -30px 30px var(--background-color-inverse), -30px 0 30px 10px var(--background-color-inverse), -30px -30px 30px 10px var(--background-color-inverse)"])
+         :data-kushi-playground-sidenav "true"}
    [:button
     (sx :.all-components-sidenav-header
         :.flex-row-fs
@@ -110,9 +111,9 @@
           (for [{:keys [label]} playground-components]
             [:<>
              [style-tag-first-intersecting label]
-             [:li (sx :.capitalize
-                      :.pointer
-                      :.flex-col-c
+             [:li (sx :.flex-col-c
+                      :tt--capitalize
+                      :cursor--pointer
                       :w--fit-content
                       :pb--0.25em)
               [button
@@ -120,14 +121,14 @@
                 (sx :.pill
                     :.minimal
                     :.neutral
-                    :.xxxfast
-                   :pi--1em
-                   :pb--0.5em
-                   :&.neutral.minimal:c--$neutral-secondary-foreground
-                   :&.neutral.minimal:hover:c--black
-                   :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
-                   :dark:&.neutral.minimal:hover:c--white
-                    {:data-kushi-playground-sidenav-button label})
+                    :transition-duration--$xxxfast
+                    :pi--1em
+                    :pb--0.5em
+                    :.neutral.minimal:c--$neutral-secondary-foreground
+                    :.neutral.minimal:hover:c--black
+                    :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse
+                    :dark:.neutral.minimal:hover:c--white)
+                {:data-kushi-playground-sidenav-button label}
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
                label]]]))]])
 
@@ -136,33 +137,33 @@
 (defn all-components-sidenav-mobile
   [playground-components]
   ;; TODO sync 4rem and 6rem with elsewhere
-  [:nav (sx 
-         :.small
-         :.flex-col-fs
-         :.neutralize
-         :$translate-y--20px
-         :lg:d--none
-         :position--sticky
-         :ai--fe
-         :w--100%
-         ;; :h--0
-         :pi--1.25rem
-         :md:pi--4rem
-         [:ibs "calc(0px - 4rem)"]
-         [:xsm:ibs "calc(0px - 6rem)"]
-         :md:iie--4rem
-         [:translate "0 calc(4rem + 0.25em + var(--navbar-height))"]
-         [:xsm:translate "0 calc(6rem + 0.25em + var(--navbar-height))"]
-         :box-shadow--none
-         :zi--4
-         ["&[aria-expanded=\"false\"]"
-          {:bgc :transparent}]
-         ["&[aria-expanded=\"true\"]" 
-          {:bgc :$white-transparent-90
-           :bgi "linear-gradient(to left, var(--background-color), var(--background-color) 50%, transparent)"}]
-         ["dark:&[aria-expanded=\"true\"]" 
-          {:bgc :$black-transparent-90
-           :bgi "linear-gradient(to left, var(--background-color-inverse), var(--background-color-inverse) 50%, transparent)"}]
+  [:nav (merge-attrs
+         (sx 
+          :.flex-col-fs
+          :.neutralize
+          :fs--$small
+          [:--translate-y :20px]
+          :lg:d--none
+          :position--sticky
+          :ai--fe
+          :w--100%
+          :pi--1.25rem
+          :md:pi--4rem
+          [:ibs "calc(0px - 4rem)"]
+          [:xsm:ibs "calc(0px - 6rem)"]
+          :md:iie--4rem
+          [:translate "0 calc(4rem + 0.25em + var(--navbar-height))"]
+          [:xsm:translate "0 calc(6rem + 0.25em + var(--navbar-height))"]
+          :box-shadow--none
+          :zi--4
+          ["&[aria-expanded=\"false\"]"
+           {:bgc :transparent}]
+          ["&[aria-expanded=\"true\"]" 
+           {:bgc :$white-transparent-90
+            :bgi "linear-gradient(to left, var(--background-color), var(--background-color) 50%, transparent)"}]
+          ["dark:&[aria-expanded=\"true\"]" 
+           {:bgc :$black-transparent-90
+            :bgi "linear-gradient(to left, var(--background-color-inverse), var(--background-color-inverse) 50%, transparent)"}])
          {:data-kushi-playground-sidenav        true
           :data-kushi-playground-sidenav-mobile true
           :aria-expanded                        false})
@@ -174,8 +175,8 @@
          :.pointer
 
         ;; To use softer color 
-         :&.neutral.minimal:c--$neutral-secondary-foreground
-         :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse)
+         :.neutral.minimal:c--$neutral-secondary-foreground
+         :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse)
      {:on-click (fn [e] 
                   (let [nav  (some-> e
                                      d/cet
@@ -189,8 +190,8 @@
                     (d/toggle-boolean-attribute nav "aria-expanded")))})
     [:span (sx :.flex-row-c
                :gap--0.5em
-               :lg:&_.kushi-icon:d--none
-               :&_.kushi-icon.sidenav-close-icon:d--none
+               :lg:_.kushi-icon:d--none
+               :_.kushi-icon.sidenav-close-icon:d--none
                ["has-ancestor(nav[data-kushi-playground-sidenav][aria-expanded=\"true\"])"
                 {:>.sidenav-menu-icon:d  :none
                  :>.sidenav-close-icon:d :inline-flex
@@ -201,8 +202,8 @@
                ;; To use softer color 
                :c--$neutral-secondary-foreground
                :dark:c--$neutral-secondary-foreground-inverse)
-     [icon (sx :.sidenav-menu-icon :.extra-light :.large) :menu]
-     [icon (sx :.sidenav-close-icon :.extra-light :.large) :close]
+     [icon (sx :.sidenav-menu-icon :.extra-light :fs--$large) :menu]
+     [icon (sx :.sidenav-close-icon :.extra-light :fs--$large) :close]
      "All Components"]]
    
    
@@ -225,7 +226,7 @@
                :o     1}])
 
     ;; List of playground components
-    (into [:ul (sx 'mobile-sidenav-list
+    (into [:ul (sx :.mobile-sidenav-list
                    :.flex-col-fs
                    :.neutralize
                    :o--0
@@ -246,8 +247,8 @@
           (for [{:keys [label]} playground-components]
             [:<> 
              [style-tag-first-intersecting label]
-             [:li (sx :.capitalize
-                      :.pointer
+             [:li (sx :tt--capitalize
+                      :cursor--pointer
                       :.flex-col-c
                       :w--fit-content
                       :pb--0.25em)
@@ -259,10 +260,10 @@
                     :.xxxfast
                     :pi--1em
                     :pb--0.5em
-                    :&.neutral.minimal:c--$neutral-secondary-foreground
-                    :&.neutral.minimal:hover:c--black
-                    :dark:&.neutral.minimal:c--$neutral-secondary-foreground-inverse
-                    :dark:&.neutral.minimal:hover:c--white
-                    {:data-kushi-playground-sidenav-button label})
+                    :.neutral.minimal:c--$neutral-secondary-foreground
+                    :.neutral.minimal:hover:c--black
+                    :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse
+                    :dark:.neutral.minimal:hover:c--white)
+                {:data-kushi-playground-sidenav-button label}
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
                label]]]))]])

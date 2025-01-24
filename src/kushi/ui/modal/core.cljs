@@ -1,11 +1,25 @@
 (ns kushi.ui.modal.core
   (:require [kushi.ui.icon.core :refer (icon)]
+            [fireworks.core :refer [? !? ?> !?>]]
             [kushi.ui.button.core :refer [button]]
             [clojure.string :as string]
             [domo.core :as domo]
             [goog.dom :as gdom]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.core :refer (merge-attrs) :refer-macros (sx)]))
+            [kushi.css.core :refer [sx
+                                    css
+                                    merge-attrs
+                                    css-vars-map
+                                    register-design-tokens
+                                    register-design-tokens-by-category]]))
+
+(register-design-tokens-by-category
+ "elevation"
+ "pane"
+ "modal")
+
+(register-design-tokens
+ :--dark-gray-transparent-90)
 
 (declare close-on-backdrop-click)
 
@@ -68,17 +82,29 @@
                                    :close))]
     [button
      (merge-attrs
-      (sx 'kushi-modal-close-button
-          :.minimal
-          :.pill
-          :.large
-          :padding--0.5rem
-          {:on-mouse-down close-kushi-modal
-           :style         {:position           :absolute
-                           :inset-block-start  :0.5rem
-                           :inset-block-end    :unset
-                           :inset-inline-end   :0.5rem
-                           :inset-inline-start :unset}})
+      {:class         (css
+                       ".kushi-modal-close-button"
+                       :.minimal
+                       :.pill
+                       :.large
+                       :padding--0.5rem
+                       {:position           :absolute
+                        :inset-block-start  :0.5rem
+                        :inset-block-end    :unset
+                        :inset-inline-end   :0.5rem
+                        :inset-inline-start :unset})
+       :on-mouse-down close-kushi-modal}
+      #_(trans (sx 'kushi-modal-close-button
+                   :.minimal
+                   :.pill
+                   :.large
+                   :padding--0.5rem
+                   {:on-mouse-down close-kushi-modal
+                    :style         {:position           :absolute
+                                    :inset-block-start  :0.5rem
+                                    :inset-block-end    :unset
+                                    :inset-inline-end   :0.5rem
+                                    :inset-inline-start :unset}}))
       attrs)
      (if icon-svg
        [icon {:icon-svg icon-svg}]
@@ -90,14 +116,24 @@
    :desc ["Elements and behaviors of modals can be custom styled and "
           "controlled via the following tokens in your theme:"
           :br
-          :br "`:$modal-border-radius`"      
-          :br "`:$modal-border`"             
-          :br "`:$modal-padding-block`"      
-          :br "`:$modal-padding-inline`"     
-          :br "`:$modal-backdrop-color`"     
-          :br "`:$modal-margin`"             
-          :br "`:$modal-min-width`"          
-          :br "`:$modal-transition-duration`"]
+          :br "`--modal-box-shadow`"                       
+          :br "`--modal-box-shadow-inverse`"               
+          :br "`--modal-border-radius`"      
+          :br "`--modal-border-width`"      
+          :br "`--modal-border-style`"      
+          :br "`--modal-border-color`"      
+          :br "`--modal-border-color-inverse`"      
+          :br "`--modal-padding-block`"      
+          :br "`--modal-padding-inline`"     
+          :br "`--modal-backdrop-color`"     
+          :br "`--modal-margin`"             
+          :br "`--modal-min-width`"          
+          :br "`--modal-transition-duration`"
+          :br
+          "Note that the value supplied to `--modal-box-shadow` should be one of"
+          "the stock elevation tokens, level 1~5, expressed like so:"
+          :br
+          "`:$elevation-3`, or `var(--elevation-3)`"]
    :opts '[{:name    modal-title
             :pred    string?
             :default nil
@@ -106,13 +142,8 @@
             :pred    string?
             :default nil
             :desc    "Optional. If supplied, this will be rendered as an p element within the modal."}
-           {:name    elevation
-            :pred    #(< -1 % 6)
-            :default nil
-            :desc    "Optional. The kushi utility class in the elevation family that will be used to create a drop-shadow for the modal panel"}
 
            ;; TODO -- add on-dismiss callback option (for calling function with on backdrop click)
-
            ;; TODO -- add option for disabling auto close-on-background click
            ;; TODO -- add option for naive BSL
            ;; TODO -- add x
@@ -122,74 +153,79 @@
   (let [[opts attrs & children] (opts+children args)
         {:keys [modal-title
                 description
-                elevation
                 expanded?]}      opts
         {:keys [id]}              attrs
         desc-id                   (str id "-description")
         title-id                  (str id "-title")
-        valid-elevation?          (and (int? elevation) (< -1 elevation 6))
-        elevation-token           (when-not (zero? elevation)
-                                    (if valid-elevation?
-                                      (str "var(--elevated-" elevation "), ")
-                                      (str "var(--elevated), ")))
-        elevation-token-inverse   (when-not (zero? elevation)
-                                    (if valid-elevation?
-                                      (str "var(--elevated-" elevation "-inverse), ")
-                                      (str "var(--elevated-inverse), ")))]
+        light-box-shadow (str
+                          "var(--modal-box-shadow), "
+                          "0 0 0 100vmax var(--modal-backdrop-color)")
+        dark-box-shadow (str
+                         "var(--modal-box-shadow-inverse), "
+                         "0 0 0 100vmax var(--dark-gray-transparent-90)")]
 
     ;; TODO document the how and why of this
     (when expanded? (js/setTimeout #(open-kushi-modal id) 100))
-
     (into
-     [:dialog (merge-attrs
-               (sx 'kushi-modal
-                   :.fixed-centered
-                   :.transition
-                   :backdrop:bgc--transparent
-                   :overflow--visible
-                   [:transition-duration "var(--modal-transition-duration, var(--fast))"]
-                   :bgc--$background-color
-                   :dark:bgc--$background-color-inverse
-                   :border-radius--$modal-border-radius
-                   :b--$modal-border
-                   :min-width--$modal-min-width||200px
-                   [:max-width "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
-                   ;;[:max-height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem)))"]
-                   :height--fit-content
-                   [:box-shadow (str elevation-token "0 0 0 100vmax var(--modal-backdrop-color)")]
-                   [:dark:box-shadow (str elevation-token-inverse "0 0 0 100vmax var(--dark-gray-transparent-90)")]
-                   :opacity--0
-                   :&.kushi-modal-open:opacity--1
-                   {:id               id
-                    :aria-labelledby  title-id
-                    :aria-describedby desc-id})
-               attrs)
-      (into [:div (sx 'kushi-modal-inner
-                      :.flex-col-fs
-                      :.transition
-                      :opacity--0
-                      ["has-parent(.kushi-modal.kushi-modal-open):opacity" 1]
-                      ["has-parent(.kushi-modal.kushi-modal-open):transition-delay" "calc(var(--modal-transition-duration, var(--fast)))"]
-                      :gap--2em
-                      :pi--$modal-padding-inline||$modal-padding
-                      :pb--$modal-padding-block||$modal-padding
-                      :w--100%
-                      :h--100%
-                      :overflow--auto)
+     [:dialog
+      (merge-attrs
+       {:style            (css-vars-map light-box-shadow dark-box-shadow)
+        :class            (css
+                           ".kushi-modal"
+                           :.fixed-centered
+                           :.transition
+                           [:transition-duration
+                            "var(--modal-transition-duration, var(--fast))"]
+                           [:max-width
+                            "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
+                           [".kushi-modal-open>.kushi-modal-inner:opacity" 1]
+                           ["kushi-modal-open>.kushi-modal-inner:transition-delay"  
+                            "calc(var(--modal-transition-duration, var(--fast)))"]
+                           [:box-shadow :$light-box-shadow]
+                           [:dark:box-shadow :$dark-box-shadow]
+                           :backdrop:bgc--transparent
+                           :overflow--visible
+                           :bgc--$background-color
+                           :dark:bgc--$background-color-inverse
+                           :border-radius--$modal-border-radius
+                           :b--$modal-border
+                           :min-width--$modal-min-width||200px
+                           :height--fit-content
+                           :opacity--0
+                           :.kushi-modal-open:opacity--1)
+        :id               id
+        :aria-labelledby  title-id
+        :aria-describedby desc-id}
+       attrs)
+      (into [:div 
+             (sx
+              ".kushi-modal-inner"
+              :.flex-col-fs
+              :.transition
+              :opacity--0
+              :gap--2em
+              :pi--$modal-padding-inline||$modal-padding
+              :pb--$modal-padding-block||$modal-padding
+              :w--100%
+              :h--100%
+              :overflow--auto)
              (when (or modal-title description)
-               [:div (sx 'kushi-modal-title-and-description
+               [:div 
+                {:class (css
+                         ".kushi-modal-title-and-description"
                          :.flex-col-fs
-                         :gap--1em
                          :.large
-                         {:id title-id})
+                         :gap--1em)
+                 :id    title-id}
                 (when modal-title 
-                  [:h2 (sx 'kushi-modal-title
-                           :.semi-bold
-                           {:id title-id})
+                  [:h2 {:class (css ".kushi-modal-title"
+                                    :.semi-bold)
+                        :id    title-id}
                    modal-title])
                 (when description
-                  [:p (sx 'kushi-modal-description
-                          :.small
-                          {:id desc-id})
+                  [:p {:class (css
+                               ".kushi-modal-description"
+                               :.small)
+                       :id    desc-id}
                    description])])]
             children)])))

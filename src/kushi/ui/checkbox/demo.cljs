@@ -1,5 +1,6 @@
-(ns kushi.ui.checkbox.demo
-  (:require [kushi.core :refer (sx)]
+(ns ^{:kushi/layer "user-styles"}
+  kushi.ui.checkbox.demo
+  (:require [kushi.css.core :refer (sx css)]
             [kushi.ui.icon.core :refer [icon]]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
@@ -32,20 +33,22 @@
 (def examples
   (let [row-attrs {:class ["playground-example-row-bounded"]}]
     [{:desc            "Different sizes"
-      :row-attrs       (sx [:xsm:&_.instance-code
+      :row-attrs       (sx [:xsm:_.instance-code
                             {:ai             :fe
                              :flex-direction :row}]
-                           [:&_.instance-code
+                           [:_.instance-code
                             {:ai             :fs
                              :flex-direction :column
                              :w              :100%
                              :jc             :sb
                              :max-width      :400px}]
-                           :xsm:&_label:first-child:pbe--0.75em
-                           :xsm:&_label:pie--0.75em)
+                           :xsm:_label:first-child:pbe--0.75em
+                           :xsm:_label:pie--0.75em)
       :snippets-header component-examples/sizes-snippet-header*
-      :snippets        '[[checkbox (sx :.xxxlarge {:-input-attrs {:name           :xxxlarge-sample
-                                                                  :defaultChecked true}})]]
+      :snippets        '[[checkbox (merge-attrs 
+                                    (sx :fs--$xxxlarge)
+                                    {:-input-attrs {:name           :xxxlarge-sample
+                                                    :defaultChecked true}})]]
       :examples        [{:code (sx-call (into [:<>] 
                                               (for [sz sizes]
                                                 [:div (sx :.flex-row-fs
@@ -55,12 +58,13 @@
                                                  [checkbox {:-label-attrs {:class [sz]}}]])))}]}
      {:desc      "With label"
       :row-attrs row-attrs
-      :snippets  '[[checkbox (sx :.large) [label "Sign me up"]]]
-      :examples  [{:code (sx-call [checkbox (sx :.large) [label "Sign me up"]])}]}
+      :snippets  '[[[label "Sign me up"]]]
+      :examples  [{:code (sx-call [checkbox [label "Sign me up"]])}]}
 
      {:desc      "With label and trailing icon"
       :row-attrs row-attrs
-      :examples  [{:code (sx-call [checkbox (sx :.large) [label "Make it shiny" [icon :auto-awesome]]])}]}
+      :examples  [{:code (sx-call [checkbox 
+                                   [label "Make it shiny" [icon :auto-awesome]]])}]}
      
      (let [weights component-examples/type-weights]
        {:desc      (str "Weight variants " (name (first weights)) " to " (name (last weights)))
@@ -85,14 +89,14 @@
      ]))
 
 #_{:desc      "Showing sizes from xsmall to xxxlarge"
- :row-attrs (sx [:md:&_.instance-code
+ :row-attrs (sx [:md:_.instance-code
                  {:ai             :fe
                   :flex-direction :row}]
-                [:&_.instance-code
+                [:_.instance-code
                  {:ai             :fs
                   :flex-direction :column}]
-                :&_label:pbe--0
-                :&_label:pie--0.35em)
+                :_label:pbe--0
+                :_label:pie--0.35em)
  :examples  [{:code (sx-call (into [:<>] 
                                    (for [sz sizes]
                                      [:div (sx :.flex-row-fs

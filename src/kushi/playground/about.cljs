@@ -3,16 +3,14 @@
             [domo.core :refer (copy-to-clipboard!)]
             [me.flowthing.pp :refer [pprint]]
             [kushi.color :refer [colors->tokens]]
-            [kushi.core :refer (sx merge-attrs keyed)]
+            [kushi.css.core :refer (sx css merge-attrs css-vars-map)]
             [kushi.playground.colors :as playground.colors]
             [kushi.playground.nav :refer [route!]]
             [kushi.playground.shared-styles]
-            [kushi.playground.state :as state]
             [kushi.ui.button.core :refer [button]]
-            [kushi.ui.core :refer [defcom]]
+            [kushi.ui.core :refer [keyed]]
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer [icon]]
-            [kushi.ui.label.core :refer [label]]
             [kushi.ui.link.core :refer [link]]
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
             [kushi.ui.tooltip.core :refer [tooltip-attrs]]))
@@ -26,29 +24,44 @@
 
 (defn color-scales2
   [{:keys [colorlist]}]
-  (let [tokens (colors->tokens kushi.colors/colors {:format :css})
-        coll   (keep (fn [[k v]]
-                       (let [color*       (or (->> k name (re-find #"^--([a-zAZ-_]+)-([0-9]+)$"))
-                                              (->> k name (re-find #"^\$([a-zAZ-_]+)-([0-9]+)$")))
-                             color-name   (some-> color* second)
-                             color-level  (some-> color* last js/parseInt)
-                             color-token? (contains? (into #{} colorlist) (keyword color-name))]
-                         (name k) #_(keyed color*)
-                         (when color-token?
-                           {:color*      color*
-                            :color-name  color-name
-                            :color-level color-level
-                            :value       v
-                            :token       k})))
-                     (partition 2 tokens))
-        ret    (mapv #(let [scale (into []
-                                        (keep (fn [{:keys [color-name token value color-level]}]
-                                                (when (= color-name (name %))
-                                                  [token value color-level]))
-                                              coll))]
-                        {:color-name %
-                         :scale      scale})
-                     colorlist)]
+  (let [tokens
+        (colors->tokens kushi.colors/colors {:format :css})
+
+        coll   
+        (keep (fn [[k v]]
+                (let [color*       
+                      (or (->> k name (re-find #"^--([a-zAZ-_]+)-([0-9]+)$"))
+                          (->> k name (re-find #"^\$([a-zAZ-_]+)-([0-9]+)$")))
+
+                      color-name   
+                      (some-> color* second)
+
+                      color-level  
+                      (some-> color* last js/parseInt)
+
+                      color-token? 
+                      (contains? (into #{} colorlist) (keyword color-name))]
+                  #_(name k)
+                  #_(keyed color*)
+                  (when color-token?
+                    {:color*      color*
+                     :color-name  color-name
+                     :color-level color-level
+                     :value       v
+                     :token       k})))
+              (partition 2 tokens))
+
+        ret    
+        (mapv #(let [scale (into []
+                                 (keep (fn [{:keys [color-name
+                                                    token value
+                                                    color-level]}]
+                                         (when (= color-name (name %))
+                                           [token value color-level]))
+                                       coll))]
+                 {:color-name %
+                  :scale      scale})
+              colorlist)]
     (keyed coll ret)
     ret))
 
@@ -93,7 +106,7 @@
     "Semantic alias tokens map to global tokens like so:"
     [:br]]
 
-   (into [:div (sx :.grid
+   (into [:div (sx :d--grid
                    :mbs--1em
                    :grg--0.5em
                    :gtc--1.3fr:0.3fr:1fr
@@ -129,20 +142,29 @@
 (defn type-scale [{:keys [coll label]}]
   (into [:div
          (sx :>p:lh--1.7)
-         [:h2 (sx 
+         [:h2 
+          (sx
+           :fs--$large
+           :fw--$semi-bold
+           [:bbs "1px solid var(--gray-300)"]
+           [:dark:bbs "1px solid var(--gray-700)"]
+           :pbs--2em
+           :mb--5rem:1.5rem)
+          #_(trans (sx 
                :.large
                :.semi-bold
                :pbs--2em
                :mb--5rem:1.5rem
                [:bbs "1px solid var(--gray-300)"]
-               [:dark:bbs "1px solid var(--gray-700)"])
+               [:dark:bbs "1px solid var(--gray-700)"]))
           (str "Type " (string/lower-case label) " scale")]
          (let [[kind-of-scale
                 start
-                end] (case label
-                       "Size"     ["sizing" "xxxsmall" "xxxxlarge"]
-                       "Weight"   ["weight" "thin" "heavy"]
-                       "Tracking" ["tracking" "xxxtight" "xxxxloose"])]
+                end]
+               (case label
+                 "Size"     ["sizing" "xxxsmall" "xxxxlarge"]
+                 "Weight"   ["weight" "thin" "heavy"]
+                 "Tracking" ["tracking" "xxxtight" "xxxxloose"])]
            [:p
             (sx :>code:mi--0.25em :>code:ws--n)
             (str "Kushi offers a typographic "
@@ -156,15 +178,19 @@
           [:div
            (sx :.flex-col-fs :mb--24px)
            [:div (merge
-                  (sx :.pointer
-                      (when (= label "Tracking") :.uppercase)
-                      :mbs--10px))
+                  (let [tt (when (= label "Tracking") :.uppercase)]
+                    {:style (css-vars-map tt)
+                     :class (css :.pointer
+                                 :tt--$tt
+                                 :mbs--10px)}))
             [:span.relative
              (merge-attrs
               {:class [x]}
-              (tooltip-attrs {:-text          (str ":." (name x))
+              (tooltip-attrs {:-text          (name x)
                               :-placement     [:inline-end :center]
-                              :-tooltip-class "code wee-bold"}))
+                              :-tooltip-class (css :.code
+                                                   :fw--$wee-bold
+                                                   :fs--$small)}))
              "The quick brown fox."]]])))
 
 (defn- formatted-code [s]
@@ -176,7 +202,7 @@
 
 (defn typography-snippet [s]
   [:div
-   (sx :.relative :mbe--2em)
+   (sx :position--relative :mbe--2em)
    [:div
     (sx :.codebox :.code :w--100%)
     (-> s
@@ -185,10 +211,11 @@
         formatted-code)]
    [:div (sx :.absolute-fill)]
    [copy-to-clipboard-button
-    (sx :.absolute
-        :inset-block-start--0
-        :inset-inline-end--0
-        {:on-click #(copy-to-clipboard! s)})]])
+    (merge-attrs
+     (sx :position--absolute
+         :inset-block-start--0
+         :inset-inline-end--0)
+     {:on-click #(copy-to-clipboard! s)})]])
 
 
 (def typography-tokens-snippet
@@ -199,8 +226,8 @@
     "My text "])
 
 
-(def typography-utility-classes-snippet
-  '[:span (sx :.xxlarge :.bold :.xloose :.uppercase :.italic) "My text"] )
+;; (def typography-utility-classes-snippet
+;;   '[:span (trans (sx :.xxlarge :.bold :.xloose :.uppercase :.italic)) "My text"] )
 
 
 (def typescale [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge :xxxxlarge])
@@ -213,16 +240,16 @@
                 :>p:mb--2em
                 :>p:lh--1.7)
 
-   [:p "Kushi includes a foundation of global tokens and utility class scales for type size, weight, letter-spacing, sizing, and capitalization."]
+  ;;  [:p "Kushi includes a foundation of global tokens and utility class scales for type size, weight, letter-spacing, sizing, and capitalization."]
 
-   [:div (sx :mbe--0.8em) "Utility classes can be used like this:"]
-   [typography-snippet typography-utility-classes-snippet]
+  ;;  [:div (sx :mbe--0.8em) "Utility classes can be used like this:"]
+  ;;  [typography-snippet typography-utility-classes-snippet]
 
    [:div (sx :mbe--0.8em) "If you need finer control, underlying design tokens can be used like this:"]
    [typography-snippet typography-tokens-snippet]
 
    (into [:p
-          [:span (sx :.block :mbe--1em) "The following utility classes are available for font-style and capitalization:"]]
+          [:span (sx :d--block :mbe--1em) "The following utility classes are available for font-style and capitalization:"]]
          (for [x [:sans :sans-serif :italic :oblique :uppercase :lowercase :capitalize]]
            [:span (sx :.code :fs--0.875rem!important :d--ib :ws--n :mie--0.5em :mbe--0.5em) (str ":." (name x))]))
 
@@ -262,8 +289,10 @@
        :pbe--2.25rem)
    [:p
     "Kushi is a base for building web UI with "
-    [link (sx {:href   "https://clojurescript.org/"
-               :target :_blank}) "ClojureScript"] "."]
+    [link {:href   "https://clojurescript.org/"
+           :target :_blank}
+     "ClojureScript"]
+    "."]
    [:p "For detailed docs, check out the "
     [link {:href   "https://github.com/kushidesign/kushi"
            :target :_blank} "Readme"]

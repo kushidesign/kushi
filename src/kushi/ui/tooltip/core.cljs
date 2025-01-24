@@ -3,13 +3,19 @@
             [clojure.string :as string]
             [domo.core :as domo]
             [goog.string]
-            [kushi.core :refer (keyed token->ms)]
+            [kushi.css.core :refer (token->ms register-design-tokens-by-category)]
+            [kushi.ui.core :refer (keyed)]
             [kushi.ui.dom.pane.core :as pane]
+            [kushi.ui.util :as util :refer [maybe]]
             ;; Import this styles ns to create defclasses
             [kushi.ui.dom.pane.placement :refer [user-placement]]
-            [kushi.ui.dom.pane.styles]
-            [kushi.ui.util :as util :refer [maybe]]))
+            [kushi.ui.dom.pane.styles]))
 
+(register-design-tokens-by-category
+ "elevation"
+ "pane"
+ "tooltip")
+            
 
 (defn valid-tooltip-text-coll? [x]
   (and (seq x) 
@@ -51,6 +57,8 @@
           "an existing elements attributes map using the pattern:"
           :br
           :br "`(merge-attrs (sx ...) (tooltip-attrs {...}))`"
+          "~ Or ~"
+          :br "`(merge-attrs {...} (tooltip-attrs {...}))`"
           :br
           :br
           "tooltips can be custom styled and controlled via the following "
@@ -58,40 +66,40 @@
           :br
           ;; TODO add documentation for each token
           :br "__Colors and images:__"
-              "`:$tooltip-color`"                            
-          :br "`:$tooltip-color-inverse`"                    
-          :br "`:$tooltip-background-color`"                 
-          :br "`:$tooltip-background-color-inverse`"         
-          :br "`:$tooltip-background-image`"                 
+          "`--tooltip-color`"                            
+          :br "`--tooltip-color-inverse`"                    
+          :br "`--tooltip-background-color`"                 
+          :br "`--tooltip-background-color-inverse`"         
+          :br "`--tooltip-background-image`"                 
           :br
           :br "__Typography:__"
-              "`:$tooltip-line-height`"
-          :br "`:$tooltip-font-family`"
-          :br "`:$tooltip-font-size`"
-          :br "`:$tooltip-font-weight`"
-          :br "`:$tooltip-text-transform`"
+          "`--tooltip-line-height`"
+          :br "`--tooltip-font-family`"
+          :br "`--tooltip-font-size`"
+          :br "`--tooltip-font-weight`"
+          :br "`--tooltip-text-transform`"
           :br
           :br "__Geometry:__"
-              "`:$tooltip-padding-inline`"
-          :br "`:$tooltip-padding-block`"
-          :br "`:$tooltip-border-radius`"
-          :br "`:$tooltip-offset`"
-          :br "`:$tooltip-viewport-padding`"
-          :br "`:$tooltip-flip-viewport-edge-threshold`"
-          :br "`:$tooltip-auto-placement-y-threshold`"
+          "`--tooltip-padding-inline`"
+          :br "`--tooltip-padding-block`"
+          :br "`--tooltip-border-radius`"
+          :br "`--tooltip-offset`"
+          :br "`--tooltip-viewport-padding`"
+          :br "`--tooltip-flip-viewport-edge-threshold`"
+          :br "`--tooltip-auto-placement-y-threshold`"
           :br
           :br "__Choreography:__"
-              "`:$tooltip-delay-duration`"            
-          :br "`:$tooltip-reveal-on-click-duration`"  
-          :br "`:$tooltip-initial-scale`"             
-          :br "`:$tooltip-offset-start`"              
-          :br "`:$tooltip-transition-duration`"       
-          :br "`:$tooltip-transition-timing-function`"
+          "`--tooltip-delay-duration`"            
+          :br "`--tooltip-reveal-on-click-duration`"  
+          :br "`--tooltip-initial-scale`"             
+          :br "`--tooltip-offset-start`"              
+          :br "`--tooltip-transition-duration`"       
+          :br "`--tooltip-transition-timing-function`"
           :br
           :br "__Arrows:__"
-              "`:$tooltip-arrow-depth`"   
-          :br "`:$tooltip-arrow-x-offset`"
-          :br "`:$tooltip-arrow-y-offset`"
+          "`--tooltip-arrow-depth`"   
+          :br "`--tooltip-arrow-x-offset`"
+          :br "`--tooltip-arrow-y-offset`"
 
           :br
           :br
@@ -99,12 +107,12 @@
           "use the following pattern."
           :br
           :br
-          "`(merge-attrs (sx :$tooltip-offset--5px ...) (tooltip-attrs {...}))`"
+          "`(tooltip-attrs {:-text \"My text\" :-tooltip-class (css [:--tooltip-font-size :34px])}))`"
           :br
           :br
           "If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for "
-          "`$tooltip-offset`, `$tooltip-arrow-x-offset`, "
-          "`$tooltip-arrow-y-offset`, or `$tooltip-border-radius`, you will need "
+          "`--tooltip-offset`, `--tooltip-arrow-x-offset`, "
+          "`--tooltip-arrow-y-offset`, or `--tooltip-border-radius`, you will need "
           "to use an explicit unit e.g. `0px`."
           ]
    :opts '[{:name    text
@@ -188,7 +196,7 @@
            {:name    tooltip-class
             :pred    string?
             :default nil
-            :desc    ["A class name for a la carte application of a classes on the "
+            :desc    ["A class name for a la carte application of classes on the "
                       " tooltip element."]}
            {:name    text-on-click
             :pred    #(or (string? %) (keyword? %) (vector? %))
@@ -231,7 +239,7 @@
        (when-let [text-on-click (pane/maybe-multiline-tooltip-text text-on-click)]
          {:on-mouse-down
           (fn [_]
-            (let [duration              (token->ms :$tooltip-text-on-click-duration)
+            (let [duration              (token->ms :--tooltip-text-on-click-duration)
                   tt-el                 (domo/qs ".kushi-tooltip")
                   tt-el-text-wrapper    (domo/qs tt-el ".kushi-tooltip-text-wrapper")
                   tt-el-text-span       (domo/qs tt-el ".kushi-tooltip-text")

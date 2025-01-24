@@ -1,12 +1,13 @@
 (ns kushi.playground.component-docs
   (:require [clojure.string :as string]
             [clojure.walk :as walk]
-            [kushi.core :refer (sx)]
+            [kushi.css.core :refer (sx css css-vars-map)]
             [kushi.playground.util :as util]
             [kushi.ui.label.core :refer [label]]
             [kushi.ui.modal.core :refer [close-kushi-modal]]
             [markdown-to-hiccup.core :as md->hc]
             [domo.core :as domo]))
+
 
 (defn add-links
   ([coll]
@@ -23,13 +24,14 @@
                      %)
                   coll)))
 
+
 (defn kushi-opts-grid-desc [v m]
   [:span
    (sx :.kushi-ui-opt-desc
        :.normal
-       :&_p:m--0
-       :&_p:fs--$medium
-       :&_p:lh--1.7)
+       :_p:m--0
+       :_p:fs--$medium
+       :_p:lh--1.7)
    (let [ret* (cond
                 (string? v)
                 (->> v md->hc/md->hiccup md->hc/component)
@@ -40,9 +42,6 @@
                 :else
                 [:span])]
      (add-links ret*))])
-
-
-
 
 
 
@@ -75,23 +74,25 @@
       (symbol? v)
       [:span.code (name v)])))
 
+
 (defn opt-detail [text v f kw]
   [:div
-   (sx :.flex-row-fs
-       {:style {:ai (if (= text "Desc.") :flex-start :center)}})
+   (let [ai (if (= text "Desc.") :flex-start :center)]
+     {:style (css-vars-map ai)
+      :class (css :.flex-row-fs :ai--$ai)})
    [:div
-    (sx 'kushi-opt-detail-label :min-width--75px)
+    (sx :.kushi-opt-detail-label :min-width--75px)
     [label (sx :.kushi-playground-meta-desc-label
                :.normal
-               :&>.kushi-label:lh--2.05) 
+               :>.kushi-label:lh--2.05) 
      text]]
-   [:div (sx 'kushi-opt-detail-value
-             [:&_.code {:pb       :0.07em
-                        :pi       :0.2em
-                        ;; :fs       :0.85rem
-                        ;; :c        :$accent-750
-                        ;; :bgc      :$accent-50
-                        ;; :dark:c   :$accent-100
-                        ;; :dark:bgc :$accent-900
-                        }])
+   [:div (sx :.kushi-opt-detail-value
+             [:_.code {:pb :0.07em
+                       :pi :0.2em
+                       ;; :fs       :0.85rem
+                       ;; :c        :$accent-750
+                       ;; :bgc      :$accent-50
+                       ;; :dark:c   :$accent-100
+                       ;; :dark:bgc :$accent-900
+                       }])
     [f v]]])

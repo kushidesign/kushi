@@ -1,11 +1,11 @@
 (ns kushi.ui.text-field.core
-  (:require-macros
-   [kushi.core :refer (sx defclass)])
   (:require
-   [kushi.core :refer (merge-attrs)]
+   [kushi.css.core :refer (sx css defcss css-vars-map css-include merge-attrs)]
    [kushi.ui.core :refer (opts+children)]))
 
-(defclass kushi-text-input-enhancer
+(css-include "text_field.css")
+
+(defcss "@layer kushi-ui-component kushi-text-input-enhancer"
   :d--if
   :ai--center
   :jc--c
@@ -13,7 +13,7 @@
 
 (defn- enhancer [x]
   [:div
-   (sx 'kushi-text-input-start-enhancer
+   (sx ".kushi-text-input-start-enhancer"
        :d--if
        :ai--center
        :jc--c
@@ -21,61 +21,74 @@
    x])
 
 (defn- text-field* [& args]
-  (let [[opts attrs & _]       (opts+children args)
+  (let [[opts attrs & _]       
+        (opts+children args)
+
         {:keys [wrapper-attrs
                 start-enhancer
                 end-enhancer
+                ;; TODO - change this out when new theming comes in
                 semantic
-                textarea?]}     opts]
+                textarea?]}     
+        opts]
     [:div
      (merge-attrs
-      (sx 'kushi-text-input-wrapper
-          :.flex-row-fs
-          :ai--stretch
-          :jc--sb
-          :w--100%
-          :w--auto
-          :min-height--34px
-          :bw--1px
-          :bs--solid
-          :border-radius--$text-input-border-radius
-          :bgc--$white-transparent-70
-          :dark:bgc--$black-transparent-20
-          :&_textarea:border-radius--$text-input-border-radius
-          :&_input:border-radius--$text-input-border-radius
-          [:bc "color-mix(in srgb, currentColor var(--text-input-border-intensity, 75%), transparent)"]
-          [:dark:bc "color-mix(in srgb, currentColor var(--text-input-border-intensity-inverse, 55%), transparent)"]
-          ["focus-within:bgc" "var(--white-transparent-70)!important"] ;; tmp fix for when semantic class + input is focused
-          ["dark:focus-within:bgc" "var(--black-transparent-20)!important"] ;; tmp fix for when semantic class + input is focused
-          [:focus-within:c :currentColor!important] ;; ["has-ancestor(.error):bc" :$negative-600]
-          [:focus-within:bc '(rgba 0 125 250 1)]
-          {:class [semantic]})
+      (sx
+       ".kushi-text-input-wrapper"
+       semantic
+       :.flex-row-fs
+       [:bc
+        "color-mix(in srgb, currentColor var(--text-input-border-intensity, 75%), transparent)"]
+       [:dark:bc
+        "color-mix(in srgb, currentColor var(--text-input-border-intensity-inverse, 55%), transparent)"]
+       ["focus-within:bgc"
+        "var(--white-transparent-70)!important"]
+       ["dark:focus-within:bgc"
+        "var(--black-transparent-20)!important"]
+       [:focus-within:c
+        :currentColor!important]
+       [:focus-within:bc
+        "rgba(0, 125, 250, 1)"]
+       :ai--stretch
+       :jc--sb
+       :w--100%
+       :w--auto
+       :min-height--34px
+       :bw--1px
+       :bs--solid
+       :border-radius--$text-input-border-radius
+       :bgc--$white-transparent-70
+       :dark:bgc--$black-transparent-20
+       :_textarea:border-radius--$text-input-border-radius
+       :_input:border-radius--$text-input-border-radius)
       wrapper-attrs)
      (when (and start-enhancer
                 (not textarea?)) 
        [enhancer start-enhancer])
-     [:div (sx 'kushi-text-input-input-wrapper :flex-grow--1)
+     [:div (sx ".kushi-text-input-input-wrapper" :flex-grow--1)
       (if textarea?
         [:textarea
          (merge-attrs
-          (sx 'kushi-text-input-input
-              :.transition
-              :h--100%
-              :w--100%
-              :pi--0.5em
-              :pb--0.5em
-              :placeholder:o--0.4)
+          (sx
+           ".kushi-text-input-input"
+           :.transition
+           :h--100%
+           :w--100%
+           :pi--0.5em
+           :pb--0.5em
+           :placeholder:o--0.4)
           attrs)]
         [:input
          (merge-attrs
-          (sx 'kushi-text-input-input
-              :.transition
-              :h--100%
-              :w--100%
-              :pi--0.5em
-              :pb--0.5em
-              :placeholder:o--0.4
-              {:type :text})
+          {:class (css
+                   ".kushi-text-input-input"
+                   :.transition
+                   :h--100%
+                   :w--100%
+                   :pi--0.5em
+                   :pb--0.5em
+                   :placeholder:o--0.4)
+           :type  :text}
           attrs)])]
      (when (and end-enhancer
                 (not textarea?))
@@ -145,7 +158,9 @@
                       "If used, this should give the user actionable information about the value of the associated input field."]}
            ]}
   [& args]
-  (let [[opts attrs & _]     (opts+children args)
+  (let [[opts attrs & _]
+        (opts+children args)
+
         {:keys [
                 outer-wrapper-attrs
                 label
@@ -157,60 +172,79 @@
                 helper
                 semantic
                 textarea?]
-         :or   {label " "}}         opts
+         :or   {label " "}}         
+        opts
+
         {:keys [required
-                disabled]}          attrs
-        input-id                    (:id attrs)
-        inline?                     (= :inline label-placement)
-        label-text-attrs   (sx 'kushi-text-input-label-text
-                               :.minimal
-                               :.info
-                               :.block
-                               :.small
-                               :fw--$wee-bold
-                               :hover:bgc--transparent!important ;; temp fix
-                               :active:bgc--transparent!important ;; temp fix
-                               {:class [semantic]})
+                disabled]}          
+        attrs
 
-        helper-label-attrs (when helper
-                             (merge-attrs
-                              label-text-attrs
-                              (sx 'kushi-text-input-helper
-                                  :.neutral-secondary-foreground
-                                  :.inline-block
-                                  :fw--$normal
-                                  :mbs--$text-input-helper-margin-block-start||0.3em)))
+        input-id                    
+        (:id attrs)
 
-        wrapped-input [text-field* (merge attrs
-                                     {:-wrapper-attrs  wrapper-attrs
-                                      :-start-enhancer start-enhancer
-                                      :-end-enhancer   end-enhancer
-                                      :-semantic       semantic
-                                      :-textarea?      textarea?})]
-        label-with-attrs [:label
-                          (merge-attrs
-                           label-text-attrs
-                           (sx 'kushi-text-input-label
-                               :.inline-block
-                               [:after:content (when required "\"*\"")]
-                               [:after:c (when required :$negative-600)]
-                               :after:pis--0.15em
-                               {:for input-id})
-                           (if inline?
-                             (sx 'kushi-text-input-label-inline [:mie :$text-input-label-inline-margin-inline-end||0.7em])
-                             (sx 'kushi-text-input-label-block [:mbe :$text-input-label-block-margin-block-end||0.4em]))
-                           label-attrs)
-                          label]
+        inline?                     
+        (= :inline label-placement)
+
+        label-text-attrs   
+        (sx ".kushi-text-input-label-text"
+            semantic
+            :.minimal
+            :.info
+            :d--block
+            :.small
+            :fw--$wee-bold
+            :hover:bgc--transparent!important
+            :active:bgc--transparent!important)
+
+        helper-label-attrs
+        (when helper
+          (merge-attrs
+           label-text-attrs
+           (sx ".kushi-text-input-helper"
+               :.neutral-secondary-foreground
+               :.inline-block
+               :fw--$normal
+               :mbs--$text-input-helper-margin-block-start||0.3em)
+           (when disabled {:class (css :.disabled)})))
+
+        wrapped-input
+        [text-field* (merge attrs
+                            {:-wrapper-attrs  wrapper-attrs
+                             :-start-enhancer start-enhancer
+                             :-end-enhancer   end-enhancer
+                             :-semantic       semantic
+                             :-textarea?      textarea?})]
+
+        label-with-attrs
+        [:label
+         (merge-attrs
+          label-text-attrs
+          (let [after-content (when required "\"*\"")
+                after-color (when required "var(--negative-600)")]
+            {:style (css-vars-map after-content after-color)
+             :class (css ".kushi-text-input-label"
+                         :.inline-block
+                         [:after:content :$after-content]
+                         [:after:c :$after-color]
+                         :after:pis--0.15em)
+             :for   input-id})
+          (when disabled {:class (css :.disabled)})
+          (if inline?
+            (sx ".kushi-text-input-label-inline"
+                [:mie :$text-input-label-inline-margin-inline-end||0.7em])
+            (sx ".kushi-text-input-label-block"
+                [:mbe :$text-input-label-block-margin-block-end||0.4em]))
+          label-attrs)
+         label]
 
 
-        kushi-input-attrs (merge-attrs (sx 'kushi-input
-                                           (when disabled :.disabled)
-                                           :ai--center)
-                                       (when inline?
-                                         (sx 'kushi-input-inline
-                                             :d--grid
-                                             [:gtc [[:auto '(minmax 0 :1fr)]]]))
-                                       outer-wrapper-attrs)]
+        kushi-input-attrs 
+        (merge-attrs (sx ".kushi-input" :ai--c)
+                     (when inline?
+                       (sx ".kushi-input-inline"
+                           :d--grid
+                           [:gtc "auto minmax(0, 1fr)"]))
+                     outer-wrapper-attrs)]
     [:div
      kushi-input-attrs
      label-with-attrs

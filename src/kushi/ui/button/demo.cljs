@@ -1,6 +1,6 @@
-(ns kushi.ui.button.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.button.demo
   (:require
-   [kushi.core :refer (sx merge-attrs)]
+   [kushi.css.core :refer [sx css css-vars css-vars-map merge-attrs]]
    [kushi.playground.component-examples :as component-examples :refer [section-label]]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.spinner.core :refer (spinner donut propeller thinking)]
@@ -14,9 +14,9 @@
   (into [:div.flex-row-fs]
         (for [color-class [:neutral :accent :positive :negative :warning]]
           [:p.info
-           (sx :p--1em
-               :m--1em
-               {:class [color-class style-class]})
+           (merge-attrs 
+            (sx :p--1em :m--1em)
+            {:class [color-class style-class]})
            "info section"])))
 
 ;; Nix
@@ -28,7 +28,7 @@
     [:div (sx :.flex-row-c
               :>div:flex-grow--1
               :>div:flex-shrink--0
-              :&_button:mb--0.5em)
+              :_button:mb--0.5em)
      (into [:div (sx :.flex-col-fs
                      :max-width--1100px)]
            (for [kind kinds]
@@ -37,8 +37,16 @@
                      (for [semantic sem]
                        [button
                         (merge-attrs
-                         (sx :$tooltip-offset--5px
-                             {:class [semantic kind-class :medium shape]})
+                         (sx [:--tooltip-offset :5px])
+                         {:class [semantic kind-class :medium shape]}
+
+                         ;; TODO - use this for above (make sure to register classes)
+                         #_(sx [:--tooltip-offset :5px]
+                               semantic
+                               kind-class
+                               :.medium
+                               shape)
+
                          (tooltip-attrs
                           {:-placement [:block-start :inline-start]
                            :-text      (map #(str ":." (name %))
@@ -71,21 +79,21 @@
 
 (def examples
   (let [container-attrs
-        (sx 'playground-button-rows-container
+        (sx :.playground-button-rows-container
             :gtc--max-content:max-content
             :md:gtc--max-content)
 
         container-attrs2
         (merge-attrs container-attrs
-                     (sx [:xsm:gtc '(repeat 4 :max-content)]
-                         :md:gtc--max-content
-                         ))]
+                     {:class (css [:xsm:gtc "repeat(4, max-content)"]
+                                  :md:gtc--max-content)})]
     [
      {:desc            "Surface variants"
       :sx-attrs        (sx-call (sx :.small))
-      :container-attrs (merge-attrs container-attrs2
-                                    (sx [:md:gtc '(repeat 4 :max-content)]
-                                        :color--red!important))
+      :container-attrs (merge-attrs
+                        container-attrs2
+                        {:class (css [:md:gtc "repeat(4, max-content)"]
+                                     :color--red!important)})
       :variants+       [:minimal]
       :snippets-header ["Use the utility classes `:.filled`, `:.bordered`, and `:.minimal` to control the surface variant of the button."]
       :snippets        '[[button "Play"]
@@ -202,10 +210,12 @@
       :reqs            '[[kushi.ui.button.core :refer [button]]
                          [kushi.ui.icon.core :refer [icon]]
                          [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]]
-      :sx-attrs        (sx-call (sx :.small {:-loading? true}))
+      ;; :sx-attrs        (sx-call (sx :.small {:-loading? true}))
+      :sx-attrs        (sx-call {:-loading? true
+                                 :class (css :.small)})
       :container-attrs container-attrs
       :snippets-header ["Examples:"]
-      :snippets        '[[button (sx {:-loading? true}) [spinner [icon :play-arrow] [propeller]] "Play"]
+      :snippets        '[[button {:-loading? true} [spinner [icon :play-arrow] [propeller]] "Play"]
                          [button {:disabled true} "Play"]]
       :examples        [{:label "Loading state, propeller"
                          :args  [[spinner [icon :play-arrow] [propeller]] "Play"]}

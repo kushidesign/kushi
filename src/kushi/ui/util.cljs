@@ -1,8 +1,8 @@
 (ns kushi.ui.util
   (:require [clojure.string :as string]
-            
             [domo.core :as domo]
-            [kushi.core :refer [keyed]]))
+            [kushi.css.defs]
+            [kushi.ui.core :refer [keyed]]))
 
 ;; Generic
 ;; --------------------------------------------------------------------------
@@ -93,7 +93,9 @@
   [s]
   (if (re-find #"`" s)
     (let [spans       (for [i    (-> (re-seq #"`" s) count range)
-                            :let [tag (if (even? i) "<span class=\"code\">" "</span>")]]
+                            :let [tag (if (even? i)
+                                        "<span class=\"code\">"
+                                        "</span>")]]
                         tag)
           spans       (conj (into [] spans) nil)
           splits      (string/split s #"`")
@@ -103,7 +105,7 @@
     s))
 
 (defn below-breakpoint? [k]
-  (false? (->> (kushi.core/breakpoints)
+  (false? (->> kushi.css.defs/media
                k
                first
                (apply domo/matches-media?))))

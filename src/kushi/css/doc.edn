@@ -1,0 +1,287 @@
+;; -----------------------------------------------------------------------------
+;; Control flow for creating nested css
+;; -----------------------------------------------------------------------------
+
+[ 
+ :.small
+ :pb--1em
+ :last-child {:c     :blue
+              :hover {:c   :gray
+                      :bgc :silver}}
+ {:mis :33px
+  :mie :23px}
+ [:&_.code {:pb             :0.07em
+            :pi             :0.2em
+            :fs             :0.85rem
+            :&.bronze:bgc     :$gold-400 
+            :&.bronze:c       :$gold-400 
+            :&.bronze:hover:c :$gold-600 
+            :&.silver       {:c   :$silver-400
+                             :bgc :$black} 
+            :c              :$accent-750
+            :bgc            :$accent-50}]
+ [:dark:&_.code {:c   :$accent-100
+                 :bgc :$accent-900}]
+ [[:first-child:bbs
+   :last-child:bbe] "1px solid var(--gray-200)"]
+ [:dark:first-child:bbs "1px solid `$gray-800`"]
+ [:sm:dark:first-child:bbs "1px solid var(--gray-200)"]
+ [:bbe "1px solid var(--gray-200)"]
+ [:dark:bbe :1px:solid:$gray-800]
+ ]
+
+
+;; 2) Unpack vectorized & hydrate-tokenized
+[ 
+ :.small
+ ["pb" "1em"]       ;; <-
+ ["after:c" "red"]  ;; <-
+ [:after:content "\"my after text\""]
+ :last-child {:c     :blue
+              :hover {:c   :gray
+                      :bgc :silver}}
+ {:mis :33px
+  :mie :23px}
+ [:&_.code {:pb             :0.07em
+            :pi             :0.2em
+            :fs             :0.85rem
+            :&.bronze:bgc     :$gold-700 
+            :&.bronze:c       :$gold-400 
+            :&.bronze:hover:c :$gold-600 
+            :&.silver       {:c   :$silver-400
+                             :bgc :$black} 
+            :c              :$accent-750
+            :bgc            :$accent-50}]
+ [:dark:&_.code {:c   :$accent-100
+                 :bgc :$accent-900}]
+ [:&_first-child:bbs "1px solid var(--gray-200)"]      ;; <-
+ [:&_last-child:bbe "1px solid var(--gray-200)"]       ;; <-
+ [:dark:&_first-child:bbs "1px solid `$gray-800`"]
+ [:sm:dark:&_first-child:bbs "1px solid var(--gray-200)"]
+ [:bbe "1px solid var(--gray-200)"]
+ [:dark:bbe :1px:solid:$gray-800]
+  ]
+
+;; 3) Unpack all maps , splice in top level maps / vectors
+;;    Use opportunity to stringify keys with appropriate leading chars e.g. ":hover"
+[
+ ["pb" "1em"]       
+ ["after:c" "red"]  
+ [:after:content "\"my after text\""]
+ ["& :last-child" [[:c     :blue]
+                   [":hover" [[:c   :gray]
+                              [:bgc :silver]]]]]       ;; <- Notice ":last-child"
+
+ ["mis" "33px"]                                        ;; <-
+ ["mie" "23px"]                                        ;; <-
+ [:&_.code [[:pb             :0.07em]                  ;; <-
+            [:pi             :0.2em]
+            [:fs             :0.85rem]
+            [:&.bronze:bgc     :$gold-400]
+            [:&.bronze:c       :$gold-400]
+            [:&.bronze:hover:c :$gold-600]
+            [:&.silver       [[:c   :$silver-400]      ;; <-
+                              [:bgc :$black]]]
+            [:c              :$accent-750]
+            [:bgc            :$accent-50]]]
+ [:dark:&_.code [[:c   :$accent-100]                   ;; <-
+                 [:bgc :$accent-900]]]
+ [:&_first-child:bbs :1px:solid:$gray-400]             ;; <-
+ [:&_last-child:bbe :1px:solid:$gray-400]              ;; <-
+ [:dark:&_first-child:bbs "1px solid `$gray-800`"]
+ [:sm:dark:&_first-child:bbs "1px solid var(--gray-200)"]
+ [:bbe "1px solid var(--gray-200)"]
+ [:dark:bbe :1px:solid:$gray-800]
+
+ ]
+
+
+;; 4) Hydrate stacks into more nesting
+
+;;    Use opportunity to stringify keys with appropriate leading chars e.g.
+;;    ":hover" ".dark" ":first-child"
+
+;;    Use opportunity to expand media queries
+
+[
+ [:pb :1em]
+
+ ["&::after" [["c" "red"]]]  
+ ["&::after" [["content" "\"my after text\""]]]                      ;; <- Notice "::after"
+
+ ["& :last-child" [[:c     :blue]
+                 [":hover" [[:c   :gray]
+                            [:bgc :silver]]]]]         
+
+ ["mis" "33px"]                                        
+ ["mie" "23px"]                                        
+ [:&_.code [[:pb             :0.07em]
+            [:pi             :0.2em]
+            [:fs             :0.85rem]
+            ["&.bronze"         [["bgc" :$gold-400]]]                ;; <-
+            ["&.bronze"         [["c" :$gold-400]]]                  ;; <-
+            ["&.bronze"         [["hover" [["c" :$gold-600]]]]]      ;; <-
+            ["&.silver"       [[:c   :$silver-400]
+                               [:bgc :$black]]]
+            [:c              :$accent-750]
+            [:bgc            :$accent-50]]]
+ [:dark [["& .code" [[:c   :$accent-100]
+                     [:bgc :$accent-900]]]]]
+
+ ["& :first-child" [["bbs" :1px:solid:$gray-400]]]                   ;; <-
+ ["& :last-child" [["bbe" :1px:solid:$gray-400]]]                    ;; <-
+ [".dark &" [["& :first-child" [["bbs" "1px solid `$gray-800`"]]]]]  ;; <-
+ ["@media(min-width:720px)" [[".dark &" [["& :first-child" [["bbs" "1px solid `$gray-200`"]]]]]]]  ;; <-
+ [:bbe "1px solid var(--gray-200)"]                                  ;; <-
+ [".dark &" [["bbe" :1px:solid:$gray-800]]]                          ;; <-
+]
+
+;; 5) Group
+ [
+  [:pb :1em]
+  
+  ["&::after" [["content" "\"my after text\""]
+               ["c" "red"]]]                                         ;; <-
+
+
+  ["mis" "33px"]                                        
+  ["mie" "23px"]                                        
+  [:&_.code [[:pb             :0.07em]
+             [:pi             :0.2em]
+             [:fs             :0.85rem]
+             ["&.bronze"      [["bgc"   :$gold-400]
+                               ["c"     :$gold-400]
+                               ["hover" [[:c :$gold-600]]]]]         ;; <-
+             ["&.silver"      [[:c   :$silver-400]
+                               [:bgc :$black]]]
+             [:c              :$accent-750]
+             [:bgc            :$accent-50]]]
+  ["& :first-child" [[:bbs :1px:solid:$gray-400]]]          
+
+  ["& :last-child" [[:bbe :1px:solid:$gray-400]
+                  [:c   :blue]
+                  ["&:hover" [[:c   :gray]
+                             [:bgc :silver]]]]]                      ;; <-
+
+  [".dark &" [["& .code" [[:c   :$accent-100]
+                          [:bgc :$accent-900]]]
+            ["& :first-child" [[:bbs "1px solid `$gray-800`)"]]]
+            [:bbe :1px:solid:$gray-800]]]                            ;; <-
+  
+  ["@media(min-width:720px)" [[".dark &" [["& :first-child" [["bbs" "1px solid `$gray-200`"]]]]]]]  ;; <-
+
+  [:bbe "1px solid var(--gray-200)"]
+  ]
+
+
+
+;; 6) Unpack shorthand and hydrate/stringify everything, hydrating vars in string-literals
+
+[
+
+  ["padding-block" "1em"]
+ 
+  ["&::after" [["content" "\"my after text\""]
+               ["color" "red"]]]                                                      ;; <-
+
+
+  ["margin-inline-start" "33px"]
+  ["margin-inline-end" "23px"]
+  ["& .code" [["padding-block"  "0.07em"]
+              ["padding-inline" "0.2em"]
+              ["font-size"      "0.85rem"]
+              ["&.bronze"       [["background-color" "var(--gold-400)"]
+                                 ["color" "var(--gold-400)"]
+                                 ["hover" [["color" "var(--gold-600)"]]]]]
+              ["&.silver"       [["color"      "var(--silver-600)"]
+                                 ["background" "var(--black)"]]]
+              ["color"            "var(--accent-750)"]
+              ["background-color" "var(--accent-50)"]]]
+  ["& :first-child" [["border-block-start" "1px solid var(--gray-400)"]]]          
+
+  ["& :last-child" [["border-block-end" "1px solid var(--gray-400)"]
+                  ["color"  "blue"]
+                  [":hover" [["color"            "color"]
+                             ["background-color" "silver"]]]]]                         ;; <-
+
+  [".dark &" [["& .code" [["color"  "var(--accent-100)"]
+                          ["background-color"    "var(--accent-900)"]]]
+              ["& :first-child" [["border-block-start" "1px solid var(--gray-800)"]]]
+              ["border-block-end" "1px solid var(--gray-800)"]]]                       ;; <-
+
+
+  ["@media(min-width:720px)" [[".dark &" [["& :first-child" [["border-block-start" "1px solid var(--gray-800)"]]]]]]]  ;; <-
+
+  ["border-block-end" "1px solid var(--gray-200)"]
+
+]
+
+
+;; 7) Group / sort recursively
+(def final
+ [
+  ;; styles
+  ["border-block-end" "1px solid var(--gray-200)"]
+  ["padding-block" "1em"]
+  ["margin-inline-start" "33px"]
+  ["margin-inline-end" "23px"]
+
+ 
+  ;; pseudo-classes
+  ["& :first-child" [;; styles
+                     ["border-block-start" "1px solid var(--gray-400)"]]]          
+  ["& :last-child" [;; styles
+                    ["border-block-end" "1px solid var(--gray-400)"]
+                    ["color"  "blue"]
+                   ;; pseudos
+                    [":hover" [["color"            "color"]
+                               ["background-color" "silver"]]]]]                      
+
+  ;; pseudo-elements
+  ["&::after" [
+               ;; styles
+               ["content" "\"my after text\""]
+               ["color" "red"]]]                                                    
+
+
+  ;; nested selectors
+  ["& .code" [
+              ;; styles
+              ["padding-block"  "0.07em"]
+              ["padding-inline" "0.2em"]
+              ["font-size"      "0.85rem"]
+              ["color"            "var(--accent-750)"]                     ;; <-
+              ["background-color" "var(--accent-50)"]                      ;; <-
+
+              ;; nested selectors
+              ["&.bronze"         [["background-color" "var(--gold-400)"]
+                                 ["color" "var(--gold-400)"]
+                                 ["color" [[:c "var(--gold-600)"]]]]]
+              ["&.silver"       [["color"      "var(--silver-600)"]
+                                 ["background" "var(--black)"]]]
+              ]]
+
+
+  ;; reverse nested selectors
+  [".dark &" [
+              ;; styles
+              ["border-block-end" "1px solid var(--gray-800)"]             ;; <-
+              ;; pseudos
+              ["& :first-child" [["border-block-start" "1px solid var(--gray-800)"]]] ;; <-
+              ;; nested
+              ["& .code" [["color"  "var(--accent-100)"]
+                          ["background-color"    "var(--accent-900)"]]]]]                    
+
+
+  ;; medias
+  ["@media(blaady-dah)" [[".dark &" [["& :first-child" [["border-block-start" "1px solid var(--gray-800)"]]]]]]]
+])
+
+
+
+
+
+
+
+
+

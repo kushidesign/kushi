@@ -1,5 +1,6 @@
-(ns kushi.ui.slider.demo
-  (:require [kushi.core :refer (sx keyed)]
+(ns ^{:kushi/layer "user-styles"} kushi.ui.slider.demo
+  (:require [kushi.css.core :refer (sx)]
+            [kushi.ui.core :refer (keyed)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.slider.core :refer [slider]]))
@@ -16,8 +17,8 @@
 
 
 (def examples
-  (let [row-attrs       (sx :&_.instance-code:w--100%
-                            :&_.instance-code:max-width--500px
+  (let [row-attrs       (sx :_.instance-code:w--100%
+                            :_.instance-code:max-width--500px
                             :mb--2rem:1.5rem)
         container-attrs (sx :gtc--1fr)
         m               (keyed row-attrs container-attrs)
@@ -66,5 +67,5 @@
                    :-step-marker      :dot
                    :-label-size-class :small
                    :-labels-attrs     (sx
-                                       [:&_.kushi-slider-step-label:first-child>span:translate :-25%:-50%]
-                                       [:&_.kushi-slider-step-label:last-child>span:translate :-75%:-50%])}]))]))
+                                       [:_.kushi-slider-step-label:first-child>span:translate :-25%:-50%]
+                                       [:_.kushi-slider-step-label:last-child>span:translate :-75%:-50%])}]))]))

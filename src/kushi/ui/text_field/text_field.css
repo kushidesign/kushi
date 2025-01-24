@@ -1,0 +1,4 @@
+.text-input-foo {
+  color: red;
+  background-color: var(--blue-500);
+}

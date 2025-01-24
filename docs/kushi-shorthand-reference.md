@@ -36,6 +36,7 @@ Shorthand grammer is available for the following css props:
 :biss ; :border-inline-start-style
 :bisw ; :border-inline-start-width
 :biw  ; :border-inline-width
+:br   ; :border-radius
 :bs   ; :border-style
 :bser ; :border-start-end-radius
 :bssr ; :border-start-start-radius

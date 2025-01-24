@@ -2,7 +2,7 @@
 
 (ns kushi.ui.flex.core
   (:require
-   [kushi.core :refer (sx merge-attrs)]
+   [kushi.css.core :refer (merge-attrs)]
    [kushi.ui.core :refer (opts+children)] ))
 
 (defn row-fs
