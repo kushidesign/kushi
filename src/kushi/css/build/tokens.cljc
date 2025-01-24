@@ -247,7 +247,7 @@
    ;; Intended for css prop `font-weight`
    {:family     "Font weight"
     :desc       {:en "Controls the weight of type"}
-    :categories ["Typography"]
+    :category ["font-weight"]
     :tags       ["font-weight" "typography"]
     }
    [:--thin                                   100
@@ -266,7 +266,7 @@
    ;; Intended for css prop `font-size`
    {:family     "Font size"
     :desc       {:en "Controls the size of type"}
-    :categories ["Typography"]
+    :category ["font-size"]
     :tags       ["font-size" "typography"]
     }
    [:--xxxxsmall                              :0.64rem
@@ -297,7 +297,7 @@
    ;; Intended for css prop `letterspacing`
    {:family     "Letter spacing"
     :desc       {:en "Controls the tracking of the type"}
-    :categories ["Typography"]
+    :category ["letter-spacing"]
     :tags       ["font-size" "typography" "tracking"]
     }
    [:--xxxtight                               :-0.09em
@@ -313,7 +313,7 @@
    ;; Intended for css props `border-width` for inputs
    {:family     "Input border weight"
     :desc       {:en "Controls the border-width for inputs"}
-    :categories ["Inputs"]
+    :category   ["input-border"]
     :tags       ["border-width" "border" "input" "inputs"]
     }
    [:--input-border-weight-thin               :0.05em
@@ -331,7 +331,7 @@
    ;; Intended for css props: border-*, general
    {:family     "Border"
     :desc       {:en "Controls general border styling"}
-    :categories ["Inputs"]
+    :category   ["border"]
     :tags       ["border" "borders"]
     }
    [:--border-width                           :1px
@@ -342,7 +342,7 @@
    
    {:family     "Divisors"
     :desc       {:en "Styling for border-like divisors"}
-    :categories ["Divisors"]
+    :category   ["divisor"]
     :tags       ["divisors" "divisor"]
     }
    divisor-tokens
@@ -351,8 +351,8 @@
    ;; Intended for overlay placement
    {:family     "Overlay placement"
     :desc       {:en "Styling for overlays"}
-    :categories ["Overlays"]
-    :tags       ["overlays"]
+    :category   ["overlay"]
+    :tags       ["overlays" "overlay"]
     }
    [:--overlay-placement-inline-offset        :12px
     :--overlay-placement-block-offset         :6px
@@ -364,7 +364,7 @@
    ;; ------------------------------------------------------
    {:family     "Button padding"
     :desc       {:en "Styling for overlays"}
-    :categories ["Button"]
+    :category   ["button-padding"]
     :tags       ["button"]
     }
    [:--button-padding-inline-ems              :1.2em
@@ -375,7 +375,7 @@
 
    {:family     "Button border styling"
     :desc       {:en "Styling borders for buttons"}
-    :categories ["Button"]
+    :category   ["button-border"]
     :tags       ["button"]
     }
    [:--button-border-width :1px]
@@ -384,8 +384,8 @@
 
    {:family     "Tag border styling"
     :desc       {:en "Styling borders for tags"}
-    :categories ["Tag"]
-    :tags       ["button"]
+    :category   ["tag-border"]
+    :tags       ["tag"]
     }
    ;; Tags
    [:--tag-border-width                       :1px
@@ -396,10 +396,10 @@
    ;; ------------------------------------------------------
    
    ;; pane colors and images
-   {:family     "Floating panes colors and images"
+   {:family     "Floating pane colors and images"
     :desc       {:en ""}
-    :categories ["Panes"]
-    :tags       ["pane" "tooltip" "toast" "floating"]
+    :category   ["pane"]
+    :tags       ["pane" "tooltip" "toast" "popover" "modal" "floating" "color"]
     }
    [:--pane-background-color                 :$background-color
     :--pane-background-color-inverse         :$background-color-inverse
@@ -412,10 +412,10 @@
     :--pane-border-color-inverse             :transparent]
 
     ;; pane geometry
-   {:family     "Floating panes geometry"
+   {:family     "Floating pane geometry"
     :desc       {:en ""}
-    :categories ["Panes"]
-    :tags       ["pane" "tooltip" "toast" "floating"]
+    :category   ["pane"]
+    :tags       ["pane" "tooltip" "toast" "popover" "modal" "floating" "geometry"]
     }
    [:--pane-min-width                        :70px
     :--pane-min-height                       :35px
@@ -428,22 +428,22 @@
     :--pane-auto-placement-y-threshold       :0.1]
 
     ;; pane choreography
-   {:family     "Floating panes choreography"
+   {:family     "Floating pane choreography"
     :desc       {:en ""}
-    :categories ["Panes"]
-    :tags       ["pane" "tooltip" "toast" "floating"]
+    :category   ["pane"]
+    :tags       ["pane" "tooltip" "toast" "popover" "modal" "floating" "choreography"]
     }
    [:--pane-offset-start                     "calc(var(--pane-offset) + 5px)"
-    :--pane-z-index                          :auto
+    :--pane-z-index                          99999
     :--pane-delay-duration                   :0ms
     :--pane-transition-duration              :$xfast 
     :--pane-transition-timing-function       :$timing-ease-out-curve]
 
     ;; pane arrows
-   {:family     "Floating panes arrow"
+   {:family     "Floating pane arrow"
     :desc       {:en ""}
-    :categories ["Panes"]
-    :tags       ["pane" "tooltip" "toast" "floating"]
+    :category   ["pane"]
+    :tags       ["pane" "tooltip" "toast" "popover" "modal" "floating" "arrows"]
     }
    [:--pane-arrow-inline-inset               :7px
     :--pane-arrow-block-inset                :2px
@@ -451,34 +451,13 @@
     ]
 
 
-   ;; Modals
-   ;; ------------------------------------------------------
-   {:family     "Modal styling"
-    :desc       {:en ""}
-    :categories ["Modal"]
-    :tags       ["modal" "dialog"] 
-    }
-   [:--modal-border-radius                    :$pane-border-radius
-    :--modal-border                           :none
-    :--modal-padding                          :1.75rem
-    :--modal-padding-inline                   :$modal-padding
-    :--modal-padding-block                    :$modal-padding
-    :--modal-backdrop-color                   :$black-transparent-50
-    :--modal-margin                           :1rem
-    :--modal-min-width                        :100px
-    :--modal-max-height                       :800px
-    :--modal-transition-duration              :$pane-transition-duration
-    ]
-
-
-
    ;; Tooltips
    ;; ------------------------------------------------------
    
-   {:family     "Tooltip typography"
-    :desc       {:en ""}
-    :categories ["Panes" "Tooltips"]
-    :tags       ["pane" "tooltip" "typography" "floating"]
+   {:family   "Tooltip typography"
+    :desc     {:en ""}
+    :category ["tooltip"]
+    :tags     ["pane" "tooltip" "typography" "floating"]
     }
    [:--tooltip-line-height    1.45
     :--tooltip-font-family    :$sans-serif-font-stack
@@ -488,10 +467,10 @@
     ]
 
    ;; tooltip colors and images
-   {:family     "Tooltip colors and images"
-    :desc       {:en ""}
-    :categories ["Panes" "Tooltips"]
-    :tags       ["pane" "tooltip" "color" "floating"]
+   {:family   "Tooltip colors and images"
+    :desc     {:en ""}
+    :category ["tooltip"]
+    :tags     ["pane" "tooltip" "color" "floating"]
     }
    [:--tooltip-color                            :$foreground-color-inverse
     :--tooltip-color-inverse                    :$foreground-color
@@ -507,10 +486,10 @@
     ]
    
    ;; tooltip geometry
-   {:family     "tooltip panes geometry"
-    :desc       {:en ""}
-    :categories ["Panes" "Tooltips"]
-    :tags       ["pane" "tooltip" "floating"]
+   {:family   "tooltip panes geometry"
+    :desc     {:en ""}
+    :category ["tooltip"]
+    :tags     ["pane" "tooltip" "floating" "geometry"]
     }
    [:--tooltip-min-width                        :1rem
     :--tooltip-min-height                       :1rem
@@ -524,10 +503,10 @@
     ]
 
    ;; tooltip choreography
-   {:family     "tooltip panes choreography"
-    :desc       {:en ""}
-    :categories ["Panes" "Tooltips"]
-    :tags       ["pane" "tooltip" "floating"]
+   {:family   "tooltip panes choreography"
+    :desc     {:en ""}
+    :category ["tooltip"]
+    :tags     ["pane" "tooltip" "floating" "choreography"]
     }
    [:--tooltip-offset-start                     :$pane-offset-start
     :--tooltip-z-index                          :$pane-z-index
@@ -539,10 +518,10 @@
     ]
 
    ;; tooltip arrows
-   {:family     "tooltip panes arrow"
-    :desc       {:en ""}
-    :categories ["Panes" "Tooltips"]
-    :tags       ["pane" "tooltip" "toast" "floating"]
+   {:family   "tooltip panes arrow"
+    :desc     {:en ""}
+    :category ["tooltip"]
+    :tags     ["pane" "tooltip" "toast" "floating" "choreography"]
     }
    [:--tooltip-arrow-inline-inset               :$pane-arrow-inline-inset
     :--tooltip-arrow-block-inset                :$pane-arrow-inline-inset
@@ -550,17 +529,14 @@
     ]
 
 
-
-
-
    ;; Popovers
    ;; ------------------------------------------------------
    
    ;; popover colors and images
-   {:family     "Popover colors and images"
-    :desc       {:en ""}
-    :categories ["Panes"]
-    :tags       ["pane" "popover" "floating"]
+   {:family   "Popover colors and images"
+    :desc     {:en ""}
+    :category ["popover"]
+    :tags     ["pane" "popover" "floating"]
     }
    [:--popover-background-color                 :$pane-background-color
     :--popover-background-color-inverse         :$pane-background-color-inverse
@@ -570,14 +546,14 @@
     :--popover-border-width                     :1px
     :--popover-border-style                     :solid
     :--popover-border-color                     :$neutral-200
-    :--popover-border-color-inverse             :$neutral-500
+    :--popover-border-color-inverse             :$neutral-700
     ]
 
    ;; popover geometry
-   {:family     "Popover panes geometry"
-    :desc       {:en ""}
-    :categories ["Panes" "Popover"]
-    :tags       ["pane" "popover" "floating"]
+   {:family   "Popover panes geometry"
+    :desc     {:en ""}
+    :category ["popover"]
+    :tags     ["pane" "popover" "floating" "geometry"]
     }
    [:--popover-min-width                        :$pane-min-width
     :--popover-min-height                       :$pane-min-height
@@ -589,10 +565,10 @@
     ]
 
    ;; popover choreography
-   {:family     "Popover panes choreography"
-    :desc       {:en ""}
-    :categories ["Panes" "Popover"]
-    :tags       ["pane" "popover" "floating"]
+   {:family   "Popover panes choreography"
+    :desc     {:en ""}
+    :category ["popover"]
+    :tags     ["pane" "popover" "floating" "chreography"]
     }
    [:--popover-offset-start                     :$pane-offset-start
     :--popover-z-index                          :$pane-z-index
@@ -604,10 +580,10 @@
     ]
 
    ;; popover arrows
-   {:family     "Popover panes arrow"
-    :desc       {:en ""}
-    :categories ["Panes" "Popover"]
-    :tags       ["pane" "popover" "floating"]
+   {:family   "Popover panes arrow"
+    :desc     {:en ""}
+    :category ["popover"]
+    :tags     ["pane" "popover" "floating" "arrow"]
     }
    [:--popover-arrow-inline-inset               :$pane-arrow-inline-inset
     :--popover-arrow-block-inset                :$pane-arrow-inline-inset
@@ -615,13 +591,13 @@
     ]
 
    
-   ;; toasts
+   ;; toasts - TODO breakout into more families (and same w other panes)
    ;; --------------------------------------------------------------------------
    ;; toast colors and images
-   {:family     "Toast colors and images"
-    :desc       {:en ""}
-    :categories ["Toast"]
-    :tags       ["pane" "Toast" "floating"]
+   {:family   "Toast colors and images"
+    :desc     {:en ""}
+    :category ["toast"]
+    :tags     ["pane" "toast" "floating" "color"]
     }
    [:--toast-background-color                 :$pane-background-color
     :--toast-background-color-inverse         :$pane-background-color-inverse
@@ -635,10 +611,10 @@
     ]
 
    ;; toast geometry
-   {:family     "Toast panes geometry"
-    :desc       {:en ""}
-    :categories ["Panes" "Toast"]
-    :tags       ["pane" "Toast" "floating"]
+   {:family   "Toast panes geometry"
+    :desc     {:en ""}
+    :category ["toast"]
+    :tags     ["pane" "Toast" "floating" "geometry"]
     }
    [:--toast-border-radius                    :$pane-border-radius
     :--toast-slot-padding-inline              :1rem
@@ -648,10 +624,10 @@
     ]
 
    ;; toast choreography
-   {:family     "Toast panes choreography"
-    :desc       {:en ""}
-    :categories ["Panes" "Toast"]
-    :tags       ["pane" "Toast" "floating"]
+   {:family   "Toast panes choreography"
+    :desc     {:en ""}
+    :category ["toast"]
+    :tags     ["pane" "Toast" "floating" "geometry"]
     }
    [:--toast-delay-duration                   :200ms
     :--toast-initial-scale                    1
@@ -663,29 +639,34 @@
 
    ;; Modals
    ;; ------------------------------------------------------
-   {:family     "Modal styling"
-    :desc       {:en ""}
-    :categories ["Modal"]
-    :tags       ["pane" "modal" "dialog" "floating"]
+   {:family   "Modal styling"
+    :desc     {:en ""}
+    :category ["modal"]
+    :tags     ["pane" "modal" "dialog" "floating"]
     }
-   [:--modal-border-radius                    :$rounded-absolute-large
-    :--modal-border                           :none
+   [
+    :--modal-box-shadow                       :$pane-box-shadow
+    :--modal-box-shadow-inverse               :$pane-box-shadow-inverse
+    :--modal-border-radius                    :$rounded-absolute-large
+    :--modal-border-width                     :0px
+    :--modal-border-style                     :solid
+    :--modal-border-color                     :$gray-150
+    :--modal-border-color-inverse             :$gray-700
     :--modal-padding                          :2rem
     :--modal-padding-block                    :$modal-padding
     :--modal-padding-inline                   :$modal-padding
     :--modal-backdrop-color                   :$black-transparent-40
     :--modal-margin                           :1rem
     :--modal-min-width                        :200px
-    :--modal-transition-duration              :$xfast
-    ]
+    :--modal-transition-duration              :$xfast]
 
 
    ;; Material UI icons
    ;; ------------------------------------------------------
-   {:family     "Mui icon size"
-    :desc       {:en ""}
-    :categories ["Icons"]
-    :tags       ["icons" "size" "font-size"]
+   {:family   "Mui icon size"
+    :desc     {:en ""}
+    :category ["icon"]
+    :tags     ["icon" "size" "font-size"]
     }
    [:--mui-icon-relative-font-size            :inherit
     ]
@@ -696,8 +677,8 @@
    ;; ------------------------------------------------------
    {:family     "Icon gap"
     :desc       {:en "Controls the width of the gap between icon and text, in labels, buttons, and tags"}
-    :categories ["Icons"]
-    :tags       ["icons" "size" "font-size"]
+    :category ["icon"]
+    :tags       ["icon" "size" "font-size"]
     }
    [:--icon-enhanceable-gap                   :0.25em]
 
@@ -706,10 +687,10 @@
    ;; ------------------------------------------------------
    
    ;; Absolute versions for panes, cards, etc.
-   {:family     "Rounded corners, absolute"
-    :desc       {:en "Controls the roundedness of corners on panes, cards, etc. Value is independent of font-size"}
-    :categories ["Surfaces" "Rounding"]
-    :tags       ["border-radius" "corners" "rounded"]
+   {:family   "Rounded corners, absolute"
+    :desc     {:en "Controls the roundedness of corners on panes, cards, etc. Value is independent of font-size"}
+    :category ["border-radius"]
+    :tags     ["border-radius" "corners" "rounded"]
     }
    [:--rounded-absolute-xxxsmall              :0.0625rem         ;; 1px
     :--rounded-absolute-xxsmall               :0.125rem         ;; 2px
@@ -723,10 +704,10 @@
     ]
    
    ;; Relative (to type size) versions for buttons, badges
-   {:family     "Rounded corners, relative"
-    :desc       {:en "Controls the roundedness of corners on panes, cards, etc. Value is relative to font-size"}
-    :categories ["Surfaces" "Rounding"]
-    :tags       ["border-radius" "corners" "rounded"]
+   {:family   "Rounded corners, relative"
+    :desc     {:en "Controls the roundedness of corners on panes, cards, etc. Value is relative to font-size"}
+    :category ["border-radius"]
+    :tags     ["border-radius" "corners" "rounded"]
     }
    [:--rounded-xxxsmall                       :0.04375em  
     :--rounded-xxsmall                        :0.0875em  
@@ -744,40 +725,39 @@
 
    ;; Intended for css props: background-image
    ;; ------------------------------------------------------
-   {:family     "Convex surface"
-    :desc       {:en ""}
-    :categories ["Surfaces"]
-    :tags       ["convex" "concave" "surfaces"]
+   {:family   "Convex surface"
+    :desc     {:en ""}
+    :category ["convex"]
+    :tags     ["convex" "concave" "surfaces"]
     }
    (concat
     convex-scale
-    [
-     :--convex-0 :none
+    [:--convex-0 :none
      :--convex   :$convex-1
      ])
    
     ;; Intended for css props: box-shadow
     ;; ------------------------------------------------------
-   {:family     "Elevation shadow colors"
-    :desc       {:en ""}
-    :categories ["Surfaces" "Shadows"]
-    :tags       ["shadow" "elevation" "surfaces"]
+   {:family   "Elevation shadow colors"
+    :desc     {:en ""}
+    :category ["elevation"]
+    :tags     ["shadow" "elevation" "surfaces"]
     }
    elevation-shadow-layer-colors
 
 
    ;; maps to MUI2 level 1
-   {:family     "Elevation levels"
-    :desc       {:en ""}
-    :categories ["Surfaces" "Shadows"]
-    :tags       ["shadow" "elevation" "surfaces"]
+   {:family   "Elevation levels"
+    :desc     {:en ""}
+    :category ["elevation"]
+    :tags     ["shadow" "elevation" "surfaces"]
     }
    elevation-scale
 
-   {:family     "Elevation levels general"
-    :desc       {:en ""}
-    :categories ["Surfaces" "Shadows"]
-    :tags       ["shadow" "elevation" "surfaces"]
+   {:family   "Elevation levels general"
+    :desc     {:en ""}
+    :category ["elevation"]
+    :tags     ["shadow" "elevation" "surfaces"]
     }
    [:--elevated-0       :none
     :--elevated         :$elevated-4
@@ -785,10 +765,10 @@
 
    ;; Intended for css animations and transitions
    ;; ------------------------------------------------------
-   {:family     "Animation and transition timing functions"
-    :desc       {:en ""}
-    :categories ["Timings" "Animations" "Transitions"]
-    :tags       ["animation" "cubic-bezier" "timing"]
+   {:family   "Animation and transition timing functions"
+    :desc     {:en ""}
+    :category ["transition-timing-function"]
+    :tags     ["animation" "cubic-bezier" "timing" "transition-timing-function"]
     }
    [:--timing-linear-curve           "cubic-bezier(0, 0, 1, 1)"
     :--timing-ease-out-curve         "cubic-bezier(.2, .8, .4, 1)"
@@ -798,10 +778,10 @@
     :--timing-ease-out-curve-extreme "cubic-bezier(0.190, 0.510, 0.125, 0.905)"
     :--transition-timing-function    :$timing-linear-curve]
 
-   {:family     "Animation and transition duration"
-    :desc       {:en ""}
-    :categories ["Timings" "Animations" "Transitions"]
-    :tags       ["animation" "cubic-bezier" "timing"]
+   {:family   "Animation and transition duration"
+    :desc     {:en ""}
+    :category ["transition-duration"]
+    :tags     ["animation" "cubic-bezier" "timing" "transition-duration"]
     }
    [:--transition-duration           :$fast
     :--instant                       :0ms
@@ -820,10 +800,10 @@
 
    ;; Intended for styling scrollbars with the .styled-scrollbars utility-class
    ;; ------------------------------------------------------
-   {:family     "Scrollbar styling"
-    :desc       {:en ""}
-    :categories ["Scrollbars"]
-    :tags       ["scrollbar" "chrome" "browser-scrollbars"]
+   {:family   "Scrollbar styling"
+    :desc     {:en ""}
+    :category ["scrollbar"]
+    :tags     ["scrollbar" "chrome" "browser-scrollbars"]
     }
    [:--scrollbar-thumb-color                  :$neutral-300
     :--scrollbar-thumb-color-inverse          :$neutral-700
@@ -834,19 +814,19 @@
 
    ;; Kushi UI Components (move?)
    ;; ------------------------------------------------------
-   {:family     "Collapse styling"
-    :desc       {:en ""}
-    :categories ["Collapse"]
-    :tags       ["collapse" "accordian"]
+   {:family   "Collapse styling"
+    :desc     {:en ""}
+    :category ["collapse"]
+    :tags     ["collapse" "accordian"]
     }
    [:--collapse-transition-duration              :$slow]
 
     ;; kushi.ui.text-field.core/input
    
-   {:family     "Text field styling"
-    :desc       {:en ""}
-    :categories ["Collapse"]
-    :tags       ["collapse" "accordian"]
+   {:family   "Text field styling"
+    :desc     {:en ""}
+    :category ["input"]
+    :tags     ["text-input" "text-field" "input"]
     }
    [:--text-input-helper-margin-block-start      :0.3em
     :--text-input-label-inline-margin-inline-end :0.7em
@@ -860,10 +840,10 @@
 
    ;; Switches
    ;; ------------------------------------------------------
-   {:family     "Legacy Color tokens"
-    :desc       {:en ""}
-    :categories ["Colors" "Theming"]
-    :tags       ["theming" "colors"]
+   {:family   "Legacy Color tokens"
+    :desc     {:en ""}
+    :category ["legacy-switch-theming"]
+    :tags     ["theming" "colors" "switch"]
     }
    kushi.css.build.tokens-legacy/legacy-switch-theming
    ))
@@ -885,7 +865,7 @@
     (str "var(--" (subs (name v) 1) ")")))
 
 (def enriched-tokens-ordered 
- (mapcat (fn [[{:keys [desc categories tags family added]
+ (mapcat (fn [[{:keys [desc category tags family added]
                 :or   {desc  "Fix m"
                        added "1.0" ;; <- get version?
                        }}
@@ -900,7 +880,7 @@
                {:name         (name tok)
                 :value        value
                 :desc         desc
-                :categories   categories
+                :category     category
                 :tags         tags
                 :family       family
                 :added        "1.0"
@@ -944,25 +924,26 @@
              {}
              enriched-tokens-array-map))
 
-(def design-tokens-by-token-categorized-by-tag 
-  (reduce (fn [acc tag]
+(def design-tokens-by-category 
+  (reduce (fn [acc category]
             (assoc acc
-                   tag
-                   (reduce (fn [acc {:keys [tags name value]}]
-                             (if (contains? (into #{} tags) "elevation")
-                               (conj acc name)
+                   category
+                   (reduce (fn [acc {tokens-category :category
+                                     tokens-name     :name}]
+                             (if (contains? (into #{} tokens-category) category)
+                               (conj acc tokens-name)
                                acc))
                            []
                            enriched-tokens-ordered)))
           {}
-          ["elevation"]))
+          ["pane" "elevation" "modal" "popover" "tooltip" "toast"]))
 
 
 
 #_{:name         "divisor-inverse",
  :value        :$divisor-5-inverse,
  :desc         {:en "Fix me"},
- :categories   ["Surface" "Borders" "Color"],
+ :category   ["Surface" "Borders" "Color"],
  :tags         ["divisor"],
  :family       nil,
  :added        "1.0",
@@ -979,7 +960,7 @@
 ;;  :desc         {:en "Foreground text that is slightly de-emphasized (such as text input field helper text)."}
 ;;  :value        :$gray-700
 ;;  :added        "1.0"
-;;  :categories   ["Color" "Typography"]
+;;  :category   ["Color" "Typography"]
 ;;  :tags         ["label" "de-emphasis"]
 ;;  :family       :font-weight  ;; :code :font-weight :font-size :letter-spacing etc (could be nil)
 ;;  :alias-token? <reactive based on :value>
@@ -1000,7 +981,7 @@
 ;;  :desc         {:en “Background color for fune floating layer primitive”}
 ;;  :value        :transparent
 ;;  :added        "1.0"
-;;  :categories   ["Color" “Layers” “Contextual”]
+;;  :category   ["Color" “Layers” “Contextual”]
 ;;  :tags         [“color”]
 ;;  :family       :fune  ;; :code :font-weight :font-size :letter-spacing etc (could be nil)
 ;;  :name-sub     “fune”

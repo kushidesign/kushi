@@ -38,49 +38,49 @@
   {:summary ["Switches are used to toggle an individual option on or off."]
    :desc ["Switches can be custom styled via a variety of tokens in your theme."
           :br
-          :br "`:$switch-width-ratio`"
+          :br "`--switch-width-ratio`"
           :br "Setting this to 1.5 will result in a switch that has the aspect ratio of 1.5:1 (width:height). The default value is 2."
           :br
-          :br "`:$switch-border-width`"
+          :br "`--switch-border-width`"
           :br "The default value is `2px`. If customizing the value, it is recommended to use a `px` or `rem` value, especially if you are using the `:-track-content-on` or `:-track-content-off` options."
           :br
-          :br "`:$switch-border-color`"
+          :br "`--switch-border-color`"
           :br "The default value is `transparent`, which will read as \"padding\" between the switch \"thumb\" and the switch \"track\", as by default the switch will have a solid background color in both the on and off states. You can supply a color value which will result in more of an \"outlined\" styling."
           :br
-          :br "`:$switch-thumb-scale-factor`"
+          :br "`--switch-thumb-scale-factor`"
           :br "The default value is `1`. Setting this to a value greater than 1 will result in the thumb height being greater than the track height."
           :br
           ;; TODO add documentation for each token
           :br "The following tokens control the background color of the switch:"
           :br
-          :br "`:$switch-off-background-color`"
-          :br "`:$switch-off-background-color-hover`"
-          :br "`:$switch-on-background-color`"
-          :br "`:$switch-on-background-color-hover`"
-          :br "`:$switch-on-accent-background-color`"
-          :br "`:$switch-on-accent-background-color-hover`"
-          :br "`:$switch-on-positive-background-color`"
-          :br "`:$switch-on-positive-background-color-hover`"
-          :br "`:$switch-on-warning-background-color`"
-          :br "`:$switch-on-warning-background-color-hover`"
-          :br "`:$switch-on-negative-background-color`"
-          :br "`:$switch-on-negative-background-color-hover`"
+          :br "`--switch-off-background-color`"
+          :br "`--switch-off-background-color-hover`"
+          :br "`--switch-on-background-color`"
+          :br "`--switch-on-background-color-hover`"
+          :br "`--switch-on-accent-background-color`"
+          :br "`--switch-on-accent-background-color-hover`"
+          :br "`--switch-on-positive-background-color`"
+          :br "`--switch-on-positive-background-color-hover`"
+          :br "`--switch-on-warning-background-color`"
+          :br "`--switch-on-warning-background-color-hover`"
+          :br "`--switch-on-negative-background-color`"
+          :br "`--switch-on-negative-background-color-hover`"
           :br
           :br
           "Each of the above has a corresponding token for dark-mode:"
           :br
-          :br "`:$switch-off-background-color-inverse`"
-          :br "`:$switch-off-background-color-hover-inverse`"
-          :br "`:$switch-on-background-color-inverse`"
-          :br "`:$switch-on-background-color-hover-inverse`"
-          :br "`:$switch-on-accent-background-color-inverse`"
-          :br "`:$switch-on-accent-background-color-hover-inverse`"
-          :br "`:$switch-on-positive-background-color-inverse`"
-          :br "`:$switch-on-positive-background-color-hover-inverse`"
-          :br "`:$switch-on-warning-background-color-inverse`"
-          :br "`:$switch-on-warning-background-color-hover-inverse`"
-          :br "`:$switch-on-negative-background-color-inverse`"
-          :br "`:$switch-on-negative-background-color-hover-inverse`"
+          :br "`--switch-off-background-color-inverse`"
+          :br "`--switch-off-background-color-hover-inverse`"
+          :br "`--switch-on-background-color-inverse`"
+          :br "`--switch-on-background-color-hover-inverse`"
+          :br "`--switch-on-accent-background-color-inverse`"
+          :br "`--switch-on-accent-background-color-hover-inverse`"
+          :br "`--switch-on-positive-background-color-inverse`"
+          :br "`--switch-on-positive-background-color-hover-inverse`"
+          :br "`--switch-on-warning-background-color-inverse`"
+          :br "`--switch-on-warning-background-color-hover-inverse`"
+          :br "`--switch-on-negative-background-color-inverse`"
+          :br "`--switch-on-negative-background-color-hover-inverse`"
           ]
    :opts '[{:name    on?
             :pred    boolean?
@@ -239,24 +239,6 @@
         :inset-inline-start--0
         :h--$thumb-height
         :w--$width)
-       #_(trans (sx
-               'kushi-switch-thumb
-               :.transition
-               :.xxfast!
-               :.pill
-               :.pointer
-               :position--absolute
-               :top--50%
-               [:transform '(translate 0 :-50%)]
-               :inset-inline-start--0
-               :h--$thumb-height
-               [:$width :$thumb-height]
-               :w--$width
-               [:bgc :$white-transparent-100]
-               [:box-shadow "0 2px 6px 0 var(--black-transparent-15)"]
-               ["has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start" "calc(100% - var(--width))"]
-               ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed]
-               ))
        thumb-attrs)
       [:div (sx ".kushi-switch-thumb-content-on"
                 :.kushi-switch-thumb-content

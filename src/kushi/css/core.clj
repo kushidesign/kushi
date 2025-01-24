@@ -512,9 +512,6 @@
   (!? :result (some-> env :ns :name))
   (when-let [ns* (some-> env :ns :name (sr #"\." "_"))]
     (let [fm (meta form)]
-     (!? :result ns*)
-     (when (= ns* "mvp_browser")
-       (!? fm))
      (str ns* "__L" (:line fm) "_C" (:column fm)))))
 
 
@@ -811,7 +808,7 @@
 (defmacro ^:public register-design-tokens [& args]
   nil)
 
-(defmacro ^:public register-design-tokens-by-tag [& args]
+(defmacro ^:public register-design-tokens-by-category [& args]
   nil)
 
 (defmacro ^:public utilize [x]

@@ -1,5 +1,6 @@
 (ns kushi.ui.popover.core
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [applied-science.js-interop :as j]
    [goog.string]
    [domo.core :as domo]
@@ -8,7 +9,19 @@
    [kushi.ui.dom.pane.core :as pane]
    [kushi.ui.dom.pane.placement :refer [user-placement]]
    ;; Import this styles ns to create defclasses
-   [kushi.ui.dom.pane.styles]))
+   [kushi.ui.dom.pane.styles]
+   [kushi.css.core :refer [sx
+                           css
+                           merge-attrs
+                           css-vars-map
+                           register-design-tokens
+                           register-design-tokens-by-category]]))
+
+(register-design-tokens-by-category
+ "elevation"
+ "popover"
+ "pane")
+   
 
 (defn popover-attrs
   {:summary ["Popovers provide additional context when clicking on an element."]
@@ -50,37 +63,37 @@
           ;; TODO add documentation for each token
           :br 
           "__Colors and images:__"
-              "`:$popover-background-color`"                 
-          :br "`:$popover-background-color-inverse`"         
-          :br "`:$popover-background-image`"                 
-          :br "`:$popover-box-shadow`"                 
-          :br "`:$popover-border-width`"                 
-          :br "`:$popover-border-style`"                 
-          :br "`:$popover-border-color`"                 
+              "`--popover-background-color`"                 
+          :br "`--popover-background-color-inverse`"         
+          :br "`--popover-background-image`"                 
+          :br "`--popover-box-shadow`"                 
+          :br "`--popover-border-width`"                 
+          :br "`--popover-border-style`"                 
+          :br "`--popover-border-color`"                 
           :br
           :br "__Geometry:__"
-              "`:$popover-min-width`"
-          :br "`:$popover-min-height`"
-          :br "`:$popover-border-radius`"
-          :br "`:$popover-offset`"
-          :br "`:$popover-viewport-padding`"
-          :br "`:$popover-flip-viewport-edge-threshold`"
-          :br "`:$popover-auto-placement-y-threshold`"
+              "`--popover-min-width`"
+          :br "`--popover-min-height`"
+          :br "`--popover-border-radius`"
+          :br "`--popover-offset`"
+          :br "`--popover-viewport-padding`"
+          :br "`--popover-flip-viewport-edge-threshold`"
+          :br "`--popover-auto-placement-y-threshold`"
           :br
           :br "__Choreography:__"
-              "`:$popover-offset-start`"
-          :br "`:$popover-z-index`"             
-          :br "`:$popover-delay-duration`"            
-          :br "`:$popover-initial-scale`"             
-          :br "`:$popover-offset-start`"              
-          :br "`:$popover-transition-duration`"       
-          :br "`:$popover-transition-timing-function`"
-          :br "`:$popover-auto-dismiss-duration`"
+              "`--popover-offset-start`"
+          :br "`--popover-z-index`"             
+          :br "`--popover-delay-duration`"            
+          :br "`--popover-initial-scale`"             
+          :br "`--popover-offset-start`"              
+          :br "`--popover-transition-duration`"       
+          :br "`--popover-transition-timing-function`"
+          :br "`--popover-auto-dismiss-duration`"
           :br
           :br "__Arrows:__"
-              "`:$popover-arrow-inline-inset`"
-          :br "`:$popover-arrow-block-inset`"
-          :br "`:$popover-arrow-depth`"   
+              "`--popover-arrow-inline-inset`"
+          :br "`--popover-arrow-block-inset`"
+          :br "`--popover-arrow-depth`"   
 
           :br
           :br
@@ -88,12 +101,12 @@
           "use the following pattern."
           :br
           :br
-          "`(merge-attrs (sx :$popover-offset--5px ...) (popover-attrs {...}))`"
+          "`(popover-attrs {:-popover-class (css [:--popover-background-color :beige])}))`"
           :br
           :br
           "If you would like to use a value of `0` (`px`, `ems`, `rem`, etc.) for "
-          "`$popover-offset`, `$popover-arrow-inline-inset`, "
-          "`$popover-arrow-block-inset`, or `$popover-border-radius`, you will need "
+          "`--popover-offset`, `--popover-arrow-inline-inset`, "
+          "`--popover-arrow-block-inset`, or `--popover-border-radius`, you will need "
           "to use an explicit unit e.g. `0px`."
           ]
    :opts '[{:name    f
@@ -186,7 +199,12 @@
             :default false
             :desc    ["Setting to true will auto-dismiss the popover. "
                       "The time of display before display is controlled "
-                      "by the theme token `:$popover-auto-dismiss-duration`"]}
+                      "by the theme token `--popover-auto-dismiss-duration`"]}
+           {:name    popover-class
+            :pred    string?
+            :default nil
+            :desc    ["A class name for a la carte application of classes on the "
+                      "popover element."]}
            #_{:name    use-on-click?
             :pred    boolean?
             :default false
@@ -195,12 +213,13 @@
                       "the popover. "]}
            ]}
 
-  [{placement          :-placement
+  [{user-pane-class    :class
+    user-pane-style    :style
+    placement          :-placement
     arrow?             :-arrow?
     auto-dismiss?      :-auto-dismiss?
     use-on-click?      :-use-on-click?
-    user-pane-class    :class
-    user-pane-style    :style
+    popover-class      :-popover-class
     user-rendering-fn  :-f
     :or                {placement     :auto
                         arrow?        true
@@ -223,7 +242,8 @@
                               pane-type
                               user-rendering-fn
                               user-pane-class
-                              user-pane-style)]
+                              user-pane-style
+                              popover-class)]
       (merge 
        {:data-kushi-ui-pane (name placement-kw)}
        {:on-click (partial pane/append-pane! opts)}

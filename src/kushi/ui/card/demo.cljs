@@ -60,7 +60,7 @@
                    :gap--2rem
                    :_.kushi-card:w--fit-content
                    :_.kushi-card:b--1px:solid:$neutral-200
-                   :dark:_.kushi-card:b--1px:solid:$neutral-800)
+                   :dark:_.kushi-card:b--1px:solid:$neutral-700)
     :examples  (for [sz   (range 5)
                      :let [class (str "elevated-" sz)]]
                  {:label class

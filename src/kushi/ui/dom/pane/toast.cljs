@@ -2,6 +2,7 @@
   (:require-macros
    [kushi.css.core :refer [utilize]])
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [goog.string]
    [domo.core :as domo]
@@ -115,7 +116,7 @@
   (when-not e.defaultPrevented
     (when (= e.key "Escape")
       (when-let [slot (domo/qs ".kushi-toast-slot")]
-        (-> slot .-firstChild .remove)
+        (.remove (.-firstChild slot))
         (toast-slot-cleanup! slot)))))
 
 
@@ -159,7 +160,7 @@
         toast-slot-el    (or existing 
                              (toast-slot-el opts placement-as-str))
         toast-el         (js/document.createElement "li")
-        pane-classes     (pane-classes  opts)]
+        pane-classes     (pane-classes opts)]
 
     (when-not existing
       (.addEventListener js/window

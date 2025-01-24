@@ -1,7 +1,7 @@
-(ns mvp.browser
+(ns site.browser
   (:require
    [reagent.dom :as rdom]
-   [mvp.views :as views]))
+   [site.views :as views]))
 
 (defn ^:dev/after-load mount-root []
   (let [root-el (.getElementById js/document "app")]

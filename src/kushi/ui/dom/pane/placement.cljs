@@ -82,7 +82,7 @@
       :else
       ;; Always auto-place pane on top, unless the owning element falls
       ;; within the top fraction of the viewport, as defined by the
-      ;; :$pane-auto-placement-y-threshold css custom property.
+      ;; --pane-auto-placement-y-threshold css custom property.
       (if (< (:y-fraction vpp)
              (some-> owning-el
                      (domo/css-custom-property-value

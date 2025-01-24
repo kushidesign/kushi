@@ -36,10 +36,10 @@
                            "new features"]]]
                ["positive" "Your transaction was successful"]
                ["warning" [:span "Your subscription needs to be updated. "
-                           [link (sx :ws--n {:href "#"})
+                           [link (merge-attrs (sx :ws--n) {:href "#"})
                             "Take action."]]]
                ["negative" [:span "Something went wrong. "
-                            [link (sx :ws--nw {:href "#"})
+                            [link (merge-attrs (sx :ws--nw) {:href "#"})
                              "Learn more."]]]]]
           {:desc            (str (string/capitalize s) " variant")
            :row-attrs       row-attrs
@@ -57,26 +57,39 @@
                                               :md:flex-direction--column))
             :container-attrs container-attrs
             :variants-       [:filled :bordered]
-            :snippets        '[[callout (merge-attrs
-                                         (sx :.large :.accent)
-                                         {:-header-text [:span "Please check out the " [link (sx :ws--n {:href "#"}) "new features"]]
-                                          :-icon        [icon :info]})]]
-            :examples        [{:code (sx-call (for [sz sizes]
-                                                [callout {:-header-text [:span "Please check out the " [link (sx :ws--n {:href "#"}) "new features"]]
-                                                          :-icon        [icon :info]
-                                                          :class        [sz "accent"]}]))}]}
+            :snippets        '[[callout
+                                (merge-attrs
+                                 (sx :.large :.accent)
+                                 {:-header-text [:span "Please check out the "
+                                                 [link (merge-attrs
+                                                        (sx :ws--n)
+                                                        {:href "#"})
+                                                  "new features"]]
+                                  :-icon        [icon :info]})]]
+            :examples        [{:code 
+                               (sx-call
+                                (for [sz sizes]
+                                  [callout {:-header-text [:span "Please check out the "
+                                                           [link (merge-attrs
+                                                                  (sx :ws--n)
+                                                                  {:href "#"})
+                                                            "new features"]]
+                                            :-icon        [icon :info]
+                                            :class        [sz "accent"]}]))}]}
 
            {:desc            "With icon and dismiss button, in positive variant"
             :row-attrs       row-attrs
             :container-attrs container-attrs
             :variants-       [:filled :bordered]
-            :examples        [{:code (sx-call [callout
-                                               (merge (sx :.positive)
-                                                      {:-icon         [icon :check-circle]
-                                                       :-header-text  "Your transaction was successful."
-                                                       :-close-button [button
-                                                                       (merge-attrs 
-                                                                        (sx :.pill :.positive :p--0.25em)
-                                                                        {:on-click (fn [] (js/alert "Example close-icon click event."))})
-                                                                       [icon :clear]]})])}]}]
+            :examples        [{:code
+                               (sx-call 
+                                [callout
+                                 (merge (sx :.positive)
+                                        {:-icon         [icon :check-circle]
+                                         :-header-text  "Your transaction was successful."
+                                         :-close-button [button
+                                                         (merge-attrs 
+                                                          (sx :.pill :.positive :p--0.25em)
+                                                          {:on-click (fn [] (js/alert "Example close-icon click event."))})
+                                                         [icon :clear]]})])}]}]
           semantic-variants)))

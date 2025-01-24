@@ -1,6 +1,6 @@
 ;; For trying stuff out
 
-(ns mvp.sandbox
+(ns site.sandbox
   (:require
    [reagent.dom :as rdom]
    [kushi.ui.icon.mui.svg :as mui.svg ]

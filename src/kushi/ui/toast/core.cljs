@@ -1,12 +1,20 @@
 (ns kushi.ui.toast.core
   (:require [domo.core :as domo]
-            [kushi.css.core :refer [utilize]]
+            [fireworks.core :refer [? !? ?> !?>]]
+            [kushi.css.core :refer [utilize register-design-tokens-by-category]]
             [kushi.ui.core :refer (keyed)]
             [kushi.ui.dom.pane.core :as pane]
             [kushi.ui.dom.pane.placement :refer [user-placement]]
             [kushi.ui.dom.pane.styles]
             [kushi.ui.dom.pane.toast :refer [toast-slot-cleanup!
                                              update-toast-slot-dimensions!]]))
+
+
+(register-design-tokens-by-category
+ "elevation"
+ "pane"
+ "toast")
+
 (utilize 
  {:lt  "top-left-corner-inside"
   :tlc "top-left-corner-inside"
@@ -67,31 +75,31 @@
           :br
           :br
           "__Colors and images:__"
-          "`:$toast-background-color`" :br
-          "`:$toast-background-color-inverse`" :br 
-          "`:$toast-background-image`" :br                  
-          "`:$toast-box-shadow`" :br                  
-          "`:$toast-box-shadow-inverse`" :br                  
-          "`:$toast-border-width`" :br                  
-          "`:$toast-border-style`" :br                  
-          "`:$toast-border-color`" :br                  
-          "`:$toast-border-color-inverse`"
+          "`--toast-background-color`" :br
+          "`--toast-background-color-inverse`" :br 
+          "`--toast-background-image`" :br                  
+          "`--toast-box-shadow`" :br                  
+          "`--toast-box-shadow-inverse`" :br                  
+          "`--toast-border-width`" :br                  
+          "`--toast-border-style`" :br                  
+          "`--toast-border-color`" :br                  
+          "`--toast-border-color-inverse`"
           :br                  
           :br
           "__Geometry:__"
-          "`:$toast-border-radius`" :br 
-          "`:$toast-slot-padding-inline`" :br 
-          "`:$toast-slot-padding-block`" :br 
-          "`:$toast-slot-gap`" :br 
-          "`:$toast-slot-z-index`"
+          "`--toast-border-radius`" :br 
+          "`--toast-slot-padding-inline`" :br 
+          "`--toast-slot-padding-block`" :br 
+          "`--toast-slot-gap`" :br 
+          "`--toast-slot-z-index`"
           :br 
           :br
           "__Choreography:__"
-          "`:$toast-delay-duration`" :br             
-          "`:$toast-initial-scale`" :br              
-          "`:$toast-transition-duration`" :br        
-          "`:$toast-transition-timing-function`" :br 
-          "`:$toast-auto-dismiss-duration`"
+          "`--toast-delay-duration`" :br             
+          "`--toast-initial-scale`" :br              
+          "`--toast-transition-duration`" :br        
+          "`--toast-transition-timing-function`" :br 
+          "`--toast-auto-dismiss-duration`"
           :br 
           :br
           "If you want supply the value of any of the above tokens ala-carte, "
@@ -100,7 +108,7 @@
           :br
           ;; TODO make this like a code block with a couple versions of this
           ;; pattern e.g.`
-          "`(merge-attrs (sx :$toast-border-radius--5px ...) (toast-attrs {...}))`"
+          "`(toast-attrs {:-toast-class (css [:--toast-background-color :beige])}))`"
           :br
           :br
           "If you would like to use a value of `0` (`px`, `ems`, `rem`, etc.) for "
@@ -192,21 +200,28 @@
             :default true
             :desc    ["Toasts are auto-dismissed by default. "
                       "The duration of display before dismissal is controlled "
-                      "by the theme token `:$toast-auto-dismiss-duration`"]}
+                      "by the theme token `--toast-auto-dismiss-duration`"]}
            {:name    slide-in?
             :pred    boolean?
             :default true
             :desc    ["Toasts slide into the viewport by default. The timing "
                       "of this can be controlled by the theme token "
-                      "`:$toast-transition-duration`. For users prefering "
+                      "`--toast-transition-duration`. For users prefering "
                       "reduced motion (an OS-level setting), toasts will never "
-                      "slide in, nor will they scale up or down upon entry."]}]}
+                      "slide in, nor will they scale up or down upon entry."]}
+           {:name    toast-class
+            :pred    string?
+            :default nil
+            :desc    ["A class name for a la carte application of classes on the "
+                      "toast element."]}
+           ]}
 
-  ;; TODO -- add :class opts so you can ala-carte try things like :$toast-slot-z-index
+  ;; TODO -- add :class opts so you can ala-carte try things like --toast-slot-z-index
   [{placement         :-placement
     auto-dismiss?     :-auto-dismiss?
     slide-in?         :-slide-in?
     user-rendering-fn :-f
+    toast-class       :-toast-class
     :or               {placement     :rb
                        auto-dismiss? true
                        slide-in?     true}}]
@@ -230,7 +245,8 @@
                                  pane-type
                                  user-rendering-fn
                                  slide-in?
-                                 reduced-motion?)]
+                                 reduced-motion?
+                                 toast-class)]
       (merge 
        ;; TODO should be :data-kushi-ui-pane-placement = se
        ;; and :data-kushi-ui-pane-type = toast
@@ -240,7 +256,7 @@
 
 (defn dismiss-toast! [e]
   (let [et            (domo/et e)
-        toast-el      (domo/nearest-ancestor et ".kushi-toast")
+        toast-el      (? (domo/nearest-ancestor et ".kushi-toast"))
         toast-slot-el (domo/nearest-ancestor et ".kushi-toast-slot")]
     (.remove toast-el)
     (update-toast-slot-dimensions! toast-slot-el)

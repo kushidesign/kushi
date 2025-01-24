@@ -18,6 +18,25 @@
            metrics?
            user-pane-class]
     :as opts}]
+  
+  ;; TODO debug fireworks - the caught error with popover example from sandbox
+  ;; For some reason it is tripping on :el
+  ;; (?  (dissoc opts
+  ;;             :el
+  ;;             ;; :owning-el-rect
+  ;;             ;; :placement-kw
+  ;;             ;; :tt-pos-og
+  ;;             ;; :tooltip-class
+  ;;             ;; :tooltip-text
+  ;;             ;; :id
+  ;;             ;; :owning-el
+  ;;             ;; :dialog-el
+  ;;             ;; :metrics?
+  ;;             ;; :pane-type
+  ;;             ;; :user-pane-class
+  ;;             ;; :arrow?
+  ;;             ))
+
   (let [pane-type-class
         (some-> pane-type
                 (maybe #(not= :pane %))

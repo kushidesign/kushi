@@ -14,7 +14,7 @@
    :target           :browser
    :compiler-options {:output-feature-set :es8
                       :warnings           {:redef false}}
-   :modules          {:main {:init-fn mvp.browser/init}}
+   :modules          {:main {:init-fn site.browser/init}}
    :output-dir       "public/js"
    :build-hooks      [(kushi.css.build.analyze/hook)
                       ;; (shadow.build/tap-hook)

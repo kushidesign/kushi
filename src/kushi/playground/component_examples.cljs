@@ -429,7 +429,7 @@
         (into [:div (sx :.flex-col-fs
                         :gap--2.25rem
                         :mbs--1.5em
-                        :pbe--2rem)
+                        #_:pbe--2rem)
                [snippet-section
                 {:header       (util/desc->hiccup
                                 ["Paste into the `:require` section of your `:ns` form:"])
