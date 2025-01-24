@@ -19,19 +19,19 @@ pom.xml.asc
 .idea
 kushi.workspace.code-workspace
 .portal
-/site/tmp
+/docs/tmp
 /public/css
 public/css/*
-site/public/css/*
+docs/public/css/*
 .public/css/*
-.site/public/css/*
-site/filtered-build-sources.edn
-
+.docs/public/css/*
+docs/filtered-build-sources.edn
 
 
 /docs/public/js/cljs-runtime
 /docs/public/js/main.js.map
 /docs/public/js/manifest.edn
+!/docs/public/css/bundle.css
 /docs/node_modules
 /docs/target
 /docs/tmp
