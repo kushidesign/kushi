@@ -1252,116 +1252,6 @@
   #_(create-css-bundle))
 
 
-;; TODO 
-
-;; Review PR, then merge
-
-
-
-;; 1 day
-;; branch ----------------------------------------------------------------------
-
-;; Figure out sx and css calls from ui and playground that were
-;; ".foo", because it might make sense not to have them as classes based on 
-;; file info. Maybe they should be like "[data-kushi-ui='button']"?
-
-;; version of sx macro? or different functionality with sym arg?
-;; or (sxui ..)
-;; (sx 'button
-;;     :.large-text
-;;     :c--red
-;;     {:id :wtf})
-;; =>
-;; {:data-kushi-ui "button"
-;;  :class         [:large-text]
-;;  :id            "wtf"
-;;  :data-ns       "kushi/ui/button.cljs::12:1"}
-
-;; "[data-kushi-ui=\"button\"] {
-;;  color: red;
-;; }"
-
-
-;; 3) - Sort out core fns from kushi.css into kushi.core.
-
-;;    - Use single version of keyed with vector
-
-;;    - Rename css-new
-;;    
-;;    - Convert sx, css
-;;      kushi.playground.tweak.element
-;;      kushi.playground.tweak.typescale
-
-;;    - Maybe delete:
-;;      kushi.ui.icon.mui.core
-;;      kushi.ui.icon.mui.examples
-;;      kushi.ui.icon.helper
-;;      kushi.ui.modal.examples
-;;      examplescustom
-;;      kushi.ui.examples
-;;      kushi.playground.sample
-;;      kushi.ui.theme
-
-;;    - other fns related to typography, injection, etc?
-
-
-;; 2 days
-;; branch ----------------------------------------------------------------------
-;; 8) New color system based on oklch
-
-
-;; 1 day
-;; branch ----------------------------------------------------------------------
-;; 5) New build reporting system
-
-
-;; 2 days
-;; branch ----------------------------------------------------------------------
-;; 4) Keep track of changes or deletions in proj via shadow build-state
-
-
-;; 2 days
-;; branch ----------------------------------------------------------------------
-;; 9) New theming system docs
-
-
-
-;; 1 day
-;; branch ----------------------------------------------------------------------
-;; 7) - (stab at)
-;;    - Figure out how to pull in css from sources with relative file path 
-
-
-;; 1 day
-;; branch ----------------------------------------------------------------------
-;; Add to playground
-;; - link
-;; - divisor
-;; - accordian
-;; - avatar
-;; - label
-
-;; Make sure styled scrollbars working for modals etc.
-
-;; branch ----------------------------------------------------------------------
-;; 10)  
-;;      Later:
-;;      3b) 
-;;          - Figure out how to index and save non-base shared styles in .edn or smthg
-;;          - kushi-theming
-;;          - kushi-ui-shared
-;;          - user-shared
-
-;;      3d) Hydrate args that use shared sources (what?)
-;;      3e) Maybe resave hydrated shared sources without infinite loop?
-;;      3f) Write styles
-
-
-;; 2 days
-;; branch ----------------------------------------------------------------------
-;; 6) Add comments, docstrings, reporting.
-
-
 (defn- design-token-summary-callout [css-new]
   (callout {:type  :subtle
             :label (bling 
@@ -1389,6 +1279,7 @@
             (-> (? :data (:not-found/design-tokens @css-new))
                 :formatted
                 :string))))
+
 
 (defn analyzed-callout
   "Just for dev"
