@@ -32,8 +32,10 @@
 (def tab-attrs
   (sx :.minimal
       :fs--$small
-      :pi--0.8em
-      :pb--0.4em))
+      :pis--0.799em
+      :pie--0.8em
+      :pbs--0.4em
+      :pbe--0.399em))
 
 (defcom tab
   [button (merge-attrs 
