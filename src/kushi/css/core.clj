@@ -197,6 +197,24 @@
               bad-keyframe-warning-body
               bad-at-rule-arg-warning-body)})))
 
+
+(defn bad-args-spec-details [spec-data]
+  [[:italic (-> (? :data
+                   {:theme "Neutral Light"}
+                   (nth spec-data 0 nil))
+                :formatted
+                :string)]
+   "\n"
+   (-> (? :data
+          {:theme             "Neutral Light"
+           :display-metadata? false}
+          (with-meta (apply hash-map (rest spec-data))
+            {:fw/hide-brackets? true}))
+       :formatted
+       :string)
+   "\n\n"])
+
+
 (defn cssrule-args-warning
   "Prints warning"
   [{:keys [fname          
@@ -230,23 +248,11 @@
            "All args are validated with:")
          "\n"
          [:bold.italic (str ::specs/valid-sx-arg)]
-         "\n\n"
-         [:italic (-> (? :data
-                         {:theme "Neutral Light"}
-                         (nth spec-data 0 nil))
-                      :formatted
-                      :string)]
-         "\n"
-         (-> (? :data
-                {:theme             "Neutral Light"
-                 :display-metadata? false}
-                (with-meta (apply hash-map (rest spec-data))
-                  {:fw/hide-brackets? true}))
-             :formatted
-             :string)
-         
-         "\n\n"
-         "The bad arguments will be discarded, and"
+         "\n\n"]
+        
+        (when false (bad-args-spec-details spec-data))
+        
+        ["The bad arguments will be discarded, and"
          "\n"
          "the following css ruleset will be created"
          "\n"
@@ -713,22 +719,25 @@
 
 (defn ansi-colorized-css-block
   [{:keys [args &form &env block display-selector? sel] :as m}]
-  (let [sel   (when (or (not block)
-                        display-selector?)
-                (bling [:blue (or (some-> sel (str " "))
-                                  (str "." (loc-id &env &form) " "))]))
-        block (or block
-                  (nested-css-block args
-                                    &form
-                                    &env
-                                    "kushi.css.core/css-block"
-                                    sel))
-        blue  #(bling [:blue (second %)] " {")
-        block (-> block 
-                  (sr #";" #(bling [:gray %]))
-                  (sr #"^([^\{]+) \{" blue)
-                  (sr #"(\&[^ ]+) \{" blue)
-                  (sr #"(.+): " #(bling [:magenta (second %)] [:gray ": "])))]
+  (let [styled-sel-kw :bold
+        sel           (when (or (not block)
+                                display-selector?)
+                        (bling [styled-sel-kw
+                                (or (some-> sel (str " "))
+                                    (str "." (loc-id &env &form) " "))]))
+        block         (or block
+                          (nested-css-block args
+                                            &form
+                                            &env
+                                            "kushi.css.core/css-block"
+                                            sel))
+        styled-sel    #(bling [styled-sel-kw (second %)] " {")
+        block         (-> block 
+                          (sr #";" #(bling [:gray %]))
+                          (sr #"^([^\{]+) \{" styled-sel)
+                          (sr #"(\&[^ ]+) \{" styled-sel)
+                          (sr #"(.+): " #(bling [:italic (second %)]
+                                                [:gray ": "])))]
     (str sel block)))
 
 
@@ -846,74 +855,79 @@
 
 (defn css-rule* [sel args &form &env]
   ;; Check if user supplied bad at-rule name, forgetting a leading "@".
-  (if (bad-at-rule-name? sel)
+  (let [fname (or (when-let [sym (nth &form 0 nil)]
+                    (when (contains? '#{sx defcss} sym)
+                      (str "kushi.core/" sym)))
+                  "kushi.core/css-rule")
+] 
+   (if (bad-at-rule-name? sel)
 
-   (bad-at-rule-name-warning sel &form)
+     (bad-at-rule-name-warning sel &form)
 
-   (if (s/valid? ::specs/at-selector sel)
+     (if (s/valid? ::specs/at-selector sel)
 
-     ;; CSS at-rule -----------------------------------------------
-     (let [f (fn [sel args]
-               (str sel 
-                    " "
-                    (nested-css-block args
-                                      &form
-                                      &env
-                                      "kushi.css.core/at-rule"
-                                      sel)))]
-       (cond
-         ;; @ keyframes ---------------------------
-         (string/starts-with? sel "@keyframes")
-         (if-not (s/valid? ::specs/keyframe-selector sel)
-           (bad-at-keyframes-name-warning sel &form)
-           (let [[vecs bad-vecs] (partition-by-spec ::specs/keyframe args)]
-             (if (seq bad-vecs)
-               (bad-at-rule-arg-warning bad-vecs &form)
-               (let [blocks (for [[nested-sel m] vecs]
-                              (f (name nested-sel) [m]))]
-                 (double-nested-rule sel blocks)))))
+       ;; CSS at-rule -----------------------------------------------
+       (let [f     (fn [sel args]
+                     (str sel 
+                          " "
+                          (nested-css-block args
+                                            &form
+                                            &env
+                                            fname
+                                            sel)))]
+         (cond
+           ;; @ keyframes ---------------------------
+           (string/starts-with? sel "@keyframes")
+           (if-not (s/valid? ::specs/keyframe-selector sel)
+             (bad-at-keyframes-name-warning sel &form)
+             (let [[vecs bad-vecs] (partition-by-spec ::specs/keyframe args)]
+               (if (seq bad-vecs)
+                 (bad-at-rule-arg-warning bad-vecs &form)
+                 (let [blocks (for [[nested-sel m] vecs]
+                                (f (name nested-sel) [m]))]
+                   (double-nested-rule sel blocks)))))
 
-         ;; @ layers ------------------------------
+           ;; @ layers ------------------------------
+           ;; TODO make work with @layer to define multiple rules
+           ;; TODO - share with kushi.css.build.analyze
+           (string/starts-with? sel "@layer")
+           (if-not (s/valid? ::specs/layer-selector sel)
+             (bad-at-layer-name-warning sel &form)
+             (let [[_ layer & sel-bits]
+                   (string/split sel #"[\t\n\r\s]+")]
+               (str "@layer " layer " {\n  "
+                    (string/replace (f (string/join " " sel-bits) args)
+                                    #"\n"
+                                    "\n  ")
+                    "\n}")))
+           
+           ;; CSS at-rule with nested css rules ------
+           ;; TODO
+           ;;  - created ::nested-css-rule spec
+           ;;  - then use partition-by-spec to remove bad ones and warn
+           (every? #(and (list? %) (= (first %) 'css-rule)) args)
+           (let [blocks (for [[_ nested-sel & style-args] args]
+                          (f nested-sel style-args))]
+             (double-nested-rule sel blocks))
+           
+           ;; @ CSS rule with no nested rules --------
+           :else
+           (do (f sel args))))
 
-         ;; TODO make work with @layer to define multiple rules
-         ;; TODO - share with kushi.css.build.analyze
-         (string/starts-with? sel "@layer")
-         (if-not (s/valid? ::specs/layer-selector sel)
-           (bad-at-layer-name-warning sel &form)
-           (let [[_ layer & sel-bits]
-                 (string/split sel #"[\t\n\r\s]+")]
-             (str "@layer " layer " {\n  "
-                  (string/replace (f (string/join " " sel-bits) args)
-                                  #"\n"
-                                  "\n  ")
-                  "\n}")))
-         
-         ;; CSS at-rule with nested css rules ------
-         ;; TODO
-         ;;  - created ::nested-css-rule spec
-         ;;  - then use partition-by-spec to remove bad ones and warn
-         (every? #(and (list? %) (= (first %) 'css-rule)) args)
-         (let [blocks (for [[_ nested-sel & style-args] args]
-                        (f nested-sel style-args))]
-           (double-nested-rule sel blocks))
-         
-         ;; @ CSS rule with no nested rules --------
-         :else
-         (do (f sel args))))
-
-    ;; Normal css-rule -------------------------------------------
-     (if-not (s/valid? ::specs/css-selector sel)
-       (rule-selector-warning (if (map? sel)
-                                (:selector sel)
-                                sel)
-                              &form)
-       (let [sel (if (map? sel) (:selector sel) sel)]
-         (when-let [css-str (nested-css-block args
-                                              &form
-                                              &env
-                                              "kushi.css.core/css-rule"
-                                              sel)]
-           (str sel " " css-str)))))))
+       ;; Normal css-rule -------------------------------------------
+       (if-not (s/valid? ::specs/css-selector sel)
+         (rule-selector-warning (if (map? sel)
+                                  (:selector sel)
+                                  sel)
+                                &form)
+         (let [sel (if (map? sel) (:selector sel) sel)]
+           
+           (when-let [css-str (nested-css-block args
+                                                &form
+                                                &env
+                                                fname
+                                                sel)]
+             (str sel " " css-str))))))))
 
 
 (defmacro ^:public css-rule
