@@ -271,7 +271,7 @@
   :.foreground-secondary
   :.neutralize
   :ai--c
-  :height--$navbar-height)
+  :min-height--$navbar-height)
 
 
 (defcss "@layer kushi-playground-shared .component-section-header-label"
