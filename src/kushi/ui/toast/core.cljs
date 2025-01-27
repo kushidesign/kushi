@@ -1,7 +1,6 @@
 (ns kushi.ui.toast.core
   (:require [domo.core :as domo]
             [kushi.css.core :refer [utilize register-design-tokens-by-category]]
-            [kushi.css.util :refer [keyed]]
             [kushi.ui.dom.pane.core :as pane]
             [kushi.ui.dom.pane.placement :refer [user-placement]]
             [kushi.ui.dom.pane.styles]
@@ -239,13 +238,13 @@
           ;;        in this ns, instead of in kushi.ui.dom.pane.core, then
           ;;        pass it to append-pane! as an opt in this map maybe with key
           ;;        of append-toast!
-          opts            (keyed [placement-kw
-                                  auto-dismiss?
-                                  pane-type
-                                  user-rendering-fn
-                                  slide-in?
-                                  reduced-motion?
-                                  toast-class])]
+          opts            {:placement-kw      placement-kw
+                           :auto-dismiss?     auto-dismiss?
+                           :pane-type         pane-type
+                           :user-rendering-fn user-rendering-fn
+                           :slide-in?         slide-in?
+                           :reduced-motion?   reduced-motion?
+                           :toast-class       toast-class}]
       (merge 
        ;; TODO should be :data-kushi-ui-pane-placement = se
        ;; and :data-kushi-ui-pane-type = toast

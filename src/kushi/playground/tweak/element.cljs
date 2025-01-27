@@ -1,4 +1,4 @@
-;; Experimental, unused !!!
+;; Experimental, unused for now
 ;; TODO - rewrite this ns with reframe
 
 (ns kushi.playground.tweak.element
@@ -6,7 +6,6 @@
             [clojure.edn :as edn]
             [clojure.spec.alpha :as s]
             [kushi.css.core :refer [sx defcss merge-attrs]]
-            [kushi.css.util :refer (keyed)]
             [kushi.specs2 :as specs2]
             [kushi.css.shorthand :as shorthand]
             [kushi.ui.button.core :refer [button]]
@@ -732,83 +731,88 @@
                    [control
                     {:-css-prop css-prop
                      :-profile  profile}
-                    [slider (merge (keyed [css-prop css-value target-els unit-type]))]]
+                    [slider (merge {:css-prop   css-prop
+                                    :css-value  css-value
+                                    :target-els target-els
+                                    :unit-type  unit-type})]]
 
                    (= category :class)
                    [control
                     {:-css-prop css-prop
                      :-profile  profile}
-                    [(:control-type profile) (keyed [target-els classes profile])]]
+                    [(:control-type profile) {:target-els target-els
+                                              :classes classes
+                                              :profile profile}]]
 
                    :else
                    nil))
 
-               #_(let [profile {:category :class}]
-                   [
-                    [control
-                     {:-utility-family "Semantic"}
-                     [semantic-slider (assoc (keyed [target-els classes])
-                                             :css-property
-                                             "color"
-                                             :default-value
-                                             "neutral"
-                                             :category
-                                             :semantic )]]
+              ;;  (let [profile {:category :class}]
+              ;;      [
+              ;;       [control
+              ;;        {:-utility-family "Semantic"}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "color"
+              ;;                                :default-value
+              ;;                                "neutral"
+              ;;                                :category
+              ;;                                :semantic )]]
 
-                    [control
-                     {:-utility-family "Flexbox"
-                      :-profile        profile}
-                     [semantic-slider (assoc (keyed [target-els classes])
-                                             :css-property
-                                             "flex"
-                                             :default-value
-                                             "flex-row-fs"
-                                             :category
-                                             :flex)]]
+              ;;       [control
+              ;;        {:-utility-family "Flexbox"
+              ;;         :-profile        profile}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "flex"
+              ;;                                :default-value
+              ;;                                "flex-row-fs"
+              ;;                                :category
+              ;;                                :flex)]]
 
-                    [control
-                     {:-utility-family "Type size"
-                      :-profile        profile}
-                     [semantic-slider (assoc (keyed [target-els classes])
-                                             :css-property
-                                             "font-size"
-                                             :default-value
-                                             "medium"
-                                             :category
-                                             :size-expanded)]]
+              ;;       [control
+              ;;        {:-utility-family "Type size"
+              ;;         :-profile        profile}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "font-size"
+              ;;                                :default-value
+              ;;                                "medium"
+              ;;                                :category
+              ;;                                :size-expanded)]]
 
-                    [control
-                     {:-utility-family "Type weight"
-                      :-profile        profile}
-                     [semantic-slider (assoc (keyed [target-els classes])
-                                             :css-property
-                                             "font-weight"
-                                             :default-value
-                                             "normal"
-                                             :category
-                                             :weight)]]
-                    [control
-                     {:-utility-family "Elevation"
-                      :-profile        profile}
-                     [semantic-slider (assoc (keyed [target-els classes])
-                                             :css-property
-                                             "box-shadow"
-                                             :default-value
-                                             "elevated-0"
-                                             :category
-                                             :elevation)]]
-                    [control
-                     {:-utility-family "Type tracking"
-                      :-profile        profile}
-                     [semantic-slider (assoc (keyed [target-els classes])
-                                             :css-property
-                                             "letter-spacing"
-                                             :default-value
-                                             "default-tracking"
-                                             :category
-                                             :tracking)]]
+              ;;       [control
+              ;;        {:-utility-family "Type weight"
+              ;;         :-profile        profile}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "font-weight"
+              ;;                                :default-value
+              ;;                                "normal"
+              ;;                                :category
+              ;;                                :weight)]]
+              ;;       [control
+              ;;        {:-utility-family "Elevation"
+              ;;         :-profile        profile}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "box-shadow"
+              ;;                                :default-value
+              ;;                                "elevated-0"
+              ;;                                :category
+              ;;                                :elevation)]]
+              ;;       [control
+              ;;        {:-utility-family "Type tracking"
+              ;;         :-profile        profile}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "letter-spacing"
+              ;;                                :default-value
+              ;;                                "default-tracking"
+              ;;                                :category
+              ;;                                :tracking)]]
 
-                    ])
+              ;;       ])
 
                ;; Close Modal, Reset, and copy code controls
                [

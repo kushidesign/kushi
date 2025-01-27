@@ -4,7 +4,6 @@
    [applied-science.js-interop :as j]
    [goog.string]
    [domo.core :as domo]
-   [kushi.ui.core :refer (keyed)]
    [kushi.ui.util :as util :refer [maybe]]
    [kushi.ui.dom.pane.core :as pane]
    [kushi.ui.dom.pane.placement :refer [user-placement]]
@@ -15,8 +14,7 @@
                            merge-attrs
                            css-vars-map
                            register-design-tokens
-                           register-design-tokens-by-category]]
-   [kushi.css.util :refer [keyed]]))
+                           register-design-tokens-by-category]]))
 
 (register-design-tokens-by-category
  "elevation"
@@ -237,14 +235,14 @@
           placement-kw (or (maybe placement #(= % :auto))
                            (user-placement placement))
           pane-type    :popover
-          opts         (keyed [placement-kw
-                               arrow?
-                               auto-dismiss?
-                               pane-type
-                               user-rendering-fn
-                               user-pane-class
-                               user-pane-style
-                               popover-class])]
+          opts         {:placement-kw      placement-kw
+                        :arrow?            arrow?
+                        :auto-dismiss?     auto-dismiss?
+                        :pane-type         pane-type
+                        :user-rendering-fn user-rendering-fn
+                        :user-pane-class   user-pane-class
+                        :user-pane-style   user-pane-style
+                        :popover-class     popover-class}]
       (merge 
        {:data-kushi-ui-pane (name placement-kw)}
        {:on-click (partial pane/append-pane! opts)}

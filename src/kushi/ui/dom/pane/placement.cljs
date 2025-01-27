@@ -2,7 +2,6 @@
   (:require [clojure.string :as string]
             [domo.core :as domo]
             [goog.string]
-            [kushi.css.util :refer (keyed)]
             [kushi.ui.util :refer [as-str calc ck? maybe]]))
 
 (def ^:private non-corner-placements
@@ -116,13 +115,16 @@
         inline-then-block? (and p1-inline? p2-block?)
         block-then-inline? (and p1-block? p2-inline?)
         p1+p2              (or inline-then-block? block-then-inline?)]
-    (keyed [p1-inline?         
-            p1-block?          
-            p2-inline?         
-            p2-block?          
-            inline-then-block? 
-            block-then-inline? 
-            p1+p2])
+
+    ;; TODO - use let-map?
+    #_{:p1-inline?         p1-inline?         
+     :p1-block?          p1-block?          
+     :p2-inline?         p2-inline?         
+     :p2-block?          p2-block?          
+     :inline-then-block? inline-then-block? 
+     :block-then-inline? block-then-inline? 
+     :p1+p2              p1+p2}
+
     (if (or (and (= corner "corner") p1+p2)
             p1+p2
             (and (nil? corner)
@@ -186,7 +188,14 @@
                                 string/join
                                 keyword)
             ret            (get corner-placements-tla ret ret)]
-        (keyed [p1 p2 corner corner? placement-vec ret])
+
+        #_{:p1            p1
+         :p2            p2
+         :corner        corner
+         :corner?       corner?
+         :placement-vec placement-vec
+         :ret           ret}
+
         ret))))
 
 (def ^:private translate-xy
@@ -459,13 +468,15 @@
                            :ltc :rtc
                            :blc :brc
                            :lbc :rbc})]
-    (keyed [block-start?       
-            block-end?         
-            block-plc? 
-            inline-start?      
-            inline-end?        
-            inline-plc?
-            corner-plc?])))
+    ;; TODO use let-map
+    {:block-start?  block-start?       
+     :block-end?    block-end?         
+     :block-plc?    block-plc? 
+     :inline-start? inline-start?      
+     :inline-end?   inline-end?        
+     :inline-plc?   inline-plc?
+     :corner-plc?   corner-plc?
+     }))
 
 (defn el-plc
   "Returns a map describing placement metrics of pane,
@@ -508,34 +519,38 @@
                 y-fraction]} (domo/client-rect el)
         s?         (< (- (:inner-height-without-scrollbars viewport)
                          edge-threshold)
-                           bottom)
+                      bottom)
         n?         (< top edge-threshold)
         w?         (< left edge-threshold)
         e?         (< (- (:inner-width-without-scrollbars viewport)
                          edge-threshold)
-                           right)
+                      right)
         on-edge?        (or n? s? w? e?)
         sw?        (and s? w?)
         nw?        (and n? w?)
         ne?        (and n? e?)
         se?        (and s? e?)
         on-corner?      (or ne? se? sw? nw?)]
-        (keyed [n?  
-                ne?  
-                e?  
-                se?  
-                s?  
-                sw?  
-                w?  
-                nw?  
-                on-corner?
-                on-edge?
-                top
-                bottom
-                left
-                right
-                y-center
-                center
-                x-fraction
-                y-fraction])))
+
+        ;; TODO use let-map
+    
+    {:n?         n?  
+     :ne?        ne?  
+     :e?         e?  
+     :se?        se?  
+     :s?         s?  
+     :sw?        sw?  
+     :w?         w?  
+     :nw?        nw?  
+     :on-corner? on-corner?
+     :on-edge?   on-edge?
+     :top        top
+     :bottom     bottom
+     :left       left
+     :right      right
+     :y-center   y-center
+     :center     center
+     :x-fraction x-fraction
+     :y-fraction y-fraction
+     }))
  

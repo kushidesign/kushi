@@ -4,7 +4,6 @@
             [domo.core :as domo] ;; Import this to create defclasses
             [goog.functions]
             [goog.string]
-            [kushi.css.util :refer (keyed)]
             [kushi.ui.dom.pane.placement :refer [el-plc og-placement
                                                  owning-el-rect-cp pane-plc
                                                  placement-css-custom-property
@@ -74,7 +73,12 @@
         x-center   (domo/round-by-dpr (- right (/ width 2)))
         y-center   (domo/round-by-dpr (- bottom (/ height 2)))]
     (merge owning-el-rect
-           (keyed [top left bottom right x-center y-center]))))
+           {:top      top
+            :left     left
+            :bottom   bottom
+            :right    right
+            :x-center x-center
+            :y-center y-center})))
 
 
 (defn- append-pane-el!
@@ -191,11 +195,11 @@
         tt-pos-og       (pane-plc placement-kw)
         el              (js/document.createElement "div")
         append-tt-opts  (merge opts
-                               (keyed [el
-                                       id
-                                       placement-kw
-                                       tt-pos-og 
-                                       arrow?]))]
+                               {:el           el
+                                :id           id
+                                :placement-kw placement-kw
+                                :tt-pos-og    tt-pos-og 
+                                :arrow?       arrow?})]
 
     ;; TODO - this causes fireworks error
     ;; (? append-tt-opts)
@@ -217,7 +221,8 @@
           vpp                  (el-plc viewport el 0)
           new-placement-kw     (updated-pane-placement
                                 (merge tt-pos-og
-                                       (keyed [vpp placement-kw])))
+                                       {:vpp          vpp
+                                        :placement-kw placement-kw}))
 
           tt-pos               (pane-plc new-placement-kw)
 
@@ -245,17 +250,18 @@
           el                   (js/document.createElement "div")
 
           append-tt-opts-part2 (merge opts
-                                      (keyed [el
-                                              id 
-                                              arrow?
-                                              
-                                              ;; is this right?
-                                              ;; why not new-placement-kw
-                                              placement-kw 
-                                              
-                                              ;; is this right or tt-pos better?
-                                              tt-pos-og
-                                              new-placement-kw]))]
+                                      {:el               el
+                                       :id               id 
+                                       :arrow?           arrow?
+                                       
+                                       ;; is this right?
+                                       ;; why not new-placement-kw
+                                       :placement-kw     placement-kw 
+                                       
+                                       ;; is this right or tt-pos better?
+                                       :tt-pos-og        tt-pos-og
+                                       :new-placement-kw new-placement-kw
+                                       })]
 
       (append-pane-el! append-tt-opts-part2)
       
@@ -304,7 +310,8 @@
            tt-pos-og           (pane-plc placement-kw)
            new-placement-kw    (updated-pane-placement
                                 (merge tt-pos-og
-                                       (keyed [vpp placement-kw])))
+                                       {:vpp          vpp
+                                        :placement-kw placement-kw}))
            new-placement-class (some->> new-placement-kw
                                         name
                                         (str "kushi-pane-"))]
@@ -521,10 +528,11 @@
                                  :toast
                                  (:toast-class opts)
                                  nil)
-           opts                (merge opts (keyed [pane-type
-                                                   user-pane-class
-                                                   owning-el
-                                                   dialog-el]))]
+           opts                (merge opts 
+                                      {:pane-type       pane-type
+                                       :user-pane-class user-pane-class
+                                       :owning-el       owning-el
+                                       :dialog-el       dialog-el})]
 
        (when-not (or (and (= pane-type :tooltip)
                           existing-popover)

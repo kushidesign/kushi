@@ -1,6 +1,5 @@
 (ns kushi.ui.modal.core
   (:require [kushi.ui.icon.core :refer (icon)]
-            [fireworks.core :refer [? !? ?> !?>]]
             [kushi.ui.button.core :refer [button]]
             [clojure.string :as string]
             [domo.core :as domo]
@@ -87,7 +86,9 @@
                        :.minimal
                        :.pill
                        :.large
-                       :padding--0.5rem
+                       :pb--0.5rem
+                       :pis--0.5rem
+                       :pie--0.499rem
                        {:position           :absolute
                         :inset-block-start  :0.5rem
                         :inset-block-end    :unset

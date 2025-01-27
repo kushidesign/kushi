@@ -4,7 +4,6 @@
             [kushi.css.core :refer (sx css merge-attrs)]
             [kushi.css.defs]
             [kushi.css.media]
-            [kushi.css.util :refer (keyed)]
             [kushi.playground.component-docs :as docs]
             [kushi.playground.util :as util]
             [kushi.ui.button.core :refer (button)]
@@ -271,13 +270,13 @@
        (when snippets 
          [:<> 
           [example-modal-trigger modal-id]
-          [example-modal (keyed [modal-id
-                                 component-label
-                                 label
-                                 snippets-header
-                                 snippets
-                                 component-reqs
-                                 example-reqs])]])]
+          [example-modal {:modal-id        modal-id
+                          :component-label component-label
+                          :label           label
+                          :snippets-header snippets-header
+                          :snippets        snippets
+                          :component-reqs  component-reqs
+                          :example-reqs    example-reqs}]])]
 
       
       (into [:div (merge-attrs
@@ -288,8 +287,8 @@
               [example-row-variant
                component
                (merge example-opts
-                      (keyed [variant-attrs
-                              reqs-by-refers]))]))]]))
+                      {:variant-attrs  variant-attrs
+                       :reqs-by-refers reqs-by-refers})]))]]))
 
 
 ;;; New snippet code

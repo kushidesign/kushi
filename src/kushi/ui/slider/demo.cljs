@@ -1,6 +1,5 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.slider.demo
   (:require [kushi.css.core :refer (sx)]
-            [kushi.css.util :refer (keyed)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.slider.core :refer [slider]]))
@@ -10,7 +9,7 @@
                             :_.instance-code:max-width--500px
                             :mb--2rem:1.5rem)
         container-attrs (sx :gtc--1fr)
-        m               (keyed [row-attrs container-attrs])
+        m               {:row-attrs row-attrs :container-attrs container-attrs}
         f               (fn example-map 
                           ([desc code]
                            (example-map desc code nil))

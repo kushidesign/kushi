@@ -4,7 +4,6 @@
             [domo.core :as domo]
             [goog.string]
             [kushi.css.core :refer (token->ms register-design-tokens-by-category)]
-            [kushi.css.util :refer (keyed)]
             [kushi.ui.dom.pane.core :as pane] [kushi.ui.util :as util :refer [maybe]]
             ;; Import this styles ns to create defclasses
             [kushi.ui.dom.pane.placement :refer [user-placement]]
@@ -226,11 +225,11 @@
           placement-kw (or (maybe placement #(= % :auto))
                            (user-placement placement))
           pane-type    :tooltip
-          opts         (keyed [tooltip-text
-                               placement-kw
-                               arrow?
-                               pane-type
-                               tooltip-class])]
+          opts         {:tooltip-text  tooltip-text
+                        :placement-kw  placement-kw
+                        :arrow?        arrow?
+                        :pane-type     pane-type
+                        :tooltip-class tooltip-class}]
       (merge 
        {:data-kushi-ui-pane (name placement-kw)
         :on-mouse-enter     (partial pane/append-pane! opts)}
