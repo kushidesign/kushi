@@ -1143,7 +1143,8 @@
 (def lightning-options-via-user-config
   {:input-path  "./public/css/main.css"
    :output-path "./public/css/bundle.css"
-   :targets     ">= 0.25%"})
+   :targets     ">= 0.25%"
+   })
 
 (defn bad-bundle-path-warning
   [{:keys [k must-be supplied extra]

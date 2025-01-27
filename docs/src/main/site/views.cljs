@@ -118,7 +118,8 @@
                    :label   "Components Playground"}
    ["colors"]     {:content about/kushi-colors-about}
    ["typography"] {:content about/kushi-typography-about}
-   ["intro"]      {:content about/kushi-about}})
+   ["intro"]      {:content about/kushi-about}
+   })
 
 (defn main-view []
   (.setAttribute (domo/el-by-id "app")

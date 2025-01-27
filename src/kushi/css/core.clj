@@ -5,7 +5,7 @@
    [kushi.css.defs :as defs]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as specs]
-   [kushi.css.util :refer [keyed vec-of-vecs? more-than-one? partition-by-pred]]
+   [kushi.util :refer [keyed vec-of-vecs? more-than-one? partition-by-pred]]
    [kushi.specs2 :as specs2]
    [clojure.walk :as walk :refer [prewalk postwalk]]
    [clojure.string :as string :refer [replace] :rename {replace sr}]

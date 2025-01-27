@@ -8,10 +8,10 @@
    [kushi.css.media :as media]
    [kushi.css.shorthand :as shorthand]
    [kushi.css.specs :as specs]
-   [kushi.css.util :refer [keyed
-                           vec-of-vecs?
-                           more-than-one?
-                           partition-by-pred]]))
+   [kushi.util :refer [keyed
+                       vec-of-vecs?
+                       more-than-one?
+                       partition-by-pred]]))
 
 ;; TODO - would there ever be any quoted backticks in css val?
 (defn str+ [s]

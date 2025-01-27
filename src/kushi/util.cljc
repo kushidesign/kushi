@@ -1,6 +1,7 @@
-(ns ^:dev/always kushi.util
-  (:require
-   [clojure.string :as string]))
+(ns kushi.util
+  (:require [clojure.string :as string])
+  #?(:cljs
+     (:require-macros [kushi.util])))
 
 (defn nameable? [x]
   (or (string? x) (keyword? x) (symbol? x)))
@@ -115,8 +116,10 @@
         (cons (first coll) (replace-nth (dec index) item (rest coll))))))))
 
 (defn- editable? [coll]
-  #?(:clj  (instance? clojure.lang.IEditableCollection coll)
-     :cljs (satisfies? cljs.core/IEditableCollection coll)))
+  #?(:cljs
+     (satisfies? cljs.core/IEditableCollection coll)
+     :clj
+     (instance? clojure.lang.IEditableCollection coll)))
 
 (defn- reduce-map [f coll]
   (let [coll' (if (record? coll) (into {} coll) coll)]
@@ -152,25 +155,15 @@
     x))
 
 
-(let [transforms {:keys keyword
-                  :strs str
-                  :syms identity}]
-  (defmacro keyed
-    "Create a map in which, for each symbol S in vars, (keyword S) is a
-     key mapping to the value of S in the current scope. If passed an optional
-     :strs or :syms first argument, use strings or symbols as the keys."
-    ([vars] `(keyed :keys ~vars))
-    ([key-type vars]
-     (let [transform (comp (partial list `quote)
-                           (transforms key-type))]
-       (into {} (map (juxt transform identity) vars))))))
 
 (defn vec-of-vecs? [v]
   (and (vector? v)
        (every? vector? v)))
 
+
 (defn more-than-one? [coll]
   (> (count coll) 1))
+
 
 (defn partition-by-pred [pred coll]
   "Given a coll and a pred, returns a vector of two vectors. The first vector
@@ -182,3 +175,17 @@
                      {:valid [] :invalid []}
                      coll)]
     [(:valid ret*) (:invalid ret*)]))
+
+
+(let [transforms {:keys keyword
+                  :strs str
+                  :syms identity}]
+  (defmacro ^:public keyed
+    "Create a map in which, for each symbol S in vars, (keyword S) is a
+       key mapping to the value of S in the current scope. If passed an optional
+     :strs or :syms first argument, use strings or symbols as the keys."
+    ([vars] `(keyed :keys ~vars))
+    ([key-type vars]
+     (let [transform (comp (partial list `quote)
+                           (transforms key-type))]
+       (into {} (map (juxt transform identity) vars))))))
