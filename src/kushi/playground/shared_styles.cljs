@@ -1,7 +1,7 @@
 (ns kushi.playground.shared-styles
   (:require
    [kushi.playground.util :as util :refer-macros (let-map)]
-   [kushi.css.core :refer [defcss]]))
+   [kushi.core :refer [defcss]]))
 
 (defcss "@keyframes jiggle"
   [:0% {:transform "translate(1px, 1px) rotate(0deg) scale(1.55)"}]

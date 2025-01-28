@@ -1,6 +1,5 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.text-field.demo
-  (:require [kushi.css.core :refer (sx merge-attrs)]
-            [kushi.playground.component-examples :as component-examples]
+  (:require [kushi.core :refer (sx merge-attrs)]
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.text-field.core :refer [text-field]]))

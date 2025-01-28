@@ -1,7 +1,7 @@
 (ns kushi.ui.dom.pane.styles
   (:require
    [goog.string]
-   [kushi.css.core :refer (defcss)]))
+   [kushi.core :refer (defcss)]))
 
 (defcss "@layer kushi-ui-shared .kushi-pane"
   :position--fixed

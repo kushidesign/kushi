@@ -1,6 +1,6 @@
 (ns kushi.devtools.dom.overlay
   (:require
-   [kushi.css.core :refer [sx css defcss css-vars-map]]))
+   [kushi.core :refer [sx css defcss css-vars-map]]))
 
 ;; TODO - USE before and/or after pseudos with svg bg images to do the coloring of the margins and padding
 

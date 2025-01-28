@@ -2,7 +2,7 @@
   (:require [domo.core :as domo]
             [clojure.string :as string]
             [kushi.ui.divisor.core :refer (divisor)]
-            [kushi.css.core :refer [sx css merge-attrs defcss]]
+            [kushi.core :refer [sx css merge-attrs defcss]]
             [kushi.ui.core :refer [defcom]]
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.spinner.core :refer [propeller]]

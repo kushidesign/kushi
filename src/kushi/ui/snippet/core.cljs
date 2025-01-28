@@ -1,6 +1,6 @@
 (ns kushi.ui.snippet.core
   (:require
-   [kushi.css.core :refer (sx css merge-attrs)]
+   [kushi.core :refer (sx css merge-attrs)]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.icon.core :refer (icon)]

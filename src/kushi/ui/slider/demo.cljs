@@ -1,6 +1,5 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.slider.demo
-  (:require [kushi.css.core :refer (sx)]
-            [kushi.playground.component-examples :as component-examples]
+  (:require [kushi.core :refer (sx)]
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.slider.core :refer [slider]]))
 

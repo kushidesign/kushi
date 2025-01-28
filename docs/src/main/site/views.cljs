@@ -1,7 +1,6 @@
 (ns site.views
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.css.core :refer [css sx token->ms merge-attrs]]
+   [kushi.core :refer [css sx token->ms merge-attrs]]
    [kushi.playground.layout :as layout]
    [kushi.playground.nav :as nav]
    [kushi.playground.components :refer [playground-components]]
@@ -16,8 +15,7 @@
    [reagent.dom :refer [render]]
    [kushi.ui.modal.core :refer [modal modal-close-button open-kushi-modal close-kushi-modal]]
    [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]
-   [kushi.ui.icon.core :refer [icon]]
-   ))
+   [kushi.ui.icon.core :refer [icon]]))
 
 (js/console.clear)
 

@@ -5,7 +5,7 @@
   (:require [clojure.string :as string]
             [clojure.edn :as edn]
             [clojure.spec.alpha :as s]
-            [kushi.css.core :refer [sx defcss merge-attrs]]
+            [kushi.core :refer [sx defcss merge-attrs]]
             [kushi.specs2 :as specs2]
             [kushi.css.shorthand :as shorthand]
             [kushi.ui.button.core :refer [button]]
@@ -18,7 +18,7 @@
             [kushi.ui.util :refer [find-index]]
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
             [domo.core :refer (copy-to-clipboard!)]
-            [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
+            ;; [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
             [applied-science.js-interop :as j]
             [reagent.dom :as rdom]))
 

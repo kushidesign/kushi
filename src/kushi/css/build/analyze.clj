@@ -6,7 +6,7 @@
    [edamame.core :as e]
    [kushi.css.build.utility-classes :as utility-classes]
    [kushi.css.build.tokens :refer [design-tokens-by-category]]
-   [kushi.css.core :refer [css-rule*]]
+   [kushi.core :refer [css-rule*]]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as kushi-specs]
    [kushi.util :refer [maybe keyed]]
@@ -95,8 +95,8 @@
   (or (some #(string/starts-with? s %) coll)
       (string/starts-with? s "kushi/ui")
       (string/starts-with? s "kushi/playground")
-      (= s "kushi/css/core.cljs");; <- this is for using css-include to pull in
-                                 ;;    build/kushi-reset.css (or others for dev)
+      (= s "kushi/core.cljs") ;; <- this is for using css-include to pull in
+                              ;;    build/kushi-reset.css (or others for dev)
       ))
 
 
@@ -118,7 +118,7 @@
     (seq used-macros)))
 
 
-;; TODO - share with kushi.css.core
+;; TODO - share with kushi.core
 (defn- layer+sel [sel-og]
   (if (string/starts-with? sel-og "@layer")
     (let [[_ layer & sel-bits]
@@ -1054,7 +1054,7 @@
         
 
 (defn hook* [config filtered-build-sources release?]
-  (!? 'kushi.css.core/hook*:config config)
+  (!? 'kushi.core/hook*:config config)
   (let [user-design-tokens
         (user-design-tokens (:theme config))
 
@@ -1159,9 +1159,9 @@
 
 (defn- create-css-bundle []
   (let [opts  lightning-options-via-user-config
-        flags (kushi.css.core/lightning-cli-flags
+        flags (kushi.core/lightning-cli-flags
                (dissoc opts :input-path :output-path)
-               (-> kushi.css.core/lightning-opts
+               (-> kushi.core/lightning-opts
                    (dissoc :browserslist)
                    (assoc :bundle true)))
         in    (:input-path opts)
@@ -1359,7 +1359,7 @@
               :append false)]))
 
 ;; namespaces-using-kushi-macros is an array-map, produced by filtering
-;; the build-state for namespaces which pull in kushi.css.core macros
+;; the build-state for namespaces which pull in kushi.core macros
 ;;
 ;; Example entry:
 ;; {[:shadow.build.classpath/resource "mvp.browser.cljs"]

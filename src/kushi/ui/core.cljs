@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.ui.core
   (:require-macros [kushi.ui.core])
   (:require [clojure.string :as string]
-            [kushi.css.core :refer [merge-attrs]]))
+            [kushi.core :refer [merge-attrs]]))
 
 (defn with-hashed-keys [coll]
   (map-indexed (fn [idx x] ^{:key (str (hash x) "-" idx)} x) coll))

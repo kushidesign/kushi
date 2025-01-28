@@ -1,8 +1,9 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.spinner.demo
   (:require 
-   [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.css.core :refer [sx css merge-attrs css-vars-map]]
-   [kushi.playground.component-examples :as component-examples :refer [sizes-snippet-map]]
+   [kushi.core :refer [sx merge-attrs]]
+   [kushi.playground.component-examples
+    :as component-examples
+    :refer [sizes-snippet-map]]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.icon.core :refer [icon]]

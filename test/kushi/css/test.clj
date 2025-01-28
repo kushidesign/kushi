@@ -4,7 +4,7 @@
             [fireworks.core :refer [? !? ?> !?>]]
             [bling.core :refer [bling callout]]
             [kushi.css.defs]
-            [kushi.css.core :refer [ansi-colorized-css-block
+            [kushi.core :refer [ansi-colorized-css-block
                                     css-block-data
                                     css-block
                                     nested-css-block

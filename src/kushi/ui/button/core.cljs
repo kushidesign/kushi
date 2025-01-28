@@ -1,9 +1,9 @@
 (ns kushi.ui.button.core
   (:require
-   [kushi.css.core :refer (css
-                           css-vars-map
-                           merge-attrs
-                           register-design-tokens)]
+   [kushi.core :refer (css
+                       css-vars-map
+                       merge-attrs
+                       register-design-tokens)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.icon.core :refer (icon)]))
 

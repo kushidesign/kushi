@@ -1,6 +1,6 @@
 ;; TODO - determine how much in this namespace can be done in macro-land
 
-(ns kushi.css.inject
+(ns kushi.inject
   (:require [clojure.string :as string]))
 
 ;; -----------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 (ns kushi.playground.ui
   (:require
-   [kushi.css.core :refer [sx merge-attrs]]
+   [kushi.core :refer [sx merge-attrs]]
    [kushi.ui.label.core :refer [label]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg]
@@ -29,8 +29,10 @@
             {:on-click #(lightswitch!)}
             &attrs)
    [label light-mode-label-attrs
+    ;; TODO put mui back in
     [icon :light-mode #_mui.svg/light-mode]]
    [label dark-mode-label-attrs
+    ;; TODO put mui back in
     [icon :dark-mode #_mui.svg/dark-mode]]])
 
 (defn desktop-lightswitch []

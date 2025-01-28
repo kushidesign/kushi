@@ -1,7 +1,7 @@
 (ns kushi.playground.tweak.typescale
   (:require [clojure.string :as string]
             [clojure.data :as data]
-            [kushi.css.core :refer [sx css merge-attrs css-vars-map]]
+            [kushi.core :refer [sx css merge-attrs css-vars-map]]
             [domo.core :as domo]
             [kushi.ui.label.core :refer [label]]
             [kushi.ui.button.core :refer [button]]

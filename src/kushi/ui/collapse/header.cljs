@@ -1,6 +1,6 @@
 (ns kushi.ui.collapse.header
   (:require 
-   [kushi.css.core :refer [css sx css-vars-map]]
+   [kushi.core :refer [css sx css-vars-map]]
    [clojure.string :as string]
    [kushi.ui.icon.core]
    [kushi.ui.label.core]))

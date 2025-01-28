@@ -1,9 +1,8 @@
 (ns kushi.playground.about
   (:require [clojure.string :as string]
             [domo.core :refer (copy-to-clipboard!)]
-            [me.flowthing.pp :refer [pprint]]
             [kushi.color :refer [colors->tokens]]
-            [kushi.css.core :refer (sx css merge-attrs css-vars-map)]
+            [kushi.core :refer (sx css merge-attrs css-vars-map)]
             [kushi.playground.colors :as playground.colors]
             [kushi.playground.nav :refer [route!]]
             [kushi.playground.shared-styles]
@@ -12,7 +11,8 @@
             [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.link.core :refer [link]]
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-            [kushi.ui.tooltip.core :refer [tooltip-attrs]]))
+            [kushi.ui.tooltip.core :refer [tooltip-attrs]]
+            [me.flowthing.pp :refer [pprint]]))
 
 (defn alias-global-mapping-row [a g]
   [:<>

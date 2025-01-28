@@ -1,7 +1,7 @@
 (ns kushi.playground.sidenav
   (:require
    [domo.core :as d]
-   [kushi.css.core :refer (sx css merge-attrs)]
+   [kushi.core :refer (sx css merge-attrs)]
    [kushi.css.defs]
    [kushi.css.media]
    [kushi.ui.util :refer [as-str]]

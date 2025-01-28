@@ -1,9 +1,9 @@
 (ns kushi.ui.collapse.core
   (:require
-   [kushi.css.core :refer [css sx css-vars-map merge-attrs]]
+   [kushi.core :refer [css sx css-vars-map merge-attrs]]
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
-   [kushi.ui.core :refer (defcom opts+children)]
+   [kushi.ui.core :refer (opts+children)]
    [domo.core :as domo]))
 
 ;; TODO - How to tie children to id of collapse?

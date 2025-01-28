@@ -1,6 +1,6 @@
 (ns kushi.ui.toast.core
   (:require [domo.core :as domo]
-            [kushi.css.core :refer [utilize register-design-tokens-by-category]]
+            [kushi.core :refer [utilize register-design-tokens-by-category]]
             [kushi.ui.dom.pane.core :as pane]
             [kushi.ui.dom.pane.placement :refer [user-placement]]
             [kushi.ui.dom.pane.styles]

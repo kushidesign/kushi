@@ -1,7 +1,7 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.toast.demo
   (:require
    [goog.string]
-   [kushi.css.core :refer (sx css merge-attrs)]
+   [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.button.core :refer [button]]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]

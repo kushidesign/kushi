@@ -2,11 +2,9 @@
   (:require
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg ]
-   [kushi.ui.button.core :refer [button]]
    [kushi.ui.popover.core :refer [dismiss-popover!]]
    [kushi.ui.text-field.core :refer [text-field]]
-   [kushi.css.core :refer (sx css merge-attrs)]
-   [kushi.playground.component-examples :as component-examples]
+   [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.popover.core :refer [popover-attrs]]

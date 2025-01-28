@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.playground.component-examples
-  (:require [clojure.string :as string] ;; [clojure.walk :as walk]
+  (:require [clojure.string :as string]
             [domo.core :as d]
-            [kushi.css.core :refer (sx css merge-attrs)]
+            [kushi.core :refer (sx css merge-attrs)]
             [kushi.css.defs]
             [kushi.css.media]
             [kushi.playground.component-docs :as docs]

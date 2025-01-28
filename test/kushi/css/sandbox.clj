@@ -6,7 +6,7 @@
             [fireworks.core :refer [? !? ?> !?>]]
             [bling.core :refer [bling callout]]
             [kushi.css.defs]
-            [kushi.css.core :refer [css-block-data
+            [kushi.core :refer [css-block-data
                                     css-block
                                     css-rule
                                     css

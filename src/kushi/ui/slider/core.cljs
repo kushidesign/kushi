@@ -2,7 +2,7 @@
   kushi.ui.slider.core
   (:require
    [applied-science.js-interop :as j]
-   [kushi.css.core :refer (css defcss css-vars-map merge-attrs)]
+   [kushi.core :refer (css defcss css-vars-map merge-attrs)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.slider.css]
    [kushi.ui.util :refer [range-of-floats find-index]]

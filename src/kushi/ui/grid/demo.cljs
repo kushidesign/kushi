@@ -1,6 +1,6 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.grid.demo
   (:require
-   [kushi.css.core :refer (sx merge-attrs)]
+   [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.grid.core :refer [grid]]))
 

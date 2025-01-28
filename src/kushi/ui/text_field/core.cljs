@@ -1,6 +1,6 @@
 (ns kushi.ui.text-field.core
   (:require
-   [kushi.css.core :refer (sx css defcss css-vars-map css-include merge-attrs)]
+   [kushi.core :refer (sx css defcss css-vars-map css-include merge-attrs)]
    [kushi.ui.core :refer (opts+children)]))
 
 (css-include "text_field.css")

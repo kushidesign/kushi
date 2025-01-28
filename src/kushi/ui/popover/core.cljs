@@ -1,6 +1,5 @@
 (ns kushi.ui.popover.core
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [applied-science.js-interop :as j]
    [goog.string]
    [domo.core :as domo]
@@ -9,12 +8,7 @@
    [kushi.ui.dom.pane.placement :refer [user-placement]]
    ;; Import this styles ns to create defclasses
    [kushi.ui.dom.pane.styles]
-   [kushi.css.core :refer [sx
-                           css
-                           merge-attrs
-                           css-vars-map
-                           register-design-tokens
-                           register-design-tokens-by-category]]))
+   [kushi.core :refer [register-design-tokens-by-category]]))
 
 (register-design-tokens-by-category
  "elevation"

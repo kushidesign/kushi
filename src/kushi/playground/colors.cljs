@@ -2,7 +2,8 @@
   (:require 
             ;; ["tinycolor2" :as tinycolor]
             [kushi.colors :as kushi.colors]
-            [kushi.css.core :refer (sx css css-vars-map trans merge-attrs)] ;;  [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
+            [kushi.core :refer (sx css css-vars-map merge-attrs)] 
+            ;;  [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
             [kushi.ui.core :refer [defcom opts+children]]
             [kushi.ui.label.core :refer [label]]))
 
@@ -132,11 +133,6 @@
               :tt--capitalize
               :pbs--2em
               :mb--2rem:1.5rem)
-          #_(trans (sx :.xlarge
-                  :.semi-bold
-                  :.capitalize
-                  :pbs--2em
-                  :mb--2rem:1.5rem))
           color-name]
          (when semantic-alias
            [:p (sx :fw--$normal :mb--1em:2.5em)

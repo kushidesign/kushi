@@ -1,6 +1,6 @@
 (ns kushi.ui.switch.core
   (:require
-   [kushi.css.core :refer (sx defcss merge-attrs)]
+   [kushi.core :refer (sx defcss merge-attrs)]
    [domo.core :as domo]
    [kushi.ui.util :as util]
    [kushi.ui.core :refer (opts+children)]))

@@ -1,6 +1,6 @@
-(ns kushi.css.core
+(ns kushi.core
   (:require 
-   [fireworks.core :refer [? !? ?> !?> pprint]]
+   [fireworks.core :refer [? !? pprint]]
    [fireworks.sample]
    [kushi.css.defs :as defs]
    [kushi.css.hydrated :as hydrated]
@@ -10,8 +10,7 @@
    [clojure.walk :as walk :refer [prewalk postwalk]]
    [clojure.string :as string :refer [replace] :rename {replace sr}]
    [clojure.spec.alpha :as s]
-   ;; TODO conditionally require fireworks pprint for clj
-   [bling.core :refer [bling callout point-of-interest stack-trace-preview]]
+   [bling.core :refer [bling callout point-of-interest]]
    [babashka.process :refer [shell]]
   ;; for testing
   ;;  [taoensso.tufte :as tufte]
@@ -729,7 +728,7 @@
                           (nested-css-block args
                                             &form
                                             &env
-                                            "kushi.css.core/css-block"
+                                            "kushi.core/css-block"
                                             sel))
         styled-sel    #(bling [styled-sel-kw (second %)] " {")
         block         (-> block 
@@ -849,7 +848,7 @@
   (nested-css-block args
                     &form
                     &env
-                    "kushi.css.core/css-block"
+                    "kushi.core/css-block"
                     nil))
 
 
@@ -858,8 +857,7 @@
   (let [fname (or (when-let [sym (nth &form 0 nil)]
                     (when (contains? '#{sx defcss} sym)
                       (str "kushi.core/" sym)))
-                  "kushi.core/css-rule")
-] 
+                  "kushi.core/css-rule")] 
    (if (bad-at-rule-name? sel)
 
      (bad-at-rule-name-warning sel &form)
@@ -1017,7 +1015,7 @@
 
 
     (if (seq class-binding) 
-       `(kushi.css.core/class-str ~classes)
+       `(kushi.core/class-str ~classes)
       (string/join " " classes))))
 
 
@@ -1029,12 +1027,12 @@
 
         expands-to
         (if (seq class-binding) 
-          `{:class (kushi.css.core/class-str ~classes)}
+          `{:class (kushi.core/class-str ~classes)}
           {:class (string/join " " classes)})]
 
     (print-css-block (assoc (keyed [args &form &env expands-to]) :sym '?css))
     (if (seq class-binding) 
-      `(kushi.css.core/class-str ~classes)
+      `(kushi.core/class-str ~classes)
       (string/join " " classes))))
 
 
@@ -1052,7 +1050,7 @@
   (let [{:keys [classes class-binding]}
         (classes+class-binding args &form &env)]
     (if (seq class-binding) 
-      `{:class (kushi.css.core/class-str ~classes)}
+      `{:class (kushi.core/class-str ~classes)}
       {:class (string/join " " classes)})))
 
 
@@ -1065,12 +1063,12 @@
 
         expands-to
         (if (seq class-binding) 
-          `{:class (kushi.css.core/class-str ~classes)}
+          `{:class (kushi.core/class-str ~classes)}
           {:class (string/join " " classes)})]
 
     (print-css-block (assoc (keyed [args &form &env expands-to]) :sym '?sx))
     (if (seq class-binding) 
-      `{:class (kushi.css.core/class-str ~classes)}
+      `{:class (kushi.core/class-str ~classes)}
       {:class (string/join " " classes)})))
 
 
@@ -1205,7 +1203,7 @@
 
 (defn lightning
   "Transforms a string of CSS using lightningcss. An (optional) user config map
-   is merged with kushi.css.core/lightning-opts, which is transformed into a
+   is merged with kushi.core/lightning-opts, which is transformed into a
    list of flags that are fed to lightningcss.
    
    Assumes that the user has installed lightningcss-cli locally or globally via
@@ -1215,7 +1213,7 @@
    Example:
    ```Clojure
    (ns your-ns.foo
-     (:require [kushi.css.core :refer [css-rule lightning]]))
+     (:require [kushi.core :refer [css-rule lightning]]))
 
    (-> (css-rule \".bar\"
                  :c--red

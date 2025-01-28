@@ -5,7 +5,7 @@
             [domo.core :as domo]
             [goog.dom :as gdom]
             [kushi.ui.core :refer (opts+children)]
-            [kushi.css.core :refer [sx
+            [kushi.core :refer [sx
                                     css
                                     merge-attrs
                                     css-vars-map
