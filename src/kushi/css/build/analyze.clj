@@ -15,11 +15,32 @@
    [clojure.java.io :as io]
    [clojure.set :as set]
    [clojure.spec.alpha]
-   [kushi.css.build.tokens :as tokens]
-   [clojure.spec.alpha :as s]))
+   [kushi.css.build.css-legacy]
+   [kushi.css.build.tokens :as tokens]))
 
 
-;; NEW shadow-css-build-hook-based approach ------------------------------------
+(def dev-sample-proj-dir "docs")
+
+(def user-config*
+  ;; Should be "./docs/kushi.edn" only for test-refresh dev
+  (let [config (try (-> "./kushi.edn" slurp read-string)
+                    (catch Exception e
+                      (try (-> (str "./" dev-sample-proj-dir "/kushi.edn") 
+                               slurp
+                               read-string)
+                           (catch Exception e
+                             {}))))]
+    (assoc config
+           :css-dir
+           (string/replace (or (:css-dir config)
+                               "./public/css")
+                           #"\/$"
+                           "")
+           :css-filename
+           (or (:css-filename config) "main")
+           :css-bundle-filename
+           (or (:css-bundle-filename config) "bundle")
+           )))
 
 (def debugging 
   #{
@@ -765,12 +786,11 @@
   {k {:css-fp path}})
 
 
-;; TODO - get css-base from user kushi.edn
 (defn layer+css-path
   ([layer]
    (layer+css-path layer layer))
   ([layer filename]
-   (let [css-base "./public/css"]
+   (let [css-base (:css-dir user-config*)]
      [layer
       (str css-base "/" layer "/" filename ".css")])))
 
@@ -958,9 +978,7 @@
 
 
 (defn spit-css-imports [coll]
- ;; TODO - grab  skip <public> folder dynamically here or user-supplied filename
- ;; form kushi.edn
- (spit "./public/css/main.css"
+ (spit (str (:css-dir user-config*) "/" (:css-filename user-config*) ".css")
        (str "/* Kushi build system - development build */\n\n"
             (string/join 
              "\n\n"
@@ -1140,11 +1158,13 @@
              :padding-top 1})
      body)))
 
+(defn lightning-path [filename-key]
+  (str (:css-dir user-config*) "/" (filename-key user-config*) ".css"))
+
 (def lightning-options-via-user-config
-  {:input-path  "./public/css/main.css"
-   :output-path "./public/css/bundle.css"
-   :targets     ">= 0.25%"
-   })
+  {:input-path  (lightning-path :css-filename)
+   :output-path (lightning-path :css-bundle-filename)
+   :targets     ">= 0.25%"})
 
 (defn bad-bundle-path-warning
   [{:keys [k must-be supplied extra]
@@ -1248,7 +1268,8 @@
   "Just for dev"
   [filtered-build-sources release?]
   ;; TODO maybe deleted? and added? should be seqs or nils
-  (write-css-imports "./docs/kushi.edn" filtered-build-sources release?)
+  (write-css-imports (str "./" dev-sample-proj-dir "/kushi.edn" )
+                     filtered-build-sources release?)
   #_(create-css-bundle))
 
 
@@ -1330,10 +1351,13 @@
        (sequence cat)
        (apply array-map)))
 
+(def dev-mock-filtered-build-sources-path
+  (str "./" dev-sample-proj-dir "/dev/mock/filtered-build-sources.edn"))
+
 ;; Dev with lein-refresh
 ;; TODO - create a fake :build.state/mode here?
 #_(let [release?               false
-      filtered-build-sources (-> "./docs/dev/mock/filtered-build-sources.edn"
+      filtered-build-sources (-> dev-mock-filtered-build-sources-path
                                  slurp
                                  read-string
                                  hydrate-paths-into-files
@@ -1354,7 +1378,8 @@
              (apply array-map))
 
         _                                 
-        (spit (? "./dev/mock/filtered-build-sources.edn")
+        (spit (? "Spitting dev-mock-filtered-build-sources edn file to:"
+                  "dev/mock/filtered-build-sources.edn")
               (with-out-str (pprint filtered-build-sources-with-paths))
               :append false)]))
 
