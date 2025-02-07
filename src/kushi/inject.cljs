@@ -231,7 +231,3 @@
           families* (reduce goog-symbols-map->str [] converted)
           families  (str (string/join "&" families*) "&display=swap")]
       (add-google-fonts-with-preconnects families))))
-
-
-;; This should always gets called for both prod or dev builds
-#_(kushi.inject/inject-google-fonts!)
