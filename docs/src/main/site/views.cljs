@@ -21,8 +21,28 @@
 
 
 (defn pane-samples []
-  [:div (sx :.absolute-centered :.flex-col-fs :gap--2rem)
+  [:div (sx :.absolute-centered 
+            :.flex-col-fs
+            :gap--2rem
+            :.debug-red
+            :outline-offset--0px
+            )
    
+
+  ;;  [button 
+  ;;   (merge-attrs (sx [:--button-border-width :5px]
+  ;;                    :border-color--pink!important)
+  ;;                {:class [:bordered]})
+  ;;   "hello"]
+  ;;  [button "hello"]
+
+   [button 
+    (sx :.bordered
+        [:--button-border-width :5px]
+        :border-color--pink!important)
+    "Play" [icon :pets]]
+   [button "Play" [icon :pets]]
+
    ;; button with spinner example
    #_[button
     (merge-attrs
@@ -90,7 +110,7 @@
 
 
    ;; popover example
-   [button (popover-attrs {:-f             (fn [popover-el]
+   #_[button (popover-attrs {:-f             (fn [popover-el]
                                              (render 
                                               (fn [] 
                                                 [:div
@@ -108,6 +128,7 @@
       (tooltip-attrs {:-text          "This is a tooltip"
                       :-tooltip-class (css {:--tooltip-background-color :$red-800})})
       "Hover me"]] 
+  
   )
 
 (def routes 
@@ -116,8 +137,7 @@
                    :label   "Components Playground"}
    ["colors"]     {:content about/kushi-colors-about}
    ["typography"] {:content about/kushi-typography-about}
-   ["intro"]      {:content about/kushi-about}
-   })
+   ["intro"]      {:content about/kushi-about}})
 
 (defn main-view []
   (.setAttribute (domo/el-by-id "app")
