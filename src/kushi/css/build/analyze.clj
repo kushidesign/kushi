@@ -15,7 +15,6 @@
    [clojure.java.io :as io]
    [clojure.set :as set]
    [clojure.spec.alpha]
-   [kushi.css.build.css-legacy]
    [kushi.css.build.tokens :as tokens]))
 
 
@@ -463,7 +462,6 @@
          (apply array-map))))
 
 (defn- css-file-path [layer ns-str]
-  ;; (? (= "./public/css" (:css-dir user-config*)))
   (let [path (str (:css-dir user-config*) "/" layer "/" ns-str ".css")]
     (io/make-parents path)
     path))
@@ -1035,10 +1033,13 @@
                       "\n"
                       (map (fn [m]
                              (str "@import \""
-                                  (string/replace (:css-fp m)
-                                                  ;; TODO Use re-pattern
-                                                  #"^\./public/css/"
-                                                  "")
+                                  (string/replace
+                                   (:css-fp m)
+                                   (re-pattern (str "^"
+                                                    "\\"
+                                                    (:css-dir user-config*)
+                                                    "/"))
+                                   "")
                                   "\";"))
                            css-files))))
                   coll)))
