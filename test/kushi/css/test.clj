@@ -30,77 +30,19 @@
             ;; [taoensso.tufte :as tufte :refer [p profile]]
             [kushi.css.defs :as defs]
             [edamame.core :as e :refer [parse-string parse-string-all]]
-            [kushi.css.build.css-legacy]
             [kushi.css.specs :as kushi-specs]
             [kushi.css.build.utility-classes :as utility-classes]
             [kushi.util :refer [maybe keyed]]
             ))
 
 
-(def *css
-  (atom {:utils {:user-shared {
-                               ".kushi-pane-top-mixin"
-                               '(:.kushi-pane-block-arrow-offset-mixin
-                                 :translate--$tx:$ty
-                                 #_[:--ty
-                                    :$top-plc]
-                                 #_[:--_arrow-gradient-direction
-                                    "to top left"]
-                                 #_[:--arrow-ty
-                                    "calc(-50% + (var(--border-width) * 0.7))"]
-                                 #_[:_.kushi-pane-arrow
-                                    {:top :100%}])
-
-                               ".kushi-pane-block-center-mixin"
-                               '(#_[:--tx
-                                  "calc(var(--oe-x-center) - 50%)"]
-                                 #_[:--arrow-tx
-                                  :-50%]
-                                 :_.kushi-pane-arrow:left--50%)
-                               
-                               ".kushi-pane-block-arrow-offset-mixin"
-                               '(:.kushi-pane-t
-                                 [:--arrow-plus-radius
-                                  "calc(var(--arrow-inline-inset) + var(--border-radius))"])}}}))
-
-
-;; (let [class-kw? (clojure.spec.alpha/valid? ::kushi-specs/class-kw x)
-;;       util-args (when class-kw?
-;;                   (let [s (name x)]
-;;                     (or (get-in  @*css [:utils :user-shared s]))))])
-
-(defn reduce-util-args [*util-args args]
-  (doseq [x args]
-    (let [mixin?     
-          (clojure.spec.alpha/valid? ::kushi-specs/class-kw x)
-
-          redundant-mixin?
-          (!? (str "Is " x " redundant?\n")
-              (and mixin? (contains? (:seen @*util-args) x)))
-
-          mixin-args
-          (when (and mixin? (not redundant-mixin?))
-            (let [s   (name x)
-                  ret (get-in  @*css [:utils :user-shared s])]
-              ret))]
-      
-      (if (seq mixin-args)
-        (do
-          (vswap! *util-args update-in [:seen] conj x)
-          (reduce-util-args *util-args mixin-args))
-
-        (when-not redundant-mixin?
-          (vswap! *util-args update-in [:acc] conj x))))
-
-    args))
-
-#_(let [*util-args (volatile! {:seen #{:.kushi-pane-t}
-                             :acc  []})]
-  (reduce-util-args *util-args
-                    '(:.kushi-pane-top-mixin
-                      :.kushi-pane-block-center-mixin
-                      :transform-origin--bottom:center))
-  (? @*util-args))
+(let [sample "./public/css/gold"
+      css-dir "./public/css"
+      og-regex #"^\./public/css/"
+      new-regex (re-pattern (str "^" "\\" css-dir "/"))] 
+  (? (re-find og-regex sample))
+  (? (re-find new-regex sample))
+  )
 
 
 (def sample-css
@@ -166,16 +108,16 @@
     (reduce-kv (fn [acc k v] (conj acc (list 'defcss k v))) [] am)))
 
 ;; (? :pp (css->kushi sample-css2))
-#_(? :pp {:non-coll-mapkey-length-limit 79}
- #_(css->kushi kushi.css.build.css-legacy/css-reset)
-   #_(css->kushi kushi.css.build.css-legacy/design-tokens)
-   (css->kushi kushi.css.build.css-legacy/kushi-ui-theming) 
- )
+;; #_(? :pp {:non-coll-mapkey-length-limit 79}
+;;  #_(css->kushi kushi.css.build.css-legacy/css-reset)
+;;    #_(css->kushi kushi.css.build.css-legacy/design-tokens)
+;;    (css->kushi kushi.css.build.css-legacy/kushi-ui-theming) 
+;;  )
 
-        [ 
-             kushi.css.build.css-legacy/css-reset
-             kushi.css.build.css-legacy/design-tokens
-             kushi.css.build.css-legacy/kushi-ui-theming ]
+;;         [ 
+;;              kushi.css.build.css-legacy/css-reset
+;;              kushi.css.build.css-legacy/design-tokens
+;;              kushi.css.build.css-legacy/kushi-ui-theming ]
 
 
 #_(? (->  sample-css
