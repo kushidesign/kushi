@@ -1,5 +1,6 @@
 (ns kushi.ui.button.core
   (:require
+   [clojure.string :as string]
    [kushi.core :refer (css
                        css-vars-map
                        merge-attrs
@@ -7,11 +8,13 @@
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.icon.core :refer (icon)]))
 
+
 (register-design-tokens
  :--icon-button-padding-inline-ems
  :--button-with-icon-padding-inline-offset
  :--button-padding-inline-ems
  :--button-border-width)
+
 
 (defn resolve-inline-offset
   [{:keys [only-icons? icon-inline-*? bordered?]}]
@@ -25,10 +28,35 @@
       (str "calc(" base " - " "var(--button-border-width)" ")")
       base)))
 
+
 (defn icon-child? [x]
   (when (and (coll? x) (seq x) )
     (or (= (first x) icon)
         (some icon-child? x))))
+
+
+(defn bordered? [attrs]
+  (boolean 
+   (when-let [class (some->> attrs :class)]
+     (some->> (cond 
+                (string? class)
+                (string/split class #" ")
+
+                (coll? class)
+                (reduce (fn [acc x]
+                          (if (or (string? x)
+                                  (keyword? x))
+                            (-> x
+                                name
+                                (string/split #" ")
+                                (->> (apply conj acc)))
+                            (conj acc x)))
+                        []
+                        class))
+              seq
+              (into #{})
+              (some #{:bordered "bordered"})))))
+
 
 (defn button
   {:summary ["Buttons provide cues for actions and events."]
@@ -62,10 +90,15 @@
         only-icons?             (every? icon-child? children)
         icon-inline-start?      (some-> children first icon-child?)
         icon-inline-end?        (some-> children last icon-child?)
-        bordered?               (some->> attrs :class seq (some #{:bordered "bordered"}))
-        pi-opts                 {:only-icons? only-icons? :bordered bordered?}
+        bordered?               (bordered? attrs)
+        pi-opts                 {:only-icons? only-icons? :bordered? bordered?}
         pis                     (resolve-inline-offset (assoc pi-opts :icon-inline-*? icon-inline-start?))
         pie                     (resolve-inline-offset (assoc pi-opts :icon-inline-*? icon-inline-end?))]
+
+    ;; (!? :result {:bordered bordered?
+    ;;             :attrs    attrs
+    ;;             :opts     opts
+    ;;             :children children})
 
     (into [:button
            (merge-attrs
