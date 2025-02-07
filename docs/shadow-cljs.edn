@@ -17,6 +17,5 @@
    :modules          {:main {:init-fn site.browser/init}}
    :output-dir       "public/js"
    :build-hooks      [(kushi.css.build.analyze/hook)
-                      ;; (shadow.build/tap-hook)
                       (shadow.cljs.build-report/hook
                        {:output-to "tmp/report.html"})]}}}
