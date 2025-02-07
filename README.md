@@ -1506,18 +1506,20 @@ Assuming your are using something like Reagent, you can use the resulting
 ```
 <br> -->
 
-### Defining complex components
+### Defining components
 
 <!-- If, for some reason, you don't want use the `defcom` to define your complex
 components, you can use the same underlying pattern that `defcom` abstracts. -->
 Kushi promotes a component definition pattern that mirrors hiccup itself by
 standardizing the function signature as an (optional) single map of attributes
-followed by any number of children. This pattern relies on using the `kushi.ui.core/opts+children` helper fn.
-Under the hood, this helper fn pulls out any keys in attr map that start with
-`:-` and puts them in a separate `opts` map. This allows passing in various custom
-options within the attributes map that will not clash with existing html
-attributes. You can optionally make use of `kushi.core/merge-attrs` to enable
-decoration, and composition of attribute maps.
+followed by any number of children. This pattern relies on using the
+`kushi.ui.core/opts+children` helper function.
+
+Under the hood, this helper function pulls out any keys in attributes map that
+start with `:-` and puts them in a separate `opts` map. This allows passing in
+various custom options within the attributes map that will not clash with
+existing html attributes. You can optionally make use of `kushi.core/merge-attrs`
+to enable decoration and composition of attribute maps.
 
 
 ```Clojure
