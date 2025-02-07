@@ -173,6 +173,10 @@
   
 (defn initialize-layer-vector! [*css ns layer]
   (when-not (get-in @*css [:sources ns layer])
+
+    ;; TODO this causes error in fireworks.core/formatted - investigate
+    ;; (? (keyed [*css ns layer]))
+
     (vswap! *css
             assoc-in
             [:sources ns layer]
@@ -422,6 +426,7 @@
     nil))
 
 
+;; TODO - add error boundery here
 (defn parse-all-forms [file]
   (-> file
       slurp
@@ -550,6 +555,8 @@
           (? :result new-toks))
       (new-toks-callout-template  "No design tokens for " ns layer))))
 
+
+;; TODO css-fp should be renamed because of clash with entry in rulesets
 (defn- spit-css-file
   [css-fp layer rulesets *css]
   (let [debug?
@@ -590,6 +597,7 @@
           (str (css-includes-block css-includes ns)
                (string/join "\n\n" others))
           :append false)))
+
 
 (defn bs-epoch [build-state]
   (let [init? true
@@ -1028,6 +1036,7 @@
                       (map (fn [m]
                              (str "@import \""
                                   (string/replace (:css-fp m)
+                                                  ;; TODO Use re-pattern
                                                   #"^\./public/css/"
                                                   "")
                                   "\";"))
@@ -1105,8 +1114,6 @@
    {:desc "Design tokens referenced in styling, but not defined."
     :value #{}}))
 
-        
-
 (defn hook* [config filtered-build-sources release?]
   (!? 'kushi.core/hook*:config config)
   (let [user-design-tokens
@@ -1114,12 +1121,16 @@
 
         *css
         (volatile!
-         (assoc (reduce-kv (fn [m k v] (assoc m k (:value v))) {} *css-state)
-                :theme/user-design-tokens
-                user-design-tokens))
+         (-> (assoc (reduce-kv (fn [m k v]
+                                 (assoc m k (:value v)))
+                               {} 
+                               *css-state)
+                    :theme/user-design-tokens
+                    user-design-tokens)))
 
-        ;; just for creating a new mock build-state
+        ;; Just for creating a new mock build-state to use for dev
         ;; _ (spit-filtered-build-sources-with-paths filtered-build-sources)
+        
         
         reduced-sources
         (reduce (partial analyze-sources *css)
@@ -1163,12 +1174,9 @@
 (defn- lightning-bundle
   [{:keys [input-path output-path]}
    flags]
-  (apply shell (concat ["npx"
-                        "lightningcss"]
+  (apply shell (concat ["npx" "lightningcss"]
                        flags
-                       [input-path
-                        "-o"
-                        output-path])))
+                       [input-path "-o" output-path])))
 
 (defn lightning-bundle-warning [e flags opts]
   (let [body (bling "Error when creating CSS bundle via lightningcss-cli."
@@ -1187,9 +1195,7 @@
      (merge opts
             {:type        :error
              :label       (str "ERROR: "
-                               (string/replace (type e)
-                                               #"^class "
-                                               "" )
+                               (string/replace (type e) #"^class " "" )
                                " (Caught)")
              :padding-top 1})
      body)))
@@ -1222,7 +1228,7 @@
                    (assoc :bundle true)))
         in    (:input-path opts)
         out   (:output-path opts)
-        fp?   #(s/valid? ::kushi-specs/css-file-path %)]
+        fp?   #(clojure.spec.alpha/valid? ::kushi-specs/css-file-path %)]
     (if (and (fp? in) (fp? out))
       (try (lightning-bundle opts flags)
            ;; TODO - test this exception handler
@@ -1297,8 +1303,12 @@
         (when (or init? new-or-deleted?)
           (write-css-imports "./kushi.edn" filtered-build-sources release?)
           (create-css-bundle))))
-  build-state))
+    build-state))
 
+#_(try (lightning-bundle opts flags)
+           ;; TODO - test this exception handler
+           (catch Exception e
+             (lightning-bundle-warning e flags opts)))
 
 (defn hook-dev
   "Just for dev"
@@ -1380,9 +1390,13 @@
   [m]
   (->> m
        (reduce (fn [acc [k v]]
-                 (conj acc
+                 ;; TODO use refactor below
+                 (conj acc #_[k (assoc v :file (clojure.java.io/file (:file v)))]
                        [k (-> v
-                              (assoc :file (-> v :file clojure.java.io/file)))]))
+                              (assoc :file
+                                     (-> v
+                                         :file
+                                         clojure.java.io/file)))]))
                [])
        (sequence cat)
        (apply array-map)))
