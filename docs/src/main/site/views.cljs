@@ -24,7 +24,7 @@
   [:div (sx :.absolute-centered :.flex-col-fs :gap--2rem)
    
    ;; button with spinner example
-   [button
+   #_[button
     (merge-attrs
      (sx :fs--$xxxlarge)
      {:on-click (fn [e]
@@ -90,7 +90,7 @@
 
 
    ;; popover example
-   #_[button (popover-attrs {:-f             (fn [popover-el]
+   [button (popover-attrs {:-f             (fn [popover-el]
                                              (render 
                                               (fn [] 
                                                 [:div
@@ -99,7 +99,7 @@
                                                      :padding--0.25em)
                                                  "💃🏽"])
                                               popover-el))
-                           :-popover-class (css [:--popover-background-color :lime])})
+                           :-popover-class nil #_(css [:--popover-background-color :lime])})
       "Click me"]
 
 
