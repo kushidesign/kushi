@@ -1,11 +1,11 @@
 (ns kushi.core
   (:require [clojure.string :as string]
-            [domo.core :as domo])
-  (:require-macros [kushi.core :refer [css-include]]))
+            [domo.core :as domo]
+            [kushi.css.build.css-reset]
+            [kushi.css.build.kushi-ui-component-theming]
+            [kushi.css.build.legacy-color-tokens])
+ (:require-macros [kushi.core]))
 
-(css-include "@layer css-reset css/build/kushi-reset.css")
-(css-include "@layer design-tokens css/build/legacy-colors.css")
-(css-include "@layer kushi-ui-theming css/build/kushi-ui-component-theming.css")
 
 (defn ^:public class-str
   "Takes a coll of class strings or keywords, at least one of which is a

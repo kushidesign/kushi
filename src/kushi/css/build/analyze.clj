@@ -116,9 +116,13 @@
   (or (some #(string/starts-with? s %) coll)
       (string/starts-with? s "kushi/ui")
       (string/starts-with? s "kushi/playground")
+      ;; (string/starts-with? s "kushi/css")
       (= s "kushi/core.cljs") ;; <- this is for using css-include to pull in
                               ;;    build/kushi-reset.css (or others for dev)
-      ))
+      (contains? #{"kushi/css/build/css_reset.cljs"
+                   "kushi/css/build/kushi_ui_component_theming.cljs"
+                   "kushi/css/build/legacy_color_tokens.cljs"}
+                 s)))
 
 
 (defn gather-macros [m1 m2 f]
@@ -427,7 +431,8 @@
          (apply array-map))))
 
 (defn- css-file-path [layer ns-str]
-  (let [path (str "./public/css/" layer "/" ns-str ".css")]
+  ;; (? (= "./public/css" (:css-dir user-config*)))
+  (let [path (str (:css-dir user-config*) "/" layer "/" ns-str ".css")]
     (io/make-parents path)
     path))
 
@@ -608,8 +613,13 @@
         ;; TODO - add try/catch to this slurp + issue warning if file-not-found
         css    (slurp css-fp)
         result (merge m (meta form) (keyed [sel-og css css-fp args layer]))]
+     (initialize-layer-vector! *css ns layer)
      (vswap! *css update-in [:sources ns layer] conj result)
      nil))
+
+
+(declare layer+css-path)
+
 
 (defn- analyze-forms
   [tl-form
@@ -652,6 +662,7 @@
          form)))
    tl-form))
 
+
 (defn- write-css-files+layer-profile
   [{:keys [*css ns ns-str msg]}]
   (let [reified-*css
@@ -664,9 +675,7 @@
              (? :pp layer))
            (if-let [rulesets (get-in reified-*css [:sources ns layer])]
              (let [css-fp (css-file-path layer ns-str)
-                  ;;  dbg? (= ns
-                  ;;          #_'kushi.ui.text-field.core
-                  ;;          'kushi.playground.shared-styles)
+                  ;;  dbg? (= layer "css-reset")
                    ]
                #_(when dbg? (? rulesets))
                (spit-css-file css-fp layer rulesets *css)
@@ -685,10 +694,10 @@
 (defn- analyze-sources
   [*css
    acc
-   [[_ rel-path] {:keys [ns file ns-info] :as m-}]]
+   [[_ rel-path] {:keys [ns file url ns-info] :as m-}]]
   (let [ns-str    (string/replace (str ns) #"\." "_")
         ns-meta   (:meta ns-info)
-        all-forms (parse-all-forms file)
+        all-forms (parse-all-forms (or file url))
         m         (keyed [*css ns ns-str ns-meta rel-path file])
          
         ;; dbg? (= ns
