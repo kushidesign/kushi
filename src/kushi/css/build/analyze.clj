@@ -301,24 +301,51 @@
                       [:neutral "No utility or shared class found for "]
                       [:olive.bold x])))))
 
-(defn- hydrated-util-args
-  [args *css rel-path form]
-  (reduce 
-   (fn [acc x]
-     (let [class-kw? (clojure.spec.alpha/valid? ::kushi-specs/class-kw x)
-           util-args (when class-kw?
-                       (let [s (name x)]
-                         (or (get utility-classes/utility-classes s)
-                             (get-in @*css [:utils :kushi-ui-shared s])
-                             (get-in  @*css [:utils :user-shared s]))))]
 
-       (when (contains? debugging :macro-hydration)
-         (hydrated-class-kw-callout class-kw? util-args x *css rel-path form))
-       (if (seq util-args)
-         (apply conj acc util-args)
-         (conj acc x))))
-   []
-   args))
+(defn defcss-mixin? [x]
+  (clojure.spec.alpha/valid? ::kushi-specs/class-kw x))
+
+(defn hydrate-util-args*
+  "Recursively hydrates defcss calls. Args to defcss which are keywords that  
+   match the name of rulesets that were previously defined with defcss will be
+   hydrated into a list of the original args."
+  [*css *util-args args]
+  (doseq [x args]
+    (let [mixin?     
+          (defcss-mixin? x)
+
+          redundant-mixin?
+          (!? (str "Is " x " redundant?\n")
+              (and mixin? (contains? (:seen @*util-args) x)))
+
+          mixin-args
+          (when (and mixin? (not redundant-mixin?))
+            (let [s   (name x)]
+              (or (get utility-classes/utility-classes s)
+                  (get-in @*css [:utils :kushi-ui-shared s])
+                  (get-in  @*css [:utils :user-shared s]))))]
+      
+      (if (seq mixin-args)
+        (do
+          (vswap! *util-args update-in [:seen] conj x)
+          (hydrate-util-args* *css *util-args mixin-args))
+
+        (when-not redundant-mixin?
+          (vswap! *util-args update-in [:acc] conj x))))
+
+    args))
+
+(defn- hydrated-util-args
+  [args *css sel form]
+  (let [dbg? false #_(contains?
+              #{"@layer kushi-ui-shared .kushi-pane-t"
+                "@layer kushi-ui-shared .kushi-pane-block-arrow-offset-mixin"}
+              (second form))]
+    (if (some defcss-mixin? args)
+      (let [*util-args (volatile! {:seen #{(keyword sel)} :acc []})]
+        (hydrate-util-args* *css *util-args args)
+        (!? {:when (fn [_] dbg?)} (:acc @*util-args)))
+      args)))
 
 (defn- defcss-callout [sel k]
   (callout {:type          :neutral
@@ -365,7 +392,7 @@
             (vswap! *css update-in [:utils k] assoc sel args)))
 
         args
-        (hydrated-util-args args *css rel-path form)
+        (hydrated-util-args args *css sel form)
 
         result
         (merge m
