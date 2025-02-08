@@ -612,7 +612,7 @@
     (keyed [init? deleted? added? new-or-deleted? existing-css-changed?])))
 
 (defn css-include-call-data
-  [{:keys [args form ns-str ns-meta ns file] :as m}
+  [{:keys [args form ns-str ns-meta ns file url] :as m}
    *css]
   (let [sel-og                 (first args)
         {css-file-path :sel
@@ -636,6 +636,7 @@
                   "user-shared-styles")
 
         ;; TODO - is there a more efficient way to do this path manipulation?
+        ;; Add error boundry here
         css-fp (-> file
                    .getPath
                    (string/split #"/")
@@ -644,7 +645,7 @@
                    (str "/" css-file-path))
 
         ;; TODO - add try/catch to this slurp + issue warning if file-not-found
-        css    (slurp css-fp)
+        css    (slurp (? css-fp))
         result (merge m (meta form) (keyed [sel-og css css-fp args layer]))]
      (initialize-layer-vector! *css ns layer)
      (vswap! *css update-in [:sources ns layer] conj result)
@@ -656,7 +657,7 @@
 
 (defn- analyze-forms
   [tl-form
-   {:keys [*css ns-str rel-path ns ns-meta file]
+   {:keys [*css ns-str rel-path ns ns-meta file url]
     :as tl-form-data}]
   (walk/prewalk
    (fn [form] 
@@ -671,13 +672,12 @@
                          ns-meta
                          rel-path
                          file
+                         url
                          macro-sym
                          args])]
            (cond 
              (contains? '#{?css-include css-include} macro-sym)
-             (do
-               (!? m)
-               (css-include-call-data m *css))
+             (css-include-call-data m *css)
 
              (contains? '#{?defcss defcss} macro-sym)
              (defcss-call-data m *css)
@@ -731,14 +731,13 @@
   (let [ns-str    (string/replace (str ns) #"\." "_")
         ns-meta   (:meta ns-info)
         all-forms (parse-all-forms (or file url))
-        m         (keyed [*css ns ns-str ns-meta rel-path file])
+        m         (keyed [*css ns ns-str ns-meta rel-path file url])
          
         ;; dbg? (= ns
         ;;         #_'kushi.ui.text-field.core
         ;;         'kushi.playground.shared-styles)
         ]
     #_(when dbg? (? all-forms))
-
     #_(stage-callout ns)
 
     ;; Currently can't build up state because we are using prewalk in
