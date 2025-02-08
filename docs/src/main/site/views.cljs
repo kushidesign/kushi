@@ -24,8 +24,8 @@
   [:div (sx :.absolute-centered 
             :.flex-col-fs
             :gap--2rem
-            :.debug-red
-            :outline-offset--0px
+            ;; :.debug-red
+            ;; :outline-offset--0px
             )
    
 
@@ -36,12 +36,17 @@
   ;;   "hello"]
   ;;  [button "hello"]
 
-   [button 
-    (sx :.bordered
-        [:--button-border-width :5px]
-        :border-color--pink!important)
-    "Play" [icon :pets]]
-   [button "Play" [icon :pets]]
+ (into [:div (sx :.flex-col-fs :gap--3em)]
+       (for [shape ["rounded" "sharp" "pill"]] 
+         (into [:div (sx :.flex-col-fs :gap--1em)]
+               (for [surface ["minimal" "outline" "solid" "soft"]]
+                 (into [:div (sx :.flex-row-fs :gap--1em)]  
+                       (for [colorway [nil "accent" "positive" "warning" "negative"]]
+                         [button 
+                          {:-colorway colorway
+                           :-surface  surface
+                           :-shape    shape}
+                          "Button"]))))))
 
    ;; button with spinner example
    #_[button
@@ -144,9 +149,9 @@
                  "data-kushi-playground-active-path"
                  "components")
 
-  #_[pane-samples]
+  [pane-samples]
 
-  (into 
+  #_(into 
    [:div (sx :.flex-col-fs)
     [nav/header]
     ;; Spinner between page transitions
