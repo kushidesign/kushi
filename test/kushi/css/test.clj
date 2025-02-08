@@ -1,27 +1,27 @@
 (ns kushi.css.test
   (:require [clojure.test :refer :all]
+            [clojure.edn :as edn]
             [kushi.css.sandbox]
             [fireworks.core :refer [? !? ?> !?>]]
             [bling.core :refer [bling callout]]
-            [kushi.utils :refer [keyed]]
             [kushi.css.defs]
-            [kushi.css.core :refer [ansi-colorized-css-block
-                                    css-block-data
-                                    css-block
-                                    nested-css-block
-                                    css-rule
-                                    css-rule*
-                                    css
-                                    ?css
-                                    sx
-                                    ?sx
-                                    defcss
-                                    ?defcss
-                                    css-vars
-                                    css-vars-map
-                                    lightning-opts
-                                    lightning
-                                    ]]
+            [kushi.core :refer [ansi-colorized-css-block
+                                css-block-data
+                                css-block
+                                nested-css-block
+                                css-rule
+                                css-rule*
+                                css
+                                ?css
+                                sx
+                                ?sx
+                                defcss
+                                ?defcss
+                                css-vars
+                                css-vars-map
+                                lightning-opts
+                                lightning
+                                ]]
             [clojure.string :as string]
             [kushi.css.specs :as specs]
             [clojure.set :as set]
@@ -30,8 +30,110 @@
             ;; [taoensso.tufte :as tufte :refer [p profile]]
             [kushi.css.defs :as defs]
             [edamame.core :as e :refer [parse-string parse-string-all]]
+            [kushi.css.specs :as kushi-specs]
+            [kushi.css.build.utility-classes :as utility-classes]
+            [kushi.util :refer [maybe keyed]]
             ))
 
+
+(let [sample "./public/css/gold"
+      css-dir "./public/css"
+      og-regex #"^\./public/css/"
+      new-regex (re-pattern (str "^" "\\" css-dir "/"))] 
+  (? (re-find og-regex sample))
+  (? (re-find new-regex sample))
+  )
+
+
+(def sample-css
+
+"
+/* End of things from legacy, kushi.ui.basetheme/ui -------------------------*/
+
+
+ .kushi-pane-r>.kushi-pane-arrow {
+
+  border-top-width: 0!important;
+  border-right-width: 0!important;
+}
+
+.kushi-pane-rt>.kushi-pane-arrow {
+  border-top-width: 0!important;
+  border-right-width: 0!important;
+}
+
+/* Beginning of legacy, hsl-based theming system ----------------------------*/
+
+.kushi-pane-mounting {
+  visibility: hidden;
+}
+ 
+/* End of whatever -------------------------*/
+ "
+
+  )
+(def sample-css2
+  ":root {
+  --gray-hue: 0;
+  --gray-50: hsl(var(--gray-hue), 0%, 98%);
+  --gray-100: hsl(var(--gray-hue), 0%, 95%);
+  --gray-150: hsl(var(--gray-hue), 0%, 93%);
+  --gray-200: hsl(var(--gray-hue), 0%, 91%);
+  --gray-250: hsl(var(--gray-hue), 0%, 88%);
+  --gray-300: hsl(var(--gray-hue), 0%, 85%);
+  --gray-350: hsl(var(--gray-hue), 0%, 81%);
+  --gray-400: hsl(var(--gray-hue), 0%, 77%);
+  --gray-450: hsl(var(--gray-hue), 0%, 72.5%);
+ }"
+  )
+
+(defn css->kushi
+  "Converts non-nested css to a vector of kushi.core/defcss calls."
+  [css-str] 
+  (let [
+        ;; Remove comments first
+        css-str (string/replace css-str #"\/\*[^\*]+\*\/" "")
+        sels    (-> css-str
+                    (string/split #"\{[^\}]+\}")
+                    (->> (map #(string/trim %))))
+        rules   (->>  css-str
+                      (re-seq #"\{[^\}]+\}")
+                      (map #(-> %
+                                (string/replace #"^\{|\}$" "")
+                                (string/trim)
+                                (string/split #"\:|\;")
+                                (->> (map (fn [s] (string/trim s))))))
+                      (map #(apply array-map %)))
+        am      (apply array-map (interleave sels rules))]
+    (reduce-kv (fn [acc k v] (conj acc (list 'defcss k v))) [] am)))
+
+;; (? :pp (css->kushi sample-css2))
+;; #_(? :pp {:non-coll-mapkey-length-limit 79}
+;;  #_(css->kushi kushi.css.build.css-legacy/css-reset)
+;;    #_(css->kushi kushi.css.build.css-legacy/design-tokens)
+;;    (css->kushi kushi.css.build.css-legacy/kushi-ui-theming) 
+;;  )
+
+;;         [ 
+;;              kushi.css.build.css-legacy/css-reset
+;;              kushi.css.build.css-legacy/design-tokens
+;;              kushi.css.build.css-legacy/kushi-ui-theming ]
+
+
+#_(? (->  sample-css
+        (->> (str "\n\""))
+        (string/replace #"\{" "\"{")
+        (string/replace #"\}" "}\"")
+        (string/replace #"\"$" "")
+        (string/replace #"  ([a-z_-]+): +([^\;]+)\;"
+                        #(let [[_ prop val] %]
+                           (str ":" prop " \"" val "\"")))
+        
+        (str "]")
+        (->> (str "["))
+        edn/read-string
+        (->> (map-indexed (fn [i v] (if (even? i) (string/trim v) v))))
+        (->> (apply array-map))))
 
 
 #_(let [myclass :.gall]

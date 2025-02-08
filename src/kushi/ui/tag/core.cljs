@@ -1,5 +1,5 @@
 (ns kushi.ui.tag.core
-  (:require [kushi.css.core :refer [css merge-attrs]]
+  (:require [kushi.core :refer [css merge-attrs]]
             [kushi.ui.core :refer (opts+children)]))
 
 (defn tag

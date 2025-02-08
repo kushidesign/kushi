@@ -6,20 +6,40 @@
    [edamame.core :as e]
    [kushi.css.build.utility-classes :as utility-classes]
    [kushi.css.build.tokens :refer [design-tokens-by-category]]
-   [kushi.css.core :refer [css-rule*]]
+   [kushi.core :refer [css-rule*]]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as kushi-specs]
-   [kushi.utils :refer [maybe keyed]]
+   [kushi.util :refer [maybe keyed]]
    [clojure.walk :as walk]
    [clojure.string :as string]
    [clojure.java.io :as io]
    [clojure.set :as set]
    [clojure.spec.alpha]
-   [kushi.css.build.tokens :as tokens]
-   [clojure.spec.alpha :as s]))
+   [kushi.css.build.tokens :as tokens]))
 
 
-;; NEW shadow-css-build-hook-based approach ------------------------------------
+(def dev-sample-proj-dir "docs")
+
+(def user-config*
+  ;; Should be "./docs/kushi.edn" only for test-refresh dev
+  (let [config (try (-> "./kushi.edn" slurp read-string)
+                    (catch Exception e
+                      (try (-> (str "./" dev-sample-proj-dir "/kushi.edn") 
+                               slurp
+                               read-string)
+                           (catch Exception e
+                             {}))))]
+    (assoc config
+           :css-dir
+           (string/replace (or (:css-dir config)
+                               "./public/css")
+                           #"\/$"
+                           "")
+           :css-filename
+           (or (:css-filename config) "main")
+           :css-bundle-filename
+           (or (:css-bundle-filename config) "bundle")
+           )))
 
 (def debugging 
   #{
@@ -95,9 +115,13 @@
   (or (some #(string/starts-with? s %) coll)
       (string/starts-with? s "kushi/ui")
       (string/starts-with? s "kushi/playground")
-      (= s "kushi/css/core.cljs");; <- this is for using css-include to pull in
-                                 ;;    build/kushi-reset.css (or others for dev)
-      ))
+      ;; (string/starts-with? s "kushi/css")
+      (= s "kushi/core.cljs") ;; <- this is for using css-include to pull in
+                              ;;    build/kushi-reset.css (or others for dev)
+      (contains? #{"kushi/css/build/css_reset.cljs"
+                   "kushi/css/build/kushi_ui_component_theming.cljs"
+                   "kushi/css/build/legacy_color_tokens.cljs"}
+                 s)))
 
 
 (defn gather-macros [m1 m2 f]
@@ -118,7 +142,7 @@
     (seq used-macros)))
 
 
-;; TODO - share with kushi.css.core
+;; TODO - share with kushi.core
 (defn- layer+sel [sel-og]
   (if (string/starts-with? sel-og "@layer")
     (let [[_ layer & sel-bits]
@@ -146,9 +170,13 @@
         (re-find #"^kushi_playground" ns-str)
         "kushi-playground-styles"))
   
-(defn initialize-layer-vector! [css-new ns layer]
-  (when-not (get-in @css-new [:sources ns layer])
-    (vswap! css-new
+(defn initialize-layer-vector! [*css ns layer]
+  (when-not (get-in @*css [:sources ns layer])
+
+    ;; TODO this causes error in fireworks.core/formatted - investigate
+    ;; (? (keyed [*css ns layer]))
+
+    (vswap! *css
             assoc-in
             [:sources ns layer]
             [])))
@@ -168,25 +196,25 @@
 
 
 (defn register-design-tokens-call-data
-  [{:keys [args]} css-new] 
+  [{:keys [args]} *css] 
   (doseq [tok args]
     (when-let [tok (css-var tok)]
-      (vswap-design-tokens! [tok] css-new) )))
+      (vswap-design-tokens! [tok] *css) )))
 
 
 (defn register-design-tokens-by-category-call-data
-  [{:keys [args]} css-new] 
+  [{:keys [args]} *css] 
   (doseq [tag args]
     (when-let [toks (!? (get design-tokens-by-category
                          (!? tag)))]
       #_(when (= tag "popover")
         (? 'popover-toks toks))
-      (vswap-design-tokens! toks css-new))))
+      (vswap-design-tokens! toks *css))))
 
 
 (defn css-call-data
   [{:keys [form ns-str ns-meta ns args] :as m} 
-   css-new] 
+   *css] 
   (let [sel-og
         (-> args first (maybe string?))
         
@@ -226,18 +254,18 @@
         result
         (merge m
                (meta form)
-               (keyed sel-og sel args layer kushi-utils))] 
+               (keyed [sel-og sel args layer kushi-utils]))] 
 
     (some->> kushi-utils
              seq
-             (vswap! css-new
+             (vswap! *css
                      update-in
                      [:utils :used/kushi-utility]
                      conj))
 
-    (initialize-layer-vector! css-new ns layer)
+    (initialize-layer-vector! *css ns layer)
 
-    (vswap! css-new
+    (vswap! *css
             update-in
             [:sources ns layer]
             conj
@@ -246,15 +274,15 @@
     nil))
 
 (defn- hydrated-class-kw-callout
-  [class-kw? util-args x css-new rel-path form]
+  [class-kw? util-args x *css rel-path form]
   (when class-kw?
     (if (seq util-args)
       (let [s    (name x)
             kind (cond (get utility-classes/utility-classes s)
                        :kushi-utility
-                       (get-in @css-new [:utils :kushi-ui-shared s])
+                       (get-in @*css [:utils :kushi-ui-shared s])
                        :kushi-ui-shared
-                       (get-in  @css-new [:utils :user-shared s])
+                       (get-in  @*css [:utils :user-shared s])
                        :user-shared
                        :else
                        :unknown)]
@@ -276,24 +304,51 @@
                       [:neutral "No utility or shared class found for "]
                       [:olive.bold x])))))
 
-(defn- hydrated-util-args
-  [args css-new rel-path form]
-  (reduce 
-   (fn [acc x]
-     (let [class-kw? (clojure.spec.alpha/valid? ::kushi-specs/class-kw x)
-           util-args (when class-kw?
-                       (let [s (name x)]
-                         (or (get utility-classes/utility-classes s)
-                             (get-in @css-new [:utils :kushi-ui-shared s])
-                             (get-in  @css-new [:utils :user-shared s]))))]
 
-       (when (contains? debugging :macro-hydration)
-         (hydrated-class-kw-callout class-kw? util-args x css-new rel-path form))
-       (if (seq util-args)
-         (apply conj acc util-args)
-         (conj acc x))))
-   []
-   args))
+(defn defcss-mixin? [x]
+  (clojure.spec.alpha/valid? ::kushi-specs/class-kw x))
+
+(defn hydrate-util-args*
+  "Recursively hydrates defcss calls. Args to defcss which are keywords that  
+   match the name of rulesets that were previously defined with defcss will be
+   hydrated into a list of the original args."
+  [*css *util-args args]
+  (doseq [x args]
+    (let [mixin?     
+          (defcss-mixin? x)
+
+          redundant-mixin?
+          (!? (str "Is " x " redundant?\n")
+              (and mixin? (contains? (:seen @*util-args) x)))
+
+          mixin-args
+          (when (and mixin? (not redundant-mixin?))
+            (let [s   (name x)]
+              (or (get utility-classes/utility-classes s)
+                  (get-in @*css [:utils :kushi-ui-shared s])
+                  (get-in  @*css [:utils :user-shared s]))))]
+      
+      (if (seq mixin-args)
+        (do
+          (vswap! *util-args update-in [:seen] conj x)
+          (hydrate-util-args* *css *util-args mixin-args))
+
+        (when-not redundant-mixin?
+          (vswap! *util-args update-in [:acc] conj x))))
+
+    args))
+
+(defn- hydrated-util-args
+  [args *css sel form]
+  (let [dbg? false #_(contains?
+              #{"@layer kushi-ui-shared .kushi-pane-t"
+                "@layer kushi-ui-shared .kushi-pane-block-arrow-offset-mixin"}
+              (second form))]
+    (if (some defcss-mixin? args)
+      (let [*util-args (volatile! {:seen #{(keyword sel)} :acc []})]
+        (hydrate-util-args* *css *util-args args)
+        (!? {:when (fn [_] dbg?)} (:acc @*util-args)))
+      args)))
 
 (defn- defcss-callout [sel k]
   (callout {:type          :neutral
@@ -307,7 +362,7 @@
 (defn defcss-call-data
   [{:keys [args form ns-str ns-meta ns rel-path]
     :as m}
-   css-new]
+   *css]
   (let [[sel-og & args]
         args
 
@@ -337,32 +392,32 @@
                         :user-shared)]
             (when (contains? debugging :macro-hydration)
               (defcss-callout sel k))
-            (vswap! css-new update-in [:utils k] assoc sel args)))
+            (vswap! *css update-in [:utils k] assoc sel args)))
 
         args
-        (hydrated-util-args args css-new rel-path form)
+        (hydrated-util-args args *css sel form)
 
         result
         (merge m
                (meta form)
-               (keyed sel-og sel args layer))
+               (keyed [sel-og sel args layer]))
         
         ;; dbg?
         ;; (= sel ".kushi-slider-step-label-marker")
         ]
 
     ;; (when dbg?
-    ;;   (keyed layer-from-defcss-first-arg
-    ;;             layer-from-ns-info
-    ;;             layer)
+    ;;   (keyed [layer-from-defcss-first-arg
+    ;;           layer-from-ns-info
+    ;;           layer])
 
-    ;;   #_(let [coll (get-in @css-new [:sources ns layer])]
+    ;;   #_(let [coll (get-in @*css [:sources ns layer])]
     ;;     (? :result [sel (some-> coll count)])
-    ;;     (!? :result (get-in @css-new [:sources ns layer]))))
+    ;;     (!? :result (get-in @*css [:sources ns layer]))))
 
-    (initialize-layer-vector! css-new ns layer)
+    (initialize-layer-vector! *css ns layer)
 
-    (vswap! css-new
+    (vswap! *css
             update-in
             [:sources ns layer]
             conj
@@ -370,6 +425,7 @@
     nil))
 
 
+;; TODO - add error boundery here
 (defn parse-all-forms [file]
   (-> file
       slurp
@@ -406,7 +462,7 @@
          (apply array-map))))
 
 (defn- css-file-path [layer ns-str]
-  (let [path (str "./public/css/" layer "/" ns-str ".css")]
+  (let [path (str (:css-dir user-config*) "/" layer "/" ns-str ".css")]
     (io/make-parents path)
     path))
 
@@ -440,8 +496,8 @@
         (? design-token  ns))))
 
 
-(defn vswap-design-tokens! [toks css-new]
-  (vswap! css-new
+(defn vswap-design-tokens! [toks *css]
+  (vswap! *css
           update-in 
           [:used/design-tokens] 
           (fn [coll args] (apply conj coll args))
@@ -449,14 +505,14 @@
 
 ;; could be 
 (defn- register-design-tokens!
-  [css-str css-new ns]
+  [css-str *css ns]
   #_(when (contains? debugging :design-token-registration)
       (print-ns-containing-design-token "--button-border-width" css ns))
   (let [toks (some->> css-str
                       css-vars-re-seq
                       (map #(nth % 1 nil))
                       seq)]
-    (some-> toks (vswap-design-tokens! css-new))))
+    (some-> toks (vswap-design-tokens! *css))))
 
 
 (defn- css-includes-block [css-includes ns]
@@ -486,9 +542,9 @@
                                   [:blue.italic layer]
                                   "\n ")}))
 
-(defn new-toks-callout [ns layer used-toks css-new]
+(defn new-toks-callout [ns layer used-toks *css]
   (let [new-toks
-        (set/difference (:used/design-tokens @css-new)
+        (set/difference (:used/design-tokens @*css)
                         used-toks)]
     (when (contains? new-toks :$button-border-width)
       (? new-toks ns))
@@ -497,8 +553,10 @@
           (? :result new-toks))
       (new-toks-callout-template  "No design tokens for " ns layer))))
 
+
+;; TODO css-fp should be renamed because of clash with entry in rulesets
 (defn- spit-css-file
-  [css-fp layer rulesets css-new]
+  [css-fp layer rulesets *css]
   (let [debug?
         (contains? debugging :design-token-registration)
 
@@ -506,7 +564,7 @@
         (some-> rulesets seq first :ns)
 
         used-toks
-        (when debug? (:used/design-tokens @css-new))
+        (when debug? (:used/design-tokens @*css))
 
         {:keys [css-includes others]}
         (reduce (fn [acc {:keys [css]
@@ -527,16 +585,17 @@
     ;; This is where design tokens get registered
     ;; They are identified based on the the actual css-rules produced
 
-    (register-design-tokens! css-str css-new ns)
+    (register-design-tokens! css-str *css ns)
     (when debug? 
       (when (= ns 'kushi.ui.button.core)
-        (new-toks-callout ns layer used-toks css-new)))
+        (new-toks-callout ns layer used-toks *css)))
     #_(when (re-find #"design-tokens" css-fp)
       (? :pp css-fp))
     (spit css-fp
           (str (css-includes-block css-includes ns)
                (string/join "\n\n" others))
           :append false)))
+
 
 (defn bs-epoch [build-state]
   (let [init? true
@@ -550,11 +609,11 @@
         ;; Check if any css imports within namespaces changed
         ;; Check if any css namespaces changed
         existing-css-changed? true]
-    (keyed init? deleted? added? new-or-deleted? existing-css-changed?)))
+    (keyed [init? deleted? added? new-or-deleted? existing-css-changed?])))
 
 (defn css-include-call-data
   [{:keys [args form ns-str ns-meta ns file] :as m}
-   css-new]
+   *css]
   (let [sel-og                 (first args)
         {css-file-path :sel
          layer         :layer} (layer+sel sel-og)
@@ -586,13 +645,18 @@
 
         ;; TODO - add try/catch to this slurp + issue warning if file-not-found
         css    (slurp css-fp)
-        result (merge m (meta form) (keyed sel-og css css-fp args layer))]
-     (vswap! css-new update-in [:sources ns layer] conj result)
+        result (merge m (meta form) (keyed [sel-og css css-fp args layer]))]
+     (initialize-layer-vector! *css ns layer)
+     (vswap! *css update-in [:sources ns layer] conj result)
      nil))
+
+
+(declare layer+css-path)
+
 
 (defn- analyze-forms
   [tl-form
-   {:keys [css-new ns-str rel-path ns ns-meta file]
+   {:keys [*css ns-str rel-path ns ns-meta file]
     :as tl-form-data}]
   (walk/prewalk
    (fn [form] 
@@ -601,74 +665,73 @@
        (if kushi-macro? 
          ;; TODO - possibly just (merge tl-form-data (keyed macro-sym args))
          ;;      - then change sig of fns in cond branch
-         (let [m (keyed form
-                        ns-str
-                        ns
-                        ns-meta
-                        rel-path
-                        file
-                        macro-sym
-                        args)]
+         (let [m (keyed [form
+                         ns-str
+                         ns
+                         ns-meta
+                         rel-path
+                         file
+                         macro-sym
+                         args])]
            (cond 
              (contains? '#{?css-include css-include} macro-sym)
              (do
                (!? m)
-               (css-include-call-data m css-new))
+               (css-include-call-data m *css))
 
              (contains? '#{?defcss defcss} macro-sym)
-             (defcss-call-data m css-new)
+             (defcss-call-data m *css)
 
              (contains? '#{register-design-tokens} macro-sym)
-             (register-design-tokens-call-data m css-new)
+             (register-design-tokens-call-data m *css)
 
              (contains? '#{register-design-tokens-by-category} macro-sym)
-             (register-design-tokens-by-category-call-data m css-new)
+             (register-design-tokens-by-category-call-data m *css)
 
              (contains? '#{?css css ?sx sx} macro-sym)
-             (css-call-data m css-new))
+             (css-call-data m *css))
            ;; prewalk return nil for perf
            nil)
          form)))
    tl-form))
 
+
 (defn- write-css-files+layer-profile
-  [{:keys [css-new ns ns-str msg]}]
-  (let [reified-css-new
-        @css-new
+  [{:keys [*css ns ns-str msg]}]
+  (let [reified-*css
+        @*css
 
         ret-new
         (reduce 
          (fn [acc layer]
            #_(when (re-find #"design-tokens" layer)
              (? :pp layer))
-           (if-let [rulesets (get-in reified-css-new [:sources ns layer])]
+           (if-let [rulesets (get-in reified-*css [:sources ns layer])]
              (let [css-fp (css-file-path layer ns-str)
-                  ;;  dbg? (= ns
-                  ;;          #_'kushi.ui.text-field.core
-                  ;;          'kushi.playground.shared-styles)
+                  ;;  dbg? (= layer "css-reset")
                    ]
                #_(when dbg? (? rulesets))
-               (spit-css-file css-fp layer rulesets css-new)
+               (spit-css-file css-fp layer rulesets *css)
                (vswap! msg 
                        str
                        "\nLayer "
                        (bling [:blue layer])
                        ", writing "
                        (bling [:olive css-fp]))
-               (update-in acc [layer] merge (keyed css-fp ns rulesets)))
+               (update-in acc [layer] merge (keyed [css-fp ns rulesets])))
              acc))
          {}
          (keys kushi-layers))]
     ret-new))
 
 (defn- analyze-sources
-  [css-new
+  [*css
    acc
-   [[_ rel-path] {:keys [ns file ns-info] :as m-}]]
+   [[_ rel-path] {:keys [ns file url ns-info] :as m-}]]
   (let [ns-str    (string/replace (str ns) #"\." "_")
         ns-meta   (:meta ns-info)
-        all-forms (parse-all-forms file)
-        m         (keyed css-new ns ns-str ns-meta rel-path file)
+        all-forms (parse-all-forms (or file url))
+        m         (keyed [*css ns ns-str ns-meta rel-path file])
          
         ;; dbg? (= ns
         ;;         #_'kushi.ui.text-field.core
@@ -685,7 +748,7 @@
 
     ;; TODO - maybe this should be broken out into another step and
     ;; anaylze-sources should just return mutated css-data volatile
-    ;; should css-data and css-new be the same thing?
+    ;; should css-data and *css be the same thing?
     ;; css-data could be map like this, forget about ordering:
     ;; {:sources {mvp.browser {"user-styles"        {...}
     ;;                         "user-shared-styles" {...}}}
@@ -722,37 +785,37 @@
 
 ;; Need to figure out policy for keys of the design maps
 ;; Should they be strings or keywords, probably strings
-(defn unique-toks [tok css-new]
-  (when-not (or (contains? (:required/kushi-design-tokens @css-new) tok)
-                (contains? (:required/user-design-tokens @css-new) tok))
+(defn unique-toks [tok *css]
+  (when-not (or (contains? (:required/kushi-design-tokens @*css) tok)
+                (contains? (:required/user-design-tokens @*css) tok))
    (let [dep-toks
          (or (dep-toks-set tok kushi.css.build.tokens/design-tokens-by-token)
-             (dep-toks-set tok (:theme/user-design-tokens @css-new)))]
+             (dep-toks-set tok (:theme/user-design-tokens @*css)))]
      (some-> dep-toks
-             (set/difference (:required/kushi-design-tokens @css-new))
+             (set/difference (:required/kushi-design-tokens @*css))
              seq))))
 
 
-(defn register-toks+deps [tok css-new] 
+(defn register-toks+deps [tok *css] 
   (if-let [[tok-val k]
            (let [kushi-tok
                  (get kushi.css.build.tokens/design-tokens-by-token tok)
                  
                  user-tok
-                 (get (:theme/user-design-tokens @css-new) tok)]
+                 (get (:theme/user-design-tokens @*css) tok)]
                      (or (some-> kushi-tok (vector :kushi))
                          (some-> user-tok (vector :user))))]
 
     ;; TODO - make sure this order of doseq then vswap! is correct
-    (do (when-let [uniques (unique-toks tok css-new)]
+    (do (when-let [uniques (unique-toks tok *css)]
           (doseq [dep-tok uniques]
-            (register-toks+deps dep-tok css-new)))
-        (vswap! css-new
+            (register-toks+deps dep-tok *css)))
+        (vswap! *css
                 update-in
                 [:required/kushi-design-tokens]
                 conj
                 [tok tok-val]))
-    (vswap! css-new
+    (vswap! *css
             update-in
             [:not-found/design-tokens]
             conj
@@ -765,12 +828,11 @@
   {k {:css-fp path}})
 
 
-;; TODO - get css-base from user kushi.edn
 (defn layer+css-path
   ([layer]
    (layer+css-path layer layer))
   ([layer filename]
-   (let [css-base "./public/css"]
+   (let [css-base (:css-dir user-config*)]
      [layer
       (str css-base "/" layer "/" filename ".css")])))
 
@@ -795,16 +857,16 @@
 ;; Currently this is registering all user-design tokens for both dev and
 ;; release builds
 (defn user-design-tokens-profile-all
-  [css-new]
+  [*css]
   (let [[layer path] (layer+css-path user-design-tokens-layer-name)]
     ;; TODO - put this back in for stats?
-    #_(let [toks (:used/design-tokens @css-new)]
+    #_(let [toks (:used/design-tokens @*css)]
       (doseq [tok toks]
-        (register-toks+deps tok css-new)))
+        (register-toks+deps tok *css)))
     (spit-css-layer+profile
      path 
      (css-rule* ":root"
-                [(:theme/user-design-tokens @css-new)]
+                [(:theme/user-design-tokens @*css)]
                 nil
                 nil)
      layer)))
@@ -812,12 +874,12 @@
 
 ;; TODO - maybe unite this with fn below and pass a map with :release? and :init?
 #_(defn design-tokens-profile-all
-  [css-new]
+  [*css]
   (let [[layer path] (layer+css-path design-tokens-layer-name)]
     ;; TODO - put this back in for stats?
-    #_(let [toks (:used/design-tokens @css-new)]
+    #_(let [toks (:used/design-tokens @*css)]
       (doseq [tok toks]
-        (register-toks+deps tok css-new)))
+        (register-toks+deps tok *css)))
     (spit-css-layer+profile
      path 
      (css-rule* ":root"
@@ -828,17 +890,17 @@
 
 
 (defn design-tokens-profile
-  [css-new {:keys [release? init?]}]
+  [*css {:keys [release? init?]}]
 
   ;; Maybe do this during dev as well?
   (when release?
-    (let [toks (:used/design-tokens @css-new)]
+    (let [toks (:used/design-tokens @*css)]
       (doseq [tok toks]
-        (register-toks+deps tok css-new))))
+        (register-toks+deps tok *css))))
 
   (let [[layer path] (layer+css-path design-tokens-layer-name)
         tokens-coll (if release? 
-                      (:required/kushi-design-tokens @css-new)
+                      (:required/kushi-design-tokens @*css)
                       [kushi.css.build.tokens/design-tokens-by-token-array-map])]
     (spit-css-layer+profile 
      path 
@@ -869,11 +931,11 @@
 
 
 (defn kushi-utility-classes-overrides-profile
-  [css-new]
+  [*css]
   (let [reified (reduce (fn [acc coll]
                           (apply conj acc coll))
                         #{}
-                        (-> @css-new :utils :used/kushi-utility))]
+                        (-> @*css :utils :used/kushi-utility))]
     (when (contains? debugging :narrative)
       ;; TODO - Add callout here 
       nil)
@@ -892,20 +954,20 @@
                                        nil)))
             debug-toks? (contains? debugging :design-token-registration)
             used-toks   (when debug-toks?
-                          (:used/design-tokens @css-new))]
+                          (:used/design-tokens @*css))]
 
         ;; This is where design tokens for utility classes get registered.
         ;; They are identified based on the the actual css-rules produced.
-        (register-design-tokens! css css-new :kushi-utility)
+        (register-design-tokens! css *css :kushi-utility)
         #_(when debug-toks? (new-toks-callout "kushi-utility"
                                               nil
                                               used-toks
-                                              css-new))
+                                              *css))
         (spit-css-layer+profile path css layer)))))
 
 
 (defn kushi-utility-classes-profile-all
-  [css-new]
+  [*css]
   (let [[layer path] (layer+css-path kushi-utility-classes-layer-name)
         util-classes (apply array-map
                             (apply concat 
@@ -918,16 +980,16 @@
                                    [v]
                                    nil
                                    nil)))]
-    (register-design-tokens! css css-new :kushi-utility)
+    (register-design-tokens! css *css :kushi-utility)
     (spit-css-layer+profile path css layer)))
 
 
 (defn kushi-utility-classes-profile
-  [css-new]
+  [*css]
   (let [reified (reduce (fn [acc coll]
                           (apply conj acc coll))
                         #{}
-                        (-> @css-new :utils :used/kushi-utility))]
+                        (-> @*css :utils :used/kushi-utility))]
 
     (when (contains? debugging :narrative)
       ;; TODO - Add callout here 
@@ -945,22 +1007,20 @@
                                        nil
                                        nil)))
             debug-toks?  (contains? debugging :design-token-registration)
-            used-toks    (when debug-toks? (:used/design-tokens @css-new))]
+            used-toks    (when debug-toks? (:used/design-tokens @*css))]
 
         ;; This is where design tokens for utility classes get registered.
         ;; They are identified based on the the actual css-rules produced.
-        (register-design-tokens! css css-new :kushi-utility)
+        (register-design-tokens! css *css :kushi-utility)
         #_(when debug-toks? (new-toks-callout "kushi-utility"
                                               nil
                                               used-toks
-                                              css-new))
+                                              *css))
         (spit-css-layer+profile path css layer)))))
 
 
 (defn spit-css-imports [coll]
- ;; TODO - grab  skip <public> folder dynamically here or user-supplied filename
- ;; form kushi.edn
- (spit "./public/css/main.css"
+ (spit (str (:css-dir user-config*) "/" (:css-filename user-config*) ".css")
        (str "/* Kushi build system - development build */\n\n"
             (string/join 
              "\n\n"
@@ -973,9 +1033,13 @@
                       "\n"
                       (map (fn [m]
                              (str "@import \""
-                                  (string/replace (:css-fp m)
-                                                  #"^\./public/css/"
-                                                  "")
+                                  (string/replace
+                                   (:css-fp m)
+                                   (re-pattern (str "^"
+                                                    "\\"
+                                                    (:css-dir user-config*)
+                                                    "/"))
+                                   "")
                                   "\";"))
                            css-files))))
                   coll)))
@@ -1002,7 +1066,7 @@
 
 
 ;; TODO - is there a difference between :used/ and :required/
-(def css-new* 
+(def *css-state
   (array-map
    :base/kushi-design-tokens
    {:desc  "Base design tokens defined in Kushi lib. See kushi.css.build.tokens ns."
@@ -1049,50 +1113,51 @@
 
    :not-found/design-tokens      
    {:desc "Design tokens referenced in styling, but not defined."
-    :value #{}}
-    ))
-
-        
+    :value #{}}))
 
 (defn hook* [config filtered-build-sources release?]
-  (!? 'kushi.css.core/hook*:config config)
+  (!? 'kushi.core/hook*:config config)
   (let [user-design-tokens
         (user-design-tokens (:theme config))
 
-        css-new
+        *css
         (volatile!
-         (assoc (reduce-kv (fn [m k v] (assoc m k (:value v))) {} css-new*)
-                :theme/user-design-tokens
-                user-design-tokens))
+         (-> (assoc (reduce-kv (fn [m k v]
+                                 (assoc m k (:value v)))
+                               {} 
+                               *css-state)
+                    :theme/user-design-tokens
+                    user-design-tokens)))
 
-        ;; just for creating a new mock build-state
+        ;; Just for creating a new mock build-state to use for dev
         ;; _ (spit-filtered-build-sources-with-paths filtered-build-sources)
         
+        
         reduced-sources
-        (reduce (partial analyze-sources css-new)
+        (reduce (partial analyze-sources *css)
                 []
                 filtered-build-sources)
 
         ;; just for dev
-        ;; _ (analyzed-callout reduced-sources css-new)
+        ;; _ (analyzed-callout reduced-sources *css)
         
         kushi-utility-classes-profile
         (if release?
-          (kushi-utility-classes-profile css-new)
-          (kushi-utility-classes-profile-all css-new)) 
+          (kushi-utility-classes-profile *css)
+          (kushi-utility-classes-profile-all *css)) 
 
         kushi-utility-classes-overrides-profile
         (if release?
-          (kushi-utility-classes-overrides-profile css-new)
+          (kushi-utility-classes-overrides-profile *css)
           (kushi-utility-classes-overrides-profile-all)) 
 
         design-tokens-profile
-        (design-tokens-profile css-new {:release? release?})
+        (design-tokens-profile *css {:release? release?})
 
         ;; Currently this is registering all user-design tokens for both dev and
         ;; release builds
         user-design-tokens-profile
-        (user-design-tokens-profile-all css-new)
+        (user-design-tokens-profile-all *css)
 
         ret
         (conj reduced-sources
@@ -1103,19 +1168,16 @@
               #_user-shared-classes-profile)]
 
     (when (contains? debugging :design-token-registration)
-      (design-token-summary-callout css-new))
+      (design-token-summary-callout *css))
 
     ret))
 
 (defn- lightning-bundle
   [{:keys [input-path output-path]}
    flags]
-  (apply shell (concat ["npx"
-                        "lightningcss"]
+  (apply shell (concat ["npx" "lightningcss"]
                        flags
-                       [input-path
-                        "-o"
-                        output-path])))
+                       [input-path "-o" output-path])))
 
 (defn lightning-bundle-warning [e flags opts]
   (let [body (bling "Error when creating CSS bundle via lightningcss-cli."
@@ -1134,16 +1196,17 @@
      (merge opts
             {:type        :error
              :label       (str "ERROR: "
-                               (string/replace (type e)
-                                               #"^class "
-                                               "" )
+                               (string/replace (type e) #"^class " "" )
                                " (Caught)")
              :padding-top 1})
      body)))
 
+(defn lightning-path [filename-key]
+  (str (:css-dir user-config*) "/" (filename-key user-config*) ".css"))
+
 (def lightning-options-via-user-config
-  {:input-path  "./public/css/main.css"
-   :output-path "./public/css/bundle.css"
+  {:input-path  (lightning-path :css-filename)
+   :output-path (lightning-path :css-bundle-filename)
    :targets     ">= 0.25%"})
 
 (defn bad-bundle-path-warning
@@ -1159,14 +1222,14 @@
 
 (defn- create-css-bundle []
   (let [opts  lightning-options-via-user-config
-        flags (kushi.css.core/lightning-cli-flags
+        flags (kushi.core/lightning-cli-flags
                (dissoc opts :input-path :output-path)
-               (-> kushi.css.core/lightning-opts
+               (-> kushi.core/lightning-opts
                    (dissoc :browserslist)
                    (assoc :bundle true)))
         in    (:input-path opts)
         out   (:output-path opts)
-        fp?   #(s/valid? ::kushi-specs/css-file-path %)]
+        fp?   #(clojure.spec.alpha/valid? ::kushi-specs/css-file-path %)]
     (if (and (fp? in) (fp? out))
       (try (lightning-bundle opts flags)
            ;; TODO - test this exception handler
@@ -1241,143 +1304,38 @@
         (when (or init? new-or-deleted?)
           (write-css-imports "./kushi.edn" filtered-build-sources release?)
           (create-css-bundle))))
-  build-state))
+    build-state))
 
+#_(try (lightning-bundle opts flags)
+           ;; TODO - test this exception handler
+           (catch Exception e
+             (lightning-bundle-warning e flags opts)))
 
 (defn hook-dev
   "Just for dev"
   [filtered-build-sources release?]
   ;; TODO maybe deleted? and added? should be seqs or nils
-  (write-css-imports "./docs/kushi.edn" filtered-build-sources release?)
+  (write-css-imports (str "./" dev-sample-proj-dir "/kushi.edn" )
+                     filtered-build-sources release?)
   #_(create-css-bundle))
 
 
-;; TODO 
-
-;; Review PR, then merge
-
-
-
-;; 1 day
-;; branch ----------------------------------------------------------------------
-
-;; Figure out sx and css calls from ui and playground that were
-;; ".foo", because it might make sense not to have them as classes based on 
-;; file info. Maybe they should be like "[data-kushi-ui='button']"?
-
-;; version of sx macro? or different functionality with sym arg?
-;; or (sxui ..)
-;; (sx 'button
-;;     :.large-text
-;;     :c--red
-;;     {:id :wtf})
-;; =>
-;; {:data-kushi-ui "button"
-;;  :class         [:large-text]
-;;  :id            "wtf"
-;;  :data-ns       "kushi/ui/button.cljs::12:1"}
-
-;; "[data-kushi-ui=\"button\"] {
-;;  color: red;
-;; }"
-
-
-;; 3) - Sort out core fns from kushi.css into kushi.core.
-
-;;    - Use single version of keyed with vector
-
-;;    - Rename css-new
-;;    
-;;    - Convert sx, css
-;;      kushi.playground.tweak.element
-;;      kushi.playground.tweak.typescale
-
-;;    - Maybe delete:
-;;      kushi.ui.icon.mui.core
-;;      kushi.ui.icon.mui.examples
-;;      kushi.ui.icon.helper
-;;      kushi.ui.modal.examples
-;;      examplescustom
-;;      kushi.ui.examples
-;;      kushi.playground.sample
-;;      kushi.ui.theme
-
-;;    - other fns related to typography, injection, etc?
-
-
-;; 2 days
-;; branch ----------------------------------------------------------------------
-;; 8) New color system based on oklch
-
-
-;; 1 day
-;; branch ----------------------------------------------------------------------
-;; 5) New build reporting system
-
-
-;; 2 days
-;; branch ----------------------------------------------------------------------
-;; 4) Keep track of changes or deletions in proj via shadow build-state
-
-
-;; 2 days
-;; branch ----------------------------------------------------------------------
-;; 9) New theming system docs
-
-
-
-;; 1 day
-;; branch ----------------------------------------------------------------------
-;; 7) - (stab at)
-;;    - Figure out how to pull in css from sources with relative file path 
-
-
-;; 1 day
-;; branch ----------------------------------------------------------------------
-;; Add to playground
-;; - link
-;; - divisor
-;; - accordian
-;; - avatar
-;; - label
-
-;; Make sure styled scrollbars working for modals etc.
-
-;; branch ----------------------------------------------------------------------
-;; 10)  
-;;      Later:
-;;      3b) 
-;;          - Figure out how to index and save non-base shared styles in .edn or smthg
-;;          - kushi-theming
-;;          - kushi-ui-shared
-;;          - user-shared
-
-;;      3d) Hydrate args that use shared sources (what?)
-;;      3e) Maybe resave hydrated shared sources without infinite loop?
-;;      3f) Write styles
-
-
-;; 2 days
-;; branch ----------------------------------------------------------------------
-;; 6) Add comments, docstrings, reporting.
-
-
-(defn- design-token-summary-callout [css-new]
+(defn- design-token-summary-callout [*css]
   (callout {:type  :subtle
             :label (bling 
                     [:italic "Total number of registered design-tokens"])} 
-           (bling [:orange.bold (-> @css-new :used/design-tokens count)]))
+           (bling [:orange.bold (-> @*css :used/design-tokens count)]))
   (callout {:type  :subtle
             :label (bling 
                     [:italic "Total number of kushi design-tokens"])} 
-           (bling [:orange.bold (-> @css-new
+           (bling [:orange.bold (-> @*css
                                     :required/kushi-design-tokens
                                     count)]))
   (callout {:type  :subtle
             :label (bling 
                     [:italic "Total number of design tokens not found"])} 
            (bling 
-            [:orange.bold (count (:not-found/design-tokens @css-new))]
+            [:orange.bold (count (:not-found/design-tokens @*css))]
             "\n\n"
             [:italic
              "These design tokens do not reference kushi library tokens,\n"]
@@ -1386,13 +1344,14 @@
             [:italic
              "referencing locally scoped css-vars.\n"]
             "\n"
-            (-> (? :data (:not-found/design-tokens @css-new))
+            (-> (? :data (:not-found/design-tokens @*css))
                 :formatted
                 :string))))
 
+
 (defn analyzed-callout
   "Just for dev"
-  [reduced-sources css-new]
+  [reduced-sources *css]
   (when (contains? debugging :narrative)  
     (do (stage-callout "ANALYZED SOURCES" {:margin-top 1 :margin-bottom 1})
         (? {:label
@@ -1432,17 +1391,24 @@
   [m]
   (->> m
        (reduce (fn [acc [k v]]
-                 (conj acc
+                 ;; TODO use refactor below
+                 (conj acc #_[k (assoc v :file (clojure.java.io/file (:file v)))]
                        [k (-> v
-                              (assoc :file (-> v :file clojure.java.io/file)))]))
+                              (assoc :file
+                                     (-> v
+                                         :file
+                                         clojure.java.io/file)))]))
                [])
        (sequence cat)
        (apply array-map)))
 
+(def dev-mock-filtered-build-sources-path
+  (str "./" dev-sample-proj-dir "/dev/mock/filtered-build-sources.edn"))
+
 ;; Dev with lein-refresh
 ;; TODO - create a fake :build.state/mode here?
 #_(let [release?               false
-      filtered-build-sources (-> "./docs/dev/mock/filtered-build-sources.edn"
+      filtered-build-sources (-> dev-mock-filtered-build-sources-path
                                  slurp
                                  read-string
                                  hydrate-paths-into-files
@@ -1463,12 +1429,13 @@
              (apply array-map))
 
         _                                 
-        (spit (? "./dev/mock/filtered-build-sources.edn")
+        (spit (? "Spitting dev-mock-filtered-build-sources edn file to:"
+                  "dev/mock/filtered-build-sources.edn")
               (with-out-str (pprint filtered-build-sources-with-paths))
               :append false)]))
 
 ;; namespaces-using-kushi-macros is an array-map, produced by filtering
-;; the build-state for namespaces which pull in kushi.css.core macros
+;; the build-state for namespaces which pull in kushi.core macros
 ;;
 ;; Example entry:
 ;; {[:shadow.build.classpath/resource "mvp.browser.cljs"]

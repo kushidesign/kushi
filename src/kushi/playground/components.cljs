@@ -1,6 +1,6 @@
 (ns ^:dev/always kushi.playground.components
  (:require 
-  [kushi.css.core :refer [sx]]
+  [kushi.core :refer [sx]]
   [kushi.ui.button.core :refer [button]]
   [kushi.ui.button.demo :as button.demo]
   [kushi.ui.callout.core :refer [callout]]

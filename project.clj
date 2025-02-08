@@ -1,4 +1,4 @@
-(defproject design.kushi/kushi "1.0.0-a.22"
+(defproject design.kushi/kushi "1.0.0-a.24-SNAPSHOT"
   :description         "ClojureScript UI Framework"
   :url                 "https://github.com/kushidesign/kushi"
   :license             {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
@@ -6,7 +6,6 @@
   ;; :source-paths        ["../domo/src"]
   :dependencies        [[design.kushi/domo "0.3.0"]
                         [org.clojure/clojure "1.11.1"]
-                        [garden "1.3.10"]
                         [applied-science/js-interop "0.3.3"]
                         [expound "0.9.0"]
                         [markdown-to-hiccup/markdown-to-hiccup "0.6.2"]

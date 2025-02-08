@@ -1,6 +1,6 @@
 (ns kushi.ui.grid.core
   (:require
-   [kushi.css.core :refer (css css-vars-map merge-attrs)]
+   [kushi.core :refer (css css-vars-map merge-attrs)]
    [kushi.ui.util :refer [aspect-ratio->number]]
    [kushi.ui.core :refer (opts+children)] ))
 

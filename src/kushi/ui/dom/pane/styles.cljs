@@ -1,7 +1,7 @@
 (ns kushi.ui.dom.pane.styles
   (:require
    [goog.string]
-   [kushi.css.core :refer (defcss)]))
+   [kushi.core :refer (defcss)]))
 
 (defcss "@layer kushi-ui-shared .kushi-pane"
   :position--fixed
@@ -152,8 +152,7 @@
   :_.kushi-pane-arrow:left--0%)
 
 (defcss 
- "@layer kushi-ui-shared .kushi-pane-block-center-mixin
-  .kushi-pane-block-center-mixin"
+ "@layer kushi-ui-shared .kushi-pane-block-center-mixin"
   [:--tx "calc(var(--oe-x-center) - 50%)"]
   [:--arrow-tx :-50%]
   :_.kushi-pane-arrow:left--50%)
@@ -171,6 +170,7 @@
   [:--_arrow-gradient-direction "to top left"]
   [:--arrow-ty "calc(-50% + (var(--border-width) * 0.7))"]
   [:_.kushi-pane-arrow {:top :100%} ])
+
 (defcss
   "@layer kushi-ui-shared .kushi-pane-tl" 
   :.kushi-pane-top-mixin
@@ -211,7 +211,7 @@
 (defcss
   "@layer kushi-ui-shared .kushi-pane-b"
   :.kushi-pane-bottom-mixin
-  :.kushi-pane-block-center-mixin
+  :.kushi-ui-shared
   :transform-origin--top:center
   [:--tx "calc((var(--oe-x-center) - 50%))"]
   [:--arrow-tx :-50%]
@@ -405,33 +405,33 @@
   [:mask-image "linear-gradient(var(--_arrow-gradient-direction), black var(--_arrow-stop), transparent var(--_arrow-stop))"]
   [:transform "translate(var(--arrow-tx), var(--arrow-ty)) rotate(45deg)"]
 
-  [".kushi-pane-tl &" {:border-top-width :0!important
-                                 :border-left-width :0!important}]
-  [".kushi-pane-t &" {:border-top-width :0!important
-                                :border-left-width :0!important}]
-  [".kushi-pane-tr &" {:border-top-width :0!important
-                                 :border-left-width :0!important}]
+  [".kushi-pane-tl &" {:border-top-width  :0!important
+                       :border-left-width :0!important}]
+  [".kushi-pane-t &" {:border-top-width  :0!important
+                      :border-left-width :0!important}]
+  [".kushi-pane-tr &" {:border-top-width  :0!important
+                       :border-left-width :0!important}]
 
-  [".kushi-pane-rt &" {:border-top-width :0!important
-                                 :border-right-width :0!important}]
-  [".kushi-pane-r &" {:border-top-width :0!important
-                                :border-right-width :0!important}]
-  [".kushi-pane-rb &" {:border-top-width :0!important
-                                 :border-right-width :0!important}]
+  [".kushi-pane-rt &" {:border-top-width   :0!important
+                       :border-right-width :0!important}]
+  [".kushi-pane-r &" {:border-top-width   :0!important
+                      :border-right-width :0!important}]
+  [".kushi-pane-rb &" {:border-top-width   :0!important
+                       :border-right-width :0!important}]
 
   [".kushi-pane-br &" {:border-bottom-width :0!important
-                                 :border-right-width :0!important}]
+                       :border-right-width  :0!important}]
   [".kushi-pane-b &" {:border-bottom-width :0!important
-                                :border-right-width :0!important}]
+                      :border-right-width  :0!important}]
   [".kushi-pane-bl &" {:border-bottom-width :0!important
-                                 :border-right-width :0!important}]
+                       :border-right-width  :0!important}]
 
   [".kushi-pane-l &" {:border-bottom-width :0!important
-                                :border-left-width :0!important}]
+                      :border-left-width   :0!important}]
   [".kushi-pane-lt &" {:border-bottom-width :0!important
-                                 :border-left-width :0!important}]
+                       :border-left-width   :0!important}]
   [".kushi-pane-lb &" {:border-bottom-width :0!important
-                                 :border-left-width :0!important}])
+                       :border-left-width   :0!important}])
 
 (defcss
   "@layer kushi-ui-shared .kushi-pane-mounting" ;; TODO is this even used?

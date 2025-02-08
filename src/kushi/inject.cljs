@@ -1,6 +1,6 @@
 ;; TODO - determine how much in this namespace can be done in macro-land
 
-(ns kushi.css.inject
+(ns kushi.inject
   (:require [clojure.string :as string]))
 
 ;; -----------------------------------------------------------------------------
@@ -231,7 +231,3 @@
           families* (reduce goog-symbols-map->str [] converted)
           families  (str (string/join "&" families*) "&display=swap")]
       (add-google-fonts-with-preconnects families))))
-
-
-;; This should always gets called for both prod or dev builds
-#_(kushi.inject/inject-google-fonts!)

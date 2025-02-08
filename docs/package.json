@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "npx shadow-cljs watch app",
     "release": "npx shadow-cljs release app",
+    "clean-css": "rm -rf public/css/*",
     "clean": "rm -rf public/js .shadow-cljs .cpcache"
   },
   "devDependencies": {

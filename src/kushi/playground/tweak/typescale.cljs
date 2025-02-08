@@ -1,10 +1,10 @@
 (ns kushi.playground.tweak.typescale
   (:require [clojure.string :as string]
             [clojure.data :as data]
-            [kushi.core :refer [sx]]
+            [kushi.core :refer [sx css merge-attrs css-vars-map]]
             [domo.core :as domo]
             [kushi.ui.label.core :refer [label]]
-            [kushi.ui.button.core :refer [ button]]
+            [kushi.ui.button.core :refer [button]]
             [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.typescale :refer [create-typescale scale-a scale-b]]
             [kushi.playground.component-examples :refer [copy-to-clipboard-button]]
@@ -25,17 +25,17 @@
 (defn code-block [x]
   [:div.relative
    [:textarea
-    (sx :.small
-        :.code
-        :bgc--white
-        :b--1px:solid:$neutral-200
-        :p--1rem
-        {:defaultValue x
-         :rows         22
-         :readOnly     true})]
+    (merge-attrs (sx :fs--$small
+                     :.code
+                     :bgc--white
+                     :b--1px:solid:$neutral-200
+                     :p--1rem)
+                 {:defaultValue x
+                  :rows         22
+                  :readOnly     true})]
    [copy-to-clipboard-button
-    (sx :.top-right-corner-inside!
-        {:-text-to-copy x})]
+    (merge-attrs (sx :.top-right-corner-inside!)
+                 {:-text-to-copy x})]
    ])
 
 (defn scale-row [s state ks]
@@ -63,8 +63,8 @@
                       :.elevated
                       :zi--1000
                       :bgc--white
-                      :$wrapper-padding-inline--2rem
-                      :$wrapper-padding-block--3rem
+                      [:--wrapper-padding-inline :2rem]
+                      [:--wrapper-padding-block :3rem]
                       :pb--$wrapper-padding-block
                       :pi--$wrapper-padding-inline)]
             (into []
@@ -75,9 +75,9 @@
                                       :c--$neutral-600
                                       ["nth-child(odd):color" :$neutral-900]
                                       ["nth-child(odd):fw" :$semi-bold]
-                                      ["nth-child(even)&_.type-tweaker-type-size-class-name:visibility" :hidden])
+                                      ["nth-child(even)_.type-tweaker-type-size-class-name:visibility" :hidden])
                              [:span (sx :.flex-row-fs #_:min-width--200px)
-                              [:span (sx 'type-tweaker-type-size-class-name
+                              [:span (sx :.type-tweaker-type-size-class-name
                                          :.xxsmall
                                          :ff--$code-font-stack
                                          :.inline-block
@@ -102,7 +102,7 @@
                           [[:div
                             (sx :.flex-row-c :gap--1.5rem :mbs--2rem)
                             [button
-                             (sx :.small
+                             (sx :fs--$small
                                  {:on-click #(do (let [[_ to-reset _] (data/diff init-scale @state)]
                                                    (doseq [[size-kw _] to-reset]
                                                      (domo/set-css-var! js/document.body
@@ -111,17 +111,19 @@
                                                  (reset! state init-scale))})
                              "Reset"]
                             [button
-                             (sx :.small
+                             (sx :fs--$small
                                  {:on-click #(reset! copy-view? (not @copy-view?))})
                              "Copy data..."]]
                            [:div
-                            (sx 'type-tweaker-copy-data-view
-                                :.flex-col-sb
-                                :.absolute-fill
-                                :bgc--white
-                                :pb--$wrapper-padding-block
-                                :pi--$wrapper-padding-inline
-                                [:d (if @copy-view? :flex :none)])
+                            (let [display (if @copy-view? "flex" "none")]
+                              {:style (css-vars-map display)
+                               :class (css :.type-tweaker-copy-data-view
+                                           :.flex-col-sb
+                                           :.absolute-fill
+                                           :bgc--white
+                                           :pb--$wrapper-padding-block
+                                           :pi--$wrapper-padding-inline
+                                           [:d display])})
                             [:div
                              (sx :.flex-row-sa
                                  :ai--fs
@@ -131,18 +133,21 @@
                              [:div (sx :.flex-col-fs
                                        :gap--0.25rem)
                               [label "K/V sequence"]
-                              [code-block (string/join "\n"
-                                                       (apply concat
-                                                              (keep-indexed (fn [idx x]
-                                                                              (when (even? idx)
-                                                                                [(keyword (str "$" (name x)))
-                                                                                 (keyword (str (x @state) "rem"))]))
-                                                                            scale-ks))) ]]]
+                              [code-block (string/join
+                                           "\n"
+                                           (apply concat
+                                                  (keep-indexed
+                                                   (fn [idx x]
+                                                     (when (even? idx)
+                                                       [(keyword (str "$" (name x)))
+                                                        (keyword (str (x @state) "rem"))]))
+                                                   scale-ks))) ]]]
                             [:div
                              (sx :.flex-row-c)
                              [button
-                              (sx :.small
-                                  {:on-click #(reset! copy-view? (not @copy-view?))})
+                              (merge-attrs
+                               (sx :fs--$small)
+                               {:on-click #(reset! copy-view? (not @copy-view?))})
                               [icon :west]
                               "Back to controls"]]]]))))))
 

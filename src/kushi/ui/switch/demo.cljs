@@ -1,7 +1,7 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.switch.demo
   (:require
    [kushi.playground.util :as util]
-   [kushi.css.core :refer (sx merge-attrs)]
+   [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.switch.core :refer [switch]]
    [kushi.playground.util :refer-macros [sx-call]]

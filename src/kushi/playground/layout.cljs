@@ -2,7 +2,7 @@
   (:require [domo.core :as domo]
             [clojure.string :as string]
             [kushi.ui.divisor.core :refer (divisor)]
-            [kushi.css.core :refer [sx css merge-attrs defcss]]
+            [kushi.core :refer [sx css merge-attrs defcss]]
             [kushi.ui.core :refer [defcom]]
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.spinner.core :refer [propeller]]
@@ -32,8 +32,10 @@
 (def tab-attrs
   (sx :.minimal
       :fs--$small
-      :pi--0.8em
-      :pb--0.4em))
+      :pis--0.799em
+      :pie--0.8em
+      :pbs--0.4em
+      :pbe--0.399em))
 
 (defcom tab
   [button (merge-attrs 

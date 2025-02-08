@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.ui.core
-  (:require-macros [kushi.ui.core :refer [keyed]])
+  (:require-macros [kushi.ui.core])
   (:require [clojure.string :as string]
-            [kushi.css.core :refer [merge-attrs]]))
+            [kushi.core :refer [merge-attrs]]))
 
 (defn with-hashed-keys [coll]
   (map-indexed (fn [idx x] ^{:key (str (hash x) "-" idx)} x) coll))
@@ -67,7 +67,9 @@
                       (string/replace #":\!$|:\!children$|:\!attr$" "")
                       keyword)
                   k)]
-    (when target? (keyed tagstr tag target?))
+    (when target? {:tagstr  tagstr
+                   :tag     tag
+                   :target? target?})
     [tag target?]))
 
 (defn target-tag? [re-str k]
@@ -100,18 +102,30 @@
        (some hiccup? coll)))
 
 (defn get-path [coll nested? re-str]
-  (if nested? (->> coll (hiccup-path (partial target-tag? re-str)) drop-last) []))
+  (if nested?
+    (->> coll
+         (hiccup-path (partial target-tag? re-str))
+         drop-last)
+    []))
 
 (defn target-vector [coll]
   (let [nested?         (nested-hiccup? coll)
         path            (get-path coll nested? "!")
         [children-path
-         attr-path]     (map #(if (seq path) path (get-path coll nested? %)) ["!children" "!attr"])
+         attr-path]     (map #(if (seq path)
+                                path
+                                (get-path coll nested? %))
+                             ["!children" "!attr"])
         target          (get-in coll path)
         children-target (get-in coll children-path)
         attr-target     (get-in coll attr-path)
         single-target?  (= children-path attr-path)]
-    (keyed children-path children-target attr-path attr-target single-target?)))
+    {:children-path   children-path
+     :children-target children-target
+     :attr-path       attr-path
+     :attr-target     attr-target
+     :single-target?  single-target?
+     }))
 
 (defn merge-attr2
   [a b]
@@ -141,7 +155,8 @@
         hiccup-w-children     (if (seq children-path)
                                 (assoc-in hiccup* children-path node-w-children)
                                 node-w-children)]
-    (keyed merged-children hiccup-w-children)))
+    {:merged-children   merged-children
+     :hiccup-w-children hiccup-w-children}))
 
 ;; TODO: Is this redundant with kushi.core/merge-attrs ?
 ;; Maybe remove
@@ -168,18 +183,6 @@
                          node-w-attr)]
     hiccup))
 
-;; TODO: Get rid of this?
-(defn gui
-  ([args hiccup*]
-   (gui args hiccup* nil))
-  ([args hiccup* decorator]
-   (let [targets          (target-vector hiccup*)
-         [user-attr
-          user-children]  (user-attr+children args)
-         m                (merge targets (keyed user-attr user-children hiccup* decorator))
-         m+               (-> m merge-children (merge m))
-         hiccup-with-attr (merge-attributes m+)]
-     hiccup-with-attr)))
 
 (defn ^:public lightswitch!
   "Expects a querySelector string and toggles a .dark class on that element.

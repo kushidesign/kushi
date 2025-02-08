@@ -1,11 +1,5 @@
 (ns kushi.playground.util)
 
-(defmacro keyed [& ks]
-  `(let [keys# (quote ~ks)
-         keys# (map keyword keys#)
-         vals# (list ~@ks)]
-     (zipmap keys# vals#)))
-
 (defmacro feature
   [sym m]
   (let [examples (mapv (fn [x]

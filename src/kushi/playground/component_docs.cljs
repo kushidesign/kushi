@@ -1,12 +1,10 @@
 (ns kushi.playground.component-docs
   (:require [clojure.string :as string]
             [clojure.walk :as walk]
-            [kushi.css.core :refer (sx css css-vars-map)]
+            [kushi.core :refer (sx css-vars-map css)]
             [kushi.playground.util :as util]
             [kushi.ui.label.core :refer [label]]
-            [kushi.ui.modal.core :refer [close-kushi-modal]]
-            [markdown-to-hiccup.core :as md->hc]
-            [domo.core :as domo]))
+            [markdown-to-hiccup.core :as md->hc]))
 
 
 (defn add-links

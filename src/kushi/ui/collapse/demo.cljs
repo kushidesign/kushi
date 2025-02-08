@@ -1,5 +1,5 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.collapse.demo
-  (:require [kushi.css.core :refer (sx css merge-attrs)]
+  (:require [kushi.core :refer (sx css merge-attrs)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.ui.collapse.core :refer [accordion collapse]]))

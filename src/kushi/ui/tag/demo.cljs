@@ -1,14 +1,10 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.tag.demo
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.text-field.core :refer [text-field]]
-   [kushi.css.core :refer (sx css)]
+   [kushi.core :refer (sx)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.button.core :refer [button]]
-   [kushi.ui.tag.core :refer [tag]]
-   [reagent.dom :as rdom]))
+   [kushi.ui.tag.core :refer [tag]]))
 
 
 ;; TODO remove section-label

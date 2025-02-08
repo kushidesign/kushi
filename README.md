@@ -122,15 +122,13 @@ interactive playground</a> of pre-built headless UI components.
 <!--Intro section for ui lib vs user guide -->
 
 ## Build system basics
-From version 1.0.0.a.23, Kushi has adopted a modified version of the
-build-system used by [`shadow-css`](https://github.com/thheller/shadow-css).
-This represents a transition away from Kushi's initial approach of using the
-side-effecting `sx` macro to generate an html attributes map with a hashed
-classname and then producing all relevant css via a `shadow-cljs` build hook.
-Using the build mechanics of `shadow-css` makes Kushi's incremental build times
-much faster, as it can now leveraging the caching features of `shadow-cljs`,
-which were previously unavailable due to the side-effecting macros necessitating
-the use of `:cache-blockers` in `shadow-cljs`.
+Currently, Kushi depends on the [`shadow-cljs`](https://github.com/thheller/shadow-css)
+build-hook system to generate and bundle CSS. The `sx` and `css` macros return
+an html attributes map or class string, respectively. The CSS is transpiled and
+generated in a separate analyzation phase triggered by `kushi.css.build.analyze/hook`.
+By default, [`lightningcss`](https://lightningcss.dev/) is leveraged to achieve
+fast and efficient minification, bundling, vendor prefixing, and syntax-lowering
+(to target older browsers).
 
 <br>
 
@@ -1449,7 +1447,7 @@ You would receive warnings about invalid args in the terminal:
 <br>
 <br>
 
-## Defining Components
+<!-- ## Defining Components
 Below is a contrived example of creating a reusable, stateless, and composable
 component using `kushi.ui.core/defcom`.
 
@@ -1506,19 +1504,23 @@ Assuming your are using something like Reagent, you can use the resulting
  [:p "Child two"]]
 
 ```
-<br>
+<br> -->
 
-### Manually defining complex components
+### Defining components
 
- If, for some reason, you don't want use the `defcom` to define your complex
- components, you can use the same underlying pattern that `defcom` abstracts.
- This component definition pattern relies on using the
- `kushi.ui.core/opts+children` helper fn. It optionally makes use of
- `kushi.core/merge-attrs` to enable decoration, and also uses the
- `(into [:div ] ...)` for the parent node of the `children`.
+<!-- If, for some reason, you don't want use the `defcom` to define your complex
+components, you can use the same underlying pattern that `defcom` abstracts. -->
+Kushi promotes a component definition pattern that mirrors hiccup itself by
+standardizing the function signature as an (optional) single map of attributes
+followed by any number of children. This pattern relies on using the
+`kushi.ui.core/opts+children` helper function.
 
-The `my-section` function below would result in the exact same component as the
-previous example (that used `defmacro`).
+Under the hood, this helper function pulls out any keys in attributes map that
+start with `:-` and puts them in a separate `opts` map. This allows passing in
+various custom options within the attributes map that will not clash with
+existing html attributes. You can optionally make use of `kushi.core/merge-attrs`
+to enable decoration and composition of attribute maps.
+
 
 ```Clojure
 (ns myapp.core

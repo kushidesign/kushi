@@ -1,12 +1,13 @@
 (ns ^:dev/always kushi.playground.component-examples
-  (:require [clojure.string :as string] ;; [clojure.walk :as walk]
+  (:require [clojure.string :as string]
             [domo.core :as d]
-            [kushi.css.core :refer (sx css merge-attrs)]
+            [kushi.core :refer (sx css merge-attrs)]
             [kushi.css.defs]
+            [kushi.css.media]
             [kushi.playground.component-docs :as docs]
             [kushi.playground.util :as util]
             [kushi.ui.button.core :refer (button)]
-            [kushi.ui.core :refer (keyed opts+children)]
+            [kushi.ui.core :refer (opts+children)]
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer (icon)]
             [kushi.ui.tooltip.core :refer (tooltip-attrs)]
@@ -269,13 +270,13 @@
        (when snippets 
          [:<> 
           [example-modal-trigger modal-id]
-          [example-modal (keyed modal-id
-                                component-label
-                                label
-                                snippets-header
-                                snippets
-                                component-reqs
-                                example-reqs)]])]
+          [example-modal {:modal-id        modal-id
+                          :component-label component-label
+                          :label           label
+                          :snippets-header snippets-header
+                          :snippets        snippets
+                          :component-reqs  component-reqs
+                          :example-reqs    example-reqs}]])]
 
       
       (into [:div (merge-attrs
@@ -286,8 +287,8 @@
               [example-row-variant
                component
                (merge example-opts
-                      (keyed variant-attrs
-                             reqs-by-refers))]))]]))
+                      {:variant-attrs  variant-attrs
+                       :reqs-by-refers reqs-by-refers})]))]]))
 
 
 ;;; New snippet code
@@ -419,7 +420,7 @@
           :gap--1em
           :_.kushi-text-input-label:min-width--7em
           :_.kushi-input-inline:gtc--36%:64%)
-      (let [max-width  (or (when-let [[p v] (some-> kushi.css.defs/media
+      (let [max-width  (or (when-let [[p v] (some-> kushi.css.media/media
                                                     :sm
                                                     first)]
                              (when-not (d/matches-media? p (as-str v))

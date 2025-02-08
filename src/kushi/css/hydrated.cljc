@@ -1,16 +1,16 @@
 (ns kushi.css.hydrated
   (:require
    [clojure.spec.alpha :as s]
-   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [clojure.walk :refer [prewalk]]
    [kushi.css.defs :as defs]
+   [kushi.css.media :as media]
    [kushi.css.shorthand :as shorthand]
    [kushi.css.specs :as specs]
-   [kushi.css.util :refer [keyed
-                           vec-of-vecs?
-                           more-than-one?
-                           partition-by-pred]]))
+   [kushi.util :refer [keyed
+                       vec-of-vecs?
+                       more-than-one?
+                       partition-by-pred]]))
 
 ;; TODO - would there ever be any quoted backticks in css val?
 (defn str+ [s]
@@ -115,7 +115,7 @@
 
 (def mod-transforms
   {:media-query    
-   #(let [m       (-> % keyword defs/media)
+   #(let [m       (-> % keyword media/media)
           [[k v]] (when (map? m) (into [] m))]
       (str "@media(" (name k) ": " (name v) ")"))
 
@@ -161,7 +161,7 @@
   [last-index prop? i s]
   (let [t (cond
             (and (zero? i)
-                 (contains? defs/media (keyword s)))
+                 (contains? media/media (keyword s)))
             :media-query
 
             (and (or (zero? i) (= 1 i))
@@ -186,7 +186,7 @@
 
             :else
             :query-selector)]
-    (!? (keyed [last-index prop? i s t]))
+    ;; (!? (keyed [last-index prop? i s t]))
     (if t
       (let [;; The first branch of this `if` is a check to see
             ;; if we are dealing with something like:
@@ -200,7 +200,7 @@
             s (if (and (pos? i)
                        (string-starts-with-pseudo-class? s))
                 (do 
-                  (!? :result (str "adding a leading \":\" to " s))
+                  ;; (!? :result (str "adding a leading \":\" to " s))
                   (str ":" s))
                 s)
             ]
@@ -251,8 +251,8 @@
                     :bunch? false}
                    s)
              ret (-> arg f symbol (with-meta {:mod-transformed? true}))]
-         (when (string/starts-with? s ":checked")
-           (!? (keyed [s arg ret f])))
+        ;;  (when (string/starts-with? s ":checked")
+        ;;    (!? (keyed [s arg ret f])))
          ret)
        (name v)))
    stack*))
@@ -380,7 +380,7 @@
 (defn- sort-mqs [coll]
   (sort-by (fn [[k]]
              (let [[mq] (string/split (name k) #":")]
-               (get defs/index-by-media-query (keyword mq))))
+               (get media/index-by-media-query (keyword mq))))
            coll))
 
 
@@ -392,8 +392,8 @@
               #(let [[_ k] (re-find #"^([^\s:]+):"
                                     (some-> % (nth 0) name))]
                  (when k
-                   (or (get defs/media (keyword k))
-                       (get defs/media k))))
+                   (or (get media/media (keyword k))
+                       (get media/media k))))
               x)]
          (when (more-than-one? mq)
            (into [] (concat others (sort-mqs x)))))))
@@ -413,16 +413,16 @@
           ;; An alternate approach would be stack-with-bunched. 
           nested-stack* (stack-unbunched stack*)
           ret           (nested-stack nested-stack* v prop?)]
-      (!?
-       (keyed [x
-               v
-               prop?
-               last-index
-               f
-               stack
-               stack*
-               nested-stack*
-               ret]))
+      ;; (!?
+      ;;  (keyed [x
+      ;;          v
+      ;;          prop?
+      ;;          last-index
+      ;;          f
+      ;;          stack
+      ;;          stack*
+      ;;          nested-stack*
+      ;;          ret]))
       ret)
 
     (if-let [mod (let [mod (when (vector? x) (nth x 0 nil))]

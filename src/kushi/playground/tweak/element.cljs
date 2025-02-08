@@ -1,13 +1,13 @@
-;; Experimental, unused !!!
+;; Experimental, unused for now
 ;; TODO - rewrite this ns with reframe
 
 (ns kushi.playground.tweak.element
   (:require [clojure.string :as string]
             [clojure.edn :as edn]
             [clojure.spec.alpha :as s]
-            [kushi.core :refer [sx keyed defclass merge-attrs]]
+            [kushi.core :refer [sx defcss merge-attrs]]
             [kushi.specs2 :as specs2]
-            [kushi.shorthand :as shorthand]
+            [kushi.css.shorthand :as shorthand]
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.tooltip.core :refer [tooltip-attrs]]
@@ -18,7 +18,7 @@
             [kushi.ui.util :refer [find-index]]
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
             [domo.core :refer (copy-to-clipboard!)]
-            [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
+            ;; [kushi.ui.modal.core :refer (modal close-kushi-modal open-kushi-modal)]
             [applied-science.js-interop :as j]
             [reagent.dom :as rdom]))
 
@@ -237,36 +237,37 @@
   (let [{:keys [og-flex-class target-els family-classes starts-with]} &opts]
     (into [:div (sx :.flex-row-sa  :p--2px :gap--1rem)]
           (for [flex-class (filter #(string/starts-with? (name %) starts-with) (:flex variants-by-category))
-                :let [og? (= (name flex-class) (name og-flex-class))]]
+                :let [og? (= (name flex-class) (name og-flex-class))
+                      og-class (when og? "og-value")]]
             [:div (merge-attrs
-                   (sx 'flex-option-thumb
-                       :.relative
-                       (when og? :.og-value)
+                   (sx :.flex-option-thumb
+                       :p--relative
+                       flex-class
+                       og-class
                        :w--30px
                        :h--30px
                        :border--1px:solid:silver
                        :.neutral-bg
-                       :.pointer
+                       :cursor--pointer
                        :gap--2px
                        ["[aria-selected='true']:bgc" :$accent-100]
-                       ["[aria-selected='true']>div:bgc" :$accent-800]
-                       {:class         [flex-class]
-                        :role          :button
-                        :tab-index     0
-                        :aria-selected og?
-                        :on-click      (fn [e]
-                                         (let [node    (.-currentTarget e)
-                                               control (domo/nearest-ancestor (domo/et e) ".tweaker-control-row")
-                                               label   (.querySelector control ".kushi-slider-single-value-label")]
+                       ["[aria-selected='true']>div:bgc" :$accent-800])
+                   {:role          :button
+                    :tab-index     0
+                    :aria-selected og?
+                    :on-click      (fn [e]
+                                     (let [node    (.-currentTarget e)
+                                           control (domo/nearest-ancestor (domo/et e) ".tweaker-control-row")
+                                           label   (.querySelector control ".kushi-slider-single-value-label")]
 
-                                           (select-flex-thumb e flex-class)
-                                           (highlight-tweaked-label! e og-flex-class flex-class)
-                                           (j/assoc! label :textContent (name flex-class))
+                                       (select-flex-thumb e flex-class)
+                                       (highlight-tweaked-label! e og-flex-class flex-class)
+                                       (j/assoc! label :textContent (name flex-class))
 
-                                           (doseq [el target-els]
-                                             (apply domo/remove-class! el family-classes)
-                                             (apply domo/remove-class! el (:display variants-by-category))
-                                             (domo/add-class! el flex-class))))})
+                                       (doseq [el target-els]
+                                         (apply domo/remove-class! el family-classes)
+                                         (apply domo/remove-class! el (:display variants-by-category))
+                                         (domo/add-class! el flex-class))))}
                    (tooltip-attrs {:-text      (str ":." (name flex-class))
                                    :-placement :top}))
              &children]))))
@@ -283,25 +284,24 @@
     [:div.flex-row-fs
      (sx :pi--1em:2em)
      [:div (merge-attrs
-            (sx 'kushi-slider-single-value-label-wrapper
+            (sx :.kushi-slider-single-value-label-wrapper
                 :.tweakable-label
                 :.flex-row-sb
                 :.no-shrink
                 :flex-basis--50px
                 :pie--0.75em)
             #_labels-attrs)
-      [:label (sx 'kushi-slider-single-value-label
-                  :ws--n
-                  #_{:id  label-id
-                     :for id})
+      [:label (sx :.kushi-slider-single-value-label
+                  :ws--n)
        og-flex-class]
       [copy-to-clipboard-button
-       (sx 'kushi-slider-single-value-label-copy-to-clipboard-button
-           :>button:h--$medium
-           :m--0
-           {:-placement :left
-            ;; :on-click   #(copy-to-clipboard! (.-textContent (.-firstChild (domo/nearest-ancestor (domo/et %) ".kushi-slider-single-value-label-wrapper"))))
-            :on-click   #(copy-to-clipboard! (copy-to-clipboard-fn %))})]]
+       (merge-attrs
+        (sx :.kushi-slider-single-value-label-copy-to-clipboard-button
+            :>button:h--$medium
+            :m--0)
+        {:-placement :left
+         ;; :on-click   #(copy-to-clipboard! (.-textContent (.-firstChild (domo/nearest-ancestor (domo/et %) ".kushi-slider-single-value-label-wrapper"))))
+         :on-click   #(copy-to-clipboard! (copy-to-clipboard-fn %))})]]
 
      [:div.flex-row-sa.grow.flex-option-thumbs
       [flex-options
@@ -323,18 +323,33 @@
         family-classes    (->> variants-by-category utility-family (map name))
         family-rules      (into {}
                                 (mapv (fn [class]
-                                        (let [mock-el        (js/document.createElement "div")
-                                              _              (doto mock-el
-                                                               (.setAttribute "class" class)
-                                                               (.setAttribute "style" "display: none;"))
-                                              _              (js/document.body.appendChild mock-el)
-                                              resolved-value (.getPropertyValue (js/window.getComputedStyle mock-el) css-property)
-                                              _              (.remove mock-el)
-                                              ]
+                                        (let [mock-el        
+                                              (js/document.createElement "div")
+
+                                              _              
+                                              (doto mock-el
+                                                (.setAttribute "class" class)
+                                                (.setAttribute "style" "display: none;"))
+
+                                              _              
+                                              (js/document.body.appendChild mock-el)
+
+                                              resolved-value 
+                                              (.getPropertyValue
+                                               (js/window.getComputedStyle mock-el)
+                                               css-property)
+
+                                              _              
+                                              (.remove mock-el)]
                                           [class resolved-value]))
                                       family-classes))
-        current-computed  (.getPropertyValue (js/window.getComputedStyle (first target-els)) css-property)
-        og-class          (or (first (filter #(contains? (into #{} family-classes) %) classes))
+        current-computed  (.getPropertyValue
+                           (js/window.getComputedStyle (first target-els))
+                           css-property)
+        og-class          (or (first (filter #(contains? (into #{}
+                                                               family-classes)
+                                                         %)
+                                             classes))
                               (first (keep (fn [[k v]]
                                              (when (= current-computed v) k))
                                            family-rules))
@@ -351,13 +366,19 @@
       :-display-step-labels? false
       :-default-index        og-class-idx
       :default-value         og-class
-      :data-kushi-tweak-og   (str {:og-value og-class :og-idx og-class-idx :family-classes family-classes})
+      :data-kushi-tweak-og   (str {:og-value og-class
+                                   :og-idx og-class-idx
+                                   :family-classes family-classes})
       :on-change             (fn [e]
                                (let [updated-class-idx   (domo/etv->int e)]
-                                 (highlight-tweaked-label! e og-class-idx updated-class-idx)
+                                 (highlight-tweaked-label! e
+                                                           og-class-idx
+                                                           updated-class-idx)
                                  (doseq [el target-els]
                                    (apply domo/remove-class! el family-classes)
-                                   (domo/add-class! el (nth family-classes (js/parseInt (domo/etv e)))))))}]))
+                                   (domo/add-class! el 
+                                                    (nth family-classes
+                                                         (js/parseInt (domo/etv e)))))))}]))
 
 
 
@@ -398,60 +419,84 @@
                                      (highlight-tweaked-label! e og-idx idx)
                                      (doseq [el target-els]
                                        (let [value (* idx step)]
-                                         (domo/set-style! el css-prop (str value (name unit-type)))))))
+                                         (domo/set-style! el
+                                                          css-prop
+                                                          (str value
+                                                               (name unit-type)))))))
           :class                 [og-class]})]))
 
-(defclass tweakable-css-prop-label
+(defcss ".tweakable-css-prop-label"
   [:after:content "\":\""]
   [:after:color :$neutral-foreground]
   [:dark:after:color :$neutral-foreground-inverse])
 
-(defclass tweakable-label
+(defcss ".tweakable-label"
   :.xsmall
   :.wee-bold
   :>label:padding--0.25em:0.5em
   :>label:border-radius--$rounded
   :ff--$code-font-stack)
 
-(defclass highlight-tweaked
-  [:&_.tweakable-label>label:bgi '(linear-gradient "to right" "var(--magenta-100)" "var(--blue-100)")])
+(defcss ".highlight-tweaked"
+  [:_.tweakable-label>label:bgi "linear-gradient(to right, var(--magenta-100), var(--blue-100))"])
 
 (defcom control
-  (let [{:keys [profile]}            &opts
+  (let [{:keys [profile]}            
+        &opts
+
         {:keys [css-prop
                 utility-family
                 control-type
-                classname]}          profile
-        utility-family-control-label (when utility-family
-                                       (utility-family utility-family-label-by-key))
-        tweakables (js->clj (.from js/Array (js/document.querySelectorAll "[data-sx-tweak]")))]
+                classname]}          
+        profile
 
-    [:li (sx 'tweaker-control-row
-             :.relative
-             :.flex-row-fs
-             (when utility-family :.utility-family-control)
-             :&_.kushi-slider:pie--1rem
-             :&_.kushi-slider-single-value-label-wrapper:flex-basis--180px
-             :&.tweak-off&_.tweakable-label>label:td--line-through
-             :&.tweak-off&_.tweak-off-mask:d--block
-             {:data-kushi-tweak (str &opts)})
-     [:div (sx 'tweak-off-mask
+        utility-family-control-label
+        (when utility-family
+          (utility-family utility-family-label-by-key))
+
+        tweakables
+        (js->clj (.from js/Array
+                        (js/document.querySelectorAll "[data-sx-tweak]")))
+
+        utility-family-class
+        (when utility-family "utility-family-control")
+        
+        tweakable-css-prop-label-class
+        (when css-prop :.tweakable-css-prop-label)
+
+        italic-class
+        (when-not css-prop :.italic)
+        
+        utility-family-class
+        (if utility-family :.xsmall :.xxsmall)]
+
+    [:li (merge-attrs 
+          (sx :.tweaker-control-row
+              :position--relative
+              :.flex-row-fs
+              utility-family-class
+              :_.kushi-slider:pie--1rem
+              :_.kushi-slider-single-value-label-wrapper:flex-basis--180px
+              :.tweak-off_.tweakable-label>label:td--line-through
+              :.tweak-off_.tweak-off-mask:d--block)
+          {:data-kushi-tweak (str &opts)})
+     [:div (sx :.tweak-off-mask
                :.absolute-fill
                :zi--1000
                :d--none
                :cursor--not-allowed
                [:w "calc(100% - 27px)"]
                :bgc--$white-transparent-50)]
-     [:label (sx 'tweaker-control-label
-                 (when css-prop :.tweakable-css-prop-label)
-                 (when-not css-prop :.italic)
+     [:label (sx :.tweaker-control-label
                  :min-width--180px
                  [:ff (when css-prop :$code-font-stack)]
-                 (if utility-family :.xsmall :.xxsmall)
-                 :.wee-bold)
+                 tweakable-css-prop-label
+                 italic-class
+                 utility-family-class
+                 :fw--$wee-bold)
       (or css-prop utility-family-control-label)]
      [:div (sx :.grow) &children]
-     [button (sx 'kushi-reset-tweakable
+     [button (sx :.kushi-reset-tweakable
                  :.minimal
                  :.pill
                  :p--0
@@ -520,8 +565,8 @@
 
                                   (contains? #{:tokenized-style :style-tuple} (:category profile))
                                   (do (domo/set-style! tweakables
-                                                      (:css-prop profile)
-                                                      (if checked? current-val "unset"))))))})]]))
+                                                       (:css-prop profile)
+                                                       (if checked? current-val "unset"))))))})]]))
 
 
 
@@ -686,91 +731,98 @@
                    [control
                     {:-css-prop css-prop
                      :-profile  profile}
-                    [slider (merge (keyed css-prop css-value target-els unit-type))]]
+                    [slider (merge {:css-prop   css-prop
+                                    :css-value  css-value
+                                    :target-els target-els
+                                    :unit-type  unit-type})]]
 
                    (= category :class)
                    [control
                     {:-css-prop css-prop
                      :-profile  profile}
-                    [(:control-type profile) (keyed target-els classes profile)]]
+                    [(:control-type profile) {:target-els target-els
+                                              :classes classes
+                                              :profile profile}]]
 
                    :else
                    nil))
 
-               #_(let [profile {:category :class}]
-                   [
-                    [control
-                     {:-utility-family "Semantic"}
-                     [semantic-slider (assoc (keyed target-els classes)
-                                             :css-property
-                                             "color"
-                                             :default-value
-                                             "neutral"
-                                             :category
-                                             :semantic )]]
+              ;;  (let [profile {:category :class}]
+              ;;      [
+              ;;       [control
+              ;;        {:-utility-family "Semantic"}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "color"
+              ;;                                :default-value
+              ;;                                "neutral"
+              ;;                                :category
+              ;;                                :semantic )]]
 
-                    [control
-                     {:-utility-family "Flexbox"
-                      :-profile        profile}
-                     [semantic-slider (assoc (keyed target-els classes)
-                                             :css-property
-                                             "flex"
-                                             :default-value
-                                             "flex-row-fs"
-                                             :category
-                                             :flex)]]
+              ;;       [control
+              ;;        {:-utility-family "Flexbox"
+              ;;         :-profile        profile}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "flex"
+              ;;                                :default-value
+              ;;                                "flex-row-fs"
+              ;;                                :category
+              ;;                                :flex)]]
 
-                    [control
-                     {:-utility-family "Type size"
-                      :-profile        profile}
-                     [semantic-slider (assoc (keyed target-els classes)
-                                             :css-property
-                                             "font-size"
-                                             :default-value
-                                             "medium"
-                                             :category
-                                             :size-expanded)]]
+              ;;       [control
+              ;;        {:-utility-family "Type size"
+              ;;         :-profile        profile}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "font-size"
+              ;;                                :default-value
+              ;;                                "medium"
+              ;;                                :category
+              ;;                                :size-expanded)]]
 
-                    [control
-                     {:-utility-family "Type weight"
-                      :-profile        profile}
-                     [semantic-slider (assoc (keyed target-els classes)
-                                             :css-property
-                                             "font-weight"
-                                             :default-value
-                                             "normal"
-                                             :category
-                                             :weight)]]
-                    [control
-                     {:-utility-family "Elevation"
-                      :-profile        profile}
-                     [semantic-slider (assoc (keyed target-els classes)
-                                             :css-property
-                                             "box-shadow"
-                                             :default-value
-                                             "elevated-0"
-                                             :category
-                                             :elevation)]]
-                    [control
-                     {:-utility-family "Type tracking"
-                      :-profile        profile}
-                     [semantic-slider (assoc (keyed target-els classes)
-                                             :css-property
-                                             "letter-spacing"
-                                             :default-value
-                                             "default-tracking"
-                                             :category
-                                             :tracking)]]
+              ;;       [control
+              ;;        {:-utility-family "Type weight"
+              ;;         :-profile        profile}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "font-weight"
+              ;;                                :default-value
+              ;;                                "normal"
+              ;;                                :category
+              ;;                                :weight)]]
+              ;;       [control
+              ;;        {:-utility-family "Elevation"
+              ;;         :-profile        profile}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "box-shadow"
+              ;;                                :default-value
+              ;;                                "elevated-0"
+              ;;                                :category
+              ;;                                :elevation)]]
+              ;;       [control
+              ;;        {:-utility-family "Type tracking"
+              ;;         :-profile        profile}
+              ;;        [semantic-slider (assoc (keyed target-els classes)
+              ;;                                :css-property
+              ;;                                "letter-spacing"
+              ;;                                :default-value
+              ;;                                "default-tracking"
+              ;;                                :category
+              ;;                                :tracking)]]
 
-                    ])
+              ;;       ])
 
                ;; Close Modal, Reset, and copy code controls
                [
                 [button
                  (sx :.minimal
                      :.pill
-                     :.top-right-corner-inside
-                     {:on-click #(domo/set-style! (domo/el-by-id "tweaker") "display" "none")})
+                     :.top-right-corner-inside)
+                 {:on-click #(domo/set-style! (domo/el-by-id "tweaker")
+                                              "display"
+                                              "none")}
                  [icon :close]]
 
                 #_[button

@@ -1,12 +1,9 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.modal.demo
-  (:require [kushi.ui.icon.core :refer (icon)]
-            [kushi.ui.modal.core :refer (modal modal-close-button close-kushi-modal open-kushi-modal)]
-            [kushi.ui.button.core :refer [button]]
-            [kushi.ui.text-field.core :refer [text-field]]
+  (:require [kushi.core :refer [sx merge-attrs]]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.css.core :refer [sx css merge-attrs]]
-            [kushi.playground.component-examples :as component-examples]
-            ))
+            [kushi.ui.button.core :refer [button]]
+            [kushi.ui.modal.core :refer (modal modal-close-button close-kushi-modal open-kushi-modal)]
+            [kushi.ui.text-field.core :refer [text-field]]))
 
 (def examples
   (let [row-attrs (sx :_.kushi-button:fs--$small)]

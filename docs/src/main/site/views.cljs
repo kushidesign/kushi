@@ -1,7 +1,6 @@
 (ns site.views
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.css.core :refer [css sx token->ms merge-attrs]]
+   [kushi.core :refer [css sx token->ms merge-attrs]]
    [kushi.playground.layout :as layout]
    [kushi.playground.nav :as nav]
    [kushi.playground.components :refer [playground-components]]
@@ -16,17 +15,36 @@
    [reagent.dom :refer [render]]
    [kushi.ui.modal.core :refer [modal modal-close-button open-kushi-modal close-kushi-modal]]
    [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]
-   [kushi.ui.icon.core :refer [icon]]
-   ))
+   [kushi.ui.icon.core :refer [icon]]))
 
 (js/console.clear)
 
 
 (defn pane-samples []
-  [:div (sx :.absolute-centered :.flex-col-fs :gap--2rem)
+  [:div (sx :.absolute-centered 
+            :.flex-col-fs
+            :gap--2rem
+            :.debug-red
+            :outline-offset--0px
+            )
    
+
+  ;;  [button 
+  ;;   (merge-attrs (sx [:--button-border-width :5px]
+  ;;                    :border-color--pink!important)
+  ;;                {:class [:bordered]})
+  ;;   "hello"]
+  ;;  [button "hello"]
+
+   [button 
+    (sx :.bordered
+        [:--button-border-width :5px]
+        :border-color--pink!important)
+    "Play" [icon :pets]]
+   [button "Play" [icon :pets]]
+
    ;; button with spinner example
-   [button
+   #_[button
     (merge-attrs
      (sx :fs--$xxxlarge)
      {:on-click (fn [e]
@@ -101,7 +119,7 @@
                                                      :padding--0.25em)
                                                  "💃🏽"])
                                               popover-el))
-                           :-popover-class (css [:--popover-background-color :lime])})
+                           :-popover-class nil #_(css [:--popover-background-color :lime])})
       "Click me"]
 
 
@@ -110,6 +128,7 @@
       (tooltip-attrs {:-text          "This is a tooltip"
                       :-tooltip-class (css {:--tooltip-background-color :$red-800})})
       "Hover me"]] 
+  
   )
 
 (def routes 

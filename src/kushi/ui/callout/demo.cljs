@@ -2,7 +2,7 @@
   (:require
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.link.core :refer [link]]
-   [kushi.css.core :refer (sx merge-attrs)]
+   [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.callout.core :refer [callout]]

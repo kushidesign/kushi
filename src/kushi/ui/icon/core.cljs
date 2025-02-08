@@ -1,7 +1,7 @@
 (ns kushi.ui.icon.core
   (:require
    [clojure.string :as string]
-   [kushi.css.core :refer (sx merge-attrs)]
+   [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.core :refer (opts+children material-symbol-or-icon-span)]))
 
 (defn icon-name->snake-case-string [coll]

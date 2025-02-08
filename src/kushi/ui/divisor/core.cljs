@@ -1,5 +1,5 @@
 (ns kushi.ui.divisor.core
-  (:require [kushi.css.core :refer [sx merge-attrs]]
+  (:require [kushi.core :refer [sx merge-attrs]]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.util :as util]))
 

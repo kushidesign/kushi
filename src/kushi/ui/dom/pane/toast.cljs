@@ -1,8 +1,7 @@
 (ns kushi.ui.dom.pane.toast
   (:require-macros
-   [kushi.css.core :refer [utilize]])
+   [kushi.core :refer [utilize]])
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [goog.string]
    [domo.core :as domo]

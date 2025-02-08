@@ -1,7 +1,7 @@
 (ns kushi.ui.label.core
   (:require
    [kushi.ui.core :refer (opts+children)]
-   [kushi.css.core :refer (css merge-attrs)]))
+   [kushi.core :refer (css merge-attrs)]))
 
 (defn label
   {:desc ["A label is typically used for providing titles to sections of content."]}

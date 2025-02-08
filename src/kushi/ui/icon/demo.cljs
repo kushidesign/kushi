@@ -1,15 +1,10 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.icon.demo
   (:require
    [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.icon.mui.svg :as mui.svg]
-   [kushi.ui.button.core :refer [button]]
-   [kushi.ui.text-field.core :refer [text-field]]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-   [kushi.css.core :refer (sx css css-vars-map merge-attrs)]
+   [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.component-examples :as component-examples]
-   [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.button.core :refer [button]]))
-
+   [kushi.playground.util :refer-macros [sx-call]]))
 
 
 (def icons-without-filled-variants

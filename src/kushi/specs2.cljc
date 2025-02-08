@@ -1,8 +1,7 @@
 (ns kushi.specs2
   (:require
    [clojure.string :as string]
-   [kushi.defs :as defs]
-   [garden.color]
+   [kushi.css.defs :as defs]
    [clojure.spec.alpha :as s]))
 
 
@@ -135,10 +134,6 @@
 ;; nix?
 (s/def ::hex-color
   #(re-find-with hex-color-re %))
-
-;; nix?
-(s/def ::named-css-color
-  (s/and ::nameable #(contains? garden.color/color-name->hex (keyword (name %)))))
 
 ;; nix?
 (s/def ::token-color
