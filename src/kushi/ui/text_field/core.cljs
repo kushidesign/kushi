@@ -1,9 +1,7 @@
 (ns kushi.ui.text-field.core
   (:require
-   [kushi.core :refer (sx css defcss css-vars-map css-include merge-attrs)]
+   [kushi.core :refer (sx css defcss css-vars-map merge-attrs)]
    [kushi.ui.core :refer (opts+children)]))
-
-(css-include "text_field.css")
 
 (defcss "@layer kushi-ui-component kushi-text-input-enhancer"
   :d--if
