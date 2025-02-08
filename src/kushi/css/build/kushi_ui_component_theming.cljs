@@ -2220,3 +2220,163 @@
    "top" "unset",
    "bottom" "0%",
    "translate" "-50% 100%"})
+
+
+;; New theming
+
+(defcss
+  ":root"
+  {"--semantic-element-outer-box-shadow-blur-length"    "0px",
+   "--semantic-element-box-outer-box-shadow-strength"   "30%",
+   "--semantic-element-outer-box-shadow-2-blur-length"  "20px",
+   "--semantic-element-box-outer-box-shadow-2-strength" "00%",
+   "--debug-grid-size"                                  "107px",
+   "--debug-grid-color"                                 "#eee",
+   "--new-purple-hue"                                   "330",
+   "--new-green-hue"                                    "145",
+   "--new-red-hue"                                      "20",
+   "--red-lightness-shift"                              "-7%",
+   "--new-yellow-hue"                                   "94",
+   "--yellow-lightness-shift"                           "5%",
+   "--new-blue-hue"                                     "265",
+   "--blue-c-shift"                                     "0.08",
+   "--positive-hue"                                     "var(--new-green-hue)",
+   "--negative-hue"                                     "var(--new-red-hue)",
+   "--negative-lightness-shift"                         "var(--red-lightness-shift)",
+   "--warning-hue"                                      "var(--new-yellow-hue)",
+   "--warning-lightness-shift"                          "var(--yellow-lightness-shift)",
+   "--accent-hue"                                       "var(--new-blue-hue)",
+   "--neutral-hue"                                      "var(--new-blue-hue)",
+   "--accent-c-shift"                                   "-0.08",
+   "--button-padding-inline-compact"                    "0.8em",
+   "--button-padding-inline"                            "1.2em",
+   "--button-padding-inline-roomy"                      "1.5em",
+   "--button-padding-block-compact"                     "0.42em",
+   "--button-padding-block"                             "0.67em",
+   "--button-padding-block-roomy"                       "0.8666em"})
+
+(defcss
+  "[data-kui-colorway=\"accent\"]"
+  {"--_hue" "var(--accent-hue)"})
+
+(defcss
+  "[data-kui-colorway=\"positive\"]"
+  {"--_hue" "var(--positive-hue)"})
+
+(defcss
+  "[data-kui-colorway=\"negative\"]"
+  {"--_hue" "var(--negative-hue)"})
+
+(defcss
+  "[data-kui-colorway=\"warning\"]"
+  {"--_hue" "var(--warning-hue)"})
+
+(defcss
+  ".kui-surface"
+  {"--_bg-chroma"
+   "0.0",
+
+   "--_fg-chroma"
+   "0.0",
+
+   "--_color"
+   "oklch(calc(var(--_fg-lightness) + var(--_fg-lightness-shift, 0%) + var(--_fg-lightness-shift-state, 0%))    calc(var(--_fg-chroma, 0) + var(--_fg-chroma-shift, 0) + var(--_fg-chroma-shift-state, 0))    var(--_hue, 0)  )",
+
+   "color"
+   "var(--_color)",
+
+   "--_background-color"
+   "oklch(calc(var(--_bg-lightness) + var(--_bg-lightness-shift, 0%) + var(--_bg-lightness-shift-state, 0%))    calc(var(--_bg-chroma, 0) + var(--_bg-chroma-shift, 0) + var(--_bg-chroma-shift-state, 0))    var(--_hue, 0) / var(--_bgc-alpha, 1)  )",
+
+   "background-color"
+   "var(--_background-color)"
+
+   "--_stroke-args"
+   "0  0  0  var(--stroke-width, 0px)  var(--stroke-color, var(--_color))",
+
+   "--_stroke"
+   "inset var(--_stroke-args)",
+
+   "[data-kui-stroke-align=\"outside\"]"
+    {"--_stroke" "var(--_stroke-args)"}
+   
+   "box-shadow"
+   "var(--_stroke), 4px 4px var(--_box-shadow-blur-length, 0) 0px color-mix(in oklch, var(--_color) var(--_box-shadow-strength, 0%), transparent), 2px 2px var(--_box-shadow-2-blur-length, 0) 0px color-mix(in oklch, var(--_color) var(--_box-shadow-2-strength, 0%), transparent)"
+   })
+                                     
+                                     
+(defcss "[data-kui-ia]"
+  {:hover  {:--_fg-lightness-shift-state :-13%
+            :--_bg-lightness-shift-state :-3%}
+   :active {:--_fg-lightness-shift-state :-23%
+            :--_bg-lightness-shift-state :-8%}})
+
+(defcss "[data-kui-colorway][data-kui-ia]"
+  {:hover  {:--_fg-chroma-shift-state :0.06
+            :--_bg-chroma-shift-state :0.03}
+   :active {:--_fg-chroma-shift-state :0.13
+            :--_bg-chroma-shift-state :0.07}})
+
+(defcss "[data-kui-surface=\"soft\"]"
+  {:--_bgc-alpha        :0.5
+   :--_bg-lightness     :94%
+   :--_fg-lightness     :44%
+   "[data-kui-colorway]" {:--_bg-chroma :0.05
+                          :--_fg-chroma :0.24}
+   "[data-kui-ia]"       {:hover  {}
+                          :active {}}})
+
+(defcss "[data-kui-surface= \"solid\"]"
+ {:color               :white
+  :--_bg-lightness     :53%
+  :--_fg-lightness     :44%
+  "[data-kui-colorway]" {:--_bg-chroma :0.27
+                         :--_fg-chroma :0.24}
+  "[data-kui-ia]"       {:hover  {:--_bg-lightness-shift-state :-5%}
+                         :active {:--_bg-lightness-shift-state :-10%}}})
+
+(defcss "[data-kui-surface=\"outline\"]"
+  {
+  ;;  :--_bgc-alpha        :0.5
+   :--_bg-lightness    :94%
+   :--_fg-lightness    :44%
+   :--stroke-width     :1px
+   :--stroke-align     "inside"
+   :--_bgc-alpha       0
+   "[data-kui-colorway]" {:--_bg-chroma :0.05
+                          :--_fg-chroma :0.24}
+   "[data-kui-ia]"       {:hover  {:--_bgc-alpha :0.17}
+                          :active {:--_bgc-alpha :0.23}}})
+
+
+(defcss "[data-kui-surface=\"minimal\"]"
+  {:--_bg-lightness     :94%
+   :--_fg-lightness     :44%
+   :--_bgc-alpha        :0.0
+   "[data-kui-colorway]" {:--_fg-chroma :0.24
+                          :--_bg-chroma :0.05}
+   "[data-kui-ia]"       {:hover  {:--_bgc-alpha :0.25}
+                          :active {:--_bgc-alpha :0.35}}})
+
+(defcss ".kui-rounded" 
+  {:border-radius :0.3em})
+
+(defcss ".kui-pill" 
+  {:border-radius :9999px})
+
+(defcss ".kui-button"
+  {:--_padding-inline            "var(--button-padding-inline)"
+   :--_padding-block             "var(--button-padding-block)"
+   "[data-kui-packing=\"compact\"]" {:--_padding-inline "var(--button-padding-inline-compact)"
+                                     :--_padding-block  "var(--button-padding-block-compact)"}
+   
+   "[data-kui-packing=\"roomy\"]"   {:--_padding-inline "var(--button-padding-inline-roomy)"
+                                     :--_padding-block  "var(--button-padding-block-roomy)"}
+   
+   "[data-kui-start-enhancer]"    {:padding-inline-start "calc(var(--_padding-inline) * 0.7666)"}
+
+   "[data-kui-end-enhancer]"      {:padding-inline-end "calc(var(--_padding-inline) * 0.7666)"}
+   
+   "[data-kui-icon-button]"       {:--_padding-inline            "var(--_padding-block)"
+                                   :_.material-symbols-outlined {:min-width   :1.2ch
+                                                                 :line-height :normal}}})
