@@ -1,6 +1,6 @@
 (ns site.views
   (:require
-   [kushi.core :refer [css sx token->ms merge-attrs css-vars-map]]
+   [kushi.core :refer [css sx defcss token->ms merge-attrs css-vars-map]]
    [kushi.playground.layout :as layout]
    [kushi.playground.nav :as nav]
    [kushi.playground.components :refer [playground-components]]
@@ -36,8 +36,19 @@
   ;;   "hello"]
   ;;  [button "hello"]
 
- (into [:div (sx :.flex-col-fs :gap--3em
-                 [:before:content "\"All colorways, all surfaces\""])]
+ (defcss ".button-dev-grid"
+   :.flex-row-fs
+   :gap--0.5em
+   :mbs--3rem
+   :position--relative
+   {:before {:content     "\"All colorways, all surfaces\""
+             :position    :absolute
+             :bottom      "calc(100% + 1em)"
+             :fs          :$xsmall
+             :font-family :$serif-font-stack
+             :font-style  :italic}})
+
+ (into [:div (sx :.button-dev-grid :.flex-col-fs)]
        (for [shape ["rounded" #_"sharp" #_"pill"]] 
          (into [:div (sx :.flex-col-fs :gap--0.5em)]
                (for [surface ["minimal" "outline" "solid" "soft"]]
@@ -51,7 +62,8 @@
                                         :-start-enhancer [icon :pets]})
                           "Button"]))))))
 
-(into [:div (sx :.flex-row-fs :gap--0.5em :mbs--1em)]
+(into [:div (sx :.button-dev-grid
+                {:before:content "\"Shape\""})]
       (for [shape ["round" "sharp" "pill"]] 
         [button 
          (merge-attrs (sx :fs--$small)
@@ -60,7 +72,8 @@
                        :-start-enhancer [icon :pets]})
          "Button"]))
 
-(into [:div (sx :.flex-row-fs :gap--0.5em :mbs--1em)]
+(into [:div (sx :.button-dev-grid
+                {:before:content "\"Packing\""})]
       (for [packing ["compact" nil "roomy"]] 
         [button 
          (merge-attrs (sx :fs--$small)
@@ -69,7 +82,9 @@
                        :-start-enhancer [icon :pets]})
          "Button"]))
 
-(into [:div (sx :.flex-row-fs :gap--3em :mbs--1em)]
+(into [:div (sx :.button-dev-grid
+                :gap--2em
+                {:before:content "\"Outline thicknesses\""})]
       (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
         [button 
          (merge-attrs {:style (css-vars-map _stroke-width)
@@ -81,7 +96,9 @@
                        :-start-enhancer [icon :pets]})
          "Button"]))
 
-(into [:div (sx :.flex-row-fs :gap--3em :mbs--1em)]
+(into [:div (sx :.button-dev-grid
+                :gap--2em
+                {:before:content "\"Outline thicknesses with :-stroke-align set to :outside\""})]
       (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
         [button 
          (merge-attrs {:style (css-vars-map _stroke-width)
@@ -94,7 +111,9 @@
                        :-start-enhancer [icon :pets]})
          "Button"]))
 
-(into [:div (sx :.flex-row-fs :gap--3em :mbs--1em)]
+(into [:div (sx :.button-dev-grid
+                :gap--2em
+                {:before:content "\"Box shadow\""})]
       (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
         [button 
          (merge-attrs {:class (css :fs--$small
