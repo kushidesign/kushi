@@ -1,6 +1,6 @@
 (ns site.views
   (:require
-   [kushi.core :refer [css sx token->ms merge-attrs]]
+   [kushi.core :refer [css sx token->ms merge-attrs css-vars-map]]
    [kushi.playground.layout :as layout]
    [kushi.playground.nav :as nav]
    [kushi.playground.components :refer [playground-components]]
@@ -36,17 +36,85 @@
   ;;   "hello"]
   ;;  [button "hello"]
 
- (into [:div (sx :.flex-col-fs :gap--3em)]
-       (for [shape ["rounded" "sharp" "pill"]] 
-         (into [:div (sx :.flex-col-fs :gap--1em)]
+ (into [:div (sx :.flex-col-fs :gap--3em
+                 [:before:content "\"All colorways, all surfaces\""])]
+       (for [shape ["rounded" #_"sharp" #_"pill"]] 
+         (into [:div (sx :.flex-col-fs :gap--0.5em)]
                (for [surface ["minimal" "outline" "solid" "soft"]]
-                 (into [:div (sx :.flex-row-fs :gap--1em)]  
+                 (into [:div (sx :.flex-row-fs :gap--0.5em)]  
                        (for [colorway [nil "accent" "positive" "warning" "negative"]]
                          [button 
-                          {:-colorway colorway
-                           :-surface  surface
-                           :-shape    shape}
+                          (merge-attrs (sx :fs--$small)
+                                       {:-colorway colorway
+                                        :-surface  surface
+                                        :-shape    shape
+                                        :-start-enhancer [icon :pets]})
                           "Button"]))))))
+
+(into [:div (sx :.flex-row-fs :gap--0.5em :mbs--1em)]
+      (for [shape ["round" "sharp" "pill"]] 
+        [button 
+         (merge-attrs (sx :fs--$small)
+                      {:-surface        "outline"
+                       :-shape          shape
+                       :-start-enhancer [icon :pets]})
+         "Button"]))
+
+(into [:div (sx :.flex-row-fs :gap--0.5em :mbs--1em)]
+      (for [packing ["compact" nil "roomy"]] 
+        [button 
+         (merge-attrs (sx :fs--$small)
+                      {:-surface        "outline"
+                       :-packing        packing
+                       :-start-enhancer [icon :pets]})
+         "Button"]))
+
+(into [:div (sx :.flex-row-fs :gap--3em :mbs--1em)]
+      (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
+        [button 
+         (merge-attrs {:style (css-vars-map _stroke-width)
+                       :class (css :fs--$small
+                                   [:--outlined-button-stroke-width :$_stroke-width]
+                                   [:--outlined-button-stroke-align "center"])}
+                      {:-surface        "outline"
+                       :-shape          "round"
+                       :-start-enhancer [icon :pets]})
+         "Button"]))
+
+(into [:div (sx :.flex-row-fs :gap--3em :mbs--1em)]
+      (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
+        [button 
+         (merge-attrs {:style (css-vars-map _stroke-width)
+                       :class (css :fs--$small
+                                   [:--outlined-button-stroke-width :$_stroke-width]
+                                   [:--outlined-button-stroke-align "center"])}
+                      {:-surface        "outline"
+                       :-shape          "round"
+                       :-stroke-align   :outside
+                       :-start-enhancer [icon :pets]})
+         "Button"]))
+
+(into [:div (sx :.flex-row-fs :gap--3em :mbs--1em)]
+      (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
+        [button 
+         (merge-attrs {:class (css :fs--$small
+                                   [:--box-shadow-strength "20%"]
+                                   [:--box-shadow-blur-radius "5px"]
+                                   [:--box-shadow-offset-x "5px"]
+                                   [:--box-shadow-offset-y "5px"]
+                                   [:--box-shadow-color "blue"]
+                                   [:--box-shadow-2-offset-x "0"]
+                                   [:--box-shadow-2-offset-y "0"]
+                                   [:--box-shadow-2-strength "50%"]
+                                   [:--box-shadow-2-blur-radius "5px"]
+                                   [:--box-shadow-2-color "red"]
+                                   )}
+                      {:-surface        "outline"
+                       :-shape          "round"
+                       :-stroke-align   :inside
+                       :-start-enhancer [icon :pets]})
+         "Button"]))
+
 
    ;; button with spinner example
    #_[button
