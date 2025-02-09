@@ -236,6 +236,7 @@
     (into [:button
            (merge-attrs
             (sx ".kui-button"
+                :.kui-surface
                 :position--relative
                 :d--flex
                 :flex-direction--row
@@ -254,9 +255,9 @@
             {:aria-busy        loading?
              :aria-label       (when loading? "loading")
              :data-kui-ia      ""
-             :data-kui-surface surface}
+             :data-kui-surface surface
+             :data-kui-shape   shape}
             (when loading? {:data-kushi-ui-spinner true})
-            {:class ["kui-surface" (str "kui-" shape)]}
             (when (and (not icon) end-enhancer) (data-kui- "" :end-enhancer))
             (when (and (not icon) start-enhancer) (data-kui- "" :start-enhancer))
             (some-> stroke-align 
