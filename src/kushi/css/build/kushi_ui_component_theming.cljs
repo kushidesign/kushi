@@ -2248,6 +2248,12 @@
    "--accent-hue"                                       "var(--new-blue-hue)",
    "--neutral-hue"                                      "var(--new-blue-hue)",
    "--accent-c-shift"                                   "-0.08",
+
+   "--outlined-element-stroke-width"                    "1px"
+   "--outlined-button-stroke-width"                     "var(--outlined-element-stroke-width)"
+   "--outlined-tag-stroke-width"                        "var(--outlined-element-stroke-width)"
+   "--outlined-callout-stroke-width"                    "var(--outlined-element-stroke-width)"
+
    "--button-padding-inline-compact"                    "0.8em",
    "--button-padding-inline"                            "1.2em",
    "--button-padding-inline-roomy"                      "1.5em",
@@ -2272,7 +2278,7 @@
   {"--_hue" "var(--warning-hue)"})
 
 (defcss
-  ".kui-surface"
+  "[data-kui-surface]"
   {"--_bg-chroma"
    "0.0",
 
@@ -2291,17 +2297,50 @@
    "background-color"
    "var(--_background-color)"
 
-   "--_stroke-args"
-   "0  0  0  var(--stroke-width, 0px)  var(--stroke-color, var(--_color))",
-
    "--_stroke"
-   "inset var(--_stroke-args)",
+   "inset 0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_color))",
 
    "[data-kui-stroke-align=\"outside\"]"
-    {"--_stroke" "var(--_stroke-args)"}
+    {"--_stroke" "0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_color))"}
    
+   "--box-shadow-offset-x"
+   "4px"
+
+   "--box-shadow-offset-y"
+   "4px"
+
+   "--box-shadow-blur-radius"
+   "0px"
+
+   "--box-shadow-spread-radius"
+   "0px"
+
+   "--_box-shadow-color"
+   "color-mix(in oklch, var(--box-shadow-color, var(--_color)) var(--box-shadow-strength, 0%), transparent)"
+
+   "--_box-shadow"
+   "var(--box-shadow-offset-x) var(--box-shadow-offset-y) var(--box-shadow-blur-radius) var(--box-shadow-spread-radius) var(--_box-shadow-color)"
+
+   "--box-shadow-2-offset-x"
+   "4px"
+
+   "--box-shadow-2-offset-y"
+   "4px"
+
+   "--box-shadow-2-blur-radius"
+   "0px"
+
+   "--box-shadow-2-spread-radius"
+   "0px"
+
+   "--_box-shadow-2-color"
+   "color-mix(in oklch, var(--box-shadow-2-color, var(--_color)) var(--box-shadow-2-strength, 0%), transparent)"
+
+   "--_box-shadow-2"
+   "var(--box-shadow-2-offset-x) var(--box-shadow-2-offset-y) var(--box-shadow-2-blur-radius) var(--box-shadow-2-spread-radius) var(--_box-shadow-2-color)"
+
    "box-shadow"
-   "var(--_stroke), 4px 4px var(--_box-shadow-blur-length, 0) 0px color-mix(in oklch, var(--_color) var(--_box-shadow-strength, 0%), transparent), 2px 2px var(--_box-shadow-2-blur-length, 0) 0px color-mix(in oklch, var(--_color) var(--_box-shadow-2-strength, 0%), transparent)"
+   "var(--_stroke), var(--_box-shadow), var(--_box-shadow-2)"
    })
                                      
                                      
@@ -2340,8 +2379,7 @@
   ;;  :--_bgc-alpha        :0.5
    :--_bg-lightness    :94%
    :--_fg-lightness    :44%
-   :--stroke-width     :1px
-   :--stroke-align     "inside"
+   :--_stroke-width    :$outlined-element-stroke-width
    :--_bgc-alpha       0
    "[data-kui-colorway]" {:--_bg-chroma :0.05
                           :--_fg-chroma :0.24}
@@ -2358,25 +2396,25 @@
    "[data-kui-ia]"       {:hover  {:--_bgc-alpha :0.25}
                           :active {:--_bgc-alpha :0.35}}})
 
-(defcss ".kui-rounded" 
+(defcss "[data-kui-shape=\"rounded\"]"
   {:border-radius :0.3em})
 
-(defcss ".kui-pill" 
+(defcss "[data-kui-shape=\"pill\"]"
   {:border-radius :9999px})
 
 (defcss ".kui-button"
-  {:--_padding-inline            "var(--button-padding-inline)"
-   :--_padding-block             "var(--button-padding-block)"
+  {:--_padding-inline               "var(--button-padding-inline)"
+   :--_padding-block                "var(--button-padding-block)"
    "[data-kui-packing=\"compact\"]" {:--_padding-inline "var(--button-padding-inline-compact)"
                                      :--_padding-block  "var(--button-padding-block-compact)"}
    
    "[data-kui-packing=\"roomy\"]"   {:--_padding-inline "var(--button-padding-inline-roomy)"
                                      :--_padding-block  "var(--button-padding-block-roomy)"}
    
-   "[data-kui-start-enhancer]"    {:padding-inline-start "calc(var(--_padding-inline) * 0.7666)"}
+   "[data-kui-start-enhancer]"      {:padding-inline-start "calc(var(--_padding-inline) * 0.7666)"}
 
-   "[data-kui-end-enhancer]"      {:padding-inline-end "calc(var(--_padding-inline) * 0.7666)"}
+   "[data-kui-end-enhancer]"        {:padding-inline-end "calc(var(--_padding-inline) * 0.7666)"}
    
-   "[data-kui-icon-button]"       {:--_padding-inline            "var(--_padding-block)"
-                                   :_.material-symbols-outlined {:min-width   :1.2ch
-                                                                 :line-height :normal}}})
+   "[data-kui-icon-button]"         {:--_padding-inline           "var(--_padding-block)"
+                                     :_.material-symbols-outlined {:min-width   :1.2ch
+                                                                   :line-height :normal}}})
