@@ -33,10 +33,26 @@
             [kushi.css.specs :as kushi-specs]
             [kushi.css.build.utility-classes :as utility-classes]
             [kushi.util :refer [maybe keyed]]
+            [kushi.colors2 :refer [oklch-colors]]
             ))
 
+(!? (into []
+         (apply concat
+                (for [[color-name m] oklch-colors]
+                  (let [{:keys [scale]} m]
+                    [color-name
+                     (assoc m
+                            :scale
+                            (list  'apply
+                                   'array-map
+                                   (into [] (apply concat
+                                                   (for [[lvl l c] scale]
+                                                     [lvl {:l l
+                                                           :c c}])))))])))))
 
-(let [sample "./public/css/gold"
+
+
+#_(let [sample "./public/css/gold"
       css-dir "./public/css"
       og-regex #"^\./public/css/"
       new-regex (re-pattern (str "^" "\\" css-dir "/"))] 

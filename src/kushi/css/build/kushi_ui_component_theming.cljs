@@ -2297,6 +2297,8 @@
    "background-color"
    "var(--_background-color)"
 
+   ;; TODO - maybe change --stroke-color to --outline-color ?
+   ;; TODO - maybe add stroke opacity here and use color-mix with transparency?
    "--_stroke"
    "inset 0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_color))",
 

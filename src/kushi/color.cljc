@@ -53,6 +53,7 @@
   [{:keys [data? color h s l]}]
   (if data?
     {:h h :s s :l l}
+    ;; TODO use "-hue-hsl"
     (str "hsl(var(--" color "-hue), " s "%, " l "%)")))
 
 (defn color-pair [{:keys [data? color level] :as m}]
@@ -65,6 +66,7 @@
   [opts [color {:keys [hue scale]}]]
   (let [alias? (:alias? opts)
         data?  (= (:format opts) :data)
+        ;; TODO use "-hue-hsl"
         h      [(keyword (str (when-not data? "$") color "-hue")) hue]
         scale+ (map-indexed
                 (fn [i [level saturation lightness]]

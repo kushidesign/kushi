@@ -5,7 +5,9 @@
    [bling.core :refer [callout bling]]
    [edamame.core :as e]
    [kushi.css.build.utility-classes :as utility-classes]
-   [kushi.css.build.tokens :refer [design-tokens-by-category]]
+   [kushi.css.build.tokens :refer [design-tokens-by-category
+                                   design-tokens-by-token
+                                   design-tokens-by-token-array-map]]
    [kushi.core :refer [css-rule*]]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as kushi-specs]
@@ -14,8 +16,7 @@
    [clojure.string :as string]
    [clojure.java.io :as io]
    [clojure.set :as set]
-   [clojure.spec.alpha]
-   [kushi.css.build.tokens :as tokens]))
+   [clojure.spec.alpha]))
 
 
 (def dev-sample-proj-dir "docs")
@@ -788,7 +789,7 @@
   (when-not (or (contains? (:required/kushi-design-tokens @*css) tok)
                 (contains? (:required/user-design-tokens @*css) tok))
    (let [dep-toks
-         (or (dep-toks-set tok kushi.css.build.tokens/design-tokens-by-token)
+         (or (dep-toks-set tok design-tokens-by-token)
              (dep-toks-set tok (:theme/user-design-tokens @*css)))]
      (some-> dep-toks
              (set/difference (:required/kushi-design-tokens @*css))
@@ -798,7 +799,7 @@
 (defn register-toks+deps [tok *css] 
   (if-let [[tok-val k]
            (let [kushi-tok
-                 (get kushi.css.build.tokens/design-tokens-by-token tok)
+                 (get design-tokens-by-token tok)
                  
                  user-tok
                  (get (:theme/user-design-tokens @*css) tok)]
@@ -882,7 +883,7 @@
     (spit-css-layer+profile
      path 
      (css-rule* ":root"
-                [kushi.css.build.tokens/design-tokens-by-token-array-map]
+                [design-tokens-by-token-array-map]
                 nil
                 nil)
      layer)))
@@ -900,7 +901,7 @@
   (let [[layer path] (layer+css-path design-tokens-layer-name)
         tokens-coll (if release? 
                       (:required/kushi-design-tokens @*css)
-                      [kushi.css.build.tokens/design-tokens-by-token-array-map])]
+                      [design-tokens-by-token-array-map])]
     (spit-css-layer+profile 
      path 
      (css-rule* ":root"
@@ -1069,7 +1070,7 @@
   (array-map
    :base/kushi-design-tokens
    {:desc  "Base design tokens defined in Kushi lib. See kushi.css.build.tokens ns."
-    :value tokens/design-tokens-by-token}
+    :value design-tokens-by-token}
 
    :theme/user-design-tokens 
    {:desc  "Design tokens defined in user theme. These could be overrides for tokens in :tokens/kushi-base, or the user's own custom global design tokens."

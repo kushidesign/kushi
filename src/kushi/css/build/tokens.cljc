@@ -1,6 +1,8 @@
 (ns kushi.css.build.tokens
   (:require [clojure.string :as string]
-            [kushi.css.build.tokens-legacy]))
+            [fireworks.core :refer [? !? ?> !?>]]
+            [kushi.css.build.tokens-legacy]
+            [kushi.colors2 :as colors2]))
 
 
 ;; Elevations ------------------------------------------------------------------
@@ -162,14 +164,24 @@
 
 (def design-tokens
   (array-map 
-   ;; All colors - this large list of color tokens is temporary and will be 
-   ;; replaced with a dynamically generated array-map based on okclh
    
-  ;;  kushi.css.build.tokens-legacy/legacy-color-theming
-   
+   {:family "Transparent Neutrals"
+    :category ["transparent-colors"]
+    :tags   ["colors" "oklch" "neutrals" "transparent"]
+    }
+   colors2/transparent-neutrals-oklch
+
+   ;; Colors
+   {:family "Colors"
+    :category ["colors"]
+    :tags   ["colors" "oklch"]
+    }
+   colors2/oklch-colors-flattened2
+
    ;; Debugging grid
    ;; ------------------------------------------------------
    {:family "Debugging grid"
+    :category ["debugging-grid"]
     :tags   ["debugging" "development" "backgrounds"]
     }
    [
@@ -185,11 +197,10 @@
 
    ;; font-family
    ;; TODO should this live in basetheme?
-   {:family "Font-family"
-    :tags   ["typography" "fonts" "font-stack"]
-    }
-   [
-    :--sans-serif-font-stack                  
+   {:family   "Font-family"
+    :category ["font-family"]
+    :tags     ["typography" "fonts" "font-stack"]}
+   [:--sans-serif-font-stack
     (string/join 
      ", "
      (map #(if (re-find #" " %)
@@ -226,10 +237,10 @@
 
 
    ;; code
-   {:family "Code"
-    :desc   {:en "Styling of code blocks"}
-    :tags   ["code" "color" "typography" "block"]
-    }
+   {:family   "Code"
+    :category ["code-blocks"]
+    :desc     {:en "Styling of code blocks"}
+    :tags     ["code" "color" "typography" "block"]}
    [
     :--code-font-size                         :$small
     :--code-padding-inline                    :0.2em
@@ -242,10 +253,10 @@
 
 
    ;; Intended for css prop `font-weight`
-   {:family     "Font weight"
-    :desc       {:en "Controls the weight of type"}
+   {:family   "Font weight"
+    :desc     {:en "Controls the weight of type"}
     :category ["font-weight"]
-    :tags       ["font-weight" "typography"]
+    :tags     ["font-weight" "typography"]
     }
    [:--thin                                   100
     :--extra-light                            200
@@ -261,10 +272,10 @@
 
 
    ;; Intended for css prop `font-size`
-   {:family     "Font size"
-    :desc       {:en "Controls the size of type"}
+   {:family   "Font size"
+    :desc     {:en "Controls the size of type"}
     :category ["font-size"]
-    :tags       ["font-size" "typography"]
+    :tags     ["font-size" "typography"]
     }
    [:--xxxxsmall                              :0.64rem
     :--xxxsmall                               :0.67rem
@@ -292,10 +303,10 @@
 
 
    ;; Intended for css prop `letterspacing`
-   {:family     "Letter spacing"
-    :desc       {:en "Controls the tracking of the type"}
+   {:family   "Letter spacing"
+    :desc     {:en "Controls the tracking of the type"}
     :category ["letter-spacing"]
-    :tags       ["font-size" "typography" "tracking"]
+    :tags     ["font-size" "typography" "tracking"]
     }
    [:--xxxtight                               :-0.09em
     :--xxtight                                :-0.06em
@@ -863,7 +874,7 @@
 
 (def enriched-tokens-ordered 
  (mapcat (fn [[{:keys [desc category tags family added]
-                :or   {desc  "Fix m"
+                :or   {desc  "Fix me"
                        added "1.0" ;; <- get version?
                        }}
                toks]]
@@ -882,10 +893,9 @@
                 :family       family
                 :added        "1.0"
                 :alias-token? alias-token?
-                :dep-toks     (when-not alias-token?
-                                (some->> (or (css-var-str v) v)
-                                         css-vars-re-seq
-                                         (mapv second)))
+                :dep-toks     (some->> (or (css-var-str v) v)
+                                       css-vars-re-seq
+                                       (mapv second))
                 })))
          design-tokens))
 
@@ -897,6 +907,8 @@
                    (conj acc (:name m) m))
                  []
                  enriched-tokens-ordered)))
+
+(!? (get enriched-tokens-array-map "--accent-500"))
 
  #_(def design-tokens-by-token
    (->> design-tokens
@@ -935,6 +947,7 @@
           {}
           ["pane" "elevation" "modal" "popover" "tooltip" "toast"]))
 
+(!? :pp design-tokens-by-token-array-map)
 
 
 #_{:name         "divisor-inverse",

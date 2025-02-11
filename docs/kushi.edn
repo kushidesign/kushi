@@ -1,6 +1,8 @@
 
 {:theme
- {:design-tokens
+ {:colorways
+  {:accent "purple"} 
+  :design-tokens
   [:--sans-serif-font-stack                 "Inter, system-ui, sans-serif"
    :--serif-font-stack                      "'Source Serif 4', Times, serif"
    :--code-font-stack                       "'JetBrains Mono', 'Fira Code', monospace"
