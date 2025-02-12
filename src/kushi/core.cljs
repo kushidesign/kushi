@@ -3,7 +3,8 @@
             [domo.core :as domo]
             [kushi.css.build.css-reset]
             [kushi.css.build.kushi-ui-component-theming]
-            [kushi.css.build.legacy-color-tokens])
+            ;; [kushi.css.build.legacy-color-tokens]
+            )
  (:require-macros [kushi.core]))
 
 

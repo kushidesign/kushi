@@ -16,7 +16,7 @@
    [kushi.ui.modal.core :refer [modal modal-close-button open-kushi-modal close-kushi-modal]]
    [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]
    [kushi.ui.icon.core :refer [icon]]
-   [kushi.colors2 :as colors2]
+  ;;  [kushi.colors2 :as colors2]
    [fireworks.core :refer [? !? ?> !?>]]
    ))
 
@@ -126,8 +126,49 @@
    [:div {:class (css :position--relative :w--100px :h--100px)
           :style {:background-color bgc}}]])
 
-(defn hsl+oklch-color-grid []
-  (let [oklch-colors (apply array-map colors2/oklch-colors)
+(defn hsl+oklch-color-grid [{:keys [hsl?]}]
+
+  #_[:div (sx :p--50px :bgc--$red-500) 
+   [:div {:class (css :w--100px :h--100px :bgc--$transparent-dark-gray-35)}]]
+
+  ;; Based on design-system-tokens
+   (let [colors   ["gray"
+                   "purple"
+                   "blue"
+                   "green"
+                   "lime"
+                   "yellow"
+                   "gold"
+                   "orange"
+                   "red"
+                   "magenta"
+                   "brown"
+                   "gray"]
+        ;; colors       (? (keys oklch-colors))
+         oklch-grid   (for [color-name colors]
+                        (into [:div (sx :.flex-row-fs)]
+                              (for [lvl (range 50 1050 50)]
+                                [color-row (str "var(--" color-name "-" lvl ")")])))
+         hsl-grid     (when hsl?
+                        #_(for [[color-name {:keys [hue scale]}] colors]
+                          (into [:div (sx :.flex-row-fs)]
+                                (for [[lvl saturation lightness] scale]
+                                  [color-row (str "hsl(var(--"
+                                                  color-name
+                                                  "-hue) "
+                                                  saturation
+                                                  " "
+                                                  lightness
+                                                  ")")]))))
+         ]
+    (into [:div (sx :.flex-col-fs :bgc--$neutral-500 :p--100px)]
+          (if hsl?
+            (interleave hsl-grid oklch-grid)
+            oklch-grid)))
+
+
+  ;; Based on raw data
+  #_(let [oklch-colors (apply array-map colors2/oklch-colors)
         hsl-colors   (apply array-map colors2/colors)
         ;; colors       (? (keys oklch-colors))
         oklch-grid   (for [[color-name {:keys [hue scale]}] oklch-colors]
@@ -140,18 +181,21 @@
                                                " "
                                                hue
                                                ")")])))
-        hsl-grid     (for [[color-name {:keys [hue scale]}] hsl-colors]
-                       (into [:div (sx :.flex-row-fs)]
-                             (for [[lvl saturation lightness] scale]
-                               [color-row (str "hsl(var(--"
-                                               color-name
-                                               "-hue) "
-                                               saturation
-                                               " "
-                                               lightness
-                                               ")")])))]
+        hsl-grid     (when hsl?
+                       (for [[color-name {:keys [hue scale]}] hsl-colors]
+                         (into [:div (sx :.flex-row-fs)]
+                               (for [[lvl saturation lightness] scale]
+                                 [color-row (str "hsl(var(--"
+                                                 color-name
+                                                 "-hue) "
+                                                 saturation
+                                                 " "
+                                                 lightness
+                                                 ")")]))))]
     (into [:div (sx :.flex-col-fs)]
-          (interleave hsl-grid oklch-grid))))
+          (if hsl?
+            (interleave hsl-grid oklch-grid)
+            oklch-grid))))
 
 (defn pane-samples []
   [:div (sx :.absolute-centered 
@@ -170,10 +214,10 @@
   ;;  [button "hello"]
    
    
-   [hsl+oklch-color-grid]
+   #_[hsl+oklch-color-grid {:hsl? false}]
    
 
-   #_[button-dev-samples]
+   [button-dev-samples]
 
 
 ;; [lvl sat-hsl lightness-hsl] (get-in hsl-colors [color-name :scale])

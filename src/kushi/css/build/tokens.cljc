@@ -164,28 +164,36 @@
 
 (def design-tokens
   (array-map 
-   
-   {:family "Transparent Neutrals"
+
+   ;; Colors
+   ;; ------------------------------------------------------
+
+   {:family   "Transparent neutrals colors"
     :category ["transparent-colors"]
-    :tags   ["colors" "oklch" "neutrals" "transparent"]
+    :tags     ["colors" "oklch" "neutrals" "transparent"]
     }
    colors2/transparent-neutrals-oklch
 
-   ;; Colors
-   {:family "Colors"
+   {:family   "Colors"
     :category ["colors"]
-    :tags   ["colors" "oklch"]
+    :tags     ["colors" "oklch"]
     }
    colors2/oklch-colors-flattened2
 
+   {:family   "Foreground colors"
+    :category ["foreground-colors"]
+    :tags     ["colors" "oklch" "foreground"]
+    }
+   colors2/foreground-colors-oklch-flattened
+
+
    ;; Debugging grid
    ;; ------------------------------------------------------
-   {:family "Debugging grid"
+   {:family   "Debugging grid"
     :category ["debugging-grid"]
-    :tags   ["debugging" "development" "backgrounds"]
+    :tags     ["debugging" "development" "backgrounds"]
     }
-   [
-    :--debug-grid-size :16px
+   [:--debug-grid-size :16px
     :--debug-grid-color "hsla(0 0% 90%)"
     :--debug-grid-color-inverse "hsla(0 0% 25%)"
     ]
@@ -319,10 +327,10 @@
 
 
    ;; Intended for css props `border-width` for inputs
-   {:family     "Input border weight"
-    :desc       {:en "Controls the border-width for inputs"}
-    :category   ["input-border"]
-    :tags       ["border-width" "border" "input" "inputs"]
+   {:family   "Input border weight"
+    :desc     {:en "Controls the border-width for inputs"}
+    :category ["input-border"]
+    :tags     ["border-width" "border" "input" "inputs"]
     }
    [:--input-border-weight-thin               :0.05em
     :--input-border-weight-extra-light        :0.07em
@@ -337,10 +345,10 @@
 
 
    ;; Intended for css props: border-*, general
-   {:family     "Border"
-    :desc       {:en "Controls general border styling"}
-    :category   ["border"]
-    :tags       ["border" "borders"]
+   {:family   "Border"
+    :desc     {:en "Controls general border styling"}
+    :category ["border"]
+    :tags     ["border" "borders"]
     }
    [:--border-width                           :1px
     :--border-style                           :solid
@@ -348,19 +356,19 @@
 
    ;; Intended for divisors and divisor-like borders
    
-   {:family     "Divisors"
-    :desc       {:en "Styling for border-like divisors"}
-    :category   ["divisor"]
-    :tags       ["divisors" "divisor"]
+   {:family   "Divisors"
+    :desc     {:en "Styling for border-like divisors"}
+    :category ["divisor"]
+    :tags     ["divisors" "divisor"]
     }
    divisor-tokens
 
 
    ;; Intended for overlay placement
-   {:family     "Overlay placement"
-    :desc       {:en "Styling for overlays"}
-    :category   ["overlay"]
-    :tags       ["overlays" "overlay"]
+   {:family   "Overlay placement"
+    :desc     {:en "Styling for overlays"}
+    :category ["overlay"]
+    :tags     ["overlays" "overlay"]
     }
    [:--overlay-placement-inline-offset        :12px
     :--overlay-placement-block-offset         :6px
@@ -370,10 +378,10 @@
 
    ;; Buttons
    ;; ------------------------------------------------------
-   {:family     "Button padding"
-    :desc       {:en "Styling for overlays"}
-    :category   ["button-padding"]
-    :tags       ["button"]
+   {:family   "Button padding"
+    :desc     {:en "Styling for overlays"}
+    :category ["button-padding"]
+    :tags     ["button"]
     }
    [:--button-padding-inline-ems              :1.2em
     :--icon-button-padding-inline-ems         :0.69em
@@ -381,19 +389,19 @@
     :--button-with-icon-padding-inline-offset :0.9em
     ]
 
-   {:family     "Button border styling"
-    :desc       {:en "Styling borders for buttons"}
-    :category   ["button-border"]
-    :tags       ["button"]
+   {:family   "Button border styling"
+    :desc     {:en "Styling borders for buttons"}
+    :category ["button-border"]
+    :tags     ["button"]
     }
    [:--button-border-width :1px]
 
 
 
-   {:family     "Tag border styling"
-    :desc       {:en "Styling borders for tags"}
-    :category   ["tag-border"]
-    :tags       ["tag"]
+   {:family   "Tag border styling"
+    :desc     {:en "Styling borders for tags"}
+    :category ["tag-border"]
+    :tags     ["tag"]
     }
    ;; Tags
    [:--tag-border-width                       :1px
@@ -404,10 +412,10 @@
    ;; ------------------------------------------------------
    
    ;; pane colors and images
-   {:family     "Floating pane colors and images"
-    :desc       {:en ""}
-    :category   ["pane"]
-    :tags       ["pane" "tooltip" "toast" "popover" "modal" "floating" "color"]
+   {:family   "Floating pane colors and images"
+    :desc     {:en ""}
+    :category ["pane"]
+    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "color"]
     }
    [:--pane-background-color                 :$background-color
     :--pane-background-color-inverse         :$background-color-inverse
@@ -420,10 +428,10 @@
     :--pane-border-color-inverse             :transparent]
 
     ;; pane geometry
-   {:family     "Floating pane geometry"
-    :desc       {:en ""}
-    :category   ["pane"]
-    :tags       ["pane" "tooltip" "toast" "popover" "modal" "floating" "geometry"]
+   {:family   "Floating pane geometry"
+    :desc     {:en ""}
+    :category ["pane"]
+    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "geometry"]
     }
    [:--pane-min-width                        :70px
     :--pane-min-height                       :35px
@@ -436,10 +444,10 @@
     :--pane-auto-placement-y-threshold       :0.1]
 
     ;; pane choreography
-   {:family     "Floating pane choreography"
-    :desc       {:en ""}
-    :category   ["pane"]
-    :tags       ["pane" "tooltip" "toast" "popover" "modal" "floating" "choreography"]
+   {:family   "Floating pane choreography"
+    :desc     {:en ""}
+    :category ["pane"]
+    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "choreography"]
     }
    [:--pane-offset-start                     "calc(var(--pane-offset) + 5px)"
     :--pane-z-index                          99999
@@ -448,10 +456,10 @@
     :--pane-transition-timing-function       :$timing-ease-out-curve]
 
     ;; pane arrows
-   {:family     "Floating pane arrow"
-    :desc       {:en ""}
-    :category   ["pane"]
-    :tags       ["pane" "tooltip" "toast" "popover" "modal" "floating" "arrows"]
+   {:family   "Floating pane arrow"
+    :desc     {:en ""}
+    :category ["pane"]
+    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "arrows"]
     }
    [:--pane-arrow-inline-inset               :7px
     :--pane-arrow-block-inset                :2px
@@ -683,10 +691,10 @@
 
    ;; General icons
    ;; ------------------------------------------------------
-   {:family     "Icon gap"
-    :desc       {:en "Controls the width of the gap between icon and text, in labels, buttons, and tags"}
+   {:family   "Icon gap"
+    :desc     {:en "Controls the width of the gap between icon and text, in labels, buttons, and tags"}
     :category ["icon"]
-    :tags       ["icon" "size" "font-size"]
+    :tags     ["icon" "size" "font-size"]
     }
    [:--icon-enhanceable-gap                   :0.25em]
 
