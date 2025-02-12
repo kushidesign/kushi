@@ -2233,7 +2233,7 @@
    "--semantic-element-outer-box-shadow-2-blur-length"  "20px",
    "--semantic-element-box-outer-box-shadow-2-strength" "00%",
    ;; Delete these end
-
+   
    "--debug-grid-size"                                  "107px",
    "--debug-grid-color"                                 "#eee",
   ;;  "--new-purple-hue"                                   "330",
@@ -2263,7 +2263,18 @@
    "--button-padding-inline-roomy"                      "1.5em",
    "--button-padding-block-compact"                     "0.42em",
    "--button-padding-block"                             "0.67em",
-   "--button-padding-block-roomy"                       "0.8666em"})
+   "--button-padding-block-roomy"                       "0.8666em"
+
+   ;; Use or not use -ems ?
+   "--tag-padding-block-start-reduction-ratio"          "0.9",
+   "--tag-padding-block-start"                          "0.27em",
+   "--tag-padding-block"                                "0.3em",
+   "--tag-padding-inline"                               "0.6em",
+   "--tag-padding-block-compact"                        "0.20em",
+   "--tag-padding-inline-compact"                       "0.45em",
+   "--tag-padding-block-roomy"                          "0.45em",
+   "--tag-padding-inline-roomy"                         "0.9em"
+   })
 
 (defcss
   "[data-kui-colorway=\"accent\"]"
@@ -2296,7 +2307,7 @@
    "var(--_color)",
 
    "--_background-color"
-   "oklch(calc(var(--_bg-lightness) + var(--_bg-lightness-shift, 0%) + var(--_bg-lightness-shift-state, 0%))    calc(var(--_bg-chroma, 0) + var(--_bg-chroma-shift, 0) + var(--_bg-chroma-shift-state, 0))    var(--_hue, 0) / var(--_bgc-alpha, 1)  )",
+   "oklch(calc(var(--_bg-lightness) + var(--_bg-lightness-shift, 0%) + var(--_bg-lightness-shift-state, 0%))    calc(var(--_bg-chroma, 0) + var(--_bg-chroma-shift, 0) + var(--_bg-chroma-shift-state, 0))    var(--_hue, 0) / var(--_bgc-alpha, 1))",
 
    "background-color"
    "var(--_background-color)"
@@ -2377,8 +2388,10 @@
   :--_fg-lightness     :44%
   "[data-kui-colorway]" {:--_bg-chroma :0.27
                          :--_fg-chroma :0.24}
-  "[data-kui-ia]"       {:hover  {:--_bg-lightness-shift-state :-5%}
-                         :active {:--_bg-lightness-shift-state :-10%}}})
+  "[data-kui-colorway=\"warning\"]" {:--_bg-lightness-shift :3.5%
+                                     :--_bg-chroma-shift    :0.085}
+  "[data-kui-ia]"       {:hover  {:--_bg-lightness-shift-state :-10%}
+                         :active {:--_bg-lightness-shift-state :-18%}}})
 
 (defcss "[data-kui-surface=\"outline\"]"
   {
@@ -2402,12 +2415,16 @@
    "[data-kui-ia]"       {:hover  {:--_bgc-alpha :0.25}
                           :active {:--_bgc-alpha :0.35}}})
 
+
 (defcss "[data-kui-shape=\"rounded\"]"
   {:border-radius :0.3em})
+
 
 (defcss "[data-kui-shape=\"pill\"]"
   {:border-radius :9999px})
 
+
+;; Move to button ns?
 (defcss ".kui-button"
   {:--_padding-inline               "var(--button-padding-inline)"
    :--_padding-block                "var(--button-padding-block)"
@@ -2417,10 +2434,28 @@
    "[data-kui-packing=\"roomy\"]"   {:--_padding-inline "var(--button-padding-inline-roomy)"
                                      :--_padding-block  "var(--button-padding-block-roomy)"}
    
-   "[data-kui-start-enhancer]"      {:padding-inline-start "calc(var(--_padding-inline) * 0.7666)"}
-
-   "[data-kui-end-enhancer]"        {:padding-inline-end "calc(var(--_padding-inline) * 0.7666)"}
-   
    "[data-kui-icon-button]"         {:--_padding-inline           "var(--_padding-block)"
                                      :_.material-symbols-outlined {:min-width   :1.2ch
                                                                    :line-height :normal}}})
+
+
+;; Keep here?
+(defcss ".kui-button, .kui-tag"
+  {"[data-kui-start-enhancer]"      {:padding-inline-start "calc(var(--_padding-inline) * 0.7666)"}
+   "[data-kui-end-enhancer]"        {:padding-inline-end "calc(var(--_padding-inline) * 0.7666)"}})
+
+
+
+;; Move to tag ns
+(defcss ".kui-tag"
+  {"[data-kui-packing=\"compact\"]"
+   {:--_padding-inline      "var(--tag-padding-inline-compact)"
+    :--_padding-block-start "calc(var(--tag-padding-block-compact) * var(--tag-padding-block-start-reduction-ratio, 1))"
+    :--_padding-block-end   "calc(var(--tag-padding-block-compact))"
+    }
+
+   "[data-kui-packing=\"roomy\"]"
+   {:--_padding-inline "var(--tag-padding-inline-roomy)"
+    :--_padding-block-start "calc(var(--tag-padding-block-roomy) * var(--tag-padding-block-start-reduction-ratio, 1))"
+    :--_padding-block-end   "calc(var(--tag-padding-block-roomy))"
+    }})

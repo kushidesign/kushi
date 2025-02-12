@@ -941,7 +941,7 @@
    :--switch-border-width
    :2px
 
-   ;; off/unchecked
+  ;;  ;; off/unchecked
    :--switch-off-background-color
    :$neutral-400
 
@@ -949,140 +949,141 @@
    :$neutral-500
 
    ;; off/unchecked dark
-   :--switch-off-background-color-inverse
+   :--switch-off-background-color-dark-mode
    :$neutral-750
 
-   :--switch-off-background-color-hover-inverse
+   :--switch-off-background-color-hover-dark-mode
    :$neutral-700
 
-   ;; Neutral
-   :--switch-on-background-color
-   :$neutral-700
+  ;;  ;; Neutral
+  ;;  :--switch-on-background-color
+  ;;  :$neutral-700
 
-   :--switch-on-background-color-hover
-   :$neutral-750
+  ;;  :--switch-on-background-color-hover
+  ;;  :$neutral-750
 
-   :--switch-thumb-on-neutral-color
-   :$neutral-minimal-color
+  ;;  :--switch-thumb-on-neutral-color
+  ;;  :$neutral-minimal-color
 
-   :--switch-thumb-on-neutral-color-hover
-   :$neutral-minimal-color-hover
+  ;;  :--switch-thumb-on-neutral-color-hover
+  ;;  :$neutral-minimal-color-hover
 
-   ;; Accent
-   :--switch-on-accent-background-color
-   :$accent-500
+  ;;  ;; Accent
+  ;;  :--switch-on-accent-background-color
+  ;;  :$accent-500
 
-   :--switch-on-accent-background-color-hover
-   :$accent-600
+  ;;  :--switch-on-accent-background-color-hover
+  ;;  :$accent-600
 
-   :--switch-thumb-on-accent-color
-   :$accent-minimal-color
+  ;;  :--switch-thumb-on-accent-color
+  ;;  :$accent-minimal-color
 
-   :--switch-thumb-on-accent-color-hover
-   :$accent-minimal-color-hover
+  ;;  :--switch-thumb-on-accent-color-hover
+  ;;  :$accent-minimal-color-hover
 
-   ;; Positive
-   :--switch-on-positive-background-color
-   :$positive-500
+  ;;  ;; Positive
+  ;;  :--switch-on-positive-background-color
+  ;;  :$positive-500
 
-   :--switch-on-positive-background-color-hover
-   :$positive-600
+  ;;  :--switch-on-positive-background-color-hover
+  ;;  :$positive-600
 
-   :--switch-thumb-on-positive-color
-   :$positive-minimal-color
+  ;;  :--switch-thumb-on-positive-color
+  ;;  :$positive-minimal-color
 
-   :--switch-thumb-on-positive-color-hover
-   :$positive-minimal-color-hover
+  ;;  :--switch-thumb-on-positive-color-hover
+  ;;  :$positive-minimal-color-hover
 
-   ;; Warning
-   :--switch-on-warning-background-color
-   :$warning-550
+  ;;  ;; Warning
+  ;;  :--switch-on-warning-background-color
+  ;;  :$warning-550
 
-   :--switch-on-warning-background-color-hover
-   :$warning-650
+  ;;  :--switch-on-warning-background-color-hover
+  ;;  :$warning-650
 
-   :--switch-thumb-on-warning-color
-   :$warning-minimal-color
+  ;;  :--switch-thumb-on-warning-color
+  ;;  :$warning-minimal-color
 
-   :--switch-thumb-on-warning-color-hover
-   :$warning-minimal-color-hover
+  ;;  :--switch-thumb-on-warning-color-hover
+  ;;  :$warning-minimal-color-hover
 
-   ;; Negative
-   :--switch-on-negative-background-color
-   :$negative-filled-background-color
+  ;;  ;; Negative
+  ;;  :--switch-on-negative-background-color
+  ;;  :$negative-filled-background-color
 
-   :--switch-on-negative-background-color-hover
-   :$negative-filled-background-color-hover
+  ;;  :--switch-on-negative-background-color-hover
+  ;;  :$negative-filled-background-color-hover
 
-   :--switch-thumb-on-negative-color
-   :$negative-minimal-color
+  ;;  :--switch-thumb-on-negative-color
+  ;;  :$negative-minimal-color
 
-   :--switch-thumb-on-negative-color-hover
-   :$negative-minimal-color-hover
+  ;;  :--switch-thumb-on-negative-color-hover
+  ;;  :$negative-minimal-color-hover
 
-   ;; Neutral dark
-   :--switch-on-background-color-inverse
-   :$neutral-550
+  ;;  ;; Neutral dark
+  ;;  :--switch-on-background-color-inverse
+  ;;  :$neutral-550
 
-   :--switch-on-background-color-hover-inverse
-   :$neutral-550
+  ;;  :--switch-on-background-color-hover-inverse
+  ;;  :$neutral-550
 
-   :--switch-thumb-on-neutral-color-inverse
-   :$neutral-minimal-color-inverse
+  ;;  :--switch-thumb-on-neutral-color-inverse
+  ;;  :$neutral-minimal-color-inverse
 
-   :--switch-thumb-on-neutral-color-hover-inverse
-   :$neutral-minimal-color-hover-inverse
+  ;;  :--switch-thumb-on-neutral-color-hover-inverse
+  ;;  :$neutral-minimal-color-hover-inverse
 
-   ;; Accent dark
-   :--switch-on-accent-background-color-inverse
-   :$accent-450
+  ;;  ;; Accent dark
+  ;;  :--switch-on-accent-background-color-inverse
+  ;;  :$accent-450
 
-   :--switch-on-accent-background-color-hover-inverse
-   :$accent-500
+  ;;  :--switch-on-accent-background-color-hover-inverse
+  ;;  :$accent-500
 
-   :--switch-thumb-on-positive-color-inverse
-   :$accent-minimal-color-inverse
+  ;;  :--switch-thumb-on-positive-color-inverse
+  ;;  :$accent-minimal-color-inverse
 
-   :--switch-thumb-on-positive-color-hover-inverse
-   :$accent-minimal-color-hover-inverse
+  ;;  :--switch-thumb-on-positive-color-hover-inverse
+  ;;  :$accent-minimal-color-hover-inverse
 
-   ;; Positive dark
-   ;; :$switch-on-positive-background-color-inverse--$lime-600
-   ;; :$switch-on-positive-background-color-hover-inverse--$lime-650
-   :--switch-on-positive-background-color-inverse
-   :$positive-500
+  ;;  ;; Positive dark
+  ;;  ;; :$switch-on-positive-background-color-inverse--$lime-600
+  ;;  ;; :$switch-on-positive-background-color-hover-inverse--$lime-650
+  ;;  :--switch-on-positive-background-color-inverse
+  ;;  :$positive-500
 
-   :--switch-on-positive-background-color-hover-inverse
-   :$positive-550
+  ;;  :--switch-on-positive-background-color-hover-inverse
+  ;;  :$positive-550
 
-   :--switch-thumb-on-positive-color-inverse
-   :$positive-minimal-color-inverse
+  ;;  :--switch-thumb-on-positive-color-inverse
+  ;;  :$positive-minimal-color-inverse
 
-   :--switch-thumb-on-positive-color-hover-inverse
-   :$positive-minimal-color-hover-inverse
+  ;;  :--switch-thumb-on-positive-color-hover-inverse
+  ;;  :$positive-minimal-color-hover-inverse
 
-   ;; Warning dark
-   :--switch-on-warning-background-color-inverse
-   :$warning-550
+  ;;  ;; Warning dark
+  ;;  :--switch-on-warning-background-color-inverse
+  ;;  :$warning-550
 
-   :--switch-on-warning-background-color-hover-inverse
-   :$warning-600
+  ;;  :--switch-on-warning-background-color-hover-inverse
+  ;;  :$warning-600
 
-   :--switch-thumb-on-warning-color-inverse
-   :$warning-minimal-color-inverse
+  ;;  :--switch-thumb-on-warning-color-inverse
+  ;;  :$warning-minimal-color-inverse
 
-   :--switch-thumb-on-warning-color-hover-inverse
-   :$warning-minimal-color-hover-inverse
+  ;;  :--switch-thumb-on-warning-color-hover-inverse
+  ;;  :$warning-minimal-color-hover-inverse
 
-   ;; Negative dark
-   :--switch-on-negative-background-color-inverse
-   :$negative-500
+  ;;  ;; Negative dark
+  ;;  :--switch-on-negative-background-color-inverse
+  ;;  :$negative-500
 
-   :--switch-on-negative-background-color-hover-inverse
-   :$negative-550
+  ;;  :--switch-on-negative-background-color-hover-inverse
+  ;;  :$negative-550
 
-   :--switch-thumb-on-negative-color-inverse
-   :$negative-minimal-color-inverse
+  ;;  :--switch-thumb-on-negative-color-inverse
+  ;;  :$negative-minimal-color-inverse
 
-   :--switch-thumb-on-negative-color-hover-inverse
-   :$negative-minimal-color-hover-inverse])
+  ;;  :--switch-thumb-on-negative-color-hover-inverse
+  ;; :$negative-minimal-color-hover-inverse
+  ])

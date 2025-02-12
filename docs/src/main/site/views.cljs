@@ -9,6 +9,10 @@
    [clojure.string :as string]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
    [kushi.ui.button.core :refer [button]]
+   [kushi.ui.tag.core :refer [tag]]
+   [kushi.ui.switch.core :refer [switch]]
+   [kushi.ui.callout.core :refer [callout]]
+   [kushi.ui.link.core :refer [link]]
    [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
    [kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]
    [kushi.ui.toast.demo :refer [toast-content]]
@@ -21,6 +25,40 @@
    ))
 
 (js/console.clear)
+
+(defn switch-dev-samples []
+  (defcss ".switch-dev-grid"
+    :.flex-row-fs
+    :gap--0.5em
+    :mbs--3rem
+    :position--relative
+    {:before {:content     "\"All colorways, all surfaces\""
+              :position    :absolute
+              :bottom      "calc(100% + 1em)"
+              :fs          :$xsmall
+              :font-family :$serif-font-stack
+              :font-style  :italic}})
+  
+
+  [:<> 
+    (into [:div (sx :.switch-dev-grid
+                    {:before:content "\"Colorways\""})]
+          (for [colorway [nil "accent" "positive" "warning" "negative"]] 
+            [switch 
+             (merge-attrs (sx :fs--$xxxlarge)
+                          {:-colorway colorway
+                           :-on?      true})]))
+
+     (into [:div (sx :.switch-dev-grid
+                    {:before:content "\"Colorways\""})]
+          (for [colorway [nil "accent" "positive" "warning" "negative"]] 
+            [button
+             (merge-attrs (sx :fs--$small
+                              :fw--$wee-bold
+                              :.loose)
+                          {:-colorway colorway
+                           :-surface  :solid})
+             "Button"]))])
 
 (defn button-dev-samples []
   (defcss ".button-dev-grid"
@@ -121,6 +159,138 @@
                           :-start-enhancer [icon :pets]})
             "Button"]))])
 
+
+(defn tag-dev-samples []
+  (defcss ".tag-dev-grid"
+    :.flex-row-fs
+    :gap--0.5em
+    :mbs--3rem
+    :position--relative
+    {:before {:content     "\"All colorways, all surfaces\""
+              :position    :absolute
+              :bottom      "calc(100% + 1em)"
+              :fs          :$xsmall
+              :font-family :$serif-font-stack
+              :font-style  :italic}})
+  [:<> 
+   #_(into [:div (sx :.tag-dev-grid :.flex-col-fs)]
+         (for [shape ["rounded" #_"sharp" #_"pill"]] 
+           (into [:div (sx :.flex-col-fs :gap--0.5em)]
+                 (for [surface ["minimal" "outline" "solid" "soft"]]
+                   (into [:div (sx :.flex-row-fs :gap--0.5em)]  
+                         (for [colorway [nil "accent" "positive" "warning" "negative"]]
+                           [tag 
+                            (merge-attrs (sx :fs--$small)
+                                         {:-colorway       colorway
+                                          :-surface        surface
+                                          :-shape          shape
+                                          :-start-enhancer [icon :pets]})
+                            "Dang"]))))))
+
+   #_(into [:div (sx :.tag-dev-grid :.flex-col-fs)]
+         (for [shape ["rounded" #_"sharp" #_"pill"]] 
+           (into [:div (sx :.flex-col-fs :gap--0.5em)]
+                 (for [surface ["minimal" "outline" "solid" "soft"]]
+                   (into [:div (sx :.flex-row-fs :gap--0.5em)]  
+                         (for [colorway [nil "accent" "positive" "warning" "negative"]]
+                           [tag 
+                            (merge-attrs (sx :fs--$small)
+                                         {:-colorway colorway
+                                          :-surface  surface
+                                          :-shape    shape})
+                            "Dang"]))))))  
+
+   (into [:div (sx :.tag-dev-grid
+                   {:before:content "\"Shape\""})]
+         (for [shape ["round" "sharp" "pill" "round" "sharp" "pill"]] 
+           [tag 
+            (merge-attrs (sx :fs--$xxxlarge
+                             ["nth-child(4):tt" :lowercase]
+                             ["nth-child(5):tt" :lowercase]
+                             ["nth-child(6):tt" :lowercase]
+                             )
+                         {:-surface        "outline"
+                          :-shape          shape})
+            (if (= shape "sharp") "Done" "Dang")]))
+
+   (into [:div (sx :.tag-dev-grid
+                   {:before:content "\"Packing\""})]
+         (for [packing ["compact" nil "roomy" "compact" nil "roomy"]] 
+           [tag 
+            (merge-attrs (sx :fs--$xxxlarge
+                             ["nth-child(4):tt" :lowercase]
+                             ["nth-child(5):tt" :lowercase]
+                             ["nth-child(6):tt" :lowercase]
+                             )
+                         {:-surface        "outline"
+                          :-packing        packing})
+            "Dang"]))
+
+   #_(into [:div (sx :.tag-dev-grid
+                   :gap--2em
+                   {:before:content "\"Outline thicknesses\""})]
+         (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
+           [tag 
+            (merge-attrs {:style (css-vars-map _stroke-width)
+                          :class (css :fs--$small
+                                      [:--outlined-button-stroke-width :$_stroke-width]
+                                      [:--outlined-button-stroke-align "center"])}
+                         {:-surface        "outline"
+                          :-shape          "round"})
+            "Dang"]))
+
+   #_(into [:div (sx :.tag-dev-grid
+                   :gap--2em
+                   {:before:content "\"Outline thicknesses with :-stroke-align set to :outside\""})]
+         (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
+           [tag 
+            (merge-attrs {:style (css-vars-map _stroke-width)
+                          :class (css :fs--$small
+                                      [:--outlined-button-stroke-width :$_stroke-width]
+                                      [:--outlined-button-stroke-align "center"])}
+                         {:-surface        "outline"
+                          :-shape          "round"
+                          :-stroke-align   :outside})
+            "Dang"]))
+   
+   #_(into [:div (sx :.tag-dev-grid
+                   :gap--2em
+                   {:before:content "\"Outline thicknesses with :-stroke-align set to :outside, with lowercase\""})]
+         (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
+           [tag 
+            (merge-attrs {:style (css-vars-map _stroke-width)
+                          :class (css :fs--$small
+                                      :.lowercase
+                                      [:--outlined-button-stroke-width :$_stroke-width]
+                                      [:--outlined-button-stroke-align "center"])}
+                         {:-surface        "outline"
+                          :-shape          "round"
+                          :-stroke-align   :outside})
+            "Dang"]))
+
+   #_(into [:div (sx :.tag-dev-grid
+                   :gap--2em
+                   {:before:content "\"Box shadow\""})]
+         (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
+           [tag 
+            (merge-attrs {:class (css :fs--$small
+                                      [:--box-shadow-strength "20%"]
+                                      [:--box-shadow-blur-radius "5px"]
+                                      [:--box-shadow-offset-x "5px"]
+                                      [:--box-shadow-offset-y "5px"]
+                                      [:--box-shadow-color "blue"]
+                                      [:--box-shadow-2-offset-x "0"]
+                                      [:--box-shadow-2-offset-y "0"]
+                                      [:--box-shadow-2-strength "50%"]
+                                      [:--box-shadow-2-blur-radius "5px"]
+                                      [:--box-shadow-2-color "red"]
+                                      )}
+                         {:-surface        "outline"
+                          :-shape          "round"
+                          :-stroke-align   :inside})
+            "Dang"]))])
+
+
 (defn color-row [bgc]
   [:div (sx :.flex-col-c :>div:w--50px :>div:h--50px)
    [:div {:class (css :position--relative :w--100px :h--100px)
@@ -197,6 +367,37 @@
             (interleave hsl-grid oklch-grid)
             oklch-grid))))
 
+(defn callout-dev-samples []
+  [callout
+   (merge-attrs (sx :.large :.accent) 
+                {:-header-text [:span
+                                "Please check out the "
+                                [link (merge-attrs
+                                       (sx :ws--n)
+                                       {:href "#"})
+                                 "new features"]]
+                 :-colorway    :accent
+                 :-icon        [icon :info]})]
+
+  #_(into [:div (sx :.button-dev-grid :.flex-col-fs)]
+         (for [shape ["rounded" #_"sharp" #_"pill"]] 
+           (into [:div (sx :.flex-col-fs :gap--0.5em)]
+                 (for [surface ["minimal" "outline" "solid" "soft"]]
+                   (into [:div (sx :.flex-row-fs :gap--0.5em)]  
+                         (for [colorway [nil "accent" "positive" "warning" "negative"]]
+                           [callout
+                            (merge-attrs (sx :.large :.accent) 
+                                         {:-header-text [:span
+                                                         "Please check out the "
+                                                         [link (merge-attrs
+                                                                (sx :ws--n)
+                                                                {:href "#"})
+                                                          "new features"]]
+                                          :-colorway    colorway
+                                          :-icon        [icon :info]})])))))))
+
+
+
 (defn pane-samples []
   [:div (sx :.absolute-centered 
             :.flex-col-fs
@@ -217,8 +418,10 @@
    #_[hsl+oklch-color-grid {:hsl? false}]
    
 
-   [button-dev-samples]
-
+   #_[button-dev-samples]
+   #_[tag-dev-samples]
+   #_[switch-dev-samples]
+   [callout-dev-samples]
 
 ;; [lvl sat-hsl lightness-hsl] (get-in hsl-colors [color-name :scale])
 ;; [hue-oklch                   (get-in oklch-colors [color-name :hue])

@@ -458,6 +458,12 @@
    :elevated      {:box-shadow      :$elevated-4
                    :dark:box-shadow :$elevated-4-inverse}
 
+   :capitalize     {:text-transform :capitalize}
+   :uppercase      {:text-transform :uppercase}
+   :lowercase      {:text-transform :lowercase}
+   :full-width     {:text-transform :full-width}
+   :full-size-kana {:text-transform :full-size-kana}
+   :math-auto      {:text-transform :math-auto}
    ])
 
 

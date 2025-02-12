@@ -1,5 +1,11 @@
 (ns kushi.ui.callout.core
-  (:require [kushi.core :refer (css sx merge-attrs)]
+  (:require [kushi.core :refer [sx css merge-attrs]]
+            [kushi.ui.util :refer [as-str maybe nameable?]]
+            [clojure.string :as string]
+            [kushi.ui.core :refer (opts+children)]
+            [kushi.ui.shared.theming :refer [data-kui- get-variants hue-style-map]]
+            [kushi.ui.icon.core])
+  #_(:require [kushi.core :refer (css sx merge-attrs)]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.icon.core]))
 
@@ -36,15 +42,31 @@
 
   [& args]
 
-  (let [[opts attrs & children]    (opts+children args)
-        {:keys [icon
+  (let [[opts attrs & children]    
+        (opts+children args)
+
+        {:keys [loading?
+                icon
                 close-button
                 header-text
-                ;; Leave this out for now
+                colorway
+                stroke-align
                 duration
+                colorway
                 ]}
         opts
-        callout-id                   (str (.now js/Date))]
+
+        {:keys             [shape surface]
+         semantic-colorway :colorway}
+        (get-variants opts)
+
+        hue-style-map                 
+        (when-not semantic-colorway 
+          (some-> colorway
+                  hue-style-map))
+
+        callout-id                   
+        (str (.now js/Date))]
 
     ;; Leave this out for now
     ;; (when (pos-int? duration)
@@ -53,13 +75,75 @@
     ;;                  duration))
 
     [:section
-     (merge-attrs
+     #_(merge-attrs
       {:class (css :.kushi-callout
                    :.info
                    :ai--c
                    :w--100%)
        :id callout-id}
       attrs)
+      (merge-attrs
+       (sx ".kui-callout"
+           :position--relative
+           :d--flex
+           :flex-direction--row
+           :jc--c
+           :ai--c
+           :w--fit-content
+           :gap--$icon-enhanceable-gap
+           
+           ;; different from button
+           ;; :cursor--pointer
+           
+           :transition-property--all
+           :transition-timing-function--$transition-timing-function
+           :transition-duration--$transition-duration
+
+                ;; different from button
+           [:--_padding-block-start "calc(var(--tag-padding-block) * var(--tag-padding-block-start-reduction-ratio, 1))"]
+           [:--_padding-block-end   :$tag-padding-block]
+           [:--_padding-inline      :$tag-padding-inline]
+                ;; different from button
+           
+           :pi--$_padding-inline
+           :pbs--$_padding-block-start
+           :pbe--$_padding-block-end)
+
+       {:aria-busy        loading?
+        :aria-label       (when loading? "loading")
+
+             ;; different from button
+             ;;  :data-kui-ia      ""
+             ;; different from button
+        
+        :data-kui-surface surface
+        :data-kui-shape   shape}
+       (when loading? {:data-kushi-ui-spinner true})
+
+ ;; different from button and tag
+      ;;  (when (and (not icon) end-enhancer) (data-kui- "" :end-enhancer))
+      ;;  (when (and (not icon) start-enhancer) (data-kui- "" :start-enhancer))
+ ;; different from button and tag
+
+       (some-> stroke-align 
+               (maybe #{:outside "outside"})
+               (data-kui- :stroke-align))
+       (some-> (or semantic-colorway
+                   (when hue-style-map ""))
+               (data-kui- :colorway))
+
+ ;; different from button and tag
+      ;;  (some-> packing
+      ;;          (maybe nameable?)
+      ;;          as-str
+      ;;          (maybe #{"compact" "roomy"})
+      ;;          (data-kui- :packing))
+ ;; different from button and tag
+       
+       hue-style-map
+       (some-> surface (data-kui- :surface))
+       attrs)     
+
      [:div (sx :.kushi-callout-header-wrap
                :.flex-row-sb
                :position--relative
@@ -77,3 +161,22 @@
      (when (seq children)
        (into [:div (sx ".kushi-callout-body" :p--1rem)]
              children))]))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
