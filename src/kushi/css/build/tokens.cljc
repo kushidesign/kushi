@@ -186,6 +186,16 @@
     }
    colors2/foreground-colors-oklch-flattened
 
+   ;; TODO - make sure these always get written
+   {:family   "Global colors"
+    :category ["global-colors"]
+    :tags     ["colors" "oklch" "global"]
+    }
+   [:--foreground-color           :$neutral-950
+    :--background-color           :white
+    :--foreground-color-dark-mode :$neutral-50
+    :--background-color-dark-mode :$neutral-1000]
+
 
    ;; Debugging grid
    ;; ------------------------------------------------------

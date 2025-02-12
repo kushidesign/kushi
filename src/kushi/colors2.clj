@@ -706,10 +706,10 @@
                   (let [m+        (-> m 
                                       (assoc :color-name color-name))
                         ret       (color-token-scale m+)
-                        alias     (!? color-name (get colorways-by-colorname color-name))
+                        alias     (get colorways-by-colorname color-name)
                         alias-ret (!? color-name
-                                     (when alias
-                                       (color-token-scale (assoc m+ :alias alias))))]
+                                      (when alias
+                                        (color-token-scale (assoc m+ :alias alias))))]
                     (if (seq alias-ret)
                       (concat ret alias-ret)
                       ret))))

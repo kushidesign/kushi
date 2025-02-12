@@ -14,8 +14,8 @@
 
 (defcss
   ".dark, body.dark"
-  {"background-color" "var(--background-color-inverse)",
-   "color" "var(--foreground-color-inverse)"})
+  {"background-color" "var(--background-color-dark-mode)",
+   "color" "var(--foreground-color-dark-mode)"})
 
 (defcss
   "code, .code"
@@ -2383,15 +2383,39 @@
                           :active {}}})
 
 (defcss "[data-kui-surface= \"solid\"]"
- {:color               :white
-  :--_bg-lightness     :53%
-  :--_fg-lightness     :44%
-  "[data-kui-colorway]" {:--_bg-chroma :0.27
-                         :--_fg-chroma :0.24}
-  "[data-kui-colorway=\"warning\"]" {:--_bg-lightness-shift :3.5%
-                                     :--_bg-chroma-shift    :0.085}
-  "[data-kui-ia]"       {:hover  {:--_bg-lightness-shift-state :-10%}
-                         :active {:--_bg-lightness-shift-state :-18%}}})
+ {:color                                     :white
+  :--_bg-lightness                           :53%
+  :--_fg-lightness                           :44%
+  "[data-kui-colorway]"                        {:--_bg-chroma :0.27
+                                                :--_fg-chroma :0.24}
+
+  "[data-kui-colorway=\"warning\"]"              {:--_bg-lightness-shift :3.5%
+                                                  :--_bg-chroma-shift    :0.085}
+  ".kushi-switch"                                {:--_bg-lightness-shift :7%}
+  ".kushi-switch[data-kui-colorway=\"warning\"]" {:--_bg-lightness-shift :12%
+                                                  :--_bg-chroma-shift    :0.085}
+  ".kushi-switch[data-kui-colorway=\"negative\"]" {:--_bg-lightness-shift :6%
+                                                   :--_bg-chroma-shift    :-0.05}
+  "[data-kui-ia]"                              {:hover  {:--_bg-lightness-shift-state :-10%}
+                                                :active {:--_bg-lightness-shift-state :-18%}}})
+
+
+(defcss ".dark [data-kui-surface= \"solid\"]"
+ {:color                                          :black
+  :--_bg-lightness                                :83%
+  :--_fg-lightness                                :44%
+  "[data-kui-colorway]"                           {:--_bg-chroma :0.27
+                                                   :--_fg-chroma :0.24}
+  "[data-kui-colorway=\"warning\"]"               {:--_bg-lightness-shift :3.5%
+                                                   :--_bg-chroma-shift    :0.085}
+  ".kushi-switch"                                 {:--_bg-lightness-shift :7%}
+
+  ".kushi-switch[data-kui-colorway=\"warning\"]"  {:--_bg-lightness-shift :12%
+                                                   :--_bg-chroma-shift    :0.085}
+  ".kushi-switch[data-kui-colorway=\"negative\"]" {:--_bg-lightness-shift :6%
+                                                   :--_bg-chroma-shift    :-0.05}
+  "[data-kui-ia]"                                 {:hover  {:--_bg-lightness-shift-state :10%}
+                                                   :active {:--_bg-lightness-shift-state :8%}}})
 
 (defcss "[data-kui-surface=\"outline\"]"
   {

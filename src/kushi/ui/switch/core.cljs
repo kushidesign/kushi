@@ -3,7 +3,8 @@
    [kushi.core :refer (sx defcss merge-attrs)]
    [domo.core :as domo]
    [kushi.ui.util :as util]
-   [kushi.ui.core :refer (opts+children)]))
+   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.shared.theming :refer [data-kui- get-variants hue-style-map]]))
 
 (defcss "@layer kushi-ui-styles .kushi-switch-track-content"
   :.flex-row-c
@@ -112,7 +113,9 @@
             :desc    "String or element that will be placed in the track, when in the \"on\" position"}
            ]}
   [& args]
-  (let [[opts attrs & _]           (opts+children args)
+  (let [[opts attrs & _]
+        (opts+children args)
+
         {:keys [disable-events?
                 on?
                 colorway
@@ -120,8 +123,21 @@
                 thumb-content-off
                 thumb-content-on
                 track-content-on
-                track-content-off]} opts
-        disabled?                  (util/html-attr? opts :disabled)]
+                track-content-off]}
+        opts
+
+        {:keys             [shape surface]
+         semantic-colorway :colorway}
+        (get-variants opts)
+
+        hue-style-map                 
+        (when-not semantic-colorway 
+          (some-> colorway
+                  hue-style-map))
+
+        disabled?                  
+        (util/html-attr? opts :disabled)
+        ]
     [:button
      (merge-attrs
       (sx
@@ -155,55 +171,17 @@
        [".kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color]
        [".kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover]
 
-      ;;  ["dark:.kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color-inverse]
-      ;;  ["dark:.kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover-inverse]
-
-      ;;  [".kushi-switch[aria-checked='true']:bgc" :$switch-on-background-color]
-      ;;  [".kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-background-color-hover]
-
-      ;;  [".kushi-switch[aria-checked='false']_.kushi-switch-thumb:color" :$neutral-500]
-      ;;  [".kushi-switch[aria-checked='false']:hover_.kushi-switch-thumb:color" :$neutral-600]
-
-      ;;  [".accent.kushi-switch[aria-checked='true']:bgc" :$switch-on-accent-background-color]
-      ;;  [".accent.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-accent-background-color-hover]
-
-      ;;  [".positive.kushi-switch[aria-checked='true']:bgc" :$switch-on-positive-background-color]
-      ;;  [".positive.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-positive-background-color-hover]
-
-      ;;  [".warning.kushi-switch[aria-checked='true']:bgc" :$switch-on-warning-background-color]
-      ;;  [".warning.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-warning-background-color-hover]
-
-      ;;  [".negative.kushi-switch[aria-checked='true']:bgc" :$switch-on-negative-background-color]
-      ;;  [".negative.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-negative-background-color-hover]
-
-      ;;  ["dark:.kushi-switch[aria-checked='true']:bgc" :$switch-on-background-color-inverse]
-      ;;  ["dark:.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-background-color-hover-inverse]
-
-      ;;  ["dark:.accent.kushi-switch[aria-checked='true']:bgc" :$switch-on-accent-background-color-inverse]
-      ;;  ["dark:.accent.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-accent-background-color-hover-inverse]
-
-      ;;  ["dark:.positive.kushi-switch[aria-checked='true']:bgc" :$switch-on-positive-background-color-inverse]
-      ;;  ["dark:.positive.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-positive-background-color-hover-inverse]
-
-      ;;  ["dark:.warning.kushi-switch[aria-checked='true']:bgc" :$switch-on-warning-background-color-inverse]
-      ;;  ["dark:.warning.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-warning-background-color-hover-inverse]
-
-      ;;  [".warning.kushi-switch[aria-checked='true']_.kushi-switch-thumb:color" :$switch-thumb-on-warning-color]
-      ;;  [".warning.kushi-switch[aria-checked='true']_.kushi-switch-thumb:hover:color" :$switch-thumb-on-warning-color-hover]
-
-      ;;  ["dark:.negative.kushi-switch[aria-checked='true']:bgc" :$switch-on-negative-background-color-inverse]
-      ;;  ["dark:.negative.kushi-switch[aria-checked='true']:hover:bgc" :$switch-on-negative-background-color-hover-inverse]
-
        )
+
+      (some-> (or semantic-colorway
+                  (when hue-style-map ""))
+              (data-kui- :colorway))
 
       {:disabled         disabled?
        :role             :switch
        :aria-checked     (if on? true false)
        :data-kui-ia      ""
-       :data-kui-surface "solid"
-       :data-kui-colorway (some-> colorway name)
-       ;; :on-mouse-down #(when-not disable-events? (toggle-switch %))
-       }
+       :data-kui-surface "solid"}
       
       (domo/mouse-down-a11y #(when-not disable-events? (toggle-switch %)))
 

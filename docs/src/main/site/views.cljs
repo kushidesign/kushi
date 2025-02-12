@@ -22,8 +22,8 @@
    [kushi.ui.icon.core :refer [icon]]
   ;;  [kushi.colors2 :as colors2]
    [fireworks.core :refer [? !? ?> !?>]]
+   [kushi.playground.ui :refer [light-dark-mode-switch]]
    ))
-
 (js/console.clear)
 
 (defn switch-dev-samples []
@@ -41,24 +41,31 @@
   
 
   [:<> 
-    (into [:div (sx :.switch-dev-grid
+    #_(into [:div (sx :.switch-dev-grid
                     {:before:content "\"Colorways\""})]
-          (for [colorway [nil "accent" "positive" "warning" "negative"]] 
+          (for [colorway ["bonkers" "accent" "positive" "warning" "negative"]] 
             [switch 
              (merge-attrs (sx :fs--$xxxlarge)
                           {:-colorway colorway
                            :-on?      true})]))
 
      (into [:div (sx :.switch-dev-grid
-                    {:before:content "\"Colorways\""})]
-          (for [colorway [nil "accent" "positive" "warning" "negative"]] 
+                     {:before:content "\"Colorways\""})]
+          (for [colorway ["bonkers" "accent" "positive" "warning" "negative"]] 
             [button
-             (merge-attrs (sx :fs--$small
-                              :fw--$wee-bold
-                              :.loose)
+             (merge-attrs (sx :fs--$small :fw--$wee-bold :.loose)
                           {:-colorway colorway
                            :-surface  :solid})
-             "Button"]))])
+             "Button"]))
+   #_(into [:div (sx :.switch-dev-grid
+                     {:before:content "\"Colorways\""})]
+          (for [colorway ["neutral" "accent" "positive" "warning" "negative"]] 
+            [button
+             (merge-attrs (sx :fs--$small :fw--$wee-bold :.loose)
+                          {:-colorway colorway
+                           :-surface  :soft})
+             "Button"]))
+   ])
 
 (defn button-dev-samples []
   (defcss ".button-dev-grid"
@@ -207,8 +214,7 @@
             (merge-attrs (sx :fs--$xxxlarge
                              ["nth-child(4):tt" :lowercase]
                              ["nth-child(5):tt" :lowercase]
-                             ["nth-child(6):tt" :lowercase]
-                             )
+                             ["nth-child(6):tt" :lowercase])
                          {:-surface        "outline"
                           :-shape          shape})
             (if (= shape "sharp") "Done" "Dang")]))
@@ -220,8 +226,7 @@
             (merge-attrs (sx :fs--$xxxlarge
                              ["nth-child(4):tt" :lowercase]
                              ["nth-child(5):tt" :lowercase]
-                             ["nth-child(6):tt" :lowercase]
-                             )
+                             ["nth-child(6):tt" :lowercase])
                          {:-surface        "outline"
                           :-packing        packing})
             "Dang"]))
@@ -295,6 +300,58 @@
   [:div (sx :.flex-col-c :>div:w--50px :>div:h--50px)
    [:div {:class (css :position--relative :w--100px :h--100px)
           :style {:background-color bgc}}]])
+
+
+(defn hsl+oklch-color-grid2 []
+   ;; Based on design-system-tokens
+   (let [colors   [
+                  ;;  ["gray" 0]
+                   {:n "purple"
+                    :h 304.9
+                    :l 57.2
+                    :c 0.315}
+                   {:n "blue"
+                    :h 262
+                    :l 51
+                    :c 0.2927}
+                   {:n "green"
+                    :h 155
+                    :l 85.5
+                    :c 0.2932}
+                  ;;  ["lime" 129.5]
+                  ;;  ["yellow" 100]
+                   {:n "gold"
+                    :h 86.4
+                    :l 85.38
+                    :c 0.2013
+                    }
+                  ;;  ["orange" 62.3]
+                   {:n "red"
+                    :h 22.4
+                    :l 65.19
+                    :c 0.2959}
+                  ;;  ["magenta" 347.6]
+                  ;;  ["brown" 46.1]
+                  ;;  ["gray" 0]
+                   ]
+         scale [5 10 20 40 80 140 200 260 320 380 440 500 560 720 780 840]
+         _ (? (count scale))
+         ;; colors       (? (keys oklch-colors))
+         oklch-grid   (for [{:keys [h l c]} colors]
+                        (into [:div (sx :.flex-row-fs)]
+                              (for [lvl [5 10 20 40 80 140 200 260 320 380 440 500 560 720 780 840 900 960 1000]
+                                    :let [c     0.1 #_(* c ratio)]]
+                                [color-row (str "oklch(" (- 100 (/ lvl 10)) "%"  " " c " " h ")")])))]
+    [:<> 
+     #_(into [:div (sx :.flex-col-fs [:bgc "rgb(127.5 127.5 127.5)"] :p--100px)]
+           oklch-grid)
+     #_(into [:div (sx :.flex-col-fs [:bgc "rgb(0 0 0)"] :p--100px)]
+           oklch-grid)
+
+     (into [:div (sx :.flex-col-fs [:bgc "rgb(255 255 255)"] :p--100px)]
+           oklch-grid)]
+
+    ))
 
 (defn hsl+oklch-color-grid [{:keys [hsl?]}]
 
@@ -399,13 +456,15 @@
 
 
 (defn pane-samples []
-  [:div (sx :.absolute-centered 
-            :.flex-col-fs
-            :gap--2rem
+  [:<> 
+   [light-dark-mode-switch (sx :.fixed-block-start-inside :.light :.transition)]
+   [:div (sx :.absolute-centered 
+             :.flex-col-fs
+             :gap--2rem
             ;; :.debug-red
             ;; :outline-offset--0px
-            )
-   
+             )
+    
 
   ;;  [button 
   ;;   (merge-attrs (sx [:--button-border-width :5px]
@@ -413,105 +472,106 @@
   ;;                {:class [:bordered]})
   ;;   "hello"]
   ;;  [button "hello"]
-   
-   
-   #_[hsl+oklch-color-grid {:hsl? false}]
-   
+    
+    
+    ;; [hsl+oklch-color-grid {:hsl? false}]
+    [hsl+oklch-color-grid2]
+    
 
-   #_[button-dev-samples]
-   #_[tag-dev-samples]
-   #_[switch-dev-samples]
-   [callout-dev-samples]
+    #_[button-dev-samples]
+    #_[tag-dev-samples]
+    #_[switch-dev-samples]
+    #_[callout-dev-samples]
 
 ;; [lvl sat-hsl lightness-hsl] (get-in hsl-colors [color-name :scale])
 ;; [hue-oklch                   (get-in oklch-colors [color-name :hue])
 ;;                                                  hue-hsl (get-in hsl-colors  [color-name :hue])]
-
+    
    ;; button with spinner example
-   #_[button
-      (merge-attrs
-       (sx :fs--$xxxlarge)
-       {:on-click (fn [e]
-                    (let [el       (-> e .-target)
-                          loading? (= "loading" (.-ariaLabel el))]
-                      (if loading?
-                        (do (.removeAttribute el "aria-label")
-                            (.removeAttribute el "data-kushi-ui-spinner")) 
-                        (do (.setAttribute el "aria-label" "loading")
-                            (.setAttribute el "data-kushi-ui-spinner" true)))))})
-      [icon (sx ["[aria-label='loading'] &:display" :none]) :play-arrow]
+    #_[button
+       (merge-attrs
+        (sx :fs--$xxxlarge)
+        {:on-click (fn [e]
+                     (let [el       (-> e .-target)
+                           loading? (= "loading" (.-ariaLabel el))]
+                       (if loading?
+                         (do (.removeAttribute el "aria-label")
+                             (.removeAttribute el "data-kushi-ui-spinner")) 
+                         (do (.setAttribute el "aria-label" "loading")
+                             (.setAttribute el "data-kushi-ui-spinner" true)))))})
+       [icon (sx ["[aria-label='loading'] &:display" :none]) :play-arrow]
 
     ;; TODO - Need to use some kind of aspect ration thing based on height
-      [:span (sx :d--none ["[aria-label='loading'] &:display" :block]) [donut]]
-      "Activate"]
-   
+       [:span (sx :d--none ["[aria-label='loading'] &:display" :block]) [donut]]
+       "Activate"]
+    
 
    ;; toast example
-   #_[button
-      (toast-attrs {:-auto-dismiss? false
-                    :-f             (fn [toast-el] (render toast-content toast-el))
+    #_[button
+       (toast-attrs {:-auto-dismiss? false
+                     :-f             (fn [toast-el] (render toast-content toast-el))
                   ;; :-placement     :tlc
-                    :-toast-class   (css [:--toast-border-width :5px]
-                                         [:--toast-background-color :beige])})
-      "Save for later"]
+                     :-toast-class   (css [:--toast-border-width :5px]
+                                          [:--toast-background-color :beige])})
+       "Save for later"]
 
 
    ;; modal example
-   #_(let
-      [id "my-modal-basic"]
-       [:div [button {:on-click (fn* [] (open-kushi-modal id))}
-              "Click to open modal"]
-        [modal (merge-attrs 
-                (sx :min-width--300px
-                    :_.kushi-modal-description:fs--$small
+    #_(let
+       [id "my-modal-basic"]
+        [:div [button {:on-click (fn* [] (open-kushi-modal id))}
+               "Click to open modal"]
+         [modal (merge-attrs 
+                 (sx :min-width--300px
+                     :_.kushi-modal-description:fs--$small
                  ;; [:--modal-border-radius :0px]
                  ;; [:--modal-backdrop-color :beige]
-                    )
-                {:id         id
-                 :-elevation 5})
-         [:div (merge-attrs
-                (sx :.flex-row-c)
+                     )
+                 {:id         id
+                  :-elevation 5})
+          [:div (merge-attrs
+                 (sx :.flex-row-c)
 
                 ;; tooltip on top-layer
-                #_(tooltip-attrs
-                   {:-text          "This is a tooltip"
-                    :-tooltip-class (css {:--tooltip-background-color :$red-800})})
+                 #_(tooltip-attrs
+                    {:-text          "This is a tooltip"
+                     :-tooltip-class (css {:--tooltip-background-color :$red-800})})
 
                 ;; popover on top-layer
-                #_(popover-attrs {:-f (fn [popover-el]
-                                        (render 
-                                         (fn [] 
-                                           [:div
-                                            (sx :.flex-row-c
-                                                :fs--$xxxlarge
-                                                :padding--0.25em)
-                                            "💃🏽"])
-                                         popover-el))
-                                  :-popover-class (css [:--popover-background-color :lime])})
-                )
-          "Modal text"
-          #_[:span "💃🏽"]]]])
+                 #_(popover-attrs {:-f (fn [popover-el]
+                                         (render 
+                                          (fn [] 
+                                            [:div
+                                             (sx :.flex-row-c
+                                                 :fs--$xxxlarge
+                                                 :padding--0.25em)
+                                             "💃🏽"])
+                                          popover-el))
+                                   :-popover-class (css [:--popover-background-color :lime])})
+                 )
+           "Modal text"
+           #_[:span "💃🏽"]]]])
 
 
    ;; popover example
-   #_[button (popover-attrs {:-f             (fn [popover-el]
-                                               (render 
-                                                (fn [] 
-                                                  [:div
-                                                   (sx :.flex-row-c
-                                                       :fs--$xxxlarge
-                                                       :padding--0.25em)
-                                                   "💃🏽"])
-                                                popover-el))
-                             :-popover-class nil #_(css [:--popover-background-color :lime])})
-      "Click me"]
+    #_[button (popover-attrs {:-f             (fn [popover-el]
+                                                (render 
+                                                 (fn [] 
+                                                   [:div
+                                                    (sx :.flex-row-c
+                                                        :fs--$xxxlarge
+                                                        :padding--0.25em)
+                                                    "💃🏽"])
+                                                 popover-el))
+                              :-popover-class nil #_(css [:--popover-background-color :lime])})
+       "Click me"]
 
 
    ;; tooltip example
-   #_[button
-      (tooltip-attrs {:-text          "This is a tooltip"
-                      :-tooltip-class (css {:--tooltip-background-color :$red-800})})
-      "Hover me"]] 
+    #_[button
+       (tooltip-attrs {:-text          "This is a tooltip"
+                       :-tooltip-class (css {:--tooltip-background-color :$red-800})})
+       "Hover me"]]] 
   
   )
 

@@ -152,6 +152,7 @@
                :p--0.85em:0.75em
                :w--100%)
       [:div (sx ".kushi-callout-header-icon-wrap"
+                :.flex-col-fs
                 :min-width--1em)
        icon]
       header-text
