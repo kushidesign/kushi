@@ -20,7 +20,9 @@
    :--popover-border-color                  :$neutral-300
    :--navbar-height                         :50px
    :--tooltip-delay-duration                :250ms
-   :--main-content-max-width                :605px]
+   :--main-content-max-width                :605px
+  ;;  :--background-color-dark-mode            :black
+   ]
   
   :ui
   ["body"
