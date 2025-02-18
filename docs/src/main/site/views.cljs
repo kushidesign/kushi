@@ -94,7 +94,7 @@
                    (into [:div (sx :.flex-row-fs :gap--0.5em)]  
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [button 
-                            (merge-attrs (sx :fs--$small)
+                            (merge-attrs (sx :fs--$medium)
                                          {:-colorway       colorway
                                           :-surface        surface
                                           :-shape          shape
