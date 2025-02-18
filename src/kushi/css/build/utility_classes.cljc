@@ -182,12 +182,12 @@
                                                   "repeating-linear-gradient(to right,  transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
    :debug-grid-8          {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
                                                        "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
-                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px))")}
+                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-dark-mode) 8px, var(--debug-grid-color-dark-mode) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color-dark-mode) 8px, var(--debug-grid-color-dark-mode) calc(8px + 1px), transparent calc(8px + 1px))")}
    :debug-grid-16         {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
                                                        "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
-                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px))")}
+                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-dark-mode) 16px, var(--debug-grid-color-dark-mode) calc(16px + 1px), transparent calc(16px + 1px)), "
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color-dark-mode) 16px, var(--debug-grid-color-dark-mode) calc(16px + 1px), transparent calc(16px + 1px))")}
 
    :wireframe         {:outline-color  :silver
                        :outline-style  :solid
@@ -197,9 +197,9 @@
    
    ;; Colorization
    :neutralize        {:bgc                        :$background-color
-                       :dark:bgc                   :$background-color-inverse
+                       :dark:bgc                   :$background-color-dark-mode
                        :c                          :$foreground-color
-                       :dark:c                     :$foreground-color-inverse
+                       :dark:c                     :$foreground-color-
                        ;; TODO - really need these?
                        :transition-property        :all
                        :transition-timing-function :$transition-timing-function
@@ -207,9 +207,9 @@
                        }
 
    :neutralize-secondary {:bgc                        :$background-color
-                          :dark:bgc                   :$background-color-inverse
-                          :c                          :$neutral-secondary-foreground
-                          :dark:c                     :$neutral-secondary-foreground-inverse
+                          :dark:bgc                   :$background-color-dark-mode
+                          :c                          :$foreground-color-secondary
+                          :dark:c                     :$foreground-color-secondary-dark-mode
                           ;; TODO - really need these?
                           :transition-property        :all
                           :transition-timing-function :$transition-timing-function
@@ -217,7 +217,10 @@
                           }
    
    :foreground-color    {:c      :$foreground-color
-                          :dark:c :$foreground-color-inverse}                        
+                         :dark:c :$foreground-color-dark-mode}                        
+
+   :foreground-color-secondary    {:c      :$foreground-color-secondary
+                                   :dark:c :$foreground-color-secondary-dark-mode}                        
 
    ;; Borders
    :outlined              {:outline-color  :currentColor
@@ -234,25 +237,25 @@
    ;; need defclass-like merging here - maybe with metadata on map?
    ;; TODO -really need transition property on these?
    :divisor-block-start  {:border-block-start         :$divisor
-                          :dark:border-block-start    :$divisor-inverse
+                          :dark:border-block-start    :$divisor-dark-mode
                           :transition-property        :all
                           :transition-timing-function :$transition-timing-function
                           :transition-duration        :$transition-duration}
 
    :divisor-block-end    {:border-block-end           :$divisor
-                          :dark:border-block-end      :$divisor-inverse
+                          :dark:border-block-end      :$divisor-dark-mode
                           :transition-property        :all
                           :transition-timing-function :$transition-timing-function
                           :transition-duration        :$transition-duration}
 
    :divisor-inline-start {:border-inline-start        :$divisor
-                          :dark:border-inline-start   :$divisor-inverse
+                          :dark:border-inline-start   :$divisor-dark-mode
                           :transition-property        :all
                           :transition-timing-function :$transition-timing-function
                           :transition-duration        :$transition-duration}
 
    :divisor-inline-end  {:border-inline-end          :$divisor
-                         :dark:border-inline-end     :$divisor-inverse
+                         :dark:border-inline-end     :$divisor-dark-mode
                          :transition-property        :all
                          :transition-timing-function :$transition-timing-function
                          :transition-duration        :$transition-duration}
@@ -451,7 +454,7 @@
 
 
    ;; TODO - use scale-of-utility-defs
-   ;; TODO convex 0-5 plus inverse
+   ;; TODO convex 0-5 plus dark-mode
    ;; TODO - consider using data-kushi-convex-level
    ;;        and maybe also :-convex-level on lib components
    :convex        {:background-image :$convex-1}
@@ -468,17 +471,17 @@
    ;;        and maybe also :-elevation on lib components
    :elevated-0    {:box-shadow :$elevated-0}
    :elevated-1    {:box-shadow      :$elevated-1
-                   :dark:box-shadow :$elevated-1-inverse}
+                   :dark:box-shadow :$elevated-1-dark-mode}
    :elevated-2    {:box-shadow      :$elevated-2
-                   :dark:box-shadow :$elevated-2-inverse}
+                   :dark:box-shadow :$elevated-2-dark-mode}
    :elevated-3    {:box-shadow      :$elevated-3
-                   :dark:box-shadow :$elevated-3-inverse}
+                   :dark:box-shadow :$elevated-3-dark-mode}
    :elevated-4    {:box-shadow      :$elevated-4
-                   :dark:box-shadow :$elevated-4-inverse}
+                   :dark:box-shadow :$elevated-4-dark-mode}
    :elevated-5    {:box-shadow      :$elevated-5
-                   :dark:box-shadow :$elevated-5-inverse}
+                   :dark:box-shadow :$elevated-5-dark-mode}
    :elevated      {:box-shadow      :$elevated-4
-                   :dark:box-shadow :$elevated-4-inverse}
+                   :dark:box-shadow :$elevated-4-dark-mode}
 
    :capitalize     {:text-transform :capitalize}
    :uppercase      {:text-transform :uppercase}

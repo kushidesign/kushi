@@ -428,7 +428,7 @@
 (defcss ".tweakable-css-prop-label"
   [:after:content "\":\""]
   [:after:color :$neutral-foreground]
-  [:dark:after:color :$neutral-foreground-inverse])
+  [:dark:after:color :$neutral-foreground-dark-mode])
 
 (defcss ".tweakable-label"
   :.xsmall
@@ -502,7 +502,7 @@
                  :p--0
                  :outline--3px:solid:transparent
                  :hover:outline-color--$neutral-background-color
-                 :dark:hover:outline-color--$neutral-background-color-inverse)
+                 :dark:hover:outline-color--$neutral-background-color-dark-mode)
       [icon {:on-click #(cond
 
                           (contains? #{flex-picker} control-type)

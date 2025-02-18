@@ -57,7 +57,7 @@
           :br 
           "__Colors and images:__"
               "`--popover-background-color`"                 
-          :br "`--popover-background-color-inverse`"         
+          :br "`--popover-background-color-dark-mode`"         
           :br "`--popover-background-image`"                 
           :br "`--popover-box-shadow`"                 
           :br "`--popover-border-width`"                 

@@ -38,7 +38,7 @@
        [:bc
         "color-mix(in srgb, currentColor var(--text-input-border-intensity, 75%), transparent)"]
        [:dark:bc
-        "color-mix(in srgb, currentColor var(--text-input-border-intensity-inverse, 55%), transparent)"]
+        "color-mix(in srgb, currentColor var(--text-input-border-intensity-dark-mode, 55%), transparent)"]
        ["focus-within:bgc"
         "var(--white-transparent-70)!important"]
        ["dark:focus-within:bgc"

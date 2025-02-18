@@ -49,8 +49,8 @@
                              "🐻‍❄"]]
                            [:section (sx :.flex-col-sa) 
                             [:p (sx :fs--1.25em :fw--$wee-bold) "Polar Bear"] 
-                            [:p (sx :c--$neutral-secondary-foreground
-                                    :dark:c--$neutral-secondary-foreground-inverse)
+                            [:p (sx :c--$secondary-foreground-color
+                                    :dark:c--$secondary-foreground-dark-mode)
                              "polar.bear@example.com"]]]]})}
    
    {:desc      "Elevated levels from 0 to 5"

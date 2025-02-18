@@ -5,7 +5,7 @@
    [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]
-   [kushi.ui.callout.core :refer [callout]]
+   [kushi.ui.callout.core :refer [callout callout-close-button]]
    [clojure.string :as string]))
 
 (def sizes
@@ -48,7 +48,7 @@
                                       :-icon        [icon :info]
                                       :class        [s]}}]} )]
 
-    (into [{:desc            "Showing sizes from xxsmall to large, in accent variant"
+    (into [#_{:desc            "Showing sizes from xxsmall to large, in accent variant"
 
             :reqs            '[[kushi.ui.icon.core :refer [icon]]
                                [kushi.ui.link.core :refer [link]]]
@@ -77,7 +77,7 @@
                                             :-icon        [icon :info]
                                             :class        [sz "accent"]}]))}]}
 
-           {:desc            "With icon and dismiss button, in positive variant"
+           #_{:desc            "With icon and dismiss button, in positive variant"
             :row-attrs       row-attrs
             :container-attrs container-attrs
             :variants-       [:filled :bordered]
@@ -87,9 +87,5 @@
                                  (merge (sx :.positive)
                                         {:-icon         [icon :check-circle]
                                          :-header-text  "Your transaction was successful."
-                                         :-close-button [button
-                                                         (merge-attrs 
-                                                          (sx :.pill :.positive :p--0.25em)
-                                                          {:on-click (fn [] (js/alert "Example close-icon click event."))})
-                                                         [icon :clear]]})])}]}]
-          semantic-variants)))
+                                         :-user-actions callout-close-button})])}]}]
+          #_semantic-variants)))

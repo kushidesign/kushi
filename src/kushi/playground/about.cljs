@@ -115,17 +115,18 @@
                       ["neutral50" "neutral50"]]]
            (alias-global-mapping-row a g)))
 
-   [:p
-    "The utility classes "
-    [:code (sx :.neutral) ":.neutral"]
+   [:p]
+   #_[:p
+    "The `data-kui-colorway` attributes "
+    [:code {:-colorway :.neutral} ":.neutral"]
     ", "
-    [:code (sx :.positive) ":.positive"]
+    [:code {:-colorway :.positive} ":.positive"]
     ", "
-    [:code (sx :.negative) ":.negative"]
+    [:code {:-colorway :.negative} ":.negative"]
     ", "
-    [:code (sx :.warning) ":.warning"]
+    [:code {:-colorway :.warning} ":.warning"]
     ", and "
-    [:code (sx :.accent) ":.accent"]
+    [:code {:-colorway :.accent} ":.accent"]
     " will decorate the element with the corresponding foreground and background colors."]
    
    [divisor]
@@ -147,13 +148,6 @@
            [:dark:bbs "1px solid var(--gray-700)"]
            :pbs--2em
            :mb--5rem:1.5rem)
-          #_(trans (sx 
-               :.large
-               :.semi-bold
-               :pbs--2em
-               :mb--5rem:1.5rem
-               [:bbs "1px solid var(--gray-300)"]
-               [:dark:bbs "1px solid var(--gray-700)"]))
           (str "Type " (string/lower-case label) " scale")]
          (let [[kind-of-scale
                 start
@@ -307,7 +301,8 @@
                      {:component-label "button"
                       :scroll-y        16}))}
     [button 
-     (sx  :.filled :.rounded :.semi-bold )
+     (merge-attrs (sx :.semi-bold)
+                  {:-surface :solid})
      "Explore components"
      [icon :arrow-right-alt]]]])
 

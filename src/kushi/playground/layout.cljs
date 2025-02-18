@@ -30,8 +30,7 @@
 
 
 (def tab-attrs
-  (sx :.minimal
-      :fs--$small
+  (sx :fs--$small
       :pis--0.799em
       :pie--0.8em
       :pbs--0.4em
@@ -82,16 +81,24 @@
   [{:keys [aria-selected
            component-label
            tab-label]}]
-  [tab (let [panel-id (str "kushi-" component-label "-" tab-label)]
-         {:class         (css
-                          :.pill
-                          :.neutral.minimal:c--$neutral-secondary-foreground
-                          :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse)
-          :name          (str "kushi-" component-label "-tab-group")
-          :aria-selected aria-selected
-          :aria-controls panel-id
-          :on-click      (partial tab-click-handler panel-id)})
-   (string/capitalize tab-label)])
+  [button
+   (let [panel-id (str "kushi-" component-label "-" tab-label)]
+     {:-surface      :minimal
+      :-shape        :pill
+      :class         (css :.foreground-color-secondary!
+                          :fs--$small
+                          :pis--0.799em
+                          :pie--0.8em
+                          :pbs--0.4em
+                          :pbe--0.399em)
+      :name          (str "kushi-" component-label "-tab-group")
+      :aria-selected aria-selected
+      :aria-controls panel-id
+      :on-click      (partial tab-click-handler panel-id)
+      :role          :tab
+      :tab-index     (if (contains? #{true "true"} aria-selected) 0 -1)
+      :on-key-down   domo/on-key-down-tab-navigation})
+    (string/capitalize tab-label)])
 
 
 (defcss "@layer kushi-playground-shared .component-section-header"
@@ -240,7 +247,7 @@
                        [:box-shadow
                         "-20px -20px 0px 20px var(--background-color), -10px 10px 20px 1px var(--background-color)"]
                        [:dark:box-shadow
-                        "-20px -20px 0px 20px var(--background-color-inverse), -10px 10px 20px 1px var(--background-color-inverse)"] )
+                        "-20px -20px 0px 20px var(--background-color-dark-mode), -10px 10px 20px 1px var(--background-color-dark-mode)"] )
               [:div (sx :.flex-row-fs :ai--c :gap--1rem)
                [:h1 (sx :.component-section-header-label) 
                 [:a 
@@ -284,15 +291,15 @@
                    :right      0
                    :bgc        :$tablist-selected-tab-underline-color}]
                  ["dark:>[role='tab'][aria-selected='true']:before"
-                  {:bgc :$tablist-selected-tab-underline-color-inverse}]
+                  {:bgc :$tablist-selected-tab-underline-color-dark-mode}]
                  [:--tablist-selected-tab-underline-color
                   :$accent-600]
-                 [:--tablist-selected-tab-underline-color-inverse
+                 [:--tablist-selected-tab-underline-color-dark-mode
                   :$accent-300]
                  [:--tablist-border-end-color
                   :$divisor-color]
-                 [:--tablist-border-end-color-inverse
-                  :$divisor-color-inverse]
+                 [:--tablist-border-end-color-dark-mode
+                  :$divisor-color-dark-mode]
                  [:--tablist-border-end-width
                   :$divisor-thickness]
                  [:--tablist-border-end-style
@@ -300,7 +307,7 @@
                  :bbew--$tablist-border-end-width
                  :bbec--$tablist-border-end-color
                  :bbes--$tablist-border-end-style
-                 :dark:bbec--$tablist-border-end-color-inverse
+                 :dark:bbec--$tablist-border-end-color-dark-mode
                  :ai--fe
                  :gap--0.75em
                  :pbe--$tablist-padding-end)

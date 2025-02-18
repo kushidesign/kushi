@@ -1,11 +1,10 @@
 (ns kushi.playground.colors
-  (:require 
-            ;; ["tinycolor2" :as tinycolor]
-            [kushi.colors :as kushi.colors]
-            [kushi.core :refer (sx css css-vars-map merge-attrs)] 
-            ;;  [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
-            [kushi.ui.core :refer [defcom opts+children]]
-            [kushi.ui.label.core :refer [label]]))
+  (:require
+   [fireworks.core :refer [? !? ?> !?>]]
+   [kushi.colors :as kushi.colors]
+   [kushi.core :refer (sx css css-vars-map merge-attrs)] ;;  [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
+   [kushi.ui.core :refer [defcom opts+children]]
+   [kushi.ui.label.core :refer [label]]))
 
 (defcom text-sample-sticker
   (let [{:keys [color bgc]} &opts]
@@ -40,6 +39,7 @@
            color-name
            color-level]
     :as m}]
+  (!? :result m)
   (let [token-name (name k)]
     [:<>
       ;;  [label (sx :.pointer
@@ -144,48 +144,45 @@
 
         ;; TODO - refactor hsl css-var stuff below
         (for [[k v color-level] scale
-              :let  [hsl (if (number? v) (str v) (name v))]]
+              :let  [hsl (if (number? v) (str v) (name v))
+                    ;;  _ (? :result [k v color-level])
+                     color-token (str "var(--" (name color-name) "-" color-level ")")
+                     ]]
           ^{:key hsl}
-          [:div {:style (css-vars-map row-height)
+          [:div {:style (css-vars-map row-height color-token hsl)
                  :class (css :.flex-row-fs
                              :ai--stretch
                              :bgc--white
                              :dark:bgc--black
                              :h--$row-height)}
-           [:div {:style (css-vars-map hsl)
-                  :class (css :sm:flex-basis--150px
+           [:div {:class (css :sm:flex-basis--150px
                               :width--66px
                               :sm:width--unset
                               :.no-grow
                               :.no-shrink
-                              :bgc--$hsl)}
+                              :bgc--$color-token)}
             #_[:div (sx :w--50% :bgc--$hsl)]
             #_[:div (sx :w--50% :$yellow-hue--59 :bgc--$hsl)]]
-           [:div {:style (css-vars-map hsl)
-                  :class (css :.flex-row-sb
+           [:div {:class (css :.flex-row-sb
                               :.grow
                               :pis--0.5em
                               :bbes--solid
                               :bbew--1px
-                              :bbec--$hsl)}
+                              :bbec--$color-token)}
             [color-modal {:k           k
                           :hsl         hsl
                           :color-name  color-name
                           :color-level color-level}]
             [:div (sx :.flex-row-fe :fw--$wee-bold)
-             [text-sample-sticker {:-color :white
-                                   :-bgc   hsl}]
-             [text-sample-sticker {:-color :black
-                                   :-bgc   hsl}]
+             [text-sample-sticker {:-color :white :-bgc color-token}]
+             [text-sample-sticker {:-color :black :-bgc color-token}]
              [text-sample-sticker 
-              {:style (css-vars-map hsl)
-               :class  (css :bs--solid :bw--1px :bc--$hsl)
-               :-color hsl
+              {:class  (css :bs--solid :bw--1px :bc--$color-token)
+               :-color color-token 
                :-bgc   :white}]
              [text-sample-sticker 
-              {:style (css-vars-map hsl)
-               :class  (css :bs--solid :bw--1px :bc--$hsl)
-               :-color hsl
+              {:class  (css :bs--solid :bw--1px :bc--$color-token)
+               :-color color-token
                :-bgc   :black}]]]]))))])
 
 (defn color-grid [& args]

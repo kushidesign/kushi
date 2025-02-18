@@ -74,14 +74,14 @@
           :br
           "__Colors and images:__"
           "`--toast-background-color`" :br
-          "`--toast-background-color-inverse`" :br 
+          "`--toast-background-color-dark-mode`" :br 
           "`--toast-background-image`" :br                  
           "`--toast-box-shadow`" :br                  
-          "`--toast-box-shadow-inverse`" :br                  
+          "`--toast-box-shadow-dark-mode`" :br                  
           "`--toast-border-width`" :br                  
           "`--toast-border-style`" :br                  
           "`--toast-border-color`" :br                  
-          "`--toast-border-color-inverse`"
+          "`--toast-border-color-dark-mode`"
           :br                  
           :br
           "__Geometry:__"

@@ -23,8 +23,8 @@
 (defn- button-grid [shape minimal?]
   (let [sem    [:neutral :positive :negative :accent :warning]
         kinds  (if minimal?
-                 [:minimal :bordered :simple :filled]
-                 [:bordered :simple :filled])]
+                 [:minimal :bordered :simple :solid]
+                 [:bordered :simple :solid])]
     [:div (sx :.flex-row-c
               :>div:flex-grow--1
               :>div:flex-shrink--0
@@ -86,8 +86,9 @@
         container-attrs2
         (merge-attrs container-attrs
                      {:class (css [:xsm:gtc "repeat(4, max-content)"]
-                                  :md:gtc--max-content)})]
+                                   :md:gtc--max-content)})]
     [
+
      {:desc            "Surface variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs (merge-attrs
@@ -95,57 +96,57 @@
                         {:class (css [:md:gtc "repeat(4, max-content)"]
                                      :color--red!important)})
       :variants+       [:minimal]
-      :snippets-header ["Use the utility classes `:.filled`, `:.bordered`, and `:.minimal` to control the surface variant of the button."]
+      :snippets-header ["Use the `data-kui-surface` attributes `:solid`, `:outline`, and `:minimal` to control the surface variant of the button."]
       :snippets        '[[button "Play"]
-                         [button (sx :.filled) "Play"]
-                         [button (sx :.bordered) "Play"]
-                         [button (sx :.minimal) "Play"]]
+                         [button {:-surface :solid} "Play"]
+                         [button {:-surface :outline} "Play"]
+                         [button {:-surface :minimal} "Play"]]
       :examples        (for [s [:rounded]]
                          {:label (name s)
                           :args  ["Pets" [icon :pets]]
-                          :attrs {:class [:accent]}})}
+                          :attrs {:-colorway :accent}})}
 
      {:desc            "Semantic variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
-      :snippets-header ["Use the utility classes `:.neutral`, `:.accent`, `:.positive`, `:.warning`, and `:.negative` to control the semantic color variant."
+      :snippets-header ["Use the `data-kui-colorway` attributes `:neutral`, `:.accent`, `:.positive`, `:.warning`, and `:.negative` to control the semantic color variant."
                         :br
                         :br
-                        "The default is `:.neutral`."]                        
+                        "The default is `:neutral`."]                        
       :snippets        '[[button "Play"]
-                         [button (sx :.neutral) "Play"]
-                         [button (sx :.accent) "Play"]
-                         [button (sx :.positive) "Play"]
-                         [button (sx :.warning) "Play"]
-                         [button (sx :.negative) "Play"]]
+                         [button {:-colorway :neutral} "Play"]
+                         [button {:-colorway :accent} "Play"]
+                         [button {:-colorway :positive} "Play"]
+                         [button {:-colorway :warning} "Play"]
+                         [button {:-colorway :negative} "Play"]]
       :examples        (for [s component-examples/colors]
                          {:label (name s)
                           :args  ["Pets" [icon :pets]]
-                          :attrs {:class [s]}})}
+                          :attrs {:-colorway s}})}
 
      {:desc            "Shape variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
-      :snippets-header ["Use the utility classes `:.pill`, `:.rounded`, and `:.sharp` to control the surface variant of the button."
+      :snippets-header ["Use the `data-kui-shape` attributes `:pill`, `:rounded`, and `:sharp` to control the surface variant of the button."
                         :br
                         :br
-                        "The default is `:.rounded`."]
+                        "The default is `:rounded`."]
       :snippets        '[[button "Play"]
-                         [button (sx :.rounded) "Play"]
-                         [button (sx :.pill) "Play"]
-                         [button (sx :.sharp) "Play"]]
+                         [button {:-shape :rounded} "Play"]
+                         [button {:-shape :pill} "Play"]
+                         [button {:-shape :sharp} "Play"]]
       :examples        (for [s [:rounded :pill :sharp]]
                          {:label (name s)
                           :args  ["Pets" [icon :pets]]
-                          :attrs {:class [s]}})}
+                          :attrs {:-shape s}})}
 
      ;; get extra reqs working
      ;; get links working
 
      {:desc            "With icons"
-      :reqs            '[[kushi.ui.icon.core :refer [icon]]
+      :reqs            '[[kushi.ui.icon.core :refer [icon icon-button]]
                          [kushi.ui.label.core :refer [label]]]
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
@@ -153,22 +154,24 @@
                         :br
                         :br
                         "Various buttons with icons:"]
-      :snippets        '[[button [icon :play-arrow]]
-                         [button "Play" [icon :play-arrow]]
-                         [button [icon :auto-awesome] "Wow" [icon :auto-awesome]]]
-      :examples        [{:label "Icon button"
-                         :args  [[icon :favorite]]}
-                        {:label "Icon button"
-                         :args  [[icon :star]]}
-                        {:label "Icon button"
-                         :args  [[icon :play-arrow]]}
+      :snippets        '[[button "Play" [icon :play-arrow]]
+                         [button [icon :auto-awesome] "Wow" [icon :auto-awesome]]
+                         #_[icon-button {:-icon :play-arrow}]]
+      :examples        [
+                        ;; {:label "Icon button"
+                        ;;  :args  [[icon :favorite]]
+                        ;;  :attrs {:icon true}}
+                        ;; {:label "Icon button"
+                        ;;  :args  [[icon :star]]}
+                        ;; {:label "Icon button"
+                        ;;  :args  [[icon :play-arrow]]}
+
                         {:label "Leading icon"
                          :args  [[icon :play-arrow] "Play"]}
                         {:label "Trailing icon"
                          :args  ["Play" [icon :play-arrow]]}
                         {:label "2 icons"
                          :args  [[icon :auto-awesome] "Wow" [icon :auto-awesome]]}]}
-
 
      (merge
       (component-examples/sizes-snippet-scale 'button "Play")
@@ -206,7 +209,7 @@
 
 
      {:desc            "Loading and disabled states"
-      :variants-       [:bordered :filled]
+      :variants-       [:bordered :solid]
       :reqs            '[[kushi.ui.button.core :refer [button]]
                          [kushi.ui.icon.core :refer [icon]]
                          [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]]

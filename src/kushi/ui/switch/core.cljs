@@ -70,18 +70,18 @@
           :br
           "Each of the above has a corresponding token for dark-mode:"
           :br
-          :br "`--switch-off-background-color-inverse`"
-          :br "`--switch-off-background-color-hover-inverse`"
-          :br "`--switch-on-background-color-inverse`"
-          :br "`--switch-on-background-color-hover-inverse`"
-          :br "`--switch-on-accent-background-color-inverse`"
-          :br "`--switch-on-accent-background-color-hover-inverse`"
-          :br "`--switch-on-positive-background-color-inverse`"
-          :br "`--switch-on-positive-background-color-hover-inverse`"
-          :br "`--switch-on-warning-background-color-inverse`"
-          :br "`--switch-on-warning-background-color-hover-inverse`"
-          :br "`--switch-on-negative-background-color-inverse`"
-          :br "`--switch-on-negative-background-color-hover-inverse`"
+          :br "`--switch-off-background-color-dark-mode`"
+          :br "`--switch-off-background-color-hover-dark-mode`"
+          :br "`--switch-on-background-color-dark-mode`"
+          :br "`--switch-on-background-color-hover-dark-mode`"
+          :br "`--switch-on-accent-background-color-dark-mode`"
+          :br "`--switch-on-accent-background-color-hover-dark-mode`"
+          :br "`--switch-on-positive-background-color-dark-mode`"
+          :br "`--switch-on-positive-background-color-hover-dark-mode`"
+          :br "`--switch-on-warning-background-color-dark-mode`"
+          :br "`--switch-on-warning-background-color-hover-dark-mode`"
+          :br "`--switch-on-negative-background-color-dark-mode`"
+          :br "`--switch-on-negative-background-color-hover-dark-mode`"
           ]
    :opts '[{:name    on?
             :pred    boolean?

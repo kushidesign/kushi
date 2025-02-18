@@ -47,11 +47,11 @@
                             :hover:c--black
                             :dark:hover:c--white
                             :.kushi-pseudo-tooltip-revealed:bc--$accent-color
-                            :dark:.kushi-pseudo-tooltip-revealed:bc--$accent-color-inverse
+                            :dark:.kushi-pseudo-tooltip-revealed:bc--$accent-color-dark-mode
                             :.kushi-pseudo-tooltip-revealed:c--$accent-color
-                            :dark:.kushi-pseudo-tooltip-revealed:c--$accent-color-inverse
+                            :dark:.kushi-pseudo-tooltip-revealed:c--$accent-color-dark-mode
                             :.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color
-                            :dark:.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color-inverse
+                            :dark:.kushi-pseudo-tooltip-revealed:bgc--$accent-background-color-dark-mode
                             :grid-area--$x)
                 :tab-index 0}
                (tooltip-attrs {:-text      ["Tooltip Line 1" "Tooltip Line 2" ]

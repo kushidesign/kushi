@@ -8,10 +8,10 @@
    [kushi.playground.about :as about]
    [clojure.string :as string]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.button.core :refer [button icon-button]]
    [kushi.ui.tag.core :refer [tag]]
    [kushi.ui.switch.core :refer [switch]]
-   [kushi.ui.callout.core :refer [callout]]
+   [kushi.ui.callout.core :refer [callout callout-close-button]]
    [kushi.ui.link.core :refer [link]]
    [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
    [kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]
@@ -48,7 +48,7 @@
   
 
   [:<> 
-    #_(into [:div (sx :.switch-dev-grid
+    (into [:div (sx :.switch-dev-grid
                     {:before:content "\"Colorways\""})]
           (for [colorway ["bonkers" "accent" "positive" "warning" "negative"]] 
             [switch 
@@ -78,6 +78,8 @@
 ;; Test callouts
 ;; Test switches
 ;; Test any other themeables
+;; Fire up full demo
+
 ;; Clean up ui_theming file
 ;; Merge branch
 ;; Look at todo
@@ -110,7 +112,23 @@
                                           :-start-enhancer [icon :pets]})
                             "Button"]))))))
 
-   #_#_#_#_#_
+
+   (into [:div (sx :.button-dev-grid
+                   {:before:content "\"Icon button\""})]
+         (for [shape ["round" "sharp" "pill"]] 
+           [icon-button 
+            (merge-attrs (sx :fs--$xxxlarge)
+                         {:-shape shape
+                          :-icon  [icon :pets]})]))
+
+   (into [:div (sx :.button-dev-grid
+                   {:before:content "\"Icon button with packing\""})]
+         (for [packing ["compact" "roomy"]] 
+           [icon-button 
+            (merge-attrs (sx :fs--$xxxlarge)
+                         {:-packing packing
+                          :-icon    [icon :pets]})]))
+   #_#_#_ #_ 
    (into [:div (sx :.button-dev-grid
                    {:before:content "\"Shape\""})]
          (for [shape ["round" "sharp" "pill"]] 
@@ -159,7 +177,7 @@
                           :-stroke-align   :outside
                           :-start-enhancer [icon :pets]})
             "Button"]))
-
+#_
    (into [:div (sx :.button-dev-grid
                    :gap--2em
                    {:before:content "\"Box shadow\""})]
@@ -196,7 +214,7 @@
               :font-family :$serif-font-stack
               :font-style  :italic}})
   [:<> 
-   #_(into [:div (sx :.tag-dev-grid :.flex-col-fs)]
+   (into [:div (sx :.tag-dev-grid :.flex-col-fs)]
          (for [shape ["rounded" #_"sharp" #_"pill"]] 
            (into [:div (sx :.flex-col-fs :gap--0.5em)]
                  (for [surface ["minimal" "outline" "solid" "soft"]]
@@ -210,7 +228,7 @@
                                           :-start-enhancer [icon :pets]})
                             "Dang"]))))))
 
-   #_(into [:div (sx :.tag-dev-grid :.flex-col-fs)]
+   (into [:div (sx :.tag-dev-grid :.flex-col-fs)]
          (for [shape ["rounded" #_"sharp" #_"pill"]] 
            (into [:div (sx :.flex-col-fs :gap--0.5em)]
                  (for [surface ["minimal" "outline" "solid" "soft"]]
@@ -227,7 +245,7 @@
                    {:before:content "\"Shape\""})]
          (for [shape ["round" "sharp" "pill" "round" "sharp" "pill"]] 
            [tag 
-            (merge-attrs (sx :fs--$xxxlarge
+            (merge-attrs (sx :fs--$large
                              ["nth-child(4):tt" :lowercase]
                              ["nth-child(5):tt" :lowercase]
                              ["nth-child(6):tt" :lowercase])
@@ -239,7 +257,7 @@
                    {:before:content "\"Packing\""})]
          (for [packing ["compact" nil "roomy" "compact" nil "roomy"]] 
            [tag 
-            (merge-attrs (sx :fs--$xxxlarge
+            (merge-attrs (sx :fs--$large
                              ["nth-child(4):tt" :lowercase]
                              ["nth-child(5):tt" :lowercase]
                              ["nth-child(6):tt" :lowercase])
@@ -247,7 +265,7 @@
                           :-packing        packing})
             "Dang"]))
 
-   #_(into [:div (sx :.tag-dev-grid
+   (into [:div (sx :.tag-dev-grid
                    :gap--2em
                    {:before:content "\"Outline thicknesses\""})]
          (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
@@ -260,7 +278,7 @@
                           :-shape          "round"})
             "Dang"]))
 
-   #_(into [:div (sx :.tag-dev-grid
+   (into [:div (sx :.tag-dev-grid
                    :gap--2em
                    {:before:content "\"Outline thicknesses with :-stroke-align set to :outside\""})]
          (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
@@ -274,7 +292,7 @@
                           :-stroke-align   :outside})
             "Dang"]))
    
-   #_(into [:div (sx :.tag-dev-grid
+   (into [:div (sx :.tag-dev-grid
                    :gap--2em
                    {:before:content "\"Outline thicknesses with :-stroke-align set to :outside, with lowercase\""})]
          (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
@@ -289,7 +307,7 @@
                           :-stroke-align   :outside})
             "Dang"]))
 
-   #_(into [:div (sx :.tag-dev-grid
+   (into [:div (sx :.tag-dev-grid
                    :gap--2em
                    {:before:content "\"Box shadow\""})]
          (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
@@ -458,20 +476,19 @@
 (defn callout-dev-samples []
   [callout
    (merge-attrs (sx :.large :.accent) 
-                {:-header-text [:span
-                                "Please check out the "
-                                [link (merge-attrs
-                                       (sx :ws--n)
-                                       {:href "#"})
-                                 "new features"]]
-                 :-colorway    :accent
-                 :-icon        [icon :info]})]
+                {:-header-text  [:span
+                                 "Please check out the "
+                                 [link (merge-attrs (sx :ws--n) {:href "#"})
+                                  "new features"]]
+                 :-colorway     :accent
+                 :-icon         [icon :info]
+                 :-user-actions callout-close-button})]
 
   #_(into [:div (sx :.button-dev-grid :.flex-col-fs)]
          (for [shape ["rounded" #_"sharp" #_"pill"]] 
            (into [:div (sx :.flex-col-fs :gap--0.5em)]
                  (for [surface ["minimal" "outline" "solid" "soft"]]
-                   (into [:div (sx :.flex-row-fs :gap--0.5em)]  
+                   (into [:div (sx :.flex-col-fs :gap--0.5em)]  
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [callout
                             (merge-attrs (sx :.large :.accent) 
@@ -481,6 +498,7 @@
                                                                 (sx :ws--n)
                                                                 {:href "#"})
                                                           "new features"]]
+                                          :-surface     surface
                                           :-colorway    colorway
                                           :-icon        [icon :info]})])))))))
 
@@ -488,7 +506,11 @@
 (defn pane-samples []
   [:<> 
    [light-dark-mode-switch (sx :.fixed-block-start-inside :.light :.transition)]
-   [:div (sx :.absolute-centered :.flex-col-fs :gap--1rem)
+   [:div (sx :.absolute-block-start
+             :.flex-col-fs
+             :gap--1rem
+             :mbs--3rem
+             :mis--2rem)
     #_[pallette-generator]
 
     #_[hsl+oklch-color-grid]
@@ -604,7 +626,8 @@
                  "data-kushi-playground-active-path"
                  "components")
 
-  (js/setTimeout
+  ;; for pallette generation dev
+  #_(js/setTimeout
    (fn []
      (dotimes [n (-> okstate deref :levels count)]
        (adjust-slider! {:pallette-idx pallette-idx 
@@ -614,10 +637,9 @@
      )
    2000)
 
-  [pane-samples]
+  #_[pane-samples]
 
-
-  #_(into 
+  (into 
    [:div (sx :.flex-col-fs)
     [nav/header]
     ;; Spinner between page transitions

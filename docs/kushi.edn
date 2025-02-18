@@ -37,7 +37,7 @@
     :c   :$code-color}
  
    ".dark code, .dark .code"
-   {:bgc :$code-background-color-inverse
+   {:bgc :$code-background-color-dark-mode
     :c   :$code-color-inverse}]
   }
 

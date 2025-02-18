@@ -36,28 +36,24 @@
                        250))))
 
 (def header-nav-button-attrs
-  (sx :.minimal
-      :.pill
-      :tt--capitalize
-      :fs--$xlarge
-      :pi--0.7em
-      :pb--0.3em
-      ;; Remove these when theming gets revamped
-      :.neutral.minimal:c--$neutral-secondary-foreground
-      :.neutral.minimal:hover:c--$neutral-950
-      :.neutral.minimal:active:c--$neutral-1000
-      :.neutral.minimal:hover:bgc--$neutral-100
-      :.neutral.minimal:active:bgc--$neutral-0
-
-      :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse
-      :dark:.neutral.minimal:hover:c--$neutral-50
-      :dark:.neutral.minimal:active:c--$neutral-0
-      :dark:.neutral.minimal:hover:bgc--$neutral-850
-      :dark:.neutral.minimal:active:bgc--$neutral-900
-
-      [".neutral.minimal[aria-selected='true']:c" :black]
-          ;; TODO test this one
-      ["dark.neutral.minimal[aria-selected='true']:c" :white]))
+  {:-surface :minimal
+   :-shape :pill
+   :class (css :.foreground-color-secondary!
+               :tt--capitalize
+               :fs--$xlarge
+               :pi--0.7em
+               :pb--0.3em
+               :hover:c--$neutral-950
+               :active:c--$neutral-1000
+               :hover:bgc--$neutral-100
+               :active:bgc--$neutral-0
+               :dark:hover:c--$neutral-50
+               :dark:active:c--$neutral-0
+               :dark:hover:bgc--$neutral-850
+               :dark:active:bgc--$neutral-900
+               ["[aria-selected='true']:c" :black]
+               ;; TODO test this one
+               ["dark:[aria-selected='true']:c" :white])})
 
 (defcom header-nav-button
   [button 
@@ -78,7 +74,7 @@
 (defn header-menu
   [menu-id]
   (into [:nav (sx :.flex-col-c
-                  :.semi-bold
+                  :fw--$semi-bold
                   :.transition
                   :.header-menu-transition-group
                   :ai--stretch
@@ -94,15 +90,14 @@
            [:a
             {:class    (css :.flex-row-c
                             :d--none
-                            :hover>button.neutral.minimal:c--$neutral-950
-                            :active>button.neutral.minimal:c--$neutral-1000
-                            :hover>button.neutral.minimal:bgc--$neutral-100
-                            :active>button.neutral.minimal:bgc--$neutral-0
-
-                            :dark:hover>button.neutral.minimal:c--$neutral-50
-                            :dark:active>button.neutral.minimal:c--$neutral-0
-                            :dark:hover>button.neutral.minimal:bgc--$neutral-850
-                            :dark:active>button.neutral.minimal:bgc--$neutral-900)
+                            :hover>button:c--$neutral-950
+                            :active>button:c--$neutral-1000
+                            :hover>button:bgc--$neutral-100
+                            :active>button:bgc--$neutral-0
+                            :dark:hover>button:c--$neutral-50
+                            :dark:active>button:c--$neutral-0
+                            :dark:hover>button:bgc--$neutral-850
+                            :dark:active>button:bgc--$neutral-900)
              :href     href
              :target   target
              :on-click (partial route! menu-id href)}
@@ -189,14 +184,13 @@
      (when (domo/media-supports-hover?)
        (domo/hover-class-attrs "has-hover")))
     [button 
-     (sx :.kushi-explore
-         :.pill
-         :.minimal
-         :.small
-         :pi--0.8em
-         :pb--0.4em
-         :.neutral.minimal:c--$neutral-secondary-foreground
-         :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse)
+     {:-shape   :pill
+      :-surface :minimal
+      :class (css :.kushi-explore
+                  :.foreground-color-secondary!
+                  :fs--$small
+                  :pi--0.8em
+                  :pb--0.4em)}
      [icon :keyboard-arrow-down]
      "Explore"]
     [:div (sx :.explore-menu-container
@@ -211,7 +205,7 @@
               :h--0
               :overflow--hidden
               [:box-shadow "0  calc(var(--menu-height) / 2) calc(100vh - var(--menu-height)) var(--background-color)"]
-              [:dark:box-shadow "0  calc(var(--menu-height) / 2) calc(100vh - var(--menu-height)) var(--background-color-inverse)"]
+              [:dark:box-shadow "0  calc(var(--menu-height) / 2) calc(100vh - var(--menu-height)) var(--background-color-dark-mode)"]
               [:transform "translateX(7px)"])
      [header-menu menu-id]]]
 

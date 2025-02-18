@@ -81,31 +81,19 @@
                                    :close))]
     [button
      (merge-attrs
-      {:class         (css
+      {:-shape        :pill
+       :class         (css
                        ".kushi-modal-close-button"
-                       :.minimal
-                       :.pill
-                       :.large
-                       :pb--0.5rem
-                       :pis--0.5rem
-                       :pie--0.499rem
-                       {:position           :absolute
+                       {:fs                 :$large
+                        :pb                 :0.5rem
+                        :pis                :0.5rem
+                        :pie                :0.499rem
+                        :position           :absolute
                         :inset-block-start  :0.5rem
                         :inset-block-end    :unset
                         :inset-inline-end   :0.5rem
                         :inset-inline-start :unset})
        :on-mouse-down close-kushi-modal}
-      #_(trans (sx 'kushi-modal-close-button
-                   :.minimal
-                   :.pill
-                   :.large
-                   :padding--0.5rem
-                   {:on-mouse-down close-kushi-modal
-                    :style         {:position           :absolute
-                                    :inset-block-start  :0.5rem
-                                    :inset-block-end    :unset
-                                    :inset-inline-end   :0.5rem
-                                    :inset-inline-start :unset}}))
       attrs)
      (if icon-svg
        [icon {:icon-svg icon-svg}]
@@ -118,12 +106,12 @@
           "controlled via the following tokens in your theme:"
           :br
           :br "`--modal-box-shadow`"                       
-          :br "`--modal-box-shadow-inverse`"               
+          :br "`--modal-box-shadow-dark-mode`"               
           :br "`--modal-border-radius`"      
           :br "`--modal-border-width`"      
           :br "`--modal-border-style`"      
           :br "`--modal-border-color`"      
-          :br "`--modal-border-color-inverse`"      
+          :br "`--modal-border-color-dark-mode`"      
           :br "`--modal-padding-block`"      
           :br "`--modal-padding-inline`"     
           :br "`--modal-backdrop-color`"     
@@ -162,7 +150,7 @@
                           "var(--modal-box-shadow), "
                           "0 0 0 100vmax var(--modal-backdrop-color)")
         dark-box-shadow (str
-                         "var(--modal-box-shadow-inverse), "
+                         "var(--modal-box-shadow-dark-mode), "
                          "0 0 0 100vmax var(--dark-gray-transparent-90)")]
 
     ;; TODO document the how and why of this
@@ -187,7 +175,7 @@
                            :backdrop:bgc--transparent
                            :overflow--visible
                            :bgc--$background-color
-                           :dark:bgc--$background-color-inverse
+                           :dark:bgc--$background-color-dark-mode
                            :border-radius--$modal-border-radius
                            :b--$modal-border
                            :min-width--$modal-min-width||200px

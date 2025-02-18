@@ -802,15 +802,25 @@
                      bg-hard-2 bg-hard-2-d
                      bg-hard-3 bg-hard-3-d]
 
-        darker      [750 fg-d
-                     800 fg-2-d
-                     850 fg-3-d
+        yellow      [800 fg-d
+                     850 fg-2-d
+                     900 fg-3-d
                      100 bg-soft-d  
                      150 bg-soft-2-d
                      200 bg-soft-3-d
                      700 bg-hard-d   
                      750 bg-hard-2-d
                      850 bg-hard-3-d]
+
+        neutral      [800 fg-d
+                      850 fg-2-d
+                      900 fg-3-d
+                      100 bg-soft-d  
+                      200 bg-soft-2-d
+                      300 bg-soft-3-d
+                      700 bg-hard-d   
+                      750 bg-hard-2-d
+                      850 bg-hard-3-d]
 
         blue        [fg-l      fg-d
                      fg-2-l    fg-2-d
@@ -823,16 +833,16 @@
                      bg-hard-3 250]
 
         coll        ["accent"   blue
-                     "warning"  darker
+                     "warning"  yellow
                      "positive" standard
                      "negative" standard
-                     "neutral"  darker
-                     "gray"     darker
+                     "neutral"  neutral
+                     "gray"     neutral
                      "purple"   standard
                      "blue"     blue
                      "green"    standard
                      "lime"     standard
-                     "yellow"   darker
+                     "yellow"   yellow
                      "gold"     standard
                      "orange"   standard
                      "red"      standard

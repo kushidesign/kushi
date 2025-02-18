@@ -1,21 +1,23 @@
 (ns ^:dev/always kushi.playground.component-examples
-  (:require [clojure.string :as string]
-            [domo.core :as d]
-            [kushi.core :refer (sx css merge-attrs)]
-            [kushi.css.defs]
-            [kushi.css.media]
-            [kushi.playground.component-docs :as docs]
-            [kushi.playground.util :as util]
-            [kushi.ui.button.core :refer (button)]
-            [kushi.ui.core :refer (opts+children)]
-            [kushi.ui.divisor.core :refer (divisor)]
-            [kushi.ui.icon.core :refer (icon)]
-            [kushi.ui.tooltip.core :refer (tooltip-attrs)]
-            [kushi.ui.icon.mui.svg :as mui.svg]
-            [kushi.ui.modal.core :refer [close-kushi-modal modal
-                                         modal-close-button open-kushi-modal]]
-            [kushi.ui.util :refer [as-str maybe]]
-            [me.flowthing.pp :refer [pprint]]))
+  (:require
+   [clojure.string :as string]
+   [domo.core :as d]
+   [fireworks.core :refer [?]]
+   [kushi.core :refer (sx css merge-attrs)]
+   [kushi.css.defs]
+   [kushi.css.media]
+   [kushi.playground.component-docs :as docs]
+   [kushi.playground.util :as util]
+   [kushi.ui.button.core :refer (button)]
+   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.divisor.core :refer (divisor)]
+   [kushi.ui.icon.core :refer (icon)]
+   [kushi.ui.icon.mui.svg :as mui.svg]
+   [kushi.ui.modal.core :refer [close-kushi-modal modal modal-close-button
+                                open-kushi-modal]]
+   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
+   [kushi.ui.util :refer [as-str maybe]]
+   [me.flowthing.pp :refer [pprint]]))
 
 (defn- example-row-variant
   [component
@@ -207,17 +209,17 @@
 
 (defn example-modal-trigger [modal-id]
   [button
-   {:class    
-    (css :.minimal
-         :.accent
-         :.pill
-         :pb--0.4em
+   {:-colorway :accent
+    :-shape    :pill
+    :-surface  :minimal
+    :class    
+    (css :pb--0.4em
          :fw--$wee-bold
          :fs--$xxsmall
          :.accent.minimal:hover:background-color--$accent-50
          :dark:.accent.minimal:hover:background-color--$accent-800
 
-               ;; Next 3 styles will give it a link-button style
+         ;; Next 3 styles will give it a link-button style
          #_:p--0
          #_:hover&.accent.minimal:bgc--transparent
          #_[:hover:after {:content  "\"\""
@@ -321,7 +323,9 @@
   (let [[opts attrs] (opts+children args)]
     [button
      (merge-attrs
-      {:class    (css :.accent :.minimal :p--7px)
+      {:-colorway :accent
+       :-surface :minimal
+       :class    (css :p--7px)
        :on-click #(d/copy-to-clipboard!
                    (or (some->> opts 
                                 :clipboard-parent-sel
@@ -336,7 +340,7 @@
         "Copied!"
 
         :-text-on-click-tooltip-class 
-        (css [:--tooltip-background-color :$accent-filled-background-color])
+        (css [:--tooltip-background-color :$background-color-accent-hard])
 
         :-placement                  
         [:block-start :inline-end]})
@@ -564,5 +568,4 @@
                          [sym '(sx :.large)]
                          [sym '(sx :.xlarge)]
                          [sym '(sx :.xxlarge)]
-                         [sym '(sx :.xxxlarge)]])]})
-  )
+                         [sym '(sx :.xxxlarge)]])]}))

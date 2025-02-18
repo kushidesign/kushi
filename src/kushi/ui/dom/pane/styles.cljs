@@ -8,9 +8,9 @@
   :border-width--$pane-border-width
   :border-style--$pane-border-style
   :border-color--$pane-border-color
-  :dark:border-color--$pane-border-color-inverse
+  :dark:border-color--$pane-border-color-dark-mode
   :box-shadow--$pane-box-shadow
-  :dark:box-shadow--$pane-box-shadow-inverse
+  :dark:box-shadow--$pane-box-shadow-dark-mode
   :border-radius--$pane-border-radius
   :transition-property--opacity|translate|scale|transform
   :.transition
@@ -23,7 +23,7 @@
   :top--0
   :left--0
   :bgc--$pane-background-color
-  :dark:bgc--$pane-background-color-inverse
+  :dark:bgc--$pane-background-color-dark-mode
   :w--max-content
   :h--max-content
   :p--$pane-padding-block:$pane-padding-inline)
@@ -34,9 +34,9 @@
   :border-width--$tooltip-border-width
   :border-style--$tooltip-border-style
   :border-color--$tooltip-border-color
-  :dark:border-color--$tooltip-border-color-inverse
+  :dark:border-color--$tooltip-border-color-dark-mode
   :box-shadow--$tooltip-box-shadow||none
-  :dark:box-shadow--$tooltip-box-shadow-inverse||none
+  :dark:box-shadow--$tooltip-box-shadow-dark-mode||none
   :fs--$tooltip-font-size
   :fw--$tooltip-font-weight
   :line-height--$tooltip-line-height
@@ -47,16 +47,16 @@
   :transition-delay--$tooltip-delay-duration
   :zi--$tooltip-z-index
   :c--$tooltip-color
-  :dark:c--$tooltip-color-inverse
+  :dark:c--$tooltip-color-dark-mode
   :bgc--$tooltip-background-color
-  :dark:bgc--$tooltip-background-color-inverse
+  :dark:bgc--$tooltip-background-color-dark-mode
   :p--$tooltip-padding-block:$tooltip-padding-inline
   ;; span.code
   :_span.code:fs--$tooltip-font-size
   :dark:_span.code:bgc--$code-background-color
   :dark:_span.code:c--$code-color
-  :_span.code:bgc--$code-background-color-inverse
-  :_span.code:c--$code-color-inverse)
+  :_span.code:bgc--$code-background-color-dark-mode
+  :_span.code:c--$code-color-dark-mode)
 
 ;; TODO maybe move to popover.styles
 (defcss "@layer kushi-ui-shared .kushi-popover"
@@ -67,9 +67,9 @@
   :border-width--$popover-border-width
   :border-style--$popover-border-style
   :border-color--$popover-border-color
-  :dark:border-color--$popover-border-color-inverse
+  :dark:border-color--$popover-border-color-dark-mode
   :box-shadow--$popover-box-shadow
-  :dark:box-shadow--$popover-box-shadow-inverse
+  :dark:box-shadow--$popover-box-shadow-dark-mode
   :border-radius--$popover-border-radius
   :transition-duration--$popover-transition-duration
   :transition-timing-function--$popover-transition-timing-function
@@ -78,7 +78,7 @@
   :zi--$popover-z-index
   :c--$popover-color
   :bgc--$popover-background-color
-  :dark:bgc--$popover-background-color-inverse
+  :dark:bgc--$popover-background-color-dark-mode
   [:--_auto-dismiss-duration :$popover-auto-dismiss-duration])
 
 ;; TODO maybe move to toast.styles
@@ -121,16 +121,16 @@
   :border-width--$toast-border-width
   :border-style--$toast-border-style
   :border-color--$toast-border-color
-  :dark:border-color--$toast-border-color-inverse
+  :dark:border-color--$toast-border-color-dark-mode
   :box-shadow--$toast-box-shadow
-  :dark:box-shadow--$toast-box-shadow-inverse
+  :dark:box-shadow--$toast-box-shadow-dark-mode
   :border-radius--$toast-border-radius
   :transition-duration--$toast-transition-duration
   :transition-timing-function--$toast-transition-timing-function
   :scale--$toast-initial-scale
   :transition-delay--$toast-delay-duration
   :bgc--$toast-background-color
-  :dark:bgc--$toast-background-color-inverse
+  :dark:bgc--$toast-background-color-dark-mode
   [:--_auto-dismiss-duration :$toast-auto-dismiss-duration]
   [:max-width "calc(100vw - (2 * var(--toast-slot-padding-inline)))"])
 

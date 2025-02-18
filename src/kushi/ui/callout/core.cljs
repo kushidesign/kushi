@@ -1,13 +1,76 @@
 (ns kushi.ui.callout.core
   (:require [kushi.core :refer [sx css merge-attrs]]
-            [kushi.ui.util :refer [as-str maybe nameable?]]
+            [kushi.ui.util :refer [maybe]]
+            [goog.dom :as gdom]
+            [domo.core :as domo]
             [clojure.string :as string]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.shared.theming :refer [data-kui- get-variants hue-style-map]]
-            [kushi.ui.icon.core])
+            [kushi.ui.icon.core :refer [icon]]
+            [kushi.ui.button.core :refer [button]]
+            )
   #_(:require [kushi.core :refer (css sx merge-attrs)]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.icon.core]))
+
+(defn close-callout [e]
+  (.stopPropagation e)
+  (let [el      (domo/et e)
+        callout (domo/nearest-ancestor el ".kui-callout")]
+    (when (gdom/isElement callout)
+      (let [duration* (.-transitionDuration (js/window.getComputedStyle callout))
+            duration  (js/Math.round (* 1000 (js/parseFloat (string/replace duration* #"s$" ""))))]
+        (domo/set-style! callout "opacity" 0)
+        (js/setTimeout #(.remove callout) duration)))))
+
+(defn callout-close-button
+  {:desc ["The `callout-close-button` is meant to be a cta for closing a callout."
+          "It is typically a single × icon positioned in the upper right or left corner of the dialog."]
+   :opts '[{:name    icon
+            :pred    keyword?
+            :default :close
+            :desc    ["Optional. A name of a Google Material Symbols icon. Defaults to a close (×) icon."]}
+           {:name    colorway
+            :pred    keyword?
+            :default :neutral
+            :desc    [""]}
+           {:name    icon-svg
+            :pred    vector?
+            :default nil
+            :desc    ["Optional. A Hiccup representation of an svg icon. Supply this as an alternative to using the Google Material Symbols icon font"]}]}
+  [& args]
+  (let [[opts attrs & _]
+        (opts+children args)
+
+        {:keys     [icon-svg colorway]
+         icon-name :icon
+         :or {colorway "neutral"}}
+        opts
+
+        icon-name              
+        (when-not icon-svg
+          (if (and icon-name
+                   (or (string? icon-name)
+                       (keyword? icon-name)))
+            icon-name
+            :close))]
+    [button
+     (merge-attrs
+      {:-shape        :pill
+       :-colorway     colorway
+       :-surface      :minimal
+       :class         (css ".kushi-callout-close-button"
+                           :fs--inherit
+                           :pb--0.5rem
+                           :pis--0.5rem
+                           :pie--0.499rem
+                           :hover:bgc--transparent
+                           :active:bgc--transparent)
+       :on-mouse-down close-callout}
+      attrs)
+     (if icon-svg
+       [icon {:icon-svg icon-svg}]
+       [icon icon-name])]))
 
 (defn callout
   {:summary ["Callouts provide contextual feedback information for the user."]
@@ -21,10 +84,11 @@
             :desc    ["An instance of a `kushi.ui.icon/icon` component"
                       "Places an icon anchored to the inline-start area "
                       "of the callout. Optional."]}
-           {:name    close-button
-            :pred    vector?
+           {:name    user-actions
+            :pred    fn?
             :default nil
-            :desc    ["Hiccup to render a close button."
+            :desc    ["Component rendering fn for CTA interactions."
+                      "Can also be a close button component via `kushi.ui.callout.core/close-button`."
                       "Optional."]}
            {:name    header-text
             :pred    string
@@ -47,11 +111,10 @@
 
         {:keys [loading?
                 icon
-                close-button
+                user-actions
                 header-text
-                colorway
                 stroke-align
-                duration
+                #_duration
                 colorway
                 ]}
         opts
@@ -158,26 +221,10 @@
       header-text
       [:div (sx :.kushi-callout-header-close-button-wrap
                 :min-width--1em)
-       close-button]]
+       (if (= user-actions callout-close-button)
+         [user-actions {:-colorway colorway :-surface surface}]
+         (user-actions))
+       ]]
      (when (seq children)
        (into [:div (sx ".kushi-callout-body" :p--1rem)]
              children))]))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

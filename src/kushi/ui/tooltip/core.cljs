@@ -65,9 +65,9 @@
           ;; TODO add documentation for each token
           :br "__Colors and images:__"
           "`--tooltip-color`"                            
-          :br "`--tooltip-color-inverse`"                    
+          :br "`--tooltip-color-dark-mode`"                    
           :br "`--tooltip-background-color`"                 
-          :br "`--tooltip-background-color-inverse`"         
+          :br "`--tooltip-background-color-dark-mode`"         
           :br "`--tooltip-background-image`"                 
           :br
           :br "__Typography:__"

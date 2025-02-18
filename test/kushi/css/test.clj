@@ -393,9 +393,9 @@
 
 #_(do (def release? true #_false)
     (def all-tokens [:--foreground-color         :$neutral-950
-                     :--foreground-color-inverse :$neutral-50
+                     :--foreground-color-dark-mode :$neutral-50
                      :--background-color         :white
-                     :--background-color-inverse :$neutral-1000
+                     :--background-color-dark-mode :$neutral-1000
                      ])
     (def bs {:all-design-tokens all-tokens})
 
@@ -414,16 +414,16 @@
 #_(? (css-rule* ":root"
               (list (array-map
                      :--foreground-color         :$neutral-950
-                     :--foreground-color-inverse :$neutral-50
+                     :--foreground-color-dark-mode :$neutral-50
 
                      :--background-color         :white
-                     :--background-color-inverse :$neutral-1000
+                     :--background-color-dark-mode :$neutral-1000
                      ))
               nil nil))
 
 #_(def block
   (css-block {:border-block-end           :$divisor
-              :dark:border-block-end      :$divisor-inverse
+              :dark:border-block-end      :$divisor-dark-mode
               ;; :_.foo:c                    :red
               ;; :dark:color                 :blue
               :transition-property        :none
@@ -436,10 +436,10 @@
           {:block (nested-css-block 
                    (list (apply array-map
                                 :$foreground-color :$neutral-950
-                                :$foreground-color-inverse :$neutral-50
+                                :$foreground-color-dark-mode :$neutral-50
 
                                 :$background-color :white
-                                :$background-color-inverse :$neutral-1000)
+                                :$background-color-dark-mode :$neutral-1000)
                          nil
                          nil
                          'myfun

@@ -27,8 +27,8 @@
      (-> acc
          (conj (keyword (str "--elevated-" level "")))
          (conj (box-shadows->str box-shadows level ""))
-         (conj (keyword (str "--elevated-" level "-inverse")))
-         (conj (box-shadows->str box-shadows level "-inverse"))))
+         (conj (keyword (str "--elevated-" level "-dark-mode")))
+         (conj (box-shadows->str box-shadows level "-dark-mode"))))
    []
    elevations))
 
@@ -64,12 +64,12 @@
  (map-indexed 
   (fn [i n]
     (let [cf (fn [n color]
-               (keyword (str "$" color "-transparent-" (subs (str n) 2))))
+               (keyword (str "$transparent-" color "-" (subs (str n) 2))))
           nm (fn [i s] 
                (keyword (str "--elevation-shadow-layer-" (inc i) "-" s)))]
       [(nm i "color")
        (cf n "black")
-       (nm i "color-inverse")
+       (nm i "color-dark-mode")
        (cf n "white")
        ]))
 
@@ -113,28 +113,28 @@
     [(keyword (str "--divisor-color-" n))
      (keyword (str "$neutral-" (* 50 n))) ]))
 
-(def divisor-color-scale-inverse
+(def divisor-color-scale-dark-mode
   "1 ~ 10
    e.g.:
-   [:--divisor-color-1-inverse  :$neutral-950
-    :--divisor-color-2-inverse  :$neutral-900
-    :--divisor-color-3-inverse  :$neutral-850
+   [:--divisor-color-1-dark-mode  :$neutral-950
+    :--divisor-color-2-dark-mode  :$neutral-900
+    :--divisor-color-3-dark-mode  :$neutral-850
     ...]"
   (for [n (range 1 11)]
-    [(keyword (str "--divisor-color-" n "-inverse"))
+    [(keyword (str "--divisor-color-" n "-dark-mode"))
      (keyword (str "$neutral-" (- 1000 (* 50 n))))]))
 
-(defn divisor-compound-scale* [inverse?]
+(defn divisor-compound-scale* [dark-mode?]
   (for [n (range 1 11)]
-    [(keyword (str "--divisor-" n (when inverse? "-inverse")))
+    [(keyword (str "--divisor-" n (when dark-mode? "-dark-mode")))
      (str "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-"
           n
-          (when inverse? "-inverse") ")") ]))
+          (when dark-mode? "-dark-mode") ")") ]))
 
 (def divisor-compound-scale
   (divisor-compound-scale* false))
 
-(def divisor-compound-scale-inverse
+(def divisor-compound-scale-dark-mode
   (divisor-compound-scale* true))
 
 (def divisor-tokens
@@ -145,18 +145,18 @@
       [:--divisor-color-0   :transparent]]
 
      divisor-color-scale
-     divisor-color-scale-inverse
+     divisor-color-scale-dark-mode
 
      [[:--divisor-color         :$divisor-color-3]
-      [:--divisor-color-inverse :$divisor-color-5-inverse]]
+      [:--divisor-color-dark-mode :$divisor-color-5-dark-mode]]
 
      [[:--divisor-0 "var(--divisor-thickness) var(--divisor-style) var(--divisor-color-0)"]]
      divisor-compound-scale
 
-     divisor-compound-scale-inverse
+     divisor-compound-scale-dark-mode
 
      [[:--divisor         :$divisor-3]
-      [:--divisor-inverse :$divisor-5-inverse]])))
+      [:--divisor-dark-mode :$divisor-5-dark-mode]])))
 
 
 
@@ -188,10 +188,14 @@
     :category ["global-colors"]
     :tags     ["colors" "oklch" "global"]
     }
-   [:--foreground-color           :$neutral-950
-    :--background-color           :white
-    :--foreground-color-dark-mode :$neutral-50
-    :--background-color-dark-mode :$neutral-1000]
+   [
+    :--foreground-color                     :$neutral-950
+    :--background-color                     :white
+    :--foreground-color-dark-mode           :$neutral-50
+    :--background-color-dark-mode           :$neutral-1000
+    :--foreground-color-secondary           :$neutral-700
+    :--foreground-color-secondary-dark-mode :$neutral-350
+    ]
 
 
    ;; Debugging grid
@@ -202,7 +206,7 @@
     }
    [:--debug-grid-size :16px
     :--debug-grid-color "hsla(0 0% 90%)"
-    :--debug-grid-color-inverse "hsla(0 0% 25%)"
+    :--debug-grid-color-dark-mode "hsla(0 0% 25%)"
     ]
 
 
@@ -262,8 +266,8 @@
     :--code-padding-block                     :0.08em
     :--code-border-radius                     :3px
     :--code-background-color                  :$gray-100
-    :--code-background-color-inverse          :$gray-800
-    :--code-color-inverse                     :$gray-50
+    :--code-background-color-dark-mode          :$gray-800
+    :--code-color-dark-mode                     :$gray-50
     ]
 
 
@@ -425,14 +429,14 @@
     :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "color"]
     }
    [:--pane-background-color                 :$background-color
-    :--pane-background-color-inverse         :$background-color-inverse
+    :--pane-background-color-dark-mode         :$background-color-dark-mode
     :--pane-background-image                 :white
     :--pane-box-shadow                       :$elevated-5
-    :--pane-box-shadow-inverse               :$elevated-5-inverse
+    :--pane-box-shadow-dark-mode               :$elevated-5-dark-mode
     :--pane-border-width                     :0px
     :--pane-border-style                     :solid
     :--pane-border-color                     :transparent
-    :--pane-border-color-inverse             :transparent]
+    :--pane-border-color-dark-mode             :transparent]
 
     ;; pane geometry
    {:family   "Floating pane geometry"
@@ -495,17 +499,17 @@
     :category ["tooltip"]
     :tags     ["pane" "tooltip" "color" "floating"]
     }
-   [:--tooltip-color                            :$foreground-color-inverse
-    :--tooltip-color-inverse                    :$foreground-color
-    :--tooltip-background-color                 :$background-color-inverse
-    :--tooltip-background-color-inverse         :$background-color
+   [:--tooltip-color                            :$foreground-color-dark-mode
+    :--tooltip-color-dark-mode                    :$foreground-color
+    :--tooltip-background-color                 :$background-color-dark-mode
+    :--tooltip-background-color-dark-mode         :$background-color
     :--tooltip-background-image                 :none
     :--tooltip-box-shadow                       :none
-    :--tooltip-box-shadow-inverse               :none
+    :--tooltip-box-shadow-dark-mode               :none
     :--tooltip-border-width                     :$pane-border-width
     :--tooltip-border-style                     :$pane-border-style
     :--tooltip-border-color                     :$pane-border-color
-    :--tooltip-border-color-inverse             :$pane-border-color-inverse
+    :--tooltip-border-color-dark-mode             :$pane-border-color-dark-mode
     ]
    
    ;; tooltip geometry
@@ -562,14 +566,14 @@
     :tags     ["pane" "popover" "floating"]
     }
    [:--popover-background-color                 :$pane-background-color
-    :--popover-background-color-inverse         :$pane-background-color-inverse
+    :--popover-background-color-dark-mode         :$pane-background-color-dark-mode
     :--popover-background-image                 :none
     :--popover-box-shadow                       :$pane-box-shadow
-    :--popover-box-shadow-inverse               :$pane-box-shadow-inverse
+    :--popover-box-shadow-dark-mode               :$pane-box-shadow-dark-mode
     :--popover-border-width                     :1px
     :--popover-border-style                     :solid
     :--popover-border-color                     :$neutral-200
-    :--popover-border-color-inverse             :$neutral-700
+    :--popover-border-color-dark-mode             :$neutral-700
     ]
 
    ;; popover geometry
@@ -593,13 +597,13 @@
     :category ["popover"]
     :tags     ["pane" "popover" "floating" "chreography"]
     }
-   [:--popover-offset-start                     :$pane-offset-start
-    :--popover-z-index                          :$pane-z-index
-    :--popover-delay-duration                   :0ms
-    :--popover-initial-scale                    1
-    :--popover-transition-duration              :$pane-transition-duration 
-    :--popover-transition-timing-function       :$pane-transition-timing-function 
-    :--popover-auto-dismiss-duration            :5000ms
+   [:--popover-offset-start               :$pane-offset-start
+    :--popover-z-index                    :$pane-z-index
+    :--popover-delay-duration             :0ms
+    :--popover-initial-scale              1
+    :--popover-transition-duration        :$pane-transition-duration 
+    :--popover-transition-timing-function :$pane-transition-timing-function 
+    :--popover-auto-dismiss-duration      :5000ms
     ]
 
    ;; popover arrows
@@ -608,9 +612,9 @@
     :category ["popover"]
     :tags     ["pane" "popover" "floating" "arrow"]
     }
-   [:--popover-arrow-inline-inset               :$pane-arrow-inline-inset
-    :--popover-arrow-block-inset                :$pane-arrow-inline-inset
-    :--popover-arrow-depth                      :7px
+   [:--popover-arrow-inline-inset :$pane-arrow-inline-inset
+    :--popover-arrow-block-inset  :$pane-arrow-inline-inset
+    :--popover-arrow-depth        :7px
     ]
 
    
@@ -622,15 +626,15 @@
     :category ["toast"]
     :tags     ["pane" "toast" "floating" "color"]
     }
-   [:--toast-background-color                 :$pane-background-color
-    :--toast-background-color-inverse         :$pane-background-color-inverse
-    :--toast-background-image                 :none
-    :--toast-box-shadow                       :$pane-box-shadow
-    :--toast-box-shadow-inverse               :$pane-box-shadow-inverse
-    :--toast-border-width                     :1px
-    :--toast-border-style                     :solid
-    :--toast-border-color                     :$gray-150
-    :--toast-border-color-inverse             :$gray-700
+   [:--toast-background-color           :$pane-background-color
+    :--toast-background-color-dark-mode :$pane-background-color-dark-mode
+    :--toast-background-image           :none
+    :--toast-box-shadow                 :$pane-box-shadow
+    :--toast-box-shadow-dark-mode       :$pane-box-shadow-dark-mode
+    :--toast-border-width               :1px
+    :--toast-border-style               :solid
+    :--toast-border-color               :$gray-150
+    :--toast-border-color-dark-mode     :$gray-700
     ]
 
    ;; toast geometry
@@ -639,11 +643,11 @@
     :category ["toast"]
     :tags     ["pane" "Toast" "floating" "geometry"]
     }
-   [:--toast-border-radius                    :$pane-border-radius
-    :--toast-slot-padding-inline              :1rem
-    :--toast-slot-padding-block               :1rem
-    :--toast-slot-gap                         :1rem
-    :--toast-slot-z-index                     100000
+   [:--toast-border-radius       :$pane-border-radius
+    :--toast-slot-padding-inline :1rem
+    :--toast-slot-padding-block  :1rem
+    :--toast-slot-gap            :1rem
+    :--toast-slot-z-index        100000
     ]
 
    ;; toast choreography
@@ -652,11 +656,11 @@
     :category ["toast"]
     :tags     ["pane" "Toast" "floating" "geometry"]
     }
-   [:--toast-delay-duration                   :200ms
-    :--toast-initial-scale                    1
-    :--toast-transition-duration              :$pane-transition-duration 
-    :--toast-transition-timing-function       :$pane-transition-timing-function 
-    :--toast-auto-dismiss-duration            :5000ms
+   [:--toast-delay-duration             :200ms
+    :--toast-initial-scale              1
+    :--toast-transition-duration        :$pane-transition-duration 
+    :--toast-transition-timing-function :$pane-transition-timing-function 
+    :--toast-auto-dismiss-duration      :5000ms
     ]
    
 
@@ -668,20 +672,20 @@
     :tags     ["pane" "modal" "dialog" "floating"]
     }
    [
-    :--modal-box-shadow                       :$pane-box-shadow
-    :--modal-box-shadow-inverse               :$pane-box-shadow-inverse
-    :--modal-border-radius                    :$rounded-absolute-large
-    :--modal-border-width                     :0px
-    :--modal-border-style                     :solid
-    :--modal-border-color                     :$gray-150
-    :--modal-border-color-inverse             :$gray-700
-    :--modal-padding                          :2rem
-    :--modal-padding-block                    :$modal-padding
-    :--modal-padding-inline                   :$modal-padding
-    :--modal-backdrop-color                   :$black-transparent-40
-    :--modal-margin                           :1rem
-    :--modal-min-width                        :200px
-    :--modal-transition-duration              :$xfast]
+    :--modal-box-shadow             :$pane-box-shadow
+    :--modal-box-shadow-dark-mode   :$pane-box-shadow-dark-mode
+    :--modal-border-radius          :$rounded-absolute-large
+    :--modal-border-width           :0px
+    :--modal-border-style           :solid
+    :--modal-border-color           :$gray-150
+    :--modal-border-color-dark-mode :$gray-700
+    :--modal-padding                :2rem
+    :--modal-padding-block          :$modal-padding
+    :--modal-padding-inline         :$modal-padding
+    :--modal-backdrop-color         :$transparent-black-40
+    :--modal-margin                 :1rem
+    :--modal-min-width              :200px
+    :--modal-transition-duration    :$xfast]
 
 
    ;; Material UI icons
@@ -691,7 +695,7 @@
     :category ["icon"]
     :tags     ["icon" "size" "font-size"]
     }
-   [:--mui-icon-relative-font-size            :inherit
+   [:--mui-icon-relative-font-size :inherit
     ]
 
 
@@ -703,7 +707,7 @@
     :category ["icon"]
     :tags     ["icon" "size" "font-size"]
     }
-   [:--icon-enhanceable-gap                   :0.25em]
+   [:--icon-enhanceable-gap :0.25em]
 
 
    ;; Intended for css props: border-radius
@@ -715,15 +719,15 @@
     :category ["border-radius"]
     :tags     ["border-radius" "corners" "rounded"]
     }
-   [:--rounded-absolute-xxxsmall              :0.0625rem         ;; 1px
-    :--rounded-absolute-xxsmall               :0.125rem         ;; 2px
-    :--rounded-absolute-xsmall                :0.25rem          ;; 4px
-    :--rounded-absolute-small                 :0.375rem         ;; 6px
-    :--rounded-absolute-medium                :0.5rem           ;; 8px
-    :--rounded-absolute-large                 :0.75rem          ;; 12px
-    :--rounded-absolute-xlarge                :0.1rem           ;; 16px
-    :--rounded-absolute-xxlarge               :1.25rem          ;; 20px
-    :--rounded-absolute-xxxlarge              :1.5625rem        ;; 25px
+   [:--rounded-absolute-xxxsmall  :0.0625rem        ;; 1px
+    :--rounded-absolute-xxsmall   :0.125rem         ;; 2px
+    :--rounded-absolute-xsmall    :0.25rem          ;; 4px
+    :--rounded-absolute-small     :0.375rem         ;; 6px
+    :--rounded-absolute-medium    :0.5rem           ;; 8px
+    :--rounded-absolute-large     :0.75rem          ;; 12px
+    :--rounded-absolute-xlarge    :0.1rem           ;; 16px
+    :--rounded-absolute-xxlarge   :1.25rem          ;; 20px
+    :--rounded-absolute-xxxlarge  :1.5625rem        ;; 25px
     ]
    
    ;; Relative (to type size) versions for buttons, badges
@@ -732,17 +736,17 @@
     :category ["border-radius"]
     :tags     ["border-radius" "corners" "rounded"]
     }
-   [:--rounded-xxxsmall                       :0.04375em  
-    :--rounded-xxsmall                        :0.0875em  
-    :--rounded-xsmall                         :0.175em   
-    :--rounded-small                          :0.2625em  
-    :--rounded-medium                         :0.35em    
-    :--rounded-large                          :0.525em   
-    :--rounded-xlarge                         :0.7em     
-    :--rounded-xxlarge                        :0.875em   
-    :--rounded-xxxlarge                       :1.09375em 
-    :--rounded                                :$rounded-medium
-    :--border-weight                          :1px
+   [:--rounded-xxxsmall :0.04375em  
+    :--rounded-xxsmall  :0.0875em  
+    :--rounded-xsmall   :0.175em   
+    :--rounded-small    :0.2625em  
+    :--rounded-medium   :0.35em    
+    :--rounded-large    :0.525em   
+    :--rounded-xlarge   :0.7em     
+    :--rounded-xxlarge  :0.875em   
+    :--rounded-xxxlarge :1.09375em 
+    :--rounded          :$rounded-medium
+    :--border-weight    :1px
     ]
 
 
@@ -784,7 +788,7 @@
     }
    [:--elevated-0       :none
     :--elevated         :$elevated-4
-    :--elevated-inverse :$elevated-4-inverse]
+    :--elevated-dark-mode :$elevated-4-dark-mode]
 
    ;; Intended for css animations and transitions
    ;; ------------------------------------------------------
@@ -829,9 +833,9 @@
     :tags     ["scrollbar" "chrome" "browser-scrollbars"]
     }
    [:--scrollbar-thumb-color                  :$neutral-300
-    :--scrollbar-thumb-color-inverse          :$neutral-700
+    :--scrollbar-thumb-color-dark-mode          :$neutral-700
     :--scrollbar-background-color             :$neutral-50
-    :--scrollbar-background-color-inverse     :$neutral-900
+    :--scrollbar-background-color-dark-mode     :$neutral-900
     :--scrollbar-width                        :5px]
 
 
@@ -857,7 +861,7 @@
 
     ;; Remove wrapper from this
     :--text-input-border-intensity               :50%
-    :--text-input-border-intensity-inverse       :55%
+    :--text-input-border-intensity-dark-mode       :55%
     :--text-input-border-radius                  :0.3em]
 
 
@@ -965,8 +969,8 @@
 (!? :pp design-tokens-by-token-array-map)
 
 
-#_{:name         "divisor-inverse",
- :value        :$divisor-5-inverse,
+#_{:name         "divisor-dark-mode",
+ :value        :$divisor-5-dark-mode,
  :desc         {:en "Fix me"},
  :category   ["Surface" "Borders" "Color"],
  :tags         ["divisor"],

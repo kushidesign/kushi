@@ -37,22 +37,22 @@
     ".dark #app[data-kushi-playground-first-intersecting=\"" x "\"] "
     "[data-kushi-playground-sidenav-button=\"" x "\"]"
     "{"
-    "color: var(--neutral-minimal-color-hover-inverse);"
-    "background-color: var(--neutral-minimal-background-color-hover-inverse);"
+    "color: var(--neutral-minimal-color-hover-dark-mode);"
+    "background-color: var(--neutral-minimal-background-color-hover-dark-mode);"
     "}"
 
     ;; "#app[data-kushi-playground-first-intersecting=\"" x "\"] "
     ;; "[data-kushi-playground-sidenav-button=\"" x "\"]:hover"
     ;; "{"
-    ;; "color: var(--foreground-color-inverse);"
-    ;; "background-color: var(--background-color-inverse);"
+    ;; "color: var(--foreground-color-dark-mode);"
+    ;; "background-color: var(--background-color-dark-mode);"
     ;; "}"
     
     ;; "#app[data-kushi-playground-first-intersecting=\"" x "\"] "
     ;; "[data-kushi-playground-sidenav-button=\"" x "\"]:active"
     ;; "{"
-    ;; "color: var(--foreground-color-inverse);"
-    ;; "background-color: var(--background-color-inverse);"
+    ;; "color: var(--foreground-color-dark-mode);"
+    ;; "background-color: var(--background-color-dark-mode);"
     ;; "}"
     )])
 
@@ -80,7 +80,7 @@
                  [:box-shadow
                   "-30px 0 30px var(--background-color), -30px -30px 30px var(--background-color), -30px 0 30px 10px var(--background-color), -30px -30px 30px 10px var(--background-color)"]
                  [:dark:box-shadow
-                  "-30px 0 30px var(--background-color-inverse), -30px -30px 30px var(--background-color-inverse), -30px 0 30px 10px var(--background-color-inverse), -30px -30px 30px 10px var(--background-color-inverse)"])
+                  "-30px 0 30px var(--background-color-dark-mode), -30px -30px 30px var(--background-color-dark-mode), -30px 0 30px 10px var(--background-color-dark-mode), -30px -30px 30px 10px var(--background-color-dark-mode)"])
          :data-kushi-playground-sidenav "true"}
    [:button
     (sx :.all-components-sidenav-header
@@ -89,7 +89,7 @@
     [:span (sx :.flex-row-c
                :gap--0.5em
                :c--$neutral-secondary-foreground
-               :dark:c--$neutral-secondary-foreground-inverse)
+               :dark:c--$neutral-secondary-foreground-dark-mode)
      "All Components"]]
 
    [:div (sx 
@@ -127,7 +127,7 @@
                     :pb--0.5em
                     :.neutral.minimal:c--$neutral-secondary-foreground
                     :.neutral.minimal:hover:c--black
-                    :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse
+                    :dark:.neutral.minimal:c--$neutral-secondary-foreground-dark-mode
                     :dark:.neutral.minimal:hover:c--white)
                 {:data-kushi-playground-sidenav-button label}
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
@@ -164,7 +164,7 @@
             :bgi "linear-gradient(to left, var(--background-color), var(--background-color) 50%, transparent)"}]
           ["dark:&[aria-expanded=\"true\"]" 
            {:bgc :$black-transparent-90
-            :bgi "linear-gradient(to left, var(--background-color-inverse), var(--background-color-inverse) 50%, transparent)"}])
+            :bgi "linear-gradient(to left, var(--background-color-dark-mode), var(--background-color-dark-mode) 50%, transparent)"}])
          {:data-kushi-playground-sidenav        true
           :data-kushi-playground-sidenav-mobile true
           :aria-expanded                        false})
@@ -177,7 +177,7 @@
 
         ;; To use softer color 
          :.neutral.minimal:c--$neutral-secondary-foreground
-         :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse)
+         :dark:.neutral.minimal:c--$neutral-secondary-foreground-dark-mode)
      {:on-click (fn [e] 
                   (let [nav  (some-> e
                                      d/cet
@@ -202,7 +202,7 @@
 
                ;; To use softer color 
                :c--$neutral-secondary-foreground
-               :dark:c--$neutral-secondary-foreground-inverse)
+               :dark:c--$neutral-secondary-foreground-dark-mode)
      [icon (sx :.sidenav-menu-icon :.extra-light :fs--$large) :menu]
      [icon (sx :.sidenav-close-icon :.extra-light :fs--$large) :close]
      "All Components"]]
@@ -263,7 +263,7 @@
                     :pb--0.5em
                     :.neutral.minimal:c--$neutral-secondary-foreground
                     :.neutral.minimal:hover:c--black
-                    :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse
+                    :dark:.neutral.minimal:c--$neutral-secondary-foreground-dark-mode
                     :dark:.neutral.minimal:hover:c--white)
                 {:data-kushi-playground-sidenav-button label}
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
