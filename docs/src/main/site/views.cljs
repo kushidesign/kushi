@@ -1,6 +1,6 @@
 (ns site.views
   (:require
-   [kushi.core :refer [css sx defcss token->ms merge-attrs css-vars-map]]
+   [kushi.core :refer [css ?css sx defcss token->ms merge-attrs css-vars-map]]
    [kushi.playground.layout :as layout]
    [kushi.playground.nav :as nav]
    [kushi.playground.components :refer [playground-components]]
@@ -17,13 +17,20 @@
    [kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]
    [kushi.ui.toast.demo :refer [toast-content]]
    [reagent.dom :refer [render]]
+   [reagent.ratom]
    [kushi.ui.modal.core :refer [modal modal-close-button open-kushi-modal close-kushi-modal]]
    [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]
+   [kushi.ui.slider.core :refer [slider]]
    [kushi.ui.icon.core :refer [icon]]
   ;;  [kushi.colors2 :as colors2]
-   [fireworks.core :refer [? !? ?> !?>]]
+   [fireworks.core :refer [? !? ?> !?> pprint]]
    [kushi.playground.ui :refer [light-dark-mode-switch]]
-   ))
+   [kushi.playground.tweak.colorscale :refer [pallette-generator
+                                              okstate
+                                              pallette-idx
+                                              adjust-slider!]]
+   [reagent.core :as r]))
+
 (js/console.clear)
 
 (defn switch-dev-samples []
@@ -94,6 +101,7 @@
                                           :-start-enhancer [icon :pets]})
                             "Button"]))))))
 
+   #_#_#_#_#_
    (into [:div (sx :.button-dev-grid
                    {:before:content "\"Shape\""})]
          (for [shape ["round" "sharp" "pill"]] 
@@ -158,8 +166,7 @@
                                       [:--box-shadow-2-offset-y "0"]
                                       [:--box-shadow-2-strength "50%"]
                                       [:--box-shadow-2-blur-radius "5px"]
-                                      [:--box-shadow-2-color "red"]
-                                      )}
+                                      [:--box-shadow-2-color "red"])}
                          {:-surface        "outline"
                           :-shape          "round"
                           :-stroke-align   :inside
@@ -306,7 +313,7 @@
    ;; Based on design-system-tokens
    (let [colors   [
                   ;;  ["gray" 0]
-                   {:n "purple"
+                   #_{:n "purple"
                     :h 304.9
                     :l 57.2
                     :c 0.315}
@@ -314,19 +321,19 @@
                     :h 262
                     :l 51
                     :c 0.2927}
-                   {:n "green"
+                   #_{:n "green"
                     :h 155
                     :l 85.5
                     :c 0.2932}
                   ;;  ["lime" 129.5]
                   ;;  ["yellow" 100]
-                   {:n "gold"
+                   #_{:n "gold"
                     :h 86.4
                     :l 85.38
                     :c 0.2013
                     }
                   ;;  ["orange" 62.3]
-                   {:n "red"
+                   #_{:n "red"
                     :h 22.4
                     :l 65.19
                     :c 0.2959}
@@ -335,13 +342,25 @@
                   ;;  ["gray" 0]
                    ]
          scale [5 10 20 40 80 140 200 260 320 380 440 500 560 720 780 840]
-         _ (? (count scale))
+         _ (!? (count scale))
          ;; colors       (? (keys oklch-colors))
          oklch-grid   (for [{:keys [h l c]} colors]
                         (into [:div (sx :.flex-row-fs)]
-                              (for [lvl [5 10 20 40 80 140 200 260 320 380 440 500 560 720 780 840 900 960 1000]
-                                    :let [c     0.1 #_(* c ratio)]]
-                                [color-row (str "oklch(" (- 100 (/ lvl 10)) "%"  " " c " " h ")")])))]
+                              (for [lvl
+                                    #_[1 2 4 40 80 140 200 260 320 380 440 500 560 720 780 840 900 960 1000]
+                                    [2.2
+                                     5.6
+                                     13.0
+                                     22.5
+                                     33.2
+                                     41.3
+                                     47.1
+                                     53.5
+                                     60.5
+                                     67.9
+                                     78.5]
+                                    :let [c 0.1 #_(* c ratio)]]
+                                [color-row (str "oklch(" (- 100 (/ lvl 10)) "%"  " " 0.05 " " h ")")])))]
     [:<> 
      #_(into [:div (sx :.flex-col-fs [:bgc "rgb(127.5 127.5 127.5)"] :p--100px)]
            oklch-grid)
@@ -352,6 +371,9 @@
            oklch-grid)]
 
     ))
+
+;; chroma go 0.005 to 0.37 in .005 increments
+;; for each, start from 100
 
 (defn hsl+oklch-color-grid [{:keys [hsl?]}]
 
@@ -454,31 +476,16 @@
                                           :-icon        [icon :info]})])))))))
 
 
-
 (defn pane-samples []
   [:<> 
    [light-dark-mode-switch (sx :.fixed-block-start-inside :.light :.transition)]
-   [:div (sx :.absolute-centered 
-             :.flex-col-fs
-             :gap--2rem
-            ;; :.debug-red
-            ;; :outline-offset--0px
-             )
-    
+   [:div (sx :.absolute-centered :.flex-col-fs :gap--1rem)
+    #_[pallette-generator]
 
-  ;;  [button 
-  ;;   (merge-attrs (sx [:--button-border-width :5px]
-  ;;                    :border-color--pink!important)
-  ;;                {:class [:bordered]})
-  ;;   "hello"]
-  ;;  [button "hello"]
-    
-    
-    ;; [hsl+oklch-color-grid {:hsl? false}]
-    [hsl+oklch-color-grid2]
-    
+    #_[hsl+oklch-color-grid]
+    #_[hsl+oklch-color-grid2]
 
-    #_[button-dev-samples]
+    [button-dev-samples]
     #_[tag-dev-samples]
     #_[switch-dev-samples]
     #_[callout-dev-samples]
@@ -588,7 +595,18 @@
                  "data-kushi-playground-active-path"
                  "components")
 
+  (js/setTimeout
+   (fn []
+     (dotimes [n (-> okstate deref :levels count)]
+       (adjust-slider! {:pallette-idx pallette-idx 
+                        :scale-key    :chroma-scale
+                        :scale-idx    n}))
+     #_(? (domo/qs "[data-scale='chroma'][data-level='450']"))
+     )
+   2000)
+
   [pane-samples]
+
 
   #_(into 
    [:div (sx :.flex-col-fs)
