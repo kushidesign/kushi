@@ -74,6 +74,15 @@
              "Button"]))
    ])
 
+;; Test tags
+;; Test callouts
+;; Test switches
+;; Test any other themeables
+;; Clean up ui_theming file
+;; Merge branch
+;; Look at todo
+;; Theming
+
 (defn button-dev-samples []
   (defcss ".button-dev-grid"
     :.flex-row-fs

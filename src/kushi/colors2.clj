@@ -234,7 +234,7 @@
 
 (def brown-hue 46.1)
 (def magenta-hue 347.6)
-(def red-hue 44)
+(def red-hue 27)
 (def orange-hue 62.3)
 (def gold-hue 82)
 (def yellow-hue 100)
