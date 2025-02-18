@@ -9,11 +9,11 @@
   {:shape    #{"rounded" "sharp" "pill"}
    :surface  #{"minimal" "outline" "solid" "soft"}
    ;; :semantic #{"neutral" "accent" "positive" "negative" "warning"}
-   :colorway #{"accent" "positive" "negative" "warning"}
+   :colorway #{"accent" "positive" "negative" "warning" "neutral"}
    })
 
 (def variant-defaults
-  {:colorway nil
+  {:colorway "neutral"
    :surface  "soft"
    :shape    "rounded"})
 
