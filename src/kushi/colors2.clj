@@ -232,12 +232,24 @@
 ;;     (mapv (partial create-color-pallette colors-map) color-names)))
 
 
+(def brown-hue 46.1)
+(def magenta-hue 347.6)
+(def red-hue 44)
+(def orange-hue 62.3)
+(def gold-hue 82)
+(def yellow-hue 100)
+(def lime-hue 129.5)
+(def green-hue 155.5)
+(def blue-hue 262.7)
+(def purple-hue 304.9)
+(def gray-hue 0)
+
 ;; generated from functions above using original kushi.colors/colors hsl scale.
 (def oklch-colors
   (apply
    array-map
    ["gray"
-    {:hue   0,
+    {:hue   gray-hue,
      :scale [[50 0.985 0]
              [100 0.962 0]
              [200 0.931 0]
@@ -250,7 +262,7 @@
              [900 0.301 0]
              [1000 0.193 0]]}
     "purple"
-    {:hue   304.9,
+    {:hue   purple-hue,
      :scale [[50 0.975 0.022]
              [100 0.932 0.047]
              [200 0.844 0.102]
@@ -263,7 +275,7 @@
              [900 0.302 0.151]
              [1000 0.193 0.101]]}
     "blue"
-    {:hue   262.7,
+    {:hue   blue-hue,
      :scale [[50 0.979 0.01]
              [100 0.948 0.024]
              [200 0.877 0.057]
@@ -276,7 +288,7 @@
              [900 0.301 0.131]
              [1000 0.198 0.078]]}
     "green"
-    {:hue   155.1,
+    {:hue   green-hue,
      :scale [[50 0.986 0.018]
              [100 0.966 0.039]
              [200 0.905 0.09]
@@ -289,7 +301,7 @@
              [900 0.35 0.091]
              [1000 0.282 0.071]]}
     "lime"
-    {:hue   129.5,
+    {:hue   lime-hue,
      :scale [[50 0.989 0.028]
              [100 0.97 0.076]
              [200 0.929 0.195]
@@ -302,7 +314,7 @@
              [900 0.392 0.105]
              [1000 0.293 0.078]]}
     "yellow"
-    {:hue   100,
+    {:hue   yellow-hue,
      :scale [[50 0.991 0.031]
              [100 0.982 0.061]
              [200 0.959 0.139]
@@ -315,7 +327,7 @@
              [900 0.406 0.086]
              [1000 0.319 0.067]]}
     "gold"
-    {:hue   86.4,
+    {:hue   gold-hue,
      :scale [[50 0.984 0.02]
              [100 0.968 0.04]
              [200 0.926 0.092]
@@ -328,7 +340,7 @@
              [900 0.383 0.078]
              [1000 0.29 0.059]]}
     "orange"
-    {:hue   62.3,
+    {:hue   orange-hue,
      :scale [[50 0.981 0.013]
              [100 0.957 0.03]
              [200 0.903 0.068]
@@ -341,7 +353,7 @@
              [900 0.355 0.082]
              [1000 0.261 0.058]]}
     "red"
-    {:hue   22.4,
+    {:hue   red-hue,
      :scale [[50 0.978 0.011]
              [100 0.944 0.028]
              [200 0.87 0.067]
@@ -354,7 +366,7 @@
              [900 0.321 0.131]
              [1000 0.215 0.087]]}
     "magenta"
-    {:hue   347.6,
+    {:hue   magenta-hue,
      :scale [[50 0.979 0.013]
              [100 0.953 0.031]
              [200 0.885 0.076]
@@ -367,7 +379,7 @@
              [900 0.342 0.139]
              [1000 0.225 0.094]]}
     "brown"
-    {:hue   46.1,
+    {:hue   brown-hue,
      :scale [[50 0.977 0.005]
              [100 0.945 0.011]
              [200 0.898 0.02]
@@ -384,7 +396,7 @@
   (apply
    array-map 
    ["gray"
-    {:hue   0,
+    {:hue   gray-hue,
      :scale [[50 0.985 0]
              [100 0.962 0]
              [150 0.95 0.0]
@@ -406,7 +418,7 @@
              [950 0.25 0.0]
              [1000 0.193 0]]}
     "purple"
-    {:hue   304.9,
+    {:hue   purple-hue,
      :scale [[50 0.975 0.022]
              [100 0.932 0.047]
              [150 0.89 0.07]
@@ -428,7 +440,7 @@
              [950 0.25 0.13]
              [1000 0.193 0.101]]}
     "blue"
-    {:hue   262.7,
+    {:hue   blue-hue,
      :scale [[50 0.979 0.01]
              [100 0.948 0.024]
              [150 0.91 0.04]
@@ -450,7 +462,7 @@
              [950 0.25 0.1]
              [1000 0.198 0.078]]}
     "green"
-    {:hue   155.1,
+    {:hue   green-hue,
      :scale [[50 0.986 0.018]
              [100 0.966 0.039]
              [150 0.94 0.06]
@@ -472,7 +484,7 @@
              [950 0.32 0.08]
              [1000 0.282 0.071]]}
     "lime"
-    {:hue   129.5,
+    {:hue   lime-hue,
      :scale [[50 0.989 0.028]
              [100 0.97 0.076]
              [150 0.95 0.14]
@@ -494,7 +506,7 @@
              [950 0.34 0.09]
              [1000 0.293 0.078]]}
     "yellow"
-    {:hue   100,
+    {:hue   yellow-hue,
      :scale [[50 0.991 0.031]
              [100 0.982 0.061]
              [150 0.97 0.1]
@@ -516,7 +528,7 @@
              [950 0.36 0.08]
              [1000 0.319 0.067]]}
     "gold"
-    {:hue   86.4,
+    {:hue   gold-hue,
      :scale [[50 0.984 0.02]
              [100 0.968 0.04]
              [150 0.95 0.07]
@@ -538,7 +550,7 @@
              [950 0.34 0.07]
              [1000 0.29 0.059]]}
     "orange"
-    {:hue   62.3,
+    {:hue   orange-hue,
      :scale [[50 0.981 0.013]
              [100 0.957 0.03]
              [150 0.93 0.05]
@@ -559,8 +571,9 @@
              [900 0.355 0.082]
              [950 0.31 0.07]
              [1000 0.261 0.058]]}
+
     "red"
-    {:hue   22.4,
+    {:hue   red-hue,
      :scale [[50 0.978 0.011]
              [100 0.944 0.028]
              [150 0.91 0.05]
@@ -581,8 +594,9 @@
              [900 0.321 0.131]
              [950 0.27 0.11]
              [1000 0.215 0.087]]}
+
     "magenta"
-    {:hue   347.6,
+    {:hue   magenta-hue,
      :scale [[50 0.979 0.013]
              [100 0.953 0.031]
              [150 0.92 0.05]
@@ -604,7 +618,7 @@
              [950 0.28 0.12]
              [1000 0.225 0.094]]}
     "brown"
-    {:hue   46.1,
+    {:hue   brown-hue,
      :scale [[50 0.977 0.005]
              [100 0.945 0.011]
              [150 0.92 0.02]
@@ -654,7 +668,8 @@
     {:accent   (f accent "blue")
      :positive (f positive "green")
      :negative (f negative "red")
-     :warning  (f warning "yellow")
+    ;;  :warning  (f warning "yellow")
+     :warning  (f warning "gold")
      :neutral  (f neutral "gray")}))
 
 
@@ -692,31 +707,6 @@
           (apply concat))))
 
 
-;; This version resolves colorways from user theme
-;; If used, take out :alias entries from oklch-colors and oklch-colors-expanded
-(def oklch-colors-flattened2
-  (!? :pp
-     (let [colorways-by-colorname (!? (reduce-kv (fn [m k v]
-                                               (assoc m (name v) (name k)))
-                                             {} 
-                                             colorways))]
-       (->> (for [[color-name m]
-                  oklch-colors-expanded]
-              (do (!? color-name)
-                  (let [m+        (-> m 
-                                      (assoc :color-name color-name))
-                        ret       (color-token-scale m+)
-                        alias     (get colorways-by-colorname color-name)
-                        alias-ret (!? color-name
-                                      (when alias
-                                        (color-token-scale (assoc m+ :alias alias))))]
-                    (if (seq alias-ret)
-                      (concat ret alias-ret)
-                      ret))))
-            (apply concat)
-            (apply concat)))))
-
-
 ;; to be used at repl to expand scales of oklch colors to create the
 ;; oklch-colors-expanded def in this ns
 (defn oklch-colors-expanded* []
@@ -744,32 +734,140 @@
             [color-name (assoc m :scale expanded)])
           (apply concat)
           (into []))))
-
 ;; (!? :pp (oklch-colors-expanded*))
 
-(def foreground-colors-oklch-flattened 
-  (let [l    650
-        d    350
-        coll ["accent"   [l d]
-              "warning"  [l d]
-              "positive" [l d]
-              "negative" [l d]
-              "gray"     [l d]
-              "purple"   [l d]
-              "blue"     [l d]
-              "green"    [l d]
-              "lime"     [l d]
-              "yellow"   [l d]
-              "gold"     [l d]
-              "orange"   [l d]
-              "red"      [l d]
-              "magenta"  [l d]
-              "brown"    [l d]]]
-    (reduce-kv (fn [acc k [l d]]
-                 (conj acc
-                       (str "--foreground-color-" k)
-                       (str "--" k "-" l)
-                       (str "--foreground-color-" k "-dark-mode")
-                       (str "--" k "-" d)))
+
+;; This version resolves colorways from user theme
+;; If used, take out :alias entries from oklch-colors and oklch-colors-expanded
+(def oklch-colors-flattened2
+  (!? :pp
+     (let [colorways-by-colorname (!? (reduce-kv (fn [m k v]
+                                               (assoc m (name v) (name k)))
+                                             {} 
+                                             colorways))]
+       (->> (for [[color-name m]
+                  oklch-colors-expanded]
+              (do (!? color-name)
+                  (let [m+        (-> m 
+                                      (assoc :color-name color-name))
+                        ret       (color-token-scale m+)
+                        alias     (get colorways-by-colorname color-name)
+                        alias-ret (!? color-name
+                                      (when alias
+                                        (color-token-scale (assoc m+ :alias alias))))]
+                    (if (seq alias-ret)
+                      (concat ret alias-ret)
+                      ret))))
+            (apply concat)
+            (apply concat)))))
+
+
+(defn color-token-pair [k cw s light-or-dark light-or-dark-key]
+  [(str (if (= k :fg) "--foreground-color-" "--background-color-")
+        cw
+        s
+        (when (= light-or-dark-key :dark) "-dark-mode"))
+   (str "var(--" cw "-" light-or-dark ")")])
+
+(def theming-colors-oklch-flattened 
+  (let [
+        fg-l        650
+        fg-d        250
+        fg-2-l      700
+        fg-2-d      150
+        fg-3-l      750
+        fg-3-d      100
+
+        bg-soft      50
+        bg-soft-d   850
+        bg-soft-2   100
+        bg-soft-2-d 750
+        bg-soft-3   150
+        bg-soft-3-d 650
+
+        bg-hard     650
+        bg-hard-d   400
+        bg-hard-2   700
+        bg-hard-2-d 350
+        bg-hard-3   750
+        bg-hard-3-d 300
+
+        standard    [fg-l      fg-d
+                     fg-2-l    fg-2-d
+                     fg-3-l    fg-3-d
+                     bg-soft   bg-soft-d  
+                     bg-soft-2 bg-soft-2-d
+                     bg-soft-3 bg-soft-3-d
+                     bg-hard   bg-hard-d  
+                     bg-hard-2 bg-hard-2-d
+                     bg-hard-3 bg-hard-3-d]
+
+        darker      [750 fg-d
+                     800 fg-2-d
+                     850 fg-3-d
+                     100 bg-soft-d  
+                     150 bg-soft-2-d
+                     200 bg-soft-3-d
+                     700 bg-hard-d   
+                     750 bg-hard-2-d
+                     850 bg-hard-3-d]
+
+        blue        [fg-l      fg-d
+                     fg-2-l    fg-2-d
+                     fg-3-l    fg-3-d
+                     bg-soft   bg-soft-d  
+                     bg-soft-2 bg-soft-2-d
+                     bg-soft-3 bg-soft-3-d
+                     bg-hard   350  
+                     bg-hard-2 300
+                     bg-hard-3 250]
+
+        coll        ["accent"   blue
+                     "warning"  darker
+                     "positive" standard
+                     "negative" standard
+                     "neutral"  darker
+                     "gray"     darker
+                     "purple"   standard
+                     "blue"     blue
+                     "green"    standard
+                     "lime"     standard
+                     "yellow"   darker
+                     "gold"     standard
+                     "orange"   standard
+                     "red"      standard
+                     "magenta"  standard
+                     "brown"    standard]
+
+        f (fn [[cw k s light dark]]
+            (->> (color-token-pair k cw s light :light)
+                 (concat (color-token-pair k cw s dark :dark))
+                 (into [])))]
+
+    (reduce-kv (fn [acc colorway [fg-l      fg-d
+                                  fg-2-l    fg-2-d
+                                  fg-3-l    fg-3-d
+                                  bg-soft   bg-soft-d  
+                                  bg-soft-2 bg-soft-2-d
+                                  bg-soft-3 bg-soft-3-d
+                                  bg-hard   bg-hard-d  
+                                  bg-hard-2 bg-hard-2-d
+                                  bg-hard-3 bg-hard-3-d
+                                  ]]
+                 (apply conj 
+                        acc 
+                        (mapcat f
+                                [[colorway :fg nil fg-l fg-d]
+                                 [colorway :fg "-2" fg-2-l fg-2-d]
+                                 [colorway :fg "-3" fg-3-l fg-3-d]
+                                 [colorway :bg "-soft" bg-soft bg-soft-d]
+                                 [colorway :bg "-soft-2" bg-soft-2 bg-soft-2-d]
+                                 [colorway :bg "-soft-3" bg-soft-3 bg-soft-3-d]
+                                 [colorway :bg "-hard" bg-hard bg-hard-d]
+                                 [colorway :bg "-hard-2" bg-hard-2 bg-hard-2-d]
+                                 [colorway :bg "-hard-3" bg-hard-3 bg-hard-3-d]
+                                 ])))
                [] 
                (apply array-map coll))))
+
+(!? :pp theming-colors-oklch-flattened)
