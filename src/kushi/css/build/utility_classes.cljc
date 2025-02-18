@@ -292,17 +292,39 @@
                                   :before:bottom   0
                                   :before:left     0}
 
+   :before-absolute-inline-end-outside    {:before:position           :absolute
+                                           :before:top                :50%
+                                           :before:bottom             :unset
+                                           :before:inset-inline-start :100%
+                                           :after:inset-inline-end    :unset
+                                           :before:translate          :0:-50%}
+
+   :before-absolute-inline-start-outside  {:before:position          :absolute
+                                           :before:top               :50%
+                                           :before:bottom            :unset
+                                           :before:inset-inline-end  :100%
+                                           :after:inset-inline-start :unset
+                                           :before:translate         :0:-50%}
+
+   :after-absolute-inline-end-outside     {:after:position           :absolute
+                                           :after:top                :50%
+                                           :after:bottom             :unset
+                                           :after:inset-inline-start :100%
+                                           :after:inset-inline-end   :unset
+                                           :after:translate          :0:-50%}
+
+   :after-absolute-inline-start-outside   {:after:position           :absolute
+                                           :after:top                :50%
+                                           :after:inset-inline-end   :100%
+                                           :after:inset-inline-start :unset
+                                           :after:translate          :0:-50%}
+
    :absolute-inline-start-inside {:position           :absolute
                                   :inset-inline-start "0%"
                                   :inset-inline-end   :unset
                                   :inset-block-start  "50%"
                                   :translate          "0px -50%"}
 
-   :absolute-inline-end-inside   {:position           :absolute
-                                  :inset-inline-start :unset
-                                  :inset-inline-end   "0%"
-                                  :inset-block-start  "50%"
-                                  :translate          "0px -50%"}
 
    :absolute-block-start-inside  {:position           :absolute
                                   :inset-block-start  "0%"
