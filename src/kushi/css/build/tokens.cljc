@@ -170,21 +170,18 @@
 
    {:family   "Transparent neutrals colors"
     :category ["transparent-colors"]
-    :tags     ["colors" "oklch" "neutrals" "transparent"]
-    }
+    :tags     ["colors" "oklch" "neutrals" "transparent"]}
    colors2/transparent-neutrals-oklch
 
    {:family   "Colors"
     :category ["colors"]
-    :tags     ["colors" "oklch"]
-    }
+    :tags     ["colors" "oklch"]}
    colors2/oklch-colors-flattened2
 
    {:family   "Foreground colors"
     :category ["foreground-colors"]
-    :tags     ["colors" "oklch" "foreground"]
-    }
-   colors2/foreground-colors-oklch-flattened
+    :tags     ["colors" "oklch" "foreground"]}
+   colors2/theming-colors-oklch-flattened
 
    ;; TODO - make sure these always get written
    {:family   "Global colors"
