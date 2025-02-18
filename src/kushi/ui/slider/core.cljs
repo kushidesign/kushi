@@ -257,7 +257,8 @@
            labels-attrs
            step-marker
            step-label-suffix
-           display-step-labels?]}]
+           display-step-labels?
+           step-label-display-fn]}]
   (into [:div
          (merge-attrs
           {:style (let [step-label-display
@@ -276,7 +277,10 @@
               last-int (dec num-steps)]
           (map-indexed
            (fn [idx step]
-             (let [calcpct              (str "( (100% - var(--kushi-input-slider-thumb-width)) / " last-int ")")
+             (let [step-display         (if step-label-display-fn
+                                          (step-label-display-fn step)
+                                          step)
+                   calcpct              (str "( (100% - var(--kushi-input-slider-thumb-width)) / " last-int ")")
                    inset-inline-start   (str "calc(" calcpct " * " idx "  + ( var(--kushi-input-slider-thumb-width) / 2)  )")
                    default-index?       (= idx default-index)
                    label-selected-class (when default-index? label-selected-class)
@@ -329,7 +333,7 @@
                   :class (css ".kushi-slider-step-label-inner"
                               :.absolute-centered
                               :translate--$right-or-left-most)}
-                 (str step step-label-suffix)]]))
+                 (str step-display step-label-suffix)]]))
            steps))))
 
 (defn on-change [label-selected-class label-id e]
@@ -384,6 +388,10 @@
             :pred    string?
             :default nil
             :desc    "String to postpend to step value label, e.g. `\"px\"`"}
+           {:name    step-label-display-fn
+            :pred    fn?
+            :default nil
+            :desc    "Function which takes the current step, (usually a number), and transforms the value for display."}
            {:name    display-step-labels?
             :pred    boolean?
             :default false
@@ -407,6 +415,7 @@
                  labels-attrs
                  step-marker
                  step-label-suffix
+                 step-label-display-fn
                  display-step-labels?]
          steps* :steps
          :or    {display-step-labels? true}}
@@ -464,6 +473,7 @@
                      :labels-attrs         labels-attrs
                      :step-marker          step-marker
                      :step-label-suffix    step-label-suffix
+                     :step-label-display-fn step-label-display-fn
                      :display-step-labels? display-step-labels?
                      }]
 
