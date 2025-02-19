@@ -18,7 +18,7 @@
  "modal")
 
 (register-design-tokens
- :--dark-gray-transparent-90)
+ :--transparent-dark-gray-90)
 
 (declare close-on-backdrop-click)
 
@@ -59,7 +59,7 @@
    ))
 
 (defn modal-close-button
-  {:desc ["The `modal-close-button` is meant to be a cta for closing a modal that is independant of other button groups that may be in the modal."
+  {:desc ["The `modal-close-button` is meant to be a cta for closing a modal that is independent of other button groups that may be in the modal."
           "It is typically a single × icon positioned in the upper right or left corner of the dialog."]
    :opts '[{:name    icon
             :pred    keyword?
@@ -82,6 +82,7 @@
     [button
      (merge-attrs
       {:-shape        :pill
+       :-surface      :minimal
        :class         (css
                        ".kushi-modal-close-button"
                        {:fs                 :$large
@@ -151,7 +152,7 @@
                           "0 0 0 100vmax var(--modal-backdrop-color)")
         dark-box-shadow (str
                          "var(--modal-box-shadow-dark-mode), "
-                         "0 0 0 100vmax var(--dark-gray-transparent-90)")]
+                         "0 0 0 100vmax var(--transparent-dark-gray-90)")]
 
     ;; TODO document the how and why of this
     (when expanded? (js/setTimeout #(open-kushi-modal id) 100))

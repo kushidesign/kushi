@@ -83,7 +83,7 @@
                              "🐻‍❄"]]
                            [:section (sx :.flex-col-sa) 
                             [:p (sx :fs--1.25em :fw--$wee-bold) "Polar Bear"] 
-                            [:p (sx :c--$neutral-secondary-foreground) "polar.bear@example.com"]]]]})}
+                            [:p (sx :.foreground-color-secondary!) "polar.bear@example.com"]]]]})}
    
 
 

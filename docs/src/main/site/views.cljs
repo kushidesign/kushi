@@ -74,16 +74,6 @@
              "Button"]))
    ])
 
-;; Test tags
-;; Test callouts
-;; Test switches
-;; Test any other themeables
-;; Fire up full demo
-
-;; Clean up ui_theming file
-;; Merge branch
-;; Look at todo
-;; Theming
 
 (defn button-dev-samples []
   (defcss ".button-dev-grid"
@@ -502,21 +492,64 @@
                                           :-colorway    colorway
                                           :-icon        [icon :info]})])))))))
 
+(defn slider3-handler [e]
+  (let [parent                   (-> e domo/cet domo/parent)
+        label-el                 (-> e domo/cet domo/previous-element-sibling)
+        as-int                   (js/parseInt (domo/cetv e))   
+        iis**                    (/ as-int 100)
+        iis                      (str (* 100 iis**) "%")
+        slider-midpoint-fraction (* 2 (js/Math.abs (- 0.5 iis**)))
+        midpoint-plus-minus-op   (if (<= as-int 50) "+" "-")]
+    (set! (.-textContent label-el) as-int)
+    (domo/set-css-var! parent "--iis" iis)
+    (domo/set-css-var! parent "--slider-midpoint-fraction" slider-midpoint-fraction)
+    (domo/set-css-var! parent "--midpoint-plus-minus-op" midpoint-plus-minus-op)))
 
+(defn slider3 []
+  [:div (merge-attrs 
+         (sx :w--700px
+             :.flex-col-fs
+             :.relative)) 
+   [:div 
+    (sx :.red-debug
+        {
+        ;;  :c         :$red-500 ;;  :bgc       :$red-900
+         :c         :white
+         :content   :$n
+         :position  :absolute
+         :bottom    :100%
+         :fs        :40px
+         :left      :$iis||0%
+         :width     :fit-content
+         :translate "calc(-50% var(--midpoint-plus-minus-op, +) (var(--slider-midpoint-fraction, 1) * (var(--kushi-input-slider-thumb-width) / 2)))" 
+         })
+    0 #_"🔴"]
+   [:input.kushi-slider-input 
+    {:min          0
+     :max          100
+     :defaultValue 0
+     :type         :range
+     :on-change    slider3-handler}]])
+
+       
 (defn pane-samples []
   [:<> 
    [light-dark-mode-switch (sx :.fixed-block-start-inside :.light :.transition)]
-   [:div (sx :.absolute-block-start
+   [:div (sx #_:.absolute-block-start
+             :.absolute-centered
              :.flex-col-fs
              :gap--1rem
              :mbs--3rem
              :mis--2rem)
+
+    [slider3]
+
     #_[pallette-generator]
 
     #_[hsl+oklch-color-grid]
     #_[hsl+oklch-color-grid2]
 
-    [button-dev-samples]
+    #_[button-dev-samples]
     #_[tag-dev-samples]
     #_[switch-dev-samples]
     #_[callout-dev-samples]
@@ -637,9 +670,11 @@
      )
    2000)
 
-  #_[pane-samples]
+  
 
-  (into 
+  [pane-samples]
+
+  #_(into 
    [:div (sx :.flex-col-fs)
     [nav/header]
     ;; Spinner between page transitions

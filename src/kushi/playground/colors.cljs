@@ -144,10 +144,8 @@
 
         ;; TODO - refactor hsl css-var stuff below
         (for [[k v color-level] scale
-              :let  [hsl (if (number? v) (str v) (name v))
-                    ;;  _ (? :result [k v color-level])
-                     color-token (str "var(--" (name color-name) "-" color-level ")")
-                     ]]
+              :let  [hsl         (if (number? v) (str v) (name v))
+                     color-token (str "var(--" (name color-name) "-" color-level ")")]]
           ^{:key hsl}
           [:div {:style (css-vars-map row-height color-token hsl)
                  :class (css :.flex-row-fs

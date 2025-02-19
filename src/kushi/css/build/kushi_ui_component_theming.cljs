@@ -2,7 +2,6 @@
   (:require
    [kushi.css.build.macros :refer [defcss]]))
 
-
 (defcss
   "body"
   {"font-family" "var(--sans-serif-font-stack)",
@@ -83,14 +82,6 @@
 (defcss
   ".kushi-radio-input:focus-visible"
   {"box-shadow" "0 0 0 4px rgba(0, 125, 250, 0.6)"})
-
-(defcss
-  ".neutral-secondary-foreground"
-  {"color" "var(--neutral-secondary-foreground)"})
-
-(defcss
-  ".dark .neutral-secondary-foreground"
-  {"color" "var(--neutral-secondary-foreground-dark-mode)"})
 
 (defcss ".kushi-tag" {"font-family" "var(--primary-font-family)"})
 
@@ -981,58 +972,20 @@
 (defcss
   ":root"
   {
-   ;; Delete these start
-   "--semantic-element-outer-box-shadow-blur-length"    "0px",
-   "--semantic-element-box-outer-box-shadow-strength"   "30%",
-   "--semantic-element-outer-box-shadow-2-blur-length"  "20px",
-   "--semantic-element-box-outer-box-shadow-2-strength" "00%",
-   ;; Delete these end
-   
    "--debug-grid-size"                                  "107px",
    "--debug-grid-color"                                 "#eee",
-  ;;  "--new-purple-hue"                                   "330",
-  ;;  "--new-green-hue"                                    "145",
-  ;;  "--new-red-hue"                                      "20",
-
-  ;;  "--red-lightness-shift"                              "-7%",
-
-  ;;  "--new-yellow-hue"                                   "94",
-
-  ;;  "--yellow-lightness-shift"                           "5%",
-
-  ;;  "--new-blue-hue"                                     "265",
-
-  ;;  "--blue-c-shift"                                     "0.08",
-
-  ;;  "--positive-hue"                                     "var(--green-hue-oklch)",
-  ;;  "--negative-hue"                                     "var(--red-hue-oklch)",
-
-  ;;  "--negative-lightness-shift"                         "var(--red-lightness-shift)",
-
-  ;;  "--warning-hue"                                      "var(--yellow-hue-oklch)",
-
-  ;;  "--warning-lightness-shift"                          "var(--yellow-lightness-shift)",
-
-  ;;  "--accent-hue"                                       "var(--new-blue-hue)",
-  ;;  "--neutral-hue"                                      "var(--new-blue-hue)",
-
-  ;;  "--accent-c-shift"                                   "-0.08",
-
    "--outlined-element-stroke-width"                    "1px"
    "--outlined-button-stroke-width"                     "var(--outlined-element-stroke-width)"
    "--outlined-tag-stroke-width"                        "var(--outlined-element-stroke-width)"
    "--outlined-callout-stroke-width"                    "var(--outlined-element-stroke-width)"
-
    "--button-padding-inline-compact"                    "0.8em",
    "--button-padding-inline"                            "1.2em",
    "--button-padding-inline-roomy"                      "1.5em",
    "--button-padding-block-compact"                     "0.42em",
    "--button-padding-block"                             "0.67em",
    "--button-padding-block-roomy"                       "0.8666em"
-
    "--icon-button-padding-inline"                        :$button-padding-block,
    "--icon-button-padding-block"                         :$button-padding-block,
-
    ;; Use or not use -ems ?
    "--tag-padding-block-start-reduction-ratio"          "0.9",
    "--tag-padding-block-start"                          "0.27em",
@@ -1041,8 +994,7 @@
    "--tag-padding-block-compact"                        "0.20em",
    "--tag-padding-inline-compact"                       "0.45em",
    "--tag-padding-block-roomy"                          "0.45em",
-   "--tag-padding-inline-roomy"                         "0.9em"
-   })
+   "--tag-padding-inline-roomy"                         "0.9em"})
 
 (defcss
   "[data-kui-colorway=\"neutral\"]"
@@ -1067,8 +1019,7 @@
                                          :active:bgc   :$background-color-neutral-hard-3}
    "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-neutral-hard-dark-mode
                                          :hover:bgc  :$background-color-neutral-hard-2-dark-mode
-                                         :active:bgc :$background-color-neutral-hard-3-dark-mode}
-   })
+                                         :active:bgc :$background-color-neutral-hard-3-dark-mode}})
 
 (defcss
   "[data-kui-colorway=\"accent\"]"
@@ -1093,8 +1044,7 @@
                                          :active:bgc   :$background-color-accent-hard-3}
    "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-accent-hard-dark-mode
                                          :hover:bgc  :$background-color-accent-hard-2-dark-mode
-                                         :active:bgc :$background-color-accent-hard-3-dark-mode}
-   })
+                                         :active:bgc :$background-color-accent-hard-3-dark-mode}})
 
 (defcss
   "[data-kui-colorway=\"positive\"]"
@@ -1119,8 +1069,7 @@
                                          :active:bgc :$background-color-positive-hard-3}
    "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-positive-hard-dark-mode
                                          :hover:bgc  :$background-color-positive-hard-2-dark-mode
-                                         :active:bgc :$background-color-positive-hard-3-dark-mode}
-   })
+                                         :active:bgc :$background-color-positive-hard-3-dark-mode}})
 
 (defcss
   "[data-kui-colorway=\"negative\"]"
@@ -1145,8 +1094,7 @@
                                          :active:bgc   :$background-color-negative-hard-3}
    "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-negative-hard-dark-mode
                                          :hover:bgc  :$background-color-negative-hard-2-dark-mode
-                                         :active:bgc :$background-color-negative-hard-3-dark-mode}
-   })
+                                         :active:bgc :$background-color-negative-hard-3-dark-mode}})
 
 (defcss
   "[data-kui-colorway=\"warning\"]"
@@ -1171,8 +1119,7 @@
                                          :active:bgc :$background-color-warning-hard-3}
    "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-warning-hard-dark-mode
                                          :hover:bgc  :$background-color-warning-hard-2-dark-mode
-                                         :active:bgc :$background-color-warning-hard-3-dark-mode}
-   })
+                                         :active:bgc :$background-color-warning-hard-3-dark-mode}})
 
 (defcss "[data-kui-surface=\"solid\"]"
   {:color             :white
@@ -1180,190 +1127,22 @@
    :hover:color       :white
    :dark:hover:color  :black
    :active:color      :white
-   :dark:active:color :black
-   })
+   :dark:active:color :black})
 
 (defcss "[data-kui-surface=\"outline\"]"
-  {
-  ;;  :--_bgc-alpha        :0.5
-  ;;  :--_bg-lightness    :94%
-  ;;  :--_fg-lightness    :44%
-
-   :--_stroke-width    :$outlined-element-stroke-width
-
-  ;;  :--_bgc-alpha       0
-  ;;  "[data-kui-colorway]" {:--_bg-chroma :0.05
-  ;;                         :--_fg-chroma :0.24}
-  ;;  "[data-kui-ia]"       {:hover  {:--_bgc-alpha :0.17}
-  ;;                         :active {:--_bgc-alpha :0.23}}
-   })
-
-#_(defcss "[data-kui-surface= \"solid\"]"
- {:color                                     :white
-  ;; ".kushi-switch"                                {:--_bg-lightness-shift :7%}
-  ;; ".kushi-switch[data-kui-colorway=\"warning\"]" {:--_bg-lightness-shift :12%
-  ;;                                                 :--_bg-chroma-shift    :0.085}
-  ;; ".kushi-switch[data-kui-colorway=\"negative\"]" {:--_bg-lightness-shift :6%
-  ;;                                                  :--_bg-chroma-shift    :-0.05}
-  })
+  {:--_stroke-width    :$outlined-element-stroke-width})
 
 (defcss
   "[data-kui-surface]"
-  {
-  ;;  "--_bg-chroma"
-  ;;  "0.0",
-
-  ;;  "--_fg-chroma"
-  ;;  "0.0",
-
-  ;;  "--_color"
-  ;;  "oklch(calc(var(--_fg-lightness) + var(--_fg-lightness-shift, 0%) + var(--_fg-lightness-shift-state, 0%))    calc(var(--_fg-chroma, 0) + var(--_fg-chroma-shift, 0) + var(--_fg-chroma-shift-state, 0))    var(--_hue, 0)  )",
-
-  ;;  "color"
-  ;;  "var(--_color)",
-
-  ;;  "--_background-color"
-  ;;  "oklch(calc(var(--_bg-lightness) + var(--_bg-lightness-shift, 0%) + var(--_bg-lightness-shift-state, 0%))    calc(var(--_bg-chroma, 0) + var(--_bg-chroma-shift, 0) + var(--_bg-chroma-shift-state, 0))    var(--_hue, 0) / var(--_bgc-alpha, 1))",
-
-  ;;  "background-color"
-  ;;  "var(--_background-color)"
-
-   ;; TODO - maybe change --stroke-color to --outline-color ?
-   ;; TODO - maybe add stroke opacity here and use color-mix with transparency?
-  ;;  "--_stroke"
-  ;;  "inset 0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_color))",
-
-   "--_stroke"
+  {"--_stroke"
    "inset 0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, currentColor)"
 
    "[data-kui-stroke-align=\"outside\"]"
     {"--_stroke" "0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, currentColor)"}
    
-  ;;  "--box-shadow-offset-x"
-  ;;  "4px"
-
-  ;;  "--box-shadow-offset-y"
-  ;;  "4px"
-
-  ;;  "--box-shadow-blur-radius"
-  ;;  "0px"
-
-  ;;  "--box-shadow-spread-radius"
-  ;;  "0px"
-
-  ;;  "--_box-shadow-color"
-  ;;  "color-mix(in oklch, var(--box-shadow-color, var(--_color)) var(--box-shadow-strength, 0%), transparent)"
-
-  ;;  "--_box-shadow"
-  ;;  "var(--box-shadow-offset-x) var(--box-shadow-offset-y) var(--box-shadow-blur-radius) var(--box-shadow-spread-radius) var(--_box-shadow-color)"
-
-  ;;  "--box-shadow-2-offset-x"
-  ;;  "4px"
-
-  ;;  "--box-shadow-2-offset-y"
-  ;;  "4px"
-
-  ;;  "--box-shadow-2-blur-radius"
-  ;;  "0px"
-
-  ;;  "--box-shadow-2-spread-radius"
-  ;;  "0px"
-
-  ;;  "--_box-shadow-2-color"
-  ;;  "color-mix(in oklch, var(--box-shadow-2-color, var(--_color)) var(--box-shadow-2-strength, 0%), transparent)"
-
-  ;;  "--_box-shadow-2"
-  ;;  "var(--box-shadow-2-offset-x) var(--box-shadow-2-offset-y) var(--box-shadow-2-blur-radius) var(--box-shadow-2-spread-radius) var(--_box-shadow-2-color)"
-
-  ;;  "box-shadow"
-  ;;  "var(--_stroke), var(--_box-shadow), var(--_box-shadow-2)"
-
    "box-shadow"
-   "var(--_stroke)"
-   })
+   "var(--_stroke)"})
                                      
-                                     
-#_(defcss "[data-kui-ia]"
-  {:hover  {:--_fg-lightness-shift-state :-13%
-            :--_bg-lightness-shift-state :-3%}
-   :active {:--_fg-lightness-shift-state :-23%
-            :--_bg-lightness-shift-state :-8%}})
-
-#_(defcss "[data-kui-colorway][data-kui-ia]"
-  {:hover  {:--_fg-chroma-shift-state :0.06
-            :--_bg-chroma-shift-state :0.03}
-   :active {:--_fg-chroma-shift-state :0.13
-            :--_bg-chroma-shift-state :0.07}})
-
-#_(defcss "[data-kui-surface=\"soft\"]"
-  {:--_bgc-alpha        :0.5
-   :--_bg-lightness     :94%
-   :--_fg-lightness     :44%
-   "[data-kui-colorway]" {:--_bg-chroma :0.05
-                          :--_fg-chroma :0.24}
-   "[data-kui-ia]"       {:hover  {}
-                          :active {}}})
-
-#_(defcss "[data-kui-surface= \"solid\"]"
- {:color                                     :white
-  :--_bg-lightness                           :53%
-  :--_fg-lightness                           :44%
-  "[data-kui-colorway]"                        {:--_bg-chroma :0.27
-                                                :--_fg-chroma :0.24}
-
-  "[data-kui-colorway=\"warning\"]"              {:--_bg-lightness-shift :3.5%
-                                                  :--_bg-chroma-shift    :0.085}
-  ".kushi-switch"                                {:--_bg-lightness-shift :7%}
-  ".kushi-switch[data-kui-colorway=\"warning\"]" {:--_bg-lightness-shift :12%
-                                                  :--_bg-chroma-shift    :0.085}
-  ".kushi-switch[data-kui-colorway=\"negative\"]" {:--_bg-lightness-shift :6%
-                                                   :--_bg-chroma-shift    :-0.05}
-  "[data-kui-ia]"                              {:hover  {:--_bg-lightness-shift-state :-10%}
-                                                :active {:--_bg-lightness-shift-state :-18%}}})
-
-
-#_(defcss ".dark [data-kui-surface= \"solid\"]"
- {:color                                          :black
-  :--_bg-lightness                                :83%
-  :--_fg-lightness                                :44%
-  "[data-kui-colorway]"                           {:--_bg-chroma :0.27
-                                                   :--_fg-chroma :0.24}
-  "[data-kui-colorway=\"warning\"]"               {:--_bg-lightness-shift :3.5%
-                                                   :--_bg-chroma-shift    :0.085}
-  ".kushi-switch"                                 {:--_bg-lightness-shift :7%}
-
-  ".kushi-switch[data-kui-colorway=\"warning\"]"  {:--_bg-lightness-shift :12%
-                                                   :--_bg-chroma-shift    :0.085}
-  ".kushi-switch[data-kui-colorway=\"negative\"]" {:--_bg-lightness-shift :6%
-                                                   :--_bg-chroma-shift    :-0.05}
-  "[data-kui-ia]"                                 {:hover  {:--_bg-lightness-shift-state :10%}
-                                                   :active {:--_bg-lightness-shift-state :8%}}})
-
-#_(defcss "[data-kui-surface=\"outline\"]"
-  {
-  ;;  :--_bgc-alpha        :0.5
-  ;;  :--_bg-lightness    :94%
-  ;;  :--_fg-lightness    :44%
-
-   :--_stroke-width    :$outlined-element-stroke-width
-
-  ;;  :--_bgc-alpha       0
-  ;;  "[data-kui-colorway]" {:--_bg-chroma :0.05
-  ;;                         :--_fg-chroma :0.24}
-  ;;  "[data-kui-ia]"       {:hover  {:--_bgc-alpha :0.17}
-  ;;                         :active {:--_bgc-alpha :0.23}}
-   })
-
-
-#_(defcss "[data-kui-surface=\"minimal\"]"
-  {:--_bg-lightness     :94%
-   :--_fg-lightness     :44%
-   :--_bgc-alpha        :0.0
-   "[data-kui-colorway]" {:--_fg-chroma :0.24
-                          :--_bg-chroma :0.05}
-   "[data-kui-ia]"       {:hover  {:--_bgc-alpha :0.25}
-                          :active {:--_bgc-alpha :0.35}}})
-
 
 (defcss "[data-kui-shape=\"rounded\"]"
   {:border-radius :0.3em})

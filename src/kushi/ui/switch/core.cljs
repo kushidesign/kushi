@@ -135,6 +135,11 @@
           (some-> colorway
                   hue-style-map))
 
+        colorway-attr
+        (some-> (or semantic-colorway
+                  (when hue-style-map ""))
+              (data-kui- :colorway))
+
         disabled?                  
         (util/html-attr? opts :disabled)
         ]
@@ -170,12 +175,10 @@
 
        [".kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color]
        [".kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover]
-
+       
        )
 
-      (some-> (or semantic-colorway
-                  (when hue-style-map ""))
-              (data-kui- :colorway))
+      colorway-attr
 
       {:disabled         disabled?
        :role             :switch
@@ -201,12 +204,15 @@
 
      [:div
       (merge-attrs
+       colorway-attr
+       {:data-kui-shape :pill}
        (sx
         ".kushi-switch-thumb"
-        [:--width :$thumb-height]
         :.transition
+        [:--width :$thumb-height]
         :transition-duration--$xxfast
-        :.pill
+        :border-color--currentColor
+        ["has-ancestor(.kushi-switch[aria-checked='false']):border-color" "color-mix(in srgb, currentColor, transparent)"]
         :cursor--pointer
         :bgc--$transparent-white-100
         :box-shadow--0:2px:6px:0:$transparent-black-15

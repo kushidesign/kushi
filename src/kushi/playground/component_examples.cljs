@@ -144,24 +144,6 @@
    s])
 
 
-;; #_(defn section-label-vertical
-;;   "Renders a vertical label"
-;;   [s]
-;;   [:p (sx :.xxsmall
-;;           :c--$neutral-secondary-foreground
-;;           :min-width--55px
-;;           {:style {:writing-mode :vertical-lr
-;;                    :text-orientation :upright
-;;                    :text-transform :uppercase
-;;                    :font-weight :800
-;;                    :color :#7d7d7d
-;;                    :font-family "JetBrains Mono"
-;;                    :text-align :center
-;;                    :background-image "linear-gradient(90deg, #e3e3e3, #e3e3d3 1px, transparent 1px)"
-;;                    :background-position-x :1ch}})
-;;    [:span (sx :bgc--white :pi--0.5em) s]])
-
-
 (declare component-snippets)
 (declare reqs-coll)
 

@@ -54,8 +54,8 @@
 
 (defcss ":root" 
   {:--kushi-input-slider-track-background-color      :silver
-   :--kushi-input-slider-thumb-width                 :1em
-   :--kushi-input-slider-thumb-height                :1em
+   :--kushi-input-slider-thumb-width                 :48px
+   :--kushi-input-slider-thumb-height                :48px
    :--kushi-input-slider-thumb-border-radius         :$kushi-input-slider-thumb-width
    :--kushi-input-slider-thumb-margin-top            "calc( var(--kushi-input-slider-thumb-height) / -2)"
    :--kushi-input-slider-thumb-outline-width-ratio   :3

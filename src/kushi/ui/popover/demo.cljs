@@ -6,7 +6,7 @@
    [kushi.ui.text-field.core :refer [text-field]]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.button.core :refer [button icon-button]]
    [kushi.ui.popover.core :refer [popover-attrs]]
    [reagent.dom :as rdom]))
 
@@ -49,28 +49,26 @@
       :-label           "Depth"
       :-label-placement :inline}]]
 
-   [button
+   [icon-button
     (merge-attrs
+     {:on-click dismiss-popover!
+      :-shape   :pill
+      :-surface :minimal}
      (sx :.kushi-popover-close-button
          :.neutral
-         :.minimal
-         :.pill
          :.top-right-corner-inside
-         :position--absolute
-         :fs--$small
-         :zi--1
-         [:--icon-button-padding-inline-ems :0.4em]
-         [:opacity                         :$popover-close-button-opacity]
-         [:--button-padding-block-ems       :$icon-button-padding-inline-ems]
-         [:margin-inline                   :$popover-close-button-margin-inline||$icon-button-padding-inline-ems]
-         [:margin-block                    :$popover-close-button-margin-block||$icon-button-padding-inline-ems])
-     {:on-click dismiss-popover!})
+         {:position      :absolute
+          :fs            :$small
+          :zi            1
+          :opacity       :$popover-close-button-opacity
+          :margin-inline :$popover-close-button-margin-inline||$icon-button-padding-inline-ems
+          :margin-block  :$popover-close-button-margin-block||$icon-button-padding-inline-ems}))
     [icon mui.svg/close]]])
 
 
 
 (def examples
-  (let [row-attrs (sx :_.kushi-button:fs--$small)]
+  (let [row-attrs (sx :_.kui-button:fs--$small)]
     [(let [code (sx-call (popover-attrs
                           {:-f (fn [popover-el]
                                  (rdom/render 

@@ -486,7 +486,7 @@
                :d--none
                :cursor--not-allowed
                [:w "calc(100% - 27px)"]
-               :bgc--$white-transparent-50)]
+               :bgc--$transparent-white-50)]
      [:label (sx :.tweaker-control-label
                  :min-width--180px
                  [:ff (when css-prop :$code-font-stack)]

@@ -1,10 +1,12 @@
 (ns kushi.playground.component-docs
-  (:require [clojure.string :as string]
-            [clojure.walk :as walk]
-            [kushi.core :refer (sx css-vars-map css)]
-            [kushi.playground.util :as util]
-            [kushi.ui.label.core :refer [label]]
-            [markdown-to-hiccup.core :as md->hc]))
+  (:require
+   [clojure.string :as string]
+   [clojure.walk :as walk]
+   [fireworks.core :refer [?]]
+   [kushi.core :refer (sx ?sx css-vars-map css ?css)]
+   [kushi.playground.util :as util]
+   [kushi.ui.label.core :refer [label]]
+   [markdown-to-hiccup.core :as md->hc]))
 
 
 (defn add-links
@@ -72,12 +74,11 @@
       (symbol? v)
       [:span.code (name v)])))
 
-
 (defn opt-detail [text v f kw]
   [:div
    (let [ai (if (= text "Desc.") :flex-start :center)]
      {:style (css-vars-map ai)
-      :class (css :.flex-row-fs :ai--$ai)})
+      :class (css :.flex-row-fs :align-items--$ai)})
    [:div
     (sx :.kushi-opt-detail-label :min-width--75px)
     [label (sx :.kushi-playground-meta-desc-label

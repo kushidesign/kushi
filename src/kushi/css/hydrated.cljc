@@ -3,14 +3,13 @@
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.walk :refer [prewalk]]
+   [fireworks.core :refer [?]]
+   [fireworks.macros :refer [keyed]]
    [kushi.css.defs :as defs]
    [kushi.css.media :as media]
    [kushi.css.shorthand :as shorthand]
    [kushi.css.specs :as specs]
-   [kushi.util :refer [keyed
-                       vec-of-vecs?
-                       more-than-one?
-                       partition-by-pred]]))
+   [kushi.util :refer [more-than-one? partition-by-pred vec-of-vecs?]]))
 
 ;; TODO - would there ever be any quoted backticks in css val?
 (defn str+ [s]
@@ -61,6 +60,11 @@
              (string/join ", "))]
         ret))
 
+(defn runtime-vars-hydrated [nv]
+  (let [runtime-vars-hydrated (str+ nv)
+        ret                   (hydrated-css-var runtime-vars-hydrated)]
+    ret))
+
 (defn hydrated-val 
   [p v]
   (let [nv (as-str v)
@@ -68,14 +72,8 @@
     (if-let [m (and (not (re-find #"[-: ]" nv))
                     (get-in shorthand/shorthand-syntax
                             [:enums np]))]
-      (get m nv nv)
-
-      (let [runtime-vars-hydrated
-            (str+ nv)
-
-            ret
-            (hydrated-css-var runtime-vars-hydrated)]
-        ret))))
+      (get m nv (runtime-vars-hydrated nv))
+      (runtime-vars-hydrated nv))))
 
 (defn hydrated-prop 
   [v]
@@ -413,6 +411,7 @@
           ;; An alternate approach would be stack-with-bunched. 
           nested-stack* (stack-unbunched stack*)
           ret           (nested-stack nested-stack* v prop?)]
+
       ;; (!?
       ;;  (keyed [x
       ;;          v
@@ -423,6 +422,7 @@
       ;;          stack*
       ;;          nested-stack*
       ;;          ret]))
+
       ret)
 
     (if-let [mod (let [mod (when (vector? x) (nth x 0 nil))]
@@ -435,6 +435,7 @@
         ;; Just the prop and value, hydrated
         (let [hp (hydrated-prop (nth x 0 nil))]
           [hp
+           ;; This should hydrate css-vars like :$wtf
            (hydrated-val hp (nth x 1 nil))])
 
         ;; Return vector of hydrated-style-vecs

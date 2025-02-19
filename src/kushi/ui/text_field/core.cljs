@@ -26,23 +26,23 @@
                 start-enhancer
                 end-enhancer
                 ;; TODO - change this out when new theming comes in
-                semantic
+                colorway
                 textarea?]}     
         opts]
     [:div
      (merge-attrs
+      {:data-kui-colorway colorway}
       (sx
        ".kushi-text-input-wrapper"
-       semantic
        :.flex-row-fs
        [:bc
         "color-mix(in srgb, currentColor var(--text-input-border-intensity, 75%), transparent)"]
        [:dark:bc
         "color-mix(in srgb, currentColor var(--text-input-border-intensity-dark-mode, 55%), transparent)"]
        ["focus-within:bgc"
-        "var(--white-transparent-70)!important"]
+        "var(--transparent-white-70)!important"]
        ["dark:focus-within:bgc"
-        "var(--black-transparent-20)!important"]
+        "var(--transparent-black-20)!important"]
        [:focus-within:c
         :currentColor!important]
        [:focus-within:bc
@@ -55,8 +55,8 @@
        :bw--1px
        :bs--solid
        :border-radius--$text-input-border-radius
-       :bgc--$white-transparent-70
-       :dark:bgc--$black-transparent-20
+       :bgc--$transparent-white-70
+       :dark:bgc--$transparent-black-20
        :_textarea:border-radius--$text-input-border-radius
        :_input:border-radius--$text-input-border-radius)
       wrapper-attrs)
@@ -149,7 +149,7 @@
             :desc    ["The text for `:.kushi-text-input-helper` label."
                       "If used, this should give the user actionable information about the value of the associated input field."]}
 
-           {:name    semantic
+           {:name    colorway
             :pred    #{:neutral :accent :positive :negative :warning}
             :default nil
             :desc    ["The text for `:.kushi-text-input-helper` label."
@@ -168,7 +168,7 @@
                 start-enhancer
                 end-enhancer
                 helper
-                semantic
+                colorway
                 textarea?]
          :or   {label " "}}         
         opts
@@ -184,22 +184,22 @@
         (= :inline label-placement)
 
         label-text-attrs   
-        (sx ".kushi-text-input-label-text"
-            semantic
-            :.minimal
-            :.info
-            :d--block
-            :.small
-            :fw--$wee-bold
-            :hover:bgc--transparent!important
-            :active:bgc--transparent!important)
+        {:class              (css ".kushi-text-input-label-text"
+                                  :.minimal
+                                  :.info
+                                  :d--block
+                                  :.small
+                                  :fw--$wee-bold
+                                  :hover:bgc--transparent!important
+                                  :active:bgc--transparent!important)
+         :data-kui-colorway colorway}
 
         helper-label-attrs
         (when helper
           (merge-attrs
            label-text-attrs
            (sx ".kushi-text-input-helper"
-               :.neutral-secondary-foreground
+               :.foreground-color-secondary
                :.inline-block
                :fw--$normal
                :mbs--$text-input-helper-margin-block-start||0.3em)
@@ -207,11 +207,11 @@
 
         wrapped-input
         [text-field* (merge attrs
-                            {:-wrapper-attrs  wrapper-attrs
-                             :-start-enhancer start-enhancer
-                             :-end-enhancer   end-enhancer
-                             :-semantic       semantic
-                             :-textarea?      textarea?})]
+                            {:-wrapper-attrs    wrapper-attrs
+                             :-start-enhancer   start-enhancer
+                             :-end-enhancer     end-enhancer
+                             :data-kui-colorway colorway
+                             :-textarea?        textarea?})]
 
         label-with-attrs
         [:label

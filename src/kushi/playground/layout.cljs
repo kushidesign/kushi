@@ -180,16 +180,6 @@
   [playground-components]
   [:<> 
    [:div
-    #_{:ref (fn [el]
-            (when (? el)
-              (domo/observe-intersection 
-               (let [f (partial swap!
-                                state/*playground
-                                assoc
-                                :playground-intro-intersecting?)]
-                 {:element          el
-                  :not-intersecting #(f false)
-                  :intersecting     #(f true)}))))}
     [about/component-playground-about]
     [:div [divisor]]]
 

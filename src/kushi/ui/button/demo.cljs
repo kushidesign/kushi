@@ -106,11 +106,11 @@
                           :args  ["Pets" [icon :pets]]
                           :attrs {:-colorway :accent}})}
 
-     {:desc            "Semantic variants"
+     {:desc            "Colorway variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
-      :snippets-header ["Use the `data-kui-colorway` attributes `:neutral`, `:.accent`, `:.positive`, `:.warning`, and `:.negative` to control the semantic color variant."
+      :snippets-header ["Use the `data-kui-colorway` attributes `:neutral`, `:accent`, `:positive`, `:warning`, and `:negative` to control the semantic color variant."
                         :br
                         :br
                         "The default is `:neutral`."]                        

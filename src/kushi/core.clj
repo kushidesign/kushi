@@ -360,11 +360,11 @@
         vectorized           (unpack-pvs list-of-vecs)]
 
     (!? (keyed [coll
-                conformed-map 
-                untokenized   
-                top-level-maps->vecs  
-                list-of-vecs            
-                vectorized]))              
+               conformed-map 
+               untokenized   
+               top-level-maps->vecs  
+               list-of-vecs            
+               vectorized]))              
 
     {:conformed-map conformed-map
      :vectorized    vectorized}))
@@ -678,7 +678,7 @@
         (some->> conformed-args
                  css-block*
                  :css-block)]
-    (!? (keyed [args &form &env fname sel invalid-args]))
+    (keyed [args &form &env fname sel conformed-args invalid-args])
     (when (seq invalid-args)
       (cssrule-args-warning
        {:fname             fname
