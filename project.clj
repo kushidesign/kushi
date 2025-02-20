@@ -15,7 +15,7 @@
                         [babashka/process "0.5.22"]
                         [borkdude/edamame "1.4.27"]
                         ;; for testing & profiling
-                        #_[com.taoensso/tufte "2.6.3"]                
+                        ;; [com.taoensso/tufte "2.6.3"]                
                         ]
   :repl-options        {:init-ns kushi.core}
   :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
