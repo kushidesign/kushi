@@ -17,34 +17,37 @@
    [clojure.java.io :as io]
    [clojure.set :as set]
    [clojure.spec.alpha]
-   [tick.core :as tick]))
+  ;;  [tick.core :as tick]
+   ))
 
 
 ;; Perf Timing -----------------------------------------------------------------
-(def add-ticks? false)
+;; (def add-ticks? false)
 
-(def ticks (atom [(tick/instant)]))
+;; (def ticks (atom [(tick/instant)]))
         
-(defn tick-msg
-  ([msg a b]
-   (tick-msg msg a b nil))
-  ([msg a b id]
-   (let [ms      (tick/between a b :millis)
-         seconds (format "%.2f" (* ms 0.001))]
-     (str (when id (str "[" id "] "))
-          msg
-          ". ("
-          (string/join (repeat (- 33 (count msg)) " "))
-          seconds
-          "s)"))))
+;; (defn tick-msg
+;;   ([msg a b]
+;;    (tick-msg msg a b nil))
+;;   ([msg a b id]
+;;    (let [ms      (tick/between a b :millis)
+;;          seconds (format "%.2f" (* ms 0.001))]
+;;      (str (when id (str "[" id "] "))
+;;           msg
+;;           ". ("
+;;           (string/join (repeat (- 33 (count msg)) " "))
+;;           seconds
+;;           "s)"))))
 
-(defn add-tick! [msg]
-  (when add-ticks?
-    (let [[prev current]
-          (-> ticks
-              (swap! conj (tick/instant))
-              (->> (take-last 2)))]
-      (println (tick-msg msg prev current)))))
+(defn add-tick! [x])
+
+;; (defn add-tick! [msg]
+;;   (when add-ticks?
+;;     (let [[prev current]
+;;           (-> ticks
+;;               (swap! conj (tick/instant))
+;;               (->> (take-last 2)))]
+;;       (println (tick-msg msg prev current)))))
 
 
 ;; Project config --------------------------------------------------------------
@@ -778,7 +781,8 @@
     (doseq [tl-form all-forms]
       (analyze-forms tl-form m))
 
-    #_(add-tick! "    analyze-forms")
+    ;; #_(add-tick! "    analyze-forms")
+
     ;; TODO - maybe this should be broken out into another step and
     ;; anaylze-sources should just return mutated css-data volatile
     ;; should css-data and *css be the same thing?
@@ -1378,12 +1382,12 @@
             (println (bling [{:color color} (second resource-id)]))))
 
         ;; If necessary write the css imports chain
-        (add-tick! "Filtered build sources")
+        ;; (add-tick! "Filtered build sources")
         (when (or init? new-or-deleted?)
           (write-css-imports "./kushi.edn"
                              filtered-build-sources 
                              release?)
-          (add-tick! "Analyzed sources and wrote css imports")
+          ;; (add-tick! "Analyzed sources and wrote css imports")
           (create-css-bundle))))
 
     ;; (? :pp build-info)
@@ -1395,10 +1399,10 @@
     ;; (? :pp (keys output))
     ;; (? :pp output)
 
-    (println (tick-msg "Finished kushi.build.analyze/hook"
-                       (first @ticks) 
-                       (tick/instant)
-                       (:build-id build-state)))
+    ;; (println (tick-msg "Finished kushi.build.analyze/hook"
+    ;;                    (first @ticks) 
+    ;;                    (tick/instant)
+    ;;                    (:build-id build-state)))
     build-state))
 
 #_(try (lightning-bundle opts flags)
