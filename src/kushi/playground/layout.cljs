@@ -1,17 +1,22 @@
 (ns ^:dev/always kushi.playground.layout
-  (:require [domo.core :as domo]
-            [clojure.string :as string]
-            [kushi.ui.divisor.core :refer (divisor)]
-            [kushi.core :refer [sx css merge-attrs defcss]]
-            [kushi.ui.core :refer [defcom]]
-            [kushi.ui.button.core :refer [button]]
-            [kushi.ui.spinner.core :refer [propeller]]
-            [kushi.playground.about :as about]
-            [kushi.playground.component-docs :as docs]
-            [kushi.playground.component-examples :as component-examples]
-            [kushi.playground.sidenav :as sidenav]
-            [kushi.playground.state :as state]
-            [kushi.playground.util :as util]))
+  (:require
+   [clojure.string :as string]
+   [domo.core :as domo]
+   [kushi.core :refer [css defcss merge-attrs sx]]
+   [kushi.playground.about :as about]
+   [kushi.playground.component-docs :as docs]
+   [kushi.playground.component-examples :as component-examples]
+   [kushi.playground.sidenav :as sidenav]
+   [kushi.playground.state :as state]
+   [kushi.playground.util :as util]
+   [kushi.ui.util :refer [keyed]]
+   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.core :refer [defcom]]
+   [kushi.ui.divisor.core :refer (divisor)]
+   [kushi.ui.spinner.core :refer [propeller]]))
+
+(defcss "@layers design-tokens :root"
+  {:--playground-main-content-max-width :605px})
 
 (defn loading-spinner []
   [:div (sx
@@ -123,6 +128,9 @@
 (defn generic-section
   ;; content is a component
   [{:keys [path label content args]}]
+
+  ;; (? content)
+
   [:<> 
    [style-tag-active-path path]
    [:div 
@@ -370,7 +378,7 @@
                      :pis--1.4em)
                (when pred [docs/opt-detail "Pred" pred docs/kushi-opts-grid-type :pred])
                (when typ [docs/opt-detail "Type" typ docs/kushi-opts-grid-type :type])
-               [docs/opt-detail "Default" default docs/kushi-opts-grid-default :default]
+               [docs/opt-detail "Defaults" default docs/kushi-opts-grid-default :default]
                (when desc [docs/opt-detail "Desc." desc docs/kushi-opts-grid-desc :desc])]])))])
 
 
@@ -394,7 +402,7 @@
                   example-opts]))
          [:div 
           {:class  (css :.playground-component-panel
-                        :>div:max-width--$main-content-max-width
+                        :>div:max-width--$playground-main-content-max-width
                         :pbs--35px)
            :hidden "hidden"
            :id     (str "kushi-" label "-documentation")}
