@@ -204,10 +204,10 @@
        :reqs           '[[kushi.ui.tag.core :refer [tag]]]
        :variants-base  #{:soft :solid :outline :minimal}
        :variants-order [:soft :solid :outline :minimal]
-       :variants-attrs {:rounded  (sx :.rounded)
-                        :solid   (sx :.rounded :.solid)
-                        :outline (sx :.rounded :.outline)
-                        :minimal  (sx :.rounded :.minimal)}}
+       :variants-attrs {:soft    {}
+                        :solid   {:-surface :solid}
+                        :outline {:-surface :outline}
+                        :minimal {:-surface :minimal}}}
 
       {:label          "callout"
        :examples       callout.demo/examples
