@@ -9,63 +9,6 @@
    [kushi.ui.button.core :refer (button)]))
 
 
-;; Nix
-(defn info-sections [style-class]
-  (into [:div.flex-row-fs]
-        (for [color-class [:neutral :accent :positive :negative :warning]]
-          [:p.info
-           (merge-attrs 
-            (sx :p--1em :m--1em)
-            {:class [color-class style-class]})
-           "info section"])))
-
-;; Nix
-(defn- button-grid [shape minimal?]
-  (let [sem    [:neutral :positive :negative :accent :warning]
-        kinds  (if minimal?
-                 [:minimal :bordered :simple :solid]
-                 [:bordered :simple :solid])]
-    [:div (sx :.flex-row-c
-              :>div:flex-grow--1
-              :>div:flex-shrink--0
-              :_button:mb--0.5em)
-     (into [:div (sx :.flex-col-fs
-                     :max-width--1100px)]
-           (for [kind kinds]
-             (let [kind-class (when-not (= :simple kind) kind)]
-               (into [:div (sx :.flex-row-fs :gap--1em)]
-                     (for [semantic sem]
-                       [button
-                        (merge-attrs
-                         (sx [:--tooltip-offset :5px])
-                         {:class [semantic kind-class :medium shape]}
-
-                         ;; TODO - use this for above (make sure to register classes)
-                         #_(sx [:--tooltip-offset :5px]
-                               semantic
-                               kind-class
-                               :.medium
-                               shape)
-
-                         (tooltip-attrs
-                          {:-placement [:block-start :inline-start]
-                           :-text      (map #(str ":." (name %))
-                                            (remove nil?
-                                                    [kind-class
-                                                     semantic
-                                                     (when (not= shape :sharp)
-                                                       shape)]))}))
-                        "Play"])))))]))
-
-
-(defn demo []
-  [:div
-   [:p.pointer-only "Hover (non-touch devices) to reveal the Kushi utility classes used for styling."]
-   [:div
-    (sx :>div:pb--1em)
-    [button-grid :sharp true]]])
-
-
 
 ;; New April 2024 ----------------------------------------------------------------------------------
 
@@ -89,7 +32,7 @@
                                    :md:gtc--max-content)})]
     [
 
-     {:desc            "Surface variants"
+     #_{:desc            "Surface variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs (merge-attrs
                         container-attrs2
@@ -106,7 +49,7 @@
                           :args  ["Pets" [icon :pets]]
                           :attrs {:-colorway :accent}})}
 
-     {:desc            "Colorway variants"
+     #_{:desc            "Colorway variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
@@ -145,7 +88,7 @@
      ;; get extra reqs working
      ;; get links working
 
-     {:desc            "With icons"
+     #_{:desc            "With icons"
       :reqs            '[[kushi.ui.icon.core :refer [icon icon-button]]
                          [kushi.ui.label.core :refer [label]]]
       :sx-attrs        (sx-call (sx :.small))
@@ -173,7 +116,7 @@
                         {:label "2 icons"
                          :args  [[icon :auto-awesome] "Wow" [icon :auto-awesome]]}]}
 
-     (merge
+     #_(merge
       (component-examples/sizes-snippet-scale 'button "Play")
       {:desc            "Sizes from xxsmall to xlarge"
        :row-attrs       (sx :md:ai--fe)
@@ -184,7 +127,7 @@
                            :args  ["Pets" [icon :pets]]})})
 
 
-     {:desc            "Weight variants from light to extra-bold"
+     #_{:desc            "Weight variants from light to extra-bold"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :snippets-header ["Use the font-weight utility classes `:.thin` ~ `:.heavy` to control the weight."
@@ -208,7 +151,7 @@
                           :attrs {:class [s]}})}
 
 
-     {:desc            "Loading and disabled states"
+     #_{:desc            "Loading and disabled states"
       :variants-       [:bordered :solid]
       :reqs            '[[kushi.ui.button.core :refer [button]]
                          [kushi.ui.icon.core :refer [icon]]
