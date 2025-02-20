@@ -1376,10 +1376,12 @@
 
         ;; (? :pp (keys filtered-build-sources))
         ;; (? :pp (count filtered-build-sources))
-        (doseq [resource-id (keys filtered-build-sources)]
-          (let [recompiled? (not (boolean (get-in build-state [:output resource-id])))
-                color       (if recompiled? :gray :green)]
-            (println (bling [{:color color} (second resource-id)]))))
+
+        ;; to be recompiled or not
+        ;; (doseq [resource-id (keys filtered-build-sources)]
+        ;;   (let [recompiled? (not (boolean (get-in build-state [:output resource-id])))
+        ;;         color       (if recompiled? :gray :green)]
+        ;;     (println (bling [{:color color} (second resource-id)]))))
 
         ;; If necessary write the css imports chain
         ;; (add-tick! "Filtered build sources")
