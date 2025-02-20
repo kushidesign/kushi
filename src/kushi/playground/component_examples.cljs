@@ -2,7 +2,6 @@
   (:require
    [clojure.string :as string]
    [domo.core :as d]
-   [fireworks.core :refer [?]]
    [kushi.core :refer (sx css merge-attrs)]
    [kushi.css.defs]
    [kushi.css.media]
@@ -16,7 +15,7 @@
    [kushi.ui.modal.core :refer [close-kushi-modal modal modal-close-button
                                 open-kushi-modal]]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
-   [kushi.ui.util :refer [as-str maybe]]
+   [kushi.ui.util :refer [as-str keyed maybe]]
    [me.flowthing.pp :refer [pprint]]))
 
 (defn- example-row-variant
@@ -99,6 +98,14 @@
            variants-attrs
            variants-order]}
    {:keys [variants+ variants-]}]
+
+  ;; (!? (keyed [variants-base
+  ;;            variants-attrs
+  ;;            variants-order
+  ;;            variants+ 
+  ;;            variants-]
+  ;;           ))
+
   (let [a (when variants-base
             (as-> variants-base $
               (apply conj $ variants+)
@@ -166,7 +173,7 @@
                         :_.kushi-modal-inner:gap--0.75rem
                         [:height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem))))"]
                         :overflow--hidden
-                        :width--$main-content-max-width)
+                        :width--$playground-main-content-max-width)
             :id    modal-id}
      [modal-close-button {:-modal-id modal-id}]
      [:div (sx :.flex-row-sb :ai--fs :gap--1.5em)
@@ -244,7 +251,7 @@
 
      [:section (sx :.playground-example-row
                    ;; make this max-width global var
-                   :max-width--$main-content-max-width)
+                   :max-width--$playground-main-content-max-width)
       [:div (sx :.flex-row-fs
                 :flex-wrap--wrap
                 :ai--c
