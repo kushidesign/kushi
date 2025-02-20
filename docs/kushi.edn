@@ -25,6 +25,9 @@
    ;; Add this to tokens
    :--slider-font-family                    :$serif-font-stack
    ;;  :--background-color-dark-mode            :black
+
+   ;; Playground
+   :--playground-main-content-max-width     :605px
    ]
   
   :ui
