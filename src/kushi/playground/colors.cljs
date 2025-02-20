@@ -1,10 +1,11 @@
 (ns kushi.playground.colors
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.colors :as kushi.colors]
-   [kushi.core :refer (sx css css-vars-map merge-attrs)] ;;  [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
+   [kushi.core :refer (sx css css-vars-map merge-attrs register-design-tokens-by-category)]
    [kushi.ui.core :refer [defcom opts+children]]
    [kushi.ui.label.core :refer [label]]))
+
+(register-design-tokens-by-category "colors" "global colors")
 
 (defcom text-sample-sticker
   (let [{:keys [color bgc]} &opts]
@@ -39,7 +40,6 @@
            color-name
            color-level]
     :as m}]
-  (!? :result m)
   (let [token-name (name k)]
     [:<>
       ;;  [label (sx :.pointer
@@ -125,7 +125,7 @@
         ^{:key color-name}
         [:div (sx :.color-scale-wrapper
                   :.transition
-                  :max-width--$main-content-max-width
+                  :max-width--$playground-main-content-max-width
                   :mbs--4.5rem)
          [:h2 
           (sx :fs--$xlarge
