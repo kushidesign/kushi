@@ -1375,7 +1375,7 @@
             (not= :dev (:shadow.build/mode build-state))]
 
         ;; (? :pp (keys filtered-build-sources))
-        (? :pp (count filtered-build-sources))
+        ;; (? :pp (count filtered-build-sources))
         (doseq [resource-id (keys filtered-build-sources)]
           (let [recompiled? (not (boolean (get-in build-state [:output resource-id])))
                 color       (if recompiled? :gray :green)]
