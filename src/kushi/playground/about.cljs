@@ -65,7 +65,7 @@
 (defn kushi-colors-about []
   [:section
    (sx 
-    :>p:max-width--$main-content-max-width
+    :>p:max-width--$playground-main-content-max-width
     :>p:first-child:mbs--0
     :>p:mb--2em
     :>p:lh--1.7)
@@ -85,7 +85,7 @@
    [:div
     (sx
      :d--none
-     :max-width--$main-content-max-width
+     :max-width--$playground-main-content-max-width
      :xsm:d--block
      :pb--2rem:4.5rem
      :pis--2.5rem)
@@ -226,7 +226,7 @@
 
 (defn kushi-typography-about
   [m]
-  [:section (sx :>*:max-width--$main-content-max-width
+  [:section (sx :>*:max-width--$playground-main-content-max-width
                 :>p:first-child:mbs--0
                 :>p:mb--2em
                 :>p:lh--1.7)

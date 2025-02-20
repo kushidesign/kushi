@@ -964,7 +964,14 @@
                            []
                            enriched-tokens-ordered)))
           {}
-          ["pane" "elevation" "modal" "popover" "tooltip" "toast"]))
+          ["pane"
+           "elevation"
+           "modal"
+           "popover"
+           "tooltip"
+           "toast"
+           "colors"
+           "global-colors"]))
 
 (!? :pp design-tokens-by-token-array-map)
 
