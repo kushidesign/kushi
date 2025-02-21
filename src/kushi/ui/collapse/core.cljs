@@ -154,7 +154,7 @@
             children))))
 
 (defn collapse
-  {:summary ["A collapse is a section of content which can be collapsed and expanded."]
+  {:summary "A collapse is a section of content which can be collapsed and expanded."
    :opts '[{:name    label
             :pred    string?
             :default nil
@@ -162,26 +162,27 @@
            {:name    label-expanded
             :pred    string?
             :default nil
-            :desc    "The text to display in the collapse header when expanded. Optional."}
+            :desc    "The text to display in the collapse header when expanded.\\
+                      Optional."}
            {:name    icon
             :pred    vector?
             :default '[kushi.ui.icon.core/icon :add]
-            :desc    ["An instance of a kushi.ui.icon/icon component"
-                      "Optional."]}
+            :desc    "An instance of a kushi.ui.icon/icon component Optional."}
            {:name    icon-expanded
             :pred    vector?
             :default '[kushi.ui.icon.core/icon :remove]
-            :desc    ["An instance of a kushi.ui.icon/icon component. Optional."]}
+            :desc    "An instance of a kushi.ui.icon/icon component. Optional."}
            {:name    icon-position
             :pred    #{:start :end}
             :default :start
-            :desc    ["A value of `:start` will place the at the inline start of the header, preceding the label. "
-                      "A value of `:end` will place the icon at the inline end of the header, opposite the label. "
-                      "Optional."]}
+            :desc    "A value of `:start` will place the at the inline start of\\
+                      the header, preceding the label. A value of `:end` will\\
+                      place the icon at the inline end of the header, opposite\\
+                      the label. Optional."}
            {:name    header-attrs
             :pred    map?
             :default nil
-            :desc    ["Attribute map for header element."]}
+            :desc    "Attribute map for header element."}
            {:name    body-attrs
             :pred    map?
             :default nil
@@ -189,12 +190,12 @@
            {:name    expanded?
             :pred    boolean?
             :default false
-            :desc    ["When a value of `true` is passed, the collapse is initially rendered in an expanded state. "
-                      "Optional."]}
+            :desc    "When a value of `true` is passed, the collapse is\\
+                       initially rendered in an expanded state. Optional."}
            {:name    speed
             :pred    pos-int?
             :default 250
-            :desc    ["The speed of the transition."]}
+            :desc    "The speed of the transition."}
            ]}
   [& args]
   (let [[opts attr & children] (opts+children args)
@@ -237,9 +238,10 @@
 
 
 (defn accordion
-  {:desc ["A wrapper for multiple instances of the `collapse` component."
-          :br
-          "When `collapse` components are children of the accordion component, they can only be expanded one at a time."]}
+  {:desc "A wrapper for multiple instances of the `collapse` component.
+
+          When `collapse` components are children of the accordion component,\\
+          they can only be expanded one at a time."}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys []}              opts]

@@ -8,7 +8,8 @@
             ))
 
 (defn tag
-  {:summary ["A tag is typically used for concise information, often in a group with other tags."]}
+  {:summary "A tag is typically used for concise information, often in a group\\
+             with other tags."}
   [& args]
   (let [[opts attrs & children]
         (opts+children args)

@@ -93,18 +93,22 @@
        [enhancer end-enhancer])]))
 
 (defn text-field
-  {:summary ["A text-field enables the entry of text."]
-   :desc ["An input enables the entry of text. By default, this component will use an `<input>` element of type `text`. If the option `:-textarea?` is set to `true`, a `<textarea>` element will be used instead."]
+  {:summary "A text-field enables the entry of text."
+   :desc "An input enables the entry of text. By default, this component will\\
+          use an `<input>` element of type `text`. If the option `:-textarea?`\\
+          is set to `true`, a `<textarea>` element will be used instead."
    :opts '[{:name    textarea?
             :pred    boolean?
             :default false
-            :desc    ["Setting to `true` will render an html `<textarea/>` element, instead of a <input type='text'/> element."]}
+            :desc    "Setting to `true` will render an html `<textarea/>`\\
+                      element, instead of a <input type='text'/> element."}
 
            {:name    outer-wrapper-attrs
             :pred    map?
             :default nil
-            :desc    ["HTML attributes map applied to the outermost div of the component."
-                      "This div wraps the label, input-wrapper div, and the helper text span."]}
+            :desc    "HTML attributes map applied to the outermost div of the\\
+                      component. This div wraps the label, input-wrapper div,\\
+                      and the helper text span."}
 
            {:name    label
             :pred    string?
@@ -114,46 +118,57 @@
            {:name    label-attrs
             :pred    map?
             :default nil
-            :desc    "HTML attributes map applied to the `:label` element that contains the `label` text."}
+            :desc    "HTML attributes map applied to the `:label` element that\\
+                      contains the `label` text."}
 
            {:name    label-placement
             :pred    #{:block :inline}
             :default :block-start
-            :desc    "HTML attributes map applied to the `label` element associated with the `input` element, and end-enhancer div."}
+            :desc    "HTML attributes map applied to the `label` element\\
+                      associated with the `input` element, and end-enhancer div."}
 
            {:name    label-width
             :pred    #(or (string? %) (keyword? %))
             :default :block-start
-            :desc    ["Sets the width of your label \"column\", when `:-label-placement` is set to `:inline`."
-                      "Must be a valid css width value (`px`, `em` `rem`, etc)"]}
+            :desc    "Sets the width of your label \"column\", when\\
+                      `:-label-placement` is set to `:inline`. Must be a valid\\
+                      css width value (`px`, `em` `rem`, etc)"}
 
            {:name    wrapper-attrs
             :pred    map?
             :default nil
-            :desc    ["HTML attributes map applied to the input wrapper div, which is bordered by default."
-                      "This div wraps the `start-enhancer` div, the actual `input` element, and the `end-enhancer` div."]}
+            :desc    "HTML attributes map applied to the input wrapper div,\\
+                      which is bordered by default. This div wraps the\\
+                      `start-enhancer` div, the actual `input` element, and the\\
+                      `end-enhancer` div."}
 
            {:name    start-enhancer
             :pred    #(or (string? %) (vector? %))
             :default nil
-            :desc    "A string, hiccup vector, or child component intended to aid the user and positioned within the input field area, at the start"}
+            :desc    "A string, hiccup vector, or child component intended to\\
+                      aid the user and positioned within the input field area,\\
+                      at the start"}
 
            {:name    end-enhancer
             :pred    #(or (string? %) (vector? %))
             :default nil
-            :desc    "A string, hiccup vector, or child component intended to aid the user and positioned within the input field area, at the end"}
+            :desc    "A string, hiccup vector, or child component intended to\\
+                      aid the user and positioned within the input field area,\\
+                      at the end"}
 
            {:name    helper
             :pred    string?
             :default nil
             :desc    ["The text for `:.kushi-text-input-helper` label."
-                      "If used, this should give the user actionable information about the value of the associated input field."]}
+                      "If used, this should give the user actionable information\\
+                       about the value of the associated input field."]}
 
            {:name    colorway
             :pred    #{:neutral :accent :positive :negative :warning}
             :default nil
             :desc    ["The text for `:.kushi-text-input-helper` label."
-                      "If used, this should give the user actionable information about the value of the associated input field."]}
+                      "If used, this should give the user actionable information\\
+                       about the value of the associated input field."]}
            ]}
   [& args]
   (let [[opts attrs & _]

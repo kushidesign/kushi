@@ -25,7 +25,7 @@
                                         {:snippets [(:quoted code)]})))))]
     [
 
-     #_(f "Simple"
+     (f "Simple"
         (sx-call [slider {:min 0
                           :max 75
                           :step 1
@@ -39,7 +39,7 @@
                           ;; :-current-value-label-position :thumb-bottom
                           }]))
 
-     #_(f "Simple"
+     (f "Simple"
         (sx-call [slider {:min 0
                           :max 75
                           :step 1
@@ -60,47 +60,47 @@
                           :-current-value-label-position :track-left
                           }]))
 
-    ;;  (f "Dot markers"
-    ;;     (sx-call [slider {:min          0
-    ;;                       :max          7
-    ;;                       :-step-marker :dot}]))
-    ;;  (f "Bar markers"
-    ;;     (sx-call [slider {:min          0
-    ;;                       :max          7
-    ;;                       :-step-marker :bar}]))
+     (f "Dot markers"
+        (sx-call [slider {:min          0
+                          :max          7
+                          :-step-marker :dot}]))
+     (f "Bar markers"
+        (sx-call [slider {:min          0
+                          :max          7
+                          :-step-marker :bar}]))
 
-    ;;  (f "Markers with no current value label"
-    ;;     (sx-call [slider {:min                     0
-    ;;                       :max                     7
-    ;;                       :-step-marker            :bar
-    ;;                       :-display-current-value? false}]))
+     (f "Markers with no current value label"
+        (sx-call [slider {:min                     0
+                          :max                     7
+                          :-step-marker            :bar
+                          :-display-current-value? false}]))
 
-     #_(f "Fractional steps"
+     (f "Fractional steps"
         (sx-call [slider {:min                            0
                           :max                            100
                           :step                           1
                           :-current-value-label-display-fn #(.toFixed (/ % 100) 2)}]))
 
-    ;;  (f "Supplied step values"
-    ;;     (sx-call [slider
-    ;;               {:-steps            ["xsmall" "medium" "large" "xlarge"]
-    ;;                :-step-marker      :label 
-    ;;                :-label-size-class :medium}]) )
+     (f "Supplied step values"
+        (sx-call [slider
+                  {:-steps            ["xsmall" "medium" "large" "xlarge"]
+                   :-step-marker      :label 
+                   :-label-size-class :medium}]) )
      
-    ;;  (f "Supplied step values, custom horizontal shift for first and last values"
-    ;;     (sx-call [slider
-    ;;               {:-steps            
-    ;;                ["First label is long"
-    ;;                 "Second label"
-    ;;                 "Third label"
-    ;;                 "Last label is long"]
-    ;;                :-step-marker      
-    ;;                :dot
-    ;;                :-label-size-class 
-    ;;                :small
-    ;;                :-labels-attrs     
-    ;;                (sx [:_.kushi-slider-step-label:first-child>span:translate
-    ;;                     :-25%:-50%]
-    ;;                    [:_.kushi-slider-step-label:last-child>span:translate
-    ;;                     :-75%:-50%])}]))
+     (f "Supplied step values, custom horizontal shift for first and last values"
+        (sx-call [slider
+                  {:-steps            
+                   ["First label is long"
+                    "Second label"
+                    "Third label"
+                    "Last label is long"]
+                   :-step-marker      
+                   :dot
+                   :-label-size-class 
+                   :small
+                   :-labels-attrs     
+                   (sx [:_.kushi-slider-step-label:first-child>span:translate
+                        :-25%:-50%]
+                       [:_.kushi-slider-step-label:last-child>span:translate
+                        :-75%:-50%])}]))
      ]))

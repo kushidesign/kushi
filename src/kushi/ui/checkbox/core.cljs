@@ -5,7 +5,7 @@
 
 ;; TODO outlines for ally
 (defn checkbox
-  {:summary ["Checkboxes are used to provide multiple options for selection."]
+  {:summary "Checkboxes are used to provide multiple options for selection."
    :opts    '[{:name    label-attrs
                :pred    map?
                :default nil

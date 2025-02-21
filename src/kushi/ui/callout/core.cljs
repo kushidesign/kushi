@@ -24,12 +24,14 @@
         (js/setTimeout #(.remove callout) duration)))))
 
 (defn callout-close-button
-  {:desc ["The `callout-close-button` is meant to be a cta for closing a callout."
-          "It is typically a single × icon positioned in the upper right or left corner of the dialog."]
+  {:desc "The `callout-close-button` is meant to be a cta for closing a callout.\\
+          It is typically a single × icon positioned in the upper right or left\\
+          corner of the dialog."
    :opts '[{:name    icon
             :pred    keyword?
             :default :close
-            :desc    ["Optional. A name of a Google Material Symbols icon. Defaults to a close (×) icon."]}
+            :desc    "Optional. A name of a Google Material Symbols icon.\\
+                      Defaults to a close (×) icon."}
            {:name    colorway
             :pred    keyword?
             :default :neutral
@@ -37,7 +39,9 @@
            {:name    icon-svg
             :pred    vector?
             :default nil
-            :desc    ["Optional. A Hiccup representation of an svg icon. Supply this as an alternative to using the Google Material Symbols icon font"]}]}
+            :desc    "Optional. A Hiccup representation of an svg icon. Supply\\
+                      this as an alternative to using the Google Material\\
+                      Symbols icon font"}]}
   [& args]
   (let [[opts attrs & _]
         (opts+children args)
@@ -73,28 +77,27 @@
        [icon icon-name])]))
 
 (defn callout
-  {:summary ["Callouts provide contextual feedback information for the user."]
-   :desc ["To position the callout at the top of the viewport, use the "
-          "`:.fixed-block-start-inside` utility class, or the "
-          "`:.fixed-block-end-inside` utility class for positioning "
-          "at the bottom of the viewport."]
+  {:summary "Callouts provide contextual feedback information for the user."
+   :desc "To position the callout at the top of the viewport, use the\\
+          `:.fixed-block-start-inside` utility class, or the\\
+          `:.fixed-block-end-inside` utility class for positioning\\
+          at the bottom of the viewport."
    :opts '[{:name    icon
             :pred    vector?
             :default nil
-            :desc    ["An instance of a `kushi.ui.icon/icon` component"
-                      "Places an icon anchored to the inline-start area "
-                      "of the callout. Optional."]}
+            :desc    "An instance of a `kushi.ui.icon/icon` component. Places\\
+                      an icon anchored to the inline-start area of the callout.\\
+                      Optional."}
            {:name    user-actions
             :pred    fn?
             :default nil
-            :desc    ["Component rendering fn for CTA interactions."
-                      "Can also be a close button component via `kushi.ui.callout.core/close-button`."
-                      "Optional."]}
+            :desc    "Component rendering fn for CTA interactions. Can also be\\
+                      a close button component via\\
+                      `kushi.ui.callout.core/close-button`. Optional."}
            {:name    header-text
             :pred    string
             :default nil
-            :desc    ["The header text to render in the callout."
-                      "Optional."]}
+            :desc    "The header text to render in the callout. Optional."}
           ;;  Leave this out for now
           ;;   {:name    duration
           ;;    :pred    pos-int?

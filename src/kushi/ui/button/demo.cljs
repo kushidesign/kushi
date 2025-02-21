@@ -32,14 +32,15 @@
                                    :md:gtc--max-content)})]
     [
 
-     #_{:desc            "Surface variants"
+     {:desc            "Surface variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs (merge-attrs
                         container-attrs2
                         {:class (css [:md:gtc "repeat(4, max-content)"]
                                      :color--red!important)})
       :variants+       [:minimal]
-      :snippets-header ["Use the `data-kui-surface` attributes `:solid`, `:outline`, and `:minimal` to control the surface variant of the button."]
+      :snippets-header "Use the `data-kui-surface` attributes `:solid`, `:outline`,\\
+                        and `:minimal` to control the surface variant of the button."
       :snippets        '[[button "Play"]
                          [button {:-surface :solid} "Play"]
                          [button {:-surface :outline} "Play"]
@@ -49,14 +50,13 @@
                           :args  ["Pets" [icon :pets]]
                           :attrs {:-colorway :accent}})}
 
-     #_{:desc            "Colorway variants"
+     {:desc            "Colorway variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
-      :snippets-header ["Use the `data-kui-colorway` attributes `:neutral`, `:accent`, `:positive`, `:warning`, and `:negative` to control the semantic color variant."
-                        :br
-                        :br
-                        "The default is `:neutral`."]                        
+      :snippets-header "Use the `data-kui-colorway` attributes `:neutral`, `:accent`,\\
+                        `:positive`, `:warning`, and `:negative` to control the\\
+                        semantic color variant. The default is `:neutral`."                        
       :snippets        '[[button "Play"]
                          [button {:-colorway :neutral} "Play"]
                          [button {:-colorway :accent} "Play"]
@@ -72,10 +72,9 @@
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
-      :snippets-header ["Use the `data-kui-shape` attributes `:pill`, `:rounded`, and `:sharp` to control the surface variant of the button."
-                        :br
-                        :br
-                        "The default is `:rounded`."]
+      :snippets-header "Use the `data-kui-shape` attributes `:pill`, `:rounded`,\\
+                        and `:sharp` to control the surface variant of the button.\\
+                        The default is `:rounded`."
       :snippets        '[[button "Play"]
                          [button {:-shape :rounded} "Play"]
                          [button {:-shape :pill} "Play"]
@@ -88,15 +87,13 @@
      ;; get extra reqs working
      ;; get links working
 
-     #_{:desc            "With icons"
+     {:desc            "With icons"
       :reqs            '[[kushi.ui.icon.core :refer [icon icon-button]]
                          [kushi.ui.label.core :refer [label]]]
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
-      :snippets-header ["Check out the [icon component](#icon) for detailed info on icon usage"
-                        :br
-                        :br
-                        "Various buttons with icons:"]
+      :snippets-header "Check out the [icon component](#icon) for detailed info\\
+                        on icon usage Various buttons with icons:"
       :snippets        '[[button "Play" [icon :play-arrow]]
                          [button [icon :auto-awesome] "Wow" [icon :auto-awesome]]
                          #_[icon-button {:-icon :play-arrow}]]
@@ -116,7 +113,7 @@
                         {:label "2 icons"
                          :args  [[icon :auto-awesome] "Wow" [icon :auto-awesome]]}]}
 
-     #_(merge
+     (merge
       (component-examples/sizes-snippet-scale 'button "Play")
       {:desc            "Sizes from xxsmall to xlarge"
        :row-attrs       (sx :md:ai--fe)
@@ -127,13 +124,11 @@
                            :args  ["Pets" [icon :pets]]})})
 
 
-     #_{:desc            "Weight variants from light to extra-bold"
+     {:desc            "Weight variants from light to extra-bold"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
-      :snippets-header ["Use the font-weight utility classes `:.thin` ~ `:.heavy` to control the weight."
-                        :br
-                        :br
-                        "Scale of weights:"]
+      :snippets-header "Use the font-weight utility classes `:.thin` ~ `:.heavy`\\
+                        to control the weight. Scale of weights:"
       :snippets        '[[:div
                           [button "Play"]
                           [button (sx :.thin) "Play"]
@@ -151,7 +146,7 @@
                           :attrs {:class [s]}})}
 
 
-     #_{:desc            "Loading and disabled states"
+     {:desc            "Loading and disabled states"
       :variants-       [:bordered :solid]
       :reqs            '[[kushi.ui.button.core :refer [button]]
                          [kushi.ui.icon.core :refer [icon]]
@@ -160,7 +155,7 @@
       :sx-attrs        (sx-call {:-loading? true
                                  :class (css :.small)})
       :container-attrs container-attrs
-      :snippets-header ["Examples:"]
+      :snippets-header "Examples:"
       :snippets        '[[button {:-loading? true} [spinner [icon :play-arrow] [propeller]] "Play"]
                          [button {:disabled true} "Play"]]
       :examples        [{:label "Loading state, propeller"

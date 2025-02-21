@@ -4,7 +4,7 @@
    [kushi.ui.core :refer (opts+children)]))
 
 (defn radio
-  {:desc ["Radio buttons are used in groups of 2 or more, when only one choice may be selected from an array of options."]
+  {:desc "Radio buttons are used in groups of 2 or more, when only one choice may be selected from an array of options."
    :opts '[{:name    input-attrs
             :pred    map?
             :default nil

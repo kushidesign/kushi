@@ -101,37 +101,38 @@
        [icon icon-name])]))
 
 (defn modal
-  {:summary ["Modal dialogs create a new floating layer over the current view "
-             "to get user feedback or display information."]
-   :desc ["Elements and behaviors of modals can be custom styled and "
-          "controlled via the following tokens in your theme:"
-          :br
-          :br "`--modal-box-shadow`"                       
-          :br "`--modal-box-shadow-dark-mode`"               
-          :br "`--modal-border-radius`"      
-          :br "`--modal-border-width`"      
-          :br "`--modal-border-style`"      
-          :br "`--modal-border-color`"      
-          :br "`--modal-border-color-dark-mode`"      
-          :br "`--modal-padding-block`"      
-          :br "`--modal-padding-inline`"     
-          :br "`--modal-backdrop-color`"     
-          :br "`--modal-margin`"             
-          :br "`--modal-min-width`"          
-          :br "`--modal-transition-duration`"
-          :br
-          "Note that the value supplied to `--modal-box-shadow` should be one of"
-          "the stock elevation tokens, level 1~5, expressed like so:"
-          :br
-          "`:$elevation-3`, or `var(--elevation-3)`"]
+  {:summary "Modal dialogs create a new floating layer over the current view\\
+             to get user feedback or display information."
+   :desc "Elements and behaviors of modals can be custom styled and controlled\\
+          via the following tokens in your theme: 
+        
+          `--modal-box-shadow`                        
+          `--modal-box-shadow-dark-mode`                
+          `--modal-border-radius`       
+          `--modal-border-width`       
+          `--modal-border-style`       
+          `--modal-border-color`       
+          `--modal-border-color-dark-mode`       
+          `--modal-padding-block`       
+          `--modal-padding-inline`      
+          `--modal-backdrop-color`      
+          `--modal-margin`              
+          `--modal-min-width`           
+          `--modal-transition-duration` 
+          
+          Note that the value supplied to `--modal-box-shadow` should be one of\\ 
+          the stock elevation tokens, level 1~5, expressed like so: 
+          `:$elevation-3`, or `var(--elevation-3)`"
    :opts '[{:name    modal-title
             :pred    string?
             :default nil
-            :desc    "Optional. If supplied, this will be rendered as an h2 element within the modal."}
+            :desc    "Optional. If supplied, this will be rendered as an h2\\
+                      element within the modal."}
            {:name    description
             :pred    string?
             :default nil
-            :desc    "Optional. If supplied, this will be rendered as an p element within the modal."}
+            :desc    "Optional. If supplied, this will be rendered as an p\\
+                      element within the modal."}
 
            ;; TODO -- add on-dismiss callback option (for calling function with on backdrop click)
            ;; TODO -- add option for disabling auto close-on-background click

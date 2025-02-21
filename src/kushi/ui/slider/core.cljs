@@ -533,11 +533,16 @@
 
 (defn slider
   ;; TODO line-break this up
-  {:summary ["A slider is a ui element which allows the user to specify a numeric value which must be no less than a given value, and no more than another given value." ]
-   :desc ["By default, values are represented as a numeric scale with a `min` and a `max`."
-          "Note that `:min`, `:max` and `:step` are passed down to the underlying `<input type=range>` element, and do not need to be written with the custom opts syntax."
-          "Checkout [input range docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range) for info on how `min`, `max`, and `step` work."
-          "Alternately, a scale of named, stepped values may be provided with the custom `:-steps` option."]
+  {:summary "A slider is a ui element which allows the user to specify a\\
+             numeric value which must be no less than a given value, and no more\\
+             than another given value." 
+   :desc "By default, values are represented as a numeric scale with a `min` and\\
+          a `max`. Note that `:min`, `:max` and `:step` are passed down to the\\
+          underlying `<input type=range>` element, and do not need to be written\\
+          with the custom opts syntax. Checkout\\
+          [input range docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range)\\
+          for info on how `min`, `max`, and `step` work. Alternately, a scale of\\
+          named, stepped values may be provided with the custom `:-steps` option."
    :opts '[{:name    default-value
             :pred    any?
             :default (:text "The supplied `min` or the first item in the supplied `:-steps` collection.")
@@ -545,9 +550,9 @@
            {:name    default-index
             :pred    int?
             :default 0
-            :desc    "Use `default-index` when you want to set the default value
-                      by index. This is the index of the number in a numeric
-                      range (with a `min` and `max`), or the index of a value in
+            :desc    "Use `default-index` when you want to set the default value\\
+                      by index. This is the index of the number in a numeric\\
+                      range (with a `min` and `max`), or the index of a value in\\
                       a supplied `:-steps` collection"}
            {:name    steps
             :pred    vector?
@@ -562,7 +567,8 @@
            {:name    label-scale-factor
             :pred    float?
             :default 0.7
-            :desc    "Factor to scale down labels in range which are not selected. Must be positive float and <= 1.0."}
+            :desc    "Factor to scale down labels in range which are not selected.\\
+                      Must be positive float and <= 1.0."}
 
            {:name    wrapper-attrs
             :pred    map?
@@ -575,11 +581,13 @@
            {:name    current-value-label-display-fn
             :pred    fn?
             :default nil
-            :desc    "Function which takes the current step, (usually a number), and transforms the value for display."}
+            :desc    "Function which takes the current step, (usually a number),\\
+                      and transforms the value for display."}
            {:name    display-current-value-label?
             :pred    boolean?
             :default false
-            :desc    "If set to `false`, the current step value label will not be displayed."}
+            :desc    "If set to `false`, the current step value label will not\\
+                      be displayed."}
 
            {:name    current-value-label-position
             :pred    #{:track-top
@@ -599,7 +607,8 @@
                        :thumb-inline-start
                        :thumb-inline-end}
             :default false
-            :desc    "The position of the current value label, relative to the slider track or slider thumb."}
+            :desc    "The position of the current value label, relative to the\\
+                      slider track or slider thumb."}
 
            ]}
   [& args]

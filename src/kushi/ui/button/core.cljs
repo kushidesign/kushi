@@ -1,6 +1,5 @@
 (ns kushi.ui.button.core
   (:require
-   [fireworks.core :refer [?]]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.icon.core]
@@ -8,31 +7,69 @@
    [kushi.ui.util :refer [as-str maybe nameable?]]))
 
 (defn button
-  {:summary ["Buttons provide cues for actions and events."]
-   :desc    ["Buttons are fundamental components allow users to process actions or navigate an experience."
-             :br
-             :br
-             "They can be custom styled via a variety of tokens in your theme."
-             :br
-             :br "`:$button-padding-inline-ems`"
-             :br "The default value is `:1.2em`"
-             :br
-             :br "`:$icon-button-padding-inline-ems`"
-             :br "The default value is `:0.69em`"
-             :br
-             :br "`:$button-padding-block-ems`"
-             :br "The default value is `:0.67em`"
-             :br
-             :br "`:$button-with-icon-padding-inline-offset`"
-             :br "The default value is `:0.9em`"
-             :br
-             :br "`:$button-border-width`"
-             :br "The default value is `:1px`"
-             :br]
+  {:summary "Buttons provide cues for actions and events."
+
+   :desc    "Buttons are fundamental components that allow users to process\\
+             actions or navigate an experience.
+              
+             They can be custom styled via a variety of tokens in your theme.
+
+             `:$button-padding-inline-ems`
+             The default value is `:1.2em`
+              
+             `:$icon-button-padding-inline-ems`
+             The default value is `:0.69em`
+              
+             `:$button-padding-block-ems`
+             The default value is `:0.67em`
+              
+             `:$button-with-icon-padding-inline-offset`
+             The default value is `:0.9em`
+              
+             `:$button-border-width`
+             The default value is `:1px`"
+   
    :opts    '[{:name    loading?
                :pred    boolean?
                :default false
-               :desc    "When `true`, this will set the appropriate values for `aria-busy` and `aria-label`"}]}
+               :desc    "When `true`, this will set the appropriate values for\\
+                        `aria-busy` and `aria-label`"}
+              {:name    start-enhancer
+               :pred    #{string? keyword?}
+               :default nil
+               :desc    "The name of a Google Material Symbol to use as an icon\\
+                         in the inline start position"}
+              {:name    end-enhancer
+               :pred    #{string? keyword?}
+               :default nil
+               :desc    "The name of a Google Material Symbol to use as an icon\\
+                         in the inline end position"}
+              {:name    colorway
+               :pred    #{:neutral :accent :positive :negative :warning}
+               :default nil
+               :desc    "Colorway of the button. Can also be a named color from\\
+                         Kushi's design system, e.g `:red`, `:purple`, `:gold`,\\
+                         etc."}
+              {:name    surface
+               :pred    #{:soft :solid :minimal :outline}
+               :default :round
+               :desc    "Surface variant of the button."}
+              {:name    shape
+               :pred    #{:sharp :round :pill}
+               :default :round
+               :desc    "Shape of the button."}
+              {:name    packing
+               :pred    #{:compact :roomy}
+               :default nil
+               :desc    ["General amount of padding inside the button"
+                         :br
+                         "Cool"
+                         "Next"
+                         :br
+                         :br
+                         "What"]
+               
+               }]}
   [& args]
   (let [
         [opts attrs & children]
@@ -107,7 +144,8 @@
 
 (defn icon-button
   {:summary ["Icon buttons provide cues for actions and events."]
-   :desc    ["Buttons are fundamental components allow users to process actions or navigate an experience."
+   :desc    ["Buttons are fundamental components that allow users to process
+              actions or navigate an experience."
              :br
              :br
              "They can be custom styled via a variety of tokens in your theme."
@@ -123,7 +161,8 @@
    :opts    '[{:name    loading?
                :pred    boolean?
                :default false
-               :desc    "When `true`, this will set the appropriate values for `aria-busy` and `aria-label`"}]}
+               :desc    "When `true`, this will set the appropriate values for
+                         `aria-busy` and `aria-label`"}]}
   [& args]
   (let [
         [opts attrs & children]

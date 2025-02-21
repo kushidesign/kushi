@@ -8,6 +8,7 @@
    [kushi.css.build.tokens :refer [design-tokens-by-category
                                    design-tokens-by-token
                                    design-tokens-by-token-array-map]]
+   [kushi.css.build.state]
    [kushi.core :refer [css-rule*]]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as kushi-specs]
@@ -1341,20 +1342,20 @@
        write-css-imports*))
 
 
-(defn hook2
-  {:shadow.build/stage :compile-finish}
-  [{:keys [:shadow.build/build-id
-           :shadow.build/build-info
-           :build-sources
-           :sources
-           :output]
-    :as   build-state}]
-  ;; (println "compile-finish")
-  ;; (? :pp (count build-sources))
-  ;; (? :pp (count sources))
-  ;; (? :pp (count output))
-  ;; (? :pp output)
-  build-state)
+;; (defn hook2
+;;   {:shadow.build/stage :compile-finish}
+;;   [{:keys [:shadow.build/build-id
+;;            :shadow.build/build-info
+;;            :build-sources
+;;            :sources
+;;            :output]
+;;     :as   build-state}]
+;;   ;; (println "compile-finish")
+;;   ;; (? :pp (count build-sources))
+;;   ;; (? :pp (count sources))
+;;   ;; (? :pp (count output))
+;;   ;; (? :pp output)
+;;   build-state)
 
 (defn hook
   {:shadow.build/stage :compile-prepare}
@@ -1364,25 +1365,25 @@
            :sources
            :output]
     :as build-state}]
+
   ;; TODO maybe deleted? and added? should be seqs or nils
+  ;; @kushi.css.build.state/initial-build?  
   (let [{:keys [init? new-or-deleted? existing-css-changed?]}
         (bs-epoch build-state)]
     (when (or existing-css-changed? new-or-deleted? init?)
-      (let [filtered-build-sources
-            (filter-build-sources build-state)
+      (let [filtered-build-sources (filter-build-sources build-state)
             
-            release?
-            (not= :dev (:shadow.build/mode build-state))]
+            release?               (not= :dev (:shadow.build/mode build-state))]
 
         ;; (? :pp (keys filtered-build-sources))
         ;; (? :pp (count filtered-build-sources))
-
+        
         ;; to be recompiled or not
         ;; (doseq [resource-id (keys filtered-build-sources)]
         ;;   (let [recompiled? (not (boolean (get-in build-state [:output resource-id])))
         ;;         color       (if recompiled? :gray :green)]
         ;;     (println (bling [{:color color} (second resource-id)]))))
-
+        
         ;; If necessary write the css imports chain
         ;; (add-tick! "Filtered build sources")
         (when (or init? new-or-deleted?)
@@ -1400,11 +1401,14 @@
     ;; (? :pp (count output))
     ;; (? :pp (keys output))
     ;; (? :pp output)
-
+    
     ;; (println (tick-msg "Finished kushi.build.analyze/hook"
     ;;                    (first @ticks) 
     ;;                    (tick/instant)
     ;;                    (:build-id build-state)))
+    
+    #_(reset! kushi.css.build.state/initial-build? false)
+
     build-state))
 
 #_(try (lightning-bundle opts flags)
