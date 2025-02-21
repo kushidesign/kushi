@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.playground.layout
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [domo.core :as domo]
    [kushi.core :refer [css defcss merge-attrs sx]]
@@ -13,7 +14,8 @@
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.core :refer [defcom]]
    [kushi.ui.divisor.core :refer (divisor)]
-   [kushi.ui.spinner.core :refer [propeller]]))
+   [kushi.ui.spinner.core :refer [propeller]]
+   [clojure.walk :as walk]))
 
 (defcss "@layers design-tokens :root"
   {:--playground-main-content-max-width :605px})
@@ -382,6 +384,8 @@
                (when desc [docs/opt-detail "Desc." desc docs/kushi-opts-grid-desc :desc])]])))])
 
 
+
+
 (defn component-section
   [{:keys                     [examples label]
     {:keys [desc summary]
@@ -404,18 +408,16 @@
           {:class  (css :.playground-component-panel
                         :>div:max-width--$playground-main-content-max-width
                         :pbs--35px)
-           :hidden "hidden"
+          ;;  :hidden "hidden"
            :id     (str "kushi-" label "-documentation")}
 
           (when summary
-            [:div 
-             (sx :fs--$medium
-                 :fw--$wee-bold
-                 :mb--0:2rem
-                 :_p:lh--1.7)
-             (->> summary
-                  util/desc->hiccup 
-                  docs/add-links)])
+            (into [:div 
+                   (sx :fs--$medium
+                       :fw--$wee-bold
+                       :mb--0:2rem
+                       :>span:lh--1.7)]
+                  (util/desc->hiccup summary)))
 
           (when desc
             [:<> 
@@ -427,18 +429,17 @@
                   :dark:bbe--1px:solid:$gray-800
                   :mb--0:1.5rem)
               "Usage"]
-             [:div (sx :lh--1.7
-                       :mb--0:2rem
-                       :_code:lh--1.9
-                       :_code:pb--0.07em
-                       :_code:pi--0.2em
-                       [:_p_b {:fw      :$wee-bold
-                               :mbe     :0.4em
-                               :display :block}])
-
-              (-> desc
-                  util/desc->hiccup 
-                  docs/add-links)]])
+             (into [:div (sx 
+                          :lh--1.7
+                          :mb--0:2rem
+                          :_code:lh--1.9
+                          :_code:pb--0.07em
+                          :_code:pi--0.2em
+                          :>span:d--block
+                          [:_b {:fw      :$wee-bold
+                                :mbe     :0.4em
+                                :display :block}])]
+                   (util/desc->hiccup desc))])
 
           (when (seq custom-attributes)
             [custom-attributes-section custom-attributes])]]))

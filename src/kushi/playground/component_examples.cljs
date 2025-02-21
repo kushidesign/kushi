@@ -2,10 +2,10 @@
   (:require
    [clojure.string :as string]
    [domo.core :as d]
+   [fireworks.core :refer [?]]
    [kushi.core :refer (sx css merge-attrs)]
    [kushi.css.defs]
    [kushi.css.media]
-   [kushi.playground.component-docs :as docs]
    [kushi.playground.util :as util]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.core :refer (opts+children)]
@@ -15,7 +15,7 @@
    [kushi.ui.modal.core :refer [close-kushi-modal modal modal-close-button
                                 open-kushi-modal]]
    [kushi.ui.tooltip.core :refer (tooltip-attrs)]
-   [kushi.ui.util :refer [as-str keyed maybe]]
+   [kushi.ui.util :refer [as-str maybe]]
    [me.flowthing.pp :refer [pprint]]))
 
 (defn- example-row-variant
@@ -425,8 +425,9 @@
                         :mbs--1.5em
                         #_:pbe--2rem)
                [snippet-section
-                {:header       (util/desc->hiccup
-                                ["Paste into the `:require` section of your `:ns` form:"])
+                {:header       (into [:div]
+                                     (util/desc->hiccup
+                                      "Paste into the `:require` section of your `:ns` form:"))
                  :preformatted (-> reqs-coll
                                    formatted*
                                    (subs 1)
@@ -440,9 +441,11 @@
 
               (for [[i call] (map-indexed (fn [i call] [i call]) snippets)
                     :let [header (when (zero? i) 
-                                   (some-> snippets-header
-                                           util/desc->hiccup 
-                                           (docs/add-links scroll-to-elsewhere-on-page)))]]
+                                   (when (string? snippets-header)
+                                     (some->> snippets-header
+                                              util/desc->hiccup 
+                                              (into [:div])
+                                              #_(docs/add-links scroll-to-elsewhere-on-page))))]]
                 [snippet-section
                  {:header       header
                   :preformatted (-> call
