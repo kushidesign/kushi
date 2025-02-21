@@ -9,7 +9,7 @@
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.sidenav :as sidenav]
    [kushi.playground.state :as state]
-   [kushi.playground.util :as util]
+   [kushi.playground.md2hiccup :refer [desc->hiccup]]
    [kushi.ui.util :refer [keyed]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.core :refer [defcom]]
@@ -393,7 +393,7 @@
     :as                       component-opts}]
 
   (into [:<>
-         (into [:section
+         #_(into [:section
                 {:class (css :.playground-component-panel)
                  :id    (str "kushi-" label "-examples")}]
                (for [
@@ -417,7 +417,7 @@
                        :fw--$wee-bold
                        :mb--0:2rem
                        :>span:lh--1.7)]
-                  (util/desc->hiccup summary)))
+                  (desc->hiccup summary)))
 
           (when desc
             [:<> 
@@ -439,7 +439,7 @@
                           [:_b {:fw      :$wee-bold
                                 :mbe     :0.4em
                                 :display :block}])]
-                   (util/desc->hiccup desc))])
+                   (desc->hiccup desc))])
 
           (when (seq custom-attributes)
             [custom-attributes-section custom-attributes])]]))

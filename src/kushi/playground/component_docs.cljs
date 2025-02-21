@@ -3,7 +3,7 @@
    [clojure.string :as string]
    [clojure.walk :as walk]
    [kushi.core :refer (sx ?sx css-vars-map css ?css)]
-   [kushi.playground.util :as util]
+   [kushi.playground.md2hiccup :refer [desc->hiccup]]
    [kushi.ui.label.core :refer [label]]))
 
 
@@ -35,7 +35,7 @@
              :_code:pb--0.07em
              :_code:pi--0.2em
              :>span:d--block)]
-        (util/desc->hiccup v)))
+        (desc->hiccup v)))
 
 
 

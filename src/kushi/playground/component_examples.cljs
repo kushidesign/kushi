@@ -6,7 +6,7 @@
    [kushi.core :refer (sx css merge-attrs)]
    [kushi.css.defs]
    [kushi.css.media]
-   [kushi.playground.util :as util]
+   [kushi.playground.md2hiccup :refer [desc->hiccup]]
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.divisor.core :refer (divisor)]
@@ -273,8 +273,8 @@
       (into [:div (merge-attrs
                    (sx :.grid :gtc--1fr :gap--1rem)
                    container-attrs)]
-            (for [variant-attrs (resolve-variants-attrs component-opts
-                                                        example-opts)]
+            (for [variant-attrs (? (resolve-variants-attrs component-opts
+                                                        example-opts))]
               [example-row-variant
                component
                (merge example-opts
@@ -426,7 +426,7 @@
                         #_:pbe--2rem)
                [snippet-section
                 {:header       (into [:div]
-                                     (util/desc->hiccup
+                                     (desc->hiccup
                                       "Paste into the `:require` section of your `:ns` form:"))
                  :preformatted (-> reqs-coll
                                    formatted*
@@ -443,7 +443,7 @@
                     :let [header (when (zero? i) 
                                    (when (string? snippets-header)
                                      (some->> snippets-header
-                                              util/desc->hiccup 
+                                              desc->hiccup 
                                               (into [:div])
                                               #_(docs/add-links scroll-to-elsewhere-on-page))))]]
                 [snippet-section
