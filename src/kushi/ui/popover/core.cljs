@@ -1,3 +1,5 @@
+
+
 (ns kushi.ui.popover.core
   (:require
    [applied-science.js-interop :as j]
@@ -18,86 +20,90 @@
 
 (defn popover-attrs
   {:summary "Popovers provide additional context when clicking on an element."
-   :desc "They can be interactive and are typically dismissed\\
-          manually by the user.
+   :desc "Popovers can be interactive and are typically dismissed manually by
+          the user.
            
-          By default, popovers will show up above the owning element. \\
-          Specifying placement in various ways can be done with the\\
-          `:-placement` option. See the tooltip docs for details on \\
-          `:-placement`.
+          By default, popovers will show up above the owning element. Specifying
+          placement in various ways can be done with the `:-placement` option.
+          See the tooltip docs for details on `:-placement`.
            
-          The element owning the popover must receive an attributes map that \\
-          is a result of passing a map of options to \\
-          `kushi.ui.popover.core/popover-attrs`. You can compose this map to \\
-          an existing element's attributes map with `kushi.core/merge-attrs` \\
-          using the pattern:
+          The element owning the popover must receive an attributes map that 
+          is a result of passing a map of options to 
+          `kushi.ui.popover.core/popover-attrs`. You can compose this map to an
+          existing element's attributes map with `kushi.core/merge-attrs` using
+          the pattern:
            
           `(merge-attrs (sx ...) (popover-attrs {...}))`
            
-          You are responsible for providing your own rendering function, which \\
-          takes as a single argument the dom node of the generated popover \\
-          into which you can render whatever you like.
+          You are responsible for providing your own rendering function, which 
+          takes as a single argument the dom node of the generated popover into
+          which you can render whatever you like.
            
-          You can use the `kushi.ui.popover.core/dismiss-popover!` function if \\
-          you want to close the popover from an action within the popover.\\
-          If you are using a close button that is potitioned near the edge \\
-          of the popover, it is recommended to give it a `z-index` of `1` or \\
-          higher so that it does not get clipped by the arrow element. See \\
-          the example above.
+          You can use the `kushi.ui.popover.core/dismiss-popover!` function if 
+          you want to close the popover from an action within the popover. If
+          you are using a close button that is potitioned near the edge of the
+          popover, it is recommended to give it a `z-index` of `1` or higher so
+          that it does not get clipped by the arrow element. See the example
+          above.
            
            
-          Elements and behaviors of the popover containers can be custom \\
-          styled and controlled via the following tokens in your theme:\\
+          Elements and behaviors of the popover containers can be custom styled
+          and controlled via the following tokens in your theme:
            
             
-          __Colors and images:__
-          `--popover-background-color`                 
-          `--popover-background-color-dark-mode`         
-          `--popover-background-image`                 
-          `--popover-box-shadow`                 
-          `--popover-border-width`                 
-          `--popover-border-style`                 
-          `--popover-border-color`                 
-          __Geometry:__
-          `--popover-min-width`
-          `--popover-min-height`
-          `--popover-border-radius`
-          `--popover-offset`
-          `--popover-viewport-padding`
-          `--popover-flip-viewport-edge-threshold`
-          `--popover-auto-placement-y-threshold`
-          __Choreography:__
-          `--popover-offset-start`
-          `--popover-z-index`             
-          `--popover-delay-duration`            
-          `--popover-initial-scale`             
-          `--popover-offset-start`              
-          `--popover-transition-duration`       
-          `--popover-transition-timing-function`
-          `--popover-auto-dismiss-duration`
-          __Arrows:__
-          `--popover-arrow-inline-inset`
-          `--popover-arrow-block-inset`
-          `--popover-arrow-depth`   
+          __Colors and images:__<br>
+          `--popover-background-color`<br>                 
+          `--popover-background-color-dark-mode`<br>
+          `--popover-background-image`<br>
+          `--popover-box-shadow`<br>
+          `--popover-border-width`<br>
+          `--popover-border-style`<br>
+          `--popover-border-color`<br>
+
+          __Geometry:__<br>
+          `--popover-min-width`<br>
+          `--popover-min-height`<br>
+          `--popover-border-radius`<br>
+          `--popover-offset`<br>
+          `--popover-viewport-padding`<br>
+          `--popover-flip-viewport-edge-threshold`<br>
+          `--popover-auto-placement-y-threshold`<br>
+
+          __Choreography:__<br>
+          `--popover-offset-start`<br>
+          `--popover-z-index`<br>             
+          `--popover-delay-duration`<br>            
+          `--popover-initial-scale`<br>             
+          `--popover-offset-start`<br>              
+          `--popover-transition-duration`<br>       
+          `--popover-transition-timing-function`<br>
+          `--popover-auto-dismiss-duration`<br>
+
+          __Arrows:__<br>
+          `--popover-arrow-inline-inset`<br>
+          `--popover-arrow-block-inset`<br>
+          `--popover-arrow-depth`<br>   
 
           If you want supply the value of any of the above tokens ala-carte, 
           use the following pattern.
 
-          `(popover-attrs {:-popover-class (css [:--popover-background-color :beige])}))`
+          `(popover-attrs {:-popover-class
+                           (css [:--popover-background-color :beige])}))`
 
-          If you would like to use a value of `0` (`px`, `ems`, `rem`, etc.) for \\
-          `--popover-offset`, `--popover-arrow-inline-inset`, \\
-          `--popover-arrow-block-inset`, or `--popover-border-radius`, you will need \\
-          to use an explicit unit e.g. `0px`."
+          If you would like to use a value of `0` (`px`, `ems`, `rem`, etc.) for 
+          `--popover-offset`, `--popover-arrow-inline-inset`, 
+          `--popover-arrow-block-inset`, or `--popover-border-radius`, you will
+          need to use an explicit unit e.g. `0px`."
+  
           
    :opts '[{:name    f
             :pred    fn?
             :default nil
-            :desc    "A component rendering function which takes a single\\ 
-                      argument, (the popover container dom node), and renders\\
+            :desc    "A component rendering function which takes a single 
+                      argument, (the popover container dom node), and renders
                       content into it.
 
-                      The example above uses reagent, but you could do\\
+                      The example above uses reagent, but you could do
                       something similar with another rendering library:
 
                       `(fn [el] (rdom/render [my-popover-content] el))`"}
@@ -131,8 +137,8 @@
                       `:rb`
                       `:rbc`
                        
-                      If you care about the popover placement respecting writing\\
-                      direction and/or document flow, you can use a vector of of\\ 
+                      If you care about the popover placement respecting writing
+                      direction and/or document flow, you can use a vector of of 
                       up to 3 logical properties keywords, separated by spaces:
                        
                       `[:inline-end :block-start]`
@@ -145,24 +151,24 @@
            {:name    arrow?
             :pred    boolean?
             :default true
-            :desc    "Setting to false will not render a directional arrow with\\ 
+            :desc    "Setting to false will not render a directional arrow with 
                       the popover."}
            {:name    auto-dismiss?
             :pred    boolean?
             :default false
-            :desc    "Setting to true will auto-dismiss the popover. The time of\\
-                      display before display is controlled by the theme token\\
+            :desc    "Setting to true will auto-dismiss the popover. The time of
+                      display before display is controlled by the theme token
                       `--popover-auto-dismiss-duration`"}
            {:name    popover-class
             :pred    string?
             :default nil
-            :desc    "A class name for a la carte application of classes on the\\ 
+            :desc    "A class name for a la carte application of classes on the 
                       popover element."}
            #_{:name    use-on-click?
             :pred    boolean?
             :default false
-            :desc    "By default, the popover is triggered on the mousedown event.\\ 
-                      Setting to true will instead use the click event to trigger\\ 
+            :desc    "By default, the popover is triggered on the mousedown event. 
+                      Setting to true will instead use the click event to trigger 
                       the popover."}
            ]}
 

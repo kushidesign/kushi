@@ -36,6 +36,22 @@
             [kushi.colors2 :refer [oklch-colors]]
             ))
 
+
+(def sam
+  "One two three,
+   four five six
+
+   Blank line<br>
+   next one<br>
+          
+   Blank line<br>
+   next one
+
+
+
+   Last one.<br>")
+
+
 (defn interleave-all
   "Returns a lazy seq of the first item in each coll, then the second, etc.
   Unlike `clojure.core/interleave`, the returned seq contains all items in the
@@ -61,14 +77,14 @@
 (defn hiccupize-url [s]
   (let [matches (re-seq #"\[[^\]]+\]\([^\)]+\)" s)
         matches (mapv #(let [[_ link href] (re-find #"\[([^\]]+)\]\(([^\)]+)\)" %)]
-                        (? [:a {:href href} link]))
+                        [:a {:href href} link])
                      matches)
         coll    (string/split s #"\[[^\]]+\]\([^\)]+\)")
         ]
 
     (interleave-all coll matches)))
 
-(? (hiccupize-url "Use [this page](https://fonts.google.com/icons?icon.set=Material+Symbols) to explore over 1000+ different icons.")) 
+(!? (hiccupize-url "Use [this page](https://fonts.google.com/icons?icon.set=Material+Symbols) to explore over 1000+ different icons.")) 
 
 (!? (css-rule* ".foo" [:ai--$ai] nil nil))
 (!? (css-rule* ".foo" [:aj--$ai] nil nil))

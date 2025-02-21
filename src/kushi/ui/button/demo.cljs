@@ -39,7 +39,7 @@
                         {:class (css [:md:gtc "repeat(4, max-content)"]
                                      :color--red!important)})
       :variants+       [:minimal]
-      :snippets-header "Use the `data-kui-surface` attributes `:solid`, `:outline`,\\
+      :snippets-header "Use the `data-kui-surface` attributes `:solid`, `:outline`,
                         and `:minimal` to control the surface variant of the button."
       :snippets        '[[button "Play"]
                          [button {:-surface :solid} "Play"]
@@ -54,8 +54,8 @@
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
-      :snippets-header "Use the `data-kui-colorway` attributes `:neutral`, `:accent`,\\
-                        `:positive`, `:warning`, and `:negative` to control the\\
+      :snippets-header "Use the `data-kui-colorway` attributes `:neutral`, `:accent`,
+                        `:positive`, `:warning`, and `:negative` to control the
                         semantic color variant. The default is `:neutral`."                        
       :snippets        '[[button "Play"]
                          [button {:-colorway :neutral} "Play"]
@@ -72,8 +72,8 @@
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
-      :snippets-header "Use the `data-kui-shape` attributes `:pill`, `:rounded`,\\
-                        and `:sharp` to control the surface variant of the button.\\
+      :snippets-header "Use the `data-kui-shape` attributes `:pill`, `:rounded`,
+                        and `:sharp` to control the surface variant of the button.
                         The default is `:rounded`."
       :snippets        '[[button "Play"]
                          [button {:-shape :rounded} "Play"]
@@ -92,7 +92,7 @@
                          [kushi.ui.label.core :refer [label]]]
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
-      :snippets-header "Check out the [icon component](#icon) for detailed info\\
+      :snippets-header "Check out the [icon component](#icon) for detailed info
                         on icon usage Various buttons with icons:"
       :snippets        '[[button "Play" [icon :play-arrow]]
                          [button [icon :auto-awesome] "Wow" [icon :auto-awesome]]
@@ -127,7 +127,7 @@
      {:desc            "Weight variants from light to extra-bold"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
-      :snippets-header "Use the font-weight utility classes `:.thin` ~ `:.heavy`\\
+      :snippets-header "Use the font-weight utility classes `:.thin` ~ `:.heavy`
                         to control the weight. Scale of weights:"
       :snippets        '[[:div
                           [button "Play"]

@@ -75,10 +75,11 @@
            attrs)]))
 
 (defn spinner
-  {:summary "Spinners indicate the in-progress status of an operation such as loading or processing."
-   :desc "The spinner is component is meant to be used in conjuction with a\\
-          component such as `spinner.core/donut`,  `spinner.core/propeller`,\\
-          or `spinner.core/propeller`. See the \"Usage with a button\" in the\\
+  {:summary "Spinners indicate the in-progress status of an operation such as
+             loading or processing."
+   :desc "The spinner is component is meant to be used in conjuction with a
+          component such as `spinner.core/donut`,  `spinner.core/propeller`, or
+          `spinner.core/propeller`. See the \"Usage with a button\" in the
           Spinner > Examples section."}
   [& args]
   (let [[_ attrs & children] (opts+children args)

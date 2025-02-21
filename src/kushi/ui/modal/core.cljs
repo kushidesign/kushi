@@ -43,7 +43,8 @@
 
 ;; TODO - Change name to open-modal!
 (defn open-kushi-modal
-  "Takes an id of the modal, and an optional callback, which fires on light-dismiss."
+  "Takes an id of the modal, and an optional callback, which fires on
+   light-dismiss."
   ([id]
    (open-kushi-modal id nil))
   ([id f]
@@ -55,20 +56,28 @@
                             )
          (.showModal dialog)
          (domo/add-class! dialog "kushi-modal-open"))
-     (js/console.warn (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of: " id)))
+     (js/console.warn
+      (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of:
+            " id)))
    ))
 
 (defn modal-close-button
-  {:desc ["The `modal-close-button` is meant to be a cta for closing a modal that is independent of other button groups that may be in the modal."
-          "It is typically a single × icon positioned in the upper right or left corner of the dialog."]
+  {:desc ["The `modal-close-button` is meant to be a cta for closing a modal
+           that is independent of other button groups that may be in the modal."
+
+          "It is typically a single × icon positioned in the upper right or left
+           corner of the dialog."]
    :opts '[{:name    icon
             :pred    keyword?
             :default :close
-            :desc    ["Optional. A name of a Google Material Symbols icon. Defaults to a close (×) icon."]}
+            :desc    ["Optional. A name of a Google Material Symbols icon.
+                       Defaults to a close (×) icon."]}
            {:name    icon-svg
             :pred  vector?
             :default nil
-            :desc    ["Optional. A Hiccup representation of an svg icon. Supply this as an alternative to using the Google Material Symbols icon font"]}]}
+            :desc    ["Optional. A Hiccup representation of an svg icon.
+                       Supply this as an alternative to using the Google
+                       Material Symbols icon font"]}]}
   [& args]
   (let [[opts attrs & _] (opts+children args)
         {:keys     [icon-svg]
@@ -101,37 +110,37 @@
        [icon icon-name])]))
 
 (defn modal
-  {:summary "Modal dialogs create a new floating layer over the current view\\
-             to get user feedback or display information."
-   :desc "Elements and behaviors of modals can be custom styled and controlled\\
+  {:summary "Modal dialogs create a new floating layer over the current view to
+             get user feedback or display information."
+   :desc "Elements and behaviors of modals can be custom styled and controlled
           via the following tokens in your theme: 
         
-          `--modal-box-shadow`                        
-          `--modal-box-shadow-dark-mode`                
-          `--modal-border-radius`       
-          `--modal-border-width`       
-          `--modal-border-style`       
-          `--modal-border-color`       
-          `--modal-border-color-dark-mode`       
-          `--modal-padding-block`       
-          `--modal-padding-inline`      
-          `--modal-backdrop-color`      
-          `--modal-margin`              
-          `--modal-min-width`           
-          `--modal-transition-duration` 
+          `--modal-box-shadow`<br>
+          `--modal-box-shadow-dark-mode`<br>
+          `--modal-border-radius`<br>
+          `--modal-border-width`<br>
+          `--modal-border-style`<br>
+          `--modal-border-color`<br>
+          `--modal-border-color-dark-mode`<br>
+          `--modal-padding-block`<br>
+          `--modal-padding-inline`<br>
+          `--modal-backdrop-color`<br>
+          `--modal-margin`<br>
+          `--modal-min-width`<br>
+          `--modal-transition-duration`
           
-          Note that the value supplied to `--modal-box-shadow` should be one of\\ 
-          the stock elevation tokens, level 1~5, expressed like so: 
+          Note that the value supplied to `--modal-box-shadow` should be one of 
+          the stock elevation tokens, level 1~5, expressed like so:<br>
           `:$elevation-3`, or `var(--elevation-3)`"
    :opts '[{:name    modal-title
             :pred    string?
             :default nil
-            :desc    "Optional. If supplied, this will be rendered as an h2\\
+            :desc    "Optional. If supplied, this will be rendered as an h2
                       element within the modal."}
            {:name    description
             :pred    string?
             :default nil
-            :desc    "Optional. If supplied, this will be rendered as an p\\
+            :desc    "Optional. If supplied, this will be rendered as an p
                       element within the modal."}
 
            ;; TODO -- add on-dismiss callback option (for calling function with on backdrop click)

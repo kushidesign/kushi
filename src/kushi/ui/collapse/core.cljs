@@ -154,7 +154,8 @@
             children))))
 
 (defn collapse
-  {:summary "A collapse is a section of content which can be collapsed and expanded."
+  {:summary "A collapse is a section of content which can be collapsed and
+             expanded."
    :opts '[{:name    label
             :pred    string?
             :default nil
@@ -162,7 +163,7 @@
            {:name    label-expanded
             :pred    string?
             :default nil
-            :desc    "The text to display in the collapse header when expanded.\\
+            :desc    "The text to display in the collapse header when expanded.
                       Optional."}
            {:name    icon
             :pred    vector?
@@ -175,9 +176,9 @@
            {:name    icon-position
             :pred    #{:start :end}
             :default :start
-            :desc    "A value of `:start` will place the at the inline start of\\
-                      the header, preceding the label. A value of `:end` will\\
-                      place the icon at the inline end of the header, opposite\\
+            :desc    "A value of `:start` will place the at the inline start of
+                      the header, preceding the label. A value of `:end` will
+                      place the icon at the inline end of the header, opposite
                       the label. Optional."}
            {:name    header-attrs
             :pred    map?
@@ -190,8 +191,8 @@
            {:name    expanded?
             :pred    boolean?
             :default false
-            :desc    "When a value of `true` is passed, the collapse is\\
-                       initially rendered in an expanded state. Optional."}
+            :desc    "When a value of `true` is passed, the collapse is
+                      initially rendered in an expanded state. Optional."}
            {:name    speed
             :pred    pos-int?
             :default 250
@@ -240,7 +241,7 @@
 (defn accordion
   {:desc "A wrapper for multiple instances of the `collapse` component.
 
-          When `collapse` components are children of the accordion component,\\
+          When `collapse` components are children of the accordion component,
           they can only be expanded one at a time."}
   [& args]
   (let [[opts attrs & children] (opts+children args)

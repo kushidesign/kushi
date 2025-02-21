@@ -38,24 +38,24 @@
 
 
 (defn tooltip-attrs
-  {:summary "Tooltips provide additional context when hovering or clicking\\ 
+  {:summary "Tooltips provide additional context when hovering or clicking 
              on an element."
-   :desc "Tooltips are intended to be ephemeral, containing only non-interactive\\
+   :desc "Tooltips are intended to be ephemeral, containing only non-interactive
           content.
 
-          By default, tooltips will show up above the owning element.Specifying\\
+          By default, tooltips will show up above the owning element.Specifying
           placement in various ways can be done with the `:-placement` option.
           
-          The element being tipped must receive an attributes map that is a\\
-          result of passing a map of options to\\
-          `kushi.ui.tooltip.core/tooltip-attrs`. You can compose this map to an\\
+          The element being tipped must receive an attributes map that is a
+          result of passing a map of options to
+          `kushi.ui.tooltip.core/tooltip-attrs`. You can compose this map to an
           existing elements attributes map using the pattern:
           
           `(merge-attrs (sx ...) (tooltip-attrs {...}))`
           ~ or ~
           `(merge-attrs {...} (tooltip-attrs {...}))`
           
-          tooltips can be custom styled and controlled via the following tokens\\
+          tooltips can be custom styled and controlled via the following tokens
           in your theme:
           
           __Colors and images:__
@@ -94,15 +94,15 @@
           `--tooltip-arrow-x-offset`
           `--tooltip-arrow-y-offset`
           
-          If you want supply the value of any of the above tokens ala-carte, use\\
+          If you want supply the value of any of the above tokens ala-carte, use
           the following pattern.
           
-          `(tooltip-attrs {:-text \"My text\"\\
+          `(tooltip-attrs {:-text \"My text\"
                            :-tooltip-class (css [:--tooltip-font-size :34px])}))`
           
-          If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for\\
-          `--tooltip-offset`, `--tooltip-arrow-x-offset`,\\
-          `--tooltip-arrow-y-offset`, or `--tooltip-border-radius`, you will\\
+          If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for
+          `--tooltip-offset`, `--tooltip-arrow-x-offset`,
+          `--tooltip-arrow-y-offset`, or `--tooltip-border-radius`, you will
           need to use an explicit unit e.g. `0px`."
           
    :opts '[{:name    text
@@ -112,7 +112,7 @@
            {:name    placement
             :pred    keyword?
             :default :auto
-            :desc    "You can use single keywords to specify the exact placement\\ 
+            :desc    "You can use single keywords to specify the exact placement 
                       of the tooltip:
                       
                       `:top-left-corner`
@@ -139,9 +139,9 @@
                       `:rb`
                       `:rbc`
                       
-                      If you care about the tooltip placement respecting writing\\
-                      direction and/or document flow, you can use a vector of of\\ 
-                      up to 3 logical properties keywords, separated by spaces:\\
+                      If you care about the tooltip placement respecting writing
+                      direction and/or document flow, you can use a vector of of 
+                      up to 3 logical properties keywords, separated by spaces:
                       
                       `[:inline-end :block-start]`
                       `[:inline-end :block-start :corner]`
@@ -153,12 +153,12 @@
            {:name    arrow?
             :pred    boolean?
             :default true
-            :desc    "Setting to false will not render a directional arrow with\\ 
+            :desc    "Setting to false will not render a directional arrow with 
                       the tooltip."}
            {:name    tooltip-class
             :pred    string?
             :default nil
-            :desc    "A class name for a la carte application of classes on the\\
+            :desc    "A class name for a la carte application of classes on the
                       tooltip element."}
            {:name    text-on-click
             :pred    #(or (string? %) (keyword? %) (vector? %))
@@ -167,8 +167,8 @@
            {:name    text-on-click-tooltip-class
             :pred    string?
             :default nil
-            :desc    "A class name for the la carte application of classes on\\
-                      the tooltip element which is displaying alternate text\\
+            :desc    "A class name for the la carte application of classes on
+                      the tooltip element which is displaying alternate text
                       after click."}]}
   [{text                        :-text
     placement                   :-placement

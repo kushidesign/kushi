@@ -40,54 +40,54 @@
    :desc "Switches can be custom styled via a variety of tokens in your theme.
           
           `--switch-width-ratio`
-          Setting this to 1.5 will result in a switch that has the aspect ratio\\
+          Setting this to 1.5 will result in a switch that has the aspect ratio
           of 1.5:1 (width:height). The default value is 2.
           
           `--switch-border-width`
-          The default value is `2px`. If customizing the value, it is recommended\\
-          to use a `px` or `rem` value, especially if you are using the\\
-          `:-track-content-on` or `:-track-content-off` options.
+          The default value is `2px`. If customizing the value, it is
+          recommended to use a `px` or `rem` value, especially if you are using
+          the `:-track-content-on` or `:-track-content-off` options.
           
           `--switch-border-color`
-          The default value is `transparent`, which will read as \"padding\"\\
-          between the switch \"thumb\" and the switch \"track\", as by default\\
-          the switch will have a solid background color in both the on and off\\
-          states. You can supply a color value which will result in more of an\\
+          The default value is `transparent`, which will read as \"padding\"
+          between the switch \"thumb\" and the switch \"track\", as by default
+          the switch will have a solid background color in both the on and off
+          states. You can supply a color value which will result in more of an
           \"outlined\" styling.
           
           `--switch-thumb-scale-factor`
-          The default value is `1`. Setting this to a value greater than 1 will\\
+          The default value is `1`. Setting this to a value greater than 1 will
           result in the thumb height being greater than the track height.
           
           The following tokens control the background color of the switch:
           
-          `--switch-off-background-color`
-          `--switch-off-background-color-hover`
-          `--switch-on-background-color`
-          `--switch-on-background-color-hover`
-          `--switch-on-accent-background-color`
-          `--switch-on-accent-background-color-hover`
-          `--switch-on-positive-background-color`
-          `--switch-on-positive-background-color-hover`
-          `--switch-on-warning-background-color`
-          `--switch-on-warning-background-color-hover`
-          `--switch-on-negative-background-color`
+          `--switch-off-background-color`<br>
+          `--switch-off-background-color-hover`<br>
+          `--switch-on-background-color`<br>
+          `--switch-on-background-color-hover`<br>
+          `--switch-on-accent-background-color`<br>
+          `--switch-on-accent-background-color-hover`<br>
+          `--switch-on-positive-background-color`<br>
+          `--switch-on-positive-background-color-hover`<br>
+          `--switch-on-warning-background-color`<br>
+          `--switch-on-warning-background-color-hover`<br>
+          `--switch-on-negative-background-color`<br>
           `--switch-on-negative-background-color-hover`
           
           
           Each of the above has a corresponding token for dark-mode:
           
-          `--switch-off-background-color-dark-mode`
-          `--switch-off-background-color-hover-dark-mode`
-          `--switch-on-background-color-dark-mode`
-          `--switch-on-background-color-hover-dark-mode`
-          `--switch-on-accent-background-color-dark-mode`
-          `--switch-on-accent-background-color-hover-dark-mode`
-          `--switch-on-positive-background-color-dark-mode`
-          `--switch-on-positive-background-color-hover-dark-mode`
-          `--switch-on-warning-background-color-dark-mode`
-          `--switch-on-warning-background-color-hover-dark-mode`
-          `--switch-on-negative-background-color-dark-mode`
+          `--switch-off-background-color-dark-mode`<br>
+          `--switch-off-background-color-hover-dark-mode`<br>
+          `--switch-on-background-color-dark-mode`<br>
+          `--switch-on-background-color-hover-dark-mode`<br>
+          `--switch-on-accent-background-color-dark-mode`<br>
+          `--switch-on-accent-background-color-hover-dark-mode`<br>
+          `--switch-on-positive-background-color-dark-mode`<br>
+          `--switch-on-positive-background-color-hover-dark-mode`<br>
+          `--switch-on-warning-background-color-dark-mode`<br>
+          `--switch-on-warning-background-color-hover-dark-mode`<br>
+          `--switch-on-negative-background-color-dark-mode`<br>
           `--switch-on-negative-background-color-hover-dark-mode`"
           
    :opts '[{:name    on?
@@ -97,34 +97,33 @@
            {:name    disable-events?
             :pred    boolean?
             :default false
-            :desc    "Set this to true if you would like to control the state of\\
+            :desc    "Set this to true if you would like to control the state of
                       the switch in a reactive manner via the `:-on?` option"}
            {:name    thumb-attrs
             :pred    map?
             :default nil
-            :desc    "HTML attributes map applied to the inner element, commonly\\
+            :desc    "HTML attributes map applied to the inner element, commonly
                       refered to as the \"handle\" or \"thumb\" of the switch."}
            {:name    thumb-content-off
             :pred    #{string? vector?}
             :default nil
-            :desc    "String or element that will be placed in center of thumb,\\
+            :desc    "String or element that will be placed in center of thumb,
                       when in the \"off\" position"}
            {:name    thumb-content-on
             :pred    #{string? vector?}
             :default nil
-            :desc    "String or element that will be placed in center of thumb,\\
+            :desc    "String or element that will be placed in center of thumb,
                       when in the \"on\" position"}
            {:name    track-content-off
             :pred    #{string? vector?}
             :default nil
-            :desc    "String or element that will be placed in the track, when\\
+            :desc    "String or element that will be placed in the track, when
                       in the \"off\" position"}
            {:name    track-content-on
             :pred    #{string? vector?}
             :default nil
-            :desc    "String or element that will be placed in the track, when\\
-                      in the \"on\" position"}
-           ]}
+            :desc    "String or element that will be placed in the track, when
+                      in the \"on\" position"}]}
   [& args]
   (let [[opts attrs & _]
         (opts+children args)

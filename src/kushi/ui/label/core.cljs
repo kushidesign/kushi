@@ -4,7 +4,7 @@
    [kushi.core :refer (css merge-attrs)]))
 
 (defn label
-  {:desc ["A label is typically used for providing titles to sections of content."]}
+  {:desc "A label is typically used for providing titles to sections of content."}
   [& args]
   (let [[_ attrs & children] (opts+children args)
         children (map #(if (string? %)

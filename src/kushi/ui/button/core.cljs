@@ -9,7 +9,7 @@
 (defn button
   {:summary "Buttons provide cues for actions and events."
 
-   :desc    "Buttons are fundamental components that allow users to process\\
+   :desc    "Buttons are fundamental components that allow users to process
              actions or navigate an experience.
               
              They can be custom styled via a variety of tokens in your theme.
@@ -32,23 +32,23 @@
    :opts    '[{:name    loading?
                :pred    boolean?
                :default false
-               :desc    "When `true`, this will set the appropriate values for\\
+               :desc    "When `true`, this will set the appropriate values for
                         `aria-busy` and `aria-label`"}
               {:name    start-enhancer
                :pred    #{string? keyword?}
                :default nil
-               :desc    "The name of a Google Material Symbol to use as an icon\\
+               :desc    "The name of a Google Material Symbol to use as an icon
                          in the inline start position"}
               {:name    end-enhancer
                :pred    #{string? keyword?}
                :default nil
-               :desc    "The name of a Google Material Symbol to use as an icon\\
+               :desc    "The name of a Google Material Symbol to use as an icon
                          in the inline end position"}
               {:name    colorway
                :pred    #{:neutral :accent :positive :negative :warning}
                :default nil
-               :desc    "Colorway of the button. Can also be a named color from\\
-                         Kushi's design system, e.g `:red`, `:purple`, `:gold`,\\
+               :desc    "Colorway of the button. Can also be a named color from
+                         Kushi's design system, e.g `:red`, `:purple`, `:gold`,
                          etc."}
               {:name    surface
                :pred    #{:soft :solid :minimal :outline}
