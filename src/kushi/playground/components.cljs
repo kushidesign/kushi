@@ -214,11 +214,13 @@
        :component-meta (-> callout var meta)
        :component      callout
        :reqs           '[[kushi.ui.callout.core :refer [callout]]]
-       :variants-base  #{:ult :solid :outline}
-       :variants-order [:ult :solid :outline]
-       :variants-attrs {:ult  {}
-                        :solid   (sx :.solid)
-                        :outline (sx :.outline)}}
+       :variants-base  #{:soft :solid :outline}
+      ;;  :variants-order [:soft :solid :outline]
+      ;;  :variants-attrs {:soft    {}
+      ;;                   :solid   {:-surface :solid}
+      ;;                   :outline {:-surface :outline}
+      ;;                   :minimal {:-surface :minimal}}
+       }
 
       {:label          "collapse"
        :examples       collapse.demo/examples

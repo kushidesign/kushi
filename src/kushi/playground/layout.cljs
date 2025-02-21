@@ -393,7 +393,7 @@
     :as                       component-opts}]
 
   (into [:<>
-         #_(into [:section
+         (into [:section
                 {:class (css :.playground-component-panel)
                  :id    (str "kushi-" label "-examples")}]
                (for [
@@ -405,11 +405,11 @@
                   component-opts
                   example-opts]))
          [:div 
-          {:class  (css :.playground-component-panel
-                        :>div:max-width--$playground-main-content-max-width
-                        :pbs--35px)
-          ;;  :hidden "hidden"
-           :id     (str "kushi-" label "-documentation")}
+          {:class (css :.playground-component-panel
+                       :>div:max-width--$playground-main-content-max-width
+                       :pbs--35px)
+           :hidden "hidden"
+           :id    (str "kushi-" label "-documentation")}
 
           (when summary
             (into [:div 

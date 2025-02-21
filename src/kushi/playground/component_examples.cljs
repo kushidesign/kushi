@@ -2,7 +2,6 @@
   (:require
    [clojure.string :as string]
    [domo.core :as d]
-   [fireworks.core :refer [?]]
    [kushi.core :refer (sx css merge-attrs)]
    [kushi.css.defs]
    [kushi.css.media]
@@ -273,8 +272,8 @@
       (into [:div (merge-attrs
                    (sx :.grid :gtc--1fr :gap--1rem)
                    container-attrs)]
-            (for [variant-attrs (? (resolve-variants-attrs component-opts
-                                                        example-opts))]
+            (for [variant-attrs (resolve-variants-attrs component-opts
+                                                        example-opts)]
               [example-row-variant
                component
                (merge example-opts
