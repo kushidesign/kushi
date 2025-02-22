@@ -116,11 +116,9 @@
         ;; TODO fix this hack
         s (string/replace s #"\n\n\n" "\n\n")
         s (string/replace s #"\n\n\n" "\n\n")
-        s (string/replace s #"\n\n\n" "\n\n")
-        ]
-(!? {:print-with prn} s)
+        s (string/replace s #"\n\n\n" "\n\n")]
+    ;; (!? {:print-with prn} s)
     (-> s
-        ;; (string/replace #"\n *" "\n")
         preformat
         #_(->> (? {:print-with println
                  :when #(string/starts-with? % "tooltips")}))
@@ -159,38 +157,8 @@
                                          x))]
                   (conj acc
                         (if (string? x)
-                          [:span (if (= x "") (gstring/unescapeEntities "&nbsp;") x)]
-                          (into [:span] x)))))
-              [])))
-    #_(-> s
-        (string/replace #"\\\n" "")
-        (string/replace #"\n *" "\n")
-        (string/split #"\n")
-        (->> (reduce 
-              (fn [acc s]
-                (let [x (if (contains-url? s) (hiccupize-url s) s)
-                      x (if (string? x)
-                          (cond
-                            (contains-codes? x)
-                            (hiccupize-codes x)
-
-                            (contains-bolded? x)
-                            (hiccupize-bolded x)
-
-                            :else
-                            x)
-                          (walk/postwalk #(cond
-                                            (contains-codes? %)
-                                            (into [:<>] (hiccupize-codes %))
-
-                                            (contains-bolded? %)
-                                            (into [:<>] (hiccupize-bolded %))
-
-                                            :else
-                                            %)
-                                         x))]
-                  (conj acc
-                        (if (string? x)
-                          [:span (if (= x "") (gstring/unescapeEntities "&nbsp;") x)]
+                          [:span (if (= x "")
+                                   (gstring/unescapeEntities "&nbsp;")
+                                   x)]
                           (into [:span] x)))))
               [])))))
