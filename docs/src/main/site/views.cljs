@@ -2,7 +2,7 @@
   (:require
    [clojure.string :as string]
    [domo.core :as domo]
-   [kushi.core :refer [sx]]
+   [kushi.core :refer [sx defcss]]
    [kushi.playground.about :as about]
    ;  [kushi.playground.tweak.samples :refer [pane-samples]]
    [kushi.playground.components :refer [playground-components]]
@@ -11,6 +11,7 @@
 
 (js/console.clear)
 
+(defcss ".foo" :c--red)
 
 (def routes 
   {["components"] {:content layout/component-playground-content
