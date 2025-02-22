@@ -6,7 +6,7 @@
             [kushi.ui.text-field.core :refer [text-field]]))
 
 (def examples
-  (let [row-attrs (sx :_.kui-button:fs--$small)]
+  (let [row-attrs (sx :_.kushi-button:fs--$small)]
     [
      (let [code (sx-call (let [id "my-modal-basic"]
                            [:div
@@ -23,7 +23,7 @@
        {:desc      "Basic"
         :component button
         :reqs      '[[kushi.ui.button.core :refer [button]]]
-        :row-attrs (sx :_.kui-button:fs--$small)
+        :row-attrs (sx :_.kushi-button:fs--$small)
         :snippets  [(:quoted code)]
         :examples  [{:label "right"
                      :args  ["Hover me"]

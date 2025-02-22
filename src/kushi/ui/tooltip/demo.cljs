@@ -86,7 +86,7 @@
   [{:desc      "Basic, auto-placement."
     :component button
     :reqs      '[[kushi.ui.button.core :refer [button]]]
-    :row-attrs (sx :_.kui-button:fs--$small)
+    :row-attrs (sx :_.kushi-button:fs--$small)
     :snippets  '[[button
                   (tooltip-attrs {:-text "This is a tooltip"})
                   "Hover me"]]
@@ -97,7 +97,7 @@
    {:desc      "Styling via design token at callsite."
     :component button
     :reqs      '[[kushi.ui.button.core :refer [button]]]
-    :row-attrs (sx :_.kui-button:fs--$small)
+    :row-attrs (sx :_.kushi-button:fs--$small)
     :snippets  '[[button
                   (tooltip-attrs
                    {:-text          

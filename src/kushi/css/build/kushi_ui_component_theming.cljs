@@ -1153,7 +1153,7 @@
 
 
 ;; Move to button ns?
-(defcss ".kui-button"
+(defcss ".kushi-button"
   {:--_padding-inline               "var(--button-padding-inline)"
    :--_padding-block                "var(--button-padding-block)"
    "[data-kui-packing=\"compact\"]" {:--_padding-inline "var(--button-padding-inline-compact)"
@@ -1165,7 +1165,7 @@
    "[data-kui-icon-button]"         {:--_padding-inline           "var(--_padding-block)"
                                      :_.material-symbols-outlined {:min-width   :1.2ch
                                                                    :line-height :normal}}})
-(defcss ".kui-icon-button"
+(defcss ".kushi-icon-button"
   {:--_padding-block            :$icon-button-padding-block||$button-padding-block
    :--_padding-inline           :$icon-button-padding-inline||$button-padding-inline
    :_.material-symbols-outlined {:min-width   :1.2ch
@@ -1177,14 +1177,14 @@
 
 
 ;; Keep here?
-(defcss ".kui-button, .kui-tag"
+(defcss ".kushi-button, .kushi-tag"
   {"[data-kui-start-enhancer]"      {:padding-inline-start "calc(var(--_padding-inline) * 0.7666)"}
    "[data-kui-end-enhancer]"        {:padding-inline-end "calc(var(--_padding-inline) * 0.7666)"}})
 
 
 
 ;; Move to tag ns
-(defcss ".kui-tag"
+(defcss ".kushi-tag"
   {"[data-kui-packing=\"compact\"]"
    {:--_padding-inline      "var(--tag-padding-inline-compact)"
     :--_padding-block-start "calc(var(--tag-padding-block-compact) * var(--tag-padding-block-start-reduction-ratio, 1))"

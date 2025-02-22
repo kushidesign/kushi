@@ -90,7 +90,7 @@
     ;; TODO maybe use :data-kui-name "button"
     (into [:button
            (merge-attrs
-            (sx ".kui-button"
+            (sx ".kushi-button"
                 :position--relative
                 :d--flex
                 :flex-direction--row
@@ -179,7 +179,7 @@
     ;; TODO maybe use :data-kui-name "button"
     (into [:button
            (merge-attrs
-            (sx ".kui-icon-button"
+            (sx ".kushi-icon-button"
                 :position--relative
                 :d--flex
                 :flex-direction--row

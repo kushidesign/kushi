@@ -3,8 +3,8 @@
             [kushi.ui.util :refer [as-str maybe nameable?]]
             [clojure.string :as string]
             [kushi.ui.core :refer (opts+children)]
+            [kushi.ui.icon.core]
             [kushi.ui.shared.theming :refer [data-kui- get-variants hue-style-map]]
-
             ))
 ;; Check docs
 (defn tag
@@ -90,7 +90,7 @@
         ]
     (into [:div
            (merge-attrs
-            (sx ".kui-tag"
+            (sx ".kushi-tag"
                 :position--relative
                 :d--flex
                 :flex-direction--row

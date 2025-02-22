@@ -14,7 +14,7 @@
 (defn close-callout [e]
   (.stopPropagation e)
   (let [el      (domo/et e)
-        callout (domo/nearest-ancestor el ".kui-callout")]
+        callout (domo/nearest-ancestor el ".kushi-callout")]
     (when (gdom/isElement callout)
       (let [duration* (.-transitionDuration (js/window.getComputedStyle callout))
             duration  (js/Math.round (* 1000 (js/parseFloat (string/replace duration* #"s$" ""))))]
@@ -169,7 +169,7 @@
        :id callout-id}
       attrs)
       (merge-attrs
-       (sx ".kui-callout"
+       (sx ".kushi-callout"
            :position--relative
            :d--flex
            :flex-direction--row

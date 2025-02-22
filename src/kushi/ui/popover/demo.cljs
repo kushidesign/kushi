@@ -68,7 +68,7 @@
 
 
 (def examples
-  (let [row-attrs (sx :_.kui-button:fs--$small)]
+  (let [row-attrs (sx :_.kushi-button:fs--$small)]
     [
      (let [code (sx-call (popover-attrs
                           {:-f (fn [popover-el]

@@ -74,7 +74,7 @@
      {:desc      "With notification, and manual dismiss cta"
       :component button
       :reqs      '[[kushi.ui.button.core :refer [button]]]
-      :row-attrs (sx :_.kui-button:fs--$small)
+      :row-attrs (sx :_.kushi-button:fs--$small)
       :snippets  [['button (:quoted code) "Save for later"]]
       :examples  [{:label    "Basic"
                    :args     ["Save for later"]
