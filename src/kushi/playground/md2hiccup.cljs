@@ -48,7 +48,6 @@
                         [:a {:href href :target target :class "kushi-link"} link])
                      matches)
         coll    (string/split s md-url-re)]
-
     (interleave-all coll matches)))
 
 
@@ -123,14 +122,25 @@
     (-> s
         ;; (string/replace #"\n *" "\n")
         preformat
+        #_(->> (? {:print-with println
+                 :when #(string/starts-with? % "tooltips")}))
         (string/split #"\n")
+
         (->> (reduce 
               (fn [acc s]
                 (let [x (if (contains-url? s) (hiccupize-url s) s)
                       x (if (string? x)
                           (cond
                             (contains-codes? x)
-                            (hiccupize-codes x)
+                            (let [ret (hiccupize-codes x)]
+                              (reduce (fn [acc %]
+                                        (if (contains-bolded? %)
+                                          (apply conj
+                                                 acc
+                                                 (hiccupize-bolded %))
+                                          (conj acc %)))
+                                      []
+                                      ret))
 
                             (contains-bolded? x)
                             (hiccupize-bolded x)

@@ -73,10 +73,10 @@
      :reqs           '[[kushi.ui.button.core :refer [button]]]
      :variants-base  #{:soft :solid :outline :minimal}
      :variants-order [:soft :solid :outline :minimal]
-     :variants-attrs {:soft     {}
-                      :solid    {:-surface :solid}
+     :variants-attrs {:soft    {}
+                      :solid   {:-surface :solid}
                       :outline {:-surface :outline}
-                      :minimal  {:-surface :minimal}}}
+                      :minimal {:-surface :minimal}}}
 
       {:label          "icon"
        :component      icon

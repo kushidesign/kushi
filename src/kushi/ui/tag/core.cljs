@@ -6,10 +6,66 @@
             [kushi.ui.shared.theming :refer [data-kui- get-variants hue-style-map]]
 
             ))
-
+;; Check docs
 (defn tag
   {:summary "A tag is typically used for concise information, often in a group
-             with other tags."}
+             with other tags."
+
+   :desc    "Tags are fundamental components that allow to organize information,
+             or view organized information.
+              
+             They can be custom styled via a variety of tokens in your theme:
+
+             `--tag-padding-inline-ems`<br>
+             The default value is `:1.2em`
+              
+             `--icon-tag-padding-inline-ems`<br>
+             The default value is `:0.69em`
+              
+             `--tag-padding-block-ems`<br>
+             The default value is `:0.67em`
+              
+             `--tag-with-icon-padding-inline-offset`<br>
+             The default value is `:0.9em`<br>
+              
+             `--tag-border-width`
+             The default value is `:1px`"
+   
+   :opts    '[{:name    loading?
+               :pred    boolean?
+               :default false
+               :desc    "When `true`, this will set the appropriate values for
+                        `aria-busy` and `aria-label`"}
+              {:name    start-enhancer
+               :pred    #{string? keyword?}
+               :default nil
+               :desc    "The name of a Google Material Symbol to use as an icon
+                         in the inline start position"}
+              {:name    end-enhancer
+               :pred    #{string? keyword?}
+               :default nil
+               :desc    "The name of a Google Material Symbol to use as an icon
+                         in the inline end position"}
+              {:name    colorway
+               :pred    #{:neutral :accent :positive :negative :warning}
+               :default nil
+               :desc    "Colorway of the tag. Can also be a named color from
+                         Kushi's design system, e.g `:red`, `:purple`, `:gold`,
+                         etc."}
+              {:name    surface
+               :pred    #{:soft :solid :minimal :outline}
+               :default :round
+               :desc    "Surface variant of the tag."}
+              {:name    shape
+               :pred    #{:sharp :round :pill}
+               :default :round
+               :desc    "Shape of the tag."}
+              {:name    packing
+               :pred    #{:compact :roomy}
+               :default nil
+               :desc    "General amount of padding inside the tag"}
+              ]
+   }
   [& args]
   (let [[opts attrs & children]
         (opts+children args)

@@ -12,21 +12,21 @@
    :desc    "Buttons are fundamental components that allow users to process
              actions or navigate an experience.
               
-             They can be custom styled via a variety of tokens in your theme.
+             They can be custom styled via a variety of tokens in your theme:
 
-             `:$button-padding-inline-ems`
+             `--button-padding-inline-ems`<br>
              The default value is `:1.2em`
               
-             `:$icon-button-padding-inline-ems`
+             `--icon-button-padding-inline-ems`<br>
              The default value is `:0.69em`
               
-             `:$button-padding-block-ems`
+             `--button-padding-block-ems`<br>
              The default value is `:0.67em`
               
-             `:$button-with-icon-padding-inline-offset`
-             The default value is `:0.9em`
+             `--button-with-icon-padding-inline-offset`<br>
+             The default value is `:0.9em`<br>
               
-             `:$button-border-width`
+             `--button-border-width`
              The default value is `:1px`"
    
    :opts    '[{:name    loading?
@@ -61,15 +61,7 @@
               {:name    packing
                :pred    #{:compact :roomy}
                :default nil
-               :desc    ["General amount of padding inside the button"
-                         :br
-                         "Cool"
-                         "Next"
-                         :br
-                         :br
-                         "What"]
-               
-               }]}
+               :desc    "General amount of padding inside the button"}]}
   [& args]
   (let [
         [opts attrs & children]

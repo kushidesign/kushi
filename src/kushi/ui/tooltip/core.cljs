@@ -13,7 +13,6 @@
  "elevation"
  "pane"
  "tooltip")
-            
 
 (defn valid-tooltip-text-coll? [x]
   (and (seq x) 
@@ -36,7 +35,6 @@
           (when (valid-tooltip-text-coll? v)
             v))))
 
-
 (defn tooltip-attrs
   {:summary "Tooltips provide additional context when hovering or clicking 
              on an element."
@@ -55,12 +53,12 @@
           ~ or ~
           `(merge-attrs {...} (tooltip-attrs {...}))`
           
-          tooltips can be custom styled and controlled via the following tokens
+          Tooltips can be custom styled and controlled via the following tokens
           in your theme:
           
           __Colors and images:__
           `--tooltip-color`                            
-          `--tooltip-color-dark-mode`                    
+          `--tooltip-color-dark-mode`
           `--tooltip-background-color`                 
           `--tooltip-background-color-dark-mode`         
           `--tooltip-background-image`                 

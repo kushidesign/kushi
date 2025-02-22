@@ -57,38 +57,8 @@
           
           `--switch-thumb-scale-factor`
           The default value is `1`. Setting this to a value greater than 1 will
-          result in the thumb height being greater than the track height.
+          result in the thumb height being greater than the track height."
           
-          The following tokens control the background color of the switch:
-          
-          `--switch-off-background-color`<br>
-          `--switch-off-background-color-hover`<br>
-          `--switch-on-background-color`<br>
-          `--switch-on-background-color-hover`<br>
-          `--switch-on-accent-background-color`<br>
-          `--switch-on-accent-background-color-hover`<br>
-          `--switch-on-positive-background-color`<br>
-          `--switch-on-positive-background-color-hover`<br>
-          `--switch-on-warning-background-color`<br>
-          `--switch-on-warning-background-color-hover`<br>
-          `--switch-on-negative-background-color`<br>
-          `--switch-on-negative-background-color-hover`
-          
-          
-          Each of the above has a corresponding token for dark-mode:
-          
-          `--switch-off-background-color-dark-mode`<br>
-          `--switch-off-background-color-hover-dark-mode`<br>
-          `--switch-on-background-color-dark-mode`<br>
-          `--switch-on-background-color-hover-dark-mode`<br>
-          `--switch-on-accent-background-color-dark-mode`<br>
-          `--switch-on-accent-background-color-hover-dark-mode`<br>
-          `--switch-on-positive-background-color-dark-mode`<br>
-          `--switch-on-positive-background-color-hover-dark-mode`<br>
-          `--switch-on-warning-background-color-dark-mode`<br>
-          `--switch-on-warning-background-color-hover-dark-mode`<br>
-          `--switch-on-negative-background-color-dark-mode`<br>
-          `--switch-on-negative-background-color-hover-dark-mode`"
           
    :opts '[{:name    on?
             :pred    boolean?
@@ -123,7 +93,15 @@
             :pred    #{string? vector?}
             :default nil
             :desc    "String or element that will be placed in the track, when
-                      in the \"on\" position"}]}
+                      in the \"on\" position"}
+           
+           {:name    colorway
+            :pred    #{:neutral :accent :positive :negative :warning}
+            :default nil
+            :desc    "Colorway of the switch. Can also be a named color from
+                      Kushi's design system, e.g `:red`, `:purple`, `:gold`,
+                      etc."}
+           ]}
   [& args]
   (let [[opts attrs & _]
         (opts+children args)

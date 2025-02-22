@@ -8,10 +8,7 @@
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.shared.theming :refer [data-kui- get-variants hue-style-map]]
-   [kushi.ui.util :refer [keyed maybe]])
-  #_(:require [kushi.core :refer (css sx merge-attrs)]
-            [kushi.ui.core :refer (opts+children)]
-            [kushi.ui.icon.core]))
+   [kushi.ui.util :refer [keyed maybe]]))
 
 ;; TODO - this is mousedown, so only if primary click
 (defn close-callout [e]
@@ -29,7 +26,7 @@
   {:desc "The `callout-close-button` is meant to be a cta for closing a callout.
           It is typically a single × icon positioned in the upper right or left
           corner of the dialog."
-   :opts '[{:name    icon
+   :opts '[{:name    icon-name
             :pred    keyword?
             :default :close
             :desc    "Optional. A name of a Google Material Symbols icon.
@@ -43,7 +40,8 @@
             :default nil
             :desc    "Optional. A Hiccup representation of an svg icon. Supply
                       this as an alternative to using the Google Material
-                      Symbols icon font"}]}
+                      Symbols icon font"}
+           ]}
   [& args]
   (let [[opts attrs & _]
         (opts+children args)
@@ -102,6 +100,24 @@
             :pred    string
             :default nil
             :desc    "The header text to render in the callout. Optional."}
+           {:name    colorway
+            :pred    #{:neutral :accent :positive :negative :warning}
+            :default nil
+            :desc    "Colorway of the callout. Can also be a named color from
+                      Kushi's design system, e.g `:red`, `:purple`, `:gold`,
+                      etc."}
+           {:name    surface
+            :pred    #{:soft :solid :minimal :outline}
+            :default :round
+            :desc    "Surface variant of the callout."}
+           {:name    shape
+            :pred    #{:sharp :round :pill}
+            :default :round
+            :desc    "Shape of the callout."}
+           {:name    packing
+            :pred    #{:compact :roomy}
+            :default nil
+            :desc    "General amount of padding inside the callout"}
           ;;  Leave this out for now
           ;;   {:name    duration
           ;;    :pred    pos-int?
@@ -170,9 +186,9 @@
            :transition-duration--$transition-duration
 
                 ;; different from button
-           [:--_padding-block-start "calc(var(--tag-padding-block) * var(--tag-padding-block-start-reduction-ratio, 1))"]
-           [:--_padding-block-end   :$tag-padding-block]
-           [:--_padding-inline      :$tag-padding-inline]
+           [:--_padding-block-start "calc(var(--callout-padding-block) * var(--callout-padding-block-start-reduction-ratio, 1))"]
+           [:--_padding-block-end   :$callout-padding-block]
+           [:--_padding-inline      :$callout-padding-inline]
                 ;; different from button
            
            :pi--$_padding-inline
