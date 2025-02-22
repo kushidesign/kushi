@@ -235,7 +235,17 @@
              (interpose "\n"
                         (map (fn [arg]
                                [:bold (unwrap-quoted-symbol arg)])
-                             invalid-args))))
+                             invalid-args))
+
+             (when-let [[_ prop val] 
+                        (when (-> invalid-args first keyword?)
+                          (re-find #"^([a-z]+)-(\$*[a-z0-9]+.*)" 
+                                   (name (-> invalid-args first))))]
+               ["\n"
+                "\n"
+                "Did you mean "
+                [:bold (str ":" prop "--" val)]
+                "?"])))
     :body   
     (let [spec-data (s/form ::specs/valid-sx-arg)]
       (apply

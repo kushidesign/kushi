@@ -39,7 +39,7 @@
   ;; [pane-samples]
 
   (into 
-   [:div (sx :.flex-col-fs)
+   [:div (sx :.flex-col-fs :p-10px)
     [nav/header]
     ;; Spinner between page transitions
     ;; Leave out for now as transitions are instant
