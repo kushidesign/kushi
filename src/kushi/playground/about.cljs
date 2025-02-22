@@ -65,7 +65,7 @@
 (defn kushi-colors-about []
   [:section
    (sx 
-    :>p:max-width--$main-content-max-width
+    :>p:max-width--$playground-main-content-max-width
     :>p:first-child:mbs--0
     :>p:mb--2em
     :>p:lh--1.7)
@@ -85,7 +85,7 @@
    [:div
     (sx
      :d--none
-     :max-width--$main-content-max-width
+     :max-width--$playground-main-content-max-width
      :xsm:d--block
      :pb--2rem:4.5rem
      :pis--2.5rem)
@@ -115,17 +115,18 @@
                       ["neutral50" "neutral50"]]]
            (alias-global-mapping-row a g)))
 
-   [:p
-    "The utility classes "
-    [:code (sx :.neutral) ":.neutral"]
+   [:p]
+   #_[:p
+    "The `data-kui-colorway` attributes "
+    [:code {:-colorway :.neutral} ":.neutral"]
     ", "
-    [:code (sx :.positive) ":.positive"]
+    [:code {:-colorway :.positive} ":.positive"]
     ", "
-    [:code (sx :.negative) ":.negative"]
+    [:code {:-colorway :.negative} ":.negative"]
     ", "
-    [:code (sx :.warning) ":.warning"]
+    [:code {:-colorway :.warning} ":.warning"]
     ", and "
-    [:code (sx :.accent) ":.accent"]
+    [:code {:-colorway :.accent} ":.accent"]
     " will decorate the element with the corresponding foreground and background colors."]
    
    [divisor]
@@ -147,13 +148,6 @@
            [:dark:bbs "1px solid var(--gray-700)"]
            :pbs--2em
            :mb--5rem:1.5rem)
-          #_(trans (sx 
-               :.large
-               :.semi-bold
-               :pbs--2em
-               :mb--5rem:1.5rem
-               [:bbs "1px solid var(--gray-300)"]
-               [:dark:bbs "1px solid var(--gray-700)"]))
           (str "Type " (string/lower-case label) " scale")]
          (let [[kind-of-scale
                 start
@@ -232,7 +226,7 @@
 
 (defn kushi-typography-about
   [m]
-  [:section (sx :>*:max-width--$main-content-max-width
+  [:section (sx :>*:max-width--$playground-main-content-max-width
                 :>p:first-child:mbs--0
                 :>p:mb--2em
                 :>p:lh--1.7)
@@ -247,7 +241,7 @@
 
    (into [:p
           [:span (sx :d--block :mbe--1em) "The following utility classes are available for font-style and capitalization:"]]
-         (for [x [:sans :sans-serif :italic :oblique :uppercase :lowercase :capitalize]]
+         (for [x [:sans :serif :italic :oblique :uppercase :lowercase :capitalize]]
            [:span (sx :.code :fs--0.875rem!important :d--ib :ws--n :mie--0.5em :mbe--0.5em) (str ":." (name x))]))
 
    [:p
@@ -307,7 +301,8 @@
                      {:component-label "button"
                       :scroll-y        16}))}
     [button 
-     (sx  :.filled :.rounded :.semi-bold )
+     (merge-attrs (sx :.semi-bold)
+                  {:-surface :solid})
      "Explore components"
      [icon :arrow-right-alt]]]])
 

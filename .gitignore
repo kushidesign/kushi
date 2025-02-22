@@ -25,13 +25,22 @@ public/css/*
 docs/public/css/*
 .public/css/*
 .docs/public/css/*
+.docs/public/js/*
+docs/public/js/*
 docs/filtered-build-sources.edn
 
 
 /docs/public/js/cljs-runtime
 /docs/public/js/main.js.map
 /docs/public/js/manifest.edn
-!/docs/public/css/bundle.css
+# !/docs/public/css/main.js
+# !/docs/public/css/bundle.css
+./docs/public/js/main.js
+./docs/public/css/bundle.css
+/docs/public/js/main.js
+*bundle.css
+*main.js
+/docs/public/css/bundle.css
 /docs/node_modules
 /docs/target
 /docs/tmp
@@ -40,3 +49,6 @@ docs/filtered-build-sources.edn
 /docs/.nrepl-port
 /docs/.clj-kondo/.cache
 /docs/.cpcache
+
+docs/public/css/bundle.css
+docs/public/js/main.js

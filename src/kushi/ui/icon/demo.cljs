@@ -128,7 +128,7 @@
                                                      weight
                                                      :cursor--pointer
                                                      :c--$foreground-color
-                                                     :dark:c--$foreground-color-inverse
+                                                     :dark:c--$foreground-color-dark-mode
                                                      )
                                                  (tooltip-attrs {:-text [(name sz) (name weight)]}))
                                            :star]))))}]}
@@ -159,7 +159,7 @@
                                 (for [weight (drop-last component-examples/type-weights)]
                                   [icon (sx weight
                                             :c--$foreground-color
-                                            :dark:c--$foreground-color-inverse
+                                            :dark:c--$foreground-color-dark-mode
                                             )
                                    :star]))}]}
 
@@ -196,7 +196,7 @@
                                                    color (get component-examples/color-lut color color)
                                                    base             "var(--foreground-color-" 
                                                    color-token      (str base color ")")
-                                                   color-token-dark (str base color "-inverse)")
+                                                   color-token-dark (str base color "-dark-mode)")
                                                    foreground-color-class (str "foreground-" color)
                                                    ]]
                                         [:div (merge-attrs
@@ -239,14 +239,14 @@
                                                       :.light
                                                       :cursor--pointer
                                                       :c--$foreground-color
-                                                      :dark:c--$foreground-color-inverse))
+                                                      :dark:c--$foreground-color-dark-mode))
                                             (name icon-name)]
                                            [icon 
                                             (merge-attrs
                                              (sx :.xlarge 
                                                  :cursor--pointer
                                                  :c--$foreground-color
-                                                 :dark:c--$foreground-color-inverse)
+                                                 :dark:c--$foreground-color-dark-mode)
                                              {:-icon-filled? true})
                                             (name icon-name)]]))))}]}
 
@@ -283,6 +283,6 @@
                                                              :.light
                                                              :cursor--pointer
                                                              :c--$foreground-color
-                                                             :dark:c--$foreground-color-inverse)
+                                                             :dark:c--$foreground-color-dark-mode)
                                                          (tooltip-attrs {:-text icon-name}))
                                             icon-name]]))))}]}]))

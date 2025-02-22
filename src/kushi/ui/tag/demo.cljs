@@ -32,35 +32,34 @@
             :xsm:gtc--max-content:max-content:max-content:max-content
             :gtc--max-content:max-content)]
     [(merge
+      (component-examples/sizes-snippet-scale 'tag "Done")
       {:desc            "Sizes from xxsmall to xlarge"
        :row-attrs       (sx :md:ai--fe)
        :container-attrs playground-tag-rows-container24
        :examples        (for [sz sizes]
                           {:label (name sz)
                            :attrs {:class sz}
-                           :args  ["Done"]})}
-      (component-examples/sizes-snippet-scale 'tag "Done"))
+                           :args  ["Done"]})})
      
-     {:desc            "Semantic variants"
+     {:desc            "Colorway variant"
       :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs playground-tag-rows-container4
       :variants+       [:minimal]
-      :examples        (let [semantics #{"neutral" "accent" "positive" "warning" "negative"}]
-                         (for [s component-examples/colors]
-                           {:label (name s)
-                            :args  ["Done"]
-                            :attrs {:class [s]}}))}
+      :examples        (for [colorway component-examples/colors]
+                         {:label (name colorway)
+                          :args  ["Done"]
+                          :attrs {:-colorway colorway}})}
 
-     {:desc            "Shape variants"
+     #_{:desc            "Shape variants"
       :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs playground-tag-rows-container4
       :variants+       [:minimal]
       :examples        (for [s [:rounded :pill :sharp]]
                          {:label (name s)
                           :args  ["Done"]
-                          :attrs {:class [s]}})}
+                          :attrs {:-shape s}})}
 
-     {:desc            "With icons"
+     #_{:desc            "With icons"
       :reqs            '[[kushi.ui.icon.core :refer [icon]]]
       :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs playground-tag-rows-container4
@@ -74,7 +73,7 @@
                         {:label "Leading icon"
                          :args  [[icon :pets] "Pets"]}]}
 
-     {:desc            "Weight variants"
+     #_{:desc            "Weight variants"
       :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs playground-tag-rows-container4
       :variants+       [:minimal]
@@ -83,7 +82,7 @@
                           :args  ["Pets" [icon :pets]]
                           :attrs {:class [s]}})}
 
-     {:desc            "Max width"
+     #_{:desc            "Max width"
       :reqs            '[[kushi.ui.icon.core :refer [icon]]]
       :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs (sx :gtc--max-content)

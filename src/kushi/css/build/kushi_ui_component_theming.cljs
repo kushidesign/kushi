@@ -14,8 +14,8 @@
 
 (defcss
   ".dark, body.dark"
-  {"background-color" "var(--background-color-inverse)",
-   "color" "var(--foreground-color-inverse)"})
+  {"background-color" "var(--background-color-dark-mode)",
+   "color" "var(--foreground-color-dark-mode)"})
 
 (defcss
   "code, .code"
@@ -35,8 +35,8 @@
 
 (defcss
   ".dark code, .dark .code"
-  {"background-color" "var(--code-background-color-inverse)",
-   "color" "var(--code-color-inverse)"})
+  {"background-color" "var(--code-background-color-dark-mode)",
+   "color" "var(--code-color-dark-mode)"})
 
 (defcss
   ".styled-scrollbars"
@@ -45,7 +45,7 @@
 
 (defcss
   ".dark .styled-scrollbars"
-  {"scrollbar-color" "var(--scrollbar-thumb-color-inverse)"})
+  {"scrollbar-color" "var(--scrollbar-thumb-color-dark-mode)"})
 
 (defcss
   ".styled-scrollbars::-webkit-scrollbar"
@@ -59,8 +59,8 @@
 
 (defcss
   ".dark .styled-scrollbars::-webkit-scrollbar-thumb"
-  {"background" "var(--scrollbar-thumb-color-inverse)",
-   "border" "0px solid var(--scrollbar-background-color-inverse)"})
+  {"background" "var(--scrollbar-thumb-color-dark-mode)",
+   "border" "0px solid var(--scrollbar-background-color-dark-mode)"})
 
 (defcss
   ".styled-scrollbars::-webkit-scrollbar-track"
@@ -68,7 +68,7 @@
 
 (defcss
   ".dark .styled-scrollbars::-webkit-scrollbar-track"
-  {"background" "var(--scrollbar-background-color-inverse)"})
+  {"background" "var(--scrollbar-background-color-dark-mode)"})
 
 (defcss
   "*:focus-visible"
@@ -82,1261 +82,6 @@
 (defcss
   ".kushi-radio-input:focus-visible"
   {"box-shadow" "0 0 0 4px rgba(0, 125, 250, 0.6)"})
-
-(defcss
-  ".neutral-secondary-foreground"
-  {"color" "var(--neutral-secondary-foreground)"})
-
-(defcss
-  ".dark .neutral-secondary-foreground"
-  {"color" "var(--neutral-secondary-foreground-inverse)"})
-
-(defcss ".neutral-foreground" {"color" "var(--neutral-foreground)"})
-
-(defcss
-  ".dark .neutral-foreground"
-  {"color" "var(--neutral-foreground-inverse)"})
-
-(defcss ".accent-foreground" {"color" "var(--accent-foreground)"})
-
-(defcss
-  ".dark .accent-foreground"
-  {"color" "var(--accent-foreground-inverse)"})
-
-(defcss ".positive-foreground" {"color" "var(--positive-foreground)"})
-
-(defcss
-  ".dark .positive-foreground"
-  {"color" "var(--positive-foreground-inverse)"})
-
-(defcss ".negative-foreground" {"color" "var(--negative-foreground)"})
-
-(defcss
-  ".dark .negative-foreground"
-  {"color" "var(--negative-foreground-inverse)"})
-
-(defcss ".warning-foreground" {"color" "var(--warning-foreground)"})
-
-(defcss
-  ".dark .warning-foreground"
-  {"color" "var(--warning-foreground-inverse)"})
-
-(defcss
-  ".neutral-bg"
-  {"background-color" "var(--neutral-background-color)"})
-
-(defcss
-  ".accent-bg"
-  {"background-color" "var(--accent-background-color)"})
-
-(defcss
-  ".positive-bg"
-  {"background-color" "var(--positive-background-color)"})
-
-(defcss
-  ".negative-bg"
-  {"background-color" "var(--negative-background-color)"})
-
-(defcss
-  ".warning-bg"
-  {"background-color" "var(--warning-background-color)"})
-
-(defcss
-  ".neutral"
-  {"color" "var(--neutral-color)",
-   "background-color" "var(--neutral-background-color)"})
-
-(defcss
-  ".neutral:hover"
-  {"color" "var(--neutral-color-hover)",
-   "background-color" "var(--neutral-background-color-hover)"})
-
-(defcss
-  ".neutral:active"
-  {"color" "var(--neutral-color-active)",
-   "background-color" "var(--neutral-background-color-active)"})
-
-(defcss
-  ".neutral.info"
-  {"color" "var(--neutral-info-color)",
-   "background-color" "var(--neutral-info-background-color)"})
-
-(defcss
-  ".neutral.info:hover"
-  {"color" "var(--neutral-info-color-hover)",
-   "background-color" "var(--neutral-info-background-color-hover)"})
-
-(defcss
-  ".neutral.info:active"
-  {"color" "var(--neutral-info-color-active)",
-   "background-color" "var(--neutral-info-background-color-active)"})
-
-(defcss
-  ".neutral.minimal"
-  {"color" "var(--neutral-minimal-color)",
-   "background-color" "var(--neutral-minimal-background-color)"})
-
-(defcss
-  ".neutral.minimal:hover"
-  {"color" "var(--neutral-minimal-color-hover)",
-   "background-color" "var(--neutral-minimal-background-color-hover)"})
-
-(defcss
-  ".neutral.minimal:active"
-  {"color" "var(--neutral-minimal-color-active)",
-   "background-color" "var(--neutral-minimal-background-color-active)"})
-
-(defcss
-  ".neutral.bordered:active"
-  {"background-color" "var(--neutral-bordered-background-color-active)",
-   "border-color" "var(--neutral-bordered-border-color-active)",
-   "color" "var(--neutral-bordered-color-active)"})
-
-(defcss
-  ".neutral.bordered"
-  {"border-color" "var(--neutral-bordered-border-color)",
-   "background-color" "var(--neutral-bordered-background-color)",
-   "color" "var(--neutral-bordered-color)"})
-
-(defcss
-  ".neutral.bordered:hover"
-  {"color" "var(--neutral-bordered-color-hover)",
-   "border-color" "var(--neutral-bordered-border-color-hover)",
-   "background-color" "var(--neutral-bordered-background-color-hover)"})
-
-(defcss
-  ".neutral.bordered.info"
-  {"background-color" "var(--neutral-bordered-info-background-color)",
-   "border-color" "var(--neutral-bordered-info-border-color)"})
-
-(defcss
-  ".neutral.bordered.info:hover"
-  {"background-color"
-   "var(--neutral-bordered-info-background-color-hover)",
-   "border-color" "var(--neutral-bordered-info-border-color-hover)"})
-
-(defcss
-  ".neutral.bordered.info:active"
-  {"background-color"
-   "var(--neutral-bordered-info-background-color-active)",
-   "border-color" "var(--neutral-bordered-info-border-color-active)"})
-
-(defcss
-  ".neutral.filled"
-  {"color" "var(--neutral-filled-color)",
-   "background-color" "var(--neutral-filled-background-color)"})
-
-(defcss
-  ".neutral.filled:hover"
-  {"color" "var(--neutral-filled-color-hover)",
-   "background-color" "var(--neutral-filled-background-color-hover)"})
-
-(defcss
-  ".neutral.filled:active"
-  {"color" "var(--neutral-filled-color-active)",
-   "background-color" "var(--neutral-filled-background-color-active)"})
-
-(defcss
-  ".neutral.filled.info"
-  {"background-color" "var(--neutral-filled-info-background-color)"})
-
-(defcss
-  ".neutral.filled.info:hover"
-  {"background-color"
-   "var(--neutral-filled-info-background-color-hover)"})
-
-(defcss
-  ".neutral-filled.info:active"
-  {"background-color" "var(--info-background-color-active)"})
-
-(defcss
-  ".dark .neutral"
-  {"color" "var(--neutral-color-inverse)",
-   "background-color" "var(--neutral-background-color-inverse)"})
-
-(defcss
-  ".dark .neutral:hover"
-  {"color" "var(--neutral-color-hover-inverse)",
-   "background-color" "var(--neutral-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .neutral:active"
-  {"color" "var(--neutral-color-active-inverse)",
-   "background-color" "var(--neutral-background-color-active-inverse)"})
-
-(defcss
-  ".dark .neutral.info"
-  {"color" "var(--neutral-info-color-inverse)",
-   "background-color" "var(--neutral-info-background-color-inverse)"})
-
-(defcss
-  ".dark .neutral.info:hover"
-  {"color" "var(--neutral-info-color-hover-inverse)",
-   "background-color"
-   "var(--neutral-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .neutral.info:active"
-  {"color" "var(--neutral-info-color-active-inverse)",
-   "background-color"
-   "var(--neutral-info-background-color-active-inverse)"})
-
-(defcss
-  ".dark .neutral.minimal"
-  {"color" "var(--neutral-minimal-color-inverse)",
-   "background-color"
-   "var(--neutral-minimal-background-color-inverse)"})
-
-(defcss
-  ".dark .neutral.minimal:hover"
-  {"color" "var(--neutral-minimal-color-hover-inverse)",
-   "background-color"
-   "var(--neutral-minimal-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .neutral.minimal:active"
-  {"color" "var(--neutral-minimal-color-active-inverse)",
-   "background-color"
-   "var(--neutral-minimal-background-color-active-inverse)"})
-
-(defcss
-  ".dark .neutral.bordered:active"
-  {"background-color"
-   "var(--neutral-bordered-background-color-active-inverse)",
-   "border-color" "var(--neutral-bordered-border-color-active-inverse)",
-   "color" "var(--neutral-bordered-color-active-inverse)"})
-
-(defcss
-  ".dark .neutral.bordered"
-  {"border-color" "var(--neutral-bordered-border-color-inverse)",
-   "background-color"
-   "var(--neutral-bordered-background-color-inverse)",
-   "color" "var(--neutral-bordered-color-inverse)"})
-
-(defcss
-  ".dark .neutral.bordered:hover"
-  {"color" "var(--neutral-bordered-color-hover-inverse)",
-   "border-color" "var(--neutral-bordered-border-color-hover-inverse)",
-   "background-color"
-   "var(--neutral-bordered-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .neutral.bordered.info:active"
-  {"background-color"
-   "var(--neutral-bordered-info-background-color-active-inverse)",
-   "border-color"
-   "var(--neutral-bordered-info-border-color-active-inverse)",
-   "color" "var(--neutral-bordered-info-color-active-inverse)"})
-
-(defcss
-  ".dark .neutral.bordered.info"
-  {"border-color" "var(--neutral-bordered-info-border-color-inverse)",
-   "background-color"
-   "var(--neutral-bordered-info-background-color-inverse)",
-   "color" "var(--neutral-bordered-info-color-inverse)"})
-
-(defcss
-  ".dark .neutral.bordered.info:hover"
-  {"color" "var(--neutral-bordered-info-color-hover-inverse)",
-   "border-color"
-   "var(--neutral-bordered-info-border-color-hover-inverse)",
-   "background-color"
-   "var(--neutral-bordered-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .neutral.filled"
-  {"color" "var(--neutral-filled-color-inverse)",
-   "background-color" "var(--neutral-filled-background-color-inverse)"})
-
-(defcss
-  ".dark .neutral.filled:hover"
-  {"color" "var(--neutral-filled-color-hover-inverse)",
-   "background-color"
-   "var(--neutral-filled-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .neutral.filled:active"
-  {"color" "var(--neutral-filled-color-active-inverse)",
-   "background-color"
-   "var(--neutral-filled-background-color-active-inverse)"})
-
-(defcss
-  ".dark .neutral.filled.info"
-  {"background-color"
-   "var(--neutral-filled-info-background-color-inverse)"})
-
-(defcss
-  ".dark .neutral.filled.info:hover"
-  {"background-color"
-   "var(--neutral-filled-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .neutral-filled.info:active"
-  {"background-color" "var(--info-background-color-active-inverse)"})
-
-(defcss
-  ".accent"
-  {"color" "var(--accent-color)",
-   "background-color" "var(--accent-background-color)"})
-
-(defcss
-  ".accent:hover"
-  {"color" "var(--accent-color-hover)",
-   "background-color" "var(--accent-background-color-hover)"})
-
-(defcss
-  ".accent:active"
-  {"color" "var(--accent-color-active)",
-   "background-color" "var(--accent-background-color-active)"})
-
-(defcss
-  ".accent.info"
-  {"color" "var(--accent-info-color)",
-   "background-color" "var(--accent-info-background-color)"})
-
-(defcss
-  ".accent.info:hover"
-  {"color" "var(--accent-info-color-hover)",
-   "background-color" "var(--accent-info-background-color-hover)"})
-
-(defcss
-  ".accent.info:active"
-  {"color" "var(--accent-info-color-active)",
-   "background-color" "var(--accent-info-background-color-active)"})
-
-(defcss
-  ".accent.minimal"
-  {"color" "var(--accent-minimal-color)",
-   "background-color" "var(--accent-minimal-background-color)"})
-
-(defcss
-  ".accent.minimal:hover"
-  {"color" "var(--accent-minimal-color-hover)",
-   "background-color" "var(--accent-minimal-background-color-hover)"})
-
-(defcss
-  ".accent.minimal:active"
-  {"color" "var(--accent-minimal-color-active)",
-   "background-color" "var(--accent-minimal-background-color-active)"})
-
-(defcss
-  ".accent.bordered:active"
-  {"background-color" "var(--accent-bordered-background-color-active)",
-   "border-color" "var(--accent-bordered-border-color-active)",
-   "color" "var(--accent-bordered-color-active)"})
-
-(defcss
-  ".accent.bordered"
-  {"border-color" "var(--accent-bordered-border-color)",
-   "background-color" "var(--accent-bordered-background-color)",
-   "color" "var(--accent-bordered-color)"})
-
-(defcss
-  ".accent.bordered:hover"
-  {"color" "var(--accent-bordered-color-hover)",
-   "border-color" "var(--accent-bordered-border-color-hover)",
-   "background-color" "var(--accent-bordered-background-color-hover)"})
-
-(defcss
-  ".accent.bordered.info:active"
-  {"background-color"
-   "var(--accent-bordered-info-background-color-active)",
-   "border-color" "var(--accent-bordered-info-border-color-active)",
-   "color" "var(--accent-bordered-info-color-active)"})
-
-(defcss
-  ".accent.bordered.info"
-  {"border-color" "var(--accent-bordered-info-border-color)",
-   "background-color" "var(--accent-bordered-info-background-color)",
-   "color" "var(--accent-bordered-info-color)"})
-
-(defcss
-  ".accent.bordered.info:hover"
-  {"color" "var(--accent-bordered-info-color-hover)",
-   "border-color" "var(--accent-bordered-info-border-color-hover)",
-   "background-color"
-   "var(--accent-bordered-info-background-color-hover)"})
-
-(defcss
-  ".accent.filled"
-  {"color" "var(--accent-filled-color)",
-   "background-color" "var(--accent-filled-background-color)"})
-
-(defcss
-  ".accent.filled:hover"
-  {"color" "var(--accent-filled-color-hover)",
-   "background-color" "var(--accent-filled-background-color-hover)"})
-
-(defcss
-  ".accent.filled:active"
-  {"color" "var(--accent-filled-color-active)",
-   "background-color" "var(--accent-filled-background-color-active)"})
-
-(defcss
-  ".accent.filled.info"
-  {"background-color" "var(--accent-filled-info-background-color)"})
-
-(defcss
-  ".accent.filled.info:hover"
-  {"background-color"
-   "var(--accent-filled-info-background-color-hover)"})
-
-(defcss
-  ".accent-filled.info:active"
-  {"background-color" "var(--info-background-color-active)"})
-
-(defcss
-  ".dark .accent"
-  {"color" "var(--accent-color-inverse)",
-   "background-color" "var(--accent-background-color-inverse)"})
-
-(defcss
-  ".dark .accent:hover"
-  {"color" "var(--accent-color-hover-inverse)",
-   "background-color" "var(--accent-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .accent:active"
-  {"color" "var(--accent-color-active-inverse)",
-   "background-color" "var(--accent-background-color-active-inverse)"})
-
-(defcss
-  ".dark .accent.info"
-  {"color" "var(--accent-info-color-inverse)",
-   "background-color" "var(--accent-info-background-color-inverse)"})
-
-(defcss
-  ".dark .accent.info:hover"
-  {"color" "var(--accent-info-color-hover-inverse)",
-   "background-color"
-   "var(--accent-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .accent.info:active"
-  {"color" "var(--accent-info-color-active-inverse)",
-   "background-color"
-   "var(--accent-info-background-color-active-inverse)"})
-
-(defcss
-  ".dark .accent.minimal"
-  {"color" "var(--accent-minimal-color-inverse)",
-   "background-color" "var(--accent-minimal-background-color-inverse)"})
-
-(defcss
-  ".dark .accent.minimal:hover"
-  {"color" "var(--accent-minimal-color-hover-inverse)",
-   "background-color"
-   "var(--accent-minimal-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .accent.minimal:active"
-  {"color" "var(--accent-minimal-color-active-inverse)",
-   "background-color"
-   "var(--accent-minimal-background-color-active-inverse)"})
-
-(defcss
-  ".dark .accent.bordered:active"
-  {"background-color"
-   "var(--accent-bordered-background-color-active-inverse)",
-   "border-color" "var(--accent-bordered-border-color-active-inverse)",
-   "color" "var(--accent-bordered-color-active-inverse)"})
-
-(defcss
-  ".dark .accent.bordered"
-  {"border-color" "var(--accent-bordered-border-color-inverse)",
-   "background-color" "var(--accent-bordered-background-color-inverse)",
-   "color" "var(--accent-bordered-color-inverse)"})
-
-(defcss
-  ".dark .accent.bordered:hover"
-  {"color" "var(--accent-bordered-color-hover-inverse)",
-   "border-color" "var(--accent-bordered-border-color-hover-inverse)",
-   "background-color"
-   "var(--accent-bordered-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .accent.bordered.info:active"
-  {"background-color"
-   "var(--accent-bordered-info-background-color-active-inverse)",
-   "border-color"
-   "var(--accent-bordered-info-border-color-active-inverse)",
-   "color" "var(--accent-bordered-info-color-active-inverse)"})
-
-(defcss
-  ".dark .accent.bordered.info"
-  {"border-color" "var(--accent-bordered-info-border-color-inverse)",
-   "background-color"
-   "var(--accent-bordered-info-background-color-inverse)",
-   "color" "var(--accent-bordered-info-color-inverse)"})
-
-(defcss
-  ".dark .accent.bordered.info:hover"
-  {"color" "var(--accent-bordered-info-color-hover-inverse)",
-   "border-color"
-   "var(--accent-bordered-info-border-color-hover-inverse)",
-   "background-color"
-   "var(--accent-bordered-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .accent.filled"
-  {"color" "var(--accent-filled-color-inverse)",
-   "background-color" "var(--accent-filled-background-color-inverse)"})
-
-(defcss
-  ".dark .accent.filled:hover"
-  {"color" "var(--accent-filled-color-hover-inverse)",
-   "background-color"
-   "var(--accent-filled-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .accent.filled:active"
-  {"color" "var(--accent-filled-color-active-inverse)",
-   "background-color"
-   "var(--accent-filled-background-color-active-inverse)"})
-
-(defcss
-  ".dark .accent.filled.info"
-  {"background-color"
-   "var(--accent-filled-info-background-color-inverse)"})
-
-(defcss
-  ".dark .accent.filled.info:hover"
-  {"background-color"
-   "var(--accent-filled-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .accent-filled.info:active"
-  {"background-color" "var(--info-background-color-active-inverse)"})
-
-(defcss
-  ".positive"
-  {"color" "var(--positive-color)",
-   "background-color" "var(--positive-background-color)"})
-
-(defcss
-  ".positive:hover"
-  {"color" "var(--positive-color-hover)",
-   "background-color" "var(--positive-background-color-hover)"})
-
-(defcss
-  ".positive:active"
-  {"color" "var(--positive-color-active)",
-   "background-color" "var(--positive-background-color-active)"})
-
-(defcss
-  ".positive.info"
-  {"color" "var(--positive-info-color)",
-   "background-color" "var(--positive-info-background-color)"})
-
-(defcss
-  ".positive.info:hover"
-  {"color" "var(--positive-info-color-hover)",
-   "background-color" "var(--positive-info-background-color-hover)"})
-
-(defcss
-  ".positive.info:active"
-  {"color" "var(--positive-info-color-active)",
-   "background-color" "var(--positive-info-background-color-active)"})
-
-(defcss
-  ".positive.minimal"
-  {"color" "var(--positive-minimal-color)",
-   "background-color" "var(--positive-minimal-background-color)"})
-
-(defcss
-  ".positive.minimal:hover"
-  {"color" "var(--positive-minimal-color-hover)",
-   "background-color" "var(--positive-minimal-background-color-hover)"})
-
-(defcss
-  ".positive.minimal:active"
-  {"color" "var(--positive-minimal-color-active)",
-   "background-color"
-   "var(--positive-minimal-background-color-active)"})
-
-(defcss
-  ".positive.bordered:active"
-  {"background-color"
-   "var(--positive-bordered-background-color-active)",
-   "border-color" "var(--positive-bordered-border-color-active)",
-   "color" "var(--positive-bordered-color-active)"})
-
-(defcss
-  ".positive.bordered"
-  {"border-color" "var(--positive-bordered-border-color)",
-   "background-color" "var(--positive-bordered-background-color)",
-   "color" "var(--positive-bordered-color)"})
-
-(defcss
-  ".positive.bordered:hover"
-  {"color" "var(--positive-bordered-color-hover)",
-   "border-color" "var(--positive-bordered-border-color-hover)",
-   "background-color"
-   "var(--positive-bordered-background-color-hover)"})
-
-(defcss
-  ".positive.bordered.info:active"
-  {"background-color"
-   "var(--positive-bordered-info-background-color-active)",
-   "border-color" "var(--positive-bordered-info-border-color-active)",
-   "color" "var(--positive-bordered-info-color-active)"})
-
-(defcss
-  ".positive.bordered.info"
-  {"border-color" "var(--positive-bordered-info-border-color)",
-   "background-color" "var(--positive-bordered-info-background-color)",
-   "color" "var(--positive-bordered-info-color)"})
-
-(defcss
-  ".positive.bordered.info:hover"
-  {"color" "var(--positive-bordered-info-color-hover)",
-   "border-color" "var(--positive-bordered-info-border-color-hover)",
-   "background-color"
-   "var(--positive-bordered-info-background-color-hover)"})
-
-(defcss
-  ".positive.filled"
-  {"color" "var(--positive-filled-color)",
-   "background-color" "var(--positive-filled-background-color)"})
-
-(defcss
-  ".positive.filled:hover"
-  {"color" "var(--positive-filled-color-hover)",
-   "background-color" "var(--positive-filled-background-color-hover)"})
-
-(defcss
-  ".positive.filled:active"
-  {"color" "var(--positive-filled-color-active)",
-   "background-color" "var(--positive-filled-background-color-active)"})
-
-(defcss
-  ".positive.filled.info"
-  {"background-color" "var(--positive-filled-info-background-color)"})
-
-(defcss
-  ".positive.filled.info:hover"
-  {"background-color"
-   "var(--positive-filled-info-background-color-hover)"})
-
-(defcss
-  ".positive-filled.info:active"
-  {"background-color" "var(--info-background-color-active)"})
-
-(defcss
-  ".dark .positive"
-  {"color" "var(--positive-color-inverse)",
-   "background-color" "var(--positive-background-color-inverse)"})
-
-(defcss
-  ".dark .positive:hover"
-  {"color" "var(--positive-color-hover-inverse)",
-   "background-color" "var(--positive-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .positive:active"
-  {"color" "var(--positive-color-active-inverse)",
-   "background-color"
-   "var(--positive-background-color-active-inverse)"})
-
-(defcss
-  ".dark .positive.info"
-  {"color" "var(--positive-info-color-inverse)",
-   "background-color" "var(--positive-info-background-color-inverse)"})
-
-(defcss
-  ".dark .positive.info:hover"
-  {"color" "var(--positive-info-color-hover-inverse)",
-   "background-color"
-   "var(--positive-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .positive.info:active"
-  {"color" "var(--positive-info-color-active-inverse)",
-   "background-color"
-   "var(--positive-info-background-color-active-inverse)"})
-
-(defcss
-  ".dark .positive.minimal"
-  {"color" "var(--positive-minimal-color-inverse)",
-   "background-color"
-   "var(--positive-minimal-background-color-inverse)"})
-
-(defcss
-  ".dark .positive.minimal:hover"
-  {"color" "var(--positive-minimal-color-hover-inverse)",
-   "background-color"
-   "var(--positive-minimal-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .positive.minimal:active"
-  {"color" "var(--positive-minimal-color-active-inverse)",
-   "background-color"
-   "var(--positive-minimal-background-color-active-inverse)"})
-
-(defcss
-  ".dark .positive.bordered:active"
-  {"background-color"
-   "var(--positive-bordered-background-color-active-inverse)",
-   "border-color"
-   "var(--positive-bordered-border-color-active-inverse)",
-   "color" "var(--positive-bordered-color-active-inverse)"})
-
-(defcss
-  ".dark .positive.bordered"
-  {"border-color" "var(--positive-bordered-border-color-inverse)",
-   "background-color"
-   "var(--positive-bordered-background-color-inverse)",
-   "color" "var(--positive-bordered-color-inverse)"})
-
-(defcss
-  ".dark .positive.bordered:hover"
-  {"color" "var(--positive-bordered-color-hover-inverse)",
-   "border-color" "var(--positive-bordered-border-color-hover-inverse)",
-   "background-color"
-   "var(--positive-bordered-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .positive.bordered.info:active"
-  {"background-color"
-   "var(--positive-bordered-info-background-color-active-inverse)",
-   "border-color"
-   "var(--positive-bordered-info-border-color-active-inverse)",
-   "color" "var(--positive-bordered-info-color-active-inverse)"})
-
-(defcss
-  ".dark .positive.bordered.info"
-  {"border-color" "var(--positive-bordered-info-border-color-inverse)",
-   "background-color"
-   "var(--positive-bordered-info-background-color-inverse)",
-   "color" "var(--positive-bordered-info-color-inverse)"})
-
-(defcss
-  ".dark .positive.bordered.info:hover"
-  {"color" "var(--positive-bordered-info-color-hover-inverse)",
-   "border-color"
-   "var(--positive-bordered-info-border-color-hover-inverse)",
-   "background-color"
-   "var(--positive-bordered-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .positive.filled"
-  {"color" "var(--positive-filled-color-inverse)",
-   "background-color"
-   "var(--positive-filled-background-color-inverse)"})
-
-(defcss
-  ".dark .positive.filled:hover"
-  {"color" "var(--positive-filled-color-hover-inverse)",
-   "background-color"
-   "var(--positive-filled-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .positive.filled:active"
-  {"color" "var(--positive-filled-color-active-inverse)",
-   "background-color"
-   "var(--positive-filled-background-color-active-inverse)"})
-
-(defcss
-  ".dark .positive.filled.info"
-  {"background-color"
-   "var(--positive-filled-info-background-color-inverse)"})
-
-(defcss
-  ".dark .positive.filled.info:hover"
-  {"background-color"
-   "var(--positive-filled-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .positive-filled.info:active"
-  {"background-color" "var(--info-background-color-active-inverse)"})
-
-(defcss
-  ".negative"
-  {"color" "var(--negative-color)",
-   "background-color" "var(--negative-background-color)"})
-
-(defcss
-  ".negative:hover"
-  {"color" "var(--negative-color-hover)",
-   "background-color" "var(--negative-background-color-hover)"})
-
-(defcss
-  ".negative:active"
-  {"color" "var(--negative-color-active)",
-   "background-color" "var(--negative-background-color-active)"})
-
-(defcss
-  ".negative.info"
-  {"color" "var(--negative-info-color)",
-   "background-color" "var(--negative-info-background-color)"})
-
-(defcss
-  ".negative.info:hover"
-  {"color" "var(--negative-info-color-hover)",
-   "background-color" "var(--negative-info-background-color-hover)"})
-
-(defcss
-  ".negative.info:active"
-  {"color" "var(--negative-info-color-active)",
-   "background-color" "var(--negative-info-background-color-active)"})
-
-(defcss
-  ".negative.minimal"
-  {"color" "var(--negative-minimal-color)",
-   "background-color" "var(--negative-minimal-background-color)"})
-
-(defcss
-  ".negative.minimal:hover"
-  {"color" "var(--negative-minimal-color-hover)",
-   "background-color" "var(--negative-minimal-background-color-hover)"})
-
-(defcss
-  ".negative.minimal:active"
-  {"color" "var(--negative-minimal-color-active)",
-   "background-color"
-   "var(--negative-minimal-background-color-active)"})
-
-(defcss
-  ".negative.bordered:active"
-  {"background-color"
-   "var(--negative-bordered-background-color-active)",
-   "border-color" "var(--negative-bordered-border-color-active)",
-   "color" "var(--negative-bordered-color-active)"})
-
-(defcss
-  ".negative.bordered"
-  {"border-color" "var(--negative-bordered-border-color)",
-   "background-color" "var(--negative-bordered-background-color)",
-   "color" "var(--negative-bordered-color)"})
-
-(defcss
-  ".negative.bordered:hover"
-  {"color" "var(--negative-bordered-color-hover)",
-   "border-color" "var(--negative-bordered-border-color-hover)",
-   "background-color"
-   "var(--negative-bordered-background-color-hover)"})
-
-(defcss
-  ".negative.bordered.info:active"
-  {"background-color"
-   "var(--negative-bordered-info-background-color-active)",
-   "border-color" "var(--negative-bordered-info-border-color-active)",
-   "color" "var(--negative-bordered-info-color-active)"})
-
-(defcss
-  ".negative.bordered.info"
-  {"border-color" "var(--negative-bordered-info-border-color)",
-   "background-color" "var(--negative-bordered-info-background-color)",
-   "color" "var(--negative-bordered-info-color)"})
-
-(defcss
-  ".negative.bordered.info:hover"
-  {"color" "var(--negative-bordered-info-color-hover)",
-   "border-color" "var(--negative-bordered-info-border-color-hover)",
-   "background-color"
-   "var(--negative-bordered-info-background-color-hover)"})
-
-(defcss
-  ".negative.filled"
-  {"color" "var(--negative-filled-color)",
-   "background-color" "var(--negative-filled-background-color)"})
-
-(defcss
-  ".negative.filled:hover"
-  {"color" "var(--negative-filled-color-hover)",
-   "background-color" "var(--negative-filled-background-color-hover)"})
-
-(defcss
-  ".negative.filled:active"
-  {"color" "var(--negative-filled-color-active)",
-   "background-color" "var(--negative-filled-background-color-active)"})
-
-(defcss
-  ".negative.filled.info"
-  {"background-color" "var(--negative-filled-info-background-color)"})
-
-(defcss
-  ".negative.filled.info:hover"
-  {"background-color"
-   "var(--negative-filled-info-background-color-hover)"})
-
-(defcss
-  ".negative-filled.info:active"
-  {"background-color" "var(--info-background-color-active)"})
-
-(defcss
-  ".dark .negative"
-  {"color" "var(--negative-color-inverse)",
-   "background-color" "var(--negative-background-color-inverse)"})
-
-(defcss
-  ".dark .negative:hover"
-  {"color" "var(--negative-color-hover-inverse)",
-   "background-color" "var(--negative-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .negative:active"
-  {"color" "var(--negative-color-active-inverse)",
-   "background-color"
-   "var(--negative-background-color-active-inverse)"})
-
-(defcss
-  ".dark .negative.info"
-  {"color" "var(--negative-info-color-inverse)",
-   "background-color" "var(--negative-info-background-color-inverse)"})
-
-(defcss
-  ".dark .negative.info:hover"
-  {"color" "var(--negative-info-color-hover-inverse)",
-   "background-color"
-   "var(--negative-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .negative.info:active"
-  {"color" "var(--negative-info-color-active-inverse)",
-   "background-color"
-   "var(--negative-info-background-color-active-inverse)"})
-
-(defcss
-  ".dark .negative.minimal"
-  {"color" "var(--negative-minimal-color-inverse)",
-   "background-color"
-   "var(--negative-minimal-background-color-inverse)"})
-
-(defcss
-  ".dark .negative.minimal:hover"
-  {"color" "var(--negative-minimal-color-hover-inverse)",
-   "background-color"
-   "var(--negative-minimal-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .negative.minimal:active"
-  {"color" "var(--negative-minimal-color-active-inverse)",
-   "background-color"
-   "var(--negative-minimal-background-color-active-inverse)"})
-
-(defcss
-  ".dark .negative.bordered:active"
-  {"background-color"
-   "var(--negative-bordered-background-color-active-inverse)",
-   "border-color"
-   "var(--negative-bordered-border-color-active-inverse)",
-   "color" "var(--negative-bordered-color-active-inverse)"})
-
-(defcss
-  ".dark .negative.bordered"
-  {"border-color" "var(--negative-bordered-border-color-inverse)",
-   "background-color"
-   "var(--negative-bordered-background-color-inverse)",
-   "color" "var(--negative-bordered-color-inverse)"})
-
-(defcss
-  ".dark .negative.bordered:hover"
-  {"color" "var(--negative-bordered-color-hover-inverse)",
-   "border-color" "var(--negative-bordered-border-color-hover-inverse)",
-   "background-color"
-   "var(--negative-bordered-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .negative.bordered.info:active"
-  {"background-color"
-   "var(--negative-bordered-info-background-color-active-inverse)",
-   "border-color"
-   "var(--negative-bordered-info-border-color-active-inverse)",
-   "color" "var(--negative-bordered-info-color-active-inverse)"})
-
-(defcss
-  ".dark .negative.bordered.info"
-  {"border-color" "var(--negative-bordered-info-border-color-inverse)",
-   "background-color"
-   "var(--negative-bordered-info-background-color-inverse)",
-   "color" "var(--negative-bordered-info-color-inverse)"})
-
-(defcss
-  ".dark .negative.bordered.info:hover"
-  {"color" "var(--negative-bordered-info-color-hover-inverse)",
-   "border-color"
-   "var(--negative-bordered-info-border-color-hover-inverse)",
-   "background-color"
-   "var(--negative-bordered-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .negative.filled"
-  {"color" "var(--negative-filled-color-inverse)",
-   "background-color"
-   "var(--negative-filled-background-color-inverse)"})
-
-(defcss
-  ".dark .negative.filled:hover"
-  {"color" "var(--negative-filled-color-hover-inverse)",
-   "background-color"
-   "var(--negative-filled-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .negative.filled:active"
-  {"color" "var(--negative-filled-color-active-inverse)",
-   "background-color"
-   "var(--negative-filled-background-color-active-inverse)"})
-
-(defcss
-  ".dark .negative.filled.info"
-  {"background-color"
-   "var(--negative-filled-info-background-color-inverse)"})
-
-(defcss
-  ".dark .negative.filled.info:hover"
-  {"background-color"
-   "var(--negative-filled-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .negative-filled.info:active"
-  {"background-color" "var(--info-background-color-active-inverse)"})
-
-(defcss
-  ".warning"
-  {"color" "var(--warning-color)",
-   "background-color" "var(--warning-background-color)"})
-
-(defcss
-  ".warning:hover"
-  {"color" "var(--warning-color-hover)",
-   "background-color" "var(--warning-background-color-hover)"})
-
-(defcss
-  ".warning:active"
-  {"color" "var(--warning-color-active)",
-   "background-color" "var(--warning-background-color-active)"})
-
-(defcss
-  ".warning.info"
-  {"color" "var(--warning-info-color)",
-   "background-color" "var(--warning-info-background-color)"})
-
-(defcss
-  ".warning.info:hover"
-  {"color" "var(--warning-info-color-hover)",
-   "background-color" "var(--warning-info-background-color-hover)"})
-
-(defcss
-  ".warning.info:active"
-  {"color" "var(--warning-info-color-active)",
-   "background-color" "var(--warning-info-background-color-active)"})
-
-(defcss
-  ".warning.minimal"
-  {"color" "var(--warning-minimal-color)",
-   "background-color" "var(--warning-minimal-background-color)"})
-
-(defcss
-  ".warning.minimal:hover"
-  {"color" "var(--warning-minimal-color-hover)",
-   "background-color" "var(--warning-minimal-background-color-hover)"})
-
-(defcss
-  ".warning.minimal:active"
-  {"color" "var(--warning-minimal-color-active)",
-   "background-color" "var(--warning-minimal-background-color-active)"})
-
-(defcss
-  ".warning.bordered:active"
-  {"background-color" "var(--warning-bordered-background-color-active)",
-   "border-color" "var(--warning-bordered-border-color-active)",
-   "color" "var(--warning-bordered-color-active)"})
-
-(defcss
-  ".warning.bordered"
-  {"border-color" "var(--warning-bordered-border-color)",
-   "background-color" "var(--warning-bordered-background-color)",
-   "color" "var(--warning-bordered-color)"})
-
-(defcss
-  ".warning.bordered:hover"
-  {"color" "var(--warning-bordered-color-hover)",
-   "border-color" "var(--warning-bordered-border-color-hover)",
-   "background-color" "var(--warning-bordered-background-color-hover)"})
-
-(defcss
-  ".warning.bordered.info:active"
-  {"background-color"
-   "var(--warning-bordered-info-background-color-active)",
-   "border-color" "var(--warning-bordered-info-border-color-active)",
-   "color" "var(--warning-bordered-info-color-active)"})
-
-(defcss
-  ".warning.bordered.info"
-  {"border-color" "var(--warning-bordered-info-border-color)",
-   "background-color" "var(--warning-bordered-info-background-color)",
-   "color" "var(--warning-bordered-info-color)"})
-
-(defcss
-  ".warning.bordered.info:hover"
-  {"color" "var(--warning-bordered-info-color-hover)",
-   "border-color" "var(--warning-bordered-info-border-color-hover)",
-   "background-color"
-   "var(--warning-bordered-info-background-color-hover)"})
-
-(defcss
-  ".warning.filled"
-  {"color" "var(--warning-filled-color)",
-   "background-color" "var(--warning-filled-background-color)"})
-
-(defcss
-  ".warning.filled:hover"
-  {"color" "var(--warning-filled-color-hover)",
-   "background-color" "var(--warning-filled-background-color-hover)"})
-
-(defcss
-  ".warning.filled:active"
-  {"color" "var(--warning-filled-color-active)",
-   "background-color" "var(--warning-filled-background-color-active)"})
-
-(defcss
-  ".warning.filled.info"
-  {"background-color" "var(--warning-filled-info-background-color)"})
-
-(defcss
-  ".warning.filled.info:hover"
-  {"background-color"
-   "var(--warning-filled-info-background-color-hover)"})
-
-(defcss
-  ".warning-filled.info:active"
-  {"background-color" "var(--info-background-color-active)"})
-
-(defcss
-  ".dark .warning"
-  {"color" "var(--warning-color-inverse)",
-   "background-color" "var(--warning-background-color-inverse)"})
-
-(defcss
-  ".dark .warning:hover"
-  {"color" "var(--warning-color-hover-inverse)",
-   "background-color" "var(--warning-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .warning:active"
-  {"color" "var(--warning-color-active-inverse)",
-   "background-color" "var(--warning-background-color-active-inverse)"})
-
-(defcss
-  ".dark .warning.info"
-  {"color" "var(--warning-info-color-inverse)",
-   "background-color" "var(--warning-info-background-color-inverse)"})
-
-(defcss
-  ".dark .warning.info:hover"
-  {"color" "var(--warning-info-color-hover-inverse)",
-   "background-color"
-   "var(--warning-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .warning.info:active"
-  {"color" "var(--warning-info-color-active-inverse)",
-   "background-color"
-   "var(--warning-info-background-color-active-inverse)"})
-
-(defcss
-  ".dark .warning.minimal"
-  {"color" "var(--warning-minimal-color-inverse)",
-   "background-color"
-   "var(--warning-minimal-background-color-inverse)"})
-
-(defcss
-  ".dark .warning.minimal:hover"
-  {"color" "var(--warning-minimal-color-hover-inverse)",
-   "background-color"
-   "var(--warning-minimal-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .warning.minimal:active"
-  {"color" "var(--warning-minimal-color-active-inverse)",
-   "background-color"
-   "var(--warning-minimal-background-color-active-inverse)"})
-
-(defcss
-  ".dark .warning.bordered:active"
-  {"background-color"
-   "var(--warning-bordered-background-color-active-inverse)",
-   "border-color" "var(--warning-bordered-border-color-active-inverse)",
-   "color" "var(--warning-bordered-color-active-inverse)"})
-
-(defcss
-  ".dark .warning.bordered"
-  {"border-color" "var(--warning-bordered-border-color-inverse)",
-   "background-color"
-   "var(--warning-bordered-background-color-inverse)",
-   "color" "var(--warning-bordered-color-inverse)"})
-
-(defcss
-  ".dark .warning.bordered:hover"
-  {"color" "var(--warning-bordered-color-hover-inverse)",
-   "border-color" "var(--warning-bordered-border-color-hover-inverse)",
-   "background-color"
-   "var(--warning-bordered-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .warning.bordered.info:active"
-  {"background-color"
-   "var(--warning-bordered-info-background-color-active-inverse)",
-   "border-color"
-   "var(--warning-bordered-info-border-color-active-inverse)",
-   "color" "var(--warning-bordered-info-color-active-inverse)"})
-
-(defcss
-  ".dark .warning.bordered.info"
-  {"border-color" "var(--warning-bordered-info-border-color-inverse)",
-   "background-color"
-   "var(--warning-bordered-info-background-color-inverse)",
-   "color" "var(--warning-bordered-info-color-inverse)"})
-
-(defcss
-  ".dark .warning.bordered.info:hover"
-  {"color" "var(--warning-bordered-info-color-hover-inverse)",
-   "border-color"
-   "var(--warning-bordered-info-border-color-hover-inverse)",
-   "background-color"
-   "var(--warning-bordered-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .warning.filled"
-  {"color" "var(--warning-filled-color-inverse)",
-   "background-color" "var(--warning-filled-background-color-inverse)"})
-
-(defcss
-  ".dark .warning.filled:hover"
-  {"color" "var(--warning-filled-color-hover-inverse)",
-   "background-color"
-   "var(--warning-filled-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .warning.filled:active"
-  {"color" "var(--warning-filled-color-active-inverse)",
-   "background-color"
-   "var(--warning-filled-background-color-active-inverse)"})
-
-(defcss
-  ".dark .warning.filled.info"
-  {"background-color"
-   "var(--warning-filled-info-background-color-inverse)"})
-
-(defcss
-  ".dark .warning.filled.info:hover"
-  {"background-color"
-   "var(--warning-filled-info-background-color-hover-inverse)"})
-
-(defcss
-  ".dark .warning-filled.info:active"
-  {"background-color" "var(--info-background-color-active-inverse)"})
-
-(defcss ".kushi-button" {"font-family" "var(--primary-font-family)"})
-
-(defcss
-  ".kushi-button.bordered"
-  {"border-width" "var(--button-border-width)"})
-
-(defcss
-  ".kushi-tag.bordered"
-  {"border-width" "var(--tag-border-width)"})
 
 (defcss ".kushi-tag" {"font-family" "var(--primary-font-family)"})
 
@@ -2220,3 +965,234 @@
    "top" "unset",
    "bottom" "0%",
    "translate" "-50% 100%"})
+
+
+;; New theming
+
+(defcss
+  ":root"
+  {
+   "--debug-grid-size"                                  "107px",
+   "--debug-grid-color"                                 "#eee",
+   "--outlined-element-stroke-width"                    "1px"
+   "--outlined-button-stroke-width"                     "var(--outlined-element-stroke-width)"
+   "--outlined-tag-stroke-width"                        "var(--outlined-element-stroke-width)"
+   "--outlined-callout-stroke-width"                    "var(--outlined-element-stroke-width)"
+   "--button-padding-inline-compact"                    "0.8em",
+   "--button-padding-inline"                            "1.2em",
+   "--button-padding-inline-roomy"                      "1.5em",
+   "--button-padding-block-compact"                     "0.42em",
+   "--button-padding-block"                             "0.67em",
+   "--button-padding-block-roomy"                       "0.8666em"
+   "--icon-button-padding-inline"                        :$button-padding-block,
+   "--icon-button-padding-block"                         :$button-padding-block,
+   ;; Use or not use -ems ?
+   "--tag-padding-block-start-reduction-ratio"          "0.9",
+   "--tag-padding-block-start"                          "0.27em",
+   "--tag-padding-block"                                "0.3em",
+   "--tag-padding-inline"                               "0.6em",
+   "--tag-padding-block-compact"                        "0.20em",
+   "--tag-padding-inline-compact"                       "0.45em",
+   "--tag-padding-block-roomy"                          "0.45em",
+   "--tag-padding-inline-roomy"                         "0.9em"})
+
+(defcss
+  "[data-kui-colorway=\"neutral\"]"
+  {:color                           :$foreground-color-neutral
+   :hover:color                     :$foreground-color-neutral-2
+   :active:color                    :$foreground-color-neutral-3
+   :dark:color                      :$foreground-color-neutral-dark-mode
+   :dark:hover:color                :$foreground-color-neutral-2-dark-mode
+   :dark:active:color               :$foreground-color-neutral-3-dark-mode
+   :hover:bgc                       :$background-color-neutral-soft
+   :active:bgc                      :$background-color-neutral-soft-2
+   :dark:hover:bgc                  :$background-color-neutral-soft-dark-mode
+   :dark:active:bgc                 :$background-color-neutral-soft-2-dark-mode
+   "[data-kui-surface= \"soft\"]"       {:bgc        :$background-color-neutral-soft
+                                         :dark:bgc        :$background-color-neutral-soft-dark-mode
+                                         :hover:bgc  :$background-color-neutral-soft-2
+                                         :dark:hover:bgc  :$background-color-neutral-soft-2-dark-mode
+                                         :active:bgc :$background-color-neutral-soft-3
+                                         :dark:active:bgc :$background-color-neutral-soft-3-dark-mode}
+   "[data-kui-surface= \"solid\"]"      {:bgc          :$background-color-neutral-hard
+                                         :hover:bgc    :$background-color-neutral-hard-2
+                                         :active:bgc   :$background-color-neutral-hard-3}
+   "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-neutral-hard-dark-mode
+                                         :hover:bgc  :$background-color-neutral-hard-2-dark-mode
+                                         :active:bgc :$background-color-neutral-hard-3-dark-mode}})
+
+(defcss
+  "[data-kui-colorway=\"accent\"]"
+  {:color                           :$foreground-color-accent
+   :hover:color                     :$foreground-color-accent-2
+   :active:color                    :$foreground-color-accent-3
+   :dark:color                      :$foreground-color-accent-dark-mode
+   :dark:hover:color                :$foreground-color-accent-2-dark-mode
+   :dark:active:color               :$foreground-color-accent-3-dark-mode
+   :hover:bgc                       :$background-color-accent-soft
+   :active:bgc                      :$background-color-accent-soft-2
+   :dark:hover:bgc                  :$background-color-accent-soft-dark-mode
+   :dark:active:bgc                 :$background-color-accent-soft-2-dark-mode
+   "[data-kui-surface= \"soft\"]"       {:bgc        :$background-color-accent-soft
+                                         :dark:bgc        :$background-color-accent-soft-dark-mode
+                                         :hover:bgc  :$background-color-accent-soft-2
+                                         :dark:hover:bgc  :$background-color-accent-soft-2-dark-mode
+                                         :active:bgc :$background-color-accent-soft-3
+                                         :dark:active:bgc :$background-color-accent-soft-3-dark-mode}
+   "[data-kui-surface= \"solid\"]"      {:bgc          :$background-color-accent-hard
+                                         :hover:bgc    :$background-color-accent-hard-2
+                                         :active:bgc   :$background-color-accent-hard-3}
+   "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-accent-hard-dark-mode
+                                         :hover:bgc  :$background-color-accent-hard-2-dark-mode
+                                         :active:bgc :$background-color-accent-hard-3-dark-mode}})
+
+(defcss
+  "[data-kui-colorway=\"positive\"]"
+  {:color                           :$foreground-color-positive
+   :hover:color                     :$foreground-color-positive-2
+   :active:color                    :$foreground-color-positive-3
+   :dark:color                      :$foreground-color-positive-dark-mode
+   :dark:hover:color                :$foreground-color-positive-2-dark-mode
+   :dark:active:color               :$foreground-color-positive-3-dark-mode
+   :hover:bgc                       :$background-color-positive-soft
+   :active:bgc                      :$background-color-positive-soft-2
+   :dark:hover:bgc                  :$background-color-positive-soft-dark-mode
+   :dark:active:bgc                 :$background-color-positive-soft-2-dark-mode
+   "[data-kui-surface= \"soft\"]"       {:bgc             :$background-color-positive-soft
+                                         :dark:bgc        :$background-color-positive-soft-dark-mode
+                                         :hover:bgc       :$background-color-positive-soft-2
+                                         :dark:hover:bgc  :$background-color-positive-soft-2-dark-mode
+                                         :active:bgc      :$background-color-positive-soft-3
+                                         :dark:active:bgc :$background-color-positive-soft-3-dark-mode}
+   "[data-kui-surface= \"solid\"]"      {:bgc        :$background-color-positive-hard
+                                         :hover:bgc  :$background-color-positive-hard-2
+                                         :active:bgc :$background-color-positive-hard-3}
+   "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-positive-hard-dark-mode
+                                         :hover:bgc  :$background-color-positive-hard-2-dark-mode
+                                         :active:bgc :$background-color-positive-hard-3-dark-mode}})
+
+(defcss
+  "[data-kui-colorway=\"negative\"]"
+  {:color                           :$foreground-color-negative
+   :hover:color                     :$foreground-color-negative-2
+   :active:color                    :$foreground-color-negative-3
+   :dark:color                      :$foreground-color-negative-dark-mode
+   :dark:hover:color                :$foreground-color-negative-2-dark-mode
+   :dark:active:color               :$foreground-color-negative-3-dark-mode
+   :hover:bgc                       :$background-color-negative-soft
+   :active:bgc                      :$background-color-negative-soft-2
+   :dark:hover:bgc                  :$background-color-negative-soft-dark-mode
+   :dark:active:bgc                 :$background-color-negative-soft-2-dark-mode
+   "[data-kui-surface= \"soft\"]"       {:bgc        :$background-color-negative-soft
+                                         :dark:bgc        :$background-color-negative-soft-dark-mode
+                                         :hover:bgc  :$background-color-negative-soft-2
+                                         :dark:hover:bgc  :$background-color-negative-soft-2-dark-mode
+                                         :active:bgc :$background-color-negative-soft-3
+                                         :dark:active:bgc :$background-color-negative-soft-3-dark-mode}
+   "[data-kui-surface= \"solid\"]"      {:bgc          :$background-color-negative-hard
+                                         :hover:bgc    :$background-color-negative-hard-2
+                                         :active:bgc   :$background-color-negative-hard-3}
+   "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-negative-hard-dark-mode
+                                         :hover:bgc  :$background-color-negative-hard-2-dark-mode
+                                         :active:bgc :$background-color-negative-hard-3-dark-mode}})
+
+(defcss
+  "[data-kui-colorway=\"warning\"]"
+  {:color                           :$foreground-color-warning
+   :hover:color                     :$foreground-color-warning-2
+   :active:color                    :$foreground-color-warning-3
+   :dark:color                      :$foreground-color-warning-dark-mode
+   :dark:hover:color                :$foreground-color-warning-2-dark-mode
+   :dark:active:color               :$foreground-color-warning-3-dark-mode
+   :hover:bgc                       :$background-color-warning-soft
+   :active:bgc                      :$background-color-warning-soft-2
+   :dark:hover:bgc                  :$background-color-warning-soft-dark-mode
+   :dark:active:bgc                 :$background-color-warning-soft-2-dark-mode
+   "[data-kui-surface= \"soft\"]"       {:bgc             :$background-color-warning-soft
+                                         :dark:bgc        :$background-color-warning-soft-dark-mode
+                                         :hover:bgc       :$background-color-warning-soft-2
+                                         :dark:hover:bgc  :$background-color-warning-soft-2-dark-mode
+                                         :active:bgc      :$background-color-warning-soft-3
+                                         :dark:active:bgc :$background-color-warning-soft-3-dark-mode}
+   "[data-kui-surface= \"solid\"]"      {:bgc        :$background-color-warning-hard
+                                         :hover:bgc  :$background-color-warning-hard-2
+                                         :active:bgc :$background-color-warning-hard-3}
+   "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-warning-hard-dark-mode
+                                         :hover:bgc  :$background-color-warning-hard-2-dark-mode
+                                         :active:bgc :$background-color-warning-hard-3-dark-mode}})
+
+(defcss "[data-kui-surface=\"solid\"]"
+  {:color             :white
+   :dark:color        :black
+   :hover:color       :white
+   :dark:hover:color  :black
+   :active:color      :white
+   :dark:active:color :black})
+
+(defcss "[data-kui-surface=\"outline\"]"
+  {:--_stroke-width    :$outlined-element-stroke-width})
+
+(defcss
+  "[data-kui-surface]"
+  {"--_stroke"
+   "inset 0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, currentColor)"
+
+   "[data-kui-stroke-align=\"outside\"]"
+    {"--_stroke" "0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, currentColor)"}
+   
+   "box-shadow"
+   "var(--_stroke)"})
+                                     
+
+(defcss "[data-kui-shape=\"rounded\"]"
+  {:border-radius :0.3em})
+
+
+(defcss "[data-kui-shape=\"pill\"]"
+  {:border-radius :9999px})
+
+
+;; Move to button ns?
+(defcss ".kui-button"
+  {:--_padding-inline               "var(--button-padding-inline)"
+   :--_padding-block                "var(--button-padding-block)"
+   "[data-kui-packing=\"compact\"]" {:--_padding-inline "var(--button-padding-inline-compact)"
+                                     :--_padding-block  "var(--button-padding-block-compact)"}
+   
+   "[data-kui-packing=\"roomy\"]"   {:--_padding-inline "var(--button-padding-inline-roomy)"
+                                     :--_padding-block  "var(--button-padding-block-roomy)"}
+   
+   "[data-kui-icon-button]"         {:--_padding-inline           "var(--_padding-block)"
+                                     :_.material-symbols-outlined {:min-width   :1.2ch
+                                                                   :line-height :normal}}})
+(defcss ".kui-icon-button"
+  {:--_padding-block            :$icon-button-padding-block||$button-padding-block
+   :--_padding-inline           :$icon-button-padding-inline||$button-padding-inline
+   :_.material-symbols-outlined {:min-width   :1.2ch
+                                 :line-height :normal}
+   "[data-kui-packing=\"compact\"]" {:--_padding-inline :$icon-button-padding-block-compact||$button-padding-block-compact
+                                     :--_padding-block  :$icon-button-padding-block-compact||$button-padding-block-compact}
+   "[data-kui-packing=\"roomy\"]"   {:--_padding-inline :$icon-button-padding-block-roomy||$button-padding-block-roomy
+                                     :--_padding-block  :$icon-button-padding-block-roomy||$button-padding-block-roomy}})
+
+
+;; Keep here?
+(defcss ".kui-button, .kui-tag"
+  {"[data-kui-start-enhancer]"      {:padding-inline-start "calc(var(--_padding-inline) * 0.7666)"}
+   "[data-kui-end-enhancer]"        {:padding-inline-end "calc(var(--_padding-inline) * 0.7666)"}})
+
+
+
+;; Move to tag ns
+(defcss ".kui-tag"
+  {"[data-kui-packing=\"compact\"]"
+   {:--_padding-inline      "var(--tag-padding-inline-compact)"
+    :--_padding-block-start "calc(var(--tag-padding-block-compact) * var(--tag-padding-block-start-reduction-ratio, 1))"
+    :--_padding-block-end   "calc(var(--tag-padding-block-compact))"
+    }
+
+   "[data-kui-packing=\"roomy\"]"
+   {:--_padding-inline "var(--tag-padding-inline-roomy)"
+    :--_padding-block-start "calc(var(--tag-padding-block-roomy) * var(--tag-padding-block-start-reduction-ratio, 1))"
+    :--_padding-block-end   "calc(var(--tag-padding-block-roomy))"
+    }})

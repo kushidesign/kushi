@@ -13,7 +13,6 @@
  "elevation"
  "pane"
  "tooltip")
-            
 
 (defn valid-tooltip-text-coll? [x]
   (and (seq x) 
@@ -36,83 +35,76 @@
           (when (valid-tooltip-text-coll? v)
             v))))
 
-
 (defn tooltip-attrs
-  {:summary ["Tooltips provide additional context when hovering or clicking "
-             "on an element."]
-   :desc ["Tooltips are intended to be ephemeral, containing only"
-          "non-interactive content."
-          :br
-          :br
-          "By default, tooltips will show up above the owning element. "
-          "Specifying placement in various ways can be done with the"
-          "`:-placement` option."
-          :br
-          :br
-          "The element being tipped must receive an attributes map that is a "
-          "result of passing a map of options to "
-          "`kushi.ui.tooltip.core/tooltip-attrs`. You can compose this map to "
-          "an existing elements attributes map using the pattern:"
-          :br
-          :br "`(merge-attrs (sx ...) (tooltip-attrs {...}))`"
-          "~ Or ~"
-          :br "`(merge-attrs {...} (tooltip-attrs {...}))`"
-          :br
-          :br
-          "tooltips can be custom styled and controlled via the following "
-          "tokens in your theme:"
-          :br
-          ;; TODO add documentation for each token
-          :br "__Colors and images:__"
-          "`--tooltip-color`"                            
-          :br "`--tooltip-color-inverse`"                    
-          :br "`--tooltip-background-color`"                 
-          :br "`--tooltip-background-color-inverse`"         
-          :br "`--tooltip-background-image`"                 
-          :br
-          :br "__Typography:__"
-          "`--tooltip-line-height`"
-          :br "`--tooltip-font-family`"
-          :br "`--tooltip-font-size`"
-          :br "`--tooltip-font-weight`"
-          :br "`--tooltip-text-transform`"
-          :br
-          :br "__Geometry:__"
-          "`--tooltip-padding-inline`"
-          :br "`--tooltip-padding-block`"
-          :br "`--tooltip-border-radius`"
-          :br "`--tooltip-offset`"
-          :br "`--tooltip-viewport-padding`"
-          :br "`--tooltip-flip-viewport-edge-threshold`"
-          :br "`--tooltip-auto-placement-y-threshold`"
-          :br
-          :br "__Choreography:__"
-          "`--tooltip-delay-duration`"            
-          :br "`--tooltip-reveal-on-click-duration`"  
-          :br "`--tooltip-initial-scale`"             
-          :br "`--tooltip-offset-start`"              
-          :br "`--tooltip-transition-duration`"       
-          :br "`--tooltip-transition-timing-function`"
-          :br
-          :br "__Arrows:__"
-          "`--tooltip-arrow-depth`"   
-          :br "`--tooltip-arrow-x-offset`"
-          :br "`--tooltip-arrow-y-offset`"
+  {:summary "Tooltips provide additional context when hovering or clicking 
+             on an element."
+   :desc "Tooltips are intended to be ephemeral, containing only non-interactive
+          content.
 
-          :br
-          :br
-          "If you want supply the value of any of the above tokens ala-carte, "
-          "use the following pattern."
-          :br
-          :br
-          "`(tooltip-attrs {:-text \"My text\" :-tooltip-class (css [:--tooltip-font-size :34px])}))`"
-          :br
-          :br
-          "If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for "
-          "`--tooltip-offset`, `--tooltip-arrow-x-offset`, "
-          "`--tooltip-arrow-y-offset`, or `--tooltip-border-radius`, you will need "
-          "to use an explicit unit e.g. `0px`."
-          ]
+          By default, tooltips will show up above the owning element.Specifying
+          placement in various ways can be done with the `:-placement` option.
+          
+          The element being tipped must receive an attributes map that is a
+          result of passing a map of options to
+          `kushi.ui.tooltip.core/tooltip-attrs`. You can compose this map to an
+          existing elements attributes map using the pattern:
+          
+          `(merge-attrs (sx ...) (tooltip-attrs {...}))`
+          ~ or ~
+          `(merge-attrs {...} (tooltip-attrs {...}))`
+          
+          Tooltips can be custom styled and controlled via the following tokens
+          in your theme:
+          
+          __Colors and images:__
+          `--tooltip-color`                            
+          `--tooltip-color-dark-mode`
+          `--tooltip-background-color`                 
+          `--tooltip-background-color-dark-mode`         
+          `--tooltip-background-image`                 
+          
+          __Typography:__
+          `--tooltip-line-height`
+          `--tooltip-font-family`
+          `--tooltip-font-size`
+          `--tooltip-font-weight`
+          `--tooltip-text-transform`
+          
+          __Geometry:__
+          `--tooltip-padding-inline`
+          `--tooltip-padding-block`
+          `--tooltip-border-radius`
+          `--tooltip-offset`
+          `--tooltip-viewport-padding`
+          `--tooltip-flip-viewport-edge-threshold`
+          `--tooltip-auto-placement-y-threshold`
+          
+          __Choreography:__
+          `--tooltip-delay-duration`            
+          `--tooltip-reveal-on-click-duration`  
+          `--tooltip-initial-scale`             
+          `--tooltip-offset-start`              
+          `--tooltip-transition-duration`       
+          `--tooltip-transition-timing-function`
+          
+          __Arrows:__
+          `--tooltip-arrow-depth`   
+          `--tooltip-arrow-x-offset`
+          `--tooltip-arrow-y-offset`
+          
+          If you want supply the value of any of the above tokens ala-carte,
+          check out the \"Styling via design token at callsite\" example
+          in this Examples section.
+          
+          `(tooltip-attrs`<br>
+          ` {:-text \"My text\"`<br>
+          `  :-tooltip-class (css [:--tooltip-font-size :34px])}))`
+          
+          If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for
+          `--tooltip-offset`, `--tooltip-arrow-x-offset`,
+          `--tooltip-arrow-y-offset`, or `--tooltip-border-radius`, you will
+          need to use an explicit unit e.g. `0px`."
+          
    :opts '[{:name    text
             :pred    #(or (string? %) (keyword? %) (vector? %))
             :default nil
@@ -120,92 +112,64 @@
            {:name    placement
             :pred    keyword?
             :default :auto
-            :desc    [
-                      "You can use single keywords to specify the exact placement "
-                      "of the tooltip:"
-                      :br
-                      "`:top-left-corner`"
-                      :br
-                      "`:top-left`"
-                      :br
-                      "`:top`"
-                      :br
-                      "`:top-right`"
-                      :br
-                      "`:top-right-corner`"
-                      :br
-                      "`:right-top-corner`"
-                      :br
-                      "`:right-top`"
-                      :br
-                      "`:right`"
-                      :br
-                      "`:right-bottom`"
-                      :br
-                      "`:right-bottom-corner`"
-                      :br
-                      :br
-                      "You can also use shorthand versions of the single keywords:"
-                      :br
-                      "`:tlc`"
-                      :br
-                      "`:tl`"
-                      :br
-                      "`:t`"
-                      :br
-                      "`:tr`"
-                      :br
-                      "`:trc`"
-                      :br
-                      "`:rtc`"
-                      :br
-                      "`:rt`"
-                      :br
-                      "`:r`"
-                      :br
-                      "`:rb`"
-                      :br
-                      "`:rbc`"
-                      :br
-                      :br
-                      "If you care about the tooltip placement respecting writing "
-                      "direction and/or document flow, you can use a vector of of "
-                      "up to 3 logical properties keywords, separated by spaces:"
-                      :br
-                      "`[:inline-end :block-start]`"
-                      :br
-                      "`[:inline-end :block-start :corner]`"
-                      :br
-                      "`[:inline-start :center]`"
-                      :br
-                      "`[:inline-end :center]`"
-                      :br
-                      "`[:block-start :enter]`"
-                      :br
-                      "`[:block-end :center]`"
-                      :br
-                      "`[:block-end :inline-start]`"
-                      :br]}
+            :desc    "You can use single keywords to specify the exact placement 
+                      of the tooltip:
+                      
+                      `:top-left-corner`
+                      `:top-left`
+                      `:top`
+                      `:top-right`
+                      `:top-right-corner`
+                      `:right-top-corner`
+                      `:right-top`
+                      `:right`
+                      `:right-bottom`
+                      `:right-bottom-corner`
+                      
+                      You can also use shorthand versions of the single keywords:
+                      
+                      `:tlc`
+                      `:tl`
+                      `:t`
+                      `:tr`
+                      `:trc`
+                      `:rtc`
+                      `:rt`
+                      `:r`
+                      `:rb`
+                      `:rbc`
+                      
+                      If you care about the tooltip placement respecting writing
+                      direction and/or document flow, you can use a vector of of 
+                      up to 3 logical properties keywords, separated by spaces:
+                      
+                      `[:inline-end :block-start]`
+                      `[:inline-end :block-start :corner]`
+                      `[:inline-start :center]`
+                      `[:inline-end :center]`
+                      `[:block-start :enter]`
+                      `[:block-end :center]`
+                      `[:block-end :inline-start]`"}
            {:name    arrow?
             :pred    boolean?
             :default true
-            :desc    ["Setting to false will not render a directional arrow with "
-                     "the tooltip."]}
+            :desc    "Setting to false will not render a directional arrow with 
+                      the tooltip."}
            {:name    tooltip-class
             :pred    string?
             :default nil
-            :desc    ["A class name for a la carte application of classes on the "
-                      " tooltip element."]}
+            :desc    "A class name for a la carte application of classes on the
+                      tooltip element."}
            {:name    text-on-click
             :pred    #(or (string? %) (keyword? %) (vector? %))
             :default nil
-            :desc    ["The tooltip text, after the tipped element has been clicked."]}
+            :desc    "The tooltip text, after the tipped element has been clicked."}
            {:name    text-on-click-tooltip-class
             :pred    string?
             :default nil
-            :desc    ["A class name for the la carte application of classes on "
-                      "the tooltip element which is displaying alternate text "
-                      "after click."]}]}
+            :desc    "A class name for the la carte application of classes on
+                      the tooltip element which is displaying alternate text
+                      after click."}]}
   [{text                        :-text
     placement                   :-placement
     arrow?                      :-arrow?

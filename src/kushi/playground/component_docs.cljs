@@ -1,10 +1,11 @@
 (ns kushi.playground.component-docs
-  (:require [clojure.string :as string]
-            [clojure.walk :as walk]
-            [kushi.core :refer (sx css-vars-map css)]
-            [kushi.playground.util :as util]
-            [kushi.ui.label.core :refer [label]]
-            [markdown-to-hiccup.core :as md->hc]))
+  (:require
+   [clojure.string :as string]
+   [clojure.walk :as walk]
+   [kushi.core :refer (sx ?sx css-vars-map css ?css)]
+   [kushi.playground.md2hiccup :refer [desc->hiccup]]
+   [kushi.ui.label.core :refer [label]]
+   [me.flowthing.pp :as pp]))
 
 
 (defn add-links
@@ -24,22 +25,18 @@
 
 
 (defn kushi-opts-grid-desc [v m]
-  [:span
-   (sx :.kushi-ui-opt-desc
-       :.normal
-       :_p:m--0
-       :_p:fs--$medium
-       :_p:lh--1.7)
-   (let [ret* (cond
-                (string? v)
-                (->> v md->hc/md->hiccup md->hc/component)
-
-                (coll? v)
-                (some->> v util/desc->hiccup)
-
-                :else
-                [:span])]
-     (add-links ret*))])
+  (into [:span
+         ;; TODO - This should be extracted for styles
+         (sx :.kushi-ui-opt-desc
+             :.normal
+             :m--0
+             :fs--$medium
+             :lh--1.55
+             :_code:lh--1.9
+             :_code:pb--0.07em
+             :_code:pi--0.2em
+             :>span:d--block)]
+        (desc->hiccup v)))
 
 
 
@@ -68,7 +65,8 @@
                              anon-fn-display*)]
         [:span.code (str "#" anon-fn-display)])
       (set? v)
-      [:span.code (str v)]
+      ;; TODO need to format sets here
+      [:span.code v #_(with-out-str (pp/pprint v {:max-width 20}))]
       (symbol? v)
       [:span.code (name v)])))
 
@@ -77,7 +75,7 @@
   [:div
    (let [ai (if (= text "Desc.") :flex-start :center)]
      {:style (css-vars-map ai)
-      :class (css :.flex-row-fs :ai--$ai)})
+      :class (css :.flex-row-fs :align-items--$ai)})
    [:div
     (sx :.kushi-opt-detail-label :min-width--75px)
     [label (sx :.kushi-playground-meta-desc-label
@@ -86,11 +84,5 @@
      text]]
    [:div (sx :.kushi-opt-detail-value
              [:_.code {:pb :0.07em
-                       :pi :0.2em
-                       ;; :fs       :0.85rem
-                       ;; :c        :$accent-750
-                       ;; :bgc      :$accent-50
-                       ;; :dark:c   :$accent-100
-                       ;; :dark:bgc :$accent-900
-                       }])
+                       :pi :0.2em}])
     [f v]]])

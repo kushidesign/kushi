@@ -101,8 +101,8 @@
    :fw         :$kushi-playground-meta-desc-label_font-weight||$wee-bold
    :font-style :$kushi-playground-meta-desc-label_font-style||italic
    :tt         :$kushi-playground-meta-desc-label_text-transform||uppercase
-   :c          :$neutral-secondary-foreground
-   :dark:c     :$neutral-secondary-foreground-inverse })
+   :c          :$foreground-color-secondary
+   :dark:c     :$foreground-color-secondary-dark-mode})
 
 (defcss "@layer kushi-playground-shared .kushi-treenav-section-header"
   :.relative
@@ -178,7 +178,7 @@
   :bw--0!important
   :p--0.425em!important
   [:c "var(--neutral-minimal-color)!important"]
-  [:dark:c "var(--neutral-minimal-color-inverse)!important"]
+  [:dark:c "var(--neutral-minimal-color-dark-mode)!important"]
   :bgc--transparent!important
   :hover:bgc--transparent!important
   :active:bgc--transparent!important)
@@ -288,12 +288,12 @@
 ;; TODO - This version won't work with out-dated browsers because of color-mix
 ;; (defcss "@layer kushi-playground-shared .bg-scrim-gradient
 ;;   {:bgi                  '(linear-gradient "to bottom" "var(--background-color) var(--menu-height)" "color-mix(in srgb, var(--background-color), transparent calc(100% - var(--transparency-at-end, 65%)))") 
-;;    :dark:bgi             '(linear-gradient "to bottom" "var(--background-color-inverse) var(--menu-height)" "color-mix(in srgb, var(--background-color-inverse), transparent calc(100% - var(--transparency-at-end, 65%)))")})
+;;    :dark:bgi             '(linear-gradient "to bottom" "var(--background-color-dark-mode) var(--menu-height)" "color-mix(in srgb, var(--background-color-dark-mode), transparent calc(100% - var(--transparency-at-end, 65%)))")})
 
 ;; TODO - This version will
 (defcss "@layer kushi-playground-shared .bg-scrim-gradient"
   {:bgi      "linear-gradient(to bottom, var(--background-color) var(--menu-height), rgba(255 255 255 / 0.65))" 
-   :dark:bgi "linear-gradient(to bottom, var(--background-color-inverse) var(--menu-height), rgba(0 0 0 / 0.65))"})
+   :dark:bgi "linear-gradient(to bottom, var(--background-color-dark-mode) var(--menu-height), rgba(0 0 0 / 0.65))"})
 
 
 (defcss "@layer kushi-playground-shared .header-menu-transition-group"

@@ -47,8 +47,8 @@
 ;; (profile ; Profile any `p` forms called during body execution
 ;;   {} ; Profiling options; we'll use the defaults for now
 ;;   (dotimes [_ 100000]
-;;     (p :contains? (+ 1 1))
-;;     (p :some (+ 1 1))))
+;;     (p :a (+ 1 1))
+;;     (p :b (reduce + 0 [1 1]))))
 
 ;; -----------------------------------------------------------------------------
 

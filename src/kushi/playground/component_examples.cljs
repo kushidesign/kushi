@@ -1,21 +1,21 @@
 (ns ^:dev/always kushi.playground.component-examples
-  (:require [clojure.string :as string]
-            [domo.core :as d]
-            [kushi.core :refer (sx css merge-attrs)]
-            [kushi.css.defs]
-            [kushi.css.media]
-            [kushi.playground.component-docs :as docs]
-            [kushi.playground.util :as util]
-            [kushi.ui.button.core :refer (button)]
-            [kushi.ui.core :refer (opts+children)]
-            [kushi.ui.divisor.core :refer (divisor)]
-            [kushi.ui.icon.core :refer (icon)]
-            [kushi.ui.tooltip.core :refer (tooltip-attrs)]
-            [kushi.ui.icon.mui.svg :as mui.svg]
-            [kushi.ui.modal.core :refer [close-kushi-modal modal
-                                         modal-close-button open-kushi-modal]]
-            [kushi.ui.util :refer [as-str maybe]]
-            [me.flowthing.pp :refer [pprint]]))
+  (:require
+   [clojure.string :as string]
+   [domo.core :as d]
+   [kushi.core :refer (sx css merge-attrs)]
+   [kushi.css.defs]
+   [kushi.css.media]
+   [kushi.playground.md2hiccup :refer [desc->hiccup]]
+   [kushi.ui.button.core :refer (button)]
+   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.divisor.core :refer (divisor)]
+   [kushi.ui.icon.core :refer (icon)]
+   [kushi.ui.icon.mui.svg :as mui.svg]
+   [kushi.ui.modal.core :refer [close-kushi-modal modal modal-close-button
+                                open-kushi-modal]]
+   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
+   [kushi.ui.util :refer [as-str maybe]]
+   [me.flowthing.pp :refer [pprint]]))
 
 (defn- example-row-variant
   [component
@@ -97,6 +97,14 @@
            variants-attrs
            variants-order]}
    {:keys [variants+ variants-]}]
+
+  ;; (!? (keyed [variants-base
+  ;;            variants-attrs
+  ;;            variants-order
+  ;;            variants+ 
+  ;;            variants-]
+  ;;           ))
+
   (let [a (when variants-base
             (as-> variants-base $
               (apply conj $ variants+)
@@ -142,24 +150,6 @@
    s])
 
 
-;; #_(defn section-label-vertical
-;;   "Renders a vertical label"
-;;   [s]
-;;   [:p (sx :.xxsmall
-;;           :c--$neutral-secondary-foreground
-;;           :min-width--55px
-;;           {:style {:writing-mode :vertical-lr
-;;                    :text-orientation :upright
-;;                    :text-transform :uppercase
-;;                    :font-weight :800
-;;                    :color :#7d7d7d
-;;                    :font-family "JetBrains Mono"
-;;                    :text-align :center
-;;                    :background-image "linear-gradient(90deg, #e3e3e3, #e3e3d3 1px, transparent 1px)"
-;;                    :background-position-x :1ch}})
-;;    [:span (sx :bgc--white :pi--0.5em) s]])
-
-
 (declare component-snippets)
 (declare reqs-coll)
 
@@ -182,7 +172,7 @@
                         :_.kushi-modal-inner:gap--0.75rem
                         [:height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem))))"]
                         :overflow--hidden
-                        :width--$main-content-max-width)
+                        :width--$playground-main-content-max-width)
             :id    modal-id}
      [modal-close-button {:-modal-id modal-id}]
      [:div (sx :.flex-row-sb :ai--fs :gap--1.5em)
@@ -207,17 +197,17 @@
 
 (defn example-modal-trigger [modal-id]
   [button
-   {:class    
-    (css :.minimal
-         :.accent
-         :.pill
-         :pb--0.4em
+   {:-colorway :accent
+    :-shape    :pill
+    :-surface  :minimal
+    :class    
+    (css :pb--0.4em
          :fw--$wee-bold
          :fs--$xxsmall
          :.accent.minimal:hover:background-color--$accent-50
          :dark:.accent.minimal:hover:background-color--$accent-800
 
-               ;; Next 3 styles will give it a link-button style
+         ;; Next 3 styles will give it a link-button style
          #_:p--0
          #_:hover&.accent.minimal:bgc--transparent
          #_[:hover:after {:content  "\"\""
@@ -260,7 +250,7 @@
 
      [:section (sx :.playground-example-row
                    ;; make this max-width global var
-                   :max-width--$main-content-max-width)
+                   :max-width--$playground-main-content-max-width)
       [:div (sx :.flex-row-fs
                 :flex-wrap--wrap
                 :ai--c
@@ -321,7 +311,9 @@
   (let [[opts attrs] (opts+children args)]
     [button
      (merge-attrs
-      {:class    (css :.accent :.minimal :p--7px)
+      {:-colorway :accent
+       :-surface :minimal
+       :class    (css :p--7px)
        :on-click #(d/copy-to-clipboard!
                    (or (some->> opts 
                                 :clipboard-parent-sel
@@ -336,7 +328,7 @@
         "Copied!"
 
         :-text-on-click-tooltip-class 
-        (css [:--tooltip-background-color :$accent-filled-background-color])
+        (css [:--tooltip-background-color :$background-color-accent-hard])
 
         :-placement                  
         [:block-start :inline-end]})
@@ -432,8 +424,9 @@
                         :mbs--1.5em
                         #_:pbe--2rem)
                [snippet-section
-                {:header       (util/desc->hiccup
-                                ["Paste into the `:require` section of your `:ns` form:"])
+                {:header       (into [:div]
+                                     (desc->hiccup
+                                      "Paste into the `:require` section of your `:ns` form:"))
                  :preformatted (-> reqs-coll
                                    formatted*
                                    (subs 1)
@@ -447,9 +440,11 @@
 
               (for [[i call] (map-indexed (fn [i call] [i call]) snippets)
                     :let [header (when (zero? i) 
-                                   (some-> snippets-header
-                                           util/desc->hiccup 
-                                           (docs/add-links scroll-to-elsewhere-on-page)))]]
+                                   (when (string? snippets-header)
+                                     (some->> snippets-header
+                                              desc->hiccup 
+                                              (into [:div])
+                                              #_(docs/add-links scroll-to-elsewhere-on-page))))]]
                 [snippet-section
                  {:header       header
                   :preformatted (-> call
@@ -564,5 +559,4 @@
                          [sym '(sx :.large)]
                          [sym '(sx :.xlarge)]
                          [sym '(sx :.xxlarge)]
-                         [sym '(sx :.xxxlarge)]])]})
-  )
+                         [sym '(sx :.xxxlarge)]])]}))

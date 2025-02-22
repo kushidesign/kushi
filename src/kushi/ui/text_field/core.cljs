@@ -26,23 +26,23 @@
                 start-enhancer
                 end-enhancer
                 ;; TODO - change this out when new theming comes in
-                semantic
+                colorway
                 textarea?]}     
         opts]
     [:div
      (merge-attrs
+      {:data-kui-colorway colorway}
       (sx
        ".kushi-text-input-wrapper"
-       semantic
        :.flex-row-fs
        [:bc
         "color-mix(in srgb, currentColor var(--text-input-border-intensity, 75%), transparent)"]
        [:dark:bc
-        "color-mix(in srgb, currentColor var(--text-input-border-intensity-inverse, 55%), transparent)"]
+        "color-mix(in srgb, currentColor var(--text-input-border-intensity-dark-mode, 55%), transparent)"]
        ["focus-within:bgc"
-        "var(--white-transparent-70)!important"]
+        "var(--transparent-white-70)!important"]
        ["dark:focus-within:bgc"
-        "var(--black-transparent-20)!important"]
+        "var(--transparent-black-20)!important"]
        [:focus-within:c
         :currentColor!important]
        [:focus-within:bc
@@ -55,8 +55,8 @@
        :bw--1px
        :bs--solid
        :border-radius--$text-input-border-radius
-       :bgc--$white-transparent-70
-       :dark:bgc--$black-transparent-20
+       :bgc--$transparent-white-70
+       :dark:bgc--$transparent-black-20
        :_textarea:border-radius--$text-input-border-radius
        :_input:border-radius--$text-input-border-radius)
       wrapper-attrs)
@@ -93,18 +93,22 @@
        [enhancer end-enhancer])]))
 
 (defn text-field
-  {:summary ["A text-field enables the entry of text."]
-   :desc ["An input enables the entry of text. By default, this component will use an `<input>` element of type `text`. If the option `:-textarea?` is set to `true`, a `<textarea>` element will be used instead."]
+  {:summary "A text-field enables the entry of text."
+   :desc "An input enables the entry of text. By default, this component will
+          use an `<input>` element of type `text`. If the option `:-textarea?`
+          is set to `true`, a `<textarea>` element will be used instead."
    :opts '[{:name    textarea?
             :pred    boolean?
             :default false
-            :desc    ["Setting to `true` will render an html `<textarea/>` element, instead of a <input type='text'/> element."]}
+            :desc    "Setting to `true` will render an html `<textarea/>`
+                      element, instead of a <input type='text'/> element."}
 
            {:name    outer-wrapper-attrs
             :pred    map?
             :default nil
-            :desc    ["HTML attributes map applied to the outermost div of the component."
-                      "This div wraps the label, input-wrapper div, and the helper text span."]}
+            :desc    "HTML attributes map applied to the outermost div of the
+                      component. This div wraps the label, input-wrapper div,
+                      and the helper text span."}
 
            {:name    label
             :pred    string?
@@ -114,46 +118,57 @@
            {:name    label-attrs
             :pred    map?
             :default nil
-            :desc    "HTML attributes map applied to the `:label` element that contains the `label` text."}
+            :desc    "HTML attributes map applied to the `:label` element that
+                      contains the `label` text."}
 
            {:name    label-placement
             :pred    #{:block :inline}
             :default :block-start
-            :desc    "HTML attributes map applied to the `label` element associated with the `input` element, and end-enhancer div."}
+            :desc    "HTML attributes map applied to the `label` element
+                      associated with the `input` element, and end-enhancer div."}
 
            {:name    label-width
             :pred    #(or (string? %) (keyword? %))
             :default :block-start
-            :desc    ["Sets the width of your label \"column\", when `:-label-placement` is set to `:inline`."
-                      "Must be a valid css width value (`px`, `em` `rem`, etc)"]}
+            :desc    "Sets the width of your label \"column\", when
+                      `:-label-placement` is set to `:inline`. Must be a valid
+                      css width value (`px`, `em` `rem`, etc)"}
 
            {:name    wrapper-attrs
             :pred    map?
             :default nil
-            :desc    ["HTML attributes map applied to the input wrapper div, which is bordered by default."
-                      "This div wraps the `start-enhancer` div, the actual `input` element, and the `end-enhancer` div."]}
+            :desc    "HTML attributes map applied to the input wrapper div,
+                      which is bordered by default. This div wraps the
+                      `start-enhancer` div, the actual `input` element, and the
+                      `end-enhancer` div."}
 
            {:name    start-enhancer
             :pred    #(or (string? %) (vector? %))
             :default nil
-            :desc    "A string, hiccup vector, or child component intended to aid the user and positioned within the input field area, at the start"}
+            :desc    "A string, hiccup vector, or child component intended to
+                      aid the user and positioned within the input field area,
+                      at the start"}
 
            {:name    end-enhancer
             :pred    #(or (string? %) (vector? %))
             :default nil
-            :desc    "A string, hiccup vector, or child component intended to aid the user and positioned within the input field area, at the end"}
+            :desc    "A string, hiccup vector, or child component intended to
+                      aid the user and positioned within the input field area,
+                      at the end"}
 
            {:name    helper
             :pred    string?
             :default nil
             :desc    ["The text for `:.kushi-text-input-helper` label."
-                      "If used, this should give the user actionable information about the value of the associated input field."]}
+                      "If used, this should give the user actionable information
+                       about the value of the associated input field."]}
 
-           {:name    semantic
+           {:name    colorway
             :pred    #{:neutral :accent :positive :negative :warning}
             :default nil
             :desc    ["The text for `:.kushi-text-input-helper` label."
-                      "If used, this should give the user actionable information about the value of the associated input field."]}
+                      "If used, this should give the user actionable information
+                       about the value of the associated input field."]}
            ]}
   [& args]
   (let [[opts attrs & _]
@@ -168,7 +183,7 @@
                 start-enhancer
                 end-enhancer
                 helper
-                semantic
+                colorway
                 textarea?]
          :or   {label " "}}         
         opts
@@ -184,22 +199,22 @@
         (= :inline label-placement)
 
         label-text-attrs   
-        (sx ".kushi-text-input-label-text"
-            semantic
-            :.minimal
-            :.info
-            :d--block
-            :.small
-            :fw--$wee-bold
-            :hover:bgc--transparent!important
-            :active:bgc--transparent!important)
+        {:class              (css ".kushi-text-input-label-text"
+                                  :.minimal
+                                  :.info
+                                  :d--block
+                                  :.small
+                                  :fw--$wee-bold
+                                  :hover:bgc--transparent!important
+                                  :active:bgc--transparent!important)
+         :data-kui-colorway colorway}
 
         helper-label-attrs
         (when helper
           (merge-attrs
            label-text-attrs
            (sx ".kushi-text-input-helper"
-               :.neutral-secondary-foreground
+               :.foreground-color-secondary
                :.inline-block
                :fw--$normal
                :mbs--$text-input-helper-margin-block-start||0.3em)
@@ -207,11 +222,11 @@
 
         wrapped-input
         [text-field* (merge attrs
-                            {:-wrapper-attrs  wrapper-attrs
-                             :-start-enhancer start-enhancer
-                             :-end-enhancer   end-enhancer
-                             :-semantic       semantic
-                             :-textarea?      textarea?})]
+                            {:-wrapper-attrs    wrapper-attrs
+                             :-start-enhancer   start-enhancer
+                             :-end-enhancer     end-enhancer
+                             :data-kui-colorway colorway
+                             :-textarea?        textarea?})]
 
         label-with-attrs
         [:label

@@ -4,9 +4,9 @@
    [kushi.ui.icon.mui.svg :as mui.svg ]
    [kushi.ui.popover.core :refer [dismiss-popover!]]
    [kushi.ui.text-field.core :refer [text-field]]
-   [kushi.core :refer (sx merge-attrs)]
+   [kushi.core :refer (sx css merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.button.core :refer [button icon-button]]
    [kushi.ui.popover.core :refer [popover-attrs]]
    [reagent.dom :as rdom]))
 
@@ -49,29 +49,28 @@
       :-label           "Depth"
       :-label-placement :inline}]]
 
-   [button
+   [icon-button
     (merge-attrs
+     {:on-click dismiss-popover!
+      :-shape   :pill
+      :-surface :minimal}
      (sx :.kushi-popover-close-button
          :.neutral
-         :.minimal
-         :.pill
          :.top-right-corner-inside
-         :position--absolute
-         :fs--$small
-         :zi--1
-         [:--icon-button-padding-inline-ems :0.4em]
-         [:opacity                         :$popover-close-button-opacity]
-         [:--button-padding-block-ems       :$icon-button-padding-inline-ems]
-         [:margin-inline                   :$popover-close-button-margin-inline||$icon-button-padding-inline-ems]
-         [:margin-block                    :$popover-close-button-margin-block||$icon-button-padding-inline-ems])
-     {:on-click dismiss-popover!})
+         {:position      :absolute
+          :fs            :$small
+          :zi            1
+          :opacity       :$popover-close-button-opacity
+          :margin-inline :$popover-close-button-margin-inline||$icon-button-padding-inline-ems
+          :margin-block  :$popover-close-button-margin-block||$icon-button-padding-inline-ems}))
     [icon mui.svg/close]]])
 
 
 
 (def examples
-  (let [row-attrs (sx :_.kushi-button:fs--$small)]
-    [(let [code (sx-call (popover-attrs
+  (let [row-attrs (sx :_.kui-button:fs--$small)]
+    [
+     (let [code (sx-call (popover-attrs
                           {:-f (fn [popover-el]
                                  (rdom/render 
                                   (fn [] 
@@ -89,7 +88,32 @@
         :snippets  [(:quoted code)]
         :examples  [{:args     ["Open"]
                      :sx-attrs code}]})
-     
+
+      (let [code2 (sx-call
+                   (popover-attrs
+                    {:-popover-class
+                     (css {:--popover-background-color           :$purple-100
+                           :--popover-background-color-dark-mode :$purple-900})
+                     :-f             
+                     (fn [popover-el]
+                       (rdom/render 
+                        (fn [] 
+                          [:div
+                           (sx :.flex-row-c
+                               :fs--$xxxlarge
+                               :padding--0.25em)
+                           "💃🏽"])
+                        popover-el))}))]
+        {:desc "Styling via design token at callsite"
+         :component button
+         :reqs      '[[kushi.ui.button.core :refer [button]]
+                      [reagent.dom :as rdom :refer [render]]]
+         :row-attrs row-attrs
+         :snippets  [(:quoted code2)]
+         :examples  [{:args     ["Open"]
+                      :sx-attrs code2}]})
+
+
      {:desc      "With manual placement"
       :component button
       :reqs      '[[kushi.ui.button.core :refer [button]]]

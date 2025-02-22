@@ -18,7 +18,7 @@
  "modal")
 
 (register-design-tokens
- :--dark-gray-transparent-90)
+ :--transparent-dark-gray-90)
 
 (declare close-on-backdrop-click)
 
@@ -43,7 +43,8 @@
 
 ;; TODO - Change name to open-modal!
 (defn open-kushi-modal
-  "Takes an id of the modal, and an optional callback, which fires on light-dismiss."
+  "Takes an id of the modal, and an optional callback, which fires on
+   light-dismiss."
   ([id]
    (open-kushi-modal id nil))
   ([id f]
@@ -55,20 +56,28 @@
                             )
          (.showModal dialog)
          (domo/add-class! dialog "kushi-modal-open"))
-     (js/console.warn (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of: " id)))
+     (js/console.warn
+      (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of:
+            " id)))
    ))
 
 (defn modal-close-button
-  {:desc ["The `modal-close-button` is meant to be a cta for closing a modal that is independant of other button groups that may be in the modal."
-          "It is typically a single × icon positioned in the upper right or left corner of the dialog."]
+  {:desc ["The `modal-close-button` is meant to be a cta for closing a modal
+           that is independent of other button groups that may be in the modal."
+
+          "It is typically a single × icon positioned in the upper right or left
+           corner of the dialog."]
    :opts '[{:name    icon
             :pred    keyword?
             :default :close
-            :desc    ["Optional. A name of a Google Material Symbols icon. Defaults to a close (×) icon."]}
+            :desc    ["Optional. A name of a Google Material Symbols icon.
+                       Defaults to a close (×) icon."]}
            {:name    icon-svg
             :pred  vector?
             :default nil
-            :desc    ["Optional. A Hiccup representation of an svg icon. Supply this as an alternative to using the Google Material Symbols icon font"]}]}
+            :desc    ["Optional. A Hiccup representation of an svg icon.
+                       Supply this as an alternative to using the Google
+                       Material Symbols icon font"]}]}
   [& args]
   (let [[opts attrs & _] (opts+children args)
         {:keys     [icon-svg]
@@ -81,68 +90,58 @@
                                    :close))]
     [button
      (merge-attrs
-      {:class         (css
+      {:-shape        :pill
+       :-surface      :minimal
+       :class         (css
                        ".kushi-modal-close-button"
-                       :.minimal
-                       :.pill
-                       :.large
-                       :pb--0.5rem
-                       :pis--0.5rem
-                       :pie--0.499rem
-                       {:position           :absolute
+                       {:fs                 :$large
+                        :pb                 :0.5rem
+                        :pis                :0.5rem
+                        :pie                :0.499rem
+                        :position           :absolute
                         :inset-block-start  :0.5rem
                         :inset-block-end    :unset
                         :inset-inline-end   :0.5rem
                         :inset-inline-start :unset})
        :on-mouse-down close-kushi-modal}
-      #_(trans (sx 'kushi-modal-close-button
-                   :.minimal
-                   :.pill
-                   :.large
-                   :padding--0.5rem
-                   {:on-mouse-down close-kushi-modal
-                    :style         {:position           :absolute
-                                    :inset-block-start  :0.5rem
-                                    :inset-block-end    :unset
-                                    :inset-inline-end   :0.5rem
-                                    :inset-inline-start :unset}}))
       attrs)
      (if icon-svg
        [icon {:icon-svg icon-svg}]
        [icon icon-name])]))
 
 (defn modal
-  {:summary ["Modal dialogs create a new floating layer over the current view "
-             "to get user feedback or display information."]
-   :desc ["Elements and behaviors of modals can be custom styled and "
-          "controlled via the following tokens in your theme:"
-          :br
-          :br "`--modal-box-shadow`"                       
-          :br "`--modal-box-shadow-inverse`"               
-          :br "`--modal-border-radius`"      
-          :br "`--modal-border-width`"      
-          :br "`--modal-border-style`"      
-          :br "`--modal-border-color`"      
-          :br "`--modal-border-color-inverse`"      
-          :br "`--modal-padding-block`"      
-          :br "`--modal-padding-inline`"     
-          :br "`--modal-backdrop-color`"     
-          :br "`--modal-margin`"             
-          :br "`--modal-min-width`"          
-          :br "`--modal-transition-duration`"
-          :br
-          "Note that the value supplied to `--modal-box-shadow` should be one of"
-          "the stock elevation tokens, level 1~5, expressed like so:"
-          :br
-          "`:$elevation-3`, or `var(--elevation-3)`"]
+  {:summary "Modal dialogs create a new floating layer over the current view to
+             get user feedback or display information."
+   :desc "Elements and behaviors of modals can be custom styled and controlled
+          via the following tokens in your theme: 
+        
+          `--modal-box-shadow`<br>
+          `--modal-box-shadow-dark-mode`<br>
+          `--modal-border-radius`<br>
+          `--modal-border-width`<br>
+          `--modal-border-style`<br>
+          `--modal-border-color`<br>
+          `--modal-border-color-dark-mode`<br>
+          `--modal-padding-block`<br>
+          `--modal-padding-inline`<br>
+          `--modal-backdrop-color`<br>
+          `--modal-margin`<br>
+          `--modal-min-width`<br>
+          `--modal-transition-duration`
+          
+          Note that the value supplied to `--modal-box-shadow` should be one of 
+          the stock elevation tokens, level 1~5, expressed like so:<br>
+          `:$elevation-3`, or `var(--elevation-3)`"
    :opts '[{:name    modal-title
             :pred    string?
             :default nil
-            :desc    "Optional. If supplied, this will be rendered as an h2 element within the modal."}
+            :desc    "Optional. If supplied, this will be rendered as an h2
+                      element within the modal."}
            {:name    description
             :pred    string?
             :default nil
-            :desc    "Optional. If supplied, this will be rendered as an p element within the modal."}
+            :desc    "Optional. If supplied, this will be rendered as an p
+                      element within the modal."}
 
            ;; TODO -- add on-dismiss callback option (for calling function with on backdrop click)
            ;; TODO -- add option for disabling auto close-on-background click
@@ -162,8 +161,8 @@
                           "var(--modal-box-shadow), "
                           "0 0 0 100vmax var(--modal-backdrop-color)")
         dark-box-shadow (str
-                         "var(--modal-box-shadow-inverse), "
-                         "0 0 0 100vmax var(--dark-gray-transparent-90)")]
+                         "var(--modal-box-shadow-dark-mode), "
+                         "0 0 0 100vmax var(--transparent-dark-gray-90)")]
 
     ;; TODO document the how and why of this
     (when expanded? (js/setTimeout #(open-kushi-modal id) 100))
@@ -187,7 +186,7 @@
                            :backdrop:bgc--transparent
                            :overflow--visible
                            :bgc--$background-color
-                           :dark:bgc--$background-color-inverse
+                           :dark:bgc--$background-color-dark-mode
                            :border-radius--$modal-border-radius
                            :b--$modal-border
                            :min-width--$modal-min-width||200px

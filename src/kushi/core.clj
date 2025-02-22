@@ -235,7 +235,17 @@
              (interpose "\n"
                         (map (fn [arg]
                                [:bold (unwrap-quoted-symbol arg)])
-                             invalid-args))))
+                             invalid-args))
+
+             (when-let [[_ prop val] 
+                        (when (-> invalid-args first keyword?)
+                          (re-find #"^([a-z]+)-(\$*[a-z0-9]+.*)" 
+                                   (name (-> invalid-args first))))]
+               ["\n"
+                "\n"
+                "Did you mean "
+                [:bold (str ":" prop "--" val)]
+                "?"])))
     :body   
     (let [spec-data (s/form ::specs/valid-sx-arg)]
       (apply
@@ -360,11 +370,11 @@
         vectorized           (unpack-pvs list-of-vecs)]
 
     (!? (keyed [coll
-                conformed-map 
-                untokenized   
-                top-level-maps->vecs  
-                list-of-vecs            
-                vectorized]))              
+               conformed-map 
+               untokenized   
+               top-level-maps->vecs  
+               list-of-vecs            
+               vectorized]))              
 
     {:conformed-map conformed-map
      :vectorized    vectorized}))
@@ -678,7 +688,7 @@
         (some->> conformed-args
                  css-block*
                  :css-block)]
-    (!? (keyed [args &form &env fname sel invalid-args]))
+    (keyed [args &form &env fname sel conformed-args invalid-args])
     (when (seq invalid-args)
       (cssrule-args-warning
        {:fname             fname

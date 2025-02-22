@@ -5,7 +5,10 @@
    [bling.core :refer [callout bling]]
    [edamame.core :as e]
    [kushi.css.build.utility-classes :as utility-classes]
-   [kushi.css.build.tokens :refer [design-tokens-by-category]]
+   [kushi.css.build.tokens :refer [design-tokens-by-category
+                                   design-tokens-by-token
+                                   design-tokens-by-token-array-map]]
+   [kushi.css.build.state]
    [kushi.core :refer [css-rule*]]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as kushi-specs]
@@ -15,8 +18,40 @@
    [clojure.java.io :as io]
    [clojure.set :as set]
    [clojure.spec.alpha]
-   [kushi.css.build.tokens :as tokens]))
+  ;;  [tick.core :as tick]
+   ))
 
+
+;; Perf Timing -----------------------------------------------------------------
+;; (def add-ticks? false)
+
+;; (def ticks (atom [(tick/instant)]))
+        
+;; (defn tick-msg
+;;   ([msg a b]
+;;    (tick-msg msg a b nil))
+;;   ([msg a b id]
+;;    (let [ms      (tick/between a b :millis)
+;;          seconds (format "%.2f" (* ms 0.001))]
+;;      (str (when id (str "[" id "] "))
+;;           msg
+;;           ". ("
+;;           (string/join (repeat (- 33 (count msg)) " "))
+;;           seconds
+;;           "s)"))))
+
+(defn add-tick! [x])
+
+;; (defn add-tick! [msg]
+;;   (when add-ticks?
+;;     (let [[prev current]
+;;           (-> ticks
+;;               (swap! conj (tick/instant))
+;;               (->> (take-last 2)))]
+;;       (println (tick-msg msg prev current)))))
+
+
+;; Project config --------------------------------------------------------------
 
 (def dev-sample-proj-dir "docs")
 
@@ -205,8 +240,7 @@
 (defn register-design-tokens-by-category-call-data
   [{:keys [args]} *css] 
   (doseq [tag args]
-    (when-let [toks (!? (get design-tokens-by-category
-                         (!? tag)))]
+    (when-let [toks (get design-tokens-by-category tag)]
       #_(when (= tag "popover")
         (? 'popover-toks toks))
       (vswap-design-tokens! toks *css))))
@@ -737,6 +771,9 @@
         ;;         #_'kushi.ui.text-field.core
         ;;         'kushi.playground.shared-styles)
         ]
+
+    #_(do (println "  " ns)
+        (add-tick! "    parse-all-forms"))
     #_(when dbg? (? all-forms))
     #_(stage-callout ns)
 
@@ -744,6 +781,8 @@
     ;; analyze-forms to mutate css-data.
     (doseq [tl-form all-forms]
       (analyze-forms tl-form m))
+
+    ;; #_(add-tick! "    analyze-forms")
 
     ;; TODO - maybe this should be broken out into another step and
     ;; anaylze-sources should just return mutated css-data volatile
@@ -762,7 +801,11 @@
     (let [msg (volatile! (str "Analyzing source for " ns "..."))
           ret (conj acc (write-css-files+layer-profile (assoc m :msg msg)))]
       #_(when (= ns 'kushi.ui.text-field.core)
-        (? 'analyze-sources/ret ret))
+          (? 'analyze-sources/ret ret))
+
+      #_(do (add-tick! "    write-css-files+layer-profile")
+            (println ""))
+
       (when (contains? debugging :narrative)
         (callout {:margin-top    0
                   :margin-bottom 0}
@@ -788,7 +831,7 @@
   (when-not (or (contains? (:required/kushi-design-tokens @*css) tok)
                 (contains? (:required/user-design-tokens @*css) tok))
    (let [dep-toks
-         (or (dep-toks-set tok kushi.css.build.tokens/design-tokens-by-token)
+         (or (dep-toks-set tok design-tokens-by-token)
              (dep-toks-set tok (:theme/user-design-tokens @*css)))]
      (some-> dep-toks
              (set/difference (:required/kushi-design-tokens @*css))
@@ -798,7 +841,7 @@
 (defn register-toks+deps [tok *css] 
   (if-let [[tok-val k]
            (let [kushi-tok
-                 (get kushi.css.build.tokens/design-tokens-by-token tok)
+                 (get design-tokens-by-token tok)
                  
                  user-tok
                  (get (:theme/user-design-tokens @*css) tok)]
@@ -882,7 +925,7 @@
     (spit-css-layer+profile
      path 
      (css-rule* ":root"
-                [kushi.css.build.tokens/design-tokens-by-token-array-map]
+                [design-tokens-by-token-array-map]
                 nil
                 nil)
      layer)))
@@ -900,7 +943,7 @@
   (let [[layer path] (layer+css-path design-tokens-layer-name)
         tokens-coll (if release? 
                       (:required/kushi-design-tokens @*css)
-                      [kushi.css.build.tokens/design-tokens-by-token-array-map])]
+                      [design-tokens-by-token-array-map])]
     (spit-css-layer+profile 
      path 
      (css-rule* ":root"
@@ -1069,7 +1112,7 @@
   (array-map
    :base/kushi-design-tokens
    {:desc  "Base design tokens defined in Kushi lib. See kushi.css.build.tokens ns."
-    :value tokens/design-tokens-by-token}
+    :value design-tokens-by-token}
 
    :theme/user-design-tokens 
    {:desc  "Design tokens defined in user theme. These could be overrides for tokens in :tokens/kushi-base, or the user's own custom global design tokens."
@@ -1119,6 +1162,8 @@
   (let [user-design-tokens
         (user-design-tokens (:theme config))
 
+        _ (add-tick! "user-design-tokens")
+
         *css
         (volatile!
          (-> (assoc (reduce-kv (fn [m k v]
@@ -1127,6 +1172,8 @@
                                *css-state)
                     :theme/user-design-tokens
                     user-design-tokens)))
+
+        _ (add-tick! "creating *css state")
 
         ;; Just for creating a new mock build-state to use for dev
         ;; _ (spit-filtered-build-sources-with-paths filtered-build-sources)
@@ -1137,6 +1184,8 @@
                 []
                 filtered-build-sources)
 
+        _ (add-tick! "reducing filtered build sources")
+
         ;; just for dev
         ;; _ (analyzed-callout reduced-sources *css)
         
@@ -1145,19 +1194,27 @@
           (kushi-utility-classes-profile *css)
           (kushi-utility-classes-profile-all *css)) 
 
+        _ (add-tick! "utility-classes-profile")
+
         kushi-utility-classes-overrides-profile
         (if release?
           (kushi-utility-classes-overrides-profile *css)
           (kushi-utility-classes-overrides-profile-all)) 
 
+        _ (add-tick! "utility-classes-overrides-profile")
+
+        ;; TODO - is this order-dependent?
         design-tokens-profile
         (design-tokens-profile *css {:release? release?})
+
+        _ (add-tick! "design-tokens-profile")
 
         ;; Currently this is registering all user-design tokens for both dev and
         ;; release builds
         user-design-tokens-profile
         (user-design-tokens-profile-all *css)
 
+        _ (add-tick! "user-design-tokens-profile")
         ret
         (conj reduced-sources
               design-tokens-profile
@@ -1166,6 +1223,7 @@
               user-design-tokens-profile
               #_user-shared-classes-profile)]
 
+    (add-tick! "conjing to reduced sources")
     (when (contains? debugging :design-token-registration)
       (design-token-summary-callout *css))
 
@@ -1284,25 +1342,73 @@
        write-css-imports*))
 
 
+;; (defn hook2
+;;   {:shadow.build/stage :compile-finish}
+;;   [{:keys [:shadow.build/build-id
+;;            :shadow.build/build-info
+;;            :build-sources
+;;            :sources
+;;            :output]
+;;     :as   build-state}]
+;;   ;; (println "compile-finish")
+;;   ;; (? :pp (count build-sources))
+;;   ;; (? :pp (count sources))
+;;   ;; (? :pp (count output))
+;;   ;; (? :pp output)
+;;   build-state)
+
 (defn hook
   {:shadow.build/stage :compile-prepare}
-  [{:keys [:shadow.build/build-id] :as build-state}]
+  [{:keys [:shadow.build/build-id
+           :shadow.build/build-info
+           :build-sources
+           :sources
+           :output]
+    :as build-state}]
+
   ;; TODO maybe deleted? and added? should be seqs or nils
+  ;; @kushi.css.build.state/initial-build?  
   (let [{:keys [init? new-or-deleted? existing-css-changed?]}
         (bs-epoch build-state)]
     (when (or existing-css-changed? new-or-deleted? init?)
-      (let [
-
-            filtered-build-sources
-            (filter-build-sources build-state)
+      (let [filtered-build-sources (filter-build-sources build-state)
             
-            release?
-            (not= :dev (:shadow.build/mode build-state))]
+            release?               (not= :dev (:shadow.build/mode build-state))]
 
+        ;; (? :pp (keys filtered-build-sources))
+        ;; (? :pp (count filtered-build-sources))
+        
+        ;; to be recompiled or not
+        ;; (doseq [resource-id (keys filtered-build-sources)]
+        ;;   (let [recompiled? (not (boolean (get-in build-state [:output resource-id])))
+        ;;         color       (if recompiled? :gray :green)]
+        ;;     (println (bling [{:color color} (second resource-id)]))))
+        
         ;; If necessary write the css imports chain
+        ;; (add-tick! "Filtered build sources")
         (when (or init? new-or-deleted?)
-          (write-css-imports "./kushi.edn" filtered-build-sources release?)
+          (write-css-imports "./kushi.edn"
+                             filtered-build-sources 
+                             release?)
+          ;; (add-tick! "Analyzed sources and wrote css imports")
           (create-css-bundle))))
+
+    ;; (? :pp build-info)
+    ;; (println)
+    ;; (? :pp (count build-sources))
+    ;; (? :pp (count sources))
+    ;; (? :pp build-sources)
+    ;; (? :pp (count output))
+    ;; (? :pp (keys output))
+    ;; (? :pp output)
+    
+    ;; (println (tick-msg "Finished kushi.build.analyze/hook"
+    ;;                    (first @ticks) 
+    ;;                    (tick/instant)
+    ;;                    (:build-id build-state)))
+    
+    #_(reset! kushi.css.build.state/initial-build? false)
+
     build-state))
 
 #_(try (lightning-bundle opts flags)

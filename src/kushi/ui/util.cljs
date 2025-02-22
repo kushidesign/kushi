@@ -1,7 +1,7 @@
 (ns kushi.ui.util
   (:require [clojure.string :as string]
-            [domo.core :as domo]
-            [kushi.css.defs]))
+            [kushi.css.defs])
+  (:require-macros [kushi.ui.util]))
 
 ;; Generic
 ;; --------------------------------------------------------------------------
@@ -9,7 +9,10 @@
   (str "calc(" (apply str strs) ")"))
 
 (defn data-kushi-attr [x]
-  (-> x name (string/replace #"^kushi\.ui\." "") (string/replace #".core$" "")) )
+  (-> x
+      name
+      (string/replace #"^kushi\.ui\." "")
+      (string/replace #".core$" "")))
 
 (defn ->fixed-float [points n]
   (.toFixed (.parseFloat js/Number n) points))

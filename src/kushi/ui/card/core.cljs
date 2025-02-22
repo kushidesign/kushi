@@ -3,7 +3,8 @@
             [kushi.ui.core :refer (opts+children)]))
 
 (defn card
-  {:summary ["Cards are typically visually contained sections of information. They are often part of a series of cards with related content."]}
+  {:summary "Cards are typically visually contained sections of information.
+             They are often part of a series of cards with related content."}
   [& args]
   (let [[opts attrs & children] (opts+children args)
         {:keys []}              opts]

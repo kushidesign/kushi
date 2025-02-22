@@ -975,6 +975,7 @@
    ["--negative-foreground" "var(--negative-minimal-color)"]
    ["--negative-foreground-inverse"
    "var(--negative-minimal-color-inverse)"]
+
    ["--foreground-color-accent" "var(--accent-650)"]
    ["--foreground-color-warning" "var(--warning-650)"]
    ["--foreground-color-positive" "var(--positive-650)"]
@@ -1004,4 +1005,5 @@
    ["--foreground-color-orange-inverse" "var(--orange-350)"]
    ["--foreground-color-red-inverse" "var(--red-350)"]
    ["--foreground-color-magenta-inverse" "var(--magenta-350)"]
-   ["--foreground-color-brown-inverse" "var(--brown-350)"])
+   ["--foreground-color-brown-inverse" "var(--brown-350)"]
+   )

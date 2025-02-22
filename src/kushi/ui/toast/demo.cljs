@@ -31,7 +31,7 @@
     [:h3 (sx :.bold :m--0) "Saved for later"]
     [:p (sx :.my-toast-text
             :fs--$small
-            :.neutral-secondary-foreground)
+            :.foreground-color-secondary!)
      (.format (new js/Intl.DateTimeFormat
                    "en-US"
                    #js{:dateStyle "full" :timeStyle "short"})
@@ -74,7 +74,7 @@
      {:desc      "With notification, and manual dismiss cta"
       :component button
       :reqs      '[[kushi.ui.button.core :refer [button]]]
-      :row-attrs (sx :_.kushi-button:fs--$small)
+      :row-attrs (sx :_.kui-button:fs--$small)
       :snippets  [['button (:quoted code) "Save for later"]]
       :examples  [{:label    "Basic"
                    :args     ["Save for later"]

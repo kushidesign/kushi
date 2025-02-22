@@ -6,7 +6,7 @@
    [kushi.ui.core :refer (opts+children)] ))
 
 (defn row-fs
-  {:desc ["Flex container, a div with `:.flex-row-fs` class"]}
+  {:desc "Flex container, a div with `:.flex-row-fs` class"}
   [& args]
   (let [[_ attrs & children]  (opts+children args)]
     (into
@@ -17,7 +17,7 @@
      children)))
 
 (defn row-c
-  {:desc ["Flex container, a div with `:.flex-row-c` class"]}
+  {:desc "Flex container, a div with `:.flex-row-c` class"}
   [& args]
   (let [[_ attrs & children]  (opts+children args)]
     (into

@@ -6,7 +6,7 @@
             [kushi.ui.text-field.core :refer [text-field]]))
 
 (def examples
-  (let [row-attrs (sx :_.kushi-button:fs--$small)]
+  (let [row-attrs (sx :_.kui-button:fs--$small)]
     [
      (let [code (sx-call (let [id "my-modal-basic"]
                            [:div
@@ -23,7 +23,7 @@
        {:desc      "Basic"
         :component button
         :reqs      '[[kushi.ui.button.core :refer [button]]]
-        :row-attrs (sx :_.kushi-button:fs--$small)
+        :row-attrs (sx :_.kui-button:fs--$small)
         :snippets  [(:quoted code)]
         :examples  [{:label "right"
                      :args  ["Hover me"]
@@ -144,7 +144,7 @@
                                              :min-width--300px
                                              :border-radius--24px
                                              :b--2px:solid:$gray-900
-                                             [:--modal-backdrop-color :$white-transparent-70]
+                                             [:--modal-backdrop-color :$transparent-white-70]
                                              :_.kushi-modal-description:fs--$small)
                                             {:-modal-title "Example modal"
                                              :-description "Example modal description goes here."
@@ -175,7 +175,7 @@
                                   :min-width--300px
                                   :border-radius--24px
                                   :b--2px:solid:$gray-900
-                                  [:--modal-backdrop-color :$white-transparent-70]
+                                  [:--modal-backdrop-color :$transparent-white-70]
                                   :_.kushi-modal-description:fs--$small
                                   {:-modal-title "Example modal"
                                    :-description "Example modal description goes here."
@@ -212,7 +212,7 @@
                              (sx
                               :min-width--300px
                               :border-radius--24px
-                              [:--modal-backdrop-color :$light-gray-transparent-50])
+                              [:--modal-backdrop-color :$transparent-light-gray-50])
                              {:-modal-title "Example modal"
                               :-description "Example modal description goes here."
                               :-elevation   0
@@ -226,10 +226,12 @@
                             [:div
                              (sx :.flex-row-fe :gap--1em)
                              [button
-                              (merge-attrs (sx :.minimal :.pill)
-                                           {:on-click close-kushi-modal})
+                              (merge-attrs {:-surface :minimal
+                                            :-shape   :pill
+                                            :on-click close-kushi-modal})
                               "Cancel"]
                              [button
-                              (merge-attrs (sx :.filled :.pill)
-                                           {:on-click close-kushi-modal}) 
+                              (merge-attrs {:-surface :minimal
+                                            :-shape   :pill
+                                            :on-click close-kushi-modal}) 
                               "Submit"]]]]))}]}]))

@@ -7,9 +7,6 @@
    [reagent.core :as r]
    [reagent.ratom]))
 
-;; (?trace (let [a 1 b 3]
-;;           a))
-
 (defonce *state
   (r/atom {
            ;;  :init-focused-component "button"
@@ -92,19 +89,6 @@
            (sort-by #(.indexOf ordered-playground-components-labels %))
            first
            (.setAttribute (domo/el-by-id "app") "data-kushi-playground-first-intersecting")))
-
-#_(def *playground-first-intersecting
-  (reagent.ratom/reaction
-   (let [_ (?-- :HIII)
-         ret (first (sort-by #(.indexOf ordered-playground-components-labels %)
-                             (:intersecting @*playground)))]
-
-     (? "first intersecting is " ret)
-
-     (.setAttribute (domo/el-by-id "app")
-                    "data-kushi-playground-first-intersecting"
-                    ret)
-     ret)))
 
 
 (def *focused-path (r/atom ["components"]))

@@ -1,9 +1,15 @@
 (ns kushi.core
-  (:require [clojure.string :as string]
-            [domo.core :as domo]
-            [kushi.css.build.css-reset]
-            [kushi.css.build.kushi-ui-component-theming]
-            [kushi.css.build.legacy-color-tokens])
+  (:require
+   [clojure.string :as string]
+   [domo.core :as domo]
+
+   ;; Should these go somewhere else?
+   [kushi.css.build.css-reset]
+   [kushi.css.build.kushi-ui-component-theming]
+
+   ;; for testing
+  ;;  [taoensso.tufte :as tufte :refer [p profile]]
+   )
  (:require-macros [kushi.core]))
 
 
@@ -34,7 +40,7 @@
   (string/join " " (map #(str "\"" % "\"") rows)))
 
 
-;; TODO - Remove this and use the one from domo.core
+;; TODO - Remove this and use the one from domo.core on next version of domo
 (defn token->ms
   "Expects a key or string which maps to an existing design token (css custom
    property). If the value of the token is a valid (css) microseconds or seconds
@@ -90,9 +96,9 @@
    :on-touch-move
    :on-touch-start
    :on-webkit-mouse-force-down
-   :on-wheel ])
+   :on-wheel])
 
-;; TODO fix warnin to be less confusing and use bling
+;; TODO fix warning to be less confusing and use bling
 (defn- merge-attrs-warning
   [v k n]
   (js/console.warn
@@ -120,17 +126,17 @@
       [class]
       class)))
 
-(defn- data-sx-str [m]
-  (when m
-    (let [{:keys [file line column]} m]
-      (str file ":"  line ":" column))))
+;; (defn- data-sx-str [m]
+;;   (when m
+;;     (let [{:keys [file line column]} m]
+;;       (str file ":"  line ":" column))))
 
-(defn- data-sx [m2 s1 s2]
-  (let [from-defcom (data-sx-str (:data-amp-form m2))
-        from-user   (data-sx-str (:data-amp-form2 m2))
-        coll   (remove nil? [from-defcom from-user s1 s2])
-        joined (when (seq coll) (string/join " + " coll))]
-    (when joined {:data-sx joined})))
+;; (defn- data-sx [m2 s1 s2]
+;;   (let [from-defcom (data-sx-str (:data-amp-form m2))
+;;         from-user   (data-sx-str (:data-amp-form2 m2))
+;;         coll   (remove nil? [from-defcom from-user s1 s2])
+;;         joined (when (seq coll) (string/join " + " coll))]
+;;     (when joined {:data-sx joined})))
 
 (defn- handler-concat [c1 c2 m2 k]
   (let [block? (contains? (some->> m2 :data-kushi-block-events (into #{})) k)
@@ -145,42 +151,94 @@
     (when f {k f})))
 
 
+;; TODO - can you avoid bad-style warnings by surfacing it at compile time?
+;; Or collecting warnings and surfacing them at end of fn?
 (defn- merge-attrs* [& maps]
   (let [[m1 m2]                   (map #(if (map? %) % {}) maps)
         {style1 :style
          class1 :class
-         data-sx1 :data-sx}   m1
+        ;;  data-sx1 :data-sx
+         }                        m1
         {style2 :style
          class2 :class
-         data-sx2 :data-sx}   m2
+        ;;  data-sx2 :data-sx
+         }                         m2
         [bad-style1? bad-style2?] (map-indexed (fn [i x] (bad-style? x i))
                                                [style1 style2])
         [bad-class1? bad-class2?] (map-indexed (fn [i x] (bad-class? x i))
                                                [class1 class2])
         merged-style              (merge (when-not bad-style1? style1)
                                          (when-not bad-style2? style2))
-        class1-coll               (class-coll class1 bad-class1?)
-        class2-coll               (class-coll class2 bad-class2?)
+        class1-coll               (some-> class1 (class-coll bad-class1?))
+        class2-coll               (some-> class2 (class-coll bad-class2?))
         classes                   (concat class1-coll class2-coll)
-        data-sx                 (data-sx m2 data-sx1 data-sx2)
+        ;; data-sx                   (data-sx m2 data-sx1 data-sx2)
+        
+        m2-keys (into #{} (keys m2))
 
-        ;; Is this optimizable ?
-        user-event-handlers       (keys (select-keys m2 dom-element-events))
-        merged-event-handlers     (apply merge
-                                         (map #(handler-concat (% m1) 
-                                                               (% m2)
-                                                               m2
-                                                               %) 
-                                              user-event-handlers))
-        m2-                       (dissoc m2 :data-amp-form)
+        user-event-handlers       (when-not (contains? #{#{:style}
+                                                         #{:class}
+                                                         #{:style :class}
+                                                         #{}}
+                                                       m2-keys)
+                                    (keys (select-keys m2 dom-element-events)))
+
+        merged-event-handlers     (some->> user-event-handlers
+                                           (map #(handler-concat (% m1) 
+                                                                 (% m2)
+                                                                 m2
+                                                                 %))
+                                           (apply merge))
+
+        ;; m2-                       (dissoc m2 :data-amp-form)
+        
         ret                       (assoc (merge m1
-                                                m2-
-                                                data-sx
+                                                m2
+                                                ;; m2-
+                                                ;; data-sx
                                                 merged-event-handlers)
                                          :class classes
                                          :style merged-style)]
     ret))
 
+;; Slimmed version
+;; (defn- merge-attrs*SLIM [& maps]
+;;   (let [[m1 m2]               (map #(if (map? %) % {}) maps)
+;;         merged-style          (merge (:style m1) (:style m2))
+;;         class1-coll           (some-> (:class m1) (class-coll false))
+;;         class2-coll           (some-> (:class m2) (class-coll false))
+;;         classes               (concat class1-coll class2-coll)
+;;         m2-keys               (into #{} (keys m2))
+;;         user-event-handlers   (when-not (contains? #{#{:style}
+;;                                                      #{:class}
+;;                                                      #{:style :class}
+;;                                                      #{}}
+;;                                                    m2-keys)
+;;                                 (keys (select-keys m2 dom-element-events)))
+;;         merged-event-handlers (some->> user-event-handlers
+;;                                        (map #(handler-concat (% m1) 
+;;                                                              (% m2)
+;;                                                              m2
+;;                                                              %))
+;;                                        (apply merge))
+;;         ret                   (assoc (merge m1
+;;                                             m2
+;;                                             merged-event-handlers)
+;;                                      :class classes
+;;                                      :style merged-style)]
+;;     ret))
+
+;; (tufte/add-basic-println-handler! {})
+
 ;; Public function for style decoration
 (defn merge-attrs [& maps]
+
+;; Testing
+;; (profile ; Profile any `p` forms called during body execution
+;;   {} ; Profiling options; we'll use the defaults for now
+;;   (dotimes [_ 10000]
+;;     (p :a (reduce merge-attrs*OLD maps))
+;;     (p :b (reduce merge-attrs* maps))))
+
   (reduce merge-attrs* maps))
+

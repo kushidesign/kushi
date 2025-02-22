@@ -1,17 +1,23 @@
 (ns ^:dev/always kushi.playground.layout
-  (:require [domo.core :as domo]
-            [clojure.string :as string]
-            [kushi.ui.divisor.core :refer (divisor)]
-            [kushi.core :refer [sx css merge-attrs defcss]]
-            [kushi.ui.core :refer [defcom]]
-            [kushi.ui.button.core :refer [button]]
-            [kushi.ui.spinner.core :refer [propeller]]
-            [kushi.playground.about :as about]
-            [kushi.playground.component-docs :as docs]
-            [kushi.playground.component-examples :as component-examples]
-            [kushi.playground.sidenav :as sidenav]
-            [kushi.playground.state :as state]
-            [kushi.playground.util :as util]))
+  (:require
+   [clojure.string :as string]
+   [domo.core :as domo]
+   [kushi.core :refer [css defcss merge-attrs sx]]
+   [kushi.playground.about :as about]
+   [kushi.playground.component-docs :as docs]
+   [kushi.playground.component-examples :as component-examples]
+   [kushi.playground.sidenav :as sidenav]
+   [kushi.playground.state :as state]
+   [kushi.playground.md2hiccup :refer [desc->hiccup]]
+   [kushi.ui.util :refer [keyed]]
+   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.core :refer [defcom]]
+   [kushi.ui.divisor.core :refer (divisor)]
+   [kushi.ui.spinner.core :refer [propeller]]
+   [clojure.walk :as walk]))
+
+(defcss "@layers design-tokens :root"
+  {:--playground-main-content-max-width :605px})
 
 (defn loading-spinner []
   [:div (sx
@@ -30,8 +36,7 @@
 
 
 (def tab-attrs
-  (sx :.minimal
-      :fs--$small
+  (sx :fs--$small
       :pis--0.799em
       :pie--0.8em
       :pbs--0.4em
@@ -82,16 +87,24 @@
   [{:keys [aria-selected
            component-label
            tab-label]}]
-  [tab (let [panel-id (str "kushi-" component-label "-" tab-label)]
-         {:class         (css
-                          :.pill
-                          :.neutral.minimal:c--$neutral-secondary-foreground
-                          :dark:.neutral.minimal:c--$neutral-secondary-foreground-inverse)
-          :name          (str "kushi-" component-label "-tab-group")
-          :aria-selected aria-selected
-          :aria-controls panel-id
-          :on-click      (partial tab-click-handler panel-id)})
-   (string/capitalize tab-label)])
+  [button
+   (let [panel-id (str "kushi-" component-label "-" tab-label)]
+     {:-surface      :minimal
+      :-shape        :pill
+      :class         (css :.foreground-color-secondary!
+                          :fs--$small
+                          :pis--0.799em
+                          :pie--0.8em
+                          :pbs--0.4em
+                          :pbe--0.399em)
+      :name          (str "kushi-" component-label "-tab-group")
+      :aria-selected aria-selected
+      :aria-controls panel-id
+      :on-click      (partial tab-click-handler panel-id)
+      :role          :tab
+      :tab-index     (if (contains? #{true "true"} aria-selected) 0 -1)
+      :on-key-down   domo/on-key-down-tab-navigation})
+    (string/capitalize tab-label)])
 
 
 (defcss "@layer kushi-playground-shared .component-section-header"
@@ -116,6 +129,9 @@
 (defn generic-section
   ;; content is a component
   [{:keys [path label content args]}]
+
+  ;; (? content)
+
   [:<> 
    [style-tag-active-path path]
    [:div 
@@ -173,16 +189,6 @@
   [playground-components]
   [:<> 
    [:div
-    #_{:ref (fn [el]
-            (when (? el)
-              (domo/observe-intersection 
-               (let [f (partial swap!
-                                state/*playground
-                                assoc
-                                :playground-intro-intersecting?)]
-                 {:element          el
-                  :not-intersecting #(f false)
-                  :intersecting     #(f true)}))))}
     [about/component-playground-about]
     [:div [divisor]]]
 
@@ -240,7 +246,7 @@
                        [:box-shadow
                         "-20px -20px 0px 20px var(--background-color), -10px 10px 20px 1px var(--background-color)"]
                        [:dark:box-shadow
-                        "-20px -20px 0px 20px var(--background-color-inverse), -10px 10px 20px 1px var(--background-color-inverse)"] )
+                        "-20px -20px 0px 20px var(--background-color-dark-mode), -10px 10px 20px 1px var(--background-color-dark-mode)"] )
               [:div (sx :.flex-row-fs :ai--c :gap--1rem)
                [:h1 (sx :.component-section-header-label) 
                 [:a 
@@ -284,15 +290,15 @@
                    :right      0
                    :bgc        :$tablist-selected-tab-underline-color}]
                  ["dark:>[role='tab'][aria-selected='true']:before"
-                  {:bgc :$tablist-selected-tab-underline-color-inverse}]
+                  {:bgc :$tablist-selected-tab-underline-color-dark-mode}]
                  [:--tablist-selected-tab-underline-color
                   :$accent-600]
-                 [:--tablist-selected-tab-underline-color-inverse
+                 [:--tablist-selected-tab-underline-color-dark-mode
                   :$accent-300]
                  [:--tablist-border-end-color
                   :$divisor-color]
-                 [:--tablist-border-end-color-inverse
-                  :$divisor-color-inverse]
+                 [:--tablist-border-end-color-dark-mode
+                  :$divisor-color-dark-mode]
                  [:--tablist-border-end-width
                   :$divisor-thickness]
                  [:--tablist-border-end-style
@@ -300,7 +306,7 @@
                  :bbew--$tablist-border-end-width
                  :bbec--$tablist-border-end-color
                  :bbes--$tablist-border-end-style
-                 :dark:bbec--$tablist-border-end-color-inverse
+                 :dark:bbec--$tablist-border-end-color-dark-mode
                  :ai--fe
                  :gap--0.75em
                  :pbe--$tablist-padding-end)
@@ -366,15 +372,17 @@
                  :dark:c--$accent-100
                  :dark:bgc--$accent-900)
                 (str ":-" nm)]]
-              [:div (sx
-                     :.flex-col-fs
-                     :pb--0.5em
-                     :gap--1.25em
-                     :pis--1.4em)
+              [:div (sx :.flex-col-fs
+                        :pb--0.5em
+                        :gap--1.25em
+                        :pis--1.4em
+                        :overflow-x--auto)
                (when pred [docs/opt-detail "Pred" pred docs/kushi-opts-grid-type :pred])
                (when typ [docs/opt-detail "Type" typ docs/kushi-opts-grid-type :type])
-               [docs/opt-detail "Default" default docs/kushi-opts-grid-default :default]
+               [docs/opt-detail "Defaults" default docs/kushi-opts-grid-default :default]
                (when desc [docs/opt-detail "Desc." desc docs/kushi-opts-grid-desc :desc])]])))])
+
+
 
 
 (defn component-section
@@ -396,21 +404,19 @@
                   component-opts
                   example-opts]))
          [:div 
-          {:class  (css :.playground-component-panel
-                        :>div:max-width--$main-content-max-width
-                        :pbs--35px)
+          {:class (css :.playground-component-panel
+                       :>div:max-width--$playground-main-content-max-width
+                       :pbs--35px)
            :hidden "hidden"
-           :id     (str "kushi-" label "-documentation")}
+           :id    (str "kushi-" label "-documentation")}
 
           (when summary
-            [:div 
-             (sx :fs--$medium
-                 :fw--$wee-bold
-                 :mb--0:2rem
-                 :_p:lh--1.7)
-             (->> summary
-                  util/desc->hiccup 
-                  docs/add-links)])
+            (into [:div 
+                   (sx :fs--$medium
+                       :fw--$wee-bold
+                       :mb--0:2rem
+                       :>span:lh--1.7)]
+                  (desc->hiccup summary)))
 
           (when desc
             [:<> 
@@ -422,18 +428,17 @@
                   :dark:bbe--1px:solid:$gray-800
                   :mb--0:1.5rem)
               "Usage"]
-             [:div (sx :lh--1.7
-                       :mb--0:2rem
-                       :_code:lh--1.9
-                       :_code:pb--0.07em
-                       :_code:pi--0.2em
-                       [:_p_b {:fw      :$wee-bold
-                               :mbe     :0.4em
-                               :display :block}])
-
-              (-> desc
-                  util/desc->hiccup 
-                  docs/add-links)]])
+             (into [:div (sx 
+                          :lh--1.7
+                          :mb--0:2rem
+                          :_code:lh--1.9
+                          :_code:pb--0.07em
+                          :_code:pi--0.2em
+                          :>span:d--block
+                          [:_b {:fw      :$wee-bold
+                                :mbe     :0.4em
+                                :display :block}])]
+                   (desc->hiccup desc))])
 
           (when (seq custom-attributes)
             [custom-attributes-section custom-attributes])]]))

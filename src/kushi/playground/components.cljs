@@ -71,22 +71,22 @@
      :examples       button.demo/examples
      :component-meta (-> button var meta)
      :reqs           '[[kushi.ui.button.core :refer [button]]]
-     :variants-base  #{:rounded :filled :bordered :minimal}
-     :variants-order [:rounded :filled :bordered :minimal]
-     :variants-attrs {:rounded  (sx :.rounded)
-                      :filled   (sx :.rounded :.filled)
-                      :bordered (sx :.rounded :.bordered)
-                      :minimal  (sx :.rounded :.minimal)}}
+     :variants-base  #{:soft :solid :outline :minimal}
+     :variants-order [:soft :solid :outline :minimal]
+     :variants-attrs {:soft    {}
+                      :solid   {:-surface :solid}
+                      :outline {:-surface :outline}
+                      :minimal {:-surface :minimal}}}
 
       {:label          "icon"
        :component      icon
        :examples       icon.demo/examples
        :component-meta (-> icon var meta)
        :reqs           '[[kushi.ui.icon.core :refer [icon]]]
-       :variants-base  #{:outlined :filled}
-       :variants-order [:outlined :filled]
-       :variants-attrs {:filled   {:-icon-filled? true}
-                        :outlined {}}}
+       :variants-base  #{:outline :solid}
+       :variants-order [:outline :solid]
+       :variants-attrs {:solid   {:-icon-solid? true}
+                        :outline {}}}
 
       {:label          "spinner"
        :component      spinner
@@ -192,8 +192,8 @@
        :component-meta (-> card var meta)
        :component      card
        :reqs           '[[kushi.ui.card.core :refer [card]]]
-       :variants-base  #{:rounded}
-       :variants-order [:rounded]
+       :variants-base  #{:soft}
+       :variants-order [:soft]
        :variants-attrs {:rounded (sx :.rounded)}
        }
 
@@ -202,23 +202,25 @@
        :component-meta (-> tag var meta)
        :component      tag
        :reqs           '[[kushi.ui.tag.core :refer [tag]]]
-       :variants-base  #{:rounded :filled :bordered :minimal}
-       :variants-order [:rounded :filled :bordered :minimal]
-       :variants-attrs {:rounded  (sx :.rounded)
-                        :filled   (sx :.rounded :.filled)
-                        :bordered (sx :.rounded :.bordered)
-                        :minimal  (sx :.rounded :.minimal)}}
+       :variants-base  #{:soft :solid :outline :minimal}
+       :variants-order [:soft :solid :outline :minimal]
+       :variants-attrs {:soft    {}
+                        :solid   {:-surface :solid}
+                        :outline {:-surface :outline}
+                        :minimal {:-surface :minimal}}}
 
       {:label          "callout"
        :examples       callout.demo/examples
        :component-meta (-> callout var meta)
        :component      callout
        :reqs           '[[kushi.ui.callout.core :refer [callout]]]
-       :variants-base  #{:ult :filled :bordered}
-       :variants-order [:ult :filled :bordered]
-       :variants-attrs {:ult  {}
-                        :filled   (sx :.filled)
-                        :bordered (sx :.bordered)}}
+       :variants-base  #{:soft :solid :outline}
+      ;;  :variants-order [:soft :solid :outline]
+      ;;  :variants-attrs {:soft    {}
+      ;;                   :solid   {:-surface :solid}
+      ;;                   :outline {:-surface :outline}
+      ;;                   :minimal {:-surface :minimal}}
+       }
 
       {:label          "collapse"
        :examples       collapse.demo/examples

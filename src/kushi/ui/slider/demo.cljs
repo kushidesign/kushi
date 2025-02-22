@@ -1,7 +1,9 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.slider.demo
-  (:require [kushi.core :refer (sx)]
-            [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.slider.core :refer [slider]]))
+  (:require
+   [domo.core :as domo]
+   [kushi.core :refer (sx)]
+   [kushi.playground.util :refer-macros [sx-call]]
+   [kushi.ui.slider.core :refer [slider]]))
 
 (def examples
   (let [row-attrs       (sx :_.instance-code:w--100%
@@ -20,13 +22,50 @@
                                     m
                                     (or snippets-map
                                         {:snippets [(:quoted code)]})))))]
-    [(f "Simple"
+    [
+
+     (f "Simple, default"
         (sx-call [slider {:min 0
-                          :max 7}]))
+                          :max 100
+                          :step 1
+                          }]))
+
+     (f "Simple, label at thumb bottom"
+        (sx-call [slider {:min 0
+                          :max 100
+                          :step 1
+                          :-current-value-label-position :thumb-bottom
+                          }]))
+
+     (f "Simple, label at track inline start"
+        (sx-call [slider {:min 0
+                          :max 100
+                          :step 1
+                          :-current-value-label-position :track-inline-start
+                          ;; :-current-value-label-position :track-left
+                          ;; :-current-value-label-position :track-inline-end
+                          ;; :-current-value-label-position :track-right
+                          ;; :-current-value-label-position :thumb-block-start
+                          ;; :-current-value-label-position :thumb-top
+                          ;; :-current-value-label-position :thumb-block-end
+                          ;; :-current-value-label-position :thumb-bottom
+                          }]))
+
+     (f "Simple, label at track inline end"
+        (sx-call [slider {:min 0
+                          :max 100
+                          :step 1
+                          :-current-value-label-position :track-inline-end
+                          }]))
+
      (f "Labels"
-        (sx-call [slider {:min          0
-                          :max          7
-                          :-step-marker :label}]))
+        (sx-call [slider {:min                           0
+                          :max                           7
+                          :-step-marker                  :label
+                          ;; :-current-value-label-position :thumb-bottom
+                          :-current-value-label-position :track-left
+                          }]))
+
      (f "Dot markers"
         (sx-call [slider {:min          0
                           :max          7
@@ -35,10 +74,19 @@
         (sx-call [slider {:min          0
                           :max          7
                           :-step-marker :bar}]))
+
+     (f "Markers with no current value label"
+        (sx-call [slider {:min                     0
+                          :max                     7
+                          :-step-marker            :bar
+                          :-display-current-value? false}]))
+
      (f "Fractional steps"
-        (sx-call [slider {:min  0
-                          :max  1
-                          :step 0.01}]))
+        (sx-call [slider {:min                            0
+                          :max                            100
+                          :step                           1
+                          :-current-value-label-display-fn #(.toFixed (/ % 100) 2)}]))
+
      (f "Supplied step values"
         (sx-call [slider
                   {:-steps            ["xsmall" "medium" "large" "xlarge"]
@@ -60,4 +108,5 @@
                    (sx [:_.kushi-slider-step-label:first-child>span:translate
                         :-25%:-50%]
                        [:_.kushi-slider-step-label:last-child>span:translate
-                        :-75%:-50%])}]))]))
+                        :-75%:-50%])}]))
+     ]))

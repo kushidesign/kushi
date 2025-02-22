@@ -174,6 +174,7 @@
        :dark:c (keyword (str "$" c "-350"))}])
    color-names))
 
+;; Do like tokens and create categories with documentation.
 (def base-classes
   [
    ;; Visual debugging utilities
@@ -182,24 +183,36 @@
                                                   "repeating-linear-gradient(to right,  transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
    :debug-grid-8          {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
                                                        "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
-                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color-inverse) 8px, var(--debug-grid-color-inverse) calc(8px + 1px), transparent calc(8px + 1px))")}
+                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-dark-mode) 8px, var(--debug-grid-color-dark-mode) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color-dark-mode) 8px, var(--debug-grid-color-dark-mode) calc(8px + 1px), transparent calc(8px + 1px))")}
    :debug-grid-16         {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
                                                        "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
-                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color-inverse) 16px, var(--debug-grid-color-inverse) calc(16px + 1px), transparent calc(16px + 1px))")}
+                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-dark-mode) 16px, var(--debug-grid-color-dark-mode) calc(16px + 1px), transparent calc(16px + 1px)), "
+                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color-dark-mode) 16px, var(--debug-grid-color-dark-mode) calc(16px + 1px), transparent calc(16px + 1px))")}
 
    :wireframe         {:outline-color  :silver
                        :outline-style  :solid
                        :outline-width  :1px
                        :outline-offset :-1px}
-   ;; End debugging utils 
    
-   ;; Colorization
+   ;; Type styling
+   :sans       {:font-family :$sans-serif-font-family}
+   :serif      {:font-family :$sans-serif-font-family}
+   :italic     {:font-family :$sans-serif-font-family}
+   :oblique    {:font-family :$sans-serif-font-family}
+   :uppercase  {:font-family :$sans-serif-font-family}
+   :uppercase  {:font-family :$sans-serif-font-family}
+   :lowercase  {:font-family :$sans-serif-font-family}
+   :capitalize {:font-family :$sans-serif-font-family}
+
+   
+
+   ;; Colorization -------------------------------------------------------------
+
    :neutralize        {:bgc                        :$background-color
-                       :dark:bgc                   :$background-color-inverse
+                       :dark:bgc                   :$background-color-dark-mode
                        :c                          :$foreground-color
-                       :dark:c                     :$foreground-color-inverse
+                       :dark:c                     :$foreground-color-
                        ;; TODO - really need these?
                        :transition-property        :all
                        :transition-timing-function :$transition-timing-function
@@ -207,9 +220,9 @@
                        }
 
    :neutralize-secondary {:bgc                        :$background-color
-                          :dark:bgc                   :$background-color-inverse
-                          :c                          :$neutral-secondary-foreground
-                          :dark:c                     :$neutral-secondary-foreground-inverse
+                          :dark:bgc                   :$background-color-dark-mode
+                          :c                          :$foreground-color-secondary
+                          :dark:c                     :$foreground-color-secondary-dark-mode
                           ;; TODO - really need these?
                           :transition-property        :all
                           :transition-timing-function :$transition-timing-function
@@ -217,9 +230,14 @@
                           }
    
    :foreground-color    {:c      :$foreground-color
-                          :dark:c :$foreground-color-inverse}                        
+                         :dark:c :$foreground-color-dark-mode}                        
 
-   ;; Borders
+   :foreground-color-secondary    {:c      :$foreground-color-secondary
+                                   :dark:c :$foreground-color-secondary-dark-mode}                        
+
+
+   ;; Borders ------------------------------------------------------------------
+
    :outlined              {:outline-color  :currentColor
                            :outline-style  :solid
                            :outline-width  :1px
@@ -230,43 +248,55 @@
    
 
    ;; TODO - use scale-of-utility-defs
-   ;; Divisors
+   ;; Divisors -----------------------------------------------------------------
    ;; need defclass-like merging here - maybe with metadata on map?
    ;; TODO -really need transition property on these?
    :divisor-block-start  {:border-block-start         :$divisor
-                          :dark:border-block-start    :$divisor-inverse
+                          :dark:border-block-start    :$divisor-dark-mode
                           :transition-property        :all
                           :transition-timing-function :$transition-timing-function
                           :transition-duration        :$transition-duration}
 
    :divisor-block-end    {:border-block-end           :$divisor
-                          :dark:border-block-end      :$divisor-inverse
+                          :dark:border-block-end      :$divisor-dark-mode
                           :transition-property        :all
                           :transition-timing-function :$transition-timing-function
                           :transition-duration        :$transition-duration}
 
    :divisor-inline-start {:border-inline-start        :$divisor
-                          :dark:border-inline-start   :$divisor-inverse
+                          :dark:border-inline-start   :$divisor-dark-mode
                           :transition-property        :all
                           :transition-timing-function :$transition-timing-function
                           :transition-duration        :$transition-duration}
 
    :divisor-inline-end  {:border-inline-end          :$divisor
-                         :dark:border-inline-end     :$divisor-inverse
+                         :dark:border-inline-end     :$divisor-dark-mode
                          :transition-property        :all
                          :transition-timing-function :$transition-timing-function
                          :transition-duration        :$transition-duration}
 
 
-   ;; Non-combo flex utility classes
+   ;; Position utility classes -------------------------------------------------
+
+   :static               {:position :static}
+   :relative             {:position :relative}
+   :absolute             {:position :absolute}
+   :fixed                {:position :fixed}
+   :sticky               {:position :sticky}
+
+
+   ;; Non-combo flex utility classes 
+
    :shrink               {:flex-shrink 1}
    :no-shrink            {:flex-shrink 0}
    :grow                 {:flex-grow 1}
    :no-grow              {:flex-grow 0}
 
 
+
    ;; Combinatorial absolute and fixed positioning utilities
    ;; --------------------------------------------------------------------------
+
    :absolute-centered            {:position           :absolute
                                   :inset-inline-start "50%"
                                   :inset-block-start  "50%"
@@ -292,17 +322,39 @@
                                   :before:bottom   0
                                   :before:left     0}
 
+   :before-absolute-inline-end-outside    {:before:position           :absolute
+                                           :before:top                :50%
+                                           :before:bottom             :unset
+                                           :before:inset-inline-start :100%
+                                           :after:inset-inline-end    :unset
+                                           :before:translate          :0:-50%}
+
+   :before-absolute-inline-start-outside  {:before:position          :absolute
+                                           :before:top               :50%
+                                           :before:bottom            :unset
+                                           :before:inset-inline-end  :100%
+                                           :after:inset-inline-start :unset
+                                           :before:translate         :0:-50%}
+
+   :after-absolute-inline-end-outside     {:after:position           :absolute
+                                           :after:top                :50%
+                                           :after:bottom             :unset
+                                           :after:inset-inline-start :100%
+                                           :after:inset-inline-end   :unset
+                                           :after:translate          :0:-50%}
+
+   :after-absolute-inline-start-outside   {:after:position           :absolute
+                                           :after:top                :50%
+                                           :after:inset-inline-end   :100%
+                                           :after:inset-inline-start :unset
+                                           :after:translate          :0:-50%}
+
    :absolute-inline-start-inside {:position           :absolute
                                   :inset-inline-start "0%"
                                   :inset-inline-end   :unset
                                   :inset-block-start  "50%"
                                   :translate          "0px -50%"}
 
-   :absolute-inline-end-inside   {:position           :absolute
-                                  :inset-inline-start :unset
-                                  :inset-inline-end   "0%"
-                                  :inset-block-start  "50%"
-                                  :translate          "0px -50%"}
 
    :absolute-block-start-inside  {:position           :absolute
                                   :inset-block-start  "0%"
@@ -352,8 +404,10 @@
                                :translate          "-50%"}
 
 
+
    ;; Surfaces, buttons, containers
    ;; --------------------------------------------------------------------------
+
    :bg-image-cover            {:background-position "center center"
                                :background-repeat   :no-repeat
                                :width               "100%"}
@@ -365,8 +419,10 @@
                                :background-size     :contain}
 
 
+
    ;; Combinatorial transition utility
    ;; --------------------------------------------------------------------------
+
    :transition            {:transition-property        :all
                            :transition-timing-function :$transition-timing-function
                            :transition-duration        :$transition-duration}
@@ -400,6 +456,7 @@
    {:opacity :45%!important ;; <-make a token $disabled-opacity
     :cursor  :not-allowed!important}])
 
+
 (def override-classes
   [;; General
    ;; --------------------------------------------------------------------------
@@ -429,7 +486,7 @@
 
 
    ;; TODO - use scale-of-utility-defs
-   ;; TODO convex 0-5 plus inverse
+   ;; TODO convex 0-5 plus dark-mode
    ;; TODO - consider using data-kushi-convex-level
    ;;        and maybe also :-convex-level on lib components
    :convex        {:background-image :$convex-1}
@@ -446,18 +503,24 @@
    ;;        and maybe also :-elevation on lib components
    :elevated-0    {:box-shadow :$elevated-0}
    :elevated-1    {:box-shadow      :$elevated-1
-                   :dark:box-shadow :$elevated-1-inverse}
+                   :dark:box-shadow :$elevated-1-dark-mode}
    :elevated-2    {:box-shadow      :$elevated-2
-                   :dark:box-shadow :$elevated-2-inverse}
+                   :dark:box-shadow :$elevated-2-dark-mode}
    :elevated-3    {:box-shadow      :$elevated-3
-                   :dark:box-shadow :$elevated-3-inverse}
+                   :dark:box-shadow :$elevated-3-dark-mode}
    :elevated-4    {:box-shadow      :$elevated-4
-                   :dark:box-shadow :$elevated-4-inverse}
+                   :dark:box-shadow :$elevated-4-dark-mode}
    :elevated-5    {:box-shadow      :$elevated-5
-                   :dark:box-shadow :$elevated-5-inverse}
+                   :dark:box-shadow :$elevated-5-dark-mode}
    :elevated      {:box-shadow      :$elevated-4
-                   :dark:box-shadow :$elevated-4-inverse}
+                   :dark:box-shadow :$elevated-4-dark-mode}
 
+   :capitalize     {:text-transform :capitalize}
+   :uppercase      {:text-transform :uppercase}
+   :lowercase      {:text-transform :lowercase}
+   :full-width     {:text-transform :full-width}
+   :full-size-kana {:text-transform :full-size-kana}
+   :math-auto      {:text-transform :math-auto}
    ])
 
 

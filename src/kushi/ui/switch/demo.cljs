@@ -1,6 +1,5 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.switch.demo
   (:require
-   [kushi.playground.util :as util]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.switch.core :refer [switch]]
@@ -24,25 +23,25 @@
                             :gtc--max-content:max-content
                             :xsm:gtc--max-content
                             )]
-    [{:desc            "Semantic variants"
+    [{:desc            "Colorway variants"
       :sx-attrs        (sx-call (sx :.xxlarge))
       :row-attrs       row-attrs
       :container-attrs container-attrs
-      :snippets-header ["Use the utility classes `:.neutral`, `:.accent`, `:.positive`, `:.warning`, and `:.negative` to control the semantic color variant."
+      :snippets-header ["Use the `data-kui-colorway` attributes `:neutral`, `:accent`, `:positive`, `:warning`, and `:negative` to control the semantic color variant."
                         :br
                         :br
                         "The default is `:.neutral`."]                        
       :snippets        '[[:div
                           [switch]
-                          [switch (sx :.neutral)]
-                          [switch (sx :.accent)]
-                          [switch (sx :.positive)]
-                          [switch (sx :.warning)]
-                          [switch (sx :.negative)]]]
-      :examples        (for [s (take 5 component-examples/colors)]
+                          [switch {:-colorway :neutral}]
+                          [switch {:-colorway :accent}]
+                          [switch {:-colorway :positive}]
+                          [switch {:-colorway :warning}]
+                          [switch {:-colorway :negative}]]]
+      :examples        (for [s component-examples/colors]
                          {:label (name s)
-                          :attrs {:class [s]}})}
-
+                          :attrs {:-colorway s}})}
+     
      ;; Leave this off until you figure out dark theme styling w/new color paradigm
      #_{:desc            "Semantic variants, outline styling"
         :sx-attrs        (sx-call (sx
