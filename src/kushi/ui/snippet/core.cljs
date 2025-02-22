@@ -18,7 +18,7 @@
   (let [children (or children*
                      [[button
                        (merge-attrs
-                        (sx :.kushi-copy-to-clipboard-button
+                        (sx ".kushi-copy-to-clipboard-button"
                             :.minimal
                             :.accent
                             :p--0px
@@ -31,7 +31,7 @@
                        [icon mui.svg/content-copy]]])]
     (into [:div
            (merge-attrs
-            (sx :.kushi-copy-to-clipboard-button-wrapper
+            (sx ".kushi-copy-to-clipboard-button-wrapper"
                 :.flex-row-c
                 :.pill
                 :cursor--pointer
@@ -59,7 +59,7 @@
         {:keys [text-to-display text-to-copy on-copy-click]} opts]
     (into [:div
            (merge-attrs
-            (sx :.kushi-snippet
+            (sx ".kushi-snippet"
                 :.codebox
                 :position--relative)
             {:data-kushi-ui :snippet}

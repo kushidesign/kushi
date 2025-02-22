@@ -75,14 +75,19 @@
   [:div
    (let [ai (if (= text "Desc.") :flex-start :center)]
      {:style (css-vars-map ai)
-      :class (css :.flex-row-fs :align-items--$ai)})
+      :class (css :.kushi-playground-component-docs-option-detail-label-wrapper
+                  :.flex-row-fs :align-items--$ai)})
    [:div
-    (sx :.kushi-opt-detail-label :min-width--75px)
-    [label (sx :.kushi-playground-meta-desc-label
+    (sx   :.kushi-playground-component-docs-option-detail-label
+          :.kushi-opt-detail-label ;; TODO -remove?
+          :min-width--75px)
+    [label (sx :.kushi-playground-component-docs-option-detail-label-meta
+               :.kushi-playground-meta-desc-label ;; TODO -remove?
                :.normal
                :>.kushi-label:lh--2.05) 
      text]]
-   [:div (sx :.kushi-opt-detail-value
+   [:div (sx :.kushi-playground-component-docs-option-detail-value
+             :.kushi-opt-detail-value
              [:_.code {:pb :0.07em
                        :pi :0.2em}])
     [f v]]])

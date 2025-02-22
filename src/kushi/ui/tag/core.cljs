@@ -4,7 +4,7 @@
             [clojure.string :as string]
             [kushi.ui.core :refer (opts+children)]
             [kushi.ui.icon.core]
-            [kushi.ui.shared.theming :refer [data-kui- get-variants hue-style-map]]
+            [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
             ))
 ;; Check docs
 (defn tag
@@ -120,27 +120,27 @@
              :aria-label       (when loading? "loading")
 
              ;; different from button
-            ;;  :data-kui-ia      ""
+            ;;  :data-kushi-ia      ""
              ;; different from button
 
-             :data-kui-surface surface
-             :data-kui-shape   shape}
+             :data-kushi-surface surface
+             :data-kushi-shape   shape}
             (when loading? {:data-kushi-ui-spinner true})
-            (when (and (not icon) end-enhancer) (data-kui- "" :end-enhancer))
-            (when (and (not icon) start-enhancer) (data-kui- "" :start-enhancer))
+            (when (and (not icon) end-enhancer) (data-kushi- "" :end-enhancer))
+            (when (and (not icon) start-enhancer) (data-kushi- "" :start-enhancer))
             (some-> stroke-align 
                     (maybe #{:outside "outside"})
-                    (data-kui- :stroke-align))
+                    (data-kushi- :stroke-align))
             (some-> (or semantic-colorway
                         (when hue-style-map ""))
-                    (data-kui- :colorway))
+                    (data-kushi- :colorway))
             (some-> packing
                     (maybe nameable?)
                     as-str
                     (maybe #{"compact" "roomy"})
-                    (data-kui- :packing))
+                    (data-kushi- :packing))
             hue-style-map
-            (some-> surface (data-kui- :surface))
+            (some-> surface (data-kushi- :surface))
             attrs)]
           (cond icon           [[kushi.ui.icon.core/icon :star]]
                 start-enhancer (cons start-enhancer children)

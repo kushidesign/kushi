@@ -12,8 +12,8 @@
 (defn collapse-body [& args]
   (let [[_ attrs & children] (opts+children args)]
     [:section
-     (merge-attrs (sx :.kushi-collapse-body-wrapper :overflow--hidden) attrs)
-     [:div (sx :.kushi-collapse-body
+     (merge-attrs (sx ".kushi-collapse-body-wrapper" :overflow--hidden) attrs)
+     [:div (sx ".kushi-collapse-body"
                :bbe--1px:solid:transparent
                :padding-block--0.25em:0.5em)
       children]]))
@@ -228,11 +228,11 @@
 
      ;; collapse body
      [:section
-      (merge-attrs (sx :.kushi-collapse-body-wrapper :overflow--hidden)
+      (merge-attrs (sx ".kushi-collapse-body-wrapper" :overflow--hidden)
                    body-attrs
                    {:style {:display             (if expanded? :block :none)
                             :transition-duration (str speed "ms")}})
-      (into [:div (sx :.kushi-collapse-body
+      (into [:div (sx ".kushi-collapse-body"
                       :bbe--1px:solid:transparent
                       :pb--0.25em:0.5em)]
             children)]]))

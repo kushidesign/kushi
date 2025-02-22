@@ -29,7 +29,7 @@
      [:input
       (merge-attrs
        {:class (css
-                :.kushi-checkbox-input
+                ".kushi-checkbox-input"
                 :.transition
                 :transition-duration--$xxfast
                 :cursor--pointer

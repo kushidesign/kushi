@@ -164,7 +164,8 @@
            example-reqs]}]
   (let [all-reqs       (into [] (concat component-reqs example-reqs))
         reqs-by-refers (reqs-by-refers all-reqs)]
-    [modal {:class (css :_.kushi-modal-inner:pi--1.25em
+    [modal {:class (css :.kushi-playground-examples-modal
+                        :_.kushi-modal-inner:pi--1.25em
                         :xsm:_.kushi-modal-inner:pi--3em
                         :_.kushi-modal-inner:pb--1.5rem:2em
                         :xsm:_.kushi-modal-inner:pb--3em:3.5em
@@ -175,10 +176,13 @@
                         :width--$playground-main-content-max-width)
             :id    modal-id}
      [modal-close-button {:-modal-id modal-id}]
-     [:div (sx :.flex-row-sb :ai--fs :gap--1.5em)
+     [:div (sx :.kushi-playground-examples-modal-wrapper
+               :.flex-row-sb :ai--fs :gap--1.5em)
       [:div
-       (sx :.flex-col-fs :ai--b :gap--1rem )
-       [:h1 (sx :.component-section-header-label) component-label]
+       (sx  :.kushi-playground-examples-modal-wrapper-inner
+            :.flex-col-fs :ai--b :gap--1rem )
+       [:h1 (sx :.kushi-playground-examples-modal-wrapper-inner-label
+                :.component-section-header-label) component-label]
        label]
       ;; #_[button (sx :.extra-light
       ;;             :.xxlarge 
@@ -201,7 +205,8 @@
     :-shape    :pill
     :-surface  :minimal
     :class    
-    (css :pb--0.4em
+    (css :.kushi-playground-examples-modal-trigger
+         :pb--0.4em
          :fw--$wee-bold
          :fs--$xxsmall
          :.accent.minimal:hover:background-color--$accent-50
@@ -218,7 +223,7 @@
                           :bgc      :$accent-foreground
                           :top      "calc(100% + 2px)"}])
     :on-click (fn* [] (open-kushi-modal modal-id))}
-   [icon (sx :.small :.extra-bold) :code]
+   [icon (sx :.kushi-playground-examples-modal-trigger-icon :.small :.extra-bold) :code]
    "Code"])
 
 (defn examples-section
@@ -239,7 +244,8 @@
                                kushi.ui.util/backtics->hiccup
                                section-label)
         modal-id       (str component-label "__" example-desc)]
-    [:div (sx :.playground-example-row-container
+    [:div (sx :.kushi-playground-example-row-wrapper
+              :.playground-example-row-container ;; TODO <-remove?
               :pb--2.5rem
               :first-of-type:pbs--2.5rem
 
@@ -248,10 +254,12 @@
               ["has([data-kushi-playground-example='popover-with-form']):display" :none]
               ["xsm:has([data-kushi-playground-example='popover-with-form']):display" :block])
 
-     [:section (sx :.playground-example-row
+     [:section (sx :.kushi-playground-example-row
+                   :.playground-example-row ;; TODO <-remove?
                    ;; make this max-width global var
                    :max-width--$playground-main-content-max-width)
-      [:div (sx :.flex-row-fs
+      [:div (sx :.kushi-playground-example-row-inner
+                :.flex-row-fs
                 :flex-wrap--wrap
                 :ai--c
                 :mbe--1rem
@@ -270,7 +278,8 @@
 
       
       (into [:div (merge-attrs
-                   (sx :.grid :gtc--1fr :gap--1rem)
+                   (sx  :.kushi-playground-example-row-variants
+                        :.grid :gtc--1fr :gap--1rem)
                    container-attrs)]
             (for [variant-attrs (resolve-variants-attrs component-opts
                                                         example-opts)]
@@ -313,7 +322,8 @@
      (merge-attrs
       {:-colorway :accent
        :-surface :minimal
-       :class    (css :p--7px)
+       :class    (css :.kushi-playground-copy-to-clipboard-button
+                      :p--7px)
        :on-click #(d/copy-to-clipboard!
                    (or (some->> opts 
                                 :clipboard-parent-sel
@@ -328,25 +338,29 @@
         "Copied!"
 
         :-text-on-click-tooltip-class 
-        (css [:--tooltip-background-color :$background-color-accent-hard])
+        (css :.kushi-playground-copy-to-clipboard-button-tooltip-class
+              [:--tooltip-background-color :$background-color-accent-hard])
 
         :-placement                  
         [:block-start :inline-end]})
       attrs)
-     [icon (sx :fs--medium) mui.svg/content-copy]]))
+     [icon (sx :.kushi-playground-copy-to-clipboard-button-icon
+               :fs--medium) mui.svg/content-copy]]))
 
 (defn- snippet-section
   [{:keys [header
            preformatted
            copyable]}]
-  [:section (sx :.snippet-section
+  [:section (sx :.kushi-playground-snippet-section
+                :.snippet-section
                 :.flex-col-fs
                 :gap--0.5em
                 ;; :first-of-type:mbe--2.5em
                 ) 
    header
    [:section 
-    (sx :.code
+    (sx :.kushi-playground-snippet-section
+        :.code
         :.xsmall
         :xsm:p--1.5em
         :position--relative

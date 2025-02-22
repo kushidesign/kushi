@@ -31,7 +31,7 @@
         opts]
     [:div
      (merge-attrs
-      {:data-kui-colorway colorway}
+      {:data-kushi-colorway colorway}
       (sx
        ".kushi-text-input-wrapper"
        :.flex-row-fs
@@ -207,7 +207,7 @@
                                   :fw--$wee-bold
                                   :hover:bgc--transparent!important
                                   :active:bgc--transparent!important)
-         :data-kui-colorway colorway}
+         :data-kushi-colorway colorway}
 
         helper-label-attrs
         (when helper
@@ -218,14 +218,15 @@
                :.inline-block
                :fw--$normal
                :mbs--$text-input-helper-margin-block-start||0.3em)
-           (when disabled {:class (css :.disabled)})))
+           (when disabled {:class (css ".kushi-text-input-helper-disabled"
+                                       :.disabled)})))
 
         wrapped-input
         [text-field* (merge attrs
                             {:-wrapper-attrs    wrapper-attrs
                              :-start-enhancer   start-enhancer
                              :-end-enhancer     end-enhancer
-                             :data-kui-colorway colorway
+                             :data-kushi-colorway colorway
                              :-textarea?        textarea?})]
 
         label-with-attrs
@@ -241,7 +242,7 @@
                          [:after:c :$after-color]
                          :after:pis--0.15em)
              :for   input-id})
-          (when disabled {:class (css :.disabled)})
+          (when disabled {:class (css ".kushi-text-input-label-disabled" :.disabled)})
           (if inline?
             (sx ".kushi-text-input-label-inline"
                 [:mie :$text-input-label-inline-margin-inline-end||0.7em])

@@ -17,11 +17,11 @@
    :surface  "soft"
    :shape    "rounded"})
 
-(defn data-kui- [x k]
+(defn data-kushi- [x k]
   (some-> x
           as-str
           #_(maybe (get variants k nil))
-          (->> (hash-map (keyword (str "data-kui-" (name k)))))))
+          (->> (hash-map (keyword (str "data-kushi-" (name k)))))))
 
 ;; (def color-mix-support? (? (.supports js/window.CSS "(color: color-mix(in oklch, red, transparent)")))
 ;; (def oklch-support? (? (.supports js/window.CSS "(color: oklch(40.1% 0.123 21.57))")))

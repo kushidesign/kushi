@@ -12,7 +12,8 @@
     [label
      [:span (merge-attrs
              {:style (css-vars-map color bgc)
-              :class (css :.flex-row-c
+              :class (css :.kushi-playground-color-text-sample-sticker
+                          :.flex-row-c
                           :fs--$kushi-playground-text-sample-sticker_font-size||$small
                           :sm:w--54px
                           :sm:h--54px
@@ -24,14 +25,6 @@
                           :bgc--$bgc)}
              &attrs)
       "Text"]]))
-
-;; (defn copy-color [s]
-;;   [:span (sx :.flex-row-fs
-;;              [:&_.kushi-button>img:transform '(scale 0.75)])
-;;    [:code s]
-;;    [copy-to-clipboard-button
-;;     {:-placement :right
-;;      :on-click   #(copy-to-clipboard! s)}]])
 
 
 (defn color-modal
@@ -49,13 +42,16 @@
       ;;             :sm:fs--0.9em
       ;;             :ws--n
       ;;             {:on-click #(open-kushi-modal token-name)})
-      [label (sx :.code
+      [label (sx :.kushi-playground-color-sample-row-color-name
+                 :.code
                  :_.code:bgc--transparent
                  :fs--0.7em
                  :sm:fs--0.9em
                  :ws--n)
-       [:span (sx :sm:d--none) color-level]
-       [:span (sx :.code :sm:d--block :d--none) token-name]
+       [:span (sx :.kushi-playground-color-sample-row-color-level
+                  :sm:d--none) color-level]
+       [:span (sx :.kushi-playground-color-sample-row-token-name
+                  :.code :sm:d--block :d--none) token-name]
 
       ;; [icon (sx :.accent-secondary-foreground
       ;;           :mis--0.5em
@@ -123,19 +119,21 @@
                                         :alias)]]
        (into
         ^{:key color-name}
-        [:div (sx :.color-scale-wrapper
+        [:div (sx :.kushi-playground-color-scale-wrapper
                   :.transition
                   :max-width--$playground-main-content-max-width
                   :mbs--4.5rem)
          [:h2 
-          (sx :fs--$xlarge
+          (sx :.kushi-playground-color-scale-wrapper-header
+              :fs--$xlarge
               :fw--$semi-bold
               :tt--capitalize
               :pbs--2em
               :mb--2rem:1.5rem)
           color-name]
          (when semantic-alias
-           [:p (sx :fw--$normal :mb--1em:2.5em)
+           [:p (sx :.kushi-playground-color-scale-desc
+                   :fw--$normal :mb--1em:2.5em)
             "All "
             [:code (str "--" (name color-name) "*")]
             " values on the scale have a corresponding "
@@ -148,12 +146,14 @@
                      color-token (str "var(--" (name color-name) "-" color-level ")")]]
           ^{:key hsl}
           [:div {:style (css-vars-map row-height color-token hsl)
-                 :class (css :.flex-row-fs
+                 :class (css :.kushi-playground-color-sample-row
+                             :.flex-row-fs
                              :ai--stretch
                              :bgc--white
                              :dark:bgc--black
                              :h--$row-height)}
-           [:div {:class (css :sm:flex-basis--150px
+           [:div {:class (css  :.kushi-playground-color-sample-row-swatch
+                               :sm:flex-basis--150px
                               :width--66px
                               :sm:width--unset
                               :.no-grow
@@ -161,7 +161,8 @@
                               :bgc--$color-token)}
             #_[:div (sx :w--50% :bgc--$hsl)]
             #_[:div (sx :w--50% :$yellow-hue--59 :bgc--$hsl)]]
-           [:div {:class (css :.flex-row-sb
+           [:div {:class (css :.kushi-playground-color-sample-row-info-container
+                              :.flex-row-sb
                               :.grow
                               :pis--0.5em
                               :bbes--solid
@@ -171,15 +172,20 @@
                           :hsl         hsl
                           :color-name  color-name
                           :color-level color-level}]
-            [:div (sx :.flex-row-fe :fw--$wee-bold)
+            [:div (sx :.kushi-playground-color-sample-row-text-samples-wrapper
+                      :.flex-row-fe :fw--$wee-bold)
              [text-sample-sticker {:-color :white :-bgc color-token}]
              [text-sample-sticker {:-color :black :-bgc color-token}]
              [text-sample-sticker 
-              {:class  (css :bs--solid :bw--1px :bc--$color-token)
+              {:class  (css :.kushi-playground-color-sample-row-text-sample-white-text
+                            :bs--solid
+                            :bw--1px
+                            :bc--$color-token)
                :-color color-token 
                :-bgc   :white}]
              [text-sample-sticker 
-              {:class  (css :bs--solid :bw--1px :bc--$color-token)
+              {:class  (css :.kushi-playground-color-sample-row-text-sample-black-text
+                            :bs--solid :bw--1px :bc--$color-token)
                :-color color-token
                :-bgc   :black}]]]]))))])
 
@@ -198,7 +204,8 @@
         opts]
     (into [:div
            (merge-attrs
-            (sx :.flex-row-fs
+            (sx :.kushi-playground-color-sample-grid-column
+                :.flex-row-fs
                 :border-radius--$rounded-large
                 :jc--sb
                 ;; [:gap column-gap]
@@ -218,7 +225,8 @@
                                   column-gap)
 
                     :class 
-                    (css :.flex-col-fs
+                    (css :.kushi-playground-color-sample-grid-column
+                         :.flex-col-fs
                          :.transition
                          :bgc--white
                          :position--relative
@@ -250,83 +258,20 @@
                             (css-vars-map before-content bgc)
 
                             :class
-                            (css
-                             :.pill
-                             :position--relative
-                             :w--26px
-                             :h--26px
-                             [:bgc :$bgc]
-                             [:before:content :$before-content]
-                             :before:d--none
-                             :before:fs--$xsmall
-                             :before:ff--$code-font-stack
-                             :before:fw--$wee-bold
-                             :before:position--absolute
-                             :before:top--50%
-                             :before:right--100%
-                             [:before:transform "translate(-1em, -50%)"])}
+                            (css :.kushi-playground-color-sample-grid-column-item
+                                 :.pill
+                                 :position--relative
+                                 :w--26px
+                                 :h--26px
+                                 [:bgc :$bgc]
+                                 [:before:content :$before-content]
+                                 :before:d--none
+                                 :before:fs--$xsmall
+                                 :before:ff--$code-font-stack
+                                 :before:fw--$wee-bold
+                                 :before:position--absolute
+                                 :before:top--50%
+                                 :before:right--100%
+                                 [:before:transform "translate(-1em, -50%)"])}
                            swatch-attrs)]))))))
-
-  #_(let [{:keys [row-gap
-                column-gap
-                labels?
-                select-colors
-                swatch-attrs]
-         :or   {row-gap     :2px
-                column-gap  :2px
-                labels?     true}}
-        &opts]
-    (into [:div
-           (merge-attrs
-            (sx :.flex-row-fs
-                :border-radius--$rounded-large
-                :jc--sb
-                ;; [:gap column-gap]
-                )
-            &attrs)]
-          (for [[color _] (partition 2 kushi.colors/colors)
-                :when (or (not (seq select-colors))
-                          (contains? (into #{} select-colors) color))]
-            (into [:div (trans (sx :.flex-col-fs
-                            :.transition
-                            :bgc--white
-                            :dark:bgc--black
-                            :outline--7px:solid:white
-                            :dark:outline--7px:solid:black
-                            :last-child:beer--$rounded-large
-                            :last-child:bser--$rounded-large
-                            :first-child:bssr--$rounded-large
-                            :first-child:besr--$rounded-large
-                            [:gap row-gap]
-                            :.relative
-                            [:before:content (str "\"" color "\"")]
-                            [:before:d (if labels? :block :none)]
-                            :before:fs--$xsmall
-                            :before:ff--$code-font-stack
-                            :before:fw--$wee-bold
-                            :before:ta--inline-end
-                            :before:position--absolute
-                            :before:top--100%
-                            :before:left--50%
-                            :before:transform-origin--top:left
-                            [:before:transform "translate(0, 0.75em) rotate(45deg)"]
-                            [:first-child>div:before:d (if labels? :block :none)]))]
-                  (for [n (range 50 1050 50) ]
-                    [:div (merge-attrs
-                           (sx
-                            :.relative
-                            :.pill
-                            :w--26px
-                            :h--26px
-                            [:bgc (str "var(--" color "-" n ")")]
-                            [:before:content (str "\"" n "\"")]
-                            :before:d--none
-                            :before:fs--$xsmall
-                            :before:ff--$code-font-stack
-                            :before:fw--$wee-bold
-                            :before:position--absolute
-                            :before:top--50%
-                            :before:right--100%
-                            [:before:transform '(translate :-1em :-50%)])
-                           swatch-attrs)])))))
 

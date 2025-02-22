@@ -117,7 +117,7 @@
 
    [:p]
    #_[:p
-    "The `data-kui-colorway` attributes "
+    "The `data-kushi-colorway` attributes "
     [:code {:-colorway :.neutral} ":.neutral"]
     ", "
     [:code {:-colorway :.positive} ":.positive"]
@@ -171,7 +171,8 @@
            [:div (merge
                   (let [tt (when (= label "Tracking") :.uppercase)]
                     {:style (css-vars-map tt)
-                     :class (css :.pointer
+                     :class (css :.kushi-playground-typescale-example-text
+                                 :.pointer
                                  :tt--$tt
                                  :mbs--10px)}))
             [:span.relative
@@ -179,7 +180,8 @@
               {:class [x]}
               (tooltip-attrs {:-text          (name x)
                               :-placement     [:inline-end :center]
-                              :-tooltip-class (css :.code
+                              :-tooltip-class (css :.kushi-playground-typescale-example-text-tooltip
+                                                   :.code
                                                    :fw--$wee-bold
                                                    :fs--$small)}))
              "The quick brown fox."]]])))
