@@ -84,11 +84,9 @@
           `--popover-arrow-block-inset`<br>
           `--popover-arrow-depth`<br>   
 
-          If you want supply the value of any of the above tokens ala-carte, 
-          use the following pattern.
-
-          `(popover-attrs {:-popover-class
-                           (css [:--popover-background-color :beige])}))`
+          If you want supply the value of any of the above tokens ala-carte,
+          check out the \"Styling via design token at callsite\" example
+          in this Examples section.
 
           If you would like to use a value of `0` (`px`, `ems`, `rem`, etc.) for 
           `--popover-offset`, `--popover-arrow-inline-inset`, 

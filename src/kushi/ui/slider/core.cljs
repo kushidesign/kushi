@@ -590,22 +590,25 @@
           ;;             be displayed."}
 
            {:name    current-value-label-position
-            :pred    #{:track-top
-                       :track-right
-                       :track-bottom
-                       :track-left
-                       :track-block-start
-                       :track-block-end
+            :pred    
+                     #{
+                      ;;  :track-top
+                      ;;  :track-right
+                      ;;  :track-bottom
+                      ;;  :track-left
+                      ;;  :track-block-start
+                      ;;  :track-block-end
                        :track-inline-start
                        :track-inline-end
                        :thumb-top
-                       :thumb-right
+                      ;;  :thumb-right
                        :thumb-bottom
-                       :thumb-left
-                       :thumb-block-start
-                       :thumb-block-end
-                       :thumb-inline-start
-                       :thumb-inline-end}
+                      ;;  :thumb-left
+                      ;;  :thumb-block-start
+                      ;;  :thumb-block-end
+                      ;;  :thumb-inline-start
+                      ;;  :thumb-inline-end
+                       }
             :default false
             :desc    "The position of the current value label, relative to the
                       slider track or slider thumb."}

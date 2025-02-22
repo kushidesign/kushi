@@ -372,11 +372,11 @@
                  :dark:c--$accent-100
                  :dark:bgc--$accent-900)
                 (str ":-" nm)]]
-              [:div (sx
-                     :.flex-col-fs
-                     :pb--0.5em
-                     :gap--1.25em
-                     :pis--1.4em)
+              [:div (sx :.flex-col-fs
+                        :pb--0.5em
+                        :gap--1.25em
+                        :pis--1.4em
+                        :overflow-x--auto)
                (when pred [docs/opt-detail "Pred" pred docs/kushi-opts-grid-type :pred])
                (when typ [docs/opt-detail "Type" typ docs/kushi-opts-grid-type :type])
                [docs/opt-detail "Defaults" default docs/kushi-opts-grid-default :default]
@@ -407,7 +407,7 @@
           {:class (css :.playground-component-panel
                        :>div:max-width--$playground-main-content-max-width
                        :pbs--35px)
-          ;;  :hidden "hidden"
+           :hidden "hidden"
            :id    (str "kushi-" label "-documentation")}
 
           (when summary

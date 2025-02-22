@@ -92,11 +92,13 @@
           `--tooltip-arrow-x-offset`
           `--tooltip-arrow-y-offset`
           
-          If you want supply the value of any of the above tokens ala-carte, use
-          the following pattern.
+          If you want supply the value of any of the above tokens ala-carte,
+          check out the \"Styling via design token at callsite\" example
+          in this Examples section.
           
-          `(tooltip-attrs {:-text \"My text\"
-                           :-tooltip-class (css [:--tooltip-font-size :34px])}))`
+          `(tooltip-attrs`<br>
+          ` {:-text \"My text\"`<br>
+          `  :-tooltip-class (css [:--tooltip-font-size :34px])}))`
           
           If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for
           `--tooltip-offset`, `--tooltip-arrow-x-offset`,
