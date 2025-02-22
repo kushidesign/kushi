@@ -174,6 +174,7 @@
        :dark:c (keyword (str "$" c "-350"))}])
    color-names))
 
+;; Do like tokens and create categories with documentation.
 (def base-classes
   [
    ;; Visual debugging utilities
@@ -193,9 +194,21 @@
                        :outline-style  :solid
                        :outline-width  :1px
                        :outline-offset :-1px}
-   ;; End debugging utils 
    
-   ;; Colorization
+   ;; Type styling
+   :sans       {:font-family :$sans-serif-font-family}
+   :serif      {:font-family :$sans-serif-font-family}
+   :italic     {:font-family :$sans-serif-font-family}
+   :oblique    {:font-family :$sans-serif-font-family}
+   :uppercase  {:font-family :$sans-serif-font-family}
+   :uppercase  {:font-family :$sans-serif-font-family}
+   :lowercase  {:font-family :$sans-serif-font-family}
+   :capitalize {:font-family :$sans-serif-font-family}
+
+   
+
+   ;; Colorization -------------------------------------------------------------
+
    :neutralize        {:bgc                        :$background-color
                        :dark:bgc                   :$background-color-dark-mode
                        :c                          :$foreground-color
@@ -222,7 +235,9 @@
    :foreground-color-secondary    {:c      :$foreground-color-secondary
                                    :dark:c :$foreground-color-secondary-dark-mode}                        
 
-   ;; Borders
+
+   ;; Borders ------------------------------------------------------------------
+
    :outlined              {:outline-color  :currentColor
                            :outline-style  :solid
                            :outline-width  :1px
@@ -233,7 +248,7 @@
    
 
    ;; TODO - use scale-of-utility-defs
-   ;; Divisors
+   ;; Divisors -----------------------------------------------------------------
    ;; need defclass-like merging here - maybe with metadata on map?
    ;; TODO -really need transition property on these?
    :divisor-block-start  {:border-block-start         :$divisor
@@ -261,15 +276,27 @@
                          :transition-duration        :$transition-duration}
 
 
-   ;; Non-combo flex utility classes
+   ;; Position utility classes -------------------------------------------------
+
+   :static               {:position :static}
+   :relative             {:position :relative}
+   :absolute             {:position :absolute}
+   :fixed                {:position :fixed}
+   :sticky               {:position :sticky}
+
+
+   ;; Non-combo flex utility classes 
+
    :shrink               {:flex-shrink 1}
    :no-shrink            {:flex-shrink 0}
    :grow                 {:flex-grow 1}
    :no-grow              {:flex-grow 0}
 
 
+
    ;; Combinatorial absolute and fixed positioning utilities
    ;; --------------------------------------------------------------------------
+
    :absolute-centered            {:position           :absolute
                                   :inset-inline-start "50%"
                                   :inset-block-start  "50%"
@@ -377,8 +404,10 @@
                                :translate          "-50%"}
 
 
+
    ;; Surfaces, buttons, containers
    ;; --------------------------------------------------------------------------
+
    :bg-image-cover            {:background-position "center center"
                                :background-repeat   :no-repeat
                                :width               "100%"}
@@ -390,8 +419,10 @@
                                :background-size     :contain}
 
 
+
    ;; Combinatorial transition utility
    ;; --------------------------------------------------------------------------
+
    :transition            {:transition-property        :all
                            :transition-timing-function :$transition-timing-function
                            :transition-duration        :$transition-duration}
@@ -424,6 +455,7 @@
   ["*:disabled"
    {:opacity :45%!important ;; <-make a token $disabled-opacity
     :cursor  :not-allowed!important}])
+
 
 (def override-classes
   [;; General

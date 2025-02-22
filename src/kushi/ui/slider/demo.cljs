@@ -1,7 +1,6 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.slider.demo
   (:require
    [domo.core :as domo]
-   [fireworks.core :refer [?]]
    [kushi.core :refer (sx)]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.slider.core :refer [slider]]))
@@ -25,9 +24,22 @@
                                         {:snippets [(:quoted code)]})))))]
     [
 
-     (f "Simple"
+     (f "Simple, default"
         (sx-call [slider {:min 0
-                          :max 75
+                          :max 100
+                          :step 1
+                          }]))
+
+     (f "Simple, label at thumb bottom"
+        (sx-call [slider {:min 0
+                          :max 100
+                          :step 1
+                          :-current-value-label-position :thumb-bottom
+                          }]))
+
+     (f "Simple, label at track inline start"
+        (sx-call [slider {:min 0
+                          :max 100
                           :step 1
                           :-current-value-label-position :track-inline-start
                           ;; :-current-value-label-position :track-left
@@ -39,19 +51,13 @@
                           ;; :-current-value-label-position :thumb-bottom
                           }]))
 
-     (f "Simple"
+     (f "Simple, label at track inline end"
         (sx-call [slider {:min 0
-                          :max 75
+                          :max 100
                           :step 1
-                          ;; :-current-value-label-position :track-inline-start
-                          ;; :-current-value-label-position :track-left
-                          ;; :-current-value-label-position :track-inline-end
-                          :-current-value-label-position :track-right
-                          ;; :-current-value-label-position :thumb-block-start
-                          ;; :-current-value-label-position :thumb-top
-                          ;; :-current-value-label-position :thumb-block-end
-                          ;; :-current-value-label-position :thumb-bottom
+                          :-current-value-label-position :track-inline-end
                           }]))
+
      (f "Labels"
         (sx-call [slider {:min                           0
                           :max                           7

@@ -241,7 +241,7 @@
 
    (into [:p
           [:span (sx :d--block :mbe--1em) "The following utility classes are available for font-style and capitalization:"]]
-         (for [x [:sans :sans-serif :italic :oblique :uppercase :lowercase :capitalize]]
+         (for [x [:sans :serif :italic :oblique :uppercase :lowercase :capitalize]]
            [:span (sx :.code :fs--0.875rem!important :d--ib :ws--n :mie--0.5em :mbe--0.5em) (str ":." (name x))]))
 
    [:p

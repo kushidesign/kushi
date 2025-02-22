@@ -4,7 +4,8 @@
    [clojure.walk :as walk]
    [kushi.core :refer (sx ?sx css-vars-map css ?css)]
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
-   [kushi.ui.label.core :refer [label]]))
+   [kushi.ui.label.core :refer [label]]
+   [me.flowthing.pp :as pp]))
 
 
 (defn add-links
@@ -64,9 +65,11 @@
                              anon-fn-display*)]
         [:span.code (str "#" anon-fn-display)])
       (set? v)
-      [:span.code (str v)]
+      ;; TODO need to format sets here
+      [:span.code v #_(with-out-str (pp/pprint v {:max-width 20}))]
       (symbol? v)
       [:span.code (name v)])))
+
 
 (defn opt-detail [text v f kw]
   [:div

@@ -1,6 +1,5 @@
 (ns kushi.css.build.tokens
   (:require [clojure.string :as string]
-            [fireworks.core :refer [? !? ?> !?>]]
             [kushi.css.build.tokens-legacy]
             [kushi.colors2 :as colors2]))
 
@@ -927,7 +926,7 @@
                  []
                  enriched-tokens-ordered)))
 
-(!? (get enriched-tokens-array-map "--accent-500"))
+;; (? (get enriched-tokens-array-map "--accent-500"))
 
  #_(def design-tokens-by-token
    (->> design-tokens
@@ -973,7 +972,7 @@
            "colors"
            "global-colors"]))
 
-(!? :pp design-tokens-by-token-array-map)
+;; (? :pp design-tokens-by-token-array-map)
 
 
 #_{:name         "divisor-dark-mode",

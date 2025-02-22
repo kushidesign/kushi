@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.playground.layout
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [domo.core :as domo]
    [kushi.core :refer [css defcss merge-attrs sx]]
@@ -393,7 +392,7 @@
     :as                       component-opts}]
 
   (into [:<>
-         #_(into [:section
+         (into [:section
                 {:class (css :.playground-component-panel)
                  :id    (str "kushi-" label "-examples")}]
                (for [

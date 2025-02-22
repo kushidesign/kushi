@@ -23,9 +23,7 @@
    [kushi.ui.slider.core :refer [slider]]
    [kushi.ui.icon.core :refer [icon]]
   ;;  [kushi.colors2 :as colors2]
-   [fireworks.core :refer [? !? ?> !?> pprint]]
    [kushi.playground.ui :refer [light-dark-mode-switch]]
-   
    [reagent.core :as r]))
 
 (def pallette-idx 0)
@@ -63,7 +61,7 @@
 
 
 (defn oklch-slider-change-handler [k %]
-  (let [updated-slider-value    (!? 'updated-slider-value (/ (domo/cetv %) (case k :l 10 :c 1000 :h 10)))
+  (let [updated-slider-value    (/ (domo/cetv %) (case k :l 10 :c 1000 :h 10))
         ;; new-state            (swap! okstate assoc-in [:current-color k] updated-slider-value)
         ;; {:keys [l c h]}      (-> new-state :current-color)
         ;; oklch                (str "oklch(" l "% " c " " h ")")
@@ -99,29 +97,27 @@
        :hue 10)))
 
 (defn get-updated-slider-value [{:keys [scale-key current-value op]}]
-  (!? :result
-     (->
-      current-value
-      ((or op +) (case scale-key
-           :lightness-scale 0.1 
-           :chroma-scale 0.001 
-           :hue 0.1))
-      (.toFixed 3)
-      (js/parseFloat))))
+  (->
+   current-value
+   ((or op +) (case scale-key
+                :lightness-scale 0.1 
+                :chroma-scale 0.001 
+                :hue 0.1))
+   (.toFixed 3)
+   (js/parseFloat)))
 
 (defn get-current-slider-value [{:keys [pallette-idx scale-key scale-idx]}]
-  (!? (str "current " scale-key)
-   (-> okstate deref
+  (-> okstate deref
       :pallettes
       (nth pallette-idx)
       scale-key
-      (nth scale-idx))))
+      (nth scale-idx)))
 
 (defn get-current-hue [{:keys [pallette-idx]}]
-  (!? 'current (-> okstate deref
+  (-> okstate deref
       :pallettes
       (nth pallette-idx)
-      :hue)))
+      :hue))
 
 (defn oklch-slider-change-handler2 [{:keys [pallette-idx scale-key scale-idx] :as m} %]
   (let [updated-slider-value (updated-slider-value (domo/cetv %) scale-key)
@@ -225,7 +221,7 @@
               (nth (-> okstate deref :pallettes) pallette-idx)
 
               {:keys [chroma-scale lightness-scale]} 
-              (!? color)]
+              color]
           (for [idx  (range (-> okstate deref :levels count))
                 :let [scale  (if (= scale-key :lightness-scale)
                                lightness-scale
@@ -255,7 +251,7 @@
             :ff--$code-font-stack)
    (into [:div (sx :.flex-col-c :ai--c :w--400px)]
          (let [color                                      (nth (-> okstate deref :pallettes) pallette-idx)
-               {:keys [hue chroma-scale lightness-scale]} (!? color)]
+               {:keys [hue chroma-scale lightness-scale]} color]
            (for [idx  (range (-> okstate deref :levels count))
                  :let [c                   (nth chroma-scale idx nil)
                        l                   (nth lightness-scale idx nil)

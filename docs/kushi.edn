@@ -23,7 +23,7 @@
    
 
    ;; Add this to tokens
-   :--slider-font-family                    :$serif-font-stack
+  ;;  :--slider-font-family                    :$serif-font-stack
    ;;  :--background-color-dark-mode            :black
 
    ;; Playground

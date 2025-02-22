@@ -23,7 +23,6 @@
    [kushi.ui.slider.core :refer [slider]]
    [kushi.ui.icon.core :refer [icon]]
   ;;  [kushi.colors2 :as colors2]
-   [fireworks.core :refer [? !? ?> !?> pprint]]
    [kushi.playground.ui :refer [light-dark-mode-switch]]
    [kushi.playground.tweak.colorscale :refer [pallette-generator
                                               okstate
@@ -359,7 +358,6 @@
                   ;;  ["gray" 0]
                    ]
          scale [5 10 20 40 80 140 200 260 320 380 440 500 560 720 780 840]
-         _ (!? (count scale))
          ;; colors       (? (keys oklch-colors))
          oklch-grid   (for [{:keys [h l c]} colors]
                         (into [:div (sx :.flex-row-fs)]

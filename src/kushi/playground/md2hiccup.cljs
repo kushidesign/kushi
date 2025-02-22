@@ -2,7 +2,6 @@
   (:require
    [clojure.string :as string]
    [clojure.walk :as walk]
-   [fireworks.core :refer [? !?]]
    [goog.string :as gstring]
    [kushi.playground.util :refer [interleave-all]]))
 
@@ -108,11 +107,8 @@
   (let [s (if (string? desc)
             desc
             (->> desc
-                 (!? {:print-with prn})
                  (map #(if (= % :br) "\n" %))
-                 (!? {:print-with prn})
-                 (string/join "\n")
-                 (!? {:print-with prn})))
+                 (string/join "\n")))
         ;; TODO fix this hack
         s (string/replace s #"\n\n\n" "\n\n")
         s (string/replace s #"\n\n\n" "\n\n")
