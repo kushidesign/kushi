@@ -1,6 +1,8 @@
 
 {:theme
  {:colorways
+  ;; This is where you customize the color pallette of the semantic colorways
+  ;; e.g. :accent, :positive, :negative, :neutral, etc.
   {
   ;;  :accent "purple"
    } 
