@@ -2,19 +2,18 @@
   (:require
    [clojure.string :as string]
    [domo.core :as domo]
+   [fireworks.core :refer [? !?]]
    [kushi.core :refer [css defcss merge-attrs sx]]
    [kushi.playground.about :as about]
    [kushi.playground.component-docs :as docs]
    [kushi.playground.component-examples :as component-examples]
+   [kushi.playground.md2hiccup :refer [desc->hiccup]]
    [kushi.playground.sidenav :as sidenav]
    [kushi.playground.state :as state]
-   [kushi.playground.md2hiccup :refer [desc->hiccup]]
-   [kushi.ui.util :refer [keyed]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.core :refer [defcom]]
    [kushi.ui.divisor.core :refer (divisor)]
-   [kushi.ui.spinner.core :refer [propeller]]
-   [clojure.walk :as walk]))
+   [kushi.ui.spinner.core :refer [propeller]]))
 
 (defcss "@layers design-tokens :root"
   {:--playground-main-content-max-width :605px})
@@ -259,14 +258,6 @@
                               (component-examples/scroll-to-playground-component!
                                {:component-label label
                                 :scroll-y        16}))}
-                 #_(trans (sx :.pointer 
-                              {:href     (str "#" label)
-                               :on-click (fn [e] 
-                                           (.preventDefault e)
-                                     ;; TODO - try a fast smooth transition here
-                                           (component-examples/scroll-to-playground-component!
-                                            {:component-label label
-                                             :scroll-y        16}))})) 
                  label]]]
 
               ;; TODO - break this out into tabs component
@@ -321,7 +312,7 @@
                                        :component-label label
                                        :tab-label       "examples"}]
                [component-section-tab {:component-label label
-                                       :tab-label       "documentation"}]]]
+                                       :tab-label       "docs"}]]]
 
             ;; For conditionally hiding based on device features
             ;; e.g. Do not show tooltip examples on mobile/touch
@@ -334,6 +325,7 @@
                                                             matches)))]
                  (if unsupported? 
                    [:p (sx :mbs--2rem :lh--1.7) message]
+                   
                    [component-section component-opts])))]]))])
 
 
@@ -383,65 +375,69 @@
                (when desc [docs/opt-detail "Desc." desc docs/kushi-opts-grid-desc :desc])]])))])
 
 
+(defn component-docs [label summary desc options]
+  [:div 
+   {:class  (css :.playground-component-panel
+                 :>div:max-width--$playground-main-content-max-width
+                 :pbs--35px)
+    :hidden "hidden"
+    :id     (str "kushi-" label "-documentation")}
+   (when summary
+     (into [:div 
+            (sx :fs--$medium
+                :fw--$wee-bold
+                :mb--0:2rem
+                :>span:lh--1.7)]
+           (desc->hiccup summary)))
+   (when desc
+     [:<> 
+      [:h2 
+       (sx :fs--$large
+           :fw--$semi-bold
+           :pbe--0.5rem
+           :bbe--1px:solid:$gray-200
+           :dark:bbe--1px:solid:$gray-800
+           :mb--0:1.5rem)
+       "Usage"]
+      (into [:div (sx 
+                   :lh--1.7
+                   :mb--0:2rem
+                   :_code:lh--1.9
+                   :_code:pb--0.07em
+                   :_code:pi--0.2em
+                   :>span:d--block
+                   [:_b {:fw      :$wee-bold
+                         :mbe     :0.4em
+                         :display :block}])]
+            (desc->hiccup desc))])
+   (when (seq options)
+     [custom-attributes-section options])])
 
 
 (defn component-section
-  [{:keys                     [examples label]
-    {:keys [desc summary]
-     custom-attributes :opts} :component-meta
-    :as                       component-opts}]
+  ;; refactor
+  [{:keys [examples label component-meta]
+    :as   component-opts}]
 
-  (into [:<>
-         (into [:section
-                {:class (css :.playground-component-panel)
-                 :id    (str "kushi-" label "-examples")}]
-               (for [
+  (? :pp component-opts)
+
+  (let [{:keys [desc summary opts]} component-meta]
+       (into [:<>
+         ;; This is where all the demos for the component live 
+              (into [:section
+                     {:class (css :.playground-component-panel)
+                      :id    (str "kushi-" label "-examples")}]
+                    (for [
                     ;; example-opts (take 2 examples)
-                     example-opts examples
+                          example-opts examples
                     ;;  example-opts (keep-indexed (fn [idx m] (when (contains? #{3} idx) m)) examples)
-                     ]
-                 [component-examples/examples-section
-                  component-opts
-                  example-opts]))
-         [:div 
-          {:class (css :.playground-component-panel
-                       :>div:max-width--$playground-main-content-max-width
-                       :pbs--35px)
-           :hidden "hidden"
-           :id    (str "kushi-" label "-documentation")}
-
-          (when summary
-            (into [:div 
-                   (sx :fs--$medium
-                       :fw--$wee-bold
-                       :mb--0:2rem
-                       :>span:lh--1.7)]
-                  (desc->hiccup summary)))
-
-          (when desc
-            [:<> 
-             [:h2 
-              (sx :fs--$large
-                  :fw--$semi-bold
-                  :pbe--0.5rem
-                  :bbe--1px:solid:$gray-200
-                  :dark:bbe--1px:solid:$gray-800
-                  :mb--0:1.5rem)
-              "Usage"]
-             (into [:div (sx 
-                          :lh--1.7
-                          :mb--0:2rem
-                          :_code:lh--1.9
-                          :_code:pb--0.07em
-                          :_code:pi--0.2em
-                          :>span:d--block
-                          [:_b {:fw      :$wee-bold
-                                :mbe     :0.4em
-                                :display :block}])]
-                   (desc->hiccup desc))])
-
-          (when (seq custom-attributes)
-            [custom-attributes-section custom-attributes])]]))
+                          ]
+                      [component-examples/examples-section
+                       component-opts
+                       example-opts]))
+         ;; This is where all the docs for the component live
+              #_[component-docs label summary desc opts]
+              ])))
 
 
 

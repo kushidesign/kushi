@@ -2,6 +2,7 @@
   (:require
    [clojure.string :as string]
    [domo.core :as d]
+   [fireworks.core :refer [? !?]]
    [kushi.core :refer (sx css merge-attrs)]
    [kushi.css.defs]
    [kushi.css.media]
@@ -161,7 +162,9 @@
            component-reqs
            snippets-header
            snippets
-           example-reqs]}]
+           example-reqs]
+    :as m}]
+  (!? :pp m)
   (let [all-reqs       (into [] (concat component-reqs example-reqs))
         reqs-by-refers (reqs-by-refers all-reqs)]
     [modal {:class (css :.kushi-playground-examples-modal
@@ -511,6 +514,21 @@
    "magenta"
    ])
 
+(def all-colors
+  [
+   "neutral"
+   "purple"
+   "blue"
+   "green"
+   "lime"
+   "yellow"
+   "gold"
+   "orange"
+   "red"
+   "magenta"
+   "brown"
+   ])
+
 (def color-lut
   {"neutral"  "gray"
    "positive" "green"
@@ -529,6 +547,16 @@
    #_:xxlarge
    #_:xxxlarge] )
 
+(def sizes-all
+  [:xxxsmall
+   :xxsmall
+   :xsmall
+   :small
+   :medium
+   :large
+   :xlarge
+   :xxlarge
+   :xxxlarge] )
 
 
 (def sizes-snippet-header*

@@ -1,41 +1,43 @@
 (ns ^:dev/always kushi.playground.components
- (:require 
+ (:require
   [kushi.core :refer [sx]]
+  [kushi.ui.avatar.core :refer [avatar]]
   [kushi.ui.button.core :refer [button]]
   [kushi.ui.button.demo :as button.demo]
   [kushi.ui.callout.core :refer [callout]]
   [kushi.ui.callout.demo :as callout.demo]
   [kushi.ui.card.core :refer [card]]
   [kushi.ui.card.demo :as card.demo]
+  [kushi.ui.avatar.core :refer [avatar]]
+  [kushi.ui.avatar.demo :as avatar.demo]
+  [kushi.ui.checkbox.core :refer [checkbox]]
+  [kushi.ui.checkbox.demo :as checkbox.demo]
   [kushi.ui.collapse.core :refer [collapse]]
   [kushi.ui.collapse.demo :as collapse.demo]
   [kushi.ui.grid.core :refer [grid]]
   [kushi.ui.grid.demo :as grid.demo]
   [kushi.ui.icon.core :refer [icon]]
   [kushi.ui.icon.demo :as icon.demo]
-  [kushi.ui.checkbox.core :refer [checkbox]]
-  [kushi.ui.checkbox.demo :as checkbox.demo]
-  [kushi.ui.radio.core :refer [radio]]
-  [kushi.ui.radio.demo :as radio.demo]
-  [kushi.ui.slider.core :refer [slider]]
-  [kushi.ui.slider.demo :as slider.demo]
-  [kushi.ui.switch.core :refer [switch]]
-  [kushi.ui.switch.demo :as switch.demo]
-  [kushi.ui.text-field.core :refer [text-field]]
-  [kushi.ui.text-field.demo :as text-field.demo]
-  [kushi.ui.tag.core :refer [tag]]
-  [kushi.ui.tag.demo :as tag.demo]
   [kushi.ui.modal.core :refer [modal]]
   [kushi.ui.modal.demo :as modal.demo]
   [kushi.ui.popover.core :refer [popover-attrs]]
   [kushi.ui.popover.demo :as popover.demo]
+  [kushi.ui.radio.core :refer [radio]]
+  [kushi.ui.radio.demo :as radio.demo]
+  [kushi.ui.slider.core :refer [slider]]
+  [kushi.ui.slider.demo :as slider.demo]
   [kushi.ui.spinner.core :refer [spinner]]
   [kushi.ui.spinner.demo :as spinner.demo]
+  [kushi.ui.switch.core :refer [switch]]
+  [kushi.ui.switch.demo :as switch.demo]
+  [kushi.ui.tag.core :refer [tag]]
+  [kushi.ui.tag.demo :as tag.demo]
+  [kushi.ui.text-field.core :refer [text-field]]
+  [kushi.ui.text-field.demo :as text-field.demo]
   [kushi.ui.toast.core :refer [toast-attrs]]
   [kushi.ui.toast.demo :as toast.demo]
   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-  [kushi.ui.tooltip.demo :as tooltip.demo]
-  ))
+  [kushi.ui.tooltip.demo :as tooltip.demo]))
 
 
 
@@ -43,24 +45,25 @@
   (filter 
   ;;  :label
    #(contains? #{
-                 "button"     
+                ;;  "button"     
                  "icon"       
-                 "spinner"    
-                 "switch"     
-                 "radio"      
-                 "checkbox"   
-                 "slider"     
-                 "text field" 
-                 "tooltip"    
-                 "popover"    ;; PS
-                 "modal"      ;; PS
-                 "toast"      ;; PS
-                 "card"       ;; PS
-                 "callout"    ;; PS
-                 "collapse"   ;; PS
-                 "accordian"  ;; PS
-                 "tag"        ;; PS
-                 "grid"       ;; PS
+                ;;  "spinner"    
+                ;;  "switch"     
+                ;;  "radio"      
+                ;;  "checkbox"   
+                ;;  "slider"     
+                ;;  "text field" 
+                ;;  "tooltip"    
+                ;;  "popover"    ;; PS
+                ;;  "modal"      ;; PS
+                ;;  "toast"      ;; PS
+                ;;  "avatar"
+                ;;  "card"       ;; PS
+                ;;  "callout"    ;; PS
+                ;;  "collapse"   ;; PS
+                ;;  "accordian"  ;; PS
+                ;;  "tag"        ;; PS
+                ;;  "grid"       ;; PS
                  }
                (:label %))
 
@@ -197,6 +200,19 @@
        :variants-attrs {:rounded (sx :.rounded)}
        }
 
+      {:label          "avatar"
+       :examples       avatar.demo/examples
+       :component-meta (-> avatar var meta)
+       :component      avatar
+       :reqs           '[[kushi.ui.avatar.core :refer [avatar]]]
+       :variants-base  #{:soft :solid :outline :minimal}
+       :variants-order [:soft :solid :outline :minimal]
+       :variants-attrs {:soft    {}
+                        :solid   {:-surface :solid}
+                        :outline {:-surface :outline}
+                        :minimal {:-surface :minimal}}
+       }
+
       {:label          "tag"
        :examples       tag.demo/examples
        :component-meta (-> tag var meta)
@@ -207,7 +223,8 @@
        :variants-attrs {:soft    {}
                         :solid   {:-surface :solid}
                         :outline {:-surface :outline}
-                        :minimal {:-surface :minimal}}}
+                        :minimal {:-surface :minimal}}
+       }
 
       {:label          "callout"
        :examples       callout.demo/examples

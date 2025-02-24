@@ -19,7 +19,8 @@
    
 
 (defn popover-attrs
-  {:summary "Popovers provide additional context when clicking on an element."
+  {:id    "popover"
+   :summary "Popovers provide additional context when clicking on an element."
    :desc "Popovers can be interactive and are typically dismissed manually by
           the user.
            
@@ -92,8 +93,8 @@
           `--popover-offset`, `--popover-arrow-inline-inset`, 
           `--popover-arrow-block-inset`, or `--popover-border-radius`, you will
           need to use an explicit unit e.g. `0px`."
-  
-          
+   
+   
    :opts '[{:name    f
             :pred    fn?
             :default nil
@@ -163,9 +164,9 @@
             :desc    "A class name for a la carte application of classes on the 
                       popover element."}
            #_{:name    use-on-click?
-            :pred    boolean?
-            :default false
-            :desc    "By default, the popover is triggered on the mousedown event. 
+              :pred    boolean?
+              :default false
+              :desc    "By default, the popover is triggered on the mousedown event. 
                       Setting to true will instead use the click event to trigger 
                       the popover."}
            ]}

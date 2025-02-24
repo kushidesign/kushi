@@ -17,6 +17,7 @@
                                 ?sx
                                 defcss
                                 ?defcss
+                                ?defcolorway
                                 css-vars
                                 css-vars-map
                                 lightning-opts
@@ -35,6 +36,16 @@
             [kushi.util :refer [maybe keyed]]
             [kushi.colors2 :refer [oklch-colors]]
             ))
+
+(? (css-rule* 
+".foo"
+ [{"@supports(color: color-mix(in oklch, currentColor, transparent 40%))"
+   {:--bordercolor :blue}}]
+
+ #_[{"@media(color: color-mix(in oklch, currentColo, yeah))"
+   {:--bordercolor :blue}}]
+ nil nil))
+
 
 
 (def sam

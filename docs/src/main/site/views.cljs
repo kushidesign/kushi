@@ -1,17 +1,30 @@
 (ns site.views
   (:require
-   [clojure.string :as string]
-   [domo.core :as domo]
-   [kushi.core :refer [sx defcss]]
    [kushi.playground.about :as about]
-   ;  [kushi.playground.tweak.samples :refer [pane-samples]]
+   [kushi.playground.tweak.samples :refer [pane-samples]]
    [kushi.playground.components :refer [playground-components]]
    [kushi.playground.layout :as layout]
-   [kushi.playground.nav :as nav]))
+   [kushi.playground.nav :as nav]
+   [kushi.playground.tweak.samples :refer [pane-samples]]
+   [kushi.playground.components :refer [playground-components]]
+
+   [clojure.string :as string]
+   [clojure.walk :as walk]
+   [domo.core :as domo]
+   [fireworks.core :refer [!? ?]]
+   [kushi.core :refer [defcss merge-attrs sx]] 
+   [kushi.css.build.design-tokens :as design-tokens]
+   [kushi.playground.component-examples :refer [all-colors section-label]]
+   [kushi.playground.showcase :refer [showcase]]
+   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.popover.core :refer [popover-attrs]]
+   [kushi.ui.popover.core :refer [popover-attrs]]
+   [kushi.ui.util :refer [as-str]]))
 
 (js/console.clear)
 
-(defcss ".foo" :c--red)
+(defcss ".foo" :c--blue)
 
 (def routes 
   {["components"] {:content layout/component-playground-content
@@ -20,6 +33,8 @@
    ["colors"]     {:content about/kushi-colors-about}
    ["typography"] {:content about/kushi-typography-about}
    ["intro"]      {:content about/kushi-about}})
+
+
 
 (defn main-view []
   (.setAttribute (domo/el-by-id "app")
@@ -37,7 +52,8 @@
      )
    2000)
   
-  ;; [pane-samples]
+  #_[showcase]
+  #_[pane-samples]
 
   (into 
    [:div (sx :.flex-col-fs)

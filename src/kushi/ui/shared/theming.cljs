@@ -6,10 +6,25 @@
   )
 
 (def variants
-  {:shape    #{"rounded" "sharp" "pill"}
+  {:shape    #{"rounded" "sharp" "pill" "circle"}
    :surface  #{"minimal" "outline" "solid" "soft"}
    ;; :semantic #{"neutral" "accent" "positive" "negative" "warning"}
-   :colorway #{"accent" "positive" "negative" "warning" "neutral"}
+   :colorway #{"neutral"
+               "accent"
+               "positive"
+               "negative"
+               "warning"
+               "gray"
+               "purple"
+               "blue"
+               "green"
+               "lime"
+               "yellow"
+               "gold"
+               "orange"
+               "red"
+               "magenta"
+               "brown"}
    })
 
 (def variant-defaults
@@ -26,18 +41,23 @@
 ;; (def color-mix-support? (? (.supports js/window.CSS "(color: color-mix(in oklch, red, transparent)")))
 ;; (def oklch-support? (? (.supports js/window.CSS "(color: oklch(40.1% 0.123 21.57))")))
 
-(defn get-variants [opts]
-  (reduce-kv (fn [acc k v]
-               (assoc acc
-                      k
-                      (or (some-> k
-                                  opts
-                                  (maybe nameable?)
-                                  as-str
-                                  (maybe (k variants)))
-                          v)))
-             {}
-             variant-defaults))
+(defn get-variants
+  ([opts]
+   (get-variants opts nil))
+  ([opts defaults]
+   (reduce-kv (fn [acc k v]
+                (assoc acc
+                       k
+                       (or (some-> k
+                                   opts
+                                   (maybe nameable?)
+                                   as-str
+                                   (maybe (k variants)))
+                           v)))
+              {}
+              (merge variant-defaults
+                     defaults)))
+  )
 
 
 (defn- valid-hue? [x]

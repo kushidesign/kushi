@@ -43,7 +43,37 @@
                :pred    #{string? keyword?}
                :default nil
                :desc    "The name of a Google Material Symbol to use as an icon
-                         in the inline end position"}
+                         in the inline end position"
+               :examples [#_{:value [icon :auto-awesome]
+                           :args  ["Wow"]
+                           :attrs {:class     ["xxxsmall"]
+                                   :-colorway :accent}}
+                          #_{:value [icon :auto-awesome]
+                           :args  ["Pets"]
+                           :attrs {:class     ["xxxsmall"]
+                                   :-colorway :accent
+                                   :-surface  :solid}}
+                          [button
+                           {:class         ["xxxsmall"]
+                            :-end-enhancer [icon :pets]
+                            :-colorway     :accent
+                            :-surface      :solid}
+                           "Pets"]
+                          
+                          [button
+                           {:class         ["xxxsmall"]
+                            :-end-enhancer [icon :auto-awesome]
+                            :-colorway     :accent
+                            :-surface      :soft}
+                           "Wow"]
+                          
+                          [button
+                           {:class         ["xxxsmall"]
+                            :-end-enhancer [icon :play-arrow]
+                            :-colorway     :accent
+                            :-surface      :outline}
+                           "Play"]
+                          ]}
               {:name    colorway
                :pred    #{:neutral :accent :positive :negative :warning}
                :default nil
@@ -51,7 +81,7 @@
                          Kushi's design system, e.g `:red`, `:purple`, `:gold`,
                          etc."}
               {:name    surface
-               :pred    #{:soft :solid :minimal :outline}
+               :pred    #{:soft :solid :outline :minimal}
                :default :round
                :desc    "Surface variant of the button."}
               {:name    shape
@@ -61,7 +91,69 @@
               {:name    packing
                :pred    #{:compact :roomy}
                :default nil
-               :desc    "General amount of padding inside the button"}]}
+               :desc    "General amount of padding inside the button"}
+              {:name    size
+               :pred    #{:xxxsmall
+                          :xxsmall
+                          :xsmall
+                          :small
+                          :medium
+                          :large
+                          :xlarge
+                          :xxlarge
+                          :xxxlarge}
+               :default nil
+               :desc    "Corresponds to the font-size based on Kushi's font-size
+                         scale."}]
+   :demos   '[{:label    "Colorway + Surface variants"
+               :variants [colorway surface]}
+              {:label         "Sizes from xxsmall-xlarge"
+               :variants      [size]
+               :variants-keys {size xxsmall-xlarge}}
+              {:label    "Shape variants"
+               :variants [shape]}
+              
+              #_{:label    "Weight variants from light to extra-bold"
+              ;;  :sx-attrs        (sx-call (sx :.small))
+              ;;  :container-attrs container-attrs2
+              ;;  :snippets-header "Use the font-weight utility classes `:.thin` ~ `:.heavy`
+              ;;           to control the weight. Scale of weights:"
+              ;;  :snippets        '[[:div
+              ;;                      [button "Play"]
+              ;;                      [button (sx :.thin) "Play"]
+              ;;                      [button (sx :.extra-light) "Play"]
+              ;;                      [button (sx :.light) "Play"]
+              ;;                      [button (sx :.normal) "Play"]
+              ;;                      [button (sx :.wee-bold) "Play"]
+              ;;                      [button (sx :.semi-bold) "Play"]
+              ;;                      [button (sx :.bold) "Play"]
+              ;;                      [button (sx :.extra-bold) "Play"]
+              ;;                      [button (sx :.heavy) "Play"]]]
+               :examples (for [s (rest component-examples/type-weights)]
+                           {:label (name s)
+                            :args  ["Wow" #_[icon :auto-awesome]]
+                            :attrs {:class [s]}})}
+              
+              #_{:label    "icons"
+               :examples [
+                        ;; {:label "Icon button"
+                        ;;  :args  [[icon :favorite]]
+                        ;;  :attrs {:icon true}}
+                        ;; {:label "Icon button"
+                        ;;  :args  [[icon :star]]}
+                        ;; {:label "Icon button"
+                        ;;  :args  [[icon :play-arrow]]}
+                          
+                          {:label "Leading icon"
+                           :sx-utils (sx :.xxsmall)
+                           :args  [[icon :play-arrow] "Play"]}
+                          {:label "Trailing icon"
+                           :sx-utils (sx :.xxsmall)
+                           :args  ["Play" [icon :play-arrow]]}
+                          {:label   "2 icons"
+                           :sx-utils (sx :.xxsmall)
+                           :args    [[icon :auto-awesome] "Wow" [icon :auto-awesome]]}]}
+              ]}
   [& args]
   (let [
         [opts attrs & children]
@@ -73,6 +165,7 @@
                 colorway
                 stroke-align
                 packing
+                size
                 icon]}
         opts
 
@@ -97,6 +190,7 @@
                 :jc--c
                 :ai--c
                 :w--fit-content
+                :h--fit-content
                 :gap--$icon-enhanceable-gap
                 :cursor--pointer
                 :transition-property--all
@@ -127,6 +221,7 @@
                     (data-kushi- :packing))
             hue-style-map
             (some-> surface (data-kushi- :surface))
+            (some-> size (data-kushi- :size))
             attrs)]
           (cond icon           [[kushi.ui.icon.core/icon :star]]
                 start-enhancer (cons start-enhancer children)

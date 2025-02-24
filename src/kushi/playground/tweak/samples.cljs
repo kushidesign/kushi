@@ -1,34 +1,18 @@
 (ns kushi.playground.tweak.samples
   (:require
-   [kushi.core :refer [css ?css sx defcss token->ms merge-attrs css-vars-map]]
-   [kushi.playground.layout :as layout]
-   [kushi.playground.nav :as nav]
-   [kushi.playground.components :refer [playground-components]]
    [domo.core :as domo]
-   [kushi.playground.about :as about]
-   [clojure.string :as string]
-   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
-   [kushi.ui.button.core :refer [button icon-button]]
-   [kushi.ui.tag.core :refer [tag]]
-   [kushi.ui.switch.core :refer [switch]]
-   [kushi.ui.callout.core :refer [callout callout-close-button]]
-   [kushi.ui.link.core :refer [link]]
-   [kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
-   [kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]
-   [kushi.ui.toast.demo :refer [toast-content]]
-   [reagent.dom :refer [render]]
-   [reagent.ratom]
-   [kushi.ui.modal.core :refer [modal modal-close-button open-kushi-modal close-kushi-modal]]
-   [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]
-   [kushi.ui.slider.core :refer [slider]]
-   [kushi.ui.icon.core :refer [icon]]
-  ;;  [kushi.colors2 :as colors2]
+   [kushi.core :refer [css css-vars-map defcss merge-attrs sx]]
+   [kushi.playground.component-examples :as component-examples]
    [kushi.playground.ui :refer [light-dark-mode-switch]]
-   [kushi.playground.tweak.colorscale :refer [pallette-generator
-                                              okstate
-                                              pallette-idx
-                                              adjust-slider!]]
-   [reagent.core :as r]))
+   [kushi.playground.assets.graphics.avatars :refer [avatar-1]]
+   [kushi.ui.avatar.core :refer [avatar]]
+   [kushi.ui.button.core :refer [button icon-button]]
+   [kushi.ui.callout.core :refer [callout callout-close-button]]
+   [kushi.ui.icon.core :refer [icon]] ;;  [kushi.colors2 :as colors2]
+   [kushi.ui.link.core :refer [link]]
+   [kushi.ui.switch.core :refer [switch]]
+   [kushi.ui.tag.core :refer [tag]]
+   [reagent.ratom]))
 
 
 
@@ -534,6 +518,7 @@
 (defn pane-samples []
   [:<> 
    [light-dark-mode-switch (sx :.fixed-block-start-inside :.light :.transition)]
+
    [:div (sx #_:.absolute-block-start
              :.absolute-centered
              :.flex-col-fs
@@ -541,11 +526,48 @@
              :mbs--3rem
              :mis--2rem)
 
-    [:div (sx :w--700px)
-     #_[:input.kushi-slider-input {:type :range :min 0 :max 1 :step 0.01 :defaultValue 0}]
-     [:input.kushi-slider-input {:type :range :min 0 :max 5 :step 0.25 :defaultValue 0}]
-     #_[:input.kushi-slider-input {:type :range :min 0 :max 33 :step 1 :defaultValue 0}]
-     ]
+    [:div (sx :.flex-row-fs :w--300px :min-height--75px :p--10px :.wireframe)
+     [avatar 
+      (merge {:src avatar-1}
+             (sx :w--50px :fs--$large))
+      "JC"]]
+
+    [:div (sx :.flex-col-fs :h--300px :min-width--75px :.wireframe)
+     [avatar {:-font-size-ratio 0.34} "JC"]]
+
+    (into [:div (sx :.flex-col-fs :gap--10px)]
+          (for [surface [:soft :solid :outline :minimal]]
+            (into [:div (sx :.flex-row-fs :gap--10px)]
+                  (for [font-size-class component-examples/sizes-all]
+                    [avatar {:-surface  surface
+                             :-colorway :accent
+                             :class     font-size-class}
+                     "JC"]))))
+
+    (into [:div (sx :.flex-col-fs :gap--10px)]
+          (for [surface [:soft :solid :outline :minimal]]
+            (into [:div (sx :.flex-row-fs :gap--10px)]
+                  (for [colorway [:neutral :accent :positive :negative]]
+                    [avatar {:-surface  surface
+                             :-colorway colorway
+                             :-shape    :rounded}
+                     "JC"]))))
+
+    (into [:div (sx :.flex-col-fs :gap--10px)]
+          (for [surface [:soft :solid :outline :minimal]]
+            (into [:div (sx :.flex-row-fs :gap--10px)]
+                  (for [colorway [:neutral :accent :positive :negative]]
+                    [avatar (merge-attrs {:-surface  surface
+                                          :-colorway colorway
+                                          :-shape    :circle}
+                                         (sx :h--48px :.large))
+                     "JC"]))))
+
+    #_[:div (sx :w--700px)
+       #_[:input.kushi-slider-input {:type :range :min 0 :max 1 :step 0.01 :defaultValue 0}]
+       [:input.kushi-slider-input {:type :range :min 0 :max 5 :step 0.25 :defaultValue 0}]
+       #_[:input.kushi-slider-input {:type :range :min 0 :max 33 :step 1 :defaultValue 0}]
+       ]
 
     #_[slider3]
 
