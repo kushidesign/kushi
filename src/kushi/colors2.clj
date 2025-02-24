@@ -7,6 +7,7 @@
 (defn round2
   "Round a double to the given precision (number of significant digits)"
   [precision d]
+  ;; cljc
   (let [factor (Math/pow 10 precision)]
     (/ (Math/round (* d factor)) factor)))
 
@@ -189,47 +190,7 @@
             [900 37 24]
             [1000 40 11]]}
    ])
-;; (defn average [coll] 
-;;   (/ (reduce + coll) (count coll)))
 
-;; (defn js-round-to [n places]
-;;   (let [factor (js/Math.pow 10 places)]
-;;     (/ (js/Math.round (* n factor)) factor)))
-
-;; (defn create-color-pallette [m color-name]
-;;   (let [{:keys [hue scale]
-;;          :as   color}      (get m color-name) 
-;;         oklch-coords       (for [[level
-;;                                   saturation
-;;                                   lightness] scale
-;;                                  :let        [hsl-color (new (.-Color js/window)
-;;                                                              "hsl"
-;;                                                              (clj->js [hue saturation lightness]))
-;;                                               oklch-color (.to hsl-color "oklch")
-;;                                               ;;  _ (when (= "gray" color-name)
-;;                                               ;;      (?> oklch-color))
-;;                                               ]]
-;;                              (->> oklch-color 
-;;                                   .-coords 
-;;                                   js->clj
-;;                                   (concat [level])))
-;;         average-ok-lch-hue* (->> oklch-coords (map last) average)
-;;         average-ok-lch-hue  (js-round-to average-ok-lch-hue* 1)
-;;         oklch-coords        (mapv #(into []
-;;                                          (map-indexed (fn [i n]
-;;                                                         (if (zero? i)
-;;                                                           n
-;;                                                           (js-round-to n 3)))
-;;                                                       (drop-last %)))
-;;                                   oklch-coords)]
-;;     [color-name {:hue (if (js/isNaN average-ok-lch-hue) 0 average-ok-lch-hue)
-;;                  :scale oklch-coords}]))
-
-
-;; (defn pallettes []
-;;   (let [colors-map      (apply hash-map colors)
-;;         color-names (take-nth 2 colors)]
-;;     (mapv (partial create-color-pallette colors-map) color-names)))
 
 
 (def brown-hue 46.1)
@@ -771,25 +732,25 @@
 
 (def theming-colors-oklch-flattened 
   (let [
-        fg-l        650
+        fg-l        700
+        fg-2-l      800
+        fg-3-l      900
         fg-d        250
-        fg-2-l      700
         fg-2-d      150
-        fg-3-l      750
         fg-3-d      100
 
         bg-soft      50
-        bg-soft-d   850
         bg-soft-2   100
-        bg-soft-2-d 750
         bg-soft-3   150
+        bg-soft-d   850
+        bg-soft-2-d 750
         bg-soft-3-d 650
 
         bg-hard     650
-        bg-hard-d   400
         bg-hard-2   700
-        bg-hard-2-d 350
         bg-hard-3   750
+        bg-hard-d   400
+        bg-hard-2-d 350
         bg-hard-3-d 300
 
         standard    [fg-l      fg-d
@@ -835,9 +796,29 @@
         blue        [fg-l      fg-d
                      fg-2-l    fg-2-d
                      fg-3-l    fg-3-d
-                     100       bg-soft-d  
-                     150       bg-soft-2-d
-                     200       bg-soft-3-d
+                     bg-soft   bg-soft-d  
+                     bg-soft-2 bg-soft-2-d
+                     bg-soft-3 bg-soft-3-d
+                     bg-hard   350  
+                     bg-hard-2 300
+                     bg-hard-3 250]
+
+        purple      [fg-l      fg-d
+                     fg-2-l    fg-2-d
+                     fg-3-l    fg-3-d
+                     bg-soft   750 
+                     bg-soft-2 650
+                     bg-soft-3 550
+                     550       350  
+                     600       300
+                     650       250]
+
+        lime        [fg-l      fg-d
+                     fg-2-l    fg-2-d
+                     fg-3-l    fg-3-d
+                     bg-soft   bg-soft-d  
+                     bg-soft-2 bg-soft-2-d
+                     bg-soft-3 bg-soft-3-d
                      bg-hard   350  
                      bg-hard-2 300
                      bg-hard-3 250]
@@ -848,10 +829,10 @@
                      "negative" standard
                      "neutral"  neutral
                      "gray"     neutral
-                     "purple"   standard
+                     "purple"   purple
                      "blue"     blue
                      "green"    green
-                     "lime"     standard
+                     "lime"     lime
                      "yellow"   yellow
                      "gold"     standard
                      "orange"   standard
