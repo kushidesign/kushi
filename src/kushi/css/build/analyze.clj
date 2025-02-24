@@ -8,8 +8,11 @@
    [kushi.css.build.tokens :refer [design-tokens-by-category
                                    design-tokens-by-token
                                    design-tokens-by-token-array-map]]
+  ;;  [kushi.css.build.color-tokens :refer [color-tokens-by-category
+  ;;                                        color-tokens-by-token
+  ;;                                        color-tokens-by-token-array-map]]
    [kushi.css.build.state]
-   [kushi.core :refer [css-rule*]]
+   [kushi.core :refer [css-rule* colorway-selector colorway-args]]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as kushi-specs]
    [kushi.util :refer [maybe keyed]]
@@ -20,6 +23,35 @@
    [clojure.spec.alpha]
   ;;  [tick.core :as tick]
    ))
+
+;; Combine the design and color tokens.
+;; They are defined similarly, but in separate namespaces, because color-tokens
+;; needs to read from the user's kushi.edn to generate pallettes based on
+;; potential overriddes from the user regarding which color to use for semantic
+;; colorways like accents, neutrals, etc. This means the color-tokens ns needs
+;; to be .clj, while the design-tokens needs to be .cljc, so that it can be seen
+;; from cljs land in the context of generating docs for playground (getting all
+;; tokens related to a component).
+
+;; (def design+color-tokens-by-category
+;;   (merge design-tokens-by-category color-tokens-by-category))
+
+;; (def design+color-tokens-by-token
+;;   (merge design-tokens-by-token color-tokens-by-token))
+
+;; (def design+color-tokens-by-token-array-map
+;;   (sequence cat 
+;;             (concat color-tokens-by-token-array-map
+;;                     design-tokens-by-token-array-map)))
+
+(def design+color-tokens-by-category
+  design-tokens-by-category)
+
+(def design+color-tokens-by-token
+  design-tokens-by-token)
+
+(def design+color-tokens-by-token-array-map
+  design-tokens-by-token-array-map)
 
 
 ;; Perf Timing -----------------------------------------------------------------
@@ -87,6 +119,7 @@
 (def kushi-macros
   '#{css-include
      defcss 
+     defcolorway
      css
      sx
      ?css
@@ -240,7 +273,7 @@
 (defn register-design-tokens-by-category-call-data
   [{:keys [args]} *css] 
   (doseq [tag args]
-    (when-let [toks (get design-tokens-by-category tag)]
+    (when-let [toks (get design+color-tokens-by-category tag)]
       #_(when (= tag "popover")
         (? 'popover-toks toks))
       (vswap-design-tokens! toks *css))))
@@ -392,6 +425,26 @@
                                   [:bold.magenta sel]
                                   " "
                                   [:italic.blue k])}))
+
+(defn defcolorway-call-data
+  [{:keys [args form ns-str ns-meta ns rel-path]
+    :as m}
+   *css]
+  (let [sel-og (colorway-selector (first args))
+        sel    sel-og
+        args   (colorway-args (first args))
+        layer  "kushi-ui-theming" 
+        result (merge m
+                      (meta form)
+                      (keyed [sel-og sel args layer]))]
+    (initialize-layer-vector! *css ns layer)
+    (vswap! *css
+            update-in
+            [:sources ns layer]
+            conj
+            result)
+    nil))
+
 
 (defn defcss-call-data
   [{:keys [args form ns-str ns-meta ns rel-path]
@@ -716,6 +769,9 @@
              (contains? '#{?defcss defcss} macro-sym)
              (defcss-call-data m *css)
 
+             (contains? '#{?defcolorway defcolorway} macro-sym)
+             (defcolorway-call-data m *css)
+
              (contains? '#{register-design-tokens} macro-sym)
              (register-design-tokens-call-data m *css)
 
@@ -831,7 +887,7 @@
   (when-not (or (contains? (:required/kushi-design-tokens @*css) tok)
                 (contains? (:required/user-design-tokens @*css) tok))
    (let [dep-toks
-         (or (dep-toks-set tok design-tokens-by-token)
+         (or (dep-toks-set tok design+color-tokens-by-token)
              (dep-toks-set tok (:theme/user-design-tokens @*css)))]
      (some-> dep-toks
              (set/difference (:required/kushi-design-tokens @*css))
@@ -841,7 +897,7 @@
 (defn register-toks+deps [tok *css] 
   (if-let [[tok-val k]
            (let [kushi-tok
-                 (get design-tokens-by-token tok)
+                 (get design+color-tokens-by-token tok)
                  
                  user-tok
                  (get (:theme/user-design-tokens @*css) tok)]
@@ -943,7 +999,7 @@
   (let [[layer path] (layer+css-path design-tokens-layer-name)
         tokens-coll (if release? 
                       (:required/kushi-design-tokens @*css)
-                      [design-tokens-by-token-array-map])]
+                      [design+color-tokens-by-token-array-map])]
     (spit-css-layer+profile 
      path 
      (css-rule* ":root"
@@ -1112,7 +1168,7 @@
   (array-map
    :base/kushi-design-tokens
    {:desc  "Base design tokens defined in Kushi lib. See kushi.css.build.tokens ns."
-    :value design-tokens-by-token}
+    :value design+color-tokens-by-token}
 
    :theme/user-design-tokens 
    {:desc  "Design tokens defined in user theme. These could be overrides for tokens in :tokens/kushi-base, or the user's own custom global design tokens."
