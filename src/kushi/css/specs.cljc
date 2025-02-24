@@ -35,8 +35,11 @@
 (defn alts-exactly-one [s]
   (str "[" s "]"))
 
+;; A-Z is not really first car, but is used in something like:
+;; (css {"@supports(color: color-mix(in oklch, currentcolor, transparent))"
+;;       {:--bordercolor :blue}}])
 (def css-prop-stack-first-char-allowables
-  " 0-9a-z_\\-\\+\\>\\~\\*\\.\\#\\$\\@")
+  " 0-9a-zA-Z_\\-\\+\\>\\~\\*\\.\\#\\$\\@\\%")
 
 (def css-selector-first-char-allowables
   "\\.\\[\\*\\#a-z\\:")
@@ -60,7 +63,7 @@
 ;; TODO - stress-test appending the & selector
 (def css-prop-stack-re-base
   (alts-zero-or-more (str css-prop-stack-allowables
-                          "\\(\\[\\'\"\\=\\~\\^\\]\\)"
+                          "\\(\\[\\'\"\\=\\~\\^\\]\\)\\,"
                           " \\&")))
 
 (def css-prop-stack-re
