@@ -14,3 +14,13 @@
    Expands to nil."
   [sel & args]
   nil)
+
+(defmacro ^:public defcolorway
+  "Used internally to define colorway rulesets for kushi ui theming system.
+   `s` must be a string that maps to a color-token base e.g. `\"red\"`, 
+   `\"warning\"`, etc.
+   The function call will be picked up in the analyzation phase of a build,
+   then fed to `css-colorway` to produce a css rule that will be written to disk.
+   Expands to nil."
+  [s]
+  nil)

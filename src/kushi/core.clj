@@ -15,7 +15,7 @@
   ;; for testing
   ;;  [taoensso.tufte :as tufte]
    
-   [kushi.css.build.tokens :as tokens]))
+   ))
 
 ;; EEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR   RRRRRRRRRRRRRRRRR   
 ;; E::::::::::::::::::::ER::::::::::::::::R  R::::::::::::::::R  
@@ -520,6 +520,8 @@
 ;; API Helpers
 ;; -----------------------------------------------------------------------------
 
+
+
 (defn- loc-id
   "Returns classname based on namespace and line + column.
    e.g. \"starter_browser__L41_C6\""
@@ -938,11 +940,53 @@
              (str sel " " css-str))))))))
 
 
+(defn colorway-selector [s]
+  (str "[data-kushi-colorway=\"" s "\"]"))
+
+
+(defn colorway-args [s]
+  [{:color                             (keyword (str "$foreground-color-" s ))
+    :hover:color                       (keyword (str "$foreground-color-" s "-2"))
+    :active:color                      (keyword (str "$foreground-color-" s "-3"))
+    :dark:color                        (keyword (str "$foreground-color-" s "-dark-mode"))
+    :dark:hover:color                  (keyword (str "$foreground-color-" s "-2-dark-mode"))
+    :dark:active:color                 (keyword (str "$foreground-color-" s "-3-dark-mode"))
+    :hover:bgc                         (keyword (str "$background-color-" s "-soft"))
+    :active:bgc                        (keyword (str "$background-color-" s "-soft-2"))
+    :dark:hover:bgc                    (keyword (str "$background-color-" s "-soft-dark-mode"))
+    :dark:active:bgc                   (keyword (str "$background-color-" s "-soft-2-dark-mode"))
+
+    "[data-kushi-surface= \"soft\"]"       {:bgc             (keyword (str "$background-color-" s "-soft"))
+                                            :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
+                                            :hover:bgc       (keyword (str "$background-color-" s "-soft-2"))
+                                            :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-2-dark-mode"))
+                                            :active:bgc      (keyword (str "$background-color-" s "-soft-3"))
+                                            :dark:active:bgc (keyword (str "$background-color-" s "-soft-3-dark-mode"))}
+
+    "[data-kushi-surface= \"solid\"]"      {:bgc        (keyword (str "$background-color-" s "-hard"))
+                                            :hover:bgc  (keyword (str "$background-color-" s "-hard-2"))
+                                            :active:bgc (keyword (str "$background-color-" s "-hard-3"))}
+
+    "dark:[data-kushi-surface= \"solid\"]" {:bgc        (keyword (str "$background-color-" s "-hard-dark-mode"))
+                                            :hover:bgc  (keyword (str "$background-color-" s "-hard-2-dark-mode"))
+                                            :active:bgc (keyword (str "$background-color-" s "-hard-3-dark-mode"))}}])
+
+
 (defmacro ^:public css-rule
   "Returns a serialized css ruleset, with selector and potentially nested css
    block."
   [sel & args]
   (css-rule* sel args &form &env))
+
+(defmacro ^:public defcolorway
+  "Used internally to define colorway rulesets for kushi ui theming system.
+   `s` must be a string that maps to a color-token base e.g. `\"red\"`, 
+   `\"warning\"`, etc.
+   The function call will be picked up in the analyzation phase of a build,
+   then fed to `css-colorway` to produce a css rule that will be written to disk.
+   Expands to nil."
+  [s]
+  nil)
 
 (defmacro ^:public css-include
   "Used to pull in .css resources. Expands to nil.
@@ -957,6 +1001,7 @@
    The information about the layer and resource will get included in the build."
   [sel]
   nil)
+
 
 (defmacro ^:public defcss
   "Used to define shared css rulesets.
@@ -979,6 +1024,20 @@
                               :sym
                               '?defcss))
       nil)))
+
+
+
+(defmacro ^:public ?defcolorway
+  "Tapping version of `defcolorway`"
+  [s]
+  (let [sel   (colorway-selector s)
+        args  (colorway-args s)
+        block (css-rule* sel args &form &env)]
+    (print-css-block (assoc (keyed [args &form &env block])
+                            :sym
+                            '?defcolorway))
+    nil))
+
 
 ;; TODO - For release builds we might want to elide the inclusion of the
 ;;        auto-generated classname (e.g. myns_foo__L20_C11), if that ruleset

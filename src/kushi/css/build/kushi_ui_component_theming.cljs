@@ -1,6 +1,7 @@
 (ns ^{:kushi/layer "kushi-ui-theming"} kushi.css.build.kushi-ui-component-theming
   (:require
-   [kushi.css.build.macros :refer [defcss]]))
+   [fireworks.core :refer [?]]
+   [kushi.css.build.macros :refer [defcolorway defcss]]))
 
 (defcss
   "body"
@@ -145,6 +146,8 @@
 (defcss ".sharp" {"border-radius" "0"})
 
 (defcss ".pill" {"border-radius" "9999px"})
+
+(defcss ".circle" {"border-radius" "9999px" "aspect-ratio" "1 / 1"})
 
 (defcss ".xxxtight" {"letter-spacing" "var(--xxxtight)"})
 
@@ -971,8 +974,7 @@
 
 (defcss
   ":root"
-  {
-   "--debug-grid-size"                                  "107px",
+  {"--debug-grid-size"                                  "107px",
    "--debug-grid-color"                                 "#eee",
    "--outlined-element-stroke-width"                    "1px"
    "--outlined-button-stroke-width"                     "var(--outlined-element-stroke-width)"
@@ -996,130 +998,24 @@
    "--tag-padding-block-roomy"                          "0.45em",
    "--tag-padding-inline-roomy"                         "0.9em"})
 
-(defcss
-  "[data-kushi-colorway=\"neutral\"]"
-  {:color                           :$foreground-color-neutral
-   :hover:color                     :$foreground-color-neutral-2
-   :active:color                    :$foreground-color-neutral-3
-   :dark:color                      :$foreground-color-neutral-dark-mode
-   :dark:hover:color                :$foreground-color-neutral-2-dark-mode
-   :dark:active:color               :$foreground-color-neutral-3-dark-mode
-   :hover:bgc                       :$background-color-neutral-soft
-   :active:bgc                      :$background-color-neutral-soft-2
-   :dark:hover:bgc                  :$background-color-neutral-soft-dark-mode
-   :dark:active:bgc                 :$background-color-neutral-soft-2-dark-mode
-   "[data-kushi-surface= \"soft\"]"       {:bgc        :$background-color-neutral-soft
-                                         :dark:bgc        :$background-color-neutral-soft-dark-mode
-                                         :hover:bgc  :$background-color-neutral-soft-2
-                                         :dark:hover:bgc  :$background-color-neutral-soft-2-dark-mode
-                                         :active:bgc :$background-color-neutral-soft-3
-                                         :dark:active:bgc :$background-color-neutral-soft-3-dark-mode}
-   "[data-kushi-surface= \"solid\"]"      {:bgc          :$background-color-neutral-hard
-                                         :hover:bgc    :$background-color-neutral-hard-2
-                                         :active:bgc   :$background-color-neutral-hard-3}
-   "dark:[data-kushi-surface= \"solid\"]" {:bgc        :$background-color-neutral-hard-dark-mode
-                                         :hover:bgc  :$background-color-neutral-hard-2-dark-mode
-                                         :active:bgc :$background-color-neutral-hard-3-dark-mode}})
 
-(defcss
-  "[data-kushi-colorway=\"accent\"]"
-  {:color                           :$foreground-color-accent
-   :hover:color                     :$foreground-color-accent-2
-   :active:color                    :$foreground-color-accent-3
-   :dark:color                      :$foreground-color-accent-dark-mode
-   :dark:hover:color                :$foreground-color-accent-2-dark-mode
-   :dark:active:color               :$foreground-color-accent-3-dark-mode
-   :hover:bgc                       :$background-color-accent-soft
-   :active:bgc                      :$background-color-accent-soft-2
-   :dark:hover:bgc                  :$background-color-accent-soft-dark-mode
-   :dark:active:bgc                 :$background-color-accent-soft-2-dark-mode
-   "[data-kushi-surface= \"soft\"]"       {:bgc        :$background-color-accent-soft
-                                         :dark:bgc        :$background-color-accent-soft-dark-mode
-                                         :hover:bgc  :$background-color-accent-soft-2
-                                         :dark:hover:bgc  :$background-color-accent-soft-2-dark-mode
-                                         :active:bgc :$background-color-accent-soft-3
-                                         :dark:active:bgc :$background-color-accent-soft-3-dark-mode}
-   "[data-kushi-surface= \"solid\"]"      {:bgc          :$background-color-accent-hard
-                                         :hover:bgc    :$background-color-accent-hard-2
-                                         :active:bgc   :$background-color-accent-hard-3}
-   "dark:[data-kushi-surface= \"solid\"]" {:bgc        :$background-color-accent-hard-dark-mode
-                                         :hover:bgc  :$background-color-accent-hard-2-dark-mode
-                                         :active:bgc :$background-color-accent-hard-3-dark-mode}})
+(defcolorway "neutral")
+(defcolorway "accent")
+(defcolorway "positive")
+(defcolorway "negative")
+(defcolorway "warning")
+(defcolorway "gray")
+(defcolorway "purple")
+(defcolorway "blue")
+(defcolorway "green")
+(defcolorway "lime")
+(defcolorway "yellow")
+(defcolorway "gold")
+(defcolorway "orange")
+(defcolorway "red")
+(defcolorway "magenta")
+(defcolorway "brown")
 
-(defcss
-  "[data-kushi-colorway=\"positive\"]"
-  {:color                           :$foreground-color-positive
-   :hover:color                     :$foreground-color-positive-2
-   :active:color                    :$foreground-color-positive-3
-   :dark:color                      :$foreground-color-positive-dark-mode
-   :dark:hover:color                :$foreground-color-positive-2-dark-mode
-   :dark:active:color               :$foreground-color-positive-3-dark-mode
-   :hover:bgc                       :$background-color-positive-soft
-   :active:bgc                      :$background-color-positive-soft-2
-   :dark:hover:bgc                  :$background-color-positive-soft-dark-mode
-   :dark:active:bgc                 :$background-color-positive-soft-2-dark-mode
-   "[data-kushi-surface= \"soft\"]"       {:bgc             :$background-color-positive-soft
-                                         :dark:bgc        :$background-color-positive-soft-dark-mode
-                                         :hover:bgc       :$background-color-positive-soft-2
-                                         :dark:hover:bgc  :$background-color-positive-soft-2-dark-mode
-                                         :active:bgc      :$background-color-positive-soft-3
-                                         :dark:active:bgc :$background-color-positive-soft-3-dark-mode}
-   "[data-kushi-surface= \"solid\"]"      {:bgc        :$background-color-positive-hard
-                                         :hover:bgc  :$background-color-positive-hard-2
-                                         :active:bgc :$background-color-positive-hard-3}
-   "dark:[data-kushi-surface= \"solid\"]" {:bgc        :$background-color-positive-hard-dark-mode
-                                         :hover:bgc  :$background-color-positive-hard-2-dark-mode
-                                         :active:bgc :$background-color-positive-hard-3-dark-mode}})
-
-(defcss
-  "[data-kushi-colorway=\"negative\"]"
-  {:color                           :$foreground-color-negative
-   :hover:color                     :$foreground-color-negative-2
-   :active:color                    :$foreground-color-negative-3
-   :dark:color                      :$foreground-color-negative-dark-mode
-   :dark:hover:color                :$foreground-color-negative-2-dark-mode
-   :dark:active:color               :$foreground-color-negative-3-dark-mode
-   :hover:bgc                       :$background-color-negative-soft
-   :active:bgc                      :$background-color-negative-soft-2
-   :dark:hover:bgc                  :$background-color-negative-soft-dark-mode
-   :dark:active:bgc                 :$background-color-negative-soft-2-dark-mode
-   "[data-kushi-surface= \"soft\"]"       {:bgc        :$background-color-negative-soft
-                                         :dark:bgc        :$background-color-negative-soft-dark-mode
-                                         :hover:bgc  :$background-color-negative-soft-2
-                                         :dark:hover:bgc  :$background-color-negative-soft-2-dark-mode
-                                         :active:bgc :$background-color-negative-soft-3
-                                         :dark:active:bgc :$background-color-negative-soft-3-dark-mode}
-   "[data-kushi-surface= \"solid\"]"      {:bgc          :$background-color-negative-hard
-                                         :hover:bgc    :$background-color-negative-hard-2
-                                         :active:bgc   :$background-color-negative-hard-3}
-   "dark:[data-kushi-surface= \"solid\"]" {:bgc        :$background-color-negative-hard-dark-mode
-                                         :hover:bgc  :$background-color-negative-hard-2-dark-mode
-                                         :active:bgc :$background-color-negative-hard-3-dark-mode}})
-
-(defcss
-  "[data-kushi-colorway=\"warning\"]"
-  {:color                           :$foreground-color-warning
-   :hover:color                     :$foreground-color-warning-2
-   :active:color                    :$foreground-color-warning-3
-   :dark:color                      :$foreground-color-warning-dark-mode
-   :dark:hover:color                :$foreground-color-warning-2-dark-mode
-   :dark:active:color               :$foreground-color-warning-3-dark-mode
-   :hover:bgc                       :$background-color-warning-soft
-   :active:bgc                      :$background-color-warning-soft-2
-   :dark:hover:bgc                  :$background-color-warning-soft-dark-mode
-   :dark:active:bgc                 :$background-color-warning-soft-2-dark-mode
-   "[data-kushi-surface= \"soft\"]"       {:bgc             :$background-color-warning-soft
-                                         :dark:bgc        :$background-color-warning-soft-dark-mode
-                                         :hover:bgc       :$background-color-warning-soft-2
-                                         :dark:hover:bgc  :$background-color-warning-soft-2-dark-mode
-                                         :active:bgc      :$background-color-warning-soft-3
-                                         :dark:active:bgc :$background-color-warning-soft-3-dark-mode}
-   "[data-kushi-surface= \"solid\"]"      {:bgc        :$background-color-warning-hard
-                                         :hover:bgc  :$background-color-warning-hard-2
-                                         :active:bgc :$background-color-warning-hard-3}
-   "dark:[data-kushi-surface= \"solid\"]" {:bgc        :$background-color-warning-hard-dark-mode
-                                         :hover:bgc  :$background-color-warning-hard-2-dark-mode
-                                         :active:bgc :$background-color-warning-hard-3-dark-mode}})
 
 (defcss "[data-kushi-surface=\"solid\"]"
   {:color             :white
@@ -1135,21 +1031,63 @@
 (defcss
   "[data-kushi-surface]"
   {"--_stroke"
-   "inset 0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, currentColor)"
+   "inset 0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_fallback-stroke-color))"
 
    "[data-kushi-stroke-align=\"outside\"]"
-    {"--_stroke" "0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, currentColor)"}
-   
+   {"--_stroke" "0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_fallback-stroke-color))"}
+
    "box-shadow"
-   "var(--_stroke)"})
+   "var(--_stroke)"
+   
+   "--_fallback-stroke-color"
+   "currentColor"
+
+   "@supports(color: color-mix(in oklch, currentColor, transparent))"
+   {"--_fallback-stroke-color"
+    "color-mix(in oklch, currentColor, transparent)"}})
                                      
 
 (defcss "[data-kushi-shape=\"rounded\"]"
   {:border-radius :0.3em})
 
 
-(defcss "[data-kushi-shape=\"pill\"]"
+(defcss "[data-kushi-shape=\"pill\"], [data-kushi-shape=\"circle\"]"
   {:border-radius :9999px})
+
+;; For generating code
+#_(println
+   (string/join "\n\n "
+                (for [sz [:xxxsmall
+                            :xxsmall
+                            :xsmall
+                            :small
+                            :medium
+                            :large
+                            :xlarge
+                            :xxlarge
+                            :xxxlarge]] 
+
+                  (list 'defcss
+                        (str "[data-kushi-shape=\"" (name sz) "\"]")
+                        {:font-size (keyword (str "$" (name sz)))}))))
+
+(defcss "[data-kushi-size=\"xxxsmall\"]" {:font-size :$xxxsmall})
+
+(defcss "[data-kushi-size=\"xxsmall\"]" {:font-size :$xxsmall})
+
+(defcss "[data-kushi-size=\"xsmall\"]" {:font-size :$xsmall})
+
+(defcss "[data-kushi-size=\"small\"]" {:font-size :$small})
+
+(defcss "[data-kushi-size=\"medium\"]" {:font-size :$medium})
+
+(defcss "[data-kushi-size=\"large\"]" {:font-size :$large})
+
+(defcss "[data-kushi-size=\"xlarge\"]" {:font-size :$xlarge})
+
+(defcss "[data-kushi-size=\"xxlarge\"]" {:font-size :$xxlarge})
+
+(defcss "[data-kushi-size=\"xxxlarge\"]" {:font-size :$xxxlarge})
 
 
 ;; Move to button ns?
@@ -1192,7 +1130,18 @@
     }
 
    "[data-kushi-packing=\"roomy\"]"
-   {:--_padding-inline "var(--tag-padding-inline-roomy)"
+   {:--_padding-inline      "var(--tag-padding-inline-roomy)"
     :--_padding-block-start "calc(var(--tag-padding-block-roomy) * var(--tag-padding-block-start-reduction-ratio, 1))"
     :--_padding-block-end   "calc(var(--tag-padding-block-roomy))"
     }})
+
+;; Move to switch ns
+(defcss ".kushi-switch"
+  {:--switch-thumb-scale-factor                   1
+   :--switch-width-ratio                          2
+   :--switch-border-color                         :transparent
+   :--switch-border-width                         :2px
+   :--switch-off-background-color                 :$neutral-400
+   :--switch-off-background-color-hover           :$neutral-500
+   :--switch-off-background-color-dark-mode       :$neutral-750
+   :--switch-off-background-color-hover-dark-mode :$neutral-700})
