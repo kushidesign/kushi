@@ -1,5 +1,6 @@
 (ns kushi.core
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [domo.core :as domo]
 
@@ -242,3 +243,77 @@
 
   (reduce merge-attrs* maps))
 
+(def publics 
+  {'boolean? boolean?
+   'string?  string?
+   'keyword? keyword?
+   'number?  number?
+   'float?   float?
+   'neg?     neg?
+   'pos?     pos?
+   'pos-int? pos-int?
+   'neg-int? neg-int?
+   'vector?  vector?
+   'set?     set?
+   'map?     map?
+   'coll?    coll?})
+
+(when ^boolean js/goog.DEBUG
+ (defn validate-opt* [{:keys [x      
+                              opt
+                              pred     
+                              ui-ns
+                              ui-name
+                              err]}]
+   
+   (when-not (nil? x)
+     (let [pred-set? (set? pred)
+           pred-f (when-not pred-set? (get publics pred)) 
+           skip?  (or (nil? x)
+                      (and (not pred-set?)
+                           (not pred-f)))]
+       (when-not skip?
+         (when-not (if pred-set?
+                     (or (contains? pred x)
+                         (when (string? x)
+                           (contains? pred (keyword x))))
+                     (pred-f x))
+
+           ;; err stack investigation
+           #_(? :pp (-> (.-stack err)
+                  (string/split  #"\n")
+                  (subvec 1)
+                  (->>
+                   (map (comp last
+                              #(string/split % #"/")
+                              second
+                              #(re-find #"\(([^\)]+)\)" %)))
+                   )
+                  (->> (map (comp second
+                                  #(string/split % #" ")
+                                  string/trim)))))
+
+           (.apply js/console.warn
+                   js/console
+                   #js[(str ui-ns
+                            "\n\nInvalid option value was supplied for %c:-" opt "%c"
+                            "\n\n"
+                            "%c" (if (string? x) (str "\"" x "\"") x) "%c"
+                            "\n"
+                            "%c" (string/join (repeat (count (str x)) "^")) "%c"
+                            "\n\n"
+                            "Value must pass the following predicate:"
+                            "\n\n"
+                            "%c" (if (set? pred) (str pred) pred) "%c"
+                            ;; "\n\n\nCheck out the docs for more info:\n"
+                            ;; "https://kushi.design"
+                            "\n\n"
+                            )
+                       "font-style:italic;font-weight:bold"
+                       "font-style:default;font-weight:default"
+                       "font-style:italic;font-weight:bold"
+                       "font-style:default;font-weight:default"
+                       "font-weight:bold;color:red"
+                       "font-style:default;font-weight:default"
+                       "font-style:italic"
+                       "font-style:default;font-weight:default"])))))))
