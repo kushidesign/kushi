@@ -19,25 +19,42 @@
    "color" "var(--foreground-color-dark-mode)"})
 
 (defcss
-  "code, .code"
-  {"width" "fit-content",
-   "transition-duration" "var(--fast)",
-   "transition-property" "all",
-   "font-family" "var(--code-font-stack)",
-   "height" "fit-content",
-   "white-space" "nowrap",
-   "padding-inline" "var(--code-padding-inline)",
+  "code"
+  {"width"                      "fit-content",
+   "transition-duration"        "var(--fast)",
+   "transition-property"        "all",
+   "font-family"                "var(--code-font-stack)",
+   "height"                     "fit-content",
+   "white-space"                "nowrap",
+   "padding-inline"             "var(--code-padding-inline)",
    "transition-timing-function" "cubic-bezier(0, 0, 1, 1)",
-   "font-size" "var(--code-font-size)",
-   "background-color" "var(--code-background-color)",
-   "border-radius" "var(--code-border-radius)",
-   "padding-block" "var(--code-padding-block)",
-   "color" "var(--code-color)"})
+   "font-size"                  "var(--code-font-size)",
+   "background-color"           "var(--code-background-color)",
+   "padding-block"              "var(--code-padding-block)",
+   "border-radius"              "var(--code-border-radius, var(--rounded-absolute-small))",
+  ;;  "border-width"               "var(--code-border-width, 1px)",
+  ;;  "border-color"               "var(--code-border-color, var(--neutral-200))",
+  ;;  "border-style"               "var(--code-border-style, solid)",
+   "color"                      "var(--code-color)"})
 
 (defcss
-  ".dark code, .dark .code"
+  "pre>code"
+  {"background-color" :transparent
+   "border-width"     0
+   })
+
+(defcss
+  ".dark code"
   {"background-color" "var(--code-background-color-dark-mode)",
-   "color" "var(--code-color-dark-mode)"})
+   "color"            "var(--code-color-dark-mode)"
+  ;;  "border-color"     "var(--code-border-color-dark-mode, var(--neutral-800))",
+   })
+
+(defcss
+  ".dark pre>code"
+  {"background-color" :transparent
+   "border-width"     0
+   })
 
 (defcss
   ".styled-scrollbars"

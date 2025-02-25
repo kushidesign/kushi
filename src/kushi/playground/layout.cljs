@@ -419,7 +419,7 @@
   [{:keys [examples label component-meta]
     :as   component-opts}]
 
-  (? :pp component-opts)
+  (!? :pp component-opts)
 
   (let [{:keys [desc summary opts]} component-meta]
        (into [:<>

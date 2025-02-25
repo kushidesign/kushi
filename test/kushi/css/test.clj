@@ -28,16 +28,30 @@
             [clojure.set :as set]
             [clojure.spec.alpha :as s]
             [clojure.walk :as walk]
-            ;; [taoensso.tufte :as tufte :refer [p profile]]
             [kushi.css.defs :as defs]
             [edamame.core :as e :refer [parse-string parse-string-all]]
             [kushi.css.specs :as kushi-specs]
             [kushi.css.build.utility-classes :as utility-classes]
-            [kushi.util :refer [maybe keyed]]
+            [kushi.util :refer [maybe keyed nameable? as-str]]
             [kushi.colors2 :refer [oklch-colors]]
+            ;; [taoensso.tufte :as tufte :refer [p profile]]
             ))
 
-(? (css-rule* 
+
+;; (tufte/add-basic-println-handler! {})
+
+;; (profile ; Profile any `p` forms called during body execution
+;;   {} ; Profiling options; we'll use the defaults for now
+;;   (dotimes [_ 100000]
+;;     (p :simple (some-> "no"
+;;                   (maybe #{:outside "outside"})))
+;;     (p :more (some-> "no"
+;;                      (maybe nameable?)
+;;                      as-str
+;;                      (maybe #{"compact" "roomy"})))))
+
+
+(!? (css-rule* 
 ".foo"
  [{"@supports(color: color-mix(in oklch, currentColor, transparent 40%))"
    {:--bordercolor :blue}}]

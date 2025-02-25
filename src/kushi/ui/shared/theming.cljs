@@ -63,6 +63,7 @@
 (defn- valid-hue? [x]
   (and (number? x) (<= 0 x 360)))
 
+;; unused for now
 (defn hue-style-map [x]
   (when-let [v (or (when-let [s (some-> x (maybe nameable?) as-str)]
                      (or (when (string/starts-with? s "$")
