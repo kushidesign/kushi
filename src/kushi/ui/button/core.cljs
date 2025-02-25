@@ -1,12 +1,15 @@
 (ns kushi.ui.button.core
   (:require
-   [kushi.core :refer (sx merge-attrs)]
+   [fireworks.core :refer [? !? ?> !?>]]
+   [clojure.string :as string]
+   [kushi.core :refer (css defcss sx merge-attrs validate-opt)]
    [kushi.ui.core :refer (opts+children)]
    [kushi.ui.icon.core]
    [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
    [kushi.ui.util :refer [as-str maybe nameable?]]))
 
-(defn button
+
+(defn ^:public button
   {:summary "Buttons provide cues for actions and events."
 
    :desc    "Buttons are fundamental components that allow users to process
@@ -29,22 +32,27 @@
              `--button-border-width`
              The default value is `:1px`"
    
-   :opts    '[{:name    loading?
-               :pred    boolean?
-               :default false
-               :desc    "When `true`, this will set the appropriate values for
+   :opts    '{loading? 
+             {:pred    boolean?
+              :default false
+              :desc    "When `true`, this will set the appropriate values for
                         `aria-busy` and `aria-label`"}
-              {:name    start-enhancer
-               :pred    #{string? keyword?}
-               :default nil
-               :desc    "The name of a Google Material Symbol to use as an icon
+             start-enhancer
+             {:pred    #{string? keyword?}
+              :default nil
+              :desc    "The name of a Google Material Symbol to use as an icon
                          in the inline start position"}
-              {:name    end-enhancer
-               :pred    #{string? keyword?}
-               :default nil
-               :desc    "The name of a Google Material Symbol to use as an icon
-                         in the inline end position"
-               :examples [#_{:value [icon :auto-awesome]
+             end-enhancer 
+             {:pred    #{string? keyword?}
+              :default nil
+              :desc    "The name of a Google Material Symbol to use as an icon
+                        in the inline end position"
+              :snippets-header "Who cares?"
+              :examples ^{:label "Examples using end enhancer icons"
+                          :require [[kushi.ui.icon.core :refer [icon]]
+                                   [smth.core :refer [duh]]
+                                   [clojure.string :as string]]}
+                         [#_{:value [icon :auto-awesome]
                            :args  ["Wow"]
                            :attrs {:class     ["xxxsmall"]
                                    :-colorway :accent}}
@@ -53,6 +61,7 @@
                            :attrs {:class     ["xxxsmall"]
                                    :-colorway :accent
                                    :-surface  :solid}}
+                          ^{:label "oneee"}
                           [button
                            {:class         ["xxxsmall"]
                             :-end-enhancer [icon :pets]
@@ -60,13 +69,15 @@
                             :-surface      :solid}
                            "Pets"]
                           
+                          ^{:label "two"}
                           [button
                            {:class         ["xxxsmall"]
                             :-end-enhancer [icon :auto-awesome]
                             :-colorway     :accent
                             :-surface      :soft}
                            "Wow"]
-                          
+
+                          ^{:label "three"}
                           [button
                            {:class         ["xxxsmall"]
                             :-end-enhancer [icon :play-arrow]
@@ -74,26 +85,34 @@
                             :-surface      :outline}
                            "Play"]
                           ]}
-              {:name    colorway
-               :pred    #{:neutral :accent :positive :negative :warning}
+              colorway
+              {:pred    #{:neutral :accent :positive :negative :warning}
                :default nil
                :desc    "Colorway of the button. Can also be a named color from
                          Kushi's design system, e.g `:red`, `:purple`, `:gold`,
                          etc."}
-              {:name    surface
-               :pred    #{:soft :solid :outline :minimal}
+              surface
+              {:pred    #{:soft :solid :outline :minimal}
                :default :round
                :desc    "Surface variant of the button."}
-              {:name    shape
-               :pred    #{:sharp :round :pill}
+
+              shape
+              {:pred    #{:sharp :rounded :pill}
                :default :round
                :desc    "Shape of the button."}
-              {:name    packing
-               :pred    #{:compact :roomy}
+
+              packing
+              {:pred    #{:compact :roomy}
                :default nil
                :desc    "General amount of padding inside the button"}
-              {:name    size
-               :pred    #{:xxxsmall
+
+              stroke-align
+              {:pred    #{:outside :inside}
+               :default nil
+               :desc    "General amount of padding inside the button"}
+
+              size
+              {:pred    #{:xxxsmall
                           :xxsmall
                           :xsmall
                           :small
@@ -104,7 +123,7 @@
                           :xxxlarge}
                :default nil
                :desc    "Corresponds to the font-size based on Kushi's font-size
-                         scale."}]
+                         scale."}}
    :demos   '[{:label    "Colorway + Surface variants"
                :variants [colorway surface]}
               {:label         "Sizes from xxsmall-xlarge"
@@ -155,14 +174,12 @@
                            :args    [[icon :auto-awesome] "Wow" [icon :auto-awesome]]}]}
               ]}
   [& args]
-  (let [
-        [opts attrs & children]
+  (let [[opts attrs & children]
         (opts+children args)
 
         {:keys [loading?
                 start-enhancer
                 end-enhancer
-                colorway
                 stroke-align
                 packing
                 size
@@ -172,56 +189,47 @@
         {:keys             [shape surface]
          semantic-colorway :colorway}
         (get-variants opts)
-
-        hue-style-map                 
-        (when-not semantic-colorway 
-          (some-> colorway
-                  hue-style-map))
-
-        icon-button? (and icon (not (seq children)))]
-
-    ;; TODO maybe use :data-kushi-name "button"
+        
+        styling-class
+        (css ".kushi-button"
+             :position--relative
+             :d--flex
+             :flex-direction--row
+             :jc--c
+             :ai--c
+             :w--fit-content
+             :h--fit-content
+             :gap--$icon-enhanceable-gap
+             :cursor--pointer
+             :transition-property--all
+             :transition-timing-function--$transition-timing-function
+             :transition-duration--$transition-duration
+             [:--_padding-block :$button-padding-block-ems]
+             [:--_padding-inline :$button-padding-inline-ems]
+             :pi--$_padding-inline
+             :pb--$_padding-block)]
+    
+    ;; TODO maybe use :data-kushi-ui "button"
     (into [:button
            (merge-attrs
-            (sx ".kushi-button"
-                :position--relative
-                :d--flex
-                :flex-direction--row
-                :jc--c
-                :ai--c
-                :w--fit-content
-                :h--fit-content
-                :gap--$icon-enhanceable-gap
-                :cursor--pointer
-                :transition-property--all
-                :transition-timing-function--$transition-timing-function
-                :transition-duration--$transition-duration
-                [:--_padding-block :$button-padding-block-ems]
-                [:--_padding-inline :$button-padding-inline-ems]
-                :pi--$_padding-inline
-                :pb--$_padding-block)
-            {:aria-busy        loading?
-             :aria-label       (when loading? "loading")
-             :data-kushi-ia      ""
-             :data-kushi-surface surface
-             :data-kushi-shape   shape}
-            (when loading? {:data-kushi-ui-spinner true})
-            (when (and (not icon) end-enhancer) (data-kushi- "" :end-enhancer))
-            (when (and (not icon) start-enhancer) (data-kushi- "" :start-enhancer))
-            (some-> stroke-align 
-                    (maybe #{:outside "outside"})
-                    (data-kushi- :stroke-align))
-            (some-> (or semantic-colorway
-                        (when hue-style-map ""))
-                    (data-kushi- :colorway))
-            (some-> packing
-                    (maybe nameable?)
-                    as-str
-                    (maybe #{"compact" "roomy"})
-                    (data-kushi- :packing))
-            hue-style-map
-            (some-> surface (data-kushi- :surface))
-            (some-> size (data-kushi- :size))
+            {:class                     styling-class
+             :aria-busy                 loading?
+             :aria-label                (when loading? "loading")
+             :data-kushi-ia             ""
+             :data-kushi-surface        (validate-opt button surface)
+             :data-kushi-colorway       (validate-opt button semantic-colorway)
+             :data-kushi-shape          (validate-opt button shape)
+             :data-kushi-size           (validate-opt button size)
+             :data-kushi-ui-spinner     (when loading? "")
+             :data-kushi-end-enhancer   (when (and (not icon) end-enhancer) "")
+             :data-kushi-start-enhancer (when (and (not icon) start-enhancer) "")
+             :data-kushi-packing        (validate-opt button packing)
+             :data-kushi-stroke-align   (validate-opt button stroke-align)
+            ;;  :data-kushi-stroke-align   (some-> stroke-align 
+            ;;                                     (maybe #{:outside "outside"}))
+             }
+            ;; hue-style-map creates a {:style {:--_hue "33"}} value - unused for now
+            ;; hue-style-map
             attrs)]
           (cond icon           [[kushi.ui.icon.core/icon :star]]
                 start-enhancer (cons start-enhancer children)
@@ -229,7 +237,7 @@
                 :else          children))))
 
 
-(defn icon-button
+(defn ^:public icon-button
   {:summary ["Icon buttons provide cues for actions and events."]
    :desc    ["Buttons are fundamental components that allow users to process
               actions or navigate an experience."
@@ -259,6 +267,7 @@
                 colorway
                 stroke-align
                 packing
+                size
                 icon]}
         opts
 
@@ -274,25 +283,37 @@
     ;; TODO maybe use :data-kushi-name "button"
     (into [:button
            (merge-attrs
-            (sx ".kushi-icon-button"
-                :position--relative
-                :d--flex
-                :flex-direction--row
-                :jc--c
-                :ai--c
-                :w--fit-content
-                :gap--$icon-enhanceable-gap
-                :cursor--pointer
-                :transition-property--all
-                :transition-timing-function--$transition-timing-function
-                :transition-duration--$transition-duration
-                [:pb :$_padding-block]
-                [:pi :$_padding-inline])
-            {:aria-busy        loading?
-             :aria-label       (when loading? "loading")
-             :data-kushi-ia      ""
-             :data-kushi-surface surface
-             :data-kushi-shape   shape}
+            {:class                   (css ".kushi-icon-button"
+                                           :position--relative
+                                           :d--flex
+                                           :flex-direction--row
+                                           :jc--c
+                                           :ai--c
+                                           :w--fit-content
+                                           :gap--$icon-enhanceable-gap
+                                           :cursor--pointer
+                                           :transition-property--all
+                                           :transition-timing-function--$transition-timing-function
+                                           :transition-duration--$transition-duration
+                                           [:pb :$_padding-block]
+                                           [:pi :$_padding-inline])
+             :aria-busy               loading?
+             :aria-label              (when loading? "loading")
+             :data-kushi-ia           ""
+             :data-kushi-surface      surface
+             :data-kushi-shape        shape
+             :data-kushi-ui-spinner   (when loading? "")
+             :data-kushi-stroke-align (some-> stroke-align 
+                                              (maybe #{:outside "outside"}))
+             :data-kushi-colorway       semantic-colorway
+             :data-kushi-size           size
+             :data-kushi-packing        (some-> packing
+                                                (maybe nameable?)
+                                                as-str
+                                                (maybe #{"compact" "roomy"})
+                                                (data-kushi- :packing))
+
+             }
             (when loading? {:data-kushi-ui-spinner true})
             (some-> stroke-align 
                     (maybe #{:outside "outside"})
@@ -310,3 +331,4 @@
             attrs)]
           (if icon [kushi.ui.icon.core/icon icon]
               children))))
+
