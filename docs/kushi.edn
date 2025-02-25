@@ -15,9 +15,9 @@
    :--code-font-size                        :0.875em
    :--code-color                            :$accent-850
    :--code-background-color                 :$accent-50
-   ;; :$code-color-inverse                  :$accent-100
-   :--code-color-inverse                    :$neutral-100
-   :--code-background-color-inverse         :$accent-900
+   ;; :$code-color-dark-mode                :$accent-100
+   :--code-color-dark-mode                  :$accent-100
+   :--code-background-color-dark-mode       :#2d3334
    :--kushi-playground-mobile-header-height :46px
    :--popover-border-color                  :$neutral-300
    :--navbar-height                         :50px
