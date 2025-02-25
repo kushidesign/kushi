@@ -3,6 +3,9 @@
   #?(:cljs
      (:require-macros [kushi.util])))
 
+(defn as-str [x]
+  (str (if (or (keyword? x) (symbol? x)) (name x) x)))
+
 (defn nameable? [x]
   (or (string? x) (keyword? x) (symbol? x)))
 
