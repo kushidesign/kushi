@@ -258,20 +258,154 @@
    'map?     map?
    'coll?    coll?})
 
+
+
+;; Experimental runtime warnings -----------------------------------------------
+
+
 (when ^boolean js/goog.DEBUG
- (defn validate-opt* [{:keys [x      
-                              opt
-                              pred     
-                              ui-ns
-                              ui-name
-                              err]}]
+ (require '[bling.core :refer [callout bling point-of-interest]])
+ 
+  (defn bad-opt-value-callout
+    [{:keys [point-of-interest-opts callout-opts]}]
+    (let [poi-opts     (merge point-of-interest-opts)
+          message      (point-of-interest poi-opts)
+          callout-opts (merge callout-opts {:padding-top 1})]
+      (callout callout-opts message)))
+
+
+  (defn origin
+    [file line column]
+    (when-let [[ns1 ns2] 
+               (-> file (string/split #"/") (->> (take-last 2)))]
+      (str ns1
+           "." 
+           (-> ns2 (string/split #"\.") (nth 0 nil))
+           ":"
+           line
+           ":"
+           column)))
+
+  (defn fqns-sym
+    [{:keys [uic-ns uic-name]}]
+    (symbol (str uic-ns
+                 "/"
+                 (string/replace (name uic-name)
+                                 #"\*$" ""))))
+
+  (defn warning-header
+    [{:keys [x opt-sym]
+      {:keys [file line column]} :src-form-meta
+      :as m}]
+    (let [origin    (origin file line column)
+          component (fqns-sym m)
+          option    (str ":-" opt-sym)
+          squiggly  (string/join (repeat (count (str x)) "^"))]
+      (bling [:italic "origin:    "] [:bold origin]
+             "\n\n"
+             [:italic "component: "] [:bold component]
+             "\n\n"
+             [:italic "option:    "] [:bold option]
+             "\n\n"
+             [:italic "invalid:   "] [:bold x]
+             "\n"
+                                     "           " [:bold.red squiggly]
+             "\n"
+             )))
+
+  (defn warning-body
+    [{:keys [opt-sym pred]}]
+    (bling "\n"
+           "Value for the "
+           [:bold (str ":-" opt-sym)] 
+           " option must pass this predicate:"
+           "\n\n"
+           [:bold (if (set? pred) (str pred) pred)]
+           ;; "\n\n\nCheck out the docs for more info:\n"
+           ;; "https://kushi.design"
+           ))
+ 
+ (defn validate-opt*
+   "Issues a warning to browser console
+    
+
+Example ui component implementation fn defined in button.cljs:
+
+(defn button*
+  {:desc \"Hi from buttonx*\"
+   :opts '{size {:pred #{:small :large :xxxlarge}}}}
+  [src & args]
+  (let [[opts attrs & children]
+        (opts+children args)]
+    
+    ;; macro here
+    ;; (validate-opts buttonx* optional-derefed-state)
+    ;; =>
+    (when (and ^boolean js/goog.DEBUG debug-kushi-ui?)
+      (kushi.core/validate-opts (-> buttonx* var meta) opts src))
+
+    (into [:div
+           (merge-attrs 
+            (sx :c--red
+                :fs--100px)
+            attrs)]
+          children)))
    
+
+
+Example public macro defined in button.clj:
+
+(defmacro buttonx [& args]
+  (let [v (into ['kushi.ui.button.core/buttonx*
+                 {:form-meta (meta &form)
+                  :form      (str &form)}]
+                args)]
+    `~v))
+
+
+
+Example call from a ns called showcase.core:
+    
+(buttonx (merge-attrs
+           (sx :c--green)
+           {:-size :xxxlargess})
+         [icon :pets])
+
+
+Example warning string:
+
+\"core.cljs:276 WARNING: Invalid option value
+
+origin:    showcase.core:210:8
+
+component: kushi.ui.button.core/buttonx
+
+option:    :-size
+
+invalid:   :xxxlargess
+           ^^^^^^^^^^^
+
+
+    ┌─ kushi/playground/showcase/core.cljs:210:8
+    │  
+210 │ (buttonx (merge-attrs (sx :c--gre ...
+    │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Value for the :-size option must pass this predicate:
+
+#{:large :small :xxxlarge}\""
+
+   [{:keys                                         [x opt-sym pred uic-ns uic-name src-form]
+     {:keys [file line column]
+      :as   src-form-meta} :src-form-meta
+     :as                                           m}]
    (when-not (nil? x)
      (let [pred-set? (set? pred)
-           pred-f (when-not pred-set? (get publics pred)) 
-           skip?  (or (nil? x)
-                      (and (not pred-set?)
-                           (not pred-f)))]
+           pred-f    (when-not pred-set? (get publics pred)) 
+           skip?     (or (nil? x)
+                         (and (not pred-set?)
+                              (not pred-f)))]
        (when-not skip?
          (when-not (if pred-set?
                      (or (contains? pred x)
@@ -279,41 +413,30 @@
                            (contains? pred (keyword x))))
                      (pred-f x))
 
-           ;; err stack investigation
-           #_(? :pp (-> (.-stack err)
-                  (string/split  #"\n")
-                  (subvec 1)
-                  (->>
-                   (map (comp last
-                              #(string/split % #"/")
-                              second
-                              #(re-find #"\(([^\)]+)\)" %)))
-                   )
-                  (->> (map (comp second
-                                  #(string/split % #" ")
-                                  string/trim)))))
+           (bad-opt-value-callout
+            {:point-of-interest-opts (merge 
+                                      {:header (warning-header m)
+                                       :body   (warning-body m)
 
-           (.apply js/console.warn
-                   js/console
-                   #js[(str ui-ns
-                            "\n\nInvalid option value was supplied for %c:-" opt "%c"
-                            "\n\n"
-                            "%c" (if (string? x) (str "\"" x "\"") x) "%c"
-                            "\n"
-                            "%c" (string/join (repeat (count (str x)) "^")) "%c"
-                            "\n\n"
-                            "Value must pass the following predicate:"
-                            "\n\n"
-                            "%c" (if (set? pred) (str pred) pred) "%c"
-                            ;; "\n\n\nCheck out the docs for more info:\n"
-                            ;; "https://kushi.design"
-                            "\n\n"
-                            )
-                       "font-style:italic;font-weight:bold"
-                       "font-style:default;font-weight:default"
-                       "font-style:italic;font-weight:bold"
-                       "font-style:default;font-weight:default"
-                       "font-weight:bold;color:red"
-                       "font-style:default;font-weight:default"
-                       "font-style:italic"
-                       "font-style:default;font-weight:default"])))))))
+                                       :type   :error
+                                       :form   (symbol src-form)}
+                                      src-form-meta)
+
+             :callout-opts           {:type  :warning
+                                      :label "WARNING: Invalid option value"}}))))))     
+
+ (defn validate-opts
+   [{uic-ns :ns uic-name :name [_ uic-opts] :opts :as uic-meta}
+    supplied-opts
+    {src-form-meta :form-meta src-form  :form}]
+
+   (doseq [[k x] supplied-opts
+           :let [opt-sym (-> k name symbol)
+                 {:keys [pred]} (get uic-opts opt-sym)]]
+     (validate-opt* {:x             x      
+                     :opt-sym       opt-sym
+                     :pred          pred
+                     :uic-ns        uic-ns
+                     :uic-name      uic-name
+                     :src-form      src-form
+                     :src-form-meta src-form-meta}))))
