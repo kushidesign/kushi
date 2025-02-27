@@ -1,7 +1,8 @@
 (ns site.browser
   (:require
    [reagent.dom :as rdom]
-   [site.views :as views]))
+   ;; Toggle views/views2 here to switch between sandbox and full site
+   [site.views2 :as views]))
 
 (defn ^:dev/after-load mount-root []
   (let [root-el (.getElementById js/document "app")]
