@@ -24,8 +24,7 @@
                "orange"
                "red"
                "magenta"
-               "brown"}
-   })
+               "brown"}})
 
 (def variant-defaults
   {:colorway "neutral"
@@ -48,16 +47,15 @@
    (reduce-kv (fn [acc k v]
                 (assoc acc
                        k
-                       (or (some-> k
-                                   opts
+                       (or (some-> opts
+                                   (get k)
                                    (maybe nameable?)
                                    as-str
                                    (maybe (k variants)))
                            v)))
               {}
               (merge variant-defaults
-                     defaults)))
-  )
+                     defaults))))
 
 
 (defn- valid-hue? [x]
