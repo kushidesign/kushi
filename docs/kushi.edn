@@ -7,7 +7,9 @@
   ;;  :accent "purple"
    } 
   :design-tokens
-  [:--sans-serif-font-stack                 "Inter, system-ui, sans-serif"
+  [
+  ;;  :--sans-serif-font-stack                 "Inter, system-ui, sans-serif"
+   :--sans-serif-font-stack                 "system-ui, sans-serif"
    :--serif-font-stack                      "'Source Serif 4', Times, serif"
    :--code-font-stack                       "'JetBrains Mono', 'Fira Code', monospace"
    :--primary-font-family                   :$sans-serif-font-stack
@@ -25,12 +27,15 @@
    
 
    ;; Add this to tokens
-  ;;  :--slider-font-family                    :$serif-font-stack
+   ;;  :--slider-font-family                    :$serif-font-stack
    ;;  :--background-color-dark-mode            :black
 
    ;; Playground
    :--playground-main-content-max-width     :605px
-   :--foreground-color                      :$neutral-750
+   :--prose-font-weight                     300
+   :--prose-font-color                      :$neutral-750
+   :--prose-font-size                       :$small
+   :--code-font-weight                      :$wee-bold
    ]
   
   :ui

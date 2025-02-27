@@ -35,9 +35,9 @@
    ["components"] {:content layout/component-playground-content
                    :args    playground-components
                    :label   "Components Playground"}
-  ;;  ["colors"]     {:content about/kushi-colors-about}
+   ["colors"]     {:content about/kushi-colors-about}
    ["typography"] {:content about/kushi-typography-about}
-  ;;  ["intro"]      {:content about/kushi-about}
+   ["intro"]      {:content about/kushi-about}
    })
 
 

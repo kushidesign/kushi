@@ -25,6 +25,7 @@
    "transition-duration"        "var(--fast)",
    "transition-property"        "all",
    "font-family"                "var(--code-font-stack)",
+   "font-weight"                "var(--code-font-weight)",
    "height"                     "fit-content",
    "white-space"                "nowrap",
    "padding-inline"             "var(--code-padding-inline)",

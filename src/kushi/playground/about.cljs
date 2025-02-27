@@ -7,6 +7,7 @@
             [kushi.playground.nav :refer [route!]]
             [kushi.playground.shared-styles]
             [kushi.ui.button.core :refer [button]]
+            [kushi.ui.prose.core :refer [prose]]
             [kushi.ui.divisor.core :refer (divisor)]
             [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.link.core :refer [link]]
@@ -69,7 +70,7 @@
     :>p:first-child:mbs--0
     :>p:mb--2em
     :>p:lh--1.7)
-   [:p "Kushi includes a foundation of global and alias color tokens."]
+   [prose "Kushi includes a foundation of global and alias color tokens."]
 
    [:div
     (sx
@@ -99,7 +100,8 @@
                          :w--26px
                          :h--26px)}]]
 
-   [:p.alias-token-scales
+   [prose
+    {:class (sx :.alias-token-scales)}
     "Semantic alias tokens map to global tokens like so:"
     [:br]]
 
@@ -156,7 +158,7 @@
                  "Size"     ["sizing" "xxxsmall" "xxxxlarge"]
                  "Weight"   ["weight" "thin" "heavy"]
                  "Tracking" ["tracking" "xxxtight" "xxxxloose"])]
-           [:p
+           [prose
             (sx :>code:mi--0.25em :>code:ws--n)
             (str "Kushi offers a typographic "
                  kind-of-scale
@@ -241,12 +243,12 @@
    [:div (sx :mbe--0.8em) "If you need finer control, underlying design tokens can be used like this:"]
    [typography-snippet typography-tokens-snippet]
 
-   (into [:p
+   (into [prose
           [:span (sx :d--block :mbe--1em) "The following utility classes are available for font-style and capitalization:"]]
          (for [x [:sans :serif :italic :oblique :uppercase :lowercase :capitalize]]
            [:span (sx :.code :fs--0.875rem!important :d--ib :ws--n :mie--0.5em :mbe--0.5em) (str ":." (name x))]))
 
-   [:p
+   [prose
     "Kushi employes the typefaces "
     [link (sx {:href   "https://fonts.google.com/specimen/Inter"
                :target :_blank})
@@ -280,25 +282,28 @@
        :>p:last-of-type:mbe--2.5em
        :>p:lh--1.7
        :pbe--2.25rem)
-   [:p
+   [prose
     "Kushi is a base for building web UI with "
     [link {:href   "https://clojurescript.org/"
            :target :_blank}
      "ClojureScript"]
     "."]
-   [:p "For detailed docs, check out the "
+   [prose "For detailed docs, check out the "
     [link {:href   "https://github.com/kushidesign/kushi"
            :target :_blank} "Readme"]
     " and the "
     [link {:href   "https://github.com/kushidesign/kushi-quickstart"
            :target :_blank}
      "Quickstart repo"] "."]
-   [:p
-    "In addition to providing a css-in-cljs solution, Kushi offers a basic suite of themeable, headless UI components for free. "
-    "This set of building blocks consitutes a base for rolling your own design system."]
+   [prose
+    (str "In addition to providing a css-in-cljs solution, Kushi offers a basic"
+         " suite of themeable, headless UI components for free. ")
+    (str "This set of building blocks consitutes a base for rolling your own"
+         " design system.")]
    [:a {:href     "/components"
         :on-click (fn [e]
                     (route! "kushi-playground-menu" "/components" e)
+                    ;; TODO - replace this
                     #_(component-examples/scroll-to-playground-component!
                      {:component-label "button"
                       :scroll-y        16}))}
@@ -315,5 +320,7 @@
        :>p:first-child:mbs--0
        :>p:mb--2em
        :>p:lh--1.7)
-   [:p 
-    "This page provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."] ])
+   [prose 
+    (str "This page provides interactive documentation, detailed usage options,"
+         " and snippet generation for easy inclusion of Kushi UI components in"
+         "your own project.")] ])

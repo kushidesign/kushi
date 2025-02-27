@@ -3,7 +3,8 @@
    [kushi.colors :as kushi.colors]
    [kushi.core :refer (sx css css-vars-map merge-attrs register-design-tokens-by-category)]
    [kushi.ui.core :refer [defcom opts+children]]
-   [kushi.ui.label.core :refer [label]]))
+   [kushi.ui.label.core :refer [label]]
+   [kushi.ui.prose.core :refer [prose]]))
 
 (register-design-tokens-by-category "colors" "global colors")
 
@@ -48,10 +49,13 @@
                  :fs--0.7em
                  :sm:fs--0.9em
                  :ws--n)
-       [:span (sx :.kushi-playground-color-sample-row-color-level
-                  :sm:d--none) color-level]
-       [:span (sx :.kushi-playground-color-sample-row-token-name
-                  :.code :sm:d--block :d--none) token-name]
+       [:code (sx :.kushi-playground-color-sample-row-color-level
+                  :sm:d--none)
+        color-level]
+       [:code (sx :.kushi-playground-color-sample-row-token-name
+                  :sm:d--block
+                  :d--none)
+        token-name]
 
       ;; [icon (sx :.accent-secondary-foreground
       ;;           :mis--0.5em
@@ -132,8 +136,8 @@
               :mb--2rem:1.5rem)
           color-name]
          (when semantic-alias
-           [:p (sx :.kushi-playground-color-scale-desc
-                   :fw--$normal :mb--1em:2.5em)
+           [prose (sx :.kushi-playground-color-scale-desc
+                      :mb--1em:2.5em)
             "All "
             [:code (str "--" (name color-name) "*")]
             " values on the scale have a corresponding "
