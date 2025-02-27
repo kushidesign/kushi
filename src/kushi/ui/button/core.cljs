@@ -2,8 +2,8 @@
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
-   [kushi.core :refer (css defcss sx merge-attrs validate-opt)]
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
+   [kushi.ui.core :refer (opts+children opts+children2)]
    [kushi.ui.icon.core]
    [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
    [kushi.ui.util :refer [as-str maybe nameable?]])
@@ -168,15 +168,15 @@
         :aria-busy                 loading?
         :aria-label                (when loading? "loading")
         :data-kushi-ia             ""
-        :data-kushi-surface        (validate-opt button surface)
-        :data-kushi-colorway       (validate-opt button semantic-colorway)
-        :data-kushi-shape          (validate-opt button shape)
-        :data-kushi-size           (validate-opt button size)
+        :data-kushi-surface        (validate-option button surface)
+        :data-kushi-colorway       (validate-option button semantic-colorway)
+        :data-kushi-shape          (validate-option button shape)
+        :data-kushi-size           (validate-option button size)
         :data-kushi-ui-spinner     (when loading? "")
         :data-kushi-end-enhancer   (when (and (not icon) end-enhancer) "")
         :data-kushi-start-enhancer (when (and (not icon) start-enhancer) "")
-        :data-kushi-packing        (validate-opt button packing)
-        :data-kushi-stroke-align   (validate-opt button stroke-align)
+        :data-kushi-packing        (validate-option button packing)
+        :data-kushi-stroke-align   (validate-option button stroke-align)
         ;; :data-kushi-stroke-align   (some-> stroke-align 
         ;;                                    (maybe #{:outside "outside"}))
         }
@@ -289,27 +289,41 @@
    :attrs    {:id "hey"}
    :children [[:div "child 1"]]})
 
-(def debug-kushi-ui? true)
 
-(defn buttonx*
+;; Sample button macro
+#_(defn buttonx*-OLD
   {:desc "Hi from buttonx*"
    :opts '{size {:pred #{:small :large :xxxlarge}}}}
   [src & args]
   (let [[opts attrs & children]
         (opts+children args)]
-    
-    ;; macro here
-    ;; (validate-opts buttonx* optional-derefed-state)
-    ;; =>
-    (when (and ^boolean js/goog.DEBUG debug-kushi-ui?)
-      (kushi.core/validate-opts (-> buttonx* var meta) opts src))
-
-    ;; (? opts)
-    ;; (? attrs)
-
+    (kushi.core/validate-options buttonx* opts src)
     (into [:div
            (merge-attrs 
             (sx :c--red
                 :fs--100px)
             attrs)]
           (? children))))
+
+(defn big-paw
+  {:desc "Hi from big button"
+   :opts '{size {:pred #{:small :large :xxxlarge}}}}
+  [& args]
+  (let [{:keys [opts attrs children]}
+        (opts+children2 args big-paw)
+        fs (? (case (:size opts)
+             :small    "20px"
+             :large    "80px"
+             :xxxlarge :200px
+             nil))]
+    (into [:div 
+           (merge-attrs 
+            #_(sx :c--red)
+            {:style {"--fs" (case (:size opts)
+                              :small    "20px"
+                              :large    "80px"
+                              :xxxlarge :200px
+                              nil)}
+             :class (css :c--red :fs--$fs)}
+            attrs)]
+          children)))

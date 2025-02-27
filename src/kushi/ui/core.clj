@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.ui.core
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.walk :as walk]))
 
 (defmacro &*->val
@@ -55,19 +54,7 @@
                                 ~f
                                 ~form-meta)))))
 
-(defmacro defcom2
-  [nm mm coll f]
-  (let [form-meta  (meta &form)]
-    `(defn ~nm
-       ~mm
-       [& args#]
-       (let [[opts# attrs# & children#] (kushi.ui.core/opts+children args#)]
-         (kushi.ui.core/&*->val opts#
-                                attrs#
-                                children#
-                                ~coll
-                                ~f
-                                ~form-meta)))))
+
 
 (defmacro material-symbol-or-icon-span
   [{:keys [icon-name icon-style icon-filled?]}]
@@ -81,6 +68,11 @@
        (into [:span {:class [icon-style# icon-fill#]}]
              ~icon-name))))
 
+
+(defmacro opts+children2 [args f]
+  `(kushi.ui.core/opts+children2* ~args
+                                  ~f
+                                  (-> ~f var meta)))
 
 
 ;; new defcom sketch

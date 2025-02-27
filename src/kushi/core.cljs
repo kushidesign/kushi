@@ -1,6 +1,5 @@
 (ns kushi.core
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [domo.core :as domo]
 
@@ -9,7 +8,7 @@
    [kushi.css.build.kushi-ui-component-theming]
 
    ;; for testing
-  ;;  [taoensso.tufte :as tufte :refer [p profile]]
+   ;; [taoensso.tufte :as tufte :refer [p profile]]
    )
  (:require-macros [kushi.core]))
 
@@ -261,7 +260,7 @@
 
 
 ;; Experimental runtime warnings -----------------------------------------------
-
+(def debug-ui? (atom true))
 
 (when ^boolean js/goog.DEBUG
  (require '[bling.core :refer [callout bling point-of-interest]])
@@ -325,7 +324,7 @@
            ;; "https://kushi.design"
            ))
  
- (defn validate-opt*
+ (defn validate-option*
    "Issues a warning to browser console
     
 
@@ -425,7 +424,7 @@ Value for the :-size option must pass this predicate:
              :callout-opts           {:type  :warning
                                       :label "WARNING: Invalid option value"}}))))))     
 
- (defn validate-opts
+ (defn validate-options*
    [{uic-ns :ns uic-name :name [_ uic-opts] :opts :as uic-meta}
     supplied-opts
     {src-form-meta :form-meta src-form  :form}]
@@ -433,10 +432,10 @@ Value for the :-size option must pass this predicate:
    (doseq [[k x] supplied-opts
            :let [opt-sym (-> k name symbol)
                  {:keys [pred]} (get uic-opts opt-sym)]]
-     (validate-opt* {:x             x      
-                     :opt-sym       opt-sym
-                     :pred          pred
-                     :uic-ns        uic-ns
-                     :uic-name      uic-name
-                     :src-form      src-form
-                     :src-form-meta src-form-meta}))))
+     (validate-option* {:x             x      
+                        :opt-sym       opt-sym
+                        :pred          pred
+                        :uic-ns        uic-ns
+                        :uic-name      uic-name
+                        :src-form      src-form
+                        :src-form-meta src-form-meta}))))

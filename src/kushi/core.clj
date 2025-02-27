@@ -1565,8 +1565,8 @@
         (cons (symbol "sx") reformatted)))))
 
 
-;; New validate option macro
-(defmacro validate-opt 
+;; New validate option macro for kushi.ui components
+(defmacro validate-option 
   "To be called from inside kushi component definitions that have a metadata map.
    Body code will be optimized away for prod builds, which effectively returns
    nil."
@@ -1587,7 +1587,7 @@
                ]
           ;;  (try (throw (js/Error. "some error"))
           ;;       (catch js/Object e# (reset! err# e#)))
-           (kushi.core/validate-opt*
+           (kushi.core/validate-option*
             {:x       runtime-value# 
              :opt     quoted-opt-sym#
              :pred    pred#    
@@ -1596,4 +1596,15 @@
             ;;  :err     @err#
              })))
        ~opt))
+
+(defmacro validate-options
+  "To be called from inside kushi component definitions that have a metadata map.
+   Body code will be optimized away for prod builds, which effectively returns
+   nil."
+  [f opts src]
+  `(when (and ^boolean js/goog.DEBUG kushi.core/debug-ui?)
+      (kushi.core/validate-options* (-> ~f var meta) ~opts ~src)))
+
+
+
 
