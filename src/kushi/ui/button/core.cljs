@@ -3,12 +3,15 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
-   [kushi.ui.core :refer (opts+children opts+children2)]
+   [kushi.ui.core :refer (opts+children extract)]
    [kushi.ui.icon.core]
    [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
-   [kushi.ui.util :refer [as-str maybe nameable?]])
+   [kushi.ui.util :refer [as-str maybe nameable?]]
+  ;;  [taoensso.tufte :as tufte :refer [p profile]]
+   )
   (:require-macros [kushi.ui.button.core]))
 
+#_(tufte/add-basic-println-handler! {})
 
 (defn ^:public button
   {:summary "Buttons provide cues for actions and events."
@@ -124,6 +127,13 @@
                           :order [surface shape]
                           :exclude #{start-enhancer size}}}}
   [& args]
+  
+  #_(profile ; Profile any `p` forms called during body execution
+    {} ; Profiling options; we'll use the defaults for now
+    (dotimes [_ 10000]
+      (p :base (opts+children args))
+      (p :more-fns (opts+children-b args))))
+
   (let [[opts attrs & children]
         (opts+children args)
 
@@ -286,38 +296,15 @@
           (if icon [kushi.ui.icon.core/icon icon]
               children))))
 
-(def args-fake
-  {:opts     {:go? true}
-   :attrs    {:id "hey"}
-   :children [[:div "child 1"]]})
 
-
-;; Sample button macro
-#_(defn buttonx*-OLD
-  {:desc "Hi from buttonx*"
-   :opts '{size {:pred #{:small :large :xxxlarge}}}}
-  [src & args]
-  (let [[opts attrs & children]
-        (opts+children args)]
-    (kushi.core/validate-options buttonx* opts src)
-    (into [:div
-           (merge-attrs 
-            (sx :c--red
-                :fs--100px)
-            attrs)]
-          (? children))))
-
-#_(defn big-paw
-  {:desc "Hi from big button"
-   :opts '{size {:pred #{:small :large :xxxlarge}}}}
+;; Sample component built with 2-fn macro pattern 
+(defn big-paw
+  {:doc "Hi from big button"
+  ;;  :opts '{size {:pred #{:small :large :xxxlarge}}}
+   }
   [& args]
   (let [{:keys [opts attrs children]}
-        (opts+children2 args big-paw)
-        fs (? (case (:size opts)
-             :small    "20px"
-             :large    "80px"
-             :xxxlarge :200px
-             nil))]
+        (extract args big-paw)]
     (into [:div 
            (merge-attrs 
             #_(sx :c--red)

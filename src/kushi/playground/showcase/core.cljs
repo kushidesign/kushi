@@ -3,7 +3,7 @@
    [clojure.walk :as walk]
    [clojure.repl]
    [fireworks.core :refer [!? ?]]
-   [kushi.core :refer [css defcss ?defcss merge-attrs sx]]
+   [kushi.core :refer [css defcss ?defcss merge-attrs sx $]]
    [kushi.css.build.design-tokens
     :rename {design-tokens-by-component-usage dtoks-by-usage }]
    [kushi.ui.lightswitch.core :refer [light-dark-mode-switch]]
@@ -15,7 +15,7 @@
    [kushi.ui.util :refer [as-str maybe keyed]]
    [kushi.ui.modal.core :refer [modal open-kushi-modal modal-close-button]]
    [clojure.string :as string]
-   [kushi.ui.button.core :refer [button icon-button #_big-paw #_big-paw*]]
+   [kushi.ui.button.core :refer [button icon-button big-paw big-paw*]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.defs :as defs]
    [kushi.css.media]))
@@ -207,73 +207,73 @@
 (defn showcase [ui]
   (let [uic (-> button var meta uic*)]
 
-  ;;  (!? (big-paw* (merge-attrs (sx :c--green)
-  ;;                            {:-size :xxxlarge})
-  ;;       [icon :pets]))
+    [big-paw (merge-attrs (sx :c--green) {:-size :xxxlarge})
+     [icon :pets]]
 
-    [:div 
-     [button {:-colorway :blue
-              :-shape    :red
-              :-size    :red
-              :id        :gray
-              :class     "gold"
-              :on-click  #(js/console.log "hi")}
-      "Hi" "Bye"]]
 
-   #_(into [:div 
-          (sx ".kpg-component-demos-wrapper"
-              :.flex-col-fs
-              :p--4rem 
-              :gap--3rem)
-          [light-dark-mode-switch (sx :.fixed-block-start-inside 
-                                      :.light
-                                      :.transition)]]
+    #_[:div 
+       [button {:-colorway :blue
+                :-shape    :red
+                :-size    :red
+                :id        :gray
+                :class     "gold"
+                :on-click  #(js/console.log "hi")}
+        "Hi" "Bye"]]
 
-         (for [[opt-sym 
-                {{:keys [variants samples]} :demo
-                 :as opt}]
-               (:opts uic)
+    #_(into [:div 
+             (sx ".kpg-component-demos-wrapper"
+                 :.flex-col-fs
+                 :p--4rem 
+                 :gap--3rem)
+             [light-dark-mode-switch (sx :.fixed-block-start-inside 
+                                         :.light
+                                         :.transition)]]
 
-               :when
-               (= opt-sym 'end-enhancer)]
-           (cond
-             variants
-             [variant-grid
-              uic
-              (assoc opt :opt-sym opt-sym)
-              opt]
+            (for [[opt-sym 
+                   {{:keys [variants samples]} :demo
+                    :as opt}]
+                  (:opts uic)
 
-             samples
-             [discrete-examples-grid2 
-              uic 
-              (assoc opt :opt-sym opt-sym)
-              samples]
-             ))
-         #_(for [demo demos]
-             (cond
-               (:variants demo)
-               [variant-grid button demo]
+                  :when
+                  (= opt-sym 'end-enhancer)]
+              (cond
+                variants
+                [variant-grid
+                 uic
+                 (assoc opt :opt-sym opt-sym)
+                 opt]
 
-               (:examples demo)
-               [examples-grid button demo]
-               )))
+                samples
+                [discrete-examples-grid2 
+                 uic 
+                 (assoc opt :opt-sym opt-sym)
+                 samples]
+                ))
+            #_(for [demo demos]
+                (cond
+                  (:variants demo)
+                  [variant-grid button demo]
 
-      #_(into [:div (sx :p--3rem)] 
-              [variant-grid demos]
+                  (:examples demo)
+                  [examples-grid button demo]
+                  )))
 
-              #_(for [{option-name :name
-                       :keys       [pred default desc samples]} 
-                      (? (second opts))
+    #_(into [:div (sx :p--3rem)] 
+            [variant-grid demos]
 
-                      :when
-                      (= option-name 'surface)]
-                  (into [:div (sx :.flex-col-fs :gap--0.5rem)]
-                        (for [surface surfaces-ordered] 
-                          (into [:div (sx :.flex-row-fs :gap--0.5rem)]
-                                (for [colorway all-colors]
-                                  [button
-                                   (merge-attrs (sx :.xxxsmall)
-                                                {:-colorway colorway
-                                                 :-surface  surface})
-                                   "Bang"]))))))))
+            #_(for [{option-name :name
+                     :keys       [pred default desc samples]} 
+                    (? (second opts))
+
+                    :when
+                    (= option-name 'surface)]
+                (into [:div (sx :.flex-col-fs :gap--0.5rem)]
+                      (for [surface surfaces-ordered] 
+                        (into [:div (sx :.flex-row-fs :gap--0.5rem)]
+                              (for [colorway all-colors]
+                                [button
+                                 (merge-attrs (sx :.xxxsmall)
+                                              {:-colorway colorway
+                                               :-surface  surface})
+                                 "Bang"]))))))))
 

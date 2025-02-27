@@ -34,90 +34,105 @@
         fragment? (-> children* first (= :<>))]
     (into (if fragment? [] [:<>]) (if f (map f children) children))))
 
+(defn children2
+  "For internal use by defcom macro"
+  [children*]
+  (let [children (unwrapped-children children*)
+        fragment? (-> children* first (= :<>))]
+    (into (if fragment? [] [:<>]) children)))
+
+(defn user-ks [attr*]
+  #_(some->> attr*
+             keys
+             (filter user-attr?)
+             (into #{}))
+  (some->> attr*
+           (reduce-kv (fn [acc k _]
+                        (if (user-attr? k)
+                          (conj acc k)
+                          acc))
+                      #{})))
+(defn grouped-attrs
+  [attr* user-ks]
+  #_(some->> attr*
+             (group-by #(contains? user-ks (first %)))
+             (map (fn [[k v]] {(if k :opts :attr) (into {} v)}))
+             (apply merge))
+  (some->> attr*
+           (group-by #(contains? user-ks (first %)))
+           (reduce-kv (fn [m k v]
+                        (assoc m (if k :opts :attr) (into {} v)))
+                      {})))
+
+(defn opts-w-normal-keys
+  [opts]
+  #_(->> opts
+                 (map (fn [[k v]] [(-> k name (subs 1) keyword) v]))
+                 (into {}))
+  (some->> opts
+           (reduce-kv
+            (fn [m k v]
+              (assoc m (-> k name (subs 1) keyword) v))
+            {})))
 
 (defn opts+children
   "Reorganizes arguments to component and returns:
    [map-of-user-opts attr child1 child2 ...]"
   [coll]
   (when (coll? coll)
-    (let [[attr* children]    
-          (attr+children coll)
-
-          user-ks             
-          #_(some->> attr*
-                     keys
-                     (filter user-attr?)
-                     (into #{}))
-          (some->> attr*
-                   (reduce-kv (fn [acc k _]
-                                (if (user-attr? k)
-                                  (conj acc k)
-                                  acc))
-                              #{}))
-
-          {:keys [attr opts]
-           :as   b} 
-          #_(some->> attr*
-                   (group-by #(contains? user-ks (first %)))
-                   (map (fn [[k v]] {(if k :opts :attr) (into {} v)}))
-                   (apply merge))
-          (some->> attr*
-                   (group-by #(contains? user-ks (first %)))
-                   (reduce-kv (fn [m k v]
-                                (assoc m (if k :opts :attr) (into {} v)))
-                              {}))
-
-          opts-w-normal-keys  
-          #_(->> opts
-                 (map (fn [[k v]] [(-> k name (subs 1) keyword) v]))
-                 (into {}))
-
-          (some->> opts
-                   (reduce-kv
-                    (fn [m k v]
-                      (assoc m (-> k name (subs 1) keyword) v))
-                    {}))
-
+    (let [[attr* children]    (attr+children coll)
+          user-ks             (user-ks attr*)
+          {:keys [attr opts]} (grouped-attrs attr* user-ks)
+          opts                (opts-w-normal-keys opts)
           ;; TODO can you eliminate this unwrapping?
-          unwrapped-children
-          (->> children (remove nil?) unwrapped-children)]
+          children            (->> children (remove nil?) unwrapped-children)]
 
-       #_(into []
-               (concat [opts-w-normal-keys attr]
-                       (->> children (remove nil?) unwrapped-children)))
-       (into [opts-w-normal-keys attr]
-             unwrapped-children))))
+      #_(into []
+              (concat [opts-w-normal-keys attr]
+                      (->> children (remove nil?) unwrapped-children)))
+      (into [opts attr]
+            children))))
 
 
-(defn opts+children2*
-  "Reorganizes arguments to component and returns:
-   [map-of-user-opts attr child1 child2 ...]"
-  [coll f fvar-meta]
-  ;; (? f)
-  ;; (? {:display-metadata? true} coll)
-  (when (coll? coll)
-    (let [[src coll]          (let [[src & rest] coll]
-                                ;; (? {:display-metadata? true} src)
-                                ;; (? {:display-metadata? true} rest)
+;; TODO - use new optimized fns from above
+(defn extract* 
+  "Extracts custom attributes from mixed map of html attributes and
+   attributes/options that are specific to the ui component.
+   
+   Returns a map:
+   {:opts     <map-of-custom-attributes>
+    :attrs    <html-attributes>
+    :children <children>}"
+  [args uic-meta]
+  (when (coll? args)
+    (let [[src args]          (let [[src & rest] args]
                                 (if (some-> src meta :kushi.ui/form)
                                   [src rest]
-                                  [nil coll]))                
-          [attr* children]    (attr+children coll)
+                                  [nil args]))                
+          [attr* children]    (attr+children args)
           user-ks             (some->> attr*
                                        keys
                                        (filter user-attr?)
                                        (into #{}))
           {:keys [attr opts]} (some->> attr*
-                                       (group-by #(contains? user-ks (nth % 0 nil)))
-                                       (map (fn [[k v]] {(if k :opts :attr) (into {} v)}))
+                                       (group-by #(contains? user-ks
+                                                             (nth % 0 nil)))
+                                       (map (fn [[k v]]
+                                              {(if k :opts :attr) (into {} v)}))
                                        (apply merge))
-          opts-w-normal-keys  (->> opts
-                                   (map (fn [[k v]] [(-> k name (subs 1) keyword) v]))
+          supplied-opts       (->> opts
+                                   (map (fn [[k v]]
+                                          [(-> k name (subs 1) keyword) v]))
                                    (into {}))]
-      (when src
-        (kushi.core/validate-options* fvar-meta opts-w-normal-keys src))
-      {:opts     opts-w-normal-keys
+      (when (and ^boolean js/goog.DEBUG
+                 (:opts uic-meta))
+        (kushi.core/validate-options* {:uic-meta      uic-meta
+                                       :supplied-opts supplied-opts 
+                                       :src           src}))
+      {:opts     supplied-opts
        :attrs    attr
-       :children (->> children (remove nil?) unwrapped-children)})))
+       :children (->> children
+                      (remove nil?)
+                      unwrapped-children)})))
 
 

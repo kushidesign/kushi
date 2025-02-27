@@ -1,15 +1,12 @@
 (ns kushi.core
-  (:require
+  (:require ;; for testing
+ ;; [taoensso.tufte :as tufte :refer [p profile]]
    [clojure.string :as string]
-   [domo.core :as domo]
-
-   ;; Should these go somewhere else?
+   [domo.core :as domo] ;; Should these go somewhere else?
+   [fireworks.core :refer [? !?]]
    [kushi.css.build.css-reset]
-   [kushi.css.build.kushi-ui-component-theming]
-
-   ;; for testing
-   ;; [taoensso.tufte :as tufte :refer [p profile]]
-   )
+   [kushi.css.build.kushi-ui-component-theming] ;; for testing
+)
  (:require-macros [kushi.core]))
 
 
@@ -267,8 +264,7 @@
  
   (defn bad-opt-value-callout
     [{:keys [point-of-interest-opts callout-opts]}]
-    (let [poi-opts     (merge point-of-interest-opts)
-          message      (point-of-interest poi-opts)
+    (let [message      (point-of-interest point-of-interest-opts)
           callout-opts (merge callout-opts {:padding-top 1})]
       (callout callout-opts message)))
 
@@ -296,20 +292,22 @@
     [{:keys [x opt-sym]
       {:keys [file line column]} :src-form-meta
       :as m}]
-    (let [origin    (origin file line column)
+    (let [origin    (when (and file line column)
+                      (origin file line column))
           component (fqns-sym m)
           option    (str ":-" opt-sym)
           squiggly  (string/join (repeat (count (str x)) "^"))]
-      (bling [:italic "origin:    "] [:bold origin]
-             "\n\n"
-             [:italic "component: "] [:bold component]
-             "\n\n"
-             [:italic "option:    "] [:bold option]
-             "\n\n"
-             [:italic "invalid:   "] [:bold x]
-             "\n"
-                                     "           " [:bold.red squiggly]
-             "\n"
+      (apply bling
+             (concat (when origin [ [:italic "origin:    "] [:bold origin] "\n\n"])
+                     [ 
+                      [:italic "component: "] [:bold component]
+                      "\n\n"
+                      [:italic "option:    "] [:bold option]
+                      "\n\n"
+                      [:italic "invalid:   "] [:bold x]
+                      "\n"
+                      "           " [:bold.red squiggly]
+                      (when origin "\n")])
              )))
 
   (defn warning-body
@@ -330,19 +328,13 @@
 
 Example ui component implementation fn defined in button.cljs:
 
-(defn button*
-  {:desc \"Hi from buttonx*\"
-   :opts '{size {:pred #{:small :large :xxxlarge}}}}
+(defn button
+  {:doc  \"Hi from button\"
+   :opts '[{size {:pred #{:small :large :xxxlarge}}}}]
   [src & args]
   (let [[opts attrs & children]
-        (opts+children args)]
+        (extract args button)] ;; <- dispatch is in extract
     
-    ;; macro here
-    ;; (validate-opts buttonx* optional-derefed-state)
-    ;; =>
-    (when (and ^boolean js/goog.DEBUG debug-kushi-ui?)
-      (kushi.core/validate-opts (-> buttonx* var meta) opts src))
-
     (into [:div
            (merge-attrs 
             (sx :c--red
@@ -354,8 +346,9 @@ Example ui component implementation fn defined in button.cljs:
 
 Example public macro defined in button.clj:
 
-(defmacro buttonx [& args]
-  (let [v (into ['kushi.ui.button.core/buttonx*
+(defmacro button* [& args]
+  (let [v (into ['kushi.ui.button.core/big-paw
+                 ^:kushi.ui/form
                  {:form-meta (meta &form)
                   :form      (str &form)}]
                 args)]
@@ -365,7 +358,7 @@ Example public macro defined in button.clj:
 
 Example call from a ns called showcase.core:
     
-(buttonx (merge-attrs
+(button* (merge-attrs
            (sx :c--green)
            {:-size :xxxlargess})
          [icon :pets])
@@ -393,12 +386,19 @@ invalid:   :xxxlargess
 
 Value for the :-size option must pass this predicate:
 
-#{:large :small :xxxlarge}\""
+#{:large :small :xxxlarge}\"
 
-   [{:keys                                         [x opt-sym pred uic-ns uic-name src-form]
-     {:keys [file line column]
-      :as   src-form-meta} :src-form-meta
-     :as                                           m}]
+
+
+Example call from a ns called showcase.core, using pure hiccup:
+    
+[button* (merge-attrs
+           (sx :c--green)
+           {:-size :xxxlargess})
+         [icon :pets]]"
+
+   [{:keys [x pred src-form src-form-meta]
+     :as   m}]
    (when-not (nil? x)
      (let [pred-set? (set? pred)
            pred-f    (when-not pred-set? (get publics pred)) 
@@ -408,34 +408,41 @@ Value for the :-size option must pass this predicate:
        (when-not skip?
          (when-not (if pred-set?
                      (or (contains? pred x)
-                         (when (string? x)
-                           (contains? pred (keyword x))))
+                            (when (string? x)
+                              (contains? pred (keyword x))))
                      (pred-f x))
 
            (bad-opt-value-callout
             {:point-of-interest-opts (merge 
                                       {:header (warning-header m)
                                        :body   (warning-body m)
-
-                                       :type   :error
-                                       :form   (symbol src-form)}
+                                       :form   (some-> src-form symbol)}
                                       src-form-meta)
 
              :callout-opts           {:type  :warning
                                       :label "WARNING: Invalid option value"}}))))))     
 
  (defn validate-options*
-   [{uic-ns :ns uic-name :name [_ uic-opts] :opts :as uic-meta}
-    supplied-opts
-    {src-form-meta :form-meta src-form  :form}]
+   "A conditional call to this is setup within the `extract` macro.
+   
+    `validate-options*` will not get called unless an :opts entry is present in
+    the metadata map of the ui component's rendering function."
+   [{:keys [uic-meta
+            supplied-opts
+            src]}]
+   (let [{uic-ns       :ns
+          uic-name     :name
+          [_ uic-opts] :opts} uic-meta
 
-   (doseq [[k x] supplied-opts
-           :let [opt-sym (-> k name symbol)
-                 {:keys [pred]} (get uic-opts opt-sym)]]
-     (validate-option* {:x             x      
-                        :opt-sym       opt-sym
-                        :pred          pred
-                        :uic-ns        uic-ns
-                        :uic-name      uic-name
-                        :src-form      src-form
-                        :src-form-meta src-form-meta}))))
+         {src-form-meta :form-meta
+          src-form      :form}       src]
+     (doseq [[k x] supplied-opts
+             :let  [opt-sym (-> k name symbol)
+                    {:keys [pred]} (get uic-opts opt-sym)]]
+       (validate-option* {:x             x      
+                          :opt-sym       opt-sym
+                          :pred          pred
+                          :uic-ns        uic-ns
+                          :uic-name      uic-name
+                          :src-form      src-form
+                          :src-form-meta src-form-meta})))))

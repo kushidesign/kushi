@@ -1603,7 +1603,9 @@
    nil."
   [f opts src]
   `(when (and ^boolean js/goog.DEBUG kushi.core/debug-ui?)
-      (kushi.core/validate-options* (-> ~f var meta) ~opts ~src)))
+      (kushi.core/validate-options* {:uic-meta      (-> ~f var meta)
+                                     :supplied-opts ~opts 
+                                     :src           ~src})))
 
 
 
