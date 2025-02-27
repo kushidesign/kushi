@@ -85,35 +85,34 @@
               :desc    "Content at the inline-start position, following the button text. Typically an icon."}
 
              end-enhancer   
-             {:pred            #{string? keyword?}
-              :default         nil
-              :desc            "Content at the inline-end position, preceding the button text. Typically an icon."
-              :snippets-header "Fix me"
-              :demo            {:label   "Examples using end enhancer icons"
-                                :require [[kushi.ui.icon.core :refer [icon]]
-                                          [smth.core :refer [duh]]
-                                          [clojure.string :as string]]
-                                :samples [^{:label "oneee"}
-                                          [button {:class         ["xxxsmall"]
-                                                   :-end-enhancer [icon :pets]
-                                                   :-colorway     :accent
-                                                   :-surface      :solid}
-                                           "Pets"]
-                                          
-                                          ^{:label "two"}
-                                          [button {:class         ["xxxsmall"]
-                                                   :-end-enhancer [icon :auto-awesome]
-                                                   :-colorway     :accent
-                                                   :-surface      :soft}
-                                           "Wow"]
+             {:pred    #{string? keyword?}
+              :default nil
+              :desc    "Content at the inline-end position, preceding the button text. Typically an icon."
+              :demo    {:label   "Examples using end enhancer icons"
+                        :require [[kushi.ui.icon.core :refer [icon]]
+                                  [smth.core :refer [duh]]
+                                  [clojure.string :as string]]
+                        :samples [^{:label "oneee"}
+                                  [button {:class         ["xxxsmall"]
+                                           :-end-enhancer [icon :pets]
+                                           :-colorway     :accent
+                                           :-surface      :solid}
+                                   "Pets"]
+                                  
+                                  ^{:label "two"}
+                                  [button {:class         ["xxxsmall"]
+                                           :-end-enhancer [icon :auto-awesome]
+                                           :-colorway     :accent
+                                           :-surface      :soft}
+                                   "Wow"]
 
-                                          ^{:label "three"}
-                                          [button {:class         ["xxxsmall"]
-                                                   :-end-enhancer [icon :play-arrow]
-                                                   :-colorway     :accent
-                                                   :-surface      :outline}
-                                           "Play"]
-                                          ]}}]
+                                  ^{:label "three"}
+                                  [button {:class         ["xxxsmall"]
+                                           :-end-enhancer [icon :play-arrow]
+                                           :-colorway     :accent
+                                           :-surface      :outline}
+                                   "Play"]
+                                  ]}}]
 
    :display  '{:docs     {:order [:summary :desc :toks]
                           :parse {:summary 'x
@@ -137,8 +136,11 @@
                 icon]}
         opts
 
+        ;;  _ (? :pp [opts children])
+
         {:keys             [shape surface]
          semantic-colorway :colorway}
+
         (get-variants opts)
         
         styling-class
@@ -168,15 +170,15 @@
         :aria-busy                 loading?
         :aria-label                (when loading? "loading")
         :data-kushi-ia             ""
-        :data-kushi-surface        (validate-option button surface)
-        :data-kushi-colorway       (validate-option button semantic-colorway)
-        :data-kushi-shape          (validate-option button shape)
         :data-kushi-size           (validate-option button size)
+        :data-kushi-shape          (validate-option button shape)
+        :data-kushi-surface        (validate-option button surface)
+        :data-kushi-packing        (validate-option button packing)
+        :data-kushi-colorway       (validate-option button semantic-colorway)
         :data-kushi-ui-spinner     (when loading? "")
+        :data-kushi-stroke-align   (validate-option button stroke-align)
         :data-kushi-end-enhancer   (when (and (not icon) end-enhancer) "")
         :data-kushi-start-enhancer (when (and (not icon) start-enhancer) "")
-        :data-kushi-packing        (validate-option button packing)
-        :data-kushi-stroke-align   (validate-option button stroke-align)
         ;; :data-kushi-stroke-align   (some-> stroke-align 
         ;;                                    (maybe #{:outside "outside"}))
         }
@@ -305,7 +307,7 @@
             attrs)]
           (? children))))
 
-(defn big-paw
+#_(defn big-paw
   {:desc "Hi from big button"
    :opts '{size {:pred #{:small :large :xxxlarge}}}}
   [& args]

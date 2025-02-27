@@ -3,7 +3,7 @@
    [clojure.string :as string]
    [domo.core :as domo]
    [kushi.playground.state :as state]
-   [kushi.playground.ui :refer [light-dark-mode-switch]]
+   [kushi.ui.lightswitch.core :refer [light-dark-mode-switch]]
    [kushi.core :refer [sx css merge-attrs css-vars-map]]
    [kushi.ui.core :refer [defcom]]
    [kushi.ui.icon.core :refer [icon]]

@@ -15,7 +15,7 @@
    [kushi.ui.util :refer [as-str maybe keyed]]
    [kushi.ui.modal.core :refer [modal open-kushi-modal modal-close-button]]
    [clojure.string :as string]
-   [kushi.ui.button.core :refer [button icon-button big-paw big-paw*]]
+   [kushi.ui.button.core :refer [button icon-button #_big-paw #_big-paw*]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.defs :as defs]
    [kushi.css.media]))
@@ -207,9 +207,9 @@
 (defn showcase [ui]
   (let [uic (-> button var meta uic*)]
 
-   #_(!? (big-paw* (merge-attrs (sx :c--green)
-                             {:-size :xxxlarge})
-        [icon :pets]))
+  ;;  (!? (big-paw* (merge-attrs (sx :c--green)
+  ;;                            {:-size :xxxlarge})
+  ;;       [icon :pets]))
 
     [:div 
      [button {:-colorway :blue

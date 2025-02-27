@@ -29,7 +29,7 @@
         container-attrs2
         (merge-attrs container-attrs
                      {:class (css [:xsm:gtc "repeat(4, max-content)"]
-                                   :md:gtc--max-content)})]
+                                  :md:gtc--max-content)})]
     [
 
      {:desc            "Surface variants"
@@ -86,7 +86,7 @@
 
      ;; get extra reqs working
      ;; get links working
-
+     
      {:desc            "With icons"
       :reqs            '[[kushi.ui.icon.core :refer [icon icon-button]]
                          [kushi.ui.label.core :refer [label]]]
@@ -105,7 +105,7 @@
                         ;;  :args  [[icon :star]]}
                         ;; {:label "Icon button"
                         ;;  :args  [[icon :play-arrow]]}
-
+                        
                         {:label "Leading icon"
                          :args  [[icon :play-arrow] "Play"]}
                         {:label "Trailing icon"

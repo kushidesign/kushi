@@ -45,8 +45,8 @@
   (filter 
   ;;  :label
    #(contains? #{
-                ;;  "button"     
-                 "icon"       
+                 "button"     
+                ;;  "icon"       
                 ;;  "spinner"    
                 ;;  "switch"     
                 ;;  "radio"      
