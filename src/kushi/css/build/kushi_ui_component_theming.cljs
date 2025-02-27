@@ -5,13 +5,14 @@
 
 (defcss
   "body"
-  {"font-family" "var(--sans-serif-font-stack)",
-   "color" "var(--foreground-color)",
-   "background-color" "var(--background-color)",
-   "transition-property" "background-color, color",
-   "transition-duration" "var(--fast)",
-   "transition-timing-function" "var(--timing-linear-curve)",
-   "overflow-y" "scroll"})
+  {"font-family"                "var(--sans-serif-font-stack)"
+   "font-weight"                "var(--body-font-weight)"               
+   "color"                      "var(--foreground-color)"
+   "background-color"           "var(--background-color)"
+   "transition-property"        "background-color, color"
+   "transition-duration"        "var(--fast)"
+   "transition-timing-function" "var(--timing-linear-curve)"
+   "overflow-y"                 "scroll"})
 
 (defcss
   ".dark, body.dark"
