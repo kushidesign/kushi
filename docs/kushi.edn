@@ -30,6 +30,8 @@
 
    ;; Playground
    :--playground-main-content-max-width     :605px
+   :--body-font-weight                      300
+   :--foreground-color                      :$neutral-750
    ]
   
   :ui
