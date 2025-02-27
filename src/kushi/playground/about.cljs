@@ -101,7 +101,7 @@
                          :h--26px)}]]
 
    [prose
-    {:class (sx :.alias-token-scales)}
+    (sx :.alias-token-scales)
     "Semantic alias tokens map to global tokens like so:"
     [:br]]
 
