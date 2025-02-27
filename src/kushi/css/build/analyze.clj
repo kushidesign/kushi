@@ -22,7 +22,7 @@
    [clojure.set :as set]
    [clojure.spec.alpha]
   ;;  [tick.core :as tick]
-   ))
+   [edamame.core :as edamame]))
 
 ;; Combine the design and color tokens.
 ;; They are defined similarly, but in separate namespaces, because color-tokens
@@ -53,6 +53,19 @@
 (def design+color-tokens-by-token-array-map
   design-tokens-by-token-array-map)
 
+;; WArnings --------------------------------------------------------------------
+
+(defn edamame-parse-warning [e ns-str]
+  (let [body (bling "Error when parsing with edamame."
+                    "\n\n"
+                    [:italic.subtle.bold ns-str])] 
+    (callout
+     {:type        :error
+      :label       (str "ERROR: "
+                        (string/replace (type e) #"^class " "" )
+                        " (Caught)")
+      :padding-top 1}
+     body)))
 
 ;; Perf Timing -----------------------------------------------------------------
 ;; (def add-ticks? false)
@@ -513,16 +526,19 @@
 
 
 ;; TODO - add error boundery here
-(defn parse-all-forms [file]
-  (-> file
-      slurp
-      (e/parse-string-all {:fn           true
-                           :regex        true
-                           :quote        true
-                           :syntax-quote true
-                           :readers      {'js (fn [v] (list 'js v))}})
-      rest))
+(defn parse-all-forms [file ns-str]
+  (try (-> file
+           slurp
+           (e/parse-string-all {:fn           true
+                                :regex        true
+                                :quote        true
+                                :syntax-quote true
+                                :readers      {'js (fn [v] (list 'js v))}})
+           rest)
+       (catch Exception e
+             (edamame-parse-warning e ns-str))))
 
+      
 (defn filter-build-sources [bs]
   (let [project-namespace-prefixes-to-analyze
         (some->> bs
@@ -820,7 +836,7 @@
    [[_ rel-path] {:keys [ns file url ns-info] :as m-}]]
   (let [ns-str    (string/replace (str ns) #"\." "_")
         ns-meta   (:meta ns-info)
-        all-forms (parse-all-forms (or file url))
+        all-forms (parse-all-forms (or file url) ns-str)
         m         (keyed [*css ns ns-str ns-meta rel-path file url])
          
         ;; dbg? (= ns
