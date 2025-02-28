@@ -1015,7 +1015,9 @@
    "--tag-padding-block-compact"                        "0.20em",
    "--tag-padding-inline-compact"                       "0.45em",
    "--tag-padding-block-roomy"                          "0.45em",
-   "--tag-padding-inline-roomy"                         "0.9em"})
+   "--tag-padding-inline-roomy"                         "0.9em"
+   
+   })
 
 
 (defcolorway "neutral")

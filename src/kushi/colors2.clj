@@ -749,9 +749,11 @@
         standard    [fg-l      fg-d
                      fg-2-l    fg-2-d
                      fg-3-l    fg-3-d
+
                      bg-soft   bg-soft-d  
                      bg-soft-2 bg-soft-2-d
                      bg-soft-3 bg-soft-3-d
+
                      bg-hard   bg-hard-d  
                      bg-hard-2 bg-hard-2-d
                      bg-hard-3 bg-hard-3-d]
@@ -759,9 +761,11 @@
         green       [750       fg-d
                      800       fg-2-d
                      850       fg-3-d
+
                      100       bg-soft-d  
                      150       bg-soft-2-d
                      200       bg-soft-3-d
+
                      bg-hard   bg-hard-d  
                      bg-hard-2 bg-hard-2-d
                      bg-hard-3 bg-hard-3-d]
@@ -769,9 +773,11 @@
         yellow      [800 fg-d
                      850 fg-2-d
                      900 fg-3-d
+
                      100 bg-soft-d  
                      150 bg-soft-2-d
                      200 bg-soft-3-d
+
                      700 bg-hard-d   
                      750 bg-hard-2-d
                      850 bg-hard-3-d]
@@ -779,9 +785,11 @@
         neutral      [800 fg-d
                       850 fg-2-d
                       900 fg-3-d
-                      100 bg-soft-d  
-                      200 bg-soft-2-d
-                      300 bg-soft-3-d
+
+                      100 900 
+                      200 850
+                      300 800
+
                       700 400   
                       750 250
                       850 100]
@@ -789,9 +797,11 @@
         blue        [fg-l      fg-d
                      fg-2-l    fg-2-d
                      fg-3-l    fg-3-d
+
                      bg-soft   bg-soft-d  
                      bg-soft-2 bg-soft-2-d
                      bg-soft-3 bg-soft-3-d
+
                      bg-hard   350  
                      bg-hard-2 300
                      bg-hard-3 250]
@@ -799,9 +809,11 @@
         purple      [fg-l      fg-d
                      fg-2-l    fg-2-d
                      fg-3-l    fg-3-d
+
                      bg-soft   750 
                      bg-soft-2 650
                      bg-soft-3 550
+
                      550       350  
                      600       300
                      650       250]
@@ -809,9 +821,11 @@
         lime        [fg-l      fg-d
                      fg-2-l    fg-2-d
                      fg-3-l    fg-3-d
+
                      bg-soft   bg-soft-d  
                      bg-soft-2 bg-soft-2-d
                      bg-soft-3 bg-soft-3-d
+
                      bg-hard   350  
                      bg-hard-2 300
                      bg-hard-3 250]

@@ -801,7 +801,9 @@
     :--xxslow                      :2s
     :--xxxslow                     :4s
     :--spinner-animation-duration  :900ms
-    :--loading-spinner-height      :0.8em]
+    :--loading-spinner-height      :0.8em
+    
+    ]
 
 
    ;; Intended for styling scrollbars with the .styled-scrollbars utility-class
