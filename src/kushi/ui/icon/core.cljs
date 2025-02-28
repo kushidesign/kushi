@@ -2,7 +2,7 @@
   (:require
    [clojure.string :as string]
    [kushi.core :refer (sx merge-attrs)]
-   [kushi.ui.core :refer (opts+children material-symbol-or-icon-span)]))
+   [kushi.ui.core :refer (extract material-symbol-or-icon-span)]))
 
 (defn icon-name->snake-case-string [coll]
   (mapv #(cond
@@ -63,7 +63,7 @@
   ;;                        "Note that the requested axis for `fill` must be present in the Material Symbols font you are pulling in."]}]
    }
   [& args]
-  (let [[opts attrs & children]           (opts+children args)
+  (let [{:keys [opts attrs children]}           (extract args icon)
         {:keys [icon-style icon-filled?]} opts
         [icon*]                           children]
     [:div

@@ -3,7 +3,7 @@
    [kushi.core :refer (sx defcss merge-attrs)]
    [domo.core :as domo]
    [kushi.ui.util :as util]
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.core :refer (extract)]
    [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]))
 
 (defcss "@layer kushi-ui-styles .kushi-switch-track-content"
@@ -104,7 +104,7 @@
            ]}
   [& args]
   (let [[opts attrs & _]
-        (opts+children args)
+        (extract args switch)
 
         {:keys [disable-events?
                 on?

@@ -12,7 +12,7 @@
             [kushi.ui.icon.core :refer [icon]]
             [kushi.ui.tooltip.core :refer [tooltip-attrs]]
             [domo.core :as domo]
-            [kushi.ui.core :refer [defcom]]
+            [kushi.ui.core :refer [extract]]
             [kushi.ui.slider.core]
             [kushi.ui.switch.core :refer [switch]]
             [kushi.ui.util :refer [find-index]]
@@ -233,10 +233,27 @@
       (domo/set-attribute! sibling "aria-selected" "false") )
     (domo/set-attribute! select-target "aria-selected" "true")))
 
-(defcom flex-options
-  (let [{:keys [og-flex-class target-els family-classes starts-with]} &opts]
+(defn flex-options-click [e]
+  (let [node    (.-currentTarget e)
+        control (domo/nearest-ancestor (domo/et e) ".tweaker-control-row")
+        label   (.querySelector control ".kushi-slider-single-value-label")]
+
+    (select-flex-thumb e flex-class)
+    (highlight-tweaked-label! e og-flex-class flex-class)
+    (j/assoc! label :textContent (name flex-class))
+
+    (doseq [el target-els]
+      (apply domo/remove-class! el family-classes)
+      (apply domo/remove-class! el (:display variants-by-category))
+      (domo/add-class! el flex-class))))
+
+(defn flex-options
+  (let [{:keys [opts attrs children]} (extract args label)
+        {:keys [og-flex-class target-els family-classes starts-with]} opts]
     (into [:div (sx :.flex-row-sa  :p--2px :gap--1rem)]
-          (for [flex-class (filter #(string/starts-with? (name %) starts-with) (:flex variants-by-category))
+          (for [flex-class (filter #(string/starts-with? (name %)
+                                                         starts-with)
+                                   (:flex variants-by-category))
                 :let [og? (= (name flex-class) (name og-flex-class))
                       og-class (when og? "og-value")]]
             [:div (merge-attrs
@@ -255,29 +272,19 @@
                    {:role          :button
                     :tab-index     0
                     :aria-selected og?
-                    :on-click      (fn [e]
-                                     (let [node    (.-currentTarget e)
-                                           control (domo/nearest-ancestor (domo/et e) ".tweaker-control-row")
-                                           label   (.querySelector control ".kushi-slider-single-value-label")]
-
-                                       (select-flex-thumb e flex-class)
-                                       (highlight-tweaked-label! e og-flex-class flex-class)
-                                       (j/assoc! label :textContent (name flex-class))
-
-                                       (doseq [el target-els]
-                                         (apply domo/remove-class! el family-classes)
-                                         (apply domo/remove-class! el (:display variants-by-category))
-                                         (domo/add-class! el flex-class))))}
+                    :on-click      flex-options-click}
                    (tooltip-attrs {:-text      (str ":." (name flex-class))
                                    :-placement :top}))
-             &children]))))
+             children]))))
 
 
 (defn flex-picker
   [{:keys [target-els profile] :as opts}]
   (let [{:keys         [utility-family]
          og-flex-class :classname}        profile
-        family-classes                    (->> variants-by-category utility-family (map name))
+        family-classes                    (->> variants-by-category
+                                               utility-family
+                                               (map name))
         opts                              {:-og-flex-class  og-flex-class
                                            :-target-els     target-els
                                            :-family-classes family-classes}]
@@ -440,9 +447,10 @@
 (defcss ".highlight-tweaked"
   [:_.tweakable-label>label:bgi "linear-gradient(to right, var(--magenta-100), var(--blue-100))"])
 
-(defcom control
+(defn control
+(let [{:keys [opts attrs children]} (extract args label)
   (let [{:keys [profile]}            
-        &opts
+        opts
 
         {:keys [css-prop
                 utility-family
@@ -479,7 +487,7 @@
               :_.kushi-slider-single-value-label-wrapper:flex-basis--180px
               :.tweak-off_.tweakable-label>label:td--line-through
               :.tweak-off_.tweak-off-mask:d--block)
-          {:data-kushi-tweak (str &opts)})
+          {:data-kushi-tweak (str opts)})
      [:div (sx :.tweak-off-mask
                :.absolute-fill
                :zi--1000
@@ -495,7 +503,7 @@
                  utility-family-class
                  :fw--$wee-bold)
       (or css-prop utility-family-control-label)]
-     [:div (sx :.grow) &children]
+     [:div (sx :.grow) children]
      [button (sx :.kushi-reset-tweakable
                  :.minimal
                  :.pill

@@ -1,11 +1,11 @@
 (ns kushi.ui.link.core
   (:require [kushi.core :refer (css merge-attrs)]
-            [kushi.ui.core :refer (opts+children)]))
+            [kushi.ui.core :refer (extract)]))
 
 (defn link
   "Desc for"
   [& args]
-  (let [[opts attrs & children] (opts+children args)
+  (let [{:keys [opts attrs children]} (extract args link)
         {:keys []}              opts]
     (into [:a
            (merge-attrs

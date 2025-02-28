@@ -1,12 +1,12 @@
 (ns kushi.ui.label.core
   (:require
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.core :refer (extract)]
    [kushi.core :refer (css merge-attrs)]))
 
 (defn label
   {:desc "A label is typically used for providing titles to sections of content."}
   [& args]
-  (let [[_ attrs & children] (opts+children args)
+  (let [{:keys [opts attrs children]} (extract args label)
         children (map #(if (string? %)
                          [:span.kushi-label-text %]
                          %)

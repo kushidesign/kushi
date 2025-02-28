@@ -1,7 +1,7 @@
 (ns kushi.ui.checkbox.core
   (:require
    [kushi.core :refer (css sx merge-attrs)]
-   [kushi.ui.core :refer (opts+children)]))
+   [kushi.ui.core :refer (extract)]))
 
 ;; TODO outlines for ally
 (defn checkbox
@@ -11,7 +11,7 @@
                :default nil
                :desc    "HTML attributes map applied to the wrapping `label` div."}]}
   [& args]
-  (let [[opts attrs & children] (opts+children args)
+  (let [{:keys [opts attrs children]} (extract args checkbox)
         {:keys [label-attrs]}   opts]
     [:label
      (merge-attrs

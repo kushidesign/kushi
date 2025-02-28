@@ -1,7 +1,7 @@
 (ns kushi.ui.text-field.core
   (:require
    [kushi.core :refer (sx css defcss css-vars-map merge-attrs)]
-   [kushi.ui.core :refer (opts+children)]))
+   [kushi.ui.core :refer (extract)]))
 
 (defcss "@layer kushi-ui-component kushi-text-input-enhancer"
   :d--if
@@ -20,7 +20,7 @@
 
 (defn- text-field* [& args]
   (let [[opts attrs & _]       
-        (opts+children args)
+        (extract args text-field*)
 
         {:keys [wrapper-attrs
                 start-enhancer
@@ -172,7 +172,7 @@
            ]}
   [& args]
   (let [[opts attrs & _]
-        (opts+children args)
+        (extract args text-field)
 
         {:keys [
                 outer-wrapper-attrs

@@ -10,7 +10,7 @@
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.util :refer [as-str maybe keyed]]
    [clojure.string :as string]
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.core :refer (extract)]
    [kushi.css.media]
    [me.flowthing.pp :refer [pprint]]
    [domo.core :as d]))
@@ -80,7 +80,7 @@
     s]])
 
 (defn copy-to-clipboard-button [& args]
-  (let [[opts attrs] (opts+children args)]
+  (let [{:keys [opts attrs children]} (extract args copy-to-clipboard-button)]
     [button
      (merge-attrs
       {:-colorway :accent

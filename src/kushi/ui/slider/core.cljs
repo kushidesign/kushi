@@ -11,7 +11,7 @@
   (:require
    [applied-science.js-interop :as j]
    [kushi.core :refer (sx css defcss css-vars-map merge-attrs)]
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.core :refer (extract)]
    [kushi.ui.slider.css]
    [kushi.ui.util :refer [range-of-floats find-index]]
    ;; have bearing on slider?
@@ -615,9 +615,8 @@
 
            ]}
   [& args]
-  (let [[opts
-         attrs]
-        (opts+children args)
+  (let [[opts attrs]
+        (extract args slider)
 
         {:keys [defaultValue
                 default-value

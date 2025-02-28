@@ -332,7 +332,7 @@ Example ui component implementation fn defined in button.cljs:
   {:doc  \"Hi from button\"
    :opts '[{size {:pred #{:small :large :xxxlarge}}}}]
   [src & args]
-  (let [[opts attrs & children]
+  (let [{:keys [opts attrs children]}
         (extract args button)] ;; <- dispatch is in extract
     
     (into [:div

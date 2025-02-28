@@ -75,7 +75,7 @@
               (assoc m (-> k name (subs 1) keyword) v))
             {})))
 
-(defn opts+children
+(defn extract
   "Reorganizes arguments to component and returns:
    [map-of-user-opts attr child1 child2 ...]"
   [coll]

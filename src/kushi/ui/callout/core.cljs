@@ -5,7 +5,7 @@
    [goog.dom :as gdom]
    [kushi.core :refer [css merge-attrs sx]]
    [kushi.ui.button.core :refer [button]]
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.core :refer (extract)]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
    [kushi.ui.util :refer [keyed maybe]]))
@@ -44,7 +44,7 @@
            ]}
   [& args]
   (let [[opts attrs & _]
-        (opts+children args)
+        (extract args callout-close-button)
 
         {:keys     [icon-svg colorway]
          icon-name :icon
@@ -129,8 +129,8 @@
 
   [& args]
 
-  (let [[opts attrs & children]    
-        (opts+children args)
+  (let [{:keys [opts attrs children]}    
+        (extract args callout)
 
         {:keys [loading?
                 icon

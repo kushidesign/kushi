@@ -2,14 +2,43 @@
   (:require
    [kushi.colors :as kushi.colors]
    [kushi.core :refer (sx css css-vars-map merge-attrs register-design-tokens-by-category)]
-   [kushi.ui.core :refer [defcom opts+children]]
-   [kushi.ui.label.core :refer [label]]
+   [kushi.ui.core :refer [extract]]
+  ;;  [kushi.ui.label.core :refer [label]]
    [kushi.ui.prose.core :refer [prose]]))
+
 
 (register-design-tokens-by-category "colors" "global colors")
 
-(defcom text-sample-sticker
-  (let [{:keys [color bgc]} &opts]
+(defn label
+  {:desc "A label is typically used for providing titles to sections of
+          content."}
+  [& args]
+  (let [{:keys [opts attrs children]} (extract args label)
+        children (map #(if (string? %)
+                         [:span.kushi-label-text %]
+                         %)
+                      children)]
+    (into [:span
+           (merge-attrs
+            {:class         (css
+                             ".kushi-label"
+                             :.flex-row-c
+                             :.enhanceable-with-icon
+                             :.transition
+                             :jc--fs
+                             :d--inline-flex
+                             :w--fit-content)
+             :data-kushi-ui :label}
+            attrs)]
+          children)))
+
+(defn text-sample-sticker [& args]
+  (let [{:keys [opts attrs children]} (extract args label)
+        children                      (map #(if (string? %)
+                                              [:span.kushi-label-text %]
+                                              %)
+                                           children)
+        {:keys [color bgc]}           opts]
     [label
      [:span (merge-attrs
              {:style (css-vars-map color bgc)
@@ -24,7 +53,7 @@
                           :mis--10px
                           :c--$color
                           :bgc--$bgc)}
-             &attrs)
+             attrs)
       "Text"]]))
 
 
@@ -194,8 +223,8 @@
                :-bgc   :black}]]]]))))])
 
 (defn color-grid [& args]
-  (let [[opts attrs & children]
-        (opts+children args)
+  (let [{:keys [opts attrs children]}
+        (extract args color-grid)
 
         {:keys [row-gap
                 column-gap

@@ -2,7 +2,7 @@
   (:require
    [kushi.core :refer (css css-vars-map merge-attrs)]
    [kushi.ui.util :refer [aspect-ratio->number]]
-   [kushi.ui.core :refer (opts+children)] ))
+   [kushi.ui.core :refer (extract)] ))
 
 (defn grid
   {:desc "Elastic grid layout with fixed-aspect ratio grid-items"
@@ -29,8 +29,8 @@
                       representing a valid CSS value for
                       [`grid-gap`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."}]}
   [& args]
-  (let [[opts attr & children]                     
-        (opts+children args)
+  (let [[opts attr children]                     
+        (extract args grid)
 
         {:keys [column-min-width aspect-ratio gap]
          :or   {column-min-width :150px

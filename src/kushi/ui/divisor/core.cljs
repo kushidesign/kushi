@@ -1,12 +1,12 @@
 (ns kushi.ui.divisor.core
   (:require [kushi.core :refer [sx merge-attrs]]
-            [kushi.ui.core :refer (opts+children)]
+            [kushi.ui.core :refer (extract)]
             [kushi.ui.util :as util]))
 
 (defn divisor
   "Desc for divisor"
   [& args]
-  (let [[opts attrs] (opts+children args)
+  (let [{:keys [opts attrs children]} (extract args divisor)
         {:keys [orientation]}  opts]
     [:div
      (merge-attrs

@@ -1,7 +1,7 @@
 (ns kushi.ui.radio.core
   (:require
    [kushi.core :refer (css sx merge-attrs)]
-   [kushi.ui.core :refer (opts+children)]))
+   [kushi.ui.core :refer (extract)]))
 
 (defn radio
   {:desc "Radio buttons are used in groups of 2 or more, when only one choice
@@ -11,7 +11,7 @@
             :default nil
             :desc    "HTML attributes map applied to the underlying `input` div."}]}
   [& args]
-  (let [[opts attrs & children] (opts+children args)
+  (let [{:keys [opts attrs children]} (extract args radio)
         {:keys [input-attrs]}   opts]
     (into
      [:label

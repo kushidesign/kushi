@@ -1,7 +1,7 @@
 (ns kushi.ui.prose.core
   (:require
    [kushi.core :refer [merge-attrs css]]
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.core :refer (extract)]
    [kushi.ui.icon.core]
    [kushi.ui.shared.theming :refer [get-variants]]
    [kushi.ui.util :refer [maybe nameable?]]))
@@ -31,7 +31,7 @@
                          scale."}
               ]}
   [& args]
-  (let [[opts attrs & children]       (opts+children args)
+  (let [{:keys [opts attrs children]}       (extract args prose) 
         {:keys [size]}                opts
         size                          (or (some-> size
                                                   (maybe nameable?)

@@ -4,13 +4,13 @@
             [clojure.string :as string]
             [domo.core :as domo]
             [goog.dom :as gdom]
-            [kushi.ui.core :refer (opts+children)]
+            [kushi.ui.core :refer (extract)]
             [kushi.core :refer [sx
-                                    css
-                                    merge-attrs
-                                    css-vars-map
-                                    register-design-tokens
-                                    register-design-tokens-by-category]]))
+                                css
+                                merge-attrs
+                                css-vars-map
+                                register-design-tokens
+                                register-design-tokens-by-category]]))
 
 (register-design-tokens-by-category
  "elevation"
@@ -75,11 +75,11 @@
            {:name    icon-svg
             :pred  vector?
             :default nil
-            :desc    ["Optional. A Hiccup representation of an svg icon.
-                       Supply this as an alternative to using the Google
-                       Material Symbols icon font"]}]}
+            :desc    ["Optional. A Hiccup representation of an svg icon. Supply
+                       this as an alternative to using the Google Material
+                       Symbols icon font"]}]}
   [& args]
-  (let [[opts attrs & _] (opts+children args)
+  (let [[opts attrs & _] (extract args modal-close-button)
         {:keys     [icon-svg]
          icon-name :icon}      opts
         icon-name              (when-not icon-svg
@@ -150,7 +150,7 @@
            ;; TODO -- add y
            ]}
   [& args]
-  (let [[opts attrs & children] (opts+children args)
+  (let [{:keys [opts attrs children]} (extract args modal)
         {:keys [modal-title
                 description
                 expanded?]}      opts

@@ -27,6 +27,14 @@
                  "data-kushi-playground-active-path"
                  "components")
 
+
+  ;; for pallette generation dev
+  ;; (js/setTimeout
+  ;;    (fn []
+       
+  ;;      )
+  ;;    2000)
+
   (into 
      [:div.flex-col-fs
       [nav/header]

@@ -732,26 +732,19 @@
 
 (def theming-colors-oklch-flattened 
   (let [
-        fg-l        700
-        fg-2-l      800
-        fg-3-l      900
-        fg-d        250
-        fg-2-d      150
-        fg-3-d      100
+        fg-l      700   fg-d        250
+        fg-2-l    800   fg-2-d      150
+        fg-3-l    900   fg-3-d      100
 
-        bg-soft      50
-        bg-soft-2   100
-        bg-soft-3   150
-        bg-soft-d   850
-        bg-soft-2-d 750
-        bg-soft-3-d 650
+        bg-soft    50   bg-soft-d   950
+        bg-soft-2 100   bg-soft-2-d 850
+        bg-soft-3 150   bg-soft-3-d 750
 
-        bg-hard     650
-        bg-hard-2   700
-        bg-hard-3   750
-        bg-hard-d   400
-        bg-hard-2-d 350
-        bg-hard-3-d 300
+        bg-hard   650   bg-hard-d   550
+        bg-hard-2 700   bg-hard-2-d 350
+        bg-hard-3 750   bg-hard-3-d 300
+        
+        
 
         standard    [fg-l      fg-d
                      fg-2-l    fg-2-d
@@ -789,9 +782,9 @@
                       100 bg-soft-d  
                       200 bg-soft-2-d
                       300 bg-soft-3-d
-                      700 bg-hard-d   
-                      750 bg-hard-2-d
-                      850 bg-hard-3-d]
+                      700 400   
+                      750 250
+                      850 100]
 
         blue        [fg-l      fg-d
                      fg-2-l    fg-2-d

@@ -3,7 +3,7 @@
   (:require
    [fireworks.core :refer [?]]
    [kushi.core :refer [css merge-attrs sx]]
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.core :refer (extract)]
    [kushi.ui.util :refer [maybe nameable?]]))
 
 ;; Check docs
@@ -12,8 +12,8 @@
    :desc    ""
    :opts    '[]}
   [& args]
-  (let [[opts attrs & children]
-        (opts+children args)
+  (let [{:keys [opts attrs children]}
+        (extract args aspect-ratio)
         
         {:keys [ratio]}
         opts

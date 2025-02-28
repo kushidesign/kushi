@@ -5,15 +5,17 @@
    [kushi.playground.state :as state]
    [kushi.ui.lightswitch.core :refer [light-dark-mode-switch]]
    [kushi.core :refer [sx css merge-attrs css-vars-map]]
-   [kushi.ui.core :refer [defcom]]
+   [kushi.ui.core :refer [extract]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.button.core :refer [button]]))
+
 
 (defn path-transitioning! [app]
     (domo/add-class! app "path-transitioning")
     (js/setTimeout #(domo/remove-class! (domo/el-by-id "app")
                                         "path-transitioning")
                    5000))
+
 
 (defn route! [menu-id href e]
   (let [e          (or e js/window.event)
@@ -35,6 +37,7 @@
         (js/setTimeout #(state/set-focused-path! (into [] path-label))
                        250))))
 
+
 (def header-nav-button-attrs
   {:-surface :minimal
    :-shape :pill
@@ -55,11 +58,13 @@
                ;; TODO test this one
                ["dark:[aria-selected='true']:c" :white])})
 
-(defcom header-nav-button
-  [button 
-   (let [focused? (:focused? &opts)]
-     (merge-attrs header-nav-button-attrs &attrs))
-   &children])
+
+(defn header-nav-button [& args]
+  (let [{:keys [opts attrs children]} (extract args header-nav-button)]
+    [button 
+     (let [focused? (:focused? opts)]
+       (merge-attrs header-nav-button-attrs attrs))
+     children]))
 
 
 (def octocat-svg

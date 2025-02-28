@@ -11,7 +11,7 @@
    [kushi.playground.sidenav :as sidenav]
    [kushi.playground.state :as state]
    [kushi.ui.button.core :refer [button]]
-   [kushi.ui.core :refer [defcom]]
+   [kushi.ui.core :refer [extract]]
    [kushi.ui.divisor.core :refer (divisor)]
    [kushi.ui.spinner.core :refer [propeller]]))
 
@@ -41,17 +41,18 @@
       :pbs--0.4em
       :pbe--0.399em))
 
-(defcom tab
-  [button (merge-attrs 
-           tab-attrs
-           {:role        :tab
-            :tab-index   (if (contains? #{true "true"}
-                                        (:aria-selected &attrs))
-                           0
-                           -1)
-            :on-key-down domo/on-key-down-tab-navigation}
-           &attrs)
-   &children])
+(defn tab [& args]
+  (let [{:keys [opts attrs children]} (extract args tab)]
+    [button (merge-attrs 
+             tab-attrs
+             {:role        :tab
+              :tab-index   (if (contains? #{true "true"}
+                                          (:aria-selected attrs))
+                             0
+                             -1)
+              :on-key-down domo/on-key-down-tab-navigation}
+             attrs)
+     children]))
 
 
 (declare component-section)

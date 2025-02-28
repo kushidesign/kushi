@@ -3,7 +3,7 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
-   [kushi.ui.core :refer (opts+children extract)]
+   [kushi.ui.core :refer (extract)]
    [kushi.ui.icon.core]
    [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
    [kushi.ui.util :refer [as-str maybe nameable?]]
@@ -127,15 +127,8 @@
                           :order [surface shape]
                           :exclude #{start-enhancer size}}}}
   [& args]
-  
-  #_(profile ; Profile any `p` forms called during body execution
-    {} ; Profiling options; we'll use the defaults for now
-    (dotimes [_ 10000]
-      (p :base (opts+children args))
-      (p :more-fns (opts+children-b args))))
-
-  (let [[opts attrs & children]
-        (opts+children args)
+  (let [{:keys [opts attrs children]}
+        (extract args button)
 
         {:keys [loading?
                 start-enhancer
@@ -224,8 +217,8 @@
                          `aria-busy` and `aria-label`"}]}
   [& args]
   (let [
-        [opts attrs & children]
-        (opts+children args)
+        {:keys [opts attrs children]}
+        (extract args icon-button)
 
         {:keys [loading?
                 colorway

@@ -12,13 +12,13 @@
                                  :file (str "defcom:" (:kushi/enclosing-fn-name form-meta) "@" (:file form-meta) ))
          ret (walk/postwalk (fn [x]
                               (cond
-                                (= x '&children)
+                                (= x 'children)
                                 (list 'kushi.ui.core/children children f)
 
-                                (= x '&opts)
+                                (= x 'opts)
                                 opts
 
-                                (= x '&attrs)
+                                (= x 'attrs)
                                 (list 'assoc
                                       attrs
                                       :data-amp-form
@@ -49,7 +49,7 @@
                                                                 (name nm))))]
     `(defn ~nm
        [& args#]
-       (let [[opts# attrs# & children#] (kushi.ui.core/opts+children args#)]
+       (let [[opts# attrs# & children#] (kushi.ui.core/extract args#)]
          (kushi.ui.core/&*->val opts#
                                 attrs#
                                 children#
@@ -74,67 +74,3 @@
 (defmacro extract [args f]
   `(kushi.ui.core/extract* ~args (-> ~f var meta)))
 
-
-;; ;; new defcom sketch
-;; '(defcom mycomp
-;;   {:doc  "Doc string"
-;;    :desc "Component desc"
-;;    :opts {packing #{:roomy :compact}
-;;           shape   {:desc "My desc of the shape attr"
-;;                    :pred #{:roomy :compact}}
-;;           n       {:pred number?}}}
-;;   [:div (merge-attrs 
-;;          (data-attrs "kushi" [packing shape])
-;;          {:data-wtf-mycomp ""}
-;;          (sx :flex-row-fs :c--red)
-;;          &attrs)
-;;    (into [:div {:id (* n n)}]
-;;          &children)])
-
-;; ;; Above woulde expand to
-;; ;; =>
-
-;; '(defn mycomp
-;;   {:doc  "Doc string"
-;;    :desc "Component desc"
-;;    :opts {:packing {:pred #{:roomy :compact}}
-;;           :shape   {:desc "My desc"
-;;                     :pred #{:round :square}}
-;;           :n       {:pred number?}}}
-;;  [& args]
-;;   (let [[opts attrs & children]
-;;         ('kushi.core/opts+children args)
-
-;;         {:keys [packing
-;;                 shape
-;;                 n]}
-;;         opts]
-    
-;;     ;; custom attrs that are not data-attrs are validated here
-;;     (when ^boolean js/goog.DEBUG
-;;       (do (kushi.core/validate-opt
-;;            n
-;;            number?
-;;            'number?)))
-
-;;    [:div (merge-attrs 
-;;           ;; data-attrs are validated here
-;;           {:data-kushi-packing (do (when ^boolean js/goog.DEBUG
-;;                                      (kushi.core/validate-opt
-;;                                       packing
-;;                                       #{:roomy :compact}))
-;;                                    packing)
-;;            :data-kushi-shape   (do (when ^boolean js/goog.DEBUG
-;;                                      (kushi.core/validate-opt
-;;                                       shape
-;;                                       #{:round :square}))
-;;                                    shape)}
-;;           {:data-wtf-mycomp ""}
-;;           (sx :flex-row-fs :c--red)
-;;           attrs)
-;;     (* n n)]
-;;     (into [:div {:id (* n n)}]
-;;           children)))
-
-;; (defn evens [coll]
-;;   (take-nth 2 coll))

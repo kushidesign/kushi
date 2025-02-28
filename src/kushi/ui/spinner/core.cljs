@@ -1,7 +1,7 @@
 (ns kushi.ui.spinner.core
   (:require
    [kushi.core :refer (sx css defcss merge-attrs)]
-   [kushi.ui.core :refer (opts+children)]))
+   [kushi.ui.core :refer (extract)]))
 
 (defcss "@keyframes spin"
   [:0% {:transform "rotate(0deg)"}]
@@ -13,7 +13,7 @@
 
 (defn thinking [& args]
   (let [[_ attrs & _]
-        (opts+children args)
+        (extract args thinking)
 
         circle
         [:div (sx ".kushi-pulsing-dot"
@@ -36,7 +36,7 @@
      circle]))
 
 (defn propeller [& args]
-  (let [[_ attrs & _] (opts+children args)]
+  (let [[_ attrs & _] (extract args propeller)]
     [:div (merge-attrs
            {:class       (css
                           ".kushi-spinner-propeller"
@@ -50,7 +50,7 @@
            attrs)]))
 
 (defn donut [& args]
-  (let [[_ attrs & _] (opts+children args)]
+  (let [[_ attrs & _] (extract args donut)]
     [:div (merge-attrs
            {:class       (css
                           ".kushi-spinner-donut"
@@ -82,7 +82,7 @@
           `spinner.core/propeller`. See the \"Usage with a button\" in the
           Spinner > Examples section."}
   [& args]
-  (let [[_ attrs & children] (opts+children args)
+  (let [{:keys [opts attrs children]} (extract args spinner)
         [content component] children]
     [:span
      (merge-attrs

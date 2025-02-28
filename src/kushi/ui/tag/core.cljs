@@ -2,7 +2,7 @@
   (:require [kushi.core :refer [sx css merge-attrs]]
             [kushi.ui.util :refer [as-str maybe nameable?]]
             [clojure.string :as string]
-            [kushi.ui.core :refer (opts+children)]
+            [kushi.ui.core :refer (extract)]
             [kushi.ui.icon.core]
             [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
             ))
@@ -67,8 +67,8 @@
               ]
    }
   [& args]
-  (let [[opts attrs & children]
-        (opts+children args)
+  (let [{:keys [opts attrs children]}
+        (extract args tag)
         
         {:keys [loading?
                 start-enhancer

@@ -3,14 +3,14 @@
    [kushi.core :refer [css sx css-vars-map merge-attrs]]
    [clojure.string :as string]
    [kushi.ui.collapse.header :refer (collapse-header-contents)]
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.core :refer (extract)]
    [domo.core :as domo]))
 
 ;; TODO - How to tie children to id of collapse?
 ;TODO refactor this out
 
 (defn collapse-body [& args]
-  (let [[_ attrs & children] (opts+children args)]
+  (let [{:keys [opts attrs children]} (extract args collapse-body)]
     [:section
      (merge-attrs (sx ".kushi-collapse-body-wrapper" :overflow--hidden) attrs)
      [:div (sx ".kushi-collapse-body"
@@ -18,13 +18,6 @@
                :padding-block--0.25em:0.5em)
       children]]))
 
-#_(defcom collapse-body
-  [:section
-   (merge-attrs (sx ".kushi-collapse-body-wrapper" :overflow--hidden) &attrs)
-   [:div (sx ".kushi-collapse-body"
-             :bbe--1px:solid:transparent
-             :padding-block--0.25em:0.5em)
-    &children]])
 
 (defn toggle-class-on-ancestor [node root-class class]
   (let [root (.closest node (str "." (name root-class)))]
@@ -58,7 +51,7 @@
 
 (defn collapse-header
   [& args]
-  (let [[opts attrs & children]       (opts+children args)
+  (let [{:keys [opts attrs children]}       (extract args collapse-header)
         {:keys [speed expanded?]
          :or   {speed 250}} opts]
     (let [on-click
@@ -199,7 +192,7 @@
             :desc    "The speed of the transition."}
            ]}
   [& args]
-  (let [[opts attr & children] (opts+children args)
+  (let [[opts attr children] (extract args collapse)
         {:keys [header-attrs
                 body-attrs
                 expanded?
@@ -244,7 +237,7 @@
           When `collapse` components are children of the accordion component,
           they can only be expanded one at a time."}
   [& args]
-  (let [[opts attrs & children] (opts+children args)
+  (let [{:keys [opts attrs children]} (extract args accordion)
         {:keys []}              opts]
     (into
      [:div

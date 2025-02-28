@@ -8,7 +8,7 @@
    [kushi.css.media]
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
    [kushi.ui.button.core :refer (button)]
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.core :refer (extract)]
    [kushi.ui.divisor.core :refer (divisor)]
    [kushi.ui.icon.core :refer (icon)]
    [kushi.ui.icon.mui.svg :as mui.svg]
@@ -320,7 +320,7 @@
     s]])
 
 (defn copy-to-clipboard-button [& args]
-  (let [[opts attrs] (opts+children args)]
+  (let [{:keys [opts attrs children]} (extract args copy-to-clipboard-button )]
     [button
      (merge-attrs
       {:-colorway :accent

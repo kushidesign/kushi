@@ -1,7 +1,7 @@
 (ns kushi.ui.avatar.core
   (:require
    [kushi.core :refer [merge-attrs sx]]
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.core :refer (extract)]
    [kushi.ui.icon.core]
    [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
    [kushi.ui.util :refer [maybe nameable?]]))
@@ -47,8 +47,8 @@
                  :default nil
                  :desc    "URL of a mask image to clip the avatar with."}]}
   [& args]
-  (let [[opts attrs & children]
-        (opts+children args)
+  (let [{:keys [opts attrs children]}
+        (extract args avatar)
         
         {:keys [colorway
                 stroke-align

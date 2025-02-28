@@ -5,7 +5,7 @@
    [kushi.ui.button.core :refer (button)]
    [kushi.ui.icon.core :refer (icon)]
    [kushi.ui.icon.mui.svg :as mui.svg]
-   [kushi.ui.core :refer (opts+children)]
+   [kushi.ui.core :refer (extract)]
    [domo.core :refer (copy-to-clipboard!)]))
 
 (def copy-content-svg
@@ -55,7 +55,7 @@
 (defn snippet
   "Desc for"
   [& args]
-  (let [[opts attrs & children]                (opts+children args)
+  (let [{:keys [opts attrs children]}                (extract args snippet)
         {:keys [text-to-display text-to-copy on-copy-click]} opts]
     (into [:div
            (merge-attrs
