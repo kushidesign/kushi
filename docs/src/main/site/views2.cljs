@@ -23,6 +23,7 @@
        )
      2000)
   
+  #_[:div "Hi"]
   [showcase]
 
   #_[pane-samples]

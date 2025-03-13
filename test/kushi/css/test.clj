@@ -2,9 +2,8 @@
   (:require [clojure.test :refer :all]
             [clojure.edn :as edn]
             [kushi.css.sandbox]
-            [fireworks.core :refer [? !? ?> !?>]]
-            [bling.core :refer [bling callout]]
-            [kushi.css.defs]
+            [fireworks.core :refer [? !? ?> !?> ?- ?-- pprint]]
+            [bling.core :refer [bling callout point-of-interest]]
             [kushi.core :refer [ansi-colorized-css-block
                                 css-block-data
                                 css-block
@@ -34,24 +33,19 @@
             [kushi.css.build.utility-classes :as utility-classes]
             [kushi.util :refer [maybe keyed nameable? as-str]]
             [kushi.colors2 :refer [oklch-colors]]
-            ;; [taoensso.tufte :as tufte :refer [p profile]]
+            [taoensso.tufte :as tufte :refer [p profile]]
             ))
 
+#_(tufte/add-basic-println-handler! {})
 
-;; (tufte/add-basic-println-handler! {})
-
-;; (profile ; Profile any `p` forms called during body execution
-;;   {} ; Profiling options; we'll use the defaults for now
-;;   (dotimes [_ 100000]
-;;     (p :simple (some-> "no"
-;;                   (maybe #{:outside "outside"})))
-;;     (p :more (some-> "no"
-;;                      (maybe nameable?)
-;;                      as-str
-;;                      (maybe #{"compact" "roomy"})))))
+    #_(profile ; Profile any `p` forms called during body execution
+     {}      ; Profiling options; we'll use the defaults for now
+     (dotimes [_ 1000]
+       (p :map-indexed (seqp bits styles))
+       (p :map-indexed2 (seqp2 bits styles))))
 
 
-(!? (css-rule* 
+(!? (css-rule*
 ".foo"
  [{"@supports(color: color-mix(in oklch, currentColor, transparent 40%))"
    {:--bordercolor :blue}}]
@@ -61,55 +55,6 @@
  nil nil))
 
 
-
-(def sam
-  "One two three,
-   four five six
-
-   Blank line<br>
-   next one<br>
-          
-   Blank line<br>
-   next one
-
-
-
-   Last one.<br>")
-
-
-(defn interleave-all
-  "Returns a lazy seq of the first item in each coll, then the second, etc.
-  Unlike `clojure.core/interleave`, the returned seq contains all items in the
-  supplied collections, even if the collections are different sizes."
-  {:arglists '([& colls])}
-  ([] ())
-  ([c1] (lazy-seq c1))
-  ([c1 c2]
-   (lazy-seq
-    (let [s1 (seq c1), s2 (seq c2)]
-      (if (and s1 s2)
-        (cons (first s1) (cons (first s2) (interleave-all (rest s1) (rest s2))))
-        (or s1 s2)))))
-  ([c1 c2 & colls]
-   (lazy-seq
-    (let [ss (keep seq (conj colls c2 c1))]
-      (when (seq ss)
-        (concat (map first ss) (apply interleave-all (map rest ss))))))))
-
-(defn contains-url? [s]
-  (re-find #"\[[^\]]+\]\([^\)]+\)" s))
-
-(defn hiccupize-url [s]
-  (let [matches (re-seq #"\[[^\]]+\]\([^\)]+\)" s)
-        matches (mapv #(let [[_ link href] (re-find #"\[([^\]]+)\]\(([^\)]+)\)" %)]
-                        [:a {:href href} link])
-                     matches)
-        coll    (string/split s #"\[[^\]]+\]\([^\)]+\)")
-        ]
-
-    (interleave-all coll matches)))
-
-(!? (hiccupize-url "Use [this page](https://fonts.google.com/icons?icon.set=Material+Symbols) to explore over 1000+ different icons.")) 
 
 (!? (css-rule* ".foo" [:ai--$ai] nil nil))
 (!? (css-rule* ".foo" [:aj--$ai] nil nil))
@@ -136,7 +81,7 @@
 .kushi-pane-mounting {
   visibility: hidden;
 }
- 
+
 /* End of whatever -------------------------*/
  "
 
@@ -158,7 +103,7 @@
 
 (defn css->kushi
   "Converts non-nested css to a vector of kushi.core/defcss calls."
-  [css-str] 
+  [css-str]
   (let [
         ;; Remove comments first
         css-str (string/replace css-str #"\/\*[^\*]+\*\/" "")
@@ -197,7 +142,7 @@
         (string/replace #"  ([a-z_-]+): +([^\;]+)\;"
                         #(let [[_ prop val] %]
                            (str ":" prop " \"" val "\"")))
-        
+
         (str "]")
         (->> (str "["))
         edn/read-string
@@ -486,7 +431,7 @@
 #_(println (ansi-colorized-css-block {:block block :sel ".wtf"}))
 
 #_(println (ansi-colorized-css-block
-          {:block (nested-css-block 
+          {:block (nested-css-block
                    (list (apply array-map
                                 :$foreground-color :$neutral-950
                                 :$foreground-color-dark-mode :$neutral-50
@@ -501,12 +446,12 @@
 
 
 ;; Fix tests
-#_(do 
+#_(do
 
 ;; *****************************************************************************
 ;; *****************************************************************************
 ;; *****************************************************************************
-  
+
   (deftest tokenized-keywords
     (testing "tokenized keywords ->"
       (testing "single -> "
@@ -533,9 +478,9 @@
         (testing "with alternation syntax and multiple properties syntax"
           (is (= (css-block :text-shadow--5px:5px:10px:red|-5px:-5px:10px:blue)
                  "{\n  text-shadow: 5px 5px 10px red, -5px -5px 10px blue;\n}"))))
-      
 
-      (testing "multiple -> " 
+
+      (testing "multiple -> "
         (testing "2"
           (is (= (css-block :c--red :bgc--blue)
                  "{\n  color: red;\n  background-color: blue;\n}")))
@@ -582,10 +527,10 @@
 ;; *****************************************************************************
 ;; *****************************************************************************
 ;; *****************************************************************************
-  
+
   (deftest tokenized-strings
-    (testing "tokenized strings -> " 
-      (testing "strings -> " 
+    (testing "tokenized strings -> "
+      (testing "strings -> "
         (testing "2"
           (is (= (css-block "c--red" "bgc--blue")
                  "{\n  color: red;\n  background-color: blue;\n}")))
@@ -623,7 +568,7 @@
 ;; *****************************************************************************
 ;; *****************************************************************************
 ;; *****************************************************************************
-  
+
 
   (deftest map-args
     (testing "map args ->"
@@ -636,7 +581,7 @@
                            :mie :1rem})
                "{\n  color: red;\n  margin-inline-end: 1rem;\n}")))
 
-      
+
       (testing "1 entry, with css calc"
         (is (= (css-block {:w "calc((100vh - (var(--navbar-height) * (2 + (6 / 2)))) * 1)"})
                "{
@@ -746,7 +691,7 @@
 ;; *****************************************************************************
 ;; *****************************************************************************
 ;; *****************************************************************************
-  
+
   (deftest vector-args
     (testing "vector ->"
       (testing "1 entry"
@@ -758,7 +703,7 @@
         (is (= (css-block [:c   :red] [:mie :1rem])
                "{\n  color: red;\n  margin-inline-end: 1rem;\n}")))
 
-      
+
       (testing "1 entry, with css calc"
         (is (= (css-block [:w "calc((100vh - (var(--navbar-height) * (2 + (6 / 2)))) * 1)"])
                "{
@@ -788,7 +733,7 @@
           (is (= (css-block [:last-child {:c   :red
                                           :bgc :blue}])
                  "{\n  &:last-child {\n    color: red;\n    background-color: blue;\n  }\n}")))
-        
+
         (testing "1 entry, double nesting"
           (is (= (css-block [:hover {:bgc :blue
                                      :>p  {:c   :teal
@@ -802,7 +747,7 @@
     }
   }
 }")))
-        
+
 
         (testing "2 entries, double nesting and grouping"
           (is (= (css-block [:hover {:bgc :blue
@@ -824,7 +769,7 @@
 ;; *****************************************************************************
 ;; *****************************************************************************
 ;; *****************************************************************************
-  
+
 
   (deftest css-rule-macro
 
@@ -836,7 +781,7 @@
       (is (= (css-rule "p" :c--red :bgc--blue)
              "p {\n  color: red;\n  background-color: blue;\n}")))
 
-    (testing "tokenized keyword with classname" 
+    (testing "tokenized keyword with classname"
       (is (= (css-rule "p" :.foo :c--red :bgc--blue)
              "p {\n  color: red;\n  background-color: blue;\n}"))) )
 
@@ -845,7 +790,7 @@
 ;; *****************************************************************************
 ;; *****************************************************************************
 ;; *****************************************************************************
-  
+
 
 ;;  (deftest at-rules-bad-names
 ;;     (testing "at-rules-bad-names  ->"
@@ -856,7 +801,7 @@
 ;;                          {:font-family "Trickster"
 ;;                           :src         "local(Trickster), url(\"trickster-COLRv1.otf\") format(\"opentype\") tech(color-COLRv1)"})
 ;;                nil)))
-      
+
 ;;       ;; This test should print a warning to terminal
 ;;       (testing "bad at-keyframes anme"
 ;;         (is (= (css-rule "@keyframes "
@@ -879,8 +824,8 @@
 ;;                   "run with a malformed calls to functions/macros, which\n"
 ;;                   "return nil, but issue a user-facing warning about\n"
 ;;                   "what went wrong."))
-  
-;;   ) 
+
+;;   )
 
   (deftest at-rules
     (testing "at-rules  ->"
@@ -907,7 +852,7 @@
     color: red;
   }
 }")))
-      
+
 
       (testing "@keyframes with percentages"
         (is (= (css-rule "@keyframes yspinner"
@@ -931,7 +876,7 @@
     color: #0288D7;
   }
 }")))
-      
+
 
       (testing "@supports with two nested css rulesets"
         (is (= (css-rule "@supports not (color: oklch(50% .37 200))"
@@ -950,14 +895,14 @@
 ;; *****************************************************************************
 ;; *****************************************************************************
 ;; *****************************************************************************
-  
+
 
   (deftest css-custom-properties
     (testing "CSS custom properties ->"
 
       ;; Subject to change
       (testing "css-vars"
-        (is (= 
+        (is (=
              (let [my-var1 "blue"
                    my-var2 "yellow"]
                (css-vars my-var1 my-var2))
@@ -965,7 +910,7 @@
 
       ;; Subject to change
       (testing "css-vars-map"
-        (is (= 
+        (is (=
              (let [my-var1 "blue"
                    my-var2 "yellow"]
                (css-vars-map my-var1 my-var2))
@@ -985,11 +930,11 @@
   color: var(--my-var1);
   background-color: var(--my-var2);
 }")))
-      
-      
+
+
       ))
 
-  
+
 
   ) ;; end of `(do ...)`
 

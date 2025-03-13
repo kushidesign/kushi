@@ -7,11 +7,10 @@
    [kushi.ui.icon.core]
    [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
    [kushi.ui.util :refer [as-str maybe nameable?]]
-  ;;  [taoensso.tufte :as tufte :refer [p profile]]
    )
-  (:require-macros [kushi.ui.button.core]))
+  ;; (:require-macros [kushi.ui.button.core])
+  )
 
-#_(tufte/add-basic-println-handler! {})
 
 (defn ^:public button
   {:summary "Buttons provide cues for actions and events."
@@ -309,3 +308,4 @@
              :class (css :c--red :fs--$fs)}
             attrs)]
           children)))
+

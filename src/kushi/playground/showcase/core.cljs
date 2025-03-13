@@ -3,7 +3,7 @@
    [clojure.walk :as walk]
    [clojure.repl]
    [fireworks.core :refer [!? ?]]
-   [kushi.core :refer [css defcss ?defcss merge-attrs sx $]]
+   [kushi.core :refer [css defcss ?defcss merge-attrs sx]]
    [kushi.css.build.design-tokens
     :rename {design-tokens-by-component-usage dtoks-by-usage }]
    [kushi.ui.lightswitch.core :refer [light-dark-mode-switch]]
@@ -15,10 +15,13 @@
    [kushi.ui.util :refer [as-str maybe keyed]]
    [kushi.ui.modal.core :refer [modal open-kushi-modal modal-close-button]]
    [clojure.string :as string]
-   [kushi.ui.button.core :refer [button icon-button big-paw big-paw*]]
+   [kushi.ui.button.core :refer [button icon-button #_big-paw #_big-paw* #_myfn]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.defs :as defs]
-   [kushi.css.media]))
+   [kushi.css.media]
+   )
+   )
+
 
 (def vo defs/variants-ordered)
 
@@ -206,8 +209,8 @@
 
 (defn showcase [ui]
   (let [uic (-> button var meta uic*)]
-
-    [big-paw (merge-attrs (sx :c--green) {:-size :xxxlarge})
+    ;; (myfn [2 2 4])
+    #_[big-paw (merge-attrs (sx :c--green) {:-size :xxxlarge})
      [icon :pets]]
 
 
@@ -220,7 +223,7 @@
                 :on-click  #(js/console.log "hi")}
         "Hi" "Bye"]]
 
-    #_(into [:div 
+    (into [:div 
              (sx ".kpg-component-demos-wrapper"
                  :.flex-col-fs
                  :p--4rem 

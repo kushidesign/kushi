@@ -5,7 +5,6 @@
   (:require [clojure.test :refer :all]
             [fireworks.core :refer [? !? ?> !?>]]
             [bling.core :refer [bling callout]]
-            [kushi.css.defs]
             [kushi.core :refer [css-block-data
                                     css-block
                                     css-rule
@@ -23,7 +22,7 @@
             [clojure.spec.alpha :as s]
             [clojure.walk :as walk]
             ;; [taoensso.tufte :as tufte :refer [p profile]]
-            [kushi.css.defs :as defs]))
+            #_[kushi.css.defs :as defs]))
 
 
 

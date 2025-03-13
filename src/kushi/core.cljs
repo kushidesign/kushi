@@ -260,8 +260,8 @@
 (def debug-ui? (atom true))
 
 (when ^boolean js/goog.DEBUG
- (require '[bling.core :refer [callout bling point-of-interest]])
- 
+  (require '[bling.core :refer [callout bling point-of-interest]])
+  
   (defn bad-opt-value-callout
     [{:keys [point-of-interest-opts callout-opts]}]
     (let [message      (point-of-interest point-of-interest-opts)
@@ -289,9 +289,9 @@
                                  #"\*$" ""))))
 
   (defn warning-header
-    [{:keys [x opt-sym]
+    [{:keys                      [x opt-sym]
       {:keys [file line column]} :src-form-meta
-      :as m}]
+      :as                        m}]
     (let [origin    (when (and file line column)
                       (origin file line column))
           component (fqns-sym m)
@@ -299,16 +299,37 @@
           squiggly  (string/join (repeat (count (str x)) "^"))]
       (apply bling
              (concat (when origin [ [:italic "origin:    "] [:bold origin] "\n\n"])
-                     [ 
-                      [:italic "component: "] [:bold component]
+                     [[:italic "component: "] [:bold component]
                       "\n\n"
                       [:italic "option:    "] [:bold option]
                       "\n\n"
                       [:italic "invalid:   "] [:bold x]
                       "\n"
                       "           " [:bold.red squiggly]
-                      (when origin "\n")])
-             )))
+                      (when origin "\n")]))))
+
+  ;; hiccup version
+  '[(when origin [:p [:italic "origin:    "] [:bold origin]]) 
+    [:p [:italic "component: "] [:bold component]]
+    [:p [:italic "option:    "] [:bold option]]
+    [:p [:italic "invalid:   "] [:bold x] [:br]
+     "           " [:bold.red squiggly]]
+    (when origin [:br])]
+  
+  ;; template-string version
+  '(let []
+     (str
+      (when origin
+        "origin:<-italic   ${origin}<-bold
+      ")
+      "component:<-italic ${component}<-bold
+   
+       option:<-italic    ${option}<-bold
+
+       invalid:<-italic   ${x}<-bold.red-squiggly-underline
+       |         ${squiggly}<-bold.red"
+      (when origin "\n")))
+
 
   (defn warning-body
     [{:keys [opt-sym pred]}]
@@ -317,13 +338,33 @@
            [:bold (str ":-" opt-sym)] 
            " option must pass this predicate:"
            "\n\n"
-           [:bold (if (set? pred) (str pred) pred)]
-           ;; "\n\n\nCheck out the docs for more info:\n"
-           ;; "https://kushi.design"
-           ))
- 
- (defn validate-option*
-   "Issues a warning to browser console
+           [:bold (if (set? pred) (str pred) pred)]))
+
+  ;; hiccup version
+  '[[:br]
+    [:p "Value for the "
+     [:bold (str ":-" opt-sym)]  
+     " option must pass this predicate:" [:br]
+     [:bold (if (set? pred) (str pred) pred)]]
+    [:br]
+    [:p "Check out the docs for more info:" [:br]
+     [:a {:href "https://kushi.design"} "https://kushi.design"]]] 
+
+;; template-string version
+  '(bling 
+    "
+     Value for the 
+     ${(str " :- " opt-sym)}<-bold option must pass this predicate:
+     
+     ${(if (set? pred) (str pred) pred)}<-bold
+
+    
+     Check out the docs for more info:
+     https://kushi.design")
+
+
+  (defn validate-option*
+    "Issues a warning to browser console
     
 
 Example ui component implementation fn defined in button.cljs:
@@ -397,52 +438,52 @@ Example call from a ns called showcase.core, using pure hiccup:
            {:-size :xxxlargess})
          [icon :pets]]"
 
-   [{:keys [x pred src-form src-form-meta]
-     :as   m}]
-   (when-not (nil? x)
-     (let [pred-set? (set? pred)
-           pred-f    (when-not pred-set? (get publics pred)) 
-           skip?     (or (nil? x)
-                         (and (not pred-set?)
-                              (not pred-f)))]
-       (when-not skip?
-         (when-not (if pred-set?
-                     (or (contains? pred x)
-                            (when (string? x)
-                              (contains? pred (keyword x))))
-                     (pred-f x))
+    [{:keys [x pred src-form src-form-meta]
+      :as   m}]
+    (when-not (nil? x)
+      (let [pred-set? (set? pred)
+            pred-f    (when-not pred-set? (get publics pred)) 
+            skip?     (or (nil? x)
+                          (and (not pred-set?)
+                               (not pred-f)))]
+        (when-not skip?
+          (when-not (if pred-set?
+                      (or (contains? pred x)
+                          (when (string? x)
+                            (contains? pred (keyword x))))
+                      (pred-f x))
 
-           (bad-opt-value-callout
-            {:point-of-interest-opts (merge 
-                                      {:header (warning-header m)
-                                       :body   (warning-body m)
-                                       :form   (some-> src-form symbol)}
-                                      src-form-meta)
+            (bad-opt-value-callout
+             {:point-of-interest-opts (merge 
+                                       {:header (warning-header m)
+                                        :body   (warning-body m)
+                                        :form   (some-> src-form symbol)}
+                                       src-form-meta)
 
-             :callout-opts           {:type  :warning
-                                      :label "WARNING: Invalid option value"}}))))))     
+              :callout-opts           {:type  :warning
+                                       :label "WARNING: Invalid option value"}}))))))     
 
- (defn validate-options*
-   "A conditional call to this is setup within the `extract` macro.
+  (defn validate-options*
+    "A conditional call to this is setup within the `extract` macro.
    
     `validate-options*` will not get called unless an :opts entry is present in
     the metadata map of the ui component's rendering function."
-   [{:keys [uic-meta
-            supplied-opts
-            src]}]
-   (let [{uic-ns       :ns
-          uic-name     :name
-          [_ uic-opts] :opts} uic-meta
+    [{:keys [uic-meta
+             supplied-opts
+             src]}]
+    (let [{uic-ns       :ns
+           uic-name     :name
+           [_ uic-opts] :opts} uic-meta
 
-         {src-form-meta :form-meta
-          src-form      :form}       src]
-     (doseq [[k x] supplied-opts
-             :let  [opt-sym (-> k name symbol)
-                    {:keys [pred]} (get uic-opts opt-sym)]]
-       (validate-option* {:x             x      
-                          :opt-sym       opt-sym
-                          :pred          pred
-                          :uic-ns        uic-ns
-                          :uic-name      uic-name
-                          :src-form      src-form
-                          :src-form-meta src-form-meta})))))
+          {src-form-meta :form-meta
+           src-form      :form}       src]
+      (doseq [[k x] supplied-opts
+              :let  [opt-sym (-> k name symbol)
+                     {:keys [pred]} (get uic-opts opt-sym)]]
+        (validate-option* {:x             x      
+                           :opt-sym       opt-sym
+                           :pred          pred
+                           :uic-ns        uic-ns
+                           :uic-name      uic-name
+                           :src-form      src-form
+                           :src-form-meta src-form-meta})))))
