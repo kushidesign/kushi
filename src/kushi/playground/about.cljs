@@ -292,7 +292,7 @@
            :target :_blank}
      "Quickstart repo"] "."]
    [:p
-    "In addition to providing a css-in-cljs solution, Kushi offers a basic suite of themeable, headless UI components for free. "
+    "In addition to providing a native ClojureScript CSS solution, Kushi offers a basic suite of themeable, headless UI components for free. "
     "This set of building blocks consitutes a base for rolling your own design system."]
    [:a {:href     "/components"
         :on-click (fn [e]
