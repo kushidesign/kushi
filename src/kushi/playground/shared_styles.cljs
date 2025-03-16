@@ -55,9 +55,9 @@
 (defcss "@layer kushi-playground-shared .codebox"
   :.transition
   {:p                         :20px:50px:20px:20px
-   :bgc                       :$accent-50
+   :bgc                       :$neutral-50
    "has-ancestor(.dark):bgc"  :$accent-900
-   :c                         :$accent-750
+   :c                         :$neutral-750
    "has-ancestor(.dark):c"    :$accent-100
    :mbs                       :7px
    :fs                        :$kushi-playground-codebox-snippet_font-size||$xsmall
@@ -68,7 +68,7 @@
    :fw                        400
    :bisw                      :5px
    :biss                      :solid
-   :bisc                      :$accent-200
+   :bisc                      :$neutral-200
    "has-ancestor(.dark):bisc" :$accent-750})
 
 (defcss "@layer kushi-playground-shared .kushi-treenav-section-level-1"
