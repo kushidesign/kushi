@@ -39,7 +39,7 @@
                           [link (merge-attrs (sx :ws--n) {:href "#"})
                            "new features"]]]
                ["positive" "Your transaction was successful"]
-               ["warning" [:span "Your subscription needs to be updated. "
+               ["warning" [:span "Time to update. "
                            [link (merge-attrs (sx :ws--n) {:href "#"})
                             "Take action."]]]
                ["negative" [:span "Something went wrong. "
