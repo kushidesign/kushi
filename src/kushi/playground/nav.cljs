@@ -55,10 +55,36 @@
                ;; TODO test this one
                ["dark:[aria-selected='true']:c" :white])})
 
+(def header-nav-desktop-button-attrs
+  {:-surface :minimal
+   :-shape   :pill
+   :class    (css :.foreground-color!
+                  :tt--capitalize
+                  :fs--$small
+                  :pi--0.7em
+                  :pb--0.3em
+                  :hover:c--$neutral-950
+                  :active:c--$neutral-1000
+                  :hover:bgc--$neutral-100
+                  :active:bgc--$neutral-0
+                  :dark:hover:c--$neutral-50
+                  :dark:active:c--$neutral-0
+                  :dark:hover:bgc--$neutral-850
+                  :dark:active:bgc--$neutral-900
+                  ["[aria-selected='true']:c" :black]
+                  ;; TODO test this one
+                  ["dark:[aria-selected='true']:c" :white])})
+
 (defcom header-nav-button
   [button 
    (let [focused? (:focused? &opts)]
      (merge-attrs header-nav-button-attrs &attrs))
+   &children])
+
+(defcom header-nav-desktop-button
+  [button 
+   (let [focused? (:focused? &opts)]
+     (merge-attrs header-nav-desktop-button-attrs &attrs))
    &children])
 
 
@@ -74,9 +100,9 @@
 (defn header-menu
   [menu-id]
   (into [:nav (sx :.flex-col-c
-                  :fw--$semi-bold
                   :.transition
                   :.header-menu-transition-group
+                  :fw--$semi-bold
                   :ai--stretch
                   :gap--1.5rem
                   :mbs--2rem)]
@@ -113,6 +139,71 @@
              (when guide? octocat-svg)
              label]])))
 
+(defn header-menu-desktop
+  [menu-id]
+  (into [:nav (sx :.flex-row-c
+                  :.transition
+                  :d--none
+                  :sm:d--flex
+                  :fw--$light
+                  :flex-grow--1
+                  :lg:pie--1.25rem
+                  :.transition
+                  :.header-menu-transition-group
+                  :ai--stretch
+                  :lg:gap--0.85rem
+                  :gap--0.40rem
+                  )]
+         (for [label ["intro" "components" "colors" "typography" "guide"]
+               :let [guide?    (= label "guide")
+                     href      (if guide?
+                                 "https://github.com/kushidesign/kushi"
+                                 (str "/" label))
+                     target    (if guide? :_blank :_self)
+                     translate (when guide? "-0.33ch")]]
+           [:a
+            (merge-attrs
+             (sx :.flex-row-c
+                 ;; :d--none
+                 :hover>button:c--$neutral-950
+                 :active>button:c--$neutral-1000
+                 :hover>button:bgc--$neutral-100
+                 :active>button:bgc--$neutral-0
+                 :dark:hover>button:c--$neutral-50
+                 :dark:active>button:c--$neutral-0
+                 :dark:hover>button:bgc--$neutral-850
+                 :dark:active>button:bgc--$neutral-900)
+             {:href     href
+              :target   target
+              :on-click (partial route! menu-id href)})
+            [header-nav-desktop-button
+             (merge-attrs
+              (sx [:translate :$translate]
+                  :sm:>svg:scale--0.65
+                  :>svg:w--20px
+                  :>svg:h--20px
+                  :>svg:o--0.66
+                  :dark:>svg:o--0.86
+                  ["dark:>svg:filter" "invert(1)"])
+              {:style         (css-vars-map translate)
+               :aria-selected false}
+              (case label
+               "intro"
+               (sx ["has-ancestor([data-kushi-playground-active-path='intro'])" {:bgc :$neutral-100}]
+                   ["dark:has-ancestor([data-kushi-playground-active-path='intro'])" {:bgc :$neutral-850}])
+               "components"
+               (sx ["has-ancestor([data-kushi-playground-active-path='components'])" {:bgc :$neutral-100}]
+                   ["dark:has-ancestor([data-kushi-playground-active-path='components'])" {:bgc :$neutral-850}])
+               "colors"
+               (sx ["has-ancestor([data-kushi-playground-active-path='colors'])" {:bgc :$neutral-100}]
+                   ["dark:has-ancestor([data-kushi-playground-active-path='colors'])" {:bgc :$neutral-850}])
+               "typography"
+               (sx ["has-ancestor([data-kushi-playground-active-path='typography'])" {:bgc :$neutral-100}]
+                   ["dark:has-ancestor([data-kushi-playground-active-path='typography'])" {:bgc :$neutral-850}])
+              nil))
+             label
+             (when guide? octocat-svg)]])))
+
 (defn remove-hover! [menu-el]
   (when (domo/has-class? menu-el "has-hover") 
     (domo/remove-class! menu-el "has-hover")))
@@ -146,8 +237,13 @@
     (sx ["--overlay-width" "calc(100vw + 40px)"]
         ["--menu-height" :415px]
         :.flex-row-sb
+        :.transition
         :.neutralize
         :.divisor-block-end
+        ;; :sm:jc--fs
+        ;; :sm:ai--baseline
+        :bbec--$neutral-50
+        :dark:bbec--$neutral-900
         :position--fixed
         ;; :o--0
         :top--0
@@ -167,8 +263,16 @@
     (when (domo/media-supports-touch?)
       {:on-touch-start (partial header-touchstart-handler menu-id)}))
 
-   [:span (sx #_:.transition :.semi-bold :fs--$xlarge :o--0.5)
+   [:span (sx #_:.transition
+              :.semi-bold
+              ;; :fs--$xlarge 
+              ;; :md:fs--$medium
+              :fs--$medium
+              ;; :o--0.5
+              ;; :md:o--1
+              )
     "Kushi"]
+   [header-menu-desktop menu-id]
    [:div
     (merge-attrs
      {:class (css :.relative
@@ -176,6 +280,7 @@
                   :.has-hover>div.explore-menu-container:h--$menu-height
                   :.has-hover_nav:mbs--4rem
                   :.has-hover>div.explore-menu-container:o--1
+                  :sm:d--none
                   [".has-hover+div.bg-scrim-gradient:height" :100vh]
                   [".has-hover+div.bg-scrim-gradient:o" 1]
                   :zi--1
@@ -187,7 +292,8 @@
      {:-shape   :pill
       :-surface :minimal
       :class (css :.kushi-explore
-                  :.foreground-color-secondary!
+                  ;; :.foreground-color-secondary!
+                  :.foreground-color!
                   :fs--$small
                   :pi--0.8em
                   :pb--0.4em)}
