@@ -31,7 +31,6 @@
                      {:class (css [:xsm:gtc "repeat(4, max-content)"]
                                    :md:gtc--max-content)})]
     [
-
      {:desc            "Surface variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs (merge-attrs
@@ -41,13 +40,13 @@
       :variants+       [:minimal]
       :snippets-header "Use the `data-kui-surface` attributes `:solid`, `:outline`,
                         and `:minimal` to control the surface variant of the button."
-      :snippets        '[[button "Play"]
-                         [button {:-surface :solid} "Play"]
-                         [button {:-surface :outline} "Play"]
-                         [button {:-surface :minimal} "Play"]]
+      :snippets        '[[button "Button"]
+                         [button {:-surface :solid} "Button"]
+                         [button {:-surface :outline} "Button"]
+                         [button {:-surface :minimal} "Button"]]
       :examples        (for [s [:rounded]]
                          {:label (name s)
-                          :args  ["Pets" [icon :pets]]
+                          :args  ["Button" #_[icon :play-arrow]]
                           :attrs {:-colorway :accent}})}
 
      {:desc            "Colorway variants"
@@ -57,15 +56,15 @@
       :snippets-header "Use the `data-kui-colorway` attributes `:neutral`, `:accent`,
                         `:positive`, `:warning`, and `:negative` to control the
                         semantic color variant. The default is `:neutral`."                        
-      :snippets        '[[button "Play"]
-                         [button {:-colorway :neutral} "Play"]
-                         [button {:-colorway :accent} "Play"]
-                         [button {:-colorway :positive} "Play"]
-                         [button {:-colorway :warning} "Play"]
-                         [button {:-colorway :negative} "Play"]]
+      :snippets        '[[button "Button"]
+                         [button {:-colorway :neutral} "Button"]
+                         [button {:-colorway :accent} "Button"]
+                         [button {:-colorway :positive} "Button"]
+                         [button {:-colorway :warning} "Button"]
+                         [button {:-colorway :negative} "Button"]]
       :examples        (for [s component-examples/colors]
                          {:label (name s)
-                          :args  ["Pets" [icon :pets]]
+                          :args  ["Button" #_[icon :play-arrow]]
                           :attrs {:-colorway s}})}
 
      {:desc            "Shape variants"
@@ -75,13 +74,13 @@
       :snippets-header "Use the `data-kui-shape` attributes `:pill`, `:rounded`,
                         and `:sharp` to control the surface variant of the button.
                         The default is `:rounded`."
-      :snippets        '[[button "Play"]
-                         [button {:-shape :rounded} "Play"]
-                         [button {:-shape :pill} "Play"]
-                         [button {:-shape :sharp} "Play"]]
+      :snippets        '[[button "Button"]
+                         [button {:-shape :rounded} "Button"]
+                         [button {:-shape :pill} "Button"]
+                         [button {:-shape :sharp} "Button"]]
       :examples        (for [s [:rounded :pill :sharp]]
                          {:label (name s)
-                          :args  ["Pets" [icon :pets]]
+                          :args  ["Button"] #_["Play" [icon :play-arrow]]
                           :attrs {:-shape s}})}
 
      ;; get extra reqs working
@@ -94,7 +93,7 @@
       :container-attrs container-attrs2
       :snippets-header "Check out the [icon component](#icon) for detailed info
                         on icon usage Various buttons with icons:"
-      :snippets        '[[button "Play" [icon :play-arrow]]
+      :snippets        '[[button "Button" [icon :play-arrow]]
                          [button [icon :auto-awesome] "Wow" [icon :auto-awesome]]
                          #_[icon-button {:-icon :play-arrow}]]
       :examples        [
@@ -118,10 +117,10 @@
       {:desc            "Sizes from xxsmall to xlarge"
        :row-attrs       (sx :md:ai--fe)
        :container-attrs container-attrs
-       :examples        (for [sz component-examples/sizes]
+       :examples        (for [sz (drop-last component-examples/sizes)]
                           {:label (name sz)
                            :attrs {:class sz}
-                           :args  ["Pets" [icon :pets]]})})
+                           :args  ["Button" #_[icon :play-arrow]]})})
 
 
      {:desc            "Weight variants from light to extra-bold"
@@ -130,17 +129,17 @@
       :snippets-header "Use the font-weight utility classes `:.thin` ~ `:.heavy`
                         to control the weight. Scale of weights:"
       :snippets        '[[:div
-                          [button "Play"]
-                          [button (sx :.thin) "Play"]
-                          [button (sx :.extra-light) "Play"]
-                          [button (sx :.light) "Play"]
-                          [button (sx :.normal) "Play"]
-                          [button (sx :.wee-bold) "Play"]
-                          [button (sx :.semi-bold) "Play"]
-                          [button (sx :.bold) "Play"]
-                          [button (sx :.extra-bold) "Play"]
-                          [button (sx :.heavy) "Play"]]]
-      :examples        (for [s (rest component-examples/type-weights)]
+                          [button "Wow"]
+                          [button (sx :.thin) "Wow"]
+                          [button (sx :.extra-light) "Wow"]
+                          [button (sx :.light) "Wow"]
+                          [button (sx :.normal) "Wow"]
+                          [button (sx :.wee-bold) "Wow"]
+                          [button (sx :.semi-bold) "Wow"]
+                          [button (sx :.bold) "Wow"]
+                          [button (sx :.extra-bold) "Wow"]
+                          [button (sx :.heavy) "Wow"]]]
+      :examples        (for [s (drop-last (rest component-examples/type-weights))]
                          {:label (name s)
                           :args  ["Wow" [icon :auto-awesome]]
                           :attrs {:class [s]}})}
@@ -156,7 +155,8 @@
                                  :class (css :.small)})
       :container-attrs container-attrs
       :snippets-header "Examples:"
-      :snippets        '[[button {:-loading? true} [spinner [icon :play-arrow] [propeller]] "Play"]
+      :snippets        '[[button {:-loading? true}
+                          [spinner [icon :play-arrow] [propeller]] "Play"]
                          [button {:disabled true} "Play"]]
       :examples        [{:label "Loading state, propeller"
                          :args  [[spinner [icon :play-arrow] [propeller]] "Play"]}
@@ -168,7 +168,7 @@
                          :args  [[spinner "Play" [donut (sx :animation-duration--325ms)]]]}
                         {:label "Loading state, donut on icon"
                          :args  [[spinner [icon :play-arrow] [donut]] "Play"]}
-                        {:label "Loading state, propeller on icon"
+                        #_{:label "Loading state, propeller on icon"
                          :attrs {:disabled true}
                          :args  [[spinner [icon :play-arrow] [donut]] "Play"]}
                         {:label "Disabled"
