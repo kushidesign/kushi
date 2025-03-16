@@ -51,6 +51,7 @@
   [playground-components]
   [:nav {:class (css 
                  :.small
+                 :.light
                  :.flex-col-fs
                  :.neutralize
                  :d--none
@@ -108,7 +109,8 @@
                       :pb--0.25em)
               [button
                (merge-attrs
-                (sx :.all-components-sidenav-button)
+                (sx :.all-components-sidenav-button
+                    :dark:color--$foreground-color-dark-mode)
                 {:data-kushi-playground-sidenav-button label
                  :-shape                               :pill
                  :-surface                             :minimal}
