@@ -156,8 +156,8 @@
                                          x))]
                   (conj acc
                         (if (string? x)
-                          [:span (if (= x "")
+                          [:span.prose (if (= x "")
                                    (gstring/unescapeEntities "&nbsp;")
                                    x)]
-                          (into [:span] x)))))
+                          (into [:span.prose] x)))))
               [])))))
