@@ -276,7 +276,7 @@
 
 (defcss "@layer kushi-playground-shared .component-section-header-label"
   :fw--$semi-bold
-  :fs--$xlarge
+  :fs--$xlarge-b
   :tt--capitalize
   :lh--0.75em)
 
