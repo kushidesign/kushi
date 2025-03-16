@@ -17,7 +17,8 @@
   )
 
 (defcss "@layer kushi-ui-styles .kushi-switch-thumb-content"
-  :c--$neutral-foreground
+  :c--$foreground-color
+  :dark:c--$foreground-color
   :d--none 
   :w--100%
   :h--100% 
@@ -133,6 +134,8 @@
         disabled?                  
         (util/html-attr? opts :disabled)
         ]
+    ;; TODO - maybe this should be an input with type "radio"
+    ;; https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-checked
     [:button
      (merge-attrs
       (sx
@@ -163,18 +166,35 @@
        :bw--$switch-border-width
        :bs--solid
 
-       [".kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color]
-       [".kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover]
+       [".kushi-switch[aria-checked='false']:bgc"
+        :$background-color-neutral-soft]
+
+       [".kushi-switch[aria-checked='false']:hover:bgc"
+        :$background-color-neutral-soft-2]
+
+       ["dark:.kushi-switch[aria-checked='true']:bgc"
+        :$background-color-neutral-soft-2-dark-mode]
+
+       ["dark:.kushi-switch[aria-checked='true']:hover:bgc"
+        :$background-color-neutral-soft-3-dark-mode]
+
+       ["dark:.kushi-switch[aria-checked='false']:bgc"
+        :$background-color-neutral-soft-dark-mode]
+
+       ["dark:.kushi-switch[aria-checked='false']:hover:bgc"
+        :$background-color-neutral-soft-2-dark-mode]
        
+
        )
 
       colorway-attr
 
-      {:disabled         disabled?
-       :role             :switch
-       :aria-checked     (if on? true false)
-       :data-kui-ia      ""
-       :data-kui-surface "solid"}
+      {:disabled               disabled?
+       :role                   :switch
+       :aria-checked           (if on? true false)
+       :data-kui-ia            ""
+       :data-kui-track-with-thumb ""
+       :data-kui-surface       "solid"}
       
       (domo/mouse-down-a11y #(when-not disable-events? (toggle-switch %)))
 
@@ -199,23 +219,36 @@
        (sx
         ".kushi-switch-thumb"
         :.transition
-        [:--width :$thumb-height]
-        :transition-duration--$xxfast
-        :border-color--currentColor
-        ["has-ancestor(.kushi-switch[aria-checked='false']):border-color" "color-mix(in srgb, currentColor, transparent)"]
-        :cursor--pointer
-        :bgc--$transparent-white-100
-        :box-shadow--0:2px:6px:0:$transparent-black-15
-        [:transform "translate(0, -50%)"]
-        ["has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start"
-         "calc(100% - var(--width))"]
-        ["has-ancestor(.kushi-switch[disabled]):cursor"
-         :not-allowed]
-        :position--absolute
-        :top--50%
-        :inset-inline-start--0
-        :h--$thumb-height
-        :w--$width)
+        {:--_bgc              :$switch-thumb-background-color||$transparent-white-100
+        ;;  :--_bgc-dark-mode    :$switch-thumb-background-color-dark-mode||black
+         :--width             :$thumb-height
+         :transition-duration :$xxfast
+         :border-color        :currentColor
+         :cursor              :pointer
+         :bgc                 :$_bgc
+         :hover:bgc           :$_bgc
+        ;;  :dark:bgc            :$_bgc-dark-mode
+        ;;  :dark:hover:bgc      :$_bgc-dark-mode
+         :box-shadow          :0:2px:6px:0:$transparent-black-15
+         :position            :absolute
+         :top                 :50%
+         :inset-inline-start  :0
+         :h                   :$thumb-height
+         :w                   :$width
+         :transform           "translate(0, -50%)"}
+         {"has-ancestor(.kushi-switch[data-kui-colorway])"                   
+          {:border-color "color-mix(in srgb, currentColor, transparent)"
+           :bgc          :$_bgc}
+
+         "has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start"
+         "calc(100% - var(--width))"
+
+         "dark:has-ancestor(.kushi-switch[aria-checked='false'])"
+         {:bgc          :$neutral-600
+          :border-color :$neutral-600}
+
+         "has-ancestor(.kushi-switch[disabled]):cursor"                        
+         :not-allowed})
        thumb-attrs)
       [:div (sx ".kushi-switch-thumb-content-on"
                 :.kushi-switch-thumb-content
