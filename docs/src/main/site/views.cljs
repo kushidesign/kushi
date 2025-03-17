@@ -11,20 +11,26 @@
 
 (js/console.clear)
 
-(defcss ".foo" :c--red)
-
 (def routes 
-  {["components"] {:content layout/component-playground-content
+  {
+   ["components"] {:content layout/component-playground-content
                    :args    playground-components
                    :label   "Components Playground"}
    ["colors"]     {:content about/kushi-colors-about}
    ["typography"] {:content about/kushi-typography-about}
-   ["intro"]      {:content about/kushi-about}})
+   ["intro"]      {:content layout/component-playground-content-3col
+                   :args    playground-components
+                   :label   "Splash"}
+   })
+
 
 (defn main-view []
   (.setAttribute (domo/el-by-id "app")
                  "data-kushi-playground-active-path"
-                 "components")
+                 "typography"
+                ;;  "intro"
+                ;;  "components"
+                 )
 
   ;; for pallette generation dev
   #_(js/setTimeout
@@ -40,7 +46,22 @@
   ;; [pane-samples]
 
   (into 
-   [:div (sx :.flex-col-fs)
+   [:div (sx :.flex-col-fs
+             {" .prose:font-weight"                                                :$light
+              "dark: .prose:color"                                                 :$neutral-500
+              " .prose code:font-weight"                                           :$normal
+              " .kushi-playground-component-usage span:font-weight"                :$light
+              " .kushi-playground-component-usage code:font-weight"                :$normal
+              " .kushi-opt-detail-value:font-weight"                               :$light
+              " .kushi-opt-detail-value code:font-weight"                          :$normal
+              " .kushi-opt-detail-value .code:font-weight"                         :$normal
+              " .kushi-opt-detail-value span>code+code:display"                    :block
+              " .kushi-opt-detail-value span>code+code:mb"                         :0.5
+              " .kushi-opt-detail-value span>code+code:line-height"                1.5
+              " #kushi-icon-examples>div>section>div>section:nth-child(2):display" :none
+              "dark: .codebox:bgc"                                                 :#222630
+              
+              })
     [nav/header]
     ;; Spinner between page transitions
     ;; Leave out for now as transitions are instant
