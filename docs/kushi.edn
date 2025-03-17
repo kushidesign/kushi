@@ -5,17 +5,17 @@
   ;;  :accent "purple"
    } 
   :design-tokens
-  [:--sans-serif-font-stack                 "Inter, system-ui, sans-serif"
+  [:--sans-serif-font-stack                 "system-ui, Inter, sans-serif"
    :--serif-font-stack                      "'Source Serif 4', Times, serif"
    :--code-font-stack                       "'JetBrains Mono', 'Fira Code', monospace"
    :--primary-font-family                   :$sans-serif-font-stack
    ;; :$code-color                          :$accent-750
    :--code-font-size                        :0.875em
-   :--code-color                            :$accent-850
-   :--code-background-color                 :$accent-50
+   :--code-color                            :$neutral-850
+   :--code-background-color                 :$neutral-100
    ;; :$code-color-inverse                  :$accent-100
    :--code-color-inverse                    :$neutral-100
-   :--code-background-color-inverse         :$accent-900
+   :--code-background-color-inverse         :$neutral-900
    :--kushi-playground-mobile-header-height :46px
    :--popover-border-color                  :$neutral-300
    :--navbar-height                         :50px
@@ -23,11 +23,17 @@
    
 
    ;; Add this to tokens
-  ;;  :--slider-font-family                    :$serif-font-stack
+   ;;  :--slider-font-family                    :$serif-font-stack
    ;;  :--background-color-dark-mode            :black
 
    ;; Playground
    :--playground-main-content-max-width     :605px
+  
+   :--navbar-height                         :57px
+   :--foreground-color-dark-mode            :$neutral-250
+   :--foreground-color-secondary-dark-mode  :$neutral-500
+   :--code-background-color-dark-mode       :#222630
+   :--code-color-dark-mode                  :$accent-200
    ]
   
   :ui
@@ -44,7 +50,10 @@
  
    ".dark code, .dark .code"
    {:bgc :$code-background-color-dark-mode
-    :c   :$code-color-inverse}]
+    :c   :$code-color-inverse}
+
+   ".prose"
+   {:font-weight 300}]
   }
 
 ;; TODO - incorporate these
