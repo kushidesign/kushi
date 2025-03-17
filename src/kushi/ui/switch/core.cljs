@@ -172,11 +172,6 @@
        [".kushi-switch[aria-checked='false']:hover:bgc"
         :$background-color-neutral-soft-2]
 
-       ["dark:.kushi-switch[aria-checked='true']:bgc"
-        :$background-color-neutral-soft-2-dark-mode]
-
-       ["dark:.kushi-switch[aria-checked='true']:hover:bgc"
-        :$background-color-neutral-soft-3-dark-mode]
 
        ["dark:.kushi-switch[aria-checked='false']:bgc"
         :$background-color-neutral-soft-dark-mode]

@@ -39,7 +39,8 @@
 
 
 (def all-components
-  #{"button"     
+  #{
+    "button"     
     "icon"       
     "spinner"    
     "switch"     
