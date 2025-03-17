@@ -67,8 +67,15 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
 
     <!-- Google Fonts and Material Symbols end -------------------------------->
+
+    <style>
+      /* Temp hack for kushi.design docs site */
+      body:has(#app[data-kushi-playground-active-path="intro"]) {
+        overflow: hidden!important;
+      }
+    </style>
 </head>
-<body>
+<body class="dark">
   <div id="app"></div>
 </body>
 </html>
