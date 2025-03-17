@@ -2,12 +2,13 @@
   (:require
    [clojure.string :as string]
    [domo.core :as domo]
-   [kushi.core :refer [sx defcss]]
+   [kushi.core :refer [sx]]
    [kushi.playground.about :as about]
    ;  [kushi.playground.tweak.samples :refer [pane-samples]]
    [kushi.playground.components :refer [playground-components]]
    [kushi.playground.layout :as layout]
    [kushi.playground.nav :as nav]))
+
 
 (js/console.clear)
 
@@ -27,8 +28,8 @@
 (defn main-view []
   (.setAttribute (domo/el-by-id "app")
                  "data-kushi-playground-active-path"
-                 "typography"
-                ;;  "intro"
+                ;;  "typography"
+                 "intro"
                 ;;  "components"
                  )
 

@@ -1046,7 +1046,11 @@
                                         :active:bgc :$background-color-neutral-hard-3}
    "dark:[data-kui-surface=\"solid\"]" {:bgc        :$background-color-neutral-hard-dark-mode
                                         :hover:bgc  :$background-color-neutral-hard-2-dark-mode
-                                        :active:bgc :$background-color-neutral-hard-3-dark-mode}})
+                                        :active:bgc :$background-color-neutral-hard-3-dark-mode}
+   "dark:.kushi-switch[data-kui-surface= \"solid\"]" {:bgc        :$background-color-neutral-soft-2-dark-mode
+                                                      :hover:bgc  :$background-color-neutral-soft-3-dark-mode
+                                                      :active:bgc :$background-color-neutral-soft-3-dark-mode}
+   })
 
 (defcss
   "[data-kui-colorway=\"accent\"]"
@@ -1060,18 +1064,23 @@
    :active:bgc                      :$background-color-accent-soft-2
    :dark:hover:bgc                  :$background-color-accent-soft-dark-mode
    :dark:active:bgc                 :$background-color-accent-soft-2-dark-mode
-   "[data-kui-surface= \"soft\"]"       {:bgc        :$background-color-accent-soft
+   "[data-kui-surface= \"soft\"]"       {:bgc             :$background-color-accent-soft
                                          :dark:bgc        :$background-color-accent-soft-dark-mode
-                                         :hover:bgc  :$background-color-accent-soft-2
+                                         :hover:bgc       :$background-color-accent-soft-2
                                          :dark:hover:bgc  :$background-color-accent-soft-2-dark-mode
-                                         :active:bgc :$background-color-accent-soft-3
+                                         :active:bgc      :$background-color-accent-soft-3
                                          :dark:active:bgc :$background-color-accent-soft-3-dark-mode}
    "[data-kui-surface= \"solid\"]"      {:bgc          :$background-color-accent-hard
                                          :hover:bgc    :$background-color-accent-hard-2
                                          :active:bgc   :$background-color-accent-hard-3}
    "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-accent-hard-dark-mode
                                          :hover:bgc  :$background-color-accent-hard-2-dark-mode
-                                         :active:bgc :$background-color-accent-hard-3-dark-mode}})
+                                         :active:bgc :$background-color-accent-hard-3-dark-mode}
+   "dark:.kushi-switch[data-kui-surface= \"solid\"]" {:bgc        :$background-color-accent-soft-2-dark-mode
+                                                      :hover:bgc  :$background-color-accent-soft-3-dark-mode
+                                                      :active:bgc :$background-color-accent-soft-3-dark-mode}
+   
+   })
 
 (defcss
   "[data-kui-colorway=\"positive\"]"
@@ -1096,7 +1105,11 @@
                                          :active:bgc :$background-color-positive-hard-3}
    "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-positive-hard-dark-mode
                                          :hover:bgc  :$background-color-positive-hard-2-dark-mode
-                                         :active:bgc :$background-color-positive-hard-3-dark-mode}})
+                                         :active:bgc :$background-color-positive-hard-3-dark-mode}
+   "dark:.kushi-switch[data-kui-surface= \"solid\"]" {:bgc        :$background-color-positive-soft-2-dark-mode
+                                                      :hover:bgc  :$background-color-positive-soft-3-dark-mode
+                                                      :active:bgc :$background-color-positive-soft-3-dark-mode}
+   })
 
 (defcss
   "[data-kui-colorway=\"negative\"]"
@@ -1110,18 +1123,22 @@
    :active:bgc                      :$background-color-negative-soft-2
    :dark:hover:bgc                  :$background-color-negative-soft-dark-mode
    :dark:active:bgc                 :$background-color-negative-soft-2-dark-mode
-   "[data-kui-surface= \"soft\"]"       {:bgc        :$background-color-negative-soft
+   "[data-kui-surface= \"soft\"]"       {:bgc             :$background-color-negative-soft
                                          :dark:bgc        :$background-color-negative-soft-dark-mode
-                                         :hover:bgc  :$background-color-negative-soft-2
+                                         :hover:bgc       :$background-color-negative-soft-2
                                          :dark:hover:bgc  :$background-color-negative-soft-2-dark-mode
-                                         :active:bgc :$background-color-negative-soft-3
+                                         :active:bgc      :$background-color-negative-soft-3
                                          :dark:active:bgc :$background-color-negative-soft-3-dark-mode}
    "[data-kui-surface= \"solid\"]"      {:bgc          :$background-color-negative-hard
                                          :hover:bgc    :$background-color-negative-hard-2
                                          :active:bgc   :$background-color-negative-hard-3}
    "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-negative-hard-dark-mode
                                          :hover:bgc  :$background-color-negative-hard-2-dark-mode
-                                         :active:bgc :$background-color-negative-hard-3-dark-mode}})
+                                         :active:bgc :$background-color-negative-hard-3-dark-mode}
+   "dark:.kushi-switch[data-kui-surface= \"solid\"]" {:bgc        :$background-color-negative-soft-2-dark-mode
+                                                      :hover:bgc  :$background-color-negative-soft-3-dark-mode
+                                                      :active:bgc :$background-color-negative-soft-3-dark-mode}
+   })
 
 (defcss
   "[data-kui-colorway=\"warning\"]"
@@ -1144,9 +1161,10 @@
    "[data-kui-surface= \"solid\"]"      {:bgc        :$background-color-warning-hard
                                          :hover:bgc  :$background-color-warning-hard-2
                                          :active:bgc :$background-color-warning-hard-3}
-   "dark:[data-kui-surface= \"solid\"]" {:bgc        :$background-color-warning-hard-dark-mode
-                                         :hover:bgc  :$background-color-warning-hard-2-dark-mode
-                                         :active:bgc :$background-color-warning-hard-3-dark-mode}})
+   "dark:.kushi-switch[data-kui-surface= \"solid\"]" {:bgc        :$background-color-warning-soft-2-dark-mode
+                                                      :hover:bgc  :$background-color-warning-soft-3-dark-mode
+                                                      :active:bgc :$background-color-warning-soft-3-dark-mode}
+   })
 
 (defcss "[data-kui-surface=\"solid\"]"
   {:color             :white
