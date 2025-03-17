@@ -284,7 +284,9 @@
                   [".has-hover+div.bg-scrim-gradient:height" :100vh]
                   [".has-hover+div.bg-scrim-gradient:o" 1]
                   :zi--1
-                  :translate---30px)
+                  :translate---12px
+                  :sm:translate---30px
+                  )
       :id    menu-id}
      (when (domo/media-supports-hover?)
        (domo/hover-class-attrs "has-hover")))
