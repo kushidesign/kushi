@@ -510,15 +510,10 @@
              :.flex-row-fs
              :ai--fs
              :gap--2rem
-            ;;  :scale--0.5
-            ;;  :sm:scale--0.8
              [:w "calc(3 * var(--playground-main-content-max-width))"]
-            ;;  :translate---13%:-37%
-            ;;  :sm:translate---10%:-35.5%
              :transform-origin--center:center
              :transform-style--preserve-3d
              [:sm:transform "translate(-10%, -35.5%) scale(0.8) rotateX(55deg) rotateY(0deg) rotate(-45deg)"]
-            ;;  [:transform "translate(-13%, -37%) scale(0.8) rotateX(55deg) rotateY(0deg) rotate(-45deg)"]
              [:transform "translate(-15.5%, -38.33%) scale(0.4) rotateX(55deg) rotateY(0deg) rotate(-45deg)"]
              [" .component-section-header:position" :static])]
    (for [n (range 4)]
@@ -748,7 +743,7 @@
     :as                       component-opts}]
 
   (into [:<>
-         (into [:section
+         #_(into [:section
                 {:class (css :.playground-component-panel)
                  :id    (str "kushi-" label "-examples")}]
                (for [
@@ -763,7 +758,7 @@
           {:class (css :.playground-component-panel
                        :>div:max-width--$playground-main-content-max-width
                        :pbs--35px)
-           :hidden "hidden"
+          ;;  :hidden "hidden"
            :id    (str "kushi-" label "-documentation")}
 
           (when summary

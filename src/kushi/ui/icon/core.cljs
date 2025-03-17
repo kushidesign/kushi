@@ -49,18 +49,18 @@
              similar namespace in your own project with your own collection of
              icon `svg`s."
              
-  ;;  :opts    '[{:name    icon-style
-  ;;              :pred    #{:outlined :rounded :sharp}
-  ;;              :default :outlined
-  ;;              :desc    ["Controls the style of the [mui-icon](https://fonts.google.com/icons?icon.set=Material+Symbols)."
-  ;;                        "This pertains only to icons from the Materials Symbols icon font, which uses variable font features."
-  ;;                        "Note that the requested style variant must be present in the Material Symbols font you are pulling in."]}
-  ;;             {:name    icon-filled?
-  ;;              :pred    boolean?
-  ;;              :default false
-  ;;              :desc    ["Use the filled (solid) version of the icon, if available."
-  ;;                        "This pertains only to icons from the Materials Symbols icon font, which uses variable font features."
-  ;;                        "Note that the requested axis for `fill` must be present in the Material Symbols font you are pulling in."]}]
+   :opts    '[{:name    icon-style
+               :pred    #{:outlined :rounded :sharp}
+               :default :outlined
+               :desc    ["Controls the style of the [mui-icon](https://fonts.google.com/icons?icon.set=Material+Symbols)."
+                         "This pertains only to icons from the Materials Symbols icon font, which uses variable font features."
+                         "Note that the requested style variant must be present in the Material Symbols font you are pulling in."]}
+              {:name    icon-filled?
+               :pred    boolean?
+               :default false
+               :desc    ["Use the filled (solid) version of the icon, if available."
+                         "This pertains only to icons from the Materials Symbols icon font, which uses variable font features."
+                         "Note that the requested axis for `fill` must be present in the Material Symbols font you are pulling in."]}]
    }
   [& args]
   (let [[opts attrs & children]           (opts+children args)
