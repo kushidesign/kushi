@@ -196,15 +196,18 @@
                        :outline-offset :-1px}
    
    ;; Type styling
-   :sans       {:font-family :$sans-serif-font-family}
-   :serif      {:font-family :$sans-serif-font-family}
-   :italic     {:font-family :$sans-serif-font-family}
-   :oblique    {:font-family :$sans-serif-font-family}
-   :uppercase  {:font-family :$sans-serif-font-family}
-   :uppercase  {:font-family :$sans-serif-font-family}
-   :lowercase  {:font-family :$sans-serif-font-family}
-   :capitalize {:font-family :$sans-serif-font-family}
+   :sans           {:font-family :$sans-serif-font-stack}
+   :serif          {:font-family :$serif-font-stack}
+   :italic         {:font-style :italic}
+   :oblique        {:font-style :oblique}
+   :capitalize     {:text-transform :capitalize}
+   :uppercase      {:text-transform :uppercase}
+   :lowercase      {:text-transform :lowercase}
 
+   ;; these might be too ambiguous - deprecate?
+   :full-width     {:text-transform :full-width}
+   :full-size-kana {:text-transform :full-size-kana}
+   :math-auto      {:text-transform :math-auto}
    
 
    ;; Colorization -------------------------------------------------------------
@@ -514,13 +517,6 @@
                    :dark:box-shadow :$elevated-5-dark-mode}
    :elevated      {:box-shadow      :$elevated-4
                    :dark:box-shadow :$elevated-4-dark-mode}
-
-   :capitalize     {:text-transform :capitalize}
-   :uppercase      {:text-transform :uppercase}
-   :lowercase      {:text-transform :lowercase}
-   :full-width     {:text-transform :full-width}
-   :full-size-kana {:text-transform :full-size-kana}
-   :math-auto      {:text-transform :math-auto}
    ])
 
 
