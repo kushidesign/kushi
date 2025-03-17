@@ -69,7 +69,7 @@
     :>p:first-child:mbs--0
     :>p:mb--2em
     :>p:lh--1.7)
-   [:p "Kushi includes a foundation of global and alias color tokens."]
+   [:p.prose "Kushi includes a foundation of global and alias color tokens."]
 
    [:div
     (sx
@@ -99,7 +99,7 @@
                          :w--26px
                          :h--26px)}]]
 
-   [:p.alias-token-scales
+   [:p.alias-token-scales.prose
     "Semantic alias tokens map to global tokens like so:"
     [:br]]
 
@@ -156,7 +156,7 @@
                  "Size"     ["sizing" "xxxsmall" "xxxxlarge"]
                  "Weight"   ["weight" "thin" "heavy"]
                  "Tracking" ["tracking" "xxxtight" "xxxxloose"])]
-           [:p
+           [:p.prose
             (sx :>code:mi--0.25em :>code:ws--n)
             (str "Kushi offers a typographic "
                  kind-of-scale
@@ -217,8 +217,8 @@
     "My text "])
 
 
-;; (def typography-utility-classes-snippet
-;;   '[:span (trans (sx :.xxlarge :.bold :.xloose :.uppercase :.italic)) "My text"] )
+(def typography-utility-classes-snippet
+  '[:span (sx :.xxlarge :.bold :.xloose :.uppercase :.italic) "My text"] )
 
 
 (def typescale [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge :xxxxlarge])
@@ -231,37 +231,48 @@
                 :>p:mb--2em
                 :>p:lh--1.7)
 
-  ;;  [:p "Kushi includes a foundation of global tokens and utility class scales for type size, weight, letter-spacing, sizing, and capitalization."]
+   [:p.prose "Kushi includes a foundation of global tokens and utility class scales for type size, weight, letter-spacing, sizing, and capitalization."]
 
-  ;;  [:div (sx :mbe--0.8em) "Utility classes can be used like this:"]
-  ;;  [typography-snippet typography-utility-classes-snippet]
+   [:label.prose (sx :mbe--0.8em) "Utility classes can be used like this:"]
+   [typography-snippet typography-utility-classes-snippet]
 
-   [:div (sx :mbe--0.8em) "If you need finer control, underlying design tokens can be used like this:"]
+   [:label.prose (sx :mbe--0.8em) "If you need finer control, underlying design tokens can be used like this:"]
    [typography-snippet typography-tokens-snippet]
 
-   (into [:p
+   (into [:p.prose
           [:span (sx :d--block :mbe--1em) "The following utility classes are available for font-style and capitalization:"]]
          (for [x [:sans :serif :italic :oblique :uppercase :lowercase :capitalize]]
            [:span (sx :.code :fs--0.875rem!important :d--ib :ws--n :mie--0.5em :mbe--0.5em) (str ":." (name x))]))
 
-   [:p
-    "Kushi employes the typefaces "
-    [link (sx {:href   "https://fonts.google.com/specimen/Inter"
-               :target :_blank})
-     "Inter"]
-    " and "
-    [link (sx {:href   "https://fonts.google.com/specimen/Fira+Code"
-               :target :_blank})
-     "Fira Code"]
-    " by default."
-    [:br]
-    "These can be changed via the " [:code ":ui"] " entry in your theming config map."
-    [:br]
-    ;; "See example "
-    ;; [link (sx {:href   "https://github.com/kushidesign/kushi-quickstart/blob/main/src/main/starter/theme.cljc"
-    ;;            :target :_blank})
-    ;;  "here."]
-    ]
+   (into [:p.prose
+          [:span (sx :d--block :mbe--1em)
+           "Kushi employes the typefaces "
+           [link {:href   "https://fonts.google.com/specimen/Inter"
+                  :target :_blank}
+            "Inter"]
+           " and "
+           [link {:href   "https://fonts.google.com/specimen/Fira+Code"
+                  :target :_blank}
+            "Fira Code"]
+           " by default."
+           [:br]
+           "These can be changed via the following tokens in the " [:code "[:theme :design-tokens]"] " entry in your theming config map (in " [:code "kushi.edn"] " file):"
+           [:br]
+          ;; "See example "
+          ;; [link (sx {:href   "https://github.com/kushidesign/kushi-quickstart/blob/main/src/main/starter/theme.cljc"
+          ;;            :target :_blank})
+          ;;  "here."]
+           ]]
+         (for [x [:--sans-serif-font-stack
+                  :--serif-font-stack
+                  :--code-font-stack]]
+           [:span (sx :.code
+                      :fs--0.875rem!important
+                      :d--ib
+                      :ws--n
+                      :mie--0.5em
+                      :mbe--0.5em) 
+            (str ":." (name x))]))
 
    [type-scale {:label "Size"
                 :coll  typescale}]
@@ -278,20 +289,20 @@
        :>p:last-of-type:mbe--2.5em
        :>p:lh--1.7
        :pbe--2.25rem)
-   [:p
+   [:p.prose
     "Kushi is a base for building web UI with "
     [link {:href   "https://clojurescript.org/"
            :target :_blank}
      "ClojureScript"]
     "."]
-   [:p "For detailed docs, check out the "
+   [:p.prose "For detailed docs, check out the "
     [link {:href   "https://github.com/kushidesign/kushi"
            :target :_blank} "Readme"]
     " and the "
     [link {:href   "https://github.com/kushidesign/kushi-quickstart"
            :target :_blank}
      "Quickstart repo"] "."]
-   [:p
+   [:p.prose
     "In addition to providing a native ClojureScript CSS solution, Kushi offers a basic suite of themeable, headless UI components for free. "
     "This set of building blocks consitutes a base for rolling your own design system."]
    [:a {:href     "/components"
@@ -313,5 +324,5 @@
        :>p:first-child:mbs--0
        :>p:mb--2em
        :>p:lh--1.7)
-   [:p 
+   [:p.prose 
     "This page provides interactive documentation, detailed usage options, and snippet generation for easy inclusion of Kushi UI components in your own project."] ])
