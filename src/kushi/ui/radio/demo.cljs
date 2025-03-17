@@ -40,14 +40,15 @@
                             (sx :.xxxlarge)
                             {:-input-attrs {:name :xxxlarge-sample}})]]]
        :examples  [{:code (sx-call (into [:<>] 
-                                         (for [sz sizes]
+                                         (for [sz sizes
+                                               :let [nm (str (gensym) "-" sz)]]
                                            [:div (sx :.flex-row-fs
                                                      :xsm:flex-direction--column) 
                                             [radio {:class        [sz]
-                                                    :-input-attrs {:name           sz
+                                                    :-input-attrs {:name           nm
                                                                    :defaultChecked true}}]
                                             [radio {:class        [sz]
-                                                    :-input-attrs {:name sz}}]])))}]})
+                                                    :-input-attrs {:name nm}}]])))}]})
      {:desc     "Radio group with labels"
       :row-attrs row-attrs
       :snippets  '[[:section 
