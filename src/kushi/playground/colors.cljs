@@ -135,7 +135,7 @@
               :mb--2rem:1.5rem)
           color-name]
          (when semantic-alias
-           [:p (sx :fw--$normal :mb--1em:2.5em)
+           [:p.prose (sx :fw--$normal :mb--1em:2.5em)
             "All "
             [:code (str "--" (name color-name) "*")]
             " values on the scale have a corresponding "
