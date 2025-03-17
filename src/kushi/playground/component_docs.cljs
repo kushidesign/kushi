@@ -28,7 +28,6 @@
   (into [:span
          ;; TODO - This should be extracted for styles
          (sx :.kushi-ui-opt-desc
-             :.normal
              :m--0
              :fs--$medium
              :lh--1.55
@@ -79,7 +78,6 @@
    [:div
     (sx :.kushi-opt-detail-label :min-width--75px)
     [label (sx :.kushi-playground-meta-desc-label
-               :.normal
                :>.kushi-label:lh--2.05) 
      text]]
    [:div (sx :.kushi-opt-detail-value
