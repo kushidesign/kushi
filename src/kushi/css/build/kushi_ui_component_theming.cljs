@@ -1021,6 +1021,33 @@
                                          :hover:bgc  :$background-color-neutral-hard-2-dark-mode
                                          :active:bgc :$background-color-neutral-hard-3-dark-mode}})
 
+
+(defcss
+  "[data-kui-track-with-thumb]"
+  {
+  ;;  :color                           :$foreground-color-neutral
+  ;;  :hover:color                     :$foreground-color-neutral-2
+  ;;  :active:color                    :$foreground-color-neutral-3
+  ;;  :dark:color                      :$foreground-color-neutral-dark-mode
+  ;;  :dark:hover:color                :$foreground-color-neutral-2-dark-mode
+  ;;  :dark:active:color               :$foreground-color-neutral-3-dark-mode
+  ;;  :hover:bgc                       :$background-color-neutral-soft
+  ;;  :active:bgc                      :$background-color-neutral-soft-2
+   :dark:hover:bgc                     :$switch-thumb-background-color
+   :dark:active:bgc                    :$switch-thumb-background-color
+   "[data-kui-surface=\"soft\"]"       {:bgc             :$background-color-neutral-soft
+                                        :dark:bgc        :$background-color-neutral-soft-dark-mode
+                                        :hover:bgc       :$background-color-neutral-soft-2
+                                        :dark:hover:bgc  :$background-color-neutral-soft-2-dark-mode
+                                        :active:bgc      :$background-color-neutral-soft-3
+                                        :dark:active:bgc :$background-color-neutral-soft-3-dark-mode}
+   "[data-kui-surface=\"solid\"]"      {:bgc        :$background-color-neutral-hard
+                                        :hover:bgc  :$background-color-neutral-hard-2
+                                        :active:bgc :$background-color-neutral-hard-3}
+   "dark:[data-kui-surface=\"solid\"]" {:bgc        :$background-color-neutral-hard-dark-mode
+                                        :hover:bgc  :$background-color-neutral-hard-2-dark-mode
+                                        :active:bgc :$background-color-neutral-hard-3-dark-mode}})
+
 (defcss
   "[data-kui-colorway=\"accent\"]"
   {:color                           :$foreground-color-accent
