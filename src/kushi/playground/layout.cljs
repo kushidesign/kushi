@@ -3,6 +3,7 @@
    [clojure.string :as string]
    [domo.core :as domo]
    [kushi.core :refer [css defcss merge-attrs sx css-vars-map]]
+   [kushi.css.media]
    [kushi.playground.about :as about]
    [kushi.playground.component-docs :as docs]
    [kushi.playground.component-examples :as component-examples]
@@ -10,7 +11,7 @@
    [kushi.playground.sidenav :as sidenav]
    [kushi.playground.state :as state]
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
-   [kushi.ui.util :refer [keyed]]
+   [kushi.ui.util :refer [keyed as-str]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.core :refer [defcom]]
    [kushi.ui.divisor.core :refer (divisor)]
@@ -38,7 +39,6 @@
    [propeller (sx :translate--0.5em
                   [:--spinner-animation-duration :700ms])]])
 
-
 (def tab-attrs
   (sx :fs--$small
       :pis--0.799em
@@ -57,7 +57,6 @@
             :on-key-down domo/on-key-down-tab-navigation}
            &attrs)
    &children])
-
 
 (declare component-section)
 
@@ -214,7 +213,10 @@
                    :lh--1.2
                    :tt--revert)
            "A Readymade Foundation for UI"]
-          [:p.prose (sx :mb--1.6rem:1rem)
+          [:p.prose (sx :sm:mb--1.6rem:1rem
+                        :mb--0.6rem:2rem
+                        :sm:fs--$medium
+                        :fs--$small)
            [:span
             (sx :bgc--white
                 :dark:bgc--black
@@ -246,7 +248,9 @@
           [:h1 (sx :.component-section-header-label)
            (string/capitalize label)]]])
       (if args
-        [content args]
+        (if splash?
+          [content args]
+          [content args])
         [content])]
 
      ;; gradients
@@ -255,8 +259,8 @@
                  [:box-shadow "0 0 50vw 50vw rgba(0 0 0 / 0.5)"]
                  [:bgi "linear-gradient(164deg, var(--background) 275px, transparent 575px, transparent)"]
                  [:dark:bgi "linear-gradient(164deg, var(--background-color-dark-mode) 275px, transparent 575px, transparent)"]
-                 [:sm:bgi "linear-gradient(to bottom right, white 420px, transparent 950px, transparent), linear-gradient(to bottom left, var(--background-color) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 800px, var(--background-color) 1200px, var(--background-color))"]
-                 [:sm:dark:bgi "linear-gradient(to bottom right, var(--background-color-dark-mode) 350px, transparent 850px, transparent), linear-gradient(to bottom left, var(--background-color-dark-mode) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 800px, var(--background-color-dark-mode) 1200px, var(--background-color-dark-mode))"])])
+                 [:sm:bgi "linear-gradient(to bottom right, white 420px, transparent 950px, transparent), linear-gradient(to bottom left, var(--background-color) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 500px, var(--background-color) 1100px, var(--background-color))"]
+                 [:sm:dark:bgi "linear-gradient(to bottom right, var(--background-color-dark-mode) 350px, transparent 850px, transparent), linear-gradient(to bottom left, var(--background-color-dark-mode) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 500px, var(--background-color-dark-mode) 1100px, var(--background-color-dark-mode))"])])
 
      ;; sliders
      #_(when splash?
@@ -425,32 +429,51 @@
 
 
 (defcss ":root"
-  {"--splash-col-1-y"            "2290px"
-   "--splash-col-2-y"            "-210px"
-   "--splash-col-3-y"            "1560px"
-   "--splash-col-4-y"            "-780px"
-   "--splash-col-shift"          "2020px"
-   "--splash-col-shift-duration" "90s"})
+  {
+   "--splash-col-1-y"            "1970px"
+   "--splash-col-1-y-mobile"     "1770px"
+   "--splash-col-2-y"            "-400px"
+   "--splash-col-2-y-mobile"     "-800px"
+   "--splash-col-3-y"            "1520px"
+   "--splash-col-3-y-mobile"     "400px"
+   "--splash-col-4-y"            "200px"
+   "--splash-col-4-y-mobile"            "200px"
+   "--splash-col-shift"          "1630px"
+   "--splash-col-shift-duration" "20s"}
+  )
 
 (defcss "@keyframes slide-col-1"
-  [:0% {:transform "translate(0, var(--splash-col-1-y))"}]
-  [:50% {:transform "translate(0, calc(var(--splash-col-1-y) - var(--splash-col-shift)))"}]
-  [:100% {:transform "translate(0, var(--splash-col-1-y))"}])
+  [:0% {:transform "translate(0, calc(var(--splash-col-1-y) - var(--splash-col-shift)))"}]
+  [:100% {:transform "translate(0, var(--splash-col-1-y))"}] )
 
 (defcss "@keyframes slide-col-2"
-  [:0% {:transform "translate(0, var(--splash-col-2-y))"}]
-  [:50% {:transform "translate(0, calc(var(--splash-col-2-y) + var(--splash-col-shift)))"}]
-  [:100% {:transform "translate(0, var(--splash-col-2-y))"}])
+  [:0% {:transform "translate(0, calc(var(--splash-col-2-y) + var(--splash-col-shift)))"}]
+  [:100% {:transform "translate(0, var(--splash-col-2-y))"}] )
 
 (defcss "@keyframes slide-col-3"
-  [:0% {:transform "translate(0, var(--splash-col-3-y))"}]
-  [:50% {:transform "translate(0, calc(var(--splash-col-3-y) - var(--splash-col-shift)))"}]
-  [:100% {:transform "translate(0, var(--splash-col-3-y))"}])
+  [:0% {:transform "translate(0, calc(var(--splash-col-3-y) - var(--splash-col-shift)))"}]
+  [:100% {:transform "translate(0, var(--splash-col-3-y))"}] )
 
 (defcss "@keyframes slide-col-4"
-  [:0% {:transform "translate(0, var(--splash-col-4-y))"}]
-  [:50% {:transform "translate(0, calc(var(--splash-col-4-y) + var(--splash-col-shift)))"}]
-  [:100% {:transform "translate(0, var(--splash-col-4-y))"}])
+  [:0% {:transform "translate(0, calc(var(--splash-col-4-y) + var(--splash-col-shift)))"}]
+  [:100% {:transform "translate(0, var(--splash-col-4-y))"}] )
+
+
+(defcss "@keyframes slide-col-1-mobile"
+  [:0% {:transform "translate(0, calc(var(--splash-col-1-y-mobile) - var(--splash-col-shift)))"}]
+  [:100% {:transform "translate(0, var(--splash-col-1-y-mobile))"}] )
+
+(defcss "@keyframes slide-col-2-mobile"
+  [:0% {:transform "translate(0, calc(var(--splash-col-2-y-mobile) + var(--splash-col-shift)))"}]
+  [:100% {:transform "translate(0, var(--splash-col-2-y-mobile))"}] )
+
+(defcss "@keyframes slide-col-3-mobile"
+  [:0% {:transform "translate(0, calc(var(--splash-col-3-y-mobile) - var(--splash-col-shift)))"}]
+  [:100% {:transform "translate(0, var(--splash-col-3-y-mobile))"}] )
+
+(defcss "@keyframes slide-col-4-mobile"
+  [:0% {:transform "translate(0, calc(var(--splash-col-4-y-mobile) + var(--splash-col-shift)))"}]
+  [:100% {:transform "translate(0, var(--splash-col-4-y-mobile))"}] )
 
 
 (declare component-playground-content-col)
@@ -464,19 +487,21 @@
     {:label "tooltip"
      :indices [2]}]
 
-   [{:label "icon"}
+   [{:label "tag"}
     {:label "spinner"}
-    {:label "tag"}
-    {:label "card"}
-    ]
+    {:label "icon"}
+    {:label "card"
+     :indices [0 1]}]
 
    [{:label "callout"}
     {:label "button"}
     {:label "collapse"}]
 
-   [{:label "radio"}
+   [{:label "radio"
+     :indices [1 2 3]}
     {:label "switch"}
     {:label "checkbox"}]])
+
 
 (defn component-playground-content-3col 
   [playground-components]
@@ -485,13 +510,16 @@
              :.flex-row-fs
              :ai--fs
              :gap--2rem
-             :scale--0.8
+            ;;  :scale--0.5
+            ;;  :sm:scale--0.8
              [:w "calc(3 * var(--playground-main-content-max-width))"]
-             :translate---15%:-35.5%
-             :sm:translate---10%:-35.5%
+            ;;  :translate---13%:-37%
+            ;;  :sm:translate---10%:-35.5%
              :transform-origin--center:center
              :transform-style--preserve-3d
-             [:transform "rotateX(55deg) rotateY(0deg) rotateZ(-45deg)"]
+             [:sm:transform "translate(-10%, -35.5%) scale(0.8) rotateX(55deg) rotateY(0deg) rotate(-45deg)"]
+            ;;  [:transform "translate(-13%, -37%) scale(0.8) rotateX(55deg) rotateY(0deg) rotate(-45deg)"]
+             [:transform "translate(-15.5%, -38.33%) scale(0.4) rotateX(55deg) rotateY(0deg) rotate(-45deg)"]
              [" .component-section-header:position" :static])]
    (for [n (range 4)]
      [component-playground-content-col 
@@ -511,26 +539,36 @@
 (defn component-playground-content-col
   [playground-components]
    ;; Cycle through collection of components defined in playground.core
-   (let [col-1 playground-components
-         #_(mapv (fn [n] 
-                   (nth playground-components n nil))
-                 (nth sorting 0)) ]
+   (let [col-1 playground-components]
      (into [:section (merge-attrs 
-                      (sx ".temp-3col-banner"
-                         ["nth-child(1):animation" "slide-col-1 linear var(--splash-col-shift-duration) 1"]
-                         ["nth-child(2):animation" "slide-col-2 linear var(--splash-col-shift-duration) 1"]
-                         ["nth-child(3):animation" "slide-col-3 linear var(--splash-col-shift-duration) 1"]
-                         ["nth-child(4):animation" "slide-col-4 linear var(--splash-col-shift-duration) 1"]
-                          
-                          ["nth-child(1):transform" "translateY(var(--splash-col-1-y))"]
-                          ["nth-child(2):transform" "translateY(var(--splash-col-2-y))"]
-                          ["nth-child(3):transform" "translateY(var(--splash-col-3-y))"]
-                          ["nth-child(4):transform" "translateY(var(--splash-col-4-y))"]
-
-                          :bgc--$background-color
-                          :dark:bgc--$background-color-dark-mode
-                          :pi--2.25rem!important
-                          :min-width--$playground-main-content-max-width))] 
+                      (if (let [[p v] (some-> kushi.css.media/media :sm first)]
+                            (domo/matches-media? p (as-str v))) 
+                        (sx :.temp-3col-banner
+                            ["nth-child(1):animation" "slide-col-1 ease-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(2):animation" "slide-col-2 ease-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(3):animation" "slide-col-3 ease-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(4):animation" "slide-col-4 ease-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(1):transform" "translateY(var(--splash-col-1-y))"]
+                            ["nth-child(2):transform" "translateY(var(--splash-col-2-y))"]
+                            ["nth-child(3):transform" "translateY(var(--splash-col-3-y))"]
+                            ["nth-child(4):transform" "translateY(var(--splash-col-4-y))"]
+                            :bgc--$background-color
+                            :dark:bgc--$background-color-dark-mode
+                            :pi--2.25rem!important
+                            :min-width--$playground-main-content-max-width)
+                        (sx :.temp-3col-banner
+                            ["nth-child(1):animation" "slide-col-1-mobile ease-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(2):animation" "slide-col-2-mobile ease-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(3):animation" "slide-col-3-mobile ease-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(4):animation" "slide-col-4-mobile ease-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(1):transform" "translateY(var(--splash-col-1-y-mobile))"]
+                            ["nth-child(2):transform" "translateY(var(--splash-col-2-y-mobile))"]
+                            ["nth-child(3):transform" "translateY(var(--splash-col-3-y-mobile))"]
+                            ["nth-child(4):transform" "translateY(var(--splash-col-4-y-mobile))"]
+                            :bgc--$background-color
+                            :dark:bgc--$background-color-dark-mode
+                            :pi--2.25rem!important
+                            :min-width--$playground-main-content-max-width)))] 
               (for [{:keys [label
                             media-matches
                             examples]
