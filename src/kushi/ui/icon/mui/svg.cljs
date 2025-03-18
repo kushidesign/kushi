@@ -2,7 +2,7 @@
 
 ;; TODO rename all to `svg-icon-remove` etc
 
-(def add
+(def add-icon
   [:svg {:xmlns   "http://www.w3.org/2000/svg"
          :viewBox "0 0 40 40"}
    [:path {:d "M18.625 31.667V21.375H8.333v-2.75h10.292V8.333h2.75v10.292h10.292v2.75H21.375v10.292Z"}]])
@@ -34,7 +34,7 @@
          :viewBox "0 0 24 24"}
    [:path {:d "M8 19v-3H5v-2h5v5Zm-3-9V8h3V5h2v5Zm9 9v-5h5v2h-3v3Zm0-9V5h2v3h3v2Z"}]])
 
-(def remove
+(def remove-icon
   [:svg {:xmlns  "http://www.w3.org/2000/svg"
          :viewBox "0 0 24 24"}
    [:path {:d "M5 13v-2h14v2Z"}]])
