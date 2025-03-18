@@ -1443,8 +1443,8 @@ Given the following:
 
 You would receive warnings about invalid args in the terminal:
 
-<div align="center"><img src="docs/public/graphics/kushi-sx-bad-args-warnings.png"
- width="654px"/></div>
+<div align="left"><img src="docs/public/graphics/images/kushi-sx-bad-args-warnings.png"
+ width="550px"/></div>
 
 <br>
 <br>
@@ -1515,7 +1515,7 @@ components, you can use the same underlying pattern that `defcom` abstracts. -->
 Kushi promotes a component definition pattern that mirrors hiccup itself by
 standardizing the function signature as an (optional) single map of attributes
 followed by any number of children. This pattern relies on using the
-`kushi.ui.core/opts+children` helper function.
+`kushi.ui.core/extract` helper function.
 
 Under the hood, this helper function pulls out any keys in attributes map that
 start with `:-` and puts them in a separate `opts` map. This allows passing in
@@ -1525,14 +1525,15 @@ to enable decoration and composition of attribute maps.
 
 
 ```Clojure
+;; This example assumes Reagent is being used as a rendering library
 (ns myapp.core
   (:require
    [kushi.core :refer [sx]]
-   [kushi.ui.core :refer [opts+children]]))
+   [kushi.ui.core :refer [extract]]))
 
 (defn my-section
   [& args]
-  (let [[opts attrs & children]  (opts+children args)
+  (let [[opts attrs & children]  (extract args)
         {:keys [label label-attrs body-attrs]} opts]
     [:section
      attrs
@@ -1547,9 +1548,28 @@ The example above assumes the following:
 `:-label-attrs`, `:-body-attrs`.
 - The values of `:-label-attrs` and `:-body-attrs` are html attribute maps.
 
-The helper function `kushi.ui.core/opts+children` will pull any keys prefixed
-with `:-` out of the attributes map and into a user `opts` map. `opts+children`
-always returns a vector in the form of `[user-opts attr child & more-children]`.
+The helper function `kushi.ui.core/extract` will pull any keys prefixed
+with `:-` out of the attributes map and into a user `opts` map. `extract`
+always returns a map:
+```Clojure
+{:opts     {...}
+ :attrs    {...}
+ :children [...]}
+```
+
+Our `my-section` component function could be called like this:
+```Clojure
+(my-section 
+ (merge-attrs
+  (sx :border--1px:solid:black
+      :p--1rem)
+  {:id     "my-id"
+   :-label "My custom label"
+   :-label-attrs (sx :c--red)
+   :-body-attrs (sx :c--white :bgc--black)})
+  "Child 1"
+  "Child 2")
+```
 
 <br>
 <br>
@@ -1578,7 +1598,9 @@ documentation site linked above.
 Although Kushi is designed to be build-tool and framework agnostic, thus far it
 has only been used in production with
 [Reagent](https://reagent-project.github.io/) +
-[Shadow-CLJS](https://github.com/thheller/shadow-cljs).
+[Shadow-CLJS](https://github.com/thheller/shadow-cljs). Integrations and
+quickstart guides for using Kushi with other cljs rendering libraries is planned
+for Q2 2025.
 
 ### shadow-cljs
 See the [kushi-quickstart](https://github.com/kushidesign/kushi-quickstart)
@@ -1606,6 +1628,6 @@ Feel free to file issues or initiate discussion in
 -->
 ## License
 
-Copyright © 2021-2024 Jeremiah Coyle
+Copyright © 2021-2025 Jeremiah Coyle
 
 Distributed under the EPL License. See LICENSE.
