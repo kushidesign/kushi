@@ -1,6 +1,8 @@
 <p><sub>Many thanks to <a href="https://www.clojuriststogether.org/">Clojurists Together</a> for generously supporting this project!</sub></p>
 
 <br>
+<div align="center"><img src="./docs/public/graphics/images/kushi-ui-iso-1.png" width="850"></img></div> 
+<br>
 
 # Kushi
 <h5>Kushi is a foundation for building web UI with ClojureScript.</h5>
@@ -95,7 +97,7 @@ mainstream JS solutions such as Tailwind, Emotion, etc.
 Current version is pre-release intended for early adopters and anyone who would
 like to provide feedback. New 1.0 alphas will be released frequently, while I
 continue to make improvements/changes/additions. Working towards a stable 1.0
-release by end of 2024 or Q1 of 2025.
+release by end of Q2 of 2025.
 
 
 Please report anything unexpected on GitHub Issues.
