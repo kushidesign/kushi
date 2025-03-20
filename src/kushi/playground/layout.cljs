@@ -259,8 +259,8 @@
                  [:box-shadow "0 0 50vw 50vw rgba(0 0 0 / 0.5)"]
                  [:bgi "linear-gradient(164deg, var(--background) 275px, transparent 575px, transparent)"]
                  [:dark:bgi "linear-gradient(164deg, var(--background-color-dark-mode) 275px, transparent 575px, transparent)"]
-                 [:sm:bgi "linear-gradient(to bottom right, white 420px, transparent 950px, transparent), linear-gradient(to bottom left, var(--background-color) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 500px, var(--background-color) 1100px, var(--background-color))"]
-                 [:sm:dark:bgi "linear-gradient(to bottom right, var(--background-color-dark-mode) 350px, transparent 850px, transparent), linear-gradient(to bottom left, var(--background-color-dark-mode) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 500px, var(--background-color-dark-mode) 1100px, var(--background-color-dark-mode))"])])
+                 [:sm:bgi "linear-gradient(to bottom right, white 420px, transparent 950px, transparent), linear-gradient(to bottom left, var(--background-color) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 700px, var(--background-color) 1200px, var(--background-color))"]
+                 [:sm:dark:bgi "linear-gradient(to bottom right, var(--background-color-dark-mode) 350px, transparent 850px, transparent), linear-gradient(to bottom left, var(--background-color-dark-mode) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 700px, var(--background-color-dark-mode) 1200px, var(--background-color-dark-mode))"])])
 
      ;; sliders
      #_(when splash?
@@ -437,8 +437,8 @@
    "--splash-col-3-y"            "1520px"
    "--splash-col-3-y-mobile"     "400px"
    "--splash-col-4-y"            "200px"
-   "--splash-col-4-y-mobile"            "200px"
-   "--splash-col-shift"          "1630px"
+   "--splash-col-4-y-mobile"     "200px"
+   "--splash-col-shift"          "730px"
    "--splash-col-shift-duration" "20s"}
   )
 
@@ -539,10 +539,10 @@
                       (if (let [[p v] (some-> kushi.css.media/media :sm first)]
                             (domo/matches-media? p (as-str v))) 
                         (sx :.temp-3col-banner
-                            ["nth-child(1):animation" "slide-col-1 ease-out var(--splash-col-shift-duration) 1"]
-                            ["nth-child(2):animation" "slide-col-2 ease-out var(--splash-col-shift-duration) 1"]
-                            ["nth-child(3):animation" "slide-col-3 ease-out var(--splash-col-shift-duration) 1"]
-                            ["nth-child(4):animation" "slide-col-4 ease-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(1):animation" "slide-col-1 ease-in-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(2):animation" "slide-col-2 ease-in-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(3):animation" "slide-col-3 ease-in-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(4):animation" "slide-col-4 ease-in-out var(--splash-col-shift-duration) 1"]
                             ["nth-child(1):transform" "translateY(var(--splash-col-1-y))"]
                             ["nth-child(2):transform" "translateY(var(--splash-col-2-y))"]
                             ["nth-child(3):transform" "translateY(var(--splash-col-3-y))"]
@@ -552,10 +552,10 @@
                             :pi--2.25rem!important
                             :min-width--$playground-main-content-max-width)
                         (sx :.temp-3col-banner
-                            ["nth-child(1):animation" "slide-col-1-mobile ease-out var(--splash-col-shift-duration) 1"]
-                            ["nth-child(2):animation" "slide-col-2-mobile ease-out var(--splash-col-shift-duration) 1"]
-                            ["nth-child(3):animation" "slide-col-3-mobile ease-out var(--splash-col-shift-duration) 1"]
-                            ["nth-child(4):animation" "slide-col-4-mobile ease-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(1):animation" "slide-col-1-mobile ease-in-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(2):animation" "slide-col-2-mobile ease-in-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(3):animation" "slide-col-3-mobile ease-in-out var(--splash-col-shift-duration) 1"]
+                            ["nth-child(4):animation" "slide-col-4-mobile ease-in-out var(--splash-col-shift-duration) 1"]
                             ["nth-child(1):transform" "translateY(var(--splash-col-1-y-mobile))"]
                             ["nth-child(2):transform" "translateY(var(--splash-col-2-y-mobile))"]
                             ["nth-child(3):transform" "translateY(var(--splash-col-3-y-mobile))"]
