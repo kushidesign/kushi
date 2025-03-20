@@ -53,11 +53,11 @@
 > [!WARNING]
 >
 > If your project is using Kushi `v1.0.0-a.22` or lower, please reference the README on a different branch that corresponds with the version that you are using:<br>
-> [v1.0.0-a.18](https://github.com/kushidesign/kushi/tree/alpha18-fixes)<br>
-> [v1.0.0-a.19](https://github.com/kushidesign/kushi/tree/cssvar-tuples-defclass)<br>
-> [v1.0.0-a.20](https://github.com/kushidesign/kushi/tree/tooltip2)<br>
-> [v1.0.0-a.21](https://github.com/kushidesign/kushi/tree/playground-update2)<br>
 > [v1.0.0-a.22](https://github.com/kushidesign/kushi/tree/refactor-warnings-and-errors)<br>
+> [v1.0.0-a.21](https://github.com/kushidesign/kushi/tree/playground-update2)<br>
+> [v1.0.0-a.20](https://github.com/kushidesign/kushi/tree/tooltip2)<br>
+> [v1.0.0-a.19](https://github.com/kushidesign/kushi/tree/cssvar-tuples-defclass)<br>
+> [v1.0.0-a.18](https://github.com/kushidesign/kushi/tree/alpha18-fixes)<br>
  
 
 
