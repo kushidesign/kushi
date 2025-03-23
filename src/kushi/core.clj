@@ -15,7 +15,8 @@
   ;; for testing
   ;;  [taoensso.tufte :as tufte]
    
-   [kushi.css.build.tokens :as tokens]))
+   [kushi.css.build.tokens :as tokens]
+   [kushi.css.media :as media]))
 
 ;; EEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR   RRRRRRRRRRRRRRRRR   
 ;; E::::::::::::::::::::ER::::::::::::::::R  R::::::::::::::::R  
@@ -400,6 +401,12 @@
 ;; Grouping
 ;; -----------------------------------------------------------------------------
 
+(defn- media-query-from-kushi-media-scale? [x]
+  (boolean (and (vector? x)
+                (string? (nth x 0 nil))
+                (contains? media/css-media-queries (nth x 0 nil))
+                (vec-of-vecs? (nth x 1 nil)))))
+
 (defn- sel-and-vec-of-vecs?2 [x]
   (boolean (and (vector? x)
                 (string? (nth x 0 nil))
@@ -428,15 +435,14 @@
 
 (defn group-shared*
   "Groups things for nesting.
-   Postions css properties in front of other selector bits.
+   Positions css properties in front of other selector bits.
    Pseudo-classes are ordered according to defs/lvfha-pseudos-order."
   ;; TODO - make pseudo-ordering override-able.
   [v all-nested-sels dupe-nested-sels]
-
   (let [
         ;; debug?
         ;; (= v [:a :b])
-
+        
         ;; If there are any duplicate selectors, partition them from others
         [dupe-vecs others]
         (partition-by-pred #(contains? dupe-nested-sels (nth % 0 nil)) v)
@@ -454,20 +460,33 @@
         (some->> dupe-vecs (group-by first) dupe-reduce)
 
         ;; Create new vec-of-vecs with non-dupes and grouped dupes
+        ;; TODO - should the sorting be more sophisticated here wrt to mqs, etc?
         ret*
         (!? 'ret* (apply conj others grouped-dupes))
         
         ;; Determine if there are selectors with lvfha pseudoclasses
         ;; Optionally resort based on selectors with lvfha pseudoclasses
-        ret (lvfha-order ret* all-nested-sels)]
+        ret (lvfha-order ret* all-nested-sels)
+        
+        ;; re-sort by mq from pre-defined mq-scale, the one
+        ;; that ships with kushi in kushi.media/media, or the user override.
+        ret (let [[mqs others]
+                  (partition-by-pred media-query-from-kushi-media-scale? ret)]
+              (if (seq mqs)
+                (let [mqs (sort-by (fn [[mq]] 
+                                     (get media/index-by-css-media-query mq))
+                                   mqs)]
+                  (apply conj others mqs))
+                ret))]
 
-   #_(when debug? (? (keyed [dupe-nested-sels
-                          dupe-vecs
-                          others
-                          grouped-dupes
-                          ;; ret*
-                          ;; ret
-                           ])))
+  ;;  (when debug?
+  ;;    (!? (keyed [dupe-nested-sels
+  ;;                dupe-vecs
+  ;;                others
+  ;;                grouped-dupes
+  ;;                ret*
+  ;;                ret
+  ;;                ])))
         ret))
 
 (defn- order-nested-rules
@@ -634,8 +653,7 @@
 
 
 (defn- css-block* [conformed-args]
-  (let [{:keys [vectorized
-                conformed-map]}
+  (let [{:keys [vectorized conformed-map]}
         (vectorized* conformed-args)
 
         grouped                 
@@ -729,8 +747,7 @@
 (defn ansi-colorized-css-block
   [{:keys [args &form &env block display-selector? sel] :as m}]
   (let [styled-sel-kw :bold
-        sel           (when (or (not block)
-                                display-selector?)
+        sel           (when (or (not block) display-selector?)
                         (bling [styled-sel-kw
                                 (or (some-> sel (str " "))
                                     (str "." (loc-id &env &form) " "))]))
