@@ -1074,9 +1074,13 @@
         expands-to
         (if (seq class-binding) 
           `{:class (kushi.core/class-str ~classes)}
-          {:class (string/join " " classes)})]
+          {:class (string/join " " classes)})
+        
+        sel
+        (when-let [sel (nth args 0 nil)]
+          (when (string? sel) sel))]
 
-    (print-css-block (assoc (keyed [args &form &env expands-to]) :sym '?sx))
+    (print-css-block (assoc (keyed [args &form &env expands-to sel]) :sym '?sx))
     (if (seq class-binding) 
       `{:class (kushi.core/class-str ~classes)}
       {:class (string/join " " classes)})))
