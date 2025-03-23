@@ -15,3 +15,16 @@
         (map-indexed (fn [i [k _]]
                        [k i])
                      media)))
+
+(def index-by-css-media-query
+  "{\"@media(min-width: 480px)\" 0
+    \"@media(min-width: 640px)\" 1
+    ...}"
+  (into {}
+        (map-indexed (fn [i [_ m]]
+                       (let [[k v] (first m)]
+                         [(str "@media(" (name k) ": " (name v) ")") i]))
+                     media)))
+
+(def css-media-queries
+  (into #{} (keys index-by-css-media-query)))
