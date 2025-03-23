@@ -74,10 +74,10 @@
   [{:keys [modal-id wrapper-tag]
     :as   m}]
   (!? :pp m)
-    ;; pass wrapper tag of :div to just render element
-    ;; good for dev 
+  ;; pass wrapper tag of :div to just render element
+  ;; good for dev 
   [(or wrapper-tag modal) 
-   {:class "kushi-playground-examples-modal"
+   {:class (css :.kushi-playground-examples-modal)
     :id    modal-id}
    [example-modal-inner m]])
 

@@ -251,9 +251,7 @@
                [:h1 (sx :.component-section-header-label) 
                 [:a 
                  {:class    (css :cursor--pointer)
-                  :href     (str
-                             "#"
-                             label)
+                  :href     (str "#" label)
                   :on-click (fn [e]
                               (.preventDefault e)
                               (component-examples/scroll-to-playground-component!
