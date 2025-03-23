@@ -36,6 +36,16 @@
             [kushi.colors2 :refer [oklch-colors]]
             ))
 
+;; Testing for duplicate media-queries
+#_(?sx ".foo"
+     :w--200px
+     :hover:c--red
+     :hover:bgc--blue
+     :sm:flex-direction--row
+     :sm:w--300px
+     :lg:w--400px)
+
+
 
 (def sam
   "One two three,
@@ -86,8 +96,6 @@
 
 (!? (hiccupize-url "Use [this page](https://fonts.google.com/icons?icon.set=Material+Symbols) to explore over 1000+ different icons.")) 
 
-(!? (css-rule* ".foo" [:ai--$ai] nil nil))
-(!? (css-rule* ".foo" [:aj--$ai] nil nil))
 
 (def sample-css
 
