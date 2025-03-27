@@ -254,19 +254,30 @@
              ret))))
 
 (defn- slider-default-index
-  [supplied-idx v steps* steps]
+  [supplied-idx v steps* steps min max]
   (let [ret* (or supplied-idx
                  (cond
                    (number? v)
-                   v
+                   (cond (<= min v max)
+                         (js/Math.abs (- min v)) 
+
+                         (< v min)
+                         0
+
+                         :else
+                         (- max min))
+
                    (and steps*
                         (or (every? string? steps*)
                             (every? keyword? steps*))
                         (or (string? v) (keyword? v)))
+
                    (when-let [idx* (find-index #(= % (name v)) steps)]
                      idx*)
+
                    :else 0))
-        ret (or ret* (js/Math.round (/ (-> steps count dec) 2)))]
+        ret (or ret*
+                (js/Math.round (/ (-> steps count dec) 2)))]
     ret))
 
 (defn- slider-labels
@@ -688,7 +699,9 @@
             default-index      (slider-default-index default-index
                                                      default-val
                                                      steps*
-                                                     steps)
+                                                     steps
+                                                     min
+                                                     max)
             label-scale-factor (cond
                                  (= 1 label-scale-factor)
                                  1.0
