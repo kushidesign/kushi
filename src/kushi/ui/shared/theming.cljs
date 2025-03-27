@@ -30,8 +30,7 @@
   (reduce-kv (fn [acc k v]
                (assoc acc
                       k
-                      (or (some-> k
-                                  opts
+                      (or (some-> (some-> opts k)
                                   (maybe nameable?)
                                   as-str
                                   (maybe (k variants)))
