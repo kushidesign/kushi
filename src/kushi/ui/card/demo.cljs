@@ -15,8 +15,35 @@
    :large])
 
 (def examples
-  [
-   {:desc      "Sizes from xxsmall to large"
+  [{:desc            "Basic"
+    :row-attrs       (sx 
+                      :ai--fs
+                      :flex-direction--column
+                      ["_.kushi-card:nth-child(5):d" :none]
+                      ["xsm:_.kushi-card:nth-child(5):d" :block]
+                      :_.kushi-card:w--fit-content
+                      :_.kushi-card:b--1px:solid:$neutral-200
+                      :dark:_.kushi-card:b--1px:solid:$neutral-700)
+    :snippets-header component-examples/sizes-snippet-header*
+    :snippets        ['[card "Basic card"]]
+    :examples        [{:code (sx-call
+                               [card "Basic card"])}]}
+   
+   {:desc            "Basic, elevated"
+    :row-attrs       (sx 
+                      :ai--fs
+                      :flex-direction--column
+                      ["_.kushi-card:nth-child(5):d" :none]
+                      ["xsm:_.kushi-card:nth-child(5):d" :block]
+                      :_.kushi-card:w--fit-content
+                      :_.kushi-card:b--1px:solid:$neutral-200
+                      :dark:_.kushi-card:b--1px:solid:$neutral-700)
+    :snippets-header component-examples/sizes-snippet-header*
+    :snippets        ['[card (sx :.elevated-3) "Basic card"]]
+    :examples        [{:code (sx-call
+                               [card (sx :.elevated-3) "Basic card"])}]}
+
+   {:desc      "With content, in sizes from xxsmall to large"
     :row-attrs (sx 
                 :ai--fs
                 :flex-direction--column
@@ -26,7 +53,28 @@
                 :_.kushi-card:b--1px:solid:$neutral-200
                 :dark:_.kushi-card:b--1px:solid:$neutral-700)
     :snippets-header component-examples/sizes-snippet-header*
-    :snippets ['[card (sx :fs--xxlarge) "My content"]]
+    :snippets ['[:div (sx :.flex-row-fs
+                                    :.neutralize
+                                    :ai--stretch
+                                    :gap--0.8em)
+                           [:div (sx :.rounded
+                                     :position--relative
+                                     :overflow--hidden
+                                     :.transition
+                                     :bgc--$neutral-200
+                                     :dark:bgc--$neutral-800
+                                     :w--3.5em
+                                     :h--3.5em)
+                            [:span (sx :.absolute-centered
+                                       [:transform "translate(0, 0.045em)"]
+                                       :display--block
+                                       :scale--2.55)
+                             "🐻‍❄"]]
+                           [:section (sx :.flex-col-sa) 
+                            [:p (sx :fs--1.25em :fw--$wee-bold) "Polar Bear"] 
+                            [:p (sx :c--$secondary-foreground-color
+                                    :dark:c--$secondary-foreground-dark-mode)
+                             "polar.bear@example.com"]]]]
     :examples  (for [sz sizes]
                  {:label (name sz)
                   :attrs {:class [sz]}
@@ -53,7 +101,7 @@
                                     :dark:c--$secondary-foreground-dark-mode)
                              "polar.bear@example.com"]]]]})}
    
-   {:desc      "Elevated levels from 0 to 5"
+   {:desc      "With content, in elevated levels from 0 to 5"
     :row-attrs (sx :.transition
                    :ai--fs
                    :flex-direction--column
