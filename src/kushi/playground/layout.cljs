@@ -241,6 +241,7 @@
                   :mbs--$navbar-height
                   ;; TODO - make sure this works
                   ["+*:pbs" :1.5rem]
+                  ["has-ancestor([data-kushi-playground-active-path='components']):d" :none]
                   ;; Maybe smaller division for mobile?
                   ;; ["~section[data-kushi-playground-component]:pbs" :6rem]
                   )
