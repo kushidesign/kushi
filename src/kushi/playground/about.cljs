@@ -1,10 +1,8 @@
 (ns kushi.playground.about
   (:require [clojure.string :as string]
             [domo.core :refer (copy-to-clipboard!)]
-            [kushi.color :refer [colors->tokens]]
+            [kushi.colors]
             [kushi.core :refer (sx css merge-attrs css-vars-map)]
-            [kushi.playground.colors :as playground.colors]
-            [kushi.playground.nav :refer [route!]]
             [kushi.playground.shared-styles]
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.divisor.core :refer (divisor)]
@@ -14,53 +12,56 @@
             [kushi.ui.tooltip.core :refer [tooltip-attrs]]
             [me.flowthing.pp :refer [pprint]]))
 
-(defn alias-global-mapping-row [a g]
-  [:<>
-   [:code (sx :.code) (str "--" a)]
-   [:span "→"]
-   [:code (sx :.code) (str "--" g)]])
+(defn diamond-swatch [s n]
+  [:span (merge-attrs
+          (sx :h--0px
+              :pbe--100%
+              :br--0px
+              :md:scale--1.2
+              :rotate---45deg)
+          {:style {:background-color (str "var(--" s "-" n ")")}})])
 
+(defn diamond-swatches [coll s]
+  (into [:div (sx :pb--4%:3%)]
+        (for [n coll]
+          [diamond-swatch s n])))
 
-(defn color-scales2
-  [{:keys [colorlist]}]
-  (let [tokens
-        (colors->tokens kushi.colors/colors {:format :css})
+(defn diamond-swatch-labels [coll]
+  (into [:div (sx :ji--c)]
+        (for [n coll]
+          [:code.xxxsmall n])))
 
-        coll   
-        (keep (fn [[k v]]
-                (let [color*       
-                      (or (->> k name (re-find #"^--([a-zAZ-_]+)-([0-9]+)$"))
-                          (->> k name (re-find #"^\$([a-zAZ-_]+)-([0-9]+)$")))
+(defn swatches-1-row [levels color-name]
+  (let [grid-repeat-sm (str "repeat(" (count levels) ", 1fr)" )]
+    [:div {:class (css {:d    :none
+                        :md:d :block
+                        :w    "calc(100% - 95px)"
+                        :>div {:d   :grid
+                               :jc  :fe
+                               :gtc :$grid-repeat-sm}})
+           :style (css-vars-map grid-repeat-sm)}
+     (into [:div (sx :pb--4%:2%)]
+           (for [n levels]
+             [diamond-swatch color-name n]))
+     [diamond-swatch-labels levels]]))
 
-                      color-name   
-                      (some-> color* second)
+(defn swatches-2-row [levels color-name]
+  (let [grid-repeat (str "repeat(" (/ (count levels) 2) ", 1fr)" )
+        first-10    (take 10 levels)
+        last-10     (take-last 10 levels)]
+    [:div (merge-attrs 
+           (sx {:md:d                       :none
+                :pi                         :0.5rem
+                :>div:gtc                   :$grid-repeat
+                :>div:jc                    :fe
+                :>div:d                     :grid})
+           {:style (css-vars-map grid-repeat)})
 
-                      color-level  
-                      (some-> color* last js/parseInt)
-
-                      color-token? 
-                      (contains? (into #{} colorlist) (keyword color-name))]
-                  (when color-token?
-                    {:color*      color*
-                     :color-name  color-name
-                     :color-level color-level
-                     :value       v
-                     :token       k})))
-              (partition 2 tokens))
-
-        ret    
-        (mapv #(let [scale (into []
-                                 (keep (fn [{:keys [color-name
-                                                    token value
-                                                    color-level]}]
-                                         (when (= color-name (name %))
-                                           [token value color-level]))
-                                       coll))]
-                 {:color-name %
-                  :scale      scale})
-              colorlist)]
-    #_{:coll coll :ret ret}
-    ret))
+     [diamond-swatches first-10 color-name]
+     [diamond-swatch-labels first-10]
+     
+     [diamond-swatches last-10 color-name]
+     [diamond-swatch-labels last-10]]))
 
 (defn kushi-colors-about []
   [:section
@@ -70,71 +71,47 @@
     :>p:mb--2em
     :>p:lh--1.7)
    [:p.prose "Kushi includes a foundation of global and alias color tokens."]
-
-   [:div
-    (sx
-     :xsm:d--none
-     :pb--1rem:2.5rem
-     :pis--0)
-    [playground.colors/color-grid
-     {:-row-gap      :4px
-      :-column-gap   :8px
-      :-labels?      false
-      :-swatch-attrs (sx :w--23px :h--23px)}]]
-
-   [:div
-    (sx
-     :d--none
-     :max-width--$playground-main-content-max-width
-     :xsm:d--block
-     :pb--2rem:4.5rem
-     :pis--2.5rem)
-    [playground.colors/color-grid
-     {:-row-gap      :7px
-      :-column-gap   :14px
-      :-swatch-attrs (sx :sm:w--34px
-                         :sm:h--34px
-                         :xsm:w--29px
-                         :xsm:h--29px
-                         :w--26px
-                         :h--26px)}]]
-
-   [:p.alias-token-scales.prose
-    "Semantic alias tokens map to global tokens like so:"
-    [:br]]
-
-   (into [:div (sx :d--grid
-                   :mbs--1em
-                   :grg--0.5em
-                   :gtc--1.3fr:0.3fr:1fr
-                   :w--275px)]
-         (for [[a g] [["positive200" "green200"]
-                      ["negative400" "red400"]
-                      ["warning300" "yellow300"]
-                      ["accent600" "blue600"]
-                      ["neutral50" "neutral50"]]]
-           (alias-global-mapping-row a g)))
-
    [:p]
-   #_[:p
-    "The `data-kui-colorway` attributes "
-    [:code {:-colorway :.neutral} ":.neutral"]
-    ", "
-    [:code {:-colorway :.positive} ":.positive"]
-    ", "
-    [:code {:-colorway :.negative} ":.negative"]
-    ", "
-    [:code {:-colorway :.warning} ":.warning"]
-    ", and "
-    [:code {:-colorway :.accent} ":.accent"]
-    " will decorate the element with the corresponding foreground and background colors."]
-   
    [divisor]
-
-   [playground.colors/color-rows 
-    (color-scales2 
-     {:colorlist [:gray :red :orange :gold :yellow :green :blue :purple :magenta :brown]})]
-   ])
+   (into [:div (sx :.transition
+                   :mbs--2rem
+                   :dark:bgc--black
+                   ;; TODO - can you transition box-shadow
+                   :dark:box-shadow---200px:1px:0px:black|200px:1px:0px:black)]
+         (for [k    [:gray :purple :blue :green :lime :yellow :gold :orange :red :magenta :brown]
+               :let [levels (range 50 1050 50)
+                     color-name (name k)
+                     alias (get kushi.colors/aliases-by-color color-name)]]
+           [:div (sx :.flex-col-sb
+                     :gap--7px
+                     :md:gap--0
+                     :md:flex-direction--row
+                     :md:ai--c
+                     :mbs--3rem
+                     :md:mbs--1rem)
+            [:h2 (sx :.semi-bold
+                     :.relative
+                     :w--fit-content
+                     :translate--0:-4px)
+             (string/capitalize color-name)
+             (when alias
+               [:<> 
+                [:code (sx :.absolute
+                           :.xxsmall 
+                           :md:d--none
+                           :bottom--0%
+                           [:left "calc(100% + 0.5rem)"])
+                 alias]
+                [:code (sx :.absolute 
+                           :.xxsmall
+                           :d--none
+                           :md:d--block
+                           :mbs--0.5em
+                           :top--100% 
+                           :left--0)
+                 alias]])]
+            [swatches-2-row levels color-name]
+            [swatches-1-row levels color-name]]))])
 
 
 (defn type-scale [{:keys [coll label]}]
@@ -280,42 +257,6 @@
                 :coll  [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy]}]
    [type-scale {:label "Tracking"
                 :coll  [:xxxtight :xxtight :xtight :tight :loose :xloose :xxloose :xxxloose]}] ])
-
-(defn kushi-about []
-  [:section
-   (sx :>*:max-width--550px
-       :>p:first-child:mbs--0
-       :>p:mb--2em
-       :>p:last-of-type:mbe--2.5em
-       :>p:lh--1.7
-       :pbe--2.25rem)
-   [:p.prose
-    "Kushi is a base for building web UI with "
-    [link {:href   "https://clojurescript.org/"
-           :target :_blank}
-     "ClojureScript"]
-    "."]
-   [:p.prose "For detailed docs, check out the "
-    [link {:href   "https://github.com/kushidesign/kushi"
-           :target :_blank} "Readme"]
-    " and the "
-    [link {:href   "https://github.com/kushidesign/kushi-quickstart"
-           :target :_blank}
-     "Quickstart repo"] "."]
-   [:p.prose
-    "In addition to providing a native ClojureScript CSS solution, Kushi offers a basic suite of themeable, headless UI components for free. "
-    "This set of building blocks consitutes a base for rolling your own design system."]
-   [:a {:href     "/components"
-        :on-click (fn [e]
-                    (route! "kushi-playground-menu" "/components" e)
-                    #_(component-examples/scroll-to-playground-component!
-                     {:component-label "button"
-                      :scroll-y        16}))}
-    [button 
-     (merge-attrs (sx :.semi-bold)
-                  {:-surface :solid})
-     "Explore components"
-     [icon :arrow-right-alt]]]])
 
 
 (defn component-playground-about []
