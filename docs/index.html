@@ -1,3 +1,4 @@
+<!--4444-->
 <!doctype html>
 <html lang="en-US">
 <head>
@@ -13,6 +14,9 @@
     <!-- Bundle from lightning, based on @imports in main.css -->
     <!-- Try this bundle via lighting for perf in dev -->
     <link rel="stylesheet" href="./public/css/bundle.css">
+
+    <!-- Temp for prod, colors page -->
+    <link rel="stylesheet" href="./public/css/oklch-colors.css">
 
     <!-- Dev only, uses @imports -->
     <!-- <link rel="stylesheet" href="./public/css/main.css"> -->
@@ -70,7 +74,7 @@
 
     <style>
       /* Temp hack for kushi.design docs site */
-      body:has(#app[data-kushi-playground-active-path="intro"]) {
+      body:has(.kpg-generic-section-splash) {
         overflow: hidden!important;
       }
     </style>
