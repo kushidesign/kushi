@@ -464,6 +464,7 @@
   (-> file
       slurp
       (e/parse-string-all {:fn           true
+                           :deref        true
                            :regex        true
                            :quote        true
                            :syntax-quote true
