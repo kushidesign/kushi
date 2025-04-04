@@ -50,7 +50,7 @@
 
 <br>
 
-> [!WARNING]
+> [!INFO]
 >
 > If your project is using Kushi `v1.0.0-a.22` or lower, please reference the readme on a different branch that corresponds with the version that you are using:<br>
 > [v1.0.0-a.18](https://github.com/kushidesign/kushi/tree/alpha18-fixes)<br>
