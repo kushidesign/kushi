@@ -123,7 +123,7 @@
      :component      checkbox
      :examples       checkbox.demo/examples
      :component-meta (-> checkbox var meta)
-     :reqs           '[[kushi.ui.radio.core :refer [radio]]]
+     :reqs           '[[kushi.ui.checkbox.core :refer [checkbox]]]
      :variants-base  #{:positions}
      :variants-attrs {:positions {}}}
 
