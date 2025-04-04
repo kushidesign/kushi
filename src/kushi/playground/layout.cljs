@@ -764,9 +764,9 @@
            :id    (str "kushi-" label "-documentation")}
 
           (when summary
-            (into [:div 
+            (into [:div.summary 
                    (sx :fs--$medium
-                       :fw--$wee-bold
+                       :.summary>.prose:fw--$wee-bold
                        :mb--0:2rem
                        :>span:lh--1.7)]
                   (desc->hiccup summary)))
