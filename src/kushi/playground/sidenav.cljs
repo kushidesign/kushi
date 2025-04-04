@@ -117,8 +117,6 @@
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
                label]]]))]])
 
-
-
 (defn all-components-sidenav-mobile
   [playground-components]
   ;; TODO sync 4rem and 6rem with elsewhere
@@ -127,18 +125,13 @@
           :.flex-col-fs
           :.neutralize
           :fs--$small
-          [:--translate-y :20px]
           :lg:d--none
-          :position--sticky
+          :position--fixed
           :ai--fe
           :w--100%
           :pi--1.25rem
           :md:pi--4rem
-          [:ibs "calc(0px - 4rem)"]
-          [:xsm:ibs "calc(0px - 6rem)"]
-          :md:iie--4rem
-          [:translate "0 calc(4rem + 0.25em + var(--navbar-height))"]
-          [:xsm:translate "0 calc(6rem + 0.25em + var(--navbar-height))"]
+          :ibs--$navbar-height
           :box-shadow--none
           :zi--4
           ["&[aria-expanded=\"false\"]"
@@ -174,15 +167,17 @@
                :.foreground-color-secondary!
                :gap--0.5em
                :lg:_.kushi-icon:d--none
-               :_.kushi-icon.sidenav-close-icon:d--none
+               :>.kushi-icon.sidenav-close-icon:d--none
+               :>.kushi-icon:fw--$light
+               :>.kushi-icon:fs--$large
                ["has-ancestor(nav[data-kushi-playground-sidenav][aria-expanded=\"true\"])"
                 {:>.sidenav-menu-icon:d  :none
                  :>.sidenav-close-icon:d :inline-flex
                  :>ul:h                  "calc((100vh - (var(--navbar-height) * 2)) * 1)"
                  :h                      :fit-content
                  :o                      1}])
-     [icon (sx :.sidenav-menu-icon :.extra-light :fs--$large) :menu]
-     [icon (sx :.sidenav-close-icon :.extra-light :fs--$large) :close]
+     [icon (sx :.sidenav-menu-icon) :menu]
+     [icon (sx :.sidenav-close-icon) :close]
      "All Components"]]
    
    
