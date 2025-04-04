@@ -189,17 +189,37 @@
                :aria-selected false}
               (case label
                "intro"
-               (sx ["has-ancestor([data-kushi-playground-active-path='intro'])" {:bgc :$neutral-100}]
-                   ["dark:has-ancestor([data-kushi-playground-active-path='intro'])" {:bgc :$neutral-850}])
+               (sx ["has-ancestor([data-kushi-playground-active-path='intro'])"
+                    {:bgc                       :$neutral-100
+                     :text-decoration           :underline
+                     :text-decoration-thickness :1px
+                     :text-underline-offset     :22px}]
+                   ["dark:has-ancestor([data-kushi-playground-active-path='intro'])"
+                    {:bgc :$neutral-850}])
                "components"
-               (sx ["has-ancestor([data-kushi-playground-active-path='components'])" {:bgc :$neutral-100}]
-                   ["dark:has-ancestor([data-kushi-playground-active-path='components'])" {:bgc :$neutral-850}])
+               (sx ["has-ancestor([data-kushi-playground-active-path='components'])"
+                    {:bgc                       :$neutral-100
+                     :text-decoration           :underline
+                     :text-decoration-thickness :1px
+                     :text-underline-offset     :22px}]
+                   ["dark:has-ancestor([data-kushi-playground-active-path='components'])"
+                    {:bgc                       :$neutral-850}])
                "colors"
-               (sx ["has-ancestor([data-kushi-playground-active-path='colors'])" {:bgc :$neutral-100}]
-                   ["dark:has-ancestor([data-kushi-playground-active-path='colors'])" {:bgc :$neutral-850}])
+               (sx ["has-ancestor([data-kushi-playground-active-path='colors'])" 
+                    {:bgc                       :$neutral-100
+                     :text-decoration           :underline
+                     :text-decoration-thickness :1px
+                     :text-underline-offset     :22px}]
+                   ["dark:has-ancestor([data-kushi-playground-active-path='colors'])" 
+                    {:bgc :$neutral-850}])
                "typography"
-               (sx ["has-ancestor([data-kushi-playground-active-path='typography'])" {:bgc :$neutral-100}]
-                   ["dark:has-ancestor([data-kushi-playground-active-path='typography'])" {:bgc :$neutral-850}])
+               (sx ["has-ancestor([data-kushi-playground-active-path='typography'])" 
+                    {:bgc                       :$neutral-100
+                     :text-decoration           :underline
+                     :text-decoration-thickness :1px
+                     :text-underline-offset     :22px}]
+                   ["dark:has-ancestor([data-kushi-playground-active-path='typography'])" 
+                    {:bgc :$neutral-850}])
               nil))
              label
              (when guide? octocat-svg)]])))
