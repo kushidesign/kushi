@@ -2,7 +2,7 @@
   (:require [clojure.string :as string]
             [domo.core :refer (copy-to-clipboard!)]
             [kushi.colors]
-            [kushi.core :refer (sx css merge-attrs css-vars-map)]
+            [kushi.core :refer (sx css merge-attrs css-vars-map register-design-tokens-by-category)]
             [kushi.playground.shared-styles]
             [kushi.ui.button.core :refer [button]]
             [kushi.ui.divisor.core :refer (divisor)]
@@ -11,6 +11,9 @@
             [kushi.ui.snippet.core :refer (copy-to-clipboard-button)]
             [kushi.ui.tooltip.core :refer [tooltip-attrs]]
             [me.flowthing.pp :refer [pprint]]))
+
+(register-design-tokens-by-category
+ "color")
 
 (defn diamond-swatch [s n]
   [:span (merge-attrs
@@ -50,11 +53,11 @@
         first-10    (take 10 levels)
         last-10     (take-last 10 levels)]
     [:div (merge-attrs 
-           (sx {:md:d                       :none
-                :pi                         :0.5rem
-                :>div:gtc                   :$grid-repeat
-                :>div:jc                    :fe
-                :>div:d                     :grid})
+           (sx {:md:d     :none
+                :pi       :0.5rem
+                :>div:gtc :$grid-repeat
+                :>div:jc  :fe
+                :>div:d   :grid})
            {:style (css-vars-map grid-repeat)})
 
      [diamond-swatches first-10 color-name]
@@ -76,7 +79,7 @@
    (into [:div (sx :.transition
                    :mbs--2rem
                    :dark:bgc--black
-                   ;; TODO - can you transition box-shadow
+                   ;; TODO - can you transition box-shadow?
                    :dark:box-shadow---200px:1px:0px:black|200px:1px:0px:black)]
          (for [k    [:gray :purple :blue :green :lime :yellow :gold :orange :red :magenta :brown]
                :let [levels (range 50 1050 50)
