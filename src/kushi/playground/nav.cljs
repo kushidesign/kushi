@@ -22,17 +22,17 @@
                      (subs href 1))]
     (domo/remove-class! (domo/el-by-id menu-id) "has-hover")
     (when path-label
-        (.preventDefault e)
-        (.setAttribute app
-                       "data-kushi-playground-active-path"
-                       path-label)
-        (js/requestAnimationFrame domo/scroll-to-top!)
-        (.pushState (.-history js/window) 
+      (.preventDefault e)
+      (.setAttribute app
+                     "data-kushi-playground-active-path"
+                     path-label)
+      (js/requestAnimationFrame domo/scroll-to-top!)
+      #_(.pushState (.-history js/window) 
                     #js{}
                     ""
                     href)
         ;; This is key!
-        (js/setTimeout #(state/set-focused-path! (into [] path-label))
+      #_(js/setTimeout #(state/set-focused-path! (into [] path-label))
                        250))))
 
 (def header-nav-button-attrs
@@ -126,7 +126,8 @@
                             :dark:active>button:bgc--$neutral-900)
              :href     href
              :target   target
-             :on-click (partial route! menu-id href)}
+             :on-click (partial route! menu-id href)
+             }
             [header-nav-button
              {:style         (css-vars-map translate)
               :class         (css [:translate :$translate]
@@ -140,7 +141,7 @@
              label]])))
 
 (defn header-menu-desktop
-  [menu-id]
+  [menu-id active-route]
   (into [:nav (sx :.flex-row-c
                   :.transition
                   :d--none
@@ -152,15 +153,19 @@
                   :.header-menu-transition-group
                   :ai--stretch
                   :lg:gap--0.85rem
-                  :gap--0.40rem
-                  )]
+                  :gap--0.40rem)]
          (for [label ["intro" "components" "colors" "typography" "guide"]
                :let [guide?    (= label "guide")
-                     href      (if guide?
+                     href      (cond
+                                 guide?
                                  "https://github.com/kushidesign/kushi"
+                                 (= label "intro")
+                                 "/"
+                                 :else
                                  (str "/" label))
                      target    (if guide? :_blank :_self)
-                     translate (when guide? "-0.33ch")]]
+                     translate (when guide? "-0.33ch")
+                     active?   (= href active-route)]]
            [:a
             (merge-attrs
              (sx :.flex-row-c
@@ -173,9 +178,11 @@
                  :dark:active>button:c--$neutral-0
                  :dark:hover>button:bgc--$neutral-850
                  :dark:active>button:bgc--$neutral-900)
-             {:href     href
+             {
+              :href     href
               :target   target
-              :on-click (partial route! menu-id href)})
+              :on-click (partial route! menu-id href)
+              })
             [header-nav-desktop-button
              (merge-attrs
               (sx [:translate :$translate]
@@ -187,40 +194,12 @@
                   ["dark:>svg:filter" "invert(1)"])
               {:style         (css-vars-map translate)
                :aria-selected false}
-              (case label
-               "intro"
-               (sx ["has-ancestor([data-kushi-playground-active-path='intro'])"
-                    {:bgc                       :$neutral-100
-                     :text-decoration           :underline
-                     :text-decoration-thickness :1px
-                     :text-underline-offset     :22px}]
-                   ["dark:has-ancestor([data-kushi-playground-active-path='intro'])"
-                    {:bgc :$neutral-850}])
-               "components"
-               (sx ["has-ancestor([data-kushi-playground-active-path='components'])"
-                    {:bgc                       :$neutral-100
-                     :text-decoration           :underline
-                     :text-decoration-thickness :1px
-                     :text-underline-offset     :22px}]
-                   ["dark:has-ancestor([data-kushi-playground-active-path='components'])"
-                    {:bgc                       :$neutral-850}])
-               "colors"
-               (sx ["has-ancestor([data-kushi-playground-active-path='colors'])" 
-                    {:bgc                       :$neutral-100
-                     :text-decoration           :underline
-                     :text-decoration-thickness :1px
-                     :text-underline-offset     :22px}]
-                   ["dark:has-ancestor([data-kushi-playground-active-path='colors'])" 
-                    {:bgc :$neutral-850}])
-               "typography"
-               (sx ["has-ancestor([data-kushi-playground-active-path='typography'])" 
-                    {:bgc                       :$neutral-100
-                     :text-decoration           :underline
-                     :text-decoration-thickness :1px
-                     :text-underline-offset     :22px}]
-                   ["dark:has-ancestor([data-kushi-playground-active-path='typography'])" 
-                    {:bgc :$neutral-850}])
-              nil))
+              (when active?
+               (sx {:bgc                       :$neutral-100
+                    :dark:bgc                  :$neutral-850
+                    :text-decoration           :underline
+                    :text-decoration-thickness :1px
+                    :text-underline-offset     :22px})))
              label
              (when guide? octocat-svg)]])))
 
@@ -244,13 +223,13 @@
                        (string/split href #"/")
                        last
                        (str "/"))]
-          (route! menu-id href e)
+          #_(route! menu-id href e)
           (remove-hover! menu-el))
         (when (domo/has-class? menu-el "has-hover") 
           (remove-hover! menu-el))))))
 
 
-(defn header []
+(defn header [active-route]
  (let [menu-id "kushi-playground-menu"]
   [:div#header-navbar
    (merge-attrs 
@@ -292,7 +271,7 @@
               ;; :md:o--1
               )
     "Kushi"]
-   [header-menu-desktop menu-id]
+   [header-menu-desktop menu-id active-route]
    [:div
     (merge-attrs
      {:class (css :.relative

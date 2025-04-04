@@ -134,13 +134,11 @@
   [button (merge-attrs
            (sx :.xxsmall
                :.bold
+               :transition-duration--$xxxfast
                [:translate "calc(0px - var(--button-padding-inline-ems))"]
-              ;;  :dark:hover:bgc--transparent!important
-              ;;  :dark:active:bgc--transparent!important
                :dark:bgc--black!important
-               )
+               [:dark:hover:bgc "var(--neutral-850)!important"])
            {:-shape        :pill
-            ;; :-colorway     :positive
             :-surface      :minimal
             :-end-enhancer [icon :arrow-forward]})
    s])
@@ -149,123 +147,131 @@
 
 (defn generic-section
   ;; content is a component
-  [{:keys [path label content args]}]
+  [{:keys [path active-route label content args]}]
   ;; change this logic to intro?
-  (let [splash? (= label "Splash")
-        bgc (when splash? "var(--neutral-50)")
+  (let [splash?       (= active-route "/")
+        bgc           (when splash? "var(--neutral-50)")
         bgc-dark-mode (when splash? "black")]
-   [:<> 
-    [style-tag-active-path path]
-    [:div 
-     (merge-attrs
-      (sx 
-       :.transition
-       :.flex-col-fs
-       :.grow
-       :d--none
-       :gap--5rem
-       :pb--0:30vh)
-      (when splash?
-        (sx :.kpg-generic-section-splash
-            :padding--0!important
-            :padding-block--0!important
-            :width--100vw
-            :height--100vh
-            :overflow--hidden
-            :gap--0
+    [:<> 
+     [style-tag-active-path path]
+     [:div 
+      (merge-attrs
+       (sx :.flex-col-fs
+           :.grow
+          ;;[:transition "all var(--transition-timing-function) var(--transition-duration), height 0s"]
+           :gap--5rem
+           :pbe--30vh
+           :mbs--$navbar-height
+           [:pbs "calc(var(--navbar-height) - 4px)"])
+       (when-not (= path "components")
+         (sx [:pbs "calc(var(--navbar-height) + 12px)"]))
+       (when splash?
+         (sx :.kpg-generic-section-splash
+             :padding--0!important
+             :padding-block--0!important
+             :width--100vw
+             :height--100vh
+             :overflow--hidden
+             :gap--0
 
-            :scale--1
-            :overflow--hidden
+             :scale--1
+             :overflow--hidden
 
             ;; :scale--0.5
             ;; :overflow--visible
-            ))
-      {:data-kushi-path path
-       :ref             (fn [el]
-                          (when el
-                            (js/requestAnimationFrame
-                             #(domo/remove-class! (domo/el-by-id "app")
-                                                  "path-transitioning"))))})
-     [:section 
-      {:style                         (css-vars-map bgc bgc-dark-mode)
-       :class                         (css :min-height--200px
-                                           :bgc--$bgc
-                                           :dark:bgc--$bgc-dark-mode
-                                           [">*:not([data-kushi-playground-sidenav]):pi" :1.25rem]
-                                           ["md:>*:not([data-kushi-playground-sidenav]):pi" "4rem"]
-                                           :>section>p:max-width--605px)
-       :data-kushi-playground-section "about"}
-      (if splash?
-        [:div (sx :.component-section-header
-                  :bgc--transparent
-                  :dark:bgc--transparent
-                  :position--absolute
-                  :top--$navbar-height )
-         [:div (sx :.flex-col-c
-                   :mbs--48px 
-                   :sm:mbs--75px 
-                   :h--auto!important
-                   :>p:line-height--1.7
-                   :>p:max-width--400px)
-          [:h1 (sx :.component-section-header-label
-                   :sm:fs--$xxlarge
-                   :fs--$xlarge
-                   :lh--1.2
-                   :tt--revert)
-           "A Readymade Foundation for UI"]
-          [:p.prose (sx :sm:mb--1.6rem:1rem
-                        :mb--0.6rem:2rem
-                        :sm:fs--$medium
-                        :fs--$small)
-           [:span
-            (sx :bgc--white
-                :dark:bgc--black
-                :dark:color--$neutral-300)
-            "Kushi is a base for building web UI with "
-            [link {:href   "https://clojurescript.org/"
-                   :target :_blank}
-             "ClojureScript"]]
-           "."]
-          [:div 
-           (sx :.flex-col-fs
-               :gap--1rem
-               {"--stroke-color"      :$neutral-200
-                "dark:--stroke-color" :$neutral-900})
-           [splash-cta-button "Explore Kushi UI Components"]
-           [splash-cta-button "View Documentation"]
-           [splash-cta-button "Quickstart"]]]]
-        [:div (sx :.component-section-header
+             ))
+       {:data-kushi-path path
+        :ref             (fn [el]
+                           (when el
+                             (js/requestAnimationFrame
+                              #(domo/remove-class! (domo/el-by-id "app")
+                                                   "path-transitioning"))))})
+      [:section 
+       {:style                         (css-vars-map bgc bgc-dark-mode)
+        :class                         (css :min-height--200px
+                                            :bgc--$bgc
+                                            :dark:bgc--$bgc-dark-mode
+                                            [">*:not([data-kushi-playground-sidenav]):pi" :1.25rem]
+                                            ["md:>*:not([data-kushi-playground-sidenav]):pi" "4rem"]
+                                            :>section>p:max-width--605px)
+        :data-kushi-playground-section "about"}
+       (if splash?
+         [:div (sx #_:.component-section-header
+                   :bgc--transparent
+                   :dark:bgc--transparent
+                   :position--absolute
+                   :top--$navbar-height
+                   :z-index--1)
+          [:div (sx :.flex-col-c
+                    ;; :mbs--48px 
+                    ;; :sm:mbs--75px 
+                    :h--auto!important
+                    :>p:line-height--1.7
+                    :>p:max-width--400px)
+           [:h1 (sx :.component-section-header-label
+                    :sm:fs--$xxlarge
+                    :fs--$xlarge
+                    :lh--1.2
+                    :tt--revert)
+            "A Readymade Foundation for UI"]
+           [:p.prose (sx :sm:mb--1.6rem:1rem
+                         :mb--0.6rem:2rem
+                         :sm:fs--$medium
+                         :fs--$small)
+            [:span
+             (sx :bgc--white
+                 :dark:bgc--black
+                 :dark:color--$neutral-300)
+             "Kushi is a base for building web UI with "
+             [link {:href   "https://clojurescript.org/"
+                    :target :_blank}
+              "ClojureScript"]]
+            "."]
+           [:div 
+            (sx :.flex-col-fs
+                :gap--1rem
+                {"--stroke-color"      :$neutral-200
+                 "dark:--stroke-color" :$neutral-900})
+            [:a {:href "/components"}
+             [splash-cta-button "Explore Kushi UI Components"]]
+            [:a {:href "https://github.com/kushidesign/kushi" 
+                 :target "_blank"}
+             [splash-cta-button "View Documentation"]]
+            [:a {:href "https://github.com/kushidesign/kushi-quickstart" 
+                 :target "_blank"}
+             [splash-cta-button "Quickstart"]]]]]
+
+         [:div (sx #_:.component-section-header
                   ;; :d--none
-                  :position--relative
-                  :top--unset
-                  :mbs--$navbar-height
-                  ;; TODO - make sure this works
-                  ["+*:pbs" :1.5rem]
-                  ["has-ancestor([data-kushi-playground-active-path='components']):d" :none]
+                   :position--relative
+                   :top--unset
+                  ;; :mbs--$navbar-height
+                   
+                  ;; TODO - make sure this works - or move this
+                   ["+*:pbs" :1.5rem]
+
+                  ;; ["has-ancestor([data-kushi-playground-active-path='components']):d" :none]
                   ;; Maybe smaller division for mobile?
                   ;; ["~section[data-kushi-playground-component]:pbs" :6rem]
-                  )
-         [:div (sx :.flex-col-c :mbs--50px :h--50px)
-          [:h1 (sx :.component-section-header-label)
-           (string/capitalize label)]]])
-      (if args
-        (if splash?
-          [content args]
-          [content args])
-        [content])]
+                   )
+          [:div (sx :.flex-col-c #_:mbs--50px #_:h--50px)
+           (when label
+             [:h1 (sx :.component-section-header-label)
+              (string/capitalize label)])]])
+       (if args [content args] [content])]
 
      ;; gradients
-     (when splash?
-       [:div (sx :.absolute-fill
-                 [:box-shadow "0 0 50vw 50vw rgba(0 0 0 / 0.5)"]
-                 [:bgi "linear-gradient(164deg, var(--background) 275px, transparent 575px, transparent)"]
-                 [:dark:bgi "linear-gradient(164deg, var(--background-color-dark-mode) 275px, transparent 575px, transparent)"]
-                 [:sm:bgi "linear-gradient(to bottom right, white 420px, transparent 950px, transparent), linear-gradient(to bottom left, var(--background-color) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 700px, var(--background-color) 1200px, var(--background-color))"]
-                 [:sm:dark:bgi "linear-gradient(to bottom right, var(--background-color-dark-mode) 350px, transparent 850px, transparent), linear-gradient(to bottom left, var(--background-color-dark-mode) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 700px, var(--background-color-dark-mode) 1200px, var(--background-color-dark-mode))"])])
+      (when splash?
+        [:div (sx :.absolute-fill
+                  [:box-shadow "0 0 50vw 50vw rgba(0 0 0 / 0.5)"]
+                  [:bgi "linear-gradient(164deg, var(--background) 275px, transparent 575px, transparent)"]
+                  [:dark:bgi "linear-gradient(164deg, var(--background-color-dark-mode) 275px, transparent 575px, transparent)"]
+                  [:sm:bgi "linear-gradient(to bottom right, white 420px, transparent 950px, transparent), linear-gradient(to bottom left, var(--background-color) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 700px, var(--background-color) 1200px, var(--background-color))"]
+                  [:sm:dark:bgi "linear-gradient(to bottom right, var(--background-color-dark-mode) 350px, transparent 850px, transparent), linear-gradient(to bottom left, var(--background-color-dark-mode) 161px, transparent 450px, transparent), linear-gradient(to bottom, transparent, transparent 700px, var(--background-color-dark-mode) 1200px, var(--background-color-dark-mode))"])])
 
      ;; sliders
-     #_(when splash?
-       [splash-isometric-grid-controls])]]))
+      #_(when splash?
+          [splash-isometric-grid-controls])]]))
 
 
 (defn style-tag-first-intersecting [x]
@@ -280,10 +286,6 @@
 (defn component-playground-content
   [playground-components]
   [:<> 
-   [:div
-    #_[about/component-playground-about]
-    #_[:div [divisor]]]
-
    [sidenav/all-components-sidenav playground-components]
    [sidenav/all-components-sidenav-mobile playground-components]
 
@@ -303,8 +305,8 @@
               (css :min-height--200px
                    :pbs--4rem
                    :xsm:pbs--6rem
-                   :first-child:pbs--1.5rem
-                   :lg:first-child:pbs--5.2rem
+                   :first-child:pbs--0rem
+                  ;;  :lg:first-child:pbs--5.2rem
                    
                    ;; De-emphasizing unfocused --------------------------------
                    ;; Leave off for now til you figure out intersection -------
