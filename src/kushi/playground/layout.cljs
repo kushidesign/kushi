@@ -303,7 +303,8 @@
               (css :min-height--200px
                    :pbs--4rem
                    :xsm:pbs--6rem
-                   ;;  :first-child:pbs--0rem
+                   :first-child:pbs--1.5rem
+                   :lg:first-child:pbs--5.2rem
                    
                    ;; De-emphasizing unfocused --------------------------------
                    ;; Leave off for now til you figure out intersection -------
