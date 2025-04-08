@@ -50,7 +50,7 @@
 
 <br>
 
-> [!INFO]
+> [!IMPORTANT]
 >
 > If your project is using Kushi `v1.0.0-a.22` or lower, please reference the README on a different branch that corresponds with the version that you are using:<br>
 > [v1.0.0-a.22](https://github.com/kushidesign/kushi/tree/refactor-warnings-and-errors)<br>
