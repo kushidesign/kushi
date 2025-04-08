@@ -61,6 +61,14 @@
           result in the thumb height being greater than the track height."
           
           
+   ;; Add following options, and logic for dictating overrides if conflicting
+
+   ;; :thumb-text-on, :thumb-text-off
+   ;; :thumb-icon-on, :thumb-icon-off
+
+   ;; :track-text-on, :track-text-off
+   ;; :track-icon-on, :track-icon-off
+
    :opts '[{:name    on?
             :pred    boolean?
             :default false
@@ -177,10 +185,7 @@
         :$background-color-neutral-soft-dark-mode]
 
        ["dark:.kushi-switch[aria-checked='false']:hover:bgc"
-        :$background-color-neutral-soft-2-dark-mode]
-       
-
-       )
+        :$background-color-neutral-soft-2-dark-mode])
 
       colorway-attr
 
@@ -245,6 +250,7 @@
          "has-ancestor(.kushi-switch[disabled]):cursor"                        
          :not-allowed})
        thumb-attrs)
+
       [:div (sx ".kushi-switch-thumb-content-on"
                 :.kushi-switch-thumb-content
                 ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
