@@ -1,6 +1,8 @@
 (ns ^:dev/always kushi.playground.showcase.shared 
   (:require
    [clojure.repl]
+   [clojure.string :as string]
+   [me.flowthing.pp :refer [pprint]]
    [kushi.core :refer [sx]]
    [kushi.css.media]))
 
@@ -21,3 +23,10 @@
        :_span.code:mis--0.5ch)
    s])
 
+(defn pprint-str [x max-width]
+  (-> x
+      (pprint {:max-width max-width})
+      with-out-str
+      (string/replace #"\n$" "")
+      (string/replace #",\n" "\n")
+      (string/replace #", :" " :")))
