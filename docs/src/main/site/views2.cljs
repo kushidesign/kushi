@@ -2,10 +2,10 @@
   (:require
    [domo.core :as domo]
    [kushi.playground.shared-styles]
-   [kushi.playground.showcase.core :refer [showcase]]))
+   [kushi.ui.button.core]
+   [kushi.playground.showcase.core :refer [showcase uic-showcase-map]]))
 
 (js/console.clear)
-
 
 (defn main-view []
   (.setAttribute (domo/el-by-id "app")
@@ -22,9 +22,9 @@
        #_(? (domo/qs "[data-scale='chroma'][data-level='450']"))
        )
      2000)
-  
   #_[:div "Hi"]
-  [showcase]
+
+  [showcase (uic-showcase-map kushi.ui.button.core/button)]
 
   #_[pane-samples]
   )

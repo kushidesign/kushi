@@ -2,7 +2,6 @@
   (:require
    [clojure.string :as string]
    [domo.core :as domo]
-   [fireworks.core :refer [? !?]]
    [kushi.core :refer [css defcss merge-attrs sx]]
    [kushi.playground.about :as about]
    [kushi.playground.component-docs :as docs]
@@ -417,9 +416,6 @@
   ;; refactor
   [{:keys [examples label component-meta]
     :as   component-opts}]
-
-  (!? :pp component-opts)
-
   (let [{:keys [desc summary opts]} component-meta]
        (into [:<>
          ;; This is where all the demos for the component live 
