@@ -1,9 +1,9 @@
 (ns ^:dev/always kushi.playground.showcase.snippets
   (:require
    [clojure.repl]
-   [fireworks.core :refer [!? ?]]
-   [kushi.core :refer [css defcss ?defcss merge-attrs sx]]
+   [kushi.core :refer [css defcss ?defcss merge-attrs sx ?css]]
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
+   [kushi.playground.showcase.shared :refer [pprint-str]]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
    [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.button.core :refer [button icon-button]]
@@ -12,7 +12,6 @@
    [clojure.string :as string]
    [kushi.ui.core :refer (extract)]
    [kushi.css.media]
-   [me.flowthing.pp :refer [pprint]]
    [domo.core :as d]))
 
 ;; not merging
@@ -93,6 +92,8 @@
                                 (d/nearest-ancestor (d/et %)))
                        js/document.body) 
                    (:text-to-copy opts))}
+
+      ;; Is this too strange with the dash convention?
       (tooltip-attrs
        {:-text                        
         "Click to copy"
@@ -100,9 +101,10 @@
         :-text-on-click               
         "Copied!"
 
+        ;; Is this too tricky with the css creating the class?
         :-text-on-click-tooltip-class 
-        (css :.kushi-playground-copy-to-clipboard-button-tooltip-class
-              [:--tooltip-background-color :$background-color-accent-hard])
+        (css ".kushi-playground-copy-to-clipboard-button-tooltip-class"
+             [:--tooltip-background-color :$background-color-accent-hard])
 
         :-placement                  
         [:block-start :inline-end]})
@@ -110,19 +112,20 @@
      [icon (sx :.kushi-playground-copy-to-clipboard-button-icon
                :fs--medium) mui.svg/content-copy]]))
 
-
 (defn- snippet-section
   [{:keys [header
            preformatted
            quoted-source-code
            copyable
-           bottom-half?]}]
+           bottom-half?]
+    :as m}]
   [:section (sx :.kushi-playground-snippet-section
                 :.snippet-section
                 :.flex-col-fs
                 ;; :gap--0.5em
                 ;; :first-of-type:mbe--2.5em
                 ) 
+   #_[:div "hi"]
    header
    [:section 
     (merge-attrs 
@@ -187,86 +190,86 @@
 
 
 (defn component-snippets
-  []
-  (fn [{:keys [reqs-coll
-               reqs-for-uic
-               snippets-header
-               snippets
-               hiccup-for-examples]}]
-
-    [:div
-     (sx :.relative
-         :.flex-row-fs
-         :_code:ws--n
-         :_.code:ws--n
-         :_pre_code:p--0
-         :_pre_.code:p--0
-         :min-height--120px
-         :lh--1.7
-         :ai--fs
-         :min-width--200px
-         :min-height--120px)
-     [:div
-      (sx :.flex-col-fs
-          :w--100%
-          :gap--1em
-          :_.kushi-text-input-label:min-width--7em
-          :_.kushi-input-inline:gtc--36%:64%)
-      (let [max-width      (or (when-let [[p v] (some-> kushi.css.media/media
-                                                        :sm
-                                                        first)]
-                                 (when-not (d/matches-media? p (as-str v))
-                                   27))
-                               50)
-            formatted*     #(-> % (pprint {:max-width max-width}) with-out-str)]
-        (into [:div (sx ".kushi-playground-snippets-modal-requires"
-                        :.flex-col-fs
-                        :gap--2.25rem
-                        :mbs--1.5em
-                        #_:pbe--2rem)
-               [snippet-section
-                {:header             (into [:div (sx :.small :.wee-bold :mbe--1em)]
-                                           (desc->hiccup
-                                            "Paste into the `:require` section of your `:ns` form:"))
-                 :preformatted       (-> reqs-for-uic
-                                         formatted*
-                                         (subs 1)
-                                         (drop-last)
-                                         string/join
-                                         (string/replace #"\n \[kushi." "\n[kushi.")
-                                         formatted-code)
-                 :quoted-source-code reqs-for-uic
-                 :copyable           (string/join "\n" reqs-coll)}]]
+  [{:keys [reqs-for-examples
+           reqs-for-uic
+           snippets-header
+           snippets
+           hiccup-for-examples]
+    :as m}]
+  [:div
+   (sx :.relative
+       :.flex-row-fs
+       :.styled-scrollbars
+       :_code:ws--n
+       :_.code:ws--n
+       :_pre_code:p--0
+       :_pre_.code:p--0
+       ["--overflow-fade-mask-height" "30px"]
+       [:mask-image "linear-gradient(to top, transparent, rgb(0, 0, 0, 100%) var(--overflow-fade-mask-height), rgb(0, 0, 0, 100%))"]
+       :pb--$overflow-fade-mask-height
+       :overflow--auto
+       :pie--1rem
+       :min-height--120px
+       :lh--1.7
+       :ai--fs
+       :min-width--200px
+       :min-height--120px)
+   [:div
+    (sx :.flex-col-fs
+        :w--100%
+        :gap--1em
+        :_.kushi-text-input-label:min-width--7em
+        :_.kushi-input-inline:gtc--36%:64%)
+    (let [max-width   (or (when-let [[p v] (some-> kushi.css.media/media
+                                                   :sm
+                                                   first)]
+                            (when-not (d/matches-media? p (as-str v))
+                              27))
+                          50)
+          reqs        (apply conj reqs-for-examples reqs-for-uic)
+          formatted*  #(pprint-str % max-width)
+          reqs-str    (->> reqs
+                           (map formatted*)
+                           (string/join "\n"))]
+      (into [:div (sx ".kushi-playground-snippets-modal-requires"
+                      :.flex-col-fs
+                      :gap--2.25rem
+                      :mbs--1.5em
+                      #_:pbe--2rem)
+             [snippet-section
+              {:header             (into [:div (sx :.small :.wee-bold :mbe--1em)]
+                                         (desc->hiccup
+                                          "Paste into the `:require` section of your `:ns` form:"))
+               :preformatted       (formatted-code reqs-str)
+               :quoted-source-code reqs
+               :copyable           reqs-str}]]
 
               ;; This produces a snippet section for each of the examples 
-              (for [[i call] (map-indexed (fn [i call] [i call]) snippets)
-                    :let     [
+            (for [[i call] (map-indexed (fn [i call] [i call]) snippets)
+                  :let     [
                           ;; header (when (zero? i) 
                           ;;          (when (string? snippets-header)
                           ;;            (some->> snippets-header
                           ;;                     desc->hiccup 
                           ;;                     (into [:div])
                           ;;                     #_(docs/add-links scroll-to-elsewhere-on-page))))
-                              header [:div 
-                                      (sx :.transition
-                                          :.kushi-playground-code-snippet-preview
-                                          )
-                                      #_header
-                                      (nth hiccup-for-examples i)]]]
-                [snippet-section
-                 {:header       header
-
-                  :bottom-half? true
-
-                  :preformatted (-> call
-                                    formatted*
-                                    string/join
-                                    formatted-code)
-                  :copyable     (let [[ob cb] (if (list? call) ["(" ")"] ["[" "]"])]
-                                  (str ob
-                                       (string/join "\n" 
-                                                    (map #(if (string? %)
-                                                            (str "\"" % "\"")
-                                                            %)
-                                                         call))
-                                       cb))}])))]]))
+                            header [:div 
+                                    (sx :.transition
+                                        :.kushi-playground-code-snippet-preview
+                                        :lh--initial
+                                        ;; :>div:display--flex
+                                        ;; :>div:flex-direction--flex-start
+                                        ;; :>div:gap--0.5em
+                                        )
+                                    #_header
+                                    (nth hiccup-for-examples i)]]]
+              [snippet-section
+               {:header       header
+                :bottom-half? true
+                :preformatted (-> call
+                                  formatted*
+                                  string/join
+                                  formatted-code)
+                :copyable     (-> call
+                                  formatted*
+                                  string/join)}])))]])
