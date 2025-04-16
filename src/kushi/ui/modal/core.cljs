@@ -58,8 +58,7 @@
          (domo/add-class! dialog "kushi-modal-open"))
      (js/console.warn
       (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of:
-            " id)))
-   ))
+            " id)))))
 
 (defn modal-close-button
   {:desc ["The `modal-close-button` is meant to be a cta for closing a modal
@@ -81,13 +80,13 @@
   [& args]
   (let [[opts attrs & _] (extract args modal-close-button)
         {:keys     [icon-svg]
-         icon-name :icon}      opts
-        icon-name              (when-not icon-svg
-                                 (if (and icon-name
-                                          (or (string? icon-name)
-                                              (keyword? icon-name)))
-                                   icon-name
-                                   :close))]
+         icon-name :icon}     opts
+        icon-name             (when-not icon-svg
+                                (if (and icon-name
+                                         (or (string? icon-name)
+                                             (keyword? icon-name)))
+                                  icon-name
+                                  :close))]
     [button
      (merge-attrs
       {:-shape        :pill
@@ -174,6 +173,7 @@
                            ".kushi-modal"
                            :.fixed-centered
                            :.transition
+                           :.flex-col-fs
                            [:transition-duration
                             "var(--modal-transition-duration, var(--fast))"]
                            [:max-width
@@ -191,6 +191,7 @@
                            :b--$modal-border
                            :min-width--$modal-min-width||200px
                            :height--fit-content
+                           [:max-height "calc(100vh - 40px)"]
                            :opacity--0
                            :.kushi-modal-open:opacity--1)
         :id               id
