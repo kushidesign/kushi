@@ -155,6 +155,9 @@
      [[:--divisor         :$divisor-3]
       [:--divisor-dark-mode :$divisor-5-dark-mode]])))
 
+;; Added a :ns entry to each family, populated with vector of namespaces of
+;; kushi.ui components which make use of the family of tokens. These namespaces
+;; 
 (def design-tokens*
   [ 
    ;; Debugging grid
@@ -629,7 +632,7 @@
    {:family   "Toast panes choreography"
     :desc     {:en ""}
     :category ["toast"]
-    :ns '[kushi.ui.toast.core]
+    :ns       '[kushi.ui.toast.core]
     :tags     ["pane" "Toast" "floating" "geometry"]
     }
    [:--toast-delay-duration             :200ms
