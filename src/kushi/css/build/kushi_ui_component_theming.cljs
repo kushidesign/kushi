@@ -60,12 +60,12 @@
 
 (defcss
   ".styled-scrollbars"
-  {"scrollbar-color" "var(--scrollbar-thumb-color)",
+  {"scrollbar-color" "var(--scrollbar-thumb-color) var(--scrollbar-background-color)",
    "scrollbar-width" "thin"})
 
 (defcss
   ".dark .styled-scrollbars"
-  {"scrollbar-color" "var(--scrollbar-thumb-color-dark-mode)"})
+  {"scrollbar-color" "var(--scrollbar-thumb-color-dark-mode) var(--scrollbar-background-color-dark-mode)"})
 
 (defcss
   ".styled-scrollbars::-webkit-scrollbar"
@@ -1065,7 +1065,10 @@
 
    "@supports(color: color-mix(in oklch, currentColor, transparent))"
    {"--_fallback-stroke-color"
-    "color-mix(in oklch, currentColor, transparent)"}})
+    ;; "currentColor"
+    ;; Somehow this doesn't work when switching between light and dark modes in Chrome?
+    "color-mix(in oklch, currentColor, transparent)"
+    }})
                                      
 
 (defcss "[data-kushi-shape=\"rounded\"]"
