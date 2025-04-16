@@ -12,7 +12,7 @@
                         [org.clojure/clojure "1.11.1"]
                         [applied-science/js-interop "0.3.3"]
                         [expound "0.9.0"]
-                        [io.github.paintparty/bling "0.4.2"]
+                        [io.github.paintparty/bling "0.5.2"]
                         [io.github.paintparty/fireworks "0.10.4"]
                         [me.flowthing/pp "2024-01-04.60"]
                         [babashka/process "0.5.22"]
