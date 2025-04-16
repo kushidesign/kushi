@@ -1,6 +1,5 @@
 (ns kushi.ui.button.core
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
    [kushi.ui.core :refer (extract)]
@@ -34,13 +33,35 @@
              `--button-border-width`
              The default value is `:1px`"
    
+   ;; Should this be a map, parsed with edamame?
+   ;; Should we use keys like :-colorway, same as call-site
    :opts   '[colorway       
              {:pred     #{:neutral :accent :positive :negative :warning}
               :default  nil
               :desc     "Colorway of the button. Can also be a named color from Kushi's design system, e.g `:red`,
                         `:purple`, `:gold`, etc."
               :demo   {:label    "Colorway + Surface variants"
-                       :variants [colorway surface]}}
+                       :variants [colorway surface]
+                       :snippets [
+                                   ^{:label "Colorway"}
+                                   [:div {:style {:display        :flex
+                                                  :flex-direction :row
+                                                  :gap            :0.5em}}
+                                    [button {:-surface :solid :-size :xxxsmall :-colorway :neutral} "Bang"]
+                                    [button {:-surface :solid :-size :xxxsmall :-colorway :purple} "Bang"]
+                                    [button {:-surface :solid :-size :xxxsmall :-colorway :blue} "Bang"]
+                                    [button {:-surface :solid :-size :xxxsmall :-colorway :green} "Bang"]
+                                    [button {:-surface :solid :-size :xxxsmall :-colorway :lime} "Bang"]]
+                                  
+                                   ^{:label "Surface, semantic"}
+                                   [:div {:style {:display        :flex
+                                                  :flex-direction :row
+                                                  :gap            :0.5em}}
+                                    [button {:-surface :solid :-size :xxxsmall :-colorway :neutral} "Bang"]
+                                    [button {:-surface :solid :-size :xxxsmall :-colorway :accent} "Bang"]
+                                    [button {:-surface :solid :-size :xxxsmall :-colorway :positive} "Bang"]
+                                    [button {:-surface :solid :-size :xxxsmall :-colorway :warning} "Bang"]
+                                    [button {:-surface :solid :-size :xxxsmall :-colorway :negative} "Bang"]]]}}
              surface        
              {:pred    #{:soft :solid :outline :minimal}
               :default :round
@@ -90,11 +111,12 @@
              {:pred    #{string? keyword?}
               :default nil
               :desc    "Content at the inline-end position, preceding the button text. Typically an icon."
-              :demo    {:label   "Examples using end enhancer icons"
+              :demo    {:label   "Examples using end-enhancer icons"
                         :require [[kushi.ui.icon.core :refer [icon]]
                                   [smth.core :refer [duh]]
                                   [clojure.string :as string]]
-                        :samples [^{:label "oneee"}
+                        :samples [
+                                  ^{:label "oneee"}
                                   [button {:class         ["xxxsmall"]
                                            :-end-enhancer [icon :pets]
                                            :-colorway     :accent
@@ -261,15 +283,13 @@
              :data-kushi-ui-spinner   (when loading? "")
              :data-kushi-stroke-align (some-> stroke-align 
                                               (maybe #{:outside "outside"}))
-             :data-kushi-colorway       semantic-colorway
-             :data-kushi-size           size
-             :data-kushi-packing        (some-> packing
-                                                (maybe nameable?)
-                                                as-str
-                                                (maybe #{"compact" "roomy"})
-                                                (data-kushi- :packing))
-
-             }
+             :data-kushi-colorway     semantic-colorway
+             :data-kushi-size         size
+             :data-kushi-packing      (some-> packing
+                                              (maybe nameable?)
+                                              as-str
+                                              (maybe #{"compact" "roomy"})
+                                              (data-kushi- :packing))}
             (when loading? {:data-kushi-ui-spinner true})
             (some-> stroke-align 
                     (maybe #{:outside "outside"})
@@ -290,22 +310,21 @@
 
 
 ;; Sample component built with 2-fn macro pattern 
-(defn big-paw
-  {:doc "Hi from big button"
-  ;;  :opts '{size {:pred #{:small :large :xxxlarge}}}
-   }
-  [& args]
-  (let [{:keys [opts attrs children]}
-        (extract args big-paw)]
-    (into [:div 
-           (merge-attrs 
-            #_(sx :c--red)
-            {:style {"--fs" (case (:size opts)
-                              :small    "20px"
-                              :large    "80px"
-                              :xxxlarge :200px
-                              nil)}
-             :class (css :c--red :fs--$fs)}
-            attrs)]
-          children)))
-
+;; (defn big-paw
+;;   {:doc "Hi from big button"
+;;   ;;  :opts '{size {:pred #{:small :large :xxxlarge}}}
+;;    }
+;;   [& args]
+;;   (let [{:keys [opts attrs children]}
+;;         (extract args big-paw)]
+;;     (into [:div 
+;;            (merge-attrs 
+;;             #_(sx :c--red)
+;;             {:style {"--fs" (case (:size opts)
+;;                               :small    "20px"
+;;                               :large    "80px"
+;;                               :xxxlarge :200px
+;;                               nil)}
+;;              :class (css :c--red :fs--$fs)}
+;;             attrs)]
+;;           children)))
