@@ -1037,8 +1037,7 @@
 (defcolorway "magenta")
 (defcolorway "brown")
 
-
-(defcss "[data-kushi-surface=\"solid\"]"
+(defcss "[data-kushi-surface=\"solid\"], [data-kushi-surface=\"solid-classic\"]"
   {:color             :white
    :dark:color        :black
    :hover:color       :white
