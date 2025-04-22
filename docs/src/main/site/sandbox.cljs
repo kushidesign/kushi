@@ -91,16 +91,16 @@
           :.pill
           :zi--1
           :fs--$small
-          ["--icon-button-padding-inline-ems"
+          ["--icon-button-padding-inline"
            :0.4em]
           [:opacity                         
            :$popover-close-button-opacity]
-          ["--button-padding-block-ems"     
-           :$icon-button-padding-inline-ems]
+          ["--button-padding-block"     
+           :$icon-button-padding-inline]
           [:margin-inline                   
-           :$popover-close-button-margin-inline||$icon-button-padding-inline-ems]
+           :$popover-close-button-margin-inline||$icon-button-padding-inline]
           [:margin-block                    
-           :$popover-close-button-margin-block||$icon-button-padding-inline-ems])
+           :$popover-close-button-margin-block||$icon-button-padding-inline])
      :on-click dismiss-popover!}
     [icon mui.svg/close]]])
 

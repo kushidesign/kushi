@@ -360,10 +360,10 @@
     :ns '[kushi.ui.button.core]
     :tags     ["button"]
     }
-   [:--button-padding-inline-ems              :1.2em
-    :--icon-button-padding-inline-ems         :0.69em
-    :--button-padding-block-ems               :0.67em
-    :--button-with-icon-padding-inline-offset :0.9em
+   [:--button-padding-inline              :0.9em
+    :--icon-button-padding-inline         :0.57em
+    :--button-padding-block               :0.55em
+    :--button-with-icon-padding-inline-offset :0.75em
     ]
 
    {:family   "Button border styling"
