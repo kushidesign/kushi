@@ -61,8 +61,8 @@
           :fs            :$small
           :zi            1
           :opacity       :$popover-close-button-opacity
-          :margin-inline :$popover-close-button-margin-inline||$icon-button-padding-inline-ems
-          :margin-block  :$popover-close-button-margin-block||$icon-button-padding-inline-ems}))
+          :margin-inline :$popover-close-button-margin-inline||$icon-button-padding-inline
+          :margin-block  :$popover-close-button-margin-block||$icon-button-padding-inline}))
     [icon mui.svg/close]]])
 
 
