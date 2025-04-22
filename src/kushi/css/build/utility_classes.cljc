@@ -425,7 +425,13 @@
 
    :transition            {:transition-property        :all
                            :transition-timing-function :$transition-timing-function
-                           :transition-duration        :$transition-duration}
+                           :transition-duration        :$transition-duration
+                           :after                      {:transition-property        :all
+                                                        :transition-timing-function :$transition-timing-function
+                                                        :transition-duration        :$transition-duration}
+                           :before                     {:transition-property        :all
+                                                        :transition-timing-function :$transition-timing-function
+                                                        :transition-duration        :$transition-duration}}
    :disabled              {:opacity "45%"} ; <- create a global :--disabled-element-opacity
                                            ;    distinct from *:disabled for inputs ?
    ])
