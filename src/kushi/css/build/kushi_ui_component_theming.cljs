@@ -1070,6 +1070,38 @@
     "color-mix(in oklch, currentColor, transparent)"
     }})
                                      
+(defcss "[data-kushi-surface=\"solid-classic\"], [data-kushi-surface=\"soft-classic\"]"
+  {
+   :box-shadow       "inset 0 0 0 1px var(--transparent-black-10), inset 0 -2px 1px var(--transparent-black-20), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-80), inset 0 2px 1px -1px var(--transparent-white-80)"
+   :bgi              "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
+   :z-index          0
+   :after            {:content          "\"\""
+                      :position         :absolute
+                      :border-radius    :inherit
+                      :pointer-events   :none
+                      :inset            0
+                      :z-index          -1
+                      :border           :2px:solid:#0000
+                      :background-clip  :content-box
+                      :background-color :inherit
+                      :background-image "linear-gradient(var(--transparent-black-05), #0000, var(--transparent-white-10))"
+                      :box-shadow       "inset 0 2px 3px -1px var(--transparent-white-30)"}})
+
+(defcss "[data-kushi-surface=\"soft-classic\"]"
+  {:dark:text-shadow "0 0px 2px var(--transparent-black-40), 0 -0.5px 0px var(--transparent-black-70)"
+   :text-shadow      "0 0.5px 0px var(--transparent-white-100)"
+   :box-shadow       "inset 0 0 0 1px var(--transparent-black-05), inset 0 -2px 1px var(--transparent-black-10), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-100), inset 0 2px 1px -1px var(--transparent-white-100)"
+   :dark:box-shadow  "inset 0 0 0 1px var(--transparent-black-05), inset 0 -2px 1px var(--transparent-black-10), inset 0 0 0 1px var(--classic-trim-color-dark), inset 0 4px 2px -2px var(--transparent-white-60), inset 0 2px 1px -1px var(--transparent-white-60)"
+   :bgi              "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
+   :dark:bgi         "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color-dark) 80%)"
+   })
+
+(defcss "[data-kushi-surface=\"solid-classic\"]"
+  {:text-shadow      "0 0px 2px var(--transparent-black-30)"
+   :dark:text-shadow "0 0.5px 0px var(--transparent-white-40)"})
+
+(defcss ".dark [data-kushi-surface=\"solid-classic\"]"
+  {:after {:background-image "linear-gradient(var(--transparent-black-02), #0000, var(--transparent-white-20))"}})
 
 (defcss "[data-kushi-shape=\"rounded\"]"
   {:border-radius :0.3em})
