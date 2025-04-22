@@ -999,12 +999,12 @@
    "--outlined-button-stroke-width"                     "var(--outlined-element-stroke-width)"
    "--outlined-tag-stroke-width"                        "var(--outlined-element-stroke-width)"
    "--outlined-callout-stroke-width"                    "var(--outlined-element-stroke-width)"
-   "--button-padding-inline-compact"                    "0.8em",
-   "--button-padding-inline"                            "1.2em",
-   "--button-padding-inline-roomy"                      "1.5em",
-   "--button-padding-block-compact"                     "0.42em",
-   "--button-padding-block"                             "0.67em",
-   "--button-padding-block-roomy"                       "0.8666em"
+   "--button-padding-inline-compact"                    "0.7em",
+   "--button-padding-inline"                            "0.9em",
+   "--button-padding-inline-roomy"                      "1.2em",
+   "--button-padding-block-compact"                     "0.35em",
+   "--button-padding-block"                             "0.55em",
+   "--button-padding-block-roomy"                       "0.75em"
    "--icon-button-padding-inline"                        :$button-padding-block,
    "--icon-button-padding-block"                         :$button-padding-block,
    ;; Use or not use -ems ?
@@ -1016,7 +1016,7 @@
    "--tag-padding-inline-compact"                       "0.45em",
    "--tag-padding-block-roomy"                          "0.45em",
    "--tag-padding-inline-roomy"                         "0.9em"
-   
+   "--transition-duration"                              :$xxxfast
    })
 
 
