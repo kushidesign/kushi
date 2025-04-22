@@ -173,7 +173,6 @@
                            ".kushi-modal"
                            :.fixed-centered
                            :.transition
-                           :.flex-col-fs
                            [:transition-duration
                             "var(--modal-transition-duration, var(--fast))"]
                            [:max-width
@@ -193,7 +192,10 @@
                            :height--fit-content
                            [:max-height "calc(100vh - 40px)"]
                            :opacity--0
-                           :.kushi-modal-open:opacity--1)
+                           :.kushi-modal-open:opacity--1
+                           :.kushi-modal-open:display--flex
+                           :flex-direction--column
+                           )
         :id               id
         :aria-labelledby  title-id
         :aria-describedby desc-id}
