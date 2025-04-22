@@ -224,6 +224,7 @@
                                        "w" "wavy"}}
    "text-decoration-thickness" {:tier 2
                                 :vals {"ff" "from-font"}}
+   "text-shadow"               {:tier 1}
    "text-transform"            {:tier 1,
                                 :vals {"u"  "uppercase",
                                        "l"  "lowercase",
