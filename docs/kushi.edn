@@ -35,7 +35,7 @@
    :--prose-font-weight                     300
    :--prose-font-color                      :$neutral-750
    :--prose-font-size                       :$small
-   :--code-font-weight                      :$wee-bold
+   :--code-font-weight                      :$light
    ]
   
   :ui
