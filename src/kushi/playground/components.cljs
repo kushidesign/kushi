@@ -74,9 +74,9 @@
      :examples       button.demo/examples
      :component-meta (-> button var meta)
      :reqs           '[[kushi.ui.button.core :refer [button]]]
-     :variants-base  #{:soft :solid :outline :minimal}
-     :variants-order [:soft :solid :outline :minimal]
-     :variants-attrs {:soft    {}
+     :variants-base  #{:faint :solid :outline :minimal}
+     :variants-order [:faint :solid :outline :minimal]
+     :variants-attrs {:faint    {}
                       :solid   {:-surface :solid}
                       :outline {:-surface :outline}
                       :minimal {:-surface :minimal}}}
@@ -195,8 +195,8 @@
        :component-meta (-> card var meta)
        :component      card
        :reqs           '[[kushi.ui.card.core :refer [card]]]
-       :variants-base  #{:soft}
-       :variants-order [:soft]
+       :variants-base  #{:faint}
+       :variants-order [:faint]
        :variants-attrs {:rounded (sx :.rounded)}
        }
 
@@ -205,9 +205,9 @@
        :component-meta (-> avatar var meta)
        :component      avatar
        :reqs           '[[kushi.ui.avatar.core :refer [avatar]]]
-       :variants-base  #{:soft :solid :outline :minimal}
-       :variants-order [:soft :solid :outline :minimal]
-       :variants-attrs {:soft    {}
+       :variants-base  #{:faint :solid :outline :minimal}
+       :variants-order [:faint :solid :outline :minimal]
+       :variants-attrs {:faint    {}
                         :solid   {:-surface :solid}
                         :outline {:-surface :outline}
                         :minimal {:-surface :minimal}}
@@ -218,9 +218,9 @@
        :component-meta (-> tag var meta)
        :component      tag
        :reqs           '[[kushi.ui.tag.core :refer [tag]]]
-       :variants-base  #{:soft :solid :outline :minimal}
-       :variants-order [:soft :solid :outline :minimal]
-       :variants-attrs {:soft    {}
+       :variants-base  #{:faint :solid :outline :minimal}
+       :variants-order [:faint :solid :outline :minimal]
+       :variants-attrs {:faint    {}
                         :solid   {:-surface :solid}
                         :outline {:-surface :outline}
                         :minimal {:-surface :minimal}}
@@ -231,9 +231,9 @@
        :component-meta (-> callout var meta)
        :component      callout
        :reqs           '[[kushi.ui.callout.core :refer [callout]]]
-       :variants-base  #{:soft :solid :outline}
-      ;;  :variants-order [:soft :solid :outline]
-      ;;  :variants-attrs {:soft    {}
+       :variants-base  #{:faint :solid :outline}
+      ;;  :variants-order [:faint :solid :outline]
+      ;;  :variants-attrs {:faint    {}
       ;;                   :solid   {:-surface :solid}
       ;;                   :outline {:-surface :outline}
       ;;                   :minimal {:-surface :minimal}}

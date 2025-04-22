@@ -4,8 +4,7 @@
   [:rounded :pill :circle :sharp :squircle])
 
 (def all-colors
-  [
-   "neutral"
+  ["gray"
    "purple"
    "blue"
    "green"
@@ -15,11 +14,13 @@
    "orange"
    "red"
    "magenta"
-   "brown"
-   ])
+   "brown"])
 
 (def basic-shapes
   [:rounded :pill :sharp])
+
+(def packing
+  [:compact :default :roomy])
 
 (def xxsmall-xlarge
   [:xxsmall
@@ -40,8 +41,14 @@
    :xxlarge
    :xxxlarge])
 
-(def basic-surfaces
-  [:soft :solid :outline :minimal])
+(def basic-surfaces-vector
+  [:solid-classic :solid :soft-classic :soft :faint :outline :minimal])
+
+(def basic-surfaces-set
+  (into #{} basic-surfaces-vector))
+
+(def basic-surfaces-set-of-strs
+  (into #{} (map name basic-surfaces-vector)))
 
 (def variants-ordered 
   {'xxsmall-xlarge  
@@ -53,5 +60,12 @@
    :defaults
    {'size    xxxsmall-xxxlarge
     'shape   basic-shapes
-    'surface basic-surfaces
-    'colorway all-colors}})
+    'surface basic-surfaces-vector
+    'colorway all-colors
+    'packing packing}})
+
+(def variants-syms-set
+  (->> variants-ordered
+       :defaults
+       keys
+       (into #{})))

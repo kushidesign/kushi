@@ -41,17 +41,17 @@
 
                       {:label "f"
                        :args  ["M"]
-                       :attrs {:-surface :soft}}
+                       :attrs {:-surface :faint}}
                       {:label "g"
                        :args  ["MT"]
-                       :attrs {:-surface :soft}}
+                       :attrs {:-surface :faint}}
                       {:label "people"
                        :args  [[icon :diversity-3]]
-                       :attrs {:-surface :soft
+                       :attrs {:-surface :faint
                                :class (css :fs--$medium)}}
                       {:label "building"
                        :args  [[icon :account-balance]]
-                       :attrs {:-surface :soft
+                       :attrs {:-surface :faint
                                :class (css :fs--$medium)}}
                       ]}
 

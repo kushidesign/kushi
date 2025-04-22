@@ -28,7 +28,7 @@
                          Kushi's design system, e.g `:red`, `:purple`, `:gold`,
                          etc. Only applies when fallback text is used."}
               {:name    surface
-               :pred    #{:soft :solid :minimal :outline}
+               :pred    #{:faint :solid :minimal :outline}
                :default :round
                :desc    "Surface variant of the avatar. Except for the `:outline`
                          variant, only applies when fallback text is used."}

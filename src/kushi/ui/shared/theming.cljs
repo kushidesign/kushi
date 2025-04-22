@@ -1,13 +1,13 @@
 (ns kushi.ui.shared.theming
   (:require 
    [kushi.ui.icon.core]
+   [kushi.ui.defs :as defs]
    [kushi.ui.util :refer [as-str maybe nameable?]]
-   [clojure.string :as string])
-  )
+   [clojure.string :as string]))
 
 (def variants
   {:shape    #{"rounded" "sharp" "pill" "circle"}
-   :surface  #{"minimal" "outline" "solid" "soft"}
+   :surface  defs/basic-surfaces-set-of-strs
    ;; :semantic #{"neutral" "accent" "positive" "negative" "warning"}
    :colorway #{"neutral"
                "accent"
@@ -28,7 +28,7 @@
 
 (def variant-defaults
   {:colorway "neutral"
-   :surface  "soft"
+   :surface  "faint"
    :shape    "rounded"})
 
 (defn data-kushi- [x k]

@@ -16,13 +16,13 @@
               
              They can be custom styled via a variety of tokens in your theme:
 
-             `--tag-padding-inline-ems`<br>
+             `--tag-padding-inline`<br>
              The default value is `:1.2em`
               
-             `--icon-tag-padding-inline-ems`<br>
+             `--icon-tag-padding-inline`<br>
              The default value is `:0.69em`
               
-             `--tag-padding-block-ems`<br>
+             `--tag-padding-block`<br>
              The default value is `:0.67em`
               
              `--tag-with-icon-padding-inline-offset`<br>
@@ -53,7 +53,7 @@
                          Kushi's design system, e.g `:red`, `:purple`, `:gold`,
                          etc."}
               {:name    surface
-               :pred    #{:soft :solid :minimal :outline}
+               :pred    #{:faint :solid :minimal :outline}
                :default :round
                :desc    "Surface variant of the tag."}
               {:name    shape
