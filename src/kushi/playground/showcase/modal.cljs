@@ -52,7 +52,7 @@
    "Code"])
 
 (defn- example-modal-inner
-  [{:keys [modal-id label component-label]
+  [{:keys [modal-id label modal-label component-label]
     :as   m}]
   [:<> 
    [modal-close-button {:-modal-id modal-id}]
@@ -67,7 +67,7 @@
      [:h1 (sx :.kushi-playground-examples-modal-wrapper-inner-label
               :.component-section-header-label) 
       component-label]
-     label]]
+     [:span.foreground-color-secondary (or label modal-label)]]]
    [divisor]
    [component-snippets m]])
 
@@ -78,7 +78,7 @@
   ;; good for dev 
   [#_(or wrapper-tag modal) 
    modal
-   {:class (css :.kushi-playground-examples-modal :.flex-col-fs)
+   {:class (css :.kushi-playground-examples-modal)
     :id    modal-id}
    [example-modal-inner m]])
 

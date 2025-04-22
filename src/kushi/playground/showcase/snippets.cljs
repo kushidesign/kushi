@@ -1,7 +1,7 @@
 (ns ^:dev/always kushi.playground.showcase.snippets
   (:require
    [clojure.repl]
-   [kushi.core :refer [css defcss ?defcss merge-attrs sx ?css]]
+   [kushi.core :refer [css defcss merge-attrs sx]]
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
    [kushi.playground.showcase.shared :refer [pprint-str]]
    [kushi.ui.tooltip.core :refer [tooltip-attrs]]
@@ -14,7 +14,7 @@
    [kushi.css.media]
    [domo.core :as d]))
 
-;; not merging
+;; Not merging ... TODO fix merging
 ;; (defcss "@layer user-shared-styles .kushi-bordered-panel"
 ;;   {
 ;;    :border-width      :$code-border-width||1px
@@ -26,7 +26,7 @@
 (defcss "@layer user-shared-styles .kushi-code-block"
   ;; :.kushi-bordered-panel
   {:border-width         :$code-border-width||1px
-   :border-color         :$code-border-color||$neutral-150
+   :border-color         :$code-border-color||$neutral-250
    :dark:border-color    :$code-border-color-dark-mode||$neutral-800
    :border-style         :$code-border-style||solid
    :background-color     :$code-background-color
@@ -59,8 +59,9 @@
 
 (defcss "@layer user-shared-styles .kushi-playground-code-snippet-preview"
    #_:.bordered-panel
-  {:border-width               :$code-border-width||1px
-   :border-color               :$code-border-color||$neutral-150
+  {
+   :border-width               :$code-border-width||1px
+   :border-color               :$code-border-color||$neutral-250
    :dark:border-color          :$code-border-color-dark-mode||$neutral-800
    :border-style               :$code-border-style||solid
    :beer                       0
@@ -113,9 +114,10 @@
                :fs--medium) mui.svg/content-copy]]))
 
 (defn- snippet-section
-  [{:keys [header
+  [{:keys [preview-section
            preformatted
            quoted-source-code
+           header
            copyable
            bottom-half?]
     :as m}]
@@ -125,25 +127,30 @@
                 ;; :gap--0.5em
                 ;; :first-of-type:mbe--2.5em
                 ) 
-   #_[:div "hi"]
    header
+   preview-section
    [:section 
     (merge-attrs 
      (sx :.kushi-playground-code-snippet
-         :.kushi-code-block
-         :.code
-         :.xsmall
-         :xsm:p--1.5em
-         :position--relative
-         :p--1.0em
-         :pie--3.5em
-         :xsm:pie--2.25em
-         :w--100%
-         :lh--1.2
-         :fs--$xsmall-b
-         :p--1rem
-         {">*:nth-child(2):line-height" "revert"})
-    (when bottom-half? (sx :bser--0 :bssr--0)))
+          :.kushi-code-block
+          :.code
+          :.xsmall
+          :xsm:p--1.5em
+          :position--relative
+          :p--1.0em
+          :pie--3.5em
+          :xsm:pie--2.25em
+          :w--100%
+          :lh--1.2
+          :fs--$xsmall-b
+          :p--1rem
+          {">*:nth-child(2):line-height" "revert"})
+     (if bottom-half?
+       (sx :bser--0
+           :bssr--0
+           :beer--$rounded-absolute-medium
+           :besr--$rounded-absolute-medium)
+       (sx :br--$rounded-absolute-medium)))
     (when-let [attrs (some->> copyable
                               (hash-map :-text-to-copy)
                               (merge-attrs 
@@ -233,43 +240,30 @@
                            (string/join "\n"))]
       (into [:div (sx ".kushi-playground-snippets-modal-requires"
                       :.flex-col-fs
-                      :gap--2.25rem
-                      :mbs--1.5em
-                      #_:pbe--2rem)
+                      :gap--2.25rem)
              [snippet-section
-              {:header             (into [:div (sx :.small :.wee-bold :mbe--1em)]
+              {:header             (into [:div (sx :.small :mbe--1em)]
                                          (desc->hiccup
                                           "Paste into the `:require` section of your `:ns` form:"))
                :preformatted       (formatted-code reqs-str)
                :quoted-source-code reqs
                :copyable           reqs-str}]]
 
-              ;; This produces a snippet section for each of the examples 
+            ;; This produces a snippet section for each of the examples 
             (for [[i call] (map-indexed (fn [i call] [i call]) snippets)
-                  :let     [
-                          ;; header (when (zero? i) 
-                          ;;          (when (string? snippets-header)
-                          ;;            (some->> snippets-header
-                          ;;                     desc->hiccup 
-                          ;;                     (into [:div])
-                          ;;                     #_(docs/add-links scroll-to-elsewhere-on-page))))
-                            header [:div 
-                                    (sx :.transition
-                                        :.kushi-playground-code-snippet-preview
-                                        :lh--initial
-                                        ;; :>div:display--flex
-                                        ;; :>div:flex-direction--flex-start
-                                        ;; :>div:gap--0.5em
-                                        )
-                                    #_header
-                                    (nth hiccup-for-examples i)]]]
+                  :let     [preview-section 
+                            [:div 
+                             (sx :.transition
+                                 :.kushi-playground-code-snippet-preview
+                                 :lh--initial)
+                             (nth hiccup-for-examples i)]]]
               [snippet-section
-               {:header       header
-                :bottom-half? true
-                :preformatted (-> call
-                                  formatted*
-                                  string/join
-                                  formatted-code)
-                :copyable     (-> call
-                                  formatted*
-                                  string/join)}])))]])
+               {:preview-section preview-section
+                :bottom-half?    true
+                :preformatted    (-> call
+                                     formatted*
+                                     string/join
+                                     formatted-code)
+                :copyable        (-> call
+                                     formatted*
+                                     string/join)}])))]])
