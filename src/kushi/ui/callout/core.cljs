@@ -107,7 +107,7 @@
                       Kushi's design system, e.g `:red`, `:purple`, `:gold`,
                       etc."}
            {:name    surface
-            :pred    #{:soft :solid :minimal :outline}
+            :pred    #{:faint :solid :minimal :outline}
             :default :round
             :desc    "Surface variant of the callout."}
            {:name    shape

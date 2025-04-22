@@ -54,7 +54,7 @@
             [button
              (merge-attrs (sx :fs--$small :fw--$wee-bold :.loose)
                           {:-colorway colorway
-                           :-surface  :soft})
+                           :-surface  :faint})
              "Button"]))
    ])
 
@@ -75,7 +75,7 @@
    (into [:div (sx :.button-dev-grid :.flex-col-fs)]
          (for [shape ["rounded" #_"sharp" #_"pill"]] 
            (into [:div (sx :.flex-col-fs :gap--0.5em)]
-                 (for [surface ["minimal" "outline" "solid" "soft"]]
+                 (for [surface ["minimal" "outline" "solid" "faint"]]
                    (into [:div (sx :.flex-row-fs :gap--0.5em)]  
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [button 
@@ -191,7 +191,7 @@
    (into [:div (sx :.tag-dev-grid :.flex-col-fs)]
          (for [shape ["rounded" #_"sharp" #_"pill"]] 
            (into [:div (sx :.flex-col-fs :gap--0.5em)]
-                 (for [surface ["minimal" "outline" "solid" "soft"]]
+                 (for [surface ["minimal" "outline" "solid" "faint"]]
                    (into [:div (sx :.flex-row-fs :gap--0.5em)]  
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [tag 
@@ -205,7 +205,7 @@
    (into [:div (sx :.tag-dev-grid :.flex-col-fs)]
          (for [shape ["rounded" #_"sharp" #_"pill"]] 
            (into [:div (sx :.flex-col-fs :gap--0.5em)]
-                 (for [surface ["minimal" "outline" "solid" "soft"]]
+                 (for [surface ["minimal" "outline" "solid" "faint"]]
                    (into [:div (sx :.flex-row-fs :gap--0.5em)]  
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [tag 
@@ -460,7 +460,7 @@
   #_(into [:div (sx :.button-dev-grid :.flex-col-fs)]
          (for [shape ["rounded" #_"sharp" #_"pill"]] 
            (into [:div (sx :.flex-col-fs :gap--0.5em)]
-                 (for [surface ["minimal" "outline" "solid" "soft"]]
+                 (for [surface ["minimal" "outline" "solid" "faint"]]
                    (into [:div (sx :.flex-col-fs :gap--0.5em)]  
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [callout
@@ -537,7 +537,7 @@
      [avatar {:-font-size-ratio 0.34} "JC"]]
 
     (into [:div (sx :.flex-col-fs :gap--10px)]
-          (for [surface [:soft :solid :outline :minimal]]
+          (for [surface [:faint :solid :outline :minimal]]
             (into [:div (sx :.flex-row-fs :gap--10px)]
                   (for [font-size-class component-examples/sizes-all]
                     [avatar {:-surface  surface
@@ -546,7 +546,7 @@
                      "JC"]))))
 
     (into [:div (sx :.flex-col-fs :gap--10px)]
-          (for [surface [:soft :solid :outline :minimal]]
+          (for [surface [:faint :solid :outline :minimal]]
             (into [:div (sx :.flex-row-fs :gap--10px)]
                   (for [colorway [:neutral :accent :positive :negative]]
                     [avatar {:-surface  surface
@@ -555,7 +555,7 @@
                      "JC"]))))
 
     (into [:div (sx :.flex-col-fs :gap--10px)]
-          (for [surface [:soft :solid :outline :minimal]]
+          (for [surface [:faint :solid :outline :minimal]]
             (into [:div (sx :.flex-row-fs :gap--10px)]
                   (for [colorway [:neutral :accent :positive :negative]]
                     [avatar (merge-attrs {:-surface  surface

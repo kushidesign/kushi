@@ -48,7 +48,7 @@
           {:desc            (str (string/capitalize s) " variant")
            :row-attrs       row-attrs
            :container-attrs container-attrs
-           :examples        (for [surface #{:soft :solid :outline}]
+           :examples        (for [surface #{:faint :solid :outline}]
                               {:attrs {:-header-text msg
                                        :-icon        [icon :info]
                                        :-colorway    s
