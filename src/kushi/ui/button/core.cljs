@@ -40,8 +40,7 @@
      colorway       
      {:pred    #{:neutral :accent :positive :negative :warning}
       :default nil
-      :desc    "Colorway of the button. Can also be a named color from Kushi's design system, e.g `:red`,
-                        `:purple`, `:gold`, etc."
+      :desc    "Colorway of the button. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
       :demo    {:label          "Colorways / surfaces × shapes"
                 :snippets-label "Colorways"
                 :require        [[kushi.ui.icon.core :refer [icon]]]
@@ -200,13 +199,13 @@
       :demo    {:label "Loading and disabled states"
                 :require [[kushi.ui.button.core :refer [button]]
                           [kushi.ui.icon.core :refer [icon]]
-                          [kushi.ui.spinner.core :refer [donut propeller thinking]]]
+                          [kushi.ui.spinner.core :refer [spinner]]]
                 :samples [[button
                            {:-loading?     true
                             :-colorway     :accent
                             :-surface      :solid
                             :-size         :small
-                            :-end-enhancer [donut]}
+                            :-end-enhancer [spinner {:-variety :donut}]}
                            "Play"]
 
                           [button
@@ -214,7 +213,7 @@
                             :-colorway     :accent
                             :-surface      :solid
                             :-size         :small
-                            :-end-enhancer [propeller]}
+                            :-end-enhancer [spinner {:-variety :propeller}]}
                            "Play"]
 
                           [button
@@ -222,7 +221,7 @@
                             :-colorway     :accent
                             :-surface      :solid
                             :-size         :small
-                            :-end-enhancer [thinking]}
+                            :-end-enhancer [spinner {:-variety :thinking}]}
                            "Play"]
 
                           [button
@@ -231,7 +230,7 @@
                             :-surface      :solid
                             :-size         :small}
                            [:span {:style {:visibility :hidden :width :0px}} "Play"]
-                           [thinking]]
+                           [spinner {:-variety :thinking}]]
 
                           [button
                            {:disabled      true
@@ -240,6 +239,27 @@
                             :-size         :small
                             :-end-enhancer [icon :play-arrow]}
                            "Play"]]}}]
+
+  ;;  :demos    '[{:label   "Start-enhancer icons"
+  ;;               :desc    "Content at the inline-start position, following the button text. Typically an icon."
+  ;;               :require [[kushi.ui.icon.core :refer [icon]]]
+  ;;               :samples [[button {:-start-enhancer [icon :pets]
+  ;;                                  :-size           :small
+  ;;                                  :-colorway       :accent
+  ;;                                  :-surface        :solid}
+  ;;                          "Pets"]
+                          
+  ;;                         [button {:-start-enhancer [icon :auto-awesome]
+  ;;                                  :-size           :small
+  ;;                                  :-colorway       :accent
+  ;;                                  :-surface        :soft}
+  ;;                          "Wow"]
+
+  ;;                         [button {:-start-enhancer [icon :play-arrow]
+  ;;                                  :-size           :small
+  ;;                                  :-colorway       :accent
+  ;;                                  :-surface        :outline}
+  ;;                          "Play"]]}]
 
    :display  '{:docs     {:order [:summary :desc :toks]
                           :parse {:summary 'x
@@ -266,6 +286,7 @@
 
         ;;  _ (? :pp [opts children])
 
+        ;; Why the rename?
         {:keys             [shape surface]
          semantic-colorway :colorway}
 

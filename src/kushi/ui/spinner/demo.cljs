@@ -7,10 +7,7 @@
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.spinner.core :refer [spinner
-                                  propeller
-                                  donut
-                                  thinking]]))
+   [kushi.ui.spinner.core :refer [spinner]]))
 
 (def sizes
   [:xxsmall
