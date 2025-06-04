@@ -19,6 +19,12 @@
 (def basic-shapes
   [:rounded :pill :sharp])
 
+(def icon-style
+  [:rounded :outlined :sharp])
+
+(def spinner-type
+  [:donut :thinking :propeller])
+
 (def packing
   [:compact :default :roomy])
 
@@ -41,6 +47,17 @@
    :xxlarge
    :xxxlarge])
 
+(def weight
+  [:thin
+   :extra-light
+   :light
+   :normal
+   :wee-bold
+   :semi-bold
+   :bold
+   :extra-bold
+   :heavy])
+
 (def basic-surfaces-vector
   [:solid-classic :solid :soft-classic :soft :faint :outline :minimal])
 
@@ -58,11 +75,14 @@
    xxxsmall-xxxlarge 
    
    :defaults
-   {'size    xxxsmall-xxxlarge
-    'shape   basic-shapes
-    'surface basic-surfaces-vector
-    'colorway all-colors
-    'packing packing}})
+   {'size         xxxsmall-xxxlarge
+    'weight       weight
+    'shape        basic-shapes
+    'surface      basic-surfaces-vector
+    'colorway     all-colors
+    'spinner-type spinner-type
+    'icon-style   icon-style
+    'packing      packing}})
 
 (def variants-syms-set
   (->> variants-ordered
