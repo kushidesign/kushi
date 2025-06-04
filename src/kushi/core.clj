@@ -63,6 +63,7 @@
 (defn generic-warning
   [{:keys [form header body unwrap-quoted-symbols?]}]
   (callout {:type        :warning
+            :label-theme :marquee
             :padding-top 1}
            (point-of-interest
             (merge {:file   ""
@@ -195,6 +196,7 @@
       :body (if keyframes? 
               bad-keyframe-warning-body
               bad-at-rule-arg-warning-body)})))
+
 
 
 (defn bad-args-spec-details [spec-data]

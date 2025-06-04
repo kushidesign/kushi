@@ -1,7 +1,6 @@
 (ns ^:dev/always kushi.ui.core
   (:require-macros [kushi.ui.core])
   (:require [clojure.string :as string]
-            [fireworks.core :refer [? !? ?> !?>]]
             [kushi.core :refer [merge-attrs]]))
       
 

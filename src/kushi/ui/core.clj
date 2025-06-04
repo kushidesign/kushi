@@ -1,7 +1,6 @@
 (ns ^:dev/always kushi.ui.core
   (:require
-   [clojure.walk :as walk]
-   [fireworks.core :refer [?]]))
+   [clojure.walk :as walk]))
 
 (defmacro &*->val
   ([opts attrs children coll f]
@@ -58,6 +57,8 @@
                                 ~form-meta)))))
 
 
+;; TODO - document why is this needed vs normal fn
+;; For now this is unused
 (defmacro material-symbol-or-icon-span
   [{:keys [icon-name icon-style icon-filled?]}]
   (let [icon-font  "material-symbols" ;; <- TODO: from user config

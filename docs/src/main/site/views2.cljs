@@ -1,44 +1,46 @@
 (ns site.views2
   (:require
+   [fireworks.core :refer [? !? ?> !?> pprint]]
    [domo.core :as domo]
+   [bling.core :as bling :refer [bling print-bling callout point-of-interest]]
+   [bling.sample]
+   [bling.hifi :refer [print-hifi]]
    [kushi.playground.shared-styles]
    [kushi.ui.button.core :refer [button]]
    [kushi.playground.showcase.core :refer [showcase uic-showcase-map]]
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.spinner.core :refer [donut propeller thinking]]
+   [kushi.ui.spinner.core :refer [spinner]]
    ))
 
 (js/console.clear)
+
 
 (defn main-view []
   (.setAttribute (domo/el-by-id "app")
                  "data-kushi-playground-active-path"
                  "components")
-
-
   #_[:div
-   [button
-    {
+     [button
+      {
     ;; :-loading?     true
-     :-end-enhancer #_[icon :east] [propeller]
-     }
-    "Play"]
-   
-   [button
-    {
+       :-end-enhancer #_[icon :east]
+       [propeller]    }
+      "Play"]
+     
+     [button
+      {
     ;; :-loading?     true
-     :-end-enhancer #_[icon :east] [donut]
-     }
-    "Play"]
-   
-   [button
-    {
+       :-end-enhancer #_[icon :east]
+       [donut]        }
+      "Play"]
+     
+     [button
+      {
     ;; :-loading?     true
-     :-end-enhancer #_[icon :east] [thinking]
-     }
-    "Play"]]
-
+       :-end-enhancer #_[icon :east]
+       [thinking]     }
+      "Play"]]
 
   ;; for pallette generation dev
   #_(js/setTimeout
@@ -50,9 +52,13 @@
        #_(? (domo/qs "[data-scale='chroma'][data-level='450']"))
        )
      2000)
-  #_[:div "Hi"]
 
-  [showcase (uic-showcase-map kushi.ui.button.core/button)]
+  #_[showcase (uic-showcase-map kushi.ui.button.core/button)]
+
+  #_[showcase (uic-showcase-map kushi.ui.spinner.core/spinner)]
+
+  [showcase (uic-showcase-map kushi.ui.icon.core/icon)]
 
   #_[pane-samples]
+
   )
