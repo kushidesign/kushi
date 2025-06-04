@@ -1,8 +1,7 @@
 (ns kushi.css.build.design-tokens
   (:require
    [clojure.string :as string]
-   [kushi.css.build.tokens-shared :as shared]
-   [fireworks.core :refer [?]]))
+   [kushi.css.build.tokens-shared :as shared]))
 
 ;; Elevations ------------------------------------------------------------------
 

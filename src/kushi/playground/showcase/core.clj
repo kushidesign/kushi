@@ -15,16 +15,18 @@
     `(let [m# (-> ~sym var meta)]
        (symbol (str (:ns m#) "/" (:name m#) "  " (:line m#) ":" (:column m#) )))))
 
+
 (defmacro uic-showcase-map
   [sym]
   (let [uic-ns (-> sym str (clojure.string/split #"/") first symbol)
         toks   (get design-tokens-by-component-usage uic-ns)]
-    `(let [{uic-name#  :name
-            [_# opts#] :opts 
-            [_# demo#] :demo
-            :as        m#}
+    `(let [{uic-name#   :name
+            [_# opts#]  :opts 
+            [_# demos#] :demos
+            :as         m#}
            (-> ~sym var meta)]
-       {:demo         demo#
+      ;;  (fireworks.core/? m#)
+       {:demos        demos#
         :opts         (apply array-map opts#)
         :toks         ~toks
         :reqs-for-uic (->> ~uic-ns

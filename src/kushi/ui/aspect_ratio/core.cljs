@@ -1,7 +1,6 @@
 ;; Todo - decide whether or not to include
 (ns kushi.ui.aspect-ratio.core
   (:require
-   [fireworks.core :refer [?]]
    [kushi.core :refer [css merge-attrs sx]]
    [kushi.ui.core :refer (extract)]
    [kushi.ui.util :refer [maybe nameable?]]))
@@ -23,8 +22,7 @@
                  (some-> ratio
                          (maybe nameable?)
                          name
-                         (->> (re-find #"^([0-9]+(?:\.[0-9]+)?)\:([0-9]+(?:\.[0-9]+)?)$"))
-                         ?)]
+                         (->> (re-find #"^([0-9]+(?:\.[0-9]+)?)\:([0-9]+(?:\.[0-9]+)?)$")))]
           (/ w h)
           (do (when ratio 
                 ;; Add warning here
