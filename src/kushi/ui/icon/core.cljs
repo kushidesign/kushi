@@ -48,24 +48,178 @@
              code do `[icon mui.svg/add]`. You can also create and utilize
              similar namespace in your own project with your own collection of
              icon `svg`s."
-             
-  ;;  :opts    '[{:name    icon-style
-  ;;              :pred    #{:outlined :rounded :sharp}
-  ;;              :default :outlined
-  ;;              :desc    ["Controls the style of the [mui-icon](https://fonts.google.com/icons?icon.set=Material+Symbols)."
-  ;;                        "This pertains only to icons from the Materials Symbols icon font, which uses variable font features."
-  ;;                        "Note that the requested style variant must be present in the Material Symbols font you are pulling in."]}
-  ;;             {:name    icon-filled?
-  ;;              :pred    boolean?
-  ;;              :default false
-  ;;              :desc    ["Use the filled (solid) version of the icon, if available."
-  ;;                        "This pertains only to icons from the Materials Symbols icon font, which uses variable font features."
-  ;;                        "Note that the requested axis for `fill` must be present in the Material Symbols font you are pulling in."]}]
-   }
+   
+  :opts
+  '[
+     size           
+     {:pred    #{:xxxsmall
+                 :xxsmall
+                 :xsmall
+                 :small
+                 :medium
+                 :large
+                 :xlarge
+                 :xxlarge
+                 :xxxlarge}
+      :default :medium
+      :desc    "Corresponds to the font-size based on Kushi's font-size scale."
+      :demo    {:label           "Sizes × Weights"
+                :attrs           {}
+                :x-variants      [weight]
+                :args            [:star]
+                :row-style       {:width "100%" :justify-content "space-between"}}}
+   
+     weight           
+     {:pred    #{:thin
+                 :extra-light
+                 :light
+                 :normal
+                 :wee-bold
+                 :semi-bold
+                 :bold
+                 :extra-bold
+                 :heavy}
+      :default :normal
+      :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."
+      :demo    {:label           "Weights"
+                :attrs           {}
+                :attrs/display   {:-size :xxxlarge}
+                :variant-labels? false
+                :args            [:star]
+                :row-style       {:width           "100%"
+                                  :justify-content "space-between"}}}
+   
+
+     colorway       
+     {:pred    #{:neutral :accent :positive :negative :warning}
+      :default nil
+      :desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
+      :demo    [{:label           "Colorways"
+                 :attrs           {:-size :xxxlarge}
+                 :variant-labels? false
+                 :args            [:star]}
+                {:label           "Colorways, filled icon"
+                 :attrs           {:-icon-filled? :true :-size :xxxlarge}
+                 :variant-labels? false
+                 :args            [:star]}]}
+
+     icon-filled?           
+     {:pred    boolean?
+      :default false
+      :desc    "Filled or not filled"
+      :demo    {:label           "Filled icon"
+                :attrs           {}
+                :attrs/display   {:-size :xxxlarge}
+                :args            [:star]}}
+   
+     icon-style           
+     {:pred    #{:rounded :outlined :sharp}
+      :default :outlined
+      :desc    "Style of icon"
+      :demo    {:label           "Icon styles"
+                :attrs/display   {:-size :xxxlarge}
+                :args            [:login]}}]
+   
+   :demos   '[{:label   "Semantic colorways"
+               :desc    "Examples of semantic coloring of icons"
+               :require [[kushi.ui.icon.core :refer [icon]]]
+               :samples [[icon {:-colorway :accent :-size :xxxlarge} :star]
+                         [icon {:-colorway :negative :-size :xxxlarge} :cancel]
+                         [icon {:-colorway :positive :-size :xxxlarge} :check-circle]
+                         [icon {:-colorway :warning :-size :xxxlarge} :warning]
+                         [icon {:-colorway :accent :-size :xxxlarge :-icon-filled? true} :star]
+                         [icon {:-colorway :negative :-size :xxxlarge :-icon-filled? true} :cancel]
+                         [icon {:-colorway :positive :-size :xxxlarge :-icon-filled? true} :check-circle]
+                         [icon {:-colorway :warning :-size :xxxlarge :-icon-filled? true} :warning]]}
+              
+              {:label     "Various icons"
+               :desc      "Examples of semantic coloring of icons"
+               :require   [[kushi.ui.icon.core :refer [icon]]]
+               :row-style {:flex-wrap :wrap :gap :1em}
+
+
+              ;; TODO - implement this in showcase ns
+              ;; :samples-fn kushi.playground.showcase.core/icon
+              ;; :samples   [:auto-awesome :help :info :favorite]
+
+
+               :samples   [[icon {:-size   :xlarge
+                                  :-weight :light} :auto-awesome]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :help]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :info]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :favorite]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :settings]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :filter-alt]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :cloud-upload]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :download]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :delete]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :cancel]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :auto-awesome-motion]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :archive]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :sell]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :visibility]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :visibility-off]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :warning]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :check-circle]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :error]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :edit]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :folder]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :smartphone]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :add-circle]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :expand-circle-down]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :search]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :playlist-add]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :expand]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :compress]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :arrow-back]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :arrow-forward]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :sort]
+                           [icon {:-size   :xlarge
+                                  :-weight :light} :clear]
+                           ]}
+              ]}
+  
+  
+
   [& args]
-  (let [{:keys [opts attrs children]}           (extract args icon)
-        {:keys [icon-style icon-filled?]} opts
-        [icon*]                           children]
+  (let [{:keys [opts attrs children]}                          (extract args icon)
+
+        {:keys [icon-style
+                icon-filled?
+                weight
+                size
+                colorway]} opts
+
+        [icon*]                                                children]
     [:div
      (merge-attrs
       (sx ".kushi-icon"
@@ -84,15 +238,24 @@
           ;;          :transition-duration        :$transition-duration}]
           :_svg:height--1em
           :_svg>path:fill--currentColor)
-      {:data-kushi-ui :icon}
+      {:data-kushi-ui       :icon
+       :data-kushi-size     size
+       :data-kushi-weight   weight
+       :data-kushi-colorway colorway}
       attrs)
      (cond
        (and (vector? icon*) (= :svg (first icon*)))
        icon*
 
        (every? #(or (string? %) (keyword? %)) children)
-       (let [icon-name (icon-name->snake-case-string children)]
-         (material-symbol-or-icon-span
-          {:icon-name    icon-name
-           :icon-style   icon-style
-           :icon-filled? icon-filled?})))]))
+       (let [icon-name  (icon-name->snake-case-string children)
+             icon-font  "material-symbols"
+             style      (if (contains? #{:outlined :rounded :sharp} icon-style)
+                          icon-style
+                          :outlined)
+             icon-style (str icon-font "-" (name style))
+             icon-fill  (when icon-filled? (str icon-font "-icon-filled"))]
+         (into [:span {:class [icon-style icon-fill]}]
+               icon-name)
+         ))]))
+
