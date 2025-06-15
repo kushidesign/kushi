@@ -1,5 +1,6 @@
 (ns kushi.css.build.utility-classes
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.util :as util]
    [clojure.string :as string]))
 
@@ -136,8 +137,7 @@
   (mapcatv (fn [fd]
              (mapcat 
               (fn [jc]
-                [(->> jc
-                      util/kebab->shorthand
+                [(->> (string/replace jc #"^flex-" "")
                       (conj ["flex" fd])
                       (string/join "-")
                       as-classname)
@@ -454,6 +454,9 @@
          v
 
          ".kushi-icon:font-variation-settings" 
+         v
+         
+         ".kushi-icon:has-ancestor([data-kushi-weight]):font-variation-settings"
          v})])
    type-weights-by-name))
 
