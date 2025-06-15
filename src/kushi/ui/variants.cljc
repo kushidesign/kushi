@@ -106,3 +106,17 @@
 ;; Use data-ks instead of data-kushi
 
 ;; in sx and css, support supplied data selector "[data-kushi-ui=icon]"
+
+(defn convert-opts [vc]
+  (reduce 
+   (fn [acc [sym m]]
+     (let [prefixed (->> sym name (str "-") keyword)
+           m (if (contains? variants-by-custom-opt-key prefixed)
+               (dissoc m :schema)
+               m)
+           m (if-not (seq (:args m))
+               (dissoc m :args)
+               m)]
+       (assoc acc prefixed m)))
+   {} 
+   (partition 2 (second vc))))

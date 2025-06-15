@@ -27,16 +27,16 @@
           It is typically a single × icon positioned in the upper right or left
           corner of the dialog."
    :opts '[{:name    icon-name
-            :pred    keyword?
+            :schema    keyword?
             :default :close
             :desc    "Optional. A name of a Google Material Symbols icon.
                       Defaults to a close (×) icon."}
            {:name    colorway
-            :pred    keyword?
+            :schema    keyword?
             :default :neutral
             :desc    [""]}
            {:name    icon-svg
-            :pred    vector?
+            :schema    vector?
             :default nil
             :desc    "Optional. A Hiccup representation of an svg icon. Supply
                       this as an alternative to using the Google Material
@@ -85,42 +85,42 @@
           `:.fixed-block-end-inside` utility class for positioning
           at the bottom of the viewport."
    :opts '[{:name    icon
-            :pred    vector?
+            :schema    vector?
             :default nil
             :desc    "An instance of a `kushi.ui.icon/icon` component. Places
                       an icon anchored to the inline-start area of the callout.
                       Optional."}
            {:name    user-actions
-            :pred    fn?
+            :schema    fn?
             :default nil
             :desc    "Component rendering fn for CTA interactions. Can also be
                       a close button component via
                       `kushi.ui.callout.core/close-button`. Optional."}
            {:name    header-text
-            :pred    string
+            :schema    string
             :default nil
             :desc    "The header text to render in the callout. Optional."}
            {:name    colorway
-            :pred    #{:neutral :accent :positive :negative :warning}
+            :schema    #{:neutral :accent :positive :negative :warning}
             :default nil
             :desc    "Colorway of the callout. Can also be a named color from
                       Kushi's design system, e.g `:red`, `:purple`, `:gold`,
                       etc."}
            {:name    surface
-            :pred    #{:faint :solid :minimal :outline}
+            :schema    #{:faint :solid :minimal :outline}
             :default :round
             :desc    "Surface variant of the callout."}
            {:name    shape
-            :pred    #{:sharp :round :pill}
+            :schema    #{:sharp :round :pill}
             :default :round
             :desc    "Shape of the callout."}
            {:name    packing
-            :pred    #{:compact :roomy}
+            :schema    #{:compact :roomy}
             :default nil
             :desc    "General amount of padding inside the callout"}
           ;;  Leave this out for now
           ;;   {:name    duration
-          ;;    :pred    pos-int?
+          ;;    :schema    pos-int?
           ;;    :default nil
           ;;    :desc    ["When supplied, the callout will dismiss itself after "
           ;;              "the given time (in milliseconds) has passed."]}

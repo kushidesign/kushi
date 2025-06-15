@@ -23,93 +23,70 @@
   :ai--c
   :min-width--$loading-spinner-height)
 
+;; changed vec to map
+;; changed sym keys to prefixed keywords
+;; changed :pred to :schema, if member of variants, elide
+
+
 
 
 (defn spinner
-  {:docs "A spinner"
+  {:docs    "A spinner"
    :summary "Round & round"
-   :opts
-   '[
-     spinner-type
-     {:pred    #{:propeller :donut :thinking}
-      :default :donut
-      :desc    "The variety of spinner"
-      :demo    {:label         "Spinner type variants"
-                :attrs/display {:-size :large}
-                ;; :x-variants      [colorway]
-                ;; :rows?           true
-                ;; :variant-labels? false
-                :args          []}}
-
-     size           
-     {:pred    #{:xxxsmall
-                 :xxsmall
-                 :xsmall
-                 :small
-                 :medium
-                 :large
-                 :xlarge
-                 :xxlarge
-                 :xxxlarge}
-      :default nil
-      :desc    "Corresponds to the font-size based on Kushi's font-size scale."
-      :demo    [{:label           "Propeller, sizes"
-                 :attrs           {:-spinner-type :propeller}
-                 :variant-labels? false
-                 :args            []}
-                {:label           "Donut, sizes"
-                 :attrs           {:-spinner-type :donut}
-                 :variant-labels? false
-                 :args            []}
-                #_{:label           "Thinking, size variants"
-                 :attrs           {:-spinner-type :thinking}
-                 :variant-labels? false
-                 :args            []}]}
-                
-                
-     colorway       
-     {:pred    #{:neutral :accent :positive :negative :warning}
-      :default nil
-      :desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
-      :demo    [{:label           "Propeller, colorways"
-                 :attrs           {:-spinner-type :propeller}
-                 :attrs/display   {:-size :xlarge}
-                 :variant-labels? false
-                 :args            []}
-                {:label           "Donut, colorways"
-                 :attrs           {:-spinner-type :donut}
-                 :attrs/display   {:-size :xlarge}
-                 :variant-labels? false
-                 :args            []}
-                {:label           "Thinking, colorways"
-                 :attrs           {:-spinner-type :thinking}
-                 :attrs/display   {:-size :xxsmall}
-                 :variant-labels? false
-                 :args            []}]}
-                
-                ]}
+   :opts    {:-spinner-type {:default   :donut
+                             :desc      "The variety of spinner"
+                             :demo      {:label         "Spinner type variants"
+                                         :attrs/display {:-size :xxxlarge}
+                                         :row-style     {:gap :2rem}
+                                         }}
+             :-size         {:default nil
+                             :desc    "Corresponds to the font-size based on Kushi's font-size scale."
+                             :demo    [{:label           "Propeller, sizes"
+                                        :attrs           {:-spinner-type :propeller}
+                                        :row-style       {:border "1px solid red"}
+                                        :variant-labels? false} 
+                                       {:label           "Donut, sizes"
+                                        :attrs           {:-spinner-type :donut}
+                                        :variant-labels? false}]}
+             :-colorway     {:default nil
+                             :desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
+                             :demo    [{:label           "Propeller, colorways"
+                                        :attrs           {:-spinner-type :propeller}
+                                        :attrs/display   {:-size :xlarge}
+                                        :variant-labels? false}
+                                       {:label           "Donut, colorways"
+                                        :attrs           {:-spinner-type :donut}
+                                        :attrs/display   {:-size :xlarge}
+                                        :variant-labels? false}
+                                       {:label           "Thinking, colorways"
+                                        :attrs           {:-spinner-type :thinking}
+                                        :attrs/display   {:-size :xxsmall}
+                                        :variant-labels? false}]}}}
   
   [& args]
   (let [{:keys [opts attrs]} 
         (extract args spinner)
 
-        {:keys [size spinner-type]
-         :or   {spinner-type :donut}}
+        {:keys [size spinner-type inert?]
+         :or   {spinner-type :donut
+                inert?       true}}
         opts
         
         ;; Why the rename?
-        {semantic-colorway :colorway}
+        {colorway :colorway}
         (get-variants opts)
         
         
-        data-kushi-colorway (validate-option spinner semantic-colorway)
-        data-kushi-size     (validate-option spinner size)
+        ;; data-kushi-colorway (validate-option spinner semantic-colorway)
+        ;; data-kushi-size     (validate-option spinner size)
         more-attrs          (merge {:aria-hidden         true
-                                    :data-kushi-size     data-kushi-size}
+                                    :data-kushi-surface  :transparent
+                                    :data-kushi-size     size}
+                                   (when (true? inert?) 
+                                     {:data-kushi-inert ""})
                                    (when-not (contains? #{"neutral" :neutral}
-                                                    data-kushi-colorway)
-                                     {:data-kushi-colorway data-kushi-colorway}))
-        ]
+                                                    colorway)
+                                     {:data-kushi-colorway colorway}))]
                
 
     (cond
@@ -149,7 +126,7 @@
          [:div (merge-attrs
                 {:class               (css
                                        ".kushi-thinking"
-                                       :.flex-row-c
+                                       :.flex-row-center
                                        :gap--0.333em)}
                 more-attrs
                 attrs)
@@ -184,5 +161,7 @@
                                      :after:bc--currentColor)}
               more-attrs
               attrs)]] )))
+
+
 
 

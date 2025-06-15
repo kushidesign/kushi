@@ -112,11 +112,11 @@
           need to use an explicit unit e.g. `0px`."
           
    :opts '[{:name    text
-            :pred    #(or (string? %) (keyword? %) (vector? %) (number? %))
+            :schema    #(or (string? %) (keyword? %) (vector? %) (number? %))
             :default nil
             :desc    "Required. The text to display in the tooltip"}
            {:name    placement
-            :pred    keyword?
+            :schema    keyword?
             :default :auto
             :desc    "You can use single keywords to specify the exact placement 
                       of the tooltip:
@@ -157,21 +157,21 @@
                       `[:block-end :center]`
                       `[:block-end :inline-start]`"}
            {:name    arrow?
-            :pred    boolean?
+            :schema    boolean?
             :default true
             :desc    "Setting to false will not render a directional arrow with 
                       the tooltip."}
            {:name    tooltip-class
-            :pred    string?
+            :schema    string?
             :default nil
             :desc    "A class name for a la carte application of classes on the
                       tooltip element."}
            {:name    text-on-click
-            :pred    #(or (string? %) (keyword? %) (vector? %) (number? %))
+            :schema    #(or (string? %) (keyword? %) (vector? %) (number? %))
             :default nil
             :desc    "The tooltip text, after the tipped element has been clicked."}
            {:name    text-on-click-tooltip-class
-            :pred    string?
+            :schema    string?
             :default nil
             :desc    "A class name for the la carte application of classes on
                       the tooltip element which is displaying alternate text

@@ -7,7 +7,7 @@
 (defn checkbox
   {:summary "Checkboxes are used to provide multiple options for selection."
    :opts    '[{:name    label-attrs
-               :pred    map?
+               :schema    map?
                :default nil
                :desc    "HTML attributes map applied to the wrapping `label` div."}]}
   [& args]

@@ -67,12 +67,12 @@
           "It is typically a single × icon positioned in the upper right or left
            corner of the dialog."]
    :opts '[{:name    icon
-            :pred    keyword?
+            :schema    keyword?
             :default :close
             :desc    ["Optional. A name of a Google Material Symbols icon.
                        Defaults to a close (×) icon."]}
            {:name    icon-svg
-            :pred  vector?
+            :schema  vector?
             :default nil
             :desc    ["Optional. A Hiccup representation of an svg icon. Supply
                        this as an alternative to using the Google Material
@@ -132,12 +132,12 @@
           the stock elevation tokens, level 1~5, expressed like so:<br>
           `:$elevation-3`, or `var(--elevation-3)`"
    :opts '[{:name    modal-title
-            :pred    string?
+            :schema    string?
             :default nil
             :desc    "Optional. If supplied, this will be rendered as an h2
                       element within the modal."}
            {:name    description
-            :pred    string?
+            :schema    string?
             :default nil
             :desc    "Optional. If supplied, this will be rendered as an p
                       element within the modal."}

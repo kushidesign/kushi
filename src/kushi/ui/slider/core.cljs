@@ -544,53 +544,53 @@
           named, stepped values may be provided with the custom `:-steps` option."
    :opts '[
           ;;  {:name    default-value
-          ;;   :pred    any?
+          ;;   :schema    any?
           ;;   :default (:text "The supplied `min` or the first item in the supplied `:-steps` collection.")
           ;;   :desc    "The initial, default value."}
           ;;  {:name    default-index
-          ;;   :pred    int?
+          ;;   :schema    int?
           ;;   :default 0
           ;;   :desc    "Use `default-index` when you want to set the default value
           ;;             by index. This is the index of the number in a numeric
           ;;             range (with a `min` and `max`), or the index of a value in
           ;;             a supplied `:-steps` collection"}
           ;;  {:name    steps
-          ;;   :pred    vector?
+          ;;   :schema    vector?
           ;;   :default nil
           ;;   :desc    "Collection of step values."}
           ;;  {:name    step-marker
-          ;;   :pred    #{:dot :bar :value :none}
+          ;;   :schema    #{:dot :bar :value :none}
           ;;   :default :none
           ;;   :desc    "Collection of step values."}
 
           ;;  ;; Flip this to current-value-label-scale-factor (or token?)
           ;;  {:name    label-scale-factor
-          ;;   :pred    float?
+          ;;   :schema    float?
           ;;   :default 0.7
           ;;   :desc    "Factor to scale down labels in range which are not selected.
           ;;             Must be positive float and <= 1.0."}
 
           ;;  {:name    wrapper-attrs
-          ;;   :pred    map?
+          ;;   :schema    map?
           ;;   :default nil
           ;;   :desc    "HTML attributes map applied to the outer containing div."}
           ;;  {:name    step-labels-wrapper-attrs
-          ;;   :pred    map?
+          ;;   :schema    map?
           ;;   :default nil
           ;;   :desc    "HTML attributes map applied to the step labels containing div."}
           ;;  {:name    current-value-label-display-fn
-          ;;   :pred    fn?
+          ;;   :schema    fn?
           ;;   :default nil
           ;;   :desc    "Function which takes the current step, (usually a number),
           ;;             and transforms the value for display."}
           ;;  {:name    display-current-value-label?
-          ;;   :pred    boolean?
+          ;;   :schema    boolean?
           ;;   :default false
           ;;   :desc    "If set to `false`, the current step value label will not
           ;;             be displayed."}
 
            {:name    current-value-label-position
-            :pred    
+            :schema    
                      #{
                       ;;  :track-top
                       ;;  :track-right

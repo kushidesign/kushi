@@ -338,7 +338,7 @@
    (into [:div]
          (for [{nm      :name
                 typ     :type
-                pred    :pred
+                schema    :schema
                 desc    :desc
                 default :default} (second custom-attributes)]
            (when nm
@@ -367,7 +367,7 @@
                         :gap--1.25em
                         :pis--1.4em
                         :overflow-x--auto)
-               (when pred [docs/opt-detail "Pred" pred docs/kushi-opts-grid-type :pred])
+               (when schema [docs/opt-detail "Pred" schema docs/kushi-opts-grid-type :schema])
                (when typ [docs/opt-detail "Type" typ docs/kushi-opts-grid-type :type])
                [docs/opt-detail "Defaults" default docs/kushi-opts-grid-default :default]
                (when desc [docs/opt-detail "Desc." desc docs/kushi-opts-grid-desc :desc])]])))])

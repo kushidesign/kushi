@@ -150,44 +150,44 @@
   {:summary "A collapse is a section of content which can be collapsed and
              expanded."
    :opts '[{:name    label
-            :pred    string?
+            :schema    string?
             :default nil
             :desc    "The text to display in the collapse header."}
            {:name    label-expanded
-            :pred    string?
+            :schema    string?
             :default nil
             :desc    "The text to display in the collapse header when expanded.
                       Optional."}
            {:name    icon
-            :pred    vector?
+            :schema    vector?
             :default '[kushi.ui.icon.core/icon :add]
             :desc    "An instance of a kushi.ui.icon/icon component Optional."}
            {:name    icon-expanded
-            :pred    vector?
+            :schema    vector?
             :default '[kushi.ui.icon.core/icon :remove]
             :desc    "An instance of a kushi.ui.icon/icon component. Optional."}
            {:name    icon-position
-            :pred    #{:start :end}
+            :schema    #{:start :end}
             :default :start
             :desc    "A value of `:start` will place the at the inline start of
                       the header, preceding the label. A value of `:end` will
                       place the icon at the inline end of the header, opposite
                       the label. Optional."}
            {:name    header-attrs
-            :pred    map?
+            :schema    map?
             :default nil
             :desc    "Attribute map for header element."}
            {:name    body-attrs
-            :pred    map?
+            :schema    map?
             :default nil
             :desc    ["Attribute map for body element."]}
            {:name    expanded?
-            :pred    boolean?
+            :schema    boolean?
             :default false
             :desc    "When a value of `true` is passed, the collapse is
                       initially rendered in an expanded state. Optional."}
            {:name    speed
-            :pred    pos-int?
+            :schema    pos-int?
             :default 250
             :desc    "The speed of the transition."}
            ]}

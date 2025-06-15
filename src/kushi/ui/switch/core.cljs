@@ -61,42 +61,42 @@
           
           
    :opts '[{:name    on?
-            :pred    boolean?
+            :schema    boolean?
             :default false
             :desc    "Use to control the initial on/off state of the switch"}
            {:name    disable-events?
-            :pred    boolean?
+            :schema    boolean?
             :default false
             :desc    "Set this to true if you would like to control the state of
                       the switch in a reactive manner via the `:-on?` option"}
            {:name    thumb-attrs
-            :pred    map?
+            :schema    map?
             :default nil
             :desc    "HTML attributes map applied to the inner element, commonly
                       refered to as the \"handle\" or \"thumb\" of the switch."}
            {:name    thumb-content-off
-            :pred    #{string? vector?}
+            :schema    #{string? vector?}
             :default nil
             :desc    "String or element that will be placed in center of thumb,
                       when in the \"off\" position"}
            {:name    thumb-content-on
-            :pred    #{string? vector?}
+            :schema    #{string? vector?}
             :default nil
             :desc    "String or element that will be placed in center of thumb,
                       when in the \"on\" position"}
            {:name    track-content-off
-            :pred    #{string? vector?}
+            :schema    #{string? vector?}
             :default nil
             :desc    "String or element that will be placed in the track, when
                       in the \"off\" position"}
            {:name    track-content-on
-            :pred    #{string? vector?}
+            :schema    #{string? vector?}
             :default nil
             :desc    "String or element that will be placed in the track, when
                       in the \"on\" position"}
            
            {:name    colorway
-            :pred    #{:neutral :accent :positive :negative :warning}
+            :schema    #{:neutral :accent :positive :negative :warning}
             :default nil
             :desc    "Colorway of the switch. Can also be a named color from
                       Kushi's design system, e.g `:red`, `:purple`, `:gold`,

@@ -96,7 +96,7 @@
    
    
    :opts '[{:name    f
-            :pred    fn?
+            :schema    fn?
             :default nil
             :desc    "A component rendering function which takes a single 
                       argument, (the popover container dom node), and renders
@@ -107,7 +107,7 @@
 
                       `(fn [el] (rdom/render [my-popover-content] el))`"}
            {:name    placement
-            :pred    keyword?
+            :schema    keyword?
             :default :auto
             :desc    "You can use single keywords to specify the exact placement 
                       of the popover:
@@ -148,23 +148,23 @@
                       `[:block-end :center]`
                       `[:block-end :inline-start]`"}
            {:name    arrow?
-            :pred    boolean?
+            :schema    boolean?
             :default true
             :desc    "Setting to false will not render a directional arrow with 
                       the popover."}
            {:name    auto-dismiss?
-            :pred    boolean?
+            :schema    boolean?
             :default false
             :desc    "Setting to true will auto-dismiss the popover. The time of
                       display before display is controlled by the theme token
                       `--popover-auto-dismiss-duration`"}
            {:name    popover-class
-            :pred    string?
+            :schema    string?
             :default nil
             :desc    "A class name for a la carte application of classes on the 
                       popover element."}
            #_{:name    use-on-click?
-              :pred    boolean?
+              :schema    boolean?
               :default false
               :desc    "By default, the popover is triggered on the mousedown event. 
                       Setting to true will instead use the click event to trigger 

@@ -121,31 +121,31 @@
    (!? {:display-metadata? false} w-reqs)
    `~w-reqs))
 
-(defn with-preds [opts]
-  (reduce-kv (fn [m k {:keys [pred]
+(defn with-schemas [opts]
+  (reduce-kv (fn [m k {:keys [schema]
                        :as   v}]
-               (let [pred 
-                     (if-not pred
+               (let [schema 
+                     (if-not schema
                        ; lookup by opt key e.g. :-custom
                        (or (k variants-by-custom-opt-key)        
                            'any?)
                        (cond 
-                         ; just a predicate function e.g. boolean?
-                         (symbol? pred)                                 
-                         pred
+                         ; just a schemaicate function e.g. boolean?
+                         (symbol? schema)                                 
+                         schema
 
                          ; set literal for enum e.g. #{:rounded :sharp :pill}
-                         (set? pred)                                    
-                         pred
+                         (set? schema)                                    
+                         schema
 
                          ; kw such as :kushi.ui.variants/colors}
-                         (keyword? pred)                                
+                         (keyword? schema)                                
                          (get variants 
-                              (keyword (str (name pred) "/set")))
+                              (keyword (str (name schema) "/set")))
 
                          ; for surfacing warning
-                         :else pred))]
-                 (assoc m k (assoc v :pred pred))))
+                         :else schema))]
+                 (assoc m k (assoc v :schema schema))))
              {}
              opts))
 
@@ -157,7 +157,7 @@
         ns-name     (some-> &env :ns :name str)
         fq-fn-name  (str ns-name "/" fn-sym)]
     (when (seq opts)
-      (let [opts    (with-preds opts)
+      (let [opts    (with-schemas opts)
             opts-unreserved-ks (mapv #(keyword (subs (name %) 1)) (keys opts))]
         `(let [schema# {:ns/name            ~ns-name
                         :fn/name            (quote ~fn-sym)

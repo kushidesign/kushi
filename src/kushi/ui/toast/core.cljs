@@ -97,7 +97,7 @@
              for any of the tokens, you will need to use an explicit unit e.g.
              `0px`."
    :opts    '[{:name    f
-               :pred    fn?
+               :schema    fn?
                :default nil
                :desc    "A component rendering function which takes a single
                       argument, (the toast container dom node), and renders
@@ -109,7 +109,7 @@
                        
                       `(fn [el] (rdom/render [my-toast-content] el))`"}
               {:name    placement
-               :pred    keyword?
+               :schema    keyword?
                :default :auto
                :desc    ["You can use single keywords to specify the exact
                        placement of the toast:
@@ -153,13 +153,13 @@
                        `[:block-end :inline-start]`"
                          ]}
               {:name    auto-dismiss?
-               :pred    boolean?
+               :schema    boolean?
                :default true
                :desc    "Toasts are auto-dismissed by default. The duration of
                       display before dismissal is controlled by the theme token
                       `--toast-auto-dismiss-duration`"}
               {:name    slide-in?
-               :pred    boolean?
+               :schema    boolean?
                :default true
                :desc    "Toasts slide into the viewport by default. The timing of
                       this can be controlled by the theme token
@@ -167,7 +167,7 @@
                       reduced motion (an OS-level setting), toasts will never
                       slide in, nor will they scale up or down upon entry."}
               {:name    toast-class
-               :pred    string?
+               :schema    string?
                :default nil
                :desc    ["A class name for a la carte application of classes on the
                        toast element."]}

@@ -274,13 +274,13 @@
 
 
 (defn- d1-grid-with-variant-labels
-  [v-1d vks uic-fn variant-attrs variant-args]
-  (!? [v-1d vks uic-fn variant-attrs variant-args])
+  [v-1d vks uic-fn variant-attrs variant-args demo]
   (into [:div (merge-attrs 
                (sx :display--grid
                    :gtc--74px:max-content
                    :ai--c
-                   :gap--0.75rem:1rem))]
+                   :gap--0.75rem:1rem)
+               {:style (:row-style demo)})]
         (let [coll (resolve-variants v-1d vks)]
           (when (coll? coll)
             (reduce
@@ -525,14 +525,15 @@
 (defn variant-grid
   "Produces a 1d, 2d, or 3d variant grid"
   [uic opt]
-  (let [{:keys [demo-index multiple-demos? pred]}
+  (let [{:keys [demo-index multiple-demos? schema]}
         opt
         
         {args          :args
          attrs         :attrs
          attrs-display :attrs/display
          :keys         [x-variants label rows? snippets? variant-labels? row-style]
-         :or           {variant-labels? true}}
+         :or           {variant-labels? true}
+         :as           demo} 
         (:demo opt)
 
         variants
@@ -546,8 +547,8 @@
 
         [variants bad-variants]
         (kushi.util/partition-by-pred
-         #(or (= pred boolean?)
-              (= pred 'boolean?)
+         #(or (= schema boolean?)
+              (= schema 'boolean?)
               (contains? defs/variants-kw-set %))
          variants)]
 
@@ -630,7 +631,13 @@
                                  variant-args))
                          coll))))
 
-         [d1-grid-with-variant-labels v-1d vks uic-fn variant-attrs variant-args]))]))))
+         [d1-grid-with-variant-labels
+          v-1d
+          vks
+          uic-fn
+          variant-attrs
+          variant-args
+          demo]))]))))
 
 
 (defn showcase [m]

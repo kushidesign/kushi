@@ -11,13 +11,13 @@
              or entity."
    :desc    "Avatars will display fallback text when no image is provided."
    :opts    '[colorway
-              {:pred    #{:neutral :accent :positive :negative :warning}
+              {:schema    #{:neutral :accent :positive :negative :warning}
                :default nil
                :desc    "Colorway of the avatar. Can also be a named color from
                          Kushi's design system, e.g `:red`, `:purple`, `:gold`,
                          etc. Only applies when fallback text is used."}
               size           
-              {:pred    #{:xxxsmall
+              {:schema    #{:xxxsmall
                           :xxsmall
                           :xsmall
                           :small

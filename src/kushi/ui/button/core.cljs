@@ -1,14 +1,18 @@
 (ns kushi.ui.button.core
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
    [kushi.ui.core :refer (extract)]
-   [kushi.ui.icon.core]
+   [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
-   [kushi.ui.util :refer [as-str maybe nameable?]]
-   )
-  ;; (:require-macros [kushi.ui.button.core])
+   [kushi.ui.util :refer [as-str maybe nameable?]])
+   ;; (:require-macros [kushi.ui.button.core])
   )
+
+;; [kushi.ui.variants :refer [variants-by-custom-opt-key convert-opts]]
+;; (? :pp (-> button var meta :opts convert-opts))
+
 
 
 (defn ^:public button
@@ -36,212 +40,181 @@
    ;; Should this be a map, parsed with edamame?
    ;; Should we use keys like :-colorway, same as call-site
    :opts   
-   '[
-     colorway       
-     {:pred    #{:neutral :accent :positive :negative :warning}
-      :default nil
-      :desc    "Colorway of the button. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
-      :demo    {:label          "Colorways / surfaces × shapes"
-                :snippets-label "Colorways"
-                :require        [[kushi.ui.icon.core :refer [icon]]]
-                :x-variants     [surface shape]
-                :rows?          true
-                :attrs          {:-end-enhancer [icon :east]}
-                :attrs/display  {:-size :small}
-                :attrs/snippet  {:-surface :solid}
-                :args           ["Next"]}}
+   {
 
-     surface        
-     {:pred    #{:classic :soft :mild :solid :outline :minimal}
-      :default :round
-      :desc    "Surface variant of the button."
-      :demo    {:label         "Surface variants"
-                :attrs         {:-end-enhancer [icon :east]
-                                :-colorway     :accent}
-                :attrs/display {:-size :small}
-                :args          ["Next"]}}
-
-     shape          
-     {:pred    #{:sharp :rounded :pill}
-      :default :round
-      :desc    "Shape of the button."
-      :demo    {:label         "Shape variants"
-                :attrs         {:-end-enhancer [icon :east]
-                                :-colorway     :accent
-                                :-surface      :solid}
-                :attrs/display {:-size :small}
-                :args          ["Next"]}}
+    ;; :-size           {:default nil
+    ;;                   :desc    "Corresponds to the font-size based on Kushi's font-size scale."
+    ;;                   :demo    {:label         "Size variants"
+    ;;                             :attrs         {:-end-enhancer :east
+    ;;                                             :-colorway     :accent
+    ;;                                             :-surface      :solid}
+    ;;                             :attrs/display {:-surface :solid}
+    ;;                             :args          ["Next"]}}
 
 
-     packing        
-     {:pred    #{:compact :roomy}
-      :default nil
-      :desc    "General amount of padding inside the button"
-      :demo    {:label         "Packing variants"
-                :attrs         {:-end-enhancer [icon :east]
-                                :-colorway     :accent
-                                :-surface      :solid}
-                :attrs/display {:-size :small}
-                :args          ["Next"]
-                ;; :x-variants    [surface]
-                }}
+    :-colorway       {:default nil
+                      :desc    "Colorway of the button. Can also be a named color from Kushi's design system e.g `:red` `:purple` `:gold` etc."
+                      :demo    {:args           ["Next"]
+                                :x-variants     [:surface]
 
-     size           
-     {:pred    #{:xxxsmall
-                 :xxsmall
-                 :xsmall
-                 :small
-                 :medium
-                 :large
-                 :xlarge
-                 :xxlarge
-                 :xxxlarge}
-      :default nil
-      :desc    "Corresponds to the font-size based on Kushi's font-size scale."
-      :demo    {:label         "Size variants"
-                :attrs         {:-end-enhancer [icon :east]
-                                :-colorway     :accent
-                                :-surface      :solid}
-                :attrs/display {:-surface :solid}
-                :rows?         true
-                :args          ["Next"]}}
+                                ;; should be label/snippets
+                                :snippets-label "Colorways"
 
-     stroke-align   
-     {:pred    #{:outside :inside}
-      :default nil
-      :desc    "Alignment of the stroke. Only applies to `:-surface` `:outline`"
-      :demo    {:label   "Stroke alignment"
-                :require [[kushi.ui.icon.core :refer [icon]]]
-                :samples [[button {:-end-enhancer [icon :east]
-                                   :-size         :small
-                                   :-colorway     :accent
-                                   :-surface      :outline
-                                   :-stroke-align :inside}
-                           "Next"]
+                                :attrs/snippet  {:-surface :solid}
+                                :attrs/display  {:-size :small}
+                                :label          "Colorways / surfaces × shapes"
+                                :attrs          {:-end-enhancer :east}
+                                :rows?          true}}
 
-                          [button {:-end-enhancer [icon :east]
-                                   :-size         :small
-                                   :-colorway     :accent
-                                   :-surface      :outline
-                                   :-stroke-align :outside}
-                           "Next"]
 
-                          ;; [button {:style         {"--outlined-element-stroke-width" :3px
-                          ;;                          "--stroke-color"                  :currentColor}
-                          ;;          :-end-enhancer [icon :east]
-                          ;;          :-size         :small
-                          ;;          :-surface      :outline
-                          ;;          :-stroke-align :inside}
-                          ;;  "Next"]
-                          ;; [button {:style         {"--outlined-element-stroke-width" :3px
-                          ;;                          "--stroke-color"                  :currentColor}
-                          ;;          :-end-enhancer [icon :east]
-                          ;;          :-size         :small
-                          ;;          :-surface      :outline
-                          ;;          :-stroke-align :outside}
-                          ;;  "Next"]
-                          
-                          ]}}
+    ;; Fix
+    ;; :-shape          {:default :round
+    ;;                   :desc    "Shape of the button."
+    ;;                   :demo    {:label         "Shape variants"
+    ;;                             :attrs         {:-end-enhancer :east
+    ;;                                             :-colorway     :accent
+    ;;                                             :-surface      :solid}
+    ;;                             :attrs/display {:-size :xxxlarge}
+    ;;                             :args          ["Next"]}}
 
-     start-enhancer 
-     {:pred   [:or :string :keyword vector?]
-      :default nil
-      :desc    "Content at the inline-start position, following the button text. Typically an icon."
-      :demo    {:label   "Start-enhancer icons"
-                :require [[kushi.ui.icon.core :refer [icon]]]
-                :samples [[button {:-start-enhancer [icon :pets]
-                                   :-size           :small
-                                   :-colorway       :accent
-                                   :-surface        :solid}
-                           "Pets"]
-                          
-                          [button {:-start-enhancer [icon :auto-awesome]
-                                   :-size           :small
-                                   :-colorway       :accent
-                                   :-surface        :soft}
-                           "Wow"]
+    ;; Fix
+    ;; :-stroke-align   {:schema    #{:inside :outside}
+    ;;                   :default nil
+    ;;                   :desc    "Alignment of the stroke. Only applies to `:-surface` `:outline`"
+    ;;                   :demo    {:label   "Stroke alignment"
+    ;;                             :require '[[kushi.ui.icon.core :refer [icon]]]
+    ;;                             :samples [[button
+    ;;                                        {:-end-enhancer '[icon :east]
+    ;;                                         :-size         :small
+    ;;                                         :-colorway     :accent
+    ;;                                         :-surface      :outline
+    ;;                                         :-stroke-align :inside}
+    ;;                                        "Next"]
+    ;;                                       [button
+    ;;                                        {:-end-enhancer '[icon :east]
+    ;;                                         :-size         :small
+    ;;                                         :-colorway     :accent
+    ;;                                         :-surface      :outline
+    ;;                                         :-stroke-align :outside}
+    ;;                                        "Next"]]}}
 
-                          [button {:-start-enhancer [icon :play-arrow]
-                                   :-size           :small
-                                   :-colorway       :accent
-                                   :-surface        :outline}
-                           "Play"]]}}
+    ;; Fix
+    ;; :-packing        {:default nil
+    ;;                   :desc    "General amount of padding inside the button"
+    ;;                   :demo    {:label         "Packing variants"
+    ;;                             :attrs         {:-end-enhancer '[icon :east]
+    ;;                                             :-colorway     :accent
+    ;;                                             :-surface      :solid}
+    ;;                             :attrs/display {:-size :small}
+                                ;; :args          ["Next"]}}
 
-     end-enhancer   
-     {:pred    #(or (string? %) (keyword? %) (vector? %))
-      :default nil
-      :desc    "Content at the inline-end position, preceding the button text. Typically an icon."
-      :demo    {:label   "End-enhancer icons"
-                :require [[kushi.ui.icon.core :refer [icon]]]
-                :samples [
-                          [button {:-end-enhancer [icon :pets]
-                                   :-size         :small
-                                   :-colorway     :accent
-                                   :-surface      :solid}
-                           "Pets"]
-                          
-                          [button {:-end-enhancer [icon :auto-awesome]
-                                   :-size         :small
-                                   :-colorway     :accent
-                                   :-surface      :soft}
-                           "Wow"]
+    ;; demo
+    ;; :-end-enhancer   {:schema    #(or (string? %) (keyword? %) (vector? %))
+    ;;                   :default nil
+    ;;                   :desc    "Content at the inline-end position preceding the button text. Typically an icon."
+    ;;                   :demo    {:label   "End-enhancer icons"
+    ;;                             :require [[kushi.ui.icon.core :refer ['icon]]]
+    ;;                             :samples [[button
+    ;;                                        {:-end-enhancer ['icon :pets]
+    ;;                                         :-size         :small
+    ;;                                         :-colorway     :accent
+    ;;                                         :-surface      :solid}
+    ;;                                        "Pets"]
+    ;;                                       [button
+    ;;                                        {:-end-enhancer ['icon :auto-awesome]
+    ;;                                         :-size         :small
+    ;;                                         :-colorway     :accent
+    ;;                                         :-surface      :soft}
+    ;;                                        "Wow"]
+    ;;                                       [button
+    ;;                                        {:-end-enhancer ['icon :play-arrow]
+    ;;                                         :-size         :small
+    ;;                                         :-colorway     :accent
+    ;;                                         :-surface      :outline}
+    ;;                                        "Play"]]}}
 
-                          [button {:-end-enhancer [icon :play-arrow]
-                                   :-size         :small
-                                   :-colorway     :accent
-                                   :-surface      :outline}
-                           "Play"]]}}
-                           
-     loading?       
-     {:pred    boolean?
-      :default false
-      :desc    "When `true`, this will set the appropriate values for `aria-busy` and `aria-label`"
-      :demo    {:label "Loading and disabled states"
-                :require [[kushi.ui.button.core :refer [button]]
-                          [kushi.ui.icon.core :refer [icon]]
-                          [kushi.ui.spinner.core :refer [spinner]]]
-                :samples [{:code [button
-                                  {:-loading?     true
-                                   :-colorway     :accent
-                                   :-surface      :solid
-                                   :-size         :small
-                                   :-end-enhancer [spinner {:-variety :donut}]}
-                                  "Play"]}
+    ;; demo
+    ;; :-start-enhancer {:schema    [:or :string :keyword vector?]
+    ;;                   :default nil
+    ;;                   :desc    "Content at the inline-start position following the button text. Typically an icon."
+    ;;                   :demo    {:label   "Start-enhancer icons"
+    ;;                             :require [[kushi.ui.icon.core :refer ['icon]]]
+    ;;                             :samples [[button
+    ;;                                        {:-start-enhancer ['icon :pets]
+    ;;                                         :-size           :small
+    ;;                                         :-colorway       :accent
+    ;;                                         :-surface        :solid}
+    ;;                                        "Pets"]
+    ;;                                       [button
+    ;;                                        {:-start-enhancer ['icon :auto-awesome]
+    ;;                                         :-size           :small
+    ;;                                         :-colorway       :accent
+    ;;                                         :-surface        :soft}
+    ;;                                        "Wow"]
+    ;;                                       [button
+    ;;                                        {:-start-enhancer ['icon :play-arrow]
+    ;;                                         :-size           :small
+    ;;                                         :-colorway       :accent
+    ;;                                         :-surface        :outline}
+    ;;                                        "Play"]]}}
 
-                          {:code [button
-                                  {:-loading?     true
-                                   :-colorway     :accent
-                                   :-surface      :solid
-                                   :-size         :small
-                                   :-end-enhancer [spinner {:-variety :propeller}]}
-                                  "Play"]}
+    ;; demo
+    ;; :-loading?       {:schema    boolean?
+    ;;                   :default false
+    ;;                   :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`"
+    ;;                   :demo    {:label   "Loading and disabled states"
+    ;;                             :require '[[kushi.ui.button.core :refer [button]]
+    ;;                                        [kushi.ui.icon.core :refer [icon]]
+    ;;                                        [kushi.ui.spinner.core :refer [spinner]]]
+    ;;                             :samples [{:code [button
+    ;;                                               {:-loading?     true
+    ;;                                                :-colorway     :accent
+    ;;                                                :-surface      :solid
+    ;;                                                :-size         :small
+    ;;                                                :-end-enhancer [spinner {:-variety :donut}]}
+    ;;                                               "Play"]}
+    ;;                                       {:code [button
+    ;;                                               {:-loading?     true
+    ;;                                                :-colorway     :accent
+    ;;                                                :-surface      :solid
+    ;;                                                :-size         :small
+    ;;                                                :-end-enhancer [spinner {:-variety :propeller}]}
+    ;;                                               "Play"]}
+    ;;                                       {:code [button
+    ;;                                               {:-loading?     true
+    ;;                                                :-colorway     :accent
+    ;;                                                :-surface      :solid
+    ;;                                                :-size         :small
+    ;;                                                :-end-enhancer [spinner {:-variety :thinking}]}
+    ;;                                               "Play"]}
+    ;;                                       {:code [button
+    ;;                                               {:-loading? true
+    ;;                                                :-colorway :accent
+    ;;                                                :-surface  :solid
+    ;;                                                :-size     :small}
+    ;;                                               [:span {:style {:visibility :hidden
+    ;;                                                               :width      :0px}} "Play"]
+    ;;                                               [spinner {:-variety :thinking}]]}
+    ;;                                       {:code [button
+    ;;                                               {:disabled      true
+    ;;                                                :-colorway     :accent
+    ;;                                                :-surface      :solid
+    ;;                                                :-size         :small
+    ;;                                                :-end-enhancer [icon :play-arrow]}
+    ;;                                               "Play"]}]}}
 
-                          {:code [button
-                                  {:-loading?     true
-                                   :-colorway     :accent
-                                   :-surface      :solid
-                                   :-size         :small
-                                   :-end-enhancer [spinner {:-variety :thinking}]}
-                                  "Play"]}
-
-                          {:code [button
-                                  {:-loading?     true
-                                   :-colorway     :accent
-                                   :-surface      :solid
-                                   :-size         :small}
-                                  [:span {:style {:visibility :hidden :width :0px}} "Play"]
-                                  [spinner {:-variety :thinking}]]}
-
-                          {:code [button
-                                  {:disabled      true
-                                   :-colorway     :accent
-                                   :-surface      :solid
-                                   :-size         :small
-                                   :-end-enhancer [icon :play-arrow]}
-                                  "Play"]}]}}]
+    ;; Fix
+    ;; :-surface        {:default :round
+    ;;                   :desc    "Surface variant of the button."
+    ;;                   :demo    {:label         "Surface variants"
+    ;;                             :attrs         {:-end-enhancer [icon :east]
+    ;;                                             :-colorway     :accent}
+    ;;                             :attrs/display {:-size :small}
+    ;;                             :args          ["Next"]}}
+    }
 
   ;;  :demos    '[{:label   "Start-enhancer icons"
-  ;;               :desc    "Content at the inline-start position, following the button text. Typically an icon."
+  ;;               :desc    "Content at the inline-start position following the button text. Typically an icon."
   ;;               :require [[kushi.ui.icon.core :refer [icon]]]
   ;;               :samples [[button {:-start-enhancer [icon :pets]
   ;;                                  :-size           :small
@@ -261,35 +234,38 @@
   ;;                                  :-surface        :outline}
   ;;                          "Play"]]}]
 
-   :display  '{:docs     {:order [:summary :desc :toks]
-                          :parse {:summary 'x
-                                  :desc 'y
-                                  :toks 'z}
-                          :exclude #{:toks}}
-               :showcase {:toks {:order ["tok family name" "..."]
-                                 :exclude #{"..."}}
-                          :order [surface shape]
-                          :exclude #{start-enhancer size}}}}
+  ;;  :display  '{:docs     {:order [:summary :desc :toks]
+  ;;                         :parse {:summary 'x
+  ;;                                 :desc 'y
+  ;;                                 :toks 'z}
+  ;;                         :exclude #{:toks}}
+  ;;              :showcase {:toks {:order ["tok family name" "..."]
+  ;;                                :exclude #{"..."}}
+  ;;                         :order [surface shape]
+  ;;                         :exclude #{start-enhancer size}}}
+
+   }
 
   [& args]
   (let [{:keys [opts attrs children]}
         (extract args button)
 
         {:keys [start-enhancer
-                loading?
                 end-enhancer
                 stroke-align
+                loading?
                 packing
                 weight
                 size]}
         opts
+         
+        start-enhancer
+        (if (keyword? start-enhancer) [icon start-enhancer] start-enhancer)
 
-        ;;  _ (? :pp [opts children])
+        end-enhancer
+        (if (keyword? end-enhancer) [icon end-enhancer] end-enhancer)
 
-        ;; Why the rename?
-        {:keys             [shape surface]
-         semantic-colorway :colorway}
-
+        {:keys [shape surface colorway]}
         (get-variants opts)
         
         styling-class
@@ -310,11 +286,8 @@
              :pb--$_padding-block
              ;; TODO what are these???
              ["[aria-label='loading']>.kushi-spinner-propeller:d" :revert]
-             ["[aria-label='loading']>.kushi-icon:d" :none]
-             )]
+             ["[aria-label='loading']>.kushi-icon:d" :none])]
     
-    ;; TODO maybe use :data-kushi-ui "button"
-
     ;; TODO incorporate into docs
     (into 
      [:button
@@ -323,19 +296,22 @@
         :aria-busy                 loading?
         :aria-label                (when loading? "loading")
         :data-kushi-ia             ""
-        :data-kushi-size           (validate-option button size)
-        :data-kushi-weight         (validate-option button weight)
-        :data-kushi-shape          (validate-option button shape)
-        :data-kushi-surface        (validate-option button surface)
-        :data-kushi-packing        (validate-option button packing)
-        :data-kushi-colorway       (validate-option button semantic-colorway)
-        :data-kushi-stroke-align   (validate-option button stroke-align)
+        :data-kushi-size           size
+        :data-kushi-weight         weight
+        :data-kushi-shape          shape
+        :data-kushi-surface        surface
+        :data-kushi-packing        packing
+        :data-kushi-colorway       colorway
+        :data-kushi-stroke-align   stroke-align
         :data-kushi-end-enhancer   (when end-enhancer "")
         :data-kushi-start-enhancer (when start-enhancer "")}
        attrs)]
           (cond start-enhancer (concat [start-enhancer] children)
                 end-enhancer   (concat children [end-enhancer])
                 :else          children))))
+
+
+
 
 
 (defn ^:public icon-button
@@ -355,7 +331,7 @@
              :br "`:$button-border-width`"
              :br "The default value is `:1px`"]
    :opts    '[{:name    loading?
-               :pred    boolean?
+               :schema    boolean?
                :default false
                :desc    "When `true`, this will set the appropriate values for
                          `aria-busy` and `aria-label`"}]}
@@ -435,7 +411,7 @@
 ;; Sample component built with 2-fn macro pattern 
 ;; (defn big-paw
 ;;   {:doc "Hi from big button"
-;;   ;;  :opts '{size {:pred #{:small :large :xxxlarge}}}
+;;   ;;  :opts '{size {:schema #{:small :large :xxxlarge}}}
 ;;    }
 ;;   [& args]
 ;;   (let [{:keys [opts attrs children]}

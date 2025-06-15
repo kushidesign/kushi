@@ -79,7 +79,7 @@
                                      :variant-labels? false
                                      :args            [:star]}]}
 
-          :-icon-filled? {:pred    boolean?
+          :-icon-filled? {:schema    boolean?
                           ;; :required? true
                           :default false
                           :desc    "Filled or not filled"
@@ -88,20 +88,19 @@
                                     :attrs/display {:-size :xxxlarge}
                                     :args          [:star]}}
 
-          :-icon-style   {:pred    (into #{} defs/icon-style)
+          :-icon-style   {:schema    (into #{} defs/icon-style)
                           :default :outlined
                           :desc    "Style of icon"
                           :demo    {:label         "Icon styles"
                                     :attrs         {:-size :xxxlarge}
                                     :args          [:login]}}
 
-          :-inert?       {:pred    boolean?
+          :-inert?       {:schema    boolean?
                           :default false
                           :desc    "Determines whether the icon will feature hover and active styles"
                           :demo    {:label         "Inert or interactive styling"
                                     :attrs {:-size :xxxlarge :-icon-filled? true :colorway :positive}
-                                    :args          [:star]}}
-          }}
+                                    :args          [:star]}}}}
   [& args]
   (when ^boolean js/goog.DEBUG (validate args))
   (let [{:keys [opts attrs children]}                              
@@ -134,9 +133,11 @@
           ;; TODO - use tokenized syntax here
           [:>span:fs "var(--mui-icon-relative-font-size, inherit)"]
           [:>span.material-symbols-icon-filled:font-variation-settings "'FILL' 1"]
+
           ;; [:>span {:transition-property        :all
           ;;          :transition-timing-function :$transition-timing-function
           ;;          :transition-duration        :$transition-duration}]
+
           :_svg:height--1em
           :_svg>path:fill--currentColor)
       {

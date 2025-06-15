@@ -12,38 +12,38 @@
    :desc    "Avatars will display fallback text when no image is provided."
    :opts    '[
               {:name    size
-               :pred    string?
+               :schema    string?
                :default "36px"
                :desc    "Must be a valid css length unit supplied as a string
                          e.g. `\"24px\"`, `\"1rem\"`, etc."}
               {:name    font-size-ratio
-               :pred    float?
+               :schema    float?
                :default "36px"
                :desc    "Must be a valid css length unit supplied as a string
                          e.g. `\"24px\"`, `\"1rem\"`, etc."}
               {:name    colorway
-               :pred    #{:neutral :accent :positive :negative :warning}
+               :schema    #{:neutral :accent :positive :negative :warning}
                :default nil
                :desc    "Colorway of the avatar. Can also be a named color from
                          Kushi's design system, e.g `:red`, `:purple`, `:gold`,
                          etc. Only applies when fallback text is used."}
               {:name    surface
-               :pred    #{:faint :solid :minimal :outline}
+               :schema    #{:faint :solid :minimal :outline}
                :default :round
                :desc    "Surface variant of the avatar. Except for the `:outline`
                          variant, only applies when fallback text is used."}
               #_{:name    stroke-align
-                 :pred    #{:inside :outside}
+                 :schema    #{:inside :outside}
                  :default inside
                  :desc    "Alignment of the stroke used for the avatar border"}
               {:name    shape
                ;; TODO add :squircle
-               :pred    #{:sharp :round :pill :circle #_:squircle}
+               :schema    #{:sharp :round :pill :circle #_:squircle}
                :default :circle
                :desc    "Shape of the avatar."}
               ;; TODO add
               #_{:name    mask
-                 :pred    string?
+                 :schema    string?
                  :default nil
                  :desc    "URL of a mask image to clip the avatar with."}]}
   [& args]

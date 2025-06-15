@@ -32,36 +32,36 @@
              The default value is `:1px`"
    
    :opts    '[{:name    loading?
-               :pred    boolean?
+               :schema    boolean?
                :default false
                :desc    "When `true`, this will set the appropriate values for
                         `aria-busy` and `aria-label`"}
               {:name    start-enhancer
-               :pred    #{string? keyword?}
+               :schema    #{string? keyword?}
                :default nil
                :desc    "The name of a Google Material Symbol to use as an icon
                          in the inline start position"}
               {:name    end-enhancer
-               :pred    #{string? keyword?}
+               :schema    #{string? keyword?}
                :default nil
                :desc    "The name of a Google Material Symbol to use as an icon
                          in the inline end position"}
               {:name    colorway
-               :pred    #{:neutral :accent :positive :negative :warning}
+               :schema    #{:neutral :accent :positive :negative :warning}
                :default nil
                :desc    "Colorway of the tag. Can also be a named color from
                          Kushi's design system, e.g `:red`, `:purple`, `:gold`,
                          etc."}
               {:name    surface
-               :pred    #{:faint :solid :minimal :outline}
+               :schema    #{:faint :solid :minimal :outline}
                :default :round
                :desc    "Surface variant of the tag."}
               {:name    shape
-               :pred    #{:sharp :round :pill}
+               :schema    #{:sharp :round :pill}
                :default :round
                :desc    "Shape of the tag."}
               {:name    packing
-               :pred    #{:compact :roomy}
+               :schema    #{:compact :roomy}
                :default nil
                :desc    "General amount of padding inside the tag"}
               ]

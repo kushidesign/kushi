@@ -9,22 +9,22 @@
    [kushi.playground.shared-styles]
    [kushi.ui.variants]
    [kushi.ui.button.core :refer [button]]
-  ;;  [kushi.playground.showcase.core :refer [showcase uic-showcase-map2 uic-showcase-map]]
-  ;;  [kushi.ui.button.core :refer [button]]
+   [kushi.playground.showcase.core :refer [showcase uic-showcase-map2 uic-showcase-map]]
+   [kushi.ui.button.core :refer [button]]
    [kushi.ui.flex.core :as flex :refer [flex-row-start flex-col-start]]
    [kushi.ui.layout.core :refer [layout]]
    [kushi.ui.icon.core :refer [icon]]
    [kushi.ui.icon.demo]
   ;;  [kushi.ui.label.core :refer [label]]
   ;;  [kushi.ui.radio.core :refer [radio]]
-  ;;  [kushi.ui.spinner.core :refer [spinner]]
+   [kushi.ui.spinner.core :refer [spinner]]
    [kushi.ui.util :as util]
    [clojure.string :as string]
    ;; [malli.core :as m]
    [kushi.ui.defs :as defs]))
 
 
-
+(? :pp {:coll-limit 22} (range 20))
 
 
 ;; (sx "@keyframes wtf dd" 7)
@@ -64,8 +64,6 @@
                  "data-kushi-playground-active-path"
                  "components")
 
-
-
   ;; (? (m/validate [:cat
   ;;                 [:? [:map
   ;;                      [:foo {:optional true} :int]
@@ -74,15 +72,29 @@
   ;;                [{:foo 8} 2 3 4]))
 
   [:div (sx :m--100px)
-   [icon {:-ns       (at)
-          :colorway :red
+   [button {:-start-enhancer :pets} "Click"]
+   #_[icon {:-ns       (at)
+          :-colorway :red
           :-size     :xxxlarge
           :-weight   :bold
           :-inert?   true
           :id        :foo}
     :star]]
 
-  ;; #_[showcase (uic-showcase-map2 kushi.ui.icon.core/icon kushi.ui.icon.demo/demos)]
+  [:div (sx :m--100px)
+   [button {:-colorway       :red 
+            :-start-enhancer :pets
+            :-surface        :solid}
+    "Click"]]
+
+  #_[showcase (uic-showcase-map2 kushi.ui.icon.core/icon kushi.ui.icon.demo/demos)]
+
+  #_[showcase (uic-showcase-map2 kushi.ui.spinner.core/spinner #_kushi.ui.icon.demo/demos)]
+
+
+  #_[showcase (uic-showcase-map2 kushi.ui.button.core/button #_kushi.ui.icon.demo/demos)]
+
+  
 
   #_[:div 
   ;;  [icon
