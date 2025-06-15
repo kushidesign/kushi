@@ -1,13 +1,17 @@
 (ns kushi.core
   (:require ;; for testing
  ;; [taoensso.tufte :as tufte :refer [p profile]]
+   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [domo.core :as domo] ;; Should these go somewhere else?
    [kushi.css.build.css-reset]
    [kushi.css.build.kushi-ui-component-theming] ;; for testing
-)
+  ;;  [malli.core :as m]
+   )
  (:require-macros [kushi.core]))
 
+(def debug? ^boolean js/goog.DEBUG)
+(def dev? ^boolean debug?)
 
 (defn ^:public class-str
   "Takes a coll of class strings or keywords, at least one of which is a
@@ -298,13 +302,20 @@
           squiggly  (string/join (repeat (count (str x)) "^"))]
       (apply bling
              (concat (when origin [ [:italic "origin:    "] [:bold origin] "\n\n"])
-                     [[:italic "component: "] [:bold component]
-                      "\n\n"
-                      [:italic "option:    "] [:bold option]
-                      "\n\n"
-                      [:italic "invalid:   "] [:bold x]
+                     "\n\n"
+                     [[:italic "Component:"]
+                      "\n\n  "
+                      [:bold component]
+                      "\n\n\n\n"
+                      [:italic "Option:"] 
+                      "\n\n  "
+                      [:bold option]
+                      "\n\n\n\n"
+                      [:italic "Invalid:"] 
+                      "\n\n  "
+                      [:bold x]
                       "\n"
-                      "           " [:bold.red squiggly]
+                      "  " [:bold.red squiggly]
                       (when origin "\n")]))))
 
   ;; hiccup version
@@ -333,10 +344,10 @@
   (defn warning-body
     [{:keys [opt-sym pred]}]
     (bling "\n"
-           "Value for the "
+           [:italic "Value for the "]
            [:bold (str ":-" opt-sym)] 
-           " option must pass this predicate:"
-           "\n\n"
+           [:italic " option must pass this predicate:"]
+           "\n\n  "
            [:bold (if (set? pred) (str pred) pred)]))
 
   ;; hiccup version
@@ -439,28 +450,46 @@ Example call from a ns called showcase.core, using pure hiccup:
 
     [{:keys [x pred src-form src-form-meta]
       :as   m}]
-    (when-not (nil? x)
-      (let [pred-set? (set? pred)
-            pred-f    (when-not pred-set? (get publics pred)) 
-            skip?     (or (nil? x)
-                          (and (not pred-set?)
-                               (not pred-f)))]
-        (when-not skip?
-          (when-not (if pred-set?
-                      (or (contains? pred x)
-                          (when (string? x)
-                            (contains? pred (keyword x))))
-                      (pred-f x))
 
-            (bad-opt-value-callout
-             {:point-of-interest-opts (merge 
-                                       {:header (warning-header m)
-                                        :body   (warning-body m)
-                                        :form   (some-> src-form symbol)}
-                                       src-form-meta)
+    ;; (when (vector? pred)
+    ;;   (when (= x 8)
+    ;;     (m/validate pred x)
 
-              :callout-opts           {:type  :warning
-                                       :label "WARNING: Invalid option value"}}))))))     
+    ;;     (bad-opt-value-callout
+    ;;      {:point-of-interest-opts (merge 
+    ;;                                {:header (warning-header m)
+    ;;                                 :body   (warning-body m)
+    ;;                                 :form   (some-> src-form symbol)}
+    ;;                                src-form-meta)
+
+    ;;       :callout-opts           {:type  :warning
+    ;;                                :label "WARNING: Invalid option value"}})))
+
+    #_(when-not (nil? x)
+        (let [pred-set? (set? pred)
+              pred-f    (when-not pred-set?
+                          (if (symbol? pred)
+                            (get publics pred)
+                            (when (fn? pred) pred))) 
+              skip?     (or (nil? x)
+                            (and (not pred-set?)
+                                 (not pred-f)))]
+          (when-not skip?
+            (when-not (if pred-set?
+                        (or (contains? pred x)
+                            (when (string? x)
+                              (contains? pred (keyword x))))
+                        (pred-f x))
+
+              (bad-opt-value-callout
+               {:point-of-interest-opts (merge 
+                                         {:header (warning-header m)
+                                          :body   (warning-body m)
+                                          :form   (some-> src-form symbol)}
+                                         src-form-meta)
+
+                :callout-opts           {:type  :warning
+                                         :label "WARNING: Invalid option value"}}))))))     
 
   (defn validate-options*
     "A conditional call to this is setup within the `extract` macro.
@@ -475,8 +504,13 @@ Example call from a ns called showcase.core, using pure hiccup:
            [_ uic-opts] :opts} uic-meta
 
           {src-form-meta :form-meta
-           src-form      :form}       src]
-      (doseq [[k x] supplied-opts
+           src-form      :form}       src
+
+          ;; TODO take this out when you make opts just a map with :-size keys etc
+          uic-opts
+          (apply array-map uic-opts)]
+
+      #_(doseq [[k x] supplied-opts
               :let  [opt-sym (-> k name symbol)
                      {:keys [pred]} (get uic-opts opt-sym)]]
         (validate-option* {:x             x      
@@ -486,3 +520,4 @@ Example call from a ns called showcase.core, using pure hiccup:
                            :uic-name      uic-name
                            :src-form      src-form
                            :src-form-meta src-form-meta})))))
+

@@ -1,7 +1,12 @@
 (ns ^:dev/always kushi.ui.core
   (:require
-   [clojure.walk :as walk]))
+   [clojure.pprint :refer [pprint]]
+   [fireworks.core :refer [? !? ?> !?>]]
+   [kushi.ui.variants :refer [variants-by-custom-opt-key variants]]
+   [edamame.core :as e]
+   [clojure.walk :as walk] ))
 
+            
 (defmacro &*->val
   ([opts attrs children coll f]
    (&*->val opts attrs children coll f nil))
@@ -72,6 +77,92 @@
              ~icon-name))))
 
 
-(defmacro extract [args f]
-  `(kushi.ui.core/extract* ~args (-> ~f var meta)))
+;; (defmacro extract [args f]
+;;   `(kushi.ui.core/extract* ~args (-> ~f var meta)))
 
+
+(defmacro sx-call 
+  [coll]
+  `{:evaled ~coll
+    :quoted (quote ~coll)})
+
+
+(defn ui-demo-samples-partioned [samples]
+  (and (even? (count samples))
+       (let [partitioned
+             (partition 2 samples)]
+         (when (every? (fn [[label]]
+                         (string? label))
+                       partitioned)
+           partitioned))))
+
+
+(defmacro ui-demo [coll]
+  (let [w-reqs 
+        (mapv #(assoc %
+                      :require
+                      (str (:require %))
+                      :samples
+                      (let [samples (:samples %)
+                            m*      (fn [sample label]
+                                      (merge 
+                                       {:code/evaled sample
+                                        :code/quoted (list 'quote sample)}
+                                       (when label {:label label})))]
+                        (if (:render-as %)
+                          samples
+                          (if-let [partitioned 
+                                   (ui-demo-samples-partioned samples)]
+                            (mapv (fn [[label sample]] (m* sample label))
+                                  partitioned)
+                            (mapv (fn [sample] (m* sample nil))
+                                  samples)))))
+              coll)]
+   (!? {:display-metadata? false} w-reqs)
+   `~w-reqs))
+
+(defn with-preds [opts]
+  (reduce-kv (fn [m k {:keys [pred]
+                       :as   v}]
+               (let [pred 
+                     (if-not pred
+                       ; lookup by opt key e.g. :-custom
+                       (or (k variants-by-custom-opt-key)        
+                           'any?)
+                       (cond 
+                         ; just a predicate function e.g. boolean?
+                         (symbol? pred)                                 
+                         pred
+
+                         ; set literal for enum e.g. #{:rounded :sharp :pill}
+                         (set? pred)                                    
+                         pred
+
+                         ; kw such as :kushi.ui.variants/colors}
+                         (keyword? pred)                                
+                         (get variants 
+                              (keyword (str (name pred) "/set")))
+
+                         ; for surfacing warning
+                         :else pred))]
+                 (assoc m k (assoc v :pred pred))))
+             {}
+             opts))
+
+(defmacro validate [args]
+  (let [source-form (some-> &env :root-source-info :source-form)
+        mm          (nth source-form 2 nil)
+        fn-sym      (nth source-form 1 nil)
+        opts        (when (map? mm) (:opts mm))
+        ns-name     (some-> &env :ns :name str)
+        fq-fn-name  (str ns-name "/" fn-sym)]
+    (when (seq opts)
+      (let [opts    (with-preds opts)
+            opts-unreserved-ks (mapv #(keyword (subs (name %) 1)) (keys opts))]
+        `(let [schema# {:ns/name            ~ns-name
+                        :fn/name            (quote ~fn-sym)
+                        :fn/fq-name         ~fq-fn-name
+                        :opts/unreserved-ks ~opts-unreserved-ks
+                        :opts/quoted        (quote ~opts)
+                        :opts/expanded      ~opts}]
+           (kushi.ui.core/validate* schema# ~args))))))

@@ -1,6 +1,7 @@
 (ns ^:dev/always kushi.playground.showcase.modal
   (:require
    [clojure.repl]
+   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer [css defcss sx]]
    [kushi.playground.showcase.snippets :refer [component-snippets]]
    [kushi.ui.button.core :refer [button]]
@@ -57,11 +58,11 @@
   [:<> 
    [modal-close-button {:-modal-id modal-id}]
    [:div (sx :.kushi-playground-examples-modal-wrapper
-             :.flex-row-sb
+             :.flex-row-space-between
              :ai--fs
              :gap--1.5em)
     [:div (sx :.kushi-playground-examples-modal-wrapper-inner
-              :.flex-col-fs
+              :.flex-col-start
               :ai--b
               :gap--1rem)
      [:h1 (sx :.kushi-playground-examples-modal-wrapper-inner-label
@@ -74,6 +75,7 @@
 (defn example-modal
   [{:keys [modal-id wrapper-tag]
     :as   m}]
+  (!? m)
   ;; pass wrapper tag of :div to just render element
   ;; good for dev 
   [#_(or wrapper-tag modal) 

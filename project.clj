@@ -5,21 +5,22 @@
                         :url  "https://www.eclipse.org/legal/epl-2.0/"}
   :source-paths        [
                         ;; "../domo/src"
-                        "../../cljc/fireworks/src"
+                        ;; "../../cljc/fireworks/src"
                         ;; "../../cljc/bling/src"
                         "src"]
   :dependencies        [[design.kushi/domo "0.3.0"]
                         [org.clojure/clojure "1.11.1"]
                         [applied-science/js-interop "0.3.3"]
                         [expound "0.9.0"]
-                        [io.github.paintparty/bling "0.5.2"]
-                        [io.github.paintparty/fireworks "0.10.4"]
+                        [io.github.paintparty/bling "0.8.4-SNAPSHOT"]
+                        [io.github.paintparty/fireworks "0.12.0"]
                         [me.flowthing/pp "2024-01-04.60"]
                         [babashka/process "0.5.22"]
                         [borkdude/edamame "1.4.27"]
+                        ;; [org.flatland/ordered "1.15.12"]
                         ;; for testing & profiling
                         [com.taoensso/tufte "2.6.3"]
-                        ]
+                        [metosin/malli "0.18.0"]]
   :repl-options        {:init-ns kushi.core}
   :deploy-repositories [["clojars" {:url           "https://clojars.org/repo"
                                     :sign-releases false}]])

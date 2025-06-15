@@ -1,6 +1,5 @@
 (ns kushi.ui.shared.theming
   (:require 
-   [kushi.ui.icon.core]
    [kushi.ui.defs :as defs]
    [kushi.ui.util :refer [as-str maybe nameable?]]
    [clojure.string :as string]))
@@ -24,18 +23,37 @@
                "orange"
                "red"
                "magenta"
-               "brown"}})
+               "brown"}
+   :weight   defs/basic-weights-set-of-strs
+   :size     defs/basic-sizes-set-of-strs})
 
 (def variant-defaults
   {:colorway "neutral"
    :surface  "faint"
    :shape    "rounded"})
 
+(def variant-basics (into #{} (keys variants)))
+
+;; When it needs to be {:data-kushi-end-enhancer ""}
+(def data-kushi-blanks 
+  #{:end-enhancer :start-enhancer})
+
+(defn maybe-blank [x k]
+  (if (contains? data-kushi-blanks k) "" x))
+
 (defn data-kushi- [x k]
   (some-> x
+          (maybe-blank k)
           as-str
-          #_(maybe (get variants k nil))
           (->> (hash-map (keyword (str "data-kushi-" (name k)))))))
+
+(defn component-attrs [s opts & colls]
+  (merge (data-kushi- s :ui)
+         (reduce
+          (fn [m k]
+            (merge m (data-kushi- (k opts) k))) 
+          {}
+          (apply concat colls))))
 
 ;; (def color-mix-support? (? (.supports js/window.CSS "(color: color-mix(in oklch, red, transparent)")))
 ;; (def oklch-support? (? (.supports js/window.CSS "(color: oklch(40.1% 0.123 21.57))")))
@@ -54,8 +72,7 @@
                                    (maybe (k variants)))
                            v)))
               {}
-              (merge variant-defaults
-                     defaults))))
+              (merge variant-defaults defaults))))
 
 
 (defn- valid-hue? [x]

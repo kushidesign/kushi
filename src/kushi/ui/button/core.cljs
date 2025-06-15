@@ -144,7 +144,7 @@
                           ]}}
 
      start-enhancer 
-     {:pred    #{string? keyword?}
+     {:pred   [:or :string :keyword vector?]
       :default nil
       :desc    "Content at the inline-start position, following the button text. Typically an icon."
       :demo    {:label   "Start-enhancer icons"
@@ -168,7 +168,7 @@
                            "Play"]]}}
 
      end-enhancer   
-     {:pred    #{string? keyword?}
+     {:pred    #(or (string? %) (keyword? %) (vector? %))
       :default nil
       :desc    "Content at the inline-end position, preceding the button text. Typically an icon."
       :demo    {:label   "End-enhancer icons"
@@ -200,45 +200,45 @@
                 :require [[kushi.ui.button.core :refer [button]]
                           [kushi.ui.icon.core :refer [icon]]
                           [kushi.ui.spinner.core :refer [spinner]]]
-                :samples [[button
-                           {:-loading?     true
-                            :-colorway     :accent
-                            :-surface      :solid
-                            :-size         :small
-                            :-end-enhancer [spinner {:-variety :donut}]}
-                           "Play"]
+                :samples [{:code [button
+                                  {:-loading?     true
+                                   :-colorway     :accent
+                                   :-surface      :solid
+                                   :-size         :small
+                                   :-end-enhancer [spinner {:-variety :donut}]}
+                                  "Play"]}
 
-                          [button
-                           {:-loading?     true
-                            :-colorway     :accent
-                            :-surface      :solid
-                            :-size         :small
-                            :-end-enhancer [spinner {:-variety :propeller}]}
-                           "Play"]
+                          {:code [button
+                                  {:-loading?     true
+                                   :-colorway     :accent
+                                   :-surface      :solid
+                                   :-size         :small
+                                   :-end-enhancer [spinner {:-variety :propeller}]}
+                                  "Play"]}
 
-                          [button
-                           {:-loading?     true
-                            :-colorway     :accent
-                            :-surface      :solid
-                            :-size         :small
-                            :-end-enhancer [spinner {:-variety :thinking}]}
-                           "Play"]
+                          {:code [button
+                                  {:-loading?     true
+                                   :-colorway     :accent
+                                   :-surface      :solid
+                                   :-size         :small
+                                   :-end-enhancer [spinner {:-variety :thinking}]}
+                                  "Play"]}
 
-                          [button
-                           {:-loading?     true
-                            :-colorway     :accent
-                            :-surface      :solid
-                            :-size         :small}
-                           [:span {:style {:visibility :hidden :width :0px}} "Play"]
-                           [spinner {:-variety :thinking}]]
+                          {:code [button
+                                  {:-loading?     true
+                                   :-colorway     :accent
+                                   :-surface      :solid
+                                   :-size         :small}
+                                  [:span {:style {:visibility :hidden :width :0px}} "Play"]
+                                  [spinner {:-variety :thinking}]]}
 
-                          [button
-                           {:disabled      true
-                            :-colorway     :accent
-                            :-surface      :solid
-                            :-size         :small
-                            :-end-enhancer [icon :play-arrow]}
-                           "Play"]]}}]
+                          {:code [button
+                                  {:disabled      true
+                                   :-colorway     :accent
+                                   :-surface      :solid
+                                   :-size         :small
+                                   :-end-enhancer [icon :play-arrow]}
+                                  "Play"]}]}}]
 
   ;;  :demos    '[{:label   "Start-enhancer icons"
   ;;               :desc    "Content at the inline-start position, following the button text. Typically an icon."
@@ -280,8 +280,8 @@
                 end-enhancer
                 stroke-align
                 packing
-                size
-                icon]}
+                weight
+                size]}
         opts
 
         ;;  _ (? :pp [opts children])
@@ -306,10 +306,11 @@
              :cursor--pointer
              [:--_padding-block :$button-padding-block]
              [:--_padding-inline :$button-padding-inline]
-             ["[aria-label='loading']>.kushi-spinner-propeller:d" :revert]
-             ["[aria-label='loading']>.kushi-icon:d" :none]
              :pi--$_padding-inline
              :pb--$_padding-block
+             ;; TODO what are these???
+             ["[aria-label='loading']>.kushi-spinner-propeller:d" :revert]
+             ["[aria-label='loading']>.kushi-icon:d" :none]
              )]
     
     ;; TODO maybe use :data-kushi-ui "button"
@@ -323,16 +324,16 @@
         :aria-label                (when loading? "loading")
         :data-kushi-ia             ""
         :data-kushi-size           (validate-option button size)
+        :data-kushi-weight         (validate-option button weight)
         :data-kushi-shape          (validate-option button shape)
         :data-kushi-surface        (validate-option button surface)
         :data-kushi-packing        (validate-option button packing)
         :data-kushi-colorway       (validate-option button semantic-colorway)
         :data-kushi-stroke-align   (validate-option button stroke-align)
-        :data-kushi-end-enhancer   (when (and (not icon) end-enhancer) "")
-        :data-kushi-start-enhancer (when (and (not icon) start-enhancer) "")}
+        :data-kushi-end-enhancer   (when end-enhancer "")
+        :data-kushi-start-enhancer (when start-enhancer "")}
        attrs)]
-          (cond icon           [[kushi.ui.icon.core/icon :star]]
-                start-enhancer (concat [start-enhancer] children)
+          (cond start-enhancer (concat [start-enhancer] children)
                 end-enhancer   (concat children [end-enhancer])
                 :else          children))))
 

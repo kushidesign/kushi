@@ -1,6 +1,8 @@
 (ns ^:dev/always kushi.playground.showcase.snippets
   (:require
    [clojure.repl]
+   [clojure.edn]
+   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer [css defcss merge-attrs sx]]
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
    [kushi.playground.showcase.shared :refer [pprint-str]]
@@ -121,9 +123,10 @@
            copyable
            bottom-half?]
     :as m}]
+  ;; (? m)
   [:section (sx :.kushi-playground-snippet-section
                 :.snippet-section
-                :.flex-col-fs
+                :.flex-col-start
                 ;; :gap--0.5em
                 ;; :first-of-type:mbe--2.5em
                 ) 
@@ -205,7 +208,7 @@
     :as m}]
   [:div
    (sx :.relative
-       :.flex-row-fs
+       :.flex-row-start
        :.styled-scrollbars
        :_code:ws--n
        :_.code:ws--n
@@ -222,24 +225,36 @@
        :min-width--200px
        :min-height--120px)
    [:div
-    (sx :.flex-col-fs
+    (sx :.flex-col-start
         :w--100%
         :gap--1em
         :_.kushi-text-input-label:min-width--7em
         :_.kushi-input-inline:gtc--36%:64%)
-    (let [max-width   (or (when-let [[p v] (some-> kushi.css.media/media
-                                                   :sm
-                                                   first)]
-                            (when-not (d/matches-media? p (as-str v))
-                              27))
-                          50)
-          reqs        (apply conj reqs-for-examples reqs-for-uic)
-          formatted*  #(pprint-str % max-width)
-          reqs-str    (->> reqs
-                           (map formatted*)
-                           (string/join "\n"))]
+    (let [max-width   
+          (or (when-let [[p v] (some-> kushi.css.media/media
+                                       :sm
+                                       first)]
+                (when-not (d/matches-media? p (as-str v))
+                  27))
+              50)
+
+          reqs-for-examples
+          (if (string? reqs-for-examples)
+            (clojure.edn/read-string reqs-for-examples)
+            reqs-for-examples)
+
+          reqs        
+          (distinct (apply conj reqs-for-examples reqs-for-uic))
+
+          formatted*  
+          #(pprint-str % max-width)
+
+          reqs-str    
+          (->> reqs
+               (map formatted*)
+               (string/join "\n"))]
       (into [:div (sx ".kushi-playground-snippets-modal-requires"
-                      :.flex-col-fs
+                      :.flex-col-start
                       :gap--2.25rem)
              [snippet-section
               {:header             (into [:div (sx :.small :mbe--1em)]

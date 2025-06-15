@@ -7,10 +7,10 @@
  {
   binaryage/devtools   {:mvn/version "1.0.6"}
   reagent/reagent    {:mvn/version "1.1.1"}
-  io.github.paintparty/bling {:mvn/version "0.7.0"}
+  io.github.paintparty/bling {:mvn/version "0.8.4-SNAPSHOT"}
   ;; TODO - try stub fireworks here
   io.github.paintparty/fireworks {:mvn/version "0.12.0"}
-  design.kushi/kushi {:mvn/version "1.0.0-a.25-SNAPSHOT"}
+  design.kushi/kushi {:mvn/version "1.0.0-a.25"}
   babashka/process {:mvn/version "0.5.22"}}
 
  :aliases
@@ -22,8 +22,9 @@
   ;; you can make local git clones, or use :git/url deps here
   :local-dev
   {:override-deps {design.kushi/kushi {:local/root "../"}
+                  ;;  io.github.paintparty/lasertag {:local/root "../../../cljc/lasertag"}
                   ;;  io.github.paintparty/fireworks {:local/root "../../../cljc/fireworks"}
-                   io.github.paintparty/bling {:local/root "../../../cljc/bling"}
+                  ;;  io.github.paintparty/bling {:local/root "../../../cljc/bling"}
                    }
    :extra-deps    {thheller/shadow-cljs {:mvn/version "2.28.7"}
                    ;; TODO does edamame this need to be in deps?

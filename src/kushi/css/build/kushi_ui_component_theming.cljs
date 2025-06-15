@@ -379,13 +379,40 @@
 
 (defcss ".bold" {"font-weight" "var(--bold)"})
 
+;; TODO need to make this support linebreaks
+(defcss ".bold [data-kushi-ui][type=\"radio\"]:not(:checked)"
+  {"border-width" "0.2em"})
+
+(defcss "[data-kushi-weight=\"bold\"] [data-kushi-ui][type=\"radio\"]:not(:checked)"
+  {"border-width" "0.2em"})
+
+(defcss ".bold[data-kushi-ui][type=\"radio\"]:not(:checked)"
+  {"border-width" "0.2em"})
+
+(defcss "[data-kushi-weight=\"bold\"][data-kushi-ui][type=\"radio\"]:not(:checked)"
+  {"border-width" "0.2em"})
+
+
+(defcss ".bold [data-kushi-ui][type=\"checkbox\"]:not(:checked)"
+  {"border-width" "0.2em"})
+
+(defcss "[data-kushi-weight=\"bold\"] [data-kushi-ui][type=\"checkbox\"]:not(:checked)"
+  {"border-width" "0.2em"})
+
+(defcss ".bold[data-kushi-ui][type=\"checkbox\"]:not(:checked)"
+  {"border-width" "0.2em"})
+
+(defcss "[data-kushi-weight=\"bold\"][data-kushi-ui][type=\"checkbox\"]:not(:checked)"
+  {"border-width" "0.2em"})
+
+
 (defcss ".bold .kushi-icon" {"font-variation-settings" "'wght' 700"})
 
 (defcss ".bold.kushi-icon" {"font-variation-settings" "'wght' 700"})
 
 (defcss
-  ".bold>.kushi-radio-input"
-  {"outline-width" "var(--input-border-weight-bold)"})
+  ".bold>.kushi-radio-input, .bold>.kushi-radio-button-input, [data-kushi-weight=\"bold\"]>.kushi-radio-button-input"
+  {"border-width" "var(--input-border-weight-bold)"})
 
 (defcss
   ".bold>.kushi-checkbox-input"
