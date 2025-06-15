@@ -94,13 +94,13 @@
        :class         (css
                        ".kushi-modal-close-button"
                        {:fs                 :$large
-                        :pb                 :0.5rem
-                        :pis                :0.5rem
-                        :pie                :0.499rem
+                        :pb                 :0.4rem
+                        :pis                :0.4rem
+                        :pie                :0.399rem
                         :position           :absolute
-                        :inset-block-start  :0.5rem
+                        :inset-block-start  :1rem
                         :inset-block-end    :unset
-                        :inset-inline-end   :0.5rem
+                        :inset-inline-end   :1rem
                         :inset-inline-start :unset})
        :on-mouse-down close-kushi-modal}
       attrs)
@@ -171,6 +171,7 @@
        {:style            (css-vars-map light-box-shadow dark-box-shadow)
         :class            (css
                            ".kushi-modal"
+                           :.styled-scrollbars
                            :.fixed-centered
                            :.transition
                            [:transition-duration
