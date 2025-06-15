@@ -5,12 +5,14 @@
    [kushi.css.defs :as defs]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as specs]
+   [kushi.css.build.colorways :refer [colorway-args colorway-selector]]
    [kushi.util :refer [keyed vec-of-vecs? more-than-one? partition-by-pred]]
    [kushi.specs2 :as specs2]
    [clojure.walk :as walk :refer [prewalk postwalk]]
    [clojure.string :as string :refer [replace] :rename {replace sr}]
    [clojure.spec.alpha :as s]
    [bling.core :refer [bling callout point-of-interest]]
+   [bling.hifi :refer [hifi]]
    [babashka.process :refer [shell]]
   ;; for testing
   ;;  [taoensso.tufte :as tufte]
@@ -132,27 +134,29 @@
                          "No css ruleset will be created.")))})))
 
 (def bad-keyframe-warning-body
-  (bling "A css keyframe must be represented as a "
-         "two-element vector."
+  (bling "\n"
+         [:italic "A CSS keyframe must be represented as a "]
+         [:italic "two-element vector."]
+         "\n"
+         [:italic "The first element must be: "]
          "\n\n"
-         "The first element must be: "
-         "\n"
-         "- one of " [:neutral (str #{:to :from "to" "from"})]
-         "\n" [:italic "OR"] "\n"
-         "- A percentage from "
-         [:neutral "0%-100%"]
-         " as keyword or string, e.g. "
-         [:neutral ":50%, \"50%\""]
+         [:italic "  One of "] (hifi #{:to :from "to" "from"})
+         "\n" [:italic "  ~OR~"] "\n"
+         "  A percentage value e.g. "
+         (hifi :50%) " or " (hifi "50%")
+         "\n\n\n"
+         [:italic "The second element must be a valid style map such as:"]
          "\n\n"
-         "The second element must be a valid style map such as:"
-         "\n"
-         [:neutral "{:transform \"translateX(100%)\""]
-         "\n"
-         [:neutral " :color     \"red\""]
-         "\n"
-         [:neutral " :red       \"red\""]
-         "\n\n"
-         "No keyframe animation will be created."))
+         (hifi {:transform "translateX(100%)"
+                :color "red"}
+               {:margin-inline-start 2})
+        ;;  [:neutral "{:transform \"translateX(100%)\""]
+        ;;  "\n"
+        ;;  [:neutral " :color     \"red\""]
+        ;;  "\n"
+        ;;  [:neutral " :red       \"red\""]
+         "\n\n\n"
+         [:italic "No keyframe animation will be created."]))
 
 (def bad-at-rule-arg-warning-body
   (bling [:bold 'at-rule] " can be called 2 ways:\n\n"
@@ -183,16 +187,17 @@
     (generic-warning
      {:form   form
       :header (let [multiple? (< 1 (count at-rule-args))]
-                (bling (str (if keyframes? 
-                              "Bad CSS keyframe"
-                              "Bad at-rule arg")
-                            (when multiple? "s")
-                            ":")
-                       "\n"
+                (bling [:italic (str (if keyframes? 
+                                       "Bad CSS keyframe"
+                                       "Bad at-rule arg")
+                                     (when multiple? "s")
+                                     ":")]
+                       "\n\n"
                        (if multiple? 
-                         (trimmed-pprint at-rule-args)
-                         [:bold (trimmed-pprint
-                                 (first at-rule-args))])))
+                         [:bold (str "  " (trimmed-pprint at-rule-args))]
+                         [:bold (str "  " (trimmed-pprint
+                                           (first at-rule-args)))])
+                       "\n"))
       :body (if keyframes? 
               bad-keyframe-warning-body
               bad-at-rule-arg-warning-body)})))
@@ -253,21 +258,21 @@
       (apply
        bling
        (concat
-        [(if (contains? #{"kushi.core/css-rule"}
-                        fname)
-           "All args beyond the first are validated with:"
-           "All args are validated with:")
+        [[:italic (if (contains? #{"kushi.core/css-rule"}
+                                 fname)
+                    "All args beyond the first are validated with:"
+                    "All args are validated with:")]
          "\n"
-         [:bold.italic (str ::specs/valid-sx-arg)]
+         [:bold (str ::specs/valid-sx-arg)]
          "\n\n"]
         
         (when false (bad-args-spec-details spec-data))
         
-        ["The bad arguments will be discarded, and"
+        [[:italic "The bad arguments will be discarded, and"]
          "\n"
-         "the following css ruleset will be created"
+         [:italic "the following css ruleset will be created"]
          "\n"
-         "from the remaining valid arguments:"
+         [:italic "from the remaining valid arguments:"]
          "\n\n"]
         (ansi-colorized-css-block m))))}))
 
@@ -942,91 +947,6 @@
              (str sel " " css-str))))))))
 
 
-(defn colorway-selector [s]
-  (str "[data-kushi-colorway=\"" s "\"]"))
-
-(defn soft-classic [s]
-  {:bgc               (keyword (str "$background-color-" s "-soft-3"))
-   :dark:bgc          (keyword (str "$background-color-" s "-soft-3-dark-mode"))
-   :hover:bgc         (keyword (str "$background-color-" s "-soft-2"))
-   :dark:hover:bgc    (keyword (str "$background-color-" s "-soft-2-dark-mode"))
-   :active:bgc        (keyword (str "$background-color-" s "-soft"))
-   :dark:active:bgc   (keyword (str "$background-color-" s "-soft-dark-mode"))
-   :color             (keyword (str "$foreground-color-" s "-3"))
-   :hover:color       (keyword (str "$foreground-color-" s "-3"))
-   :active:color      (keyword (str "$foreground-color-" s "-3"))
-   :dark:color        (keyword (str "$foreground-color-" s "-3-dark-mode"))
-   :dark:hover:color  (keyword (str "$foreground-color-" s "-3-dark-mode"))
-   :dark:active:color (keyword (str "$foreground-color-" s "-3-dark-mode"))})
-
-(defn colorway-args [s]
-  (let [soft
-        {:bgc               (keyword (str "$background-color-" s "-soft-3"))
-         :dark:bgc          (keyword (str "$background-color-" s "-soft-3-dark-mode"))
-         :hover:bgc         (keyword (str "$background-color-" s "-soft-2"))
-         :dark:hover:bgc    (keyword (str "$background-color-" s "-soft-2-dark-mode"))
-         :active:bgc        (keyword (str "$background-color-" s "-soft"))
-         :dark:active:bgc   (keyword (str "$background-color-" s "-soft-dark-mode"))
-         :color             (keyword (str "$foreground-color-" s "-3"))
-         :hover:color       (keyword (str "$foreground-color-" s "-3"))
-         :active:color      (keyword (str "$foreground-color-" s "-3"))
-         :dark:color        (keyword (str "$foreground-color-" s "-3-dark-mode"))
-         :dark:hover:color  (keyword (str "$foreground-color-" s "-3-dark-mode"))
-         :dark:active:color (keyword (str "$foreground-color-" s "-3-dark-mode"))}]
-   [{:color                             (keyword (str "$foreground-color-" s ))
-    :hover:color                       (keyword (str "$foreground-color-" s "-2"))
-    :active:color                      (keyword (str "$foreground-color-" s "-3"))
-    :dark:color                        (keyword (str "$foreground-color-" s "-dark-mode"))
-    :dark:hover:color                  (keyword (str "$foreground-color-" s "-2-dark-mode"))
-    :dark:active:color                 (keyword (str "$foreground-color-" s "-3-dark-mode"))
-    :hover:bgc                         (keyword (str "$background-color-" s "-soft"))
-    :active:bgc                        (keyword (str "$background-color-" s "-soft-2"))
-    :dark:hover:bgc                    (keyword (str "$background-color-" s "-soft-dark-mode"))
-    :dark:active:bgc                   (keyword (str "$background-color-" s "-soft-2-dark-mode"))
-
-
-    "[data-kushi-surface= \"faint\"]"       
-    {:bgc             (keyword (str "$background-color-" s "-soft"))
-     :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
-     :hover:bgc       (keyword (str "$background-color-" s "-soft-2"))
-     :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-2-dark-mode"))
-     :active:bgc      (keyword (str "$background-color-" s "-soft-3"))
-     :dark:active:bgc (keyword (str "$background-color-" s "-soft-3-dark-mode"))}
-
-
-    "[data-kushi-surface= \"soft\"]"
-    soft
-
-
-    "[data-kushi-surface= \"soft-classic\"]"
-    (merge soft
-           {:--classic-trim-color (keyword (str "$" s "-150"))
-            :--classic-trim-color-dark (keyword (str "$" s "-800"))})
-
-
-    "[data-kushi-surface= \"solid\"]"      
-    {:bgc        (keyword (str "$background-color-" s "-hard"))
-     :hover:bgc  (keyword (str "$background-color-" s "-hard-2"))
-     :active:bgc (keyword (str "$background-color-" s "-hard-3"))}
-
-
-    "[data-kushi-surface= \"solid-classic\"]"    
-    {:--classic-trim-color (keyword (str "$" s "-550"))
-     :bgc                  (keyword (str "$background-color-" s "-hard"))
-     :hover:bgc            (keyword (str "$background-color-" s "-hard-2"))
-     :active:bgc           (keyword (str "$background-color-" s "-hard-3"))}
-
-
-    "dark:[data-kushi-surface= \"solid-classic\"]" 
-    {:bgc        (keyword (str "$background-color-" s "-hard-dark-mode"))
-     :hover:bgc  (keyword (str "$background-color-" s "-hard-2-dark-mode"))
-     :active:bgc (keyword (str "$background-color-" s "-hard-3-dark-mode"))}
-
-
-    "dark:[data-kushi-surface= \"solid\"]" 
-    {:bgc        (keyword (str "$background-color-" s "-hard-dark-mode"))
-     :hover:bgc  (keyword (str "$background-color-" s "-hard-2-dark-mode"))
-     :active:bgc (keyword (str "$background-color-" s "-hard-3-dark-mode"))}}]))
 
 
 (defmacro ^:public css-rule
@@ -1629,17 +1549,22 @@
    nil."
   [f opt]
   `(do (when js/goog.DEBUG 
-         (let [runtime-value#  ~opt
-               quoted-opt-sym# (quote ~opt)
+         (let [runtime-value#  
+               ~opt
+
+               quoted-opt-sym# 
+               (quote ~opt)
+
                {opts#    :opts
                 ui-name# :name
-                ui-ns#   :ns}  (meta (var ~f))
-               {pred# :pred}   (some->> opts#
-                                        second
-                                        (filter (fn [m#] 
-                                                  (= quoted-opt-sym#
-                                                     (:name m#))))
-                                        first)
+                ui-ns#   :ns}  
+               (meta (var ~f))
+
+               {pred# :pred}   
+               (some->> opts#
+                        second
+                        (filter (fn [m#] (= quoted-opt-sym# (:name m#))))
+                        first)
               ;;  err# (atom nil)
                ]
           ;;  (try (throw (js/Error. "some error"))
@@ -1667,3 +1592,11 @@
 
 
 
+
+(defmacro at
+  "Provides a data-kushi-src with source-code coordinates"
+  []
+  (let [{:keys [file line column]} (meta &form)
+        ns-name (-> &env :ns :name)
+        ret (str ns-name ":" line ":" column)]
+    `~ret))
