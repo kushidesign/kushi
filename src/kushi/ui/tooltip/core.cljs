@@ -1,5 +1,6 @@
 (ns kushi.ui.tooltip.core
   (:require [applied-science.js-interop :as j]
+            [fireworks.core :refer [? !? ?> !?>]]
             [clojure.string :as string]
             [domo.core :as domo]
             [goog.string]
@@ -27,9 +28,14 @@
   (cond (string? text)
         (when-not (string/blank? text)
           text)
+
+        (or (symbol? text) (keyword? text) (number? text))
+        (str text)
+
         (coll? text)
         (when (valid-tooltip-text-coll? text)
           (into [] text))
+
         (array? text)
         (let [v (js->clj text)]
           (when (valid-tooltip-text-coll? v)
@@ -106,7 +112,7 @@
           need to use an explicit unit e.g. `0px`."
           
    :opts '[{:name    text
-            :pred    #(or (string? %) (keyword? %) (vector? %))
+            :pred    #(or (string? %) (keyword? %) (vector? %) (number? %))
             :default nil
             :desc    "Required. The text to display in the tooltip"}
            {:name    placement
@@ -161,7 +167,7 @@
             :desc    "A class name for a la carte application of classes on the
                       tooltip element."}
            {:name    text-on-click
-            :pred    #(or (string? %) (keyword? %) (vector? %))
+            :pred    #(or (string? %) (keyword? %) (vector? %) (number? %))
             :default nil
             :desc    "The tooltip text, after the tipped element has been clicked."}
            {:name    text-on-click-tooltip-class
