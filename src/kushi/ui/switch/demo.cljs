@@ -27,7 +27,7 @@
       :sx-attrs        (sx-call (sx :.xxlarge))
       :row-attrs       row-attrs
       :container-attrs container-attrs
-      :snippets-header ["Use the `data-kushi-colorway` attributes `:neutral`, `:accent`, `:positive`, `:warning`, and `:negative` to control the semantic color variant."
+      :snippets-header ["Use the `data-ks-colorway` attributes `:neutral`, `:accent`, `:positive`, `:warning`, and `:negative` to control the semantic color variant."
                         :br
                         :br
                         "The default is `:.neutral`."]                        

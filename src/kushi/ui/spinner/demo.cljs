@@ -46,12 +46,12 @@
                             loading? (= "loading" (.-ariaLabel el))] 
                         (if loading?
                           (do (.removeAttribute el "aria-label")
-                              (.removeAttribute el "data-kushi-ui-spinner"))
+                              (.removeAttribute el "data-ks-ui-spinner"))
                           (do (.setAttribute el
                                              "aria-label"
                                              "loading")
                               (.setAttribute el
-                                             "data-kushi-ui-spinner"
+                                             "data-ks-ui-spinner"
                                              true)))))})
                   [spinner [icon :play-arrow] [donut]]
                   "Activate"])

@@ -5,7 +5,7 @@
    [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
    [kushi.ui.core :refer (extract)]
    [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
+   [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
    [kushi.ui.util :refer [as-str maybe nameable?]])
    ;; (:require-macros [kushi.ui.button.core])
   )
@@ -256,7 +256,10 @@
                 loading?
                 packing
                 weight
-                size]}
+                size
+                contour
+                surface
+                colorway]}
         opts
          
         start-enhancer
@@ -265,8 +268,8 @@
         end-enhancer
         (if (keyword? end-enhancer) [icon end-enhancer] end-enhancer)
 
-        {:keys [shape surface colorway]}
-        (get-variants opts)
+        ;; {:keys [contour surface colorway]}
+        ;; (get-variants opts)
         
         styling-class
         (css ".kushi-button"
@@ -292,19 +295,19 @@
     (into 
      [:button
       (merge-attrs
-       {:class                     styling-class
-        :aria-busy                 loading?
-        :aria-label                (when loading? "loading")
-        :data-kushi-ia             ""
-        :data-kushi-sizing           size
-        :data-kushi-weight         weight
-        :data-kushi-contour          shape
-        :data-kushi-surface        surface
-        :data-kushi-packing        packing
-        :data-kushi-colorway       colorway
-        :data-kushi-stroke-align   stroke-align
-        :data-kushi-end-enhancer   (when end-enhancer "")
-        :data-kushi-start-enhancer (when start-enhancer "")}
+       {:class                  styling-class
+        :aria-busy              loading?
+        :aria-label             (when loading? "loading")
+        :data-ks-ia             ""
+        :data-ks-sizing         size
+        :data-ks-weight         weight
+        :data-ks-contour        contour
+        :data-ks-surface        surface
+        :data-ks-packing        packing
+        :data-ks-colorway       colorway
+        :data-ks-stroke-align   stroke-align
+        :data-ks-end-enhancer   (when end-enhancer "")
+        :data-ks-start-enhancer (when start-enhancer "")}
        attrs)]
           (cond start-enhancer (concat [start-enhancer] children)
                 end-enhancer   (concat children [end-enhancer])
@@ -357,7 +360,7 @@
           (some-> colorway
                   hue-style-map))]
 
-    ;; TODO maybe use :data-kushi-name "button"
+    ;; TODO maybe use :data-ks-name "button"
     (into [:button
            (merge-attrs
             {:class                   (css ".kushi-icon-button"
@@ -376,33 +379,33 @@
                                            [:pi :$_padding-inline])
              :aria-busy               loading?
              :aria-label              (when loading? "loading")
-             :data-kushi-ia           ""
-             :data-kushi-surface      surface
-             :data-kushi-contour        shape
-             :data-kushi-ui-spinner   (when loading? "")
-             :data-kushi-stroke-align (some-> stroke-align 
+             :data-ks-ia           ""
+             :data-ks-surface      surface
+             :data-ks-contour        shape
+             :data-ks-ui-spinner   (when loading? "")
+             :data-ks-stroke-align (some-> stroke-align 
                                               (maybe #{:outside "outside"}))
-             :data-kushi-colorway     semantic-colorway
-             :data-kushi-sizing         size
-             :data-kushi-packing      (some-> packing
+             :data-ks-colorway     semantic-colorway
+             :data-ks-sizing         size
+             :data-ks-packing      (some-> packing
                                               (maybe nameable?)
                                               as-str
                                               (maybe #{"compact" "roomy"})
-                                              (data-kushi- :packing))}
-            ;; (when loading? {:data-kushi-ui-spinner ""})
+                                              (data-ks- :packing))}
+            ;; (when loading? {:data-ks-ui-spinner ""})
             (some-> stroke-align 
                     (maybe #{:outside "outside"})
-                    (data-kushi- :stroke-align))
+                    (data-ks- :stroke-align))
             (some-> (or semantic-colorway
                         (when hue-style-map ""))
-                    (data-kushi- :colorway))
+                    (data-ks- :colorway))
             (some-> packing
                     (maybe nameable?)
                     as-str
                     (maybe #{"compact" "roomy"})
-                    (data-kushi- :packing))
+                    (data-ks- :packing))
             hue-style-map
-            (some-> surface (data-kushi- :surface))
+            (some-> surface (data-ks- :surface))
             attrs)]
           (if icon [kushi.ui.icon.core/icon icon]
               children))))

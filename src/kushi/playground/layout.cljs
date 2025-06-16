@@ -121,8 +121,8 @@
 
 (defn style-tag-active-path [path]
   [:style {:type "text/css"}
-   (str "#app[data-kushi-playground-active-path=\"" path "\"]"
-        " [data-kushi-path=\"" path "\"]{display: flex}")])
+   (str "#app[data-ks-playground-active-path=\"" path "\"]"
+        " [data-ks-path=\"" path "\"]{display: flex}")])
 
 
 (defn generic-section
@@ -141,7 +141,7 @@
                        :d--none
                        :gap--5rem
                        :pb--0:30vh)
-     :data-kushi-path path
+     :data-ks-path path
      :ref             (fn [el]
                         (when el
                           (js/requestAnimationFrame
@@ -151,10 +151,10 @@
     [:section 
      {:class
       (css :min-height--200px
-           [">*:not([data-kushi-playground-sidenav]):pi" :1.25rem]
-           ["md:>*:not([data-kushi-playground-sidenav]):pi" "4rem"]
+           [">*:not([data-ks-playground-sidenav]):pi" :1.25rem]
+           ["md:>*:not([data-ks-playground-sidenav]):pi" "4rem"]
            :>section>p:max-width--605px)
-      :data-kushi-playground-section
+      :data-ks-playground-section
       "about"}
      [:div (sx :.component-section-header
               ;;  :d--none
@@ -164,7 +164,7 @@
                ;; TODO - make sure this works
                ["+*:pbs" :1.5rem]
                ;; Maybe smaller division for mobile?
-               ;; ["~section[data-kushi-playground-component]:pbs" :6rem]
+               ;; ["~section[data-ks-playground-component]:pbs" :6rem]
                )
       [:div (sx :.flex-col-c :mbs--50px :h--50px)
        [:h1 (sx :.component-section-header-label)
@@ -177,8 +177,8 @@
 
 (defn style-tag-first-intersecting [x]
   [:style {:type "text/css"}
-   (str "#app[data-kushi-playground-first-intersecting=\"" x "\"]"
-        " [data-kushi-playground-component=\"" x "\"]{opacity: 1; filter: none}")])
+   (str "#app[data-ks-playground-first-intersecting=\"" x "\"]"
+        " [data-ks-playground-component=\"" x "\"]{opacity: 1; filter: none}")])
 
 
 ;; Everytime there is a resize event
@@ -219,7 +219,7 @@
                    ;; ---------------------------------------------------------
                    )
 
-              :data-kushi-playground-component 
+              :data-ks-playground-component 
               label
 
               :ref                             

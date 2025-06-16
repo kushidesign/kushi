@@ -10,7 +10,7 @@
         {:keys [orientation]}  opts]
     [:div
      (merge-attrs
-      {:data-kushi-ui :divisor}
+      {:data-ks-ui :divisor}
       (sx ".kushi-divisor"
           :.transition
           :bgc--$divisor-color

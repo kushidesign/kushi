@@ -31,7 +31,7 @@
         opts]
     [:div
      (merge-attrs
-      {:data-kushi-colorway colorway}
+      {:data-ks-colorway colorway}
       (sx
        ".kushi-text-input-wrapper"
        :.flex-row-fs
@@ -207,7 +207,7 @@
                                   :fw--$wee-bold
                                   :hover:bgc--transparent!important
                                   :active:bgc--transparent!important)
-         :data-kushi-colorway colorway}
+         :data-ks-colorway colorway}
 
         helper-label-attrs
         (when helper
@@ -226,7 +226,7 @@
                             {:wrapper-attrs    wrapper-attrs
                              :start-enhancer   start-enhancer
                              :end-enhancer     end-enhancer
-                             :data-kushi-colorway colorway
+                             :data-ks-colorway colorway
                              :textarea?        textarea?})]
 
         label-with-attrs

@@ -205,7 +205,7 @@
 ;;               [[:box-shadow--0:0:0:10px:red|0:0:0:10px:black]]
 ;;               nil nil))
 
-;; (? (css-rule* ".wtf" [[">*:not([data-kushi-playground-sidenav]):pi" :1.25rem]] nil nil))
+;; (? (css-rule* ".wtf" [[">*:not([data-ks-playground-sidenav]):pi" :1.25rem]] nil nil))
 ;; (? (css-rule* ".wtf" [[">*:last-child:pi" :1.25rem]] nil nil))
 ;; (? (css-rule* ".wtf" [:>*:last-child:pi--1.25rem] nil nil))
 ;; (? (css-rule* ".wtf" [{:.foo:last-child:c :red}] nil nil))

@@ -224,8 +224,8 @@
 
               ;; Hack to conditionally hide things here,
               ;; like if they should not be shown on mobile
-              ["has([data-kushi-playground-example='popover-with-form']):display" :none]
-              ["xsm:has([data-kushi-playground-example='popover-with-form']):display" :block])
+              ["has([data-ks-playground-example='popover-with-form']):display" :none]
+              ["xsm:has([data-ks-playground-example='popover-with-form']):display" :block])
 
      [:section (sx :.kushi-playground-example-row
                    :.playground-example-row ;; TODO <-remove?

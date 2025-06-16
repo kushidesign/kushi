@@ -100,10 +100,10 @@
   (let [txy          (txy append-tt-opts)
         pane-classes (pane-classes append-tt-opts)]
     (doto el
-      (.setAttribute "data-kushi-ui" "pane")
+      (.setAttribute "data-ks-ui" "pane")
 
       ;; TODO swap this in once defcss is ready
-      ;; (.setAttribute "data-kushi-ui-pane-placement" placement)
+      ;; (.setAttribute "data-ks-ui-pane-placement" placement)
 
       (.setAttribute "id" id)
       (.setAttribute "style" txy)

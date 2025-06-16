@@ -380,29 +380,29 @@
 (defcss ".bold" {"font-weight" "var(--bold)"})
 
 ;; TODO need to make this support linebreaks
-(defcss ".bold [data-kushi-ui][type=\"radio\"]:not(:checked)"
+(defcss ".bold [data-ks-ui][type=\"radio\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss "[data-kushi-weight=\"bold\"] [data-kushi-ui][type=\"radio\"]:not(:checked)"
+(defcss "[data-ks-weight=\"bold\"] [data-ks-ui][type=\"radio\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss ".bold[data-kushi-ui][type=\"radio\"]:not(:checked)"
+(defcss ".bold[data-ks-ui][type=\"radio\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss "[data-kushi-weight=\"bold\"][data-kushi-ui][type=\"radio\"]:not(:checked)"
+(defcss "[data-ks-weight=\"bold\"][data-ks-ui][type=\"radio\"]:not(:checked)"
   {"border-width" "0.2em"})
 
 
-(defcss ".bold [data-kushi-ui][type=\"checkbox\"]:not(:checked)"
+(defcss ".bold [data-ks-ui][type=\"checkbox\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss "[data-kushi-weight=\"bold\"] [data-kushi-ui][type=\"checkbox\"]:not(:checked)"
+(defcss "[data-ks-weight=\"bold\"] [data-ks-ui][type=\"checkbox\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss ".bold[data-kushi-ui][type=\"checkbox\"]:not(:checked)"
+(defcss ".bold[data-ks-ui][type=\"checkbox\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss "[data-kushi-weight=\"bold\"][data-kushi-ui][type=\"checkbox\"]:not(:checked)"
+(defcss "[data-ks-weight=\"bold\"][data-ks-ui][type=\"checkbox\"]:not(:checked)"
   {"border-width" "0.2em"})
 
 
@@ -411,7 +411,7 @@
 (defcss ".bold.kushi-icon" {"font-variation-settings" "'wght' 700"})
 
 (defcss
-  ".bold>.kushi-radio-input, .bold>.kushi-radio-button-input, [data-kushi-weight=\"bold\"]>.kushi-radio-button-input"
+  ".bold>.kushi-radio-input, .bold>.kushi-radio-button-input, [data-ks-weight=\"bold\"]>.kushi-radio-button-input"
   {"border-width" "var(--input-border-weight-bold)"})
 
 (defcss
@@ -1063,7 +1063,7 @@
 (defcolorway "magenta")
 (defcolorway "brown")
 
-(defcss "[data-kushi-surface=\"solid\"], [data-kushi-surface=\"solid-classic\"]"
+(defcss "[data-ks-surface=\"solid\"], [data-ks-surface=\"solid-classic\"]"
   {:color             :white
    :dark:color        :black
    :hover:color       :white
@@ -1071,15 +1071,15 @@
    :active:color      :white
    :dark:active:color :black})
 
-(defcss "[data-kushi-surface=\"outline\"]"
+(defcss "[data-ks-surface=\"outline\"]"
   {:--_stroke-width    :$outlined-element-stroke-width})
 
 (defcss
-  "[data-kushi-surface]"
+  "[data-ks-surface]"
   {"--_stroke"
    "inset 0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_fallback-stroke-color))"
 
-   "[data-kushi-stroke-align=\"outside\"]"
+   "[data-ks-stroke-align=\"outside\"]"
    {"--_stroke" "0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_fallback-stroke-color))"}
 
    "box-shadow"
@@ -1095,7 +1095,7 @@
     "color-mix(in oklch, currentColor, transparent)"
     }})
                                      
-(defcss "[data-kushi-surface=\"solid-classic\"], [data-kushi-surface=\"soft-classic\"]"
+(defcss "[data-ks-surface=\"solid-classic\"], [data-ks-surface=\"soft-classic\"]"
   {
    :box-shadow       "inset 0 0 0 1px var(--transparent-black-10), inset 0 -2px 1px var(--transparent-black-20), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-80), inset 0 2px 1px -1px var(--transparent-white-80)"
    :bgi              "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
@@ -1112,7 +1112,7 @@
                       :background-image "linear-gradient(var(--transparent-black-05), #0000, var(--transparent-white-10))"
                       :box-shadow       "inset 0 2px 3px -1px var(--transparent-white-30)"}})
 
-(defcss "[data-kushi-surface=\"soft-classic\"]"
+(defcss "[data-ks-surface=\"soft-classic\"]"
   {:dark:text-shadow "0 0px 2px var(--transparent-black-40), 0 -0.5px 0px var(--transparent-black-70)"
    :text-shadow      "0 0.5px 0px var(--transparent-white-100)"
    :box-shadow       "inset 0 0 0 1px var(--transparent-black-05), inset 0 -2px 1px var(--transparent-black-10), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-100), inset 0 2px 1px -1px var(--transparent-white-100)"
@@ -1121,18 +1121,18 @@
    :dark:bgi         "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color-dark) 80%)"
    })
 
-(defcss "[data-kushi-surface=\"solid-classic\"]"
+(defcss "[data-ks-surface=\"solid-classic\"]"
   {:text-shadow      "0 0px 2px var(--transparent-black-30)"
    :dark:text-shadow "0 0.5px 0px var(--transparent-white-40)"})
 
-(defcss ".dark [data-kushi-surface=\"solid-classic\"]"
+(defcss ".dark [data-ks-surface=\"solid-classic\"]"
   {:after {:background-image "linear-gradient(var(--transparent-black-02), #0000, var(--transparent-white-20))"}})
 
-(defcss "[data-kushi-contour=\"rounded\"]"
+(defcss "[data-ks-contour=\"rounded\"]"
   {:border-radius :0.3em})
 
 
-(defcss "[data-kushi-contour=\"pill\"], [data-kushi-contour=\"circle\"]"
+(defcss "[data-ks-contour=\"pill\"], [data-ks-contour=\"circle\"]"
   {:border-radius :9999px})
 
 ;; For generating code
@@ -1149,39 +1149,39 @@
                             :xxxlarge]] 
 
                   (list 'defcss
-                        (str "[data-kushi-contour=\"" (name sz) "\"]")
+                        (str "[data-ks-contour=\"" (name sz) "\"]")
                         {:font-size (keyword (str "$" (name sz)))}))))
 
-(defcss "[data-kushi-sizing=\"xxxsmall\"]" {:font-size :$xxxsmall})
+(defcss "[data-ks-sizing=\"xxxsmall\"]" {:font-size :$xxxsmall})
 
-(defcss "[data-kushi-sizing=\"xxsmall\"]" {:font-size :$xxsmall})
+(defcss "[data-ks-sizing=\"xxsmall\"]" {:font-size :$xxsmall})
 
-(defcss "[data-kushi-sizing=\"xsmall\"]" {:font-size :$xsmall})
+(defcss "[data-ks-sizing=\"xsmall\"]" {:font-size :$xsmall})
 
-(defcss "[data-kushi-sizing=\"small\"]" {:font-size :$small})
+(defcss "[data-ks-sizing=\"small\"]" {:font-size :$small})
 
-(defcss "[data-kushi-sizing=\"medium\"]" {:font-size :$medium})
+(defcss "[data-ks-sizing=\"medium\"]" {:font-size :$medium})
 
-(defcss "[data-kushi-sizing=\"large\"]" {:font-size :$large})
+(defcss "[data-ks-sizing=\"large\"]" {:font-size :$large})
 
-(defcss "[data-kushi-sizing=\"xlarge\"]" {:font-size :$xlarge})
+(defcss "[data-ks-sizing=\"xlarge\"]" {:font-size :$xlarge})
 
-(defcss "[data-kushi-sizing=\"xxlarge\"]" {:font-size :$xxlarge})
+(defcss "[data-ks-sizing=\"xxlarge\"]" {:font-size :$xxlarge})
 
-(defcss "[data-kushi-sizing=\"xxxlarge\"]" {:font-size :$xxxlarge})
+(defcss "[data-ks-sizing=\"xxxlarge\"]" {:font-size :$xxxlarge})
 
 
 ;; Move to button ns?
 (defcss ".kushi-button"
   {:--_padding-inline               "var(--button-padding-inline)"
    :--_padding-block                "var(--button-padding-block)"
-   "[data-kushi-packing=\"compact\"]" {:--_padding-inline "var(--button-padding-inline-compact)"
+   "[data-ks-packing=\"compact\"]" {:--_padding-inline "var(--button-padding-inline-compact)"
                                      :--_padding-block  "var(--button-padding-block-compact)"}
    
-   "[data-kushi-packing=\"roomy\"]"   {:--_padding-inline "var(--button-padding-inline-roomy)"
+   "[data-ks-packing=\"roomy\"]"   {:--_padding-inline "var(--button-padding-inline-roomy)"
                                      :--_padding-block  "var(--button-padding-block-roomy)"}
    
-   "[data-kushi-icon-button]"         {:--_padding-inline           "var(--_padding-block)"
+   "[data-ks-icon-button]"         {:--_padding-inline           "var(--_padding-block)"
                                      :_.material-symbols-outlined {:min-width   :1.2ch
                                                                    :line-height :normal}}})
 (defcss ".kushi-icon-button"
@@ -1189,28 +1189,28 @@
    :--_padding-inline           :$icon-button-padding-inline||$button-padding-inline
    :_.material-symbols-outlined {:min-width   :1.2ch
                                  :line-height :normal}
-   "[data-kushi-packing=\"compact\"]" {:--_padding-inline :$icon-button-padding-block-compact||$button-padding-block-compact
+   "[data-ks-packing=\"compact\"]" {:--_padding-inline :$icon-button-padding-block-compact||$button-padding-block-compact
                                      :--_padding-block  :$icon-button-padding-block-compact||$button-padding-block-compact}
-   "[data-kushi-packing=\"roomy\"]"   {:--_padding-inline :$icon-button-padding-block-roomy||$button-padding-block-roomy
+   "[data-ks-packing=\"roomy\"]"   {:--_padding-inline :$icon-button-padding-block-roomy||$button-padding-block-roomy
                                      :--_padding-block  :$icon-button-padding-block-roomy||$button-padding-block-roomy}})
 
 
 ;; Keep here?
 (defcss ".kushi-button, .kushi-tag"
-  {"[data-kushi-start-enhancer]"      {:padding-inline-start "calc(var(--_padding-inline) * 0.7666)"}
-   "[data-kushi-end-enhancer]"        {:padding-inline-end "calc(var(--_padding-inline) * 0.7666)"}})
+  {"[data-ks-start-enhancer]"      {:padding-inline-start "calc(var(--_padding-inline) * 0.7666)"}
+   "[data-ks-end-enhancer]"        {:padding-inline-end "calc(var(--_padding-inline) * 0.7666)"}})
 
 
 
 ;; Move to tag ns
 (defcss ".kushi-tag"
-  {"[data-kushi-packing=\"compact\"]"
+  {"[data-ks-packing=\"compact\"]"
    {:--_padding-inline      "var(--tag-padding-inline-compact)"
     :--_padding-block-start "calc(var(--tag-padding-block-compact) * var(--tag-padding-block-start-reduction-ratio, 1))"
     :--_padding-block-end   "calc(var(--tag-padding-block-compact))"
     }
 
-   "[data-kushi-packing=\"roomy\"]"
+   "[data-ks-packing=\"roomy\"]"
    {:--_padding-inline      "var(--tag-padding-inline-roomy)"
     :--_padding-block-start "calc(var(--tag-padding-block-roomy) * var(--tag-padding-block-start-reduction-ratio, 1))"
     :--_padding-block-end   "calc(var(--tag-padding-block-roomy))"

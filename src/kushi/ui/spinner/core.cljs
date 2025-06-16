@@ -2,7 +2,7 @@
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
-   [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
+   [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
    [kushi.ui.core :refer (extract)]))
 
 (defcss "@keyframes spin"
@@ -77,22 +77,22 @@
         (get-variants opts)
         
         
-        ;; data-kushi-colorway (validate-option spinner semantic-colorway)
-        ;; data-kushi-sizing     (validate-option spinner size)
+        ;; data-ks-colorway (validate-option spinner semantic-colorway)
+        ;; data-ks-sizing     (validate-option spinner size)
         more-attrs          (merge {:aria-hidden         true
-                                    :data-kushi-surface  :transparent
-                                    :data-kushi-sizing     size}
+                                    :data-ks-surface  :transparent
+                                    :data-ks-sizing     size}
                                    (when (true? inert?) 
-                                     {:data-kushi-inert ""})
+                                     {:data-ks-inert ""})
                                    (when-not (contains? #{"neutral" :neutral}
                                                     colorway)
-                                     {:data-kushi-colorway colorway}))]
+                                     {:data-ks-colorway colorway}))]
                
 
     (cond
 
       (contains? #{:propeller "propeller"} spinner-type)
-      [:div {:data-kushi-spinner ""
+      [:div {:data-ks-spinner ""
              :class              (css ".kushi-propeller-wrapper"
                                       :.kushi-spinner-wrapper
                                       :.transition
@@ -119,7 +119,7 @@
                                     ["nth-child(2):animation-delay" "calc(var(--spinner-animation-duration) / 4)"]
                                     ["nth-child(3):animation-delay" "calc(var(--spinner-animation-duration) / 2)"])]]
 
-        [:div {:data-kushi-spinner ""
+        [:div {:data-ks-spinner ""
                :class              (css ".kushi-thinking-wrapper"
                                         :.kushi-spinner-wrapper
                                         :.transition)} 
@@ -135,7 +135,7 @@
           circle]])
       
       :else
-      [:div {:data-kushi-spinner ""
+      [:div {:data-ks-spinner ""
              :class              (css ".kushi-donut-wrapper"
                                       :.kushi-spinner-wrapper
                                       :.transition)}

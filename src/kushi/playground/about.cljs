@@ -119,7 +119,7 @@
 
    [:p]
    #_[:p
-    "The `data-kushi-colorway` attributes "
+    "The `data-ks-colorway` attributes "
     [:code {:colorway :.neutral} ":.neutral"]
     ", "
     [:code {:colorway :.positive} ":.positive"]

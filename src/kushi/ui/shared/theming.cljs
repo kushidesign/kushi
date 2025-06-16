@@ -34,24 +34,24 @@
 
 (def variant-basics (into #{} (keys variants)))
 
-;; When it needs to be {:data-kushi-end-enhancer ""}
-(def data-kushi-blanks 
+;; When it needs to be {:data-ks-end-enhancer ""}
+(def data-ks-blanks 
   #{:end-enhancer :start-enhancer})
 
 (defn maybe-blank [x k]
-  (if (contains? data-kushi-blanks k) "" x))
+  (if (contains? data-ks-blanks k) "" x))
 
-(defn data-kushi- [x k]
+(defn data-ks- [x k]
   (some-> x
           (maybe-blank k)
           as-str
-          (->> (hash-map (keyword (str "data-kushi-" (name k)))))))
+          (->> (hash-map (keyword (str "data-ks-" (name k)))))))
 
 (defn component-attrs [s opts & colls]
-  (merge (data-kushi- s :ui)
+  (merge (data-ks- s :ui)
          (reduce
           (fn [m k]
-            (merge m (data-kushi- (k opts) k))) 
+            (merge m (data-ks- (k opts) k))) 
           {}
           (apply concat colls))))
 

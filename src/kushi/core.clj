@@ -1594,7 +1594,7 @@
 
 
 (defmacro at
-  "Provides a data-kushi-src with source-code coordinates"
+  "Provides a data-ks-src with source-code coordinates"
   []
   (let [{:keys [file line column]} (meta &form)
         ns-name (-> &env :ns :name)

@@ -25,22 +25,22 @@
   (when-let [nav (some-> e
                          d/cet 
                          (d/nearest-ancestor
-                          "nav[data-kushi-playground-sidenav-mobile]"))]
+                          "nav[data-ks-playground-sidenav-mobile]"))]
     (d/toggle-boolean-attribute nav "aria-expanded")))
 
 
 (defn style-tag-first-intersecting [x]
   [:style {:type "text/css"}
    (str 
-    "#app[data-kushi-playground-first-intersecting=\"" x "\"] "
-    "[data-kushi-playground-sidenav-button=\"" x "\"]"
+    "#app[data-ks-playground-first-intersecting=\"" x "\"] "
+    "[data-ks-playground-sidenav-button=\"" x "\"]"
     "{"
     "color: var(--foreground-color-neutral-2);"
     "background-color: var(--background-color-neutral-soft);"
     "}"
 
-    ".dark #app[data-kushi-playground-first-intersecting=\"" x "\"] "
-    "[data-kushi-playground-sidenav-button=\"" x "\"]"
+    ".dark #app[data-ks-playground-first-intersecting=\"" x "\"] "
+    "[data-ks-playground-sidenav-button=\"" x "\"]"
     "{"
     "color: var(--foreground-color-neutral-2-dark-mode);"
     "background-color: var(--background-color-neutral-soft-dark-mode);"
@@ -71,7 +71,7 @@
                   "-30px 0 30px var(--background-color), -30px -30px 30px var(--background-color), -30px 0 30px 10px var(--background-color), -30px -30px 30px 10px var(--background-color)"]
                  [:dark:box-shadow
                   "-30px 0 30px var(--background-color-dark-mode), -30px -30px 30px var(--background-color-dark-mode), -30px 0 30px 10px var(--background-color-dark-mode), -30px -30px 30px 10px var(--background-color-dark-mode)"])
-         :data-kushi-playground-sidenav "true"}
+         :data-ks-playground-sidenav "true"}
    [:button
     (sx :.all-components-sidenav-header
         :.flex-row-fs
@@ -109,7 +109,7 @@
               [button
                (merge-attrs
                 (sx :.all-components-sidenav-button)
-                {:data-kushi-playground-sidenav-button label
+                {:data-ks-playground-sidenav-button label
                  :contour                               :pill
                  :surface                             :minimal}
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
@@ -147,8 +147,8 @@
           ["dark:&[aria-expanded=\"true\"]" 
            {:bgc :$transparent-black-90
             :bgi "linear-gradient(to left, var(--background-color-dark-mode), var(--background-color-dark-mode) 50%, transparent)"}])
-         {:data-kushi-playground-sidenav        true
-          :data-kushi-playground-sidenav-mobile true
+         {:data-ks-playground-sidenav        true
+          :data-ks-playground-sidenav-mobile true
           :aria-expanded                        false})
 
    ;; Button for toggling open nav 
@@ -173,7 +173,7 @@
                :gap--0.5em
                :lg:_.kushi-icon:d--none
                :_.kushi-icon.sidenav-close-icon:d--none
-               ["has-ancestor(nav[data-kushi-playground-sidenav][aria-expanded=\"true\"])"
+               ["has-ancestor(nav[data-ks-playground-sidenav][aria-expanded=\"true\"])"
                 {:>.sidenav-menu-icon:d  :none
                  :>.sidenav-close-icon:d :inline-flex
                  :>ul:h                  "calc((100vh - (var(--navbar-height) * 2)) * 1)"
@@ -196,7 +196,7 @@
              :w--fit-content
              :h--0
              :o--0
-             ["has-ancestor(nav[data-kushi-playground-sidenav][aria-expanded=\"true\"])"
+             ["has-ancestor(nav[data-ks-playground-sidenav][aria-expanded=\"true\"])"
               {:>ul:h "calc((100vh - (var(--navbar-height) * 2)) * 1)"
                :>ul:o 1
                :h     :fit-content
@@ -232,7 +232,7 @@
               [button
                (merge-attrs
                 (sx :.all-components-sidenav-button)
-                {:data-kushi-playground-sidenav-button label
+                {:data-ks-playground-sidenav-button label
                  :contour                               :pill
                  :surface                             :minimal}
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))

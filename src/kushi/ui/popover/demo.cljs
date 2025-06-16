@@ -155,7 +155,7 @@
       :reqs            '[[kushi.ui.button.core :refer [button]]]
       :container-attrs (merge-attrs
                         (sx :d--none :xsm:d--block)
-                        {:data-kushi-playground-example "popover-with-form"})
+                        {:data-ks-playground-example "popover-with-form"})
       :row-attrs       row-attrs
       :examples        [{:args     ["Open"]
                          :sx-attrs (sx-call

@@ -114,7 +114,6 @@
 
 
 
-;; Use data-ks instead of data-kushi
 
 ;; Make kushi.ui.button work (remove .core from namespaces)
 ;; kushi.ui.uix.button
@@ -122,7 +121,7 @@
 ;; kushi.replicant.ui.button
 ;; kushi.ui.replicant.button
 
-;; in sx and css macros, support supplied data selector "[data-kushi-ui=icon]", or "#blah" or [id=foo] or [something=something]
+;; in sx and css macros, support supplied data selector "[data-ks-ui=icon]", or "#blah" or [id=foo] or [something=something]
 
 (defn convert-opts [vc]
   (reduce 

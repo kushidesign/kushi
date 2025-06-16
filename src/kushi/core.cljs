@@ -139,7 +139,7 @@
 ;;     (when joined {:data-sx joined})))
 
 (defn- handler-concat [c1 c2 m2 k]
-  (let [block? (contains? (some->> m2 :data-kushi-block-events (into #{})) k)
+  (let [block? (contains? (some->> m2 :data-ks-block-events (into #{})) k)
         f (if block?
             c2
             (if (and c1 c2)

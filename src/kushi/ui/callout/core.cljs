@@ -7,7 +7,7 @@
    [kushi.ui.button.core :refer [button]]
    [kushi.ui.core :refer (extract)]
    [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
+   [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
    [kushi.ui.util :refer [keyed maybe]]))
 
 ;; TODO - this is mousedown, so only if primary click
@@ -192,35 +192,35 @@
         :aria-label       (when loading? "loading")
 
              ;; different from button
-             ;;  :data-kushi-ia      ""
+             ;;  :data-ks-ia      ""
              ;; different from button
         
-        :data-kushi-surface surface
-        :data-kushi-contour   shape}
-       (when loading? {:data-kushi-ui-spinner true})
+        :data-ks-surface surface
+        :data-ks-contour   shape}
+       (when loading? {:data-ks-ui-spinner true})
 
  ;; different from button and tag
-      ;;  (when (and (not icon) end-enhancer) (data-kushi- "" :end-enhancer))
-      ;;  (when (and (not icon) start-enhancer) (data-kushi- "" :start-enhancer))
+      ;;  (when (and (not icon) end-enhancer) (data-ks- "" :end-enhancer))
+      ;;  (when (and (not icon) start-enhancer) (data-ks- "" :start-enhancer))
  ;; different from button and tag
 
        (some-> stroke-align 
                (maybe #{:outside "outside"})
-               (data-kushi- :stroke-align))
+               (data-ks- :stroke-align))
        (some-> (or semantic-colorway
                    (when hue-style-map ""))
-               (data-kushi- :colorway))
+               (data-ks- :colorway))
 
  ;; different from button and tag
       ;;  (some-> packing
       ;;          (maybe nameable?)
       ;;          as-str
       ;;          (maybe #{"compact" "roomy"})
-      ;;          (data-kushi- :packing))
+      ;;          (data-ks- :packing))
  ;; different from button and tag
        
        hue-style-map
-       (some-> surface (data-kushi- :surface))
+       (some-> surface (data-ks- :surface))
        attrs)     
 
      [:div (sx ".kushi-callout-header-wrap"

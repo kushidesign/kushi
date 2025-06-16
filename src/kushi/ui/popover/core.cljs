@@ -203,7 +203,7 @@
                         :user-pane-style   user-pane-style
                         :popover-class     popover-class}]
       (merge 
-       {:data-kushi-ui-pane (name placement-kw)}
+       {:data-ks-ui-pane (name placement-kw)}
        {:on-click (partial pane/append-pane! opts)}
        #_{(if use-on-click? :on-click :on-mouse-down)
         (partial pane/append-pane! opts)}))))

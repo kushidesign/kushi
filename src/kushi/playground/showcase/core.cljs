@@ -290,9 +290,8 @@
                         variant-label]
                        (into [uic-fn
                               (merge-attrs
-                               {v-1d a
-                                :end-enhancer        [icon :arrow-forward]
-                                :ns (at)}
+                               {v-1d          a
+                                :ns           (at)}
                                variant-attrs)]
                              variant-args))))
              []

@@ -516,7 +516,7 @@
        attrs
        {:class         (css ".kushi-slider-input" :w--100%)
         :id            id
-        :data-kushi-ui :input.range
+        :data-ks-ui :input.range
         :type          :range
         :on-change     (partial slider-slim-change-handler f num-steps midpoint)
         :defaultValue  dv
@@ -726,7 +726,7 @@
          [:input (merge-attrs
                   {:class         (css ".kushi-slider-input" :w--100%)
                    :id            id
-                   :data-kushi-ui :input.range
+                   :data-ks-ui :input.range
                    :type          :range
                    :on-change     (partial on-change label-selected-class label-id)}
                   (assoc (or attrs {})

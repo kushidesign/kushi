@@ -64,7 +64,7 @@
             (sx ".kushi-snippet"
                 :.codebox
                 :position--relative)
-            {:data-kushi-ui :snippet}
+            {:data-ks-ui :snippet}
             attrs)
            [:span text-to-display]
            [copy-to-clipboard-button

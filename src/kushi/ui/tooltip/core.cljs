@@ -201,7 +201,7 @@
                         :pane-type     pane-type
                         :tooltip-class tooltip-class}]
       (merge 
-       {:data-kushi-ui-pane (name placement-kw)
+       {:data-ks-ui-pane (name placement-kw)
         :on-mouse-enter     (partial pane/append-pane! opts)}
        ;; Todo use when-let to validate text-on-click and normalize if vector
        (when-let [text-on-click (pane/maybe-multiline-tooltip-text text-on-click)]

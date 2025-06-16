@@ -19,7 +19,7 @@
                                  :position--relative
                                  :w--100%
                                  :p--1.25em)
-             :data-kushi-ui :card}
+             :data-ks-ui :card}
             attrs)]
      children)))
 

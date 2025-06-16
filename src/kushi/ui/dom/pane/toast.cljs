@@ -125,7 +125,7 @@
   (let [toast-slot-el    (js/document.createElement "ol")
         placement-class  (get toast-slot-placement-classes placement-kw)]
     (doto toast-slot-el
-      (.setAttribute "data-kushi-ui-toast-slot" placement-as-str)
+      (.setAttribute "data-ks-ui-toast-slot" placement-as-str)
       (.setAttribute 
        "style"
        (domo/css-style-string 
@@ -154,7 +154,7 @@
   (let [placement-as-str (as-str (get placement-kws-hydrated
                                       placement-kw
                                       nil))
-        existing         (domo/qs-data= "kushi-ui-toast-slot" 
+        existing         (domo/qs-data= "ks-ui-toast-slot" 
                                         placement-as-str)
         toast-slot-el    (or existing 
                              (toast-slot-el opts placement-as-str))
@@ -167,10 +167,10 @@
                          dismiss-toast!))
 
     (doto toast-el
-      (.setAttribute "data-kushi-ui" "toast")
+      (.setAttribute "data-ks-ui" "toast")
 
       ;; TODO swap this in once defcss is ready
-      ;; (.setAttribute "data-kushi-ui-pane-placement" placement)
+      ;; (.setAttribute "data-ks-ui-pane-placement" placement)
       (.setAttribute "id" id)
       (.setAttribute "style"
                      (domo/css-style-string

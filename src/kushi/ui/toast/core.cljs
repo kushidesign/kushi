@@ -205,8 +205,8 @@
                            :reduced-motion?   reduced-motion?
                            :toast-class       toast-class}]
       (merge 
-       ;; TODO should be :data-kushi-ui-pane-placement = se
-       ;; and :data-kushi-ui-pane-type = toast
+       ;; TODO should be :data-ks-ui-pane-placement = se
+       ;; and :data-ks-ui-pane-type = toast
 
        {:on-click (partial pane/append-pane! opts)}))))
 

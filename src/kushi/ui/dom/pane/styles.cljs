@@ -95,22 +95,22 @@
   :zi--$toast-slot-z-index
   
   ;; leave these out for now
-  ;; ["[data-kushi-ui-toast-slot='left']:p" :0:0:0:$_pi]
-  ;; ["[data-kushi-ui-toast-slot='left-top']:p" :_$pb:0:0:$_pi]
-  ;; ["[data-kushi-ui-toast-slot='top-left-corner']:p" :_$pb:0:0:$_pi]
-  ;; ["[data-kushi-ui-toast-slot='top-left']:p" :$_pb:0:0:$_pi]
-  ;; ["[data-kushi-ui-toast-slot='top']:p" :$_pb:0:0:0]
-  ;; ["[data-kushi-ui-toast-slot='top-right']:p" :$_pb:$_pi:0:0]
-  ;; ["[data-kushi-ui-toast-slot='top-right-corner']:p" :$_pb:$_pi:0:0]
-  ;; ["[data-kushi-ui-toast-slot='right-top']:p" :$_pb:$_pi:0:0]
-  ;; ["[data-kushi-ui-toast-slot='right']:p" :0:$_pi:0:0]
-  ;; ["[data-kushi-ui-toast-slot='right-bottom']:p" :0:0:$_pb:0]
-  ;; ["[data-kushi-ui-toast-slot='bottom-right-corner']:p" :0:$_pi:$_pb:0]
-  ;; ["[data-kushi-ui-toast-slot='bottom-right']:p" :0:$_pi:$_pb:0]
-  ;; ["[data-kushi-ui-toast-slot='bottom']:p" :0:0:$_pb:0]
-  ;; ["[data-kushi-ui-toast-slot='bottom-left']:p" :0:0:$_pb:$_pi]
-  ;; ["[data-kushi-ui-toast-slot='bottom-left-corner']:p" :0:0:$_pb:$_pi]
-  ;; ["[data-kushi-ui-toast-slot='left-bottom']:p" :0:0:$_pb:$_pi]
+  ;; ["[data-ks-ui-toast-slot='left']:p" :0:0:0:$_pi]
+  ;; ["[data-ks-ui-toast-slot='left-top']:p" :_$pb:0:0:$_pi]
+  ;; ["[data-ks-ui-toast-slot='top-left-corner']:p" :_$pb:0:0:$_pi]
+  ;; ["[data-ks-ui-toast-slot='top-left']:p" :$_pb:0:0:$_pi]
+  ;; ["[data-ks-ui-toast-slot='top']:p" :$_pb:0:0:0]
+  ;; ["[data-ks-ui-toast-slot='top-right']:p" :$_pb:$_pi:0:0]
+  ;; ["[data-ks-ui-toast-slot='top-right-corner']:p" :$_pb:$_pi:0:0]
+  ;; ["[data-ks-ui-toast-slot='right-top']:p" :$_pb:$_pi:0:0]
+  ;; ["[data-ks-ui-toast-slot='right']:p" :0:$_pi:0:0]
+  ;; ["[data-ks-ui-toast-slot='right-bottom']:p" :0:0:$_pb:0]
+  ;; ["[data-ks-ui-toast-slot='bottom-right-corner']:p" :0:$_pi:$_pb:0]
+  ;; ["[data-ks-ui-toast-slot='bottom-right']:p" :0:$_pi:$_pb:0]
+  ;; ["[data-ks-ui-toast-slot='bottom']:p" :0:0:$_pb:0]
+  ;; ["[data-ks-ui-toast-slot='bottom-left']:p" :0:0:$_pb:$_pi]
+  ;; ["[data-ks-ui-toast-slot='bottom-left-corner']:p" :0:0:$_pb:$_pi]
+  ;; ["[data-ks-ui-toast-slot='left-bottom']:p" :0:0:$_pb:$_pi]
   )
 
 (defcss "@layer kushi-ui-shared .kushi-toast"

@@ -445,7 +445,7 @@
    ...]"
   (mapcatv
    (fn [[k weight]]
-     [(maybe-data-attr-css-selector (name k) "kushi-weight")
+     [(maybe-data-attr-css-selector (name k) "ks-weight")
       (let [v (str "'wght' " weight)]
         {:font-weight                           
          (->> k util/stringify (str "$") keyword)
@@ -456,7 +456,7 @@
          ".kushi-icon:font-variation-settings" 
          v
          
-         ".kushi-icon:has-ancestor([data-kushi-weight]):font-variation-settings"
+         ".kushi-icon:has-ancestor([data-ks-weight]):font-variation-settings"
          v})])
    type-weights-by-name))
 
@@ -469,7 +469,7 @@
 (def override-classes
   [;; General
    ;; --------------------------------------------------------------------------
-   ;; TODO - consider [data-kushi-offscreen]
+   ;; TODO - consider [data-ks-offscreen]
    :offscreen {:position :absolute
                :left     :-10000px
                :top      :auto
@@ -487,7 +487,7 @@
    ;; Surfaces, buttons, containers 3D
    ;; TODO - make $debossed and $embossed tokens
    ;;      - Maybe make scale like convex and elevation 0-5?
-   ;; TODO - consider using data-kushi-debossed-text-level
+   ;; TODO - consider using data-ks-debossed-text-level
    ;;        and maybe also :debossed-level on lib components
    ;; --------------------------------------------------------------------------
    :debossed-text {:text-shadow "0 1px 2px hsl(0deg 0% 100% / 55%), 0 -1px 2px hsl(0deg 0% 0% / 27%)"}
@@ -496,7 +496,7 @@
 
    ;; TODO - use scale-of-utility-defs
    ;; TODO convex 0-5 plus dark-mode
-   ;; TODO - consider using data-kushi-convex-level
+   ;; TODO - consider using data-ks-convex-level
    ;;        and maybe also :convex-level on lib components
    :convex        {:background-image :$convex-1}
    :convex-0      {:background-image :$convex-0}
@@ -508,7 +508,7 @@
 
 
    ;; TODO - use scale-of-utility-defs
-   ;; TODO - consider using data-kushi-elevation-level
+   ;; TODO - consider using data-ks-elevation-level
    ;;        and maybe also :elevation on lib components
    :elevated-0    {:box-shadow :$elevated-0}
    :elevated-1    {:box-shadow      :$elevated-1
@@ -542,7 +542,7 @@
    [">.kushi-radio-input:outline-width"
     ">.kushi-checkbox-input:bw"]
    {:val-prefix "input-border-weight"
-    :data-attr  "kushi-weight"
+    :data-attr  "ks-weight"
     :acc-f      (fn [k]
                   {:font-weight (->> k
                                      util/stringify
@@ -679,8 +679,8 @@
            {:top    :unset
             :bottom "0%"})))
 
-(def data-kushi-weight-synced 
-  "[\"[data-kushi-weight=\"light\"]\"
+(def data-ks-weight-synced 
+  "[\"[data-ks-weight=\"light\"]\"
     {:font-weight                :$light
      \" >.kushi-radio-i \"...    :$input-border-weight-light
      \" >.kushi-checkbo \"...    :$input-border-weight-light
@@ -737,7 +737,7 @@
 
    global-selectors
 
-   ;; A scale of selectors like "[data-kushi-weight=\"thin\"]"
+   ;; A scale of selectors like "[data-ks-weight=\"thin\"]"
    ;;
    ;; TODO - maybe you don't need this if you can figure out how to add a
    ;; setting to the css compiler to do:
@@ -759,7 +759,7 @@
    ;;                      ...})
    ;;                   x)})
    
-   data-kushi-weight-synced])
+   data-ks-weight-synced])
 
 
 (def utility-class-ks

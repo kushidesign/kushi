@@ -148,13 +148,13 @@
           :_svg:height--1em
           :_svg>path:fill--currentColor)
       {
-       :data-kushi-ui       :icon
-       :data-kushi-inert    (when (true? inert?) "")
-       :data-kushi-ns       ns
-       :data-kushi-surface  :transparent
-       :data-kushi-sizing   sizing
-       :data-kushi-weight   weight
-       :data-kushi-colorway colorway}
+       :data-ks-ui       :icon
+       :data-ks-inert    (when (true? inert?) "")
+       :data-ks-ns       ns
+       :data-ks-surface  :transparent
+       :data-ks-sizing   sizing
+       :data-ks-weight   weight
+       :data-ks-colorway colorway}
       attrs)
      (cond
        (and (vector? icon*) (= :svg (first icon*)))

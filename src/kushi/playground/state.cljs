@@ -88,7 +88,7 @@
            :intersecting
            (sort-by #(.indexOf ordered-playground-components-labels %))
            first
-           (.setAttribute (domo/el-by-id "app") "data-kushi-playground-first-intersecting")))
+           (.setAttribute (domo/el-by-id "app") "data-ks-playground-first-intersecting")))
 
 
 (def *focused-path (r/atom ["components"]))

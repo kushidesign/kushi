@@ -64,6 +64,6 @@
                          :gtc         :$gtc
                          :grid-gap    :$gap
                          :width       :100%})
-        :data-kushi-ui :grid}
+        :data-ks-ui :grid}
        attr)]
      children)))

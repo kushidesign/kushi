@@ -39,7 +39,7 @@
                         {:class (css [:md:gtc "repeat(4, max-content)"]
                                      :color--red!important)})
       :variants+       [:minimal]
-      :snippets-header "Use the `data-kushi-surface` attributes `:solid`, `:outline`,
+      :snippets-header "Use the `data-ks-surface` attributes `:solid`, `:outline`,
                         and `:minimal` to control the surface variant of the button."
       :snippets        '[[button "Play"]
                          [button {:surface :solid} "Play"]
@@ -54,7 +54,7 @@
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
-      :snippets-header "Use the `data-kushi-colorway` attributes `:neutral`, `:accent`,
+      :snippets-header "Use the `data-ks-colorway` attributes `:neutral`, `:accent`,
                         `:positive`, `:warning`, and `:negative` to control the
                         semantic color variant. The default is `:neutral`."                        
       :snippets        '[[button "Play"]
@@ -72,7 +72,7 @@
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
-      :snippets-header "Use the `data-kushi-contour` attributes `:pill`, `:rounded`,
+      :snippets-header "Use the `data-ks-contour` attributes `:pill`, `:rounded`,
                         and `:sharp` to control the surface variant of the button.
                         The default is `:rounded`."
       :snippets        '[[button "Play"]

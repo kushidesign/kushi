@@ -32,7 +32,7 @@
         :padding-inline--0.5em:1em
         :padding-block--0.4em
         :>*:align-self--center)
-       {:data-kushi-sizing size}
+       {:data-ks-sizing size}
        attrs)
       [:input
        (merge-attrs
@@ -62,7 +62,7 @@
                          :checked:border-offset---0.333em
                          :o--1
                          :border-radius--50%)
-         :data-kushi-ui :input.radio
+         :data-ks-ui :input.radio
          :type          :radio}
         input-attrs)]]
      children)))
@@ -98,7 +98,7 @@
                              :checked:border-offset---0.333em
                              :o--1
                              :border-radius--50%)
-       :data-kushi-ui       :radio
+       :data-ks-ui       :radio
        :type                :radio}
       attrs)]))
 

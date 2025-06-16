@@ -3,7 +3,7 @@
    [kushi.core :refer [merge-attrs sx]]
    [kushi.ui.core :refer (extract)]
    [kushi.ui.icon.core]
-   [kushi.ui.shared.theming :refer [data-kushi- get-variants hue-style-map]]
+   [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
    [kushi.ui.util :refer [maybe nameable?]]))
 
 (defn avatar 
@@ -91,16 +91,16 @@
                 :fs--$font-size
                 [:aspect-ratio "1 / 1"]
                 :overflow--hidden)
-            {:data-kushi-surface surface
-             :data-kushi-contour   shape}
+            {:data-ks-surface surface
+             :data-ks-contour   shape}
             (some-> stroke-align 
                     (maybe #{:outside "outside"})
-                    (data-kushi- :stroke-align))
+                    (data-ks- :stroke-align))
             (some-> (or semantic-colorway
                         (when hue-style-map ""))
-                    (data-kushi- :colorway))
+                    (data-ks- :colorway))
             hue-style-map
-            (some-> surface (data-kushi- :surface))
+            (some-> surface (data-ks- :surface))
             attrs)]
           (when-not (:src attrs)
             children))))

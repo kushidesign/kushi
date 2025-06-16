@@ -8,7 +8,7 @@
 (defn calc [& strs]
   (str "calc(" (apply str strs) ")"))
 
-(defn data-kushi-attr [x]
+(defn data-ks-attr [x]
   (-> x
       name
       (string/replace #"^kushi\.ui\." "")

@@ -288,7 +288,7 @@
     :ref :key})
 
 (def kushi-ui-props 
-  #{:ns :inert?})
+  #{:ns :inert? :end-enhancer :start-enhancer})
 
 (defn extract
   "Extracts custom attributes from mixed map of html attributes and

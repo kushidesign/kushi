@@ -56,7 +56,7 @@
 
 (defn main-view []
   (.setAttribute (domo/el-by-id "app")
-                 "data-kushi-playground-active-path"
+                 "data-ks-playground-active-path"
                  "components")
 
   ;; (? (m/validate [:cat

@@ -28,7 +28,7 @@
                              :jc--fs
                              :d--inline-flex
                              :w--fit-content)
-             :data-kushi-ui :label}
+             :data-ks-ui :label}
             attrs)]
           children)))
 

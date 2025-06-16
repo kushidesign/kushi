@@ -26,7 +26,7 @@
     (when path-label
         (.preventDefault e)
         (.setAttribute app
-                       "data-kushi-playground-active-path"
+                       "data-ks-playground-active-path"
                        path-label)
         (js/requestAnimationFrame domo/scroll-to-top!)
         (.pushState (.-history js/window) 
@@ -165,7 +165,7 @@
         :height--$navbar-height
         :pi--1.25rem
         :md:pi--4rem
-        #_["has(~&_div&_nav[aria-expanded=\"true\"][data-kushi-playground-sidenav])>*:opacity"
+        #_["has(~&_div&_nav[aria-expanded=\"true\"][data-ks-playground-sidenav])>*:opacity"
            0]
         )
 

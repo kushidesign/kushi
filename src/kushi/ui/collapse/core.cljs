@@ -209,7 +209,7 @@
                            expanded-class
                            :.flex-col-fs
                            :w--100%)
-       :data-kushi-ui :collapse}
+       :data-ks-ui :collapse}
       attr)
      [collapse-header
       (merge-attrs header-attrs

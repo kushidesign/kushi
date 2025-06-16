@@ -19,6 +19,6 @@
                           :tdc       "color-mix(in oklch, currentColor 40%, transparent)"
                           :hover:tdc :currentColor}
                          )
-             :data-kushi-ui :link}
+             :data-ks-ui :link}
             attrs)]
           children)))
