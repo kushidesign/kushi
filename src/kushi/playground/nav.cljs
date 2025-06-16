@@ -60,7 +60,7 @@
 
 
 (defn header-nav-button [& args]
-  (let [{:keys [opts attrs children]} (extract args header-nav-button)]
+  (let [{:keys [opts attrs children]} (extract args)]
     [button 
      (let [focused? (:focused? opts)]
        (merge-attrs header-nav-button-attrs attrs))

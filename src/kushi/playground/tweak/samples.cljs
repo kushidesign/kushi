@@ -38,7 +38,7 @@
             [switch 
              (merge-attrs (sx :fs--$xxxlarge)
                           {:colorway colorway
-                           :-on?      true})]))
+                           :on?      true})]))
 
      (into [:div (sx :.switch-dev-grid
                      {:before:content "\"Colorways\""})]
@@ -83,7 +83,7 @@
                                          {:colorway       colorway
                                           :surface        surface
                                           :contour          shape
-                                          :-start-enhancer [icon :pets]})
+                                          :start-enhancer [icon :pets]})
                             "Button"]))))))
 
 
@@ -110,7 +110,7 @@
             (merge-attrs (sx :fs--$small)
                          {:surface        "outline"
                           :contour          shape
-                          :-start-enhancer [icon :pets]})
+                          :start-enhancer [icon :pets]})
             "Button"]))
 
    (into [:div (sx :.button-dev-grid
@@ -120,7 +120,7 @@
             (merge-attrs (sx :fs--$small)
                          {:surface        "outline"
                           :-packing        packing
-                          :-start-enhancer [icon :pets]})
+                          :start-enhancer [icon :pets]})
             "Button"]))
 
    (into [:div (sx :.button-dev-grid
@@ -134,7 +134,7 @@
                                       [:--outlined-button-stroke-align "center"])}
                          {:surface        "outline"
                           :contour          "round"
-                          :-start-enhancer [icon :pets]})
+                          :start-enhancer [icon :pets]})
             "Button"]))
 
    (into [:div (sx :.button-dev-grid
@@ -149,7 +149,7 @@
                          {:surface        "outline"
                           :contour          "round"
                           :-stroke-align   :outside
-                          :-start-enhancer [icon :pets]})
+                          :start-enhancer [icon :pets]})
             "Button"]))
 #_
    (into [:div (sx :.button-dev-grid
@@ -171,7 +171,7 @@
                          {:surface        "outline"
                           :contour          "round"
                           :-stroke-align   :inside
-                          :-start-enhancer [icon :pets]})
+                          :start-enhancer [icon :pets]})
             "Button"]))])
 
 
@@ -199,7 +199,7 @@
                                          {:colorway       colorway
                                           :surface        surface
                                           :contour          shape
-                                          :-start-enhancer [icon :pets]})
+                                          :start-enhancer [icon :pets]})
                             "Dang"]))))))
 
    (into [:div (sx :.tag-dev-grid :.flex-col-fs)]
@@ -609,7 +609,7 @@
     #_[button
        (toast-attrs {:-auto-dismiss? false
                      :-f             (fn [toast-el] (render toast-content toast-el))
-                  ;; :-placement     :tlc
+                  ;; :placement     :tlc
                      :-toast-class   (css [:--toast-border-width :5px]
                                           [:--toast-background-color :beige])})
        "Save for later"]
@@ -633,8 +633,8 @@
 
                 ;; tooltip on top-layer
                  #_(tooltip-attrs
-                    {:-text          "This is a tooltip"
-                     :-tooltip-class (css {:--tooltip-background-color :$red-800})})
+                    {:text          "This is a tooltip"
+                     :tooltip-class (css {:--tooltip-background-color :$red-800})})
 
                 ;; popover on top-layer
                  #_(popover-attrs {:-f (fn [popover-el]
@@ -668,8 +668,8 @@
 
    ;; tooltip example
     #_[button
-       (tooltip-attrs {:-text          "This is a tooltip"
-                       :-tooltip-class (css {:--tooltip-background-color :$red-800})})
+       (tooltip-attrs {:text          "This is a tooltip"
+                       :tooltip-class (css {:--tooltip-background-color :$red-800})})
        "Hover me"]]] 
   
   )

@@ -10,7 +10,7 @@
 ;TODO refactor this out
 
 (defn collapse-body [& args]
-  (let [{:keys [opts attrs children]} (extract args collapse-body)]
+  (let [{:keys [opts attrs children]} (extract args)]
     [:section
      (merge-attrs (sx ".kushi-collapse-body-wrapper" :overflow--hidden) attrs)
      [:div (sx ".kushi-collapse-body"
@@ -51,7 +51,7 @@
 
 (defn collapse-header
   [& args]
-  (let [{:keys [opts attrs children]}       (extract args collapse-header)
+  (let [{:keys [opts attrs children]}       (extract args)
         {:keys [speed expanded?]
          :or   {speed 250}} opts]
     (let [on-click
@@ -192,7 +192,7 @@
             :desc    "The speed of the transition."}
            ]}
   [& args]
-  (let [[opts attr children] (extract args collapse)
+  (let [[opts attr children] (extract args)
         {:keys [header-attrs
                 body-attrs
                 expanded?
@@ -215,8 +215,8 @@
       (merge-attrs header-attrs
                    {:on-click       on-click
                     :aria-expanded  (if expanded? "true" "false")
-                    :-icon-position icon-position
-                    :-speed         speed})
+                    :icon-position icon-position
+                    :speed         speed})
       [collapse-header-contents opts]]
 
      ;; collapse body
@@ -237,7 +237,7 @@
           When `collapse` components are children of the accordion component,
           they can only be expanded one at a time."}
   [& args]
-  (let [{:keys [opts attrs children]} (extract args accordion)
+  (let [{:keys [opts attrs children]} (extract args)
         {:keys []}              opts]
     (into
      [:div

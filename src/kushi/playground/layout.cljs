@@ -41,7 +41,7 @@
       :pbe--0.399em))
 
 (defn tab [& args]
-  (let [{:keys [opts attrs children]} (extract args tab)]
+  (let [{:keys [opts attrs children]} (extract args)]
     [button (merge-attrs 
              tab-attrs
              {:role        :tab

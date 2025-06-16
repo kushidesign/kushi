@@ -5,7 +5,7 @@
 (defn link
   "Desc for"
   [& args]
-  (let [{:keys [opts attrs children]} (extract args link)
+  (let [{:keys [opts attrs children]} (extract args)
         {:keys []}              opts]
     (into [:a
            (merge-attrs

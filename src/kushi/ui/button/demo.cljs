@@ -76,13 +76,13 @@
                         and `:sharp` to control the surface variant of the button.
                         The default is `:rounded`."
       :snippets        '[[button "Play"]
-                         [button {:-contour :rounded} "Play"]
-                         [button {:-contour :pill} "Play"]
-                         [button {:-contour :sharp} "Play"]]
+                         [button {:contour :rounded} "Play"]
+                         [button {:contour :pill} "Play"]
+                         [button {:contour :sharp} "Play"]]
       :examples        (for [s [:rounded :pill :sharp]]
                          {:label (name s)
                           :args  ["Pets" [icon :pets]]
-                          :attrs {:-contour s}})}
+                          :attrs {:contour s}})}
 
      ;; get extra reqs working
      ;; get links working
@@ -96,7 +96,7 @@
                         on icon usage Various buttons with icons:"
       :snippets        '[[button "Play" [icon :play-arrow]]
                          [button [icon :auto-awesome] "Wow" [icon :auto-awesome]]
-                         #_[icon-button {:-icon :play-arrow}]]
+                         #_[icon-button {:icon :play-arrow}]]
       :examples        [
                         ;; {:label "Icon button"
                         ;;  :args  [[icon :favorite]]
@@ -151,12 +151,12 @@
       :reqs            '[[kushi.ui.button.core :refer [button]]
                          [kushi.ui.icon.core :refer [icon]]
                          [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]]
-      ;; :sx-attrs        (sx-call (sx :.small {:-loading? true}))
-      :sx-attrs        (sx-call {:-loading? true
+      ;; :sx-attrs        (sx-call (sx :.small {:loading? true}))
+      :sx-attrs        (sx-call {:loading? true
                                  :class (css :.small)})
       :container-attrs container-attrs
       :snippets-header "Examples:"
-      :snippets        '[[button {:-loading? true} [spinner [icon :play-arrow] [propeller]] "Play"]
+      :snippets        '[[button {:loading? true} [spinner [icon :play-arrow] [propeller]] "Play"]
                          [button {:disabled true} "Play"]]
       :examples        [{:label "Loading state, propeller"
                          :args  [[spinner [icon :play-arrow] [propeller]] "Play"]}

@@ -488,7 +488,7 @@
    ;; TODO - make $debossed and $embossed tokens
    ;;      - Maybe make scale like convex and elevation 0-5?
    ;; TODO - consider using data-kushi-debossed-text-level
-   ;;        and maybe also :-debossed-level on lib components
+   ;;        and maybe also :debossed-level on lib components
    ;; --------------------------------------------------------------------------
    :debossed-text {:text-shadow "0 1px 2px hsl(0deg 0% 100% / 55%), 0 -1px 2px hsl(0deg 0% 0% / 27%)"}
    :embossed-text {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}
@@ -497,7 +497,7 @@
    ;; TODO - use scale-of-utility-defs
    ;; TODO convex 0-5 plus dark-mode
    ;; TODO - consider using data-kushi-convex-level
-   ;;        and maybe also :-convex-level on lib components
+   ;;        and maybe also :convex-level on lib components
    :convex        {:background-image :$convex-1}
    :convex-0      {:background-image :$convex-0}
    :convex-1      {:background-image :$convex-1}
@@ -509,7 +509,7 @@
 
    ;; TODO - use scale-of-utility-defs
    ;; TODO - consider using data-kushi-elevation-level
-   ;;        and maybe also :-elevation on lib components
+   ;;        and maybe also :elevation on lib components
    :elevated-0    {:box-shadow :$elevated-0}
    :elevated-1    {:box-shadow      :$elevated-1
                    :dark:box-shadow :$elevated-1-dark-mode}

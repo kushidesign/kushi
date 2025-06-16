@@ -12,7 +12,7 @@
    :opts    '[]}
   [& args]
   (let [{:keys [opts attrs children]}
-        (extract args aspect-ratio)
+        (extract args)
         
         {:keys [ratio]}
         opts

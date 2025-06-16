@@ -88,7 +88,7 @@
        :reqs           '[[kushi.ui.icon.core :refer [icon]]]
        :variants-base  #{:outline :solid}
        :variants-order [:outline :solid]
-       :variants-attrs {:solid   {:-icon-solid? true}
+       :variants-attrs {:solid   {:icon-solid? true}
                         :outline {}}}
 
       {:label          "spinner"
@@ -107,7 +107,7 @@
        :reqs           '[[kushi.ui.switch.core :refer [switch]]]
        :variants-base  #{:on :off}
        :variants-order [:off :on]
-       :variants-attrs {:on  {:-on? true}
+       :variants-attrs {:on  {:on? true}
                         :off {}}}
 
       {:label          "radio" 

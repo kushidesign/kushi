@@ -38,21 +38,21 @@
      "Example Popover Form"]
     [text-field
      {:placeholder      "100%"
-      :-label           "Height"
-      :-label-placement :inline}]
+      :label           "Height"
+      :label-placement :inline}]
     [text-field
      {:placeholder      "335px"
-      :-label           "Min Width"
-      :-label-placement :inline}]
+      :label           "Min Width"
+      :label-placement :inline}]
     [text-field
      {:placeholder      "75px"
-      :-label           "Depth"
-      :-label-placement :inline}]]
+      :label           "Depth"
+      :label-placement :inline}]]
 
    [icon-button
     (merge-attrs
      {:on-click dismiss-popover!
-      :-contour   :pill
+      :contour   :pill
       :surface :minimal}
      (sx :.kushi-popover-close-button
          :.neutral
@@ -71,7 +71,7 @@
   (let [row-attrs (sx :_.kushi-button:fs--$small)]
     [
      (let [code (sx-call (popover-attrs
-                          {:-f (fn [popover-el]
+                          {:f (fn [popover-el]
                                  (rdom/render 
                                   (fn [] 
                                     [:div
@@ -91,10 +91,10 @@
 
       (let [code2 (sx-call
                    (popover-attrs
-                    {:-popover-class
+                    {:popover-class
                      (css {:--popover-background-color           :$purple-100
                            :--popover-background-color-dark-mode :$purple-900})
-                     :-f             
+                     :f             
                      (fn [popover-el]
                        (rdom/render 
                         (fn [] 
@@ -120,7 +120,7 @@
       :row-attrs row-attrs
       :examples  [{:args     ["Open"]
                    :sx-attrs (sx-call (popover-attrs
-                                       {:-f         (fn [popover-el]
+                                       {:f         (fn [popover-el]
                                                       (rdom/render 
                                                        (fn [] 
                                                          [:div
@@ -129,7 +129,7 @@
                                                               :padding--0.25em)
                                                           "💃🏽"])
                                                        popover-el))
-                                        :-placement :r}))}]}
+                                        :placement :r}))}]}
 
 
      {:desc      "Arrowless"
@@ -138,7 +138,7 @@
       :row-attrs row-attrs
       :examples  [{:args     ["Open"]
                    :sx-attrs (sx-call (popover-attrs
-                                       {:-f         (fn [popover-el]
+                                       {:f         (fn [popover-el]
                                                       (rdom/render 
                                                        (fn [] 
                                                          [:div
@@ -147,8 +147,8 @@
                                                               :padding--0.25em)
                                                           "💃🏽"])
                                                        popover-el))
-                                        :-arrow?    false
-                                        :-placement :r}))}]}
+                                        :arrow?    false
+                                        :placement :r}))}]}
 
      {:desc            "With form"
       :component       button
@@ -160,7 +160,7 @@
       :examples        [{:args     ["Open"]
                          :sx-attrs (sx-call
                                     (popover-attrs
-                                     {:-f (fn [popover-el]
+                                     {:f (fn [popover-el]
                                             (rdom/render popover-content
                                                          popover-el))
                                         ;; :class (:class (sx :max-width--200px))
@@ -174,7 +174,7 @@
       :examples  [{:code (sx-call 
                           [button
                            (popover-attrs
-                            {:-f
+                            {:f
                              (fn
                                [el]
                                (rdom/render
@@ -196,7 +196,7 @@
       :examples  [{:code (sx-call 
                           [button
                            (popover-attrs
-                            {:-f             
+                            {:f             
                              (fn
                                [el]
                                (rdom/render
@@ -208,10 +208,10 @@
                                   "after 5000ms"]]
                                 el)) 
 
-                             :-auto-dismiss?
+                             :auto-dismiss?
                              true
 
-                             :-placement     
+                             :placement     
                              :r}) 
                            "Open"])}]}]))
 

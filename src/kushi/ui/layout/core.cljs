@@ -29,7 +29,7 @@
                 :weight   defs/basic-weights-set-of-strs
                 :size     defs/basic-sizes-set-of-strs}]}
   [& args]
-  (let [{:keys [opts attrs children]} (extract args layout)]
+  (let [{:keys [opts attrs children]} (extract args)]
     (into
      ;; TODO validate layout tag?
      [(or (:as opts) :div)

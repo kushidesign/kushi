@@ -384,7 +384,7 @@ Example ui component implementation fn defined in button.cljs:
    :opts '[{size {:pred #{:small :large :xxxlarge}}}}]
   [src & args]
   (let [{:keys [opts attrs children]}
-        (extract args button)] ;; <- dispatch is in extract
+        (extract args $1)] ;; <- dispatch is in extract
     
     (into [:div
            (merge-attrs 

@@ -25,8 +25,8 @@
           the user.
            
           By default, popovers will show up above the owning element. Specifying
-          placement in various ways can be done with the `:-placement` option.
-          See the tooltip docs for details on `:-placement`.
+          placement in various ways can be done with the `:placement` option.
+          See the tooltip docs for details on `:placement`.
            
           The element owning the popover must receive an attributes map that 
           is a result of passing a map of options to 
@@ -173,12 +173,12 @@
 
   [{user-pane-class    :class
     user-pane-style    :style
-    placement          :-placement
-    arrow?             :-arrow?
-    auto-dismiss?      :-auto-dismiss?
-    use-on-click?      :-use-on-click?
-    popover-class      :-popover-class
-    user-rendering-fn  :-f
+    placement          :placement
+    arrow?             :arrow?
+    auto-dismiss?      :auto-dismiss?
+    use-on-click?      :use-on-click?
+    popover-class      :popover-class
+    user-rendering-fn  :f
     :or                {placement     :auto
                         arrow?        true
                         auto-dismiss? false

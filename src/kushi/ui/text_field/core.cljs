@@ -95,7 +95,7 @@
 (defn text-field
   {:summary "A text-field enables the entry of text."
    :desc "An input enables the entry of text. By default, this component will
-          use an `<input>` element of type `text`. If the option `:-textarea?`
+          use an `<input>` element of type `text`. If the option `:textarea?`
           is set to `true`, a `<textarea>` element will be used instead."
    :opts '[{:name    textarea?
             :schema    boolean?
@@ -131,7 +131,7 @@
             :schema    #(or (string? %) (keyword? %))
             :default :block-start
             :desc    "Sets the width of your label \"column\", when
-                      `:-label-placement` is set to `:inline`. Must be a valid
+                      `:label-placement` is set to `:inline`. Must be a valid
                       css width value (`px`, `em` `rem`, etc)"}
 
            {:name    wrapper-attrs
@@ -172,7 +172,7 @@
            ]}
   [& args]
   (let [[opts attrs & _]
-        (extract args text-field)
+        (extract args)
 
         {:keys [
                 outer-wrapper-attrs
@@ -223,11 +223,11 @@
 
         wrapped-input
         [text-field* (merge attrs
-                            {:-wrapper-attrs    wrapper-attrs
-                             :-start-enhancer   start-enhancer
-                             :-end-enhancer     end-enhancer
+                            {:wrapper-attrs    wrapper-attrs
+                             :start-enhancer   start-enhancer
+                             :end-enhancer     end-enhancer
                              :data-kushi-colorway colorway
-                             :-textarea?        textarea?})]
+                             :textarea?        textarea?})]
 
         label-with-attrs
         [:label

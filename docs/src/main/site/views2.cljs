@@ -23,16 +23,11 @@
    ;; [malli.core :as m]
    [kushi.ui.defs :as defs]))
 
-
-(? :pp {:coll-limit 22} (range 20))
-
-
 ;; (sx "@keyframes wtf dd" 7)
 
+
 (js/console.clear)
-
 #_(pprint (? :data {1 2 3 :x}))
-
 
 
 ;; (? (:colorway kushi.ui.variants/variants-by-custom-opt-key))
@@ -75,12 +70,14 @@
 
   [:div (sx :m--100px)
    #_[button {:start-enhancer :pets} "Click"]
-   [icon {:ns       (at)
-          :colorway :red
-          :sizing   :xxxlarge
-          :weight   :bolds
-          :inert?   true
-          :id       :foo}
+   [icon {:ns           (at)
+          :colorway     :red
+          :sizing       :xxxlarge
+          :weight       :bolds
+          :icon-style   :sharp
+          :icon-filled? true
+          :inert?       true
+          :id           :foo}
     :star]]
 
 
@@ -90,7 +87,7 @@
             :surface        :solid}
     "Click"]]
 
-  #_[showcase (uic-showcase-map2 kushi.ui.icon.core/icon
+  [showcase (uic-showcase-map2 kushi.ui.icon.core/icon
                                #_kushi.ui.icon.demo/demos)]
 
   #_[showcase (uic-showcase-map2 kushi.ui.spinner.core/spinner #_kushi.ui.icon.demo/demos)]

@@ -157,7 +157,7 @@
   ;; 1) Pre-calculate and append pane
   ;; Calculate an initial placement and append a pane element to the dom.
   ;; If the owning element is beyond the edge-threshold, the pane will
-  ;; be assigned a new placement, but only if the value of :-pane-placement
+  ;; be assigned a new placement, but only if the value of :pane-placement
   ;; is something other than :auto.
 
   ;; TODO - optimize for auto placement

@@ -44,7 +44,7 @@
            ]}
   [& args]
   (let [[opts attrs & _]
-        (extract args callout-close-button)
+        (extract args)
 
         {:keys     [icon-svg colorway]
          icon-name :icon
@@ -60,7 +60,7 @@
             :close))]
     [button
      (merge-attrs
-      {:-contour        :pill
+      {:contour        :pill
        :colorway     colorway
        :surface      :minimal
        :class         (css ".kushi-callout-close-button"
@@ -130,7 +130,7 @@
   [& args]
 
   (let [{:keys [opts attrs children]}    
-        (extract args callout)
+        (extract args)
 
         {:keys [loading?
                 icon

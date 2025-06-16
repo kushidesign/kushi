@@ -57,7 +57,7 @@
     :examples  [{:label    "Basic"
                  :args     ["Pop toast"]
                  :sx-attrs (sx-call (toast-attrs
-                                     {:-f (fn [popover-el]
+                                     {:f (fn [popover-el]
                                             (rdom/render (fn []
                                                            [:div
                                                             (sx :.xxxlarge
@@ -67,8 +67,8 @@
                                                          popover-el))}))}]}
 
    (let [code (sx-call (toast-attrs
-                        {:-auto-dismiss? false
-                         :-f             (fn [toast-el]
+                        {:auto-dismiss? false
+                         :f             (fn [toast-el]
                                            (rdom/render toast-content
                                                         toast-el))}))]
      {:desc      "With notification, and manual dismiss cta"

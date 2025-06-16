@@ -49,8 +49,8 @@
            :row-attrs       row-attrs
            :container-attrs container-attrs
            :examples        (for [surface #{:faint :solid :outline}]
-                              {:attrs {:-header-text msg
-                                       :-icon        [icon :info]
+                              {:attrs {:header-text msg
+                                       :icon        [icon :info]
                                        :colorway    s
                                        :surface     surface}})})]
 
@@ -61,20 +61,20 @@
               :snippets        '[[callout
                                   (merge-attrs
                                    (sx :.large)
-                                   {:-header-text [:span "Please check out the "
+                                   {:header-text [:span "Please check out the "
                                                    [link (merge-attrs (sx :ws--n)
                                                                       {:href "#"})
                                                     "new features"]]
                                     :colorway    :accent
-                                    :-icon        [icon :info]})]]
+                                    :icon        [icon :info]})]]
               :examples          [{:code (sx-call
                                           (for [sz sizes]
-                                            [callout {:-header-text [:span "Please check out the "
+                                            [callout {:header-text [:span "Please check out the "
                                                                      [link (merge-attrs
                                                                             (sx :ws--n)
                                                                             {:href "#"})
                                                                       "new features"]]
-                                                      :-icon        [icon :info]
+                                                      :icon        [icon :info]
                                                       :colorway    :accent
                                                       :class        [sz]}]))}]}
 
@@ -84,10 +84,10 @@
               :variants-       [:filled :bordered]
               :examples        [{:code (sx-call 
                                         [callout
-                                         {:-icon         [icon :check-circle]
+                                         {:icon         [icon :check-circle]
                                           :colorway     :positive
-                                          :-header-text  "Your transaction was successful."
-                                          :-user-actions callout-close-button}])}]}
+                                          :header-text  "Your transaction was successful."
+                                          :user-actions callout-close-button}])}]}
 
              ]
              semantic-variants)
@@ -104,22 +104,22 @@
             :snippets        '[[callout
                                 (merge-attrs
                                  (sx :.large)
-                                 {:-header-text [:span "Please check out the "
+                                 {:header-text [:span "Please check out the "
                                                  [link (merge-attrs
                                                         (sx :ws--n)
                                                         {:href "#"})
                                                   "new features"]]
                                   :colorway    :accent
-                                  :-icon        [icon :info]})]]
+                                  :icon        [icon :info]})]]
             :examples        [{:code 
                                (sx-call
                                 (for [sz sizes]
-                                  [callout {:-header-text [:span "Please check out the "
+                                  [callout {:header-text [:span "Please check out the "
                                                            [link (merge-attrs
                                                                   (sx :ws--n)
                                                                   {:href "#"})
                                                             "new features"]]
-                                            :-icon        [icon :info]
+                                            :icon        [icon :info]
                                             :colorway    :accent
                                             :class        [sz]}]))}]}
            #_{:desc            "With icon and dismiss button, in positive variant"
@@ -129,9 +129,9 @@
             :examples        [{:code
                                (sx-call 
                                 [callout
-                                 (merge {:-icon         [icon :check-circle]
+                                 (merge {:icon         [icon :check-circle]
                                          :colorway     :positive
-                                         :-header-text  "Your transaction was successful."
-                                         :-user-actions callout-close-button})])}]}]
+                                         :header-text  "Your transaction was successful."
+                                         :user-actions callout-close-button})])}]}]
           #_semantic-variants)))
 

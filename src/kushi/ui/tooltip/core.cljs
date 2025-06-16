@@ -48,7 +48,7 @@
           content.
 
           By default, tooltips will show up above the owning element.Specifying
-          placement in various ways can be done with the `:-placement` option.
+          placement in various ways can be done with the `:placement` option.
           
           The element being tipped must receive an attributes map that is a
           result of passing a map of options to
@@ -103,8 +103,8 @@
           in this Examples section.
           
           `(tooltip-attrs`<br>
-          ` {:-text \"My text\"`<br>
-          `  :-tooltip-class (css [:--tooltip-font-size :34px])}))`
+          ` {:text \"My text\"`<br>
+          `  :tooltip-class (css [:--tooltip-font-size :34px])}))`
           
           If you would like to use a value of 0 (`px`, `ems`, `rem`, etc.) for
           `--tooltip-offset`, `--tooltip-arrow-x-offset`,
@@ -176,12 +176,12 @@
             :desc    "A class name for the la carte application of classes on
                       the tooltip element which is displaying alternate text
                       after click."}]}
-  [{text                        :-text
-    placement                   :-placement
-    arrow?                      :-arrow?
-    tooltip-class               :-tooltip-class
-    text-on-click               :-text-on-click
-    text-on-click-tooltip-class :-text-on-click-tooltip-class
+  [{text                        :text
+    placement                   :placement
+    arrow?                      :arrow?
+    tooltip-class               :tooltip-class
+    text-on-click               :text-on-click
+    text-on-click-tooltip-class :text-on-click-tooltip-class
     :or                         {placement :auto
                                  arrow?    true}}]
   

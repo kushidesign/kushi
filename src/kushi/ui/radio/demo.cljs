@@ -34,32 +34,32 @@
        :snippets '[[:div 
                     [radio (merge-attrs
                             (sx :.xxxlarge)
-                            {:-input-attrs {:name           :xxxlarge-sample
+                            {:input-attrs {:name           :xxxlarge-sample
                                             :defaultChecked true}})]
                     [radio (merge-attrs
                             (sx :.xxxlarge)
-                            {:-input-attrs {:name :xxxlarge-sample}})]]]
+                            {:input-attrs {:name :xxxlarge-sample}})]]]
        :examples  [{:code (sx-call (into [:<>] 
                                          (for [sz sizes]
                                            [:div (sx :.flex-row-fs
                                                      :xsm:flex-direction--column) 
                                             [radio {:class        [sz]
-                                                    :-input-attrs {:name           sz
+                                                    :input-attrs {:name           sz
                                                                    :defaultChecked true}}]
                                             [radio {:class        [sz]
-                                                    :-input-attrs {:name sz}}]])))}]})
+                                                    :input-attrs {:name sz}}]])))}]})
      {:desc     "Radio group with labels"
       :row-attrs row-attrs
       :snippets  '[[:section 
                     (sx :.flex-row-fs)
-                    [radio {:-input-attrs {:name :demo}} "Yes"]
-                    [radio {:-input-attrs {:name :demo}} "No"]
-                    [radio {:-input-attrs {:name :demo}} "Maybe"]]]
+                    [radio {:input-attrs {:name :demo}} "Yes"]
+                    [radio {:input-attrs {:name :demo}} "No"]
+                    [radio {:input-attrs {:name :demo}} "Maybe"]]]
       :examples [{:code (sx-call [:section 
                                   (sx :.flex-row-fs)
-                                  [radio {:-input-attrs {:name :demo}} "Yes"]
-                                  [radio {:-input-attrs {:name :demo}} "No"]
-                                  [radio {:-input-attrs {:name :demo}} "Maybe"]])}]}
+                                  [radio {:input-attrs {:name :demo}} "Yes"]
+                                  [radio {:input-attrs {:name :demo}} "No"]
+                                  [radio {:input-attrs {:name :demo}} "Maybe"]])}]}
 
      {:desc     "Radio group with labels, inherited color"
       :row-attrs row-attrs
@@ -67,17 +67,17 @@
                     (sx :.flex-row-fs
                         :c--$purple-600
                         :dark:c--$purple-300)
-                    [radio {:-input-attrs {:name :demo}} "Yes"]
-                    [radio {:-input-attrs {:name :demo}} "No"]
-                    [radio {:-input-attrs {:name :demo}} "Maybe"]]]
+                    [radio {:input-attrs {:name :demo}} "Yes"]
+                    [radio {:input-attrs {:name :demo}} "No"]
+                    [radio {:input-attrs {:name :demo}} "Maybe"]]]
       :examples [{:code (sx-call [:section 
                                   (sx :.flex-row-fs
                                       :c--$purple-600
                                       :dark:c--$purple-300
                                       )
-                                  [radio {:-input-attrs {:name :demo-color}} "Yes"]
-                                  [radio {:-input-attrs {:name :demo-color}} "No"]
-                                  [radio {:-input-attrs {:name :demo-color}} "Maybe"]])}]}
+                                  [radio {:input-attrs {:name :demo-color}} "Yes"]
+                                  [radio {:input-attrs {:name :demo-color}} "No"]
+                                  [radio {:input-attrs {:name :demo-color}} "Maybe"]])}]}
      
      (let [code (sx-call [:section
                           (sx
@@ -98,17 +98,17 @@
                              :animation :jiggle2:0.5s}])
                           [radio
                            (merge-attrs (sx :.normal)
-                                        {:-input-attrs {:name           :demo-custom
+                                        {:input-attrs {:name           :demo-custom
                                                         :defaultChecked true}})
                            [label [:span.emoji "🦑"] "Squid"]]
                           [radio
-                           (merge-attrs (sx :.normal) {:-input-attrs {:name :demo-custom}})
+                           (merge-attrs (sx :.normal) {:input-attrs {:name :demo-custom}})
                            [label [:span.emoji "🐋"] "Whale"]]
                           [radio
-                           (merge-attrs (sx :.normal) {:-input-attrs {:name :demo-custom}})
+                           (merge-attrs (sx :.normal) {:input-attrs {:name :demo-custom}})
                            [label [:span.emoji "🦈 "] "Shark"]]
                           [radio
-                           (merge-attrs (sx :.normal) {:-input-attrs {:name :demo-custom}})
+                           (merge-attrs (sx :.normal) {:input-attrs {:name :demo-custom}})
                            [label [:span.emoji "🐊"] "Croc"]]])] 
        {:desc      "Custom, with default checked"
         :row-attrs row-attrs

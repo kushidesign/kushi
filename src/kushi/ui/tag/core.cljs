@@ -68,7 +68,7 @@
    }
   [& args]
   (let [{:keys [opts attrs children]}
-        (extract args tag)
+        (extract args)
         
         {:keys [loading?
                 start-enhancer

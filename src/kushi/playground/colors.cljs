@@ -13,7 +13,7 @@
   {:desc "A label is typically used for providing titles to sections of
           content."}
   [& args]
-  (let [{:keys [opts attrs children]} (extract args label)
+  (let [{:keys [opts attrs children]} (extract args)
         children (map #(if (string? %)
                          [:span.kushi-label-text %]
                          %)
@@ -33,7 +33,7 @@
           children)))
 
 (defn text-sample-sticker [& args]
-  (let [{:keys [opts attrs children]} (extract args label)
+  (let [{:keys [opts attrs children]} (extract args)
         children                      (map #(if (string? %)
                                               [:span.kushi-label-text %]
                                               %)
@@ -224,7 +224,7 @@
 
 (defn color-grid [& args]
   (let [{:keys [opts attrs children]}
-        (extract args color-grid)
+        (extract args)
 
         {:keys [row-gap
                 column-gap

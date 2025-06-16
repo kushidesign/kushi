@@ -47,15 +47,15 @@
       :snippets-header component-examples/sizes-snippet-header*
       :snippets        '[[checkbox (merge-attrs 
                                     (sx :fs--$xxxlarge)
-                                    {:-input-attrs {:name           :xxxlarge-sample
+                                    {:input-attrs {:name           :xxxlarge-sample
                                                     :defaultChecked true}})]]
       :examples        [{:code (sx-call (into [:<>] 
                                               (for [sz sizes]
                                                 [:div (sx :.flex-row-fs
                                                           :xsm:flex-direction--column) 
-                                                 [checkbox {:-label-attrs   {:class [sz]}
+                                                 [checkbox {:label-attrs   {:class [sz]}
                                                             :defaultChecked true}]
-                                                 [checkbox {:-label-attrs {:class [sz]}}]])))}]}
+                                                 [checkbox {:label-attrs {:class [sz]}}]])))}]}
      {:desc      "With label"
       :row-attrs row-attrs
       :snippets  '[[[label "Sign me up"]]]
@@ -84,7 +84,7 @@
         :sx-attrs  (sx-call (sx :.large))
         :examples  (for [s weights]
                      {:label (name s)
-                      :attrs {:-label-attrs {:class [s]}}
+                      :attrs {:label-attrs {:class [s]}}
                       :args  [[label "Make it shiny" [icon :auto-awesome]]]} )})
      ]))
 
@@ -102,7 +102,7 @@
                                      [:div (sx :.flex-row-fs
                                                :md:flex-direction--column) 
                                       [radio {:class        [sz]
-                                              :-input-attrs {:name           sz
+                                              :input-attrs {:name           sz
                                                              :defaultChecked true}}]
                                       [radio {:class        [sz]
-                                              :-input-attrs {:name sz}}]])))}]}
+                                              :input-attrs {:name sz}}]])))}]}

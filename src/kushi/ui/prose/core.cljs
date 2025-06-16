@@ -31,7 +31,7 @@
                          scale."}
               ]}
   [& args]
-  (let [{:keys [opts attrs children]}       (extract args prose) 
+  (let [{:keys [opts attrs children]}       (extract args) 
         {:keys [size]}                opts
         size                          (or (some-> size
                                                   (maybe nameable?)

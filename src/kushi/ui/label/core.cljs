@@ -9,7 +9,7 @@
 (defn label
   {:desc "A label is typically used for providing titles to sections of content."}
   [& args]
-  (let [{:keys [opts attrs children]} (extract args label)
+  (let [{:keys [opts attrs children]} (extract args)
         {:keys [start-enhancer end-enhancer]}
         opts]
     (into [:label

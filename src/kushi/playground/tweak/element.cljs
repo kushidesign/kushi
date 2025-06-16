@@ -273,8 +273,8 @@
                     :tab-index     0
                     :aria-selected og?
                     :on-click      flex-options-click}
-                   (tooltip-attrs {:-text      (str ":." (name flex-class))
-                                   :-placement :top}))
+                   (tooltip-attrs {:text      (str ":." (name flex-class))
+                                   :placement :top}))
              children]))))
 
 
@@ -306,7 +306,7 @@
         (sx :.kushi-slider-single-value-label-copy-to-clipboard-button
             :>button:h--$medium
             :m--0)
-        {:-placement :left
+        {:placement :left
          ;; :on-click   #(copy-to-clipboard! (.-textContent (.-firstChild (domo/nearest-ancestor (domo/et %) ".kushi-slider-single-value-label-wrapper"))))
          :on-click   #(copy-to-clipboard! (copy-to-clipboard-fn %))})]]
 
@@ -554,7 +554,7 @@
        :refresh]]
      [switch (sx :.small
                  :mis--1rem
-                 {:-on?     true
+                 {:on?     true
                   :on-click (fn [e]
 
                               (let [el          (domo/cet e)

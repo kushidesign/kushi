@@ -57,7 +57,7 @@
       :examples        (for [s [:rounded :pill :sharp]]
                          {:label (name s)
                           :args  ["Done"]
-                          :attrs {:-contour s}})}
+                          :attrs {:contour s}})}
 
      #_{:desc            "With icons"
       :reqs            '[[kushi.ui.icon.core :refer [icon]]]

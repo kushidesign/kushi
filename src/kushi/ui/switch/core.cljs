@@ -46,7 +46,7 @@
           `--switch-border-width`
           The default value is `2px`. If customizing the value, it is
           recommended to use a `px` or `rem` value, especially if you are using
-          the `:-track-content-on` or `:-track-content-off` options.
+          the `:track-content-on` or `:track-content-off` options.
           
           `--switch-border-color`
           The default value is `transparent`, which will read as \"padding\"
@@ -68,7 +68,7 @@
             :schema    boolean?
             :default false
             :desc    "Set this to true if you would like to control the state of
-                      the switch in a reactive manner via the `:-on?` option"}
+                      the switch in a reactive manner via the `:on?` option"}
            {:name    thumb-attrs
             :schema    map?
             :default nil
@@ -104,7 +104,7 @@
            ]}
   [& args]
   (let [[opts attrs & _]
-        (extract args switch)
+        (extract args)
 
         {:keys [disable-events?
                 on?

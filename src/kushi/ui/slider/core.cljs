@@ -541,11 +541,11 @@
           with the custom opts syntax. Checkout
           [input range docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range)
           for info on how `min`, `max`, and `step` work. Alternately, a scale of
-          named, stepped values may be provided with the custom `:-steps` option."
+          named, stepped values may be provided with the custom `:steps` option."
    :opts '[
           ;;  {:name    default-value
           ;;   :schema    any?
-          ;;   :default (:text "The supplied `min` or the first item in the supplied `:-steps` collection.")
+          ;;   :default (:text "The supplied `min` or the first item in the supplied `:steps` collection.")
           ;;   :desc    "The initial, default value."}
           ;;  {:name    default-index
           ;;   :schema    int?
@@ -553,7 +553,7 @@
           ;;   :desc    "Use `default-index` when you want to set the default value
           ;;             by index. This is the index of the number in a numeric
           ;;             range (with a `min` and `max`), or the index of a value in
-          ;;             a supplied `:-steps` collection"}
+          ;;             a supplied `:steps` collection"}
           ;;  {:name    steps
           ;;   :schema    vector?
           ;;   :default nil
@@ -616,7 +616,7 @@
            ]}
   [& args]
   (let [[opts attrs]
-        (extract args slider)
+        (extract args)
 
         {:keys [defaultValue
                 default-value

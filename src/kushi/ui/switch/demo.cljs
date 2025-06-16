@@ -53,7 +53,7 @@
                                    ["hover:bgc" :transparent!important]
                                    ["[aria-checked='true']:bc" :currentColor]
                                    ["[aria-checked='true']:hover:bc" :currentColor]
-                                   {:-thumb-attrs (sx
+                                   {:themb-attrs (sx
                                                    :.elevated-0!
                                                    [:border
                                                     "calc(var(--switch-border-width) * (1 / var(--switch-thumb-scale-factor))) solid transparent"]
@@ -80,9 +80,9 @@
      {:desc            "With convex-styled thumb control"
       :row-attrs       row-attrs
       :container-attrs container-attrs
-      :sx-attrs        (sx-call {:-thumb-attrs (sx :bgi--$convex
+      :sx-attrs        (sx-call {:themb-attrs (sx :bgi--$convex
                                                    :dark:bgi--$convex-3)})
-      :snippets        '[[switch {:-thumb-attrs (sx :bgi--$convex
+      :snippets        '[[switch {:themb-attrs (sx :bgi--$convex
                                                     :dark:bgi--$convex-3)}]]
       :examples        (for [sz sizes]
                          {:label (name sz)
@@ -95,12 +95,12 @@
                                  (sx
                                   [:--switch-border-width :0px]
                                   [:--switch-thumb-scale-factor :1.25])
-                                 {:-thumb-attrs (sx :border--1px:solid:currentColor)}))
+                                 {:themb-attrs (sx :border--1px:solid:currentColor)}))
       :snippets        '[[switch (merge-attrs
                                   (sx
                                    [:--switch-border-width :0px]
                                    [:--switch-thumb-scale-factor :1.25])
-                                  {:-thumb-attrs (sx :border--1px:solid:currentColor)})]]
+                                  {:themb-attrs (sx :border--1px:solid:currentColor)})]]
       :examples        (for [sz sizes]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
@@ -110,12 +110,12 @@
       :container-attrs container-attrs
       :sx-attrs        (sx-call (merge-attrs (sx
                                               [:--switch-width-ratio :2.25])
-                                             {:-track-content-on  "ON"
-                                              :-track-content-off "OFF"}))
+                                             {:track-content-on  "ON"
+                                              :track-content-off "OFF"}))
       :snippets        '[[switch (merge-attrs (sx
                                                [:--switch-width-ratio :2.25])
-                                              {:-track-content-on  "ON"
-                                               :-track-content-off "OFF"})]]
+                                              {:track-content-on  "ON"
+                                               :track-content-off "OFF"})]]
       :examples        (for [sz sizes]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
@@ -123,11 +123,11 @@
      {:desc            "With labeled thumb"
       :row-attrs       row-attrs
       :container-attrs container-attrs
-      :sx-attrs        (sx-call {:-thumb-content-on  [:span (sx :.semi-bold :fs--0.3em) "ON"]
-                                 :-thumb-content-off [:span (sx :.semi-bold :fs--0.3em) "OFF"]})
+      :sx-attrs        (sx-call {:thumb-content-on  [:span (sx :.semi-bold :fs--0.3em) "ON"]
+                                 :thumb-content-off [:span (sx :.semi-bold :fs--0.3em) "OFF"]})
 
-      :snippets        '[[switch {:-thumb-content-on  [:span (sx :.semi-bold :fs--0.3em) "ON"]
-                                  :-thumb-content-off [:span (sx :.semi-bold :fs--0.3em) "OFF"]}]]
+      :snippets        '[[switch {:thumb-content-on  [:span (sx :.semi-bold :fs--0.3em) "ON"]
+                                  :thumb-content-off [:span (sx :.semi-bold :fs--0.3em) "OFF"]}]]
       :examples        (for [sz (drop 2 sizes)]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
@@ -136,18 +136,18 @@
       :reqs            '[[kushi.ui.icon.core :refer [icon]]]
       :row-attrs       row-attrs
       :container-attrs container-attrs
-      :sx-attrs        (sx-call {:-track-content-on  [icon (merge-attrs (sx :fs--0.55em)
-                                                                        {:-icon-filled? true})
+      :sx-attrs        (sx-call {:track-content-on  [icon (merge-attrs (sx :fs--0.55em)
+                                                                        {:icon-filled? true})
                                                       :visibility]
-                                 :-track-content-off [icon (merge-attrs (sx :fs--0.55em)
-                                                                        {:-icon-filled? true})
+                                 :track-content-off [icon (merge-attrs (sx :fs--0.55em)
+                                                                        {:icon-filled? true})
                                                       :visibility-off]})
 
-      :snippets        '[[switch {:-track-content-on  [icon (merge-attrs (sx :fs--0.55em)
-                                                                         {:-icon-filled? true})
+      :snippets        '[[switch {:track-content-on  [icon (merge-attrs (sx :fs--0.55em)
+                                                                         {:icon-filled? true})
                                                        :visibility]
-                                  :-track-content-off [icon (merge-attrs (sx :fs--0.55em)
-                                                                         {:-icon-filled? true})
+                                  :track-content-off [icon (merge-attrs (sx :fs--0.55em)
+                                                                         {:icon-filled? true})
                                                        :visibility-off]}]]
       :examples        (for [sz sizes]
                          {:label (name sz)
@@ -157,18 +157,18 @@
       :reqs            '[[kushi.ui.icon.core :refer [icon]]]
       :row-attrs       row-attrs
       :container-attrs container-attrs
-      :sx-attrs        (sx-call {:-thumb-content-on  [icon (merge-attrs (sx :fs--0.55em)
-                                                                        {:-icon-filled? true})
+      :sx-attrs        (sx-call {:thumb-content-on  [icon (merge-attrs (sx :fs--0.55em)
+                                                                        {:icon-filled? true})
                                                       :visibility]
-                                 :-thumb-content-off [icon (merge-attrs (sx :fs--0.55em)
-                                                                        {:-icon-filled? true})
+                                 :thumb-content-off [icon (merge-attrs (sx :fs--0.55em)
+                                                                        {:icon-filled? true})
                                                       :visibility-off]})
 
-      :snippets        '[[switch {:-thumb-content-on  [icon (merge-attrs (sx :fs--0.55em)
-                                                                         {:-icon-filled? true})
+      :snippets        '[[switch {:thumb-content-on  [icon (merge-attrs (sx :fs--0.55em)
+                                                                         {:icon-filled? true})
                                                        :visibility]
-                                  :-thumb-content-off [icon (merge-attrs (sx :fs--0.55em)
-                                                                         {:-icon-filled? true})
+                                  :thumb-content-off [icon (merge-attrs (sx :fs--0.55em)
+                                                                         {:icon-filled? true})
                                                        :visibility-off]}]]
       :examples        (for [sz sizes]
                          {:label (name sz)

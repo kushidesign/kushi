@@ -6,7 +6,7 @@
   {:summary "Cards are typically visually contained sections of information.
              They are often part of a series of cards with related content."}
   [& args]
-  (let [{:keys [opts attrs children]} (extract args card)
+  (let [{:keys [opts attrs children]} (extract args)
         {:keys []}              opts]
     (into
      [:div (merge-attrs

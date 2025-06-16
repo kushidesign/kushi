@@ -24,10 +24,10 @@
                             :p--0px
                             :fs--$small)
                         (tooltip-attrs
-                         {:-text                        "Click to copy"
-                          :-text-on-click               "Copied!"
-                          :-text-on-click-tooltip-class (css [:--tooltip-background-color :$accent-filled-background-color])
-                          :-placement                   :r}))
+                         {:text                        "Click to copy"
+                          :text-on-click               "Copied!"
+                          :text-on-click-tooltip-class (css [:--tooltip-background-color :$accent-filled-background-color])
+                          :placement                   :r}))
                        [icon mui.svg/content-copy]]])]
     (into [:div
            (merge-attrs
@@ -49,14 +49,16 @@
                 :bgc--transparent)
             {:type  :text
              :value "copy"}
-            (dissoc opts :-placement))]
+            (dissoc opts :placement))]
           children)))
 
 (defn snippet
   "Desc for"
   [& args]
-  (let [{:keys [opts attrs children]}                (extract args snippet)
-        {:keys [text-to-display text-to-copy on-copy-click]} opts]
+  (let [{:keys [opts attrs children]}                
+        (extract args [:text-to-display :text-to-copy :on-copy-click])
+        {:keys [text-to-display text-to-copy on-copy-click]}
+        opts]
     (into [:div
            (merge-attrs
             (sx ".kushi-snippet"

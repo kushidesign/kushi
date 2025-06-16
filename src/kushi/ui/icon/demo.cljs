@@ -55,39 +55,42 @@
 (def demos
   (ui-demo
    
-   [{:label   "Semantic colorways"
+   [
+    
+    
+    {:label   "Semantic colorways"
      :desc    "Examples of semantic coloring of icons"
      :require [[kushi.ui.icon.core :refer [icon]]]
      :samples ["accent"
                [icon {:colorway :accent
-                      :-sizing     :xxxlarge} :star]
+                      :sizing     :xxxlarge} :star]
 
                "negative"
                [icon {:colorway :negative
-                      :-sizing     :xxxlarge} :cancel]
+                      :sizing     :xxxlarge} :cancel]
 
                "positive"
                [icon {:colorway :positive
-                      :-sizing     :xxxlarge} :check-circle]
+                      :sizing     :xxxlarge} :check-circle]
 
                "warning"
                [icon {:colorway :warning
-                      :-sizing     :xxxlarge} :warning]]}
+                      :sizing     :xxxlarge} :warning]]}
     
     {:label     "Semantic colorways"
      :desc      "Examples of semantic coloring of icons"
      :require   [[kushi.ui.icon.core :refer [icon]]]
      :samples   [[icon {:colorway :accent
-                        :-sizing     :xxxlarge} :star]
+                        :sizing     :xxxlarge} :star]
 
                  [icon {:colorway :negative
-                        :-sizing     :xxxlarge} :cancel]
+                        :sizing     :xxxlarge} :cancel]
 
                  [icon {:colorway :positive
-                        :-sizing     :xxxlarge} :check-circle]
+                        :sizing     :xxxlarge} :check-circle]
 
                  [icon {:colorway :warning
-                        :-sizing     :xxxlarge} :warning]]}
+                        :sizing     :xxxlarge} :warning]]}
     
     {:label         [:span "Various icons" [:span " (hover to view icon name)"]]
      :label/modal   "Various icons"
@@ -95,8 +98,8 @@
      :require       '[[kushi.ui.icon.core :refer [icon]]]
      :row-style     {:flex-wrap :wrap
                      :gap       :2em}
-     :attrs/display {:-sizing   :xxxlarge
-                     :-weight :light}
+     :attrs/display {:sizing   :xxxlarge
+                     :weight :light}
      :render-as     :icons-with-tooltips
      :samples       [:auto-awesome
                      :help

@@ -82,7 +82,8 @@
     s]])
 
 (defn copy-to-clipboard-button [& args]
-  (let [{:keys [opts attrs children]} (extract args copy-to-clipboard-button)]
+  (let [{:keys [opts attrs]}
+        (extract args [:text-to-copy :clipboard-parent-sel])]
     [button
      (merge-attrs
       {:colorway :accent
@@ -98,18 +99,18 @@
 
       ;; Is this too strange with the dash convention?
       (tooltip-attrs
-       {:-text                        
+       {:text                        
         "Click to copy"
 
-        :-text-on-click               
+        :text-on-click               
         "Copied!"
 
         ;; Is this too tricky with the css creating the class?
-        :-text-on-click-tooltip-class 
+        :text-on-click-tooltip-class 
         (css ".kushi-playground-copy-to-clipboard-button-tooltip-class"
              [:--tooltip-background-color :$background-color-accent-hard])
 
-        :-placement                  
+        :placement                  
         [:block-start :inline-end]})
       attrs)
      [icon (sx :.kushi-playground-copy-to-clipboard-button-icon
@@ -155,13 +156,13 @@
            :besr--$rounded-absolute-medium)
        (sx :br--$rounded-absolute-medium)))
     (when-let [attrs (some->> copyable
-                              (hash-map :-text-to-copy)
+                              (hash-map :text-to-copy)
                               (merge-attrs 
                                ;; TODO - can this be done without :.top-right-corner-inside!
                                ;; TODO - can this be done without :.top-right-corner-inside!
                                (sx :.top-right-corner-inside
                                    :position--absolute)
-                               {:-clipboard-parent-sel ".kushi-modal"}))]
+                               {:clipboard-parent-sel ".kushi-modal"}))]
       [copy-to-clipboard-button attrs])
     preformatted
     ]])

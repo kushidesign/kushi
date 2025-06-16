@@ -48,16 +48,16 @@
                                         (sx
                                          :min-width--300px
                                          :_.kushi-modal-description:fs--$small)
-                                        {:-modal-title "Example modal"
-                                         :-description "Example modal description goes here."
+                                        {:modal-title "Example modal"
+                                         :description "Example modal description goes here."
                                          :id           id})
                                        [modal-close-button {:modal-id id}]
                                        [:div
                                         (sx :.flex-col-fs :gap--1em)
                                         [text-field {:placeholder "Puffy"
-                                                     :-label      "Screen name"}]
+                                                     :label      "Screen name"}]
                                         [text-field {:placeholder "Executive"
-                                                     :-label      "Occupation"}]]
+                                                     :label      "Occupation"}]]
                                        [:div
                                         (sx :.flex-row-fe :gap--1em)
                                         [button {:on-click close-kushi-modal} "Cancel"]
@@ -81,16 +81,16 @@
                                  :min-width--300px
                                  [:translate "-50% calc(-50% + 30px)"]
                                  [:.kushi-modal-open:translate "-50% -50%"])
-                                {:-modal-title "Example modal"
-                                 :-description "Example modal description goes here."
+                                {:modal-title "Example modal"
+                                 :description "Example modal description goes here."
                                  :id           id})
                                [modal-close-button {:modal-id id}]
                                [:div
                                 (sx :.flex-col-fs :gap--1em)
                                 [text-field (sx {:placeholder "Puffy"
-                                                 :-label      "Screen name"})]
+                                                 :label      "Screen name"})]
                                 [text-field (sx {:placeholder "Executive"
-                                                 :-label      "Occupation"})]]
+                                                 :label      "Occupation"})]]
                                [:div
                                 (sx :.flex-row-fe :gap--1em)
                                 [button {:on-click close-kushi-modal} "Cancel"]
@@ -115,16 +115,16 @@
                                  :min-width--300px
                                  [:translate "-50% -50px"]
                                  [:.kushi-modal-open:translate "-50% 50px"])
-                                {:-modal-title "Example modal"
-                                 :-description "Example modal description goes here."
+                                {:modal-title "Example modal"
+                                 :description "Example modal description goes here."
                                  :id           id})
                                [modal-close-button {:modal-id id}]
                                [:div
                                 (sx :.flex-col-fs :gap--1em)
                                 [text-field (sx {:placeholder "Puffy"
-                                                 :-label      "Screen name"})]
+                                                 :label      "Screen name"})]
                                 [text-field (sx {:placeholder "Executive"
-                                                 :-label      "Occupation"})]]
+                                                 :label      "Occupation"})]]
                                [:div
                                 (sx :.flex-row-fe :gap--1em)
                                 [button {:on-click close-kushi-modal} "Cancel"]
@@ -149,15 +149,15 @@
                                              :b--2px:solid:$gray-900
                                              [:--modal-backdrop-color :$transparent-white-70]
                                              :_.kushi-modal-description:fs--$small)
-                                            {:-modal-title "Example modal"
-                                             :-description "Example modal description goes here."
+                                            {:modal-title "Example modal"
+                                             :description "Example modal description goes here."
                                              :id           id})
                                [:div
                                 (sx :.flex-col-fs :gap--1em)
                                 [text-field {:placeholder "Puffy"
-                                             :-label      "Screen name"}]
+                                             :label      "Screen name"}]
                                 [text-field {:placeholder "Executive"
-                                             :-label      "Occupation"}]]
+                                             :label      "Occupation"}]]
                                [:div
                                 (sx :.flex-row-fe :gap--1em)
                                 [button
@@ -180,15 +180,15 @@
                                   :b--2px:solid:$gray-900
                                   [:--modal-backdrop-color :$transparent-white-70]
                                   :_.kushi-modal-description:fs--$small
-                                  {:-modal-title "Example modal"
-                                   :-description "Example modal description goes here."
+                                  {:modal-title "Example modal"
+                                   :description "Example modal description goes here."
                                    :id           id})
                                  [:div
                                   (sx :.flex-col-fs :gap--1em)
                                   [text-field (sx {:placeholder "Puffy"
-                                                   :-label      "Screen name"})]
+                                                   :label      "Screen name"})]
                                   [text-field (sx {:placeholder "Executive"
-                                                   :-label      "Occupation"})]]
+                                                   :label      "Occupation"})]]
                                  [:div
                                   (sx :.flex-row-fe :gap--1em)
                                   [button
@@ -216,25 +216,25 @@
                                  :min-width--300px
                                  :border-radius--24px
                                  [:--modal-backdrop-color :$transparent-light-gray-50])
-                                {:-modal-title "Example modal"
-                                 :-description "Example modal description goes here."
-                                 :-elevation   0
+                                {:modal-title "Example modal"
+                                 :description "Example modal description goes here."
+                                 :elevation   0
                                  :id           id})
                                [:div
                                 (sx :.flex-col-fs :gap--1em)
                                 [text-field (sx {:placeholder "Puffy"
-                                                 :-label      "Screen name"})]
+                                                 :label      "Screen name"})]
                                 [text-field (sx {:placeholder "Executive"
-                                                 :-label      "Occupation"})]]
+                                                 :label      "Occupation"})]]
                                [:div
                                 (sx :.flex-row-fe :gap--1em)
                                 [button
                                  (merge-attrs {:surface :minimal
-                                               :-contour   :pill
+                                               :contour   :pill
                                                :on-click close-kushi-modal})
                                  "Cancel"]
                                 [button
                                  (merge-attrs {:surface :minimal
-                                               :-contour   :pill
+                                               :contour   :pill
                                                :on-click close-kushi-modal}) 
                                  "Submit"]]]]))}]}]))

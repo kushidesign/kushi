@@ -33,39 +33,39 @@
 (defn spinner
   {:docs    "A spinner"
    :summary "Round & round"
-   :opts    {:-spinner-type {:default   :donut
+   :opts    {:spinner-type {:default   :donut
                              :desc      "The variety of spinner"
                              :demo      {:label         "Spinner type variants"
-                                         :attrs/display {:-sizing :xxxlarge}
+                                         :attrs/display {:sizing :xxxlarge}
                                          :row-style     {:gap :2rem}
                                          }}
-             :-sizing         {:default nil
+             :sizing         {:default nil
                              :desc    "Corresponds to the font-size based on Kushi's font-size scale."
                              :demo    [{:label           "Propeller, sizes"
-                                        :attrs           {:-spinner-type :propeller}
+                                        :attrs           {:spinner-type :propeller}
                                         :row-style       {:border "1px solid red"}
                                         :variant-labels? false} 
                                        {:label           "Donut, sizes"
-                                        :attrs           {:-spinner-type :donut}
+                                        :attrs           {:spinner-type :donut}
                                         :variant-labels? false}]}
              :colorway     {:default nil
                              :desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
                              :demo    [{:label           "Propeller, colorways"
-                                        :attrs           {:-spinner-type :propeller}
-                                        :attrs/display   {:-sizing :xlarge}
+                                        :attrs           {:spinner-type :propeller}
+                                        :attrs/display   {:sizing :xlarge}
                                         :variant-labels? false}
                                        {:label           "Donut, colorways"
-                                        :attrs           {:-spinner-type :donut}
-                                        :attrs/display   {:-sizing :xlarge}
+                                        :attrs           {:spinner-type :donut}
+                                        :attrs/display   {:sizing :xlarge}
                                         :variant-labels? false}
                                        {:label           "Thinking, colorways"
-                                        :attrs           {:-spinner-type :thinking}
-                                        :attrs/display   {:-sizing :xxsmall}
+                                        :attrs           {:spinner-type :thinking}
+                                        :attrs/display   {:sizing :xxsmall}
                                         :variant-labels? false}]}}}
   
   [& args]
   (let [{:keys [opts attrs]} 
-        (extract args spinner)
+        (extract args)
 
         {:keys [size spinner-type inert?]
          :or   {spinner-type :donut

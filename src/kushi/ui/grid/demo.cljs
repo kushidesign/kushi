@@ -26,9 +26,9 @@
                           (merge-attrs
                            (sx :>div:bgc--$neutral-150
                                :dark:>div:bgc--$neutral-800)
-                           {:-column-min-width :80px
-                            :-gap              :15px
-                            :-aspect-ratio     :2:3})
+                           {:column-min-width :80px
+                            :gap              :15px
+                            :aspect-ratio     :2:3})
                           (for
                            [x (range 18)]
                             [:div [:div (sx :.absolute-fill

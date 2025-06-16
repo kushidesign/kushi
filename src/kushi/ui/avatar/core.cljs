@@ -48,7 +48,7 @@
                  :desc    "URL of a mask image to clip the avatar with."}]}
   [& args]
   (let [{:keys [opts attrs children]}
-        (extract args avatar)
+        (extract args)
         
         {:keys [colorway
                 stroke-align

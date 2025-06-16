@@ -11,7 +11,7 @@
                :default nil
                :desc    "HTML attributes map applied to the wrapping `label` div."}]}
   [& args]
-  (let [{:keys [opts attrs children]} (extract args checkbox)
+  (let [{:keys [opts attrs children]} (extract args)
         {:keys [label-attrs]}   opts]
     [:label
      (merge-attrs

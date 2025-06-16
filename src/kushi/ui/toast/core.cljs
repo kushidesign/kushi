@@ -38,8 +38,8 @@
    :desc    "Toasts can be interactive and are sometimes auto-dismissing. 
             
              Specifying placement in various ways can be done with the
-             `:-placement` option. See the tooltip docs for details on
-             `:-placement`. You will most likely want to use the `:right-top`
+             `:placement` option. See the tooltip docs for details on
+             `:placement`. You will most likely want to use the `:right-top`
              or `:right-bottom` options, or the logic equivalent to these, which
              would be `[:inline-end :block-start]` and `[:inline-end :block-end]`,
              respectively. In both cases, the toast will slide in, horizontally,
@@ -91,7 +91,7 @@
              If you want supply the value of any of the above tokens ala-carte,  
              use the following pattern. 
               
-             `(toast-attrs {:-toast-class (css [:--toast-background-color :beige])}))` 
+             `(toast-attrs {:toast-class (css [:--toast-background-color :beige])}))` 
               
              If you would like to use a value of `0` (`px`, `ems`, `rem`, etc.)
              for any of the tokens, you will need to use an explicit unit e.g.
@@ -174,11 +174,11 @@
               ]}
 
   ;; TODO -- add :class opts so you can ala-carte try things like --toast-slot-z-index
-  [{placement         :-placement
-    auto-dismiss?     :-auto-dismiss?
-    slide-in?         :-slide-in?
-    user-rendering-fn :-f
-    toast-class       :-toast-class
+  [{placement         :placement
+    auto-dismiss?     :auto-dismiss?
+    slide-in?         :slide-in?
+    user-rendering-fn :f
+    toast-class       :toast-class
     :or               {placement     :rb
                        auto-dismiss? true
                        slide-in?     true}}]

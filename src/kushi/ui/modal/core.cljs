@@ -1,5 +1,6 @@
 (ns kushi.ui.modal.core
   (:require [kushi.ui.icon.core :refer (icon)]
+            [fireworks.core :refer [? !? ?> !?>]]
             [kushi.ui.button.core :refer [button]]
             [clojure.string :as string]
             [domo.core :as domo]
@@ -66,19 +67,20 @@
 
           "It is typically a single × icon positioned in the upper right or left
            corner of the dialog."]
-   :opts '[{:name    icon
-            :schema    keyword?
-            :default :close
-            :desc    ["Optional. A name of a Google Material Symbols icon.
-                       Defaults to a close (×) icon."]}
-           {:name    icon-svg
-            :schema  vector?
-            :default nil
-            :desc    ["Optional. A Hiccup representation of an svg icon. Supply
-                       this as an alternative to using the Google Material
-                       Symbols icon font"]}]}
+  ;;  :opts '[{:name    icon
+  ;;           :schema  keyword?
+  ;;           :default :close
+  ;;           :desc    ["Optional. A name of a Google Material Symbols icon.
+  ;;                      Defaults to a close (×) icon."]}
+  ;;          {:name    icon-svg
+  ;;           :schema  vector?
+  ;;           :default nil
+  ;;           :desc    ["Optional. A Hiccup representation of an svg icon. Supply
+  ;;                      this as an alternative to using the Google Material
+  ;;                      Symbols icon font"]}]
+   }
   [& args]
-  (let [[opts attrs & _] (extract args modal-close-button)
+  (let [[opts attrs & _] (extract args)
         {:keys     [icon-svg]
          icon-name :icon}     opts
         icon-name             (when-not icon-svg
@@ -89,7 +91,7 @@
                                   :close))]
     [button
      (merge-attrs
-      {:-contour        :pill
+      {:contour        :pill
        :surface      :minimal
        :class         (css
                        ".kushi-modal-close-button"
@@ -149,7 +151,7 @@
            ;; TODO -- add y
            ]}
   [& args]
-  (let [{:keys [opts attrs children]} (extract args modal)
+  (let [{:keys [opts attrs children]} (extract args)
         {:keys [modal-title
                 description
                 expanded?]}      opts

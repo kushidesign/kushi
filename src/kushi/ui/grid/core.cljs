@@ -30,7 +30,7 @@
                       [`grid-gap`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."}]}
   [& args]
   (let [[opts attr children]                     
-        (extract args grid)
+        (extract args)
 
         {:keys [column-min-width aspect-ratio gap]
          :or   {column-min-width :150px

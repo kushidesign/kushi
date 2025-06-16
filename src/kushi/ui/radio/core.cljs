@@ -13,7 +13,7 @@
           when only one choice may be selected from a set of related options."
    }
   [& args]
-  (let [{:keys [opts attrs children]} (extract args radio-old)
+  (let [{:keys [opts attrs children]} (extract args)
         {:keys [input-attrs size]}    opts]
     (into
      [:label
@@ -70,7 +70,7 @@
 
 
 (defn radio [& args]
-  (let [{:keys [opts attrs]} (extract args radio)]
+  (let [{:keys [opts attrs]} (extract args)]
     [:input
      (merge-attrs
       {:class               (css
@@ -107,25 +107,25 @@
 (def demos
   [{:label   "Basic group with labels"
     :samples [(sx-call [:section.flex-row-fs 
-                        [radio {:-input-attrs {:name :demo}} "Yes"]
-                        [radio {:-input-attrs {:name :demo}} "No"]
-                        [radio {:-input-attrs {:name :demo}} "Maybe"]])]}
+                        [radio {:input-attrs {:name :demo}} "Yes"]
+                        [radio {:input-attrs {:name :demo}} "No"]
+                        [radio {:input-attrs {:name :demo}} "Maybe"]])]}
    
    {:label   "Basic group with labels, inherited color"
     :samples [(sx-call [:section
-                        {:class [:foreground-purple :flex-row-fs]}
-                        [radio {:-input-attrs {:name :demo}} "Yes"]
-                        [radio {:-input-attrs {:name :demo}} "No"]
-                        [radio {:-input-attrs {:name :demo}} "Maybe"]])]}
+                        {:class [:foreground-purple :flex-row-start]}
+                        [radio {:input-attrs {:name :demo}} "Yes"]
+                        [radio {:input-attrs {:name :demo}} "No"]
+                        [radio {:input-attrs {:name :demo}} "Maybe"]])]}
    
    {:label   "Custom size, xxlarge"
     :samples [(sx-call [:div.flex-row-fs
-                        [radio {:-sizing        :xxlarge
-                                :-input-attrs {:name           :custom-size-xxlarge-sample
+                        [radio {:sizing        :xxlarge
+                                :input-attrs {:name           :custom-size-xxlarge-sample
                                                :defaultChecked true}}
                          "Yes"]
-                        [radio {:-sizing        :xxlarge
-                                :-input-attrs {:name :custom-size-xxlarge-sample}}
+                        [radio {:sizing        :xxlarge
+                                :input-attrs {:name :custom-size-xxlarge-sample}}
                          "No"]] )]}
 
    {:label   "Showing-sizes from xsmall to xxxlarge"
@@ -149,12 +149,12 @@
                                 :xxxlarge]
                           :let [nm (str size "-sample")]]
                       [:div.flex-row-fs
-                       [radio {:-sizing        size
-                               :-input-attrs {:name           nm 
+                       [radio {:sizing        size
+                               :input-attrs {:name           nm 
                                               :defaultChecked true}}
                         "Yes"]
-                       [radio {:-sizing        size
-                               :-input-attrs {:name nm}}
+                       [radio {:sizing        size
+                               :input-attrs {:name nm}}
                         "No"]])))]}
 
    {:label   "Custom, with default checked"
@@ -180,33 +180,33 @@
                      :animation :jiggle2:0.5s}])
                   [radio
                    (merge-attrs (sx :.normal)
-                                {:-input-attrs {:name           :demo-custom
+                                {:input-attrs {:name           :demo-custom
                                                 :defaultChecked true}})
                    [label [:span.emoji "🦑"] "Squid"]]
                   [radio
-                   (merge-attrs (sx :.normal) {:-input-attrs {:name :demo-custom}})
+                   (merge-attrs (sx :.normal) {:input-attrs {:name :demo-custom}})
                    [label [:span.emoji "🐋"] "Whale"]]
                   [radio
-                   (merge-attrs (sx :.normal) {:-input-attrs {:name :demo-custom}})
+                   (merge-attrs (sx :.normal) {:input-attrs {:name :demo-custom}})
                    [label [:span.emoji "🦈 "] "Shark"]]
                   [radio
-                   (merge-attrs (sx :.normal) {:-input-attrs {:name :demo-custom}})
+                   (merge-attrs (sx :.normal) {:input-attrs {:name :demo-custom}})
                    [label [:span.emoji "🐊"] "Croc"]]])]}
    ])
 
   ;;  :demos '[
   ;;           {:label   "Basic group with labels"
   ;;            :samples [[:section.flex-row-fs 
-  ;;                       [radio {:-input-attrs {:name :demo}} "Yes"]
-  ;;                       [radio {:-input-attrs {:name :demo}} "No"]
-  ;;                       [radio {:-input-attrs {:name :demo}} "Maybe"]]]}
+  ;;                       [radio {:input-attrs {:name :demo}} "Yes"]
+  ;;                       [radio {:input-attrs {:name :demo}} "No"]
+  ;;                       [radio {:input-attrs {:name :demo}} "Maybe"]]]}
             
   ;;           {:label   "Basic group with labels, inherited color"
   ;;            :samples [[:section
-  ;;                       {:class [:foreground-purple :flex-row-fs]}
-  ;;                       [radio {:-input-attrs {:name :demo}} "Yes"]
-  ;;                       [radio {:-input-attrs {:name :demo}} "No"]
-  ;;                       [radio {:-input-attrs {:name :demo}} "Maybe"]]]
+  ;;                       {:class [:foreground-purple :flex-row-start]}
+  ;;                       [radio {:input-attrs {:name :demo}} "Yes"]
+  ;;                       [radio {:input-attrs {:name :demo}} "No"]
+  ;;                       [radio {:input-attrs {:name :demo}} "Maybe"]]]
   ;;            }
 
 
@@ -226,11 +226,11 @@
   ;;                           [:_.kushi-radio-input:checked+.kushi-label>.emoji {:filter    :none
   ;;                                                                              :transform "scale(1.5)"
   ;;                                                                              :animation :jiggle2:0.5s}])
-  ;;                       [radio (merge-attrs (sx :.normal) {:-input-attrs {:name           :demo-custom
+  ;;                       [radio (merge-attrs (sx :.normal) {:input-attrs {:name           :demo-custom
   ;;                                                                         :defaultChecked true}}) [label [:span.emoji "🦑"] "Squid"]]
-  ;;                       [radio (merge-attrs (sx :.normal) {:-input-attrs {:name :demo-custom}}) [label [:span.emoji "🐋"] "Whale"]]
-  ;;                       [radio (merge-attrs (sx :.normal) {:-input-attrs {:name :demo-custom}}) [label [:span.emoji "🦈 "] "Shark"]]
-  ;;                       [radio (merge-attrs (sx :.normal) {:-input-attrs {:name :demo-custom}}) [label [:span.emoji "🐊"] "Croc"]]]]}
+  ;;                       [radio (merge-attrs (sx :.normal) {:input-attrs {:name :demo-custom}}) [label [:span.emoji "🐋"] "Whale"]]
+  ;;                       [radio (merge-attrs (sx :.normal) {:input-attrs {:name :demo-custom}}) [label [:span.emoji "🦈 "] "Shark"]]
+  ;;                       [radio (merge-attrs (sx :.normal) {:input-attrs {:name :demo-custom}}) [label [:span.emoji "🐊"] "Croc"]]]]}
 
 
   ;;           {:label   "Showing-sizes from xsmall to xxxlarge"
@@ -242,55 +242,55 @@
   ;;                        :xlarge]
   ;;            [{:label "xsmall"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-sizing        :xsmall
-  ;;                              :-input-attrs {:name           :xsmall-sample
+  ;;                      [radio {:sizing        :xsmall
+  ;;                              :input-attrs {:name           :xsmall-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-sizing        :xsmall
-  ;;                              :-input-attrs {:name :xsmall-sample}}]]}
+  ;;                      [radio {:sizing        :xsmall
+  ;;                              :input-attrs {:name :xsmall-sample}}]]}
 
   ;;             {:label "small"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-sizing        :small
-  ;;                              :-input-attrs {:name           :small-sample
+  ;;                      [radio {:sizing        :small
+  ;;                              :input-attrs {:name           :small-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-sizing        :small
-  ;;                              :-input-attrs {:name :small-sample}}]]}
+  ;;                      [radio {:sizing        :small
+  ;;                              :input-attrs {:name :small-sample}}]]}
 
   ;;             {:label "medium"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-sizing        :medium
-  ;;                              :-input-attrs {:name           :medium-sample
+  ;;                      [radio {:sizing        :medium
+  ;;                              :input-attrs {:name           :medium-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-sizing        :medium
-  ;;                              :-input-attrs {:name :medium-sample}}]]}
+  ;;                      [radio {:sizing        :medium
+  ;;                              :input-attrs {:name :medium-sample}}]]}
 
   ;;             {:label "large"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-sizing        :large
-  ;;                              :-input-attrs {:name           :large-sample
+  ;;                      [radio {:sizing        :large
+  ;;                              :input-attrs {:name           :large-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-sizing        :large
-  ;;                              :-input-attrs {:name :large-sample}}]]}
+  ;;                      [radio {:sizing        :large
+  ;;                              :input-attrs {:name :large-sample}}]]}
   ;;             {:label "xlarge"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-sizing        :xlarge
-  ;;                              :-input-attrs {:name           :xlarge-sample
+  ;;                      [radio {:sizing        :xlarge
+  ;;                              :input-attrs {:name           :xlarge-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-sizing        :xlarge
-  ;;                              :-input-attrs {:name :xlarge-sample}}]]}
+  ;;                      [radio {:sizing        :xlarge
+  ;;                              :input-attrs {:name :xlarge-sample}}]]}
 
   ;;             {:label "xxlarge"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-sizing        :xxlarge
-  ;;                              :-input-attrs {:name           :xxlarge-sample
+  ;;                      [radio {:sizing        :xxlarge
+  ;;                              :input-attrs {:name           :xxlarge-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-sizing        :xxlarge
-  ;;                              :-input-attrs {:name :xxlarge-sample}}]]}
+  ;;                      [radio {:sizing        :xxlarge
+  ;;                              :input-attrs {:name :xxlarge-sample}}]]}
 
   ;;             {:label "xxxlarge"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-sizing        :xxxlarge
-  ;;                              :-input-attrs {:name           :xxxlarge-sample
+  ;;                      [radio {:sizing        :xxxlarge
+  ;;                              :input-attrs {:name           :xxxlarge-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-sizing        :xxxlarge
-  ;;                              :-input-attrs {:name :xxxlarge-sample}}]]}]}]
+  ;;                      [radio {:sizing        :xxxlarge
+  ;;                              :input-attrs {:name :xxxlarge-sample}}]]}]}]

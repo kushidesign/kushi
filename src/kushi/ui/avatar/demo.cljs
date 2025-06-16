@@ -70,11 +70,11 @@
                 :jc--fs)
     :container-attrs (sx :>*:d--none :>*:first-child:d--flex)
     :snippets-header component-examples/sizes-snippet-header*
-    :snippets ['[avatar {:-sizing "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
+    :snippets ['[avatar {:sizing "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
     :variants+ [:minimal]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-sizing sz
+                  :attrs {:sizing sz
                           :src   avatar-1}
                   :args  []})}
    
@@ -84,12 +84,12 @@
                 :jc--fs)
     :container-attrs (sx :>*:d--none :>*:first-child:d--flex)
     :snippets-header component-examples/sizes-snippet-header*
-    :snippets ['[avatar {:-sizing "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
+    :snippets ['[avatar {:sizing "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
     :variants+ [:minimal]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-sizing  sz
-                          :-contour :rounded
+                  :attrs {:sizing  sz
+                          :contour :rounded
                           :src    avatar-1}
                   :args  []})}
 
@@ -102,7 +102,7 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-sizing sz}
+                  :attrs {:sizing sz}
                   :args  ["M"]})}
 
    {:desc      "Sample sizes from 24px to 72px, solid variant."
@@ -114,7 +114,7 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-sizing    sz
+                  :attrs {:sizing    sz
                           :surface :solid}
                   :args  ["M"]})}
 
@@ -127,8 +127,8 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-sizing sz
-                          :-contour :rounded}
+                  :attrs {:sizing sz
+                          :contour :rounded}
                   :args  ["M"]})}
 
    {:desc      "Sample sizes from 24px to 72px, rounded shape, solid variant"
@@ -140,8 +140,8 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-sizing    sz
-                          :-contour   :rounded
+                  :attrs {:sizing    sz
+                          :contour   :rounded
                           :surface :solid}
                   :args  ["M"]})}
 

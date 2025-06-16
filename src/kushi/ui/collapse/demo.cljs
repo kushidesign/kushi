@@ -16,21 +16,21 @@
            :examples  [{:code code}]})]
     [(f "Basic"
         (sx-call [collapse
-                  {:-label "Collapsable section label"} 
+                  {:label "Collapsable section label"} 
                   [:p "Child 1"] 
                   [:p "Child 2"]]))
      
      (f "Dynamic label"
         (sx-call [collapse
-                  {:-label          "Click to expand"
-                   :-label-expanded "Click to collapse"}
+                  {:label          "Click to expand"
+                   :label-expanded "Click to collapse"}
                   [:p "Child 1"] 
                   [:p "Child 2"]]))
      
      (f "Icon on right"
         (sx-call [collapse
-                  {:-label         "Collapsable section label "
-                   :-icon-position :end}
+                  {:label         "Collapsable section label "
+                   :icon-position :end}
                   [:p "Child 1"] 
                   [:p "Child 2"]]))
 
@@ -40,26 +40,26 @@
                    (sx
                     :bbe--1px:solid:$neutral-800
                     :dark:bbe--1px:solid:$neutral-400)
-                   {:-label        "Collapsable section label "
-                    :-header-attrs (sx :bbs--1px:solid:$neutral-800
+                   {:label        "Collapsable section label "
+                    :header-attrs (sx :bbs--1px:solid:$neutral-800
                                        :dark:bbs--1px:solid:$neutral-400)})
                   [:p "Child 1"] 
                   [:p "Child 2"]]))
 
      (f "Label weight"
         (sx-call [collapse
-                  {:-label        "Collapsable section label "
-                   :-header-attrs (sx :fw--$bold)}
+                  {:label        "Collapsable section label "
+                   :header-attrs (sx :fw--$bold)}
                   [:p "Child 1"] 
                   [:p "Child 2"]]))
      
      (f "Body color"
         (sx-call [collapse
-                  {:-label      "Collapsable section label "
-                   :-body-attrs (sx :bgc--$purple-100 
+                  {:label      "Collapsable section label "
+                   :body-attrs (sx :bgc--$purple-100 
                                     :dark:bgc--$purple-900 
                                     :pis--1rem)
-                   :-speed      1000}
+                   :speed      1000}
                   [:section
                    (sx :pb--0.5rem)
                    [:p "Child 1"]
@@ -74,9 +74,9 @@
                                    :border-block--3px:solid:$purple-100
                                    :dark:border-block--3px:solid:$purple-850)
                    
-                   :-label        "Collapsable section label "
-                   :-body-attrs   (sx :pis--0.5rem)
-                   :-header-attrs (sx
+                   :label        "Collapsable section label "
+                   :body-attrs   (sx :pis--0.5rem)
+                   :header-attrs (sx
                                    :fw--$semi-bold
                                    :p--10px
                                    :bgc--$purple-100
@@ -86,7 +86,7 @@
      
      (f "Click event"
         (sx-call [collapse
-                  {:-label    "Collapsable section label"
+                  {:label    "Collapsable section label"
                    :-on-click (fn* [] (js/alert "clicked"))}
                   [:p "Child 1"] 
                   [:p "Child 2"]]))]))
@@ -110,22 +110,22 @@
       :row-attrs row-attrs
       :examples  [{:code (sx-call [accordion
                                    [collapse
-                                    {:-label "First section" }
+                                    {:label "First section" }
                                     [:div (sx :pis--0.5rem) [:p "Child 1"] [:p "Child 2"]]]
                                    [collapse
-                                    {:-label "Second section" }
+                                    {:label "Second section" }
                                     [:div (sx :pis--0.5rem) [:p "Child 1"] [:p "Child 2"]]]])}]}
 
      {:desc      "With slower transition"
       :row-attrs row-attrs
       :examples  [{:code (sx-call [accordion
                                    [collapse
-                                    {:-label "First section"
-                                     :-speed 1000}
+                                    {:label "First section"
+                                     :speed 1000}
                                     [:div (sx :pis--0.5rem) [:p "Child 1"] [:p "Child 2"]]]
                                    [collapse
-                                    {:-label "Second section"
-                                     :-speed 1000}
+                                    {:label "Second section"
+                                     :speed 1000}
                                     [:div (sx :pis--0.5rem) [:p "Child 1"] [:p "Child 2"]]]])}]}
      
      {:desc      "With block borders"
@@ -139,5 +139,5 @@
                                       ["Third section" "Lorem ipsum3"]]]
                                      [collapse
                                       (merge-attrs (sx :bbe--1px:solid:black)
-                                                   {:-label label-text})
+                                                   {:label label-text})
                                       [:p content]])])}]}]))

@@ -126,7 +126,7 @@
                        :as   v}]
                (let [schema 
                      (if-not schema
-                       ; lookup by opt key e.g. :-custom
+                       ; lookup by opt key e.g. :custom
                        (or (k variants-by-custom-opt-key)        
                            'any?)
                        (cond 

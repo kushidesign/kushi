@@ -35,7 +35,7 @@
                   :readOnly     true})]
    [copy-to-clipboard-button
     (merge-attrs (sx :.top-right-corner-inside!)
-                 {:-text-to-copy x})]
+                 {:text-to-copy x})]
    ])
 
 (defn scale-row [s state ks]

@@ -320,7 +320,7 @@
            (some->> attr*
                     keys
                     (filter #(or (contains? variants/variants-by-custom-opt-key %)
-                                 (contains? custom-option-ks %)
+                                 (contains? (into #{} custom-option-ks) %)
                                  (contains? kushi-ui-props %)))
                     (into #{}))
 
@@ -329,7 +329,9 @@
                     (group-by #(contains? user-ks (nth % 0 nil)))
                     (map (fn [[k v]]
                            {(if k :opts :attrs) (into {} v)}))
-                    (apply merge))]
+                    (apply merge))
+           attrs
+           (apply dissoc attrs user-ks)]
 
       ;; (when (and ^boolean js/goog.DEBUG schema)
       ;;   (when (map? attr*)
@@ -546,7 +548,7 @@
                 section-header-break "\n\n"
                 missing-key?         (= problem :missing-key )
                 unprefixed-key?      (= problem :unprefixed-key)
-                src-ns               (:-ns attr*)
+                src-ns               (:ns attr*)
                 warning-opts         (keyed [section-break
                                              section-header-break
                                              unprefixed-key

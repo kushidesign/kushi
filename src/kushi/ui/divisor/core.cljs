@@ -6,7 +6,7 @@
 (defn divisor
   "Desc for divisor"
   [& args]
-  (let [{:keys [opts attrs children]} (extract args divisor)
+  (let [{:keys [opts attrs children]} (extract args)
         {:keys [orientation]}  opts]
     [:div
      (merge-attrs

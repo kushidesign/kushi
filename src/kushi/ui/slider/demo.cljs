@@ -34,77 +34,77 @@
         (sx-call [slider {:min 0
                           :max 100
                           :step 1
-                          :-current-value-label-position :thumb-bottom
+                          :current-value-label-position :thumb-bottom
                           }]))
 
      (f "Simple, label at track inline start"
         (sx-call [slider {:min 0
                           :max 100
                           :step 1
-                          :-current-value-label-position :track-inline-start
-                          ;; :-current-value-label-position :track-left
-                          ;; :-current-value-label-position :track-inline-end
-                          ;; :-current-value-label-position :track-right
-                          ;; :-current-value-label-position :thumb-block-start
-                          ;; :-current-value-label-position :thumb-top
-                          ;; :-current-value-label-position :thumb-block-end
-                          ;; :-current-value-label-position :thumb-bottom
+                          :current-value-label-position :track-inline-start
+                          ;; :current-value-label-position :track-left
+                          ;; :current-value-label-position :track-inline-end
+                          ;; :current-value-label-position :track-right
+                          ;; :current-value-label-position :thumb-block-start
+                          ;; :current-value-label-position :thumb-top
+                          ;; :current-value-label-position :thumb-block-end
+                          ;; :current-value-label-position :thumb-bottom
                           }]))
 
      (f "Simple, label at track inline end"
         (sx-call [slider {:min 0
                           :max 100
                           :step 1
-                          :-current-value-label-position :track-inline-end
+                          :current-value-label-position :track-inline-end
                           }]))
 
      (f "Labels"
         (sx-call [slider {:min                           0
                           :max                           7
-                          :-step-marker                  :label
-                          ;; :-current-value-label-position :thumb-bottom
-                          :-current-value-label-position :track-left
+                          :step-marker                  :label
+                          ;; :current-value-label-position :thumb-bottom
+                          :current-value-label-position :track-left
                           }]))
 
      (f "Dot markers"
         (sx-call [slider {:min          0
                           :max          7
-                          :-step-marker :dot}]))
+                          :step-marker :dot}]))
      (f "Bar markers"
         (sx-call [slider {:min          0
                           :max          7
-                          :-step-marker :bar}]))
+                          :step-marker :bar}]))
 
      (f "Markers with no current value label"
         (sx-call [slider {:min                     0
                           :max                     7
-                          :-step-marker            :bar
-                          :-display-current-value? false}]))
+                          :step-marker            :bar
+                          :display-current-value? false}]))
 
      (f "Fractional steps"
         (sx-call [slider {:min                            0
                           :max                            100
                           :step                           1
-                          :-current-value-label-display-fn #(.toFixed (/ % 100) 2)}]))
+                          :current-value-label-display-fn #(.toFixed (/ % 100) 2)}]))
 
      (f "Supplied step values"
         (sx-call [slider
-                  {:-steps            ["xsmall" "medium" "large" "xlarge"]
-                   :-step-marker      :label 
-                   :-label-size-class :medium}]) )
+                  {:steps            ["xsmall" "medium" "large" "xlarge"]
+                   :step-marker      :label 
+                   :label-size-class :medium}]) )
      
      (f "Supplied step values, custom horizontal shift for first and last values"
         (sx-call [slider
-                  {:-steps            
+                  {:steps            
                    ["First label is long"
                     "Second label"
                     "Third label"
                     "Last label is long"]
-                   :-step-marker      
+                   :step-marker      
                    :dot
-                   :-label-size-class 
+                   :label-size-class 
                    :small
-                   :-labels-attrs     
+                   :labels-attrs     
                    (sx [:_.kushi-slider-step-label:first-child>span:translate
                         :-25%:-50%]
                        [:_.kushi-slider-step-label:last-child>span:translate

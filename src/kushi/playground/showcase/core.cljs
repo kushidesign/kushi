@@ -41,21 +41,13 @@
   ([kw ks]
    (or (when (-> kw name (string/ends-with? "?"))
          [false true])
-       (get vo kw)
-       (get vo (get ks kw))
-       (get-in vo [:defaults kw])
-       kw)))
-
-(defn kw->option-key [kw]
-  (keyword (str "-" (name kw))))
-
-(defn sym->option-key [sym]
-  (keyword (str "-" sym)))
+       (kw variants/ordered-variants-by-custom-opt-key))))
 
 
 (defcss "@layer kushi-playground-styles .kpg-variant-grid-1d"
   :.flex-row-start
   :gap--0.5rem)
+
 
 (defcss "@layer kushi-playground-styles .kpg-variant-grid-2d"
   :.flex-col-start
@@ -210,8 +202,8 @@
                         (-> opt :demo :attrs))
                     (sx :.pointer)
                     (tooltip-attrs 
-                     {:-text          arg
-                      :-tooltip-class (css :ff--$code-font-stack
+                     {:text          arg
+                      :tooltip-class (css :ff--$code-font-stack
                                            [:--tooltip-delay-duration :$xxxfast])}))
        arg])
     samples)
@@ -245,8 +237,8 @@
        (merge-attrs (or (-> opt :demo :attrs/display)
                         (-> opt :demo :attrs))
                     (sx :.pointer)
-                    (tooltip-attrs {:-text          arg
-                                    :-tooltip-class (css :ff--$code-font-stack
+                    (tooltip-attrs {:text          arg
+                                    :tooltip-class (css :ff--$code-font-stack
                                                          [:--tooltip-delay-duration :$xxxfast])
                                     }))
        arg])
@@ -298,9 +290,9 @@
                         variant-label]
                        (into [uic-fn
                               (merge-attrs
-                               {(kw->option-key v-1d) a
-                                :-end-enhancer        [icon :arrow-forward]
-                                :-ns (at)}
+                               {v-1d a
+                                :end-enhancer        [icon :arrow-forward]
+                                :ns (at)}
                                variant-attrs)]
                              variant-args))))
              []
@@ -386,9 +378,9 @@
   (let [evaled (mapv :code/evaled samples)]
     (cond (= 'radio (:uic-name uic))
           (walk/postwalk #(if-let [nm (and (map? %)
-                                           (-> % :-input-attrs :name))]
+                                           (-> % :input-attrs :name))]
                             (assoc-in % 
-                                      [:-input-attrs :name]
+                                      [:input-attrs :name]
                                       (str (util/as-str nm) "-snippets-modal"))
                             %)
                          evaled)
@@ -469,11 +461,12 @@
   (let [{args          :args
          attrs         :attrs
          attrs-snippet :attrs/snippet
-         snippets?     :snippets?}
+         snippets?     :snippets?
+         :as m}
         (:demo opt)]
     (if true ; TODO <-validate here
-      (let [{:keys [opt-key opt-kw]} opt
-            resolved-variants      (resolve-variants opt-kw nil)
+      (let [{:keys [opt-key]} opt
+            resolved-variants      (resolve-variants opt-key nil)
             attrs-hydrated         (syms->publics uic opt nil attrs)
             attrs-snippet-hydrated (syms->publics uic opt nil attrs-snippet)]
         (when opt-key
@@ -506,8 +499,8 @@
                                    )}]
                 (for [b (resolve-variants v-1d vks)]
                   (into [uic-fn
-                         (merge-attrs {(kw->option-key v-2d) a
-                                       (kw->option-key v-1d) b}
+                         (merge-attrs {v-2d a
+                                       v-1d b}
                                       variant-attrs
                                       #_{:style (css-vars-map variant-label)
                                          :class (css :.kpg-variant-grid-1d
@@ -533,7 +526,7 @@
         {args          :args
          attrs         :attrs
          attrs-display :attrs/display
-         :keys         [x-variants label rows? snippets? variant-labels? row-style]
+         :keys         [x-variants label rows? snippets? variant-labels? row-style variant-scale]
          :or           {variant-labels? true}
          :as           demo} 
         (:demo opt)
@@ -543,9 +536,9 @@
               (remove nil? 
                       (if rows?
                         (into [(first x-variants)
-                               (:opt-kw opt)]
+                               (:opt-key opt)]
                               (rest x-variants))
-                        (into [(:opt-kw opt)] x-variants))))
+                        (into [(:opt-key opt)] x-variants))))
 
         [variants bad-variants]
         (kushi.util/partition-by-pred
@@ -624,11 +617,11 @@
        (if-not variant-labels?
          ;; d1 with no labels
          (into [:div (sx :.flex-row-space-between :ai--c :w--100%)]
-               (let [coll (resolve-variants v-1d vks)]
+               (let [coll (resolve-variants (or variant-scale v-1d) vks)]
                  (when (coll? coll)
                    (mapv (fn [a]
                            (into [uic-fn
-                                  (merge-attrs {(kw->option-key v-1d) a}
+                                  (merge-attrs {v-1d a}
                                                variant-attrs)]
                                  variant-args))
                          coll))))
@@ -654,14 +647,12 @@
           
          (concat
           (for [[opt-key opt] (:opts m)
-                :let          [opt-name (subs (name opt-key) 1)
+                :let          [opt-name (name opt-key)
                                opt-sym  (symbol opt-name)
-                               opt-kw   (keyword opt-name)
                                opt      (assoc opt
                                                :opt-name opt-sym
                                                :opt-sym opt-sym
-                                               :opt-key opt-key
-                                               :opt-kw opt-kw)]
+                                               :opt-key opt-key)]
                 :when         (and (:demo opt)
                                    ;; Only for debugging
                                    #_(= opt-sym 'start-enhancer)
@@ -698,7 +689,7 @@
                 
 
                   ;; This branch renders variants for the specific opt, things like
-                  ;; :-sizing, :colorway, etc.
+                  ;; :sizing, :colorway, etc.
                   ;; It uses the :attrs map provided in the :demo entry, or 
                   ;; just an empty map if no :attrs is provided. 
                 :else

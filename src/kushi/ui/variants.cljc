@@ -22,14 +22,14 @@
 (def packing
   [:compact :default :roomy])
 
-(def basic-colorways
+(def colorways-named
   [:gray :purple :blue :green :lime :yellow :gold :orange :red :magenta :brown])
 
-(def semantic-colorways
+(def colorways-semantic
   [:neutral :accent :positive :warning :negative])
 
 (def colorways
-  (apply conj basic-colorways semantic-colorways))
+  (apply conj colorways-named colorways-semantic))
 
 (def xxsmall-xlarge
   [:xxsmall :xsmall :small :medium :large :xlarge])
@@ -50,8 +50,8 @@
           icon-style
           spinner-type
           packing
-          basic-colorways
-          semantic-colorways
+          colorways-named
+          colorways-semantic
           colorways
           xxsmall-xlarge
           sizings
@@ -86,22 +86,43 @@
    variants*))
 
 (def variants-by-custom-opt-key
-  {:weight       (:weights/set variants)
-   :sizing       (:sizings/set variants)
-   :colorway     (:colorways/set variants)
-   :surface      (:surfaces/set variants)
-   :packing      (:packing/set variants)
-   :spinner-type (:spinner-type/set variants)
-   :contour        (:contours/set variants)
-   :icon-style   (:icon-style/set variants)
-   })
+  {:weight            (:weights/set variants)
+   :sizing            (:sizings/set variants)
+   :colorway          (:colorways/set variants)
+   :colorway/named    (:colorways-named/set variants)
+   :colorway/semantic (:colorways-semantic/set variants)
+   :surface           (:surfaces/set variants)
+   :packing           (:packing/set variants)
+   :spinner-type      (:spinner-type/set variants)
+   :contour           (:contours/set variants)
+   :icon-style        (:icon-style/set variants)})
+
+(def ordered-variants-by-custom-opt-key
+  {:weight            (:weights/vector variants)
+   :sizing            (:sizings/vector variants)
+   :colorway          (:colorways/vector variants)
+   :colorway/named    (:colorways-named/vector variants)
+   :colorway/semantic (:colorways-semantic/vector variants)
+   :surface           (:surfaces/vector variants)
+   :packing           (:packing/vector variants)
+   :spinner-type      (:spinner-type/vector variants)
+   :contour           (:contours/vector variants)
+   :icon-style        (:icon-style/vector variants)})
 
 (def variants-by-custom-opt-key-set
   (into #{} (keys variants-by-custom-opt-key)))
 
+
+
 ;; Use data-ks instead of data-kushi
 
-;; in sx and css, support supplied data selector "[data-kushi-ui=icon]"
+;; Make kushi.ui.button work (remove .core from namespaces)
+;; kushi.ui.uix.button
+;; kushi.uix.ui.button
+;; kushi.replicant.ui.button
+;; kushi.ui.replicant.button
+
+;; in sx and css macros, support supplied data selector "[data-kushi-ui=icon]", or "#blah" or [id=foo] or [something=something]
 
 (defn convert-opts [vc]
   (reduce 
