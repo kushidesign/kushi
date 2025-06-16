@@ -85,8 +85,8 @@
   (let [{:keys [opts attrs children]} (extract args copy-to-clipboard-button)]
     [button
      (merge-attrs
-      {:-colorway :accent
-       :-surface :minimal
+      {:colorway :accent
+       :surface :minimal
        :class    (css :.kushi-playground-copy-to-clipboard-button
                       :p--7px)
        :on-click #(d/copy-to-clipboard!

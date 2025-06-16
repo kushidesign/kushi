@@ -26,32 +26,32 @@
                        :args  []}
                       {:label "f"
                        :args  ["M"]
-                       :attrs {:-surface :solid}}
+                       :attrs {:surface :solid}}
                       {:label "g"
                        :args  ["MT"]
-                       :attrs {:-surface :solid}}
+                       :attrs {:surface :solid}}
                       {:label "people"
                        :args  [[icon :diversity-3]]
-                       :attrs {:-surface :solid
+                       :attrs {:surface :solid
                                :class (css :fs--$medium)}}
                       {:label "building"
                        :args  [[icon :account-balance]]
-                       :attrs {:-surface :solid
+                       :attrs {:surface :solid
                                :class (css :fs--$medium)}}
 
                       {:label "f"
                        :args  ["M"]
-                       :attrs {:-surface :faint}}
+                       :attrs {:surface :faint}}
                       {:label "g"
                        :args  ["MT"]
-                       :attrs {:-surface :faint}}
+                       :attrs {:surface :faint}}
                       {:label "people"
                        :args  [[icon :diversity-3]]
-                       :attrs {:-surface :faint
+                       :attrs {:surface :faint
                                :class (css :fs--$medium)}}
                       {:label "building"
                        :args  [[icon :account-balance]]
-                       :attrs {:-surface :faint
+                       :attrs {:surface :faint
                                :class (css :fs--$medium)}}
                       ]}
 
@@ -62,7 +62,7 @@
     :examples        (for [colorway component-examples/all-colors]
                        {:label (name colorway)
                         :args  ["M"]
-                        :attrs {:-colorway colorway}})}
+                        :attrs {:colorway colorway}})}
    
    {:desc      "Sample sizes from 24px to 72px, circle"
     :row-attrs (sx 
@@ -70,11 +70,11 @@
                 :jc--fs)
     :container-attrs (sx :>*:d--none :>*:first-child:d--flex)
     :snippets-header component-examples/sizes-snippet-header*
-    :snippets ['[avatar {:-size "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
+    :snippets ['[avatar {:-sizing "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
     :variants+ [:minimal]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-size sz
+                  :attrs {:-sizing sz
                           :src   avatar-1}
                   :args  []})}
    
@@ -84,12 +84,12 @@
                 :jc--fs)
     :container-attrs (sx :>*:d--none :>*:first-child:d--flex)
     :snippets-header component-examples/sizes-snippet-header*
-    :snippets ['[avatar {:-size "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
+    :snippets ['[avatar {:-sizing "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
     :variants+ [:minimal]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-size  sz
-                          :-shape :rounded
+                  :attrs {:-sizing  sz
+                          :-contour :rounded
                           :src    avatar-1}
                   :args  []})}
 
@@ -102,7 +102,7 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-size sz}
+                  :attrs {:-sizing sz}
                   :args  ["M"]})}
 
    {:desc      "Sample sizes from 24px to 72px, solid variant."
@@ -114,8 +114,8 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-size    sz
-                          :-surface :solid}
+                  :attrs {:-sizing    sz
+                          :surface :solid}
                   :args  ["M"]})}
 
    {:desc      "Sample sizes from 24px to 72px, rounded shape"
@@ -127,8 +127,8 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-size sz
-                          :-shape :rounded}
+                  :attrs {:-sizing sz
+                          :-contour :rounded}
                   :args  ["M"]})}
 
    {:desc      "Sample sizes from 24px to 72px, rounded shape, solid variant"
@@ -140,9 +140,9 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:-size    sz
-                          :-shape   :rounded
-                          :-surface :solid}
+                  :attrs {:-sizing    sz
+                          :-contour   :rounded
+                          :surface :solid}
                   :args  ["M"]})}
 
    

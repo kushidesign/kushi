@@ -195,7 +195,7 @@
      [:div
       (merge-attrs
        colorway-attr
-       {:data-kushi-shape :pill}
+       {:data-kushi-contour :pill}
        (sx
         ".kushi-switch-thumb"
         :.transition

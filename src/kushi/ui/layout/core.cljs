@@ -8,7 +8,7 @@
 
 (defn layout
   {:doc  "A generic layout container."
-   #_:opts #_[:map {:shape    #{"rounded" "sharp" "pill" "circle"}
+   #_:opts #_[:map {:contour    #{"rounded" "sharp" "pill" "circle"}
                 :surface  defs/basic-surfaces-set-of-strs
                 :colorway #{"neutral"
                             "accent"

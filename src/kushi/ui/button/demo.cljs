@@ -42,13 +42,13 @@
       :snippets-header "Use the `data-kushi-surface` attributes `:solid`, `:outline`,
                         and `:minimal` to control the surface variant of the button."
       :snippets        '[[button "Play"]
-                         [button {:-surface :solid} "Play"]
-                         [button {:-surface :outline} "Play"]
-                         [button {:-surface :minimal} "Play"]]
+                         [button {:surface :solid} "Play"]
+                         [button {:surface :outline} "Play"]
+                         [button {:surface :minimal} "Play"]]
       :examples        (for [s [:rounded]]
                          {:label (name s)
                           :args  ["Pets" [icon :pets]]
-                          :attrs {:-colorway :accent}})}
+                          :attrs {:colorway :accent}})}
 
      {:desc            "Colorway variants"
       :sx-attrs        (sx-call (sx :.small))
@@ -58,31 +58,31 @@
                         `:positive`, `:warning`, and `:negative` to control the
                         semantic color variant. The default is `:neutral`."                        
       :snippets        '[[button "Play"]
-                         [button {:-colorway :neutral} "Play"]
-                         [button {:-colorway :accent} "Play"]
-                         [button {:-colorway :positive} "Play"]
-                         [button {:-colorway :warning} "Play"]
-                         [button {:-colorway :negative} "Play"]]
+                         [button {:colorway :neutral} "Play"]
+                         [button {:colorway :accent} "Play"]
+                         [button {:colorway :positive} "Play"]
+                         [button {:colorway :warning} "Play"]
+                         [button {:colorway :negative} "Play"]]
       :examples        (for [s component-examples/colors]
                          {:label (name s)
                           :args  ["Pets" [icon :pets]]
-                          :attrs {:-colorway s}})}
+                          :attrs {:colorway s}})}
 
      {:desc            "Shape variants"
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :variants+       [:minimal]
-      :snippets-header "Use the `data-kushi-shape` attributes `:pill`, `:rounded`,
+      :snippets-header "Use the `data-kushi-contour` attributes `:pill`, `:rounded`,
                         and `:sharp` to control the surface variant of the button.
                         The default is `:rounded`."
       :snippets        '[[button "Play"]
-                         [button {:-shape :rounded} "Play"]
-                         [button {:-shape :pill} "Play"]
-                         [button {:-shape :sharp} "Play"]]
+                         [button {:-contour :rounded} "Play"]
+                         [button {:-contour :pill} "Play"]
+                         [button {:-contour :sharp} "Play"]]
       :examples        (for [s [:rounded :pill :sharp]]
                          {:label (name s)
                           :args  ["Pets" [icon :pets]]
-                          :attrs {:-shape s}})}
+                          :attrs {:-contour s}})}
 
      ;; get extra reqs working
      ;; get links working

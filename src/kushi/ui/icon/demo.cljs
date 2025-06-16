@@ -59,35 +59,35 @@
      :desc    "Examples of semantic coloring of icons"
      :require [[kushi.ui.icon.core :refer [icon]]]
      :samples ["accent"
-               [icon {:-colorway :accent
-                      :-size     :xxxlarge} :star]
+               [icon {:colorway :accent
+                      :-sizing     :xxxlarge} :star]
 
                "negative"
-               [icon {:-colorway :negative
-                      :-size     :xxxlarge} :cancel]
+               [icon {:colorway :negative
+                      :-sizing     :xxxlarge} :cancel]
 
                "positive"
-               [icon {:-colorway :positive
-                      :-size     :xxxlarge} :check-circle]
+               [icon {:colorway :positive
+                      :-sizing     :xxxlarge} :check-circle]
 
                "warning"
-               [icon {:-colorway :warning
-                      :-size     :xxxlarge} :warning]]}
+               [icon {:colorway :warning
+                      :-sizing     :xxxlarge} :warning]]}
     
     {:label     "Semantic colorways"
      :desc      "Examples of semantic coloring of icons"
      :require   [[kushi.ui.icon.core :refer [icon]]]
-     :samples   [[icon {:-colorway :accent
-                        :-size     :xxxlarge} :star]
+     :samples   [[icon {:colorway :accent
+                        :-sizing     :xxxlarge} :star]
 
-                 [icon {:-colorway :negative
-                        :-size     :xxxlarge} :cancel]
+                 [icon {:colorway :negative
+                        :-sizing     :xxxlarge} :cancel]
 
-                 [icon {:-colorway :positive
-                        :-size     :xxxlarge} :check-circle]
+                 [icon {:colorway :positive
+                        :-sizing     :xxxlarge} :check-circle]
 
-                 [icon {:-colorway :warning
-                        :-size     :xxxlarge} :warning]]}
+                 [icon {:colorway :warning
+                        :-sizing     :xxxlarge} :warning]]}
     
     {:label         [:span "Various icons" [:span " (hover to view icon name)"]]
      :label/modal   "Various icons"
@@ -95,7 +95,7 @@
      :require       '[[kushi.ui.icon.core :refer [icon]]]
      :row-style     {:flex-wrap :wrap
                      :gap       :2em}
-     :attrs/display {:-size   :xxxlarge
+     :attrs/display {:-sizing   :xxxlarge
                      :-weight :light}
      :render-as     :icons-with-tooltips
      :samples       [:auto-awesome

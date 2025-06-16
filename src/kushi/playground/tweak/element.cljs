@@ -45,7 +45,7 @@
    :kind          [:default :minimal :bordered :filled]
    :kind2         [:default :bordered :filled]
   ;;  :status   [:disabled]
-   :shape         [:pill :rounded :sharp]
+   :contour         [:pill :rounded :sharp]
    :weight        [:thin
                    :extra-light
                    :light
@@ -168,7 +168,7 @@
    :kind      "Kind"
    :tracking  "Type tracking"
    :elevation "Elevation"
-   :shape     "Shape"})
+   :contour     "Shape"})
 
 (defn highlight-tweaked-label!
   [e a b]
@@ -637,7 +637,7 @@
    [:kind      (:kind variants-by-category)]
    [:tracking  (:tracking variants-by-category)]
    [:elevation (:elevation variants-by-category)]
-   [:shape     (:shape variants-by-category)]])
+   [:contour     (:contour variants-by-category)]])
 
 (defn class-arg-profile [arg]
   (let [kw             (-> arg name (subs 1) keyword)

@@ -110,8 +110,8 @@
                (merge-attrs
                 (sx :.all-components-sidenav-button)
                 {:data-kushi-playground-sidenav-button label
-                 :-shape                               :pill
-                 :-surface                             :minimal}
+                 :contour                               :pill
+                 :surface                             :minimal}
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
                label]]]))]])
 
@@ -233,7 +233,7 @@
                (merge-attrs
                 (sx :.all-components-sidenav-button)
                 {:data-kushi-playground-sidenav-button label
-                 :-shape                               :pill
-                 :-surface                             :minimal}
+                 :contour                               :pill
+                 :surface                             :minimal}
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
                label]]]))]])

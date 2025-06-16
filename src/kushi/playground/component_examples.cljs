@@ -52,20 +52,9 @@
                                                  {:instance-sx-attrs? true})
                                                example-opts
                                                m)
-                    ;; poa           (popover-attrs
-                    ;;                (merge-attrs
-                    ;;                 {:class "dark"
-                    ;;                  :-f    (fn [popover-el]
-                    ;;                           (rdom/render
-                    ;;                            [component-details-popover 
-                    ;;                             component
-                    ;;                             merged-attrs*
-                    ;;                             quoted-attrs]
-                    ;;                            popover-el))}))
                     merged-attrs  (merge-attrs variant-attrs
                                                sx-attrs
                                                instance-attrs
-                                              ;;  poa
                                                )]]
           (if instance-code 
             (let [attrs (sx :.instance-code
@@ -77,15 +66,6 @@
                 (into [:div attrs] instance-code)
                 [:div attrs
                  instance-code
-            ;;  [button
-            ;;   (merge-attrs
-            ;;    (sx :.accent
-            ;;        :.pill
-            ;;        :.xxsmall
-            ;;        :.bold) 
-            ;;    poa
-            ;;    (tooltip-attrs {:-text "Click to view code" :-placement :r}))
-            ;;   [icon :code]]
                  ]))
             (into [component merged-attrs] instance-args)))))
 
@@ -98,13 +78,6 @@
            variants-order]}
    {:keys [variants+ variants-]}]
 
-  ;; (!? (keyed [variants-base
-  ;;            variants-attrs
-  ;;            variants-order
-  ;;            variants+ 
-  ;;            variants-]
-  ;;           ))
-
   (let [a (when variants-base
             (as-> variants-base $
               (apply conj $ variants+)
@@ -113,7 +86,6 @@
         b (if variants-order
             (keep #(% a) variants-order)
             a)
-        ;; If example does not use a variants-base, give it a blank one
         c (or (maybe b seq)
               '({}))]
     c))
@@ -176,7 +148,7 @@
                         :overflow--hidden
                         :width--$playground-main-content-max-width)
             :id    modal-id}
-     [modal-close-button {:-modal-id modal-id}]
+     [modal-close-button {:modal-id modal-id}]
      [:div (sx :.kushi-playground-examples-modal-wrapper
                :.flex-row-sb :ai--fs :gap--1.5em)
       [:div
@@ -202,9 +174,9 @@
 
 (defn example-modal-trigger [modal-id]
   [button
-   {:-colorway :accent
-    :-shape    :pill
-    :-surface  :minimal
+   {:colorway :accent
+    :contour    :pill
+    :surface  :minimal
     :class    
     (css :.kushi-playground-examples-modal-trigger
          :pb--0.4em
@@ -321,8 +293,8 @@
   (let [{:keys [opts attrs children]} (extract args copy-to-clipboard-button )]
     [button
      (merge-attrs
-      {:-colorway :accent
-       :-surface :minimal
+      {:colorway :accent
+       :surface :minimal
        :class    (css :.kushi-playground-copy-to-clipboard-button
                       :p--7px)
        :on-click #(d/copy-to-clipboard!

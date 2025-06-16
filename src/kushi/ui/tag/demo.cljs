@@ -48,7 +48,7 @@
       :examples        (for [colorway component-examples/colors]
                          {:label (name colorway)
                           :args  ["Done"]
-                          :attrs {:-colorway colorway}})}
+                          :attrs {:colorway colorway}})}
 
      #_{:desc            "Shape variants"
       :sx-attrs        (sx-call (sx :fs--$small))
@@ -57,7 +57,7 @@
       :examples        (for [s [:rounded :pill :sharp]]
                          {:label (name s)
                           :args  ["Done"]
-                          :attrs {:-shape s}})}
+                          :attrs {:-contour s}})}
 
      #_{:desc            "With icons"
       :reqs            '[[kushi.ui.icon.core :refer [icon]]]

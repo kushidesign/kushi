@@ -32,7 +32,7 @@
         :padding-inline--0.5em:1em
         :padding-block--0.4em
         :>*:align-self--center)
-       {:data-kushi-size size}
+       {:data-kushi-sizing size}
        attrs)
       [:input
        (merge-attrs
@@ -120,11 +120,11 @@
    
    {:label   "Custom size, xxlarge"
     :samples [(sx-call [:div.flex-row-fs
-                        [radio {:-size        :xxlarge
+                        [radio {:-sizing        :xxlarge
                                 :-input-attrs {:name           :custom-size-xxlarge-sample
                                                :defaultChecked true}}
                          "Yes"]
-                        [radio {:-size        :xxlarge
+                        [radio {:-sizing        :xxlarge
                                 :-input-attrs {:name :custom-size-xxlarge-sample}}
                          "No"]] )]}
 
@@ -149,11 +149,11 @@
                                 :xxxlarge]
                           :let [nm (str size "-sample")]]
                       [:div.flex-row-fs
-                       [radio {:-size        size
+                       [radio {:-sizing        size
                                :-input-attrs {:name           nm 
                                               :defaultChecked true}}
                         "Yes"]
-                       [radio {:-size        size
+                       [radio {:-sizing        size
                                :-input-attrs {:name nm}}
                         "No"]])))]}
 
@@ -242,55 +242,55 @@
   ;;                        :xlarge]
   ;;            [{:label "xsmall"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-size        :xsmall
+  ;;                      [radio {:-sizing        :xsmall
   ;;                              :-input-attrs {:name           :xsmall-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-size        :xsmall
+  ;;                      [radio {:-sizing        :xsmall
   ;;                              :-input-attrs {:name :xsmall-sample}}]]}
 
   ;;             {:label "small"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-size        :small
+  ;;                      [radio {:-sizing        :small
   ;;                              :-input-attrs {:name           :small-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-size        :small
+  ;;                      [radio {:-sizing        :small
   ;;                              :-input-attrs {:name :small-sample}}]]}
 
   ;;             {:label "medium"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-size        :medium
+  ;;                      [radio {:-sizing        :medium
   ;;                              :-input-attrs {:name           :medium-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-size        :medium
+  ;;                      [radio {:-sizing        :medium
   ;;                              :-input-attrs {:name :medium-sample}}]]}
 
   ;;             {:label "large"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-size        :large
+  ;;                      [radio {:-sizing        :large
   ;;                              :-input-attrs {:name           :large-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-size        :large
+  ;;                      [radio {:-sizing        :large
   ;;                              :-input-attrs {:name :large-sample}}]]}
   ;;             {:label "xlarge"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-size        :xlarge
+  ;;                      [radio {:-sizing        :xlarge
   ;;                              :-input-attrs {:name           :xlarge-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-size        :xlarge
+  ;;                      [radio {:-sizing        :xlarge
   ;;                              :-input-attrs {:name :xlarge-sample}}]]}
 
   ;;             {:label "xxlarge"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-size        :xxlarge
+  ;;                      [radio {:-sizing        :xxlarge
   ;;                              :-input-attrs {:name           :xxlarge-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-size        :xxlarge
+  ;;                      [radio {:-sizing        :xxlarge
   ;;                              :-input-attrs {:name :xxlarge-sample}}]]}
 
   ;;             {:label "xxxlarge"
   ;;              :code  [:div.flex-row-fs
-  ;;                      [radio {:-size        :xxxlarge
+  ;;                      [radio {:-sizing        :xxxlarge
   ;;                              :-input-attrs {:name           :xxxlarge-sample
   ;;                                             :defaultChecked true}}]
-  ;;                      [radio {:-size        :xxxlarge
+  ;;                      [radio {:-sizing        :xxxlarge
   ;;                              :-input-attrs {:name :xxxlarge-sample}}]]}]}]

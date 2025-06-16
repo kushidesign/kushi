@@ -51,8 +51,8 @@
            :examples        (for [surface #{:faint :solid :outline}]
                               {:attrs {:-header-text msg
                                        :-icon        [icon :info]
-                                       :-colorway    s
-                                       :-surface     surface}})})]
+                                       :colorway    s
+                                       :surface     surface}})})]
 
 
       (into [{:desc            "Sizes from xxsmall to xlarge"
@@ -65,7 +65,7 @@
                                                    [link (merge-attrs (sx :ws--n)
                                                                       {:href "#"})
                                                     "new features"]]
-                                    :-colorway    :accent
+                                    :colorway    :accent
                                     :-icon        [icon :info]})]]
               :examples          [{:code (sx-call
                                           (for [sz sizes]
@@ -75,7 +75,7 @@
                                                                             {:href "#"})
                                                                       "new features"]]
                                                       :-icon        [icon :info]
-                                                      :-colorway    :accent
+                                                      :colorway    :accent
                                                       :class        [sz]}]))}]}
 
              {:desc            "With icon and dismiss button, in positive variant"
@@ -85,7 +85,7 @@
               :examples        [{:code (sx-call 
                                         [callout
                                          {:-icon         [icon :check-circle]
-                                          :-colorway     :positive
+                                          :colorway     :positive
                                           :-header-text  "Your transaction was successful."
                                           :-user-actions callout-close-button}])}]}
 
@@ -109,7 +109,7 @@
                                                         (sx :ws--n)
                                                         {:href "#"})
                                                   "new features"]]
-                                  :-colorway    :accent
+                                  :colorway    :accent
                                   :-icon        [icon :info]})]]
             :examples        [{:code 
                                (sx-call
@@ -120,7 +120,7 @@
                                                                   {:href "#"})
                                                             "new features"]]
                                             :-icon        [icon :info]
-                                            :-colorway    :accent
+                                            :colorway    :accent
                                             :class        [sz]}]))}]}
            #_{:desc            "With icon and dismiss button, in positive variant"
             :row-attrs       row-attrs
@@ -130,7 +130,7 @@
                                (sx-call 
                                 [callout
                                  (merge {:-icon         [icon :check-circle]
-                                         :-colorway     :positive
+                                         :colorway     :positive
                                          :-header-text  "Your transaction was successful."
                                          :-user-actions callout-close-button})])}]}]
           #_semantic-variants)))

@@ -78,10 +78,10 @@
      :pb--1rem:2.5rem
      :pis--0)
     [playground.colors/color-grid
-     {:-row-gap      :4px
-      :-column-gap   :8px
-      :-labels?      false
-      :-swatch-attrs (sx :w--23px :h--23px)}]]
+     {:row-gap      :4px
+      :column-gap   :8px
+      :labels?      false
+      :swatch-attrs (sx :w--23px :h--23px)}]]
 
    [:div
     (sx
@@ -91,9 +91,9 @@
      :pb--2rem:4.5rem
      :pis--2.5rem)
     [playground.colors/color-grid
-     {:-row-gap      :7px
-      :-column-gap   :14px
-      :-swatch-attrs (sx :sm:w--34px
+     {:row-gap      :7px
+      :column-gap   :14px
+      :swatch-attrs (sx :sm:w--34px
                          :sm:h--34px
                          :xsm:w--29px
                          :xsm:h--29px
@@ -120,15 +120,15 @@
    [:p]
    #_[:p
     "The `data-kushi-colorway` attributes "
-    [:code {:-colorway :.neutral} ":.neutral"]
+    [:code {:colorway :.neutral} ":.neutral"]
     ", "
-    [:code {:-colorway :.positive} ":.positive"]
+    [:code {:colorway :.positive} ":.positive"]
     ", "
-    [:code {:-colorway :.negative} ":.negative"]
+    [:code {:colorway :.negative} ":.negative"]
     ", "
-    [:code {:-colorway :.warning} ":.warning"]
+    [:code {:colorway :.warning} ":.warning"]
     ", and "
-    [:code {:-colorway :.accent} ":.accent"]
+    [:code {:colorway :.accent} ":.accent"]
     " will decorate the element with the corresponding foreground and background colors."]
    
    [divisor]
@@ -180,9 +180,9 @@
             [:span.relative
              (merge-attrs
               {:class [x]}
-              (tooltip-attrs {:-text          (name x)
-                              :-placement     [:inline-end :center]
-                              :-tooltip-class (css :.kushi-playground-typescale-example-text-tooltip
+              (tooltip-attrs {:text          (name x)
+                              :placement     [:inline-end :center]
+                              :tooltip-class (css :.kushi-playground-typescale-example-text-tooltip
                                                    :.code
                                                    :fw--$wee-bold
                                                    :fs--$small)}))
@@ -309,7 +309,7 @@
                       :scroll-y        16}))}
     [button 
      (merge-attrs (sx :.semi-bold)
-                  {:-surface :solid})
+                  {:surface :solid})
      "Explore components"
      [icon :arrow-right-alt]]]])
 

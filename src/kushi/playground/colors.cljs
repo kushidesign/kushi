@@ -38,10 +38,10 @@
                                               [:span.kushi-label-text %]
                                               %)
                                            children)
-        {:keys [color bgc]}           opts]
+        {:keys [sticker-fg-color sticker-bg-bgc]}           opts]
     [label
      [:span (merge-attrs
-             {:style (css-vars-map color bgc)
+             {:style (css-vars-map sticker-fg-color sticker-bg-bgc)
               :class (css :.kushi-playground-color-text-sample-sticker
                           :.flex-row-c
                           :fs--$kushi-playground-text-sample-sticker_font-size||$small
@@ -88,7 +88,7 @@
 
       ;; [icon (sx :.accent-secondary-foreground
       ;;           :mis--0.5em
-      ;;           {:-icon-style :outlined})
+      ;;           {:icon-style :outlined})
       ;;  :help]
        
        ]
@@ -207,20 +207,20 @@
                           :color-level color-level}]
             [:div (sx :.kushi-playground-color-sample-row-text-samples-wrapper
                       :.flex-row-fe :fw--$wee-bold)
-             [text-sample-sticker {:-color :white :-bgc color-token}]
-             [text-sample-sticker {:-color :black :-bgc color-token}]
+             [text-sample-sticker {:sticker-fg-color :white :sticker-bgc-color color-token}]
+             [text-sample-sticker {:sticker-fg-color :black :sticker-bgc-color color-token}]
              [text-sample-sticker 
               {:class  (css :.kushi-playground-color-sample-row-text-sample-white-text
                             :bs--solid
                             :bw--1px
                             :bc--$color-token)
-               :-color color-token 
-               :-bgc   :white}]
+               :sticker-fg-color color-token 
+               :sticker-bgc-color   :white}]
              [text-sample-sticker 
               {:class  (css :.kushi-playground-color-sample-row-text-sample-black-text
                             :bs--solid :bw--1px :bc--$color-token)
-               :-color color-token
-               :-bgc   :black}]]]]))))])
+               :sticker-fg-color color-token
+               :sticker-bgc-color   :black}]]]]))))])
 
 (defn color-grid [& args]
   (let [{:keys [opts attrs children]}

@@ -60,9 +60,9 @@
             :close))]
     [button
      (merge-attrs
-      {:-shape        :pill
-       :-colorway     colorway
-       :-surface      :minimal
+      {:-contour        :pill
+       :colorway     colorway
+       :surface      :minimal
        :class         (css ".kushi-callout-close-button"
                            :.absolute-centered!
                            :fs--inherit
@@ -196,7 +196,7 @@
              ;; different from button
         
         :data-kushi-surface surface
-        :data-kushi-shape   shape}
+        :data-kushi-contour   shape}
        (when loading? {:data-kushi-ui-spinner true})
 
  ;; different from button and tag
@@ -244,7 +244,7 @@
                 :min-width--1em
                 :min-height--1em)
        (if (= user-actions callout-close-button)
-         [user-actions {:-colorway colorway :-surface surface}]
+         [user-actions {:colorway colorway :surface surface}]
          (when user-actions (user-actions)))
        ]]
      (when (seq children)

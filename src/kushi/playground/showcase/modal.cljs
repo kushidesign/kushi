@@ -23,9 +23,9 @@
 
 (defn example-modal-trigger [modal-id]
   [button
-   {:-colorway :accent
-    :-shape    :pill
-    :-surface  :minimal
+   {:colorway :accent
+    :contour    :pill
+    :surface  :minimal
     :class    
     (css :.kushi-playground-examples-modal-trigger
          :pb--0.4em
@@ -56,7 +56,7 @@
   [{:keys [modal-id label modal-label component-label]
     :as   m}]
   [:<> 
-   [modal-close-button {:-modal-id modal-id}]
+   [modal-close-button {:modal-id modal-id}]
    [:div (sx :.kushi-playground-examples-modal-wrapper
              :.flex-row-space-between
              :ai--fs

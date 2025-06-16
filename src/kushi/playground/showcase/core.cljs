@@ -5,7 +5,7 @@
    [clojure.walk :as walk]
    [clojure.repl]
    [clojure.edn]
-   [kushi.core :refer [css defcss merge-attrs sx css-vars-map]]
+   [kushi.core :refer [css defcss merge-attrs sx css-vars-map at]]
   ;;  [kushi.css.build.design-tokens
   ;;   :rename {design-tokens-by-component-usage dtoks-by-usage}]
    [kushi.ui.lightswitch.core :refer [light-dark-mode-switch]]
@@ -23,6 +23,7 @@
    [kushi.ui.radio.core :refer [radio]]
    [kushi.ui.label.core :refer [label]]
    [kushi.ui.defs :as defs]
+   [kushi.ui.variants :as variants]
    [kushi.util]
    [kushi.css.media]
    [kushi.util :as util])
@@ -298,7 +299,8 @@
                        (into [uic-fn
                               (merge-attrs
                                {(kw->option-key v-1d) a
-                                :-end-enhancer        [icon :arrow-forward]}
+                                :-end-enhancer        [icon :arrow-forward]
+                                :-ns (at)}
                                variant-attrs)]
                              variant-args))))
              []
@@ -549,7 +551,7 @@
         (kushi.util/partition-by-pred
          #(or (= schema boolean?)
               (= schema 'boolean?)
-              (contains? defs/variants-kw-set %))
+              (contains? variants/variants-by-custom-opt-key %))
          variants)]
 
     (if (seq bad-variants)
@@ -696,7 +698,7 @@
                 
 
                   ;; This branch renders variants for the specific opt, things like
-                  ;; :-size, :-colorway, etc.
+                  ;; :-sizing, :colorway, etc.
                   ;; It uses the :attrs map provided in the :demo entry, or 
                   ;; just an empty map if no :attrs is provided. 
                 :else

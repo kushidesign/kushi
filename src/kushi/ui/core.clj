@@ -130,7 +130,7 @@
                        (or (k variants-by-custom-opt-key)        
                            'any?)
                        (cond 
-                         ; just a schemaicate function e.g. boolean?
+                         ; just a schema function e.g. boolean?
                          (symbol? schema)                                 
                          schema
 
@@ -158,11 +158,12 @@
         fq-fn-name  (str ns-name "/" fn-sym)]
     (when (seq opts)
       (let [opts    (with-schemas opts)
-            opts-unreserved-ks (mapv #(keyword (subs (name %) 1)) (keys opts))]
+            ;; opts-unreserved-ks (mapv #(keyword (subs (name %) 1)) (keys opts))
+            ]
         `(let [schema# {:ns/name            ~ns-name
                         :fn/name            (quote ~fn-sym)
                         :fn/fq-name         ~fq-fn-name
-                        :opts/unreserved-ks ~opts-unreserved-ks
+                        ;; :opts/unreserved-ks ~opts-unreserved-ks
                         :opts/quoted        (quote ~opts)
                         :opts/expanded      ~opts}]
            (kushi.ui.core/validate* schema# ~args))))))

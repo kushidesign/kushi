@@ -51,7 +51,7 @@
                                         {:-modal-title "Example modal"
                                          :-description "Example modal description goes here."
                                          :id           id})
-                                       [modal-close-button {:-modal-id id}]
+                                       [modal-close-button {:modal-id id}]
                                        [:div
                                         (sx :.flex-col-fs :gap--1em)
                                         [text-field {:placeholder "Puffy"
@@ -84,7 +84,7 @@
                                 {:-modal-title "Example modal"
                                  :-description "Example modal description goes here."
                                  :id           id})
-                               [modal-close-button {:-modal-id id}]
+                               [modal-close-button {:modal-id id}]
                                [:div
                                 (sx :.flex-col-fs :gap--1em)
                                 [text-field (sx {:placeholder "Puffy"
@@ -118,7 +118,7 @@
                                 {:-modal-title "Example modal"
                                  :-description "Example modal description goes here."
                                  :id           id})
-                               [modal-close-button {:-modal-id id}]
+                               [modal-close-button {:modal-id id}]
                                [:div
                                 (sx :.flex-col-fs :gap--1em)
                                 [text-field (sx {:placeholder "Puffy"
@@ -229,12 +229,12 @@
                                [:div
                                 (sx :.flex-row-fe :gap--1em)
                                 [button
-                                 (merge-attrs {:-surface :minimal
-                                               :-shape   :pill
+                                 (merge-attrs {:surface :minimal
+                                               :-contour   :pill
                                                :on-click close-kushi-modal})
                                  "Cancel"]
                                 [button
-                                 (merge-attrs {:-surface :minimal
-                                               :-shape   :pill
+                                 (merge-attrs {:surface :minimal
+                                               :-contour   :pill
                                                :on-click close-kushi-modal}) 
                                  "Submit"]]]]))}]}]))

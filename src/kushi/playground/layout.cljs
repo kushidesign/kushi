@@ -88,8 +88,8 @@
            tab-label]}]
   [button
    (let [panel-id (str "kushi-" component-label "-" tab-label)]
-     {:-surface      :minimal
-      :-shape        :pill
+     {:surface      :minimal
+      :contour        :pill
       :class         (css :.foreground-color-secondary!
                           :fs--$small
                           :pis--0.799em

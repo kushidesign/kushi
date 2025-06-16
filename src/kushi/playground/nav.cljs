@@ -39,8 +39,8 @@
 
 
 (def header-nav-button-attrs
-  {:-surface :minimal
-   :-shape :pill
+  {:surface :minimal
+   :contour :pill
    :class (css :.foreground-color-secondary!
                :tt--capitalize
                :fs--$xlarge
@@ -189,8 +189,8 @@
      (when (domo/media-supports-hover?)
        (domo/hover-class-attrs "has-hover")))
     [button 
-     {:-shape   :pill
-      :-surface :minimal
+     {:contour   :pill
+      :surface :minimal
       :class (css :.kushi-explore
                   :.foreground-color-secondary!
                   :fs--$small

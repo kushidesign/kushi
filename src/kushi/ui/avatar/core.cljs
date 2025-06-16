@@ -71,7 +71,7 @@
 
         {:keys             [shape surface]
          semantic-colorway :colorway}
-        (get-variants opts {:shape :circle})
+        (get-variants opts {:contour :circle})
 
         hue-style-map                 
         (when-not semantic-colorway 
@@ -92,7 +92,7 @@
                 [:aspect-ratio "1 / 1"]
                 :overflow--hidden)
             {:data-kushi-surface surface
-             :data-kushi-shape   shape}
+             :data-kushi-contour   shape}
             (some-> stroke-align 
                     (maybe #{:outside "outside"})
                     (data-kushi- :stroke-align))

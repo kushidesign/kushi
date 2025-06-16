@@ -37,7 +37,7 @@
           (for [colorway ["bonkers" "accent" "positive" "warning" "negative"]] 
             [switch 
              (merge-attrs (sx :fs--$xxxlarge)
-                          {:-colorway colorway
+                          {:colorway colorway
                            :-on?      true})]))
 
      (into [:div (sx :.switch-dev-grid
@@ -45,16 +45,16 @@
           (for [colorway ["bonkers" "accent" "positive" "warning" "negative"]] 
             [button
              (merge-attrs (sx :fs--$small :fw--$wee-bold :.loose)
-                          {:-colorway colorway
-                           :-surface  :solid})
+                          {:colorway colorway
+                           :surface  :solid})
              "Button"]))
    #_(into [:div (sx :.switch-dev-grid
                      {:before:content "\"Colorways\""})]
           (for [colorway ["neutral" "accent" "positive" "warning" "negative"]] 
             [button
              (merge-attrs (sx :fs--$small :fw--$wee-bold :.loose)
-                          {:-colorway colorway
-                           :-surface  :faint})
+                          {:colorway colorway
+                           :surface  :faint})
              "Button"]))
    ])
 
@@ -80,9 +80,9 @@
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [button 
                             (merge-attrs (sx :fs--$medium)
-                                         {:-colorway       colorway
-                                          :-surface        surface
-                                          :-shape          shape
+                                         {:colorway       colorway
+                                          :surface        surface
+                                          :contour          shape
                                           :-start-enhancer [icon :pets]})
                             "Button"]))))))
 
@@ -92,7 +92,7 @@
          (for [shape ["round" "sharp" "pill"]] 
            [icon-button 
             (merge-attrs (sx :fs--$xxxlarge)
-                         {:-shape shape
+                         {:contour shape
                           :-icon  [icon :pets]})]))
 
    (into [:div (sx :.button-dev-grid
@@ -108,8 +108,8 @@
          (for [shape ["round" "sharp" "pill"]] 
            [button 
             (merge-attrs (sx :fs--$small)
-                         {:-surface        "outline"
-                          :-shape          shape
+                         {:surface        "outline"
+                          :contour          shape
                           :-start-enhancer [icon :pets]})
             "Button"]))
 
@@ -118,7 +118,7 @@
          (for [packing ["compact" nil "roomy"]] 
            [button 
             (merge-attrs (sx :fs--$small)
-                         {:-surface        "outline"
+                         {:surface        "outline"
                           :-packing        packing
                           :-start-enhancer [icon :pets]})
             "Button"]))
@@ -132,8 +132,8 @@
                           :class (css :fs--$small
                                       [:--outlined-button-stroke-width :$_stroke-width]
                                       [:--outlined-button-stroke-align "center"])}
-                         {:-surface        "outline"
-                          :-shape          "round"
+                         {:surface        "outline"
+                          :contour          "round"
                           :-start-enhancer [icon :pets]})
             "Button"]))
 
@@ -146,8 +146,8 @@
                           :class (css :fs--$small
                                       [:--outlined-button-stroke-width :$_stroke-width]
                                       [:--outlined-button-stroke-align "center"])}
-                         {:-surface        "outline"
-                          :-shape          "round"
+                         {:surface        "outline"
+                          :contour          "round"
                           :-stroke-align   :outside
                           :-start-enhancer [icon :pets]})
             "Button"]))
@@ -168,8 +168,8 @@
                                       [:--box-shadow-2-strength "50%"]
                                       [:--box-shadow-2-blur-radius "5px"]
                                       [:--box-shadow-2-color "red"])}
-                         {:-surface        "outline"
-                          :-shape          "round"
+                         {:surface        "outline"
+                          :contour          "round"
                           :-stroke-align   :inside
                           :-start-enhancer [icon :pets]})
             "Button"]))])
@@ -196,9 +196,9 @@
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [tag 
                             (merge-attrs (sx :fs--$small)
-                                         {:-colorway       colorway
-                                          :-surface        surface
-                                          :-shape          shape
+                                         {:colorway       colorway
+                                          :surface        surface
+                                          :contour          shape
                                           :-start-enhancer [icon :pets]})
                             "Dang"]))))))
 
@@ -210,9 +210,9 @@
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [tag 
                             (merge-attrs (sx :fs--$small)
-                                         {:-colorway colorway
-                                          :-surface  surface
-                                          :-shape    shape})
+                                         {:colorway colorway
+                                          :surface  surface
+                                          :contour    shape})
                             "Dang"]))))))  
 
    (into [:div (sx :.tag-dev-grid
@@ -223,8 +223,8 @@
                              ["nth-child(4):tt" :lowercase]
                              ["nth-child(5):tt" :lowercase]
                              ["nth-child(6):tt" :lowercase])
-                         {:-surface        "outline"
-                          :-shape          shape})
+                         {:surface        "outline"
+                          :contour          shape})
             (if (= shape "sharp") "Done" "Dang")]))
 
    (into [:div (sx :.tag-dev-grid
@@ -235,7 +235,7 @@
                              ["nth-child(4):tt" :lowercase]
                              ["nth-child(5):tt" :lowercase]
                              ["nth-child(6):tt" :lowercase])
-                         {:-surface        "outline"
+                         {:surface        "outline"
                           :-packing        packing})
             "Dang"]))
 
@@ -248,8 +248,8 @@
                           :class (css :fs--$small
                                       [:--outlined-button-stroke-width :$_stroke-width]
                                       [:--outlined-button-stroke-align "center"])}
-                         {:-surface        "outline"
-                          :-shape          "round"})
+                         {:surface        "outline"
+                          :contour          "round"})
             "Dang"]))
 
    (into [:div (sx :.tag-dev-grid
@@ -261,8 +261,8 @@
                           :class (css :fs--$small
                                       [:--outlined-button-stroke-width :$_stroke-width]
                                       [:--outlined-button-stroke-align "center"])}
-                         {:-surface        "outline"
-                          :-shape          "round"
+                         {:surface        "outline"
+                          :contour          "round"
                           :-stroke-align   :outside})
             "Dang"]))
    
@@ -276,8 +276,8 @@
                                       :.lowercase
                                       [:--outlined-button-stroke-width :$_stroke-width]
                                       [:--outlined-button-stroke-align "center"])}
-                         {:-surface        "outline"
-                          :-shape          "round"
+                         {:surface        "outline"
+                          :contour          "round"
                           :-stroke-align   :outside})
             "Dang"]))
 
@@ -298,8 +298,8 @@
                                       [:--box-shadow-2-blur-radius "5px"]
                                       [:--box-shadow-2-color "red"]
                                       )}
-                         {:-surface        "outline"
-                          :-shape          "round"
+                         {:surface        "outline"
+                          :contour          "round"
                           :-stroke-align   :inside})
             "Dang"]))])
 
@@ -453,7 +453,7 @@
                                  "Please check out the "
                                  [link (merge-attrs (sx :ws--n) {:href "#"})
                                   "new features"]]
-                 :-colorway     :accent
+                 :colorway     :accent
                  :-icon         [icon :info]
                  :-user-actions callout-close-button})]
 
@@ -471,8 +471,8 @@
                                                                 (sx :ws--n)
                                                                 {:href "#"})
                                                           "new features"]]
-                                          :-surface     surface
-                                          :-colorway    colorway
+                                          :surface     surface
+                                          :colorway    colorway
                                           :-icon        [icon :info]})])))))))
 
 (defn slider3-change-handler [e]
@@ -540,8 +540,8 @@
           (for [surface [:faint :solid :outline :minimal]]
             (into [:div (sx :.flex-row-fs :gap--10px)]
                   (for [font-size-class component-examples/sizes-all]
-                    [avatar {:-surface  surface
-                             :-colorway :accent
+                    [avatar {:surface  surface
+                             :colorway :accent
                              :class     font-size-class}
                      "JC"]))))
 
@@ -549,18 +549,18 @@
           (for [surface [:faint :solid :outline :minimal]]
             (into [:div (sx :.flex-row-fs :gap--10px)]
                   (for [colorway [:neutral :accent :positive :negative]]
-                    [avatar {:-surface  surface
-                             :-colorway colorway
-                             :-shape    :rounded}
+                    [avatar {:surface  surface
+                             :colorway colorway
+                             :contour    :rounded}
                      "JC"]))))
 
     (into [:div (sx :.flex-col-fs :gap--10px)]
           (for [surface [:faint :solid :outline :minimal]]
             (into [:div (sx :.flex-row-fs :gap--10px)]
                   (for [colorway [:neutral :accent :positive :negative]]
-                    [avatar (merge-attrs {:-surface  surface
-                                          :-colorway colorway
-                                          :-shape    :circle}
+                    [avatar (merge-attrs {:surface  surface
+                                          :colorway colorway
+                                          :contour    :circle}
                                          (sx :h--48px :.large))
                      "JC"]))))
 

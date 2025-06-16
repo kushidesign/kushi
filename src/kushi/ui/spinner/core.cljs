@@ -36,10 +36,10 @@
    :opts    {:-spinner-type {:default   :donut
                              :desc      "The variety of spinner"
                              :demo      {:label         "Spinner type variants"
-                                         :attrs/display {:-size :xxxlarge}
+                                         :attrs/display {:-sizing :xxxlarge}
                                          :row-style     {:gap :2rem}
                                          }}
-             :-size         {:default nil
+             :-sizing         {:default nil
                              :desc    "Corresponds to the font-size based on Kushi's font-size scale."
                              :demo    [{:label           "Propeller, sizes"
                                         :attrs           {:-spinner-type :propeller}
@@ -48,19 +48,19 @@
                                        {:label           "Donut, sizes"
                                         :attrs           {:-spinner-type :donut}
                                         :variant-labels? false}]}
-             :-colorway     {:default nil
+             :colorway     {:default nil
                              :desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
                              :demo    [{:label           "Propeller, colorways"
                                         :attrs           {:-spinner-type :propeller}
-                                        :attrs/display   {:-size :xlarge}
+                                        :attrs/display   {:-sizing :xlarge}
                                         :variant-labels? false}
                                        {:label           "Donut, colorways"
                                         :attrs           {:-spinner-type :donut}
-                                        :attrs/display   {:-size :xlarge}
+                                        :attrs/display   {:-sizing :xlarge}
                                         :variant-labels? false}
                                        {:label           "Thinking, colorways"
                                         :attrs           {:-spinner-type :thinking}
-                                        :attrs/display   {:-size :xxsmall}
+                                        :attrs/display   {:-sizing :xxsmall}
                                         :variant-labels? false}]}}}
   
   [& args]
@@ -78,10 +78,10 @@
         
         
         ;; data-kushi-colorway (validate-option spinner semantic-colorway)
-        ;; data-kushi-size     (validate-option spinner size)
+        ;; data-kushi-sizing     (validate-option spinner size)
         more-attrs          (merge {:aria-hidden         true
                                     :data-kushi-surface  :transparent
-                                    :data-kushi-size     size}
+                                    :data-kushi-sizing     size}
                                    (when (true? inert?) 
                                      {:data-kushi-inert ""})
                                    (when-not (contains? #{"neutral" :neutral}

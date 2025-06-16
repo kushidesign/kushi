@@ -77,9 +77,9 @@
      :variants-base  #{:faint :solid :outline :minimal}
      :variants-order [:faint :solid :outline :minimal]
      :variants-attrs {:faint    {}
-                      :solid   {:-surface :solid}
-                      :outline {:-surface :outline}
-                      :minimal {:-surface :minimal}}}
+                      :solid   {:surface :solid}
+                      :outline {:surface :outline}
+                      :minimal {:surface :minimal}}}
 
       {:label          "icon"
        :component      icon
@@ -208,9 +208,9 @@
        :variants-base  #{:faint :solid :outline :minimal}
        :variants-order [:faint :solid :outline :minimal]
        :variants-attrs {:faint    {}
-                        :solid   {:-surface :solid}
-                        :outline {:-surface :outline}
-                        :minimal {:-surface :minimal}}
+                        :solid   {:surface :solid}
+                        :outline {:surface :outline}
+                        :minimal {:surface :minimal}}
        }
 
       {:label          "tag"
@@ -221,9 +221,9 @@
        :variants-base  #{:faint :solid :outline :minimal}
        :variants-order [:faint :solid :outline :minimal]
        :variants-attrs {:faint    {}
-                        :solid   {:-surface :solid}
-                        :outline {:-surface :outline}
-                        :minimal {:-surface :minimal}}
+                        :solid   {:surface :solid}
+                        :outline {:surface :outline}
+                        :minimal {:surface :minimal}}
        }
 
       {:label          "callout"
@@ -234,9 +234,9 @@
        :variants-base  #{:faint :solid :outline}
       ;;  :variants-order [:faint :solid :outline]
       ;;  :variants-attrs {:faint    {}
-      ;;                   :solid   {:-surface :solid}
-      ;;                   :outline {:-surface :outline}
-      ;;                   :minimal {:-surface :minimal}}
+      ;;                   :solid   {:surface :solid}
+      ;;                   :outline {:surface :outline}
+      ;;                   :minimal {:surface :minimal}}
        }
 
       {:label          "collapse"

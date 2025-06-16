@@ -38,21 +38,21 @@
              The default value is `:1px`"
    
    ;; Should this be a map, parsed with edamame?
-   ;; Should we use keys like :-colorway, same as call-site
+   ;; Should we use keys like :colorway, same as call-site
    :opts   
    {
 
-    ;; :-size           {:default nil
+    ;; :-sizing           {:default nil
     ;;                   :desc    "Corresponds to the font-size based on Kushi's font-size scale."
     ;;                   :demo    {:label         "Size variants"
     ;;                             :attrs         {:-end-enhancer :east
-    ;;                                             :-colorway     :accent
-    ;;                                             :-surface      :solid}
-    ;;                             :attrs/display {:-surface :solid}
+    ;;                                             :colorway     :accent
+    ;;                                             :surface      :solid}
+    ;;                             :attrs/display {:surface :solid}
     ;;                             :args          ["Next"]}}
 
 
-    :-colorway       {:default nil
+    :colorway       {:default nil
                       :desc    "Colorway of the button. Can also be a named color from Kushi's design system e.g `:red` `:purple` `:gold` etc."
                       :demo    {:args           ["Next"]
                                 :x-variants     [:surface]
@@ -60,41 +60,41 @@
                                 ;; should be label/snippets
                                 :snippets-label "Colorways"
 
-                                :attrs/snippet  {:-surface :solid}
-                                :attrs/display  {:-size :small}
+                                :attrs/snippet  {:surface :solid}
+                                :attrs/display  {:-sizing :small}
                                 :label          "Colorways / surfaces × shapes"
                                 :attrs          {:-end-enhancer :east}
                                 :rows?          true}}
 
 
     ;; Fix
-    ;; :-shape          {:default :round
+    ;; :-contour          {:default :round
     ;;                   :desc    "Shape of the button."
     ;;                   :demo    {:label         "Shape variants"
     ;;                             :attrs         {:-end-enhancer :east
-    ;;                                             :-colorway     :accent
-    ;;                                             :-surface      :solid}
-    ;;                             :attrs/display {:-size :xxxlarge}
+    ;;                                             :colorway     :accent
+    ;;                                             :surface      :solid}
+    ;;                             :attrs/display {:-sizing :xxxlarge}
     ;;                             :args          ["Next"]}}
 
     ;; Fix
     ;; :-stroke-align   {:schema    #{:inside :outside}
     ;;                   :default nil
-    ;;                   :desc    "Alignment of the stroke. Only applies to `:-surface` `:outline`"
+    ;;                   :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`"
     ;;                   :demo    {:label   "Stroke alignment"
     ;;                             :require '[[kushi.ui.icon.core :refer [icon]]]
     ;;                             :samples [[button
     ;;                                        {:-end-enhancer '[icon :east]
-    ;;                                         :-size         :small
-    ;;                                         :-colorway     :accent
-    ;;                                         :-surface      :outline
+    ;;                                         :-sizing         :small
+    ;;                                         :colorway     :accent
+    ;;                                         :surface      :outline
     ;;                                         :-stroke-align :inside}
     ;;                                        "Next"]
     ;;                                       [button
     ;;                                        {:-end-enhancer '[icon :east]
-    ;;                                         :-size         :small
-    ;;                                         :-colorway     :accent
-    ;;                                         :-surface      :outline
+    ;;                                         :-sizing         :small
+    ;;                                         :colorway     :accent
+    ;;                                         :surface      :outline
     ;;                                         :-stroke-align :outside}
     ;;                                        "Next"]]}}
 
@@ -103,9 +103,9 @@
     ;;                   :desc    "General amount of padding inside the button"
     ;;                   :demo    {:label         "Packing variants"
     ;;                             :attrs         {:-end-enhancer '[icon :east]
-    ;;                                             :-colorway     :accent
-    ;;                                             :-surface      :solid}
-    ;;                             :attrs/display {:-size :small}
+    ;;                                             :colorway     :accent
+    ;;                                             :surface      :solid}
+    ;;                             :attrs/display {:-sizing :small}
                                 ;; :args          ["Next"]}}
 
     ;; demo
@@ -116,21 +116,21 @@
     ;;                             :require [[kushi.ui.icon.core :refer ['icon]]]
     ;;                             :samples [[button
     ;;                                        {:-end-enhancer ['icon :pets]
-    ;;                                         :-size         :small
-    ;;                                         :-colorway     :accent
-    ;;                                         :-surface      :solid}
+    ;;                                         :-sizing         :small
+    ;;                                         :colorway     :accent
+    ;;                                         :surface      :solid}
     ;;                                        "Pets"]
     ;;                                       [button
     ;;                                        {:-end-enhancer ['icon :auto-awesome]
-    ;;                                         :-size         :small
-    ;;                                         :-colorway     :accent
-    ;;                                         :-surface      :soft}
+    ;;                                         :-sizing         :small
+    ;;                                         :colorway     :accent
+    ;;                                         :surface      :soft}
     ;;                                        "Wow"]
     ;;                                       [button
     ;;                                        {:-end-enhancer ['icon :play-arrow]
-    ;;                                         :-size         :small
-    ;;                                         :-colorway     :accent
-    ;;                                         :-surface      :outline}
+    ;;                                         :-sizing         :small
+    ;;                                         :colorway     :accent
+    ;;                                         :surface      :outline}
     ;;                                        "Play"]]}}
 
     ;; demo
@@ -141,21 +141,21 @@
     ;;                             :require [[kushi.ui.icon.core :refer ['icon]]]
     ;;                             :samples [[button
     ;;                                        {:-start-enhancer ['icon :pets]
-    ;;                                         :-size           :small
-    ;;                                         :-colorway       :accent
-    ;;                                         :-surface        :solid}
+    ;;                                         :-sizing           :small
+    ;;                                         :colorway       :accent
+    ;;                                         :surface        :solid}
     ;;                                        "Pets"]
     ;;                                       [button
     ;;                                        {:-start-enhancer ['icon :auto-awesome]
-    ;;                                         :-size           :small
-    ;;                                         :-colorway       :accent
-    ;;                                         :-surface        :soft}
+    ;;                                         :-sizing           :small
+    ;;                                         :colorway       :accent
+    ;;                                         :surface        :soft}
     ;;                                        "Wow"]
     ;;                                       [button
     ;;                                        {:-start-enhancer ['icon :play-arrow]
-    ;;                                         :-size           :small
-    ;;                                         :-colorway       :accent
-    ;;                                         :-surface        :outline}
+    ;;                                         :-sizing           :small
+    ;;                                         :colorway       :accent
+    ;;                                         :surface        :outline}
     ;;                                        "Play"]]}}
 
     ;; demo
@@ -168,48 +168,48 @@
     ;;                                        [kushi.ui.spinner.core :refer [spinner]]]
     ;;                             :samples [{:code [button
     ;;                                               {:-loading?     true
-    ;;                                                :-colorway     :accent
-    ;;                                                :-surface      :solid
-    ;;                                                :-size         :small
+    ;;                                                :colorway     :accent
+    ;;                                                :surface      :solid
+    ;;                                                :-sizing         :small
     ;;                                                :-end-enhancer [spinner {:-variety :donut}]}
     ;;                                               "Play"]}
     ;;                                       {:code [button
     ;;                                               {:-loading?     true
-    ;;                                                :-colorway     :accent
-    ;;                                                :-surface      :solid
-    ;;                                                :-size         :small
+    ;;                                                :colorway     :accent
+    ;;                                                :surface      :solid
+    ;;                                                :-sizing         :small
     ;;                                                :-end-enhancer [spinner {:-variety :propeller}]}
     ;;                                               "Play"]}
     ;;                                       {:code [button
     ;;                                               {:-loading?     true
-    ;;                                                :-colorway     :accent
-    ;;                                                :-surface      :solid
-    ;;                                                :-size         :small
+    ;;                                                :colorway     :accent
+    ;;                                                :surface      :solid
+    ;;                                                :-sizing         :small
     ;;                                                :-end-enhancer [spinner {:-variety :thinking}]}
     ;;                                               "Play"]}
     ;;                                       {:code [button
     ;;                                               {:-loading? true
-    ;;                                                :-colorway :accent
-    ;;                                                :-surface  :solid
-    ;;                                                :-size     :small}
+    ;;                                                :colorway :accent
+    ;;                                                :surface  :solid
+    ;;                                                :-sizing     :small}
     ;;                                               [:span {:style {:visibility :hidden
     ;;                                                               :width      :0px}} "Play"]
     ;;                                               [spinner {:-variety :thinking}]]}
     ;;                                       {:code [button
     ;;                                               {:disabled      true
-    ;;                                                :-colorway     :accent
-    ;;                                                :-surface      :solid
-    ;;                                                :-size         :small
+    ;;                                                :colorway     :accent
+    ;;                                                :surface      :solid
+    ;;                                                :-sizing         :small
     ;;                                                :-end-enhancer [icon :play-arrow]}
     ;;                                               "Play"]}]}}
 
     ;; Fix
-    ;; :-surface        {:default :round
+    ;; :surface        {:default :round
     ;;                   :desc    "Surface variant of the button."
     ;;                   :demo    {:label         "Surface variants"
     ;;                             :attrs         {:-end-enhancer [icon :east]
-    ;;                                             :-colorway     :accent}
-    ;;                             :attrs/display {:-size :small}
+    ;;                                             :colorway     :accent}
+    ;;                             :attrs/display {:-sizing :small}
     ;;                             :args          ["Next"]}}
     }
 
@@ -217,21 +217,21 @@
   ;;               :desc    "Content at the inline-start position following the button text. Typically an icon."
   ;;               :require [[kushi.ui.icon.core :refer [icon]]]
   ;;               :samples [[button {:-start-enhancer [icon :pets]
-  ;;                                  :-size           :small
-  ;;                                  :-colorway       :accent
-  ;;                                  :-surface        :solid}
+  ;;                                  :-sizing           :small
+  ;;                                  :colorway       :accent
+  ;;                                  :surface        :solid}
   ;;                          "Pets"]
                           
   ;;                         [button {:-start-enhancer [icon :auto-awesome]
-  ;;                                  :-size           :small
-  ;;                                  :-colorway       :accent
-  ;;                                  :-surface        :soft}
+  ;;                                  :-sizing           :small
+  ;;                                  :colorway       :accent
+  ;;                                  :surface        :soft}
   ;;                          "Wow"]
 
   ;;                         [button {:-start-enhancer [icon :play-arrow]
-  ;;                                  :-size           :small
-  ;;                                  :-colorway       :accent
-  ;;                                  :-surface        :outline}
+  ;;                                  :-sizing           :small
+  ;;                                  :colorway       :accent
+  ;;                                  :surface        :outline}
   ;;                          "Play"]]}]
 
   ;;  :display  '{:docs     {:order [:summary :desc :toks]
@@ -296,9 +296,9 @@
         :aria-busy                 loading?
         :aria-label                (when loading? "loading")
         :data-kushi-ia             ""
-        :data-kushi-size           size
+        :data-kushi-sizing           size
         :data-kushi-weight         weight
-        :data-kushi-shape          shape
+        :data-kushi-contour          shape
         :data-kushi-surface        surface
         :data-kushi-packing        packing
         :data-kushi-colorway       colorway
@@ -378,12 +378,12 @@
              :aria-label              (when loading? "loading")
              :data-kushi-ia           ""
              :data-kushi-surface      surface
-             :data-kushi-shape        shape
+             :data-kushi-contour        shape
              :data-kushi-ui-spinner   (when loading? "")
              :data-kushi-stroke-align (some-> stroke-align 
                                               (maybe #{:outside "outside"}))
              :data-kushi-colorway     semantic-colorway
-             :data-kushi-size         size
+             :data-kushi-sizing         size
              :data-kushi-packing      (some-> packing
                                               (maybe nameable?)
                                               as-str

@@ -4,6 +4,7 @@
             [fireworks.core :refer [? !? ?> !?>]]
             [me.flowthing.pp :refer [pprint]]
             [kushi.core :refer [merge-attrs]]
+            [kushi.ui.variants :as variants]
             [kushi.util :refer [keyed]]
             ))
 
@@ -274,6 +275,20 @@
 ;;                       (remove nil?)
 ;;                       unwrapped-children)})))
 
+(def html-attrs 
+  #{:bgcolor :accept :accept-charset :access-key :action :allow-full-screen :allow-transparency :alt :async :auto-complete :auto-focus :auto-play :capture
+    :cell-padding :cell-spacing :challenge :char-set :checked :cite :class :class-name :cols :col-span :content :content-editable :context-menu :controls :controls-list
+    :coords :cross-origin :data :date-time :default :defer :dir :disabled :download :draggable :enc-type :form :form-action :form-enc-type :form-method
+    :form-no-validate :form-target :frame-border :headers :height :hidden :high :href :href-lang :html-for :http-equiv :icon :id :input-mode :integrity
+    :is :key-params :key-type :kind :label :lang :list :loop :low :manifest
+    :margin-height :margin-width :max :max-length :media :media-group :method :min :min-length :multiple :muted :name :no-validate :nonce :open :optimum :pattern :placeholder
+    :poster :preload :profile :radio-group :read-only :rel :required :reversed :role :rows :row-span :sandbox :scope :scoped :scrolling :seamless :selected :shape :size :sizes
+    :span :spell-check :src :src-doc :src-lang :src-set :start :step :style :summary :tab-index :target :title :type :use-map :value :width :wmode :wrap
+    ; React specific 
+    :ref :key})
+
+(def kushi-ui-props 
+  #{:ns :inert?})
 
 (defn extract
   "Extracts custom attributes from mixed map of html attributes and
@@ -285,7 +300,12 @@
     :children <children>}"
   ([args]
    (extract args nil))
-  ([args schema]
+  ([args custom-option-ks]
+   (doseq [k custom-option-ks]
+     (when (contains? html-attrs k)
+       (js/console.warn (str "HTML attribute name clash\n" k "\n"
+                             "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes" "\n"
+                             "You should probably choose a different name for your custom attribute."))))
    (when (coll? args)
      (let [[src args]          
            (let [[src & rest] args]
@@ -299,26 +319,17 @@
            user-ks             
            (some->> attr*
                     keys
-                    (filter user-attr?)
+                    (filter #(or (contains? variants/variants-by-custom-opt-key %)
+                                 (contains? custom-option-ks %)
+                                 (contains? kushi-ui-props %)))
                     (into #{}))
 
-           {:keys [attr opts]} 
+           {:keys [attrs opts]} 
            (some->> attr*
-                    (group-by #(contains? user-ks
-                                          (nth % 0 nil)))
+                    (group-by #(contains? user-ks (nth % 0 nil)))
                     (map (fn [[k v]]
-                           {(if k :opts :attr) (into {} v)}))
-                    (apply merge))
-
-           supplied-opts       
-           (->> opts
-                (map (fn [[k v]]
-                       [(-> k name (subs 1) keyword) v]))
-                (into {}))
-           
-           component
-           (str (:ns/name schema) "/" (:fn/name schema))
-           ]
+                           {(if k :opts :attrs) (into {} v)}))
+                    (apply merge))]
 
       ;; (when (and ^boolean js/goog.DEBUG schema)
       ;;   (when (map? attr*)
@@ -328,8 +339,8 @@
       ;;                                    :supplied-opts supplied-opts 
       ;;                                    :src           src}))
        
-       {:opts     supplied-opts
-        :attrs    attr
+       {:opts     opts
+        :attrs    attrs
         :children (->> children
                        (remove nil?)
                        unwrapped-children)}))))
@@ -424,6 +435,7 @@
   [{:keys [schema
            unprefixed-key
            prop
+           unprefixed-key-value
            src-ns]
     :as   m}]
   (case (:opt-validation-warning/template warning-config)
@@ -435,8 +447,13 @@
                    (when src-ns "\n")
                    "%c" (:fn/fq-name schema) "%c"
                    "\n"
-                   "%cUnprefixed key:%c " "%c" unprefixed-key "%c\n"
+                   "%cUnprefixed key:%c " "{%c" prop "%c" " " unprefixed-key-value "}\n"
+
+                              
                    "%cSuggested fix:%c  " "%c" prop "%c"
+                   (when (string/starts-with? (str src-ns) "kushi.playground.showcase")
+                     (str "\n\nThis is caused by a variant example or demo\nfrom "
+                          (:fn/fq-name schema)))
                    )
               "line-height: 2;"
               "line-height:initial;"
@@ -492,32 +509,29 @@
                           "line-height:initial;"]))))
 
 
-(defn mf [attr*
-          [prop {:keys [required? schema]}]
-          [_ {quoted-schema :schema}]]
-  (let [unprefixed-key (-> prop name (subs 1) keyword)]
-    (when-let [problem
-               (or (if (true? required?)
-                     (if-not (contains? attr* prop)
-                       :missing-key
-                       (when-not (schema (prop attr*)) schema))
-                     (when-let [v (prop attr*)]
-                       ;; This is where validation occurs
-                       (when-not (schema v)
-                         (if (fn? schema) quoted-schema schema))))
-                   (when (contains? attr* unprefixed-key)
-                     :unprefixed-key))]
-      {:in             [prop]
-       :prop           prop
-       :problem        problem
-       :unprefixed-key unprefixed-key
-       :value          (prop attr*)})))
+(defn mf 
+  [attr*
+   [prop {:keys [required? schema]}]
+   [_ {quoted-schema :schema}]]
+  (when-let [problem
+             (if (true? required?)
+               (if-not (contains? attr* prop)
+                 :missing-key
+                 (when-not (schema (prop attr*)) schema))
+               (when-let [v (prop attr*)]
+                 ;; This is where validation occurs
+                 (when-not (schema v)
+                   (if (fn? schema) quoted-schema schema))))]
+    {:in      [prop]
+     :prop    prop
+     :problem problem
+     :value   (prop attr*)}))
 
 
-(defn validate* [schema args]
+(defn validate*
+  [schema args]
   (let [attr* (first args)]
     (when (and (map? attr*) (seq attr*))
-      (? attr*)
       (let [problems
             (remove
              nil?  
@@ -526,7 +540,8 @@
                   (:opts/quoted schema)))]
 
         #_(? (select-keys schema [:form/meta :fn/name :ns/name])) 
-        (doseq [{:keys [in prop problem value unprefixed-key]} problems]
+        (doseq [{:keys [in prop problem value unprefixed-key-value unprefixed-key]}
+                problems]
           (let [section-break        "\n\n\n"
                 section-header-break "\n\n"
                 missing-key?         (= problem :missing-key )
@@ -535,8 +550,10 @@
                 warning-opts         (keyed [section-break
                                              section-header-break
                                              unprefixed-key
+                                             unprefixed-key-value
                                              schema
                                              prop
+                                             value
                                              src-ns])]
 
             #_(js/console.warn "")

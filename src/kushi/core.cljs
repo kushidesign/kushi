@@ -298,7 +298,7 @@
     (let [origin    (when (and file line column)
                       (origin file line column))
           component (fqns-sym m)
-          option    (str ":-" opt-sym)
+          option    (str ":" opt-sym)
           squiggly  (string/join (repeat (count (str x)) "^"))]
       (apply bling
              (concat (when origin [ [:italic "origin:    "] [:bold origin] "\n\n"])
@@ -345,32 +345,32 @@
     [{:keys [opt-sym pred]}]
     (bling "\n"
            [:italic "Value for the "]
-           [:bold (str ":-" opt-sym)] 
+           [:bold (str ":" opt-sym)] 
            [:italic " option must pass this predicate:"]
            "\n\n  "
            [:bold (if (set? pred) (str pred) pred)]))
 
-  ;; hiccup version
-  '[[:br]
-    [:p "Value for the "
-     [:bold (str ":-" opt-sym)]  
-     " option must pass this predicate:" [:br]
-     [:bold (if (set? pred) (str pred) pred)]]
-    [:br]
-    [:p "Check out the docs for more info:" [:br]
-     [:a {:href "https://kushi.design"} "https://kushi.design"]]] 
+;;   ;; hiccup version
+;;   '[[:br]
+;;     [:p "Value for the "
+;;      [:bold (str ":" opt-sym)]  
+;;      " option must pass this predicate:" [:br]
+;;      [:bold (if (set? pred) (str pred) pred)]]
+;;     [:br]
+;;     [:p "Check out the docs for more info:" [:br]
+;;      [:a {:href "https://kushi.design"} "https://kushi.design"]]] 
 
-;; template-string version
-  '(bling 
-    "
-     Value for the 
-     ${(str " :- " opt-sym)}<-bold option must pass this predicate:
+;; ;; template-string version
+;;   '(bling 
+;;     "
+;;      Value for the 
+;;      ${(str " : " opt-sym)}<-bold option must pass this predicate:
      
-     ${(if (set? pred) (str pred) pred)}<-bold
+;;      ${(if (set? pred) (str pred) pred)}<-bold
 
     
-     Check out the docs for more info:
-     https://kushi.design")
+;;      Check out the docs for more info:
+;;      https://kushi.design")
 
 
   (defn validate-option*
@@ -411,7 +411,7 @@ Example call from a ns called showcase.core:
     
 (button* (merge-attrs
            (sx :c--green)
-           {:-size :xxxlargess})
+           {:sizing :xxxlargess})
          [icon :pets])
 
 
@@ -423,7 +423,7 @@ origin:    showcase.core:210:8
 
 component: kushi.ui.button.core/buttonx
 
-option:    :-size
+option:    :sizing
 
 invalid:   :xxxlargess
            ^^^^^^^^^^^
@@ -435,7 +435,7 @@ invalid:   :xxxlargess
     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-Value for the :-size option must pass this predicate:
+Value for the :sizing option must pass this predicate:
 
 #{:large :small :xxxlarge}\"
 
@@ -445,7 +445,7 @@ Example call from a ns called showcase.core, using pure hiccup:
     
 [button* (merge-attrs
            (sx :c--green)
-           {:-size :xxxlargess})
+           {:sizing :xxxlargess})
          [icon :pets]]"
 
     [{:keys [x pred src-form src-form-meta]
@@ -506,7 +506,7 @@ Example call from a ns called showcase.core, using pure hiccup:
           {src-form-meta :form-meta
            src-form      :form}       src
 
-          ;; TODO take this out when you make opts just a map with :-size keys etc
+          ;; TODO take this out when you make opts just a map with :sizing keys etc
           uic-opts
           (apply array-map uic-opts)]
 

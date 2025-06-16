@@ -124,7 +124,7 @@
              ;; different from button
 
              :data-kushi-surface surface
-             :data-kushi-shape   shape}
+             :data-kushi-contour   shape}
             (when loading? {:data-kushi-ui-spinner true})
             (when (and (not icon) end-enhancer) (data-kushi- "" :end-enhancer))
             (when (and (not icon) start-enhancer) (data-kushi- "" :start-enhancer))

@@ -74,7 +74,7 @@
                            :disabled             false 
                            :-label-attrs         (sx :bgc--$yellow-50
                                                      :dark:bgc--$yellow-900)
-                           :-colorway            :accent
+                           :colorway            :accent
                            :-end-enhancer        "🦄"
                            :-helper              "Your helper text here"
                            :-start-enhancer      "$"

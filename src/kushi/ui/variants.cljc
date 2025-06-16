@@ -4,14 +4,14 @@
    [kushi.ui.util :refer [keyed]]
    #?(:clj [kushi.ui.ordered :refer [ordered-set]])))
 
-(def basic-shapes
+(def basic-contours
   [:rounded :pill :sharp])
 
-(def auxillary-shapes
+(def auxillary-contours
   [:circle :squircle])
 
-(def all-shapes
-  (apply conj basic-shapes auxillary-shapes))
+(def all-contours
+  (apply conj basic-contours auxillary-contours))
 
 (def icon-style
   [:rounded :outlined :sharp])
@@ -22,19 +22,19 @@
 (def packing
   [:compact :default :roomy])
 
-(def basic-colors
+(def basic-colorways
   [:gray :purple :blue :green :lime :yellow :gold :orange :red :magenta :brown])
 
-(def semantic-colors
+(def semantic-colorways
   [:neutral :accent :positive :warning :negative])
 
-(def colors
-  (apply conj basic-colors semantic-colors))
+(def colorways
+  (apply conj basic-colorways semantic-colorways))
 
 (def xxsmall-xlarge
   [:xxsmall :xsmall :small :medium :large :xlarge])
 
-(def sizes 
+(def sizings 
   [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
 
 (def weights
@@ -44,17 +44,17 @@
   [:solid-classic :solid :soft-classic :soft :faint :outline :minimal :transparent])
 
 (def variants*
-  (keyed [basic-shapes
-          auxillary-shapes
-          all-shapes
+  (keyed [basic-contours
+          auxillary-contours
+          all-contours
           icon-style
           spinner-type
           packing
-          basic-colors
-          semantic-colors
-          colors
+          basic-colorways
+          semantic-colorways
+          colorways
           xxsmall-xlarge
-          sizes
+          sizings
           weights
           surfaces]))
 
@@ -86,22 +86,18 @@
    variants*))
 
 (def variants-by-custom-opt-key
-  {:-weight       (:weights/set variants)
-   :-size         (:sizes/set variants)
-   :-colorway     (:colors/set variants)
-   :-surface      (:surfaces/set variants)
-   :-packing      (:packing/set variants)
-   :-spinner-type (:spinner-type/set variants)
-   :-shape        (:shapes/set variants)})
+  {:weight       (:weights/set variants)
+   :sizing       (:sizings/set variants)
+   :colorway     (:colorways/set variants)
+   :surface      (:surfaces/set variants)
+   :packing      (:packing/set variants)
+   :spinner-type (:spinner-type/set variants)
+   :contour        (:contours/set variants)
+   :icon-style   (:icon-style/set variants)
+   })
 
-
-;; :pred -> :schema
-
-;; In this namespace :colors -> colorways
-
-;; size -> sizing
-
-;; shape ->  countour
+(def variants-by-custom-opt-key-set
+  (into #{} (keys variants-by-custom-opt-key)))
 
 ;; Use data-ks instead of data-kushi
 

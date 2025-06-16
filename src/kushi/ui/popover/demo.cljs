@@ -52,8 +52,8 @@
    [icon-button
     (merge-attrs
      {:on-click dismiss-popover!
-      :-shape   :pill
-      :-surface :minimal}
+      :-contour   :pill
+      :surface :minimal}
      (sx :.kushi-popover-close-button
          :.neutral
          :.top-right-corner-inside

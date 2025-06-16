@@ -35,7 +35,7 @@
 
 
 
-;; (? (:-colorway kushi.ui.variants/variants-by-custom-opt-key))
+;; (? (:colorway kushi.ui.variants/variants-by-custom-opt-key))
 #_(defn my-radio [m]
   (let [id (str (:name m) "-radio-group_" (:value m) "-choice")]
     [flex-row-start
@@ -43,19 +43,19 @@
                       :pb--0.33em
                       :pi--0.5em:0.75em
                       :w--fit-content)
-      :-as       :section
-      :-colorway :accent
-      :-size     :xxlarge
-      :-shape    :pill
-      :-weight   :extra-light
-      :-surface  :minimal}
+      :as       :section
+      :colorway :accent
+      :sizing     :xxlarge
+      :contour    :pill
+      :weight   :extra-light
+      :surface  :minimal}
      [radio (assoc m :id id)]
 
      ;; make this label component
      [label (merge-attrs
              (sx :pis--0.5em)
-             {:-weight         :bold
-              :-start-enhancer 8 #_[icon {:-weight :light} (:icon m)]
+             {:weight         :bold
+              :start-enhancer 8 #_[icon {:weight :light} (:icon m)]
               :for             id})
       (string/capitalize (:value m))]]))
 
@@ -71,23 +71,27 @@
   ;;                 [:* [:not :map]]]
   ;;                [{:foo 8} 2 3 4]))
 
+
+
   [:div (sx :m--100px)
-   [button {:-start-enhancer :pets} "Click"]
-   #_[icon {:-ns       (at)
-          :-colorway :red
-          :-size     :xxxlarge
-          :-weight   :bold
-          :-inert?   true
-          :id        :foo}
+   #_[button {:start-enhancer :pets} "Click"]
+   [icon {:ns       (at)
+          :colorway :red
+          :sizing   :xxxlarge
+          :weight   :bolds
+          :inert?   true
+          :id       :foo}
     :star]]
 
-  [:div (sx :m--100px)
-   [button {:-colorway       :red 
-            :-start-enhancer :pets
-            :-surface        :solid}
+
+  #_[:div (sx :m--100px)
+   [button {:colorway       :red 
+            :start-enhancer :pets
+            :surface        :solid}
     "Click"]]
 
-  #_[showcase (uic-showcase-map2 kushi.ui.icon.core/icon kushi.ui.icon.demo/demos)]
+  #_[showcase (uic-showcase-map2 kushi.ui.icon.core/icon
+                               #_kushi.ui.icon.demo/demos)]
 
   #_[showcase (uic-showcase-map2 kushi.ui.spinner.core/spinner #_kushi.ui.icon.demo/demos)]
 
@@ -99,20 +103,20 @@
   #_[:div 
   ;;  [icon
   ;;   (merge-attrs
-  ;;    {:-start-enhancer [icon :phone]
-  ;;     :-size           :xxxlarge
-  ;;     :-weight         :thin}
+  ;;    {:start-enhancer [icon :phone]
+  ;;     :sizing           :xxxlarge
+  ;;     :weight         :thin}
   ;;    (sx :fs--98px))
   ;;   "star"]
      
      [button
-      {:-start-enhancer 8 #_[icon :phone]
-       :-size           :xxlarge
-       :-weight         :bold}
+      {:start-enhancer 8 #_[icon :phone]
+       :sizing           :xxlarge
+       :weight         :bold}
       "Phone"]
 
      #_[flex-col-start (merge-attrs (sx :gap--1em :p--2rem)
-                                    {:-as :section})
+                                    {:as :section})
         [my-radio {:name  :baz
                    :icon  :email
                    :value "email"}]
@@ -123,22 +127,22 @@
   #_[:div
      [button
       {
-    ;; :-loading?     true
-       :-end-enhancer #_[icon :east]
+    ;; :loading?     true
+       :end-enhancer #_[icon :east]
        [propeller]    }
       "Play"]
      
      [button
       {
-    ;; :-loading?     true
-       :-end-enhancer #_[icon :east]
+    ;; :loading?     true
+       :end-enhancer #_[icon :east]
        [donut]        }
       "Play"]
      
      [button
       {
-    ;; :-loading?     true
-       :-end-enhancer #_[icon :east]
+    ;; :loading?     true
+       :end-enhancer #_[icon :east]
        [thinking]     }
       "Play"]]
 
@@ -163,10 +167,10 @@
 ;; ;; This will auto-generate children
   
   #_[radio-group 
-     {:-radio-button-attrs {:name    :baz
-                            :-size   :large
-                            :-weight :bold}
-      :-choices            ["Email" "Phone" "Mail"]}]
+     {:radio-button-attrs {:name    :baz
+                            :sizing   :large
+                            :weight :bold}
+      :choices            ["Email" "Phone" "Mail"]}]
   
 
 ;; This will auto-generate...
@@ -176,24 +180,24 @@
       [radio-button {:name           :baz
                      :id             "baz-radio-group_email-choice"
                      :value          "email"
-                     :-size          :xxxlarge
-                     :-weight        :bold
-                     :-label-attrs   {}
-                     :-wrapper-attrs {}}]
+                     :sizing          :xxxlarge
+                     :weight        :bold
+                     :label-attrs   {}
+                     :wrapper-attrs {}}]
       [:label {:for "baz-radio-group_email-choice"}
        "Email"]]
      
 
      [radio-button {:name    :baz
                     :value   "phone"
-                    :-label  "phonnne"
-                    :-size   :xxxlarge
-                    :-weight :bold}]
+                    :label  "phonnne"
+                    :sizing   :xxxlarge
+                    :weight :bold}]
      [radio-button {:name    :baz
                     :value   "mail"
-                    :-label  "mailll"
-                    :-size   :xxxlarge
-                    :-weight :bold}]]
+                    :label  "mailll"
+                    :sizing   :xxxlarge
+                    :weight :bold}]]
 
 
   #_[pane-samples]

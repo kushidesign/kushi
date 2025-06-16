@@ -3,14 +3,14 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.util :refer [keyed]]))
 
-(def basic-shapes
+(def basic-contours
   [:rounded :pill :sharp])
 
-(def auxillary-shapes
+(def auxillary-contours
   [:squircle])
 
-(def all-shapes
-  (apply conj [:rounded :pill :circle :sharp :squircle] auxillary-shapes))
+(def all-contours
+  (apply conj [:rounded :pill :circle :sharp :squircle] auxillary-contours))
 
 (def icon-style
   [:rounded :outlined :sharp])
@@ -143,7 +143,7 @@
    :defaults
    {'size            xxxsmall-xxxlarge
     'weight          weights
-    'shape           basic-shapes
+    'shape           basic-contours
     'surface         basic-surfaces-vector
     'colorway        all-colors
     'semantic-colors semantic-colors
@@ -161,7 +161,7 @@
    :defaults
    {:size            xxxsmall-xxxlarge
     :weight          weights
-    :shape           basic-shapes
+    :contour         basic-contours
     :surface         basic-surfaces-vector
     :colorway        basic-colors
     :semantic-colors semantic-colors

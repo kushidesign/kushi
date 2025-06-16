@@ -33,14 +33,14 @@
                         "The default is `:.neutral`."]                        
       :snippets        '[[:div
                           [switch]
-                          [switch {:-colorway :neutral}]
-                          [switch {:-colorway :accent}]
-                          [switch {:-colorway :positive}]
-                          [switch {:-colorway :warning}]
-                          [switch {:-colorway :negative}]]]
+                          [switch {:colorway :neutral}]
+                          [switch {:colorway :accent}]
+                          [switch {:colorway :positive}]
+                          [switch {:colorway :warning}]
+                          [switch {:colorway :negative}]]]
       :examples        (for [s component-examples/colors]
                          {:label (name s)
-                          :attrs {:-colorway s}})}
+                          :attrs {:colorway s}})}
      
      ;; Leave this off until you figure out dark theme styling w/new color paradigm
      #_{:desc            "Semantic variants, outline styling"

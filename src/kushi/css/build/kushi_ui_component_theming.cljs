@@ -1128,11 +1128,11 @@
 (defcss ".dark [data-kushi-surface=\"solid-classic\"]"
   {:after {:background-image "linear-gradient(var(--transparent-black-02), #0000, var(--transparent-white-20))"}})
 
-(defcss "[data-kushi-shape=\"rounded\"]"
+(defcss "[data-kushi-contour=\"rounded\"]"
   {:border-radius :0.3em})
 
 
-(defcss "[data-kushi-shape=\"pill\"], [data-kushi-shape=\"circle\"]"
+(defcss "[data-kushi-contour=\"pill\"], [data-kushi-contour=\"circle\"]"
   {:border-radius :9999px})
 
 ;; For generating code
@@ -1149,26 +1149,26 @@
                             :xxxlarge]] 
 
                   (list 'defcss
-                        (str "[data-kushi-shape=\"" (name sz) "\"]")
+                        (str "[data-kushi-contour=\"" (name sz) "\"]")
                         {:font-size (keyword (str "$" (name sz)))}))))
 
-(defcss "[data-kushi-size=\"xxxsmall\"]" {:font-size :$xxxsmall})
+(defcss "[data-kushi-sizing=\"xxxsmall\"]" {:font-size :$xxxsmall})
 
-(defcss "[data-kushi-size=\"xxsmall\"]" {:font-size :$xxsmall})
+(defcss "[data-kushi-sizing=\"xxsmall\"]" {:font-size :$xxsmall})
 
-(defcss "[data-kushi-size=\"xsmall\"]" {:font-size :$xsmall})
+(defcss "[data-kushi-sizing=\"xsmall\"]" {:font-size :$xsmall})
 
-(defcss "[data-kushi-size=\"small\"]" {:font-size :$small})
+(defcss "[data-kushi-sizing=\"small\"]" {:font-size :$small})
 
-(defcss "[data-kushi-size=\"medium\"]" {:font-size :$medium})
+(defcss "[data-kushi-sizing=\"medium\"]" {:font-size :$medium})
 
-(defcss "[data-kushi-size=\"large\"]" {:font-size :$large})
+(defcss "[data-kushi-sizing=\"large\"]" {:font-size :$large})
 
-(defcss "[data-kushi-size=\"xlarge\"]" {:font-size :$xlarge})
+(defcss "[data-kushi-sizing=\"xlarge\"]" {:font-size :$xlarge})
 
-(defcss "[data-kushi-size=\"xxlarge\"]" {:font-size :$xxlarge})
+(defcss "[data-kushi-sizing=\"xxlarge\"]" {:font-size :$xxlarge})
 
-(defcss "[data-kushi-size=\"xxxlarge\"]" {:font-size :$xxxlarge})
+(defcss "[data-kushi-sizing=\"xxxlarge\"]" {:font-size :$xxxlarge})
 
 
 ;; Move to button ns?
