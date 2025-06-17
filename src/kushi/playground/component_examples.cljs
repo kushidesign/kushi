@@ -6,14 +6,14 @@
    [kushi.css.defs]
    [kushi.css.media]
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
-   [kushi.ui.button.core :refer (button)]
+   [kushi.ui.button :refer (button)]
    [kushi.ui.core :refer (extract)]
-   [kushi.ui.divisor.core :refer (divisor)]
-   [kushi.ui.icon.core :refer (icon)]
+   [kushi.ui.divisor :refer (divisor)]
+   [kushi.ui.icon :refer (icon)]
    [kushi.ui.icon.mui.svg :as mui.svg]
-   [kushi.ui.modal.core :refer [close-kushi-modal modal modal-close-button
+   [kushi.ui.modal :refer [close-kushi-modal modal modal-close-button
                                 open-kushi-modal]]
-   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
+   [kushi.ui.tooltip :refer (tooltip-attrs)]
    [kushi.ui.util :refer [as-str maybe]]
    [me.flowthing.pp :refer [pprint]]))
 
@@ -93,8 +93,8 @@
 (defn- reqs-by-refers
   "This creates a map of syms / syms representing :requires by :refers
    Used to populate popover snipped
-   Ex '{button kushi.ui.button.core
-   icon   kushi.ui.icon.core}"
+   Ex '{button kushi.ui.button
+   icon   kushi.ui.icon}"
   [all-reqs]
   (some->> (mapv (fn [vc]
                    (let [_ns (first vc)
@@ -267,8 +267,8 @@
 
 (defn- reqs-coll
   "Returns something like this:
-   '[[kushi.ui.button.core  :refer  [button]]
-     [kushi.ui.icon.core  :refer  [icon]]]"
+   '[[kushi.ui.button  :refer  [button]]
+     [kushi.ui.icon  :refer  [icon]]]"
   [reqs-by-refers]
   (some->> reqs-by-refers
            keys

@@ -1,7 +1,7 @@
-(ns kushi.ui.modal.core
-  (:require [kushi.ui.icon.core :refer (icon)]
+(ns kushi.ui.modal
+  (:require [kushi.ui.icon :refer (icon)]
             [fireworks.core :refer [? !? ?> !?>]]
-            [kushi.ui.button.core :refer [button]]
+            [kushi.ui.button :refer [button]]
             [clojure.string :as string]
             [domo.core :as domo]
             [goog.dom :as gdom]
@@ -58,7 +58,7 @@
          (.showModal dialog)
          (domo/add-class! dialog "kushi-modal-open"))
      (js/console.warn
-      (str "kushi.ui.modal.core/open-kushi-modal\nNo dialog found with an id of:
+      (str "kushi.ui.modal/open-kushi-modal\nNo dialog found with an id of:
             " id)))))
 
 (defn modal-close-button

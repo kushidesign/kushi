@@ -1,9 +1,9 @@
-(ns kushi.ui.lightswitch.core
+(ns kushi.ui.lightswitch
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer [sx merge-attrs]]
-   [kushi.ui.label.core :refer [label]]
-   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.label :refer [label]]
+   [kushi.ui.icon :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.core :refer [extract]]))
 

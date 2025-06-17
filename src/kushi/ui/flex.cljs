@@ -1,6 +1,6 @@
 ;; TODO - use :-as option to provide alternate tag
 
-(ns kushi.ui.flex.core
+(ns kushi.ui.flex
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (merge-attrs)]

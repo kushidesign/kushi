@@ -1,4 +1,4 @@
-(ns kushi.ui.toast.core
+(ns kushi.ui.toast
   (:require [domo.core :as domo]
             [kushi.core :refer [utilize register-design-tokens-by-category]]
             [kushi.ui.dom.pane.core :as pane]
@@ -47,7 +47,7 @@
              top or bottom, you would use `:top-right`, or `:bottom-right` instead. 
               
              You can trigger a toast via an element listener by using
-             `kushi.ui.toast.core/toast-attrs`. You can compose this map to an
+             `kushi.ui.toast/toast-attrs`. You can compose this map to an
              existing element's attributes map with `kushi.core/merge-attrs`
              using the pattern: 
               
@@ -57,7 +57,7 @@
              takes as a single argument the auto-generated dom node of the toast,
              into which you can render whatever you like. 
               
-             You can use the `kushi.ui.toast.core/dismiss-toast!` function if you
+             You can use the `kushi.ui.toast/dismiss-toast!` function if you
              want to close the toast from an action within the toast. 
               
              Elements and behaviors of the toast containers can be custom styled

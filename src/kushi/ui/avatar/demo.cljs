@@ -2,8 +2,8 @@
   (:require [kushi.core :refer (sx css)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.avatar.core :refer [avatar]]
-            [kushi.ui.icon.core :refer [icon]]
+            [kushi.ui.avatar :refer [avatar]]
+            [kushi.ui.icon :refer [icon]]
             [kushi.playground.assets.graphics.avatars :refer [avatar-1]]))
 
 (def sizes

@@ -2,9 +2,9 @@
   (:require
    [goog.string]
    [kushi.core :refer (sx merge-attrs)]
-   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.button :refer [button]]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.toast.core :refer [toast-attrs dismiss-toast!]]
+   [kushi.ui.toast :refer [toast-attrs dismiss-toast!]]
    [reagent.dom :as rdom]))
 
 
@@ -53,7 +53,7 @@
 (def examples
   [#_{:desc      "Basic, auto-dismissing"
     :component button
-    :reqs      '[[kushi.ui.button.core :refer [button]]]
+    :reqs      '[[kushi.ui.button :refer [button]]]
     :examples  [{:label    "Basic"
                  :args     ["Pop toast"]
                  :sx-attrs (sx-call (toast-attrs
@@ -73,7 +73,7 @@
                                                         toast-el))}))]
      {:desc      "With notification, and manual dismiss cta"
       :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :reqs      '[[kushi.ui.button :refer [button]]]
       :row-attrs (sx :_.kushi-button:fs--$small)
       :snippets  [['button (:quoted code) "Save for later"]]
       :examples  [{:label    "Basic"

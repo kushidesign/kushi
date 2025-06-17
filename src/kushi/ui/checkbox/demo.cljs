@@ -1,11 +1,11 @@
 (ns ^{:kushi/layer "user-styles"}
   kushi.ui.checkbox.demo
   (:require [kushi.core :refer (sx)]
-            [kushi.ui.icon.core :refer [icon]]
+            [kushi.ui.icon :refer [icon]]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.checkbox.core :refer [checkbox]]
-            [kushi.ui.label.core :refer [label]]))
+            [kushi.ui.checkbox :refer [checkbox]]
+            [kushi.ui.label :refer [label]]))
 
 
 ;; (declare checkbox-examples)

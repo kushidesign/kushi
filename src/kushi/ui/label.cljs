@@ -1,4 +1,4 @@
-(ns kushi.ui.label.core
+(ns kushi.ui.label
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.core :refer (extract)]

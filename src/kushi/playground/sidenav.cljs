@@ -5,8 +5,8 @@
    [kushi.css.defs]
    [kushi.css.media]
    [kushi.ui.util :refer [as-str]]
-   [kushi.ui.button.core :refer [button]]
-   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.button :refer [button]]
+   [kushi.ui.icon :refer [icon]]
    [kushi.playground.component-examples :as component-examples]))
 
 (defcss ".all-components-sidenav-button"

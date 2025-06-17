@@ -3,9 +3,9 @@
    [clojure.string :as string]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.callout.core :refer [callout callout-close-button]]
-   [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.link.core :refer [link]]))
+   [kushi.ui.callout :refer [callout callout-close-button]]
+   [kushi.ui.icon :refer [icon]]
+   [kushi.ui.link :refer [link]]))
 
 (def sizes
   [:xxsmall
@@ -94,8 +94,8 @@
 
 
     #_(into [{:desc            "Showing sizes from xxsmall to large, in accent variant"
-            :reqs            '[[kushi.ui.icon.core :refer [icon]]
-                               [kushi.ui.link.core :refer [link]]]
+            :reqs            '[[kushi.ui.icon :refer [icon]]
+                               [kushi.ui.link :refer [link]]]
             :row-attrs       (merge-attrs row-attrs
                                           (sx :flex-direction--column
                                               :md:flex-direction--column))

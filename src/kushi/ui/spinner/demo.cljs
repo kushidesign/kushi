@@ -5,9 +5,9 @@
     :as component-examples
     :refer [sizes-snippet-map]]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.button.core :refer [button]]
-   [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.spinner.core :refer [spinner]]))
+   [kushi.ui.button :refer [button]]
+   [kushi.ui.icon :refer [icon]]
+   [kushi.ui.spinner :refer [spinner]]))
 
 (def sizes
   [:xxsmall
@@ -120,7 +120,7 @@
     [
      #_{:desc      "Usage with a button."
       :row-attrs row-attrs
-      ;; :reqs     '[[kushi.ui.button.core :refer [button]]]
+      ;; :reqs     '[[kushi.ui.button :refer [button]]]
       :snippets  [(:quoted button-example-code)]
       :examples  [{:code button-example-code}]}
      

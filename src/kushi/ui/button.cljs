@@ -1,13 +1,13 @@
-(ns kushi.ui.button.core
+(ns kushi.ui.button
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
    [kushi.ui.core :refer (extract)]
-   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.icon :refer [icon]]
    [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
    [kushi.ui.util :refer [as-str maybe nameable?]])
-   ;; (:require-macros [kushi.ui.button.core])
+   ;; (:require-macros [kushi.ui.button])
   )
 
 ;; [kushi.ui.variants :refer [variants-by-custom-opt-key convert-opts]]
@@ -82,7 +82,7 @@
     ;;                   :default nil
     ;;                   :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`"
     ;;                   :demo    {:label   "Stroke alignment"
-    ;;                             :require '[[kushi.ui.icon.core :refer [icon]]]
+    ;;                             :require '[[kushi.ui.icon :refer [icon]]]
     ;;                             :samples [[button
     ;;                                        {:end-enhancer '[icon :east]
     ;;                                         :sizing         :small
@@ -113,7 +113,7 @@
     ;;                   :default nil
     ;;                   :desc    "Content at the inline-end position preceding the button text. Typically an icon."
     ;;                   :demo    {:label   "End-enhancer icons"
-    ;;                             :require [[kushi.ui.icon.core :refer ['icon]]]
+    ;;                             :require [[kushi.ui.icon :refer ['icon]]]
     ;;                             :samples [[button
     ;;                                        {:end-enhancer ['icon :pets]
     ;;                                         :sizing         :small
@@ -138,7 +138,7 @@
     ;;                   :default nil
     ;;                   :desc    "Content at the inline-start position following the button text. Typically an icon."
     ;;                   :demo    {:label   "Start-enhancer icons"
-    ;;                             :require [[kushi.ui.icon.core :refer ['icon]]]
+    ;;                             :require [[kushi.ui.icon :refer ['icon]]]
     ;;                             :samples [[button
     ;;                                        {:start-enhancer ['icon :pets]
     ;;                                         :sizing           :small
@@ -163,9 +163,9 @@
     ;;                   :default false
     ;;                   :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`"
     ;;                   :demo    {:label   "Loading and disabled states"
-    ;;                             :require '[[kushi.ui.button.core :refer [button]]
-    ;;                                        [kushi.ui.icon.core :refer [icon]]
-    ;;                                        [kushi.ui.spinner.core :refer [spinner]]]
+    ;;                             :require '[[kushi.ui.button :refer [button]]
+    ;;                                        [kushi.ui.icon :refer [icon]]
+    ;;                                        [kushi.ui.spinner :refer [spinner]]]
     ;;                             :samples [{:code [button
     ;;                                               {:loading?     true
     ;;                                                :colorway     :accent
@@ -215,7 +215,7 @@
 
   ;;  :demos    '[{:label   "Start-enhancer icons"
   ;;               :desc    "Content at the inline-start position following the button text. Typically an icon."
-  ;;               :require [[kushi.ui.icon.core :refer [icon]]]
+  ;;               :require [[kushi.ui.icon :refer [icon]]]
   ;;               :samples [[button {:start-enhancer [icon :pets]
   ;;                                  :sizing           :small
   ;;                                  :colorway       :accent
@@ -407,7 +407,7 @@
             hue-style-map
             (some-> surface (data-ks- :surface))
             attrs)]
-          (if icon [kushi.ui.icon.core/icon icon]
+          (if icon [kushi.ui.icon/icon icon]
               children))))
 
 

@@ -695,7 +695,7 @@
 
     (register-design-tokens! css-str *css ns)
     (when debug? 
-      (when (= ns 'kushi.ui.button.core)
+      (when (= ns 'kushi.ui.button)
         (new-toks-callout ns layer used-toks *css)))
     #_(when (re-find #"design-tokens" css-fp)
       (? :pp css-fp))
@@ -845,7 +845,7 @@
         m         (keyed [*css ns ns-str ns-meta rel-path file url])
          
         ;; dbg? (= ns
-        ;;         #_'kushi.ui.text-field.core
+        ;;         #_'kushi.ui.text-field
         ;;         'kushi.playground.shared-styles)
         ]
 
@@ -877,7 +877,7 @@
     ;; public/css/user-styles/mvp_browser.css
     (let [msg (volatile! (str "Analyzing source for " ns "..."))
           ret (conj acc (write-css-files+layer-profile (assoc m :msg msg)))]
-      #_(when (= ns 'kushi.ui.text-field.core)
+      #_(when (= ns 'kushi.ui.text-field)
           (? 'analyze-sources/ret ret))
 
       #_(do (add-tick! "    write-css-files+layer-profile")

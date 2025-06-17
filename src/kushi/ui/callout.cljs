@@ -1,12 +1,12 @@
-(ns kushi.ui.callout.core
+(ns kushi.ui.callout
   (:require
    [clojure.string :as string]
    [domo.core :as domo]
    [goog.dom :as gdom]
    [kushi.core :refer [css merge-attrs sx]]
-   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.button :refer [button]]
    [kushi.ui.core :refer (extract)]
-   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.icon :refer [icon]]
    [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
    [kushi.ui.util :refer [keyed maybe]]))
 
@@ -95,7 +95,7 @@
             :default nil
             :desc    "Component rendering fn for CTA interactions. Can also be
                       a close button component via
-                      `kushi.ui.callout.core/close-button`. Optional."}
+                      `kushi.ui.callout/close-button`. Optional."}
            {:name    header-text
             :schema    string
             :default nil

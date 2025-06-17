@@ -1,4 +1,4 @@
-(ns kushi.ui.spinner.core
+(ns kushi.ui.spinner
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]

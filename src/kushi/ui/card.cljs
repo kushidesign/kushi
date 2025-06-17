@@ -1,4 +1,4 @@
-(ns kushi.ui.card.core
+(ns kushi.ui.card
   (:require [kushi.core :refer (css merge-attrs)]
             [kushi.ui.core :refer (extract)]))
 

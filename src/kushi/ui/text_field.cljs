@@ -1,4 +1,4 @@
-(ns kushi.ui.text-field.core
+(ns kushi.ui.text-field
   (:require
    [kushi.core :refer (sx css defcss css-vars-map merge-attrs)]
    [kushi.ui.core :refer (extract)]))

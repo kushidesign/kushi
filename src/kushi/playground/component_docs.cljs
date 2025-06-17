@@ -4,7 +4,7 @@
    [clojure.walk :as walk]
    [kushi.core :refer (sx ?sx css-vars-map css ?css)]
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
-   [kushi.ui.label.core :refer [label]]
+   [kushi.ui.label :refer [label]]
    [me.flowthing.pp :as pp]))
 
 

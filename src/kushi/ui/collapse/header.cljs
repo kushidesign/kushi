@@ -2,8 +2,8 @@
   (:require 
    [kushi.core :refer [css sx css-vars-map]]
    [clojure.string :as string]
-   [kushi.ui.icon.core]
-   [kushi.ui.label.core]))
+   [kushi.ui.icon]
+   [kushi.ui.label]))
 
 (defn readable-string? [label]
   (and (string? label) (not (string/blank? label))))
@@ -30,8 +30,8 @@
                    :w--$w
                    :jc--$jc)}]
       (if icon-opposite?
-        [kushi.ui.label.core/label attrs label icon]
-        [kushi.ui.label.core/label attrs icon label]))
+        [kushi.ui.label/label attrs label icon]
+        [kushi.ui.label/label attrs icon label]))
     label))
 
 (defn collapse-header-contents
@@ -40,8 +40,8 @@
            icon
            icon-expanded
            icon-position]
-    :or {icon          [kushi.ui.icon.core/icon :add]
-         icon-expanded [kushi.ui.icon.core/icon :remove]}}]
+    :or {icon          [kushi.ui.icon/icon :add]
+         icon-expanded [kushi.ui.icon/icon :remove]}}]
   (let [label-expanded    (or label-expanded label)
         icon-opposite?    (= :end icon-position)
         opts              {:label          label

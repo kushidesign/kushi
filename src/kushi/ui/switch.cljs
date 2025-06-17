@@ -1,4 +1,4 @@
-(ns kushi.ui.switch.core
+(ns kushi.ui.switch
   (:require
    [kushi.core :refer (sx defcss merge-attrs)]
    [domo.core :as domo]

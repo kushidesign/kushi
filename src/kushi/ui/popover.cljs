@@ -1,6 +1,6 @@
 
 
-(ns kushi.ui.popover.core
+(ns kushi.ui.popover
   (:require
    [applied-science.js-interop :as j]
    [goog.string]
@@ -30,7 +30,7 @@
            
           The element owning the popover must receive an attributes map that 
           is a result of passing a map of options to 
-          `kushi.ui.popover.core/popover-attrs`. You can compose this map to an
+          `kushi.ui.popover/popover-attrs`. You can compose this map to an
           existing element's attributes map with `kushi.core/merge-attrs` using
           the pattern:
            
@@ -40,7 +40,7 @@
           takes as a single argument the dom node of the generated popover into
           which you can render whatever you like.
            
-          You can use the `kushi.ui.popover.core/dismiss-popover!` function if 
+          You can use the `kushi.ui.popover/dismiss-popover!` function if 
           you want to close the popover from an action within the popover. If
           you are using a close button that is potitioned near the edge of the
           popover, it is recommended to give it a `z-index` of `1` or higher so

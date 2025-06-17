@@ -1,4 +1,4 @@
-(ns kushi.ui.checkbox.core
+(ns kushi.ui.checkbox
   (:require
    [kushi.core :refer (css sx merge-attrs)]
    [kushi.ui.core :refer (extract)]))

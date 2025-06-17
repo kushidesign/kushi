@@ -2,8 +2,8 @@
   (:require 
    [kushi.core :refer (sx css merge-attrs css-vars-map grid-template-areas)]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.button.core :refer [button]]
-   [kushi.ui.tooltip.core :refer [tooltip-attrs]]))
+   [kushi.ui.button :refer [button]]
+   [kushi.ui.tooltip :refer [tooltip-attrs]]))
 
 (defn demo []
   (into
@@ -84,7 +84,7 @@
 (def examples
   [{:desc      "Basic, auto-placement."
     :component button
-    :reqs      '[[kushi.ui.button.core :refer [button]]]
+    :reqs      '[[kushi.ui.button :refer [button]]]
     :row-attrs (sx :_.kushi-button:fs--$small)
     :snippets  '[[button
                   (tooltip-attrs {:text "This is a tooltip"})
@@ -95,7 +95,7 @@
    
    {:desc      "Styling via design token at callsite."
     :component button
-    :reqs      '[[kushi.ui.button.core :refer [button]]]
+    :reqs      '[[kushi.ui.button :refer [button]]]
     :row-attrs (sx :_.kushi-button:fs--$small)
     :snippets  '[[button
                   (tooltip-attrs

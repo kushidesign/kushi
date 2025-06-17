@@ -1,9 +1,9 @@
-(ns kushi.ui.tag.core
+(ns kushi.ui.tag
   (:require [kushi.core :refer [sx css merge-attrs]]
             [kushi.ui.util :refer [as-str maybe nameable?]]
             [clojure.string :as string]
             [kushi.ui.core :refer (extract)]
-            [kushi.ui.icon.core]
+            [kushi.ui.icon]
             [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
             ))
 ;; Check docs
@@ -142,7 +142,7 @@
             hue-style-map
             (some-> surface (data-ks- :surface))
             attrs)]
-          (cond icon           [[kushi.ui.icon.core/icon :star]]
+          (cond icon           [[kushi.ui.icon/icon :star]]
                 start-enhancer (cons start-enhancer children)
                 end-enhancer   (concat children [end-enhancer])
                 :else          children))))

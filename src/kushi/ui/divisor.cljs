@@ -1,4 +1,4 @@
-(ns kushi.ui.divisor.core
+(ns kushi.ui.divisor
   (:require [kushi.core :refer [sx merge-attrs]]
             [kushi.ui.core :refer (extract)]
             [kushi.ui.util :as util]))

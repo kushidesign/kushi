@@ -1,8 +1,8 @@
-(ns kushi.ui.prose.core
+(ns kushi.ui.prose
   (:require
    [kushi.core :refer [merge-attrs css]]
    [kushi.ui.core :refer (extract)]
-   [kushi.ui.icon.core]
+   [kushi.ui.icon]
    [kushi.ui.shared.theming :refer [get-variants]]
    [kushi.ui.util :refer [maybe nameable?]]))
 

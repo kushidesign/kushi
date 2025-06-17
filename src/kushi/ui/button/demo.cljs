@@ -3,10 +3,10 @@
    [kushi.core :refer [sx css merge-attrs]]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.spinner.core :refer (spinner donut propeller thinking)]
-   [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
-   [kushi.ui.button.core :refer (button)]))
+   [kushi.ui.spinner :refer (spinner donut propeller thinking)]
+   [kushi.ui.icon :refer [icon]]
+   [kushi.ui.tooltip :refer (tooltip-attrs)]
+   [kushi.ui.button :refer (button)]))
 
 
 
@@ -88,8 +88,8 @@
      ;; get links working
      
      {:desc            "With icons"
-      :reqs            '[[kushi.ui.icon.core :refer [icon icon-button]]
-                         [kushi.ui.label.core :refer [label]]]
+      :reqs            '[[kushi.ui.icon :refer [icon icon-button]]
+                         [kushi.ui.label :refer [label]]]
       :sx-attrs        (sx-call (sx :.small))
       :container-attrs container-attrs2
       :snippets-header "Check out the [icon component](#icon) for detailed info
@@ -148,9 +148,9 @@
 
      {:desc            "Loading and disabled states"
       :variants-       [:bordered :solid]
-      :reqs            '[[kushi.ui.button.core :refer [button]]
-                         [kushi.ui.icon.core :refer [icon]]
-                         [kushi.ui.spinner.core :refer [spinner donut propeller thinking]]]
+      :reqs            '[[kushi.ui.button :refer [button]]
+                         [kushi.ui.icon :refer [icon]]
+                         [kushi.ui.spinner :refer [spinner donut propeller thinking]]]
       ;; :sx-attrs        (sx-call (sx :.small {:loading? true}))
       :sx-attrs        (sx-call {:loading? true
                                  :class (css :.small)})

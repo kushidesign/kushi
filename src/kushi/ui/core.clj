@@ -87,39 +87,30 @@
     :quoted (quote ~coll)})
 
 
-(defn ui-demo-samples-partioned [samples]
-  (and (even? (count samples))
-       (let [partitioned
-             (partition 2 samples)]
-         (when (every? (fn [[label]]
-                         (string? label))
-                       partitioned)
-           partitioned))))
 
-
-(defmacro ui-demo [coll]
-  (let [w-reqs 
-        (mapv #(assoc %
-                      :require
-                      (str (:require %))
-                      :samples
-                      (let [samples (:samples %)
-                            m*      (fn [sample label]
-                                      (merge 
-                                       {:code/evaled sample
-                                        :code/quoted (list 'quote sample)}
-                                       (when label {:label label})))]
-                        (if (:render-as %)
-                          samples
-                          (if-let [partitioned 
-                                   (ui-demo-samples-partioned samples)]
-                            (mapv (fn [[label sample]] (m* sample label))
-                                  partitioned)
-                            (mapv (fn [sample] (m* sample nil))
-                                  samples)))))
-              coll)]
-   (!? {:display-metadata? false} w-reqs)
-   `~w-reqs))
+;; (defmacro ui-demo [coll]
+;;   (let [w-reqs 
+;;         (mapv #(assoc %
+;;                       :require
+;;                       (str (:require %))
+;;                       :samples
+;;                       (let [samples (:samples %)
+;;                             m*      (fn [sample label]
+;;                                       (merge 
+;;                                        {:code/evaled sample
+;;                                         :code/quoted (list 'quote sample)}
+;;                                        (when label {:label label})))]
+;;                         (if (:render-as %)
+;;                           samples
+;;                           (if-let [partitioned 
+;;                                    (ui-demo-samples-partioned samples)]
+;;                             (mapv (fn [[label sample]] (m* sample label))
+;;                                   partitioned)
+;;                             (mapv (fn [sample] (m* sample nil))
+;;                                   samples)))))
+;;               coll)]
+;;    (!? {:display-metadata? false} w-reqs)
+;;    `~w-reqs))
 
 (defn with-schemas [opts]
   (reduce-kv (fn [m k {:keys [schema]

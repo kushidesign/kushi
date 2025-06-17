@@ -1,4 +1,4 @@
-(ns kushi.ui.icon.core
+(ns kushi.ui.icon
   (:require
    [clojure.string :as string]
    [fireworks.core :refer [? !? ?> !?>]]
@@ -47,41 +47,39 @@
    `[icon mui.svg/add]`. You can also create and utilize similar namespace in
    your own project with your own collection of icon `svg`s."
 
-   :opts {
-          :sizing         {:default :medium
-                          :desc    "Corresponds to the font-size based on Kushi's font-size scale."
-                          :demo    {:label           "Sizes"
-                                    :attrs           {}
-                                    :variant-labels? false
+   :opts {:sizing       {:default :medium
+                         :desc    "Corresponds to the font-size based on Kushi's font-size scale."
+                         :demo    {:label           "Sizes"
+                                   :attrs           {}
+                                   :variant-labels? false
                                     ;; :x-variants [:weight]
-                                    :args            [:star]
-                                    :row-style       {:width           "100%"
-                                                      :justify-content "space-between"}}}
+                                   :args            [:star]
+                                   :row-style       {:width           "100%"
+                                                     :justify-content "space-between"}}}
           
           :weight       {:default :normal
-                          :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."
-                          :demo    {:label           "Weights"
-                                    :attrs           {}
-                                    :attrs/display   {:sizing :xxxlarge}
-                                    :variant-labels? false
-                                    :args            [:star]
-                                    :row-style       {:width           "100%"
-                                                      :justify-content "space-between"}}}
+                         :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."
+                         :demo    {:label           "Weights"
+                                   :attrs           {}
+                                   :attrs/display   {:sizing :xxxlarge}
+                                   :variant-labels? false
+                                   :args            [:star]
+                                   :row-style       {:width           "100%"
+                                                     :justify-content "space-between"}}}
           
-          :colorway {:default nil
-                     :desc    "Colorway of the icon. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
-                     :demo    [{:label           "Colorways"
-                                  :attrs           {:sizing :xxxlarge}
-                                  :args            [:star]
-                                  :variant-labels? false
-                                  :variant-scale   :colorway/named}
-                               {:label           "Colorways, filled icon"
-                                :attrs           {:icon-filled? true
-                                                  :sizing       :xxxlarge}
-                                :args            [:star]
-                                :variant-labels? false
-                                :variant-scale   :colorway/named
-                                }]}
+          :colorway     {:default nil
+                         :desc    "Colorway of the icon. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
+                         :demo    [{:label           "Colorways"
+                                    :attrs           {:sizing :xxxlarge}
+                                    :args            [:star]
+                                    :variant-labels? false
+                                    :variant-scale   :colorway/named}
+                                   {:label           "Colorways, filled icon"
+                                    :attrs           {:icon-filled? true
+                                                      :sizing       :xxxlarge}
+                                    :args            [:star]
+                                    :variant-labels? false
+                                    :variant-scale   :colorway/named}]}
           
           :icon-filled? {:schema  boolean?
                          ;; :required? true
@@ -106,9 +104,7 @@
                                    :attrs {:sizing       :xxxlarge
                                            :icon-filled? true 
                                            :colorway     :positive}
-                                   :args  [:star]}}
-          
-          }}
+                                   :args  [:star]}}}}
   [& args]
   (when ^boolean js/goog.DEBUG (validate args))
   (let [{:keys [opts attrs children]}                              

@@ -1,9 +1,9 @@
-(ns kushi.ui.radio.core
+(ns kushi.ui.radio
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (css sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.label.core :refer (label)]
+   [kushi.ui.label :refer (label)]
    [kushi.ui.core :refer (extract)]
    [clojure.string :as string]))
 

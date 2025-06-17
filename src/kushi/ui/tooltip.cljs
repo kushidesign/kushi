@@ -1,4 +1,4 @@
-(ns kushi.ui.tooltip.core
+(ns kushi.ui.tooltip
   (:require [applied-science.js-interop :as j]
             [fireworks.core :refer [? !? ?> !?>]]
             [clojure.string :as string]
@@ -52,7 +52,7 @@
           
           The element being tipped must receive an attributes map that is a
           result of passing a map of options to
-          `kushi.ui.tooltip.core/tooltip-attrs`. You can compose this map to an
+          `kushi.ui.tooltip/tooltip-attrs`. You can compose this map to an
           existing elements attributes map using the pattern:
           
           `(merge-attrs (sx ...) (tooltip-attrs {...}))`

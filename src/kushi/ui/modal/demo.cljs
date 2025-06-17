@@ -1,12 +1,12 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.modal.demo
   (:require [kushi.core :refer [sx merge-attrs]]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.button.core :refer [button]]
-            [kushi.ui.modal.core :refer (modal
+            [kushi.ui.button :refer [button]]
+            [kushi.ui.modal :refer (modal
                                          modal-close-button
                                          close-kushi-modal
                                          open-kushi-modal)]
-            [kushi.ui.text-field.core :refer [text-field]]))
+            [kushi.ui.text-field :refer [text-field]]))
 
 (def examples
   (let [row-attrs (sx :_.kushi-button:fs--$small)]
@@ -25,7 +25,7 @@
                               "💃🏽"] ]]))] 
        {:desc      "Basic"
         :component button
-        :reqs      '[[kushi.ui.button.core :refer [button]]]
+        :reqs      '[[kushi.ui.button :refer [button]]]
         :row-attrs (sx :_.kushi-button:fs--$small)
         :snippets  [(:quoted code)]
         :examples  [{:label "right"
@@ -34,7 +34,7 @@
      
      {:desc      "With modal title, description, form with fields, and close button"
       :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :reqs      '[[kushi.ui.button :refer [button]]]
       :row-attrs row-attrs
       :examples  [{:label "Basic, form with fields."
                    :args  ["Hover me"]
@@ -65,7 +65,7 @@
      
      {:desc      "Animated"
       :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :reqs      '[[kushi.ui.button :refer [button]]]
       :row-attrs row-attrs
       :examples  [{:label "Basic, form with fields."
                    :args  ["Hover me"]
@@ -98,7 +98,7 @@
 
      {:desc      "Animated from top"
       :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :reqs      '[[kushi.ui.button :refer [button]]]
       :row-attrs row-attrs
       :examples  [{:label "Basic, form with fields."
                    :args  ["Hover me"]
@@ -132,7 +132,7 @@
      
      {:desc      "Rounded, with white backdrop"
       :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :reqs      '[[kushi.ui.button :refer [button]]]
       :row-attrs row-attrs
       :examples  [{:label "Basic, form with fields."
                    :args  ["Hover me"]
@@ -200,7 +200,7 @@
                                ))}]}
      {:desc      "No drop shadow"
       :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :reqs      '[[kushi.ui.button :refer [button]]]
       :row-attrs row-attrs
       :examples  [{:label "Basic, form with fields."
                    :args  ["Hover me"]

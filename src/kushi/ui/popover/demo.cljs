@@ -1,13 +1,13 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.popover.demo
   (:require
-   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.icon :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg ]
-   [kushi.ui.popover.core :refer [dismiss-popover!]]
-   [kushi.ui.text-field.core :refer [text-field]]
+   [kushi.ui.popover :refer [dismiss-popover!]]
+   [kushi.ui.text-field :refer [text-field]]
    [kushi.core :refer (sx css merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.button.core :refer [button icon-button]]
-   [kushi.ui.popover.core :refer [popover-attrs]]
+   [kushi.ui.button :refer [button icon-button]]
+   [kushi.ui.popover :refer [popover-attrs]]
    [reagent.dom :as rdom]))
 
 (defn popover-content []
@@ -82,7 +82,7 @@
                                   popover-el))}))]
        {:desc      "Basic"
         :component button
-        :reqs      '[[kushi.ui.button.core :refer [button]]
+        :reqs      '[[kushi.ui.button :refer [button]]
                      [reagent.dom :as rdom :refer [render]]]
         :row-attrs row-attrs
         :snippets  [(:quoted code)]
@@ -106,7 +106,7 @@
                         popover-el))}))]
         {:desc "Styling via design token at callsite"
          :component button
-         :reqs      '[[kushi.ui.button.core :refer [button]]
+         :reqs      '[[kushi.ui.button :refer [button]]
                       [reagent.dom :as rdom :refer [render]]]
          :row-attrs row-attrs
          :snippets  [(:quoted code2)]
@@ -116,7 +116,7 @@
 
      {:desc      "With manual placement"
       :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :reqs      '[[kushi.ui.button :refer [button]]]
       :row-attrs row-attrs
       :examples  [{:args     ["Open"]
                    :sx-attrs (sx-call (popover-attrs
@@ -134,7 +134,7 @@
 
      {:desc      "Arrowless"
       :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :reqs      '[[kushi.ui.button :refer [button]]]
       :row-attrs row-attrs
       :examples  [{:args     ["Open"]
                    :sx-attrs (sx-call (popover-attrs
@@ -152,7 +152,7 @@
 
      {:desc            "With form"
       :component       button
-      :reqs            '[[kushi.ui.button.core :refer [button]]]
+      :reqs            '[[kushi.ui.button :refer [button]]]
       :container-attrs (merge-attrs
                         (sx :d--none :xsm:d--block)
                         {:data-ks-playground-example "popover-with-form"})
@@ -169,7 +169,7 @@
      
      {:desc      "With dismiss action"
       :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :reqs      '[[kushi.ui.button :refer [button]]]
       :row-attrs row-attrs
       :examples  [{:code (sx-call 
                           [button
@@ -191,7 +191,7 @@
      
      {:desc      "Auto-dismissing, with manual placement"
       :component button
-      :reqs      '[[kushi.ui.button.core :refer [button]]]
+      :reqs      '[[kushi.ui.button :refer [button]]]
       :row-attrs row-attrs
       :examples  [{:code (sx-call 
                           [button

@@ -398,7 +398,7 @@ Example ui component implementation fn defined in button.cljs:
 Example public macro defined in button.clj:
 
 (defmacro button* [& args]
-  (let [v (into ['kushi.ui.button.core/big-paw
+  (let [v (into ['kushi.ui.button/big-paw
                  ^:kushi.ui/form
                  {:form-meta (meta &form)
                   :form      (str &form)}]
@@ -421,7 +421,7 @@ Example warning string:
 
 origin:    showcase.core:210:8
 
-component: kushi.ui.button.core/buttonx
+component: kushi.ui.button/buttonx
 
 option:    :sizing
 

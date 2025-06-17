@@ -1,5 +1,5 @@
 ;; Todo - decide whether or not to include
-(ns kushi.ui.aspect-ratio.core
+(ns kushi.ui.aspect-ratio
   (:require
    [kushi.core :refer [css merge-attrs sx]]
    [kushi.ui.core :refer (extract)]

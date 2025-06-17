@@ -1,9 +1,9 @@
-(ns kushi.ui.snippet.core
+(ns kushi.ui.snippet
   (:require
    [kushi.core :refer (sx css merge-attrs)]
-   [kushi.ui.tooltip.core :refer (tooltip-attrs)]
-   [kushi.ui.button.core :refer (button)]
-   [kushi.ui.icon.core :refer (icon)]
+   [kushi.ui.tooltip :refer (tooltip-attrs)]
+   [kushi.ui.button :refer (button)]
+   [kushi.ui.icon :refer (icon)]
    [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.core :refer (extract)]
    [domo.core :refer (copy-to-clipboard!)]))

@@ -2,8 +2,8 @@
   (:require [kushi.core :refer (sx merge-attrs)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.radio.core :refer [radio]]
-            [kushi.ui.label.core :refer [label]]))
+            [kushi.ui.radio :refer [radio]]
+            [kushi.ui.label :refer [label]]))
 
 
 (def sizes

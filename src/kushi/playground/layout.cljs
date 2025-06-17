@@ -9,10 +9,10 @@
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
    [kushi.playground.sidenav :as sidenav]
    [kushi.playground.state :as state]
-   [kushi.ui.button.core :refer [button]]
+   [kushi.ui.button :refer [button]]
    [kushi.ui.core :refer [extract]]
-   [kushi.ui.divisor.core :refer (divisor)]
-   [kushi.ui.spinner.core :refer [propeller]]))
+   [kushi.ui.divisor :refer (divisor)]
+   [kushi.ui.spinner :refer [propeller]]))
 
 (defcss "@layers design-tokens :root"
   {:--playground-main-content-max-width :605px})

@@ -1,4 +1,4 @@
-(ns kushi.ui.link.core
+(ns kushi.ui.link
   (:require [kushi.core :refer (css merge-attrs)]
             [kushi.ui.core :refer (extract)]))
 

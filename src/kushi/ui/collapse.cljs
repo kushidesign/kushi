@@ -1,4 +1,4 @@
-(ns kushi.ui.collapse.core
+(ns kushi.ui.collapse
   (:require
    [kushi.core :refer [css sx css-vars-map merge-attrs]]
    [clojure.string :as string]
@@ -160,11 +160,11 @@
                       Optional."}
            {:name    icon
             :schema    vector?
-            :default '[kushi.ui.icon.core/icon :add]
+            :default '[kushi.ui.icon/icon :add]
             :desc    "An instance of a kushi.ui.icon/icon component Optional."}
            {:name    icon-expanded
             :schema    vector?
-            :default '[kushi.ui.icon.core/icon :remove]
+            :default '[kushi.ui.icon/icon :remove]
             :desc    "An instance of a kushi.ui.icon/icon component. Optional."}
            {:name    icon-position
             :schema    #{:start :end}

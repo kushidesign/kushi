@@ -2,7 +2,7 @@
   (:require [kushi.core :refer (sx css merge-attrs)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.collapse.core :refer [accordion collapse]]))
+            [kushi.ui.collapse :refer [accordion collapse]]))
 
 (def examples
   (let [row-attrs

@@ -1,6 +1,5 @@
 (ns ^:dev/always kushi.ui.variants
   (:require 
-   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.util :refer [keyed]]
    #?(:clj [kushi.ui.ordered :refer [ordered-set]])))
 
@@ -113,15 +112,12 @@
   (into #{} (keys variants-by-custom-opt-key)))
 
 
+;; use kushi.showcase instead of kushi.playground.showcase
 
-
-;; Make kushi.ui.button work (remove .core from namespaces)
-;; kushi.ui.uix.button
-;; kushi.uix.ui.button
-;; kushi.replicant.ui.button
-;; kushi.ui.replicant.button
+;; Then get button demo working
 
 ;; in sx and css macros, support supplied data selector "[data-ks-ui=icon]", or "#blah" or [id=foo] or [something=something]
+
 
 (defn convert-opts [vc]
   (reduce 

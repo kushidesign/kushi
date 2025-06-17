@@ -1,10 +1,10 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.tag.demo
   (:require
-   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.icon :refer [icon]]
    [kushi.core :refer (sx)]
    [kushi.playground.component-examples :as component-examples]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.tag.core :refer [tag]]))
+   [kushi.ui.tag :refer [tag]]))
 
 
 ;; TODO remove section-label
@@ -60,7 +60,7 @@
                           :attrs {:contour s}})}
 
      #_{:desc            "With icons"
-      :reqs            '[[kushi.ui.icon.core :refer [icon]]]
+      :reqs            '[[kushi.ui.icon :refer [icon]]]
       :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs playground-tag-rows-container4
       :variants+       [:minimal]
@@ -83,7 +83,7 @@
                           :attrs {:class [s]}})}
 
      #_{:desc            "Max width"
-      :reqs            '[[kushi.ui.icon.core :refer [icon]]]
+      :reqs            '[[kushi.ui.icon :refer [icon]]]
       :sx-attrs        (sx-call (sx :fs--$small))
       :container-attrs (sx :gtc--max-content)
       :variants+       [:minimal]

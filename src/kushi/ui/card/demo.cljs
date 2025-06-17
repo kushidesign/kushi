@@ -2,7 +2,7 @@
   (:require [kushi.core :refer (sx)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.card.core :refer [card]]))
+            [kushi.ui.card :refer [card]]))
 
 
 ;; TODO remove section-label

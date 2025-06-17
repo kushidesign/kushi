@@ -1,8 +1,8 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.switch.demo
   (:require
    [kushi.core :refer (sx merge-attrs)]
-   [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.switch.core :refer [switch]]
+   [kushi.ui.icon :refer [icon]]
+   [kushi.ui.switch :refer [switch]]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.playground.component-examples :as component-examples]))
 
@@ -133,7 +133,7 @@
                           :attrs {:class [sz]}})}
      
      {:desc            "With icon track"
-      :reqs            '[[kushi.ui.icon.core :refer [icon]]]
+      :reqs            '[[kushi.ui.icon :refer [icon]]]
       :row-attrs       row-attrs
       :container-attrs container-attrs
       :sx-attrs        (sx-call {:track-content-on  [icon (merge-attrs (sx :fs--0.55em)
@@ -154,7 +154,7 @@
                           :attrs {:class [sz]}})}
 
      {:desc            "With icon thumb"
-      :reqs            '[[kushi.ui.icon.core :refer [icon]]]
+      :reqs            '[[kushi.ui.icon :refer [icon]]]
       :row-attrs       row-attrs
       :container-attrs container-attrs
       :sx-attrs        (sx-call {:thumb-content-on  [icon (merge-attrs (sx :fs--0.55em)

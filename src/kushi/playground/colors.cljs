@@ -3,8 +3,8 @@
    [kushi.colors :as kushi.colors]
    [kushi.core :refer (sx css css-vars-map merge-attrs register-design-tokens-by-category)]
    [kushi.ui.core :refer [extract]]
-  ;;  [kushi.ui.label.core :refer [label]]
-   [kushi.ui.prose.core :refer [prose]]))
+  ;;  [kushi.ui.label :refer [label]]
+   [kushi.ui.prose :refer [prose]]))
 
 
 (register-design-tokens-by-category "colors" "global colors")

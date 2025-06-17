@@ -1,8 +1,8 @@
-(ns kushi.ui.avatar.core
+(ns kushi.ui.avatar
   (:require
    [kushi.core :refer [merge-attrs sx]]
    [kushi.ui.core :refer (extract)]
-   [kushi.ui.icon.core]
+   [kushi.ui.icon]
    [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
    [kushi.ui.util :refer [maybe nameable?]]))
 

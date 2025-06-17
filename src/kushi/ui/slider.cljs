@@ -7,7 +7,7 @@
 
 
 (ns ^{:kushi/layer "kushi-ui-styles"}
-  kushi.ui.slider.core
+  kushi.ui.slider
   (:require
    [applied-science.js-interop :as j]
    [kushi.core :refer (sx css defcss css-vars-map merge-attrs)]

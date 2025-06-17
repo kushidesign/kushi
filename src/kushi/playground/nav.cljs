@@ -3,11 +3,11 @@
    [clojure.string :as string]
    [domo.core :as domo]
    [kushi.playground.state :as state]
-   [kushi.ui.lightswitch.core :refer [light-dark-mode-switch]]
+   [kushi.ui.lightswitch :refer [light-dark-mode-switch]]
    [kushi.core :refer [sx css merge-attrs css-vars-map]]
    [kushi.ui.core :refer [extract]]
-   [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.button.core :refer [button]]))
+   [kushi.ui.icon :refer [icon]]
+   [kushi.ui.button :refer [button]]))
 
 
 (defn path-transitioning! [app]

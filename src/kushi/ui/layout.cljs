@@ -1,4 +1,4 @@
-(ns kushi.ui.layout.core
+(ns kushi.ui.layout
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (merge-attrs)]

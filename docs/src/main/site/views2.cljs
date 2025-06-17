@@ -8,16 +8,16 @@
    [kushi.core :refer [?sx sx css merge-attrs at]]
    [kushi.playground.shared-styles]
    [kushi.ui.variants]
-   [kushi.ui.button.core :refer [button]]
-   [kushi.playground.showcase.core :refer [showcase uic-showcase-map2 uic-showcase-map]]
-   [kushi.ui.button.core :refer [button]]
-   [kushi.ui.flex.core :as flex :refer [flex-row-start flex-col-start]]
-   [kushi.ui.layout.core :refer [layout]]
-   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.button :refer [button]]
+   [kushi.playground.showcase.core :refer [showcase uic-showcase-map2 uic-showcase-map3]]
+   [kushi.ui.button :refer [button]]
+   [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start]]
+   [kushi.ui.layout :refer [layout]]
+   [kushi.ui.icon :refer [icon]]
    [kushi.ui.icon.demo]
-  ;;  [kushi.ui.label.core :refer [label]]
-  ;;  [kushi.ui.radio.core :refer [radio]]
-   [kushi.ui.spinner.core :refer [spinner]]
+  ;;  [kushi.ui.label :refer [label]]
+  ;;  [kushi.ui.radio :refer [radio]]
+   [kushi.ui.spinner :refer [spinner]]
    [kushi.ui.util :as util]
    [clojure.string :as string]
    ;; [malli.core :as m]
@@ -55,6 +55,8 @@
       (string/capitalize (:value m))]]))
 
 (defn main-view []
+
+
   (.setAttribute (domo/el-by-id "app")
                  "data-ks-playground-active-path"
                  "components")
@@ -65,7 +67,6 @@
   ;;                      [:bar {:optional true} :string]]]
   ;;                 [:* [:not :map]]]
   ;;                [{:foo 8} 2 3 4]))
-
 
 
   [:div (sx :m--100px)
@@ -82,18 +83,18 @@
 
 
   #_[:div (sx :m--100px)
-   [button {:colorway       :red 
-            :start-enhancer :pets
-            :surface        :solid}
-    "Click"]]
+     [button {:colorway       :red 
+              :start-enhancer :pets
+              :surface        :solid}
+      "Click"]]
 
-  [showcase (uic-showcase-map2 kushi.ui.icon.core/icon
-                               #_kushi.ui.icon.demo/demos)]
+  ;; (? (uic-showcase-map3 kushi.ui.icon.demo/demos))
 
-  #_[showcase (uic-showcase-map2 kushi.ui.spinner.core/spinner #_kushi.ui.icon.demo/demos)]
+  [showcase (!? (uic-showcase-map3 kushi.ui.icon/icon kushi.ui.icon.demo/demos))]
 
+  #_[showcase (uic-showcase-map2 kushi.ui.spinner/spinner #_kushi.ui.icon.demo/demos)]
 
-  #_[showcase (uic-showcase-map2 kushi.ui.button.core/button #_kushi.ui.icon.demo/demos)]
+  #_[showcase (uic-showcase-map2 kushi.ui.button/button #_kushi.ui.icon.demo/demos)]
 
   
 
@@ -154,19 +155,19 @@
        )
      2000)
 
-  ;; #_[showcase (? :pp (uic-showcase-map kushi.ui.button.core/button))]
+  ;; #_[showcase (? :pp (uic-showcase-map kushi.ui.button/button))]
+  
+  ;; #_[showcase (uic-showcase-map kushi.ui.spinner/spinner)]
+  
 
-  ;; #_[showcase (uic-showcase-map kushi.ui.spinner.core/spinner)]
-
-
-  ;; #_[showcase (uic-showcase-map kushi.ui.radio.core/radio)]
-
+  ;; #_[showcase (uic-showcase-map kushi.ui.radio/radio)]
+  
 ;; ;; This will auto-generate children
   
   #_[radio-group 
      {:radio-button-attrs {:name    :baz
-                            :sizing   :large
-                            :weight :bold}
+                           :sizing   :large
+                           :weight :bold}
       :choices            ["Email" "Phone" "Mail"]}]
   
 

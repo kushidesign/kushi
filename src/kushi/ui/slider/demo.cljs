@@ -3,7 +3,7 @@
    [domo.core :as domo]
    [kushi.core :refer (sx)]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.slider.core :refer [slider]]))
+   [kushi.ui.slider :refer [slider]]))
 
 (def examples
   (let [row-attrs       (sx :_.instance-code:w--100%

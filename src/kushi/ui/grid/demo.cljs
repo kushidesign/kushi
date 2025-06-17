@@ -2,7 +2,7 @@
   (:require
    [kushi.core :refer (sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.grid.core :refer [grid]]))
+   [kushi.ui.grid :refer [grid]]))
 
 (def examples
   (let [row-attrs       (sx :_.instance-code:w--100%)

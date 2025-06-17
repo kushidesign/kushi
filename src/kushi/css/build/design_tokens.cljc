@@ -220,7 +220,7 @@
    {:family   "Code"
     :category ["code-blocks"]
     :desc     {:en "Styling of code blocks"}
-    :ns '[kushi.ui.code.core]
+    :ns '[kushi.ui.code]
     :tags     ["code" "color" "typography" "block"]}
    [
     :--code-font-size                         :$small
@@ -303,7 +303,7 @@
    {:family   "Input border weight"
     :desc     {:en "Controls the border-width for inputs"}
     :category ["input-border"]
-    :ns '[kushi.ui.input.core]
+    :ns '[kushi.ui.input]
     :tags     ["border-width" "border" "input" "inputs"]
     }
    [:--input-border-weight-thin               :0.05em
@@ -333,7 +333,7 @@
    {:family   "Divisors"
     :desc     {:en "Styling for border-like divisors"}
     :category ["divisor"]
-    :ns '[kushi.ui.divisor.core]
+    :ns '[kushi.ui.divisor]
     :tags     ["divisors" "divisor"]
     }
    divisor-tokens
@@ -356,7 +356,7 @@
    {:family   "Button padding"
     :desc     {:en "Styling for overlays"}
     :category ["button"]
-    :ns '[kushi.ui.button.core]
+    :ns '[kushi.ui.button]
     :tags     ["button"]
     }
    [:--button-padding-inline              :0.9em
@@ -378,7 +378,7 @@
    {:family   "Tag border styling"
     :desc     {:en "Styling borders for tags"}
     :category ["tag-border"]
-    :ns '[kushi.ui.tag.core]
+    :ns '[kushi.ui.tag]
     :tags     ["tag"]
     }
    ;; Tags
@@ -464,7 +464,7 @@
    {:family   "Tooltip colors and images"
     :desc     {:en ""}
     :category ["tooltip"]
-    :ns '[kushi.ui.tooltip.core]     
+    :ns '[kushi.ui.tooltip]     
     :tags     ["pane" "tooltip" "color" "floating"]
     }
    [:--tooltip-color                            :$foreground-color-dark-mode
@@ -484,7 +484,7 @@
    {:family   "tooltip panes geometry"
     :desc     {:en ""}
     :category ["tooltip"]
-    :ns '[kushi.ui.tooltip.core]     
+    :ns '[kushi.ui.tooltip]     
     :tags     ["pane" "tooltip" "floating" "geometry"]
     }
    [:--tooltip-min-width                        :1rem
@@ -502,7 +502,7 @@
    {:family   "tooltip panes choreography"
     :desc     {:en ""}
     :category ["tooltip"]
-    :ns '[kushi.ui.tooltip.core]     
+    :ns '[kushi.ui.tooltip]     
     :tags     ["pane" "tooltip" "floating" "choreography"]
     }
    [:--tooltip-offset-start                     :$pane-offset-start
@@ -518,7 +518,7 @@
    {:family   "tooltip panes arrow"
     :desc     {:en ""}
     :category ["tooltip"]
-    :ns '[kushi.ui.tooltip.core]     
+    :ns '[kushi.ui.tooltip]     
     :tags     ["pane" "tooltip" "toast" "floating" "choreography"]
     }
    [:--tooltip-arrow-inline-inset               :$pane-arrow-inline-inset
@@ -534,7 +534,7 @@
    {:family   "Popover colors and images"
     :desc     {:en ""}
     :category ["popover"]
-    :ns '[kushi.ui.popover.core]
+    :ns '[kushi.ui.popover]
     :tags     ["pane" "popover" "floating"]
     }
    [:--popover-background-color                 :$pane-background-color
@@ -552,7 +552,7 @@
    {:family   "Popover panes geometry"
     :desc     {:en ""}
     :category ["popover"]
-    :ns '[kushi.ui.popover.core]
+    :ns '[kushi.ui.popover]
     :tags     ["pane" "popover" "floating" "geometry"]
     }
    [:--popover-min-width                        :$pane-min-width
@@ -568,7 +568,7 @@
    {:family   "Popover panes choreography"
     :desc     {:en ""}
     :category ["popover"]
-    :ns '[kushi.ui.popover.core]
+    :ns '[kushi.ui.popover]
     :tags     ["pane" "popover" "floating" "chreography"]
     }
    [:--popover-offset-start               :$pane-offset-start
@@ -584,7 +584,7 @@
    {:family   "Popover panes arrow"
     :desc     {:en ""}
     :category ["popover"]
-    :ns '[kushi.ui.popover.core]
+    :ns '[kushi.ui.popover]
     :tags     ["pane" "popover" "floating" "arrow"]
     }
    [:--popover-arrow-inline-inset :$pane-arrow-inline-inset
@@ -599,7 +599,7 @@
    {:family   "Toast colors and images"
     :desc     {:en ""}
     :category ["toast"]
-    :ns '[kushi.ui.toast.core]
+    :ns '[kushi.ui.toast]
     :tags     ["pane" "toast" "floating" "color"]
     }
    [:--toast-background-color           :$pane-background-color
@@ -617,7 +617,7 @@
    {:family   "Toast panes geometry"
     :desc     {:en ""}
     :category ["toast"]
-    :ns '[kushi.ui.toast.core]
+    :ns '[kushi.ui.toast]
     :tags     ["pane" "Toast" "floating" "geometry"]
     }
    [:--toast-border-radius       :$pane-border-radius
@@ -631,7 +631,7 @@
    {:family   "Toast panes choreography"
     :desc     {:en ""}
     :category ["toast"]
-    :ns       '[kushi.ui.toast.core]
+    :ns       '[kushi.ui.toast]
     :tags     ["pane" "Toast" "floating" "geometry"]
     }
    [:--toast-delay-duration             :200ms
@@ -647,7 +647,7 @@
    {:family   "Modal styling"
     :desc     {:en ""}
     :category ["modal"]
-    :ns '[kushi.ui.toast.core]
+    :ns '[kushi.ui.toast]
     :tags     ["pane" "modal" "dialog" "floating"]
     }
    [
@@ -672,7 +672,7 @@
    {:family   "Mui icon size"
     :desc     {:en ""}
     :category ["icon"]
-    :ns '[kushi.ui.icon.core]
+    :ns '[kushi.ui.icon]
     :tags     ["icon" "size" "font-size"]
     }
    [:--mui-icon-relative-font-size :inherit
@@ -685,7 +685,7 @@
    {:family   "Icon gap"
     :desc     {:en "Controls the width of the gap between icon and text, in labels, buttons, and tags"}
     :category ["icon"]
-    :ns '[kushi.ui.button.core kushi.ui.tag.core kushi.ui.label.core]
+    :ns '[kushi.ui.button kushi.ui.tag kushi.ui.label]
     :tags     ["icon" "size" "font-size"]
     }
    [:--icon-enhanceable-gap :0.25em]
@@ -813,7 +813,7 @@
    {:family   "Scrollbar styling"
     :desc     {:en ""}
     :category ["scrollbar"]
-    :ns '[kushi.ui.modal.core]
+    :ns '[kushi.ui.modal]
     :tags     ["scrollbar" "chrome" "browser-scrollbars"]
     }
    [:--scrollbar-thumb-color                  :$neutral-300
@@ -828,17 +828,17 @@
    {:family   "Collapse styling"
     :desc     {:en ""}
     :category ["collapse"]
-    :ns '[kushi.ui.collapse.core]
+    :ns '[kushi.ui.collapse]
     :tags     ["collapse" "accordian"]
     }
    [:--collapse-transition-duration              :$slow]
 
-    ;; kushi.ui.text-field.core/input
+    ;; kushi.ui.text-field/input
    
    {:family   "Text field styling"
     :desc     {:en ""}
     :category ["input"]
-    :ns '[kushi.ui.text-field.core]
+    :ns '[kushi.ui.text-field]
     :tags     ["text-input" "text-field" "input"]
     }
    [:--text-input-helper-margin-block-start      :0.3em
