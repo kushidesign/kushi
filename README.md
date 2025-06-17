@@ -32,7 +32,7 @@
 
 - **Default industry-standard breakpoint scale**
 
-- **Auto-generated selectors to avoid pontential collisions**
+- **Auto-generated selectors to avoid potential collisions**
 
 - **Flexible selector prefixing options**
 
@@ -85,7 +85,7 @@ system:
 - Functional styling engine
 - Configurable theming
 
-Usage of Kushi's design system and component library is completly optional. You
+Usage of Kushi's design system and component library is completely optional. You
 can just use the styling engine as a pure ClojureScript alternative to
 mainstream JS solutions such as Tailwind, Emotion, etc.
 
@@ -892,7 +892,7 @@ to describe styles is the usage of tokenized keywords. These keywords contain a
 :color--red
 ```
 
-More examples, using Kushi's optional shorthand grammer.
+More examples, using Kushi's optional shorthand grammar.
 ```Clojure
 :c--red    ; :color--red
 :ai--c     ; :align-items--center
@@ -901,7 +901,7 @@ More examples, using Kushi's optional shorthand grammer.
 :fs--18px  ; :font-size--18px
 :ff--serif ; :font-family--serif
 ```
-This shorthand grammer is available for the most commonly used props:
+This shorthand grammar is available for the most commonly used props:
 ```Clojure
 :ai   ; :align-items
 :b    ; :border
@@ -949,7 +949,7 @@ See the complete list of supported css properties
 <a href="https://github.com/kushidesign/kushi/blob/main/docs/kushi-shorthand-reference.md"
 target="_blank">here</a>.
 
-Shorthand grammer extends to cover enumerated values:
+Shorthand grammar extends to cover enumerated values:
 ```Clojure
 ;; text-decoration
 :td--u   ; text-decoration--uppercase
@@ -974,7 +974,7 @@ Shorthand grammer extends to cover enumerated values:
 ```
 
 Note that the enumerated value `none`, as well as global properties such as
-`inherit`, `initial`, `revert`, `unset`, etc. are intentially not supported with
+`inherit`, `initial`, `revert`, `unset`, etc. are intentionally not supported with
 shorthand syntax:
 
 ```Clojure
@@ -1047,7 +1047,7 @@ Kushi ships with the following, industry-standard, mobile-first breakpoint scale
 ```
 Both the names and values can be customized via supplying a kwargs vector (not a
 map) as the `:media` entry in your `kushi.edn` config file. Because CSS Media
-Queries must be explicity ordered, this scale must be written as a vector of
+Queries must be explicitly ordered, this scale must be written as a vector of
 kwargs. See [Configuration Options](#configuration-options).
 
 Below is an example of a scale that is desktop-first and uses different names.<br>
@@ -1469,7 +1469,7 @@ component using `kushi.ui.core/defcom`.
 
 `defcom` is a macro that returns a component rendering function which accepts an
 optional attributes map, plus any number of children. The signature at the call
-site mirrros hiccup itself.
+site mirrors hiccup itself.
 
 Under the hood, `defcom` pulls out any keys in attr map that start with `:-` and
 puts them in a separate `opts` map. This allows passing in various custom
