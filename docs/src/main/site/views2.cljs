@@ -9,7 +9,7 @@
    [kushi.playground.shared-styles]
    [kushi.ui.variants]
    [kushi.ui.button :refer [button]]
-   [kushi.playground.showcase.core :refer [showcase uic-showcase-map2 uic-showcase-map3]]
+   [kushi.playground.showcase.core :as showcase :refer [showcase]]
    [kushi.ui.button :refer [button]]
    [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start]]
    [kushi.ui.layout :refer [layout]]
@@ -90,7 +90,8 @@
 
   ;; (? (uic-showcase-map3 kushi.ui.icon.demo/demos))
 
-  [showcase (!? (uic-showcase-map3 kushi.ui.icon/icon kushi.ui.icon.demo/demos))]
+  [showcase (!? (showcase/opts kushi.ui.icon/icon
+                               kushi.ui.icon.demo/demos))]
 
   #_[showcase (uic-showcase-map2 kushi.ui.spinner/spinner #_kushi.ui.icon.demo/demos)]
 

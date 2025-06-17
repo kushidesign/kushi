@@ -4,10 +4,10 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer [css defcss sx]]
    [kushi.playground.showcase.snippets :refer [component-snippets]]
-   [kushi.ui.button.core :refer [button]]
-   [kushi.ui.divisor.core :refer [divisor]]
-   [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.modal.core :refer [modal open-kushi-modal modal-close-button]]
+   [kushi.ui.button :refer [button]]
+   [kushi.ui.divisor :refer [divisor]]
+   [kushi.ui.icon :refer [icon]]
+   [kushi.ui.modal :refer [modal open-kushi-modal modal-close-button]]
    [kushi.css.media]))
 
 (defcss ".kushi-playground-examples-modal"

@@ -6,10 +6,10 @@
    [kushi.core :refer [css defcss merge-attrs sx]]
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
    [kushi.playground.showcase.shared :refer [pprint-str]]
-   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
+   [kushi.ui.tooltip :refer [tooltip-attrs]]
    [kushi.ui.icon.mui.svg :as mui.svg]
-   [kushi.ui.button.core :refer [button icon-button]]
-   [kushi.ui.icon.core :refer [icon]]
+   [kushi.ui.button :refer [button icon-button]]
+   [kushi.ui.icon :refer [icon]]
    [kushi.ui.util :refer [as-str maybe keyed]]
    [clojure.string :as string]
    [kushi.ui.core :refer (extract)]
@@ -169,8 +169,8 @@
 
 (defn reqs-coll
   "Returns something like this:
-   '[[kushi.ui.button.core  :refer  [button]]
-     [kushi.ui.icon.core  :refer  [icon]]]"
+   '[[kushi.ui.button  :refer  [button]]
+     [kushi.ui.icon  :refer  [icon]]]"
   [reqs-by-refers]
   (some->> reqs-by-refers
            keys
@@ -187,8 +187,8 @@
 (defn reqs-by-refers
   "This creates a map of syms / syms representing :requires by :refers
    Used to populate popover snipped
-   Ex '{button kushi.ui.button.core
-   icon   kushi.ui.icon.core}"
+   Ex '{button kushi.ui.button
+   icon   kushi.ui.icon}"
   [all-reqs]
   (some->> (mapv (fn [vc]
                    (let [_ns (first vc)

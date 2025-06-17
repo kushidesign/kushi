@@ -8,20 +8,20 @@
    [kushi.core :refer [css defcss merge-attrs sx css-vars-map at]]
   ;;  [kushi.css.build.design-tokens
   ;;   :rename {design-tokens-by-component-usage dtoks-by-usage}]
-   [kushi.ui.lightswitch.core :refer [light-dark-mode-switch]]
+   [kushi.ui.lightswitch :refer [light-dark-mode-switch]]
    [kushi.playground.showcase.shared :refer [section-label pprint-str]]
    [kushi.playground.showcase.modal :refer [example-modal-trigger example-modal]]
-   [kushi.ui.tooltip.core :refer [tooltip-attrs]]
+   [kushi.ui.tooltip :refer [tooltip-attrs]]
    [kushi.ui.icon.mui.svg :as mui.svg]
-   [kushi.ui.divisor.core :refer [divisor]]
+   [kushi.ui.divisor :refer [divisor]]
    [kushi.ui.util :refer [as-str maybe keyed]]
-   [kushi.ui.modal.core :refer [modal open-kushi-modal modal-close-button]]
-   [kushi.ui.spinner.core :refer [spinner]]
+   [kushi.ui.modal :refer [modal open-kushi-modal modal-close-button]]
+   [kushi.ui.spinner :refer [spinner]]
    [clojure.string :as string]
-   [kushi.ui.button.core :refer [button]]
-   [kushi.ui.icon.core :refer [icon]]
-   [kushi.ui.radio.core :refer [radio]]
-   [kushi.ui.label.core :refer [label]]
+   [kushi.ui.button :refer [button]]
+   [kushi.ui.icon :refer [icon]]
+   [kushi.ui.radio :refer [radio]]
+   [kushi.ui.label :refer [label]]
    [kushi.ui.defs :as defs]
    [kushi.ui.variants :as variants]
    [kushi.util]
@@ -29,11 +29,6 @@
    [kushi.util :as util])
   (:require-macros [kushi.playground.showcase.core :refer [fqns-sym+file-info]]))
 
-(def vo defs/variants-ordered-kw)
-
-;; sym will be something like 'surface or 'colorway
-
-;; TODO - fix this so sym is keyword like :surface
 
 (defn resolve-variants
   ([kw]
@@ -100,7 +95,7 @@
   "Converts symbols to values if they are present in `publics` def.
    (syms->publics '[:div [icon :pets]])
    =>
-   [:div [#Object[kushi.ui.icon.core] :pets]]]"
+   [:div [#Object[kushi.ui.icon] :pets]]]"
   [uic opt i coll]
   (walk/postwalk 
    (fn [x]
@@ -121,111 +116,45 @@
        x))
    coll))
 
+;; Public functions for rendering previews when demo has :template-fn entry
 
-;; Trash if not needed
-
-;; (defn- sx-utils->class-vector [sx-utils]
-;;   (into [] (->> sx-utils
-;;                 rest 
-;;                 (map (comp #(subs % 1) as-str)))))
-
-
-;; (defn examples-grid [uic demo]
-;;   (let [{:keys [label examples]}
-;;         demo]
-;;     [:div (sx ".kpg-example-grid-wrapper"
-;;               :.flex-col-start
-;;               :gap--1rem)
-;;      [section-label label]
-;;      (into [:div (sx :.kpg-variant-grid-1d)]
-;;            (for [{:keys [label args sx-utils]} examples]
-;;              (into [uic {:class (sx-utils->class-vector sx-utils)}]
-;;                    (syms->publics args))))]))
-
-
-;;  (defn discrete-examples-grid [uic m]
-;;   (let [{:keys [label examples]
-;;          option-name :name}
-;;         m]
-;;     [:div (sx ".kpg-example-grid-wrapper"
-;;               :.flex-col-start
-;;               :gap--1rem)
-;;      [section-label label]
-;;      (into [:div (sx :.kpg-variant-grid-1d)]
-;;            (for [{:keys [label args attrs value]} examples]
-;;              (into [uic (merge 
-;;                          {(sym->option-key option-name) (syms->publics value)}
-;;                          attrs)]
-;;                    (syms->publics args))))]))
-
-(defn- modal-opts*
-  "Creates opts for a modal within the component's showcase"
-  [{:keys [uic-name reqs-for-uic] :as uic}
-   {:keys [demo opt-sym snippets-header demo-index label] :as opt}]
-  (let [{reqs-for-examples :require
-         demo-label        :label
-         modal-label       :label/modal
-         samples           :samples
-        ;;  variants          :variants
-        ;;  variant-attrs     :variant-attrs
-        ;;  variant-args      :variant-args
-         }
-        demo
-        demo-label (or modal-label label demo-label)]
-
-   {:modal-id          (str uic-name
-                               "_"
-                               opt-sym
-                                 "_snippets"
-                                 "_demo-" 
-                                 demo-index)
-    ;; change to uic-label
-    :component-label     (str uic-name)
-    :label               [section-label demo-label #_(name opt-sym)]
-    :snippets-header     snippets-header
-    :snippets            samples
-    :reqs-for-uic        reqs-for-uic
-    :reqs-for-examples   reqs-for-examples}))
-
-(def modal-dbg? true)
-
-(defn- icons-with-tooltips
-  [{:keys [component-fn uic-name]
+(defn ^public icons-with-tooltips
+  [{:keys [component-fn uic-sym]
     :as   uic}
    opt
-   samples]
+   vec-of-arg-vecs]
   {:hic 
    (mapv 
-    (fn [arg]
-      [component-fn
-       (merge-attrs (or (-> opt :demo :attrs/display)
-                        (-> opt :demo :attrs))
-                    (sx :.pointer)
-                    (tooltip-attrs 
-                     {:text          arg
-                      :tooltip-class (css :ff--$code-font-stack
-                                           [:--tooltip-delay-duration :$xxxfast])}))
-       arg])
-    samples)
+    (fn [args-vec]
+      (into [component-fn
+             (merge-attrs (or (-> opt :demo :attrs/display)
+                              (-> opt :demo :attrs))
+                          (sx :.pointer)
+                          (tooltip-attrs 
+                           {:text          (first args-vec)
+                            :tooltip-class (css :ff--$code-font-stack
+                                                [:--tooltip-delay-duration :$xxxfast])}))]
+            args-vec))
+    vec-of-arg-vecs)
    :hiccup-for-examples
    (mapv 
-    (fn [arg]
+    (fn [args-vec]
       (if-let [attrs (or (-> opt :demo :attrs/snippet)
                          (-> opt :demo :attrs))]
-        [component-fn attrs arg]
-        [component-fn arg]))
-    samples)
+        (into [component-fn attrs] args-vec)
+        (into [component-fn] args-vec)))
+    vec-of-arg-vecs)
    :hiccup-for-snippets
    (mapv 
-    (fn [arg]
+    (fn [args-vec]
       (if-let [attrs (or (-> opt :demo :attrs/snippet)
                          (-> opt :demo :attrs))]
-        [uic-name attrs arg]
-        [uic-name arg]))
-    samples)})
+        (into [uic-sym attrs] args-vec)
+        (into [uic-sym] args-vec)))
+    vec-of-arg-vecs)})
 
 
-(defn radio-sizes
+(defn ^public radio-sizes
   [{:keys [component-fn uic-name]
     :as   uic}
    opt
@@ -265,6 +194,35 @@
   {:icons-with-tooltips icons-with-tooltips
    :radio-sizes         radio-sizes})
 
+;; End of public functions for rendering previews ------------------------------
+
+
+(defn- modal-opts*
+  "Creates opts for a modal within the component's showcase"
+  [{:keys [uic-name reqs-for-uic] :as uic}
+   {:keys [demo opt-sym snippets-header demo-index label] :as opt}]
+  (let [{reqs-for-examples :require
+         demo-label        :label
+         modal-label       :label/modal
+         samples           :samples}
+        demo
+        demo-label (or modal-label label demo-label)]
+
+   {:modal-id          (str uic-name
+                               "_"
+                               opt-sym
+                                 "_snippets"
+                                 "_demo-" 
+                                 demo-index)
+    ;; change to uic-label
+    :component-label     (str uic-name)
+    :label               [section-label demo-label #_(name opt-sym)]
+    :snippets-header     snippets-header
+    :snippets            samples
+    :reqs-for-uic        reqs-for-uic
+    :reqs-for-examples   reqs-for-examples}))
+
+(def modal-dbg? true)
 
 (defn- d1-grid-with-variant-labels
   [v-1d vks uic-fn variant-attrs variant-args demo]
@@ -297,35 +255,8 @@
              []
              coll)))))
 
-
 ;; view input coming in from opts
 
-#_(defn- d1-grid-with-sample-labels
-  [samples labels]
-  (? labels)
-  (? samples)
-  (into [:div (merge-attrs (sx :display--grid
-                               :gtc--74px:max-content
-                               :ai--c
-                               :gap--0.75rem:1rem))]
-        (reduce
-         (fn [acc [label sample]]
-           (? :no-file label)
-           (? :pp sample)
-           (let [variant-label
-                 (if (keyword? label) (name label) (str label))]
-             (conj
-              acc
-              [:span (sx :content--$variant-label
-                         :ws--n
-                         :.foreground-color-secondary
-                         :text-shadow--none
-                         :fs--$xsmall
-                         :ff--$sans-serif-font-stack)
-               variant-label]
-              sample)))
-         []
-         (map vector labels samples))))
          
 (defn- d1-grid-with-sample-labels
   [samples]
@@ -386,72 +317,58 @@
           :else
           evaled)))
 
+
+(defn- discrete-examples-grid-with-template-fn
+  "For rendering with a template fn"
+  [f uic opt vec-of-arg-vecs]
+  (when (seq vec-of-arg-vecs)
+    (let [{:keys [hic hiccup-for-examples hiccup-for-snippets]}
+          (f uic opt vec-of-arg-vecs)
+
+          modal-opts 
+          (assoc (modal-opts* uic opt)
+                 :hiccup-for-examples
+                 hiccup-for-examples
+                 :samples
+                 vec-of-arg-vecs
+                 :snippets
+                 hiccup-for-snippets
+                 :wrapper-tag
+                 (when modal-dbg? :div))]
+
+      [discrete-example-grid-wrapper 
+       opt
+       modal-opts
+       (into [:div (merge-attrs 
+                    (sx :.kpg-variant-grid-1d)
+                    {:style (or (-> opt :row-style)
+                                (-> opt :demo :row-style))})]
+             hic)])))
+
+
+
 (defn- discrete-examples-grid2
   "Supports literal hiccup in the examples"
   [uic 
    opt
    samples]
   (when (seq samples)
-
-    (if-let [f (->> opt :demo :render-as (get showcase-fns))]
-
-      ;; TODO - Make this work with labels too
-      ;; This branch uses a specific rendering fn in this playground.showcase.core 
-      (let [{:keys [hic hiccup-for-examples hiccup-for-snippets]}
-            (f uic opt samples)
-
-            modal-opts 
-            (assoc (modal-opts* uic opt)
-                   :hiccup-for-examples
-                   hiccup-for-examples
-                   :samples
-                   samples
-                   :snippets
-                   hiccup-for-snippets
-                   :wrapper-tag
-                   (when modal-dbg? :div))]
-
-        [discrete-example-grid-wrapper 
-         opt
-         modal-opts
-         (into [:div (merge-attrs 
-                      (sx :.kpg-variant-grid-1d)
-                      {:style (or (-> opt :row-style)
-                                  (-> opt :demo :row-style))})]
-               hic)])
-
-      ;; This branch renders a row of samples, maybe with labels 
-      (let [
-            ;; og-samples        samples
-            ;; samples-are-maps? (every? #(and (map? %) (some-> % :code seq)) og-samples) 
-            ;; samples           (if samples-are-maps? (mapv :code samples) og-samples)
-            ;; labels            (when samples-are-maps? (keep :label og-samples))
-            ;; labels            (when (and (= (count labels) (count samples))
-            ;;                              (every? #(or (keyword? %) (string? %))
-            ;;                                      labels))
-            ;;                     labels)
-            ;; hic               (map-indexed (fn [i sample] 
-            ;;                                  (syms->publics uic opt i sample))
-            ;;                                samples)
-            ;; opt               (if samples-are-maps?
-            ;;                     (assoc-in opt [:demo :samples] samples)
-            ;;                     opt)
-            labels?    (every? #(-> % :label) samples)
-            modal-opts (assoc (modal-opts* uic opt)
-                              :hiccup-for-examples
-                              (hiccup-for-examples uic samples)
-                              :snippets
-                              (mapv :code/quoted samples)
-                              :wrapper-tag
-                              (when modal-dbg? :div))]
-        
-        (keyed [#_uic #_opt samples labels? modal-opts])
-        [discrete-example-grid-wrapper
-         opt
-         modal-opts
-         (if labels? 
-           [d1-grid-with-sample-labels samples]
-           [d1-grid-no-labels opt samples])]))))
+    (let [labels?    (every? #(-> % :label) samples)
+          modal-opts (assoc (modal-opts* uic opt)
+                            :hiccup-for-examples
+                            (hiccup-for-examples uic samples)
+                            :snippets
+                            (mapv :code/quoted samples)
+                            :wrapper-tag
+                            (when modal-dbg? :div))]
+      
+      (keyed [#_uic #_opt samples labels? modal-opts])
+      [discrete-example-grid-wrapper
+       opt
+       modal-opts
+       (if labels? 
+         [d1-grid-with-sample-labels samples]
+         [d1-grid-no-labels opt samples])])))
 
 
 ;; :variants -> :x-variants for additional dimensions 
@@ -460,7 +377,6 @@
   (let [{args          :args
          attrs         :attrs
          attrs-snippet :attrs/snippet
-         snippets?     :snippets?
          :as m}
         (:demo opt)]
     (if true ; TODO <-validate here
@@ -491,27 +407,12 @@
               :let [variant-label (str "\"" a "\"")]] 
           (into [:div {:style (merge (css-vars-map variant-label)
                                      row-style)
-                       :class (css :.kpg-variant-grid-1d
-                                        ;; :first-child>*:after:display--block
-                                        ;; :first-child>*:after:display--none
-                                   #_:before:content--$variant-label
-                                   )}]
+                       :class (css :.kpg-variant-grid-1d)}]
                 (for [b (resolve-variants v-1d vks)]
                   (into [uic-fn
                          (merge-attrs {v-2d a
                                        v-1d b}
-                                      variant-attrs
-                                      #_{:style (css-vars-map variant-label)
-                                         :class (css :.kpg-variant-grid-1d
-                                                     :before:content--$variant-label
-                                                     :before:position--absolute
-                                                     :before:bottom--125%
-                                                     :before:left--50%
-                                                     :before:translate---50%
-                                                     :before:fs--$xxxsmall
-                                                     :before:font-style--italic
-                                                     :before:color--$foreground-color
-                                                     )})]
+                                      variant-attrs)]
                         variant-args))))))
 
 
@@ -519,7 +420,7 @@
 (defn variant-grid
   "Produces a 1d, 2d, or 3d variant grid"
   [uic opt]
-  (let [{:keys [demo-index multiple-demos? schema]}
+  (let [{:keys [schema]}
         opt
         
         {args          :args
@@ -615,7 +516,8 @@
        :else
        (if-not variant-labels?
          ;; d1 with no labels
-         (into [:div (sx :.flex-row-space-between :ai--c :w--100%)]
+         (into [:div (merge-attrs (sx :.flex-row-space-between :ai--c :w--100%)
+                                  {:style row-style})]
                (let [coll (resolve-variants (or variant-scale v-1d) vks)]
                  (when (coll? coll)
                    (mapv (fn [a]
@@ -645,62 +547,47 @@
               :.transition)]]
           
          (concat
-          (for [[opt-key opt] (:opts m)
-                :let          [opt-name (name opt-key)
-                               opt-sym  (symbol opt-name)
-                               opt      (assoc opt
-                                               :opt-name opt-sym
-                                               :opt-sym opt-sym
-                                               :opt-key opt-key)]
-                :when         (and (:demo opt)
-                                   ;; Only for debugging
-                                   #_(= opt-sym 'start-enhancer)
-                                   )]
+          (for [{:keys [opt-key demo]
+                 :as   opt}           (:opts m)
+                :let                  [opt-name (name opt-key)
+                                       opt-sym  (symbol opt-name)
+                                       opt      (assoc opt
+                                                       :opt-name opt-sym
+                                                       :opt-sym opt-sym
+                                                       :opt-key opt-key)]
+                :when                 (and (:demo opt)
+                                      ;; Only for debugging
+                                           #_(= opt-sym 'start-enhancer)
+                                           )]
 
-            (let [samples         (some-> opt :demo :samples)
-                  demo            (:demo opt)
-                  multiple-demos? (vector? demo) 
-                  demos           (if multiple-demos? demo [(or demo {})])]
+            (let [demos           [(or demo {})]]
               (into [:<>] 
                     (map-indexed (fn [demo-index demo]
                                    [variant-grid
-                                    (!? m)
-                                    (!? (assoc opt
-                                               :demo demo
-                                               :demo-index demo-index
-                                               :multiple-demos? multiple-demos?))])
+                                    m
+                                    (assoc opt
+                                           :demo demo
+                                           :demo-index demo-index
+                                           )])
                                  demos))))
 
-          (map-indexed (fn [demo-index demo]
-                         [discrete-examples-grid2 
-                          m
-                          {:demo            demo
-                           :demo-index      demo-index
-                           :multiple-demos? true}
-                          (:samples demo)])
-                       (:demos m)))))
+          (map-indexed (fn [demo-index
+                            {:keys [template-fn args samples] :as demo}]
+                         (let [examples-grid-opts {:demo            demo
+                                                   :demo-index      demo-index
+                                                   :multiple-demos? true}]
+                           (if template-fn 
 
-#_(let [samples (some-> opt :demo :samples)]
-              (cond
-                  ;; This branch uses the :samples vector located in the :demo entry
-                  ;; samples
-                  ;; [discrete-examples-grid2 m opt samples]
-                
+                             [discrete-examples-grid-with-template-fn
+                              template-fn
+                              m
+                              examples-grid-opts
+                              args]
 
-                  ;; This branch renders variants for the specific opt, things like
-                  ;; :sizing, :colorway, etc.
-                  ;; It uses the :attrs map provided in the :demo entry, or 
-                  ;; just an empty map if no :attrs is provided. 
-                :else
-                (let [demo            (:demo opt)
-                      multiple-demos? (vector? demo) 
-                      demos           (if multiple-demos? demo [(or demo {})])]
-                  (into [:<>] 
-                        (map-indexed (fn [demo-index demo]
-                                       [variant-grid
-                                        (? m)
-                                        (? (assoc opt
-                                                  :demo demo
-                                                  :demo-index demo-index
-                                                  :multiple-demos? multiple-demos?))])
-                                     demos)))))
+                             [discrete-examples-grid2 
+                              m
+                              examples-grid-opts
+                              samples])))
+                         (:demos m)))))
+
+
