@@ -52,3 +52,5 @@ docs/filtered-build-sources.edn
 
 docs/public/css/bundle.css
 docs/public/js/main.js
+.clj-kondo/taoensso/encore/config.edn
+.clj-kondo/taoensso/encore/taoensso/encore.clj

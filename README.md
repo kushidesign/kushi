@@ -1,8 +1,6 @@
 <p><sub>Many thanks to <a href="https://www.clojuriststogether.org/">Clojurists Together</a> for generously supporting this project!</sub></p>
 
 <br>
-<div align="center"><img src="./docs/public/graphics/images/kushi-ui-iso-1.png" width="850"></img></div> 
-<br>
 
 # Kushi
 <h5>Kushi is a foundation for building web UI with ClojureScript.</h5>
@@ -34,7 +32,7 @@
 
 - **Default industry-standard breakpoint scale**
 
-- **Auto-generated selectors to avoid pontential collisions**
+- **Auto-generated selectors to avoid potential collisions**
 
 - **Flexible selector prefixing options**
 
@@ -48,17 +46,8 @@
 
 - **Generates interactive UI documentation**
 
-<br>
 
-> [!IMPORTANT]
->
-> If your project is using Kushi `v1.0.0-a.22` or lower, please reference the README on a different branch that corresponds with the version that you are using:<br>
-> [v1.0.0-a.22](https://github.com/kushidesign/kushi/tree/refactor-warnings-and-errors)<br>
-> [v1.0.0-a.21](https://github.com/kushidesign/kushi/tree/playground-update2)<br>
-> [v1.0.0-a.20](https://github.com/kushidesign/kushi/tree/tooltip2)<br>
-> [v1.0.0-a.19](https://github.com/kushidesign/kushi/tree/cssvar-tuples-defclass)<br>
-> [v1.0.0-a.18](https://github.com/kushidesign/kushi/tree/alpha18-fixes)<br>
- 
+
 
 
 <br>
@@ -96,7 +85,7 @@ system:
 - Functional styling engine
 - Configurable theming
 
-Usage of Kushi's design system and component library is completly optional. You
+Usage of Kushi's design system and component library is completely optional. You
 can just use the styling engine as a pure ClojureScript alternative to
 mainstream JS solutions such as Tailwind, Emotion, etc.
 
@@ -106,7 +95,7 @@ mainstream JS solutions such as Tailwind, Emotion, etc.
 Current version is pre-release intended for early adopters and anyone who would
 like to provide feedback. New 1.0 alphas will be released frequently, while I
 continue to make improvements/changes/additions. Working towards a stable 1.0
-release by end of Q2 2025.
+release by end of 2024 or Q1 of 2025.
 
 
 Please report anything unexpected on GitHub Issues.
@@ -903,7 +892,7 @@ to describe styles is the usage of tokenized keywords. These keywords contain a
 :color--red
 ```
 
-More examples, using Kushi's optional shorthand grammer.
+More examples, using Kushi's optional shorthand grammar.
 ```Clojure
 :c--red    ; :color--red
 :ai--c     ; :align-items--center
@@ -912,7 +901,7 @@ More examples, using Kushi's optional shorthand grammer.
 :fs--18px  ; :font-size--18px
 :ff--serif ; :font-family--serif
 ```
-This shorthand grammer is available for the most commonly used props:
+This shorthand grammar is available for the most commonly used props:
 ```Clojure
 :ai   ; :align-items
 :b    ; :border
@@ -960,7 +949,7 @@ See the complete list of supported css properties
 <a href="https://github.com/kushidesign/kushi/blob/main/docs/kushi-shorthand-reference.md"
 target="_blank">here</a>.
 
-Shorthand grammer extends to cover enumerated values:
+Shorthand grammar extends to cover enumerated values:
 ```Clojure
 ;; text-decoration
 :td--u   ; text-decoration--uppercase
@@ -985,7 +974,7 @@ Shorthand grammer extends to cover enumerated values:
 ```
 
 Note that the enumerated value `none`, as well as global properties such as
-`inherit`, `initial`, `revert`, `unset`, etc. are intentially not supported with
+`inherit`, `initial`, `revert`, `unset`, etc. are intentionally not supported with
 shorthand syntax:
 
 ```Clojure
@@ -1058,7 +1047,7 @@ Kushi ships with the following, industry-standard, mobile-first breakpoint scale
 ```
 Both the names and values can be customized via supplying a kwargs vector (not a
 map) as the `:media` entry in your `kushi.edn` config file. Because CSS Media
-Queries must be explicity ordered, this scale must be written as a vector of
+Queries must be explicitly ordered, this scale must be written as a vector of
 kwargs. See [Configuration Options](#configuration-options).
 
 Below is an example of a scale that is desktop-first and uses different names.<br>
@@ -1452,8 +1441,8 @@ Given the following:
 
 You would receive warnings about invalid args in the terminal:
 
-<div align="left"><img src="docs/public/graphics/images/kushi-sx-bad-args-warnings.png"
- width="550px"/></div>
+<div align="center"><img src="docs/public/graphics/kushi-sx-bad-args-warnings.png"
+ width="654px"/></div>
 
 <br>
 <br>
@@ -1480,7 +1469,7 @@ component using `kushi.ui.core/defcom`.
 
 `defcom` is a macro that returns a component rendering function which accepts an
 optional attributes map, plus any number of children. The signature at the call
-site mirrros hiccup itself.
+site mirrors hiccup itself.
 
 Under the hood, `defcom` pulls out any keys in attr map that start with `:-` and
 puts them in a separate `opts` map. This allows passing in various custom
@@ -1524,7 +1513,7 @@ components, you can use the same underlying pattern that `defcom` abstracts. -->
 Kushi promotes a component definition pattern that mirrors hiccup itself by
 standardizing the function signature as an (optional) single map of attributes
 followed by any number of children. This pattern relies on using the
-`kushi.ui.core/extract` helper function.
+`kushi.ui.core/opts+children` helper function.
 
 Under the hood, this helper function pulls out any keys in attributes map that
 start with `:-` and puts them in a separate `opts` map. This allows passing in
@@ -1534,15 +1523,14 @@ to enable decoration and composition of attribute maps.
 
 
 ```Clojure
-;; This example assumes Reagent is being used as a rendering library
 (ns myapp.core
   (:require
    [kushi.core :refer [sx]]
-   [kushi.ui.core :refer [extract]]))
+   [kushi.ui.core :refer [opts+children]]))
 
 (defn my-section
   [& args]
-  (let [[opts attrs & children]  (extract args)
+  (let [[opts attrs & children]  (opts+children args)
         {:keys [label label-attrs body-attrs]} opts]
     [:section
      attrs
@@ -1557,28 +1545,9 @@ The example above assumes the following:
 `:-label-attrs`, `:-body-attrs`.
 - The values of `:-label-attrs` and `:-body-attrs` are html attribute maps.
 
-The helper function `kushi.ui.core/extract` will pull any keys prefixed
-with `:-` out of the attributes map and into a user `opts` map. `extract`
-always returns a map:
-```Clojure
-{:opts     {...}
- :attrs    {...}
- :children [...]}
-```
-
-Our `my-section` component function could be called like this:
-```Clojure
-(my-section 
- (merge-attrs
-  (sx :border--1px:solid:black
-      :p--1rem)
-  {:id     "my-id"
-   :-label "My custom label"
-   :-label-attrs (sx :c--red)
-   :-body-attrs (sx :c--white :bgc--black)})
-  "Child 1"
-  "Child 2")
-```
+The helper function `kushi.ui.core/opts+children` will pull any keys prefixed
+with `:-` out of the attributes map and into a user `opts` map. `opts+children`
+always returns a vector in the form of `[user-opts attr child & more-children]`.
 
 <br>
 <br>
@@ -1607,9 +1576,7 @@ documentation site linked above.
 Although Kushi is designed to be build-tool and framework agnostic, thus far it
 has only been used in production with
 [Reagent](https://reagent-project.github.io/) +
-[Shadow-CLJS](https://github.com/thheller/shadow-cljs). Integrations and
-quickstart guides for using Kushi with other cljs rendering libraries is planned
-for Q2 2025.
+[Shadow-CLJS](https://github.com/thheller/shadow-cljs).
 
 ### shadow-cljs
 See the [kushi-quickstart](https://github.com/kushidesign/kushi-quickstart)
@@ -1637,6 +1604,6 @@ Feel free to file issues or initiate discussion in
 -->
 ## License
 
-Copyright © 2021-2025 Jeremiah Coyle
+Copyright © 2021-2024 Jeremiah Coyle
 
 Distributed under the EPL License. See LICENSE.
