@@ -9,7 +9,7 @@
    [kushi.playground.shared-styles]
    [kushi.ui.variants]
    [kushi.ui.button :refer [button]]
-   [kushi.playground.showcase.core :as showcase :refer [showcase]]
+   [kushi.showcase.core :as showcase :refer [showcase]]
    [kushi.ui.button :refer [button]]
    [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start]]
    [kushi.ui.layout :refer [layout]]

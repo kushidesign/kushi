@@ -1,4 +1,4 @@
-(ns ^:dev/always kushi.playground.showcase.shared 
+(ns ^:dev/always kushi.showcase.shared 
   (:require
    [clojure.repl]
    [clojure.string :as string]

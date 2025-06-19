@@ -1,4 +1,4 @@
-(ns kushi.playground.showcase.core
+(ns kushi.showcase.core
   (:require 
    [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]

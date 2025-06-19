@@ -1,9 +1,9 @@
-(ns ^:dev/always kushi.playground.showcase.modal
+(ns ^:dev/always kushi.showcase.modal
   (:require
    [clojure.repl]
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer [css defcss sx]]
-   [kushi.playground.showcase.snippets :refer [component-snippets]]
+   [kushi.showcase.snippets :refer [component-snippets]]
    [kushi.ui.button :refer [button]]
    [kushi.ui.divisor :refer [divisor]]
    [kushi.ui.icon :refer [icon]]
@@ -20,6 +20,7 @@
   [:height "min(var(--modal-max-height), calc(100vh - (2 * var(--modal-margin, 1rem))))"]
   :overflow--hidden
   :width--$playground-main-content-max-width)
+
 
 (defn example-modal-trigger [modal-id]
   [button

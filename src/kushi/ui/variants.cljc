@@ -112,12 +112,6 @@
   (into #{} (keys variants-by-custom-opt-key)))
 
 
-;; use kushi.showcase instead of kushi.playground.showcase
-
-;; Then get button demo working
-
-;; in sx and css macros, support supplied data selector "[data-ks-ui=icon]", or "#blah" or [id=foo] or [something=something]
-
 
 (defn convert-opts [vc]
   (reduce 

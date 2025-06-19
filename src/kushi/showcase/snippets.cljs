@@ -1,11 +1,11 @@
-(ns ^:dev/always kushi.playground.showcase.snippets
+(ns ^:dev/always kushi.showcase.snippets
   (:require
    [clojure.repl]
    [clojure.edn]
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer [css defcss merge-attrs sx]]
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
-   [kushi.playground.showcase.shared :refer [pprint-str]]
+   [kushi.showcase.shared :refer [pprint-str]]
    [kushi.ui.tooltip :refer [tooltip-attrs]]
    [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.button :refer [button icon-button]]

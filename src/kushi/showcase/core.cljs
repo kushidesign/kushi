@@ -1,4 +1,4 @@
-(ns ^:dev/always kushi.playground.showcase.core
+(ns ^:dev/always kushi.showcase.core
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [bling.core :refer [bling callout]]
@@ -9,8 +9,8 @@
   ;;  [kushi.css.build.design-tokens
   ;;   :rename {design-tokens-by-component-usage dtoks-by-usage}]
    [kushi.ui.lightswitch :refer [light-dark-mode-switch]]
-   [kushi.playground.showcase.shared :refer [section-label pprint-str]]
-   [kushi.playground.showcase.modal :refer [example-modal-trigger example-modal]]
+   [kushi.showcase.shared :refer [section-label pprint-str]]
+   [kushi.showcase.modal :refer [example-modal-trigger example-modal]]
    [kushi.ui.tooltip :refer [tooltip-attrs]]
    [kushi.ui.icon.mui.svg :as mui.svg]
    [kushi.ui.divisor :refer [divisor]]
@@ -27,7 +27,7 @@
    [kushi.util]
    [kushi.css.media]
    [kushi.util :as util])
-  (:require-macros [kushi.playground.showcase.core :refer [fqns-sym+file-info]]))
+  (:require-macros [kushi.showcase.core :refer [fqns-sym+file-info]]))
 
 
 (defn resolve-variants
