@@ -226,13 +226,14 @@
 
 (defn- d1-grid-with-variant-labels
   [v-1d vks uic-fn variant-attrs variant-args demo]
+  #_(? (keyed [v-1d vks uic-fn variant-attrs variant-args demo]))
   (into [:div (merge-attrs 
                (sx :display--grid
                    :gtc--74px:max-content
                    :ai--c
                    :gap--0.75rem:1rem)
                {:style (:row-style demo)})]
-        (let [coll (resolve-variants v-1d vks)]
+        (let [coll (resolve-variants (or (:variant-scale demo) v-1d) vks)]
           (when (coll? coll)
             (reduce
              (fn [acc a]

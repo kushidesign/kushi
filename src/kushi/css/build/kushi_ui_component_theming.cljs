@@ -1089,11 +1089,13 @@
    "currentColor"
 
    "@supports(color: color-mix(in oklch, currentColor, transparent))"
-   {"--_fallback-stroke-color"
-    ;; "currentColor"
+   {"--_fallback-stroke-color" ;; "currentColor"
     ;; Somehow this doesn't work when switching between light and dark modes in Chrome?
-    "color-mix(in oklch, currentColor, transparent)"
-    }})
+    "color-mix(in oklch, currentColor, transparent)"}})
+
+ (defcss
+   "[data-ks-surface=\"transparent\"]"
+   {"--_stroke" ""})
                                      
 (defcss "[data-ks-surface=\"solid-classic\"], [data-ks-surface=\"soft-classic\"]"
   {

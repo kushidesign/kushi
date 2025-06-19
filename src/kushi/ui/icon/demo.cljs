@@ -1,15 +1,9 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.icon.demo
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.icon :refer [icon]]
-   ;; TODO should this be from showcase?
    [kushi.showcase.core
     :as showcase
-    :refer [samples samples-with-variant samples-with-template]]
-   [kushi.ui.tooltip :refer [tooltip-attrs]]
-   [kushi.core :refer (sx merge-attrs)]
-   [kushi.playground.component-examples :as component-examples]
-   [kushi.playground.util :refer-macros [sx-call]]))
+    :refer [samples samples-with-variant samples-with-template]]))
 
 
 (def icons-without-filled-variants
@@ -56,57 +50,6 @@
    "add-circle"
    "expand-circle-down"])
 
-
-'{:label   "Colorways"
-  ;;  :label/modal "Colorways ..."
- :desc    "Oh yeah"
-  ;;  :row-style {}
- :samples (samples-from-variant
-           {:variant         :sizing
-            :variant-labels? false
-            :variant-scale   :colorway/named
-            :attrs           {:sizing :xxxlarge}
-            :args            [:star]})}
-
-'{:label   "Colorways"
-  ;;  :label/modal "Colorways ..."
- :desc    "Oh yeah"
-  ;;  :row-style {}
- :samples (samples-from-template 
-           {:template-fn   myns/myfn            ; <- overrides :template? 
-            :attrs         {:sizing :xxxlarge}
-            :attrs/display {:sizing :xxxlarge
-                            :weight :light}
-            :args          [[:auto-awesome]
-                            [:help]
-                            [:info]
-                            [:favorite]
-                            [:settings]
-                            [:filter-alt]
-                            [:cloud-upload]
-                            [:download]
-                            '...]
-            })}
-
-;; for legacy
-'{:label     "Semantic colorways"
-  :desc      "Examples of semantic coloring of icons"
-  :row-style {}
-  :samples   (samples ["accent"
-                       [icon {:colorway :accent
-                              :sizing   :xxxlarge} :star]
-
-                       "negative"
-                       [icon {:colorway :negative
-                              :sizing   :xxxlarge} :cancel]
-
-                       "positive"
-                       [icon {:colorway :positive
-                              :sizing   :xxxlarge} :check-circle]
-
-                       "warning"
-                       [icon {:colorway :warning
-                              :sizing   :xxxlarge} :warning]])}
 
 
 

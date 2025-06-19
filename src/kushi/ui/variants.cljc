@@ -3,14 +3,14 @@
    [kushi.ui.util :refer [keyed]]
    #?(:clj [kushi.ui.ordered :refer [ordered-set]])))
 
-(def basic-contours
+(def contours-basic
   [:rounded :pill :sharp])
 
-(def auxillary-contours
+(def contours-auxillary
   [:circle :squircle])
 
-(def all-contours
-  (apply conj basic-contours auxillary-contours))
+(def contours
+  (apply conj contours-basic contours-auxillary))
 
 (def icon-style
   [:rounded :outlined :sharp])
@@ -43,9 +43,9 @@
   [:solid-classic :solid :soft-classic :soft :faint :outline :minimal :transparent])
 
 (def variants*
-  (keyed [basic-contours
-          auxillary-contours
-          all-contours
+  (keyed [contours-basic
+          contours-auxillary
+          contours
           icon-style
           spinner-type
           packing
@@ -94,6 +94,8 @@
    :packing           (:packing/set variants)
    :spinner-type      (:spinner-type/set variants)
    :contour           (:contours/set variants)
+   :contour/basic     (:contours-basic/set variants)
+   :contour/auxillary (:contours-auxillary/set variants)
    :icon-style        (:icon-style/set variants)})
 
 (def ordered-variants-by-custom-opt-key
@@ -106,12 +108,12 @@
    :packing           (:packing/vector variants)
    :spinner-type      (:spinner-type/vector variants)
    :contour           (:contours/vector variants)
+   :contour/basic     (:contours-basic/vector variants)
+   :contour/auxillary (:contours-auxillary/vector variants)
    :icon-style        (:icon-style/vector variants)})
 
 (def variants-by-custom-opt-key-set
   (into #{} (keys variants-by-custom-opt-key)))
-
-
 
 (defn convert-opts [vc]
   (reduce 

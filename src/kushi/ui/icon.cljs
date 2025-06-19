@@ -47,64 +47,28 @@
    `[icon mui.svg/add]`. You can also create and utilize similar namespace in
    your own project with your own collection of icon `svg`s."
 
+   ;; TODO - remove desc and pull from shared defs
    :opts {:sizing       {:default :medium
-                         :desc    "Corresponds to the font-size based on Kushi's font-size scale."
-                         :demo    {:label           "Sizes"
-                                   :attrs           {}
-                                   :variant-labels? false
-                                    ;; :x-variants [:weight]
-                                   :args            [:star]
-                                   :row-style       {:width           "100%"
-                                                     :justify-content "space-between"}}}
+                         :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
           
           :weight       {:default :normal
-                         :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."
-                         :demo    {:label           "Weights"
-                                   :attrs           {}
-                                   :attrs/display   {:sizing :xxxlarge}
-                                   :variant-labels? false
-                                   :args            [:star]
-                                   :row-style       {:width           "100%"
-                                                     :justify-content "space-between"}}}
+                         :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."}
           
           :colorway     {:default nil
-                         :desc    "Colorway of the icon. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
-                         :demo    [{:label           "Colorways"
-                                    :attrs           {:sizing :xxxlarge}
-                                    :args            [:star]
-                                    :variant-labels? false
-                                    :variant-scale   :colorway/named}
-                                   {:label           "Colorways, filled icon"
-                                    :attrs           {:icon-filled? true
-                                                      :sizing       :xxxlarge}
-                                    :args            [:star]
-                                    :variant-labels? false
-                                    :variant-scale   :colorway/named}]}
+                         :desc    "Colorway of the icon. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."}
           
           :icon-filled? {:schema  boolean?
                          ;; :required? true
                          :default false
-                         :desc    "Filled or not filled"
-                         :demo    {:label         "Filled icon"
-                                   :attrs         {}
-                                   :attrs/display {:sizing :xxxlarge}
-                                   :args          [:star]}}
+                         :desc    "Filled or not filled"}
           
           :icon-style   {:schema  (into #{} defs/icon-style)
                          :default :outlined
-                         :desc    "Style of icon"
-                         :demo    {:label "Icon styles"
-                                   :attrs {:sizing :xxxlarge}
-                                   :args  [:login]}}
+                         :desc    "Style of icon"}
           
           :inert?       {:schema  boolean?
                          :default false
-                         :desc    "Determines whether the icon will feature hover and active styles"
-                         :demo    {:label "Inert or interactive styling"
-                                   :attrs {:sizing       :xxxlarge
-                                           :icon-filled? true 
-                                           :colorway     :positive}
-                                   :args  [:star]}}}}
+                         :desc    "Determines whether the icon will feature hover and active styles"}}}
   [& args]
   (when ^boolean js/goog.DEBUG (validate args))
   (let [{:keys [opts attrs children]}                              

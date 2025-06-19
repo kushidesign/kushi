@@ -11,6 +11,7 @@
    [kushi.ui.button :refer [button]]
    [kushi.showcase.core :as showcase :refer [showcase]]
    [kushi.ui.button :refer [button]]
+   [kushi.ui.button.demo]
    [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start]]
    [kushi.ui.layout :refer [layout]]
    [kushi.ui.icon :refer [icon]]
@@ -55,8 +56,6 @@
       (string/capitalize (:value m))]]))
 
 (defn main-view []
-
-
   (.setAttribute (domo/el-by-id "app")
                  "data-ks-playground-active-path"
                  "components")
@@ -68,8 +67,7 @@
   ;;                 [:* [:not :map]]]
   ;;                [{:foo 8} 2 3 4]))
 
-
-  [:div (sx :m--100px)
+  #_[:div (sx :m--100px)
    #_[button {:start-enhancer :pets} "Click"]
    [icon {:ns           (at)
           :colorway     :red
@@ -81,21 +79,37 @@
           :id           :foo}
     :star]]
 
-
   #_[:div (sx :m--100px)
      [button {:colorway       :red 
               :start-enhancer :pets
               :surface        :solid}
       "Click"]]
 
-  ;; (? (uic-showcase-map3 kushi.ui.icon.demo/demos))
 
-  [showcase (!? (showcase/opts kushi.ui.icon/icon
+  ;; (? (uic-showcase-map3 kushi.ui.icon.demo/demos))
+  ;; get spinner working
+  ;; get radio working
+
+
+  #_[button
+   {:loading?     true
+    :colorway     :accent
+    :surface      :solid
+    :sizing       :small
+    :end-enhancer [spinner {:spinner-type :donut}]}
+   "Play"]
+
+  #_[showcase (!? (showcase/opts kushi.ui.icon/icon
                                kushi.ui.icon.demo/demos))]
 
-  #_[showcase (uic-showcase-map2 kushi.ui.spinner/spinner #_kushi.ui.icon.demo/demos)]
+  [showcase (!? (showcase/opts kushi.ui.button/button
+                               kushi.ui.button.demo/demos))]
 
-  #_[showcase (uic-showcase-map2 kushi.ui.button/button #_kushi.ui.icon.demo/demos)]
+  #_[showcase (uic-showcase-map2 kushi.ui.spinner/spinner 
+                                 #_kushi.ui.icon.demo/demos)]
+
+  #_[showcase (uic-showcase-map2 kushi.ui.button/button 
+                                 #_kushi.ui.icon.demo/demos)]
 
   
 

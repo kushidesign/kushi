@@ -27,10 +27,9 @@
 (defmacro samples [vc]
   (let [samples vc
         m*      (fn [sample label]
-                  (merge 
-                   {:code/evaled sample
-                    :code/quoted (list 'quote sample)}
-                   (when label {:label label})))
+                  (merge {:code/evaled sample
+                          :code/quoted (list 'quote sample)}
+                         (when label {:label label})))
         ret     (if-let [partitioned 
                          (ui-demo-samples-partioned samples)]
                   (mapv (fn [[label sample]] (m* sample label))
@@ -74,11 +73,12 @@
     
     ;; (? (keyed [toks uic-ns-name uic-name uic-ns-sym fq-uic-sym fq-uic-name]))
     
-    `(let [opts# (->> ~demos-sym 
-                      (filter :opt)
-                      (reduce (fn [acc# m#]
-                                (assoc acc# (:opt m#) (dissoc m# :opt)))
-                              {}))
+    `(let [
+          ;;  opts# (->> ~demos-sym 
+          ;;             (filter :opt)
+          ;;             (reduce (fn [acc# m#]
+          ;;                       (assoc acc# (:opt m#) (dissoc m# :opt)))
+          ;;                     {}))
            opts# (->> ~demos-sym 
                        (keep (fn [m#] 
                                  (when (-> m# :samples meta :kushi.ui.showcase/opt)
@@ -94,7 +94,7 @@
                                   (merge (:samples m#) (dissoc m# :samples))
                                   (-> m# :samples meta :kushi.ui.showcase/demo)
                                   m#)))
-                        (into []))
+                       (into []))
            ]
        (!? demos#)
        {:demos        (!? demos#)
