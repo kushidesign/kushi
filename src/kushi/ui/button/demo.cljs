@@ -41,18 +41,6 @@
                :attrs          {:end-enhancer :east},
                :rows?          true})}
 
-   {:label   "Sizing"
-    ;;  :label/modal "Colorways ..."
-    :desc    "Sizes from xxxsmall to xxxlarge"
-    ;; :row-style {:border "1px solid red"}
-    :samples (samples-with-variant
-              {:variant :sizing
-              ;; :variant-labels? false
-               :attrs   {:surface      :solid
-                         :end-enhancer :east
-                         :colorway     :accent}
-               :args    ["Next"]})}
-   
    {:label   "Contour variants"
     :desc    "Contour of the button."
     :samples (samples-with-variant
@@ -70,7 +58,7 @@
                          :colorway     :accent},
                :args    ["Next"],
                :variant :surface})}
-
+   
    {:desc    "General amount of padding inside the button",
     :label   "Packing variants",
     :samples (samples-with-variant
@@ -79,6 +67,18 @@
                          :surface      :solid},
                :args    ["Next"],
                :variant :packing})}
+
+   {:label   "Sizing"
+    ;;  :label/modal "Colorways ..."
+    :desc    "Sizes from xxxsmall to xxxlarge"
+    ;; :row-style {:border "1px solid red"}
+    :samples (samples-with-variant
+              {:variant :sizing
+              ;; :variant-labels? false
+               :attrs   {:surface      :solid
+                         :end-enhancer :east
+                         :colorway     :accent}
+               :args    ["Next"]})}
 
    {:schema  #{:inside :outside},
     :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`",
