@@ -429,7 +429,7 @@ invalid:   :xxxlargess
            ^^^^^^^^^^^
 
 
-    ┌─ kushi/playground/showcase/core.cljs:210:8
+    ┌─ kushi.showcase/core.cljs:210:8
     │  
 210 │ (buttonx (merge-attrs (sx :c--gre ...
     │ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

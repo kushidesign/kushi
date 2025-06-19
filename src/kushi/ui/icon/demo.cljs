@@ -3,7 +3,7 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.icon :refer [icon]]
    ;; TODO should this be from showcase?
-   [kushi.playground.showcase.core
+   [kushi.showcase.core
     :as showcase
     :refer [samples samples-with-variant samples-with-template]]
    [kushi.ui.tooltip :refer [tooltip-attrs]]

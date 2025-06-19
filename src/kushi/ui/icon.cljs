@@ -125,7 +125,7 @@
 
     [:div
      (merge-attrs
-      (sx ".kushi-icon"
+      (sx "[data-ks-ui=\"icon\"]"
           :.transition
           :position--relative
           :d--inline-flex
@@ -143,9 +143,7 @@
 
           :_svg:height--1em
           :_svg>path:fill--currentColor)
-      {
-       :data-ks-ui       :icon
-       :data-ks-inert    (when (true? inert?) "")
+      {:data-ks-inert    (when (true? inert?) "")
        :data-ks-ns       ns
        :data-ks-surface  :transparent
        :data-ks-sizing   sizing
@@ -156,6 +154,7 @@
        (and (vector? icon*) (= :svg (first icon*)))
        icon*
 
+       ;; TODO - Use with another icon set
        (every? #(or (string? %) (keyword? %)) children)
        (let [icon-name  (icon-name->snake-case-string children)
              icon-font  "material-symbols"

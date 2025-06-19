@@ -453,7 +453,7 @@
 
                               
                    "%cSuggested fix:%c  " "%c" prop "%c"
-                   (when (string/starts-with? (str src-ns) "kushi.playground.showcase")
+                   (when (string/starts-with? (str src-ns) "kushi.showcase")
                      (str "\n\nThis is caused by a variant example or demo\nfrom "
                           (:fn/fq-name schema)))
                    )

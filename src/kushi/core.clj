@@ -568,7 +568,8 @@
     :classes [...]}"
   ([m]
    (user-classlist m nil))
-  ([{:keys [class-kw class-binding] :as m} loc-id]
+  ([{:keys [class-kw class-binding] :as m}
+    loc-id]
    (let [class-kw-stringified (map specs/dot-kw->s class-kw)]
      {:class-binding class-binding
       :classes       (into []
@@ -578,6 +579,7 @@
 
 (declare conformed-args)
 
+;; TODO gradually add changes back in
 (defn- classlist
   "Returns classlist vector of classnames as strings. Includes user-supplied
    classes, as well as auto-generated, namespace-derived classname from `css`
@@ -586,16 +588,96 @@
    (classlist {:ns {:name "ns.unknown"}} form args))
   ([env form args]
    (let [fa                 (first args)
-         supplied-classname (when (and (string? fa) (re-find #"^\.[^\.]" fa))
+         supplied-classname (when (and (string? fa)
+                                       (re-find specs/classname-with-dot-re fa))
                               (subs fa 1))
-         sel                (or supplied-classname (some-> env (loc-id form)))
+         id-selector        (and (string? fa)
+                                 (re-find specs/id-with-hash-re fa)
+                                 fa)
+         attr-selector      (and (string? fa)
+                                 (re-find specs/attribute-selector-re fa)
+                                 fa)
+         sel                (or supplied-classname
+                                id-selector
+                                attr-selector
+                                (some-> env (loc-id form)))
          args               (if supplied-classname (rest args) args)
          m                  (-> args
                                 conformed-args
                                 :conformed-args
                                 vectorized*
-                                :conformed-map)]
-     (user-classlist m sel))))
+                                :conformed-map)
+         alternate-selectors (merge (when id-selector
+                                      {:id (subs id-selector 1)})
+                                    (when attr-selector
+                                        (let [[_ attr val] (re-find specs/attribute-selector-re-with-capturing attr-selector)
+                                              val (-> val
+                                                      (string/replace #"^[\"\']" "")
+                                                      (string/replace #"[\"\']$" ""))]
+                                          {attr val})))
+         user-classlist     (assoc (user-classlist
+                                    m 
+                                    (when-not (or id-selector attr-selector)
+                                      sel))
+                                   :alternate-selectors
+                                   alternate-selectors )]
+(when (= fa "[data-ks-ui=\"icon\"]")
+       (println (re-find specs/attribute-selector-re-with-capturing "[data-ks-ui=\"icon\"]"))
+       #_(pprint (keyed [
+                      ;;  fa
+                      ;;  supplied-classname
+                      ;;  sel
+                      ;;  args
+                      ;;  m
+                      ;;  attr-selector
+                      ;;  m
+                       user-classlist
+                       ])))
+     user-classlist)))
+
+(defn- classlist2
+  "Returns classlist vector of classnames as strings. Includes user-supplied
+   classes, as well as auto-generated, namespace-derived classname from `css`
+   macro."
+  ([form args]
+   (classlist2 {:ns {:name "ns.unknown"}} form args))
+  ([env form args]
+   (let [fa                 (first args)
+         supplied-classname (when (and (string? fa)
+                                       (re-find specs/classname-with-dot-re fa))
+                              (subs fa 1))
+         data-attr-selector (and (string? fa)
+                                 (re-find specs/attribute-selector-re fa)
+                                 fa)
+         id-selector        (and (string? fa)
+                                 (re-find specs/id-with-hash-re fa)
+                                 fa)
+         sel                (or supplied-classname
+                                data-attr-selector
+                                id-selector
+                                (some-> env (loc-id form)))
+         args               (if supplied-classname (rest args) args)
+         m                  (-> args
+                                conformed-args
+                                :conformed-args
+                                vectorized*
+                                :conformed-map)
+         user-classlist     (assoc (user-classlist m supplied-classname)
+                                   :alternate-selectors
+                                   (merge (when id-selector 
+                                            {:id (subs id-selector 1)})
+                                          #_(when id-selector 
+                                            {:id (subs id-selector 1)})))]
+     (when (= fa "#foo")
+       (pprint (keyed [fa
+                       supplied-classname
+                       sel
+                       args
+                       m
+                       data-attr-selector
+                       m
+                       user-classlist])))
+     user-classlist)))
 
 (defn- spaces [n] (string/join (repeat n " ")))
 
@@ -1093,11 +1175,15 @@
    boilerplate when you are only applying styling to an element and therefore do
    not need to supply any html attributes other than :class."
   [& args]
-  (let [{:keys [classes class-binding]}
+  (let [{:keys [classes class-binding alternate-selectors]}
         (classes+class-binding args &form &env)]
     (if (seq class-binding) 
-      `{:class (kushi.core/class-str ~classes)}
-      {:class (string/join " " classes)})))
+      (if alternate-selectors
+        `(merge {:class (kushi.core/class-str ~classes)}
+                alternate-selectors)
+        `{:class (kushi.core/class-str ~classes)})
+      (merge {:class (string/join " " classes)}
+             alternate-selectors))))
 
 
 ;; TODO - maybe dry this up with ?css

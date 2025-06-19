@@ -129,6 +129,32 @@
   ;; ".foo:c-r" -> invalid
   #"^\.\D[^\:\s]*$")
 
+(def id-with-hash-re
+  ;; ".foo"     -> valid
+  ;; ".foo-3"   -> valid
+  ;; ".foo--3"  -> valid
+  ;; ".foo--3"  -> valid
+  ;; "."        -> invalid
+  ;; ".3foo"    -> invalid
+  ;; ".foo:c-r" -> invalid
+  #"^\#\D[^\:\s]*$")
+
+(def attribute-selector-re
+  ;; "[data-foo=\"bar\"]" -> valid
+  ;; "[data-foo=bar]"     -> invalid
+  ;; "[data-foo]"         -> valid
+  ;; "[data-foo=\"\"]"    -> invalid
+  ;; "[name=\"foo\"]"     -> valid
+  ;; "[2name=\"foo\"]"    -> invalid
+  ;; "[id=\"foo\"]"       -> valid
+  ;; "[id]"               -> valid
+  ;; "[i="foo"]"          -> valid although no such attribute 
+  ;; TODO - should this be extended to allow all unicode things like data-foo-ɰ=\"Ҽ\"
+  #"^\[\D[a-zA-Z0-1_-]*(?:=(?:\"[^\"]+\"|\'[^\']+\'))?\]$")
+
+(def attribute-selector-re-with-capturing
+  #"^\[(\D[a-zA-Z0-1_-]*)(?:=(\"[^\"]+\"|\'[^\']+\'))?\]$")
+
 (def var-re-base
   "([a-zA-Z_-]+[a-zA-Z0-9_-\\|]*)")
 
@@ -196,12 +222,12 @@
 (s/def ::keyframe-selector
   (s/and 
    string?
-   #(re-find #"^@keyframes [a-z]+.*$" %)))
+   #(re-find #"^@keyframes [a-zA-Z0-1_-]+.*$" %)))
 
 (s/def ::layer-selector
   (s/and 
    string?
-   #(re-find #"^@layer [a-z_-]+.*$" %)))
+   #(re-find #"^@layer [a-zA-Z0-1_-]+.*$" %)))
 
 
 ;; ## Specs for css-values -----------------------------------------------------
@@ -229,9 +255,14 @@
   (s/and keyword?
          #(re-find classname-with-dot-re (name %))))
 
-(s/def ::supplied-classname
+(s/def ::supplied-selector
   (s/and string?
-         #(re-find classname-with-dot-re (name %))))
+         (s/or :classname-with-dot
+               #(re-find classname-with-dot-re (name %))
+               :attribute-selector
+               #(re-find attribute-selector-re (name %))
+               :id-selector
+               #(re-find id-with-hash-re (name %)))))
 
 
 ;; ## Specs for keyframes ------------------------------------------------------
@@ -256,7 +287,7 @@
 
 ;; Spec for the 'prop-side' (left in en) of a tokenized keyword e.g.:
 ;; :sm:dark:hover:b--1px:solid:red
-;; ^^^^^^^^^^^^^^^^
+;; ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 (s/def ::tok-kw-css-prop-stack
   (s/and keyword? #(re-find tok-kw-css-prop-stack-re (name %))))
 
@@ -315,7 +346,7 @@
 
 (s/def ::valid-sx-arg
   (s/or 
-   :supplied-classname ::supplied-classname
+   :supplied-selector ::supplied-selector
    :class-kw           ::class-kw
    :tokenized          ::tokenized
    :style-vec          ::style-vec

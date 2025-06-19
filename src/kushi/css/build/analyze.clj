@@ -169,9 +169,11 @@
    "kushi-ui-styles"
    "Styles defined for elements of kushi ui components."
 
+   ;; TODO -- Change this to showcase
    "kushi-playground-shared" 
    "Styles to be shared across or within families of kushi.playground namespaces."
 
+   ;; TODO -- Change this to showcase
    "kushi-playground-styles"
    "Styles defined for elements of kushi.playground components."
 
@@ -197,7 +199,9 @@
   [coll [_ s]]
   (or (some #(string/starts-with? s %) coll)
       (string/starts-with? s "kushi/ui")
+      ;; Remove this when you rename all playground stuff
       (string/starts-with? s "kushi/playground")
+      (string/starts-with? s "kushi/showcase")
       ;; (string/starts-with? s "kushi/css")
       (= s "kushi/core.cljs") ;; <- this is for using css-include to pull in
                               ;;    build/kushi-reset.css (or others for dev)

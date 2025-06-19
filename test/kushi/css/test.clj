@@ -36,6 +36,33 @@
             [taoensso.tufte :as tufte :refer [p profile]]
             ))
 
+;; '["["
+;;   [:non-digit]
+;;   [:zero-or-more [:or :a-z :A-Z :0-1 "_" "-"]]
+;;   [:optional 
+;;    "="
+;;    [:alt
+;;     :anything-in-double-quotes ;; ["\"" [:anything-but "\""] "\""]
+;;     :anything-in-single-quotes ;; ["\'" [:anything-but "\'"] "\'"]
+;;     ]]
+;;   "]"]
+
+;; (? (re-find #"^\[\D[a-zA-Z0-1_-]*(?:=(?:\"[^\"]+\"|\'[^\']+\'))?\]$"
+;;             "[data-ks-ui='\"']"))
+
+
+;; (def re #"^\[data-[a-zA-Z0-1_-]+(?:=\"?[a-z]+\")?\]$")
+;; (? (re-find re "[data-ks-ui=\"foo\"]"))
+;; (? (re-find re "[data-ks-ui]"))
+
+;; (? (s/explain-data ::specs/supplied-selector "[data-ks-ui=\"icon\"]"))
+
+#_(? (css
+    "[data-ks-ui=\"button\"]"
+    :.relative
+    :m--10px
+    nil nil))
+
 #_(tufte/add-basic-println-handler! {})
 
     #_(profile ; Profile any `p` forms called during body execution
