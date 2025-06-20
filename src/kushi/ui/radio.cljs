@@ -79,6 +79,7 @@
                           :.transition
                           :transition-duration--$xxfast
                           :cursor--pointer
+                          :+label:cursor--pointer
                           [:border-color
                            "color-mix(in hsl, currentColor 55%, transparent)"]
                           [:checked:border-color

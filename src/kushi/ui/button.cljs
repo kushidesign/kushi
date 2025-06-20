@@ -12,7 +12,8 @@
 
 
 (defn ^:public button
-  {:summary "Buttons provide cues for actions and events."
+  {
+   :summary "Buttons provide cues for actions and events."
 
    :desc    "Buttons are fundamental components that allow users to process actions or navigate an experience.
               

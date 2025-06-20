@@ -278,13 +278,6 @@
 
    ;; Position utility classes -------------------------------------------------
 
-   :static               {:position :static}
-   :relative             {:position :relative}
-   :absolute             {:position :absolute}
-   :fixed                {:position :fixed}
-   :sticky               {:position :sticky}
-
-
    ;; Non-combo flex utility classes 
 
    :shrink               {:flex-shrink 1}
@@ -292,6 +285,17 @@
    :grow                 {:flex-grow 1}
    :no-grow              {:flex-grow 0}
 
+  ;;  :shrink-no-grow-no
+  ;;  :shrink-yes-grow-no
+  ;;  :shrink-yes-grow-yes
+  ;;  :shrink-no-grow-yes
+
+   ;; data-ks-positioning
+   :static               {:position :static}
+   :relative             {:position :relative}
+   :absolute             {:position :absolute}
+   :fixed                {:position :fixed}
+   :sticky               {:position :sticky}
 
 
    ;; Combinatorial absolute and fixed positioning utilities
@@ -470,6 +474,7 @@
   [;; General
    ;; --------------------------------------------------------------------------
    ;; TODO - consider [data-ks-offscreen]
+
    :offscreen {:position :absolute
                :left     :-10000px
                :top      :auto
@@ -481,6 +486,7 @@
    ;; Icon enhancement - maybe you don't need if you make a 
    ;; label component that has this built-in?
    ;; --------------------------------------------------------------------------
+
    :enhanceable-with-icon {:gap :$icon-enhanceable-gap}
 
 
@@ -490,6 +496,7 @@
    ;; TODO - consider using data-ks-debossed-text-level
    ;;        and maybe also :debossed-level on lib components
    ;; --------------------------------------------------------------------------
+
    :debossed-text {:text-shadow "0 1px 2px hsl(0deg 0% 100% / 55%), 0 -1px 2px hsl(0deg 0% 0% / 27%)"}
    :embossed-text {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}
 
@@ -498,6 +505,7 @@
    ;; TODO convex 0-5 plus dark-mode
    ;; TODO - consider using data-ks-convex-level
    ;;        and maybe also :convex-level on lib components
+
    :convex        {:background-image :$convex-1}
    :convex-0      {:background-image :$convex-0}
    :convex-1      {:background-image :$convex-1}
@@ -510,7 +518,9 @@
    ;; TODO - use scale-of-utility-defs
    ;; TODO - consider using data-ks-elevation-level
    ;;        and maybe also :elevation on lib components
+
    :elevated-0    {:box-shadow :$elevated-0}
+
    :elevated-1    {:box-shadow      :$elevated-1
                    :dark:box-shadow :$elevated-1-dark-mode}
    :elevated-2    {:box-shadow      :$elevated-2
@@ -703,26 +713,45 @@
 
 (def all-classes 
   [
+   ;; data-ks-flexbox="row-end"
    ;; flex-utility classes e.g. :.flex-row-fe
    combo-flex-utility-classes
 
+   ;; data-ks-debug="red"
    ;; debugging outline helpers  :.outline-red
    debug-outline-classes
 
+   ;; data-ks-foreground-color="red"
    foreground-color-classes
 
    ;; These are combinatorial classes dealing with:
+
+   ;; data-ks-positioning="absolute-block-end-inside "
    ;; - abs fixed pos   e.g. :.absolute-block-end-inside 
+
+   ;; data-ks-debug="red"
    ;; - debugging       e.g. :.debug-grid-8, :.wireframe
+
+   ;; data-ks-divisor="block-start"
    ;; - divisors        e.g. :.divisor-block-start
+
+   ;; data-ks-bounding="bordered"
    ;; - bounding        ->   :.outlined and :.bordered
+
+
+   ;; data-ks-flex-elastic="shrink-yes-grow-no"
    ;; - flex helpers    ->   :.shrink, :.no-shrink, :.grow, :.no-grow
+
+   ;; data-ks-background-image-behavior="cover"
    ;; - bg image help   ->   :.bg-image-cover, :.bg-image-contain
+
+   ;; data-ks-transition-speed="xxxfast"
    ;; - animation       ->   :.transition
    (kws->dot-strs base-classes)
 
    ;; These are geometry-based absolute and fixed positioning utilities 
    ;; e.g. :.top-left-outside :.top-left-corner-outside etc.
+   ;; data-ks-positioning="top-left-outside"
    geom-top-left-corners
    geom-top-right-corners
    geom-bottom-left-corners
@@ -734,6 +763,7 @@
 
    ;; maybe eliminate completely?
    (kws->dot-strs override-classes)
+
 
    global-selectors
 
@@ -761,6 +791,11 @@
    
    data-ks-weight-synced])
 
+   ;; OTHERS
+   ;; data-ks-convex-level="5"
+   ;; data-ks-elevation-level="5"
+   ;; data-ks-text-effect="deboss"
+   ;; data-ks-enhanceable-with-icon=""
 
 (def utility-class-ks
   (mapcat util/kwargs-keys all-classes))

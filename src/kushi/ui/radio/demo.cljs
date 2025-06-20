@@ -69,7 +69,46 @@
                          :name :bar}]
                  [:label
                   (merge-attrs (sx :.pointer :padding-inline-start--0.5em)
-                               {:for :bar-maybe}) "Maybe"]]]])}
+                               {:for :bar-maybe}) "Maybe"]]]
+                               
+                               
+               ;; sample code with data-ks-centric approach
+               #_[:div 
+                (merge-attrs
+                 (sx :_label:padding-inline-start--0.5em)
+                 (data-ks {:flexbox   :row-start
+                           :boundary* 1
+                           :radius*   5}))
+                [flex-row-start 
+                 {:colorway :magenta
+                  :gap*     1      
+                  :surface  :transparent} 
+                 [radio {:id             :bar-yes
+                         :name           :bar
+                         :defaultChecked true}]
+                 [:label {:for :bar-yes}
+                  "Yes"]]
+                [flex-row-start 
+                 {:colorway :magenta
+                  :gap*     1      
+                  :surface  :transparent}
+                 [radio {:id   :bar-no
+                         :name :bar}]
+                 [:label
+                  (merge-attrs {:for :bar-no})
+                  "No"]]
+
+                [flex-row-start 
+                 {:colorway :magenta
+                  :gap*     1      
+                  :surface  :transparent}
+                 [radio {:id   :bar-maybe
+                         :name :bar}]
+                 [:label
+                  (merge-attrs {:for :bar-maybe})
+                  "Maybe"]]]
+                  
+                  ])}
    
     {:label   "Radio sizes"
      :samples (samples-with-variant 

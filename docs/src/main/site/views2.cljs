@@ -8,6 +8,7 @@
    [kushi.core :refer [?sx sx css merge-attrs at]]
    [kushi.playground.shared-styles]
    [kushi.ui.variants]
+   [kushi.ui.core :refer [defui]]
 
    [kushi.showcase.core :as showcase :refer [showcase]]
 
@@ -48,10 +49,21 @@
    ;; [malli.core :as m]
    [kushi.ui.defs :as defs]))
 
-;; (sx "@keyframes wtf dd" 7)
 
 
+
+
+;; Experimental macro calls
+;; (defui bang 
+;;   {:opts {:foo {:schema number?} 
+;;           :bar {:schema string?}}}
+;;   (js/console.log bar))
+;; (bang {:foo 3 :bar "buzz"})
 ;; (js/console.clear)
+
+
+
+
 #_(pprint (? :data {1 2 3 :x}))
 
 
@@ -111,6 +123,15 @@
 
 
   ;; (? (uic-showcase-map3 kushi.ui.icon.demo/demos))
+  
+  ;; Take stock on conventions and see if you can use defui macro
+  ;; maybe see if you can make macro to rewrite fns into macro
+  ;; write outer let body in macro then insert postwalked-body?
+  ;; make it easy to fall back to expanded defn if you want
+  
+  ;; if macro works, try conditional compiltion for another framework 
+
+
   ;; Change kpg to showcase
   ;; switch
   ;; slider

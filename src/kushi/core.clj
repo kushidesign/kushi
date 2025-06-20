@@ -1665,20 +1665,6 @@
              })))
        ~opt))
 
-(defmacro validate-options
-  "To be called from inside kushi component definitions that have a metadata map.
-   Body code will be optimized away for prod builds, which effectively returns
-   nil."
-  [f opts src]
-  `(when (and ^boolean js/goog.DEBUG kushi.core/debug-ui?)
-      (kushi.core/validate-options* {:uic-meta      (-> ~f var meta)
-                                     :supplied-opts ~opts 
-                                     :src           ~src})))
-
-
-
-
-
 (defmacro at
   "Provides a data-ks-src with source-code coordinates"
   []
