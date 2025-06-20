@@ -8,14 +8,38 @@
    [kushi.core :refer [?sx sx css merge-attrs at]]
    [kushi.playground.shared-styles]
    [kushi.ui.variants]
-   [kushi.ui.button :refer [button]]
+
    [kushi.showcase.core :as showcase :refer [showcase]]
-   [kushi.ui.button :refer [button]]
-   [kushi.ui.button.demo]
-   [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start]]
-   [kushi.ui.layout :refer [layout]]
-   [kushi.ui.icon :refer [icon]]
-   [kushi.ui.icon.demo]
+
+  ;;  [kushi.ui.button :refer [button]]
+
+  ;;  [kushi.ui.button :refer [button]]
+  ;;  [kushi.ui.button.demo]
+
+  ;;  [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start]]
+  ;;  [kushi.ui.layout :refer [layout]]
+
+  ;;  [kushi.ui.icon :refer [icon]]
+  ;;  [kushi.ui.icon.demo]
+
+  ;;  [kushi.ui.spinner :refer [spinner]]
+  ;;  [kushi.ui.spinner.demo]
+
+  ;;  [kushi.ui.callout :refer [callout]]
+  ;;  [kushi.ui.callout.demo]
+
+  ;;  [kushi.ui.tag :refer [tag]]
+  ;;  [kushi.ui.tag.demo]
+
+  ;;  [kushi.ui.checkbox :refer [checkbox]]
+  ;;  [kushi.ui.checkbox.demo]
+
+   [kushi.ui.radio :refer [radio]]
+   [kushi.ui.radio.demo]
+
+   [kushi.ui.avatar :refer [avatar]]
+   [kushi.ui.avatar.demo]
+
   ;;  [kushi.ui.label :refer [label]]
   ;;  [kushi.ui.radio :refer [radio]]
    [kushi.ui.spinner :refer [spinner]]
@@ -27,7 +51,7 @@
 ;; (sx "@keyframes wtf dd" 7)
 
 
-(js/console.clear)
+;; (js/console.clear)
 #_(pprint (? :data {1 2 3 :x}))
 
 
@@ -80,15 +104,17 @@
     :star]]
 
   #_[:div (sx :m--100px)
-     [button {:colorway       :red 
+        [button {:colorway       :red 
               :start-enhancer :pets
               :surface        :solid}
       "Click"]]
 
 
   ;; (? (uic-showcase-map3 kushi.ui.icon.demo/demos))
-  ;; get spinner working
-  ;; get radio working
+  ;; Change kpg to showcase
+  ;; switch
+  ;; slider
+  ;; popover
 
 
   #_[button
@@ -102,16 +128,28 @@
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
                                kushi.ui.icon.demo/demos))]
 
-  [showcase (!? (showcase/opts kushi.ui.button/button
+  #_[showcase (!? (showcase/opts kushi.ui.tag/tag
+                               kushi.ui.tag.demo/demos))]
+
+  #_[showcase (!? (showcase/opts kushi.ui.button/button
                                kushi.ui.button.demo/demos))]
 
-  #_[showcase (uic-showcase-map2 kushi.ui.spinner/spinner 
-                                 #_kushi.ui.icon.demo/demos)]
+  #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
+                               kushi.ui.spinner.demo/demos))]
 
-  #_[showcase (uic-showcase-map2 kushi.ui.button/button 
-                                 #_kushi.ui.icon.demo/demos)]
+  #_[showcase (? {:display-metadata? false}
+               (showcase/opts kushi.ui.callout/callout
+                              kushi.ui.callout.demo/demos))]
 
-  
+  #_[showcase (? {:display-metadata? false}
+               (showcase/opts kushi.ui.checkbox/checkbox
+                              kushi.ui.checkbox.demo/demos))]
+
+  #_[showcase (showcase/opts kushi.ui.radio/radio
+                              kushi.ui.radio.demo/demos)]
+
+  [showcase (showcase/opts kushi.ui.avatar/avatar
+                           kushi.ui.avatar.demo/demos)]
 
   #_[:div 
   ;;  [icon

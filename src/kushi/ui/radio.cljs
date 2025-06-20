@@ -13,7 +13,7 @@
           when only one choice may be selected from a set of related options."
    }
   [& args]
-  (let [{:keys [opts attrs children]} (extract args)
+  (let [{:keys [opts attrs children]} (extract args [:input-attrs])
         {:keys [input-attrs size]}    opts]
     (into
      [:label
@@ -70,36 +70,40 @@
 
 
 (defn radio [& args]
-  (let [{:keys [opts attrs]} (extract args)]
+  (let [{:keys [opts attrs]} (extract args)
+        {:keys [sizing colorway]} opts]
     [:input
      (merge-attrs
-      {:class               (css
-                             ".kushi-radio-button"
-                             :.transition
-                             :transition-duration--$xxfast
-                             :cursor--pointer
-                             [:border-color
-                              "color-mix(in hsl, currentColor 55%, transparent)"]
-                             [:checked:border-color
-                              :currentColor]
-                             :display--grid
-                             :place-content--center
-                             :-webkit-appearance--none
-                             :appearance--none
-                             :bgc--transparent
-                             :m--0
-                             :color--currentColor
-                             :width--1em
-                             :height--1em
-                             :border-style--solid
-                             :border-width--$input-border-weight-normal
-                             :border-color--currentColor
-                             :checked:border-width--0.333em
-                             :checked:border-offset---0.333em
-                             :o--1
-                             :border-radius--50%)
+      {:class            (css
+                          ".kushi-radio-button"
+                          :.transition
+                          :transition-duration--$xxfast
+                          :cursor--pointer
+                          [:border-color
+                           "color-mix(in hsl, currentColor 55%, transparent)"]
+                          [:checked:border-color
+                           :currentColor]
+                          :display--grid
+                          :place-content--center
+                          :-webkit-appearance--none
+                          :appearance--none
+                          :bgc--transparent
+                          :m--0
+                          :color--currentColor
+                          :width--1em
+                          :height--1em
+                          :border-style--solid
+                          :border-width--$input-border-weight-normal
+                          :border-color--currentColor
+                          :checked:border-width--0.333em
+                          :checked:border-offset---0.333em
+                          :o--1
+                          :border-radius--50%)
        :data-ks-ui       :radio
-       :type                :radio}
+       :data-ks-sizing   sizing
+       :data-ks-colorway colorway
+       :data-ks-surface  :transparent
+       :type             :radio}
       attrs)]))
 
 

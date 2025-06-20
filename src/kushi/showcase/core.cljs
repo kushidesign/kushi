@@ -26,8 +26,71 @@
    [kushi.ui.variants :as variants]
    [kushi.util]
    [kushi.css.media]
-   [kushi.util :as util])
+   [kushi.util :as util]
+   [clojure.walk :as walk])
   (:require-macros [kushi.showcase.core :refer [fqns-sym+file-info]]))
+
+
+(defn convert-samples [coll]
+  (mapv (fn [[k {{:keys [samples require]
+                  :as   demo} :demo
+                 :as                                 m}]]
+          (merge (dissoc m :default :demo)
+                 demo
+                 (when require {:require require})
+                 (when samples {:samples (walk/postwalk
+                                          (fn [x] 
+                                            (if (and (vector? x)
+                                                     (-> x first (= 'icon))
+                                                     (-> x second keyword?))
+                                              (-> x second)
+                                              x)
+                                            )
+                                          (mapv #(if (map? %) (:code %) %) samples))})
+                 (when-not samples {:variant k})))
+        coll))
+
+(defn convert-legacy-opts [coll]
+  (reduce (fn [m {:keys [name] :as opt}]
+            (assoc m (keyword name) (dissoc opt :name)))
+          {}
+          coll))
+
+(!? :pp (convert-legacy-opts 
+        '[{:name    loading?
+           :schema  boolean?
+           :default false
+           :desc    "When `true`, this will set the appropriate values for
+                        `aria-busy` and `aria-label`"}
+          {:name    start-enhancer
+           :schema  #{string? keyword?}
+           :default nil
+           :desc    "The name of a Google Material Symbol to use as an icon
+                         in the inline start position"}
+          {:name    end-enhancer
+           :schema  #{string? keyword?}
+           :default nil
+           :desc    "The name of a Google Material Symbol to use as an icon
+                         in the inline end position"}
+          {:name    colorway
+           :schema  #{:neutral :accent :positive :negative :warning}
+           :default nil
+           :desc    "Colorway of the tag. Can also be a named color from
+                         Kushi's design system, e.g `:red`, `:purple`, `:gold`,
+                         etc."}
+          {:name    surface
+           :schema  #{:faint :solid :minimal :outline}
+           :default :round
+           :desc    "Surface variant of the tag."}
+          {:name    shape
+           :schema  #{:sharp :round :pill}
+           :default :round
+           :desc    "Shape of the tag."}
+          {:name    packing
+           :schema  #{:compact :roomy}
+           :default nil
+           :desc    "General amount of padding inside the tag"}
+          ]))
 
 
 (defn resolve-variants
@@ -233,7 +296,10 @@
                    :ai--c
                    :gap--0.75rem:1rem)
                {:style (:row-style demo)})]
-        (let [coll (resolve-variants (or (:variant-scale demo) v-1d) vks)]
+        (let [variant-scale (:variant-scale demo)
+              coll          (if (vector? variant-scale)
+                              variant-scale
+                              (resolve-variants (or variant-scale v-1d) vks))]
           (when (coll? coll)
             (reduce
              (fn [acc a]
@@ -249,8 +315,8 @@
                         variant-label]
                        (into [uic-fn
                               (merge-attrs
-                               {v-1d          a
-                                :ns           (at)}
+                               {v-1d a
+                                :ns  (at)}
                                variant-attrs)]
                              variant-args))))
              []
@@ -283,6 +349,7 @@
          []
          samples)))
 
+
 (defn- d1-grid-no-labels
   [opt samples]
   (into [:div (merge-attrs 
@@ -290,6 +357,7 @@
                {:style (or (-> opt :row-style)
                            (-> opt :demo :row-style))})]
         (map :code/evaled samples)))
+
 
 (defn- discrete-example-grid-wrapper [opt modal-opts hic]
  (!? (keyed [opt modal-opts hic]))
@@ -305,16 +373,18 @@
    [example-modal modal-opts]
    hic])
 
+
 (defn hiccup-for-examples [uic samples]
   (let [evaled (mapv :code/evaled samples)]
     (cond (= 'radio (:uic-name uic))
-          (walk/postwalk #(if-let [nm (and (map? %)
-                                           (-> % :input-attrs :name))]
-                            (assoc-in % 
-                                      [:input-attrs :name]
-                                      (str (util/as-str nm) "-snippets-modal"))
-                            %)
-                         evaled)
+          (walk/postwalk 
+           #(if-let [nm (and (map? %)
+                             (-> % :input-attrs :name))]
+              (assoc-in % 
+                        [:input-attrs :name]
+                        (str (util/as-str nm) "-snippets-modal"))
+              %)
+           evaled)
           :else
           evaled)))
 
@@ -357,7 +427,25 @@
     (let [labels?    (every? #(-> % :label) samples)
           modal-opts (assoc (modal-opts* uic opt)
                             :hiccup-for-examples
-                            (hiccup-for-examples uic samples)
+                            (let [hic (hiccup-for-examples uic samples)]
+                              (if (= (:uic-sym uic) 'radio)
+                                (walk/postwalk (fn [x]
+                                                 (cond (and (map? x)
+                                                            (contains? x :id))
+                                                       (assoc x
+                                                              :id
+                                                              (str (name (:id x)) "-modal")
+                                                              :name
+                                                              (str (name (:name x)) "-modal"))
+                                                       (and (map? x)
+                                                            (contains? x :for))
+                                                       (assoc x
+                                                              :for
+                                                              (str (name (:for x)) "-modal"))
+                                                       :else
+                                                       x))
+                                               hic)
+                                hic))
                             :snippets
                             (mapv :code/quoted samples)
                             :wrapper-tag
@@ -374,7 +462,7 @@
 
 ;; :variants -> :x-variants for additional dimensions 
 ;; Control for variants by column or row
-(defn variant-grid-snippet-modal-samples [uic opt]
+(defn variant-grid-snippet-modal-samples_OLD [uic opt]
   (let [{args          :args
          attrs         :attrs
          attrs-snippet :attrs/snippet
@@ -389,38 +477,92 @@
           {:samples ; <- this is for snippets
            (into []
                  (for [v resolved-variants]
-                   (into [(:uic-sym uic) (merge (assoc attrs opt-key v)
-                                                attrs-snippet)]
+                   (into [(:uic-sym uic) (? (merge (assoc attrs opt-key v)
+                                                attrs-snippet))]
                          args)))
            :hiccup-for-examples  ; <- this is for rendering preview above snippets
            (for [v resolved-variants]
              (into [(:component-fn uic) 
                     (merge (assoc attrs-hydrated opt-key v)
-                           attrs-snippet-hydrated)]
+                              attrs-snippet-hydrated)]
                    args))}))
       (callout {:type :waring} "bad variant name"))))
 
 
-(defn d2-grid [v-2d vks v-1d uic-fn variant-attrs variant-args row-style]
-  (!? [v-2d vks v-1d uic-fn variant-attrs variant-args])
+
+(defn variant-grid-snippet-modal-samples [uic opt]
+  (let [{args          :args
+         attrs         :attrs
+         variant-scale :variant-scale
+         attrs-snippet :attrs/snippet
+         :as           m}
+        (:demo opt)]
+    (if true                                                                    ; <-validate here
+      (let [{:keys [opt-key]}
+            opt
+
+            resolved-variants 
+            (if (vector? variant-scale)
+              variant-scale
+              (resolve-variants (or variant-scale opt-key) nil))
+
+            {args-quoted          :args
+             attrs-quoted         :attrs
+             attrs-snippet-quoted :attrs/snippet
+             :as                  m}
+            (some-> m meta :quoted)]
+        (when opt-key
+          {:samples                                                             ; <- this is for snippets
+           (into []
+                 (for [v resolved-variants]
+                   (into [(:uic-sym uic) (merge (assoc attrs-quoted opt-key v)
+                                                attrs-snippet-quoted)]
+                         args-quoted)))
+           :hiccup-for-examples                                                 ; <- this is for rendering preview above snippets
+           (for [v resolved-variants]
+             (into [(:component-fn uic) 
+                    (merge (assoc attrs opt-key v) attrs-snippet)]
+                   args))}))
+      (callout {:type :waring} "bad variant name"))))
+
+
+#_(if (vector? variant-scale)
+    variant-scale
+    (resolve-variants (or variant-scale v-1d) vks))
+
+
+(defn d2-grid [v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style]
+  #_(? [v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale])
   (into [:div (sx :.kpg-variant-grid-2d)]
-        (for [a    (resolve-variants v-2d vks)
+        (for [a    (if (vector? variant-scale)
+                     variant-scale
+                     (resolve-variants (or variant-scale v-2d) vks)) 
               :let [variant-label (str "\"" a "\"")]] 
           (into [:div {:style (merge (css-vars-map variant-label)
                                      row-style)
                        :class (css :.kpg-variant-grid-1d)}]
-                (for [b (resolve-variants v-1d vks)]
+                (for [b (resolve-variants v-1d vks)
+                      :let [b-prop (if (re-find #"/" (str v-1d))
+                                     (-> v-1d
+                                         str
+                                         (string/split #"/") 
+                                         first
+                                         (subs 1)
+                                         keyword)
+                                     v-1d)]]
                   (into [uic-fn
-                         (merge-attrs {v-2d a
-                                       v-1d b}
+                         (merge-attrs {v-2d   a
+                                       b-prop b}
                                       variant-attrs)]
                         variant-args))))))
-
 
 
 (defn variant-grid
   "Produces a 1d, 2d, or 3d variant grid"
   [uic opt]
+
+  (!? {:display-metadata? false} opt)
+
   (let [{:keys [schema]}
         opt
         
@@ -509,17 +651,22 @@
        (into [:div (sx :.flex-col-start :gap--2em)]
              (for [kw (resolve-variants v-3d vks)
                    :let [variant-attrs (assoc variant-attrs (:opt-key opt) kw)]]
-               [d2-grid v-2d vks v-1d uic-fn variant-attrs variant-args row-style]))
+               [d2-grid v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style]))
 
        v-2d
-       [d2-grid v-2d vks v-1d uic-fn variant-attrs variant-args row-style]
+       [d2-grid v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style]
 
        :else
        (if-not variant-labels?
          ;; d1 with no labels
-         (into [:div (merge-attrs (sx :.flex-row-space-between :ai--c :w--100%)
+         (into [:div (merge-attrs (sx :.flex-row-space-between 
+                                      :ai--c
+                                      :w--100%
+                                      :max-width--605px)
                                   {:style row-style})]
-               (let [coll (resolve-variants (or variant-scale v-1d) vks)]
+               (let [coll (if (vector? variant-scale)
+                            variant-scale
+                            (resolve-variants (or variant-scale v-1d) vks))]
                  (when (coll? coll)
                    (mapv (fn [a]
                            (into [uic-fn
@@ -536,6 +683,41 @@
           variant-args
           demo]))]))))
 
+(defn variant-demo [demo-index m x]
+  (let [{:keys [opt-key demo]
+         :as   opt}           x
+        opt-name              (name opt-key)
+        opt-sym               (symbol opt-name)
+        opt                   (assoc opt
+                                     :opt-name opt-sym
+                                     :opt-sym opt-sym
+                                     :opt-key opt-key)]
+    [variant-grid
+     m
+     (assoc opt
+            :demo demo
+            :demo-index demo-index)]))
+
+(defn freeform-demo [demo-index m x]
+  (let [{:keys [template-fn args samples]
+        :as   demo}
+        x
+
+        examples-grid-opts 
+        {:demo            demo
+         :demo-index      demo-index
+         :multiple-demos? true}]
+  (if template-fn 
+    [discrete-examples-grid-with-template-fn
+     template-fn
+     m
+     examples-grid-opts
+     args]
+    [discrete-examples-grid2 
+     m
+     examples-grid-opts
+     samples])))
+
 
 (defn showcase [m]
   (into [:div (sx ".kpg-component-demos-wrapper"
@@ -547,48 +729,16 @@
               :.light
               :.transition)]]
           
-         (concat
-          (for [{:keys [opt-key demo]
-                 :as   opt}           (:opts m)
-                :let                  [opt-name (name opt-key)
-                                       opt-sym  (symbol opt-name)
-                                       opt      (assoc opt
-                                                       :opt-name opt-sym
-                                                       :opt-sym opt-sym
-                                                       :opt-key opt-key)]
-                :when                 (and (:demo opt)
-                                      ;; Only for debugging
-                                           #_(= opt-sym 'start-enhancer)
-                                           )]
 
-            (let [demos           [(or demo {})]]
-              (into [:<>] 
-                    (map-indexed (fn [demo-index demo]
-                                   [variant-grid
-                                    m
-                                    (assoc opt
-                                           :demo demo
-                                           :demo-index demo-index
-                                           )])
-                                 demos))))
+         (map-indexed
+          (fn [demo-index x]
+            (if (-> x meta :kushi.ui.showcase/opt)
+              [variant-demo demo-index m x]
+              [freeform-demo demo-index m x]))
+          (:mixed m))))
 
-          (map-indexed (fn [demo-index
-                            {:keys [template-fn args samples] :as demo}]
-                         (let [examples-grid-opts {:demo            demo
-                                                   :demo-index      demo-index
-                                                   :multiple-demos? true}]
-                           (if template-fn 
 
-                             [discrete-examples-grid-with-template-fn
-                              template-fn
-                              m
-                              examples-grid-opts
-                              args]
 
-                             [discrete-examples-grid2 
-                              m
-                              examples-grid-opts
-                              samples])))
-                         (:demos m)))))
+
 
 

@@ -1,172 +1,62 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.spinner.demo
   (:require 
-   [kushi.core :refer [sx merge-attrs]]
-   [kushi.playground.component-examples
-    :as component-examples
-    :refer [sizes-snippet-map]]
-   [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.button :refer [button]]
-   [kushi.ui.icon :refer [icon]]
+   [kushi.showcase.core
+    :as showcase
+    :refer [samples-with-variant]]
    [kushi.ui.spinner :refer [spinner]]))
 
-(def sizes
-  [:xxsmall
-   :xsmall
-   :small
-   :medium
-   :large
-   :xlarge
-   :xxlarge
-   :xxxlarge])
-
-(def examples
-  (let [container-attrs
-        (sx :gtc--1fr)
-
-        row-attrs
-        (sx [:_.instance-code {:w  :100%
-                               :d  :flex
-                               :jc :sb
-                               :pi :0.75rem}])
-
-        row-attrs-all-colors
-        (sx [:_.instance-code {:w              :100%
-                               :pi             :0.75rem
-                               :row-gap        :2rem
-                               :flex-direction :column
-                               :align-items    :stretch}])
-
-        button-example-code
-        (sx-call [button 
-                  (merge-attrs 
-                   (sx :fs--$small)
-                   {:on-click
-                    (fn [e]
-                      (let [el       (-> e .-target)
-                            loading? (= "loading" (.-ariaLabel el))] 
-                        (if loading?
-                          (do (.removeAttribute el "aria-label")
-                              (.removeAttribute el "data-ks-ui-spinner"))
-                          (do (.setAttribute el
-                                             "aria-label"
-                                             "loading")
-                              (.setAttribute el
-                                             "data-ks-ui-spinner"
-                                             true)))))})
-                  [spinner [icon :play-arrow] [donut]]
-                  "Activate"])
-
-        f
-        (fn [desc row-attrs code snippets-map]
-          (merge {:desc            desc
-                  :container-attrs container-attrs
-                  :row-attrs       row-attrs
-                  :examples        [{:code code}]}
-                 snippets-map))
-
-        all-the-colors-snippet-map
-        (fn [sym]
-          {:snippets-header
-           ["The css `color` property controls the color."
-            "Kushi provides color tokens in value ranges from `50` ~ `1000`, in increments of `50`."
-            "E.g. `:c--$blue-50`, `:c--$blue-350`, `:c--$blue-800`, etc."
-            :br
-            "You can also use any valid css color value e.g. `$c--#8a8a8a`"
-            :br
-            :br
-            "Example rows below, in all the colors."
-            :br
-            :br
-            "The first example sets the `:color` property directly."
-            :br
-            :br
-            "The second example sets a `:.foreground-<color>` class, which provides a different shade of color depending on light or dark mode."
-            ]
-
-           :snippets        
-           [[:div
-             [sym '(sx :c--$gray-500)]
-             [sym '(sx :c--$blue-500)]
-             [sym '(sx :c--$green-500)]
-             [sym '(sx :c--$yellow-500)]
-             [sym '(sx :c--$red-500)]
-             [sym '(sx :c--$purple-500)]
-             [sym '(sx :c--$lime-500)]
-             [sym '(sx :c--$brown-500)]
-             [sym '(sx :c--$orange-500)]
-             [sym '(sx :c--$magenta-500)]]
-
-            [:div
-             [sym '(sx :.foreground-gray)]
-             [sym '(sx :.foreground-blue)]
-             [sym '(sx :.foreground-green)]
-             [sym '(sx :.foreground-yellow)]
-             [sym '(sx :.foreground-red)]
-             [sym '(sx :.foreground-purple)]
-             [sym '(sx :.foreground-lime)]
-             [sym '(sx :.foreground-brown)]
-             [sym '(sx :.foreground-orange)]
-             [sym '(sx :.foreground-magenta)]]
-            
-            ]})
-
-         example-colors
-         (map #(->> (get component-examples/color-lut % %)
-                    (str "foreground-"))
-              (concat component-examples/colors
-                      component-examples/non-semantic-colors))]
 
 
-    [
-     #_{:desc      "Usage with a button."
-      :row-attrs row-attrs
-      ;; :reqs     '[[kushi.ui.button :refer [button]]]
-      :snippets  [(:quoted button-example-code)]
-      :examples  [{:code button-example-code}]}
-     
-     (f "Propeller, xxsmall to xxxlarge"
-        row-attrs
-        (sx-call (for [sz sizes]
-                   [propeller {:class [sz]}]))
-        (sizes-snippet-map 'propeller))
-     
-     (f "Propeller, all the colors"
-        row-attrs-all-colors
-        (sx-call 
-         (into
-          [:div (sx :.flex-row-fs :jc--sb)]
-          (for [fg-color-class example-colors]
-            [propeller (sx :fs--$large fg-color-class)])))
+(def demos
+  [{:variant       :spinner-type
+    :label         "Spinner type"
+    :desc          "The variety of spinner"
+    :row-style     {:gap :2rem}
+    :samples       (samples-with-variant
+                    {:variant       :spinner-type
+                     :label         "Spinner type"
+                     :desc          "The variety of spinner"
+                     :attrs/display {:sizing :xlarge}
+                     })}
 
-        (all-the-colors-snippet-map 'propeller))
+   {:label     "Propeller, sizes"
+    :desc      "Corresponds to the font-size based on Kushi's font-size scale."
+    :samples   (samples-with-variant 
+                {:variant         :sizing
+                 :attrs           {:spinner-type :propeller}
+                 :variant-labels? false})}
 
-     (f "Donut, xxsmall to xxxlarge"
-        row-attrs 
-        (sx-call (for [sz sizes]
-                   [donut {:class [sz]}]))
-        (sizes-snippet-map 'donut))
-     
-     (f "Donut, all the colors"
-        row-attrs-all-colors 
-        (sx-call 
-         (into [:div (sx :.flex-row-fs :jc--sb)]
-               (for [fg-color-class example-colors]
-                 [donut (sx :fs--$large fg-color-class)])))
-        (all-the-colors-snippet-map 'donut))
+   {:desc      "Corresponds to the font-size based on Kushi's font-size scale."
+    :label     "Donut, sizes"
+    :samples   (samples-with-variant 
+                {:variant         :sizing
+                 :label           "Donut, sizes"
+                 :attrs           {:spinner-type :donut}
+                 :variant-labels? false})}
 
-     (f "Thinking, small to xxxlarge"
-        row-attrs
-        (sx-call (for [sz (drop 2 sizes)]
-                   [thinking {:class [sz]}]))
-        (sizes-snippet-map 'thinking))
+   {:desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
+    :label   "Propeller, colorways"
+    :samples (samples-with-variant
+              {:variant         :colorway
+               :variant-scale   :colorway/named
+               :attrs           {:spinner-type :propeller}
+               :attrs/display   {:sizing :xlarge}
+               :variant-labels? false})}
 
-     
-     (f "Thinking, all the colors"
-        row-attrs-all-colors 
-        (sx-call 
-         (into [:div (sx :.flex-row-fs :jc--sb)]
-               (for [fg-color-class example-colors]
-                 [thinking (sx :fs--$medium fg-color-class)])))
-        (all-the-colors-snippet-map 'thinking))]))
-
-
+   {:desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
+    :label   "Donut, colorways"
+    :samples (samples-with-variant
+              {:variant         :colorway
+               :variant-scale   :colorway/named
+               :attrs           {:spinner-type :donut}
+               :attrs/display   {:sizing :xlarge}
+               :variant-labels? false})}
+   
+   {:desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
+    :label   "Thinking, colorways"
+    :samples (samples-with-variant
+              {:variant         :colorway
+               :variant-scale   :colorway/named
+               :attrs           {:spinner-type :thinking}
+               :attrs/display   {:sizing :xxsmall}
+               :variant-labels? false})}])

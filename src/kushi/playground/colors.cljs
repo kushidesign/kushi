@@ -195,7 +195,7 @@
             #_[:div (sx :w--50% :bgc--$hsl)]
             #_[:div (sx :w--50% :$yellow-hue--59 :bgc--$hsl)]]
            [:div {:class (css :.kushi-playground-color-sample-row-info-container
-                              :.flex-row-sb
+                              :.flex-row-space-between
                               :.grow
                               :pis--0.5em
                               :bbes--solid

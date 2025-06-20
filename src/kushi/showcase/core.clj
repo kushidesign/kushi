@@ -1,6 +1,6 @@
 (ns kushi.showcase.core
   (:require 
-   [fireworks.core :refer [? !? ?> !?>]]
+   [fireworks.core :refer [? !? ?> !?> pprint]]
    [clojure.string :as string]
    [clojure.repl]
    [kushi.util :refer [keyed]]
@@ -24,6 +24,7 @@
            partitioned))))
 
 
+;; TODO - validate that you have a vector of hiccups
 (defmacro samples [vc]
   (let [samples vc
         m*      (fn [sample label]
@@ -61,7 +62,8 @@
            args]
     :as m}]
   (let [ret m]
-    `(with-meta ~ret {:kushi.ui.showcase/opt true})))
+    `(with-meta ~ret {:kushi.ui.showcase/opt true
+                      :quoted (quote ~m)})))
 
 (defmacro opts
   [fq-uic-sym demos-sym]
@@ -80,25 +82,44 @@
           ;;                       (assoc acc# (:opt m#) (dissoc m# :opt)))
           ;;                     {}))
            opts# (->> ~demos-sym 
-                       (keep (fn [m#] 
-                                 (when (-> m# :samples meta :kushi.ui.showcase/opt)
-                                   {:opt-key (-> m# :samples :variant)
-                                    :demo (merge (dissoc (:samples m#) :variant)
+                      (keep (fn [m#] 
+                              (when (-> m# :samples meta :kushi.ui.showcase/opt)
+                                {:opt-key (-> m# :samples :variant)
+                                 :demo    (merge (dissoc (:samples m#) :variant)
                                                  (dissoc m# :samples))})))
-                       (into []))
+                      (into []))
            
            demos# (->> ~demos-sym 
-                        (keep (fn [m#] 
-                                (cond
-                                  (-> m# :samples meta :kushi.ui.showcase/demo-with-template)
-                                  (merge (:samples m#) (dissoc m# :samples))
-                                  (-> m# :samples meta :kushi.ui.showcase/demo)
-                                  m#)))
+                       (keep (fn [m#] 
+                               (cond
+                                 (-> m# :samples meta :kushi.ui.showcase/demo-with-template)
+                                 (merge (:samples m#) (dissoc m# :samples))
+                                 (-> m# :samples meta :kushi.ui.showcase/demo)
+                                 m#)))
                        (into []))
-           ]
+
+           mixed# (->> ~demos-sym 
+                       (mapv (fn [m#] 
+                               (cond
+                                 (-> m# :samples meta :kushi.ui.showcase/opt)
+                                 (with-meta
+                                   {:opt-key (-> m# :samples :variant)
+                                    :demo    (merge (dissoc (:samples m#) :variant)
+                                                    (dissoc m# :samples))}
+                                   {:kushi.ui.showcase/opt true})
+
+                                 (-> m# :samples meta :kushi.ui.showcase/demo-with-template)
+                                 (with-meta 
+                                   (merge (:samples m#) (dissoc m# :samples))
+                                   {:kushi.ui.showcase/demo-with-template true})
+
+                                 (-> m# :samples meta :kushi.ui.showcase/demo)
+                                 (with-meta m#
+                                   {:kushi.ui.showcase/demo true})))))]
        (!? demos#)
        {:demos        (!? demos#)
         :opts         opts#
+        :mixed        mixed#
         :fq-uic-name  ~fq-uic-name
         :component-fn ~fq-uic-sym
         :uic-name     ~uic-name

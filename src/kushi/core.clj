@@ -621,7 +621,7 @@
                                       sel))
                                    :alternate-selectors
                                    alternate-selectors )]
-(when (= fa "[data-ks-ui=\"icon\"]")
+     #_(when (= fa "[data-ks-ui=\"icon\"]")
        (println (re-find specs/attribute-selector-re-with-capturing "[data-ks-ui=\"icon\"]"))
        #_(pprint (keyed [
                       ;;  fa

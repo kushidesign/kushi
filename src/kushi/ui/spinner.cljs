@@ -27,66 +27,36 @@
 ;; changed sym keys to prefixed keywords
 ;; changed :pred to :schema, if member of variants, elide
 
-
-
-
 (defn spinner
   {:docs    "A spinner"
    :summary "Round & round"
-   :opts    {:spinner-type {:default   :donut
-                             :desc      "The variety of spinner"
-                             :demo      {:label         "Spinner type variants"
-                                         :attrs/display {:sizing :xxxlarge}
-                                         :row-style     {:gap :2rem}
-                                         }}
-             :sizing         {:default nil
-                             :desc    "Corresponds to the font-size based on Kushi's font-size scale."
-                             :demo    [{:label           "Propeller, sizes"
-                                        :attrs           {:spinner-type :propeller}
-                                        :row-style       {:border "1px solid red"}
-                                        :variant-labels? false} 
-                                       {:label           "Donut, sizes"
-                                        :attrs           {:spinner-type :donut}
-                                        :variant-labels? false}]}
+   :opts    {:spinner-type {:default :donut
+                            :desc    "The variety of spinner"}
+             :sizing       {:default nil
+                            :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
              :colorway     {:default nil
-                             :desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
-                             :demo    [{:label           "Propeller, colorways"
-                                        :attrs           {:spinner-type :propeller}
-                                        :attrs/display   {:sizing :xlarge}
-                                        :variant-labels? false}
-                                       {:label           "Donut, colorways"
-                                        :attrs           {:spinner-type :donut}
-                                        :attrs/display   {:sizing :xlarge}
-                                        :variant-labels? false}
-                                       {:label           "Thinking, colorways"
-                                        :attrs           {:spinner-type :thinking}
-                                        :attrs/display   {:sizing :xxsmall}
-                                        :variant-labels? false}]}}}
+                            :desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."}}}
   
   [& args]
   (let [{:keys [opts attrs]} 
-        (extract args)
+        (extract args [:spinner-type])
 
         {:keys [size spinner-type inert?]
          :or   {spinner-type :donut
                 inert?       true}}
         opts
         
-        ;; Why the rename?
-        {colorway :colorway}
-        (get-variants opts)
-        
         
         ;; data-ks-colorway (validate-option spinner semantic-colorway)
         ;; data-ks-sizing     (validate-option spinner size)
-        more-attrs          (merge {:aria-hidden         true
-                                    :data-ks-surface  :transparent
-                                    :data-ks-sizing     size}
+        more-attrs          (merge {:aria-hidden     true
+                                    :data-ks-surface :transparent
+                                    :data-ks-sizing  (:sizing opts)}
                                    (when (true? inert?) 
                                      {:data-ks-inert ""})
                                    (when-not (contains? #{"neutral" :neutral}
-                                                    colorway)
-                                     {:data-ks-colorway colorway}))]
+                                                    (:colorway opts))
+                                     {:data-ks-colorway (:colorway opts)}))]
                
 
     (cond
@@ -160,7 +130,7 @@
                                      :after:bs--solid
                                      :after:bc--currentColor)}
               more-attrs
-              attrs)]] )))
+              attrs)]])))
 
 
 

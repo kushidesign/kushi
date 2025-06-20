@@ -48,10 +48,11 @@
                  :desc    "URL of a mask image to clip the avatar with."}]}
   [& args]
   (let [{:keys [opts attrs children]}
-        (extract args)
+        (extract args [:font-size-ratio])
         
         {:keys [colorway
                 stroke-align
+                contour
                 size
                 font-size-ratio]}
         opts
@@ -92,7 +93,7 @@
                 [:aspect-ratio "1 / 1"]
                 :overflow--hidden)
             {:data-ks-surface surface
-             :data-ks-contour   shape}
+             :data-ks-contour (or contour :rounded)}
             (some-> stroke-align 
                     (maybe #{:outside "outside"})
                     (data-ks- :stroke-align))

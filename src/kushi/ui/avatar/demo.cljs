@@ -2,9 +2,34 @@
   (:require [kushi.core :refer (sx css)]
             [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
+            [kushi.showcase.core
+             :as showcase
+             :refer [samples samples-with-variant]]
             [kushi.ui.avatar :refer [avatar]]
             [kushi.ui.icon :refer [icon]]
             [kushi.playground.assets.graphics.avatars :refer [avatar-1]]))
+
+(def demos 
+  [{:label   "Content examples"
+ ;; :sx-attrs        (sx-call (sx :fs--$small))
+ ;; :container-attrs (sx :>*:d--none :>*:first-child:d--flex)
+    :samples (samples [[avatar {:src avatar-1}]
+                       [avatar {:surface :solid} "M"]
+                       [avatar {:surface :solid} "MT"]
+                       [avatar {:surface :solid
+                                :class   (css :fs--$medium)}
+                        [icon :diversity-3]]
+                       [avatar {:surface :solid
+                                :class   (css :fs--$medium)}
+                        [icon :account-balance]]
+                       [avatar {:surface :soft} "M"]
+                       [avatar {:surface :soft} "MT"]
+                       [avatar {:surface :soft
+                                :class   (css :fs--$medium)}
+                        [icon :diversity-3]]
+                       [avatar {:surface :soft
+                                :class   (css :fs--$medium)}
+                        [icon :account-balance]]])}])
 
 (def sizes
   [:24px :36px :48px :60px :72px :96px #_:128px])

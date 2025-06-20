@@ -150,7 +150,7 @@
             :id    modal-id}
      [modal-close-button {:modal-id modal-id}]
      [:div (sx :.kushi-playground-examples-modal-wrapper
-               :.flex-row-sb :ai--fs :gap--1.5em)
+               :.flex-row-space-between :ai--fs :gap--1.5em)
       [:div
        (sx  :.kushi-playground-examples-modal-wrapper-inner
             :.flex-col-fs :ai--b :gap--1rem )

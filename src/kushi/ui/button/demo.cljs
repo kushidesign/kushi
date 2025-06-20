@@ -7,24 +7,7 @@
    [kushi.showcase.core
     :as showcase
     :refer [samples samples-with-variant]]
-   [clojure.walk :as walk]))
-
-
-#_(? :pp (mapv (fn [[k {{:keys [samples require] :as demo} :demo :as m}]]
-        (merge (dissoc m :default :demo)
-               demo
-               (when require {:require require})
-               (when samples {:samples (walk/postwalk
-                                        (fn [x] 
-                                          (if (and (vector? x)
-                                                   (-> x first (= 'icon))
-                                                   (-> x second keyword?))
-                                            (-> x second)
-                                            x)
-                                          )
-                                        (mapv #(if (map? %) (:code %) %) samples))})
-               (when-not samples {:variant k})))
-      legacy))
+   ))
 
 
 (def demos
@@ -89,6 +72,7 @@
                          :sizing       :xlarge,
                          :colorway     :accent,
                          :surface      :outline,
+                         :stroke-width :3px
                          :stroke-align :inside}
                         "Next"]
                        [button
@@ -96,6 +80,7 @@
                          :sizing       :xlarge,
                          :colorway     :accent,
                          :surface      :outline,
+                         :stroke-width :3px
                          :stroke-align :outside}
                         "Next"]])}
 

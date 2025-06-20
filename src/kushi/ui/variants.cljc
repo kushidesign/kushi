@@ -30,8 +30,11 @@
 (def colorways
   (apply conj colorways-named colorways-semantic))
 
-(def xxsmall-xlarge
+(def sizings-xxsmall-xlarge
   [:xxsmall :xsmall :small :medium :large :xlarge])
+
+(def sizings-xsmall-xxxlarge
+  [:xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
 
 (def sizings 
   [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
@@ -41,6 +44,9 @@
 
 (def surfaces 
   [:solid-classic :solid :soft-classic :soft :faint :outline :minimal :transparent])
+
+(def surfaces-tag
+  [:solid :soft :faint :outline :minimal])
 
 (def variants*
   (keyed [contours-basic
@@ -52,10 +58,13 @@
           colorways-named
           colorways-semantic
           colorways
-          xxsmall-xlarge
+          sizings-xxsmall-xlarge
+          sizings-xsmall-xxxlarge
           sizings
           weights
-          surfaces]))
+          surfaces
+          surfaces-tag
+          ]))
 
 (defn variant-key [k s]
   (keyword (str (name k) "/" s)))
@@ -85,32 +94,38 @@
    variants*))
 
 (def variants-by-custom-opt-key
-  {:weight            (:weights/set variants)
-   :sizing            (:sizings/set variants)
-   :colorway          (:colorways/set variants)
-   :colorway/named    (:colorways-named/set variants)
-   :colorway/semantic (:colorways-semantic/set variants)
-   :surface           (:surfaces/set variants)
-   :packing           (:packing/set variants)
-   :spinner-type      (:spinner-type/set variants)
-   :contour           (:contours/set variants)
-   :contour/basic     (:contours-basic/set variants)
-   :contour/auxillary (:contours-auxillary/set variants)
-   :icon-style        (:icon-style/set variants)})
+  {:weight                 (:weights/set variants)
+   :sizing/xxsmall-xlarge  (:sizings-xxsmall-xlarge/set variants)
+   :sizing/xsmall-xxxlarge (:sizings-xsmall-xxxlarge/set variants)
+   :sizing                 (:sizings/set variants)
+   :colorway               (:colorways/set variants)
+   :colorway/named         (:colorways-named/set variants)
+   :colorway/semantic      (:colorways-semantic/set variants)
+   :surface                (:surfaces/set variants)
+   :surface/tag            (:surfaces-tag/set variants)
+   :packing                (:packing/set variants)
+   :spinner-type           (:spinner-type/set variants)
+   :contour                (:contours/set variants)
+   :contour/basic          (:contours-basic/set variants)
+   :contour/auxillary      (:contours-auxillary/set variants)
+   :icon-style             (:icon-style/set variants)})
 
 (def ordered-variants-by-custom-opt-key
-  {:weight            (:weights/vector variants)
-   :sizing            (:sizings/vector variants)
-   :colorway          (:colorways/vector variants)
-   :colorway/named    (:colorways-named/vector variants)
-   :colorway/semantic (:colorways-semantic/vector variants)
-   :surface           (:surfaces/vector variants)
-   :packing           (:packing/vector variants)
-   :spinner-type      (:spinner-type/vector variants)
-   :contour           (:contours/vector variants)
-   :contour/basic     (:contours-basic/vector variants)
-   :contour/auxillary (:contours-auxillary/vector variants)
-   :icon-style        (:icon-style/vector variants)})
+  {:weight                 (:weights/vector variants)
+   :sizing/xxsmall-xlarge  (:sizings-xxsmall-xlarge/vector variants)
+   :sizing/xsmall-xxxlarge (:sizings-xsmall-xxxlarge/vector variants)
+   :sizing                 (:sizings/vector variants)
+   :colorway               (:colorways/vector variants)
+   :colorway/named         (:colorways-named/vector variants)
+   :colorway/semantic      (:colorways-semantic/vector variants)
+   :surface                (:surfaces/vector variants)
+   :surface/tag            (:surfaces-tag/vector variants)
+   :packing                (:packing/vector variants)
+   :spinner-type           (:spinner-type/vector variants)
+   :contour                (:contours/vector variants)
+   :contour/basic          (:contours-basic/vector variants)
+   :contour/auxillary      (:contours-auxillary/vector variants)
+   :icon-style             (:icon-style/vector variants)})
 
 (def variants-by-custom-opt-key-set
   (into #{} (keys variants-by-custom-opt-key)))

@@ -150,7 +150,7 @@
    (merge-attrs 
     (sx ["--overlay-width" "calc(100vw + 40px)"]
         ["--menu-height" :415px]
-        :.flex-row-sb
+        :.flex-row-space-between
         :.neutralize
         :.divisor-block-end
         :position--fixed

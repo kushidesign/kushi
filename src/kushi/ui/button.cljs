@@ -10,10 +10,6 @@
    ;; (:require-macros [kushi.ui.button])
   )
 
-;; [kushi.ui.variants :refer [variants-by-custom-opt-key convert-opts]]
-;; (? :pp (-> button var meta :opts convert-opts))
-
-
 
 (defn ^:public button
   {:summary "Buttons provide cues for actions and events."
@@ -152,13 +148,13 @@
        {:class                  styling-class
         :aria-busy              loading?
         :aria-label             (when loading? "loading")
-        :data-ks-ia             ""
+        :data-ks-ui             :button
         :data-ks-sizing         sizing
         :data-ks-weight         weight
         :data-ks-contour        (or contour :rounded)
         :data-ks-surface        surface
         :data-ks-packing        packing
-        :data-ks-colorway       colorway
+        :data-ks-colorway       (or colorway :neutral)
         :data-ks-stroke-align   stroke-align
         :data-ks-end-enhancer   (when end-enhancer "")
         :data-ks-start-enhancer (when start-enhancer "")}
