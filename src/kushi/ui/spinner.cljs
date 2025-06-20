@@ -2,7 +2,7 @@
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
-   [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
+   [kushi.ui.shared.theming :refer [data-ks- get-variants]]
    [kushi.ui.core :refer (extract)]))
 
 (defcss "@keyframes spin"

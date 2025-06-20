@@ -11,7 +11,7 @@
 
    [kushi.showcase.core :as showcase :refer [showcase]]
 
-  ;;  [kushi.ui.button :refer [button]]
+   [kushi.ui.button :refer [button]]
 
   ;;  [kushi.ui.button :refer [button]]
   ;;  [kushi.ui.button.demo]
@@ -117,7 +117,7 @@
   ;; popover
 
 
-  #_[button
+  [button
    {:loading?     true
     :colorway     :accent
     :surface      :solid
@@ -148,7 +148,7 @@
   #_[showcase (showcase/opts kushi.ui.radio/radio
                               kushi.ui.radio.demo/demos)]
 
-  [showcase (showcase/opts kushi.ui.avatar/avatar
+  #_[showcase (showcase/opts kushi.ui.avatar/avatar
                            kushi.ui.avatar.demo/demos)]
 
   #_[:div 

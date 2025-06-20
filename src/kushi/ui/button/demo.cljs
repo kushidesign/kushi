@@ -19,7 +19,7 @@
                :x-variants     [:surface],
                :snippets-label "Colorways",
                :attrs/snippet  {:surface :solid},
-              ;;  :attrs/display  {:sizing :small},
+               ;; :attrs/display  {:sizing :small},
                :label          "Colorways ... surfaces × contours",
                :attrs          {:end-enhancer :east},
                :rows?          true})}

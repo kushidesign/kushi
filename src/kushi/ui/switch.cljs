@@ -4,7 +4,7 @@
    [domo.core :as domo]
    [kushi.ui.util :as util]
    [kushi.ui.core :refer (extract)]
-   [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]))
+   [kushi.ui.shared.theming :refer [data-ks- get-variants]]))
 
 (defcss "@layer kushi-ui-styles .kushi-switch-track-content"
   :.flex-row-c
@@ -116,19 +116,6 @@
                 track-content-off]}
         opts
 
-        {:keys             [shape surface]
-         semantic-colorway :colorway}
-        (get-variants opts)
-
-        hue-style-map                 
-        (when-not semantic-colorway 
-          (some-> colorway
-                  hue-style-map))
-
-        colorway-attr
-        (some-> (or semantic-colorway
-                  (when hue-style-map ""))
-              (data-ks- :colorway))
 
         disabled?                  
         (util/html-attr? opts :disabled)
@@ -168,13 +155,12 @@
        
        )
 
-      colorway-attr
-
       {:disabled         disabled?
        :role             :switch
        :aria-checked     (if on? true false)
-       :data-ks-ia      ""
-       :data-ks-surface "solid"}
+       :data-ks-ia       ""
+       :data-ks-colorway colorway
+       :data-ks-surface  "solid"}
       
       (domo/mouse-down-a11y #(when-not disable-events? (toggle-switch %)))
 
@@ -194,8 +180,9 @@
 
      [:div
       (merge-attrs
-       colorway-attr
-       {:data-ks-contour :pill}
+       {:data-ks-contour  :pill
+        :data-ks-colorway colorway
+        }
        (sx
         ".kushi-switch-thumb"
         :.transition

@@ -1174,7 +1174,7 @@
 
 
 ;; Move to button ns?
-(defcss ".kushi-button"
+(defcss "[data-ks-ui=\"button\"]"
   {:--_padding-inline               "var(--button-padding-inline)"
    :--_padding-block                "var(--button-padding-block)"
    "[data-ks-packing=\"compact\"]" {:--_padding-inline "var(--button-padding-inline-compact)"
@@ -1198,14 +1198,14 @@
 
 
 ;; Keep here?
-(defcss ".kushi-button, .kushi-tag"
+(defcss "[data-ks-ui=\"button\"], [data-ks-ui=\"tag\"]"
   {"[data-ks-start-enhancer]"      {:padding-inline-start "calc(var(--_padding-inline) * 0.7666)"}
    "[data-ks-end-enhancer]"        {:padding-inline-end "calc(var(--_padding-inline) * 0.7666)"}})
 
 
 
 ;; Move to tag ns
-(defcss ".kushi-tag"
+(defcss "[data-ks-ui=\"tag\"]"
   {"[data-ks-packing=\"compact\"]"
    {:--_padding-inline      "var(--tag-padding-inline-compact)"
     :--_padding-block-start "calc(var(--tag-padding-block-compact) * var(--tag-padding-block-start-reduction-ratio, 1))"
@@ -1219,7 +1219,7 @@
     }})
 
 ;; Move to switch ns
-(defcss ".kushi-switch"
+(defcss "[data-ks-ui=\"tag\"]"
   {:--switch-thumb-scale-factor                   1
    :--switch-width-ratio                          2
    :--switch-border-color                         :transparent

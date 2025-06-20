@@ -1,10 +1,27 @@
 (ns kushi.ui.avatar
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer [merge-attrs sx]]
    [kushi.ui.core :refer (extract)]
    [kushi.ui.icon]
-   [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
+   [kushi.ui.shared.theming :refer [data-ks- get-variants]]
    [kushi.ui.util :refer [maybe nameable?]]))
+
+[:24px :36px :48px :60px :72px :96px #_:128px]
+
+;; (def 
+;;   {
+;;    "xxxsmall" "24px"
+;;    "xxsmall" "36px"
+;;    "xsmall" "48px"
+;;    "small" "60px"
+;;    "medium" "72px"
+;;    "large" "72px"
+;;    "xlarge" "96px"
+;;    "xxlarge" "96px"
+;;    "xxxlarge" "96px"
+;;    })
+
 
 (defn avatar 
   {:summary "Avatars are graphical thumbnail representations of an individual
@@ -48,18 +65,24 @@
                  :desc    "URL of a mask image to clip the avatar with."}]}
   [& args]
   (let [{:keys [opts attrs children]}
-        (extract args [:font-size-ratio])
+        (extract args [:colorway
+                       :stroke-align
+                       :surface
+                       :contour
+                       :sizing
+                       :font-size-ratio])
         
         {:keys [colorway
                 stroke-align
+                surface
                 contour
-                size
+                sizing
                 font-size-ratio]}
         opts
 
         ;; TODO - maybe warning here?
-        size
-        (or (some-> size (maybe nameable?) name)
+        sizing
+        (or (? (some-> sizing (maybe nameable?) name))
             "36px")
 
         ;; TODO - maybe warning here?
@@ -68,21 +91,13 @@
           (or (some-> font-size-ratio
                       (maybe #(and (float? %)
                                    (<= 0 % 1))))
-              0.4))
-
-        {:keys             [shape surface]
-         semantic-colorway :colorway}
-        (get-variants opts {:contour :circle})
-
-        hue-style-map                 
-        (when-not semantic-colorway 
-          (some-> colorway
-                  hue-style-map))]
+              0.4))]
     (into [(if (:src attrs) :img :span)
            (merge-attrs
-            {:style {"--width"     (name size)
-                     "--font-size" (str "calc(" size " * " font-size-ratio ")")}}
+            {:style {"--width"     (name sizing)
+                     "--font-size" (str "calc(" sizing " * " font-size-ratio ")")}}
             (sx ".kushi-avatar"
+                :.relative
                 :cursor--pointer
                 :d--inline-flex
                 :jc--c
@@ -92,16 +107,8 @@
                 :fs--$font-size
                 [:aspect-ratio "1 / 1"]
                 :overflow--hidden)
-            {:data-ks-surface surface
+            {:data-ks-surface (or surface :soft)
              :data-ks-contour (or contour :rounded)}
-            (some-> stroke-align 
-                    (maybe #{:outside "outside"})
-                    (data-ks- :stroke-align))
-            (some-> (or semantic-colorway
-                        (when hue-style-map ""))
-                    (data-ks- :colorway))
-            hue-style-map
-            (some-> surface (data-ks- :surface))
             attrs)]
           (when-not (:src attrs)
             children))))

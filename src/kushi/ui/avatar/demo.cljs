@@ -10,9 +10,16 @@
             [kushi.playground.assets.graphics.avatars :refer [avatar-1]]))
 
 (def demos 
-  [{:label   "Content examples"
- ;; :sx-attrs        (sx-call (sx :fs--$small))
- ;; :container-attrs (sx :>*:d--none :>*:first-child:d--flex)
+  [
+
+   {:label   "Sizes"
+    :samples (samples-with-variant
+              {:variant       :sizing
+               :args          ["M"]})}
+
+   {:label   "Content examples"
+    ;; :sx-attrs        (sx-call (sx :fs--$small))
+    ;; :container-attrs (sx :>*:d--none :>*:first-child:d--flex)
     :samples (samples [[avatar {:src avatar-1}]
                        [avatar {:surface :solid} "M"]
                        [avatar {:surface :solid} "MT"]
@@ -29,7 +36,34 @@
                         [icon :diversity-3]]
                        [avatar {:surface :soft
                                 :class   (css :fs--$medium)}
-                        [icon :account-balance]]])}])
+                        [icon :account-balance]]])}
+
+   {:label   "Surfaces"
+    :samples (samples-with-variant
+              {:variant       :surface
+               :variant-scale :surface/tag
+               :args          ["M"]})}
+
+   {:label   "Colorways"
+    :samples (samples-with-variant
+              {:variant       :colorway
+               :variant-scale :colorway/named
+               :args          ["M"]
+               :attrs         {:surface :solid}})}
+
+   {:label   "Colorways x Surfaces"
+    :samples (samples-with-variant
+              {:args           ["M"],
+               :variant        :colorway,
+               :variant-scale  :colorway/named,
+               :x-variants     [:surface/tag],
+               :snippets-label "Colorways",
+               :attrs/snippet  {:surface :solid},
+               :rows?          true})}
+   
+   ])
+
+
 
 (def sizes
   [:24px :36px :48px :60px :72px :96px #_:128px])

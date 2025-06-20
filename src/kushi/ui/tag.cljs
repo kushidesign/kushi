@@ -4,8 +4,7 @@
             [clojure.string :as string]
             [kushi.ui.core :refer (extract)]
             [kushi.ui.icon :refer [icon]]
-            [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
-            ))
+            [kushi.ui.shared.theming :refer [get-variants]]))
 ;; Check docs
 (defn tag
   {:summary "A tag is typically used for concise information, often in a group
@@ -57,32 +56,37 @@
    }
   [& args]
   (let [{:keys [opts attrs children]}
-        (extract args)
+        (extract args [:loading?
+                       :start-enhancer
+                       :end-enhancer
+                       :colorway
+                       :contour
+                       :surface
+                       :sizing
+                       :weight
+                       :stroke-align
+                       :stroke-width
+                       :packing
+                       :inert?])
         
         {:keys [loading?
                 start-enhancer
                 end-enhancer
                 colorway
                 contour
+                surface
                 sizing
+                weight
                 stroke-align
                 stroke-width
                 packing
                 inert?]}
-        opts
-
-        {:keys             [surface]
-         semantic-colorway :colorway}
-        (get-variants opts)
-
-        hue-style-map                 
-        (when-not semantic-colorway 
-          (some-> colorway
-                  hue-style-map))
-        ]
+        opts]
     (into [:div
            (merge-attrs
-            (sx ".kushi-tag"
+
+            ;; base styles
+            (sx "[data-ks-ui=\"tag\"]"
                 :position--relative
                 :d--flex
                 :flex-direction--row
@@ -106,37 +110,28 @@
                 
                 :pi--$_padding-inline
                 :pbs--$_padding-block-start
-                :pbe--$_padding-block-end
-                )
+                :pbe--$_padding-block-end)
 
+            ;; stroke-width
             (when stroke-width 
               {:style {"--_stroke-width" (name stroke-width)}})
 
-            {:aria-busy            loading?
-             :aria-label           (when loading? "loading")
-             :data-ks-sizing       sizing
-             :data-ks-surface      surface
-             :data-ks-contour      contour
-             :data-ks-stroke-align stroke-align}
-
-            ;; (some-> stroke-align 
-            ;;         (maybe #{:outside "outside"})
-            ;;         (data-ks- :stroke-align))
-            (when-not (false? inert?) {:data-ks-inert ""})
-
-            (when loading? {:data-ks-ui-spinner ""})
-            (when end-enhancer (data-ks- "" :end-enhancer))
-            (when start-enhancer (data-ks- "" :start-enhancer))
-            (some-> (or semantic-colorway
-                        (when hue-style-map ""))
-                    (data-ks- :colorway))
-            (some-> packing
-                    (maybe nameable?)
-                    as-str
-                    (maybe #{"compact" "roomy"})
-                    (data-ks- :packing))
-            hue-style-map
-            (some-> surface (data-ks- :surface))
+            ;; resolved html attributes for theming
+            {:aria-busy              loading?
+             :aria-label             (when loading? "loading")
+             :data-ks-ui-spinner     (when loading? "")
+             :data-ks-sizing         sizing
+             :data-ks-weight         weight
+             :data-ks-contour        (or contour :rounded)
+             :data-ks-surface        (or surface :soft)
+             :data-ks-packing        packing
+             :data-ks-colorway       (or colorway :neutral)
+             :data-ks-stroke-align   stroke-align
+             :data-ks-end-enhancer   (when end-enhancer "")
+             :data-ks-start-enhancer (when start-enhancer "")
+             :data-ks-inert          (when-not (false? inert?) "")}
+            
+            ;; user attrs
             attrs)]
           (cond start-enhancer (cons [icon start-enhancer] children)
                 end-enhancer   (concat children [[icon end-enhancer]])

@@ -78,14 +78,14 @@
 (defn- valid-hue? [x]
   (and (number? x) (<= 0 x 360)))
 
-;; unused for now
-(defn hue-style-map [x]
-  (when-let [v (or (when-let [s (some-> x (maybe nameable?) as-str)]
-                     (or (when (string/starts-with? s "$")
-                           (str "var(--" (subs s 1) ")"))
-                         (maybe s #(re-find #"^var\(--.+\)$" %))))
-                   (valid-hue? x)
-                   (some-> x (maybe nameable?) js/parseInt valid-hue?))]
-    {:style {"--_hue" v}}))
+;; unused for now, would not work in browser with no oklch support
+;; (defn hue-style-map [x]
+;;   (when-let [v (or (when-let [s (some-> x (maybe nameable?) as-str)]
+;;                      (or (when (string/starts-with? s "$")
+;;                            (str "var(--" (subs s 1) ")"))
+;;                          (maybe s #(re-find #"^var\(--.+\)$" %))))
+;;                    (valid-hue? x)
+;;                    (some-> x (maybe nameable?) js/parseInt valid-hue?))]
+;;     {:style {"--_hue" v}}))
 
 

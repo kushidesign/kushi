@@ -8,7 +8,7 @@
    [kushi.ui.button :refer [button]]
    [kushi.ui.core :refer (extract)]
    [kushi.ui.icon :refer [icon]]
-   [kushi.ui.shared.theming :refer [data-ks- get-variants hue-style-map]]
+   [kushi.ui.shared.theming :refer [data-ks- get-variants]]
    [kushi.ui.util :refer [keyed maybe]]))
 
 ;; TODO - this is mousedown, so only if primary click
@@ -78,11 +78,6 @@
          semantic-colorway :colorway}
         (get-variants opts)
 
-        hue-style-map                 
-        (when-not semantic-colorway 
-          (some-> colorway
-                  hue-style-map))
-
         callout-id                   
         (str (.now js/Date))]
 
@@ -129,32 +124,6 @@
        (when-not (false? inert?) {:data-ks-inert ""})
        (when loading? {:data-ks-ui-spinner ""})
 
-
-      ;; need these?
-
-      ;;  (some-> stroke-align 
-      ;;          (maybe #{:outside "outside"})
-      ;;          (data-ks- :stroke-align))
-      ;;  (some-> (or semantic-colorway
-      ;;              (when hue-style-map ""))
-      ;;          (data-ks- :colorway))
-       
-
- ;; different from button and tag
-      ;;  (when (and (not icon) end-enhancer) (data-ks- "" :end-enhancer))
-      ;;  (when (and (not icon) start-enhancer) (data-ks- "" :start-enhancer))
- ;; different from button and tag
-
- ;; different from button and tag
-      ;;  (some-> packing
-      ;;          (maybe nameable?)
-      ;;          as-str
-      ;;          (maybe #{"compact" "roomy"})
-      ;;          (data-ks- :packing))
- ;; different from button and tag
-       
-       hue-style-map
-       (some-> surface (data-ks- :surface))
        attrs)     
 
      [:div (sx ".kushi-callout-header-wrap"
