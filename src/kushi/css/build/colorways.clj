@@ -105,6 +105,24 @@
              :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
              :dark:active:bgc (keyword (str "$background-color-" s "-soft-dark-mode"))})
 
+     "[data-ks-surface= \"faint-outline\"]"                        
+     (merge base
+            {:bgc             (keyword (str "$background-color-" s "-soft"))
+             :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
+             :hover:bgc       (keyword (str "$background-color-" s "-soft-2"))
+             :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-2-dark-mode"))
+             :active:bgc      (keyword (str "$background-color-" s "-soft-3"))
+             :dark:active:bgc (keyword (str "$background-color-" s "-soft-3-dark-mode"))})
+
+
+     "[data-ks-surface= \"faint-outline\"][data-ks-inert]"         
+     (merge base-inert
+            {:bgc             (keyword (str "$background-color-" s "-soft"))
+             :hover:bgc       (keyword (str "$background-color-" s "-soft"))
+             :active:bgc      (keyword (str "$background-color-" s "-soft"))
+             :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
+             :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
+             :dark:active:bgc (keyword (str "$background-color-" s "-soft-dark-mode"))})
 
      "[data-ks-surface= \"soft\"]"                          
      soft

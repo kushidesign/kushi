@@ -12,10 +12,9 @@
 
    [kushi.showcase.core :as showcase :refer [showcase]]
 
-   [kushi.ui.button :refer [button]]
 
-  ;;  [kushi.ui.button :refer [button]]
-  ;;  [kushi.ui.button.demo]
+   [kushi.ui.button :refer [button]]
+   [kushi.ui.button.demo]
 
   ;;  [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start]]
   ;;  [kushi.ui.layout :refer [layout]]
@@ -35,7 +34,7 @@
   ;;  [kushi.ui.checkbox :refer [checkbox]]
   ;;  [kushi.ui.checkbox.demo]
 
-   [kushi.ui.radio :refer [radio]]
+   [kushi.ui.radio :refer [radio radio-group]]
    [kushi.ui.radio.demo]
 
    [kushi.ui.avatar :refer [avatar]]
@@ -52,14 +51,19 @@
 
 
 
+(js/console.clear)
 
 ;; Experimental macro calls
-;; (defui bang 
-;;   {:opts {:foo {:schema number?} 
+
+;; #_(defui bang 
+;;   {:doc  "This is bang docstring"
+;;    :opts {:foo {:schema number?} 
 ;;           :bar {:schema string?}}}
-;;   (js/console.log bar))
+;;   (let [{:keys [foo bar]} &opts]
+;;     (js/console.log &data-ks-attrs &opts foo bar)))
+
+
 ;; (bang {:foo 3 :bar "buzz"})
-;; (js/console.clear)
 
 
 
@@ -102,7 +106,7 @@
   ;;                      [:bar {:optional true} :string]]]
   ;;                 [:* [:not :map]]]
   ;;                [{:foo 8} 2 3 4]))
-
+  
   #_[:div (sx :m--100px)
    #_[button {:start-enhancer :pets} "Click"]
    [icon {:ns           (at)
@@ -116,7 +120,7 @@
     :star]]
 
   #_[:div (sx :m--100px)
-        [button {:colorway       :red 
+     [button {:colorway       :red 
               :start-enhancer :pets
               :surface        :solid}
       "Click"]]
@@ -130,13 +134,13 @@
   ;; make it easy to fall back to expanded defn if you want
   
   ;; if macro works, try conditional compiltion for another framework 
-
+  
 
   ;; Change kpg to showcase
   ;; switch
   ;; slider
   ;; popover
-
+  
 
   [button
    {:loading?     true
@@ -146,32 +150,50 @@
     :end-enhancer [spinner {:spinner-type :donut}]}
    "Play"]
 
+  ;; This should be box or flex with flex and default inert
+  ;; [box {:--border-color :gold
+  ;;       :--smile-factor :clown}]
+  [radio-group 
+   {:class    (css :w--fit-content
+                   :p--1em
+                   :flex-direction--column
+                   :ai--flex-start)
+    :surface  :solid
+    ;; mabye that is good?
+    :flexbox  :row:start:center
+    ;;  :contour   :rounded-3 ?
+    :contour  :rounded-xlarge
+    :sizing   :large
+    :colorway :accent
+    :id       "foo"
+    :default  "Yes"
+    :choices  ["Yes" "No" "Maybe"]}]
+
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
-                               kushi.ui.icon.demo/demos))]
+                                 kushi.ui.icon.demo/demos))]
 
   #_[showcase (!? (showcase/opts kushi.ui.tag/tag
-                               kushi.ui.tag.demo/demos))]
+                                 kushi.ui.tag.demo/demos))]
 
-  #_[showcase (!? (showcase/opts kushi.ui.button/button
+  [showcase (!? (showcase/opts kushi.ui.button/button
                                kushi.ui.button.demo/demos))]
 
   #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
-                               kushi.ui.spinner.demo/demos))]
+                                 kushi.ui.spinner.demo/demos))]
 
   #_[showcase (? {:display-metadata? false}
-               (showcase/opts kushi.ui.callout/callout
-                              kushi.ui.callout.demo/demos))]
+                 (showcase/opts kushi.ui.callout/callout
+                                kushi.ui.callout.demo/demos))]
 
   #_[showcase (? {:display-metadata? false}
-               (showcase/opts kushi.ui.checkbox/checkbox
-                              kushi.ui.checkbox.demo/demos))]
+                 (showcase/opts kushi.ui.checkbox/checkbox
+                                kushi.ui.checkbox.demo/demos))]
 
   #_[showcase (showcase/opts kushi.ui.radio/radio
-                              kushi.ui.radio.demo/demos)]
+                             kushi.ui.radio.demo/demos)]
 
   #_[showcase (showcase/opts kushi.ui.avatar/avatar
-                           kushi.ui.avatar.demo/demos)]
-
+                             kushi.ui.avatar.demo/demos)]
   #_[:div 
   ;;  [icon
   ;;   (merge-attrs

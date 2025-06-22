@@ -28,7 +28,7 @@
     :desc    "Contour of the button."
     :samples (samples-with-variant
               {:variant       :contour
-               :variant-scale :contour/basic
+               :variant-scale :contour/basic+rounded
                :attrs         {:end-enhancer :east
                                :colorway     :accent
                                :surface      :solid}

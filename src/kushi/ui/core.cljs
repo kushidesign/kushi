@@ -290,6 +290,38 @@
 (def kushi-ui-props 
   #{:ns :inert? :end-enhancer :start-enhancer :loading? :stroke-align :stroke-width})
 
+(defn data-ks-attrs 
+  "Attaches data-ks based on opts from defn metadata map. To be called from defui macro."
+  [m with-schema]
+
+  ;; Should it be data-ks instead of data?
+  ;; Or concept of registry so you don't need to manually add :elide thing?
+  #_(reduce-kv 
+   (fn [m k {:keys [default data]}]
+     (merge m
+            (when-not (= data :elide)
+              (let [supplied (get m k)]
+                (cond (not (nil? supplied))
+                      {(keyword (str "data-ks-" (name k))) (if (fn? data)
+                                                             (data supplied)
+                                                             (kushi.util/as-str supplied))}
+                    ;; TODO figure this out with logic for a fn, using :data entry
+                      default
+                      default))))
+     #_(assoc m
+            (keyword (str "data-ks-" (name k)))
+            (kushi.util/as-str v)))
+   {} 
+   with-schema)
+ (? with-schema)
+  (reduce-kv 
+   (fn [m k v]
+     (assoc m
+            (keyword (str "data-ks-" (name k)))
+            (kushi.util/as-str v)))
+   {} 
+   m))
+
 (defn extract
   "Extracts custom attributes from mixed map of html attributes and
    attributes/options that are specific to the ui component.

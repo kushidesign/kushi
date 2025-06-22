@@ -3,14 +3,28 @@
    [kushi.ui.util :refer [keyed]]
    #?(:clj [kushi.ui.ordered :refer [ordered-set]])))
 
+(def contours-rounded
+  [:rounded-xxxsmall
+   :rounded-xxsmall
+   :rounded-xsmall
+   :rounded-small
+   :rounded-medium
+   :rounded-large
+   :rounded-xlarge
+   :rounded-xxlarge
+   :rounded-xxxsmall])
+
 (def contours-basic
-  [:rounded :pill :sharp])
+  [:pill :sharp :rounded])
 
 (def contours-auxillary
   [:circle :squircle])
 
+(def contours-basic+rounded
+  (apply conj contours-basic contours-rounded))
+
 (def contours
-  (apply conj contours-basic contours-auxillary))
+  (apply conj contours-auxillary contours-basic contours-rounded))
 
 (def icon-style
   [:rounded :outlined :sharp])
@@ -43,14 +57,16 @@
   [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy])
 
 (def surfaces 
-  [:solid-classic :solid :soft-classic :soft :faint :outline :minimal :transparent])
+  [:solid-classic :solid :soft-classic :soft :faint :faint-outline :outline :minimal :transparent])
 
 (def surfaces-tag
-  [:solid :soft :faint :outline :minimal])
+  [:solid :soft :faint :faint-outline :outline :minimal])
 
 (def variants*
   (keyed [contours-basic
           contours-auxillary
+          contours-basic+rounded
+          contours-rounded
           contours
           icon-style
           spinner-type
@@ -107,6 +123,8 @@
    :spinner-type           (:spinner-type/set variants)
    :contour                (:contours/set variants)
    :contour/basic          (:contours-basic/set variants)
+   :contour/rounded        (:contours-rounded/set variants)
+   :contour/basic+rounded  (:contours-basic+rounded/set variants)
    :contour/auxillary      (:contours-auxillary/set variants)
    :icon-style             (:icon-style/set variants)})
 
@@ -124,6 +142,8 @@
    :spinner-type           (:spinner-type/vector variants)
    :contour                (:contours/vector variants)
    :contour/basic          (:contours-basic/vector variants)
+   :contour/rounded        (:contours-rounded/vector variants)
+   :contour/basic+rounded  (:contours-basic+rounded/vector variants)
    :contour/auxillary      (:contours-auxillary/vector variants)
    :icon-style             (:icon-style/vector variants)})
 

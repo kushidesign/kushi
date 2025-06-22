@@ -1,3 +1,7 @@
+;; TODO bring faint down to table bg gray, or just above
+;; TODO bring soft down a notch
+;; Add soft outline surface variant
+
 (ns kushi.ui.button
   (:require
    [fireworks.core :refer [? !? ?> !?>]]

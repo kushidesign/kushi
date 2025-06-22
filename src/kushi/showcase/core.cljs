@@ -30,6 +30,11 @@
    [clojure.walk :as walk])
   (:require-macros [kushi.showcase.core :refer [fqns-sym+file-info]]))
 
+(defcss ".d1-grid-wrapper"
+  :display--grid
+  :gtc--100px:max-content
+  :ai--c
+  :gap--0.75rem:1rem)
 
 (defn convert-samples [coll]
   (mapv (fn [[k {{:keys [samples require]
@@ -291,10 +296,7 @@
   [v-1d vks uic-fn variant-attrs variant-args demo]
   #_(? (keyed [v-1d vks uic-fn variant-attrs variant-args demo]))
   (into [:div (merge-attrs 
-               (sx :display--grid
-                   :gtc--74px:max-content
-                   :ai--c
-                   :gap--0.75rem:1rem)
+               (sx :.d1-grid-wrapper)
                {:style (:row-style demo)})]
         (let [variant-scale (:variant-scale demo)
               coll          (if (vector? variant-scale)
@@ -327,11 +329,7 @@
          
 (defn- d1-grid-with-sample-labels
   [samples]
-  (into [:div (merge-attrs (sx :display--grid
-                               ;; TODO - Does this need to be more dynamic? e.g. 74px
-                               :gtc--74px:max-content
-                               :ai--c
-                               :gap--0.75rem:1rem))]
+  (into [:div (sx :.d1-grid-wrapper)]
         (reduce
          (fn [acc {:keys [label] :as sample}]
            (let [variant-label
@@ -431,12 +429,13 @@
                               (if (= (:uic-sym uic) 'radio)
                                 (walk/postwalk (fn [x]
                                                  (cond (and (map? x)
-                                                            (contains? x :id))
-                                                       (assoc x
-                                                              :id
-                                                              (str (name (:id x)) "-modal")
-                                                              :name
-                                                              (str (name (:name x)) "-modal"))
+                                                            (contains? x :name))
+                                                       (merge (assoc x
+                                                                     :name
+                                                                     (str (name (:name x)) "-modal"))
+                                                              (when-let [id (some-> x :id name)]
+                                                                {:id (str id "-modal")}))
+
                                                        (and (map? x)
                                                             (contains? x :for))
                                                        (assoc x

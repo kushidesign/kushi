@@ -130,7 +130,7 @@
 
 
 ;; New
-#_(def defui-syms
+(def defui-syms
   '{&opts          opts
     &attrs         attrs
     &children      children
@@ -232,21 +232,70 @@
                 end-enhancer   (concat &children [end-enhancer])
                 :else          &children))))
 
+
+
+(defmacro defn-mm [m]
+  (assoc m :doc "WOOHAAAAAG"))
+
+
+
 (defmacro defui
+  [sym m _ body]
+  (let [opts        (:opts m)
+        opts-trimmed (reduce-kv (fn [m k v] (assoc m k (dissoc v :desc :schema))) {} opts)
+        opts-keys   (into [] (keys opts))
+
+        ;; TODO - process body here for different frameworks
+        body        body
+
+        opts-for-mm (reduce-kv (fn [m k v] (assoc m k (dissoc m :data v)))
+                               {}
+                               opts)
+        mm          (assoc m :opts opts-for-mm)
+        ks          '[&opts &attrs &data-ks-attrs &children args]]
+    `(defn ~sym 
+       ~mm
+       [& args#]
+       (let [ex#                  (kushi.ui.core/extract args# ~opts-keys)
+             data-ks-attrs#       (kushi.ui.core/data-ks-attrs (:opts ex#) ~opts-trimmed)
+             ex#                  {:&opts          (:opts ex#)
+                                   :&attrs         (:attrs ex#)
+                                   :&data-ks-attrs data-ks-attrs#
+                                   :&children      (:children ex#)
+                                   :args           args#}
+
+             {:keys ~ks} ex#]
+         (when ^boolean js/goog.DEBUG
+             ;; TODO - Try to validate opts in here.
+           (!? "Validation goes ehreeHHEERRRREE"))
+         ~body))))
+
+#_(defmacro defui
   [sym m body]
-  (let [opts-syms (mapv symbol (keys (:opts m)))
-        ;; process body here for different frameworks
-        ]
+  (let [opts          (some-> m :opts keys)
+        opts          (cond (map? opts)
+                            opts
+                            (symbol? opts)
+                            (get prop-maps opts)
+                            (and (list? opts) (= 'merge (first opts)))
+                            (->> opts
+                                 rest
+                                 (keep #(cond (symbol? %)
+                                              (get prop-maps %)
+                                              (map? %)
+                                              %))
+                                 (apply merge)))
+        opts-syms     (mapv symbol opts)
+        data-ks-attrs {}                        ; <- fn that takes opts and returns map of data-ks-* attrs
+        meta-data     (reduce-kv (fn [m k v] (assoc m k (dissoc :data v)) ) {} opts)
+        body          (walk/postwalk
+                       (fn [x]
+                         (get defui-syms x x))
+                       body)]
     `(defn ~sym 
        ~m
-       [& args#]
-       (when ^boolean js/goog.DEBUG
-             ;; Try to validate opts in here.
-             "This is going to be included YEAHHHHHHHH")
-       (let [opts#
-             (first args#)
-
-             {:keys ~opts-syms
-              :as   bones#} 
-             opts#]
-         ~body))))
+       '[& args]
+       `(let [{:keys [opts# attrs# children#]} (extract args (into [] ~opts))
+              {:keys ~opts-syms}               opts#
+              data-ks-attrs#                   ~data-ks-attrs]
+          ~body))))

@@ -1071,8 +1071,8 @@
    :active:color      :white
    :dark:active:color :black})
 
-(defcss "[data-ks-surface=\"outline\"]"
-  {:--_stroke-width    :$outlined-element-stroke-width})
+(defcss "[data-ks-surface=\"outline\"], [data-ks-surface=\"faint-outline\"]"
+  {:--_stroke-width :$outlined-element-stroke-width})
 
 (defcss
   "[data-ks-surface]"
@@ -1091,7 +1091,23 @@
    "@supports(color: color-mix(in oklch, currentColor, transparent))"
    {"--_fallback-stroke-color" ;; "currentColor"
     ;; Somehow this doesn't work when switching between light and dark modes in Chrome?
-    "color-mix(in oklch, currentColor, transparent)"}})
+    "color-mix(in oklch, currentColor, transparent)"}
+   
+   "[data-ks-surface=\"faint-outline\"]"
+   {"@supports(color: color-mix(in oklch, currentColor, transparent))"
+    {"--_fallback-stroke-color" ;; "currentColor"
+            ;; Somehow this doesn't work when switching between light and dark modes in Chrome?
+     "color-mix(in oklch, currentColor, transparent 90%)"}}
+   
+   "dark:[data-ks-surface=\"faint-outline\"]"
+   {"@supports(color: color-mix(in oklch, currentColor, transparent))"
+    {"--_fallback-stroke-color" ;; "currentColor"
+            ;; Somehow this doesn't work when switching between light and dark modes in Chrome?
+     "color-mix(in oklch, currentColor, transparent 80%)"}}
+   
+   })
+
+
 
  (defcss
    "[data-ks-surface=\"transparent\"]"
@@ -1131,8 +1147,34 @@
   {:after {:background-image "linear-gradient(var(--transparent-black-02), #0000, var(--transparent-white-20))"}})
 
 (defcss "[data-ks-contour=\"rounded\"]"
-  {:border-radius :0.3em})
+  {:border-radius :$rounded-medium})
 
+(defcss "[data-ks-contour=\"rounded-3xsmall\"]"
+  {:border-radius :$rounded-xxxsmall})
+
+(defcss "[data-ks-contour=\"rounded-2xsmall\"]"
+  {:border-radius :$rounded-xxsmall})
+
+(defcss "[data-ks-contour=\"rounded-xsmall\"]"
+  {:border-radius :$rounded-xsmall})
+
+(defcss "[data-ks-contour=\"rounded-small\"]"
+  {:border-radius :$rounded-small})
+
+(defcss "[data-ks-contour=\"rounded-medium\"]"
+  {:border-radius :$rounded-medium})
+
+(defcss "[data-ks-contour=\"rounded-large\"]"
+  {:border-radius :$rounded-large})
+
+(defcss "[data-ks-contour=\"rounded-xlarge\"]"
+  {:border-radius :$rounded-xlarge})
+
+(defcss "[data-ks-contour=\"rounded-2xlarge\"]"
+  {:border-radius :$rounded-xxlarge})
+
+(defcss "[data-ks-contour=\"rounded-3xlarge\"]"
+  {:border-radius :$rounded-xxxsmall})
 
 (defcss "[data-ks-contour=\"pill\"], [data-ks-contour=\"circle\"]"
   {:border-radius :9999px})

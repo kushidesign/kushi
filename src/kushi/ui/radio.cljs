@@ -4,8 +4,12 @@
    [kushi.core :refer (css sx merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.label :refer (label)]
-   [kushi.ui.core :refer (extract)]
+   [kushi.ui.flex :refer (flex-row-start)]
+   [kushi.ui.core :refer (extract defui)]
    [clojure.string :as string]))
+
+
+
 
 
 (defn radio-old
@@ -69,8 +73,15 @@
 
 
 
-(defn radio [& args]
-  (let [{:keys [opts attrs]} (extract args)
+#_(defn radio
+  {:doc "Input elments of type radio buttons are used in groups of 2 or more,
+         when only one choice may be selected from a set of related options."
+   :opts {:sizing   {:desc    "Size"
+                     :default nil}
+          :colorway {:desc    "Size"
+                     :default nil}}}
+  [& args]
+  (let [{:keys [opts attrs]}      (extract args)
         {:keys [sizing colorway]} opts]
     [:input
      (merge-attrs
@@ -107,6 +118,50 @@
        :type             :radio}
       attrs)]))
 
+(defui radio 
+  {:doc  "This is radio docstring"
+   :opts {:sizing   {:schema keyword?
+                     :desc   "Blah blah blah"
+                     :default nil} 
+          :colorway {:schema keyword?
+                     :desc   "Blah blah blah"
+                     :defaul nil}}}
+  [& args]
+  (let [{:keys [colorway sizing]} &opts]
+    [:input
+     (merge-attrs
+      {:class            (css
+                          ".kushi-radio-button"
+                          :.transition
+                          :transition-duration--$xxfast
+                          :cursor--pointer
+                          :+label:cursor--pointer
+                          :+label:pis--0.369em
+                          [:border-color
+                           "color-mix(in hsl, currentColor 55%, transparent)"]
+                          [:checked:border-color
+                           :currentColor]
+                          :display--grid
+                          :place-content--center
+                          :-webkit-appearance--none
+                          :appearance--none
+                          :bgc--transparent
+                          :m--0
+                          :color--currentColor
+                          :width--1em
+                          :height--1em
+                          :border-style--solid
+                          :border-width--$input-border-weight-normal
+                          :border-color--currentColor
+                          :checked:border-width--0.333em
+                          :checked:border-offset---0.333em
+                          :o--1
+                          :border-radius--50%)
+       :data-ks-ui       :radio
+       :data-ks-surface  :transparent
+       :type             :radio}
+      &data-ks-attrs
+      &attrs)]))
 
 
 (def demos
@@ -299,3 +354,85 @@
   ;;                                             :defaultChecked true}}]
   ;;                      [radio {:sizing        :xxxlarge
   ;;                              :input-attrs {:name :xxxlarge-sample}}]]}]}]
+
+;; Sketch for radio-group
+(defui radio-group 
+  {:doc  "This is radio docstring"
+   :opts {:sizing   {:schema  keyword?
+                     :desc    "Blah blah blah"
+                     :default nil} 
+          :colorway {:schema  keyword?
+                     :desc    "Blah blah blah"
+                     :default nil}
+          :surface  {:schema  keyword?
+                     :desc    "Blah blah blah"
+                     :default nil}
+          :id       {:schema    keyword?
+                     :required? true}
+          :choices  {:schema    vector?
+                     :required? true
+                     :data      :elide}
+          :legend   {:schema  string?
+                     :default nil
+                     :data    :elide}
+          :default  {:schema  string?
+                     :desc    "Must match the Choice label string value"
+                     :default nil
+                     :data    :elide}
+          }}
+  [& args]
+  (let [{:keys [id choices default inert?]} &opts]
+    ;; Maybe no legend
+    (let [rg-id (str id "-radio-group")]
+      (into
+       [:div (merge-attrs (sx :.flex-row-start :gap--1.5em)
+                          {:id rg-id}
+                          &data-ks-attrs
+                          &attrs
+
+                          ;; Pull this from in data-ks-attrs so you don't have to manualize schema?
+                          {:data-ks-inert (when-not (false? inert?) "")})]
+       (for [choice choices]
+         (let [choice-label (if (map? choice) (:label choice) choice)
+               choice-lc    (string/lower-case choice-label)
+               choice-id    (or (when (map? choice) (:id choice))
+                                (str rg-id "-" choice-lc "-choice"))
+               choice-value (or (when (map? choice) (:value choice))
+                                choice-lc)]
+           [flex-row-start 
+            [radio (merge {:id    choice-id
+                           :name  id
+                           :value (or choice-value choice-lc)}
+                          (when (= default choice-label)
+                            {:defaultChecked true}))
+             choice-label]
+            [label {:for choice-id} choice-label]]))))))
+
+
+;; Basic example call
+;; [radio-group {:id      "foo"
+;;               :choices ["Yes" "No" "Maybe"]}]
+
+
+;; Basic example call, with maps
+;; [radio-group {:id      "foo"
+;;               :choices [{:label "Yes"
+;;                          :value "12"}
+;;                         {:label "No"
+;;                          :value "2"}
+;;                         {:label "Maybe"
+;;                          :value "3"}]}]
+
+;; Basic example call, with maps
+;; How to apply attrs to members?
+;; Maybe leave legend out of it?
+;; [radio-group (merge-attrs
+;;               (sx :flex-direction--column
+;;                   :gap--0.5em)
+;;               {:id             "foo"
+;;                :choices        [{:label "Yes"
+;;                                  :value "12"}
+;;                                 {:label "No"
+;;                                  :value "2"}
+;;                                 {:label "Maybe"
+;;                                  :value "3"}]})]
