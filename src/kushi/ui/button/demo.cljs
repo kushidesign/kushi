@@ -1,29 +1,50 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.button.demo
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.icon :refer [icon]]
    [kushi.ui.button :refer [button]]
    [kushi.ui.spinner :refer [spinner]]
    [kushi.showcase.core
     :as showcase
-    :refer [samples samples-with-variant]]
-   ))
+    :refer [samples samples-with-variant]]))
 
 
 (def demos
-  [{:samples (samples-with-variant
+  [
+   {:samples (samples-with-variant
               {:args           ["Next"],
-               :desc           "Colorway of the button. Can also be a named color from Kushi's design system e.g `:red` `:purple` `:gold` etc.",
                :variant        :colorway,
                :variant-scale  :colorway/named,
                :x-variants     [:surface],
-               :snippets-label "Colorways",
-               :attrs/snippet  {:surface :solid},
+               :snippets?      false
+               ;;  :attrs/snippet  {:surface :solid},
                ;; :attrs/display  {:sizing :small},
-               :label          "Colorways ... surfaces × contours",
+               ;;  :label          "Colorways, surfaces × contours",
+               :label          "Colorways × surfaces",
                :attrs          {:end-enhancer :east},
                :rows?          true})}
 
+   {:samples (samples-with-variant
+              {:args          ["Next"],
+               :variant       :contour,
+               :variant-scale :contour/basic,
+               :x-variants    [:surface],
+               :snippets?     false
+              ;;  :attrs/snippet  {:surface :solid},
+               ;; :attrs/display  {:sizing :small},
+              ;;  :label          "Colorways, surfaces × contours",
+               :label         "Contour × surfaces",
+               :attrs         {:end-enhancer :east
+                               :colorway     :accent},
+               :rows?         true})}
+
+   {:desc    "Surface variant of the button.",
+    :label   "Surface variants",
+    :samples (samples-with-variant
+              {:attrs   {:end-enhancer [icon :east]
+                         :colorway     :accent},
+               :args    ["Next"],
+               :variant :surface})}
+   
    {:label   "Contour variants"
     :desc    "Contour of the button."
     :samples (samples-with-variant
@@ -33,14 +54,6 @@
                                :colorway     :accent
                                :surface      :solid}
                :args          ["Next"]})}
-   
-   {:desc    "Surface variant of the button.",
-    :label   "Surface variants",
-    :samples (samples-with-variant
-              {:attrs   {:end-enhancer [icon :east]
-                         :colorway     :accent},
-               :args    ["Next"],
-               :variant :surface})}
    
    {:desc    "General amount of padding inside the button",
     :label   "Packing variants",

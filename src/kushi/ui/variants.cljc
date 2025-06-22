@@ -12,7 +12,7 @@
    :rounded-large
    :rounded-xlarge
    :rounded-xxlarge
-   :rounded-xxxsmall])
+   :rounded-xxxlarge])
 
 (def contours-basic
   [:pill :sharp :rounded])

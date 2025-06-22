@@ -24,10 +24,10 @@
         soft
         {:bgc               (keyword (str "$background-color-" s "-soft-3"))
          :dark:bgc          (keyword (str "$background-color-" s "-soft-3-dark-mode"))
-         :hover:bgc         (keyword (str "$background-color-" s "-soft-2"))
-         :dark:hover:bgc    (keyword (str "$background-color-" s "-soft-2-dark-mode"))
-         :active:bgc        (keyword (str "$background-color-" s "-soft"))
-         :dark:active:bgc   (keyword (str "$background-color-" s "-soft-dark-mode"))
+         :hover:bgc         (keyword (str "$background-color-" s "-soft-4"))
+         :dark:hover:bgc    (keyword (str "$background-color-" s "-soft-4-dark-mode"))
+         :active:bgc        (keyword (str "$background-color-" s "-soft-5"))
+         :dark:active:bgc   (keyword (str "$background-color-" s "-soft-5-dark-mode"))
          :color             (keyword (str "$foreground-color-" s "-3"))
          :hover:color       (keyword (str "$foreground-color-" s "-3"))
          :active:color      (keyword (str "$foreground-color-" s "-3"))
@@ -37,13 +37,30 @@
         
         soft-inert
         {
-         :bgc               (keyword (str "$background-color-" s "-soft-3"))
-         :hover:bgc         (keyword (str "$background-color-" s "-soft-3"))
-         :active:bgc        (keyword (str "$background-color-" s "-soft-3"))
+         :bgc             (keyword (str "$background-color-" s "-soft-3"))
+         :hover:bgc       (keyword (str "$background-color-" s "-soft-3"))
+         :active:bgc      (keyword (str "$background-color-" s "-soft-3"))
 
-         :dark:bgc          (keyword (str "$background-color-" s "-soft-3-dark-mode"))
-         :dark:hover:bgc    (keyword (str "$background-color-" s "-soft-3-dark-mode"))
-         :dark:active:bgc   (keyword (str "$background-color-" s "-soft-3-dark-mode"))}
+         :dark:bgc        (keyword (str "$background-color-" s "-soft-3-dark-mode"))
+         :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-3-dark-mode"))
+         :dark:active:bgc (keyword (str "$background-color-" s "-soft-3-dark-mode"))}
+        
+
+        faint
+        {:bgc             (keyword (str "$background-color-" s "-soft"))
+         :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
+         :hover:bgc       (keyword (str "$background-color-" s "-soft-2"))
+         :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-2-dark-mode"))
+         :active:bgc      (keyword (str "$background-color-" s "-soft-3"))
+         :dark:active:bgc (keyword (str "$background-color-" s "-soft-3-dark-mode"))}
+
+        faint-inert
+        {:bgc             (keyword (str "$background-color-" s "-soft"))
+         :hover:bgc       (keyword (str "$background-color-" s "-soft"))
+         :active:bgc      (keyword (str "$background-color-" s "-soft"))
+         :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
+         :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
+         :dark:active:bgc (keyword (str "$background-color-" s "-soft-dark-mode"))}
         ]
 
    [{"[data-ks-surface= \"transparent\"]"                  
@@ -88,41 +105,21 @@
 
      "[data-ks-surface= \"faint\"]"                        
      (merge base
-            {:bgc             (keyword (str "$background-color-" s "-soft"))
-             :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
-             :hover:bgc       (keyword (str "$background-color-" s "-soft-2"))
-             :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-2-dark-mode"))
-             :active:bgc      (keyword (str "$background-color-" s "-soft-3"))
-             :dark:active:bgc (keyword (str "$background-color-" s "-soft-3-dark-mode"))})
+            faint)
 
 
      "[data-ks-surface= \"faint\"][data-ks-inert]"         
      (merge base-inert
-            {:bgc             (keyword (str "$background-color-" s "-soft"))
-             :hover:bgc       (keyword (str "$background-color-" s "-soft"))
-             :active:bgc      (keyword (str "$background-color-" s "-soft"))
-             :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
-             :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
-             :dark:active:bgc (keyword (str "$background-color-" s "-soft-dark-mode"))})
+            faint-inert)
 
      "[data-ks-surface= \"faint-outline\"]"                        
      (merge base
-            {:bgc             (keyword (str "$background-color-" s "-soft"))
-             :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
-             :hover:bgc       (keyword (str "$background-color-" s "-soft-2"))
-             :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-2-dark-mode"))
-             :active:bgc      (keyword (str "$background-color-" s "-soft-3"))
-             :dark:active:bgc (keyword (str "$background-color-" s "-soft-3-dark-mode"))})
+            faint)
 
 
      "[data-ks-surface= \"faint-outline\"][data-ks-inert]"         
      (merge base-inert
-            {:bgc             (keyword (str "$background-color-" s "-soft"))
-             :hover:bgc       (keyword (str "$background-color-" s "-soft"))
-             :active:bgc      (keyword (str "$background-color-" s "-soft"))
-             :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
-             :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
-             :dark:active:bgc (keyword (str "$background-color-" s "-soft-dark-mode"))})
+            faint-inert)
 
      "[data-ks-surface= \"soft\"]"                          
      soft

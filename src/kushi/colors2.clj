@@ -34,7 +34,7 @@
        (apply concat)))
 
 
-(def colors
+#_(def colors
   ["gray"
    {:hue   0,
     :scale [[50 0 98]
@@ -211,7 +211,7 @@
    array-map
    ["gray"
     {:hue   gray-hue,
-     :scale [[50 0.985 0]
+     :scale [[50 0.982 0]
              [100 0.962 0]
              [200 0.931 0]
              [300 0.885 0]
@@ -263,7 +263,7 @@
              [1000 0.282 0.071]]}
     "lime"
     {:hue   lime-hue,
-     :scale [[50 0.989 0.028]
+     :scale [[50 0.982 0.028]
              [100 0.97 0.076]
              [200 0.929 0.195]
              [300 0.89 0.247]
@@ -276,8 +276,8 @@
              [1000 0.293 0.078]]}
     "yellow"
     {:hue   yellow-hue,
-     :scale [[50 0.991 0.031]
-             [100 0.982 0.061]
+     :scale [[50 0.987 0.031]
+             [100 0.977 0.061]
              [200 0.959 0.139]
              [300 0.916 0.197]
              [400 0.87 0.187]
@@ -357,8 +357,8 @@
   (apply
    array-map 
    ["gray"
-    {:hue   gray-hue,
-     :scale [[50 0.985 0]
+    {:hue   0,
+     :scale [[50 0.982 0]
              [100 0.962 0]
              [150 0.95 0.0]
              [200 0.931 0]
@@ -379,7 +379,7 @@
              [950 0.25 0.0]
              [1000 0.193 0]]}
     "purple"
-    {:hue   purple-hue,
+    {:hue   304.9,
      :scale [[50 0.975 0.022]
              [100 0.932 0.047]
              [150 0.89 0.07]
@@ -401,7 +401,7 @@
              [950 0.25 0.13]
              [1000 0.193 0.101]]}
     "blue"
-    {:hue   blue-hue,
+    {:hue   262.7,
      :scale [[50 0.979 0.01]
              [100 0.948 0.024]
              [150 0.91 0.04]
@@ -423,7 +423,7 @@
              [950 0.25 0.1]
              [1000 0.198 0.078]]}
     "green"
-    {:hue   green-hue,
+    {:hue   155.5,
      :scale [[50 0.986 0.018]
              [100 0.966 0.039]
              [150 0.94 0.06]
@@ -445,8 +445,8 @@
              [950 0.32 0.08]
              [1000 0.282 0.071]]}
     "lime"
-    {:hue   lime-hue,
-     :scale [[50 0.989 0.028]
+    {:hue   129.5,
+     :scale [[50 0.982 0.028]
              [100 0.97 0.076]
              [150 0.95 0.14]
              [200 0.929 0.195]
@@ -467,9 +467,9 @@
              [950 0.34 0.09]
              [1000 0.293 0.078]]}
     "yellow"
-    {:hue   yellow-hue,
-     :scale [[50 0.991 0.031]
-             [100 0.982 0.061]
+    {:hue   100,
+     :scale [[50 0.987 0.031]
+             [100 0.977 0.061]
              [150 0.97 0.1]
              [200 0.959 0.139]
              [250 0.94 0.17]
@@ -489,7 +489,7 @@
              [950 0.36 0.08]
              [1000 0.319 0.067]]}
     "gold"
-    {:hue   gold-hue,
+    {:hue   82,
      :scale [[50 0.984 0.02]
              [100 0.968 0.04]
              [150 0.95 0.07]
@@ -511,7 +511,7 @@
              [950 0.34 0.07]
              [1000 0.29 0.059]]}
     "orange"
-    {:hue   orange-hue,
+    {:hue   62.3,
      :scale [[50 0.981 0.013]
              [100 0.957 0.03]
              [150 0.93 0.05]
@@ -532,9 +532,8 @@
              [900 0.355 0.082]
              [950 0.31 0.07]
              [1000 0.261 0.058]]}
-
     "red"
-    {:hue   red-hue,
+    {:hue   27,
      :scale [[50 0.978 0.011]
              [100 0.944 0.028]
              [150 0.91 0.05]
@@ -555,9 +554,8 @@
              [900 0.321 0.131]
              [950 0.27 0.11]
              [1000 0.215 0.087]]}
-
     "magenta"
-    {:hue   magenta-hue,
+    {:hue   347.6,
      :scale [[50 0.979 0.013]
              [100 0.953 0.031]
              [150 0.92 0.05]
@@ -579,7 +577,7 @@
              [950 0.28 0.12]
              [1000 0.225 0.094]]}
     "brown"
-    {:hue   brown-hue,
+    {:hue   46.1,
      :scale [[50 0.977 0.005]
              [100 0.945 0.011]
              [150 0.92 0.02]
@@ -695,7 +693,8 @@
             [color-name (assoc m :scale expanded)])
           (apply concat)
           (into []))))
-;; (!? :pp (oklch-colors-expanded*))
+
+(!? :pp (oklch-colors-expanded*))
 
 
 ;; This version resolves colorways from user theme
@@ -738,81 +737,94 @@
 
         bg-soft    50   bg-soft-d   950
         bg-soft-2 100   bg-soft-2-d 850
-        bg-soft-3 150   bg-soft-3-d 750
+        bg-soft-3 150   bg-soft-3-d 800
+        bg-soft-4 200   bg-soft-4-d 750
+        bg-soft-5 250   bg-soft-5-d 700
 
         bg-hard   650   bg-hard-d   550
         bg-hard-2 700   bg-hard-2-d 350
         bg-hard-3 750   bg-hard-3-d 300
         
-        
 
-        standard    [fg-l      fg-d
-                     fg-2-l    fg-2-d
-                     fg-3-l    fg-3-d
+        standard    [fg-l       fg-d
+                     fg-2-l     fg-2-d
+                     fg-3-l     fg-3-d
 
-                     bg-soft   bg-soft-d  
-                     bg-soft-2 bg-soft-2-d
-                     bg-soft-3 bg-soft-3-d
+                     bg-soft    bg-soft-d  
+                     bg-soft-2  bg-soft-2-d
+                     bg-soft-3  bg-soft-3-d
+                     bg-soft-4  bg-soft-4-d
+                     bg-soft-5  bg-soft-5-d
 
-                     bg-hard   bg-hard-d  
-                     bg-hard-2 bg-hard-2-d
-                     bg-hard-3 bg-hard-3-d]
+                     bg-hard    bg-hard-d  
+                     bg-hard-2  bg-hard-2-d
+                     bg-hard-3  bg-hard-3-d]
 
         green       [750       fg-d
                      800       fg-2-d
                      850       fg-3-d
 
-                     100       bg-soft-d  
-                     150       bg-soft-2-d
-                     200       bg-soft-3-d
+                     bg-soft   900  
+                     bg-soft-2 800
+                     bg-soft-3 750
+                     bg-soft-4 700
+                     bg-soft-5 650
 
-                     bg-hard   bg-hard-d  
-                     bg-hard-2 bg-hard-2-d
-                     bg-hard-3 bg-hard-3-d]
+                     bg-hard   450  
+                     bg-hard-2 300
+                     bg-hard-3 200]
 
-        yellow      [800 fg-d
-                     850 fg-2-d
-                     900 fg-3-d
+        yellow      [800       fg-d
+                     850       fg-2-d
+                     900       fg-3-d
 
-                     100 bg-soft-d  
-                     150 bg-soft-2-d
-                     200 bg-soft-3-d
+                     bg-soft   bg-soft-d  
+                     bg-soft-2 bg-soft-2-d
+                     bg-soft-3 bg-soft-3-d
+                     bg-soft-4 bg-soft-4-d
+                     bg-soft-5 bg-soft-5-d
 
-                     700 bg-hard-d   
-                     750 bg-hard-2-d
-                     850 bg-hard-3-d]
+                     700       bg-hard-d   
+                     750       bg-hard-2-d
+                     850       bg-hard-3-d]
 
-        neutral      [800 fg-d
-                      850 fg-2-d
-                      900 fg-3-d
+        neutral      [800       fg-d
+                      850       fg-2-d
+                      900       fg-3-d
 
-                      100 900 
-                      200 850
-                      300 800
+                      bg-soft   900  
+                      bg-soft-2 800
+                      bg-soft-3 750
+                      bg-soft-4 700
+                      bg-soft-5 650
 
-                      700 400   
-                      750 250
-                      850 100]
+                      700       400   
+                      750       250
+                      850       100]
 
         blue        [fg-l      fg-d
                      fg-2-l    fg-2-d
                      fg-3-l    fg-3-d
 
-                     bg-soft   bg-soft-d  
-                     bg-soft-2 bg-soft-2-d
-                     bg-soft-3 bg-soft-3-d
+                     bg-soft   900  
+                     bg-soft-2 800
+                     bg-soft-3 750
+                     bg-soft-4 700
+                     bg-soft-5 650
 
-                     bg-hard   350  
-                     bg-hard-2 300
-                     bg-hard-3 250]
+                     bg-hard   400  
+                     bg-hard-2 350
+                     bg-hard-3 300]
 
         purple      [fg-l      fg-d
                      fg-2-l    fg-2-d
                      fg-3-l    fg-3-d
 
-                     bg-soft   750 
-                     bg-soft-2 650
-                     bg-soft-3 550
+                     bg-soft   900  
+                     bg-soft-2 800
+                     bg-soft-3 750
+                     bg-soft-4 700
+                     bg-soft-5 650
 
                      550       350  
                      600       300
@@ -825,6 +837,8 @@
                      bg-soft   bg-soft-d  
                      bg-soft-2 bg-soft-2-d
                      bg-soft-3 bg-soft-3-d
+                     bg-soft-4 bg-soft-4-d
+                     bg-soft-5 bg-soft-5-d
 
                      bg-hard   350  
                      bg-hard-2 300
@@ -858,10 +872,11 @@
                                   bg-soft   bg-soft-d  
                                   bg-soft-2 bg-soft-2-d
                                   bg-soft-3 bg-soft-3-d
+                                  bg-soft-4 bg-soft-4-d
+                                  bg-soft-5 bg-soft-5-d
                                   bg-hard   bg-hard-d  
                                   bg-hard-2 bg-hard-2-d
-                                  bg-hard-3 bg-hard-3-d
-                                  ]]
+                                  bg-hard-3 bg-hard-3-d]]
                  (apply conj 
                         acc 
                         (mapcat f
@@ -871,10 +886,11 @@
                                  [colorway :bg "-soft" bg-soft bg-soft-d]
                                  [colorway :bg "-soft-2" bg-soft-2 bg-soft-2-d]
                                  [colorway :bg "-soft-3" bg-soft-3 bg-soft-3-d]
+                                 [colorway :bg "-soft-4" bg-soft-4 bg-soft-4-d]
+                                 [colorway :bg "-soft-5" bg-soft-5 bg-soft-5-d]
                                  [colorway :bg "-hard" bg-hard bg-hard-d]
                                  [colorway :bg "-hard-2" bg-hard-2 bg-hard-2-d]
-                                 [colorway :bg "-hard-3" bg-hard-3 bg-hard-3-d]
-                                 ])))
+                                 [colorway :bg "-hard-3" bg-hard-3 bg-hard-3-d]])))
                [] 
                (apply array-map coll))))
 

@@ -1149,10 +1149,10 @@
 (defcss "[data-ks-contour=\"rounded\"]"
   {:border-radius :$rounded-medium})
 
-(defcss "[data-ks-contour=\"rounded-3xsmall\"]"
+(defcss "[data-ks-contour=\"rounded-xxxsmall\"]"
   {:border-radius :$rounded-xxxsmall})
 
-(defcss "[data-ks-contour=\"rounded-2xsmall\"]"
+(defcss "[data-ks-contour=\"rounded-xxsmall\"]"
   {:border-radius :$rounded-xxsmall})
 
 (defcss "[data-ks-contour=\"rounded-xsmall\"]"
@@ -1170,10 +1170,10 @@
 (defcss "[data-ks-contour=\"rounded-xlarge\"]"
   {:border-radius :$rounded-xlarge})
 
-(defcss "[data-ks-contour=\"rounded-2xlarge\"]"
+(defcss "[data-ks-contour=\"rounded-xxlarge\"]"
   {:border-radius :$rounded-xxlarge})
 
-(defcss "[data-ks-contour=\"rounded-3xlarge\"]"
+(defcss "[data-ks-contour=\"rounded-xxxlarge\"]"
   {:border-radius :$rounded-xxxsmall})
 
 (defcss "[data-ks-contour=\"pill\"], [data-ks-contour=\"circle\"]"

@@ -569,7 +569,8 @@
          attrs         :attrs
          attrs-display :attrs/display
          :keys         [x-variants label rows? snippets? variant-labels? row-style variant-scale]
-         :or           {variant-labels? true}
+         :or           {variant-labels? true
+                        snippets?       true}
          :as           demo} 
         (:demo opt)
 
@@ -616,7 +617,7 @@
 
             modal-opts
             (when (and (seq samples)
-                       (not (false? snippets?)))
+                       snippets?)
               (assoc (modal-opts* uic opt)
                      :hiccup-for-examples
                      hiccup-for-examples
