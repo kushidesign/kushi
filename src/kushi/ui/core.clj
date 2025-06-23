@@ -241,7 +241,7 @@
 
 (defmacro defui
   [sym m _ body]
-  (let [opts        (:opts m)
+  (let [opts        (?  {:display-metadata? false} (:opts m))
         opts-trimmed (reduce-kv (fn [m k v] (assoc m k (dissoc v :desc :schema))) {} opts)
         opts-keys   (into [] (keys opts))
 

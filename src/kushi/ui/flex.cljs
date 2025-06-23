@@ -3,9 +3,9 @@
 (ns kushi.ui.flex
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.core :refer (merge-attrs)]
+   [kushi.core :refer (merge-attrs sx)]
    [kushi.ui.shared.theming :refer [component-attrs variant-basics]]
-   [kushi.ui.core :refer (extract)] ))
+   [kushi.ui.core :refer (extract defui)]))
 
 
 (defn- flex-container [m s]
@@ -17,6 +17,37 @@
                  (:attrs m))]
    (:children m)))
 
+(defui box
+  {:doc  "This is radio docstring"
+   :opts {:sizing   {:schema  keyword?
+                     :desc    "Blah blah blah"
+                     :default nil} 
+          :colorway {:schema  keyword?
+                     :desc    "Blah blah blah"
+                     :default nil}
+          :surface  {:schema  keyword?
+                     :desc    "Blah blah blah"
+                     :default nil}
+          :inert?   {:schema  boolean
+                     :desc    "Blah blah blah"
+                     :default nil}
+          :position {:schema  keyword
+                     :desc    "Blah blah blah"
+                     :default nil}}
+
+   
+   }
+  [& args]
+  (let [{:keys [inert?]} &opts]
+    ;; Maybe no legend
+    (into
+     [:div (merge-attrs 
+            (sx ".kushi-box" :.relative)
+            &data-ks-attrs
+            &attrs
+            ;; Pull this from in data-ks-attrs so you don't have to manualize schema?
+            {:data-ks-inert (when-not (false? inert?) "")})]
+     &children)))
 
 (defn flex-row-start
   [& args]

@@ -1,7 +1,7 @@
 (ns kushi.css.build.utility-classes
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.util :as util]
+   [kushi.util :as util :refer [keyed]]
    [clojure.string :as string]))
 
 ;; From kushi.colors/colornames ------------------------------------------------
@@ -154,7 +154,8 @@
 ;;                       :outline-width  :1px
 ;;                       :outline-offset :-1px}
 ;;  :debug-red {:outline-color :$red-500}
-   
+
+
 (def debug-outline-classes
   (mapcatv 
    (fn [c]
@@ -174,8 +175,8 @@
        :dark:c (keyword (str "$" c "-350"))}])
    color-names))
 
-;; Do like tokens and create categories with documentation.
-(def base-classes
+
+(def debugging-classes
   [
    ;; Visual debugging utilities
    ;; --------------------------------------------------------------------------
@@ -193,65 +194,18 @@
    :wireframe         {:outline-color  :silver
                        :outline-style  :solid
                        :outline-width  :1px
-                       :outline-offset :-1px}
-   
-   ;; Type styling
+                       :outline-offset :-1px}])
+
+(def font-family-classes
+  [
+   ;; font-family
    :sans       {:font-family :$sans-serif-font-family}
-   :serif      {:font-family :$sans-serif-font-family}
-   :italic     {:font-family :$sans-serif-font-family}
-   :oblique    {:font-family :$sans-serif-font-family}
-   :uppercase  {:font-family :$sans-serif-font-family}
-   :uppercase  {:font-family :$sans-serif-font-family}
-   :lowercase  {:font-family :$sans-serif-font-family}
-   :capitalize {:font-family :$sans-serif-font-family}
+   :serif      {:font-family :$serif-font-family}
+   :italic     {:font-style :italic}
+   :oblique    {:font-style :oblique}])
 
-   
-
-   ;; Colorization -------------------------------------------------------------
-
-   :neutralize        {:bgc                        :$background-color
-                       :dark:bgc                   :$background-color-dark-mode
-                       :c                          :$foreground-color
-                       :dark:c                     :$foreground-color-
-                       ;; TODO - really need these?
-                       :transition-property        :all
-                       :transition-timing-function :$transition-timing-function
-                       :transition-duration        :$transition-duration
-                       }
-
-   :neutralize-secondary {:bgc                        :$background-color
-                          :dark:bgc                   :$background-color-dark-mode
-                          :c                          :$foreground-color-secondary
-                          :dark:c                     :$foreground-color-secondary-dark-mode
-                          ;; TODO - really need these?
-                          :transition-property        :all
-                          :transition-timing-function :$transition-timing-function
-                          :transition-duration        :$transition-duration
-                          }
-   
-   :foreground-color    {:c      :$foreground-color
-                         :dark:c :$foreground-color-dark-mode}                        
-
-   :foreground-color-secondary    {:c      :$foreground-color-secondary
-                                   :dark:c :$foreground-color-secondary-dark-mode}                        
-
-
-   ;; Borders ------------------------------------------------------------------
-
-   :outlined              {:outline-color  :currentColor
-                           :outline-style  :solid
-                           :outline-width  :1px
-                           :outline-offset :-1px}
-   :bordered              {:border-color :currentColor
-                           :border-style :solid
-                           :border-width :1px}
-   
-
-   ;; TODO - use scale-of-utility-defs
-   ;; Divisors -----------------------------------------------------------------
-   ;; need defclass-like merging here - maybe with metadata on map?
-   ;; TODO -really need transition property on these?
-   :divisor-block-start  {:border-block-start         :$divisor
+(def divisor-classes
+  [:divisor-block-start  {:border-block-start         :$divisor
                           :dark:border-block-start    :$divisor-dark-mode
                           :transition-property        :all
                           :transition-timing-function :$transition-timing-function
@@ -273,37 +227,22 @@
                          :dark:border-inline-end     :$divisor-dark-mode
                          :transition-property        :all
                          :transition-timing-function :$transition-timing-function
-                         :transition-duration        :$transition-duration}
+                         :transition-duration        :$transition-duration}])
 
-
-   ;; Position utility classes -------------------------------------------------
-
-   ;; Non-combo flex utility classes 
-
-   :shrink               {:flex-shrink 1}
-   :no-shrink            {:flex-shrink 0}
-   :grow                 {:flex-grow 1}
-   :no-grow              {:flex-grow 0}
-
-  ;;  :shrink-no-grow-no
-  ;;  :shrink-yes-grow-no
-  ;;  :shrink-yes-grow-yes
-  ;;  :shrink-no-grow-yes
-
-   ;; data-ks-positioning
-   :static               {:position :static}
+(def position-classes 
+   ;; Combinatorial absolute and fixed positioning utilities
+   ;; --------------------------------------------------------------------------
+  [:static               {:position :static}
    :relative             {:position :relative}
    :absolute             {:position :absolute}
    :fixed                {:position :fixed}
    :sticky               {:position :sticky}
 
-
-   ;; Combinatorial absolute and fixed positioning utilities
-   ;; --------------------------------------------------------------------------
-
    :absolute-centered            {:position           :absolute
                                   :inset-inline-start "50%"
+                                  :inset-inline-end   :unset
                                   :inset-block-start  "50%"
+                                  :inset-block-end    :unset
                                   :translate          "-50% -50%"}
 
    :absolute-fill                {:position :absolute
@@ -312,7 +251,78 @@
                                   :bottom   0
                                   :left     0}
 
-   :after-absolute-fill         {:after:content  "\"\""
+   :absolute-inline-start-inside {:position           :absolute
+                                  :inset-inline-start "0%"
+                                  :inset-inline-end   :unset
+                                  :inset-block-start  "50%"
+                                  :inset-block-end    :reset
+                                  :translate          "0px -50%"}
+
+   :absolute-inline-end-inside   {:position           :absolute
+                                  :inset-inline-end   "0%"
+                                  :inset-inline-start :unset
+                                  :inset-block-start  "50%"
+                                  :inset-block-end    :reset
+                                  :translate          "0px -50%"}
+
+   :absolute-block-start-inside  {:position           :absolute
+                                  :inset-block-start  "0%"
+                                  :inset-block-end    :unset
+                                  :inset-inline-start "50%"
+                                  :inset-inline-end   :unset
+                                  :translate          "-50% 0px"}
+
+   :absolute-block-end-inside    {:position           :absolute
+                                  :inset-block-start  :unset
+                                  :inset-block-end    "0%"
+                                  :inset-inline-start "50%"
+                                  :inset-inline-end   :unset
+                                  :translate          "-50% 0px"}
+
+   :fixed-fill                   {:position :fixed
+                                  :top      0
+                                  :right    0
+                                  :bottom   0
+                                  :left     0}
+
+   :fixed-centered            {:position           :fixed
+                               :inset-inline-start "50%"
+                               :inset-inline-end   :unset
+                               :inset-block-start  "50%"
+                               :inset-block-end    :unset
+                               :translate          "-50% -50%"}
+
+   :fixed-inline-start-inside {:position           :fixed
+                               :inset-inline-start "0%"
+                               :inset-inline-end   :unset
+                               :inset-block-start  "50%"
+                               :inset-block-end    :unset
+                               :translate          "0px -50%"}
+
+   :fixed-inline-end-inside   {:position           :fixed
+                               :inset-inline-end   "0%"
+                               :inset-inline-start :unset
+                               :inset-block-start  "50%"
+                               :inset-block-end    :unset
+                               :translate          "0px -50%"}
+
+   :fixed-block-start-inside  {:position           :fixed
+                               :inset-block-start  "0%"
+                               :inset-block-end    :unset
+                               :inset-inline-start "50%"
+                               :inset-inline-end   :unset
+                               :translate          "-50%"}
+
+   :fixed-block-end-inside    {:position           :fixed
+                               :inset-block-end    "0%"
+                               :inset-block-start  :unset
+                               :inset-inline-start "50%"
+                               :inset-inline-end   :unset
+                               :translate          "-50%"}]
+  )
+
+(def pseudo-element-position-classes  
+  [:after-absolute-fill         {:after:content  "\"\""
                                  :after:position :absolute
                                  :after:top      0
                                  :after:right    0
@@ -351,94 +361,96 @@
                                            :after:top                :50%
                                            :after:inset-inline-end   :100%
                                            :after:inset-inline-start :unset
-                                           :after:translate          :0:-50%}
-
-   :absolute-inline-start-inside {:position           :absolute
-                                  :inset-inline-start "0%"
-                                  :inset-inline-end   :unset
-                                  :inset-block-start  "50%"
-                                  :translate          "0px -50%"}
+                                           :after:translate          :0:-50%}])
 
 
-   :absolute-block-start-inside  {:position           :absolute
-                                  :inset-block-start  "0%"
-                                  :inset-block-end    :unset
-                                  :inset-inline-start "50%"
-                                  :translate          "-50% 0px"}
+(def background-image-behavior-classes
+  [:bg-image-cover {:background-position "center center"
+                    :background-repeat   :no-repeat
+                    :width               "100%"}
 
-   :absolute-block-end-inside    {:position           :absolute
-                                  :inset-block-start  :unset
-                                  :inset-block-end    "0%"
-                                  :inset-inline-start "50%"
-                                  :translate          "-50% 0px"}
-
-   :fixed-fill                   {:position :fixed
-                                  :top      0
-                                  :right    0
-                                  :bottom   0
-                                  :left     0}
-
-   :fixed-centered            {:position           :fixed
-                               :inset-inline-start "50%"
-                               :inset-block-start  "50%"
-                               :translate          "-50% -50%"}
-
-   :fixed-inline-start-inside {:position           :fixed
-                               :inset-inline-start "0%"
-                               :inset-inline-end   :unset
-                               :inset-block-start  "50%"
-                               :translate          "0px -50%"}
-
-   :fixed-inline-end-inside   {:position           :fixed
-                               :inset-inline-end   "0%"
-                               :inset-inline-start :unset
-                               :inset-block-start  "50%"
-                               :translate          "0px -50%"}
-
-   :fixed-block-start-inside  {:position           :fixed
-                               :inset-block-start  "0%"
-                               :inset-block-end    :unset
-                               :inset-inline-start "50%"
-                               :translate          "-50%"}
-
-   :fixed-block-end-inside    {:position           :fixed
-                               :inset-block-end    "0%"
-                               :inset-block-start  :unset
-                               :inset-inline-start "50%"
-                               :translate          "-50%"}
+   :bg-image-contain {:background-position "center center"
+                      :background-repeat   :no-repeat
+                      :width               "100%"
+                      :height              "100%"
+                      :background-size     :contain}])
 
 
 
-   ;; Surfaces, buttons, containers
-   ;; --------------------------------------------------------------------------
 
-   :bg-image-cover            {:background-position "center center"
-                               :background-repeat   :no-repeat
-                               :width               "100%"}
+;; TODO - This is cruft, delete when not needed
+(def base-classes
+  [
+   ;; Colorization -------------------------------------------------------------
 
-   :bg-image-contain          {:background-position "center center"
-                               :background-repeat   :no-repeat
-                               :width               "100%"
-                               :height              "100%"
-                               :background-size     :contain}
+   ;; Maybe not needed with surfaces?
+   :neutralize        {:bgc                        :$background-color
+                       :dark:bgc                   :$background-color-dark-mode
+                       :c                          :$foreground-color
+                       :dark:c                     :$foreground-color-
+                       ;; TODO - really need these?
+                       :transition-property        :all
+                       :transition-timing-function :$transition-timing-function
+                       :transition-duration        :$transition-duration
+                       }
+
+   :neutralize-secondary {:bgc                        :$background-color
+                          :dark:bgc                   :$background-color-dark-mode
+                          :c                          :$foreground-color-secondary
+                          :dark:c                     :$foreground-color-secondary-dark-mode
+                          ;; TODO - really need these?
+                          :transition-property        :all
+                          :transition-timing-function :$transition-timing-function
+                          :transition-duration        :$transition-duration
+                          }
+   
+   ;; Maybe not needed?
+   :foreground-color    {:c      :$foreground-color
+                         :dark:c :$foreground-color-dark-mode}                        
+
+   :foreground-color-secondary    {:c      :$foreground-color-secondary
+                                   :dark:c :$foreground-color-secondary-dark-mode}                        
 
 
+   ;; Borders ------------------------------------------------------------------
+   ;; Maybe obsolete with surfaces?
+   :outlined              {:outline-color  :currentColor
+                           :outline-style  :solid
+                           :outline-width  :1px
+                           :outline-offset :-1px}
+   :bordered              {:border-color :currentColor
+                           :border-style :solid
+                           :border-width :1px}
+   
 
-   ;; Combinatorial transition utility
-   ;; --------------------------------------------------------------------------
+   ;; TODO - use scale-of-utility-defs
+   ;; Divisors -----------------------------------------------------------------
+   ;; need defclass-like merging here - maybe with metadata on map?
+   ;; TODO -really need transition property on these?
 
-   :transition            {:transition-property        :all
-                           :transition-timing-function :$transition-timing-function
-                           :transition-duration        :$transition-duration
-                           :after                      {:transition-property        :all
-                                                        :transition-timing-function :$transition-timing-function
-                                                        :transition-duration        :$transition-duration}
-                           :before                     {:transition-property        :all
-                                                        :transition-timing-function :$transition-timing-function
-                                                        :transition-duration        :$transition-duration}}
-   :disabled              {:opacity "45%"} ; <- create a global :--disabled-element-opacity
-                                           ;    distinct from *:disabled for inputs ?
+
+   ;; Position utility classes -------------------------------------------------
+
+   ;; Non-combo flex utility classes 
+
+   ;; :shrink-no-grow-no
+   ;; :shrink-yes-grow-no
+   ;; :shrink-yes-grow-yes
+   ;; :shrink-no-grow-yes
+
    ])
+
+(def flex-shrink-grow-classes 
+  [:shrink {:flex-shrink 1}
+   :no-shrink {:flex-shrink 0}
+   :grow {:flex-grow 1}
+   :no-grow {:flex-grow 0}])
+
+(def flex-shrink-grow-data-ks
+  ["[data-ks-flex-grow=\"true\"]" {:flex-grow 1}
+   "[data-ks-flex-grow=\"false\"]" {:flex-grow 0}
+   "[data-ks-flex-shrink=\"true\"]" {:flex-shrink 1}
+   "[data-ks-flex-shrink=\"false\"]" {:flex-shrink 0}])
 
 (def icon-synced-weights
   "Creates an ordered vector of pairs, thin ~ heavy (100 ~ 900):
@@ -467,29 +479,40 @@
 (def global-selectors
   ["*:disabled"
    {:opacity :45%!important ;; <-make a token $disabled-opacity
-    :cursor  :not-allowed!important}])
+    :cursor  :not-allowed!important}
+
+   :disabled              
+   {:opacity "45%"} ; <- create a global :--disabled-element-opacity
+                    ;    distinct from *:disabled for inputs ?
+
+   :transition            
+   {:transition-property        :all
+    :transition-timing-function :$transition-timing-function
+    :transition-duration        :$transition-duration
+    :after                      {:transition-property        :all
+                                 :transition-timing-function :$transition-timing-function
+                                 :transition-duration        :$transition-duration}
+    :before                     {:transition-property        :all
+                                 :transition-timing-function :$transition-timing-function
+                                 :transition-duration        :$transition-duration}}])
 
 
-(def override-classes
-  [;; General
-   ;; --------------------------------------------------------------------------
-   ;; TODO - consider [data-ks-offscreen]
-
-   :offscreen {:position :absolute
+(def offscreen-classes 
+  [:offscreen {:position :absolute
                :left     :-10000px
                :top      :auto
                :width    :1px
                :height   :1px
-               :overflow :hidden}
+               :overflow :hidden}])
 
 
+(def icon-enhancement-classes 
    ;; Icon enhancement - maybe you don't need if you make a 
    ;; label component that has this built-in?
-   ;; --------------------------------------------------------------------------
-
-   :enhanceable-with-icon {:gap :$icon-enhanceable-gap}
+  [:enhanceable-with-icon {:gap :$icon-enhanceable-gap}])
 
 
+(def relief-effects-classes
    ;; Surfaces, buttons, containers 3D
    ;; TODO - make $debossed and $embossed tokens
    ;;      - Maybe make scale like convex and elevation 0-5?
@@ -497,51 +520,45 @@
    ;;        and maybe also :debossed-level on lib components
    ;; --------------------------------------------------------------------------
 
-   :debossed-text {:text-shadow "0 1px 2px hsl(0deg 0% 100% / 55%), 0 -1px 2px hsl(0deg 0% 0% / 27%)"}
-   :embossed-text {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}
+   [:debossed-text {:text-shadow "0 1px 2px hsl(0deg 0% 100% / 55%), 0 -1px 2px hsl(0deg 0% 0% / 27%)"}
+    :embossed-text {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}])
 
 
+(def convex-level-classes
    ;; TODO - use scale-of-utility-defs
    ;; TODO convex 0-5 plus dark-mode
    ;; TODO - consider using data-ks-convex-level
    ;;        and maybe also :convex-level on lib components
+  [:convex {:background-image :$convex-1}
+   :convex-0 {:background-image :$convex-0}
+   :convex-1 {:background-image :$convex-1}
+   :convex-2 {:background-image :$convex-2}
+   :convex-3 {:background-image :$convex-3}
+   :convex-4 {:background-image :$convex-4}
+   :convex-5 {:background-image :$convex-5}])
 
-   :convex        {:background-image :$convex-1}
-   :convex-0      {:background-image :$convex-0}
-   :convex-1      {:background-image :$convex-1}
-   :convex-2      {:background-image :$convex-2}
-   :convex-3      {:background-image :$convex-3}
-   :convex-4      {:background-image :$convex-4}
-   :convex-5      {:background-image :$convex-5}
+(def elevated-level-classes 
+ [:elevated-0    {:box-shadow :$elevated-0}
+  :elevated-1    {:box-shadow      :$elevated-1
+                  :dark:box-shadow :$elevated-1-dark-mode}
+  :elevated-2    {:box-shadow      :$elevated-2
+                  :dark:box-shadow :$elevated-2-dark-mode}
+  :elevated-3    {:box-shadow      :$elevated-3
+                  :dark:box-shadow :$elevated-3-dark-mode}
+  :elevated-4    {:box-shadow      :$elevated-4
+                  :dark:box-shadow :$elevated-4-dark-mode}
+  :elevated-5    {:box-shadow      :$elevated-5
+                  :dark:box-shadow :$elevated-5-dark-mode}
+  :elevated      {:box-shadow      :$elevated-4
+                  :dark:box-shadow :$elevated-4-dark-mode}])
 
-
-   ;; TODO - use scale-of-utility-defs
-   ;; TODO - consider using data-ks-elevation-level
-   ;;        and maybe also :elevation on lib components
-
-   :elevated-0    {:box-shadow :$elevated-0}
-
-   :elevated-1    {:box-shadow      :$elevated-1
-                   :dark:box-shadow :$elevated-1-dark-mode}
-   :elevated-2    {:box-shadow      :$elevated-2
-                   :dark:box-shadow :$elevated-2-dark-mode}
-   :elevated-3    {:box-shadow      :$elevated-3
-                   :dark:box-shadow :$elevated-3-dark-mode}
-   :elevated-4    {:box-shadow      :$elevated-4
-                   :dark:box-shadow :$elevated-4-dark-mode}
-   :elevated-5    {:box-shadow      :$elevated-5
-                   :dark:box-shadow :$elevated-5-dark-mode}
-   :elevated      {:box-shadow      :$elevated-4
-                   :dark:box-shadow :$elevated-4-dark-mode}
-
-   :capitalize     {:text-transform :capitalize}
-   :uppercase      {:text-transform :uppercase}
-   :lowercase      {:text-transform :lowercase}
-   :full-width     {:text-transform :full-width}
-   :full-size-kana {:text-transform :full-size-kana}
-   :math-auto      {:text-transform :math-auto}
-   ])
-
+(def text-transform-classes 
+ [:capitalize     {:text-transform :capitalize}
+  :uppercase      {:text-transform :uppercase}
+  :lowercase      {:text-transform :lowercase}
+  :full-width     {:text-transform :full-width}
+  :full-size-kana {:text-transform :full-size-kana}
+  :math-auto      {:text-transform :math-auto}])
 
 
 ;; Border weights for radios and checkbox sync with type weight
@@ -565,17 +582,18 @@
 
 (defn geometries [coll m]
   (mapcatv (fn [[k v]]
-             (let [m+    (assoc m :translate v)
-                   k-str (util/stringify k)]
-               (concat [(as-classname (name k)) ; <- string version
-                        ;; k                    ; <- kw version
-                        m+]
-                       (when (and fixed-geometries?
-                                  (re-find #"-inside$" k-str))
-                         [(-> k-str
-                              (str "-fixed")
-                              as-classname)
-                          (assoc m+ :position :fixed)]))))
+             (let [m+     (assoc m :translate v)
+                   k-str  (util/stringify k)
+                   sel    (as-classname (name k))
+                   -fixed (when (and fixed-geometries?
+                                     (re-find #"-inside$" k-str))
+                            [(-> k-str
+                                 (str "-fixed")
+                                 as-classname)
+                             (assoc m+ :position :fixed)])]
+               (!? {:when (= k :bottom-inside)} (keyed [m+ k-str sel -fixed]))
+               (concat [sel m+]
+                       -fixed)))
            coll))
 
 (def geom-top-base 
@@ -711,59 +729,88 @@
                        (if (odd? i) x (->> x name (str "."))))
                      coll)))
 
+(defn wdks
+  ([coll s]
+   (wdks coll s nil nil))
+  ([coll s re replacement]
+   (reduce (fn [acc [k v]] 
+             (conj acc
+                   (str "[data-ks-"
+                        s
+                        "=\"" 
+                        (if (and re replacement)
+                          (string/replace (subs k 1) re replacement)
+                          (subs k 1))
+                        "\"]")
+                   v
+                   k
+                   v))
+           []
+           (partition 2 coll))))
+
 (def all-classes 
   [
-   ;; data-ks-flexbox="row-end"
    ;; flex-utility classes e.g. :.flex-row-fe
-   combo-flex-utility-classes
+   (wdks combo-flex-utility-classes "flexbox")
 
-   ;; data-ks-debug="red"
    ;; debugging outline helpers  :.outline-red
-   debug-outline-classes
+   (wdks debug-outline-classes "debug" #"^debug-" "")
 
-   ;; data-ks-foreground-color="red"
-   foreground-color-classes
-
-   ;; These are combinatorial classes dealing with:
-
-   ;; data-ks-positioning="absolute-block-end-inside "
-   ;; - abs fixed pos   e.g. :.absolute-block-end-inside 
-
-   ;; data-ks-debug="red"
-   ;; - debugging       e.g. :.debug-grid-8, :.wireframe
-
-   ;; data-ks-divisor="block-start"
-   ;; - divisors        e.g. :.divisor-block-start
-
-   ;; data-ks-bounding="bordered"
-   ;; - bounding        ->   :.outlined and :.bordered
+   (wdks foreground-color-classes "foreground-color")
 
 
    ;; data-ks-flex-elastic="shrink-yes-grow-no"
    ;; - flex helpers    ->   :.shrink, :.no-shrink, :.grow, :.no-grow
-
+   
    ;; data-ks-background-image-behavior="cover"
    ;; - bg image help   ->   :.bg-image-cover, :.bg-image-contain
-
+   
    ;; data-ks-transition-speed="xxxfast"
    ;; - animation       ->   :.transition
+   
    (kws->dot-strs base-classes)
 
+   ;; data-ks-debug="red"
+   ;; - debugging       e.g. :.debug-grid-8, :.wireframe
+   (-> debugging-classes kws->dot-strs (wdks "debug" #"^debug-" ""))
+   (-> font-family-classes kws->dot-strs (wdks "font-family"))
+
+   ;; data-ks-divisor="block-start"
+   ;; - divisors        e.g. :.divisor-block-start
+   (-> divisor-classes kws->dot-strs (wdks "divisor"))
+
+   ;; These are combinatorial classes dealing with:
+   ;; - abs fixed pos   e.g. :.absolute-block-end-inside 
+   (-> position-classes kws->dot-strs (wdks "position"))
+
+   ;; - abs fixed pos for pseudo   e.g. :.after-absolute-block-end-inside 
+   (-> pseudo-element-position-classes kws->dot-strs (wdks "position"))
+
+   (-> background-image-behavior-classes kws->dot-strs (wdks "background-image-behavior"))
+
+   (-> flex-shrink-grow-classes kws->dot-strs (wdks "background-image-behavior"))
+
+   flex-shrink-grow-data-ks
+   
    ;; These are geometry-based absolute and fixed positioning utilities 
    ;; e.g. :.top-left-outside :.top-left-corner-outside etc.
-   ;; data-ks-positioning="top-left-outside"
-   geom-top-left-corners
-   geom-top-right-corners
-   geom-bottom-left-corners
-   geom-bottom-right-corners
-   geom-left-side
-   geom-right-side
-   geom-top-side
-   geom-bottom-side
+   ;; data-ks-placement="top-left-outside"
+   ;; data-ks-placement="absolute-block-end-inside "
+   (wdks geom-top-left-corners "position")
+   (wdks geom-top-right-corners "position")
+   (wdks geom-bottom-left-corners "position")
+   (wdks geom-bottom-right-corners "position")
+   (wdks geom-left-side "position")
+   (wdks geom-right-side "position")
+   (wdks geom-top-side "position")
+   (wdks geom-bottom-side "position")
 
-   ;; maybe eliminate completely?
-   (kws->dot-strs override-classes)
-
+   (-> text-transform-classes kws->dot-strs (wdks "text-transform"))
+   (-> elevated-level-classes kws->dot-strs (wdks "elevation"))
+   (-> convex-level-classes kws->dot-strs (wdks "convex"))
+   (-> relief-effects-classes kws->dot-strs (wdks "fx"))
+   (-> icon-enhancement-classes kws->dot-strs (wdks "icon-enhancement"))
+   (-> offscreen-classes kws->dot-strs (wdks "position"))
 
    global-selectors
 
@@ -788,18 +835,21 @@
    ;;                      (keyword (str "$input-border-weight-" s))
    ;;                      ...})
    ;;                   x)})
-   
-   data-ks-weight-synced])
+   ])
 
-   ;; OTHERS
-   ;; data-ks-convex-level="5"
-   ;; data-ks-elevation-level="5"
-   ;; data-ks-text-effect="deboss"
-   ;; data-ks-enhanceable-with-icon=""
+(!? all-classes)
+
+;; OTHERS
+;; data-ks-convex-level="5"
+;; data-ks-elevation-level="5"
+;; data-ks-text-effect="deboss"
+;; data-ks-enhanceable-with-icon=""
 
 (def utility-class-ks
-  (mapcat util/kwargs-keys all-classes))
+  (!? :pp (mapcat util/kwargs-keys all-classes)))
 
+;; (? :pp (filter #(string/starts-with? % "[" ) utility-class-ks))
+;; (? :pp (filter #(string/starts-with? % "." ) utility-class-ks))
 
 (def utility-class-ks-set
   (into #{} utility-class-ks))
@@ -810,7 +860,6 @@
 ;;   ".bottom-outside"
 ;;   ".flex-col-se"
 ;;   ...}
-
 
 (def utility-classes
   (apply util/deep-merge

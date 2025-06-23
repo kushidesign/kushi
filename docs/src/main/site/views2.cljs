@@ -8,7 +8,7 @@
    [kushi.core :refer [?sx sx css merge-attrs at]]
    [kushi.playground.shared-styles]
    [kushi.ui.variants]
-   [kushi.ui.core :refer [defui]]
+   [kushi.ui.core :refer [defui data-ks-attrs]]
 
    [kushi.showcase.core :as showcase :refer [showcase]]
 
@@ -16,7 +16,7 @@
    [kushi.ui.button :refer [button]]
    [kushi.ui.button.demo]
 
-  ;;  [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start]]
+   [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start box]]
   ;;  [kushi.ui.layout :refer [layout]]
 
   ;;  [kushi.ui.icon :refer [icon]]
@@ -49,10 +49,7 @@
    [kushi.ui.defs :as defs]))
 
 
-
-
 (js/console.clear)
-
 ;; Experimental macro calls
 
 ;; #_(defui bang 
@@ -169,13 +166,34 @@
     :default  "Yes"
     :choices  ["Yes" "No" "Maybe"]}]
 
+  (let [id (fn [m] 
+             [box (merge {:size     :xlarge
+                          :surface  :solid
+                          :class    (css :w--100px :h--100px)}
+                         m)
+              [box {:position :absolute-centered}
+               "Hi"]])]
+    [box
+     {:class    (css {:w :500px
+                      :h :500px})
+      :position :absolute-centered
+      :surface  :faint-outline
+      :colorway :neutral}
+     [id {:position :absolute-inline-start-inside
+          :colorway :red}]
+     [id {:position :absolute-inline-end-inside
+          :colorway :green}]
+     [id {:position :absolute-block-end-inside
+          :colorway :blue}]
+     "Child 1"])
+
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
                                  kushi.ui.icon.demo/demos))]
 
   #_[showcase (!? (showcase/opts kushi.ui.tag/tag
                                  kushi.ui.tag.demo/demos))]
 
-  [showcase (!? (showcase/opts kushi.ui.button/button
+  #_[showcase (!? (showcase/opts kushi.ui.button/button
                                kushi.ui.button.demo/demos))]
 
   #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner

@@ -361,29 +361,69 @@
    :opts {:sizing   {:schema  keyword?
                      :desc    "Blah blah blah"
                      :default nil} 
+
           :colorway {:schema  keyword?
                      :desc    "Blah blah blah"
                      :default nil}
+
           :surface  {:schema  keyword?
                      :desc    "Blah blah blah"
                      :default nil}
-          :id       {:schema    keyword?
+
+          :inert?   {:schema? boolean?
+                     :desc    "Surface is not interative meaning no hover or active states."
+                     :default nil}
+
+          ;; TODO group-id?
+          :group-id {:schema    keyword?
                      :required? true}
+
           :choices  {:schema    vector?
                      :required? true
-                     :data      :elide}
-          :legend   {:schema  string?
-                     :default nil
-                     :data    :elide}
-          :default  {:schema  string?
-                     :desc    "Must match the Choice label string value"
-                     :default nil
-                     :data    :elide}
-          }}
+                     :data-ks?  false}
+
+          :legend   {:schema   string?
+                     :default  nil
+                     :data-ks? false}
+
+          :default  {:schema   string?
+                     :desc     "Must match the Choice label string value"
+                     :default  nil
+                     :data-ks? false}}}
+
+
+  ;; Is `data-ks?` needed? or use a registry?
+  ;; Pull in from data-ks-attrs
+  ;; Incorporate validation in defui
+  ;; for :props entry, make kushi.ui.props
+  ;; or kushi.props entry work
+
+
+  ;; {:kushi.ui.props [:surface :convex]
+  ;;  :kushi.props    [:surface :convex]
+  ;;  :props          {:legend {:schema   string?
+  ;;                            :default  nil
+  ;;                            :data-ks? false}}}
+
+
+  ;; {:doc   "HIHIihihihh"
+  ;;    :props (merge surface-props
+  ;;                  {:id      {:schema    keyword?
+  ;;                             :required? true}
+  ;;                   :choices {:schema    vector?
+  ;;                             :required? true
+  ;;                             :data-ks?  false}
+  ;;                   :legend  {:schema  string?
+  ;;                             :default nil
+  ;;                             :data-ks?  false}
+  ;;                   :default {:schema   string?
+  ;;                             :desc     "Must match the Choice label string value"
+  ;;                             :default  nil
+  ;;                             :data-ks? false}})}
   [& args]
-  (let [{:keys [id choices default inert?]} &opts]
+  (let [{:keys [group-id choices default inert?]} &opts]
     ;; Maybe no legend
-    (let [rg-id (str id "-radio-group")]
+    (let [rg-id (str group-id "-radio-group")]
       (into
        [:div (merge-attrs (sx :.flex-row-start :gap--1.5em)
                           {:id rg-id}
@@ -401,7 +441,7 @@
                                 choice-lc)]
            [flex-row-start 
             [radio (merge {:id    choice-id
-                           :name  id
+                           :name  group-id
                            :value (or choice-value choice-lc)}
                           (when (= default choice-label)
                             {:defaultChecked true}))

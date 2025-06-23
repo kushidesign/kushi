@@ -313,7 +313,6 @@
             (kushi.util/as-str v)))
    {} 
    with-schema)
- (? with-schema)
   (reduce-kv 
    (fn [m k v]
      (assoc m
