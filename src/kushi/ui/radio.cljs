@@ -357,39 +357,46 @@
 
 ;; Sketch for radio-group
 (defui radio-group 
-  {:doc  "This is radio docstring"
-   :opts {:sizing   {:schema  keyword?
-                     :desc    "Blah blah blah"
-                     :default nil} 
+  {:doc          "This is radio docstring"
+   :props/family [:element]
+   :props/shared [
+                ;;  :sizing 
+                ;;  :colorway
+                  ;; :element
+                  ]
+   :opts         {
+          ;; :sizing   {:schema  keyword?
+          ;;            :desc    "Blah blah blah"
+          ;;            :default nil} 
+                  
+          ;; :colorway {:schema  keyword?
+          ;;            :desc    "Blah blah blah"
+          ;;            :default nil}
+                  
+                  :surface  {:schema  keyword?
+                             :desc    "Blah blah blah"
+                             :default nil}
 
-          :colorway {:schema  keyword?
-                     :desc    "Blah blah blah"
-                     :default nil}
-
-          :surface  {:schema  keyword?
-                     :desc    "Blah blah blah"
-                     :default nil}
-
-          :inert?   {:schema? boolean?
-                     :desc    "Surface is not interative meaning no hover or active states."
-                     :default nil}
+                  :inert?   {:schema? boolean?
+                             :desc    "Surface is not interative meaning no hover or active states."
+                             :default nil}
 
           ;; TODO group-id?
-          :group-id {:schema    keyword?
-                     :required? true}
+                  :group-id {:schema    keyword?
+                             :required? true}
 
-          :choices  {:schema    vector?
-                     :required? true
-                     :data-ks?  false}
+                  :choices  {:schema    vector?
+                             :required? true
+                             :data-ks?  false}
 
-          :legend   {:schema   string?
-                     :default  nil
-                     :data-ks? false}
+                  :legend   {:schema   string?
+                             :default  nil
+                             :data-ks? false}
 
-          :default  {:schema   string?
-                     :desc     "Must match the Choice label string value"
-                     :default  nil
-                     :data-ks? false}}}
+                  :default  {:schema   string?
+                             :desc     "Must match the Choice label string value"
+                             :default  nil
+                             :data-ks? false}}}
 
 
   ;; Is `data-ks?` needed? or use a registry?

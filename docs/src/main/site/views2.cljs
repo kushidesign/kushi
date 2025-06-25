@@ -167,18 +167,31 @@
     :choices  ["Yes" "No" "Maybe"]}]
 
   (let [id (fn [m] 
-             [box (merge {:size     :xlarge
-                          :surface  :solid
-                          :class    (css :w--100px :h--100px)}
+             [box (merge {:sizing  :xlarge
+                          :surface :solid
+                          :class   (css :w--100px :h--100px)}
                          m)
               [box {:position :absolute-centered}
                "Hi"]])]
     [box
-     {:class    (css {:w :500px
-                      :h :500px})
+     {:class    (css {"--foo" "0 5px 10px green"
+                      :w      :500px
+                      :h      :500px})
+
+      ;; Could have both elevation and shadows, with shadows overriding
+      ;; :elevated 5
+      ;; :elevation 5
+      
+      ;; :shadow [:--elevated-5 :--my-custom-shadow]
+      ;; :shadow :--elevated-5
+      ;; :shadows :--elevated-5
+      
+      ;; These values need to be checked at runtime or it kills border and shadow, if bad value
+      :shadows  ["var(--elevated-3)" "-15px -15px 10px purple"]
       :position :absolute-centered
       :surface  :faint-outline
-      :colorway :neutral}
+      ;; :colorway :neutral
+      }
      [id {:position :absolute-inline-start-inside
           :colorway :red}]
      [id {:position :absolute-inline-end-inside

@@ -5,7 +5,8 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (merge-attrs sx)]
    [kushi.ui.shared.theming :refer [component-attrs variant-basics]]
-   [kushi.ui.core :refer (extract defui)]))
+   [kushi.ui.core :refer (extract defui)]
+   [clojure.string :as string]))
 
 
 (defn- flex-container [m s]
@@ -19,23 +20,22 @@
 
 (defui box
   {:doc  "This is radio docstring"
-   :opts {:sizing   {:schema  keyword?
-                     :desc    "Blah blah blah"
-                     :default nil} 
-          :colorway {:schema  keyword?
-                     :desc    "Blah blah blah"
-                     :default nil}
-          :surface  {:schema  keyword?
-                     :desc    "Blah blah blah"
-                     :default nil}
-          :inert?   {:schema  boolean
-                     :desc    "Blah blah blah"
-                     :default nil}
-          :position {:schema  keyword
-                     :desc    "Blah blah blah"
-                     :default nil}}
-
-   
+   :props/family [:container]
+  ;;  :opts {:sizing   {:schema  keyword?
+  ;;                    :desc    "Blah blah blah"
+  ;;                    :default nil} 
+  ;;         :colorway {:schema  keyword?
+  ;;                    :desc    "Blah blah blah"
+  ;;                    :default nil}
+  ;;         :surface  {:schema  keyword?
+  ;;                    :desc    "Blah blah blah"
+  ;;                    :default nil}
+  ;;         :inert?   {:schema  boolean
+  ;;                    :desc    "Blah blah blah"
+  ;;                    :default nil}
+  ;;         :position {:schema  keyword
+  ;;                    :desc    "Blah blah blah"
+  ;;                    :default nil}}
    }
   [& args]
   (let [{:keys [inert?]} &opts]
@@ -46,7 +46,30 @@
             &data-ks-attrs
             &attrs
             ;; Pull this from in data-ks-attrs so you don't have to manualize schema?
-            {:data-ks-inert (when-not (false? inert?) "")})]
+            {:data-ks-inert (when-not (false? inert?) "")}
+            (when-let [n (:data-ks-elevated &data-ks-attrs)]
+              {:style {"--_drop-shadow" (str "var(--elevated" 
+                                          (when-not (string/blank? n) (str "-" n))
+                                          ")")}}))]
+     &children)))
+
+(defui elevated
+  {:doc          "elevated"
+   :props/shared [:elevated :position]
+   }
+  [& args]
+  (let [{:keys [inert?]} &opts]
+    ;; Maybe no legend
+    (into
+     [:div (merge-attrs 
+            (sx ".kushi-elevated"
+                :.relative
+                :w--fit-content
+                :h--fit-content)
+            &data-ks-attrs
+            &attrs
+            ;; Pull this from in data-ks-attrs so you don't have to manualize schema?
+            )]
      &children)))
 
 (defn flex-row-start

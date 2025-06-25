@@ -1074,16 +1074,28 @@
 (defcss "[data-ks-surface=\"outline\"], [data-ks-surface=\"faint-outline\"]"
   {:--_stroke-width :$outlined-element-stroke-width})
 
+(defcss "[data-ks-surface][data-ks-elevated]"
+  {:box-shadow "var(--_stroke), var(--_stroke-2, 0 0), var(--_stroke-3, 0 0), var(--_drop-shadow, var(--elevated))"})
+
+(defcss "[data-ks-surface][data-ks-shadows]"
+  {:box-shadow "var(--_stroke), var(--_stroke-2, 0 0), var(--_stroke-3, 0 0), var(--_drop-shadow-layers, 0 0)"})
+
+;; TODO - make "slots" for strokes and drop shadows, but how many? 
+
+
 (defcss
   "[data-ks-surface]"
-  {"--_stroke"
+  {"--_drop-shadow-layers"
+   "var(--_drop-shadow, 0 0), var(--_drop-shadow-2, 0 0), var(--_drop-shadow-3, 0 0)"
+
+   "--_stroke"
    "inset 0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_fallback-stroke-color))"
 
    "[data-ks-stroke-align=\"outside\"]"
    {"--_stroke" "0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_fallback-stroke-color))"}
 
    "box-shadow"
-   "var(--_stroke)"
+   "var(--_stroke), var(--_stroke-2, 0 0), var(--_stroke-3, 0 0)"
    
    "--_fallback-stroke-color"
    "currentColor"
@@ -1114,8 +1126,7 @@
    {"--_stroke" ""})
                                      
 (defcss "[data-ks-surface=\"solid-classic\"], [data-ks-surface=\"soft-classic\"]"
-  {
-   :box-shadow       "inset 0 0 0 1px var(--transparent-black-10), inset 0 -2px 1px var(--transparent-black-20), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-80), inset 0 2px 1px -1px var(--transparent-white-80)"
+  {:box-shadow       "inset 0 0 0 1px var(--transparent-black-10), inset 0 -2px 1px var(--transparent-black-20), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-80), inset 0 2px 1px -1px var(--transparent-white-80)"
    :bgi              "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
    :z-index          0
    :after            {:content          "\"\""

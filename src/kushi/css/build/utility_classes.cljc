@@ -506,11 +506,14 @@
                :overflow :hidden}])
 
 
-(def icon-enhancement-classes 
+(def icon-enhanceable-classes 
    ;; Icon enhancement - maybe you don't need if you make a 
    ;; label component that has this built-in?
   [:enhanceable-with-icon {:gap :$icon-enhanceable-gap}])
 
+
+(def icon-enhanceable-classes-data-ks
+  ["[data-ks-enhanceable-with-icon?=\"true\"]" {:flex-grow 1}])
 
 (def relief-effects-classes
    ;; Surfaces, buttons, containers 3D
@@ -537,20 +540,22 @@
    :convex-4 {:background-image :$convex-4}
    :convex-5 {:background-image :$convex-5}])
 
-(def elevated-level-classes 
- [:elevated-0    {:box-shadow :$elevated-0}
-  :elevated-1    {:box-shadow      :$elevated-1
+
+(def elevation-level-classes 
+ [:elevation-0    {:box-shadow :$elevated-0}
+  :elevation-1    {:box-shadow      :$elevated-1
                   :dark:box-shadow :$elevated-1-dark-mode}
-  :elevated-2    {:box-shadow      :$elevated-2
+  :elevation-2    {:box-shadow      :$elevated-2
                   :dark:box-shadow :$elevated-2-dark-mode}
-  :elevated-3    {:box-shadow      :$elevated-3
+  :elevation-3    {:box-shadow      :$elevated-3
                   :dark:box-shadow :$elevated-3-dark-mode}
-  :elevated-4    {:box-shadow      :$elevated-4
+  :elevation-4    {:box-shadow      :$elevated-4
                   :dark:box-shadow :$elevated-4-dark-mode}
-  :elevated-5    {:box-shadow      :$elevated-5
+  :elevation-5    {:box-shadow      :$elevated-5
                   :dark:box-shadow :$elevated-5-dark-mode}
-  :elevated      {:box-shadow      :$elevated-4
+  :elevation      {:box-shadow      :$elevated-4
                   :dark:box-shadow :$elevated-4-dark-mode}])
+
 
 (def text-transform-classes 
  [:capitalize     {:text-transform :capitalize}
@@ -806,10 +811,10 @@
    (wdks geom-bottom-side "position")
 
    (-> text-transform-classes kws->dot-strs (wdks "text-transform"))
-   (-> elevated-level-classes kws->dot-strs (wdks "elevation"))
-   (-> convex-level-classes kws->dot-strs (wdks "convex"))
+   (-> elevation-level-classes kws->dot-strs (wdks "elevation" #"^elevation-" ""))
+   (-> convex-level-classes kws->dot-strs (wdks "convex" #"^convex-" ""))
    (-> relief-effects-classes kws->dot-strs (wdks "fx"))
-   (-> icon-enhancement-classes kws->dot-strs (wdks "icon-enhancement"))
+   (-> icon-enhanceable-classes kws->dot-strs)
    (-> offscreen-classes kws->dot-strs (wdks "position"))
 
    global-selectors

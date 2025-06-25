@@ -1,5 +1,6 @@
 (ns ^:dev/always kushi.ui.variants
   (:require 
+   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.util :refer [keyed]]
    #?(:clj [kushi.ui.ordered :refer [ordered-set]])))
 
@@ -32,7 +33,7 @@
 (def spinner-type
   [:donut :thinking :propeller])
 
-(def packing
+(def packings
   [:compact :default :roomy])
 
 (def colorways-named
@@ -70,7 +71,7 @@
           contours
           icon-style
           spinner-type
-          packing
+          packings
           colorways-named
           colorways-semantic
           colorways
@@ -119,7 +120,7 @@
    :colorway/semantic      (:colorways-semantic/set variants)
    :surface                (:surfaces/set variants)
    :surface/tag            (:surfaces-tag/set variants)
-   :packing                (:packing/set variants)
+   :packing                (:packings/set variants)
    :spinner-type           (:spinner-type/set variants)
    :contour                (:contours/set variants)
    :contour/basic          (:contours-basic/set variants)
@@ -138,7 +139,7 @@
    :colorway/semantic      (:colorways-semantic/vector variants)
    :surface                (:surfaces/vector variants)
    :surface/tag            (:surfaces-tag/vector variants)
-   :packing                (:packing/vector variants)
+   :packing                (:packings/vector variants)
    :spinner-type           (:spinner-type/vector variants)
    :contour                (:contours/vector variants)
    :contour/basic          (:contours-basic/vector variants)
@@ -163,3 +164,85 @@
        (assoc acc prefixed m)))
    {} 
    (partition 2 (second vc))))
+
+(def props
+  {:sizing                    {:default nil
+                               :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
+   :colorway                  {:default nil
+                               :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." }
+   :contour                   {:default :round
+                               :desc    "Shape of the element."}
+   :stroke-align              {:schema  #{:inside :outside}
+                               :default nil
+                               :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`"}
+   :packing                   {:default nil
+                               :desc    "General amount of padding inside the element"}
+   :end-enhancer              {:schema  #(or (string? %) (keyword? %) (vector? %))
+                               :default nil
+                               :desc    "Content at the inline-end position preceding the element text. Typically an icon."}
+   :start-enhancer            {:schema  [:or :string :keyword vector?]
+                               :default nil
+                               :desc    "Content at the inline-start position following the element text. Typically an icon."}
+   :loading?                  {:schema  boolean?
+                               :default false
+                               :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`"}
+   :surface                   {:desc    "Surface variant. Composition of two or more of the following charachteristics: background color, foreground color, contrast, surface bevel, and stroke."}
+   :inert?                    {:schema  boolean?
+                               :desc    "Surface is not interative meaning no hover or active states."
+                               :default nil}
+   :text-transform            {:desc    "Equivalent to the css text-transform property."
+                               :default nil}
+   :elevation                  {:desc    "Elevation level of the element. Renders a drop-shadow."
+                               :default nil}
+   :convex                    {:desc    "Elevation level of the element. Renders a drop-shadow."
+                               :default nil}
+   :fx                        {:desc    "Surface effect such as emboss and deboss."
+                               :default nil}
+   :icon-enhanceable?         {:schema  boolean?
+                               :desc    "Element is enhanceable with an icon."
+                               :default nil}
+   :background-image-behavior {:schema  #{:cover :contain}
+                               :desc    "Element is enhanceable with an icon."
+                               :default nil}
+   :shadows                   {
+                              ;;  :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
+                               ;; TODO maybe :$myvar or "var(--myvar)" or "0 0 10px red" (legit shadow string)
+                               :schema        #(and (vector? %)
+                                                    (every? (fn [k] 
+                                                              (and (string? k)
+                                                                   (re-find #"^var\(--[^\)\s]+\)" k)))
+                                                            %))
+                               :desc          "Vector of design tokens which are values for the CSS box-shadow property"
+                               :default       nil
+                               :when-not-nil  ""
+                               :style-tokens? true  
+                               }
+   :position                  {:schema  #{:cover :contain}
+                               :desc    "Element is enhanceable with an icon."
+                               :default "relative"}
+
+  ;;  "position"                   "divisor"
+  ;;  "font-family"                "debug"
+  ;;  "flexbox"                    "foreground-color"
+   
+   })
+
+
+(def prop-families
+  {:container [:sizing
+               :colorway
+               :contour
+               :surface
+               :stroke-align
+               :inert?
+               :position
+               :background-image-behavior
+               :fx
+               :convex
+               :elevation
+               :shadows
+               :loading?]})
+
+#_{:container (-> props (dissoc :icon-enhanceable? :start-enhancer :end-enhancer :loading?)
+                  keys 
+                  (->> (into [])))}

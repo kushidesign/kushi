@@ -2,8 +2,9 @@
   (:require
    [clojure.pprint :refer [pprint]]
    [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.ui.variants :refer [variants-by-custom-opt-key variants]]
+   [kushi.ui.variants :as props :refer [variants-by-custom-opt-key variants]]
    [edamame.core :as e]
+   [kushi.util :refer [keyed]]
    [clojure.walk :as walk] ))
 
             
@@ -238,23 +239,69 @@
   (assoc m :doc "WOOHAAAAAG"))
 
 
-
 (defmacro defui
   [sym m _ body]
-  (let [opts        (?  {:display-metadata? false} (:opts m))
-        opts-trimmed (reduce-kv (fn [m k v] (assoc m k (dissoc v :desc :schema))) {} opts)
+  (let [
+        
+        ;; groups of props rolled up into families 
+        props-from-families
+        (some->> (:props/family m)
+                 (reduce (fn [vc k]
+                           (apply conj
+                                  vc
+                                  (k props/prop-families)))
+                         [])
+                 (select-keys props/props))
+
+        ;; props shared across components
+        props-from-shared 
+        (select-keys props/props (:props/shared m))
+
+        
+        ;; props specific/unique to the component
+        user-props
+        (:opts m)
+
+        opts        
+        (merge user-props
+               props-from-shared
+               props-from-families)
+
+        ;; trims the opts to only give data-ks-attrs what it needs at runtime,
+        ;; which are the :default and and :data-ks? :data-ks (data trans fn) entries
+        opts-trimmed
+        (reduce-kv (fn [m k v]
+                     (assoc m
+                            k
+                            (dissoc v :desc :schema :required? :data)))
+                   {}
+                   opts)
+
         opts-keys   (into [] (keys opts))
 
         ;; TODO - process body here for different frameworks
-        body        body
+        ;; TODO - maybe wrap body here if elevated is in the mix?
 
-        opts-for-mm (reduce-kv (fn [m k v] (assoc m k (dissoc m :data v)))
-                               {}
-                               opts)
-        mm          (assoc m :opts opts-for-mm)
+        body        body
         ks          '[&opts &attrs &data-ks-attrs &children args]]
+
+    #_(when (= sym 'box )
+      (? { :display-metadata? false}
+
+         (keyed [m
+                 opts        
+                 opts-keys 
+                 user-props   
+                 opts-trimmed
+                 props-from-shared
+                 props-from-families
+               ;; body        
+               ;; opts-for-mm 
+               ;; ks
+                 ])))
+
     `(defn ~sym 
-       ~mm
+       ~m
        [& args#]
        (let [ex#                  (kushi.ui.core/extract args# ~opts-keys)
              data-ks-attrs#       (kushi.ui.core/data-ks-attrs (:opts ex#) ~opts-trimmed)

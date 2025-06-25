@@ -41,53 +41,39 @@
    ;; Should this be a map, parsed with edamame?
    ;; Should we use keys like :colorway, same as call-site
    :opts   
-   {
-
-    :sizing       {:default nil
-                   :desc    "Corresponds to the font-size based on Kushi's font-size scale."
-                   }
-
+   {:sizing       {:default nil
+                   :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
 
     :colorway     {:default nil
-                   :desc    "Colorway of the button. Can also be a named color from Kushi's design system e.g `:red` `:purple` `:gold` etc."
-                   }
-
+                   :desc    "Colorway of the button. Can also be a named color from Kushi's design system e.g `:red` `:purple` `:gold` etc."}
 
     :contour      {:default :round
-                   :desc    "Shape of the button."
-                   }
+                   :desc    "Shape of the button."}
     
     :stroke-align {:schema  #{:inside :outside}
                    :default nil
-                   :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`"
-                   }
+                   :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`"}
     
     :packing        {:default nil
-                     :desc    "General amount of padding inside the button"
-                     }
+                     :desc    "General amount of padding inside the button"}
     
     :end-enhancer   {:schema    #(or (string? %) (keyword? %) (vector? %))
                       :default nil
-                      :desc    "Content at the inline-end position preceding the button text. Typically an icon."
-                      }
+                      :desc    "Content at the inline-end position preceding the button text. Typically an icon."}
     
     :start-enhancer {:schema  [:or :string :keyword vector?]
                      :default nil
-                     :desc    "Content at the inline-start position following the button text. Typically an icon."
-                     }
+                     :desc    "Content at the inline-start position following the button text. Typically an icon."}
     
     :loading?       {:schema  boolean?
                      :default false
-                     :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`"
-                     }
+                     :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`"}
     
     :surface        {:default :round
-                     :desc    "Surface variant of the button."
-                     }
-    }
+                     :desc    "Surface variant of the button."}}
 
    :demos    '[{:label   "Start-enhancer icons"
-                :desc    "Content at the inline-start position following the button text. Typically an icon." }]
+                :desc    "Content at the inline-start position following the button text. Typically an icon."}]
 
   ;;  :display  '{:docs     {:order [:summary :desc :toks]
   ;;                         :parse {:summary 'x
