@@ -247,6 +247,25 @@
 
 (def debug-defui 'box)
 
+(defn- props-from-families* [m dbg]
+  (some->> (:props/family m)
+           (dbg 'family-props)
+           (reduce (fn [vc k]
+                     (apply conj
+                            vc
+                            (k props/prop-families)))
+                   [])
+           (dbg 'constituent-prop-keys)
+           (select-keys props/props)
+           #_(dbg 'hydrated-constituent-prop-map)))
+
+(defn- props-trimmed* [merged-props dbg]
+  (dbg 'props-trimmed
+       (reduce-kv (fn [m k v]
+                    (assoc m k (dissoc v :desc :schema :required? :data)))
+                  {}
+                  merged-props)))
+
 (defmacro defui
   [sym  ; <- Symbol, name of component
 
@@ -274,16 +293,7 @@
 
         ;; groups of props rolled up into families 
         props-from-families
-        (some->> (:props/family m)
-                 (dbg 'family-props)
-                 (reduce (fn [vc k]
-                           (apply conj
-                                  vc
-                                  (k props/prop-families)))
-                         [])
-                 (dbg 'constituent-prop-keys)
-                 (select-keys props/props)
-                 #_(dbg 'hydrated-constituent-prop-map))
+        (props-from-families* m dbg)
 
         ;; props shared across components
         props-from-shared 
@@ -297,20 +307,13 @@
         ;; merge all the props
         merged-props        
         (dbg 'merged-opts
-             (merge user-props
-                    props-from-shared
-                    props-from-families))
+             (merge user-props props-from-shared props-from-families))
 
         ;; trims the opts to only give data-ks-attrs what it needs at runtime,
         ;; which are the :default and and :data-ks? :data-ks (data trans fn) entries
         props-trimmed
-        (dbg 'props-trimmed
-             (reduce-kv (fn [m k v]
-                          (assoc m
-                                 k
-                                 (dissoc v :desc :schema :required? :data)))
-                        {}
-                        merged-props))
+        (props-trimmed* merged-props dbg)
+        
 
         props-keys   
         (into [] (keys merged-props))
@@ -335,7 +338,8 @@
        ~m
        [& args#]
        (let [extracted*#    (kushi.ui.core/extract args# ~props-keys)
-             data-ks-attrs# (kushi.ui.core/data-ks-attrs (:opts extracted*#) ~props-trimmed)
+             data-ks-attrs# (kushi.ui.core/data-ks-attrs (:opts extracted*#)
+                                                         ~props-trimmed)
              extracted#     {:&opts          (:opts extracted*#)
                              :&attrs         (:attrs extracted*#)
                              :&data-ks-attrs data-ks-attrs#
