@@ -344,7 +344,7 @@
    attributes/options that are specific to the ui component.
    
    Returns a map:
-   {:opts     <map-of-custom-attributes>
+   {:props    <map-of-custom-attributes>
     :attrs    <html-attributes>
     :children <children>}"
   ([args]
@@ -373,11 +373,11 @@
                                  (contains? kushi-ui-props %)))
                     (into #{}))
 
-           {:keys [attrs opts]} 
+           {:keys [attrs props]} 
            (some->> attr*
                     (group-by #(contains? user-ks (nth % 0 nil)))
                     (map (fn [[k v]]
-                           {(if k :opts :attrs) (into {} v)}))
+                           {(if k :props :attrs) (into {} v)}))
                     (apply merge))
            attrs
            (apply dissoc attrs user-ks)]
@@ -390,11 +390,9 @@
       ;;                                    :supplied-opts supplied-opts 
       ;;                                    :src           src}))
        
-       {:opts     opts
+       {:props    props
         :attrs    attrs
-        :children (->> children
-                       (remove nil?)
-                       unwrapped-children)}))))
+        :children (->> children (remove nil?) unwrapped-children)}))))
 
 
 

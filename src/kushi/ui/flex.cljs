@@ -11,10 +11,10 @@
 
 (defn- flex-container [m s]
   (into
-   [(or (some-> m :opts :as) :div)
+   [(or (some-> m :props :as) :div)
     (merge-attrs {:class [s "relative"]
-                  :style {:gap (-> m :opts :gap)}} ;; use relative class so that soft-classic and solid-classic ::after styling works
-                 (component-attrs s (:opts m) variant-basics)
+                  :style {:gap (-> m :props :gap)}} ;; use relative class so that soft-classic and solid-classic ::after styling works
+                 (component-attrs s (:props m) variant-basics)
                  (:attrs m))]
    (:children m)))
 
@@ -38,7 +38,7 @@
   ;;                    :default nil}}
    }
   [& args]
-  (let [{:keys [inert?]} &opts]
+  (let [{:keys [inert?]} &props]
     ;; Maybe no legend
     (into
      [:div (merge-attrs 
@@ -58,7 +58,7 @@
    :props/shared [:elevated :position]
    }
   [& args]
-  (let [{:keys [inert?]} &opts]
+  (let [{:keys [inert?]} &props]
     ;; Maybe no legend
     (into
      [:div (merge-attrs 

@@ -119,15 +119,15 @@
       attrs)]))
 
 (defui radio 
-  {:doc  "This is radio docstring"
-   :opts {:sizing   {:schema keyword?
-                     :desc   "Blah blah blah"
-                     :default nil} 
-          :colorway {:schema keyword?
-                     :desc   "Blah blah blah"
-                     :defaul nil}}}
+  {:doc   "This is radio docstring"
+   :props {:sizing   {:schema  keyword?
+                      :desc    "Blah blah blah"
+                      :default nil} 
+           :colorway {:schema keyword?
+                      :desc   "Blah blah blah"
+                      :defaul nil}}}
   [& args]
-  (let [{:keys [colorway sizing]} &opts]
+  (let [{:keys [colorway sizing]} &props]
     [:input
      (merge-attrs
       {:class            (css
@@ -364,7 +364,7 @@
                 ;;  :colorway
                   ;; :element
                   ]
-   :opts         {
+   :props        {
           ;; :sizing   {:schema  keyword?
           ;;            :desc    "Blah blah blah"
           ;;            :default nil} 
@@ -428,7 +428,7 @@
   ;;                             :default  nil
   ;;                             :data-ks? false}})}
   [& args]
-  (let [{:keys [group-id choices default inert?]} &opts]
+  (let [{:keys [group-id choices default inert?]} &props]
     ;; Maybe no legend
     (let [rg-id (str group-id "-radio-group")]
       (into
