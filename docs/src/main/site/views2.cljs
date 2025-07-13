@@ -59,11 +59,7 @@
 ;;   (let [{:keys [foo bar]} &opts]
 ;;     (js/console.log &data-ks-attrs &opts foo bar)))
 
-
 ;; (bang {:foo 3 :bar "buzz"})
-
-
-
 
 #_(pprint (? :data {1 2 3 :x}))
 
@@ -196,8 +192,9 @@
           :colorway :red}]
      [id {:position :absolute-inline-end-inside
           :colorway :green}]
-     [id {:position :absolute-block-end-inside
-          :colorway :blue}]
+     [id {:position      :absolute-block-end-inside
+          :colorway      :blue
+          :data-ks-debug :foobar}]
      "Child 1"])
 
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon

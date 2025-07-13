@@ -238,111 +238,122 @@
 (defmacro defn-mm [m]
   (assoc m :doc "WOOHAAAAAG"))
 
+(defn dbg [label x]
+  (? :no-file 
+     {:label                 label
+      :display-metadata?     false
+      :non-coll-length-limit 21}
+     x))
+
+(def debug-defui 'box)
 
 (defmacro defui
-  [sym m _ body]
-  (let [
-        
+  [sym  ; <- Symbol, name of component
+
+   m    ; <- map e.g.
+        ;    {:doc          "xyz component ..."
+        ;     :props/family [...]
+        ;     :props        {...
+        ;                    :my-custom-prop {:schema  string?
+        ;                                     :desc    "prop desc"
+        ;                                     :default "foo"}
+        ;                    ...}}
+
+   _    ; <- The args vector, should always be [& args]
+
+   body ; <- body of component
+   ]
+  
+  (let [dbg
+        (if (= sym debug-defui) dbg (fn [_ x] x))
+
+        _
+        (when (= sym debug-defui)
+          (dbg 'sym sym)
+          (dbg 'm m))
+
         ;; groups of props rolled up into families 
         props-from-families
         (some->> (:props/family m)
+                 (dbg 'family-props)
                  (reduce (fn [vc k]
                            (apply conj
                                   vc
                                   (k props/prop-families)))
                          [])
-                 (select-keys props/props))
+                 (dbg 'constituent-prop-keys)
+                 (select-keys props/props)
+                 #_(dbg 'hydrated-constituent-prop-map))
 
         ;; props shared across components
         props-from-shared 
-        (select-keys props/props (:props/shared m))
+        (dbg 'props-from-shared (select-keys props/props (:props/shared m)))
 
         
         ;; props specific/unique to the component
         user-props
-        (:opts m)
+        (dbg 'user-props (:opts m))
 
-        opts        
-        (merge user-props
-               props-from-shared
-               props-from-families)
+        ;; merge all the props
+        merged-props        
+        (dbg 'merged-opts
+             (merge user-props
+                    props-from-shared
+                    props-from-families))
 
         ;; trims the opts to only give data-ks-attrs what it needs at runtime,
         ;; which are the :default and and :data-ks? :data-ks (data trans fn) entries
-        opts-trimmed
-        (reduce-kv (fn [m k v]
-                     (assoc m
-                            k
-                            (dissoc v :desc :schema :required? :data)))
-                   {}
-                   opts)
+        props-trimmed
+        (dbg 'props-trimmed
+             (reduce-kv (fn [m k v]
+                          (assoc m
+                                 k
+                                 (dissoc v :desc :schema :required? :data)))
+                        {}
+                        merged-props))
 
-        opts-keys   (into [] (keys opts))
+        props-keys   
+        (into [] (keys merged-props))
+
 
         ;; TODO - process body here for different frameworks
         ;; TODO - maybe wrap body here if elevated is in the mix?
+        body        
+        body
 
-        body        body
-        ks          '[&opts &attrs &data-ks-attrs &children args]]
 
-    #_(when (= sym 'box )
-      (? { :display-metadata? false}
+        ;; All the following symbols are available within the body of the macro
 
-         (keyed [m
-                 opts        
-                 opts-keys 
-                 user-props   
-                 opts-trimmed
-                 props-from-shared
-                 props-from-families
-               ;; body        
-               ;; opts-for-mm 
-               ;; ks
-                 ])))
-
+        ;; &props         - map of props defined via the :props or :props/family, extracted from the second arg (map) to defui
+        ;; &attrs         - map of html attributes extracted from the second arg (map) to defui
+        ;; &data-ks-attrs - map of data-ks-* attributes. Some/most of the kushi-specific theming props need to end up as data-ks-* attributes 
+        ;; &children      - collection of children passed to components
+        ks          
+        '[&opts &attrs &data-ks-attrs &children args]]
+    
     `(defn ~sym 
        ~m
        [& args#]
-       (let [ex#                  (kushi.ui.core/extract args# ~opts-keys)
-             data-ks-attrs#       (kushi.ui.core/data-ks-attrs (:opts ex#) ~opts-trimmed)
-             ex#                  {:&opts          (:opts ex#)
-                                   :&attrs         (:attrs ex#)
-                                   :&data-ks-attrs data-ks-attrs#
-                                   :&children      (:children ex#)
-                                   :args           args#}
+       (let [extracted*#    (kushi.ui.core/extract args# ~props-keys)
+             data-ks-attrs# (kushi.ui.core/data-ks-attrs (:opts extracted*#) ~props-trimmed)
+             extracted#     {:&opts          (:opts extracted*#)
+                             :&attrs         (:attrs extracted*#)
+                             :&data-ks-attrs data-ks-attrs#
+                             :&children      (:children extracted*#)
+                             :args           args#}
+             {:keys ~ks}    extracted#]
 
-             {:keys ~ks} ex#]
          (when ^boolean js/goog.DEBUG
-             ;; TODO - Try to validate opts in here.
+
+           ;; Internal dev only, debugging specific instance of component, comment this block out if not debugging
+           ;; 1) Set kushi.core/debug-defui to the name (symbol) of the component you want to debug
+           ;; 2) At the call-site in consuming app, give the instance of that component a unique :data-ks-debug value in the attrs map
+           (when (= (quote ~sym) (quote ~debug-defui))
+             (let [data-ks-debug# :foobar]
+               (when (some-> extracted*# :attrs :data-ks-debug (= data-ks-debug#))
+                (? {:extracted* extracted*#
+                    :extracted  extracted#}))))
+
+           ;; TODO - Try to validate props here.
            (!? "Validation goes ehreeHHEERRRREE"))
          ~body))))
-
-#_(defmacro defui
-  [sym m body]
-  (let [opts          (some-> m :opts keys)
-        opts          (cond (map? opts)
-                            opts
-                            (symbol? opts)
-                            (get prop-maps opts)
-                            (and (list? opts) (= 'merge (first opts)))
-                            (->> opts
-                                 rest
-                                 (keep #(cond (symbol? %)
-                                              (get prop-maps %)
-                                              (map? %)
-                                              %))
-                                 (apply merge)))
-        opts-syms     (mapv symbol opts)
-        data-ks-attrs {}                        ; <- fn that takes opts and returns map of data-ks-* attrs
-        meta-data     (reduce-kv (fn [m k v] (assoc m k (dissoc :data v)) ) {} opts)
-        body          (walk/postwalk
-                       (fn [x]
-                         (get defui-syms x x))
-                       body)]
-    `(defn ~sym 
-       ~m
-       '[& args]
-       `(let [{:keys [opts# attrs# children#]} (extract args (into [] ~opts))
-              {:keys ~opts-syms}               opts#
-              data-ks-attrs#                   ~data-ks-attrs]
-          ~body))))
