@@ -17,7 +17,7 @@
         coll))
 
 (defn icon
-  {:doc  "Icons provide compactness by visually indicating meaning using iconic symbols.
+  {:doc   "Icons provide compactness by indicating meaning using iconic symbols.
              
    By default, icons in Kushi are pulled in via
    [Google's Material Symbols font for the web]
@@ -48,30 +48,29 @@
    your own project with your own collection of icon `svg`s."
 
    ;; TODO - remove desc and pull from shared defs
-   :opts {:sizing       {:default :medium
-                         :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
-          
-          :weight       {:default :normal
-                         :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."}
-          
-          :colorway     {:default nil
-                         :desc    "Colorway of the icon. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."}
-          
-          :icon-filled? {:schema  boolean?
-                         ;; :required? true
-                         :default false
-                         :desc    "Filled or not filled"}
-          
-          :icon-style   {:schema  (into #{} defs/icon-style)
-                         :default :outlined
-                         :desc    "Style of icon"}
-          
-          :inert?       {:schema  boolean?
-                         :default false
-                         :desc    "Determines whether the icon will feature hover and active styles"}}}
+   :props {:sizing       {:default :medium
+                          :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
+           
+           :weight       {:default :normal
+                          :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."}
+           
+           :colorway     {:default nil
+                          :desc    "Colorway of the icon. Can also be a named color from Kushi's design system, e.g `:red`, `:gold`, etc."}
+           
+           :icon-filled? {:schema  boolean?
+                          ;; :required? true
+                          :default false
+                          :desc    "Filled or not filled"}
+           
+           :icon-style   {:default :outlined
+                          :desc    "Style of icon"}
+           
+           :inert?       {:schema  boolean?
+                          :default false
+                          :desc    "Determines whether the icon will feature hover and active styles"}}}
   [& args]
   (when ^boolean js/goog.DEBUG (validate args))
-  (let [{:keys [opts attrs children]}                              
+  (let [{:keys [props attrs children]}                              
         (extract args [:icon-filled? 
                        :icon-style]) ; <-don't need to do this if these keys are present in variants-by-custom-opt-key or kushi.ui.core/kushi-ui-props
         
@@ -82,7 +81,7 @@
                 colorway
                 ns
                 inert?]}
-        opts
+        props
 
         [icon*]
         children]

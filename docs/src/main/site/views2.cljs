@@ -19,7 +19,7 @@
    [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start box]]
   ;;  [kushi.ui.layout :refer [layout]]
 
-  ;;  [kushi.ui.icon :refer [icon]]
+   [kushi.ui.icon :refer [icon]]
   ;;  [kushi.ui.icon.demo]
 
   ;;  [kushi.ui.spinner :refer [spinner]]
@@ -162,6 +162,7 @@
     :default  "Yes"
     :choices  ["Yes" "No" "Maybe"]}]
 
+
   (let [id (fn [m] 
              [box (merge {:sizing  :xlarge
                           :surface :solid
@@ -193,9 +194,19 @@
      [id {:position :absolute-inline-end-inside
           :colorway :green}]
      [id {:position      :absolute-block-end-inside
-          :colorway      :blue
+          :colorway      :blues
           :data-ks-debug :foobar}]
      "Child 1"])
+
+  #_[icon {:ns           (at)
+         :colorway     :red
+         :sizing       :xxxlarge
+         :weight       :bolds
+         :icon-style   :sharp
+         :icon-filled? true
+         :inert?       true
+         :id           :foo}
+    :star]
 
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
                                  kushi.ui.icon.demo/demos))]

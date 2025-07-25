@@ -498,7 +498,7 @@
                    "\n"
                    "%cUnprefixed key:%c " "{%c" prop "%c" " " unprefixed-key-value "}\n"
 
-                              
+                   
                    "%cSuggested fix:%c  " "%c" prop "%c"
                    (when (string/starts-with? (str src-ns) "kushi.showcase")
                      (str "\n\nThis is caused by a variant example or demo\nfrom "
@@ -520,43 +520,44 @@
 
     (.apply js/console.log
             js/console
-            (.concat #js [(str "══ Schema Validation Error ════"
+            (.concat 
+             #js
+              [(str "══ Schema Validation Error ════"
 
-                               (when src-ns
-                                 (section-with-header "Source" src-ns m))
+                    (when src-ns
+                      (section-with-header "Source" src-ns m))
 
-                               (section-with-header "UI component" 
-                                                    (:fn/fq-name schema)
-                                                    m)
+                    (section-with-header "UI component" 
+                                         (:fn/fq-name schema)
+                                         m)
 
-                               (section-with-header "Unprefixed key" 
-                                                    unprefixed-key
-                                                    m)
+                    (section-with-header "Unprefixed key" 
+                                         unprefixed-key
+                                         m)
 
-                               (section-with-header "Suggested fix" 
-                                                    prop
-                                                    m)
-                               "\n")]
+                    (section-with-header "Suggested fix" 
+                                         prop
+                                         m)
+                    "\n")]
 
-                     (when src-ns
-                       #js ["font-style:italic;"
-                            "line-height:initial;"
-                            "font-weight:bold;"
-                            "line-height:initial;"])
+             (when src-ns
+               #js ["font-style:italic;"
+                    "line-height:initial;"
+                    "font-weight:bold;"
+                    "line-height:initial;"])
 
-                     #js ["font-style:italic;"
-                          "line-height:initial;"
-                          "font-weight:bold;"
-                          "line-height:initial;"
-                          "font-style:italic;"
-                          "line-height:initial;"
-                          "font-weight:bold; text-decoration-line: underline; text-underline-offset: 3px;text-decoration-style: wavy; text-decoration-color: red; line-height: 2;"
-                          "line-height:initial;"
-                          "font-style:italic;"
-                          "line-height:initial;"
-                          "font-weight:bold;"
-                          "line-height:initial;"]))))
-
+             #js ["font-style:italic;"
+                  "line-height:initial;"
+                  "font-weight:bold;"
+                  "line-height:initial;"
+                  "font-style:italic;"
+                  "line-height:initial;"
+                  "font-weight:bold; text-decoration-line: underline; text-underline-offset: 3px;text-decoration-style: wavy; text-decoration-color: red; line-height: 2;"
+                  "line-height:initial;"
+                  "font-style:italic;"
+                  "line-height:initial;"
+                  "font-weight:bold;"
+                  "line-height:initial;"]))))
 
 (defn mf 
   [attr*
@@ -577,20 +578,31 @@
      :value   (prop attr*)}))
 
 
+(defn- map-with-entries? [m]
+  (boolean (and (map? m) (seq m))))
+
+
+;; get this working as intended and document
 (defn validate*
   [schema args]
   (let [attr* (first args)]
-    (when (and (map? attr*) (seq attr*))
+    (when (map-with-entries? attr*)
       (let [problems
             (remove
              nil?  
              (map (partial mf attr*)
-                  (:opts/expanded schema)
-                  (:opts/quoted schema)))]
+                  (:props/expanded schema)
+                  (:props/quoted schema)))]
 
         #_(? (select-keys schema [:form/meta :fn/name :ns/name])) 
-        (doseq [{:keys [in prop problem value unprefixed-key-value unprefixed-key]}
-                problems]
+        (doseq [{:keys [in
+                        prop
+                        problem
+                        value
+                        unprefixed-key-value 
+                        unprefixed-key]}
+                (? problems)]
+
           (let [section-break        "\n\n\n"
                 section-header-break "\n\n"
                 missing-key?         (= problem :missing-key )
@@ -621,23 +633,31 @@
                       js/console
                       
                       (if src-ns 
-                        #js [(str 
-                              "%c══ %c"
-                              "%c" src-ns "%c"
-                              " %c════%c"
-                              "\n"
-                              (:fn/fq-name schema)
-                              "\n"
-                              "{%c" prop "%c" " " "%c" value "%c}"
-                              "\n"
-                              "%cMust satisfy:%c\n"
-                              "%c" (pprint-with-indent problem 0) "%c")
+                        #js [(let [leading-divisor "══ "
+                                   trailing-divisor " ════"]
+                               (str 
+                                "%c" leading-divisor "%c"
+                                "%c" src-ns "%c"
+                                "%c" trailing-divisor "%c"
+                                "\n"
+                                (:fn/fq-name schema)
+                                "\n"
+                                "{%c" prop "%c" " " "%c" value "%c}"
+                                "\n"
+                                "%cMust satisfy:%c\n"
+                                "%c" (pprint-with-indent problem 0) "%c"
+                                "\n"
+                                "%c" 
+                                (string/join (repeat (count leading-divisor) "═"))
+                                (string/join (repeat (count src-ns) "═"))
+                                (string/join (repeat (count trailing-divisor) "═"))
+                                "%c"))
 
-                             "color:#af8700;"
+                             "color:#ff000070;"
                              "line-height:initial;"
                              "font-style:italic;"
                              "line-height:initial;"
-                             "color:#af8700;"
+                             "color:#ff000070;"
                              "line-height:initial;"
                              
                              "font-weight:bold; line-height: 2; background-color:rgba(5, 197, 255, 0.18)"
@@ -647,6 +667,8 @@
                              "font-style:italic;"
                              "line-height:initial;"
                              "font-weight:normal;"
+                             "line-height:initial;"
+                             "color:#ff000070;"
                              "line-height:initial;"]
 
                         #js [(str 

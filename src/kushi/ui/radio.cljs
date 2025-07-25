@@ -377,7 +377,7 @@
                              :desc    "Blah blah blah"
                              :default nil}
 
-                  :inert?   {:schema? boolean?
+                  :inert?   {:schema  boolean?
                              :desc    "Surface is not interative meaning no hover or active states."
                              :default nil}
 

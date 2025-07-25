@@ -36,6 +36,7 @@
 (def packings
   [:compact :default :roomy])
 
+;; Pull this from colors namespace?
 (def colorways-named
   [:gray :purple :blue :green :lime :yellow :gold :orange :red :magenta :brown])
 
@@ -58,7 +59,34 @@
   [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy])
 
 (def surfaces 
-  [:solid-classic :solid :soft-classic :soft :faint :faint-outline :outline :minimal :transparent])
+  [:solid-classic
+   :solid
+   :soft-classic
+   :soft
+   :faint
+   :faint-outline
+   :outline 
+   :minimal
+   :transparent])
+
+(def positions 
+  [:fixed-inline-start-inside
+   :absolute-inline-end-inside
+   :fixed-fill
+   :absolute-block-end-inside
+   :fixed-block-start-inside
+   :static
+   :absolute-inline-start-inside
+   :absolute
+   :absolute-fill
+   :sticky
+   :fixed-inline-end-inside
+   :absolute-block-start-inside
+   :fixed-block-end-inside
+   :fixed-centered
+   :fixed
+   :absolute-centered
+   :relative])
 
 (def surfaces-tag
   [:solid :soft :faint :faint-outline :outline :minimal])
@@ -72,6 +100,7 @@
           icon-style
           spinner-type
           packings
+          positions
           colorways-named
           colorways-semantic
           colorways
@@ -80,8 +109,7 @@
           sizings
           weights
           surfaces
-          surfaces-tag
-          ]))
+          surfaces-tag]))
 
 (defn variant-key [k s]
   (keyword (str (name k) "/" s)))
@@ -121,6 +149,7 @@
    :surface                (:surfaces/set variants)
    :surface/tag            (:surfaces-tag/set variants)
    :packing                (:packings/set variants)
+   :positions              (:positions/set variants)
    :spinner-type           (:spinner-type/set variants)
    :contour                (:contours/set variants)
    :contour/basic          (:contours-basic/set variants)
@@ -140,6 +169,7 @@
    :surface                (:surfaces/vector variants)
    :surface/tag            (:surfaces-tag/vector variants)
    :packing                (:packings/vector variants)
+   :position               (:positions/vector variants)
    :spinner-type           (:spinner-type/vector variants)
    :contour                (:contours/vector variants)
    :contour/basic          (:contours-basic/vector variants)
@@ -168,15 +198,17 @@
 (def props
   {:sizing                    {:default nil
                                :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
+   :weight                    {:default :normal
+                               :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."}
    :colorway                  {:default nil
                                :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." }
    :contour                   {:default :round
                                :desc    "Shape of the element."}
    :stroke-align              {:schema  #{:inside :outside}
                                :default nil
-                               :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`"}
+                               :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`."}
    :packing                   {:default nil
-                               :desc    "General amount of padding inside the element"}
+                               :desc    "General amount of padding inside the element."}
    :end-enhancer              {:schema  #(or (string? %) (keyword? %) (vector? %))
                                :default nil
                                :desc    "Content at the inline-end position preceding the element text. Typically an icon."}
@@ -185,14 +217,14 @@
                                :desc    "Content at the inline-start position following the element text. Typically an icon."}
    :loading?                  {:schema  boolean?
                                :default false
-                               :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`"}
-   :surface                   {:desc    "Surface variant. Composition of two or more of the following charachteristics: background color, foreground color, contrast, surface bevel, and stroke."}
+                               :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`."}
+   :surface                   {:desc "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."}
    :inert?                    {:schema  boolean?
-                               :desc    "Surface is not interative meaning no hover or active states."
+                               :desc    "Surface is not interactive meaning no hover or active states."
                                :default nil}
    :text-transform            {:desc    "Equivalent to the css text-transform property."
                                :default nil}
-   :elevation                  {:desc    "Elevation level of the element. Renders a drop-shadow."
+   :elevation                 {:desc    "Elevation level of the element. Renders a drop-shadow."
                                :default nil}
    :convex                    {:desc    "Elevation level of the element. Renders a drop-shadow."
                                :default nil}
@@ -202,30 +234,23 @@
                                :desc    "Element is enhanceable with an icon."
                                :default nil}
    :background-image-behavior {:schema  #{:cover :contain}
-                               :desc    "Element is enhanceable with an icon."
+                               :desc    "The behavior of the background image."
                                :default nil}
    :shadows                   {
-                              ;;  :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
+                               ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
                                ;; TODO maybe :$myvar or "var(--myvar)" or "0 0 10px red" (legit shadow string)
                                :schema        #(and (vector? %)
                                                     (every? (fn [k] 
                                                               (and (string? k)
                                                                    (re-find #"^var\(--[^\)\s]+\)" k)))
                                                             %))
-                               :desc          "Vector of design tokens which are values for the CSS box-shadow property"
+                               :desc          "Vector of design tokens which are values for the CSS box-shadow property."
                                :default       nil
                                :when-not-nil  ""
                                :style-tokens? true  
                                }
-   :position                  {:schema  #{:cover :contain}
-                               :desc    "Element is enhanceable with an icon."
-                               :default "relative"}
-
-  ;;  "position"                   "divisor"
-  ;;  "font-family"                "debug"
-  ;;  "flexbox"                    "foreground-color"
-   
-   })
+   :position                  {:desc    "A utility class dictating the element's position."
+                               :default "relative"}})
 
 
 (def prop-families

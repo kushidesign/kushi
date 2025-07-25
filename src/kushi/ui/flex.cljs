@@ -5,7 +5,7 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (merge-attrs sx)]
    [kushi.ui.shared.theming :refer [component-attrs variant-basics]]
-   [kushi.ui.core :refer (extract defui)]
+   [kushi.ui.core :refer (extract defui validate)]
    [clojure.string :as string]))
 
 
@@ -19,27 +19,37 @@
    (:children m)))
 
 (defui box
-  {:doc  "This is radio docstring"
+  {:doc          "This is box docstring"
    :props/family [:container]
-  ;;  :opts {:sizing   {:schema  keyword?
-  ;;                    :desc    "Blah blah blah"
-  ;;                    :default nil} 
-  ;;         :colorway {:schema  keyword?
-  ;;                    :desc    "Blah blah blah"
-  ;;                    :default nil}
-  ;;         :surface  {:schema  keyword?
-  ;;                    :desc    "Blah blah blah"
-  ;;                    :default nil}
-  ;;         :inert?   {:schema  boolean
-  ;;                    :desc    "Blah blah blah"
-  ;;                    :default nil}
-  ;;         :position {:schema  keyword
-  ;;                    :desc    "Blah blah blah"
-  ;;                    :default nil}}
+
+  ;;  :props        {:wtf {:schema  boolean?
+  ;;                       :desc    "hey"
+  ;;                       :default nil}}
+
+   ;; :opts {:sizing   {:schema  keyword?
+   ;;                   :desc    "Blah blah blah"
+   ;;                   :default nil} 
+   ;;        :colorway {:schema  keyword?
+   ;;                   :desc    "Blah blah blah"
+   ;;                   :default nil}
+   ;;        :surface  {:schema  keyword?
+   ;;                   :desc    "Blah blah blah"
+   ;;                   :default nil}
+   ;;        :inert?   {:schema  boolean
+   ;;                   :desc    "Blah blah blah"
+   ;;                   :default nil}
+   ;;        :position {:schema  keyword
+   ;;                   :desc    "Blah blah blah"
+   ;;                   :default nil}}
    }
   [& args]
   (let [{:keys [inert?]} &props]
     ;; Maybe no legend
+    '(do (let [[state set-state!] (uix.core/use-state 0)]
+           ($ :<>
+              ($ button {:on-click #(set-state! dec)} "-")
+              ($ :span state)
+              ($ button {:on-click #(set-state! inc)} "+"))))
     (into
      [:div (merge-attrs 
             (sx ".kushi-box" :.relative)
@@ -49,8 +59,9 @@
             {:data-ks-inert (when-not (false? inert?) "")}
             (when-let [n (:data-ks-elevated &data-ks-attrs)]
               {:style {"--_drop-shadow" (str "var(--elevated" 
-                                          (when-not (string/blank? n) (str "-" n))
-                                          ")")}}))]
+                                             (when-not (string/blank? n)
+                                               (str "-" n))
+                                             ")")}}))]
      &children)))
 
 (defui elevated
