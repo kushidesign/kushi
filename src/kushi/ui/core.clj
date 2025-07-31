@@ -1,9 +1,11 @@
 (ns ^:dev/always kushi.ui.core
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
+   [clojure.string :as string]
    [clojure.walk :as walk]
+   [malli.core :as malli]
    [kushi.ui.util :refer [keyed]]
-   [kushi.ui.variants :as props :refer [variants-by-custom-opt-key variants]]))
+   [kushi.ui.variants :as props :refer [enum-variants-by-custom-opt-key variants-by-custom-opt-key variants]]))
 
 
 ;; TODO - document why is this needed vs normal fn
@@ -19,6 +21,9 @@
            icon-fill#  (when ~icon-filled? :material-symbols-icon-filled)]
        (into [:span {:class [icon-style# icon-fill#]}]
              ~icon-name))))
+
+
+(def debug? (atom false))
 
 
 (defn with-schemas
@@ -37,7 +42,7 @@
                      (if-not schema
                        ; lookup by opt key e.g. :custom
                        (or (k variants-by-custom-opt-key)        
-                           'any?)
+                           :any)
                        (cond 
                          ; just a schema function e.g. boolean?
                          (symbol? schema)                                 
@@ -51,7 +56,7 @@
                          (keyword? schema)                                
                          (-> schema
                              name
-                             (str "/set")
+                             (str "/enum")
                              keyword
                              (->> (get variants)))
 
@@ -60,6 +65,85 @@
                  (assoc m k (assoc v :schema schema))))
              {}
              props))
+
+(def malli-type-schema-keywords
+  (->> (malli.core/type-schemas)
+       keys
+       (into #{})))
+
+(def malli-predicate-schema-symbols
+  (->> (malli.core/predicate-schemas)
+       keys
+       (filter #(symbol? %))
+       (into #{})))
+
+(defn with-schemas-2
+  "Version for malli"
+  [props]
+  (reduce-kv (fn [m k {:keys [schema] :as v}]
+               (let [debug-schema?
+                     (and @debug? (= k :inert?))
+
+                     schema 
+                     (if-not schema
+                       ; get set from stock e.g. 
+                       (or (k enum-variants-by-custom-opt-key)        
+                           :any)
+                       (cond 
+                         ; e.g. boolean? -> :boolean
+                         (and (symbol? schema)
+                              (contains? malli-predicate-schema-symbols schema))                                 
+                         (-> schema name (string/replace #"\?$" "") keyword)
+
+                         ; set literal for enum e.g. #{:rounded :sharp :pill}
+                         (set? schema)                                    
+                         (into [:enum] schema)
+
+                         ; kw such as :kushi.ui.variants/colors}
+                         (keyword? schema)                                
+                         (or (when (contains? malli-type-schema-keywords
+                                              schema)
+                               schema)
+                             (-> schema
+                                 name
+                                 (str "/enum")
+                                 keyword
+                                 (->> (get variants)))
+                             :any)
+
+                         :else
+                         :any))]
+
+                 (assoc m 
+                        k 
+                        (assoc v
+                               :schema 
+                               (!? {:when  debug-schema?
+                                   :label [k v]} schema)))))
+             {}
+             (!? {:when @debug?} props)))
+
+(defn required-props* [props-with-schemas]
+  (into [] 
+        (keep (fn [[k v]]
+                (when (true? (:required? v)) k))
+              props-with-schemas)))
+
+(defn malli-schema*
+  [props-with-schemas]
+  (reduce-kv 
+   (fn [acc k {:keys [required? schema]
+               :as   v}]
+     (let [schema (if (set? schema)
+                    (into [:enum] schema)
+                    schema)]
+       (conj acc 
+             (if (true? required?)
+               [k schema]
+               [k {:optional true} schema]))))
+   [:map]
+   (!? {:when (= @debug? 'box)}
+       props-with-schemas)))
 
 
 (defn dbg
@@ -72,7 +156,7 @@
      x))
 
 
-(def debug-defui #_nil 'box)
+(def debug-defui nil #_box)
 
 
 (defn- props-from-families* [m dbgf]
@@ -136,7 +220,7 @@
                  fq-fn-name])))
     (when (seq props)
       ;; Augment the props with schemas from kushi.ui.schema
-      (let [props (with-schemas props)
+      (let [props (with-schemas-2 props)
             ;; props-unreserved-ks (mapv #(keyword (subs (name %) 1)) (keys props))
             ]
         (when dbg? (? {:label "defmacro validate, props with-schemas"} props))
@@ -176,7 +260,9 @@
 
    body ; <- body of component
    ]
-  
+
+  (reset! debug? (if (= sym 'box) true false))
+
   (let [!dbgf
         (fn [_ x] x)
 
@@ -206,10 +292,10 @@
         body        
         (do 
           #_(when (= sym 'box) 
-            (? (walk/postwalk (fn [x] (if (= (and (list? x) (first x)) '$)
-                                        (into [] (rest x))
-                                        x))
-                              body)))
+              (? (walk/postwalk (fn [x] (if (= (and (list? x) (first x)) '$)
+                                          (into [] (rest x))
+                                          x))
+                                body)))
           body)
 
 
@@ -222,19 +308,40 @@
         ks          
         '[&props &attrs &data-ks-attrs &children args]
         
-        ;; props-with-schemas
-        ;; (with-schemas merged-props)
-        ]
+        mm
+        (let [
+              ;; props-with-schemas-v1   (with-schemas merged-props)
+              props-with-schemas (with-schemas-2 merged-props)
+              required-props     (required-props* props-with-schemas)
+              malli-schema       (malli-schema* props-with-schemas)]
+          (assoc m 
+                 :props
+                 props-with-schemas
+                 :required-props 
+                 required-props
+                 :malli-schema
+                 malli-schema))
 
-    
+        [_ fn-sym]
+        (some-> &env :root-source-info :source-form)
+        
+        fn-info
+        (assoc (meta &form)
+               :fn
+               fn-sym
+               :fn/name
+               (str fn-sym)
+               :ns/name
+               (some-> &env :ns :name str))]
 
     `(defn ~sym 
-       ~m
+       ~mm
        [& args#]
        (let [extracted*#    (kushi.ui.core/extract args# ~props-keys)
              data-ks-attrs# (kushi.ui.core/data-ks-attrs (:props extracted*#)
                                                          ~props-trimmed)
-             extracted#     {:&props         (:props extracted*#)
+             props#         (dissoc (:props extracted*#) :ns)
+             extracted#     {:&props         props#
                              :&attrs         (:attrs extracted*#)
                              :&data-ks-attrs data-ks-attrs#
                              :&children      (:children extracted*#)
@@ -256,8 +363,16 @@
                  (!? "extracted*" extracted*#))))
 
            ;; TODO - Try to validate props here.
-           (? ~m)
+           #_(? ~mm)
            #_(validate {:args args#}))
+           (kushi.ui.core/validate*2
+            (assoc ~mm 
+                   :fn-info
+                   ~fn-info
+                   :props
+                   props#
+                   :data-ks-ns
+                   (:data-ks-ns data-ks-attrs#)))
          ~body))))
 
 #_(defmacro validate

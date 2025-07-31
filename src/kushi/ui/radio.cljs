@@ -373,27 +373,27 @@
           ;;            :desc    "Blah blah blah"
           ;;            :default nil}
                   
-                  :surface  {:schema  keyword?
+                  :surface  {:schema  :keyword
                              :desc    "Blah blah blah"
                              :default nil}
 
-                  :inert?   {:schema  boolean?
+                  :inert?   {:schema  :boolean
                              :desc    "Surface is not interative meaning no hover or active states."
                              :default nil}
 
           ;; TODO group-id?
-                  :group-id {:schema    keyword?
+                  :group-id {:schema    :keyword
                              :required? true}
 
-                  :choices  {:schema    vector?
+                  :choices  {:schema    :vector
                              :required? true
                              :data-ks?  false}
 
-                  :legend   {:schema   string?
+                  :legend   {:schema   :string
                              :default  nil
                              :data-ks? false}
 
-                  :default  {:schema   string?
+                  :default  {:schema   :string
                              :desc     "Must match the Choice label string value"
                              :default  nil
                              :data-ks? false}}}

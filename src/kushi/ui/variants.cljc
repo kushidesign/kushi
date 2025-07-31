@@ -25,7 +25,7 @@
   (apply conj contours-basic contours-rounded))
 
 (def contours
-  (apply conj contours-auxillary contours-basic contours-rounded))
+  (into [] (concat contours-basic+rounded contours-auxillary contours-rounded)))
 
 (def icon-style
   [:rounded :outlined :sharp])
@@ -125,6 +125,8 @@
                (into #{} v)
                :clj
                (into (ordered-set) v))
+            (variant-key k "enum")
+            (into [:enum] v)
             
             ;; (keyword (str (name k) "/" "vector-of-strs"))
             ;; (mapv name v)
@@ -158,6 +160,26 @@
    :contour/auxillary      (:contours-auxillary/set variants)
    :icon-style             (:icon-style/set variants)})
 
+(def enum-variants-by-custom-opt-key
+  {:weight                 (:weights/enum variants)
+   :sizing/xxsmall-xlarge  (:sizings-xxsmall-xlarge/enum variants)
+   :sizing/xsmall-xxxlarge (:sizings-xsmall-xxxlarge/enum variants)
+   :sizing                 (:sizings/enum variants)
+   :colorway               (:colorways/enum variants)
+   :colorway/named         (:colorways-named/enum variants)
+   :colorway/semantic      (:colorways-semantic/enum variants)
+   :surface                (:surfaces/enum variants)
+   :surface/tag            (:surfaces-tag/enum variants)
+   :packing                (:packings/enum variants)
+   :positions              (:positions/enum variants)
+   :spinner-type           (:spinner-type/enum variants)
+   :contour                (:contours/enum variants)
+   :contour/basic          (:contours-basic/enum variants)
+   :contour/rounded        (:contours-rounded/enum variants)
+   :contour/basic+rounded  (:contours-basic+rounded/enum variants)
+   :contour/auxillary      (:contours-auxillary/enum variants)
+   :icon-style             (:icon-style/enum variants)})
+
 (def ordered-variants-by-custom-opt-key
   {:weight                 (:weights/vector variants)
    :sizing/xxsmall-xlarge  (:sizings-xxsmall-xlarge/vector variants)
@@ -178,8 +200,10 @@
    :contour/auxillary      (:contours-auxillary/vector variants)
    :icon-style             (:icon-style/vector variants)})
 
+
 (def variants-by-custom-opt-key-set
   (into #{} (keys variants-by-custom-opt-key)))
+
 
 (defn convert-opts [vc]
   (reduce 
@@ -195,6 +219,22 @@
    {} 
    (partition 2 (second vc))))
 
+
+(defn shadows? [vc]
+  (and (vector? vc)
+       (every? (fn [k] 
+                 (and (string? k)
+                      (re-find #"^var\(--[^\)\s]+\)" k)))
+               vc)))
+
+
+#_[:vector [:and :string [:re #"^var\(--[^\)\s]+\)"]]]
+
+
+(defn enhancer? [x]
+  (or (string? x) (keyword? x) (vector? x)))
+
+
 (def props
   {:sizing                    {:default nil
                                :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
@@ -204,22 +244,22 @@
                                :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." }
    :contour                   {:default :round
                                :desc    "Shape of the element."}
-   :stroke-align              {:schema  #{:inside :outside}
+   :stroke-align              {:schema  [:enum :inside :outside]
                                :default nil
                                :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`."}
    :packing                   {:default nil
                                :desc    "General amount of padding inside the element."}
-   :end-enhancer              {:schema  #(or (string? %) (keyword? %) (vector? %))
+   :end-enhancer              {:schema  [:or :string :keyword :vector]
                                :default nil
                                :desc    "Content at the inline-end position preceding the element text. Typically an icon."}
-   :start-enhancer            {:schema  [:or :string :keyword vector?]
+   :start-enhancer            {:schema  [:or :string :keyword :vector]
                                :default nil
                                :desc    "Content at the inline-start position following the element text. Typically an icon."}
-   :loading?                  {:schema  boolean?
+   :loading?                  {:schema  :boolean
                                :default false
                                :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`."}
    :surface                   {:desc "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."}
-   :inert?                    {:schema  boolean?
+   :inert?                    {:schema  :boolean
                                :desc    "Surface is not interactive meaning no hover or active states."
                                :default nil}
    :text-transform            {:desc    "Equivalent to the css text-transform property."
@@ -230,20 +270,16 @@
                                :default nil}
    :fx                        {:desc    "Surface effect such as emboss and deboss."
                                :default nil}
-   :icon-enhanceable?         {:schema  boolean?
+   :icon-enhanceable?         {:schema  :boolean
                                :desc    "Element is enhanceable with an icon."
                                :default nil}
-   :background-image-behavior {:schema  #{:cover :contain}
+   :background-image-behavior {:schema  [:enum :cover :contain]
                                :desc    "The behavior of the background image."
                                :default nil}
    :shadows                   {
                                ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
                                ;; TODO maybe :$myvar or "var(--myvar)" or "0 0 10px red" (legit shadow string)
-                               :schema        #(and (vector? %)
-                                                    (every? (fn [k] 
-                                                              (and (string? k)
-                                                                   (re-find #"^var\(--[^\)\s]+\)" k)))
-                                                            %))
+                               :schema        [:vector [:and :string [:re #"^var\(--[^\)\s]+\)"]]]
                                :desc          "Vector of design tokens which are values for the CSS box-shadow property."
                                :default       nil
                                :when-not-nil  ""
@@ -267,7 +303,3 @@
                :elevation
                :shadows
                :loading?]})
-
-#_{:container (-> props (dissoc :icon-enhanceable? :start-enhancer :end-enhancer :loading?)
-                  keys 
-                  (->> (into [])))}

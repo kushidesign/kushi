@@ -6,6 +6,7 @@
             [kushi.core :refer [merge-attrs]]
             [kushi.ui.variants :as variants]
             [kushi.util :refer [keyed]]
+            [bling.explain :refer [explain-malli]]
             ))
 
 
@@ -305,28 +306,30 @@
 
   ;; Should it be data-ks instead of data?
   ;; Or concept of registry so you don't need to manually add :elide thing?
-  (reduce-kv 
-   (fn [m k {:keys [default data when-not-nil style-tokens?]}]
-     (!? {:when (= k :shadows)}
-        (merge m
-               (when-not (= data :elide)
-                 (let [supplied (get props k)
-                       data-ks  (keyword (str "data-ks-" (name k)))
-                       style    (when style-tokens?
-                                  (data-ks-attrs-style-map k supplied))
-                       ret 
-                       (cond (not (nil? supplied))
-                             {data-ks (or when-not-nil
-                                          (kushi.util/as-str supplied))}
+  (merge (reduce-kv 
+          (fn [m k {:keys [default data when-not-nil style-tokens?]}]
+            (!? {:when (= k :shadows)}
+                (merge m
+                       (when-not (= data :elide)
+                         (let [supplied (get props k)
+                               data-ks  (keyword (str "data-ks-" (name k)))
+                               style    (when style-tokens?
+                                          (data-ks-attrs-style-map k supplied))
+                               ret 
+                               (cond (not (nil? supplied))
+                                     {data-ks (or when-not-nil
+                                                  (kushi.util/as-str supplied))}
                       ;; TODO figure this out with logic for a fn, using :data entry
-                             default
-                             {data-ks (kushi.util/as-str default)})]
-                   (merge ret (when style {:style style}))))))
-     #_(assoc m
-            (keyword (str "data-ks-" (name k)))
-            (kushi.util/as-str v)))
-   {} 
-   with-schema)
+                                     default
+                                     {data-ks (kushi.util/as-str default)})]
+                           (merge ret (when style {:style style}))))))
+            #_(assoc m
+                     (keyword (str "data-ks-" (name k)))
+                     (kushi.util/as-str v)))
+          {} 
+          with-schema)
+          (when-let [data-ks-ns (:ns props)]
+            {:data-ks-ns data-ks-ns}))
 
   ;; (? m)
   ;; (? with-schema)
@@ -580,6 +583,42 @@
 
 (defn- map-with-entries? [m]
   (boolean (and (map? m) (seq m))))
+
+
+(defn validate*2 
+  [{:keys [props
+           required-props 
+           props-with-schemas 
+           fn-info
+           malli-schema
+           data-ks-ns]}]
+  (!? fn-info)
+  (!? props)
+
+  (when (and (seq props) malli-schema) 
+    (explain-malli 
+     malli-schema
+     props 
+     {:display-schema?                   false
+      :highlighted-problem-section-label "Supplied props:"
+      :preamble-section-label            "UI component:"
+      :preamble-section-body             (str (:ns/name fn-info)
+                                              "/"
+                                              (:fn/name fn-info))
+      :callout-opts                      {:colorway   :blue
+                                          :side-label data-ks-ns}}))
+
+  #_(keep #(when-not (contains? props %)
+           {:in      [%]
+            :prop    %
+            :problem :missing-key})
+        required-props)
+
+  #_(keep (fn [[prop v]]
+          (when-let [{:keys [required? schema]}
+                     (get props-with-schemas prop)]
+            ()))
+        props))
 
 
 ;; get this working as intended and document

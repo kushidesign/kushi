@@ -22,9 +22,10 @@
   {:doc          "This is box docstring"
    :props/family [:container]
 
-  ;;  :props        {:wtf {:schema  boolean?
-  ;;                       :desc    "hey"
-  ;;                       :default nil}}
+   :props        {:wtf {:schema    :boolean 
+                        :required? true
+                        :desc      "hey"
+                        :default   nil}}
 
    ;; :opts {:sizing   {:schema  keyword?
    ;;                   :desc    "Blah blah blah"

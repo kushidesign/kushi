@@ -152,7 +152,7 @@
                    :flex-direction--column
                    :ai--flex-start)
     :surface  :solid
-    ;; mabye that is good?
+    ;; maybe that is good?
     :flexbox  :row:start:center
     ;;  :contour   :rounded-3 ?
     :contour  :rounded-xlarge
@@ -170,33 +170,39 @@
                          m)
               [box {:position :absolute-centered}
                "Hi"]])]
-    [box
-     {:class    (css {"--foo" "0 5px 10px green"
-                      :w      :500px
-                      :h      :500px})
+    [box {:position      :absolute-block-end-inside
+          :colorway      :blues
+          :data-ks-debug :foobar
+          :ns            (at)
+          :class         (css :w--100px :h--100px)}
+     "HI"]
+    #_[box
+       {:class    (css {"--foo" "0 5px 10px green"
+                        :w    :500px
+                        :h    :500px})
 
       ;; Could have both elevation and shadows, with shadows overriding
       ;; :elevated 5
       ;; :elevation 5
-      
+        
       ;; :shadow [:--elevated-5 :--my-custom-shadow]
       ;; :shadow :--elevated-5
       ;; :shadows :--elevated-5
-      
+        
       ;; These values need to be checked at runtime or it kills border and shadow, if bad value
-      :shadows  ["var(--elevated-3)" "-15px -15px 10px purple"]
-      :position :absolute-centered
-      :surface  :faint-outline
+        :shadows  ["var(--elevated-3)" "-15px -15px 10px purple"]
+        :position :absolute-centered
+        :surface  :faint-outline
       ;; :colorway :neutral
-      }
-     [id {:position :absolute-inline-start-inside
-          :colorway :red}]
-     [id {:position :absolute-inline-end-inside
-          :colorway :green}]
-     [id {:position      :absolute-block-end-inside
-          :colorway      :blues
-          :data-ks-debug :foobar}]
-     "Child 1"])
+        }
+       [id {:position :absolute-inline-start-inside
+            :colorway :red}]
+       [id {:position :absolute-inline-end-inside
+            :colorway :green}]
+       [id {:position      :absolute-block-end-inside
+            :colorway      :blues
+            :data-ks-debug :foobar}]
+       "Child 1"])
 
   #_[icon {:ns           (at)
          :colorway     :red
