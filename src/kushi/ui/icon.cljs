@@ -5,7 +5,8 @@
    [kushi.core :refer (sx merge-attrs at)]
    [kushi.ui.defs :as defs]
    [kushi.ui.shared.theming :refer [component-attrs variant-basics]]
-   [kushi.ui.core :refer (extract validate)]))
+   [kushi.ui.core :refer (extract validate)]
+   ))
 
 (defn- icon-name->snake-case-string [coll]
   (mapv #(cond
@@ -69,7 +70,7 @@
                           :default false
                           :desc    "Determines whether the icon will feature hover and active styles"}}}
   [& args]
-  (when ^boolean js/goog.DEBUG (validate args))
+  (when ^boolean js/goog.DEBUG (validate {:args args}))
   (let [{:keys [props attrs children]}                              
         (extract args [:icon-filled? 
                        :icon-style]) ; <-don't need to do this if these keys are present in variants-by-custom-opt-key or kushi.ui.core/kushi-ui-props

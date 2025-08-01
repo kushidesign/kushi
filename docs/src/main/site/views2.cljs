@@ -162,8 +162,17 @@
     :default  "Yes"
     :choices  ["Yes" "No" "Maybe"]}]
 
+  [icon {:ns           (at)
+         :colorway     :red
+         :sizing       :xxxlarge
+         :weight       :bolds
+         :icon-style   :sharp
+         :icon-filled? true
+         :inert?       true
+         :id           :foo}
+   :star]
 
-  (let [id (fn [m] 
+  #_(let [id (fn [m] 
              [box (merge {:sizing  :xlarge
                           :surface :solid
                           :class   (css :w--100px :h--100px)}

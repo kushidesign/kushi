@@ -14,6 +14,7 @@
    :target           :browser
    :compiler-options {:output-feature-set :es8
                       :warnings           {:redef false}}
+   :closure-defines  {malli.registry/type "custom"}
    :modules          {:main {:init-fn site.browser/init}}
    :output-dir       "public/js"
    :build-hooks      [(kushi.css.build.analyze/hook)

@@ -3,7 +3,7 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [clojure.walk :as walk]
-   [malli.core :as malli]
+   [malli.core]
    [kushi.ui.util :refer [keyed]]
    [kushi.ui.variants :as props :refer [enum-variants-by-custom-opt-key variants-by-custom-opt-key variants]]))
 
@@ -211,7 +211,7 @@
         ns-name       (some-> &env :ns :name str)
         fq-fn-name    (str ns-name "/" fn-sym)
         dbg?          (= 'box fn-sym)]
-    (when dbg?
+    #_(when dbg?
       (? (str "defmacro validate " fn-sym)
          (keyed [mm          
                  fn-sym      
@@ -227,7 +227,7 @@
         #_(? "defmacro validate, props with-schemas" fn-sym)
         `(do (!? "validate, args" ~args)
              (kushi.ui.core/validate* 
-              (? "validate, m"
+              (!? "validate, m"
                  {:ns/name        ~ns-name
                   :fn/name        (quote ~fn-sym)
                   :fn/fq-name     ~fq-fn-name
@@ -350,9 +350,9 @@
 
          (when ^boolean js/goog.DEBUG
            ;; Internal dev only, debugging specific instance of component, comment this block out if not debugging
-           ;; 1) Set kushi.core/debug-defui to the name (symbol) of the component you want to debug
-           ;; 2) At the call-site in consuming app, give the instance of that component a unique :data-ks-debug value in the attrs map
-           ;; 3) Set the data-ks-debug# binding below to match the value you chose in step 2 
+           ;; 1. Set kushi.core/debug-defui to the name (symbol) of the component you want to debug
+           ;; 2. At the call-site in consuming app, give the instance of that component a unique :data-ks-debug value in the attrs map
+           ;; 3. Set the data-ks-debug# binding below to match the value you chose in step 2 
            (when (= (quote ~sym) (quote ~debug-defui))
              (let [data-ks-debug# :foobar]
                (when (some-> extracted*#
@@ -364,7 +364,8 @@
 
            ;; TODO - Try to validate props here.
            #_(? ~mm)
-           #_(validate {:args args#}))
+           #_(validate {:args args#})
+           
            (kushi.ui.core/validate*2
             (assoc ~mm 
                    :fn-info
@@ -372,7 +373,7 @@
                    :props
                    props#
                    :data-ks-ns
-                   (:data-ks-ns data-ks-attrs#)))
+                   (:data-ks-ns data-ks-attrs#))))
          ~body))))
 
 #_(defmacro validate

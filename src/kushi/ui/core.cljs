@@ -6,8 +6,7 @@
             [kushi.core :refer [merge-attrs]]
             [kushi.ui.variants :as variants]
             [kushi.util :refer [keyed]]
-            [bling.explain :refer [explain-malli]]
-            ))
+            [bling.explain :refer [explain-malli]]))
 
 
 (defn attr+children [coll]
@@ -566,59 +565,63 @@
   [attr*
    [prop {:keys [required? schema]}]
    [_ {quoted-schema :schema}]]
-  (when-let [problem
-             (if (true? required?)
-               (if-not (contains? attr* prop)
-                 :missing-key
-                 (when-not (schema (prop attr*)) schema))
-               (when-let [v (prop attr*)]
+  (let [schema (if (and (vector? schema)
+                        (= :enum (first schema)))
+                 (into #{} (rest schema))
+                 schema)]
+    (when-let [problem
+               (if (true? required?)
+                 (if-not (contains? attr* prop)
+                   :missing-key
+                   (when-not (schema (prop attr*)) schema))
+                 (when-let [v (prop attr*)]
                  ;; This is where validation occurs
-                 (when-not (schema v)
-                   (if (fn? schema) quoted-schema schema))))]
-    {:in      [prop]
-     :prop    prop
-     :problem problem
-     :value   (prop attr*)}))
+                   (when-not (schema v)
+                     (if (fn? schema) quoted-schema schema))))]
+      {:in      [prop]
+       :prop    prop
+       :problem problem
+       :value   (prop attr*)})))
 
 
 (defn- map-with-entries? [m]
   (boolean (and (map? m) (seq m))))
 
 
-(defn validate*2 
-  [{:keys [props
-           required-props 
-           props-with-schemas 
-           fn-info
-           malli-schema
-           data-ks-ns]}]
-  (!? fn-info)
-  (!? props)
+(when ^boolean js/goog.DEBUG
+ (defn validate*2 
+   [{:keys [props
+            required-props 
+            props-with-schemas 
+            fn-info
+            malli-schema
+            data-ks-ns]}]
+   (!? fn-info)
+   (!? props)
 
-  (when (and (seq props) malli-schema) 
-    (explain-malli 
-     malli-schema
-     props 
-     {:display-schema?                   false
-      :highlighted-problem-section-label "Supplied props:"
-      :preamble-section-label            "UI component:"
-      :preamble-section-body             (str (:ns/name fn-info)
-                                              "/"
-                                              (:fn/name fn-info))
-      :callout-opts                      {:colorway   :blue
-                                          :side-label data-ks-ns}}))
+   (when (and (seq props) malli-schema) 
+     (explain-malli 
+      malli-schema
+      props 
+      {:display-schema?                   false
+       :highlighted-problem-section-label "Supplied props:"
+       :preamble-section-label            "UI component:"
+       :preamble-section-body             (str (:ns/name fn-info)
+                                               "/"
+                                               (:fn/name fn-info))
+       :callout-opts                      {:side-label data-ks-ns}}))
 
-  #_(keep #(when-not (contains? props %)
-           {:in      [%]
-            :prop    %
-            :problem :missing-key})
-        required-props)
+   #_(keep #(when-not (contains? props %)
+              {:in      [%]
+               :prop    %
+               :problem :missing-key})
+           required-props)
 
-  #_(keep (fn [[prop v]]
-          (when-let [{:keys [required? schema]}
-                     (get props-with-schemas prop)]
-            ()))
-        props))
+   #_(keep (fn [[prop v]]
+             (when-let [{:keys [required? schema]}
+                        (get props-with-schemas prop)]
+               ()))
+           props)))
 
 
 ;; get this working as intended and document

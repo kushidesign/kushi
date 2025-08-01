@@ -5,7 +5,7 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (merge-attrs sx)]
    [kushi.ui.shared.theming :refer [component-attrs variant-basics]]
-   [kushi.ui.core :refer (extract defui validate)]
+   [kushi.ui.core :refer (extract defui)]
    [clojure.string :as string]))
 
 
