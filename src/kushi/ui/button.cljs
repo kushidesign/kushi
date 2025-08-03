@@ -7,13 +7,232 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
-   [kushi.ui.core :refer (extract)]
+   [kushi.ui.core :refer (extract fn->defui defui)]
    [kushi.ui.icon :refer [icon]]
    [kushi.ui.shared.theming :refer [data-ks- get-variants]]
    [kushi.ui.util :refer [as-str maybe nameable?]])
    ;; (:require-macros [kushi.ui.button])
   )
 
+#_(defui button2
+ {:doc     "Buttons are fundamental components that allow users to process actions or navigate an experience.
+
+             They can be custom styled via a variety of tokens in your theme.
+
+             `--button-padding-inline`<br>
+             The default value is `:1.2em`
+
+             `--icon-button-padding-inline`<br>
+             The default value is `:0.69em`
+
+             `--button-padding-block`<br>
+             The default value is `:0.67em`
+         "...
+  :summary "Buttons provide cues for actions and events."
+  :props   {:colorway       {:default nil
+                             :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc."}
+            :contour        {:default :round
+                             :desc    "Shape of the element."}
+            :end-enhancer   {:default nil
+                             :desc    "Content at the inline-end position preceding the element text. Typically an icon."}
+            :loading?       {:default false
+                             :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`."}
+            :packing        {:default nil
+                             :desc    "General amount of padding inside the element."}
+            :sizing         {:default nil
+                             :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
+            :start-enhancer {:default nil
+                             :desc    "Content at the inline-start position following the element text. Typically an icon."}
+            :stroke-align   {:default nil
+                             :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`."}
+            :surface        {:desc "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."}}}
+ [& args]
+ (let [{:keys [start-enhancer
+               end-enhancer
+               loading?]}
+       &opts
+
+       start-enhancer                                                                                             
+       (if (keyword? start-enhancer)
+         [icon start-enhancer]
+         start-enhancer)
+
+       end-enhancer                                                                                               
+       (if (keyword? end-enhancer)
+         [icon end-enhancer]
+         end-enhancer)]
+   (into
+    [:button
+     (merge-attrs
+      (sx
+       "[data-ks-ui=\"button\"]"
+       :.transition
+       :position--relative
+       :d--flex
+       :flex-direction--row
+       :jc--c
+       :ai--c
+       :w--fit-content
+       :h--fit-content
+       :gap--$icon-enhanceable-gap
+       :cursor--pointer
+       [:--_padding-block :$button-padding-block]
+       [:--_padding-inline :$button-padding-inline]
+       :pi--$_padding-inline
+       :pb--$_padding-block
+       ["[aria-label='loading']>.kushi-spinner-propeller:d" :revert]
+       ["[aria-label='loading']>.kushi-icon:d" :none])
+      {:aria-busy  loading?
+       :aria-label (when loading? "loading")}
+      &data-ks-attrs
+      &attrs)]
+    (cond start-enhancer
+          (concat [start-enhancer] &children)
+
+          end-enhancer
+          (concat &children [end-enhancer])
+
+          :else
+          &children))))
+
+
+(fn->defui
+  (defn ^:public button
+    {
+     :summary "Buttons provide cues for actions and events."
+
+     :desc    "Buttons are fundamental components that allow users to process actions or navigate an experience.
+              
+             They can be custom styled via a variety of tokens in your theme.
+
+             `--button-padding-inline`<br>
+             The default value is `:1.2em`
+              
+             `--icon-button-padding-inline`<br>
+             The default value is `:0.69em`
+              
+             `--button-padding-block`<br>
+             The default value is `:0.67em`
+              
+             `--button-with-icon-padding-inline-offset`<br>
+             The default value is `:0.9em`<br>
+              
+             `--button-border-width`
+             The default value is `:1px`"
+     
+   ;; Should this be a map, parsed with edamame?
+   ;; Should we use keys like :colorway, same as call-site
+     :opts    {:sizing         {:default nil
+                                :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
+
+               :colorway       {:default nil
+                                :desc    "Colorway of the button. Can also be a named color from Kushi's design system e.g `:red` `:purple` `:gold` etc."}
+
+               :contour        {:default :round
+                                :desc    "Shape of the button."}
+               
+               :stroke-align   {:schema  #{:inside :outside}
+                                :default nil
+                                :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`"}
+               
+               :packing        {:default nil
+                                :desc    "General amount of padding inside the button"}
+               
+               :end-enhancer   {:schema  #(or (string? %) (keyword? %) (vector? %))
+                                :default nil
+                                :desc    "Content at the inline-end position preceding the button text. Typically an icon."}
+               
+               :start-enhancer {:schema  [:or :string :keyword vector?]
+                                :default nil
+                                :desc    "Content at the inline-start position following the button text. Typically an icon."}
+               
+               :loading?       {:schema  boolean?
+                                :default false
+                                :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`"}
+               
+               :surface        {:default :round
+                                :desc    "Surface variant of the button."}}
+
+     :demos   '[{:label "Start-enhancer icons"
+                 :desc  "Content at the inline-start position following the button text. Typically an icon."}]
+
+  ;;  :display  '{:docs     {:order [:summary :desc :toks]
+  ;;                         :parse {:summary 'x
+  ;;                                 :desc 'y
+  ;;                                 :toks 'z}
+  ;;                         :exclude #{:toks}}
+  ;;              :showcase {:toks {:order ["tok family name" "..."]
+  ;;                                :exclude #{"..."}}
+  ;;                         :order [surface shape]
+  ;;                         :exclude #{start-enhancer size}}}
+     
+     }
+
+    [& args]
+    (let [
+          {:keys [opts attrs children]}                                                                              (extract args [:start-enhancer
+                                                                                                                                    :end-enhancer
+                                                                                                                                    :stroke-align
+                                                                                                                                    :loading?
+                                                                                                                                    :packing
+                                                                                                                                    :weight
+                                                                                                                                    :sizing
+                                                                                                                                    :contour
+                                                                                                                                    :surface
+                                                                                                                                    :colorway])
+
+          {:keys [start-enhancer
+                  end-enhancer
+                  stroke-align
+                  loading?
+                  packing
+                  weight
+                  sizing
+                  contour
+                  surface
+                  colorway]} opts
+          
+          start-enhancer                                                                                             (if (keyword? start-enhancer) [icon start-enhancer] start-enhancer)
+
+          end-enhancer                                                                                               (if (keyword? end-enhancer) [icon end-enhancer] end-enhancer)]
+      
+    ;; TODO incorporate into docs
+      (into 
+       [:button
+        (merge-attrs
+         (sx "[data-ks-ui=\"button\"]"
+             :.transition
+             :position--relative
+             :d--flex
+             :flex-direction--row
+             :jc--c
+             :ai--c
+             :w--fit-content
+             :h--fit-content
+             :gap--$icon-enhanceable-gap
+             :cursor--pointer
+             [:--_padding-block :$button-padding-block]
+             [:--_padding-inline :$button-padding-inline]
+             :pi--$_padding-inline
+             :pb--$_padding-block
+             ;; TODO what are these???
+             ["[aria-label='loading']>.kushi-spinner-propeller:d" :revert]
+             ["[aria-label='loading']>.kushi-icon:d" :none])
+         {:aria-busy              loading?
+          :aria-label             (when loading? "loading")
+          :data-ks-sizing         sizing
+          :data-ks-weight         weight
+          :data-ks-contour        (or contour :rounded)
+          :data-ks-surface        (or surface :solid)
+          :data-ks-packing        packing
+          :data-ks-colorway       (or colorway :neutral)
+          :data-ks-stroke-align   stroke-align
+          :data-ks-end-enhancer   (when end-enhancer "")
+          :data-ks-start-enhancer (when start-enhancer "")}
+         attrs)]
+       (cond start-enhancer (concat [start-enhancer] children)
+             end-enhancer   (concat children [end-enhancer])
+             :else          children)))))
 
 (defn ^:public button
   {
