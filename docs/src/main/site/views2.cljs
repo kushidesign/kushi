@@ -172,7 +172,7 @@
          :id           :foo}
    :star]
 
-  #_(let [id (fn [m] 
+  (let [id (fn [m] 
              [box (merge {:sizing  :xlarge
                           :surface :solid
                           :class   (css :w--100px :h--100px)}
@@ -180,7 +180,8 @@
               [box {:position :absolute-centered}
                "Hi"]])]
     [box {:position      :absolute-block-end-inside
-          :colorway      :blues
+          :colorway      :blue
+          :wtf           true
           :data-ks-debug :foobar
           :ns            (at)
           :class         (css :w--100px :h--100px)}
