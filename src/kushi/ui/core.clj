@@ -249,8 +249,20 @@
   [sym  ; <- Symbol, name of component
 
    m    ; <- map e.g.
-        ;    {:doc          "xyz component ..."
-        ;     :props/family [...]
+        ;    {
+        ;     The docstring
+        ;     :doc          "xyz component ..."
+        ;
+        ;     Predefined lists of stock props. List of keywords corresponding to entries in variants/prop-families
+        ;     :props/family [...] 
+        ;
+        ;     List of keywords corresponding to entries in variants/props. TODO - is :props/stock the best name here?
+        ;     :props/stock  [...]
+        ;
+        ;     Props that are unique to the component, each an entry of [:keyword [:map
+        ;                                                                         [:schema {:optional? true}]
+        ;                                                                         [:desc :string]
+        ;                                                                         [:default {:optional? true} :any]]]
         ;     :props        {...
         ;                    :my-custom-prop {:schema  string?
         ;                                     :desc    "prop desc"
