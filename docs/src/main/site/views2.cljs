@@ -1,48 +1,49 @@
 (ns site.views2
   (:require
    [fireworks.core :refer [? !? ?> !?> pprint]]
+   [bling.core]
    [domo.core :as domo]
   ;;  [bling.core :as bling :refer [bling print-bling callout point-of-interest]]
   ;;  [bling.hifi :refer [print-hifi hifi]]
   ;;  [bling.explain :refer [explain-malli]]
    [kushi.core :refer [?sx sx css merge-attrs at]]
    [kushi.playground.shared-styles]
-   [kushi.ui.variants]
+  ;;  [kushi.ui.variants]
    [kushi.ui.core :refer [defui data-ks-attrs]]
 
    [kushi.showcase.core :as showcase :refer [showcase]]
 
 
-   [kushi.ui.button :refer [button]]
+   [kushi.ui.button :refer [button icon-button]]
    [kushi.ui.button.demo]
 
    [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start box]]
   ;;  [kushi.ui.layout :refer [layout]]
 
-   [kushi.ui.icon :refer [icon]]
+  ;;  [kushi.ui.icon :refer [icon]]
   ;;  [kushi.ui.icon.demo]
 
-  ;;  [kushi.ui.spinner :refer [spinner]]
+   [kushi.ui.spinner :refer [spinner]]
   ;;  [kushi.ui.spinner.demo]
 
   ;;  [kushi.ui.callout :refer [callout]]
   ;;  [kushi.ui.callout.demo]
 
-  ;;  [kushi.ui.tag :refer [tag]]
-  ;;  [kushi.ui.tag.demo]
+   [kushi.ui.tag :refer [tag]]
+   [kushi.ui.tag.demo]
 
   ;;  [kushi.ui.checkbox :refer [checkbox]]
   ;;  [kushi.ui.checkbox.demo]
 
-   [kushi.ui.radio :refer [radio radio-group]]
-   [kushi.ui.radio.demo]
+  ;;  [kushi.ui.radio :refer [radio radio-group]]
+  ;;  [kushi.ui.radio.demo]
 
-   [kushi.ui.avatar :refer [avatar]]
-   [kushi.ui.avatar.demo]
+  ;;  [kushi.ui.avatar :refer [avatar]]
+  ;;  [kushi.ui.avatar.demo]
 
   ;;  [kushi.ui.label :refer [label]]
   ;;  [kushi.ui.radio :refer [radio]]
-   [kushi.ui.spinner :refer [spinner]]
+  ;;  [kushi.ui.spinner :refer [spinner]]
    [kushi.ui.util :as util]
    [clojure.string :as string]
    ;; [malli.core :as m]
@@ -50,6 +51,7 @@
 
 
 (js/console.clear)
+
 ;; Experimental macro calls
 
 ;; #_(defui bang 
@@ -108,7 +110,7 @@
           :weight       :bolds
           :icon-style   :sharp
           :icon-filled? true
-          :inert?       true
+          :inert       true
           :id           :foo}
     :star]]
 
@@ -135,8 +137,8 @@
   ;; popover
   
 
-  [button
-   {:loading?     true
+  #_[button
+   {:loading     true
     :colorway     :accent
     :surface      :solid
     :sizing       :small
@@ -146,7 +148,7 @@
   ;; This should be box or flex with flex and default inert
   ;; [box {:--border-color :gold
   ;;       :--smile-factor :clown}]
-  [radio-group 
+  #_[radio-group 
    {:class    (css :w--fit-content
                    :p--1em
                    :flex-direction--column
@@ -162,17 +164,57 @@
     :default  "Yes"
     :choices  ["Yes" "No" "Maybe"]}]
 
-  [icon {:ns           (at)
+  #_[icon {:ns           (at)
          :colorway     :red
          :sizing       :xxxlarge
          :weight       :bolds
          :icon-style   :sharp
          :icon-filled? true
-         :inert?       true
+         :inert       true
          :id           :foo}
    :star]
 
-  (let [id (fn [m] 
+ #_[button
+  {:at           (at)
+   :sizing       :xxlarge
+   :position     :absolute-centered
+   :loading      true,
+   :colorway     :accent,
+   :surface      :outline,
+  ;;  :stroke-width :5px
+   :end-enhancer [spinner {:spinner-type :donut}]
+   :style        {"--outlined-button-stroke-width" :10px}}
+  "Play"]
+
+ #_[tag
+  {:at           (at)
+   :sizing       :xxlarge
+   :position     :absolute-centered
+   :colorway     :accent,
+   :surface      :outline,
+  ;;  :stroke-width :5px
+   :end-enhancer [spinner {:spinner-type :donut}]
+   :style        {"--outlined-button-stroke-width" :10px}}
+  "Play"]
+
+  #_[button
+   {:surface  :solid
+    :colorway :blue
+    :id       "foo"
+    :loading  true
+    :ns       (at)}
+   "hi"]
+
+  [icon-button
+   {:surface  :solid
+    :position :absolute-centered
+    :colorway :blue
+    :id       "foo"
+    :loading  true
+    :ns       (at)}
+   :east]
+
+  #_(let [id (fn [m] 
              [box (merge {:sizing  :xlarge
                           :surface :solid
                           :class   (css :w--100px :h--100px)}
@@ -181,11 +223,12 @@
                "Hi"]])]
     [box {:position      :absolute-block-end-inside
           :colorway      :blue
-          :wtf           true
+          :surface       :solid
           :data-ks-debug :foobar
           :ns            (at)
           :class         (css :w--100px :h--100px)}
      "HI"]
+
     #_[box
        {:class    (css {"--foo" "0 5px 10px green"
                         :w    :500px
@@ -220,7 +263,7 @@
          :weight       :bolds
          :icon-style   :sharp
          :icon-filled? true
-         :inert?       true
+         :inert       true
          :id           :foo}
     :star]
 
@@ -228,7 +271,7 @@
                                  kushi.ui.icon.demo/demos))]
 
   #_[showcase (!? (showcase/opts kushi.ui.tag/tag
-                                 kushi.ui.tag.demo/demos))]
+                               kushi.ui.tag.demo/demos))]
 
   #_[showcase (!? (showcase/opts kushi.ui.button/button
                                kushi.ui.button.demo/demos))]
@@ -276,21 +319,21 @@
   #_[:div
      [button
       {
-    ;; :loading?     true
+    ;; :loading     true
        :end-enhancer #_[icon :east]
        [propeller]    }
       "Play"]
      
      [button
       {
-    ;; :loading?     true
+    ;; :loading     true
        :end-enhancer #_[icon :east]
        [donut]        }
       "Play"]
      
      [button
       {
-    ;; :loading?     true
+    ;; :loading     true
        :end-enhancer #_[icon :east]
        [thinking]     }
       "Play"]]
