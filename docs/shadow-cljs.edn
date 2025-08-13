@@ -19,7 +19,8 @@
    :build-hooks      [(kushi.css.build.analyze/hook)
                       (shadow.cljs.build-report/hook
                        {:output-to "tmp/report.html"})]
-   :release          {:build-options {:ns-aliases {bling.core     bling.stubs.core
+   :release          {:build-options {:ns-aliases {kushi.ui.core  kushi.ui.stubs.core
+                                                   bling.core     bling.stubs.core
                                                    bling.explain  bling.stubs.explain
                                                    bling.hifi     bling.stubs.hifi
                                                    fireworks.core fireworks.stubs.core
