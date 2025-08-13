@@ -40,7 +40,7 @@
    {:desc    "Surface variant of the button.",
     :label   "Surface variants",
     :samples (samples-with-variant
-              {:attrs   {:end-enhancer [icon :east]
+              {:attrs   {:end-enhancer :east
                          :colorway     :accent},
                :args    ["Next"],
                :variant :surface})}
@@ -142,26 +142,26 @@
                [kushi.ui.spinner :refer [spinner]]],
     :samples (samples
               [[button
-                {:loading?     true,
+                {:loading     true,
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :donut}]
                  }
                 "Play"]
                [button
-                {:loading?     true,
+                {:loading     true,
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :propeller}]}
                 "Play"]
                [button
-                {:loading?     true,
+                {:loading     true,
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :thinking}]}
                 "Play"]
                [button
-                {:loading? true
+                {:loading true
                  :colorway :accent
                  :surface  :solid}
                 [:span {:style {:visibility :hidden

@@ -41,7 +41,7 @@
                                      :header-icon :info
                                      :colorway    :accent
                                      :surface     :faint
-                                     :inert?      true}
+                                     :inert      true}
                    :variant-labels? false})}
      
      {:label     "With icon and dismiss button, in positive variant"
@@ -67,7 +67,7 @@
                                                     "new features"]]
                                      :header-icon :info
                                      :colorway    :neutral
-                                     :inert?      true}
+                                     :inert      true}
                    :variant-labels? false})}
      
      {:label     "Accent variant"
@@ -82,7 +82,7 @@
                                                     "new features"]]
                                      :header-icon :info
                                      :colorway    :accent
-                                     :inert?      true}
+                                     :inert      true}
                    :variant-labels? false})}
      
      {:label     "Positive variant"
@@ -94,7 +94,7 @@
                    :attrs           {:header-text "Your transaction was successful"
                                      :header-icon :info
                                      :colorway    :positive
-                                     :inert?      true}
+                                     :inert      true}
                    :variant-labels? false})}
 
      {:label     "Warning variant"
@@ -109,7 +109,7 @@
                                                     "Take action"]]
                                      :header-icon :info
                                      :colorway    :warning
-                                     :inert?      true}
+                                     :inert      true}
                    :variant-labels? false})}
      
      {:label     "Negative variant"
@@ -124,7 +124,7 @@
                                                     "Learn more"]]
                                      :header-icon :info
                                      :colorway    :negative
-                                     :inert?      true}
+                                     :inert      true}
                    :variant-labels? false})}
 
 

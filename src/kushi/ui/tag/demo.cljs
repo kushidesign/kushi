@@ -91,10 +91,10 @@
                          :surface        :soft}
                         "Wow"]
                        [tag
-                        {:start-enhancer :play-arrow,
+                        {:start-enhancer :check-circle,
                          :colorway       :accent,
                          :surface        :outline}
-                        "Play"]])}
+                        "Passing"]])}
    
    {:desc    "Content at the inline-end position preceding the tag text. Typically an icon.",
     :label   "End-enhancer icons",
@@ -110,12 +110,12 @@
                          :surface      :soft}
                         "Wow"]
                        [tag
-                        {:end-enhancer :play-arrow,
+                        {:end-enhancer :check-circle,
                          :colorway     :accent,
                          :surface      :outline}
-                        "Play"]])}
+                        "Passing"]])}
 
-   {:label   "Loading states",
+   #_{:label   "Loading states",
     :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`",
     :schema  boolean?,
     :require '[[kushi.ui.tag :refer [tag]]
@@ -123,26 +123,26 @@
                [kushi.ui.spinner :refer [spinner]]],
     :samples (samples
               [[tag
-                {:loading?     true,
+                {:loading     true,
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :donut}]
                  }
                 "Play"]
                [tag
-                {:loading?     true,
+                {:loading     true,
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :propeller}]}
                 "Play"]
                [tag
-                {:loading?     true,
+                {:loading     true,
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :thinking}]}
                 "Play"]
                [tag
-                {:loading? true
+                {:loading true
                  :colorway :accent
                  :surface  :solid}
                 [:span {:style {:visibility :hidden

@@ -18,33 +18,36 @@
                  (:attrs m))]
    (:children m)))
 
+
+
+
+
+
+
 (defui box
   {:doc          "This is box docstring"
    :props/family [:container]
-
-   :props        {:wtf {:schema    :boolean 
+   :props/shared [:text-transform]
+   :props        {:foo {:schema    :boolean 
                         :required? true
-                        :desc      "hey"
+                        :desc      "IS THIS XYZ Docstring goes here"
                         :default   nil}}
 
-   ;; :opts {:sizing   {:schema  keyword?
-   ;;                   :desc    "Blah blah blah"
+   ;; :opts {:sizing   {:schema  :keyword
+   ;;                   :desc    "Corresponds to the font-size based on Kushi's font-size scale."
    ;;                   :default nil} 
-   ;;        :colorway {:schema  keyword?
-   ;;                   :desc    "Blah blah blah"
+   ;;        :colorway {:schema  :keyword
+   ;;                   :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." 
    ;;                   :default nil}
-   ;;        :surface  {:schema  keyword?
-   ;;                   :desc    "Blah blah blah"
+   ;;        :surface  {:schema  :keyword
    ;;                   :default nil}
-   ;;        :inert?   {:schema  boolean
-   ;;                   :desc    "Blah blah blah"
+   ;;        :inert   {:schema  :boolean
    ;;                   :default nil}
-   ;;        :position {:schema  keyword
-   ;;                   :desc    "Blah blah blah"
+   ;;        :position {:schema  :keyword
    ;;                   :default nil}}
    }
   [& args]
-  (let [{:keys [inert?]} &props]
+  (let [{:keys [inert]} &props]
     ;; Maybe no legend
     '(do (let [[state set-state!] (uix.core/use-state 0)]
            ($ :<>
@@ -57,7 +60,7 @@
             &data-ks-attrs
             &attrs
             ;; Pull this from in data-ks-attrs so you don't have to manualize schema?
-            {:data-ks-inert (when-not (false? inert?) "")}
+            {:data-ks-inert (when-not (false? inert) "")}
             (when-let [n (:data-ks-elevated &data-ks-attrs)]
               {:style {"--_drop-shadow" (str "var(--elevated" 
                                              (when-not (string/blank? n)
@@ -65,12 +68,15 @@
                                              ")")}}))]
      &children)))
 
+
+
+
 (defui elevated
   {:doc          "elevated"
    :props/shared [:elevated :position]
    }
   [& args]
-  (let [{:keys [inert?]} &props]
+  (let [{:keys [inert]} &props]
     ;; Maybe no legend
     (into
      [:div (merge-attrs 
