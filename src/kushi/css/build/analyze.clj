@@ -1088,6 +1088,16 @@
                                               *css))
         (spit-css-layer+profile path css layer)))))
 
+(defn- utility-classes-debugging-callout [fn-sym classes path]
+  (when (contains? debugging :narrative)
+      (callout {:label fn-sym}
+               (bling  (str (count classes) " utility classes")
+                       "\n"
+                       "Layer "
+                       [:blue "kushi-utility"]
+                       ", writing "
+                       path))
+      nil))
 
 (defn kushi-utility-classes-profile-all
   [*css]
@@ -1103,6 +1113,12 @@
                                    [v]
                                    nil
                                    nil)))]
+
+    (utility-classes-debugging-callout
+     'analyze/kushi-utility-classes-profile-all
+     util-classes
+     path)
+    
     (register-design-tokens! css *css :kushi-utility)
     (spit-css-layer+profile path css layer)))
 
@@ -1114,9 +1130,7 @@
                         #{}
                         (-> @*css :utils :used/kushi-utility))]
 
-    (when (contains? debugging :narrative)
-      ;; TODO - Add callout here 
-      nil)
+    
 
     (when (!? :used/kushi-utility (seq reified))
       (let [[layer path] (layer+css-path kushi-utility-classes-layer-name)
@@ -1131,6 +1145,12 @@
                                        nil)))
             debug-toks?  (contains? debugging :design-token-registration)
             used-toks    (when debug-toks? (:used/design-tokens @*css))]
+
+        (utility-classes-debugging-callout
+         'analyze/kushi-utility-classes-profile
+         reified
+         path)
+
 
         ;; This is where design tokens for utility classes get registered.
         ;; They are identified based on the the actual css-rules produced.
