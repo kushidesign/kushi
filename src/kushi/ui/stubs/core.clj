@@ -1,0 +1,319 @@
+(ns ^:dev/always kushi.ui.stubs.core
+  (:require
+   [fireworks.core :refer [? !? ?> !?>]]
+   [clojure.string :as string]
+   [clojure.walk :as walk]
+   [malli.core]
+   [kushi.ui.variants :as variants]
+   [kushi.ui.util :refer [keyed]]
+   [kushi.ui.variants :as props]))
+
+;; TODO - document why is this needed vs normal fn
+;; For now this is unused
+(defmacro material-symbol-or-icon-span
+  [{:keys [icon-name icon-style icon-filled?]}]
+  (let [icon-font  "material-symbols" ;; <- TODO: from user config
+        ]
+    `(let [style#      (if (clojure.core/contains? #{:outlined :rounded :sharp} ~icon-style)
+                         ~icon-style
+                         :outlined)
+           icon-style# (str ~icon-font "-" (name style#))
+           icon-fill#  (when ~icon-filled? :material-symbols-icon-filled)]
+       (into [:span {:class [icon-style# icon-fill#]}]
+             ~icon-name))))
+
+
+(def debug? (atom false))
+
+
+(def malli-type-schema-keywords
+  (->> (malli.core/type-schemas)
+       keys
+       (into #{})))
+
+(def malli-predicate-schema-symbols
+  (->> (malli.core/predicate-schemas)
+       keys
+       (filter #(symbol? %))
+       (into #{})))
+
+(defn with-schemas
+  "Expects a map of props, from the :props entry in the metadata map of the
+   component rendering function. This metadata map originates from the 2nd
+   arg to the kushi.ui.core/defui.
+   
+   Each prop map's value is a map, and may contain a :schema entry. If a :schema
+   entry is not present, the map will potentially be given a :schema entry,
+   pulled from the `kushi.ui.variants` namespace. If no schema is found, a value
+   of any? will be used for the schema"
+  [props]
+  (reduce-kv (fn [m k {:keys [schema] :as v}]
+               (let [debug-schema?
+                     (and @debug? (= k :inert))
+
+                     schema 
+                     (if-not schema
+                       ; get set from stock e.g. 
+                       (or (k props/enum-variants-by-custom-opt-key)        
+                           :any)
+                       (cond 
+                         ; e.g. boolean? -> :boolean
+                         (and (symbol? schema)
+                              (contains? malli-predicate-schema-symbols schema))                                 
+                         (-> schema name (string/replace #"\?$" "") keyword)
+
+                         ; set literal for enum e.g. #{:rounded :sharp :pill}
+                         (set? schema)                                    
+                         (into [:enum] schema)
+
+                         ; kw such as :kushi.ui.variants/colors}
+                         (keyword? schema)                                
+                         (or (when (contains? malli-type-schema-keywords
+                                              schema)
+                               schema)
+                             (-> schema
+                                 name
+                                 (str "/enum")
+                                 keyword
+                                 (->> (get props/variants)))
+                             :any)
+
+                         :else
+                         :any))]
+
+                 (assoc m 
+                        k 
+                        (assoc v
+                               :schema 
+                               (!? {:when  debug-schema?
+                                   :label [k v]} schema)))))
+             {}
+             (!? {:when @debug?} props)))
+
+(defn required-props* [props-with-schemas]
+  (into [] 
+        (keep (fn [[k v]]
+                (when (true? (:required? v)) k))
+              props-with-schemas)))
+
+(defn malli-schema*
+  [props-with-schemas]
+  (reduce-kv 
+   (fn [acc k {:keys [required? schema]
+               :as   v}]
+     (let [schema (if (set? schema)
+                    (into [:enum] schema)
+                    schema)]
+       (conj acc 
+             (if (true? required?)
+               [k schema]
+               [k {:optional true} schema]))))
+   [:map]
+   (!? {:when (= @debug? 'box)}
+       props-with-schemas)))
+
+
+(defn dbg
+  "Wrapper for debugging defmacro defui"
+  [label x]
+  (? :no-file 
+     {:label                 label
+      :display-metadata?     false
+      :non-coll-length-limit 21}
+     x))
+
+
+(def debug-defui nil #_'box)
+
+
+(defn- props-from-families* [m dbgf]
+  (some->> (:props/family m)
+           (dbgf 'family-props)
+           (reduce (fn [vc k]
+                     (apply conj
+                            vc
+                            (k props/prop-families)))
+                   [])
+           (dbgf 'constituent-prop-keys)
+           (select-keys props/props)
+           #_(dbg 'hydrated-constituent-prop-map)))
+
+(defn- props-trimmed* [merged-props dbgf]
+  (dbgf 'props-trimmed
+       (reduce-kv (fn [m k v]
+                    (assoc m k (dissoc v :desc :schema :required? :data)))
+                  {}
+                  merged-props)))
+
+(defn- merged-props* 
+  [m dbgf]
+  (let [
+        ;; groups of props rolled up into families 
+        props-from-families
+        (dbgf 'props-from-families (props-from-families* m dbgf))
+
+        ;; props shared across components
+        props-from-shared   
+        (dbgf 'props-from-shared (select-keys props/props (:props/shared m)))
+
+        
+        ;; props specific/unique to the component
+        user-props          
+        (dbgf 'user-props (:props m))]
+
+    ;; merge all the props
+    (dbgf 'merged-props
+         (merge user-props props-from-shared props-from-families))))
+
+
+
+(defmacro defui
+  [sym  ; <- Symbol, name of component
+
+   m    ; <- Function metadata map with docs and props e.g.
+        ;    {
+        ;     The docstring
+        ;
+        ;     :doc "Buttons are primitive UI components that ..."
+        ;
+        ;
+        ;
+        ;     Predefined lists of stock props. List of keywords corresponding to
+        ;     entries in variants/prop-families
+        ;
+        ;     :props/family [...] 
+        ;
+        ;
+        ;
+        ;     List of keywords corresponding to entries in variants/props.
+        ;
+        ;     :props/shared [...]
+        ;
+        ;
+        ;
+        ;     Props that are unique to the component, each an entry of:
+        ;
+        ;     [:keyword [:map
+        ;                [:schema {:optional? true}]
+        ;                [:desc :string]
+        ;                [:default {:optional? true} :any]]]
+        ;
+        ;     :props {...
+        ;             :my-custom-prop {:schema  string?
+        ;                              :desc    "prop desc"
+        ;                              :default "foo"}
+        ;             ...}}
+        ;
+        ;
+   _    ; <- The args vector, should always be [& args]
+        ;
+        ;
+   body ; <- body of component
+   ]
+
+  (reset! debug? (if (= sym 'box) true false))
+
+  (let [!dbgf
+        (fn [_ x] x)
+
+        dbgf
+        (if (= sym debug-defui) dbg !dbgf)
+
+        _
+        (when (= sym debug-defui)
+          (dbgf 'sym sym)
+          (dbgf 'm m))
+
+        merged-props
+        (merged-props* m dbgf)
+
+        ;; trims the props to only give data-ks-attrs what it needs at runtime,
+        ;; which are the :default and :data-ks? :data-ks (data trans fn) entries
+        props-trimmed
+        (props-trimmed* merged-props dbgf)
+        
+
+        props-keys   
+        (into [] (keys merged-props))
+
+
+        ;; TODO - process body here for different frameworks
+        ;; TODO - maybe wrap body here if elevated is in the mix?
+        body        
+        (do 
+          #_(when (= sym 'box) 
+              (? (walk/postwalk (fn [x] (if (= (and (list? x) (first x)) '$)
+                                          (into [] (rest x))
+                                          x))
+                                body)))
+          body)
+
+
+        ;; All the following symbols are available within the body of the macro
+        
+        ;; &props         - map of props defined via the :props or :props/family,
+        ;;                  extracted from the second arg (map) to defui
+
+        ;; &attrs         - map of html attributes extracted from the second arg
+        ;;                  (map) to defui
+
+        ;; &data-ks-attrs - map of data-ks-* attributes. Some/most of the
+        ;;                  kushi-specific theming props need to end up as
+        ;;                  data-ks-* attributes 
+
+        ;; &children      - collection of children passed to components
+
+        ks          
+        '[&props &attrs &data-ks-attrs &children args]
+        
+        ;; This metadata fn map is used for generation of docs when component is
+        ;; included 
+        mm
+        (let [props-with-schemas (with-schemas merged-props)]
+          (assoc m 
+                 :props
+                 props-with-schemas))
+
+        [_ fn-sym]
+        (some-> &env :root-source-info :source-form)
+        
+        fn-info
+        (assoc (meta &form)
+               :fn
+               fn-sym
+               :fn/name
+               (str fn-sym)
+               :ns/name
+               (some-> &env :ns :name str))]
+
+    `(defn ~sym 
+       ~mm
+       [& args#]
+       (let [extracted*#          (kushi.ui.core/extract args# ~props-keys)
+             data-ks-attrs#       (kushi.ui.core/data-ks-attrs 
+                                   (:props extracted*#)
+                                   ~props-trimmed)
+             props#               (dissoc (:props extracted*#) :ns)
+             extracted#           {:&props         props#
+                                   :&attrs         (:attrs extracted*#)
+                                   :&data-ks-attrs data-ks-attrs#
+                                   :&children      (:children extracted*#)
+                                   :args           args#}
+             {:keys ~ks}          extracted#]
+         ~body))))
+
+
+(defmacro fn->defui [form]
+  (let [[_ sym {:keys [summary desc opts]} args-vc body] form
+        props (reduce-kv
+               (fn [m k v]
+                 (assoc m k (if-let [m (get variants/props k)]
+                              (dissoc m :schema)
+                              v)))
+               {}
+               opts)
+        mm {:doc desc :summary summary :props props}
+        ret (list 'defui ^:public sym mm args-vc body)]
+    (!? (keyed [sym mm args-vc body]))
+    (? {:non-coll-length-limit 500} ret)
+    `nil))
