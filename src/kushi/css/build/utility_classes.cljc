@@ -484,18 +484,24 @@
    :disabled              
    {:opacity "45%"} ; <- create a global :--disabled-element-opacity
                     ;    distinct from *:disabled for inputs ?
+   ])
 
-   :transition            
-   {:transition-property        :all
-    :transition-timing-function :$transition-timing-function
-    :transition-duration        :$transition-duration
-    :after                      {:transition-property        :all
-                                 :transition-timing-function :$transition-timing-function
-                                 :transition-duration        :$transition-duration}
-    :before                     {:transition-property        :all
-                                 :transition-timing-function :$transition-timing-function
-                                 :transition-duration        :$transition-duration}}])
-
+(def transition 
+  {:transition-property        :all
+   :transition-timing-function :$transition-timing-function
+   :transition-duration        :$transition-duration
+   :after                      {:transition-property        :all
+                                :transition-timing-function :$transition-timing-function
+                                :transition-duration        :$transition-duration}
+   :before                     {:transition-property        :all
+                                :transition-timing-function :$transition-timing-function
+                                :transition-duration        :$transition-duration}})
+(def transition-selectors
+  [:transition
+   transition
+   
+   "[data-ks-transition]"            
+   transition])
 
 (def offscreen-classes 
   [:offscreen {:position :absolute
@@ -818,6 +824,7 @@
    (-> offscreen-classes kws->dot-strs (wdks "position"))
 
    global-selectors
+   transition-selectors
 
    ;; A scale of selectors like "[data-ks-weight=\"thin\"]"
    ;;
