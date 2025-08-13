@@ -1185,7 +1185,7 @@
   {:border-radius :$rounded-xxlarge})
 
 (defcss "[data-ks-contour=\"rounded-xxxlarge\"]"
-  {:border-radius :$rounded-xxxsmall})
+  {:border-radius :$rounded-xxxlarge})
 
 (defcss "[data-ks-contour=\"pill\"], [data-ks-contour=\"circle\"]"
   {:border-radius :9999px})
