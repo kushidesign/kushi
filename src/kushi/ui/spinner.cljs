@@ -41,9 +41,9 @@
   (let [{:keys [opts attrs]} 
         (extract args [:spinner-type])
 
-        {:keys [size spinner-type inert?]
+        {:keys [size spinner-type inert]
          :or   {spinner-type :donut
-                inert?       true}}
+                inert       true}}
         opts
         
         
@@ -52,7 +52,7 @@
         more-attrs          (merge {:aria-hidden     true
                                     :data-ks-surface :transparent
                                     :data-ks-sizing  (:sizing opts)}
-                                   (when (true? inert?) 
+                                   (when (true? inert) 
                                      {:data-ks-inert ""})
                                    (when-not (contains? #{"neutral" :neutral}
                                                     (:colorway opts))

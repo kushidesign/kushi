@@ -247,21 +247,29 @@
    :stroke-align              {:schema  [:enum :inside :outside]
                                :default nil
                                :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`."}
+   :stroke-width              {:schema  [:int]
+                               :default nil
+                               :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`."}
    :packing                   {:default nil
                                :desc    "General amount of padding inside the element."}
-   :end-enhancer              {:schema  [:or :string :keyword :vector]
-                               :default nil
-                               :desc    "Content at the inline-end position preceding the element text. Typically an icon."}
-   :start-enhancer            {:schema  [:or :string :keyword :vector]
-                               :default nil
-                               :desc    "Content at the inline-start position following the element text. Typically an icon."}
-   :loading?                  {:schema  :boolean
+   :end-enhancer              {:schema       [:or :string :keyword :vector]
+                               :default      nil
+                               :when-not-nil ""
+                               :desc         "Content at the inline-end position preceding the element text. Typically an icon."}
+   :start-enhancer            {:schema       [:or :string :keyword :vector]
+                               :default      nil
+                               :when-not-nil ""
+                               :desc         "Content at the inline-start position following the element text. Typically an icon."}
+   :transition                {:schema  :boolean
+                               :desc    "When `true` this will enable Kushi's default css `transition-*` values on the element and the elements `:before` and `:after` pseudo-elements"
+                               :default true}
+   :loading                   {:schema  :boolean
                                :default false
                                :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`."}
    :surface                   {:desc "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."}
-   :inert?                    {:schema  :boolean
+   :inert                     {:schema  :boolean
                                :desc    "Surface is not interactive meaning no hover or active states."
-                               :default nil}
+                               :default true}
    :text-transform            {:desc    "Equivalent to the css text-transform property."
                                :default nil}
    :elevation                 {:desc    "Elevation level of the element. Renders a drop-shadow."
@@ -270,7 +278,7 @@
                                :default nil}
    :fx                        {:desc    "Surface effect such as emboss and deboss."
                                :default nil}
-   :icon-enhanceable?         {:schema  :boolean
+   :icon-enhanceable          {:schema  :boolean
                                :desc    "Element is enhanceable with an icon."
                                :default nil}
    :background-image-behavior {:schema  [:enum :cover :contain]
@@ -295,11 +303,11 @@
                :contour
                :surface
                :stroke-align
-               :inert?
+               :inert
                :position
                :background-image-behavior
                :fx
                :convex
                :elevation
                :shadows
-               :loading?]})
+               :loading]})

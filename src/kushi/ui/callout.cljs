@@ -58,14 +58,14 @@
   [& args]
 
   (let [{:keys [opts attrs children]}    
-        (extract args [:header-icon :header-text :loading? :user-actions :close-button?])
+        (extract args [:header-icon :header-text :loading :user-actions :close-button?])
 
-        {:keys [loading?
+        {:keys [loading
                 user-actions
                 close-button?
                 header-text
                 header-icon
-                inert?
+                inert
                 #_stroke-align
                 #_duration
                 colorway
@@ -115,14 +115,14 @@
            :pbs--$_padding-block-start
            :pbe--$_padding-block-end)
 
-       {:aria-busy        loading?
-        :aria-label       (when loading? "loading")
+       {:aria-busy        loading
+        :aria-label       (when loading "loading")
         :data-ks-surface  surface
         :data-ks-contour  (or contour :rounded)
         :data-ks-sizing   sizing
         :data-ks-colorway colorway}
-       (when-not (false? inert?) {:data-ks-inert ""})
-       (when loading? {:data-ks-ui-spinner ""})
+       (when-not (false? inert) {:data-ks-inert ""})
+       (when loading {:data-ks-ui-spinner ""})
 
        attrs)     
 

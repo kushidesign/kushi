@@ -319,7 +319,7 @@
                                    :attrs {:sizing :xxxlarge}
                                    :args  [:login]}}
           
-          :inert?       {:schema  boolean?
+          :inert       {:schema  boolean?
                          :default false
                          :desc    "Determines whether the icon will feature hover and active styles"
                          :demo    {:label "Inert or interactive styling"

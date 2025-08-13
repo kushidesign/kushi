@@ -377,7 +377,7 @@
                              :desc    "Blah blah blah"
                              :default nil}
 
-                  :inert?   {:schema  :boolean
+                  :inert   {:schema  :boolean
                              :desc    "Surface is not interative meaning no hover or active states."
                              :default nil}
 
@@ -428,7 +428,7 @@
   ;;                             :default  nil
   ;;                             :data-ks? false}})}
   [& args]
-  (let [{:keys [group-id choices default inert?]} &props]
+  (let [{:keys [group-id choices default inert]} &props]
     ;; Maybe no legend
     (let [rg-id (str group-id "-radio-group")]
       (into
@@ -438,7 +438,7 @@
                           &attrs
 
                           ;; Pull this from in data-ks-attrs so you don't have to manualize schema?
-                          {:data-ks-inert (when-not (false? inert?) "")})]
+                          {:data-ks-inert (when-not (false? inert) "")})]
        (for [choice choices]
          (let [choice-label (if (map? choice) (:label choice) choice)
                choice-lc    (string/lower-case choice-label)

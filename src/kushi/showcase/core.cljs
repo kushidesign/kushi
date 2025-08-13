@@ -62,7 +62,7 @@
           coll))
 
 (!? :pp (convert-legacy-opts 
-        '[{:name    loading?
+        '[{:name    loading
            :schema  boolean?
            :default false
            :desc    "When `true`, this will set the appropriate values for

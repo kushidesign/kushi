@@ -5,7 +5,7 @@
    [kushi.core :refer (sx merge-attrs at)]
    [kushi.ui.defs :as defs]
    [kushi.ui.shared.theming :refer [component-attrs variant-basics]]
-   [kushi.ui.core :refer (extract validate)]
+   [kushi.ui.core :refer (extract)]
    ))
 
 (defn- icon-name->snake-case-string [coll]
@@ -66,7 +66,7 @@
            :icon-style   {:default :outlined
                           :desc    "Style of icon"}
            
-           :inert?       {:schema  boolean?
+           :inert       {:schema  boolean?
                           :default false
                           :desc    "Determines whether the icon will feature hover and active styles"}}}
   [& args]
@@ -80,7 +80,7 @@
                 sizing
                 colorway
                 ns
-                inert?]}
+                inert]}
         props
 
         [icon*]
@@ -106,7 +106,7 @@
 
           :_svg:height--1em
           :_svg>path:fill--currentColor)
-      {:data-ks-inert    (when (true? inert?) "")
+      {:data-ks-inert    (when (true? inert) "")
        :data-ks-ns       ns
        :data-ks-surface  :transparent
        :data-ks-sizing   sizing
@@ -114,11 +114,11 @@
        :data-ks-colorway colorway}
       attrs)
      (cond
-       (and (vector? icon*) (= :svg (first icon*)))
+       (? (and (vector? icon*) (= :svg (first icon*))))
        icon*
 
        ;; TODO - Use with another icon set
-       (every? #(or (string? %) (keyword? %)) children)
+       (? (every? #(or (string? %) (keyword? %)) children))
        (let [icon-name  (icon-name->snake-case-string children)
              icon-font  "material-symbols"
              style      (if (contains? #{:outlined :rounded :sharp} icon-style)
@@ -128,8 +128,8 @@
              icon-fill  (when icon-filled? (str icon-font "-icon-filled"))]
 
 
-         (into [:span {:class [icon-style icon-fill]}]
-               icon-name)))]))
+         (? (into [:span {:class [icon-style icon-fill]}]
+               icon-name))))]))
 #_{
           :sizing         {:default :medium
                           :desc    "Corresponds to the font-size based on Kushi's font-size scale."
@@ -179,7 +179,7 @@
                                     :attrs         {:sizing :xxxlarge}
                                     :args          [:login]}}
 
-          :inert?       {:schema    boolean?
+          :inert       {:schema    boolean?
                           :default false
                           :desc    "Determines whether the icon will feature hover and active styles"
                           :demo    {:label         "Inert or interactive styling"
