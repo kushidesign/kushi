@@ -2,7 +2,7 @@
   (:require-macros [kushi.ui.core])
   (:require [fireworks.core :refer [? !? ?> !?>]]
             [kushi.ui.variants :as variants]
-            [kushi.util]
+            [kushi.util :refer [keyed]]
             [bling.explain :refer [explain-malli]]))
 
 (defn attr+children [coll]
@@ -36,7 +36,7 @@
     :ref :key})
 
 (def kushi-ui-props 
-  #{:ns :inert? :end-enhancer :start-enhancer :loading? :stroke-align :stroke-width})
+  #{:at :inert :end-enhancer :start-enhancer :loading :stroke-align :stroke-width})
 
 (defn- data-ks-attrs-style-map [k supplied]
   (cond (and (= k :shadows) supplied) 
@@ -48,32 +48,48 @@
                            (take 3 supplied)))))
 
 (defn data-ks-attrs 
-  "Attaches data-ks based on opts from defn metadata map. To be called from defui macro."
+  "Attaches data-ks based on opts from defn metadata map. To be called from
+   defui macro."
   [props with-schema]
 
   ;; Should it be data-ks instead of data?
   ;; Or concept of registry so you don't need to manually add :elide thing?
   (merge (reduce-kv 
-          (fn [m k {:keys [default data when-not-nil style-tokens?]}]
+          (fn [m k {:keys [default data when-not-nil style-tokens?] :as prop}]
             (!? {:when (= k :shadows)}
                 (merge m
                        (when-not (= data :elide)
-                         (let [supplied (get props k)
-                               data-ks  (keyword (str "data-ks-" (name k)))
-                               style    (when style-tokens?
-                                          (data-ks-attrs-style-map k supplied))
+                         (let [supplied 
+                               (get props k)
+
+                               data-ks-*  
+                               (keyword (str "data-ks-" (name k)))
+
+                               style    
+                               (when style-tokens?
+                                 (data-ks-attrs-style-map k supplied))
+
+                               ;; This sorts out `data-ks-*` attrs that are boolean,
+                               ;; but need to be supplied as `data-ks-foo=""` (when true, appears in dom as `data-ks-foo`)
+                               ;; or `data-ks-foo=nil` (if false, does not appear in dom)
                                ret 
-                               (cond (not (nil? supplied))
-                                     {data-ks (or when-not-nil
-                                                  (kushi.util/as-str supplied))}
-                      ;; TODO figure this out with logic for a fn, using :data entry
-                                     default
-                                     {data-ks (kushi.util/as-str default)})]
+                               (cond (!? {:when (= k :loading)} (not (nil? supplied)))
+                                     {data-ks-* (if (true? (:boolean? prop))
+                                                  (if (false? supplied) nil "")
+                                                  (or when-not-nil
+                                                      (kushi.util/as-str supplied)))}
+                                     (!? {:when (= k :loading)} default)
+                                     {data-ks-* (if (true? (:boolean? prop))
+                                                 (case default
+                                                   false   nil
+                                                   "false" nil
+                                                   "")
+                                                 (kushi.util/as-str default))})]
+                           (!? (keyed [supplied data-ks-* style ret]))
                            (merge ret (when style {:style style})))))))
           {} 
           with-schema)
-          (when-let [data-ks-ns (:ns props)]
-            {:data-ks-ns data-ks-ns})))
+          (some->> props :at (hash-map :data-ks-at))))
 
 
 (defn extract
@@ -91,9 +107,10 @@
    ;; TODO - analyze perf benefits of NOT doing this in prod
    (doseq [k custom-option-ks]
      (when (contains? html-attrs k)
-       (js/console.warn (str "HTML attribute name clash\n" k "\n"
-                             "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes" "\n"
-                             "You should probably choose a different name for your custom attribute."))))
+       (js/console.warn 
+        (str "HTML attribute name clash\n" k "\n"
+             "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes" "\n"
+             "You should probably choose a different name for your custom attribute."))))
    (when (coll? args)
      (let [[src args]          
            (let [[src & rest] args]
@@ -133,13 +150,16 @@
            data-ks-ns]}]
   (when (and (seq props) malli-schema) 
     (let [user-spacing 
-          #_:compact :ultra-compact
+          :compact #_:ultra-compact
 
           user-malli-schema-validation-label
           nil
 
           callout-opts 
-          (if (= :ultra-compact user-spacing)
+          {:label (str (:ns/name fn-info)
+                       "/"
+                       (:fn/name fn-info))}
+          #_(if (= :ultra-compact user-spacing)
             {:label data-ks-ns}
             (some->> user-malli-schema-validation-label 
                      (hash-map :label)))]
@@ -150,17 +170,17 @@
            :display-file-info-as-side-label?  true
            :display-schema?                   false
           ;;  :success-message                   :bling.explain/explain-malli-success-verbose
-           :success-message                   :bling.explain/explain-malli-success-simple
+          ;;  :success-message                   :bling.explain/explain-malli-success-simple
            :select-keys-in-problem-path?      true     
            :highlight-missing-keys?           true     
-          ;;  :section-body-indentation          2
+           :section-body-indentation          0
            :spacing                           user-spacing
            :omit-sections                     [:problem-value]
            :omit-section-labels               ["UI component:" "Supplied props:"]
            :highlighted-problem-section-label "Supplied props:"
            :preamble-section-label            "UI component:"
-           :preamble-section-body             (str (:ns/name fn-info)
-                                                   "/"
-                                                   (:fn/name fn-info))
+           ;; :preamble-section-body             (str (:ns/name fn-info)
+           ;;                                          "/"
+           ;;                                          (:fn/name fn-info))
            :callout-opts                      callout-opts
            }))))
