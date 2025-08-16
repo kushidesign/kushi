@@ -2,13 +2,16 @@
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [bling.core :refer [callout bling]]
+   [bling.explain :refer [explain-malli]]
    [bling.hifi :refer [hifi]]
    [clojure.string :as string]
    [clojure.walk :as walk]
    [malli.core]
+   [kushi.util :refer [partition-by-pred]]
    [kushi.ui.variants :as variants]
    [kushi.ui.util :refer [keyed]]
-   [kushi.ui.variants :as props]))
+   [kushi.ui.variants :as props]
+   [malli.core :as m]))
 
 ;; TODO - document why is this needed vs normal fn
 ;; For now this is unused
@@ -51,7 +54,7 @@
   [props]
   (reduce-kv (fn [m k {:keys [schema] :as v}]
                (let [debug-schema?
-                     (and @debug? (= k :inert))
+                     (and @debug? (= k :choices))
 
                      schema 
                      (if-not schema
@@ -59,6 +62,10 @@
                        (or (k props/enum-variants-by-custom-opt-key)        
                            :any)
                        (cond 
+                         ;; Assumes valid malli schema e.g. [:or [:vector :string] [:vector :map]]
+                         (vector? schema)
+                         schema
+
                          ; e.g. boolean? -> :boolean
                          (and (symbol? schema)
                               (contains? malli-predicate-schema-symbols schema))                                 
@@ -88,7 +95,8 @@
                         (assoc v
                                :schema 
                                (!? {:when  debug-schema?
-                                   :label [k v]} schema)))))
+                                    :label [k v]}
+                                   schema)))))
              {}
              (!? {:when @debug?} props)))
 
@@ -125,7 +133,7 @@
      x))
 
 
-(def debug-defui nil #_'button)
+(def debug-defui nil #_icon)
 
 
 (defn- props-from-families* [m dbgf]
@@ -144,14 +152,35 @@
 (defn- props-trimmed* [merged-props dbgf]
   (dbgf 'props-trimmed
        (reduce-kv (fn [m k v]
-                    (assoc m k (merge (dissoc v :desc :schema :required? :data)
-                                      (when (= :boolean (:schema v))
-                                        {:boolean? true}))))
+                    (assoc m
+                           k
+                           (merge (dissoc v :desc :schema :required? :data)
+                                  (when (= :boolean (:schema v))
+                                    {:boolean? true}))))
                   {}
                   merged-props)))
 
+(defn- default-override?
+  [user-props props-from-families props-from-shared k dbg-k]
+  (!? {:when  (and (= k :colorway) (= dbg-k :foo))}
+     user-props)
+  (and (!? {:when  (and (= k :colorway) (= dbg-k :foo))
+            :label k}
+           (contains? props/props k))
+
+       (!? {:when (and (= k :colorway) (= dbg-k :foo))}
+           (or (contains? props-from-families k)
+               (contains? props-from-shared k)))
+
+       (true? (!? {:when (and (= k :colorway) (= dbg-k :foo))
+                   }
+                  (some-> user-props
+                          (get k)
+                          keys
+                          (= '(:default)))))))
 
 (defn conflicting-props-warning [user-props fn-info]
+  (!? fn-info)
   (when-let [prop-name-conflicts
              (some->> user-props
                       keys
@@ -169,19 +198,79 @@
                                   (:line fn-info)
                                   ":"
                                   (:column fn-info))}
-               "The following prop names conflict with shared props"
+               "The following " (hifi :prop) " entries conflict with shared props"
                "\n"
                "defined in " (bling [:blue 'kushi.ui.variants/props]) ":"
                "\n\n"
-               (hifi prop-name-conflicts)
-               "\n\n\n"
+               (string/join "\n" (mapv #(hifi %) prop-name-conflicts))
+               "\n\n"
                "You should instead use a "  (bling [:blue :props/shared]) " entry like this:"
                "\n\n"
                (hifi {:props/shared prop-name-conflicts})))))
 
 
+#_(try (malli.core/validate [:map vc] 42)
+                                  (catch js/Object
+                                         err
+                                    (when (= ":malli.core/invalid-schema" (.-message e))
+                                      (callout {:label       "Invalid Malli Schema"
+                                                :type        :error
+                                                :padding-top 1
+                                                :side-label  (str (:ns/name fn-info) 
+                                                                  ":" 
+                                                                  (:line fn-info) 
+                                                                  ":" 
+                                                                  (:column fn-info))
+                                                :label-theme :pipe}
+                                               (bling [:italic "Component:"])
+                                               "\n\n"
+                                               (hifi (symbol (:fn/name fn-info)) {:margin-inline-start 2})
+                                               "\n\n\n"
+                                               (bling [:italic "Prop:"])
+                                               "\n\n"
+                                               (hifi k {:margin-inline-start 2})
+                                               "\n\n\n"
+                                               (bling [:italic "Invalid Schema:"])
+                                               "\n\n"
+                                               (hifi (some-> custom-props k :schema) {:margin-inline-start 2}))
+                                      )))
+
+(defn- validate-custom-prop-schema 
+  [k v fn-info]
+  (try (some-> v :schema (m/validate 42))
+       (catch Throwable
+              e
+         (when (= ":malli.core/invalid-schema" 
+                  (.getMessage e))
+           (callout
+            {:label       "Invalid Malli Schema"
+             :type        :error
+             :padding-top 1
+             :side-label  (str (:ns/name fn-info) 
+                               ":" 
+                               (:line fn-info) 
+                               ":" 
+                               (:column fn-info))
+             :label-theme :marquee}
+            (bling [:italic "Component:"])
+            "\n\n"
+            (hifi (symbol (:fn/name fn-info))
+                  {:margin-inline-start 2})
+            "\n\n\n"
+            (bling [:italic "Custom prop:"])
+            "\n\n"
+            (hifi k {:margin-inline-start 2})
+            "\n\n\n"
+            (bling [:italic "Invalid Schema:"])
+            "\n\n"
+            (hifi (:schema v) 
+                  {:margin-inline-start 2}))))))
+
 (defn- merged-props* 
-  [m fn-sym fn-info dbgf]
+  [{supplied-user-props :props :as m}
+   fn-sym
+   fn-info
+   dbgf]
   (dbgf fn-sym fn-info)
   (let [
         ;; groups of props rolled up into families 
@@ -189,29 +278,84 @@
         (dbgf 'props-from-families (props-from-families* m dbgf))
 
         ;; props shared across components
-        props-from-shared   
-        (dbgf 'props-from-shared (select-keys props/props (:props/shared m)))
+        [shared-prop-overrides* props-from-shared*]   
+        (dbgf 'props-from-shared-partitioned 
+              (partition-by-pred #(m/validate [:tuple :keyword :map] %)
+                                 (:props/shared m)))
 
+        props-from-shared*
+        (dbgf 'props-from-shared*
+              (apply conj 
+                     (into [] (filter keyword? props-from-shared*)) 
+                     (reduce (fn [acc [k]] (conj acc k))
+                             []
+                             shared-prop-overrides*)))
+
+        props-from-shared
+        (dbgf 'props-from-shared (select-keys props/props props-from-shared*))
+
+        shared-prop-overrides
+        (dbgf 'shared-prop-overrides*
+              (into {} shared-prop-overrides*))
+
+        ;; props-from-shared   
+        ;; (dbgf 'props-from-shared (select-keys props/props (:props/shared m)))
         
+        ;; user-props-to-override-defaults-on-shared-props
+        ;; (dbgf 'user-props-to-override-defaults-on-shared-props
+        ;;       (reduce-kv (fn [m k v]
+        ;;                    (if (default-override? supplied-user-props
+        ;;                                           props-from-shared
+        ;;                                           props-from-families
+        ;;                                           k
+        ;;                                           :foo)
+        ;;                      (assoc m k v)
+        ;;                      m))
+        ;;                  {}
+        ;;                  supplied-user-props))
+
+        ;; _ (? (= props-from-shared* props-from-shared) )
+        ;; _ (when (not= shared-prop-overrides* shared-prop-overrides)
+        ;;     (? fn-sym
+        ;;        m))
+
+        ;; props specific/unique to the component, removed overrides for shared props on :default value
+        user-props*
+        (dbgf 'user-props* 
+              (apply dissoc
+                     supplied-user-props 
+                     (keys shared-prop-overrides)))
+
         ;; props specific/unique to the component
-        user-props          
-        (dbgf 'user-props (:props m))
+        validated-user-props-with-schemas
+        (dbgf 'validated-user-props-with-schemas
+              (reduce-kv
+               (fn [m k v]
+                 (assoc m
+                        k 
+                        (if (validate-custom-prop-schema k v fn-info)
+                          v
+                          (assoc v :schema :any))))
+               {}
+               user-props*))
+
+        merged-props*
+        (dbgf 'merged-props*
+              (merge validated-user-props-with-schemas
+                     props-from-shared
+                     props-from-families))
         
-        ;; merged-props
-        ;; (merge user-props
-        ;;         props-from-shared
-        ;;         props-from-families)
+        merged-props-with-default-overrides
+        (dbgf 'merged-props-with-default-overrides
+              (reduce-kv (fn [m k v]
+                           (assoc-in m [k :default] (:default v)))
+                         merged-props*
+                         shared-prop-overrides))]
 
-        ;; props-with-schemas
-        ]
-
-    #_(conflicting-props-warning user-props fn-info)
+    (!? (conflicting-props-warning user-props* fn-info))
 
     ;; merge all the props
-    (dbgf 'merged-props
-         (merge user-props
-                props-from-shared
-                props-from-families))))
+    merged-props-with-default-overrides))
 
 
 
@@ -259,7 +403,7 @@
    body ; <- body of component
    ]
 
-  (reset! debug? (if (= sym 'box) true false))
+  (reset! debug? (if (= sym 'radio-group) true false))
 
   (let [!dbgf
         (fn [_ x] x)
@@ -276,13 +420,20 @@
         (some-> &env :root-source-info :source-form)
         
         fn-info
-        (assoc (meta &form)
-               :fn
-               fn-sym
-               :fn/name
-               (str fn-sym)
-               :ns/name
-               (some-> &env :ns :name str))
+        (let [m (assoc (meta &form)
+                       :fn
+                       fn-sym
+                       :fn/name
+                       (str fn-sym)
+                       :ns/name
+                       (some-> &env :ns :name str))]
+          (assoc m :fn/loc-str (str (:ns/name m)
+                                    "/"
+                                    (:fn/name m)
+                                    ":"
+                                    (:line m)
+                                    ":"
+                                    (:column m))))
 
         merged-props
         (merged-props* m fn-sym fn-info dbgf)
@@ -337,13 +488,15 @@
           (assoc m 
                  :props
                  props-with-schemas
+                 :props/custom
+                 (:props m)
                  :malli-schema
                  malli-schema))]
 
     `(defn ~sym 
        ~mm
        [& args#]
-       (let [extracted*#          (kushi.ui.core/extract args# ~props-keys)
+       (let [extracted*#          (kushi.ui.core/extract args# ~props-keys ~fn-info)
              data-ks-attrs#       (kushi.ui.core/data-ks-attrs 
                                    (:props extracted*#)
                                    ~props-trimmed)
@@ -392,8 +545,8 @@
                    ~fn-info
                    :props
                    props#
-                   :data-ks-ns
-                   (:data-ks-ns data-ks-attrs#))))
+                   :data-ks-at
+                   (:data-ks-at data-ks-attrs#))))
          
         ;; End of dev-only runtime malli validation ============================
          

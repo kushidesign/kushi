@@ -2,10 +2,11 @@
   (:require
    [clojure.string :as string]
    [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.core :refer (sx merge-attrs at)]
+   [kushi.core :refer [sx merge-attrs at]]
+   [kushi.ui.util]
    [kushi.ui.defs :as defs]
    [kushi.ui.shared.theming :refer [component-attrs variant-basics]]
-   [kushi.ui.core :refer (extract)]
+   [kushi.ui.core :refer [defui]]
    ))
 
 (defn- icon-name->snake-case-string [coll]
@@ -17,7 +18,7 @@
            :else %)
         coll))
 
-(defn icon
+(defui icon
   {:doc   "Icons provide compactness by indicating meaning using iconic symbols.
              
    By default, icons in Kushi are pulled in via
@@ -48,49 +49,25 @@
    `[icon mui.svg/add]`. You can also create and utilize similar namespace in
    your own project with your own collection of icon `svg`s."
 
-   ;; TODO - remove desc and pull from shared defs
-   :props {:sizing       {:default :medium
-                          :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
-           
-           :weight       {:default :normal
-                          :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."}
-           
-           :colorway     {:default nil
-                          :desc    "Colorway of the icon. Can also be a named color from Kushi's design system, e.g `:red`, `:gold`, etc."}
-           
-           :icon-filled? {:schema  boolean?
-                          ;; :required? true
-                          :default false
-                          :desc    "Filled or not filled"}
-           
-           :icon-style   {:default :outlined
-                          :desc    "Style of icon"}
-           
-           :inert       {:schema  boolean?
-                          :default false
-                          :desc    "Determines whether the icon will feature hover and active styles"}}}
+   :props/shared [[:surface {:default nil}]       
+                  [:colorway {:default nil}]
+                  :sizing
+                  :weight       
+                  :position
+                  :inert
+                  :transition
+                  :icon-style
+                  :icon-filled]
+   :props {:colorway {:default nil}
+           :surface {:default :transparent}
+           }}
   [& args]
-  (let [{:keys [props attrs children]}                              
-        (extract args [:icon-filled? 
-                       :icon-style]) ; <-don't need to do this if these keys are present in variants-by-custom-opt-key or kushi.ui.core/kushi-ui-props
-        
-        {:keys [icon-style
-                icon-filled?
-                weight
-                sizing
-                colorway
-                ns
-                inert]}
-        props
-
-        [icon*]
-        children]
+  (let [{:keys [icon-style icon-filled surface colorway]} &props
+        [icon*]                                           &children]
 
     [:div
      (merge-attrs
       (sx "[data-ks-ui=\"icon\"]"
-          :.transition
-          :position--relative
           :d--inline-flex
           :flex-direction--row
           :jc--c
@@ -98,38 +75,31 @@
           :ai--c
           ;; TODO - use tokenized syntax here
           [:>span:fs "var(--mui-icon-relative-font-size, inherit)"]
+          :>span:fw--inherit
           [:>span.material-symbols-icon-filled:font-variation-settings "'FILL' 1"]
-
-          ;; [:>span {:transition-property        :all
-          ;;          :transition-timing-function :$transition-timing-function
-          ;;          :transition-duration        :$transition-duration}]
-
           :_svg:height--1em
           :_svg>path:fill--currentColor)
-      {:data-ks-inert    (when (true? inert) "")
-       :data-ks-ns       ns
-       :data-ks-surface  :transparent
-       :data-ks-sizing   sizing
-       :data-ks-weight   weight
-       :data-ks-colorway colorway}
-      attrs)
+
+      ;; TODO - what if you want to redefine the default value for e.g. :surface? Best way?
+      ;; {:data-ks-surface (or (some-> surface kushi.ui.util/as-str) "transparent")}
+      &attrs)
      (cond
-       (? (and (vector? icon*) (= :svg (first icon*))))
+       (and (vector? icon*) (= :svg (first icon*)))
        icon*
 
        ;; TODO - Use with another icon set
-       (? (every? #(or (string? %) (keyword? %)) children))
-       (let [icon-name  (icon-name->snake-case-string children)
+       (every? #(or (string? %) (keyword? %)) &children)
+       (let [icon-name  (icon-name->snake-case-string &children)
              icon-font  "material-symbols"
+
+                        ;; maybe don't need check here
              style      (if (contains? #{:outlined :rounded :sharp} icon-style)
                           icon-style
                           :outlined)
              icon-style (str icon-font "-" (name style))
-             icon-fill  (when icon-filled? (str icon-font "-icon-filled"))]
-
-
-         (? (into [:span {:class [icon-style icon-fill]}]
-               icon-name))))]))
+             icon-fill  (when icon-filled (str icon-font "-icon-filled"))]
+         (into [:span {:class [icon-style icon-fill]}]
+               icon-name)))]))
 #_{
           :sizing         {:default :medium
                           :desc    "Corresponds to the font-size based on Kushi's font-size scale."

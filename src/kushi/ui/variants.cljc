@@ -240,7 +240,7 @@
                                :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
    :weight                    {:default :normal
                                :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."}
-   :colorway                  {:default nil
+   :colorway                  {:default :neutral
                                :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." }
    :contour                   {:default :round
                                :desc    "Shape of the element."}
@@ -252,11 +252,11 @@
                                :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`."}
    :packing                   {:default nil
                                :desc    "General amount of padding inside the element."}
-   :end-enhancer              {:schema       [:or :string :keyword :vector]
+   :end-enhancer              {:schema       [:or :string :keyword [:vector :any]]
                                :default      nil
                                :when-not-nil ""
                                :desc         "Content at the inline-end position preceding the element text. Typically an icon."}
-   :start-enhancer            {:schema       [:or :string :keyword :vector]
+   :start-enhancer            {:schema       [:or :string :keyword [:vector :any]]
                                :default      nil
                                :when-not-nil ""
                                :desc         "Content at the inline-start position following the element text. Typically an icon."}
@@ -281,6 +281,13 @@
    :icon-enhanceable          {:schema  :boolean
                                :desc    "Element is enhanceable with an icon."
                                :default nil}
+   :icon-style                {:desc    "Drawn style of icon, e.g. rounded, outlined, sharp"
+                               :default :outlined}
+   :icon-filled               {:desc    "Filled or not filled"
+                               :schema  :boolean
+                               :default false}
+   :spinner-type              {:desc    "The design of the spinner"
+                               :default :donut}
    :background-image-behavior {:schema  [:enum :cover :contain]
                                :desc    "The behavior of the background image."
                                :default nil}

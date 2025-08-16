@@ -14,17 +14,20 @@
    [kushi.showcase.core :as showcase :refer [showcase]]
 
 
-   [kushi.ui.button :refer [button icon-button]]
+   [kushi.ui.button :refer [button]]
    [kushi.ui.button.demo]
+
+   [kushi.ui.icon-button :refer [icon-button]]
+  ;;  [kushi.ui.icon-button.demo]
 
    [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start box]]
   ;;  [kushi.ui.layout :refer [layout]]
 
-  ;;  [kushi.ui.icon :refer [icon]]
-  ;;  [kushi.ui.icon.demo]
+   [kushi.ui.icon :refer [icon]]
+   [kushi.ui.icon.demo]
 
    [kushi.ui.spinner :refer [spinner]]
-  ;;  [kushi.ui.spinner.demo]
+   [kushi.ui.spinner.demo]
 
   ;;  [kushi.ui.callout :refer [callout]]
   ;;  [kushi.ui.callout.demo]
@@ -35,13 +38,16 @@
   ;;  [kushi.ui.checkbox :refer [checkbox]]
   ;;  [kushi.ui.checkbox.demo]
 
-  ;;  [kushi.ui.radio :refer [radio radio-group]]
+   [kushi.ui.radio :refer [radio]]
+  ;;  [kushi.ui.radio.demo]
+
+   [kushi.ui.radio-group :refer [radio-group]]
   ;;  [kushi.ui.radio.demo]
 
   ;;  [kushi.ui.avatar :refer [avatar]]
   ;;  [kushi.ui.avatar.demo]
 
-  ;;  [kushi.ui.label :refer [label]]
+   [kushi.ui.label :refer [label]]
   ;;  [kushi.ui.radio :refer [radio]]
   ;;  [kushi.ui.spinner :refer [spinner]]
    [kushi.ui.util :as util]
@@ -164,14 +170,15 @@
     :default  "Yes"
     :choices  ["Yes" "No" "Maybe"]}]
 
-  #_[icon {:ns           (at)
-         :colorway     :red
-         :sizing       :xxxlarge
-         :weight       :bolds
-         :icon-style   :sharp
-         :icon-filled? true
+  #_[icon {:at          (at)
+         :position    :absolute-centered
+         :colorway    :red
+         :sizing      :xxxlarge
+         :weight      :bold
+         :icon-style  :sharp
+         :icon-filled true
          :inert       true
-         :id           :foo}
+         :id          :foo}
    :star]
 
  #_[button
@@ -205,7 +212,7 @@
     :ns       (at)}
    "hi"]
 
-  [icon-button
+  #_[icon-button
    {:surface  :solid
     :position :absolute-centered
     :colorway :blue
@@ -213,6 +220,29 @@
     :loading  true
     :ns       (at)}
    :east]
+
+  
+;; radios
+#_[:span
+ [:span.flex-row-start [radio {:name "foo" :id "foo-hi"}] [label {:for "foo-hi"} "hi"]]
+ [:span.flex-row-start [radio {:name "foo" :id "foo-bye"}] [label {:for "foo-bye"} "bye"]]]
+
+;; Basic example call
+#_[radio-group {
+              :group-id       "foo"
+              :sizing         :xxxlarge
+              :choices        ["Yes" "No" "Maybe"]
+              :default-choice "Yes"}]
+
+
+;; Basic example call, with maps
+#_[radio-group {:group-id "foo"
+              :choices  [{:label "Yes"
+                          :value "12"}
+                         {:label "No"
+                          :value "2"}
+                         {:label "Maybe"
+                          :value "3"}]}]
 
   #_(let [id (fn [m] 
              [box (merge {:sizing  :xlarge
@@ -276,8 +306,20 @@
   #_[showcase (!? (showcase/opts kushi.ui.button/button
                                kushi.ui.button.demo/demos))]
 
+
+  [button 
+   {:surface      :solid 
+    :position     :absolute-centered
+    :colorway     :red
+    :end-enhancer :east}
+   "Next"
+
+   #_[spinner {:spinner-type :thinking}]
+
+   ]
+
   #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
-                                 kushi.ui.spinner.demo/demos))]
+                               kushi.ui.spinner.demo/demos))]
 
   #_[showcase (? {:display-metadata? false}
                  (showcase/opts kushi.ui.callout/callout

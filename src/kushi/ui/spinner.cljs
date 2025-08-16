@@ -2,8 +2,7 @@
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
-   [kushi.ui.shared.theming :refer [data-ks- get-variants]]
-   [kushi.ui.core :refer (extract)]))
+   [kushi.ui.core :refer (defui)]))
 
 (defcss "@keyframes spin"
   [:0% {:transform "rotate(0deg)"}]
@@ -27,36 +26,20 @@
 ;; changed sym keys to prefixed keywords
 ;; changed :pred to :schema, if member of variants, elide
 
-(defn spinner
-  {:docs    "A spinner"
-   :summary "Round & round"
-   :opts    {:spinner-type {:default :donut
-                            :desc    "The variety of spinner"}
-             :sizing       {:default nil
-                            :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
-             :colorway     {:default nil
-                            :desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."}}}
+(defui spinner
+  {:docs         "A spinner"
+   :summary      "Round & round"
+   :props/shared [:spinner-type 
+                  :sizing       
+                  [:colorway {:default nil}]]
+   :props        {:colorway {:default nil}}}
   
   [& args]
-  (let [{:keys [opts attrs]} 
-        (extract args [:spinner-type])
+  (let [{:keys [spinner-type]} 
+        &props
 
-        {:keys [size spinner-type inert]
-         :or   {spinner-type :donut
-                inert       true}}
-        opts
-        
-        
-        ;; data-ks-colorway (validate-option spinner semantic-colorway)
-        ;; data-ks-sizing     (validate-option spinner size)
         more-attrs          (merge {:aria-hidden     true
-                                    :data-ks-surface :transparent
-                                    :data-ks-sizing  (:sizing opts)}
-                                   (when (true? inert) 
-                                     {:data-ks-inert ""})
-                                   (when-not (contains? #{"neutral" :neutral}
-                                                    (:colorway opts))
-                                     {:data-ks-colorway (:colorway opts)}))]
+                                    :data-ks-surface :transparent})]
                
 
     (cond
@@ -76,7 +59,7 @@
                                          :h--$loading-spinner-height
                                          :w--0px)}
               more-attrs
-              attrs)]]
+              &attrs)]]
       
 
       (contains? #{:thinking "thinking"} spinner-type)
@@ -99,7 +82,7 @@
                                        :.flex-row-center
                                        :gap--0.333em)}
                 more-attrs
-                attrs)
+                &attrs)
           circle
           circle
           circle]])
@@ -130,7 +113,7 @@
                                      :after:bs--solid
                                      :after:bc--currentColor)}
               more-attrs
-              attrs)]])))
+              &attrs)]])))
 
 
 

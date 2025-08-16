@@ -6,7 +6,8 @@
    [kushi.ui.text-field :refer [text-field]]
    [kushi.core :refer (sx css merge-attrs)]
    [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.ui.button :refer [button icon-button]]
+   [kushi.ui.button :refer [button]]
+   [kushi.ui.icon-button :refer [icon-button]]
    [kushi.ui.popover :refer [popover-attrs]]
    [reagent.dom :as rdom]))
 

@@ -3,7 +3,10 @@
   (:require [fireworks.core :refer [? !? ?> !?>]]
             [kushi.ui.variants :as variants]
             [kushi.util :refer [keyed]]
-            [bling.explain :refer [explain-malli]]))
+            [bling.core :refer [callout bling]]
+            [bling.hifi :refer [hifi]]
+            [bling.explain :refer [explain-malli]]
+            [malli.core :as m]))
 
 (defn attr+children [coll]
   (when (coll? coll)
@@ -103,14 +106,28 @@
   ([args]
    (extract args nil))
   ([args custom-option-ks]
+   (extract args custom-option-ks nil))
+  ([args custom-option-ks fn-info]
    
    ;; TODO - analyze perf benefits of NOT doing this in prod
    (doseq [k custom-option-ks]
      (when (contains? html-attrs k)
-       (js/console.warn 
-        (str "HTML attribute name clash\n" k "\n"
+       (callout {:type        :warning
+                 :label-theme :pipe
+                 :side-label  (:fn/loc-str fn-info)}
+                (str "kushi.ui.core/extract:  HTML attribute name clash"
+                     "\n\n"
+                     k
+                     "\n\n"
+                     "You might want to choose a different name for your custom attribute."
+                     "\n\n"
+                     "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes"))
+
+       #_(js/console.warn 
+        (str "kushi.ui.core/extract:  HTML attribute name clash\n" k "\n"
              "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes" "\n"
              "You should probably choose a different name for your custom attribute."))))
+
    (when (coll? args)
      (let [[src args]          
            (let [[src & rest] args]
@@ -142,13 +159,61 @@
         :attrs    attrs
         :children (->> children (remove nil?) unwrapped-children)}))))
 
+(defn- contains-malli-error? [e]
+  (contains? #{":malli.core/invalid-schema"
+               ":malli.core/child-error"}
+             (.-message e)))
+
+;; This is done in defui macro, so probably don't need this at runtime
+(defn check-each-schema-at-runtime
+  [malli-schema custom-props fn-info e]
+  (when (contains-malli-error? e)
+    (doseq [vc   (some-> malli-schema rest)
+            :let [k (first vc)]]
+      (try (malli.core/validate [:map vc] 42)
+           (catch js/Object
+                  err
+             (when (contains-malli-error? err)
+               (let [custom-prop-schema (or (some-> custom-props k :schema)
+                                            (last vc))]
+                 (callout {:label       (.-message e)
+                           :type        :error
+                           :padding-top 1
+                           :side-label  (str (:ns/name fn-info) 
+                                             ":" 
+                                             (:line fn-info) 
+                                             ":" 
+                                             (:column fn-info))
+                           :label-theme :pipe}
+                          (bling [:italic "Component:"])
+                          "\n\n"
+                          (hifi (symbol (:fn/name fn-info)) {:margin-inline-start 2})
+                          "\n\n\n"
+                          (bling [:italic "Prop:"])
+                          "\n\n"
+                          (hifi k {:margin-inline-start 2})
+                          (when custom-prop-schema "\n\n\n")
+                          (when custom-prop-schema (bling [:italic "Schema:"]))
+                          (when custom-prop-schema "\n\n")
+                          (when custom-prop-schema (hifi custom-prop-schema
+                                                         {:margin-inline-start 2}))
+                          (when true "\n\n\n")
+                          (when true (bling [:italic "Component props map schema:"]))
+                          (when true "\n\n")
+                          (when true (hifi malli-schema {:margin-inline-start 2}))
+                          
+                          ))
+               ))))))
 
 (defn validate*2 
-  [{:keys [props
-           fn-info
-           malli-schema
-           data-ks-ns]}]
-  (when (and (seq props) malli-schema) 
+  [{:keys          [fn-info
+                    malli-schema
+                    data-ks-at]
+    custom-props   :props/custom
+    supplied-props :props
+    :as            m}]
+  ;; (? m)
+  (when (and supplied-props malli-schema) 
     (let [user-spacing 
           :compact #_:ultra-compact
 
@@ -164,23 +229,34 @@
             (some->> user-malli-schema-validation-label 
                      (hash-map :label)))]
       (explain-malli 
-          malli-schema
-          props 
-          {:file-info-str                     data-ks-ns
-           :display-file-info-as-side-label?  true
-           :display-schema?                   false
+       malli-schema
+       supplied-props 
+       {:file-info-str                     data-ks-at
+        :display-file-info-as-side-label?  true
+        :display-schema?                   false
           ;;  :success-message                   :bling.explain/explain-malli-success-verbose
           ;;  :success-message                   :bling.explain/explain-malli-success-simple
-           :select-keys-in-problem-path?      true     
-           :highlight-missing-keys?           true     
-           :section-body-indentation          0
-           :spacing                           user-spacing
-           :omit-sections                     [:problem-value]
-           :omit-section-labels               ["UI component:" "Supplied props:"]
-           :highlighted-problem-section-label "Supplied props:"
-           :preamble-section-label            "UI component:"
+
+        ;; TODO shoudl be :narrow-ancestor-keys ...?
+        ;; maybe don't highlight keys with yellow
+        :select-keys-in-problem-path?      true     
+        :highlight-missing-keys?           true     
+        :section-body-indentation          0
+        :spacing                           user-spacing
+        :omit-sections                     [:problem-value]
+        :omit-section-labels               ["UI component:" "Supplied props:"]
+        :highlighted-problem-section-label "Supplied props:"
+        :preamble-section-label            "UI component:"
            ;; :preamble-section-body             (str (:ns/name fn-info)
            ;;                                          "/"
            ;;                                          (:fn/name fn-info))
-           :callout-opts                      callout-opts
-           }))))
+        :callout-opts                      callout-opts
+
+        ;; This is done in defui macro, so probably don't need this at runtime
+        :error-handler                     (partial
+                                            check-each-schema-at-runtime
+                                            malli-schema
+                                            custom-props
+                                            fn-info)
+
+        }))))
