@@ -160,24 +160,6 @@
                   {}
                   merged-props)))
 
-(defn- default-override?
-  [user-props props-from-families props-from-shared k dbg-k]
-  (!? {:when  (and (= k :colorway) (= dbg-k :foo))}
-     user-props)
-  (and (!? {:when  (and (= k :colorway) (= dbg-k :foo))
-            :label k}
-           (contains? props/props k))
-
-       (!? {:when (and (= k :colorway) (= dbg-k :foo))}
-           (or (contains? props-from-families k)
-               (contains? props-from-shared k)))
-
-       (true? (!? {:when (and (= k :colorway) (= dbg-k :foo))
-                   }
-                  (some-> user-props
-                          (get k)
-                          keys
-                          (= '(:default)))))))
 
 (defn conflicting-props-warning [user-props fn-info]
   (!? fn-info)
@@ -277,12 +259,13 @@
         props-from-families
         (dbgf 'props-from-families (props-from-families* m dbgf))
 
-        ;; props shared across components
+        ;; props shared across components, partition out ones with overrides on the default val
         [shared-prop-overrides* props-from-shared*]   
         (dbgf 'props-from-shared-partitioned 
               (partition-by-pred #(m/validate [:tuple :keyword :map] %)
                                  (:props/shared m)))
 
+        ;; add the keys from the overrides back in the keys vector
         props-from-shared*
         (dbgf 'props-from-shared*
               (apply conj 
@@ -291,33 +274,14 @@
                              []
                              shared-prop-overrides*)))
 
+        ;; resolve keys vector into map
         props-from-shared
         (dbgf 'props-from-shared (select-keys props/props props-from-shared*))
 
+        ;; convert overrides from tuple form into map
         shared-prop-overrides
         (dbgf 'shared-prop-overrides*
               (into {} shared-prop-overrides*))
-
-        ;; props-from-shared   
-        ;; (dbgf 'props-from-shared (select-keys props/props (:props/shared m)))
-        
-        ;; user-props-to-override-defaults-on-shared-props
-        ;; (dbgf 'user-props-to-override-defaults-on-shared-props
-        ;;       (reduce-kv (fn [m k v]
-        ;;                    (if (default-override? supplied-user-props
-        ;;                                           props-from-shared
-        ;;                                           props-from-families
-        ;;                                           k
-        ;;                                           :foo)
-        ;;                      (assoc m k v)
-        ;;                      m))
-        ;;                  {}
-        ;;                  supplied-user-props))
-
-        ;; _ (? (= props-from-shared* props-from-shared) )
-        ;; _ (when (not= shared-prop-overrides* shared-prop-overrides)
-        ;;     (? fn-sym
-        ;;        m))
 
         ;; props specific/unique to the component, removed overrides for shared props on :default value
         user-props*
