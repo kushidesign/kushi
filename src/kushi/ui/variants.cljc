@@ -67,7 +67,9 @@
    :faint-outline
    :outline 
    :minimal
-   :transparent])
+   :transparent
+   #_:convex
+   ])
 
 (def positions 
   [:fixed-inline-start-inside
@@ -244,12 +246,35 @@
                                :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." }
    :contour                   {:default :round
                                :desc    "Shape of the element."}
-   :stroke-align              {:schema  [:enum :inside :outside]
-                               :default nil
-                               :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`."}
+   :stroke-align              {:schema   [:enum :inside :outside]
+                               :default  nil
+                               :desc     "Alignment of the stroke. Only applies to `:surface` `:outline`."
+                               :data-ks? false}
    :stroke-width              {:schema  [:int]
                                :default nil
                                :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`."}
+   :shadows                   {
+                               ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
+                               ;; TODO maybe :$myvar or "var(--myvar)" or "0 0 10px red" (legit shadow string)
+                               :schema        [:vector [:and :string [:re #"^var\(--[^\)\s]+\)"]]]
+                               :desc          "Vector of design tokens which are values for the CSS box-shadow property."
+                               :default       nil
+                               :when-not-nil  ""
+                               :style-tokens? true  
+                               }
+
+   :drop-shadow               {
+                               :schema        [:or :keyword :string [:vector :any]]
+                               :desc          "Controls the drop shadow"
+                               :default       nil
+                               :data-ks?      false
+                               }
+   :stroke                    {
+                               :schema        [:or :keyword :string [:vector :any]]
+                               :desc          "Controls the drop shadow"
+                               :default       nil
+                               :data-ks?      false
+                               }
    :packing                   {:default nil
                                :desc    "General amount of padding inside the element."}
    :end-enhancer              {:schema       [:or :string :keyword [:vector :any]]
@@ -291,20 +316,21 @@
    :background-image-behavior {:schema  [:enum :cover :contain]
                                :desc    "The behavior of the background image."
                                :default nil}
-   :shadows                   {
-                               ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
-                               ;; TODO maybe :$myvar or "var(--myvar)" or "0 0 10px red" (legit shadow string)
-                               :schema        [:vector [:and :string [:re #"^var\(--[^\)\s]+\)"]]]
-                               :desc          "Vector of design tokens which are values for the CSS box-shadow property."
-                               :default       nil
-                               :when-not-nil  ""
-                               :style-tokens? true  
-                               }
    :position                  {:desc    "A utility class dictating the element's position."
-                               :default "relative"}})
+                               :default "relative"}
+   :display                   {:schema  [:or :string :keyword [:vector :keyword]]
+                               :desc    "A utility class dictating the element's display properties."
+                               :default "inline"}
+   :gap                       {:schema  [:enum 0 [:or :string :keyword [:vector :keyword]]]
+                               :desc    "A utility class dictating the element's CSS gap value"
+                               :default 0}
+   })
 
+(def shared-props-enum
+  (->> props keys (into [:enum])))
 
 (def prop-families
+  ;; TODO - should packing be in here?
   {:container [:sizing
                :colorway
                :contour
@@ -317,4 +343,6 @@
                :convex
                :elevation
                :shadows
-               :loading]})
+               :loading
+               :display
+               :gap]})

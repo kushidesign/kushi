@@ -1,6 +1,7 @@
 (ns ^:dev/always kushi.ui.core
   (:require-macros [kushi.ui.core])
   (:require [fireworks.core :refer [? !? ?> !?>]]
+            [clojure.string :as string]
             [kushi.ui.variants :as variants]
             [kushi.util :refer [keyed]]
             [bling.core :refer [callout bling]]
@@ -49,50 +50,67 @@
                                    (when (pos? i) (str "-" (inc i))))
                               s])
                            (take 3 supplied)))))
+(def debug? (atom false))
 
 (defn data-ks-attrs 
   "Attaches data-ks based on opts from defn metadata map. To be called from
    defui macro."
   [props with-schema]
 
+  (reset! debug? (= props
+                    {:stroke       [[:2px :$brown-300]                [:2px :$green-300]]
+                     :colorway     :accent
+                     :drop-shadow  ["5px 5px 10px currentColor"]
+                     :stroke-align :outside
+                     :contour      :pill
+                     :surface      :transparent}))
+
   ;; Should it be data-ks instead of data?
   ;; Or concept of registry so you don't need to manually add :elide thing?
-  (merge (reduce-kv 
-          (fn [m k {:keys [default data when-not-nil style-tokens?] :as prop}]
-            (!? {:when (= k :shadows)}
-                (merge m
-                       (when-not (= data :elide)
-                         (let [supplied 
-                               (get props k)
+  (!? {:when (contains? with-schema :choices)}
+      (merge (reduce-kv 
+              (fn [m k {:keys [default data-ks? when-not-nil style-tokens?]
+                        :as   prop}]
+                (!? {:when (and @debug? (= k :drop-shadow))}
+                    (merge m
+                           (when (or (and (contains? variants/props k)
+                                          (not (false? data-ks?)))
+                                     (true? data-ks?))
+                             (let [supplied  (case k
+                                               :display
+                                               (let [v (get props k)]
+                                                 (cond
+                                                   (vector? v)
+                                                   (string/join " " (mapv name v))
+                                                   :else
+                                                   v))
+                                               (get props k))
 
-                               data-ks-*  
-                               (keyword (str "data-ks-" (name k)))
+                                   data-ks-* (keyword (str "data-ks-" (name k)))
 
-                               style    
-                               (when style-tokens?
-                                 (data-ks-attrs-style-map k supplied))
+                                   style     (when style-tokens?
+                                               (data-ks-attrs-style-map k supplied))
 
                                ;; This sorts out `data-ks-*` attrs that are boolean,
                                ;; but need to be supplied as `data-ks-foo=""` (when true, appears in dom as `data-ks-foo`)
                                ;; or `data-ks-foo=nil` (if false, does not appear in dom)
-                               ret 
-                               (cond (!? {:when (= k :loading)} (not (nil? supplied)))
-                                     {data-ks-* (if (true? (:boolean? prop))
-                                                  (if (false? supplied) nil "")
-                                                  (or when-not-nil
-                                                      (kushi.util/as-str supplied)))}
-                                     (!? {:when (= k :loading)} default)
-                                     {data-ks-* (if (true? (:boolean? prop))
-                                                 (case default
-                                                   false   nil
-                                                   "false" nil
-                                                   "")
-                                                 (kushi.util/as-str default))})]
-                           (!? (keyed [supplied data-ks-* style ret]))
-                           (merge ret (when style {:style style})))))))
-          {} 
-          with-schema)
-          (some->> props :at (hash-map :data-ks-at))))
+                                   ret       (cond (!? {:when (= k :choices)} (not (nil? supplied)))
+                                                   {data-ks-* (if (true? (:boolean? prop))
+                                                                (if (false? supplied) nil "")
+                                                                (or when-not-nil
+                                                                    (kushi.util/as-str supplied)))}
+                                                   (!? {:when (= k :choices)} default)
+                                                   {data-ks-* (if (true? (:boolean? prop))
+                                                                (case default
+                                                                  false   nil
+                                                                  "false" nil
+                                                                  "")
+                                                                (kushi.util/as-str default))})]
+                               (!? {:when (= k :choices)} (keyed [supplied data-ks-* style ret]))
+                               (merge ret (when style {:style style})))))))
+              {} 
+              with-schema)
+             (some->> props :at (hash-map :data-ks-at)))))
 
 
 (defn extract
@@ -153,7 +171,7 @@
                            {(if k :props :attrs) (into {} v)}))
                     (apply merge))
            attrs
-           (apply dissoc attrs user-ks)]
+           (apply dissoc attrs (!? user-ks))]
 
        {:props    props
         :attrs    attrs
@@ -201,9 +219,7 @@
                           (when true (bling [:italic "Component props map schema:"]))
                           (when true "\n\n")
                           (when true (hifi malli-schema {:margin-inline-start 2}))
-                          
-                          ))
-               ))))))
+                          ))))))))
 
 (defn validate*2 
   [{:keys          [fn-info

@@ -1,10 +1,8 @@
 (ns kushi.ui.tag
-  (:require [kushi.core :refer [?sx sx css merge-attrs]]
-            [kushi.ui.util :refer [as-str maybe nameable?]]
-            [clojure.string :as string]
-            [kushi.ui.core :refer (extract defui)]
+  (:require [kushi.core :refer [sx merge-attrs]]
+            [kushi.ui.core :refer (defui)]
             [kushi.ui.icon :refer [icon]]
-            [kushi.ui.shared.theming :refer [get-variants]]))
+            [kushi.ui.shared :refer [add-enhancer]]))
 
 (defui tag
   {:summary      "A tag is typically used for concise information, often in a group with other tags."
@@ -23,21 +21,7 @@
                   :transition
                   :inert]}
   [& args]
-  (let [{:keys [loading
-                start-enhancer
-                end-enhancer
-                stroke-width]}
-        &props
-        
-        enhancer
-        #(if (keyword? %) [icon %] %)
-
-        start-enhancer                                                                                             
-        (enhancer start-enhancer)
-
-        end-enhancer                                                                                               
-        (enhancer end-enhancer)
-        ]
+  (let [{:keys [loading stroke-width]} &props]
     (into [:div
            (merge-attrs
 
@@ -69,14 +53,7 @@
              :aria-label (when loading "loading")}
 
             &attrs)]
-          (cond start-enhancer
-                (concat [start-enhancer] &children)
-
-                end-enhancer
-                (concat &children [end-enhancer])
-
-                :else
-                &children))))
+          (add-enhancer &props &children))))
 
 #_(defn tag
   {:summary "A tag is typically used for concise information, often in a group

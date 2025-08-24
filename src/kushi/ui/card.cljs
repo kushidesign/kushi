@@ -1,25 +1,20 @@
 (ns kushi.ui.card
-  (:require [kushi.core :refer (css merge-attrs)]
-            [kushi.ui.core :refer (extract)]))
+  (:require [kushi.core :refer (sx merge-attrs)]
+            [kushi.ui.core :refer (defui)]))
 
-(defn card
-  {:summary "Cards are typically visually contained sections of information.
-             They are often part of a series of cards with related content."}
+(defui card
+  {:doc "Cards are typically visually contained sections of information.
+         They are often part of a series of cards with related content."
+   :props/family [:container]
+   :props/shared  [[:surface {:default :outline}]
+                   [:contour {:default :rounded}]]}
   [& args]
-  (let [{:keys [opts attrs children]} (extract args)
-        {:keys []}              opts]
-    (into
-     [:div (merge-attrs
-            {:class         (css ".kushi-card"
-                                 :.neutralize
-                                 :.bordered
-                                 :.rounded
-                                 :b--1px:solid:$neutral-200
-                                 :dark:b--1px:solid:$neutral-200
-                                 :position--relative
-                                 :w--100%
-                                 :p--1.25em)
-             :data-ks-ui :card}
-            attrs)]
-     children)))
+  (into
+   [:div (merge-attrs
+          (sx "[data-ks-ui=\"card\"]"
+              :position--relative
+              :w--100%
+              :p--1.25em)
+          &attrs)]
+   &children))
 

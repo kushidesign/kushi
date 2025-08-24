@@ -133,7 +133,7 @@
      x))
 
 
-(def debug-defui nil #_icon)
+(def debug-defui #_nil 'span)
 
 
 (defn- props-from-families* [m dbgf]
@@ -219,7 +219,8 @@
 
 (defn- validate-custom-prop-schema 
   [k v fn-info]
-  (try (some-> v :schema (m/validate 42))
+  (try (do (!? {:when (= k :close-button?)} (some-> v :schema (m/validate 42)))
+           true)
        (catch Throwable
               e
          (when (= ":malli.core/invalid-schema" 
@@ -259,6 +260,25 @@
         ;; groups of props rolled up into families 
         props-from-families
         (dbgf 'props-from-families (props-from-families* m dbgf))
+
+        ;; check the shape of :props/shared and warn with malli-explain
+        [shared-props-clean malformed-shared-props]
+        (dbgf 'shared-props-clean
+              (partition-by-pred 
+               #(m/validate [:or props/shared-props-enum
+                             [:tuple props/shared-props-enum :map]] %)
+               (:props/shared m)))
+
+        _
+        (when (seq malformed-shared-props)
+          (explain-malli [:vector [:or
+                                   props/shared-props-enum
+                                   [:tuple props/shared-props-enum :map]]]
+                         (:props/shared m)
+                         {:display-schema? false
+                          ;; :padding-top     1
+                          :callout-opts {:side-label (:fn/loc-str fn-info)}
+                          }))
 
         ;; props shared across components, partition out ones with overrides on the default val
         [shared-prop-overrides* props-from-shared*]   
@@ -302,11 +322,11 @@
                           v
                           (assoc v :schema :any))))
                {}
-               user-props*))
+               (!? {:when @debug?} user-props*)))
 
         merged-props*
         (dbgf 'merged-props*
-              (merge validated-user-props-with-schemas
+              (merge (!? {:when @debug?} validated-user-props-with-schemas)
                      props-from-shared
                      props-from-families))
         
@@ -315,12 +335,22 @@
               (reduce-kv (fn [m k v]
                            (assoc-in m [k :default] (:default v)))
                          merged-props*
-                         shared-prop-overrides))]
+                         shared-prop-overrides))
+        
+        user-props-with-defaults-values
+        (reduce-kv (fn [m k v]
+                     (if (not (nil? (:default v)))
+                       (assoc m k (:default v))
+                       m))
+                   {}
+                   validated-user-props-with-schemas)]
 
     (!? (conflicting-props-warning user-props* fn-info))
 
     ;; merge all the props
-    merged-props-with-default-overrides))
+    (!? {:when @debug?}
+       {:merged-props                   merged-props-with-default-overrides
+        :user-props-with-default-values user-props-with-defaults-values})))
 
 
 
@@ -368,7 +398,7 @@
    body ; <- body of component
    ]
 
-  (reset! debug? (if (= sym 'radio-group) true false))
+  (reset! debug? (if (= sym 'card) true false))
 
   (let [!dbgf
         (fn [_ x] x)
@@ -400,7 +430,7 @@
                                     ":"
                                     (:column m))))
 
-        merged-props
+        {:keys [merged-props user-props-with-default-values]}
         (merged-props* m fn-sym fn-info dbgf)
 
         props-with-schemas
@@ -465,7 +495,8 @@
              data-ks-attrs#       (kushi.ui.core/data-ks-attrs 
                                    (:props extracted*#)
                                    ~props-trimmed)
-             props#               (dissoc (:props extracted*#) :at)
+             props#               (merge (dissoc (:props extracted*#) :at)
+                                         ~user-props-with-default-values)
              extracted#           {:&props         props#
                                    :&attrs         (merge (:attrs extracted*#)
                                                           data-ks-attrs#)

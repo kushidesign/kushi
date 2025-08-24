@@ -49,7 +49,7 @@
    `[icon mui.svg/add]`. You can also create and utilize similar namespace in
    your own project with your own collection of icon `svg`s."
 
-   :props/shared [[:surface {:default nil}]       
+   :props/shared [[:surface {:default :transparent}]       
                   [:colorway {:default nil}]
                   :sizing
                   :weight       
@@ -57,10 +57,7 @@
                   :inert
                   :transition
                   :icon-style
-                  :icon-filled]
-   :props {:colorway {:default nil}
-           :surface {:default :transparent}
-           }}
+                  :icon-filled]}
   [& args]
   (let [{:keys [icon-style icon-filled surface colorway]} &props
         [icon*]                                           &children]

@@ -109,7 +109,7 @@
 (defcss ".dark .kushi-checkbox-input" {"background-color" "black"})
 
 (defcss
-  ".dark .kushi-checkbox-input:before"
+  ".dark [data-ks-ui=checkbox-input]:before"
   {"box-shadow" "inset 1em 1em black"})
 
 (defcss
@@ -281,38 +281,74 @@
 
 (defcss ".xxxxlarge" {"font-size" "var(--xxxxlarge)"})
 
-(defcss ".thin" {"font-weight" "var(--thin)"})
 
-(defcss ".thin .kushi-icon" {"font-variation-settings" "'wght' 100"})
+;; data-ks-sizing versions
+(defcss "[data-ks-sizing=\"xxxsmall\"]" {:font-size :$xxxsmall})
 
-(defcss ".thin.kushi-icon" {"font-variation-settings" "'wght' 100"})
+(defcss "[data-ks-sizing=\"xxsmall\"]" {:font-size :$xxsmall})
+
+(defcss "[data-ks-sizing=\"xsmall\"]" {:font-size :$xsmall})
+
+(defcss "[data-ks-sizing=\"small\"]" {:font-size :$small})
+
+(defcss "[data-ks-sizing=\"medium\"]" {:font-size :$medium})
+
+(defcss "[data-ks-sizing=\"large\"]" {:font-size :$large})
+
+(defcss "[data-ks-sizing=\"xlarge\"]" {:font-size :$xlarge})
+
+(defcss "[data-ks-sizing=\"xxlarge\"]" {:font-size :$xxlarge})
+
+(defcss "[data-ks-sizing=xxxlarge]" {:font-size :$xxxlarge})
+
+
+
+
+
+;; thin
+(defcss "[data-ks-weight=thin]" 
+  {"font-weight" "var(--thin)"})
+
+(defcss "[data-ks-weight=thin] [data-ks-ui=icon], [data-ks-weight=thin][data-ks-ui=icon]" 
+  {"font-variation-settings" "'wght' 100"})
 
 (defcss
-  ".thin>.kushi-radio-input"
+  "[data-ks-weight=thin]>[data-ks-ui=radio-input]"
   {"outline-width" "var(--input-border-weight-thin)"})
 
 (defcss
-  ".thin>.kushi-checkbox-input"
+  "[data-ks-weight=thin]>[data-ks-ui=checkbox-input]"
   {"border-width" "var(--input-border-weight-thin)"})
 
-(defcss ".extra-light" {"font-weight" "var(--extra-light)"})
+(defcss "[data-ks-weight=thin] [data-ks-ui=icon], [data-ks-weight=thin][data-ks-ui=icon]" 
+  {"font-variation-settings" "'wght' 100"})
 
 (defcss
-  ".extra-light .kushi-icon"
+  "[data-ks-weight=thin][data-ks-ui=radio], [data-ks-weight=thin] [data-ks-ui=radio]"
+  {"border-width" "var(--input-border-weight-thin)"})
+
+(defcss
+  "[data-ks-weight=thin][data-ks-ui=checkbox], [data-ks-weight=thin] [data-ks-ui=checkbox]"
+  {"border-width" "var(--input-border-weight-thin)"})
+
+
+;; extra-light
+(defcss "[data-ks-weight=extra-light]" 
+  {"font-weight" "var(--extra-light)"})
+
+(defcss "[data-ks-weight=extra-light] [data-ks-ui=icon], [data-ks-weight=extra-light][data-ks-ui=icon]" 
   {"font-variation-settings" "'wght' 200"})
 
 (defcss
-  ".extra-light.kushi-icon"
-  {"font-variation-settings" "'wght' 200"})
-
-(defcss
-  ".extra-light>.kushi-radio-input"
+  "[data-ks-weight=extra-light]>[data-ks-ui=radio-input]"
   {"outline-width" "var(--input-border-weight-extra-light)"})
 
 (defcss
-  ".extra-light>.kushi-checkbox-input"
+  "[data-ks-weight=extra-light]>[data-ks-ui=checkbox-input]"
   {"border-width" "var(--input-border-weight-extra-light)"})
 
+
+;; light
 (defcss ".light" {"font-weight" "var(--light)"})
 
 (defcss ".light .kushi-icon" {"font-variation-settings" "'wght' 300"})
@@ -326,6 +362,13 @@
 (defcss
   ".light>.kushi-checkbox-input"
   {"border-width" "var(--input-border-weight-light)"})
+(defcss
+  ".light>[data-ks-ui=checkbox-input]"
+  {"border-width" "var(--input-border-weight-light)"})
+(defcss
+  "[data-ks-weight=light]>[data-ks-ui=checkbox-input]"
+  {"border-width" "var(--input-border-weight-light)"})
+
 
 (defcss ".normal" {"font-weight" "var(--normal)"})
 
@@ -339,6 +382,12 @@
 
 (defcss
   ".normal>.kushi-checkbox-input"
+  {"border-width" "var(--input-border-weight-normal)"})
+(defcss
+  ".normal>[data-ks-ui=checkbox-input]"
+  {"border-width" "var(--input-border-weight-normal)"})
+(defcss
+  "[data-ks-weight=normal]>[data-ks-ui=checkbox-input]"
   {"border-width" "var(--input-border-weight-normal)"})
 
 (defcss ".wee-bold" {"font-weight" "var(--wee-bold)"})
@@ -358,6 +407,13 @@
 (defcss
   ".wee-bold>.kushi-checkbox-input"
   {"border-width" "var(--input-border-weight-wee-bold)"})
+(defcss
+  ".wee-bold>[data-ks-ui=checkbox-input]"
+  {"border-width" "var(--input-border-weight-wee-bold)"})
+(defcss
+  "[data-ks-weight=wee-bold]>[data-ks-ui=checkbox-input]"
+  {"border-width" "var(--input-border-weight-wee-bold)"})
+
 
 (defcss ".semi-bold" {"font-weight" "var(--semi-bold)"})
 
@@ -375,6 +431,12 @@
 
 (defcss
   ".semi-bold>.kushi-checkbox-input"
+  {"border-width" "var(--input-border-weight-semi-bold)"})
+(defcss
+  ".semi-bold>[data-ks-ui=checkbox-input]"
+  {"border-width" "var(--input-border-weight-semi-bold)"})
+(defcss
+  "[data-ks-weight=semi-bold]>[data-ks-ui=checkbox-input]"
   {"border-width" "var(--input-border-weight-semi-bold)"})
 
 (defcss ".bold" {"font-weight" "var(--bold)"})
@@ -417,6 +479,12 @@
 (defcss
   ".bold>.kushi-checkbox-input"
   {"border-width" "var(--input-border-weight-bold)"})
+(defcss
+  ".bold>[data-ks-ui=checkbox-input]"
+  {"border-width" "var(--input-border-weight-bold)"})
+(defcss
+  "[data-ks-weight=bold]>[data-ks-ui=checkbox-input]"
+  {"border-width" "var(--input-border-weight-bold)"})
 
 (defcss ".extra-bold" {"font-weight" "var(--extra-bold)"})
 
@@ -435,6 +503,12 @@
 (defcss
   ".extra-bold>.kushi-checkbox-input"
   {"border-width" "var(--input-border-weight-extra-bold)"})
+(defcss
+  ".extra-bold>[data-ks-ui=checkbox-input]"
+  {"border-width" "var(--input-border-weight-extra-bold)"})
+(defcss
+  "[data-ks-weight=extra-bold]>[data-ks-ui=checkbox-input]"
+  {"border-width" "var(--input-border-weight-extra-bold)"})
 
 (defcss ".heavy" {"font-weight" "var(--heavy)"})
 
@@ -448,6 +522,12 @@
 
 (defcss
   ".heavy>.kushi-checkbox-input"
+  {"border-width" "var(--input-border-weight-heavy)"})
+(defcss
+  ".heavy>[data-ks-ui=checkbox-input]"
+  {"border-width" "var(--input-border-weight-heavy)"})
+(defcss
+  "[data-ks-weight=heavy]>[data-ks-ui=checkbox-input]"
   {"border-width" "var(--input-border-weight-heavy)"})
 
 (defcss
@@ -1255,24 +1335,6 @@
                         (str "[data-ks-contour=\"" (name sz) "\"]")
                         {:font-size (keyword (str "$" (name sz)))}))))
 
-(defcss "[data-ks-sizing=\"xxxsmall\"]" {:font-size :$xxxsmall})
-
-(defcss "[data-ks-sizing=\"xxsmall\"]" {:font-size :$xxsmall})
-
-(defcss "[data-ks-sizing=\"xsmall\"]" {:font-size :$xsmall})
-
-(defcss "[data-ks-sizing=\"small\"]" {:font-size :$small})
-
-(defcss "[data-ks-sizing=\"medium\"]" {:font-size :$medium})
-
-(defcss "[data-ks-sizing=\"large\"]" {:font-size :$large})
-
-(defcss "[data-ks-sizing=\"xlarge\"]" {:font-size :$xlarge})
-
-(defcss "[data-ks-sizing=\"xxlarge\"]" {:font-size :$xxlarge})
-
-(defcss "[data-ks-sizing=\"xxxlarge\"]" {:font-size :$xxxlarge})
-
 
 ;; Move to button ns?
 (defcss "[data-ks-ui=\"button\"]"
@@ -1320,12 +1382,13 @@
     }})
 
 ;; Move to switch ns
-(defcss "[data-ks-ui=\"tag\"]"
+(defcss ".kushi-switch"
   {:--switch-thumb-scale-factor                   1
    :--switch-width-ratio                          2
    :--switch-border-color                         :transparent
    :--switch-border-width                         :2px
-   :--switch-off-background-color                 :$neutral-400
-   :--switch-off-background-color-hover           :$neutral-500
-   :--switch-off-background-color-dark-mode       :$neutral-750
-   :--switch-off-background-color-hover-dark-mode :$neutral-700})
+   :--switch-off-background-color                 :$background-color-neutral-soft-2
+   :--switch-off-background-color-hover           :$background-color-neutral-soft-3
+   :--switch-off-background-color-dark-mode       :$background-color-neutral-soft-dark-mode
+   :--switch-off-background-color-hover-dark-mode :$background-color-neutral-soft2-dark-mode
+   })

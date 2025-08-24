@@ -31,8 +31,7 @@
    :summary      "Round & round"
    :props/shared [:spinner-type 
                   :sizing       
-                  [:colorway {:default nil}]]
-   :props        {:colorway {:default nil}}}
+                  [:colorway {:default nil}]]}
   
   [& args]
   (let [{:keys [spinner-type]} 

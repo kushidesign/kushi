@@ -4,16 +4,14 @@
 
 (ns kushi.ui.button
   (:require
-   [fireworks.core :refer [? !? ?> !?>]]
    [bling.core]
-   [clojure.string :as string]
-   [kushi.core :refer (css-vars-map css defcss sx merge-attrs validate-option)]
-   [kushi.ui.core :refer (extract fn->defui defui)]
-   [kushi.ui.icon :refer [icon]]
-   [kushi.ui.shared.theming :refer [data-ks- get-variants]]
-   [kushi.ui.util :refer [as-str maybe nameable?]])
-   ;; (:require-macros [kushi.ui.button])
-  )
+   [fireworks.core :refer [? !? ?> !?>]]
+   [kushi.core :refer (sx merge-attrs)]
+   [kushi.ui.span :refer (span)]
+   [kushi.ui.core :refer (defui)]
+   [kushi.ui.shared :refer [add-enhancer]]
+   [kushi.ui.util :refer [as-str]]
+   [kushi.ui.util :as util]))
 
 
 (defui button
@@ -30,59 +28,64 @@
                  :position
                  :contour
                  [:surface {:default :soft}]
-                 :transition]
-  :props        {:surface {:default :soft}}}
+                 :transition
+                 :drop-shadow
+                 :stroke]}
  [& args]
- (let [{:keys [start-enhancer
-               end-enhancer
-               colorway
-               loading
-               stroke-width]}
+ (let [{:keys [loading stroke-width stroke surface drop-shadow]}
        &props
 
-       enhancer
-       #(if (keyword? %) [icon %] %)
+       classic-variant?
+       (contains? #{:solid-classic :soft-classic} surface)
 
-       start-enhancer                                                                                             
-       (enhancer start-enhancer)
+       button
+       [:button (merge-attrs
+                 (sx
+                  "[data-ks-ui=\"button\"]"
+                  :d--flex
+                  :flex-direction--row
+                  :jc--c
+                  :ai--c
+                  :w--fit-content
+                  :h--fit-content
+                  :gap--$icon-enhanceable-gap
+                  :cursor--pointer
+                 ;; TODO - is this local/private css var necessary?
+                  [:--_padding-block :$button-padding-block]
+                  [:--_padding-inline :$button-padding-inline]
+                  :pi--$_padding-inline
+                  :pb--$_padding-block
+                  ["[aria-label='loading']>.kushi-spinner-propeller:d" :revert]
+                  ["[aria-label='loading']>.kushi-icon:d" :none])
+                 {:aria-busy  loading
+                  :aria-label (when loading "loading")}
 
-       end-enhancer                                                                                               
-       (enhancer end-enhancer)
-       ]
-   (into
-    [:button
-     (merge-attrs
-      (sx
-       "[data-ks-ui=\"button\"]"
-       :d--flex
-       :flex-direction--row
-       :jc--c
-       :ai--c
-       :w--fit-content
-       :h--fit-content
-       :gap--$icon-enhanceable-gap
-       :cursor--pointer
-       ;; TODO - is this local/private css var necessary?
-       [:--_padding-block :$button-padding-block]
-       [:--_padding-inline :$button-padding-inline]
-       :pi--$_padding-inline
-       :pb--$_padding-block
-       ["[aria-label='loading']>.kushi-spinner-propeller:d" :revert]
-       ["[aria-label='loading']>.kushi-icon:d" :none])
-      {:aria-busy  loading
-       :aria-label (when loading "loading")}
+                 &attrs
 
-      &attrs
+                 (when stroke-width 
+                   {:style {"--_stroke-width" (as-str stroke-width)}})
 
-      (when stroke-width 
-        {:style {"--_stroke-width" (as-str stroke-width)}}))]
+                 (when (and (not classic-variant?)
+                            (or drop-shadow stroke))
+                   {:style {:box-shadow (util/box-shadow 
+                                         {:shadows drop-shadow
+                                          :strokes [stroke]})}}))]
 
-    (cond start-enhancer
-          (concat [start-enhancer] &children)
+       body
+       (add-enhancer &props &children)]
 
-          end-enhancer
-          (concat &children [end-enhancer])
-
-          :else
-          &children))))
+   (if (and classic-variant? (or drop-shadow stroke))
+     [span (merge-attrs 
+            (let [{:keys [stroke-align contour colorway]} &props]
+              {:drop-shadow  drop-shadow
+               :stroke       stroke
+               :stroke-align stroke-align
+               :surface      :transparent
+               :contour      contour
+               :colorway     colorway})
+            (sx "[data-ks-ui=\"button-style-wrapper\"]"
+                :w--fit-content 
+                :h--fit-content))
+      (into button body)]
+     (into button body))))
 

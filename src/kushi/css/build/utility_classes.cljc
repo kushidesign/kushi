@@ -577,8 +577,15 @@
 (def radio-and-checkbox-synced-border-weights
   (scale-of-utility-defs
    type-weights
-   [">.kushi-radio-input:outline-width"
-    ">.kushi-checkbox-input:bw"]
+   [
+    ">[data-ks-ui=checkbox-input]:outline-width"
+    ">[data-ks-ui=checkbox-input]:bw"
+
+    ;; TODO - remove these two
+    ">.kushi-radio-input:outline-width"
+    ">.kushi-checkbox-input:bw"
+    
+    ]
    {:val-prefix "input-border-weight"
     :data-attr  "ks-weight"
     :acc-f      (fn [k]

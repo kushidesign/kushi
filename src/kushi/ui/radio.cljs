@@ -6,37 +6,34 @@
 
 (defui radio 
   {:doc   "This is radio docstring"
-   :props/shared [:sizing :colorway :transition]}
+   :props/shared [:sizing :colorway :transition :weight]}
   [& args]
   [:input
    (merge-attrs
     {:class            (css
-                        ;; use data-ks
-                        ".kushi-radio-button"
-                        :transition-duration--$xxfast
-                        :cursor--pointer
-                        :+label:cursor--pointer
-                        :+label:pis--0.369em
-                        [:border-color
-                         "color-mix(in hsl, currentColor 55%, transparent)"]
-                        [:checked:border-color
-                         :currentColor]
-                        :display--grid
-                        :place-content--center
-                        :-webkit-appearance--none
-                        :appearance--none
-                        :bgc--transparent
-                        :m--0
-                        :color--currentColor
-                        :width--1em
-                        :height--1em
-                        :border-style--solid
-                        :border-width--$input-border-weight-normal
-                        :border-color--currentColor
-                        :checked:border-width--0.333em
-                        :checked:border-offset---0.333em
-                        :o--1
-                        :border-radius--50%)
+                        "[data-ks-ui=\"radio\"]"
+                        {:transition-duration   :$xxfast
+                         :cursor                :pointer
+                         :+label:cursor         :pointer
+                         :+label:pis            :0.369em
+                         ;; why grid?
+                         :display               :grid
+                         :place-content         :center
+                         :-webkit-appearance    :none
+                         :appearance            :none
+                         :bgc                   :transparent
+                         :color                 :currentColor
+                         :m                     :0
+                         :width                 :1em
+                         :height                :1em
+                         :border-style          :solid
+                         :border-width          :$input-border-weight-normal
+                         :border-radius         :50%
+                         ;; fallback??
+                         :border-color          "color-mix(in hsl, currentColor 55%, transparent)"
+                         :checked:border-color  :currentColor
+                         :checked:border-width  :0.333em
+                         :checked:border-offset :-0.333em})
      :data-ks-ui       :radio
      :data-ks-surface  :transparent
      :type             :radio}

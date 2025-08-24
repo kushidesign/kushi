@@ -252,7 +252,8 @@
                 "\n"
                 "Did you mean "
                 [:bold (str ":" prop "--" val)]
-                "?"])))
+                "?"
+                "\n"])))
     :body   
     (let [spec-data (s/form ::specs/valid-sx-arg)]
       (apply

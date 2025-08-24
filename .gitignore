@@ -18,6 +18,7 @@ pom.xml.asc
 .calva
 .vscode
 .idea
+.zed
 kushi.workspace.code-workspace
 .portal
 /docs/tmp

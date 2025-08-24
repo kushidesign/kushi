@@ -3,11 +3,11 @@
    [kushi.core :refer (sx defcss merge-attrs)]
    [domo.core :as domo]
    [kushi.ui.util :as util]
-   [kushi.ui.core :refer (extract)]
+   [kushi.ui.core :refer (defui)]
    [kushi.ui.shared.theming :refer [data-ks- get-variants]]))
 
 (defcss "@layer kushi-ui-styles .kushi-switch-track-content"
-  :.flex-row-c
+  :.flex-row-center
   :.semi-bold
   :.transition
   :.xxfast!
@@ -35,7 +35,7 @@
   (when x
     [:div opts (if (string? x) [:span x] x)]))
 
-(defn switch
+(defui switch
   {:summary "Switches are used to toggle an individual option on or off."
    :desc "Switches can be custom styled via a variety of tokens in your theme.
           
@@ -60,65 +60,42 @@
           result in the thumb height being greater than the track height."
           
           
-   :opts '[{:name    on?
-            :schema    boolean?
-            :default false
-            :desc    "Use to control the initial on/off state of the switch"}
-           {:name    disable-events?
-            :schema    boolean?
-            :default false
-            :desc    "Set this to true if you would like to control the state of
-                      the switch in a reactive manner via the `:on?` option"}
-           {:name    thumb-attrs
-            :schema    map?
-            :default nil
-            :desc    "HTML attributes map applied to the inner element, commonly
-                      refered to as the \"handle\" or \"thumb\" of the switch."}
-           {:name    thumb-content-off
-            :schema    #{string? vector?}
-            :default nil
-            :desc    "String or element that will be placed in center of thumb,
-                      when in the \"off\" position"}
-           {:name    thumb-content-on
-            :schema    #{string? vector?}
-            :default nil
-            :desc    "String or element that will be placed in center of thumb,
-                      when in the \"on\" position"}
-           {:name    track-content-off
-            :schema    #{string? vector?}
-            :default nil
-            :desc    "String or element that will be placed in the track, when
-                      in the \"off\" position"}
-           {:name    track-content-on
-            :schema    #{string? vector?}
-            :default nil
-            :desc    "String or element that will be placed in the track, when
-                      in the \"on\" position"}
-           
-           {:name    colorway
-            :schema    #{:neutral :accent :positive :negative :warning}
-            :default nil
-            :desc    "Colorway of the switch. Can also be a named color from
-                      Kushi's design system, e.g `:red`, `:purple`, `:gold`,
-                      etc."}
-           ]}
+   :props/shared [:colorway :sizing :weight]
+   :props {:on                {:schema  :boolean
+                               :default false
+                               :desc    "Control the initial on/off state of the switch"}
+           :disable-events?   {:schema  :boolean
+                               :default false
+                               :desc    "Set this to true if you would like to control the state of the switch in a reactive manner via the `:on?` option"}
+           :thumb-attrs       {:schema  :map 
+                               :default nil
+                               :desc    "HTML attributes map applied to the inner element, commonly referred to as the \"handle\" or \"thumb\" of the switch."}
+           :thumb-content-off {:schema  [:or :string [:vector :any]]
+                               :default nil
+                               :desc    "String or element that will be placed in center of thumb, when in the \"off\" position"}
+           :thumb-content-on  {:schema  [:or :string [:vector :any]]
+                               :default nil
+                               :desc    "String or element that will be placed in center of thumb, when in the \"on\" position"}
+           :track-content-off {:schema  [:or :string [:vector :any]]
+                               :default nil
+                               :desc    "String or element that will be placed in the track, when in the \"off\" position"}
+           :track-content-on  {:schema  [:or :string [:vector :any]]
+                               :default nil
+                               :desc    "String or element that will be placed in the track, when in the \"on\" position"}
+           }}
   [& args]
-  (let [[opts attrs & _]
-        (extract args)
-
-        {:keys [disable-events?
-                on?
+  (let [{:keys [disable-events?
+                on
                 colorway
                 thumb-attrs
                 thumb-content-off
                 thumb-content-on
                 track-content-on
                 track-content-off]}
-        opts
-
+        &props
 
         disabled?                  
-        (util/html-attr? opts :disabled)
+        (util/html-attr? &props :disabled)
         ]
     [:button
      (merge-attrs
@@ -127,7 +104,7 @@
        {:--thumb-height "calc(var(--switch-thumb-scale-factor, 1) * (1em - (var(--switch-border-width) * 2)))"
         :--height       :1em}
        :.pill
-       :.flex-row-fs
+       :.flex-row-start
        :.no-shrink
        :.transition
        :transition-duration--$xxfast
@@ -157,15 +134,15 @@
 
       {:disabled         disabled?
        :role             :switch
-       :aria-checked     (if on? true false)
+       :aria-checked     (if on true false)
        :data-ks-ia       ""
-       :data-ks-colorway colorway
        :data-ks-surface  "solid"}
       
       (domo/mouse-down-a11y #(when-not disable-events? (toggle-switch %)))
 
-      attrs)
+      &attrs)
 
+     ;; TODO - maybe just divs?
      [track-content
       (sx ".kushi-switch-track-content-on"
           :.absolute-inline-start-inside
@@ -181,28 +158,26 @@
      [:div
       (merge-attrs
        {:data-ks-contour  :pill
-        :data-ks-colorway colorway
-        }
-       (sx
-        ".kushi-switch-thumb"
-        :.transition
-        [:--width :$thumb-height]
-        :transition-duration--$xxfast
-        :border-color--currentColor
-        ["has-ancestor(.kushi-switch[aria-checked='false']):border-color" "color-mix(in srgb, currentColor, transparent)"]
-        :cursor--pointer
-        :bgc--$transparent-white-100
-        :box-shadow--0:2px:6px:0:$transparent-black-15
-        [:transform "translate(0, -50%)"]
-        ["has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start"
-         "calc(100% - var(--width))"]
-        ["has-ancestor(.kushi-switch[disabled]):cursor"
-         :not-allowed]
-        :position--absolute
-        :top--50%
-        :inset-inline-start--0
-        :h--$thumb-height
-        :w--$width)
+        :data-ks-colorway colorway}
+       (sx ".kushi-switch-thumb"
+           :.transition
+           [:--width :$thumb-height]
+           :transition-duration--$xxfast
+           :border-color--currentColor
+           ["has-ancestor(.kushi-switch[aria-checked='false']):border-color" "color-mix(in srgb, currentColor, transparent)"]
+           :cursor--pointer
+           :bgc--$transparent-white-100
+           :box-shadow--0:2px:6px:0:$transparent-black-15
+           [:transform "translate(0, -50%)"]
+           ["has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start"
+            "calc(100% - var(--width))"]
+           ["has-ancestor(.kushi-switch[disabled]):cursor"
+            :not-allowed]
+           :position--absolute
+           :top--50%
+           :inset-inline-start--0
+           :h--$thumb-height
+           :w--$width)
        thumb-attrs)
       [:div (sx ".kushi-switch-thumb-content-on"
                 :.kushi-switch-thumb-content

@@ -1,32 +1,37 @@
 (ns kushi.ui.label
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.ui.core :refer (extract)]
-   [kushi.ui.shared.theming :refer [component-attrs variant-basics]]
-   [kushi.core :refer (css merge-attrs)]))
+   [kushi.ui.core :refer (defui)]
+   [kushi.ui.shared :refer [add-enhancer]]
+   [kushi.core :refer (css sx merge-attrs)]))
 
 
-(defn label
-  {:desc "A label is typically used for providing titles to sections of content."}
+(defui label
+  {:desc         "A label is typically used for providing titles to sections of content."
+   :props/shared [:sizing
+                  :end-enhancer
+                  :start-enhancer
+                  :colorway
+                  ;; :packing
+                  :loading
+                  :stroke-align
+                  :stroke-width
+                  :position
+                  ;; :contour
+                  :surface
+                  :transition
+                  :inert]
+   }
   [& args]
-  (let [{:keys [opts attrs children]} (extract args)
-        {:keys [start-enhancer end-enhancer]}
-        opts]
-    (into [:label
-           (merge-attrs
-            {:class (css
-                     :.flex-row-start
-                     :.transition
-                     :d--inline-flex
-                     :w--fit-content
-                     :gap--$icon-enhanceable-gap)}
-            (component-attrs "label"
-                             opts
-                             variant-basics
-                             [:end-enhancer :start-enhancer])
-            attrs)]
-          (cond start-enhancer (concat [start-enhancer] children)
-                end-enhancer   (concat children [end-enhancer])
-                :else          children))))
+  (into [:label
+         (merge-attrs
+          (sx
+           "[data-ks-ui=\"label\"]"
+           :.flex-row-start
+           :d--inline-flex
+           :w--fit-content
+           :gap--$icon-enhanceable-gap)
+          &attrs)]
+        (add-enhancer &props &children)))
 
 

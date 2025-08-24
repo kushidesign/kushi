@@ -79,14 +79,6 @@
              :dark:active:bgc (keyword (str "$background-color-" s "-soft-2-dark-mode"))})
 
 
-     "[data-ks-surface= \"outline\"]" 
-     (merge base
-            {:hover:bgc       (keyword (str "$background-color-" s "-soft"))
-             :active:bgc      (keyword (str "$background-color-" s "-soft-2"))
-             :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
-             :dark:active:bgc (keyword (str "$background-color-" s "-soft-2-dark-mode"))})
-
-
      "[data-ks-surface= \"minimal\"][data-ks-inert]"
      (merge base-inert
             {:hover:bgc       "transparent"
@@ -94,6 +86,12 @@
              :dark:hover:bgc  "transparent"
              :dark:active:bgc "transparent"})
 
+     "[data-ks-surface= \"outline\"]" 
+     (merge base
+            {:hover:bgc       (keyword (str "$background-color-" s "-soft"))
+             :active:bgc      (keyword (str "$background-color-" s "-soft-2"))
+             :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
+             :dark:active:bgc (keyword (str "$background-color-" s "-soft-2-dark-mode"))})
 
      "[data-ks-surface= \"outline\"][data-ks-inert]"
      (merge base-inert

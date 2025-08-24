@@ -1,5 +1,6 @@
 (ns site.views2
   (:require
+
    [fireworks.core :refer [? !? ?> !?> pprint]]
    [bling.core]
    [domo.core :as domo]
@@ -20,7 +21,7 @@
    [kushi.ui.icon-button :refer [icon-button]]
   ;;  [kushi.ui.icon-button.demo]
 
-   [kushi.ui.flex :as flex :refer [flex-row-start flex-col-start box]]
+   [kushi.ui.box :refer [box]]
   ;;  [kushi.ui.layout :refer [layout]]
 
    [kushi.ui.icon :refer [icon]]
@@ -29,23 +30,34 @@
    [kushi.ui.spinner :refer [spinner]]
    [kushi.ui.spinner.demo]
 
-  ;;  [kushi.ui.callout :refer [callout]]
+   [kushi.ui.callout :refer [callout]]
   ;;  [kushi.ui.callout.demo]
 
    [kushi.ui.tag :refer [tag]]
    [kushi.ui.tag.demo]
 
-  ;;  [kushi.ui.checkbox :refer [checkbox]]
+   [kushi.ui.checkbox :refer [checkbox]]
   ;;  [kushi.ui.checkbox.demo]
 
    [kushi.ui.radio :refer [radio]]
   ;;  [kushi.ui.radio.demo]
 
    [kushi.ui.radio-group :refer [radio-group]]
-  ;;  [kushi.ui.radio.demo]
+  ;;  [kushi.ui.radio-group.demo]
 
-  ;;  [kushi.ui.avatar :refer [avatar]]
+   [kushi.ui.checkbox-group :refer [checkbox-group]]
+  ;;  [kushi.ui.checkbox-group.demo]
+
+   [kushi.playground.assets.graphics.avatars :refer [avatar-1]]
+   [kushi.ui.avatar :refer [avatar]]
   ;;  [kushi.ui.avatar.demo]
+
+   
+   [kushi.ui.card :refer [card]]
+
+   [kushi.ui.switch :refer [switch]]
+
+   [kushi.ui.thumb :refer [thumb]]
 
    [kushi.ui.label :refer [label]]
   ;;  [kushi.ui.radio :refer [radio]]
@@ -53,7 +65,7 @@
    [kushi.ui.util :as util]
    [clojure.string :as string]
    ;; [malli.core :as m]
-   [kushi.ui.defs :as defs]))
+   [kushi.ui.link :refer [link]]))
 
 
 (js/console.clear)
@@ -75,7 +87,7 @@
 ;; (? (:colorway kushi.ui.variants/variants-by-custom-opt-key))
 #_(defn my-radio [m]
   (let [id (str (:name m) "-radio-group_" (:value m) "-choice")]
-    [flex-row-start
+    [:div.flex-row-start
      {:class     (css :.pointer
                       :pb--0.33em
                       :pi--0.5em:0.75em
@@ -287,15 +299,165 @@
             :data-ks-debug :foobar}]
        "Child 1"])
 
-  #_[icon {:ns           (at)
-         :colorway     :red
-         :sizing       :xxxlarge
-         :weight       :bolds
-         :icon-style   :sharp
-         :icon-filled? true
-         :inert       true
-         :id           :foo}
-    :star]
+  #_[callout {:header-text     [:span "Please check out the "
+                              [link (merge-attrs (sx :ws--n) {:href "#"})
+                               "new features"]]
+            :close-button-fn #(js/console.log "HI")
+            :header-icon     :info
+            :colorway        :accent
+            :surface         :solid
+            :inert           true}] 
+
+
+  [:div (sx :.flex-col-center :.absolute-centered :gap--3rem) 
+
+   #_[:span.flex-row-start
+      [radio {:name   :g
+              :id     :foo
+              :weight :thin}]
+      [label {:for :foo} "hi"]]
+
+
+   [:div.flex-col-start (sx :gap--0.1rem)
+    ;; [switch]
+    ;; [switch {:colorway :neutral}]
+    #_#_#_
+          [switch {:colorway :accent :sizing :xxlarge}]
+        [switch {:colorway    :accent
+                 :sizing      :xxlarge
+                 :thumb-attrs (sx :bgi--$convex :dark:bgi--$convex-3)}]
+      [switch
+       (merge-attrs (sx [:--switch-border-width :0px]
+                        [:--switch-thumb-scale-factor :1.25])
+                    {:sizing      :xxlarge
+                     :thumb-attrs (sx :border--1px:solid:currentColor)})]
+    ;; [switch {:colorway :positive}]
+    ;; [switch {:colorway :warning}]
+    ;; [switch {:colorway :negative}]
+    ;; [button {:surface :outline :sizing :large} "Click"]
+    ;; [button {:surface :classic :sizing :large} "Click"]
+    [button
+     (merge-attrs 
+      {:surface      :solid-classic
+       :sizing       :large
+       :contour      :pill
+       :colorway     :accent
+       :stroke       [[:2px :$brown-300] [:2px :$green-300]]
+       :stroke-align :outside
+       :drop-shadow  ["5px 5px 10px currentColor"]
+       })
+     "Click"]
+    
+    ;; [button {:surface :soft-classic :sizing :large :contour :pill :colorway :accent} "Click"]
+    ;; [thumb {:surface :outline :sizing :xxlarge :stroke-width :1px}]
+    ;; [thumb {:surface :soft-classic :sizing :xxlarge #_#_:stroke-width :1px}]
+    ;; [thumb {:surface :solid-classic :sizing :xxlarge #_#_:stroke-width :1px}]
+    #_(let [
+            stroke-align :inside
+
+            strokes      (for [c ["magenta" "red" "orange" "yellow" "lime" "green" "blue" "purple"]]
+                           [:2px (str "var(--" c "-700)")])
+
+            shadows       (util/stepped-shadows 
+                           {:colors            [:$red-500 :$orange-500 :$yellow-500 :$lime-500 :$green-500 :$blue-500 :$purple-500]
+                            :blur              :10px
+                                              ;;  :spread  :10px
+                            :start-y           10
+                            :end-y             100
+                            :start-x           10
+                            :end-x             100
+                            :start-opacity     1
+                            :end-opacity       0.1
+                            :opacity-mix-color :white
+                            })
+            shadows-2     nil #_(util/stepped-shadows {:colors  ["yellow"
+                                                                 "orange"
+                                                                 "red"
+                                                                 "magenta"]
+                                                       :blur    :10px
+                                                       :start-y -10
+                                                       :end-y   -50
+                                                       :start-x -10
+                                                       :end-x   -50
+                                                       })
+
+          ;; shadows      [[:-15px :15px :20px :aqua]
+          ;;               [:15px :-15px :20px :yellow]]
+            shadows (concat shadows shadows-2)]
+        [:div {:style {:width      :200px
+                       :height     :200px
+                       :background :aliceblue
+                       :box-shadow (util/box-shadow
+                                    {:shadows      shadows
+                                     :strokes      strokes
+                                     :stroke-align stroke-align
+                                     })}
+               }])]
+
+   #_#_#_#_#_#_
+   [box {:surface  :solid
+         :colorway :accent} "hi"]
+   [card [:div (sx :.flex-row-start
+                   :ai--stretch
+                   :gap--0.8em)
+          #_[:div (sx :.rounded
+                      :position--relative
+                      :.transition
+                      :overflow--hidden
+                      :dark:bgc--$neutral-850
+                      :bgc--$neutral-200
+                      :w--3.5em
+                      :h--3.5em)
+             [:span (sx :.absolute-centered
+                        [:transform "translate(0, 0.045em)"]
+                        :display--block
+                        :scale--2.55)
+              "🐻‍❄"]]
+          [avatar {:surface :faint-outline
+                  ;;  :sizing  :xxlarge
+                  ;;  :src     avatar-1
+                   }
+           "🐻‍❄"]
+          [:section (sx :.flex-col-space-around
+                        :jc--sa) 
+           [:p (sx :fs--1.25em :fw--$wee-bold) "Polar Bear"] 
+           [:p (sx :.foreground-color-secondary!) "polar.bear@example.com"]]]]
+   [avatar 
+    {:surface :solid
+     :sizing  :xxlarge
+     :src     avatar-1}
+    "JC"]
+   [tag {:end-enhancer :east} "Bingo " [link {:href "google.com"} "& more"]]
+   [:span (sx :.flex-row-start :gap--1em)
+    [checkbox {:id     :bar
+               :weight :thin
+               :class  (css :.xxlarge)}] 
+    [label {:for          :bar
+            :class        (css :.xxlarge)
+            :end-enhancer :star} "check me"]
+    #_[icon {:sizing :xxlarge} :star]]
+   
+
+   [checkbox-group {:group-id "foo"
+                    :choices  ["Yes" "No" "Maybe"]
+                    :surface  :outline
+                  ;; :display  [:flex :column :flex-start :center]
+                  ;; :gap      0
+                    :class    (css :d--grid
+                                   :gtc--1fr:1fr
+                                   :>div:p--1rem)}]
+
+   #_[checkbox {:weight :thin}
+      "Star"
+      [icon {:at         (at)
+             :colorway   :red
+             :sizing     :xxxlarge
+             :icon-style :sharp
+             :inert      true
+             :id         :foo}
+       :star]]
+   
+   ]
 
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
                                  kushi.ui.icon.demo/demos))]
@@ -307,8 +469,9 @@
                                kushi.ui.button.demo/demos))]
 
 
-  [button 
-   {:surface      :solid 
+  #_[button 
+   {:sizing       :xxxlarge
+    :surface      :solid 
     :position     :absolute-centered
     :colorway     :red
     :end-enhancer :east}
