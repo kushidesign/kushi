@@ -1302,7 +1302,7 @@
    "[data-ks-icon-button]"         {:--_padding-inline           "var(--_padding-block)"
                                      :_.material-symbols-outlined {:min-width   :1.2ch
                                                                    :line-height :normal}}})
-(defcss ".kushi-icon-button"
+(defcss "[data-ks-ui=\"icon-button\"]"
   {:--_padding-block            :$icon-button-padding-block||$button-padding-block
    :--_padding-inline           :$icon-button-padding-inline||$button-padding-inline
    :_.material-symbols-outlined {:min-width   :1.2ch

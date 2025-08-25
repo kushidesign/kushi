@@ -49,7 +49,7 @@
    `[icon mui.svg/add]`. You can also create and utilize similar namespace in
    your own project with your own collection of icon `svg`s."
 
-   :props/shared [:colorway
+   :props/shared [[:colorway {:default nil}]
                   :contour
                   :sizing
                   :weight       

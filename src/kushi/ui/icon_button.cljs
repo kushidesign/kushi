@@ -4,7 +4,7 @@
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.core :refer (defui)]
    [kushi.ui.icon :refer [icon]]
-   [kushi.ui.util :refer [as-str]])
+   [kushi.ui.util :as util])
    ;; (:require-macros [kushi.ui.button])
   )
 
@@ -15,6 +15,7 @@
                  :colorway
                  :packing
                  :loading
+                 :stroke
                  :stroke-align
                  :stroke-width
                  :position
@@ -22,29 +23,37 @@
                  :surface
                  :transition]}
  [& args]
- (let [{:keys [loading stroke-width]} &props
-       [icon*]                        &children]
+ (let [{:keys [surface loading stroke-width colorway]} &props
+       [icon*]                                         &children
+       
+       classic-variant?
+       (contains? #{:solid-classic :soft-classic} surface)]
    [:button
-     (merge-attrs
-      (sx
-       "[data-ks-ui=\"icon-button\"]"
-       :d--flex
-       :flex-direction--row
-       :jc--c
-       :ai--c
-       :w--fit-content
-       :cursor--pointer
+    (merge-attrs
+     (sx
+      "[data-ks-ui=\"icon-button\"]"
+      :d--flex
+      :flex-direction--row
+      :jc--c
+      :ai--c
+      :w--fit-content
+      :cursor--pointer
        ;; TODO - is this local/private css var necessary?
-       [:--_padding-block :$icon-button-padding-block]
-       [:--_padding-inline :$icon-button-padding-inline]
-       :pi--$_padding-inline
-       :pb--$_padding-block
-       )
-      {:aria-busy  loading
-       :aria-label (when loading "loading")}
+      [:--_padding-block :$icon-button-padding-block]
+      [:--_padding-inline :$icon-button-padding-inline]
+      :pi--$_padding-inline
+      :pb--$_padding-block
+      )
+     {:aria-busy  loading
+      :aria-label (when loading "loading")}
 
-      &attrs
+     (util/stroke-width-cssvar stroke-width "button")
 
-      (when stroke-width 
-        {:style {"--_stroke-width" (as-str stroke-width)}}))
-        [icon icon*]]))
+     (when-not classic-variant? 
+       (util/drop-shadow-and-stroke-attrs &props))
+
+     &attrs
+
+     (when stroke-width 
+       {:style {"--_stroke-width" (util/as-str stroke-width)}}))
+    [icon {:colorway colorway} icon*]]))
