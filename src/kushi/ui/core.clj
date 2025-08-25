@@ -11,6 +11,7 @@
    [kushi.ui.variants :as variants]
    [kushi.ui.util :refer [keyed]]
    [kushi.ui.variants :as props]
+   [kushi.ui.decoration :as decoration]
    [malli.core :as m]))
 
 (def ^:private html-attrs 
@@ -496,16 +497,16 @@
         
         ;; &props         - map of props defined via the :props or :props/family,
         ;;                  extracted from the second arg (map) to defui
-
+        
         ;; &attrs         - map of html attributes extracted from the second arg
         ;;                  (map) to defui
-
+        
         ;; &data-ks-attrs - map of data-ks-* attributes. Some/most of the
         ;;                  kushi-specific theming props need to end up as
         ;;                  data-ks-* attributes 
-
+        
         ;; &children      - collection of children passed to components
-
+        
         ks          
         '[&props &attrs &data-ks-attrs &children args]
         
@@ -684,3 +685,14 @@
 ;;                  (assoc m k (assoc v :schema schema))))
 ;;              {}
 ;;              props))
+
+(defmacro pc 
+  "Optional compile-time computation of HTML attributes and styles related to
+   strokes and shadows on components defined with kushi.ui.core/defui"
+  [m]
+  (if (->> m vals (not-any? symbol?))
+    (? "no prop values found, precompiling..." 
+       (some->> m 
+                decoration/drop-shadow-and-stroke-attrs
+                (assoc m :kushi.ui.core/pc)))
+    (? "dynamic prop values found, passing through..." m)))

@@ -10,8 +10,8 @@
    [kushi.ui.span :refer (span)]
    [kushi.ui.core :refer (defui)]
    [kushi.ui.shared :refer [add-enhancer]]
+   [kushi.ui.decoration :as decoration]
    [kushi.ui.util :as util]))
-
 
 
 (defui button
@@ -69,10 +69,10 @@
                  {:aria-busy  loading
                   :aria-label (when loading "loading")}
 
-                 (!? :pp (util/stroke-width-cssvar stroke-width "button"))
+                 (!? :pp (decoration/stroke-width-cssvar stroke-width "button"))
 
                  (when-not classic-variant? 
-                   (util/drop-shadow-and-stroke-attrs &props))
+                   (decoration/drop-shadow-and-stroke-attrs &props))
                  
                  &attrs)]
 
