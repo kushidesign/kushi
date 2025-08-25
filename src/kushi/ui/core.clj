@@ -13,6 +13,38 @@
    [kushi.ui.variants :as props]
    [malli.core :as m]))
 
+(def ^:private html-attrs 
+  #{:bgcolor :accept :accept-charset :access-key :action :allow-full-screen :allow-transparency :alt :async :auto-complete :auto-focus :auto-play :capture
+    :cell-padding :cell-spacing :challenge :char-set :checked :cite :class :class-name :cols :col-span :content :content-editable :context-menu :controls :controls-list
+    :coords :cross-origin :data :date-time :default :defer :dir :disabled :download :draggable :enc-type :form :form-action :form-enc-type :form-method
+    :form-no-validate :form-target :frame-border :headers :height :hidden :high :href :href-lang :html-for :http-equiv :icon :id :input-mode :integrity
+    :is :key-params :key-type :kind :label :lang :list :loop :low :manifest
+    :margin-height :margin-width :max :max-length :media :media-group :method :min :min-length :multiple :muted :name :no-validate :nonce :open :optimum :pattern :placeholder
+    :poster :preload :profile :radio-group :read-only :rel :required :reversed :role :rows :row-span :sandbox :scope :scoped :scrolling :seamless :selected :shape :size :sizes
+    :span :spell-check :src :src-doc :src-lang :src-set :start :step :style :summary :tab-index :target :title :type :use-map :value :width :wmode :wrap
+    ; React specific 
+    :ref :key})
+
+(defn ^:private issue-html-attribute-name-clash-warnings
+  [props-keys fn-info] 
+  (doseq [k props-keys]
+    (when (contains? html-attrs k)
+      (callout {:type        :warning
+                :label-theme :marquee
+                :padding-top 1
+                :side-label  (:fn/loc-str fn-info)}
+               (str "HTML attribute name clash"
+                    "\n\n"
+                    (bling.hifi/hifi k {:find {:pred  #(= % k)
+                                               :class :highlight-error-underlined}})
+                    "\n\n"
+                    "You might want to choose a different name\n"
+                    "for your custom attribute."
+                    "\n\n"
+                    (bling [{:href "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes"}
+                            "cmd+click to view MDN docs ↗"])
+                    )))))
+
 ;; TODO - document why is this needed vs normal fn
 ;; For now this is unused
 (defmacro material-symbol-or-icon-span
@@ -443,9 +475,11 @@
         
 
         props-keys   
-        (into [] (keys merged-props))
+        (let [ks (keys merged-props)]
+          (issue-html-attribute-name-clash-warnings ks fn-info)
+          (into [] ks))
 
-
+        
         ;; TODO - process body here for different frameworks
         ;; TODO - maybe wrap body here if elevated is in the mix?
         body        
