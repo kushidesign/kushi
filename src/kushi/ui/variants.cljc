@@ -37,7 +37,7 @@
   [:donut :thinking :propeller])
 
 (def packings
-  [:compact :default :roomy])
+  [:xcompact :compact :default :roomy :xroomy])
 
 ;; Pull this from colors namespace?
 (def colorways-named
@@ -365,6 +365,8 @@
                :colorway
                :contour
                :surface
+               :stroke
+               :stroke-weight
                :stroke-align
                :inert
                :position
