@@ -23,6 +23,43 @@
 
 
 ;; TODO - make version without the layout slots
+(defui callout2
+  {:summary "Callouts provide contextual feedback information for the user."
+   :desc    "To position the callout at the top of the viewport, use the
+          `:.fixed-block-start-inside` utility class, or the
+          `:.fixed-block-end-inside` utility class for positioning
+          at the bottom of the viewport."
+   :props/family [:container]
+   :props/shared [:packing :transition [:surface {:default :faint}]]}
+  [& args]
+  (let [{:keys [inert
+                loading
+                stroke-width]}
+        &props]
+    (into [:section
+           (merge-attrs
+            (sx "[data-ks-ui=\"callout2\"]"
+                :position--relative
+                :d--flex
+                :flex-direction--row
+                :jc--c
+                :ai--c
+                :w--100%
+                :gap--$icon-enhanceable-gap
+                :p--$callout-padding||0.75em
+                :>*:w--100%
+                )
+            
+            {:aria-busy  loading
+             :aria-label (when loading "loading")
+             :data-ks-ui-spinner (when loading "loading")}
+
+            (when stroke-width 
+              {:style {"--_stroke-width" (name stroke-width)}})
+
+            &attrs)]
+          &children)))
+
 (defui callout
   {:summary "Callouts provide contextual feedback information for the user."
    :desc    "To position the callout at the top of the viewport, use the
