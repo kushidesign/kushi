@@ -1100,35 +1100,45 @@
 ;; TODO - should these live in design-tokens?
 (defcss
   ":root"
-  {"--debug-grid-size"                                  "107px",
-   "--debug-grid-color"                                 "#eee",
-   "--outlined-element-stroke-width"                    "0.075em"
-   "--outlined-button-stroke-width"                     "var(--outlined-element-stroke-width)"
-   "--outlined-tag-stroke-width"                        "var(--outlined-element-stroke-width)"
-   "--outlined-callout-stroke-width"                    "var(--outlined-element-stroke-width)"
-   "--button-padding-inline-compact"                    "0.7em",
-   "--button-padding-inline"                            "0.9em",
-   "--button-padding-inline-roomy"                      "1.2em",
-   "--button-padding-block-compact"                     "0.35em",
-   "--button-padding-block"                             "0.55em",
-   "--button-padding-block-roomy"                       "0.75em"
-   "--icon-button-padding-inline"                        :$button-padding-block,
-   "--icon-button-padding-block"                         :$button-padding-block,
+  {"--debug-grid-size"                                "107px",
+   "--debug-grid-color"                               "#eee",
+   "--outlined-element-stroke-width"                  "0.075em"
+   "--outlined-button-stroke-width"                   "var(--outlined-element-stroke-width)"
+
+   "--element-stroke-width"                           "1px"
+   "--button-stroke-width"                            :$element-stroke-width
+   "--tag-stroke-width"                               :$element-stroke-width
+   "--stroke-width-nearest-pixel"                     "round(nearest, var(--stroke-width, 1px), 1px)"
+
+   "--outlined-tag-stroke-width"                      "var(--outlined-element-stroke-width)"
+   "--outlined-callout-stroke-width"                  "var(--outlined-element-stroke-width)"
+   "--button-padding-inline-compact"                  "0.7em",
+   "--button-padding-inline"                          "0.9em",
+   "--button-padding-inline-roomy"                    "1.2em",
+   "--button-padding-block-compact"                   "0.35em",
+   "--button-padding-block"                           "0.55em",
+   "--button-padding-block-roomy"                     "0.75em"
+   "--icon-button-padding-inline"                     :$button-padding-block,
+   "--icon-button-padding-block"                      :$button-padding-block,
    ;; Use or not use -ems ?
-   "--tag-padding-block-start-reduction-ratio"          "0.9",
-   "--tag-padding-block-start"                          "0.27em",
-   "--tag-padding-block"                                "0.3em",
-   "--tag-padding-inline"                               "0.6em",
-   "--tag-padding-block-compact"                        "0.20em",
-   "--tag-padding-inline-compact"                       "0.45em",
-   "--tag-padding-block-roomy"                          "0.45em",
-   "--tag-padding-inline-roomy"                         "0.9em"
-   "--transition-duration"                              :$xxxfast
+   "--tag-padding-block-start-reduction-ratio"        "0.9",
+   "--tag-padding-block-start"                        "0.27em",
+   "--tag-padding-block"                              "0.3em",
+   "--tag-padding-inline"                             "0.6em",
+   "--tag-padding-block-compact"                      "0.20em",
+   "--tag-padding-inline-compact"                     "0.45em",
+   "--tag-padding-block-roomy"                        "0.45em",
+   "--tag-padding-inline-roomy"                       "0.9em"
+   "--transition-duration"                            :$xxxfast
    ;; data-ks-surface=outline
-   "--outlined-element-stroke-transparency"             "30%"
-   "--outlined-element-stroke-transparency-dark-mode"   "30%"
-   "--faint-outlined-element-stroke-transparency"             "90%"
-   "--faint-outlined-element-stroke-transparency-dark-mode"   "80%"
+   "--outlined-element-stroke-transparency"           "30%"
+   "--outlined-element-stroke-transparency-dark-mode" "30%"
+
+   "--xsoft-stroke-transparency"                      "15%"
+   "--soft-stroke-transparency"                       "30%"
+   "--medium-stroke-transparency"                     "50%"
+   "--hard-stroke-transparency"                       "70%"
+   "--xhard-stroke-transparency"                      "100%"
    })
 
 
@@ -1149,6 +1159,43 @@
 (defcolorway "magenta")
 (defcolorway "brown")
 
+
+;; Strokes
+(defcss "[data-ks-surface][data-ks-stroke][data-ks-stroke-align=\"inside\"]"
+  {:box-shadow "inset 0 0 0 var(--stroke-width, var(--element-stroke-width), 1px) color-mix(in oklch, currentColor var(--stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))"
+   })
+
+(defcss "[data-ks-surface][data-ks-stroke][data-ks-stroke-align=\"outside\"]"
+  {:box-shadow "0 0 0 var(--stroke-width, var(--element-stroke-width), 1px) color-mix(in oklch, currentColor var(--stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))" })
+
+(defcss "[data-ks-surface][data-ks-stroke]"
+  {"[data-ks-stroke=\"none\"]"   {:--stroke-transparency :0%}
+   "[data-ks-stroke=\"xsoft\"]"  {:--stroke-transparency :$xsoft-stroke-transparency}
+   "[data-ks-stroke=\"soft\"]"   {:--stroke-transparency :$soft-stroke-transparency}
+   "[data-ks-stroke=\"medium\"]" {:--stroke-transparency :$medium-stroke-transparency}
+   "[data-ks-stroke=\"hard\"]"   {:--stroke-transparency :$hard-stroke-transparency}
+   "[data-ks-stroke=\"xhard\"]"  {:--stroke-transparency :$xhard-stroke-transparency}})
+
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"]"
+  {:box-shadow      :$shadow-xsmall
+   :dark:box-shadow :$shadow-xsmall-dark-mode})
+
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"]"
+  {:box-shadow      :$shadow-small
+   :dark:box-shadow :$shadow-small-dark-mode})
+
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"]"
+  {:box-shadow      :$shadow-medium
+   :dark:box-shadow :$shadow-medium-dark-mode})
+
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"
+  {:box-shadow      :$shadow-large
+   :dark:box-shadow :$shadow-large-dark-mode
+   })
+
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"]"
+  {:box-shadow      :$shadow-xlarge
+   :dark:box-shadow :$shadow-xlarge-dark-mode})
 (defcss "[data-ks-surface=\"solid\"], [data-ks-surface=\"solid-classic\"]"
   {:color             :white
    :dark:color        :black
@@ -1156,103 +1203,9 @@
    :dark:hover:color  :black
    :active:color      :white
    :dark:active:color :black})
-
-
-;; Outlined Surfaces ---------------------------------------------------------------------
-
-(defcss "[data-ks-surface=\"outline\"], [data-ks-surface=\"faint-outline\"]"
-  {:--_stroke-width :$outlined-element-stroke-width})
-
-;; Rounding of stroke-width for outlined and faint-outlined surfaces (it could be provided in ems), if browser-supported
-(defcss "[data-ks-surface=\"outline\"], [data-ks-surface=\"faint-outline\"]"
-  {"@supports(width: round(nearest, 0.075em, 1px))"
-   {"--_stroke-width" "round(nearest, var(--outlined-element-stroke-width), 1px)"}})
-
-
-;; Outlined Buttons ---------------------------------------------------------------------
-(defcss "[data-ks-surface=\"outline\"][data-ks-ui=\"button\"], [data-ks-surface=\"faint-outline\"][data-ks-ui=\"button\"]"
-  {:--_stroke-width :$outlined-button-stroke-width})
-
-;; Rounding of stroke-width for buttons (it could be provided in ems), if browser-supported
-(defcss "[data-ks-surface=\"outline\"][data-ks-ui=\"button\"], [data-ks-surface=\"faint-outline\"][data-ks-ui=\"button\"]"
-  {"@supports(width: round(nearest, 0.075em, 1px))"
-   {"--_stroke-width" "round(nearest, var(--outlined-button-stroke-width), 1px)"}})
-
-
-;; Outlined Tags ---------------------------------------------------------------------
-(defcss "[data-ks-surface=\"outline\"][data-ks-ui=\"tag\"], [data-ks-surface=\"faint-outline\"][data-ks-ui=\"tag\"]"
-  {:--_stroke-width :$outlined-tag-stroke-width})
-
-;; Rounding of stroke-width for tags (it could be provided in ems), if browser-supported
-(defcss "[data-ks-surface=\"outline\"][data-ks-ui=\"tag\"], [data-ks-surface=\"faint-outline\"][data-ks-ui=\"tag\"]"
-  {"@supports(width: round(nearest, 0.075em, 1px))"
-   {"--_stroke-width" "round(nearest, var(--outlined-tag-stroke-width), 1px)"}})
-
-
-;; Outlined Callouts ---------------------------------------------------------------------
-(defcss "[data-ks-surface=\"outline\"][data-ks-ui=\"callout\"], [data-ks-surface=\"faint-outline\"][data-ks-ui=\"callout\"]"
-  {:--_stroke-width :$outlined-callout-stroke-width})
-
-;; Rounding of stroke-width for callouts (it could be provided in ems), if browser-supported
-(defcss "[data-ks-surface=\"outline\"][data-ks-ui=\"callout\"], [data-ks-surface=\"faint-outline\"][data-ks-ui=\"callout\"]"
-  {"@supports(width: round(nearest, 0.075em, 1px))"
-   {"--_stroke-width" "round(nearest, var(--outlined-callout-stroke-width), 1px)"}})
-
-
-;; Elevation shadows ---------------------------------------------------------------------
-(defcss "[data-ks-surface][data-ks-elevated]"
-  {:box-shadow "var(--_stroke), var(--_stroke-2, 0 0), var(--_stroke-3, 0 0), var(--_drop-shadow, var(--elevated))"})
-
-;; Shadows shadows ---------------------------------------------------------------------
-(defcss "[data-ks-surface][data-ks-shadows]"
-  {:box-shadow "var(--_stroke), var(--_stroke-2, 0 0), var(--_stroke-3, 0 0), var(--_drop-shadow-layers, 0 0)"})
-
-;; TODO - make "slots" for strokes and drop shadows, but how many? 
-
-
-(defcss
-  "[data-ks-surface]"
-  {"--_drop-shadow-layers"
-   "var(--_drop-shadow, 0 0), var(--_drop-shadow-2, 0 0), var(--_drop-shadow-3, 0 0)"
-
-   "--_stroke"
-   "inset 0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_fallback-stroke-color))"
-
-   "[data-ks-stroke-align=\"outside\"]"
-   {"--_stroke" "0  0  0  var(--_stroke-width, 0px)  var(--stroke-color, var(--_fallback-stroke-color))"}
-
-   "box-shadow"
-   "var(--_stroke), var(--_stroke-2, 0 0), var(--_stroke-3, 0 0)"
-   
-   "--_fallback-stroke-color"
-   "currentColor"
-
-   "[data-ks-surface=\"outline\"]"
-   {"@supports(color: color-mix(in oklch, currentColor, transparent))"
-    {"--_fallback-stroke-color" ;; "currentColor"
-    ;; Somehow this doesn't work when switching between light and dark modes in Chrome?
-     "color-mix(in oklch, currentColor, transparent var(--outlined-element-stroke-transparency, 30%))"}}
-   
-   "[data-ks-surface=\"faint-outline\"]"
-   {"@supports(color: color-mix(in oklch, currentColor, transparent))"
-    {"--_fallback-stroke-color" ;; "currentColor"
-     ;; Somehow this doesn't work when switching between light and dark modes in Chrome?
-     "color-mix(in oklch, currentColor, transparent var(--faint-outlined-element-stroke-transparency, 90%))"}}
-   
-   "dark:[data-ks-surface=\"faint-outline\"]"
-   {"@supports(color: color-mix(in oklch, currentColor, transparent))"
-    {"--_fallback-stroke-color" ;; "currentColor"
-     ;; Somehow this doesn't work when switching between light and dark modes in Chrome?
-     "color-mix(in oklch, currentColor, transparent var(--faint-outlined-element-stroke-transparency-dark-mode, 80%))"}}
-   
-   })
-
-
-
- (defcss
-   "[data-ks-surface=\"transparent\"]"
-   {"--_stroke" ""})
                                      
+
+;; Classics
 (defcss "[data-ks-surface=\"solid-classic\"], [data-ks-surface=\"soft-classic\"]"
   {:box-shadow       "inset 0 0 0 1px var(--transparent-black-10), inset 0 -2px 1px var(--transparent-black-20), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-80), inset 0 2px 1px -1px var(--transparent-white-80)"
    :bgi              "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"

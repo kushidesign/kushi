@@ -237,9 +237,11 @@
           nil
 
           callout-opts 
-          {:label (str (:ns/name fn-info)
-                       "/"
-                       (:fn/name fn-info))}
+          {:label          (str (:ns/name fn-info)
+                                "/"
+                                (:fn/name fn-info))
+           :padding-bottom 1}
+
           #_(if (= :ultra-compact user-spacing)
             {:label data-ks-ns}
             (some->> user-malli-schema-validation-label 
@@ -250,10 +252,11 @@
        {:file-info-str                     data-ks-at
         :display-file-info-as-side-label?  true
         :display-schema?                   false
-          ;;  :success-message                   :bling.explain/explain-malli-success-verbose
-          ;;  :success-message                   :bling.explain/explain-malli-success-simple
+        :display-explain-data?             false
+        ;;  :success-message                   :bling.explain/explain-malli-success-verbose
+        ;;  :success-message                   :bling.explain/explain-malli-success-simple
 
-        ;; TODO shoudl be :narrow-ancestor-keys ...?
+        ;; TODO should be :narrow-ancestor-keys ...?
         ;; maybe don't highlight keys with yellow
         :select-keys-in-problem-path?      true     
         :highlight-missing-keys?           true     
@@ -263,9 +266,9 @@
         :omit-section-labels               ["UI component:" "Supplied props:"]
         :highlighted-problem-section-label "Supplied props:"
         :preamble-section-label            "UI component:"
-           ;; :preamble-section-body             (str (:ns/name fn-info)
-           ;;                                          "/"
-           ;;                                          (:fn/name fn-info))
+        ;; :preamble-section-body             (str (:ns/name fn-info)
+        ;;                                          "/"
+        ;;                                          (:fn/name fn-info))
         :callout-opts                      callout-opts
 
         ;; This is done in defui macro, so probably don't need this at runtime

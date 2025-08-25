@@ -113,9 +113,18 @@
 
 ;;; Shadows and strokes --------------------------------------------------------
           
+(defn kw->cssvar  [x] 
+  (if-let [token (some-> x
+                         (maybe keyword?)
+                         name
+                         (maybe #(string/starts-with? % "$"))
+                         (subs 1))]
+    (str "var(--" token ")")
+    (as-str x)))
+
 (defn accumulated-stroke-widths [strokes]
   (reduce (fn [acc [w]] 
-            (let [w        (as-str w)
+            (let [w        (kw->cssvar w)
                   previous (peek acc)]
               (if previous
                 (conj acc (into [] (concat previous [w])))
@@ -132,14 +141,6 @@
                         ")")))
                accumulated-stroke-widths))
          
-(defn kw->cssvar  [x] 
-  (if-let [token (some-> x
-                         (maybe keyword?)
-                         name
-                         (maybe #(string/starts-with? % "$"))
-                         (subs 1))]
-    (str "var(--" token ")")
-    (as-str x)))
 
 (defn strokes-with-calc-stroke-widths [strokes]
   (mapv vector
@@ -178,15 +179,83 @@
 ;; if design token, make that work
 
 ;; TODO remove code from theming with drop-shadow layers
+(def stroke-presets
+  {:none   [["0" "transparent"]]
+   :xsoft  [[:$stroke-width "color-mix(in oklch, currentColor var(--xsoft-stroke-transparency, 15%), var(--stroke-transparency-mix-color, transparent))"]]
+   :soft   [[:$stroke-width "color-mix(in oklch, currentColor var(--soft-stroke-transparency, 30%), var(--stroke-transparency-mix-color, transparent)"]]
+   :medium [[:$stroke-width "color-mix(in oklch, currentColor var(--medium-stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))"]]
+   :hard   [[:$stroke-width "color-mix(in oklch, currentColor var(--hard-stroke-transparency, 70%), var(--stroke-transparency-mix-color, transparent))"]]
+   :xhard  [[:$stroke-width "color-mix(in oklch, currentColor var(--xhard-stroke-transparency, 100%), var(--stroke-transparency-mix-color, transparent))"]]
+   })
 
-(defn box-shadow [{:keys [shadows strokes stroke-align]}]
+(def stroke-presets-key-set (->> stroke-presets keys (into #{})))
+
+(defn strokes-vector [x]
+  (cond
+    (keyword? x) 
+    (get stroke-presets x (get stroke-presets :none))
+    (not-any? vector? x)
+    [x]
+    :else
+    x))
+
+(def shadow-presets
+  {:xsmall  :$shadow-xsmall
+   :small [:$shadow-small]
+   :medium [:$shadow-medium]
+   :large [:$shadow-large]
+   :xlarge [:$shadow-xlarge]
+   })
+
+(def shadow-presets-key-set (->> shadow-presets keys (into #{})))
+
+(defn shadows-vector [x]
+  (or
+   (get shadow-presets x nil) 
+   (cond
+     (or (string? x) (keyword? x)) 
+     [x]
+     :else
+     x)))
+
+(defn box-shadow [{:keys [shadows strokes stroke-align] :or {stroke-align :inside}}]
   (let [strokes (some-> strokes
-                        (css-box-shadow-for-strokes stroke-align))
+                        strokes-vector
+                        (css-box-shadow-for-strokes stroke-align)
+                        )
         shadows (some->> shadows
+                         shadows-vector
                          css-box-shadow-for-shadows)]
     (str strokes (when (and strokes shadows) ", ") shadows)))
 
 (def dbg (atom false))
+
+(defn drop-shadow-and-stroke-attrs 
+  [{:keys [stroke drop-shadow stroke-align] :or {stroke-align :inside}}]
+  (let [only-simple-stroke?      (and (contains? stroke-presets-key-set stroke)
+                                      (not drop-shadow))
+        only-simple-drop-shadow? (and (contains? shadow-presets-key-set drop-shadow)
+                                      (not stroke))]
+    (!? :pp (cond 
+              only-simple-stroke?
+              {:data-ks-stroke       stroke
+               :data-ks-stroke-align stroke-align}
+
+              only-simple-drop-shadow?
+              {:data-ks-drop-shadow drop-shadow}
+
+              (or stroke drop-shadow)
+              {:style {:box-shadow (box-shadow 
+                                    {:shadows      drop-shadow
+                                     :strokes      stroke
+                                     :stroke-align stroke-align})}}))))
+
+(defn stroke-width-cssvar [stroke-width s]
+  {:style {"--stroke-width" 
+           (or (some-> stroke-width as-str)
+               (str "var(--" s "-stroke-width, var(--element-stroke-width), 1px)"))}}
+  )
+
 
 ;; stepped-shadows effect
 (defn- shadow-range [start end n]

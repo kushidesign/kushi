@@ -28,7 +28,20 @@
                         [kushi.ui.link :refer [link]]]
         variant-scale [:faint :soft :solid :outline]]
 
-    [{:label     "Sizes from xxsmall to xlarge"
+    [
+     {:label     "With icon and dismiss button, in positive variant"
+      :row-style row-style
+      :variants- [:filled :bordered]
+      :samples   (samples
+                  [[callout
+                    {:header-icon     :check-circle
+                     :sizing          :xxxlarge
+                     :colorway        :positive
+                     :header-text     "Your transaction was successful."
+                     :close-button?   true
+                     :close-button-fn (fn [] [:div "hi"])}]])}
+     ]
+    #_[{:label     "Sizes from xxsmall to xlarge"
       :row-style row-style
       :require   require
       :samples   (samples-with-variant 
@@ -49,11 +62,11 @@
       :variants- [:filled :bordered]
       :samples   (samples
                   [[callout
-                    {:header-icon   [icon :check-circle]
-                     :colorway      :positive
-                     :header-text   "Your transaction was successful."
-                     :close-button? true
-                     :user-actions  (fn [] [:div "hi"])}]])}
+                    {:header-icon     [icon :check-circle]
+                     :colorway        :positive
+                     :header-text     "Your transaction was successful."
+                     :close-button?   true
+                     :close-button-fn (fn [] [:div "hi"])}]])}
      
      {:label     "Neutral variant"
       :row-style row-style

@@ -12,7 +12,7 @@
                        " "
                        (conj
                         (mapv #(str % "px") settings)
-                        (str "var(--elevation-shadow-layer-"
+                        (str "var(--shadow-layer-"
                              (inc idx)
                              "-color"
                              suffix
@@ -23,9 +23,9 @@
   (reduce
    (fn [acc [level box-shadows]]
      (-> acc
-         (conj (keyword (str "--elevated-" level "")))
+         (conj (keyword (str "--shadow-" level "")))
          (conj (box-shadows->str box-shadows level ""))
-         (conj (keyword (str "--elevated-" level "-dark-mode")))
+         (conj (keyword (str "--shadow-" level "-dark-mode")))
          (conj (box-shadows->str box-shadows level "-dark-mode"))))
    []
    elevations))
@@ -35,23 +35,23 @@
 (def elevation-scale
  (elevation-scale*
    (array-map
-    1
+    "xsmall"
     [[0 3 3 -2]
      [0 3 4 0]
      [0 1 8 0]]
-    2
+    "small"
     [[0 3 3 -2]
      [0 3 4 0]
      [0 1 8 0]]
-    3
+    "medium"
     [[0 3 5 -1]
      [0 6 10 0]
      [0 1 18 0]]
-    4
+    "large"
     [[0 5 5 -3]
      [0 8 18 1]
      [0 6 20 2]]
-    5
+    "xlarge"
     [[0 7 14 -2]
      [0 6 26 0]
      [0 8 27 0]])))
@@ -64,7 +64,7 @@
     (let [cf (fn [n color]
                (keyword (str "$transparent-" color "-" (subs (str n) 2))))
           nm (fn [i s] 
-               (keyword (str "--elevation-shadow-layer-" (inc i) "-" s)))]
+               (keyword (str "--shadow-layer-" (inc i) "-" s)))]
       [(nm i "color")
        (cf n "black")
        (nm i "color-dark-mode")
@@ -220,7 +220,7 @@
    {:family   "Code"
     :category ["code-blocks"]
     :desc     {:en "Styling of code blocks"}
-    :ns '[kushi.ui.code]
+    :ns       '[kushi.ui.code]
     :tags     ["code" "color" "typography" "block"]}
    [
     :--code-font-size                         :$small
@@ -303,7 +303,7 @@
    {:family   "Input border weight"
     :desc     {:en "Controls the border-width for inputs"}
     :category ["input-border"]
-    :ns '[kushi.ui.input]
+    :ns       '[kushi.ui.input]
     :tags     ["border-width" "border" "input" "inputs"]
     }
    [:--input-border-weight-thin               :0.05em
@@ -333,7 +333,7 @@
    {:family   "Divisors"
     :desc     {:en "Styling for border-like divisors"}
     :category ["divisor"]
-    :ns '[kushi.ui.divisor]
+    :ns       '[kushi.ui.divisor]
     :tags     ["divisors" "divisor"]
     }
    divisor-tokens
@@ -356,7 +356,7 @@
    {:family   "Button padding"
     :desc     {:en "Styling for overlays"}
     :category ["button"]
-    :ns '[kushi.ui.button]
+    :ns       '[kushi.ui.button]
     :tags     ["button"]
     }
    [:--button-padding-inline              :0.9em
@@ -378,7 +378,7 @@
    {:family   "Tag border styling"
     :desc     {:en "Styling borders for tags"}
     :category ["tag-border"]
-    :ns '[kushi.ui.tag]
+    :ns       '[kushi.ui.tag]
     :tags     ["tag"]
     }
    ;; Tags
@@ -464,7 +464,7 @@
    {:family   "Tooltip colors and images"
     :desc     {:en ""}
     :category ["tooltip"]
-    :ns '[kushi.ui.tooltip]     
+    :ns       '[kushi.ui.tooltip]     
     :tags     ["pane" "tooltip" "color" "floating"]
     }
    [:--tooltip-color                            :$foreground-color-dark-mode
@@ -484,7 +484,7 @@
    {:family   "tooltip panes geometry"
     :desc     {:en ""}
     :category ["tooltip"]
-    :ns '[kushi.ui.tooltip]     
+    :ns       '[kushi.ui.tooltip]     
     :tags     ["pane" "tooltip" "floating" "geometry"]
     }
    [:--tooltip-min-width                        :1rem
@@ -502,7 +502,7 @@
    {:family   "tooltip panes choreography"
     :desc     {:en ""}
     :category ["tooltip"]
-    :ns '[kushi.ui.tooltip]     
+    :ns       '[kushi.ui.tooltip]     
     :tags     ["pane" "tooltip" "floating" "choreography"]
     }
    [:--tooltip-offset-start                     :$pane-offset-start
@@ -518,7 +518,7 @@
    {:family   "tooltip panes arrow"
     :desc     {:en ""}
     :category ["tooltip"]
-    :ns '[kushi.ui.tooltip]     
+    :ns       '[kushi.ui.tooltip]     
     :tags     ["pane" "tooltip" "toast" "floating" "choreography"]
     }
    [:--tooltip-arrow-inline-inset               :$pane-arrow-inline-inset
@@ -534,7 +534,7 @@
    {:family   "Popover colors and images"
     :desc     {:en ""}
     :category ["popover"]
-    :ns '[kushi.ui.popover]
+    :ns       '[kushi.ui.popover]
     :tags     ["pane" "popover" "floating"]
     }
    [:--popover-background-color                 :$pane-background-color
@@ -552,7 +552,7 @@
    {:family   "Popover panes geometry"
     :desc     {:en ""}
     :category ["popover"]
-    :ns '[kushi.ui.popover]
+    :ns       '[kushi.ui.popover]
     :tags     ["pane" "popover" "floating" "geometry"]
     }
    [:--popover-min-width                        :$pane-min-width
@@ -568,7 +568,7 @@
    {:family   "Popover panes choreography"
     :desc     {:en ""}
     :category ["popover"]
-    :ns '[kushi.ui.popover]
+    :ns       '[kushi.ui.popover]
     :tags     ["pane" "popover" "floating" "chreography"]
     }
    [:--popover-offset-start               :$pane-offset-start
@@ -584,7 +584,7 @@
    {:family   "Popover panes arrow"
     :desc     {:en ""}
     :category ["popover"]
-    :ns '[kushi.ui.popover]
+    :ns       '[kushi.ui.popover]
     :tags     ["pane" "popover" "floating" "arrow"]
     }
    [:--popover-arrow-inline-inset :$pane-arrow-inline-inset
@@ -599,7 +599,7 @@
    {:family   "Toast colors and images"
     :desc     {:en ""}
     :category ["toast"]
-    :ns '[kushi.ui.toast]
+    :ns       '[kushi.ui.toast]
     :tags     ["pane" "toast" "floating" "color"]
     }
    [:--toast-background-color           :$pane-background-color
@@ -617,7 +617,7 @@
    {:family   "Toast panes geometry"
     :desc     {:en ""}
     :category ["toast"]
-    :ns '[kushi.ui.toast]
+    :ns       '[kushi.ui.toast]
     :tags     ["pane" "Toast" "floating" "geometry"]
     }
    [:--toast-border-radius       :$pane-border-radius
@@ -647,7 +647,7 @@
    {:family   "Modal styling"
     :desc     {:en ""}
     :category ["modal"]
-    :ns '[kushi.ui.toast]
+    :ns       '[kushi.ui.toast]
     :tags     ["pane" "modal" "dialog" "floating"]
     }
    [
@@ -672,7 +672,7 @@
    {:family   "Mui icon size"
     :desc     {:en ""}
     :category ["icon"]
-    :ns '[kushi.ui.icon]
+    :ns       '[kushi.ui.icon]
     :tags     ["icon" "size" "font-size"]
     }
    [:--mui-icon-relative-font-size :inherit
@@ -685,7 +685,7 @@
    {:family   "Icon gap"
     :desc     {:en "Controls the width of the gap between icon and text, in labels, buttons, and tags"}
     :category ["icon"]
-    :ns '[kushi.ui.button kushi.ui.tag kushi.ui.label]
+    :ns       '[kushi.ui.button kushi.ui.tag kushi.ui.label]
     :tags     ["icon" "size" "font-size"]
     }
    [:--icon-enhanceable-gap :0.25em]
@@ -767,9 +767,35 @@
     :category ["elevation"]
     :tags     ["shadow" "elevation" "surfaces"]
     }
-   [:--elevated-0       :none
-    :--elevated         :$elevated-4
-    :--elevated-dark-mode :$elevated-4-dark-mode]
+   [:--shadow-none        :none
+    :--shadow             :$shadow-4
+    :--shadow-dark-mode   :$shadow-4-dark-mode]
+
+   
+    ;; Intended for css props: box-shadow
+    ;; ------------------------------------------------------
+   
+  ;;  {:family   "Drop shadow colors"
+  ;;   :desc     {:en ""}
+  ;;   :category ["shadows"]
+  ;;   :tags     ["shadow" "surfaces"]
+  ;;   }
+   
+  ;;  {:family   "Drop shadows"
+  ;;   :desc     {:en ""}
+  ;;   :category ["shadows"]
+  ;;   :tags     ["shadow" "surfaces"]
+  ;;   }
+  ;;  {:--shadow-xxsmall "0 1px rgb(0 0 0 / 0.05)"
+  ;;   :--shadow-xsmall  "0 1px 2px 0 rgb(0 0 0 / 0.05)"
+  ;;   :--shadow-small   "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)"
+  ;;   :--shadow-md      "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
+  ;;   :--shadow-large   "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
+  ;;   :--shadow-xlarge  "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
+  ;;   :--shadow-xxlarge "0 25px 50px -12px rgb(0 0 0 / 0.25)"}
+   
+
+
 
    ;; Intended for css animations and transitions
    ;; ------------------------------------------------------
@@ -813,7 +839,7 @@
    {:family   "Scrollbar styling"
     :desc     {:en ""}
     :category ["scrollbar"]
-    :ns '[kushi.ui.modal]
+    :ns       '[kushi.ui.modal]
     :tags     ["scrollbar" "chrome" "browser-scrollbars"]
     }
    [:--scrollbar-thumb-color                  :$neutral-300
@@ -828,7 +854,7 @@
    {:family   "Collapse styling"
     :desc     {:en ""}
     :category ["collapse"]
-    :ns '[kushi.ui.collapse]
+    :ns       '[kushi.ui.collapse]
     :tags     ["collapse" "accordian"]
     }
    [:--collapse-transition-duration              :$slow]
@@ -838,7 +864,7 @@
    {:family   "Text field styling"
     :desc     {:en ""}
     :category ["input"]
-    :ns '[kushi.ui.text-field]
+    :ns       '[kushi.ui.text-field]
     :tags     ["text-input" "text-field" "input"]
     }
    [:--text-input-helper-margin-block-start      :0.3em

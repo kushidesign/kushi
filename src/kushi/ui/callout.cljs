@@ -1,5 +1,6 @@
 (ns kushi.ui.callout
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [domo.core :as domo]
    [goog.dom :as gdom]
@@ -21,7 +22,7 @@
         (js/setTimeout #(reagent.dom/unmount-component-at-node callout) duration)))))
 
 
-;; TODO - dedupe desc from global variants
+;; TODO - make version without the layout slots
 (defui callout
   {:summary "Callouts provide contextual feedback information for the user."
    :desc    "To position the callout at the top of the viewport, use the
@@ -29,7 +30,7 @@
           `:.fixed-block-end-inside` utility class for positioning
           at the bottom of the viewport."
    :props/family [:container]
-   :props/shared [:packing :transition]
+   :props/shared [:packing :transition [:surface {:default :faint}]]
    :props   {:header-icon     {:schema  :keyword,
                                :default nil,
                                :desc    "Name of the icon to anchored to the inline-start area of the callout."},
@@ -108,7 +109,7 @@
                 :.flex-col-fs
                 :min-width--1em)
        (if (keyword? header-icon)
-         [icon header-icon]
+         [icon {:colorway colorway} header-icon]
          header-icon)]
 
       (if (or (string? header-text)

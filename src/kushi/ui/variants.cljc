@@ -27,6 +27,9 @@
 (def contours
   (into [] (concat contours-basic+rounded contours-auxillary contours-rounded)))
 
+(def strokes
+  [:none :xsoft :soft :medium :hard :xhard])
+
 (def icon-style
   [:rounded :outlined :sharp])
 
@@ -63,12 +66,10 @@
    :solid
    :soft-classic
    :soft
+   :convex
    :faint
-   :faint-outline
-   :outline 
    :minimal
    :transparent
-   #_:convex
    ])
 
 (def positions 
@@ -91,7 +92,7 @@
    :relative])
 
 (def surfaces-tag
-  [:solid :soft :faint :faint-outline :outline :minimal])
+  [:solid :soft :faint :minimal])
 
 (def variants*
   (keyed [contours-basic
@@ -99,6 +100,7 @@
           contours-basic+rounded
           contours-rounded
           contours
+          strokes
           icon-style
           spinner-type
           packings
@@ -160,6 +162,7 @@
    :contour/rounded        (:contours-rounded/set variants)
    :contour/basic+rounded  (:contours-basic+rounded/set variants)
    :contour/auxillary      (:contours-auxillary/set variants)
+   :stroke                 (:strokes/set variants)
    :icon-style             (:icon-style/set variants)})
 
 (def enum-variants-by-custom-opt-key
@@ -180,6 +183,7 @@
    :contour/rounded        (:contours-rounded/enum variants)
    :contour/basic+rounded  (:contours-basic+rounded/enum variants)
    :contour/auxillary      (:contours-auxillary/enum variants)
+   :stroke                 (:strokes/enum variants)
    :icon-style             (:icon-style/enum variants)})
 
 (def ordered-variants-by-custom-opt-key
@@ -200,6 +204,7 @@
    :contour/rounded        (:contours-rounded/vector variants)
    :contour/basic+rounded  (:contours-basic+rounded/vector variants)
    :contour/auxillary      (:contours-auxillary/vector variants)
+   :stroke                 (:strokes/vector variants)
    :icon-style             (:icon-style/vector variants)})
 
 
@@ -246,13 +251,6 @@
                                :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." }
    :contour                   {:default :round
                                :desc    "Shape of the element."}
-   :stroke-align              {:schema   [:enum :inside :outside]
-                               :default  nil
-                               :desc     "Alignment of the stroke. Only applies to `:surface` `:outline`."
-                               :data-ks? false}
-   :stroke-width              {:schema  [:int]
-                               :default nil
-                               :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`."}
    :shadows                   {
                                ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
                                ;; TODO maybe :$myvar or "var(--myvar)" or "0 0 10px red" (legit shadow string)
@@ -264,17 +262,49 @@
                                }
 
    :drop-shadow               {
-                               :schema        [:or :keyword :string [:vector :any]]
-                               :desc          "Controls the drop shadow"
-                               :default       nil
-                               :data-ks?      false
+                               :schema   [:or :keyword :string [:vector :any]]
+                               :desc     "Controls the drop shadow"
+                               :default  nil
+                               :data-ks? false
+                               }
+   :multi-stroke              {
+                               :schema   [:vector [:tuple [:or :string :keyword] [:or :string :keyword]]]
+                               :desc     "When you want multiple strokes, e.g. `[[:2px :$red-500] [:5px :$green-500] [:2px :$blue-500]]`."
+                               :default  nil
+                               :data-ks? false
                                }
    :stroke                    {
-                               :schema        [:or :keyword :string [:vector :any]]
-                               :desc          "Controls the drop shadow"
-                               :default       nil
-                               :data-ks?      false
+                               :schema   [:or 
+                                          [:enum :none :xsoft :soft :medium :hard :xhard]
+                                          [:tuple
+                                           {:examples [[:1px :red]
+                                                       [:2em :$accent-400]
+                                                       ["4px" "rgb(0 0 0 / 0.5)"]
+                                                       ["var(--my-width, 1px)" "aliceblue"]]}
+                                           [:or :string :keyword] [:or :string :keyword]]
+                                          [:vector 
+                                           {:examples [[[:3px :$red-500]
+                                                        [:3px :$green-500]
+                                                        [:3px :$blue-500]]]}
+                                           [:tuple [:or :string :keyword] [:or :string :keyword]]]]
+                               :desc     "Can be set a number of different ways"
+                               :default  nil
+                               :data-ks? false
                                }
+   :stroke-color              {
+                               :schema   [:or :keyword :string]
+                               :desc     "Controls the stroke color."
+                               :default  "currentColor"
+                               ;; support a pred here so you can do :faint :soft :medium :hard
+                               :data-ks? false
+                               }
+   :stroke-align              {:schema   [:enum :inside :outside]
+                               :default  nil
+                               :desc     "Alignment of the stroke. Only applies to `:surface`."
+                               :data-ks? false}
+   :stroke-width              {:schema   [:or :string :keyword]
+                               :desc     "Width of the stroke. Only applies to `:surface`. Locally sets the value of `--stroke-width`."
+                               :data-ks? false}
    :packing                   {:default nil
                                :desc    "General amount of padding inside the element."}
    :end-enhancer              {:schema       [:or :string :keyword [:vector :any]]

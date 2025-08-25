@@ -83,7 +83,7 @@
                {:variant         :colorway
                 :variant-labels? false
                 :variant-scale   :colorway/named
-                :attrs           {:icon-filled? true
+                :attrs           {:icon-filled true
                                   :sizing       :xxxlarge}
                 :args            [:star]})}
 
@@ -109,7 +109,7 @@
                :variant-labels? false
                :variant-scale   :colorway/named}
               {:label           "Colorways, filled icon"
-               :attrs           {:icon-filled? true
+               :attrs           {:icon-filled true
                                  :sizing       :xxxlarge}
                :args            [:star]
                :variant-labels? false
@@ -147,7 +147,39 @@
                        [icon {:colorway :warning
                               :sizing   :xxxlarge} :warning]])}
    
-   
+   {:label   "Semantic colorways, solid surface, round contour"
+    :desc    "Examples of semantic coloring of icons"
+    :samples (samples ["accent"
+                       [icon {:colorway :accent
+                              :sizing   :xxxlarge
+                              :icon-filled :true
+                              ;; :surface  :solid
+                              :contour  :circle}
+                        :star]
+
+                       "negative"
+                       [icon {:colorway    :negative
+                              :sizing      :xxxlarge
+                              :icon-filled :true
+                              :contour     :circle}
+                        :cancel]
+
+                       "positive"
+                       [icon {:colorway :positive
+                              :sizing   :xxxlarge
+                              :icon-filled :true
+                              ;; :surface  :solid
+                              :contour  :circle} 
+                        :check-circle]
+
+                       "warning"
+                       [icon {:colorway :warning
+                              :sizing   :xxxlarge
+                              :icon-filled :true
+                              ;; :surface  :solid
+                              :contour  :circle}
+                        :warning]])}
+
    {:label   [:span "Various icons" [:span " (hover to view icon name)"]]
     ;;  :label/modal "Colorways ..."
     :desc    "Oh yeah"
@@ -296,14 +328,14 @@
                                   :variant-labels? false
                                   :variant-scale   :colorway/named}
                                {:label           "Colorways, filled icon"
-                                :attrs           {:icon-filled? true
+                                :attrs           {:icon-filled true
                                                   :sizing       :xxxlarge}
                                 :args            [:star]
                                 :variant-labels? false
                                 :variant-scale   :colorway/named
                                 }]}
           
-          :icon-filled? {:schema  boolean?
+          :icon-filled {:schema  boolean?
                          ;; :required? true
                          :default false
                          :desc    "Filled or not filled"

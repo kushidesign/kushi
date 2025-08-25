@@ -133,7 +133,7 @@
      x))
 
 
-(def debug-defui #_nil 'span)
+(def debug-defui nil #_'span)
 
 
 (defn- props-from-families* [m dbgf]

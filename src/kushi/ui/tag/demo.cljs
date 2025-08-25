@@ -23,7 +23,7 @@
                :label          "Colorways ... surfaces × contours",
                :rows?          true})}
 
-   {:label   "Contour variants"
+   {:label   "Contour"
     :desc    "Contour of the tag."
     :samples (samples-with-variant
               {:variant       :contour
@@ -33,7 +33,7 @@
                :args          ["New"]})}
    
    {:desc    "Surface variant of the tag.",
-    :label   "Surface variants",
+    :label   "Surface",
     :samples (samples-with-variant
               {:variant       :surface,
                :variant-scale :surface/tag,
@@ -41,7 +41,7 @@
                :args          ["New"]})}
    
    {:desc    "General amount of padding inside the tag",
-    :label   "Packing variants",
+    :label   "Packing",
     :samples (samples-with-variant
               {:attrs   {:colorway     :accent
                          :surface      :solid},
@@ -59,21 +59,68 @@
                          :colorway     :accent}
                :args    ["New"]})}
 
+   
+   {:label   "Stroke"
+    :desc    "Preset stroke styles."
+    :samples (samples-with-variant
+              {:variant       :stroke
+              ;;  :variant-scale :contour/basic+rounded
+               :attrs         {:colorway     :accent
+                               :surface      :minimal}
+               :args          ["New"]})}
+
+   {:label   "Stroke width"
+    :desc    "Custom stroke widths."
+    :samples (samples [[button
+                        {
+                         :colorway     :accent,
+                         :surface      :minimal,
+                         :stroke       :soft
+                         :stroke-width :1px
+                         :stroke-align :inside}
+                        "New"]
+                       [button
+                        {
+                         :colorway     :accent,
+                         :surface      :minimal,
+                         :stroke       :soft
+                         :stroke-width :2px
+                         :stroke-align :inside}
+                        "New"]
+                       [button
+                        {
+                         :colorway     :accent,
+                         :surface      :minimal,
+                         :stroke       :soft
+                         :stroke-width :3px
+                         :stroke-align :inside}
+                        "New"]
+                       [button
+                        {
+                         :colorway     :accent,
+                         :surface      :minimal,
+                         :stroke       :soft
+                         :stroke-width :4px
+                         :stroke-align :inside}
+                        "New"]
+                       ])}
+
+
    {:schema  #{:inside :outside},
     :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`",
     :label   "Stroke alignment",
     :require '[[kushi.ui.icon :refer [icon]]],
     :samples (samples [[tag
-                        {:sizing       :xlarge,
-                         :colorway     :accent,
-                         :surface      :outline,
+                        {:colorway     :accent,
+                        ;;  :surface      :minimal,
+                         :stroke       :medium
                          :stroke-align :inside
                          :stroke-width :2px}
                         "New"]
                        [tag
-                        {:sizing       :xlarge,
-                         :colorway     :accent,
-                         :surface      :outline,
+                        {:colorway     :accent,
+                        ;;  :surface      :outline,
+                         :stroke       :medium
                          :stroke-align :outside
                          :stroke-width :2px}
                         "New"]])}
@@ -87,13 +134,20 @@
                         "Pets"]
                        [tag
                         {:start-enhancer :auto-awesome,
-                         :colorway       :accent,
-                         :surface        :soft}
+                         :colorway     :accent,
+                         :surface      :soft}
                         "Wow"]
                        [tag
                         {:start-enhancer :check-circle,
-                         :colorway       :accent,
-                         :surface        :outline}
+                         :colorway     :accent,
+                         :surface      :faint
+                         :stroke       :soft}
+                        "Passing"]
+                       [tag
+                        {:start-enhancer :check-circle,
+                         :colorway     :accent,
+                         :surface      :minimal
+                         :stroke       :xsoft}
                         "Passing"]])}
    
    {:desc    "Content at the inline-end position preceding the tag text. Typically an icon.",
@@ -112,8 +166,16 @@
                        [tag
                         {:end-enhancer :check-circle,
                          :colorway     :accent,
-                         :surface      :outline}
-                        "Passing"]])}
+                         :surface      :faint
+                         :stroke       :soft}
+                        "Passing"]
+                       [tag
+                        {:end-enhancer :check-circle,
+                         :colorway     :accent,
+                         :surface      :minimal
+                         :stroke       :xsoft}
+                        "Passing"]
+                       ])}
 
    #_{:label   "Loading states",
     :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`",
@@ -196,7 +258,7 @@
 ;;                           :args  ["Done"]
 ;;                           :attrs {:colorway colorway}})}
 
-;;      #_{:desc            "Shape variants"
+;;      #_{:desc            "Shape"
 ;;       :sx-attrs        (sx-call (sx :fs--$small))
 ;;       :container-attrs playground-tag-rows-container4
 ;;       :variants+       [:minimal]
@@ -219,7 +281,7 @@
 ;;                         {:label "Leading icon"
 ;;                          :args  [[icon :pets] "Pets"]}]}
 
-;;      #_{:desc            "Weight variants"
+;;      #_{:desc            "Weight"
 ;;       :sx-attrs        (sx-call (sx :fs--$small))
 ;;       :container-attrs playground-tag-rows-container4
 ;;       :variants+       [:minimal]

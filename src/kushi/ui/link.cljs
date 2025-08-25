@@ -4,12 +4,7 @@
 
 (defui link
   {:desc         "A link is a wrapper for an anchor tag."
-   :props/shared [:sizing
-                  :colorway
-                  :position
-                  :transition
-                  :inert]
-   }
+   :props/shared [:sizing :position :transition]}
   [& args]
   (into [:a
          (merge-attrs
@@ -24,6 +19,3 @@
                :hover:tdc :currentColor})
           &attrs)]
         &children))
-
-
-;; TODO - Fix (css "[data-ks-wtf=\"hi\"]")

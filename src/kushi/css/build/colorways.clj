@@ -1,4 +1,5 @@
-(ns kushi.css.build.colorways)
+(ns kushi.css.build.colorways
+  (:require [fireworks.core :refer [? !? ?> !?>]]))
 
 (defn colorway-selector [s]
   (str "[data-ks-colorway=\"" s "\"]"))
@@ -21,6 +22,7 @@
          :dark:hover:color  (keyword (str "$foreground-color-" s "-dark-mode"))
          :dark:active:color (keyword (str "$foreground-color-" s "-dark-mode"))}
 
+        ;; TODO - maybe lighten by a step?
         soft
         {:bgc               (keyword (str "$background-color-" s "-soft-3"))
          :dark:bgc          (keyword (str "$background-color-" s "-soft-3-dark-mode"))
@@ -33,7 +35,8 @@
          :active:color      (keyword (str "$foreground-color-" s "-3"))
          :dark:color        (keyword (str "$foreground-color-" s "-3-dark-mode"))
          :dark:hover:color  (keyword (str "$foreground-color-" s "-3-dark-mode"))
-         :dark:active:color (keyword (str "$foreground-color-" s "-3-dark-mode"))}
+         :dark:active:color (keyword (str "$foreground-color-" s "-3-dark-mode"))
+         }
         
         soft-inert
         {
@@ -45,13 +48,12 @@
          :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-3-dark-mode"))
          :dark:active:bgc (keyword (str "$background-color-" s "-soft-3-dark-mode"))}
         
-
         faint
         {:bgc             (keyword (str "$background-color-" s "-soft"))
-         :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
          :hover:bgc       (keyword (str "$background-color-" s "-soft-2"))
-         :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-2-dark-mode"))
          :active:bgc      (keyword (str "$background-color-" s "-soft-3"))
+         :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
+         :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-2-dark-mode"))
          :dark:active:bgc (keyword (str "$background-color-" s "-soft-3-dark-mode"))}
 
         faint-inert
@@ -61,6 +63,37 @@
          :dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
          :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
          :dark:active:bgc (keyword (str "$background-color-" s "-soft-dark-mode"))}
+        
+        convex
+        (let [lg "linear-gradient(180deg, transparent, transparent 15%, "
+              lg-dark "linear-gradient(360deg, transparent, transparent 15%, "]
+          {:bgi               (str lg "var(--background-color-" s "-soft-3))")
+           :hover:bgi         (str lg "var(--background-color-" s "-soft-4))")
+           :hover:bgc         (keyword (str "$background-color-" s "-soft"))
+           :active:bgi        (str lg "var(--background-color-" s "-soft-5))")
+           :active:bgc        (keyword (str "$background-color-" s "-soft-2"))
+           :color             (keyword (str "$foreground-color-" s "-2"))
+           :hover:color       (keyword (str "$foreground-color-" s "-3"))
+           :active:color      (keyword (str "$foreground-color-" s "-3"))
+           :dark:bgi          (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")
+           :dark:hover:bgi    (str lg-dark "var(--background-color-" s "-soft-4-dark-mode))")
+           :dark:hover:bgc    (keyword (str "$background-color-" s "-soft-dark-mode"))
+           :dark:active:bgi   (str lg-dark "var(--background-color-" s "-soft-5-dark-mode))")
+           :dark:active:bgc   (keyword (str "$background-color-" s "-soft-2-dark-mode"))
+           :dark:color        (keyword (str "$foreground-color-" s "-2-dark-mode"))
+           :dark:hover:color  (keyword (str "$foreground-color-" s "-3-dark-mode"))
+           :dark:active:color (keyword (str "$foreground-color-" s "-3-dark-mode"))
+           })
+
+        convex-inert
+        (let [lg "linear-gradient(180deg, transparent, transparent 15%, "
+              lg-dark "linear-gradient(360deg, transparent, transparent 15%, "]
+          {:bgi (str lg "var(--background-color-" s "-soft-3))")
+           :hover:bgi (str lg "var(--background-color-" s "-soft-3))")
+           :active:bgi (str lg "var(--background-color-" s "-soft-3))")
+           :dark:bgi (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")
+           :dark:hover:bgi (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")
+           :dark:active:bgi (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")})
         ]
 
    [{"[data-ks-surface= \"transparent\"]"                  
@@ -86,20 +119,6 @@
              :dark:hover:bgc  "transparent"
              :dark:active:bgc "transparent"})
 
-     "[data-ks-surface= \"outline\"]" 
-     (merge base
-            {:hover:bgc       (keyword (str "$background-color-" s "-soft"))
-             :active:bgc      (keyword (str "$background-color-" s "-soft-2"))
-             :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
-             :dark:active:bgc (keyword (str "$background-color-" s "-soft-2-dark-mode"))})
-
-     "[data-ks-surface= \"outline\"][data-ks-inert]"
-     (merge base-inert
-            {:hover:bgc       "transparent"
-             :active:bgc      "transparent"
-             :dark:hover:bgc  "transparent"
-             :dark:active:bgc "transparent"})
-
 
      "[data-ks-surface= \"faint\"]"                        
      (merge base
@@ -110,14 +129,14 @@
      (merge base-inert
             faint-inert)
 
-     "[data-ks-surface= \"faint-outline\"]"                        
-     (merge base
-            faint)
+     "[data-ks-surface= \"convex\"]"                        
+     (merge faint ; <- for :bgc
+            convex)
 
 
-     "[data-ks-surface= \"faint-outline\"][data-ks-inert]"         
-     (merge base-inert
-            faint-inert)
+     "[data-ks-surface= \"convex\"][data-ks-inert]"         
+     (merge faint-inert ; <- for :bgc
+            convex-inert)
 
      "[data-ks-surface= \"soft\"]"                          
      soft

@@ -11,17 +11,17 @@
 (def demos
   [
    {:samples (samples-with-variant
-              {:args           ["Next"],
-               :variant        :colorway,
-               :variant-scale  :colorway/named,
-               :x-variants     [:surface],
-               :snippets?      false
+              {:args          ["Next"],
+               :variant       :colorway,
+               :variant-scale :colorway/named,
+               :x-variants    [:surface],
+               :snippets?     false
                ;;  :attrs/snippet  {:surface :solid},
                ;; :attrs/display  {:sizing :small},
                ;;  :label          "Colorways, surfaces × contours",
-               :label          "Colorways × surfaces",
-               :attrs          {:end-enhancer :east},
-               :rows?          true})}
+               :label         "Colorways × surfaces",
+               :attrs         {:end-enhancer :east},
+               :rows?         true})}
 
    {:samples (samples-with-variant
               {:args          ["Next"],
@@ -38,14 +38,14 @@
                :rows?         true})}
 
    {:desc    "Surface variant of the button.",
-    :label   "Surface variants",
+    :label   "Surface",
     :samples (samples-with-variant
               {:attrs   {:end-enhancer :east
                          :colorway     :accent},
                :args    ["Next"],
                :variant :surface})}
    
-   {:label   "Contour variants"
+   {:label   "Contour"
     :desc    "Contour of the button."
     :samples (samples-with-variant
               {:variant       :contour
@@ -56,7 +56,7 @@
                :args          ["Next"]})}
    
    {:desc    "General amount of padding inside the button",
-    :label   "Packing variants",
+    :label   "Packing",
     :samples (samples-with-variant
               {:attrs   {:end-enhancer :east
                          :colorway     :accent
@@ -76,63 +76,125 @@
                          :colorway     :accent}
                :args    ["Next"]})}
 
-   {:schema  #{:inside :outside},
-    :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`",
-    :label   "Stroke alignment",
-    :require [[kushi.ui.icon :refer [icon]]],
+   {:label   "Stroke"
+    :desc    "Preset stroke styles."
+    :samples (samples-with-variant
+              {:variant       :stroke
+              ;;  :variant-scale :contour/basic+rounded
+               :attrs         {:end-enhancer :east
+                               :colorway     :accent
+                               :surface      :minimal}
+               :args          ["Next"]})}
+
+   {:label   "Stroke width"
+    :desc    "Custom stroke widths."
     :samples (samples [[button
                         {:end-enhancer :east,
-                         :sizing       :xlarge,
                          :colorway     :accent,
-                         :surface      :outline,
+                         :surface      :minimal,
+                         :stroke       :medium
+                         :stroke-width :1px
+                         :stroke-align :inside}
+                        "Next"]
+                       [button
+                        {:end-enhancer :east,
+                         :colorway     :accent,
+                         :surface      :minimal,
+                         :stroke       :medium
+                         :stroke-width :2px
+                         :stroke-align :inside}
+                        "Next"]
+                       [button
+                        {:end-enhancer :east,
+                         :colorway     :accent,
+                         :surface      :minimal,
+                         :stroke       :medium
                          :stroke-width :3px
                          :stroke-align :inside}
                         "Next"]
                        [button
-                        {:end-enhancer ':east,
-                         :sizing       :xlarge,
+                        {:end-enhancer :east,
                          :colorway     :accent,
-                         :surface      :outline,
-                         :stroke-width :3px
+                         :surface      :minimal,
+                         :stroke       :medium
+                         :stroke-width :4px
+                         :stroke-align :inside}
+                        "Next"]
+                       ])}
+
+   {:schema  #{:inside :outside},
+    :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`",
+    :label   "Stroke alignment",
+    :samples (samples [[button
+                        {:end-enhancer :east,
+                         :colorway     :accent,
+                         :surface      :minimal,
+                         :stroke       :medium
+                         :stroke-width :2px
+                         :stroke-align :inside}
+                        "Next"]
+                       [button
+                        {:end-enhancer :east,
+                         :colorway     :accent,
+                         :surface      :minimal,
+                         :stroke       :medium
+                         :stroke-width :2px
                          :stroke-align :outside}
                         "Next"]])}
 
    {:desc    "Content at the inline-start position following the button text. Typically an icon.",
-    :label   "Start-enhancer icons",
+    :label   "Start-enhancer",
     :samples (samples [[button
-                        {:start-enhancer :pets,
+                        {:start-enhancer :west,
                          :colorway       :accent,
                          :surface        :solid}
-                        "Pets"]
+                        "Back"]
                        [button
                         {:start-enhancer :auto-awesome,
                          :colorway       :accent,
                          :surface        :soft}
-                        "Wow"]
+                        "Enhance"]
                        [button
                         {:start-enhancer :play-arrow,
                          :colorway       :accent,
-                         :surface        :outline}
-                        "Play"]])}
+                         :surface        :faint
+                         :stroke         :soft
+                         }
+                        "Play"]
+                       [button
+                        {:start-enhancer :check-circle,
+                         :colorway       :accent,
+                         :surface        :minimal
+                         :stroke         :xsoft}
+                        "Confirm"]
+                       ])}
    
    {:desc    "Content at the inline-end position preceding the button text. Typically an icon.",
-    :label   "End-enhancer icons",
+    :label   "End-enhancer",
     :require [[kushi.ui.icon :refer [icon]]],
     :samples (samples [[button
-                        {:end-enhancer :pets,
+                        {:end-enhancer :east,
                          :colorway     :accent,
                          :surface      :solid}
-                        "Pets"]
+                        "Next"]
                        [button
                         {:end-enhancer :auto-awesome,
                          :colorway     :accent,
                          :surface      :soft}
-                        "Wow"]
+                        "Enhance"]
                        [button
                         {:end-enhancer :play-arrow,
                          :colorway     :accent,
-                         :surface      :outline}
-                        "Play"]])}
+                         :surface      :faint
+                         :stroke       :soft}
+                        "Play"]
+                       [button
+                        {:end-enhancer :check-circle,
+                         :colorway     :accent,
+                         :surface      :minimal
+                         :stroke       :xsoft}
+                        "Confirm"]
+                       ])}
 
    {:label   "Loading states",
     :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`",
@@ -142,26 +204,26 @@
                [kushi.ui.spinner :refer [spinner]]],
     :samples (samples
               [[button
-                {:loading     true,
+                {:loading      true,
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :donut}]
                  }
                 "Play"]
                [button
-                {:loading     true,
+                {:loading      true,
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :propeller}]}
                 "Play"]
                [button
-                {:loading     true,
+                {:loading      true,
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :thinking}]}
                 "Play"]
                [button
-                {:loading true
+                {:loading  true
                  :colorway :accent
                  :surface  :solid}
                 [:span {:style {:visibility :hidden

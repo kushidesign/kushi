@@ -31,7 +31,7 @@
    [kushi.ui.spinner.demo]
 
    [kushi.ui.callout :refer [callout]]
-  ;;  [kushi.ui.callout.demo]
+   [kushi.ui.callout.demo]
 
    [kushi.ui.tag :refer [tag]]
    [kushi.ui.tag.demo]
@@ -309,7 +309,7 @@
             :inert           true}] 
 
 
-  [:div (sx :.flex-col-center :.absolute-centered :gap--3rem) 
+  [:div (sx :.flex-col-center :p--20px #_:.absolute-centered :gap--3rem) 
 
    #_[:span.flex-row-start
       [radio {:name   :g
@@ -318,7 +318,7 @@
       [label {:for :foo} "hi"]]
 
 
-   [:div.flex-col-start (sx :gap--0.1rem)
+   #_[:div.flex-col-start (sx :gap--1rem)
     ;; [switch]
     ;; [switch {:colorway :neutral}]
     #_#_#_
@@ -336,9 +336,11 @@
     ;; [switch {:colorway :negative}]
     ;; [button {:surface :outline :sizing :large} "Click"]
     ;; [button {:surface :classic :sizing :large} "Click"]
-    [button
+
+    #_[button
      (merge-attrs 
-      {:surface      :solid-classic
+      {:at           (at)
+       :surface      :soft-classic
        :sizing       :large
        :contour      :pill
        :colorway     :accent
@@ -347,7 +349,35 @@
        :drop-shadow  ["5px 5px 10px currentColor"]
        })
      "Click"]
+
+    #_[button
+     (merge-attrs 
+      {:surface      :transparent
+       :sizing       :large
+       :contour      :pill
+       :colorway     :accent
+      ;;  :stroke [[:4px :$brown-300] [:2px :$green-300]]
+       :stroke       :soft
+      ;;  :stroke-width "5px"
+       :stroke-align :inside
+      ;;  :drop-shadow  ["5px 5px 10px pink"]
+       })
+     "Click"]
     
+    [button
+     {:at           (at)
+      :surface      :solid
+      :sizing       :large
+      :contour      :pill
+      :colorway     :accent
+        ;; :stroke [[:4px :$brown-300] [:2px :$green-300]]
+      :stroke       :medium
+      :stroke-width "3px"
+      :stroke-align :outside
+      :drop-shadow  ["0 10px 10px -0px pink"]
+      :class        (css ["--stroke-transparency-mix-color" :$green-600])}
+     "Click"]
+
     ;; [button {:surface :soft-classic :sizing :large :contour :pill :colorway :accent} "Click"]
     ;; [thumb {:surface :outline :sizing :xxlarge :stroke-width :1px}]
     ;; [thumb {:surface :soft-classic :sizing :xxlarge #_#_:stroke-width :1px}]
@@ -457,10 +487,24 @@
              :id         :foo}
        :star]]
    
+  #_[button
+   {:start-enhancer :check-circle,
+    :colorway       :accent,
+    :surface        :minimal
+    :stroke         :xsoft}
+   "Passing"]
+
+  #_[tag
+   {:start-enhancer :check-circle,
+    :colorway       :accent,
+    :surface        :minimal
+    :stroke         :xsoft}
+   "Passing"] 
+
    ]
 
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
-                                 kushi.ui.icon.demo/demos))]
+                               kushi.ui.icon.demo/demos))]
 
   #_[showcase (!? (showcase/opts kushi.ui.tag/tag
                                kushi.ui.tag.demo/demos))]
@@ -469,24 +513,12 @@
                                kushi.ui.button.demo/demos))]
 
 
-  #_[button 
-   {:sizing       :xxxlarge
-    :surface      :solid 
-    :position     :absolute-centered
-    :colorway     :red
-    :end-enhancer :east}
-   "Next"
-
-   #_[spinner {:spinner-type :thinking}]
-
-   ]
-
   #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
                                kushi.ui.spinner.demo/demos))]
 
-  #_[showcase (? {:display-metadata? false}
-                 (showcase/opts kushi.ui.callout/callout
-                                kushi.ui.callout.demo/demos))]
+    
+  [showcase (!? (showcase/opts kushi.ui.callout/callout
+                               kushi.ui.callout.demo/demos))]
 
   #_[showcase (? {:display-metadata? false}
                  (showcase/opts kushi.ui.checkbox/checkbox

@@ -49,8 +49,8 @@
    `[icon mui.svg/add]`. You can also create and utilize similar namespace in
    your own project with your own collection of icon `svg`s."
 
-   :props/shared [[:surface {:default :transparent}]       
-                  [:colorway {:default nil}]
+   :props/shared [:colorway
+                  :contour
                   :sizing
                   :weight       
                   :position
@@ -77,8 +77,8 @@
           :_svg:height--1em
           :_svg>path:fill--currentColor)
 
-      ;; TODO - what if you want to redefine the default value for e.g. :surface? Best way?
-      ;; {:data-ks-surface (or (some-> surface kushi.ui.util/as-str) "transparent")}
+      ;; This is necessary to enable colorways
+      {:data-ks-surface "transparent"}
       &attrs)
      (cond
        (and (vector? icon*) (= :svg (first icon*)))
