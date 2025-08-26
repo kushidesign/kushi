@@ -10,6 +10,7 @@
 
 
 ;; data-ks-attribute resolution ------------------------------------------------
+(def debug-data-ks? (atom false))
 
 (defn data-ns-flex-attrs [m]
   (when-let [{:keys [display]} m]
@@ -97,14 +98,21 @@
    just ignore it, if the prop is just used for internal logic in the component
    rendering function."
   [props defaults-by-prop flag]
-  (!? (symbol (str flag ":data-ks-attrs"))
+
+  (when (= flag :runtime) (reset! debug-data-ks? true))
+  (?  (symbol (str flag ":data-ks-attrs"))
+      {:when @debug-data-ks?}
+      (keyed [props defaults-by-prop]))
+  (?  (symbol (str flag ":data-ks-attrs"))
+      {:when @debug-data-ks?}
       (merge (!? (reduce-kv 
-              (fn [m k prop]
-                (merge m
-                       (when (destined-for-data-ks-attr? k prop)
-                         (data-ks-attr props k prop))))
-              {} 
-              (!? defaults-by-prop)))
+                  (fn [m k prop]
+                    (merge m
+                           (when (? {:when (and @debug-data-ks? (= k :shadow-color))}
+                                  (destined-for-data-ks-attr? k prop))
+                             (data-ks-attr props k prop))))
+                  {} 
+                  (!? defaults-by-prop)))
              (!? (data-ns-flex-attrs props))
              (some->> props :at (hash-map :data-ks-at)))))
 

@@ -32,7 +32,8 @@
                  :contour
                  [:surface {:default :soft}]
                  :transition
-                 :drop-shadow]}
+                 :drop-shadow
+                 :shadow-color]}
  [& args]
  (let [{:keys [loading
                stroke

@@ -1370,4 +1370,59 @@
 (defcss "[data-ks-ai=\"flex-end\"]" :ai--flex-end)
 
 
+;; Shadows experimentation ------------------------------------------------------
 
+;; TODO - selector should be
+;; (defcss {:data-ks-surface      ""
+;;          :data-ks-drop-shadow  ""
+;;          :data-ks-shadow-color :blue} 
+;;   {:--shadow-color             :$blue-500})
+
+;; modern version
+(defcss "[data-ks-surface][data-ks-drop-shadow]" 
+ {
+  "&[data-ks-shadow-color=\"red\"]" {:--shadow-color :$red-500}
+  "&[data-ks-shadow-color=\"blue\"]" {:--shadow-color :$blue-500}
+  "&[data-ks-shadow-color=\"accent\"]" {:--shadow-color :$blue-500}
+  "&[data-ks-shadow-color=\"green\"]" {:--shadow-color :$green-500}
+  })
+
+;; legacy-version
+;; (defcss "[data-ks-surface][data-ks-drop-shadow][data-ks-shadow-color=\"red\"]" 
+;;   {
+;;    :--shadow-color-red-h-s-l         "10 100 50" ; <- this would be in :root
+;;    :--shadow-color-h-s-l             :$shadow-color-red-h-s-l})
+
+;; super legacy-version, no support for shadow-strength
+;; (defcss "[data-ks-surface][data-ks-drop-shadow][data-ks-shadow-color=\"red\"]" 
+;;   {
+;;    :--shadow-color-red-hex         "#f908244d" ; <- this would be in :root
+;;    :--shadow-color-hex             :$shadow-color-red-hex})
+
+
+;; modern version
+(defcss "[data-ks-surface][data-ks-drop-shadow]" 
+  {:--shadow-color             "black"
+   :--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 20%), transparent)"})
+
+;; legacy version
+;; (defcss "[data-ks-surface][data-ks-drop-shadow]" 
+;;   {:--shadow-color-h-s-l     "0 0 0"
+;;    :--shadow-strength      "20%"
+;;    ;; TODO - figure out whether the slash "/" syntax works in older browsers
+;;    :--transparent-shadow-color "hsl(var(--shadow-color-h-s-l) / var(--shadow-strength))"})
+
+;; super-legacy version
+;; (defcss "[data-ks-surface][data-ks-drop-shadow]" 
+;;   {;; TODO - figure out whether the slash "/" syntax works in older browsers
+;;    :--transparent-shadow-color "var(--shadow-color-hex)"})
+
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxsmall\"]" [:box-shadow "0 1px 1px (--transparent-shadow-color)"])
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"]"  [:box-shadow "0 1px 2px 0 (--transparent-shadow-color)"])
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"]"  [:box-shadow "0 1px 3px 0 var(--transparent-shadow-color), 0 1px 2px -1px var(--transparent-shadow-color)"])
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"]"  [:box-shadow "0 4px 6px -1px var(--transparent-shadow-color), 0 2px 4px -2px var(--transparent-shadow-color)"])
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"  {:box-shadow "0 10px 15px -3px var(--transparent-shadow-color), 0 4px 6px -4px var(--transparent-shadow-color)"
+                                                             ;; Remove :dark after you take legacy stuff out
+                                                             :dark:box-shadow "0 10px 15px -3px var(--transparent-shadow-color), 0 4px 6px -4px var(--transparent-shadow-color)"})
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"]"  [:box-shadow "0 20px 25px -5px var(--transparent-shadow-color), 0 8px 10px -6px var(--transparent-shadow-color)"])
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxlarge\"]" [:box-shadow "0 25px 50px -12px var(--transparent-shadow-color), 0 8px 10px -6px var(--transparent-shadow-color)"])

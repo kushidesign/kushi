@@ -340,21 +340,22 @@
     ;; [button {:surface :outline :sizing :large} "Click"]
     ;; [button {:surface :classic :sizing :large} "Click"]
       
-      [button
+      #_[button
        (merge-attrs 
         {:at               (at)
-         :surface          :solid
+         :surface          :transparent
          :size             :large
          :contour          :pill
          :colorway         :accent
-         :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
-         :stroke/width     :5px
-         :stroke/align     :outside
-         :shadow           :large
-         :shadow/color     :$blue-500
-         :shadow/strength  :medium
+        ;;  :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
+        ;;  :stroke-width     :5px
+        ;;  :stroke-align     :outside
+         :drop-shadow      :large
+        ;;  :shadow-color     :$blue-500
+        ;;  :shadow-strength  :medium
          #_["5px 5px 10px currentColor"]
-         })
+         :style {"--shadow-color"    "var(--red-500)"
+                 "--shadow-strength" "30%"}})
        "Click"]
 
       #_[button
@@ -546,6 +547,15 @@
 
   #_[showcase (!? (showcase/opts kushi.ui.tag/tag
                                kushi.ui.tag.demo/demos))]
+
+  [:div.absolute-centered 
+   [button {:end-enhancer :east
+            :colorway     :accent
+            :surface      :minimal
+            :drop-shadow  :large
+            :shadow-color :accent
+            :class        (css [:hover:--shadow-strength :50%])}
+    "Next"]]
 
   #_[showcase (!? (showcase/opts kushi.ui.button/button
                                kushi.ui.button.demo/demos))]

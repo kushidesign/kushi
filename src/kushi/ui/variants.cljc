@@ -30,6 +30,9 @@
 (def strokes
   [:none :xsoft :soft :medium :hard :xhard])
 
+(def drop-shadows
+  [:xxsmall :xsmall :small :medium :large :xlarge :xxlarge])
+
 (def icon-style
   [:rounded :outlined :sharp])
 
@@ -47,6 +50,9 @@
   [:neutral :accent :positive :warning :negative])
 
 (def colorways
+  (apply conj colorways-named colorways-semantic))
+
+(def shadow-colors
   (apply conj colorways-named colorways-semantic))
 
 (def sizings-xxsmall-xlarge
@@ -101,6 +107,8 @@
           contours-rounded
           contours
           strokes
+          drop-shadows
+          shadow-colors
           icon-style
           spinner-type
           packings
@@ -163,6 +171,8 @@
    :contour/basic+rounded  (:contours-basic+rounded/set variants)
    :contour/auxillary      (:contours-auxillary/set variants)
    :stroke                 (:strokes/set variants)
+   :drop-shadow            (:drop-shadows/set variants)
+   :shadow-color           (:shadow-colors/set variants)
    :icon-style             (:icon-style/set variants)})
 
 (def enum-variants-by-custom-opt-key
@@ -184,6 +194,8 @@
    :contour/basic+rounded  (:contours-basic+rounded/enum variants)
    :contour/auxillary      (:contours-auxillary/enum variants)
    :stroke                 (:strokes/enum variants)
+   :drop-shadow            (:drop-shadows/enum variants)
+   :shadow-color           (:shadow-colors/enum variants)
    :icon-style             (:icon-style/enum variants)})
 
 (def ordered-variants-by-custom-opt-key
@@ -205,7 +217,10 @@
    :contour/basic+rounded  (:contours-basic+rounded/vector variants)
    :contour/auxillary      (:contours-auxillary/vector variants)
    :stroke                 (:strokes/vector variants)
+   :drop-shadow            (:drop-shadows/vector variants)
+   :shadow-color           (:shadow-colors/vector variants)
    :icon-style             (:icon-style/vector variants)})
+
 
 
 (def variants-by-custom-opt-key-set
@@ -266,6 +281,11 @@
                                :desc     "Controls the drop shadow"
                                :default  nil
                                :data-ks? false
+                               }
+
+   :shadow-color            {
+                               :desc     "Controls the drop shadow"
+                               :default  nil
                                }
    :multi-stroke              {
                                :schema   [:vector [:tuple [:or :string :keyword] [:or :string :keyword]]]

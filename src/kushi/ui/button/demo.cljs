@@ -10,6 +10,18 @@
 
 (def demos
   [
+   {:label   "Shadow"
+    :desc    "Preset shadow styles."
+    :samples (samples-with-variant
+              {:variant       :drop-shadow
+              ;;  :variant-scale :contour/basic+rounded
+               :attrs         {:end-enhancer :east
+                               :colorway     :accent
+                               :surface      :minimal
+                               :shadow-color :red}
+               :args          ["Next"]})}
+   ]
+  #_[
    {:samples (samples-with-variant
               {:args          ["Next"],
                :variant       :colorway,

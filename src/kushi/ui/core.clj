@@ -533,7 +533,7 @@
        [& args#]
        (let [extracted*#           (!? (kushi.ui.core/extract args# ~props-keys ~fn-info))
 
-             props->data-ks-attrs# (?
+             props->data-ks-attrs# (!?
                                     (kushi.ui.core/data-ks-attrs 
                                      (:props extracted*#)
                                      (select-keys ~defaults-by-prop (-> extracted*# :props keys))
@@ -706,6 +706,9 @@
 
 
 ;; Experimental
+
+;; TODO - try pulling out the non-dynamic parts for processing ? 
+
 ;; (defmacro pc 
 ;;   "Optional compile-time computation of HTML attributes and styles related to
 ;;    strokes and shadows on components defined with kushi.ui.core/defui"
