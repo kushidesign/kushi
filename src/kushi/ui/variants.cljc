@@ -249,16 +249,17 @@
                                :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."}
    :colorway                  {:default :neutral
                                :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." }
-   :contour                   {:desc    "Shape of the element."}
-   :shadows                   {
-                               ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
-                               ;; TODO maybe :$myvar or "var(--myvar)" or "0 0 10px red" (legit shadow string)
-                               :schema        [:vector [:and :string [:re #"^var\(--[^\)\s]+\)"]]]
-                               :desc          "Vector of design tokens which are values for the CSS box-shadow property."
-                               :default       nil
-                               :when-not-nil  ""
-                               :style-tokens? true  
-                               }
+   :contour                   {:desc    "Shape of the element."
+                               :default nil}
+  ;;  :shadows                   {
+  ;;                              ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
+  ;;                              ;; TODO maybe :$myvar or "var(--myvar)" or "0 0 10px red" (legit shadow string)
+  ;;                              :schema        [:vector [:and :string [:re #"^var\(--[^\)\s]+\)"]]]
+  ;;                              :desc          "Vector of design tokens which are values for the CSS box-shadow property."
+  ;;                              :default       nil
+  ;;                              :when-not-nil  ""
+  ;;                              :style-tokens? true  
+  ;;                              }
 
    :drop-shadow               {
                                :schema   [:or :keyword :string [:vector :any]]

@@ -12,6 +12,7 @@
    [kushi.ui.util :refer [keyed]]
    [kushi.ui.variants :as props]
    [kushi.ui.decoration :as decoration]
+   [kushi.ui.extract :as extract]
    [malli.core :as m]))
 
 (def ^:private html-attrs 
@@ -166,7 +167,7 @@
      x))
 
 
-(def debug-defui nil #_'span)
+(def debug-defui nil #_box)
 
 
 (defn- props-from-families* [m dbgf]
@@ -182,8 +183,8 @@
            #_(dbg 'hydrated-constituent-prop-map)))
 
 
-(defn- props-trimmed* [merged-props dbgf]
-  (dbgf 'props-trimmed
+(defn- defaults-by-prop* [merged-props dbgf]
+  (dbgf 'defaults-by-prop*
        (reduce-kv (fn [m k v]
                     (assoc m
                            k
@@ -431,7 +432,7 @@
    body ; <- body of component
    ]
 
-  (reset! debug? (if (= sym 'card) true false))
+  (reset! debug? (if (= sym 'box) true false))
 
   (let [!dbgf
         (fn [_ x] x)
@@ -471,9 +472,13 @@
 
         ;; trims the props to only give data-ks-attrs what it needs at runtime,
         ;; which are the :default and :data-ks? :data-ks (data trans fn) entries
-        props-trimmed
-        (props-trimmed* props-with-schemas dbgf)
-        
+        defaults-by-prop
+        (!? {:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
+
+
+        data-ks-attrs-map-with-defaults
+        (!? 'data-ks-attrs-map-with-defaults {:when @debug?} 
+         (kushi.ui.extract/data-ks-attrs {} defaults-by-prop :comptime))
 
         props-keys   
         (let [ks (keys merged-props)]
@@ -526,49 +531,62 @@
     `(defn ~sym 
        ~mm
        [& args#]
-       (let [extracted*#          (kushi.ui.core/extract args# ~props-keys ~fn-info)
-             data-ks-attrs#       (kushi.ui.core/data-ks-attrs 
-                                   (:props extracted*#)
-                                   ~props-trimmed)
-             props#               (merge (dissoc (:props extracted*#) :at)
-                                         ~user-props-with-default-values)
-             extracted#           {:&props         props#
-                                   :&attrs         (merge (:attrs extracted*#)
-                                                          data-ks-attrs#)
-                                   :&data-ks-attrs data-ks-attrs#
-                                   :&children      (:children extracted*#)
-                                   :args           args#}
-             {:keys ~ks}          extracted#]
+       (let [extracted*#           (!? (kushi.ui.core/extract args# ~props-keys ~fn-info))
+
+             props->data-ks-attrs# (?
+                                    (kushi.ui.core/data-ks-attrs 
+                                     (:props extracted*#)
+                                     (select-keys ~defaults-by-prop (-> extracted*# :props keys))
+                                     :runtime))
+
+            ;;  data-ks-attrs_#        (? (kushi.ui.core/data-ks-attrs 
+            ;;                         (:props extracted*#)
+            ;;                         ~defaults-by-prop))
+
+             data-ks-attrs#        (merge ~data-ks-attrs-map-with-defaults
+                                          props->data-ks-attrs#)
+
+            ;;  _#                    (? (= data-ks-attrs_# data-ks-attrs#))            
+
+             props#                (merge (dissoc (:props extracted*#) :at)
+                                          ~user-props-with-default-values)
+             extracted#            {:&props         props#
+                                    :&attrs         (merge (:attrs extracted*#)
+                                                           data-ks-attrs#)
+                                    :&data-ks-attrs data-ks-attrs#
+                                    :&children      (:children extracted*#)
+                                    :args           args#}
+             {:keys ~ks}  extracted#]
 
         ;; Dev-only runtime malli validation ===================================
          
-        (when ^boolean js/goog.DEBUG
-         
+         (when ^boolean js/goog.DEBUG
+           
           ;;  ------------------------------------------------------------------
           ;;  Internal dev only, debugging specific instance of component ------
           ;;  comment this block out if not debugging
-         
+           
           ;;  1. Set kushi.core/debug-defui to the name (symbol) of the
           ;;     component you want to debug.
-         
+           
           ;;  2. At the call-site in consuming app, give the instance of that
           ;;     component a unique :data-ks-debug value in the attrs map.
-         
+           
           ;;  3. Set the data-ks-debug# binding below to match the value you
           ;;     chose in step 2.
-         
+           
            #_(when (= (quote ~sym) (quote ~debug-defui))
-             (let [data-ks-debug# :foobar]
-               (when (some-> extracted*#
-                             :attrs
-                             :data-ks-debug
-                             (= data-ks-debug#))
-                 (!? "extracted" extracted#)
-                 (!? "extracted*" extracted*#))))
-         
+               (let [data-ks-debug# :foobar]
+                 (when (some-> extracted*#
+                               :attrs
+                               :data-ks-debug
+                               (= data-ks-debug#))
+                   (!? "extracted" extracted#)
+                   (!? "extracted*" extracted*#))))
+           
           ;;  End of internal dev only, debugging specific instance of component
           ;;  ------------------------------------------------------------------
-         
+           
           ;;  Dev-only, this is where runtime malli validation happens
            (kushi.ui.core/validate*2
             (assoc ~mm 

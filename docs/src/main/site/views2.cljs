@@ -10,7 +10,7 @@
    [kushi.core :refer [?sx sx css merge-attrs mrj at]]
    [kushi.playground.shared-styles]
   ;;  [kushi.ui.variants]
-   [kushi.ui.core :refer [defui data-ks-attrs pc]]
+   [kushi.ui.core :refer [defui data-ks-attrs #_pc]]
 
    [kushi.showcase.core :as showcase :refer [showcase]]
 
@@ -326,7 +326,7 @@
              :sizing  :xxxlarge}
       ]
 
-     [switch
+     #_[switch
       (mrj
        #_(sx [:--switch-border-width :0px]
            [:--switch-thumb-scale-factor :1.25])
@@ -340,18 +340,22 @@
     ;; [button {:surface :outline :sizing :large} "Click"]
     ;; [button {:surface :classic :sizing :large} "Click"]
       
-      #_[button
-         (merge-attrs 
-          {:at           (at)
-           :surface      :soft-classic
-           :sizing       :large
-           :contour      :pill
-           :colorway     :accent
-           :stroke       [[:2px :$brown-300] [:2px :$green-300]]
-           :stroke-align :outside
-           :drop-shadow  ["5px 5px 10px currentColor"]
-           })
-         "Click"]
+      [button
+       (merge-attrs 
+        {:at               (at)
+         :surface          :solid
+         :size             :large
+         :contour          :pill
+         :colorway         :accent
+         :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
+         :stroke/width     :5px
+         :stroke/align     :outside
+         :shadow           :large
+         :shadow/color     :$blue-500
+         :shadow/strength  :medium
+         #_["5px 5px 10px currentColor"]
+         })
+       "Click"]
 
       #_[button
          (merge-attrs 
@@ -496,7 +500,7 @@
           :stroke       :medium
           :stroke-width "2px"
           ;; :drop-shadow :medium
-          }
+          :at (at)}
          (sx :w--300px :h--200px))
     [:div "1"]
     [:div "2"]

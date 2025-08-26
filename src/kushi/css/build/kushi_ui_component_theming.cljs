@@ -1315,6 +1315,9 @@
 
 
 ;; Keep here?
+
+;; TODO  (defcss {:data-ks-ui :button :data-ks-color :accent} ...) => "[data-ks-ui=\"button\"][data-ks-ui=\"accent\"]" ;;
+;; TODO  (defcss [{:data-ks-ui :button} {:data-ks-ui :tag}] ...) => "[data-ks-ui=\"button\"], [data-ks-ui=\"tag\"]" ;;
 (defcss "[data-ks-ui=\"button\"], [data-ks-ui=\"tag\"]"
   {"[data-ks-start-enhancer]"      {:padding-inline-start "calc(var(--_padding-inline) * 0.7666)"}
    "[data-ks-end-enhancer]"        {:padding-inline-end "calc(var(--_padding-inline) * 0.7666)"}})
@@ -1365,3 +1368,6 @@
 (defcss "[data-ks-ai=\"center\"]" :ai--center)
 (defcss "[data-ks-ai=\"flex-start\"]" :ai--flex-start)
 (defcss "[data-ks-ai=\"flex-end\"]" :ai--flex-end)
+
+
+

@@ -46,6 +46,7 @@
 
        button
        [:button (merge-attrs
+                 ;; TODO - should this be (sx {:data-ks-ui :button} ...) => "[data-ks-ui=\"button\"]"
                  (sx "[data-ks-ui=\"button\"]"
                      :d--flex
                      :flex-direction--row
