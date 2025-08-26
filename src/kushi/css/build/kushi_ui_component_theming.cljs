@@ -1108,6 +1108,7 @@
    "--element-stroke-width"                           "1px"
    "--button-stroke-width"                            :$element-stroke-width
    "--tag-stroke-width"                               :$element-stroke-width
+   "--thumb-stroke-width"                             :$element-stroke-width
    "--stroke-width-nearest-pixel"                     "round(nearest, var(--stroke-width, 1px), 1px)"
 
    "--outlined-tag-stroke-width"                      "var(--outlined-element-stroke-width)"
@@ -1345,3 +1346,22 @@
    :--switch-off-background-color-dark-mode       :$background-color-neutral-soft-dark-mode
    :--switch-off-background-color-hover-dark-mode :$background-color-neutral-soft2-dark-mode
    })
+
+;; display
+(defcss "[data-ks-display=\"flex\"]" :d--flex)
+(defcss "[data-ks-display=\"grid\"]" :d--grid)
+(defcss "[data-ks-display=\"none\"]" :d--grid)
+
+(defcss "[data-ks-fd=\"row\"]" :flex-direction--row)
+(defcss "[data-ks-fd=\"row-reverse\"]" :flex-direction--row-reverse)
+(defcss "[data-ks-fd=\"column\"]" :flex-direction--column)
+(defcss "[data-ks-fd=\"column-reverse\"]" :flex-direction--column-reverse)
+
+(defcss "[data-ks-jc=\"center\"]" :jc--center)
+(defcss "[data-ks-jc=\"flex-start\"]" :jc--flex-start)
+(defcss "[data-ks-jc=\"space-around\"]" :jc--space-around)
+(defcss "[data-ks-jc=\"space-between\"]" :jc--space-between)
+
+(defcss "[data-ks-ai=\"center\"]" :ai--center)
+(defcss "[data-ks-ai=\"flex-start\"]" :ai--flex-start)
+(defcss "[data-ks-ai=\"flex-end\"]" :ai--flex-end)

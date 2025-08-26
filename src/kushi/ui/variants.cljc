@@ -249,8 +249,7 @@
                                :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."}
    :colorway                  {:default :neutral
                                :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." }
-   :contour                   {:default :round
-                               :desc    "Shape of the element."}
+   :contour                   {:desc    "Shape of the element."}
    :shadows                   {
                                ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
                                ;; TODO maybe :$myvar or "var(--myvar)" or "0 0 10px red" (legit shadow string)
@@ -321,7 +320,8 @@
    :loading                   {:schema  :boolean
                                :default false
                                :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`."}
-   :surface                   {:desc "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."}
+   :surface                   {:desc    "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."
+                               :default :transparent}
    :inert                     {:schema  :boolean
                                :desc    "Surface is not interactive meaning no hover or active states."
                                :default true}

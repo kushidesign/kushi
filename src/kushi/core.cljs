@@ -242,19 +242,6 @@
 
   (reduce merge-attrs* maps))
 
-(def publics 
-  {'boolean? boolean?
-   'string?  string?
-   'keyword? keyword?
-   'number?  number?
-   'float?   float?
-   'neg?     neg?
-   'pos?     pos?
-   'pos-int? pos-int?
-   'neg-int? neg-int?
-   'vector?  vector?
-   'set?     set?
-   'map?     map?
-   'coll?    coll?})
+(def mrj merge-attrs)
 
 

@@ -7,7 +7,7 @@
    [clojure.string :as string]
    [clojure.walk :as walk]
    [malli.core]
-   [kushi.util :refer [partition-by-pred]]
+   [kushi.util :refer [partition-by-pred as-str]]
    [kushi.ui.variants :as variants]
    [kushi.ui.util :refer [keyed]]
    [kushi.ui.variants :as props]
@@ -686,13 +686,21 @@
 ;;              {}
 ;;              props))
 
-(defmacro pc 
-  "Optional compile-time computation of HTML attributes and styles related to
-   strokes and shadows on components defined with kushi.ui.core/defui"
-  [m]
-  (if (->> m vals (not-any? symbol?))
-    (? "no prop values found, precompiling..." 
-       (some->> m 
-                decoration/drop-shadow-and-stroke-attrs
-                (assoc m :kushi.ui.core/pc)))
-    (? "dynamic prop values found, passing through..." m)))
+
+;; Experimental
+;; (defmacro pc 
+;;   "Optional compile-time computation of HTML attributes and styles related to
+;;    strokes and shadows on components defined with kushi.ui.core/defui"
+;;   [m]
+;;   (if (->> m vals (not-any? symbol?))
+;;     (? "no dynamic prop values found, precompiling..." 
+;;         (let [flex-attrs       (flex-data-ns-attrs m)
+;;               decoration-attrs (some->> m 
+;;                                         decoration/drop-shadow-and-stroke-attrs
+;;                                         (assoc m :kushi.ui.core/pc)
+;;                                         )
+;;               decoration-attrs (some-> decoration-attrs
+;;                                        (dissoc :stroke :stroke-align :drop-shadow))]
+;;           (merge (? decoration-attrs)
+;;                  (? flex-attrs))))
+;;     (? "dynamic prop values found, passing through..." m)))

@@ -3,39 +3,55 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (merge-attrs sx)]
    [kushi.ui.core :refer (defui)]
-   [kushi.ui.util :refer [as-str]]
+   [kushi.ui.decoration :as decoration]
    [clojure.string :as string]))
 
 
 (defui thumb
-  {:doc          "This is thumb docstring"
-   :props/family [:container]
-   :props/shared [:transition
-                  [:sizing {:default :medium}]
-                  [:contour {:default :pill}]]}
+  {:doc          "Thumb docstring"
+   :props/shared [:sizing
+                  :colorway
+                  :packing
+                  :loading
+                  :stroke
+                  :stroke-align
+                  :stroke-width
+                  :position
+                  :contour
+                  :surface
+                  :transition]}
   [& args]
-  (let [{:keys [stroke-width sizing elevated]} (? &props)] 
-    (into
-     [:div (merge-attrs 
-            (sx "[data-ks-ui=\"thumb\"]"
-                :.relative
-                :transition-duration--$xxfast
-                :border-color--currentColor
-                :cursor--pointer
-                [:--width :$thumb-height]
-                :h--$thumb-height
-                :w--$thumb-height)
-            {:style {"--thumb-height" (str "var(--" (as-str sizing) ")")}}
-            (when stroke-width 
-              {:style {"--_stroke-width" (as-str stroke-width)}})
-            #_(when-let [n elevated]
-              {:style {"--_drop-shadow" (str "var(--elevated" 
-                                             (when-not (string/blank? n)
-                                               (str "-" n))
-                                             ")")}})
+  (let [{:keys [surface loading stroke-width]} &props
+        classic-variant?                       (contains? #{:solid-classic 
+                                                            :soft-classic} 
+                                                          surface)]
+    (into [:div
+           (merge-attrs
+            (sx
+             ".ks-thumb"
+             :.pill
+             :d--flex
+             :flex-direction--row
+             :jc--c
+             :ai--c
+             :w--1em
+             :h--1em
+             :cursor--pointer
+             ;; TODO - is this local/private css var necessary?
+             [:--_padding-block :$thumb-padding-block]
+             [:--_padding-inline :$thumb-padding-inline]
+             :pi--$_padding-inline
+             :pb--$_padding-block)
+            {:aria-busy  loading
+             :aria-label (when loading "loading")}
+
+            (decoration/stroke-width-cssvar stroke-width "thumb")
+
+            (when-not classic-variant? 
+              (decoration/drop-shadow-and-stroke-attrs &props))
+
             &attrs)]
-            
-     &children)))
+          &children)))
 
 ;; {:--thumb-height "calc(var(--switch-thumb-scale-factor, 1) * (1em - (var(--switch-border-width) * 2)))"
 

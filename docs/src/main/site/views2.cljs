@@ -7,7 +7,7 @@
   ;;  [bling.core :as bling :refer [bling print-bling callout point-of-interest]]
   ;;  [bling.hifi :refer [print-hifi hifi]]
   ;;  [bling.explain :refer [explain-malli]]
-   [kushi.core :refer [?sx sx css merge-attrs at]]
+   [kushi.core :refer [?sx sx css merge-attrs mrj at]]
    [kushi.playground.shared-styles]
   ;;  [kushi.ui.variants]
    [kushi.ui.core :refer [defui data-ks-attrs pc]]
@@ -311,19 +311,29 @@
       [label {:for :foo} "hi"]]
 
 
-   #_[:div.flex-col-start (sx :gap--1rem)
+   [:div.flex-col-start (sx :gap--1rem)
     ;; [switch]
     ;; [switch {:colorway :neutral}]
-      #_#_#_
-            [switch {:colorway :accent :sizing :xxlarge}]
-          [switch {:colorway    :accent
-                   :sizing      :xxlarge
-                   :thumb-attrs (sx :bgi--$convex :dark:bgi--$convex-3)}]
-        [switch
-         (merge-attrs (sx [:--switch-border-width :0px]
-                          [:--switch-thumb-scale-factor :1.25])
-                      {:sizing      :xxlarge
-                       :thumb-attrs (sx :border--1px:solid:currentColor)})]
+      
+     #_[switch {:colorway :accent :sizing :xxlarge}]
+
+     #_[switch {:colorway    :accent
+              :sizing      :xxlarge
+              :thumb-attrs (sx :bgi--$convex :dark:bgi--$convex-3)}]
+
+     #_[thumb {:surface :soft-classic
+            ;;  :stroke  :soft
+             :sizing  :xxxlarge}
+      ]
+
+     [switch
+      (mrj
+       #_(sx [:--switch-border-width :0px]
+           [:--switch-thumb-scale-factor :1.25])
+       {:sizing      :xxlarge
+        :thumb-attrs (mrj {:surface :minimal}
+                          (sx :bgc--white))})]
+
     ;; [switch {:colorway :positive}]
     ;; [switch {:colorway :warning}]
     ;; [switch {:colorway :negative}]
@@ -357,7 +367,7 @@
            })
          "Click"]
       
-      [button
+      #_[button
        {:at           (at)
         :surface      :solid
         :sizing       :large
@@ -480,15 +490,17 @@
              :id         :foo}
        :star]]
    
-   (let [stroke :medium]
-     [button
-         (pc {:start-enhancer :check-circle
-              :colorway       :accent
-              :surface        :minimal
-              :stroke         [[:2px :red] [:3px :blue] [:5px :yellow]]
-              :drop-shadow    :xlarge
-              })
-         "Passing"])
+   #_[box (merge-attrs 
+         {:contour      :rounded
+          :display      [:flex :row :space-around :center]
+          :stroke       :medium
+          :stroke-width "2px"
+          ;; :drop-shadow :medium
+          }
+         (sx :w--300px :h--200px))
+    [:div "1"]
+    [:div "2"]
+    [:div "3"]]
 
    #_[tag
       {:start-enhancer :check-circle,

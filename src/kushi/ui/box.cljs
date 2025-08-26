@@ -1,7 +1,9 @@
 (ns kushi.ui.box
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (merge-attrs sx)]
    [kushi.ui.core :refer (defui)]
+   [kushi.ui.decoration :as decoration]
    [clojure.string :as string]))
 
 
@@ -15,14 +17,16 @@
               ($ button {:on-click #(set-state! dec)} "-")
               ($ :span state)
               ($ button {:on-click #(set-state! inc)} "+"))))
+    (? &attrs)
     (into
      [:div (merge-attrs 
             (sx "[data-ks-ui=\"box\"]"
                 :.relative)
+
+            (!? :pp (decoration/stroke-width-cssvar (:stroke-width &props) "button"))
+
+            ;; no classics
+            (? (decoration/drop-shadow-and-stroke-attrs &props))
             &attrs
-            (when-let [n (:data-ks-elevated &attrs)]
-              {:style {"--_drop-shadow" (str "var(--elevated" 
-                                             (when-not (string/blank? n)
-                                               (str "-" n))
-                                             ")")}}))]
+            )]
      &children)))

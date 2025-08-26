@@ -3,6 +3,7 @@
    [kushi.core :refer (sx defcss merge-attrs)]
    [domo.core :as domo]
    [kushi.ui.util :as util]
+   [kushi.ui.thumb :refer (thumb)]
    [kushi.ui.core :refer (defui)]
    [kushi.ui.shared.theming :refer [data-ks- get-variants]]))
 
@@ -129,7 +130,10 @@
 
        [".kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color]
        [".kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover]
-       
+
+       :_.ks-thumb:w--$thumb-height
+       :_.ks-thumb:h--$thumb-height
+
        )
 
       {:disabled         disabled?
@@ -155,7 +159,8 @@
           :.kushi-switch-track-content)
       track-content-off]
 
-     [:div
+     [thumb thumb-attrs]
+     #_[:div
       (merge-attrs
        {:data-ks-contour  :pill
         :data-ks-colorway colorway}
