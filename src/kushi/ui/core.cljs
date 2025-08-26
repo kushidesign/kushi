@@ -3,7 +3,7 @@
             [clojure.string :as string]
             [kushi.ui.variants :as variants]
             [kushi.ui.extract]
-            [kushi.util :refer [keyed]]
+            [kushi.util :refer [keyed as-str maybe]]
             [bling.core :refer [callout bling]]
             [bling.hifi :refer [hifi]]
             [bling.explain :refer [explain-malli]]
@@ -21,67 +21,114 @@
                            (take 3 supplied)))))
 (def debug? (atom false))
 
+
+
+;; data-ks-attribute resolution ------------------------------------------------
+
+(defn data-ns-flex-attrs [m]
+  (when-let [{:keys [display]} m]
+    (cond 
+      (or (keyword? display) (string? display))
+      (!? {:data-ks-display (as-str display)})
+      
+      (vector? display)
+      (!? (when-let [[css-display] (seq display)]
+           (let [css-display (as-str css-display)]
+             (cond
+               (= "flex" css-display)
+               (let [[_ flex-direction justify-content align-items] display]
+                 {:data-ks-display (as-str css-display)
+                  :data-ks-fd      (some-> flex-direction as-str)
+                  :data-ks-jc      (some-> justify-content as-str)
+                  :data-ks-ai      (some-> align-items as-str)})
+               )))))))
+
+
+(defn- resolve-supplied-prop [prop supplied when-not-nil]
+  (if (true? (:boolean? prop))
+    (if (false? supplied) nil "")
+    (or when-not-nil
+        (kushi.util/as-str supplied))))
+
+
+(defn- resolve-default-prop [prop default]
+  (if (true? (:boolean? prop))
+    (case default
+      false   nil
+      "false" nil
+      "")
+    (kushi.util/as-str default)))
+
+
+(defn- data-ks-attr*
+  "Returns something like:
+   `{:data-ks-surface \"transparent\"}`
+   or
+   `{:data-ks-inert \"\"}`
+   
+   This sorts out `data-ks-*` attrs that are boolean,
+   but need to be supplied as `data-ks-foo=\"\"` (when true, appears in dom as `data-ks-foo`)
+   or `data-ks-foo=nil` (if false, does not appear in dom)"
+
+  [{:keys [when-not-nil default] :as prop} supplied data-ks-key]
+
+  (cond 
+    (not (nil? supplied))
+    {data-ks-key (resolve-supplied-prop prop supplied when-not-nil)}
+
+    default
+    {data-ks-key (resolve-default-prop prop default)}))
+
+
+(defn- shared-prop-destined-for-data-ks-attr? [k data-ks?]
+  (and (contains? variants/props k)
+       (not (false? data-ks?))))
+
+
+(defn- destined-for-data-ks-attr? [k {:keys [data-ks?]}]
+  (or (shared-prop-destined-for-data-ks-attr? k data-ks?)
+      ;; user prop destined for data-ks-attr
+      (true? data-ks?)))
+
+
+(defn- data-ks-attr
+  [props k prop]
+  (let [supplied    (get props k)
+        style       (when (:style-tokens? prop)
+                      (data-ks-attrs-style-map k supplied))
+        data-ks-key (keyword (str "data-ks-" (name k)))
+        ret         (data-ks-attr* prop supplied data-ks-key)]
+    (? {:when (= k :contour)} (keyed [supplied data-ks-key style ret]))
+    (merge ret (when style {:style style}))))
+
+
 (defn data-ks-attrs 
-  "Attaches data-ks based on opts from defn metadata map. To be called from
-   defui macro."
+  "Creates a map of data-ks-* attributes based on defined prop schema from
+   component rendering function's metadata map, which is defined in the defui
+   macro. To be called at runtime from within runtime portion of defui macro.
+   
+   If one of the props is supplied, it will convert it to a data-ks-* attribute,
+   or do something else with it, such as set a css var in the style map, or
+   just ignore it, if the prop is just used for internal logic in the component
+   rendering function."
   [props with-schema]
-
-  (reset! debug? (= props
-                    {:stroke       [[:2px :$brown-300]                [:2px :$green-300]]
-                     :colorway     :accent
-                     :drop-shadow  ["5px 5px 10px currentColor"]
-                     :stroke-align :outside
-                     :contour      :pill
-                     :surface      :transparent}))
-
-  ;; Or concept of registry so you don't need to manually add :elide thing?
-  (!? {:when (contains? with-schema :choices)}
-      (merge (reduce-kv 
-              (fn [m k {:keys [default data-ks? when-not-nil style-tokens?]
-                        :as   prop}]
-                (!? {:when (and @debug? (= k :drop-shadow))}
-                    (merge m
-                           (when (or (and (contains? variants/props k)
-                                          (not (false? data-ks?)))
-                                     (true? data-ks?))
-                             (let [supplied  (case k
-                                               :display
-                                               (let [v (get props k)]
-                                                 (cond
-                                                   (vector? v)
-                                                   (string/join " " (mapv name v))
-                                                   :else
-                                                   v))
-                                               (get props k))
-
-                                   data-ks-* (keyword (str "data-ks-" (name k)))
-
-                                   style     (when style-tokens?
-                                               (data-ks-attrs-style-map k supplied))
-
-                                   ;; This sorts out `data-ks-*` attrs that are boolean,
-                                   ;; but need to be supplied as `data-ks-foo=""` (when true, appears in dom as `data-ks-foo`)
-                                   ;; or `data-ks-foo=nil` (if false, does not appear in dom)
-                                   ret       (cond (!? {:when (= k :choices)} (not (nil? supplied)))
-                                                   {data-ks-* (if (true? (:boolean? prop))
-                                                                (if (false? supplied) nil "")
-                                                                (or when-not-nil
-                                                                    (kushi.util/as-str supplied)))}
-                                                   (!? {:when (= k :choices)} default)
-                                                   {data-ks-* (if (true? (:boolean? prop))
-                                                                (case default
-                                                                  false   nil
-                                                                  "false" nil
-                                                                  "")
-                                                                (kushi.util/as-str default))})]
-                               (!? {:when (= k :choices)} (keyed [supplied data-ks-* style ret]))
-                               (merge ret (when style {:style style})))))))
+  (? 'runtime:data-ks-attrs
+      (merge (? (reduce-kv 
+              (fn [m k prop]
+                (merge m
+                       (when (destined-for-data-ks-attr? k prop)
+                         (data-ks-attr props k prop))))
               {} 
-              with-schema)
+              with-schema))
+             (? (data-ns-flex-attrs props))
              (some->> props :at (hash-map :data-ks-at)))))
 
+
+;; Extraction ------------------------------------------------------------------
 (def extract kushi.ui.extract/extract)
 
+
+;; Validation ------------------------------------------------------------------
 (defn validate*2 
   [{:keys          [fn-info
                     malli-schema
