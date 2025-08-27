@@ -68,7 +68,7 @@
    [kushi.ui.link :refer [link]]))
 
 
-(js/console.clear)
+#_(js/console.clear)
 
 ;; Experimental macro calls
 
@@ -549,12 +549,12 @@
                                kushi.ui.tag.demo/demos))]
 
   [:div.absolute-centered 
-   [button {:end-enhancer :east
-            :colorway     :accent
-            :surface      :minimal
-            :drop-shadow  :large
-            :shadow-color :accent
-            :class        (css [:hover:--shadow-strength :50%])}
+   [button (mrj {:end-enhancer :east
+                 :colorway     :accent
+                 :surface      :minimal
+                 :drop-shadow  :large
+                 :shadow-color :gold
+                 :class (css [:hover:--shadow-strength :50%])})
     "Next"]]
 
   #_[showcase (!? (showcase/opts kushi.ui.button/button

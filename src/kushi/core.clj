@@ -800,15 +800,22 @@
 
 (defn- print-as-def [{:keys [&form sym]}]
   (-> (cons (symbol (bling [:bold (str sym " \"" (second &form) "\"")]))
-               (drop 2 &form))
-         fireworks.core/pprint
-         with-out-str
-         (sr #"\n$" "")
-         (sr #"\n" "\n ")))
+            (drop 2 &form))
+      fireworks.core/pprint
+      with-out-str
+      (sr #"\n$" "")
+      (sr #"\n" "\n ")))
 
 
 (defn- print-as-fcall [{:keys [&form sym]}]
-  (-> (rest &form)
+  (-> &form
+      bling.hifi/hifi
+      (string/replace-first #"\n" "")
+      (sr #"\n$" "")
+      (sr #"^\(|\)$" "")
+      (sr #"\n" (str "\n" (spaces (inc (count (name sym)))))))
+
+  #_(-> (rest &form)
       fireworks.core/pprint
       with-out-str
       (sr #"\n$" "")
@@ -826,12 +833,12 @@
                         (bling [styled-sel-kw
                                 (or (some-> sel (str " "))
                                     (str "." (loc-id &env &form) " "))]))
-        block         (or block
+        block         (? (or block
                           (nested-css-block args
                                             &form
                                             &env
                                             "kushi.core/css-block"
-                                            sel))
+                                            sel)))
         styled-sel    #(bling [styled-sel-kw (second %)] " {")
         block         (-> block 
                           (sr #";" #(bling [:gray %]))
@@ -855,8 +862,8 @@
           "\n\n"
           [:italic.subtle.bold "Expands to:"]
           "\n"
-          (with-out-str (pprint expands-to))
-          "\n"
+          (bling.hifi/hifi expands-to)
+          "\n\n"
           [:italic.subtle.bold "Emits css ruleset:"]
           "\n"
           (ansi-colorized-css-block m))))

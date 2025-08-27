@@ -6,7 +6,7 @@
   (:require
    [bling.core :refer [callout]]
    [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.core :refer (defcss sx merge-attrs)]
+   [kushi.core :refer (defcss sx ?sx merge-attrs)]
    [kushi.ui.span :refer (span)]
    [kushi.ui.core :refer (defui)]
    [kushi.ui.shared :refer [add-enhancer]]
@@ -46,37 +46,35 @@
        (contains? #{:solid-classic :soft-classic} surface)
 
        button
-       [:button (merge-attrs
-                 ;; TODO - should this be (sx {:data-ks-ui :button} ...) => "[data-ks-ui=\"button\"]"
-                 (sx "[data-ks-ui=\"button\"]"
-                     :d--flex
-                     :flex-direction--row
-                     :jc--c
-                     :ai--c
-                     :w--fit-content
-                     :h--fit-content
-                     :gap--$icon-enhanceable-gap
-                     :cursor--pointer
-                     ;; TODO - is this local/private css var necessary?
-                     [:--stroke-width :$button-stroke-width]
-                     [:--_padding-block :$button-padding-block]
-                     [:--_padding-inline :$button-padding-inline]
-                     :pi--$_padding-inline
-                     :pb--$_padding-block
+       [:button 
+        (merge-attrs
+         {:data-ks-display :flex
+          :data-ks-fd      :row
+          :data-ks-jc      :center
+          :data-ks-ai      :center
+          :aria-busy       loading
+          :aria-label      (when loading "loading")}
 
-                     ;; TODO - are these really needed?
-                     ["[aria-label='loading']>.kushi-spinner-propeller:d" :revert]
-                     ["[aria-label='loading']>.kushi-icon:d" :none])
+         ;; TODO - should this be (sx {:data-ks-ui :button} ...) => "[data-ks-ui=\"button\"]"
+         ;; TODO - why this selector not working with (css ...) ?
+         (?sx "[data-ks-ui=\"button\"]"
+             {:pi                :$_padding-inline
+              :pb                :$_padding-block
+              :w                 :fit-content
+              :h                 :fit-content
+              :gap               :$icon-enhanceable-gap
+              :cursor            :pointer
+              :--stroke-width    :$button-stroke-width
+                                 ;; TODO - is this local/private css var necessary?
+              :--_padding-block  :$button-padding-block
+              :--_padding-inline :$button-padding-inline})
 
-                 {:aria-busy  loading
-                  :aria-label (when loading "loading")}
+         (!? :pp (decoration/stroke-width-cssvar stroke-width "button"))
 
-                 (!? :pp (decoration/stroke-width-cssvar stroke-width "button"))
-
-                 (when-not classic-variant? 
-                   (decoration/drop-shadow-and-stroke-attrs &props))
-                 
-                 &attrs)]
+         (when-not classic-variant? 
+           (decoration/drop-shadow-and-stroke-attrs &props))
+         
+         &attrs)]
 
        body
        (add-enhancer &props &children)]

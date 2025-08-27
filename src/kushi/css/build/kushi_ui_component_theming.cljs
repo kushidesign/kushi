@@ -1,5 +1,8 @@
 (ns ^{:kushi/layer "kushi-ui-theming"} kushi.css.build.kushi-ui-component-theming
   (:require
+   [kushi.colors]
+   [bling.hifi]
+   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.css.build.macros :refer [defcolorway defcss]]))
 
 (defcss
@@ -1177,26 +1180,27 @@
    "[data-ks-stroke=\"hard\"]"   {:--stroke-transparency :$hard-stroke-transparency}
    "[data-ks-stroke=\"xhard\"]"  {:--stroke-transparency :$xhard-stroke-transparency}})
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"]"
-  {:box-shadow      :$shadow-xsmall
-   :dark:box-shadow :$shadow-xsmall-dark-mode})
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"]"
+;;   {:box-shadow      :$shadow-xsmall
+;;    :dark:box-shadow :$shadow-xsmall-dark-mode})
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"]"
-  {:box-shadow      :$shadow-small
-   :dark:box-shadow :$shadow-small-dark-mode})
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"]"
+;;   {:box-shadow      :$shadow-small
+;;    :dark:box-shadow :$shadow-small-dark-mode})
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"]"
-  {:box-shadow      :$shadow-medium
-   :dark:box-shadow :$shadow-medium-dark-mode})
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"]"
+;;   {:box-shadow      :$shadow-medium
+;;    :dark:box-shadow :$shadow-medium-dark-mode})
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"
-  {:box-shadow      :$shadow-large
-   :dark:box-shadow :$shadow-large-dark-mode
-   })
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"
+;;   {:box-shadow      :$shadow-large
+;;    :dark:box-shadow :$shadow-large-dark-mode
+;;    })
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"]"
-  {:box-shadow      :$shadow-xlarge
-   :dark:box-shadow :$shadow-xlarge-dark-mode})
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"]"
+;;   {:box-shadow      :$shadow-xlarge
+;;    :dark:box-shadow :$shadow-xlarge-dark-mode})
+
 (defcss "[data-ks-surface=\"solid\"], [data-ks-surface=\"solid-classic\"]"
   {:color             :white
    :dark:color        :black
@@ -1378,14 +1382,42 @@
 ;;          :data-ks-shadow-color :blue} 
 ;;   {:--shadow-color             :$blue-500})
 
+
+;; For generating code
+#_(?
+ :pp
+ {:non-coll-mapkey-length-limit 50}
+ (->> kushi.colors/colors 
+      (apply array-map) 
+      (reduce-kv (fn [acc k v] (conj acc k (:alias v))) [])
+      (remove nil?)
+      (reduce (fn [acc color] 
+                (assoc acc
+                       (str "&[data-ks-shadow-color=\"" color "\"]" )
+                       {:--shadow-color (keyword (str "$" color "-500"))}))
+              {})
+      (list 'defcss "[data-ks-surface][data-ks-drop-shadow]")))
+ 
+
 ;; modern version
-(defcss "[data-ks-surface][data-ks-drop-shadow]" 
- {
-  "&[data-ks-shadow-color=\"red\"]" {:--shadow-color :$red-500}
-  "&[data-ks-shadow-color=\"blue\"]" {:--shadow-color :$blue-500}
-  "&[data-ks-shadow-color=\"accent\"]" {:--shadow-color :$blue-500}
-  "&[data-ks-shadow-color=\"green\"]" {:--shadow-color :$green-500}
-  })
+(defcss
+  "[data-ks-surface][data-ks-drop-shadow]"
+  {"&[data-ks-shadow-color=\"positive\"]" {:--shadow-color :$positive-500},
+   "&[data-ks-shadow-color=\"neutral\"]"  {:--shadow-color :$neutral-500},
+   "&[data-ks-shadow-color=\"negative\"]" {:--shadow-color :$negative-500},
+   "&[data-ks-shadow-color=\"purple\"]"   {:--shadow-color :$purple-500},
+   "&[data-ks-shadow-color=\"magenta\"]"  {:--shadow-color :$magenta-500},
+   "&[data-ks-shadow-color=\"accent\"]"   {:--shadow-color :$accent-500},
+   "&[data-ks-shadow-color=\"brown\"]"    {:--shadow-color :$brown-500},
+   "&[data-ks-shadow-color=\"blue\"]"     {:--shadow-color :$blue-500},
+   "&[data-ks-shadow-color=\"orange\"]"   {:--shadow-color :$orange-500},
+   "&[data-ks-shadow-color=\"gray\"]"     {:--shadow-color :$gray-500},
+   "&[data-ks-shadow-color=\"warning\"]"  {:--shadow-color :$warning-500},
+   "&[data-ks-shadow-color=\"green\"]"    {:--shadow-color :$green-500},
+   "&[data-ks-shadow-color=\"gold\"]"     {:--shadow-color :$gold-500},
+   "&[data-ks-shadow-color=\"lime\"]"     {:--shadow-color :$lime-500},
+   "&[data-ks-shadow-color=\"yellow\"]"   {:--shadow-color :$yellow-500},
+   "&[data-ks-shadow-color=\"red\"]"      {:--shadow-color :$red-500}})
 
 ;; legacy-version
 ;; (defcss "[data-ks-surface][data-ks-drop-shadow][data-ks-shadow-color=\"red\"]" 
@@ -1398,6 +1430,7 @@
 ;;   {
 ;;    :--shadow-color-red-hex         "#f908244d" ; <- this would be in :root
 ;;    :--shadow-color-hex             :$shadow-color-red-hex})
+
 
 
 ;; modern version
@@ -1417,12 +1450,12 @@
 ;;   {;; TODO - figure out whether the slash "/" syntax works in older browsers
 ;;    :--transparent-shadow-color "var(--shadow-color-hex)"})
 
+
+;; TODO tune these shadows
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxsmall\"]" [:box-shadow "0 1px 1px (--transparent-shadow-color)"])
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"]"  [:box-shadow "0 1px 2px 0 (--transparent-shadow-color)"])
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"]"  [:box-shadow "0 1px 3px 0 var(--transparent-shadow-color), 0 1px 2px -1px var(--transparent-shadow-color)"])
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"]"  [:box-shadow "0 4px 6px -1px var(--transparent-shadow-color), 0 2px 4px -2px var(--transparent-shadow-color)"])
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"  {:box-shadow "0 10px 15px -3px var(--transparent-shadow-color), 0 4px 6px -4px var(--transparent-shadow-color)"
-                                                             ;; Remove :dark after you take legacy stuff out
-                                                             :dark:box-shadow "0 10px 15px -3px var(--transparent-shadow-color), 0 4px 6px -4px var(--transparent-shadow-color)"})
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"  {:box-shadow "0 10px 15px -3px var(--transparent-shadow-color), 0 4px 6px -4px var(--transparent-shadow-color)"})
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"]"  [:box-shadow "0 20px 25px -5px var(--transparent-shadow-color), 0 8px 10px -6px var(--transparent-shadow-color)"])
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxlarge\"]" [:box-shadow "0 25px 50px -12px var(--transparent-shadow-color), 0 8px 10px -6px var(--transparent-shadow-color)"])
