@@ -1466,22 +1466,22 @@
 
 
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxxsmall\"]" 
-  [:box-shadow "0 1px 0 0 var(--transparent-shadow-color)"])
+  [:box-shadow "0 1px 3px -1px var(--transparent-shadow-color)"])
 
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxsmall\"]" 
-  [:box-shadow "0 1px 2px 0 var(--transparent-shadow-color)"])
+  [:box-shadow "0 3px 6px -2px var(--transparent-shadow-color)"])
 
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"]"  
-  [:box-shadow "0 3px 5px -1px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"])
+  [:box-shadow "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"])
 
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"]"  
-  [:box-shadow "0 5px 10px -2px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"])
+  [:box-shadow "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"])
 
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"]"  
-  {:box-shadow "0 9px 15px -4px var(--transparent-shadow-color), 0 3px 8px -5px var(--transparent-shadow-color)"})
+  {:box-shadow "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"})
 
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"  
-  [:box-shadow "0 16px 25px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"])
+  [:box-shadow "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"])
 
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"]"  
   [:box-shadow "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"])
