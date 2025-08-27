@@ -102,6 +102,7 @@
 
 (def shadow-presets
   {
+   :xxxsmall [:$shadow-xxxsmall]
    :xxsmall [:$shadow-xxsmall]
    :xsmall  [:$shadow-xsmall]
    :small   [:$shadow-small]
@@ -109,6 +110,7 @@
    :large   [:$shadow-large]
    :xlarge  [:$shadow-xlarge]
    :xxlarge [:$shadow-xxlarge]
+   :xxxlarge [:$shadow-xxxlarge]
    })
 
 (def shadow-presets-key-set (->> shadow-presets keys (into #{})))

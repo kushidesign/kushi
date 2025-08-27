@@ -31,7 +31,7 @@
   [:none :xsoft :soft :medium :hard :xhard])
 
 (def drop-shadows
-  [:xxsmall :xsmall :small :medium :large :xlarge :xxlarge])
+  [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
 
 (def icon-style
   [:rounded :outlined :sharp])
@@ -277,7 +277,10 @@
   ;;                              }
 
    :drop-shadow               {
-                               :schema   [:or :keyword :string [:vector :any]]
+                               :schema   [:or
+                                          [:and :keyword (:drop-shadows/enum variants)]
+                                          :string 
+                                          [:vector :any]]
                                :desc     "Controls the drop shadow"
                                :default  nil
                                :data-ks? false

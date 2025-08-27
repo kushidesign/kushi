@@ -100,10 +100,10 @@
   [props defaults-by-prop flag]
 
   (when (= flag :runtime) (reset! debug-data-ks? true))
-  (?  (symbol (str flag ":data-ks-attrs"))
+  (!?  (symbol (str flag ":data-ks-attrs"))
       {:when @debug-data-ks?}
       (keyed [props defaults-by-prop]))
-  (?  (symbol (str flag ":data-ks-attrs"))
+  (!?  (symbol (str flag ":data-ks-attrs"))
       {:when @debug-data-ks?}
       (merge (!? (reduce-kv 
                   (fn [m k prop]

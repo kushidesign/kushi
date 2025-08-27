@@ -57,7 +57,7 @@
 
          ;; TODO - should this be (sx {:data-ks-ui :button} ...) => "[data-ks-ui=\"button\"]"
          ;; TODO - why this selector not working with (css ...) ?
-         (?sx "[data-ks-ui=\"button\"]"
+         (sx "[data-ks-ui=\"button\"]"
              {:pi                :$_padding-inline
               :pb                :$_padding-block
               :w                 :fit-content

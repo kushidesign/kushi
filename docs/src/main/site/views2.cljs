@@ -548,14 +548,19 @@
   #_[showcase (!? (showcase/opts kushi.ui.tag/tag
                                kushi.ui.tag.demo/demos))]
 
-  [:div.absolute-centered 
-   [button (mrj {:end-enhancer :east
-                 :colorway     :accent
-                 :surface      :minimal
-                 :drop-shadow  :large
-                 :shadow-color :gold
-                 :class (css [:hover:--shadow-strength :50%])})
-    "Next"]]
+  (into [:div.absolute-centered.flex-col-space-between (sx :gap--5rem) 
+         ]
+        (for [k [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge]]
+          [button (mrj {:packing      :roomy
+                        :sizing       :xsmall
+                        :contour      :rounded
+                        :surface      :minimal
+                        :drop-shadow  k}
+                       (sx :p--20px:40px
+                           :min-width--200px
+                           [:--color :$gold-400]))
+           k]
+          ))
 
   #_[showcase (!? (showcase/opts kushi.ui.button/button
                                kushi.ui.button.demo/demos))]
