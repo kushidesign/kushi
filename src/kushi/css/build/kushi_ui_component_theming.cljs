@@ -1143,6 +1143,17 @@
    "--medium-stroke-transparency"                     "50%"
    "--hard-stroke-transparency"                       "70%"
    "--xhard-stroke-transparency"                      "100%"
+
+   ;; Shadows
+   :--shadow-color                                  "black"
+   :dark:--shadow-color                             "white"
+
+   ;; TODO - add these scales for legacy browser support of colored shadows
+   ;; legacy
+   ;; :--shadow-color-red-h-s-l         "10 100 50" ; <- this would be in :root
+
+   ;; super legacy, no support for shadow strength
+   ;; :--shadow-color-red-hex         "#f908244d" ; <- this would be in :root
    })
 
 
@@ -1435,7 +1446,7 @@
 
 ;; modern version
 (defcss "[data-ks-surface][data-ks-drop-shadow]" 
-  {:--shadow-color             "black"
+  {
    :--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 20%), transparent)"
   ;;  :--transparent-shadow-color-1 "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 2%), transparent)"
   ;;  :--transparent-shadow-color-2 "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 12%), transparent)"
@@ -1454,7 +1465,6 @@
 ;;    :--transparent-shadow-color "var(--shadow-color-hex)"})
 
 
-;; TODO tune these shadows
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxxsmall\"]" 
   [:box-shadow "0 1px 0 0 var(--transparent-shadow-color)"])
 
@@ -1471,13 +1481,13 @@
   {:box-shadow "0 9px 15px -4px var(--transparent-shadow-color), 0 3px 8px -5px var(--transparent-shadow-color)"})
 
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"  
-  [:box-shadow "0 16px 25px -8px var(--transparent-shadow-color), 0 5px 9px -6px var(--transparent-shadow-color)"])
+  [:box-shadow "0 16px 25px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"])
 
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"]"  
-  [:box-shadow "0 21px 37px -10px var(--transparent-shadow-color), 0 8px 10px -6px var(--transparent-shadow-color)"])
+  [:box-shadow "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"])
 
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxlarge\"]" 
-  [:box-shadow "0 25px 52px -11px var(--transparent-shadow-color), 0 8px 10px -7px var(--transparent-shadow-color)"])
+  [:box-shadow "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"])
 
 (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxxlarge\"]" 
-  [:box-shadow "0 27px 60px -14px var(--transparent-shadow-color), 0 8px 10px -7px var(--transparent-shadow-color)"])
+  [:box-shadow "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"])

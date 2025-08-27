@@ -548,17 +548,17 @@
   #_[showcase (!? (showcase/opts kushi.ui.tag/tag
                                kushi.ui.tag.demo/demos))]
 
-  (into [:div.absolute-centered.flex-col-space-between (sx :gap--5rem) 
-         ]
+  (into [:div.absolute-centered.flex-col-space-between (sx :gap--5rem)]
         (for [k [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge]]
-          [button (mrj {:packing      :roomy
-                        :sizing       :xsmall
-                        :contour      :rounded
-                        :surface      :minimal
-                        :drop-shadow  k}
+          [button (mrj {:packing         :roomy
+                        :sizing          :xsmall
+                        :contour         :rounded
+                        :surface         :minimal
+                        :drop-shadow     k}
                        (sx :p--20px:40px
                            :min-width--200px
-                           [:--color :$gold-400]))
+                           [:--color :$gold-400]
+                           [:--shadow-strength :40%]))
            k]
           ))
 
