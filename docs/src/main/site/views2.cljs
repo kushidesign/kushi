@@ -50,7 +50,6 @@
 
    [kushi.playground.assets.graphics.avatars :refer [avatar-1]]
    [kushi.ui.avatar :refer [avatar]]
-  ;;  [kushi.ui.avatar.demo]
 
    
    [kushi.ui.card :refer [card]]
@@ -304,6 +303,7 @@
 
   [:div (sx :.flex-col-center :p--20px #_:.absolute-centered :gap--3rem) 
 
+
    #_[:span.flex-row-start
       [radio {:name   :g
               :id     :foo
@@ -311,7 +311,10 @@
       [label {:for :foo} "hi"]]
 
 
-   [:div.flex-col-start (sx :gap--1rem)
+   [:div.flex-row-start.absolute-inline-start-inside
+    (sx :gap--1rem
+        :p--100px
+        :fs--$xxxlarge)
     ;; [switch]
     ;; [switch {:colorway :neutral}]
       
@@ -326,13 +329,22 @@
              :sizing  :xxxlarge}
       ]
 
-     #_[switch
+     [switch
       (mrj
-       #_(sx [:--switch-border-width :0px]
-           [:--switch-thumb-scale-factor :1.25])
-       {:sizing      :xxlarge
-        :thumb-attrs (mrj {:surface :minimal}
-                          (sx :bgc--white))})]
+       (sx #_[:--switch-inset-gap :2px]
+           #_[:--switch-thumb-scale-factor :1.25])
+       {:sizing            :xxxlarge
+        ;; :thumb-content-on  "ON"
+        ;; :thumb-content-off "OFF"
+        ;; :thumb-scale-factor 1.2
+        :track-inset-gap   :2px
+        :thumb-attrs       (mrj {:surface     :convex
+                                 ;; TODO - why not :soft working?
+                                 :stroke      :medium #_[[:2px :$red-500] [:2px :$orange-300] [:2px :$yellow-300]]
+                                 :drop-shadow :large}
+                                (sx :bgc--white
+                                    #_[:--shadow-strength :50%]
+                                    ))})]
 
     ;; [switch {:colorway :positive}]
     ;; [switch {:colorway :warning}]
@@ -343,16 +355,18 @@
       #_[button
        (merge-attrs 
         {:at               (at)
-         :surface          :transparent
-         :size             :large
+         :surface          :soft
+         :sizing           :xxxlarge
          :contour          :pill
          :colorway         :accent
-        ;;  :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
-        ;;  :stroke-width     :5px
+         :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
+         :stroke-width     :3px
+
         ;;  :stroke-align     :outside
-         :drop-shadow      :large
+        ;;  :drop-shadow      :large
         ;;  :shadow-color     :$blue-500
         ;;  :shadow-strength  :medium
+
          #_["5px 5px 10px currentColor"]
          :style {"--shadow-color"    "var(--red-500)"
                  "--shadow-strength" "30%"}})
@@ -542,6 +556,11 @@
       :warning]]]
    ]
 
+  
+
+  #_[showcase (!? (showcase/opts kushi.ui.switch/switch
+                               kushi.ui.switch.demo/demos))]
+
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
                                kushi.ui.icon.demo/demos))]
 
@@ -549,7 +568,7 @@
                                kushi.ui.tag.demo/demos))]
 
 
-  (into [:div.absolute-centered.flex-col-space-between (sx :gap--5rem)]
+  #_(into [:div.absolute-centered.flex-col-space-between (sx :gap--5rem)]
         (for [k [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge]]
           [button (mrj {:packing         :roomy
                         :sizing          :xsmall

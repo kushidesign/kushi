@@ -36,6 +36,10 @@
              :ai--c
              :w--1em
              :h--1em
+
+             ;; TODO - browser support?
+            ;;  [:aspect-ratio "1 / 1"]
+
              :cursor--pointer
              ;; TODO - is this local/private css var necessary?
              [:--_padding-block :$thumb-padding-block]

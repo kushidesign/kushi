@@ -1359,8 +1359,8 @@
    :--switch-width-ratio                          2
    :--switch-border-color                         :transparent
    :--switch-border-width                         :2px
-   :--switch-off-background-color                 :$background-color-neutral-soft-2
-   :--switch-off-background-color-hover           :$background-color-neutral-soft-3
+   :--switch-off-background-color                 :$background-color-neutral-soft-4
+   :--switch-off-background-color-hover           :$background-color-neutral-soft-5
    :--switch-off-background-color-dark-mode       :$background-color-neutral-soft-dark-mode
    :--switch-off-background-color-hover-dark-mode :$background-color-neutral-soft2-dark-mode
    })
