@@ -337,12 +337,16 @@
         ;; :thumb-content-on  "ON"
         ;; :thumb-content-off "OFF"
         ;; :thumb-scale-factor 1.2
+
+        :track-content-on  "ON"
+        :track-content-off "OFF"
+
         :track-inset-gap   :2px
         :thumb-attrs       (mrj {:surface     :convex
                                  ;; TODO - why not :soft working?
                                  :stroke      :medium #_[[:2px :$red-500] [:2px :$orange-300] [:2px :$yellow-300]]
                                  :drop-shadow :large}
-                                (sx :bgc--white
+                                (sx #_:bgc--red
                                     #_[:--shadow-strength :50%]
                                     ))})]
 

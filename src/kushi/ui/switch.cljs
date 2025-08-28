@@ -230,8 +230,11 @@
   :.semi-bold
   :.transition
   :.xxfast!
-  :>*:fs--0.40em
+  :>*:fs--0.35em
   :c--white
+  :dark:c--black
+  :.kushi-switch-track-content-off:c--$neutral-700
+  :dark:.kushi-switch-track-content-off:c--$neutral-300
   [:w "calc(100% - 50% + var(--switch-border-width))"]
   )
 
@@ -320,6 +323,7 @@
                 thumb-content-off
                 thumb-content-on
                 thumb-scale-factor
+                track-inset-gap
                 track-content-on
                 track-content-off
                 clip-thumb-shadow?]}
@@ -335,14 +339,12 @@
                  "--track-inset-gap"   :0px
                  "overflow"             :visible}}
         {:style {"--thumb-scale-factor" 1}})
+      (when track-inset-gap {:style {"--track-inset-gap" track-inset-gap}})
       (sx
        ".kushi-switch"
        {:--thumb-height "calc(var(--thumb-scale-factor, var(--switch-thumb-scale-factor, 1)) * (1em - (var(--track-inset-gap, 0px) * 2)))"
         :--height       :1em}
-       :.pill
-       :.flex-row-start
-       :.no-shrink
-       :.transition
+       :flex-shrink--0
        :overflow--clip
        :transition-duration--$xxfast
        :position--relative
@@ -358,10 +360,10 @@
        [".kushi-switch[aria-checked='true']_.kushi-switch-thumb-content-on:display" :flex]
        [".kushi-switch[aria-checked='true']_.kushi-switch-thumb-content-off:display" :none]
 
-      ;;  [".kushi-switch_.kushi-switch-track-content-on:opacity" 0]
-      ;;  [".kushi-switch[aria-checked='true']_.kushi-switch-track-content-off:opacity" 0]
-      ;;  [".kushi-switch[aria-checked='true']_.kushi-switch-track-content-on:opacity" 1]
-
+       [".kushi-switch_.kushi-switch-track-content-on:opacity" 0]
+       [".kushi-switch[aria-checked='true']_.kushi-switch-track-content-off:opacity" 0]
+       [".kushi-switch[aria-checked='true']_.kushi-switch-track-content-on:opacity" 1]
+       
        [".kushi-switch[aria-checked='false']:bgc" :$switch-off-background-color]
        [".kushi-switch[aria-checked='false']:hover:bgc" :$switch-off-background-color-hover]
        
@@ -371,33 +373,42 @@
        :_.ks-thumb:w--$thumb-height
        :_.ks-thumb:h--$thumb-height
 
+       ["_.kushi-switch-thumb-content" {:jc :c
+                                        :fs :$switch-thumb-content-font-size||0.3em
+                                        :fw :$switch-thumb-content-font-weight||$wee-bold}]
        ["_.kushi-switch-thumb-content-off:display" :flex]
        ["_.kushi-switch-thumb-content-on:display" :none]
 
        )
 
-      {:disabled         disabled?
-       :role             :switch
-       :aria-checked     (if on true false)
-       :data-ks-ia       ""
-       :data-ks-surface  "solid"}
+      {:disabled           disabled?
+       :role               :switch
+       :aria-checked       (if on true false)
+       :data-ks-ia         ""
+       :data-ks-surface    "solid"
+       :data-ks-display    "flex"
+       :data-ks-fd         "row"
+       :data-ks-jc         "flex-start"
+       :data-ks-transition ""
+       :data-ks-contour    "pill"
+       }
       
       (domo/mouse-down-a11y #(when-not disable-events? (toggle-switch %)))
 
       &attrs)
 
-     ;; TODO - maybe just divs?
-    ;;  [track-content
-    ;;   (sx ".kushi-switch-track-content-on"
-    ;;       :.absolute-inline-start-inside
-    ;;       :.kushi-switch-track-content)
-    ;;   track-content-on]
+    ;;  TODO - maybe just divs?
+     [track-content
+      (sx ".kushi-switch-track-content-on"
+          :.absolute-inline-start-inside
+          :.kushi-switch-track-content)
+      track-content-on]
 
-    ;;  [track-content
-    ;;   (sx ".kushi-switch-track-content-off"
-    ;;       :.absolute-inline-end-inside
-    ;;       :.kushi-switch-track-content)
-    ;;   track-content-off]
+     [track-content
+      (sx ".kushi-switch-track-content-off"
+          :.absolute-inline-end-inside
+          :.kushi-switch-track-content)
+      track-content-off]
 
      [thumb
       thumb-attrs
