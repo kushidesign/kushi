@@ -55,6 +55,7 @@
    [kushi.ui.card :refer [card]]
 
    [kushi.ui.switch :refer [switch]]
+   [kushi.ui.switch.demo]
 
    [kushi.ui.thumb :refer [thumb]]
 
@@ -67,7 +68,7 @@
    [kushi.ui.link :refer [link]]))
 
 
-#_(js/console.clear)
+(js/console.clear)
 
 ;; Experimental macro calls
 
@@ -311,7 +312,7 @@
       [label {:for :foo} "hi"]]
 
 
-   [:div.flex-row-start.absolute-inline-start-inside
+   #_[:div.flex-row-start.absolute-inline-start-inside
     (sx :gap--1rem
         :p--100px
         :fs--$xxxlarge)
@@ -561,6 +562,35 @@
    ]
 
   
+
+  #_[switch
+      (mrj
+       (sx #_[:--switch-inset-gap :2px]
+           #_[:--switch-thumb-scale-factor :1.25])
+       {
+        :on? true
+        :sizing            :xxxlarge
+        ;; :thumb-content-on  "ON"
+        ;; :thumb-content-off "OFF"
+        ;; :thumb-scale-factor 1.2
+
+        ;; :track-content-on  "ON"
+        ;; :track-content-off "OFF"
+
+        ;; :track-inset-gap   :2px
+
+        :thumb-attrs       (mrj {
+                                 :surface     :minimal
+                                 ;; TODO - why not :soft working?
+                                 :stroke      :medium #_[[:2px :$red-500] [:2px :$orange-300] [:2px :$yellow-300]]
+                                 :drop-shadow :large}
+                                (sx #_:bgc--red
+                                    #_[:--shadow-strength :50%]
+                                    ))
+        })]
+
+  [showcase (!? (showcase/opts kushi.ui.switch/switch
+                               kushi.ui.switch.demo/demos))]
 
   #_[showcase (!? (showcase/opts kushi.ui.switch/switch
                                kushi.ui.switch.demo/demos))]

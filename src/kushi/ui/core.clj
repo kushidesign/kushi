@@ -531,7 +531,7 @@
     `(defn ~sym 
        ~mm
        [& args#]
-       (let [extracted*#           (!? (kushi.ui.core/extract args# ~props-keys ~fn-info))
+       (let [extracted*#           (? (kushi.ui.core/extract args# ~props-keys ~fn-info))
 
              props->data-ks-attrs# (!?
                                     (kushi.ui.core/data-ks-attrs 
@@ -548,8 +548,8 @@
 
             ;;  _#                    (? (= data-ks-attrs_# data-ks-attrs#))            
 
-             props#                (merge (dissoc (:props extracted*#) :at)
-                                          ~user-props-with-default-values)
+             props#                (merge ~user-props-with-default-values
+                                          (dissoc (:props extracted*#) :at))
              extracted#            {:&props         props#
                                     :&attrs         (merge (:attrs extracted*#)
                                                            data-ks-attrs#)

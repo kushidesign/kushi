@@ -106,7 +106,9 @@
 
      "[data-ks-surface= \"minimal\"]" 
      (merge base
-            {:hover:bgc       (keyword (str "$background-color-" s "-soft"))
+            {:bgc             :white
+             :dark:bgc        :black
+             :hover:bgc       (keyword (str "$background-color-" s "-soft"))
              :active:bgc      (keyword (str "$background-color-" s "-soft-2"))
              :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
              :dark:active:bgc (keyword (str "$background-color-" s "-soft-2-dark-mode"))})

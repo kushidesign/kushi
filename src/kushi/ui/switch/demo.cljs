@@ -1,21 +1,124 @@
-(ns ^{:kushi/layer "user-styles"} kushi.ui.switch.demo
-  (:require
-   [kushi.core :refer (sx merge-attrs)]
-   [kushi.ui.icon :refer [icon]]
-   [kushi.ui.switch :refer [switch]]
-   [kushi.playground.util :refer-macros [sx-call]]
-   [kushi.playground.component-examples :as component-examples]))
+(ns ^{:kushi/layer "user-styles"}
+  kushi.ui.switch.demo
+  (:require [kushi.core :refer (sx)]
+            [kushi.ui.icon :refer [icon]]
+            [kushi.showcase.core
+             :as showcase
+             :refer [samples samples-with-variant]]
+            [kushi.ui.switch :refer [switch]]))
+
+(def demos
+  [{:label   "Basic"
+    :desc    "Basic"
+    :samples (samples [[:div (sx :.flex-row-start :gap--1rem)
+                        [switch {:colorway :neutral
+                                 :sizing   :xxlarge}]
+                        [switch {:colorway :neutral
+                                 :sizing   :xxlarge
+                                 :on?      true}]]])}
+
+   {:samples (samples-with-variant
+              {:variant         :colorway,
+               :variant-labels? false
+               :variant-scale   :colorway/semantic,
+               :label           "Colorway",
+               :row-style       {:justify-content :flex-start
+                                 :gap :1rem}
+               :attrs           {:sizing :xxlarge
+                                 :on?    true}})}
+
+   {:samples (samples-with-variant
+              {:variant :sizing,
+               :label   "Sizing",
+               :attrs   {:on? true}})}
+
+   ;; why rows not working?
+   {:samples (samples-with-variant
+              {:variant         :sizing
+               :variant-labels? false
+               :variant-scale   :sizing/xsmall-xxlarge,
+               :row-style       {:justify-content :flex-start
+                                 :gap :1rem}
+               :label           "Convex thumb",
+               :attrs           {:on?         true
+                                 :thumb-attrs {:surface :convex}}})}
+
+   {:samples (samples-with-variant
+              {:variant         :sizing
+               :variant-labels? false
+               :variant-scale   :sizing/xsmall-xxlarge,
+               :row-style       {:justify-content :flex-start
+                                 :gap :1rem}
+               :label           "Oversized thumb",
+               :attrs           {:on?                true
+                                 :thumb-scale-factor 1.25
+                                 :thumb-attrs        {:surface :minimal
+                                                      :stroke  :medium}}})}
+
+   {:samples (samples-with-variant
+              {:variant         :sizing
+               :variant-labels? false
+               :variant-scale   :sizing/xsmall-xxlarge,
+               :row-style       {:justify-content :flex-start
+                                 :gap :1rem}
+               :label           "Labeled track",
+               :attrs           {:on?                true
+                                 :thumb-scale-factor 1.25
+                                 :thumb-content-on   "ON"
+                                 :thumb-content-off  "OFF"
+                                 :thumb-attrs        {:surface :minimal
+                                                      :stroke  :medium}}})}
+   #_#_#_#_
+
+           {:samples (samples-with-variant
+                      {:args          ["Next"],
+                       :variant       :contour,
+                       :variant-scale :contour/basic,
+                       :x-variants    [:surface],
+                       :snippets?     false
+              ;;  :attrs/snippet  {:surface :solid},
+               ;; :attrs/display  {:sizing :small},
+              ;;  :label          "Colorways, surfaces × contours",
+                       :label         "Contour × surfaces",
+                       :attrs         {:end-enhancer :east
+                                       :colorway     :accent},
+                       :rows?         true})}
 
 
-(def sizes
-  [:small
-   :medium
-   :large
-   :xlarge
-   :xxlarge
-   :xxxlarge])
+         {:label   "With label",
+          :samples (samples
+                    [#_[:div (sx {:border-radius :$rounded
+                                  :w             :fit-content
+                                  :bgc           :transparent
+                                  :p             :1em
+                                  :pie           :1.5em
+                                  :b             :1px:solid:$neutral-150
+                                  :dark:b        :1px:solid:$neutral-850})
+                        [checkbox "Sign me up"]]
+                     [checkbox "Sign me up"]])}
 
-(def examples
+       {:label   "With label and traling icon",
+        :samples (samples
+                  [#_[:div (sx {:border-radius :$rounded
+                                :w             :fit-content
+                                :bgc           :transparent
+                                :p             :1em
+                                :pie           :1.5em
+                                :b             :1px:solid:$neutral-150
+                                :dark:b        :1px:solid:$neutral-850})
+                      [checkbox "Sign me up"]]
+                   [checkbox "Make it shiny" [icon :auto-awesome]]])}
+     
+     {:label     "Weight variants extra-light to extra-bold",
+      :row-style {:flex-direction :column
+                  :align-items    :flex-start
+                  :gap            :2rem}
+      :samples   (samples-with-variant
+                  {:variant         :weight
+                   :variant-labels? false
+                   :args            ["Make it shiny" [icon :auto-awesome]]})}])
+
+#_(def examples
   (let [row-attrs       (sx :.kushi-playground-switch-example-row
                             :xsm:ai--fe
                             :xsm:flex-direction--row )

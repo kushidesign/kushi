@@ -283,9 +283,10 @@
           
           
    :props/shared [:colorway :sizing :weight]
-   :props {:on                 {:schema  :boolean
-                                :default false
-                                :desc    "Control the initial on/off state of the switch"}
+   :props {:on?                {:schema   :boolean
+                                :default  false
+                                :desc     "Control the initial on/off state of the switch"
+                                :data-ks? false}
            :disable-events?    {:schema  :boolean
                                 :default false
                                 :desc    "Set this to true if you would like to control the state of the switch in a reactive manner via the `:on?` option"}
@@ -317,7 +318,7 @@
            }}
   [& args]
   (let [{:keys [disable-events?
-                on
+                on?
                 colorway
                 thumb-attrs
                 thumb-content-off
@@ -330,8 +331,7 @@
         (? &props)
 
         disabled?                  
-        (util/html-attr? &props :disabled)
-        ]
+        (util/html-attr? &props :disabled)]
     [:button
      (merge-attrs
       (if (pos? thumb-scale-factor)
@@ -342,7 +342,7 @@
       (when track-inset-gap {:style {"--track-inset-gap" track-inset-gap}})
       (sx
        ".kushi-switch"
-       {:--thumb-height "calc(var(--thumb-scale-factor, var(--switch-thumb-scale-factor, 1)) * (1em - (var(--track-inset-gap, 0px) * 2)))"
+       {:--thumb-height "calc(var(--thumb-scale-factor, var(--switch-thumb-scale-factor, 1)) * (1em - (var(--track-inset-gap, 1px) * 2)))"
         :--height       :1em}
        :flex-shrink--0
        :overflow--clip
@@ -353,7 +353,7 @@
        [:w "calc((var(--height) *  max(1.25, var(--switch-width-ratio, 2))) - var(--switch-border-width))"]
        :h--$height
 
-       :p--$track-inset-gap
+       :p--$track-inset-gap||1px
 
        [".kushi-switch[aria-checked='true']:jc" :fe]
 
@@ -383,12 +383,13 @@
 
       {:disabled           disabled?
        :role               :switch
-       :aria-checked       (if on true false)
+       :aria-checked       (if on? true false)
        :data-ks-ia         ""
        :data-ks-surface    "solid"
        :data-ks-display    "flex"
        :data-ks-fd         "row"
        :data-ks-jc         "flex-start"
+       :data-ks-ai         "center"
        :data-ks-transition ""
        :data-ks-contour    "pill"
        }
@@ -410,16 +411,17 @@
           :.kushi-switch-track-content)
       track-content-off]
 
-     [thumb
-      thumb-attrs
-      [:div (sx ".kushi-switch-thumb-content-on"
-                :.kushi-switch-thumb-content
-                ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
-       thumb-content-on]
-      [:div (sx ".kushi-switch-thumb-content-off"
-                :.kushi-switch-thumb-content
-                ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
-       thumb-content-off]]
+     (let [thumb-attrs (merge {:surface :minimal} thumb-attrs)]
+       [thumb
+        thumb-attrs
+        [:div (sx ".kushi-switch-thumb-content-on"
+                  :.kushi-switch-thumb-content
+                  ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
+         thumb-content-on]
+        [:div (sx ".kushi-switch-thumb-content-off"
+                  :.kushi-switch-thumb-content
+                  ["has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed])
+         thumb-content-off]])
 
      #_[:div
       (merge-attrs

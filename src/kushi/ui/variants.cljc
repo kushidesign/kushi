@@ -58,6 +58,9 @@
 (def sizings-xxsmall-xlarge
   [:xxsmall :xsmall :small :medium :large :xlarge])
 
+(def sizings-xsmall-xxlarge
+  [:xsmall :small :medium :large :xlarge :xxlarge])
+
 (def sizings-xsmall-xxxlarge
   [:xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
 
@@ -116,6 +119,7 @@
           colorways-named
           colorways-semantic
           colorways
+          sizings-xsmall-xxlarge
           sizings-xxsmall-xlarge
           sizings-xsmall-xxxlarge
           sizings
@@ -156,6 +160,7 @@
   {:weight                 (:weights/set variants)
    :sizing/xxsmall-xlarge  (:sizings-xxsmall-xlarge/set variants)
    :sizing/xsmall-xxxlarge (:sizings-xsmall-xxxlarge/set variants)
+   :sizing/xsmall-xxlarge  (:sizings-xsmall-xxlarge/set variants)
    :sizing                 (:sizings/set variants)
    :colorway               (:colorways/set variants)
    :colorway/named         (:colorways-named/set variants)
@@ -179,6 +184,7 @@
   {:weight                 (:weights/enum variants)
    :sizing/xxsmall-xlarge  (:sizings-xxsmall-xlarge/enum variants)
    :sizing/xsmall-xxxlarge (:sizings-xsmall-xxxlarge/enum variants)
+   :sizing/xsmall-xxlarge  (:sizings-xsmall-xxlarge/enum variants)
    :sizing                 (:sizings/enum variants)
    :colorway               (:colorways/enum variants)
    :colorway/named         (:colorways-named/enum variants)
@@ -202,6 +208,7 @@
   {:weight                 (:weights/vector variants)
    :sizing/xxsmall-xlarge  (:sizings-xxsmall-xlarge/vector variants)
    :sizing/xsmall-xxxlarge (:sizings-xsmall-xxxlarge/vector variants)
+   :sizing/xsmall-xxlarge  (:sizings-xsmall-xxlarge/vector variants)
    :sizing                 (:sizings/vector variants)
    :colorway               (:colorways/vector variants)
    :colorway/named         (:colorways-named/vector variants)
@@ -266,6 +273,7 @@
                                :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." }
    :contour                   {:desc    "Shape of the element."
                                :default nil}
+
   ;;  :shadows                   {
   ;;                              ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
   ;;                              ;; TODO maybe :$myvar or "var(--myvar)" or "0 0 10px red" (legit shadow string)
@@ -275,29 +283,22 @@
   ;;                              :when-not-nil  ""
   ;;                              :style-tokens? true  
   ;;                              }
-
-   :drop-shadow               {
-                               :schema   [:or
+   
+   :drop-shadow               {:schema   [:or
                                           [:and :keyword (:drop-shadows/enum variants)]
                                           :string 
                                           [:vector :any]]
                                :desc     "Controls the drop shadow"
                                :default  nil
-                               :data-ks? false
-                               }
+                               :data-ks? false}
 
-   :shadow-color            {
-                               :desc     "Controls the drop shadow"
-                               :default  nil
-                               }
-   :multi-stroke              {
-                               :schema   [:vector [:tuple [:or :string :keyword] [:or :string :keyword]]]
+   :shadow-color              {:desc    "Controls the drop shadow"
+                               :default nil}
+   :multi-stroke              {:schema   [:vector [:tuple [:or :string :keyword] [:or :string :keyword]]]
                                :desc     "When you want multiple strokes, e.g. `[[:2px :$red-500] [:5px :$green-500] [:2px :$blue-500]]`."
                                :default  nil
-                               :data-ks? false
-                               }
-   :stroke                    {
-                               :schema   [:or 
+                               :data-ks? false}
+   :stroke                    {:schema   [:or 
                                           [:enum :none :xsoft :soft :medium :hard :xhard]
                                           [:tuple
                                            {:examples [[:1px :red]
@@ -312,15 +313,12 @@
                                            [:tuple [:or :string :keyword] [:or :string :keyword]]]]
                                :desc     "Can be set a number of different ways"
                                :default  nil
-                               :data-ks? false
-                               }
-   :stroke-color              {
-                               :schema   [:or :keyword :string]
+                               :data-ks? false}
+   :stroke-color              {:schema   [:or :keyword :string]
                                :desc     "Controls the stroke color."
                                :default  "currentColor"
                                ;; support a pred here so you can do :faint :soft :medium :hard
-                               :data-ks? false
-                               }
+                               :data-ks? false}
    :stroke-align              {:schema   [:enum :inside :outside]
                                :default  nil
                                :desc     "Alignment of the stroke. Only applies to `:surface`."
