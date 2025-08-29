@@ -315,6 +315,9 @@
            :track-content-on   {:schema  [:or :string [:vector :any]]
                                 :default nil
                                 :desc    "String or element that will be placed in the track, when in the \"on\" position"}
+           :switch-width-ratio {:schema  :float
+                                :default nil
+                                :desc    "Width ratio of switch"}
            }}
   [& args]
   (let [{:keys [disable-events?
@@ -327,6 +330,7 @@
                 track-inset-gap
                 track-content-on
                 track-content-off
+                switch-width-ratio
                 clip-thumb-shadow?]}
         (? &props)
 
@@ -340,6 +344,7 @@
                  "overflow"             :visible}}
         {:style {"--thumb-scale-factor" 1}})
       (when track-inset-gap {:style {"--track-inset-gap" track-inset-gap}})
+      (when switch-width-ratio {:style {"--switch-width-ratio" switch-width-ratio}})
       (sx
        ".kushi-switch"
        {:--thumb-height "calc(var(--thumb-scale-factor, var(--switch-thumb-scale-factor, 1)) * (1em - (var(--track-inset-gap, 1px) * 2)))"
@@ -391,8 +396,7 @@
        :data-ks-jc         "flex-start"
        :data-ks-ai         "center"
        :data-ks-transition ""
-       :data-ks-contour    "pill"
-       }
+       :data-ks-contour    "pill"}
       
       (domo/mouse-down-a11y #(when-not disable-events? (toggle-switch %)))
 

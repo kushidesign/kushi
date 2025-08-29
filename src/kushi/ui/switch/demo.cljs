@@ -23,7 +23,7 @@
                :variant-scale   :colorway/semantic,
                :label           "Colorway",
                :row-style       {:justify-content :flex-start
-                                 :gap :1rem}
+                                 :gap             :1rem}
                :attrs           {:sizing :xxlarge
                                  :on?    true}})}
 
@@ -38,7 +38,7 @@
                :variant-labels? false
                :variant-scale   :sizing/xsmall-xxlarge,
                :row-style       {:justify-content :flex-start
-                                 :gap :1rem}
+                                 :gap             :1rem}
                :label           "Convex thumb",
                :attrs           {:on?         true
                                  :thumb-attrs {:surface :convex}}})}
@@ -48,7 +48,7 @@
                :variant-labels? false
                :variant-scale   :sizing/xsmall-xxlarge,
                :row-style       {:justify-content :flex-start
-                                 :gap :1rem}
+                                 :gap             :1rem}
                :label           "Oversized thumb",
                :attrs           {:on?                true
                                  :thumb-scale-factor 1.25
@@ -60,12 +60,40 @@
                :variant-labels? false
                :variant-scale   :sizing/xsmall-xxlarge,
                :row-style       {:justify-content :flex-start
-                                 :gap :1rem}
+                                 :gap             :1rem}
                :label           "Labeled track",
                :attrs           {:on?                true
                                  :thumb-scale-factor 1.25
                                  :thumb-content-on   "ON"
                                  :thumb-content-off  "OFF"
+                                 :thumb-attrs        {:surface :minimal
+                                                      :stroke  :medium}}})}
+   
+   {:samples (samples-with-variant
+              {:variant         :sizing
+               :variant-labels? false
+               :variant-scale   :sizing/xsmall-xxlarge,
+               :row-style       {:justify-content :flex-start
+                                 :gap             :1rem}
+               :label           "Labeled track",
+               :attrs           {:on?                true
+                                 :thumb-scale-factor 1.25
+                                 :thumb-content-on   "ON"
+                                 :thumb-content-off  "OFF"
+                                 :thumb-attrs        {:surface :minimal
+                                                      :stroke  :medium}}})}
+   
+   {:samples (samples-with-variant
+              {:variant         :sizing
+               :variant-labels? false
+               :variant-scale   :sizing/xsmall-xxlarge,
+               :row-style       {:justify-content :flex-start
+                                 :gap             :1rem}
+               :label           "Labeled track",
+               :attrs           {:on?                true
+                                 :switch-width-ratio 2.25
+                                 :track-content-on   "ON"
+                                 :track-content-off  "OFF"
                                  :thumb-attrs        {:surface :minimal
                                                       :stroke  :medium}}})}
    #_#_#_#_
