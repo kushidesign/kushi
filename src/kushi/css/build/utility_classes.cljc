@@ -255,14 +255,14 @@
                                   :inset-inline-start "0%"
                                   :inset-inline-end   :unset
                                   :inset-block-start  "50%"
-                                  :inset-block-end    :reset
+                                  :inset-block-end    :unset
                                   :translate          "0px -50%"}
 
    :absolute-inline-end-inside   {:position           :absolute
                                   :inset-inline-end   "0%"
                                   :inset-inline-start :unset
                                   :inset-block-start  "50%"
-                                  :inset-block-end    :reset
+                                  :inset-block-end    :unset
                                   :translate          "0px -50%"}
 
    :absolute-block-start-inside  {:position           :absolute

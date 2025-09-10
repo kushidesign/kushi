@@ -415,7 +415,7 @@
     :--pane-min-height                       :35px
     :--pane-padding-inline                   :1em
     :--pane-padding-block                    :0.5em
-    :--pane-border-radius                    :$rounded-absolute-large
+    :--pane-border-radius                    :$rounded-medium-absolute
     :--pane-offset                           :7px
     :--pane-viewport-padding                 :5px 
     :--pane-flip-viewport-edge-threshold     :32px 
@@ -653,7 +653,7 @@
    [
     :--modal-box-shadow             :$pane-box-shadow
     :--modal-box-shadow-dark-mode   :$pane-box-shadow-dark-mode
-    :--modal-border-radius          :$rounded-absolute-large
+    :--modal-border-radius          :$rounded-medium-absolute
     :--modal-border-width           :0px
     :--modal-border-style           :solid
     :--modal-border-color           :$gray-150
@@ -700,15 +700,16 @@
     :category ["border-radius"]
     :tags     ["border-radius" "corners" "rounded"]
     }
-   [:--rounded-absolute-xxxsmall  :0.0625rem        ;; 1px
-    :--rounded-absolute-xxsmall   :0.125rem         ;; 2px
-    :--rounded-absolute-xsmall    :0.25rem          ;; 4px
-    :--rounded-absolute-small     :0.375rem         ;; 6px
-    :--rounded-absolute-medium    :0.5rem           ;; 8px
-    :--rounded-absolute-large     :0.75rem          ;; 12px
-    :--rounded-absolute-xlarge    :0.1rem           ;; 16px
-    :--rounded-absolute-xxlarge   :1.25rem          ;; 20px
-    :--rounded-absolute-xxxlarge  :1.5625rem        ;; 25px
+   [:--rounded-xxxsmall-absolute  :0.0625rem        ;; 1px
+    :--rounded-xxsmall-absolute   :0.125rem         ;; 2px
+    :--rounded-xsmall-absolute    :0.25rem          ;; 4px
+    :--rounded-small-absolute     :0.375rem         ;; 6px
+    :--rounded-medium-absolute    :0.5rem           ;; 8px
+    :--rounded-large-absolute     :0.75rem          ;; 12px
+    :--rounded-xlarge-absolute    :1rem           ;; 16px
+    :--rounded-xxlarge-absolute   :1.25rem          ;; 20px
+    :--rounded-xxxlarge-absolute  :1.5625rem        ;; 25px
+    :--rounded-absolute           :$rounded-medium-absolute
     ]
    
    ;; Relative (to type size) versions for buttons, badges
@@ -722,10 +723,10 @@
     :--rounded-xsmall   :0.175em   
     :--rounded-small    :0.2625em  
     :--rounded-medium   :0.35em    
-    :--rounded-large    :0.525em   
-    :--rounded-xlarge   :0.7em     
-    :--rounded-xxlarge  :0.875em   
-    :--rounded-xxxlarge :1.09375em 
+    :--rounded-large    :0.475em   
+    :--rounded-xlarge   :0.625em     
+    :--rounded-xxlarge  :0.775em   
+    :--rounded-xxxlarge :0.925em 
     :--rounded          :$rounded-medium
     :--border-weight    :1px
     ]

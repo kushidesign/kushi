@@ -35,7 +35,7 @@
    "font-size"                  "var(--code-font-size)",
    "background-color"           "var(--code-background-color)",
    "padding-block"              "var(--code-padding-block)",
-   "border-radius"              "var(--code-border-radius, var(--rounded-absolute-small))",
+   "border-radius"              "var(--code-border-radius, var(--rounded-small-absolute))",
   ;;  "border-width"               "var(--code-border-width, 1px)",
   ;;  "border-color"               "var(--code-border-color, var(--neutral-200))",
   ;;  "border-style"               "var(--code-border-style, solid)",
@@ -158,9 +158,7 @@
 
 (defcss ".contents" {"display" "contents"})
 
-(defcss
-  ".rounded-absolute"
-  {"border-radius" "var(--rounded-absolute-medium)"})
+(defcss ".rounded-absolute" {"border-radius" "var(--rounded-medium-absolute)"})
 
 (defcss ".rounded" {"border-radius" "var(--rounded)"})
 
@@ -208,41 +206,24 @@
 
 (defcss ".xxxslow" {"transition-duration" "var(--xxxslow)"})
 
-(defcss
-  ".rounded-absolute-xxsmall"
-  {"border-radius" "var(--rounded-absolute-xxsmall)"})
+;; Rounded
+(defcss ".rounded-xxsmall-absolute" {"border-radius" "var(--rounded-xxsmall-absolute)"})
 
-(defcss
-  ".rounded-absolute-xsmall"
-  {"border-radius" "var(--rounded-absolute-xsmall)"})
+(defcss ".rounded-xsmall-absolute" {"border-radius" "var(--rounded-xsmall-absolute)"})
 
-(defcss
-  ".rounded-absolute-small"
-  {"border-radius" "var(--rounded-absolute-small)"})
+(defcss ".rounded-small-absolute" {"border-radius" "var(--rounded-small-absolute)"})
 
-(defcss
-  ".rounded-absolute-medium"
-  {"border-radius" "var(--rounded-absolute-medium)"})
+(defcss ".rounded-medium-absolute" {"border-radius" "var(--rounded-medium-absolute)"})
 
-(defcss
-  ".rounded-absolute-large"
-  {"border-radius" "var(--rounded-absolute-large)"})
+(defcss ".rounded-medium-absolute" {"border-radius" "var(--rounded-medium-absolute)"})
 
-(defcss
-  ".rounded-absolute-xlarge"
-  {"border-radius" "var(--rounded-absolute-xlarge)"})
+(defcss ".rounded-xlarge-absolute" {"border-radius" "var(--rounded-xlarge-absolute)"})
 
-(defcss
-  ".rounded-absolute-xxlarge"
-  {"border-radius" "var(--rounded-absolute-xxlarge)"})
+(defcss ".rounded-xxlarge-absolute" {"border-radius" "var(--rounded-xxlarge-absolute)"})
 
-(defcss
-  ".rounded-absolute-xxxlarge"
-  {"border-radius" "var(--rounded-absolute-xxxlarge)"})
+(defcss ".rounded-xxxlarge-absolute" {"border-radius" "var(--rounded-xxxlarge-absolute)"})
 
-(defcss
-  ".rounded-xxxsmall"
-  {"border-radius" "var(--rounded-xxxsmall)"})
+(defcss ".rounded-xxxsmall" {"border-radius" "var(--rounded-xxxsmall)"})
 
 (defcss ".rounded-xxsmall" {"border-radius" "var(--rounded-xxsmall)"})
 
@@ -258,10 +239,9 @@
 
 (defcss ".rounded-xxlarge" {"border-radius" "var(--rounded-xxlarge)"})
 
-(defcss
-  ".rounded-xxxlarge"
-  {"border-radius" "var(--rounded-xxxlarge)"})
+(defcss ".rounded-xxxlarge" {"border-radius" "var(--rounded-xxxlarge)"})
 
+;; Sizing
 (defcss ".xxxxsmall" {"font-size" "var(--xxxxsmall)"})
 
 (defcss ".xxxsmall" {"font-size" "var(--xxxsmall)"})
@@ -1254,35 +1234,27 @@
 (defcss ".dark [data-ks-surface=\"solid-classic\"]"
   {:after {:background-image "linear-gradient(var(--transparent-black-02), #0000, var(--transparent-white-20))"}})
 
-(defcss "[data-ks-contour=\"rounded\"]"
-  {:border-radius :$rounded-medium})
+(defcss "[data-ks-contour=\"rounded\"]" {:border-radius :$rounded-medium})
+(defcss "[data-ks-contour=\"rounded-xxxsmall\"]" {:border-radius :$rounded-xxxsmall})
+(defcss "[data-ks-contour=\"rounded-xxsmall\"]" {:border-radius :$rounded-xxsmall})
+(defcss "[data-ks-contour=\"rounded-xsmall\"]" {:border-radius :$rounded-xsmall})
+(defcss "[data-ks-contour=\"rounded-small\"]" {:border-radius :$rounded-small})
+(defcss "[data-ks-contour=\"rounded-medium\"]" {:border-radius :$rounded-medium})
+(defcss "[data-ks-contour=\"rounded-large\"]" {:border-radius :$rounded-large})
+(defcss "[data-ks-contour=\"rounded-xlarge\"]" {:border-radius :$rounded-xlarge})
+(defcss "[data-ks-contour=\"rounded-xxlarge\"]" {:border-radius :$rounded-xxlarge})
+(defcss "[data-ks-contour=\"rounded-xxxlarge\"]" {:border-radius :$rounded-xxxlarge})
 
-(defcss "[data-ks-contour=\"rounded-xxxsmall\"]"
-  {:border-radius :$rounded-xxxsmall})
-
-(defcss "[data-ks-contour=\"rounded-xxsmall\"]"
-  {:border-radius :$rounded-xxsmall})
-
-(defcss "[data-ks-contour=\"rounded-xsmall\"]"
-  {:border-radius :$rounded-xsmall})
-
-(defcss "[data-ks-contour=\"rounded-small\"]"
-  {:border-radius :$rounded-small})
-
-(defcss "[data-ks-contour=\"rounded-medium\"]"
-  {:border-radius :$rounded-medium})
-
-(defcss "[data-ks-contour=\"rounded-large\"]"
-  {:border-radius :$rounded-large})
-
-(defcss "[data-ks-contour=\"rounded-xlarge\"]"
-  {:border-radius :$rounded-xlarge})
-
-(defcss "[data-ks-contour=\"rounded-xxlarge\"]"
-  {:border-radius :$rounded-xxlarge})
-
-(defcss "[data-ks-contour=\"rounded-xxxlarge\"]"
-  {:border-radius :$rounded-xxxlarge})
+(defcss "[data-ks-contour=\"rounded-absolute\"]" {:border-radius :$rounded-medium-absolute})
+(defcss "[data-ks-contour=\"rounded-xxxsmall-absolute\"]" {:border-radius :$rounded-xxxsmall-absolute})
+(defcss "[data-ks-contour=\"rounded-xxsmall-absolute\"]" {:border-radius :$rounded-xxsmall-absolute})
+(defcss "[data-ks-contour=\"rounded-xsmall-absolute\"]" {:border-radius :$rounded-xsmall-absolute})
+(defcss "[data-ks-contour=\"rounded-small-absolute\"]" {:border-radius :$rounded-small-absolute})
+(defcss "[data-ks-contour=\"rounded-medium-absolute\"]" {:border-radius :$rounded-medium-absolute})
+(defcss "[data-ks-contour=\"rounded-large-absolute\"]" {:border-radius :$rounded-large-absolute})
+(defcss "[data-ks-contour=\"rounded-xlarge-absolute\"]" {:border-radius :$rounded-xlarge-absolute})
+(defcss "[data-ks-contour=\"rounded-xxlarge-absolute\"]" {:border-radius :$rounded-xxlarge-absolute})
+(defcss "[data-ks-contour=\"rounded-xxxlarge-absolute\"]" {:border-radius :$rounded-xxxlarge-absolute})
 
 (defcss "[data-ks-contour=\"pill\"], [data-ks-contour=\"circle\"]"
   {:border-radius :9999px})
@@ -1356,11 +1328,11 @@
 ;; Move to switch ns
 (defcss ".kushi-switch"
   {:--switch-thumb-scale-factor                   1
-   :--switch-width-ratio                          2
+   :--switch-width-ratio                          1.85
    :--switch-border-color                         :transparent
    :--switch-border-width                         :2px
-   :--switch-off-background-color                 :$background-color-neutral-soft-4
-   :--switch-off-background-color-hover           :$background-color-neutral-soft-5
+   :--switch-off-background-color                 :$background-color-neutral-soft-5
+   :--switch-off-background-color-hover           :$background-color-neutral-soft-6
    :--switch-off-background-color-dark-mode       :$background-color-neutral-soft-dark-mode
    :--switch-off-background-color-hover-dark-mode :$background-color-neutral-soft2-dark-mode
    })

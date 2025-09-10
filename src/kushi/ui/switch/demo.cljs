@@ -1,6 +1,6 @@
 (ns ^{:kushi/layer "user-styles"}
   kushi.ui.switch.demo
-  (:require [kushi.core :refer (sx)]
+  (:require [kushi.core :refer (sx at)]
             [kushi.ui.icon :refer [icon]]
             [kushi.showcase.core
              :as showcase
@@ -8,94 +8,186 @@
             [kushi.ui.switch :refer [switch]]))
 
 (def demos
-  [{:label   "Basic"
+  #_[
+   #_{:samples (samples [[:div (sx :.flex-row-start :gap--1rem)
+                        [switch {:at              (at)
+                                 :on?             true
+                                 :sizing          :xxxlarge
+                                 :contour         :rounded
+                                 :track-inset-gap :1px}]
+                        [switch {:at              (at)
+                                 :on?             true
+                                 :sizing          :xxxlarge
+                                 :contour         :rounded-absolute
+                                 :track-inset-gap :1px}]]])}
+   {:samples (samples-with-variant
+              {:variant       :contour,
+               :variant-scale :contour/basic+rounded,
+               :label         "Contour",
+               :attrs         {:at              (at)
+                               :on?             true
+                               :sizing          :xxxlarge
+                               :track-inset-gap :1px}})}
+   ]
+  [
+   {:label   "Basic"
     :desc    "Basic"
     :samples (samples [[:div (sx :.flex-row-start :gap--1rem)
                         [switch {:colorway :neutral
-                                 :sizing   :xxlarge}]
+                                 :sizing   :xxxlarge}]
                         [switch {:colorway :neutral
-                                 :sizing   :xxlarge
+                                 :sizing   :xxxlarge
                                  :on?      true}]]])}
+
 
    {:samples (samples-with-variant
               {:variant         :colorway,
-               :variant-labels? false
+              ;;  :variant-labels? false
                :variant-scale   :colorway/semantic,
                :label           "Colorway",
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
-               :attrs           {:sizing :xxlarge
+               :attrs           {:sizing :xxxlarge
                                  :on?    true}})}
 
+   
    {:samples (samples-with-variant
               {:variant :sizing,
                :label   "Sizing",
                :attrs   {:on? true}})}
 
+   {:samples (samples-with-variant
+              {:variant       :contour,
+               :variant-scale :contour/basic+rounded,
+               :label         "Contour",
+               :attrs         {:at              (at)
+                               :on?             true
+                               :sizing          :xxxlarge}})}
+
    ;; why rows not working?
    {:samples (samples-with-variant
               {:variant         :sizing
                :variant-labels? false
-               :variant-scale   :sizing/xsmall-xxlarge,
+               :variant-scale   :sizing/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Convex thumb",
                :attrs           {:on?         true
-                                 :thumb-attrs {:surface :convex}}})}
+                                 :thumb-props {:surface :convex}}})}
 
    {:samples (samples-with-variant
               {:variant         :sizing
                :variant-labels? false
-               :variant-scale   :sizing/xsmall-xxlarge,
+               :variant-scale   :sizing/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Oversized thumb",
                :attrs           {:on?                true
                                  :thumb-scale-factor 1.25
-                                 :thumb-attrs        {:surface :minimal
+                                 :thumb-props        {:surface :minimal
                                                       :stroke  :medium}}})}
 
-   {:samples (samples-with-variant
-              {:variant         :sizing
-               :variant-labels? false
-               :variant-scale   :sizing/xsmall-xxlarge,
-               :row-style       {:justify-content :flex-start
-                                 :gap             :1rem}
-               :label           "Labeled track",
-               :attrs           {:on?                true
-                                 :thumb-scale-factor 1.25
-                                 :thumb-content-on   "ON"
-                                 :thumb-content-off  "OFF"
-                                 :thumb-attrs        {:surface :minimal
-                                                      :stroke  :medium}}})}
+        ;; Track content, leave off for now, consider removing
+  ;;  {:samples (samples-with-variant
+  ;;             {:variant         :sizing
+  ;;              :variant-labels? false
+  ;;              :variant-scale   :sizing/large-xxxlarge,
+  ;;              :row-style       {:justify-content :flex-start
+  ;;                                :gap             :1rem}
+  ;;              :label           "Labeled track",
+  ;;              :attrs           {:switch-width-ratio 2.1
+  ;;                                :track-label-on   "ON"
+  ;;                                :track-label-off  "OFF"}})}
+   
+        ;; Track content, leave off for now, consider removing
+  ;;  {:samples (samples-with-variant
+  ;;             {:variant         :sizing
+  ;;              :variant-labels? false
+  ;;              :variant-scale   :sizing/large-xxxlarge,
+  ;;              :row-style       {:justify-content :flex-start
+  ;;                                :gap             :1rem}
+  ;;              :label           "Labeled track, on",
+  ;;              :attrs           {:on?                true
+  ;;                                :switch-width-ratio 2.1
+  ;;                                :track-label-on   "ON"
+  ;;                                :track-label-off  "OFF"}})}
+   
+        ;; Track content, leave off for now, consider removing
+  ;;  {:samples (samples-with-variant
+  ;;             {:variant         :sizing
+  ;;              :variant-labels? false
+  ;;              :variant-scale   :sizing/large-xxxlarge,
+  ;;              :row-style       {:justify-content :flex-start
+  ;;                                :gap             :1rem}
+  ;;              :label           "Icon track",
+  ;;              :attrs           {:track-icon-on   :visibility
+  ;;                                :track-icon-off  :visibility-off}})}
+   
+        ;; Track content, leave off for now, consider removing
+  ;;  {:samples (samples-with-variant
+  ;;             {:variant         :sizing
+  ;;              :variant-labels? false
+  ;;              :variant-scale   :sizing/large-xxxlarge,
+  ;;              :row-style       {:justify-content :flex-start
+  ;;                                :gap             :1rem}
+  ;;              :label           "Icon track, on",
+  ;;              :attrs           {:on?            true
+  ;;                                :track-icon-on  :visibility
+  ;;                                :track-icon-off :visibility-off}})}
    
    {:samples (samples-with-variant
               {:variant         :sizing
                :variant-labels? false
-               :variant-scale   :sizing/xsmall-xxlarge,
+               :variant-scale   :sizing/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
-               :label           "Labeled track",
-               :attrs           {:on?                true
-                                 :thumb-scale-factor 1.25
-                                 :thumb-content-on   "ON"
-                                 :thumb-content-off  "OFF"
-                                 :thumb-attrs        {:surface :minimal
-                                                      :stroke  :medium}}})}
+               :label           "Labeled thumb",
+               :attrs           {:thumb-label-on  "ON"
+                                 :thumb-label-off "OFF"}})}
    
    {:samples (samples-with-variant
               {:variant         :sizing
                :variant-labels? false
-               :variant-scale   :sizing/xsmall-xxlarge,
+               :variant-scale   :sizing/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
-               :label           "Labeled track",
-               :attrs           {:on?                true
-                                 :switch-width-ratio 2.25
-                                 :track-content-on   "ON"
-                                 :track-content-off  "OFF"
-                                 :thumb-attrs        {:surface :minimal
-                                                      :stroke  :medium}}})}
+               :label           "Labeled thumb, on",
+               :attrs           {:on?             true
+                                 :thumb-label-on  "ON"
+                                 :thumb-label-off "OFF"}})}
+   
+   {:samples (samples-with-variant
+              {:variant         :sizing
+               :variant-labels? false
+               :variant-scale   :sizing/large-xxxlarge,
+               :row-style       {:justify-content :flex-start
+                                 :gap             :1rem}
+               :label           "Icon thumb",
+               :attrs           {:thumb-icon-on  :visibility
+                                 :thumb-icon-off :visibility-off}})}
+   
+   {:samples (samples-with-variant
+              {:variant         :sizing
+               :variant-labels? false
+               :variant-scale   :sizing/large-xxxlarge,
+               :row-style       {:justify-content :flex-start
+                                 :gap             :1rem}
+               :label           "Icon thumb, on",
+               :attrs           {:on?            true
+                                 :thumb-icon-on  :visibility
+                                 :thumb-icon-off :visibility-off}})}
+   
+   {:label   "Disabled"
+    :desc    "Disabled"
+    :samples (samples [[:div (sx :.flex-row-start :gap--1rem)
+                        [switch {:colorway :neutral
+                                 :sizing   :xxxlarge
+                                 :disabled true}]
+                        [switch {:colorway :neutral
+                                 :sizing   :xxxlarge
+                                 :on?      true
+                                 :disabled true}]]])}
+
    #_#_#_#_
 
            {:samples (samples-with-variant
@@ -241,12 +333,12 @@
       :container-attrs container-attrs
       :sx-attrs        (sx-call (merge-attrs (sx
                                               [:--switch-width-ratio :2.25])
-                                             {:track-content-on  "ON"
-                                              :track-content-off "OFF"}))
+                                             {:track-label-on  "ON"
+                                              :track-label-off "OFF"}))
       :snippets        '[[switch (merge-attrs (sx
                                                [:--switch-width-ratio :2.25])
-                                              {:track-content-on  "ON"
-                                               :track-content-off "OFF"})]]
+                                              {:track-label-on  "ON"
+                                               :track-label-off "OFF"})]]
       :examples        (for [sz sizes]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
@@ -254,11 +346,11 @@
      {:desc            "With labeled thumb"
       :row-attrs       row-attrs
       :container-attrs container-attrs
-      :sx-attrs        (sx-call {:thumb-content-on  [:span (sx :.semi-bold :fs--0.3em) "ON"]
-                                 :thumb-content-off [:span (sx :.semi-bold :fs--0.3em) "OFF"]})
+      :sx-attrs        (sx-call {:thumb-label-on  [:span (sx :.semi-bold :fs--0.3em) "ON"]
+                                 :thumb-label-off [:span (sx :.semi-bold :fs--0.3em) "OFF"]})
 
-      :snippets        '[[switch {:thumb-content-on  [:span (sx :.semi-bold :fs--0.3em) "ON"]
-                                  :thumb-content-off [:span (sx :.semi-bold :fs--0.3em) "OFF"]}]]
+      :snippets        '[[switch {:thumb-label-on  [:span (sx :.semi-bold :fs--0.3em) "ON"]
+                                  :thumb-label-off [:span (sx :.semi-bold :fs--0.3em) "OFF"]}]]
       :examples        (for [sz (drop 2 sizes)]
                          {:label (name sz)
                           :attrs {:class [sz]}})}
@@ -267,17 +359,17 @@
       :reqs            '[[kushi.ui.icon :refer [icon]]]
       :row-attrs       row-attrs
       :container-attrs container-attrs
-      :sx-attrs        (sx-call {:track-content-on  [icon (merge-attrs (sx :fs--0.55em)
+      :sx-attrs        (sx-call {:track-label-on  [icon (merge-attrs (sx :fs--0.55em)
                                                                         {:icon-filled? true})
                                                       :visibility]
-                                 :track-content-off [icon (merge-attrs (sx :fs--0.55em)
+                                 :track-label-off [icon (merge-attrs (sx :fs--0.55em)
                                                                         {:icon-filled? true})
                                                       :visibility-off]})
 
-      :snippets        '[[switch {:track-content-on  [icon (merge-attrs (sx :fs--0.55em)
+      :snippets        '[[switch {:track-label-on  [icon (merge-attrs (sx :fs--0.55em)
                                                                          {:icon-filled? true})
                                                        :visibility]
-                                  :track-content-off [icon (merge-attrs (sx :fs--0.55em)
+                                  :track-label-off [icon (merge-attrs (sx :fs--0.55em)
                                                                          {:icon-filled? true})
                                                        :visibility-off]}]]
       :examples        (for [sz sizes]
@@ -288,17 +380,17 @@
       :reqs            '[[kushi.ui.icon :refer [icon]]]
       :row-attrs       row-attrs
       :container-attrs container-attrs
-      :sx-attrs        (sx-call {:thumb-content-on  [icon (merge-attrs (sx :fs--0.55em)
+      :sx-attrs        (sx-call {:thumb-label-on  [icon (merge-attrs (sx :fs--0.55em)
                                                                         {:icon-filled? true})
                                                       :visibility]
-                                 :thumb-content-off [icon (merge-attrs (sx :fs--0.55em)
+                                 :thumb-label-off [icon (merge-attrs (sx :fs--0.55em)
                                                                         {:icon-filled? true})
                                                       :visibility-off]})
 
-      :snippets        '[[switch {:thumb-content-on  [icon (merge-attrs (sx :fs--0.55em)
+      :snippets        '[[switch {:thumb-label-on  [icon (merge-attrs (sx :fs--0.55em)
                                                                          {:icon-filled? true})
                                                        :visibility]
-                                  :thumb-content-off [icon (merge-attrs (sx :fs--0.55em)
+                                  :thumb-label-off [icon (merge-attrs (sx :fs--0.55em)
                                                                          {:icon-filled? true})
                                                        :visibility-off]}]]
       :examples        (for [sz sizes]

@@ -740,6 +740,8 @@
         bg-soft-3 150   bg-soft-3-d 800
         bg-soft-4 200   bg-soft-4-d 750
         bg-soft-5 250   bg-soft-5-d 700
+        bg-soft-6 300   bg-soft-6-d 650
+        bg-soft-7 350   bg-soft-7-d 600
 
         bg-hard   650   bg-hard-d   550
         bg-hard-2 700   bg-hard-2-d 350
@@ -755,6 +757,8 @@
                      bg-soft-3  bg-soft-3-d
                      bg-soft-4  bg-soft-4-d
                      bg-soft-5  bg-soft-5-d
+                     bg-soft-6  bg-soft-6-d
+                     bg-soft-7  bg-soft-7-d
 
                      bg-hard    bg-hard-d  
                      bg-hard-2  bg-hard-2-d
@@ -769,6 +773,8 @@
                      bg-soft-3 750
                      bg-soft-4 700
                      bg-soft-5 650
+                     bg-soft-6 600
+                     bg-soft-7 550
 
                      bg-hard   450  
                      bg-hard-2 300
@@ -783,6 +789,8 @@
                      bg-soft-3 bg-soft-3-d
                      bg-soft-4 bg-soft-4-d
                      bg-soft-5 bg-soft-5-d
+                     bg-soft-6 bg-soft-6-d
+                     bg-soft-7 bg-soft-7-d
 
                      700       bg-hard-d   
                      750       bg-hard-2-d
@@ -797,10 +805,12 @@
                       bg-soft-3 750
                       bg-soft-4 700
                       bg-soft-5 650
+                      bg-soft-6 600
+                      bg-soft-7 550
 
-                      700       400   
-                      750       250
-                      850       100]
+                      700       450   
+                      750       350
+                      850       200]
 
         blue        [fg-l      fg-d
                      fg-2-l    fg-2-d
@@ -811,6 +821,8 @@
                      bg-soft-3 750
                      bg-soft-4 700
                      bg-soft-5 650
+                     bg-soft-6 600
+                     bg-soft-7 550
 
                      bg-hard   400  
                      bg-hard-2 350
@@ -825,6 +837,8 @@
                      bg-soft-3 750
                      bg-soft-4 700
                      bg-soft-5 650
+                     bg-soft-6 600
+                     bg-soft-7 550
 
                      550       350  
                      600       300
@@ -839,6 +853,8 @@
                      bg-soft-3 bg-soft-3-d
                      bg-soft-4 bg-soft-4-d
                      bg-soft-5 bg-soft-5-d
+                     bg-soft-6 bg-soft-6-d
+                     bg-soft-7 bg-soft-7-d
 
                      bg-hard   350  
                      bg-hard-2 300
@@ -874,6 +890,8 @@
                                   bg-soft-3 bg-soft-3-d
                                   bg-soft-4 bg-soft-4-d
                                   bg-soft-5 bg-soft-5-d
+                                  bg-soft-6 bg-soft-6-d
+                                  bg-soft-7 bg-soft-7-d
                                   bg-hard   bg-hard-d  
                                   bg-hard-2 bg-hard-2-d
                                   bg-hard-3 bg-hard-3-d]]
@@ -888,6 +906,8 @@
                                  [colorway :bg "-soft-3" bg-soft-3 bg-soft-3-d]
                                  [colorway :bg "-soft-4" bg-soft-4 bg-soft-4-d]
                                  [colorway :bg "-soft-5" bg-soft-5 bg-soft-5-d]
+                                 [colorway :bg "-soft-6" bg-soft-6 bg-soft-6-d]
+                                 [colorway :bg "-soft-7" bg-soft-7 bg-soft-7-d]
                                  [colorway :bg "-hard" bg-hard bg-hard-d]
                                  [colorway :bg "-hard-2" bg-hard-2 bg-hard-2-d]
                                  [colorway :bg "-hard-3" bg-hard-3 bg-hard-3-d]])))

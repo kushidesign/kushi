@@ -108,7 +108,7 @@
       (merge (!? (reduce-kv 
                   (fn [m k prop]
                     (merge m
-                           (when (? {:when (and @debug-data-ks? (= k :shadow-color))}
+                           (when (!? {:when (and @debug-data-ks? (= k :shadow-color))}
                                   (destined-for-data-ks-attr? k prop))
                              (data-ks-attr props k prop))))
                   {} 

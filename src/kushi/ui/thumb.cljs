@@ -19,7 +19,8 @@
                   :position
                   :contour
                   :surface
-                  :transition]}
+                  :transition
+                  [:inert {:default false}]]}
   [& args]
   (let [{:keys [surface loading stroke-width]} &props
         classic-variant?                       (contains? #{:solid-classic 
@@ -29,7 +30,6 @@
            (merge-attrs
             (sx
              ".ks-thumb"
-             :.pill
              :d--flex
              :flex-direction--row
              :jc--c
@@ -49,7 +49,7 @@
             {:aria-busy  loading
              :aria-label (when loading "loading")}
 
-            (decoration/stroke-width-cssvar stroke-width "thumb")
+            (!? (decoration/stroke-width-cssvar stroke-width "thumb"))
 
             (when-not classic-variant? 
               (decoration/drop-shadow-and-stroke-attrs &props))

@@ -5,7 +5,8 @@
    #?(:clj [kushi.ui.ordered :refer [ordered-set]])))
 
 (def contours-rounded
-  [:rounded-xxxsmall
+  [:rounded
+   :rounded-xxxsmall
    :rounded-xxsmall
    :rounded-xsmall
    :rounded-small
@@ -15,17 +16,51 @@
    :rounded-xxlarge
    :rounded-xxxlarge])
 
+(def contours-rounded-absolute
+  [:rounded-absolute
+   :rounded-xxxsmall-absolute
+   :rounded-xxsmall-absolute
+   :rounded-xsmall-absolute
+   :rounded-small-absolute
+   :rounded-medium-absolute
+   :rounded-medium-absolute
+   :rounded-large-absolute
+   :rounded-xlarge-absolute
+   :rounded-xxlarge-absolute
+   :rounded-xxxlarge-absolute])
+
+(def contours-rounded-medium-xxxlarge
+  [:rounded-medium
+   :rounded-large
+   :rounded-xlarge
+   :rounded-xxlarge
+   :rounded-xxxlarge])
+
+(def contours-rounded-medium-xxxlarge-absolute
+  [:rounded-medium-absolute
+   :rounded-large-absolute
+   :rounded-xlarge-absolute
+   :rounded-xxlarge-absolute
+   :rounded-xxxlarge-absolute])
+
 (def contours-basic
-  [:pill :sharp :rounded])
+  [:pill :rounded :rounded-absolute :sharp])
 
 (def contours-auxillary
   [:circle :squircle])
 
 (def contours-basic+rounded
-  (apply conj contours-basic contours-rounded))
+  (into [] (distinct (apply conj contours-basic contours-rounded))))
+
+(def contours-rounded+rounded-absolute
+  (apply conj contours-rounded contours-rounded-absolute))
 
 (def contours
-  (into [] (concat contours-basic+rounded contours-auxillary contours-rounded)))
+  (into [] 
+        (distinct (concat contours-basic
+                          contours-rounded
+                          contours-rounded-absolute
+                          contours-auxillary))))
 
 (def strokes
   [:none :xsoft :soft :medium :hard :xhard])
@@ -64,6 +99,9 @@
 (def sizings-xsmall-xxxlarge
   [:xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
 
+(def sizings-large-xxxlarge
+  [:large :xlarge :xxlarge :xxxlarge])
+          
 (def sizings 
   [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
 
@@ -78,6 +116,7 @@
    :convex
    :faint
    :minimal
+   :minimal-light-mode
    :transparent
    ])
 
@@ -109,6 +148,10 @@
           contours-basic+rounded
           contours-rounded
           contours
+          contours-rounded-medium-xxxlarge
+          contours-rounded-absolute
+          contours-rounded+rounded-absolute
+          contours-rounded-medium-xxxlarge-absolute
           strokes
           drop-shadows
           shadow-colors
@@ -122,6 +165,7 @@
           sizings-xsmall-xxlarge
           sizings-xxsmall-xlarge
           sizings-xsmall-xxxlarge
+          sizings-large-xxxlarge
           sizings
           weights
           surfaces
@@ -157,76 +201,91 @@
    variants*))
 
 (def variants-by-custom-opt-key
-  {:weight                 (:weights/set variants)
-   :sizing/xxsmall-xlarge  (:sizings-xxsmall-xlarge/set variants)
-   :sizing/xsmall-xxxlarge (:sizings-xsmall-xxxlarge/set variants)
-   :sizing/xsmall-xxlarge  (:sizings-xsmall-xxlarge/set variants)
-   :sizing                 (:sizings/set variants)
-   :colorway               (:colorways/set variants)
-   :colorway/named         (:colorways-named/set variants)
-   :colorway/semantic      (:colorways-semantic/set variants)
-   :surface                (:surfaces/set variants)
-   :surface/tag            (:surfaces-tag/set variants)
-   :packing                (:packings/set variants)
-   :position               (:positions/set variants)
-   :spinner-type           (:spinner-type/set variants)
-   :contour                (:contours/set variants)
-   :contour/basic          (:contours-basic/set variants)
-   :contour/rounded        (:contours-rounded/set variants)
-   :contour/basic+rounded  (:contours-basic+rounded/set variants)
-   :contour/auxillary      (:contours-auxillary/set variants)
-   :stroke                 (:strokes/set variants)
-   :drop-shadow            (:drop-shadows/set variants)
-   :shadow-color           (:shadow-colors/set variants)
-   :icon-style             (:icon-style/set variants)})
+  {:weight                                   (:weights/set variants)
+   :sizing/xxsmall-xlarge                    (:sizings-xxsmall-xlarge/set variants)
+   :sizing/xsmall-xxxlarge                   (:sizings-xsmall-xxxlarge/set variants)
+   :sizing/xsmall-xxlarge                    (:sizings-xsmall-xxlarge/set variants)
+   :sizing/large-xxxlarge                    (:sizings-large-xxxlarge/set variants)
+   :sizing                                   (:sizings/set variants)
+   :colorway                                 (:colorways/set variants)
+   :colorway/named                           (:colorways-named/set variants)
+   :colorway/semantic                        (:colorways-semantic/set variants)
+   :surface                                  (:surfaces/set variants)
+   :surface/tag                              (:surfaces-tag/set variants)
+   :packing                                  (:packings/set variants)
+   :position                                 (:positions/set variants)
+   :spinner-type                             (:spinner-type/set variants)
+   :contour                                  (:contours/set variants)
+   :contour/basic                            (:contours-basic/set variants)
+   :contour/rounded                          (:contours-rounded/set variants)
+   :contour/basic+rounded                    (:contours-basic+rounded/set variants)
+   :contour/auxillary                        (:contours-auxillary/set variants)
+   :contour/rounded-medium-xxxlarge          (:contours-rounded-medium-xxxlarge/set variants)
+   :contour/rounded-absolute                 (:contours-rounded-absolute/set variants)
+   :contour/rounded-medium-xxxlarge-absolute (:contours-rounded-medium-xxxlarge-absolute/set variants)
+   :contour/rounded+rounded-absolute         (:contours-rounded+rounded-absolute/set variants)
+   :stroke                                   (:strokes/set variants)
+   :drop-shadow                              (:drop-shadows/set variants)
+   :shadow-color                             (:shadow-colors/set variants)
+   :icon-style                               (:icon-style/set variants)})
 
 (def enum-variants-by-custom-opt-key
-  {:weight                 (:weights/enum variants)
-   :sizing/xxsmall-xlarge  (:sizings-xxsmall-xlarge/enum variants)
-   :sizing/xsmall-xxxlarge (:sizings-xsmall-xxxlarge/enum variants)
-   :sizing/xsmall-xxlarge  (:sizings-xsmall-xxlarge/enum variants)
-   :sizing                 (:sizings/enum variants)
-   :colorway               (:colorways/enum variants)
-   :colorway/named         (:colorways-named/enum variants)
-   :colorway/semantic      (:colorways-semantic/enum variants)
-   :surface                (:surfaces/enum variants)
-   :surface/tag            (:surfaces-tag/enum variants)
-   :packing                (:packings/enum variants)
-   :position               (:positions/enum variants)
-   :spinner-type           (:spinner-type/enum variants)
-   :contour                (:contours/enum variants)
-   :contour/basic          (:contours-basic/enum variants)
-   :contour/rounded        (:contours-rounded/enum variants)
-   :contour/basic+rounded  (:contours-basic+rounded/enum variants)
-   :contour/auxillary      (:contours-auxillary/enum variants)
-   :stroke                 (:strokes/enum variants)
-   :drop-shadow            (:drop-shadows/enum variants)
-   :shadow-color           (:shadow-colors/enum variants)
-   :icon-style             (:icon-style/enum variants)})
+  {:weight                                   (:weights/enum variants)
+   :sizing/xxsmall-xlarge                    (:sizings-xxsmall-xlarge/enum variants)
+   :sizing/xsmall-xxxlarge                   (:sizings-xsmall-xxxlarge/enum variants)
+   :sizing/xsmall-xxlarge                    (:sizings-xsmall-xxlarge/enum variants)
+   :sizing/large-xxxlarge                    (:sizings-large-xxxlarge/enum variants)
+   :sizing                                   (:sizings/enum variants)
+   :colorway                                 (:colorways/enum variants)
+   :colorway/named                           (:colorways-named/enum variants)
+   :colorway/semantic                        (:colorways-semantic/enum variants)
+   :surface                                  (:surfaces/enum variants)
+   :surface/tag                              (:surfaces-tag/enum variants)
+   :packing                                  (:packings/enum variants)
+   :position                                 (:positions/enum variants)
+   :spinner-type                             (:spinner-type/enum variants)
+   :contour                                  (:contours/enum variants)
+   :contour/basic                            (:contours-basic/enum variants)
+   :contour/rounded                          (:contours-rounded/enum variants)
+   :contour/basic+rounded                    (:contours-basic+rounded/enum variants)
+   :contour/auxillary                        (:contours-auxillary/enum variants)
+   :contour/rounded-medium-xxxlarge          (:contours-rounded-medium-xxxlarge/enum variants)
+   :contour/rounded-absolute                 (:contours-rounded-absolute/enum variants)
+   :contour/rounded-medium-xxxlarge-absolute (:contours-rounded-medium-xxxlarge-absolute/enum variants)
+   :contour/rounded+rounded-absolute         (:contours-rounded+rounded-absolute/enum variants)
+   :stroke                                   (:strokes/enum variants)
+   :drop-shadow                              (:drop-shadows/enum variants)
+   :shadow-color                             (:shadow-colors/enum variants)
+   :icon-style                               (:icon-style/enum variants)})
 
 (def ordered-variants-by-custom-opt-key
-  {:weight                 (:weights/vector variants)
-   :sizing/xxsmall-xlarge  (:sizings-xxsmall-xlarge/vector variants)
-   :sizing/xsmall-xxxlarge (:sizings-xsmall-xxxlarge/vector variants)
-   :sizing/xsmall-xxlarge  (:sizings-xsmall-xxlarge/vector variants)
-   :sizing                 (:sizings/vector variants)
-   :colorway               (:colorways/vector variants)
-   :colorway/named         (:colorways-named/vector variants)
-   :colorway/semantic      (:colorways-semantic/vector variants)
-   :surface                (:surfaces/vector variants)
-   :surface/tag            (:surfaces-tag/vector variants)
-   :packing                (:packings/vector variants)
-   :position               (:positions/vector variants)
-   :spinner-type           (:spinner-type/vector variants)
-   :contour                (:contours/vector variants)
-   :contour/basic          (:contours-basic/vector variants)
-   :contour/rounded        (:contours-rounded/vector variants)
-   :contour/basic+rounded  (:contours-basic+rounded/vector variants)
-   :contour/auxillary      (:contours-auxillary/vector variants)
-   :stroke                 (:strokes/vector variants)
-   :drop-shadow            (:drop-shadows/vector variants)
-   :shadow-color           (:shadow-colors/vector variants)
-   :icon-style             (:icon-style/vector variants)})
+  {:weight                                   (:weights/vector variants)
+   :sizing/xxsmall-xlarge                    (:sizings-xxsmall-xlarge/vector variants)
+   :sizing/xsmall-xxxlarge                   (:sizings-xsmall-xxxlarge/vector variants)
+   :sizing/xsmall-xxlarge                    (:sizings-xsmall-xxlarge/vector variants)
+   :sizing/large-xxxlarge                    (:sizings-large-xxxlarge/vector variants)
+   :sizing                                   (:sizings/vector variants)
+   :colorway                                 (:colorways/vector variants)
+   :colorway/named                           (:colorways-named/vector variants)
+   :colorway/semantic                        (:colorways-semantic/vector variants)
+   :surface                                  (:surfaces/vector variants)
+   :surface/tag                              (:surfaces-tag/vector variants)
+   :packing                                  (:packings/vector variants)
+   :position                                 (:positions/vector variants)
+   :spinner-type                             (:spinner-type/vector variants)
+   :contour                                  (:contours/vector variants)
+   :contour/basic                            (:contours-basic/vector variants)
+   :contour/rounded                          (:contours-rounded/vector variants)
+   :contour/basic+rounded                    (:contours-basic+rounded/vector variants)
+   :contour/auxillary                        (:contours-auxillary/vector variants)
+   :contour/rounded-medium-xxxlarge          (:contours-rounded-medium-xxxlarge/vector variants)
+   :contour/rounded-absolute                 (:contours-rounded-absolute/vector variants)
+   :contour/rounded-medium-xxxlarge-absolute (:contours-rounded-medium-xxxlarge-absolute/vector variants)
+   :contour/rounded+rounded-absolute         (:contours-rounded+rounded-absolute/vector variants)
+   :stroke                                   (:strokes/vector variants)
+   :drop-shadow                              (:drop-shadows/vector variants)
+   :shadow-color                             (:shadow-colors/vector variants)
+   :icon-style                               (:icon-style/vector variants)})
 
 
 

@@ -6,21 +6,27 @@
 
 
 (defn colorway-args [s]
-  (let [base
+  (let [base-light-mode
         {:color             (keyword (str "$foreground-color-" s ))
          :hover:color       (keyword (str "$foreground-color-" s "-2"))
-         :active:color      (keyword (str "$foreground-color-" s "-3"))
-         :dark:color        (keyword (str "$foreground-color-" s "-dark-mode"))
-         :dark:hover:color  (keyword (str "$foreground-color-" s "-2-dark-mode"))
-         :dark:active:color (keyword (str "$foreground-color-" s "-3-dark-mode"))}
+         :active:color      (keyword (str "$foreground-color-" s "-3"))}
 
-        base-inert
+        base
+        (merge base-light-mode
+               {:dark:color        (keyword (str "$foreground-color-" s "-dark-mode"))
+                :dark:hover:color  (keyword (str "$foreground-color-" s "-2-dark-mode"))
+                :dark:active:color (keyword (str "$foreground-color-" s "-3-dark-mode"))})
+
+        base-inert-light-mode
         {:color             (keyword (str "$foreground-color-" s ))
          :hover:color       (keyword (str "$foreground-color-" s ))
-         :active:color      (keyword (str "$foreground-color-" s ))
-         :dark:color        (keyword (str "$foreground-color-" s "-dark-mode"))
-         :dark:hover:color  (keyword (str "$foreground-color-" s "-dark-mode"))
-         :dark:active:color (keyword (str "$foreground-color-" s "-dark-mode"))}
+         :active:color      (keyword (str "$foreground-color-" s ))}
+
+        base-inert
+        (merge base-inert-light-mode
+               {:dark:color        (keyword (str "$foreground-color-" s "-dark-mode"))
+                :dark:hover:color  (keyword (str "$foreground-color-" s "-dark-mode"))
+                :dark:active:color (keyword (str "$foreground-color-" s "-dark-mode"))})
 
         ;; TODO - maybe lighten by a step?
         soft
@@ -65,7 +71,7 @@
          :dark:active:bgc (keyword (str "$background-color-" s "-soft-dark-mode"))}
         
         convex
-        (let [lg "linear-gradient(180deg, transparent, transparent 15%, "
+        (let [lg      "linear-gradient(180deg, transparent, transparent 15%, "
               lg-dark "linear-gradient(360deg, transparent, transparent 15%, "]
           {:bgi               (str lg "var(--background-color-" s "-soft-3))")
            :hover:bgi         (str lg "var(--background-color-" s "-soft-4))")
@@ -86,46 +92,58 @@
            })
 
         convex-inert
-        (let [lg "linear-gradient(180deg, transparent, transparent 15%, "
+        (let [lg      "linear-gradient(180deg, transparent, transparent 15%, "
               lg-dark "linear-gradient(360deg, transparent, transparent 15%, "]
-          {:bgi (str lg "var(--background-color-" s "-soft-3))")
-           :hover:bgi (str lg "var(--background-color-" s "-soft-3))")
-           :active:bgi (str lg "var(--background-color-" s "-soft-3))")
-           :dark:bgi (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")
-           :dark:hover:bgi (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")
+          {:bgi             (str lg "var(--background-color-" s "-soft-3))")
+           :hover:bgi       (str lg "var(--background-color-" s "-soft-3))")
+           :active:bgi      (str lg "var(--background-color-" s "-soft-3))")
+           :dark:bgi        (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")
+           :dark:hover:bgi  (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")
            :dark:active:bgi (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")})
         ]
+
+
+   ;; do <surface>-light and <surface-dark> versions of all these to lock in light and dark versions
+   ;; minimal, faint, convex, soft, soft-classic, solid, solid-classic
+   ;; rectify with the "dark:" prefixed at bottom
+
 
    [{"[data-ks-surface= \"transparent\"]"                  
      base
 
-
      "[data-ks-surface= \"transparent\"][data-ks-inert]"   
      base-inert
 
-
      "[data-ks-surface= \"minimal\"]" 
      (merge base
-            {:bgc             :white
-             :dark:bgc        :black
+            {:bgc             :white ; TODO - should this be accesible via token?
              :hover:bgc       (keyword (str "$background-color-" s "-soft"))
              :active:bgc      (keyword (str "$background-color-" s "-soft-2"))
+             :dark:bgc        :black ; TODO - should this be accesible via token?
              :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
              :dark:active:bgc (keyword (str "$background-color-" s "-soft-2-dark-mode"))})
 
-
      "[data-ks-surface= \"minimal\"][data-ks-inert]"
      (merge base-inert
-            {:hover:bgc       "transparent"
-             :active:bgc      "transparent"
-             :dark:hover:bgc  "transparent"
-             :dark:active:bgc "transparent"})
+            {:hover:bgc  :white
+             :active:bgc :white
+             :dark:hover:bgc  :black 
+             :dark:active:bgc :black})
 
+     "[data-ks-surface= \"minimal-light-mode\"]" 
+     (merge base-light-mode
+            {:bgc        :white
+             :hover:bgc  (keyword (str "$background-color-" s "-soft"))
+             :active:bgc (keyword (str "$background-color-" s "-soft-2"))})
+
+     "[data-ks-surface= \"minimal-light-mode\"][data-ks-inert]"
+     (merge base-inert-light-mode
+            {:hover:bgc       :white
+             :active:bgc      :white})
 
      "[data-ks-surface= \"faint\"]"                        
      (merge base
             faint)
-
 
      "[data-ks-surface= \"faint\"][data-ks-inert]"         
      (merge base-inert

@@ -10,7 +10,18 @@
 
 (def demos
   [
-   {:label   "Shadow"
+  {:label   "Contour"
+    :desc    "Contour of the button."
+    :samples (samples-with-variant
+              {:variant       :contour
+               :variant-scale :contour/rounded-medium-xxxlarge
+               :attrs         {:sizing       :xxxlarge
+                               :end-enhancer :east
+                               :colorway     :accent
+                               :surface      :solid
+                               :style   {:font-size :50px}}
+               :args          ["Next"]})}
+   #_{:label   "Shadow"
     :desc    "Preset shadow styles."
     :samples (samples-with-variant
               {:variant       :drop-shadow

@@ -531,7 +531,7 @@
     `(defn ~sym 
        ~mm
        [& args#]
-       (let [extracted*#           (? (kushi.ui.core/extract args# ~props-keys ~fn-info))
+       (let [extracted*#           (!? (kushi.ui.core/extract args# ~props-keys ~fn-info))
 
              props->data-ks-attrs# (!?
                                     (kushi.ui.core/data-ks-attrs 

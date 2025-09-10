@@ -335,12 +335,12 @@
        (sx #_[:--switch-inset-gap :2px]
            #_[:--switch-thumb-scale-factor :1.25])
        {:sizing            :xxxlarge
-        ;; :thumb-content-on  "ON"
-        ;; :thumb-content-off "OFF"
+        ;; :thumb-label-on  "ON"
+        ;; :thumb-label-off "OFF"
         ;; :thumb-scale-factor 1.2
 
-        :track-content-on  "ON"
-        :track-content-off "OFF"
+        :track-label-on  "ON"
+        :track-label-off "OFF"
 
         :track-inset-gap   :2px
         :thumb-attrs       (mrj {:surface     :convex
@@ -570,12 +570,12 @@
        {
         :on? true
         :sizing            :xxxlarge
-        ;; :thumb-content-on  "ON"
-        ;; :thumb-content-off "OFF"
+        ;; :thumb-label-on  "ON"
+        ;; :thumb-label-off "OFF"
         ;; :thumb-scale-factor 1.2
 
-        ;; :track-content-on  "ON"
-        ;; :track-content-off "OFF"
+        ;; :track-label-on  "ON"
+        ;; :track-label-off "OFF"
 
         ;; :track-inset-gap   :2px
 
@@ -589,8 +589,7 @@
                                     ))
         })]
 
-  [showcase (!? (showcase/opts kushi.ui.switch/switch
-                               kushi.ui.switch.demo/demos))]
+  
 
   #_[showcase (!? (showcase/opts kushi.ui.switch/switch
                                kushi.ui.switch.demo/demos))]
@@ -615,9 +614,11 @@
                            [:--shadow-strength :40%]))
            k]))
 
-
-  #_[showcase (!? (showcase/opts kushi.ui.button/button
-                               kushi.ui.button.demo/demos))]
+  [:<> 
+   [showcase (!? (showcase/opts kushi.ui.switch/switch
+                                kushi.ui.switch.demo/demos))]
+   #_[showcase (!? (showcase/opts kushi.ui.button/button
+                                kushi.ui.button.demo/demos))]]
 
 
   #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
