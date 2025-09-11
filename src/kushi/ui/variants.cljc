@@ -44,7 +44,7 @@
    :rounded-xxxlarge-absolute])
 
 (def contours-basic
-  [:pill :rounded :rounded-absolute :sharp])
+  [:pill :rounded :sharp])
 
 (def contours-auxillary
   [:circle :squircle])

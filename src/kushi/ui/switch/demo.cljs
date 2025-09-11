@@ -57,7 +57,7 @@
 
    {:samples (samples-with-variant
               {:variant       :contour,
-               :variant-scale :contour/basic+rounded,
+               :variant-scale :contour/basic,
                :label         "Contour",
                :attrs         {:at              (at)
                                :on?             true
@@ -72,7 +72,7 @@
                                  :gap             :1rem}
                :label           "Convex thumb",
                :attrs           {:on?         true
-                                 :thumb-props {:surface :convex}}})}
+                                 :thumb-props {:surface :convex-light-mode}}})}
 
    {:samples (samples-with-variant
               {:variant         :sizing
@@ -83,8 +83,7 @@
                :label           "Oversized thumb",
                :attrs           {:on?                true
                                  :thumb-scale-factor 1.25
-                                 :thumb-props        {:surface :minimal
-                                                      :stroke  :medium}}})}
+                                 :thumb-props        {:stroke  :medium}}})}
 
    {:samples (samples-with-variant
               {:variant         :sizing
@@ -137,4 +136,6 @@
                         [switch {:colorway :neutral
                                  :sizing   :xxxlarge
                                  :on?      true
-                                 :disabled true}]]])}])
+                                 :disabled true}]]])}
+   
+   ])

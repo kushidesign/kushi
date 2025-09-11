@@ -177,7 +177,7 @@
                                                   :_.kushi-switch-thumb-icon-off:display  :flex
                                                   :_.kushi-switch-thumb-label-on:display  :none
                                                   :_.kushi-switch-thumb-label-off:display :flex
-                                                  :dark:_.kushi-switch-thumb-content:c    :$foreground-color-secondary
+                                                  :_.kushi-switch-thumb-content:c    :$foreground-color-secondary
                                                   :bgc                                    :$switch-off-background-color
                                                   :hover:bgc                              :$switch-off-background-color-hover
                                                   "[data-ks-inert]:bgc"                     :$switch-off-background-color
