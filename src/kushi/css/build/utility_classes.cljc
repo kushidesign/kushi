@@ -481,7 +481,7 @@
    {:opacity :45%!important ;; <-make a token $disabled-opacity
     :cursor  :not-allowed!important}
 
-   :disabled              
+   ".disabled"              
    {:opacity "45%"} ; <- create a global :--disabled-element-opacity
                     ;    distinct from *:disabled for inputs ?
    ])

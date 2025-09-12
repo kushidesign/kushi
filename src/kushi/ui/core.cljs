@@ -31,15 +31,14 @@
   ;; (? m)
   (when (and supplied-props malli-schema) 
     (let [user-spacing 
-          :compact #_:ultra-compact
+          nil
+          #_:compact #_:ultra-compact
 
           user-malli-schema-validation-label
           nil
 
           callout-opts 
-          {:label          (str (:ns/name fn-info)
-                                "/"
-                                (:fn/name fn-info))
+          {:label          "WARNING - Invalid prop value"
            :padding-bottom 1}
 
           #_(if (= :ultra-compact user-spacing)
@@ -63,12 +62,12 @@
         :section-body-indentation          0
         :spacing                           user-spacing
         :omit-sections                     [:problem-value]
-        :omit-section-labels               ["UI component:" "Supplied props:"]
-        :highlighted-problem-section-label "Supplied props:"
+        ;; :omit-section-labels               ["UI component:" "Supplied props:"]
+        :highlighted-problem-section-label "Invalid prop values:"
         :preamble-section-label            "UI component:"
-        ;; :preamble-section-body             (str (:ns/name fn-info)
-        ;;                                          "/"
-        ;;                                          (:fn/name fn-info))
+        :preamble-section-body             (str (:ns/name fn-info)
+                                                 "/"
+                                                 (:fn/name fn-info))
         :callout-opts                      callout-opts
 
         ;; This is done in defui macro, so probably don't need this at runtime

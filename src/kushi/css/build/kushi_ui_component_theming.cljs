@@ -1131,9 +1131,12 @@
    ;; TODO - add these scales for legacy browser support of colored shadows
    ;; legacy
    ;; :--shadow-color-red-h-s-l         "10 100 50" ; <- this would be in :root
-
+   
    ;; super legacy, no support for shadow strength
    ;; :--shadow-color-red-hex         "#f908244d" ; <- this would be in :root
+   
+   ;; Convex
+   :--convex-shadow-strength                        "25%"
    })
 
 

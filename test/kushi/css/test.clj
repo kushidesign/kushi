@@ -31,10 +31,45 @@
             [edamame.core :as e :refer [parse-string parse-string-all]]
             [kushi.css.specs :as kushi-specs]
             [kushi.css.build.utility-classes :as utility-classes]
-            [kushi.util :refer [maybe keyed nameable? as-str]]
+            [kushi.util :refer [maybe keyed nameable? as-str kw->cssvar color-mix linear-gradient]]
             [kushi.colors2 :refer [oklch-colors]]
             [taoensso.tufte :as tufte :refer [p profile]]
-            ))
+            
+            [me.flowthing.pp :as pp]))
+
+
+#_(?sx ".he"
+    {:color                                         :red
+     "@supports(color: color-mix(in oklch, red, red))" {:color :blue}})
+
+#_(let [s                               "neutral"
+      convex-light-mode-grad          #(str "linear-gradient(180deg, transparent, transparent 15%, " % ")")
+      convex-light-mode-shadow-color  #(str "color-mix(in oklch, transparent, var(--background-color-" s "-hard" % ") var(--convex-shadow-strength, 10%))")
+      css-fn                          (fn [fname & args] (str fname "(" (string/join ", " args) ")"))
+      convex-light-mode-shadow-color+ #(color-mix "in oklch"
+                                                  ["transparent"] 
+                                                  [(str "var(--background-color-" s "-hard" % ")")
+                                                   "var(--convex-shadow-strength, 10%)"])]
+
+  ;; (? (convex-light-mode-shadow-color+ "-3"))
+  (? (linear-gradient "45deg" [:$blue-250||$yellow-500||gold|| :50%] :red))
+
+  #_(? (= (? (convex-light-mode-shadow-color "-3"))
+        (? (convex-light-mode-shadow-color+ "-3")))))
+
+
+;;  (println (css-rule* 
+;;   "[data-ks-colorway= \"neutral\"]"
+;;   [{"[data-ks-surface= \"convex\"]" 
+;;     {"@supports(color: color-mix(in oklch, red, red))" {:bgi       "linear-gradient(180deg, transparent, transparent 15%, color-mix(in oklch, transparent, var(--background-color-neutral-hard-3) var(--convex-shadow-strength, 10%)))",
+;;                                                         :hover:bgi "linear-gradient(180deg, transparent, transparent 15%, color-mix(in oklch, transparent, var(--background-color-neutral-hard-4) var(--convex-shadow-strength, 10%)))"},
+;;      :bgi                                            "linear-gradient(180deg, transparent, transparent 15%, var(--background-color-neutral-soft-3))",
+;;      :hover:bgi                                      "linear-gradient(180deg, transparent, transparent 15%, var(--background-color-neutral-soft-4))",
+;;      }}]
+;;    nil
+;;    nil
+;;   )),
+
 
 ;; '["["
 ;;   [:non-digit]
@@ -72,19 +107,19 @@
        (p :map-indexed2 (seqp2 bits styles))))
 
 
-(!? (css-rule*
-".foo"
- [{"@supports(color: color-mix(in oklch, currentColor, transparent 40%))"
-   {:--bordercolor :blue}}]
+;; (!? (css-rule*
+;; ".foo"
+;;  [{"@supports(color: color-mix(in oklch, currentColor, transparent 40%))"
+;;    {:--bordercolor :blue}}]
 
- #_[{"@media(color: color-mix(in oklch, currentColo, yeah))"
-   {:--bordercolor :blue}}]
- nil nil))
+;;  #_[{"@media(color: color-mix(in oklch, currentColo, yeah))"
+;;    {:--bordercolor :blue}}]
+;;  nil nil))
 
 
 
-(!? (css-rule* ".foo" [:ai--$ai] nil nil))
-(!? (css-rule* ".foo" [:aj--$ai] nil nil))
+;; (!? (css-rule* ".foo" [:ai--$ai] nil nil))
+;; (!? (css-rule* ".foo" [:aj--$ai] nil nil))
 
 (def sample-css
 

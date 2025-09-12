@@ -1,121 +1,152 @@
 (ns kushi.css.build.colorways
-  (:require [fireworks.core :refer [? !? ?> !?>]]))
+  (:require [fireworks.core :refer [? !? ?> !?>]]
+            [kushi.util :refer [kw->cssvar as-str color-mix linear-gradient css-varize]]
+            [clojure.string :as string]))
 
 (defn colorway-selector [s]
   (str "[data-ks-colorway=\"" s "\"]"))
 
+(defn color-var-kw 
+  ([s]
+   (color-var-kw s nil))
+  ([s level]
+   (keyword (str "$foreground-color-" s level))))
 
 (defn colorway-args [s]
-  (let [base-light-mode
-        {:color             (keyword (str "$foreground-color-" s ))
-         :hover:color       (keyword (str "$foreground-color-" s "-2"))
-         :active:color      (keyword (str "$foreground-color-" s "-3"))}
+  (let [color-var-kw
+        (partial color-var-kw s)
+
+        bg-color-var-kw
+        (fn [level] (keyword (str "$background-color-" s level )))
+
+        convex-light-mode-grad 
+        #(linear-gradient :180deg :transparent [:transparent :15%] %)
+
+        convex-dark-mode-grad 
+        #(linear-gradient :360deg :transparent [:transparent :15%] %)
+
+        convex-light-mode-shadow-color 
+        #(color-mix "in oklch"
+                    :transparent 
+                    [(css-varize "background-color-" s "-hard" %)
+                     :$convex-shadow-strength||10%])
+
+
+        base-light-mode
+        {:color        (color-var-kw)
+         :hover:color  (color-var-kw "-2")
+         :active:color (color-var-kw "-3")}
 
         base
         (merge base-light-mode
-               {:dark:color        (keyword (str "$foreground-color-" s "-dark-mode"))
-                :dark:hover:color  (keyword (str "$foreground-color-" s "-2-dark-mode"))
-                :dark:active:color (keyword (str "$foreground-color-" s "-3-dark-mode"))})
+               {:dark:color        (color-var-kw "-dark-mode")
+                :dark:hover:color  (color-var-kw "-2-dark-mode")
+                :dark:active:color (color-var-kw "-3-dark-mode")})
 
         base-inert-light-mode
-        {:color             (keyword (str "$foreground-color-" s ))
-         :hover:color       (keyword (str "$foreground-color-" s ))
-         :active:color      (keyword (str "$foreground-color-" s ))}
+        {:color        (color-var-kw)
+         :hover:color  (color-var-kw)
+         :active:color (color-var-kw)}
 
         base-inert
         (merge base-inert-light-mode
-               {:dark:color        (keyword (str "$foreground-color-" s "-dark-mode"))
-                :dark:hover:color  (keyword (str "$foreground-color-" s "-dark-mode"))
-                :dark:active:color (keyword (str "$foreground-color-" s "-dark-mode"))})
+               {:dark:color        (color-var-kw "-dark-mode")
+                :dark:hover:color  (color-var-kw "-dark-mode")
+                :dark:active:color (color-var-kw "-dark-mode")})
 
         ;; TODO - maybe lighten by a step?
         soft
-        {:bgc               (keyword (str "$background-color-" s "-soft-3"))
-         :dark:bgc          (keyword (str "$background-color-" s "-soft-3-dark-mode"))
-         :hover:bgc         (keyword (str "$background-color-" s "-soft-4"))
-         :dark:hover:bgc    (keyword (str "$background-color-" s "-soft-4-dark-mode"))
-         :active:bgc        (keyword (str "$background-color-" s "-soft-5"))
-         :dark:active:bgc   (keyword (str "$background-color-" s "-soft-5-dark-mode"))
-         :color             (keyword (str "$foreground-color-" s "-3"))
-         :hover:color       (keyword (str "$foreground-color-" s "-3"))
-         :active:color      (keyword (str "$foreground-color-" s "-3"))
-         :dark:color        (keyword (str "$foreground-color-" s "-3-dark-mode"))
-         :dark:hover:color  (keyword (str "$foreground-color-" s "-3-dark-mode"))
-         :dark:active:color (keyword (str "$foreground-color-" s "-3-dark-mode"))
-         }
+        {:bgc               (bg-color-var-kw "-soft-3")
+         :hover:bgc         (bg-color-var-kw "-soft-4")
+         :active:bgc        (bg-color-var-kw "-soft-5")
+         :dark:bgc          (bg-color-var-kw "-soft-3-dark-mode")
+         :dark:hover:bgc    (bg-color-var-kw "-soft-4-dark-mode")
+         :dark:active:bgc   (bg-color-var-kw "-soft-5-dark-mode")
+         :color             (color-var-kw "-3")
+         :hover:color       (color-var-kw "-3")
+         :active:color      (color-var-kw "-3")
+         :dark:color        (color-var-kw "-3-dark-mode")
+         :dark:hover:color  (color-var-kw "-3-dark-mode")
+         :dark:active:color (color-var-kw "-3-dark-mode")}
         
         soft-inert
-        {
-         :bgc             (keyword (str "$background-color-" s "-soft-3"))
-         :hover:bgc       (keyword (str "$background-color-" s "-soft-3"))
-         :active:bgc      (keyword (str "$background-color-" s "-soft-3"))
+        (let [soft-light (bg-color-var-kw "-soft-3")
+              soft-dark (bg-color-var-kw "-soft-3-dark-mod")]
+          {
+           :bgc             soft-light
+           :hover:bgc       soft-light
+           :active:bgc      soft-light
 
-         :dark:bgc        (keyword (str "$background-color-" s "-soft-3-dark-mode"))
-         :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-3-dark-mode"))
-         :dark:active:bgc (keyword (str "$background-color-" s "-soft-3-dark-mode"))}
+           :dark:bgc        soft-dark
+           :dark:hover:bgc  soft-dark
+           :dark:active:bgc soft-dark})
         
         faint-light-mode
-        {:bgc             (keyword (str "$background-color-" s "-soft"))
-         :hover:bgc       (keyword (str "$background-color-" s "-soft-2"))
-         :active:bgc      (keyword (str "$background-color-" s "-soft-3"))}
+        {:bgc        (bg-color-var-kw "-soft")
+         :hover:bgc  (bg-color-var-kw "-soft-2")
+         :active:bgc (bg-color-var-kw "-soft-3")}
 
         faint
         (merge faint-light-mode
-               {:dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
-                :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-2-dark-mode"))
-                :dark:active:bgc (keyword (str "$background-color-" s "-soft-3-dark-mode"))})
+               {:dark:bgc        (bg-color-var-kw "-soft-dark-mode")
+                :dark:hover:bgc  (bg-color-var-kw "-soft-2-dark-mode")
+                :dark:active:bgc (bg-color-var-kw "-soft-3-dark-mode")})
 
         faint-inert-light-mode
-        {:bgc             (keyword (str "$background-color-" s "-soft"))
-         :hover:bgc       (keyword (str "$background-color-" s "-soft"))
-         :active:bgc      (keyword (str "$background-color-" s "-soft"))}
+        (let [bgc (bg-color-var-kw "-soft")]
+          {:bgc        bgc
+           :hover:bgc  bgc
+           :active:bgc bgc})
 
         faint-inert
         (merge faint-inert-light-mode
-               {:dark:bgc        (keyword (str "$background-color-" s "-soft-dark-mode"))
-                :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
-                :dark:active:bgc (keyword (str "$background-color-" s "-soft-dark-mode"))})
+               (let [bgc (bg-color-var-kw "-soft-dark-mode")]
+                 {:dark:bgc        bgc
+                  :dark:hover:bgc  bgc
+                  :dark:active:bgc bgc}))
         
         convex-light-mode
-        (let [lg      "linear-gradient(180deg, transparent, transparent 15%, "]
-          {:bgi               (str lg "var(--background-color-" s "-soft-3))")
-           :hover:bgi         (str lg "var(--background-color-" s "-soft-4))")
-           :hover:bgc         (keyword (str "$background-color-" s "-soft"))
-           :active:bgi        (str lg "var(--background-color-" s "-soft-5))")
-           :active:bgc        (keyword (str "$background-color-" s "-soft-2"))
-           :color             (keyword (str "$foreground-color-" s "-2"))
-           :hover:color       (keyword (str "$foreground-color-" s "-3"))
-           :active:color      (keyword (str "$foreground-color-" s "-3"))
-           })
+        {:bgi                                            (convex-light-mode-grad (bg-color-var-kw "-soft-3"))
+         :hover:bgi                                      (convex-light-mode-grad (bg-color-var-kw "-soft-4"))
+         :active:bgi                                     (convex-light-mode-grad (bg-color-var-kw "-soft-5"))
+         :color                                          (color-var-kw "-2")
+         :hover:color                                    (color-var-kw "-3")
+         :active:color                                   (color-var-kw "-3")
+         :hover:bgc                                      (bg-color-var-kw "-soft")
+         :active:bgc                                     (bg-color-var-kw "-soft-2")
+
+         "@supports(color: color-mix(in oklch, red, red))" 
+         {:bgi        (convex-light-mode-grad (convex-light-mode-shadow-color ""))
+          :hover:bgi  (convex-light-mode-grad (convex-light-mode-shadow-color "-2"))
+          :active:bgi (convex-light-mode-grad (convex-light-mode-shadow-color "-3"))}}
 
         convex
-        (let [lg-dark "linear-gradient(360deg, transparent, transparent 15%, "]
-          (merge 
-           convex-light-mode
-           {:dark:bgi          (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")
-            :dark:hover:bgi    (str lg-dark "var(--background-color-" s "-soft-4-dark-mode))")
-            :dark:hover:bgc    (keyword (str "$background-color-" s "-soft-dark-mode"))
-            :dark:active:bgi   (str lg-dark "var(--background-color-" s "-soft-5-dark-mode))")
-            :dark:active:bgc   (keyword (str "$background-color-" s "-soft-2-dark-mode"))
-            :dark:color        (keyword (str "$foreground-color-" s "-2-dark-mode"))
-            :dark:hover:color  (keyword (str "$foreground-color-" s "-3-dark-mode"))
-            :dark:active:color (keyword (str "$foreground-color-" s "-3-dark-mode"))
-            }))
+        (merge 
+         convex-light-mode
+         {
+          :dark:bgi          (convex-dark-mode-grad (bg-color-var-kw "-soft-3-dark-mode"))
+          :dark:hover:bgi    (convex-dark-mode-grad (bg-color-var-kw "-soft-4-dark-mode"))
+          :dark:active:bgi   (convex-dark-mode-grad (bg-color-var-kw "-soft-5-dark-mode"))
+          :dark:color        (color-var-kw "-2-dark-mode")
+          :dark:hover:color  (color-var-kw "-3-dark-mode")
+          :dark:active:color (color-var-kw "-3-dark-mode")
+          :dark:hover:bgc    (color-var-kw "-soft-dark-mode")
+          :dark:active:bgc   (color-var-kw "-soft-2-dark-mode")
+          })
 
         convex-inert-light-mode
-        (let [lg      "linear-gradient(180deg, transparent, transparent 15%, "]
-          {:bgi             (str lg "var(--background-color-" s "-soft-3))")
-           :hover:bgi       (str lg "var(--background-color-" s "-soft-3))")
-           :active:bgi      (str lg "var(--background-color-" s "-soft-3))")})
+        (let [grad      (convex-light-mode-grad (bg-color-var-kw "-soft-3"))]
+          {:bgi        grad
+           :hover:bgi  grad
+           :active:bgi grad})
 
         convex-inert
-        (let [lg-dark "linear-gradient(360deg, transparent, transparent 15%, "]
+        (let [grad (convex-dark-mode-grad (bg-color-var-kw "-soft-3-dark-mode"))]
           (merge 
            convex-inert-light-mode
-           {:dark:bgi        (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")
-            :dark:hover:bgi  (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")
-            :dark:active:bgi (str lg-dark "var(--background-color-" s "-soft-3-dark-mode))")}))
-        ]
+           {:dark:bgi        grad
+            :dark:hover:bgi  grad
+            :dark:active:bgi grad}))]
 
 
    ;; do <surface>-light and <surface-dark> versions of all these to lock in light and dark versions
@@ -131,30 +162,30 @@
 
      "[data-ks-surface= \"minimal\"]" 
      (merge base
-            {:bgc             :white ; TODO - should this be accesible via token?
-             :hover:bgc       (keyword (str "$background-color-" s "-soft"))
-             :active:bgc      (keyword (str "$background-color-" s "-soft-2"))
-             :dark:bgc        :black ; TODO - should this be accesible via token?
-             :dark:hover:bgc  (keyword (str "$background-color-" s "-soft-dark-mode"))
-             :dark:active:bgc (keyword (str "$background-color-" s "-soft-2-dark-mode"))})
+            {:bgc             :$background-color ; TODO - should this be accesible via token?
+             :hover:bgc       (bg-color-var-kw "-soft")
+             :active:bgc      (bg-color-var-kw "-soft-2")
+             :dark:bgc        :$background-color-dark-mode ; TODO - should this be accesible via token?
+             :dark:hover:bgc  (bg-color-var-kw "-soft-dark-mode")
+             :dark:active:bgc (bg-color-var-kw "-soft-2-dark-mode")})
 
      "[data-ks-surface= \"minimal\"][data-ks-inert]"
      (merge base-inert
-            {:hover:bgc  :white
-             :active:bgc :white
-             :dark:hover:bgc  :black 
-             :dark:active:bgc :black})
+            {:hover:bgc       :$background-color
+             :active:bgc      :$background-color
+             :dark:hover:bgc  :$background-color-dark-mode
+             :dark:active:bgc :$background-color-dark-mode})
 
      "[data-ks-surface= \"minimal-light-mode\"]" 
      (merge base-light-mode
-            {:bgc        :white
-             :hover:bgc  (keyword (str "$background-color-" s "-soft"))
-             :active:bgc (keyword (str "$background-color-" s "-soft-2"))})
+            {:bgc        :$background-color
+             :hover:bgc  (bg-color-var-kw "-soft")
+             :active:bgc (bg-color-var-kw "-soft-2")})
 
      "[data-ks-surface= \"minimal-light-mode\"][data-ks-inert]"
      (merge base-inert-light-mode
-            {:hover:bgc       :white
-             :active:bgc      :white})
+            {:hover:bgc       :$background-color
+             :active:bgc      :$background-color})
 
      "[data-ks-surface= \"faint\"]"                        
      (merge base
@@ -207,44 +238,49 @@
 
 
      "[data-ks-surface= \"solid\"]"                         
-     {:bgc        (keyword (str "$background-color-" s "-hard"))
-      :hover:bgc  (keyword (str "$background-color-" s "-hard-2"))
-      :active:bgc (keyword (str "$background-color-" s "-hard-3"))}
+     {:bgc        (bg-color-var-kw "-hard")
+      :hover:bgc  (bg-color-var-kw "-hard-2")
+      :active:bgc (bg-color-var-kw "-hard-3")}
 
 
      "[data-ks-surface= \"solid\"][data-ks-inert]"          
-     {:bgc        (keyword (str "$background-color-" s "-hard"))
-      :hover:bgc  (keyword (str "$background-color-" s "-hard"))
-      :active:bgc (keyword (str "$background-color-" s "-hard"))}
+     {:bgc         (bg-color-var-kw "-hard")
+      :hover:bgc   (bg-color-var-kw "-hard")
+      :active:bgc  (bg-color-var-kw "-hard")}
 
 
      "[data-ks-surface= \"solid-classic\"]"                    
      {:--classic-trim-color (keyword (str "$" s "-550"))
-      :bgc                  (keyword (str "$background-color-" s "-hard"))
-      :hover:bgc            (keyword (str "$background-color-" s "-hard-2"))
-      :active:bgc           (keyword (str "$background-color-" s "-hard-3"))}
+      :bgc                  (bg-color-var-kw "-hard")
+      :hover:bgc            (bg-color-var-kw "-hard-2")
+      :active:bgc           (bg-color-var-kw "-hard-3")}
 
      "[data-ks-surface= \"solid-classic\"][data-ks-inert]"  
-     {:bgc        (keyword (str "$background-color-" s "-hard"))
-      :hover:bgc  (keyword (str "$background-color-" s "-hard"))
-      :active:bgc (keyword (str "$background-color-" s "-hard"))}
+     {:bgc        (bg-color-var-kw "-hard")
+      :hover:bgc  (bg-color-var-kw "-hard")
+      :active:bgc (bg-color-var-kw "-hard")}
 
      "dark:[data-ks-surface= \"solid-classic\"]"               
-     {:bgc        (keyword (str "$background-color-" s "-hard-dark-mode"))
-      :hover:bgc  (keyword (str "$background-color-" s "-hard-2-dark-mode"))
-      :active:bgc (keyword (str "$background-color-" s "-hard-3-dark-mode"))}
+     {:bgc        (bg-color-var-kw "-hard-dark-mode")
+      :hover:bgc  (bg-color-var-kw "-hard-2-dark-mode")
+      :active:bgc (bg-color-var-kw "-hard-3-dark-mode")}
 
      "dark:[data-ks-surface= \"solid-classic\"][data-ks-inert]" 
-     {:bgc        (keyword (str "$background-color-" s "-hard-dark-mode"))
-      :hover:bgc  (keyword (str "$background-color-" s "-hard-dark-mode"))
-      :active:bgc (keyword (str "$background-color-" s "-hard-dark-mode"))}
+     {:bgc        (bg-color-var-kw "-hard-dark-mode")
+      :hover:bgc  (bg-color-var-kw "-hard-dark-mode")
+      :active:bgc (bg-color-var-kw "-hard-dark-mode")}
 
      "dark:[data-ks-surface= \"solid\"]"                       
-     {:bgc        (keyword (str "$background-color-" s "-hard-dark-mode"))
-      :hover:bgc  (keyword (str "$background-color-" s "-hard-2-dark-mode"))
-      :active:bgc (keyword (str "$background-color-" s "-hard-3-dark-mode"))}
+     {:bgc        (bg-color-var-kw "-hard-dark-mode")
+      :hover:bgc  (bg-color-var-kw "-hard-2-dark-mode")
+      :active:bgc (bg-color-var-kw "-hard-3-dark-mode")}
+     
+     ;; TODO - abstract above^ into:
+     #_(bgc-map "-hard-dark-mode"
+              "-hard-2-dark-mode"
+              "-hard-3-dark-mode")
      
      "dark:[data-ks-surface= \"solid\"][data-ks-inert]"        
-     {:bgc        (keyword (str "$background-color-" s "-hard-dark-mode"))
-      :hover:bgc  (keyword (str "$background-color-" s "-hard-dark-mode"))
-      :active:bgc (keyword (str "$background-color-" s "-hard-dark-mode"))}}]))
+     {:bgc        (bg-color-var-kw "-hard-dark-mode")
+      :hover:bgc  (bg-color-var-kw "-hard-dark-mode")
+      :active:bgc (bg-color-var-kw "-hard-dark-mode")}}]))

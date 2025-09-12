@@ -108,7 +108,7 @@
 (def weights
   [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy])
 
-(def surfaces 
+(def surfaces-basic
   [:solid-classic
    :solid
    :soft-classic
@@ -116,9 +116,12 @@
    :convex
    :faint
    :minimal
-   :minimal-light-mode
-   :transparent
-   ])
+   :transparent])
+
+(def surfaces-light-mode [:minimal-light-mode :convex-light-mode])
+
+(def surfaces 
+  (apply conj surfaces-basic surfaces-light-mode ))
 
 (def positions 
   [:fixed-inline-start-inside
@@ -168,6 +171,7 @@
           sizings-large-xxxlarge
           sizings
           weights
+          surfaces-basic
           surfaces
           surfaces-tag]))
 
@@ -210,6 +214,7 @@
    :colorway                                 (:colorways/set variants)
    :colorway/named                           (:colorways-named/set variants)
    :colorway/semantic                        (:colorways-semantic/set variants)
+   :surface/basic                            (:surfaces-basic/set variants)
    :surface                                  (:surfaces/set variants)
    :surface/tag                              (:surfaces-tag/set variants)
    :packing                                  (:packings/set variants)
@@ -239,6 +244,7 @@
    :colorway                                 (:colorways/enum variants)
    :colorway/named                           (:colorways-named/enum variants)
    :colorway/semantic                        (:colorways-semantic/enum variants)
+   :surface/basic                            (:surfaces-basic/enum variants)
    :surface                                  (:surfaces/enum variants)
    :surface/tag                              (:surfaces-tag/enum variants)
    :packing                                  (:packings/enum variants)
@@ -268,6 +274,7 @@
    :colorway                                 (:colorways/vector variants)
    :colorway/named                           (:colorways-named/vector variants)
    :colorway/semantic                        (:colorways-semantic/vector variants)
+   :surface/basic                            (:surfaces-basic/vector variants)
    :surface                                  (:surfaces/vector variants)
    :surface/tag                              (:surfaces-tag/vector variants)
    :packing                                  (:packings/vector variants)
@@ -387,6 +394,8 @@
                                :data-ks? false}
    :packing                   {:default nil
                                :desc    "General amount of padding inside the element."}
+
+   ;; TODO should this just be [:or :string :keyword] , :string for text, :keyword for icon ?
    :end-enhancer              {:schema       [:or :string :keyword [:vector :any]]
                                :default      nil
                                :when-not-nil ""
@@ -406,6 +415,9 @@
    :inert                     {:schema  :boolean
                                :desc    "Surface is not interactive meaning no hover or active states."
                                :default true}
+   :required                  {:schema  :boolean
+                               :desc    "HTML `required` attribute for elements such as input etc."
+                               :default nil}
    :text-transform            {:desc    "Equivalent to the css text-transform property."
                                :default nil}
    :elevation                 {:desc    "Elevation level of the element. Renders a drop-shadow."

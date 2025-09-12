@@ -15,6 +15,9 @@
    [kushi.showcase.core :as showcase :refer [showcase]]
 
 
+   [kushi.ui.text-field :refer [text-field]]
+   [kushi.ui.text-field.demo]
+
    [kushi.ui.button :refer [button]]
    [kushi.ui.button.demo]
 
@@ -614,11 +617,57 @@
                            [:--shadow-strength :40%]))
            k]))
 
-  [:<> 
-   [showcase (!? (showcase/opts kushi.ui.switch/switch
-                                kushi.ui.switch.demo/demos))]
+  [:div
+   (sx :.flex-col-start :gap--3rem :.absolute-centered)
+
+   [text-field
+    {:placeholder "Your text here"
+     :required    true
+     :disabled    true
+     :label-text  "Input label"
+     :helper-text "My helper text"}]
+
+   [text-field
+    {:placeholder    "Enter a dollar amount"
+     :required       true
+     :label-text     "Input label"
+     :helper-text    "My helper text"
+     :start-enhancer "$"
+     :end-enhancer   :star}]
+   
+   [text-field
+    {:placeholder    "Enter a dollar amount"
+     :required       true
+     :label-text     "Input label"
+     :helper-text    "My helper text"
+     :start-enhancer "$"
+     :end-enhancer   :star
+     :textarea?      true}]
+   
+   [text-field
+    {:at                  (at)
+     :colorway            :accent
+     :label-attrs         (sx :bgc--$yellow-50 :dark:bgc--$yellow-900)
+     :placeholder         "Your text here"
+     :disabled            false
+     :end-enhancer        "🦄"
+     :helper-text         "Your helper text here"
+     :start-enhancer      2
+     :wrapper-attrs       (sx :box-shadow--4px:4px:7px:#f2baf9ab
+                              :dark:box-shadow--4px:4px:7px:#b000c66e
+                              {:class :my-input-wrapper-name})
+     :outer-wrapper-attrs (sx :b--1px:solid:yellow
+                              :dark:b--1px:solid:#c419b5
+                              :box-shadow--8px:8px:17px:#b000c66e
+                              :dark:box-shadow--8px:8px:17px:#b000c66e
+                              :p--1em)
+     :required            false
+     :label-text          "Input label"}]
+   
+   #_[showcase (!? (showcase/opts kushi.ui.switch/switch
+                                  kushi.ui.switch.demo/demos))]
    #_[showcase (!? (showcase/opts kushi.ui.button/button
-                                kushi.ui.button.demo/demos))]]
+                                  kushi.ui.button.demo/demos))]]
 
 
   #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner

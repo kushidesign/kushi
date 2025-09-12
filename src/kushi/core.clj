@@ -422,16 +422,30 @@
              []
              grouped))
 
+(defn- lvfha-sorted* [coll]
+  (into []
+        (sort-by #(->> % 
+                       first
+                       (get defs/lvfha-pseudos-order-strs))
+                 coll)))
 
+(defn- feature-query-sorted* [coll]
+  (let [[fq others]
+        (partition-by-pred
+         #(re-find #"^\@[a-z]" (some-> % (nth 0) name))
+         coll)]
+    (if (seq fq)
+      (into [] (concat others fq))
+      coll)))
+
+
+;; Sorts lvfha and feature queries such as @supports
 (defn- lvfha-order [coll all-nested-sels]
-  (!? [coll all-nested-sels])
-  (!? :ret (if (some #(contains? defs/lvfha-pseudos-strs %) all-nested-sels)
-    (into []
-          (sort-by #(->> % 
-                         first
-                         (get defs/lvfha-pseudos-order-strs))
-                   coll))
-    coll)))
+  (if (some #(contains? defs/lvfha-pseudos-strs %) all-nested-sels)
+    (-> coll
+        lvfha-sorted*
+        feature-query-sorted*)
+    coll))
 
 
 (defn group-shared*
@@ -963,6 +977,8 @@
 
 (defn css-rule* [sel args &form &env]
   ;; Check if user supplied bad at-rule name, forgetting a leading "@".
+  #_(when (= sel "[data-ks-colorway=\"neutral\"]")
+    (!? :pp args #_(-> args first keys)))
   (let [fname (or (when-let [sym (nth &form 0 nil)]
                     (when (contains? '#{sx defcss} sym)
                       (str "kushi.core/" sym)))

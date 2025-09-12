@@ -604,17 +604,20 @@
 
 (defmacro fn->defui [form]
   (let [[_ sym {:keys [summary desc opts]} args-vc body] form
-        props (reduce-kv
-               (fn [m k v]
-                 (assoc m k (if-let [m (get variants/props k)]
-                              (dissoc m :schema)
-                              v)))
+        props (reduce
+               (fn [m opt]
+                 (let [prop-kw (? (-> (? opt) :name name keyword))] 
+                   (assoc m
+                          (some-> opt :name name keyword)
+                          (if-let [m (get variants/props prop-kw)]
+                            (dissoc m :schema :name)
+                            (dissoc opt :name)))))
                {}
-               opts)
+               (second opts))
         mm {:doc desc :summary summary :props props}
         ret (list 'defui ^:public sym mm args-vc body)]
     (!? (keyed [sym mm args-vc body]))
-    (? {:non-coll-length-limit 500} ret)
+    (? {:non-coll-length-limit 500} props #_ret)
     `nil))
 
 

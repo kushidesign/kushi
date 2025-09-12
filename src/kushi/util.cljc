@@ -1,5 +1,7 @@
 (ns kushi.util
-  (:require [clojure.string :as string])
+  (:require [clojure.string :as string]
+            [fireworks.core :refer [? !? ?> !?>]]
+            )
   #?(:cljs
      (:require-macros [kushi.util])))
 
@@ -192,3 +194,63 @@
      (let [transform (comp (partial list `quote)
                            (transforms key-type))]
        (into {} (map (juxt transform identity) vars))))))
+
+
+;; TODO - get this to support ||
+;; Check out kushi.css.hydrated/hydrated-css-var
+(defn extract-cssvar-token [s]
+  (some-> s
+          (maybe #(string/starts-with? % "$"))
+          (subs 1)))
+
+
+(defn css-varize [& args] (str "var(--" (apply str args) ")"))
+
+(defn- s->cssvar [s] 
+  (if-let [token (extract-cssvar-token s)]
+    (css-varize token)
+    s))
+
+(defn kw->cssvar  [x]
+  (if-let [token (some-> x
+                         (maybe keyword?)
+                         name
+                         extract-cssvar-token)]
+    (css-varize token)
+    (as-str x)))
+
+
+;; Supports up to 2 fallbacks
+(defn kw->cssvar2  [x] 
+  (if-let [token (some-> x
+                         (maybe keyword?)
+                         name
+                         extract-cssvar-token)]
+    (let [[token fallback1 fallback2] (string/split token #"\|\|")]
+      (css-varize token 
+                  (some->> fallback1 s->cssvar (str ", "))
+                  (some->> fallback2 s->cssvar (str ", "))))
+    (as-str x)))
+
+
+(defn css-fn [fname & args] (str fname "(" (string/join ", " args) ")"))
+
+
+(defn map-css-tuple-args [coll]
+  (map #(let [x (if (vector? %) % [%])]
+          (->> x
+               (map kw->cssvar2)
+               (string/join " "))) 
+       coll))
+
+(defn color-mix [color-space & args] 
+  (->> args
+       map-css-tuple-args
+       (into ["color-mix" color-space])
+       (apply css-fn)))
+
+(defn linear-gradient [direction & args] 
+  (->> args
+       map-css-tuple-args
+       (into ["linear-gradient" direction])
+       (apply css-fn)))

@@ -1,199 +1,61 @@
 (ns kushi.ui.text-field
   (:require
    [kushi.core :refer (sx css defcss css-vars-map merge-attrs)]
-   [kushi.ui.core :refer (extract)]))
+   [kushi.ui.icon :refer (icon)]
+   [kushi.ui.shared :refer [enhancer]]
+   [kushi.ui.core :refer (extract defui)]))
 
-(defcss "@layer kushi-ui-component kushi-text-input-enhancer"
-  :d--if
-  :ai--center
-  :jc--c
-  :pi--0.375em )
-
-(defn- enhancer [x]
-  [:div
-   (sx ".kushi-text-input-start-enhancer"
-       :d--if
-       :ai--center
-       :jc--c
-       :pi--0.375em )
-   x])
-
-(defn- text-field* [& args]
-  (let [[opts attrs & _]       
-        (extract args text-field*)
-
-        {:keys [wrapper-attrs
-                start-enhancer
-                end-enhancer
-                ;; TODO - change this out when new theming comes in
-                colorway
-                textarea?]}     
-        opts]
-    [:div
-     (merge-attrs
-      {:data-ks-colorway colorway}
-      (sx
-       ".kushi-text-input-wrapper"
-       :.flex-row-fs
-       [:bc
-        "color-mix(in srgb, currentColor var(--text-input-border-intensity, 75%), transparent)"]
-       [:dark:bc
-        "color-mix(in srgb, currentColor var(--text-input-border-intensity-dark-mode, 55%), transparent)"]
-       ["focus-within:bgc"
-        "var(--transparent-white-70)!important"]
-       ["dark:focus-within:bgc"
-        "var(--transparent-black-20)!important"]
-       [:focus-within:c
-        :currentColor!important]
-       [:focus-within:bc
-        "rgba(0, 125, 250, 1)"]
-       :ai--stretch
-       :jc--sb
-       :w--100%
-       :w--auto
-       :min-height--34px
-       :bw--1px
-       :bs--solid
-       :border-radius--$text-input-border-radius
-       :bgc--$transparent-white-70
-       :dark:bgc--$transparent-black-20
-       :_textarea:border-radius--$text-input-border-radius
-       :_input:border-radius--$text-input-border-radius)
-      wrapper-attrs)
-     (when (and start-enhancer
-                (not textarea?)) 
-       [enhancer start-enhancer])
-     [:div (sx ".kushi-text-input-input-wrapper" :flex-grow--1)
-      (if textarea?
-        [:textarea
-         (merge-attrs
-          (sx
-           ".kushi-text-input-input"
-           :.transition
-           :h--100%
-           :w--100%
-           :pi--0.5em
-           :pb--0.5em
-           :placeholder:o--0.4)
-          attrs)]
-        [:input
-         (merge-attrs
-          {:class (css
-                   ".kushi-text-input-input"
-                   :.transition
-                   :h--100%
-                   :w--100%
-                   :pi--0.5em
-                   :pb--0.5em
-                   :placeholder:o--0.4)
-           :type  :text}
-          attrs)])]
-     (when (and end-enhancer
-                (not textarea?))
-       [enhancer end-enhancer])]))
-
-(defn text-field
-  {:summary "A text-field enables the entry of text."
-   :desc "An input enables the entry of text. By default, this component will
+(defui text-field
+  {:summary      "A text-field enables the entry of text."
+   :desc         "An input enables the entry of text. By default, this component will
           use an `<input>` element of type `text`. If the option `:textarea?`
           is set to `true`, a `<textarea>` element will be used instead."
-   :opts '[{:name    textarea?
-            :schema    boolean?
-            :default false
-            :desc    "Setting to `true` will render an html `<textarea/>`
-                      element, instead of a <input type='text'/> element."}
-
-           {:name    outer-wrapper-attrs
-            :schema    map?
-            :default nil
-            :desc    "HTML attributes map applied to the outermost div of the
-                      component. This div wraps the label, input-wrapper div,
-                      and the helper text span."}
-
-           {:name    label
-            :schema    string?
-            :default nil
-            :desc    "The text for `:label` element associated with the input field."}
-
-           {:name    label-attrs
-            :schema    map?
-            :default nil
-            :desc    "HTML attributes map applied to the `:label` element that
-                      contains the `label` text."}
-
-           {:name    label-placement
-            :schema    #{:block :inline}
-            :default :block-start
-            :desc    "HTML attributes map applied to the `label` element
-                      associated with the `input` element, and end-enhancer div."}
-
-           {:name    label-width
-            :schema    #(or (string? %) (keyword? %))
-            :default :block-start
-            :desc    "Sets the width of your label \"column\", when
-                      `:label-placement` is set to `:inline`. Must be a valid
-                      css width value (`px`, `em` `rem`, etc)"}
-
-           {:name    wrapper-attrs
-            :schema    map?
-            :default nil
-            :desc    "HTML attributes map applied to the input wrapper div,
-                      which is bordered by default. This div wraps the
-                      `start-enhancer` div, the actual `input` element, and the
-                      `end-enhancer` div."}
-
-           {:name    start-enhancer
-            :schema    #(or (string? %) (vector? %))
-            :default nil
-            :desc    "A string, hiccup vector, or child component intended to
-                      aid the user and positioned within the input field area,
-                      at the start"}
-
-           {:name    end-enhancer
-            :schema    #(or (string? %) (vector? %))
-            :default nil
-            :desc    "A string, hiccup vector, or child component intended to
-                      aid the user and positioned within the input field area,
-                      at the end"}
-
-           {:name    helper
-            :schema    string?
-            :default nil
-            :desc    ["The text for `:.kushi-text-input-helper` label."
-                      "If used, this should give the user actionable information
-                       about the value of the associated input field."]}
-
-           {:name    colorway
-            :schema    #{:neutral :accent :positive :negative :warning}
-            :default nil
-            :desc    ["The text for `:.kushi-text-input-helper` label."
-                      "If used, this should give the user actionable information
-                       about the value of the associated input field."]}
-           ]}
+   :props/shared [:end-enhancer :start-enhancer :colorway]
+   :props        {:helper-text         {:schema  :string
+                                        :default nil
+                                        :desc    ["The text for `:.kushi-text-input-helper` label."
+                                                  "If used, this should give the user actionable information about the value of the associated input field."]}
+                  :label-text          {:schema  :string
+                                        :default nil
+                                        :desc    "The text for `:label` element associated with the input field."}
+                  :label-attrs         {:schema  :map
+                                        :default nil
+                                        :desc    "HTML attributes map applied to the `:label` element that contains the `label` text."}
+                  :label-placement     {:schema  [:enum :block :inline :block-start]
+                                        :default :block-start
+                                        :desc    "HTML attributes map applied to the `label` element associated with the `input` element, and end-enhancer div."}
+                  :label-width         {:schema  [:or :string :keyword]
+                                        :default :block-start
+                                        :desc    "Sets the width of your label \"column\", when `:label-placement` is set to `:inline`. Must be a valid css width value (`px`, `em` `rem`, etc)"}
+                  :outer-wrapper-attrs {:schema  :map
+                                        :default nil
+                                        :desc    "HTML attributes map applied to the outermost div of the component. This div wraps the label, input-wrapper div, and the helper text span."}
+                  :textarea?           {:schema  :boolean
+                                        :default false
+                                        :desc    "Setting to `true` will render an html `<textarea/>` element, instead of a <input type='text'/> element."}
+                  :wrapper-attrs       {:schema  :map
+                                        :default nil
+                                        :desc    "HTML attributes map applied to the input wrapper div, which is bordered by default. This div wraps the `start-enhancer` div, the actual `input` element, and the `end-enhancer` div."}}}
   [& args]
-  (let [[opts attrs & _]
-        (extract args)
-
-        {:keys [
-                outer-wrapper-attrs
-                label
+  (let [{:keys [outer-wrapper-attrs
+                label-text
                 label-placement
                 label-attrs
                 wrapper-attrs
                 start-enhancer
                 end-enhancer
-                helper
+                helper-text
                 colorway
                 textarea?]
-         :or   {label " "}}         
-        opts
+         :or   {label-text " "}}         
+        &props
 
         {:keys [required
                 disabled]}          
-        attrs
+        &attrs
 
         input-id                    
-        (:id attrs)
+        (:id &attrs)
 
         inline?                     
         (= :inline label-placement)
@@ -210,7 +72,7 @@
          :data-ks-colorway colorway}
 
         helper-label-attrs
-        (when helper
+        (when helper-text
           (merge-attrs
            label-text-attrs
            (sx ".kushi-text-input-helper"
@@ -220,14 +82,6 @@
                :mbs--$text-input-helper-margin-block-start||0.3em)
            (when disabled {:class (css ".kushi-text-input-helper-disabled"
                                        :.disabled)})))
-
-        wrapped-input
-        [text-field* (merge attrs
-                            {:wrapper-attrs    wrapper-attrs
-                             :start-enhancer   start-enhancer
-                             :end-enhancer     end-enhancer
-                             :data-ks-colorway colorway
-                             :textarea?        textarea?})]
 
         label-with-attrs
         [:label
@@ -249,7 +103,7 @@
             (sx ".kushi-text-input-label-block"
                 [:mbe :$text-input-label-block-margin-block-end||0.4em]))
           label-attrs)
-         label]
+         label-text]
 
 
         kushi-input-attrs 
@@ -258,12 +112,84 @@
                        (sx ".kushi-input-inline"
                            :d--grid
                            [:gtc "auto minmax(0, 1fr)"]))
-                     outer-wrapper-attrs)]
-    [:div
+                     outer-wrapper-attrs)
+        
+        wrapped-input
+        [:div
+         (merge-attrs
+          {:data-ks-colorway colorway}
+          (sx
+           ".kushi-text-input-wrapper"
+           :.flex-row-fs
+           {:display                                         :flex
+            :flex-direction                                  :row
+            :justify-content                                 :space-between
+            :align-items                                     :stretch
+            ;; :w                     :100%
+            :width                                           :auto
+            :min-height                                      :34px
+            :bgc                                             :$transparent-white-70
+            :dark:bgc                                        :$transparent-black-20
+            :focus-within:bgc                                "var(--transparent-white-70)!important"
+            :dark:focus-within:bgc                           "var(--transparent-black-20)!important"
+            :focus-within:c                                  :currentColor!important
+            :focus-within:bc                                 "rgba(0, 125, 250, 1)"
+            :_textarea:border-radius                         :$text-input-border-radius
+            :_input:border-radius                            :$text-input-border-radius
+            :border-width                                    :1px
+            :border-style                                    :solid
+            :border-radius                                   :$text-input-border-radius
+            :border-color                                    :currentColor
+            :dark:border-color                               :currentColor
+            "@supports (color: color-mix(in oklch, red, red))" {:border-color      "color-mix(in srgb, currentColor var(--text-input-border-intensity, 75%), transparent)"
+                                                                :dark:border-color "color-mix(in srgb, currentColor var(--text-input-border-intensity-dark-mode, 55%), transparent)"}
+            :_.kushi-text-input-enhancer                     {:d  :inline-flex
+                                                              :ai :center
+                                                              :jc :c
+                                                              :pi :0.375em}
+            })
+          wrapper-attrs)
+         (when (and start-enhancer (not textarea?)) 
+           [:div
+            {:class [:kushi-text-input-enhancer 
+                     :kushi-text-input-start-enhancer 
+                     (when disabled :disabled)]}
+            [enhancer start-enhancer]])
+         [:div (sx ".kushi-text-input-input-wrapper" :flex-grow--1)
+          (if textarea?
+            [:textarea
+             (merge-attrs
+              (sx ".kushi-text-input-input"
+                  :.transition
+                  :h--100%
+                  :w--100%
+                  :pi--0.5em
+                  :pb--0.5em
+                  :placeholder:o--0.4)
+              &attrs)]
+            [:input
+             (merge-attrs
+              {:class (css ".kushi-text-input-input"
+                           :.transition
+                           :h--100%
+                           :w--100%
+                           :pi--0.5em
+                           :pb--0.5em
+                           :placeholder:o--0.4)
+               :type  :text}
+              &attrs)])]
+         (when (and end-enhancer (not textarea?)) 
+           [:div
+            {:class [:kushi-text-input-enhancer
+                     :kushi-text-input-end-enhancer 
+                     (when disabled :disabled)]}
+            [enhancer end-enhancer ]])]
+        ]
+    [:div 
      kushi-input-attrs
      label-with-attrs
      wrapped-input
-     (when helper
+     (when helper-text
        [:<>
         (when inline? [:div])
-        [:span helper-label-attrs helper]])]))
+        [:span helper-label-attrs helper-text]])]))

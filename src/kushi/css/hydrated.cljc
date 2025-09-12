@@ -1,5 +1,6 @@
 (ns kushi.css.hydrated
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
    [clojure.walk :refer [prewalk]]
@@ -395,6 +396,19 @@
          (when (more-than-one? mq)
            (into [] (concat others (sort-mqs x)))))))
 
+
+;; for putting stuff like @supports last
+(defn- with-ordered-feature-queries [x] 
+  (and (vec-of-vecs? x)
+       (more-than-one? x)
+       (let [[fq others]
+             (partition-by-pred
+              #(re-find #"^\@[a-z]" (some-> % (nth 0) name))
+              x)]
+         (when (seq fq)
+           (into [] (concat others fq))))))
+
+
 ;; TODO make separate version for stack-with-bunched
 (defn hydrated-stacks1
   "If x is vec and first el is string or keyword representing a 'stack' 
@@ -441,7 +455,9 @@
         ;; order media queries here
         ;; TODO - maybe order media queries in core/order-nested rules, then
         ;;        A/B test for perf.
-        (or (with-ordered-mqs x) x)))))
+        (let [ret (or (with-ordered-mqs x) x)]
+          (or (with-ordered-feature-queries ret)
+              ret))))))
 
 (defn first-el-mod [v]
   (when (vector? v)

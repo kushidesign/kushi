@@ -9,8 +9,8 @@
 
 
 (def demos
-  [
-  {:label   "Contour"
+  #_[
+  #_{:label   "Contour"
     :desc    "Contour of the button."
     :samples (samples-with-variant
               {:variant       :contour
@@ -32,25 +32,27 @@
                                :shadow-color :red}
                :args          ["Next"]})}
    ]
-  #_[
+
+  [
    {:samples (samples-with-variant
               {:args          ["Next"],
                :variant       :colorway,
                :variant-scale :colorway/named,
-               :x-variants    [:surface],
+               :x-variants    [:surface/basic],
                :snippets?     false
                ;;  :attrs/snippet  {:surface :solid},
                ;; :attrs/display  {:sizing :small},
                ;;  :label          "Colorways, surfaces × contours",
                :label         "Colorways × surfaces",
-               :attrs         {:end-enhancer :east},
+               :attrs         {:end-enhancer :east
+                               :contour      :rounded},
                :rows?         true})}
 
    {:samples (samples-with-variant
               {:args          ["Next"],
                :variant       :contour,
                :variant-scale :contour/basic,
-               :x-variants    [:surface],
+               :x-variants    [:surface/basic],
                :snippets?     false
               ;;  :attrs/snippet  {:surface :solid},
                ;; :attrs/display  {:sizing :small},
@@ -63,10 +65,11 @@
    {:desc    "Surface variant of the button.",
     :label   "Surface",
     :samples (samples-with-variant
-              {:attrs   {:end-enhancer :east
-                         :colorway     :accent},
-               :args    ["Next"],
-               :variant :surface})}
+              {:attrs         {:end-enhancer :east
+                               :colorway     :accent},
+               :args          ["Next"],
+               :variant       :surface
+               :variant-scale :surface/basic})}
    
    {:label   "Contour"
     :desc    "Contour of the button."

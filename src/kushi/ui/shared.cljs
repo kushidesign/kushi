@@ -1,11 +1,11 @@
 (ns kushi.ui.shared
   (:require [kushi.ui.icon :refer [icon]]))
             
-(defn add-enhancer [{:keys [start-enhancer end-enhancer]} children]
-  (let [enhancer
-        #(if (keyword? %) [icon %] %)
 
-        start-enhancer                                                                                             
+(defn enhancer [x] (if (keyword? x) [icon x] x))
+
+(defn add-enhancer [{:keys [start-enhancer end-enhancer]} children]
+  (let [start-enhancer                                                                                             
         (enhancer start-enhancer)
 
         end-enhancer                                                                                               
