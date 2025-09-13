@@ -847,12 +847,12 @@
                         (bling [styled-sel-kw
                                 (or (some-> sel (str " "))
                                     (str "." (loc-id &env &form) " "))]))
-        block         (? (or block
+        block         (or block
                           (nested-css-block args
                                             &form
                                             &env
                                             "kushi.core/css-block"
-                                            sel)))
+                                            sel))
         styled-sel    #(bling [styled-sel-kw (second %)] " {")
         block         (-> block 
                           (sr #";" #(bling [:gray %]))

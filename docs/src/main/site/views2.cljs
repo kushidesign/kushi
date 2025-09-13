@@ -53,6 +53,7 @@
 
    [kushi.playground.assets.graphics.avatars :refer [avatar-1]]
    [kushi.ui.avatar :refer [avatar]]
+   [kushi.ui.avatar.demo]
 
    
    [kushi.ui.card :refer [card]]
@@ -618,56 +619,43 @@
            k]))
 
   [:div
-   (sx :.flex-col-start :gap--3rem :.absolute-centered)
+   #_(sx :.flex-col-start :gap--3rem :.absolute-centered)
 
-   [text-field
-    {:placeholder "Your text here"
-     :required    true
-     :disabled    true
-     :label-text  "Input label"
-     :helper-text "My helper text"}]
+   
+   #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
+                                  kushi.ui.text-field.demo/demos))]
 
-   [text-field
-    {:placeholder    "Enter a dollar amount"
-     :required       true
-     :label-text     "Input label"
-     :helper-text    "My helper text"
-     :start-enhancer "$"
-     :end-enhancer   :star}]
-   
-   [text-field
-    {:placeholder    "Enter a dollar amount"
-     :required       true
-     :label-text     "Input label"
-     :helper-text    "My helper text"
-     :start-enhancer "$"
-     :end-enhancer   :star
-     :textarea?      true}]
-   
-   [text-field
-    {:at                  (at)
-     :colorway            :accent
-     :label-attrs         (sx :bgc--$yellow-50 :dark:bgc--$yellow-900)
-     :placeholder         "Your text here"
-     :disabled            false
-     :end-enhancer        "🦄"
-     :helper-text         "Your helper text here"
-     :start-enhancer      2
-     :wrapper-attrs       (sx :box-shadow--4px:4px:7px:#f2baf9ab
-                              :dark:box-shadow--4px:4px:7px:#b000c66e
-                              {:class :my-input-wrapper-name})
-     :outer-wrapper-attrs (sx :b--1px:solid:yellow
-                              :dark:b--1px:solid:#c419b5
-                              :box-shadow--8px:8px:17px:#b000c66e
-                              :dark:box-shadow--8px:8px:17px:#b000c66e
-                              :p--1em)
-     :required            false
-     :label-text          "Input label"}]
-   
    #_[showcase (!? (showcase/opts kushi.ui.switch/switch
                                   kushi.ui.switch.demo/demos))]
    #_[showcase (!? (showcase/opts kushi.ui.button/button
-                                  kushi.ui.button.demo/demos))]]
+                                  kushi.ui.button.demo/demos))]
+   
+   
+   [:div (sx :.flex-row-start 
+             :p--20px
+             :gap--1rem)
+    #_(ui 
+      [tag {:surface :solid
+            :sizing  :small}
+       ])
+    #_[tag {:surface :solid
+            :sizing  :small} "BG"]
+    #_[tag {:surface   :solid
+          :sizing    :xxxlarge
+          :sm:sizing :medium
+          :colorway  :gold}
+     "BG"]
+
+    #_[tag
+     {:surface  :solid
+      :sizing   :xxlarge #_{:sm :xxlarge
+                            :lg :small}
+      :colorway :gold}
+     "BG"]]
+   
+   #_[showcase (showcase/opts kushi.ui.avatar/avatar
+                            kushi.ui.avatar.demo/demos)]
+   ]
 
 
   #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
@@ -684,8 +672,12 @@
   #_[showcase (showcase/opts kushi.ui.radio/radio
                              kushi.ui.radio.demo/demos)]
 
-  #_[showcase (showcase/opts kushi.ui.avatar/avatar
-                             kushi.ui.avatar.demo/demos)]
+    #_[avatar {:surface :solid
+             :sizing  :xxlarge
+             :src     avatar-1}
+     "JC"]
+
+
   #_[:div 
   ;;  [icon
   ;;   (merge-attrs
@@ -790,3 +782,30 @@
 
   )
 
+
+'(ui 
+  [tag {:surface        :solid
+        :display        :flex
+        :size           :xlarge
+        ;; :shape       {:=           :rounded-xxlarge-absolute
+        ;;               :media/large :rounded-xxxlarge-absolute}
+        :at-media/large {:size  :small
+                         :shape :rounded-xxxlarge-absolute}
+        :style          {:color                          :red
+                         :at-supports/color-mix-in-oklch {:color :blue}}
+        }])
+
+'=>
+
+;; feeds to css-rule during analyzation
+#_(sx :.surface-solid
+      :.colorway-gold
+      {:font-size    :$small
+       :sm:font-size :$large
+       :br           :$rounded-absolute
+       :large:br     :$rounded-absolute})
+
+[tag {:class ["foo.wtf__L20_C30"
+              "surface-solid" 
+              "colorway-gold"]
+      :style ""}]

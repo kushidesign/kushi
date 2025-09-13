@@ -297,7 +297,8 @@
   #_(? (keyed [v-1d vks uic-fn variant-attrs variant-args demo]))
   (into [:div (merge-attrs 
                (sx :.d1-grid-wrapper)
-               {:style (:row-style demo)})]
+               {:style (:row-style demo)}
+               (:row-attrs demo))]
         (let [variant-scale (:variant-scale demo)
               coll          (if (vector? variant-scale)
                               variant-scale
@@ -352,6 +353,8 @@
   [opt samples]
   (into [:div (merge-attrs 
                (sx :.kpg-variant-grid-1d)
+               (or (-> opt :row-attrs)
+                   (-> opt :demo :row-attrs))
                {:style (or (-> opt :row-style)
                            (-> opt :demo :row-style))})]
         (map :code/evaled samples)))
@@ -530,16 +533,17 @@
     (resolve-variants (or variant-scale v-1d) vks))
 
 
-(defn d2-grid [v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style]
+(defn d2-grid [v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style row-attrs]
   #_(? [v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale])
   (into [:div (sx :.kpg-variant-grid-2d)]
         (for [a    (if (vector? variant-scale)
                      variant-scale
                      (resolve-variants (or variant-scale v-2d) vks)) 
               :let [variant-label (str "\"" a "\"")]] 
-          (into [:div {:style (merge (css-vars-map variant-label)
-                                     row-style)
-                       :class (css :.kpg-variant-grid-1d)}]
+          (into [:div (merge-attrs {:style (merge (css-vars-map variant-label)
+                                                  row-style)
+                                    :class (css :.kpg-variant-grid-1d)}
+                                   row-attrs)]
                 (for [b (resolve-variants v-1d vks)
                       :let [b-prop (if (re-find #"/" (str v-1d))
                                      (-> v-1d
@@ -568,7 +572,7 @@
         {args          :args
          attrs         :attrs
          attrs-display :attrs/display
-         :keys         [x-variants label rows? snippets? variant-labels? row-style variant-scale]
+         :keys         [x-variants label rows? snippets? variant-labels? row-style row-attrs variant-scale]
          :or           {variant-labels? true
                         snippets?       true}
          :as           demo} 
@@ -651,10 +655,10 @@
        (into [:div (sx :.flex-col-start :gap--2em)]
              (for [kw (resolve-variants v-3d vks)
                    :let [variant-attrs (assoc variant-attrs (:opt-key opt) kw)]]
-               [d2-grid v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style]))
+               [d2-grid v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style row-attrs]))
 
        v-2d
-       [d2-grid v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style]
+       [d2-grid v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style row-attrs]
 
        :else
        (if-not variant-labels?
@@ -663,7 +667,8 @@
                                       :ai--c
                                       :w--100%
                                       :max-width--605px)
-                                  {:style row-style})]
+                                  {:style row-style}
+                                  row-attrs)]
                (let [coll (if (vector? variant-scale)
                             variant-scale
                             (resolve-variants (or variant-scale v-1d) vks))]

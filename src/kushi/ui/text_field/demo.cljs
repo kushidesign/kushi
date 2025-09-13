@@ -1,99 +1,90 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.text-field.demo
-  (:require [kushi.core :refer (sx merge-attrs)]
-            [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.icon :refer [icon]]
+  (:require [kushi.core :refer (sx)]
+            [kushi.showcase.core :as showcase :refer [samples]]
             [kushi.ui.text-field :refer [text-field]]))
 
 
-(def examples
-  (let [row-attrs (merge-attrs {:class ["playground-example-row-bounded"]}
-                               (sx :_.instance-code:p--1.05em:1.65em:1.25em))
-        f         (fn [desc code]
-                    {:desc      desc
-                     :row-attrs row-attrs
-                     :snippets  [(:quoted code)]
-                     :examples  [{:code code}]})]
+(def demos
+  (let [row-attrs (sx ".ks-showcase-text-field-sample-wrapper"
+                      {:padding           :1.05em:1.65em:1.25em
+                       :border-width      :1px
+                       :border-style      :solid
+                       :border-color      :$neutral-150
+                       :dark:border-color :$neutral-850
+                       :width             :fit-content
+                       :border-radius     :$rounded})]
+    [{:label     "Basic"
+      :desc      "Basic"
+      :row-attrs row-attrs
+      :samples   (samples [[text-field
+                            {:placeholder "Your text here"
+                             :label-text  "Input label"
+                             :helper-text "My helper text"}]])}
+     {:label   "Required"
+      :desc    "Required"
+      :row-attrs row-attrs
+      :samples (samples [[text-field
+                          {:placeholder "Your text here"
+                           :required    true
+                           :label-text  "Input label"
+                           :helper-text "My helper text"}]])}
 
-    [
-     (f "Simple"
-        (sx-call [text-field
-                  {:placeholder "Your text here"
-                   :label      "Input label" 
-                   :helper     "My helper text"}]))
+     {:label   "Disabled"
+      :desc    "Disabled"
+      :row-attrs row-attrs
+      :samples (samples [[text-field
+                          {:placeholder "Your text here"
+                           :disabled    true
+                           :label-text  "Input label"
+                           :helper-text "My helper text"}]])}
 
-     #_{:desc      "Simple"
-        :row-attrs row-attrs
-        :examples  [{:code (sx-call [text-field
-                                     (sx
-                                      {:placeholder "Your text here"
-                                       :label      "Input label" 
-                                       :helper     "My helper text"})]
-                                    )}]}
+     {:label   "Start enhancer(text)"
+      :desc    "Start enhancer(text)"
+      :row-attrs row-attrs
+      :samples (samples [[text-field
+                          {:placeholder    "Enter a dollar amount"
+                           :start-enhancer "$"
+                           :label-text     "Input label"
+                           :helper-text    "My helper text"}]])}
 
-     (f "Required"
-        (sx-call [text-field
-                  {:placeholder "Your text here"
-                   :required    true
-                   :label      "Input label" 
-                   :helper     "My helper text"}]))
+     {:label   "End enhancer (icon)"
+      :desc    "End enhancer (icon)"
+      :row-attrs row-attrs
+      :samples (samples [[text-field
+                          {:placeholder  "Enter a dollar amount"
+                           :end-enhancer :star
+                           :label-text   "Input label"
+                           :helper-text  "My helper text"}]])}
 
-     (f "Disabled"
-        (sx-call [text-field
-                  {:placeholder "Your text here"
-                   :disabled    true
-                   :label      "Input label" 
-                   :helper     "My helper text"}]) )
+     {:label   "Textarea"
+      :desc    "Textarea"
+      :row-attrs row-attrs
+      :samples (samples [[text-field
+                          {:placeholder    "Enter a dollar amount"
+                           :required       true
+                           :label-text     "Input label"
+                           :helper-text    "My helper text"
+                           :start-enhancer "$"
+                           :end-enhancer   :star
+                           :textarea?      true}]])}
 
-     (f "With helper"
-        (sx-call [text-field
-                  {:placeholder "Your text here"
-                   :label      "Input label" 
-                   :helper     "Your helper text here"}]) )
-
-     (f "With start enhancer"
-        (sx-call [text-field {:placeholder     "Your text here"
-                              :start-enhancer "$"
-                              :label          "Input label"}]) )
-
-     (f "With end enhancer (icon)"
-        (sx-call [text-field
-                  {:placeholder   "Your text here"
-                   :end-enhancer [icon :star]
-                   :label        "Input label"}]) )
-
-     (f "With textarea element"
-        (sx-call [text-field
-                  {:placeholder "Your text here"
-                   :textarea?  true 
-                   :label      "Input label" 
-                   :helper     "My helper text"}]) )
-
-     (let [code (sx-call [text-field
-                          {:required             false
-                           :placeholder          "Your text here"
-                           :disabled             false 
-                           :label-attrs         (sx :bgc--$yellow-50
-                                                     :dark:bgc--$yellow-900)
-                           :colorway            :accent
+     {:label   "All the options"
+      :desc    "All the options"
+      :samples (samples [[text-field
+                          {:colorway            :accent
+                           :label-attrs         (sx :bgc--$yellow-50 :dark:bgc--$yellow-900)
+                           :placeholder         "Your text here"
+                           :disabled            false
                            :end-enhancer        "🦄"
-                           :helper              "Your helper text here"
+                           :helper-text         "Your helper text here"
                            :start-enhancer      "$"
-                           :wrapper-attrs       (sx
-                                                  :box-shadow--4px:4px:7px:#f2baf9ab
-                                                  :dark:box-shadow--4px:4px:7px:#b000c66e
-                                                  {:class :my-input-wrapper-name})
-                           :outer-wrapper-attrs (sx
-                                                  :b--1px:solid:yellow
-                                                  :dark:b--1px:solid:#c419b5
-                                                  :box-shadow--8px:8px:17px:#b000c66e
-                                                  :dark:box-shadow--8px:8px:17px:#b000c66e
-                                                  :p--1em) 
-                           :label               "Input label"}])] 
-       {:desc      "All the options"
-        :row-attrs (merge-attrs row-attrs
-                                (sx :max-width--280px
-                                    :xsm:max-width--unset))
-        :snippets [(:quoted code)]
-        :examples  [{:code code}]})]))
-
-
+                           :wrapper-attrs       (sx :box-shadow--4px:4px:7px:#f2baf9ab
+                                                    :dark:box-shadow--4px:4px:7px:#b000c66e
+                                                    {:class :my-input-wrapper-name})
+                           :outer-wrapper-attrs (sx :b--1px:solid:yellow
+                                                    :dark:b--1px:solid:#c419b5
+                                                    :box-shadow--8px:8px:17px:#b000c66e
+                                                    :dark:box-shadow--8px:8px:17px:#b000c66e
+                                                    :p--1.05em:1.65em:1.25em)
+                           :required            false
+                           :label-text          "Input label"}]])}]))

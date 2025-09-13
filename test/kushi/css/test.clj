@@ -38,9 +38,13 @@
             [me.flowthing.pp :as pp]))
 
 
+(?sx ".he"
+     {:color :red
+      :sm    {:color :blue}})
 #_(?sx ".he"
-    {:color                                         :red
-     "@supports(color: color-mix(in oklch, red, red))" {:color :blue}})
+     {:color                                          :red
+      "@supports(color: color-mix(in oklch, red, red))" {:color :blue}
+      })
 
 #_(let [s                               "neutral"
       convex-light-mode-grad          #(str "linear-gradient(180deg, transparent, transparent 15%, " % ")")
