@@ -110,7 +110,7 @@
                (merge-attrs
                 (sx :.all-components-sidenav-button)
                 {:data-ks-playground-sidenav-button label
-                 :contour                               :pill
+                 :shape                               :pill
                  :surface                             :minimal}
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
                label]]]))]])
@@ -233,7 +233,7 @@
                (merge-attrs
                 (sx :.all-components-sidenav-button)
                 {:data-ks-playground-sidenav-button label
-                 :contour                               :pill
+                 :shape                               :pill
                  :surface                             :minimal}
                 (d/mouse-down-a11y sidenav-item-handler {:component-label label}))
                label]]]))]])

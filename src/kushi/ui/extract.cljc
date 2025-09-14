@@ -83,7 +83,7 @@
   (let [supplied    (get props k)
         data-ks-key (keyword (str "data-ks-" (name k)))
         ret         (data-ks-attr* prop supplied data-ks-key)]
-    (!? {:when (= k :contour)} (keyed [supplied data-ks-key ret]))
+    (!? {:when (= k :shape)} (keyed [supplied data-ks-key ret]))
     ret))
 
 (defn- data-ks-attrs->classnames* [m]

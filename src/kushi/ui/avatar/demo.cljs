@@ -148,7 +148,7 @@
     :examples  (for [sz sizes]
                  {:label (name sz)
                   :attrs {:sizing  sz
-                          :contour :rounded
+                          :shape :rounded
                           :src    avatar-1}
                   :args  []})}
 
@@ -187,7 +187,7 @@
     :examples  (for [sz sizes]
                  {:label (name sz)
                   :attrs {:sizing sz
-                          :contour :rounded}
+                          :shape :rounded}
                   :args  ["M"]})}
 
    {:desc      "Sample sizes from 24px to 72px, rounded shape, solid variant"
@@ -200,7 +200,7 @@
     :examples  (for [sz sizes]
                  {:label (name sz)
                   :attrs {:sizing    sz
-                          :contour   :rounded
+                          :shape   :rounded
                           :surface :solid}
                   :args  ["M"]})}
 

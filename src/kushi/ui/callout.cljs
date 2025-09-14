@@ -166,7 +166,7 @@
               (when close-button?
                 [icon-button
                  (merge-attrs
-                  {:contour       :pill
+                  {:shape       :pill
                    :surface       surface
                    :colorway      colorway
                    :on-mouse-down close-button-fn})

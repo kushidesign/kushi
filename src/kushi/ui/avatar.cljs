@@ -28,7 +28,7 @@
    :props/shared [[:sizing {:default "36px"}]
                   [:surface {:default :soft}]
                   :colorway
-                  [:contour {:default :rounded}]
+                  [:shape {:default :rounded}]
                   :stroke-align]
    :props   {:font-size-ratio {:schema  :float
                                :default 0.4

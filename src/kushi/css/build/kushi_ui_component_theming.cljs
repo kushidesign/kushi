@@ -1251,29 +1251,29 @@
 (defcss ".dark [data-ks-surface=\"solid-classic\"]"
   {:after {:background-image "linear-gradient(var(--transparent-black-02), #0000, var(--transparent-white-20))"}})
 
-(defcss "[data-ks-contour=\"rounded\"]" {:border-radius :$rounded-medium})
-(defcss "[data-ks-contour=\"rounded-xxxsmall\"]" {:border-radius :$rounded-xxxsmall})
-(defcss "[data-ks-contour=\"rounded-xxsmall\"]" {:border-radius :$rounded-xxsmall})
-(defcss "[data-ks-contour=\"rounded-xsmall\"]" {:border-radius :$rounded-xsmall})
-(defcss "[data-ks-contour=\"rounded-small\"]" {:border-radius :$rounded-small})
-(defcss "[data-ks-contour=\"rounded-medium\"]" {:border-radius :$rounded-medium})
-(defcss "[data-ks-contour=\"rounded-large\"]" {:border-radius :$rounded-large})
-(defcss "[data-ks-contour=\"rounded-xlarge\"]" {:border-radius :$rounded-xlarge})
-(defcss "[data-ks-contour=\"rounded-xxlarge\"]" {:border-radius :$rounded-xxlarge})
-(defcss "[data-ks-contour=\"rounded-xxxlarge\"]" {:border-radius :$rounded-xxxlarge})
+(defcss "[data-ks-shape=\"rounded\"]" {:border-radius :$rounded-medium})
+(defcss "[data-ks-shape=\"rounded-xxxsmall\"]" {:border-radius :$rounded-xxxsmall})
+(defcss "[data-ks-shape=\"rounded-xxsmall\"]" {:border-radius :$rounded-xxsmall})
+(defcss "[data-ks-shape=\"rounded-xsmall\"]" {:border-radius :$rounded-xsmall})
+(defcss "[data-ks-shape=\"rounded-small\"]" {:border-radius :$rounded-small})
+(defcss "[data-ks-shape=\"rounded-medium\"]" {:border-radius :$rounded-medium})
+(defcss "[data-ks-shape=\"rounded-large\"]" {:border-radius :$rounded-large})
+(defcss "[data-ks-shape=\"rounded-xlarge\"]" {:border-radius :$rounded-xlarge})
+(defcss "[data-ks-shape=\"rounded-xxlarge\"]" {:border-radius :$rounded-xxlarge})
+(defcss "[data-ks-shape=\"rounded-xxxlarge\"]" {:border-radius :$rounded-xxxlarge})
 
-(defcss "[data-ks-contour=\"rounded-absolute\"]" {:border-radius :$rounded-medium-absolute})
-(defcss "[data-ks-contour=\"rounded-xxxsmall-absolute\"]" {:border-radius :$rounded-xxxsmall-absolute})
-(defcss "[data-ks-contour=\"rounded-xxsmall-absolute\"]" {:border-radius :$rounded-xxsmall-absolute})
-(defcss "[data-ks-contour=\"rounded-xsmall-absolute\"]" {:border-radius :$rounded-xsmall-absolute})
-(defcss "[data-ks-contour=\"rounded-small-absolute\"]" {:border-radius :$rounded-small-absolute})
-(defcss "[data-ks-contour=\"rounded-medium-absolute\"]" {:border-radius :$rounded-medium-absolute})
-(defcss "[data-ks-contour=\"rounded-large-absolute\"]" {:border-radius :$rounded-large-absolute})
-(defcss "[data-ks-contour=\"rounded-xlarge-absolute\"]" {:border-radius :$rounded-xlarge-absolute})
-(defcss "[data-ks-contour=\"rounded-xxlarge-absolute\"]" {:border-radius :$rounded-xxlarge-absolute})
-(defcss "[data-ks-contour=\"rounded-xxxlarge-absolute\"]" {:border-radius :$rounded-xxxlarge-absolute})
+(defcss "[data-ks-shape=\"rounded-absolute\"]" {:border-radius :$rounded-medium-absolute})
+(defcss "[data-ks-shape=\"rounded-xxxsmall-absolute\"]" {:border-radius :$rounded-xxxsmall-absolute})
+(defcss "[data-ks-shape=\"rounded-xxsmall-absolute\"]" {:border-radius :$rounded-xxsmall-absolute})
+(defcss "[data-ks-shape=\"rounded-xsmall-absolute\"]" {:border-radius :$rounded-xsmall-absolute})
+(defcss "[data-ks-shape=\"rounded-small-absolute\"]" {:border-radius :$rounded-small-absolute})
+(defcss "[data-ks-shape=\"rounded-medium-absolute\"]" {:border-radius :$rounded-medium-absolute})
+(defcss "[data-ks-shape=\"rounded-large-absolute\"]" {:border-radius :$rounded-large-absolute})
+(defcss "[data-ks-shape=\"rounded-xlarge-absolute\"]" {:border-radius :$rounded-xlarge-absolute})
+(defcss "[data-ks-shape=\"rounded-xxlarge-absolute\"]" {:border-radius :$rounded-xxlarge-absolute})
+(defcss "[data-ks-shape=\"rounded-xxxlarge-absolute\"]" {:border-radius :$rounded-xxxlarge-absolute})
 
-(defcss "[data-ks-contour=\"pill\"], [data-ks-contour=\"circle\"]"
+(defcss "[data-ks-shape=\"pill\"], [data-ks-shape=\"circle\"]"
   {:border-radius :9999px})
 
 ;; For generating code
@@ -1290,7 +1290,7 @@
                             :xxxlarge]] 
 
                   (list 'defcss
-                        (str "[data-ks-contour=\"" (name sz) "\"]")
+                        (str "[data-ks-shape=\"" (name sz) "\"]")
                         {:font-size (keyword (str "$" (name sz)))}))))
 
 

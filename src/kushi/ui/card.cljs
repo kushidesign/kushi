@@ -7,7 +7,7 @@
          They are often part of a series of cards with related content."
    :props/family [:container]
    :props/shared  [[:surface {:default :outline}]
-                   [:contour {:default :rounded}]]}
+                   [:shape {:default :rounded}]]}
   [& args]
   (into
    [:div (merge-attrs

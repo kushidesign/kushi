@@ -230,11 +230,11 @@
                                 (sx :.flex-row-fe :gap--1em)
                                 [button
                                  (merge-attrs {:surface :minimal
-                                               :contour   :pill
+                                               :shape   :pill
                                                :on-click close-kushi-modal})
                                  "Cancel"]
                                 [button
                                  (merge-attrs {:surface :minimal
-                                               :contour   :pill
+                                               :shape   :pill
                                                :on-click close-kushi-modal}) 
                                  "Submit"]]]]))}]}]))

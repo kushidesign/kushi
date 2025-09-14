@@ -91,7 +91,7 @@
                                   :close))]
     [button
      (merge-attrs
-      {:contour        :pill
+      {:shape        :pill
        :surface      :minimal
        :class         (css
                        ".kushi-modal-close-button"

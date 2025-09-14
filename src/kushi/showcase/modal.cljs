@@ -25,7 +25,7 @@
 (defn example-modal-trigger [modal-id]
   [button
    {:colorway :accent
-    :contour    :pill
+    :shape    :pill
     :surface  :minimal
     :class    
     (css :.kushi-playground-examples-modal-trigger

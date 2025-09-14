@@ -89,7 +89,7 @@
   [button
    (let [panel-id (str "kushi-" component-label "-" tab-label)]
      {:surface      :minimal
-      :contour        :pill
+      :shape        :pill
       :class         (css :.foreground-color-secondary!
                           :fs--$small
                           :pis--0.799em

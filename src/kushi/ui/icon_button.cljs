@@ -19,7 +19,7 @@
                  :stroke-align
                  :stroke-width
                  :position
-                 :contour
+                 :shape
                  :surface
                  :transition]}
  [& args]

@@ -17,7 +17,7 @@
                   :stroke-align
                   :stroke-width
                   :position
-                  :contour
+                  :shape
                   [:surface {:default :faint}]
                   :transition
                   :inert]}

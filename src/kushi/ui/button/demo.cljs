@@ -13,8 +13,8 @@
   #_{:label   "Contour"
     :desc    "Contour of the button."
     :samples (samples-with-variant
-              {:variant       :contour
-               :variant-scale :contour/rounded-medium-xxxlarge
+              {:variant       :shape
+               :variant-scale :shape/rounded-medium-xxxlarge
                :attrs         {:sizing       :xxxlarge
                                :end-enhancer :east
                                :colorway     :accent
@@ -25,7 +25,7 @@
     :desc    "Preset shadow styles."
     :samples (samples-with-variant
               {:variant       :drop-shadow
-              ;;  :variant-scale :contour/basic+rounded
+              ;;  :variant-scale :shape/basic+rounded
                :attrs         {:end-enhancer :east
                                :colorway     :accent
                                :surface      :minimal
@@ -42,21 +42,21 @@
                :snippets?     false
                ;;  :attrs/snippet  {:surface :solid},
                ;; :attrs/display  {:sizing :small},
-               ;;  :label          "Colorways, surfaces × contours",
+               ;;  :label          "Colorways, surfaces × shapes",
                :label         "Colorways × surfaces",
                :attrs         {:end-enhancer :east
-                               :contour      :rounded},
+                               :shape      :rounded},
                :rows?         true})}
 
    {:samples (samples-with-variant
               {:args          ["Next"],
-               :variant       :contour,
-               :variant-scale :contour/basic,
+               :variant       :shape,
+               :variant-scale :shape/basic,
                :x-variants    [:surface/basic],
                :snippets?     false
               ;;  :attrs/snippet  {:surface :solid},
                ;; :attrs/display  {:sizing :small},
-              ;;  :label          "Colorways, surfaces × contours",
+              ;;  :label          "Colorways, surfaces × shapes",
                :label         "Contour × surfaces",
                :attrs         {:end-enhancer :east
                                :colorway     :accent},
@@ -74,8 +74,8 @@
    {:label   "Contour"
     :desc    "Contour of the button."
     :samples (samples-with-variant
-              {:variant       :contour
-               :variant-scale :contour/basic+rounded
+              {:variant       :shape
+               :variant-scale :shape/basic+rounded
                :attrs         {:end-enhancer :east
                                :colorway     :accent
                                :surface      :solid}
@@ -106,7 +106,7 @@
     :desc    "Preset stroke styles."
     :samples (samples-with-variant
               {:variant       :stroke
-              ;;  :variant-scale :contour/basic+rounded
+              ;;  :variant-scale :shape/basic+rounded
                :attrs         {:end-enhancer :east
                                :colorway     :accent
                                :surface      :minimal}

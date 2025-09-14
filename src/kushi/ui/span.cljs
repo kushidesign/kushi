@@ -6,7 +6,7 @@
    [kushi.ui.util :as util]))
 
 (defui span 
-  {:props/shared [:contour :stroke :stroke-align :drop-shadow :colorway]}
+  {:props/shared [:shape :stroke :stroke-align :drop-shadow :colorway]}
   [& args]
   (into [:span 
          (merge-attrs

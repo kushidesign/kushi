@@ -147,21 +147,21 @@
                        [icon {:colorway :warning
                               :sizing   :xxxlarge} :warning]])}
    
-   {:label   "Semantic colorways, solid surface, round contour"
+   {:label   "Semantic colorways, solid surface, round shape"
     :desc    "Examples of semantic coloring of icons"
     :samples (samples ["accent"
                        [icon {:colorway :accent
                               :sizing   :xxxlarge
                               :icon-filled :true
                               ;; :surface  :solid
-                              :contour  :circle}
+                              :shape  :circle}
                         :star]
 
                        "negative"
                        [icon {:colorway    :negative
                               :sizing      :xxxlarge
                               :icon-filled :true
-                              :contour     :circle}
+                              :shape     :circle}
                         :cancel]
 
                        "positive"
@@ -169,7 +169,7 @@
                               :sizing   :xxxlarge
                               :icon-filled :true
                               ;; :surface  :solid
-                              :contour  :circle} 
+                              :shape  :circle} 
                         :check-circle]
 
                        "warning"
@@ -177,7 +177,7 @@
                               :sizing   :xxxlarge
                               :icon-filled :true
                               ;; :surface  :solid
-                              :contour  :circle}
+                              :shape  :circle}
                         :warning]])}
 
    {:label   [:span "Various icons" [:span " (hover to view icon name)"]]

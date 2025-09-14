@@ -12,16 +12,16 @@
                         [switch {:at              (at)
                                  :on?             true
                                  :sizing          :xxxlarge
-                                 :contour         :rounded
+                                 :shape         :rounded
                                  :track-inset-gap :1px}]
                         [switch {:at              (at)
                                  :on?             true
                                  :sizing          :xxxlarge
-                                 :contour         :rounded-absolute
+                                 :shape         :rounded-absolute
                                  :track-inset-gap :1px}]]])}
    {:samples (samples-with-variant
-              {:variant       :contour,
-               :variant-scale :contour/basic+rounded,
+              {:variant       :shape,
+               :variant-scale :shape/basic+rounded,
                :label         "Contour",
                :attrs         {:at              (at)
                                :on?             true
@@ -56,8 +56,8 @@
                :attrs   {:on? true}})}
 
    {:samples (samples-with-variant
-              {:variant       :contour,
-               :variant-scale :contour/basic,
+              {:variant       :shape,
+               :variant-scale :shape/basic,
                :label         "Contour",
                :attrs         {:at              (at)
                                :on?             true

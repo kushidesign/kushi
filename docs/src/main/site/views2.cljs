@@ -99,7 +99,7 @@
       :as       :section
       :colorway :accent
       :sizing     :xxlarge
-      :contour    :pill
+      :shape    :pill
       :weight   :extra-light
       :surface  :minimal}
      [radio (assoc m :id id)]
@@ -178,8 +178,8 @@
     :surface  :solid
     ;; maybe that is good?
     :flexbox  :row:start:center
-    ;;  :contour   :rounded-3 ?
-    :contour  :rounded-xlarge
+    ;;  :shape   :rounded-3 ?
+    :shape  :rounded-xlarge
     :sizing   :large
     :colorway :accent
     :id       "foo"
@@ -366,7 +366,7 @@
         {:at               (at)
          :surface          :soft
          :sizing           :xxxlarge
-         :contour          :pill
+         :shape          :pill
          :colorway         :accent
          :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
          :stroke-width     :3px
@@ -385,7 +385,7 @@
          (merge-attrs 
           {:surface      :transparent
            :sizing       :large
-           :contour      :pill
+           :shape      :pill
            :colorway     :accent
       ;;  :stroke [[:4px :$brown-300] [:2px :$green-300]]
            :stroke       :soft
@@ -399,7 +399,7 @@
        {:at           (at)
         :surface      :solid
         :sizing       :large
-        :contour      :pill
+        :shape      :pill
         :colorway     :accent
         ;; :stroke [[:4px :$brown-300] [:2px :$green-300]]
         :stroke       :medium
@@ -409,7 +409,7 @@
         :class        (css ["--stroke-transparency-mix-color" :$green-600])}
        "Click"]
 
-    ;; [button {:surface :soft-classic :sizing :large :contour :pill :colorway :accent} "Click"]
+    ;; [button {:surface :soft-classic :sizing :large :shape :pill :colorway :accent} "Click"]
     ;; [thumb {:surface :outline :sizing :xxlarge :stroke-width :1px}]
     ;; [thumb {:surface :soft-classic :sizing :xxlarge #_#_:stroke-width :1px}]
     ;; [thumb {:surface :solid-classic :sizing :xxlarge #_#_:stroke-width :1px}]
@@ -519,7 +519,7 @@
        :star]]
    
    #_[box (merge-attrs 
-         {:contour      :rounded
+         {:shape      :rounded
           :display      [:flex :row :space-around :center]
           :stroke       :medium
           :stroke-width "2px"
@@ -553,13 +553,13 @@
      "Your transaction was successful."
      [button {:colorway :positive
               :surface  :faint
-              :contour  :circle
+              :shape  :circle
               :stroke   :medium}
       "GO"]
      [icon-button 
       {:colorway :positive
        :surface  :faint
-       :contour  :circle
+       :shape  :circle
        :stroke   :medium
        :packing  :compact}
       :warning]]]
@@ -609,7 +609,7 @@
         (for [k [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge]]
           [button (mrj {:packing         :roomy
                         :sizing          :xsmall
-                        :contour         :rounded
+                        :shape         :rounded
                         :surface         :minimal
                         :drop-shadow     k}
                        (sx :p--20px:40px

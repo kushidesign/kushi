@@ -50,7 +50,7 @@
    your own project with your own collection of icon `svg`s."
 
    :props/shared [[:colorway {:default nil}]
-                  :contour
+                  :shape
                   :sizing
                   :weight       
                   :position

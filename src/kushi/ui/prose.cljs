@@ -37,7 +37,7 @@
                                                   (maybe nameable?)
                                                   name)
                                           "36px")
-        {semantic-colorway :colorway} (get-variants opts {:contour :circle})]
+        {semantic-colorway :colorway} (get-variants opts {:shape :circle})]
     (into [:p
            (merge-attrs
             {:class               (css ".kushi-prose"

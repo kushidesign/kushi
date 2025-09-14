@@ -4,7 +4,7 @@
    [kushi.ui.util :refer [keyed]]
    #?(:clj [kushi.ui.ordered :refer [ordered-set]])))
 
-(def contours-rounded
+(def shapes-rounded
   [:rounded
    :rounded-xxxsmall
    :rounded-xxsmall
@@ -16,7 +16,7 @@
    :rounded-xxlarge
    :rounded-xxxlarge])
 
-(def contours-rounded-absolute
+(def shapes-rounded-absolute
   [:rounded-absolute
    :rounded-xxxsmall-absolute
    :rounded-xxsmall-absolute
@@ -29,38 +29,38 @@
    :rounded-xxlarge-absolute
    :rounded-xxxlarge-absolute])
 
-(def contours-rounded-medium-xxxlarge
+(def shapes-rounded-medium-xxxlarge
   [:rounded-medium
    :rounded-large
    :rounded-xlarge
    :rounded-xxlarge
    :rounded-xxxlarge])
 
-(def contours-rounded-medium-xxxlarge-absolute
+(def shapes-rounded-medium-xxxlarge-absolute
   [:rounded-medium-absolute
    :rounded-large-absolute
    :rounded-xlarge-absolute
    :rounded-xxlarge-absolute
    :rounded-xxxlarge-absolute])
 
-(def contours-basic
+(def shapes-basic
   [:pill :rounded :sharp])
 
-(def contours-auxillary
+(def shapes-auxillary
   [:circle :squircle])
 
-(def contours-basic+rounded
-  (into [] (distinct (apply conj contours-basic contours-rounded))))
+(def shapes-basic+rounded
+  (into [] (distinct (apply conj shapes-basic shapes-rounded))))
 
-(def contours-rounded+rounded-absolute
-  (apply conj contours-rounded contours-rounded-absolute))
+(def shapes-rounded+rounded-absolute
+  (apply conj shapes-rounded shapes-rounded-absolute))
 
-(def contours
+(def shapes
   (into [] 
-        (distinct (concat contours-basic
-                          contours-rounded
-                          contours-rounded-absolute
-                          contours-auxillary))))
+        (distinct (concat shapes-basic
+                          shapes-rounded
+                          shapes-rounded-absolute
+                          shapes-auxillary))))
 
 (def strokes
   [:none :xsoft :soft :medium :hard :xhard])
@@ -146,15 +146,15 @@
   [:solid :soft :faint :minimal])
 
 (def variants*
-  (keyed [contours-basic
-          contours-auxillary
-          contours-basic+rounded
-          contours-rounded
-          contours
-          contours-rounded-medium-xxxlarge
-          contours-rounded-absolute
-          contours-rounded+rounded-absolute
-          contours-rounded-medium-xxxlarge-absolute
+  (keyed [shapes-basic
+          shapes-auxillary
+          shapes-basic+rounded
+          shapes-rounded
+          shapes
+          shapes-rounded-medium-xxxlarge
+          shapes-rounded-absolute
+          shapes-rounded+rounded-absolute
+          shapes-rounded-medium-xxxlarge-absolute
           strokes
           drop-shadows
           shadow-colors
@@ -220,15 +220,15 @@
    :packing                                  (:packings/set variants)
    :position                                 (:positions/set variants)
    :spinner-type                             (:spinner-type/set variants)
-   :contour                                  (:contours/set variants)
-   :contour/basic                            (:contours-basic/set variants)
-   :contour/rounded                          (:contours-rounded/set variants)
-   :contour/basic+rounded                    (:contours-basic+rounded/set variants)
-   :contour/auxillary                        (:contours-auxillary/set variants)
-   :contour/rounded-medium-xxxlarge          (:contours-rounded-medium-xxxlarge/set variants)
-   :contour/rounded-absolute                 (:contours-rounded-absolute/set variants)
-   :contour/rounded-medium-xxxlarge-absolute (:contours-rounded-medium-xxxlarge-absolute/set variants)
-   :contour/rounded+rounded-absolute         (:contours-rounded+rounded-absolute/set variants)
+   :shape                                  (:shapes/set variants)
+   :shape/basic                            (:shapes-basic/set variants)
+   :shape/rounded                          (:shapes-rounded/set variants)
+   :shape/basic+rounded                    (:shapes-basic+rounded/set variants)
+   :shape/auxillary                        (:shapes-auxillary/set variants)
+   :shape/rounded-medium-xxxlarge          (:shapes-rounded-medium-xxxlarge/set variants)
+   :shape/rounded-absolute                 (:shapes-rounded-absolute/set variants)
+   :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/set variants)
+   :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/set variants)
    :stroke                                   (:strokes/set variants)
    :drop-shadow                              (:drop-shadows/set variants)
    :shadow-color                             (:shadow-colors/set variants)
@@ -250,15 +250,15 @@
    :packing                                  (:packings/enum variants)
    :position                                 (:positions/enum variants)
    :spinner-type                             (:spinner-type/enum variants)
-   :contour                                  (:contours/enum variants)
-   :contour/basic                            (:contours-basic/enum variants)
-   :contour/rounded                          (:contours-rounded/enum variants)
-   :contour/basic+rounded                    (:contours-basic+rounded/enum variants)
-   :contour/auxillary                        (:contours-auxillary/enum variants)
-   :contour/rounded-medium-xxxlarge          (:contours-rounded-medium-xxxlarge/enum variants)
-   :contour/rounded-absolute                 (:contours-rounded-absolute/enum variants)
-   :contour/rounded-medium-xxxlarge-absolute (:contours-rounded-medium-xxxlarge-absolute/enum variants)
-   :contour/rounded+rounded-absolute         (:contours-rounded+rounded-absolute/enum variants)
+   :shape                                  (:shapes/enum variants)
+   :shape/basic                            (:shapes-basic/enum variants)
+   :shape/rounded                          (:shapes-rounded/enum variants)
+   :shape/basic+rounded                    (:shapes-basic+rounded/enum variants)
+   :shape/auxillary                        (:shapes-auxillary/enum variants)
+   :shape/rounded-medium-xxxlarge          (:shapes-rounded-medium-xxxlarge/enum variants)
+   :shape/rounded-absolute                 (:shapes-rounded-absolute/enum variants)
+   :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/enum variants)
+   :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/enum variants)
    :stroke                                   (:strokes/enum variants)
    :drop-shadow                              (:drop-shadows/enum variants)
    :shadow-color                             (:shadow-colors/enum variants)
@@ -280,15 +280,15 @@
    :packing                                  (:packings/vector variants)
    :position                                 (:positions/vector variants)
    :spinner-type                             (:spinner-type/vector variants)
-   :contour                                  (:contours/vector variants)
-   :contour/basic                            (:contours-basic/vector variants)
-   :contour/rounded                          (:contours-rounded/vector variants)
-   :contour/basic+rounded                    (:contours-basic+rounded/vector variants)
-   :contour/auxillary                        (:contours-auxillary/vector variants)
-   :contour/rounded-medium-xxxlarge          (:contours-rounded-medium-xxxlarge/vector variants)
-   :contour/rounded-absolute                 (:contours-rounded-absolute/vector variants)
-   :contour/rounded-medium-xxxlarge-absolute (:contours-rounded-medium-xxxlarge-absolute/vector variants)
-   :contour/rounded+rounded-absolute         (:contours-rounded+rounded-absolute/vector variants)
+   :shape                                  (:shapes/vector variants)
+   :shape/basic                            (:shapes-basic/vector variants)
+   :shape/rounded                          (:shapes-rounded/vector variants)
+   :shape/basic+rounded                    (:shapes-basic+rounded/vector variants)
+   :shape/auxillary                        (:shapes-auxillary/vector variants)
+   :shape/rounded-medium-xxxlarge          (:shapes-rounded-medium-xxxlarge/vector variants)
+   :shape/rounded-absolute                 (:shapes-rounded-absolute/vector variants)
+   :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/vector variants)
+   :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/vector variants)
    :stroke                                   (:strokes/vector variants)
    :drop-shadow                              (:drop-shadows/vector variants)
    :shadow-color                             (:shadow-colors/vector variants)
@@ -339,7 +339,7 @@
                                :fq?     true}
    :colorway                  {:default :neutral
                                :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." }
-   :contour                   {:desc    "Shape of the element, corresponds to a Kushi's border-radius scale"
+   :shape                   {:desc    "Shape of the element, corresponds to a Kushi's border-radius scale"
                                :default nil
                                :fq?     true}
 
@@ -485,7 +485,7 @@
   ;; TODO - should packing be in here?
   {:container [:sizing
                :colorway
-               :contour
+               :shape
                :surface
                :stroke
                :stroke-weight

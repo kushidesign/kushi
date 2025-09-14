@@ -46,7 +46,7 @@
    :props/shared [:colorway
                   :sizing
                   :weight
-                  [:contour {:default :pill}]]
+                  [:shape {:default :pill}]]
    :props {:on?                {:schema   :boolean
                                 :default  false
                                 :desc     "Control the initial on/off state of the switch"
@@ -92,7 +92,7 @@
   (let [{:keys [disable-events?
                 on?
                 colorway
-                contour
+                shape
                 thumb-props
                 thumb-label-off
                 thumb-label-on
@@ -102,22 +102,22 @@
                 thumb-scale-factor
                 track-inset-gap
                 switch-width-ratio]
-         :or   {contour :pill}}
+         :or   {shape :pill}}
         (!? &props)
 
-        rounded-contour?
-        (!? 'rounded-contour?
-            (contains? (:contour/rounded+rounded-absolute variants-by-custom-opt-key)
-                       contour))
+        rounded-shape?
+        (!? 'rounded-shape?
+            (contains? (:shape/rounded+rounded-absolute variants-by-custom-opt-key)
+                       shape))
 
-        relative-rounded-contour?
-        (!? 'relative-rounded-contour? 
-            (contains? (:contour/rounded variants-by-custom-opt-key) contour))
+        relative-rounded-shape?
+        (!? 'relative-rounded-shape? 
+            (contains? (:shape/rounded variants-by-custom-opt-key) shape))
 
-        contour
-        (if relative-rounded-contour?
-          (!? (-> contour name (str "-absolute") keyword))
-          contour)
+        shape
+        (if relative-rounded-shape?
+          (!? (-> shape name (str "-absolute") keyword))
+          shape)
 
         track-inset-gap
         (string/replace (util/as-str track-inset-gap) #"^\-" "")
@@ -214,16 +214,16 @@
 
       &attrs
       
-      {:data-ks-contour (util/as-str contour)})
+      {:data-ks-shape (util/as-str shape)})
 
      (let [thumb-props      
            (!? (merge {:surface  :minimal-light-mode
                        :inert    true
-                       :contour  contour
+                       :shape  shape
                        :position :absolute}
                       thumb-props
-                      (when rounded-contour?
-                        {:style (merge {:border-radius (str "calc(var(--" (name contour) ") - var(--track-inset-gap))")}
+                      (when rounded-shape?
+                        {:style (merge {:border-radius (str "calc(var(--" (name shape) ") - var(--track-inset-gap))")}
                                        (some-> thumb-props
                                                :style
                                                (util/maybe map?)))})))

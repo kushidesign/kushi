@@ -29,7 +29,7 @@
                  :stroke-color
                  :multi-stroke
                  :position
-                 [:contour {:default :rounded}]
+                 [:shape {:default :rounded}]
                  [:surface {:default :soft}]
                  :transition
                  :drop-shadow
@@ -80,7 +80,7 @@
    (if (and classic-variant?
             (or drop-shadow stroke))
      [span (merge-attrs 
-            (let [{:keys [stroke-align contour colorway]
+            (let [{:keys [stroke-align shape colorway]
                    :or {stroke-align :inside}}
                   &props]
               (when (and js/goog.DEBUG stroke (= stroke-align :inside))

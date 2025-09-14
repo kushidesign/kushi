@@ -5,7 +5,7 @@
    [clojure.string :as string]))
 
 (def variants
-  {:contour    #{"rounded" "sharp" "pill" "circle"}
+  {:shape    #{"rounded" "sharp" "pill" "circle"}
    :surface  defs/basic-surfaces-set-of-strs
    ;; :semantic #{"neutral" "accent" "positive" "negative" "warning"}
    :colorway #{"neutral"
@@ -30,7 +30,7 @@
 (def variant-defaults
   {:colorway "neutral"
    :surface  "faint"
-   :contour    "rounded"})
+   :shape    "rounded"})
 
 (def variant-basics (into #{} (keys variants)))
 

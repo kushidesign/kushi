@@ -20,14 +20,14 @@
                :snippets-label "Colorways",
                :attrs/snippet  {:surface :solid},
                ;; :attrs/display  {:sizing :small},
-               :label          "Colorways ... surfaces × contours",
+               :label          "Colorways ... surfaces × shapes",
                :rows?          true})}
 
    {:label   "Contour"
     :desc    "Contour of the tag."
     :samples (samples-with-variant
-              {:variant       :contour
-               :variant-scale :contour/basic
+              {:variant       :shape
+               :variant-scale :shape/basic
                :attrs         {:colorway     :accent
                                :surface      :solid}
                :args          ["New"]})}
@@ -64,7 +64,7 @@
     :desc    "Preset stroke styles."
     :samples (samples-with-variant
               {:variant       :stroke
-              ;;  :variant-scale :contour/basic+rounded
+              ;;  :variant-scale :shape/basic+rounded
                :attrs         {:colorway     :accent
                                :surface      :minimal}
                :args          ["New"]})}
@@ -265,7 +265,7 @@
 ;;       :examples        (for [s [:rounded :pill :sharp]]
 ;;                          {:label (name s)
 ;;                           :args  ["Done"]
-;;                           :attrs {:contour s}})}
+;;                           :attrs {:shape s}})}
 
 ;;      #_{:desc            "With icons"
 ;;       :reqs            '[[kushi.ui.icon :refer [icon]]]
