@@ -1137,6 +1137,7 @@
    
    ;; Convex
    :--convex-shadow-strength                        "25%"
+
    })
 
 
@@ -1166,6 +1167,8 @@
 (defcss "[data-ks-surface][data-ks-stroke][data-ks-stroke-align=\"outside\"]"
   {:box-shadow "0 0 0 var(--stroke-width, var(--element-stroke-width), 1px) color-mix(in oklch, currentColor var(--stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))" })
 
+
+
 (defcss "[data-ks-surface][data-ks-stroke]"
   {"[data-ks-stroke=\"none\"]"   {:--stroke-transparency :0%}
    "[data-ks-stroke=\"xsoft\"]"  {:--stroke-transparency :$xsoft-stroke-transparency}
@@ -1173,6 +1176,17 @@
    "[data-ks-stroke=\"medium\"]" {:--stroke-transparency :$medium-stroke-transparency}
    "[data-ks-stroke=\"hard\"]"   {:--stroke-transparency :$hard-stroke-transparency}
    "[data-ks-stroke=\"xhard\"]"  {:--stroke-transparency :$xhard-stroke-transparency}})
+
+(defcss "[class*=\"surface-\"][class*=\"stroke-\"]"
+  {".stroke-align-outside"    {"--stroke-inset" ""}
+   :--box-shadow-for-stroke   "var(--stroke-inset, inset) 0 0 0 var(--stroke-width, var(--element-stroke-width), 1px) color-mix(in oklch, currentColor var(--stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))" 
+   :box-shadow                "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)" 
+   ".stroke-none"             {:--stroke-transparency :0%}
+   ".stroke-xsoft"            {:--stroke-transparency :$xsoft-stroke-transparency}
+   ".stroke-soft"             {:--stroke-transparency :$soft-stroke-transparency}
+   ".stroke-medium"           {:--stroke-transparency :$medium-stroke-transparency}
+   ".stroke-hard"             {:--stroke-transparency :$hard-stroke-transparency}
+   ".stroke-xhard"            {:--stroke-transparency :$xhard-stroke-transparency}})
 
 ;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"]"
 ;;   {:box-shadow      :$shadow-xsmall
@@ -1205,7 +1219,7 @@
                                      
 
 ;; Classics
-(defcss "[data-ks-surface=\"solid-classic\"], [data-ks-surface=\"soft-classic\"]"
+(defcss "[data-ks-surface=\"solid-classic\"], [data-ks-surface=\"soft-classic\"], .surface-solid-classic"
   {:box-shadow       "inset 0 0 0 1px var(--transparent-black-10), inset 0 -2px 1px var(--transparent-black-20), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-80), inset 0 2px 1px -1px var(--transparent-white-80)"
    :bgi              "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
    :z-index          0
@@ -1388,7 +1402,8 @@
 ;; modern version
 (defcss
   "[data-ks-surface][data-ks-drop-shadow]"
-  {"&[data-ks-shadow-color=\"positive\"]" {:--shadow-color :$positive-500},
+  {
+   "&[data-ks-shadow-color=\"positive\"]" {:--shadow-color :$positive-500},
    "&[data-ks-shadow-color=\"neutral\"]"  {:--shadow-color :$neutral-500},
    "&[data-ks-shadow-color=\"negative\"]" {:--shadow-color :$negative-500},
    "&[data-ks-shadow-color=\"purple\"]"   {:--shadow-color :$purple-500},
@@ -1403,7 +1418,8 @@
    "&[data-ks-shadow-color=\"gold\"]"     {:--shadow-color :$gold-500},
    "&[data-ks-shadow-color=\"lime\"]"     {:--shadow-color :$lime-500},
    "&[data-ks-shadow-color=\"yellow\"]"   {:--shadow-color :$yellow-500},
-   "&[data-ks-shadow-color=\"red\"]"      {:--shadow-color :$red-500}})
+   "&[data-ks-shadow-color=\"red\"]"      {:--shadow-color :$red-500}
+   })
 
 ;; legacy-version
 ;; (defcss "[data-ks-surface][data-ks-drop-shadow][data-ks-shadow-color=\"red\"]" 
@@ -1420,7 +1436,7 @@
 
 
 ;; modern version
-(defcss "[data-ks-surface][data-ks-drop-shadow]" 
+(defcss "[data-ks-surface][data-ks-drop-shadow], [class*=\"surface-\"][class*=\"shadow-\"], [data-ks-surface][data-ks-shadow]" 
   {
    :--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 20%), transparent)"
   ;;  :--transparent-shadow-color-1 "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 2%), transparent)"
@@ -1440,29 +1456,269 @@
 ;;    :--transparent-shadow-color "var(--shadow-color-hex)"})
 
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxxsmall\"]" 
+(defcss "[class*=\"surface-\"][class*=\"shadow-\"]" 
+  {:box-shadow "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)"})
+
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxxsmall\"]"
   [:box-shadow "0 1px 3px -1px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxsmall\"]" 
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxsmall\"]"
   [:box-shadow "0 3px 6px -2px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"]"  
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"]"
   [:box-shadow "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"]"  
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"]"
   [:box-shadow "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"]"  
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"]"
   {:box-shadow "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"})
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"  
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"
   [:box-shadow "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"]"  
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"]"
   [:box-shadow "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxlarge\"]" 
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxlarge\"]"
   [:box-shadow "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxxlarge\"]" 
+(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxxlarge\"]"
   [:box-shadow "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"])
+
+(defcss "[class*=\"surface-\"]" 
+  {".shadow-xxxsmall" {:--shadow :$shadow-xxxsmall}
+   ".shadow-xxsmall" {:--shadow :$shadow-xxsmall}
+   ".shadow-xsmall" {:--shadow :$shadow-xsmall}
+   ".shadow-small" {:--shadow :$shadow-small}
+   ".shadow-medium" {:--shadow :$shadow-medium}
+   ".shadow-large" {:--shadow :$shadow-large}
+   ".shadow-xlarge" {:--shadow :$shadow-xlarge}
+   ".shadow-xxlarge" {:--shadow :$shadow-xxlarge}
+   ".shadow-xxxlarge" {:--shadow :$shadow-xxxlarge}})
+
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxsmall\"], [class*=\"surface-\"].shadow-xxsmall" 
+;;   [:box-shadow "0 3px 6px -2px var(--transparent-shadow-color)"])
+
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"], [class*=\"surface-\"].shadow-xsmall"  
+;;   [:box-shadow "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"])
+
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"], [class*=\"surface-\"].shadow-small"  
+;;   [:box-shadow "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"])
+
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"], [class*=\"surface-\"].shadow-medium"  
+;;   {:box-shadow "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"})
+
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"], [class*=\"surface-\"].shadow-large"  
+;;   [:box-shadow "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"])
+
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"], [class*=\"surface-\"].shadow-xlarge"  
+;;   [:box-shadow "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"])
+
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxlarge\"], [class*=\"surface-\"].shadow-xxlarge" 
+;;   [:box-shadow "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"])
+
+;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxxlarge\"], [class*=\"surface-\"].shadow-xxxlarge" 
+;;   [:box-shadow "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"])
+
+
+
+;;  ---------------------------------------------------------------------------------------------------------
+;;  ---------------------------------------------------------------------------------------------------------
+;;  NEW STUFF Sept 14 2025
+;;  
+    ;; Color notes
+    ;; '{:solid {
+    ;;           :yellow {:chroma    [0.134 0.12 0.1]
+    ;;                    :lightness [0.629 0.57 0.46]}
+    ;;           :blue   {:chroma    [0.2 0.185 0.17]
+    ;;                    :lightness [0.48 0.439 0.4]}
+    ;;           :green  {:chroma    [0.15 0.136 0.13]
+    ;;                    :lightness [0.55 0.502 0.47]}
+    ;;           :red    {:chroma    [0.19 0.179 0.17]
+    ;;                    :lightness [0.5 0.465 0.43]}}
+    ;;   :soft  {
+    ;;           :yellow {:chroma    [0.134 0.12 0.1]
+    ;;                    :lightness [0.629 0.57 0.46]}
+    ;;           :blue   {:chroma    [0.2 0.185 0.17]
+    ;;                    :lightness [0.48 0.439 0.4]}
+
+    ;;           :green  {:chroma    [0.06 0.09 0.12]
+    ;;                    :lightness [0.94 0.905 0.87]}
+    ;;           :red    {:chroma    [0.05 0.067 0.09]
+    ;;                    :lightness [0.91 0.87 0.82]}
+
+    ;;           }}
+;;  ---------------------------------------------------------------------------------------------------------
+;;  ---------------------------------------------------------------------------------------------------------
+
+    ;; Colorway hues   ---------------------------------------------------------------------------------------------------------
+    (defcss ".colorway-green, .colorway-positive" {:--colorway-hue "var(--green-hue-oklch)"})
+    (defcss ".colorway-yellow, .colorway-warning" {:--colorway-hue "var(--yellow-hue-oklch)"})
+    (defcss ".colorway-blue, .colorway-accent" {:--colorway-hue "var(--blue-hue-oklch)"})
+    (defcss ".colorway-red, .colorway-negative" {:--colorway-hue "var(--red-hue-oklch)"})
+    (defcss ".colorway-neutral" {:--colorway-hue :$gray-hue-oklch})
+    (defcss ".colorway-gray"    {:--colorway-hue :$gray-hue-oklch})
+    (defcss ".colorway-purple"  {:--colorway-hue :$purple-hue-oklch})
+    (defcss ".colorway-magenta" {:--colorway-hue :$magenta-hue-oklch})
+    (defcss ".colorway-brown"   {:--colorway-hue :$brown-hue-oklch})
+    (defcss ".colorway-orange"  {:--colorway-hue :$orange-hue-oklch})
+    (defcss ".colorway-gold"    {:--colorway-hue :$gold-hue-oklch})
+    (defcss ".colorway-lime"    {:--colorway-hue :$lime-hue-oklch})
+
+
+    ;; Surface styles  ---------------------------------------------------------------------------------------------------------
+    
+    ;; Solids
+    (defcss ".surface-solid, .surface-solid-classic"
+      {:--lightness          0.53
+       :--chroma             0.2
+       :--classic-trim-color "oklch(0.62 0.17 var(--colorway-hue))" 
+       :bgc                  "oklch(var(--lightness) var(--chroma) var(--colorway-hue))" 
+       :hover:bgc            "oklch(calc(var(--lightness) - 0.04) calc(var(--chroma) - 0.01) var(--colorway-hue))" 
+       :active:bgc           "oklch(calc(var(--lightness) - 0.08) calc(var(--chroma) - 0.02) var(--colorway-hue))" 
+       :color                :white})
+
+    ;; Softs
+    (defcss ".surface-soft, .surface-soft-classic" 
+      {:--lightness          0.93
+       :--chroma             0.065
+       :--classic-trim-color "oklch(0.91 0.04 var(--colorway-hue))" 
+       :color                "oklch(0.3 0.13 var(--colorway-hue))" 
+       :bgc                  "oklch(var(--lightness) var(--chroma) var(--colorway-hue))" 
+       :hover:bgc            "oklch(calc(var(--lightness) - 0.04) calc(var(--chroma) + 0.025) var(--colorway-hue))" 
+       :active:bgc           "oklch(calc(var(--lightness) - 0.08) calc(var(--chroma) + 0.05) var(--colorway-hue))"})
+
+
+    ;; Faint
+    (defcss ".surface-faint" {:--lightness 0.980
+                              :--chroma    0.025
+                              :color       "oklch(0.439 0.185 var(--colorway-hue))" 
+                              :bgc         "oklch(var(--lightness) var(--chroma) var(--colorway-hue))" 
+                              :hover:bgc   "oklch(calc(var(--lightness) - 0.025) calc(var(--chroma) + 0.025) var(--colorway-hue))" 
+                              :active:bgc  "oklch(calc(var(--lightness) - 0.05) calc(var(--chroma) + 0.05) var(--colorway-hue))"})
+
+
+    ;; Minimal
+    (defcss ".surface-minimal" {:--lightness 1 
+                                :--chroma    0
+                                :color       "oklch(0.439 0.185 var(--colorway-hue))" 
+                                :bgc         :$background-color
+                                :hover:bgc   "oklch(calc(var(--lightness) - 0.025) calc(var(--chroma) + 0.025) var(--colorway-hue))" 
+                                :active:bgc  "oklch(calc(var(--lightness) - 0.05) calc(var(--chroma) + 0.05) var(--colorway-hue))"})
+
+    ;; Transparent
+    (defcss ".surface-transparent" {:color "oklch(0.439 0.185 var(--colorway-hue))"})
+
+
+    ;; Classic details
+    (defcss ".surface-solid-classic, .surface-soft-classic"
+      {:box-shadow "inset 0 0 0 1px var(--transparent-black-10), inset 0 -2px 1px var(--transparent-black-20), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-80), inset 0 2px 1px -1px var(--transparent-white-80)"
+       :bgi        "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
+       :z-index    0
+       :after      {:content          "\"\""
+                    :position         :absolute
+                    :border-radius    :inherit
+                    :pointer-events   :none
+                    :inset            0
+                    :z-index          -1
+                    :border           :2px:solid:#0000
+                    :background-clip  :content-box
+                    :background-color :inherit
+                    :background-image "linear-gradient(var(--transparent-black-05), #0000, var(--transparent-white-10))"
+                    :box-shadow       "inset 0 2px 3px -1px var(--transparent-white-30)"}})
+
+    (defcss ".surface-soft-classic"
+      {:dark:text-shadow "0 0px 2px var(--transparent-black-40), 0 -0.5px 0px var(--transparent-black-70)"
+       :text-shadow      "0 0.5px 0px var(--transparent-white-100)"
+       :box-shadow       "inset 0 0 0 1px var(--transparent-black-05), inset 0 -2px 1px var(--transparent-black-10), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-100), inset 0 2px 1px -1px var(--transparent-white-100)"
+       :dark:box-shadow  "inset 0 0 0 1px var(--transparent-black-05), inset 0 -2px 1px var(--transparent-black-10), inset 0 0 0 1px var(--classic-trim-color-dark), inset 0 4px 2px -2px var(--transparent-white-60), inset 0 2px 1px -1px var(--transparent-white-60)"
+       :bgi              "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
+       :dark:bgi         "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color-dark) 80%)"
+       })
+
+    (defcss ".surface-solid-classic"
+      {:text-shadow      "0 0px 2px var(--transparent-black-30)"
+       :dark:text-shadow "0 0.5px 0px var(--transparent-white-40)"})
+
+    (defcss ".dark .surface-solid-classic"
+      {:after {:background-image "linear-gradient(var(--transparent-black-02), #0000, var(--transparent-white-20))"}})
+
+
+    ;; Surface shaping ---------------------------------------------------------------------------------------------------------
+    (defcss "[class*=\"surface-\"]"
+      {".shape-pill"                      {:br :9999px}     
+       ".shape-rounded"                   {:br :$rounded-medium}
+       ".shape-rounded-xxxsmall"          {:br :$rounded-xxxsmall}
+       ".shape-rounded-xxsmall"           {:br :$rounded-xxsmall}
+       ".shape-rounded-xsmall"            {:br :$rounded-xsmall}
+       ".shape-rounded-small"             {:br :$rounded-small}
+       ".shape-rounded-medium"            {:br :$rounded-medium}
+       ".shape-rounded-large"             {:br :$rounded-large}
+       ".shape-rounded-xlarge"            {:br :$rounded-xlarge}
+       ".shape-rounded-xxlarge"           {:br :$rounded-xxlarge}
+       ".shape-rounded-xxxlarge"          {:br :$rounded-xxxlarge}
+       ".shape-rounded-absolute"          {:br :$rounded-medium-absolute}
+       ".shape-rounded-xxxsmall-absolute" {:br :$rounded-xxxsmall-absolute}
+       ".shape-rounded-xxsmall-absolute"  {:br :$rounded-xxsmall-absolute}
+       ".shape-rounded-xsmall-absolute"   {:br :$rounded-xsmall-absolute}
+       ".shape-rounded-small-absolute"    {:br :$rounded-small-absolute}
+       ".shape-rounded-medium-absolute"   {:br :$rounded-medium-absolute}
+       ".shape-rounded-large-absolute"    {:br :$rounded-large-absolute}
+       ".shape-rounded-xlarge-absolute"   {:br :$rounded-xlarge-absolute}
+       ".shape-rounded-xxlarge-absolute"  {:br :$rounded-xxlarge-absolute}
+       ".shape-rounded-xxxlarge-absolute" {:br :$rounded-xxxlarge-absolute}}
+      
+      )
+
+    
+   ;; Surface stroking ---------------------------------------------------------------------------------------------------------
+    (defcss "[class*=\"surface-\"][class*=\"stroke-\"]"
+      {".stroke-align-outside"    {"--stroke-inset" ""}
+       :--box-shadow-for-stroke "var(--stroke-inset, inset) 0 0 0 var(--stroke-width, var(--element-stroke-width), 1px) color-mix(in oklch, currentColor var(--stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))" 
+       :box-shadow              "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)" 
+       ".stroke-none"             {:--stroke-transparency :0%}
+       ".stroke-xsoft"            {:--stroke-transparency :$xsoft-stroke-transparency}
+       ".stroke-soft"             {:--stroke-transparency :$soft-stroke-transparency}
+       ".stroke-medium"           {:--stroke-transparency :$medium-stroke-transparency}
+       ".stroke-hard"             {:--stroke-transparency :$hard-stroke-transparency}
+       ".stroke-xhard"            {:--stroke-transparency :$xhard-stroke-transparency}})
+
+
+    ;; Surface shadowing ---------------------------------------------------------------------------------------------------------
+    (defcss "[class*=\"surface-\"][class*=\"shadow-\"]" 
+      {:--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 20%), transparent)"
+       :--shadow-xxxsmall          "0 1px 3px -1px var(--transparent-shadow-color)"
+       :--shadow-xxsmall           "0 3px 6px -2px var(--transparent-shadow-color)"
+       :--shadow-xsmall            "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"
+       :--shadow-small             "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"
+       :--shadow-medium            "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"
+       :--shadow-large             "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"
+       :--shadow-xlarge            "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"
+       :--shadow-xxlarge           "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"
+       :--shadow-xxxlarge          "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"
+       ".shadow-xxxsmall"            {:--shadow :$shadow-xxxsmall}
+       ".shadow-xxsmall"             {:--shadow :$shadow-xxsmall}
+       ".shadow-xsmall"              {:--shadow :$shadow-xsmall}
+       ".shadow-small"               {:--shadow :$shadow-small}
+       ".shadow-medium"              {:--shadow :$shadow-medium}
+       ".shadow-large"               {:--shadow :$shadow-large}
+       ".shadow-xlarge"              {:--shadow :$shadow-xlarge}
+       ".shadow-xxlarge"             {:--shadow :$shadow-xxlarge}
+       ".shadow-xxxlarge"            {:--shadow :$shadow-xxxlarge}
+       ".shadow-color-positive"      {:--shadow-color :$positive-500},
+       ".shadow-color-neutral"       {:--shadow-color :$neutral-500},
+       ".shadow-color-negative"      {:--shadow-color :$negative-500},
+       ".shadow-color-purple"        {:--shadow-color :$purple-500},
+       ".shadow-color-magenta"       {:--shadow-color :$magenta-500},
+       ".shadow-color-accent"        {:--shadow-color :$accent-500},
+       ".shadow-color-brown"         {:--shadow-color :$brown-500},
+       ".shadow-color-blue"          {:--shadow-color :$blue-500},
+       ".shadow-color-orange"        {:--shadow-color :$orange-500},
+       ".shadow-color-gray"          {:--shadow-color :$gray-500},
+       ".shadow-color-warning"       {:--shadow-color :$warning-500},
+       ".shadow-color-green"         {:--shadow-color :$green-500},
+       ".shadow-color-gold"          {:--shadow-color :$gold-500},
+       ".shadow-color-lime"          {:--shadow-color :$lime-500},
+       ".shadow-color-yellow"        {:--shadow-color :$yellow-500},
+       ".shadow-color-red"           {:--shadow-color :$red-500}})

@@ -7,7 +7,7 @@
   ;;  [bling.core :as bling :refer [bling print-bling callout point-of-interest]]
   ;;  [bling.hifi :refer [print-hifi hifi]]
   ;;  [bling.explain :refer [explain-malli]]
-   [kushi.core :refer [?sx sx css merge-attrs mrj at]]
+   [kushi.core :refer [?sx sx css merge-attrs mrj at defcss]]
    [kushi.playground.shared-styles]
   ;;  [kushi.ui.variants]
    [kushi.ui.core :refer [defui data-ks-attrs #_pc ui]]
@@ -618,50 +618,238 @@
                            [:--shadow-strength :40%]))
            k]))
 
-  [:div
-   (sx :.flex-col-start :gap--3rem :.absolute-centered)
+     #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
+                                    kushi.ui.text-field.demo/demos))]
 
-   
-   #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
-                                  kushi.ui.text-field.demo/demos))]
+     #_[showcase (!? (showcase/opts kushi.ui.switch/switch
+                                    kushi.ui.switch.demo/demos))]
+     #_[showcase (!? (showcase/opts kushi.ui.button/button
+                                    kushi.ui.button.demo/demos))]
+  (do
 
-   #_[showcase (!? (showcase/opts kushi.ui.switch/switch
-                                  kushi.ui.switch.demo/demos))]
-   #_[showcase (!? (showcase/opts kushi.ui.button/button
-                                  kushi.ui.button.demo/demos))]
-   
-   [:div (sx :.flex-row-start 
-             :p--20px
-             :gap--1rem)
 
-    (ui [button {:sizing       :xxxlarge
-                 :surface      :solid
-                 :colorway     :red
-                 :end-enhancer :east}
-         "Next"])
+    
 
-    #_(ui 
-      [tag {:surface :solid
-            :sizing  :small}
-       ])
-    #_[tag {:surface :solid
-            :sizing  :small} "BG"]
-    #_[tag {:surface   :solid
-          :sizing    :xxxlarge
-          :sm:sizing :medium
-          :colorway  :gold}
-     "BG"]
+    (defcss ".ks-button" {:position       :relative
+                          :pi             :$button-padding-inline
+                          :pb             :$button-padding-block
+                          :w              :fit-content
+                          :h              :fit-content
+                          :gap            :$icon-enhanceable-gap
+                          :cursor         :pointer
+                          :--stroke-width :$button-stroke-width
+                             ;; TODO - is this local/private css var necessary?
+                          })
 
-    #_[tag
-     {:surface  :solid
-      :sizing   :xxlarge #_{:sm :xxlarge
-                            :lg :small}
-      :colorway :gold}
-     "BG"]]
-   
-   #_[showcase (showcase/opts kushi.ui.avatar/avatar
-                            kushi.ui.avatar.demo/demos)]
-   ]
+    [:div 
+     (sx :.flex-col-start :ai--flex-start :gap--1rem :.absolute-centered)
+
+     
+     #_#_
+     ;; TRANSPARENT
+     [:div
+      (sx :.flex-row-start :ai--flex-start :gap--1rem)
+      [:div (sx :.flex-col-start :p--20px :gap--4rem)
+       [button {:sizing      :medium
+                :stroke      :medium
+                :drop-shadow :medium
+                :surface     :transparent
+                :colorway    :green} "Next"]
+       [button {:sizing      :medium
+                :stroke      :medium
+                :drop-shadow :medium
+                :surface     :transparent
+                :colorway    :yellow} "Next"]
+       [button {:sizing      :medium
+                :stroke      :medium
+                :drop-shadow :medium
+                :surface     :transparent
+                :colorway    :blue} "Next"]
+       [button {:sizing      :medium
+                :stroke      :medium
+                :drop-shadow :medium
+                :surface     :transparent
+                :colorway    :red} "Next"]]
+      [:div (sx :.flex-col-start :p--20px :gap--4rem)
+       [:button {:class (css :.ks-button
+                             ["--stroke-width" :3px]
+                             ["--shadow-color" :$red-500]
+                             :.shadow-large
+                             :.stroke-medium
+                            ;;  :.stroke-align-outside
+                             :.surface-transparent
+                             :.colorway-positive
+                             :.shadow-color-positive
+                             :.shape-rounded)
+                 }
+        "Next"]
+       [:button {:class (css :.ks-button ["--stroke-width" :1px] :.shadow-large :.stroke-medium :.surface-transparent :.colorway-yellow :.shape-rounded)} "Next"]
+       [:button {:class (css :.ks-button ["--stroke-width" :1px] :.shadow-large :.stroke-medium :.surface-transparent :.colorway-blue :.shape-rounded)} "Next"]
+       [:button {:class (css :.ks-button ["--stroke-width" :1px] :.shadow-large :.stroke-medium :.surface-transparent :.colorway-red :.shape-rounded)} "Next"]]]    
+
+
+     ;; MINIMAL
+     [:div
+      (sx :.flex-row-start :ai--flex-start :gap--1rem)
+      [:div (sx :.flex-col-start :p--20px :gap--4rem)
+       [button {:sizing      :medium
+                :stroke      :medium
+                :drop-shadow :medium
+                :surface     :minimal
+                :colorway    :green} "Next"]
+       [button {:sizing      :medium
+                :stroke      :medium
+                :drop-shadow :medium
+                :surface     :minimal
+                :colorway    :yellow} "Next"]
+       [button {:sizing      :medium
+                :stroke      :medium
+                :drop-shadow :medium
+                :surface     :minimal
+                :colorway    :blue} "Next"]
+       [button {:sizing      :medium
+                :stroke      :medium
+                :drop-shadow :medium
+                :surface     :minimal
+                :colorway    :red} "Next"]]
+      [:div (sx :.flex-col-start :p--20px :gap--4rem)
+       [:button {:class           (css :.ks-button
+                                       ["--stroke-width" :1px]
+                                       :.shadow-medium
+                                       :.stroke-medium
+                                      ;;  :.stroke-align-outside
+                                       :.surface-minimal
+                                       :.colorway-green
+                                       :.shape-rounded)
+                 :data-ks-surface ""
+                ;;  :data-ks-shadow  ""
+                 }
+        "Next"]
+       [:button {:class (css  :.ks-button ["--stroke-width" :1px] #_:.stroke-medium :.surface-minimal :.colorway-yellow :.shape-rounded)} "Next"]
+       [:button {:class (css  :.ks-button ["--stroke-width" :1px] :.shadow-medium #_:.stroke-medium :.surface-minimal :.colorway-blue :.shape-rounded)} "Next"]
+       [:button {:class (css  :.ks-button ["--stroke-width" :1px] :.shadow-medium #_:.stroke-medium :.surface-minimal :.colorway-red :.shape-rounded)} "Next"]]]    
+
+
+     #_
+     ;; FAINT
+         [:div
+          (sx :.flex-row-start :ai--flex-start :gap--1rem)
+          [:div (sx :.flex-col-start :p--20px :gap--1rem)
+           [button {:sizing   :medium
+                    :surface  :faint
+                    :colorway :green} "Next"]
+           [button {:sizing   :medium
+                    :surface  :faint
+                    :colorway :yellow} "Next"]
+           [button {:sizing   :medium
+                    :surface  :faint
+                    :colorway :blue} "Next"]
+           [button {:sizing   :medium
+                    :surface  :faint
+                    :colorway :red} "Next"]]
+          [:div (sx :.flex-col-start :p--20px :gap--1rem)
+           [:button (sx ".ks-button" :.surface-faint :.colorway-green :.shape-rounded) "Next"]
+           [:button (sx ".ks-button" :.surface-faint :.colorway-yellow :.shape-rounded) "Next"]
+           [:button (sx ".ks-button" :.surface-faint :.colorway-blue :.shape-rounded) "Next"]
+           [:button (sx ".ks-button" :.surface-faint :.colorway-red :.shape-rounded) "Next"]]]
+
+
+     ;; SOFT
+       [:div
+        (sx :.flex-row-start :ai--flex-start :gap--1rem)
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+
+         [button {:sizing   :medium
+                  :surface  :soft
+                  :colorway :green} "Next"]
+         #_#_#_
+               [button {:sizing   :medium
+                        :surface  :soft
+                        :colorway :yellow} "Next"]
+             [button {:sizing   :medium
+                      :surface  :soft
+                      :colorway :blue} "Next"]
+           [button {:sizing   :medium
+                    :surface  :soft
+                    :colorway :red} "Next"]]
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [:button (sx :.ks-button :.surface-soft :.colorway-green :.shape-rounded) "Next"]
+         #_#_#_
+         [:button (sx :.ks-button :.surface-soft :.colorway-yellow :.shape-rounded) "Next"]
+         [:button (sx :.ks-button :.surface-soft :.colorway-blue :.shape-rounded) "Next"]
+         [:button (sx :.ks-button :.surface-soft :.colorway-red :.shape-rounded) "Next"]]]
+
+     
+     #_
+     ;; SOFT CLASSIC
+     [:div
+      (sx :.flex-row-start :ai--flex-start :gap--1rem)
+      [:div (sx :.flex-col-start :p--20px :gap--1rem)
+       [button {:sizing   :medium
+                :surface  :soft-classic
+                :colorway :green} "Next"]
+       [button {:sizing   :medium
+                :surface  :soft-classic
+                :colorway :yellow} "Next"]
+       [button {:sizing   :medium
+                :surface  :soft-classic
+                :colorway :blue} "Next"]
+       [button {:sizing   :medium
+                :surface  :soft-classic
+                :colorway :red} "Next"]]
+      [:div (sx :.flex-col-start :p--20px :gap--1rem)
+       [:button (sx ".ks-button" :.surface-soft-classic :.colorway-green :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-soft-classic :.colorway-yellow :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-soft-classic :.colorway-blue :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-soft-classic :.colorway-red :.shape-rounded) "Next"]]]
+
+     #_
+     ;; SOlID
+       [:div
+        (sx :.flex-row-start :ai--flex-start :gap--1rem)
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [button {:sizing   :medium
+                  :surface  :solid
+                  :colorway :green} "Next"]
+         [button {:sizing   :medium
+                  :surface  :solid
+                  :colorway :yellow} "Next"]
+         [button {:sizing   :medium
+                  :surface  :solid
+                  :colorway :blue} "Next"]
+         [button {:sizing   :medium
+                  :surface  :solid
+                  :colorway :red} "Next"]]
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [:button (sx ".ks-button" :.surface-solid :.colorway-green :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid :.colorway-yellow :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid :.colorway-blue :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid :.colorway-red :.shape-rounded) "Next"]]]
+
+     #_
+     ;; SOLID CLASSIC
+       [:div
+        (sx :.flex-row-start :ai--flex-start :gap--1rem)
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [button {:sizing   :medium
+                  :surface  :solid-classic
+                  :colorway :green} "Next"]
+         [button {:sizing   :medium
+                  :surface  :solid-classic
+                  :colorway :yellow} "Next"]
+         [button {:sizing   :medium
+                  :surface  :solid-classic
+                  :colorway :blue} "Next"]
+         [button {:sizing   :medium
+                  :surface  :solid-classic
+                  :colorway :red} "Next"]]
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-green :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-yellow :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-blue :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-red :.shape-rounded) "Next"]]]
+     
+     ])
 
 
   #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner

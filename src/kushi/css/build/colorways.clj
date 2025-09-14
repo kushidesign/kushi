@@ -4,7 +4,7 @@
             [clojure.string :as string]))
 
 (defn colorway-selector [s]
-  (str "[data-ks-colorway=\"" s "\"]"))
+  (str "[data-ks-colorway=\"" s "\"], .colorway-" s))
 
 (defn color-var-kw 
   ([s]
@@ -154,13 +154,13 @@
    ;; rectify with the "dark:" prefixed at bottom
 
 
-   [{"[data-ks-surface= \"transparent\"]"                  
+   [{"[data-ks-surface=\"transparent\"], .surface-transparent"
      base
 
-     "[data-ks-surface= \"transparent\"][data-ks-inert]"   
+     "[data-ks-surface=\"transparent\"][data-ks-inert], .surface-transparent.inert"
      base-inert
 
-     "[data-ks-surface= \"minimal\"]" 
+     "[data-ks-surface=\"minimal\"], .surface-minimal" 
      (merge base
             {:bgc             :$background-color ; TODO - should this be accesible via token?
              :hover:bgc       (bg-color-var-kw "-soft")
@@ -169,108 +169,108 @@
              :dark:hover:bgc  (bg-color-var-kw "-soft-dark-mode")
              :dark:active:bgc (bg-color-var-kw "-soft-2-dark-mode")})
 
-     "[data-ks-surface= \"minimal\"][data-ks-inert]"
+     "[data-ks-surface=\"minimal\"][data-ks-inert], .surface-minimal.inert"
      (merge base-inert
             {:hover:bgc       :$background-color
              :active:bgc      :$background-color
              :dark:hover:bgc  :$background-color-dark-mode
              :dark:active:bgc :$background-color-dark-mode})
 
-     "[data-ks-surface= \"minimal-light-mode\"]" 
+     "[data-ks-surface=\"minimal-light-mode\"], .surface-minimal-light-mode" 
      (merge base-light-mode
             {:bgc        :$background-color
              :hover:bgc  (bg-color-var-kw "-soft")
              :active:bgc (bg-color-var-kw "-soft-2")})
 
-     "[data-ks-surface= \"minimal-light-mode\"][data-ks-inert]"
+     "[data-ks-surface=\"minimal-light-mode\"][data-ks-inert]"
      (merge base-inert-light-mode
             {:hover:bgc       :$background-color
              :active:bgc      :$background-color})
 
-     "[data-ks-surface= \"faint\"]"                        
+     "[data-ks-surface=\"faint\"]"                        
      (merge base
             faint)
 
-     "[data-ks-surface= \"faint\"][data-ks-inert]"         
+     "[data-ks-surface=\"faint\"][data-ks-inert]"         
      (merge base-inert
             faint-inert)
 
      ;; todo - use minimal
-     "[data-ks-surface= \"convex\"]"                        
+     "[data-ks-surface=\"convex\"]"                        
      (merge faint ; <- for :bgc
             convex)
 
      ;; todo - use minimal
-     "[data-ks-surface= \"convex\"][data-ks-inert]"         
+     "[data-ks-surface=\"convex\"][data-ks-inert]"         
      (merge faint-inert ; <- for :bgc
             convex-inert)
 
      ;; todo - use minimal
-     "[data-ks-surface= \"convex-light-mode\"]"                        
+     "[data-ks-surface=\"convex-light-mode\"]"                        
      (merge faint-light-mode ; <- for :bgc
             convex-light-mode)
 
      ;; todo - use minimal
-     "[data-ks-surface= \"convex-light-mode\"][data-ks-inert]"         
+     "[data-ks-surface=\"convex-light-mode\"][data-ks-inert]"         
      (merge faint-inert-light-mode ; <- for :bgc
             convex-inert-light-mode)
 
 
-     "[data-ks-surface= \"soft\"]"                          
+     "[data-ks-surface=\"soft\"]"                          
      soft
 
 
-     "[data-ks-surface= \"soft\"][data-ks-inert]"           
+     "[data-ks-surface=\"soft\"][data-ks-inert]"           
      soft-inert
 
 
-     "[data-ks-surface= \"soft-classic\"]"                  
+     "[data-ks-surface=\"soft-classic\"]"                  
      (merge soft
             {:--classic-trim-color      (keyword (str "$" s "-150"))
              :--classic-trim-color-dark (keyword (str "$" s "-800"))})
 
 
-     "[data-ks-surface= \"soft-classic\"][data-ks-inert]"   
+     "[data-ks-surface=\"soft-classic\"][data-ks-inert]"   
      (merge soft
             soft-inert
             {:--classic-trim-color      (keyword (str "$" s "-150"))
              :--classic-trim-color-dark (keyword (str "$" s "-800"))})
 
 
-     "[data-ks-surface= \"solid\"]"                         
+     "[data-ks-surface=\"solid\"], .surface-solid"                         
      {:bgc        (bg-color-var-kw "-hard")
       :hover:bgc  (bg-color-var-kw "-hard-2")
       :active:bgc (bg-color-var-kw "-hard-3")}
 
 
-     "[data-ks-surface= \"solid\"][data-ks-inert]"          
+     "[data-ks-surface=\"solid\"][data-ks-inert], .surface-solid.inert"          
      {:bgc         (bg-color-var-kw "-hard")
       :hover:bgc   (bg-color-var-kw "-hard")
       :active:bgc  (bg-color-var-kw "-hard")}
 
 
-     "[data-ks-surface= \"solid-classic\"]"                    
+     "[data-ks-surface=\"solid-classic\"]"                    
      {:--classic-trim-color (keyword (str "$" s "-550"))
       :bgc                  (bg-color-var-kw "-hard")
       :hover:bgc            (bg-color-var-kw "-hard-2")
       :active:bgc           (bg-color-var-kw "-hard-3")}
 
-     "[data-ks-surface= \"solid-classic\"][data-ks-inert]"  
+     "[data-ks-surface=\"solid-classic\"][data-ks-inert]"  
      {:bgc        (bg-color-var-kw "-hard")
       :hover:bgc  (bg-color-var-kw "-hard")
       :active:bgc (bg-color-var-kw "-hard")}
 
-     "dark:[data-ks-surface= \"solid-classic\"]"               
+     "dark:[data-ks-surface=\"solid-classic\"]"               
      {:bgc        (bg-color-var-kw "-hard-dark-mode")
       :hover:bgc  (bg-color-var-kw "-hard-2-dark-mode")
       :active:bgc (bg-color-var-kw "-hard-3-dark-mode")}
 
-     "dark:[data-ks-surface= \"solid-classic\"][data-ks-inert]" 
+     "dark:[data-ks-surface=\"solid-classic\"][data-ks-inert]" 
      {:bgc        (bg-color-var-kw "-hard-dark-mode")
       :hover:bgc  (bg-color-var-kw "-hard-dark-mode")
       :active:bgc (bg-color-var-kw "-hard-dark-mode")}
 
-     "dark:[data-ks-surface= \"solid\"]"                       
+     "dark:[data-ks-surface=\"solid\"], :dark:.surface-solid"                       
      {:bgc        (bg-color-var-kw "-hard-dark-mode")
       :hover:bgc  (bg-color-var-kw "-hard-2-dark-mode")
       :active:bgc (bg-color-var-kw "-hard-3-dark-mode")}
@@ -280,7 +280,7 @@
               "-hard-2-dark-mode"
               "-hard-3-dark-mode")
      
-     "dark:[data-ks-surface= \"solid\"][data-ks-inert]"        
+     "dark:[data-ks-surface=\"solid\"][data-ks-inert], :dark:.surface-solid.inert"        
      {:bgc        (bg-color-var-kw "-hard-dark-mode")
       :hover:bgc  (bg-color-var-kw "-hard-dark-mode")
       :active:bgc (bg-color-var-kw "-hard-dark-mode")}}]))

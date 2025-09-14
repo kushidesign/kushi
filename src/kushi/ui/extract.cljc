@@ -86,7 +86,16 @@
     (!? {:when (= k :contour)} (keyed [supplied data-ks-key ret]))
     ret))
 
-
+(defn- data-ks-attrs->classnames* [m]
+  (reduce-kv (fn [acc k v] 
+               (conj acc (-> k
+                             name
+                             (string/replace #"^data-ks-" "") 
+                             (str (when (and v 
+                                             (not (string/blank? v)))
+                                    (str "-" v))))))
+             [] 
+             m))
 
 (defn data-ks-attrs 
   "Creates a map of data-ks-* attributes based on defined prop schema from
@@ -100,22 +109,27 @@
   [props defaults-by-prop flag]
 
   (when (= flag :runtime) (reset! debug-data-ks? true))
+
   (!?  (symbol (str flag ":data-ks-attrs"))
-      {:when @debug-data-ks?}
-      (keyed [props defaults-by-prop]))
-  (!?  (symbol (str flag ":data-ks-attrs"))
+       {:when @debug-data-ks?}
+       (keyed [props defaults-by-prop]))
+  (?  (symbol (str flag ":data-ks-attrs"))
       {:when @debug-data-ks?}
       (merge (!? (reduce-kv 
                   (fn [m k prop]
                     (merge m
                            (when (!? {:when (and @debug-data-ks? (= k :shadow-color))}
-                                  (destined-for-data-ks-attr? k prop))
+                                     (destined-for-data-ks-attr? k prop))
                              (data-ks-attr props k prop))))
                   {} 
                   (!? defaults-by-prop)))
              (!? (data-ns-flex-attrs props))
              (some->> props :at (hash-map :data-ks-at)))))
 
+(defn data-ks-attrs->classnames [m]
+  (->> m
+       data-ks-attrs->classnames*
+       (hash-map :class)))
 
 #_(defn user-supplied-props->data-ks-attrs 
   "wtf"

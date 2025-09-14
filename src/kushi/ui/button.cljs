@@ -57,17 +57,15 @@
 
          ;; TODO - should this be (sx {:data-ks-ui :button} ...) => "[data-ks-ui=\"button\"]"
          ;; TODO - why this selector not working with (css ...) ?
-         (sx "[data-ks-ui=\"button\"]"
-             {:pi                :$_padding-inline
-              :pb                :$_padding-block
+         (sx ".ks-button"
+             {:pi                :$padding-inline||$button-padding-inline
+              :pb                :$padding-block||$button-padding-block
               :w                 :fit-content
               :h                 :fit-content
               :gap               :$icon-enhanceable-gap
               :cursor            :pointer
               :--stroke-width    :$button-stroke-width
-                                 ;; TODO - is this local/private css var necessary?
-              :--_padding-block  :$button-padding-block
-              :--_padding-inline :$button-padding-inline})
+              })
 
          (!? :pp (decoration/stroke-width-cssvar stroke-width "button"))
 
@@ -95,7 +93,7 @@
                          "\n\n"
                          "Try using `{:stroke-align :outside}`"))
               (assoc &props :surface :transparent))
-            (sx "[data-ks-ui=\"button-decoration-wrapper\"]"
+            (sx ".ks-button-decoration-wrapper"
                 :w--fit-content 
                 :h--fit-content))
       (into button body)]
