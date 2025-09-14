@@ -113,7 +113,7 @@
 
 (def mod-transforms
   {:media-query    
-   #(let [m       (-> % keyword media/media)
+   #(let [m       (-> % keyword media/media+)
           [[k v]] (when (map? m) (into [] m))]
       (str "@media(" (name k) ": " (name v) ")"))
 
@@ -159,7 +159,7 @@
   [last-index prop? i s]
   (let [t (cond
             (and (zero? i)
-                 (contains? media/media (keyword s)))
+                 (contains? media/media+ (keyword s)))
             :media-query
 
             (and (or (zero? i) (= 1 i))
@@ -390,8 +390,8 @@
               #(let [[_ k] (re-find #"^([^\s:]+):"
                                     (some-> % (nth 0) name))]
                  (when k
-                   (or (get media/media (keyword k))
-                       (get media/media k))))
+                   (or (get media/media+ (keyword k))
+                       (get media/media+ k))))
               x)]
          (when (more-than-one? mq)
            (into [] (concat others (sort-mqs x)))))))

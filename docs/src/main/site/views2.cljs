@@ -10,7 +10,7 @@
    [kushi.core :refer [?sx sx css merge-attrs mrj at]]
    [kushi.playground.shared-styles]
   ;;  [kushi.ui.variants]
-   [kushi.ui.core :refer [defui data-ks-attrs #_pc]]
+   [kushi.ui.core :refer [defui data-ks-attrs #_pc ui]]
 
    [kushi.showcase.core :as showcase :refer [showcase]]
 
@@ -619,7 +619,7 @@
            k]))
 
   [:div
-   #_(sx :.flex-col-start :gap--3rem :.absolute-centered)
+   (sx :.flex-col-start :gap--3rem :.absolute-centered)
 
    
    #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
@@ -630,10 +630,16 @@
    #_[showcase (!? (showcase/opts kushi.ui.button/button
                                   kushi.ui.button.demo/demos))]
    
-   
    [:div (sx :.flex-row-start 
              :p--20px
              :gap--1rem)
+
+    (ui [button {:sizing       :xxxlarge
+                 :surface      :solid
+                 :colorway     :red
+                 :end-enhancer :east}
+         "Next"])
+
     #_(ui 
       [tag {:surface :solid
             :sizing  :small}
@@ -783,29 +789,31 @@
   )
 
 
-'(ui 
-  [tag {:surface        :solid
-        :display        :flex
-        :size           :xlarge
-        ;; :shape       {:=           :rounded-xxlarge-absolute
-        ;;               :media/large :rounded-xxxlarge-absolute}
-        :at-media/large {:size  :small
-                         :shape :rounded-xxxlarge-absolute}
-        :style          {:color                          :red
-                         :at-supports/color-mix-in-oklch {:color :blue}}
-        }])
+;; '(ui 
+;;   [tag
+;;    {:surface     wtf
+;;     :display     :flex
+;;     :size        :xlarge
+;;     ;; :shape       {:=           :rounded-xxlarge-absolute
+;;     ;;               :media/large :rounded-xxxlarge-absolute}
+;;     :at-media/lg {:size  :small
+;;                   :shape :rounded-xxxlarge-absolute}
+;;     :style       {:color                          :red
+;;                   :at-supports/color-mix-in-oklch {:color :blue}}
+;;     }])
 
-'=>
+;; '=>
 
-;; feeds to css-rule during analyzation
-#_(sx :.surface-solid
-      :.colorway-gold
-      {:font-size    :$small
-       :sm:font-size :$large
-       :br           :$rounded-absolute
-       :large:br     :$rounded-absolute})
+;; ;; feeds to css-rule during analyzation
+;; '(merge-attrs 
+;;   {:class [(resolve-kushi-prop :surface wtf)
+;;            ]}
+;;   (sx {:font-size    :$small
+;;        :sm:font-size :$large
+;;        :br           :$rounded-absolute
+;;        :large:br     :$rounded-absolute}))
 
-[tag {:class ["foo.wtf__L20_C30"
-              "surface-solid" 
-              "colorway-gold"]
-      :style ""}]
+;; '[tag {:class ["foo.wtf__L20_C30"
+;;                "surface-solid" 
+;;                "colorway-gold"]
+;;        :style ""}]

@@ -332,13 +332,16 @@
 
 (def props
   {:sizing                    {:default nil
-                               :desc    "Corresponds to the font-size based on Kushi's font-size scale."}
+                               :desc    "Corresponds to the font-size based on Kushi's font-size scale."
+                               :fq?     true}
    :weight                    {:default :normal
-                               :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."}
+                               :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."
+                               :fq?     true}
    :colorway                  {:default :neutral
                                :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc." }
-   :contour                   {:desc    "Shape of the element."
-                               :default nil}
+   :contour                   {:desc    "Shape of the element, corresponds to a Kushi's border-radius scale"
+                               :default nil
+                               :fq?     true}
 
   ;;  :shadows                   {
   ;;                              ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
@@ -354,16 +357,18 @@
                                           [:and :keyword (:drop-shadows/enum variants)]
                                           :string 
                                           [:vector :any]]
-                               :desc     "Controls the drop shadow"
+                               :desc     "Controls the drop shadow. If not combined with a `:stroke`, correspondes to a design token from Kushi's shadow scale."
                                :default  nil
-                               :data-ks? false}
+                               :data-ks? false
+                               :fq?      true}
 
    :shadow-color              {:desc    "Controls the drop shadow"
                                :default nil}
    :multi-stroke              {:schema   [:vector [:tuple [:or :string :keyword] [:or :string :keyword]]]
                                :desc     "When you want multiple strokes, e.g. `[[:2px :$red-500] [:5px :$green-500] [:2px :$blue-500]]`."
                                :default  nil
-                               :data-ks? false}
+                               :fq?      true ; <- Only if enum
+                               }
    :stroke                    {:schema   [:or 
                                           [:enum :none :xsoft :soft :medium :hard :xhard]
                                           [:tuple
@@ -379,7 +384,9 @@
                                            [:tuple [:or :string :keyword] [:or :string :keyword]]]]
                                :desc     "Can be set a number of different ways"
                                :default  nil
-                               :data-ks? false}
+                               :data-ks? false
+                               :fq?      true ; <- Only if enum
+                               }
    :stroke-color              {:schema   [:or :keyword :string]
                                :desc     "Controls the stroke color."
                                :default  "currentColor"
@@ -388,12 +395,16 @@
    :stroke-align              {:schema   [:enum :inside :outside]
                                :default  nil
                                :desc     "Alignment of the stroke. Only applies to `:surface`."
-                               :data-ks? false}
+                               :data-ks? false
+                               :fq?      true ; really?
+                               }
    :stroke-width              {:schema   [:or :string :keyword]
                                :desc     "Width of the stroke. Only applies to `:surface`. Locally sets the value of `--stroke-width`."
-                               :data-ks? false}
+                               :data-ks? false
+                               }
    :packing                   {:default nil
-                               :desc    "General amount of padding inside the element."}
+                               :desc    "General amount of padding inside the element."
+                               :fq?     true}
 
    ;; TODO should this just be [:or :string :keyword] , :string for text, :keyword for icon ?
    :end-enhancer              {:schema       [:or :string :keyword [:vector :any]]
@@ -420,30 +431,48 @@
                                :default nil}
    :text-transform            {:desc    "Equivalent to the css text-transform property."
                                :default nil}
+
+   ;; Deprecated - remove
    :elevation                 {:desc    "Elevation level of the element. Renders a drop-shadow."
                                :default nil}
+
+   ;; Deprecated - remove
    :convex                    {:desc    "Elevation level of the element. Renders a drop-shadow."
                                :default nil}
+
+   ;; Deprecated ? - remove ?
    :fx                        {:desc    "Surface effect such as emboss and deboss."
                                :default nil}
+
    :icon-enhanceable          {:schema  :boolean
                                :desc    "Element is enhanceable with an icon."
                                :default nil}
+
    :icon-style                {:desc    "Drawn style of icon, e.g. rounded, outlined, sharp"
                                :default :outlined}
+
    :icon-filled               {:desc    "Filled or not filled"
                                :schema  :boolean
                                :default false}
+
    :spinner-type              {:desc    "The design of the spinner"
                                :default :donut}
+
    :background-image-behavior {:schema  [:enum :cover :contain]
                                :desc    "The behavior of the background image."
-                               :default nil}
+                               :default nil
+                               :fq?     true}
+
    :position                  {:desc    "A utility class dictating the element's position."
-                               :default "relative"}
+                               :default "relative"
+                               :fq?     true}
+
    :display                   {:schema  [:or :string :keyword [:vector :keyword]]
                                :desc    "A utility class dictating the element's display properties."
-                               :default "inline"}
+                               :default "inline"
+                               :fq?     true}
+
+   ;; Deprecated ? - remove ?
    :gap                       {:schema  [:enum 0 [:or :string :keyword [:vector :keyword]]]
                                :desc    "A utility class dictating the element's CSS gap value"
                                :default 0}

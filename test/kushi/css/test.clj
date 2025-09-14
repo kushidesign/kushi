@@ -39,8 +39,9 @@
 
 
 (?sx ".he"
-     {:color :red
-      :sm    {:color :blue}})
+     {:color       :red
+      :at-media/sm {:color :blue}})
+
 #_(?sx ".he"
      {:color                                          :red
       "@supports(color: color-mix(in oklch, red, red))" {:color :blue}

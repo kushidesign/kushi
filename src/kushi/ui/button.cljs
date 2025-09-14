@@ -29,7 +29,7 @@
                  :stroke-color
                  :multi-stroke
                  :position
-                 :contour
+                 [:contour {:default :rounded}]
                  [:surface {:default :soft}]
                  :transition
                  :drop-shadow

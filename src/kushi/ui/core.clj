@@ -7,7 +7,7 @@
    [clojure.string :as string]
    [clojure.walk :as walk]
    [malli.core]
-   [kushi.util :refer [partition-by-pred as-str]]
+   [kushi.util :refer [partition-by-pred as-str maybe]]
    [kushi.ui.variants :as variants]
    [kushi.ui.util :refer [keyed]]
    [kushi.ui.variants :as props]
@@ -728,3 +728,24 @@
 ;;           (merge (? decoration-attrs)
 ;;                  (? flex-attrs))))
 ;;     (? "dynamic prop values found, passing through..." m)))
+
+(def ui-components
+  '#{"button" "tag"})
+
+(defmacro ui 
+  "Optional compile-time computation of HTML attributes and styles related to
+   strokes and shadows on components defined with kushi.ui.core/defui"
+  [coll]
+  (walk/prewalk
+   (fn [x] 
+     (when (and (vector? x)
+                (when-let [[tag m] (maybe x vector?)]
+                  (when-let [tag (some-> tag 
+                                         (maybe #(or (symbol? %) (keyword? %)))
+                                         name
+                                         (string/split #"\." 1)
+                                         (nth 0 nil))]
+                    (and (contains? ui-components tag)
+                         (m))))))
+     x)
+   coll))

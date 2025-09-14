@@ -10,6 +10,20 @@
 
 (def media (apply array-map default-kushi-responsive))
 
+(def media-nsqkw
+  (apply array-map 
+         (reduce-kv (fn [acc k v]
+                      (conj acc
+                            (->> k
+                                 name 
+                                 (str "at-media/") 
+                                 keyword)
+                            v))
+                    [] 
+                    media)))
+
+(def media+ (merge media media-nsqkw))
+
 (def index-by-media-query
   (into {}
         (map-indexed (fn [i [k _]]
