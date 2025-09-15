@@ -6,7 +6,7 @@
   (:require
    [bling.core :refer [callout]]
    [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.core :refer (defcss sx ?sx merge-attrs)]
+   [kushi.core :refer (css sx ?sx merge-attrs)]
    [kushi.ui.span :refer (span)]
    [kushi.ui.core :refer (defui)]
    [kushi.ui.shared :refer [add-enhancer]]
@@ -27,7 +27,6 @@
                  :stroke-align
                  :stroke-width
                  :stroke-color
-                 :multi-stroke
                  :position
                  [:shape {:default :rounded}]
                  [:surface {:default :soft}]
@@ -48,29 +47,26 @@
        button
        [:button 
         (merge-attrs
-         {:data-ks-display :flex
-          :data-ks-fd      :row
-          :data-ks-jc      :center
-          :data-ks-ai      :center
-          :aria-busy       loading
-          :aria-label      (when loading "loading")}
+         {:aria-busy  loading
+          :aria-label (when loading "loading")
+          :class      (css ".ks-button"
+                           {:d              :flex
+                            :flex-direction :row
+                            :jc             :center
+                            :ai             :center
+                            :pi             :$padding-inline||$button-padding-inline
+                            :pb             :$padding-block||$button-padding-block
+                            :w              :fit-content
+                            :h              :fit-content
+                            :gap            :$icon-enhanceable-gap
+                            :cursor         :pointer
+                            :--stroke-width :$button-stroke-width})}
 
-         ;; TODO - should this be (sx {:data-ks-ui :button} ...) => "[data-ks-ui=\"button\"]"
-         ;; TODO - why this selector not working with (css ...) ?
-         (sx ".ks-button"
-             {:pi                :$padding-inline||$button-padding-inline
-              :pb                :$padding-block||$button-padding-block
-              :w                 :fit-content
-              :h                 :fit-content
-              :gap               :$icon-enhanceable-gap
-              :cursor            :pointer
-              :--stroke-width    :$button-stroke-width
-              })
+         (? :pp (some-> stroke-width
+                        (decoration/stroke-width-cssvar "button")))
 
-         (!? :pp (decoration/stroke-width-cssvar stroke-width "button"))
-
-         (when-not classic-variant? 
-           (decoration/drop-shadow-and-stroke-attrs &props))
+         #_(? :pp (when-not classic-variant? 
+                  (decoration/drop-shadow-and-stroke-attrs &props)))
          
          &attrs)]
 

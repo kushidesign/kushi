@@ -794,8 +794,8 @@
              (contains? '#{?defcss defcss} macro-sym)
              (defcss-call-data m *css)
 
-             (contains? '#{?defcolorway defcolorway} macro-sym)
-             (defcolorway-call-data m *css)
+            ;;  (contains? '#{?defcolorway defcolorway} macro-sym)
+            ;;  (defcolorway-call-data m *css)
 
              (contains? '#{register-design-tokens} macro-sym)
              (register-design-tokens-call-data m *css)

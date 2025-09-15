@@ -125,16 +125,16 @@
   ;;                [{:foo 8} 2 3 4]))
   
   #_[:div (sx :m--100px)
-   #_[button {:start-enhancer :pets} "Click"]
-   [icon {:ns           (at)
-          :colorway     :red
-          :sizing       :xxxlarge
-          :weight       :bolds
-          :icon-style   :sharp
-          :icon-filled? true
-          :inert       true
-          :id           :foo}
-    :star]]
+     #_[button {:start-enhancer :pets} "Click"]
+     [icon {:ns           (at)
+            :colorway     :red
+            :sizing       :xxxlarge
+            :weight       :bolds
+            :icon-style   :sharp
+            :icon-filled? true
+            :inert       true
+            :id           :foo}
+      :star]]
 
   #_[:div (sx :m--100px)
      [button {:colorway       :red 
@@ -160,150 +160,150 @@
   
 
   #_[button
-   {:loading     true
-    :colorway     :accent
-    :surface      :solid
-    :sizing       :small
-    :end-enhancer [spinner {:spinner-type :donut}]}
-   "Play"]
+     {:loading     true
+      :colorway     :accent
+      :surface      :solid
+      :sizing       :small
+      :end-enhancer [spinner {:spinner-type :donut}]}
+     "Play"]
 
   ;; This should be box or flex with flex and default inert
   ;; [box {:--border-color :gold
   ;;       :--smile-factor :clown}]
   #_[radio-group 
-   {:class    (css :w--fit-content
-                   :p--1em
-                   :flex-direction--column
-                   :ai--flex-start)
-    :surface  :solid
+     {:class    (css :w--fit-content
+                     :p--1em
+                     :flex-direction--column
+                     :ai--flex-start)
+      :surface  :solid
     ;; maybe that is good?
-    :flexbox  :row:start:center
+      :flexbox  :row:start:center
     ;;  :shape   :rounded-3 ?
-    :shape  :rounded-xlarge
-    :sizing   :large
-    :colorway :accent
-    :id       "foo"
-    :default  "Yes"
-    :choices  ["Yes" "No" "Maybe"]}]
+      :shape  :rounded-xlarge
+      :sizing   :large
+      :colorway :accent
+      :id       "foo"
+      :default  "Yes"
+      :choices  ["Yes" "No" "Maybe"]}]
 
   #_[icon {:at          (at)
-         :position    :absolute-centered
-         :colorway    :red
-         :sizing      :xxxlarge
-         :weight      :bold
-         :icon-style  :sharp
-         :icon-filled true
-         :inert       true
-         :id          :foo}
-   :star]
-
- #_[button
-  {:at           (at)
-   :sizing       :xxlarge
-   :position     :absolute-centered
-   :loading      true,
-   :colorway     :accent,
-   :surface      :outline,
-  ;;  :stroke-width :5px
-   :end-enhancer [spinner {:spinner-type :donut}]
-   :style        {"--outlined-button-stroke-width" :10px}}
-  "Play"]
-
- #_[tag
-  {:at           (at)
-   :sizing       :xxlarge
-   :position     :absolute-centered
-   :colorway     :accent,
-   :surface      :outline,
-  ;;  :stroke-width :5px
-   :end-enhancer [spinner {:spinner-type :donut}]
-   :style        {"--outlined-button-stroke-width" :10px}}
-  "Play"]
+           :position    :absolute-centered
+           :colorway    :red
+           :sizing      :xxxlarge
+           :weight      :bold
+           :icon-style  :sharp
+           :icon-filled true
+           :inert       true
+           :id          :foo}
+     :star]
 
   #_[button
-   {:surface  :solid
-    :colorway :blue
-    :id       "foo"
-    :loading  true
-    :ns       (at)}
-   "hi"]
+     {:at           (at)
+      :sizing       :xxlarge
+      :position     :absolute-centered
+      :loading      true,
+      :colorway     :accent,
+      :surface      :outline,
+  ;;  :stroke-width :5px
+      :end-enhancer [spinner {:spinner-type :donut}]
+      :style        {"--outlined-button-stroke-width" :10px}}
+     "Play"]
+
+  #_[tag
+     {:at           (at)
+      :sizing       :xxlarge
+      :position     :absolute-centered
+      :colorway     :accent,
+      :surface      :outline,
+  ;;  :stroke-width :5px
+      :end-enhancer [spinner {:spinner-type :donut}]
+      :style        {"--outlined-button-stroke-width" :10px}}
+     "Play"]
+
+  #_[button
+     {:surface  :solid
+      :colorway :blue
+      :id       "foo"
+      :loading  true
+      :ns       (at)}
+     "hi"]
 
   #_[icon-button
-   {:surface  :solid
-    :position :absolute-centered
-    :colorway :blue
-    :id       "foo"
-    :loading  true
-    :ns       (at)}
-   :east]
+     {:surface  :solid
+      :position :absolute-centered
+      :colorway :blue
+      :id       "foo"
+      :loading  true
+      :ns       (at)}
+     :east]
 
   
 ;; radios
-#_[:span
- [:span.flex-row-start [radio {:name "foo" :id "foo-hi"}] [label {:for "foo-hi"} "hi"]]
- [:span.flex-row-start [radio {:name "foo" :id "foo-bye"}] [label {:for "foo-bye"} "bye"]]]
+  #_[:span
+     [:span.flex-row-start [radio {:name "foo" :id "foo-hi"}] [label {:for "foo-hi"} "hi"]]
+     [:span.flex-row-start [radio {:name "foo" :id "foo-bye"}] [label {:for "foo-bye"} "bye"]]]
 
 ;; Basic example call
-#_[radio-group {
-              :group-id       "foo"
-              :sizing         :xxxlarge
-              :choices        ["Yes" "No" "Maybe"]
-              :default-choice "Yes"}]
+  #_[radio-group {
+                  :group-id       "foo"
+                  :sizing         :xxxlarge
+                  :choices        ["Yes" "No" "Maybe"]
+                  :default-choice "Yes"}]
 
 
 ;; Basic example call, with maps
-#_[radio-group {:group-id "foo"
-              :choices  [{:label "Yes"
-                          :value "12"}
-                         {:label "No"
-                          :value "2"}
-                         {:label "Maybe"
-                          :value "3"}]}]
+  #_[radio-group {:group-id "foo"
+                  :choices  [{:label "Yes"
+                              :value "12"}
+                             {:label "No"
+                              :value "2"}
+                             {:label "Maybe"
+                              :value "3"}]}]
 
   #_(let [id (fn [m] 
-             [box (merge {:sizing  :xlarge
-                          :surface :solid
-                          :class   (css :w--100px :h--100px)}
-                         m)
-              [box {:position :absolute-centered}
-               "Hi"]])]
-    [box {:position      :absolute-block-end-inside
-          :colorway      :blue
-          :surface       :solid
-          :data-ks-debug :foobar
-          :ns            (at)
-          :class         (css :w--100px :h--100px)}
-     "HI"]
+               [box (merge {:sizing  :xlarge
+                            :surface :solid
+                            :class   (css :w--100px :h--100px)}
+                           m)
+                [box {:position :absolute-centered}
+                 "Hi"]])]
+      [box {:position      :absolute-block-end-inside
+            :colorway      :blue
+            :surface       :solid
+            :data-ks-debug :foobar
+            :ns            (at)
+            :class         (css :w--100px :h--100px)}
+       "HI"]
 
-    #_[box
-       {:class    (css {"--foo" "0 5px 10px green"
-                        :w    :500px
-                        :h    :500px})
+      #_[box
+         {:class    (css {"--foo" "0 5px 10px green"
+                          :w    :500px
+                          :h    :500px})
 
       ;; Could have both elevation and shadows, with shadows overriding
       ;; :elevated 5
       ;; :elevation 5
-        
+          
       ;; :shadow [:--elevated-5 :--my-custom-shadow]
       ;; :shadow :--elevated-5
       ;; :shadows :--elevated-5
-        
+          
       ;; These values need to be checked at runtime or it kills border and shadow, if bad value
-        :shadows  ["var(--elevated-3)" "-15px -15px 10px purple"]
-        :position :absolute-centered
-        :surface  :faint-outline
+          :shadows  ["var(--elevated-3)" "-15px -15px 10px purple"]
+          :position :absolute-centered
+          :surface  :faint-outline
       ;; :colorway :neutral
-        }
-       [id {:position :absolute-inline-start-inside
-            :colorway :red}]
-       [id {:position :absolute-inline-end-inside
-            :colorway :green}]
-       [id {:position      :absolute-block-end-inside
-            :colorway      :blues
-            :data-ks-debug :foobar}]
-       "Child 1"])
+          }
+         [id {:position :absolute-inline-start-inside
+              :colorway :red}]
+         [id {:position :absolute-inline-end-inside
+              :colorway :green}]
+         [id {:position      :absolute-block-end-inside
+              :colorway      :blues
+              :data-ks-debug :foobar}]
+         "Child 1"])
 
-   
+  
 
 
   [:div (sx :.flex-col-center :p--20px #_:.absolute-centered :gap--3rem) 
@@ -317,43 +317,43 @@
 
 
    #_[:div.flex-row-start.absolute-inline-start-inside
-    (sx :gap--1rem
-        :p--100px
-        :fs--$xxxlarge)
+      (sx :gap--1rem
+          :p--100px
+          :fs--$xxxlarge)
     ;; [switch]
     ;; [switch {:colorway :neutral}]
       
-     #_[switch {:colorway :accent :sizing :xxlarge}]
+      #_[switch {:colorway :accent :sizing :xxlarge}]
 
-     #_[switch {:colorway    :accent
-              :sizing      :xxlarge
-              :thumb-attrs (sx :bgi--$convex :dark:bgi--$convex-3)}]
+      #_[switch {:colorway    :accent
+                 :sizing      :xxlarge
+                 :thumb-attrs (sx :bgi--$convex :dark:bgi--$convex-3)}]
 
-     #_[thumb {:surface :soft-classic
+      #_[thumb {:surface :soft-classic
             ;;  :stroke  :soft
-             :sizing  :xxxlarge}
-      ]
+                :sizing  :xxxlarge}
+         ]
 
-     [switch
-      (mrj
-       (sx #_[:--switch-inset-gap :2px]
-           #_[:--switch-thumb-scale-factor :1.25])
-       {:sizing            :xxxlarge
+      [switch
+       (mrj
+        (sx #_[:--switch-inset-gap :2px]
+         #_[:--switch-thumb-scale-factor :1.25])
+        {:sizing            :xxxlarge
         ;; :thumb-label-on  "ON"
         ;; :thumb-label-off "OFF"
         ;; :thumb-scale-factor 1.2
+         
+         :track-label-on  "ON"
+         :track-label-off "OFF"
 
-        :track-label-on  "ON"
-        :track-label-off "OFF"
-
-        :track-inset-gap   :2px
-        :thumb-attrs       (mrj {:surface     :convex
+         :track-inset-gap   :2px
+         :thumb-attrs       (mrj {:surface     :convex
                                  ;; TODO - why not :soft working?
-                                 :stroke      :medium #_[[:2px :$red-500] [:2px :$orange-300] [:2px :$yellow-300]]
-                                 :drop-shadow :large}
-                                (sx #_:bgc--red
-                                    #_[:--shadow-strength :50%]
-                                    ))})]
+                                  :stroke      :medium #_[[:2px :$red-500] [:2px :$orange-300] [:2px :$yellow-300]]
+                                  :drop-shadow :large}
+                                 (sx #_:bgc--red
+                                  #_[:--shadow-strength :50%]
+                                  ))})]
 
     ;; [switch {:colorway :positive}]
     ;; [switch {:colorway :warning}]
@@ -362,24 +362,24 @@
     ;; [button {:surface :classic :sizing :large} "Click"]
       
       #_[button
-       (merge-attrs 
-        {:at               (at)
-         :surface          :soft
-         :sizing           :xxxlarge
-         :shape          :pill
-         :colorway         :accent
-         :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
-         :stroke-width     :3px
+         (merge-attrs 
+          {:at               (at)
+           :surface          :soft
+           :sizing           :xxxlarge
+           :shape          :pill
+           :colorway         :accent
+           :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
+           :stroke-width     :3px
 
         ;;  :stroke-align     :outside
         ;;  :drop-shadow      :large
         ;;  :shadow-color     :$blue-500
         ;;  :shadow-strength  :medium
-
-         #_["5px 5px 10px currentColor"]
-         :style {"--shadow-color"    "var(--red-500)"
-                 "--shadow-strength" "30%"}})
-       "Click"]
+           
+           #_["5px 5px 10px currentColor"]
+           :style {"--shadow-color"    "var(--red-500)"
+                   "--shadow-strength" "30%"}})
+         "Click"]
 
       #_[button
          (merge-attrs 
@@ -396,18 +396,18 @@
          "Click"]
       
       #_[button
-       {:at           (at)
-        :surface      :solid
-        :sizing       :large
-        :shape      :pill
-        :colorway     :accent
+         {:at           (at)
+          :surface      :solid
+          :sizing       :large
+          :shape      :pill
+          :colorway     :accent
         ;; :stroke [[:4px :$brown-300] [:2px :$green-300]]
-        :stroke       :medium
-        :stroke-width "3px"
-        :stroke-align :outside
-        :drop-shadow  ["0 10px 10px -0px pink"]
-        :class        (css ["--stroke-transparency-mix-color" :$green-600])}
-       "Click"]
+          :stroke       :medium
+          :stroke-width "3px"
+          :stroke-align :outside
+          :drop-shadow  ["0 10px 10px -0px pink"]
+          :class        (css ["--stroke-transparency-mix-color" :$green-600])}
+         "Click"]
 
     ;; [button {:surface :soft-classic :sizing :large :shape :pill :colorway :accent} "Click"]
     ;; [thumb {:surface :outline :sizing :xxlarge :stroke-width :1px}]
@@ -519,16 +519,16 @@
        :star]]
    
    #_[box (merge-attrs 
-         {:shape      :rounded
-          :display      [:flex :row :space-around :center]
-          :stroke       :medium
-          :stroke-width "2px"
+           {:shape      :rounded
+            :display      [:flex :row :space-around :center]
+            :stroke       :medium
+            :stroke-width "2px"
           ;; :drop-shadow :medium
-          :at (at)}
-         (sx :w--300px :h--200px))
-    [:div "1"]
-    [:div "2"]
-    [:div "3"]]
+            :at (at)}
+           (sx :w--300px :h--200px))
+      [:div "1"]
+      [:div "2"]
+      [:div "3"]]
 
    #_[tag
       {:start-enhancer :check-circle,
@@ -538,154 +538,138 @@
       "Passing"] 
 
    #_[callout
-    {:header-icon     :check-circle
-     :sizing          :xlarge
-     :colorway        :positive
-     :header-text     "Your transaction was successful."
-     :close-button?   true
-     :close-button-fn (fn [] [:div "hi"])}]
+      {:header-icon     :check-circle
+       :sizing          :xlarge
+       :colorway        :positive
+       :header-text     "Your transaction was successful."
+       :close-button?   true
+       :close-button-fn (fn [] [:div "hi"])}]
 
    #_[callout2
-    {:sizing          :xlarge
-     :colorway        :positive}
-    [:div (sx :.flex-row-space-between)
-      [icon :check-circle]
-     "Your transaction was successful."
-     [button {:colorway :positive
-              :surface  :faint
-              :shape  :circle
-              :stroke   :medium}
-      "GO"]
-     [icon-button 
-      {:colorway :positive
-       :surface  :faint
-       :shape  :circle
-       :stroke   :medium
-       :packing  :compact}
-      :warning]]]
+      {:sizing          :xlarge
+       :colorway        :positive}
+      [:div (sx :.flex-row-space-between)
+       [icon :check-circle]
+       "Your transaction was successful."
+       [button {:colorway :positive
+                :surface  :faint
+                :shape  :circle
+                :stroke   :medium}
+        "GO"]
+       [icon-button 
+        {:colorway :positive
+         :surface  :faint
+         :shape  :circle
+         :stroke   :medium
+         :packing  :compact}
+        :warning]]]
    ]
 
   
 
   #_[switch
-      (mrj
-       (sx #_[:--switch-inset-gap :2px]
-           #_[:--switch-thumb-scale-factor :1.25])
-       {
-        :on? true
-        :sizing            :xxxlarge
+     (mrj
+      (sx #_[:--switch-inset-gap :2px]
+       #_[:--switch-thumb-scale-factor :1.25])
+      {
+       :on? true
+       :sizing            :xxxlarge
         ;; :thumb-label-on  "ON"
         ;; :thumb-label-off "OFF"
         ;; :thumb-scale-factor 1.2
-
+       
         ;; :track-label-on  "ON"
         ;; :track-label-off "OFF"
-
+       
         ;; :track-inset-gap   :2px
-
-        :thumb-attrs       (mrj {
-                                 :surface     :minimal
+       
+       :thumb-attrs       (mrj {
+                                :surface     :minimal
                                  ;; TODO - why not :soft working?
-                                 :stroke      :medium #_[[:2px :$red-500] [:2px :$orange-300] [:2px :$yellow-300]]
-                                 :drop-shadow :large}
-                                (sx #_:bgc--red
-                                    #_[:--shadow-strength :50%]
-                                    ))
-        })]
+                                :stroke      :medium #_[[:2px :$red-500] [:2px :$orange-300] [:2px :$yellow-300]]
+                                :drop-shadow :large}
+                               (sx #_:bgc--red
+                                #_[:--shadow-strength :50%]
+                                ))
+       })]
 
   
 
   #_[showcase (!? (showcase/opts kushi.ui.switch/switch
-                               kushi.ui.switch.demo/demos))]
+                                 kushi.ui.switch.demo/demos))]
 
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
-                               kushi.ui.icon.demo/demos))]
+                                 kushi.ui.icon.demo/demos))]
 
   #_[showcase (!? (showcase/opts kushi.ui.tag/tag
-                               kushi.ui.tag.demo/demos))]
+                                 kushi.ui.tag.demo/demos))]
 
 
   #_(into [:div.absolute-centered.flex-col-space-between (sx :gap--5rem)]
-        (for [k [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge]]
-          [button (mrj {:packing         :roomy
-                        :sizing          :xsmall
-                        :shape         :rounded
-                        :surface         :minimal
-                        :drop-shadow     k}
-                       (sx :p--20px:40px
-                           :min-width--200px
-                           [:--color :$gold-400]
-                           [:--shadow-strength :40%]))
-           k]))
+          (for [k [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge]]
+            [button (mrj {:packing         :roomy
+                          :sizing          :xsmall
+                          :shape         :rounded
+                          :surface         :minimal
+                          :drop-shadow     k}
+                         (sx :p--20px:40px
+                             :min-width--200px
+                             [:--color :$gold-400]
+                             [:--shadow-strength :40%]))
+             k]))
 
-     #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
-                                    kushi.ui.text-field.demo/demos))]
+  #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
+                                 kushi.ui.text-field.demo/demos))]
 
-     #_[showcase (!? (showcase/opts kushi.ui.switch/switch
-                                    kushi.ui.switch.demo/demos))]
-     #_[showcase (!? (showcase/opts kushi.ui.button/button
-                                    kushi.ui.button.demo/demos))]
-  (do
+  #_[showcase (!? (showcase/opts kushi.ui.switch/switch
+                                 kushi.ui.switch.demo/demos))]
+  #_[showcase (!? (showcase/opts kushi.ui.button/button
+                                 kushi.ui.button.demo/demos))]
+  [:div 
+   (sx :.flex-col-start :ai--flex-start :gap--1rem :.absolute-centered)
 
-
-    
-
-    (defcss ".ks-button" {:position       :relative
-                          :pi             :$button-padding-inline
-                          :pb             :$button-padding-block
-                          :w              :fit-content
-                          :h              :fit-content
-                          :gap            :$icon-enhanceable-gap
-                          :cursor         :pointer
-                          :--stroke-width :$button-stroke-width
-                             ;; TODO - is this local/private css var necessary?
-                          })
-
-    [:div 
-     (sx :.flex-col-start :ai--flex-start :gap--1rem :.absolute-centered)
-
-     
-     #_#_
+   
+   #_#_
      ;; TRANSPARENT
-     [:div
-      (sx :.flex-row-start :ai--flex-start :gap--1rem)
-      [:div (sx :.flex-col-start :p--20px :gap--4rem)
-       [button {:sizing      :medium
-                :stroke      :medium
-                :drop-shadow :medium
-                :surface     :transparent
-                :colorway    :green} "Next"]
-       [button {:sizing      :medium
-                :stroke      :medium
-                :drop-shadow :medium
-                :surface     :transparent
-                :colorway    :yellow} "Next"]
-       [button {:sizing      :medium
-                :stroke      :medium
-                :drop-shadow :medium
-                :surface     :transparent
-                :colorway    :blue} "Next"]
-       [button {:sizing      :medium
-                :stroke      :medium
-                :drop-shadow :medium
-                :surface     :transparent
-                :colorway    :red} "Next"]]
-      [:div (sx :.flex-col-start :p--20px :gap--4rem)
-       [:button {:class (css :.ks-button
-                             ["--stroke-width" :3px]
-                             ["--shadow-color" :$red-500]
-                             :.shadow-large
-                             :.stroke-medium
+       [:div
+        (sx :.flex-row-start :ai--flex-start :gap--1rem)
+        [:div (sx :.flex-col-start :p--20px :gap--4rem)
+         [button {:sizing      :medium
+                  :stroke      :medium
+                  :drop-shadow :medium
+                  :surface     :transparent
+                  :colorway    :green} "Next"]
+         [button {:sizing      :medium
+                  :stroke      :medium
+                  :drop-shadow :medium
+                  :surface     :transparent
+                  :colorway    :yellow} "Next"]
+         [button {:sizing      :medium
+                  :stroke      :medium
+                  :drop-shadow :medium
+                  :surface     :transparent
+                  :colorway    :blue} "Next"]
+         [button {:sizing      :medium
+                  :stroke      :medium
+                  :drop-shadow :medium
+                  :surface     :transparent
+                  :colorway    :red} "Next"]]
+        [:div (sx :.flex-col-start :p--20px :gap--4rem)
+         [:button {:class (css :.ks-button
+                               ["--stroke-width" :3px]
+                               ["--shadow-color" :$red-500]
+                               :.shadow-large
+                               :.stroke-medium
                             ;;  :.stroke-align-outside
-                             :.surface-transparent
-                             :.colorway-positive
-                             :.shadow-color-positive
-                             :.shape-rounded)
-                 }
-        "Next"]
-       [:button {:class (css :.ks-button ["--stroke-width" :1px] :.shadow-large :.stroke-medium :.surface-transparent :.colorway-yellow :.shape-rounded)} "Next"]
-       [:button {:class (css :.ks-button ["--stroke-width" :1px] :.shadow-large :.stroke-medium :.surface-transparent :.colorway-blue :.shape-rounded)} "Next"]
-       [:button {:class (css :.ks-button ["--stroke-width" :1px] :.shadow-large :.stroke-medium :.surface-transparent :.colorway-red :.shape-rounded)} "Next"]]]    
+                               :.surface-transparent
+                               :.colorway-positive
+                               :.shadow-color-positive
+                               :.shape-rounded)
+                   }
+          "Next"]
+         [:button {:class (css :.ks-button ["--stroke-width" :1px] :.shadow-large :.stroke-medium :.surface-transparent :.colorway-yellow :.shape-rounded)} "Next"]
+         [:button {:class (css :.ks-button ["--stroke-width" :1px] :.shadow-large :.stroke-medium :.surface-transparent :.colorway-blue :.shape-rounded)} "Next"]
+         [:button {:class (css :.ks-button ["--stroke-width" :1px] :.shadow-large :.stroke-medium :.surface-transparent :.colorway-red :.shape-rounded)} "Next"]]]    
 
 
      ;; MINIMAL
@@ -730,57 +714,59 @@
        [:button {:class (css  :.ks-button ["--stroke-width" :1px] :.shadow-medium #_:.stroke-medium :.surface-minimal :.colorway-red :.shape-rounded)} "Next"]]]    
 
 
-     #_
+   #_
      ;; FAINT
-         [:div
-          (sx :.flex-row-start :ai--flex-start :gap--1rem)
-          [:div (sx :.flex-col-start :p--20px :gap--1rem)
-           [button {:sizing   :medium
-                    :surface  :faint
-                    :colorway :green} "Next"]
-           [button {:sizing   :medium
-                    :surface  :faint
-                    :colorway :yellow} "Next"]
-           [button {:sizing   :medium
-                    :surface  :faint
-                    :colorway :blue} "Next"]
-           [button {:sizing   :medium
-                    :surface  :faint
-                    :colorway :red} "Next"]]
-          [:div (sx :.flex-col-start :p--20px :gap--1rem)
-           [:button (sx ".ks-button" :.surface-faint :.colorway-green :.shape-rounded) "Next"]
-           [:button (sx ".ks-button" :.surface-faint :.colorway-yellow :.shape-rounded) "Next"]
-           [:button (sx ".ks-button" :.surface-faint :.colorway-blue :.shape-rounded) "Next"]
-           [:button (sx ".ks-button" :.surface-faint :.colorway-red :.shape-rounded) "Next"]]]
+     [:div
+      (sx :.flex-row-start :ai--flex-start :gap--1rem)
+      [:div (sx :.flex-col-start :p--20px :gap--1rem)
+       [button {:sizing   :medium
+                :surface  :faint
+                :colorway :green} "Next"]
+       [button {:sizing   :medium
+                :surface  :faint
+                :colorway :yellow} "Next"]
+       [button {:sizing   :medium
+                :surface  :faint
+                :colorway :blue} "Next"]
+       [button {:sizing   :medium
+                :surface  :faint
+                :colorway :red} "Next"]]
+      [:div (sx :.flex-col-start :p--20px :gap--1rem)
+       [:button (sx ".ks-button" :.surface-faint :.colorway-green :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-faint :.colorway-yellow :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-faint :.colorway-blue :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-faint :.colorway-red :.shape-rounded) "Next"]]]
 
 
      ;; SOFT
-       [:div
-        (sx :.flex-row-start :ai--flex-start :gap--1rem)
-        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+   [:div
+    (sx :.flex-row-start :ai--flex-start :gap--1rem)
+    [:div (sx :.flex-col-start :p--20px :gap--1rem)
 
-         [button {:sizing   :medium
-                  :surface  :soft
-                  :colorway :green} "Next"]
-         #_#_#_
-               [button {:sizing   :medium
-                        :surface  :soft
-                        :colorway :yellow} "Next"]
-             [button {:sizing   :medium
-                      :surface  :soft
-                      :colorway :blue} "Next"]
+     [button {:surface  :soft
+              :shape    :pill
+              :colorway :green
+              :stroke   :hard}
+      "Next"]
+     #_#_#_
            [button {:sizing   :medium
                     :surface  :soft
-                    :colorway :red} "Next"]]
-        [:div (sx :.flex-col-start :p--20px :gap--1rem)
-         [:button (sx :.ks-button :.surface-soft :.colorway-green :.shape-rounded) "Next"]
-         #_#_#_
-         [:button (sx :.ks-button :.surface-soft :.colorway-yellow :.shape-rounded) "Next"]
+                    :colorway :yellow} "Next"]
+         [button {:sizing   :medium
+                  :surface  :soft
+                  :colorway :blue} "Next"]
+       [button {:sizing   :medium
+                :surface  :soft
+                :colorway :red} "Next"]]
+    [:div (sx :.flex-col-start :p--20px :gap--1rem)
+     [:button (sx :.ks-button :.surface-soft :.colorway-green :.shape-rounded) "Next"]
+     #_#_#_
+           [:button (sx :.ks-button :.surface-soft :.colorway-yellow :.shape-rounded) "Next"]
          [:button (sx :.ks-button :.surface-soft :.colorway-blue :.shape-rounded) "Next"]
-         [:button (sx :.ks-button :.surface-soft :.colorway-red :.shape-rounded) "Next"]]]
+       [:button (sx :.ks-button :.surface-soft :.colorway-red :.shape-rounded) "Next"]]]
 
-     
-     #_
+   
+   #_
      ;; SOFT CLASSIC
      [:div
       (sx :.flex-row-start :ai--flex-start :gap--1rem)
@@ -803,61 +789,61 @@
        [:button (sx ".ks-button" :.surface-soft-classic :.colorway-blue :.shape-rounded) "Next"]
        [:button (sx ".ks-button" :.surface-soft-classic :.colorway-red :.shape-rounded) "Next"]]]
 
-     #_
+   #_
      ;; SOlID
-       [:div
-        (sx :.flex-row-start :ai--flex-start :gap--1rem)
-        [:div (sx :.flex-col-start :p--20px :gap--1rem)
-         [button {:sizing   :medium
-                  :surface  :solid
-                  :colorway :green} "Next"]
-         [button {:sizing   :medium
-                  :surface  :solid
-                  :colorway :yellow} "Next"]
-         [button {:sizing   :medium
-                  :surface  :solid
-                  :colorway :blue} "Next"]
-         [button {:sizing   :medium
-                  :surface  :solid
-                  :colorway :red} "Next"]]
-        [:div (sx :.flex-col-start :p--20px :gap--1rem)
-         [:button (sx ".ks-button" :.surface-solid :.colorway-green :.shape-rounded) "Next"]
-         [:button (sx ".ks-button" :.surface-solid :.colorway-yellow :.shape-rounded) "Next"]
-         [:button (sx ".ks-button" :.surface-solid :.colorway-blue :.shape-rounded) "Next"]
-         [:button (sx ".ks-button" :.surface-solid :.colorway-red :.shape-rounded) "Next"]]]
+     [:div
+      (sx :.flex-row-start :ai--flex-start :gap--1rem)
+      [:div (sx :.flex-col-start :p--20px :gap--1rem)
+       [button {:sizing   :medium
+                :surface  :solid
+                :colorway :green} "Next"]
+       [button {:sizing   :medium
+                :surface  :solid
+                :colorway :yellow} "Next"]
+       [button {:sizing   :medium
+                :surface  :solid
+                :colorway :blue} "Next"]
+       [button {:sizing   :medium
+                :surface  :solid
+                :colorway :red} "Next"]]
+      [:div (sx :.flex-col-start :p--20px :gap--1rem)
+       [:button (sx ".ks-button" :.surface-solid :.colorway-green :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-solid :.colorway-yellow :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-solid :.colorway-blue :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-solid :.colorway-red :.shape-rounded) "Next"]]]
 
-     #_
+   #_
      ;; SOLID CLASSIC
-       [:div
-        (sx :.flex-row-start :ai--flex-start :gap--1rem)
-        [:div (sx :.flex-col-start :p--20px :gap--1rem)
-         [button {:sizing   :medium
-                  :surface  :solid-classic
-                  :colorway :green} "Next"]
-         [button {:sizing   :medium
-                  :surface  :solid-classic
-                  :colorway :yellow} "Next"]
-         [button {:sizing   :medium
-                  :surface  :solid-classic
-                  :colorway :blue} "Next"]
-         [button {:sizing   :medium
-                  :surface  :solid-classic
-                  :colorway :red} "Next"]]
-        [:div (sx :.flex-col-start :p--20px :gap--1rem)
-         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-green :.shape-rounded) "Next"]
-         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-yellow :.shape-rounded) "Next"]
-         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-blue :.shape-rounded) "Next"]
-         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-red :.shape-rounded) "Next"]]]
-     
-     ])
+     [:div
+      (sx :.flex-row-start :ai--flex-start :gap--1rem)
+      [:div (sx :.flex-col-start :p--20px :gap--1rem)
+       [button {:sizing   :medium
+                :surface  :solid-classic
+                :colorway :green} "Next"]
+       [button {:sizing   :medium
+                :surface  :solid-classic
+                :colorway :yellow} "Next"]
+       [button {:sizing   :medium
+                :surface  :solid-classic
+                :colorway :blue} "Next"]
+       [button {:sizing   :medium
+                :surface  :solid-classic
+                :colorway :red} "Next"]]
+      [:div (sx :.flex-col-start :p--20px :gap--1rem)
+       [:button (sx ".ks-button" :.surface-solid-classic :.colorway-green :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-solid-classic :.colorway-yellow :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-solid-classic :.colorway-blue :.shape-rounded) "Next"]
+       [:button (sx ".ks-button" :.surface-solid-classic :.colorway-red :.shape-rounded) "Next"]]]
+   
+   ]
 
 
   #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
-                               kushi.ui.spinner.demo/demos))]
+                                 kushi.ui.spinner.demo/demos))]
 
-    
+  
   #_[showcase (!? (showcase/opts kushi.ui.callout/callout
-                               kushi.ui.callout.demo/demos))]
+                                 kushi.ui.callout.demo/demos))]
 
   #_[showcase (? {:display-metadata? false}
                  (showcase/opts kushi.ui.checkbox/checkbox
@@ -866,7 +852,7 @@
   #_[showcase (showcase/opts kushi.ui.radio/radio
                              kushi.ui.radio.demo/demos)]
 
-    #_[avatar {:surface :solid
+  #_[avatar {:surface :solid
              :sizing  :xxlarge
              :src     avatar-1}
      "JC"]

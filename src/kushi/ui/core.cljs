@@ -15,7 +15,9 @@
 
 ;; Extraction ------------------------------------------------------------------
 (def data-ks-attrs kushi.ui.extract/data-ks-attrs)
-(def data-ks-attrs->classnames kushi.ui.extract/data-ks-attrs->classnames)
+(def ks-classes->classnames kushi.ui.extract/ks-classes->classnames)
+(def ks-classes kushi.ui.extract/ks-classes)
+(def merged-ks-classes kushi.ui.extract/merged-ks-classes)
 
 ;; Extraction ------------------------------------------------------------------
 (def extract kushi.ui.extract/extract)

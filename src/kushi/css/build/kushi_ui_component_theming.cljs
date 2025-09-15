@@ -112,7 +112,7 @@
 (defcss ".dark .kushi-checkbox-input" {"background-color" "black"})
 
 (defcss
-  ".dark [data-ks-ui=checkbox-input]:before"
+  ".dark .ks-checkbox-input:before"
   {"box-shadow" "inset 1em 1em black"})
 
 (defcss
@@ -121,213 +121,126 @@
 
 (defcss ".dark .kushi-slider-step-label" {"color" "var(--gray-300)"})
 
-(defcss ".invisible" {"opacity" "0"})
+;; (defcss ".invisible" {"opacity" "0"})
+;; (defcss ".hidden" {"visibility" "hidden"})
+;; (defcss ".visible" {"visibility" "visible"})
+;; (defcss ".collapse" {"visibility" "collapse"})
 
-(defcss ".hidden" {"visibility" "hidden"})
-
-(defcss ".visible" {"visibility" "visible"})
-
-(defcss ".collapse" {"visibility" "collapse"})
-
-(defcss
-  ".offscreen"
-  {"position" "absolute",
-   "left" "-10000px",
-   "top" "auto",
-   "width" "1px",
-   "height" "1px",
-   "overflow" "hidden"})
 
 (defcss ".pointer" {"cursor" "pointer"})
 
-(defcss ".block" {"display" "block"})
-
-(defcss ".inline" {"display" "inline"})
-
-(defcss ".inline-block" {"display" "inline-block"})
-
-(defcss ".flex" {"display" "flex"})
-
-(defcss ".inline-flex" {"display" "inline-flex"})
-
-(defcss ".grid" {"display" "grid"})
-
-(defcss ".inline-grid" {"display" "inline-grid"})
-
-(defcss ".flow-root" {"display" "flow-root"})
-
-(defcss ".contents" {"display" "contents"})
-
-(defcss ".rounded-absolute" {"border-radius" "var(--rounded-medium-absolute)"})
-
-(defcss ".rounded" {"border-radius" "var(--rounded)"})
-
-(defcss ".sharp" {"border-radius" "0"})
-
-(defcss ".pill" {"border-radius" "9999px"})
-
-(defcss ".circle" {"border-radius" "9999px" "aspect-ratio" "1 / 1"})
-
-(defcss ".xxxtight" {"letter-spacing" "var(--xxxtight)"})
-
-(defcss ".xxtight" {"letter-spacing" "var(--xxtight)"})
-
-(defcss ".xtight" {"letter-spacing" "var(--xtight)"})
-
-(defcss ".tight" {"letter-spacing" "var(--tight)"})
-
-(defcss ".default-tracking" {"letter-spacing" "0"})
-
-(defcss ".loose" {"letter-spacing" "var(--loose)"})
-
-(defcss ".xloose" {"letter-spacing" "var(--xloose)"})
-
-(defcss ".xxloose" {"letter-spacing" "var(--xxloose)"})
-
-(defcss ".xxxloose" {"letter-spacing" "var(--xxxloose)"})
-
-(defcss ".instant" {"transition-duration" "var(--instant)"})
-
-(defcss ".xxxfast" {"transition-duration" "var(--xxxfast)"})
-
-(defcss ".xxfast" {"transition-duration" "var(--xxfast)"})
-
-(defcss ".xfast" {"transition-duration" "var(--xfast)"})
-
-(defcss ".fast" {"transition-duration" "var(--fast)"})
-
-(defcss ".moderate" {"transition-duration" "var(--moderate)"})
-
-(defcss ".slow" {"transition-duration" "var(--slow)"})
-
-(defcss ".xslow" {"transition-duration" "var(--xslow)"})
-
-(defcss ".xxslow" {"transition-duration" "var(--xxslow)"})
-
-(defcss ".xxxslow" {"transition-duration" "var(--xxxslow)"})
-
-;; Rounded
-(defcss ".rounded-xxsmall-absolute" {"border-radius" "var(--rounded-xxsmall-absolute)"})
-
-(defcss ".rounded-xsmall-absolute" {"border-radius" "var(--rounded-xsmall-absolute)"})
-
-(defcss ".rounded-small-absolute" {"border-radius" "var(--rounded-small-absolute)"})
-
-(defcss ".rounded-medium-absolute" {"border-radius" "var(--rounded-medium-absolute)"})
-
-(defcss ".rounded-medium-absolute" {"border-radius" "var(--rounded-medium-absolute)"})
-
-(defcss ".rounded-xlarge-absolute" {"border-radius" "var(--rounded-xlarge-absolute)"})
-
-(defcss ".rounded-xxlarge-absolute" {"border-radius" "var(--rounded-xxlarge-absolute)"})
-
-(defcss ".rounded-xxxlarge-absolute" {"border-radius" "var(--rounded-xxxlarge-absolute)"})
-
-(defcss ".rounded-xxxsmall" {"border-radius" "var(--rounded-xxxsmall)"})
-
-(defcss ".rounded-xxsmall" {"border-radius" "var(--rounded-xxsmall)"})
-
-(defcss ".rounded-xsmall" {"border-radius" "var(--rounded-xsmall)"})
-
-(defcss ".rounded-small" {"border-radius" "var(--rounded-small)"})
-
-(defcss ".rounded-medium" {"border-radius" "var(--rounded-medium)"})
-
-(defcss ".rounded-large" {"border-radius" "var(--rounded-large)"})
-
-(defcss ".rounded-xlarge" {"border-radius" "var(--rounded-xlarge)"})
-
-(defcss ".rounded-xxlarge" {"border-radius" "var(--rounded-xxlarge)"})
-
-(defcss ".rounded-xxxlarge" {"border-radius" "var(--rounded-xxxlarge)"})
-
-;; Sizing
-(defcss ".xxxxsmall" {"font-size" "var(--xxxxsmall)"})
-
-(defcss ".xxxsmall" {"font-size" "var(--xxxsmall)"})
-
-(defcss ".xxsmall" {"font-size" "var(--xxsmall)"})
-
-(defcss ".xsmall" {"font-size" "var(--xsmall)"})
-
-(defcss ".small" {"font-size" "var(--small)"})
-
-(defcss ".medium" {"font-size" "var(--medium)"})
-
-(defcss ".large" {"font-size" "var(--large)"})
-
-(defcss ".xlarge" {"font-size" "var(--xlarge)"})
-
-(defcss ".xxlarge" {"font-size" "var(--xxlarge)"})
-
-(defcss ".xxxlarge" {"font-size" "var(--xxxlarge)"})
-
-(defcss ".xxxxlarge" {"font-size" "var(--xxxxlarge)"})
-
-
-;; data-ks-sizing versions
-(defcss "[data-ks-sizing=\"xxxsmall\"]" {:font-size :$xxxsmall})
-
-(defcss "[data-ks-sizing=\"xxsmall\"]" {:font-size :$xxsmall})
-
-(defcss "[data-ks-sizing=\"xsmall\"]" {:font-size :$xsmall})
-
-(defcss "[data-ks-sizing=\"small\"]" {:font-size :$small})
-
-(defcss "[data-ks-sizing=\"medium\"]" {:font-size :$medium})
-
-(defcss "[data-ks-sizing=\"large\"]" {:font-size :$large})
-
-(defcss "[data-ks-sizing=\"xlarge\"]" {:font-size :$xlarge})
-
-(defcss "[data-ks-sizing=\"xxlarge\"]" {:font-size :$xxlarge})
-
-(defcss "[data-ks-sizing=xxxlarge]" {:font-size :$xxxlarge})
-
-
-
+;; DISPLAY
+(defcss ".display-block" {"display" "block"})
+(defcss ".display-inline" {"display" "inline"})
+(defcss ".display-inline-block" {"display" "inline-block"})
+(defcss ".display-flex" {"display" "flex"})
+(defcss ".display-inline-flex" {"display" "inline-flex"})
+(defcss ".display-grid" {"display" "grid"})
+(defcss ".display-inline-grid" {"display" "inline-grid"})
+(defcss ".display-flow-root" {"display" "flow-root"})
+(defcss ".display-contents" {"display" "contents"})
+
+;; TRACKING
+(defcss ".tracking-xxxtight" {"letter-spacing" "var(--xxxtight)"})
+(defcss ".tracking-xxtight" {"letter-spacing" "var(--xxtight)"})
+(defcss ".tracking-xtight" {"letter-spacing" "var(--xtight)"})
+(defcss ".tracking-tight" {"letter-spacing" "var(--tight)"})
+(defcss ".tracking-default-tracking" {"letter-spacing" "0"})
+(defcss ".tracking-loose" {"letter-spacing" "var(--loose)"})
+(defcss ".tracking-xloose" {"letter-spacing" "var(--xloose)"})
+(defcss ".tracking-xxloose" {"letter-spacing" "var(--xxloose)"})
+(defcss ".tracking-xxxloose" {"letter-spacing" "var(--xxxloose)"})
+
+;; TRANSITION SPEED
+(defcss ".transition-instant" {"transition-duration" "var(--instant)"})
+(defcss ".transition-xxxfast" {"transition-duration" "var(--xxxfast)"})
+(defcss ".transition-xxfast" {"transition-duration" "var(--xxfast)"})
+(defcss ".transition-xfast" {"transition-duration" "var(--xfast)"})
+(defcss ".transition-fast" {"transition-duration" "var(--fast)"})
+(defcss ".transition-moderate" {"transition-duration" "var(--moderate)"})
+(defcss ".transition-slow" {"transition-duration" "var(--slow)"})
+(defcss ".transition-xslow" {"transition-duration" "var(--xslow)"})
+(defcss ".transition-xxslow" {"transition-duration" "var(--xxslow)"})
+(defcss ".transition-xxxslow" {"transition-duration" "var(--xxxslow)"})
+
+;; SHAPE
+(defcss ".shape-rounded-absolute" {"border-radius" "var(--rounded-medium-absolute)"})
+(defcss ".shape-rounded" {"border-radius" "var(--rounded)"})
+(defcss ".shape-sharp" {"border-radius" "0"})
+(defcss ".shape-pill" {"border-radius" "9999px"})
+(defcss ".shape-circle" {"border-radius" "9999px" "aspect-ratio" "1 / 1"})
+(defcss ".shape-rounded-xxsmall-absolute" {"border-radius" "var(--rounded-xxsmall-absolute)"})
+(defcss ".shape-rounded-xsmall-absolute" {"border-radius" "var(--rounded-xsmall-absolute)"})
+(defcss ".shape-rounded-small-absolute" {"border-radius" "var(--rounded-small-absolute)"})
+(defcss ".shape-rounded-medium-absolute" {"border-radius" "var(--rounded-medium-absolute)"})
+(defcss ".shape-rounded-medium-absolute" {"border-radius" "var(--rounded-medium-absolute)"})
+(defcss ".shape-rounded-xlarge-absolute" {"border-radius" "var(--rounded-xlarge-absolute)"})
+(defcss ".shape-rounded-xxlarge-absolute" {"border-radius" "var(--rounded-xxlarge-absolute)"})
+(defcss ".shape-rounded-xxxlarge-absolute" {"border-radius" "var(--rounded-xxxlarge-absolute)"})
+(defcss ".shape-rounded-xxxsmall" {"border-radius" "var(--rounded-xxxsmall)"})
+(defcss ".shape-rounded-xxsmall" {"border-radius" "var(--rounded-xxsmall)"})
+(defcss ".shape-rounded-xsmall" {"border-radius" "var(--rounded-xsmall)"})
+(defcss ".shape-rounded-small" {"border-radius" "var(--rounded-small)"})
+(defcss ".shape-rounded-medium" {"border-radius" "var(--rounded-medium)"})
+(defcss ".shape-rounded-large" {"border-radius" "var(--rounded-large)"})
+(defcss ".shape-rounded-xlarge" {"border-radius" "var(--rounded-xlarge)"})
+(defcss ".shape-rounded-xxlarge" {"border-radius" "var(--rounded-xxlarge)"})
+(defcss ".shape-rounded-xxxlarge" {"border-radius" "var(--rounded-xxxlarge)"})
+
+;; New Sizing
+(defcss ".size-xxxxsmall" {"font-size" "var(--xxxxsmall)"})
+(defcss ".size-xxxsmall" {"font-size" "var(--xxxsmall)"})
+(defcss ".size-xxsmall" {"font-size" "var(--xxsmall)"})
+(defcss ".size-xsmall" {"font-size" "var(--xsmall)"})
+(defcss ".size-small" {"font-size" "var(--small)"})
+(defcss ".size-medium" {"font-size" "var(--medium)"})
+(defcss ".size-large" {"font-size" "var(--large)"})
+(defcss ".size-xlarge" {"font-size" "var(--xlarge)"})
+(defcss ".size-xxlarge" {"font-size" "var(--xxlarge)"})
+(defcss ".size-xxxlarge" {"font-size" "var(--xxxlarge)"})
+(defcss ".size-xxxxlarge" {"font-size" "var(--xxxxlarge)"})
 
 
 ;; thin
-(defcss "[data-ks-weight=thin]" 
+(defcss ".weight-thin" 
   {"font-weight" "var(--thin)"})
 
-(defcss "[data-ks-weight=thin] [data-ks-ui=icon], [data-ks-weight=thin][data-ks-ui=icon]" 
+(defcss ".weight-thin .ks-icon, .weight-thin.ks-icon" 
   {"font-variation-settings" "'wght' 100"})
 
 (defcss
-  "[data-ks-weight=thin]>[data-ks-ui=radio-input]"
+  ".weight-thin>.ks-radio-input"
   {"outline-width" "var(--input-border-weight-thin)"})
 
 (defcss
-  "[data-ks-weight=thin]>[data-ks-ui=checkbox-input]"
+  ".weight-thin>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-thin)"})
 
-(defcss "[data-ks-weight=thin] [data-ks-ui=icon], [data-ks-weight=thin][data-ks-ui=icon]" 
+(defcss ".weight-thin .ks-icon, .weight-thin.ks-icon" 
   {"font-variation-settings" "'wght' 100"})
 
 (defcss
-  "[data-ks-weight=thin][data-ks-ui=radio], [data-ks-weight=thin] [data-ks-ui=radio]"
+  ".weight-thin.ks-radio, .weight-thin .ks-radio"
   {"border-width" "var(--input-border-weight-thin)"})
 
 (defcss
-  "[data-ks-weight=thin][data-ks-ui=checkbox], [data-ks-weight=thin] [data-ks-ui=checkbox]"
+  ".weight-thin.ks-checkbox, .weight-thin .ks-checkbox"
   {"border-width" "var(--input-border-weight-thin)"})
 
 
 ;; extra-light
-(defcss "[data-ks-weight=extra-light]" 
+(defcss ".weight-extra-light" 
   {"font-weight" "var(--extra-light)"})
 
-(defcss "[data-ks-weight=extra-light] [data-ks-ui=icon], [data-ks-weight=extra-light][data-ks-ui=icon]" 
+(defcss ".weight-extra-light .ks-icon, .weight-extra-light.ks-icon" 
   {"font-variation-settings" "'wght' 200"})
 
 (defcss
-  "[data-ks-weight=extra-light]>[data-ks-ui=radio-input]"
+  ".weight-extra-light>.ks-radio-input"
   {"outline-width" "var(--input-border-weight-extra-light)"})
 
 (defcss
-  "[data-ks-weight=extra-light]>[data-ks-ui=checkbox-input]"
+  ".weight-extra-light>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-extra-light)"})
 
 
@@ -346,10 +259,10 @@
   ".light>.kushi-checkbox-input"
   {"border-width" "var(--input-border-weight-light)"})
 (defcss
-  ".light>[data-ks-ui=checkbox-input]"
+  ".light>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-light)"})
 (defcss
-  "[data-ks-weight=light]>[data-ks-ui=checkbox-input]"
+  ".weight-light>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-light)"})
 
 
@@ -367,10 +280,10 @@
   ".normal>.kushi-checkbox-input"
   {"border-width" "var(--input-border-weight-normal)"})
 (defcss
-  ".normal>[data-ks-ui=checkbox-input]"
+  ".normal>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-normal)"})
 (defcss
-  "[data-ks-weight=normal]>[data-ks-ui=checkbox-input]"
+  ".weight-normal>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-normal)"})
 
 (defcss ".wee-bold" {"font-weight" "var(--wee-bold)"})
@@ -391,10 +304,10 @@
   ".wee-bold>.kushi-checkbox-input"
   {"border-width" "var(--input-border-weight-wee-bold)"})
 (defcss
-  ".wee-bold>[data-ks-ui=checkbox-input]"
+  ".wee-bold>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-wee-bold)"})
 (defcss
-  "[data-ks-weight=wee-bold]>[data-ks-ui=checkbox-input]"
+  ".weight-wee-bold>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-wee-bold)"})
 
 
@@ -416,38 +329,38 @@
   ".semi-bold>.kushi-checkbox-input"
   {"border-width" "var(--input-border-weight-semi-bold)"})
 (defcss
-  ".semi-bold>[data-ks-ui=checkbox-input]"
+  ".semi-bold>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-semi-bold)"})
 (defcss
-  "[data-ks-weight=semi-bold]>[data-ks-ui=checkbox-input]"
+  ".weight-semi-bold>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-semi-bold)"})
 
 (defcss ".bold" {"font-weight" "var(--bold)"})
 
 ;; TODO need to make this support linebreaks
-(defcss ".bold [data-ks-ui][type=\"radio\"]:not(:checked)"
+(defcss ".bold .ks-radio[type=\"radio\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss "[data-ks-weight=\"bold\"] [data-ks-ui][type=\"radio\"]:not(:checked)"
+(defcss ".weight-bold .ks-radio[type=\"radio\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss ".bold[data-ks-ui][type=\"radio\"]:not(:checked)"
+(defcss ".bold.ks-radio[type=\"radio\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss "[data-ks-weight=\"bold\"][data-ks-ui][type=\"radio\"]:not(:checked)"
+(defcss ".weight-bold.ks-radio[type=\"radio\"]:not(:checked)"
   {"border-width" "0.2em"})
 
 
-(defcss ".bold [data-ks-ui][type=\"checkbox\"]:not(:checked)"
+(defcss ".bold .ks-checkbox[type=\"checkbox\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss "[data-ks-weight=\"bold\"] [data-ks-ui][type=\"checkbox\"]:not(:checked)"
+(defcss ".weight-bold .ks-checkbox[type=\"checkbox\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss ".bold[data-ks-ui][type=\"checkbox\"]:not(:checked)"
+(defcss ".bold.ks-checkbox[type=\"checkbox\"]:not(:checked)"
   {"border-width" "0.2em"})
 
-(defcss "[data-ks-weight=\"bold\"][data-ks-ui][type=\"checkbox\"]:not(:checked)"
+(defcss ".weight-bold.ks-checkbox[type=\"checkbox\"]:not(:checked)"
   {"border-width" "0.2em"})
 
 
@@ -456,17 +369,17 @@
 (defcss ".bold.kushi-icon" {"font-variation-settings" "'wght' 700"})
 
 (defcss
-  ".bold>.kushi-radio-input, .bold>.kushi-radio-button-input, [data-ks-weight=\"bold\"]>.kushi-radio-button-input"
+  ".bold>.kushi-radio-input, .bold>.kushi-radio-button-input, .weight-bold>.kushi-radio-button-input"
   {"border-width" "var(--input-border-weight-bold)"})
 
 (defcss
   ".bold>.kushi-checkbox-input"
   {"border-width" "var(--input-border-weight-bold)"})
 (defcss
-  ".bold>[data-ks-ui=checkbox-input]"
+  ".bold>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-bold)"})
 (defcss
-  "[data-ks-weight=bold]>[data-ks-ui=checkbox-input]"
+  ".weight-bold>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-bold)"})
 
 (defcss ".extra-bold" {"font-weight" "var(--extra-bold)"})
@@ -487,10 +400,10 @@
   ".extra-bold>.kushi-checkbox-input"
   {"border-width" "var(--input-border-weight-extra-bold)"})
 (defcss
-  ".extra-bold>[data-ks-ui=checkbox-input]"
+  ".extra-bold>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-extra-bold)"})
 (defcss
-  "[data-ks-weight=extra-bold]>[data-ks-ui=checkbox-input]"
+  ".weight-extra-bold>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-extra-bold)"})
 
 (defcss ".heavy" {"font-weight" "var(--heavy)"})
@@ -507,575 +420,33 @@
   ".heavy>.kushi-checkbox-input"
   {"border-width" "var(--input-border-weight-heavy)"})
 (defcss
-  ".heavy>[data-ks-ui=checkbox-input]"
+  ".heavy>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-heavy)"})
 (defcss
-  "[data-ks-weight=heavy]>[data-ks-ui=checkbox-input]"
+  ".weight-heavy>.ks-checkbox-input"
   {"border-width" "var(--input-border-weight-heavy)"})
 
-(defcss
-  ".absolute-centered"
-  {"position" "absolute",
-   "inset-inline-start" "50%",
-   "inset-block-start" "50%",
-   "translate" "-50% -50%"})
 
-(defcss
-  ".absolute-fill"
-  {"position" "absolute",
-   "top" "0",
-   "right" "0",
-   "bottom" "0",
-   "left" "0"})
+;; (defcss
+;;   ".bgi-cover"
+;;   {"background-position" "center center",
+;;    "background-repeat" "no-repeat",
+;;    "width" "100%"})
+
+;; (defcss
+;;   ".bgi-contain"
+;;   {"background-position" "center center",
+;;    "background-size" "contain",
+;;    "background-repeat" "no-repeat",
+;;    "width" "100%",
+;;    "height" "100%"})
+
+;; (defcss
+;;   ".transition"
+;;   {"transition-property" "all",
+;;    "transition-timing-function" "var(--transition-timing-function)",
+;;    "transition-duration" "var(--transition-duration)"})
 
-(defcss
-  ".after-absolute-fill::after"
-  {"content" "\"\"",
-   "position" "absolute",
-   "top" "0",
-   "right" "0",
-   "bottom" "0",
-   "left" "0"})
-
-(defcss
-  ".before-absolute-fill::before"
-  {"content" "\"\"",
-   "position" "absolute",
-   "top" "0",
-   "right" "0",
-   "bottom" "0",
-   "left" "0"})
-
-(defcss
-  ".absolute-inline-start-inside"
-  {"position" "absolute",
-   "inset-inline-start" "0%",
-   "inset-inline-end" "unset",
-   "inset-block-start" "50%",
-   "translate" "0px -50%"})
-
-(defcss
-  ".absolute-inline-end-inside"
-  {"position" "absolute",
-   "inset-inline-start" "unset",
-   "inset-inline-end" "0%",
-   "inset-block-start" "50%",
-   "translate" "0px -50%"})
-
-(defcss
-  ".absolute-block-start-inside"
-  {"position" "absolute",
-   "inset-block-start" "0%",
-   "inset-block-end" "unset",
-   "inset-inline-start" "50%",
-   "translate" "-50% 0px"})
-
-(defcss
-  ".absolute-block-end-inside"
-  {"position" "absolute",
-   "inset-block-start" "unset",
-   "inset-block-end" "0%",
-   "inset-inline-start" "50%",
-   "translate" "-50% 0px"})
-
-(defcss
-  ".fixed-fill"
-  {"position" "fixed",
-   "top" "0",
-   "right" "0",
-   "bottom" "0",
-   "left" "0"})
-
-(defcss
-  ".fixed-centered"
-  {"position" "fixed",
-   "inset-inline-start" "50%",
-   "inset-block-start" "50%",
-   "translate" "-50% -50%"})
-
-(defcss
-  ".fixed-inline-start-inside"
-  {"position" "fixed",
-   "inset-inline-start" "0%",
-   "inset-inline-end" "unset",
-   "inset-block-start" "50%",
-   "translate" "0px -50%"})
-
-(defcss
-  ".fixed-inline-end-inside"
-  {"position" "fixed",
-   "inset-inline-end" "0%",
-   "inset-inline-start" "unset",
-   "inset-block-start" "50%",
-   "translate" "0px -50%"})
-
-(defcss
-  ".fixed-block-start-inside"
-  {"position" "fixed",
-   "inset-block-start" "0%",
-   "inset-block-end" "unset",
-   "inset-inline-start" "50%",
-   "translate" "-50%"})
-
-(defcss
-  ".fixed-block-end-inside"
-  {"position" "fixed",
-   "inset-block-end" "0%",
-   "inset-block-start" "unset",
-   "inset-inline-start" "50%",
-   "translate" "-50%"})
-
-(defcss
-  ".bgi-cover"
-  {"background-position" "center center",
-   "background-repeat" "no-repeat",
-   "width" "100%"})
-
-(defcss
-  ".bgi-contain"
-  {"background-position" "center center",
-   "background-size" "contain",
-   "background-repeat" "no-repeat",
-   "width" "100%",
-   "height" "100%"})
-
-(defcss
-  ".transition"
-  {"transition-property" "all",
-   "transition-timing-function" "var(--transition-timing-function)",
-   "transition-duration" "var(--transition-duration)"})
-
-(defcss
-  ".top-left-corner-outside"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "0%",
-   "right" "unset",
-   "translate" "-100% -100%"})
-
-(defcss
-  ".top-left-corner"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "0%",
-   "right" "unset",
-   "translate" "-50% -50%"})
-
-(defcss
-  ".top-left-corner-inside"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "0%",
-   "right" "unset",
-   "translate" "0% 0%"})
-
-(defcss
-  ".top-left-corner-inside-fixed"
-  {"position" "fixed",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "0%",
-   "right" "unset",
-   "translate" "0% 0%"})
-
-(defcss
-  ".top-left-outside"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "0%",
-   "right" "unset",
-   "translate" "0% -100%"})
-
-(defcss
-  ".top-left"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "0%",
-   "right" "unset",
-   "translate" "0% -50%"})
-
-(defcss
-  ".left-top-outside"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "0%",
-   "right" "unset",
-   "translate" "-100% 0%"})
-
-(defcss
-  ".left-top"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "0%",
-   "right" "unset",
-   "translate" "-50% 0%"})
-
-(defcss
-  ".top-right-outside"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "0% -100%"})
-
-(defcss
-  ".top-right"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "0% -50%"})
-
-(defcss
-  ".top-right-corner-outside"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "100% -100%"})
-
-(defcss
-  ".top-right-corner"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "50% -50%"})
-
-(defcss
-  ".top-right-corner-inside"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "0% 0%"})
-
-(defcss
-  ".top-right-corner-inside-fixed"
-  {"position" "fixed",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "0% 0%"})
-
-(defcss
-  ".right-top-outside"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "100% 0%"})
-
-(defcss
-  ".right-top"
-  {"position" "absolute",
-   "top" "0%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "50% 0%"})
-
-(defcss
-  ".bottom-left-outside"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "0%",
-   "right" "unset",
-   "translate" "0% 100%"})
-
-(defcss
-  ".bottom-left"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "0%",
-   "right" "unset",
-   "translate" "0% 50%"})
-
-(defcss
-  ".bottom-left-corner-outside"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "0%",
-   "right" "unset",
-   "translate" "-100% 100%"})
-
-(defcss
-  ".bottom-left-corner"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "0%",
-   "right" "unset",
-   "translate" "-50% 50%"})
-
-(defcss
-  ".bottom-left-corner-inside"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "0%",
-   "right" "unset",
-   "translate" "0% 0%"})
-
-(defcss
-  ".bottom-left-corner-inside-fixed"
-  {"position" "fixed",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "0%",
-   "right" "unset",
-   "translate" "0% 0%"})
-
-(defcss
-  ".left-bottom-outside"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "0%",
-   "right" "unset",
-   "translate" "-100% 0%"})
-
-(defcss
-  ".left-bottom"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "0%",
-   "right" "unset",
-   "translate" "-50% 0%"})
-
-(defcss
-  ".right-bottom-outside"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "unset",
-   "right" "0%",
-   "translate" "100% 0%"})
-
-(defcss
-  ".right-bottom"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "unset",
-   "right" "0%",
-   "translate" "50% 0%"})
-
-(defcss
-  ".bottom-right-corner-outside"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "unset",
-   "right" "0%",
-   "translate" "100% 100%"})
-
-(defcss
-  ".bottom-right-corner"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "unset",
-   "right" "0%",
-   "translate" "50% 50%"})
-
-(defcss
-  ".bottom-right-corner-inside"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "unset",
-   "right" "0%",
-   "translate" "0% 0%"})
-
-(defcss
-  ".bottom-right-corner-inside-fixed"
-  {"position" "fixed",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "unset",
-   "right" "0%",
-   "translate" "0% 0%"})
-
-(defcss
-  ".bottom-right-outside"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "unset",
-   "right" "0%",
-   "translate" "0% 100%"})
-
-(defcss
-  ".bottom-right"
-  {"position" "absolute",
-   "top" "unset",
-   "bottom" "0%",
-   "left" "unset",
-   "right" "0%",
-   "translate" "0% 50%"})
-
-(defcss
-  ".left-inside"
-  {"position" "absolute",
-   "top" "50%",
-   "bottom" "unset",
-   "right" "unset",
-   "left" "0%",
-   "translate" "0% -50%"})
-
-(defcss
-  ".left-inside-fixed"
-  {"position" "fixed",
-   "top" "50%",
-   "bottom" "unset",
-   "right" "unset",
-   "left" "0%",
-   "translate" "0% -50%"})
-
-(defcss
-  ".left"
-  {"position" "absolute",
-   "top" "50%",
-   "bottom" "unset",
-   "right" "unset",
-   "left" "0%",
-   "translate" "-50% -50%"})
-
-(defcss
-  ".left-outside"
-  {"position" "absolute",
-   "top" "50%",
-   "bottom" "unset",
-   "right" "unset",
-   "left" "0%",
-   "translate" "-100% -50%"})
-
-(defcss
-  ".right-inside"
-  {"position" "absolute",
-   "top" "50%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "0% -50%"})
-
-(defcss
-  ".right-inside-fixed"
-  {"position" "fixed",
-   "top" "50%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "0% -50%"})
-
-(defcss
-  ".right"
-  {"position" "absolute",
-   "top" "50%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "50% -50%"})
-
-(defcss
-  ".right-outside"
-  {"position" "absolute",
-   "top" "50%",
-   "bottom" "unset",
-   "left" "unset",
-   "right" "0%",
-   "translate" "100% -50%"})
-
-(defcss
-  ".top-outside"
-  {"position" "absolute",
-   "left" "50%",
-   "right" "unset",
-   "bottom" "unset",
-   "top" "0%",
-   "translate" "-50% -100%"})
-
-(defcss
-  ".top"
-  {"position" "absolute",
-   "left" "50%",
-   "right" "unset",
-   "bottom" "unset",
-   "top" "0%",
-   "translate" "-50% -50%"})
-
-(defcss
-  ".top-inside"
-  {"position" "absolute",
-   "left" "50%",
-   "right" "unset",
-   "bottom" "unset",
-   "top" "0%",
-   "translate" "-50% 0%"})
-
-(defcss
-  ".top-inside-fixed"
-  {"position" "fixed",
-   "left" "50%",
-   "right" "unset",
-   "bottom" "unset",
-   "top" "0%",
-   "translate" "-50% 0%"})
-
-(defcss
-  ".bottom-inside"
-  {"position" "absolute",
-   "left" "50%",
-   "right" "unset",
-   "top" "unset",
-   "bottom" "0%",
-   "translate" "-50% 0%"})
-
-(defcss
-  ".bottom-inside-fixed"
-  {"position" "fixed",
-   "left" "50%",
-   "right" "unset",
-   "top" "unset",
-   "bottom" "0%",
-   "translate" "-50% 0%"})
-
-(defcss
-  ".bottom"
-  {"position" "absolute",
-   "left" "50%",
-   "right" "unset",
-   "top" "unset",
-   "bottom" "0%",
-   "translate" "-50% 50%"})
-
-(defcss
-  ".bottom-outside"
-  {"position" "absolute",
-   "left" "50%",
-   "right" "unset",
-   "top" "unset",
-   "bottom" "0%",
-   "translate" "-50% 100%"})
 
 
 ;; New theming
@@ -1569,6 +940,12 @@
 
     ;; Surface styles  ---------------------------------------------------------------------------------------------------------
     
+    ;; neutralize chroma shift
+    (defcss "[class*=\"surface-\"].colorway-neutral" 
+      {:--chroma       0
+       :--fgc-chroma   0
+       :--chroma-shift 0})
+
     ;; Solids
     (defcss ".surface-solid, .surface-solid-classic"
       {:--lightness          0.53
@@ -1579,36 +956,41 @@
        :active:bgc           "oklch(calc(var(--lightness) - 0.08) calc(var(--chroma) - 0.02) var(--colorway-hue))" 
        :color                :white})
 
+    (defcss ".surface-soft, .surface-soft-classic, .surface-faint, .surface-minimal, .surface-transparent"
+      {:--chroma-shift 0.025
+       :hover:bgc      "oklch(calc(var(--lightness) - 0.025) calc(var(--chroma) + var(--chroma-shift)) var(--colorway-hue))" 
+       :active:bgc     "oklch(calc(var(--lightness) - 0.05) calc(var(--chroma) + calc(2 * var(--chroma-shift))) var(--colorway-hue))"}) 
+
     ;; Softs
     (defcss ".surface-soft, .surface-soft-classic" 
       {:--lightness          0.93
        :--chroma             0.065
+       :--fgc-chroma         0.13
        :--classic-trim-color "oklch(0.91 0.04 var(--colorway-hue))" 
-       :color                "oklch(0.3 0.13 var(--colorway-hue))" 
-       :bgc                  "oklch(var(--lightness) var(--chroma) var(--colorway-hue))" 
-       :hover:bgc            "oklch(calc(var(--lightness) - 0.04) calc(var(--chroma) + 0.025) var(--colorway-hue))" 
-       :active:bgc           "oklch(calc(var(--lightness) - 0.08) calc(var(--chroma) + 0.05) var(--colorway-hue))"})
+       :color                "oklch(0.3 var(--fgc-chroma) var(--colorway-hue))" 
+       :bgc                  "oklch(var(--lightness) var(--chroma) var(--colorway-hue))"})
 
 
     ;; Faint
-    (defcss ".surface-faint" {:--lightness 0.980
-                              :--chroma    0.025
-                              :color       "oklch(0.439 0.185 var(--colorway-hue))" 
-                              :bgc         "oklch(var(--lightness) var(--chroma) var(--colorway-hue))" 
-                              :hover:bgc   "oklch(calc(var(--lightness) - 0.025) calc(var(--chroma) + 0.025) var(--colorway-hue))" 
-                              :active:bgc  "oklch(calc(var(--lightness) - 0.05) calc(var(--chroma) + 0.05) var(--colorway-hue))"})
+    (defcss ".surface-faint" 
+      {:--lightness  0.980
+       :--chroma     0.025
+       :--fgc-chroma 0.185
+       :color        "oklch(0.439 var(--fgc-chroma) var(--colorway-hue))" 
+       :bgc          "oklch(var(--lightness) var(--chroma) var(--colorway-hue))"})
 
 
     ;; Minimal
-    (defcss ".surface-minimal" {:--lightness 1 
-                                :--chroma    0
-                                :color       "oklch(0.439 0.185 var(--colorway-hue))" 
-                                :bgc         :$background-color
-                                :hover:bgc   "oklch(calc(var(--lightness) - 0.025) calc(var(--chroma) + 0.025) var(--colorway-hue))" 
-                                :active:bgc  "oklch(calc(var(--lightness) - 0.05) calc(var(--chroma) + 0.05) var(--colorway-hue))"})
+    (defcss ".surface-minimal" 
+      {:--lightness  1 
+       :--chroma     0
+       :--fgc-chroma 0.185
+       :color        "oklch(0.439 var(--fgc-chroma) var(--colorway-hue))" 
+       :bgc          :$background-color})
 
     ;; Transparent
-    (defcss ".surface-transparent" {:color "oklch(0.439 0.185 var(--colorway-hue))"})
+    (defcss ".surface-transparent" 
+      {:color "oklch(0.439 0.185 var(--colorway-hue))"})
 
 
     ;; Classic details

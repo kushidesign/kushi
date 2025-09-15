@@ -22,10 +22,16 @@
     :form-no-validate :form-target :frame-border :headers :height :hidden :high :href :href-lang :html-for :http-equiv :icon :id :input-mode :integrity
     :is :key-params :key-type :kind :label :lang :list :loop :low :manifest
     :margin-height :margin-width :max :max-length :media :media-group :method :min :min-length :multiple :muted :name :no-validate :nonce :open :optimum :pattern :placeholder
-    :poster :preload :profile :radio-group :read-only :rel :required :reversed :role :rows :row-span :sandbox :scope :scoped :scrolling :seamless :selected :shape :size :sizes
+    :poster :preload :profile :radio-group :read-only :rel :required :reversed :role :rows :row-span :sandbox :scope :scoped :scrolling :seamless :selected  :size :sizes
     :span :spell-check :src :src-doc :src-lang :src-set :start :step :style :summary :tab-index :target :title :type :use-map :value :width :wmode :wrap
+
     ; React specific 
-    :ref :key})
+    :ref :key
+
+    ; Reserved for Kushi shared UI props
+    ; Keep commented out
+    #_:shape
+    })
 
 (defn ^:private issue-html-attribute-name-clash-warnings
   [props-keys fn-info] 
@@ -432,7 +438,7 @@
    body ; <- body of component
    ]
 
-  (reset! debug? (if (= sym 'box) true false))
+  (reset! debug? (if (= sym 'button) true false))
 
   (let [!dbgf
         (fn [_ x] x)
@@ -473,12 +479,16 @@
         ;; trims the props to only give data-ks-attrs what it needs at runtime,
         ;; which are the :default and :data-ks? :data-ks (data trans fn) entries
         defaults-by-prop
-        (!? {:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
+        (? {:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
 
 
         data-ks-attrs-map-with-defaults
-        (!? 'data-ks-attrs-map-with-defaults {:when @debug?} 
+        (? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when @debug?} 
          (kushi.ui.extract/data-ks-attrs {} defaults-by-prop :comptime))
+
+        ks-classes-with-defaults
+        (? (symbol "comptime:ks-classes-with-defaults") {:when @debug?} 
+         (kushi.ui.extract/ks-classes {} defaults-by-prop :comptime))
 
         props-keys   
         (let [ks (keys merged-props)]
@@ -512,6 +522,8 @@
         
         ;; &children      - collection of children passed to components
         
+        ;; Remove `&data-ks-attrs` ?
+        ;; Or keep? and add `&ks-classes` ?
         ks          
         '[&props &attrs &data-ks-attrs &children args]
         
@@ -531,7 +543,7 @@
     `(defn ~sym 
        ~mm
        [& args#]
-       (let [extracted*#           (? 'extracted*# (kushi.ui.core/extract args# ~props-keys ~fn-info))
+       (let [extracted*#           (!? 'extracted*# (kushi.ui.core/extract args# ~props-keys ~fn-info))
 
              props->data-ks-attrs# (!?
                                     (kushi.ui.core/data-ks-attrs 
@@ -542,23 +554,33 @@
             ;;  data-ks-attrs_#        (? (kushi.ui.core/data-ks-attrs 
             ;;                         (:props extracted*#)
             ;;                         ~defaults-by-prop))
+             
+             data-ks-attrs#        (!? 'data-ks-attrs#
+                                       (merge (? "~data-ks-attrs-map-with-defaults"
+                                                 ~data-ks-attrs-map-with-defaults)
+                                              props->data-ks-attrs#))
 
-             data-ks-attrs#        (merge ~data-ks-attrs-map-with-defaults
-                                          props->data-ks-attrs#)
+             ks-classes*#           (kushi.ui.core/ks-classes 
+                                     (:props extracted*#)
+                                     (select-keys ~defaults-by-prop (-> extracted*# :props keys))
+                                     :runtime)
 
-             ks-classnames#        (kushi.ui.core/data-ks-attrs->classnames data-ks-attrs#)
+             ks-classes#            (? 'ks-classes#
+                                       (kushi.ui.core/merged-ks-classes
+                                        ~ks-classes-with-defaults
+                                        ks-classes*#))
             ;;  _#                    (? (= data-ks-attrs_# data-ks-attrs#))            
-
+             
              props#                (merge ~user-props-with-default-values
                                           (dissoc (:props extracted*#) :at))
-             extracted#            {:&props         props#
-                                    :&attrs         (kushi.core/merge-attrs
-                                                     (:attrs extracted*#)
-                                                           #_data-ks-attrs#
-                                                           ks-classnames#)
+             extracted#            {:&props    props#
+                                    :&attrs    (kushi.core/merge-attrs
+                                                (:attrs extracted*#)
+                                                data-ks-attrs#
+                                                ks-classes#)
                                     ;; :&data-ks-attrs data-ks-attrs#
-                                    :&children      (:children extracted*#)
-                                    :args           args#}
+                                    :&children (:children extracted*#)
+                                    :args      args#}
              {:keys ~ks}  extracted#]
 
         ;; Dev-only runtime malli validation ===================================

@@ -500,8 +500,9 @@
   [:transition
    transition
    
-   "[data-ks-transition]"            
-   transition])
+  ;;  "[data-ks-transition]"    
+  ;;  transition
+   ])
 
 (def offscreen-classes 
   [:offscreen {:position :absolute
@@ -741,11 +742,14 @@
      []
      sels)))
 
-(defn kws->dot-strs [coll]
-  (into []
-        (map-indexed (fn [i x] 
-                       (if (odd? i) x (->> x name (str "."))))
-                     coll)))
+(defn kws->dot-strs
+  ([coll]
+   (kws->dot-strs coll nil))
+  ([coll prefix]
+   (into []
+         (map-indexed (fn [i x] 
+                        (if (odd? i) x (->> x name (str "." prefix (when prefix "-")))))
+                      coll))))
 
 (defn wdks
   ([coll s]
@@ -769,12 +773,12 @@
 (def all-classes 
   [
    ;; flex-utility classes e.g. :.flex-row-fe
-   (wdks combo-flex-utility-classes "flexbox")
+   (kws->dot-strs combo-flex-utility-classes "display")
 
    ;; debugging outline helpers  :.outline-red
-   (wdks debug-outline-classes "debug" #"^debug-" "")
+   (kws->dot-strs debug-outline-classes)
 
-   (wdks foreground-color-classes "foreground-color")
+   (kws->dot-strs foreground-color-classes)
 
 
    ;; data-ks-flex-elastic="shrink-yes-grow-no"
@@ -814,21 +818,21 @@
    ;; e.g. :.top-left-outside :.top-left-corner-outside etc.
    ;; data-ks-placement="top-left-outside"
    ;; data-ks-placement="absolute-block-end-inside "
-   (wdks geom-top-left-corners "position")
-   (wdks geom-top-right-corners "position")
-   (wdks geom-bottom-left-corners "position")
-   (wdks geom-bottom-right-corners "position")
-   (wdks geom-left-side "position")
-   (wdks geom-right-side "position")
-   (wdks geom-top-side "position")
-   (wdks geom-bottom-side "position")
+   (kws->dot-strs geom-top-left-corners "position")
+   (kws->dot-strs geom-top-right-corners "position")
+   (kws->dot-strs geom-bottom-left-corners "position")
+   (kws->dot-strs geom-bottom-right-corners "position")
+   (kws->dot-strs geom-left-side "position")
+   (kws->dot-strs geom-right-side "position")
+   (kws->dot-strs geom-top-side "position")
+   (kws->dot-strs geom-bottom-side "position")
 
-   (-> text-transform-classes kws->dot-strs (wdks "text-transform"))
-   (-> elevation-level-classes kws->dot-strs (wdks "elevation" #"^elevation-" ""))
-   (-> convex-level-classes kws->dot-strs (wdks "convex" #"^convex-" ""))
-   (-> relief-effects-classes kws->dot-strs (wdks "fx"))
-   (-> icon-enhanceable-classes kws->dot-strs)
-   (-> offscreen-classes kws->dot-strs (wdks "position"))
+  ;;  (-> text-transform-classes kws->dot-strs (wdks "text-transform"))
+  ;;  (-> elevation-level-classes kws->dot-strs (wdks "elevation" #"^elevation-" ""))
+  ;;  (-> convex-level-classes kws->dot-strs (wdks "convex" #"^convex-" ""))
+  ;;  (-> relief-effects-classes kws->dot-strs (wdks "fx"))
+  ;;  (-> icon-enhanceable-classes kws->dot-strs)
+   (kws->dot-strs offscreen-classes "position")
 
    global-selectors
    transition-selectors

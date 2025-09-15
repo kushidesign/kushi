@@ -11,6 +11,7 @@
 
 ;; data-ks-attribute resolution ------------------------------------------------
 (def debug-data-ks? (atom false))
+(def debug-ks-classes? (atom false))
 
 (defn data-ns-flex-attrs [m]
   (when-let [{:keys [display]} m]
@@ -66,16 +67,34 @@
     default
     {data-ks-key (resolve-default-prop prop default)}))
 
+(defn- ks-class*
+  "Returns something like:
+   `{:ks-surface \"transparent\"}`
+   or
+   `{:ks-inert \"\"}`
+   
+   This sorts out `ks-*` classes like `:inert` that are boolean,
+   but need to be supplied as `ks-inert`. When true, would appear in dom as
+   `ks-inert`. If false, does not appear in dom"
 
-(defn- shared-prop-destined-for-data-ks-attr? [k data-ks?]
-  (and (contains? variants/props k)
-       (not (false? data-ks?))))
+  [{:keys [when-not-nil default] :as prop} supplied ks-class-key]
+
+  (cond 
+    (not (nil? supplied))
+    {ks-class-key (resolve-supplied-prop prop supplied when-not-nil)}
+
+    default
+    {ks-class-key (resolve-default-prop prop default)}))
+
+;; (defn- shared-prop-destined-for-data-ks-attr? [k data-ks?]
+;;   (and (contains? variants/props k)
+;;        (not (false? data-ks?))))
 
 
-(defn- destined-for-data-ks-attr? [k {:keys [data-ks?]}]
-  (or (shared-prop-destined-for-data-ks-attr? k data-ks?)
-      ;; user prop destined for data-ks-attr
-      (true? data-ks?)))
+;; (defn- destined-for-data-ks-attr? [k {:keys [data-ks?]}]
+;;   (or (shared-prop-destined-for-data-ks-attr? k data-ks?)
+;;       ;; user prop destined for data-ks-attr
+;;       (true? data-ks?)))
 
 
 (defn- data-ks-attr
@@ -83,29 +102,29 @@
   (let [supplied    (get props k)
         data-ks-key (keyword (str "data-ks-" (name k)))
         ret         (data-ks-attr* prop supplied data-ks-key)]
-    (!? {:when (= k :shape)} (keyed [supplied data-ks-key ret]))
     ret))
 
-(defn- data-ks-attrs->classnames* [m]
+(defn- ks-class
+  [props k prop]
+  (let [supplied     (get props k)
+        ks-class-key k
+        ret          (ks-class* prop supplied ks-class-key)]
+    ret))
+
+(defn ks-classes->classnames [m]
   (reduce-kv (fn [acc k v] 
                (conj acc (-> k
                              name
-                             (string/replace #"^data-ks-" "") 
                              (str (when (and v 
                                              (not (string/blank? v)))
                                     (str "-" v))))))
-             [] 
+             []
              m))
 
 (defn data-ks-attrs 
   "Creates a map of data-ks-* attributes based on defined prop schema from
    component rendering function's metadata map, which is defined in the defui
-   macro. To be called at runtime from within runtime portion of defui macro.
-   
-   If one of the props is supplied, it will convert it to a data-ks-* attribute,
-   or do something else with it, such as set a css var in the style map, or
-   just ignore it, if the prop is just used for internal logic in the component
-   rendering function."
+   macro. To be called at runtime from within runtime portion of defui macro."
   [props defaults-by-prop flag]
 
   (when (= flag :runtime) (reset! debug-data-ks? true))
@@ -113,23 +132,46 @@
   (!?  (symbol (str flag ":data-ks-attrs"))
        {:when @debug-data-ks?}
        (keyed [props defaults-by-prop]))
-  (?  (symbol (str flag ":data-ks-attrs"))
+
+  (!?  (symbol (str flag ":data-ks-attrs"))
       {:when @debug-data-ks?}
       (merge (!? (reduce-kv 
                   (fn [m k prop]
                     (merge m
-                           (when (!? {:when (and @debug-data-ks? (= k :shadow-color))}
-                                     (destined-for-data-ks-attr? k prop))
+                           (when (true? (:data-ks? prop))
                              (data-ks-attr props k prop))))
                   {} 
                   (!? defaults-by-prop)))
              (!? (data-ns-flex-attrs props))
              (some->> props :at (hash-map :data-ks-at)))))
 
-(defn data-ks-attrs->classnames [m]
-  (->> m
-       data-ks-attrs->classnames*
-       (hash-map :class)))
+(defn ks-classes
+  "Creates a map with a `:class` entry, which is a vector of .ks-* classnames
+   based on defined prop schema from component rendering function's metadata
+   map, which is defined in the defui macro. To be called at runtime from within
+   runtime portion of defui macro."
+  [props defaults-by-prop flag]
+
+  (when (= flag :runtime) (reset! debug-ks-classes? true))
+
+  (!? (symbol (str flag ":ks-classes"))
+      {:when @debug-ks-classes?}
+      (keyed [props defaults-by-prop]))
+
+  (? (symbol (str flag ":ks-classes"))
+     {:when @debug-ks-classes?}
+     (->> (!? defaults-by-prop)
+          (reduce-kv 
+           (fn [m k prop]
+             (merge m
+                    (when (true? (:class? prop))
+                      (!? k (ks-class props k prop)))))
+           {}))))
+
+(defn merged-ks-classes [m1 m2]
+  (->> (merge m1 m2)
+      ks-classes->classnames
+      (hash-map :class)))
 
 #_(defn user-supplied-props->data-ks-attrs 
   "wtf"
@@ -200,3 +242,25 @@
        {:props    props
         :attrs    attrs
         :children (->> children (remove nil?) unwrapped-children)}))))
+
+
+'{:data-ks    [:position
+               :size
+               :weight
+               :display]
+
+  :classnames [:colorway-red
+               :stroke-hard
+               :stroke-align-outside
+               :surface-soft
+               :shape-rounded
+               :shadow-xxlarge
+               :packing-roomy
+               :end-enhancer
+               :start-enhancer
+               :inert
+               :transition
+               :icon-enhanceable
+
+               :loading? ;; need?
+               ]}
