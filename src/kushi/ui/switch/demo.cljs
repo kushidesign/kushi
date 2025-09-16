@@ -4,11 +4,12 @@
             [kushi.showcase.core
              :as showcase
              :refer [samples samples-with-variant]]
+            [kushi.ui.flex :refer [flex-row flex-col]]
             [kushi.ui.switch :refer [switch]]))
 
 (def demos
   #_[
-   #_{:samples (samples [[:div (sx :.flex-row-start :gap--1rem)
+   #_{:samples (samples [[:div (sx :.display-flex-row-start :gap--1rem)
                         [switch {:at              (at)
                                  :on?             true
                                  :size          :xxxlarge
@@ -31,7 +32,7 @@
   [
    {:label   "Basic"
     :desc    "Basic"
-    :samples (samples [[:div (sx :.flex-row-start :gap--1rem)
+    :samples (samples [[flex-row (sx :gap--1rem)
                         [switch {:colorway :neutral
                                  :size   :xxxlarge}]
                         [switch {:colorway :neutral
@@ -129,7 +130,7 @@
    
    {:label   "Disabled"
     :desc    "Disabled"
-    :samples (samples [[:div (sx :.flex-row-start :gap--1rem)
+    :samples (samples [[flex-row (sx :gap--1rem) 
                         [switch {:colorway :neutral
                                  :size   :xxxlarge
                                  :disabled true}]

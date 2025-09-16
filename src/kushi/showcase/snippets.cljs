@@ -11,6 +11,7 @@
    [kushi.ui.button :refer [button]]
    [kushi.ui.icon-button :refer [icon-button]]
    [kushi.ui.icon :refer [icon]]
+   [kushi.ui.flex :refer [flex-row flex-col]]
    [kushi.ui.util :refer [as-str maybe keyed]]
    [clojure.string :as string]
    [kushi.ui.core :refer (extract)]
@@ -88,7 +89,7 @@
     [button
      (merge-attrs
       {:colorway :accent
-       :surface :minimal
+       :surface :transparent
        :class    (css :.kushi-playground-copy-to-clipboard-button
                       :p--7px)
        :on-click #(d/copy-to-clipboard!
@@ -161,7 +162,7 @@
                               (merge-attrs 
                                ;; TODO - can this be done without :.top-right-corner-inside!
                                ;; TODO - can this be done without :.top-right-corner-inside!
-                               (sx :.top-right-corner-inside
+                               (sx :.position-top-right-corner-inside
                                    :position--absolute)
                                {:clipboard-parent-sel ".kushi-modal"}))]
       [copy-to-clipboard-button attrs])
@@ -208,9 +209,8 @@
            snippets
            hiccup-for-examples]
     :as m}]
-  [:div
+  [flex-row
    (sx :.relative
-       :.flex-row-start
        :.styled-scrollbars
        :_code:ws--n
        :_.code:ws--n
@@ -226,9 +226,8 @@
        :ai--fs
        :min-width--200px
        :min-height--120px)
-   [:div
-    (sx :.flex-col-start
-        :w--100%
+   [flex-col
+    (sx :w--100%
         :gap--1em
         :_.kushi-text-input-label:min-width--7em
         :_.kushi-input-inline:gtc--36%:64%)
@@ -255,9 +254,8 @@
           (->> reqs
                (map formatted*)
                (string/join "\n"))]
-      (into [:div (sx ".kushi-playground-snippets-modal-requires"
-                      :.flex-col-start
-                      :gap--2.25rem)
+      (into [flex-col (sx ".kushi-playground-snippets-modal-requires"
+                          :gap--2.25rem)
              [snippet-section
               {:header             (into [:div (sx :.small :mbe--1em)]
                                          (desc->hiccup

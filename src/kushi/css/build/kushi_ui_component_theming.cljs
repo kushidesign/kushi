@@ -356,9 +356,9 @@
        :color "oklch(44% var(--chroma-fgc) var(--colorway-hue))"})
 
     ;; Minimal
-    (defcss ".surface-minimal" 
+    (defcss ".surface-minimal, .surface-minimal-light-mode, .surface-convex-light-mode" 
       {:--lightness  :100% 
-       :--chroma-bgc     :0%
+       :--chroma-bgc :0%
        :bgc          :$background-color ; <- body background color (change name globablly?)
        })
 
@@ -396,15 +396,15 @@
       {:after {:background-image "linear-gradient(var(--transparent-black-02), #0000, var(--transparent-white-20))"}})
     
     ;; Convex
-    (defcss ".surface-convex"
+    (defcss ".surface-convex, .surface-convex-light-mode"
       {:--convex-shadow-strength      "20%"
        :--convex-shadow-lightness     "calc(var(--lightness) - (var(--convex-shadow-strength) / 3))"
        :--convex-shadow-chroma        "calc(var(--chroma-bgc) + (var(--convex-shadow-strength) / 6))"
        :--convex-shadow-chroma-hover  "calc(var(--convex-shadow-chroma) + calc(2 * var(--chroma-shift)))"
        :--convex-shadow-chroma-active "calc(var(--convex-shadow-chroma) + calc(3 * var(--chroma-shift)))"
-      ;;  ".colorway-brown"                {:--convex-shadow-chroma        "var(--chroma-bgc)"
-      ;;                                    :--convex-shadow-chroma-hover  "var(--chroma-bgc)"
-      ;;                                    :--convex-shadow-chroma-active "var(--chroma-bgc)"}
+       ".colorway-neutral"              {:--convex-shadow-chroma        "var(--chroma-bgc)"
+                                         :--convex-shadow-chroma-hover  "var(--chroma-bgc)"
+                                         :--convex-shadow-chroma-active "var(--chroma-bgc)"}
        :background-image              "linear-gradient(180deg, transparent, transparent 15%, oklch(var(--convex-shadow-lightness) calc(var(--convex-shadow-chroma) + calc(1 * var(--chroma-shift))) var(--colorway-hue)))"
        :hover:background-image        "linear-gradient(180deg, transparent, transparent 15%, oklch(calc(var(--convex-shadow-lightness) - 4%) var(--convex-shadow-chroma-hover) var(--colorway-hue)))"
        :active:background-image       "linear-gradient(180deg, transparent, transparent 15%, oklch(calc(var(--convex-shadow-lightness) - 8%) var(--convex-shadow-chroma-active) var(--colorway-hue)))"

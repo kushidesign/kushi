@@ -623,11 +623,11 @@
   #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
                                  kushi.ui.text-field.demo/demos))]
 
-  #_[showcase (!? (showcase/opts kushi.ui.switch/switch
-                                 kushi.ui.switch.demo/demos))]
+  [showcase (!? (showcase/opts kushi.ui.switch/switch
+                               kushi.ui.switch.demo/demos))]
 
   ;; DONE
-  [showcase (!? (showcase/opts kushi.ui.icon-button/icon-button
+  #_[showcase (!? (showcase/opts kushi.ui.icon-button/icon-button
                                kushi.ui.icon-button.demo/demos))]
 
   ;; DONE

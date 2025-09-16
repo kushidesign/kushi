@@ -151,6 +151,9 @@
 
       (sx
        ".kushi-switch"
+       :.surface-solid
+       :.transition
+       :.display-flex-row
        {:--thumb-height                        "calc(var(--thumb-scale-factor, var(--switch-thumb-scale-factor, 1)) * (1em - (var(--track-inset-gap, 1px) * 2)))"
         :--height                              :1em
         :--switch-track-inset-box-shadow-color :$transparent-black-05
@@ -200,13 +203,7 @@
       {:disabled           disabled?
        :role               :switch
        :aria-checked       (if on? true false)
-       :data-ks-ia         ""
-       :data-ks-surface    "solid"
-       :data-ks-display    "flex"
-       :data-ks-fd         "row"
-       :data-ks-jc         "flex-start"
-       :data-ks-ai         "center"
-       :data-ks-transition ""}
+       }
 
       (when disabled? {:data-ks-inert ""})
       
@@ -214,16 +211,16 @@
 
       &attrs
       
-      {:data-ks-shape (util/as-str shape)})
+      {:class (some->> shape util/as-str (str "shape-"))})
 
      (let [thumb-props      
            (!? (merge {:surface  :minimal-light-mode
                        :inert    true
-                       :shape  shape
+                       :shape    shape
                        :position :absolute}
                       thumb-props
                       (when rounded-shape?
-                        {:style (merge {:border-radius (str "calc(var(--" (name shape) ") - var(--track-inset-gap))")}
+                        {:style (merge {:border-radius (str "calc(var(--shape-" (util/as-str shape) ") - var(--track-inset-gap))")}
                                        (some-> thumb-props
                                                :style
                                                (util/maybe map?)))})))
