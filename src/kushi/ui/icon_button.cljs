@@ -50,7 +50,7 @@
      (util/stroke-width-cssvar stroke-width "button")
 
      (when-not classic-variant? 
-       (util/drop-shadow-and-stroke-attrs &props))
+       (util/shadow-and-stroke-attrs &props))
 
      &attrs
 

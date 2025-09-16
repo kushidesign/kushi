@@ -31,14 +31,14 @@
                  [:shape {:default :rounded}]
                  [:surface {:default :soft}]
                  :transition
-                 :drop-shadow
+                 :shadow
                  :shadow-color]}
  [& args]
  (let [{:keys [loading
                stroke
                stroke-width
                surface
-               drop-shadow]}
+               shadow]}
        &props
 
        classic-variant?
@@ -66,7 +66,7 @@
                         (decoration/stroke-width-cssvar "button")))
 
          #_(? :pp (when-not classic-variant? 
-                  (decoration/drop-shadow-and-stroke-attrs &props)))
+                  (decoration/shadow-and-stroke-attrs &props)))
          
          &attrs)]
 
@@ -74,7 +74,7 @@
        (add-enhancer &props &children)]
 
    (if (and classic-variant?
-            (or drop-shadow stroke))
+            (or shadow stroke))
      [span (merge-attrs 
             (let [{:keys [stroke-align shape colorway]
                    :or {stroke-align :inside}}

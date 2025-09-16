@@ -54,7 +54,7 @@
                                              "var(--tag-stroke-width)")}})
             
             (util/stroke-width-cssvar stroke-width "tag")
-            (util/drop-shadow-and-stroke-attrs &props)
+            (util/shadow-and-stroke-attrs &props)
 
             &attrs)]
           (add-enhancer &props &children))))

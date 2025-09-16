@@ -479,15 +479,15 @@
         ;; trims the props to only give data-ks-attrs what it needs at runtime,
         ;; which are the :default and :data-ks? :data-ks (data trans fn) entries
         defaults-by-prop
-        (? {:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
+        (!? {:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
 
 
         data-ks-attrs-map-with-defaults
-        (? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when @debug?} 
+        (!? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when @debug?} 
          (kushi.ui.extract/data-ks-attrs {} defaults-by-prop :comptime))
 
         ks-classes-with-defaults
-        (? (symbol "comptime:ks-classes-with-defaults") {:when @debug?} 
+        (!? (symbol "comptime:ks-classes-with-defaults") {:when @debug?} 
          (kushi.ui.extract/ks-classes {} defaults-by-prop :comptime))
 
         props-keys   
@@ -565,7 +565,7 @@
                                      (select-keys ~defaults-by-prop (-> extracted*# :props keys))
                                      :runtime)
 
-             ks-classes#            (? 'ks-classes#
+             ks-classes#            (!? 'ks-classes#
                                        (kushi.ui.core/merged-ks-classes
                                         ~ks-classes-with-defaults
                                         ks-classes*#))
@@ -745,11 +745,11 @@
 ;;     (? "no dynamic prop values found, precompiling..." 
 ;;         (let [flex-attrs       (flex-data-ns-attrs m)
 ;;               decoration-attrs (some->> m 
-;;                                         decoration/drop-shadow-and-stroke-attrs
+;;                                         decoration/shadow-and-stroke-attrs
 ;;                                         (assoc m :kushi.ui.core/pc)
 ;;                                         )
 ;;               decoration-attrs (some-> decoration-attrs
-;;                                        (dissoc :stroke :stroke-align :drop-shadow))]
+;;                                        (dissoc :stroke :stroke-align :shadow))]
 ;;           (merge (? decoration-attrs)
 ;;                  (? flex-attrs))))
 ;;     (? "dynamic prop values found, passing through..." m)))

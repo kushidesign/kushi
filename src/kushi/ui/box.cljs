@@ -26,7 +26,7 @@
             (!? :pp (decoration/stroke-width-cssvar (:stroke-width &props) "button"))
 
             ;; no classics
-            (!? (decoration/drop-shadow-and-stroke-attrs &props))
+            (!? (decoration/shadow-and-stroke-attrs &props))
             &attrs
             )]
      &children)))

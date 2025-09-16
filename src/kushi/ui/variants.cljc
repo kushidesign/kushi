@@ -1,8 +1,50 @@
 (ns ^:dev/always kushi.ui.variants
   (:require 
+   [clojure.string :as string]
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.util :refer [keyed]]
-   #?(:clj [kushi.ui.ordered :refer [ordered-set]])))
+   #?(:clj [kushi.ui.ordered :refer [ordered-set]])
+   [bling.util :as util]))
+
+;; TODO - make a subvec utility for generating scales like :medium-xxxlarge
+(defn- tshirt-size-with-prefix [])
+
+(defn- tshirt-size* [prefix postfix cast-fn with-size-str]
+  (-> prefix
+      util/as-str 
+      (str (when prefix "-")
+           with-size-str
+           (when postfix "-")
+           postfix)
+      cast-fn))
+
+(defn tshirt-sizes
+  {:examples [{:call   '(tshirt-sizes [:small :medium :large]
+                                      {:number-of-sizes 3
+                                       :prefix          :rounded
+                                       :cast-fn         keyword})
+               :result [:rounded-xxxsmall
+                        :rounded-xxsmall
+                        :rounded-xsmall
+                        :rounded-medium
+                        :rounded-xlarge
+                        :rounded-xxlarge
+                        :rounded-xxxlarge]}]}
+  [[a default b]
+   {:keys [prefix postfix cast-fn]
+    n     :number-of-sizes
+    :or   {cast-fn util/as-str}}]
+  (into [] 
+        (let [rng           (range (inc n))
+              f             (partial tshirt-size* prefix postfix cast-fn)
+              with-size-str #(str (string/join (repeat %1 "x"))
+                                  (util/as-str %2))]
+          (concat (for [i (reverse rng)] (f (with-size-str i a)))
+                  [(f (util/as-str default))]
+                  (for [i rng] (f (with-size-str i b)))))))
+
+(def xxxsmall-xxxlarge
+ [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
 
 (def shapes-rounded
   [:rounded
@@ -22,7 +64,6 @@
    :rounded-xxsmall-absolute
    :rounded-xsmall-absolute
    :rounded-small-absolute
-   :rounded-medium-absolute
    :rounded-medium-absolute
    :rounded-large-absolute
    :rounded-xlarge-absolute
@@ -65,8 +106,7 @@
 (def strokes
   [:none :xsoft :soft :medium :hard :xhard])
 
-(def drop-shadows
-  [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
+(def shadows xxxsmall-xxxlarge)
 
 (def icon-style
   [:rounded :outlined :sharp])
@@ -102,8 +142,7 @@
 (def sizings-large-xxxlarge
   [:large :xlarge :xxlarge :xxxlarge])
           
-(def sizings 
-  [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
+(def sizings xxxsmall-xxxlarge)
 
 (def weights
   [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy])
@@ -156,7 +195,7 @@
           shapes-rounded+rounded-absolute
           shapes-rounded-medium-xxxlarge-absolute
           strokes
-          drop-shadows
+          shadows
           shadow-colors
           icon-style
           spinner-type
@@ -230,7 +269,7 @@
    :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/set variants)
    :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/set variants)
    :stroke                                   (:strokes/set variants)
-   :drop-shadow                              (:drop-shadows/set variants)
+   :shadow                              (:shadows/set variants)
    :shadow-color                             (:shadow-colors/set variants)
    :icon-style                               (:icon-style/set variants)})
 
@@ -260,7 +299,7 @@
    :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/enum variants)
    :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/enum variants)
    :stroke                                   (:strokes/enum variants)
-   :drop-shadow                              (:drop-shadows/enum variants)
+   :shadow                              (:shadows/enum variants)
    :shadow-color                             (:shadow-colors/enum variants)
    :icon-style                               (:icon-style/enum variants)})
 
@@ -290,7 +329,7 @@
    :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/vector variants)
    :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/vector variants)
    :stroke                                   (:strokes/vector variants)
-   :drop-shadow                              (:drop-shadows/vector variants)
+   :shadow                              (:shadows/vector variants)
    :shadow-color                             (:shadow-colors/vector variants)
    :icon-style                               (:icon-style/vector variants)})
 
@@ -371,8 +410,8 @@
   ;;                              }
    
    ;; change to shadow
-   :drop-shadow      {:schema  [:or
-                                [:and :keyword (:drop-shadows/enum variants)]
+   :shadow      {:schema  [:or
+                                [:and :keyword (:shadows/enum variants)]
                                 :string 
                                 [:vector :any]]
                       :desc    "Controls the drop shadow. If not combined with a `:stroke`, correspondes to a design token from Kushi's shadow scale."

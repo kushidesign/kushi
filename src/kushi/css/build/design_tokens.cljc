@@ -3,8 +3,9 @@
    [clojure.string :as string]
    [kushi.css.build.tokens-shared :as shared]))
 
-;; Elevations ------------------------------------------------------------------
 
+;; TODO Remove?
+;; Elevations ------------------------------------------------------------------
 (defn- box-shadows->str [coll level suffix]
   (->> coll
        (map-indexed (fn [idx settings]
@@ -19,6 +20,7 @@
                              ")")))))
        (string/join ", ")))
 
+;; TODO Remove?
 (defn- elevation-scale* [elevations]
   (reduce
    (fn [acc [level box-shadows]]
@@ -31,6 +33,7 @@
    elevations))
 
 
+;; TODO Remove?
 ;; These are arguments to css box-shadow
 (def elevation-scale
  (elevation-scale*
@@ -57,6 +60,7 @@
      [0 8 27 0]])))
 
 
+;; TODO Remove?
 (def elevation-shadow-layer-colors 
 (flatten
  (map-indexed 
@@ -75,6 +79,7 @@
   [0.08 0.05 0.03])))
 
 
+;; TODO Remove?
 ;; Convex surfaces -------------------------------------------------------------
 
 ;; Change these to manipulate convex scale
@@ -158,6 +163,7 @@
 ;; kushi.ui components which make use of the family of tokens. These namespaces
 ;; 
 (def design-tokens*
+  ;; 
   [ 
    ;; Debugging grid
    ;; ------------------------------------------------------
@@ -239,16 +245,16 @@
     :category ["font-weight"]
     :tags     ["font-weight" "typography"]
     }
-   [:--thin                                   100
-    :--extra-light                            200
-    :--light                                  300
-    :--normal                                 400
-    :--wee-bold                               500
-    :--semi-bold                              600
-    :--bold                                   700
-    :--extra-bold                             800
-    :--heavy                                  900
-    :--root-font-size                         :1rem
+   [:--weight-thin                                   100
+    :--weight-extra-light                            200
+    :--weight-light                                  300
+    :--weight-normal                                 400
+    :--weight-wee-bold                               500
+    :--weight-semi-bold                              600
+    :--weight-bold                                   700
+    :--weight-extra-bold                             800
+    :--weight-heavy                                  900
+    :--weight-root-font-size                         :1rem
     ]
 
 
@@ -258,45 +264,46 @@
     :category ["font-size"]
     :tags     ["font-size" "typography"]
     }
-   [:--xxxxsmall                              :0.64rem
-    :--xxxsmall                               :0.67rem
-    :--xxsmall                                :0.71rem
-    :--xsmall                                 :0.77rem
-    :--small                                  :0.86rem
-    :--medium                                 :1rem
-    :--large                                  :1.21rem
-    :--xlarge                                 :1.485rem
-    :--xxlarge                                :1.86rem
-    :--xxxlarge                               :2.36rem
-    :--xxxxlarge                              :3.03rem
+   [:--size-xxxxsmall                              :0.64rem
+    :--size-xxxsmall                               :0.67rem
+    :--size-xxsmall                                :0.71rem
+    :--size-xsmall                                 :0.77rem
+    :--size-small                                  :0.86rem
+    :--size-medium                                 :1rem
+    :--size-large                                  :1.21rem
+    :--size-xlarge                                 :1.485rem
+    :--size-xxlarge                                :1.86rem
+    :--size-xxxlarge                               :2.36rem
+    :--size-xxxxlarge                              :3.03rem
 
-    :--xxxxsmall-b                            :0.655rem
-    :--xxxsmall-b                             :0.685rem
-    :--xxsmall-b                              :0.733rem
-    :--xsmall-b                               :0.805rem
-    :--small-b                                :0.92rem
-    :--medium-b                               :1.1rem
-    :--large-b                                :1.33rem
-    :--xlarge-b                               :1.655rem
-    :--xxlarge-b                              :2.085rem
-    :--xxxlarge-b                             :2.68rem
-    :--xxxxlarge-b                            :3.475rem]
+    :--size-xxxxsmall-b                            :0.655rem
+    :--size-xxxsmall-b                             :0.685rem
+    :--size-xxsmall-b                              :0.733rem
+    :--size-xsmall-b                               :0.805rem
+    :--size-small-b                                :0.92rem
+    :--size-medium-b                               :1.1rem
+    :--size-large-b                                :1.33rem
+    :--size-xlarge-b                               :1.655rem
+    :--size-xxlarge-b                              :2.085rem
+    :--size-xxxlarge-b                             :2.68rem
+    :--size-xxxxlarge-b                            :3.475rem]
 
 
    ;; Intended for css prop `letterspacing`
-   {:family   "Letter spacing"
+   {:family   "Tracking"
     :desc     {:en "Controls the tracking of the type"}
-    :category ["letter-spacing"]
+    :category ["Tracking"]
     :tags     ["font-size" "typography" "tracking"]
     }
-   [:--xxxtight                               :-0.09em
-    :--xxtight                                :-0.06em
-    :--xtight                                 :-0.03em
-    :--tight                                  :-0.01em
-    :--loose                                  :0.04em
-    :--xloose                                 :0.08em
-    :--xxloose                                :0.12em
-    :--xxxloose                               :0.16em]
+   [:--tracking-xxxtight                               :-0.09em
+    :--tracking-xxtight                                :-0.06em
+    :--tracking-xtight                                 :-0.03em
+    :--tracking-tight                                  :-0.01em
+    :--tracking-default                                :0em
+    :--tracking-loose                                  :0.04em
+    :--tracking-xloose                                 :0.08em
+    :--tracking-xxloose                                :0.12em
+    :--tracking-xxxloose                               :0.16em]
 
 
    ;; Intended for css props `border-width` for inputs
@@ -700,16 +707,16 @@
     :category ["border-radius"]
     :tags     ["border-radius" "corners" "rounded"]
     }
-   [:--rounded-xxxsmall-absolute  :0.0625rem        ;; 1px
-    :--rounded-xxsmall-absolute   :0.125rem         ;; 2px
-    :--rounded-xsmall-absolute    :0.25rem          ;; 4px
-    :--rounded-small-absolute     :0.375rem         ;; 6px
-    :--rounded-medium-absolute    :0.5rem           ;; 8px
-    :--rounded-large-absolute     :0.75rem          ;; 12px
-    :--rounded-xlarge-absolute    :1rem           ;; 16px
-    :--rounded-xxlarge-absolute   :1.25rem          ;; 20px
-    :--rounded-xxxlarge-absolute  :1.5625rem        ;; 25px
-    :--rounded-absolute           :$rounded-medium-absolute
+   [:--shape-rounded-xxxsmall-absolute  :0.0625rem        ;; 1px
+    :--shape-rounded-xxsmall-absolute   :0.125rem         ;; 2px
+    :--shape-rounded-xsmall-absolute    :0.25rem          ;; 4px
+    :--shape-rounded-small-absolute     :0.375rem         ;; 6px
+    :--shape-rounded-medium-absolute    :0.5rem           ;; 8px
+    :--shape-rounded-large-absolute     :0.75rem          ;; 12px
+    :--shape-rounded-xlarge-absolute    :1rem           ;; 16px
+    :--shape-rounded-xxlarge-absolute   :1.25rem          ;; 20px
+    :--shape-rounded-xxxlarge-absolute  :1.5625rem        ;; 25px
+    :--shape-rounded-absolute           :$rounded-medium-absolute
     ]
    
    ;; Relative (to type size) versions for buttons, badges
@@ -718,60 +725,62 @@
     :category ["border-radius"]
     :tags     ["border-radius" "corners" "rounded"]
     }
-   [:--rounded-xxxsmall :0.04375em  
-    :--rounded-xxsmall  :0.0875em  
-    :--rounded-xsmall   :0.175em   
-    :--rounded-small    :0.2625em  
-    :--rounded-medium   :0.35em    
-    :--rounded-large    :0.475em   
-    :--rounded-xlarge   :0.625em     
-    :--rounded-xxlarge  :0.775em   
-    :--rounded-xxxlarge :0.925em 
-    :--rounded          :$rounded-medium
+   [:--shape-rounded-xxxsmall :0.04375em  
+    :--shape-rounded-xxsmall  :0.0875em  
+    :--shape-rounded-xsmall   :0.175em   
+    :--shape-rounded-small    :0.2625em  
+    :--shape-rounded-medium   :0.35em    
+    :--shape-rounded-large    :0.475em   
+    :--shape-rounded-xlarge   :0.625em     
+    :--shape-rounded-xxlarge  :0.775em   
+    :--shape-rounded-xxxlarge :0.925em 
+    :--shape-rounded          :$rounded-medium
     :--border-weight    :1px
     ]
 
 
-   ;; Intended for css props: background-image
-   ;; ------------------------------------------------------
-   {:family   "Convex surface"
-    :desc     {:en ""}
-    :category ["convex"]
-    :tags     ["convex" "concave" "surfaces"]
-    }
-   (concat
-    convex-scale
-    [:--convex-0 :none
-     :--convex   :$convex-1
-     ])
+   ;; TODO - Remove?
    
-    ;; Intended for css props: box-shadow
-    ;; ------------------------------------------------------
-   {:family   "Elevation shadow colors"
-    :desc     {:en ""}
-    :category ["elevation"]
-    :tags     ["shadow" "elevation" "surfaces"]
-    }
-   elevation-shadow-layer-colors
+   ;; Intended for css props: background-image
+  ;;  ;; ------------------------------------------------------
+  ;;  {:family   "Convex surface"
+  ;;   :desc     {:en ""}
+  ;;   :category ["convex"]
+  ;;   :tags     ["convex" "concave" "surfaces"]
+  ;;   }
+  ;;  (concat
+  ;;   convex-scale
+  ;;   [:--convex-0 :none
+  ;;    :--convex   :$convex-1
+  ;;    ])
+   
+  ;;   ;; Intended for css props: box-shadow
+  ;;   ;; ------------------------------------------------------
+  ;;  {:family   "Elevation shadow colors"
+  ;;   :desc     {:en ""}
+  ;;   :category ["elevation"]
+  ;;   :tags     ["shadow" "elevation" "surfaces"]
+  ;;   }
+  ;;  elevation-shadow-layer-colors
+   
 
-
-   ;; maps to MUI2 level 1
-   {:family   "Elevation levels"
-    :desc     {:en ""}
-    :category ["elevation"]
-    :tags     ["shadow" "elevation" "surfaces"]
-    }
-   elevation-scale
-
-   {:family   "Elevation levels general"
-    :desc     {:en ""}
-    :category ["elevation"]
-    :tags     ["shadow" "elevation" "surfaces"]
-    }
-   [:--shadow-none        :none
-    :--shadow             :$shadow-4
-    :--shadow-dark-mode   :$shadow-4-dark-mode]
-
+  ;;  ;; maps to MUI2 level 1
+  ;;  {:family   "Elevation levels"
+  ;;   :desc     {:en ""}
+  ;;   :category ["elevation"]
+  ;;   :tags     ["shadow" "elevation" "surfaces"]
+  ;;   }
+  ;;  elevation-scale
+   
+  ;;  {:family   "Elevation levels general"
+  ;;   :desc     {:en ""}
+  ;;   :category ["elevation"]
+  ;;   :tags     ["shadow" "elevation" "surfaces"]
+  ;;   }
+  ;;  [:--shadow-none        :none
+  ;;   :--shadow             :$shadow-4
+  ;;   :--shadow-dark-mode   :$shadow-4-dark-mode]
+   
    
     ;; Intended for css props: box-shadow
     ;; ------------------------------------------------------
@@ -819,16 +828,16 @@
     :tags     ["animation" "cubic-bezier" "timing" "transition-duration"]
     }
    [:--transition-duration         :$fast
-    :--instant                     :0ms
-    :--xxxfast                     :50ms
-    :--xxfast                      :100ms
-    :--xfast                       :175ms
-    :--fast                        :250ms
-    :--moderate                    :500ms
-    :--slow                        :700ms
-    :--xslow                       :1s
-    :--xxslow                      :2s
-    :--xxxslow                     :4s
+    :--transition-instant          :0ms
+    :--transition-xxxfast          :50ms
+    :--transition-xxfast           :100ms
+    :--transition-xfast            :175ms
+    :--transition-fast             :250ms
+    :--transition-moderate         :500ms
+    :--transition-slow             :700ms
+    :--transition-xslow            :1s
+    :--transition-xxslow           :2s
+    :--transition-xxxslow          :4s
     :--spinner-animation-duration  :900ms
     :--loading-spinner-height      :0.8em
     

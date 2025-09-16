@@ -24,7 +24,7 @@
    #_{:label   "Shadow"
     :desc    "Preset shadow styles."
     :samples (samples-with-variant
-              {:variant       :drop-shadow
+              {:variant       :shadow
               ;;  :variant-scale :shape/basic+rounded
                :attrs         {:end-enhancer :east
                                :colorway     :accent

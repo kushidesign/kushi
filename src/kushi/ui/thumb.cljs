@@ -52,7 +52,7 @@
             (!? (decoration/stroke-width-cssvar stroke-width "thumb"))
 
             (when-not classic-variant? 
-              (decoration/drop-shadow-and-stroke-attrs &props))
+              (decoration/shadow-and-stroke-attrs &props))
 
             &attrs)]
           &children)))

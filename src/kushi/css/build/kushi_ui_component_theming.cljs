@@ -559,24 +559,24 @@
    ".stroke-hard"             {:--stroke-transparency :$hard-stroke-transparency}
    ".stroke-xhard"            {:--stroke-transparency :$xhard-stroke-transparency}})
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"]"
+;; (defcss "[data-ks-surface][data-ks-shadow=\"xsmall\"]"
 ;;   {:box-shadow      :$shadow-xsmall
 ;;    :dark:box-shadow :$shadow-xsmall-dark-mode})
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"]"
+;; (defcss "[data-ks-surface][data-ks-shadow=\"small\"]"
 ;;   {:box-shadow      :$shadow-small
 ;;    :dark:box-shadow :$shadow-small-dark-mode})
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"]"
+;; (defcss "[data-ks-surface][data-ks-shadow=\"medium\"]"
 ;;   {:box-shadow      :$shadow-medium
 ;;    :dark:box-shadow :$shadow-medium-dark-mode})
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"
+;; (defcss "[data-ks-surface][data-ks-shadow=\"large\"]"
 ;;   {:box-shadow      :$shadow-large
 ;;    :dark:box-shadow :$shadow-large-dark-mode
 ;;    })
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"]"
+;; (defcss "[data-ks-surface][data-ks-shadow=\"xlarge\"]"
 ;;   {:box-shadow      :$shadow-xlarge
 ;;    :dark:box-shadow :$shadow-xlarge-dark-mode})
 
@@ -749,7 +749,7 @@
 
 ;; TODO - selector should be
 ;; (defcss {:data-ks-surface      ""
-;;          :data-ks-drop-shadow  ""
+;;          :data-ks-shadow  ""
 ;;          :data-ks-shadow-color :blue} 
 ;;   {:--shadow-color             :$blue-500})
 
@@ -767,12 +767,12 @@
                        (str "&[data-ks-shadow-color=\"" color "\"]" )
                        {:--shadow-color (keyword (str "$" color "-500"))}))
               {})
-      (list 'defcss "[data-ks-surface][data-ks-drop-shadow]")))
+      (list 'defcss "[data-ks-surface][data-ks-shadow]")))
  
 
 ;; modern version
 (defcss
-  "[data-ks-surface][data-ks-drop-shadow]"
+  "[data-ks-surface][data-ks-shadow]"
   {
    "&[data-ks-shadow-color=\"positive\"]" {:--shadow-color :$positive-500},
    "&[data-ks-shadow-color=\"neutral\"]"  {:--shadow-color :$neutral-500},
@@ -793,13 +793,13 @@
    })
 
 ;; legacy-version
-;; (defcss "[data-ks-surface][data-ks-drop-shadow][data-ks-shadow-color=\"red\"]" 
+;; (defcss "[data-ks-surface][data-ks-shadow][data-ks-shadow-color=\"red\"]" 
 ;;   {
 ;;    :--shadow-color-red-h-s-l         "10 100 50" ; <- this would be in :root
 ;;    :--shadow-color-h-s-l             :$shadow-color-red-h-s-l})
 
 ;; super legacy-version, no support for shadow-strength
-;; (defcss "[data-ks-surface][data-ks-drop-shadow][data-ks-shadow-color=\"red\"]" 
+;; (defcss "[data-ks-surface][data-ks-shadow][data-ks-shadow-color=\"red\"]" 
 ;;   {
 ;;    :--shadow-color-red-hex         "#f908244d" ; <- this would be in :root
 ;;    :--shadow-color-hex             :$shadow-color-red-hex})
@@ -807,7 +807,7 @@
 
 
 ;; modern version
-(defcss "[data-ks-surface][data-ks-drop-shadow], [class*=\"surface-\"][class*=\"shadow-\"], [data-ks-surface][data-ks-shadow]" 
+(defcss "[data-ks-surface][data-ks-shadow], [class*=\"surface-\"][class*=\"shadow-\"], [data-ks-surface][data-ks-shadow]" 
   {
    :--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 20%), transparent)"
   ;;  :--transparent-shadow-color-1 "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 2%), transparent)"
@@ -815,14 +815,14 @@
    })
 
 ;; legacy version
-;; (defcss "[data-ks-surface][data-ks-drop-shadow]" 
+;; (defcss "[data-ks-surface][data-ks-shadow]" 
 ;;   {:--shadow-color-h-s-l     "0 0 0"
 ;;    :--shadow-strength      "20%"
 ;;    ;; TODO - figure out whether the slash "/" syntax works in older browsers
 ;;    :--transparent-shadow-color "hsl(var(--shadow-color-h-s-l) / var(--shadow-strength))"})
 
 ;; super-legacy version
-;; (defcss "[data-ks-surface][data-ks-drop-shadow]" 
+;; (defcss "[data-ks-surface][data-ks-shadow]" 
 ;;   {;; TODO - figure out whether the slash "/" syntax works in older browsers
 ;;    :--transparent-shadow-color "var(--shadow-color-hex)"})
 
@@ -830,31 +830,31 @@
 (defcss "[class*=\"surface-\"][class*=\"shadow-\"]" 
   {:box-shadow "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)"})
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxxsmall\"]"
+(defcss "[data-ks-surface][data-ks-shadow=\"xxxsmall\"]"
   [:box-shadow "0 1px 3px -1px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxsmall\"]"
+(defcss "[data-ks-surface][data-ks-shadow=\"xxsmall\"]"
   [:box-shadow "0 3px 6px -2px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"]"
+(defcss "[data-ks-surface][data-ks-shadow=\"xsmall\"]"
   [:box-shadow "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"]"
+(defcss "[data-ks-surface][data-ks-shadow=\"small\"]"
   [:box-shadow "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"]"
+(defcss "[data-ks-surface][data-ks-shadow=\"medium\"]"
   {:box-shadow "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"})
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"]"
+(defcss "[data-ks-surface][data-ks-shadow=\"large\"]"
   [:box-shadow "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"]"
+(defcss "[data-ks-surface][data-ks-shadow=\"xlarge\"]"
   [:box-shadow "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxlarge\"]"
+(defcss "[data-ks-surface][data-ks-shadow=\"xxlarge\"]"
   [:box-shadow "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"])
 
-(defcss "[data-ks-surface][data-ks-drop-shadow=\"xxxlarge\"]"
+(defcss "[data-ks-surface][data-ks-shadow=\"xxxlarge\"]"
   [:box-shadow "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"])
 
 (defcss "[class*=\"surface-\"]" 
@@ -868,28 +868,28 @@
    ".shadow-xxlarge" {:--shadow :$shadow-xxlarge}
    ".shadow-xxxlarge" {:--shadow :$shadow-xxxlarge}})
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxsmall\"], [class*=\"surface-\"].shadow-xxsmall" 
+;; (defcss "[data-ks-surface][data-ks-shadow=\"xxsmall\"], [class*=\"surface-\"].shadow-xxsmall" 
 ;;   [:box-shadow "0 3px 6px -2px var(--transparent-shadow-color)"])
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xsmall\"], [class*=\"surface-\"].shadow-xsmall"  
+;; (defcss "[data-ks-surface][data-ks-shadow=\"xsmall\"], [class*=\"surface-\"].shadow-xsmall"  
 ;;   [:box-shadow "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"])
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"small\"], [class*=\"surface-\"].shadow-small"  
+;; (defcss "[data-ks-surface][data-ks-shadow=\"small\"], [class*=\"surface-\"].shadow-small"  
 ;;   [:box-shadow "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"])
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"medium\"], [class*=\"surface-\"].shadow-medium"  
+;; (defcss "[data-ks-surface][data-ks-shadow=\"medium\"], [class*=\"surface-\"].shadow-medium"  
 ;;   {:box-shadow "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"})
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"large\"], [class*=\"surface-\"].shadow-large"  
+;; (defcss "[data-ks-surface][data-ks-shadow=\"large\"], [class*=\"surface-\"].shadow-large"  
 ;;   [:box-shadow "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"])
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xlarge\"], [class*=\"surface-\"].shadow-xlarge"  
+;; (defcss "[data-ks-surface][data-ks-shadow=\"xlarge\"], [class*=\"surface-\"].shadow-xlarge"  
 ;;   [:box-shadow "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"])
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxlarge\"], [class*=\"surface-\"].shadow-xxlarge" 
+;; (defcss "[data-ks-surface][data-ks-shadow=\"xxlarge\"], [class*=\"surface-\"].shadow-xxlarge" 
 ;;   [:box-shadow "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"])
 
-;; (defcss "[data-ks-surface][data-ks-drop-shadow=\"xxxlarge\"], [class*=\"surface-\"].shadow-xxxlarge" 
+;; (defcss "[data-ks-surface][data-ks-shadow=\"xxxlarge\"], [class*=\"surface-\"].shadow-xxxlarge" 
 ;;   [:box-shadow "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"])
 
 

@@ -38,7 +38,11 @@
             [me.flowthing.pp :as pp]))
 
 
-(?sx ".he"
+
+
+
+
+#_(?sx ".he"
      {:color       :red
       :at-media/sm {:color :blue}})
 

@@ -15,6 +15,8 @@
    [kushi.showcase.core :as showcase :refer [showcase]]
 
 
+   [kushi.ui.flex :refer [flex-row flex-col]]
+
    [kushi.ui.text-field :refer [text-field]]
    [kushi.ui.text-field.demo]
 
@@ -350,7 +352,7 @@
          :thumb-attrs       (mrj {:surface     :convex
                                  ;; TODO - why not :soft working?
                                   :stroke      :medium #_[[:2px :$red-500] [:2px :$orange-300] [:2px :$yellow-300]]
-                                  :drop-shadow :large}
+                                  :shadow :large}
                                  (sx #_:bgc--red
                                   #_[:--shadow-strength :50%]
                                   ))})]
@@ -372,7 +374,7 @@
            :stroke-width     :3px
 
         ;;  :stroke-align     :outside
-        ;;  :drop-shadow      :large
+        ;;  :shadow      :large
         ;;  :shadow-color     :$blue-500
         ;;  :shadow-strength  :medium
            
@@ -391,7 +393,7 @@
            :stroke       :soft
       ;;  :stroke-width "5px"
            :stroke-align :inside
-      ;;  :drop-shadow  ["5px 5px 10px pink"]
+      ;;  :shadow  ["5px 5px 10px pink"]
            })
          "Click"]
       
@@ -405,7 +407,7 @@
           :stroke       :medium
           :stroke-width "3px"
           :stroke-align :outside
-          :drop-shadow  ["0 10px 10px -0px pink"]
+          :shadow  ["0 10px 10px -0px pink"]
           :class        (css ["--stroke-transparency-mix-color" :$green-600])}
          "Click"]
 
@@ -523,7 +525,7 @@
             :display      [:flex :row :space-around :center]
             :stroke       :medium
             :stroke-width "2px"
-          ;; :drop-shadow :medium
+          ;; :shadow :medium
             :at (at)}
            (sx :w--300px :h--200px))
       [:div "1"]
@@ -587,7 +589,7 @@
                                 :surface     :minimal
                                  ;; TODO - why not :soft working?
                                 :stroke      :medium #_[[:2px :$red-500] [:2px :$orange-300] [:2px :$yellow-300]]
-                                :drop-shadow :large}
+                                :shadow :large}
                                (sx #_:bgc--red
                                 #_[:--shadow-strength :50%]
                                 ))
@@ -611,7 +613,7 @@
                           :sizing          :xsmall
                           :shape         :rounded
                           :surface         :minimal
-                          :drop-shadow     k}
+                          :shadow     k}
                          (sx :p--20px:40px
                              :min-width--200px
                              [:--color :$gold-400]
@@ -625,36 +627,22 @@
                                  kushi.ui.switch.demo/demos))]
   #_[showcase (!? (showcase/opts kushi.ui.button/button
                                  kushi.ui.button.demo/demos))]
-  [:div 
-   (sx :.flex-col-start :ai--flex-start :gap--1rem :.absolute-centered)
-
+  [flex-col
+   (sx :gap--1rem :_div:gap--1rem :.position-absolute-centered)
    
-   #_#_
      ;; TRANSPARENT
-       [:div
-        (sx :.flex-row-start :ai--flex-start :gap--1rem)
-        [:div (sx :.flex-col-start :p--20px :gap--4rem)
-         [button {:sizing      :medium
-                  :stroke      :medium
-                  :drop-shadow :medium
-                  :surface     :transparent
-                  :colorway    :green} "Next"]
-         [button {:sizing      :medium
-                  :stroke      :medium
-                  :drop-shadow :medium
-                  :surface     :transparent
-                  :colorway    :yellow} "Next"]
-         [button {:sizing      :medium
-                  :stroke      :medium
-                  :drop-shadow :medium
-                  :surface     :transparent
-                  :colorway    :blue} "Next"]
-         [button {:sizing      :medium
-                  :stroke      :medium
-                  :drop-shadow :medium
-                  :surface     :transparent
-                  :colorway    :red} "Next"]]
-        [:div (sx :.flex-col-start :p--20px :gap--4rem)
+       [flex-row
+        (into [flex-col
+               (for [colorway [:green :yellow :blue :red]]
+                 [button {:sizing       :medium
+                          :shape        :pill
+                          :stroke       :medium
+                          :surface      :transparent
+                          :colorway     colorway
+                          :shadow       :medium
+                          :shadow-color colorway}
+                  "Next"])])
+        [flex-col
          [:button {:class (css :.ks-button
                                ["--stroke-width" :3px]
                                ["--shadow-color" :$red-500]
@@ -672,31 +660,32 @@
          [:button {:class (css :.ks-button ["--stroke-width" :1px] :.shadow-large :.stroke-medium :.surface-transparent :.colorway-red :.shape-rounded)} "Next"]]]    
 
 
+     
      ;; MINIMAL
      [:div
-      (sx :.flex-row-start :ai--flex-start :gap--1rem)
-      [:div (sx :.flex-col-start :p--20px :gap--4rem)
+      (sx :.display-flex-row-start :ai--flex-start :gap--1rem)
+      [:div (sx :.display-flex-col-start :p--20px :gap--4rem)
        [button {:sizing      :medium
                 :stroke      :medium
-                :drop-shadow :medium
+                :shadow :medium
                 :surface     :minimal
                 :colorway    :green} "Next"]
        [button {:sizing      :medium
                 :stroke      :medium
-                :drop-shadow :medium
+                :shadow :medium
                 :surface     :minimal
                 :colorway    :yellow} "Next"]
        [button {:sizing      :medium
                 :stroke      :medium
-                :drop-shadow :medium
+                :shadow :medium
                 :surface     :minimal
                 :colorway    :blue} "Next"]
        [button {:sizing      :medium
                 :stroke      :medium
-                :drop-shadow :medium
+                :shadow :medium
                 :surface     :minimal
                 :colorway    :red} "Next"]]
-      [:div (sx :.flex-col-start :p--20px :gap--4rem)
+      [:div (sx :.display-flex-col-start :p--20px :gap--4rem)
        [:button {:class           (css :.ks-button
                                        ["--stroke-width" :1px]
                                        :.shadow-medium
@@ -709,9 +698,9 @@
                 ;;  :data-ks-shadow  ""
                  }
         "Next"]
-       [:button {:class (css  :.ks-button ["--stroke-width" :1px] #_:.stroke-medium :.surface-minimal :.colorway-yellow :.shape-rounded)} "Next"]
-       [:button {:class (css  :.ks-button ["--stroke-width" :1px] :.shadow-medium #_:.stroke-medium :.surface-minimal :.colorway-blue :.shape-rounded)} "Next"]
-       [:button {:class (css  :.ks-button ["--stroke-width" :1px] :.shadow-medium #_:.stroke-medium :.surface-minimal :.colorway-red :.shape-rounded)} "Next"]]]    
+       [:button {:class (css  :.ks-button ["--stroke-width" :1px] :.shadow-medium :.stroke-medium :.surface-minimal :.colorway-yellow :.shape-rounded)} "Next"]
+       [:button {:class (css  :.ks-button ["--stroke-width" :1px] :.shadow-medium :.stroke-medium :.surface-minimal :.colorway-blue :.shape-rounded)} "Next"]
+       [:button {:class (css  :.ks-button ["--stroke-width" :1px] :.shadow-medium :.stroke-medium :.surface-minimal :.colorway-red :.shape-rounded)} "Next"]]]    
 
 
    #_
@@ -738,12 +727,14 @@
        [:button (sx ".ks-button" :.surface-faint :.colorway-red :.shape-rounded) "Next"]]]
 
 
+     #_
      ;; SOFT
    [:div
     (sx :.flex-row-start :ai--flex-start :gap--1rem)
     [:div (sx :.flex-col-start :p--20px :gap--1rem)
 
      [button {:surface  :soft
+              :sizing   :xxxlarge
               :shape    :pill
               :colorway :green
               :stroke   :hard}

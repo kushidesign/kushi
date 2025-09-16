@@ -41,7 +41,7 @@
   (cond (and (= k :shadows) supplied) 
         (into {}
               (map-indexed (fn [i s]
-                             [(str "--_drop-shadow"
+                             [(str "--_shadow"
                                    (when (pos? i) (str "-" (inc i))))
                               s])
                            (take 3 supplied)))))

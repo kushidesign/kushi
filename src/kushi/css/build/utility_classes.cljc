@@ -1,6 +1,7 @@
 (ns kushi.css.build.utility-classes
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
+   [kushi.ui.variants :as variants]
    [kushi.util :as util :refer [keyed]]
    [clojure.string :as string]))
 
@@ -59,8 +60,10 @@
                     #(some-> % (str "-"))
 
                     css-selector*
-                    (str (pf key-prefix)
-                         (util/stringify k))
+                    (->> k
+                         util/stringify
+                         (str (pf key-prefix))
+                         keyword)
 
                     css-selector
                     (maybe-data-attr-css-selector css-selector* data-attr)]
@@ -71,11 +74,95 @@
                               (str "$" (pf val-prefix))
                               keyword)]
                    (reduce (fn [acc k] (assoc acc k v))
-                           (if acc-f
-                             (acc-f k)
-                             {})
+                           (if acc-f (acc-f k) {})
                            ks))]))
-            coll)) )
+            coll)))
+
+(defn utility-class-scale
+  {:examples [{:desc   "Generating an ordered scale of font-size utility classes"
+               :call   '(utility-class-scale [:xxxsmall :xxsmall :small]
+                                                   :font-size)
+               :result [:xxxsmall
+                        {:font-size :$xxxsmall}
+                        :xxsmall
+                        {:font-size :$xxsmall}
+                        :xsmall
+                        {:font-size :$xsmall}]}]}
+  [coll css-prop]
+  (mapcatv 
+   (fn [x]
+     [(keyword x)
+      {css-prop (keyword (str "$" (util/as-str x)))}])
+   coll))
+
+(defn class-sels
+  "(class-sels [\"foo\"
+                   {:color :red}
+                   \"bar\"
+                   {:color :blue}]
+                   \"debug\")
+   =>
+   [\".debug-foo\"]
+    {:color :red}
+    \".debug-bar\"]
+    {:color :blue}]"
+  ([coll]
+   (class-sels coll nil))
+  ([coll prefix]
+   (into []
+         (map-indexed (fn [i x] 
+                        (if (odd? i) 
+                          x
+                          (->> x
+                               name
+                               (str "." 
+                                    prefix 
+                                    (when prefix "-")))))
+                      coll))))
+
+(defn wdks
+  ([coll s]
+   (wdks coll s nil nil))
+  ([coll s re replacement]
+   (reduce (fn [acc [k v]] 
+             (conj acc
+                   (str "[data-ks-"
+                        s
+                        "=\"" 
+                        (if (and re replacement)
+                          (string/replace (subs k 1) re replacement)
+                          (subs k 1))
+                        "\"]")
+                   v
+                   k
+                   v))
+           []
+           (partition 2 coll))))
+
+
+(defn kws->data-ks-sels
+  "(kws->data-ks-sels [\"foo\"
+                       {:color :red}
+                       \"bar\"
+                       {:color :blue}]
+                      \"debug\")
+   =>
+   [\"[data-ks-debug=\"foo\"]\"
+    {:color :red}
+    \"[data-ks-debug=\"bar\"]\"
+    {:color :blue}]"
+  [coll s]
+  (reduce (fn [acc [k v]] 
+            (conj acc
+                  (str "[data-ks-"
+                       s
+                       "=\"" 
+                       k
+                       "\"]")
+                  v))
+          []
+          (partition 2 coll)))
+
 
 ;; Scale defs
 ;; -----------------------------------------------------------------------------
@@ -91,12 +178,8 @@
    :extra-bold 800
    :heavy 900))
 
+
 (def type-weights (keys type-weights-by-name))
-
-
-
-
-
 
 
 ;; Combinatorial flexbox utilities
@@ -118,8 +201,8 @@
                     :align-items     :center
                     :display         :flex})
 
-(def flex-col-base {:flex-direction  :column
-                    :display         :flex})
+(def flex-column-base {:flex-direction :column
+                       :display        :flex})
 
 (def flex-justify-content-options 
   ["flex-start"
@@ -133,6 +216,10 @@
    "normal"
    "stretch"])
 
+(def base-flex-classes
+  [:flex-row flex-row-base
+   :flex-col flex-column-base])
+
 (def combo-flex-utility-classes
   (mapcatv (fn [fd]
              (mapcat 
@@ -140,8 +227,8 @@
                 [(->> (string/replace jc #"^flex-" "")
                       (conj ["flex" fd])
                       (string/join "-")
-                      as-classname)
-                 (merge (if (= fd "row") flex-row-base flex-col-base)
+                      #_as-classname)
+                 (merge (if (= fd "row") flex-row-base flex-column-base)
                         {:justify-content (keyword jc)})])
               flex-justify-content-options))
            ["row" "col"]))
@@ -159,7 +246,7 @@
 (def debug-outline-classes
   (mapcatv 
    (fn [c]
-     [(->> c (str "debug-") as-classname)
+     [(keyword c)
       (assoc {:outline-style  :solid
               :outline-offset :-1px
               :outline-width  :1px}
@@ -167,10 +254,13 @@
              (keyword (str "$" c "-500||" c)))])
    color-names))
 
+(!? (class-sels debug-outline-classes "debug"))
+(!? (kws->data-ks-sels (take 2 debug-outline-classes) "debug"))
+
 (def foreground-color-classes
   (mapcatv 
    (fn [c]
-     [(->> c (str "foreground-") as-classname)
+     [(keyword c)
       {:c      (keyword (str "$" c "-650"))
        :dark:c (keyword (str "$" c "-350"))}])
    color-names))
@@ -205,29 +295,29 @@
    :oblique    {:font-style :oblique}])
 
 (def divisor-classes
-  [:divisor-block-start  {:border-block-start         :$divisor
-                          :dark:border-block-start    :$divisor-dark-mode
-                          :transition-property        :all
-                          :transition-timing-function :$transition-timing-function
-                          :transition-duration        :$transition-duration}
+  [:block-start  {:border-block-start         :$divisor
+                  :dark:border-block-start    :$divisor-dark-mode
+                  :transition-property        :all
+                  :transition-timing-function :$transition-timing-function
+                  :transition-duration        :$transition-duration}
 
-   :divisor-block-end    {:border-block-end           :$divisor
-                          :dark:border-block-end      :$divisor-dark-mode
-                          :transition-property        :all
-                          :transition-timing-function :$transition-timing-function
-                          :transition-duration        :$transition-duration}
+   :block-end    {:border-block-end           :$divisor
+                  :dark:border-block-end      :$divisor-dark-mode
+                  :transition-property        :all
+                  :transition-timing-function :$transition-timing-function
+                  :transition-duration        :$transition-duration}
 
-   :divisor-inline-start {:border-inline-start        :$divisor
-                          :dark:border-inline-start   :$divisor-dark-mode
-                          :transition-property        :all
-                          :transition-timing-function :$transition-timing-function
-                          :transition-duration        :$transition-duration}
+   :inline-start {:border-inline-start        :$divisor
+                  :dark:border-inline-start   :$divisor-dark-mode
+                  :transition-property        :all
+                  :transition-timing-function :$transition-timing-function
+                  :transition-duration        :$transition-duration}
 
-   :divisor-inline-end  {:border-inline-end          :$divisor
-                         :dark:border-inline-end     :$divisor-dark-mode
-                         :transition-property        :all
-                         :transition-timing-function :$transition-timing-function
-                         :transition-duration        :$transition-duration}])
+   :inline-end  {:border-inline-end          :$divisor
+                 :dark:border-inline-end     :$divisor-dark-mode
+                 :transition-property        :all
+                 :transition-timing-function :$transition-timing-function
+                 :transition-duration        :$transition-duration}])
 
 (def position-classes 
    ;; Combinatorial absolute and fixed positioning utilities
@@ -321,48 +411,48 @@
                                :translate          "-50%"}]
   )
 
-(def pseudo-element-position-classes  
-  [:after-absolute-fill         {:after:content  "\"\""
-                                 :after:position :absolute
-                                 :after:top      0
-                                 :after:right    0
-                                 :after:bottom   0
-                                 :after:left     0}
+(def pseudo-element-before-position-classes  
+  [:absolute-fill         {:before:content  "\"\""
+                           :before:position :absolute
+                           :before:top      0
+                           :before:right    0
+                           :before:bottom   0
+                           :before:left     0}
 
-   :before-absolute-fill         {:before:content  "\"\""
-                                  :before:position :absolute
-                                  :before:top      0
-                                  :before:right    0
-                                  :before:bottom   0
-                                  :before:left     0}
+   :absolute-inline-end-outside    {:before:position           :absolute
+                                    :before:top                :50%
+                                    :before:bottom             :unset
+                                    :before:inset-inline-start :100%
+                                    :after:inset-inline-end    :unset
+                                    :before:translate          :0:-50%}
 
-   :before-absolute-inline-end-outside    {:before:position           :absolute
-                                           :before:top                :50%
-                                           :before:bottom             :unset
-                                           :before:inset-inline-start :100%
-                                           :after:inset-inline-end    :unset
-                                           :before:translate          :0:-50%}
+   :absolute-inline-start-outside  {:before:position          :absolute
+                                    :before:top               :50%
+                                    :before:bottom            :unset
+                                    :before:inset-inline-end  :100%
+                                    :after:inset-inline-start :unset
+                                    :before:translate         :0:-50%}])
 
-   :before-absolute-inline-start-outside  {:before:position          :absolute
-                                           :before:top               :50%
-                                           :before:bottom            :unset
-                                           :before:inset-inline-end  :100%
-                                           :after:inset-inline-start :unset
-                                           :before:translate         :0:-50%}
+(def pseudo-element-after-position-classes  
+  [:absolute-fill         {:after:content  "\"\""
+                           :after:position :absolute
+                           :after:top      0
+                           :after:right    0
+                           :after:bottom   0
+                           :after:left     0}
 
-   :after-absolute-inline-end-outside     {:after:position           :absolute
-                                           :after:top                :50%
-                                           :after:bottom             :unset
-                                           :after:inset-inline-start :100%
-                                           :after:inset-inline-end   :unset
-                                           :after:translate          :0:-50%}
+   :absolute-inline-end-outside     {:after:position           :absolute
+                                     :after:top                :50%
+                                     :after:bottom             :unset
+                                     :after:inset-inline-start :100%
+                                     :after:inset-inline-end   :unset
+                                     :after:translate          :0:-50%}
 
-   :after-absolute-inline-start-outside   {:after:position           :absolute
-                                           :after:top                :50%
-                                           :after:inset-inline-end   :100%
-                                           :after:inset-inline-start :unset
-                                           :after:translate          :0:-50%}])
-
+   :absolute-inline-start-outside   {:after:position           :absolute
+                                     :after:top                :50%
+                                     :after:inset-inline-end   :100%
+                                     :after:inset-inline-start :unset
+                                     :after:translate          :0:-50%}])
 
 (def background-image-behavior-classes
   [:bg-image-cover {:background-position "center center"
@@ -374,8 +464,6 @@
                       :width               "100%"
                       :height              "100%"
                       :background-size     :contain}])
-
-
 
 
 ;; TODO - This is cruft, delete when not needed
@@ -456,27 +544,27 @@
   "Creates an ordered vector of pairs, thin ~ heavy (100 ~ 900):
    [:thin 
     {:font-weight                             :$thin
-     \" .kushi-icon:font-variation-settings\" \"'wght' 100\"
-     \".kushi-icon:font-variation-settings\"  \"'wght' 100\"}
+     \" .ks-icon:font-variation-settings\" \"'wght' 100\"
+     \".ks-icon:font-variation-settings\"  \"'wght' 100\"}
    ...]"
   (mapcatv
    (fn [[k weight]]
-     [(maybe-data-attr-css-selector (name k) "ks-weight")
+     [k
       (let [v (str "'wght' " weight)]
         {:font-weight                           
          (->> k util/stringify (str "$") keyword)
 
-         " .kushi-icon:font-variation-settings"
+         " .ks-icon:font-variation-settings"
          v
 
-         ".kushi-icon:font-variation-settings" 
+         ".ks-icon:font-variation-settings" 
          v
          
-         ".kushi-icon:has-ancestor([data-ks-weight]):font-variation-settings"
+         ".ks-icon:has-ancestor([class*=\"weight-\"]):font-variation-settings"
          v})])
    type-weights-by-name))
 
-(def global-selectors
+(def global-classes
   ["*:disabled"
    {:opacity :45%!important ;; <-make a token $disabled-opacity
     :cursor  :not-allowed!important}
@@ -496,13 +584,42 @@
    :before                     {:transition-property        :all
                                 :transition-timing-function :$transition-timing-function
                                 :transition-duration        :$transition-duration}})
-(def transition-selectors
-  [:transition
-   transition
-   
-  ;;  "[data-ks-transition]"    
-  ;;  transition
-   ])
+
+(def transition-duration-classes
+  (utility-class-scale
+   (variants/tshirt-sizes [:slow :moderate :fast]
+                          {:number-of-sizes 3
+                           :cast-fn         keyword})
+   :transition-duration)  )
+
+(def transition-classes
+  (into [:transition
+         transition]
+        transition-duration-classes))
+
+
+;; ;; TRACKING
+;; (defcss ".tracking-xxxtight" {"letter-spacing" "var(--xxxtight)"})
+;; (defcss ".tracking-xxtight" {"letter-spacing" "var(--xxtight)"})
+;; (defcss ".tracking-xtight" {"letter-spacing" "var(--xtight)"})
+;; (defcss ".tracking-tight" {"letter-spacing" "var(--tight)"})
+;; (defcss ".tracking-default" {"letter-spacing" "0"})
+;; (defcss ".tracking-loose" {"letter-spacing" "var(--loose)"})
+;; (defcss ".tracking-xloose" {"letter-spacing" "var(--xloose)"})
+;; (defcss ".tracking-xxloose" {"letter-spacing" "var(--xxloose)"})
+;; (defcss ".tracking-xxxloose" {"letter-spacing" "var(--xxxloose)"})
+
+;; ;; TRANSITION SPEED
+;; (defcss ".transition-instant" {"transition-duration" "var(--instant)"})
+;; (defcss ".transition-xxxfast" {"transition-duration" "var(--xxxfast)"})
+;; (defcss ".transition-xxfast" {"transition-duration" "var(--xxfast)"})
+;; (defcss ".transition-xfast" {"transition-duration" "var(--xfast)"})
+;; (defcss ".transition-fast" {"transition-duration" "var(--fast)"})
+;; (defcss ".transition-moderate" {"transition-duration" "var(--moderate)"})
+;; (defcss ".transition-slow" {"transition-duration" "var(--slow)"})
+;; (defcss ".transition-xslow" {"transition-duration" "var(--xslow)"})
+;; (defcss ".transition-xxslow" {"transition-duration" "var(--xxslow)"})
+;; (defcss ".transition-xxxslow" {"transition-duration" "var(--xxxslow)"})
 
 (def offscreen-classes 
   [:offscreen {:position :absolute
@@ -534,35 +651,6 @@
     :embossed-text {:text-shadow "0 -1px 2px hsl(0deg 0% 100% / 55%), 0 1px 2px hsl(0deg 0% 0% / 27%)"}])
 
 
-(def convex-level-classes
-   ;; TODO - use scale-of-utility-defs
-   ;; TODO convex 0-5 plus dark-mode
-   ;; TODO - consider using data-ks-convex-level
-   ;;        and maybe also :convex-level on lib components
-  [:convex {:background-image :$convex-1}
-   :convex-0 {:background-image :$convex-0}
-   :convex-1 {:background-image :$convex-1}
-   :convex-2 {:background-image :$convex-2}
-   :convex-3 {:background-image :$convex-3}
-   :convex-4 {:background-image :$convex-4}
-   :convex-5 {:background-image :$convex-5}])
-
-
-(def elevation-level-classes 
- [:elevation-0    {:box-shadow :$elevated-0}
-  :elevation-1    {:box-shadow      :$elevated-1
-                  :dark:box-shadow :$elevated-1-dark-mode}
-  :elevation-2    {:box-shadow      :$elevated-2
-                  :dark:box-shadow :$elevated-2-dark-mode}
-  :elevation-3    {:box-shadow      :$elevated-3
-                  :dark:box-shadow :$elevated-3-dark-mode}
-  :elevation-4    {:box-shadow      :$elevated-4
-                  :dark:box-shadow :$elevated-4-dark-mode}
-  :elevation-5    {:box-shadow      :$elevated-5
-                  :dark:box-shadow :$elevated-5-dark-mode}
-  :elevation      {:box-shadow      :$elevated-4
-                  :dark:box-shadow :$elevated-4-dark-mode}])
-
 
 (def text-transform-classes 
  [:capitalize     {:text-transform :capitalize}
@@ -572,23 +660,43 @@
   :full-size-kana {:text-transform :full-size-kana}
   :math-auto      {:text-transform :math-auto}])
 
+(def text-size-classes
+  (utility-class-scale variants/xxxsmall-xxxlarge  :font-size))
+
+(def text-tracking-classes
+  (utility-class-scale
+   (variants/tshirt-sizes [:tight :default :loose]
+                          {:number-of-sizes 3
+                           :cast-fn         keyword})
+   :letter-spacing))
+
+(def shape-classes-rounded
+  (utility-class-scale variants/shapes-rounded+rounded-absolute :border-radius))
+
+(def shape-classes-non-rounded
+  [:pill {:border-radius :9999px}
+   :sharp {:border-radius :0px}
+  ;;  :squircle {}
+  ;;  :notched {}
+   ])
 
 ;; Border weights for radios and checkbox sync with type weight
 ;; -----------------------------------------------------------------------------
+;; TODO - sort out "checkbox-input" vs "checkbox"
 (def radio-and-checkbox-synced-border-weights
   (scale-of-utility-defs
    type-weights
    [
-    ">[data-ks-ui=checkbox-input]:outline-width"
-    ">[data-ks-ui=checkbox-input]:bw"
+    ">.ks-checkbox-input:outline-width"
+    ">.ks-checkbox-input:border-width"
 
     ;; TODO - remove these two
-    ">.kushi-radio-input:outline-width"
-    ">.kushi-checkbox-input:bw"
+    ">.ks-radio-input:outline-width"
+    ">.ks-checkbox-input:bw"
     
     ]
    {:val-prefix "input-border-weight"
-    :data-attr  "ks-weight"
+    ;; :data-attr  "ks-weight"
     :acc-f      (fn [k]
                   {:font-weight (->> k
                                      util/stringify
@@ -603,12 +711,15 @@
   (mapcatv (fn [[k v]]
              (let [m+     (assoc m :translate v)
                    k-str  (util/stringify k)
-                   sel    (as-classname (name k))
+                   sel    (-> k
+                              #_name
+                              #_as-classname)
                    -fixed (when (and fixed-geometries?
                                      (re-find #"-inside$" k-str))
                             [(-> k-str
                                  (str "-fixed")
-                                 as-classname)
+                                 #_as-classname
+                                 keyword)
                              (assoc m+ :position :fixed)])]
                (!? {:when (= k :bottom-inside)} (keyed [m+ k-str sel -fixed]))
                (concat [sel m+]
@@ -726,13 +837,13 @@
            {:top    :unset
             :bottom "0%"})))
 
-(def data-ks-weight-synced 
+(def text-weight-synced-classes 
   "[\"[data-ks-weight=\"light\"]\"
     {:font-weight                :$light
-     \" >.kushi-radio-i \"...    :$input-border-weight-light
-     \" >.kushi-checkbo \"...    :$input-border-weight-light
-     \" .kushi-icon:fo \"... \"  'wght' 300 \"
-     \" .kushi-icon:fon \"... \" 'wght' 300 \"}]"
+     \" >.ks-radio-i \"...    :$input-border-weight-light
+     \" >.ks-checkbo \"...    :$input-border-weight-light
+     \" .ks-icon:fo \"... \"  'wght' 300 \"
+     \" .ks-icon:fon \"... \" 'wght' 300 \"}]"
   (let [sels (take-nth 2 radio-and-checkbox-synced-border-weights)
         m1   (apply hash-map radio-and-checkbox-synced-border-weights)
         m2   (apply hash-map icon-synced-weights)]
@@ -742,100 +853,84 @@
      []
      sels)))
 
-(defn kws->dot-strs
-  ([coll]
-   (kws->dot-strs coll nil))
-  ([coll prefix]
-   (into []
-         (map-indexed (fn [i x] 
-                        (if (odd? i) x (->> x name (str "." prefix (when prefix "-")))))
-                      coll))))
 
-(defn wdks
-  ([coll s]
-   (wdks coll s nil nil))
-  ([coll s re replacement]
-   (reduce (fn [acc [k v]] 
-             (conj acc
-                   (str "[data-ks-"
-                        s
-                        "=\"" 
-                        (if (and re replacement)
-                          (string/replace (subs k 1) re replacement)
-                          (subs k 1))
-                        "\"]")
-                   v
-                   k
-                   v))
-           []
-           (partition 2 coll))))
-
-(def all-classes 
+(def all-classes
+  "All the classes"
   [
+
+   ;; base and global
+   global-classes
+   (class-sels base-classes)
+
    ;; flex-utility classes e.g. :.flex-row-fe
-   (kws->dot-strs combo-flex-utility-classes "display")
+   (class-sels base-flex-classes "display")
+   (class-sels combo-flex-utility-classes "display")
 
-   ;; debugging outline helpers  :.outline-red
-   (kws->dot-strs debug-outline-classes)
-
-   (kws->dot-strs foreground-color-classes)
-
-
-   ;; data-ks-flex-elastic="shrink-yes-grow-no"
-   ;; - flex helpers    ->   :.shrink, :.no-shrink, :.grow, :.no-grow
-   
    ;; data-ks-background-image-behavior="cover"
    ;; - bg image help   ->   :.bg-image-cover, :.bg-image-contain
-   
-   ;; data-ks-transition-speed="xxxfast"
-   ;; - animation       ->   :.transition
-   
-   (kws->dot-strs base-classes)
+   (class-sels background-image-behavior-classes "bg-image")
 
-   ;; data-ks-debug="red"
+   ;; - flex helpers    ->   :.shrink, :.no-shrink, :.grow, :.no-grow
+   (class-sels flex-shrink-grow-classes "flex")
+
+   ;; debugging outline helpers  :.outline-red
+   (class-sels debug-outline-classes "debug")
+
+   ;; foreground color
+   (class-sels foreground-color-classes "foreground")
+
    ;; - debugging       e.g. :.debug-grid-8, :.wireframe
-   (-> debugging-classes kws->dot-strs (wdks "debug" #"^debug-" ""))
-   (-> font-family-classes kws->dot-strs (wdks "font-family"))
+   (class-sels debugging-classes "debug")
+   (class-sels font-family-classes "font-family")
 
-   ;; data-ks-divisor="block-start"
    ;; - divisors        e.g. :.divisor-block-start
-   (-> divisor-classes kws->dot-strs (wdks "divisor"))
+   (class-sels divisor-classes "divisor")
 
    ;; These are combinatorial classes dealing with:
    ;; - abs fixed pos   e.g. :.absolute-block-end-inside 
-   (-> position-classes kws->dot-strs (wdks "position"))
+   (class-sels position-classes "position")
 
-   ;; - abs fixed pos for pseudo   e.g. :.after-absolute-block-end-inside 
-   (-> pseudo-element-position-classes kws->dot-strs (wdks "position"))
-
-   (-> background-image-behavior-classes kws->dot-strs (wdks "background-image-behavior"))
-
-   (-> flex-shrink-grow-classes kws->dot-strs (wdks "background-image-behavior"))
-
-   flex-shrink-grow-data-ks
-   
    ;; These are geometry-based absolute and fixed positioning utilities 
    ;; e.g. :.top-left-outside :.top-left-corner-outside etc.
    ;; data-ks-placement="top-left-outside"
    ;; data-ks-placement="absolute-block-end-inside "
-   (kws->dot-strs geom-top-left-corners "position")
-   (kws->dot-strs geom-top-right-corners "position")
-   (kws->dot-strs geom-bottom-left-corners "position")
-   (kws->dot-strs geom-bottom-right-corners "position")
-   (kws->dot-strs geom-left-side "position")
-   (kws->dot-strs geom-right-side "position")
-   (kws->dot-strs geom-top-side "position")
-   (kws->dot-strs geom-bottom-side "position")
+   (class-sels geom-top-left-corners "position")
+   (class-sels geom-top-right-corners "position")
+   (class-sels geom-bottom-left-corners "position")
+   (class-sels geom-bottom-right-corners "position")
+   (class-sels geom-left-side "position")
+   (class-sels geom-right-side "position")
+   (class-sels geom-top-side "position")
+   (class-sels geom-bottom-side "position")
 
-  ;;  (-> text-transform-classes kws->dot-strs (wdks "text-transform"))
-  ;;  (-> elevation-level-classes kws->dot-strs (wdks "elevation" #"^elevation-" ""))
-  ;;  (-> convex-level-classes kws->dot-strs (wdks "convex" #"^convex-" ""))
-  ;;  (-> relief-effects-classes kws->dot-strs (wdks "fx"))
-  ;;  (-> icon-enhanceable-classes kws->dot-strs)
-   (kws->dot-strs offscreen-classes "position")
+   ;; offscreen positioning
+   (class-sels offscreen-classes "position")
 
-   global-selectors
-   transition-selectors
+   ;; - abs fixed pos for pseudo   e.g. :.after-absolute-block-end-inside 
+   (class-sels pseudo-element-after-position-classes "after-position")
+   (class-sels pseudo-element-before-position-classes "before-position")
+
+   ;; transitions, animations
+   (class-sels transition-classes "transition")
+
+   ;; text weight
+   (class-sels text-weight-synced-classes "weight")
+
+   ;; text size
+   (class-sels text-size-classes "size")
+
+   ;; text tracking
+   (class-sels text-tracking-classes "tracking")
+   
+
+  ;;  (-> text-transform-classes class-sels (wdks "text-transform"))
+  ;;  (-> elevation-level-classes class-sels (wdks "elevation" #"^elevation-" ""))
+  ;;  (-> convex-level-classes class-sels (wdks "convex" #"^convex-" ""))
+  ;;  (-> relief-effects-classes class-sels (wdks "fx"))
+  ;;  (-> icon-enhanceable-classes class-sels)
+
+
+   ])
 
    ;; A scale of selectors like "[data-ks-weight=\"thin\"]"
    ;;
@@ -845,8 +940,8 @@
    ;; (css-block {:fw $thin})
    ;; =>
    ;; {:font-weight                           var(--thin)
-   ;;  ">.kushi-radio-input:border-weight"    $input-border-weight-thin
-   ;;  " .kushi-icon:font-variation-settings" "'wght' 100"}
+   ;;  ">.ks-radio-input:border-weight"    $input-border-weight-thin
+   ;;  " .ks-icon:font-variation-settings" "'wght' 100"}
    ;;
    ;; It would have to be a config that maps a props to fns e.g.
    ;; {:font-weight (fn [x]
@@ -854,11 +949,10 @@
    ;;                   (let [s (subs 1 (name x))] ; <- stringify it
    ;;                     {:font-weight                        
    ;;                      x
-   ;;                      ">.kushi-radio-input:border-weight"
+   ;;                      ">.ks-radio-input:border-weight"
    ;;                      (keyword (str "$input-border-weight-" s))
    ;;                      ...})
    ;;                   x)})
-   ])
 
 (!? all-classes)
 
@@ -887,4 +981,3 @@
 (def utility-classes
   (apply util/deep-merge
          (map #(apply hash-map %) all-classes)))
-

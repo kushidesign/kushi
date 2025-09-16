@@ -174,11 +174,11 @@
            seq
            (string/join ", ")))
           
-;; TODO maybe change to  drop-shadow and stroke
+;; TODO maybe change to  shadow and stroke
 ;; coerce into vector e.g. [:2px :red] => [[:2px :red]]
 ;; if design token, make that work
 
-;; TODO remove code from theming with drop-shadow layers
+;; TODO remove code from theming with shadow layers
 (def stroke-presets
   {:none   [["0" "transparent"]]
    :xsoft  [[:$stroke-width "color-mix(in oklch, currentColor var(--xsoft-stroke-transparency, 15%), var(--stroke-transparency-mix-color, transparent))"]]
@@ -230,23 +230,23 @@
 
 (def dbg (atom false))
 
-(defn drop-shadow-and-stroke-attrs 
-  [{:keys [stroke drop-shadow stroke-align] :or {stroke-align :inside}}]
+(defn shadow-and-stroke-attrs 
+  [{:keys [stroke shadow stroke-align] :or {stroke-align :inside}}]
   (let [only-simple-stroke?      (and (contains? stroke-presets-key-set stroke)
-                                      (not drop-shadow))
-        only-simple-drop-shadow? (and (contains? shadow-presets-key-set drop-shadow)
+                                      (not shadow))
+        only-simple-shadow? (and (contains? shadow-presets-key-set shadow)
                                       (not stroke))]
     (!? :pp (cond 
               only-simple-stroke?
               {:data-ks-stroke       stroke
                :data-ks-stroke-align stroke-align}
 
-              only-simple-drop-shadow?
-              {:data-ks-drop-shadow drop-shadow}
+              only-simple-shadow?
+              {:data-ks-shadow shadow}
 
-              (or stroke drop-shadow)
+              (or stroke shadow)
               {:style {:box-shadow (box-shadow 
-                                    {:shadows      drop-shadow
+                                    {:shadows      shadow
                                      :strokes      stroke
                                      :stroke-align stroke-align})}}))))
 
