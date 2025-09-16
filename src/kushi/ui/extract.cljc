@@ -158,7 +158,7 @@
       {:when @debug-ks-classes?}
       (keyed [props defaults-by-prop]))
 
-  (? (symbol (str flag ":ks-classes"))
+  (!? (symbol (str flag ":ks-classes"))
      {:when @debug-ks-classes?}
      (->> (!? defaults-by-prop)
           (reduce-kv 

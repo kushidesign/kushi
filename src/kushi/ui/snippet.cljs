@@ -22,7 +22,7 @@
                             :.minimal
                             :.accent
                             :p--0px
-                            :fs--$small)
+                            :fs--$size-small)
                         (tooltip-attrs
                          {:text                        "Click to copy"
                           :text-on-click               "Copied!"

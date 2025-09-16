@@ -89,7 +89,7 @@
         smalls+         (type-scale-map opts - smalls)
         larges          (create-tshirt-sizes "large" num-sizes)
         larges+         (type-scale-map opts + larges)
-        medium+         {:$medium (keyword (str (nth full (+ shift medium-index)) "rem"))}
+        medium+         {:$size-medium (keyword (str (nth full (+ shift medium-index)) "rem"))}
         sizes           (concat (reverse smalls+) medium+ larges+)]
     (apply concat sizes)))
 

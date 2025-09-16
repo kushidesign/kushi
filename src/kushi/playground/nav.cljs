@@ -43,7 +43,7 @@
    :shape :pill
    :class (css :.foreground-color-secondary!
                :tt--capitalize
-               :fs--$xlarge
+               :fs--$size-xlarge
                :pi--0.7em
                :pb--0.3em
                :hover:c--$neutral-950
@@ -172,7 +172,7 @@
     (when (domo/media-supports-touch?)
       {:on-touch-start (partial header-touchstart-handler menu-id)}))
 
-   [:span (sx #_:.transition :.semi-bold :fs--$xlarge :o--0.5)
+   [:span (sx #_:.transition :.semi-bold :fs--$size-xlarge :o--0.5)
     "Kushi"]
    [:div
     (merge-attrs
@@ -193,7 +193,7 @@
       :surface :minimal
       :class (css :.kushi-explore
                   :.foreground-color-secondary!
-                  :fs--$small
+                  :fs--$size-small
                   :pi--0.8em
                   :pb--0.4em)}
      [icon :keyboard-arrow-down]

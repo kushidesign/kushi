@@ -16,7 +16,7 @@
    (sx :.my-popover-content
        :position--relative
        :.flex-row-fs
-       :fs--$small
+       :fs--$size-small
        :ai--fs
        :pi--1.5em
        :xsm:pi--2.5em
@@ -33,7 +33,7 @@
              :_.kushi-text-input-label:min-width--7em
              :_.kushi-input-inline:gtc--36%:64%)
     [:h2 (sx :.my-form-header
-             :fs--$medium
+             :fs--$size-medium
              :fw--$semi-bold
              :mbe--0.75em)
      "Example Popover Form"]
@@ -59,7 +59,7 @@
          :.neutral
          :.top-right-corner-inside
          {:position      :absolute
-          :fs            :$small
+          :fs            :$size-small
           :zi            1
           :opacity       :$popover-close-button-opacity
           :margin-inline :$popover-close-button-margin-inline||$icon-button-padding-inline
@@ -69,7 +69,7 @@
 
 
 (def examples
-  (let [row-attrs (sx :_.kushi-button:fs--$small)]
+  (let [row-attrs (sx :_.kushi-button:fs--$size-small)]
     [
      (let [code (sx-call (popover-attrs
                           {:f (fn [popover-el]
@@ -77,7 +77,7 @@
                                   (fn [] 
                                     [:div
                                      (sx :.flex-row-c
-                                         :fs--$xxxlarge
+                                         :fs--$size-xxxlarge
                                          :padding--0.25em)
                                      "💃🏽"])
                                   popover-el))}))]
@@ -101,7 +101,7 @@
                         (fn [] 
                           [:div
                            (sx :.flex-row-c
-                               :fs--$xxxlarge
+                               :fs--$size-xxxlarge
                                :padding--0.25em)
                            "💃🏽"])
                         popover-el))}))]
@@ -125,7 +125,7 @@
                                                       (rdom/render 
                                                        (fn [] 
                                                          [:div
-                                                          (sx :fs--$xxxlarge
+                                                          (sx :fs--$size-xxxlarge
                                                               :.flex-row-c
                                                               :padding--0.25em)
                                                           "💃🏽"])
@@ -143,7 +143,7 @@
                                                       (rdom/render 
                                                        (fn [] 
                                                          [:div
-                                                          (sx :fs--$xxxlarge
+                                                          (sx :fs--$size-xxxlarge
                                                               :.flex-row-c
                                                               :padding--0.25em)
                                                           "💃🏽"])
@@ -184,7 +184,7 @@
                                      :ai--c
                                      :min-height--100%
                                      :p--1rem)
-                                 [button (merge-attrs (sx :fs--$small)
+                                 [button (merge-attrs (sx :fs--$size-small)
                                                       {:on-click dismiss-popover!})
                                   "Close"]]
                                 el))}) 
@@ -203,7 +203,7 @@
                                (rdom/render
                                 [:div
                                  (sx :.flex-col-c :ai--c :min-height--100% :p--1rem)
-                                 [:p (sx :fs--$small)
+                                 [:p (sx :fs--$size-small)
                                   "I will close automatically,"
                                   [:br]
                                   "after 5000ms"]]

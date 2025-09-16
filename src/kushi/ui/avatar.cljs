@@ -8,7 +8,7 @@
 
 
 ;; TODO - figure this out
-(def avatar-sizing 
+(def avatar-size 
   {
    "xxxsmall" "24px"
    "xxsmall"  "36px"
@@ -25,7 +25,7 @@
 (defui avatar 
   {:summary "Avatars are graphical thumbnail representations of an individual or entity."
    :desc    "Avatars will display fallback text when no image is provided."
-   :props/shared [[:sizing {:default "36px"}]
+   :props/shared [[:size {:default "36px"}]
                   [:surface {:default :soft}]
                   :colorway
                   [:shape {:default :rounded}]
@@ -40,11 +40,11 @@
                                :default nil
                                :desc    "URL of a mask image to clip the avatar with."} }}
   [& args]
-  (let [{:keys [sizing font-size-ratio]}
+  (let [{:keys [size font-size-ratio]}
         &props
 
-        sizing
-        (or (!? (some-> sizing (maybe nameable?) name avatar-sizing))
+        size
+        (or (!? (some-> size (maybe nameable?) name avatar-size))
             "36px")
 
         font-size-ratio
@@ -55,8 +55,8 @@
               0.4))]
     (into [(if (:src &attrs) :img :span)
            (merge-attrs
-            {:style {"--width"     (name sizing)
-                     "--font-size" (str "calc(" sizing " * " font-size-ratio ")")}}
+            {:style {"--width"     (name size)
+                     "--font-size" (str "calc(" size " * " font-size-ratio ")")}}
             (sx "[data-ks-ui=\"avatar\"]"
                 :.relative
                 :d--inline-flex

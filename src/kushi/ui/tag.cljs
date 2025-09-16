@@ -8,7 +8,7 @@
 (defui tag
   {:summary      "A tag is typically used for concise information, often in a group with other tags."
    :desc         "Tags are fundamental components that allow to organize information, or view organized information."
-   :props/shared [:sizing
+   :props/shared [:size
                   :end-enhancer
                   :start-enhancer
                   :colorway
@@ -28,7 +28,7 @@
 
             ;; base styles
             ;; TODO - how different from button?
-            (sx "[data-ks-ui=\"tag\"]"
+            (sx ".ks-tag"
                 :d--flex
                 :flex-direction--row
                 :jc--c
@@ -38,9 +38,9 @@
                 :gap--$icon-enhanceable-gap
                 
                 ;; different from button
-                [:--_padding-block-start "calc(var(--tag-padding-block) * var(--tag-padding-block-start-reduction-ratio, 1))"]
-                [:--_padding-block-end   :$tag-padding-block]
-                [:--_padding-inline      :$tag-padding-inline]
+                [:--padding-block-start "calc(var(--tag-padding-block) * var(--tag-padding-block-start-reduction-ratio, 1))"]
+                [:--padding-block-end   :$tag-padding-block]
+                [:--padding-inline      :$tag-padding-inline]
                 ;; different from button
                 
                 :pi--$_padding-inline

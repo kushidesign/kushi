@@ -24,7 +24,7 @@
    [kushi.ui.button.demo]
 
    [kushi.ui.icon-button :refer [icon-button]]
-  ;;  [kushi.ui.icon-button.demo]
+   [kushi.ui.icon-button.demo]
 
    [kushi.ui.box :refer [box]]
   ;;  [kushi.ui.layout :refer [layout]]
@@ -100,7 +100,7 @@
                       :w--fit-content)
       :as       :section
       :colorway :accent
-      :sizing     :xxlarge
+      :size     :xxlarge
       :shape    :pill
       :weight   :extra-light
       :surface  :minimal}
@@ -130,7 +130,7 @@
      #_[button {:start-enhancer :pets} "Click"]
      [icon {:ns           (at)
             :colorway     :red
-            :sizing       :xxxlarge
+            :size       :xxxlarge
             :weight       :bolds
             :icon-style   :sharp
             :icon-filled? true
@@ -165,7 +165,7 @@
      {:loading     true
       :colorway     :accent
       :surface      :solid
-      :sizing       :small
+      :size       :small
       :end-enhancer [spinner {:spinner-type :donut}]}
      "Play"]
 
@@ -182,7 +182,7 @@
       :flexbox  :row:start:center
     ;;  :shape   :rounded-3 ?
       :shape  :rounded-xlarge
-      :sizing   :large
+      :size   :large
       :colorway :accent
       :id       "foo"
       :default  "Yes"
@@ -191,7 +191,7 @@
   #_[icon {:at          (at)
            :position    :absolute-centered
            :colorway    :red
-           :sizing      :xxxlarge
+           :size      :xxxlarge
            :weight      :bold
            :icon-style  :sharp
            :icon-filled true
@@ -201,7 +201,7 @@
 
   #_[button
      {:at           (at)
-      :sizing       :xxlarge
+      :size       :xxlarge
       :position     :absolute-centered
       :loading      true,
       :colorway     :accent,
@@ -213,7 +213,7 @@
 
   #_[tag
      {:at           (at)
-      :sizing       :xxlarge
+      :size       :xxlarge
       :position     :absolute-centered
       :colorway     :accent,
       :surface      :outline,
@@ -248,7 +248,7 @@
 ;; Basic example call
   #_[radio-group {
                   :group-id       "foo"
-                  :sizing         :xxxlarge
+                  :size         :xxxlarge
                   :choices        ["Yes" "No" "Maybe"]
                   :default-choice "Yes"}]
 
@@ -263,7 +263,7 @@
                               :value "3"}]}]
 
   #_(let [id (fn [m] 
-               [box (merge {:sizing  :xlarge
+               [box (merge {:size  :xlarge
                             :surface :solid
                             :class   (css :w--100px :h--100px)}
                            m)
@@ -321,26 +321,26 @@
    #_[:div.flex-row-start.absolute-inline-start-inside
       (sx :gap--1rem
           :p--100px
-          :fs--$xxxlarge)
+          :fs--$size-xxxlarge)
     ;; [switch]
     ;; [switch {:colorway :neutral}]
       
-      #_[switch {:colorway :accent :sizing :xxlarge}]
+      #_[switch {:colorway :accent :size :xxlarge}]
 
       #_[switch {:colorway    :accent
-                 :sizing      :xxlarge
+                 :size      :xxlarge
                  :thumb-attrs (sx :bgi--$convex :dark:bgi--$convex-3)}]
 
       #_[thumb {:surface :soft-classic
             ;;  :stroke  :soft
-                :sizing  :xxxlarge}
+                :size  :xxxlarge}
          ]
 
       [switch
        (mrj
         (sx #_[:--switch-inset-gap :2px]
          #_[:--switch-thumb-scale-factor :1.25])
-        {:sizing            :xxxlarge
+        {:size            :xxxlarge
         ;; :thumb-label-on  "ON"
         ;; :thumb-label-off "OFF"
         ;; :thumb-scale-factor 1.2
@@ -360,14 +360,14 @@
     ;; [switch {:colorway :positive}]
     ;; [switch {:colorway :warning}]
     ;; [switch {:colorway :negative}]
-    ;; [button {:surface :outline :sizing :large} "Click"]
-    ;; [button {:surface :classic :sizing :large} "Click"]
+    ;; [button {:surface :outline :size :large} "Click"]
+    ;; [button {:surface :classic :size :large} "Click"]
       
       #_[button
          (merge-attrs 
           {:at               (at)
            :surface          :soft
-           :sizing           :xxxlarge
+           :size           :xxxlarge
            :shape          :pill
            :colorway         :accent
            :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
@@ -386,7 +386,7 @@
       #_[button
          (merge-attrs 
           {:surface      :transparent
-           :sizing       :large
+           :size       :large
            :shape      :pill
            :colorway     :accent
       ;;  :stroke [[:4px :$brown-300] [:2px :$green-300]]
@@ -400,7 +400,7 @@
       #_[button
          {:at           (at)
           :surface      :solid
-          :sizing       :large
+          :size       :large
           :shape      :pill
           :colorway     :accent
         ;; :stroke [[:4px :$brown-300] [:2px :$green-300]]
@@ -411,10 +411,10 @@
           :class        (css ["--stroke-transparency-mix-color" :$green-600])}
          "Click"]
 
-    ;; [button {:surface :soft-classic :sizing :large :shape :pill :colorway :accent} "Click"]
-    ;; [thumb {:surface :outline :sizing :xxlarge :stroke-width :1px}]
-    ;; [thumb {:surface :soft-classic :sizing :xxlarge #_#_:stroke-width :1px}]
-    ;; [thumb {:surface :solid-classic :sizing :xxlarge #_#_:stroke-width :1px}]
+    ;; [button {:surface :soft-classic :size :large :shape :pill :colorway :accent} "Click"]
+    ;; [thumb {:surface :outline :size :xxlarge :stroke-width :1px}]
+    ;; [thumb {:surface :soft-classic :size :xxlarge #_#_:stroke-width :1px}]
+    ;; [thumb {:surface :solid-classic :size :xxlarge #_#_:stroke-width :1px}]
       #_(let [
               stroke-align :inside
 
@@ -477,7 +477,7 @@
                                   :scale--2.55)
                         "🐻‍❄"]]
                     [avatar {:surface :faint-outline
-                  ;;  :sizing  :xxlarge
+                  ;;  :size  :xxlarge
                   ;;  :src     avatar-1
                              }
                      "🐻‍❄"]
@@ -487,7 +487,7 @@
                      [:p (sx :.foreground-color-secondary!) "polar.bear@example.com"]]]]
            [avatar 
             {:surface :solid
-             :sizing  :xxlarge
+             :size  :xxlarge
              :src     avatar-1}
             "JC"]
          [tag {:end-enhancer :east} "Bingo " [link {:href "google.com"} "& more"]]
@@ -498,7 +498,7 @@
         [label {:for          :bar
                 :class        (css :.xxlarge)
                 :end-enhancer :star} "check me"]
-        #_[icon {:sizing :xxlarge} :star]]
+        #_[icon {:size :xxlarge} :star]]
      
 
      [checkbox-group {:group-id "foo"
@@ -514,7 +514,7 @@
       "Star"
       [icon {:at         (at)
              :colorway   :red
-             :sizing     :xxxlarge
+             :size     :xxxlarge
              :icon-style :sharp
              :inert      true
              :id         :foo}
@@ -541,14 +541,14 @@
 
    #_[callout
       {:header-icon     :check-circle
-       :sizing          :xlarge
+       :size          :xlarge
        :colorway        :positive
        :header-text     "Your transaction was successful."
        :close-button?   true
        :close-button-fn (fn [] [:div "hi"])}]
 
    #_[callout2
-      {:sizing          :xlarge
+      {:size          :xlarge
        :colorway        :positive}
       [:div (sx :.flex-row-space-between)
        [icon :check-circle]
@@ -575,7 +575,7 @@
        #_[:--switch-thumb-scale-factor :1.25])
       {
        :on? true
-       :sizing            :xxxlarge
+       :size            :xxxlarge
         ;; :thumb-label-on  "ON"
         ;; :thumb-label-off "OFF"
         ;; :thumb-scale-factor 1.2
@@ -610,7 +610,7 @@
   #_(into [:div.absolute-centered.flex-col-space-between (sx :gap--5rem)]
           (for [k [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge]]
             [button (mrj {:packing         :roomy
-                          :sizing          :xsmall
+                          :size          :xsmall
                           :shape         :rounded
                           :surface         :minimal
                           :shadow     k}
@@ -625,24 +625,33 @@
 
   #_[showcase (!? (showcase/opts kushi.ui.switch/switch
                                  kushi.ui.switch.demo/demos))]
+
+  ;; DONE
+  [showcase (!? (showcase/opts kushi.ui.icon-button/icon-button
+                               kushi.ui.icon-button.demo/demos))]
+
+  ;; DONE
   #_[showcase (!? (showcase/opts kushi.ui.button/button
                                  kushi.ui.button.demo/demos))]
-  [flex-col
+  #_[flex-col
    (sx :gap--1rem :_div:gap--1rem :.position-absolute-centered)
    
      ;; TRANSPARENT
        [flex-row
         (into [flex-col
                (for [colorway [:green :yellow :blue :red]]
-                 [button {:sizing       :medium
+                 [button {:size         :medium
                           :shape        :pill
                           :stroke       :medium
+                          :stroke-align :outside
+                          :stroke-color :green
+                          :stroke-width :1px
                           :surface      :transparent
                           :colorway     colorway
-                          :shadow       :medium
+                          :shadow       :xsmall
                           :shadow-color colorway}
                   "Next"])])
-        [flex-col
+        #_[flex-col
          [:button {:class (css :.ks-button
                                ["--stroke-width" :3px]
                                ["--shadow-color" :$red-500]
@@ -665,22 +674,22 @@
      [:div
       (sx :.display-flex-row-start :ai--flex-start :gap--1rem)
       [:div (sx :.display-flex-col-start :p--20px :gap--4rem)
-       [button {:sizing      :medium
+       [button {:size      :medium
                 :stroke      :medium
                 :shadow :medium
                 :surface     :minimal
                 :colorway    :green} "Next"]
-       [button {:sizing      :medium
+       [button {:size      :medium
                 :stroke      :medium
                 :shadow :medium
                 :surface     :minimal
                 :colorway    :yellow} "Next"]
-       [button {:sizing      :medium
+       [button {:size      :medium
                 :stroke      :medium
                 :shadow :medium
                 :surface     :minimal
                 :colorway    :blue} "Next"]
-       [button {:sizing      :medium
+       [button {:size      :medium
                 :stroke      :medium
                 :shadow :medium
                 :surface     :minimal
@@ -708,16 +717,16 @@
      [:div
       (sx :.flex-row-start :ai--flex-start :gap--1rem)
       [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :faint
                 :colorway :green} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :faint
                 :colorway :yellow} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :faint
                 :colorway :blue} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :faint
                 :colorway :red} "Next"]]
       [:div (sx :.flex-col-start :p--20px :gap--1rem)
@@ -734,19 +743,19 @@
     [:div (sx :.flex-col-start :p--20px :gap--1rem)
 
      [button {:surface  :soft
-              :sizing   :xxxlarge
+              :size   :xxxlarge
               :shape    :pill
               :colorway :green
               :stroke   :hard}
       "Next"]
      #_#_#_
-           [button {:sizing   :medium
+           [button {:size   :medium
                     :surface  :soft
                     :colorway :yellow} "Next"]
-         [button {:sizing   :medium
+         [button {:size   :medium
                   :surface  :soft
                   :colorway :blue} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :soft
                 :colorway :red} "Next"]]
     [:div (sx :.flex-col-start :p--20px :gap--1rem)
@@ -762,16 +771,16 @@
      [:div
       (sx :.flex-row-start :ai--flex-start :gap--1rem)
       [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :soft-classic
                 :colorway :green} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :soft-classic
                 :colorway :yellow} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :soft-classic
                 :colorway :blue} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :soft-classic
                 :colorway :red} "Next"]]
       [:div (sx :.flex-col-start :p--20px :gap--1rem)
@@ -785,16 +794,16 @@
      [:div
       (sx :.flex-row-start :ai--flex-start :gap--1rem)
       [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :solid
                 :colorway :green} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :solid
                 :colorway :yellow} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :solid
                 :colorway :blue} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :solid
                 :colorway :red} "Next"]]
       [:div (sx :.flex-col-start :p--20px :gap--1rem)
@@ -808,16 +817,16 @@
      [:div
       (sx :.flex-row-start :ai--flex-start :gap--1rem)
       [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :solid-classic
                 :colorway :green} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :solid-classic
                 :colorway :yellow} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :solid-classic
                 :colorway :blue} "Next"]
-       [button {:sizing   :medium
+       [button {:size   :medium
                 :surface  :solid-classic
                 :colorway :red} "Next"]]
       [:div (sx :.flex-col-start :p--20px :gap--1rem)
@@ -844,7 +853,7 @@
                              kushi.ui.radio.demo/demos)]
 
   #_[avatar {:surface :solid
-             :sizing  :xxlarge
+             :size  :xxlarge
              :src     avatar-1}
      "JC"]
 
@@ -853,14 +862,14 @@
   ;;  [icon
   ;;   (merge-attrs
   ;;    {:start-enhancer [icon :phone]
-  ;;     :sizing           :xxxlarge
+  ;;     :size           :xxxlarge
   ;;     :weight         :thin}
   ;;    (sx :fs--98px))
   ;;   "star"]
      
      [button
       {:start-enhancer 8 #_[icon :phone]
-       :sizing           :xxlarge
+       :size           :xxlarge
        :weight         :bold}
       "Phone"]
 
@@ -917,7 +926,7 @@
   
   #_[radio-group 
      {:radio-button-attrs {:name    :baz
-                           :sizing   :large
+                           :size   :large
                            :weight :bold}
       :choices            ["Email" "Phone" "Mail"]}]
   
@@ -929,7 +938,7 @@
       [radio-button {:name           :baz
                      :id             "baz-radio-group_email-choice"
                      :value          "email"
-                     :sizing          :xxxlarge
+                     :size          :xxxlarge
                      :weight        :bold
                      :label-attrs   {}
                      :wrapper-attrs {}}]
@@ -940,12 +949,12 @@
      [radio-button {:name    :baz
                     :value   "phone"
                     :label  "phonnne"
-                    :sizing   :xxxlarge
+                    :size   :xxxlarge
                     :weight :bold}]
      [radio-button {:name    :baz
                     :value   "mail"
                     :label  "mailll"
-                    :sizing   :xxxlarge
+                    :size   :xxxlarge
                     :weight :bold}]]
 
 
@@ -973,10 +982,10 @@
 ;; '(merge-attrs 
 ;;   {:class [(resolve-kushi-prop :surface wtf)
 ;;            ]}
-;;   (sx {:font-size    :$small
-;;        :sm:font-size :$large
-;;        :br           :$rounded-absolute
-;;        :large:br     :$rounded-absolute}))
+;;   (sx {:font-size    :$size-small
+;;        :sm:font-size :$size-large
+;;        :br           :$shape-rounded-absolute
+;;        :large:br     :$shape-rounded-absolute}))
 
 ;; '[tag {:class ["foo.wtf__L20_C30"
 ;;                "surface-solid" 

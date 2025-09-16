@@ -1,5 +1,6 @@
 (ns kushi.ui.icon-button
   (:require
+   [fireworks.core :refer [? !? ?> !?>]]
    [bling.core]
    [kushi.core :refer (sx merge-attrs)]
    [kushi.ui.core :refer (defui)]
@@ -11,8 +12,8 @@
 (defui icon-button
  {:doc          "Buttons are fundamental components that allow users to process actions or navigate an experience. Icon buttons feature a single icon or symbol, with no text"
   :summary      "Buttons provide cues for actions and events."
-  :props/shared [:sizing
-                 :colorway
+  :props/shared [:size
+                 [:colorway {:default :neutral}]
                  :packing
                  :loading
                  :stroke
@@ -21,9 +22,10 @@
                  :position
                  :shape
                  :surface
+                 :icon-filled
                  :transition]}
  [& args]
- (let [{:keys [surface loading stroke-width colorway]} &props
+ (let [{:keys [surface loading stroke-width colorway icon-filled]} &props
        [icon*]                                         &children
        
        classic-variant?
@@ -31,7 +33,7 @@
    [:button
     (merge-attrs
      (sx
-      "[data-ks-ui=\"icon-button\"]"
+      ".ks-icon-button"
       :d--flex
       :flex-direction--row
       :jc--c
@@ -39,10 +41,10 @@
       :w--fit-content
       :cursor--pointer
        ;; TODO - is this local/private css var necessary?
-      [:--_padding-block :$icon-button-padding-block]
-      [:--_padding-inline :$icon-button-padding-inline]
-      :pi--$_padding-inline
-      :pb--$_padding-block
+      [:--padding-block :$icon-button-padding-block]
+      [:--padding-inline :$icon-button-padding-inline]
+      :pi--$padding-inline
+      :pb--$padding-block
       )
      {:aria-busy  loading
       :aria-label (when loading "loading")}
@@ -56,4 +58,7 @@
 
      (when stroke-width 
        {:style {"--_stroke-width" (util/as-str stroke-width)}}))
-    [icon {:colorway colorway} icon*]]))
+    [icon
+     (merge (some->> colorway (hash-map :colorway))
+            (some->> icon-filled (hash-map :icon-filled)))
+     icon*]]))

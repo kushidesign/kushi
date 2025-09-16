@@ -3,104 +3,6 @@
    [clojure.string :as string]
    [kushi.css.build.tokens-shared :as shared]))
 
-
-;; TODO Remove?
-;; Elevations ------------------------------------------------------------------
-(defn- box-shadows->str [coll level suffix]
-  (->> coll
-       (map-indexed (fn [idx settings]
-                      (string/join
-                       " "
-                       (conj
-                        (mapv #(str % "px") settings)
-                        (str "var(--shadow-layer-"
-                             (inc idx)
-                             "-color"
-                             suffix
-                             ")")))))
-       (string/join ", ")))
-
-;; TODO Remove?
-(defn- elevation-scale* [elevations]
-  (reduce
-   (fn [acc [level box-shadows]]
-     (-> acc
-         (conj (keyword (str "--shadow-" level "")))
-         (conj (box-shadows->str box-shadows level ""))
-         (conj (keyword (str "--shadow-" level "-dark-mode")))
-         (conj (box-shadows->str box-shadows level "-dark-mode"))))
-   []
-   elevations))
-
-
-;; TODO Remove?
-;; These are arguments to css box-shadow
-(def elevation-scale
- (elevation-scale*
-   (array-map
-    "xsmall"
-    [[0 3 3 -2]
-     [0 3 4 0]
-     [0 1 8 0]]
-    "small"
-    [[0 3 3 -2]
-     [0 3 4 0]
-     [0 1 8 0]]
-    "medium"
-    [[0 3 5 -1]
-     [0 6 10 0]
-     [0 1 18 0]]
-    "large"
-    [[0 5 5 -3]
-     [0 8 18 1]
-     [0 6 20 2]]
-    "xlarge"
-    [[0 7 14 -2]
-     [0 6 26 0]
-     [0 8 27 0]])))
-
-
-;; TODO Remove?
-(def elevation-shadow-layer-colors 
-(flatten
- (map-indexed 
-  (fn [i n]
-    (let [cf (fn [n color]
-               (keyword (str "$transparent-" color "-" (subs (str n) 2))))
-          nm (fn [i s] 
-               (keyword (str "--shadow-layer-" (inc i) "-" s)))]
-      [(nm i "color")
-       (cf n "black")
-       (nm i "color-dark-mode")
-       (cf n "white")
-       ]))
-
-    ;; These control the level of opacity of the shadow layer
-  [0.08 0.05 0.03])))
-
-
-;; TODO Remove?
-;; Convex surfaces -------------------------------------------------------------
-
-;; Change these to manipulate convex scale
-;; gradient-start lightness and alpha, then gradient-end lightness + alpha 
-(def convex-scale-grds-l+a
-  [[["100%" "20%"] ["0%" "15%"]]
-   [["100%" "25%"] ["0%" "25%"]]
-   [["0%" "30%"] ["100%" "35%"]]
-   [["0%" "35%"] ["100%" "45%"]]
-   [["0%" "40%"] ["100%" "50%"]]])
-
-(def convex-scale 
-  (flatten (map-indexed
-            (fn [i
-                 [[l1 a1] 
-                  [l2 a2]]]
-              [(keyword (str "--convex-" (inc i)))
-               (str "linear-gradient(180deg, hsl(0deg 0% " l1 " / " a1 "),"
-                    "transparent, hsl(0deg 0% " l2 " / " a2 "))")])
-            convex-scale-grds-l+a)))
-
 ;; Divisors  -------------------------------------------------------------------
 
 (def divisor-color-scale
@@ -229,7 +131,7 @@
     :ns       '[kushi.ui.code]
     :tags     ["code" "color" "typography" "block"]}
    [
-    :--code-font-size                         :$small
+    :--code-font-size                         :$size-small
     :--code-padding-inline                    :0.2em
     :--code-padding-block                     :0.08em
     :--code-border-radius                     :3px
@@ -422,7 +324,7 @@
     :--pane-min-height                       :35px
     :--pane-padding-inline                   :1em
     :--pane-padding-block                    :0.5em
-    :--pane-border-radius                    :$rounded-medium-absolute
+    :--pane-border-radius                    :$shape-rounded-medium-absolute
     :--pane-offset                           :7px
     :--pane-viewport-padding                 :5px 
     :--pane-flip-viewport-edge-threshold     :32px 
@@ -462,7 +364,7 @@
     }
    [:--tooltip-line-height    1.45
     :--tooltip-font-family    :$sans-serif-font-stack
-    :--tooltip-font-size      :$xsmall
+    :--tooltip-font-size      :$size-xsmall
     :--tooltip-font-weight    :$wee-bold
     :--tooltip-text-transform :none
     ]
@@ -660,7 +562,7 @@
    [
     :--modal-box-shadow             :$pane-box-shadow
     :--modal-box-shadow-dark-mode   :$pane-box-shadow-dark-mode
-    :--modal-border-radius          :$rounded-medium-absolute
+    :--modal-border-radius          :$shape-rounded-medium-absolute
     :--modal-border-width           :0px
     :--modal-border-style           :solid
     :--modal-border-color           :$gray-150
@@ -716,7 +618,7 @@
     :--shape-rounded-xlarge-absolute    :1rem           ;; 16px
     :--shape-rounded-xxlarge-absolute   :1.25rem          ;; 20px
     :--shape-rounded-xxxlarge-absolute  :1.5625rem        ;; 25px
-    :--shape-rounded-absolute           :$rounded-medium-absolute
+    :--shape-rounded-absolute           :$shape-rounded-medium-absolute
     ]
    
    ;; Relative (to type size) versions for buttons, badges
@@ -734,77 +636,9 @@
     :--shape-rounded-xlarge   :0.625em     
     :--shape-rounded-xxlarge  :0.775em   
     :--shape-rounded-xxxlarge :0.925em 
-    :--shape-rounded          :$rounded-medium
+    :--shape-rounded          :$shape-rounded-medium
     :--border-weight    :1px
     ]
-
-
-   ;; TODO - Remove?
-   
-   ;; Intended for css props: background-image
-  ;;  ;; ------------------------------------------------------
-  ;;  {:family   "Convex surface"
-  ;;   :desc     {:en ""}
-  ;;   :category ["convex"]
-  ;;   :tags     ["convex" "concave" "surfaces"]
-  ;;   }
-  ;;  (concat
-  ;;   convex-scale
-  ;;   [:--convex-0 :none
-  ;;    :--convex   :$convex-1
-  ;;    ])
-   
-  ;;   ;; Intended for css props: box-shadow
-  ;;   ;; ------------------------------------------------------
-  ;;  {:family   "Elevation shadow colors"
-  ;;   :desc     {:en ""}
-  ;;   :category ["elevation"]
-  ;;   :tags     ["shadow" "elevation" "surfaces"]
-  ;;   }
-  ;;  elevation-shadow-layer-colors
-   
-
-  ;;  ;; maps to MUI2 level 1
-  ;;  {:family   "Elevation levels"
-  ;;   :desc     {:en ""}
-  ;;   :category ["elevation"]
-  ;;   :tags     ["shadow" "elevation" "surfaces"]
-  ;;   }
-  ;;  elevation-scale
-   
-  ;;  {:family   "Elevation levels general"
-  ;;   :desc     {:en ""}
-  ;;   :category ["elevation"]
-  ;;   :tags     ["shadow" "elevation" "surfaces"]
-  ;;   }
-  ;;  [:--shadow-none        :none
-  ;;   :--shadow             :$shadow-4
-  ;;   :--shadow-dark-mode   :$shadow-4-dark-mode]
-   
-   
-    ;; Intended for css props: box-shadow
-    ;; ------------------------------------------------------
-   
-  ;;  {:family   "Drop shadow colors"
-  ;;   :desc     {:en ""}
-  ;;   :category ["shadows"]
-  ;;   :tags     ["shadow" "surfaces"]
-  ;;   }
-   
-  ;;  {:family   "Drop shadows"
-  ;;   :desc     {:en ""}
-  ;;   :category ["shadows"]
-  ;;   :tags     ["shadow" "surfaces"]
-  ;;   }
-  ;;  {:--shadow-xxsmall "0 1px rgb(0 0 0 / 0.05)"
-  ;;   :--shadow-xsmall  "0 1px 2px 0 rgb(0 0 0 / 0.05)"
-  ;;   :--shadow-small   "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)"
-  ;;   :--shadow-md      "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)"
-  ;;   :--shadow-large   "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
-  ;;   :--shadow-xlarge  "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
-  ;;   :--shadow-xxlarge "0 25px 50px -12px rgb(0 0 0 / 0.25)"}
-   
-
 
 
    ;; Intended for css animations and transitions
@@ -812,8 +646,7 @@
    {:family   "Animation and transition timing functions"
     :desc     {:en ""}
     :category ["transition-timing-function"]
-    :tags     ["animation" "cubic-bezier" "timing" "transition-timing-function"]
-    }
+    :tags     ["animation" "cubic-bezier" "timing" "transition-timing-function"]}
    [:--timing-linear-curve           "cubic-bezier(0, 0, 1, 1)"
     :--timing-ease-out-curve         "cubic-bezier(.2, .8, .4, 1)"
     :--timing-ease-out-curve-5       "cubic-bezier(.2, .8, .4, 1)"
@@ -825,8 +658,7 @@
    {:family   "Animation and transition duration"
     :desc     {:en ""}
     :category ["transition-duration"]
-    :tags     ["animation" "cubic-bezier" "timing" "transition-duration"]
-    }
+    :tags     ["animation" "cubic-bezier" "timing" "transition-duration"]}
    [:--transition-duration         :$fast
     :--transition-instant          :0ms
     :--transition-xxxfast          :50ms
@@ -839,9 +671,7 @@
     :--transition-xxslow           :2s
     :--transition-xxxslow          :4s
     :--spinner-animation-duration  :900ms
-    :--loading-spinner-height      :0.8em
-    
-    ]
+    :--loading-spinner-height      :0.8em]
 
 
    ;; Intended for styling scrollbars with the .styled-scrollbars utility-class
@@ -850,8 +680,7 @@
     :desc     {:en ""}
     :category ["scrollbar"]
     :ns       '[kushi.ui.modal]
-    :tags     ["scrollbar" "chrome" "browser-scrollbars"]
-    }
+    :tags     ["scrollbar" "chrome" "browser-scrollbars"]}
    [:--scrollbar-thumb-color                  :$neutral-300
     :--scrollbar-thumb-color-dark-mode        :$neutral-700
     :--scrollbar-background-color             :$neutral-50
@@ -865,8 +694,7 @@
     :desc     {:en ""}
     :category ["collapse"]
     :ns       '[kushi.ui.collapse]
-    :tags     ["collapse" "accordian"]
-    }
+    :tags     ["collapse" "accordian"]}
    [:--collapse-transition-duration              :$slow]
 
     ;; kushi.ui.text-field/input
@@ -875,8 +703,7 @@
     :desc     {:en ""}
     :category ["input"]
     :ns       '[kushi.ui.text-field]
-    :tags     ["text-input" "text-field" "input"]
-    }
+    :tags     ["text-input" "text-field" "input"]}
    [:--text-input-helper-margin-block-start      :0.3em
     :--text-input-label-inline-margin-inline-end :0.7em
     :--text-input-label-block-margin-block-end   :0.4em
@@ -884,8 +711,7 @@
     ;; Remove wrapper from this
     :--text-input-border-intensity               :50%
     :--text-input-border-intensity-dark-mode     :55%
-    :--text-input-border-radius                  :0.3em]]
-  )
+    :--text-input-border-radius                  :0.3em]])
 
 (def design-tokens-by-component-usage
   (reduce 

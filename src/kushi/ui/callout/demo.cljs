@@ -35,7 +35,7 @@
       :samples   (samples
                   [[callout
                     {:header-icon     :check-circle
-                     :sizing          :xxxlarge
+                     :size          :xxxlarge
                      :colorway        :positive
                      :header-text     "Your transaction was successful."
                      :close-button?   true
@@ -45,8 +45,8 @@
       :row-style row-style
       :require   require
       :samples   (samples-with-variant 
-                  {:variant         :sizing
-                   :variant-scale   :sizing/xxsmall-xlarge
+                  {:variant         :size
+                   :variant-scale   :size/xxsmall-xlarge
                    :attrs           {:header-text [:span "Please check out the "
                                                    [link (merge-attrs (sx :ws--n)
                                                                       {:href "#"})

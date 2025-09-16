@@ -12,7 +12,7 @@
   [:0% {:opacity 1}]
   [:50% {:opacity 0}])
 
-(defcss "kushi-spinner-wrapper"
+(defcss ".ks-spinner-wrapper"
   :position--relative
   :pi--0.3em
   :d--inline-flex
@@ -30,7 +30,7 @@
   {:docs         "A spinner"
    :summary      "Round & round"
    :props/shared [:spinner-type 
-                  :sizing       
+                  :size       
                   [:colorway {:default nil}]]}
   
   [& args]
@@ -45,12 +45,12 @@
 
       (contains? #{:propeller "propeller"} spinner-type)
       [:div {:data-ks-spinner ""
-             :class              (css ".kushi-propeller-wrapper"
-                                      :.kushi-spinner-wrapper
+             :class              (css ".ks-propeller-wrapper"
+                                      :.ks-spinner-wrapper
                                       :.transition
                                       :pi--0.5em)}
        [:div (merge-attrs
-              {:class               (css ".kushi-propeller"
+              {:class               (css ".ks-propeller"
                                          [:animation
                                           "var(--spinner-animation-duration) linear infinite spin"]
                                          [:b
@@ -62,7 +62,7 @@
       
 
       (contains? #{:thinking "thinking"} spinner-type)
-      (let [circle        [:div (sx ".kushi-pulsing-dot"
+      (let [circle        [:div (sx ".ks-pulsing-dot"
                                     :.pill
                                     :w--0.3em
                                     :h--0.3em
@@ -72,13 +72,13 @@
                                     ["nth-child(3):animation-delay" "calc(var(--spinner-animation-duration) / 2)"])]]
 
         [:div {:data-ks-spinner ""
-               :class              (css ".kushi-thinking-wrapper"
-                                        :.kushi-spinner-wrapper
+               :class              (css ".ks-thinking-wrapper"
+                                        :.ks-spinner-wrapper
                                         :.transition)} 
          [:div (merge-attrs
                 {:class               (css
-                                       ".kushi-thinking"
-                                       :.flex-row-center
+                                       ".ks-thinking"
+                                       :.display-flex-row-center
                                        :gap--0.333em)}
                 more-attrs
                 &attrs)
@@ -88,12 +88,12 @@
       
       :else
       [:div {:data-ks-spinner ""
-             :class              (css ".kushi-donut-wrapper"
-                                      :.kushi-spinner-wrapper
+             :class              (css ".ks-donut-wrapper"
+                                      :.ks-spinner-wrapper
                                       :.transition)}
        [:div (merge-attrs
               {:class               (css
-                                     ".kushi-donut"
+                                     ".ks-donut"
                                      :position--relative
                                      :.before-absolute-fill
                                      :.after-absolute-fill

@@ -20,7 +20,7 @@
 (defn loading-spinner []
   [:div (sx
          :.flex-col-c
-         :fs--$xxlarge
+         :fs--$size-xxlarge
          ["has-ancestor(.path-transitioning):display"
           :flex]
          :position--fixed
@@ -34,7 +34,7 @@
 
 
 (def tab-attrs
-  (sx :fs--$small
+  (sx :fs--$size-small
       :pis--0.799em
       :pie--0.8em
       :pbs--0.4em
@@ -91,7 +91,7 @@
      {:surface      :minimal
       :shape        :pill
       :class         (css :.foreground-color-secondary!
-                          :fs--$small
+                          :fs--$size-small
                           :pis--0.799em
                           :pie--0.8em
                           :pbs--0.4em
@@ -212,7 +212,7 @@
                    :xsm:pbs--6rem
                    ;;  :first-child:pbs--0rem
                    
-                   ;; De-emphasizing unfocused --------------------------------
+                   ;; De-emphasize unfocused --------------------------------
                    ;; Leave off for now til you figure out intersection -------
                    ;;  :o--0.3
                    ;;  [:filter "blur(0px)"]
@@ -331,7 +331,7 @@
   [custom-attributes]
   [:<>
    [:h2 (sx
-         :fs--$large
+         :fs--$size-large
          :fw--$semi-bold
          :mb--0:0.5rem)
     "Opts"]
@@ -382,7 +382,7 @@
     :id     (str "kushi-" label "-documentation")}
    (when summary
      (into [:div 
-            (sx :fs--$medium
+            (sx :fs--$size-medium
                 :fw--$wee-bold
                 :mb--0:2rem
                 :>span:lh--1.7)]
@@ -390,7 +390,7 @@
    (when desc
      [:<> 
       [:h2 
-       (sx :fs--$large
+       (sx :fs--$size-large
            :fw--$semi-bold
            :pbe--0.5rem
            :bbe--1px:solid:$gray-200

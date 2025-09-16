@@ -67,7 +67,7 @@
         :_.kushi-text-input-label:min-width--7em
         :_.kushi-input-inline:gtc--36%:64%
         :_.kushi-input-inline:d--grid)
-    [:h2 (sx :fs--$medium
+    [:h2 (sx :fs--$size-medium
              :fw--$semi-bold
              :mbe--0.75em)
      "Example Popover Form"]
@@ -90,7 +90,7 @@
           :.minimal
           :.pill
           :zi--1
-          :fs--$small
+          :fs--$size-small
           ["--icon-button-padding-inline"
            :0.4em]
           [:opacity                         
@@ -110,7 +110,7 @@
    (sx ".my-toast-content"
        :.flex-row-fs
        :position--relative
-       :fs--$medium
+       :fs--$size-medium
        :ai--c
        :gap--1.25em
        :xsm:gap--1.5em
@@ -127,7 +127,7 @@
         :_.kushi-input-inline:gtc--36%:64%)
     [:h3 (sx :fw--$bold :m--0) "Saved for later"]
     [:p (sx ".my-toast-text"
-            :fs--$small
+            :fs--$size-small
             :.neutral-secondary-foreground)
      (.format (new js/Intl.DateTimeFormat
                    "en-US"
@@ -137,8 +137,8 @@
     {:class (css ".toast-close-button"
                  :fw--$semi-bold
                  :.no-shrink
-                 :br--$rounded
-                 :fs--$xxsmall
+                 :br--$shape-rounded
+                 :fs--$size-xxsmall
                  :letter-spacing--$loose
                  :zi--1
                  [:opacity  :$popover-close-button-opacity])
@@ -154,7 +154,7 @@
   ;;    [:div [button {:on-click (fn* [] (open-kushi-modal id))}
   ;;           "Click to open modal"]
   ;;     [modal {:class (css :min-width--300px
-  ;;                         :_.kushi-modal-description:fs--$small)
+  ;;                         :_.kushi-modal-description:fs--$size-small)
   ;;             :id    id}
   ;;      [:div (sx :.xxxlarge :.flex-row-c) "💃🏽"]]])
 
@@ -283,7 +283,7 @@
                      :border-radius--24px
                      :b--2px:solid:$gray-900
                      [:--modal-backdrop-color :$white-transparent-70]
-                     :_.kushi-modal-description:fs--$small)
+                     :_.kushi-modal-description:fs--$size-small)
                     {:-modal-title "Example modal"
                      :-description "Example modal description goes here."
                      :id           id})
@@ -309,7 +309,7 @@
        [:div [button {:on-click (fn* [] (open-kushi-modal id))}
               "Click to open modal"]
         [modal {:class (css :min-width--300px
-                            :_.kushi-modal-description:fs--$small)
+                            :_.kushi-modal-description:fs--$size-small)
                 :id    id}
          [:div (sx :.xxxlarge :.flex-row-c) "💃🏽"]]])
 
@@ -524,20 +524,20 @@
    #_[:div (sx :.flex-row-fs :gap--2rem)
       [:div (sx :.flex-col-fs :gap--1.0rem)
        [checkbox
-        {:class          (css :fs--$small)
+        {:class          (css :fs--$size-small)
          :name           :xxxlarge-sample
          :defaultChecked true}]
        [checkbox
-        {:class          (css :fs--$small)
+        {:class          (css :fs--$size-small)
          :name           :xxxlarge-sample
          :defaultChecked false}]]
       [:div (sx :.flex-col-fs :gap--1.0rem)
        [checkbox
-        {:class          (css :fs--$xxxlarge)
+        {:class          (css :fs--$size-xxxlarge)
          :name           :xxxlarge-sample
          :defaultChecked true}]
        [checkbox
-        {:class          (css :fs--$xxxlarge)
+        {:class          (css :fs--$size-xxxlarge)
          :name           :xxxlarge-sample
          :defaultChecked false}]]
       

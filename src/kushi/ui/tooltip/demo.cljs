@@ -85,7 +85,7 @@
   [{:desc      "Basic, auto-placement."
     :component button
     :reqs      '[[kushi.ui.button :refer [button]]]
-    :row-attrs (sx :_.kushi-button:fs--$small)
+    :row-attrs (sx :_.kushi-button:fs--$size-small)
     :snippets  '[[button
                   (tooltip-attrs {:text "This is a tooltip"})
                   "Hover me"]]
@@ -96,7 +96,7 @@
    {:desc      "Styling via design token at callsite."
     :component button
     :reqs      '[[kushi.ui.button :refer [button]]]
-    :row-attrs (sx :_.kushi-button:fs--$small)
+    :row-attrs (sx :_.kushi-button:fs--$size-small)
     :snippets  '[[button
                   (tooltip-attrs
                    {:text          
@@ -144,12 +144,12 @@
                    :gta--$gta
                    [:>span {:ta             :c
                             :ff             :$code-font-stack
-                            :fs             :$xsmall
+                            :fs             :$size-xsmall
                             :fw             :$wee-bold
                             :cursor         :pointer
                             :bgc            :$neutral-100
                             :d              :flex
-                            :border-radius  :$rounded
+                            :border-radius  :$shape-rounded
                             :border         :1px:dashed:$neutral-400
                             :hover:border   :1px:dashed:$neutral-600
                             :flex-direction :column
@@ -160,7 +160,7 @@
                    [:dark:>span {:bgc            :$neutral-800
                                  :hover:bgc      :$neutral-750
                                  :d              :flex
-                                 :border-radius  :$rounded
+                                 :border-radius  :$shape-rounded
                                  :border         :1px:dashed:$neutral-500
                                  :hover:border   :1px:dashed:$neutral-400
                                  :flex-direction :column

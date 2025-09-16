@@ -51,7 +51,7 @@
 
    :props/shared [[:colorway {:default nil}]
                   :shape
-                  :sizing
+                  :size
                   :weight       
                   :position
                   :inert
@@ -98,7 +98,7 @@
          (into [:span {:class [icon-style icon-fill]}]
                icon-name)))]))
 #_{
-          :sizing         {:default :medium
+          :size         {:default :medium
                           :desc    "Corresponds to the font-size based on Kushi's font-size scale."
                           :demo    {:label           "Sizes"
                                     :attrs           {}
@@ -112,7 +112,7 @@
                           :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."
                           :demo    {:label           "Weights"
                                     :attrs           {}
-                                    :attrs/display   {:sizing :xxxlarge}
+                                    :attrs/display   {:size :xxxlarge}
                                     :variant-labels? false
                                     :args            [:star]
                                     :row-style       {:width           "100%"
@@ -121,12 +121,12 @@
           :colorway     {:default nil
                           :desc    "Colorway of the icon. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
                           :demo    [{:label           "Colorways"
-                                     :attrs           {:sizing :xxxlarge}
+                                     :attrs           {:size :xxxlarge}
                                      :variant-labels? false
                                      :args            [:star]}
                                     {:label           "Colorways, filled icon"
                                      :attrs           {:icon-filled? true
-                                                       :sizing         :xxxlarge}
+                                                       :size         :xxxlarge}
                                      :variant-labels? false
                                      :args            [:star]}]}
 
@@ -136,21 +136,21 @@
                           :desc    "Filled or not filled"
                           :demo    {:label         "Filled icon"
                                     :attrs         {}
-                                    :attrs/display {:sizing :xxxlarge}
+                                    :attrs/display {:size :xxxlarge}
                                     :args          [:star]}}
 
           :icon-style   {:schema    (into #{} defs/icon-style)
                           :default :outlined
                           :desc    "Style of icon"
                           :demo    {:label         "Icon styles"
-                                    :attrs         {:sizing :xxxlarge}
+                                    :attrs         {:size :xxxlarge}
                                     :args          [:login]}}
 
           :inert       {:schema    boolean?
                           :default false
                           :desc    "Determines whether the icon will feature hover and active styles"
                           :demo    {:label         "Inert or interactive styling"
-                                    :attrs         {:sizing :xxxlarge
+                                    :attrs         {:size :xxxlarge
                                                     :icon-filled? true 
                                                     :colorway :positive}
                                     :args          [:star]}}

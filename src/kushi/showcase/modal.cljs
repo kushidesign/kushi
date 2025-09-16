@@ -7,6 +7,7 @@
    [kushi.ui.button :refer [button]]
    [kushi.ui.divisor :refer [divisor]]
    [kushi.ui.icon :refer [icon]]
+   [kushi.ui.flex :refer [flex-row flex-col flex-row-space-between]]
    [kushi.ui.modal :refer [modal open-kushi-modal modal-close-button]]
    [kushi.css.media]))
 
@@ -30,10 +31,10 @@
     :class    
     (css :.kushi-playground-examples-modal-trigger
          :pb--0.4em
-         :fw--$wee-bold
-         :fs--$xxsmall
-         :.accent.minimal:hover:background-color--$accent-50
-         :dark:.accent.minimal:hover:background-color--$accent-800
+         :fw--$weight-wee-bold
+         :fs--$size-xxsmall
+        ;;  :.accent.minimal:hover:background-color--$accent-50
+        ;;  :dark:.accent.minimal:hover:background-color--$accent-800
 
          ;; Next 3 styles will give it a link-button style
          #_:p--0
@@ -58,14 +59,14 @@
     :as   m}]
   [:<> 
    [modal-close-button {:modal-id modal-id}]
-   [:div (sx :.kushi-playground-examples-modal-wrapper
-             :.flex-row-space-between
-             :ai--fs
-             :gap--1.5em)
-    [:div (sx :.kushi-playground-examples-modal-wrapper-inner
-              :.flex-col-start
-              :ai--b
-              :gap--1rem)
+   [flex-row-space-between
+    (sx :.kushi-playground-examples-modal-wrapper
+        :ai--fs
+        :gap--1.5em)
+    [flex-col 
+     (sx :.kushi-playground-examples-modal-wrapper-inner
+         :ai--b
+         :gap--1rem)
      [:h1 (sx :.kushi-playground-examples-modal-wrapper-inner-label
               :.component-section-header-label) 
       component-label]

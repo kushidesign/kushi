@@ -116,14 +116,14 @@
    
    {:label   "Radio sizes"
     :samples (samples-with-variant 
-              {:variant :sizing
+              {:variant :size
                :attrs   {:defaultChecked :true}})}
 
   ;;  {:label   "Radio colorways"
   ;;   :samples (samples-with-variant 
   ;;             {:variant       :colorway
   ;;              :variant-scale :colorway/named
-  ;;              :attrs/display {:sizing :xxxlarge}
+  ;;              :attrs/display {:size :xxxlarge}
   ;;              :attrs         {:defaultChecked :true}})}
    
    #_(? :pp
@@ -133,11 +133,11 @@
                       ['flex-row-start 
                        {:gap :0.5em}
                        ['radio {:colorway       k
-                                :sizing         :xxxlarge
+                                :size         :xxxlarge
                                 :name           k
                                 :defaultChecked true}]
                        ['radio {:colorway k     
-                                :sizing   :xxxlarge
+                                :size   :xxxlarge
                                 :name     k}]]) )
               []
               variants/colorways-named))
@@ -148,121 +148,121 @@
                 {:gap :0.5em}
                 [radio
                  {:colorway       :gray,
-                  :sizing         :xxxlarge,
+                  :size         :xxxlarge,
                   :name           :gray,
                   :defaultChecked true}]
                 [radio {:colorway :gray
-                        :sizing   :xxxlarge
+                        :size   :xxxlarge
                         :name     :gray}]]
                "purple"
                [:div.flex-row-start
                 {:gap :0.5em}
                 [radio
                  {:colorway       :purple,
-                  :sizing         :xxxlarge,
+                  :size         :xxxlarge,
                   :name           :purple,
                   :defaultChecked true}]
                 [radio {:colorway :purple
-                        :sizing   :xxxlarge
+                        :size   :xxxlarge
                         :name     :purple}]]
                "blue"
                [:div.flex-row-start
                 {:gap :0.5em}
                 [radio
                  {:colorway       :blue,
-                  :sizing         :xxxlarge,
+                  :size         :xxxlarge,
                   :name           :blue,
                   :defaultChecked true}]
                 [radio {:colorway :blue
-                        :sizing   :xxxlarge
+                        :size   :xxxlarge
                         :name     :blue}]]
                "green"
                [:div.flex-row-start
                 {:gap :0.5em}
                 [radio
                  {:colorway       :green,
-                  :sizing         :xxxlarge,
+                  :size         :xxxlarge,
                   :name           :green,
                   :defaultChecked true}]
                 [radio {:colorway :green
-                        :sizing   :xxxlarge
+                        :size   :xxxlarge
                         :name     :green}]]
                "lime"
                [:div.flex-row-start
                 {:gap :0.5em}
                 [radio
                  {:colorway       :lime,
-                  :sizing         :xxxlarge,
+                  :size         :xxxlarge,
                   :name           :lime,
                   :defaultChecked true}]
                 [radio {:colorway :lime
-                        :sizing   :xxxlarge
+                        :size   :xxxlarge
                         :name     :lime}]]
                "yellow"
                [:div.flex-row-start
                 {:gap :0.5em}
                 [radio
                  {:colorway       :yellow,
-                  :sizing         :xxxlarge,
+                  :size         :xxxlarge,
                   :name           :yellow,
                   :defaultChecked true}]
                 [radio {:colorway :yellow
-                        :sizing   :xxxlarge
+                        :size   :xxxlarge
                         :name     :yellow}]]
                "gold"
                [:div.flex-row-start
                 {:gap :0.5em}
                 [radio
                  {:colorway       :gold,
-                  :sizing         :xxxlarge,
+                  :size         :xxxlarge,
                   :name           :gold,
                   :defaultChecked true}]
                 [radio {:colorway :gold
-                        :sizing   :xxxlarge
+                        :size   :xxxlarge
                         :name     :gold}]]
                "orange"
                [:div.flex-row-start
                 {:gap :0.5em}
                 [radio
                  {:colorway       :orange,
-                  :sizing         :xxxlarge,
+                  :size         :xxxlarge,
                   :name           :orange,
                   :defaultChecked true}]
                 [radio {:colorway :orange
-                        :sizing   :xxxlarge
+                        :size   :xxxlarge
                         :name     :orange}]]
                "red"
                [:div.flex-row-start
                 {:gap :0.5em}
                 [radio
                  {:colorway       :red,
-                  :sizing         :xxxlarge,
+                  :size         :xxxlarge,
                   :name           :red,
                   :defaultChecked true}]
                 [radio {:colorway :red
-                        :sizing   :xxxlarge
+                        :size   :xxxlarge
                         :name     :red}]]
                "magenta"
                [:div.flex-row-start
                 {:gap :0.5em}
                 [radio
                  {:colorway       :magenta,
-                  :sizing         :xxxlarge,
+                  :size         :xxxlarge,
                   :name           :magenta,
                   :defaultChecked true}]
                 [radio {:colorway :magenta
-                        :sizing   :xxxlarge
+                        :size   :xxxlarge
                         :name     :magenta}]]
                "brown"
                [:div.flex-row-start
                 {:gap :0.5em}
                 [radio
                  {:colorway       :brown,
-                  :sizing         :xxxlarge,
+                  :size         :xxxlarge,
                   :name           :brown,
                   :defaultChecked true}]
                 [radio {:colorway :brown
-                        :sizing   :xxxlarge
+                        :size   :xxxlarge
                         :name     :brown}]]]
               )}
    

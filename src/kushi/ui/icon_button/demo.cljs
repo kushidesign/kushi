@@ -1,7 +1,6 @@
-(ns ^{:kushi/layer "user-styles"} kushi.ui.button.demo
+(ns ^{:kushi/layer "user-styles"} kushi.ui.icon-button.demo
   (:require
-   [kushi.ui.icon :refer [icon]]
-   [kushi.ui.button :refer [button]]
+   [kushi.ui.icon-button :refer [icon-button]]
    [kushi.ui.spinner :refer [spinner]]
    [kushi.core :refer [sx]]
    [kushi.showcase.core
@@ -36,7 +35,7 @@
 
   [
    {:samples (samples-with-variant
-              {:args          ["Next"],
+              {:args          [:star],
                :row-attrs     (sx :_.surface-transparent:display--none)
                :variant       :colorway,
                :variant-scale :colorway/named,
@@ -47,11 +46,12 @@
                ;;  :label          "Colorways, surfaces × shapes",
                :label         "Colorways × surfaces",
                :attrs         {:end-enhancer :east
-                               :shape      :rounded},
+                               :icon-filled  true
+                               :shape        :rounded},
                :rows?         true})}
 
    {:samples (samples-with-variant
-              {:args          ["Next"],
+              {:args          [:star],
                :row-attrs     (sx :_.surface-transparent:display--none)
                :variant       :shape,
                :variant-scale :shape/basic,
@@ -62,6 +62,7 @@
               ;;  :label          "Colorways, surfaces × shapes",
                :label         "Contour × surfaces",
                :attrs         {:end-enhancer :east
+                               :icon-filled  true
                                :colorway     :accent},
                :rows?         true})}
 
@@ -69,28 +70,33 @@
     :label   "Surface",
     :samples (samples-with-variant
               {:attrs         {:end-enhancer :east
+                               :icon-filled  true
+                               :shape        :rounded
                                :colorway     :accent},
-               :args          ["Next"],
+               :args          [:star],
                :variant       :surface
                :variant-scale :surface/basic})}
    
-   {:label   "Contour"
-    :desc    "Contour of the button."
+   {:label   "Shape"
+    :desc    "Shape of the button"
     :samples (samples-with-variant
               {:variant       :shape
                :variant-scale :shape/basic+rounded
                :attrs         {:end-enhancer :east
+                               :icon-filled  true
                                :colorway     :accent
                                :surface      :solid}
-               :args          ["Next"]})}
+               :args          [:star]})}
    
    {:desc    "General amount of padding inside the button",
     :label   "Packing",
     :samples (samples-with-variant
               {:attrs   {:end-enhancer :east
+                         :icon-filled  true
+                         :shape        :rounded
                          :colorway     :accent
                          :surface      :solid},
-               :args    ["Next"],
+               :args    [:star],
                :variant :packing})}
 
    {:label   "size"
@@ -101,175 +107,141 @@
               {:variant :size
               ;; :variant-labels? false
                :attrs   {:surface      :solid
+                         :shape        :rounded
+                         :icon-filled  true
                          :end-enhancer :east
                          :colorway     :accent}
-               :args    ["Next"]})}
+               :args    [:star]})}
 
    {:label   "Stroke"
     :desc    "Preset stroke styles."
     :samples (samples-with-variant
-              {:variant       :stroke
+              {:variant :stroke
               ;;  :variant-scale :shape/basic+rounded
-               :attrs         {:end-enhancer :east
-                               :colorway     :accent
-                               :surface      :minimal}
-               :args          ["Next"]})}
+               :attrs   {:end-enhancer :east
+                         :shape        :rounded
+                         :icon-filled  true
+                         :colorway     :accent
+                         :surface      :minimal}
+               :args    [:star]})}
 
    {:label   "Stroke width"
     :desc    "Custom stroke widths."
-    :samples (samples [[button
+    :samples (samples [[icon-button
                         {:end-enhancer :east,
+                         :shape        :rounded
+                         :icon-filled  true
                          :colorway     :accent,
                          :surface      :minimal,
-                         :stroke       :medium
+                         :stroke       :hard
                          :stroke-width :1px
                          :stroke-align :inside}
-                        "Next"]
-                       [button
+                        :star]
+                       [icon-button
                         {:end-enhancer :east,
+                         :shape        :rounded
+                         :icon-filled  true
                          :colorway     :accent,
                          :surface      :minimal,
-                         :stroke       :medium
+                         :stroke       :hard
                          :stroke-width :2px
                          :stroke-align :inside}
-                        "Next"]
-                       [button
+                        :star]
+                       [icon-button
                         {:end-enhancer :east,
+                         :shape        :rounded
+                         :icon-filled  true
                          :colorway     :accent,
                          :surface      :minimal,
-                         :stroke       :medium
+                         :stroke       :hard
                          :stroke-width :3px
                          :stroke-align :inside}
-                        "Next"]
-                       [button
+                        :star]
+                       [icon-button
                         {:end-enhancer :east,
+                         :shape        :rounded
+                         :icon-filled  true
                          :colorway     :accent,
                          :surface      :minimal,
-                         :stroke       :medium
+                         :stroke       :hard
                          :stroke-width :4px
                          :stroke-align :inside}
-                        "Next"]
+                        :star]
                        ])}
+
 
    {:schema  #{:inside :outside},
     :desc    "Alignment of the stroke. Only applies to `:surface` `:outline`",
     :label   "Stroke alignment",
-    :samples (samples [[button
+    :samples (samples [[icon-button
                         {:end-enhancer :east,
+                         :shape        :rounded
+                         :icon-filled  true
                          :colorway     :accent,
                          :surface      :minimal,
                          :stroke       :medium
                          :stroke-width :2px
                          :stroke-align :inside}
-                        "Next"]
-                       [button
+                        :star]
+                       [icon-button
                         {:end-enhancer :east,
+                         :shape        :rounded
+                         :icon-filled  true
                          :colorway     :accent,
                          :surface      :minimal,
                          :stroke       :medium
                          :stroke-width :2px
                          :stroke-align :outside}
-                        "Next"]])}
+                        :star]])}
 
-   {:desc    "Content at the inline-start position following the button text. Typically an icon.",
-    :label   "Start-enhancer",
-    :samples (samples [[button
-                        {:start-enhancer :west,
-                         :colorway       :accent,
-                         :surface        :solid}
-                        "Back"]
-                       [button
-                        {:start-enhancer :auto-awesome,
-                         :colorway       :accent,
-                         :surface        :soft}
-                        "Enhance"]
-                       [button
-                        {:start-enhancer :play-arrow,
-                         :colorway       :accent,
-                         :surface        :faint
-                         :stroke         :soft
-                         }
-                        "Play"]
-                       [button
-                        {:start-enhancer :check-circle,
-                         :colorway       :accent,
-                         :surface        :minimal
-                         :stroke         :xsoft}
-                        "Confirm"]
-                       ])}
    
-   {:desc    "Content at the inline-end position preceding the button text. Typically an icon.",
-    :label   "End-enhancer",
-    :require [[kushi.ui.icon :refer [icon]]],
-    :samples (samples [[button
-                        {:end-enhancer :east,
-                         :colorway     :accent,
-                         :surface      :solid}
-                        "Next"]
-                       [button
-                        {:end-enhancer :auto-awesome,
-                         :colorway     :accent,
-                         :surface      :soft}
-                        "Enhance"]
-                       [button
-                        {:end-enhancer :play-arrow,
-                         :colorway     :accent,
-                         :surface      :faint
-                         :stroke       :soft}
-                        "Play"]
-                       [button
-                        {:end-enhancer :check-circle,
-                         :colorway     :accent,
-                         :surface      :minimal
-                         :stroke       :xsoft}
-                        "Confirm"]
-                       ])}
-
-   {:label   "Loading states",
+   ;; TODO Fix this
+   #_{:label   "Loading states",
     :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`",
-    :schema  boolean?,
-    :require '[[kushi.ui.button :refer [button]]
-               [kushi.ui.icon :refer [icon]]
+    :require '[[kushi.ui.icon :refer [icon]]
                [kushi.ui.spinner :refer [spinner]]],
     :samples (samples
-              [[button
+              [[icon-button
                 {:loading      true,
+                 :shape        :rounded
+                 :icon-filled  true
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :donut}]
                  }
-                "Play"]
-               [button
+                :star]
+               [icon-button
                 {:loading      true,
+                 :shape        :rounded
+                 :icon-filled  true
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :propeller}]}
-                "Play"]
-               [button
+                :star]
+               [icon-button
                 {:loading      true,
+                 :shape        :rounded
+                 :icon-filled  true
                  :colorway     :accent,
                  :surface      :solid,
                  :end-enhancer [spinner {:spinner-type :thinking}]}
-                "Play"]
-               [button
-                {:loading  true
-                 :colorway :accent
-                 :surface  :solid}
-                [:span {:style {:visibility :hidden
+                :star]
+               [icon-button
+                {:loading     true
+                 :shape       :rounded
+                 :icon-filled true
+                 :colorway    :accent
+                 :surface     :solid}
+                #_[:span {:style {:visibility :hidden
                                 :width      :0px}} 
-                 "Play"]
+                 :star]
                 [spinner {:spinner-type :thinking}]] ])}
    
    {:label   "Disabled state",
     :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`",
-    :schema  boolean?,
-    :require '[[kushi.ui.button :refer [button]]
-               [kushi.ui.icon :refer [icon]]
-               [kushi.ui.spinner :refer [spinner]]],
     :samples (samples
-              [[button
+              [[icon-button
                 {:disabled     true,
                  :colorway     :accent,
-                 :surface      :solid,
-                 :end-enhancer :play-arrow}
-                "Play"]])}])
+                 :surface      :solid,}
+                :star]])}])

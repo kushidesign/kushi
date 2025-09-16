@@ -113,8 +113,8 @@
       ;; Include this if using cormorant serif face in :$serif-font-stack
       ;;  :.cormorant-section-label
       ;; Comment fs below if using cormorant serif face in :$serif-font-stack
-      ;;  :fs--$small
-       :fs--$small-b
+      ;;  :fs--$size-small
+       :fs--$size-small-b
        :.oblique
        :.neutralize-secondary
        :lh--1.7
@@ -181,7 +181,7 @@
     (css :.kushi-playground-examples-modal-trigger
          :pb--0.4em
          :fw--$wee-bold
-         :fs--$xxsmall
+         :fs--$size-xxsmall
          :.accent.minimal:hover:background-color--$accent-50
          :dark:.accent.minimal:hover:background-color--$accent-800
 
@@ -387,8 +387,8 @@
          :_.code:ws--n
          :_pre_code:p--0
          :_pre_.code:p--0
-         :_pre_code:fs--$xsmall
-         :_pre_.code:fs--$xsmall
+         :_pre_code:fs--$size-xsmall
+         :_pre_.code:fs--$size-xsmall
          :lh--1.7
          :ai--fs
          :min-width--200px

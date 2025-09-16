@@ -117,9 +117,9 @@
            :ai--c
            :w--100%
            :gap--$icon-enhanceable-gap
-           [:--_padding-block-start "calc(var(--callout-padding-block) * var(--callout-padding-block-start-reduction-ratio, 1))"]
-           [:--_padding-block-end   :$callout-padding-block]
-           [:--_padding-inline      :$callout-padding-inline]
+           [:--padding-block-start "calc(var(--callout-padding-block) * var(--callout-padding-block-start-reduction-ratio, 1))"]
+           [:--padding-block-end   :$callout-padding-block]
+           [:--padding-inline      :$callout-padding-inline]
            :pi--$_padding-inline
            :pbs--$_padding-block-start
            :pbe--$_padding-block-end)

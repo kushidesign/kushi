@@ -636,8 +636,8 @@
                                       sel))
                                    :alternate-selectors
                                    alternate-selectors )]
-     #_(when (= fa "[data-ks-ui=\"icon\"]")
-       (println (re-find specs/attribute-selector-re-with-capturing "[data-ks-ui=\"icon\"]"))
+     #_(when (= fa ".ui-icon")
+       (println (re-find specs/attribute-selector-re-with-capturing ".ui-icon"))
        #_(pprint (keyed [
                       ;;  fa
                       ;;  supplied-classname
@@ -977,7 +977,7 @@
 
 (defn css-rule* [sel args &form &env]
   ;; Check if user supplied bad at-rule name, forgetting a leading "@".
-  #_(when (= sel "[data-ks-colorway=\"neutral\"]")
+  #_(when (= sel ".colorway-neutral")
     (!? :pp args #_(-> args first keys)))
   (let [fname (or (when-let [sym (nth &form 0 nil)]
                     (when (contains? '#{sx defcss} sym)

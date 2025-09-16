@@ -130,19 +130,19 @@
 (def shadow-colors
   (apply conj colorways-named colorways-semantic))
 
-(def sizings-xxsmall-xlarge
+(def sizes-xxsmall-xlarge
   [:xxsmall :xsmall :small :medium :large :xlarge])
 
-(def sizings-xsmall-xxlarge
+(def sizes-xsmall-xxlarge
   [:xsmall :small :medium :large :xlarge :xxlarge])
 
-(def sizings-xsmall-xxxlarge
+(def sizes-xsmall-xxxlarge
   [:xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
 
-(def sizings-large-xxxlarge
+(def sizes-large-xxxlarge
   [:large :xlarge :xxlarge :xxxlarge])
           
-(def sizings xxxsmall-xxxlarge)
+(def sizes xxxsmall-xxxlarge)
 
 (def weights
   [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy])
@@ -156,6 +156,7 @@
    :faint
    :minimal
    :transparent])
+
 
 (def surfaces-light-mode [:minimal-light-mode :convex-light-mode])
 
@@ -204,11 +205,11 @@
           colorways-named
           colorways-semantic
           colorways
-          sizings-xsmall-xxlarge
-          sizings-xxsmall-xlarge
-          sizings-xsmall-xxxlarge
-          sizings-large-xxxlarge
-          sizings
+          sizes-xsmall-xxlarge
+          sizes-xxsmall-xlarge
+          sizes-xsmall-xxxlarge
+          sizes-large-xxxlarge
+          sizes
           weights
           surfaces-basic
           surfaces
@@ -245,11 +246,11 @@
 
 (def variants-by-custom-opt-key
   {:weight                                   (:weights/set variants)
-   :sizing/xxsmall-xlarge                    (:sizings-xxsmall-xlarge/set variants)
-   :sizing/xsmall-xxxlarge                   (:sizings-xsmall-xxxlarge/set variants)
-   :sizing/xsmall-xxlarge                    (:sizings-xsmall-xxlarge/set variants)
-   :sizing/large-xxxlarge                    (:sizings-large-xxxlarge/set variants)
-   :sizing                                   (:sizings/set variants)
+   :size/xxsmall-xlarge                    (:sizes-xxsmall-xlarge/set variants)
+   :size/xsmall-xxxlarge                   (:sizes-xsmall-xxxlarge/set variants)
+   :size/xsmall-xxlarge                    (:sizes-xsmall-xxlarge/set variants)
+   :size/large-xxxlarge                    (:sizes-large-xxxlarge/set variants)
+   :size                                   (:sizes/set variants)
    :colorway                                 (:colorways/set variants)
    :colorway/named                           (:colorways-named/set variants)
    :colorway/semantic                        (:colorways-semantic/set variants)
@@ -275,11 +276,11 @@
 
 (def enum-variants-by-custom-opt-key
   {:weight                                   (:weights/enum variants)
-   :sizing/xxsmall-xlarge                    (:sizings-xxsmall-xlarge/enum variants)
-   :sizing/xsmall-xxxlarge                   (:sizings-xsmall-xxxlarge/enum variants)
-   :sizing/xsmall-xxlarge                    (:sizings-xsmall-xxlarge/enum variants)
-   :sizing/large-xxxlarge                    (:sizings-large-xxxlarge/enum variants)
-   :sizing                                   (:sizings/enum variants)
+   :size/xxsmall-xlarge                    (:sizes-xxsmall-xlarge/enum variants)
+   :size/xsmall-xxxlarge                   (:sizes-xsmall-xxxlarge/enum variants)
+   :size/xsmall-xxlarge                    (:sizes-xsmall-xxlarge/enum variants)
+   :size/large-xxxlarge                    (:sizes-large-xxxlarge/enum variants)
+   :size                                   (:sizes/enum variants)
    :colorway                                 (:colorways/enum variants)
    :colorway/named                           (:colorways-named/enum variants)
    :colorway/semantic                        (:colorways-semantic/enum variants)
@@ -305,11 +306,11 @@
 
 (def ordered-variants-by-custom-opt-key
   {:weight                                   (:weights/vector variants)
-   :sizing/xxsmall-xlarge                    (:sizings-xxsmall-xlarge/vector variants)
-   :sizing/xsmall-xxxlarge                   (:sizings-xsmall-xxxlarge/vector variants)
-   :sizing/xsmall-xxlarge                    (:sizings-xsmall-xxlarge/vector variants)
-   :sizing/large-xxxlarge                    (:sizings-large-xxxlarge/vector variants)
-   :sizing                                   (:sizings/vector variants)
+   :size/xxsmall-xlarge                    (:sizes-xxsmall-xlarge/vector variants)
+   :size/xsmall-xxxlarge                   (:sizes-xsmall-xxxlarge/vector variants)
+   :size/xsmall-xxlarge                    (:sizes-xsmall-xxlarge/vector variants)
+   :size/large-xxxlarge                    (:sizes-large-xxxlarge/vector variants)
+   :size                                   (:sizes/vector variants)
    :colorway                                 (:colorways/vector variants)
    :colorway/named                           (:colorways-named/vector variants)
    :colorway/semantic                        (:colorways-semantic/vector variants)
@@ -370,7 +371,7 @@
 
   {
    ;; change to size
-   :sizing           {:default  nil
+   :size           {:default  nil
                       :desc     "Corresponds to the font-size based on Kushi's font-size scale."
                       :class? true
                       :fq?      true}
@@ -531,7 +532,7 @@
 
 (def prop-families
   ;; TODO - should packing be in here?
-  {:container [:sizing
+  {:container [:size
                :colorway
                :shape
                :surface

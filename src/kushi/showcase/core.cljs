@@ -8,7 +8,7 @@
    [kushi.core :refer [css defcss merge-attrs sx css-vars-map at]]
   ;;  [kushi.css.build.design-tokens
   ;;   :rename {design-tokens-by-component-usage dtoks-by-usage}]
-   [kushi.ui.lightswitch :refer [light-dark-mode-switch]]
+   [kushi.ui.lightswitch :refer [lightswitch]]
    [kushi.showcase.shared :refer [section-label pprint-str]]
    [kushi.showcase.modal :refer [example-modal-trigger example-modal]]
    [kushi.ui.tooltip :refer [tooltip-attrs]]
@@ -24,6 +24,9 @@
    [kushi.ui.label :refer [label]]
    [kushi.ui.defs :as defs]
    [kushi.ui.variants :as variants]
+   [kushi.ui.flex :refer [flex-row
+                          flex-col
+                          flex-row-space-between]]
    [kushi.util]
    [kushi.css.media]
    [kushi.util :as util]
@@ -108,12 +111,12 @@
 
 
 (defcss "@layer kushi-playground-styles .kpg-variant-grid-1d"
-  :.flex-row-start
+  ;; :.display-flex-row
   :gap--0.5rem)
 
 
 (defcss "@layer kushi-playground-styles .kpg-variant-grid-2d"
-  :.flex-col-start
+  ;; :.display-flex-col
   :ai--fs
   :gap--0.5rem)
 
@@ -313,7 +316,7 @@
                                   :ws--n
                                   :.foreground-color-secondary
                                   :text-shadow--none
-                                  :fs--$xsmall
+                                  :fs--$size-xsmall
                                   :ff--$sans-serif-font-stack)
                         variant-label]
                        (into [uic-fn
@@ -341,7 +344,7 @@
                          :ws--n
                          :.foreground-color-secondary
                          :text-shadow--none
-                         :fs--$xsmall
+                         :fs--$size-xsmall
                          :ff--$sans-serif-font-stack)
                variant-label]
               (:code/evaled sample))))
@@ -351,23 +354,22 @@
 
 (defn- d1-grid-no-labels
   [opt samples]
-  (into [:div (merge-attrs 
-               (sx :.kpg-variant-grid-1d)
-               (or (-> opt :row-attrs)
-                   (-> opt :demo :row-attrs))
-               {:style (or (-> opt :row-style)
-                           (-> opt :demo :row-style))})]
+  (into [flex-row (merge-attrs 
+                   (sx :.kpg-variant-grid-1d)
+                   (or (-> opt :row-attrs)
+                       (-> opt :demo :row-attrs))
+                   {:style (or (-> opt :row-style)
+                               (-> opt :demo :row-style))})]
         (map :code/evaled samples)))
 
 
 (defn- discrete-example-grid-wrapper [opt modal-opts hic]
- (!? (keyed [opt modal-opts hic]))
-  [:div (sx ".kpg-example-grid-wrapper" :.flex-col-start :gap--1rem)
-   [:div (sx :.flex-row-start
-             :gap--0.5em
-             :pbe--0.5em
-             :bbe--1px:solid:$neutral-200
-             :dark:bbe--1px:solid:$neutral-800)
+  (!? (keyed [opt modal-opts hic]))
+  [flex-col (sx ".kpg-example-grid-wrapper" :gap--1rem)
+   [flex-row (sx :gap--0.5em
+                 :pbe--0.5em
+                 :bbe--1px:solid:$neutral-200
+                 :dark:bbe--1px:solid:$neutral-800)
     [section-label (or (-> opt :label)
                        (-> opt :demo :label))]
     [example-modal-trigger (:modal-id modal-opts)]]
@@ -411,10 +413,10 @@
       [discrete-example-grid-wrapper 
        opt
        modal-opts
-       (into [:div (merge-attrs 
-                    (sx :.kpg-variant-grid-1d)
-                    {:style (or (-> opt :row-style)
-                                (-> opt :demo :row-style))})]
+       (into [flex-row (merge-attrs 
+                        (sx :.kpg-variant-grid-1d)
+                        {:style (or (-> opt :row-style)
+                                    (-> opt :demo :row-style))})]
              hic)])))
 
 
@@ -535,15 +537,15 @@
 
 (defn d2-grid [v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style row-attrs]
   #_(? [v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale])
-  (into [:div (sx :.kpg-variant-grid-2d)]
+  (into [flex-col (sx :.kpg-variant-grid-2d)]
         (for [a    (if (vector? variant-scale)
                      variant-scale
                      (resolve-variants (or variant-scale v-2d) vks)) 
               :let [variant-label (str "\"" a "\"")]] 
-          (into [:div (merge-attrs {:style (merge (css-vars-map variant-label)
-                                                  row-style)
-                                    :class (css :.kpg-variant-grid-1d)}
-                                   row-attrs)]
+          (into [flex-row (merge-attrs {:style (merge (css-vars-map variant-label)
+                                                      row-style)
+                                        :class (css :.kpg-variant-grid-1d)}
+                                       row-attrs)]
                 (for [b (resolve-variants v-1d vks)
                       :let [b-prop (if (re-find #"/" (str v-1d))
                                      (-> v-1d
@@ -635,13 +637,12 @@
             (merge (syms->publics uic opt nil attrs)
                    (syms->publics uic opt nil attrs-display))]
 
-    [:div (sx ".kpg-variant-grid-wrapper" :.flex-col-start :gap--1rem)
-     [:div (sx :.flex-row-start
-               :gap--0.5em
-               :pbe--0.5em
-               :bbe--1px:solid:$neutral-200
-               :dark:bbe--1px:solid:$neutral-800
-               )
+    [flex-col (sx ".kpg-variant-grid-wrapper" :gap--1rem)
+     [flex-row (sx :gap--0.5em
+                   :pbe--0.5em
+                   :bbe--1px:solid:$neutral-200
+                   :dark:bbe--1px:solid:$neutral-800
+                   )
       [section-label (or label (some-> opt :opt-sym name string/capitalize (str " variants")))]
       (when modal-opts 
         (let [id (:modal-id modal-opts)]
@@ -652,7 +653,7 @@
      ;; Note if you want before labels, you'll need to use a grid layout
      (cond
        v-3d
-       (into [:div (sx :.flex-col-start :gap--2em)]
+       (into [flex-col (sx :gap--2em)]
              (for [kw (resolve-variants v-3d vks)
                    :let [variant-attrs (assoc variant-attrs (:opt-key opt) kw)]]
                [d2-grid v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style row-attrs]))
@@ -663,12 +664,13 @@
        :else
        (if-not variant-labels?
          ;; d1 with no labels
-         (into [:div (merge-attrs (sx :.flex-row-space-between 
-                                      :ai--c
-                                      :w--100%
-                                      :max-width--605px)
-                                  {:style row-style}
-                                  row-attrs)]
+         (into [flex-row-space-between 
+                (merge-attrs 
+                 (sx :ai--c
+                     :w--100%
+                     :max-width--605px)
+                 {:style row-style}
+                 row-attrs)]
                (let [coll (if (vector? variant-scale)
                             variant-scale
                             (resolve-variants (or variant-scale v-1d) vks))]
@@ -725,14 +727,14 @@
 
 
 (defn showcase [m]
-  (into [:div (sx ".kpg-component-demos-wrapper"
-                  :.flex-col-start
-                  :p--4rem 
-                  :gap--5rem)
-         [light-dark-mode-switch 
-          (sx :.fixed-block-start-inside 
-              :.light
-              :.transition)]]
+  (into [flex-col
+         (sx ".kpg-component-demos-wrapper"
+             :p--4rem 
+             :gap--5rem)
+         [lightswitch 
+          {:surface :transparent
+           :size    :xxxlarge
+           :class   :display-fixed-block-start-inside}]]
           
 
          (map-indexed

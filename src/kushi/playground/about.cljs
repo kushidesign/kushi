@@ -144,7 +144,7 @@
          (sx :>p:lh--1.7)
          [:h2 
           (sx
-           :fs--$large
+           :fs--$size-large
            :fw--$semi-bold
            [:bbs "1px solid var(--gray-300)"]
            [:dark:bbs "1px solid var(--gray-700)"]
@@ -155,14 +155,14 @@
                 start
                 end]
                (case label
-                 "Size"     ["sizing" "xxxsmall" "xxxxlarge"]
+                 "Size"     ["size" "xxxsmall" "xxxxlarge"]
                  "Weight"   ["weight" "thin" "heavy"]
                  "Tracking" ["tracking" "xxxtight" "xxxxloose"])]
            [prose
             (sx :>code:mi--0.25em :>code:ws--n)
             (str "Kushi offers a typographic "
                  kind-of-scale
-                 " scale with t-shirt sizing from")
+                 " scale with t-shirt size from")
             [:code start]
             "up to"
             [:code end]
@@ -185,7 +185,7 @@
                               :tooltip-class (css :.kushi-playground-typescale-example-text-tooltip
                                                    :.code
                                                    :fw--$wee-bold
-                                                   :fs--$small)}))
+                                                   :fs--$size-small)}))
              "The quick brown fox."]]])))
 
 (defn- formatted-code [s]
@@ -215,7 +215,7 @@
 
 (def typography-tokens-snippet
   '[:span
-    (sx :fs--$xxlarge
+    (sx :fs--$size-xxlarge
         :fw--$bold
         :letter-spacing--$xloose)
     "My text "])
@@ -235,7 +235,7 @@
                 :>p:mb--2em
                 :>p:lh--1.7)
 
-  ;;  [:p "Kushi includes a foundation of global tokens and utility class scales for type size, weight, letter-spacing, sizing, and capitalization."]
+  ;;  [:p "Kushi includes a foundation of global tokens and utility class scales for type size, weight, letter-spacing, size, and capitalization."]
 
   ;;  [:div (sx :mbe--0.8em) "Utility classes can be used like this:"]
   ;;  [typography-snippet typography-utility-classes-snippet]

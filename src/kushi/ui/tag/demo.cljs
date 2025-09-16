@@ -19,7 +19,7 @@
                :x-variants     [:surface/tag],
                :snippets-label "Colorways",
                :attrs/snippet  {:surface :solid},
-               ;; :attrs/display  {:sizing :small},
+               ;; :attrs/display  {:size :small},
                :label          "Colorways ... surfaces × shapes",
                :rows?          true})}
 
@@ -48,12 +48,12 @@
                :args    ["New"],
                :variant :packing})}
 
-   {:label   "Sizing"
+   {:label   "size"
     ;;  :label/modal "Colorways ..."
     :desc    "Sizes from xxxsmall to xxxlarge"
     ;; :row-style {:border "1px solid red"}
     :samples (samples-with-variant
-              {:variant :sizing
+              {:variant :size
               ;; :variant-labels? false
                :attrs   {:surface      :solid
                          :colorway     :accent}
@@ -250,7 +250,7 @@
 ;;                            :args  ["Done"]})})
      
 ;;      {:desc            "Colorway variant"
-;;       :sx-attrs        (sx-call (sx :fs--$small))
+;;       :sx-attrs        (sx-call (sx :fs--$size-small))
 ;;       :container-attrs playground-tag-rows-container4
 ;;       :variants+       [:minimal]
 ;;       :examples        (for [colorway component-examples/colors]
@@ -259,7 +259,7 @@
 ;;                           :attrs {:colorway colorway}})}
 
 ;;      #_{:desc            "Shape"
-;;       :sx-attrs        (sx-call (sx :fs--$small))
+;;       :sx-attrs        (sx-call (sx :fs--$size-small))
 ;;       :container-attrs playground-tag-rows-container4
 ;;       :variants+       [:minimal]
 ;;       :examples        (for [s [:rounded :pill :sharp]]
@@ -269,7 +269,7 @@
 
 ;;      #_{:desc            "With icons"
 ;;       :reqs            '[[kushi.ui.icon :refer [icon]]]
-;;       :sx-attrs        (sx-call (sx :fs--$small))
+;;       :sx-attrs        (sx-call (sx :fs--$size-small))
 ;;       :container-attrs playground-tag-rows-container4
 ;;       :variants+       [:minimal]
 ;;       :examples        [{:label "Icon tag"
@@ -282,7 +282,7 @@
 ;;                          :args  [[icon :pets] "Pets"]}]}
 
 ;;      #_{:desc            "Weight"
-;;       :sx-attrs        (sx-call (sx :fs--$small))
+;;       :sx-attrs        (sx-call (sx :fs--$size-small))
 ;;       :container-attrs playground-tag-rows-container4
 ;;       :variants+       [:minimal]
 ;;       :examples        (for [s (rest component-examples/type-weights)]
@@ -292,7 +292,7 @@
 
 ;;      #_{:desc            "Max width"
 ;;       :reqs            '[[kushi.ui.icon :refer [icon]]]
-;;       :sx-attrs        (sx-call (sx :fs--$small))
+;;       :sx-attrs        (sx-call (sx :fs--$size-small))
 ;;       :container-attrs (sx :gtc--max-content)
 ;;       :variants+       [:minimal]
 ;;       :examples        [{:label "Max width"

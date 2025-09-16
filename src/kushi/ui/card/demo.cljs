@@ -96,11 +96,11 @@
                    :dark:_.kushi-card:b--1px:solid:$neutral-800)
     :examples  [{:label "Alien"
                  :code  (sx-call [card
-                                  (sx :fs--$xxsmall
-                                      :xsm:fs--$small
-                                      :sm:fs--$medium
-                                      :md:fs--$large
-                                      :lg:fs--$xlarge
+                                  (sx :fs--$size-xxsmall
+                                      :xsm:fs--$size-small
+                                      :sm:fs--$size-medium
+                                      :md:fs--$size-large
+                                      :lg:fs--$size-xlarge
                                       :.extra-bold
                                       :.flex-col-c
                                       :.rounded-small

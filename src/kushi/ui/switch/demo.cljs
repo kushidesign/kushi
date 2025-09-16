@@ -11,12 +11,12 @@
    #_{:samples (samples [[:div (sx :.flex-row-start :gap--1rem)
                         [switch {:at              (at)
                                  :on?             true
-                                 :sizing          :xxxlarge
+                                 :size          :xxxlarge
                                  :shape         :rounded
                                  :track-inset-gap :1px}]
                         [switch {:at              (at)
                                  :on?             true
-                                 :sizing          :xxxlarge
+                                 :size          :xxxlarge
                                  :shape         :rounded-absolute
                                  :track-inset-gap :1px}]]])}
    {:samples (samples-with-variant
@@ -25,7 +25,7 @@
                :label         "Contour",
                :attrs         {:at              (at)
                                :on?             true
-                               :sizing          :xxxlarge
+                               :size          :xxxlarge
                                :track-inset-gap :1px}})}
    ]
   [
@@ -33,9 +33,9 @@
     :desc    "Basic"
     :samples (samples [[:div (sx :.flex-row-start :gap--1rem)
                         [switch {:colorway :neutral
-                                 :sizing   :xxxlarge}]
+                                 :size   :xxxlarge}]
                         [switch {:colorway :neutral
-                                 :sizing   :xxxlarge
+                                 :size   :xxxlarge
                                  :on?      true}]]])}
 
 
@@ -46,13 +46,13 @@
                :label           "Colorway",
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
-               :attrs           {:sizing :xxxlarge
+               :attrs           {:size :xxxlarge
                                  :on?    true}})}
 
    
    {:samples (samples-with-variant
-              {:variant :sizing,
-               :label   "Sizing",
+              {:variant :size,
+               :label   "size",
                :attrs   {:on? true}})}
 
    {:samples (samples-with-variant
@@ -61,13 +61,13 @@
                :label         "Contour",
                :attrs         {:at              (at)
                                :on?             true
-                               :sizing          :xxxlarge}})}
+                               :size          :xxxlarge}})}
 
    ;; why rows not working?
    {:samples (samples-with-variant
-              {:variant         :sizing
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :sizing/large-xxxlarge,
+               :variant-scale   :size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Convex thumb",
@@ -75,9 +75,9 @@
                                  :thumb-props {:surface :convex-light-mode}}})}
 
    {:samples (samples-with-variant
-              {:variant         :sizing
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :sizing/large-xxxlarge,
+               :variant-scale   :size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Oversized thumb",
@@ -86,9 +86,9 @@
                                  :thumb-props        {:stroke  :medium}}})}
 
    {:samples (samples-with-variant
-              {:variant         :sizing
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :sizing/large-xxxlarge,
+               :variant-scale   :size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Labeled thumb",
@@ -96,9 +96,9 @@
                                  :thumb-label-off "OFF"}})}
    
    {:samples (samples-with-variant
-              {:variant         :sizing
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :sizing/large-xxxlarge,
+               :variant-scale   :size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Labeled thumb, on",
@@ -107,9 +107,9 @@
                                  :thumb-label-off "OFF"}})}
    
    {:samples (samples-with-variant
-              {:variant         :sizing
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :sizing/large-xxxlarge,
+               :variant-scale   :size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Icon thumb",
@@ -117,9 +117,9 @@
                                  :thumb-icon-off :visibility-off}})}
    
    {:samples (samples-with-variant
-              {:variant         :sizing
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :sizing/large-xxxlarge,
+               :variant-scale   :size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Icon thumb, on",
@@ -131,10 +131,10 @@
     :desc    "Disabled"
     :samples (samples [[:div (sx :.flex-row-start :gap--1rem)
                         [switch {:colorway :neutral
-                                 :sizing   :xxxlarge
+                                 :size   :xxxlarge
                                  :disabled true}]
                         [switch {:colorway :neutral
-                                 :sizing   :xxxlarge
+                                 :size   :xxxlarge
                                  :on?      true
                                  :disabled true}]]])}
    

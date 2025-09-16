@@ -34,7 +34,7 @@
                             [:div [:div (sx :.absolute-fill
                                             :.flex-col-c :ai--c)
                                    (inc x)]])])]
-       {:desc            "With sizing options"
+       {:desc            "With size options"
         :row-attrs       row-attrs
         :container-attrs container-attrs
         :snippets        [(:quoted code)]

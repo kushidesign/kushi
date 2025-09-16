@@ -9,7 +9,7 @@
 
 (defui thumb
   {:doc          "Thumb docstring"
-   :props/shared [:sizing
+   :props/shared [:size
                   :colorway
                   :packing
                   :loading
@@ -42,8 +42,8 @@
 
              :cursor--pointer
              ;; TODO - is this local/private css var necessary?
-             [:--_padding-block :$thumb-padding-block]
-             [:--_padding-inline :$thumb-padding-inline]
+             [:--padding-block :$thumb-padding-block]
+             [:--padding-inline :$thumb-padding-inline]
              :pi--$_padding-inline
              :pb--$_padding-block)
             {:aria-busy  loading

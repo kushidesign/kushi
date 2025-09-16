@@ -97,7 +97,7 @@
                    :pb--0rem:2rem
                    :pi--0em
                    :column-gap--normal
-                   :fs--$small)]
+                   :fs--$size-small)]
           (for [{:keys [label]} playground-components]
             [:<>
              [style-tag-first-intersecting label]
@@ -124,7 +124,7 @@
          (sx 
           :.flex-col-fs
           :.neutralize
-          :fs--$small
+          :fs--$size-small
           [:--translate-y :20px]
           :lg:d--none
           :position--sticky
@@ -179,8 +179,8 @@
                  :>ul:h                  "calc((100vh - (var(--navbar-height) * 2)) * 1)"
                  :h                      :fit-content
                  :o                      1}])
-     [icon (sx :.sidenav-menu-icon :.extra-light :fs--$large) :menu]
-     [icon (sx :.sidenav-close-icon :.extra-light :fs--$large) :close]
+     [icon (sx :.sidenav-menu-icon :.extra-light :fs--$size-large) :menu]
+     [icon (sx :.sidenav-close-icon :.extra-light :fs--$size-large) :close]
      "All Components"]]
    
    
@@ -218,7 +218,7 @@
                    :flex-wrap--wrap-reverse
                    :column-gap--0.75rem
                    :align-content--inherit
-                   :fs--$small
+                   :fs--$size-small
                    :min-width--50vw
                    :xsm:min-width--unset)]
           (for [{:keys [label]} playground-components]

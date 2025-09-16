@@ -17,7 +17,7 @@
 (defui button
  {:doc          "Buttons are fundamental components that allow users to process actions or navigate an experience."
   :summary      "Buttons provide cues for actions and events."
-  :props/shared [:sizing
+  :props/shared [:size
                  :end-enhancer
                  :start-enhancer
                  :colorway
@@ -62,7 +62,7 @@
                             :cursor         :pointer
                             :--stroke-width :$button-stroke-width})}
 
-         (? :pp (some-> stroke-width
+         (!? :pp (some-> stroke-width
                         (decoration/stroke-width-cssvar "button")))
 
          #_(? :pp (when-not classic-variant? 

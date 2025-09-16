@@ -12,7 +12,7 @@
                        :border-color      :$neutral-150
                        :dark:border-color :$neutral-850
                        :width             :fit-content
-                       :border-radius     :$rounded})]
+                       :border-radius     :$shape-rounded})]
     [{:label     "Basic"
       :desc      "Basic"
       :row-attrs row-attrs

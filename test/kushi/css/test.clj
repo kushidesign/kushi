@@ -270,9 +270,9 @@
 ;;        ))
 
 ;; (? (css-rule* ".wtf"
-;;               ;; [:fs--$large||$small||$xsmall||$no]
-;;               ;; [[:fs "$large||$small||$xsmall||$no"]]
-;;               ;; [[:ff "$large||regular||$gold|$bang"]]
+;;               ;; [:fs--$size-large||$size-small||$size-xsmall||$no]
+;;               ;; [[:fs "$size-large||$size-small||$size-xsmall||$no"]]
+;;               ;; [[:ff "$size-large||regular||$gold|$bang"]]
 ;;               [[:box-shadow--0:0:0:10px:red|0:0:0:10px:black]]
 ;;               nil nil))
 

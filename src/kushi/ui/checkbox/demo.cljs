@@ -11,7 +11,7 @@
 ;; TODO Make :row-attrs work
 
   (def demos
-    (let [bounded (sx {:border-radius :$rounded
+    (let [bounded (sx {:border-radius :$shape-rounded
                        :w             :fit-content
                        :bgc           :transparent
                        :p             :1em
@@ -20,14 +20,14 @@
                        :dark:b        :1px:solid:$neutral-850})]
       [{:label   "Different sizes",
         :samples (samples-with-variant
-                  {:variant       :sizing,
-                   :variant-scale :sizing/xsmall-xxxlarge,
+                  {:variant       :size,
+                   :variant-scale :size/xsmall-xxxlarge,
                    :attrs         {:end-enhancer   :east
                                    :defaultChecked true} })}
 
        {:label   "With label",
         :samples (samples
-                  [#_[:div (sx {:border-radius :$rounded
+                  [#_[:div (sx {:border-radius :$shape-rounded
                                 :w             :fit-content
                                 :bgc           :transparent
                                 :p             :1em
@@ -39,7 +39,7 @@
 
        {:label   "With label and traling icon",
         :samples (samples
-                  [#_[:div (sx {:border-radius :$rounded
+                  [#_[:div (sx {:border-radius :$shape-rounded
                                 :w             :fit-content
                                 :bgc           :transparent
                                 :p             :1em

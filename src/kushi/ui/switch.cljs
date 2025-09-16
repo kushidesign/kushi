@@ -44,7 +44,7 @@
           
           
    :props/shared [:colorway
-                  :sizing
+                  :size
                   :weight
                   [:shape {:default :pill}]]
    :props {:on?                {:schema   :boolean
@@ -180,8 +180,8 @@
                                                   :_.kushi-switch-thumb-content:c    :$foreground-color-secondary
                                                   :bgc                                    :$switch-off-background-color
                                                   :hover:bgc                              :$switch-off-background-color-hover
-                                                  "[data-ks-inert]:bgc"                     :$switch-off-background-color
-                                                  "[data-ks-inert]:hover:bgc"               :$switch-off-background-color-hover
+                                                  ".inert:bgc"                     :$switch-off-background-color
+                                                  ".inert:hover:bgc"               :$switch-off-background-color-hover
                                                   :dark:bgc                               :$background-color-neutral-soft-3-dark-mode
                                                   :dark:hover:bgc                         :$background-color-neutral-soft-4-dark-mode
                                                   }
@@ -195,7 +195,7 @@
                                                 :.kushi-switch-thumb-label                   {:fs :$switch-thumb-label-font-size||0.3em
                                                                                               :fw :$switch-thumb-label-font-weight||$semi-bold}
                                                 :.kushi-switch-thumb-icon                    {:fs :$switch-thumb-icon-font-size||0.55em
-                                                                                              :fw :$switch-thumb-icon-font-weight||$medium}}})
+                                                                                              :fw :$switch-thumb-icon-font-weight||$size-medium}}})
 
       {:disabled           disabled?
        :role               :switch

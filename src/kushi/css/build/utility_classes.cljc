@@ -2,7 +2,7 @@
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.variants :as variants]
-   [kushi.util :as util :refer [keyed]]
+   [kushi.util :as util :refer [keyed maybe]]
    [clojure.string :as string]))
 
 ;; From kushi.colors/colornames ------------------------------------------------
@@ -81,19 +81,24 @@
 (defn utility-class-scale
   {:examples [{:desc   "Generating an ordered scale of font-size utility classes"
                :call   '(utility-class-scale [:xxxsmall :xxsmall :small]
-                                                   :font-size)
+                                             :font-size
+                                             "size")
                :result [:xxxsmall
-                        {:font-size :$xxxsmall}
+                        {:font-size :$size-xxxsmall}
                         :xxsmall
-                        {:font-size :$xxsmall}
+                        {:font-size :$size-xxsmall}
                         :xsmall
-                        {:font-size :$xsmall}]}]}
-  [coll css-prop]
-  (mapcatv 
-   (fn [x]
-     [(keyword x)
-      {css-prop (keyword (str "$" (util/as-str x)))}])
-   coll))
+                        {:font-size :$size-xsmall}]}]}
+  ([coll css-prop]
+   (utility-class-scale coll css-prop nil))
+  ([coll css-prop token-prefix]
+   (mapcatv 
+    (fn [x]
+      [(keyword x)
+       {css-prop (keyword (str "$"
+                               (some-> token-prefix util/as-str (str "-"))
+                               (util/as-str x)))}])
+    coll)))
 
 (defn class-sels
   "(class-sels [\"foo\"
@@ -147,9 +152,9 @@
                        {:color :blue}]
                       \"debug\")
    =>
-   [\"[data-ks-debug=\"foo\"]\"
+   [\".debug-foo\"
     {:color :red}
-    \"[data-ks-debug=\"bar\"]\"
+    \".debug-bar\"
     {:color :blue}]"
   [coll s]
   (reduce (fn [acc [k v]] 
@@ -181,6 +186,21 @@
 
 (def type-weights (keys type-weights-by-name))
 
+;;
+
+;; DISPLAY
+;; -----------------------------------------------------------------------------
+(def display-classes
+  [:display-block        {:display :block}
+   :display-inline       {:display :inline}
+   :display-inline-block {:display :inline-block}
+   :display-flex         {:display :flex}
+   :display-inline-flex  {:display :inline-flex}
+   :display-grid         {:display :grid}
+   :display-inline-grid  {:display :inline-grid}
+   :display-flow-root    {:display :flow-root}
+   :display-contents     {:display :contents}])
+
 
 ;; Combinatorial flexbox utilities
 ;; -----------------------------------------------------------------------------
@@ -206,8 +226,10 @@
 
 (def flex-justify-content-options 
   ["flex-start"
+   "start"
    "center"
    "flex-end"
+   "end"
    "space-between"
    "space-around"
    "space-evenly"
@@ -224,7 +246,8 @@
   (mapcatv (fn [fd]
              (mapcat 
               (fn [jc]
-                [(->> (string/replace jc #"^flex-" "")
+                [(->> #_(string/replace jc #"^flex-" "")
+                      jc
                       (conj ["flex" fd])
                       (string/join "-")
                       #_as-classname)
@@ -232,15 +255,6 @@
                         {:justify-content (keyword jc)})])
               flex-justify-content-options))
            ["row" "col"]))
-
-
-
-;; TODO - after string-based selector is working, use something like this instead
-;;  "[class^='debug-']" {:outline-color  :silver
-;;                       :outline-style  :solid
-;;                       :outline-width  :1px
-;;                       :outline-offset :-1px}
-;;  :debug-red {:outline-color :$red-500}
 
 
 (def debug-outline-classes
@@ -254,8 +268,6 @@
              (keyword (str "$" c "-500||" c)))])
    color-names))
 
-(!? (class-sels debug-outline-classes "debug"))
-(!? (kws->data-ks-sels (take 2 debug-outline-classes) "debug"))
 
 (def foreground-color-classes
   (mapcatv 
@@ -534,12 +546,6 @@
    :grow {:flex-grow 1}
    :no-grow {:flex-grow 0}])
 
-(def flex-shrink-grow-data-ks
-  ["[data-ks-flex-grow=\"true\"]" {:flex-grow 1}
-   "[data-ks-flex-grow=\"false\"]" {:flex-grow 0}
-   "[data-ks-flex-shrink=\"true\"]" {:flex-shrink 1}
-   "[data-ks-flex-shrink=\"false\"]" {:flex-shrink 0}])
-
 (def icon-synced-weights
   "Creates an ordered vector of pairs, thin ~ heavy (100 ~ 900):
    [:thin 
@@ -597,30 +603,6 @@
          transition]
         transition-duration-classes))
 
-
-;; ;; TRACKING
-;; (defcss ".tracking-xxxtight" {"letter-spacing" "var(--xxxtight)"})
-;; (defcss ".tracking-xxtight" {"letter-spacing" "var(--xxtight)"})
-;; (defcss ".tracking-xtight" {"letter-spacing" "var(--xtight)"})
-;; (defcss ".tracking-tight" {"letter-spacing" "var(--tight)"})
-;; (defcss ".tracking-default" {"letter-spacing" "0"})
-;; (defcss ".tracking-loose" {"letter-spacing" "var(--loose)"})
-;; (defcss ".tracking-xloose" {"letter-spacing" "var(--xloose)"})
-;; (defcss ".tracking-xxloose" {"letter-spacing" "var(--xxloose)"})
-;; (defcss ".tracking-xxxloose" {"letter-spacing" "var(--xxxloose)"})
-
-;; ;; TRANSITION SPEED
-;; (defcss ".transition-instant" {"transition-duration" "var(--instant)"})
-;; (defcss ".transition-xxxfast" {"transition-duration" "var(--xxxfast)"})
-;; (defcss ".transition-xxfast" {"transition-duration" "var(--xxfast)"})
-;; (defcss ".transition-xfast" {"transition-duration" "var(--xfast)"})
-;; (defcss ".transition-fast" {"transition-duration" "var(--fast)"})
-;; (defcss ".transition-moderate" {"transition-duration" "var(--moderate)"})
-;; (defcss ".transition-slow" {"transition-duration" "var(--slow)"})
-;; (defcss ".transition-xslow" {"transition-duration" "var(--xslow)"})
-;; (defcss ".transition-xxslow" {"transition-duration" "var(--xxslow)"})
-;; (defcss ".transition-xxxslow" {"transition-duration" "var(--xxxslow)"})
-
 (def offscreen-classes 
   [:offscreen {:position :absolute
                :left     :-10000px
@@ -635,9 +617,6 @@
    ;; label component that has this built-in?
   [:enhanceable-with-icon {:gap :$icon-enhanceable-gap}])
 
-
-(def icon-enhanceable-classes-data-ks
-  ["[data-ks-enhanceable-with-icon?=\"true\"]" {:flex-grow 1}])
 
 (def relief-effects-classes
    ;; Surfaces, buttons, containers 3D
@@ -661,7 +640,7 @@
   :math-auto      {:text-transform :math-auto}])
 
 (def text-size-classes
-  (utility-class-scale variants/xxxsmall-xxxlarge  :font-size))
+  (utility-class-scale variants/xxxsmall-xxxlarge :font-size :size))
 
 (def text-tracking-classes
   (utility-class-scale
@@ -670,8 +649,10 @@
                            :cast-fn         keyword})
    :letter-spacing))
 
+
+
 (def shape-classes-rounded
-  (utility-class-scale variants/shapes-rounded+rounded-absolute :border-radius))
+  (utility-class-scale variants/shapes-rounded+rounded-absolute :border-radius "shape"))
 
 (def shape-classes-non-rounded
   [:pill {:border-radius :9999px}
@@ -838,7 +819,7 @@
             :bottom "0%"})))
 
 (def text-weight-synced-classes 
-  "[\"[data-ks-weight=\"light\"]\"
+  "[\".weight-light\"
     {:font-weight                :$light
      \" >.ks-radio-i \"...    :$input-border-weight-light
      \" >.ks-checkbo \"...    :$input-border-weight-light
@@ -862,7 +843,11 @@
    global-classes
    (class-sels base-classes)
 
-   ;; flex-utility classes e.g. :.flex-row-fe
+
+   ;; flex-utility classes e.g. :.display-inline-flex
+   (class-sels display-classes "display")
+
+   ;; flex-utility classes e.g. :.display-flex-row-flex-end
    (class-sels base-flex-classes "display")
    (class-sels combo-flex-utility-classes "display")
 
@@ -921,6 +906,10 @@
 
    ;; text tracking
    (class-sels text-tracking-classes "tracking")
+
+   ;; surface shapes
+   (class-sels shape-classes-non-rounded "shape")
+   (class-sels shape-classes-rounded "shape")
    
 
   ;;  (-> text-transform-classes class-sels (wdks "text-transform"))
@@ -932,7 +921,7 @@
 
    ])
 
-   ;; A scale of selectors like "[data-ks-weight=\"thin\"]"
+   ;; A scale of selectors like ".weight-thin"
    ;;
    ;; TODO - maybe you don't need this if you can figure out how to add a
    ;; setting to the css compiler to do:

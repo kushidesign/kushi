@@ -22,7 +22,7 @@
     :form-no-validate :form-target :frame-border :headers :height :hidden :high :href :href-lang :html-for :http-equiv :icon :id :input-mode :integrity
     :is :key-params :key-type :kind :label :lang :list :loop :low :manifest
     :margin-height :margin-width :max :max-length :media :media-group :method :min :min-length :multiple :muted :name :no-validate :nonce :open :optimum :pattern :placeholder
-    :poster :preload :profile :radio-group :read-only :rel :required :reversed :role :rows :row-span :sandbox :scope :scoped :scrolling :seamless :selected  :size :sizes
+    :poster :preload :profile :radio-group :read-only :rel :required :reversed :role :rows :row-span :sandbox :scope :scoped :scrolling :seamless :selected :sizes
     :span :spell-check :src :src-doc :src-lang :src-set :start :step :style :summary :tab-index :target :title :type :use-map :value :width :wmode :wrap
 
     ; React specific 
@@ -30,6 +30,7 @@
 
     ; Reserved for Kushi shared UI props
     ; Keep commented out
+    #_:size
     #_:shape
     })
 
@@ -556,7 +557,7 @@
             ;;                         ~defaults-by-prop))
              
              data-ks-attrs#        (!? 'data-ks-attrs#
-                                       (merge (? "~data-ks-attrs-map-with-defaults"
+                                       (merge (!? "~data-ks-attrs-map-with-defaults"
                                                  ~data-ks-attrs-map-with-defaults)
                                               props->data-ks-attrs#))
 

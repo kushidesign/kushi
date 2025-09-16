@@ -69,8 +69,8 @@
    :border-style               :$code-border-style||solid
    :beer                       0
    :besr                       0
-   :bser                       :$rounded-medium-absolute,
-   :bssr                       :$rounded-medium-absolute,
+   :bser                       :$shape-rounded-medium-absolute,
+   :bssr                       :$shape-rounded-medium-absolute,
    :bbew                       0
    ">*:nth-child(2):line-height" "revert"
    :p                          :1rem})
@@ -147,15 +147,15 @@
           :xsm:pie--2.25em
           :w--100%
           :lh--1.2
-          :fs--$xsmall-b
+          :fs--$size-xsmall-b
           :p--1rem
           {">*:nth-child(2):line-height" "revert"})
      (if bottom-half?
        (sx :bser--0
            :bssr--0
-           :beer--$rounded-medium-absolute
-           :besr--$rounded-medium-absolute)
-       (sx :br--$rounded-medium-absolute)))
+           :beer--$shape-rounded-medium-absolute
+           :besr--$shape-rounded-medium-absolute)
+       (sx :br--$shape-rounded-medium-absolute)))
     (when-let [attrs (some->> copyable
                               (hash-map :text-to-copy)
                               (merge-attrs 

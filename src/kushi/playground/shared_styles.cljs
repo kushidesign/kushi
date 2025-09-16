@@ -60,9 +60,9 @@
    :c                         :$accent-750
    "has-ancestor(.dark):c"    :$accent-100
    :mbs                       :7px
-   :fs                        :$kushi-playground-codebox-snippet_font-size||$xsmall
-   :_.code:fs                 :$kushi-playground-codebox-snippet_font-size||$xsmall
-   :_code:fs                  :$kushi-playground-codebox-snippet_font-size||$xsmall
+   :fs                        :$kushi-playground-codebox-snippet_font-size||$size-xsmall
+   :_.code:fs                 :$kushi-playground-codebox-snippet_font-size||$size-xsmall
+   :_code:fs                  :$kushi-playground-codebox-snippet_font-size||$size-xsmall
    :_.code:bgc               :transparent
    :_code:bgc                :transparent
    :fw                        400
@@ -97,7 +97,7 @@
    :xl:w      :$components-menu-width})
 
 (defcss "@layer kushi-playground-shared .kushi-playground-meta-desc-label"
-  {:fs         :$kushi-playground-meta-desc-label_font-size||$xsmall
+  {:fs         :$kushi-playground-meta-desc-label_font-size||$size-xsmall
    :fw         :$kushi-playground-meta-desc-label_font-weight||$wee-bold
    :font-style :$kushi-playground-meta-desc-label_font-style||italic
    :tt         :$kushi-playground-meta-desc-label_text-transform||uppercase
@@ -243,7 +243,7 @@
 
 ;; New May 2024
 (defcss "@layer kushi-playground-shared .playground-example-row-bounded"
-  [:_.instance-code {:border-radius :$rounded
+  [:_.instance-code {:border-radius :$shape-rounded
                      :w             :fit-content
                      :bgc           :transparent
                      :p             :1em
@@ -253,7 +253,7 @@
                           :b   :1px:solid:$neutral-850}])
 
 (defcss "@layer kushi-playground-shared .playground-example-row-bounded-parent"
-  {:border-radius :$rounded
+  {:border-radius :$shape-rounded
    :w             :fit-content
    :bgc           :transparent
    :p             :1em
@@ -276,7 +276,7 @@
 
 (defcss "@layer kushi-playground-shared .component-section-header-label"
   :fw--$semi-bold
-  :fs--$xlarge
+  :fs--$size-xlarge
   :tt--capitalize
   :lh--0.75em)
 

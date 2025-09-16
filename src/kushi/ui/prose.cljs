@@ -45,7 +45,7 @@
                                         :font-weight :$prose-font-weight
                                         :font-family :$prose-font-family
                                         :color       :$prose-color})
-             :data-ks-sizing     size
+             :data-ks-size     size
              :data-ks-colorway semantic-colorway}
             attrs)]
           children)))

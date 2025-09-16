@@ -30,7 +30,7 @@
         :_.kushi-input-inline:gtc--36%:64%)
     [:h3 (sx :.bold :m--0) "Saved for later"]
     [:p (sx :.my-toast-text
-            :fs--$small
+            :fs--$size-small
             :.foreground-color-secondary!)
      (.format (new js/Intl.DateTimeFormat
                    "en-US"
@@ -41,7 +41,7 @@
                      :.no-shrink
                      :.rounded
                      :fw--$semi-bold
-                     :fs--$xxsmall
+                     :fs--$size-xxsmall
                      :letter-spacing--$loose
                      :zi--1
                      [:opacity  :$popover-close-button-opacity])
@@ -74,7 +74,7 @@
      {:desc      "With notification, and manual dismiss cta"
       :component button
       :reqs      '[[kushi.ui.button :refer [button]]]
-      :row-attrs (sx :_.kushi-button:fs--$small)
+      :row-attrs (sx :_.kushi-button:fs--$size-small)
       :snippets  [['button (:quoted code) "Save for later"]]
       :examples  [{:label    "Basic"
                    :args     ["Save for later"]

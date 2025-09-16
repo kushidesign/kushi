@@ -193,7 +193,7 @@
 
 
 
-(def brown-hue 46.1)
+(def brown-hue 80)
 (def magenta-hue 347.6)
 (def red-hue 27)
 (def orange-hue 62.3)
@@ -201,7 +201,7 @@
 (def yellow-hue 100)
 (def lime-hue 129.5)
 (def green-hue 155.5)
-(def blue-hue 262.7)
+(def blue-hue 267)
 (def purple-hue 304.9)
 (def gray-hue 0)
 
@@ -401,7 +401,7 @@
              [950 0.25 0.13]
              [1000 0.193 0.101]]}
     "blue"
-    {:hue   262.7,
+    {:hue   267,
      :scale [[50 0.979 0.01]
              [100 0.948 0.024]
              [150 0.91 0.04]
@@ -577,7 +577,7 @@
              [950 0.28 0.12]
              [1000 0.225 0.094]]}
     "brown"
-    {:hue   46.1,
+    {:hue   80,
      :scale [[50 0.977 0.005]
              [100 0.945 0.011]
              [150 0.92 0.02]
