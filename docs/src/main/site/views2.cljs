@@ -623,7 +623,8 @@
   #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
                                  kushi.ui.text-field.demo/demos))]
 
-  [showcase (!? (showcase/opts kushi.ui.switch/switch
+  ;; Fix transition
+  #_[showcase (!? (showcase/opts kushi.ui.switch/switch
                                kushi.ui.switch.demo/demos))]
 
   ;; DONE
@@ -631,8 +632,8 @@
                                kushi.ui.icon-button.demo/demos))]
 
   ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.button/button
-                                 kushi.ui.button.demo/demos))]
+  [showcase (!? (showcase/opts kushi.ui.button/button
+                               kushi.ui.button.demo/demos))]
   #_[flex-col
    (sx :gap--1rem :_div:gap--1rem :.position-absolute-centered)
    

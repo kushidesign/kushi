@@ -303,69 +303,153 @@
     
     ;; neutralize chroma shift
     (defcss "[class*=\"surface-\"].colorway-neutral, [class*=\"surface-\"].colorway-gray" 
-      {:--chroma-bgc       :0%
+      {:--chroma-bgc   :0%
        :--chroma-fgc   :0%
-       :--chroma-shift :0%})
+       :--chroma-shift :0%
+       :dark           {:--chroma-bgc   :0%
+                        :--chroma-fgc   :0%
+                        :--chroma-shift :0%}})
+
+    (defcss ".surface-solid, .surface-solid-classic, .surface-soft, .surface-soft-classic, .surface-faint, .surface-convex, .surface-minimal, .surface-transparent"
+      {:--hover-bgc  "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) var(--lightness-shift)) calc(var(--chroma-bgc) var(--chroma-shift-op, +) var(--chroma-shift)) var(--colorway-hue))"
+       :--active-bgc "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) (2 * var(--lightness-shift))) calc(var(--chroma-bgc) var(--chroma-shift-op, +) calc(2 * var(--chroma-shift))) var(--colorway-hue))"
+       :--bgc        "oklch(var(--lightness-bgc) var(--chroma-bgc) var(--colorway-hue))" })
+       
 
     ;; Solids
     (defcss ".surface-solid, .surface-solid-classic"
-      {:--lightness          :55%
-       :--chroma-bgc             :55%
-       ".colorway-brown"      {:--chroma-bgc :20%}
+      {:--lightness-bgc      :54%
+       :--chroma-bgc         :55%
+       :--chroma-shift       :6.25%
+       :--lightness-shift    :6%
        :--classic-trim-color "oklch(62% 42.5% var(--colorway-hue))" 
-       :bgc                  "oklch(var(--lightness) var(--chroma-bgc) var(--colorway-hue))" 
-       :hover:bgc            "oklch(calc(var(--lightness) - 4%) calc(var(--chroma-bgc) - 2.5%) var(--colorway-hue))" 
-       :active:bgc           "oklch(calc(var(--lightness) - 8%) calc(var(--chroma-bgc) - 5%) var(--colorway-hue))" 
-       :color                :white})
+       :bgc                  :$bgc
+       :hover:bgc            :$hover-bgc
+       :active:bgc           :$active-bgc
+       :color                :white
+       ".colorway-brown"       {:--chroma-bgc :20%}
+       :dark                 {:--lightness-bgc      :69%
+                              :--chroma-bgc         :52%
+                              :color                :black
+                              :--chroma-shift-op    "-"
+                              :--lightness-shift-op "+"
+                              :--classic-trim-color "oklch(75% 48.5% var(--colorway-hue))" 
+                              ".colorway-brown"       {:--chroma-bgc :20%} }
+       })
 
     (defcss ".surface-solid-classic.colorway-neutral, .surface-solid-classic.colorway-gray"
       {:--classic-trim-color "oklch(62% 0% var(--colorway-hue))"})
 
     (defcss ".surface-soft, .surface-soft-classic, .surface-faint, .surface-convex, .surface-minimal, .surface-transparent"
-      {:--chroma-shift :6.25% 
-       ".colorway-brown" {:--chroma-shift :2% }
-       :hover:bgc      "oklch(calc(var(--lightness) - 2.5%) calc(var(--chroma-bgc) + var(--chroma-shift)) var(--colorway-hue))" 
-       :active:bgc     "oklch(calc(var(--lightness) - 5%) calc(var(--chroma-bgc) + calc(2 * var(--chroma-shift))) var(--colorway-hue))"}) 
+      {:--chroma-shift    :6.25% 
+       :--lightness-shift :4% 
+       ".colorway-brown"    {:--chroma-shift :2% }
+       :hover:bgc         :$hover-bgc
+       :active:bgc        :$active-bgc
+       :dark              {:--chroma-shift-op    "-"
+                           :--lightness-shift-op "+"
+                           :hover:bgc            :$hover-bgc
+                           :active:bgc           :$active-bgc}}) 
+
 
     ;; Softs
     (defcss ".surface-soft, .surface-soft-classic" 
-      {:--lightness          :94.25%
-       :--chroma-bgc             :15.75%
-       ".colorway-brown"       {:--chroma-bgc :6%}
+      {:--lightness-bgc      :94.25%
+       :--chroma-bgc         :15.75%
+       :--lightness-fgc      :30%
        :--chroma-fgc         :32.5%
        :--classic-trim-color "oklch(91% 10% var(--colorway-hue))" 
-       :color                "oklch(30% var(--chroma-fgc) var(--colorway-hue))" 
-       :bgc                  "oklch(var(--lightness) var(--chroma-bgc) var(--colorway-hue))"})
+       :color                "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))" 
+       :bgc                  :$bgc
+       ".colorway-brown"       {:--chroma-bgc :6%}
+       :dark                 {:--lightness-bgc      :39%
+                              :--chroma-bgc         :35.6%
+                              :--lightness-fgc      :95.7%
+                              :--chroma-fgc         :8.8%
+                              :--classic-trim-color "oklch(36% 30% var(--colorway-hue))" 
+                              ".colorway-brown"       {:--chroma-bgc :16%}
+                              }})
+    ;; Convex, dark
+     (defcss ".surface-convex"
+       {:dark {:--lightness-bgc :39%
+               :--chroma-bgc    :33%
+               :--lightness-fgc :95.7%
+               :--chroma-fgc    :8.8%
+               ".colorway-brown"  {:--chroma-bgc    :17%
+                                   :--lightness-bgc :39%}
+               :color           "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))" 
+               :bgc             :$bgc
+               :hover:bgc       :$hover-bgc
+               :active:bgc      :$active-bgc
+               }})
 
+    ;; Neutral
     (defcss ".surface-soft-classic.colorway-neutral, .surface-soft-classic.colorway-gray"
       {:--classic-trim-color "oklch(91% 0% var(--colorway-hue))"})
 
     ;; Faint
     (defcss ".surface-faint, .surface-convex" 
-      {:--lightness    :98%
-       :--chroma-bgc       :6.25%
-       ".colorway-brown" {:--chroma-bgc    :3%
-                          :--lightness :97%}
-       :--chroma-fgc   :46.25%
-       :color          "oklch(44% var(--chroma-fgc) var(--colorway-hue))" 
-       :bgc            "oklch(var(--lightness) var(--chroma-bgc) var(--colorway-hue))"})
+      {:--lightness-bgc :98%
+       :--lightness-fgc :44%
+       :--chroma-bgc    :6.25%
+       :--chroma-fgc    :46.25%
+       :color           "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))" 
+       :bgc             :$bgc
+       ".colorway-brown"  {:--chroma-bgc    :3%
+                           :--lightness-bgc :97%}
+       ":dark"            {:--lightness-bgc :26%
+                           :--chroma-bgc    :26%
+                           :--lightness-fgc :92%
+                           :--chroma-fgc    :25%
+                           ".colorway-brown"  {:--chroma-bgc    :14%
+                                               :--lightness-bgc :28%}}})
+
+    ;; Convex, dark
+    (defcss ".surface-convex" 
+      {:dark {:--lightness-bgc :37%
+              :--chroma-bgc    :34.6%
+              :--lightness-fgc :95.7%
+              :--chroma-fgc    :8.8%
+              ".colorway-brown"  {:--chroma-bgc :14%
+                                  :--lightness-bgc :39%}}})
 
     ;; Transparent
     (defcss ".surface-transparent, .surface-minimal" 
-      {:--chroma-fgc :46.25%
-       :color "oklch(44% var(--chroma-fgc) var(--colorway-hue))"})
+      {:--chroma-fgc    :46.25%
+       :--lightness-fgc :44%
+       :color           "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))"
+       :dark            {:--lightness-fgc :88%
+                         :--chroma-fgc    :44%}})
+
+    ;; Transparent
+    (defcss ".surface-minimal" 
+      {:dark {:--lightness-bgc :26%
+              :--chroma-bgc    :26%
+              ".colorway-brown"  {:--chroma-bgc    :14%
+                                  :--lightness-bgc :28%}}})
 
     ;; Minimal
     (defcss ".surface-minimal, .surface-minimal-light-mode, .surface-convex-light-mode" 
-      {:--lightness  :100% 
-       :--chroma-bgc :0%
-       :bgc          :$background-color ; <- body background color (change name globablly?)
+      {:--lightness-bgc :100% 
+       :--chroma-bgc    :0%
+       :bgc             :$background-color ; <- body background color (change name globablly?)
        })
 
+    (defcss ".surface-minimal" 
+      {:dark:bgc :$background-color-dark-mode ; <- body background color (change name globablly?)
+       })
+
+    (defcss ".surface-transparent"
+      {:bgc        :transparent
+       :bgc:hover  :transparent
+       :bgc:active :transparent
+       :dark {:bgc        :transparent
+              :bgc:hover  :transparent
+              :bgc:active :transparent}}) 
 
     ;; Classic details
     (defcss ".surface-solid-classic, .surface-soft-classic"
-      {:box-shadow "inset 0 0 0 1px var(--transparent-black-10), inset 0 -2px 1px var(--transparent-black-20), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-80), inset 0 2px 1px -1px var(--transparent-white-80)"
+      {:box-shadow "inset 0 0 0 1px var(--transparent-black-10), inset 0 -2px 1px var(--transparent-black-20), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--top-rim-highlight-color, var(--transparent-white-80)), inset 0 2px 1px -1px var(--transparent-white-80)"
        :bgi        "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
        :z-index    0
        :after      {:content          "\"\""
@@ -389,91 +473,27 @@
        :dark:bgi         "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color-dark) 80%)"})
 
     (defcss ".surface-solid-classic"
-      {:text-shadow      "0 0px 2px var(--transparent-black-30)"
-       :dark:text-shadow "0 0.5px 0px var(--transparent-white-40)"})
-
-    (defcss ".dark .surface-solid-classic"
-      {:after {:background-image "linear-gradient(var(--transparent-black-02), #0000, var(--transparent-white-20))"}})
+      {:text-shadow "0 0px 2px var(--transparent-black-30)"
+       :dark        {:--top-rim-highlight-color :$transparent-white-50
+                     :text-shadow               "0 0.5px 0px var(--transparent-white-40)"
+                     :after:bgi                 "linear-gradient(var(--transparent-black-15), #0000, var(--transparent-white-20))"}})
     
     ;; Convex
     (defcss ".surface-convex, .surface-convex-light-mode"
       {:--convex-shadow-strength      "20%"
-       :--convex-shadow-lightness     "calc(var(--lightness) - (var(--convex-shadow-strength) / 3))"
+       :dark:--convex-shadow-strength "30%"
+       :--convex-shadow-lightness-bgc "calc(var(--lightness-bgc) - (var(--convex-shadow-strength) / 3))"
        :--convex-shadow-chroma        "calc(var(--chroma-bgc) + (var(--convex-shadow-strength) / 6))"
-       :--convex-shadow-chroma-hover  "calc(var(--convex-shadow-chroma) + calc(2 * var(--chroma-shift)))"
-       :--convex-shadow-chroma-active "calc(var(--convex-shadow-chroma) + calc(3 * var(--chroma-shift)))"
+       :--convex-shadow-chroma-hover  "calc(var(--convex-shadow-chroma) var(--chroma-shift-op, +) calc(2 * var(--chroma-shift)))"
+       :--convex-shadow-chroma-active "calc(var(--convex-shadow-chroma) var(--chroma-shift-op, +) calc(3 * var(--chroma-shift)))"
        ".colorway-neutral"              {:--convex-shadow-chroma        "var(--chroma-bgc)"
                                          :--convex-shadow-chroma-hover  "var(--chroma-bgc)"
                                          :--convex-shadow-chroma-active "var(--chroma-bgc)"}
-       :background-image              "linear-gradient(180deg, transparent, transparent 15%, oklch(var(--convex-shadow-lightness) calc(var(--convex-shadow-chroma) + calc(1 * var(--chroma-shift))) var(--colorway-hue)))"
-       :hover:background-image        "linear-gradient(180deg, transparent, transparent 15%, oklch(calc(var(--convex-shadow-lightness) - 4%) var(--convex-shadow-chroma-hover) var(--colorway-hue)))"
-       :active:background-image       "linear-gradient(180deg, transparent, transparent 15%, oklch(calc(var(--convex-shadow-lightness) - 8%) var(--convex-shadow-chroma-active) var(--colorway-hue)))"
+       :background-image              "linear-gradient(180deg, transparent, transparent 15%, oklch(var(--convex-shadow-lightness-bgc) calc(var(--convex-shadow-chroma) + calc(1 * var(--chroma-shift))) var(--colorway-hue)))"
+       :hover:background-image        "linear-gradient(180deg, transparent, transparent 15%, oklch(calc(var(--convex-shadow-lightness-bgc) var(--chroma-shift-op, -) 4%) var(--convex-shadow-chroma-hover) var(--colorway-hue)))"
+       :active:background-image       "linear-gradient(180deg, transparent, transparent 15%, oklch(calc(var(--convex-shadow-lightness-bgc) var(--chroma-shift-op, -) 8%) var(--convex-shadow-chroma-active) var(--colorway-hue)))"
+       :dark                          {:--chroma-shift-op "+"}
        })
-
-  ;; &[data-ks-surface="convex"] {
-  ;;   color: var(--foreground-color-neutral-2);
-  ;;   background-image: linear-gradient( 180deg, transparent, transparent 15%, var(--background-color-neutral-soft-3));
-  ;;   background-color: var(--background-color-neutral-soft);
-  ;;   .dark & {
-  ;;     color: var(--foreground-color-neutral-2-dark-mode);
-  ;;     background-color: var(--background-color-neutral-soft-dark-mode);
-  ;;     background-image: linear-gradient( 360deg, transparent, transparent 15%, var(--background-color-neutral-soft-3-dark-mode));
-  ;;     &:hover {
-  ;;       background-color: var(--foreground-color-neutral-soft-dark-mode);
-  ;;       color: var(--foreground-color-neutral-3-dark-mode);
-  ;;       background-image: linear-gradient( 360deg, transparent, transparent 15%, var(--background-color-neutral-soft-4-dark-mode));
-  ;;     }
-  ;;     &:active {
-  ;;       background-color: var(--foreground-color-neutral-soft-2-dark-mode);
-  ;;       background-image: linear-gradient( 360deg, transparent, transparent 15%, var(--background-color-neutral-soft-5-dark-mode));
-  ;;       color: var(--foreground-color-neutral-3-dark-mode);
-  ;;     }
-  ;;   }
-  ;;   &:hover {
-  ;;     color: var(--foreground-color-neutral-3);
-  ;;     background-image: linear-gradient( 180deg, transparent, transparent 15%, var(--background-color-neutral-soft-4));
-  ;;     background-color: var(--background-color-neutral-soft);
-  ;;   }
-  ;;   &:active {
-  ;;     background-image: linear-gradient( 180deg, transparent, transparent 15%, var(--background-color-neutral-soft-5));
-  ;;     color: var(--foreground-color-neutral-3);
-  ;;     background-color: var(--background-color-neutral-soft-2);
-  ;;   }
-  ;;   @supports(color: color-mix(in oklch, red, red)) {
-  ;;     background-image: linear-gradient( 180deg, transparent, transparent 15%, color-mix(in oklch, transparent, var(--background-color-neutral-hard) var(--convex-shadow-strength, 10%)));
-  ;;     &:hover {
-  ;;       background-image: linear-gradient( 180deg, transparent, transparent 15%, color-mix(in oklch, transparent, var(--background-color-neutral-hard-2) var(--convex-shadow-strength, 10%)));
-  ;;     }
-  ;;     &:active {
-  ;;       background-image: linear-gradient( 180deg, transparent, transparent 15%, color-mix(in oklch, transparent, var(--background-color-neutral-hard-3) var(--convex-shadow-strength, 10%)));
-  ;;     }
-  ;;   }
-  ;; }
-
-
-    ;; Surface shaping ---------------------------------------------------------------------------------------------------------
-    #_(defcss "[class*=\"surface-\"]"
-      {".shape-pill"                      {:br :9999px}     
-       ".shape-rounded"                   {:br :$shape-rounded-medium}
-       ".shape-rounded-xxxsmall"          {:br :$shape-rounded-xxxsmall}
-       ".shape-rounded-xxsmall"           {:br :$shape-rounded-xxsmall}
-       ".shape-rounded-xsmall"            {:br :$shape-rounded-xsmall}
-       ".shape-rounded-small"             {:br :$shape-rounded-small}
-       ".shape-rounded-medium"            {:br :$shape-rounded-medium}
-       ".shape-rounded-large"             {:br :$shape-rounded-large}
-       ".shape-rounded-xlarge"            {:br :$shape-rounded-xlarge}
-       ".shape-rounded-xxlarge"           {:br :$shape-rounded-xxlarge}
-       ".shape-rounded-xxxlarge"          {:br :$shape-rounded-xxxlarge}
-       ".shape-rounded-absolute"          {:br :$shape-rounded-medium-absolute}
-       ".shape-rounded-xxxsmall-absolute" {:br :$shape-rounded-xxxsmall-absolute}
-       ".shape-rounded-xxsmall-absolute"  {:br :$shape-rounded-xxsmall-absolute}
-       ".shape-rounded-xsmall-absolute"   {:br :$shape-rounded-xsmall-absolute}
-       ".shape-rounded-small-absolute"    {:br :$shape-rounded-small-absolute}
-       ".shape-rounded-medium-absolute"   {:br :$shape-rounded-medium-absolute}
-       ".shape-rounded-large-absolute"    {:br :$shape-rounded-large-absolute}
-       ".shape-rounded-xlarge-absolute"   {:br :$shape-rounded-xlarge-absolute}
-       ".shape-rounded-xxlarge-absolute"  {:br :$shape-rounded-xxlarge-absolute}
-       ".shape-rounded-xxxlarge-absolute" {:br :$shape-rounded-xxxlarge-absolute}})
 
     
    ;; Surface stroking ---------------------------------------------------------------------------------------------------------

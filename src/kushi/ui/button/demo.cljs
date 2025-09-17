@@ -37,7 +37,7 @@
   [
    {:samples (samples-with-variant
               {:args          ["Next"],
-               :row-attrs     (sx :_.surface-transparent:display--none)
+              ;;  :row-attrs     (sx :_.surface-transparent:display--none)
                :variant       :colorway,
                :variant-scale :colorway/named,
                :x-variants    [:surface/basic],
