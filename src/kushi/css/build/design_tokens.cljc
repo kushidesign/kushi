@@ -365,7 +365,7 @@
    [:--tooltip-line-height    1.45
     :--tooltip-font-family    :$sans-serif-font-stack
     :--tooltip-font-size      :$size-xsmall
-    :--tooltip-font-weight    :$wee-bold
+    :--tooltip-font-weight    :$weight-wee-bold
     :--tooltip-text-transform :none
     ]
 

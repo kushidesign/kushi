@@ -196,7 +196,7 @@
                                                 :w                                           :100%
                                                 :h                                           :100%
                                                 :.kushi-switch-thumb-label                   {:fs :$switch-thumb-label-font-size||0.3em
-                                                                                              :fw :$switch-thumb-label-font-weight||$semi-bold}
+                                                                                              :fw :$switch-thumb-label-font-weight||$weight-semi-bold}
                                                 :.kushi-switch-thumb-icon                    {:fs :$switch-thumb-icon-font-size||0.55em
                                                                                               :fw :$switch-thumb-icon-font-weight||$size-medium}}})
 

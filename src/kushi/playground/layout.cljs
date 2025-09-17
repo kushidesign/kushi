@@ -404,7 +404,7 @@
                    :_code:pb--0.07em
                    :_code:pi--0.2em
                    :>span:d--block
-                   [:_b {:fw      :$wee-bold
+                   [:_b {:fw      :$weight-wee-bold
                          :mbe     :0.4em
                          :display :block}])]
             (desc->hiccup desc))])

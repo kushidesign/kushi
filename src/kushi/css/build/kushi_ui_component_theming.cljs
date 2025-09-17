@@ -310,10 +310,12 @@
                         :--chroma-fgc   :0%
                         :--chroma-shift :0%}})
 
-    (defcss ".surface-solid, .surface-solid-classic, .surface-soft, .surface-soft-classic, .surface-faint, .surface-convex, .surface-minimal, .surface-transparent"
+    (defcss ".surface-solid, .surface-solid-classic, .surface-soft, .surface-soft-classic, .surface-faint, .surface-convex, .surface-minimal, .surface-transparent, .surface-minimal-light-mode, .surface-convex-light-mode"
       {:--hover-bgc  "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) var(--lightness-shift)) calc(var(--chroma-bgc) var(--chroma-shift-op, +) var(--chroma-shift)) var(--colorway-hue))"
        :--active-bgc "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) (2 * var(--lightness-shift))) calc(var(--chroma-bgc) var(--chroma-shift-op, +) calc(2 * var(--chroma-shift))) var(--colorway-hue))"
-       :--bgc        "oklch(var(--lightness-bgc) var(--chroma-bgc) var(--colorway-hue))" })
+       :--bgc        "oklch(var(--lightness-bgc) var(--chroma-bgc) var(--colorway-hue))"
+       :--fgc        "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))" 
+       })
        
 
     ;; Solids
@@ -344,6 +346,8 @@
       {:--chroma-shift    :6.25% 
        :--lightness-shift :4% 
        ".colorway-brown"    {:--chroma-shift :2% }
+
+       :color                :$fgc
        :hover:bgc         :$hover-bgc
        :active:bgc        :$active-bgc
        :dark              {:--chroma-shift-op    "-"
@@ -359,7 +363,7 @@
        :--lightness-fgc      :30%
        :--chroma-fgc         :32.5%
        :--classic-trim-color "oklch(91% 10% var(--colorway-hue))" 
-       :color                "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))" 
+      ;;  :color                :$fgc
        :bgc                  :$bgc
        ".colorway-brown"       {:--chroma-bgc :6%}
        :dark                 {:--lightness-bgc      :39%
@@ -377,7 +381,7 @@
                :--chroma-fgc    :8.8%
                ".colorway-brown"  {:--chroma-bgc    :17%
                                    :--lightness-bgc :39%}
-               :color           "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))" 
+              ;;  :color           :$fgc
                :bgc             :$bgc
                :hover:bgc       :$hover-bgc
                :active:bgc      :$active-bgc
@@ -393,7 +397,7 @@
        :--lightness-fgc :44%
        :--chroma-bgc    :6.25%
        :--chroma-fgc    :46.25%
-       :color           "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))" 
+      ;;  :color           :$fgc
        :bgc             :$bgc
        ".colorway-brown"  {:--chroma-bgc    :3%
                            :--lightness-bgc :97%}
@@ -417,7 +421,7 @@
     (defcss ".surface-transparent, .surface-minimal" 
       {:--chroma-fgc    :46.25%
        :--lightness-fgc :44%
-       :color           "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))"
+      ;;  :color           :$fgc
        :dark            {:--lightness-fgc :88%
                          :--chroma-fgc    :44%}})
 
@@ -431,7 +435,9 @@
     ;; Minimal
     (defcss ".surface-minimal, .surface-minimal-light-mode, .surface-convex-light-mode" 
       {:--lightness-bgc :100% 
+       :--lightness-fgc :44%
        :--chroma-bgc    :0%
+       :color           :$fgc
        :bgc             :$background-color ; <- body background color (change name globablly?)
        })
 
@@ -504,7 +510,7 @@
        ".stroke-none"             {:--stroke-transparency :0%}
        ".stroke-xsoft"            {:--stroke-transparency :$xsoft-stroke-transparency}
        ".stroke-soft"             {:--stroke-transparency :$soft-stroke-transparency}
-       ".stroke-medium"           {:--stroke-transparency :$size-medium-stroke-transparency}
+       ".stroke-medium"           {:--stroke-transparency :$medium-stroke-transparency}
        ".stroke-hard"             {:--stroke-transparency :$hard-stroke-transparency}
        ".stroke-xhard"            {:--stroke-transparency :$xhard-stroke-transparency}})
 

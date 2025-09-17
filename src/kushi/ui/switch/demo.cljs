@@ -1,6 +1,6 @@
 (ns ^{:kushi/layer "user-styles"}
   kushi.ui.switch.demo
-  (:require [kushi.core :refer (sx at)]
+  (:require [kushi.core :refer (sx css at)]
             [kushi.showcase.core
              :as showcase
              :refer [samples samples-with-variant]]
@@ -73,7 +73,9 @@
                                  :gap             :1rem}
                :label           "Convex thumb",
                :attrs           {:on?         true
-                                 :thumb-props {:surface :convex-light-mode}}})}
+                                 :thumb-props {:surface :convex-light-mode
+                                               :class (css {:--convex-shadow-strength      :40%
+                                                            :dark:--convex-shadow-strength :70%})}}})}
 
    {:samples (samples-with-variant
               {:variant         :size

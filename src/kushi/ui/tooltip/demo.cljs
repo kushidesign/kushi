@@ -145,7 +145,7 @@
                    [:>span {:ta             :c
                             :ff             :$code-font-stack
                             :fs             :$size-xsmall
-                            :fw             :$wee-bold
+                            :fw             :$weight-wee-bold
                             :cursor         :pointer
                             :bgc            :$neutral-100
                             :d              :flex

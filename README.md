@@ -1075,7 +1075,7 @@ Pseudo-classes, pseudo-elements, and combo selectors are available via modifiers
           :>a:hover:c--red
           :&_a:hover:c--gold ; The "_" gets converted to " "
           :&.bar:hover:c--pink
-          :before:fw--bold
+          :before:fw--$weight-bold
           :after:mie--5px
           ["~a:hover:c" :blue] ; Vector is used as "~" is not valid in a keyword
           ["nth-child(2):c" :red] ; Vector is used as "(" and ")" are not valid in keywords
