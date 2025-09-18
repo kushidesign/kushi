@@ -38,7 +38,7 @@
         &props
 
         more-attrs          (merge {:aria-hidden     true
-                                    :data-ks-surface :transparent})]
+                                    :class [:surface-transparent]})]
                
 
     (cond
@@ -63,7 +63,7 @@
 
       (contains? #{:thinking "thinking"} spinner-type)
       (let [circle        [:div (sx ".ks-pulsing-dot"
-                                    :.pill
+                                    :.shape-pill
                                     :w--0.3em
                                     :h--0.3em
                                     :bgc--currentColor
@@ -95,8 +95,8 @@
               {:class               (css
                                      ".ks-donut"
                                      :position--relative
-                                     :.before-absolute-fill
-                                     :.after-absolute-fill
+                                     :.before-position-absolute-fill
+                                     :.after-position-absolute-fill
                                      [:animation
                                       "var(--spinner-animation-duration) linear infinite spin"]
                                      [:before:bw "max(2.5px, 0.125em)"]

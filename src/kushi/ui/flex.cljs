@@ -21,6 +21,8 @@
 (defui flex-row
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row}]
+                  [:surface {:default :transparent}]
+                  :colorway
                   :size
                   :weight]}
   [& args]
@@ -30,6 +32,8 @@
 (defui flex-row-center
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row-center}]
+                  [:surface {:default :transparent}]
+                  [:colorway {:default :neutral}]
                   :size
                   :weight]}
   [& args]
@@ -39,6 +43,8 @@
 (defui flex-row-flex-end
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row-flex-end}]
+                  [:surface {:default :transparent}]
+                  [:colorway {:default :neutral}]
                   :size
                   :weight]}
   [& args]
@@ -48,6 +54,8 @@
 (defui flex-row-space-around
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row-space-around}]
+                  [:surface {:default :transparent}]
+                  [:colorway {:default :neutral}]
                   :size
                   :weight]}
   [& args]
@@ -57,6 +65,8 @@
 (defui flex-row-space-between
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row-space-between}]
+                  [:surface {:default :transparent}]
+                  [:colorway {:default :neutral}]
                   :size
                   :weight]}
   [& args]
@@ -66,6 +76,8 @@
 (defui flex-row-space-evenly
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row-space-evenly}]
+                  [:surface {:default :transparent}]
+                  [:colorway {:default :neutral}]
                   :size
                   :weight]}
   [& args]
@@ -75,6 +87,8 @@
 (defui flex-col
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col}]
+                  [:surface {:default :transparent}]
+                  [:colorway {:default :neutral}]
                   :size
                   :weight]}
   [& args]
@@ -86,6 +100,8 @@
 (defui flex-col-center
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col-center}]
+                  [:surface {:default :transparent}]
+                  [:colorway {:default :neutral}]
                   :size
                   :weight]}
   [& args]
@@ -95,6 +111,8 @@
 (defui flex-col-flex-end
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col-flex-end}]
+                  [:surface {:default :transparent}]
+                  [:colorway {:default :neutral}]
                   :size
                   :weight]}
   [& args]
@@ -104,6 +122,8 @@
 (defui flex-col-space-around
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col-space-around}]
+                  [:surface {:default :transparent}]
+                  [:colorway {:default :neutral}]
                   :size
                   :weight]}
   [& args]
@@ -113,6 +133,8 @@
 (defui flex-col-space-between
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col-space-between}]
+                  [:surface {:default :transparent}]
+                  [:colorway {:default :neutral}]
                   :size
                   :weight]}
   [& args]
@@ -122,6 +144,8 @@
 (defui flex-col-space-evenly
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col-space-evenly}]
+                  [:surface {:default :transparent}]
+                  [:colorway {:default :neutral}]
                   :size
                   :weight]}
   [& args]

@@ -2,7 +2,6 @@
   (:require
    [kushi.colors]
    [bling.hifi]
-   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.css.build.macros :refer [defcolorway defcss]]))
 
 (defcss
@@ -310,16 +309,17 @@
                         :--chroma-fgc   :0%
                         :--chroma-shift :0%}})
 
-    (defcss ".surface-solid, .surface-solid-classic, .surface-soft, .surface-soft-classic, .surface-faint, .surface-convex, .surface-minimal, .surface-transparent, .surface-minimal-light-mode, .surface-convex-light-mode"
-      {
-       :--hover-bgc  "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) var(--lightness-shift)) calc(var(--chroma-bgc) var(--chroma-shift-op, +) var(--chroma-shift)) var(--colorway-hue))"
+    (defcss ".surface-solid, .surface-solid-classic, .surface-soft, .surface-soft-classic, .surface-faint, .surface-convex, .surface-minimal, .surface-minimal-light-mode, .surface-convex-light-mode"
+      {:--hover-bgc  "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) var(--lightness-shift)) calc(var(--chroma-bgc) var(--chroma-shift-op, +) var(--chroma-shift)) var(--colorway-hue))"
        :--active-bgc "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) (2 * var(--lightness-shift))) calc(var(--chroma-bgc) var(--chroma-shift-op, +) calc(2 * var(--chroma-shift))) var(--colorway-hue))"
        :--bgc        "oklch(var(--lightness-bgc) var(--chroma-bgc) var(--colorway-hue))"
        :--fgc        "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))" 
-       :.inert {:bgc          :$bgc
-                :--hover-bgc  :$bgc
-                :--active-bgc :$bgc}})
-       
+       ".inert"        {:bgc          :$bgc
+                        :--hover-bgc  :$bgc
+                        :--active-bgc :$bgc}})
+
+    (defcss ".surface-transparent"
+      {:--fgc "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))"})
 
     ;; Solids
     (defcss ".surface-solid, .surface-solid-classic"

@@ -1,11 +1,11 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.radio.demo
-  (:require [kushi.core :refer (sx merge-attrs)]
+  (:require [kushi.core :refer (sx css merge-attrs)]
             [fireworks.core :refer [? !? ?> !?>]]
             [kushi.showcase.core
              :as showcase
              :refer [samples samples-with-variant]]
             [kushi.ui.radio :refer [radio]]
-            [kushi.ui.flex :refer [:div.flex-row-start]]
+            [kushi.ui.flex :refer [flex-row]]
             [kushi.ui.label :refer [label]]
             [kushi.ui.variants :as variants]))
 
@@ -16,59 +16,64 @@
   [
    {:label   "Radio group with labels"
     :samples (samples 
-              [[:div (sx :.flex-row-start
-                         :gap--1.5rem
-                         :p--1.5rem
-                         :br--5px
-                         :b--$divisor-4
-                         :dark:b--$divisor-4-dark-mode)
-                [:div.flex-row-start 
+              [[flex-row (sx :gap--1.5rem
+                             :p--1.5rem
+                             :br--5px
+                             :b--$divisor-4
+                             :dark:b--$divisor-4-dark-mode)
+                [flex-row 
                  [radio {:id             :foo-yes
                          :name           :foo
                          :defaultChecked true}]
                  [:label.pointer (merge-attrs (sx :.pointer :padding-inline-start--0.5em)
                                               {:for :foo-yes}) "Yes"]]
-                [:div.flex-row-start 
+                [flex-row 
                  [radio {:id   :foo-no
                          :name :foo}]
                  [:label
                   (merge-attrs (sx :.pointer :padding-inline-start--0.5em)
                                {:for :foo-no}) "No"]]
-                [:div.flex-row-start 
+                [flex-row 
                  [radio {:id   :foo-maybe
                          :name :foo}]
                  [:label
                   (merge-attrs (sx :.pointer :padding-inline-start--0.5em)
                                {:for :foo-maybe}) "Maybe"]]]])}
    
+
+
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;;
+   ;;         Fix inherited colorways with flex-row div
+   ;;
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
    {:label   "Radio group with labels, inherited color"
     :samples (samples 
-              [[:div (sx :.flex-row-start
-                         :gap--1.5rem
-                         :p--1.5rem
-                         :br--5px
-                         :b--$divisor-4
-                         :dark:b--$divisor-4-dark-mode)
-                [:div.flex-row-start 
-                 {:data-ks-colorway :magenta
-                  :data-ks-surface  :transparent }
+              [[flex-row {:colorway :magenta
+                          :class    (css :gap--1.5rem
+                                         :p--1.5rem
+                                         :br--5px
+                                         :b--$divisor-4
+                                         :dark:b--$divisor-4-dark-mode)}
+                [flex-row 
                  [radio {:id             :bar-yes
                          :name           :bar
                          :defaultChecked true}]
                  [:label.pointer (merge-attrs (sx :.pointer :padding-inline-start--0.5em)
                                               {:for :bar-yes}) "Yes"]]
-                [:div.flex-row-start 
-                 {:data-ks-colorway :magenta
-                  :data-ks-surface  :transparent }
+                [flex-row 
                  [radio {:id   :bar-no
                          :name :bar}]
                  [:label
                   (merge-attrs (sx :.pointer :padding-inline-start--0.5em)
                                {:for :bar-no}) "No"]]
 
-                [:div.flex-row-start 
-                 {:data-ks-colorway :magenta
-                  :data-ks-surface  :transparent }
+                [flex-row 
                  [radio {:id   :bar-maybe
                          :name :bar}]
                  [:label
@@ -83,7 +88,7 @@
                    (data-ks {:flexbox   :row-start
                              :boundary* 1
                              :radius*   5}))
-                  [:div.flex-row-start 
+                  [flex-row 
                    {:colorway :magenta
                     :gap*     1      
                     :surface  :transparent} 
@@ -92,7 +97,7 @@
                            :defaultChecked true}]
                    [:label {:for :bar-yes}
                     "Yes"]]
-                  [:div.flex-row-start 
+                  [flex-row 
                    {:colorway :magenta
                     :gap*     1      
                     :surface  :transparent}
@@ -102,7 +107,7 @@
                     (merge-attrs {:for :bar-no})
                     "No"]]
 
-                  [:div.flex-row-start 
+                  [flex-row 
                    {:colorway :magenta
                     :gap*     1      
                     :surface  :transparent}
@@ -141,130 +146,127 @@
                                 :name     k}]]) )
               []
               variants/colorways-named))
-   {:label   "Radio colorways2"
-    :samples (samples
-              ["gray"
-               [:div.flex-row-start
-                {:gap :0.5em}
-                [radio
-                 {:colorway       :gray,
-                  :size         :xxxlarge,
-                  :name           :gray,
-                  :defaultChecked true}]
-                [radio {:colorway :gray
-                        :size   :xxxlarge
-                        :name     :gray}]]
-               "purple"
-               [:div.flex-row-start
-                {:gap :0.5em}
-                [radio
-                 {:colorway       :purple,
-                  :size         :xxxlarge,
-                  :name           :purple,
-                  :defaultChecked true}]
-                [radio {:colorway :purple
-                        :size   :xxxlarge
-                        :name     :purple}]]
-               "blue"
-               [:div.flex-row-start
-                {:gap :0.5em}
-                [radio
-                 {:colorway       :blue,
-                  :size         :xxxlarge,
-                  :name           :blue,
-                  :defaultChecked true}]
-                [radio {:colorway :blue
-                        :size   :xxxlarge
-                        :name     :blue}]]
-               "green"
-               [:div.flex-row-start
-                {:gap :0.5em}
-                [radio
-                 {:colorway       :green,
-                  :size         :xxxlarge,
-                  :name           :green,
-                  :defaultChecked true}]
-                [radio {:colorway :green
-                        :size   :xxxlarge
-                        :name     :green}]]
-               "lime"
-               [:div.flex-row-start
-                {:gap :0.5em}
-                [radio
-                 {:colorway       :lime,
-                  :size         :xxxlarge,
-                  :name           :lime,
-                  :defaultChecked true}]
-                [radio {:colorway :lime
-                        :size   :xxxlarge
-                        :name     :lime}]]
-               "yellow"
-               [:div.flex-row-start
-                {:gap :0.5em}
-                [radio
-                 {:colorway       :yellow,
-                  :size         :xxxlarge,
-                  :name           :yellow,
-                  :defaultChecked true}]
-                [radio {:colorway :yellow
-                        :size   :xxxlarge
-                        :name     :yellow}]]
-               "gold"
-               [:div.flex-row-start
-                {:gap :0.5em}
-                [radio
-                 {:colorway       :gold,
-                  :size         :xxxlarge,
-                  :name           :gold,
-                  :defaultChecked true}]
-                [radio {:colorway :gold
-                        :size   :xxxlarge
-                        :name     :gold}]]
-               "orange"
-               [:div.flex-row-start
-                {:gap :0.5em}
-                [radio
-                 {:colorway       :orange,
-                  :size         :xxxlarge,
-                  :name           :orange,
-                  :defaultChecked true}]
-                [radio {:colorway :orange
-                        :size   :xxxlarge
-                        :name     :orange}]]
-               "red"
-               [:div.flex-row-start
-                {:gap :0.5em}
-                [radio
-                 {:colorway       :red,
-                  :size         :xxxlarge,
-                  :name           :red,
-                  :defaultChecked true}]
-                [radio {:colorway :red
-                        :size   :xxxlarge
-                        :name     :red}]]
-               "magenta"
-               [:div.flex-row-start
-                {:gap :0.5em}
-                [radio
-                 {:colorway       :magenta,
-                  :size         :xxxlarge,
-                  :name           :magenta,
-                  :defaultChecked true}]
-                [radio {:colorway :magenta
-                        :size   :xxxlarge
-                        :name     :magenta}]]
-               "brown"
-               [:div.flex-row-start
-                {:gap :0.5em}
-                [radio
-                 {:colorway       :brown,
-                  :size         :xxxlarge,
-                  :name           :brown,
-                  :defaultChecked true}]
-                [radio {:colorway :brown
-                        :size   :xxxlarge
-                        :name     :brown}]]]
-              )}
+
+   {:label     "Radio colorways2"
+    :row-attrs (sx {:_.ks-flex-row:gap :0.5em})
+    ;; This recognizes the even/odd structure of the vector, and uses the strings
+    ;; as labels for the samples
+    :samples   (samples
+                ["gray"
+                 [flex-row
+                  {:colorway :neutral}
+                  [radio
+                   {:size           :xxxlarge,
+                    :name           :gray,
+                    :defaultChecked true}]
+                  [radio {:size :xxxlarge
+                          :name :gray}]]
+                 "purple"
+                 [flex-row
+                  {:colorway :purple}
+                  [radio
+                   {:size           :xxxlarge,
+                    :name           :purple,
+                    :defaultChecked true}]
+                  [radio {:size :xxxlarge
+                          :name :purple}]]
+                 "blue"
+                 [flex-row
+                  {:colorway :blue}
+                  [radio
+                   {:size           :xxxlarge,
+                    :name           :blue,
+                    :defaultChecked true}]
+                  [radio {:size :xxxlarge
+                          :name :blue}]]
+                 "green"
+                 [flex-row
+                  {:colorway :green}
+                  [radio
+                   {:colorway       :green,
+                    :size           :xxxlarge,
+                    :name           :green,
+                    :defaultChecked true}]
+                  [radio {:colorway :green
+                          :size     :xxxlarge
+                          :name     :green}]]
+                 "lime"
+                 [flex-row
+                  {:colorway :lime}
+                  [radio
+                   {:colorway       :lime,
+                    :size           :xxxlarge,
+                    :name           :lime,
+                    :defaultChecked true}]
+                  [radio {:colorway :lime
+                          :size     :xxxlarge
+                          :name     :lime}]]
+                 "yellow"
+                 [flex-row
+                  {:colorway :yellow}
+                  [radio
+                   {:colorway       :yellow,
+                    :size           :xxxlarge,
+                    :name           :yellow,
+                    :defaultChecked true}]
+                  [radio {:colorway :yellow
+                          :size     :xxxlarge
+                          :name     :yellow}]]
+                 "gold"
+                 [flex-row
+                  {:colorway :gold}
+                  [radio
+                   {:colorway       :gold,
+                    :size           :xxxlarge,
+                    :name           :gold,
+                    :defaultChecked true}]
+                  [radio {:colorway :gold
+                          :size     :xxxlarge
+                          :name     :gold}]]
+                 "orange"
+                 [flex-row
+                  {:colorway :gold}
+                  [radio
+                   {:colorway       :orange,
+                    :size           :xxxlarge,
+                    :name           :orange,
+                    :defaultChecked true}]
+                  [radio {:colorway :orange
+                          :size     :xxxlarge
+                          :name     :orange}]]
+                 "red"
+                 [flex-row
+                  {:colorway :red}
+                  [radio
+                   {:colorway       :red,
+                    :size           :xxxlarge,
+                    :name           :red,
+                    :defaultChecked true}]
+                  [radio {:colorway :red
+                          :size     :xxxlarge
+                          :name     :red}]]
+                 "magenta"
+                 [flex-row
+                  {:colorway :magenta}
+                  [radio
+                   {:colorway       :magenta,
+                    :size           :xxxlarge,
+                    :name           :magenta,
+                    :defaultChecked true}]
+                  [radio {:colorway :magenta
+                          :size     :xxxlarge
+                          :name     :magenta}]]
+                 "brown"
+                 [flex-row
+                  {:colorway :brown}
+                  [radio
+                   {:colorway       :brown,
+                    :size           :xxxlarge,
+                    :name           :brown,
+                    :defaultChecked true}]
+                  [radio {:colorway :brown
+                          :size     :xxxlarge
+                          :name     :brown}]]])}
    
    #_{:label   "Custom"
       :samples (samples

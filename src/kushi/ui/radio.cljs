@@ -6,12 +6,13 @@
 
 (defui radio 
   {:doc   "This is radio docstring"
-   :props/shared [:size :colorway :transition :weight]}
+   :props/shared [:size :transition :weight]}
   [& args]
   [:input
    (merge-attrs
     {:class            (css
-                        "[data-ks-ui=\"radio\"]"
+                        ".ks-radio"
+                        :.surface-transparent
                         {:transition-duration   :$transition-xxfast
                          :cursor                :pointer
                          :+label:cursor         :pointer
@@ -34,8 +35,6 @@
                          :checked:border-color  :currentColor
                          :checked:border-width  :0.333em
                          :checked:border-offset :-0.333em})
-     :data-ks-ui       :radio
-     :data-ks-surface  :transparent
      :type             :radio}
     &attrs)])
 

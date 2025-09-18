@@ -152,7 +152,7 @@
     :samples (samples ["accent"
                        [icon {:colorway :accent
                               :size   :xxxlarge
-                              :icon-filled :true
+                              :icon-filled true
                               ;; :surface  :solid
                               :shape  :circle}
                         :star]
@@ -160,14 +160,14 @@
                        "negative"
                        [icon {:colorway    :negative
                               :size      :xxxlarge
-                              :icon-filled :true
+                              :icon-filled true
                               :shape     :circle}
                         :cancel]
 
                        "positive"
                        [icon {:colorway :positive
                               :size   :xxxlarge
-                              :icon-filled :true
+                              :icon-filled true
                               ;; :surface  :solid
                               :shape  :circle} 
                         :check-circle]
@@ -175,7 +175,7 @@
                        "warning"
                        [icon {:colorway :warning
                               :size   :xxxlarge
-                              :icon-filled :true
+                              :icon-filled true
                               ;; :surface  :solid
                               :shape  :circle}
                         :warning]])}

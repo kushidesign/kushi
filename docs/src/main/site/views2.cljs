@@ -42,10 +42,10 @@
    [kushi.ui.tag.demo]
 
    [kushi.ui.checkbox :refer [checkbox]]
-  ;;  [kushi.ui.checkbox.demo]
+   [kushi.ui.checkbox.demo]
 
    [kushi.ui.radio :refer [radio]]
-  ;;  [kushi.ui.radio.demo]
+   [kushi.ui.radio.demo]
 
    [kushi.ui.radio-group :refer [radio-group]]
   ;;  [kushi.ui.radio-group.demo]
@@ -600,7 +600,7 @@
   #_[showcase (!? (showcase/opts kushi.ui.switch/switch
                                  kushi.ui.switch.demo/demos))]
 
-  [showcase (!? (showcase/opts kushi.ui.icon/icon
+  #_[showcase (!? (showcase/opts kushi.ui.icon/icon
                                kushi.ui.icon.demo/demos))]
 
   #_[showcase (!? (showcase/opts kushi.ui.tag/tag
@@ -848,11 +848,11 @@
                                  kushi.ui.callout.demo/demos))]
 
   #_[showcase (? {:display-metadata? false}
-                 (showcase/opts kushi.ui.checkbox/checkbox
-                                kushi.ui.checkbox.demo/demos))]
+               (showcase/opts kushi.ui.checkbox/checkbox
+                              kushi.ui.checkbox.demo/demos))]
 
-  #_[showcase (showcase/opts kushi.ui.radio/radio
-                             kushi.ui.radio.demo/demos)]
+  [showcase (showcase/opts kushi.ui.radio/radio
+                           kushi.ui.radio.demo/demos)]
 
   #_[avatar {:surface :solid
              :size  :xxlarge

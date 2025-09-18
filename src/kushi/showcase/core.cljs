@@ -332,8 +332,9 @@
 
          
 (defn- d1-grid-with-sample-labels
-  [samples]
-  (into [:div (sx :.d1-grid-wrapper)]
+  [opt samples]
+  (into [:div (merge-attrs (sx :.d1-grid-wrapper)
+                           (some-> opt :demo :row-attrs))]
         (reduce
          (fn [acc {:keys [label] :as sample}]
            (let [variant-label
@@ -460,7 +461,7 @@
        opt
        modal-opts
        (if labels? 
-         [d1-grid-with-sample-labels samples]
+         [d1-grid-with-sample-labels opt samples]
          [d1-grid-no-labels opt samples])])))
 
 

@@ -48,9 +48,10 @@
                           :top      "calc(100% + 2px)"}])
     :on-click
     (fn* [] (open-kushi-modal modal-id))}
-   [icon (sx :.kushi-playground-examples-modal-trigger-icon
-             :.small
-             :.extra-bold)
+   [icon {:size    :small
+          :weight  :extra-bold
+          :surface :transparent
+          :class   :kushi-playground-examples-modal-trigger-icon}
     :code]
    "Code"])
 
