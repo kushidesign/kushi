@@ -3,6 +3,7 @@
    [kushi.core :refer (sx css defcss css-vars-map merge-attrs)]
    [kushi.ui.icon :refer (icon)]
    [kushi.ui.shared :refer [enhancer]]
+   [kushi.ui.flex :refer [flex-row flex-col flex-row-space-between]]
    [kushi.ui.core :refer (extract defui)]))
 
 (defui text-field
@@ -60,27 +61,24 @@
         inline?                     
         (= :inline label-placement)
 
-        label-text-attrs   
-        {:class              (css ".kushi-text-input-label-text"
-                                  :.minimal
-                                  :.info
-                                  :d--block
-                                  :.small
-                                  :fw--$wee-bold
-                                  :hover:bgc--transparent!important
-                                  :active:bgc--transparent!important)
-         :data-ks-colorway colorway}
+        label-text-attrs
+        {:class    (css ".ks-text-input-label-text"
+                        :d--block
+                        :.size-small
+                        :fw--$weight-wee-bold
+                        :hover:bgc--transparent!important
+                        :active:bgc--transparent!important)}
 
         helper-label-attrs
         (when helper-text
           (merge-attrs
            label-text-attrs
-           (sx ".kushi-text-input-helper"
+           (sx ".ks-text-input-helper"
                :.foreground-color-secondary
-               :.inline-block
-               :fw--$normal
+               :.display-inline-block
+               :fw--$weight-normal
                :mbs--$text-input-helper-margin-block-start||0.3em)
-           (when disabled {:class (css ".kushi-text-input-helper-disabled"
+           (when disabled {:class (css ".ks-text-input-helper-disabled"
                                        :.disabled)})))
 
         label-with-attrs
@@ -90,41 +88,37 @@
           (let [after-content (when required "\"*\"")
                 after-color (when required "var(--negative-600)")]
             {:style (css-vars-map after-content after-color)
-             :class (css ".kushi-text-input-label"
-                         :.inline-block
+             :class (css ".ks-text-input-label"
+                         :.display-inline-block
                          [:after:content :$after-content]
                          [:after:c :$after-color]
                          :after:pis--0.15em)
              :for   input-id})
-          (when disabled {:class (css ".kushi-text-input-label-disabled" :.disabled)})
+          (when disabled {:class (css ".ks-text-input-label-disabled" :.disabled)})
           (if inline?
-            (sx ".kushi-text-input-label-inline"
+            (sx ".ks-text-input-label-inline"
                 [:mie :$text-input-label-inline-margin-inline-end||0.7em])
-            (sx ".kushi-text-input-label-block"
+            (sx ".ks-text-input-label-block"
                 [:mbe :$text-input-label-block-margin-block-end||0.4em]))
           label-attrs)
          label-text]
 
 
         kushi-input-attrs 
-        (merge-attrs (sx ".kushi-input" :ai--c)
+        (merge-attrs (sx ".ks-input" :ai--c)
                      (when inline?
-                       (sx ".kushi-input-inline"
+                       (sx ".ks-input-inline"
                            :d--grid
                            [:gtc "auto minmax(0, 1fr)"]))
                      outer-wrapper-attrs)
         
         wrapped-input
-        [:div
+        [flex-row-space-between
          (merge-attrs
           {:data-ks-colorway colorway}
           (sx
-           ".kushi-text-input-wrapper"
-           :.flex-row-fs
-           {:display                                         :flex
-            :flex-direction                                  :row
-            :justify-content                                 :space-between
-            :align-items                                     :stretch
+           ".ks-text-input-wrapper"
+           {:align-items                                     :stretch
             ;; :w                     :100%
             :width                                           :auto
             :min-height                                      :34px
@@ -139,11 +133,14 @@
             :border-width                                    :1px
             :border-style                                    :solid
             :border-radius                                   :$text-input-border-radius
-            :border-color                                    :currentColor
-            :dark:border-color                               :currentColor
+
+            ;; :border-color                                    :currentColor
+            ;; TODO - this under :dark is not getting sorted correctly with @supports - FIX
+            ;; :dark:border-color                               :currentColor
+
             "@supports (color: color-mix(in oklch, red, red))" {:border-color      "color-mix(in srgb, currentColor var(--text-input-border-intensity, 75%), transparent)"
                                                                 :dark:border-color "color-mix(in srgb, currentColor var(--text-input-border-intensity-dark-mode, 55%), transparent)"}
-            :_.kushi-text-input-enhancer                     {:d  :inline-flex
+            :_.ks-text-input-enhancer                     {:d  :inline-flex
                                                               :ai :center
                                                               :jc :c
                                                               :pi :0.375em}
@@ -151,15 +148,15 @@
           wrapper-attrs)
          (when (and start-enhancer (not textarea?)) 
            [:div
-            {:class [:kushi-text-input-enhancer 
-                     :kushi-text-input-start-enhancer 
+            {:class [:ks-text-input-enhancer 
+                     :ks-text-input-start-enhancer 
                      (when disabled :disabled)]}
             [enhancer start-enhancer]])
-         [:div (sx ".kushi-text-input-input-wrapper" :flex-grow--1)
+         [:div (sx ".ks-text-input-input-wrapper" :flex-grow--1)
           (if textarea?
             [:textarea
              (merge-attrs
-              (sx ".kushi-text-input-input"
+              (sx ".ks-text-input-input"
                   :.transition
                   :h--100%
                   :w--100%
@@ -169,7 +166,7 @@
               &attrs)]
             [:input
              (merge-attrs
-              {:class (css ".kushi-text-input-input"
+              {:class (css ".ks-text-input-input"
                            :.transition
                            :h--100%
                            :w--100%
@@ -180,8 +177,8 @@
               &attrs)])]
          (when (and end-enhancer (not textarea?)) 
            [:div
-            {:class [:kushi-text-input-enhancer
-                     :kushi-text-input-end-enhancer 
+            {:class [:ks-text-input-enhancer
+                     :ks-text-input-end-enhancer 
                      (when disabled :disabled)]}
             [enhancer end-enhancer ]])]
         ]

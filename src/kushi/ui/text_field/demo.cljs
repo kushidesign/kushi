@@ -19,7 +19,8 @@
       :samples   (samples [[text-field
                             {:placeholder "Your text here"
                              :label-text  "Input label"
-                             :helper-text "My helper text"}]])}
+                             :helper-text "My helper text"
+                             :id "text-field-basic-example"}]])}
      {:label   "Required"
       :desc    "Required"
       :row-attrs row-attrs
@@ -27,7 +28,8 @@
                           {:placeholder "Your text here"
                            :required    true
                            :label-text  "Input label"
-                           :helper-text "My helper text"}]])}
+                           :helper-text "My helper text"
+                           :id          "text-field-required-example"}]])}
 
      {:label   "Disabled"
       :desc    "Disabled"
@@ -36,43 +38,47 @@
                           {:placeholder "Your text here"
                            :disabled    true
                            :label-text  "Input label"
-                           :helper-text "My helper text"}]])}
+                           :helper-text "My helper text"
+                           :id          "text-field-disabled-example"
+                           }]])}
 
-     {:label   "Start enhancer(text)"
-      :desc    "Start enhancer(text)"
+     {:label   "Start enhancer (text)"
+      :desc    "Start enhancer (text)"
       :row-attrs row-attrs
       :samples (samples [[text-field
                           {:placeholder    "Enter a dollar amount"
                            :start-enhancer "$"
                            :label-text     "Input label"
-                           :helper-text    "My helper text"}]])}
+                           :helper-text    "My helper text"
+                          ;;  :id             "text-field-start-enhancer(text)-example"
+                           }]])}
 
      {:label   "End enhancer (icon)"
       :desc    "End enhancer (icon)"
       :row-attrs row-attrs
       :samples (samples [[text-field
-                          {:placeholder  "Enter a dollar amount"
+                          {:placeholder  "Your text here"
                            :end-enhancer :star
                            :label-text   "Input label"
-                           :helper-text  "My helper text"}]])}
+                           :helper-text  "My helper text"
+                           :id           "text-field-end-enhancer(text)-example"}]])}
 
      {:label   "Textarea"
       :desc    "Textarea"
       :row-attrs row-attrs
       :samples (samples [[text-field
-                          {:placeholder    "Enter a dollar amount"
-                           :required       true
-                           :label-text     "Input label"
-                           :helper-text    "My helper text"
-                           :start-enhancer "$"
-                           :end-enhancer   :star
-                           :textarea?      true}]])}
+                          {:placeholder "Your text here"
+                           :label-text  "Input label"
+                           :helper-text "My helper text"
+                           :textarea?   true
+                           :id          "text-field-textarea-example"}]])}
 
      {:label   "All the options"
       :desc    "All the options"
       :samples (samples [[text-field
-                          {:colorway            :accent
-                           :label-attrs         (sx :bgc--$yellow-50 :dark:bgc--$yellow-900)
+                          {:id                  "text-field-all-the-options-example"
+                           :colorway            :accent
+                           :label-attrs         (sx :c--$lime-750 :dark:c--$lime-400)
                            :placeholder         "Your text here"
                            :disabled            false
                            :end-enhancer        "🦄"

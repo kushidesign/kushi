@@ -620,11 +620,11 @@
                              [:--shadow-strength :40%]))
              k]))
 
-  #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
-                                 kushi.ui.text-field.demo/demos))]
+  [showcase (!? (showcase/opts kushi.ui.text-field/text-field
+                               kushi.ui.text-field.demo/demos))]
 
   ;; Fix transition
-  [showcase (!? (showcase/opts kushi.ui.switch/switch
+  #_[showcase (!? (showcase/opts kushi.ui.switch/switch
                                kushi.ui.switch.demo/demos))]
 
   ;; DONE

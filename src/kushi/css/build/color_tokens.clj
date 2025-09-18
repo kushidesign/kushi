@@ -32,7 +32,7 @@
    [
     :--foreground-color                     :$neutral-950
     :--background-color                     :white
-    :--foreground-color-dark-mode           :$neutral-50
+    :--foreground-color-dark-mode           :$neutral-100
     :--background-color-dark-mode           :$neutral-1000
     :--foreground-color-secondary           :$neutral-700
     :--foreground-color-secondary-dark-mode :$neutral-350

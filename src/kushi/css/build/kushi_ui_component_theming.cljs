@@ -345,11 +345,12 @@
     (defcss ".surface-soft, .surface-soft-classic, .surface-faint, .surface-convex, .surface-minimal, .surface-transparent"
       {:--chroma-shift    :6.25% 
        :--lightness-shift :4% 
-       ".colorway-brown"    {:--chroma-shift :2% }
-
-       :color                :$fgc
+       :color             :$fgc
        :hover:bgc         :$hover-bgc
        :active:bgc        :$active-bgc
+       ".colorway-brown"    {:--chroma-shift :2% }
+       ".foreground-color-secondary" {:color :$foreground-color-secondary
+                                      :dark  :$foreground-color-secondary-dark-mode}
        :dark              {:--chroma-shift-op    "-"
                            :--lightness-shift-op "+"
                            :hover:bgc            :$hover-bgc
