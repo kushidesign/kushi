@@ -600,10 +600,10 @@
   #_[showcase (!? (showcase/opts kushi.ui.switch/switch
                                  kushi.ui.switch.demo/demos))]
 
-  #_[showcase (!? (showcase/opts kushi.ui.icon/icon
-                                 kushi.ui.icon.demo/demos))]
+  [showcase (!? (showcase/opts kushi.ui.icon/icon
+                               kushi.ui.icon.demo/demos))]
 
-  [showcase (!? (showcase/opts kushi.ui.tag/tag
+  #_[showcase (!? (showcase/opts kushi.ui.tag/tag
                                  kushi.ui.tag.demo/demos))]
 
 

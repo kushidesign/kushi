@@ -64,7 +64,8 @@
 
     [:div
      (merge-attrs
-      (sx "[data-ks-ui=\"icon\"]"
+      (sx ".ks-icon"
+          :.surface-transparent
           :d--inline-flex
           :flex-direction--row
           :jc--c
@@ -76,9 +77,6 @@
           [:>span.material-symbols-icon-filled:font-variation-settings "'FILL' 1"]
           :_svg:height--1em
           :_svg>path:fill--currentColor)
-
-      ;; This is necessary to enable colorways
-      {:data-ks-surface "transparent"}
       &attrs)
      (cond
        (and (vector? icon*) (= :svg (first icon*)))
@@ -97,62 +95,4 @@
              icon-fill  (when icon-filled (str icon-font "-icon-filled"))]
          (into [:span {:class [icon-style icon-fill]}]
                icon-name)))]))
-#_{
-          :size         {:default :medium
-                          :desc    "Corresponds to the font-size based on Kushi's font-size scale."
-                          :demo    {:label           "Sizes"
-                                    :attrs           {}
-                                    :variant-labels? false
-                                    ;; :x-variants [:weight]
-                                    :args            [:star]
-                                    :row-style       {:width           "100%"
-                                                      :justify-content "space-between"}}}
 
-          :weight       {:default :normal
-                          :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."
-                          :demo    {:label           "Weights"
-                                    :attrs           {}
-                                    :attrs/display   {:size :xxxlarge}
-                                    :variant-labels? false
-                                    :args            [:star]
-                                    :row-style       {:width           "100%"
-                                                      :justify-content "space-between"}}}
-
-          :colorway     {:default nil
-                          :desc    "Colorway of the icon. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
-                          :demo    [{:label           "Colorways"
-                                     :attrs           {:size :xxxlarge}
-                                     :variant-labels? false
-                                     :args            [:star]}
-                                    {:label           "Colorways, filled icon"
-                                     :attrs           {:icon-filled? true
-                                                       :size         :xxxlarge}
-                                     :variant-labels? false
-                                     :args            [:star]}]}
-
-          :icon-filled? {:schema    boolean?
-                          ;; :required? true
-                          :default false
-                          :desc    "Filled or not filled"
-                          :demo    {:label         "Filled icon"
-                                    :attrs         {}
-                                    :attrs/display {:size :xxxlarge}
-                                    :args          [:star]}}
-
-          :icon-style   {:schema    (into #{} defs/icon-style)
-                          :default :outlined
-                          :desc    "Style of icon"
-                          :demo    {:label         "Icon styles"
-                                    :attrs         {:size :xxxlarge}
-                                    :args          [:login]}}
-
-          :inert       {:schema    boolean?
-                          :default false
-                          :desc    "Determines whether the icon will feature hover and active styles"
-                          :demo    {:label         "Inert or interactive styling"
-                                    :attrs         {:size :xxxlarge
-                                                    :icon-filled? true 
-                                                    :colorway :positive}
-                                    :args          [:star]}}
-          
-          }

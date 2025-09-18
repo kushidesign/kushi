@@ -55,7 +55,7 @@
 
 (def demos
   [
-   {:label   "size"
+   {:label   "Size"
     ;;  :label/modal "Colorways ..."
     :desc    "Sizes from xxxsmall to xxxlarge"
     ;; :row-style {:border "1px solid red"}
