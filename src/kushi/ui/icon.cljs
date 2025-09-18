@@ -52,7 +52,7 @@
    :props/shared [[:colorway {:default nil}]
                   :shape
                   :size
-                  :weight       
+                  [:weight {:default nil}]       
                   :position
                   :inert
                   :transition

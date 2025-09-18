@@ -15,7 +15,7 @@
    [kushi.showcase.core :as showcase :refer [showcase]]
 
 
-   [kushi.ui.flex :refer [flex-row flex-col]]
+   [kushi.ui.flex :refer [flex-row flex-col flex-row-space-between]]
 
    [kushi.ui.text-field :refer [text-field]]
    [kushi.ui.text-field.demo]
@@ -547,24 +547,28 @@
        :close-button?   true
        :close-button-fn (fn [] [:div "hi"])}]
 
-   #_[callout2
-      {:size          :xlarge
-       :colorway        :positive}
-      [:div (sx :.flex-row-space-between)
-       [icon :check-circle]
-       "Your transaction was successful."
-       [button {:colorway :positive
-                :surface  :faint
-                :shape  :circle
-                :stroke   :medium}
-        "GO"]
-       [icon-button 
-        {:colorway :positive
-         :surface  :faint
-         :shape  :circle
-         :stroke   :medium
-         :packing  :compact}
-        :warning]]]
+   [callout2
+    {:size     :xlarge
+     :colorway :positive
+     :surface  :soft
+     :stroke   :hard}
+    [flex-row-space-between
+     [icon :check-circle]
+     "Your transaction was successful."
+     [button {:colorway :positive
+              :surface  :faint
+              :shape    :circle
+              :stroke   :medium}
+      "GO"]
+     [icon-button 
+      {:colorway :positive
+       :surface  :faint
+       :shape    :pill
+       :stroke   :medium
+       :packing  :compact
+       :weight   :bold
+       :size     :medium}
+      :close]]]
    ]
 
   
@@ -845,13 +849,13 @@
 
   
   #_[showcase (!? (showcase/opts kushi.ui.callout/callout
-                                 kushi.ui.callout.demo/demos))]
+                               kushi.ui.callout.demo/demos))]
 
-  #_[showcase (? {:display-metadata? false}
+  #_[showcase (!? {:display-metadata? false}
                (showcase/opts kushi.ui.checkbox/checkbox
                               kushi.ui.checkbox.demo/demos))]
 
-  [showcase (showcase/opts kushi.ui.radio/radio
+  #_[showcase (showcase/opts kushi.ui.radio/radio
                            kushi.ui.radio.demo/demos)]
 
   #_[avatar {:surface :solid

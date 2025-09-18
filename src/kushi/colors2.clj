@@ -609,9 +609,9 @@
                     (nth (nth scale n1) n2))))]
     (/ (apply + vals) (count vals))))
 
-(? (find-average 1 1))
+#_(? (find-average 1 1))
 
-(? (/ (find-average 1 2) 0.4))
+#_(? (/ (find-average 1 2) 0.4))
 
 
 (def dev-sample-proj-dir "docs")

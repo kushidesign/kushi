@@ -6,18 +6,21 @@
              :as showcase
              :refer [samples samples-with-variant]]
             [kushi.ui.checkbox :refer [checkbox]]
+            [kushi.ui.flex :refer [flex-row]]
             [kushi.ui.label :refer [label]]))
 
 ;; TODO Make :row-attrs work
 
   (def demos
-    (let [bounded (sx {:border-radius :$shape-rounded
-                       :w             :fit-content
-                       :bgc           :transparent
-                       :p             :1em
-                       :pie           :1.5em
-                       :b             :1px:solid:$neutral-150
-                       :dark:b        :1px:solid:$neutral-850})]
+    (let [bounded (sx ".ks-showcase-text-field-sample-wrapper"
+                      {:bgc               :transparent
+                       :padding           :1.05em:1.65em:1.05em
+                       :border-width      :1px
+                       :border-style      :solid
+                       :border-color      :$neutral-150
+                       :dark:border-color :$neutral-850
+                       :width             :fit-content
+                       :border-radius     :$shape-rounded})]
       [{:label   "Different sizes",
         :samples (samples-with-variant
                   {:variant       :size,
@@ -25,35 +28,84 @@
                    :attrs         {:end-enhancer   :east
                                    :defaultChecked true} })}
 
-       {:label   "With label",
-        :samples (samples
-                  [#_[:div (sx {:border-radius :$shape-rounded
-                                :w             :fit-content
-                                :bgc           :transparent
-                                :p             :1em
-                                :pie           :1.5em
-                                :b             :1px:solid:$neutral-150
-                                :dark:b        :1px:solid:$neutral-850})
-                      [checkbox "Sign me up"]]
-                   [checkbox "Sign me up"]])}
+       {:label     "With label",
+        :row-attrs bounded
+        :samples   (samples
+                    [[flex-row
+                      [checkbox {:id "with-label"}]
+                      [label {:for "with-label"} "Sign me up"]]])}
 
-       {:label   "With label and traling icon",
-        :samples (samples
-                  [#_[:div (sx {:border-radius :$shape-rounded
-                                :w             :fit-content
-                                :bgc           :transparent
-                                :p             :1em
-                                :pie           :1.5em
-                                :b             :1px:solid:$neutral-150
-                                :dark:b        :1px:solid:$neutral-850})
-                      [checkbox "Sign me up"]]
-                   [checkbox "Make it shiny" [icon :auto-awesome]]])}
+       {:label     "With label and traling icon",
+        :row-attrs bounded
+        :samples   (samples
+                    [[flex-row
+                      [checkbox]
+                    ;; TODO fix red colorway on icon
+                      [label "Make it shiny" [icon #_{:colorway :neutral} :auto-awesome]]]])}
        
-       {:label     "Weight variants extra-light to extra-bold",
+       {:label     "Weights",
         :row-style {:flex-direction :column
                     :align-items    :flex-start
                     :gap            :2rem}
-        :samples   (samples-with-variant
+        :samples   (samples 
+                    [
+                     "thin"
+                     [flex-row
+                      {:size   :xlarge
+                       :weight :thin}
+                      [checkbox]
+                      [:label "Sign me up"]]
+
+                     "extra-light"
+                     [flex-row
+                      {:size   :xlarge
+                       :weight :extra-light}
+                      [checkbox]
+                      [:label "Sign me up"]]
+
+                     "normal"
+                     [flex-row
+                      {:size   :xlarge
+                       :weight :normal}
+                      [checkbox]
+                      [:label "Sign me up"]]
+
+                     "wee-bold"
+                     [flex-row
+                      {:size   :xlarge
+                       :weight :wee-bold}
+                      [checkbox]
+                      [:label "Sign me up"]]
+
+                     "semi-bold"
+                     [flex-row
+                      {:size   :xlarge
+                       :weight :semi-bold}
+                      [checkbox]
+                      [:label "Sign me up"]]
+
+                     "bold"
+                     [flex-row
+                      {:size   :xlarge
+                       :weight :bold}
+                      [checkbox]
+                      [:label "Sign me up"]]
+
+                     "extra-bold"
+                     [flex-row
+                      {:size   :xlarge
+                       :weight :extra-bold}
+                      [checkbox]
+                      [:label "Sign me up"]]
+
+                     "heavy"
+                     [flex-row
+                      {:size   :xlarge
+                       :weight :heavy}
+                      [checkbox]
+                      [:label "Sign me up"]]])
+
+        #_(samples-with-variant
                     {:variant         :weight
                      :variant-labels? false
                      :args            ["Make it shiny" [icon :auto-awesome]]})}]))

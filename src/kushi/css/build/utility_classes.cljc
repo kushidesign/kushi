@@ -558,7 +558,7 @@
      [k
       (let [v (str "'wght' " weight)]
         {:font-weight                           
-         (->> k util/stringify (str "$") keyword)
+         (->> k util/stringify (str "$weight-") keyword)
 
          " .ks-icon:font-variation-settings"
          v
@@ -667,14 +667,10 @@
   (scale-of-utility-defs
    type-weights
    [
-    ">.ks-checkbox-input:outline-width"
-    ">.ks-checkbox-input:border-width"
-
-    ;; TODO - remove these two
-    ">.ks-radio-input:outline-width"
-    ">.ks-checkbox-input:bw"
-    
-    ]
+    ">.ks-checkbox:outline-width"
+    ">.ks-checkbox:border-width"
+    " .ks-checkbox:outline-width"
+    " .ks-checkbox:border-width"]
    {:val-prefix "input-border-weight"
     ;; :data-attr  "ks-weight"
     :acc-f      (fn [k]

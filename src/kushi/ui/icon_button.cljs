@@ -13,6 +13,7 @@
  {:doc          "Buttons are fundamental components that allow users to process actions or navigate an experience. Icon buttons feature a single icon or symbol, with no text"
   :summary      "Buttons provide cues for actions and events."
   :props/shared [:size
+                 :weight
                  [:colorway {:default :neutral}]
                  :packing
                  :loading

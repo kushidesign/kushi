@@ -8,6 +8,7 @@
    [kushi.ui.icon-button :refer [icon-button]]
    [kushi.ui.core :refer (defui)]
    [kushi.ui.icon :refer [icon]]
+   [kushi.ui.flex :refer [flex-row]]
    [reagent.dom]))
 
 ;; TODO - this is mousedown, so isolate only if primary click
@@ -30,7 +31,10 @@
           `:.fixed-block-end-inside` utility class for positioning
           at the bottom of the viewport."
    :props/family [:container]
-   :props/shared [:packing :transition [:surface {:default :faint}]]}
+   :props/shared [:inert 
+                  :packing 
+                  :transition 
+                  [:surface {:default :faint}]]}
   [& args]
   (let [{:keys [inert
                 loading
@@ -38,7 +42,7 @@
         &props]
     (into [:section
            (merge-attrs
-            (sx "[data-ks-ui=\"callout2\"]"
+            (sx ".ks-callout"
                 :position--relative
                 :d--flex
                 :flex-direction--row

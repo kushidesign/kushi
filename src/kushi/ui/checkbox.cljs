@@ -14,7 +14,7 @@
   [:input
    (merge-attrs
     {:class           (css
-                       "[data-ks-ui=\"checkbox\"]"
+                       ".ks-checkbox"
                        {:transition-duration      :$transition-xxfast
                         :cursor                   :pointer
                         :+label:cursor            :pointer
@@ -46,7 +46,5 @@
                         :checked:o                :1
                         :checked:border-color     :currentColor
                         :checked:before:transform "scale(1) rotate(15deg)"})
-     :data-ks-ui      :checkbox
-     :data-ks-surface :transparent
      :type            :checkbox}
     &attrs)])

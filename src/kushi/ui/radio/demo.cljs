@@ -152,7 +152,8 @@
     ;; This recognizes the even/odd structure of the vector, and uses the strings
     ;; as labels for the samples
     :samples   (samples
-                ["gray"
+                [
+                 "gray"
                  [flex-row
                   {:colorway :neutral}
                   [radio
