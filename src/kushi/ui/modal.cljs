@@ -177,12 +177,12 @@
                            :.fixed-centered
                            :.transition
                            [:transition-duration
-                            "var(--modal-transition-duration, var(--fast))"]
+                            "var(--modal-transition-duration, var(--transition-fast))"]
                            [:max-width
                             "calc(100vw - (2 * var(--modal-margin, 1rem)))"]
                            [".kushi-modal-open>.kushi-modal-inner:opacity" 1]
                            ["kushi-modal-open>.kushi-modal-inner:transition-delay"  
-                            "calc(var(--modal-transition-duration, var(--fast)))"]
+                            "calc(var(--modal-transition-duration, var(--transition-fast)))"]
                            [:box-shadow :$light-box-shadow]
                            [:dark:box-shadow :$dark-box-shadow]
                            :backdrop:bgc--transparent

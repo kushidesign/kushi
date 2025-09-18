@@ -3,6 +3,7 @@
             [fireworks.core :refer [? !? ?> !?>]]
             [kushi.ui.core :refer (defui)]
             [kushi.ui.util :as util]
+            [kushi.ui.flex :refer [flex-row-center]]
             [kushi.ui.shared :refer [add-enhancer]]))
 
 (defui tag
@@ -14,6 +15,7 @@
                   :colorway
                   :packing
                   :loading
+                  :stroke
                   :stroke-align
                   :stroke-width
                   :position
@@ -23,38 +25,36 @@
                   :inert]}
   [& args]
   (let [{:keys [loading stroke-width]} &props]
-    (into [:div
+    (into [flex-row-center
            (merge-attrs
 
             ;; base styles
             ;; TODO - how different from button?
             (sx ".ks-tag"
-                :d--flex
-                :flex-direction--row
-                :jc--c
-                :ai--c
-                :w--fit-content
-                :h--fit-content
-                :gap--$icon-enhanceable-gap
-                
-                ;; different from button
-                [:--padding-block-start "calc(var(--tag-padding-block) * var(--tag-padding-block-start-reduction-ratio, 1))"]
-                [:--padding-block-end   :$tag-padding-block]
-                [:--padding-inline      :$tag-padding-inline]
-                ;; different from button
-                
-                :pi--$_padding-inline
-                :pbs--$_padding-block-start
-                :pbe--$_padding-block-end)
+                {:w               :fit-content
+                 :h               :fit-content
+                 :gap             :$icon-enhanceable-gap
+                 :pi              :$padding-inline||$tag-padding-inline
+                 :pb              :$padding-block||$tag-padding-block
+                 :.start-enhancer {:pis  "calc(var(--padding-inline, var(--tag-padding-inline)) * 0.7666)"}
+                 :.end-enhancer   {:pie  "calc(var(--padding-inline, var(--tag-padding-inline)) * 0.7666)"}
+                 })
 
             {:aria-busy  loading
              :aria-label (when loading "loading")}
-
+            
             (? :pp {:style {"--stroke-width" (or (some-> stroke-width util/as-str)
-                                             "var(--tag-stroke-width)")}})
+                                                 "var(--tag-stroke-width)")}})
             
             (util/stroke-width-cssvar stroke-width "tag")
             (util/shadow-and-stroke-attrs &props)
 
             &attrs)]
           (add-enhancer &props &children))))
+
+
+;; Keep here?
+
+#_(defcss ".ks-button, .ks-tag"
+  {".start-enhancer"      {:padding-inline-start "calc(var(--padding-inline) * 0.7666)"}
+   ".end-enhancer"        {:padding-inline-end "calc(var(--padding-inline) * 0.7666)"}})

@@ -12,7 +12,7 @@
    (merge-attrs
     {:class            (css
                         "[data-ks-ui=\"radio\"]"
-                        {:transition-duration   :$xxfast
+                        {:transition-duration   :$transition-xxfast
                          :cursor                :pointer
                          :+label:cursor         :pointer
                          :+label:pis            :0.369em

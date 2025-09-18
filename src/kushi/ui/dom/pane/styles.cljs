@@ -384,7 +384,7 @@
 ;;   :zi--10
 ;;   :.absolute
 ;;   :.transition
-;;   :.xxfast
+;;   :.transition-xxfast
 ;;   :.hidden:border--0!important
 ;;   [:translate "var(--tx) var(--ty)"])
 

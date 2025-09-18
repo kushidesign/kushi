@@ -12,9 +12,9 @@
 
 (defn- toggle-switch [%]
   (let [node* (domo/et %)
-        node  (if (domo/has-class? node* "kushi-switch")
+        node  (if (domo/has-class? node* ".ks-switch")
                 node*
-                (domo/nearest-ancestor node* ".kushi-switch"))]
+                (domo/nearest-ancestor node* ".ks-switch"))]
     (domo/toggle-boolean-attribute node "aria-checked")))
 
 
@@ -150,7 +150,7 @@
       (when switch-width-ratio {:style {"--switch-width-ratio" switch-width-ratio}})
 
       (sx
-       ".kushi-switch"
+       ".ks-switch"
        :.surface-solid
        :.transition
        :.display-flex-row
@@ -159,46 +159,46 @@
         :--switch-track-inset-box-shadow-color :$transparent-black-05
         :flex-shrink                           0
         :overflow                              :clip
-        :transition-duration                   :$xxfast
+        :transition-duration                   :$transition-xxfast
         :position                              :relative
         :cursor                                :pointer
         :width                                 "calc((var(--height) *  max(1.25, var(--switch-width-ratio, 1.8))) - var(--switch-border-width))"
         :height                                :$height
         :padding                               :$track-inset-gap||1px
         :box-shadow                            "inset 0 0 0.15em 0.01em var(--switch-track-inset-box-shadow-color)"
-        :_.ks-thumb                            {:width                                       :$thumb-height
-                                                :height                                      :$thumb-height
-                                                "has-ancestor(.kushi-switch[disabled]):cursor" :not-allowed}
-        "[aria-checked='true']"                  {:_.ks-thumb:inset-inline-start          "calc(100% - var(--thumb-height) - var(--track-inset-gap) + (((var(--thumb-height) * var(--thumb-scale-factor, 1)) - var(--thumb-height)) / 2))"
-                                                  :justify-content                        :flex-end
-                                                  :_.kushi-switch-thumb-icon-on:display   :flex
-                                                  :_.kushi-switch-thumb-icon-off:display  :none
-                                                  :_.kushi-switch-thumb-label-on:display  :flex
-                                                  :_.kushi-switch-thumb-label-off:display :none}
-        "[aria-checked='false']"                 {:_.ks-thumb:inset-inline-start          "calc(var(--track-inset-gap) - (((var(--thumb-height) * var(--thumb-scale-factor, 1)) - var(--thumb-height)) / 2))"
-                                                  :_.kushi-switch-thumb-icon-on:display   :none
-                                                  :_.kushi-switch-thumb-icon-off:display  :flex
-                                                  :_.kushi-switch-thumb-label-on:display  :none
-                                                  :_.kushi-switch-thumb-label-off:display :flex
-                                                  :_.kushi-switch-thumb-content:c    :$foreground-color-secondary
-                                                  :bgc                                    :$switch-off-background-color
-                                                  :hover:bgc                              :$switch-off-background-color-hover
-                                                  ".inert:bgc"                     :$switch-off-background-color
-                                                  ".inert:hover:bgc"               :$switch-off-background-color-hover
-                                                  :dark:bgc                               :$background-color-neutral-soft-3-dark-mode
-                                                  :dark:hover:bgc                         :$background-color-neutral-soft-4-dark-mode
+        :_.ks-thumb                            {:width                                    :$thumb-height
+                                                :height                                   :$thumb-height
+                                                "has-ancestor(.ks-switch[disabled]):cursor" :not-allowed}
+        "[aria-checked='true']"                  {:_.ks-thumb:inset-inline-start       "calc(100% - var(--thumb-height) - var(--track-inset-gap) + (((var(--thumb-height) * var(--thumb-scale-factor, 1)) - var(--thumb-height)) / 2))"
+                                                  :justify-content                     :flex-end
+                                                  :_.ks-switch-thumb-icon-on:display   :flex
+                                                  :_.ks-switch-thumb-icon-off:display  :none
+                                                  :_.ks-switch-thumb-label-on:display  :flex
+                                                  :_.ks-switch-thumb-label-off:display :none}
+        "[aria-checked='false']"                 {:_.ks-thumb:inset-inline-start       "calc(var(--track-inset-gap) - (((var(--thumb-height) * var(--thumb-scale-factor, 1)) - var(--thumb-height)) / 2))"
+                                                  :_.ks-switch-thumb-icon-on:display   :none
+                                                  :_.ks-switch-thumb-icon-off:display  :flex
+                                                  :_.ks-switch-thumb-label-on:display  :none
+                                                  :_.ks-switch-thumb-label-off:display :flex
+                                                  :_.ks-switch-thumb-content:c         :$foreground-color-secondary
+                                                  :bgc                                 :$switch-off-background-color
+                                                  :hover:bgc                           :$switch-off-background-color-hover
+                                                  ".inert:bgc"                           :$switch-off-background-color
+                                                  ".inert:hover:bgc"                     :$switch-off-background-color-hover
+                                                  :dark:bgc                            :$background-color-neutral-soft-3-dark-mode
+                                                  :dark:hover:bgc                      :$background-color-neutral-soft-4-dark-mode
                                                   }
 
-        :_.kushi-switch-thumb-content          {:display                                     :none
-                                                :flex-direction                              :column
-                                                :jc                                          :center
-                                                :ai                                          :center
-                                                :w                                           :100%
-                                                :h                                           :100%
-                                                :.kushi-switch-thumb-label                   {:fs :$switch-thumb-label-font-size||0.3em
-                                                                                              :fw :$switch-thumb-label-font-weight||$weight-semi-bold}
-                                                :.kushi-switch-thumb-icon                    {:fs :$switch-thumb-icon-font-size||0.55em
-                                                                                              :fw :$switch-thumb-icon-font-weight||$size-medium}}})
+        :_.ks-switch-thumb-content          {:display                :none
+                                             :flex-direction         :column
+                                             :jc                     :center
+                                             :ai                     :center
+                                             :w                      :100%
+                                             :h                      :100%
+                                             :.ks-switch-thumb-label {:fs :$switch-thumb-label-font-size||0.3em
+                                                                      :fw :$switch-thumb-label-font-weight||$weight-semi-bold}
+                                             :.ks-switch-thumb-icon  {:fs :$switch-thumb-icon-font-size||0.55em
+                                                                      :fw :$switch-thumb-icon-font-weight||$size-medium}}})
 
       {:disabled           disabled?
        :role               :switch
@@ -232,22 +232,22 @@
         thumb-props
         (when label-on-thumb? 
           [:<> 
-           [:div {:class [:kushi-switch-thumb-content
-                          :kushi-switch-thumb-label
-                          :kushi-switch-thumb-label-on]}
+           [:div {:class [:ks-switch-thumb-content
+                          :ks-switch-thumb-label
+                          :ks-switch-thumb-label-on]}
             thumb-label-on]
-           [:div {:class [:kushi-switch-thumb-content
-                          :kushi-switch-thumb-label
-                          :kushi-switch-thumb-label-off]}
+           [:div {:class [:ks-switch-thumb-content
+                          :ks-switch-thumb-label
+                          :ks-switch-thumb-label-off]}
             thumb-label-off]])
 
         (when icon-on-thumb? 
           [:<> 
-           [:div {:class [:kushi-switch-thumb-content
-                          :kushi-switch-thumb-icon
-                          :kushi-switch-thumb-icon-on]}
+           [:div {:class [:ks-switch-thumb-content
+                          :ks-switch-thumb-icon
+                          :ks-switch-thumb-icon-on]}
             [icon thumb-icon-props thumb-icon-on]]
-           [:div {:class [:kushi-switch-thumb-content
-                          :kushi-switch-thumb-icon
-                          :kushi-switch-thumb-icon-off]}
+           [:div {:class [:ks-switch-thumb-content
+                          :ks-switch-thumb-icon
+                          :ks-switch-thumb-icon-off]}
             [icon thumb-icon-props thumb-icon-off]]])])]))

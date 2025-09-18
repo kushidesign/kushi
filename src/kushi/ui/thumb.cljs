@@ -59,19 +59,19 @@
 
 ;; {:--thumb-height "calc(var(--switch-thumb-scale-factor, 1) * (1em - (var(--switch-border-width) * 2)))"
 
-#_(sx ".kushi-switch-thumb"
+#_(sx ".ks-switch-thumb"
       :.transition
       [:--width :$thumb-height]
-      :transition-duration--$xxfast
+      :transition-duration--$transition-xxfast
       :border-color--currentColor
-      ["has-ancestor(.kushi-switch[aria-checked='false']):border-color" "color-mix(in srgb, currentColor, transparent)"]
+      ["has-ancestor(.ks-switch[aria-checked='false']):border-color" "color-mix(in srgb, currentColor, transparent)"]
       :cursor--pointer
       :bgc--$transparent-white-100
       :box-shadow--0:2px:6px:0:$transparent-black-15
       [:transform "translate(0, -50%)"]
-      ["has-ancestor(.kushi-switch[aria-checked='true']):inset-inline-start"
+      ["has-ancestor(.ks-switch[aria-checked='true']):inset-inline-start"
        "calc(100% - var(--width))"]
-      ["has-ancestor(.kushi-switch[disabled]):cursor"
+      ["has-ancestor(.ks-switch[disabled]):cursor"
        :not-allowed]
       :position--absolute
       :top--50%

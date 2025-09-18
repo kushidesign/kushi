@@ -12,7 +12,7 @@
    "color"                      "var(--foreground-color)"
    "background-color"           "var(--background-color)"
    "transition-property"        "background-color, color"
-   "transition-duration"        "var(--fast)"
+   "transition-duration"        "var(--transition-fast)"
    "transition-timing-function" "var(--timing-linear-curve)"
    "overflow-y"                 "scroll"})
 
@@ -24,7 +24,7 @@
 (defcss
   "code"
   {"width"                      "fit-content",
-   "transition-duration"        "var(--fast)",
+   "transition-duration"        "var(--transition-fast)",
    "transition-property"        "all",
    "font-family"                "var(--code-font-stack)",
    "font-weight"                "var(--code-font-weight)",
@@ -164,13 +164,20 @@
    ;; Use or not use -ems ?
    "--tag-padding-block-start-reduction-ratio"        "0.9",
    "--tag-padding-block-start"                        "0.27em",
-   "--tag-padding-block"                              "0.3em",
-   "--tag-padding-inline"                             "0.6em",
-   "--tag-padding-block-compact"                      "0.20em",
+
+   "--tag-padding-inline-xcompact"                    "0.275em",
    "--tag-padding-inline-compact"                     "0.45em",
-   "--tag-padding-block-roomy"                        "0.45em",
-   "--tag-padding-inline-roomy"                       "0.9em"
-   "--transition-duration"                            :$xxxfast
+   "--tag-padding-inline"                             "0.6em",
+   "--tag-padding-inline-roomy"                       "0.75em",
+   "--tag-padding-inline-xroomy"                      "1.0em",
+
+   "--tag-padding-block-xcompact"                     "0.15em",
+   "--tag-padding-block-compact"                      "0.20em",
+   "--tag-padding-block"                              "0.3em",
+   "--tag-padding-block-roomy"                        "0.45em"
+   "--tag-padding-block-xroomy"                       "0.6em"
+
+   "--transition-duration"                            :$transition-xxxfast
    ;; data-ks-surface=outline
    "--outlined-element-stroke-transparency"           "30%"
    "--outlined-element-stroke-transparency-dark-mode" "30%"
@@ -252,23 +259,16 @@
    })
 
 
-;; Keep here?
-
-(defcss ".ks-button, .ks-tag"
-  {".start-enhancer"      {:padding-inline-start "calc(var(--padding-inline) * 0.7666)"}
-   ".end-enhancer"        {:padding-inline-end "calc(var(--padding-inline) * 0.7666)"}})
-
 ;; Move to tag ns
 (defcss ".ks-tag"
-  {".packing-compact"
-   {:--padding-inline      "var(--tag-padding-inline-compact)"
-    :--padding-block-start "calc(var(--tag-padding-block-compact) * var(--tag-padding-block-start-reduction-ratio, 1))"
-    :--padding-block-end   "calc(var(--tag-padding-block-compact))"}
-
-   ".packing-roomy"
-   {:--padding-inline      "var(--tag-padding-inline-roomy)"
-    :--padding-block-start "calc(var(--tag-padding-block-roomy) * var(--tag-padding-block-start-reduction-ratio, 1))"
-    :--padding-block-end   "calc(var(--tag-padding-block-roomy))"}})
+  {".packing-xcompact" {:--padding-inline :$tag-padding-inline-xcompact
+                        :--padding-block  :$tag-padding-block-xcompact}
+   ".packing-compact"  {:--padding-inline :$tag-padding-inline-compact
+                        :--padding-block  :$tag-padding-block-compact}
+   ".packing-roomy"    {:--padding-inline :$tag-padding-inline-roomy
+                        :--padding-block  :$tag-padding-block-roomy}
+   ".packing-xroomy"   {:--padding-inline :$tag-padding-inline-xroomy
+                        :--padding-block  :$tag-padding-block-xroomy}})
 
 ;; Move to switch ns
 (defcss ".kushi-switch"
@@ -311,11 +311,14 @@
                         :--chroma-shift :0%}})
 
     (defcss ".surface-solid, .surface-solid-classic, .surface-soft, .surface-soft-classic, .surface-faint, .surface-convex, .surface-minimal, .surface-transparent, .surface-minimal-light-mode, .surface-convex-light-mode"
-      {:--hover-bgc  "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) var(--lightness-shift)) calc(var(--chroma-bgc) var(--chroma-shift-op, +) var(--chroma-shift)) var(--colorway-hue))"
+      {
+       :--hover-bgc  "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) var(--lightness-shift)) calc(var(--chroma-bgc) var(--chroma-shift-op, +) var(--chroma-shift)) var(--colorway-hue))"
        :--active-bgc "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) (2 * var(--lightness-shift))) calc(var(--chroma-bgc) var(--chroma-shift-op, +) calc(2 * var(--chroma-shift))) var(--colorway-hue))"
        :--bgc        "oklch(var(--lightness-bgc) var(--chroma-bgc) var(--colorway-hue))"
        :--fgc        "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))" 
-       })
+       :.inert {:bgc          :$bgc
+                :--hover-bgc  :$bgc
+                :--active-bgc :$bgc}})
        
 
     ;; Solids

@@ -1522,79 +1522,79 @@
                               (contains? #{:.neutral} c)
                               nil
 
-                              (contains? #{:.xxxtight      
-                                           :.xxtight       
-                                           :.xtight        
-                                           :.tight         
+                              (contains? #{:.tracking-xxxtight      
+                                           :.tracking-xxtight       
+                                           :.tracking-xtight        
+                                           :.tracking-tight         
                                            :.default-tracking 
-                                           :.loose         
-                                           :.xloose        
-                                           :.xxloose       
-                                           :.xxxloose}
+                                           :.tracking-loose         
+                                           :.tracking-xloose        
+                                           :.tracking-xxloose       
+                                           :.tracking-xxxloose}
                                          c)
                               (class->kw c "letter-spacing")
 
-                              (contains? #{:.instant! 
-                                           :.xxxfast! 
-                                           :.xxfast!  
-                                           :.xfast!   
-                                           :.fast!    
+                              (contains? #{:.transition-instant! 
+                                           :.transition-xxxfast! 
+                                           :.transition-xxfast!  
+                                           :.transition-xfast!   
+                                           :.transition-fast!    
                                            :.moderate!
-                                           :.slow!    
-                                           :.xslow!   
-                                           :.xxslow!  
-                                           :.xxxslow!}
+                                           :.transition-slow!    
+                                           :.transition-xslow!   
+                                           :.transition-xxslow!  
+                                           :.transition-xxxslow!}
                                          c)
                               (class->kw c "transition-duration")
 
-                              (contains? #{:.instant 
-                                           :.xxxfast 
-                                           :.xxfast  
-                                           :.xfast   
-                                           :.fast    
-                                           :.moderate
-                                           :.slow    
-                                           :.xslow   
-                                           :.xxslow  
-                                           :.xxxslow}
+                              (contains? #{:.transition-instant 
+                                           :.transition-xxxfast 
+                                           :.transition-xxfast  
+                                           :.transition-xfast   
+                                           :.transition-fast    
+                                           :.transition-moderate
+                                           :.transition-slow    
+                                           :.transition-xslow   
+                                           :.transition-xxslow  
+                                           :.transition-xxxslow}
                                          c)
                               (class->kw c "transition-duration")
 
-                              (contains? #{:.thin
-                                           :.extra-light
-                                           :.light
-                                           :.normal
-                                           :.wee-bold
-                                           :.semi-bold
-                                           :.bold
-                                           :.extra-bold
-                                           :.heavy}
+                              (contains? #{:.weight-thin
+                                           :.weight-extra-light
+                                           :.weight-light
+                                           :.weight-normal
+                                           :.weight-wee-bold
+                                           :.weight-semi-bold
+                                           :.weight-bold
+                                           :.weight-extra-bold
+                                           :.weight-heavy}
                                          c)
                               (class->kw c "fw")
 
-                              (contains? #{:.xxxsmall
-                                           :.xxsmall
-                                           :.xsmall
-                                           :.small
-                                           :.medium
-                                           :.large
-                                           :.xlarge
-                                           :.xxlarge
-                                           :.xxxlarge
-                                           :.xxxxlarge}
+                              (contains? #{:.size-xxxsmall
+                                           :.size-xxsmall
+                                           :.size-xsmall
+                                           :.size-small
+                                           :.size-medium
+                                           :.size-large
+                                           :.size-xlarge
+                                           :.size-xxlarge
+                                           :.size-xxxlarge
+                                           :.size-xxxxlarge}
                                          c)
                               (class->kw c "fs")
 
-                              (contains? #{:.absolute :.relative :.fixed} c)
+                              (contains? #{:.position-absolute :.position-relative :.position-fixed} c)
                               (class->kw c "position")
 
-                              (contains? #{:.block :.flex :.grid} c)
+                              (contains? #{:.display-block :.display-flex :.display-grid} c)
                               (class->kw c "d")
 
-                              (contains? #{:.not-allowed :.pointer} c)
+                              (contains? #{:.cursor-not-allowed :.cursor-pointer} c)
                               (class->kw c "cursor")
 
-                              (contains? #{:.enhanceable} c)
+                              (contains? #{:.icon-enhanceable} c)
                               :.enhanceable-with-icon
 
                               :else c)

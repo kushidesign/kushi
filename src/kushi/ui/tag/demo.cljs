@@ -71,39 +71,34 @@
 
    {:label   "Stroke width"
     :desc    "Custom stroke widths."
-    :samples (samples [[button
-                        {
-                         :colorway     :accent,
+    :samples (samples [[tag
+                        {:colorway     :accent,
                          :surface      :minimal,
                          :stroke       :soft
                          :stroke-width :1px
                          :stroke-align :inside}
                         "New"]
-                       [button
-                        {
-                         :colorway     :accent,
+                       [tag
+                        {:colorway     :accent,
                          :surface      :minimal,
                          :stroke       :soft
                          :stroke-width :2px
                          :stroke-align :inside}
                         "New"]
-                       [button
-                        {
-                         :colorway     :accent,
+                       [tag
+                        {:colorway     :accent,
                          :surface      :minimal,
                          :stroke       :soft
                          :stroke-width :3px
                          :stroke-align :inside}
                         "New"]
-                       [button
-                        {
-                         :colorway     :accent,
+                       [tag
+                        {:colorway     :accent,
                          :surface      :minimal,
                          :stroke       :soft
                          :stroke-width :4px
                          :stroke-align :inside}
-                        "New"]
-                       ])}
+                        "New"]])}
 
 
    {:schema  #{:inside :outside},

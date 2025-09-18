@@ -603,7 +603,7 @@
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
                                  kushi.ui.icon.demo/demos))]
 
-  #_[showcase (!? (showcase/opts kushi.ui.tag/tag
+  [showcase (!? (showcase/opts kushi.ui.tag/tag
                                  kushi.ui.tag.demo/demos))]
 
 
@@ -620,10 +620,11 @@
                              [:--shadow-strength :40%]))
              k]))
 
-  [showcase (!? (showcase/opts kushi.ui.text-field/text-field
+  ;; DONE
+  #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
                                kushi.ui.text-field.demo/demos))]
 
-  ;; Fix transition
+  ;; DONE
   #_[showcase (!? (showcase/opts kushi.ui.switch/switch
                                kushi.ui.switch.demo/demos))]
 

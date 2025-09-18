@@ -14,7 +14,7 @@
    :props/shared [:end-enhancer :start-enhancer :colorway]
    :props        {:helper-text         {:schema  :string
                                         :default nil
-                                        :desc    ["The text for `:.kushi-text-input-helper` label."
+                                        :desc    ["The text for `:.ks-text-input-helper` label."
                                                   "If used, this should give the user actionable information about the value of the associated input field."]}
                   :label-text          {:schema  :string
                                         :default nil

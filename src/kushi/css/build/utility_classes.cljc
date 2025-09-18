@@ -590,18 +590,17 @@
    :before                     {:transition-property        :all
                                 :transition-timing-function :$transition-timing-function
                                 :transition-duration        :$transition-duration}})
+(def transition-classes
+  [:transition transition])
 
 (def transition-duration-classes
   (utility-class-scale
    (variants/tshirt-sizes [:slow :moderate :fast]
                           {:number-of-sizes 3
                            :cast-fn         keyword})
-   :transition-duration)  )
+   :transition-duration))
 
-(def transition-classes
-  (into [:transition
-         transition]
-        transition-duration-classes))
+
 
 (def offscreen-classes 
   [:offscreen {:position :absolute
@@ -896,7 +895,8 @@
    (class-sels pseudo-element-before-position-classes "before-position")
 
    ;; transitions, animations
-   (class-sels transition-classes "transition")
+   (class-sels transition-classes)
+   (class-sels transition-duration-classes "transition")
 
    ;; text weight
    (class-sels text-weight-synced-classes "weight")

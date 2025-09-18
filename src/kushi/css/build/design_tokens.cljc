@@ -305,14 +305,14 @@
     :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "color"]
     }
    [:--pane-background-color                 :$background-color
-    :--pane-background-color-dark-mode         :$background-color-dark-mode
+    :--pane-background-color-dark-mode       :$background-color-dark-mode
     :--pane-background-image                 :white
     :--pane-box-shadow                       :$elevated-5
-    :--pane-box-shadow-dark-mode               :$elevated-5-dark-mode
+    :--pane-box-shadow-dark-mode             :$elevated-5-dark-mode
     :--pane-border-width                     :0px
     :--pane-border-style                     :solid
     :--pane-border-color                     :transparent
-    :--pane-border-color-dark-mode             :transparent]
+    :--pane-border-color-dark-mode           :transparent]
 
     ;; pane geometry
    {:family   "Floating pane geometry"
@@ -339,7 +339,7 @@
    [:--pane-offset-start                     "calc(var(--pane-offset) + 5px)"
     :--pane-z-index                          99999
     :--pane-delay-duration                   :0ms
-    :--pane-transition-duration              :$xfast 
+    :--pane-transition-duration              :$transition-transition-xfast 
     :--pane-transition-timing-function       :$timing-ease-out-curve]
 
     ;; pane arrows
@@ -573,7 +573,7 @@
     :--modal-backdrop-color         :$transparent-black-40
     :--modal-margin                 :1rem
     :--modal-min-width              :200px
-    :--modal-transition-duration    :$xfast]
+    :--modal-transition-duration    :$transition-xfast]
 
 
    ;; Material UI icons
@@ -659,7 +659,7 @@
     :desc     {:en ""}
     :category ["transition-duration"]
     :tags     ["animation" "cubic-bezier" "timing" "transition-duration"]}
-   [:--transition-duration         :$fast
+   [:--transition-duration         :$transition-fast
     :--transition-instant          :0ms
     :--transition-xxxfast          :50ms
     :--transition-xxfast           :100ms

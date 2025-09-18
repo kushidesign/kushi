@@ -204,7 +204,7 @@
                           (tooltip-attrs 
                            {:text          (first args-vec)
                             :tooltip-class (css :ff--$code-font-stack
-                                                [:--tooltip-delay-duration :$xxxfast])}))]
+                                                [:--tooltip-delay-duration :$transition-xxxfast])}))]
             args-vec))
     vec-of-arg-vecs)
    :hiccup-for-examples
@@ -239,7 +239,7 @@
                     (sx :.pointer)
                     (tooltip-attrs {:text          arg
                                     :tooltip-class (css :ff--$code-font-stack
-                                                         [:--tooltip-delay-duration :$xxxfast])
+                                                         [:--tooltip-delay-duration :$transition-xxxfast])
                                     }))
        arg])
     samples)
