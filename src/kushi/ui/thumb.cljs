@@ -10,7 +10,7 @@
 (defui thumb
   {:doc          "Thumb docstring"
    :props/shared [:size
-                  :colorway
+                  [:colorway {:default :neutral}]
                   :packing
                   :loading
                   :stroke

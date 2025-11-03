@@ -43,7 +43,7 @@
           result in the thumb height being greater than the track height."
           
           
-   :props/shared [:colorway
+   :props/shared [[:colorway {:default :neutral}]
                   :size
                   :weight
                   [:shape {:default :pill}]]
@@ -139,6 +139,7 @@
 
     [:button
      (merge-attrs
+
       (if (pos? thumb-scale-factor)
         {:style {"--thumb-scale-factor" thumb-scale-factor
                  "--track-inset-gap"   :0px

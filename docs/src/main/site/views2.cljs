@@ -598,10 +598,10 @@
                                 ))
        })]
 
-  
-
-  [showcase (!? (showcase/opts kushi.ui.switch/switch
-                               kushi.ui.switch.demo/demos))]
+  [showcase 
+   (!? (showcase/opts
+        kushi.ui.switch/switch
+        kushi.ui.switch.demo/demos))]
 
   ;; DONE
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
