@@ -556,20 +556,19 @@
      [icon :check-circle]
      "Your transaction was successful."
      [button {:colorway :positive
-              :surface  :faint
+              :surface  :ghost
               :shape    :circle
-              :stroke   :medium}
+              :stroke   :hard}
       "GO"]
      [icon-button 
       {:colorway :positive
-       :surface  :faint
+       :surface  :ghost
        :shape    :pill
-       :stroke   :medium
+       :stroke   :hard
        :packing  :compact
        :weight   :bold
        :size     :medium}
-      :close]]]
-   ]
+      :close]]]]
 
   
 

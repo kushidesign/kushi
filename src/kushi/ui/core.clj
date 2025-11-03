@@ -173,8 +173,9 @@
       :non-coll-length-limit 21}
      x))
 
+;; (def debug-defui nil)
 
-(def debug-defui nil #_box)
+(def debug-defui 'flex-row-space-between)
 
 
 (defn- props-from-families* [m dbgf]
@@ -439,7 +440,8 @@
    body ; <- body of component
    ]
 
-  (reset! debug? (if (= sym 'button) true false))
+  (reset! debug? 
+          (if (= sym 'flex-row-space-between) true false))
 
   (let [!dbgf
         (fn [_ x] x)

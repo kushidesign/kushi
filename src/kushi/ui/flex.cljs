@@ -33,7 +33,7 @@
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row-center}]
                   [:surface {:default :transparent}]
-                  [:colorway {:default :neutral}]
+                  :colorway
                   :size
                   :weight]}
   [& args]
@@ -44,7 +44,7 @@
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row-flex-end}]
                   [:surface {:default :transparent}]
-                  [:colorway {:default :neutral}]
+                  :colorway
                   :size
                   :weight]}
   [& args]
@@ -55,7 +55,7 @@
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row-space-around}]
                   [:surface {:default :transparent}]
-                  [:colorway {:default :neutral}]
+                  :colorway
                   :size
                   :weight]}
   [& args]
@@ -66,7 +66,7 @@
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row-space-between}]
                   [:surface {:default :transparent}]
-                  [:colorway {:default :neutral}]
+                  :colorway
                   :size
                   :weight]}
   [& args]
@@ -77,7 +77,7 @@
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row-space-evenly}]
                   [:surface {:default :transparent}]
-                  [:colorway {:default :neutral}]
+                  :colorway
                   :size
                   :weight]}
   [& args]
@@ -88,7 +88,7 @@
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col}]
                   [:surface {:default :transparent}]
-                  [:colorway {:default :neutral}]
+                  :colorway
                   :size
                   :weight]}
   [& args]
@@ -101,7 +101,7 @@
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col-center}]
                   [:surface {:default :transparent}]
-                  [:colorway {:default :neutral}]
+                  :colorway
                   :size
                   :weight]}
   [& args]
@@ -112,7 +112,7 @@
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col-flex-end}]
                   [:surface {:default :transparent}]
-                  [:colorway {:default :neutral}]
+                  :colorway
                   :size
                   :weight]}
   [& args]
@@ -123,7 +123,7 @@
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col-space-around}]
                   [:surface {:default :transparent}]
-                  [:colorway {:default :neutral}]
+                  :colorway
                   :size
                   :weight]}
   [& args]
@@ -134,7 +134,7 @@
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col-space-between}]
                   [:surface {:default :transparent}]
-                  [:colorway {:default :neutral}]
+                  :colorway
                   :size
                   :weight]}
   [& args]
@@ -145,7 +145,7 @@
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-col-space-evenly}]
                   [:surface {:default :transparent}]
-                  [:colorway {:default :neutral}]
+                  :colorway
                   :size
                   :weight]}
   [& args]

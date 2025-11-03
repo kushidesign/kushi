@@ -23,7 +23,6 @@
         (js/setTimeout #(reagent.dom/unmount-component-at-node callout) duration)))))
 
 
-;; TODO - make version without the layout slots
 (defui callout2
   {:summary "Callouts provide contextual feedback information for the user."
    :desc    "To position the callout at the top of the viewport, use the
@@ -51,8 +50,7 @@
                 :w--100%
                 :gap--$icon-enhanceable-gap
                 :p--$callout-padding||0.75em
-                :>*:w--100%
-                )
+                :>*:w--100%)
             
             {:aria-busy  loading
              :aria-label (when loading "loading")

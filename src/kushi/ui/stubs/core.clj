@@ -211,7 +211,7 @@
    body ; <- body of component
    ]
 
-  (reset! debug? (if (= sym 'box) true false))
+  (reset! debug? (if (= sym 'flex-row-space-between) true false))
 
   (let [!dbgf
         (fn [_ x] x)

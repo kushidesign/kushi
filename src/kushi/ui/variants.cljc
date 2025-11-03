@@ -390,8 +390,7 @@
                       :default "inline"
                       :class?  true}
 
-   :colorway         {:default :neutral
-
+   :colorway         {:default nil   ;;  <- TODO should this be nil?
                       :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc."
                       :class?  true}
 
