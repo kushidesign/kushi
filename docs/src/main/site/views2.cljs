@@ -35,7 +35,7 @@
    [kushi.ui.spinner :refer [spinner]]
    [kushi.ui.spinner.demo]
 
-   [kushi.ui.callout :refer [callout callout2]]
+   [kushi.ui.callout :refer [callout]]
    [kushi.ui.callout.demo]
 
    [kushi.ui.tag :refer [tag]]
@@ -547,7 +547,7 @@
        :close-button?   true
        :close-button-fn (fn [] [:div "hi"])}]
 
-   [callout2
+   #_[callout
     {:size     :xlarge
      :colorway :positive
      :surface  :soft
@@ -556,13 +556,13 @@
      [icon :check-circle]
      "Your transaction was successful."
      [button {:colorway :positive
-              :surface  :ghost
+              :surface  :transparent
               :shape    :circle
               :stroke   :hard}
       "GO"]
      [icon-button 
       {:colorway :positive
-       :surface  :ghost
+       :surface  :transparent
        :shape    :pill
        :stroke   :hard
        :packing  :compact
@@ -638,6 +638,9 @@
   ;; DONE
   #_[showcase (!? (showcase/opts kushi.ui.button/button
                                kushi.ui.button.demo/demos))]
+
+  [showcase (!? (showcase/opts kushi.ui.callout/callout
+                               kushi.ui.callout.demo/demos))]
   #_[flex-col
    (sx :gap--1rem :_div:gap--1rem :.position-absolute-centered)
    
@@ -847,8 +850,6 @@
                                  kushi.ui.spinner.demo/demos))]
 
   
-  #_[showcase (!? (showcase/opts kushi.ui.callout/callout
-                               kushi.ui.callout.demo/demos))]
 
   #_[showcase (!? {:display-metadata? false}
                (showcase/opts kushi.ui.checkbox/checkbox

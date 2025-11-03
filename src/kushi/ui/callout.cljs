@@ -9,6 +9,7 @@
    [kushi.ui.core :refer (defui)]
    [kushi.ui.icon :refer [icon]]
    [kushi.ui.flex :refer [flex-row]]
+   [kushi.ui.decoration :as decoration]
    [reagent.dom]))
 
 ;; TODO - this is mousedown, so isolate only if primary click
@@ -23,7 +24,7 @@
         (js/setTimeout #(reagent.dom/unmount-component-at-node callout) duration)))))
 
 
-(defui callout2
+(defui callout
   {:summary "Callouts provide contextual feedback information for the user."
    :desc    "To position the callout at the top of the viewport, use the
           `:.fixed-block-start-inside` utility class, or the
@@ -33,6 +34,8 @@
    :props/shared [:inert 
                   :packing 
                   :transition 
+                  :stroke
+                  [:colorway {:default :neutral}]
                   [:surface {:default :faint}]]}
   [& args]
   (let [{:keys [inert
@@ -49,20 +52,25 @@
                 :ai--c
                 :w--100%
                 :gap--$icon-enhanceable-gap
-                :p--$callout-padding||0.75em
-                :>*:w--100%)
+                :pb--$callout-padding-block||0.55em
+                :pi--$callout-padding-inline||0.75em
+                :>*:w--100%
+                [:--stroke-width :$callout-stroke-width])
+
             
-            {:aria-busy  loading
-             :aria-label (when loading "loading")
+
+
+            {:aria-busy          loading
+             :aria-label         (when loading "loading")
              :data-ks-ui-spinner (when loading "loading")}
 
-            (when stroke-width 
-              {:style {"--_stroke-width" (name stroke-width)}})
+            (!? :pp (some-> stroke-width
+                            (decoration/stroke-width-cssvar "callout")))
 
             &attrs)]
           &children)))
 
-(defui callout
+(defui callout-old
   {:summary "Callouts provide contextual feedback information for the user."
    :desc    "To position the callout at the top of the viewport, use the
           `:.fixed-block-start-inside` utility class, or the

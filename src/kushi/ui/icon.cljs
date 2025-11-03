@@ -65,7 +65,7 @@
     [:div
      (merge-attrs
       (sx ".ks-icon"
-          :.surface-transparent
+          ;; :.surface-transparent ;; <- No, right?
           :d--inline-flex
           :flex-direction--row
           :jc--c

@@ -11,6 +11,7 @@
           {:data-ks-surface :transparent}
           (sx "[data-ks-ui=\"link\"]"
               {:td        :underline
+               :cursor    :pointer
               ;; TODO - On older browsers, (older iPhones) this won't work.
               ;; See if lightning css can fix this...
               ;; Otherwise, it defaults to currentColor, so NBD.

@@ -8,7 +8,10 @@
     :as showcase
     :refer [samples-with-variant samples]]
    [kushi.ui.callout :refer [callout]]
+   [kushi.ui.flex :refer [flex-row-space-between]]
    [kushi.ui.icon :refer [icon]]
+   [kushi.ui.button :refer [button]]
+   [kushi.ui.icon-button :refer [icon-button]]
    [kushi.ui.link :refer [link]]))
 
 (def sizes
@@ -19,28 +22,479 @@
    :large])
 
 (def demos
-  (let [row-style     {:flex-direction  :column
-                       :justify-content :flex-start
-                       :gap             :1rem
-                       :max-width       :605px}
+  (let [row-style     {:flex-direction        :column
+                       :justify-content       :flex-start
+                       :gap                   :1rem
+                       :grid-template-columns "100px 600px"}
         require       '[[kushi.core :refer (sx merge-attrs)]
                         [kushi.ui.icon :refer [icon]]
                         [kushi.ui.link :refer [link]]]
         variant-scale [:faint :soft :solid :outline]]
 
-    [
-     {:label     "With icon and dismiss button, in positive variant"
-      :row-style row-style
-      :variants- [:filled :bordered]
+    [{:label     "Sizes from xxsmall to xxlarge"
+      :row-attrs (sx :gtc--100px:600px)
+      :desc      "Sizes from xxxsmall to xxxlarge"
+      :samples   (samples-with-variant
+                  {:variant       :size
+                   :variant-scale :size/xxsmall-large
+                   :attrs         {:colorway :accent}
+                   :args          [[flex-row-space-between
+                                    [icon :info]
+                                    [:span "Please check out the " [link "new features"]]
+                                    [icon-button 
+                                     {:colorway :positive
+                                      :surface  :transparent
+                                      :shape    :pill
+                                      :packing  :compact}
+                                     :close]]]})}
+
+     ;; TODO - maybe you need a new surface sub-family for non-interactive things
+     #_{:label     "Surfaces"
+        :row-attrs (sx :max-width--600px)
+        :desc      "Surfaces"
+        :samples   (samples-with-variant
+                    {:variant       :surface
+                     :variant-scale :size/xxsmall-large
+                     :attrs         {:colorway :accent
+                                     :stroke   :hard}
+                     :args          [[flex-row-space-between
+                                      [icon :info]
+                                      [:span "Please check out the " [link "new features"]]
+                                      [icon-button 
+                                       {:colorway :positive
+                                        :surface  :transparent
+                                        :shape    :pill
+                                        :packing  :compact}
+                                       :close]]]})}
+     {:label     "Stroke intensity"
+      :row-attrs (sx :gtc--100px:600px)
+      :desc      "Stroke intensity"
+      :samples   (samples-with-variant
+                  {:variant       :stroke
+                   :attrs         {:colorway :accent}
+                   :args          [[flex-row-space-between
+                                    [icon :info]
+                                    [:span "Please check out the " [link "new features"]]
+                                    [icon-button 
+                                     {:colorway :positive
+                                      :surface  :transparent
+                                      :shape    :pill
+                                      :packing  :compact}
+                                     :close]]]})}
+     
+
+     {:label     "Surfaces"
+      :row-attrs (sx :gtc--100px:600px)
+      :desc      "Sizes from xxxsmall to xxxlarge"
+      :samples   (samples-with-variant
+                  {:variant       :surface
+                   :variant-scale :surface/simple
+                   :attrs         {:colorway :accent}
+                   :args          [[flex-row-space-between
+                                    [icon :info]
+                                    [:span "Please check out the " [link "new features"]]
+                                    [icon-button 
+                                     {:colorway :positive
+                                      :surface  :transparent
+                                      :shape    :pill
+                                      :packing  :compact}
+                                     :close]]]})}
+     #_{:label     "Surfaces"
+      :row-attrs (sx :flex-wrap--wrap :_.ks-callout:w--100%)
       :samples   (samples
                   [[callout
-                    {:header-icon     :check-circle
-                     :size          :xxxlarge
-                     :colorway        :positive
-                     :header-text     "Your transaction was successful."
-                     :close-button?   true
-                     :close-button-fn (fn [] [:div "hi"])}]])}
-     ]
+                    {:colorway :accent
+                     :surface  :faint}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:colorway :accent
+                     :surface  :soft}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+                   
+                   [callout
+                    {:colorway :accent
+                     :surface  :solid}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]])}
+     
+         
+
+     {:label     "Surfaces with outline"
+      :row-attrs (sx :flex-wrap--wrap :_.ks-callout:w--100%)
+      :samples   (samples
+                  [[callout
+                    {:colorway :accent
+                     :surface  :transparent
+                     :stroke   :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:colorway :accent
+                     :surface  :faint
+                     :stroke   :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+                   
+                   [callout
+                    {:colorway :accent
+                     :surface  :soft
+                     :stroke   :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]])}
+
+
+     
+
+
+     {:label     "Neutral"
+      :row-attrs (sx :flex-wrap--wrap :_.ks-callout:w--100%)
+      :samples   (samples
+                  [[callout
+                    {:surface :solid}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :soft
+                     :stroke  :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+                   
+                   [callout
+                    {:surface :soft}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :faint
+                     :stroke  :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :faint}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :transparent
+                     :stroke  :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]])}
+
+     {:label     "Positive"
+      :row-attrs (sx :flex-wrap--wrap :_.ks-callout:w--100%)
+      :samples   (samples
+                  [[callout
+                    {:surface :solid
+                     :colorway :positive}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :soft
+                     :colorway :positive
+                     :stroke  :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+                   
+                   [callout
+                    {:surface :soft
+                     :colorway :positive}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :faint
+                     :colorway :positive
+                     :stroke  :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :faint
+                     :colorway :positive}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :transparent
+                     :colorway :positive
+                     :stroke  :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :positive
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]])}
+     
+
+     {:label     "Warning"
+      :row-attrs (sx :flex-wrap--wrap :_.ks-callout:w--100%)
+      :samples   (samples
+                  [[callout
+                    {:surface :solid
+                     :colorway :warning}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :warning
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :soft
+                     :colorway :warning
+                     :stroke  :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :warning
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+                   
+                   [callout
+                    {:surface :soft
+                     :colorway :warning}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :warning
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :faint
+                     :colorway :warning
+                     :stroke  :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :warning
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :faint
+                     :colorway :warning}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :warning
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :transparent
+                     :colorway :warning
+                     :stroke  :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :warning
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]])}
+     
+     {:label     "Negative"
+      :row-attrs (sx :flex-wrap--wrap :_.ks-callout:w--100%)
+      :samples   (samples
+                  [
+                   [callout
+                    {:surface :solid
+                     :colorway :negative}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :negative
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :soft
+                     :colorway :negative
+                     :stroke  :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :negative
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :soft
+                     :colorway :negative}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :negative
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface :faint
+                     :colorway :negative
+                     :stroke  :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :negative
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+                   
+                   [callout
+                    {:surface :faint
+                     :colorway :negative}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :negative
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]
+
+                   [callout
+                    {:surface  :transparent
+                     :colorway :negative
+                     :stroke   :hard}
+                    [flex-row-space-between
+                     [icon :info]
+                     [:span "Please check out the " [link "new features"]]
+                     [icon-button 
+                      {:colorway :negative
+                       :shape    :pill
+                       :packing  :compact}
+                      :close]]]])}]
+
+
     #_[{:label     "Sizes from xxsmall to xlarge"
       :row-style row-style
       :require   require
@@ -186,7 +640,7 @@
      
      ]))
 
-(def examples
+#_(def examples
   (let [row-attrs         
         (sx :.fooosball
             :_.instance-code:w--100%

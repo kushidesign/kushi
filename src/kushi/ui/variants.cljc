@@ -130,6 +130,9 @@
 (def shadow-colors
   (apply conj colorways-named colorways-semantic))
 
+(def sizes-xxsmall-large
+  [:xxsmall :xsmall :small :medium :large])
+
 (def sizes-xxsmall-xlarge
   [:xxsmall :xsmall :small :medium :large :xlarge])
 
@@ -157,6 +160,12 @@
    :minimal
    :transparent])
 
+(def surfaces-simple
+  [:solid
+   :soft
+   :faint
+   :minimal
+   :transparent])
 
 (def surfaces-light-mode [:minimal-light-mode :convex-light-mode])
 
@@ -182,8 +191,6 @@
    :absolute-centered
    :relative])
 
-(def surfaces-tag
-  [:solid :soft :faint :minimal])
 
 (def variants*
   (keyed [shapes-basic
@@ -207,13 +214,14 @@
           colorways
           sizes-xsmall-xxlarge
           sizes-xxsmall-xlarge
+          sizes-xxsmall-large
           sizes-xsmall-xxxlarge
           sizes-large-xxxlarge
           sizes
           weights
           surfaces-basic
           surfaces
-          surfaces-tag]))
+          surfaces-simple]))
 
 (defn variant-key [k s]
   (keyword (str (name k) "/" s)))
@@ -245,21 +253,22 @@
    variants*))
 
 (def variants-by-custom-opt-key
-  {:weight                                   (:weights/set variants)
+  {:weight                                 (:weights/set variants)
+   :size/xxsmall-large                     (:sizes-xxsmall-large/set variants)
    :size/xxsmall-xlarge                    (:sizes-xxsmall-xlarge/set variants)
    :size/xsmall-xxxlarge                   (:sizes-xsmall-xxxlarge/set variants)
    :size/xsmall-xxlarge                    (:sizes-xsmall-xxlarge/set variants)
    :size/large-xxxlarge                    (:sizes-large-xxxlarge/set variants)
    :size                                   (:sizes/set variants)
-   :colorway                                 (:colorways/set variants)
-   :colorway/named                           (:colorways-named/set variants)
-   :colorway/semantic                        (:colorways-semantic/set variants)
-   :surface/basic                            (:surfaces-basic/set variants)
-   :surface                                  (:surfaces/set variants)
-   :surface/tag                              (:surfaces-tag/set variants)
-   :packing                                  (:packings/set variants)
-   :position                                 (:positions/set variants)
-   :spinner-type                             (:spinner-type/set variants)
+   :colorway                               (:colorways/set variants)
+   :colorway/named                         (:colorways-named/set variants)
+   :colorway/semantic                      (:colorways-semantic/set variants)
+   :surface/basic                          (:surfaces-basic/set variants)
+   :surface                                (:surfaces/set variants)
+   :surface/simple                (:surfaces-simple/set variants)
+   :packing                                (:packings/set variants)
+   :position                               (:positions/set variants)
+   :spinner-type                           (:spinner-type/set variants)
    :shape                                  (:shapes/set variants)
    :shape/basic                            (:shapes-basic/set variants)
    :shape/rounded                          (:shapes-rounded/set variants)
@@ -269,27 +278,28 @@
    :shape/rounded-absolute                 (:shapes-rounded-absolute/set variants)
    :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/set variants)
    :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/set variants)
-   :stroke                                   (:strokes/set variants)
-   :shadow                              (:shadows/set variants)
-   :shadow-color                             (:shadow-colors/set variants)
-   :icon-style                               (:icon-style/set variants)})
+   :stroke                                 (:strokes/set variants)
+   :shadow                                 (:shadows/set variants)
+   :shadow-color                           (:shadow-colors/set variants)
+   :icon-style                             (:icon-style/set variants)})
 
 (def enum-variants-by-custom-opt-key
-  {:weight                                   (:weights/enum variants)
+  {:weight                                 (:weights/enum variants)
+   :size/xxsmall-large                     (:sizes-xxsmall-large/enum variants)
    :size/xxsmall-xlarge                    (:sizes-xxsmall-xlarge/enum variants)
    :size/xsmall-xxxlarge                   (:sizes-xsmall-xxxlarge/enum variants)
    :size/xsmall-xxlarge                    (:sizes-xsmall-xxlarge/enum variants)
    :size/large-xxxlarge                    (:sizes-large-xxxlarge/enum variants)
    :size                                   (:sizes/enum variants)
-   :colorway                                 (:colorways/enum variants)
-   :colorway/named                           (:colorways-named/enum variants)
-   :colorway/semantic                        (:colorways-semantic/enum variants)
-   :surface/basic                            (:surfaces-basic/enum variants)
-   :surface                                  (:surfaces/enum variants)
-   :surface/tag                              (:surfaces-tag/enum variants)
-   :packing                                  (:packings/enum variants)
-   :position                                 (:positions/enum variants)
-   :spinner-type                             (:spinner-type/enum variants)
+   :colorway                               (:colorways/enum variants)
+   :colorway/named                         (:colorways-named/enum variants)
+   :colorway/semantic                      (:colorways-semantic/enum variants)
+   :surface/basic                          (:surfaces-basic/enum variants)
+   :surface                                (:surfaces/enum variants)
+   :surface/simple                (:surfaces-simple/enum variants)
+   :packing                                (:packings/enum variants)
+   :position                               (:positions/enum variants)
+   :spinner-type                           (:spinner-type/enum variants)
    :shape                                  (:shapes/enum variants)
    :shape/basic                            (:shapes-basic/enum variants)
    :shape/rounded                          (:shapes-rounded/enum variants)
@@ -299,27 +309,28 @@
    :shape/rounded-absolute                 (:shapes-rounded-absolute/enum variants)
    :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/enum variants)
    :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/enum variants)
-   :stroke                                   (:strokes/enum variants)
-   :shadow                              (:shadows/enum variants)
-   :shadow-color                             (:shadow-colors/enum variants)
-   :icon-style                               (:icon-style/enum variants)})
+   :stroke                                 (:strokes/enum variants)
+   :shadow                                 (:shadows/enum variants)
+   :shadow-color                           (:shadow-colors/enum variants)
+   :icon-style                             (:icon-style/enum variants)})
 
 (def ordered-variants-by-custom-opt-key
-  {:weight                                   (:weights/vector variants)
+  {:weight                                 (:weights/vector variants)
+   :size/xxsmall-large                     (:sizes-xxsmall-large/vector variants)
    :size/xxsmall-xlarge                    (:sizes-xxsmall-xlarge/vector variants)
    :size/xsmall-xxxlarge                   (:sizes-xsmall-xxxlarge/vector variants)
    :size/xsmall-xxlarge                    (:sizes-xsmall-xxlarge/vector variants)
    :size/large-xxxlarge                    (:sizes-large-xxxlarge/vector variants)
    :size                                   (:sizes/vector variants)
-   :colorway                                 (:colorways/vector variants)
-   :colorway/named                           (:colorways-named/vector variants)
-   :colorway/semantic                        (:colorways-semantic/vector variants)
-   :surface/basic                            (:surfaces-basic/vector variants)
-   :surface                                  (:surfaces/vector variants)
-   :surface/tag                              (:surfaces-tag/vector variants)
-   :packing                                  (:packings/vector variants)
-   :position                                 (:positions/vector variants)
-   :spinner-type                             (:spinner-type/vector variants)
+   :colorway                               (:colorways/vector variants)
+   :colorway/named                         (:colorways-named/vector variants)
+   :colorway/semantic                      (:colorways-semantic/vector variants)
+   :surface/basic                          (:surfaces-basic/vector variants)
+   :surface                                (:surfaces/vector variants)
+   :surface/simple                (:surfaces-simple/vector variants)
+   :packing                                (:packings/vector variants)
+   :position                               (:positions/vector variants)
+   :spinner-type                           (:spinner-type/vector variants)
    :shape                                  (:shapes/vector variants)
    :shape/basic                            (:shapes-basic/vector variants)
    :shape/rounded                          (:shapes-rounded/vector variants)
@@ -329,10 +340,10 @@
    :shape/rounded-absolute                 (:shapes-rounded-absolute/vector variants)
    :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/vector variants)
    :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/vector variants)
-   :stroke                                   (:strokes/vector variants)
-   :shadow                              (:shadows/vector variants)
-   :shadow-color                             (:shadow-colors/vector variants)
-   :icon-style                               (:icon-style/vector variants)})
+   :stroke                                 (:strokes/vector variants)
+   :shadow                                 (:shadows/vector variants)
+   :shadow-color                           (:shadow-colors/vector variants)
+   :icon-style                             (:icon-style/vector variants)})
 
 
 
@@ -390,7 +401,7 @@
                       :default "inline"
                       :class?  true}
 
-   :colorway         {:default nil   ;;  <- TODO should this be nil?
+   :colorway         {:default nil ;;  <- TODO should this be nil?
                       :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc."
                       :class?  true}
 
@@ -487,7 +498,7 @@
                       }
 
    :surface          {:desc    "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."
-                      :default :transparent
+                      :default nil ;;  <- TODO should this be nil?
                       :class?  true
                       }
 
