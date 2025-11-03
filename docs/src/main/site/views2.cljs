@@ -606,8 +606,9 @@
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
                                kushi.ui.icon.demo/demos))]
 
-  #_[showcase (!? (showcase/opts kushi.ui.tag/tag
-                                 kushi.ui.tag.demo/demos))]
+  ;; DONE
+  [showcase (!? (showcase/opts kushi.ui.tag/tag
+                               kushi.ui.tag.demo/demos))]
 
 
   #_(into [:div.absolute-centered.flex-col-space-between (sx :gap--5rem)]
@@ -638,8 +639,8 @@
   ;; DONE
   #_[showcase (!? (showcase/opts kushi.ui.button/button
                                kushi.ui.button.demo/demos))]
-
-  [showcase (!? (showcase/opts kushi.ui.callout/callout
+  ;; DONE
+  #_[showcase (!? (showcase/opts kushi.ui.callout/callout
                                kushi.ui.callout.demo/demos))]
   #_[flex-col
    (sx :gap--1rem :_div:gap--1rem :.position-absolute-centered)

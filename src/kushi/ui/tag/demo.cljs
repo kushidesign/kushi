@@ -28,23 +28,23 @@
     :samples (samples-with-variant
               {:variant       :shape
                :variant-scale :shape/basic
-               :attrs         {:colorway     :accent
-                               :surface      :solid}
+               :attrs         {:colorway :accent
+                               :surface  :solid}
                :args          ["New"]})}
    
    {:desc    "Surface variant of the tag.",
     :label   "Surface",
     :samples (samples-with-variant
               {:variant       :surface,
-               :variant-scale :surface/tag,
+               :variant-scale :surface/simple,
                :attrs         {:colorway     :accent},
                :args          ["New"]})}
    
    {:desc    "General amount of padding inside the tag",
     :label   "Packing",
     :samples (samples-with-variant
-              {:attrs   {:colorway     :accent
-                         :surface      :solid},
+              {:attrs   {:colorway :accent
+                         :surface  :solid},
                :args    ["New"],
                :variant :packing})}
 
@@ -55,19 +55,19 @@
     :samples (samples-with-variant
               {:variant :size
               ;; :variant-labels? false
-               :attrs   {:surface      :solid
-                         :colorway     :accent}
+               :attrs   {:surface  :solid
+                         :colorway :accent}
                :args    ["New"]})}
 
    
    {:label   "Stroke"
     :desc    "Preset stroke styles."
     :samples (samples-with-variant
-              {:variant       :stroke
+              {:variant :stroke
               ;;  :variant-scale :shape/basic+rounded
-               :attrs         {:colorway     :accent
-                               :surface      :minimal}
-               :args          ["New"]})}
+               :attrs   {:colorway :accent
+                         :surface  :minimal}
+               :args    ["New"]})}
 
    {:label   "Stroke width"
     :desc    "Custom stroke widths."
