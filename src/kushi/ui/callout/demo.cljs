@@ -192,7 +192,8 @@
                   [[callout
                     {:surface :solid}
                     [flex-row-space-between
-                     [icon :info]
+                     [icon :info
+                      {:colorway :neutral}]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :positive

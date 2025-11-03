@@ -20,7 +20,7 @@
   :props/shared [:size
                  :end-enhancer
                  :start-enhancer
-                 :colorway
+                 [:colorway {:default :neutral}]
                  :packing
                  :loading
                  :stroke

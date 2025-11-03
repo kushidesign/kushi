@@ -158,14 +158,16 @@
    :convex
    :faint
    :minimal
-   :transparent])
+   :transparent
+   :ghost])
 
 (def surfaces-simple
   [:solid
    :soft
    :faint
    :minimal
-   :transparent])
+   :transparent
+   :ghost])
 
 (def surfaces-light-mode [:minimal-light-mode :convex-light-mode])
 

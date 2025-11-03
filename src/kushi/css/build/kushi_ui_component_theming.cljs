@@ -124,9 +124,6 @@
 ;; (defcss ".hidden" {"visibility" "hidden"})
 ;; (defcss ".visible" {"visibility" "visible"})
 ;; (defcss ".collapse" {"visibility" "collapse"})
-
-
-
 ;; New theming
 
 ;; TODO - should these live in design-tokens?
@@ -271,7 +268,7 @@
                         :--padding-block  :$tag-padding-block-xroomy}})
 
 ;; Move to switch ns
-(defcss ".kushi-switch"
+(defcss ".ks-switch"
   {:--switch-thumb-scale-factor                   1
    :--switch-width-ratio                          1.85
    :--switch-border-color                         :transparent
@@ -310,7 +307,7 @@
                         :--chroma-fgc   :0%
                         :--chroma-shift :0%}})
 
-    (defcss ".surface-solid, .surface-solid-classic, .surface-soft, .surface-soft-classic, .surface-faint, .surface-convex, .surface-minimal, .surface-minimal-light-mode, .surface-convex-light-mode"
+    (defcss ".surface-solid, .surface-solid-classic, .surface-soft, .surface-soft-classic, .surface-faint, .surface-convex, .surface-minimal, .surface-transparent, .surface-minimal-light-mode, .surface-convex-light-mode"
       {:--hover-bgc  "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) var(--lightness-shift)) calc(var(--chroma-bgc) var(--chroma-shift-op, +) var(--chroma-shift)) var(--colorway-hue))"
        :--active-bgc "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) (2 * var(--lightness-shift))) calc(var(--chroma-bgc) var(--chroma-shift-op, +) calc(2 * var(--chroma-shift))) var(--colorway-hue))"
        :--bgc        "oklch(var(--lightness-bgc) var(--chroma-bgc) var(--colorway-hue))"
@@ -333,15 +330,14 @@
        :hover:bgc            :$hover-bgc
        :active:bgc           :$active-bgc
        :color                :white
-       ".colorway-brown"       {:--chroma-bgc :20%}
+       ".colorway-brown"     {:--chroma-bgc :20%}
        :dark                 {:--lightness-bgc      :69%
                               :--chroma-bgc         :52%
                               :color                :black
                               :--chroma-shift-op    "-"
                               :--lightness-shift-op "+"
                               :--classic-trim-color "oklch(75% 48.5% var(--colorway-hue))" 
-                              ".colorway-brown"       {:--chroma-bgc :20%} }
-       })
+                              ".colorway-brown"     {:--chroma-bgc :20%}}})
 
     (defcss ".surface-solid-classic.colorway-neutral, .surface-solid-classic.colorway-gray"
       {:--classic-trim-color "oklch(62% 0% var(--colorway-hue))"})
@@ -426,11 +422,10 @@
     (defcss ".surface-transparent, .surface-minimal" 
       {:--chroma-fgc    :46.25%
        :--lightness-fgc :44%
-      ;;  :color           :$fgc
        :dark            {:--lightness-fgc :88%
                          :--chroma-fgc    :44%}})
 
-    ;; Transparent
+    ;; Minimal, dark
     (defcss ".surface-minimal" 
       {:dark {:--lightness-bgc :26%
               :--chroma-bgc    :26%

@@ -15,14 +15,14 @@
   :props/shared [:size
                  :weight
                  [:colorway {:default :neutral}]
+                 [:surface {:default :soft}]
+                 [:shape {:default :pill}]
                  :packing
                  :loading
                  :stroke
                  :stroke-align
                  :stroke-width
                  :position
-                 :shape
-                 :surface
                  :icon-filled
                  :transition]}
  [& args]
@@ -60,6 +60,6 @@
      (when stroke-width 
        {:style {"--_stroke-width" (util/as-str stroke-width)}}))
     [icon
-     (merge (some->> colorway (hash-map :colorway))
+     (merge #_(some->> colorway (hash-map :colorway))
             (some->> icon-filled (hash-map :icon-filled)))
      icon*]]))

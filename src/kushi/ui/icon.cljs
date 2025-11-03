@@ -2,7 +2,7 @@
   (:require
    [clojure.string :as string]
    [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.core :refer [sx merge-attrs at]]
+   [kushi.core :refer [sx ?sx merge-attrs at]]
    [kushi.ui.util]
    [kushi.ui.defs :as defs]
    [kushi.ui.shared.theming :refer [component-attrs variant-basics]]
@@ -60,12 +60,13 @@
                   :icon-filled]}
   [& args]
   (let [{:keys [icon-style icon-filled surface colorway]} &props
-        [icon*]                                           &children]
+        [icon*]                                           &children
+        surface-transparent (when colorway :.surface-transparent)]
 
     [:div
      (merge-attrs
-      (sx ".ks-icon"
-          ;; :.surface-transparent ;; <- No, right?
+      (?sx ".ks-icon"
+          surface-transparent
           :d--inline-flex
           :flex-direction--row
           :jc--c

@@ -600,14 +600,15 @@
 
   
 
-  #_[showcase (!? (showcase/opts kushi.ui.switch/switch
-                                 kushi.ui.switch.demo/demos))]
+  [showcase (!? (showcase/opts kushi.ui.switch/switch
+                               kushi.ui.switch.demo/demos))]
 
+  ;; DONE
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
                                kushi.ui.icon.demo/demos))]
 
   ;; DONE
-  [showcase (!? (showcase/opts kushi.ui.tag/tag
+  #_[showcase (!? (showcase/opts kushi.ui.tag/tag
                                kushi.ui.tag.demo/demos))]
 
 
@@ -642,6 +643,182 @@
   ;; DONE
   #_[showcase (!? (showcase/opts kushi.ui.callout/callout
                                kushi.ui.callout.demo/demos))]
+  
+
+  ;; Sorting out 
+   #_[flex-col
+    (sx :max-width--1200px
+       :p--24px
+       :gap--48px
+       :fs--$size-xxlarge
+       :_p:fs--$size-large
+       [:bgi "linear-gradient(to bottom right, silver, transparent)"])
+
+    [callout
+     {:surface :faint}
+     [flex-row-space-between
+      [icon {:colorway :negative} :info]
+      [:span "Please check out the " [link "new features"]]
+      [icon-button 
+       {:shape   :pill
+        :surface :transparent
+        :packing :xcompact}
+       :close]]]
+    
+    [callout
+    {:surface  :solid
+     :colorway :accent
+    ;;  :stroke   :xhard
+     }
+    [flex-row-space-between
+     [icon :info]
+     [:span "Please check out the " [link "new features"]]
+     [icon-button 
+      {:shape    :pill
+       :surface  :solid
+       :colorway :accent
+       :packing  :xcompact}
+      :close]]]
+    
+    ] 
+
+
+  #_[flex-col
+   (sx :max-width--1200px
+       :p--24px
+       :gap--48px
+       :fs--$size-xxlarge
+       :_p:fs--$size-large
+       [:bgi "linear-gradient(to bottom right, silver, transparent)"])
+
+   [:p "No colorway set"]
+   [callout
+    {:surface :faint}
+    [flex-row-space-between
+     [icon {:colorway :negative} :info]
+     [:span "Please check out the " [link "new features"]]
+     [icon-button 
+      {:shape    :pill
+       :surface  :transparent
+       :packing  :xcompact}
+      :close]]]
+
+
+   [:p "No colorway set"]
+   [callout
+    {:surface :faint}
+    [flex-row-space-between
+     [icon :info]
+     [:span "Please check out the " [link "new features"]]
+     [icon-button 
+      {:shape    :pill
+       :surface  :transparent
+       :packing  :xcompact}
+      :close]]]
+
+
+   [:p "Colorway neutral"]
+   [callout
+    {:surface  :faint
+     :colorway :neutral}
+    [flex-row-space-between
+     [icon :info
+      ]
+     [:span "Please check out the " [link "new features"]]
+     [icon-button 
+      {:shape    :pill
+       :surface  :faint
+       :packing  :xcompact}
+      :close]]]
+   
+   [:p "Colorway accent"]
+   [callout
+    {:surface  :faint
+     :colorway :accent}
+    [flex-row-space-between
+     [icon :info]
+     [:span "Please check out the " [link "new features"]]
+     [icon-button 
+      {:shape    :pill
+       :surface  :faint
+       :colorway :accent
+       :packing  :xcompact}
+      :close]]]
+
+   [:p "Colorway accent"]
+   [callout
+    {:surface  :transparent
+     :colorway :accent
+     :stroke   :xhard}
+    [flex-row-space-between
+     [icon :info]
+     [:span "Please check out the " [link "new features"]]
+     [icon-button 
+      {:shape    :pill
+       :surface  :transparent
+       :colorway :accent
+       :packing  :xcompact}
+      :close]]]
+
+   [:p "Colorway accent"]
+   [callout
+    {:surface  :solid
+     :colorway :accent
+    ;;  :stroke   :xhard
+     }
+    [flex-row-space-between
+     [icon :info]
+     [:span "Please check out the " [link "new features"]]
+     [icon-button 
+      {:shape    :pill
+       :surface  :solid
+       :colorway :accent
+       :packing  :xcompact}
+      :close]]]
+
+   [:p "Colorway accent, surface solid"]
+   [icon-button {:colorway :accent :surface :solid :shape :pill} :east]
+
+   [:p "No colorway"]
+   [icon-button :east]
+
+   [:p "Colorway neutral"]
+   [icon-button {:colorway :neutral} :east]
+
+   [:p "Colorway accent"]
+   [icon-button {:colorway :accent} :east]
+
+   [:p "Colorway accent, surface faint"]
+   [icon-button {:colorway :accent :surface :faint :shape :pill} :east]
+   
+   [:p "No colorway"]
+   [button {:end-enhancer :east :surface :minimal} "Next"]
+
+   [:p "No colorway"]
+   [button {:stroke :hard :end-enhancer :east :surface :transparent} "Next"]
+
+   [:p "No colorway"]
+   [button {:stroke :hard :end-enhancer :east :surface :ghost} "Next"]
+
+   [:p "No colorway"]
+   [button {:end-enhancer :east} "Next"]
+
+   [:p "No colorway"]
+   [button {:end-enhancer :east} "Next"]
+
+   [:p "No colorway"]
+   [button {:end-enhancer :east} "Next"]
+   
+   [:p "Colorway neutral"]
+   [button {:end-enhancer :east :colorway :neutral} "Next"]
+
+   [:p "Colorway accent"]
+   [button {:end-enhancer :east :colorway :accent} "Next"]
+
+   [:p "Colorway accent"]
+   [button {:end-enhancer :east :colorway :accent :surface :solid} "Next"]]
+
+
   #_[flex-col
    (sx :gap--1rem :_div:gap--1rem :.position-absolute-centered)
    
