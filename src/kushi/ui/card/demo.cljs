@@ -1,8 +1,18 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.card.demo
   (:require [kushi.core :refer (sx)]
-            [kushi.playground.component-examples :as component-examples]
             [kushi.playground.util :refer-macros [sx-call]]
-            [kushi.ui.card :refer [card]]))
+            [kushi.showcase.core
+             :as showcase
+             :refer [samples-with-variant samples]]
+            [kushi.ui.card :refer [card]]
+            
+            [kushi.ui.callout :refer [callout]]
+            [kushi.ui.flex :refer [flex-col-space-around flex-row-space-between flex-row]]
+            [kushi.ui.icon :refer [icon]]
+            [kushi.ui.icon-button :refer [icon-button]]
+            [kushi.ui.link :refer [link]]
+            
+            ))
 
 
 ;; TODO remove section-label
@@ -14,7 +24,154 @@
    :medium
    :large])
 
-(def examples
+
+(def demos
+  [{:label     "Sizes from xxsmall to large"
+    :row-attrs (sx :gtc--80px:400px)
+    :desc      "Sizes from xxsmall to large"
+    :samples   (samples
+                [
+
+                 "xxsmall"
+                 [card 
+                  {:size :xxsmall}
+                  [flex-row (sx :ai--stretch :gap--0.8em)
+                   [:div (sx :.rounded
+                             :position--relative
+                             :overflow--hidden
+                             :.transition
+                             :bgc--$neutral-200
+                             :dark:bgc--$neutral-800
+                             :w--3.5em
+                             :h--3.5em)
+                    [:span (sx :.position-absolute-centered
+                               [:transform "translate(0, 0.045em)"]
+                               :display--block
+                               :scale--2.55)
+                     "🐻‍❄"]]
+                   [flex-col-space-around
+                    [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :c--$secondary-foreground-color
+                            :dark:c--$secondary-foreground-dark-mode)
+                     "polar.bear@example.com"]]]]
+
+                 "xsmall"
+                 [card 
+                  {:size :xsmall}
+                  [flex-row (sx :ai--stretch :gap--0.8em)
+                   [:div (sx :.rounded
+                             :position--relative
+                             :overflow--hidden
+                             :.transition
+                             :bgc--$neutral-200
+                             :dark:bgc--$neutral-800
+                             :w--3.5em
+                             :h--3.5em)
+                    [:span (sx :.position-absolute-centered
+                               [:transform "translate(0, 0.045em)"]
+                               :display--block
+                               :scale--2.55)
+                     "🐻‍❄"]]
+                   [flex-col-space-around
+                    [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :c--$secondary-foreground-color
+                            :dark:c--$secondary-foreground-dark-mode)
+                     "polar.bear@example.com"]]]]
+
+                 "small"
+                 [card 
+                  {:size :small}
+                  [flex-row (sx :ai--stretch :gap--0.8em)
+                   [:div (sx :.rounded
+                             :position--relative
+                             :overflow--hidden
+                             :.transition
+                             :bgc--$neutral-200
+                             :dark:bgc--$neutral-800
+                             :w--3.5em
+                             :h--3.5em)
+                    [:span (sx :.position-absolute-centered
+                               [:transform "translate(0, 0.045em)"]
+                               :display--block
+                               :scale--2.55)
+                     "🐻‍❄"]]
+                   [flex-col-space-around
+                    [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :c--$secondary-foreground-color
+                            :dark:c--$secondary-foreground-dark-mode)
+                     "polar.bear@example.com"]]]]
+
+                 "medium"
+                 [card 
+                  {:size :medium}
+                  [flex-row (sx :ai--stretch :gap--0.8em)
+                   [:div (sx :.rounded
+                             :position--relative
+                             :overflow--hidden
+                             :.transition
+                             :bgc--$neutral-200
+                             :dark:bgc--$neutral-800
+                             :w--3.5em
+                             :h--3.5em)
+                    [:span (sx :.position-absolute-centered
+                               [:transform "translate(0, 0.045em)"]
+                               :display--block
+                               :scale--2.55)
+                     "🐻‍❄"]]
+                   [flex-col-space-around
+                    [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :c--$secondary-foreground-color
+                            :dark:c--$secondary-foreground-dark-mode)
+                     "polar.bear@example.com"]]]]
+
+                 "large"
+                 [card 
+                  {:size :large}
+                  [flex-row (sx :ai--stretch :gap--0.8em)
+                   [:div (sx :.rounded
+                             :position--relative
+                             :overflow--hidden
+                             :.transition
+                             :bgc--$neutral-200
+                             :dark:bgc--$neutral-800
+                             :w--3.5em
+                             :h--3.5em)
+                    [:span (sx :.position-absolute-centered
+                               [:transform "translate(0, 0.045em)"]
+                               :display--block
+                               :scale--2.55)
+                     "🐻‍❄"]]
+                   [flex-col-space-around
+                    [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :c--$secondary-foreground-color
+                            :dark:c--$secondary-foreground-dark-mode)
+                     "polar.bear@example.com"]]]]
+                 ])}
+   
+   {:label     "Shadow sizes from xxsmall to xxxlarge"
+    :row-attrs (sx :gtc--80px:400px
+                   :row-gap--3rem
+                   :_.ks-card:color--$foreground-color-secondary)
+    :desc      "Shadow sizes from xxsmall to xxxlarge"
+    :samples   (samples-with-variant
+                {:variant       :shadow
+                 :attrs         {:size :large}
+                 :args          ["Card with shadow"]})}
+   
+   {:label     "Shadow colors"
+    :row-attrs (sx :gtc--80px:400px
+                   :row-gap--2rem
+                   :_.ks-card:color--$foreground-color-secondary)
+    :desc      "Shadow colors"
+    :samples   (samples-with-variant
+                {:variant       :shadow-color
+                ;;  :variant-scale :size/xxsmall-large
+                 :attrs         {:size :large :shadow :medium}
+                 :args          ["Card with colored shadow"]})}
+   ])
+
+
+#_(def examples
   [
    {:desc      "Sizes from xxsmall to large"
     :row-attrs (sx 

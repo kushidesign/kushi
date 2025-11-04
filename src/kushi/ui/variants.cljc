@@ -423,7 +423,7 @@
   ;;                              }
    
    ;; change to shadow
-   :shadow      {:schema  [:or
+   :shadow            {:schema  [:or
                                 [:and :keyword (:shadows/enum variants)]
                                 :string 
                                 [:vector :any]]
@@ -431,7 +431,7 @@
                       :default nil
                       :class?  true}
 
-   :shadow-color     {:desc    "Controls the drop shadow"
+   :shadow-color     {:desc    "Controls the drop shadow color"
                       :class?  true
                       :default nil}
 
@@ -557,7 +557,8 @@
                :fx
                :convex
                :elevation
-               :shadows
+               :shadow
+               :shadow-color
                :loading
                :display
                :gap]})

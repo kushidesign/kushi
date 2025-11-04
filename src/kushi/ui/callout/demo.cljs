@@ -12,7 +12,9 @@
    [kushi.ui.icon :refer [icon]]
    [kushi.ui.button :refer [button]]
    [kushi.ui.icon-button :refer [icon-button]]
-   [kushi.ui.link :refer [link]]))
+   [kushi.ui.link :refer [link]]
+   )
+    )
 
 (def sizes
   [:xxsmall
@@ -427,8 +429,7 @@
      {:label     "Negative"
       :row-attrs (sx :flex-wrap--wrap :_.ks-callout:w--100%)
       :samples   (samples
-                  [
-                   [callout
+                  [[callout
                     {:surface :solid
                      :colorway :negative}
                     [flex-row-space-between

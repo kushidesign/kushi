@@ -137,7 +137,8 @@
    "--element-stroke-width"                           "1px"
    "--button-stroke-width"                            :$element-stroke-width
    "--callout-stroke-width"                           :$element-stroke-width
-   "--avatar-stroke-width"                            :$avatar-stroke-width
+   "--avatar-stroke-width"                            :$element-stroke-width
+   "--card-stroke-width"                              :$element-stroke-width
    "--tag-stroke-width"                               :$element-stroke-width
    "--thumb-stroke-width"                             :$element-stroke-width
    "--stroke-width-nearest-pixel"                     "round(nearest, var(--stroke-width, 1px), 1px)"

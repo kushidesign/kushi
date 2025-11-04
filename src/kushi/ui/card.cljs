@@ -1,20 +1,25 @@
 (ns kushi.ui.card
   (:require [kushi.core :refer (sx merge-attrs)]
+            [kushi.ui.decoration :as decoration]
             [kushi.ui.core :refer (defui)]))
 
 (defui card
   {:doc "Cards are typically visually contained sections of information.
          They are often part of a series of cards with related content."
    :props/family [:container]
-   :props/shared  [[:surface {:default :outline}]
-                   [:shape {:default :rounded}]]}
+   :props/shared  [[:surface {:default :transparent}]
+                   [:shape {:default :rounded}]
+                   [:stroke {:default :xsoft}]]}
   [& args]
-  (into
-   [:div (merge-attrs
-          (sx "[data-ks-ui=\"card\"]"
-              :position--relative
-              :w--100%
-              :p--1.25em)
-          &attrs)]
-   &children))
+  (let [{:keys [stroke-width]} &props]
+    (into
+     [:div (merge-attrs
+            (sx ".ks-card"
+                [:--stroke-width :$card-stroke-width]
+                :position--relative 
+                :w--fit-content
+                :p--1.25em)
+            (some-> stroke-width (decoration/stroke-width-cssvar "card"))
+            &attrs)]
+     &children)))
 

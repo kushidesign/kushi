@@ -23,6 +23,9 @@
    [kushi.ui.button :refer [button]]
    [kushi.ui.button.demo]
 
+   [kushi.ui.collapse :refer [collapse]]
+   [kushi.ui.collapse.demo]
+
    [kushi.ui.icon-button :refer [icon-button]]
    [kushi.ui.icon-button.demo]
 
@@ -59,6 +62,7 @@
 
    
    [kushi.ui.card :refer [card]]
+   [kushi.ui.card.demo]
 
    [kushi.ui.switch :refer [switch]]
    [kushi.ui.switch.demo]
@@ -548,27 +552,27 @@
        :close-button-fn (fn [] [:div "hi"])}]
 
    #_[callout
-    {:size     :xlarge
-     :colorway :positive
-     :surface  :soft
-     :stroke   :hard}
-    [flex-row-space-between
-     [icon :check-circle]
-     "Your transaction was successful."
-     [button {:colorway :positive
-              :surface  :transparent
-              :shape    :circle
-              :stroke   :hard}
-      "GO"]
-     [icon-button 
-      {:colorway :positive
-       :surface  :transparent
-       :shape    :pill
-       :stroke   :hard
-       :packing  :compact
-       :weight   :bold
-       :size     :medium}
-      :close]]]]
+      {:size     :xlarge
+       :colorway :positive
+       :surface  :soft
+       :stroke   :hard}
+      [flex-row-space-between
+       [icon :check-circle]
+       "Your transaction was successful."
+       [button {:colorway :positive
+                :surface  :transparent
+                :shape    :circle
+                :stroke   :hard}
+        "GO"]
+       [icon-button 
+        {:colorway :positive
+         :surface  :transparent
+         :shape    :pill
+         :stroke   :hard
+         :packing  :compact
+         :weight   :bold
+         :size     :medium}
+        :close]]]]
 
   
 
@@ -612,53 +616,114 @@
              k]))
   
 
+
+  ;; DONE
+  #_[showcase (!? (showcase/opts kushi.ui.button/button
+                                 kushi.ui.button.demo/demos))]
+  
+  ;; DONE
+  #_[showcase (!? (showcase/opts kushi.ui.icon/icon
+                                 kushi.ui.icon.demo/demos))]
+
+  ;; DONE
+  #_[showcase (!? (showcase/opts kushi.ui.icon-button/icon-button
+                                 kushi.ui.icon-button.demo/demos))]
+
+  ;; DONE
+  #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
+                                 kushi.ui.spinner.demo/demos))]
+
+  ;; DONE
+  #_[showcase (showcase/opts kushi.ui.radio/radio
+                             kushi.ui.radio.demo/demos)]
+
+  ;; DONE
+  #_[showcase (showcase/opts kushi.ui.avatar/avatar
+                             kushi.ui.avatar.demo/demos)]
+
   ;; DONE
   #_[showcase (!? (showcase/opts kushi.ui.switch/switch
                                  kushi.ui.switch.demo/demos))]
 
   ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.icon/icon
-                               kushi.ui.icon.demo/demos))]
+  #_[showcase (showcase/opts kushi.ui.checkbox/checkbox
+                             kushi.ui.checkbox.demo/demos)]
 
   ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.tag/tag
-                               kushi.ui.tag.demo/demos))]
+  #_[showcase (showcase/opts kushi.ui.checkbox/slider
+                             kushi.ui.slider.demo/demos)]
 
   ;; DONE
   #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
-                               kushi.ui.text-field.demo/demos))]
+                                 kushi.ui.text-field.demo/demos))]
+
+
+
+  ;; [showcase (!? (showcase/opts kushi.ui.collapse/collapse
+  ;;                              kushi.ui.collapse.demo/collapse))]
+  ;; tooltip
+  ;; popover
+  ;; modal
+  ;; toast
+  
+  ;; DONE
+  #_[showcase (showcase/opts kushi.ui.card/card
+                             kushi.ui.card.demo/demos)]
 
   ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.switch/switch
-                               kushi.ui.switch.demo/demos))]
+  #_[showcase (!? (showcase/opts kushi.ui.tag/tag
+                                 kushi.ui.tag.demo/demos))]
 
   ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.icon-button/icon-button
-                               kushi.ui.icon-button.demo/demos))]
+  #_[showcase (!? (showcase/opts kushi.ui.callout/callout
+                                 kushi.ui.callout.demo/demos))]
+  
+  ;; grid
 
-  ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.button/button
-                               kushi.ui.button.demo/demos))]
-  ;; DONE
-  [showcase (!? (showcase/opts kushi.ui.callout/callout
-                               kushi.ui.callout.demo/demos))]
+  ;; collapse
+  ;; DONE when you do demo
+  [collapse
+   {:label-collapsed "Collapsable section label"}
+   [:p "Child 1"]
+   [:p "Child 2"]]
 
-  ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
-                               kushi.ui.spinner.demo/demos))]
+  [collapse
+   {:label-collapsed "Click to expand"
+    :label-expanded  "Click to collapse"}
+   [:p "Child 1"]
+   [:p "Child 2"]]
 
-  ;; DONE
-  #_[showcase (!? {:display-metadata? false}
-               (showcase/opts kushi.ui.checkbox/checkbox
-                              kushi.ui.checkbox.demo/demos))]
+  [collapse
+   {:label-collapsed "Collapsable section label"
+    :icon-position   :end}
+   [:p "Child 1"]
+   [:p "Child 2"]]
 
-  ;; DONE
-  #_[showcase (showcase/opts kushi.ui.radio/radio
-                           kushi.ui.radio.demo/demos)]
+  [collapse
+   (merge-attrs (sx :bbe--1px:solid:$neutral-800
+                    :dark:bbe--1px:solid:$neutral-400) 
+                {:label-collapsed "Collapsable section label "
+                 :header-attrs    (sx :bbs--1px:solid:$neutral-800
+                                      :dark:bbs--1px:solid:$neutral-400)})
+   [:p "Child 1"]
+   [:p "Child 2"]] 
 
-  ;; DONE
-  #_[showcase (showcase/opts kushi.ui.avatar/avatar
-                           kushi.ui.avatar.demo/demos)]
+  #_[collapse
+   (merge-attrs (sx :bbe--1px:solid:$neutral-800
+                    :dark:bbe--1px:solid:$neutral-400) 
+                {:-label        "Collapsable section label "
+                 :-header-attrs (sx :bbs--1px:solid:$neutral-800 
+                                    :dark:bbs--1px:solid:$neutral-400)})
+   [:p "Child 1"]
+   [:p "Child 2"]]
+
+
+  
+
+
+  
+
+
 
   #_[avatar {:surface :solid
              :size  :xxlarge
@@ -668,198 +733,198 @@
 
 
   ;; Sorting out 
-   #_[flex-col
-    (sx :max-width--1200px
-       :p--24px
-       :gap--48px
-       :fs--$size-xxlarge
-       :_p:fs--$size-large
-       [:bgi "linear-gradient(to bottom right, silver, transparent)"])
+  #_[flex-col
+     (sx :max-width--1200px
+         :p--24px
+         :gap--48px
+         :fs--$size-xxlarge
+         :_p:fs--$size-large
+         [:bgi "linear-gradient(to bottom right, silver, transparent)"])
 
-    [callout
-     {:surface :faint}
-     [flex-row-space-between
-      [icon {:colorway :negative} :info]
-      [:span "Please check out the " [link "new features"]]
-      [icon-button 
-       {:shape   :pill
-        :surface :transparent
-        :packing :xcompact}
-       :close]]]
-    
-    [callout
-    {:surface  :solid
-     :colorway :accent
-    ;;  :stroke   :xhard
-     }
-    [flex-row-space-between
-     [icon :info]
-     [:span "Please check out the " [link "new features"]]
-     [icon-button 
-      {:shape    :pill
-       :surface  :solid
+     [callout
+      {:surface :faint}
+      [flex-row-space-between
+       [icon {:colorway :negative} :info]
+       [:span "Please check out the " [link "new features"]]
+       [icon-button 
+        {:shape   :pill
+         :surface :transparent
+         :packing :xcompact}
+        :close]]]
+     
+     [callout
+      {:surface  :solid
        :colorway :accent
-       :packing  :xcompact}
-      :close]]]
-    
-    ] 
+    ;;  :stroke   :xhard
+       }
+      [flex-row-space-between
+       [icon :info]
+       [:span "Please check out the " [link "new features"]]
+       [icon-button 
+        {:shape    :pill
+         :surface  :solid
+         :colorway :accent
+         :packing  :xcompact}
+        :close]]]
+     
+     ]
 
 
   #_[flex-col
-   (sx :max-width--1200px
-       :p--24px
-       :gap--48px
-       :fs--$size-xxlarge
-       :_p:fs--$size-large
-       [:bgi "linear-gradient(to bottom right, silver, transparent)"])
+     (sx :max-width--1200px
+         :p--24px
+         :gap--48px
+         :fs--$size-xxlarge
+         :_p:fs--$size-large
+         [:bgi "linear-gradient(to bottom right, silver, transparent)"])
 
-   [:p "No colorway set"]
-   [callout
-    {:surface :faint}
-    [flex-row-space-between
-     [icon {:colorway :negative} :info]
-     [:span "Please check out the " [link "new features"]]
-     [icon-button 
-      {:shape    :pill
-       :surface  :transparent
-       :packing  :xcompact}
-      :close]]]
-
-
-   [:p "No colorway set"]
-   [callout
-    {:surface :faint}
-    [flex-row-space-between
-     [icon :info]
-     [:span "Please check out the " [link "new features"]]
-     [icon-button 
-      {:shape    :pill
-       :surface  :transparent
-       :packing  :xcompact}
-      :close]]]
+     [:p "No colorway set"]
+     [callout
+      {:surface :faint}
+      [flex-row-space-between
+       [icon {:colorway :negative} :info]
+       [:span "Please check out the " [link "new features"]]
+       [icon-button 
+        {:shape    :pill
+         :surface  :transparent
+         :packing  :xcompact}
+        :close]]]
 
 
-   [:p "Colorway neutral"]
-   [callout
-    {:surface  :faint
-     :colorway :neutral}
-    [flex-row-space-between
-     [icon :info
-      ]
-     [:span "Please check out the " [link "new features"]]
-     [icon-button 
-      {:shape    :pill
-       :surface  :faint
-       :packing  :xcompact}
-      :close]]]
-   
-   [:p "Colorway accent"]
-   [callout
-    {:surface  :faint
-     :colorway :accent}
-    [flex-row-space-between
-     [icon :info]
-     [:span "Please check out the " [link "new features"]]
-     [icon-button 
-      {:shape    :pill
-       :surface  :faint
+     [:p "No colorway set"]
+     [callout
+      {:surface :faint}
+      [flex-row-space-between
+       [icon :info]
+       [:span "Please check out the " [link "new features"]]
+       [icon-button 
+        {:shape    :pill
+         :surface  :transparent
+         :packing  :xcompact}
+        :close]]]
+
+
+     [:p "Colorway neutral"]
+     [callout
+      {:surface  :faint
+       :colorway :neutral}
+      [flex-row-space-between
+       [icon :info
+        ]
+       [:span "Please check out the " [link "new features"]]
+       [icon-button 
+        {:shape    :pill
+         :surface  :faint
+         :packing  :xcompact}
+        :close]]]
+     
+     [:p "Colorway accent"]
+     [callout
+      {:surface  :faint
+       :colorway :accent}
+      [flex-row-space-between
+       [icon :info]
+       [:span "Please check out the " [link "new features"]]
+       [icon-button 
+        {:shape    :pill
+         :surface  :faint
+         :colorway :accent
+         :packing  :xcompact}
+        :close]]]
+
+     [:p "Colorway accent"]
+     [callout
+      {:surface  :transparent
        :colorway :accent
-       :packing  :xcompact}
-      :close]]]
+       :stroke   :xhard}
+      [flex-row-space-between
+       [icon :info]
+       [:span "Please check out the " [link "new features"]]
+       [icon-button 
+        {:shape    :pill
+         :surface  :transparent
+         :colorway :accent
+         :packing  :xcompact}
+        :close]]]
 
-   [:p "Colorway accent"]
-   [callout
-    {:surface  :transparent
-     :colorway :accent
-     :stroke   :xhard}
-    [flex-row-space-between
-     [icon :info]
-     [:span "Please check out the " [link "new features"]]
-     [icon-button 
-      {:shape    :pill
-       :surface  :transparent
+     [:p "Colorway accent"]
+     [callout
+      {:surface  :solid
        :colorway :accent
-       :packing  :xcompact}
-      :close]]]
-
-   [:p "Colorway accent"]
-   [callout
-    {:surface  :solid
-     :colorway :accent
     ;;  :stroke   :xhard
-     }
-    [flex-row-space-between
-     [icon :info]
-     [:span "Please check out the " [link "new features"]]
-     [icon-button 
-      {:shape    :pill
-       :surface  :solid
-       :colorway :accent
-       :packing  :xcompact}
-      :close]]]
+       }
+      [flex-row-space-between
+       [icon :info]
+       [:span "Please check out the " [link "new features"]]
+       [icon-button 
+        {:shape    :pill
+         :surface  :solid
+         :colorway :accent
+         :packing  :xcompact}
+        :close]]]
 
-   [:p "Colorway accent, surface solid"]
-   [icon-button {:colorway :accent :surface :solid :shape :pill} :east]
+     [:p "Colorway accent, surface solid"]
+     [icon-button {:colorway :accent :surface :solid :shape :pill} :east]
 
-   [:p "No colorway"]
-   [icon-button :east]
+     [:p "No colorway"]
+     [icon-button :east]
 
-   [:p "Colorway neutral"]
-   [icon-button {:colorway :neutral} :east]
+     [:p "Colorway neutral"]
+     [icon-button {:colorway :neutral} :east]
 
-   [:p "Colorway accent"]
-   [icon-button {:colorway :accent} :east]
+     [:p "Colorway accent"]
+     [icon-button {:colorway :accent} :east]
 
-   [:p "Colorway accent, surface faint"]
-   [icon-button {:colorway :accent :surface :faint :shape :pill} :east]
-   
-   [:p "No colorway"]
-   [button {:end-enhancer :east :surface :minimal} "Next"]
+     [:p "Colorway accent, surface faint"]
+     [icon-button {:colorway :accent :surface :faint :shape :pill} :east]
+     
+     [:p "No colorway"]
+     [button {:end-enhancer :east :surface :minimal} "Next"]
 
-   [:p "No colorway"]
-   [button {:stroke :hard :end-enhancer :east :surface :transparent} "Next"]
+     [:p "No colorway"]
+     [button {:stroke :hard :end-enhancer :east :surface :transparent} "Next"]
 
-   [:p "No colorway"]
-   [button {:stroke :hard :end-enhancer :east :surface :ghost} "Next"]
+     [:p "No colorway"]
+     [button {:stroke :hard :end-enhancer :east :surface :ghost} "Next"]
 
-   [:p "No colorway"]
-   [button {:end-enhancer :east} "Next"]
+     [:p "No colorway"]
+     [button {:end-enhancer :east} "Next"]
 
-   [:p "No colorway"]
-   [button {:end-enhancer :east} "Next"]
+     [:p "No colorway"]
+     [button {:end-enhancer :east} "Next"]
 
-   [:p "No colorway"]
-   [button {:end-enhancer :east} "Next"]
-   
-   [:p "Colorway neutral"]
-   [button {:end-enhancer :east :colorway :neutral} "Next"]
+     [:p "No colorway"]
+     [button {:end-enhancer :east} "Next"]
+     
+     [:p "Colorway neutral"]
+     [button {:end-enhancer :east :colorway :neutral} "Next"]
 
-   [:p "Colorway accent"]
-   [button {:end-enhancer :east :colorway :accent} "Next"]
+     [:p "Colorway accent"]
+     [button {:end-enhancer :east :colorway :accent} "Next"]
 
-   [:p "Colorway accent"]
-   [button {:end-enhancer :east :colorway :accent :surface :solid} "Next"]]
+     [:p "Colorway accent"]
+     [button {:end-enhancer :east :colorway :accent :surface :solid} "Next"]]
 
 
   #_[flex-col
-   (sx :gap--1rem :_div:gap--1rem :.position-absolute-centered)
-   
+     (sx :gap--1rem :_div:gap--1rem :.position-absolute-centered)
+     
      ;; TRANSPARENT
-       [flex-row
-        (into [flex-col
-               (for [colorway [:green :yellow :blue :red]]
-                 [button {:size         :medium
-                          :shape        :pill
-                          :stroke       :medium
-                          :stroke-align :outside
-                          :stroke-color :green
-                          :stroke-width :1px
-                          :surface      :transparent
-                          :colorway     colorway
-                          :shadow       :xsmall
-                          :shadow-color colorway}
-                  "Next"])])
-        #_[flex-col
+     [flex-row
+      (into [flex-col
+             (for [colorway [:green :yellow :blue :red]]
+               [button {:size         :medium
+                        :shape        :pill
+                        :stroke       :medium
+                        :stroke-align :outside
+                        :stroke-color :green
+                        :stroke-width :1px
+                        :surface      :transparent
+                        :colorway     colorway
+                        :shadow       :xsmall
+                        :shadow-color colorway}
+                "Next"])])
+      #_[flex-col
          [:button {:class (css :.ks-button
                                ["--stroke-width" :3px]
                                ["--shadow-color" :$red-500]
@@ -920,130 +985,130 @@
        [:button {:class (css  :.ks-button ["--stroke-width" :1px] :.shadow-medium :.stroke-medium :.surface-minimal :.colorway-red :.shape-rounded)} "Next"]]]    
 
 
-   #_
+     #_
      ;; FAINT
-     [:div
-      (sx :.flex-row-start :ai--flex-start :gap--1rem)
-      [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [button {:size   :medium
-                :surface  :faint
-                :colorway :green} "Next"]
-       [button {:size   :medium
-                :surface  :faint
-                :colorway :yellow} "Next"]
-       [button {:size   :medium
-                :surface  :faint
-                :colorway :blue} "Next"]
-       [button {:size   :medium
-                :surface  :faint
-                :colorway :red} "Next"]]
-      [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [:button (sx ".ks-button" :.surface-faint :.colorway-green :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-faint :.colorway-yellow :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-faint :.colorway-blue :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-faint :.colorway-red :.shape-rounded) "Next"]]]
+       [:div
+        (sx :.flex-row-start :ai--flex-start :gap--1rem)
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [button {:size   :medium
+                  :surface  :faint
+                  :colorway :green} "Next"]
+         [button {:size   :medium
+                  :surface  :faint
+                  :colorway :yellow} "Next"]
+         [button {:size   :medium
+                  :surface  :faint
+                  :colorway :blue} "Next"]
+         [button {:size   :medium
+                  :surface  :faint
+                  :colorway :red} "Next"]]
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [:button (sx ".ks-button" :.surface-faint :.colorway-green :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-faint :.colorway-yellow :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-faint :.colorway-blue :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-faint :.colorway-red :.shape-rounded) "Next"]]]
 
 
      #_
      ;; SOFT
-   [:div
-    (sx :.flex-row-start :ai--flex-start :gap--1rem)
-    [:div (sx :.flex-col-start :p--20px :gap--1rem)
+       [:div
+        (sx :.flex-row-start :ai--flex-start :gap--1rem)
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
 
-     [button {:surface  :soft
-              :size   :xxxlarge
-              :shape    :pill
-              :colorway :green
-              :stroke   :hard}
-      "Next"]
-     #_#_#_
+         [button {:surface  :soft
+                  :size   :xxxlarge
+                  :shape    :pill
+                  :colorway :green
+                  :stroke   :hard}
+          "Next"]
+         #_#_#_
+               [button {:size   :medium
+                        :surface  :soft
+                        :colorway :yellow} "Next"]
+             [button {:size   :medium
+                      :surface  :soft
+                      :colorway :blue} "Next"]
            [button {:size   :medium
                     :surface  :soft
-                    :colorway :yellow} "Next"]
-         [button {:size   :medium
-                  :surface  :soft
-                  :colorway :blue} "Next"]
-       [button {:size   :medium
-                :surface  :soft
-                :colorway :red} "Next"]]
-    [:div (sx :.flex-col-start :p--20px :gap--1rem)
-     [:button (sx :.ks-button :.surface-soft :.colorway-green :.shape-rounded) "Next"]
-     #_#_#_
-           [:button (sx :.ks-button :.surface-soft :.colorway-yellow :.shape-rounded) "Next"]
-         [:button (sx :.ks-button :.surface-soft :.colorway-blue :.shape-rounded) "Next"]
-       [:button (sx :.ks-button :.surface-soft :.colorway-red :.shape-rounded) "Next"]]]
+                    :colorway :red} "Next"]]
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [:button (sx :.ks-button :.surface-soft :.colorway-green :.shape-rounded) "Next"]
+         #_#_#_
+               [:button (sx :.ks-button :.surface-soft :.colorway-yellow :.shape-rounded) "Next"]
+             [:button (sx :.ks-button :.surface-soft :.colorway-blue :.shape-rounded) "Next"]
+           [:button (sx :.ks-button :.surface-soft :.colorway-red :.shape-rounded) "Next"]]]
 
-   
-   #_
+     
+     #_
      ;; SOFT CLASSIC
-     [:div
-      (sx :.flex-row-start :ai--flex-start :gap--1rem)
-      [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [button {:size   :medium
-                :surface  :soft-classic
-                :colorway :green} "Next"]
-       [button {:size   :medium
-                :surface  :soft-classic
-                :colorway :yellow} "Next"]
-       [button {:size   :medium
-                :surface  :soft-classic
-                :colorway :blue} "Next"]
-       [button {:size   :medium
-                :surface  :soft-classic
-                :colorway :red} "Next"]]
-      [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [:button (sx ".ks-button" :.surface-soft-classic :.colorway-green :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-soft-classic :.colorway-yellow :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-soft-classic :.colorway-blue :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-soft-classic :.colorway-red :.shape-rounded) "Next"]]]
+       [:div
+        (sx :.flex-row-start :ai--flex-start :gap--1rem)
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [button {:size   :medium
+                  :surface  :soft-classic
+                  :colorway :green} "Next"]
+         [button {:size   :medium
+                  :surface  :soft-classic
+                  :colorway :yellow} "Next"]
+         [button {:size   :medium
+                  :surface  :soft-classic
+                  :colorway :blue} "Next"]
+         [button {:size   :medium
+                  :surface  :soft-classic
+                  :colorway :red} "Next"]]
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [:button (sx ".ks-button" :.surface-soft-classic :.colorway-green :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-soft-classic :.colorway-yellow :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-soft-classic :.colorway-blue :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-soft-classic :.colorway-red :.shape-rounded) "Next"]]]
 
-   #_
+     #_
      ;; SOlID
-     [:div
-      (sx :.flex-row-start :ai--flex-start :gap--1rem)
-      [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [button {:size   :medium
-                :surface  :solid
-                :colorway :green} "Next"]
-       [button {:size   :medium
-                :surface  :solid
-                :colorway :yellow} "Next"]
-       [button {:size   :medium
-                :surface  :solid
-                :colorway :blue} "Next"]
-       [button {:size   :medium
-                :surface  :solid
-                :colorway :red} "Next"]]
-      [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [:button (sx ".ks-button" :.surface-solid :.colorway-green :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-solid :.colorway-yellow :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-solid :.colorway-blue :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-solid :.colorway-red :.shape-rounded) "Next"]]]
+       [:div
+        (sx :.flex-row-start :ai--flex-start :gap--1rem)
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [button {:size   :medium
+                  :surface  :solid
+                  :colorway :green} "Next"]
+         [button {:size   :medium
+                  :surface  :solid
+                  :colorway :yellow} "Next"]
+         [button {:size   :medium
+                  :surface  :solid
+                  :colorway :blue} "Next"]
+         [button {:size   :medium
+                  :surface  :solid
+                  :colorway :red} "Next"]]
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [:button (sx ".ks-button" :.surface-solid :.colorway-green :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid :.colorway-yellow :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid :.colorway-blue :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid :.colorway-red :.shape-rounded) "Next"]]]
 
-   #_
+     #_
      ;; SOLID CLASSIC
-     [:div
-      (sx :.flex-row-start :ai--flex-start :gap--1rem)
-      [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [button {:size   :medium
-                :surface  :solid-classic
-                :colorway :green} "Next"]
-       [button {:size   :medium
-                :surface  :solid-classic
-                :colorway :yellow} "Next"]
-       [button {:size   :medium
-                :surface  :solid-classic
-                :colorway :blue} "Next"]
-       [button {:size   :medium
-                :surface  :solid-classic
-                :colorway :red} "Next"]]
-      [:div (sx :.flex-col-start :p--20px :gap--1rem)
-       [:button (sx ".ks-button" :.surface-solid-classic :.colorway-green :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-solid-classic :.colorway-yellow :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-solid-classic :.colorway-blue :.shape-rounded) "Next"]
-       [:button (sx ".ks-button" :.surface-solid-classic :.colorway-red :.shape-rounded) "Next"]]]
-   
-   ]
+       [:div
+        (sx :.flex-row-start :ai--flex-start :gap--1rem)
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [button {:size   :medium
+                  :surface  :solid-classic
+                  :colorway :green} "Next"]
+         [button {:size   :medium
+                  :surface  :solid-classic
+                  :colorway :yellow} "Next"]
+         [button {:size   :medium
+                  :surface  :solid-classic
+                  :colorway :blue} "Next"]
+         [button {:size   :medium
+                  :surface  :solid-classic
+                  :colorway :red} "Next"]]
+        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-green :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-yellow :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-blue :.shape-rounded) "Next"]
+         [:button (sx ".ks-button" :.surface-solid-classic :.colorway-red :.shape-rounded) "Next"]]]
+     
+     ]
 
 
 

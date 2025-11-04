@@ -1,27 +1,73 @@
 (ns kushi.ui.collapse
   (:require
+   [kushi.ui.core :refer (defui)]
    [kushi.core :refer [css sx css-vars-map merge-attrs]]
    [clojure.string :as string]
-   [kushi.ui.collapse.header :refer (collapse-header-contents)]
    [kushi.ui.core :refer (extract)]
+   [kushi.ui.icon]
+   [kushi.ui.label]
    [domo.core :as domo]))
 
-;; TODO - How to tie children to id of collapse?
-;TODO refactor this out
+(defn header-title
+  [{:keys [label-collapsed-or-expanded
+           icon-opposite?
+           collapsed-or-expanded-icon]
+    :as   opts}]
+  (if (string? label-collapsed-or-expanded)
+    (let [w (when icon-opposite? "100%")
+          jc (when icon-opposite? "space-between")
+          attrs
+          {:style (css-vars-map w jc)
+           :class (css ".kushi-collapse-header-title-contents"
+                       :w--$w
+                       :jc--$jc)}]
+      (if icon-opposite?
+        [kushi.ui.label/label
+         attrs
+         label-collapsed-or-expanded 
+         [kushi.ui.icon/icon collapsed-or-expanded-icon]]
+        [kushi.ui.label/label
+         attrs
+         [kushi.ui.icon/icon collapsed-or-expanded-icon]
+         label-collapsed-or-expanded]))
+    label-collapsed-or-expanded))
 
-(defn collapse-body [& args]
-  (let [{:keys [opts attrs children]} (extract args)]
-    [:section
-     (merge-attrs (sx ".kushi-collapse-body-wrapper" :overflow--hidden) attrs)
-     [:div (sx ".kushi-collapse-body"
-               :bbe--1px:solid:transparent
-               :padding-block--0.25em:0.5em)
-      children]]))
 
-
-(defn toggle-class-on-ancestor [node root-class class]
-  (let [root (.closest node (str "." (name root-class)))]
-    (when root (.toggle (.-classList root) (name class)))))
+(defn collapse-header-contents
+  [{:keys [label-collapsed
+           label-expanded
+           icon-collapsed
+           icon-expanded
+           icon-position]
+    :or {icon-collapsed :add
+         icon-expanded  :remove}}]
+  (let [label-expanded    (or label-expanded label-collapsed)
+        icon-opposite?    (= :end icon-position)
+        opts              {:label-collapsed-or-expanded label-collapsed
+                           :collapsed-or-expanded-icon  icon-collapsed
+                           :icon-opposite?              icon-opposite?}]
+    [:<>
+     [:span
+      (sx ".kushi-collapse-header-label-collapsed"
+          :display--flex
+          :ai--c
+          :w--100% )
+      (if (string? label-collapsed)
+        [header-title opts]
+        label-collapsed)]
+     [:span
+      (sx ".kushi-collapse-header-label-expanded"
+          :display--flex
+          :ai--c
+          :w--100%
+          :d--none)
+      (if (string? label-expanded)
+        [header-title (assoc opts
+                             :label-collapsed-or-expanded 
+                             label-expanded
+                             :collapsed-or-expanded-icon 
+                             icon-expanded)]
+        label-expanded)]]))
 
 (defn toggle-boolean-attribute [node attr]
   (let [oldv (.getAttribute node (name attr))
@@ -51,9 +97,12 @@
 
 (defn collapse-header
   [& args]
-  (let [{:keys [opts attrs children]}       (extract args)
+  (let [{:keys [opts attrs children]}
+        (extract args)
+
         {:keys [speed expanded?]
-         :or   {speed 250}} opts]
+         :or   {speed 250}}
+        opts]
     (let [on-click
           #(let [header   (.closest (-> % .-target) "[aria-expanded][role='button']")
                  collapse (.-parentNode header)]
@@ -120,8 +169,9 @@
              (merge-attrs
               {:style         {:--speed  (str speed "ms") }
                :class         (css
-                               ".kushi-collapse-header"
+                               ".ks-collapse-header"
                                :.flex-row-fs
+                               :display--flex
                                :cursor--pointer
                                {:ai                                          :center
                                 :padding-block                               :0.75em
@@ -146,7 +196,82 @@
               attrs)]
             children))))
 
-(defn collapse
+
+(defui collapse
+  {:props/shared [:colorway :size]
+   :props {
+           :label-collapsed {:schema  :string
+                             :default nil
+                             :desc    "The text to display in the collapse header."}
+           :label-expanded  {:schema  :string
+                             :default nil
+                             :desc    "The text to display in the collapse header, when expanded."}
+           :icon-collapsed  {:schema  :keyword
+                             :default nil
+                             :desc    "The icon to display in the collapse header, when collapsed."}
+           :icon-expanded   {:schema  :keyword
+                             :default nil
+                             :desc    "The icon to display in the collapse header, when expanded."}
+           :icon-position   {:schema  :map
+                             :default nil
+                             :desc    "A value of `:start` will place the at the inline start of
+                                     the header, preceding the label. A value of `:end` will
+                                     place the icon at the inline end of the header, opposite
+                                     the label. Optional."}
+           :header-attrs    {:schema  :map
+                             :default nil
+                             :desc    "A value of `:start` will place the at the inline start of
+                                      the header, preceding the label. A value of `:end` will
+                                      place the icon at the inline end of the header, opposite
+                                      the label. Optional."}
+           :expanded?       {:schema  :boolean
+                             :default false
+                             :desc    "When a value of `true` is passed, the collapse is initially rendered in an expanded state. Optional."}
+           :speed           {:schema  :int
+                             :default 250
+                             :desc    "The speed of the transition. A positive integer representing milliseconds"}
+           }}
+  [& args]
+  (let [{:keys [header-attrs
+                body-attrs
+                expanded?
+                on-click
+                icon-position
+                speed]
+         :or   {speed 250}}    &props
+        expanded-class (when expanded? :.kushi-collapse-expanded)]
+    [:section
+     (merge-attrs
+      {:style         (let [speed (str speed "ms")]
+                        (css-vars-map speed))
+       :class         (css ".ks-collapse"
+                           expanded-class
+                           :display--flex
+                           :flex-direction--column
+                           :w--100%)
+       :data-ks-ui :collapse}
+      &attrs)
+     [collapse-header
+      (merge-attrs header-attrs
+                   {:on-click       on-click
+                    :aria-expanded  (if expanded? "true" "false")
+                    :icon-position icon-position
+                    :speed         speed})
+      [collapse-header-contents &props]]
+
+     ;; collapse body
+     [:section
+      (merge-attrs (sx ".kushi-collapse-body-wrapper" :overflow--hidden)
+                   body-attrs
+                   {:style {:display             (if expanded? :block :none)
+                            :transition-duration (str speed "ms")}})
+      (into [:div (sx ".kushi-collapse-body"
+                      :bbe--1px:solid:transparent
+                      :pb--0.25em:0.5em)]
+            &children)]]))
+
+
+#_(defn collapse
   {:summary "A collapse is a section of content which can be collapsed and
              expanded."
    :opts '[{:name    label
