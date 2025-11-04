@@ -578,7 +578,7 @@
        #_[:--switch-thumb-scale-factor :1.25])
       {
        :on? true
-       :size            :xxxlarge
+       :size            :xxxlarger 
         ;; :thumb-label-on  "ON"
         ;; :thumb-label-off "OFF"
         ;; :thumb-scale-factor 1.2

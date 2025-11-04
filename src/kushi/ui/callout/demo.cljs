@@ -142,13 +142,13 @@
       :samples   (samples
                   [[callout
                     {:colorway :accent
-                     :surface  :transparent
+                     :surface  :minimal
                      :stroke   :hard}
                     [flex-row-space-between
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
-                      {:colorway :positive
+                      {:surface  :minimal
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -161,7 +161,8 @@
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
-                      {:colorway :positive
+                      {:surface  :faint
+                       :colorway :accent
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -174,7 +175,8 @@
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
-                      {:colorway :positive
+                      {:surface  :transparent
+                       :colorway :accent
                        :shape    :pill
                        :packing  :compact}
                       :close]]]])}
