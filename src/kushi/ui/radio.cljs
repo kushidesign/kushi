@@ -12,7 +12,6 @@
    (merge-attrs
     {:class            (css
                         ".ks-radio"
-                        :.surface-transparent
                         {:transition-duration   :$transition-xxfast
                          :cursor                :pointer
                          :+label:cursor         :pointer

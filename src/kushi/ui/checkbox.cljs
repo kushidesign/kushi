@@ -17,9 +17,9 @@
                        ".ks-checkbox"
                        {:transition-duration      :$transition-xxfast
                         :cursor                   :pointer
-                        :+label:cursor            :pointer
+                        ; :+label:cursor          :pointer ; <- leave this out until it will actually check the input 
                         :+label:pis               :0.369em
-                       ;; why inline-grid?
+                        ; why inline-grid?
                         :display                  :inline-grid
                         :place-content            :center
                         :-webkit-appearance       :none

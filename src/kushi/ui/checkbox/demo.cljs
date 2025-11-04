@@ -21,7 +21,10 @@
                        :dark:border-color :$neutral-850
                        :width             :fit-content
                        :border-radius     :$shape-rounded})]
-      [{:label   "Different sizes",
+      
+      [
+      #_ 
+       {:label   "Different sizes",
         :samples (samples-with-variant
                   {:variant       :size,
                    :variant-scale :size/xsmall-xxxlarge,
@@ -45,8 +48,7 @@
        
        {:label     "Weights",
         :row-style {:flex-direction :column
-                    :align-items    :flex-start
-                    :gap            :2rem}
+                    :gap            :1.5rem}
         :samples   (samples 
                     [
                      "thin"

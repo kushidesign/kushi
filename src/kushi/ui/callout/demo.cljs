@@ -135,10 +135,7 @@
                      [icon-button 
                       {:colorway :positive
                        :shape    :pill
-                       :packing  :compact}
-                      :close]]]])}
-     
-         
+                       :packing  :compact} :close]]]])}
 
      {:label     "Surfaces with outline"
       :row-attrs (sx :flex-wrap--wrap :_.ks-callout:w--100%)
@@ -181,11 +178,7 @@
                        :shape    :pill
                        :packing  :compact}
                       :close]]]])}
-
-
-     
-
-
+    
      {:label     "Neutral"
       :row-attrs (sx :flex-wrap--wrap :_.ks-callout:w--100%)
       :samples   (samples
@@ -196,7 +189,7 @@
                       {:colorway :neutral}]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
-                      {:colorway :positive
+                      {:surface  :solid
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -208,7 +201,7 @@
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
-                      {:colorway :positive
+                      {:surface  :soft
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -219,7 +212,7 @@
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
-                      {:colorway :positive
+                      {:surface  :soft
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -231,7 +224,7 @@
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
-                      {:colorway :positive
+                      {:surface  :faint
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -242,7 +235,7 @@
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
-                      {:colorway :positive
+                      {:surface  :faint
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -255,6 +248,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :positive
+                       :surface  :transparent
                        :shape    :pill
                        :packing  :compact}
                       :close]]]])}
@@ -270,6 +264,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :positive
+                       :surface  :solid
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -283,6 +278,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :positive
+                       :surface  :soft
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -295,6 +291,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :positive
+                       :surface  :soft
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -308,6 +305,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :positive
+                       :surface  :faint
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -320,6 +318,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :positive
+                       :surface  :faint
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -333,6 +332,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :positive
+                       :surface  :transparent
                        :shape    :pill
                        :packing  :compact}
                       :close]]]])}
@@ -349,6 +349,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :warning
+                       :surface  :solid
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -362,6 +363,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :warning
+                       :surface  :soft
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -374,6 +376,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :warning
+                       :surface  :soft
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -387,6 +390,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :warning
+                       :surface  :faint
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -399,6 +403,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :warning
+                       :surface  :faint
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -412,6 +417,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :warning
+                       :surface  :transparent
                        :shape    :pill
                        :packing  :compact}
                       :close]]]])}
@@ -428,19 +434,21 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :negative
+                       :surface  :solid
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
 
                    [callout
-                    {:surface :soft
+                    {:surface  :soft
                      :colorway :negative
-                     :stroke  :hard}
+                     :stroke   :hard}
                     [flex-row-space-between
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :negative
+                       :surface  :soft
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -453,6 +461,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :negative
+                       :surface :soft
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -466,6 +475,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :negative
+                       :surface  :faint
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -478,6 +488,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :negative
+                       :surface  :faint
                        :shape    :pill
                        :packing  :compact}
                       :close]]]
@@ -491,6 +502,7 @@
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
                       {:colorway :negative
+                       :surface  :transparent
                        :shape    :pill
                        :packing  :compact}
                       :close]]]])}]

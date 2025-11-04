@@ -12,6 +12,23 @@
 (def demos 
   [
 
+   {:label   "Colorways x Surfaces"
+    :samples (samples-with-variant
+              {:args           ["M"],
+               :variant        :colorway,
+               :variant-scale  :colorway/named,
+               :x-variants     [:surface/simple],
+               :snippets-label "Colorways",
+               :attrs/snippet  {:surface :solid},
+               :rows?          true})}
+
+   {:label   "Colorways"
+    :samples (samples-with-variant
+              {:variant       :colorway
+               :variant-scale :colorway/named
+               :args          ["M"]
+               :attrs         {:surface :solid}})}
+
    {:label   "Sizes"
     :samples (samples-with-variant
               {:variant       :size
@@ -41,25 +58,15 @@
    {:label   "Surfaces"
     :samples (samples-with-variant
               {:variant       :surface
-               :variant-scale :surface/tag
+               :attrs         {:colorway :neutral}
+               :variant-scale :surface/simple
                :args          ["M"]})}
 
-   {:label   "Colorways"
+   {:label   "Stroke Intensity"
     :samples (samples-with-variant
-              {:variant       :colorway
-               :variant-scale :colorway/named
-               :args          ["M"]
-               :attrs         {:surface :solid}})}
-
-   {:label   "Colorways x Surfaces"
-    :samples (samples-with-variant
-              {:args           ["M"],
-               :variant        :colorway,
-               :variant-scale  :colorway/named,
-               :x-variants     [:surface/tag],
-               :snippets-label "Colorways",
-               :attrs/snippet  {:surface :solid},
-               :rows?          true})}
+              {:variant       :stroke
+               :attrs         {:colorway :neutral}
+               :args          ["M"]})}
    
    ])
 

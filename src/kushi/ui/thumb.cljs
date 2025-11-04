@@ -9,8 +9,9 @@
 
 (defui thumb
   {:doc          "Thumb docstring"
-   :props/shared [:size
-                  [:colorway {:default :neutral}]
+   :props/shared [[:colorway {:default :neutral}]
+                  [:inert {:default false}]
+                  :size
                   :packing
                   :loading
                   :stroke
@@ -19,13 +20,14 @@
                   :position
                   :shape
                   :surface
-                  :transition
-                  [:inert {:default false}]]}
+                  :transition]}
   [& args]
-  (let [{:keys [surface loading stroke-width]} &props
-        classic-variant?                       (contains? #{:solid-classic 
-                                                            :soft-classic} 
-                                                          surface)]
+  (let [{:keys [surface
+                loading
+                stroke-width]} &props
+        classic-variant?       (contains? #{:solid-classic 
+                                            :soft-classic} 
+                                          surface)]
     (into [:div
            (merge-attrs
             (sx
@@ -38,7 +40,7 @@
              :h--1em
 
              ;; TODO - browser support?
-            ;;  [:aspect-ratio "1 / 1"]
+             ;; [:aspect-ratio "1 / 1"]
 
              :cursor--pointer
              ;; TODO - is this local/private css var necessary?

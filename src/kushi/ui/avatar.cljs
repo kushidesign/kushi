@@ -4,22 +4,21 @@
    [kushi.core :refer [merge-attrs sx]]
    [kushi.ui.core :refer (defui)]
    [kushi.ui.icon]
+   [kushi.ui.decoration :as decoration]
    [kushi.ui.util :refer [maybe nameable?]]))
 
 
 ;; TODO - figure this out
 (def avatar-size 
-  {
-   "xxxsmall" "24px"
-   "xxsmall"  "36px"
-   "xsmall"   "48px"
-   "small"    "60px"
-   "medium"   "72px"
-   "large"    "72px"
+  {"xxxsmall" "18px"
+   "xxsmall"  "26px"
+   "xsmall"   "36px"
+   "small"    "48px"
+   "medium"   "60px"
+   "large"    "78px"
    "xlarge"   "96px"
-   "xxlarge"  "96px"
-   "xxxlarge" "96px"
-   })
+   "xxlarge"  "120px"
+   "xxxlarge" "145px"})
 
 
 (defui avatar 
@@ -27,8 +26,9 @@
    :desc    "Avatars will display fallback text when no image is provided."
    :props/shared [[:size {:default "36px"}]
                   [:surface {:default :soft}]
-                  :colorway
+                  [:colorway {:default :neutral}]
                   [:shape {:default :rounded}]
+                  :stroke
                   :stroke-align]
    :props   {:font-size-ratio {:schema  :float
                                :default 0.4
@@ -40,7 +40,7 @@
                                :default nil
                                :desc    "URL of a mask image to clip the avatar with."} }}
   [& args]
-  (let [{:keys [size font-size-ratio]}
+  (let [{:keys [size font-size-ratio stroke-width]}
         &props
 
         size
@@ -58,7 +58,9 @@
             {:style {"--width"     (name size)
                      "--font-size" (str "calc(" size " * " font-size-ratio ")")}}
             (sx "[data-ks-ui=\"avatar\"]"
-                :.relative
+                :.position-relative
+                [:--stroke-width :$avatar-stroke-width]
+                :cursor--default
                 :d--inline-flex
                 :jc--c
                 :ai--c
@@ -67,5 +69,9 @@
                 :fs--$font-size
                 [:aspect-ratio "1 / 1"]
                 :overflow--hidden)
+
+            (some-> stroke-width
+                    (decoration/stroke-width-cssvar "avatar"))
+
             &attrs)]
           (when-not (:src &attrs) &children))))

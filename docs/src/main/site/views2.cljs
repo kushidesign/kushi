@@ -598,20 +598,6 @@
                                 ))
        })]
 
-  [showcase 
-   (!? (showcase/opts
-        kushi.ui.switch/switch
-        kushi.ui.switch.demo/demos))]
-
-  ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.icon/icon
-                               kushi.ui.icon.demo/demos))]
-
-  ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.tag/tag
-                               kushi.ui.tag.demo/demos))]
-
-
   #_(into [:div.absolute-centered.flex-col-space-between (sx :gap--5rem)]
           (for [k [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge]]
             [button (mrj {:packing         :roomy
@@ -624,6 +610,19 @@
                              [:--color :$gold-400]
                              [:--shadow-strength :40%]))
              k]))
+  
+
+  ;; DONE
+  #_[showcase (!? (showcase/opts kushi.ui.switch/switch
+                                 kushi.ui.switch.demo/demos))]
+
+  ;; DONE
+  #_[showcase (!? (showcase/opts kushi.ui.icon/icon
+                               kushi.ui.icon.demo/demos))]
+
+  ;; DONE
+  #_[showcase (!? (showcase/opts kushi.ui.tag/tag
+                               kushi.ui.tag.demo/demos))]
 
   ;; DONE
   #_[showcase (!? (showcase/opts kushi.ui.text-field/text-field
@@ -641,9 +640,32 @@
   #_[showcase (!? (showcase/opts kushi.ui.button/button
                                kushi.ui.button.demo/demos))]
   ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.callout/callout
+  [showcase (!? (showcase/opts kushi.ui.callout/callout
                                kushi.ui.callout.demo/demos))]
-  
+
+  ;; DONE
+  #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
+                               kushi.ui.spinner.demo/demos))]
+
+  ;; DONE
+  #_[showcase (!? {:display-metadata? false}
+               (showcase/opts kushi.ui.checkbox/checkbox
+                              kushi.ui.checkbox.demo/demos))]
+
+  ;; DONE
+  #_[showcase (showcase/opts kushi.ui.radio/radio
+                           kushi.ui.radio.demo/demos)]
+
+  ;; DONE
+  #_[showcase (showcase/opts kushi.ui.avatar/avatar
+                           kushi.ui.avatar.demo/demos)]
+
+  #_[avatar {:surface :solid
+             :size  :xxlarge
+             :src     avatar-1}
+     "JC"]
+
+
 
   ;; Sorting out 
    #_[flex-col
@@ -1023,23 +1045,6 @@
    
    ]
 
-
-  #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
-                                 kushi.ui.spinner.demo/demos))]
-
-  
-
-  #_[showcase (!? {:display-metadata? false}
-               (showcase/opts kushi.ui.checkbox/checkbox
-                              kushi.ui.checkbox.demo/demos))]
-
-  #_[showcase (showcase/opts kushi.ui.radio/radio
-                           kushi.ui.radio.demo/demos)]
-
-  #_[avatar {:surface :solid
-             :size  :xxlarge
-             :src     avatar-1}
-     "JC"]
 
 
   #_[:div 

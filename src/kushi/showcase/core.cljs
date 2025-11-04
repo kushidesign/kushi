@@ -334,7 +334,8 @@
 (defn- d1-grid-with-sample-labels
   [opt samples]
   (into [:div (merge-attrs (sx :.d1-grid-wrapper)
-                           (some-> opt :demo :row-attrs))]
+                           (some-> opt :demo :row-attrs)
+                           (some->> opt :demo :row-style (hash-map :style)))]
         (reduce
          (fn [acc {:keys [label] :as sample}]
            (let [variant-label
