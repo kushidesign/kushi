@@ -88,9 +88,7 @@
      {:label     "Header color"
       :row-attrs row-attrs
       :samples   (samples [[collapse
-                            {:class           (css {:border-block      :3px:solid:$purple-100
-                                                    :dark:border-block :3px:solid:$purple-850})
-                             :label-collapsed "Collapsable section label"
+                            {:label-collapsed "Collapsable section label"
                              :body-attrs      (sx {:pis :0.5rem})
                              :header-attrs    (sx {:fw       :$semi-bold
                                                    :pi       :0.5em:1em
