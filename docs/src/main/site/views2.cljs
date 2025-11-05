@@ -677,29 +677,33 @@
   ;; DONE
   #_[showcase (!? (showcase/opts kushi.ui.callout/callout
                                  kushi.ui.callout.demo/demos))]
+
+  ;; DONE
+  [showcase (showcase/opts kushi.ui.collapse/collapse
+                           kushi.ui.collapse.demo/demos)]
   
   ;; grid
 
   ;; collapse
   ;; DONE when you do demo
-  [collapse
+  #_[collapse
    {:label-collapsed "Collapsable section label"}
    [:p "Child 1"]
    [:p "Child 2"]]
 
-  [collapse
+  #_[collapse
    {:label-collapsed "Click to expand"
     :label-expanded  "Click to collapse"}
    [:p "Child 1"]
    [:p "Child 2"]]
 
-  [collapse
+  #_[collapse
    {:label-collapsed "Collapsable section label"
     :icon-position   :end}
    [:p "Child 1"]
    [:p "Child 2"]]
 
-  [collapse
+  #_[collapse
    (merge-attrs (sx :bbe--1px:solid:$neutral-800
                     :dark:bbe--1px:solid:$neutral-400) 
                 {:label-collapsed "Collapsable section label "
