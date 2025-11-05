@@ -1,6 +1,6 @@
 (ns ^{:kushi/layer "user-styles"} 
   kushi.ui.collapse.demo
-  (:require [kushi.core :refer (sx css merge-attrs)]
+  (:require [kushi.core :refer (sx merge-attrs)]
             [kushi.ui.collapse :refer [collapse]]
             [kushi.core :refer (sx merge-attrs)]
             [kushi.showcase.core :as showcase :refer [samples]]))

@@ -415,7 +415,7 @@
              (.removeChild (or toast-slot 
                                (or dialog-el
                                    js/document.body))
-                            el-to-be-removed))
+                           el-to-be-removed))
 
     ;; Popovers
     (when (= :popover pane-type)
@@ -427,9 +427,9 @@
           (.removeEventListener js/window
                                 "click"
                                 (partial remove-pane-if-clicked-outside!
-                                            owning-el
-                                            pane-id
-                                            pane-type)
+                                         owning-el
+                                         pane-id
+                                         pane-type)
                                 #js {:once true}))
         (.removeEventListener js/window "resize" update-placement-fn)
         (.removeEventListener js/window "scroll" update-placement-fn))

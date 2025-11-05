@@ -1,9 +1,10 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.tooltip.demo
   (:require 
-   [kushi.core :refer (sx css merge-attrs css-vars-map grid-template-areas)]
-   [kushi.playground.util :refer-macros [sx-call]]
+   [kushi.core :refer (css merge-attrs css-vars-map grid-template-areas)]
    [kushi.ui.button :refer [button]]
+   [kushi.showcase.core :as showcase :refer [samples]]
    [kushi.ui.tooltip :refer [tooltip-attrs]]))
+
 
 (defn demo []
   (into
@@ -59,6 +60,18 @@
       [:span.placement-label (str ":" x)]])))
 
 
+(def demos
+  [{:label    "Basic"
+    :samples (samples [[button (tooltip-attrs
+                                {:text          "This is a tooltip"
+                                 :tooltip-class (css 
+                                                 #_{:--tooltip-font-size                  :34px
+                                                  :--tooltip-background-color           :$red-800
+                                                  :--tooltip-background-color-dark-mode :$red-300})})
+                        "Hover me"]
+                       ])}])
+
+
 ;; Code for generating tooltip placement examples at repl
 ;; (?pp (into []
 ;;            (for [x     [:brc :br  :b   :bl  :blc
@@ -81,7 +94,9 @@
 ;;                                 )}))))
 
 
-(def examples
+
+
+#_(def examples
   [{:desc      "Basic, auto-placement."
     :component button
     :reqs      '[[kushi.ui.button :refer [button]]]
@@ -101,12 +116,10 @@
                   (tooltip-attrs
                    {:text          
                     "This is a tooltip"
-                    :tooltip-class
-                    (css 
-                     {:--tooltip-font-size                  :34px
-                      :--tooltip-background-color           :$red-800
-                      :--tooltip-background-color-dark-mode :$red-300}
-                     )})
+                    :tooltip-class 
+                    (css {:--tooltip-font-size                  :34px
+                          :--tooltip-background-color           :$red-800
+                          :--tooltip-background-color-dark-mode :$red-300})})
                   "Hover me"]]
     :examples  [{:label    "right"
                  :args     ["Hover me"]
@@ -116,8 +129,7 @@
                               :tooltip-class (css 
                                                {:--tooltip-font-size                  :34px
                                                 :--tooltip-background-color           :$red-800
-                                                :--tooltip-background-color-dark-mode :$red-300}
-                                               )}))}]}
+                                                :--tooltip-background-color-dark-mode :$red-300})}))}]}
 
    {:desc     "Tooltips with specific placements"      
     :row-attrs (let [gta (grid-template-areas

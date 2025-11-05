@@ -26,6 +26,9 @@
    [kushi.ui.collapse :refer [collapse]]
    [kushi.ui.collapse.demo]
 
+   [kushi.ui.tooltip :refer [tooltip-attrs]]
+   [kushi.ui.tooltip.demo]
+
    [kushi.ui.icon-button :refer [icon-button]]
    [kushi.ui.icon-button.demo]
 
@@ -679,8 +682,11 @@
                                  kushi.ui.callout.demo/demos))]
 
   ;; DONE
-  [showcase (showcase/opts kushi.ui.collapse/collapse
+  #_[showcase (showcase/opts kushi.ui.collapse/collapse
                            kushi.ui.collapse.demo/demos)]
+
+  [showcase (showcase/opts kushi.ui.tooltip/tooltip-attrs
+                           kushi.ui.tooltip.demo/demos)]
   
   ;; grid
 

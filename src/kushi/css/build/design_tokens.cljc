@@ -339,7 +339,7 @@
    [:--pane-offset-start                     "calc(var(--pane-offset) + 5px)"
     :--pane-z-index                          99999
     :--pane-delay-duration                   :0ms
-    :--pane-transition-duration              :$transition-transition-xfast 
+    :--pane-transition-duration              :$transition-xfast 
     :--pane-transition-timing-function       :$timing-ease-out-curve]
 
     ;; pane arrows

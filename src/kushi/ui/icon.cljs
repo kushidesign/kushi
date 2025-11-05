@@ -2,7 +2,7 @@
   (:require
    [clojure.string :as string]
    [fireworks.core :refer [? !? ?> !?>]]
-   [kushi.core :refer [sx ?sx merge-attrs at]]
+   [kushi.core :refer [sx merge-attrs at]]
    [kushi.ui.util]
    [kushi.ui.defs :as defs]
    [kushi.ui.shared.theming :refer [component-attrs variant-basics]]
@@ -50,22 +50,27 @@
    your own project with your own collection of icon `svg`s."
 
    :props/shared [[:colorway {:default nil}]
+                  [:weight {:default nil}]
                   :shape
-                  :size
-                  [:weight {:default nil}]       
+                  :size       
                   :position
                   :inert
                   :transition
                   :icon-style
                   :icon-filled]}
   [& args]
-  (let [{:keys [icon-style icon-filled surface colorway]} &props
-        [icon*]                                           &children
-        surface-transparent (when colorway :.surface-transparent)]
+  (let [{:keys [icon-style icon-filled surface colorway]}
+        &props
+
+        [icon*]                                           
+        &children
+
+        surface-transparent 
+        (when colorway :.surface-transparent)]
 
     [:div
      (merge-attrs
-      (?sx ".ks-icon"
+      (sx ".ks-icon"
           surface-transparent
           :d--inline-flex
           :flex-direction--row
