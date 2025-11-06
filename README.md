@@ -93,9 +93,9 @@ mainstream JS solutions such as Tailwind, Emotion, etc.
 
 ## Project status
 Current version is pre-release intended for early adopters and anyone who would
-like to provide feedback. New 1.0 alphas will be released frequently, while I
-continue to make improvements/changes/additions. Working towards a stable 1.0
-release by end of 2024 or Q1 of 2025.
+like to provide feedback. New 1.0 alphas will be released semi-frequently as 
+improvements/changes/additions are made towards a stable 1.0-beta
+release by end of 2025 or Q1 of 2026.
 
 
 Please report anything unexpected on GitHub Issues.
