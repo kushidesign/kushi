@@ -133,7 +133,7 @@
                                                  cls
                                                  (util/class-coll? cls)
                                                  (string/join " " cls)))
-                                         " invisible offscreen")))]
+                                         " visibility-invisible position-offscreen")))]
     (.appendChild js/document.body el)
     (let [ret (domo/css-custom-property-value el cp)]
       (.removeChild js/document.body el)
@@ -271,7 +271,7 @@
       
 
       ;; 4) Display
-      ;; Remove `.invisible` class, which will fade-in the pane via
+      ;; Remove `.visibility-invisible` class, which will fade-in the pane via
       ;; css transition setting, if desired. 
       (let [arrow-el (when (and arrow?
                                 (not (:corner-plc? tt-pos)))
@@ -284,7 +284,7 @@
            (let [t      (-> opts :pane-type as-str)
                  offset (str "max(var(--" t "-offset), 0px)")]
              el
-             (domo/remove-class! el "invisible")
+             (domo/remove-class! el "visibility-invisible")
              (domo/set-css-var! el "--offset" offset)
              (domo/set-style! el "scale" "1")) ))))))
 

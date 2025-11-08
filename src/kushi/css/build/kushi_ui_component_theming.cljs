@@ -120,10 +120,6 @@
 
 (defcss ".dark .kushi-slider-step-label" {"color" "var(--gray-300)"})
 
-;; (defcss ".invisible" {"opacity" "0"})
-;; (defcss ".hidden" {"visibility" "hidden"})
-;; (defcss ".visible" {"visibility" "visible"})
-;; (defcss ".collapse" {"visibility" "collapse"})
 ;; New theming
 
 ;; TODO - should these live in design-tokens?

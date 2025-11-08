@@ -282,17 +282,16 @@
   [
    ;; Visual debugging utilities
    ;; --------------------------------------------------------------------------
-   :debug-grid            {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px)), "
-                                                  "repeating-linear-gradient(to right,  transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
-   :debug-grid-8          {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
-                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-dark-mode) 8px, var(--debug-grid-color-dark-mode) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color-dark-mode) 8px, var(--debug-grid-color-dark-mode) calc(8px + 1px), transparent calc(8px + 1px))")}
-   :debug-grid-16         {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
-                           :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-dark-mode) 16px, var(--debug-grid-color-dark-mode) calc(16px + 1px), transparent calc(16px + 1px)), "
-                                                       "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color-dark-mode) 16px, var(--debug-grid-color-dark-mode) calc(16px + 1px), transparent calc(16px + 1px))")}
-
+   :debug-grid        {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px)), "
+                                              "repeating-linear-gradient(to right,  transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
+   :debug-grid-8      {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                   "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
+                       :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-dark-mode) 8px, var(--debug-grid-color-dark-mode) calc(8px + 1px), transparent calc(8px + 1px)), "
+                                                   "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color-dark-mode) 8px, var(--debug-grid-color-dark-mode) calc(8px + 1px), transparent calc(8px + 1px))")}
+   :debug-grid-16     {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
+                                                   "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
+                       :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-dark-mode) 16px, var(--debug-grid-color-dark-mode) calc(16px + 1px), transparent calc(16px + 1px)), "
+                                                   "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color-dark-mode) 16px, var(--debug-grid-color-dark-mode) calc(16px + 1px), transparent calc(16px + 1px))")}
    :wireframe         {:outline-color  :silver
                        :outline-style  :solid
                        :outline-width  :1px
@@ -829,6 +828,13 @@
      []
      sels)))
 
+;; Really need these?
+(def visibility-classes
+  [:invisible {"opacity" "0"}
+   :hidden    {"visibility" "hidden"}
+   :visible   {"visibility" "visibility"}
+   :visible   {"visibility" "visible"}
+   :collapse  {"visibility" "collapse"}]) 
 
 (def all-classes
   "All the classes"
@@ -838,6 +844,8 @@
    global-classes
    (class-sels base-classes)
 
+   ;; visibility classes e.g. :.visibility-hidden
+   (class-sels visibility-classes "visibility")
 
    ;; flex-utility classes e.g. :.display-inline-flex
    (class-sels display-classes "display")
@@ -906,6 +914,7 @@
    ;; surface shapes
    (class-sels shape-classes-non-rounded "shape")
    (class-sels shape-classes-rounded "shape")
+
    
 
   ;;  (-> text-transform-classes class-sels (wdks "text-transform"))

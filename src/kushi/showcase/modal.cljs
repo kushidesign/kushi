@@ -33,8 +33,8 @@
          :pb--0.4em
          :fw--$weight-wee-bold
          :fs--$size-xxsmall
-        ;;  :.accent.minimal:hover:background-color--$accent-50
-        ;;  :dark:.accent.minimal:hover:background-color--$accent-800
+         ;; :.accent.minimal:hover:background-color--$accent-50
+         ;; :dark:.accent.minimal:hover:background-color--$accent-800
 
          ;; Next 3 styles will give it a link-button style
          #_:p--0
@@ -45,7 +45,8 @@
                           :h        :1px
                           :o        0.5
                           :bgc      :$accent-foreground
-                          :top      "calc(100% + 2px)"}])
+                          :top      "calc(100% + 2px)"}]
+         )
     :on-click
     (fn* [] (open-kushi-modal modal-id))}
    [icon {:size    :small

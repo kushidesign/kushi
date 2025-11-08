@@ -274,20 +274,27 @@
    {:keys [demo opt-sym snippets-header demo-index label] :as opt}]
   (let [{reqs-for-examples :require
          demo-label        :label
-         modal-label       :label/modal
+         dialog-label      :label/dialog
+         dialog-header     :header/dialog
          samples           :samples}
         demo
-        demo-label (or modal-label label demo-label)]
+
+        dialog-desc
+        (or dialog-label label demo-label)
+        
+        dialog-header
+        (or dialog-header (str uic-name))]
 
    {:modal-id          (str uic-name
-                               "_"
-                               opt-sym
-                                 "_snippets"
-                                 "_demo-" 
-                                 demo-index)
+                            "_"
+                            opt-sym
+                            "_snippets"
+                            "_demo-" 
+                            demo-index)
+
     ;; change to uic-label
-    :component-label     (str uic-name)
-    :label               [section-label demo-label #_(name opt-sym)]
+    :component-label     dialog-header
+    :label               [section-label dialog-desc #_(name opt-sym)]
     :snippets-header     snippets-header
     :snippets            samples
     :reqs-for-uic        reqs-for-uic

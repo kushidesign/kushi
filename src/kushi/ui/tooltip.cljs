@@ -217,12 +217,12 @@
                     (domo/add-class! text-on-mouse-down-el "absolute-centered")
                     (some->> text-on-click-tooltip-class (domo/add-class! tt-el))
                     (.appendChild tt-el-text-wrapper text-on-mouse-down-el)
-                    (domo/add-class! tt-el-text-span "invisible")
+                    (domo/add-class! tt-el-text-span "visibility-invisible")
                     (js/setTimeout (fn [_] 
                                      (.removeChild tt-el-text-wrapper
                                                    text-on-mouse-down-el)
                                      (some->> text-on-click-tooltip-class
                                               (domo/remove-class! tt-el))
                                      (domo/remove-class! tt-el-text-span
-                                                         "invisible"))
+                                                         "visibility-invisible"))
                                    duration)))})))))

@@ -59,7 +59,7 @@
                  (concat user-pane-class
                          ["kushi-pane"
                           (some->> pane-type-class (str "kushi-"))
-                          "invisible" 
+                          "visibility-invisible" 
                           (when-not toast?
                             (some->> (if metrics? placement-kw new-placement-kw)
                                      name

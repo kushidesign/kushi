@@ -189,7 +189,7 @@
     (js/window.requestAnimationFrame
      (fn [_]
        (let []
-         (domo/remove-class! toast-el "invisible")
+         (domo/remove-class! toast-el "visibility-invisible")
          (domo/set-style! toast-el "scale" "1")
          (domo/set-css-var! toast-el "--_tx" "0px")
          (domo/set-css-var! toast-el "--_ty" "0px")

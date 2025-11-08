@@ -2,13 +2,12 @@
   (:require
    [kushi.ui.icon :refer [icon]]
    [kushi.ui.icon.mui.svg :as mui.svg ]
-   [kushi.ui.popover :refer [dismiss-popover!]]
    [kushi.ui.text-field :refer [text-field]]
    [kushi.core :refer (sx css merge-attrs)]
-   [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.button :refer [button]]
    [kushi.ui.icon-button :refer [icon-button]]
-   [kushi.ui.popover :refer [popover-attrs]]
+   [kushi.ui.popover :refer [popover-attrs dismiss-popover!]]
+   [kushi.showcase.core :as showcase :refer [samples]]
    [reagent.dom :as rdom]))
 
 (defn popover-content []
@@ -67,153 +66,213 @@
     [icon mui.svg/close]]])
 
 
-
-(def examples
-  (let [row-attrs (sx :_.kushi-button:fs--$size-small)]
+(def demos
+  (let []
     [
-     (let [code (sx-call (popover-attrs
+     {:label         "Basic"
+      :header/dialog "Popover"
+      :require       '[[kushi.ui.popover.core :refer [popover-attrs dismiss-popover!]]
+                       [kushi.ui.button :refer [button]]
+                       [kushi.ui.button.core :refer [button]]                  
+                       [reagent.dom :refer [render]]]
+      :samples       (samples 
+                      [[button
+                        (merge-attrs 
+                         {:size :small}
+                         (popover-attrs
                           {:f (fn [popover-el]
-                                 (rdom/render 
-                                  (fn [] 
-                                    [:div
-                                     (sx :.flex-row-c
-                                         :fs--$size-xxxlarge
-                                         :padding--0.25em)
-                                     "💃🏽"])
-                                  popover-el))}))]
-       {:desc      "Basic"
-        :component button
-        :reqs      '[[kushi.ui.button :refer [button]]
-                     [reagent.dom :as rdom :refer [render]]]
-        :row-attrs row-attrs
-        :snippets  [(:quoted code)]
-        :examples  [{:args     ["Open"]
-                     :sx-attrs code}]})
+                                (rdom/render
+                                 (fn []
+                                   [:div 
+                                    (sx :.display-flex-row-center 
+                                        :fs--$size-xxxlarge 
+                                        :padding--0.25em)
+                                    "💃🏽"])
+                                 popover-el))}))
+                        "Open"]])}
 
-      (let [code2 (sx-call
-                   (popover-attrs
-                    {:popover-class
-                     (css {:--popover-background-color           :$purple-100
-                           :--popover-background-color-dark-mode :$purple-900})
-                     :f             
-                     (fn [popover-el]
-                       (rdom/render 
-                        (fn [] 
-                          [:div
-                           (sx :.flex-row-c
-                               :fs--$size-xxxlarge
-                               :padding--0.25em)
-                           "💃🏽"])
-                        popover-el))}))]
-        {:desc "Styling via design token at callsite"
-         :component button
-         :reqs      '[[kushi.ui.button :refer [button]]
-                      [reagent.dom :as rdom :refer [render]]]
-         :row-attrs row-attrs
-         :snippets  [(:quoted code2)]
-         :examples  [{:args     ["Open"]
-                      :sx-attrs code2}]})
+     {:label         "Styling via design token at callsite"
+      :header/dialog "Popover"
+      :require       '[[kushi.ui.button :refer [button]]
+                       [reagent.dom :as rdom :refer [render]]]
+      :row-attrs     (sx :_.ks-button:fs--$size-small)
+      :samples       (samples 
+                      [[button
+                        (merge-attrs
+                         {:size :small}
+                         (popover-attrs
+                          {:popover-class (css {:--popover-background-color           :$purple-100
+                                                :--popover-background-color-dark-mode :$purple-900})
+                           :f             (fn [popover-el]
+                                            (rdom/render 
+                                             (fn [] 
+                                               [:div
+                                                (sx :.flex-row-c
+                                                    :fs--$size-xxxlarge
+                                                    :padding--0.25em)
+                                                "💃🏽"])
+                                             popover-el))}))
+                        "Open"]])}
 
+     {:label         "With manual placement"
+      :header/dialog "Popover"
+      :require       '[[kushi.ui.button :refer [button]]
+                       [reagent.dom :as rdom :refer [render]]]
+      :row-attrs     (sx :_.ks-button:fs--$size-small)
+      :samples       (samples 
+                      [[button
+                        (merge-attrs 
+                         {:size :small}
+                         (popover-attrs
+                          {:placement :r
+                           :f         (fn [popover-el]
+                                        (rdom/render 
+                                         (fn [] 
+                                           [:div
+                                            (sx :.flex-row-c
+                                                :fs--$size-xxxlarge
+                                                :padding--0.25em)
+                                            "💃🏽"])
+                                         popover-el))}))
+                        "Open"]])}
 
-     {:desc      "With manual placement"
-      :component button
-      :reqs      '[[kushi.ui.button :refer [button]]]
-      :row-attrs row-attrs
-      :examples  [{:args     ["Open"]
-                   :sx-attrs (sx-call (popover-attrs
-                                       {:f         (fn [popover-el]
-                                                      (rdom/render 
-                                                       (fn [] 
-                                                         [:div
-                                                          (sx :fs--$size-xxxlarge
-                                                              :.flex-row-c
-                                                              :padding--0.25em)
-                                                          "💃🏽"])
-                                                       popover-el))
-                                        :placement :r}))}]}
-
-
-     {:desc      "Arrowless"
-      :component button
-      :reqs      '[[kushi.ui.button :refer [button]]]
-      :row-attrs row-attrs
-      :examples  [{:args     ["Open"]
-                   :sx-attrs (sx-call (popover-attrs
-                                       {:f         (fn [popover-el]
-                                                      (rdom/render 
-                                                       (fn [] 
-                                                         [:div
-                                                          (sx :fs--$size-xxxlarge
-                                                              :.flex-row-c
-                                                              :padding--0.25em)
-                                                          "💃🏽"])
-                                                       popover-el))
-                                        :arrow?    false
-                                        :placement :r}))}]}
-
-     {:desc            "With form"
-      :component       button
-      :reqs            '[[kushi.ui.button :refer [button]]]
-      :container-attrs (merge-attrs
-                        (sx :d--none :xsm:d--block)
-                        {:data-ks-playground-example "popover-with-form"})
-      :row-attrs       row-attrs
-      :examples        [{:args     ["Open"]
-                         :sx-attrs (sx-call
-                                    (popover-attrs
-                                     {:f (fn [popover-el]
-                                            (rdom/render popover-content
-                                                         popover-el))
-                                        ;; :class (:class (sx :max-width--200px))
-                                      }))}]}
+     {:label         "Arrowless"
+      :header/dialog "Popover"
+      :require       '[[kushi.ui.button :refer [button]]
+                       [reagent.dom :as rdom :refer [render]]]
+      :row-attrs     (sx :_.ks-button:fs--$size-small)
+      :samples       (samples 
+                      [[button
+                        (merge-attrs
+                         {:size :small}
+                         (popover-attrs
+                          {:placement :r
+                           :arrow?    false
+                           :f         (fn [popover-el]
+                                        (rdom/render 
+                                         (fn [] 
+                                           [:div
+                                            (sx :.flex-row-c
+                                                :fs--$size-xxxlarge
+                                                :padding--0.25em)
+                                            "💃🏽"])
+                                         popover-el))}))
+                        "Open"]])}
      
+     {:label         "With form"
+      :header/dialog "Popover"
+      :require       '[[kushi.ui.button :refer [button]]
+                       [reagent.dom :as rdom :refer [render]]]
+      :row-attrs     (sx :_.ks-button:fs--$size-small)
+      :samples       (samples 
+                      [[button
+                        (merge-attrs
+                         {:size :small}
+                         (popover-attrs
+                          {:placement :r
+                           :arrow?    false
+                           :f         (fn [popover-el]
+                                        (rdom/render 
+                                         (fn [] 
+                                           [:div
+                                            (sx :.my-popover-content
+                                                :.display-flex-row-flex-start
+                                                :position--relative
+                                                :fs--$size-small
+                                                :ai--fs
+                                                :pi--1.5em
+                                                :xsm:pi--2.5em
+                                                :pb--1.25em:1.75em
+                                                :xsm:pb--2.25em:2.75em
+                                                :min-width--200px
+                                                :xsm:max-width--90vw
+                                                :max-width--250px
+                                                :min-height--120px)
+
+                                            [:div (sx :.my-form
+                                                      :.display-flex-col-flex-start
+                                                      :gap--1em
+                                                      :_.ks-text-input-label:min-width--7em
+                                                      :_.ks-input-inline:gtc--36%:64%)
+                                             [:h2 (sx :.my-form-header
+                                                      :fs--$size-medium
+                                                      :fw--$weight-semi-bold
+                                                      :mbe--0.75em)
+                                              "Example Popover Form"]
+                                             [text-field
+                                              {:placeholder     "100%"
+                                               :label-text      "Height"
+                                               :label-placement :inline}]
+                                             [text-field
+                                              {:placeholder     "335px"
+                                               :label-text      "Min Width"
+                                               :label-placement :inline}]
+                                             [text-field
+                                              {:placeholder     "75px"
+                                               :label-text      "Depth"
+                                               :label-placement :inline}]]
+
+                                            [icon-button
+                                             (merge-attrs
+                                              {:on-click dismiss-popover!
+                                               :shape    :pill
+                                               :surface  :minimal}
+                                              (sx :.ks-popover-close-button
+                                                  ;; :.neutral
+                                                  :.position-top-right-corner-inside
+                                                  {:position      :absolute
+                                                   :fs            :$size-small
+                                                   :zi            1
+                                                   :opacity       :$popover-close-button-opacity
+                                                   :margin-inline :$popover-close-button-margin-inline||$icon-button-padding-inline
+                                                   :margin-block  :$popover-close-button-margin-block||$icon-button-padding-inline}))
+                                             :close]])
+                                         popover-el))}))
+                        "Open"]])}
      
-     {:desc      "With dismiss action"
-      :component button
-      :reqs      '[[kushi.ui.button :refer [button]]]
-      :row-attrs row-attrs
-      :examples  [{:code (sx-call 
-                          [button
-                           (popover-attrs
-                            {:f
-                             (fn
-                               [el]
-                               (rdom/render
-                                [:div
-                                 (sx :.flex-col-c
-                                     :ai--c
-                                     :min-height--100%
-                                     :p--1rem)
-                                 [button (merge-attrs (sx :fs--$size-small)
-                                                      {:on-click dismiss-popover!})
-                                  "Close"]]
-                                el))}) 
-                           "Open"])}]}
+     {:label         "With dismiss action"
+      :header/dialog "Popover"
+      :require       '[[kushi.ui.button :refer [button]]
+                       [reagent.dom :as rdom :refer [render]]]
+      :row-attrs     (sx :_.ks-button:fs--$size-small)
+      :samples       (samples [[button
+                                (merge-attrs
+                                 {:size :small}
+                                 (popover-attrs
+                                  {:f (fn
+                                        [el]
+                                        (rdom/render
+                                         [:div
+                                          (sx :.display-flex-col-center
+                                              :ai--c
+                                              :min-height--100%
+                                              :p--1rem)
+                                          [button (merge-attrs 
+                                                   (sx :fs--$size-small)
+                                                   {:on-click dismiss-popover!})
+                                           "Close"]]
+                                         el))})) 
+                                "Open"]])}
      
-     {:desc      "Auto-dismissing, with manual placement"
-      :component button
-      :reqs      '[[kushi.ui.button :refer [button]]]
-      :row-attrs row-attrs
-      :examples  [{:code (sx-call 
-                          [button
-                           (popover-attrs
-                            {:f             
-                             (fn
-                               [el]
-                               (rdom/render
-                                [:div
-                                 (sx :.flex-col-c :ai--c :min-height--100% :p--1rem)
-                                 [:p (sx :fs--$size-small)
-                                  "I will close automatically,"
-                                  [:br]
-                                  "after 5000ms"]]
-                                el)) 
-
-                             :auto-dismiss?
-                             true
-
-                             :placement     
-                             :r}) 
-                           "Open"])}]}]))
-
-
+     {:label         "With dismiss action"
+      :header/dialog "Popover"
+      :require       '[[kushi.ui.button :refer [button]]
+                       [reagent.dom :as rdom :refer [render]]]
+      :row-attrs     (sx :_.ks-button:fs--$size-small)
+      :samples       (samples [[button
+                                (merge-attrs
+                                 {:size :small}
+                                 (popover-attrs
+                                  {:f             (fn
+                                                    [el]
+                                                    (rdom/render
+                                                     [:div
+                                                      (sx :.flex-col-c :ai--c :min-height--100% :p--1rem)
+                                                      [:p (sx :fs--$size-small)
+                                                       "I will close automatically,"
+                                                       [:br]
+                                                       "after 5000ms"]]
+                                                     el)) 
+                                   :auto-dismiss? true
+                                   :placement     :r})) 
+                                "Open"]])}]))

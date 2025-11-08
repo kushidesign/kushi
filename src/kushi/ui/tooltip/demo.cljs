@@ -1,6 +1,6 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.tooltip.demo
   (:require 
-   [kushi.core :refer (css merge-attrs css-vars-map grid-template-areas)]
+   [kushi.core :refer (sx css merge-attrs css-vars-map grid-template-areas)]
    [kushi.ui.button :refer [button]]
    [kushi.showcase.core :as showcase :refer [samples]]
    [kushi.ui.tooltip :refer [tooltip-attrs]]))
@@ -61,15 +61,202 @@
 
 
 (def demos
-  [{:label    "Basic"
-    :samples (samples [[button (tooltip-attrs
+  [{:label         "Basic"
+    :header/dialog "Tooltip"
+    :require       '[[kushi.ui.button :refer [button]]]
+    :samples       (samples [[button (merge-attrs
+                                      {:size :small}
+                                      (tooltip-attrs {:text "This is a tooltip"}))
+                              "Hover me"]])}
+   
+   {:label         "Styling via design token at callsite."
+    :header/dialog "Tooltip"
+    :require       '[[kushi.ui.button :refer [button]]]
+    :samples       (samples [[button
+                              (merge-attrs
+                               {:size :small}
+                               (tooltip-attrs
                                 {:text          "This is a tooltip"
-                                 :tooltip-class (css 
-                                                 #_{:--tooltip-font-size                  :34px
-                                                  :--tooltip-background-color           :$red-800
-                                                  :--tooltip-background-color-dark-mode :$red-300})})
-                        "Hover me"]
-                       ])}])
+                                 :tooltip-class (css {:--tooltip-font-size                  :34px
+                                                      :--tooltip-background-color           :$red-800
+                                                      :--tooltip-background-color-dark-mode :$red-300})}))
+                              "Hover me"]])}
+
+   {:label         "Tooltips with specific placements"      
+    :header/dialog "Tooltip"
+    :row-attrs     (let [gta (grid-template-areas
+                              "brc br b  bl blc"
+                              "rt  .  .  .  lt"
+                              "r   .  .  .  l"
+                              "rb  .  .  .  lb"
+                              "trc tr t  tl tlc")]
+                     {:style (css-vars-map gta)
+                      :class (css
+                              [:--tooltip-delay-duration :0ms]
+                              :display--grid
+                              :gtc--1fr:1fr:1fr:1fr:1fr
+                              :gtr--auto
+                              :gap--0.75rem
+                              :xsm:w--333px
+                              :xsm:h--333px
+                              :w--300px
+                              :h--300px
+                              :_span.kushi-tooltip-text:ta--c
+                              :gta--$gta
+                              [:>span {:ta             :c
+                                       :ff             :$code-font-stack
+                                       :fs             :$size-xsmall
+                                       :fw             :$weight-wee-bold
+                                       :cursor         :pointer
+                                       :bgc            :$neutral-100
+                                       :d              :flex
+                                       :border-radius  :$shape-rounded
+                                       :border         :1px:dashed:$neutral-400
+                                       :hover:border   :1px:dashed:$neutral-600
+                                       :flex-direction :column
+                                       :jc             :c
+                                       :h              :100%}]
+                              [:>span:hover {:bgc    :$neutral-200
+                                             :border :1px:dashed:$neutral-600}]
+                              [:dark:>span {:bgc            :$neutral-800
+                                            :hover:bgc      :$neutral-750
+                                            :d              :flex
+                                            :border-radius  :$shape-rounded
+                                            :border         :1px:dashed:$neutral-500
+                                            :hover:border   :1px:dashed:$neutral-400
+                                            :flex-direction :column
+                                            :jc             :c
+                                            :h              :100%}]
+                              [:dark:>span:hover {:border :1px:dashed:$neutral-400
+                                                  :bgc    :$neutral-700}])})
+    :samples       (samples [
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:bottom-right-corner`"],
+                                 :placement :brc})
+                               {:style {:grid-area "brc"}})
+                              ":brc"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:bottom-right`"],
+                                 :placement :br})
+                               {:style {:grid-area "br"}})
+                              ":br"]
+                             
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:bottom`"],
+                                 :placement :b})
+                               {:style {:grid-area "b"}})
+                              ":b"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:bottom-left`"],
+                                 :placement :bl})
+                               {:style {:grid-area "bl"}})
+                              ":bl"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:bottom-left-corner`"],
+                                 :placement :blc})
+                               {:style {:grid-area "blc"}})
+                              ":blc"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:right-top`"],
+                                 :placement :rt})
+                               {:style {:grid-area "rt"}})
+                              ":rt"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:left-top`"],
+                                 :placement :lt})
+                               {:style {:grid-area "lt"}})
+                              ":lt"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:right`"],
+                                 :placement :r})
+                               {:style {:grid-area "r"}})
+                              ":r"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:left`"],
+                                 :placement :l})
+                               {:style {:grid-area "l"}})
+                              ":l"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:right-bottom`"],
+                                 :placement :rb})
+                               {:style {:grid-area "rb"}})
+                              ":rb"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:left-bottom`"],
+                                 :placement :lb})
+                               {:style {:grid-area "lb"}})
+                              ":lb"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:top-right-corner`"],
+                                 :placement :trc})
+                               {:style {:grid-area "trc"}})
+                              ":trc"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:tr`"],
+                                 :placement :tr})
+                               {:style {:grid-area "tr"}})
+                              ":tr"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:t`"],
+                                 :placement :t})
+                               {:style {:grid-area "t"}})
+                              ":t"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:tl`"],
+                                 :placement :tl})
+                               {:style {:grid-area "tl"}})
+                              ":tl"]
+
+                             [:span
+                              (merge-attrs
+                               (tooltip-attrs
+                                {:text      ["`:tlc`"],
+                                 :placement :tlc})
+                               {:style {:grid-area "tlc"}})
+                              ":tlc"]])}])
 
 
 ;; Code for generating tooltip placement examples at repl
@@ -92,220 +279,3 @@
 ;;                                         :placement x})
 ;;                                  {:style  {:grid-area (name x)}})
 ;;                                 )}))))
-
-
-
-
-#_(def examples
-  [{:desc      "Basic, auto-placement."
-    :component button
-    :reqs      '[[kushi.ui.button :refer [button]]]
-    :row-attrs (sx :_.kushi-button:fs--$size-small)
-    :snippets  '[[button
-                  (tooltip-attrs {:text "This is a tooltip"})
-                  "Hover me"]]
-    :examples  [{:label    "right"
-                 :args     ["Hover me"]
-                 :sx-attrs (sx-call (tooltip-attrs {:text "This is a tooltip"}))}]}
-   
-   {:desc      "Styling via design token at callsite."
-    :component button
-    :reqs      '[[kushi.ui.button :refer [button]]]
-    :row-attrs (sx :_.kushi-button:fs--$size-small)
-    :snippets  '[[button
-                  (tooltip-attrs
-                   {:text          
-                    "This is a tooltip"
-                    :tooltip-class 
-                    (css {:--tooltip-font-size                  :34px
-                          :--tooltip-background-color           :$red-800
-                          :--tooltip-background-color-dark-mode :$red-300})})
-                  "Hover me"]]
-    :examples  [{:label    "right"
-                 :args     ["Hover me"]
-                 :sx-attrs (sx-call
-                            (tooltip-attrs
-                             {:text          "This is a tooltip"
-                              :tooltip-class (css 
-                                               {:--tooltip-font-size                  :34px
-                                                :--tooltip-background-color           :$red-800
-                                                :--tooltip-background-color-dark-mode :$red-300})}))}]}
-
-   {:desc     "Tooltips with specific placements"      
-    :row-attrs (let [gta (grid-template-areas
-                          "brc br b  bl blc"
-                          "rt  .  .  .  lt"
-                          "r   .  .  .  l"
-                          "rb  .  .  .  lb"
-                          "trc tr t  tl tlc")]
-                 {:style
-                  (css-vars-map gta)
-                  
-                  :class
-                  (css
-                   [:--tooltip-delay-duration :0ms]
-                   :.grid
-                   :gtc--1fr:1fr:1fr:1fr:1fr
-                   :gtr--auto
-                   :gap--0.75rem
-                   :xsm:w--333px
-                   :xsm:h--333px
-                   :w--300px
-                   :h--300px
-                   :_span.kushi-tooltip-text:ta--c
-                   :gta--$gta
-                   [:>span {:ta             :c
-                            :ff             :$code-font-stack
-                            :fs             :$size-xsmall
-                            :fw             :$weight-wee-bold
-                            :cursor         :pointer
-                            :bgc            :$neutral-100
-                            :d              :flex
-                            :border-radius  :$shape-rounded
-                            :border         :1px:dashed:$neutral-400
-                            :hover:border   :1px:dashed:$neutral-600
-                            :flex-direction :column
-                            :jc             :c
-                            :h              :100%}]
-                   [:>span:hover {:bgc    :$neutral-200
-                                  :border :1px:dashed:$neutral-600}]
-                   [:dark:>span {:bgc            :$neutral-800
-                                 :hover:bgc      :$neutral-750
-                                 :d              :flex
-                                 :border-radius  :$shape-rounded
-                                 :border         :1px:dashed:$neutral-500
-                                 :hover:border   :1px:dashed:$neutral-400
-                                 :flex-direction :column
-                                 :jc             :c
-                                 :h              :100%}]
-                   [:dark:>span:hover {:border :1px:dashed:$neutral-400
-                                       :bgc    :$neutral-700}])})
-    :examples [{:label    "bottom-right-corner",
-                :args     [":brc"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:bottom-right-corner`" ],
-                              :placement :brc})
-                            {:style {:grid-area "brc"}}))}
-               {:label    "bottom-right",
-                :args     [":br"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:bottom-right`" ]
-                              :placement :br})
-                            {:style {:grid-area "br"}}))}
-               {:label    "bottom",
-                :args     [":b"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:bottom`" ]
-                              :placement :b})
-                            {:style {:grid-area "b"}}))}
-               {:label    "bottom-left",
-                :args     [":bl"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:bottom-left`" ]
-                              :placement :bl})
-                            {:style {:grid-area "bl"}}))}
-               {:label    "bottom-left-corner",
-                :args     [":blc"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:bottom-left-corner`" ],
-                              :placement :blc})
-                            {:style {:grid-area "blc"}}))}
-               {:label    "right-top",
-                :args     [":rt"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:right-top`" ]
-                              :placement :rt})
-                            {:style {:grid-area "rt"}}))}
-               {:label    "left-top",
-                :args     [":lt"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:left-top`" ]
-                              :placement :lt})
-                            {:style {:grid-area "lt"}}))}
-               {:label    "right",
-                :args     [":r"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:right`" ]
-                              :placement :r})
-                            {:style {:grid-area "r"}}))}
-               {:label    "left",
-                :args     [":l"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:left`" ]
-                              :placement :l})
-                            {:style {:grid-area "l"}}))}
-               {:label    "right-bottom",
-                :args     [":rb"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:right-bottom`" ]
-                              :placement :rb})
-                            {:style {:grid-area "rb"}}))}
-               {:label    "left-bottom",
-                :args     [":lb"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:left-bottom`" ]
-                              :placement :lb})
-                            {:style {:grid-area "lb"}}))}
-               {:label    "top-right-corner",
-                :args     [":trc"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:top-right-corner`" ],
-                              :placement :trc})
-                            {:style {:grid-area "trc"}}))}
-               {:label    "top-right",
-                :args     [":tr"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:top-right`" ]
-                              :placement :tr})
-                            {:style {:grid-area "tr"}}))}
-               {:label    "top",
-                :args     [":t"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:top`" ]
-                              :placement :t})
-                            {:style {:grid-area "t"}}))}
-               {:label    "top-left",
-                :args     [":tl"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:top-left`" ]
-                              :placement :tl})
-                            {:style {:grid-area "tl"}}))}
-               {:label    "top-left-corner",
-                :args     [":tlc"],
-                :sx-attrs (sx-call
-                           (merge-attrs
-                            (tooltip-attrs
-                             {:text      ["`:top-left-corner`" ],
-                              :placement :tlc})
-                            {:style {:grid-area "tlc"}}))}]}])
-

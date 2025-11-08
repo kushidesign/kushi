@@ -29,6 +29,9 @@
    [kushi.ui.tooltip :refer [tooltip-attrs]]
    [kushi.ui.tooltip.demo]
 
+   [kushi.ui.popover :refer [popover-attrs]]
+   [kushi.ui.popover.demo]
+
    [kushi.ui.icon-button :refer [icon-button]]
    [kushi.ui.icon-button.demo]
 
@@ -687,6 +690,10 @@
 
   [showcase (showcase/opts kushi.ui.tooltip/tooltip-attrs
                            kushi.ui.tooltip.demo/demos)]
+
+
+  #_[showcase (showcase/opts kushi.ui.popover/popover-attrs
+                           kushi.ui.popover.demo/demos)]
   
   ;; grid
 

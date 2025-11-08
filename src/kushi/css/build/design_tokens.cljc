@@ -302,8 +302,7 @@
    {:family   "Floating pane colors and images"
     :desc     {:en ""}
     :category ["pane"]
-    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "color"]
-    }
+    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "color"]}
    [:--pane-background-color                 :$background-color
     :--pane-background-color-dark-mode       :$background-color-dark-mode
     :--pane-background-image                 :white
@@ -318,8 +317,7 @@
    {:family   "Floating pane geometry"
     :desc     {:en ""}
     :category ["pane"]
-    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "geometry"]
-    }
+    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "geometry"]}
    [:--pane-min-width                        :70px
     :--pane-min-height                       :35px
     :--pane-padding-inline                   :1em
@@ -334,8 +332,7 @@
    {:family   "Floating pane choreography"
     :desc     {:en ""}
     :category ["pane"]
-    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "choreography"]
-    }
+    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "choreography"]}
    [:--pane-offset-start                     "calc(var(--pane-offset) + 5px)"
     :--pane-z-index                          99999
     :--pane-delay-duration                   :0ms
@@ -346,8 +343,7 @@
    {:family   "Floating pane arrow"
     :desc     {:en ""}
     :category ["pane"]
-    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "arrows"]
-    }
+    :tags     ["pane" "tooltip" "toast" "popover" "modal" "floating" "arrows"]}
    [:--pane-arrow-inline-inset               :7px
     :--pane-arrow-block-inset                :2px
     :--pane-arrow-depth                      :7px
@@ -360,8 +356,7 @@
    {:family   "Tooltip typography"
     :desc     {:en ""}
     :category ["tooltip"]
-    :tags     ["pane" "tooltip" "typography" "floating"]
-    }
+    :tags     ["pane" "tooltip" "typography" "floating"]}
    [:--tooltip-line-height    1.45
     :--tooltip-font-family    :$sans-serif-font-stack
     :--tooltip-font-size      :$size-xsmall
@@ -374,8 +369,7 @@
     :desc     {:en ""}
     :category ["tooltip"]
     :ns       '[kushi.ui.tooltip]     
-    :tags     ["pane" "tooltip" "color" "floating"]
-    }
+    :tags     ["pane" "tooltip" "color" "floating"]}
    [:--tooltip-color                            :$foreground-color-dark-mode
     :--tooltip-color-dark-mode                    :$foreground-color
     :--tooltip-background-color                 :$background-color-dark-mode
@@ -394,8 +388,7 @@
     :desc     {:en ""}
     :category ["tooltip"]
     :ns       '[kushi.ui.tooltip]     
-    :tags     ["pane" "tooltip" "floating" "geometry"]
-    }
+    :tags     ["pane" "tooltip" "floating" "geometry"]}
    [:--tooltip-min-width                        :1rem
     :--tooltip-min-height                       :1rem
     :--tooltip-padding-inline                   :1.2em
@@ -412,8 +405,7 @@
     :desc     {:en ""}
     :category ["tooltip"]
     :ns       '[kushi.ui.tooltip]     
-    :tags     ["pane" "tooltip" "floating" "choreography"]
-    }
+    :tags     ["pane" "tooltip" "floating" "choreography"]}
    [:--tooltip-offset-start                     :$pane-offset-start
     :--tooltip-z-index                          :$pane-z-index
     :--tooltip-delay-duration                   :550ms
@@ -428,8 +420,7 @@
     :desc     {:en ""}
     :category ["tooltip"]
     :ns       '[kushi.ui.tooltip]     
-    :tags     ["pane" "tooltip" "toast" "floating" "choreography"]
-    }
+    :tags     ["pane" "tooltip" "toast" "floating" "choreography"]}
    [:--tooltip-arrow-inline-inset               :$pane-arrow-inline-inset
     :--tooltip-arrow-block-inset                :$pane-arrow-inline-inset
     :--tooltip-arrow-depth                      :5px
@@ -444,8 +435,7 @@
     :desc     {:en ""}
     :category ["popover"]
     :ns       '[kushi.ui.popover]
-    :tags     ["pane" "popover" "floating"]
-    }
+    :tags     ["pane" "popover" "floating"]}
    [:--popover-background-color                 :$pane-background-color
     :--popover-background-color-dark-mode       :$pane-background-color-dark-mode
     :--popover-background-image                 :none
@@ -462,8 +452,7 @@
     :desc     {:en ""}
     :category ["popover"]
     :ns       '[kushi.ui.popover]
-    :tags     ["pane" "popover" "floating" "geometry"]
-    }
+    :tags     ["pane" "popover" "floating" "geometry"]}
    [:--popover-min-width                        :$pane-min-width
     :--popover-min-height                       :$pane-min-height
     :--popover-border-radius                    :$pane-border-radius
@@ -478,8 +467,7 @@
     :desc     {:en ""}
     :category ["popover"]
     :ns       '[kushi.ui.popover]
-    :tags     ["pane" "popover" "floating" "chreography"]
-    }
+    :tags     ["pane" "popover" "floating" "chreography"]}
    [:--popover-offset-start               :$pane-offset-start
     :--popover-z-index                    :$pane-z-index
     :--popover-delay-duration             :0ms
@@ -494,8 +482,7 @@
     :desc     {:en ""}
     :category ["popover"]
     :ns       '[kushi.ui.popover]
-    :tags     ["pane" "popover" "floating" "arrow"]
-    }
+    :tags     ["pane" "popover" "floating" "arrow"]}
    [:--popover-arrow-inline-inset :$pane-arrow-inline-inset
     :--popover-arrow-block-inset  :$pane-arrow-inline-inset
     :--popover-arrow-depth        :7px
@@ -509,8 +496,7 @@
     :desc     {:en ""}
     :category ["toast"]
     :ns       '[kushi.ui.toast]
-    :tags     ["pane" "toast" "floating" "color"]
-    }
+    :tags     ["pane" "toast" "floating" "color"]}
    [:--toast-background-color           :$pane-background-color
     :--toast-background-color-dark-mode :$pane-background-color-dark-mode
     :--toast-background-image           :none
@@ -527,8 +513,7 @@
     :desc     {:en ""}
     :category ["toast"]
     :ns       '[kushi.ui.toast]
-    :tags     ["pane" "Toast" "floating" "geometry"]
-    }
+    :tags     ["pane" "Toast" "floating" "geometry"]}
    [:--toast-border-radius       :$pane-border-radius
     :--toast-slot-padding-inline :1rem
     :--toast-slot-padding-block  :1rem
@@ -541,8 +526,7 @@
     :desc     {:en ""}
     :category ["toast"]
     :ns       '[kushi.ui.toast]
-    :tags     ["pane" "Toast" "floating" "geometry"]
-    }
+    :tags     ["pane" "Toast" "floating" "geometry"]}
    [:--toast-delay-duration             :200ms
     :--toast-initial-scale              1
     :--toast-transition-duration        :$pane-transition-duration 
@@ -557,8 +541,7 @@
     :desc     {:en ""}
     :category ["modal"]
     :ns       '[kushi.ui.toast]
-    :tags     ["pane" "modal" "dialog" "floating"]
-    }
+    :tags     ["pane" "modal" "dialog" "floating"]}
    [
     :--modal-box-shadow             :$pane-box-shadow
     :--modal-box-shadow-dark-mode   :$pane-box-shadow-dark-mode
@@ -595,8 +578,7 @@
     :desc     {:en "Controls the width of the gap between icon and text, in labels, buttons, and tags"}
     :category ["icon"]
     :ns       '[kushi.ui.button kushi.ui.tag kushi.ui.label]
-    :tags     ["icon" "size" "font-size"]
-    }
+    :tags     ["icon" "size" "font-size"]}
    [:--icon-enhanceable-gap :0.25em]
 
 
@@ -607,8 +589,7 @@
    {:family   "Rounded corners, absolute"
     :desc     {:en "Controls the roundedness of corners on panes, cards, etc. Value is independent of font-size"}
     :category ["border-radius"]
-    :tags     ["border-radius" "corners" "rounded"]
-    }
+    :tags     ["border-radius" "corners" "rounded"]}
    [:--shape-rounded-xxxsmall-absolute  :0.0625rem        ;; 1px
     :--shape-rounded-xxsmall-absolute   :0.125rem         ;; 2px
     :--shape-rounded-xsmall-absolute    :0.25rem          ;; 4px
@@ -625,8 +606,7 @@
    {:family   "Rounded corners, relative"
     :desc     {:en "Controls the roundedness of corners on panes, cards, etc. Value is relative to font-size"}
     :category ["border-radius"]
-    :tags     ["border-radius" "corners" "rounded"]
-    }
+    :tags     ["border-radius" "corners" "rounded"]}
    [:--shape-rounded-xxxsmall :0.04375em  
     :--shape-rounded-xxsmall  :0.0875em  
     :--shape-rounded-xsmall   :0.175em   
