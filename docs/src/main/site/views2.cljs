@@ -699,7 +699,7 @@
                            kushi.ui.tooltip.demo/demos)]
 
   ;; DONE
-  [showcase (showcase/opts kushi.ui.popover/popover-attrs
+  #_[showcase (showcase/opts kushi.ui.popover/popover-attrs
                            kushi.ui.popover.demo/demos)]
 
   ;; DONE
@@ -708,7 +708,7 @@
 
 
   ;; DONE
-  #_[showcase (showcase/opts kushi.ui.toast/toast-attrs
+  [showcase (showcase/opts kushi.ui.toast/toast-attrs
                            kushi.ui.toast.demo/demos)]
   
 

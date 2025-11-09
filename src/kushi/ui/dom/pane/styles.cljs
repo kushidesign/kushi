@@ -64,12 +64,12 @@
   :p--0
   :min-width--$popover-min-width
   :min-height--$popover-min-height
-  ;; :border-width--$popover-border-width
-  ;; :border-style--$popover-border-style
-  ;; :border-color--$popover-border-color
-  ;; :dark:border-color--$popover-border-color-dark-mode
-  ;; :box-shadow--$popover-box-shadow
-  ;; :dark:box-shadow--$popover-box-shadow-dark-mode
+  :border-width--$popover-border-width
+  :border-style--$popover-border-style
+  :border-color--$popover-border-color
+  :dark:border-color--$popover-border-color-dark-mode
+  :box-shadow--$popover-box-shadow
+  :dark:box-shadow--$popover-box-shadow-dark-mode
   :border-radius--$popover-border-radius
   :transition-duration--$popover-transition-duration
   :transition-timing-function--$popover-transition-timing-function
@@ -77,8 +77,8 @@
   :transition-delay--$popover-delay-duration
   :zi--$popover-z-index
   :c--$popover-color
-  ;; :bgc--$popover-background-color
-  ;; :dark:bgc--$popover-background-color-dark-mode
+  :bgc--$popover-background-color
+  :dark:bgc--$popover-background-color-dark-mode
   [:--_auto-dismiss-duration :$popover-auto-dismiss-duration])
 
 ;; TODO maybe move to toast.styles
@@ -118,19 +118,19 @@
   :position--relative!important ;; <- do we need this !important?
   :p--0
   :translate--$_tx:$_ty
-  ;; :border-width--$toast-border-width
-  ;; :border-style--$toast-border-style
-  ;; :border-color--$toast-border-color
-  ;; :dark:border-color--$toast-border-color-dark-mode
-  ;; :box-shadow--$toast-box-shadow
-  ;; :dark:box-shadow--$toast-box-shadow-dark-mode
-  ;; :border-radius--$toast-border-radius
+  :border-width--$toast-border-width
+  :border-style--$toast-border-style
+  :border-color--$toast-border-color
+  :dark:border-color--$toast-border-color-dark-mode
+  :box-shadow--$toast-box-shadow
+  :dark:box-shadow--$toast-box-shadow-dark-mode
+  :border-radius--$toast-border-radius
   :transition-duration--$toast-transition-duration
   :transition-timing-function--$toast-transition-timing-function
   :scale--$toast-initial-scale
   :transition-delay--$toast-delay-duration
-  ;; :bgc--$toast-background-color
-  ;; :dark:bgc--$toast-background-color-dark-mode
+  :bgc--$toast-background-color
+  :dark:bgc--$toast-background-color-dark-mode
   [:--_auto-dismiss-duration :$toast-auto-dismiss-duration]
   [:max-width "calc(100vw - (2 * var(--toast-slot-padding-inline)))"])
 

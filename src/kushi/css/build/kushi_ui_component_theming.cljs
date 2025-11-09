@@ -515,16 +515,7 @@
 
     ;; Surface shadowing ---------------------------------------------------------------------------------------------------------
     (defcss "[class*=\"surface-\"][class*=\"shadow-\"]" 
-      {:--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 20%), transparent)"
-       :--shadow-xxxsmall          "0 1px 3px -1px var(--transparent-shadow-color)"
-       :--shadow-xxsmall           "0 3px 6px -2px var(--transparent-shadow-color)"
-       :--shadow-xsmall            "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"
-       :--shadow-small             "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"
-       :--shadow-medium            "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"
-       :--shadow-large             "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"
-       :--shadow-xlarge            "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"
-       :--shadow-xxlarge           "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"
-       :--shadow-xxxlarge          "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"
+      {
        ".shadow-xxxsmall"            {:--shadow :$shadow-xxxsmall}
        ".shadow-xxsmall"             {:--shadow :$shadow-xxsmall}
        ".shadow-xsmall"              {:--shadow :$shadow-xsmall}

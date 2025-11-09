@@ -130,14 +130,13 @@
     :desc     {:en "Styling of code blocks"}
     :ns       '[kushi.ui.code]
     :tags     ["code" "color" "typography" "block"]}
-   [
-    :--code-font-size                         :$size-small
-    :--code-padding-inline                    :0.2em
-    :--code-padding-block                     :0.08em
-    :--code-border-radius                     :3px
-    :--code-background-color                  :$gray-100
-    :--code-background-color-dark-mode          :$gray-800
-    :--code-color-dark-mode                     :$gray-50
+   [:--code-font-size                  :$size-small
+    :--code-padding-inline             :0.2em
+    :--code-padding-block              :0.08em
+    :--code-border-radius              :3px
+    :--code-background-color           :$gray-100
+    :--code-background-color-dark-mode :$gray-800
+    :--code-color-dark-mode            :$gray-50
     ]
 
 
@@ -145,8 +144,7 @@
    {:family   "Font weight"
     :desc     {:en "Controls the weight of type"}
     :category ["font-weight"]
-    :tags     ["font-weight" "typography"]
-    }
+    :tags     ["font-weight" "typography"]}
    [:--weight-thin                                   100
     :--weight-extra-light                            200
     :--weight-light                                  300
@@ -164,8 +162,7 @@
    {:family   "Font size"
     :desc     {:en "Controls the size of type"}
     :category ["font-size"]
-    :tags     ["font-size" "typography"]
-    }
+    :tags     ["font-size" "typography"]}
    [:--size-xxxxsmall                              :0.64rem
     :--size-xxxsmall                               :0.67rem
     :--size-xxsmall                                :0.71rem
@@ -195,8 +192,7 @@
    {:family   "Tracking"
     :desc     {:en "Controls the tracking of the type"}
     :category ["Tracking"]
-    :tags     ["font-size" "typography" "tracking"]
-    }
+    :tags     ["font-size" "typography" "tracking"]}
    [:--tracking-xxxtight                               :-0.09em
     :--tracking-xxtight                                :-0.06em
     :--tracking-xtight                                 :-0.03em
@@ -213,8 +209,7 @@
     :desc     {:en "Controls the border-width for inputs"}
     :category ["input-border"]
     :ns       '[kushi.ui.input]
-    :tags     ["border-width" "border" "input" "inputs"]
-    }
+    :tags     ["border-width" "border" "input" "inputs"]}
    [:--input-border-weight-thin               :0.05em
     :--input-border-weight-extra-light        :0.07em
     :--input-border-weight-light              :0.09em
@@ -231,8 +226,7 @@
    {:family   "Border"
     :desc     {:en "Controls general border styling"}
     :category ["border"]
-    :tags     ["border" "borders"]
-    }
+    :tags     ["border" "borders"]}
    [:--border-width                           :1px
     :--border-style                           :solid
     ]
@@ -243,8 +237,7 @@
     :desc     {:en "Styling for border-like divisors"}
     :category ["divisor"]
     :ns       '[kushi.ui.divisor]
-    :tags     ["divisors" "divisor"]
-    }
+    :tags     ["divisors" "divisor"]}
    divisor-tokens
 
 
@@ -252,12 +245,29 @@
    {:family   "Overlay placement"
     :desc     {:en "Styling for overlays"}
     :category ["overlay"]
-    :tags     ["overlays" "overlay"]
-    }
+    :tags     ["overlays" "overlay"]}
    [:--overlay-placement-inline-offset        :12px
     :--overlay-placement-block-offset         :6px
     ]
 
+
+   ;; Shadows
+   ;; ------------------------------------------------------
+   {:family   "Shadows"
+    :desc     {:en "Styling for shadows"}
+    :category ["shadows"]
+    :ns       '[kushi.ui.button]
+    :tags     ["shadows" "pane" "surfaces"]}
+   [:--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 15%), transparent)"
+    :--shadow-xxxsmall          "0 1px 3px -1px var(--transparent-shadow-color)"
+    :--shadow-xxsmall           "0 3px 6px -2px var(--transparent-shadow-color)"
+    :--shadow-xsmall            "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"
+    :--shadow-small             "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"
+    :--shadow-medium            "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"
+    :--shadow-large             "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"
+    :--shadow-xlarge            "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"
+    :--shadow-xxlarge           "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"
+    :--shadow-xxxlarge          "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"]
 
 
    ;; Buttons
@@ -266,8 +276,7 @@
     :desc     {:en "Styling for overlays"}
     :category ["button"]
     :ns       '[kushi.ui.button]
-    :tags     ["button"]
-    }
+    :tags     ["button"]}
    [:--button-padding-inline              :0.9em
     :--icon-button-padding-inline         :0.57em
     :--button-padding-block               :0.55em
@@ -277,8 +286,7 @@
    {:family   "Button border styling"
     :desc     {:en "Styling borders for buttons"}
     :category ["button-border"]
-    :tags     ["button"]
-    }
+    :tags     ["button"]}
    [:--button-border-width :1px]
 
 
@@ -288,8 +296,7 @@
     :desc     {:en "Styling borders for tags"}
     :category ["tag-border"]
     :ns       '[kushi.ui.tag]
-    :tags     ["tag"]
-    }
+    :tags     ["tag"]}
    ;; Tags
    [:--tag-border-width                       :1px
     ]
@@ -306,8 +313,8 @@
    [:--pane-background-color                 :$background-color
     :--pane-background-color-dark-mode       :$background-color-dark-mode
     :--pane-background-image                 :white
-    :--pane-box-shadow                       :$elevated-5
-    :--pane-box-shadow-dark-mode             :$elevated-5-dark-mode
+    :--pane-box-shadow                       :$shadow-large
+    :--pane-box-shadow-dark-mode             :$shadow-large
     :--pane-border-width                     :0px
     :--pane-border-style                     :solid
     :--pane-border-color                     :transparent
@@ -617,7 +624,7 @@
     :--shape-rounded-xxlarge  :0.775em   
     :--shape-rounded-xxxlarge :0.925em 
     :--shape-rounded          :$shape-rounded-medium
-    :--border-weight    :1px
+    :--border-weight          :1px
     ]
 
 

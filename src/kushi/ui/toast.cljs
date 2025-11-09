@@ -178,18 +178,8 @@
     auto-dismiss?     :auto-dismiss?
     slide-in?         :slide-in?
     user-rendering-fn :f
-    shadow            :shadow
-    shadow-strength   :shadow-strength
-    shadow-color      :shadow-strength
-    stroke            :stroke
-    surface           :surface
     toast-class       :toast-class
     :or               {placement       :rb
-                       shadow          :medium
-                       stroke          :xsoft
-                       shadow-strength :15%
-                       shadow-color    :black
-                       surface         :minimal
                        auto-dismiss?   true
                        slide-in?       true}}]
 
@@ -215,20 +205,13 @@
           ;;        pass it to append-pane! as an opt in this map maybe with key
           ;;        of append-toast!
 
-          toast-class     (str 
-                           toast-class
-                           " shadow-" (name shadow)
-                           " surface-" (name surface)
-                           " stroke-" (name stroke))
           opts            {:placement-kw      placement-kw
                            :auto-dismiss?     auto-dismiss?
                            :pane-type         pane-type
                            :user-rendering-fn user-rendering-fn
                            :slide-in?         slide-in?
                            :reduced-motion?   reduced-motion?
-                           :toast-class       toast-class
-                           :style             {"--shadow-color"    (name shadow-color)
-                                               "--shadow-strength" (name shadow-strength)}}]
+                           :toast-class       toast-class}]
       (merge 
        ;; TODO should be :data-ks-ui-pane-placement = se
        ;; and :data-ks-ui-pane-type = toast
