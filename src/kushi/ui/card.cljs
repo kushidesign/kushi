@@ -11,7 +11,7 @@
                    [:shape {:default :rounded}]
                    [:stroke {:default :xsoft}]]}
   [& args]
-  (let [{:keys [stroke-width]} &props]
+  (let [{:keys [stroke-width shadow-strength]} &props]
     (into
      [:div (merge-attrs
             (sx ".ks-card"
@@ -19,7 +19,14 @@
                 :position--relative 
                 :w--fit-content
                 :p--1.25em)
-            (some-> stroke-width (decoration/stroke-width-cssvar "card"))
+
+            (some->> shadow-strength
+                     (hash-map "--shadow-strength")
+                     (hash-map :style))
+
+            (some-> stroke-width
+                    (decoration/stroke-width-cssvar "card"))
+
             &attrs)]
      &children)))
 

@@ -384,10 +384,10 @@
 
   {
    ;; change to size
-   :size           {:default  nil
-                      :desc     "Corresponds to the font-size based on Kushi's font-size scale."
-                      :class? true
-                      :fq?      true}
+   :size             {:default nil
+                      :desc    "Corresponds to the font-size based on Kushi's font-size scale."
+                      :class?  true
+                      :fq?     true}
 
    :weight           {:default :normal
                       :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."
@@ -423,7 +423,7 @@
   ;;                              }
    
    ;; change to shadow
-   :shadow            {:schema  [:or
+   :shadow           {:schema  [:or
                                 [:and :keyword (:shadows/enum variants)]
                                 :string 
                                 [:vector :any]]
@@ -433,6 +433,12 @@
 
    :shadow-color     {:desc    "Controls the drop shadow color"
                       :class?  true
+                      :default nil}
+
+   :shadow-strength  {:schema  [:or
+                                :keyword
+                                :string]
+                      :desc    "Controls the drop shadow strength"
                       :default nil}
 
    :stroke           {:schema  [:or 
@@ -453,11 +459,11 @@
                       :class?  true
                       }
 
-   :stroke-color     {:schema   [:or :keyword :string]
-                      :desc     "Controls the stroke color."
+   :stroke-color     {:schema [:or :keyword :string]
+                      :desc   "Controls the stroke color."
                       ;; leave :default off for now
                       ;; :default  "currentColor"
-                      :class?  true
+                      :class? true
                       }
 
    :stroke-align     {:schema  [:enum :inside :outside]
@@ -465,8 +471,8 @@
                       :desc    "Alignment of the stroke. Only applies to `:surface`."
                       :class?  true}
 
-   :stroke-width     {:schema   [:or :string :keyword]
-                      :desc     "Width of the stroke. Only applies to `:surface`. Locally sets the value of `--stroke-width`."
+   :stroke-width     {:schema [:or :string :keyword]
+                      :desc   "Width of the stroke. Only applies to `:surface`. Locally sets the value of `--stroke-width`."
                       }
 
    :packing          {:default nil
@@ -485,7 +491,7 @@
                       :default      nil
                       :when-not-nil ""
                       :desc         "Content at the inline-start position following the element text. Typically an icon."
-                      :class?  true
+                      :class?       true
                       }
 
    :transition       {:schema  :boolean
@@ -518,21 +524,18 @@
   ;; Leave out for brevity
   ;;  :text-transform   {:desc    "Equivalent to the css text-transform property."
   ;;                     :default nil}
-
+   
    :icon-enhanceable {:schema  :boolean
                       :desc    "Element is enhanceable with an icon."
                       :default nil
-                      :class?  true
-                      }
+                      :class?  true}
 
-   :icon-style       {:desc     "Drawn style of icon, e.g. rounded, outlined, sharp"
-                      :default  :outlined
-                      }
+   :icon-style       {:desc    "Drawn style of icon, e.g. rounded, outlined, sharp"
+                      :default :outlined}
 
-   :icon-filled      {:desc     "Filled or not filled"
-                      :schema   :boolean
-                      :default  false
-                      }
+   :icon-filled      {:desc    "Filled or not filled"
+                      :schema  :boolean
+                      :default false}
 
    :spinner-type     {:desc    "The design of the spinner"
                       :default :donut}
@@ -559,6 +562,7 @@
                :elevation
                :shadow
                :shadow-color
+               :shadow-strength
                :loading
                :display
                :gap]})

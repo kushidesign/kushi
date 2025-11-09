@@ -52,22 +52,22 @@
              (string/join " "))))
 
 (def toast-slot-placement-classes
-  {:lt  "top-left-corner-inside"
-   :tlc "top-left-corner-inside"
-   :tl  "top-left-corner-inside"
-   :t   "top-inside"
-   :tr  "top-right-corner-inside"
-   :trc "top-right-corner-inside"
-   :rt  "top-right-corner-inside"
-   :r   "right-inside"
-   :rb  "bottom-right-corner-inside"
-   :brc "bottom-right-corner-inside"
-   :br  "bottom-right-corner-inside"
-   :b   "bottom-inside"
-   :bl  "bottom-left-corner-inside"
-   :blc "bottom-left-corner-inside"
-   :lb  "bottom-left-corner-inside"
-   :l   "left-inside"})
+  {:lt  "position-top-left-corner-inside"
+   :tlc "position-top-left-corner-inside"
+   :tl  "position-top-left-corner-inside"
+   :t   "position-top-inside"
+   :tr  "position-top-right-corner-inside"
+   :trc "position-top-right-corner-inside"
+   :rt  "position-top-right-corner-inside"
+   :r   "position-right-inside"
+   :rb  "position-bottom-right-corner-inside"
+   :brc "position-bottom-right-corner-inside"
+   :br  "position-bottom-right-corner-inside"
+   :b   "position-bottom-inside"
+   :bl  "position-bottom-left-corner-inside"
+   :blc "position-bottom-left-corner-inside"
+   :lb  "position-bottom-left-corner-inside"
+   :l   "position-left-inside"})
 
 
 
@@ -145,7 +145,8 @@
 (defn append-toast!
   [{:keys [user-rendering-fn
            placement-kw
-           slide-in?]
+           slide-in?
+           style]
     :as   opts} 
    id]
 
@@ -174,12 +175,13 @@
       (.setAttribute "id" id)
       (.setAttribute "style"
                      (domo/css-style-string
-                      {:--_tx (if slide-in? 
-                                (toast-slot-tx placement-kw)
-                                "0px")
-                       :--_ty (if slide-in?
-                                (toast-slot-ty placement-kw)
-                                "0px")}))
+                      (merge {:--_tx (if slide-in? 
+                                       (toast-slot-tx placement-kw)
+                                       "0px")
+                              :--_ty (if slide-in?
+                                       (toast-slot-ty placement-kw)
+                                       "0px")}
+                             style)))
       (.setAttribute "class" pane-classes))
 
     (.appendChild toast-slot-el toast-el)

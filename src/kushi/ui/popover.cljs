@@ -178,30 +178,49 @@
     auto-dismiss?      :auto-dismiss?
     use-on-click?      :use-on-click?
     popover-class      :popover-class
+    shadow             :shadow
+    shadow-strength    :shadow-strength
+    shadow-color       :shadow-strength
+    stroke             :stroke
+    surface            :surface
     user-rendering-fn  :f
     :or                {placement     :auto
+                        shadow          :medium
+                        stroke          :xsoft
+                        shadow-strength :15%
+                        shadow-color    :black
+                        surface         :minimal
                         arrow?        true
                         auto-dismiss? false
                         use-on-click? false}}]
   
   (when user-rendering-fn 
-    (let [arrow?       (if (false? arrow?) false true)
-          placement    (if-not (or (string? placement)
-                                   (keyword? placement)
-                                   (vector? placement))
-                         :auto
-                         placement)
-          placement-kw (or (maybe placement #(= % :auto))
-                           (user-placement placement))
-          pane-type    :popover
-          opts         {:placement-kw      placement-kw
-                        :arrow?            arrow?
-                        :auto-dismiss?     auto-dismiss?
-                        :pane-type         pane-type
-                        :user-rendering-fn user-rendering-fn
-                        :user-pane-class   user-pane-class
-                        :user-pane-style   user-pane-style
-                        :popover-class     popover-class}]
+    (let [arrow?        (if (false? arrow?) false true)
+          placement     (if-not (or (string? placement)
+                                    (keyword? placement)
+                                    (vector? placement))
+                          :auto
+                          placement)
+          placement-kw  (or (maybe placement #(= % :auto))
+                            (user-placement placement))
+          pane-type     :popover
+
+          popover-class (str popover-class
+                             " shadow-" (name shadow)
+                             " surface-" (name surface)
+                             " stroke-" (name stroke))
+
+          opts          {:placement-kw      placement-kw
+                         :arrow?            arrow?
+                         :auto-dismiss?     auto-dismiss?
+                         :pane-type         pane-type
+                         :user-rendering-fn user-rendering-fn
+                         :user-pane-class   user-pane-class
+                         :user-pane-style   user-pane-style
+                         :popover-class     popover-class
+                         :style             {"--shadow-color"    (name shadow-color)
+                                             "--shadow-strength" (name shadow-strength)}}]
+
       (merge 
        {:data-ks-ui-pane (name placement-kw)}
        {:on-click (partial pane/append-pane! opts)}

@@ -1,18 +1,19 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.toast.demo
   (:require
    [goog.string]
-   [kushi.core :refer (sx merge-attrs)]
+   [kushi.core :refer (sx css merge-attrs)]
    [kushi.ui.button :refer [button]]
+   [kushi.ui.card :refer [card]]
    [kushi.playground.util :refer-macros [sx-call]]
    [kushi.ui.toast :refer [toast-attrs dismiss-toast!]]
+   [kushi.showcase.core :as showcase :refer [samples]]
    [reagent.dom :as rdom]))
-
 
 (defn toast-content []
   [:div
    (sx :.my-toast-content
-       :.flex-row-fs
-       :.medium
+       :.display-flex-row-flex-start
+       :.size-medium
        :position--relative
        :ai--c
        :gap--1.25em
@@ -23,12 +24,12 @@
        :xsm:pb--1.25em )
    [:div
     (sx :.my-toast-content-wrapper
-        :.flex-col-c
+        :.display-flex-col-center
         :ai--fs
         :gap--0.5em
         :_.kushi-text-input-label:min-width--7em
         :_.kushi-input-inline:gtc--36%:64%)
-    [:h3 (sx :.bold :m--0) "Saved for later"]
+    [:h3 (sx :.weight-bold :m--0) "Saved for later"]
     [:p (sx :.my-toast-text
             :fs--$size-small
             :.foreground-color-secondary!)
@@ -38,8 +39,8 @@
               (new js/Date))]]
    [button
     (merge-attrs (sx :.kushi-toast-close-button
-                     :.no-shrink
-                     :.rounded
+                     :.shape-rounded
+                     :flex-shrink--0
                      :fw--$semi-bold
                      :fs--$size-xxsmall
                      :letter-spacing--$loose
@@ -49,24 +50,8 @@
     "Undo Save"]])
 
 
-
 (def examples
-  [#_{:desc      "Basic, auto-dismissing"
-    :component button
-    :reqs      '[[kushi.ui.button :refer [button]]]
-    :examples  [{:label    "Basic"
-                 :args     ["Pop toast"]
-                 :sx-attrs (sx-call (toast-attrs
-                                     {:f (fn [popover-el]
-                                            (rdom/render (fn []
-                                                           [:div
-                                                            (sx :.xxxlarge
-                                                                :.flex-row-c
-                                                                :padding--0.25em)
-                                                            "🍞"])
-                                                         popover-el))}))}]}
-
-   (let [code (sx-call (toast-attrs
+  [(let [code (sx-call (toast-attrs
                         {:auto-dismiss? false
                          :f             (fn [toast-el]
                                            (rdom/render toast-content
@@ -78,6 +63,60 @@
       :snippets  [['button (:quoted code) "Save for later"]]
       :examples  [{:label    "Basic"
                    :args     ["Save for later"]
-                   :sx-attrs code}]})
-   
-   ])
+                   :sx-attrs code}]})])
+
+(def demos 
+  [{:label   "With notification and manual dismiss CTA"
+    :require '[[kushi.ui.button :refer [button]]
+               [kushi.ui.card :refer [card]]]
+    :samples (samples 
+              [[button
+                (toast-attrs
+                 {:auto-dismiss? false
+                  :f             (fn [toast-el]
+                                   (rdom/render 
+                                    [:div
+                                     {
+                                      ;; :shadow          :medium
+                                      ;; :shadow-strength :15%
+                                      ;; :stroke          :xsoft
+                                      :class           (css :.my-toast-content
+                                                            :.display-flex-row-flex-start
+                                                            :.size-medium
+                                                            :position--relative
+                                                            :ai--c
+                                                            :gap--1.25em
+                                                            :xsm:gap--1.5em
+                                                            :pi--1.25em
+                                                            :xsm:pi--1.5em
+                                                            :pb--1em
+                                                            :xsm:pb--1.25em)}
+                                     [:div
+                                      (sx :.my-toast-content-wrapper
+                                          :.display-flex-col-center
+                                          :ai--fs
+                                          :gap--0.5em
+                                          :_.kushi-text-input-label:min-width--7em
+                                          :_.kushi-input-inline:gtc--36%:64%)
+                                      [:h3 (sx :.weight-bold :m--0) "Saved for later"]
+                                      [:p (sx :.my-toast-text
+                                              :fs--$size-small
+                                              :.foreground-color-secondary!)
+                                       (.format (new js/Intl.DateTimeFormat
+                                                     "en-US"
+                                                     #js{:dateStyle "full"
+                                                         :timeStyle "short"})
+                                                (new js/Date))]]
+                                     [button
+                                      (merge-attrs (sx :.kushi-toast-close-button
+                                                       :.shape-rounded
+                                                       :flex-shrink--0
+                                                       :fw--$semi-bold
+                                                       :fs--$size-xxsmall
+                                                       :letter-spacing--$loose
+                                                       :zi--1
+                                                       [:opacity :$popover-close-button-opacity])
+                                                   {:on-click dismiss-toast!})
+                                      "Undo Save"]]
+                                    toast-el))})
+                "Save for Later"]])}])

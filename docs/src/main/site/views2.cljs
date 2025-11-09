@@ -32,6 +32,12 @@
    [kushi.ui.popover :refer [popover-attrs]]
    [kushi.ui.popover.demo]
 
+   [kushi.ui.grid :refer [grid]]
+   [kushi.ui.grid.demo]
+
+   [kushi.ui.toast]
+   [kushi.ui.toast.demo]
+
    [kushi.ui.icon-button :refer [icon-button]]
    [kushi.ui.icon-button.demo]
 
@@ -688,13 +694,24 @@
   #_[showcase (showcase/opts kushi.ui.collapse/collapse
                            kushi.ui.collapse.demo/demos)]
 
-  [showcase (showcase/opts kushi.ui.tooltip/tooltip-attrs
+  ;; DONE
+  #_[showcase (showcase/opts kushi.ui.tooltip/tooltip-attrs
                            kushi.ui.tooltip.demo/demos)]
 
-
-  #_[showcase (showcase/opts kushi.ui.popover/popover-attrs
+  ;; DONE
+  [showcase (showcase/opts kushi.ui.popover/popover-attrs
                            kushi.ui.popover.demo/demos)]
+
+  ;; DONE
+  #_[showcase (showcase/opts kushi.ui.grid/grid
+                           kushi.ui.grid.demo/demos)]
+
+
+  ;; DONE
+  #_[showcase (showcase/opts kushi.ui.toast/toast-attrs
+                           kushi.ui.toast.demo/demos)]
   
+
   ;; grid
 
   ;; collapse

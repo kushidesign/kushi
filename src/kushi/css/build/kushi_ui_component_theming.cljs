@@ -503,7 +503,7 @@
    ;; Surface stroking ---------------------------------------------------------------------------------------------------------
     (defcss "[class*=\"surface-\"][class*=\"stroke-\"]"
       {".stroke-align-outside"    {"--stroke-inset" ""}
-       :--box-shadow-for-stroke "var(--stroke-inset, inset) 0 0 0 var(--stroke-width, var(--element-stroke-width), 1px) color-mix(in oklch, currentColor var(--stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))" 
+       :--box-shadow-for-stroke "var(--stroke-inset, inset) 0 0 0 var(--stroke-width, var(--element-stroke-width, 1px)) color-mix(in oklch, currentColor var(--stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))" 
        :box-shadow              "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)" 
        ".stroke-none"             {:--stroke-transparency :0%}
        ".stroke-xsoft"            {:--stroke-transparency :$xsoft-stroke-transparency}

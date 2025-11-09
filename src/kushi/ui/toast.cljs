@@ -13,22 +13,22 @@
  "toast")
 
 (utilize 
- {:lt  "top-left-corner-inside"
-  :tlc "top-left-corner-inside"
-  :tl  "top-left-corner-inside"
-  :t   "top-inside"
-  :tr  "top-right-corner-inside"
-  :trc "top-right-corner-inside"
-  :rt  "top-right-corner-inside"
-  :r   "right-inside"
-  :rb  "bottom-right-corner-inside"
-  :brc "bottom-right-corner-inside"
-  :br  "bottom-right-corner-inside"
-  :b   "bottom-inside"
-  :bl  "bottom-left-corner-inside"
-  :blc "bottom-left-corner-inside"
-  :lb  "bottom-left-corner-inside"
-  :l   "left-inside"})
+ {:lt  "position-top-left-corner-inside"
+  :tlc "position-top-left-corner-inside"
+  :tl  "position-top-left-corner-inside"
+  :t   "position-top-inside"
+  :tr  "position-top-right-corner-inside"
+  :trc "position-top-right-corner-inside"
+  :rt  "position-top-right-corner-inside"
+  :r   "position-right-inside"
+  :rb  "position-bottom-right-corner-inside"
+  :brc "position-bottom-right-corner-inside"
+  :br  "position-bottom-right-corner-inside"
+  :b   "position-bottom-inside"
+  :bl  "position-bottom-left-corner-inside"
+  :blc "position-bottom-left-corner-inside"
+  :lb  "position-bottom-left-corner-inside"
+  :l   "position-left-inside"})
 
 
 ;; TODO make below this like a code block with a couple versions of this
@@ -178,11 +178,27 @@
     auto-dismiss?     :auto-dismiss?
     slide-in?         :slide-in?
     user-rendering-fn :f
+    shadow            :shadow
+    shadow-strength   :shadow-strength
+    shadow-color      :shadow-strength
+    stroke            :stroke
+    surface           :surface
     toast-class       :toast-class
-    :or               {placement     :rb
-                       auto-dismiss? true
-                       slide-in?     true}}]
+    :or               {placement       :rb
+                       shadow          :medium
+                       stroke          :xsoft
+                       shadow-strength :15%
+                       shadow-color    :black
+                       surface         :minimal
+                       auto-dismiss?   true
+                       slide-in?       true}}]
 
+  ;; TODO - make it optional to pass the user-rendering fn
+  ;; If they don't, the card component will be used, but only if they pass a :toast-title and :toast-description prop
+
+  ;; TODO
+  ;; treat props like defui, and incorporate with toast-class and add a style
+  
   (when user-rendering-fn 
     (let [placement       (if-not (or (string? placement)
                                       (keyword? placement)
@@ -193,17 +209,26 @@
           pane-type       :toast
           reduced-motion? (domo/prefers-reduced-motion?)
           slide-in?       (if reduced-motion? false slide-in?)
+
           ;; TODO - require [kushi.ui.dom.pane.toast :refer [append-toast!]]
           ;;        in this ns, instead of in kushi.ui.dom.pane.core, then
           ;;        pass it to append-pane! as an opt in this map maybe with key
           ;;        of append-toast!
+
+          toast-class     (str 
+                           toast-class
+                           " shadow-" (name shadow)
+                           " surface-" (name surface)
+                           " stroke-" (name stroke))
           opts            {:placement-kw      placement-kw
                            :auto-dismiss?     auto-dismiss?
                            :pane-type         pane-type
                            :user-rendering-fn user-rendering-fn
                            :slide-in?         slide-in?
                            :reduced-motion?   reduced-motion?
-                           :toast-class       toast-class}]
+                           :toast-class       toast-class
+                           :style             {"--shadow-color"    (name shadow-color)
+                                               "--shadow-strength" (name shadow-strength)}}]
       (merge 
        ;; TODO should be :data-ks-ui-pane-placement = se
        ;; and :data-ks-ui-pane-type = toast

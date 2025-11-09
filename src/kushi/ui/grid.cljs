@@ -1,42 +1,35 @@
 (ns kushi.ui.grid
   (:require
    [kushi.core :refer (css css-vars-map merge-attrs)]
-   [kushi.ui.util :refer [aspect-ratio->number]]
-   [kushi.ui.core :refer (extract)] ))
+   [kushi.ui.core :refer (defui)]
+   [kushi.ui.util :refer [aspect-ratio->number]]))
 
-(defn grid
-  {:desc "Elastic grid layout with fixed-aspect ratio grid-items"
-   :opts '[{:name    column-min-width
-            :schema    keyword?
-            :default :150px
-            :desc    "The minimum width of the columns. The width of the
-                      columns will expand evenly to fill out the parent container. 
-                      Value must be a keyword representing a valid CSS value
-                      for [`min-width`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."}
-           {:name    aspect-ratio
-            :schema    keyword?
-            :default :1:1
-            :desc    "The aspect ratio of the grid cells. Value must be a
-                      keyword representing a formula of width to height. For
-                      example, a value of `:1:1` would result in square elements, 
-                      while a value of `:2:3` would result in elements with a
-                      portrait orientation."}
-           {
-            :name    gap
-            :schema    keyword?
-            :default :20px
-            :desc    "The gap between grid cells. Value must be a keyword
-                      representing a valid CSS value for
-                      [`grid-gap`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."}]}
+(defui grid
+  {:doc   "Elastic grid layout with fixed-aspect ratio grid-items"
+   :props {:column-min-width {:schema  :keyword
+                              :default :150px
+                              :desc    "The minimum width of the columns. The width of the
+                                        columns will expand evenly to fill out the parent container. 
+                                        Value must be a keyword representing a valid CSS value
+                                        for [`min-width`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."}
+           :aspect-ratio     {:schema  :keyword
+                              :default :1:1
+                              :desc    "The aspect ratio of the grid cells. Value must be a
+                                        keyword representing a formula of width to height. For
+                                        example, a value of `:1:1` would result in square elements, 
+                                        while a value of `:2:3` would result in elements with a
+                                        portrait orientation."}
+           :gap              {:schema  :keyword
+                              :default :20px
+                              :desc    "The gap between grid cells. Value must be a keyword
+                                        representing a valid CSS value for
+                                        [`grid-gap`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."} }}
   [& args]
-  (let [[opts attr children]                     
-        (extract args)
-
-        {:keys [column-min-width aspect-ratio gap]
+  (let [{:keys [column-min-width aspect-ratio gap]
          :or   {column-min-width :150px
                 gap              :20px
                 aspect-ratio     :1:1}}            
-        opts
+        &props
 
         ar                                         
         (aspect-ratio->number aspect-ratio)
@@ -55,7 +48,7 @@
       (merge-attrs
        {:style         (css-vars-map aspect-ratio-pct gtc gap)
         :class         (css
-                        ".kushi-grid"
+                        ".ks-grid"
                         {:>*:w        :auto
                          :>*:h        0
                          :>*:pbs      :$aspect-ratio-pct
@@ -63,7 +56,6 @@
                          :d           :grid
                          :gtc         :$gtc
                          :grid-gap    :$gap
-                         :width       :100%})
-        :data-ks-ui :grid}
-       attr)]
-     children)))
+                         :width       :100%})}
+       &attrs)]
+     &children)))
