@@ -7,7 +7,6 @@
    [kushi.ui.core :refer (extract defui)]
    [clojure.string :as string]))
 
-
 (defn- flex-container [m s]
   (into
    [(or (some-> m :props :as) :div)
@@ -18,15 +17,42 @@
    (:children m)))
 
 
+;; TODO maybe should not have surface?
+
 (defui flex-row
   {:props/shared [[:position {:default :relative}]
                   [:display {:default :flex-row}]
+                  :inert
                   :surface
                   :colorway
                   :size
-                  :weight]}
+                  :weight]
+   :props        {:tag {:schema  :keyword
+                        :desc    "HTML tag to use."
+                        :default :div}}}
   [& args]
-  (into [:div.ks-flex-row &attrs] &children))
+  (into
+   [(or (:as &props) :div)
+    (merge-attrs {:data-ks-ui "flex-row"} &attrs)]
+   &children))
+
+
+(defui flex-col
+  {:props/shared [[:position {:default :relative}]
+                  [:display {:default :flex-col}]
+                  :inert
+                  :surface
+                  :colorway
+                  :size
+                  :weight]
+   :props        {:tag {:schema  :keyword
+                        :desc    "HTML tag to use."
+                        :default :div}}}
+  [& args]
+  (into
+   [(or (:as &props) :div)
+    (merge-attrs {:data-ks-ui "flex-col"} &attrs)]
+   &children))
 
 
 (defui flex-row-center
@@ -84,17 +110,6 @@
   (into [:div.ks-flex-row &attrs] &children))
 
 
-(defui flex-col
-  {:props/shared [[:position {:default :relative}]
-                  [:display {:default :flex-col}]
-                  :surface
-                  :colorway
-                  :size
-                  :weight]}
-  [& args]
-  (into
-   [:div.ks-flex-col &attrs]
-   &children))
 
 
 (defui flex-col-center

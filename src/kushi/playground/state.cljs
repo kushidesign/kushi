@@ -1,11 +1,14 @@
 (ns kushi.playground.state
   (:require
    [kushi.css.media :refer [media]]
-   [kushi.playground.components :refer [playground-components]]
+  ;;  [kushi.playground.components :refer [playground-components]]
    [domo.core :as domo]
    [applied-science.js-interop :as j]
    [reagent.core :as r]
    [reagent.ratom]))
+
+;; dummy
+(def playground-components [])
 
 (defonce *state
   (r/atom {

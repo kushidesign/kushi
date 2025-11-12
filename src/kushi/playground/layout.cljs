@@ -12,7 +12,7 @@
    [kushi.ui.button :refer [button]]
    [kushi.ui.core :refer [extract]]
    [kushi.ui.divisor :refer (divisor)]
-   [kushi.ui.spinner :refer [propeller]]))
+   [kushi.ui.spinner :refer [spinner]]))
 
 (defcss "@layers design-tokens :root"
   {:--playground-main-content-max-width :605px})
@@ -29,9 +29,10 @@
          :h--50px
          :d--none
          :top--$navbar-height)
-   [propeller (sx :translate--0.5em
-                  [:--spinner-animation-duration :700ms])]])
-
+   [spinner {:spinner-type :propeller
+             :class (css [:--spinner-animation-duration :700ms]
+                         :translate--0.5em)}
+    ]])
 
 (def tab-attrs
   (sx :fs--$size-small

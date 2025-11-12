@@ -84,17 +84,18 @@
  [:div (sx {:w                               :fit-content
             :_.ks-lightswitch-icon-dark-mode {:display :none
                                               :color   :white}
-            "has-ancestor(.dark)"              {:_.ks-lightswitch-icon-light-mode:display :none
-                                                :_.ks-lightswitch-icon-dark-mode:display  :block}}
-           )
+            "has-ancestor(.dark)"            {:_.ks-lightswitch-icon-light-mode:display :none
+                                              :_.ks-lightswitch-icon-dark-mode:display  :block}})
   [icon-button 
    (merge-attrs (first args) 
                 {:class    :ks-lightswitch-icon-light-mode
+                 :surface  :minimal
                  :on-click #(lightswitch!)})
    :light-mode]
   [icon-button
    (merge-attrs (first args) 
                 {:class    :ks-lightswitch-icon-dark-mode
+                 :surface  :minimal
                  :on-click #(lightswitch!)})
    :dark-mode]]
  

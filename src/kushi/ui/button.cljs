@@ -18,6 +18,7 @@
  {:doc          "Buttons are fundamental components that allow users to process actions or navigate an experience."
   :summary      "Buttons provide cues for actions and events."
   :props/shared [:size
+                 :weight
                  :end-enhancer
                  :start-enhancer
                  [:colorway {:default :neutral}]

@@ -341,18 +341,20 @@
       {:--classic-trim-color "oklch(62% 0% var(--colorway-hue))"})
 
     (defcss ".surface-soft, .surface-soft-classic, .surface-faint, .surface-convex, .surface-minimal, .surface-transparent"
-      {:--chroma-shift    :6.25% 
-       :--lightness-shift :4% 
-       :color             :$fgc
-       :hover:bgc         :$hover-bgc
-       :active:bgc        :$active-bgc
-       ".colorway-brown"    {:--chroma-shift :2% }
+      {:--chroma-shift             :6.25% 
+       :--lightness-shift          :4% 
+       :color                      :$fgc
+       :hover:bgc                  :$hover-bgc
+       :active:bgc                 :$active-bgc
+       ".colorway-brown"             {:--chroma-shift :2% }
        ".foreground-color-secondary" {:color :$foreground-color-secondary
                                       :dark  :$foreground-color-secondary-dark-mode}
-       :dark              {:--chroma-shift-op    "-"
-                           :--lightness-shift-op "+"
-                           :hover:bgc            :$hover-bgc
-                           :active:bgc           :$active-bgc}}) 
+      ;;  :dark                       {:--chroma-shift-op    "-"
+      ;;                               :--lightness-shift-op "+"
+      ;;                               :hover:bgc            :$hover-bgc
+      ;;                               :active:bgc           :$active-bgc}
+       
+       }) 
 
 
     ;; Softs
