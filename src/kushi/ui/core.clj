@@ -15,23 +15,27 @@
    [kushi.ui.extract :as extract]
    [malli.core :as m]))
 
-(def ^:private html-attrs 
+(def ^:public html-attrs 
   #{:bgcolor :accept :accept-charset :access-key :action :allow-full-screen :allow-transparency :alt :async :auto-complete :auto-focus :auto-play :capture
     :cell-padding :cell-spacing :challenge :char-set :checked :cite :class :class-name :cols :col-span :content :content-editable :context-menu :controls :controls-list
     :coords :cross-origin :data :date-time :default :defer :dir :disabled :download :draggable :enc-type :form :form-action :form-enc-type :form-method
-    :form-no-validate :form-target :frame-border :headers :height :hidden :high :href :href-lang :html-for :http-equiv :icon :id :input-mode :integrity
+    :form-no-validate :form-target :frame-border :headers :hidden :high :href :href-lang :html-for :http-equiv :icon :id :input-mode :integrity
     :is :key-params :key-type :kind :label :lang :list :loop :low :manifest
     :margin-height :margin-width :max :max-length :media :media-group :method :min :min-length :multiple :muted :name :no-validate :nonce :open :optimum :pattern :placeholder
     :poster :preload :profile :radio-group :read-only :rel :required :reversed :role :rows :row-span :sandbox :scope :scoped :scrolling :seamless :selected :sizes
-    :span :spell-check :src :src-doc :src-lang :src-set :start :step :style :summary :tab-index :target :title :type :use-map :value :width :wmode :wrap
+    :span :spell-check :src :src-doc :src-lang :src-set :start :step :style :summary :tab-index :target :title :type :use-map :value :wmode :wrap
 
     ; React specific 
     :ref :key
 
     ; Reserved for Kushi shared UI props
     ; Keep commented out
-    #_:size
-    #_:shape
+    :html-attr/shape
+    :html-attr/height 
+    :html-attr/width
+
+    ; Release this once you use text-size and text-weight
+    ; :size
     })
 
 (defn ^:private issue-html-attribute-name-clash-warnings
@@ -440,8 +444,7 @@
    body ; <- body of component
    ]
 
-  (reset! debug? 
-          (if (= sym 'flex-row-space-between) true false))
+  (reset! debug? (if (= sym 'header) true false))
 
   (let [!dbgf
         (fn [_ x] x)
@@ -484,14 +487,13 @@
         defaults-by-prop
         (!? {:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
 
-
         data-ks-attrs-map-with-defaults
         (!? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when @debug?} 
-         (kushi.ui.extract/data-ks-attrs {} defaults-by-prop :comptime))
+         (kushi.ui.extract/data-ks-attrs {} defaults-by-prop (when @debug? :debug) #_:comptime))
 
-        ks-classes-with-defaults
-        (!? (symbol "comptime:ks-classes-with-defaults") {:when @debug?} 
-         (kushi.ui.extract/ks-classes {} defaults-by-prop :comptime))
+        ;; ks-classes-with-defaults
+        ;; (!? (symbol "comptime:ks-classes-with-defaults") {:when @debug?} 
+        ;;  (kushi.ui.extract/ks-classes {} defaults-by-prop (when @debug? :debug) #_:comptime))
 
         props-keys   
         (let [ks (keys merged-props)]
@@ -563,15 +565,15 @@
                                                  ~data-ks-attrs-map-with-defaults)
                                               props->data-ks-attrs#))
 
-             ks-classes*#           (kushi.ui.core/ks-classes 
-                                     (:props extracted*#)
-                                     (select-keys ~defaults-by-prop (-> extracted*# :props keys))
-                                     :runtime)
+            ;;  ks-classes*#           (kushi.ui.core/ks-classes 
+            ;;                          (:props extracted*#)
+            ;;                          (select-keys ~defaults-by-prop (-> extracted*# :props keys))
+            ;;                          :runtime)
 
-             ks-classes#            (!? 'ks-classes#
-                                       (kushi.ui.core/merged-ks-classes
-                                        ~ks-classes-with-defaults
-                                        ks-classes*#))
+            ;;  ks-classes#            (!? 'ks-classes#
+            ;;                            (kushi.ui.core/merged-ks-classes
+            ;;                             ~ks-classes-with-defaults
+            ;;                             ks-classes*#))
             ;;  _#                    (? (= data-ks-attrs_# data-ks-attrs#))            
              
              props#                (merge ~user-props-with-default-values
@@ -580,7 +582,8 @@
                                     :&attrs    (kushi.core/merge-attrs
                                                 (:attrs extracted*#)
                                                 data-ks-attrs#
-                                                ks-classes#)
+                                                #_ks-classes#
+                                                )
                                     ;; :&data-ks-attrs data-ks-attrs#
                                     :&children (:children extracted*#)
                                     :args      args#}

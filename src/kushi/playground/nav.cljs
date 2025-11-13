@@ -8,6 +8,7 @@
    [kushi.ui.core :refer [extract]]
    [kushi.ui.icon :refer [icon]]
    [kushi.ui.flex :refer [flex-row flex-col]]
+   [kushi.ui.header :refer [header]]
    [kushi.ui.button :refer [button]]))
 
 
@@ -80,9 +81,10 @@
 
 (defn header-menu
   [menu-id]
-  (into [:nav (sx :.display-flex-row-center
-                  :.transition
-                  :gap--1.5rem)]
+  (into [flex-row
+         (mrj {:display    :flex-row-space-around
+               :transition true}
+              (sx :gap--1.5rem))]
          (for [label ["intro" "components" "colors" "typography" "guide"]
                :let [guide?    (= label "guide")
                      selected? (= label "components")
@@ -90,13 +92,11 @@
                                  "https://github.com/kushidesign/kushi"
                                  (str "/" label))
                      target    (if guide? :_blank :_self)]]
-           [:a
-            {:href     href
-             :target   target
-             :on-click (partial route! menu-id href)}
+           [:a {:href     href
+                :target   target
+                :on-click (partial route! menu-id href)}
             [button {:shape         :pill
                      :size          :small
-                     :weight        :semi-bold
                      :surface       (if selected? :soft :minimal)
                      :packing       :xcompact
                      :class         (css [:--icon-enhanceable-gap :0.5em]
@@ -114,16 +114,17 @@
 
 (defn header2 []
   (let [menu-id "kushi-playground-menu"]
-    [flex-row
-     (mrj {:tag      :header
-           :surface  :minimal
-           :inert?   true
-           :colorway :neutral
-           :position :sticky}
-          (sx {:top 0
-               :jc  :sb
-               :zi  50}))
-     [:span (sx :.transition :.weight-semi-bold :.size-small) "Kushi"]
+    [header (mrj {:surface  :minimal
+                  :inert    true
+                  :colorway :neutral
+                  :position :sticky
+                  :weight   :semi-bold}
+                 (sx {:top 0
+                      :jc  :sb
+                      :zi  50}))
+     [button {:size    :small
+              :surface :minimal}
+      "Kushi"]
      [header-menu menu-id]
      [lightswitch (sx :.light :.transition)]]))
 
@@ -155,7 +156,7 @@
           (remove-hover! menu-el))))))
 
 
-(defn header []
+#_(defn header []
  (let [menu-id "kushi-playground-menu"]
   [:div#header-navbar
    (mrj 

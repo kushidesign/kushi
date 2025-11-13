@@ -127,7 +127,7 @@
    macro. To be called at runtime from within runtime portion of defui macro."
   [props defaults-by-prop flag]
 
-  (when (= flag :runtime) (reset! debug-data-ks? true))
+  (when (contains? #{:debug :runtime} flag) (reset! debug-data-ks? true))
 
   (!?  (symbol (str flag ":data-ks-attrs"))
        {:when @debug-data-ks?}

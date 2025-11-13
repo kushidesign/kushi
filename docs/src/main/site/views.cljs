@@ -3,13 +3,13 @@
    [kushi.playground.about :as about]
   ;;  [kushi.playground.components :refer [playground-components]]
   ;;  [kushi.playground.layout :as layout]
+   [fireworks.core :refer [? !? ?> !?>]]
    [kushi.playground.nav :as nav]
    [clojure.string :as string]
    [domo.core :as domo]
    [kushi.ui.flex :as flex :refer [flex-row flex-col]]
-   [kushi.core :refer [sx] :rename {merge-attrs ma}]
-   [kushi.playground.shared-styles]
-   ))
+   [kushi.core :refer [sx sx2] :rename {merge-attrs ma}]
+   [kushi.playground.shared-styles]))
 
 ;; (js/console.clear)
 
@@ -25,6 +25,7 @@
 
 
 (defn main-view []
+  (js/console.clear)
   (.setAttribute (domo/el-by-id "app")
                  "data-kushi-playground-active-path"
                  "components")
@@ -58,12 +59,22 @@
        [layout/generic-section (assoc route :path path :label label)])
    )
 
-   [flex-col
-    (sx {:>*:padding :1rem:4rem})
+   [:div 
+    (? (sx2 {:display    :flex-col
+             :id         :foo
+             :color      :red
+             :>*:padding :1rem:4rem}
+            {:color :blue}))
+    [:div "hi"]]
+   #_[:div
+    (? (sx2 {:display    :flex-col
+             :>*:padding :1rem:4rem}))
     [nav/header2]
 
 
-    [flex-row (ma {:tag :main} (sx :pbs--1rem))
+    #_[flex-row 
+     (ma {:tag :main} (sx :pbs--1rem))
+     
      (into [flex-col]
            (for [x (range 100)]
              [:div x]))]])

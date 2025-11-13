@@ -2,11 +2,13 @@
   (:require 
    [fireworks.core :refer [? !? pprint]]
    [fireworks.sample]
+   [kushi.ui.variants :as props]
+   [kushi.ui.core :refer [html-attrs]]
    [kushi.css.defs :as defs]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as specs]
    [kushi.css.build.colorways :refer [colorway-args colorway-selector]]
-   [kushi.util :refer [keyed vec-of-vecs? more-than-one? partition-by-pred]]
+   [kushi.util :refer [keyed vec-of-vecs? more-than-one? partition-by-pred as-str maybe]]
    [kushi.specs2 :as specs2]
    [clojure.walk :as walk :refer [prewalk postwalk]]
    [clojure.string :as string :refer [replace] :rename {replace sr}]
@@ -600,24 +602,29 @@
    classes, as well as auto-generated, namespace-derived classname from `css`
    macro."
   ([form args]
-   (classlist {:ns {:name "ns.unknown"}} form args))
+   (classlist {:ns {:name "[unresolved ns]"}} form args))
   ([env form args]
-   (let [fa                 (first args)
-         supplied-classname (when (and (string? fa)
-                                       (re-find specs/classname-with-dot-re fa))
-                              (subs fa 1))
-         id-selector        (and (string? fa)
-                                 (re-find specs/id-with-hash-re fa)
-                                 fa)
-         attr-selector      (and (string? fa)
-                                 (re-find specs/attribute-selector-re fa)
-                                 fa)
-         sel                (or supplied-classname
-                                id-selector
-                                attr-selector
-                                (some-> env (loc-id form)))
-         args               (if supplied-classname (rest args) args)
-         m                  (-> args
+   (let [fa                  (first args)
+         supplied-classname  (when (and (string? fa)
+                                        (re-find specs/classname-with-dot-re fa))
+                               (subs fa 1))
+         id-selector         (and (string? fa)
+                                  (re-find specs/id-with-hash-re fa)
+                                  fa)
+         attr-selector       (and (string? fa)
+                                  (re-find specs/attribute-selector-re fa)
+                                  fa)
+         loc-id-str          (some-> env (loc-id form))
+         data-ks-at          (when-let [[ns-str loc-str] (some-> loc-id-str (string/split #"__"))]
+                               (let [ns-str  (string/replace ns-str #"_" ".")
+                                     loc-str (string/replace loc-str #"_" ":")]
+                                 (str ns-str ":" loc-str)))
+         sel                 (or supplied-classname
+                                 id-selector
+                                 attr-selector
+                                 loc-id-str)
+         args                (if supplied-classname (rest args) args)
+         m                   (-> args
                                 conformed-args
                                 :conformed-args
                                 vectorized*
@@ -625,17 +632,20 @@
          alternate-selectors (merge (when id-selector
                                       {:id (subs id-selector 1)})
                                     (when attr-selector
-                                        (let [[_ attr val] (re-find specs/attribute-selector-re-with-capturing attr-selector)
-                                              val (-> val
-                                                      (string/replace #"^[\"\']" "")
-                                                      (string/replace #"[\"\']$" ""))]
+                                        (let [[_ attr val] 
+                                              (re-find specs/attribute-selector-re-with-capturing 
+                                                       attr-selector)
+
+                                              val
+                                              (-> val
+                                                  (string/replace #"^[\"\']" "")
+                                                  (string/replace #"[\"\']$" ""))]
                                           {attr val})))
-         user-classlist     (assoc (user-classlist
+         user-classlist     (merge (user-classlist
                                     m 
                                     (when-not (or id-selector attr-selector)
                                       sel))
-                                   :alternate-selectors
-                                   alternate-selectors )]
+                                   (keyed [alternate-selectors data-ks-at]))]
      #_(when (= fa ".ui-icon")
        (println (re-find specs/attribute-selector-re-with-capturing ".ui-icon"))
        #_(pprint (keyed [
@@ -892,7 +902,7 @@
 
 (defn- classes+class-binding [args &form &env]
   (apply classlist 
-         (if-not &env
+         (if-not (:ns &env)
            [&form args]
            [&env &form args])))
 
@@ -1053,13 +1063,12 @@
              (str sel " " css-str))))))))
 
 
-
-
 (defmacro ^:public css-rule
   "Returns a serialized css ruleset, with selector and potentially nested css
    block."
   [sel & args]
   (css-rule* sel args &form &env))
+
 
 (defmacro ^:public defcolorway
   "Used internally to define colorway rulesets for kushi ui theming system.
@@ -1070,6 +1079,7 @@
    Expands to nil."
   [s]
   nil)
+
 
 (defmacro ^:public css-include
   "Used to pull in .css resources. Expands to nil.
@@ -1208,6 +1218,192 @@
         `{:class (kushi.core/class-str ~classes)})
       (merge {:class (string/join " " classes)}
              alternate-selectors))))
+
+
+;; -----------------------------------------------------------------------------
+;; sx2 Start 
+;; -----------------------------------------------------------------------------
+
+(defn ^:public props+attrs+css
+  [m]
+  (reduce-kv 
+   (fn [acc k v]
+     (let [ks
+           (cond (contains? props/generic-props k)
+                 [:props k]
+                 
+                 (contains? html-attrs k)
+                 [:attrs k]
+
+                 (-> k name (string/starts-with? "data-"))
+                 [:attrs k]
+
+                 :else
+                 (when-not (= k :selector)
+                   [:css k])) ]
+       (if ks (assoc-in acc ks v) acc)))
+   {:props {}
+    :attrs {}
+    :css   {}}
+   m))
+
+(defn- class-map [selector m+]
+  (let [class-selector
+        (!? 'class-selector 
+           (or (some-> selector
+                       (maybe #(string/starts-with? % ".")))
+               (first (:classes m+))))
+
+        cls
+        (!? 'cls1 (when-let [cls (some-> m+ :attrs :class)] 
+          (cond (string? cls)
+                (string/split cls #" ")
+                (coll? cls)
+                (seq cls))))
+
+        cls 
+        (!? 'cls2 (if cls 
+          (into []
+                (if class-selector
+                  (concat cls 
+                          (some-> class-selector
+                                  vector))
+                  cls))
+          class-selector))]
+    (some->> cls (hash-map :class))))
+
+(defn- data-ks-attrs [m+]
+  (reduce-kv (fn [m k v] 
+               (assoc m
+                      (keyword (str "data-ks-" (name k)))
+                      (cond (true? v)
+                            ""
+                            (symbol? v)
+                            v
+                            :else
+                            (as-str v))))
+             {}
+             (:props m+)))
+
+;; TODO - reconcile if selector is "#foo" and :id is something else
+(defn- sx2* [m &form &env]
+  (let [selector         (:selector m)
+        m                (dissoc m :selector)
+        ret              (!? (props+attrs+css m))
+        args             (if selector [selector m] [m])
+        m+               (!? 'm+ (merge ret (classes+class-binding args &form &env)))
+        class-map        (class-map selector m+)
+        data-ks-attrs    (data-ks-attrs m+)]
+    (!? {:attrs          (merge data-ks-attrs
+                                (select-keys m+ [:data-ks-at])
+                                (:attrs m+) 
+                                class-map)
+         :dynamic-props? (boolean (some->> m+ :props vals (some symbol?)))})))
+
+
+(defn ^:public validator-stub [m]
+  (!? 'validator-stub m))
+
+(defn ^:public merge-attrs-stub [& maps]
+  (let [[m1 m2] maps]
+    (!? 'merge-attrs-stub 
+       (assoc (merge m1 m2)
+              :class
+              (into [] (concat (:class m1) (:class m2)))
+              :style
+              (merge (:style m1) (:style m2))))))
+
+;; 
+(defmacro ^:public sx2
+  "Returns an html attributes map.
+   
+   Can take any number of args which should be maps or symbols that are bound to
+   attribute maps. If multiple args are supplied, all map-literals will be
+   sorted out into a coll bound to `attrs-coll`, then macro will expand to:
+   `(apply kushi.core/merge-attrs ~attrs-coll)`
+   
+   Pulls out shared kushi props from map literals, validates the values
+   (if not dynamic), and converts them to data-ks-* attributes.
+   
+   Removes all css properties and values. These css properties and values are
+   pulled out in an analyzation phase, and used to create rulesets with the
+   appropriate selectors.
+
+   If multiple map literals are passed, only one can contain css properties and
+   values (alongside kushi props and html attributes). These will be pulled out
+   and a unique classname will be generated, based on the namespace and row/col,
+   unless a `:selector` key is present in the map.
+   
+   The :selector key can be one of the following patterns:
+   \".foo\"
+   \"#foo\"
+   \"[data-ks-ui=\"foo\"]\"
+   
+   Examples:
+
+   (sx {:color :red})
+   => {:class      \"my_ns__L11_C3\"
+       :data-ks-at my.ns:L11:C3}
+
+   (sx {:display :flex-row-center
+        :shape   :pill})
+   => {:data-ks-display \"flex-row-center\"
+       :data-ks-shape   \"pill\"
+       :data-ks-at      my.ns:L11:C3}
+
+   (sx {:selector \".foo\" :color :red})
+   => {:class      \"foo\"
+       :data-ks-at my.ns:L11:C3}
+
+   (let [my-map {:class [:baz :bat]}]
+     (sx {:color :red}
+         {:id :foo}
+         my-map)
+   => {:class      [\"my_ns__L11_C3\" \"baz\" \"bat\"]
+       :id         \"foo\"
+       :data-ks-at my.ns:L11:C3}"
+
+  [& args]
+
+  (let [attrs-coll     (reduce (fn [acc x]
+                                 (if-let [ret (cond (symbol? x)
+                                                    x
+                                                    (map? x)
+                                                    (sx2* x &form &env))]
+                                   (conj acc ret)
+                                   acc))
+                               [] 
+                               args)
+
+        dynamic-props? (some :dynamic-props? attrs-coll)
+        
+        attrs-coll     (!? (mapv :attrs attrs-coll))]
+    
+    (if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
+      (if dynamic-props?
+        `(kushi.core/validator-stub ~m)
+        `~m)
+      (if dynamic-props?
+        `(kushi.core/validator-stub (apply kushi.core/merge-attrs
+                                           ~attrs-coll))
+        `(apply kushi.core/merge-attrs
+                ~attrs-coll)))
+
+    ;; for testing in pure jvm clj env
+    #_(if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
+        (if dynamic-props?
+          `(kushi.core/validator-stub ~m)
+          `~m)
+        (if dynamic-props?
+          `(kushi.core/validator-stub (apply kushi.core/merge-attrs-stub
+                                             ~attrs-coll))
+          `(apply kushi.core/merge-attrs-stub
+                  ~attrs-coll)))))
+
+
+;; -----------------------------------------------------------------------------
+;; sx2 End 
+;; -----------------------------------------------------------------------------
 
 
 ;; TODO - maybe dry this up with ?css

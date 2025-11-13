@@ -78,8 +78,8 @@
                :.display-inline-block
                :fw--$weight-normal
                :mbs--$text-input-helper-margin-block-start||0.3em)
-           (when disabled {:class (css ".ks-text-input-helper-disabled"
-                                       :.disabled)})))
+           ;; Removed :.disabled, check
+           (when disabled {:class (css ".ks-text-input-helper-disabled")})))
 
         label-with-attrs
         [:label
@@ -94,7 +94,8 @@
                          [:after:c :$after-color]
                          :after:pis--0.15em)
              :for   input-id})
-          (when disabled {:class (css ".ks-text-input-label-disabled" :.disabled)})
+          ;; Removed :.disabled, check
+          (when disabled {:class (css ".ks-text-input-label-disabled")})
           (if inline?
             (sx ".ks-text-input-label-inline"
                 [:mie :$text-input-label-inline-margin-inline-end||0.7em])

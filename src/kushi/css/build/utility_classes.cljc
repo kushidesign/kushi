@@ -100,12 +100,13 @@
                                (util/as-str x)))}])
     coll)))
 
+
 (defn class-sels
   "(class-sels [\"foo\"
-                   {:color :red}
-                   \"bar\"
-                   {:color :blue}]
-                   \"debug\")
+                {:color :red}
+                \"bar\"
+                {:color :blue}]
+                \"debug\")
    =>
    [\".debug-foo\"]
     {:color :red}
@@ -125,49 +126,44 @@
                                     (when prefix "-")))))
                       coll))))
 
-(defn wdks
-  ([coll s]
-   (wdks coll s nil nil))
-  ([coll s re replacement]
-   (reduce (fn [acc [k v]] 
-             (conj acc
-                   (str "[data-ks-"
-                        s
-                        "=\"" 
-                        (if (and re replacement)
-                          (string/replace (subs k 1) re replacement)
-                          (subs k 1))
-                        "\"]")
-                   v
-                   k
-                   v))
-           []
-           (partition 2 coll))))
 
-
-(defn kws->data-ks-sels
-  "(kws->data-ks-sels [\"foo\"
-                       {:color :red}
-                       \"bar\"
-                       {:color :blue}]
-                      \"debug\")
+(defn data-ks-sels
+  "(data-ks-sels [\"foo\"
+                  {:color :red}
+                  \"bar\"
+                  {:color :blue}]
+                  \"debug\")
    =>
    [\".debug-foo\"
     {:color :red}
     \".debug-bar\"
     {:color :blue}]"
-  [coll s]
-  (reduce (fn [acc [k v]] 
-            (conj acc
-                  (str "[data-ks-"
-                       s
-                       "=\"" 
-                       k
-                       "\"]")
-                  v))
-          []
-          (partition 2 coll)))
+  ([coll]
+   (data-ks-sels coll nil))
+  ([coll s]
+   (reduce (fn [acc [k v]] 
+             (conj acc
+                   (str "[data-ks-"
+                        s
+                        "=\"" 
+                        (name k)
+                        "\"]")
+                   v))
+           []
+           (partition 2 coll))))
 
+
+(def sel-fn
+  "The function used to generate either:
+
+   a) utilility class selectors
+   ~OR~
+   b) data-attr selectors
+   
+   e.g.
+   "
+  data-ks-sels
+  #_class-sels)
 
 ;; Scale defs
 ;; -----------------------------------------------------------------------------
@@ -191,15 +187,15 @@
 ;; DISPLAY
 ;; -----------------------------------------------------------------------------
 (def display-classes
-  [:display-block        {:display :block}
-   :display-inline       {:display :inline}
-   :display-inline-block {:display :inline-block}
-   :display-flex         {:display :flex}
-   :display-inline-flex  {:display :inline-flex}
-   :display-grid         {:display :grid}
-   :display-inline-grid  {:display :inline-grid}
-   :display-flow-root    {:display :flow-root}
-   :display-contents     {:display :contents}])
+  [:block        {:display :block}
+   :inline       {:display :inline}
+   :inline-block {:display :inline-block}
+   :flex         {:display :flex}
+   :inline-flex  {:display :inline-flex}
+   :grid         {:display :grid}
+   :inline-grid  {:display :inline-grid}
+   :flow-root    {:display :flow-root}
+   :contents     {:display :contents}])
 
 
 ;; Combinatorial flexbox utilities
@@ -305,7 +301,9 @@
    :italic     {:font-style :italic}
    :oblique    {:font-style :oblique}])
 
-(def divisor-classes
+
+;; TODO - Ok to take these out?
+#_(def divisor-classes
   [:block-start  {:border-block-start         :$divisor
                   :dark:border-block-start    :$divisor-dark-mode
                   :transition-property        :all
@@ -477,74 +475,6 @@
                       :background-size     :contain}])
 
 
-;; TODO - This is cruft, delete when not needed
-(def base-classes
-  [
-   ;; Colorization -------------------------------------------------------------
-
-   ;; Maybe not needed with surfaces?
-   :neutralize        {:bgc                        :$background-color
-                       :dark:bgc                   :$background-color-dark-mode
-                       :c                          :$foreground-color
-                       :dark:c                     :$foreground-color-
-                       ;; TODO - really need these?
-                       :transition-property        :all
-                       :transition-timing-function :$transition-timing-function
-                       :transition-duration        :$transition-duration
-                       }
-
-   :neutralize-secondary {:bgc                        :$background-color
-                          :dark:bgc                   :$background-color-dark-mode
-                          :c                          :$foreground-color-secondary
-                          :dark:c                     :$foreground-color-secondary-dark-mode
-                          ;; TODO - really need these?
-                          :transition-property        :all
-                          :transition-timing-function :$transition-timing-function
-                          :transition-duration        :$transition-duration
-                          }
-   
-   ;; Maybe not needed?
-   :foreground-color    {:c      :$foreground-color
-                         :dark:c :$foreground-color-dark-mode}                        
-
-   :foreground-color-secondary    {:c      :$foreground-color-secondary
-                                   :dark:c :$foreground-color-secondary-dark-mode}                        
-
-
-   ;; Borders ------------------------------------------------------------------
-   ;; Maybe obsolete with surfaces?
-   :outlined              {:outline-color  :currentColor
-                           :outline-style  :solid
-                           :outline-width  :1px
-                           :outline-offset :-1px}
-   :bordered              {:border-color :currentColor
-                           :border-style :solid
-                           :border-width :1px}
-   
-
-   ;; TODO - use scale-of-utility-defs
-   ;; Divisors -----------------------------------------------------------------
-   ;; need defclass-like merging here - maybe with metadata on map?
-   ;; TODO -really need transition property on these?
-
-
-   ;; Position utility classes -------------------------------------------------
-
-   ;; Non-combo flex utility classes 
-
-   ;; :shrink-no-grow-no
-   ;; :shrink-yes-grow-no
-   ;; :shrink-yes-grow-yes
-   ;; :shrink-no-grow-yes
-
-   ])
-
-(def flex-shrink-grow-classes 
-  [:shrink {:flex-shrink 1}
-   :no-shrink {:flex-shrink 0}
-   :grow {:flex-grow 1}
-   :no-grow {:flex-grow 0}])
-
 (def icon-synced-weights
   "Creates an ordered vector of pairs, thin ~ heavy (100 ~ 900):
    [:thin 
@@ -555,17 +485,19 @@
   (mapcatv
    (fn [[k weight]]
      [k
-      (let [v (str "'wght' " weight)]
+      (let [v        (str "'wght' " weight)
+            sel      (if (= sel-fn data-ks-sels) "[data-ks-ui=\"icon\"]" ".ks-icon")
+            ancestor (if (= sel-fn data-ks-sels) "[data-ks-weight]" "[class*=\"weight-\"]")]
         {:font-weight                           
          (->> k util/stringify (str "$weight-") keyword)
 
-         " .ks-icon:font-variation-settings"
+         (str " " sel ":font-variation-settings")
          v
 
-         ".ks-icon:font-variation-settings" 
+         (str sel ":font-variation-settings") 
          v
          
-         ".ks-icon:has-ancestor([class*=\"weight-\"]):font-variation-settings"
+         (str sel ":has-ancestor(" ancestor "):font-variation-settings")
          v})])
    type-weights-by-name))
 
@@ -573,10 +505,6 @@
   ["*:disabled"
    {:opacity :45%!important ;; <-make a token $disabled-opacity
     :cursor  :not-allowed!important}
-
-   ".disabled"              
-   {:opacity "45%"} ; <- create a global :--disabled-element-opacity
-                    ;    distinct from *:disabled for inputs ?
    ])
 
 (def transition 
@@ -590,9 +518,14 @@
                                 :transition-timing-function :$transition-timing-function
                                 :transition-duration        :$transition-duration}})
 (def transition-classes
-  [:transition transition])
+  ;; class-based selector
+  #_[:transition transition]
+  ;; data-ks selector
+  ["[data-ks-transition]" transition])
 
-(def transition-duration-classes
+
+;; TODO maybe just do in css?
+#_(def transition-duration-classes
   (utility-class-scale
    (variants/tshirt-sizes [:slow :moderate :fast]
                           {:number-of-sizes 3
@@ -665,11 +598,26 @@
 (def radio-and-checkbox-synced-border-weights
   (scale-of-utility-defs
    type-weights
-   [
-    ">.ks-checkbox:outline-width"
-    ">.ks-checkbox:border-width"
-    " .ks-checkbox:outline-width"
-    " .ks-checkbox:border-width"]
+   (let [sel-checkbox
+         (if (= sel-fn data-ks-sels)
+           "[data-ks-ui=\"checkbox\"]" 
+           ".ks-checkbox")
+         
+         sel-radio
+         (if (= sel-fn data-ks-sels)
+           "[data-ks-ui=\"checkbox\"]" 
+           ".ks-checkbox")]
+     [
+      (str ">" sel-checkbox ":outline-width")
+      (str ">" sel-checkbox ":border-width")
+      (str " " sel-checkbox ":outline-width")
+      (str " " sel-checkbox ":border-width")
+      
+      (str ">" sel-radio ":outline-width")
+      (str ">" sel-radio ":border-width")
+      (str " " sel-radio ":outline-width")
+      (str " " sel-radio ":border-width")
+      ])
    {:val-prefix "input-border-weight"
     ;; :data-attr  "ks-weight"
     :acc-f      (fn [k]
@@ -828,13 +776,6 @@
      []
      sels)))
 
-;; Really need these?
-(def visibility-classes
-  [:invisible {"opacity" "0"}
-   :hidden    {"visibility" "hidden"}
-   :visible   {"visibility" "visibility"}
-   :visible   {"visibility" "visible"}
-   :collapse  {"visibility" "collapse"}]) 
 
 (def all-classes
   "All the classes"
@@ -842,88 +783,79 @@
 
    ;; base and global
    global-classes
-   (class-sels base-classes)
-
-   ;; visibility classes e.g. :.visibility-hidden
-   (class-sels visibility-classes "visibility")
 
    ;; flex-utility classes e.g. :.display-inline-flex
-   (class-sels display-classes "display")
+   (sel-fn display-classes "display")
 
    ;; flex-utility classes e.g. :.display-flex-row-flex-end
-   (class-sels base-flex-classes "display")
-   (class-sels combo-flex-utility-classes "display")
+   (sel-fn base-flex-classes "display")
+   (sel-fn combo-flex-utility-classes "display")
 
    ;; data-ks-background-image-behavior="cover"
    ;; - bg image help   ->   :.bg-image-cover, :.bg-image-contain
-   (class-sels background-image-behavior-classes "bg-image")
-
-   ;; - flex helpers    ->   :.shrink, :.no-shrink, :.grow, :.no-grow
-   (class-sels flex-shrink-grow-classes "flex")
+   (sel-fn background-image-behavior-classes "bg-image")
 
    ;; debugging outline helpers  :.outline-red
-   (class-sels debug-outline-classes "debug")
+   (sel-fn debug-outline-classes "debug")
 
    ;; foreground color
-   (class-sels foreground-color-classes "foreground")
+   ;; TODO - Remove? maybe redundant with colorway
+   #_(sel-fn foreground-color-classes "foreground")
 
    ;; - debugging       e.g. :.debug-grid-8, :.wireframe
-   (class-sels debugging-classes "debug")
-   (class-sels font-family-classes "font-family")
+   (sel-fn debugging-classes "debug")
+   
+   ;; TODO - Maybe take out?
+   (sel-fn font-family-classes "font-family")
 
    ;; - divisors        e.g. :.divisor-block-start
-   (class-sels divisor-classes "divisor")
+   ;; TODO - remove
+   #_(sel-fn divisor-classes "divisor")
 
    ;; These are combinatorial classes dealing with:
    ;; - abs fixed pos   e.g. :.absolute-block-end-inside 
-   (class-sels position-classes "position")
+   (sel-fn position-classes "position")
 
    ;; These are geometry-based absolute and fixed positioning utilities 
    ;; e.g. :.top-left-outside :.top-left-corner-outside etc.
    ;; data-ks-placement="top-left-outside"
    ;; data-ks-placement="absolute-block-end-inside "
-   (class-sels geom-top-left-corners "position")
-   (class-sels geom-top-right-corners "position")
-   (class-sels geom-bottom-left-corners "position")
-   (class-sels geom-bottom-right-corners "position")
-   (class-sels geom-left-side "position")
-   (class-sels geom-right-side "position")
-   (class-sels geom-top-side "position")
-   (class-sels geom-bottom-side "position")
+   (sel-fn geom-top-left-corners "position")
+   (sel-fn geom-top-right-corners "position")
+   (sel-fn geom-bottom-left-corners "position")
+   (sel-fn geom-bottom-right-corners "position")
+   (sel-fn geom-left-side "position")
+   (sel-fn geom-right-side "position")
+   (sel-fn geom-top-side "position")
+   (sel-fn geom-bottom-side "position")
 
    ;; offscreen positioning
-   (class-sels offscreen-classes "position")
+   (sel-fn offscreen-classes "position")
 
    ;; - abs fixed pos for pseudo   e.g. :.after-absolute-block-end-inside 
-   (class-sels pseudo-element-after-position-classes "after-position")
-   (class-sels pseudo-element-before-position-classes "before-position")
+   (sel-fn pseudo-element-after-position-classes "after-position")
+   (sel-fn pseudo-element-before-position-classes "before-position")
 
    ;; transitions, animations
-   (class-sels transition-classes)
-   (class-sels transition-duration-classes "transition")
+   transition-classes
+
+   ;; TODO maybe remove
+   #_(sel-fn transition-duration-classes "transition")
 
    ;; text weight
-   (class-sels text-weight-synced-classes "weight")
+   (sel-fn text-weight-synced-classes "weight")
 
    ;; text size
-   (class-sels text-size-classes "size")
+   (sel-fn text-size-classes "size")
 
    ;; text tracking
-   (class-sels text-tracking-classes "tracking")
+   (sel-fn text-tracking-classes "tracking")
 
    ;; surface shapes
-   (class-sels shape-classes-non-rounded "shape")
-   (class-sels shape-classes-rounded "shape")
+   (sel-fn shape-classes-non-rounded "shape")
+   (sel-fn shape-classes-rounded "shape")
 
-   
-
-  ;;  (-> text-transform-classes class-sels (wdks "text-transform"))
-  ;;  (-> elevation-level-classes class-sels (wdks "elevation" #"^elevation-" ""))
-  ;;  (-> convex-level-classes class-sels (wdks "convex" #"^convex-" ""))
-  ;;  (-> relief-effects-classes class-sels (wdks "fx"))
-  ;;  (-> icon-enhanceable-classes class-sels)
-
-
+   (sel-fn shape-classes-rounded "shape")
    ])
 
    ;; A scale of selectors like ".weight-thin"

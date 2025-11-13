@@ -13,6 +13,7 @@
                                 css
                                 ?css
                                 sx
+                                sx2
                                 ?sx
                                 defcss
                                 ?defcss
@@ -30,6 +31,7 @@
             [kushi.css.defs :as defs]
             [edamame.core :as e :refer [parse-string parse-string-all]]
             [kushi.css.specs :as kushi-specs]
+            [kushi.css.build.analyze :refer [sx2-analyze]]
             [kushi.css.build.utility-classes :as utility-classes]
             [kushi.util :refer [maybe keyed nameable? as-str kw->cssvar color-mix linear-gradient]]
             [kushi.colors2 :refer [oklch-colors]]
@@ -39,7 +41,53 @@
 
 
 
+(let [bang       "bat"
+      my-surface :solid]
 
+  #_(!? (sx2 {:selector "#hi"
+            :display  :flex-row-space-between
+            :colorway :neutral
+            :surface  my-surface
+            :inert    true
+            :position :sticky
+            :weight   :semi-bold
+            :size     :semi-bold
+            :top      0
+            :z-index  50
+            :class    ["foo" "bar" bang]
+            :style    {"--foo" "12"}
+            :id       :wtf
+            :data-hi  :yeah}
+           {:class ["baz"]
+            :style {:color "red!important"}}))
+
+  (sx2-analyze
+   [{:selector    "#hi"
+     :display     :flex-row-space-between
+     :colorway    :neutral
+     :surface     my-surface
+     :inert       true
+     :position    :sticky
+     :text-weight :semi-bold
+     :text-size   :semi-bold
+     :top         0
+     :zi          50
+     :class       ["foo" "bar" bang]
+     :style       {"--foo" "12"}
+     :id          :wtf
+     :data-hi     :yeah}
+    {:class ["baz"]
+     :color :blue
+     :style {:color "red!important"}}]
+   {}))
+
+;; 1) Pull out any ks-specific properties
+;; 2) Create map with defaults
+;; 3) Deal with strokes and shadows?
+;; 4) Put map together
+
+;; Still need to do jams at runtime? maybe not as you could mark thing
+;; Or if yes you could wrap in a runtime-checking function?
 
 
 #_(?sx ".he"

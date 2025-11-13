@@ -386,30 +386,35 @@
    ;; change to size
    :size             {:default nil
                       :desc    "Corresponds to the font-size based on Kushi's font-size scale."
-                      :class?  true
+                      :class?  true :data-ks? true 
                       :fq?     true}
 
-   :weight           {:default :normal
+   :weight           {:default nil
                       :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."
-                      :class?  true
+                      :class?  true :data-ks? true 
                       :fq?     true}
 
    :position         {:desc    "A utility class dictating the element's position."
                       :default "relative"
-                      :class?  true}
+                      :class?  true :data-ks? true }
 
    :display          {:schema  [:or :string :keyword [:vector :keyword]]
                       :desc    "A utility class dictating the element's display properties."
+                      :default nil
+                      :class?  true :data-ks? true }
+
+   :gap              {:schema  [:or :string :keyword :number [:vector [:or :string :keyword :number]]]
+                      :desc    "Controls the gap in flex and grid layouts."
                       :default "inline"
-                      :class?  true}
+                      :class?  true :data-ks? true }
 
    :colorway         {:default nil ;;  <- TODO should this be nil?
                       :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc."
-                      :class?  true}
+                      :class?  true :data-ks? true }
 
    :shape            {:desc    "Shape of the element, corresponds to a Kushi's border-radius scale"
                       :default nil
-                      :class?  true
+                      :class?  true :data-ks? true 
                       :fq?     true}
 
   ;;  :shadows                   {
@@ -429,10 +434,10 @@
                                 [:vector :any]]
                       :desc    "Controls the drop shadow. If not combined with a `:stroke`, correspondes to a design token from Kushi's shadow scale."
                       :default nil
-                      :class?  true}
+                      :class?  true :data-ks? true }
 
    :shadow-color     {:desc    "Controls the drop shadow color"
-                      :class?  true
+                      :class?  true :data-ks? true 
                       :default nil}
 
    :shadow-strength  {:schema  [:or
@@ -456,7 +461,7 @@
                                  [:tuple [:or :string :keyword] [:or :string :keyword]]]]
                       :desc    "Can be set a number of different ways"
                       :default nil
-                      :class?  true
+                      :class?  true :data-ks? true 
                       }
 
    :stroke-color     {:schema [:or :keyword :string]
@@ -469,15 +474,16 @@
    :stroke-align     {:schema  [:enum :inside :outside]
                       :default nil
                       :desc    "Alignment of the stroke. Only applies to `:surface`."
-                      :class?  true}
+                      :class?  true :data-ks? true }
 
    :stroke-width     {:schema [:or :string :keyword]
                       :desc   "Width of the stroke. Only applies to `:surface`. Locally sets the value of `--stroke-width`."
                       }
 
+
    :packing          {:default nil
                       :desc    "General amount of padding inside the element."
-                      :class?  true}
+                      :class?  true :data-ks? true }
 
    ;; TODO should this just be [:or :string :keyword] , :string for text, :keyword for icon ?
    :end-enhancer     {:schema       [:or :string :keyword [:vector :any]]
@@ -497,7 +503,7 @@
    :transition       {:schema  :boolean
                       :desc    "When `true` this will enable Kushi's default css `transition-*` values on the element and the elements `:before` and `:after` pseudo-elements"
                       :default true
-                      :class?  true
+                      :class?  true :data-ks? true 
                       }
 
    :loading          {:schema  :boolean
@@ -507,13 +513,13 @@
 
    :surface          {:desc    "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."
                       :default nil ;;  <- TODO should this be nil?
-                      :class?  true
+                      :class?  true :data-ks? true 
                       }
 
    :inert            {:schema  :boolean
                       :desc    "Surface is not interactive meaning no hover or active states."
                       :default true
-                      :class?  true
+                      :class?  true :data-ks? true 
                       }
 
    ;; Need this since it is an html attribut already?
@@ -528,7 +534,7 @@
    :icon-enhanceable {:schema  :boolean
                       :desc    "Element is enhanceable with an icon."
                       :default nil
-                      :class?  true}
+                      :class?  true :data-ks? true }
 
    :icon-style       {:desc    "Drawn style of icon, e.g. rounded, outlined, sharp"
                       :default :outlined}
@@ -548,6 +554,7 @@
 (def prop-families
   ;; TODO - should packing be in here?
   {:container [:size
+               :weight
                :colorway
                :shape
                :surface
@@ -557,12 +564,12 @@
                :inert
                :position
                :background-image-behavior
-               :fx
-               :convex
-               :elevation
                :shadow
                :shadow-color
                :shadow-strength
                :loading
                :display
                :gap]})
+
+(def generic-props
+  (into #{} (:container prop-families)))

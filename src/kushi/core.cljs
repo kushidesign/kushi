@@ -242,6 +242,7 @@
 
   (reduce merge-attrs* maps))
 
-(def mrj merge-attrs)
 
-
+(defn validator-stub [m]
+  (println "validator")
+  m)

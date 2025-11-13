@@ -3,17 +3,18 @@
    [fireworks.core :refer [? !? ?> !?> pprint]]
    [babashka.process :refer [shell]]
    [bling.core :refer [callout bling]]
+   [bling.hifi :refer [hifi]]
    [edamame.core :as e]
    [kushi.css.build.utility-classes :as utility-classes]
    [kushi.css.build.tokens :refer [design-tokens-by-category
                                    design-tokens-by-token
                                    design-tokens-by-token-array-map]]
-  ;;  [kushi.css.build.color-tokens :refer [color-tokens-by-category
-  ;;                                        color-tokens-by-token
-  ;;                                        color-tokens-by-token-array-map]]
+   ;;  [kushi.css.build.color-tokens :refer [color-tokens-by-category
+   ;;                                        color-tokens-by-token
+   ;;                                        color-tokens-by-token-array-map]]
    [kushi.css.build.state]
    [kushi.css.build.colorways :refer [colorway-selector colorway-args]]
-   [kushi.core :refer [css-rule*]]
+   [kushi.core :refer [css-rule* props+attrs+css]]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as kushi-specs]
    [kushi.util :refer [maybe keyed]]
@@ -137,6 +138,7 @@
      defcolorway
      css
      sx
+     sx2
      ?css
      ?sx
      ?defcss
@@ -299,6 +301,14 @@
       #_(when (= tag "popover")
         (? 'popover-toks toks))
       (vswap-design-tokens! toks *css))))
+
+{:ns      'wtf.foo
+ :args    []
+ :ns-meta nil
+ :ns-str  "wtf/foo"
+ :form    (with-meta '(+ 1 1) {:line 69
+                               :col  22})
+ }
 
 
 (defn css-call-data
@@ -665,10 +675,67 @@
           (? :result new-toks))
       (new-toks-callout-template  "No design tokens for " ns layer))))
 
+(defn- resolve-ruleset [macro-sym ruleset]
+  (when (= macro-sym 'sx2)
+    (? "ruleset-args, before distillation" (:args ruleset)))
+  (let [ruleset
+        (if (= macro-sym 'sx2)
+          (let [args (reduce (fn [acc m]
+                               (if (map? m)
+                                 (let [{:keys [css]} (props+attrs+css m)]
+                                   (when (seq css)
+                                     (conj acc css)))
+                                 acc))
+                             []
+                             (:args ruleset))]
+            (when (< 1 (count args))
+              ;; TODO - add warning highlighting to extra maps
+              (callout {:type        :warning
+                        :padding-top 1
+                        :side-label  (str (:rel-path ruleset) ":" (:row ruleset) ":" (:col ruleset))}
+                       "The `sx` macro should only receive 1 map with css styles."
+                       "\n"
+                       "2 maps containing css properties and values were supplied."
+                       "\n"
+                       "The first one will be used, and the rest ignored."
+                       "\n\n"
+                       (hifi (:form ruleset))
+                       ))
+            (assoc ruleset :args (take 1 args)))
+          ruleset)]
+
+    (when (= macro-sym 'sx2)
+      (? "ruleset-args, after distillation" (:args ruleset))
+      #_(? :pp (keyed [ruleset css k])))
+    
+
+    (ruleset->css ruleset)))
+
+(defn- css-includes+others [rulesets]
+  (reduce (fn [acc {:keys [css macro-sym]
+                    :as   ruleset}]
+
+            (let [[css k]
+                  (or (some-> css (vector :css-includes))
+                      (resolve-ruleset macro-sym ruleset))]
+              
+              #_(when (= macro-sym 'sx2)
+                  (? :pp (keyed [ruleset css k])))
+
+                    ;; TODO change k from :others to :css-rulesets
+              (update-in acc [k] conj css)))
+          {:css-includes []
+           :others       []}
+          rulesets))
+
 
 ;; TODO css-fp should be renamed because of clash with entry in rulesets
 (defn- spit-css-file
   [css-fp layer rulesets *css]
+
+  #_(when (= "./public/css/user-styles/site_views.css" css-fp)
+    (? rulesets))
+
   (let [debug?
         (contains? debugging :design-token-registration)
 
@@ -678,17 +745,9 @@
         used-toks
         (when debug? (:used/design-tokens @*css))
 
+        ;; TODO change k from :others to :css-rulesets
         {:keys [css-includes others]}
-        (reduce (fn [acc {:keys [css]
-                          :as   ruleset}]
-                  (let [[css k]
-                        (or (some-> css (vector :css-includes))
-                            (ruleset->css ruleset))]
-                    
-                    (update-in acc [k] conj css)))
-                {:css-includes []
-                 :others       []}
-                rulesets)
+        (css-includes+others rulesets)
 
         css-str
         (str (css-includes-block css-includes ns)
@@ -696,13 +755,13 @@
 
     ;; This is where design tokens get registered
     ;; They are identified based on the the actual css-rules produced
-
+    
     (register-design-tokens! css-str *css ns)
     (when debug? 
       (when (= ns 'kushi.ui.button)
         (new-toks-callout ns layer used-toks *css)))
     #_(when (re-find #"design-tokens" css-fp)
-      (? :pp css-fp))
+        (? :pp css-fp))
     (spit css-fp
           (str (css-includes-block css-includes ns)
                (string/join "\n\n" others))
@@ -803,7 +862,7 @@
              (contains? '#{register-design-tokens-by-category} macro-sym)
              (register-design-tokens-by-category-call-data m *css)
 
-             (contains? '#{?css css ?sx sx} macro-sym)
+             (contains? '#{?css css ?sx sx sx2} macro-sym)
              (css-call-data m *css))
            ;; prewalk return nil for perf
            nil)
