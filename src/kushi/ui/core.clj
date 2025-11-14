@@ -444,7 +444,7 @@
    body ; <- body of component
    ]
 
-  (reset! debug? (if (= sym 'header) true false))
+  (reset! debug? (if (= sym 'button) true false))
 
   (let [!dbgf
         (fn [_ x] x)
@@ -476,6 +476,7 @@
                                     ":"
                                     (:column m))))
 
+
         {:keys [merged-props user-props-with-default-values]}
         (merged-props* m fn-sym fn-info dbgf)
 
@@ -488,8 +489,14 @@
         (!? {:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
 
         data-ks-attrs-map-with-defaults
-        (!? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when @debug?} 
-         (kushi.ui.extract/data-ks-attrs {} defaults-by-prop (when @debug? :debug) #_:comptime))
+        (? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when @debug?} 
+         (assoc (kushi.ui.extract/data-ks-attrs {} 
+                                                defaults-by-prop
+                                                (when @debug? :debug) #_:comptime)
+
+                ;; TODO - perhaps make this optional from config?
+                :data-ks-defui
+                (:fn/loc-str fn-info)))
 
         ;; ks-classes-with-defaults
         ;; (!? (symbol "comptime:ks-classes-with-defaults") {:when @debug?} 
