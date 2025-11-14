@@ -220,13 +220,13 @@
 (defcss ".ks-button"
   {"--padding-inline"             :$button-padding-inline
    "--padding-block"              :$button-padding-block
-   "[data-ks-packing=\"xcompact\"]" {:--padding-inline :$button-padding-inline-xcompact
+   "[data-ks-packing=xcompact]" {:--padding-inline :$button-padding-inline-xcompact
                                      :--padding-block  :$button-padding-block-xcompact}
-   "[data-ks-packing=\"compact\"]"  {:--padding-inline :$button-padding-inline-compact
+   "[data-ks-packing=compact]"  {:--padding-inline :$button-padding-inline-compact
                                      :--padding-block  :$button-padding-block-compact}
-   "[data-ks-packing=\"roomy\"]"    {:--padding-inline :$button-padding-inline-roomy
+   "[data-ks-packing=roomy]"    {:--padding-inline :$button-padding-inline-roomy
                                      :--padding-block  :$button-padding-block-roomy}
-   "[data-ks-packing=\"xroomy\"]"   {:--padding-inline :$button-padding-inline-xroomy
+   "[data-ks-packing=xroomy]"   {:--padding-inline :$button-padding-inline-xroomy
                                      :--padding-block  :$button-padding-block-xroomy}
    ".ks-icon-button"               {:--padding-inline            :$padding-block
                                     :_.material-symbols-outlined {:min-width   :1.2ch
@@ -237,25 +237,25 @@
    "--padding-inline"             :$icon-button-padding-inline||$button-padding-inline
    :_.material-symbols-outlined {:min-width   :1.2ch
                                  :line-height :normal}
-   "[data-ks-packing=\"xcompact\"]" {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-xcompact
+   "[data-ks-packing=xcompact]" {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-xcompact
                                      :--padding-block  :$icon-button-padding-block-compact||$button-padding-block-xcompact}
-   "[data-ks-packing=\"compact\"]"  {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-compact
+   "[data-ks-packing=compact]"  {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-compact
                                      :--padding-block  :$icon-button-padding-block-compact||$button-padding-block-compact}
-   "[data-ks-packing=\"roomy\"]"    {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-roomy
+   "[data-ks-packing=roomy]"    {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-roomy
                                      :--padding-block  :$icon-button-padding-block-roomy||$button-padding-block-roomy}
-   "[data-ks-packing=\"xroomy\"]"   {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-xroomy
+   "[data-ks-packing=xroomy]"   {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-xroomy
                                      :--padding-block  :$icon-button-padding-block-roomy||$button-padding-block-xroomy}})
 
 
 ;; Move to tag ns
 (defcss ".ks-tag"
-  {"[data-ks-packing=\"xcompact\"]" {:--padding-inline :$tag-padding-inline-xcompact
+  {"[data-ks-packing=xcompact]" {:--padding-inline :$tag-padding-inline-xcompact
                                      :--padding-block  :$tag-padding-block-xcompact}
-   "[data-ks-packing=\"compact\"]"  {:--padding-inline :$tag-padding-inline-compact
+   "[data-ks-packing=compact]"  {:--padding-inline :$tag-padding-inline-compact
                                      :--padding-block  :$tag-padding-block-compact}
-   "[data-ks-packing=\"roomy\"]"    {:--padding-inline :$tag-padding-inline-roomy
+   "[data-ks-packing=roomy]"    {:--padding-inline :$tag-padding-inline-roomy
                                      :--padding-block  :$tag-padding-block-roomy}
-   "[data-ks-packing=\"xroomy\"]"   {:--padding-inline :$tag-padding-inline-xroomy
+   "[data-ks-packing=xroomy]"   {:--padding-inline :$tag-padding-inline-xroomy
                                      :--padding-block  :$tag-padding-block-xroomy}})
 
 ;; Move to switch ns
@@ -273,24 +273,24 @@
 
 
 ;; Colorway hues   ---------------------------------------------------------------------------------------------------------
-(defcss "[data-ks-colorway=\"green\"], [data-ks-colorway=\"positive\"]" {:--colorway-hue "var(--green-hue-oklch)"})
-(defcss "[data-ks-colorway=\"yellow\"], [data-ks-colorway=\"warning\"]" {:--colorway-hue "var(--yellow-hue-oklch)"})
-(defcss "[data-ks-colorway=\"blue\"], [data-ks-colorway=\"accent\"]" {:--colorway-hue "var(--blue-hue-oklch)"})
-(defcss "[data-ks-colorway=\"red\"], [data-ks-colorway=\"negative\"]" {:--colorway-hue "var(--red-hue-oklch)"})
-(defcss "[data-ks-colorway=\"neutral\"]" {:--colorway-hue :$gray-hue-oklch})
-(defcss "[data-ks-colorway=\"gray\"]"    {:--colorway-hue :$gray-hue-oklch})
-(defcss "[data-ks-colorway=\"purple\"]"  {:--colorway-hue :$purple-hue-oklch})
-(defcss "[data-ks-colorway=\"magenta\"]" {:--colorway-hue :$magenta-hue-oklch})
-(defcss "[data-ks-colorway=\"brown\"]"   {:--colorway-hue :$brown-hue-oklch})
-(defcss "[data-ks-colorway=\"orange\"]"  {:--colorway-hue :$orange-hue-oklch})
-(defcss "[data-ks-colorway=\"gold\"]"    {:--colorway-hue :$gold-hue-oklch})
-(defcss "[data-ks-colorway=\"lime\"]"    {:--colorway-hue :$lime-hue-oklch})
+(defcss "[data-ks-colorway=green], [data-ks-colorway=positive]" {:--colorway-hue "var(--green-hue-oklch)"})
+(defcss "[data-ks-colorway=yellow], [data-ks-colorway=warning]" {:--colorway-hue "var(--yellow-hue-oklch)"})
+(defcss "[data-ks-colorway=blue], [data-ks-colorway=accent]" {:--colorway-hue "var(--blue-hue-oklch)"})
+(defcss "[data-ks-colorway=red], [data-ks-colorway=negative]" {:--colorway-hue "var(--red-hue-oklch)"})
+(defcss "[data-ks-colorway=neutral]" {:--colorway-hue :$gray-hue-oklch})
+(defcss "[data-ks-colorway=gray]"    {:--colorway-hue :$gray-hue-oklch})
+(defcss "[data-ks-colorway=purple]"  {:--colorway-hue :$purple-hue-oklch})
+(defcss "[data-ks-colorway=magenta]" {:--colorway-hue :$magenta-hue-oklch})
+(defcss "[data-ks-colorway=brown]"   {:--colorway-hue :$brown-hue-oklch})
+(defcss "[data-ks-colorway=orange]"  {:--colorway-hue :$orange-hue-oklch})
+(defcss "[data-ks-colorway=gold]"    {:--colorway-hue :$gold-hue-oklch})
+(defcss "[data-ks-colorway=lime]"    {:--colorway-hue :$lime-hue-oklch})
 
 
 ;; Surface styles  ---------------------------------------------------------------------------------------------------------
 
 ;; neutralize chroma shift
-(defcss "[data-ks-surface][data-ks-colorway=\"neutral\"], [data-ks-surface][data-ks-colorway=\"gray\"]" 
+(defcss "[data-ks-surface][data-ks-colorway=neutral], [data-ks-surface][data-ks-colorway=gray]" 
   {:--chroma-bgc   :0%
    :--chroma-fgc   :0%
    :--chroma-shift :0%
@@ -298,7 +298,7 @@
                     :--chroma-fgc   :0%
                     :--chroma-shift :0%}})
 
-(defcss "[data-ks-surface=\"solid\"], [data-ks-surface=\"solid-classic\"], [data-ks-surface=\"soft\"], [data-ks-surface=\"soft-classic\"], [data-ks-surface=\"faint\"], [data-ks-surface=\"convex\"], [data-ks-surface=\"minimal\"], [data-ks-surface=\"transparent\"], [data-ks-surface=\"minimal-light-mode\"], [data-ks-surface=\"convex-light-mode\"]"
+(defcss "[data-ks-surface=solid], [data-ks-surface=solid-classic], [data-ks-surface=soft], [data-ks-surface=soft-classic], [data-ks-surface=faint], [data-ks-surface=convex], [data-ks-surface=minimal], [data-ks-surface=transparent], [data-ks-surface=minimal-light-mode], [data-ks-surface=convex-light-mode]"
   {:--hover-bgc    "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) var(--lightness-shift)) calc(var(--chroma-bgc) var(--chroma-shift-op, +) var(--chroma-shift)) var(--colorway-hue))"
    :--active-bgc   "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) (2 * var(--lightness-shift))) calc(var(--chroma-bgc) var(--chroma-shift-op, +) calc(2 * var(--chroma-shift))) var(--colorway-hue))"
    :--bgc          "oklch(var(--lightness-bgc) var(--chroma-bgc) var(--colorway-hue))"
@@ -307,11 +307,11 @@
                       :--hover-bgc  :$bgc
                       :--active-bgc :$bgc}})
 
-(defcss "[data-ks-surface=\"transparent\"]"
+(defcss "[data-ks-surface=transparent]"
   {:--fgc "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))"})
 
 ;; Solids
-(defcss "[data-ks-surface=\"solid\"], [data-ks-surface=\"solid-classic\"]"
+(defcss "[data-ks-surface=solid], [data-ks-surface=solid-classic]"
   {:--lightness-bgc           :54%
    :--chroma-bgc              :55%
    :--chroma-shift            :6.25%
@@ -321,26 +321,26 @@
    :hover:bgc                 :$hover-bgc
    :active:bgc                :$active-bgc
    :color                     :white
-   "[data-ks-colorway=\"brown\"]" {:--chroma-bgc :20%}
+   "[data-ks-colorway=brown]" {:--chroma-bgc :20%}
    :dark                      {:--lightness-bgc           :69%
                                :--chroma-bgc              :52%
                                :color                     :black
                                :--chroma-shift-op         "-"
                                :--lightness-shift-op      "+"
                                :--classic-trim-color      "oklch(75% 48.5% var(--colorway-hue))" 
-                               "[data-ks-colorway=\"brown\"]" {:--chroma-bgc :20%}}})
+                               "[data-ks-colorway=brown]" {:--chroma-bgc :20%}}})
 
-(defcss "[data-ks-surface=\"solid-classic\"][data-ks-colorway=\"neutral\"], [data-ks-surface=\"solid-classic\"][data-ks-colorway=\"gray\"]"
+(defcss "[data-ks-surface=solid-classic][data-ks-colorway=neutral], [data-ks-surface=solid-classic][data-ks-colorway=gray]"
   {:--classic-trim-color "oklch(62% 0% var(--colorway-hue))"})
 
-(defcss "[data-ks-surface=\"soft\"], [data-ks-surface=\"soft-classic\"], [data-ks-surface=\"faint\"], [data-ks-surface=\"convex\"], [data-ks-surface=\"minimal\"], [data-ks-surface=\"transparent\"]"
+(defcss "[data-ks-surface=soft], [data-ks-surface=soft-classic], [data-ks-surface=faint], [data-ks-surface=convex], [data-ks-surface=minimal], [data-ks-surface=transparent]"
   {:--chroma-shift                :6.25% 
    :--lightness-shift             :4% 
    :color                         :$fgc
    :hover:bgc                     :$hover-bgc
    :active:bgc                    :$active-bgc
-   "[data-ks-colorway=\"brown\"]"     {:--chroma-shift :2% }
-   "[data-ks-colorway=\"secondary\"]" {:color :$foreground-color-secondary
+   "[data-ks-colorway=brown]"     {:--chroma-shift :2% }
+   "[data-ks-colorway=secondary]" {:color :$foreground-color-secondary
                                        :dark  :$foreground-color-secondary-dark-mode}
   ;;  :dark                       {:--chroma-shift-op    "-"
   ;;                               :--lightness-shift-op "+"
@@ -350,7 +350,7 @@
    }) 
 
 ;; Softs
-(defcss "[data-ks-surface=\"soft\"], [data-ks-surface=\"soft-classic\"]" 
+(defcss "[data-ks-surface=soft], [data-ks-surface=soft-classic]" 
   {:--lightness-bgc           :94.25%
    :--chroma-bgc              :15.75%
    :--lightness-fgc           :30%
@@ -358,22 +358,22 @@
    :--classic-trim-color      "oklch(91% 10% var(--colorway-hue))" 
       ;;  :color                :$fgc
    :bgc                       :$bgc
-   "[data-ks-colorway=\"brown\"]" {:--chroma-bgc :6%}
+   "[data-ks-colorway=brown]" {:--chroma-bgc :6%}
    :dark                      {:--lightness-bgc           :39%
                                :--chroma-bgc              :35.6%
                                :--lightness-fgc           :95.7%
                                :--chroma-fgc              :8.8%
                                :--classic-trim-color      "oklch(36% 30% var(--colorway-hue))" 
-                               "[data-ks-colorway=\"brown\"]" {:--chroma-bgc :16%}
+                               "[data-ks-colorway=brown]" {:--chroma-bgc :16%}
                                }})
 
 ;; Convex, dark
- (defcss "[data-ks-surface=\"convex\"]"
+ (defcss "[data-ks-surface=convex]"
    {:dark {:--lightness-bgc           :39%
            :--chroma-bgc              :33%
            :--lightness-fgc           :95.7%
            :--chroma-fgc              :8.8%
-           "[data-ks-colorway=\"brown\"]" {:--chroma-bgc    :17%
+           "[data-ks-colorway=brown]" {:--chroma-bgc    :17%
                                            :--lightness-bgc :39%}
           ;;  :color           :$fgc
            :bgc                       :$bgc
@@ -382,51 +382,51 @@
            }})
 
 ;; Neutral
-(defcss "[data-ks-surface=\"soft-classic\"][data-ks-colorway=\"neutral\"], [data-ks-surface=\"soft-classic\"][data-ks-colorway=\"gray\"]"
+(defcss "[data-ks-surface=soft-classic][data-ks-colorway=neutral], [data-ks-surface=soft-classic][data-ks-colorway=gray]"
   {:--classic-trim-color "oklch(91% 0% var(--colorway-hue))"})
 
 ;; Faint
-(defcss "[data-ks-surface=\"faint\"], [data-ks-surface=\"convex\"]" 
+(defcss "[data-ks-surface=faint], [data-ks-surface=convex]" 
   {:--lightness-bgc :98%
    :--lightness-fgc :44%
    :--chroma-bgc    :6.25%
    :--chroma-fgc    :46.25%
    ;;  :color           :$fgc
    :bgc             :$bgc
-   "[data-ks-colorway=\"brown\"]"  {:--chroma-bgc    :3%
+   "[data-ks-colorway=brown]"  {:--chroma-bgc    :3%
                                     :--lightness-bgc :97%}
    ":dark"            {:--lightness-bgc           :26%
                        :--chroma-bgc              :26%
                        :--lightness-fgc           :92%
                        :--chroma-fgc              :25%
-                       "[data-ks-colorway=\"brown\"]" {:--chroma-bgc    :14%
+                       "[data-ks-colorway=brown]" {:--chroma-bgc    :14%
                                                        :--lightness-bgc :28%}}})
 
 ;; Convex, dark
-(defcss "[data-ks-surface=\"convex\"]" 
+(defcss "[data-ks-surface=convex]" 
   {:dark {:--lightness-bgc :37%
           :--chroma-bgc    :34.6%
           :--lightness-fgc :95.7%
           :--chroma-fgc    :8.8%
-          "[data-ks-colorway=\"brown\"]"  {:--chroma-bgc :14%
+          "[data-ks-colorway=brown]"  {:--chroma-bgc :14%
                               :--lightness-bgc :39%}}})
 
 ;; Transparent
-(defcss "[data-ks-surface=\"transparent\"], [data-ks-surface=\"minimal\"]" 
+(defcss "[data-ks-surface=transparent], [data-ks-surface=minimal]" 
   {:--chroma-fgc    :46.25%
    :--lightness-fgc :44%
    :dark            {:--lightness-fgc :88%
                      :--chroma-fgc    :44%}})
 
 ;; Minimal, dark
-(defcss "[data-ks-surface=\"minimal\"]" 
+(defcss "[data-ks-surface=minimal]" 
   {:dark {:--lightness-bgc :26%
           :--chroma-bgc    :26%
-          "[data-ks-colorway=\"brown\"]"  {:--chroma-bgc    :14%
+          "[data-ks-colorway=brown]"  {:--chroma-bgc    :14%
                               :--lightness-bgc :28%}}})
 
 ;; Minimal
-(defcss "[data-ks-surface=\"minimal\"], [data-ks-surface=\"minimal-light-mode\"], [data-ks-surface=\"convex-light-mode\"]" 
+(defcss "[data-ks-surface=minimal], [data-ks-surface=minimal-light-mode], [data-ks-surface=convex-light-mode]" 
   {:--lightness-bgc :100% 
    :--lightness-fgc :44%
    :--chroma-bgc    :0%
@@ -434,11 +434,11 @@
    :bgc             :$background-color ; <- body background color (change name globablly?)
    })
 
-(defcss "[data-ks-surface=\"minimal\"]" 
+(defcss "[data-ks-surface=minimal]" 
   {:dark:bgc :$background-color-dark-mode ; <- body background color (change name globablly?)
    })
 
-(defcss "[data-ks-surface=\"transparent\"]"
+(defcss "[data-ks-surface=transparent]"
   {:bgc        :transparent
    :hover:bgc  :transparent
    :active:bgc :transparent
@@ -447,7 +447,7 @@
                 :active:bgc :transparent}})
 
 ;; Classic details
-(defcss "[data-ks-surface=\"solid-classic\"], [data-ks-surface=\"soft-classic\"]"
+(defcss "[data-ks-surface=solid-classic], [data-ks-surface=soft-classic]"
   {:box-shadow "inset 0 0 0 1px var(--transparent-black-10), inset 0 -2px 1px var(--transparent-black-20), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--top-rim-highlight-color, var(--transparent-white-80)), inset 0 2px 1px -1px var(--transparent-white-80)"
    :bgi        "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
    :z-index    0
@@ -463,7 +463,7 @@
                 :background-image "linear-gradient(var(--transparent-black-05), #0000, var(--transparent-white-10))"
                 :box-shadow       "inset 0 2px 3px -1px var(--transparent-white-30)"}})
 
-(defcss "[data-ks-surface=\"soft-classic\"]"
+(defcss "[data-ks-surface=soft-classic]"
   {:dark:text-shadow "0 0px 2px var(--transparent-black-40), 0 -0.5px 0px var(--transparent-black-70)"
    :text-shadow      "0 0.5px 0px var(--transparent-white-100)"
    :box-shadow       "inset 0 0 0 1px var(--transparent-black-05), inset 0 -2px 1px var(--transparent-black-10), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-100), inset 0 2px 1px -1px var(--transparent-white-100)"
@@ -471,21 +471,21 @@
    :bgi              "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
    :dark:bgi         "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color-dark) 80%)"})
 
-(defcss "[data-ks-surface=\"solid-classic\"]"
+(defcss "[data-ks-surface=solid-classic]"
   {:text-shadow "0 0px 2px var(--transparent-black-30)"
    :dark        {:--top-rim-highlight-color :$transparent-white-50
                  :text-shadow               "0 0.5px 0px var(--transparent-white-40)"
                  :after:bgi                 "linear-gradient(var(--transparent-black-15), #0000, var(--transparent-white-20))"}})
 
 ;; Convex
-(defcss "[data-ks-surface=\"convex\"], [data-ks-surface=\"convex-light-mode\"]"
+(defcss "[data-ks-surface=convex], [data-ks-surface=convex-light-mode]"
   {:--convex-shadow-strength      "20%"
    :dark:--convex-shadow-strength "30%"
    :--convex-shadow-lightness-bgc "calc(var(--lightness-bgc) - (var(--convex-shadow-strength) / 3))"
    :--convex-shadow-chroma        "calc(var(--chroma-bgc) + (var(--convex-shadow-strength) / 6))"
    :--convex-shadow-chroma-hover  "calc(var(--convex-shadow-chroma) var(--chroma-shift-op, +) calc(2 * var(--chroma-shift)))"
    :--convex-shadow-chroma-active "calc(var(--convex-shadow-chroma) var(--chroma-shift-op, +) calc(3 * var(--chroma-shift)))"
-   "[data-ks-colorway=\"neutral\"]"   {:--convex-shadow-chroma        "var(--chroma-bgc)"
+   "[data-ks-colorway=neutral]"   {:--convex-shadow-chroma        "var(--chroma-bgc)"
                                        :--convex-shadow-chroma-hover  "var(--chroma-bgc)"
                                        :--convex-shadow-chroma-active "var(--chroma-bgc)"}
    :background-image              "linear-gradient(180deg, transparent, transparent 15%, oklch(var(--convex-shadow-lightness-bgc) calc(var(--convex-shadow-chroma) + calc(1 * var(--chroma-shift))) var(--colorway-hue)))"
@@ -495,45 +495,45 @@
    })
 
 ; Surface stroking ---------------------------------------------------------------------------------------------------------
-(defcss "[class*=\"surface-\"][class*=\"stroke-\"]"
-  {"[data-ks-stroke-align=\"outside\"]" {"--stroke-inset" ""}
+(defcss "[data-ks-surface][data-ks-stroke]"
+  {"[data-ks-stroke-align=outside]" {"--stroke-inset" ""}
    :--box-shadow-for-stroke         "var(--stroke-inset, inset) 0 0 0 var(--stroke-width, var(--element-stroke-width, 1px)) color-mix(in oklch, currentColor var(--stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))" 
    :box-shadow                      "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)" 
-   "[data-ks-stroke=\"none\"]"          {:--stroke-transparency :0%}
-   "[data-ks-stroke=\"xsoft\"]"         {:--stroke-transparency :$xsoft-stroke-transparency}
-   "[data-ks-stroke=\"soft\"]"          {:--stroke-transparency :$soft-stroke-transparency}
-   "[data-ks-stroke=\"medium\"]"        {:--stroke-transparency :$medium-stroke-transparency}
-   "[data-ks-stroke=\"hard\"]"          {:--stroke-transparency :$hard-stroke-transparency}
-   "[data-ks-stroke=\"xhard\"]"         {:--stroke-transparency :$xhard-stroke-transparency}})
+   "[data-ks-stroke=none]"          {:--stroke-transparency :0%}
+   "[data-ks-stroke=xsoft]"         {:--stroke-transparency :$xsoft-stroke-transparency}
+   "[data-ks-stroke=soft]"          {:--stroke-transparency :$soft-stroke-transparency}
+   "[data-ks-stroke=medium]"        {:--stroke-transparency :$medium-stroke-transparency}
+   "[data-ks-stroke=hard]"          {:--stroke-transparency :$hard-stroke-transparency}
+   "[data-ks-stroke=xhard]"         {:--stroke-transparency :$xhard-stroke-transparency}})
 
 ;; Surface shadowing ---------------------------------------------------------------------------------------------------------
-(defcss "[class*=\"surface-\"][class*=\"shadow-\"]" 
+(defcss "[data-ks-surface][data-ks-shadow]" 
   {
-   "[data-ks-shadow=\"xxxsmall\"]"       {:--shadow :$shadow-xxxsmall}
-   "[data-ks-shadow=\"xxsmall\"]"        {:--shadow :$shadow-xxsmall}
-   "[data-ks-shadow=\"xsmall\"]"         {:--shadow :$shadow-xsmall}
-   "[data-ks-shadow=\"small\"]"          {:--shadow :$shadow-small}
-   "[data-ks-shadow=\"medium\"]"         {:--shadow :$shadow-medium}
-   "[data-ks-shadow=\"large\"]"          {:--shadow :$shadow-large}
-   "[data-ks-shadow=\"xlarge\"]"         {:--shadow :$shadow-xlarge}
-   "[data-ks-shadow=\"xxlarge\"]"        {:--shadow :$shadow-xxlarge}
-   "[data-ks-shadow=\"xxxlarge\"]"       {:--shadow :$shadow-xxxlarge}
-   "[data-ks-shadow-color=\"positive\"]" {:--shadow-color :$positive-500},
-   "[data-ks-shadow-color=\"neutral\"]"  {:--shadow-color :$neutral-500},
-   "[data-ks-shadow-color=\"negative\"]" {:--shadow-color :$negative-500},
-   "[data-ks-shadow-color=\"purple\"]"   {:--shadow-color :$purple-500},
-   "[data-ks-shadow-color=\"magenta\"]"  {:--shadow-color :$magenta-500},
-   "[data-ks-shadow-color=\"accent\"]"   {:--shadow-color :$accent-500},
-   "[data-ks-shadow-color=\"brown\"]"    {:--shadow-color :$brown-500},
-   "[data-ks-shadow-color=\"blue\"]"     {:--shadow-color :$blue-500},
-   "[data-ks-shadow-color=\"orange\"]"   {:--shadow-color :$orange-500},
-   "[data-ks-shadow-color=\"gray\"]"     {:--shadow-color :$gray-500},
-   "[data-ks-shadow-color=\"warning\"]"  {:--shadow-color :$warning-500},
-   "[data-ks-shadow-color=\"green\"]"    {:--shadow-color :$green-500},
-   "[data-ks-shadow-color=\"gold\"]"     {:--shadow-color :$gold-500},
-   "[data-ks-shadow-color=\"lime\"]"     {:--shadow-color :$lime-500},
-   "[data-ks-shadow-color=\"yellow\"]"   {:--shadow-color :$yellow-500},
-   "[data-ks-shadow-color=\"red\"]"      {:--shadow-color :$red-500}})
+   "[data-ks-shadow=xxxsmall]"       {:--shadow :$shadow-xxxsmall}
+   "[data-ks-shadow=xxsmall]"        {:--shadow :$shadow-xxsmall}
+   "[data-ks-shadow=xsmall]"         {:--shadow :$shadow-xsmall}
+   "[data-ks-shadow=small]"          {:--shadow :$shadow-small}
+   "[data-ks-shadow=medium]"         {:--shadow :$shadow-medium}
+   "[data-ks-shadow=large]"          {:--shadow :$shadow-large}
+   "[data-ks-shadow=xlarge]"         {:--shadow :$shadow-xlarge}
+   "[data-ks-shadow=xxlarge]"        {:--shadow :$shadow-xxlarge}
+   "[data-ks-shadow=xxxlarge]"       {:--shadow :$shadow-xxxlarge}
+   "[data-ks-shadow-color=positive]" {:--shadow-color :$positive-500},
+   "[data-ks-shadow-color=neutral]"  {:--shadow-color :$neutral-500},
+   "[data-ks-shadow-color=negative]" {:--shadow-color :$negative-500},
+   "[data-ks-shadow-color=purple]"   {:--shadow-color :$purple-500},
+   "[data-ks-shadow-color=magenta]"  {:--shadow-color :$magenta-500},
+   "[data-ks-shadow-color=accent]"   {:--shadow-color :$accent-500},
+   "[data-ks-shadow-color=brown]"    {:--shadow-color :$brown-500},
+   "[data-ks-shadow-color=blue]"     {:--shadow-color :$blue-500},
+   "[data-ks-shadow-color=orange]"   {:--shadow-color :$orange-500},
+   "[data-ks-shadow-color=gray]"     {:--shadow-color :$gray-500},
+   "[data-ks-shadow-color=warning]"  {:--shadow-color :$warning-500},
+   "[data-ks-shadow-color=green]"    {:--shadow-color :$green-500},
+   "[data-ks-shadow-color=gold]"     {:--shadow-color :$gold-500},
+   "[data-ks-shadow-color=lime]"     {:--shadow-color :$lime-500},
+   "[data-ks-shadow-color=yellow]"   {:--shadow-color :$yellow-500},
+   "[data-ks-shadow-color=red]"      {:--shadow-color :$red-500}})
 
 
 ;; Shadows experimentation cruft ------------------------------------------------------
@@ -558,24 +558,24 @@
                        (str "&[data-ks-shadow-color=\"" color "\"]" )
                        {:--shadow-color (keyword (str "$" color "-500"))}))
               {})
-      (list 'defcss "[class*=\"surface-\"][class*=\"shadow-\"]")))
+      (list 'defcss "[data-ks-surface][data-ks-shadow]")))
  
 
 ;; legacy-version
-;; (defcss "[class*=\"surface-\"][class*=\"shadow-\"][data-ks-shadow-color=\"red\"]" 
+;; (defcss "[data-ks-surface][data-ks-shadow][data-ks-shadow-color=red]" 
 ;;   {
 ;;    :--shadow-color-red-h-s-l         "10 100 50" ; <- this would be in :root
 ;;    :--shadow-color-h-s-l             :$shadow-color-red-h-s-l})
 
 ;; super legacy-version, no support for shadow-strength
-;; (defcss "[class*=\"surface-\"][class*=\"shadow-\"][data-ks-shadow-color=\"red\"]" 
+;; (defcss "[data-ks-surface][data-ks-shadow][data-ks-shadow-color=red]" 
 ;;   {
 ;;    :--shadow-color-red-hex         "#f908244d" ; <- this would be in :root
 ;;    :--shadow-color-hex             :$shadow-color-red-hex})
 
 
 ;; modern version
-#_(defcss "[class*=\"surface-\"][class*=\"shadow-\"]" 
+#_(defcss "[data-ks-surface][data-ks-shadow]" 
   {
    :--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 20%), transparent)"
   ;;  :--transparent-shadow-color-1 "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 2%), transparent)"
@@ -583,19 +583,19 @@
    })
 
 ;; legacy version
-;; (defcss "[class*=\"surface-\"][class*=\"shadow-\"]" 
+;; (defcss "[data-ks-surface][data-ks-shadow]" 
 ;;   {:--shadow-color-h-s-l     "0 0 0"
 ;;    :--shadow-strength      "20%"
 ;;    ;; TODO - figure out whether the slash "/" syntax works in older browsers
 ;;    :--transparent-shadow-color "hsl(var(--shadow-color-h-s-l) / var(--shadow-strength))"})
 
 ;; super-legacy version
-;; (defcss "[class*=\"surface-\"][class*=\"shadow-\"]" 
+;; (defcss "[data-ks-surface][data-ks-shadow]" 
 ;;   {;; TODO - figure out whether the slash "/" syntax works in older browsers
 ;;    :--transparent-shadow-color "var(--shadow-color-hex)"})
 
 
-;; (defcss "[class*=\"surface-\"][class*=\"shadow-\"]" 
+;; (defcss "[data-ks-surface][data-ks-shadow]" 
 ;;   {:box-shadow "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)"})
 
    

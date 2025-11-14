@@ -160,7 +160,7 @@
    :bc                                :$gray-300
    :dark:bc                           :$gray-700
    :mb                                :10px
-   " [data-ks-kushi=\"input\"]:min-width" :220px})
+   " [data-ks-kushi=input]:min-width" :220px})
 
 (defcss "@layer kushi-playground-shared
          .kushi-playground-demobox"
@@ -168,13 +168,13 @@
    :_.kushi-playground-examples-input-row-wrapper:min-height       :50px
    :_.kushi-playground-examples-input-row-wrapper:padding-block    :0.75em
    :md:_.kushi-playground-examples-input-row-wrapper:padding-block :0.5em
-   " [data-ks-kushi=\"radio\"]:margin-inline"                          :0:0.666em
-   " [data-ks-kushi=\"radio\"]:margin-block"                           :0.125em})
+   " [data-ks-kushi=radio]:margin-inline"                          :0:0.666em
+   " [data-ks-kushi=radio]:margin-block"                           :0.125em})
 
 (defcss "@layer kushi-playground-shared
          .kushi-playground-demobox-ui-icon"
   {:fs                                :1rem!important
-   ">div[data-ks-kushi=\"icon\"]>span:fs" :1rem!important
+   ">div[data-ks-kushi=icon]>span:fs" :1rem!important
    :b                                 :none!important
    :bw                                :0!important
    :padding                           :0.425em!important

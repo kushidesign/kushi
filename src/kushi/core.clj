@@ -8,7 +8,7 @@
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as specs]
    [kushi.css.build.colorways :refer [colorway-args colorway-selector]]
-   [kushi.util :refer [keyed vec-of-vecs? more-than-one? partition-by-pred as-str maybe]]
+   [kushi.util :as util :refer [keyed vec-of-vecs? more-than-one? partition-by-pred as-str maybe]]
    [kushi.specs2 :as specs2]
    [clojure.walk :as walk :refer [prewalk postwalk]]
    [clojure.string :as string :refer [replace] :rename {replace sr}]
@@ -505,6 +505,7 @@
         ret*            (into [] (concat non-nested nested-rules))]
     (lvfha-order ret* all-nested-sels)))
 
+
 (defn group-shared
   [v]
   (let [debug? false #_(= v [:a :b])]
@@ -518,12 +519,15 @@
                                      frequencies
                                      (keep (fn [[sel n]] (when (> n 1) sel)))
                                      (into #{}))]
-          ;;  (when debug? (!? dupe-nested-sels))
+           ;; (when debug? (!? dupe-nested-sels))
            (if (seq dupe-nested-sels)
              (group-shared* v all-nested-sels dupe-nested-sels)
              (order-nested-rules v all-nested-sels nested-rules)))
          (order-nested-rules v all-nested-sels nested-rules)))
-     v)))
+
+     (if (string? v)
+       (util/double-quote-data-attr-selector-values v)
+       v))))
 
 
 ;; HHHHHHHHH     HHHHHHHHHLLLLLLLLLLL             PPPPPPPPPPPPPPPPP   
@@ -991,7 +995,10 @@
   ;; Check if user supplied bad at-rule name, forgetting a leading "@".
   #_(when (= sel ".colorway-neutral")
     (!? :pp args #_(-> args first keys)))
-  (let [fname (or (when-let [sym (nth &form 0 nil)]
+  (let [sel   (if (string? sel)
+                (util/double-quote-data-attr-selector-values sel)
+                sel)
+        fname (or (when-let [sym (nth &form 0 nil)]
                     (when (contains? '#{sx defcss} sym)
                       (str "kushi.core/" sym)))
                   "kushi.core/css-rule")] 
@@ -1310,7 +1317,7 @@
 (defn- sx2* [m &form &env]
   (let [selector         (:selector m)
         m                (dissoc m :selector)
-        ret              (? (props+attrs+css m))
+        ret              (!? (props+attrs+css m))
         args             (if selector [selector m] [m])
         m+               (!? 'm+ (merge ret (classes+class-binding args &form &env)))
         class-map        (class-map selector m+)
@@ -1358,7 +1365,7 @@
    The :selector key can be one of the following patterns:
    \".foo\"
    \"#foo\"
-   \"[data-ks-ui=\"foo\"]\"
+   \"[data-ks-ui=foo]\"
    
    Examples:
 

@@ -173,10 +173,10 @@
                {:gap                                                                
                 :0.5em
 
-                "lg:_[data-ks-kushi=\"icon\"]:d"                                        
+                "lg:_[data-ks-kushi=icon]:d"                                        
                 :none
 
-                "_[data-ks-kushi=\"icon\"].sidenav-close-icon:d"                        
+                "_[data-ks-kushi=icon].sidenav-close-icon:d"                        
                 :none
 
                 "has-ancestor(nav[data-ks-playground-sidenav][aria-expanded=\"true\"])" 

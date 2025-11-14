@@ -254,3 +254,10 @@
        map-css-tuple-args
        (into ["linear-gradient" direction])
        (apply css-fn)))
+
+(defn double-quote-data-attr-selector-values [v]
+  (if (re-find #"=" v)
+      (string/replace v
+                      #"\[([a-z-\*\|\$\~\^]+)=([^\"\]]+)\]"
+                      "[$1=\"$2\"]")
+       v))

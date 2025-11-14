@@ -188,10 +188,10 @@
     (if t
       (let [;; The first branch of this `if` is a check to see
             ;; if we are dealing with something like:
-            ;; "checked+[data-ks-kushi=\"label\"]>.emoji"
+            ;; "checked+[data-ks-kushi=label]>.emoji"
 
             ;; which would have been split from something like:
-            ;; " [data-ks-kushi-radio=\"input\"]:checked+[data-ks-kushi=\"label\"]>.emoji"
+            ;; " [data-ks-kushi-radio=input]:checked+[data-ks-kushi=label]>.emoji"
             
             ;; If first bit is a css pseudoclass like ":checked", we need to
             ;; prepend a ":" 

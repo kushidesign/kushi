@@ -49,7 +49,21 @@
 ;; (? {:coll-limit 320} shorthand/all-props-as-kws)
 
 
-(let [bang       "bat"
+(!? :pp 
+   (string/replace "&[data-ks-shadow=xxxsmall][data-ks-size=small]"
+                   #"\[([a-z-\*\|\$\~\^]+)=([^\"\]]+)\]"
+                   "[$1=\"$2\"]"
+
+                   #_#(str "[" %1 "=" %2 "]")
+
+                   ))
+
+(?defcss "[data-ks-surface=solid][data-ks-shadow=medium]" 
+  {
+   "[data-ks-shadow=xxxsmall]" {"[data-ks-foo=bar]" {:--shadow 1}}})
+
+
+#_(let [bang       "bat"
       my-surface :solid]
 
   (!? (sx2 {:selector        "#hi"
