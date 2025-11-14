@@ -20,7 +20,8 @@
   ;;  [taoensso.tufte :as tufte]
    
    
-   [kushi.cssprops :as cssprops]))
+   [kushi.cssprops :as cssprops]
+   [kushi.css.shorthand :as shorthand]))
 
 ;; EEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR   RRRRRRRRRRRRRRRRR   
 ;; E::::::::::::::::::::ER::::::::::::::::R  R::::::::::::::::R  
@@ -1221,9 +1222,25 @@
              alternate-selectors))))
 
 
+
 ;; -----------------------------------------------------------------------------
 ;; sx2 Start 
 ;; -----------------------------------------------------------------------------
+
+(defn- extract-css-props* [k]
+  (or (contains? shorthand/all-props-as-kws k)
+      (contains? cssprops/cherries-set k)
+      (contains? cssprops/non-cherries-set k)))
+
+(defn ^:public extract-css-props
+  [m]
+  (reduce-kv 
+   (fn [acc k v]
+     (if (extract-css-props* k)
+       (assoc-in acc k v)
+       acc))
+   {}
+   (dissoc m :selector)))
 
 (defn ^:public props+attrs+css
   [m]
@@ -1239,8 +1256,7 @@
                  (-> k name (string/starts-with? "data-"))
                  [:attrs k]
 
-                 (or (contains? cssprops/cherries-set (? k))
-                     (contains? cssprops/non-cherries-set k))
+                 (extract-css-props* k)
                  [:css k]
 
                  :else

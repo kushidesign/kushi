@@ -14,7 +14,7 @@
    ;;                                        color-tokens-by-token-array-map]]
    [kushi.css.build.state]
    [kushi.css.build.colorways :refer [colorway-selector colorway-args]]
-   [kushi.core :refer [css-rule* props+attrs+css]]
+   [kushi.core :refer [css-rule* extract-css-props]]
    [kushi.css.hydrated :as hydrated]
    [kushi.css.specs :as kushi-specs]
    [kushi.util :refer [maybe keyed]]
@@ -682,7 +682,7 @@
         (if (= macro-sym 'sx2)
           (let [args (reduce (fn [acc m]
                                (if (map? m)
-                                 (let [{:keys [css]} (props+attrs+css m)]
+                                 (let [{:keys [css]} (extract-css-props)]
                                    (when (seq css)
                                      (conj acc css)))
                                  acc))

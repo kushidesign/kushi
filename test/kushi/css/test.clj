@@ -36,7 +36,8 @@
             [kushi.util :refer [maybe keyed nameable? as-str kw->cssvar color-mix linear-gradient]]
             [kushi.colors2 :refer [oklch-colors]]
             [taoensso.tufte :as tufte :refer [p profile]]
-            [me.flowthing.pp :as pp]))
+            [me.flowthing.pp :as pp]
+            [kushi.css.shorthand :as shorthand]))
 
 
 (!? cssprops/by-alphabetical-index)
@@ -45,6 +46,7 @@
 ;; (? {:coll-limit 320} cssprops/non-cherries-set)
 ;; (? {:coll-limit 320} cssprops/shorthands)
 ;; (? {:coll-limit 320} cssprops/cherries)
+;; (? {:coll-limit 320} shorthand/all-props-as-kws)
 
 
 (let [bang       "bat"
@@ -59,6 +61,7 @@
             :weight          :semi-bold
             :size            :semi-bold
             :my-custom-prop  :yeah
+            :bssr            :10px
             :top             0
             :z-index         50
             :x               23

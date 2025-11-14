@@ -516,3 +516,11 @@
                                                     "i" "inset",
                                                     "o" "outset"}},
    :max-shorthand-len 4})
+
+(def all-props-as-kws
+  (->> (select-keys shorthand-syntax [1 2 3])
+       vals
+       (mapv keys)
+       (apply concat)
+       (mapv keyword)
+       (into #{})))
