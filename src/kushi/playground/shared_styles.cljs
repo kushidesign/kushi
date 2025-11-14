@@ -149,7 +149,7 @@
 
 (defcss "@layer kushi-playground-shared
          .no-hover-bgc"
-  :bgc  :transparent!important)
+  {:bgc :transparent!important})
 
 (defcss "@layer kushi-playground-shared
          .kushi-demo-stage"

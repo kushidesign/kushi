@@ -6,6 +6,7 @@
 
 (defui grid
   {:doc   "Elastic grid layout with fixed-aspect ratio grid-items"
+   :props/shared [:gap]
    :props {:column-min-width {:schema  :keyword
                               :default :150px
                               :desc    "The minimum width of the columns. The width of the
@@ -18,12 +19,7 @@
                                         keyword representing a formula of width to height. For
                                         example, a value of `:1:1` would result in square elements, 
                                         while a value of `:2:3` would result in elements with a
-                                        portrait orientation."}
-           :gap              {:schema  :keyword
-                              :default :20px
-                              :desc    "The gap between grid cells. Value must be a keyword
-                                        representing a valid CSS value for
-                                        [`grid-gap`](https://developer.mozilla.org/en-US/docs/Web/CSS/min-width)."} }}
+                                        portrait orientation."}}}
   [& args]
   (let [{:keys [column-min-width aspect-ratio gap]
          :or   {column-min-width :150px

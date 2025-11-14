@@ -84,7 +84,8 @@
                                 (rdom/render
                                  (fn []
                                    [:div 
-                                    (sx :.display-flex-row-center 
+                                    (sx :d--flex
+                                        :jc--center
                                         :fs--$size-xxxlarge 
                                         :padding--0.25em)
                                     "💃🏽"])
@@ -176,7 +177,7 @@
                                          (fn [] 
                                            [:div
                                             (sx :.my-popover-content
-                                                :.display-flex-row-flex-start
+                                                :display--flex
                                                 :position--relative
                                                 :fs--$size-small
                                                 :ai--fs
@@ -190,7 +191,8 @@
                                                 :min-height--120px)
 
                                             [:div (sx :.my-form
-                                                      :.display-flex-col-flex-start
+                                                      :display--flex
+                                                      :flex-direction--column
                                                       :gap--1em
                                                       :_.ks-text-input-label:min-width--7em
                                                       :_.ks-input-inline:gtc--36%:64%)
@@ -243,7 +245,9 @@
                                         [el]
                                         (rdom/render
                                          [:div
-                                          (sx :.display-flex-col-center
+                                          (sx :display--flex
+                                              :flex-direction--column
+                                              :jc--c
                                               :ai--c
                                               :min-height--100%
                                               :p--1rem)
@@ -267,7 +271,8 @@
                                                     [el]
                                                     (rdom/render
                                                      [:div
-                                                      (sx :.flex-col-c :ai--c :min-height--100% :p--1rem)
+                                                      (merge-attrs (sx :ai--c :min-height--100% :p--1rem)
+                                                                   {:data-ks-display :flex-col-center})
                                                       [:p (sx :fs--$size-small)
                                                        "I will close automatically,"
                                                        [:br]

@@ -31,7 +31,7 @@
   (let [{:keys [group-id choices default-choice]} &props
         radio-group-id (str group-id "-radio-group")]
     (into
-     [:div (merge-attrs (sx "[data-ks-ui=\"checkbox-group\"]"
+     [:div (merge-attrs (sx ".ks-checkbox-group"
                             :.flex-row-start)
                         {:id radio-group-id}
                         &attrs)]
@@ -42,7 +42,7 @@
                                   (str radio-group-id "-" choice-lowercase "-choice"))
              choice-value     (or (when (map? choice) (:value choice))
                                   choice-lowercase)]
-         [:div (sx "[data-ks-ui=\"checkbox-with-label\"]" :.flex-row-start)
+         [:div (sx ".ks-checkbox-with-label" :.flex-row-start)
           [checkbox
            (merge {:id    choice-id
                    :value (or choice-value choice-lowercase)}

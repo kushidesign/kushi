@@ -62,14 +62,14 @@
       
 
       (contains? #{:thinking "thinking"} spinner-type)
-      (let [circle        [:div (sx ".ks-pulsing-dot"
-                                    :.shape-pill
-                                    :w--0.3em
-                                    :h--0.3em
-                                    :bgc--currentColor
-                                    [:animation "var(--spinner-animation-duration) linear infinite pulsing"]
-                                    ["nth-child(2):animation-delay" "calc(var(--spinner-animation-duration) / 4)"]
-                                    ["nth-child(3):animation-delay" "calc(var(--spinner-animation-duration) / 2)"])]]
+      (let [circle        [:div (merge-attrs (sx ".ks-pulsing-dot"
+                                                 :w--0.3em
+                                                 :h--0.3em
+                                                 :bgc--currentColor
+                                                 [:animation "var(--spinner-animation-duration) linear infinite pulsing"]
+                                                 ["nth-child(2):animation-delay" "calc(var(--spinner-animation-duration) / 4)"]
+                                                 ["nth-child(3):animation-delay" "calc(var(--spinner-animation-duration) / 2)"])
+                                             {:data-ks-shape :pill})]]
 
         [:div {:data-ks-spinner ""
                :class              (css ".ks-thinking-wrapper"
@@ -78,8 +78,8 @@
          [:div (merge-attrs
                 {:class               (css
                                        ".ks-thinking"
-                                       :.display-flex-row-center
-                                       :gap--0.333em)}
+                                       :gap--0.333em)
+                 :data-ks-display      :flex-row-center}
                 more-attrs
                 &attrs)
           circle
@@ -92,25 +92,26 @@
                                       :.ks-spinner-wrapper
                                       :.transition)}
        [:div (merge-attrs
-              {:class               (css
-                                     ".ks-donut"
-                                     :position--relative
-                                     :.before-position-absolute-fill
-                                     :.after-position-absolute-fill
-                                     [:animation
-                                      "var(--spinner-animation-duration) linear infinite spin"]
-                                     [:before:bw "max(2.5px, 0.125em)"]
-                                     [:after:bw "max(2.5px, 0.125em)"]
-                                     :w--$loading-spinner-height
-                                     :h--$loading-spinner-height
-                                     :before:border-radius--9999px
-                                     :before:bs--solid
-                                     :before:bc--transparent
-                                     :before:bbsc--currentColor
-                                     :after:border-radius--9999px
-                                     :after:o--0.2
-                                     :after:bs--solid
-                                     :after:bc--currentColor)}
+              {:class                   (css ".ks-donut"
+                                             :position--relative
+                                             :.before-position-absolute-fill
+                                             :.after-position-absolute-fill
+                                             [:animation
+                                              "var(--spinner-animation-duration) linear infinite spin"]
+                                             [:before:bw "max(2.5px, 0.125em)"]
+                                             [:after:bw "max(2.5px, 0.125em)"]
+                                             :w--$loading-spinner-height
+                                             :h--$loading-spinner-height
+                                             :before:border-radius--9999px
+                                             :before:bs--solid
+                                             :before:bc--transparent
+                                             :before:bbsc--currentColor
+                                             :after:border-radius--9999px
+                                             :after:o--0.2
+                                             :after:bs--solid
+                                             :after:bc--currentColor)
+               :data-ks-before-position :absolute-fill
+               :data-ks-after-position  :absolute-fill}
               more-attrs
               &attrs)]])))
 

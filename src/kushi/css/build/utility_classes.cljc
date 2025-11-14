@@ -605,18 +605,18 @@
              ".ks-checkbox")
          
          sel-radio
-         ".ks-checkbox"
+         ".ks-radio"
          #_(if (= sel-fn data-ks-sels)
              "[data-ks-ui=\"checkbox\"]" 
              ".ks-checkbox")]
      [
-      (str ">" sel-checkbox ":outline-width")
-      (str ">" sel-checkbox ":border-width")
+      (str sel-checkbox ":outline-width")
+      (str sel-checkbox ":border-width")
       (str " " sel-checkbox ":outline-width")
       (str " " sel-checkbox ":border-width")
       
-      (str ">" sel-radio ":outline-width")
-      (str ">" sel-radio ":border-width")
+      (str sel-radio ":outline-width")
+      (str sel-radio ":border-width")
       (str " " sel-radio ":outline-width")
       (str " " sel-radio ":border-width")
       ])

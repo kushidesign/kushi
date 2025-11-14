@@ -160,9 +160,9 @@
  (let [menu-id "kushi-playground-menu"]
   [:div#header-navbar
    (mrj 
+    {:data-ks-display :flex-row-space-between}
     (sx ["--overlay-width" "calc(100vw + 40px)"]
         ["--menu-height" :415px]
-        :.flex-row-space-between
         :.neutralize
         :.divisor-block-end
         :position--fixed

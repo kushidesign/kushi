@@ -3,6 +3,7 @@
    [kushi.colors :as kushi.colors]
    [kushi.core :refer (sx css css-vars-map merge-attrs register-design-tokens-by-category)]
    [kushi.ui.core :refer [extract]]
+   [kushi.ui.flex :refer [flex-row flex-col]]
   ;;  [kushi.ui.label :refer [label]]
    [kushi.ui.prose :refer [prose]]))
 
@@ -19,18 +20,18 @@
         {:keys [sticker-fg-color sticker-bg-bgc]}           opts]
     [label
      [:span (merge-attrs
-             {:style (css-vars-map sticker-fg-color sticker-bg-bgc)
-              :class (css :.kushi-playground-color-text-sample-sticker
-                          :.flex-row-c
-                          :fs--$kushi-playground-text-sample-sticker_font-size||$size-small
-                          :sm:w--54px
-                          :sm:h--54px
-                          :w--44px
-                          :h--44px
-                          :border-radius--50%
-                          :mis--10px
-                          :c--$color
-                          :bgc--$bgc)}
+             {:style           (css-vars-map sticker-fg-color sticker-bg-bgc)
+              :data-ks-display :flex-row-center
+              :class           (css :.kushi-playground-color-text-sample-sticker
+                                    :fs--$kushi-playground-text-sample-sticker_font-size||$size-small
+                                    :sm:w--54px
+                                    :sm:h--54px
+                                    :w--44px
+                                    :h--44px
+                                    :border-radius--50%
+                                    :mis--10px
+                                    :c--$color
+                                    :bgc--$bgc)}
              attrs)
       "Text"]]))
 
@@ -156,49 +157,51 @@
               :let  [hsl         (if (number? v) (str v) (name v))
                      color-token (str "var(--" (name color-name) "-" color-level ")")]]
           ^{:key hsl}
-          [:div {:style (css-vars-map row-height color-token hsl)
-                 :class (css :.kushi-playground-color-sample-row
-                             :.flex-row-fs
-                             :ai--stretch
-                             :bgc--white
-                             :dark:bgc--black
-                             :h--$row-height)}
+          [flex-row {:style (css-vars-map row-height color-token hsl)
+                     :class (css :.kushi-playground-color-sample-row
+                                 :ai--stretch
+                                 :bgc--white
+                                 :dark:bgc--black
+                                 :h--$row-height)}
            [:div {:class (css  :.kushi-playground-color-sample-row-swatch
                                :sm:flex-basis--150px
-                              :width--66px
-                              :sm:width--unset
-                              :.no-grow
-                              :.no-shrink
-                              :bgc--$color-token)}
+                               :width--66px
+                               :sm:width--unset
+                               :.no-grow
+                               :.no-shrink
+                               :bgc--$color-token)}
             #_[:div (sx :w--50% :bgc--$hsl)]
             #_[:div (sx :w--50% :$yellow-hue--59 :bgc--$hsl)]]
-           [:div {:class (css :.kushi-playground-color-sample-row-info-container
-                              :.flex-row-space-between
-                              :.grow
-                              :pis--0.5em
-                              :bbes--solid
-                              :bbew--1px
-                              :bbec--$color-token)}
+           [flex-row {:class (css :.kushi-playground-color-sample-row-info-container
+                                  :flex-grow--1
+                                  :jc--sb
+                                  :pis--0.5em
+                                  :bbes--solid
+                                  :bbew--1px
+                                  :bbec--$color-token)}
             [color-modal {:k           k
                           :hsl         hsl
                           :color-name  color-name
                           :color-level color-level}]
-            [:div (sx :.kushi-playground-color-sample-row-text-samples-wrapper
-                      :.flex-row-fe :fw--$wee-bold)
-             [text-sample-sticker {:sticker-fg-color :white :sticker-bgc-color color-token}]
-             [text-sample-sticker {:sticker-fg-color :black :sticker-bgc-color color-token}]
+            [flex-row (sx :.kushi-playground-color-sample-row-text-samples-wrapper
+                          :jc--fe
+                          :fw--$wee-bold)
+             [text-sample-sticker {:sticker-fg-color  :white
+                                   :sticker-bgc-color color-token}]
+             [text-sample-sticker {:sticker-fg-color  :black
+                                   :sticker-bgc-color color-token}]
              [text-sample-sticker 
-              {:class  (css :.kushi-playground-color-sample-row-text-sample-white-text
-                            :bs--solid
-                            :bw--1px
-                            :bc--$color-token)
-               :sticker-fg-color color-token 
-               :sticker-bgc-color   :white}]
+              {:class             (css :.kushi-playground-color-sample-row-text-sample-white-text
+                                       :bs--solid
+                                       :bw--1px
+                                       :bc--$color-token)
+               :sticker-fg-color  color-token 
+               :sticker-bgc-color :white}]
              [text-sample-sticker 
-              {:class  (css :.kushi-playground-color-sample-row-text-sample-black-text
-                            :bs--solid :bw--1px :bc--$color-token)
-               :sticker-fg-color color-token
-               :sticker-bgc-color   :black}]]]]))))])
+              {:class             (css :.kushi-playground-color-sample-row-text-sample-black-text
+                                       :bs--solid :bw--1px :bc--$color-token)
+               :sticker-fg-color  color-token
+               :sticker-bgc-color :black}]]]]))))])
 
 (defn color-grid [& args]
   (let [{:keys [opts attrs children]}
@@ -213,10 +216,9 @@
                 column-gap  :2px
                 labels?     true}}
         opts]
-    (into [:div
+    (into [flex-row
            (merge-attrs
             (sx :.kushi-playground-color-sample-grid-column
-                :.flex-row-fs
                 :border-radius--$shape-rounded-large
                 :jc--sb
                 ;; [:gap column-gap]
@@ -228,7 +230,7 @@
                 :let [before-content (str "\"" color "\"")
                       ;; TODO can we use kw here?
                       before-display (if labels? "block" "none")]]
-            (into [:div 
+            (into [flex-col 
                    {:style
                     (css-vars-map before-content
                                   before-display
@@ -237,7 +239,6 @@
 
                     :class 
                     (css :.kushi-playground-color-sample-grid-column
-                         :.flex-col-fs
                          :.transition
                          :bgc--white
                          :position--relative

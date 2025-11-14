@@ -7,7 +7,7 @@
             [kushi.ui.card :refer [card]]
             
             [kushi.ui.callout :refer [callout]]
-            [kushi.ui.flex :refer [flex-col-space-around flex-row-space-between flex-row]]
+            [kushi.ui.flex :refer [flex-col flex-row]]
             [kushi.ui.icon :refer [icon]]
             [kushi.ui.icon-button :refer [icon-button]]
             [kushi.ui.link :refer [link]]
@@ -49,7 +49,7 @@
                                :display--block
                                :scale--2.55)
                      "🐻‍❄"]]
-                   [flex-col-space-around
+                   [flex-col (sx {:jc :sa})
                     [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
@@ -72,7 +72,7 @@
                                :display--block
                                :scale--2.55)
                      "🐻‍❄"]]
-                   [flex-col-space-around
+                   [flex-col (sx {:jc :sa})
                     [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
@@ -95,7 +95,7 @@
                                :display--block
                                :scale--2.55)
                      "🐻‍❄"]]
-                   [flex-col-space-around
+                   [flex-col (sx {:jc :sa})
                     [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
@@ -118,7 +118,7 @@
                                :display--block
                                :scale--2.55)
                      "🐻‍❄"]]
-                   [flex-col-space-around
+                   [flex-col (sx {:jc :sa})
                     [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
@@ -141,7 +141,7 @@
                                :display--block
                                :scale--2.55)
                      "🐻‍❄"]]
-                   [flex-col-space-around
+                   [flex-col (sx {:jc :sa})
                     [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)

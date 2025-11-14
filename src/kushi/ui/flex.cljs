@@ -33,7 +33,7 @@
   [& args]
   (into
    [(or (:as &props) :div)
-    (merge-attrs {:data-ks-ui "flex-row"} &attrs)]
+    (merge-attrs {:class "ks-flex-row"} &attrs)]
    &children))
 
 
@@ -51,117 +51,7 @@
   [& args]
   (into
    [(or (:as &props) :div)
-    (merge-attrs {:data-ks-ui "flex-col"} &attrs)]
+    (merge-attrs {:class "ks-flex-col"} &attrs)]
    &children))
 
 
-(defui flex-row-center
-  {:props/shared [[:position {:default :relative}]
-                  [:display {:default :flex-row-center}]
-                  :surface
-                  :colorway
-                  :size
-                  :weight]}
-  [& args]
-  (into [:div.ks-flex-row &attrs] &children))
-
-
-(defui flex-row-flex-end
-  {:props/shared [[:position {:default :relative}]
-                  [:display {:default :flex-row-flex-end}]
-                  :surface
-                  :colorway
-                  :size
-                  :weight]}
-  [& args]
-  (into [:div.ks-flex-row &attrs] &children))
-
-
-(defui flex-row-space-around
-  {:props/shared [[:position {:default :relative}]
-                  [:display {:default :flex-row-space-around}]
-                  :surface
-                  :colorway
-                  :size
-                  :weight]}
-  [& args]
-  (into [:div.ks-flex-row &attrs] &children))
-
-
-(defui flex-row-space-between
-  {:props/shared [[:position {:default :relative}]
-                  [:display {:default :flex-row-space-between}]
-                  :surface
-                  :colorway
-                  :size
-                  :weight]}
-  [& args]
-  (into [:div.ks-flex-row &attrs] &children))
-
-
-(defui flex-row-space-evenly
-  {:props/shared [[:position {:default :relative}]
-                  [:display {:default :flex-row-space-evenly}]
-                  :surface
-                  :colorway
-                  :size
-                  :weight]}
-  [& args]
-  (into [:div.ks-flex-row &attrs] &children))
-
-
-
-
-(defui flex-col-center
-  {:props/shared [[:position {:default :relative}]
-                  [:display {:default :flex-col-center}]
-                  :surface
-                  :colorway
-                  :size
-                  :weight]}
-  [& args]
-  (into [:div.ks-flex-col &attrs] &children))
-
-
-(defui flex-col-flex-end
-  {:props/shared [[:position {:default :relative}]
-                  [:display {:default :flex-col-flex-end}]
-                  :surface
-                  :colorway
-                  :size
-                  :weight]}
-  [& args]
-  (into [:div.ks-flex-col &attrs] &children))
-
-
-(defui flex-col-space-around
-  {:props/shared [[:position {:default :relative}]
-                  [:display {:default :flex-col-space-around}]
-                  :surface
-                  :colorway
-                  :size
-                  :weight]}
-  [& args]
-  (into [:div.ks-flex-col &attrs] &children))
-
-
-(defui flex-col-space-between
-  {:props/shared [[:position {:default :relative}]
-                  [:display {:default :flex-col-space-between}]
-                  :surface
-                  :colorway
-                  :size
-                  :weight]}
-  [& args]
-  (into [:div.ks-flex-col &attrs] &children))
-
-
-(defui flex-col-space-evenly
-  {:props/shared [[:position {:default :relative}]
-                  [:display {:default :flex-col-space-evenly}]
-                  :surface
-                  :colorway
-                  :size
-                  :weight]}
-  [& args]
-  (into [:div.ks-flex-col &attrs] &children))

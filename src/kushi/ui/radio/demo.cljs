@@ -126,7 +126,16 @@
    {:label   "Radio sizes"
     :samples (samples-with-variant 
               {:variant :size
-               :attrs   {:defaultChecked :true}})}
+               :attrs   {:defaultChecked :true
+                         :name           :radio-sizes-demo
+                         }})}
+
+   {:label   "Radio weights"
+    :samples (samples-with-variant 
+              {:variant :weight
+               :attrs   {:defaultChecked false
+                         :name           :radio-weights-demo
+                         :size           :xxxlarge}})}
 
   ;;  {:label   "Radio colorways"
   ;;   :samples (samples-with-variant 
@@ -151,7 +160,7 @@
               []
               variants/colorways-named))
 
-   {:label     "Radio colorways2"
+   {:label     "Radio colorways"
     :row-attrs (sx {:_.ks-flex-row:gap :0.5em})
     ;; This recognizes the even/odd structure of the vector, and uses the strings
     ;; as labels for the samples

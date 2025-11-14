@@ -1,5 +1,3 @@
-;; 1) Go thru this and convert class selectors to data-ks-
-
 ;; 2) Make ui macro automatically generate a data-ks-button, based on namespace
 ;;    data-foo.bar.bang-button
 
@@ -9,6 +7,7 @@
 
 ;; 4) Figure out how to do custom props with new paradigm, for ui components
 
+;; 5) Figure out list of elements that cannot take props and maybe add :not rules to the data-ks-* prop utility classes
 
 (ns ^{:kushi/layer "kushi-ui-theming"} kushi.css.build.kushi-ui-component-theming
   (:require
@@ -97,25 +96,25 @@
 (defcss "*:disabled"
   {"opacity" "45%!important", "cursor" "not-allowed!important"})
 
-(defcss "[data-ks-ui=\"radio-input:focus-visible\"]"
+(defcss ".ks-radio-input:focus-visible"
   {"box-shadow" "0 0 0 4px rgba(0, 125, 250, 0.6)"})
 
 (defcss ".ks-tag" 
   {"font-family" "var(--primary-font-family)"})
 
-(defcss ".dark [data-ks-ui=\"radio-input\"]"
+(defcss ".dark .ks-radio-input"
   {"background-color" "black"})
 
-(defcss ".dark [data-ks-ui=\"checkbox-input\"]" 
+(defcss ".dark .ks-checkbox-input" 
   {"background-color" "black"})
 
-(defcss ".dark [data-ks-ui=\"checkbox-input:before"
+(defcss ".dark .ks-checkbox-input:before"
   {"box-shadow" "inset 1em 1em black"})
 
-(defcss ".dark [data-ks-ui=\"slider-step-label\"][data-ks-ui=\"slider-step-label-selected\"]"
+(defcss ".dark .ks-slider-step-label.ks-slider-step-label-selected"
   {"color" "white"})
 
-(defcss ".dark [data-ks-ui=\"slider-step-label\"]"
+(defcss ".dark .ks-slider-step-label"
   {"color" "var(--gray-300)"})
 
 
@@ -229,23 +228,23 @@
                                      :--padding-block  :$button-padding-block-roomy}
    "[data-ks-packing=\"xroomy\"]"   {:--padding-inline :$button-padding-inline-xroomy
                                      :--padding-block  :$button-padding-block-xroomy}
-   "[data-ks-ui=\"icon-button\"]"   {:--padding-inline            :$padding-block
-                                     :_.material-symbols-outlined {:min-width   :1.2ch
-                                                                   :line-height :normal}}})
+   ".ks-icon-button"               {:--padding-inline            :$padding-block
+                                    :_.material-symbols-outlined {:min-width   :1.2ch
+                                                                  :line-height :normal}}})
 
-(defcss "[data-ks-ui=\"icon-button\"]"
-  {"--padding-block"            :$icon-button-padding-block||$button-padding-block
-   "--padding-inline"           :$icon-button-padding-inline||$button-padding-inline
+(defcss ".ks-icon-button"
+  {"--padding-block"              :$icon-button-padding-block||$button-padding-block
+   "--padding-inline"             :$icon-button-padding-inline||$button-padding-inline
    :_.material-symbols-outlined {:min-width   :1.2ch
                                  :line-height :normal}
-   "[data-ks-packing=\"xcompact\"]"          {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-xcompact
-                                              :--padding-block  :$icon-button-padding-block-compact||$button-padding-block-xcompact}
-   "[data-ks-packing=\"compact\"]"           {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-compact
-                                              :--padding-block  :$icon-button-padding-block-compact||$button-padding-block-compact}
-   "[data-ks-packing=\"roomy\"]"             {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-roomy
-                                              :--padding-block  :$icon-button-padding-block-roomy||$button-padding-block-roomy}
-   "[data-ks-packing=\"xroomy\"]"            {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-xroomy
-                                              :--padding-block  :$icon-button-padding-block-roomy||$button-padding-block-xroomy}})
+   "[data-ks-packing=\"xcompact\"]" {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-xcompact
+                                     :--padding-block  :$icon-button-padding-block-compact||$button-padding-block-xcompact}
+   "[data-ks-packing=\"compact\"]"  {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-compact
+                                     :--padding-block  :$icon-button-padding-block-compact||$button-padding-block-compact}
+   "[data-ks-packing=\"roomy\"]"    {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-roomy
+                                     :--padding-block  :$icon-button-padding-block-roomy||$button-padding-block-roomy}
+   "[data-ks-packing=\"xroomy\"]"   {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-xroomy
+                                     :--padding-block  :$icon-button-padding-block-roomy||$button-padding-block-xroomy}})
 
 
 ;; Move to tag ns
@@ -298,14 +297,16 @@
    :dark           {:--chroma-bgc   :0%
                     :--chroma-fgc   :0%
                     :--chroma-shift :0%}})
+
 (defcss "[data-ks-surface=\"solid\"], [data-ks-surface=\"solid-classic\"], [data-ks-surface=\"soft\"], [data-ks-surface=\"soft-classic\"], [data-ks-surface=\"faint\"], [data-ks-surface=\"convex\"], [data-ks-surface=\"minimal\"], [data-ks-surface=\"transparent\"], [data-ks-surface=\"minimal-light-mode\"], [data-ks-surface=\"convex-light-mode\"]"
-  {:--hover-bgc  "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) var(--lightness-shift)) calc(var(--chroma-bgc) var(--chroma-shift-op, +) var(--chroma-shift)) var(--colorway-hue))"
-   :--active-bgc "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) (2 * var(--lightness-shift))) calc(var(--chroma-bgc) var(--chroma-shift-op, +) calc(2 * var(--chroma-shift))) var(--colorway-hue))"
-   :--bgc        "oklch(var(--lightness-bgc) var(--chroma-bgc) var(--colorway-hue))"
-   :--fgc        "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))" 
-   ".inert"        {:bgc          :$bgc
-                    :--hover-bgc  :$bgc
-                    :--active-bgc :$bgc}})
+  {:--hover-bgc    "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) var(--lightness-shift)) calc(var(--chroma-bgc) var(--chroma-shift-op, +) var(--chroma-shift)) var(--colorway-hue))"
+   :--active-bgc   "oklch(calc(var(--lightness-bgc) var(--lightness-shift-op, -) (2 * var(--lightness-shift))) calc(var(--chroma-bgc) var(--chroma-shift-op, +) calc(2 * var(--chroma-shift))) var(--colorway-hue))"
+   :--bgc          "oklch(var(--lightness-bgc) var(--chroma-bgc) var(--colorway-hue))"
+   :--fgc          "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))" 
+   "[data-ks-inert]" {:bgc          :$bgc
+                      :--hover-bgc  :$bgc
+                      :--active-bgc :$bgc}})
+
 (defcss "[data-ks-surface=\"transparent\"]"
   {:--fgc "oklch(var(--lightness-fgc) var(--chroma-fgc) var(--colorway-hue))"})
 
@@ -350,34 +351,34 @@
 
 ;; Softs
 (defcss "[data-ks-surface=\"soft\"], [data-ks-surface=\"soft-classic\"]" 
-  {:--lightness-bgc      :94.25%
-   :--chroma-bgc         :15.75%
-   :--lightness-fgc      :30%
-   :--chroma-fgc         :32.5%
-   :--classic-trim-color "oklch(91% 10% var(--colorway-hue))" 
+  {:--lightness-bgc           :94.25%
+   :--chroma-bgc              :15.75%
+   :--lightness-fgc           :30%
+   :--chroma-fgc              :32.5%
+   :--classic-trim-color      "oklch(91% 10% var(--colorway-hue))" 
       ;;  :color                :$fgc
-       :bgc                  :$bgc
-       "[data-ks-colorway=\"brown\"]"       {:--chroma-bgc :6%}
-       :dark                 {:--lightness-bgc      :39%
-                              :--chroma-bgc         :35.6%
-                              :--lightness-fgc      :95.7%
-                              :--chroma-fgc         :8.8%
-                              :--classic-trim-color "oklch(36% 30% var(--colorway-hue))" 
-                              "[data-ks-colorway=\"brown\"]"       {:--chroma-bgc :16%}
-                              }})
+   :bgc                       :$bgc
+   "[data-ks-colorway=\"brown\"]" {:--chroma-bgc :6%}
+   :dark                      {:--lightness-bgc           :39%
+                               :--chroma-bgc              :35.6%
+                               :--lightness-fgc           :95.7%
+                               :--chroma-fgc              :8.8%
+                               :--classic-trim-color      "oklch(36% 30% var(--colorway-hue))" 
+                               "[data-ks-colorway=\"brown\"]" {:--chroma-bgc :16%}
+                               }})
 
 ;; Convex, dark
  (defcss "[data-ks-surface=\"convex\"]"
-   {:dark {:--lightness-bgc :39%
-           :--chroma-bgc    :33%
-           :--lightness-fgc :95.7%
-           :--chroma-fgc    :8.8%
-           "[data-ks-colorway=\"brown\"]"  {:--chroma-bgc    :17%
-                               :--lightness-bgc :39%}
+   {:dark {:--lightness-bgc           :39%
+           :--chroma-bgc              :33%
+           :--lightness-fgc           :95.7%
+           :--chroma-fgc              :8.8%
+           "[data-ks-colorway=\"brown\"]" {:--chroma-bgc    :17%
+                                           :--lightness-bgc :39%}
           ;;  :color           :$fgc
-           :bgc             :$bgc
-           :hover:bgc       :$hover-bgc
-           :active:bgc      :$active-bgc
+           :bgc                       :$bgc
+           :hover:bgc                 :$hover-bgc
+           :active:bgc                :$active-bgc
            }})
 
 ;; Neutral
@@ -390,16 +391,16 @@
    :--lightness-fgc :44%
    :--chroma-bgc    :6.25%
    :--chroma-fgc    :46.25%
-  ;;  :color           :$fgc
+   ;;  :color           :$fgc
    :bgc             :$bgc
    "[data-ks-colorway=\"brown\"]"  {:--chroma-bgc    :3%
-                       :--lightness-bgc :97%}
-   ":dark"            {:--lightness-bgc :26%
-                       :--chroma-bgc    :26%
-                       :--lightness-fgc :92%
-                       :--chroma-fgc    :25%
-                       "[data-ks-colorway=\"brown\"]"  {:--chroma-bgc    :14%
-                                           :--lightness-bgc :28%}}})
+                                    :--lightness-bgc :97%}
+   ":dark"            {:--lightness-bgc           :26%
+                       :--chroma-bgc              :26%
+                       :--lightness-fgc           :92%
+                       :--chroma-fgc              :25%
+                       "[data-ks-colorway=\"brown\"]" {:--chroma-bgc    :14%
+                                                       :--lightness-bgc :28%}}})
 
 ;; Convex, dark
 (defcss "[data-ks-surface=\"convex\"]" 
@@ -439,11 +440,11 @@
 
 (defcss "[data-ks-surface=\"transparent\"]"
   {:bgc        :transparent
-   :bgc:hover  :transparent
-   :bgc:active :transparent
-   :dark {:bgc        :transparent
-          :bgc:hover  :transparent
-          :bgc:active :transparent}})
+   :hover:bgc  :transparent
+   :active:bgc :transparent
+   :dark       {:bgc        :transparent
+                :hover:bgc  :transparent
+                :active:bgc :transparent}})
 
 ;; Classic details
 (defcss "[data-ks-surface=\"solid-classic\"], [data-ks-surface=\"soft-classic\"]"
@@ -495,15 +496,15 @@
 
 ; Surface stroking ---------------------------------------------------------------------------------------------------------
 (defcss "[class*=\"surface-\"][class*=\"stroke-\"]"
-  {"[data-ks-stroke-align=\"outside\"]"    {"--stroke-inset" ""}
-   :--box-shadow-for-stroke "var(--stroke-inset, inset) 0 0 0 var(--stroke-width, var(--element-stroke-width, 1px)) color-mix(in oklch, currentColor var(--stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))" 
-   :box-shadow              "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)" 
-   "[data-ks-stroke=\"none\"]"             {:--stroke-transparency :0%}
-   "[data-ks-stroke=\"xsoft\"]"            {:--stroke-transparency :$xsoft-stroke-transparency}
-   "[data-ks-stroke=\"soft\"]"             {:--stroke-transparency :$soft-stroke-transparency}
-   "[data-ks-stroke=\"medium\"]"           {:--stroke-transparency :$medium-stroke-transparency}
-   "[data-ks-stroke=\"hard\"]"             {:--stroke-transparency :$hard-stroke-transparency}
-   "[data-ks-stroke=\"xhard\"]"            {:--stroke-transparency :$xhard-stroke-transparency}})
+  {"[data-ks-stroke-align=\"outside\"]" {"--stroke-inset" ""}
+   :--box-shadow-for-stroke         "var(--stroke-inset, inset) 0 0 0 var(--stroke-width, var(--element-stroke-width, 1px)) color-mix(in oklch, currentColor var(--stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))" 
+   :box-shadow                      "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)" 
+   "[data-ks-stroke=\"none\"]"          {:--stroke-transparency :0%}
+   "[data-ks-stroke=\"xsoft\"]"         {:--stroke-transparency :$xsoft-stroke-transparency}
+   "[data-ks-stroke=\"soft\"]"          {:--stroke-transparency :$soft-stroke-transparency}
+   "[data-ks-stroke=\"medium\"]"        {:--stroke-transparency :$medium-stroke-transparency}
+   "[data-ks-stroke=\"hard\"]"          {:--stroke-transparency :$hard-stroke-transparency}
+   "[data-ks-stroke=\"xhard\"]"         {:--stroke-transparency :$xhard-stroke-transparency}})
 
 ;; Surface shadowing ---------------------------------------------------------------------------------------------------------
 (defcss "[class*=\"surface-\"][class*=\"shadow-\"]" 
@@ -597,3 +598,4 @@
 ;; (defcss "[class*=\"surface-\"][class*=\"shadow-\"]" 
 ;;   {:box-shadow "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)"})
 
+   

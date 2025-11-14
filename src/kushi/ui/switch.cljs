@@ -150,11 +150,13 @@
 
       (when switch-width-ratio {:style {"--switch-width-ratio" switch-width-ratio}})
 
+      ;; TODO - move these into shared props
+      {:data-ks-surface    :solid
+       :data-ks-display    :flex-row
+       :data-ks-transition ""}
+
       (sx
        ".ks-switch"
-       :.surface-solid
-       :.transition
-       :.display-flex-row
        {:--thumb-height                        "calc(var(--thumb-scale-factor, var(--switch-thumb-scale-factor, 1)) * (1em - (var(--track-inset-gap, 1px) * 2)))"
         :--height                              :1em
         :--switch-track-inset-box-shadow-color :$transparent-black-05

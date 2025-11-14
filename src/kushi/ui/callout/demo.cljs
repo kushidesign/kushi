@@ -8,7 +8,7 @@
     :as showcase
     :refer [samples-with-variant samples]]
    [kushi.ui.callout :refer [callout]]
-   [kushi.ui.flex :refer [flex-row-space-between]]
+   [kushi.ui.flex :refer [flex-row]]
    [kushi.ui.icon :refer [icon]]
    [kushi.ui.button :refer [button]]
    [kushi.ui.icon-button :refer [icon-button]]
@@ -40,7 +40,7 @@
                   {:variant       :size
                    :variant-scale :size/xxsmall-large
                    :attrs         {:colorway :accent}
-                   :args          [[flex-row-space-between
+                   :args          [[flex-row (sx {:jc :sb})
                                     [icon :info]
                                     [:span "Please check out the " [link "new features"]]
                                     [icon-button 
@@ -59,7 +59,7 @@
                      :variant-scale :size/xxsmall-large
                      :attrs         {:colorway :accent
                                      :stroke   :hard}
-                     :args          [[flex-row-space-between
+                     :args          [[flex-row (sx {:jc :sb})
                                       [icon :info]
                                       [:span "Please check out the " [link "new features"]]
                                       [icon-button 
@@ -74,7 +74,7 @@
       :samples   (samples-with-variant
                   {:variant       :stroke
                    :attrs         {:colorway :accent}
-                   :args          [[flex-row-space-between
+                   :args          [[flex-row (sx {:jc :sb})
                                     [icon :info]
                                     [:span "Please check out the " [link "new features"]]
                                     [icon-button 
@@ -92,7 +92,7 @@
                   {:variant       :surface
                    :variant-scale :surface/simple
                    :attrs         {:colorway :accent}
-                   :args          [[flex-row-space-between
+                   :args          [[flex-row (sx {:jc :sb})
                                     [icon :info]
                                     [:span "Please check out the " [link "new features"]]
                                     [icon-button 
@@ -107,7 +107,7 @@
                   [[callout
                     {:colorway :accent
                      :surface  :faint}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -119,7 +119,7 @@
                    [callout
                     {:colorway :accent
                      :surface  :soft}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -131,7 +131,7 @@
                    [callout
                     {:colorway :accent
                      :surface  :solid}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -146,7 +146,7 @@
                     {:colorway :accent
                      :surface  :minimal
                      :stroke   :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -159,7 +159,7 @@
                     {:colorway :accent
                      :surface  :faint
                      :stroke   :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -173,7 +173,7 @@
                     {:colorway :accent
                      :surface  :soft
                      :stroke   :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -188,7 +188,7 @@
       :samples   (samples
                   [[callout
                     {:surface :solid}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info
                       {:colorway :neutral}]
                      [:span "Please check out the " [link "new features"]]
@@ -201,7 +201,7 @@
                    [callout
                     {:surface :soft
                      :stroke  :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -212,7 +212,7 @@
                    
                    [callout
                     {:surface :soft}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -224,7 +224,7 @@
                    [callout
                     {:surface :faint
                      :stroke  :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -235,7 +235,7 @@
 
                    [callout
                     {:surface :faint}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -247,7 +247,7 @@
                    [callout
                     {:surface :transparent
                      :stroke  :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -263,7 +263,7 @@
                   [[callout
                     {:surface :solid
                      :colorway :positive}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -277,7 +277,7 @@
                     {:surface :soft
                      :colorway :positive
                      :stroke  :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -290,7 +290,7 @@
                    [callout
                     {:surface :soft
                      :colorway :positive}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -304,7 +304,7 @@
                     {:surface :faint
                      :colorway :positive
                      :stroke  :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -317,7 +317,7 @@
                    [callout
                     {:surface :faint
                      :colorway :positive}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -331,7 +331,7 @@
                     {:surface :transparent
                      :colorway :positive
                      :stroke  :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -348,7 +348,7 @@
                   [[callout
                     {:surface :solid
                      :colorway :warning}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -362,7 +362,7 @@
                     {:surface :soft
                      :colorway :warning
                      :stroke  :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -375,7 +375,7 @@
                    [callout
                     {:surface :soft
                      :colorway :warning}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -389,7 +389,7 @@
                     {:surface :faint
                      :colorway :warning
                      :stroke  :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -402,7 +402,7 @@
                    [callout
                     {:surface :faint
                      :colorway :warning}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -416,7 +416,7 @@
                     {:surface :transparent
                      :colorway :warning
                      :stroke  :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -432,7 +432,7 @@
                   [[callout
                     {:surface :solid
                      :colorway :negative}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -446,7 +446,7 @@
                     {:surface  :soft
                      :colorway :negative
                      :stroke   :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -459,7 +459,7 @@
                    [callout
                     {:surface :soft
                      :colorway :negative}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -473,7 +473,7 @@
                     {:surface :faint
                      :colorway :negative
                      :stroke  :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -486,7 +486,7 @@
                    [callout
                     {:surface :faint
                      :colorway :negative}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 
@@ -500,7 +500,7 @@
                     {:surface  :transparent
                      :colorway :negative
                      :stroke   :hard}
-                    [flex-row-space-between
+                    [flex-row (sx {:jc :sb})
                      [icon :info]
                      [:span "Please check out the " [link "new features"]]
                      [icon-button 

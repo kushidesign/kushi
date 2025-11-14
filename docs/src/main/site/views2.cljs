@@ -7,7 +7,7 @@
   ;;  [bling.core :as bling :refer [bling print-bling callout point-of-interest]]
   ;;  [bling.hifi :refer [print-hifi hifi]]
   ;;  [bling.explain :refer [explain-malli]]
-   [kushi.core :refer [?sx sx css merge-attrs mrj at defcss]]
+   [kushi.core :refer [?sx sx css merge-attrs at defcss]]
    [kushi.playground.shared-styles]
   ;;  [kushi.ui.variants]
    [kushi.ui.core :refer [defui data-ks-attrs #_pc ui]]
@@ -15,7 +15,7 @@
    [kushi.showcase.core :as showcase :refer [showcase]]
 
 
-   [kushi.ui.flex :refer [flex-row flex-col flex-row-space-between]]
+   [kushi.ui.flex :refer [flex-row flex-col]]
 
    [kushi.ui.text-field :refer [text-field]]
    [kushi.ui.text-field.demo]
@@ -568,7 +568,7 @@
        :colorway :positive
        :surface  :soft
        :stroke   :hard}
-      [flex-row-space-between
+      [flex-row (sx {:jc :sb})
        [icon :check-circle]
        "Your transaction was successful."
        [button {:colorway :positive
@@ -630,7 +630,7 @@
 
 
   ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.button/button
+  [showcase (!? (showcase/opts kushi.ui.button/button
                                  kushi.ui.button.demo/demos))]
   
   ;; DONE
@@ -645,9 +645,11 @@
   #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
                                  kushi.ui.spinner.demo/demos))]
 
+
   ;; DONE
   #_[showcase (showcase/opts kushi.ui.radio/radio
-                             kushi.ui.radio.demo/demos)]
+                           kushi.ui.radio.demo/demos)]
+
 
   ;; DONE
   #_[showcase (showcase/opts kushi.ui.avatar/avatar
@@ -708,7 +710,7 @@
 
 
   ;; DONE
-  [showcase (showcase/opts kushi.ui.toast/toast-attrs
+  #_[showcase (showcase/opts kushi.ui.toast/toast-attrs
                            kushi.ui.toast.demo/demos)]
   
 
@@ -777,7 +779,7 @@
 
      [callout
       {:surface :faint}
-      [flex-row-space-between
+      [flex-row (sx {:jc :sb})
        [icon {:colorway :negative} :info]
        [:span "Please check out the " [link "new features"]]
        [icon-button 
@@ -791,7 +793,7 @@
        :colorway :accent
     ;;  :stroke   :xhard
        }
-      [flex-row-space-between
+      [flex-row (sx {:jc :sb})
        [icon :info]
        [:span "Please check out the " [link "new features"]]
        [icon-button 
@@ -815,7 +817,7 @@
      [:p "No colorway set"]
      [callout
       {:surface :faint}
-      [flex-row-space-between
+      [flex-row (sx {:jc :sb})
        [icon {:colorway :negative} :info]
        [:span "Please check out the " [link "new features"]]
        [icon-button 
@@ -828,7 +830,7 @@
      [:p "No colorway set"]
      [callout
       {:surface :faint}
-      [flex-row-space-between
+      [flex-row (sx {:jc :sb})
        [icon :info]
        [:span "Please check out the " [link "new features"]]
        [icon-button 
@@ -842,7 +844,7 @@
      [callout
       {:surface  :faint
        :colorway :neutral}
-      [flex-row-space-between
+      [flex-row (sx {:jc :sb})
        [icon :info
         ]
        [:span "Please check out the " [link "new features"]]
@@ -856,7 +858,7 @@
      [callout
       {:surface  :faint
        :colorway :accent}
-      [flex-row-space-between
+      [flex-row (sx {:jc :sb})
        [icon :info]
        [:span "Please check out the " [link "new features"]]
        [icon-button 
@@ -871,7 +873,7 @@
       {:surface  :transparent
        :colorway :accent
        :stroke   :xhard}
-      [flex-row-space-between
+      [flex-row (sx {:jc :sb})
        [icon :info]
        [:span "Please check out the " [link "new features"]]
        [icon-button 
@@ -887,7 +889,7 @@
        :colorway :accent
     ;;  :stroke   :xhard
        }
-      [flex-row-space-between
+      [flex-row (sx {:jc :sb})
        [icon :info]
        [:span "Please check out the " [link "new features"]]
        [icon-button 
@@ -978,30 +980,30 @@
 
      
      ;; MINIMAL
-     [:div
-      (sx :.display-flex-row-start :ai--flex-start :gap--1rem)
-      [:div (sx :.display-flex-col-start :p--20px :gap--4rem)
-       [button {:size      :medium
-                :stroke      :medium
-                :shadow :medium
-                :surface     :minimal
-                :colorway    :green} "Next"]
-       [button {:size      :medium
-                :stroke      :medium
-                :shadow :medium
-                :surface     :minimal
-                :colorway    :yellow} "Next"]
-       [button {:size      :medium
-                :stroke      :medium
-                :shadow :medium
-                :surface     :minimal
-                :colorway    :blue} "Next"]
-       [button {:size      :medium
-                :stroke      :medium
-                :shadow :medium
-                :surface     :minimal
-                :colorway    :red} "Next"]]
-      [:div (sx :.display-flex-col-start :p--20px :gap--4rem)
+     [flex-row
+      (sx :ai--flex-start :gap--1rem)
+      [flex-col (sx :p--20px :gap--4rem)
+       [button {:size     :medium
+                :stroke   :medium
+                :shadow   :medium
+                :surface  :minimal
+                :colorway :green} "Next"]
+       [button {:size     :medium
+                :stroke   :medium
+                :shadow   :medium
+                :surface  :minimal
+                :colorway :yellow} "Next"]
+       [button {:size     :medium
+                :stroke   :medium
+                :shadow   :medium
+                :surface  :minimal
+                :colorway :blue} "Next"]
+       [button {:size     :medium
+                :stroke   :medium
+                :shadow   :medium
+                :surface  :minimal
+                :colorway :red} "Next"]]
+      [flex-col (sx :p--20px :gap--4rem)
        [:button {:class           (css :.ks-button
                                        ["--stroke-width" :1px]
                                        :.shadow-medium
@@ -1021,8 +1023,8 @@
 
      #_
      ;; FAINT
-       [:div
-        (sx :.flex-row-start :ai--flex-start :gap--1rem)
+       [flex-row
+        (sx :ai--flex-start :gap--1rem)
         [:div (sx :.flex-col-start :p--20px :gap--1rem)
          [button {:size   :medium
                   :surface  :faint
@@ -1036,7 +1038,7 @@
          [button {:size   :medium
                   :surface  :faint
                   :colorway :red} "Next"]]
-        [:div (sx :.flex-col-start :p--20px :gap--1rem)
+        [flex-col (sx :p--20px :gap--1rem)
          [:button (sx ".ks-button" :.surface-faint :.colorway-green :.shape-rounded) "Next"]
          [:button (sx ".ks-button" :.surface-faint :.colorway-yellow :.shape-rounded) "Next"]
          [:button (sx ".ks-button" :.surface-faint :.colorway-blue :.shape-rounded) "Next"]

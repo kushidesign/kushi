@@ -10,12 +10,11 @@
         {:keys [orientation]}  opts]
     [:div
      (merge-attrs
-      {:data-ks-ui :divisor}
-      (sx ".kushi-divisor"
+      (sx ".ks-divisor"
           :.transition
           :bgc--$divisor-color
           :dark:bgc--$divisor-color-dark-mode)
       (if (= "vertical" (util/as-str orientation)) 
-        (sx ".kushi-divisor-vertical" :w--$divisor-thickness)
-        (sx ".kushi-divisor-horizontal" :h--$divisor-thickness))
+        (sx ".ks-divisor-vertical" :w--$divisor-thickness)
+        (sx ".ks-divisor-horizontal" :h--$divisor-thickness))
       attrs)]))

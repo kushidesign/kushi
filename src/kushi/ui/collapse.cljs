@@ -258,8 +258,7 @@
                         expanded-class
                         :display--flex
                         :flex-direction--column
-                        :w--100%)
-       :data-ks-ui :collapse}
+                        :w--100%)}
       &attrs)
      [collapse-header
       (merge-attrs header-attrs

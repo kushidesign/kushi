@@ -34,7 +34,48 @@
                :args          ["Next"]})}
    ]
 
-  [
+[ {:label   "Loading states",
+   :desc    "The spinner component can be supplied as the value of the button's
+             `start-enhancer` or `end-enhancer` prop. Note that the `aria-busy`
+             and `aria-label` attributes need to be set manually.",
+   :schema  boolean?,
+   :require '[[kushi.ui.button :refer [button]]
+              [kushi.ui.icon :refer [icon]]
+              [kushi.ui.spinner :refer [spinner]]],
+   :samples (samples
+             [
+              [button
+               {:colorway     :accent,
+                :surface      :solid,
+                :end-enhancer [spinner {:spinner-type :donut}]
+                :aria-busy    true
+                :aria-label   "loading"
+                }
+               "Play"]
+              [button
+               {:colorway     :accent
+                :surface      :solid
+                :end-enhancer [spinner {:spinner-type :propeller}]
+                :aria-busy    true
+                :aria-label   "loading"
+                }
+               "Play"]
+              [button
+               {:colorway     :accent,
+                :surface      :solid,
+                :end-enhancer [spinner {:spinner-type :thinking}]
+                :aria-busy    true
+                :aria-label   "loading"}
+               "Play"]
+              [button
+               {:colorway :accent
+                :surface  :solid
+                :aria-busy    true
+                :aria-label   "loading"
+                }
+               [:span {:style {:visibility :hidden :width :0px}} "Play"]
+               [spinner {:spinner-type :thinking}]]])}]
+  #_[
    {:samples (samples-with-variant
               {:args          ["Next"],
               ;;  :row-attrs     (sx :_.surface-transparent:display--none)

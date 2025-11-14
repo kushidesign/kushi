@@ -11,24 +11,24 @@
 
 (defn toast-content []
   [:div
-   (sx :.my-toast-content
-       :.display-flex-row-flex-start
-       :.size-medium
-       :position--relative
-       :ai--c
-       :gap--1.25em
-       :xsm:gap--1.5em
-       :pi--1.25em
-       :xsm:pi--1.5em
-       :pb--1em
-       :xsm:pb--1.25em )
+   (merge-attrs (sx :.my-toast-content
+                    :.size-medium
+                    :position--relative
+                    :ai--c
+                    :gap--1.25em
+                    :xsm:gap--1.5em
+                    :pi--1.25em
+                    :xsm:pi--1.5em
+                    :pb--1em
+                    :xsm:pb--1.25em)
+                {:data-ks-display :flex-row})
    [:div
-    (sx :.my-toast-content-wrapper
-        :.display-flex-col-center
-        :ai--fs
-        :gap--0.5em
-        :_.kushi-text-input-label:min-width--7em
-        :_.kushi-input-inline:gtc--36%:64%)
+    (merge-attrs (sx :.my-toast-content-wrapper
+                     :ai--fs
+                     :gap--0.5em
+                     :_.kushi-text-input-label:min-width--7em
+                     :_.kushi-input-inline:gtc--36%:64%)
+                 {:data-ks-display :flex-col-center})
     [:h3 (sx :.weight-bold :m--0) "Saved for later"]
     [:p (sx :.my-toast-text
             :fs--$size-small
@@ -39,14 +39,14 @@
               (new js/Date))]]
    [button
     (merge-attrs (sx :.kushi-toast-close-button
-                     :.shape-rounded
                      :flex-shrink--0
                      :fw--$semi-bold
                      :fs--$size-xxsmall
                      :letter-spacing--$loose
                      :zi--1
                      [:opacity  :$popover-close-button-opacity])
-                 {:on-click dismiss-toast!})
+                 {:on-click      dismiss-toast!
+                  :data-ks-shape :rounded})
     "Undo Save"]])
 
 
@@ -81,7 +81,6 @@
                                       ;; :shadow-strength :15%
                                       ;; :stroke          :xsoft
                                       :class           (css :.my-toast-content
-                                                            :.display-flex-row-flex-start
                                                             :.size-medium
                                                             :position--relative
                                                             :ai--c
@@ -90,14 +89,15 @@
                                                             :pi--1.25em
                                                             :xsm:pi--1.5em
                                                             :pb--1em
-                                                            :xsm:pb--1.25em)}
+                                                            :xsm:pb--1.25em)
+                                      :data-ks-display      :flex-row}
                                      [:div
-                                      (sx :.my-toast-content-wrapper
-                                          :.display-flex-col-center
-                                          :ai--fs
-                                          :gap--0.5em
-                                          :_.kushi-text-input-label:min-width--7em
-                                          :_.kushi-input-inline:gtc--36%:64%)
+                                      (merge-attrs (sx :.my-toast-content-wrapper
+                                                       :ai--fs
+                                                       :gap--0.5em
+                                                       :_.kushi-text-input-label:min-width--7em
+                                                       :_.kushi-input-inline:gtc--36%:64%)
+                                                   {:data-ks-display :flex-col-center})
                                       [:h3 (sx :.weight-bold :m--0) "Saved for later"]
                                       [:p (sx :.my-toast-text
                                               :fs--$size-small
@@ -109,14 +109,14 @@
                                                 (new js/Date))]]
                                      [button
                                       (merge-attrs (sx :.kushi-toast-close-button
-                                                       :.shape-rounded
                                                        :flex-shrink--0
                                                        :fw--$semi-bold
                                                        :fs--$size-xxsmall
                                                        :letter-spacing--$loose
                                                        :zi--1
                                                        [:opacity :$popover-close-button-opacity])
-                                                   {:on-click dismiss-toast!})
+                                                   {:on-click      dismiss-toast!
+                                                    :data-ks-shape :rounded})
                                       "Undo Save"]]
                                     toast-el))})
                 "Save for Later"]])}])

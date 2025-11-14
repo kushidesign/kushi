@@ -3,7 +3,7 @@
    [kushi.core :refer (sx css defcss css-vars-map merge-attrs)]
    [kushi.ui.icon :refer (icon)]
    [kushi.ui.shared :refer [enhancer]]
-   [kushi.ui.flex :refer [flex-row flex-col flex-row-space-between]]
+   [kushi.ui.flex :refer [flex-row flex-col]]
    [kushi.ui.core :refer (extract defui)]))
 
 (defui text-field
@@ -114,12 +114,13 @@
                      outer-wrapper-attrs)
         
         wrapped-input
-        [flex-row-space-between
+        [flex-row
          (merge-attrs
           {:data-ks-colorway colorway}
           (sx
            ".ks-text-input-wrapper"
            {:align-items                                     :stretch
+            :jc                                              :space-between
             ;; :w                     :100%
             :width                                           :auto
             :min-height                                      :34px
@@ -138,10 +139,10 @@
             ;; :border-color                                    :currentColor
             ;; TODO - this under :dark is not getting sorted correctly with @supports - FIX
             ;; :dark:border-color                               :currentColor
-
+            
             "@supports (color: color-mix(in oklch, red, red))" {:border-color      "color-mix(in srgb, currentColor var(--text-input-border-intensity, 75%), transparent)"
                                                                 :dark:border-color "color-mix(in srgb, currentColor var(--text-input-border-intensity-dark-mode, 55%), transparent)"}
-            :_.ks-text-input-enhancer                     {:d  :inline-flex
+            :_.ks-text-input-enhancer                        {:d  :inline-flex
                                                               :ai :center
                                                               :jc :c
                                                               :pi :0.375em}

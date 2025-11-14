@@ -8,6 +8,7 @@
    [kushi.playground.md2hiccup :refer [desc->hiccup]]
    [kushi.ui.button :refer (button)]
    [kushi.ui.core :refer (extract)]
+   [kushi.ui.flex :refer (flex-row flex-col)]
    [kushi.ui.divisor :refer (divisor)]
    [kushi.ui.icon :refer (icon)]
    [kushi.ui.icon.mui.svg :as mui.svg]
@@ -149,13 +150,18 @@
                         :width--$playground-main-content-max-width)
             :id    modal-id}
      [modal-close-button {:modal-id modal-id}]
-     [:div (sx :.kushi-playground-examples-modal-wrapper
-               :.flex-row-space-between :ai--fs :gap--1.5em)
+     [flex-row (sx :.kushi-playground-examples-modal-wrapper
+                   :jc--sb
+                   :ai--fs
+                   :gap--1.5em)
       [:div
        (sx  :.kushi-playground-examples-modal-wrapper-inner
-            :.flex-col-fs :ai--b :gap--1rem )
+            :.flex-col-fs
+            :ai--b
+            :gap--1rem )
        [:h1 (sx :.kushi-playground-examples-modal-wrapper-inner-label
-                :.component-section-header-label) component-label]
+                :.component-section-header-label)
+        component-label]
        label]
       ;; #_[button (sx :.extra-light
       ;;             :.xxlarge 

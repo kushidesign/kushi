@@ -24,9 +24,7 @@
    [kushi.ui.label :refer [label]]
    [kushi.ui.defs :as defs]
    [kushi.ui.variants :as variants]
-   [kushi.ui.flex :refer [flex-row
-                          flex-col
-                          flex-row-space-between]]
+   [kushi.ui.flex :refer [flex-row flex-col]]
    [kushi.util]
    [kushi.css.media]
    [kushi.util :as util]
@@ -111,12 +109,10 @@
 
 
 (defcss "@layer kushi-playground-styles .kpg-variant-grid-1d"
-  ;; :.display-flex-row
   :gap--0.5rem)
 
 
 (defcss "@layer kushi-playground-styles .kpg-variant-grid-2d"
-  ;; :.display-flex-col
   :ai--fs
   :gap--0.5rem)
 
@@ -673,9 +669,10 @@
        :else
        (if-not variant-labels?
          ;; d1 with no labels
-         (into [flex-row-space-between 
+         (into [flex-row
                 (merge-attrs 
                  (sx :ai--c
+                     :jc--sb
                      :w--100%
                      :max-width--605px)
                  {:style row-style}

@@ -553,23 +553,26 @@
 
 (def prop-families
   ;; TODO - should packing be in here?
-  {:container [:size
-               :weight
+  {:container [:text-size
+               :text-weight
                :colorway
                :shape
                :surface
                :stroke
                :stroke-weight
                :stroke-align
-               :inert
+               :stroke-width
                :position
                :background-image-behavior
                :shadow
                :shadow-color
                :shadow-strength
                :loading
+               :inert
+
                :display
-               :gap]})
+               :gap
+               ]})
 
 (def generic-props
   (into #{} (:container prop-families)))

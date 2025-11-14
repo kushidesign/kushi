@@ -3,7 +3,7 @@
             [fireworks.core :refer [? !? ?> !?>]]
             [kushi.ui.core :refer (defui)]
             [kushi.ui.util :as util]
-            [kushi.ui.flex :refer [flex-row-center]]
+            [kushi.ui.flex :refer [flex-row]]
             [kushi.ui.shared :refer [add-enhancer]]))
 
 (defui tag
@@ -25,13 +25,14 @@
                   :inert]}
   [& args]
   (let [{:keys [loading stroke-width]} &props]
-    (into [flex-row-center
+    (into [flex-row
            (merge-attrs
 
             ;; base styles
             ;; TODO - how different from button?
             (sx ".ks-tag"
-                {:w               :fit-content
+                {:jc              :center
+                 :w               :fit-content
                  :h               :fit-content
                  :gap             :$icon-enhanceable-gap
                  :pi              :$padding-inline||$tag-padding-inline

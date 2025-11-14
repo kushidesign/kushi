@@ -8,7 +8,7 @@
    [kushi.ui.icon-button :refer [icon-button]]
    [kushi.ui.core :refer (defui)]
    [kushi.ui.icon :refer [icon]]
-   [kushi.ui.flex :refer [flex-row]]
+   [kushi.ui.flex :refer [flex-row flex-col]]
    [kushi.ui.decoration :as decoration]
    [reagent.dom]))
 
@@ -145,14 +145,14 @@
 
        &attrs)     
 
-     [:div (sx "[data-ks-ui=\"callout-header-wrap\"]"
-               :.flex-row-space-between
-               :position--relative
-               :ta--center
-               :gap--0.5em
-               :p--0.85em:0.75em
-               :w--100%)
-      [:div (sx "[data-ks-ui=\"callout-header-icon-wrap\"]" 
+     [flex-row (sx ".ks-callout-header-wrap"
+                   :jc--sb
+                   :position--relative
+                   :ta--center
+                   :gap--0.5em
+                   :p--0.85em:0.75em
+                   :w--100%)
+      [:div (sx ".ks-callout-header-icon-wrap" 
                 :.flex-col-fs
                 :min-width--1em)
        (if (keyword? header-icon)
@@ -165,13 +165,13 @@
         [:span header-text]
         header-text)
 
-      [:div (sx "[data-ks-ui=\"callout-header-user-inline-end-slot\"]"
+      [:div (sx ".ks-callout-header-user-inline-end-slot"
                 :position--relative
                 :min-width--1em
                 :min-height--1em)
        (when (or user-actions (and close-button? close-button-fn))
          [:div 
-          {:data-ks-ui (if user-actions "callout-user-actions" "callout-close-button")}
+          {:class (if user-actions "callout-user-actions" "callout-close-button")}
           (or user-actions 
               (when close-button?
                 [icon-button
@@ -183,5 +183,5 @@
                  :close]))])]]
 
      (when (seq &children)
-       (into [:div (sx "[data-ks-ui=\"callout-body\"]" :p--1rem)]
+       (into [:div (sx ".ks-callout-body" :p--1rem)]
              &children))]))

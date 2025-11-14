@@ -83,7 +83,9 @@
 
 ;; TODO maybe move to toast.styles
 (defcss "@layer kushi-ui-shared .kushi-toast-slot"
-  :.display-flex-col-center
+  :display--flex
+  :flex-direction--column
+  :jc--center
   :transition-duration--$toast-transition-duration||$pane-transition-duration
   ;; :.xxxslow
   :transition-property--width|height

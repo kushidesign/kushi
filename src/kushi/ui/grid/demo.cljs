@@ -17,9 +17,9 @@
                                    :dark:>div:bgc--$neutral-800)
                                   (for [x (range 6)]
                                     [:div 
-                                     [:div (sx :.position-absolute-fill
-                                               :.display-flex-col-center
-                                               :ai--c)
+                                     [:div (merge-attrs (sx :ai--c)
+                                                        {:data-ks-display  :flex-col-center
+                                                         :data-ks-position :absolute-fill})
                                       (inc x)]])]])}
 
      {:label           "With aspect ratio"
@@ -34,7 +34,7 @@
                                     :aspect-ratio     :2:3})
                                   (for [x (range 18)]
                                     [:div [:div 
-                                           (sx :.position-absolute-fill
-                                               :.display-flex-col-center
-                                               :ai--c)
+                                           (merge-attrs (sx :ai--c)
+                                                        {:data-ks-display  :flex-col-center
+                                                         :data-ks-position :absolute-fill})
                                            (inc x)]])]])}]))

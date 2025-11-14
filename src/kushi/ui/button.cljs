@@ -23,7 +23,6 @@
                  :start-enhancer
                  [:colorway {:default :neutral}]
                  :packing
-                 :loading
                  :stroke
                  :stroke-align
                  :stroke-width
@@ -35,8 +34,7 @@
                  :shadow
                  :shadow-color]}
  [& args]
- (let [{:keys [loading
-               stroke
+ (let [{:keys [stroke
                stroke-width
                surface
                shadow]}
@@ -48,9 +46,7 @@
        button
        [:button 
         (merge-attrs
-         {:aria-busy  loading
-          :aria-label (when loading "loading")
-          :class      (css ".ks-button"
+         {:class      (css ".ks-button"
                            {:d              :flex
                             :flex-direction :row
                             :jc             :center

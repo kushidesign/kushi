@@ -9,7 +9,7 @@
 
 (def demos
   #_[
-   #_{:samples (samples [[:div (sx :.display-flex-row-start :gap--1rem)
+   #_{:samples (samples [[:div (sx :display--flex :gap--1rem)
                         [switch {:at              (at)
                                  :on?             true
                                  :size          :xxxlarge

@@ -7,7 +7,7 @@
    [kushi.ui.button :refer [button]]
    [kushi.ui.divisor :refer [divisor]]
    [kushi.ui.icon :refer [icon]]
-   [kushi.ui.flex :refer [flex-row flex-col flex-row-space-between]]
+   [kushi.ui.flex :refer [flex-row flex-col]]
    [kushi.ui.modal :refer [modal open-kushi-modal modal-close-button]]
    [kushi.css.media]))
 
@@ -61,8 +61,9 @@
     :as   m}]
   [:<> 
    [modal-close-button {:modal-id modal-id}]
-   [flex-row-space-between
+   [flex-row
     (sx :.kushi-playground-examples-modal-wrapper
+        :jc--sb
         :ai--fs
         :gap--1.5em)
     [flex-col 
