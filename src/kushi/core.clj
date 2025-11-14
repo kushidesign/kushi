@@ -19,7 +19,8 @@
   ;; for testing
   ;;  [taoensso.tufte :as tufte]
    
-   ))
+   
+   [kushi.cssprops :as cssprops]))
 
 ;; EEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR   RRRRRRRRRRRRRRRRR   
 ;; E::::::::::::::::::::ER::::::::::::::::R  R::::::::::::::::R  
@@ -1238,14 +1239,18 @@
                  (-> k name (string/starts-with? "data-"))
                  [:attrs k]
 
+                 (or (contains? cssprops/cherries-set (? k))
+                     (contains? cssprops/non-cherries-set k))
+                 [:css k]
+
                  :else
-                 (when-not (= k :selector)
-                   [:css k])) ]
+                 [:custom-props k]) ]
        (if ks (assoc-in acc ks v) acc)))
-   {:props {}
-    :attrs {}
-    :css   {}}
-   m))
+   {:props        {}
+    :attrs        {}
+    :css          {}
+    :custom-props {}}
+   (dissoc m :selector)))
 
 (defn- class-map [selector m+]
   (let [class-selector
@@ -1289,7 +1294,7 @@
 (defn- sx2* [m &form &env]
   (let [selector         (:selector m)
         m                (dissoc m :selector)
-        ret              (!? (props+attrs+css m))
+        ret              (? (props+attrs+css m))
         args             (if selector [selector m] [m])
         m+               (!? 'm+ (merge ret (classes+class-binding args &form &env)))
         class-map        (class-map selector m+)
@@ -1379,7 +1384,7 @@
         
         attrs-coll     (!? (mapv :attrs attrs-coll))]
     
-    (if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
+    #_(if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
       (if dynamic-props?
         `(kushi.core/validator-stub ~m)
         `~m)
@@ -1390,7 +1395,7 @@
                 ~attrs-coll)))
 
     ;; for testing in pure jvm clj env
-    #_(if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
+    (if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
         (if dynamic-props?
           `(kushi.core/validator-stub ~m)
           `~m)

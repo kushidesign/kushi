@@ -25,61 +25,51 @@
                                 ]]
             [clojure.string :as string]
             [kushi.css.specs :as specs]
+            [kushi.cssprops :as cssprops]
             [clojure.set :as set]
             [clojure.spec.alpha :as s]
             [clojure.walk :as walk]
             [kushi.css.defs :as defs]
             [edamame.core :as e :refer [parse-string parse-string-all]]
             [kushi.css.specs :as kushi-specs]
-            [kushi.css.build.analyze :refer [sx2-analyze]]
             [kushi.css.build.utility-classes :as utility-classes]
             [kushi.util :refer [maybe keyed nameable? as-str kw->cssvar color-mix linear-gradient]]
             [kushi.colors2 :refer [oklch-colors]]
             [taoensso.tufte :as tufte :refer [p profile]]
-            
             [me.flowthing.pp :as pp]))
 
+
+(!? cssprops/by-alphabetical-index)
+;; (? {:coll-limit 30} cssprops/all)
+;; (? {:coll-limit 30} cssprops/cherries-set)
+;; (? {:coll-limit 320} cssprops/non-cherries-set)
+;; (? {:coll-limit 320} cssprops/shorthands)
+;; (? {:coll-limit 320} cssprops/cherries)
 
 
 (let [bang       "bat"
       my-surface :solid]
 
-  #_(!? (sx2 {:selector "#hi"
-            :display  :flex-row-space-between
-            :colorway :neutral
-            :surface  my-surface
-            :inert    true
-            :position :sticky
-            :weight   :semi-bold
-            :size     :semi-bold
-            :top      0
-            :z-index  50
-            :class    ["foo" "bar" bang]
-            :style    {"--foo" "12"}
-            :id       :wtf
-            :data-hi  :yeah}
+  (!? (sx2 {:selector        "#hi"
+            :display         :flex-row-space-between
+            :colorway        :neutral
+            :surface         my-surface
+            :inert           true
+            :position        :sticky
+            :weight          :semi-bold
+            :size            :semi-bold
+            :my-custom-prop  :yeah
+            :top             0
+            :z-index         50
+            :x               23
+            :border-collapse :gone
+            :class           ["foo" "bar" bang]
+            :style           {"--foo" "12"}
+            :id              :wtf
+            :data-hi         :yeah}
            {:class ["baz"]
             :style {:color "red!important"}}))
-
-  (sx2-analyze
-   [{:selector    "#hi"
-     :display     :flex-row-space-between
-     :colorway    :neutral
-     :surface     my-surface
-     :inert       true
-     :position    :sticky
-     :text-weight :semi-bold
-     :text-size   :semi-bold
-     :top         0
-     :zi          50
-     :class       ["foo" "bar" bang]
-     :style       {"--foo" "12"}
-     :id          :wtf
-     :data-hi     :yeah}
-    {:class ["baz"]
-     :color :blue
-     :style {:color "red!important"}}]
-   {}))
+  )
 
 ;; 1) Pull out any ks-specific properties
 ;; 2) Create map with defaults
