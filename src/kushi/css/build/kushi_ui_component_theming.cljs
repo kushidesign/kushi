@@ -1,6 +1,10 @@
 ;; 1) Go thru this and convert class selectors to data-ks-
-;; 1) Make defui macro automatically generate a data-ks-button, based on namespace
+
+;; 2) Make defui macro automatically generate a data-ks-button, based on namespace
 ;;    data-foo.bar.bang-button
+
+;; 3) Change :size to :font-size and :weight to :font-weight
+
 
 (ns ^{:kushi/layer "kushi-ui-theming"} kushi.css.build.kushi-ui-component-theming
   (:require

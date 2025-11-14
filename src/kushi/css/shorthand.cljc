@@ -47,7 +47,7 @@
                                             "s"  "space"}}
    "background-size"           {:shorthand "bgs"
                                 :tier      2}
-   "border"                    {:tier 1}
+   "border"                    {:tier 1}                                        
    "border-block"              {:tier 1}
    "border-block-color"        {:tier 2}
    "border-block-end"          {:tier 1}
@@ -113,8 +113,10 @@
                                        "i" "inset",
                                        "o" "outset"}}
    "border-width"              {:tier 1}
-   "color"                     {:tier 1}
-   "display"                   {:tier 1,
+   "color"                     {:tier 1}                                        
+
+   ;; TODO - SVG clash with :d, remove this
+   "display"                   {:tier 1,                                        
                                 :vals {"ib"  "inline-block",
                                        "f"   "flex",
                                        "tr"  "table-row",
@@ -136,7 +138,7 @@
    "font-size"                 {:tier 1}
    "font-variant"              {:tier 1}
    "font-weight"               {:tier 1}
-   "grid"                      {:tier 2}
+   "grid"                      {:tier 2}                                        
    "grid-area"                 {:tier 3}
    "grid-auto-columns"         {:tier 3}
    "grid-auto-flow"            {:tier 3}
@@ -153,8 +155,8 @@
    "grid-template-areas"       {:tier 1}
    "grid-template-columns"     {:tier 1}
    "grid-template-rows"        {:tier 1}
-   "height"                    {:tier 1}
-   "inset"                     {:tier 2}
+   "height"                    {:tier 1}                                        
+   "inset"                     {:tier 2}                                        
    "inset-block"               {:tier 2}
    "inset-block-end"           {:tier 2}
    "inset-block-start"         {:tier 2}
@@ -186,14 +188,14 @@
                                        "l"  "left",
                                        "c"  "center"}}
    "line-height"               {:tier 2}
-   "margin"                    {:tier 1}
+   "margin"                    {:tier 1}                                        
    "margin-block"              {:tier 1}
    "margin-block-end"          {:tier 1}
    "margin-block-start"        {:tier 1}
    "margin-inline"             {:tier 1}
    "margin-inline-end"         {:tier 1}
    "margin-inline-start"       {:tier 1}
-   "opacity"                   {:tier 1}
+   "opacity"                   {:tier 1}                                        
    "padding"                   {:tier 1}
    "padding-block"             {:tier 1}
    "padding-block-end"         {:tier 1}
@@ -243,7 +245,7 @@
                                        "tt" "text-top",
                                        "tb" "text-bottom",
                                        "m"  "middle"}}
-   "visibility"                {:tier 2
+   "visibility"                {:tier 2                                         
                                 :vals {"h" "hidden"
                                        "v" "visibile"
                                        "c" "collapse"}}
@@ -252,7 +254,7 @@
                                        "p"  "pre"
                                        "pw" "pre-wrap"
                                        "pl" "pre-line"}}
-   "width"                     {:tier 1}
+   "width"                     {:tier 1}                                        
    "z-index"                   {:tier 1}})
 
 ;; uses fireworks.pp/?pp

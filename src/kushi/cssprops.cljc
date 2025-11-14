@@ -517,8 +517,8 @@
      word-break
      word-spacing
      writing-mode
-     x
-     y
+     x 🍒
+     y 🍒
      z-index 🍒
      zoom 🍒
                          ]
