@@ -16,7 +16,7 @@
 #_(defn close-callout [e]
   (.stopPropagation e)
   (let [el      (domo/et e)
-        callout (domo/nearest-ancestor el "[data-ks-ui=\"callout\"]")]
+        callout (domo/nearest-ancestor el ".ks-callout")]
     (when (gdom/isElement callout)
       (let [duration* (.-transitionDuration (js/window.getComputedStyle callout))
             duration  (js/Math.round (* 1000 (js/parseFloat (string/replace duration* #"s$" ""))))]
@@ -119,7 +119,7 @@
 
     [:section
       (merge-attrs
-       (sx "[data-ks-ui=\"callout\"]"
+       (sx ".ks-callout"
            :position--relative
            :d--flex
            :flex-direction--row

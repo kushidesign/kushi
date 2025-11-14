@@ -9,7 +9,7 @@
   (into [:a
          (merge-attrs
           {:data-ks-surface :transparent}
-          (sx "[data-ks-ui=\"link\"]"
+          (sx ".ks-link"
               {:td        :underline
                :cursor    :pointer
               ;; TODO - On older browsers, (older iPhones) this won't work.

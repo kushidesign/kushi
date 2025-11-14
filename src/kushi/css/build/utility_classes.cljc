@@ -486,7 +486,7 @@
    (fn [[k weight]]
      [k
       (let [v        (str "'wght' " weight)
-            sel      (if (= sel-fn data-ks-sels) "[data-ks-ui=\"icon\"]" ".ks-icon")
+            sel      (if (= sel-fn data-ks-sels) ".ks-icon" ".ks-icon")
             ancestor (if (= sel-fn data-ks-sels) "[data-ks-weight]" "[class*=\"weight-\"]")]
         {:font-weight                           
          (->> k util/stringify (str "$weight-") keyword)
@@ -599,14 +599,16 @@
   (scale-of-utility-defs
    type-weights
    (let [sel-checkbox
-         (if (= sel-fn data-ks-sels)
-           "[data-ks-ui=\"checkbox\"]" 
-           ".ks-checkbox")
+         ".ks-checkbox"
+         #_(if (= sel-fn data-ks-sels)
+             "[data-ks-ui=\"checkbox\"]" 
+             ".ks-checkbox")
          
          sel-radio
-         (if (= sel-fn data-ks-sels)
-           "[data-ks-ui=\"checkbox\"]" 
-           ".ks-checkbox")]
+         ".ks-checkbox"
+         #_(if (= sel-fn data-ks-sels)
+             "[data-ks-ui=\"checkbox\"]" 
+             ".ks-checkbox")]
      [
       (str ">" sel-checkbox ":outline-width")
       (str ">" sel-checkbox ":border-width")
@@ -761,6 +763,7 @@
             :bottom "0%"})))
 
 (def text-weight-synced-classes 
+  ;; TODO fix this docstring
   "[\".weight-light\"
     {:font-weight                :$light
      \" >.ks-radio-i \"...    :$input-border-weight-light

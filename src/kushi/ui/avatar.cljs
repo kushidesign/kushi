@@ -57,7 +57,7 @@
            (merge-attrs
             {:style {"--width"     (name size)
                      "--font-size" (str "calc(" size " * " font-size-ratio ")")}}
-            (sx "[data-ks-ui=\"avatar\"]"
+            (sx ".ks-avatar"
                 :.position-relative
                 [:--stroke-width :$avatar-stroke-width]
                 :cursor--default

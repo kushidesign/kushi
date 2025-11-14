@@ -63,9 +63,10 @@
            (merge-attrs
             (sx ".kushi-snippet"
                 :.codebox
+                :.transition
                 :position--relative)
             {:data-ks-ui :snippet}
-            attrs)
+                  attrs)
            [:span text-to-display]
            [copy-to-clipboard-button
             {:on-click (or on-copy-click

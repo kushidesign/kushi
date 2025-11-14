@@ -10,11 +10,11 @@
    [kushi.playground.component-examples :as component-examples]))
 
 (defcss ".all-components-sidenav-button"
-  :transition-duration--$xxxfast
-  :pi--1em
-  :pb--0.5em
-  :hover:c--black
-  :dark:hover:c--white)
+  {:transition-duration :$xxxfast
+   :pi                  :1em
+   :pb                  :0.5em
+   :hover:c             :black
+   :dark:hover:c        :white})
 
 (defn sidenav-item-handler [opts e]
   (component-examples/scroll-to-playground-component!
@@ -170,17 +170,33 @@
                     (d/toggle-boolean-attribute nav "aria-expanded")))})
     [:span (sx :.flex-row-c
                :.foreground-color-secondary!
-               :gap--0.5em
-               :lg:_.kushi-icon:d--none
-               :_.kushi-icon.sidenav-close-icon:d--none
-               ["has-ancestor(nav[data-ks-playground-sidenav][aria-expanded=\"true\"])"
+               {:gap                                                                
+                :0.5em
+
+                "lg:_[data-ks-kushi=\"icon\"]:d"                                        
+                :none
+
+                "_[data-ks-kushi=\"icon\"].sidenav-close-icon:d"                        
+                :none
+
+                "has-ancestor(nav[data-ks-playground-sidenav][aria-expanded=\"true\"])" 
                 {:>.sidenav-menu-icon:d  :none
                  :>.sidenav-close-icon:d :inline-flex
                  :>ul:h                  "calc((100vh - (var(--navbar-height) * 2)) * 1)"
                  :h                      :fit-content
-                 :o                      1}])
-     [icon (sx :.sidenav-menu-icon :.extra-light :fs--$size-large) :menu]
-     [icon (sx :.sidenav-close-icon :.extra-light :fs--$size-large) :close]
+                 :o                      1}})
+
+     [icon
+      (sx :.sidenav-menu-icon 
+          {:fs :$size-large
+           :fw :$weight-extra-light}) 
+      :menu]
+
+     [icon 
+      (sx :.sidenav-close-icon 
+          {:fs :$size-large
+           :fw :$weight-extra-light})
+      :close]
      "All Components"]]
    
    

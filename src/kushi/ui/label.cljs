@@ -26,7 +26,7 @@
   (into [:label
          (merge-attrs
           (sx
-           "[data-ks-ui=\"label\"]"
+           ".ks-label"
            :.flex-row-start
            :d--inline-flex
            :w--fit-content

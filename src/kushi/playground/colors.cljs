@@ -9,28 +9,6 @@
 
 (register-design-tokens-by-category "colors" "global colors")
 
-(defn label
-  {:desc "A label is typically used for providing titles to sections of
-          content."}
-  [& args]
-  (let [{:keys [opts attrs children]} (extract args)
-        children (map #(if (string? %)
-                         [:span.kushi-label-text %]
-                         %)
-                      children)]
-    (into [:span
-           (merge-attrs
-            {:class         (css
-                             ".kushi-label"
-                             :.flex-row-c
-                             :.enhanceable-with-icon
-                             :.transition
-                             :jc--fs
-                             :d--inline-flex
-                             :w--fit-content)
-             :data-ks-ui :label}
-            attrs)]
-          children)))
 
 (defn text-sample-sticker [& args]
   (let [{:keys [opts attrs children]} (extract args)

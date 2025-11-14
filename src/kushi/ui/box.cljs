@@ -20,7 +20,7 @@
     (!? &attrs)
     (into
      [:div (merge-attrs 
-            (sx "[data-ks-ui=\"box\"]"
+            (sx ".ks-box"
                 :.relative)
 
             (!? :pp (decoration/stroke-width-cssvar (:stroke-width &props) "button"))

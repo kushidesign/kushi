@@ -137,13 +137,13 @@
 
 
 ;; (def re #"^\[data-[a-zA-Z0-1_-]+(?:=\"?[a-z]+\")?\]$")
-;; (? (re-find re "[data-ks-ui=\"foo\"]"))
+;; (? (re-find re ".ks-foo"))
 ;; (? (re-find re "[data-ks-ui]"))
 
-;; (? (s/explain-data ::specs/supplied-selector "[data-ks-ui=\"icon\"]"))
+;; (? (s/explain-data ::specs/supplied-selector ".ks-icon"))
 
 #_(? (css
-    "[data-ks-ui=\"button\"]"
+    ".ks-button"
     :.relative
     :m--10px
     nil nil))
