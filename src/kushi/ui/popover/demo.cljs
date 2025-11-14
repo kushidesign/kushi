@@ -216,14 +216,12 @@
 
                                             [icon-button
                                              (merge-attrs
-                                              {:on-click dismiss-popover!
-                                               :shape    :pill
-                                               :surface  :minimal}
+                                              {:on-click         dismiss-popover!
+                                               :shape            :pill
+                                               :surface          :minimal
+                                               :data-ks-position :top-right-corner-inside}
                                               (sx :.ks-popover-close-button
-                                                  ;; :.neutral
-                                                  :.position-top-right-corner-inside
-                                                  {:position      :absolute
-                                                   :fs            :$size-small
+                                                  {:fs            :$size-small
                                                    :zi            1
                                                    :opacity       :$popover-close-button-opacity
                                                    :margin-inline :$popover-close-button-margin-inline||$icon-button-padding-inline

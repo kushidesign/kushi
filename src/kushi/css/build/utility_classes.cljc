@@ -787,10 +787,10 @@
    ;; base and global
    global-classes
 
-   ;; flex-utility classes e.g. :.display-inline-flex
+   ;; display utility classes e.g. [data-ks-display="inline"]
    (sel-fn display-classes "display")
 
-   ;; flex-utility classes e.g. :.display-flex-row-flex-end
+   ;; combo flex-utility classes e.g. [data-ks-display="flex-row-flex-end"]
    (sel-fn base-flex-classes "display")
    (sel-fn combo-flex-utility-classes "display")
 

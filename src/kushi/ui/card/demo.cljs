@@ -1,17 +1,15 @@
 (ns ^{:kushi/layer "user-styles"} kushi.ui.card.demo
-  (:require [kushi.core :refer (sx)]
+  (:require [kushi.core :refer (sx merge-attrs)]
             [kushi.playground.util :refer-macros [sx-call]]
             [kushi.showcase.core
              :as showcase
              :refer [samples-with-variant samples]]
             [kushi.ui.card :refer [card]]
-            
             [kushi.ui.callout :refer [callout]]
             [kushi.ui.flex :refer [flex-col flex-row]]
             [kushi.ui.icon :refer [icon]]
             [kushi.ui.icon-button :refer [icon-button]]
             [kushi.ui.link :refer [link]]
-            
             ))
 
 
@@ -36,18 +34,21 @@
                  [card 
                   {:size :xxsmall}
                   [flex-row (sx :ai--stretch :gap--0.8em)
-                   [:div (sx :.rounded
-                             :position--relative
-                             :overflow--hidden
-                             :.transition
-                             :bgc--$neutral-200
-                             :dark:bgc--$neutral-800
-                             :w--3.5em
-                             :h--3.5em)
-                    [:span (sx :.position-absolute-centered
-                               [:transform "translate(0, 0.045em)"]
-                               :display--block
-                               :scale--2.55)
+                   [:div (merge-attrs
+                          (sx :position--relative
+                              :overflow--hidden
+                              :.transition
+                              :bgc--$neutral-200
+                              :dark:bgc--$neutral-800
+                              :w--3.5em
+                              :h--3.5em)
+                          {:data-ks-shape      :rounded
+                           :data-ks-transition ""})
+                    [:span (merge-attrs 
+                            (sx [:transform "translate(0, 0.045em)"]
+                                :display--block
+                                :scale--2.55)
+                            {:data-ks-position :absolute-centered})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
                     [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
@@ -59,18 +60,20 @@
                  [card 
                   {:size :xsmall}
                   [flex-row (sx :ai--stretch :gap--0.8em)
-                   [:div (sx :.rounded
-                             :position--relative
+                   [:div (sx :position--relative
                              :overflow--hidden
                              :.transition
                              :bgc--$neutral-200
                              :dark:bgc--$neutral-800
                              :w--3.5em
                              :h--3.5em)
-                    [:span (sx :.position-absolute-centered
-                               [:transform "translate(0, 0.045em)"]
-                               :display--block
-                               :scale--2.55)
+                    [:span (merge-attrs
+                            (sx [:transform "translate(0, 0.045em)"]
+                                :display--block
+                                :scale--2.55)
+                            {:data-ks-position   :absolute-centered
+                             :data-ks-shape      :rounded
+                             :data-ks-transition ""})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
                     [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
@@ -82,18 +85,21 @@
                  [card 
                   {:size :small}
                   [flex-row (sx :ai--stretch :gap--0.8em)
-                   [:div (sx :.rounded
-                             :position--relative
-                             :overflow--hidden
-                             :.transition
-                             :bgc--$neutral-200
-                             :dark:bgc--$neutral-800
-                             :w--3.5em
-                             :h--3.5em)
-                    [:span (sx :.position-absolute-centered
-                               [:transform "translate(0, 0.045em)"]
-                               :display--block
-                               :scale--2.55)
+                   [:div (merge-attrs
+                          (sx :overflow--hidden
+                              :bgc--$neutral-200
+                              :dark:bgc--$neutral-800
+                              :w--3.5em
+                              :h--3.5em)
+                          {:data-ks-position   :relative
+                           :data-ks-shape      :rounded
+                           :data-ks-transition ""})
+                    [:span (merge-attrs
+                            (sx [:transform "translate(0, 0.045em)"]
+                                :display--block
+                                :scale--2.55)
+                            {:data-ks-position   :absolute-centered
+                             :data-ks-transition ""})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
                     [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
@@ -105,18 +111,20 @@
                  [card 
                   {:size :medium}
                   [flex-row (sx :ai--stretch :gap--0.8em)
-                   [:div (sx :.rounded
-                             :position--relative
-                             :overflow--hidden
-                             :.transition
-                             :bgc--$neutral-200
-                             :dark:bgc--$neutral-800
-                             :w--3.5em
-                             :h--3.5em)
-                    [:span (sx :.position-absolute-centered
-                               [:transform "translate(0, 0.045em)"]
-                               :display--block
-                               :scale--2.55)
+                   [:div (merge-attrs
+                          (sx :overflow--hidden
+                              :bgc--$neutral-200
+                              :dark:bgc--$neutral-800
+                              :w--3.5em
+                              :h--3.5em)
+                          {:data-ks-position   :relative
+                           :data-ks-shape      :rounded
+                           :data-ks-transition ""})
+                    [:span (merge-attrs
+                            (sx [:transform "translate(0, 0.045em)"]
+                                :scale--2.55)
+                            {:data-ks-position :absolute-centered
+                             :data-ks-display  :block})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
                     [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
@@ -136,10 +144,11 @@
                              :dark:bgc--$neutral-800
                              :w--3.5em
                              :h--3.5em)
-                    [:span (sx :.position-absolute-centered
-                               [:transform "translate(0, 0.045em)"]
-                               :display--block
-                               :scale--2.55)
+                    [:span (merge-attrs
+                            (sx [:transform "translate(0, 0.045em)"]
+                                :scale--2.55)
+                            {:data-ks-position :absolute-centered
+                             :data-ks-display  :block})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
                     [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 

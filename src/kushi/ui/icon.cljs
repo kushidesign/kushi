@@ -59,19 +59,16 @@
                   :icon-style
                   :icon-filled]}
   [& args]
-  (let [{:keys [icon-style icon-filled surface colorway]}
+  (let [{:keys [icon-style icon-filled colorway]}
         &props
 
         [icon*]                                           
-        &children
-
-        surface-transparent 
-        (when colorway :.surface-transparent)]
+        &children]
 
     [:div
      (merge-attrs
+      (when colorway {:data-ks-surface :transparent})
       (sx ".ks-icon"
-          surface-transparent
           :d--inline-flex
           :flex-direction--row
           :jc--c

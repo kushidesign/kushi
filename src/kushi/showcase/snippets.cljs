@@ -160,11 +160,8 @@
     (when-let [attrs (some->> copyable
                               (hash-map :text-to-copy)
                               (merge-attrs 
-                               ;; TODO - can this be done without :.top-right-corner-inside!
-                               ;; TODO - can this be done without :.top-right-corner-inside!
-                               (sx :.position-top-right-corner-inside
-                                   :position--absolute)
-                               {:clipboard-parent-sel ".kushi-modal"}))]
+                               {:clipboard-parent-sel ".kushi-modal"
+                                :data-ks-position     :top-right-corner-inside}))]
       [copy-to-clipboard-button attrs])
     preformatted
     ]])

@@ -55,10 +55,10 @@
               0.4))]
     (into [(if (:src &attrs) :img :span)
            (merge-attrs
-            {:style {"--width"     (name size)
-                     "--font-size" (str "calc(" size " * " font-size-ratio ")")}}
+            {:style            {"--width"     (name size)
+                                "--font-size" (str "calc(" size " * " font-size-ratio ")")}
+             :data-ks-position :relative}
             (sx ".ks-avatar"
-                :.position-relative
                 [:--stroke-width :$avatar-stroke-width]
                 :cursor--default
                 :d--inline-flex

@@ -73,9 +73,9 @@
         (when helper-text
           (merge-attrs
            label-text-attrs
+           {:data-ks-display :inline-block
+            :data-ks-colorway :secondary}
            (sx ".ks-text-input-helper"
-               :.foreground-color-secondary
-               :.display-inline-block
                :fw--$weight-normal
                :mbs--$text-input-helper-margin-block-start||0.3em)
            ;; Removed :.disabled, check
@@ -87,13 +87,14 @@
           label-text-attrs
           (let [after-content (when required "\"*\"")
                 after-color (when required "var(--negative-600)")]
-            {:style (css-vars-map after-content after-color)
-             :class (css ".ks-text-input-label"
-                         :.display-inline-block
-                         [:after:content :$after-content]
-                         [:after:c :$after-color]
-                         :after:pis--0.15em)
-             :for   input-id})
+            {:style            (css-vars-map after-content after-color)
+             :class            (css ".ks-text-input-label"
+                                    [:after:content :$after-content]
+                                    [:after:c :$after-color]
+                                    :after:pis--0.15em)
+             :for              input-id
+             :data-ks-display  :inline-block
+             })
           ;; Removed :.disabled, check
           (when disabled {:class (css ".ks-text-input-label-disabled")})
           (if inline?
