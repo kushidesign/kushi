@@ -1,6 +1,6 @@
 (ns site.views2
   (:require
-
+   [clojure.string :as str]
    [fireworks.core :refer [? !? ?> !?> pprint]]
    [bling.core]
    [domo.core :as domo]
@@ -186,7 +186,7 @@
      "Play"]
 
   ;; This should be box or flex with flex and default inert
-  ;; [box {:--border-color :gold
+  ;; [box {:--border-color :cyan
   ;;       :--smile-factor :clown}]
   #_[radio-group 
      {:class    (css :w--fit-content
@@ -324,7 +324,17 @@
   
 
 
-  (let [div (fn [{:keys [stroke surface colorway interactive text shape]}]
+  (let [en->jp 
+        {"ghost"         "ゴースト",
+         "transparent"   "透明",
+         "minimal"       "ミニマル",
+         "faint"         "薄い",
+         "soft"          "ソフト",
+         "convex"        "凸",
+         "soft-classic"  "ソフトクラシック",
+         "solid-classic" "ソリッドクラシック",
+         "solid"         "ソリッド"}
+        div (fn [{:keys [stroke surface colorway interactive text shape]}]
               [:div (merge-attrs 
                      (when (contains? #{"soft-classic" "solid-classic"} surface)
                        {:class [:ks-button2]
@@ -334,7 +344,8 @@
                           ;; :aspect-ratio                        3
                           :w              :150px
                           :h              :55px
-                          :fs             :$text-size-small
+                          :ff             "Bradthen"
+                          :fs             :$text-size-xxlarge
                           :fw             :$text-weight-bold
                           :tt             :u
                           :d              :flex
@@ -352,7 +363,9 @@
                             (some->> shape (hash-map :data-ks-shape))
                             )
                      )
-               (or text (name surface))])]
+               (let [s (or text (name surface))]
+                 s
+                 #_(get en->jp s s))])]
     
    [flex-row
     (sx {:p        :2rem
@@ -407,100 +420,100 @@
 
     [flex-col
      [div {:surface  "ghost"
-           :colorway :gold
+           :colorway :cyan
            :stroke   :hard
            :shape    :rounded-xlarge}]
      [div {:surface     "transparent"
-           :colorway    :gold
+           :colorway    :cyan
            :stroke      :hard}]
      [div {:surface     "minimal"
-           :colorway    :gold
+           :colorway    :cyan
            :stroke      :hard}]
      [div {:surface     "faint"
-           :colorway    :gold}]
+           :colorway    :cyan}]
      [div {:surface     "soft"
-           :colorway    :gold}]
+           :colorway    :cyan}]
      [div {:surface     "convex"
-           :colorway    :gold}]
+           :colorway    :cyan}]
      [div {:surface     "soft-classic"
-           :colorway    :gold
+           :colorway    :cyan
            :shape       :pill}]
      [div {:surface     "solid-classic"
-           :colorway    :gold
+           :colorway    :cyan
            :shape       :pill}]
      [div {:surface     "solid"
-           :colorway    :gold
+           :colorway    :cyan
            :shape       :pill}]]
 
     [flex-col
      [div {:surface     "ghost"
-           :colorway    :gold
+           :colorway    :cyan
            :interactive true
            :shape       :rounded-xlarge 
            :stroke      :hard}]
      [div {:surface     "transparent"
-           :colorway    :gold
+           :colorway    :cyan
            :interactive true
            :stroke      :hard}]
      [div {:surface     "minimal"
-           :colorway    :gold
+           :colorway    :cyan
            :interactive true
            :stroke      :hard}]
      [div {:surface     "faint"
-           :colorway    :gold
+           :colorway    :cyan
            :interactive true}]
      [div {:surface     "soft"
-           :colorway    :gold
+           :colorway    :cyan
            :interactive true}]
      [div {:surface     "convex"
-           :colorway    :gold
+           :colorway    :cyan
            :interactive true}]
      [div {:surface     "soft-classic"
-           :colorway    :gold
+           :colorway    :cyan
            :shape       :pill
            :interactive true}]
      [div {:surface     "solid-classic"
-           :colorway    :gold
+           :colorway    :cyan
            :shape       :pill
            :interactive true}]
      [div {:surface     "solid"
-           :colorway    :gold
+           :colorway    :cyan
            :interactive true
            :shape       :pill}] ]
 
     [flex-col
      [div {:surface     "ghost"
-           :colorway    :brown
+           :colorway    :greige
            :interactive true
            :shape       :rounded-xlarge 
            :stroke      :hard}]
      [div {:surface     "transparent"
-           :colorway    :brown
+           :colorway    :greige
            :interactive true
            :stroke      :hard}]
      [div {:surface     "minimal"
-           :colorway    :brown
+           :colorway    :greige
            :interactive true
            :stroke      :hard}]
      [div {:surface     "faint"
-           :colorway    :brown
+           :colorway    :greige
            :interactive true}]
      [div {:surface     "soft"
-           :colorway    :brown
+           :colorway    :greige
            :interactive true}]
      [div {:surface     "convex"
-           :colorway    :brown
+           :colorway    :greige
            :interactive true}]
      [div {:surface     "soft-classic"
-           :colorway    :brown
+           :colorway    :greige
            :shape       :pill
            :interactive true}]
      [div {:surface     "solid-classic"
-           :colorway    :brown
+           :colorway    :greige
            :shape       :pill
            :interactive true}]
      [div {:surface     "solid"
-           :colorway    :brown
+           :colorway    :greige
            :interactive true
            :shape       :pill}]]
      
@@ -541,6 +554,41 @@
            :interactive true
            :shape       :pill}]]
      
+    [flex-col
+     [div {:surface     "ghost"
+           :colorway    :blue
+           :interactive true
+           :shape       :rounded-xlarge 
+           :stroke      :hard}]
+     [div {:surface     "transparent"
+           :colorway    :blue
+           :interactive true
+           :stroke      :hard}]
+     [div {:surface     "minimal"
+           :colorway    :blue
+           :interactive true
+           :stroke      :hard}]
+     [div {:surface     "faint"
+           :colorway    :blue
+           :interactive true}]
+     [div {:surface     "soft"
+           :colorway    :blue
+           :interactive true}]
+     [div {:surface     "convex"
+           :colorway    :blue
+           :interactive true}]
+     [div {:surface     "soft-classic"
+           :colorway    :blue
+           :shape       :pill
+           :interactive true}]
+     [div {:surface     "solid-classic"
+           :colorway    :blue
+           :shape       :pill
+           :interactive true}]
+     [div {:surface     "solid"
+           :colorway    :blue
+           :interactive true
+           :shape       :pill}]]
      
      ] 
 
@@ -563,7 +611,7 @@
               ;;  :gtr                                 "repeat(10, 50px)"
               ;;  :gtc                                 :1fr:1fr:1fr
                :gap                                 :3rem
-               :>.sidenav-close-icon:c              :gold
+               :>.sidenav-close-icon:c              :cyan
                })
 
 
@@ -606,7 +654,7 @@
                  :name                    :wtf
                  :display                 :flex-row-space-between
                  :position                :absolute-center
-                 :colorway                :gold
+                 :colorway                :cyan
                  :surface                 :transparent
                  :stroke                  :hard
                  :shape                   :rounded-xsmall 
@@ -622,7 +670,7 @@
                  :>.sidenav-close-icon:c  :red
           ;; ".bones &"                 {:outline        :3px:solid:lime
           ;;                             :outline-offset :10px}
-                 "[data-ks]:c"              :gold
+                 "[data-ks]:c"              :cyan
                  "[data-ks=\"wtf\"]:c"        :blue
                  :fs                      :$text-size-xxxlarge
                  :.aa:bgc                 :pink
@@ -698,7 +746,7 @@
                 :size           :xxxlarge
                 :shape          :pill
                 :colorway         :accent
-                :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
+                :stroke           :medium #_[[:2px :$greige-300] [:2px :$green-300]]
                 :stroke-width     :3px
 
         ;;  :stroke-align     :outside
@@ -717,7 +765,7 @@
                 :size       :large
                 :shape      :pill
                 :colorway     :accent
-      ;;  :stroke [[:4px :$brown-300] [:2px :$green-300]]
+      ;;  :stroke [[:4px :$greige-300] [:2px :$green-300]]
                 :stroke       :soft
       ;;  :stroke-width "5px"
                 :stroke-align :inside
@@ -731,7 +779,7 @@
                :size       :large
                :shape      :pill
                :colorway     :accent
-        ;; :stroke [[:4px :$brown-300] [:2px :$green-300]]
+        ;; :stroke [[:4px :$greige-300] [:2px :$green-300]]
                :stroke       :medium
                :stroke-width "3px"
                :stroke-align :outside
@@ -773,7 +821,7 @@
                                                               })
 
           ;; shadows      [[:-15px :15px :20px :aqua]
-          ;;               [:15px :-15px :20px :gold]]
+          ;;               [:15px :-15px :20px :cyan]]
                    shadows (concat shadows shadows-2)]
                [:div {:style {:width      :200px
                               :height     :200px
@@ -935,7 +983,7 @@
                           :shadow     k}
                          (sx :p--20px:40px
                              :min-width--200px
-                             [:--color :$gold-400]
+                             [:--color :$cyan-400]
                              [:--shadow-strength :40%]))
              k]))
   
@@ -1262,7 +1310,7 @@
      ;; TRANSPARENT
      [flex-row
       (into [flex-col
-             (for [colorway [:green :gold :blue :red]]
+             (for [colorway [:green :cyan :blue :red]]
                [button {:size         :medium
                         :shape        :pill
                         :stroke       :medium
@@ -1306,7 +1354,7 @@
                 :stroke   :medium
                 :shadow   :medium
                 :surface  :minimal
-                :colorway :gold} "Next"]
+                :colorway :cyan} "Next"]
        [button {:size     :medium
                 :stroke   :medium
                 :shadow   :medium
@@ -1345,7 +1393,7 @@
                   :colorway :green} "Next"]
          [button {:size   :medium
                   :surface  :faint
-                  :colorway :gold} "Next"]
+                  :colorway :cyan} "Next"]
          [button {:size   :medium
                   :surface  :faint
                   :colorway :blue} "Next"]
@@ -1374,7 +1422,7 @@
          #_#_#_
                [button {:size   :medium
                         :surface  :soft
-                        :colorway :gold} "Next"]
+                        :colorway :cyan} "Next"]
              [button {:size   :medium
                       :surface  :soft
                       :colorway :blue} "Next"]
@@ -1399,7 +1447,7 @@
                   :colorway :green} "Next"]
          [button {:size   :medium
                   :surface  :soft-classic
-                  :colorway :gold} "Next"]
+                  :colorway :cyan} "Next"]
          [button {:size   :medium
                   :surface  :soft-classic
                   :colorway :blue} "Next"]
@@ -1422,7 +1470,7 @@
                   :colorway :green} "Next"]
          [button {:size   :medium
                   :surface  :solid
-                  :colorway :gold} "Next"]
+                  :colorway :cyan} "Next"]
          [button {:size   :medium
                   :surface  :solid
                   :colorway :blue} "Next"]
@@ -1445,7 +1493,7 @@
                   :colorway :green} "Next"]
          [button {:size   :medium
                   :surface  :solid-classic
-                  :colorway :gold} "Next"]
+                  :colorway :cyan} "Next"]
          [button {:size   :medium
                   :surface  :solid-classic
                   :colorway :blue} "Next"]
@@ -1593,5 +1641,23 @@
 
 ;; '[tag {:class ["foo.wtf__L20_C30"
 ;;                "surface-solid" 
-;;                "colorway-gold"]
+;;                "colorway-cyan"]
 ;;        :style ""}]
+
+(? (clj->js (map #(-> % second :surface)
+                 '[[div {:surface "ghost" 
+                         :stroke  :hard
+                         :shape   :rounded-xlarge}]
+                   [div {:surface "transparent"
+                         :stroke  :hard}]
+                   [div {:surface "minimal"
+                         :stroke  :hard}]
+                   [div {:surface "faint"}]
+                   [div {:surface "soft"}]
+                   [div {:surface "convex"}]
+                   [div {:surface "soft-classic"
+                         :shape   :pill }]
+                   [div {:surface "solid-classic"
+                         :shape   :pill }]
+                   [div {:surface "solid"
+                         :shape   :pill}]])))

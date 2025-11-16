@@ -17,6 +17,7 @@
                "gray"
                "purple"
                "blue"
+               "cyan"
                "green"
                "lime"
                "yellow"
@@ -24,7 +25,7 @@
                "orange"
                "red"
                "magenta"
-               "brown"
+               "greige"
                "slate"}
    :text-weight   defs/basic-weights-set-of-strs
    :text-size     defs/basic-sizes-set-of-strs})

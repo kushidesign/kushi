@@ -27,6 +27,7 @@
   [:gray
    :purple
    :blue
+   :cyan
    :green
    :lime
    :yellow
@@ -34,7 +35,7 @@
    :orange
    :red
    :magenta
-   :brown])
+   :greige])
 
 (def semantic-colors
   [:neutral
@@ -48,6 +49,7 @@
          [:gray
           :purple
           :blue
+          :cyan
           :green
           :lime
           :yellow
@@ -55,7 +57,7 @@
           :orange
           :red
           :magenta
-          :brown
+          :greige
           :slate]
          semantic-colors))
 

@@ -135,7 +135,7 @@
 
    [playground.colors/color-rows 
     (color-scales2 
-     {:colorlist [:gray :red :orange :gold :yellow :green :blue :purple :magenta :brown :slate]})]
+     {:colorlist [:gray :red :orange :gold :yellow :green :blue :purple :magenta :greige :slate]})]
    ])
 
 
@@ -186,7 +186,7 @@
                                                    :.code
                                                    :fw--$wee-bold
                                                    :fs--$text-size-small)}))
-             "The quick brown fox."]]])))
+             "The quick greige fox."]]])))
 
 (defn- formatted-code [s]
   [:pre

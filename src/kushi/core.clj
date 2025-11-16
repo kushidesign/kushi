@@ -1,27 +1,26 @@
 (ns kushi.core
-  (:require 
-   [fireworks.core :refer [? !? pprint]]
-   [fireworks.sample]
-   [kushi.ui.variants :as props]
-   [kushi.ui.core :refer [html-attrs]]
-   [kushi.css.defs :as defs]
-   [kushi.css.hydrated :as hydrated]
-   [kushi.css.specs :as specs]
-   [kushi.css.build.colorways :refer [colorway-args colorway-selector]]
-   [kushi.util :as util :refer [keyed vec-of-vecs? more-than-one? partition-by-pred as-str maybe]]
-   [kushi.specs2 :as specs2]
-   [clojure.walk :as walk :refer [prewalk postwalk]]
-   [clojure.string :as string :refer [replace] :rename {replace sr}]
-   [clojure.spec.alpha :as s]
+  (:require ;; for testing
+ ;;  [taoensso.tufte :as tufte]
+   [babashka.process :refer [shell]] ;; for testing
    [bling.core :refer [bling callout point-of-interest]]
    [bling.hifi :refer [hifi]]
-   [babashka.process :refer [shell]]
-  ;; for testing
-  ;;  [taoensso.tufte :as tufte]
-   
-   
+   [clojure.data.json :as json]
+   [clojure.spec.alpha :as s]
+   [clojure.string :as string :refer [replace] :rename {replace sr}]
+   [clojure.walk :as walk :refer [postwalk prewalk]]
+   [fireworks.core :refer [!? ? pprint]]
+   [fireworks.sample]
+   [kushi.css.build.colorways :refer [colorway-args colorway-selector]]
+   [kushi.css.defs :as defs]
+   [kushi.css.hydrated :as hydrated]
+   [kushi.css.shorthand :as shorthand]
+   [kushi.css.specs :as specs]
    [kushi.cssprops :as cssprops]
-   [kushi.css.shorthand :as shorthand]))
+   [kushi.specs2 :as specs2]
+   [kushi.ui.core :refer [html-attrs]]
+   [kushi.ui.variants :as props]
+   [kushi.util :as util :refer [as-str keyed maybe more-than-one?
+                                partition-by-pred vec-of-vecs?]]))
 
 ;; EEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR   RRRRRRRRRRRRRRRRR   
 ;; E::::::::::::::::::::ER::::::::::::::::R  R::::::::::::::::R  
@@ -1927,3 +1926,4 @@
         ns-name (-> &env :ns :name)
         ret (str ns-name ":" line ":" column)]
     `~ret))
+

@@ -475,7 +475,7 @@
    "positive"
   ;;  "lime"
    "warning"
-  ;;  "brown"
+  ;;  "greige"
   ;;  "slate"
   ;;  "orange"
    "negative"
@@ -486,7 +486,7 @@
   [
    "purple"
    "lime"
-   "brown"
+   "greige"
    "slate"
    "orange"
    "magenta"
@@ -504,7 +504,7 @@
    "orange"
    "red"
    "magenta"
-   "brown"
+   "greige"
    "slate"
    ])
 

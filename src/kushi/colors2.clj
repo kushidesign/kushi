@@ -176,7 +176,7 @@
             [800 88 30]
             [900 95 21]
             [1000 100 11]]},
-   "brown"
+   "greige"
    {:hue   19,
     :scale [[50 40 97]
             [100 37 93]
@@ -192,8 +192,6 @@
    ])
 
 
-(def slate-hue 267)
-(def brown-hue 80)
 (def magenta-hue 347.6)
 (def red-hue 27)
 (def orange-hue 62.3)
@@ -201,9 +199,12 @@
 (def yellow-hue 100)
 (def lime-hue 129.5)
 (def green-hue 155.5)
+(def cyan-hue 200)
 (def blue-hue 267)
 (def purple-hue 304.9)
 (def gray-hue 0)
+(def slate-hue 290)
+(def greige-hue 80)
 
 ;; generated from functions above using original kushi.colors/colors hsl scale.
 (def oklch-colors
@@ -248,6 +249,21 @@
              [800 0.37 0.159]
              [900 0.301 0.131]
              [1000 0.198 0.078]]}
+
+    "cyan"
+    {:hue   cyan-hue,
+     :scale [[50 0.979 0.01]
+             [100 0.948 0.024]
+             [200 0.877 0.057]
+             [300 0.797 0.094]
+             [400 0.702 0.136]
+             [500 0.601 0.189]
+             [600 0.521 0.213]
+             [700 0.439 0.185]
+             [800 0.37 0.159]
+             [900 0.301 0.131]
+             [1000 0.198 0.078]]}
+
     "green"
     {:hue   green-hue,
      :scale [[50 0.986 0.018]
@@ -357,8 +373,8 @@
              [900 0.362 0.051]
              [1000 0.227 0.028]]}
 
-    "brown"
-    {:hue   brown-hue,
+    "greige"
+    {:hue   greige-hue,
      :scale [[50 0.977 0.005]
              [100 0.945 0.011]
              [200 0.898 0.02]
@@ -421,6 +437,29 @@
 
     "blue"
     {:hue   267,
+     :scale [[50 0.979 0.01]
+             [100 0.948 0.024]
+             [150 0.91 0.04]
+             [200 0.877 0.057]
+             [250 0.84 0.08]
+             [300 0.797 0.094]
+             [350 0.75 0.12]
+             [400 0.702 0.136]
+             [450 0.65 0.16]
+             [500 0.601 0.189]
+             [550 0.56 0.2]
+             [600 0.521 0.213]
+             [650 0.48 0.2]
+             [700 0.439 0.185]
+             [750 0.4 0.17]
+             [800 0.37 0.159]
+             [850 0.34 0.15]
+             [900 0.301 0.131]
+             [950 0.25 0.1]
+             [1000 0.198 0.078]]}
+
+    "cyan"
+    {:hue   200,
      :scale [[50 0.979 0.01]
              [100 0.948 0.024]
              [150 0.91 0.04]
@@ -621,7 +660,7 @@
              [950 0.29 0.04]
              [1000 0.227 0.028]]}
 
-    "brown"
+    "greige"
     {:hue   80,
      :scale [[50 0.977 0.005]
              [100 0.945 0.011]
@@ -925,6 +964,7 @@
                      "gray"     neutral
                      "purple"   purple
                      "blue"     blue
+                     "cyan"    green
                      "green"    green
                      "lime"     lime
                      "yellow"   yellow
@@ -932,7 +972,7 @@
                      "orange"   standard
                      "red"      standard
                      "magenta"  standard
-                     "brown"    standard]
+                     "greige"    standard]
 
         f (fn [[cw k s light dark]]
             (->> (color-token-pair k cw s light :light)

@@ -297,17 +297,17 @@
                           :text-size     :xxxlarge
                           :name     :magenta}]]
 
-                 "brown"
+                 "greige"
                  [flex-row
-                  {:surface :transparent :colorway :brown}
+                  {:surface :transparent :colorway :greige}
                   [radio
-                   {:colorway       :brown,
+                   {:colorway       :greige,
                     :text-size           :xxxlarge,
-                    :name           :brown,
+                    :name           :greige,
                     :defaultChecked true}]
-                  [radio {:colorway :brown
+                  [radio {:colorway :greige
                           :text-size     :xxxlarge
-                          :name     :brown}]]
+                          :name     :greige}]]
 
                  "slate"
                  [flex-row

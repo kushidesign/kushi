@@ -17,7 +17,7 @@
    "orange"
    "red"
    "magenta"
-   "brown"
+   "greige"
    "slate"
    ])
 

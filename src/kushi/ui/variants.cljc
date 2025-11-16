@@ -119,7 +119,7 @@
 
 ;; Pull this from colors namespace?
 (def colorways-named
-  [:gray :purple :blue :green :lime :yellow :gold :orange :red :magenta :brown :slate])
+  [:gray :purple :blue :cyan :green :lime :yellow :gold :orange :red :magenta :greige :slate])
 
 (def colorways-semantic
   [:neutral :accent :positive :warning :negative])
