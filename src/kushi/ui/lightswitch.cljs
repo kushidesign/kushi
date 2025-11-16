@@ -21,7 +21,7 @@
 ;;   (let [{:keys [attrs children]} (extract args)]
 ;;     [:button (merge-attrs 
 ;;               (sx :.minimal
-;;                   :fs--$size-large
+;;                   :fs--$text-size-large
 ;;                   :.pointer
 ;;                   :pb--0.5rem!important)
 ;;               {:on-click #(lightswitch!)}
@@ -69,10 +69,9 @@
 
 (defui lightswitch
  {:doc          "Icon button that toggles a `dark` class on the body element"
-  :props/shared [:size
+  :props/shared [:text-size
                  :colorway
                  :packing
-                 :loading
                  :stroke
                  :stroke-align
                  :stroke-width
@@ -102,7 +101,7 @@
 
  #_[:button (merge-attrs 
               (sx :.minimal
-                  :fs--$size-large
+                  :fs--$text-size-large
                   :.pointer
                   :pb--0.5rem!important)
               {:on-click #(lightswitch!)}

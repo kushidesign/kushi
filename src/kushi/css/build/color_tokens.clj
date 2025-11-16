@@ -43,7 +43,7 @@
 
 (def enriched-tokens-array-map (shared/enriched-tokens-array-map* enriched-tokens-ordered))
 
-;; This version has css-var-keywords cast to strs e.g. :$weight-wee-bold -> "var(--weight-bold)"
+;; This version has css-var-keywords cast to strs e.g. :$text-weight-wee-bold -> "var(--text-weight-bold)"
 (def color-tokens-by-token-array-map
   (shared/tokens-by-token-array-map* enriched-tokens-array-map))
 

@@ -7,7 +7,7 @@
   ;;  [bling.core :as bling :refer [bling print-bling callout point-of-interest]]
   ;;  [bling.hifi :refer [print-hifi hifi]]
   ;;  [bling.explain :refer [explain-malli]]
-   [kushi.core :refer [?sx sx css merge-attrs at defcss]]
+   [kushi.core :refer [?sx sx sx2 css merge-attrs at defcss]]
    [kushi.playground.shared-styles]
   ;;  [kushi.ui.variants]
    [kushi.ui.core :refer [defui data-ks-attrs #_pc ui]]
@@ -118,15 +118,15 @@
       :colorway :accent
       :size     :xxlarge
       :shape    :pill
-      :weight   :extra-light
+      :text-weight   :extra-light
       :surface  :minimal}
      [radio (assoc m :id id)]
 
      ;; make this label component
      [label (merge-attrs
              (sx :pis--0.5em)
-             {:weight         :bold
-              :start-enhancer 8 #_[icon {:weight :light} (:icon m)]
+             {:text-weight         :bold
+              :start-enhancer 8 #_[icon {:text-weight :light} (:icon m)]
               :for             id})
       (string/capitalize (:value m))]]))
 
@@ -147,7 +147,7 @@
      [icon {:ns           (at)
             :colorway     :red
             :size       :xxxlarge
-            :weight       :bolds
+            :text-weight       :bolds
             :icon-style   :sharp
             :icon-filled? true
             :inert       true
@@ -178,7 +178,7 @@
   
 
   #_[button
-     {:loading     true
+     {
       :colorway     :accent
       :surface      :solid
       :size       :small
@@ -208,7 +208,7 @@
            :position    :absolute-centered
            :colorway    :red
            :size      :xxxlarge
-           :weight      :bold
+           :text-weight      :bold
            :icon-style  :sharp
            :icon-filled true
            :inert       true
@@ -219,7 +219,7 @@
      {:at           (at)
       :size       :xxlarge
       :position     :absolute-centered
-      :loading      true,
+      ,
       :colorway     :accent,
       :surface      :outline,
   ;;  :stroke-width :5px
@@ -242,7 +242,7 @@
      {:surface  :solid
       :colorway :blue
       :id       "foo"
-      :loading  true
+      
       :ns       (at)}
      "hi"]
 
@@ -251,7 +251,7 @@
       :position :absolute-centered
       :colorway :blue
       :id       "foo"
-      :loading  true
+      
       :ns       (at)}
      :east]
 
@@ -324,267 +324,579 @@
   
 
 
-  [:div (sx :.flex-col-center :p--20px #_:.absolute-centered :gap--3rem) 
+  (let [div (fn [{:keys [stroke surface colorway interactive text shape]}]
+              [:div (merge-attrs 
+                     (when (contains? #{"soft-classic" "solid-classic"} surface)
+                       {:class [:ks-button2]
+                        :style {:position :relative}})
+                     (sx {
+                          ;; :border :3px:solid:silver
+                          ;; :aspect-ratio                        3
+                          :w              :150px
+                          :h              :55px
+                          :fs             :$text-size-small
+                          :fw             :$text-weight-bold
+                          :tt             :u
+                          :d              :flex
+                          :jc             :center
+                          :ai             :center
+                          ":--stroke-width" :1px
+                          ;; "--colorway-background-opacity"        0.5
+                          ;; "--colorway-background-opacity-hover"  0.5
+                          ;; "--colorway-background-opacity-active" 1
+                          })
+                     (merge (some->> surface (hash-map :data-ks-surface2))
+                            (some->> colorway (hash-map :data-ks-colorway2))
+                            (some->> interactive (hash-map :data-ks-interactive))
+                            (some->> stroke (hash-map :data-ks-stroke))
+                            (some->> shape (hash-map :data-ks-shape))
+                            )
+                     )
+               (or text (name surface))])]
+    
+   [flex-row
+    (sx {:p        :2rem
+         :gap      :2rem
+         :>div:gap :2rem})
+
+    [flex-col
+     [div {:surface "ghost" 
+           :stroke  :hard
+           :shape   :rounded-xlarge}]
+     [div {:surface "transparent"
+           :stroke  :hard}]
+     [div {:surface "minimal"
+           :stroke  :hard}]
+     [div {:surface "faint"}]
+     [div {:surface "soft"}]
+     [div {:surface "convex"}]
+     [div {:surface "soft-classic"
+           :shape   :pill }]
+     [div {:surface "solid-classic"
+           :shape   :pill }]
+     [div {:surface     "solid"
+           :shape       :pill}]]
+
+    [flex-col
+     [div {:surface     "ghost"
+           :interactive true
+           :stroke      :hard
+           :shape       :rounded-xlarge
+           }]
+     [div {:surface     "transparent"
+           :interactive true
+           :stroke      :hard}]
+     [div {:surface     "minimal"
+           :interactive true
+           :stroke      :hard}]
+     [div {:surface     "faint"
+           :interactive true}]
+     [div {:surface     "soft"
+           :interactive true}]
+     [div {:surface     "convex"
+           :interactive true}]
+     [div {:surface     "soft-classic"
+           :shape       :pill
+           :interactive true}]
+     [div {:surface     "solid-classic"
+           :interactive true
+           :shape       :pill}]
+     [div {:surface     "solid"
+           :interactive true
+           :shape       :pill}]]
+
+    [flex-col
+     [div {:surface  "ghost"
+           :colorway :gold
+           :stroke   :hard
+           :shape    :rounded-xlarge}]
+     [div {:surface     "transparent"
+           :colorway    :gold
+           :stroke      :hard}]
+     [div {:surface     "minimal"
+           :colorway    :gold
+           :stroke      :hard}]
+     [div {:surface     "faint"
+           :colorway    :gold}]
+     [div {:surface     "soft"
+           :colorway    :gold}]
+     [div {:surface     "convex"
+           :colorway    :gold}]
+     [div {:surface     "soft-classic"
+           :colorway    :gold
+           :shape       :pill}]
+     [div {:surface     "solid-classic"
+           :colorway    :gold
+           :shape       :pill}]
+     [div {:surface     "solid"
+           :colorway    :gold
+           :shape       :pill}]]
+
+    [flex-col
+     [div {:surface     "ghost"
+           :colorway    :gold
+           :interactive true
+           :shape       :rounded-xlarge 
+           :stroke      :hard}]
+     [div {:surface     "transparent"
+           :colorway    :gold
+           :interactive true
+           :stroke      :hard}]
+     [div {:surface     "minimal"
+           :colorway    :gold
+           :interactive true
+           :stroke      :hard}]
+     [div {:surface     "faint"
+           :colorway    :gold
+           :interactive true}]
+     [div {:surface     "soft"
+           :colorway    :gold
+           :interactive true}]
+     [div {:surface     "convex"
+           :colorway    :gold
+           :interactive true}]
+     [div {:surface     "soft-classic"
+           :colorway    :gold
+           :shape       :pill
+           :interactive true}]
+     [div {:surface     "solid-classic"
+           :colorway    :gold
+           :shape       :pill
+           :interactive true}]
+     [div {:surface     "solid"
+           :colorway    :gold
+           :interactive true
+           :shape       :pill}] ]
+
+    [flex-col
+     [div {:surface     "ghost"
+           :colorway    :brown
+           :interactive true
+           :shape       :rounded-xlarge 
+           :stroke      :hard}]
+     [div {:surface     "transparent"
+           :colorway    :brown
+           :interactive true
+           :stroke      :hard}]
+     [div {:surface     "minimal"
+           :colorway    :brown
+           :interactive true
+           :stroke      :hard}]
+     [div {:surface     "faint"
+           :colorway    :brown
+           :interactive true}]
+     [div {:surface     "soft"
+           :colorway    :brown
+           :interactive true}]
+     [div {:surface     "convex"
+           :colorway    :brown
+           :interactive true}]
+     [div {:surface     "soft-classic"
+           :colorway    :brown
+           :shape       :pill
+           :interactive true}]
+     [div {:surface     "solid-classic"
+           :colorway    :brown
+           :shape       :pill
+           :interactive true}]
+     [div {:surface     "solid"
+           :colorway    :brown
+           :interactive true
+           :shape       :pill}]]
+     
+
+    [flex-col
+     [div {:surface     "ghost"
+           :colorway    :slate
+           :interactive true
+           :shape       :rounded-xlarge 
+           :stroke      :hard}]
+     [div {:surface     "transparent"
+           :colorway    :slate
+           :interactive true
+           :stroke      :hard}]
+     [div {:surface     "minimal"
+           :colorway    :slate
+           :interactive true
+           :stroke      :hard}]
+     [div {:surface     "faint"
+           :colorway    :slate
+           :interactive true}]
+     [div {:surface     "soft"
+           :colorway    :slate
+           :interactive true}]
+     [div {:surface     "convex"
+           :colorway    :slate
+           :interactive true}]
+     [div {:surface     "soft-classic"
+           :colorway    :slate
+           :shape       :pill
+           :interactive true}]
+     [div {:surface     "solid-classic"
+           :colorway    :slate
+           :shape       :pill
+           :interactive true}]
+     [div {:surface     "solid"
+           :colorway    :slate
+           :interactive true
+           :shape       :pill}]]
+     
+     
+     ] 
 
 
-   #_[:span.flex-row-start
-      [radio {:name   :g
-              :id     :foo
-              :weight :thin}]
-      [label {:for :foo} "hi"]]
+        ;; [div {:surface "transparent" :colorway :red :interactive true}]
+        ;; [div {:surface "faint" :colorway :red :interactive true}]
+        ;; [div {:surface "soft" :colorway :red :interactive true}]
+
+        ;; [div {:surface :ghost}]
+
+        ;; [:div (sx :p--10px :color--red) [div {:text "hi" :surface :transparent}]]
+        ;; [:div (sx :p--10px :color--teal) [div {:text "hi" :surface :faint}]]
+        ;; [:div (sx :p--10px :color--purple) [div {:text "hi" :surface :soft}]]
+
+        
+        ;; [div {:surface "solid"}]
+    #_[flex-col (sx :.bones
+              {
+               :p                                   :20px
+              ;;  :gtr                                 "repeat(10, 50px)"
+              ;;  :gtc                                 :1fr:1fr:1fr
+               :gap                                 :3rem
+               :>.sidenav-close-icon:c              :gold
+               })
 
 
-   #_[:div.flex-row-start.absolute-inline-start-inside
-      (sx :gap--1rem
-          :p--100px
-          :fs--$size-xxxlarge)
+        #_#_#_#_#_
+
+                  [icon-button {:text-size :xxxlarge :surface :soft} :star]
+
+                [icon-button {:text-size :xxxlarge :surface :transparent} :star]
+
+              [icon-button {:text-size :xxxlarge :surface :soft :colorway :red} :star]
+
+            [icon {:text-size :xxxlarge} :star]
+
+          [icon {:text-size :xxxlarge :colorway :red} :star]
+
+        #_[box {:shadow          :xxlarge
+                :stroke          :xsoft
+                :surface         :transparent
+                :shadow-strength :50%
+                :class           (css :w--300px :h--300px)}
+           "hi"]
+
+        #_[:span (sx2 {
+                ;; :shadow          :xxlarge
+                ;; :shadow-strength :50%
+                ;; :surface         :transparent
+                       :class       [:sample]
+                       :display     :flex-col-center
+                       :ai          :center
+                       :text-size   :xxlarge
+                       :text-weight :wee-bold
+                       :tt          :u
+                       :w           :px
+                       :h           :300px})
+           "span"]
+
+        #_[:span
+    ;; You should be able to do stroke and shape without surface?
+           (sx2 {:id                      :foo
+                 :name                    :wtf
+                 :display                 :flex-row-space-between
+                 :position                :absolute-center
+                 :colorway                :gold
+                 :surface                 :transparent
+                 :stroke                  :hard
+                 :shape                   :rounded-xsmall 
+                 :padding                 :10px
+                 :shadow                  :xxlarge 
+                 :shadow-strength         :60%
+          ;; :margin                  :*1
+          ;; :gap                     :*3
+                 :gap                     :3*
+          ;; :bgi                     :$background-grid
+                 :w                       :500px
+                 :h                       :300px
+                 :>.sidenav-close-icon:c  :red
+          ;; ".bones &"                 {:outline        :3px:solid:lime
+          ;;                             :outline-offset :10px}
+                 "[data-ks]:c"              :gold
+                 "[data-ks=\"wtf\"]:c"        :blue
+                 :fs                      :$text-size-xxxlarge
+                 :.aa:bgc                 :pink
+                 " a.wtf:bgc"               :salmon
+                 :--background-grid-size  :16px
+                 :--background-grid-color :$red-500}
+                )
+           [:span "🍒"]
+           [:span "👺"]
+           [:span "🦑"]
+           [:strong 
+            (sx2 {:surface  :solid
+                  :colorway :blue
+                  :shape    :rounded})
+            "COLOR"]]
+
+        #_[:span.flex-row-start
+           [radio {:name   :g
+                   :id     :foo
+                   :text-weight :thin}]
+           [label {:for :foo} "hi"]]
+
+
+        #_[:div.flex-row-start.absolute-inline-start-inside
+           (sx :gap--1rem
+               :p--100px
+               :fs--$text-size-xxxlarge)
     ;; [switch]
     ;; [switch {:colorway :neutral}]
-      
-      #_[switch {:colorway :accent :size :xxlarge}]
+           
+           #_[switch {:colorway :accent :size :xxlarge}]
 
-      #_[switch {:colorway    :accent
-                 :size      :xxlarge
-                 :thumb-attrs (sx :bgi--$convex :dark:bgi--$convex-3)}]
+           #_[switch {:colorway    :accent
+                      :size      :xxlarge
+                      :thumb-attrs (sx :bgi--$convex :dark:bgi--$convex-3)}]
 
-      #_[thumb {:surface :soft-classic
+           #_[thumb {:surface :soft-classic
             ;;  :stroke  :soft
-                :size  :xxxlarge}
-         ]
+                     :size  :xxxlarge}
+              ]
 
-      [switch
-       (mrj
-        (sx #_[:--switch-inset-gap :2px]
-         #_[:--switch-thumb-scale-factor :1.25])
-        {:size            :xxxlarge
+           [switch
+            (mrj
+             (sx #_[:--switch-inset-gap :2px]
+              #_[:--switch-thumb-scale-factor :1.25])
+             {:size            :xxxlarge
         ;; :thumb-label-on  "ON"
         ;; :thumb-label-off "OFF"
         ;; :thumb-scale-factor 1.2
-         
-         :track-label-on  "ON"
-         :track-label-off "OFF"
+              
+              :track-label-on  "ON"
+              :track-label-off "OFF"
 
-         :track-inset-gap   :2px
-         :thumb-attrs       (mrj {:surface     :convex
+              :track-inset-gap   :2px
+              :thumb-attrs       (mrj {:surface     :convex
                                  ;; TODO - why not :soft working?
-                                  :stroke      :medium #_[[:2px :$red-500] [:2px :$orange-300] [:2px :$yellow-300]]
-                                  :shadow :large}
-                                 (sx #_:bgc--red
-                                  #_[:--shadow-strength :50%]
-                                  ))})]
+                                       :stroke      :medium #_[[:2px :$red-500] [:2px :$orange-300] [:2px :$yellow-300]]
+                                       :shadow :large}
+                                      (sx #_:bgc--red
+                                       #_[:--shadow-strength :50%]
+                                       ))})]
 
     ;; [switch {:colorway :positive}]
     ;; [switch {:colorway :warning}]
     ;; [switch {:colorway :negative}]
     ;; [button {:surface :outline :size :large} "Click"]
     ;; [button {:surface :classic :size :large} "Click"]
-      
-      #_[button
-         (merge-attrs 
-          {:at               (at)
-           :surface          :soft
-           :size           :xxxlarge
-           :shape          :pill
-           :colorway         :accent
-           :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
-           :stroke-width     :3px
+           
+           #_[button
+              (merge-attrs 
+               {:at               (at)
+                :surface          :soft
+                :size           :xxxlarge
+                :shape          :pill
+                :colorway         :accent
+                :stroke           :medium #_[[:2px :$brown-300] [:2px :$green-300]]
+                :stroke-width     :3px
 
         ;;  :stroke-align     :outside
         ;;  :shadow      :large
         ;;  :shadow-color     :$blue-500
         ;;  :shadow-strength  :medium
-           
-           #_["5px 5px 10px currentColor"]
-           :style {"--shadow-color"    "var(--red-500)"
-                   "--shadow-strength" "30%"}})
-         "Click"]
+                
+                #_["5px 5px 10px currentColor"]
+                :style {"--shadow-color"    "var(--red-500)"
+                        "--shadow-strength" "30%"}})
+              "Click"]
 
-      #_[button
-         (merge-attrs 
-          {:surface      :transparent
-           :size       :large
-           :shape      :pill
-           :colorway     :accent
+           #_[button
+              (merge-attrs 
+               {:surface      :transparent
+                :size       :large
+                :shape      :pill
+                :colorway     :accent
       ;;  :stroke [[:4px :$brown-300] [:2px :$green-300]]
-           :stroke       :soft
+                :stroke       :soft
       ;;  :stroke-width "5px"
-           :stroke-align :inside
+                :stroke-align :inside
       ;;  :shadow  ["5px 5px 10px pink"]
-           })
-         "Click"]
-      
-      #_[button
-         {:at           (at)
-          :surface      :solid
-          :size       :large
-          :shape      :pill
-          :colorway     :accent
+                })
+              "Click"]
+           
+           #_[button
+              {:at           (at)
+               :surface      :solid
+               :size       :large
+               :shape      :pill
+               :colorway     :accent
         ;; :stroke [[:4px :$brown-300] [:2px :$green-300]]
-          :stroke       :medium
-          :stroke-width "3px"
-          :stroke-align :outside
-          :shadow  ["0 10px 10px -0px pink"]
-          :class        (css ["--stroke-transparency-mix-color" :$green-600])}
-         "Click"]
+               :stroke       :medium
+               :stroke-width "3px"
+               :stroke-align :outside
+               :shadow  ["0 10px 10px -0px pink"]
+               :class        (css ["--stroke-transparency-mix-color" :$green-600])}
+              "Click"]
 
     ;; [button {:surface :soft-classic :size :large :shape :pill :colorway :accent} "Click"]
     ;; [thumb {:surface :outline :size :xxlarge :stroke-width :1px}]
     ;; [thumb {:surface :soft-classic :size :xxlarge #_#_:stroke-width :1px}]
     ;; [thumb {:surface :solid-classic :size :xxlarge #_#_:stroke-width :1px}]
-      #_(let [
-              stroke-align :inside
+           #_(let [
+                   stroke-align :inside
 
-              strokes      (for [c ["magenta" "red" "orange" "yellow" "lime" "green" "blue" "purple"]]
-                             [:2px (str "var(--" c "-700)")])
+                   strokes      (for [c ["magenta" "red" "orange" "yellow" "lime" "green" "blue" "purple"]]
+                                  [:2px (str "var(--" c "-700)")])
 
-              shadows       (util/stepped-shadows 
-                             {:colors            [:$red-500 :$orange-500 :$yellow-500 :$lime-500 :$green-500 :$blue-500 :$purple-500]
-                              :blur              :10px
+                   shadows       (util/stepped-shadows 
+                                  {:colors            [:$red-500 :$orange-500 :$yellow-500 :$lime-500 :$green-500 :$blue-500 :$purple-500]
+                                   :blur              :10px
                                               ;;  :spread  :10px
-                              :start-y           10
-                              :end-y             100
-                              :start-x           10
-                              :end-x             100
-                              :start-opacity     1
-                              :end-opacity       0.1
-                              :opacity-mix-color :white
-                              })
-              shadows-2     nil #_(util/stepped-shadows {:colors  ["yellow"
-                                                                   "orange"
-                                                                   "red"
-                                                                   "magenta"]
-                                                         :blur    :10px
-                                                         :start-y -10
-                                                         :end-y   -50
-                                                         :start-x -10
-                                                         :end-x   -50
-                                                         })
+                                   :start-y           10
+                                   :end-y             100
+                                   :start-x           10
+                                   :end-x             100
+                                   :start-opacity     1
+                                   :end-opacity       0.1
+                                   :opacity-mix-color :white
+                                   })
+                   shadows-2     nil #_(util/stepped-shadows {:colors  ["yellow"
+                                                                        "orange"
+                                                                        "red"
+                                                                        "magenta"]
+                                                              :blur    :10px
+                                                              :start-y -10
+                                                              :end-y   -50
+                                                              :start-x -10
+                                                              :end-x   -50
+                                                              })
 
           ;; shadows      [[:-15px :15px :20px :aqua]
-          ;;               [:15px :-15px :20px :yellow]]
-              shadows (concat shadows shadows-2)]
-          [:div {:style {:width      :200px
-                         :height     :200px
-                         :background :aliceblue
-                         :box-shadow (util/box-shadow
-                                      {:shadows      shadows
-                                       :strokes      strokes
-                                       :stroke-align stroke-align
-                                       })}
-                 }])]
+          ;;               [:15px :-15px :20px :gold]]
+                   shadows (concat shadows shadows-2)]
+               [:div {:style {:width      :200px
+                              :height     :200px
+                              :background :aliceblue
+                              :box-shadow (util/box-shadow
+                                           {:shadows      shadows
+                                            :strokes      strokes
+                                            :stroke-align stroke-align
+                                            })}
+                      }])]
 
-   #_#_#_#_#_#_
-               [box {:surface  :solid
-                     :colorway :accent} "hi"]
-             [card [:div (sx :.flex-row-start
-                             :ai--stretch
-                             :gap--0.8em)
-                    #_[:div (sx :.rounded
-                                :position--relative
-                                :.transition
-                                :overflow--hidden
-                                :dark:bgc--$neutral-850
-                                :bgc--$neutral-200
-                                :w--3.5em
-                                :h--3.5em)
-                       [:span (sx :.absolute-centered
-                                  [:transform "translate(0, 0.045em)"]
-                                  :display--block
-                                  :scale--2.55)
-                        "🐻‍❄"]]
-                    [avatar {:surface :faint-outline
+        #_#_#_#_#_#_
+                    [box {:surface  :solid
+                          :colorway :accent} "hi"]
+                  [card [:div (sx :.flex-row-start
+                                  :ai--stretch
+                                  :gap--0.8em)
+                         #_[:div (sx :.rounded
+                                     :position--relative
+                                     :.transition
+                                     :overflow--hidden
+                                     :dark:bgc--$neutral-850
+                                     :bgc--$neutral-200
+                                     :w--3.5em
+                                     :h--3.5em)
+                            [:span (sx :.absolute-centered
+                                       [:transform "translate(0, 0.045em)"]
+                                       :display--block
+                                       :scale--2.55)
+                             "🐻‍❄"]]
+                         [avatar {:surface :faint-outline
                   ;;  :size  :xxlarge
                   ;;  :src     avatar-1
-                             }
-                     "🐻‍❄"]
-                    [:section (sx :.flex-col-space-around
-                                  :jc--sa) 
-                     [:p (sx :fs--1.25em :fw--$wee-bold) "Polar Bear"] 
-                     [:p (sx :.foreground-color-secondary!) "polar.bear@example.com"]]]]
-           [avatar 
-            {:surface :solid
-             :size  :xxlarge
-             :src     avatar-1}
-            "JC"]
-         [tag {:end-enhancer :east} "Bingo " [link {:href "google.com"} "& more"]]
-       [:span (sx :.flex-row-start :gap--1em)
-        [checkbox {:id     :bar
-                   :weight :thin
-                   :class  (css :.xxlarge)}] 
-        [label {:for          :bar
-                :class        (css :.xxlarge)
-                :end-enhancer :star} "check me"]
-        #_[icon {:size :xxlarge} :star]]
-     
+                                  }
+                          "🐻‍❄"]
+                         [:section (sx :.flex-col-space-around
+                                       :jc--sa) 
+                          [:p (sx :fs--1.25em :fw--$wee-bold) "Polar Bear"] 
+                          [:p (sx :.foreground-color-secondary!) "polar.bear@example.com"]]]]
+                [avatar 
+                 {:surface :solid
+                  :size  :xxlarge
+                  :src     avatar-1}
+                 "JC"]
+              [tag {:end-enhancer :east} "Bingo " [link {:href "google.com"} "& more"]]
+            [:span (sx :.flex-row-start :gap--1em)
+             [checkbox {:id     :bar
+                        :text-weight :thin
+                        :class  (css :.xxlarge)}] 
+             [label {:for          :bar
+                     :class        (css :.xxlarge)
+                     :end-enhancer :star} "check me"]
+             #_[icon {:size :xxlarge} :star]]
+          
 
-     [checkbox-group {:group-id "foo"
-                      :choices  ["Yes" "No" "Maybe"]
-                      :surface  :outline
+          [checkbox-group {:group-id "foo"
+                           :choices  ["Yes" "No" "Maybe"]
+                           :surface  :outline
                   ;; :display  [:flex :column :flex-start :center]
                   ;; :gap      0
-                      :class    (css :d--grid
-                                     :gtc--1fr:1fr
-                                     :>div:p--1rem)}]
+                           :class    (css :d--grid
+                                          :gtc--1fr:1fr
+                                          :>div:p--1rem)}]
 
-   #_[checkbox {:weight :thin}
-      "Star"
-      [icon {:at         (at)
-             :colorway   :red
-             :size     :xxxlarge
-             :icon-style :sharp
-             :inert      true
-             :id         :foo}
-       :star]]
-   
-   #_[box (merge-attrs 
-           {:shape      :rounded
-            :display      [:flex :row :space-around :center]
-            :stroke       :medium
-            :stroke-width "2px"
+        #_[checkbox {:text-weight :thin}
+           "Star"
+           [icon {:at         (at)
+                  :colorway   :red
+                  :size     :xxxlarge
+                  :icon-style :sharp
+                  :inert      true
+                  :id         :foo}
+            :star]]
+        
+        #_[box (merge-attrs 
+                {:shape      :rounded
+                 :display      [:flex :row :space-around :center]
+                 :stroke       :medium
+                 :stroke-width "2px"
           ;; :shadow :medium
-            :at (at)}
-           (sx :w--300px :h--200px))
-      [:div "1"]
-      [:div "2"]
-      [:div "3"]]
+                 :at (at)}
+                (sx :w--300px :h--200px))
+           [:div "1"]
+           [:div "2"]
+           [:div "3"]]
 
-   #_[tag
-      {:start-enhancer :check-circle,
-       :colorway       :accent,
-       :surface        :minimal
-       :stroke         :xsoft}
-      "Passing"] 
+        #_[tag
+           {:start-enhancer :check-circle,
+            :colorway       :accent,
+            :surface        :minimal
+            :stroke         :xsoft}
+           "Passing"] 
 
-   #_[callout
-      {:header-icon     :check-circle
-       :size          :xlarge
-       :colorway        :positive
-       :header-text     "Your transaction was successful."
-       :close-button?   true
-       :close-button-fn (fn [] [:div "hi"])}]
+        #_[callout
+           {:header-icon     :check-circle
+            :size          :xlarge
+            :colorway        :positive
+            :header-text     "Your transaction was successful."
+            :close-button?   true
+            :close-button-fn (fn [] [:div "hi"])}]
 
-   #_[callout
-      {:size     :xlarge
-       :colorway :positive
-       :surface  :soft
-       :stroke   :hard}
-      [flex-row (sx {:jc :sb})
-       [icon :check-circle]
-       "Your transaction was successful."
-       [button {:colorway :positive
-                :surface  :transparent
-                :shape    :circle
-                :stroke   :hard}
-        "GO"]
-       [icon-button 
-        {:colorway :positive
-         :surface  :transparent
-         :shape    :pill
-         :stroke   :hard
-         :packing  :compact
-         :weight   :bold
-         :size     :medium}
-        :close]]]]
+        #_[callout
+           {:size     :xlarge
+            :colorway :positive
+            :surface  :soft
+            :stroke   :hard}
+           [flex-row (sx {:jc :sb})
+            [icon :check-circle]
+            "Your transaction was successful."
+            [button {:colorway :positive
+                     :surface  :transparent
+                     :shape    :circle
+                     :stroke   :hard}
+             "GO"]
+            [icon-button 
+             {:colorway :positive
+              :surface  :transparent
+              :shape    :pill
+              :stroke   :hard
+              :packing  :compact
+              :text-weight   :bold
+              :size     :medium}
+             :close]]]])
 
   
 
@@ -630,7 +942,7 @@
 
 
   ;; DONE
-  [showcase (!? (showcase/opts kushi.ui.button/button
+  #_[showcase (!? (showcase/opts kushi.ui.button/button
                                  kushi.ui.button.demo/demos))]
   
   ;; DONE
@@ -645,23 +957,25 @@
   #_[showcase (!? (showcase/opts kushi.ui.spinner/spinner
                                  kushi.ui.spinner.demo/demos))]
 
+  #_[:<>
 
-  ;; DONE
-  #_[showcase (showcase/opts kushi.ui.radio/radio
-                           kushi.ui.radio.demo/demos)]
+    ;; DONE
+    [showcase (showcase/opts kushi.ui.radio/radio
+                             kushi.ui.radio.demo/demos)]
 
+    ;; DONE
+    #_[showcase (showcase/opts kushi.ui.avatar/avatar
+                              kushi.ui.avatar.demo/demos)]
 
-  ;; DONE
-  #_[showcase (showcase/opts kushi.ui.avatar/avatar
-                             kushi.ui.avatar.demo/demos)]
+    ;; DONE
+    #_[showcase (!? (showcase/opts kushi.ui.switch/switch
+                                  kushi.ui.switch.demo/demos))]
 
-  ;; DONE
-  #_[showcase (!? (showcase/opts kushi.ui.switch/switch
-                                 kushi.ui.switch.demo/demos))]
-
-  ;; DONE
-  #_[showcase (showcase/opts kushi.ui.checkbox/checkbox
+    ;; DONE
+    #_[showcase (showcase/opts kushi.ui.checkbox/checkbox
                              kushi.ui.checkbox.demo/demos)]
+  ]
+
 
   ;; DONE
   #_[showcase (showcase/opts kushi.ui.checkbox/slider
@@ -773,8 +1087,8 @@
      (sx :max-width--1200px
          :p--24px
          :gap--48px
-         :fs--$size-xxlarge
-         :_p:fs--$size-large
+         :fs--$text-size-xxlarge
+         :_p:fs--$text-size-large
          [:bgi "linear-gradient(to bottom right, silver, transparent)"])
 
      [callout
@@ -810,8 +1124,8 @@
      (sx :max-width--1200px
          :p--24px
          :gap--48px
-         :fs--$size-xxlarge
-         :_p:fs--$size-large
+         :fs--$text-size-xxlarge
+         :_p:fs--$text-size-large
          [:bgi "linear-gradient(to bottom right, silver, transparent)"])
 
      [:p "No colorway set"]
@@ -948,7 +1262,7 @@
      ;; TRANSPARENT
      [flex-row
       (into [flex-col
-             (for [colorway [:green :yellow :blue :red]]
+             (for [colorway [:green :gold :blue :red]]
                [button {:size         :medium
                         :shape        :pill
                         :stroke       :medium
@@ -992,7 +1306,7 @@
                 :stroke   :medium
                 :shadow   :medium
                 :surface  :minimal
-                :colorway :yellow} "Next"]
+                :colorway :gold} "Next"]
        [button {:size     :medium
                 :stroke   :medium
                 :shadow   :medium
@@ -1031,7 +1345,7 @@
                   :colorway :green} "Next"]
          [button {:size   :medium
                   :surface  :faint
-                  :colorway :yellow} "Next"]
+                  :colorway :gold} "Next"]
          [button {:size   :medium
                   :surface  :faint
                   :colorway :blue} "Next"]
@@ -1060,7 +1374,7 @@
          #_#_#_
                [button {:size   :medium
                         :surface  :soft
-                        :colorway :yellow} "Next"]
+                        :colorway :gold} "Next"]
              [button {:size   :medium
                       :surface  :soft
                       :colorway :blue} "Next"]
@@ -1085,7 +1399,7 @@
                   :colorway :green} "Next"]
          [button {:size   :medium
                   :surface  :soft-classic
-                  :colorway :yellow} "Next"]
+                  :colorway :gold} "Next"]
          [button {:size   :medium
                   :surface  :soft-classic
                   :colorway :blue} "Next"]
@@ -1108,7 +1422,7 @@
                   :colorway :green} "Next"]
          [button {:size   :medium
                   :surface  :solid
-                  :colorway :yellow} "Next"]
+                  :colorway :gold} "Next"]
          [button {:size   :medium
                   :surface  :solid
                   :colorway :blue} "Next"]
@@ -1131,7 +1445,7 @@
                   :colorway :green} "Next"]
          [button {:size   :medium
                   :surface  :solid-classic
-                  :colorway :yellow} "Next"]
+                  :colorway :gold} "Next"]
          [button {:size   :medium
                   :surface  :solid-classic
                   :colorway :blue} "Next"]
@@ -1153,14 +1467,14 @@
   ;;   (merge-attrs
   ;;    {:start-enhancer [icon :phone]
   ;;     :size           :xxxlarge
-  ;;     :weight         :thin}
+  ;;     :text-weight         :thin}
   ;;    (sx :fs--98px))
   ;;   "star"]
      
      [button
       {:start-enhancer 8 #_[icon :phone]
        :size           :xxlarge
-       :weight         :bold}
+       :text-weight         :bold}
       "Phone"]
 
      #_[flex-col-start (merge-attrs (sx :gap--1em :p--2rem)
@@ -1175,21 +1489,21 @@
   #_[:div
      [button
       {
-    ;; :loading     true
+    ;; 
        :end-enhancer #_[icon :east]
        [propeller]    }
       "Play"]
      
      [button
       {
-    ;; :loading     true
+    ;; 
        :end-enhancer #_[icon :east]
        [donut]        }
       "Play"]
      
      [button
       {
-    ;; :loading     true
+    ;; 
        :end-enhancer #_[icon :east]
        [thinking]     }
       "Play"]]
@@ -1217,7 +1531,7 @@
   #_[radio-group 
      {:radio-button-attrs {:name    :baz
                            :size   :large
-                           :weight :bold}
+                           :text-weight :bold}
       :choices            ["Email" "Phone" "Mail"]}]
   
 
@@ -1229,7 +1543,7 @@
                      :id             "baz-radio-group_email-choice"
                      :value          "email"
                      :size          :xxxlarge
-                     :weight        :bold
+                     :text-weight        :bold
                      :label-attrs   {}
                      :wrapper-attrs {}}]
       [:label {:for "baz-radio-group_email-choice"}
@@ -1240,12 +1554,12 @@
                     :value   "phone"
                     :label  "phonnne"
                     :size   :xxxlarge
-                    :weight :bold}]
+                    :text-weight :bold}]
      [radio-button {:name    :baz
                     :value   "mail"
                     :label  "mailll"
                     :size   :xxxlarge
-                    :weight :bold}]]
+                    :text-weight :bold}]]
 
 
   #_[pane-samples]
@@ -1272,8 +1586,8 @@
 ;; '(merge-attrs 
 ;;   {:class [(resolve-kushi-prop :surface wtf)
 ;;            ]}
-;;   (sx {:font-size    :$size-small
-;;        :sm:font-size :$size-large
+;;   (sx {:font-size    :$text-size-small
+;;        :sm:font-size :$text-size-large
 ;;        :br           :$shape-rounded-absolute
 ;;        :large:br     :$shape-rounded-absolute}))
 

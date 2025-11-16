@@ -12,12 +12,12 @@
    #_{:samples (samples [[:div (sx :display--flex :gap--1rem)
                         [switch {:at              (at)
                                  :on?             true
-                                 :size          :xxxlarge
+                                 :text-size          :xxxlarge
                                  :shape         :rounded
                                  :track-inset-gap :1px}]
                         [switch {:at              (at)
                                  :on?             true
-                                 :size          :xxxlarge
+                                 :text-size          :xxxlarge
                                  :shape         :rounded-absolute
                                  :track-inset-gap :1px}]]])}
    {:samples (samples-with-variant
@@ -26,7 +26,7 @@
                :label         "Contour",
                :attrs         {:at              (at)
                                :on?             true
-                               :size          :xxxlarge
+                               :text-size          :xxxlarge
                                :track-inset-gap :1px}})}
    ]
   [
@@ -34,9 +34,9 @@
     :desc    "Basic"
     :samples (samples [[flex-row (sx :gap--1rem)
                         [switch {:colorway :neutral
-                                 :size   :xxxlarge}]
+                                 :text-size   :xxxlarge}]
                         [switch {:colorway :neutral
-                                 :size   :xxxlarge
+                                 :text-size   :xxxlarge
                                  :on?      true}]]])}
 
 
@@ -47,12 +47,12 @@
                :label           "Colorway",
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
-               :attrs           {:size :xxxlarge
+               :attrs           {:text-size :xxxlarge
                                  :on?    true}})}
 
    
    {:samples (samples-with-variant
-              {:variant :size,
+              {:variant :text-size,
                :label   "size",
                :attrs   {:on? true}})}
 
@@ -62,13 +62,13 @@
                :label         "Contour",
                :attrs         {:at              (at)
                                :on?             true
-                               :size          :xxxlarge}})}
+                               :text-size          :xxxlarge}})}
 
    ;; why rows not working?
    {:samples (samples-with-variant
-              {:variant         :size
+              {:variant         :text-size
                :variant-labels? false
-               :variant-scale   :size/large-xxxlarge,
+               :variant-scale   :text-size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Convex thumb",
@@ -78,9 +78,9 @@
                                                             :dark:--convex-shadow-strength :70%})}}})}
 
    {:samples (samples-with-variant
-              {:variant         :size
+              {:variant         :text-size
                :variant-labels? false
-               :variant-scale   :size/large-xxxlarge,
+               :variant-scale   :text-size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Oversized thumb",
@@ -89,9 +89,9 @@
                                  :thumb-props        {:stroke  :medium}}})}
 
    {:samples (samples-with-variant
-              {:variant         :size
+              {:variant         :text-size
                :variant-labels? false
-               :variant-scale   :size/large-xxxlarge,
+               :variant-scale   :text-size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Labeled thumb",
@@ -99,9 +99,9 @@
                                  :thumb-label-off "OFF"}})}
    
    {:samples (samples-with-variant
-              {:variant         :size
+              {:variant         :text-size
                :variant-labels? false
-               :variant-scale   :size/large-xxxlarge,
+               :variant-scale   :text-size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Labeled thumb, on",
@@ -110,9 +110,9 @@
                                  :thumb-label-off "OFF"}})}
    
    {:samples (samples-with-variant
-              {:variant         :size
+              {:variant         :text-size
                :variant-labels? false
-               :variant-scale   :size/large-xxxlarge,
+               :variant-scale   :text-size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Icon thumb",
@@ -120,9 +120,9 @@
                                  :thumb-icon-off :visibility-off}})}
    
    {:samples (samples-with-variant
-              {:variant         :size
+              {:variant         :text-size
                :variant-labels? false
-               :variant-scale   :size/large-xxxlarge,
+               :variant-scale   :text-size/large-xxxlarge,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Icon thumb, on",
@@ -134,10 +134,10 @@
     :desc    "Disabled"
     :samples (samples [[flex-row (sx :gap--1rem) 
                         [switch {:colorway :neutral
-                                 :size   :xxxlarge
+                                 :text-size   :xxxlarge
                                  :disabled true}]
                         [switch {:colorway :neutral
-                                 :size   :xxxlarge
+                                 :text-size   :xxxlarge
                                  :on?      true
                                  :disabled true}]]])}
    

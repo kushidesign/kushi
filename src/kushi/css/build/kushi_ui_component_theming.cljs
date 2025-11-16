@@ -1,9 +1,13 @@
-;; 2) Make ui macro automatically generate a data-ks-button, based on namespace
-;;    data-foo.bar.bang-button
+;; 1) Figure out stroke independant of shadow
+;;    Just a stroke
+;;    Just a shadow
+;;    Stroke and shadow
 
 
-;; 3) Change :size to :font-size and :weight to :font-weight
 
+;; 2) malli warning at comptime for sx2
+
+;; 3) gap, spacing, padding, maybe use spacing numbers if number is supplied
 
 ;; 4) Figure out how to do custom props with new paradigm, for ui components
 
@@ -50,8 +54,7 @@
 
 (defcss "pre>code"
   {"background-color" :transparent
-   "border-width"     0
-   })
+   "border-width"     0})
 
 (defcss ".dark code"
   {"background-color" "var(--code-background-color-dark-mode)",
@@ -61,8 +64,7 @@
 
 (defcss ".dark pre>code"
   {"background-color" :transparent
-   "border-width"     0
-   })
+   "border-width"     0})
 
 (defcss ".styled-scrollbars"
   {"scrollbar-color" "var(--scrollbar-thumb-color) var(--scrollbar-background-color)",
@@ -122,8 +124,8 @@
 
 ;; TODO - should these live in design-tokens?
 (defcss ":root"
-  {"--debug-grid-size"                                "107px",
-   "--debug-grid-color"                               "#eee",
+  {"--background-grid-size"                           "107px",
+   "--background-grid-color"                          "#81818122",
    "--outlined-element-stroke-width"                  "0.075em"
    "--outlined-button-stroke-width"                   "var(--outlined-element-stroke-width)"
 
@@ -281,10 +283,11 @@
 (defcss "[data-ks-colorway=gray]"    {:--colorway-hue :$gray-hue-oklch})
 (defcss "[data-ks-colorway=purple]"  {:--colorway-hue :$purple-hue-oklch})
 (defcss "[data-ks-colorway=magenta]" {:--colorway-hue :$magenta-hue-oklch})
-(defcss "[data-ks-colorway=brown]"   {:--colorway-hue :$brown-hue-oklch})
 (defcss "[data-ks-colorway=orange]"  {:--colorway-hue :$orange-hue-oklch})
 (defcss "[data-ks-colorway=gold]"    {:--colorway-hue :$gold-hue-oklch})
 (defcss "[data-ks-colorway=lime]"    {:--colorway-hue :$lime-hue-oklch})
+(defcss "[data-ks-colorway=brown]"   {:--colorway-hue :$brown-hue-oklch})
+(defcss "[data-ks-colorway=slate]"   {:--colorway-hue :$slate-hue-oklch})
 
 
 ;; Surface styles  ---------------------------------------------------------------------------------------------------------
@@ -334,7 +337,8 @@
   {:--classic-trim-color "oklch(62% 0% var(--colorway-hue))"})
 
 (defcss "[data-ks-surface=soft], [data-ks-surface=soft-classic], [data-ks-surface=faint], [data-ks-surface=convex], [data-ks-surface=minimal], [data-ks-surface=transparent]"
-  {:--chroma-shift                :6.25% 
+  {
+   :--chroma-shift                :6.25% 
    :--lightness-shift             :4% 
    :color                         :$fgc
    :hover:bgc                     :$hover-bgc
@@ -387,7 +391,8 @@
 
 ;; Faint
 (defcss "[data-ks-surface=faint], [data-ks-surface=convex]" 
-  {:--lightness-bgc :98%
+  {
+   :--lightness-bgc :98%
    :--lightness-fgc :44%
    :--chroma-bgc    :6.25%
    :--chroma-fgc    :46.25%
@@ -525,6 +530,7 @@
    "[data-ks-shadow-color=magenta]"  {:--shadow-color :$magenta-500},
    "[data-ks-shadow-color=accent]"   {:--shadow-color :$accent-500},
    "[data-ks-shadow-color=brown]"    {:--shadow-color :$brown-500},
+   "[data-ks-shadow-color=slate]"    {:--shadow-color :$slate-500},
    "[data-ks-shadow-color=blue]"     {:--shadow-color :$blue-500},
    "[data-ks-shadow-color=orange]"   {:--shadow-color :$orange-500},
    "[data-ks-shadow-color=gray]"     {:--shadow-color :$gray-500},

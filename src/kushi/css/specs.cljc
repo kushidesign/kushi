@@ -241,6 +241,15 @@
 
 ;; ## Specs for css-props ------------------------------------------------------
 ;; TODO Do we need another one for just :css-prop ?
+
+(s/def ::css-prop-standard-potential
+  (s/and ::s|kw
+         #(re-find #"^-?[a-z-]+$" (name %))))
+
+(s/def ::css-custom-prop
+  (s/and ::s|kw
+         #(string/starts-with? (name %) "--")))
+
 (s/def ::css-prop-stack
   (s/and ::s|kw
          #(re-find css-prop-stack-re (name %))))

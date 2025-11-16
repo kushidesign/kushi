@@ -14,9 +14,27 @@
 ;; TODO - Consider using Flex containers
 (def demos
   [
+
+   {:label   "Radio sizes"
+    :samples (samples-with-variant 
+              {:variant :text-size
+               :attrs   {:defaultChecked :true
+                         :name           :radio-sizes-demo
+                         }})}
+
+   {:label   "Radio weights"
+    :samples (samples-with-variant 
+              {:variant :text-weight
+               :attrs   {:defaultChecked false
+                         :name           :radio-weights-demo
+                         :text-size      :xxxlarge}})}
+   ]
+
+  #_[
    {:label   "Radio group with labels"
     :samples (samples 
-              [[flex-row (sx :gap--1.5rem
+              [
+               [flex-row (sx :gap--1.5rem
                              :p--1.5rem
                              :br--5px
                              :b--$divisor-4
@@ -125,23 +143,23 @@
    
    {:label   "Radio sizes"
     :samples (samples-with-variant 
-              {:variant :size
+              {:variant :text-size
                :attrs   {:defaultChecked :true
                          :name           :radio-sizes-demo
                          }})}
 
    {:label   "Radio weights"
     :samples (samples-with-variant 
-              {:variant :weight
+              {:variant :text-weight
                :attrs   {:defaultChecked false
                          :name           :radio-weights-demo
-                         :size           :xxxlarge}})}
+                         :text-size      :xxxlarge}})}
 
   ;;  {:label   "Radio colorways"
   ;;   :samples (samples-with-variant 
   ;;             {:variant       :colorway
   ;;              :variant-scale :colorway/named
-  ;;              :attrs/display {:size :xxxlarge}
+  ;;              :attrs/display {:text-size :xxxlarge}
   ;;              :attrs         {:defaultChecked :true}})}
    
    #_(? :pp
@@ -151,11 +169,11 @@
                       ['flex-row-start 
                        {:gap :0.5em}
                        ['radio {:colorway       k
-                                :size         :xxxlarge
+                                :text-size         :xxxlarge
                                 :name           k
                                 :defaultChecked true}]
                        ['radio {:colorway k     
-                                :size   :xxxlarge
+                                :text-size   :xxxlarge
                                 :name     k}]]) )
               []
               variants/colorways-named))
@@ -169,30 +187,30 @@
                  [flex-row
                   {:surface :transparent :colorway :neutral}
                   [radio
-                   {:size           :xxxlarge,
+                   {:text-size           :xxxlarge,
                     :name           :gray,
                     :defaultChecked true}]
-                  [radio {:size :xxxlarge
+                  [radio {:text-size :xxxlarge
                           :name :gray}]]
 
                  "purple"
                  [flex-row
                   {:surface :transparent :colorway :purple}
                   [radio
-                   {:size           :xxxlarge,
+                   {:text-size           :xxxlarge,
                     :name           :purple,
                     :defaultChecked true}]
-                  [radio {:size :xxxlarge
+                  [radio {:text-size :xxxlarge
                           :name :purple}]]
 
                  "blue"
                  [flex-row
                   {:surface :transparent :colorway :blue}
                   [radio
-                   {:size           :xxxlarge,
+                   {:text-size           :xxxlarge,
                     :name           :blue,
                     :defaultChecked true}]
-                  [radio {:size :xxxlarge
+                  [radio {:text-size :xxxlarge
                           :name :blue}]]
 
                  "green"
@@ -200,11 +218,11 @@
                   {:surface :transparent :colorway :green}
                   [radio
                    {:colorway       :green,
-                    :size           :xxxlarge,
+                    :text-size           :xxxlarge,
                     :name           :green,
                     :defaultChecked true}]
                   [radio {:colorway :green
-                          :size     :xxxlarge
+                          :text-size     :xxxlarge
                           :name     :green}]]
                  
                  "lime"
@@ -212,11 +230,11 @@
                   {:surface :transparent :colorway :lime}
                   [radio
                    {:colorway       :lime,
-                    :size           :xxxlarge,
+                    :text-size           :xxxlarge,
                     :name           :lime,
                     :defaultChecked true}]
                   [radio {:colorway :lime
-                          :size     :xxxlarge
+                          :text-size     :xxxlarge
                           :name     :lime}]]
 
                  "yellow"
@@ -224,11 +242,11 @@
                   {:surface :transparent :colorway :yellow}
                   [radio
                    {:colorway       :yellow,
-                    :size           :xxxlarge,
+                    :text-size           :xxxlarge,
                     :name           :yellow,
                     :defaultChecked true}]
                   [radio {:colorway :yellow
-                          :size     :xxxlarge
+                          :text-size     :xxxlarge
                           :name     :yellow}]]
 
                  "gold"
@@ -236,11 +254,11 @@
                   {:surface :transparent :colorway :gold}
                   [radio
                    {:colorway       :gold,
-                    :size           :xxxlarge,
+                    :text-size           :xxxlarge,
                     :name           :gold,
                     :defaultChecked true}]
                   [radio {:colorway :gold
-                          :size     :xxxlarge
+                          :text-size     :xxxlarge
                           :name     :gold}]]
 
                  "orange"
@@ -248,11 +266,11 @@
                   {:surface :transparent :colorway :gold}
                   [radio
                    {:colorway       :orange,
-                    :size           :xxxlarge,
+                    :text-size           :xxxlarge,
                     :name           :orange,
                     :defaultChecked true}]
                   [radio {:colorway :orange
-                          :size     :xxxlarge
+                          :text-size     :xxxlarge
                           :name     :orange}]]
 
                  "red"
@@ -260,11 +278,11 @@
                   {:surface :transparent :colorway :red}
                   [radio
                    {:colorway       :red,
-                    :size           :xxxlarge,
+                    :text-size           :xxxlarge,
                     :name           :red,
                     :defaultChecked true}]
                   [radio {:colorway :red
-                          :size     :xxxlarge
+                          :text-size     :xxxlarge
                           :name     :red}]]
 
                  "magenta"
@@ -272,11 +290,11 @@
                   {:surface :transparent :colorway :magenta}
                   [radio
                    {:colorway       :magenta,
-                    :size           :xxxlarge,
+                    :text-size           :xxxlarge,
                     :name           :magenta,
                     :defaultChecked true}]
                   [radio {:colorway :magenta
-                          :size     :xxxlarge
+                          :text-size     :xxxlarge
                           :name     :magenta}]]
 
                  "brown"
@@ -284,12 +302,27 @@
                   {:surface :transparent :colorway :brown}
                   [radio
                    {:colorway       :brown,
-                    :size           :xxxlarge,
+                    :text-size           :xxxlarge,
                     :name           :brown,
                     :defaultChecked true}]
                   [radio {:colorway :brown
-                          :size     :xxxlarge
-                          :name     :brown}]]])}
+                          :text-size     :xxxlarge
+                          :name     :brown}]]
+
+                 "slate"
+                 [flex-row
+                  {:surface :transparent :colorway :slate}
+                  [radio
+                   {:colorway       :slate,
+                    :text-size      :xxxlarge,
+                    :name           :slate,
+                    :defaultChecked true}]
+                  [radio {:colorway  :slate
+                          :text-size :xxxlarge
+                          :name      :slate}]]
+                 
+                 
+                 ])}
    
    #_{:label   "Custom"
       :samples (samples

@@ -97,7 +97,7 @@
                    :pb--0rem:2rem
                    :pi--0em
                    :column-gap--normal
-                   :fs--$size-small)]
+                   :fs--$text-size-small)]
           (for [{:keys [label]} playground-components]
             [:<>
              [style-tag-first-intersecting label]
@@ -124,7 +124,7 @@
          (sx 
           :.flex-col-fs
           :.neutralize
-          :fs--$size-small
+          :fs--$text-size-small
           [:--translate-y :20px]
           :lg:d--none
           :position--sticky
@@ -188,14 +188,14 @@
 
      [icon
       (sx :.sidenav-menu-icon 
-          {:fs :$size-large
-           :fw :$weight-extra-light}) 
+          {:fs :$text-size-large
+           :fw :$text-weight-extra-light}) 
       :menu]
 
      [icon 
       (sx :.sidenav-close-icon 
-          {:fs :$size-large
-           :fw :$weight-extra-light})
+          {:fs :$text-size-large
+           :fw :$text-weight-extra-light})
       :close]
      "All Components"]]
    
@@ -234,7 +234,7 @@
                    :flex-wrap--wrap-reverse
                    :column-gap--0.75rem
                    :align-content--inherit
-                   :fs--$size-small
+                   :fs--$text-size-small
                    :min-width--50vw
                    :xsm:min-width--unset)]
           (for [{:keys [label]} playground-components]

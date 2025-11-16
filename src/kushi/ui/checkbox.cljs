@@ -5,7 +5,7 @@
 
 (defui checkbox
   {:doc          "Checkboxes are used to provide multiple options for selection."
-   :props/shared [:size :colorway :transition :weight]
+   :props/shared [:text-size :colorway :transition :text-weight]
    :props        {:label-attrs {:schema  :map
                                 :default nil
                                 :desc    "HTML attributes map applied to the wrapping `label` div."}}}

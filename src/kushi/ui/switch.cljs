@@ -44,8 +44,8 @@
           
           
    :props/shared [[:colorway {:default :neutral}]
-                  :size
-                  :weight
+                  :text-size
+                  :text-weight
                   [:shape {:default :pill}]]
    :props {:on?                {:schema   :boolean
                                 :default  false
@@ -199,9 +199,9 @@
                                              :w                      :100%
                                              :h                      :100%
                                              :.ks-switch-thumb-label {:fs :$switch-thumb-label-font-size||0.3em
-                                                                      :fw :$switch-thumb-label-font-weight||$weight-semi-bold}
+                                                                      :fw :$switch-thumb-label-font-weight||$text-weight-semi-bold}
                                              :.ks-switch-thumb-icon  {:fs :$switch-thumb-icon-font-size||0.55em
-                                                                      :fw :$switch-thumb-icon-font-weight||$size-medium}}})
+                                                                      :fw :$switch-thumb-icon-font-weight||$text-weight-semi-bold}}})
 
       {:disabled           disabled?
        :role               :switch

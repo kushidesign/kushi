@@ -72,8 +72,8 @@
             :surface         my-surface
             :inert           true
             :position        :sticky
-            :weight          :semi-bold
-            :size            :semi-bold
+            :text-weight          :semi-bold
+            :text-size            :semi-bold
             :my-custom-prop  :yeah
             :bssr            :10px
             :top             0
@@ -323,13 +323,6 @@
 ;;        (string/split #"\|")
 ;;        (->> (map #(string/replace % #"____\*DOUBLE-BAR\*____" "||")))
 ;;        ))
-
-;; (? (css-rule* ".wtf"
-;;               ;; [:fs--$size-large||$size-small||$size-xsmall||$no]
-;;               ;; [[:fs "$size-large||$size-small||$size-xsmall||$no"]]
-;;               ;; [[:ff "$size-large||regular||$gold|$bang"]]
-;;               [[:box-shadow--0:0:0:10px:red|0:0:0:10px:black]]
-;;               nil nil))
 
 ;; (? (css-rule* ".wtf" [[">*:not([data-ks-playground-sidenav]):pi" :1.25rem]] nil nil))
 ;; (? (css-rule* ".wtf" [[">*:last-child:pi" :1.25rem]] nil nil))

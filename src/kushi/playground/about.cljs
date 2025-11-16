@@ -135,7 +135,7 @@
 
    [playground.colors/color-rows 
     (color-scales2 
-     {:colorlist [:gray :red :orange :gold :yellow :green :blue :purple :magenta :brown]})]
+     {:colorlist [:gray :red :orange :gold :yellow :green :blue :purple :magenta :brown :slate]})]
    ])
 
 
@@ -144,7 +144,7 @@
          (sx :>p:lh--1.7)
          [:h2 
           (sx
-           :fs--$size-large
+           :fs--$text-size-large
            :fw--$semi-bold
            [:bbs "1px solid var(--gray-300)"]
            [:dark:bbs "1px solid var(--gray-700)"]
@@ -185,7 +185,7 @@
                               :tooltip-class (css :.kushi-playground-typescale-example-text-tooltip
                                                    :.code
                                                    :fw--$wee-bold
-                                                   :fs--$size-small)}))
+                                                   :fs--$text-size-small)}))
              "The quick brown fox."]]])))
 
 (defn- formatted-code [s]
@@ -215,7 +215,7 @@
 
 (def typography-tokens-snippet
   '[:span
-    (sx :fs--$size-xxlarge
+    (sx :fs--$text-size-xxlarge
         :fw--$bold
         :letter-spacing--$xloose)
     "My text "])

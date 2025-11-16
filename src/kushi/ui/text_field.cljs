@@ -65,7 +65,7 @@
         {:class    (css ".ks-text-input-label-text"
                         :d--block
                         :.size-small
-                        :fw--$weight-wee-bold
+                        :fw--$text-weight-wee-bold
                         :hover:bgc--transparent!important
                         :active:bgc--transparent!important)}
 
@@ -76,7 +76,7 @@
            {:data-ks-display :inline-block
             :data-ks-colorway :secondary}
            (sx ".ks-text-input-helper"
-               :fw--$weight-normal
+               :fw--$text-weight-normal
                :mbs--$text-input-helper-margin-block-start||0.3em)
            ;; Removed :.disabled, check
            (when disabled {:class (css ".ks-text-input-helper-disabled")})))

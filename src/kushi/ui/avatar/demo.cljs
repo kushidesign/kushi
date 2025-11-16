@@ -29,30 +29,30 @@
                :args          ["M"]
                :attrs         {:surface :solid}})}
 
-   {:label   "Sizes"
+   {:label   "Text sizes"
     :samples (samples-with-variant
-              {:variant       :size
+              {:variant       :text-size
                :args          ["M"]})}
 
    {:label   "Content examples"
-    ;; :sx-attrs        (sx-call (sx :fs--$size-small))
+    ;; :sx-attrs        (sx-call (sx :fs--$text-size-small))
     ;; :container-attrs (sx :>*:d--none :>*:first-child:d--flex)
     :samples (samples [[avatar {:src avatar-1}]
                        [avatar {:surface :solid} "M"]
                        [avatar {:surface :solid} "MT"]
                        [avatar {:surface :solid
-                                :class   (css :fs--$size-medium)}
+                                :class   (css :fs--$text-size-medium)}
                         [icon :diversity-3]]
                        [avatar {:surface :solid
-                                :class   (css :fs--$size-medium)}
+                                :class   (css :fs--$text-size-medium)}
                         [icon :account-balance]]
                        [avatar {:surface :soft} "M"]
                        [avatar {:surface :soft} "MT"]
                        [avatar {:surface :soft
-                                :class   (css :fs--$size-medium)}
+                                :class   (css :fs--$text-size-medium)}
                         [icon :diversity-3]]
                        [avatar {:surface :soft
-                                :class   (css :fs--$size-medium)}
+                                :class   (css :fs--$text-size-medium)}
                         [icon :account-balance]]])}
 
    {:label   "Surfaces"
@@ -83,7 +83,7 @@
 (def examples
   [
    {:desc            "Content examples"
-    ;; :sx-attrs        (sx-call (sx :fs--$size-small))
+    ;; :sx-attrs        (sx-call (sx :fs--$text-size-small))
     :container-attrs (sx :>*:d--none :>*:first-child:d--flex)
     :variants+       [:minimal]
     :examples        [
@@ -99,11 +99,11 @@
                       {:label "people"
                        :args  [[icon :diversity-3]]
                        :attrs {:surface :solid
-                               :class (css :fs--$size-medium)}}
+                               :class (css :fs--$text-size-medium)}}
                       {:label "building"
                        :args  [[icon :account-balance]]
                        :attrs {:surface :solid
-                               :class (css :fs--$size-medium)}}
+                               :class (css :fs--$text-size-medium)}}
 
                       {:label "f"
                        :args  ["M"]
@@ -114,15 +114,15 @@
                       {:label "people"
                        :args  [[icon :diversity-3]]
                        :attrs {:surface :faint
-                               :class (css :fs--$size-medium)}}
+                               :class (css :fs--$text-size-medium)}}
                       {:label "building"
                        :args  [[icon :account-balance]]
                        :attrs {:surface :faint
-                               :class (css :fs--$size-medium)}}
+                               :class (css :fs--$text-size-medium)}}
                       ]}
 
    {:desc            "Colorway variants"
-    :sx-attrs        (sx-call (sx :fs--$size-small))
+    :sx-attrs        (sx-call (sx :fs--$text-size-small))
     :container-attrs {}
     :variants+       [:minimal]
     :examples        (for [colorway component-examples/all-colors]
@@ -136,11 +136,11 @@
                 :jc--fs)
     :container-attrs (sx :>*:d--none :>*:first-child:d--flex)
     :snippets-header component-examples/sizes-snippet-header*
-    :snippets ['[avatar {:size "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
+    :snippets ['[avatar {:text-size "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
     :variants+ [:minimal]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:size sz
+                  :attrs {:text-size sz
                           :src   avatar-1}
                   :args  []})}
    
@@ -150,11 +150,11 @@
                 :jc--fs)
     :container-attrs (sx :>*:d--none :>*:first-child:d--flex)
     :snippets-header component-examples/sizes-snippet-header*
-    :snippets ['[avatar {:size "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
+    :snippets ['[avatar {:text-size "48px" :src "https://placecats.com/bella/200/200?fit=fill&position=right"}]]
     :variants+ [:minimal]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:size  sz
+                  :attrs {:text-size  sz
                           :shape :rounded
                           :src    avatar-1}
                   :args  []})}
@@ -168,7 +168,7 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:size sz}
+                  :attrs {:text-size sz}
                   :args  ["M"]})}
 
    {:desc      "Sample sizes from 24px to 72px, solid variant."
@@ -180,7 +180,7 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:size    sz
+                  :attrs {:text-size    sz
                           :surface :solid}
                   :args  ["M"]})}
 
@@ -193,7 +193,7 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:size sz
+                  :attrs {:text-size sz
                           :shape :rounded}
                   :args  ["M"]})}
 
@@ -206,7 +206,7 @@
     :snippets ['[avatar]]
     :examples  (for [sz sizes]
                  {:label (name sz)
-                  :attrs {:size    sz
+                  :attrs {:text-size    sz
                           :shape   :rounded
                           :surface :solid}
                   :args  ["M"]})}

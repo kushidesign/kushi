@@ -24,15 +24,15 @@
 
 
 (def demos
-  [{:label     "Sizes from xxsmall to large"
+  [{:label     "Text sizes from xxsmall to large"
     :row-attrs (sx :gtc--80px:400px)
-    :desc      "Sizes from xxsmall to large"
+    :desc      "Text sizes from xxsmall to large"
     :samples   (samples
                 [
 
                  "xxsmall"
                  [card 
-                  {:size :xxsmall}
+                  {:text-size :xxsmall}
                   [flex-row (sx :ai--stretch :gap--0.8em)
                    [:div (merge-attrs
                           (sx :position--relative
@@ -51,14 +51,14 @@
                             {:data-ks-position :absolute-centered})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
-                    [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :fs--1.25em :fw--$text-weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
                      "polar.bear@example.com"]]]]
 
                  "xsmall"
                  [card 
-                  {:size :xsmall}
+                  {:text-size :xsmall}
                   [flex-row (sx :ai--stretch :gap--0.8em)
                    [:div (sx :position--relative
                              :overflow--hidden
@@ -76,14 +76,14 @@
                              :data-ks-transition ""})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
-                    [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :fs--1.25em :fw--$text-weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
                      "polar.bear@example.com"]]]]
 
                  "small"
                  [card 
-                  {:size :small}
+                  {:text-size :small}
                   [flex-row (sx :ai--stretch :gap--0.8em)
                    [:div (merge-attrs
                           (sx :overflow--hidden
@@ -102,14 +102,14 @@
                              :data-ks-transition ""})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
-                    [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :fs--1.25em :fw--$text-weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
                      "polar.bear@example.com"]]]]
 
                  "medium"
                  [card 
-                  {:size :medium}
+                  {:text-size :medium}
                   [flex-row (sx :ai--stretch :gap--0.8em)
                    [:div (merge-attrs
                           (sx :overflow--hidden
@@ -127,14 +127,14 @@
                              :data-ks-display  :block})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
-                    [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :fs--1.25em :fw--$text-weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
                      "polar.bear@example.com"]]]]
 
                  "large"
                  [card 
-                  {:size :large}
+                  {:text-size :large}
                   [flex-row (sx :ai--stretch :gap--0.8em)
                    [:div (sx :.rounded
                              :position--relative
@@ -151,7 +151,7 @@
                              :data-ks-display  :block})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
-                    [:p (sx :fs--1.25em :fw--$weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :fs--1.25em :fw--$text-weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
                      "polar.bear@example.com"]]]]
@@ -164,7 +164,7 @@
     :desc      "Shadow sizes from xxsmall to xxxlarge"
     :samples   (samples-with-variant
                 {:variant       :shadow
-                 :attrs         {:size :large}
+                 :attrs         {:text-size :large}
                  :args          ["Card with shadow"]})}
    
    {:label     "Shadow colors"
@@ -174,15 +174,15 @@
     :desc      "Shadow colors"
     :samples   (samples-with-variant
                 {:variant       :shadow-color
-                ;;  :variant-scale :size/xxsmall-large
-                 :attrs         {:size :large :shadow :medium}
+                ;;  :variant-scale :text-size/xxsmall-large
+                 :attrs         {:text-size :large :shadow :medium}
                  :args          ["Card with colored shadow"]})}
    ])
 
 
 #_(def examples
   [
-   {:desc      "Sizes from xxsmall to large"
+   {:desc      "Text sizes from xxsmall to large"
     :row-attrs (sx 
                 :ai--fs
                 :flex-direction--column
@@ -262,11 +262,11 @@
                    :dark:_.kushi-card:b--1px:solid:$neutral-800)
     :examples  [{:label "Alien"
                  :code  (sx-call [card
-                                  (sx :fs--$size-xxsmall
-                                      :xsm:fs--$size-small
-                                      :sm:fs--$size-medium
-                                      :md:fs--$size-large
-                                      :lg:fs--$size-xlarge
+                                  (sx :fs--$text-size-xxsmall
+                                      :xsm:fs--$text-size-small
+                                      :sm:fs--$text-size-medium
+                                      :md:fs--$text-size-large
+                                      :lg:fs--$text-size-xlarge
                                       :.extra-bold
                                       :.flex-col-c
                                       :.rounded-small

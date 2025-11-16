@@ -55,7 +55,8 @@
           :orange
           :red
           :magenta
-          :brown]
+          :brown
+          :slate]
          semantic-colors))
 
 
@@ -159,8 +160,8 @@
    xxxsmall-xxxlarge 
    
    :defaults
-   {:size            xxxsmall-xxxlarge
-    :weight          weights
+   {:text-size            xxxsmall-xxxlarge
+    :text-weight          weights
     :shape         basic-shapes
     :surface         basic-surfaces-vector
     :colorway        basic-colors

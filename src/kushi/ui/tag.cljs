@@ -9,12 +9,11 @@
 (defui tag
   {:summary      "A tag is typically used for concise information, often in a group with other tags."
    :desc         "Tags are fundamental components that allow to organize information, or view organized information."
-   :props/shared [:size
+   :props/shared [:text-size
                   :end-enhancer
                   :start-enhancer
                   :colorway
                   :packing
-                  :loading
                   :stroke
                   :stroke-align
                   :stroke-width
@@ -24,7 +23,7 @@
                   :transition
                   :inert]}
   [& args]
-  (let [{:keys [loading stroke-width]} &props]
+  (let [{:keys [stroke-width]} &props]
     (into [flex-row
            (merge-attrs
 
@@ -41,9 +40,6 @@
                  :.end-enhancer   {:pie  "calc(var(--padding-inline, var(--tag-padding-inline)) * 0.7666)"}
                  })
 
-            {:aria-busy  loading
-             :aria-label (when loading "loading")}
-            
             (? :pp {:style {"--stroke-width" (or (some-> stroke-width util/as-str)
                                                  "var(--tag-stroke-width)")}})
             

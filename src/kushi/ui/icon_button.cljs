@@ -12,13 +12,12 @@
 (defui icon-button
  {:doc          "Buttons are fundamental components that allow users to process actions or navigate an experience. Icon buttons feature a single icon or symbol, with no text"
   :summary      "Buttons provide cues for actions and events."
-  :props/shared [:size
-                 :weight
+  :props/shared [:text-size
+                 :text-weight
                  [:colorway {:default :neutral}]
                  [:surface {:default :soft}]
                  [:shape {:default :pill}]
                  :packing
-                 :loading
                  :stroke
                  :stroke-align
                  :stroke-width
@@ -26,7 +25,7 @@
                  :icon-filled
                  :transition]}
  [& args]
- (let [{:keys [surface loading stroke-width colorway icon-filled]} &props
+ (let [{:keys [surface stroke-width colorway icon-filled]} &props
        [icon*]                                         &children
        
        classic-variant?
@@ -47,8 +46,6 @@
       :pi--$padding-inline
       :pb--$padding-block
       )
-     {:aria-busy  loading
-      :aria-label (when loading "loading")}
 
      (util/stroke-width-cssvar stroke-width "button")
 

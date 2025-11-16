@@ -4,7 +4,7 @@
 
 (defui link
   {:desc         "A link is a wrapper for an anchor tag."
-   :props/shared [:size :position :transition]}
+   :props/shared [:text-size :position :transition]}
   [& args]
   (into [:a
          (merge-attrs

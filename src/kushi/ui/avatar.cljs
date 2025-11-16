@@ -24,7 +24,7 @@
 (defui avatar 
   {:summary "Avatars are graphical thumbnail representations of an individual or entity."
    :desc    "Avatars will display fallback text when no image is provided."
-   :props/shared [[:size {:default "36px"}]
+   :props/shared [[:text-size {:default "36px"}]
                   [:surface {:default :soft}]
                   [:colorway {:default :neutral}]
                   [:shape {:default :rounded}]

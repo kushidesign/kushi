@@ -95,7 +95,7 @@
        :surface      :minimal
        :class         (css
                        ".kushi-modal-close-button"
-                       {:fs                 :$size-large
+                       {:fs                 :$text-size-large
                         :pb                 :0.4rem
                         :pis                :0.4rem
                         :pie                :0.399rem

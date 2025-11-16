@@ -6,7 +6,6 @@
 
 (defui grid
   {:doc   "Elastic grid layout with fixed-aspect ratio grid-items"
-   :props/shared [:gap]
    :props {:column-min-width {:schema  :keyword
                               :default :150px
                               :desc    "The minimum width of the columns. The width of the
@@ -21,9 +20,8 @@
                                         while a value of `:2:3` would result in elements with a
                                         portrait orientation."}}}
   [& args]
-  (let [{:keys [column-min-width aspect-ratio gap]
+  (let [{:keys [column-min-width aspect-ratio]
          :or   {column-min-width :150px
-                gap              :20px
                 aspect-ratio     :1:1}}            
         &props
 
@@ -42,16 +40,14 @@
     (into
      [:section
       (merge-attrs
-       {:style         (css-vars-map aspect-ratio-pct gtc gap)
-        :class         (css
-                        ".ks-grid"
-                        {:>*:w        :auto
-                         :>*:h        0
-                         :>*:pbs      :$aspect-ratio-pct
-                         :>*:position :relative
-                         :d           :grid
-                         :gtc         :$gtc
-                         :grid-gap    :$gap
-                         :width       :100%})}
+       {:style (css-vars-map aspect-ratio-pct gtc)
+        :class (css ".ks-grid"
+                    {:>*:w        :auto
+                     :>*:h        0
+                     :>*:pbs      :$aspect-ratio-pct
+                     :>*:position :relative
+                     :d           :grid
+                     :gtc         :$gtc
+                     :width       :100%})}
        &attrs)]
      &children)))

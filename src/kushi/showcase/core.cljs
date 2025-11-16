@@ -105,7 +105,7 @@
   ([kw ks]
    (or (when (-> kw name (string/ends-with? "?"))
          [false true])
-       (kw variants/ordered-variants-by-custom-opt-key))))
+       (kw (? variants/ordered-variants-by-custom-opt-key)))))
 
 
 (defcss "@layer kushi-playground-styles .kpg-variant-grid-1d"
@@ -319,7 +319,7 @@
                                   :ws--n
                                   :.foreground-color-secondary
                                   :text-shadow--none
-                                  :fs--$size-xsmall
+                                  :fs--$text-size-xsmall
                                   :ff--$sans-serif-font-stack)
                         variant-label]
                        (into [uic-fn
@@ -349,7 +349,7 @@
                          :ws--n
                          :.foreground-color-secondary
                          :text-shadow--none
-                         :fs--$size-xsmall
+                         :fs--$text-size-xsmall
                          :ff--$sans-serif-font-stack)
                variant-label]
               (:code/evaled sample))))
@@ -601,6 +601,11 @@
               (contains? variants/variants-by-custom-opt-key %))
          variants)]
 
+    (println "\n\n")
+     (? :comment (:opt-name opt))
+    ;; (? demo)
+    ;; (? variants)
+
     (if (seq bad-variants)
 
       (do (uic-demo-callout-warning
@@ -641,6 +646,8 @@
             variant-attrs
             (merge (syms->publics uic opt nil attrs)
                    (syms->publics uic opt nil attrs-display))]
+
+    (!? (keyed [v-1d v-2d v-3d]))
 
     [flex-col (sx ".kpg-variant-grid-wrapper" :gap--1rem)
      [flex-row (sx :gap--0.5em
@@ -688,13 +695,19 @@
                                  variant-args))
                          coll))))
 
-         [d1-grid-with-variant-labels
-          v-1d
-          vks
-          uic-fn
-          variant-attrs
-          variant-args
-          demo]))]))))
+         (do (!? (keyed [v-1d
+                        vks
+                        uic-fn
+                        variant-attrs
+                        variant-args
+                        demo]))
+             [d1-grid-with-variant-labels
+              v-1d
+              vks
+              uic-fn
+              variant-attrs
+              variant-args
+              demo])))]))))
 
 (defn variant-demo [demo-index m x]
   (let [{:keys [opt-key demo]
@@ -739,7 +752,7 @@
              :gap--5rem)
          [lightswitch 
           {:surface :transparent
-           :size    :xxxlarge
+           :text-size    :xxxlarge
            :class   :display-fixed-block-start-inside}]]
           
 

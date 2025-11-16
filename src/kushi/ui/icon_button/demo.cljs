@@ -15,7 +15,7 @@
     :samples (samples-with-variant
               {:variant       :shape
                :variant-scale :shape/rounded-medium-xxxlarge
-               :attrs         {:size       :xxxlarge
+               :attrs         {:text-size       :xxxlarge
                                :end-enhancer :east
                                :colorway     :accent
                                :surface      :solid
@@ -42,7 +42,7 @@
                :x-variants    [:surface/basic],
                :snippets?     false
                ;;  :attrs/snippet  {:surface :solid},
-               ;; :attrs/display  {:size :small},
+               ;; :attrs/display  {:text-size :small},
                ;;  :label          "Colorways, surfaces × shapes",
                :label         "Colorways × surfaces",
                :attrs         {:end-enhancer :east
@@ -58,7 +58,7 @@
                :x-variants    [:surface/basic],
                :snippets?     false
               ;;  :attrs/snippet  {:surface :solid},
-               ;; :attrs/display  {:size :small},
+               ;; :attrs/display  {:text-size :small},
               ;;  :label          "Colorways, surfaces × shapes",
                :label         "Contour × surfaces",
                :attrs         {:end-enhancer :east
@@ -101,10 +101,10 @@
 
    {:label   "size"
     ;;  :label/modal "Colorways ..."
-    :desc    "Sizes from xxxsmall to xxxlarge"
+    :desc    "Text sizes from xxxsmall to xxxlarge"
     ;; :row-style {:border "1px solid red"}
     :samples (samples-with-variant
-              {:variant :size
+              {:variant :text-size
               ;; :variant-labels? false
                :attrs   {:surface      :solid
                          :shape        :rounded
@@ -202,7 +202,7 @@
                [kushi.ui.spinner :refer [spinner]]],
     :samples (samples
               [[icon-button
-                {:loading      true,
+                {,
                  :shape        :rounded
                  :icon-filled  true
                  :colorway     :accent,
@@ -211,7 +211,7 @@
                  }
                 :star]
                [icon-button
-                {:loading      true,
+                {,
                  :shape        :rounded
                  :icon-filled  true
                  :colorway     :accent,
@@ -219,7 +219,7 @@
                  :end-enhancer [spinner {:spinner-type :propeller}]}
                 :star]
                [icon-button
-                {:loading      true,
+                {,
                  :shape        :rounded
                  :icon-filled  true
                  :colorway     :accent,
@@ -227,7 +227,7 @@
                  :end-enhancer [spinner {:spinner-type :thinking}]}
                 :star]
                [icon-button
-                {:loading     true
+                {
                  :shape       :rounded
                  :icon-filled true
                  :colorway    :accent

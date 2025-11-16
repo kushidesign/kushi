@@ -1,3 +1,4 @@
+;; Remove this namespace?
 (ns kushi.ui.shared.theming
   (:require 
    [kushi.ui.defs :as defs]
@@ -23,9 +24,10 @@
                "orange"
                "red"
                "magenta"
-               "brown"}
-   :weight   defs/basic-weights-set-of-strs
-   :size     defs/basic-sizes-set-of-strs})
+               "brown"
+               "slate"}
+   :text-weight   defs/basic-weights-set-of-strs
+   :text-size     defs/basic-sizes-set-of-strs})
 
 (def variant-defaults
   {:colorway "neutral"

@@ -14,11 +14,11 @@
       ;; Include this if using cormorant serif face in :$serif-font-stack
       ;;  :.cormorant-section-label
       ;; Comment fs below if using cormorant serif face in :$serif-font-stack
-       :fs--$size-small
-       :fs--$size-small-b
+       :fs--$text-size-small
+       :fs--$text-size-small-b
       ;;  :.oblique
       ;;  :font-weight--$normal
-       :font-weight--$weight-wee-bold
+       :font-weight--$text-weight-wee-bold
       ;;  :font-weight--$light
       ;;  :.neutralize-secondary
        :lh--1.7

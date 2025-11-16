@@ -25,9 +25,11 @@
                             "orange"
                             "red"
                             "magenta"
-                            "brown"}
-                :weight   defs/basic-weights-set-of-strs
-                :size     defs/basic-sizes-set-of-strs}]}
+                            "brown"
+                            "slate"
+                            }
+                :text-weight   defs/basic-weights-set-of-strs
+                :text-size     defs/basic-sizes-set-of-strs}]}
   [& args]
   (let [{:keys [opts attrs children]} (extract args)]
     (into

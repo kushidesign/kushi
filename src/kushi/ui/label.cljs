@@ -8,12 +8,11 @@
 
 (defui label
   {:desc         "A label is typically used for providing titles to sections of content."
-   :props/shared [:size
+   :props/shared [:text-size
                   :end-enhancer
                   :start-enhancer
                   :colorway
                   ;; :packing
-                  :loading
                   :stroke-align
                   :stroke-width
                   :position

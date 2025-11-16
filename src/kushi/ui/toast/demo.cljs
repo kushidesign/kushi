@@ -31,7 +31,7 @@
                  {:data-ks-display :flex-col-center})
     [:h3 (sx :.weight-bold :m--0) "Saved for later"]
     [:p (sx :.my-toast-text
-            :fs--$size-small
+            :fs--$text-size-small
             :.foreground-color-secondary!)
      (.format (new js/Intl.DateTimeFormat
                    "en-US"
@@ -41,7 +41,7 @@
     (merge-attrs (sx :.kushi-toast-close-button
                      :flex-shrink--0
                      :fw--$semi-bold
-                     :fs--$size-xxsmall
+                     :fs--$text-size-xxsmall
                      :letter-spacing--$loose
                      :zi--1
                      [:opacity  :$popover-close-button-opacity])
@@ -59,7 +59,7 @@
      {:desc      "With notification, and manual dismiss cta"
       :component button
       :reqs      '[[kushi.ui.button :refer [button]]]
-      :row-attrs (sx :_.kushi-button:fs--$size-small)
+      :row-attrs (sx :_.kushi-button:fs--$text-size-small)
       :snippets  [['button (:quoted code) "Save for later"]]
       :examples  [{:label    "Basic"
                    :args     ["Save for later"]
@@ -100,7 +100,7 @@
                                                    {:data-ks-display :flex-col-center})
                                       [:h3 (sx :.weight-bold :m--0) "Saved for later"]
                                       [:p (sx :.my-toast-text
-                                              :fs--$size-small
+                                              :fs--$text-size-small
                                               :.foreground-color-secondary!)
                                        (.format (new js/Intl.DateTimeFormat
                                                      "en-US"
@@ -111,7 +111,7 @@
                                       (merge-attrs (sx :.kushi-toast-close-button
                                                        :flex-shrink--0
                                                        :fw--$semi-bold
-                                                       :fs--$size-xxsmall
+                                                       :fs--$text-size-xxsmall
                                                        :letter-spacing--$loose
                                                        :zi--1
                                                        [:opacity :$popover-close-button-opacity])

@@ -1234,20 +1234,12 @@
 ;; sx2 Start 
 ;; -----------------------------------------------------------------------------
 
-(defn- extract-css-props* [k]
-  (or (contains? shorthand/all-props-as-kws k)
-      (contains? cssprops/cherries-set k)
-      (contains? cssprops/non-cherries-set k)))
-
-(defn ^:public extract-css-props
-  [m]
-  (reduce-kv 
-   (fn [acc k v]
-     (if (extract-css-props* k)
-       (assoc-in acc k v)
-       acc))
-   {}
-   (dissoc m :selector)))
+(defn- css-prop? [k]
+  (boolean 
+   (when (s/valid? ::specs/css-prop-standard-potential k)
+     (or (contains? shorthand/all-props-as-kws k)
+         (contains? cssprops/cherries-set k)
+         (contains? cssprops/non-cherries-set k)))))
 
 (defn ^:public props+attrs+css
   [m]
@@ -1260,10 +1252,15 @@
                  (contains? html-attrs k)
                  [:attrs k]
 
-                 (-> k name (string/starts-with? "data-"))
+                 (-> k util/as-str (string/starts-with? "data-"))
                  [:attrs k]
 
-                 (extract-css-props* k)
+                 (or (s/valid? ::specs/css-custom-prop k)
+                     (and (vector? k) (seq k))
+                     (? {:when (= k :w)} (css-prop? k))
+                     (!? {:when (= k :debug)}
+                        (and (s/valid? ::specs/css-prop-stack k)
+                             (not (s/valid? ::specs/css-prop-standard-potential k)))))
                  [:css k]
 
                  :else
@@ -1274,6 +1271,16 @@
     :css          {}
     :custom-props {}}
    (dissoc m :selector)))
+
+
+(defn ^:public extract-css-props
+  [m]
+  (? extract-css-props
+     (-> m
+         (dissoc :selector)
+         props+attrs+css
+         :css)))
+
 
 (defn- class-map [selector m+]
   (let [class-selector
@@ -1407,7 +1414,7 @@
         
         attrs-coll     (!? (mapv :attrs attrs-coll))]
     
-    #_(if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
+    (if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
       (if dynamic-props?
         `(kushi.core/validator-stub ~m)
         `~m)
@@ -1418,7 +1425,7 @@
                 ~attrs-coll)))
 
     ;; for testing in pure jvm clj env
-    (if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
+    #_(if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
         (if dynamic-props?
           `(kushi.core/validator-stub ~m)
           `~m)

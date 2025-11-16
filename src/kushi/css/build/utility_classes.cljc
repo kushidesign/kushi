@@ -17,7 +17,9 @@
    "orange"
    "red"
    "magenta"
-   "brown"])
+   "brown"
+   "slate"
+   ])
 
 
 ;; Helper fns
@@ -82,13 +84,13 @@
   {:examples [{:desc   "Generating an ordered scale of font-size utility classes"
                :call   '(utility-class-scale [:xxxsmall :xxsmall :small]
                                              :font-size
-                                             "size")
+                                             "text-size")
                :result [:xxxsmall
-                        {:font-size :$size-xxxsmall}
+                        {:font-size :$text-size-xxxsmall}
                         :xxsmall
-                        {:font-size :$size-xxsmall}
+                        {:font-size :$text-size-xxsmall}
                         :xsmall
-                        {:font-size :$size-xsmall}]}]}
+                        {:font-size :$text-size-xsmall}]}]}
   ([coll css-prop]
    (utility-class-scale coll css-prop nil))
   ([coll css-prop token-prefix]
@@ -252,8 +254,15 @@
               flex-justify-content-options))
            ["row" "col"]))
 
+(def foreground-color-classes
+  (mapcatv 
+   (fn [c]
+     [(keyword c)
+      {:c      (keyword (str "$" c "-650"))
+       :dark:c (keyword (str "$" c "-350"))}])
+   color-names))
 
-(def debug-outline-classes
+(def colored-wireframe-classes
   (mapcatv 
    (fn [c]
      [(keyword c)
@@ -264,34 +273,14 @@
              (keyword (str "$" c "-500||" c)))])
    color-names))
 
-
-(def foreground-color-classes
-  (mapcatv 
-   (fn [c]
-     [(keyword c)
-      {:c      (keyword (str "$" c "-650"))
-       :dark:c (keyword (str "$" c "-350"))}])
-   color-names))
-
-
-(def debugging-classes
+(def wireframe-classes
   [
    ;; Visual debugging utilities
    ;; --------------------------------------------------------------------------
-   :debug-grid        {:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px)), "
-                                              "repeating-linear-gradient(to right,  transparent, transparent var(--debug-grid-size), var(--debug-grid-color) var(--debug-grid-size), var(--debug-grid-color) calc(var(--debug-grid-size) + 1px), transparent calc(var(--debug-grid-size) + 1px))")}
-   :debug-grid-8      {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                   "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color) 8px, var(--debug-grid-color) calc(8px + 1px), transparent calc(8px + 1px))")
-                       :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 8px, var(--debug-grid-color-dark-mode) 8px, var(--debug-grid-color-dark-mode) calc(8px + 1px), transparent calc(8px + 1px)), "
-                                                   "repeating-linear-gradient(to right,  transparent, transparent 8px, var(--debug-grid-color-dark-mode) 8px, var(--debug-grid-color-dark-mode) calc(8px + 1px), transparent calc(8px + 1px))")}
-   :debug-grid-16     {:background-image      (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px)), "
-                                                   "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color) 16px, var(--debug-grid-color) calc(16px + 1px), transparent calc(16px + 1px))")
-                       :dark:background-image (str "repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--debug-grid-color-dark-mode) 16px, var(--debug-grid-color-dark-mode) calc(16px + 1px), transparent calc(16px + 1px)), "
-                                                   "repeating-linear-gradient(to right,  transparent, transparent 16px, var(--debug-grid-color-dark-mode) 16px, var(--debug-grid-color-dark-mode) calc(16px + 1px), transparent calc(16px + 1px))")}
-   :wireframe         {:outline-color  :silver
-                       :outline-style  :solid
-                       :outline-width  :1px
-                       :outline-offset :-1px}])
+   ".wireframe"   {:outline-color  :silver
+                   :outline-style  :solid
+                   :outline-width  :1px
+                   :outline-offset :-1px}])
 
 (def font-family-classes
   [
@@ -337,12 +326,12 @@
    :fixed                {:position :fixed}
    :sticky               {:position :sticky}
 
-   :absolute-centered            {:position           :absolute
-                                  :inset-inline-start "50%"
-                                  :inset-inline-end   :unset
-                                  :inset-block-start  "50%"
-                                  :inset-block-end    :unset
-                                  :translate          "-50% -50%"}
+   :absolute-center            {:position           :absolute
+                                :inset-inline-start "50%"
+                                :inset-inline-end   :unset
+                                :inset-block-start  "50%"
+                                :inset-block-end    :unset
+                                :translate          "-50% -50%"}
 
    :absolute-fill                {:position :absolute
                                   :top      0
@@ -384,12 +373,12 @@
                                   :bottom   0
                                   :left     0}
 
-   :fixed-centered            {:position           :fixed
-                               :inset-inline-start "50%"
-                               :inset-inline-end   :unset
-                               :inset-block-start  "50%"
-                               :inset-block-end    :unset
-                               :translate          "-50% -50%"}
+   :fixed-center            {:position           :fixed
+                             :inset-inline-start "50%"
+                             :inset-inline-end   :unset
+                             :inset-block-start  "50%"
+                             :inset-block-end    :unset
+                             :translate          "-50% -50%"}
 
    :fixed-inline-start-inside {:position           :fixed
                                :inset-inline-start "0%"
@@ -478,7 +467,7 @@
 (def icon-synced-weights
   "Creates an ordered vector of pairs, thin ~ heavy (100 ~ 900):
    [:thin 
-    {:font-weight                             :$thin
+    {:font-weight                             :$text-weight-thin
      \" .ks-icon:font-variation-settings\" \"'wght' 100\"
      \".ks-icon:font-variation-settings\"  \"'wght' 100\"}
    ...]"
@@ -489,7 +478,7 @@
             sel      (if (= sel-fn data-ks-sels) ".ks-icon" ".ks-icon")
             ancestor (if (= sel-fn data-ks-sels) "[data-ks-weight]" "[class*=\"weight-\"]")]
         {:font-weight                           
-         (->> k util/stringify (str "$weight-") keyword)
+         (->> k util/stringify (str "$text-weight-") keyword)
 
          (str " " sel ":font-variation-settings")
          v
@@ -571,7 +560,7 @@
   :math-auto      {:text-transform :math-auto}])
 
 (def text-size-classes
-  (utility-class-scale variants/xxxsmall-xxxlarge :font-size :size))
+  (utility-class-scale variants/xxxsmall-xxxlarge :font-size :text-size))
 
 (def text-tracking-classes
   (utility-class-scale
@@ -765,7 +754,7 @@
 (def text-weight-synced-classes 
   ;; TODO fix this docstring
   "[\".weight-light\"
-    {:font-weight                :$light
+    {:font-weight                :$text-weight-light
      \" >.ks-radio-i \"...    :$input-border-weight-light
      \" >.ks-checkbo \"...    :$input-border-weight-light
      \" .ks-icon:fo \"... \"  'wght' 300 \"
@@ -798,15 +787,15 @@
    ;; - bg image help   ->   :.bg-image-cover, :.bg-image-contain
    (sel-fn background-image-behavior-classes "bg-image")
 
-   ;; debugging outline helpers  :.outline-red
-   (sel-fn debug-outline-classes "debug")
-
    ;; foreground color
    ;; TODO - Remove? maybe redundant with colorway
    #_(sel-fn foreground-color-classes "foreground")
 
-   ;; - debugging       e.g. :.debug-grid-8, :.wireframe
-   (sel-fn debugging-classes "debug")
+   ;; outline helpers  :.wireframe-red
+   (class-sels colored-wireframe-classes "wireframe")
+
+   ;; - debugging   e.g. :.wireframe
+   wireframe-classes
    
    ;; TODO - Maybe take out?
    (sel-fn font-family-classes "font-family")
@@ -846,10 +835,10 @@
    #_(sel-fn transition-duration-classes "transition")
 
    ;; text weight
-   (sel-fn text-weight-synced-classes "weight")
+   (sel-fn text-weight-synced-classes "text-weight")
 
    ;; text size
-   (sel-fn text-size-classes "size")
+   (sel-fn text-size-classes "text-size")
 
    ;; text tracking
    (sel-fn text-tracking-classes "tracking")
@@ -861,14 +850,14 @@
    (sel-fn shape-classes-rounded "shape")
    ])
 
-   ;; A scale of selectors like ".weight-thin"
+   ;; A scale of selectors like ".text-weight-thin"
    ;;
    ;; TODO - maybe you don't need this if you can figure out how to add a
    ;; setting to the css compiler to do:
    ;;
-   ;; (css-block {:fw $thin})
+   ;; (css-block {:fw $text-weight-thin})
    ;; =>
-   ;; {:font-weight                           var(--thin)
+   ;; {:font-weight                           var(--text-weight-thin)
    ;;  ">.ks-radio-input:border-weight"    $input-border-weight-thin
    ;;  " .ks-icon:font-variation-settings" "'wght' 100"}
    ;;

@@ -198,7 +198,7 @@
 
 
 (defui collapse
-  {:props/shared [:colorway :size]
+  {:props/shared [:colorway :text-size]
    :props        {:label-collapsed {:schema  :string
                                     :default nil
                                     :desc    "The text to display in the collapse header."}

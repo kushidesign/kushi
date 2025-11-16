@@ -23,7 +23,7 @@
              {:style           (css-vars-map sticker-fg-color sticker-bg-bgc)
               :data-ks-display :flex-row-center
               :class           (css :.kushi-playground-color-text-sample-sticker
-                                    :fs--$kushi-playground-text-sample-sticker_font-size||$size-small
+                                    :fs--$kushi-playground-text-sample-sticker_font-size||$text-size-small
                                     :sm:w--54px
                                     :sm:h--54px
                                     :w--44px
@@ -137,7 +137,7 @@
                   :mbs--4.5rem)
          [:h2 
           (sx :.kushi-playground-color-scale-wrapper-header
-              :fs--$size-xlarge
+              :fs--$text-size-xlarge
               :fw--$semi-bold
               :tt--capitalize
               :pbs--2em
@@ -252,7 +252,7 @@
                          [:gap :$row-gap]
                          [:before:content :$before-content]
                          [:before:d :$before-display]
-                         :before:fs--$size-xsmall
+                         :before:fs--$text-size-xsmall
                          :before:ff--$code-font-stack
                          :before:fw--$wee-bold
                          :before:ta--inline-end
@@ -278,7 +278,7 @@
                                  [:bgc :$bgc]
                                  [:before:content :$before-content]
                                  :before:d--none
-                                 :before:fs--$size-xsmall
+                                 :before:fs--$text-size-xsmall
                                  :before:ff--$code-font-stack
                                  :before:fw--$wee-bold
                                  :before:position--absolute

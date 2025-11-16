@@ -148,7 +148,7 @@
           :xsm:pie--2.25em
           :w--100%
           :lh--1.2
-          :fs--$size-xsmall-b
+          :fs--$text-size-xsmall-b
           :p--1rem
           {">*:nth-child(2):line-height" "revert"})
      (if bottom-half?

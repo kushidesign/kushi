@@ -67,16 +67,19 @@
 (def design-tokens*
   ;; 
   [ 
-   ;; Debugging grid
+   ;; Background grid
    ;; ------------------------------------------------------
-   {:family   "Debugging grid"
-    :category ["debugging-grid"]
-    :tags     ["debugging" "development" "backgrounds"]
+   {:family   "Background Grid"
+    :category ["background-patterns"]
+    :tags     ["debugging" "development" "background" "patterns"]
     }
-   [:--debug-grid-size :16px
-    :--debug-grid-color "hsla(0 0% 90%)"
-    :--debug-grid-color-dark-mode "hsla(0 0% 25%)"
+   [:--background-grid-size :16px
+    :--background-grid-color "hsla(0 0% 90%)"
+    :--background-grid-color-dark-mode "hsla(0 0% 25%)"
+    :--background-grid (str "repeating-linear-gradient(to bottom, transparent, transparent var(--background-grid-size), var(--background-grid-color) var(--background-grid-size), var(--background-grid-color) calc(var(--background-grid-size) + 1px), transparent calc(var(--background-grid-size) + 1px)), "
+                            "repeating-linear-gradient(to right,  transparent, transparent var(--background-grid-size), var(--background-grid-color) var(--background-grid-size), var(--background-grid-color) calc(var(--background-grid-size) + 1px), transparent calc(var(--background-grid-size) + 1px))")
     ]
+
 
 
    ;; Typography
@@ -130,7 +133,7 @@
     :desc     {:en "Styling of code blocks"}
     :ns       '[kushi.ui.code]
     :tags     ["code" "color" "typography" "block"]}
-   [:--code-font-size                  :$size-small
+   [:--code-font-size                  :$text-size-small
     :--code-padding-inline             :0.2em
     :--code-padding-block              :0.08em
     :--code-border-radius              :3px
@@ -145,16 +148,16 @@
     :desc     {:en "Controls the weight of type"}
     :category ["font-weight"]
     :tags     ["font-weight" "typography"]}
-   [:--weight-thin                                   100
-    :--weight-extra-light                            200
-    :--weight-light                                  300
-    :--weight-normal                                 400
-    :--weight-wee-bold                               500
-    :--weight-semi-bold                              600
-    :--weight-bold                                   700
-    :--weight-extra-bold                             800
-    :--weight-heavy                                  900
-    :--weight-root-font-size                         :1rem
+   [:--text-weight-thin                                   100
+    :--text-weight-extra-light                            200
+    :--text-weight-light                                  300
+    :--text-weight-normal                                 400
+    :--text-weight-wee-bold                               500
+    :--text-weight-semi-bold                              600
+    :--text-weight-bold                                   700
+    :--text-weight-extra-bold                             800
+    :--text-weight-heavy                                  900
+    :--text-weight-root-font-size                         :1rem
     ]
 
 
@@ -163,29 +166,29 @@
     :desc     {:en "Controls the size of type"}
     :category ["font-size"]
     :tags     ["font-size" "typography"]}
-   [:--size-xxxxsmall                              :0.64rem
-    :--size-xxxsmall                               :0.67rem
-    :--size-xxsmall                                :0.71rem
-    :--size-xsmall                                 :0.77rem
-    :--size-small                                  :0.86rem
-    :--size-medium                                 :1rem
-    :--size-large                                  :1.21rem
-    :--size-xlarge                                 :1.485rem
-    :--size-xxlarge                                :1.86rem
-    :--size-xxxlarge                               :2.36rem
-    :--size-xxxxlarge                              :3.03rem
+   [:--text-size-xxxxsmall                              :0.64rem
+    :--text-size-xxxsmall                               :0.67rem
+    :--text-size-xxsmall                                :0.71rem
+    :--text-size-xsmall                                 :0.77rem
+    :--text-size-small                                  :0.86rem
+    :--text-size-medium                                 :1rem
+    :--text-size-large                                  :1.21rem
+    :--text-size-xlarge                                 :1.485rem
+    :--text-size-xxlarge                                :1.86rem
+    :--text-size-xxxlarge                               :2.36rem
+    :--text-size-xxxxlarge                              :3.03rem
 
-    :--size-xxxxsmall-b                            :0.655rem
-    :--size-xxxsmall-b                             :0.685rem
-    :--size-xxsmall-b                              :0.733rem
-    :--size-xsmall-b                               :0.805rem
-    :--size-small-b                                :0.92rem
-    :--size-medium-b                               :1.1rem
-    :--size-large-b                                :1.33rem
-    :--size-xlarge-b                               :1.655rem
-    :--size-xxlarge-b                              :2.085rem
-    :--size-xxxlarge-b                             :2.68rem
-    :--size-xxxxlarge-b                            :3.475rem]
+    :--text-size-xxxxsmall-b                            :0.655rem
+    :--text-size-xxxsmall-b                             :0.685rem
+    :--text-size-xxsmall-b                              :0.733rem
+    :--text-size-xsmall-b                               :0.805rem
+    :--text-size-small-b                                :0.92rem
+    :--text-size-medium-b                               :1.1rem
+    :--text-size-large-b                                :1.33rem
+    :--text-size-xlarge-b                               :1.655rem
+    :--text-size-xxlarge-b                              :2.085rem
+    :--text-size-xxxlarge-b                             :2.68rem
+    :--text-size-xxxxlarge-b                            :3.475rem]
 
 
    ;; Intended for css prop `letterspacing`
@@ -366,8 +369,8 @@
     :tags     ["pane" "tooltip" "typography" "floating"]}
    [:--tooltip-line-height    1.45
     :--tooltip-font-family    :$sans-serif-font-stack
-    :--tooltip-font-size      :$size-xsmall
-    :--tooltip-font-weight    :$weight-wee-bold
+    :--tooltip-font-size      :$text-size-xsmall
+    :--tooltip-font-weight    :$text-weight-wee-bold
     :--tooltip-text-transform :none
     ]
 

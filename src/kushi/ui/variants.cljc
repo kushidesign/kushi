@@ -119,7 +119,7 @@
 
 ;; Pull this from colors namespace?
 (def colorways-named
-  [:gray :purple :blue :green :lime :yellow :gold :orange :red :magenta :brown])
+  [:gray :purple :blue :green :lime :yellow :gold :orange :red :magenta :brown :slate])
 
 (def colorways-semantic
   [:neutral :accent :positive :warning :negative])
@@ -130,24 +130,24 @@
 (def shadow-colors
   (apply conj colorways-named colorways-semantic))
 
-(def sizes-xxsmall-large
+(def text-sizes-xxsmall-large
   [:xxsmall :xsmall :small :medium :large])
 
-(def sizes-xxsmall-xlarge
+(def text-sizes-xxsmall-xlarge
   [:xxsmall :xsmall :small :medium :large :xlarge])
 
-(def sizes-xsmall-xxlarge
+(def text-sizes-xsmall-xxlarge
   [:xsmall :small :medium :large :xlarge :xxlarge])
 
-(def sizes-xsmall-xxxlarge
+(def text-sizes-xsmall-xxxlarge
   [:xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
 
-(def sizes-large-xxxlarge
+(def text-sizes-large-xxxlarge
   [:large :xlarge :xxlarge :xxxlarge])
           
-(def sizes xxxsmall-xxxlarge)
+(def text-sizes xxxsmall-xxxlarge)
 
-(def weights
+(def text-weights
   [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy])
 
 (def surfaces-basic
@@ -214,13 +214,13 @@
           colorways-named
           colorways-semantic
           colorways
-          sizes-xsmall-xxlarge
-          sizes-xxsmall-xlarge
-          sizes-xxsmall-large
-          sizes-xsmall-xxxlarge
-          sizes-large-xxxlarge
-          sizes
-          weights
+          text-sizes-xsmall-xxlarge
+          text-sizes-xxsmall-xlarge
+          text-sizes-xxsmall-large
+          text-sizes-xsmall-xxxlarge
+          text-sizes-large-xxxlarge
+          text-sizes
+          text-weights
           surfaces-basic
           surfaces
           surfaces-simple]))
@@ -255,19 +255,19 @@
    variants*))
 
 (def variants-by-custom-opt-key
-  {:weight                                 (:weights/set variants)
-   :size/xxsmall-large                     (:sizes-xxsmall-large/set variants)
-   :size/xxsmall-xlarge                    (:sizes-xxsmall-xlarge/set variants)
-   :size/xsmall-xxxlarge                   (:sizes-xsmall-xxxlarge/set variants)
-   :size/xsmall-xxlarge                    (:sizes-xsmall-xxlarge/set variants)
-   :size/large-xxxlarge                    (:sizes-large-xxxlarge/set variants)
-   :size                                   (:sizes/set variants)
+  {:text-weight                            (:text-weights/set variants)
+   :text-size/xxsmall-large                (:text-sizes-xxsmall-large/set variants)
+   :text-size/xxsmall-xlarge               (:text-sizes-xxsmall-xlarge/set variants)
+   :text-size/xsmall-xxxlarge              (:text-sizes-xsmall-xxxlarge/set variants)
+   :text-size/xsmall-xxlarge               (:text-sizes-xsmall-xxlarge/set variants)
+   :text-size/large-xxxlarge               (:text-sizes-large-xxxlarge/set variants)
+   :text-size                              (:text-sizes/set variants)
    :colorway                               (:colorways/set variants)
    :colorway/named                         (:colorways-named/set variants)
    :colorway/semantic                      (:colorways-semantic/set variants)
    :surface/basic                          (:surfaces-basic/set variants)
    :surface                                (:surfaces/set variants)
-   :surface/simple                (:surfaces-simple/set variants)
+   :surface/simple                         (:surfaces-simple/set variants)
    :packing                                (:packings/set variants)
    :position                               (:positions/set variants)
    :spinner-type                           (:spinner-type/set variants)
@@ -286,19 +286,19 @@
    :icon-style                             (:icon-style/set variants)})
 
 (def enum-variants-by-custom-opt-key
-  {:weight                                 (:weights/enum variants)
-   :size/xxsmall-large                     (:sizes-xxsmall-large/enum variants)
-   :size/xxsmall-xlarge                    (:sizes-xxsmall-xlarge/enum variants)
-   :size/xsmall-xxxlarge                   (:sizes-xsmall-xxxlarge/enum variants)
-   :size/xsmall-xxlarge                    (:sizes-xsmall-xxlarge/enum variants)
-   :size/large-xxxlarge                    (:sizes-large-xxxlarge/enum variants)
-   :size                                   (:sizes/enum variants)
+  {:text-weight                            (:text-weights/enum variants)
+   :text-size/xxsmall-large                (:text-sizes-xxsmall-large/enum variants)
+   :text-size/xxsmall-xlarge               (:text-sizes-xxsmall-xlarge/enum variants)
+   :text-size/xsmall-xxxlarge              (:text-sizes-xsmall-xxxlarge/enum variants)
+   :text-size/xsmall-xxlarge               (:text-sizes-xsmall-xxlarge/enum variants)
+   :text-size/large-xxxlarge               (:text-sizes-large-xxxlarge/enum variants)
+   :text-size                              (:text-sizes/enum variants)
    :colorway                               (:colorways/enum variants)
    :colorway/named                         (:colorways-named/enum variants)
    :colorway/semantic                      (:colorways-semantic/enum variants)
    :surface/basic                          (:surfaces-basic/enum variants)
    :surface                                (:surfaces/enum variants)
-   :surface/simple                (:surfaces-simple/enum variants)
+   :surface/simple                         (:surfaces-simple/enum variants)
    :packing                                (:packings/enum variants)
    :position                               (:positions/enum variants)
    :spinner-type                           (:spinner-type/enum variants)
@@ -317,19 +317,19 @@
    :icon-style                             (:icon-style/enum variants)})
 
 (def ordered-variants-by-custom-opt-key
-  {:weight                                 (:weights/vector variants)
-   :size/xxsmall-large                     (:sizes-xxsmall-large/vector variants)
-   :size/xxsmall-xlarge                    (:sizes-xxsmall-xlarge/vector variants)
-   :size/xsmall-xxxlarge                   (:sizes-xsmall-xxxlarge/vector variants)
-   :size/xsmall-xxlarge                    (:sizes-xsmall-xxlarge/vector variants)
-   :size/large-xxxlarge                    (:sizes-large-xxxlarge/vector variants)
-   :size                                   (:sizes/vector variants)
+  {:text-weight                            (:text-weights/vector variants)
+   :text-size/xxsmall-large                (:text-sizes-xxsmall-large/vector variants)
+   :text-size/xxsmall-xlarge               (:text-sizes-xxsmall-xlarge/vector variants)
+   :text-size/xsmall-xxxlarge              (:text-sizes-xsmall-xxxlarge/vector variants)
+   :text-size/xsmall-xxlarge               (:text-sizes-xsmall-xxlarge/vector variants)
+   :text-size/large-xxxlarge               (:text-sizes-large-xxxlarge/vector variants)
+   :text-size                              (:text-sizes/vector variants)
    :colorway                               (:colorways/vector variants)
    :colorway/named                         (:colorways-named/vector variants)
    :colorway/semantic                      (:colorways-semantic/vector variants)
    :surface/basic                          (:surfaces-basic/vector variants)
    :surface                                (:surfaces/vector variants)
-   :surface/simple                (:surfaces-simple/vector variants)
+   :surface/simple                         (:surfaces-simple/vector variants)
    :packing                                (:packings/vector variants)
    :position                               (:positions/vector variants)
    :spinner-type                           (:spinner-type/vector variants)
@@ -383,39 +383,39 @@
 (def props
 
   {
-   ;; change to size
-   :size             {:default nil
-                      :desc    "Corresponds to the font-size based on Kushi's font-size scale."
-                      :class?  true :data-ks? true 
-                      :fq?     true}
+   :text-size        {:default  nil
+                      :desc     "Corresponds to the font-size based on Kushi's font-size scale."
+                      :class?   true
+                      :data-ks? true 
+                      :fq?      true}
 
-   :weight           {:default nil
-                      :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."
-                      :class?  true :data-ks? true 
-                      :fq?     true}
+   :text-weight      {:default  nil
+                      :desc     "Corresponds to the font-weight based on Kushi's font-weight scale."
+                      :class?   true
+                      :data-ks? true 
+                      :fq?      true}
 
-   :position         {:desc    "A utility class dictating the element's position."
-                      :default "relative"
-                      :class?  true :data-ks? true }
+   :position         {:desc     "A utility class dictating the element's position."
+                      :default  "relative"
+                      :class?   true
+                      :data-ks? true }
 
-   :display          {:schema  [:or :string :keyword [:vector :keyword]]
-                      :desc    "A utility class dictating the element's display properties."
-                      :default nil
-                      :class?  true :data-ks? true }
+   :display          {:schema   [:or :string :keyword [:vector :keyword]]
+                      :desc     "A utility class dictating the element's display properties."
+                      :default  nil
+                      :class?   true
+                      :data-ks? true }
 
-   :gap              {:schema  [:or :string :keyword :number [:vector [:or :string :keyword :number]]]
-                      :desc    "Controls the gap in flex and grid layouts."
-                      :default "inline"
-                      :class?  true :data-ks? true }
+   :colorway         {:default  nil ;;  <- TODO should this be nil?
+                      :desc     "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc."
+                      :class?   true
+                      :data-ks? true }
 
-   :colorway         {:default nil ;;  <- TODO should this be nil?
-                      :desc    "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc."
-                      :class?  true :data-ks? true }
-
-   :shape            {:desc    "Shape of the element, corresponds to a Kushi's border-radius scale"
-                      :default nil
-                      :class?  true :data-ks? true 
-                      :fq?     true}
+   :shape            {:desc     "Shape of the element, corresponds to a Kushi's border-radius scale"
+                      :default  nil
+                      :class?   true
+                      :data-ks? true 
+                      :fq?      true}
 
   ;;  :shadows                   {
   ;;                              ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
@@ -428,113 +428,113 @@
   ;;                              }
    
    ;; change to shadow
-   :shadow           {:schema  [:or
-                                [:and :keyword (:shadows/enum variants)]
-                                :string 
-                                [:vector :any]]
-                      :desc    "Controls the drop shadow. If not combined with a `:stroke`, correspondes to a design token from Kushi's shadow scale."
-                      :default nil
-                      :class?  true :data-ks? true }
+   :shadow           {:schema   [:or
+                                 [:and :keyword (:shadows/enum variants)]
+                                 ;;TODO  validate :$my-custom-prop
+                                 :string ; <-css shadow value 
+                                 [:vector :any]] ; <-vector of values
+                      :desc     "Controls the drop shadow. If a keyword such as `:xxsmall` or `:large` is used, and not combined with a `:stroke`, correspondes to a design token from Kushi's shadow scale."
+                      :default  nil
+                      :class?   true
+                      :data-ks? true }
 
-   :shadow-color     {:desc    "Controls the drop shadow color"
-                      :class?  true :data-ks? true 
-                      :default nil}
+   :shadow-color     {:desc     "Controls the drop shadow color. Takes effect if a value such as `:xxsmall` or `:large` is supplied to the `:shadow` prop."
+                      :class?   true
+                      :data-ks? true 
+                      :default  nil}
 
    :shadow-strength  {:schema  [:or
                                 :keyword
                                 :string]
-                      :desc    "Controls the drop shadow strength"
+                      :desc    "Controls the drop shadow strength. Takes effect if a value such as `:xxsmall` or `:large` is supplied to the `:shadow` prop."
                       :default nil}
 
-   :stroke           {:schema  [:or 
-                                [:enum :none :xsoft :soft :medium :hard :xhard]
-                                [:tuple
-                                 {:examples [[:1px :red]
-                                             [:2em :$accent-400]
-                                             ["4px" "rgb(0 0 0 / 0.5)"]
-                                             ["var(--my-width, 1px)" "aliceblue"]]}
-                                 [:or :string :keyword] [:or :string :keyword]]
-                                [:vector 
-                                 {:examples [[[:3px :$red-500]
-                                              [:3px :$green-500]
-                                              [:3px :$blue-500]]]}
-                                 [:tuple [:or :string :keyword] [:or :string :keyword]]]]
-                      :desc    "Can be set a number of different ways"
-                      :default nil
-                      :class?  true :data-ks? true 
+   :stroke           {:schema   [:or 
+                                 [:enum :none :xsoft :soft :medium :hard :xhard]
+                                 [:tuple
+                                  {:examples [[:1px :red]
+                                              [:2em :$accent-400]
+                                              ["4px" "rgb(0 0 0 / 0.5)"]
+                                              ["var(--my-width, 1px)" "aliceblue"]]}
+                                  [:or :string :keyword] [:or :string :keyword]]
+                                 [:vector 
+                                  {:examples [[[:3px :$red-500]
+                                               [:3px :$green-500]
+                                               [:3px :$blue-500]]]}
+                                  [:tuple [:or :string :keyword] [:or :string :keyword]]]]
+                      :desc     "Can be set a number of different ways"
+                      :default  nil
+                      :class?   true
+                      :data-ks? true 
                       }
 
    :stroke-color     {:schema [:or :keyword :string]
-                      :desc   "Controls the stroke color."
+                      :desc   "Controls the stroke color, unless `:stroke` is set as a tuple or vector containing a color value(s)."
                       ;; leave :default off for now
                       ;; :default  "currentColor"
                       :class? true
                       }
 
-   :stroke-align     {:schema  [:enum :inside :outside]
-                      :default nil
-                      :desc    "Alignment of the stroke. Only applies to `:surface`."
-                      :class?  true :data-ks? true }
+   :stroke-align     {:schema   [:enum :inside :outside]
+                      :default  nil
+                      :desc     "Alignment of the stroke. Only applies when a `:surface` value is provided."
+                      :class?   true
+                      :data-ks? true}
 
    :stroke-width     {:schema [:or :string :keyword]
-                      :desc   "Width of the stroke. Only applies to `:surface`. Locally sets the value of `--stroke-width`."
-                      }
+                      :desc   "Width of the stroke. Only applies when a `:surface` value is provided. Locally sets the value of `--stroke-width`."}
 
 
-   :packing          {:default nil
-                      :desc    "General amount of padding inside the element."
-                      :class?  true :data-ks? true }
+   :packing          {:default  nil
+                      :desc     "General amount of padding inside the element."
+                      :class?   true 
+                      :data-ks? true}
 
    ;; TODO should this just be [:or :string :keyword] , :string for text, :keyword for icon ?
    :end-enhancer     {:schema       [:or :string :keyword [:vector :any]]
                       :default      nil
                       :when-not-nil ""
                       :desc         "Content at the inline-end position preceding the element text. Typically an icon."
-                      :class?       true
-                      }
+                      :class?       true}
 
    :start-enhancer   {:schema       [:or :string :keyword [:vector :any]]
                       :default      nil
                       :when-not-nil ""
                       :desc         "Content at the inline-start position following the element text. Typically an icon."
-                      :class?       true
-                      }
+                      :class?       true}
 
-   :transition       {:schema  :boolean
-                      :desc    "When `true` this will enable Kushi's default css `transition-*` values on the element and the elements `:before` and `:after` pseudo-elements"
-                      :default true
-                      :class?  true :data-ks? true 
-                      }
+   :transition       {:schema   :boolean
+                      :desc     "When `true` this will enable Kushi's default css `transition-*` values on the element and the elements `:before` and `:after` pseudo-elements"
+                      :default  true
+                      :class?   true 
+                      :data-ks? true}
 
-   :loading          {:schema  :boolean
-                      :default false
-                      :desc    "When `true` this will set the appropriate values for `aria-busy` and `aria-label`."
-                      }
+   :surface          {:desc     "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."
+                      :default  nil ;;  <- TODO should this be nil?
+                      :class?   true 
+                      :data-ks? true}
 
-   :surface          {:desc    "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."
-                      :default nil ;;  <- TODO should this be nil?
-                      :class?  true :data-ks? true 
-                      }
-
-   :inert            {:schema  :boolean
-                      :desc    "Surface is not interactive meaning no hover or active states."
-                      :default true
-                      :class?  true :data-ks? true 
-                      }
+   ;; TODO - maybe defaults to true, but not for certain tags such as :button :link and similar components
+   :inert            {:schema   :boolean
+                      :desc     "Surface is not interactive meaning no hover or active states."
+                      :default  nil
+                      :class?   true
+                      :data-ks? true}
 
    ;; Need this since it is an html attribut already?
    :required         {:schema  :boolean
                       :desc    "HTML `required` attribute for elements such as input etc."
                       :default nil}
 
-  ;; Leave out for brevity
-  ;;  :text-transform   {:desc    "Equivalent to the css text-transform property."
-  ;;                     :default nil}
+   ;; Leave out for brevity
+   ;; :text-transform   {:desc    "Equivalent to the css text-transform property."
+   ;;                    :default nil}
    
-   :icon-enhanceable {:schema  :boolean
-                      :desc    "Element is enhanceable with an icon."
-                      :default nil
-                      :class?  true :data-ks? true }
+   :icon-enhanceable {:schema   :boolean
+                      :desc     "Element is enhanceable with an icon."
+                      :default  nil
+                      :class?   true
+                      :data-ks? true }
 
    :icon-style       {:desc    "Drawn style of icon, e.g. rounded, outlined, sharp"
                       :default :outlined}
@@ -544,9 +544,7 @@
                       :default false}
 
    :spinner-type     {:desc    "The design of the spinner"
-                      :default :donut}
-
-   })
+                      :default :donut}})
 
 (def shared-props-enum
   (->> props keys (into [:enum])))
@@ -559,19 +557,15 @@
                :shape
                :surface
                :stroke
-               :stroke-weight
                :stroke-align
                :stroke-width
-               :position
-               :background-image-behavior
                :shadow
                :shadow-color
                :shadow-strength
-               :loading
+               :background-image-behavior
                :inert
-
+               :position
                :display
-               :gap
                ]})
 
 (def generic-props

@@ -30,7 +30,7 @@
          (sx :.kushi-ui-opt-desc
              :.normal
              :m--0
-             :fs--$size-medium
+             :fs--$text-size-medium
              :lh--1.55
              :_code:lh--1.9
              :_code:pb--0.07em

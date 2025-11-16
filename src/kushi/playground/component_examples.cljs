@@ -114,8 +114,8 @@
       ;; Include this if using cormorant serif face in :$serif-font-stack
       ;;  :.cormorant-section-label
       ;; Comment fs below if using cormorant serif face in :$serif-font-stack
-      ;;  :fs--$size-small
-       :fs--$size-small-b
+      ;;  :fs--$text-size-small
+       :fs--$text-size-small-b
        :.oblique
        :.neutralize-secondary
        :lh--1.7
@@ -187,7 +187,7 @@
     (css :.kushi-playground-examples-modal-trigger
          :pb--0.4em
          :fw--$wee-bold
-         :fs--$size-xxsmall
+         :fs--$text-size-xxsmall
          :.accent.minimal:hover:background-color--$accent-50
          :dark:.accent.minimal:hover:background-color--$accent-800
 
@@ -393,8 +393,8 @@
          :_.code:ws--n
          :_pre_code:p--0
          :_pre_.code:p--0
-         :_pre_code:fs--$size-xsmall
-         :_pre_.code:fs--$size-xsmall
+         :_pre_code:fs--$text-size-xsmall
+         :_pre_.code:fs--$text-size-xsmall
          :lh--1.7
          :ai--fs
          :min-width--200px
@@ -476,6 +476,7 @@
   ;;  "lime"
    "warning"
   ;;  "brown"
+  ;;  "slate"
   ;;  "orange"
    "negative"
   ;;  "magenta"
@@ -486,6 +487,7 @@
    "purple"
    "lime"
    "brown"
+   "slate"
    "orange"
    "magenta"
    ])
@@ -503,6 +505,7 @@
    "red"
    "magenta"
    "brown"
+   "slate"
    ])
 
 (def color-lut

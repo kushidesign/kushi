@@ -20,7 +20,7 @@
 (defn loading-spinner []
   [:div (sx
          :.flex-col-c
-         :fs--$size-xxlarge
+         :fs--$text-size-xxlarge
          ["has-ancestor(.path-transitioning):display"
           :flex]
          :position--fixed
@@ -35,7 +35,7 @@
     ]])
 
 (def tab-attrs
-  (sx :fs--$size-small
+  (sx :fs--$text-size-small
       :pis--0.799em
       :pie--0.8em
       :pbs--0.4em
@@ -92,7 +92,7 @@
      {:surface      :minimal
       :shape        :pill
       :class         (css :.foreground-color-secondary!
-                          :fs--$size-small
+                          :fs--$text-size-small
                           :pis--0.799em
                           :pie--0.8em
                           :pbs--0.4em
@@ -332,7 +332,7 @@
   [custom-attributes]
   [:<>
    [:h2 (sx
-         :fs--$size-large
+         :fs--$text-size-large
          :fw--$semi-bold
          :mb--0:0.5rem)
     "Opts"]
@@ -383,7 +383,7 @@
     :id     (str "kushi-" label "-documentation")}
    (when summary
      (into [:div 
-            (sx :fs--$size-medium
+            (sx :fs--$text-size-medium
                 :fw--$wee-bold
                 :mb--0:2rem
                 :>span:lh--1.7)]
@@ -391,7 +391,7 @@
    (when desc
      [:<> 
       [:h2 
-       (sx :fs--$size-large
+       (sx :fs--$text-size-large
            :fw--$semi-bold
            :pbe--0.5rem
            :bbe--1px:solid:$gray-200
@@ -405,7 +405,7 @@
                    :_code:pb--0.07em
                    :_code:pi--0.2em
                    :>span:d--block
-                   [:_b {:fw      :$weight-wee-bold
+                   [:_b {:fw      :$text-weight-wee-bold
                          :mbe     :0.4em
                          :display :block}])]
             (desc->hiccup desc))])

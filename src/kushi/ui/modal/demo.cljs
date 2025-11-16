@@ -9,7 +9,7 @@
             [kushi.ui.text-field :refer [text-field]]))
 
 (def examples
-  (let [row-attrs (sx :_.kushi-button:fs--$size-small)]
+  (let [row-attrs (sx :_.kushi-button:fs--$text-size-small)]
     [(let [code (sx-call (let [id "my-modal-basic"]
                            [:div
                             [button
@@ -18,7 +18,7 @@
                             [modal
                              (merge-attrs
                               (sx :min-width--300px
-                                  :_.kushi-modal-description:fs--$size-small)
+                                  :_.kushi-modal-description:fs--$text-size-small)
                               {:id id})
                              [:div
                               (sx :.xxxlarge :.flex-row-c)
@@ -26,7 +26,7 @@
        {:desc      "Basic"
         :component button
         :reqs      '[[kushi.ui.button :refer [button]]]
-        :row-attrs (sx :_.kushi-button:fs--$size-small)
+        :row-attrs (sx :_.kushi-button:fs--$text-size-small)
         :snippets  [(:quoted code)]
         :examples  [{:label "right"
                      :args  ["Hover me"]
@@ -47,7 +47,7 @@
                                        (merge-attrs 
                                         (sx
                                          :min-width--300px
-                                         :_.kushi-modal-description:fs--$size-small)
+                                         :_.kushi-modal-description:fs--$text-size-small)
                                         {:modal-title "Example modal"
                                          :description "Example modal description goes here."
                                          :id           id})
@@ -148,7 +148,7 @@
                                              :border-radius--24px
                                              :b--2px:solid:$gray-900
                                              [:--modal-backdrop-color :$transparent-white-70]
-                                             :_.kushi-modal-description:fs--$size-small)
+                                             :_.kushi-modal-description:fs--$text-size-small)
                                             {:modal-title "Example modal"
                                              :description "Example modal description goes here."
                                              :id           id})
@@ -179,7 +179,7 @@
                                   :border-radius--24px
                                   :b--2px:solid:$gray-900
                                   [:--modal-backdrop-color :$transparent-white-70]
-                                  :_.kushi-modal-description:fs--$size-small
+                                  :_.kushi-modal-description:fs--$text-size-small
                                   {:modal-title "Example modal"
                                    :description "Example modal description goes here."
                                    :id           id})

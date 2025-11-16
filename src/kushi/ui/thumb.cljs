@@ -11,9 +11,8 @@
   {:doc          "Thumb docstring"
    :props/shared [[:colorway {:default :neutral}]
                   [:inert {:default false}]
-                  :size
+                  :text-size
                   :packing
-                  :loading
                   :stroke
                   :stroke-align
                   :stroke-width
@@ -23,7 +22,6 @@
                   :transition]}
   [& args]
   (let [{:keys [surface
-                loading
                 stroke-width]} &props
         classic-variant?       (contains? #{:solid-classic 
                                             :soft-classic} 
@@ -48,8 +46,6 @@
              [:--padding-inline :$thumb-padding-inline]
              :pi--$_padding-inline
              :pb--$_padding-block)
-            {:aria-busy  loading
-             :aria-label (when loading "loading")}
 
             (!? (decoration/stroke-width-cssvar stroke-width "thumb"))
 

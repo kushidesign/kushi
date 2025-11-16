@@ -191,7 +191,7 @@
 ;; extraction of props  ------------------------------------------------
 
 (def kushi-ui-props 
-  #{:at :inert :end-enhancer :start-enhancer :loading :stroke-align :stroke-width})
+  #{:at :inert :end-enhancer :start-enhancer :stroke-align :stroke-width})
 
 (defn attr+children [coll]
   (when (coll? coll)
@@ -245,8 +245,8 @@
 
 
 '{:data-ks    [:position
-               :size
-               :weight
+               :text-size
+               :text-weight
                :display]
 
   :classnames [:colorway-red
@@ -262,5 +262,4 @@
                :transition
                :icon-enhanceable
 
-               :loading? ;; need?
                ]}

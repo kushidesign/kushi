@@ -45,7 +45,7 @@
    :shape :pill
    :class (css :.foreground-color-secondary!
                :tt--capitalize
-               :fs--$size-xlarge
+               :fs--$text-size-xlarge
                :pi--0.7em
                :pb--0.3em
                :hover:c--$neutral-950
@@ -96,7 +96,7 @@
                 :target   target
                 :on-click (partial route! menu-id href)}
             [button {:shape         :pill
-                     :size          :small
+                     :text-size          :small
                      :surface       (if selected? :soft :minimal)
                      :packing       :xcompact
                      :class         (css [:--icon-enhanceable-gap :0.5em]
@@ -118,11 +118,11 @@
                   :inert    true
                   :colorway :neutral
                   :position :sticky
-                  :weight   :semi-bold}
+                  text-weight   :semi-bold}
                  (sx {:top 0
                       :jc  :sb
                       :zi  50}))
-     [button {:size    :small
+     [button {:text-size    :small
               :surface :minimal}
       "Kushi"]
      [header-menu menu-id]
@@ -184,7 +184,7 @@
     (when (domo/media-supports-touch?)
       {:on-touch-start (partial header-touchstart-handler menu-id)}))
 
-   [:span (sx #_:.transition :.semi-bold :fs--$size-xlarge :o--0.5)
+   [:span (sx #_:.transition :.semi-bold :fs--$text-size-xlarge :o--0.5)
     "Kushi"]
 
    [:div
@@ -206,7 +206,7 @@
       :surface :minimal
       :class (css :.kushi-explore
                   :.foreground-color-secondary!
-                  :fs--$size-small
+                  :fs--$text-size-small
                   :pi--0.8em
                   :pb--0.4em)}
      [icon :keyboard-arrow-down]

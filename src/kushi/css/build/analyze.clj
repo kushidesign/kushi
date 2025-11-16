@@ -64,9 +64,9 @@
                     [:italic.subtle.bold ns-str])] 
     (callout
      {:type        :error
-      :label       (str "ERROR: "
-                        (string/replace (type e) #"^class " "" )
+      :label       (str (string/replace (type e) #"^class " "" )
                         " (Caught)")
+      :side-label  "kushi.css.build.analyze"
       :padding-top 1}
      body)))
 
@@ -545,6 +545,7 @@
 
 
 ;; TODO - add error boundery here
+;; How to handle duplicate keys in sx2 map
 (defn parse-all-forms [file ns-str]
   (try (-> file
            slurp
@@ -677,14 +678,14 @@
 
 (defn- resolve-ruleset [macro-sym ruleset]
   (when (= macro-sym 'sx2)
-    (? "ruleset-args, before distillation" (:args ruleset)))
+    (!? "ruleset-args, before distillation" (:args ruleset)))
   (let [ruleset
         (if (= macro-sym 'sx2)
           (let [args (reduce (fn [acc m]
                                (if (map? m)
-                                 (let [{:keys [css]} (extract-css-props)]
-                                   (when (seq css)
-                                     (conj acc css)))
+                                 (let [css-map (extract-css-props m)]
+                                   (when (seq css-map)
+                                     (conj acc css-map)))
                                  acc))
                              []
                              (:args ruleset))]
@@ -705,10 +706,8 @@
           ruleset)]
 
     (when (= macro-sym 'sx2)
-      (? "ruleset-args, after distillation" (:args ruleset))
-      #_(? :pp (keyed [ruleset css k])))
+      (? "ruleset-args, after distillation" (:args ruleset)))
     
-
     (ruleset->css ruleset)))
 
 (defn- css-includes+others [rulesets]
@@ -718,11 +717,11 @@
             (let [[css k]
                   (or (some-> css (vector :css-includes))
                       (resolve-ruleset macro-sym ruleset))]
-              
-              #_(when (= macro-sym 'sx2)
-                  (? :pp (keyed [ruleset css k])))
 
-                    ;; TODO change k from :others to :css-rulesets
+              (when (= macro-sym 'sx2)
+                (? css))
+
+              ;; TODO change k from :others to :css-rulesets
               (update-in acc [k] conj css)))
           {:css-includes []
            :others       []}
