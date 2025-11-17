@@ -35,7 +35,7 @@
    :orange
    :red
    :magenta
-   :greige])
+   :sand])
 
 (def semantic-colors
   [:neutral
@@ -57,7 +57,7 @@
           :orange
           :red
           :magenta
-          :greige
+          :sand
           :slate]
          semantic-colors))
 

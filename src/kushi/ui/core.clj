@@ -489,7 +489,7 @@
         (!? {:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
 
         data-ks-attrs-map-with-defaults
-        (? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when @debug?} 
+        (!? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when @debug?} 
          (assoc (kushi.ui.extract/data-ks-attrs {} 
                                                 defaults-by-prop
                                                 (when @debug? :debug) #_:comptime)

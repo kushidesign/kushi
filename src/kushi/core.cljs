@@ -5,7 +5,7 @@
    [clojure.string :as string]
    [domo.core :as domo] ;; Should these go somewhere else?
    [kushi.css.build.css-reset]
-   [kushi.css.build.kushi-ui-component-theming] ;; for testing
+  ;;  [kushi.css.build.kushi-ui-component-theming] ;; for testing
   ;;  [malli.core :as m]
    )
  (:require-macros [kushi.core]))

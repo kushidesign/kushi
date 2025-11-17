@@ -135,6 +135,7 @@
 (def kushi-macros
   '#{css-include
      defcss 
+     css-string
      defcolorway
      css
      sx
@@ -677,49 +678,52 @@
       (new-toks-callout-template  "No design tokens for " ns layer))))
 
 (defn- resolve-ruleset [macro-sym ruleset]
-  (when (= macro-sym 'sx2)
-    (!? "ruleset-args, before distillation" (:args ruleset)))
-  (let [ruleset
-        (if (= macro-sym 'sx2)
-          (let [args (reduce (fn [acc m]
-                               (if (map? m)
-                                 (let [css-map (extract-css-props m)]
-                                   (when (seq css-map)
-                                     (conj acc css-map)))
-                                 acc))
-                             []
-                             (:args ruleset))]
-            (when (< 1 (count args))
+  (let [debug? (= macro-sym 'css-string #_ 'sx2)] 
+   (when debug?
+     (? "ruleset-args, before distillation" (:args ruleset)))
+    (let [ruleset
+          (if (= macro-sym 'sx2)
+            (let [args (reduce (fn [acc m]
+                                 (if (map? m)
+                                   (let [css-map (extract-css-props m)]
+                                     (when (seq css-map)
+                                       (conj acc css-map)))
+                                   acc))
+                               []
+                               (:args ruleset))]
+              (when (< 1 (count args))
               ;; TODO - add warning highlighting to extra maps
-              (callout {:type        :warning
-                        :padding-top 1
-                        :side-label  (str (:rel-path ruleset) ":" (:row ruleset) ":" (:col ruleset))}
-                       "The `sx` macro should only receive 1 map with css styles."
-                       "\n"
-                       "2 maps containing css properties and values were supplied."
-                       "\n"
-                       "The first one will be used, and the rest ignored."
-                       "\n\n"
-                       (hifi (:form ruleset))
-                       ))
-            (assoc ruleset :args (take 1 args)))
-          ruleset)]
+                (callout {:type        :warning
+                          :padding-top 1
+                          :side-label  (str (:rel-path ruleset) ":" (:row ruleset) ":" (:col ruleset))}
+                         "The `sx` macro should only receive 1 map with css styles."
+                         "\n"
+                         "2 maps containing css properties and values were supplied."
+                         "\n"
+                         "The first one will be used, and the rest ignored."
+                         "\n\n"
+                         (hifi (:form ruleset))
+                         ))
+              (assoc ruleset :args (take 1 args)))
+            ruleset)]
 
-    (when (= macro-sym 'sx2)
-      (? "ruleset-args, after distillation" (:args ruleset)))
-    
-    (ruleset->css ruleset)))
+      (when debug?
+        (? "ruleset-args, after distillation" (:args ruleset)))
+      
+      (ruleset->css ruleset))))
 
 (defn- css-includes+others [rulesets]
   (reduce (fn [acc {:keys [css macro-sym]
                     :as   ruleset}]
 
             (let [[css k]
-                  (or (some-> css (vector :css-includes))
+                  (or (some-> css (vector (if (= macro-sym 'css-string)
+                                            :others
+                                            :css-includes)))
                       (resolve-ruleset macro-sym ruleset))]
 
-              (when (= macro-sym 'sx2)
-                (? css))
+              (when (= macro-sym 'css-string)
+                (? k css))
 
               ;; TODO change k from :others to :css-rulesets
               (update-in acc [k] conj css)))
@@ -735,8 +739,16 @@
   #_(when (= "./public/css/user-styles/site_views.css" css-fp)
     (? rulesets))
 
-  (let [debug?
+  (let [
+
+        debug?
         (contains? debugging :design-token-registration)
+
+        debug-layer?  (= "kushi-ui-theming" layer)
+
+        _
+        (when debug-layer?
+          (!? {:coll-limit 300} (mapv #(-> % :macro-sym) rulesets)))
 
         ns 
         (some-> rulesets seq first :ns)
@@ -747,6 +759,8 @@
         ;; TODO change k from :others to :css-rulesets
         {:keys [css-includes others]}
         (css-includes+others rulesets)
+
+        ;; _ (when debug-layer? (println others))
 
         css-str
         (str (css-includes-block css-includes ns)
@@ -762,6 +776,7 @@
     #_(when (re-find #"design-tokens" css-fp)
         (? :pp css-fp))
     (spit css-fp
+          ;; TODO - can you use css-str binding up there?
           (str (css-includes-block css-includes ns)
                (string/join "\n\n" others))
           :append false)))
@@ -822,6 +837,21 @@
      nil))
 
 
+(defn css-string-call-data
+  "This is for css-string macro, when user wants to define css with just a string
+   of css"
+  [{:keys [args form ns] :as m}
+   *css]
+  (let [[layer css] (if (= 2 (count args))
+                      args
+                      ["@layer user-shared-styles" (first args)])
+        layer       (string/replace layer #"^@layer " "")
+        result      (merge m (meta form) (keyed [css args layer]))]
+    (initialize-layer-vector! *css ns layer)
+    (vswap! *css update-in [:sources ns layer] conj result)
+    nil))
+
+
 (declare layer+css-path)
 
 
@@ -850,7 +880,12 @@
              (css-include-call-data m *css)
 
              (contains? '#{?defcss defcss} macro-sym)
-             (defcss-call-data m *css)
+             (do (!? :- {:when (= ns 'kushi.css.build.kushi-ui-component-theming)} (list 'defcss (first args) '...))
+                 (defcss-call-data m *css))
+
+             (contains? '#{?css-string css-string} macro-sym)
+             (do (!? :- {:when (= ns 'kushi.css.build.kushi-ui-component-theming)} (list 'css-string (first args) '...)) 
+               (css-string-call-data m *css))
 
              (contains? '#{?defcolorway defcolorway} macro-sym)
              (defcolorway-call-data m *css)

@@ -15,6 +15,7 @@
                         [io.github.paintparty/bling "0.8.8"]
                         [io.github.paintparty/fireworks "0.12.6"]
                         [me.flowthing/pp "2024-01-04.60"]
+                        [funcool/cuerdas "2025.05.26-411"]
                         [babashka/process "0.5.22"]
                         [borkdude/edamame "1.4.27"]
 
