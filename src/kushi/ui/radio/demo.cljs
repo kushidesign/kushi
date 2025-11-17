@@ -297,17 +297,17 @@
                           :text-size     :xxxlarge
                           :name     :magenta}]]
 
-                 "sand"
+                 "greige"
                  [flex-row
-                  {:surface :transparent :colorway :sand}
+                  {:surface :transparent :colorway :greige}
                   [radio
-                   {:colorway       :sand,
+                   {:colorway       :greige,
                     :text-size           :xxxlarge,
-                    :name           :sand,
+                    :name           :greige,
                     :defaultChecked true}]
-                  [radio {:colorway :sand
+                  [radio {:colorway :greige
                           :text-size     :xxxlarge
-                          :name     :sand}]]
+                          :name     :greige}]]
 
                  "slate"
                  [flex-row

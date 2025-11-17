@@ -25,7 +25,7 @@
                             "orange"
                             "red"
                             "magenta"
-                            "sand"
+                            "greige"
                             "slate"
                             }
                 :text-weight   defs/basic-weights-set-of-strs

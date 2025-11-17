@@ -336,32 +336,22 @@
          "solid"         "ソリッド"}
         div (fn [{:keys [stroke surface colorway interactive text shape]}]
               [:div (merge-attrs 
-                     {:style {:display  (if (contains? #{"ghost"
-                                                         "transparent"
-                                                         "minimal"
-                                                         "faint"
-                                                         "convex"
-                                                         "soft"}
-                                                       (name surface))
-                                          "flex"
-                                          "none")}}
-                     (when (contains? #{"soft-classic" "solid-classic"}
-                                      surface)
-                       {:class [:ks-button2 surface]
+                     (when (contains? #{"soft-classic" "solid-classic"} surface)
+                       {:class [:ks-button2]
                         :style {:position :relative}})
                      (sx {
                           ;; :border :3px:solid:silver
                           ;; :aspect-ratio                        3
-                          :w                :140px
-                          :h                :55px
-                          :ff               "Bradthen"
-                          :fs               :$text-size-xxlarge
-                          :fw               :$text-weight-bold
-                          :tt               :u
-                          :d                :flex
-                          :jc               :center
-                          :ai               :center
-                          ":--stroke-width" :3px
+                          :w              :150px
+                          :h              :55px
+                          :ff             "Bradthen"
+                          :fs             :$text-size-xxlarge
+                          :fw             :$text-weight-bold
+                          :tt             :u
+                          :d              :flex
+                          :jc             :center
+                          :ai             :center
+                          ":--stroke-width" :1px
                           ;; "--colorway-background-opacity"        0.5
                           ;; "--colorway-background-opacity-hover"  0.5
                           ;; "--colorway-background-opacity-active" 1
@@ -370,7 +360,9 @@
                             (some->> colorway (hash-map :data-ks-colorway2))
                             (some->> interactive (hash-map :data-ks-interactive))
                             (some->> stroke (hash-map :data-ks-stroke))
-                            (some->> shape (hash-map :data-ks-shape))))
+                            (some->> shape (hash-map :data-ks-shape))
+                            )
+                     )
                (let [s (or text (name surface))]
                  s
                  #_(get en->jp s s))])]
@@ -389,8 +381,8 @@
      [div {:surface "minimal"
            :stroke  :hard}]
      [div {:surface "faint"}]
-     [div {:surface "convex"}]
      [div {:surface "soft"}]
+     [div {:surface "convex"}]
      [div {:surface "soft-classic"
            :shape   :pill }]
      [div {:surface "solid-classic"
@@ -412,9 +404,9 @@
            :stroke      :hard}]
      [div {:surface     "faint"
            :interactive true}]
-     [div {:surface     "convex"
-           :interactive true}]
      [div {:surface     "soft"
+           :interactive true}]
+     [div {:surface     "convex"
            :interactive true}]
      [div {:surface     "soft-classic"
            :shape       :pill
@@ -439,9 +431,9 @@
            :stroke      :hard}]
      [div {:surface     "faint"
            :colorway    :cyan}]
-     [div {:surface     "convex"
-           :colorway    :cyan}]
      [div {:surface     "soft"
+           :colorway    :cyan}]
+     [div {:surface     "convex"
            :colorway    :cyan}]
      [div {:surface     "soft-classic"
            :colorway    :cyan
@@ -470,10 +462,10 @@
      [div {:surface     "faint"
            :colorway    :cyan
            :interactive true}]
-     [div {:surface     "convex"
+     [div {:surface     "soft"
            :colorway    :cyan
            :interactive true}]
-     [div {:surface     "soft"
+     [div {:surface     "convex"
            :colorway    :cyan
            :interactive true}]
      [div {:surface     "soft-classic"
@@ -491,73 +483,37 @@
 
     [flex-col
      [div {:surface     "ghost"
-           :colorway    :gold
+           :colorway    :greige
            :interactive true
            :shape       :rounded-xlarge 
            :stroke      :hard}]
      [div {:surface     "transparent"
-           :colorway    :gold
+           :colorway    :greige
            :interactive true
            :stroke      :hard}]
      [div {:surface     "minimal"
-           :colorway    :gold
+           :colorway    :greige
            :interactive true
            :stroke      :hard}]
      [div {:surface     "faint"
-           :colorway    :gold
-           :interactive true}]
-     [div {:surface     "convex"
-           :colorway    :gold
+           :colorway    :greige
            :interactive true}]
      [div {:surface     "soft"
-           :colorway    :gold
+           :colorway    :greige
+           :interactive true}]
+     [div {:surface     "convex"
+           :colorway    :greige
            :interactive true}]
      [div {:surface     "soft-classic"
-           :colorway    :gold
+           :colorway    :greige
            :shape       :pill
            :interactive true}]
      [div {:surface     "solid-classic"
-           :colorway    :gold
+           :colorway    :greige
            :shape       :pill
            :interactive true}]
      [div {:surface     "solid"
-           :colorway    :gold
-           :interactive true
-           :shape       :pill}]]   
-
-    [flex-col
-     [div {:surface     "ghost"
-           :colorway    :sand
-           :interactive true
-           :shape       :rounded-xlarge 
-           :stroke      :hard}]
-     [div {:surface     "transparent"
-           :colorway    :sand
-           :interactive true
-           :stroke      :hard}]
-     [div {:surface     "minimal"
-           :colorway    :sand
-           :interactive true
-           :stroke      :hard}]
-     [div {:surface     "faint"
-           :colorway    :sand
-           :interactive true}]
-     [div {:surface     "convex"
-           :colorway    :sand
-           :interactive true}]
-     [div {:surface     "soft"
-           :colorway    :sand
-           :interactive true}]
-     [div {:surface     "soft-classic"
-           :colorway    :sand
-           :shape       :pill
-           :interactive true}]
-     [div {:surface     "solid-classic"
-           :colorway    :sand
-           :shape       :pill
-           :interactive true}]
-     [div {:surface     "solid"
-           :colorway    :sand
+           :colorway    :greige
            :interactive true
            :shape       :pill}]]
      
@@ -579,10 +535,10 @@
      [div {:surface     "faint"
            :colorway    :slate
            :interactive true}]
-     [div {:surface     "convex"
+     [div {:surface     "soft"
            :colorway    :slate
            :interactive true}]
-     [div {:surface     "soft"
+     [div {:surface     "convex"
            :colorway    :slate
            :interactive true}]
      [div {:surface     "soft-classic"
@@ -615,10 +571,10 @@
      [div {:surface     "faint"
            :colorway    :blue
            :interactive true}]
-     [div {:surface     "convex"
+     [div {:surface     "soft"
            :colorway    :blue
            :interactive true}]
-     [div {:surface     "soft"
+     [div {:surface     "convex"
            :colorway    :blue
            :interactive true}]
      [div {:surface     "soft-classic"
@@ -790,7 +746,7 @@
                 :size           :xxxlarge
                 :shape          :pill
                 :colorway         :accent
-                :stroke           :medium #_[[:2px :$sand-300] [:2px :$green-300]]
+                :stroke           :medium #_[[:2px :$greige-300] [:2px :$green-300]]
                 :stroke-width     :3px
 
         ;;  :stroke-align     :outside
@@ -809,7 +765,7 @@
                 :size       :large
                 :shape      :pill
                 :colorway     :accent
-      ;;  :stroke [[:4px :$sand-300] [:2px :$green-300]]
+      ;;  :stroke [[:4px :$greige-300] [:2px :$green-300]]
                 :stroke       :soft
       ;;  :stroke-width "5px"
                 :stroke-align :inside
@@ -823,7 +779,7 @@
                :size       :large
                :shape      :pill
                :colorway     :accent
-        ;; :stroke [[:4px :$sand-300] [:2px :$green-300]]
+        ;; :stroke [[:4px :$greige-300] [:2px :$green-300]]
                :stroke       :medium
                :stroke-width "3px"
                :stroke-align :outside
@@ -1688,7 +1644,7 @@
 ;;                "colorway-cyan"]
 ;;        :style ""}]
 
-#_(? (clj->js (map #(-> % second :surface)
+(? (clj->js (map #(-> % second :surface)
                  '[[div {:surface "ghost" 
                          :stroke  :hard
                          :shape   :rounded-xlarge}]

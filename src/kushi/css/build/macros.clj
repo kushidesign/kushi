@@ -24,13 +24,3 @@
    Expands to nil."
   [s]
   nil)
-
-
-
-(defmacro ^:public css-string
-  "Used to pull in css that is in a string format. Expands to nil.
-   The information about the layer and resource will get included in the build."
-  ([s]
-   (css-string "@layer user-shared-styles" s))
-  ([layer s]
-   nil))

@@ -176,7 +176,7 @@
             [800 88 30]
             [900 95 21]
             [1000 100 11]]},
-   "sand"
+   "greige"
    {:hue   19,
     :scale [[50 40 97]
             [100 37 93]
@@ -192,43 +192,19 @@
    ])
 
 
+(def magenta-hue 347.6)
 (def red-hue 27)
-;;tomato
 (def orange-hue 62.3)
-(def gold-hue 82) ;;amber
+(def gold-hue 82)
 (def yellow-hue 100)
 (def lime-hue 129.5)
-;;grass
 (def green-hue 155.5)
-;emerald
-;jade
-;teal
 (def cyan-hue 200)
-;mint
-;sky
 (def blue-hue 267)
-;indigo
-;irisa
-;violet
 (def purple-hue 304.9)
-;plum
-;fuschia
-(def magenta-hue 347.6)
-;pink
-;rose
-;crimson
-;ruby
-
-(def slate-hue 290)
 (def gray-hue 0)
-;zinc
-;neutral
-(def sand-hue 80)
-
-
-
-
-
+(def slate-hue 290)
+(def greige-hue 80)
 
 ;; generated from functions above using original kushi.colors/colors hsl scale.
 (def oklch-colors
@@ -397,8 +373,8 @@
              [900 0.362 0.051]
              [1000 0.227 0.028]]}
 
-    "sand"
-    {:hue   sand-hue,
+    "greige"
+    {:hue   greige-hue,
      :scale [[50 0.977 0.005]
              [100 0.945 0.011]
              [200 0.898 0.02]
@@ -684,7 +660,7 @@
              [950 0.29 0.04]
              [1000 0.227 0.028]]}
 
-    "sand"
+    "greige"
     {:hue   80,
      :scale [[50 0.977 0.005]
              [100 0.945 0.011]
@@ -996,7 +972,7 @@
                      "orange"   standard
                      "red"      standard
                      "magenta"  standard
-                     "sand"    standard]
+                     "greige"    standard]
 
         f (fn [[cw k s light dark]]
             (->> (color-token-pair k cw s light :light)
