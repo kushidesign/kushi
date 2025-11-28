@@ -3,6 +3,7 @@
    [clojure.string :as string]
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.util :refer [keyed]]
+   [kushi.ui.defs :as defs]
    #?(:clj [kushi.ui.ordered :refer [ordered-set]])
    [bling.util :as util]))
 
@@ -118,11 +119,9 @@
   [:xcompact :compact :default :roomy :xroomy])
 
 ;; Pull this from colors namespace?
-(def colorways-named
-  [:gray :purple :blue :cyan :green :lime :yellow :gold :orange :red :magenta :greige :slate])
+(def colorways-named defs/basic-colors)
 
-(def colorways-semantic
-  [:neutral :accent :positive :warning :negative])
+(def colorways-semantic defs/semantic-colors)
 
 (def colorways
   (apply conj colorways-named colorways-semantic))

@@ -6,29 +6,11 @@
    [clojure.string :as string]))
 
 (def variants
-  {:shape    #{"rounded" "sharp" "pill" "circle"}
-   :surface  defs/basic-surfaces-set-of-strs
-   ;; :semantic #{"neutral" "accent" "positive" "negative" "warning"}
-   :colorway #{"neutral"
-               "accent"
-               "positive"
-               "negative"
-               "warning"
-               "gray"
-               "purple"
-               "blue"
-               "cyan"
-               "green"
-               "lime"
-               "yellow"
-               "gold"
-               "orange"
-               "red"
-               "magenta"
-               "greige"
-               "slate"}
-   :text-weight   defs/basic-weights-set-of-strs
-   :text-size     defs/basic-sizes-set-of-strs})
+  {:shape       #{"rounded" "sharp" "pill" "circle"}
+   :surface     defs/basic-surfaces-set-of-strs
+   :colorway    (into #{} (mapv name defs/all-colors))
+   :text-weight defs/basic-weights-set-of-strs
+   :text-size   defs/basic-sizes-set-of-strs})
 
 (def variant-defaults
   {:colorway "neutral"

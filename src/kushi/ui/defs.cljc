@@ -21,21 +21,27 @@
 (def packing
   [:compact :default :roomy])
 
-
-
 (def basic-colors
   [:gray
    :purple
+   :violet
+   :indigo
    :blue
+   :sky
    :cyan
+   :teal
+   :mint
    :green
    :lime
    :yellow
    :gold
    :orange
    :red
+   :rose
+   :pink
    :magenta
-   :greige])
+   :sand
+   :slate])
 
 (def semantic-colors
   [:neutral
@@ -45,22 +51,10 @@
    :negative])
 
 (def all-colors
-  (apply conj
-         [:gray
-          :purple
-          :blue
-          :cyan
-          :green
-          :lime
-          :yellow
-          :gold
-          :orange
-          :red
-          :magenta
-          :greige
-          :slate]
-         semantic-colors))
-
+  (apply 
+   conj
+   basic-colors
+   semantic-colors))
 
 (def xxsmall-xlarge
   [:xxsmall

@@ -16,8 +16,9 @@
 (ns ^{:kushi/layer "kushi-ui-theming"} kushi.css.build.kushi-ui-component-theming
   (:require
    [kushi.colors]
+   [cuerdas.core]
    [bling.hifi]
-   [kushi.css.build.macros :refer [defcolorway defcss]]))
+   [kushi.css.build.macros :refer [defcolorway defcss css-string]]))
 
 (defcss "body"
   {"font-family"                "var(--sans-serif-font-stack)"
@@ -215,7 +216,7 @@
 ;; (defcolorway "orange")
 ;; (defcolorway "red")
 ;; (defcolorway "magenta")
-;; (defcolorway "greige")
+;; (defcolorway "sand")
 
 
 ;; Move to button ns?
@@ -275,21 +276,68 @@
 
 
 ;; Colorway hues   ---------------------------------------------------------------------------------------------------------
-(defcss "[data-ks-colorway=green], [data-ks-colorway=positive]" {:--colorway-hue "var(--green-hue-oklch)"})
-(defcss "[data-ks-colorway=yellow], [data-ks-colorway=warning]" {:--colorway-hue "var(--yellow-hue-oklch)"})
-(defcss "[data-ks-colorway=blue], [data-ks-colorway=accent]" {:--colorway-hue "var(--blue-hue-oklch)"})
-(defcss "[data-ks-colorway=red], [data-ks-colorway=negative]" {:--colorway-hue "var(--red-hue-oklch)"})
-(defcss "[data-ks-colorway=neutral]" {:--colorway-hue :$gray-hue-oklch})
-(defcss "[data-ks-colorway=gray]"    {:--colorway-hue :$gray-hue-oklch})
-(defcss "[data-ks-colorway=purple]"  {:--colorway-hue :$purple-hue-oklch})
-(defcss "[data-ks-colorway=magenta]" {:--colorway-hue :$magenta-hue-oklch})
-(defcss "[data-ks-colorway=orange]"  {:--colorway-hue :$orange-hue-oklch})
-(defcss "[data-ks-colorway=gold]"    {:--colorway-hue :$gold-hue-oklch})
-(defcss "[data-ks-colorway=lime]"    {:--colorway-hue :$lime-hue-oklch})
-(defcss "[data-ks-colorway=cyan]"    {:--colorway-hue :$cyan-hue-oklch})
-(defcss "[data-ks-colorway=greige]"   {:--colorway-hue :$greige-hue-oklch})
-(defcss "[data-ks-colorway=slate]"   {:--colorway-hue :$slate-hue-oklch})
+;; TODO - decouple semantics
+(defcss "[data-ks-colorway=gray]"     {:--colorway-hue :$gray-hue-oklch})
+(defcss "[data-ks-colorway=neutral]"  {:--colorway-hue :$gray-hue-oklch})
+(defcss "[data-ks-colorway=sand]"     {:--colorway-hue :$sand-hue-oklch})
+(defcss "[data-ks-colorway=slate]"    {:--colorway-hue :$slate-hue-oklch})
 
+(defcss "[data-ks-colorway=blue]"     {:--colorway-hue "var(--blue-hue-oklch)"})
+    (defcss "[data-ks-colorway=accent]"   {:--colorway-hue "var(--blue-hue-oklch)"})
+(defcss "[data-ks-colorway=sky]"      {:--colorway-hue :$sky-hue-oklch})
+(defcss "[data-ks-colorway=cyan]"     {:--colorway-hue :$cyan-hue-oklch})
+(defcss "[data-ks-colorway=teal]"     {:--colorway-hue :$teal-hue-oklch})
+(defcss "[data-ks-colorway=mint]"     {:--colorway-hue :$mint-hue-oklch})
+(defcss "[data-ks-colorway=green]"    {:--colorway-hue "var(--green-hue-oklch)"})
+    (defcss "[data-ks-colorway=positive]" {:--colorway-hue "var(--green-hue-oklch)"})
+(defcss "[data-ks-colorway=lime]"     {:--colorway-hue :$lime-hue-oklch})
+(defcss "[data-ks-colorway=yellow]"   {:--colorway-hue "var(--yellow-hue-oklch)"})
+    (defcss "[data-ks-colorway=warning]"  {:--colorway-hue "var(--yellow-hue-oklch)"})
+(defcss "[data-ks-colorway=gold]"     {:--colorway-hue :$gold-hue-oklch})
+(defcss "[data-ks-colorway=orange]"   {:--colorway-hue :$orange-hue-oklch})
+(defcss "[data-ks-colorway=red]"      {:--colorway-hue "var(--red-hue-oklch)"})
+    (defcss "[data-ks-colorway=negative]" {:--colorway-hue "var(--red-hue-oklch)"})
+(defcss "[data-ks-colorway=rose]"     {:--colorway-hue "var(--rose-hue-oklch)"})
+(defcss "[data-ks-colorway=pink]"     {:--colorway-hue "var(--pink-hue-oklch)"})
+(defcss "[data-ks-colorway=magenta]"  {:--colorway-hue :$magenta-hue-oklch})
+(defcss "[data-ks-colorway=purple]"   {:--colorway-hue :$purple-hue-oklch})
+(defcss "[data-ks-colorway=violet]"   {:--colorway-hue :$violet-hue-oklch})
+(defcss "[data-ks-colorway=indigo]"   {:--colorway-hue :$indigo-hue-oklch})
+
+
+(css-string "kushi-ui-theming"
+            (:data-ks-surface-str 
+             {:surface       "soft"
+              :lightness-fgc "30%"
+              :lightness-bgc "94.25%"
+              :chroma-fgc    "32.5%"
+              :chroma-bgc    "15.75%"
+              :chroma-fgc-muted "12.5%"
+              :chroma-bgc-muted "2424242"
+              :lightness-bgc-dark-mode "39%"
+              :chroma-bgc-dark-mode "35.6%"
+              :lightness-fgc-dark-mode "95.7%"
+              :chroma-fgc-dark-mode "8.8%"}))
+
+
+(css-string "kushi-ui-theming"
+"[data-ks-surface2],
+[data-ks-surface2]&[data-ks-interactive]:hover, 
+[data-ks-surface2]&[data-ks-interactive]:active {
+  &[data-ks-colorway2=gray], &[data-ks-colorway2=neutral], &:not([data-ks-colorway2]) {
+    --chroma-shift:   0%;
+    --colorway-hue:   var(--neutral-hue-oklch);
+    --chroma-bgc:     0%;
+    --chroma-fgc:     0%;
+  }
+  &[data-ks-colorway2=sand], &[data-ks-colorway2=slate] {
+    --chroma-shift: 1%;
+    .dark & {
+      --chroma-shift: 1%;
+    }
+  }
+}"
+)
 
 ;; Surface styles  ---------------------------------------------------------------------------------------------------------
 
@@ -325,14 +373,14 @@
    :hover:bgc                 :$hover-bgc
    :active:bgc                :$active-bgc
    :color                     :white
-   "[data-ks-colorway=greige]" {:--chroma-bgc :20%}
+   "[data-ks-colorway=sand]" {:--chroma-bgc :20%}
    :dark                      {:--lightness-bgc           :69%
                                :--chroma-bgc              :52%
                                :color                     :black
                                :--chroma-shift-op         "-"
                                :--lightness-shift-op      "+"
                                :--classic-trim-color      "oklch(75% 48.5% var(--colorway-hue))" 
-                               "[data-ks-colorway=greige]" {:--chroma-bgc :20%}}})
+                               "[data-ks-colorway=sand]" {:--chroma-bgc :20%}}})
 
 (defcss "[data-ks-surface=solid-classic][data-ks-colorway=neutral], [data-ks-surface=solid-classic][data-ks-colorway=gray]"
   {:--classic-trim-color "oklch(62% 0% var(--colorway-hue))"})
@@ -344,7 +392,7 @@
    :color                         :$fgc
    :hover:bgc                     :$hover-bgc
    :active:bgc                    :$active-bgc
-   "[data-ks-colorway=greige]"     {:--chroma-shift :2% }
+   "[data-ks-colorway=sand]"     {:--chroma-shift :2% }
    "[data-ks-colorway=secondary]" {:color :$foreground-color-secondary
                                        :dark  :$foreground-color-secondary-dark-mode}
   ;;  :dark                       {:--chroma-shift-op    "-"
@@ -363,13 +411,13 @@
    :--classic-trim-color      "oklch(91% 10% var(--colorway-hue))" 
       ;;  :color                :$fgc
    :bgc                       :$bgc
-   "[data-ks-colorway=greige]" {:--chroma-bgc :6%}
+   "[data-ks-colorway=sand]" {:--chroma-bgc :6%}
    :dark                      {:--lightness-bgc           :39%
                                :--chroma-bgc              :35.6%
                                :--lightness-fgc           :95.7%
                                :--chroma-fgc              :8.8%
                                :--classic-trim-color      "oklch(36% 30% var(--colorway-hue))" 
-                               "[data-ks-colorway=greige]" {:--chroma-bgc :16%}
+                               "[data-ks-colorway=sand]" {:--chroma-bgc :16%}
                                }})
 
 ;; Convex, dark
@@ -378,7 +426,7 @@
            :--chroma-bgc              :33%
            :--lightness-fgc           :95.7%
            :--chroma-fgc              :8.8%
-           "[data-ks-colorway=greige]" {:--chroma-bgc    :17%
+           "[data-ks-colorway=sand]" {:--chroma-bgc    :17%
                                            :--lightness-bgc :39%}
           ;;  :color           :$fgc
            :bgc                       :$bgc
@@ -399,13 +447,13 @@
    :--chroma-fgc    :46.25%
    ;;  :color           :$fgc
    :bgc             :$bgc
-   "[data-ks-colorway=greige]"  {:--chroma-bgc    :3%
+   "[data-ks-colorway=sand]"  {:--chroma-bgc    :3%
                                     :--lightness-bgc :97%}
    ":dark"            {:--lightness-bgc           :26%
                        :--chroma-bgc              :26%
                        :--lightness-fgc           :92%
                        :--chroma-fgc              :25%
-                       "[data-ks-colorway=greige]" {:--chroma-bgc    :14%
+                       "[data-ks-colorway=sand]" {:--chroma-bgc    :14%
                                                        :--lightness-bgc :28%}}})
 
 ;; Convex, dark
@@ -414,7 +462,7 @@
           :--chroma-bgc    :34.6%
           :--lightness-fgc :95.7%
           :--chroma-fgc    :8.8%
-          "[data-ks-colorway=greige]"  {:--chroma-bgc :14%
+          "[data-ks-colorway=sand]"  {:--chroma-bgc :14%
                               :--lightness-bgc :39%}}})
 
 ;; Transparent
@@ -428,7 +476,7 @@
 (defcss "[data-ks-surface=minimal]" 
   {:dark {:--lightness-bgc :26%
           :--chroma-bgc    :26%
-          "[data-ks-colorway=greige]"  {:--chroma-bgc    :14%
+          "[data-ks-colorway=sand]"  {:--chroma-bgc    :14%
                               :--lightness-bgc :28%}}})
 
 ;; Minimal
@@ -530,7 +578,7 @@
    "[data-ks-shadow-color=purple]"   {:--shadow-color :$purple-500},
    "[data-ks-shadow-color=magenta]"  {:--shadow-color :$magenta-500},
    "[data-ks-shadow-color=accent]"   {:--shadow-color :$accent-500},
-   "[data-ks-shadow-color=greige]"    {:--shadow-color :$greige-500},
+   "[data-ks-shadow-color=sand]"    {:--shadow-color :$sand-500},
    "[data-ks-shadow-color=slate]"    {:--shadow-color :$slate-500},
    "[data-ks-shadow-color=blue]"     {:--shadow-color :$blue-500},
    "[data-ks-shadow-color=orange]"   {:--shadow-color :$orange-500},
