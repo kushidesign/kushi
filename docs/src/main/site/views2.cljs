@@ -336,34 +336,34 @@
                (domo/toggle-class! el "ks-active"))
              300)))
         en->jp 
-        {"ghost"         "ゴースト",
-         "transparent"   "透明",
-         "minimal"       "ミニマル",
-         "faint"         "薄い",
-         "soft"          "ソフト",
-         "convex"        "凸",
-         "soft-classic"  "ソフトクラシック",
-         "solid-classic" "ソリッドクラシック",
-         "solid"         "ソリッド"}
+        (? {"ghost"         "ゴースト",
+            "transparent"   "透明",
+            "minimal"       "ミニマル",
+            "faint"         "薄い",
+            "soft"          "ソフト",
+            "convex"        "凸",
+            "soft-classic"  "ソフトクラシック",
+            "solid-classic" "ソリッドクラシック",
+            "solid"         "ソリッド"})
         div (fn [{:keys [stroke surface colorway interactive text shape id]}]
               [:div (merge-attrs 
                      {
                       ;; for the animation wipe
                       ;; :on-click sim-ia
-                      :id    id
-                      :style {:display (if (or (contains? #{
-                                                            ;; "ghost"
-                                                            ;; "transparent"
-                                                            "minimal"
-                                                            "faint"
-                                                            "convex"
-                                                            "soft"
-                                                            "soft-classic"
-                                                            "solid"
-                                                            "solid-classic"}
-                                                          (name surface)))
-                                         "flex"
-                                         "none")}
+                      :id                 id
+                      :style              {:display (if (or (contains? #{
+                                                                         "ghost"
+                                                                         "transparent"
+                                                                         "minimal"
+                                                                         "faint"
+                                                                         "convex"
+                                                                         "soft"
+                                                                         "soft-classic"
+                                                                         "solid"
+                                                                         "solid-classic"}
+                                                                       (name surface)))
+                                                      "flex"
+                                                      "none")}
                       :data-ks-transition ""}
                      (when (contains? #{"soft-classic" "solid-classic"}
                                       surface)
@@ -383,23 +383,23 @@
                           
                           ;;;;;; buttons
                           "--stroke-transparency" "33%"
-                          :fs               :$text-size-small
-                          :display          :relative
-                          :cursor           :pointer
-                          :gap              :$icon-enhanceable-gap
-                          :padding-inline   :$button-padding-inline
-                          :padding-block    :$button-padding-block
-                          :w                :fit-content
-                          :tt               :capitalize
-                          :d                :flex
-                          :jc               :center
-                          :ai               :center
-                          :border-radius    :$shape-rounded-medium
+                          :fs                   :$text-size-small
+                          :display              :relative
+                          :cursor               :pointer
+                          :gap                  :$icon-enhanceable-gap
+                          :padding-inline       :$button-padding-inline
+                          :padding-block        :$button-padding-block
+                          :w                    :fit-content
+                          :tt                   :capitalize
+                          :d                    :flex
+                          :jc                   :center
+                          :ai                   :center
+                          :border-radius        :$shape-rounded-medium
                           
                           ;; for the animation wipe
                           ;; :transition-duration :300ms
                           ;; :after:transition-duration         :300ms
-
+                          
                           ;; "--colorway-background-opacity"        0.5
                           ;; "--colorway-background-opacity-hover"  0.5
                           ;; "--colorway-background-opacity-active" 1
@@ -436,9 +436,9 @@
                                         :convex
                                         :solid
                                         :solid-classic])]
-                  (let [id (? :- (str (name surface) 
-                                      "-" 
-                                      (name colorway)))]
+                  (let [id (!? :- (str (name surface) 
+                                       "-" 
+                                       (name colorway)))]
                     
                     (js/setTimeout
                      (fn []
@@ -455,9 +455,10 @@
         (fn [i colorway]
           (when (< i 25)
             [flex-row (sx {:h :50px})
-             [:span (sx {:w :100px :fs :$text-size-small})
+             [:span (sx {:w  :100px
+                         :fs :$text-size-small})
               (-> colorway name string/capitalize)]
-             [:div {:style {:background-color (str "oklch(0.39 0.12 var(--" (name colorway) "-hue-oklch))")
+             [:div {:style {:background-color (str "oklch(0.49 0.18 var(--" (name colorway) "-hue-oklch))")
                             :rotate           :45deg
                             :width            :100px
                             :height           :100px}}]]))]
@@ -472,8 +473,8 @@
                         :mbe :1rem
                         :pis "calc(55px + 0.5rem)"})]
                   (for [s (reverse [
-                                    ;; :ghost 
-                                    ;; :transparent
+                                    :ghost 
+                                    :transparent
                                     "Minimal"
                                     "Faint"
                                     "Soft"
@@ -522,8 +523,8 @@
                                 :gray 
 
                                 ])]
-             [swatch i colorway]
-             #_[button-lineup colorway i]))
+             #_[swatch i colorway]
+             [button-lineup colorway i]))
 
      #_[flex-row
         (sx {:p                                   :2rem

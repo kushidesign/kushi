@@ -17,7 +17,7 @@
    "orange"
    "red"
    "magenta"
-   "greige"
+   "sand"
    "slate"
    ])
 

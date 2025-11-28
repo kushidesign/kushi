@@ -5,8 +5,8 @@
                         :url  "https://www.eclipse.org/legal/epl-2.0/"}
   :source-paths        [
                         ;; "../domo/src"
-                        "../../cljc/fireworks/src"
-                        "../../cljc/bling/src"
+                        ;; "../../cljc/fireworks/src"
+                        ;; "../../cljc/bling/src"
                         "src"]
   :dependencies        [[design.kushi/domo "0.3.0"]
                         [org.clojure/clojure "1.11.1"]
@@ -17,6 +17,7 @@
                         [me.flowthing/pp "2024-01-04.60"]
                         [babashka/process "0.5.22"]
                         [borkdude/edamame "1.4.27"]
+                        [funcool/cuerdas "2025.05.26-411"]
 
                         ;; temp
                         [org.flatland/ordered "1.15.12"]

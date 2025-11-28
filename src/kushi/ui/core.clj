@@ -489,7 +489,7 @@
         (!? {:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
 
         data-ks-attrs-map-with-defaults
-        (? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when @debug?} 
+        (!? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when @debug?} 
          (assoc (kushi.ui.extract/data-ks-attrs {} 
                                                 defaults-by-prop
                                                 (when @debug? :debug) #_:comptime)
@@ -500,7 +500,10 @@
 
         ;; ks-classes-with-defaults
         ;; (!? (symbol "comptime:ks-classes-with-defaults") {:when @debug?} 
-        ;;  (kushi.ui.extract/ks-classes {} defaults-by-prop (when @debug? :debug) #_:comptime))
+        ;;     (kushi.ui.extract/ks-classes {}
+        ;;                                  defaults-by-prop 
+        ;;                                  (when @debug? :debug)
+        ;;                                  #_:comptime))
 
         props-keys   
         (let [ks (keys merged-props)]

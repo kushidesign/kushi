@@ -4,7 +4,6 @@
    [babashka.process :refer [shell]] ;; for testing
    [bling.core :refer [bling callout point-of-interest]]
    [bling.hifi :refer [hifi]]
-   [clojure.data.json :as json]
    [clojure.spec.alpha :as s]
    [clojure.string :as string :refer [replace] :rename {replace sr}]
    [clojure.walk :as walk :refer [postwalk prewalk]]
@@ -1927,3 +1926,10 @@
         ret (str ns-name ":" line ":" column)]
     `~ret))
 
+(defmacro ^:public css-string
+  "Used to pull in css that is in a string format. Expands to nil.
+   The information about the layer and resource will get included in the build."
+  ([s]
+   (css-string "@layer user-shared-styles" s))
+  ([layer s]
+   nil))

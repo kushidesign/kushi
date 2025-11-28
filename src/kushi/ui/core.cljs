@@ -48,7 +48,7 @@
             {:label data-ks-ns}
             (some->> user-malli-schema-validation-label 
                      (hash-map :label)))]
-      (explain-malli 
+      #_(explain-malli 
        malli-schema
        supplied-props 
        {:file-info-str                     data-ks-at
