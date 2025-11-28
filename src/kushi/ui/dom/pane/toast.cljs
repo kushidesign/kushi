@@ -80,8 +80,8 @@
         sum-gap-height    (str "(var(--toast-slot-gap, 1rem) * "
                                (dec num-toasts)
                                ")")
-        padding-top       (domo/computed-style toast-slot-el "padding-top")
-        padding-bottom    (domo/computed-style toast-slot-el "padding-bottom")
+        padding-top       (domo/computed-style-value toast-slot-el "padding-top")
+        padding-bottom    (domo/computed-style-value toast-slot-el "padding-bottom")
         padding-block-max (str "max(" padding-top ", " padding-bottom ")")]
     (domo/set-style! toast-slot-el
                      "height"
@@ -155,8 +155,8 @@
   (let [placement-as-str (as-str (get placement-kws-hydrated
                                       placement-kw
                                       nil))
-        existing         (domo/qs-data= "ks-ui-toast-slot" 
-                                        placement-as-str)
+        existing         (domo/qs-data "ks-ui-toast-slot" 
+                                       placement-as-str)
         toast-slot-el    (or existing 
                              (toast-slot-el opts placement-as-str))
         toast-el         (js/document.createElement "li")
@@ -193,6 +193,6 @@
        (let []
          (domo/remove-class! toast-el "visibility-invisible")
          (domo/set-style! toast-el "scale" "1")
-         (domo/set-css-var! toast-el "--_tx" "0px")
-         (domo/set-css-var! toast-el "--_ty" "0px")
+         (domo/set-style! toast-el "--_tx" "0px")
+         (domo/set-style! toast-el "--_ty" "0px")
          (update-toast-slot-dimensions! toast-slot-el))))))

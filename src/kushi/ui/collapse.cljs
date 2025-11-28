@@ -87,7 +87,7 @@
 (defn currently-open-accordion-node
   [currently-open-header]
   (let [accordion-root* (domo/grandparent currently-open-header)
-        accordion-root  (when (domo/has-class accordion-root* "ks-accordion") accordion-root*)]
+        accordion-root  (when (domo/has-class? accordion-root* "ks-accordion") accordion-root*)]
     (when accordion-root
       (when-let [open-node (.querySelector
                             accordion-root
@@ -108,7 +108,7 @@
                  collapse (.-parentNode header)]
 
              ;; First, we make sure the collapse is not already in the process of opening or closing.
-             (when-not (domo/has-class collapse "ks-collapse-transit")
+             (when-not (domo/has-class? collapse "ks-collapse-transit")
 
                ;; Add an 'in-transit' class to the collapse
                (domo/add-class! collapse "ks-collapse-transit")

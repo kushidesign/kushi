@@ -361,7 +361,7 @@
 
 (defn scroll-to-playground-component!
   [{:keys [component-label scroll-y]}]
-  (let [el (d/qs-data= "kushi-playground-component" component-label)]
+  (let [el (d/qs-data "kushi-playground-component" component-label)]
     (d/scroll-into-view! el)
     ;; This is dependent on the existance of `#header-navbar`
     (when scroll-y
@@ -475,7 +475,7 @@
    "positive"
   ;;  "lime"
    "warning"
-  ;;  "greige"
+  ;;  "sand"
   ;;  "slate"
   ;;  "orange"
    "negative"
@@ -486,7 +486,7 @@
   [
    "purple"
    "lime"
-   "greige"
+   "sand"
    "slate"
    "orange"
    "magenta"
@@ -504,7 +504,7 @@
    "orange"
    "red"
    "magenta"
-   "greige"
+   "sand"
    "slate"
    ])
 

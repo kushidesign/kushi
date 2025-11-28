@@ -285,7 +285,7 @@
                  offset (str "max(var(--" t "-offset), 0px)")]
              el
              (domo/remove-class! el "visibility-invisible")
-             (domo/set-css-var! el "--offset" offset)
+             (domo/set-style! el "--offset" offset)
              (domo/set-style! el "scale" "1")) ))))))
 
 (declare remove-pane!)
@@ -351,7 +351,8 @@
                (some->  placement-kw* keyword)]
 
            (doseq [[k v] m]
-             (domo/set-css-var! pane-el k v))
+             ;; TODO - check the k value here
+             (domo/set-style! pane-el v))
 
            (js/setTimeout (partial update-pane-placement-class!
                                    pane-el

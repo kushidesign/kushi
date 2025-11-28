@@ -105,7 +105,7 @@
   ([kw ks]
    (or (when (-> kw name (string/ends-with? "?"))
          [false true])
-       (kw (? variants/ordered-variants-by-custom-opt-key)))))
+       (kw (!? variants/ordered-variants-by-custom-opt-key)))))
 
 
 (defcss "@layer kushi-playground-styles .kpg-variant-grid-1d"
@@ -601,8 +601,8 @@
               (contains? variants/variants-by-custom-opt-key %))
          variants)]
 
-    (println "\n\n")
-     (? :comment (:opt-name opt))
+    #_(println "\n\n")
+    ;;  (? :comment (:opt-name opt))
     ;; (? demo)
     ;; (? variants)
 

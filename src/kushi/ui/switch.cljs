@@ -15,7 +15,7 @@
         node  (if (domo/has-class? node* ".ks-switch")
                 node*
                 (domo/nearest-ancestor node* ".ks-switch"))]
-    (domo/toggle-boolean-attribute node "aria-checked")))
+    (domo/toggle-boolean-attribute! node "aria-checked")))
 
 
 (defui switch
