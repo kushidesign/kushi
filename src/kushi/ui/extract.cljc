@@ -100,7 +100,10 @@
 (defn- data-ks-attr
   [props k prop]
   (let [supplied    (get props k)
-        data-ks-key (keyword (str "data-ks-" (name k)))
+        data-ks-key (keyword 
+                     (str "data-ks-"
+                          (name k)
+                          (when (contains? #{:colorway :surface} k) "2")))
         ret         (data-ks-attr* prop supplied data-ks-key)]
     ret))
 
