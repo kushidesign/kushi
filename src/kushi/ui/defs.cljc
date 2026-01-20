@@ -21,27 +21,50 @@
 (def packing
   [:compact :default :roomy])
 
+
+
 (def basic-colors
-  [:gray
-   :purple
-   :violet
-   :indigo
+  [
    :blue
    :sky
+   :azure
+   :aqua
    :cyan
    :teal
    :mint
+   :emerald
+   :jade
    :green
+   :matcha
    :lime
+   :acid
+   :citron
    :yellow
+   :banana
    :gold
+   :apricot
+   :amber
    :orange
+   :coral
    :red
+   :ruby
    :rose
+  ;;  :crimson
    :pink
    :magenta
-   :sand
-   :slate])
+   :plum
+   :purple
+   :violet
+   :indigo
+   :lapis
+   :blue
+   :sky
+   
+
+   ;;  :gray
+   ;;  :sand
+   ;;  :slate
+   ])
 
 (def semantic-colors
   [:neutral

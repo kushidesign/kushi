@@ -42,9 +42,9 @@
                :variant-scale :colorway/named,
                :x-variants    [:surface/basic],
                :snippets?     false
-               ;;  :attrs/snippet  {:surface :solid},
+               ;; :attrs/snippet  {:surface :solid},
                ;; :attrs/display  {:text-size :small},
-               ;;  :label          "Colorways, surfaces × shapes",
+               ;; :label          "Colorways, surfaces × shapes",
                :label         "Colorways × surfaces",
                :attrs         {:end-enhancer :east
                                :shape        :rounded},

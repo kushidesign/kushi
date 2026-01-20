@@ -221,45 +221,45 @@
 
 ;; Move to button ns?
 (defcss ".ks-button"
-  {"--padding-inline"             :$button-padding-inline
-   "--padding-block"              :$button-padding-block
+  {"--padding-inline"           :$button-padding-inline
+   "--padding-block"            :$button-padding-block
    "[data-ks-packing=xcompact]" {:--padding-inline :$button-padding-inline-xcompact
-                                     :--padding-block  :$button-padding-block-xcompact}
+                                 :--padding-block  :$button-padding-block-xcompact}
    "[data-ks-packing=compact]"  {:--padding-inline :$button-padding-inline-compact
-                                     :--padding-block  :$button-padding-block-compact}
+                                 :--padding-block  :$button-padding-block-compact}
    "[data-ks-packing=roomy]"    {:--padding-inline :$button-padding-inline-roomy
-                                     :--padding-block  :$button-padding-block-roomy}
+                                 :--padding-block  :$button-padding-block-roomy}
    "[data-ks-packing=xroomy]"   {:--padding-inline :$button-padding-inline-xroomy
-                                     :--padding-block  :$button-padding-block-xroomy}
-   ".ks-icon-button"               {:--padding-inline            :$padding-block
-                                    :_.material-symbols-outlined {:min-width   :1.2ch
-                                                                  :line-height :normal}}})
+                                 :--padding-block  :$button-padding-block-xroomy}
+   ".ks-icon-button"            {:--padding-inline            :$padding-block
+                                 :_.material-symbols-outlined {:min-width   :1.2ch
+                                                               :line-height :normal}}})
 
 (defcss ".ks-icon-button"
   {"--padding-block"              :$icon-button-padding-block||$button-padding-block
    "--padding-inline"             :$icon-button-padding-inline||$button-padding-inline
    :_.material-symbols-outlined {:min-width   :1.2ch
                                  :line-height :normal}
-   "[data-ks-packing=xcompact]" {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-xcompact
-                                     :--padding-block  :$icon-button-padding-block-compact||$button-padding-block-xcompact}
-   "[data-ks-packing=compact]"  {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-compact
-                                     :--padding-block  :$icon-button-padding-block-compact||$button-padding-block-compact}
-   "[data-ks-packing=roomy]"    {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-roomy
-                                     :--padding-block  :$icon-button-padding-block-roomy||$button-padding-block-roomy}
-   "[data-ks-packing=xroomy]"   {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-xroomy
-                                     :--padding-block  :$icon-button-padding-block-roomy||$button-padding-block-xroomy}})
+   "[data-ks-packing=xcompact]"   {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-xcompact
+                                   :--padding-block  :$icon-button-padding-block-compact||$button-padding-block-xcompact}
+   "[data-ks-packing=compact]"    {:--padding-inline :$icon-button-padding-block-compact||$button-padding-block-compact
+                                   :--padding-block  :$icon-button-padding-block-compact||$button-padding-block-compact}
+   "[data-ks-packing=roomy]"      {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-roomy
+                                   :--padding-block  :$icon-button-padding-block-roomy||$button-padding-block-roomy}
+   "[data-ks-packing=xroomy]"     {:--padding-inline :$icon-button-padding-block-roomy||$button-padding-block-xroomy
+                                   :--padding-block  :$icon-button-padding-block-roomy||$button-padding-block-xroomy}})
 
 
 ;; Move to tag ns
 (defcss ".ks-tag"
   {"[data-ks-packing=xcompact]" {:--padding-inline :$tag-padding-inline-xcompact
-                                     :--padding-block  :$tag-padding-block-xcompact}
+                                 :--padding-block  :$tag-padding-block-xcompact}
    "[data-ks-packing=compact]"  {:--padding-inline :$tag-padding-inline-compact
-                                     :--padding-block  :$tag-padding-block-compact}
+                                 :--padding-block  :$tag-padding-block-compact}
    "[data-ks-packing=roomy]"    {:--padding-inline :$tag-padding-inline-roomy
-                                     :--padding-block  :$tag-padding-block-roomy}
+                                 :--padding-block  :$tag-padding-block-roomy}
    "[data-ks-packing=xroomy]"   {:--padding-inline :$tag-padding-inline-xroomy
-                                     :--padding-block  :$tag-padding-block-xroomy}})
+                                 :--padding-block  :$tag-padding-block-xroomy}})
 
 ;; Move to switch ns
 (defcss ".ks-switch"
@@ -270,39 +270,54 @@
    :--switch-off-background-color                 :$background-color-neutral-soft-5
    :--switch-off-background-color-hover           :$background-color-neutral-soft-6
    :--switch-off-background-color-dark-mode       :$background-color-neutral-soft-dark-mode
-   :--switch-off-background-color-hover-dark-mode :$background-color-neutral-soft2-dark-mode
-   })
+   :--switch-off-background-color-hover-dark-mode :$background-color-neutral-soft2-dark-mode})
 
 
 
 ;; Colorway hues   ---------------------------------------------------------------------------------------------------------
 ;; TODO - decouple semantics
-(defcss "[data-ks-colorway=gray]"     {:--colorway-hue :$gray-hue-oklch})
-(defcss "[data-ks-colorway=neutral]"  {:--colorway-hue :$gray-hue-oklch})
-(defcss "[data-ks-colorway=sand]"     {:--colorway-hue :$sand-hue-oklch})
-(defcss "[data-ks-colorway=slate]"    {:--colorway-hue :$slate-hue-oklch})
 
-(defcss "[data-ks-colorway=blue]"     {:--colorway-hue "var(--blue-hue-oklch)"})
-    (defcss "[data-ks-colorway=accent]"   {:--colorway-hue "var(--blue-hue-oklch)"})
+(defcss "[data-ks-colorway=blue]"     {:--colorway-hue :$blue-hue-oklch})
 (defcss "[data-ks-colorway=sky]"      {:--colorway-hue :$sky-hue-oklch})
-(defcss "[data-ks-colorway=cyan]"     {:--colorway-hue :$cyan-hue-oklch})
+(defcss "[data-ks-colorway=azure]"    {:--colorway-hue :$azure-hue-oklch})
+(defcss "[data-ks-colorway=aqua]"     {:--colorway-hue :$aqua-hue-oklch})
 (defcss "[data-ks-colorway=teal]"     {:--colorway-hue :$teal-hue-oklch})
+(defcss "[data-ks-colorway=cyan]"     {:--colorway-hue :$cyan-hue-oklch})
 (defcss "[data-ks-colorway=mint]"     {:--colorway-hue :$mint-hue-oklch})
-(defcss "[data-ks-colorway=green]"    {:--colorway-hue "var(--green-hue-oklch)"})
-    (defcss "[data-ks-colorway=positive]" {:--colorway-hue "var(--green-hue-oklch)"})
+(defcss "[data-ks-colorway=emerald]"  {:--colorway-hue :$emerald-hue-oklch})
+(defcss "[data-ks-colorway=jade]"     {:--colorway-hue :$jade-hue-oklch})
+(defcss "[data-ks-colorway=green]"    {:--colorway-hue :$green-hue-oklch})
+(defcss "[data-ks-colorway=matcha]"   {:--colorway-hue :$matcha-hue-oklch})
 (defcss "[data-ks-colorway=lime]"     {:--colorway-hue :$lime-hue-oklch})
-(defcss "[data-ks-colorway=yellow]"   {:--colorway-hue "var(--yellow-hue-oklch)"})
-    (defcss "[data-ks-colorway=warning]"  {:--colorway-hue "var(--yellow-hue-oklch)"})
+(defcss "[data-ks-colorway=acid]"     {:--colorway-hue :$acid-hue-oklch})
+(defcss "[data-ks-colorway=citron]"   {:--colorway-hue :$citron-hue-oklch})
+(defcss "[data-ks-colorway=yellow]"   {:--colorway-hue :$yellow-hue-oklch})
+(defcss "[data-ks-colorway=banana]"   {:--colorway-hue :$banana-hue-oklch})
 (defcss "[data-ks-colorway=gold]"     {:--colorway-hue :$gold-hue-oklch})
+(defcss "[data-ks-colorway=apricot]"  {:--colorway-hue :$apricot-hue-oklch})
+(defcss "[data-ks-colorway=amber]"    {:--colorway-hue :$amber-hue-oklch})
 (defcss "[data-ks-colorway=orange]"   {:--colorway-hue :$orange-hue-oklch})
-(defcss "[data-ks-colorway=red]"      {:--colorway-hue "var(--red-hue-oklch)"})
-    (defcss "[data-ks-colorway=negative]" {:--colorway-hue "var(--red-hue-oklch)"})
-(defcss "[data-ks-colorway=rose]"     {:--colorway-hue "var(--rose-hue-oklch)"})
-(defcss "[data-ks-colorway=pink]"     {:--colorway-hue "var(--pink-hue-oklch)"})
+(defcss "[data-ks-colorway=coral]"    {:--colorway-hue :$coral-hue-oklch})
+(defcss "[data-ks-colorway=red]"      {:--colorway-hue :$red-hue-oklch})
+(defcss "[data-ks-colorway=ruby]"     {:--colorway-hue :$ruby-hue-oklch})
+(defcss "[data-ks-colorway=rose]"     {:--colorway-hue :$rose-hue-oklch})
+(defcss "[data-ks-colorway=crimson]"  {:--colorway-hue :$crimson-hue-oklch})
+(defcss "[data-ks-colorway=pink]"     {:--colorway-hue :$pink-hue-oklch})
 (defcss "[data-ks-colorway=magenta]"  {:--colorway-hue :$magenta-hue-oklch})
+(defcss "[data-ks-colorway=plum]"     {:--colorway-hue :$plum-hue-oklch})
 (defcss "[data-ks-colorway=purple]"   {:--colorway-hue :$purple-hue-oklch})
 (defcss "[data-ks-colorway=violet]"   {:--colorway-hue :$violet-hue-oklch})
 (defcss "[data-ks-colorway=indigo]"   {:--colorway-hue :$indigo-hue-oklch})
+(defcss "[data-ks-colorway=lapis]"    {:--colorway-hue :$lapis-hue-oklch})
+
+(defcss "[data-ks-colorway=gray]"     {:--colorway-hue :$gray-hue-oklch})
+(defcss "[data-ks-colorway=sand]"     {:--colorway-hue :$sand-hue-oklch})
+(defcss "[data-ks-colorway=slate]"    {:--colorway-hue :$slate-hue-oklch})
+(defcss "[data-ks-colorway=neutral]"  {:--colorway-hue :$gray-hue-oklch})
+(defcss "[data-ks-colorway=warning]"  {:--colorway-hue "var(--yellow-hue-oklch)"})
+(defcss "[data-ks-colorway=accent]"   {:--colorway-hue "var(--blue-hue-oklch)"})
+(defcss "[data-ks-colorway=negative]" {:--colorway-hue "var(--red-hue-oklch)"})
+(defcss "[data-ks-colorway=positive]" {:--colorway-hue "var(--green-hue-oklch)"})
 
 
 (css-string "kushi-ui-theming"

@@ -149,12 +149,14 @@
 (def text-weights
   [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy])
 
+
+;; TODO - why both basic and simple?
 (def surfaces-basic
   [:solid-classic
    :solid
+   :convex
    :soft-classic
    :soft
-   :convex
    :faint
    :minimal
    :transparent

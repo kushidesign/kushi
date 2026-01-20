@@ -6,12 +6,15 @@
    [clojure.string :as string]))
 
 ;; From kushi.colors/colornames ------------------------------------------------
+;; TODO - pull this in from defs
+
 (def color-names
   ["gray"
    "purple"
    "blue"
    "green"
    "lime"
+   "acid"
    "yellow"
    "gold"
    "orange"
