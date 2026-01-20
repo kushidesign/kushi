@@ -5,7 +5,7 @@
    [clojure.walk :as walk]
    [clojure.repl]
    [clojure.edn]
-   [kushi.core :refer [css defcss merge-attrs sx css-vars-map at]]
+   [kushi.core :refer [?css css defcss merge-attrs sx css-vars-map at]]
   ;;  [kushi.css.build.design-tokens
   ;;   :rename {design-tokens-by-component-usage dtoks-by-usage}]
    [kushi.ui.lightswitch :refer [lightswitch]]
@@ -539,19 +539,26 @@
     variant-scale
     (resolve-variants (or variant-scale v-1d) vks))
 
-
+#_(into [flex-row {:style {:grid-template-columns "repeat(10, 1fr)"}
+                          :class ["kpg-variant-grid-1d" (css {:padding-left :66px :display :grid :w :100%})]}]
+               (for [b (resolve-variants v-1d vks)]
+                 [:span (sx :fs--12px) b]))
 (defn d2-grid [v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale row-style row-attrs]
   #_(? [v-2d vks v-1d uic-fn variant-attrs variant-args variant-scale])
-  (into [flex-col (sx :.kpg-variant-grid-2d)]
+  (into [flex-col (sx :.kpg-variant-grid-2d
+                      :mbs--5rem)]
         (for [a    (if (vector? variant-scale)
                      variant-scale
                      (resolve-variants (or variant-scale v-2d) vks)) 
               :let [variant-label (str "\"" a "\"")]] 
           (into [flex-row (merge-attrs {:style (merge (css-vars-map variant-label)
                                                       row-style)
-                                        :class (css :.kpg-variant-grid-1d)}
-                                       row-attrs)]
-                (for [b (resolve-variants v-1d vks)
+                                        :class ["kpg-variant-grid-1d"
+                                                (css {:first-child:_.column-header:before:display :block})]}
+                                       row-attrs)
+                 ;; Temporary
+                 [:span (sx :w--66px :fs--12px) (string/capitalize (name a))]]
+                (for [b    (resolve-variants v-1d vks)
                       :let [b-prop (if (re-find #"/" (str v-1d))
                                      (-> v-1d
                                          str
@@ -560,11 +567,25 @@
                                          (subs 1)
                                          keyword)
                                      v-1d)]]
-                  (into [uic-fn
-                         (merge-attrs {v-2d   a
-                                       b-prop b}
-                                      variant-attrs)]
-                        variant-args))))))
+                  [:span.column-header 
+                   {:style {"--label" (str "\"" (string/replace (string/capitalize (name b)) #"-" " ") "\"")}
+                    :class (css {:position :relative
+                                 :before   {:display          :none
+                                            :rotate           "-45deg"
+                                            :transform-origin :bottom:left
+                                            :content          :$label 
+                                            :position         :absolute
+                                            :bottom           "calc(100% + 15px)"
+                                            :iis              "50%"
+                                            :translate        :3px
+                                            :white-space      "nowrap"
+                                            :color            :white
+                                            :font-size        :12px}})}
+                   (into [uic-fn
+                          (merge-attrs {v-2d   a
+                                        b-prop b}
+                                       variant-attrs)]
+                         variant-args)])))))
 
 
 (defn variant-grid
@@ -750,18 +771,18 @@
          (sx ".kpg-component-demos-wrapper"
              :p--4rem 
              :gap--5rem)
-         [lightswitch 
-          {:surface :transparent
-           :text-size    :xxxlarge
-           :class   :display-fixed-block-start-inside}]]
-          
 
-         (map-indexed
-          (fn [demo-index x]
-            (if (-> x meta :kushi.ui.showcase/opt)
-              [variant-demo demo-index m x]
-              [freeform-demo demo-index m x]))
-          (:mixed m))))
+         #_[lightswitch 
+          {:surface   :transparent
+           :text-size :xxxlarge
+           :class     :display-fixed-block-start-inside}]]
+
+        (map-indexed
+         (fn [demo-index x]
+           (if (-> x meta :kushi.ui.showcase/opt)
+             [variant-demo demo-index m x]
+             [freeform-demo demo-index m x]))
+         (:mixed m))))
 
 
 
