@@ -180,6 +180,7 @@
    :absolute-inline-end-inside
    :fixed-fill
    :absolute-block-end-inside
+   :absolute-block-end-outside
    :fixed-block-start-inside
    :static
    :absolute-inline-start-inside
@@ -515,6 +516,7 @@
                       :class?   true 
                       :data-ks? true}
 
+   ;; Should this become :interactive?
    ;; TODO - maybe defaults to true, but not for certain tags such as :button :link and similar components
    :inert            {:schema   :boolean
                       :desc     "Surface is not interactive meaning no hover or active states."
