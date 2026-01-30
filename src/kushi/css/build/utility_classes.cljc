@@ -342,12 +342,33 @@
                                   :bottom   0
                                   :left     0}
 
+   :absolute-inline-start        {:position           :absolute
+                                  :inset-inline-start "0%"
+                                  :inset-inline-end   :unset
+                                  :inset-block-start  "50%"
+                                  :inset-block-end    :unset
+                                  :translate          "-50% -50%"}
+
    :absolute-inline-start-inside {:position           :absolute
                                   :inset-inline-start "0%"
                                   :inset-inline-end   :unset
                                   :inset-block-start  "50%"
                                   :inset-block-end    :unset
                                   :translate          "0px -50%"}
+
+   :absolute-inline-start-outside {:position           :absolute
+                                   :inset-inline-start "0%"
+                                   :inset-inline-end   :unset
+                                   :inset-block-start  "50%"
+                                   :inset-block-end    :unset
+                                   :translate          "-100% -50%"}
+
+   :absolute-inline-end          {:position           :absolute
+                                  :inset-inline-end   "0%"
+                                  :inset-inline-start :unset
+                                  :inset-block-start  "50%"
+                                  :inset-block-end    :unset
+                                  :translate          "50% -50%"}
 
    :absolute-inline-end-inside   {:position           :absolute
                                   :inset-inline-end   "0%"
@@ -356,6 +377,20 @@
                                   :inset-block-end    :unset
                                   :translate          "0px -50%"}
 
+   :absolute-inline-end-outside  {:position           :absolute
+                                  :inset-inline-end   "0%"
+                                  :inset-inline-start :unset
+                                  :inset-block-start  "50%"
+                                  :inset-block-end    :unset
+                                  :translate          "100% -50%"}
+
+   :absolute-block-start         {:position           :absolute
+                                  :inset-block-start  "0%"
+                                  :inset-block-end    :unset
+                                  :inset-inline-start "50%"
+                                  :inset-inline-end   :unset
+                                  :translate          "-50% -50%"}
+
    :absolute-block-start-inside  {:position           :absolute
                                   :inset-block-start  "0%"
                                   :inset-block-end    :unset
@@ -363,12 +398,33 @@
                                   :inset-inline-end   :unset
                                   :translate          "-50% 0px"}
 
+   :absolute-block-start-outside {:position           :absolute
+                                  :inset-block-start  "0%"
+                                  :inset-block-end    :unset
+                                  :inset-inline-start "50%"
+                                  :inset-inline-end   :unset
+                                  :translate          "-50% -100px"}
+
+   :absolute-block-end           {:position           :absolute
+                                  :inset-block-start  :unset
+                                  :inset-block-end    "0%"
+                                  :inset-inline-start "50%"
+                                  :inset-inline-end   :unset
+                                  :translate          "-50% 50%"}
+
    :absolute-block-end-inside    {:position           :absolute
                                   :inset-block-start  :unset
                                   :inset-block-end    "0%"
                                   :inset-inline-start "50%"
                                   :inset-inline-end   :unset
                                   :translate          "-50% 0px"}
+
+   :absolute-block-end-outside   {:position           :absolute
+                                  :inset-block-start  :unset
+                                  :inset-block-end    "0%"
+                                  :inset-inline-start "50%"
+                                  :inset-inline-end   :unset
+                                  :translate          "-50% 100%"}
 
    :fixed-fill                   {:position :fixed
                                   :top      0
@@ -382,6 +438,8 @@
                              :inset-block-start  "50%"
                              :inset-block-end    :unset
                              :translate          "-50% -50%"}
+
+   ;; Add fixed center and outside variants
 
    :fixed-inline-start-inside {:position           :fixed
                                :inset-inline-start "0%"
@@ -409,30 +467,29 @@
                                :inset-block-start  :unset
                                :inset-inline-start "50%"
                                :inset-inline-end   :unset
-                               :translate          "-50%"}]
-  )
+                               :translate          "-50%"}])
 
 (def pseudo-element-before-position-classes  
-  [:absolute-fill         {:before:content  "\"\""
-                           :before:position :absolute
-                           :before:top      0
-                           :before:right    0
-                           :before:bottom   0
-                           :before:left     0}
+  [:absolute-fill                  {:before:content  "\"\""
+                                    :before:position :absolute
+                                    :before:top      0
+                                    :before:right    0
+                                    :before:bottom   0
+                                    :before:left     0}
 
    :absolute-inline-end-outside    {:before:position           :absolute
                                     :before:top                :50%
                                     :before:bottom             :unset
                                     :before:inset-inline-start :100%
                                     :after:inset-inline-end    :unset
-                                    :before:translate          :0:-50%}
+                                    :before:translate          "0 -50%"}
 
    :absolute-inline-start-outside  {:before:position          :absolute
                                     :before:top               :50%
                                     :before:bottom            :unset
                                     :before:inset-inline-end  :100%
                                     :after:inset-inline-start :unset
-                                    :before:translate         :0:-50%}])
+                                    :before:translate         "0 -50%"}])
 
 (def pseudo-element-after-position-classes  
   [:absolute-fill         {:after:content  "\"\""
