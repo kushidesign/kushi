@@ -84,12 +84,17 @@
   ;;  [kushi.ui.radio :refer [radio]]
   ;;  [kushi.ui.spinner :refer [spinner]]
    [kushi.ui.util :as util]
+   [kushi.util :refer [keyed]]
    [clojure.string :as string]
    ;; [malli.core :as m]
    [kushi.ui.link :refer [link]]
+
+   [kushi.css.defs]
+
    [lasertag.core :as lasertag :refer [tag tag-map]]
    
-   [lasertag.cljs-interop :as jsi]))
+   [lasertag.cljs-interop :as jsi]
+   [kushi.ui.defs :as defs]))
 
    (js/console.clear)
 
@@ -917,7 +922,258 @@
             :close]]]])
   )   
 
+(defn circle-edge-points
+  "Calculate points around the edge of a circle inscribed in a square.
+  
+  The circle has a diameter equal to the square's width/height.
+  Returns coordinates as percentages (0-100) relative to the square.
+  
+  Parameters:
+    points - number of points to generate around the circle
+    margin - percentage to increase the circle's radius (e.g., 10 = 10% larger)
+    shift  - number of positions to shift points (e.g., 1 shifts by one point position)
+  
+  Returns:
+    A vector of [x y angle] tuples where:
+      - x, y are percentages (0-100)
+      - angle is in degrees (0-359)
+  
+  Examples:
+    (circle-edge-points 4 0 0)
+    => [[50.0 0.0 0] [100.0 50.0 90] [50.0 100.0 180] [0.0 50.0 270]]
+    
+    (circle-edge-points 4 0 1)
+    => [[100.0 50.0 90] [50.0 100.0 180] [0.0 50.0 270] [50.0 0.0 0]]
+    
+    (circle-edge-points 8 10 2)
+    => points around a circle 10% larger, shifted by 2 positions"
+  [points margin shift]
+  (let [;; Center of square is at 50%, 50%
+        center-x 50.0
+        center-y 50.0
+        ;; Base radius is 50% (half the square's width)
+        base-radius 50.0
+        ;; Apply margin: if margin is 10, radius becomes 50 * 1.10 = 55
+        radius (* base-radius (+ 1.0 (/ margin 100.0)))
+        ;; Angular step between points
+        angle-step (/ (* 2 js/Math.PI) points)
+        ;; Shift offset in radians
+        shift-offset (* shift angle-step)
+        ;; Rotate by -90 degrees to make 0° at the top instead of right
+        top-offset (- (/ js/Math.PI 2))]
+    (mapv (fn [i]
+            (let [angle (+ (* i angle-step) shift-offset top-offset)
+                  ;; Calculate position relative to center
+                  x (+ center-x (* radius (.cos js/Math angle)))
+                  y (+ center-y (* radius (.sin js/Math angle)))
+                  ;; Convert radians to degrees and normalize to 0-359
+                  angle-degrees (int (mod (.round js/Math (* angle (/ 180 js/Math.PI))) 360))]
+              [x y angle-degrees]))
+          (range points))))
+
+;; exponential progression
+(defn deformed-scale-2 [number-of-indices base-index shift]
+  (let [shifted-index (+ base-index shift)
+        ;; Invert the power so max effect is at shifted-index
+        power-below (if (> shifted-index 0)
+                      (/ 1.0 (+ 1.0 (/ (Math/abs (double shift)) 5.0)))
+                      1.0)
+        power-above (if (< shifted-index number-of-indices)
+                      (/ 1.0 (+ 1.0 (/ (Math/abs (double shift)) 5.0)))
+                      1.0)]
+    (for [i (range number-of-indices)]
+      (cond
+        ;; Below or at the shifted index
+        (<= i shifted-index)
+        (let [t (if (> shifted-index 0)
+                  (/ i (double shifted-index))
+                  0.0)
+              ;; Invert: 1 - curve gives max compression near shifted-index
+              deformed-t (- 1.0 (Math/pow (- 1.0 t) power-below))]
+          [i (* deformed-t base-index)])
+        
+        ;; Above the shifted index
+        :else
+        (let [distance (- i shifted-index)
+              remaining (- (dec number-of-indices) shifted-index)
+              t (/ distance (double remaining))
+              ;; Start with max stretch, diminish toward edge
+              deformed-t (- 1.0 (Math/pow (- 1.0 t) power-above))
+              value-range (- (dec number-of-indices) base-index)]
+          [i (+ base-index (* deformed-t value-range))])))))
+
+
+;; linear progression
+(defn deformed-scale-linear [number-of-indices base-index shift]
+  (let [shifted-index (+ base-index shift)]
+    (for [i (range number-of-indices)]
+      (cond
+        ;; Below or at the shifted index
+        (<= i shifted-index)
+        (let [t (if (> shifted-index 0)
+                  (/ i (double shifted-index))
+                  0.0)]
+          [i (* t base-index)])
+        
+        ;; Above the shifted index
+        :else
+        (let [distance (- i shifted-index)
+              remaining (- (dec number-of-indices) shifted-index)
+              t (/ distance (double remaining))
+              value-range (- (dec number-of-indices) base-index)]
+          [i (+ base-index (* t value-range))])))))
+
+(defn deformed-range [start end n]
+  (let [range-size (- end start)
+        num-points 16  ; or make this a parameter
+        ;; Negative n = compress at start, positive n = compress at end
+        power (+ 1.0 (/ (double n) 10.0))]
+    (for [i (range num-points)]
+      (let [t (/ i (double (dec num-points)))  ; normalize to [0, 1]
+            ;; Apply exponential curve
+            deformed-t (Math/pow t power)
+            value (+ start (* deformed-t range-size))]
+        [i value]))))
+
+(defn deformed-range2 [start end n]
+  (let [range-size (- end start)
+        num-points (inc range-size)
+        strength (/ (double n) 100.0)]
+    (for [i (range num-points)]
+      (let [index (+ start i)
+            t (/ i (double (dec num-points)))
+            ;; Corrected: use a formula that preserves endpoints
+            ;; deformed-t must be 0 when t=0 and 1 when t=1
+            deformed-t (+ t (* strength t (- 1 t)))
+            value (+ start (* deformed-t range-size))]
+        [index value]))))
    
+
+
+(defn circular-rotate
+  "Rotate a collection to start from the given index, wrapping around once."
+  [coll start-idx]
+  (let [v (vec coll)
+        n (count v)]
+    (when (pos? n)
+      (mapv #(nth v (mod % n))
+            (range start-idx (+ start-idx n))))))
+
+(defn rotated-colors-from-0 [coll]
+  (->> coll
+       (keep-indexed (fn [i [_ v]] (when (= v 0) i)))
+       first
+       (circular-rotate defs/basic-colors*)))
+
+(defn pie-slices-oklch [coll]
+  (vec (reverse (assoc-in coll
+                          [0 1]
+                          (* 100 (/ 360 100))))))
+
+(defn uniform-pie-slices-oklch [coll]
+  ;; For uniform slices
+  (map-indexed (fn [i [nm hue]] 
+                 (let [fr     (->> coll count (/ 100))
+                       start* (* i fr)
+                       start  (if (zero? i) 0 start*)
+                       end    (+ start fr)]
+                   [(name nm) hue start end]))
+               (pie-slices-oklch coll))
+
+  #_(map-indexed (fn [i [nm hue]] 
+                   (let [fr        (/ 100 360)
+                         start     (* fr
+                                      (if (zero? i)
+                                        0
+                                        (second (nth reversed (dec i)))))
+                         hue-as-fr (* fr hue)]
+                     [(name nm) hue start hue-as-fr]))
+                 reversed)
+  )
+
+(defn vec-range-replace
+  [v start-index coll]
+  (let [end-index (+ start-index (count coll))]
+    (vec (concat (subvec v 0 start-index)
+                 coll
+                 (subvec v end-index)))))
+
+#_(defn replace-range-with-tweaked
+  [coll]
+  (vec-range-replace coll 0 (deformed-range2 0 4 -55)))
+
+;; Tuning for lightness 0.43 / chroma 0.12
+
+
+;; Tuning for lightness 0.23 / chroma 0.12
+(def tuning-023-012
+  [[0 4 -55]
+   [6 12 45]
+   [12 18 -53]
+   [18 23 30]
+   [23 31 20]])
+
+(def tuning-043-012
+  [[0 13 15]
+   [13 23 43]
+   [23 31 -10]])
+
+
+(defn uniform-math-pie-slices-oklch
+  "Calculate points around the edge of a circle inscribed in a square.
+  
+  The circle has a diameter equal to the square's width/height.
+  Returns coordinates as percentages (0-100) relative to the square.
+  
+  Options:
+    coll - vector of color names. First color is associated with `0` hue value in oklch represenation
+    tuning-coll - vector of triples [tweak-idx-start tweak-idx-end strength] 
+  
+  Returns:
+    A vector of  maps where"
+  [{:keys [coll tuning-coll]}]
+  (let [fr                      (->> coll count (/ 100))
+        hue-fr                  (->> coll count (/ 360))
+        indexes-and-shifts-base (vec (map-indexed (fn [i _] [i i]) coll))]
+    (map (fn [[i i-shifted] color-name]
+           (let [start*      (* i fr)
+                 slice-start (if (zero? i) 0 start*)
+                 slice-end   (+ slice-start fr)
+                 shifted-hue (* i-shifted hue-fr)
+                 color-name  (name color-name)]
+             {:color-name  color-name
+              :shifted-hue shifted-hue
+              :slice-start slice-start
+              :slice-end   slice-end}))
+
+         (if tuning-coll
+           (reduce (fn [coll [start-tweak-idx end-tweak-idx strength]]
+                     (vec-range-replace coll
+                                        start-tweak-idx
+                                        (deformed-range2 start-tweak-idx
+                                          end-tweak-idx strength)))
+                   indexes-and-shifts-base
+                   tuning-coll)
+           indexes-and-shifts-base)
+         coll)))
+
+
+#_(def oklch-l 0.43)
+(def oklch-l 0.77)
+(def oklch-c 0.1252)
+;; (def oklch-c 0.0727)
+;; (def oklch-c 0.12)
+;; (def oklch-c 0.048)
+
+(defn- oklch-color-css [l c h]
+  (str "oklch(" l " " c " " h ")"))
+
+(defn- conic-gradient-step [l c h slice-start slice-end]
+  (str (oklch-color-css l c h) " " slice-start "% " slice-end "% "))
+
+;; TODO 
+;; For each lightness level, go thru each hue point and find the limits for srgb, p3, and rec2020
+;; 
 
 
 
@@ -926,13 +1182,149 @@
                  "data-ks-playground-active-path"
                  "components")
 
-
+  
+  #_(into [:div (sx {:w :100% :m :100px})]
+        (for [[i v] (? (deformed-range2 0 16 30))]
+          [:div (sx2 {:position :absolute
+                      :width    :1px
+                      :bgc      :white
+                      :height   :10px
+                      :style    {:left (str (* 50 v) "px")}})]))
 
   ;; BUTTON
-  [:<> 
-   [showcase (showcase/opts kushi.ui.button/button
-                            kushi.ui.button.demo/demos)]
-   [new-button-lineup]]
+  (let [pie-slices (uniform-math-pie-slices-oklch {:coll        defs/colors-from-0
+                                                  ;;  :tuning-coll tuning-023-012
+                                                  ;;  :tuning-coll tuning-043-012
+                                                   })]
+      [:div (sx2 {:position :fixed-fill}) 
+       [:div (sx2 {:style         {:--bgi (let [stops (string/join 
+                                                       ", "
+                                                       (mapv (fn [{:keys [shifted-hue slice-start slice-end]}]
+                                                               (conic-gradient-step oklch-l oklch-c shifted-hue slice-start slice-end))
+                                                             pie-slices))]
+                                            (str "conic-gradient(" stops ")"))}
+                   :bgi           :$bgi
+                   :width         :700px 
+                   :position      :absolute-center
+                   :height        :700px
+                   :border-radius :100%
+                   :>.axis-label  {:opacity     0.5
+                                   :text-weight :light
+                                   :size        :xsmall}})
+        
+        (into [:div (sx2 {:position :absolute
+                          :width    :100%
+                          :height   :100%})]
+              (map-indexed 
+               (fn [i [x y deg]]
+                 (let [{:keys [shifted-hue color-name]} (nth pie-slices i)
+                       start-idx?                       (or (= i 12) (= i 6))
+                       end-idx?                         (= i 12)
+                       deformation                      (if (= i 6)
+                                                          #{:stretch-from-start}
+                                                          #{:compress-towards-end
+                                                            :stretch-from-start})]
+                   [:span.wireframe
+                    (sx2 {:position  :absolute
+                          :text-size :xxsmall
+                          :width     :0px
+                          :height    :0px
+                          :style     {:left (str x "%")
+                                      :top  (str y "%")}})
+                    [:span (sx2 {:position    :absolute
+                                 :display     :flex
+                                 :jc          :sb
+                                 :ai          :center
+                                 :_span:d     :inline-block
+                                 :gap         :1em
+                                 :line-height 0
+                                 :ws          :n
+                                 :style       {:transform-origin "center left"
+                                               :flex-direction   (when (< i 16) "row-reverse")
+                                               :transform        (cond 
+                                                                   (< 90 deg 270)
+                                                                   (str "rotate(" (+ deg 180) "deg) " "translate(-100%, -50%)")
+                                                                   :else
+                                                                   (str "rotate(" deg "deg) " "translate(0%, -50%)"))}})
+                     (when (or start-idx? end-idx?)
+                       [:div (sx2 {:position       :absolute-inline-end-outside
+                                   :padding-left   :10px
+                                   :gap            :30px
+                                   :>div:w         :20px
+                                   :>div:h         :20px
+                                   :display        :flex
+                                   :flex-direction :column
+                                   :jc             :c
+                                   :ai             :c
+                                   :>.arrow        {:o     :0.5
+                                                    :scale 1.5}})
+                        [:div.arrow
+                         (sx2 {:ta     :c
+                               :rotate :180deg
+                               :style  {:visibility (when-not end-idx? :hidden)}})
+                         (if (contains? deformation :compress-towards-end?) 
+                           "⭣"
+                           "⭡")]
+                        [:div (sx2 {:shape :pill
+                                    :bgi   "radial-gradient(rgb(255 255 255 / 30%) 3px, transparent 3px, transparent)"
+                                    :style {:background-color (oklch-color-css oklch-l oklch-c shifted-hue)}})]
+                        [:div.arrow 
+                         (sx2 {:ta    :c
+                               :style {:visibility (when-not start-idx? :hidden)}})
+                         (contains? deformation :stretch-from-start) "⭣"]])
+
+                     [:span (sx2 {:style {:flex-direction (when (>= i 16) "row-reverse")
+                                          :text-align     (when (>= i 16) "end")
+                                          :opacity        :0.5
+                                          :display        :flex
+                                          :gap            :1em}})
+                      [:span i]
+                      [:span (sx2 {:min-width :44px
+                                   :shrink    0
+                                   :grow      1}) 
+                       (-> color-name string/capitalize)]]]]))
+               (circle-edge-points (count defs/basic-colors*)
+                                   7
+                                   0.5)))
+
+        #_#_#_#_
+        [:div.axis-label
+         (sx2 {:position       :top-outside
+               :padding-bottom :20px}) 
+         0]
+
+        [:div.axis-label
+         (sx2 {:position     :right-outside
+               :padding-left :20px}) 
+         90]
+
+        [:div.axis-label
+         (sx2 {:position    :bottom-outside
+               :padding-top :20px}) 
+         180]
+
+        [:div.axis-label
+         (sx2 {:position      :left-outside
+               :padding-right :20px}) 
+         270]]
+       
+
+
+       #_[:div {:style {:width            :900px 
+                        :height           :900px
+                        :border-radius    :100%
+                        :margin           :80px
+                        :rotate           :-90deg
+                        :background-image (let [stops (string/join ", "
+                                                                   (mapv (fn [[hue-name hue start end]]
+                                                                           (str "oklch(" oklch-l " " oklch-c " " hue ") " start "% " end "% "))
+                                                                         (uniform-pie-slices-oklch defs/basic-colors*)))]
+                                            (str "conic-gradient(" stops ")"))}}]
+
+
+       #_[showcase (showcase/opts kushi.ui.button/button
+                                  kushi.ui.button.demo/demos)]
+       #_[new-button-lineup]])
   
   ;; ICON
   #_[showcase (!? (showcase/opts kushi.ui.icon/icon
