@@ -553,11 +553,8 @@
 (defn parse-all-forms [file ns-str]
   (try (-> file
            slurp
-           (e/parse-string-all {:fn           true
-                                :regex        true
-                                :quote        true
-                                :syntax-quote true
-                                :readers      {'js (fn [v] (list 'js v))}})
+           (e/parse-string-all {:all     true
+                                :readers {'js (fn [v] (list 'js v))}})
            rest)
        (catch Exception e
              (edamame-parse-warning e ns-str))))
