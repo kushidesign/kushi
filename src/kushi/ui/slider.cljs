@@ -6,12 +6,14 @@
 ;; - Make sure you can tweak all parts of slider
 
 
-(ns ^{:kushi/layer "kushi-ui-styles"}
-  kushi.ui.slider
+(ns kushi.ui.slider
   (:require
+   [kushi.core :refer [sx merge-attrs]]
+   [fireworks.core :refer [? !? ?> !?>]]
+   [kushi.ui.flex :refer [flex-row]]
    [applied-science.js-interop :as j]
    [kushi.core :refer (sx css defcss css-vars-map merge-attrs)]
-   [kushi.ui.core :refer (extract)]
+   [kushi.ui.core :refer (extract defui)]
    [kushi.ui.slider.css]
    [kushi.ui.util :refer [range-of-floats find-index]]
    ;; have bearing on slider?
@@ -32,7 +34,7 @@
    :before:top                                        :50%
    :before:left                                       :50%
    :before:transform                                  "translate(-50%, -50%)"
-  ;;  :.kushi-slider-step-label-selected:before:content :unset
+   ;;  :.kushi-slider-step-label-selected:before:content :unset
    })
 
 (defcss
@@ -61,17 +63,17 @@
 ;; Cross-browser styles for slider track, thumb, outline, background etc.
 ;; ----------------------------------------------------------------------------
 
-(defcss ":root" 
-  {:--kushi-input-slider-track-background-color      :silver
+(defcss ":root"
+  {:--kushi-input-slider-track-background-color      :$gray-300
    :--kushi-input-slider-thumb-width                 :1em
    :--kushi-input-slider-thumb-height                :1em
    :--kushi-input-slider-thumb-border-radius         :$kushi-input-slider-thumb-width
    :--kushi-input-slider-thumb-margin-top            "calc( var(--kushi-input-slider-thumb-height) / -2)"
    :--kushi-input-slider-thumb-outline-width-ratio   :3
    :--kushi-input-slider-thumb-outline-color         :#000
-   :--kushi-input-slider-thumb-outline-color-dark    :#fff
+   :--kushi-input-slider-thumb-outline-color-dark    :$gray-300
    :--kushi-input-slider-thumb-background-color      :#fff
-   :--kushi-input-slider-thumb-background-color-dark :#000
+   :--kushi-input-slider-thumb-background-color-dark :$gray-800
    :--kushi-input-slider-thumb-outline-style         :solid
    :--kushi-input-slider-thumb-outline-width         "calc( var(--kushi-input-slider-thumb-width) / var(--kushi-input-slider-thumb-outline-width-ratio))"
    :--kushi-input-slider-thumb-outline-offset        "calc( var(--kushi-input-slider-thumb-width) / (0 - var(--kushi-input-slider-thumb-outline-width-ratio)))"
@@ -84,11 +86,11 @@
   ["-webkit-appearance" :none]
   :width--100%)
 
-(defcss 
+(defcss
   "input.kushi-slider-input[type=range]:focus"
   :outline--none)
 
-(defcss 
+(defcss
   "input.kushi-slider-input[type=range]::-webkit-slider-runnable-track"
   :width--100%
   :height--1px
@@ -113,18 +115,18 @@
   :-webkit-appearance--none
   :border-radius--50%)
 
-(defcss 
+(defcss
   ".dark input.kushi-slider-input[type=range]::-webkit-slider-thumb"
   :outline--$kushi-input-slider-thumb-outline-dark
   :background--$kushi-input-slider-thumb-background-color-dark)
 
 (defcss
   "input.kushi-slider-input[type=range]:focus::-webkit-slider-runnable-track"
-  :background--#000)
+  {:background "#6f6f6f"})
 
 (defcss
   ".dark input.kushi-slider-input[type=range]:focus::-webkit-slider-runnable-track"
- :background--#fff)
+  {:background "#9b9b9b"})
 
 (defcss
   "input.kushi-slider-input[type=range]::-moz-range-track"
@@ -153,12 +155,12 @@
   :cursor--pointer)
 
 (defcss
-  ".dark input.kushi-slider-input[type=range]::-moz-range-thumb" 
+  ".dark input.kushi-slider-input[type=range]::-moz-range-thumb"
   :outline--5px:solid:#fff
   :background--#000)
 
 (defcss
-  "input.kushi-slider-input[type=range]::-ms-track" 
+  "input.kushi-slider-input[type=range]::-ms-track"
   :width--100%
   :height--1px
   :cursor--pointer
@@ -167,30 +169,30 @@
   :border-color--transparent
   :color--transparent)
 
-(defcss 
-  "input.kushi-slider-input[type=range]::-ms-fill-lower" 
+(defcss
+  "input.kushi-slider-input[type=range]::-ms-fill-lower"
   :background--$kushi-input-slider-track-background-color
   :border--0px:solid:#000000
   :border-radius--2px
   :box-shadow--0px:0px:0px:#000000)
 
 (defcss
-  ".dark input.kushi-slider-input[type=range]::-ms-fill-lower" 
+  ".dark input.kushi-slider-input[type=range]::-ms-fill-lower"
   :border--0px:solid:#fff)
 
 (defcss
-  "input.kushi-slider-input[type=range]::-ms-fill-upper" 
+  "input.kushi-slider-input[type=range]::-ms-fill-upper"
   :background--$kushi-input-slider-track-background-color
   :border--0px:solid:#000000
   :border-radius--2px
   :box-shadow--0px:0px:0px:#000000)
 
 (defcss
-  ".dark input.kushi-slider-input[type=range]::-ms-fill-upper" 
+  ".dark input.kushi-slider-input[type=range]::-ms-fill-upper"
   :border--0px:solid:#fff)
 
 (defcss
-  "input.kushi-slider-input[type=range]::-ms-thumb" 
+  "input.kushi-slider-input[type=range]::-ms-thumb"
   :margin-top--1px
   :box-shadow--0px:0px:0px:#000000
   :outline--5px:solid:#000
@@ -202,25 +204,25 @@
   :cursor--pointer)
 
 (defcss
-  ".dark input.kushi-slider-input[type=range]::-ms-thumb" 
+  ".dark input.kushi-slider-input[type=range]::-ms-thumb"
   :margin-top--1px
   :outline--5px:solid:#fff
   :background--#000)
 
 (defcss
-  "input.kushi-slider-input[type=range]:focus::-ms-fill-lower" 
+  "input.kushi-slider-input[type=range]:focus::-ms-fill-lower"
   :background--#000)
 
 (defcss
-  ".dark input.kushi-slider-input[type=range]:focus::-ms-fill-lower" 
+  ".dark input.kushi-slider-input[type=range]:focus::-ms-fill-lower"
   :background--#fff)
 
 (defcss
-  "input.kushi-slider-input[type=range]:focus::-ms-fill-upper" 
+  "input.kushi-slider-input[type=range]:focus::-ms-fill-upper"
   :background--#000)
 
 (defcss
-  ".dark input.kushi-slider-input[type=range]:focus::-ms-fill-upper" 
+  ".dark input.kushi-slider-input[type=range]:focus::-ms-fill-upper"
   :background--#fff)
 
 
@@ -270,8 +272,7 @@
     ret))
 
 (defn- slider-labels
-  [{:keys [f
-           cvlp
+  [{:keys [cvlp
            steps
            num-steps
            step-marker
@@ -281,15 +282,16 @@
            label-selected-class
            display-step-markers?
            step-labels-wrapper-attrs
-           display-current-value-label?]}]
+           display-current-value-label?
+           current-value-label-display-fn]}]
   (into [:div
          (merge-attrs
-          {:style (let [current-value-display 
+          {:style (let [current-value-display
                         (if display-current-value-label?
                           "block"
                           "none")
-                        
-                        step-marker-display 
+
+                        step-marker-display
                         (if display-step-markers?
                           "flex"
                           "none")
@@ -311,16 +313,15 @@
                        :w--100%
                        :h--0
                        {:mbe "calc(10px + 0.5em)"})}
-          
+
           (when (contains? #{:thumb-bottom :thumb-block-end} cvlp)
             {:style {:margin-block-end   :unset
                      :margin-block-start "calc(10px + 0.5em)"}})
-          step-labels-wrapper-attrs)
-         
-         ]
+          step-labels-wrapper-attrs)]
 
         (let [ltr?     (= "ltr" (domo/writing-direction))
-              last-int (dec num-steps)]
+              last-int (dec num-steps)
+              f        current-value-label-display-fn]
           (map-indexed
            (fn [idx step]
              (let [step-display         (if f (f step) step)
@@ -348,12 +349,12 @@
                    left-most?           (or (and first? ltr?) (and last? (not ltr?)))
                    right-most?          (or (and first? (not ltr?)) (and last? ltr?))
                    right-or-left-most   (cond right-most?
-                                              (str (if supplied-steps? "-67%" "-50%" ) " -50%")
+                                              (str (if supplied-steps? "-67%" "-50%") " -50%")
                                               left-most?
-                                              (str (if supplied-steps? "-33%" "-50%" ) " -50%")
+                                              (str (if supplied-steps? "-33%" "-50%") " -50%")
                                               :else
                                               "-50% -50%")]
-               [:span {:style (css-vars-map inset-inline-start 
+               [:span {:style (css-vars-map inset-inline-start
                                             label-scale-factor
                                             step-marker-content
                                             current-value-display-class)
@@ -372,14 +373,14 @@
                                    :inset-inline-start--$inset-inline-start
                                    :w--0
                                    :h--0
-                                   :transform--$label-scale-factor 
+                                   :transform--$label-scale-factor
                                    :.kushi-slider-step-label-selected:o--1
                                    :.kushi-slider-step-label-selected:c--currentColor
                                    :.kushi-slider-step-label-selected>span:v--visible
                                    :before:content--$step-marker-content
                                    {".kushi-slider-step-label-selected.kushi-slider-step-label-display-current-value:before:content"
                                     "\"\""
-                                    :.kushi-slider-step-label-selected:transform           
+                                    :.kushi-slider-step-label-selected:transform
                                     "scale(1)"})}
                 [:span
                  {:style (css-vars-map right-or-left-most)
@@ -412,51 +413,62 @@
 ;; -----------------------------------------------------------------------------
 ;; Slim slider supporting fns start 
 ;; -----------------------------------------------------------------------------
-(defn current-value-label [{:keys [dv cvlp f]}] 
+;; TODO - Remove track start and end value display options
+(defn current-value-label [{:keys [dv cvlp cvlo f vertical?]}]
   [:div
    (merge-attrs
     (sx ".kushi-slider-hi-perf-current-value-label"
         {:c        :currentColor
          :position :absolute})
-    (let [thumb-block-y-shift  "calc(100% + 0.5em)"
+    (let [thumb-block-y-shift  (str "calc(100% + " 
+                                    (if (or (string? cvlo) (keyword? cvlo))
+                                      (name cvlo)
+                                      "0.5em") 
+                                    ")")
           thumb-block-style    {:left      "var(--iis, 0%)"
                                 :translate "var(--tx)"}
           track-inline-x-shift "calc(100% + 1.5ex)"
-          track-inline-style   {:bottom    :unset
-                                :top       :50%
-                                :transform "translateY(calc(-50% - 0.1em))"}
+          track-inline-style   (merge {:bottom    :unset
+                                       :top       :50%
+                                       :transform "translateY(calc(-50% - 0.1em))"}
+                                      (when vertical?
+                                        {:transform "rotate(-90deg) translate(50%)"}))
           above-thumb          (merge thumb-block-style
                                       {:bottom thumb-block-y-shift
-                                       :left   "var(--iis, 0%)" })]
+                                       :left   "var(--iis, 0%)"}
+                                      (when vertical?
+                                        {:transform "rotate(-90deg) translate(50%)"}))]
 
       ;; We are using inline styles here to reduce complexity
       ;; This positions the label relative the thumb, or the track.
       (cond
         (contains? #{:thumb-top :thumb-block-start} cvlp)
-        {:style above-thumb}
+        (merge {:style above-thumb})
 
         (contains? #{:thumb-bottom :thumb-block-end} cvlp)
         {:style (merge thumb-block-style
                        {:bottom :unset
-                        :top    thumb-block-y-shift})}
+                        :top    thumb-block-y-shift}
+                       (when vertical?
+                         {:transform "rotate(-90deg) translate(calc(-50% + 0.5ch))"}))}
 
         (contains? #{:track-right} cvlp)
-        {:style (assoc track-inline-style 
+        {:style (assoc track-inline-style
                        :left
                        track-inline-x-shift)}
 
         (contains? #{:track-inline-end} cvlp)
-        {:style (assoc track-inline-style 
+        {:style (assoc track-inline-style
                        :inset-inline-start
                        track-inline-x-shift)}
 
         (contains? #{:track-left} cvlp)
-        {:style (assoc track-inline-style 
+        {:style (assoc track-inline-style
                        :right
                        track-inline-x-shift)}
 
         (contains? #{:track-inline-start} cvlp)
-        {:style (assoc track-inline-style 
+        {:style (assoc track-inline-style
                        :inset-inline-end
                        track-inline-x-shift)}
         :else
@@ -464,22 +476,37 @@
    (if f (f dv) dv)])
 
 
-(defn slider-slim-change-handler [f num-steps midpoint e]
-  (let [parent                   (-> e domo/cet domo/parent)
-        label-el                 (-> e domo/cet domo/previous-element-sibling)
-        s                        (domo/etv e)
-        float?                   (re-find #"[0-9]+\.[0-9]+" s) 
-        n                        (if float? (js/parseFloat s) (js/parseInt s))
+(defn- slider-stats
+  [v num-steps min midpoint]
+  (let [float?                   (re-find #"[0-9]+\.[0-9]+" v)
+        n*                       (if float? (js/parseFloat v) (js/parseInt v))
+        n                        (abs (- min n*))
         fraction                 (/ n num-steps)
-        inline-inset-start-css   (str (* 100 fraction) "%")
         slider-midpoint-fraction (* 2 (js/Math.abs (- 0.5 fraction)))
-        midpoint-plus-minus-op   (if (<= n midpoint) "+" "-")]
-    (set! (.-textContent label-el) (if f (f n) n))
+        midpoint-plus-minus-op   (if (<= n* midpoint) "+" "-")
+        inline-inset-start-css   (str (* 100 fraction) "%")]
+    {:slider-midpoint-fraction slider-midpoint-fraction
+     :n*                       n* 
+     :midpoint-plus-minus-op   midpoint-plus-minus-op
+     :inline-inset-start-css   inline-inset-start-css }))
+
+
+(defn slim-slider-change-handler [f num-steps midpoint min max display-cvl? e]
+  (when display-cvl?
+   (let [parent                   (-> e domo/cet domo/parent)
+         label-el                 (-> e domo/cet domo/previous-element-sibling)
+         s                        (domo/etv e)
+         {:keys [slider-midpoint-fraction
+                 n*
+                 midpoint-plus-minus-op
+                 inline-inset-start-css]}
+         (!? :pp (slider-stats s num-steps min midpoint))]
+    (set! (.-textContent label-el) (if f (f n*) n*))
 
     ;; TODO - set atomically in one go - add this functionality to domo
     (domo/set-css-var! parent "--iis" inline-inset-start-css)
     (domo/set-css-var! parent "--slider-midpoint-fraction" slider-midpoint-fraction)
-    (domo/set-css-var! parent "--midpoint-plus-minus-op" midpoint-plus-minus-op)))
+    (domo/set-css-var! parent "--midpoint-plus-minus-op" midpoint-plus-minus-op))))
 
 
 (defn slim-slider
@@ -491,9 +518,13 @@
            wrapper-attrs
            attrs
            id
-           cvlp]}]
+           cvlp
+           cvlo
+           cvldm
+           display-cvl?
+           orientation]}]
   (let [f         current-value-label-display-fn
-        dv        (or default-val 0 min)
+        dv        (or default-val min 0)
         num-steps (js/Math.abs (- max min))
         midpoint  (/ (+ min max) 2)
         step      (or step 1)
@@ -501,28 +532,50 @@
                        "var(--midpoint-plus-minus-op, +) "
                        "(var(--slider-midpoint-fraction, 1) "
                        " * "
-                       "(var(--kushi-input-slider-thumb-width) / 2)))")]
+                       "(var(--kushi-input-slider-thumb-width) / 2)))")
+        vertical? (= orientation :vertical)
+        stats     (slider-stats (str default-val) num-steps min midpoint)]
     [:div (merge-attrs
-           {:style (css-vars-map tx)
+           {:style {"--tx"                       tx
+                    "--slider-midpoint-fraction" (:slider-midpoint-fraction stats)
+                    "--iis"                      (:inline-inset-start-css stats)
+                    "--midpoint-plus-minus-op"   (:midpoint-plus-minus-op stats)
+                    :rotate                    (if vertical? "90deg" "0deg")
+                    :transform-origin          (if vertical? "left" "center")}
             :class (css ".kushi-slider-hi-perf"
                         :.kushi-slider-wrapper
                         :mi--1em:2em)}
+
+           (when (= cvldm :visible-on-interaction)
+             {:class (css {:_.kushi-slider-hi-perf-current-value-label:d              :none
+                           :focus-within:_.kushi-slider-hi-perf-current-value-label:d :block
+                           :hover:_.kushi-slider-hi-perf-current-value-label:d        :block})})
            wrapper-attrs)
-     [current-value-label {:f    f
-                           :dv   dv
-                           :cvlp cvlp}]
+
+     (when display-cvl?
+       [current-value-label {:f         f
+                             :dv        dv
+                             :cvlp      cvlp
+                             :cvlo      cvlo
+                             :vertical? vertical?}])
      [:input
-      (merge-attrs 
+      (merge-attrs
        attrs
-       {:class         (css ".kushi-slider-input" :w--100%)
-        :id            id
-        :data-ks-ui :input.range
-        :type          :range
-        :on-change     (partial slider-slim-change-handler f num-steps midpoint)
-        :defaultValue  dv
-        :min           min
-        :max           max
-        :step          step})]]))
+       {:class        (css ".kushi-slider-input" :w--100%)
+        :id           id
+        :data-ks-ui   :input.range
+        :type         :range
+        :on-change    (partial slim-slider-change-handler
+                               f
+                               num-steps
+                               midpoint
+                               min
+                               max
+                               display-cvl?)
+        :defaultValue dv
+        :min          min
+        :max          max
+        :step         step})]]))
 
 ;; Slim slider supporting fns start 
 ;; -----------------------------------------------------------------------------
@@ -530,113 +583,102 @@
 
 
 
-(defn slider
+(defui slider
   ;; TODO line-break this up
   {:summary "A slider is a ui element which allows the user to specify a
              numeric value which must be no less than a given value, and no more
-             than another given value." 
-   :desc "By default, values are represented as a numeric scale with a `min` and
-          a `max`. Note that `:min`, `:max` and `:step` are passed down to the
-          underlying `<input type=range>` element, and do not need to be written
-          with the custom opts syntax. Checkout
-          [input range docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range)
-          for info on how `min`, `max`, and `step` work. Alternately, a scale of
-          named, stepped values may be provided with the custom `:steps` option."
-   :opts '[
-          ;;  {:name    default-value
-          ;;   :schema    any?
-          ;;   :default (:text "The supplied `min` or the first item in the supplied `:steps` collection.")
-          ;;   :desc    "The initial, default value."}
-          ;;  {:name    default-index
-          ;;   :schema    int?
-          ;;   :default 0
-          ;;   :desc    "Use `default-index` when you want to set the default value
-          ;;             by index. This is the index of the number in a numeric
-          ;;             range (with a `min` and `max`), or the index of a value in
-          ;;             a supplied `:steps` collection"}
-          ;;  {:name    steps
-          ;;   :schema    vector?
-          ;;   :default nil
-          ;;   :desc    "Collection of step values."}
-          ;;  {:name    step-marker
-          ;;   :schema    #{:dot :bar :value :none}
-          ;;   :default :none
-          ;;   :desc    "Collection of step values."}
+             than another given value."
+   :desc    "By default, values are represented as a numeric scale with a `min` and
+             a `max`. Note that `:min`, `:max` and `:step` are passed down to the
+             underlying `<input type=range>` element, and do not need to be written
+             with the custom opts syntax. Checkout
+             [input range docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/range)
+             for info on how `min`, `max`, and `step` work. Alternately, a scale of
+             named, stepped values may be provided with the custom `:steps` option."
+   :props   {:default-value                    {:schema :any
+                                              ;; :default (:text "The supplied `min` or the first item in the supplied `:steps` collection.")
+                                                :desc   "The initial, default value."}
+             :default-index                    {:schema  :int
+                                                :default 0
+                                                :desc    "Use `default-index` when you want to set the default value
+                                                        by index. This is the index of the number in a numeric
+                                                        range (with a `min` and `max`), or the index of a value in
+                                                        a supplied `:steps` collection"}
+             :steps                            {:schema  :vector
+                                                :default nil
+                                                :desc    "Collection of step values."}
+             :step-marker                      {:schema  [:enum :dot :bar :value :none]
+                                                :default :none
+                                                :desc    "Display style of step marker"}
 
-          ;;  ;; Flip this to current-value-label-scale-factor (or token?)
-          ;;  {:name    label-scale-factor
-          ;;   :schema    float?
-          ;;   :default 0.7
-          ;;   :desc    "Factor to scale down labels in range which are not selected.
-          ;;             Must be positive float and <= 1.0."}
+             ;; Flip this to current-value-label-scale-factor (or token?)
+             :label-scale-factor               {:schema  :float
+                                                :default 0.7
+                                                :desc    "Factor to scale down labels in range which are not selected.
+                                                        Must be positive float and <= 1.0."}
 
-          ;;  {:name    wrapper-attrs
-          ;;   :schema    map?
-          ;;   :default nil
-          ;;   :desc    "HTML attributes map applied to the outer containing div."}
-          ;;  {:name    step-labels-wrapper-attrs
-          ;;   :schema    map?
-          ;;   :default nil
-          ;;   :desc    "HTML attributes map applied to the step labels containing div."}
-          ;;  {:name    current-value-label-display-fn
-          ;;   :schema    fn?
-          ;;   :default nil
-          ;;   :desc    "Function which takes the current step, (usually a number),
-          ;;             and transforms the value for display."}
-          ;;  {:name    display-current-value-label?
-          ;;   :schema    boolean?
-          ;;   :default false
-          ;;   :desc    "If set to `false`, the current step value label will not
-          ;;             be displayed."}
-
-           {:name    current-value-label-position
-            :schema    
-                     #{
-                      ;;  :track-top
-                      ;;  :track-right
-                      ;;  :track-bottom
-                      ;;  :track-left
-                      ;;  :track-block-start
-                      ;;  :track-block-end
-                       :track-inline-start
-                       :track-inline-end
-                       :thumb-top
-                      ;;  :thumb-right
-                       :thumb-bottom
-                      ;;  :thumb-left
-                      ;;  :thumb-block-start
-                      ;;  :thumb-block-end
-                      ;;  :thumb-inline-start
-                      ;;  :thumb-inline-end
-                       }
-            :default false
-            :desc    "The position of the current value label, relative to the
-                      slider track or slider thumb."}
-
-           ]}
+             :wrapper-attrs                    {:schema  :map
+                                                :default nil
+                                                :desc    "HTML attributes map applied to the outer containing div."}
+             :step-labels-wrapper-attrs        {:schema  :map
+                                                :default nil
+                                                :desc    "HTML attributes map applied to the step labels containing div."}
+             :current-value-label-display-fn   {:schema  :fn
+                                                :default nil
+                                                :desc    "Function which takes the current step, (usually a number), and transforms the value for display."}
+             :display-current-value-label?     {:schema  :boolean
+                                                :default false
+                                                :desc    "If set to `false`, the current step value label will not be displayed."}
+             :orientation                      {:schema  [:enum :horizontal :vertical]
+                                                :default :horizontal}
+             :current-value-label-offset       {:schema [:or :string :keyword]}
+             :current-value-label-display-mode {:schema  [:enum :always-visible :visible-on-interaction]
+                                                :default :always-visible
+                                                :desc    "If set to `:visible-on-interaction`, the current step value label will only be displayed when input is in hover or active state."}
+             :current-value-label-position     {:schema  [:enum
+                                                        ;; TODO - JUST :thumb-top and :thumb-bottom ?
+                                                        ;;  :track-top
+                                                        ;;  :track-right
+                                                        ;;  :track-bottom
+                                                        ;;  :track-left
+                                                        ;;  :track-block-start
+                                                        ;;  :track-block-end
+                                                          :track-inline-start
+                                                          :track-inline-end
+                                                          :thumb-top
+                                                        ;;  :thumb-right
+                                                          :thumb-bottom
+                                                        ;;  :thumb-left
+                                                        ;;  :thumb-block-start
+                                                        ;;  :thumb-block-end
+                                                        ;;  :thumb-inline-start
+                                                        ;;  :thumb-inline-end
+                                                          ]
+                                                :default false
+                                                :desc    "The position of the current value label, relative to the slider track or slider thumb."}}}
   [& args]
-  (let [[opts attrs]
-        (extract args)
-
-        {:keys [defaultValue
-                default-value
+  (let [{:keys [defaultValue
                 min
                 max
                 step]}
-        attrs
+        &attrs
 
         {:keys  [default-index
+                 default-value
                  label-scale-factor
                  wrapper-attrs
                  step-labels-wrapper-attrs
                  step-marker
-                 display-current-value-label?]
-         f      :current-value-label-display-fn
+                 display-current-value-label?
+                 current-value-label-display-fn
+                 orientation]
          cvlp   :current-value-label-position
+         cvlo   :current-value-label-offset
+         cvldm  :current-value-label-display-mode
          steps* :steps
          :or    {display-current-value-label? true
                  cvlp                         :thumb-top}}
-        opts
+        &props
 
         supplied-steps?
         (boolean steps*)
@@ -648,15 +690,13 @@
         (and step-marker (not= step-marker :none))
 
         hi-perf-slider?
-        (and display-current-value-label?
-             (not display-step-markers?)
-             (not steps*))
+        (and (not display-step-markers?) (not steps*))
 
         label-selected-class
         "kushi-slider-step-label-selected"
 
         id
-        (or (:id attrs) (gensym))
+        (or (:id &attrs) (gensym))
 
         label-id
         (str "label-for-" id)
@@ -665,21 +705,25 @@
         (or defaultValue default-value)]
 
 
-    (if hi-perf-slider?   
+    (if hi-perf-slider?
 
       ;; Version of slider that is more performant when lots of steps are present
       ;; Does not feature tick marks or labels
       ;; Current value label can be put to left or right (inline) of track
-      [slim-slider {:f             f
-                    :default-val   default-val
-                    :min           min
-                    :max           max
-                    :step          step
-                    :wrapper-attrs wrapper-attrs
-                    :attrs         attrs
-                    :id            id
-                    :cvlp          cvlp}]
-      
+      [slim-slider {:current-value-label-display-fn current-value-label-display-fn
+                    :default-val                    default-val
+                    :min                            min
+                    :max                            max
+                    :step                           step
+                    :wrapper-attrs                  wrapper-attrs
+                    :attrs                          &attrs
+                    :id                             id
+                    :cvlp                           cvlp
+                    :cvlo                           cvlo
+                    :cvldm                          cvldm
+                    :display-cvl?                   display-current-value-label?
+                    :orientation                    orientation}]
+
 
 
       ;; Version of slider with a distinct dom element for each marker/current-value-label 
@@ -698,8 +742,8 @@
                                       (< label-scale-factor 1.0))
                                  label-scale-factor
                                  :else 0.6)]
-        
-        [:div (merge-attrs 
+
+        [:div (merge-attrs
                {:class (css ".kushi-slider"
                             :.kushi-slider-wrapper
                             :pi--1em:2em)}
@@ -708,8 +752,8 @@
                  (contains? #{:thumb-bottom :thumb-block-end} cvlp)
                  {:style {:flex-direction :column-reverse}}))
 
-         
-         [slider-labels {:f                            f
+
+         [slider-labels {:current-value-label-display-fn current-value-label-display-fn                            
                          :steps                        steps
                          :supplied-steps?              supplied-steps?
                          :num-steps                    num-steps
@@ -722,14 +766,14 @@
                          :cvlp                         cvlp
                          :default-val                  default-val
                          :display-step-markers?        display-step-markers?}]
-         
+
          [:input (merge-attrs
                   {:class         (css ".kushi-slider-input" :w--100%)
                    :id            id
                    :data-ks-ui :input.range
                    :type          :range
                    :on-change     (partial on-change label-selected-class label-id)}
-                  (assoc (or attrs {})
+                  (assoc (or &attrs {})
                          :defaultValue default-index
                          :min (str 0)
                          :max (str (-> steps count dec))
