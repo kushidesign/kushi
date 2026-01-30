@@ -46,24 +46,27 @@
        button
        [:button 
         (merge-attrs
-         {:class      (css ".ks-button"
-                           {:d              :flex
-                            :flex-direction :row
-                            :jc             :center
-                            :ai             :center
-                            :pi             :$padding-inline||$button-padding-inline
-                            :pb             :$padding-block||$button-padding-block
-                            :w              :fit-content
-                            :h              :fit-content
-                            :gap            :$icon-enhanceable-gap
-                            :cursor         :pointer
-                            :--stroke-width :$button-stroke-width})}
+         {:class (css ".ks-button"
+                      {:d              :flex
+                       :flex-direction :row
+                       :jc             :center
+                       :ai             :center
+                       :pi             :$padding-inline||$button-padding-inline
+                       :pb             :$padding-block||$button-padding-block
+                       :w              :fit-content
+                       :h              :fit-content
+                       :gap            :$icon-enhanceable-gap
+                       :cursor         :pointer
+                       :--stroke-width :$button-stroke-width})}
+
+         ;; In variants?
+         {:data-ks-interactive ""}
 
          (!? :pp (some-> stroke-width
-                        (decoration/stroke-width-cssvar "button")))
+                         (decoration/stroke-width-cssvar "button")))
 
          #_(? :pp (when-not classic-variant? 
-                  (decoration/shadow-and-stroke-attrs &props)))
+                    (decoration/shadow-and-stroke-attrs &props)))
          
          &attrs)]
 
