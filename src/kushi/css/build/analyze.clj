@@ -62,7 +62,9 @@
 (defn edamame-parse-warning [e ns-str]
   (let [body (bling "Error when parsing with edamame."
                     "\n\n"
-                    [:italic.subtle.bold ns-str])] 
+                    [:italic.subtle.bold ns-str]
+                    "\n\n"
+                    e)] 
     (callout
      {:type        :error
       :label       (str (string/replace (type e) #"^class " "" )
