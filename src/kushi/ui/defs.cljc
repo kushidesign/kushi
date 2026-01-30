@@ -21,10 +21,83 @@
 (def packing
   [:compact :default :roomy])
 
+(+ 1 1)
+
+(def colors-from-0
+  [:ruby
+   :red
+   :coral
+   :orange 
+   :amber
+   :apricot
+   :gold
+   :banana
+   :yellow
+   :citron
+   :acid
+   :lime
+   :matcha
+   :green
+   :jade
+   :emerald
+   :mint
+   :teal
+   :cyan
+   :aqua
+   :glacier
+   :azure
+   :sky
+   :blue
+   :lapis
+   :indigo
+   :violet
+   :purple 
+   :plum
+   :magenta 
+   :pink
+   :rose])
+
+(def basic-colors*
+  (apply array-map 
+         [:blue 255
+          :sky 247
+          :azure 234
+          :aqua 216
+          :cyan 202
+          :teal 188
+          :mint 174
+          :emerald 163
+          :jade 151
+          :green 143
+          :matcha 136
+          :lime 131
+          :acid 125
+          :citron 118
+          :yellow 110
+          :banana 103
+          :gold 96
+          :apricot 87
+          :amber 78
+          :orange 66 
+          :coral 49
+          :tomato 38
+          :red 20
+          :ruby 0
+          :rose 349
+          :pink 335
+          :magenta 320
+          :plum 304
+          :purple 294
+          :violet 283
+          :indigo 274
+          :lapis 266]))
+
+
 
 
 (def basic-colors
-  [
+ (keys basic-colors*)
+  #_[
    :blue
    :sky
    :azure

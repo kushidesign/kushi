@@ -40,6 +40,120 @@
             [me.flowthing.pp :as pp]
             [kushi.css.shorthand :as shorthand]))
 
+(def colors 
+  ["red"
+   "tomato"
+   "coral"
+   "orange"
+   "amber"
+   "apricot"
+   "gold"
+   "banana"
+   "yellow"
+   "citron"
+   "acid"
+   "lime"
+   "matcha"
+   "green"
+   "jade"
+   "emerald"
+   "mint"
+   "teal"
+   "cyan"
+   "aqua"
+   "azure"
+   "sky"
+   "blue"
+   "lapis"
+   "indigo"
+   "violet"
+   "purple"
+   "plum"
+   "magenta"
+   "pink"
+   "rose"
+   "ruby"])
+
+(!? (/ (!? (count colors)) 4))
+
+#_(let [step-ratio (double (/ 100 32))]
+  (? step-ratio)
+  (? (double (/ 7 8)))
+  (? (range (? (- 8 1)) 1 #_(? (double (/ 7 8))) )))
+
+(defn deformed-scale [number-of-indices shift]
+  (for [i (range (+ (inc number-of-indices) shift))]
+    [i (* i (double (/ number-of-indices (+ number-of-indices shift))))]))
+
+#_(? (deformed-scale 8 -3))
+;; => 
+
+(? (for [i (range 16)]
+     [i (if (<= i (dec 8))
+          (* i (!? (double (/ 8 7))))
+          (+ i 1 #_(double (/ 1 9))))]))
+
+(? (double (/ 8 9))) 
+
+(defn deformed-scale-2 [number-of-indices base-index shift]
+  (let [shifted-index (+ base-index shift)
+        ;; Invert the power so max effect is at shifted-index
+        power-below (if (> shifted-index 0)
+                      (/ 1.0 (+ 1.0 (/ (Math/abs (double shift)) 5.0)))
+                      1.0)
+        power-above (if (< shifted-index number-of-indices)
+                      (/ 1.0 (+ 1.0 (/ (Math/abs (double shift)) 5.0)))
+                      1.0)]
+    (for [i (range number-of-indices)]
+      (cond
+        ;; Below or at the shifted index
+        (<= i shifted-index)
+        (let [t (if (> shifted-index 0)
+                  (/ i (double shifted-index))
+                  0.0)
+              ;; Invert: 1 - curve gives max compression near shifted-index
+              deformed-t (- 1.0 (Math/pow (- 1.0 t) power-below))]
+          [i (* deformed-t base-index)])
+        
+        ;; Above the shifted index
+        :else
+        (let [distance (- i shifted-index)
+              remaining (- (dec number-of-indices) shifted-index)
+              t (/ distance (double remaining))
+              ;; Start with max stretch, diminish toward edge
+              deformed-t (- 1.0 (Math/pow (- 1.0 t) power-above))
+              value-range (- (dec number-of-indices) base-index)]
+          [i (+ base-index (* deformed-t value-range))])))))
+
+(? (deformed-scale-2 16 8 -2))
+
+;;  [0 0.0]
+;;  [1 1.142857142857143]
+;;  [2 2.285714285714286]
+;;  [3 3.428571428571429]
+;;  [4 4.571428571428572]
+;;  [5 5.714285714285715]
+;;  [6 6.857142857142858]
+;;  [7 8.000000000000002]
+;;  [8 8.75]
+;;  [9 9.5]
+;;  [10 10.25]
+;;  [11 11]
+;;  [12 12.75]
+;;  [13 13.5]
+;;  [14 14.25]
+;;  [15 15]
+
+
+#_(? (reduce (fn [acc x] (conj acc (+ (last acc) x))) [0] (repeat 8 (double (/ 7 8)))))
+
+(!? (map-indexed (fn [i color] 
+                   (when (zero? (rem i 8))
+                     (? i color))
+                   [(symbol color) i]) colors))
+
+(!? (sx2 {:color :red 
+         :style {:--bgc (let [a 12] (str "awhat-" a))}}))
 
 
 (!? cssprops/by-alphabetical-index)

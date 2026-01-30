@@ -179,7 +179,7 @@
 
 (def debug-defui nil)
 
-;; (def debug-defui 'flex-row-space-between)
+#_(def debug-defui 'box)
 
 
 (defn- props-from-families* [m dbgf]
@@ -444,7 +444,7 @@
    body ; <- body of component
    ]
 
-  (reset! debug? (if (= sym 'button) true false))
+  #_(reset! debug? (if (= sym 'button) true false))
 
   (let [!dbgf
         (fn [_ x] x)
@@ -489,7 +489,7 @@
         (!? {:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
 
         data-ks-attrs-map-with-defaults
-        (!? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when @debug?} 
+        (!? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when (= sym 'box)#_@debug?} 
          (assoc (kushi.ui.extract/data-ks-attrs {} 
                                                 defaults-by-prop
                                                 (when @debug? :debug) #_:comptime)
@@ -571,8 +571,7 @@
             ;;                         ~defaults-by-prop))
              
              data-ks-attrs#        (!? 'data-ks-attrs#
-                                       (merge (!? "~data-ks-attrs-map-with-defaults"
-                                                 ~data-ks-attrs-map-with-defaults)
+                                       (merge ~data-ks-attrs-map-with-defaults
                                               props->data-ks-attrs#))
 
             ;;  ks-classes*#           (kushi.ui.core/ks-classes 
@@ -616,14 +615,15 @@
           ;;  3. Set the data-ks-debug# binding below to match the value you
           ;;     chose in step 2.
            
-           #_(when (= (quote ~sym) (quote ~debug-defui))
-               (let [data-ks-debug# :foobar]
+           (when (= (quote ~sym) (quote ~debug-defui))
+               (let [data-ks-debug# :foobang]
                  (when (some-> extracted*#
-                               :attrs
-                               :data-ks-debug
-                               (= data-ks-debug#))
-                   (!? "extracted" extracted#)
-                   (!? "extracted*" extracted*#))))
+                                 ?
+                                 :attrs
+                                 :data-ks-debug
+                                 (= data-ks-debug#))
+                       (? "extracted" extracted#)
+                       (? "extracted*" extracted*#))))
            
           ;;  End of internal dev only, debugging specific instance of component
           ;;  ------------------------------------------------------------------
