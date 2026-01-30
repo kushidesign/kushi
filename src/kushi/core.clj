@@ -1239,6 +1239,12 @@
          (contains? cssprops/cherries-set k)
          (contains? cssprops/non-cherries-set k)))))
 
+(defn ^:public stringify-custom-css-properties-in-stylemap [stylemap]
+  (reduce-kv (fn [m k v]
+               (if (keyword? k) (assoc m (name k) v) m))
+             {} 
+             stylemap))
+
 (defn ^:public props+attrs+css
   [m]
   (reduce-kv 
@@ -1255,14 +1261,18 @@
 
                  (or (s/valid? ::specs/css-custom-prop k)
                      (and (vector? k) (seq k))
-                     (? {:when (= k :w)} (css-prop? k))
+                     (!? {:when (= k :w)} (css-prop? k))
                      (!? {:when (= k :debug)}
-                        (and (s/valid? ::specs/css-prop-stack k)
-                             (not (s/valid? ::specs/css-prop-standard-potential k)))))
+                         (and (s/valid? ::specs/css-prop-stack k)
+                              (not (s/valid? ::specs/css-prop-standard-potential k)))))
                  [:css k]
 
                  :else
-                 [:custom-props k]) ]
+                 [:custom-props k])
+           v
+           (if (= ks [:attrs :style]) 
+             (stringify-custom-css-properties-in-stylemap v)
+             v)]
        (if ks (assoc-in acc ks v) acc)))
    {:props        {}
     :attrs        {}
@@ -1273,11 +1283,11 @@
 
 (defn ^:public extract-css-props
   [m]
-  (? extract-css-props
-     (-> m
-         (dissoc :selector)
-         props+attrs+css
-         :css)))
+  (!? extract-css-props
+      (-> m
+          (dissoc :selector)
+          props+attrs+css
+          :css)))
 
 
 (defn- class-map [selector m+]
@@ -1327,11 +1337,11 @@
         m+               (!? 'm+ (merge ret (classes+class-binding args &form &env)))
         class-map        (class-map selector m+)
         data-ks-attrs    (data-ks-attrs m+)]
-    (!? {:attrs          (merge data-ks-attrs
-                                (select-keys m+ [:data-ks-at])
-                                (:attrs m+) 
-                                class-map)
-         :dynamic-props? (boolean (some->> m+ :props vals (some symbol?)))})))
+    {:attrs          (merge data-ks-attrs
+                            (select-keys m+ [:data-ks-at])
+                            (:attrs m+) 
+                            class-map)
+     :dynamic-props? (boolean (some->> m+ :props vals (some symbol?)))}))
 
 
 (defn ^:public validator-stub [m]
