@@ -5,8 +5,9 @@
                         :url  "https://www.eclipse.org/legal/epl-2.0/"}
   :source-paths        [
                         ;; "../domo/src"
-                        ;; "../../cljc/fireworks/src"
-                        ;; "../../cljc/bling/src"
+                        "../../cljc/lasertag/src"
+                        "../../cljc/fireworks/src"
+                        "../../cljc/bling/src"
                         "src"]
   :dependencies        [[design.kushi/domo "0.3.0"]
                         [org.clojure/clojure "1.11.1"]

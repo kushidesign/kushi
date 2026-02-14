@@ -5,7 +5,7 @@
  :deps    {
            binaryage/devtools                   {:mvn/version "1.0.6"}
            reagent/reagent                      {:mvn/version "1.1.1"}
-           io.github.paintparty/bling           {:mvn/version "0.8.8"}
+           io.github.paintparty/bling           {:mvn/version "0.9.2"}
            ;; TODO - try stub fireworks here
            io.github.paintparty/fireworks-stubs {:mvn/version "0.12.6"}
            io.github.paintparty/fireworks       {:mvn/version "0.12.6"}
