@@ -232,10 +232,10 @@
 
 (defn shadow-and-stroke-attrs 
   [{:keys [stroke shadow stroke-align] :or {stroke-align :inside}}]
-  (let [only-simple-stroke?      (and (contains? stroke-presets-key-set stroke)
-                                      (not shadow))
+  (let [only-simple-stroke? (and (contains? stroke-presets-key-set stroke)
+                                 (not shadow))
         only-simple-shadow? (and (contains? shadow-presets-key-set shadow)
-                                      (not stroke))]
+                                 (not stroke))]
     (!? :pp (cond 
               only-simple-stroke?
               {:data-ks-stroke       stroke

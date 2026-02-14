@@ -1,5 +1,6 @@
 (ns kushi.css.specs
   (:require 
+   [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
    [clojure.spec.alpha :as s]))
 
@@ -21,10 +22,13 @@
 
 ;; ## Utility regexps ----------------------------------------------------------
 
+(defn bookend [s]
+  (str "^" s "$"))
+
 (defn re-pattern-be
   "re-pattern bookend"
   [s]
-  (re-pattern (str "^" s "$")))
+  (re-pattern (bookend s)))
 
 (defn alts-zero-or-more  [s]
   (str "[" s "]*"))
@@ -65,6 +69,35 @@
   (alts-zero-or-more (str css-prop-stack-allowables
                           "\\(\\[\\'\"\\=\\~\\^\\]\\)\\,"
                           " \\&")))
+
+(def unstacked-css-property-re-base
+  "(?:-[a-zA-Z]+-)?[a-zA-Z_][a-zA-Z0-9_-]*")
+
+(def css-var-prop-re-base 
+  "--[a-zA-Z0-9_-]+")
+
+(def css-style-string-prop-val-separator-re-base
+  ": ?")
+
+(def css-style-string-val-re-base
+  "[^;]+;?")
+
+(def css-prop-for-style-attribute-re-base
+  (str (bookend unstacked-css-property-re-base) 
+       "|" 
+       (bookend css-var-prop-re-base)))
+
+(def css-prop-for-style-attribute-as-string-re-base
+  (str unstacked-css-property-re-base 
+       "|" 
+       css-var-prop-re-base))
+
+(def css-prop+value-for-style-attribute-as-string-re-base
+  (str "(?:"
+       css-prop-for-style-attribute-as-string-re-base 
+       ")"
+       css-style-string-prop-val-separator-re-base
+       css-style-string-val-re-base))
 
 (def css-prop-stack-re
   (re-pattern-be css-prop-stack-re-base))
@@ -230,6 +263,7 @@
    #(re-find #"^@layer [a-zA-Z0-1_-]+.*$" %)))
 
 
+
 ;; ## Specs for css-values -----------------------------------------------------
 (s/def ::css-value
   ::s|kw|num
@@ -238,6 +272,8 @@
             (not (re-find only-valid-in-css-values-supplied-as-keywords-re
                           %))
             true)))
+
+
 
 ;; ## Specs for css-props ------------------------------------------------------
 ;; TODO Do we need another one for just :css-prop ?
@@ -258,6 +294,12 @@
   (s/and ::s|kw
          #(string/starts-with? (name %) "@")))
 
+(s/def ::css-prop-for-style-attribute
+  (s/and ::s|kw
+         #(re-find (re-pattern css-prop-for-style-attribute-re-base)
+                   (name %))))
+
+
 
 ;; ## Specs for classes --------------------------------------------------------
 (s/def ::class-kw
@@ -272,6 +314,8 @@
                #(re-find attribute-selector-re (name %))
                :id-selector
                #(re-find id-with-hash-re (name %)))))
+
+
 
 
 ;; ## Specs for keyframes ------------------------------------------------------
@@ -290,15 +334,19 @@
   (s/tuple ::keyframe-name ::style-map))
 
 
+
+
 ;; ## Specs for tokenized keywords ---------------------------------------------
 (s/def ::tok-kw
   (s/and keyword? #(re-find tok-kw-re (name %))))
+
 
 ;; Spec for the 'prop-side' (left in en) of a tokenized keyword e.g.:
 ;; :sm:dark:hover:b--1px:solid:red
 ;; ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 (s/def ::tok-kw-css-prop-stack
   (s/and keyword? #(re-find tok-kw-css-prop-stack-re (name %))))
+
 
 ;; Spec for the 'value-side' (right in en) of a tokenized keyword e.g.:
 ;; :sm:dark:hover:b--1px:solid:red
@@ -312,6 +360,15 @@
 
 (s/def ::tok-str
   (s/and string? #(re-find tok-str-re %)))
+
+
+
+;; ## Specs for style-attribute strings ----------------------------------------
+(s/def ::style-string-for-style-attribute
+  (s/and string?
+         #(re-find (? (re-pattern
+                       css-prop+value-for-style-attribute-as-string-re-base)) 
+                   %)))
 
 
 
@@ -330,6 +387,7 @@
                                  (s/valid? ::style-map-value %))))
 
 
+
 ;; ## Specs for style-maps -----------------------------------------------------
 
 (s/def ::style-map-value
@@ -339,12 +397,23 @@
 (s/def ::style-map
   (s/map-of ::css-prop-stack ::style-map-value))
 
+(s/def ::style-map-for-style-attribute
+  (s/map-of ::css-prop-for-style-attribute
+            (s/or :css-value
+                  ::css-value
+                  :sexpr
+                  list?)))
+
+
+
 
 ;; ## Specs for css-rule-call --------------------------------------------------
 
 (s/def ::css-rule-call
   (s/and list?
          #(= 'css-rule (nth % 0 nil))))
+
+
 
 
 ;; ## Specs for args to `sx` `css` and `defcss` macros -------------------------
