@@ -3,6 +3,7 @@
  ;;  [taoensso.tufte :as tufte]
    [babashka.process :refer [shell]] ;; for testing
    [bling.core :refer [bling callout point-of-interest]]
+   [bling.explain :refer [explain-malli]]
    [bling.hifi :refer [hifi]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string :refer [replace] :rename {replace sr}]
@@ -12,6 +13,7 @@
    [kushi.css.build.colorways :refer [colorway-args colorway-selector]]
    [kushi.css.defs :as defs]
    [kushi.css.hydrated :as hydrated]
+   [kushi.css.schemas :as schemas]
    [kushi.css.shorthand :as shorthand]
    [kushi.css.specs :as specs]
    [kushi.cssprops :as cssprops]
@@ -19,7 +21,8 @@
    [kushi.ui.core :refer [html-attrs]]
    [kushi.ui.variants :as props]
    [kushi.util :as util :refer [as-str keyed maybe more-than-one?
-                                partition-by-pred vec-of-vecs?]]))
+                                partition-by-pred vec-of-vecs?]]
+   [malli.core :refer [validate]]))
 
 ;; EEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR   RRRRRRRRRRRRRRRRR   
 ;; E::::::::::::::::::::ER::::::::::::::::R  R::::::::::::::::R  
@@ -69,24 +72,26 @@
   (callout {:type        :warning
             :label-theme :marquee
             :padding-top 1}
+           header
            (point-of-interest
             (merge {:file   ""
                     :type   :warning
-                    :header header
-                    :body   body}
+                    ;; :header header
+                    ;; :body   body
+                    }
                    (meta form)
                    {:form (if unwrap-quoted-symbols?
                             (apply list (map unwrap-quoted-symbol form))
-                            form)}))))
+                            form)}))
+           body))
 
 (defn bad-at-rule-name-warning [sel &form]
   (generic-warning 
    {:form   &form
-    :header (bling
-             "It seems you are trying to construct an\n"
-             [:bold (str "@" sel)] 
-             " rule and you forget a leading "
-             [:bold "\"@\"."])}))
+    :header (bling "It seems you are trying to construct an\n"
+                   [:bold (str "@" sel)] 
+                   " rule and you forget a leading "
+                   [:bold "\"@\"."])}))
 
 (defn bad-at-keyframes-name-warning [sel &form]
   (generic-warning
@@ -135,7 +140,7 @@
                          "\n\n"
                          "No css ruleset will be created.")))})))
 
-(def bad-keyframe-warning-body
+(defn bad-keyframe-warning-body []
   (bling "\n"
          [:italic "A CSS keyframe must be represented as a "]
          [:italic "two-element vector."]
@@ -160,7 +165,7 @@
          "\n\n\n"
          [:italic "No keyframe animation will be created."]))
 
-(def bad-at-rule-arg-warning-body
+(defn bad-at-rule-arg-warning-body []
   (bling [:bold 'at-rule] " can be called 2 ways:\n\n"
          "1) With a selector and a "
          "single map:\n"
@@ -201,9 +206,8 @@
                                            (first at-rule-args)))])
                        "\n"))
       :body (if keyframes? 
-              bad-keyframe-warning-body
-              bad-at-rule-arg-warning-body)})))
-
+              (bad-keyframe-warning-body)
+              (bad-at-rule-arg-warning-body))})))
 
 
 (defn bad-args-spec-details [spec-data]
@@ -223,6 +227,55 @@
    "\n\n"])
 
 
+(defn bad-style-map-warning
+  "Prints warning"
+  [{:keys [fname          
+           invalid-args        
+           &form]
+    :as m}]
+  (generic-warning
+   {:form
+    &form
+
+    :unwrap-quoted-symbols?
+    true
+
+    :header
+    (apply
+     bling
+     (concat [[:italic "Bad value for :style entry to "] fname ":"
+              "\n\n"]
+             (interpose "\n"
+                        (map (fn [arg]
+                               #_[:bold (unwrap-quoted-symbol arg)]
+                               (bling.hifi/hifi (unwrap-quoted-symbol arg)
+                                                {:margin-inline-start 4}))
+                             invalid-args))
+
+             ["\n\n"]
+             (when-let [[_ prop val] 
+                        (when (-> invalid-args first keyword?)
+                          (re-find #"^([a-z]+)-(\$*[a-z0-9]+.*)" 
+                                   (name (-> invalid-args first))))]
+               ["\n"
+                "\n"
+                "Did you mean "
+                [:bold (str ":" prop "--" val)]
+                "?"
+                "\n\n"])))
+    :body   
+    (apply
+     bling
+     (concat
+      ["\n"
+       [:italic "The value of the :style entry should be valid stylemap or style string"]
+       "\n\n\n"
+       [:italic "The value of the :style entry is validated with:"]
+       "\n\n    "
+       (bling.hifi/hifi ::specs/style-map-for-style-attribute)
+       "\n\n"]))}))
+
+
 (defn cssrule-args-warning
   "Prints warning"
   [{:keys [fname          
@@ -240,12 +293,13 @@
     (apply
      bling
      (concat ["Bad args to " [:italic fname] ":"
-              "\n"]
+              "\n     "]
              (interpose "\n"
                         (map (fn [arg]
                                [:bold (unwrap-quoted-symbol arg)])
                              invalid-args))
 
+             ["\n"]
              (when-let [[_ prop val] 
                         (when (-> invalid-args first keyword?)
                           (re-find #"^([a-z]+)-(\$*[a-z0-9]+.*)" 
@@ -255,7 +309,7 @@
                 "Did you mean "
                 [:bold (str ":" prop "--" val)]
                 "?"
-                "\n"])))
+                "\n\n"])))
     :body   
     (let [spec-data (s/form ::specs/valid-sx-arg)]
       (apply
@@ -265,7 +319,7 @@
                                  fname)
                     "All args beyond the first are validated with:"
                     "All args are validated with:")]
-         "\n"
+         "\n    "
          [:bold (str ::specs/valid-sx-arg)]
          "\n\n"]
         
@@ -549,15 +603,19 @@
 ;; -----------------------------------------------------------------------------
 
 
+(defn- file+line+col [m]
+  (let [{:keys [file line column]} (meta m)]
+    (str (or file "[unresolved ns]") ":" line ":" column)))
 
 (defn- loc-id
   "Returns classname based on namespace and line + column.
    e.g. \"starter_browser__L41_C6\""
   [env form]
   (!? :result (some-> env :ns :name))
-  (when-let [ns* (some-> env :ns :name (sr #"\." "_"))]
+  (when-let [ns* (or (some-> env :ns :name (sr #"\." "_"))
+                     "[unresolved ns]")]
     (let [fm (meta form)]
-     (str ns* "__L" (:line fm) "_C" (:column fm)))))
+      (str ns* "__L" (:line fm) "_C" (:column fm)))))
 
 
 
@@ -752,10 +810,8 @@
       %)
    coll))
 
-
-(defn- css-block* [conformed-args]
-  (let [{:keys [vectorized
-                conformed-map]}
+(defn- grouped-css-declarations [conformed-args]
+  (let [{:keys [vectorized conformed-map]}
         (vectorized* conformed-args)
 
         grouped                 
@@ -766,15 +822,16 @@
                  (!? 'hydrated)
                  (prewalk group-shared)
                  (!? 'grouped)))]
+    (keyed [grouped conformed-map])))
 
+(defn- css-block* [conformed-args]
+  (let [{:keys [grouped conformed-map]}
+        (grouped-css-declarations conformed-args)]
     {:css-block     (str "{\n" (css-block-str grouped) "}")
      :nested-vector grouped
      ;; Leave this :nested-array-map out for now
      ;; :nested-array-map (nested-array-map grouped)
-     :classes       (-> conformed-map
-                        user-classlist
-                        :classes)}))
-
+     :classes       (-> conformed-map user-classlist :classes)}))
 
 (defn conformed-args 
   "Returns a vector of `[conformed-args invalid-args]`"
@@ -808,7 +865,7 @@
         (some->> conformed-args
                  css-block*
                  :css-block)]
-    (keyed [args &form &env fname sel conformed-args invalid-args])
+    #_(keyed [args &form &env fname sel conformed-args invalid-args])
     (when (seq invalid-args)
       (cssrule-args-warning
        {:fname             fname
@@ -1239,26 +1296,28 @@
          (contains? cssprops/cherries-set k)
          (contains? cssprops/non-cherries-set k)))))
 
-(defn ^:public stringify-custom-css-properties-in-stylemap [stylemap]
-  (reduce-kv (fn [m k v]
-               (if (keyword? k) (assoc m (name k) v) m))
-             {} 
-             stylemap))
 
 (defn ^:public props+attrs+css
   [m]
   (reduce-kv 
    (fn [acc k v]
      (let [ks
-           (cond (contains? props/generic-props k)
+           (cond 
+                 ;; kushi prop variants such as `:display`, `:stroke`, etc.
+                 (contains? props/generic-props k)
                  [:props k]
                  
+                 ;; Any html attribute such as `:id` `:class` `:name` etc
                  (contains? html-attrs k)
                  [:attrs k]
 
+                 ;; A data-* attribute
                  (-> k util/as-str (string/starts-with? "data-"))
                  [:attrs k]
 
+
+                 ;; css syntax such as `:color`,
+                 ;; or kushi-specific css stacked syntax like `:_p:hover:color`
                  (or (s/valid? ::specs/css-custom-prop k)
                      (and (vector? k) (seq k))
                      (!? {:when (= k :w)} (css-prop? k))
@@ -1267,12 +1326,11 @@
                               (not (s/valid? ::specs/css-prop-standard-potential k)))))
                  [:css k]
 
+                 ;; user custom props
                  :else
                  [:custom-props k])
            v
-           (if (= ks [:attrs :style]) 
-             (stringify-custom-css-properties-in-stylemap v)
-             v)]
+           v]
        (if ks (assoc-in acc ks v) acc)))
    {:props        {}
     :attrs        {}
@@ -1328,15 +1386,62 @@
              {}
              (:props m+)))
 
+
+(defn- validated* [x &form opts schema]
+  (if (validate schema x)
+    x
+    (callout {:type :warning :label "bad :style value"} x)
+    #_(explain-malli schema
+                   x
+                   (merge {:file-info-str (file+line+col &form)
+                           :spacing       :compact
+                           :callout-opts  {:colorway :subtle}}
+                          opts))))
+
+(defn- hydrate-style-attribute-value [m &form &env selector]
+  (if-let [x (when-let [x (:style m)]
+               (when (or (map? x)
+                         (string? x) 
+                         (symbol? x))
+                 (let [validated (partial validated* x &form {:highlighted-problem-section-label (bling "Bad value for " [:purple :style] " entry supplied to " [:purple "kushi.core/sx2"])})]
+                   (cond (map? x)
+                         (validated schemas/style-map-for-style-attribute)
+                         (string? x)
+                         (validated schemas/style-string-for-style-attribute)
+                         :else
+                         x))))]
+    (assoc m
+           :style 
+           (if (map? x)
+             (let [{:keys [conformed-args]} (conformed-args [x])
+
+                   ret                      (->> conformed-args
+                                                 grouped-css-declarations
+                                                 :grouped
+                                                 (into {}))]
+               #_(keyed [args
+                         &form
+                         &env
+                         fname
+                         sel
+                         conformed-args
+                         invalid-args])
+               ret)
+             x))
+    m))
+
 ;; TODO - reconcile if selector is "#foo" and :id is something else
 (defn- sx2* [m &form &env]
-  (let [selector         (:selector m)
-        m                (dissoc m :selector)
-        ret              (!? (props+attrs+css m))
-        args             (if selector [selector m] [m])
-        m+               (!? 'm+ (merge ret (classes+class-binding args &form &env)))
-        class-map        (class-map selector m+)
-        data-ks-attrs    (data-ks-attrs m+)]
+  (let [selector      (:selector m)
+        m             (dissoc m :selector)
+        m             (hydrate-style-attribute-value m &form &env selector)
+        ret           (props+attrs+css m)
+        args          (if selector [selector m] [m])
+
+        ;; validator
+        m+            (!? 'm+ (merge ret (classes+class-binding args &form &env)))
+        class-map     (class-map selector m+)
+        data-ks-attrs (data-ks-attrs m+)]
     {:attrs          (merge data-ks-attrs
                             (select-keys m+ [:data-ks-at])
                             (:attrs m+) 
@@ -1361,15 +1466,15 @@
   "Returns an html attributes map.
    
    Can take any number of args which should be maps or symbols that are bound to
-   attribute maps. If multiple args are supplied, all map-literals will be
+   vals which are maps. If multiple args are supplied, all map-literals will be
    sorted out into a coll bound to `attrs-coll`, then macro will expand to:
    `(apply kushi.core/merge-attrs ~attrs-coll)`
    
    Pulls out shared kushi props from map literals, validates the values
    (if not dynamic), and converts them to data-ks-* attributes.
    
-   Removes all css properties and values. These css properties and values are
-   pulled out in an analyzation phase, and used to create rulesets with the
+   Removes all css prop / values. These css properties and values are pulled out
+   in kushi's analyzation phase, and used to create rulesets with the
    appropriate selectors.
 
    If multiple map literals are passed, only one can contain css properties and
@@ -1408,29 +1513,29 @@
 
   [& args]
 
-  (let [attrs-coll     (reduce (fn [acc x]
-                                 (if-let [ret (cond (symbol? x)
-                                                    x
-                                                    (map? x)
-                                                    (sx2* x &form &env))]
-                                   (conj acc ret)
-                                   acc))
-                               [] 
-                               args)
+  (let [attrs-coll*     (reduce (fn [acc x]
+                                  (if-let [ret (cond (symbol? x)
+                                                     x
+                                                     (map? x)
+                                                     (sx2* x &form &env))]
+                                    (conj acc ret)
+                                    acc))
+                                [] 
+                                args)
+        dynamic-props? (boolean (some :dynamic-props? attrs-coll*))
+        attrs-coll     (mapv :attrs attrs-coll*)]
 
-        dynamic-props? (some :dynamic-props? attrs-coll)
-        
-        attrs-coll     (!? (mapv :attrs attrs-coll))]
-    
+    (keyed [attrs-coll* dynamic-props? attrs-coll])
+
     (if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
+      ;; A single map has been passed to sx2
       (if dynamic-props?
         `(kushi.core/validator-stub ~m)
         `~m)
+      ;; Multiple maps have been passed to sx2
       (if dynamic-props?
-        `(kushi.core/validator-stub (apply kushi.core/merge-attrs
-                                           ~attrs-coll))
-        `(apply kushi.core/merge-attrs
-                ~attrs-coll)))
+        `(kushi.core/validator-stub (apply kushi.core/merge-attrs ~attrs-coll))
+        `(apply kushi.core/merge-attrs ~attrs-coll)))
 
     ;; for testing in pure jvm clj env
     #_(if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
