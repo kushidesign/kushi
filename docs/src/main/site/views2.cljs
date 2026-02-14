@@ -1277,7 +1277,8 @@
                                           :text-align     (when (>= i 16) "end")
                                           :opacity        :0.5
                                           :display        :flex
-                                          :gap            :1em}})
+                                          :gap            :1em
+                                          :wtf            []}})
                       [:span i]
                       [:span (sx2 {:min-width :44px
                                    :shrink    0

@@ -544,7 +544,7 @@
 
    :icon-filled      {:desc    "Filled or not filled"
                       :schema  :boolean
-                      :default false}
+                      :default false} ;; why false and not nil
 
    :spinner-type     {:desc    "The design of the spinner"
                       :default :donut}})
@@ -554,22 +554,32 @@
 
 (def prop-families
   ;; TODO - should packing be in here?
-  {:container [:text-size
-               :text-weight
-               :colorway
-               :shape
-               :surface
-               :stroke
-               :stroke-align
+  {:container [:text-size                    ;; change to font-size
+               :text-weight                  ;; change to font-weight
+               :display
+               :position
+
+               :colorway                     ;; add twists and turns 
+               :shape                        ;; add shapes
+               :surface                      ;; add surfaces
+               :stroke                       ;; presets from soft-hard or custom
+               :stroke-align 
                :stroke-width
-               :shadow
+               :shadow                       ;; change to shadow-size - but isn't it multi?
                :shadow-color
                :shadow-strength
+
                :background-image-behavior
-               :inert
-               :position
-               :display
+               :inert                        ;; change to interactive and flip logic
+               :packing
+               
+               ;; :transition ;; include?
                ]})
 
 (def generic-props
   (into #{} (:container prop-families)))
+
+
+;; Just use sx for both defui components and [:div ] components
+;; Validate everything the same way
+;; how do you 
