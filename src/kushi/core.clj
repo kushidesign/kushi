@@ -1436,25 +1436,25 @@
   (let [selector      (:selector m)
         m             (dissoc m :selector)
         m             (hydrate-style-attribute-value m &form &env selector)
-        ret           (? (props+attrs+css m))
+        ret           (props+attrs+css m)
         args          (if selector [selector m] [m])
 
-        ;; validator
+        ;; Validator
         m+            (merge ret (classes+class-binding args &form &env))
         class-map     (class-map selector m+)
         data-ks-attrs (data-ks-attrs m+)
-        theme-styles  (? (some-> ret
-                                 :props
-                                 (select-keys variants/local-tokens)
-                                 (->> (reduce-kv
-                                       (fn [m k v]
-                                         (or (some-> (get variants/local-token-transformers k)
-                                                     (apply [k v]))
-                                             (assoc m 
-                                                    (str "--" (name k))
-                                                    (name v))))
-                                       {})
-                                      (hash-map :style))))]
+        theme-styles  (some-> ret
+                              :props
+                              (select-keys variants/local-tokens)
+                              (->> (reduce-kv
+                                    (fn [m k v]
+                                      (or (some-> (get variants/local-token-transformers k)
+                                                  (apply [k v]))
+                                          (assoc m 
+                                                 (str "--" (name k))
+                                                 (name v))))
+                                    {})
+                                   (hash-map :style)))]
     {:attrs          (merge data-ks-attrs
                             (select-keys m+ [:data-ks-at])
                             (:attrs m+) 

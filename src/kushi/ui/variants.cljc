@@ -599,9 +599,14 @@
 
 (def local-token-transformers
   {:shadow-color (fn [_ v]
-                   (when (contains? (:shadow-color variants-by-custom-opt-key) v)
-                     {"--shadow-color"           (str "var(--" (name v) "-700)")
-                      "--shadow-color-dark-mode" (str "var(--" (name v) "-300)")}))})
+                   (let [kushi-color? (contains? (:shadow-color variants-by-custom-opt-key) v)
+                         s (util/as-str v)]
+                     {"--shadow-color"           (if kushi-color? 
+                                                   (str "var(--" s "-700)")
+                                                   s)
+                      "--shadow-color-dark-mode" (if kushi-color? 
+                                                   (str "var(--" s "-300)")
+                                                   s)}))})
 
 (def shared-props-enum
   (->> props keys (into [:enum])))
@@ -614,11 +619,11 @@
                :display
                :position
 
-               :colorway                     ;; add twists and turns 
-               :shape                        ;; add shapes like squircle and blob
-               :surface                      ;; add surfaces like ?
+               :colorway                   ;; add twists and turns 
+               :shape                      ;; add shapes like squircle and blob
+               :surface                    ;; add surfaces like ?
 
-               :stroke                       ;; custom vector only?
+               :stroke                     ;; custom vector only?
                :stroke-opacity 
                :stroke-align 
                :stroke-width
@@ -628,12 +633,20 @@
                :shadow-opacity
 
                :background-image-behavior
-               :inert                        ;; change to interactive and flip logic
+               :inert                      ;; change to interactive and flip logic
                :packing
                
-               ;; :transition ;; include?
+               ;; :transition              ;; include?
                ]})
 
+
+;; fix stroke
+;; fix stroke + shadow
+
+;; test packing 
+;; deal with inert
+
+;; try on component
 
 (def generic-props
   (into #{} (:container prop-families)))
