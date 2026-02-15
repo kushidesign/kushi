@@ -20,7 +20,7 @@
 (defn loading-spinner []
   [:div (sx
          :.flex-col-c
-         :fs--$text-size-xxlarge
+         :fs--$text-2xl
          ["has-ancestor(.path-transitioning):display"
           :flex]
          :position--fixed
@@ -35,7 +35,7 @@
     ]])
 
 (def tab-attrs
-  (sx :fs--$text-size-small
+  (sx :fs--$text-sm
       :pis--0.799em
       :pie--0.8em
       :pbs--0.4em
@@ -92,7 +92,7 @@
      {:surface      :minimal
       :shape        :pill
       :class         (css :.foreground-color-secondary!
-                          :fs--$text-size-small
+                          :fs--$text-sm
                           :pis--0.799em
                           :pie--0.8em
                           :pbs--0.4em
@@ -164,7 +164,7 @@
                :mbs--$navbar-height
                ;; TODO - make sure this works
                ["+*:pbs" :1.5rem]
-               ;; Maybe smaller division for mobile?
+               ;; Maybe smer division for mobile?
                ;; ["~section[data-ks-playground-component]:pbs" :6rem]
                )
       [:div (sx :.flex-col-c :mbs--50px :h--50px)
@@ -332,7 +332,7 @@
   [custom-attributes]
   [:<>
    [:h2 (sx
-         :fs--$text-size-large
+         :fs--$text-lg
          :fw--$semi-bold
          :mb--0:0.5rem)
     "Opts"]
@@ -383,7 +383,7 @@
     :id     (str "kushi-" label "-documentation")}
    (when summary
      (into [:div 
-            (sx :fs--$text-size-medium
+            (sx :fs--$text-md
                 :fw--$wee-bold
                 :mb--0:2rem
                 :>span:lh--1.7)]
@@ -391,7 +391,7 @@
    (when desc
      [:<> 
       [:h2 
-       (sx :fs--$text-size-large
+       (sx :fs--$text-lg
            :fw--$semi-bold
            :pbe--0.5rem
            :bbe--1px:solid:$gray-200
@@ -405,7 +405,7 @@
                    :_code:pb--0.07em
                    :_code:pi--0.2em
                    :>span:d--block
-                   [:_b {:fw      :$text-weight-wee-bold
+                   [:_b {:fw      :$font-weight-wee-bold
                          :mbe     :0.4em
                          :display :block}])]
             (desc->hiccup desc))])

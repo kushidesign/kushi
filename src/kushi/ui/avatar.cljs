@@ -10,21 +10,21 @@
 
 ;; TODO - figure this out
 (def avatar-size 
-  {"xxxsmall" "18px"
-   "xxsmall"  "26px"
-   "xsmall"   "36px"
-   "small"    "48px"
-   "medium"   "60px"
-   "large"    "78px"
-   "xlarge"   "96px"
-   "xxlarge"  "120px"
-   "xxxlarge" "145px"})
+  {"3xs" "18px"
+   "2xs"  "26px"
+   "xs"   "36px"
+   "sm"    "48px"
+   "md"   "60px"
+   "lg"    "78px"
+   "xl"   "96px"
+   "2xl"  "120px"
+   "3xl" "145px"})
 
 
 (defui avatar 
   {:summary "Avatars are graphical thumbnail representations of an individual or entity."
    :desc    "Avatars will display fallback text when no image is provided."
-   :props/shared [[:text-size {:default "36px"}]
+   :props/shared [[:size {:default "36px"}]
                   [:surface {:default :soft}]
                   [:colorway {:default :neutral}]
                   [:shape {:default :rounded}]

@@ -28,7 +28,7 @@
 
 #_(?defcss "@font-face"
   {:font-family "FiraCodeRegular"
-   :font-weight "400"
+   :weight "400"
    :font-style "normal"
   ;;  :src "url(../fonts/FiraCode-Regular.woff)"
    :src "local('Trickster'),

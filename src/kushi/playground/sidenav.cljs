@@ -50,7 +50,7 @@
 (defn all-components-sidenav
   [playground-components]
   [:nav {:class (css 
-                 :.small
+                 :.sm
                  :.flex-col-fs
                  :.neutralize
                  :d--none
@@ -97,7 +97,7 @@
                    :pb--0rem:2rem
                    :pi--0em
                    :column-gap--normal
-                   :fs--$text-size-small)]
+                   :fs--$text-sm)]
           (for [{:keys [label]} playground-components]
             [:<>
              [style-tag-first-intersecting label]
@@ -124,7 +124,7 @@
          (sx 
           :.flex-col-fs
           :.neutralize
-          :fs--$text-size-small
+          :fs--$text-sm
           [:--translate-y :20px]
           :lg:d--none
           :position--sticky
@@ -188,14 +188,14 @@
 
      [icon
       (sx :.sidenav-menu-icon 
-          {:fs :$text-size-large
-           :fw :$text-weight-extra-light}) 
+          {:fs :$font-size-lg
+           :fw :$font-weight-extra-light}) 
       :menu]
 
      [icon 
       (sx :.sidenav-close-icon 
-          {:fs :$text-size-large
-           :fw :$text-weight-extra-light})
+          {:fs :$font-size-lg
+           :fw :$font-weight-extra-light})
       :close]
      "All Components"]]
    
@@ -234,7 +234,7 @@
                    :flex-wrap--wrap-reverse
                    :column-gap--0.75rem
                    :align-content--inherit
-                   :fs--$text-size-small
+                   :fs--$text-sm
                    :min-width--50vw
                    :xsm:min-width--unset)]
           (for [{:keys [label]} playground-components]

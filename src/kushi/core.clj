@@ -22,7 +22,8 @@
    [kushi.ui.variants :as props]
    [kushi.util :as util :refer [as-str keyed maybe more-than-one?
                                 partition-by-pred vec-of-vecs?]]
-   [malli.core :refer [validate]]))
+   [malli.core :refer [validate]]
+   [kushi.ui.variants :as variants]))
 
 ;; EEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR   RRRRRRRRRRRRRRRRR   
 ;; E::::::::::::::::::::ER::::::::::::::::R  R::::::::::::::::R  
@@ -1435,17 +1436,30 @@
   (let [selector      (:selector m)
         m             (dissoc m :selector)
         m             (hydrate-style-attribute-value m &form &env selector)
-        ret           (props+attrs+css m)
+        ret           (? (props+attrs+css m))
         args          (if selector [selector m] [m])
 
         ;; validator
-        m+            (!? 'm+ (merge ret (classes+class-binding args &form &env)))
+        m+            (merge ret (classes+class-binding args &form &env))
         class-map     (class-map selector m+)
-        data-ks-attrs (data-ks-attrs m+)]
+        data-ks-attrs (data-ks-attrs m+)
+        theme-styles  (? (some-> ret
+                                 :props
+                                 (select-keys variants/local-tokens)
+                                 (->> (reduce-kv
+                                       (fn [m k v]
+                                         (or (some-> (get variants/local-token-transformers k)
+                                                     (apply [k v]))
+                                             (assoc m 
+                                                    (str "--" (name k))
+                                                    (name v))))
+                                       {})
+                                      (hash-map :style))))]
     {:attrs          (merge data-ks-attrs
                             (select-keys m+ [:data-ks-at])
                             (:attrs m+) 
-                            class-map)
+                            class-map
+                            theme-styles)
      :dynamic-props? (boolean (some->> m+ :props vals (some symbol?)))}))
 
 
@@ -1870,7 +1884,7 @@
                                            :.tracking-xxtight       
                                            :.tracking-xtight        
                                            :.tracking-tight         
-                                           :.default-tracking 
+                                           :.tracking-base 
                                            :.tracking-loose         
                                            :.tracking-xloose        
                                            :.tracking-xxloose       
@@ -1883,7 +1897,7 @@
                                            :.transition-xxfast!  
                                            :.transition-xfast!   
                                            :.transition-fast!    
-                                           :.moderate!
+                                           :.transition-base!
                                            :.transition-slow!    
                                            :.transition-xslow!   
                                            :.transition-xxslow!  
@@ -1896,7 +1910,7 @@
                                            :.transition-xxfast  
                                            :.transition-xfast   
                                            :.transition-fast    
-                                           :.transition-moderate
+                                           :.transition-base!
                                            :.transition-slow    
                                            :.transition-xslow   
                                            :.transition-xxslow  
@@ -1916,16 +1930,16 @@
                                          c)
                               (class->kw c "fw")
 
-                              (contains? #{:.size-xxxsmall
-                                           :.size-xxsmall
-                                           :.size-xsmall
+                              (contains? #{:.size-3xs
+                                           :.size-2xs
+                                           :.size-xs
                                            :.size-small
-                                           :.size-medium
-                                           :.size-large
-                                           :.size-xlarge
-                                           :.size-xxlarge
-                                           :.size-xxxlarge
-                                           :.size-xxxxlarge}
+                                           :.size-base
+                                           :.size-lg
+                                           :.size-xl
+                                           :.size-2xl
+                                           :.size-3xl
+                                           :.size-4xl}
                                          c)
                               (class->kw c "fs")
 

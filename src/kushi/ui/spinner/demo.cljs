@@ -16,20 +16,20 @@
                     {:variant       :spinner-type
                      :label         "Spinner type"
                      :desc          "The variety of spinner"
-                     :attrs/display {:text-size :xlarge}
+                     :attrs/display {:size :xl}
                      })}
 
    {:label     "Propeller, sizes"
     :desc      "Corresponds to the font-size based on Kushi's font-size scale."
     :samples   (samples-with-variant 
-                {:variant         :text-size
+                {:variant         :size
                  :attrs           {:spinner-type :propeller}
                  :variant-labels? false})}
 
    {:desc      "Corresponds to the font-size based on Kushi's font-size scale."
     :label     "Donut, sizes"
     :samples   (samples-with-variant 
-                {:variant         :text-size
+                {:variant         :size
                  :label           "Donut, sizes"
                  :attrs           {:spinner-type :donut}
                  :variant-labels? false})}
@@ -40,7 +40,7 @@
               {:variant         :colorway
                :variant-scale   :colorway/named
                :attrs           {:spinner-type :propeller}
-               :attrs/display   {:text-size :xlarge}
+               :attrs/display   {:size :xl}
                :variant-labels? false})}
 
    {:desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
@@ -49,7 +49,7 @@
               {:variant         :colorway
                :variant-scale   :colorway/named
                :attrs           {:spinner-type :donut}
-               :attrs/display   {:text-size :xlarge}
+               :attrs/display   {:size :xl}
                :variant-labels? false})}
    
    {:desc    "Colorway of the spinner. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
@@ -58,6 +58,6 @@
               {:variant         :colorway
                :variant-scale   :colorway/named
                :attrs           {:spinner-type :thinking}
-               :attrs/display   {:text-size :xxsmall}
+               :attrs/display   {:size :2xs}
                :variant-labels? false})}
    ])

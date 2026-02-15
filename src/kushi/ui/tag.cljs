@@ -9,7 +9,7 @@
 (defui tag
   {:summary      "A tag is typically used for concise information, often in a group with other tags."
    :desc         "Tags are fundamental components that allow to organize information, or view organized information."
-   :props/shared [:text-size
+   :props/shared [:size
                   :end-enhancer
                   :start-enhancer
                   :colorway

@@ -16,23 +16,23 @@
 ;; TODO remove section-label
 ;; TODO hoist reqs up to a higher level
 (def sizes
-  [:xxsmall
-   :xsmall
-   :small
-   :medium
-   :large])
+  [:2xs
+   :xs
+   :sm
+   :base
+   :lg])
 
 
 (def demos
-  [{:label     "Text sizes from xxsmall to large"
+  [{:label     "Text sizes from 2xs to lg"
     :row-attrs (sx :gtc--80px:400px)
-    :desc      "Text sizes from xxsmall to large"
+    :desc      "Text sizes from 2xs to lg"
     :samples   (samples
                 [
 
-                 "xxsmall"
+                 "2xs"
                  [card 
-                  {:text-size :xxsmall}
+                  {:size :2xs}
                   [flex-row (sx :ai--stretch :gap--0.8em)
                    [:div (merge-attrs
                           (sx :position--relative
@@ -51,14 +51,14 @@
                             {:data-ks-position :absolute-centered})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
-                    [:p (sx :fs--1.25em :fw--$text-weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :fs--1.25em :fw--$font-weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
                      "polar.bear@example.com"]]]]
 
-                 "xsmall"
+                 "xs"
                  [card 
-                  {:text-size :xsmall}
+                  {:size :xs}
                   [flex-row (sx :ai--stretch :gap--0.8em)
                    [:div (sx :position--relative
                              :overflow--hidden
@@ -76,14 +76,14 @@
                              :data-ks-transition ""})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
-                    [:p (sx :fs--1.25em :fw--$text-weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :fs--1.25em :fw--$font-weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
                      "polar.bear@example.com"]]]]
 
-                 "small"
+                 "sm"
                  [card 
-                  {:text-size :small}
+                  {:size :sm}
                   [flex-row (sx :ai--stretch :gap--0.8em)
                    [:div (merge-attrs
                           (sx :overflow--hidden
@@ -102,14 +102,14 @@
                              :data-ks-transition ""})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
-                    [:p (sx :fs--1.25em :fw--$text-weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :fs--1.25em :fw--$font-weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
                      "polar.bear@example.com"]]]]
 
-                 "medium"
+                 "base"
                  [card 
-                  {:text-size :medium}
+                  {:size :base}
                   [flex-row (sx :ai--stretch :gap--0.8em)
                    [:div (merge-attrs
                           (sx :overflow--hidden
@@ -127,14 +127,14 @@
                              :data-ks-display  :block})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
-                    [:p (sx :fs--1.25em :fw--$text-weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :fs--1.25em :fw--$font-weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
                      "polar.bear@example.com"]]]]
 
-                 "large"
+                 "lg"
                  [card 
-                  {:text-size :large}
+                  {:size :lg}
                   [flex-row (sx :ai--stretch :gap--0.8em)
                    [:div (sx :.rounded
                              :position--relative
@@ -151,20 +151,20 @@
                              :data-ks-display  :block})
                      "🐻‍❄"]]
                    [flex-col (sx {:jc :sa})
-                    [:p (sx :fs--1.25em :fw--$text-weight-wee-bold) "Polar Bear"] 
+                    [:p (sx :fs--1.25em :fw--$font-weight-wee-bold) "Polar Bear"] 
                     [:p (sx :c--$secondary-foreground-color
                             :dark:c--$secondary-foreground-dark-mode)
                      "polar.bear@example.com"]]]]
                  ])}
    
-   {:label     "Shadow sizes from xxsmall to xxxlarge"
+   {:label     "Shadow sizes from 2xs to 3xl"
     :row-attrs (sx :gtc--80px:400px
                    :row-gap--3rem
                    :_.ks-card:color--$foreground-color-secondary)
-    :desc      "Shadow sizes from xxsmall to xxxlarge"
+    :desc      "Shadow sizes from 2xs to 3xl"
     :samples   (samples-with-variant
                 {:variant       :shadow
-                 :attrs         {:text-size :large}
+                 :attrs         {:size :lg}
                  :args          ["Card with shadow"]})}
    
    {:label     "Shadow colors"
@@ -174,15 +174,15 @@
     :desc      "Shadow colors"
     :samples   (samples-with-variant
                 {:variant       :shadow-color
-                ;;  :variant-scale :text-size/xxsmall-large
-                 :attrs         {:text-size :large :shadow :medium}
+                ;;  :variant-scale :size/2xs-lg
+                 :attrs         {:size :lg :shadow :md}
                  :args          ["Card with colored shadow"]})}
    ])
 
 
 #_(def examples
   [
-   {:desc      "Text sizes from xxsmall to large"
+   {:desc      "Text sizes from 2xs to lg"
     :row-attrs (sx 
                 :ai--fs
                 :flex-direction--column
@@ -192,7 +192,7 @@
                 :_.kushi-card:b--1px:solid:$neutral-200
                 :dark:_.kushi-card:b--1px:solid:$neutral-700)
     :snippets-header component-examples/sizes-snippet-header*
-    :snippets ['[card (sx :fs--xxlarge) "My content"]]
+    :snippets ['[card (sx :fs--2xl) "My content"]]
     :examples  (for [sz sizes]
                  {:label (name sz)
                   :attrs {:class [sz]}
@@ -262,14 +262,14 @@
                    :dark:_.kushi-card:b--1px:solid:$neutral-800)
     :examples  [{:label "Alien"
                  :code  (sx-call [card
-                                  (sx :fs--$text-size-xxsmall
-                                      :xsm:fs--$text-size-small
-                                      :sm:fs--$text-size-medium
-                                      :md:fs--$text-size-large
-                                      :lg:fs--$text-size-xlarge
+                                  (sx :fs--$text-2xs
+                                      :xsm:fs--$text-sm
+                                      :sm:fs--$text-base
+                                      :md:fs--$text-lg
+                                      :lg:fs--$text-xl
                                       :.extra-bold
                                       :.flex-col-c
-                                      :.rounded-small
+                                      :.rounded-sm
                                       :p--0
                                       :height--12em
                                       :tt--u

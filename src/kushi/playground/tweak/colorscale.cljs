@@ -213,7 +213,7 @@
    :before   {:content :$value
               :o       :33%
               :pi      :1em
-              :fs      :$xsmall}})
+              :fs      :$xs}})
 
 (defn color-sliders [factor scale-key label-attrs]
   (into [:div.flex-col-c]
@@ -278,7 +278,7 @@
                         :before:pis--1em
                         :before:o--33%
                         :before:pi--1em
-                        :before:fs--$xsmall))])))
+                        :before:fs--$xs))])))
 
    [:div (sx :.flex-row-fs
              :gap--4rem

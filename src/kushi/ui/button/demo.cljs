@@ -15,12 +15,12 @@
         :desc    "Contour of the button."
         :samples (samples-with-variant
                   {:variant       :shape
-                   :variant-scale :shape/rounded-medium-xxxlarge
-                   :attrs         {:text-size    :xxxlarge
+                   :variant-scale :shape/rounded-md-3xl
+                   :attrs         {:size    :3xl
                                    :end-enhancer :east
                                    :colorway     :accent
                                    :surface      :solid
-                                   :style        {:font-size :50px}}
+                                   :style        {:size :50px}}
                    :args          ["Next"]})}
      #_{:label   "Shadow"
         :desc    "Preset shadow styles."
@@ -43,7 +43,7 @@
                :x-variants    [:surface/basic],
                :snippets?     false
                ;; :attrs/snippet  {:surface :solid},
-               ;; :attrs/display  {:text-size :small},
+               ;; :attrs/display  {:size :sm},
                ;; :label          "Colorways, surfaces × shapes",
                :label         "Colorways × surfaces",
                :attrs         {:end-enhancer :east
@@ -101,7 +101,7 @@
                  :x-variants    [:surface/basic],
                  :snippets?     false
                ;;  :attrs/snippet  {:surface :solid},
-               ;; :attrs/display  {:text-size :small},
+               ;; :attrs/display  {:size :sm},
                ;;  :label          "Colorways, surfaces × shapes",
                  :label         "Colorways × surfaces",
                  :attrs         {:end-enhancer :east
@@ -116,7 +116,7 @@
                  :x-variants    [:surface/basic],
                  :snippets?     false
               ;;  :attrs/snippet  {:surface :solid},
-               ;; :attrs/display  {:text-size :small},
+               ;; :attrs/display  {:size :sm},
               ;;  :label          "Colorways, surfaces × shapes",
                  :label         "Contour × surfaces",
                  :attrs         {:end-enhancer :east
@@ -153,10 +153,10 @@
 
      {:label   "size"
     ;;  :label/modal "Colorways ..."
-      :desc    "Text sizes from xxxsmall to xxxlarge"
+      :desc    "Text sizes from 3xs to 3xl"
     ;; :row-style {:border "1px solid red"}
       :samples (samples-with-variant
-                {:variant :text-size
+                {:variant :size
               ;; :variant-labels? false
                  :attrs   {:surface      :solid
                            :end-enhancer :east
@@ -179,7 +179,7 @@
                           {:end-enhancer :east,
                            :colorway     :accent,
                            :surface      :minimal,
-                           :stroke       :medium
+                           :stroke       :md
                            :stroke-width :1px
                            :stroke-align :inside}
                           "Next"]
@@ -187,7 +187,7 @@
                           {:end-enhancer :east,
                            :colorway     :accent,
                            :surface      :minimal,
-                           :stroke       :medium
+                           :stroke       :md
                            :stroke-width :2px
                            :stroke-align :inside}
                           "Next"]
@@ -195,7 +195,7 @@
                           {:end-enhancer :east,
                            :colorway     :accent,
                            :surface      :minimal,
-                           :stroke       :medium
+                           :stroke       :md
                            :stroke-width :3px
                            :stroke-align :inside}
                           "Next"]
@@ -203,7 +203,7 @@
                           {:end-enhancer :east,
                            :colorway     :accent,
                            :surface      :minimal,
-                           :stroke       :medium
+                           :stroke       :md
                            :stroke-width :4px
                            :stroke-align :inside}
                           "Next"]
@@ -216,7 +216,7 @@
                           {:end-enhancer :east,
                            :colorway     :accent,
                            :surface      :minimal,
-                           :stroke       :medium
+                           :stroke       :md
                            :stroke-width :2px
                            :stroke-align :inside}
                           "Next"]
@@ -224,7 +224,7 @@
                           {:end-enhancer :east,
                            :colorway     :accent,
                            :surface      :minimal,
-                           :stroke       :medium
+                           :stroke       :md
                            :stroke-width :2px
                            :stroke-align :outside}
                           "Next"]])}

@@ -114,8 +114,8 @@
       ;; Include this if using cormorant serif face in :$serif-font-stack
       ;;  :.cormorant-section-label
       ;; Comment fs below if using cormorant serif face in :$serif-font-stack
-      ;;  :fs--$text-size-small
-       :fs--$text-size-small-b
+      ;;  :fs--$text-sm
+       :fs--$text-sm-b
        :.oblique
        :.neutralize-secondary
        :lh--1.7
@@ -164,7 +164,7 @@
         component-label]
        label]
       ;; #_[button (sx :.extra-light
-      ;;             :.xxlarge 
+      ;;             :.2xl 
       ;;             :.minimal 
       ;;             :.pill
       ;;             :p--0
@@ -187,7 +187,7 @@
     (css :.kushi-playground-examples-modal-trigger
          :pb--0.4em
          :fw--$wee-bold
-         :fs--$text-size-xxsmall
+         :fs--$text-2xs
          :.accent.minimal:hover:background-color--$accent-50
          :dark:.accent.minimal:hover:background-color--$accent-800
 
@@ -202,7 +202,7 @@
                           :bgc      :$accent-foreground
                           :top      "calc(100% + 2px)"}])
     :on-click (fn* [] (open-kushi-modal modal-id))}
-   [icon (sx :.kushi-playground-examples-modal-trigger-icon :.small :.extra-bold) :code]
+   [icon (sx :.kushi-playground-examples-modal-trigger-icon :.sm :.extra-bold) :code]
    "Code"])
 
 (defn examples-section
@@ -324,7 +324,7 @@
         [:block-start :inline-end]})
       attrs)
      [icon (sx :.kushi-playground-copy-to-clipboard-button-icon
-               :fs--medium) mui.svg/content-copy]]))
+               :fs--md) mui.svg/content-copy]]))
 
 (defn- snippet-section
   [{:keys [header
@@ -340,7 +340,7 @@
    [:section 
     (sx :.kushi-playground-snippet-section
         :.code
-        :.xsmall
+        :.xs
         :xsm:p--1.5em
         :position--relative
         :p--1.0em
@@ -393,8 +393,8 @@
          :_.code:ws--n
          :_pre_code:p--0
          :_pre_.code:p--0
-         :_pre_code:fs--$text-size-xsmall
-         :_pre_.code:fs--$text-size-xsmall
+         :_pre_code:fs--$text-xs
+         :_pre_.code:fs--$text-xs
          :lh--1.7
          :ai--fs
          :min-width--200px
@@ -516,39 +516,39 @@
    "accent"   "blue"})
 
 (def sizes
-  [#_:xxxsmall
-   :xxsmall
-   :xsmall
-   :small
-   :medium
-   :large
-   :xlarge
-   #_:xxlarge
-   #_:xxxlarge] )
+  [#_:3xs
+   :2xs
+   :xs
+   :sm
+   :md
+   :lg
+   :xl
+   #_:2xl
+   #_:3xl] )
 
 (def sizes-all
-  [:xxxsmall
-   :xxsmall
-   :xsmall
-   :small
-   :medium
-   :large
-   :xlarge
-   :xxlarge
-   :xxxlarge] )
+  [:3xs
+   :2xs
+   :xs
+   :sm
+   :md
+   :lg
+   :xl
+   :2xl
+   :3xl] )
 
 
 (def sizes-snippet-header*
-  ["Use the font-size utility classes `:.xxxsmall` ~ `:.xxxlarge` to control the size."
+  ["Use the size utility classes `:.3xs` ~ `:.3xl` to control the size."
    "You can also use something like `:fs--96px` for specific sizes."
    :br
    :br])
         
 (defn sizes-snippet-map [sym]
   {:snippets-header (conj sizes-snippet-header* "A few examples of different sizes:")
-   :snippets        [[sym '(sx :.small)]
-                     [sym '(sx :.large)]
-                     [sym '(sx :.xxxlarge)]]})
+   :snippets        [[sym '(sx :.sm)]
+                     [sym '(sx :.lg)]
+                     [sym '(sx :.3xl)]]})
 
 (def sizes-snippet-scale-header
   (conj sizes-snippet-header* "Scale of different sizes:"))
@@ -561,23 +561,23 @@
     :snippets        [(if arg
                         [:div
                          [sym arg]
-                         [sym '(sx :.xxxsmall) arg]
-                         [sym '(sx :.xxsmall) arg]
-                         [sym '(sx :.xsmall) arg]
-                         [sym '(sx :.small) arg]
-                         [sym '(sx :.medium) arg]
-                         [sym '(sx :.large) arg]
-                         [sym '(sx :.xlarge) arg]
-                         [sym '(sx :.xxlarge) arg]
-                         [sym '(sx :.xxxlarge) arg]]
+                         [sym '(sx2 {:size :3xs}) arg]
+                         [sym '(sx2 {:size :2xs}) arg]
+                         [sym '(sx2 {:size :xs}) arg]
+                         [sym '(sx2 {:size :sm}) arg]
+                         [sym '(sx2 {:size :base}) arg]
+                         [sym '(sx2 {:size :lg}) arg]
+                         [sym '(sx2 {:size :xl}) arg]
+                         [sym '(sx2 {:size :2xl}) arg]
+                         [sym '(sx2 {:size :3xl}) arg]]
                         [:div
                          [sym]
-                         [sym '(sx :.xxxsmall)]
-                         [sym '(sx :.xxsmall)]
-                         [sym '(sx :.xsmall)]
-                         [sym '(sx :.small)]
-                         [sym '(sx :.medium)]
-                         [sym '(sx :.large)]
-                         [sym '(sx :.xlarge)]
-                         [sym '(sx :.xxlarge)]
-                         [sym '(sx :.xxxlarge)]])]}))
+                         [sym '(sx2 {:size :3xs})]
+                         [sym '(sx2 {:size :2xs})]
+                         [sym '(sx2 {:size :xs})]
+                         [sym '(sx2 {:size :sm})]
+                         [sym '(sx2 {:size :base})]
+                         [sym '(sx2 {:size :lg})]
+                         [sym '(sx2 {:size :xl})]
+                         [sym '(sx2 {:size :2xl})]
+                         [sym '(sx2 {:size :3xl})]])]}))

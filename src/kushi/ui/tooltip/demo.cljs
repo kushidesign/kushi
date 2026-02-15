@@ -65,7 +65,7 @@
     :header/dialog "Tooltip"
     :require       '[[kushi.ui.button :refer [button]]]
     :samples       (samples [[button (merge-attrs
-                                      {:text-size :small}
+                                      {:size :sm}
                                       (tooltip-attrs {:text "This is a tooltip"}))
                               "Hover me"]])}
    
@@ -74,7 +74,7 @@
     :require       '[[kushi.ui.button :refer [button]]]
     :samples       (samples [[button
                               (merge-attrs
-                               {:text-size :small}
+                               {:size :sm}
                                (tooltip-attrs
                                 {:text          "This is a tooltip"
                                  :tooltip-class (css {:--tooltip-font-size                  :34px
@@ -105,8 +105,8 @@
                               :gta--$gta
                               [:>span {:ta             :c
                                        :ff             :$code-font-stack
-                                       :fs             :$text-size-xsmall
-                                       :fw             :$text-weight-wee-bold
+                                       :fs             :$font-size-xs
+                                       :fw             :$font-weight-wee-bold
                                        :cursor         :pointer
                                        :bgc            :$neutral-100
                                        :d              :flex

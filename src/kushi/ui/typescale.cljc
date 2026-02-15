@@ -3,7 +3,7 @@
    [clojure.string :as string]))
 
 
-;; primary type scale from xxxxsmall ~ xxxxlarge
+;; primary type scale from 4xs ~ 4xl
 (def scale-a
   [0.64
    0.67
@@ -18,7 +18,7 @@
    3.03])
 
 
-;; Secondary type scale from xxxxsmall ~ xxxxlarge
+;; Secondary type scale from 4xs ~ 4xl
 ;; Shifted "up"
 (def scale-b
   [0.655
@@ -38,13 +38,13 @@
   (when (and (pos-int? n) (< 2 n 6))
     (map #(keyword (str "$text-" (string/join (repeat % "x")) s)) (range n))))
 
-(defn type-scale-map [{:keys [full shift medium-index expanded-scale?]} f coll]
+(defn type-scale-map [{:keys [full shift md-index expanded-scale?]} f coll]
   (let [fallback        (if (= f -) (first full) (last full))
         step-multiplier (if expanded-scale? 2 1)]
     (into {}
           (map-indexed (fn [idx s]
                          [s (keyword (str (nth full
-                                               (f (+ shift medium-index)
+                                               (f (+ shift md-index)
                                                   (* step-multiplier (inc idx)))
                                                fallback)
                                           "rem"))])
@@ -87,9 +87,9 @@
                          :expanded-scale? expanded-scale?}
         smalls          (create-tshirt-sizes "small" num-sizes)
         smalls+         (type-scale-map opts - smalls)
-        larges          (create-tshirt-sizes "large" num-sizes)
-        larges+         (type-scale-map opts + larges)
-        medium+         {:$size-medium (keyword (str (nth full (+ shift medium-index)) "rem"))}
-        sizes           (concat (reverse smalls+) medium+ larges+)]
+        lgs          (create-tshirt-sizes "lg" num-sizes)
+        lgs+         (type-scale-map opts + lgs)
+        medium+         {:$text-base (keyword (str (nth full (+ shift medium-index)) "rem"))}
+        sizes           (concat (reverse smalls+) medium+ lgs+)]
     (apply concat sizes)))
 

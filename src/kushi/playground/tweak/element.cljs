@@ -25,8 +25,8 @@
 
 (def variants-by-category
   {
-   :size          [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge #_:xxlarge #_:xxxlarge]
-   :size-expanded [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge :xxxxlarge]
+   :size          [:3xs :2xs :xs :sm :base :lg :xl #_:2xl #_:3xl]
+   :size-expanded [:3xs :2xs :xs :sm :base :lg :xl :2xl :3xl :4xl]
    :tracking      [:xxxtight
                    :xxtight
                    :xtight
@@ -304,7 +304,7 @@
       [copy-to-clipboard-button
        (merge-attrs
         (sx :.kushi-slider-single-value-label-copy-to-clipboard-button
-            :>button:h--$medium
+            :>button:h--$base
             :m--0)
         {:placement :left
          ;; :on-click   #(copy-to-clipboard! (.-textContent (.-firstChild (domo/nearest-ancestor (domo/et %) ".kushi-slider-single-value-label-wrapper"))))
@@ -368,7 +368,7 @@
      {:-copy-to-clipboard-fn copy-to-clipboard-fn
       :-steps                family-classes
       :-step-marker          :dot
-      :-label-size-class     :medium
+      :-label-size-class     :base
       :-labels-attrs         (sx :.tweakable-label)
       :-display-step-labels? false
       :-default-index        og-class-idx
@@ -413,7 +413,7 @@
      (sx :w--100%
          {:-copy-to-clipboard-fn copy-to-clipboard-fn
           :-step-label-suffix    (name unit-type)
-          :-label-size-class     :xxsmall
+          :-label-size-class     :2xs
           :-labels-attrs         (sx :.tweakable-label)
           :-default-index        og-idx
           :default-value         css-value
@@ -438,7 +438,7 @@
   [:dark:after:color :$neutral-foreground-dark-mode])
 
 (defcss ".tweakable-label"
-  :.xsmall
+  :.xs
   :.wee-bold
   :>label:padding--0.25em:0.5em
   :>label:border-radius--$rounded
@@ -476,7 +476,7 @@
         (when-not css-prop :.italic)
         
         utility-family-class
-        (if utility-family :.xsmall :.xxsmall)]
+        (if utility-family :.xs :.2xs)]
 
     [:li (merge-attrs 
           (sx :.tweaker-control-row
@@ -552,7 +552,7 @@
                                 (apply domo/remove-class! el (:family-classes og))
                                 (domo/add-class! el (:og-value og))))))}
        :refresh]]
-     [switch (sx :.small
+     [switch (sx :.sm
                  :mis--1rem
                  {:on?     true
                   :on-click (fn [e]
@@ -785,7 +785,7 @@
               ;;                                :css-property
               ;;                                "font-size"
               ;;                                :default-value
-              ;;                                "medium"
+              ;;                                "base"
               ;;                                :category
               ;;                                :size-expanded)]]
 
@@ -834,7 +834,7 @@
                  [icon :close]]
 
                 #_[button
-                   (sx :.xsmall
+                   (sx :.xs
                        :w--fit-content
                        {:on-click (fn [_]
                                     (let [

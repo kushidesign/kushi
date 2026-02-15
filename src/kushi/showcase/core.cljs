@@ -319,7 +319,7 @@
                                   :ws--n
                                   :.foreground-color-secondary
                                   :text-shadow--none
-                                  :fs--$text-size-xsmall
+                                  :fs--$text-xs
                                   :ff--$sans-serif-font-stack)
                         variant-label]
                        (into [uic-fn
@@ -349,7 +349,7 @@
                          :ws--n
                          :.foreground-color-secondary
                          :text-shadow--none
-                         :fs--$text-size-xsmall
+                         :fs--$text-xs
                          :ff--$sans-serif-font-stack)
                variant-label]
               (:code/evaled sample))))
@@ -580,7 +580,7 @@
                                             :translate        :3px
                                             :white-space      "nowrap"
                                             :color            :white
-                                            :font-size        :12px}})}
+                                            :size        :12px}})}
                    (into [uic-fn
                           (merge-attrs {v-2d   a
                                         b-prop b}
@@ -774,7 +774,7 @@
 
          #_[lightswitch 
           {:surface   :transparent
-           :text-size :xxxlarge
+           :size :3xl
            :class     :display-fixed-block-start-inside}]]
 
         (map-indexed

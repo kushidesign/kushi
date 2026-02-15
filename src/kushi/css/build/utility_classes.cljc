@@ -45,8 +45,10 @@
         v))
     v))
 
+
 (defn mapcatv [f coll]
   (into [] (mapcat f coll)))
+
 
 (defn maybe-data-attr-css-selector
   ([s]
@@ -55,6 +57,7 @@
    (if data-attr
      (str "[data-" data-attr "=\"" s "\"]")
      s)))
+
 
 (defn scale-of-utility-defs
   ([coll ks]
@@ -83,17 +86,17 @@
                            ks))]))
             coll)))
 
+
 (defn utility-class-scale
+  ;; Add another example
   {:examples [{:desc   "Generating an ordered scale of font-size utility classes"
-               :call   '(utility-class-scale [:xxxsmall :xxsmall :small]
-                                             :font-size
-                                             "text-size")
-               :result [:xxxsmall
-                        {:font-size :$text-size-xxxsmall}
-                        :xxsmall
-                        {:font-size :$text-size-xxsmall}
-                        :xsmall
-                        {:font-size :$text-size-xsmall}]}]}
+               :call   '(utility-class-scale [:3xs :2xs :sm] :font-size nil)
+               :result [:3xs
+                        {:font-size :$font-size-3xs}
+                        :2xs
+                        {:font-size :$font-size-2xs}
+                        :xs
+                        {:font-size :$font-size-xs}]}]}
   ([coll css-prop]
    (utility-class-scale coll css-prop nil))
   ([coll css-prop token-prefix]
@@ -124,11 +127,14 @@
          (map-indexed (fn [i x] 
                         (if (odd? i) 
                           x
-                          (->> x
-                               name
-                               (str "." 
-                                    prefix 
-                                    (when prefix "-")))))
+                          (let [s                  (name x)
+                                starts-with-digit? (re-find #"^[0-9]" s)]
+                            (str "."
+                                 (when starts-with-digit? "\\3")
+                                 s
+                                 (when starts-with-digit? " ")
+                                 prefix
+                                 (when prefix "-")))))
                       coll))))
 
 
@@ -187,20 +193,64 @@
 
 (def type-weights (keys type-weights-by-name))
 
-;;
+
+;; DISPLAY
+;; -----------------------------------------------------------------------------
+(def align-items-classes
+  [:items-normal        {:align-items "stretch"}
+   :items-self-start    {:align-items "self-start"}
+   :items-self-end      {:align-items "self-end"}
+   :items-flex-start    {:align-items "flex-start"}
+   :items-flex-end      {:align-items "flex-end"}
+   :items-start         {:align-items "start"}
+   :items-end           {:align-items "end"}
+   :items-center        {:align-items "center"}
+   :items-anchor-center {:align-items "anchor-center"}
+   :items-baseline      {:align-items "baseline"}
+   :items-stretch       {:align-items "stretch"}])
+
 
 ;; DISPLAY
 ;; -----------------------------------------------------------------------------
 (def display-classes
-  [:block        {:display :block}
-   :inline       {:display :inline}
-   :inline-block {:display :inline-block}
-   :flex         {:display :flex}
-   :inline-flex  {:display :inline-flex}
-   :grid         {:display :grid}
-   :inline-grid  {:display :inline-grid}
-   :flow-root    {:display :flow-root}
-   :contents     {:display :contents}])
+  [:block              {:display :block}
+   :inline             {:display :inline}
+   :inline-block       {:display :inline-block}
+   :flex               {:display :flex}
+   :inline-flex        {:display :inline-flex}
+   :grid               {:display :grid}
+   :inline-grid        {:display :inline-grid}
+   :flow-root          {:display :flow-root}
+   :contents           {:display :contents}
+   :table              {:display :table}
+   :inline-table       {:display :inline-table}
+   :table-caption      {:display :table-caption}
+   :table-cell         {:display :table-cell}
+   :table-column       {:display :table-column}
+   :table-column-group {:display :table-column-group}
+   :table-footer-group {:display :table-footer-group}
+   :table-header-group {:display :table-header-group}
+   :table-row-group    {:display :table-row-group}
+   :table-row          {:display :table-row}
+   :list-item          {:display :list-item}
+   :no-display         {:display :none}
+   :sr-only            {:position     :absolute
+                        :width        :1px
+                        :height       :1px
+                        :padding      :0
+                        :margin       :-1px
+                        :overflow     :hidden
+                        :clip-path    "inset(50%)"
+                        :white-space  :nowrap
+                        :border-width :0}
+   :not-sr-only        {:position    :static
+                        :width       :auto
+                        :height      :auto
+                        :padding     0
+                        :margin      0
+                        :overflow    :visible
+                        :clip-path   :none
+                        :white-space :normal}])
 
 
 ;; Combinatorial flexbox utilities
@@ -527,7 +577,7 @@
 (def icon-synced-weights
   "Creates an ordered vector of pairs, thin ~ heavy (100 ~ 900):
    [:thin 
-    {:font-weight                             :$text-weight-thin
+    {:font-weight                             :$font-weight-thin
      \" .ks-icon:font-variation-settings\" \"'wght' 100\"
      \".ks-icon:font-variation-settings\"  \"'wght' 100\"}
    ...]"
@@ -538,7 +588,7 @@
             sel      (if (= sel-fn data-ks-sels) ".ks-icon" ".ks-icon")
             ancestor (if (= sel-fn data-ks-sels) "[data-ks-weight]" "[class*=\"weight-\"]")]
         {:font-weight                           
-         (->> k util/stringify (str "$text-weight-") keyword)
+         (->> k util/stringify (str "$font-weight-") keyword)
 
          (str " " sel ":font-variation-settings")
          v
@@ -576,7 +626,7 @@
 ;; TODO maybe just do in css?
 #_(def transition-duration-classes
   (utility-class-scale
-   (variants/tshirt-sizes [:slow :moderate :fast]
+   (variants/tshirt-sizes [:slow :base :fast]
                           {:number-of-sizes 3
                            :cast-fn         keyword})
    :transition-duration))
@@ -619,8 +669,8 @@
   :full-size-kana {:text-transform :full-size-kana}
   :math-auto      {:text-transform :math-auto}])
 
-(def text-size-classes
-  (utility-class-scale variants/xxxsmall-xxxlarge :font-size :text-size))
+(def font-size-classes
+  (utility-class-scale variants/sizes-3xs-3xl :font-size "font-size"))
 
 (def text-tracking-classes
   (utility-class-scale
@@ -637,6 +687,7 @@
 (def shape-classes-non-rounded
   [:pill {:border-radius :9999px}
    :sharp {:border-radius :0px}
+   :rounded {:border-radius :$shape-rounded}
   ;;  :squircle {}
   ;;  :notched {}
    ])
@@ -811,10 +862,10 @@
            {:top    :unset
             :bottom "0%"})))
 
-(def text-weight-synced-classes 
+(def font-weight-synced-classes 
   ;; TODO fix this docstring
   "[\".weight-light\"
-    {:font-weight                :$text-weight-light
+    {:font-weight                :$font-weight-light
      \" >.ks-radio-i \"...    :$input-border-weight-light
      \" >.ks-checkbo \"...    :$input-border-weight-light
      \" .ks-icon:fo \"... \"  'wght' 300 \"
@@ -838,10 +889,16 @@
 
    ;; display utility classes e.g. [data-ks-display="inline"]
    (sel-fn display-classes "display")
+   (class-sels display-classes)
 
    ;; combo flex-utility classes e.g. [data-ks-display="flex-row-flex-end"]
    (sel-fn base-flex-classes "display")
+   (class-sels base-flex-classes)
    (sel-fn combo-flex-utility-classes "display")
+   (class-sels combo-flex-utility-classes)
+
+   ;; align-items utility classes e.g. .items-center]
+   (class-sels align-items-classes)
 
    ;; data-ks-background-image-behavior="cover"
    ;; - bg image help   ->   :.bg-image-cover, :.bg-image-contain
@@ -867,22 +924,39 @@
    ;; These are combinatorial classes dealing with:
    ;; - abs fixed pos   e.g. :.absolute-block-end-inside 
    (sel-fn position-classes "position")
+   (class-sels position-classes)
 
    ;; These are geometry-based absolute and fixed positioning utilities 
    ;; e.g. :.top-left-outside :.top-left-corner-outside etc.
    ;; data-ks-placement="top-left-outside"
    ;; data-ks-placement="absolute-block-end-inside "
    (sel-fn geom-top-left-corners "position")
+   (class-sels geom-top-left-corners)
+
    (sel-fn geom-top-right-corners "position")
+   (class-sels geom-top-right-corners)
+
    (sel-fn geom-bottom-left-corners "position")
+   (class-sels geom-bottom-left-corners)
+
    (sel-fn geom-bottom-right-corners "position")
+   (class-sels geom-bottom-right-corners)
+
    (sel-fn geom-left-side "position")
+   (class-sels geom-left-side)
+
    (sel-fn geom-right-side "position")
+   (class-sels geom-right-side)
+
    (sel-fn geom-top-side "position")
+   (class-sels geom-top-side)
+
    (sel-fn geom-bottom-side "position")
+   (class-sels geom-bottom-side)
 
    ;; offscreen positioning
    (sel-fn offscreen-classes "position")
+   (class-sels offscreen-classes)
 
    ;; - abs fixed pos for pseudo   e.g. :.after-absolute-block-end-inside 
    (sel-fn pseudo-element-after-position-classes "after-position")
@@ -894,38 +968,39 @@
    ;; TODO maybe remove
    #_(sel-fn transition-duration-classes "transition")
 
-   ;; text weight
-   (sel-fn text-weight-synced-classes "text-weight")
+   ;; font weight
+   (sel-fn font-weight-synced-classes "weight")
+   (class-sels font-weight-synced-classes)
 
-   ;; text size
-   (sel-fn text-size-classes "text-size")
+   ;; font size
+   (sel-fn font-size-classes "size")
+   (class-sels font-size-classes)
 
    ;; text tracking
    (sel-fn text-tracking-classes "tracking")
 
    ;; surface shapes
    (sel-fn shape-classes-non-rounded "shape")
-   (sel-fn shape-classes-rounded "shape")
-
+   (class-sels shape-classes-non-rounded)
    (sel-fn shape-classes-rounded "shape")
    ])
 
-   ;; A scale of selectors like ".text-weight-thin"
+   ;; A scale of selectors like ".font-weight-thin"
    ;;
    ;; TODO - maybe you don't need this if you can figure out how to add a
    ;; setting to the css compiler to do:
    ;;
-   ;; (css-block {:fw $text-weight-thin})
+   ;; (css-block {:fw $font-weight-thin})
    ;; =>
-   ;; {:font-weight                           var(--text-weight-thin)
+   ;; {:weight                           var(--font-weight-thin)
    ;;  ">.ks-radio-input:border-weight"    $input-border-weight-thin
    ;;  " .ks-icon:font-variation-settings" "'wght' 100"}
    ;;
    ;; It would have to be a config that maps a props to fns e.g.
-   ;; {:font-weight (fn [x]
+   ;; {:weight (fn [x]
    ;;                 (if x-is-on-scale-of-type-weights?
    ;;                   (let [s (subs 1 (name x))] ; <- stringify it
-   ;;                     {:font-weight                        
+   ;;                     {:weight                        
    ;;                      x
    ;;                      ">.ks-radio-input:border-weight"
    ;;                      (keyword (str "$input-border-weight-" s))

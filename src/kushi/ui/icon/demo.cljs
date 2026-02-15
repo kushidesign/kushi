@@ -57,10 +57,10 @@
   [
    {:label   "Size"
     ;;  :label/modal "Colorways ..."
-    :desc    "Text sizes from xxxsmall to xxxlarge"
+    :desc    "Text sizes from 3xs to 3xl"
     ;; :row-style {:border "1px solid red"}
     :samples (samples-with-variant
-              {:variant         :text-size
+              {:variant         :size
                :variant-labels? false
               ;;  :variant-scale   :colorway/named
                :attrs           {}
@@ -75,7 +75,7 @@
               {:variant         :colorway
                :variant-labels? false
                :variant-scale   :colorway/named
-               :attrs           {:text-size :xxxlarge}
+               :attrs           {:size :3xl}
                :args            [:star]})}
 
     {:label   "Colorways, filled icon"
@@ -84,33 +84,33 @@
                 :variant-labels? false
                 :variant-scale   :colorway/named
                 :attrs           {:icon-filled true
-                                  :text-size       :xxxlarge}
+                                  :size       :3xl}
                 :args            [:star]})}
 
-   #_{:opt  :text-size
+   #_{:opt  :size
     :demo {:label           "Text sizes"
            :attrs           {}
            :variant-labels? false
-           ;; :x-variants [:text-weight]
+           ;; :x-variants [:weight]
            :args            [:star]
            :row-style       {:width           "100%"
                              :justify-content "space-between"}}}
    
    #_{:opt     :colorway 
     :demo    {:label           "Colorways"
-               :attrs           {:text-size :xxxlarge}
+               :attrs           {:size :3xl}
                :args            [:star]
                :variant-labels? false
                :variant-scale   :colorway/named}
 
     #_[{:label           "Colorways"
-               :attrs           {:text-size :xxxlarge}
+               :attrs           {:size :3xl}
                :args            [:star]
                :variant-labels? false
                :variant-scale   :colorway/named}
               {:label           "Colorways, filled icon"
                :attrs           {:icon-filled true
-                                 :text-size       :xxxlarge}
+                                 :size       :3xl}
                :args            [:star]
                :variant-labels? false
                :variant-scale   :colorway/named
@@ -122,10 +122,10 @@
     :desc    "Oh yeah"
     ;;  :row-style {}
     :samples (samples-from-variant
-              {:variant         :text-size
+              {:variant         :size
                :variant-labels? false
                :variant-scale   :colorway/named
-               :attrs           {:text-size :xxxlarge}
+               :attrs           {:size :3xl}
                :args            [:star]})}
 
 
@@ -133,25 +133,25 @@
     :desc    "Examples of semantic coloring of icons"
     :samples (samples ["accent"
                        [icon {:colorway :accent
-                              :text-size   :xxxlarge} :star]
+                              :size   :3xl} :star]
 
                        "negative"
                        [icon {:colorway :negative
-                              :text-size   :xxxlarge} :cancel]
+                              :size   :3xl} :cancel]
 
                        "positive"
                        [icon {:colorway :positive
-                              :text-size   :xxxlarge} :check-circle]
+                              :size   :3xl} :check-circle]
 
                        "warning"
                        [icon {:colorway :warning
-                              :text-size   :xxxlarge} :warning]])}
+                              :size   :3xl} :warning]])}
    
    {:label   "Semantic colorways, solid surface, round shape"
     :desc    "Examples of semantic coloring of icons"
     :samples (samples ["accent"
                        [icon {:colorway :accent
-                              :text-size   :xxxlarge
+                              :size   :3xl
                               :icon-filled true
                               ;; :surface  :solid
                               :shape  :circle}
@@ -159,14 +159,14 @@
 
                        "negative"
                        [icon {:colorway    :negative
-                              :text-size      :xxxlarge
+                              :size      :3xl
                               :icon-filled true
                               :shape     :circle}
                         :cancel]
 
                        "positive"
                        [icon {:colorway :positive
-                              :text-size   :xxxlarge
+                              :size   :3xl
                               :icon-filled true
                               ;; :surface  :solid
                               :shape  :circle} 
@@ -174,7 +174,7 @@
 
                        "warning"
                        [icon {:colorway :warning
-                              :text-size   :xxxlarge
+                              :size   :3xl
                               :icon-filled true
                               ;; :surface  :solid
                               :shape  :circle}
@@ -187,9 +187,9 @@
     :samples (samples-with-template 
               {:template-fn   showcase/icons-with-tooltips ; <- overrides :template? 
                :row-style     {:gap "2rem"}
-               :attrs         {:text-size :xxxlarge}
-               :attrs/display {:text-size :xxxlarge
-                               :text-weight :light}
+               :attrs         {:size :3xl}
+               :attrs/display {:size :3xl
+                               :weight :light}
                :args          [[:auto-awesome]
                                [:help]
                                [:info]
@@ -206,11 +206,11 @@
    
    [
 
-    {:opt  :text-size
+    {:opt  :size
      :demo {:label           "Text sizes"
             :attrs           {}
             :variant-labels? false
-                                    ;; :x-variants [:text-weight]
+                                    ;; :x-variants [:weight]
             :args            [:star]
             :row-style       {:width           "100%"
                               :justify-content "space-between"}}}
@@ -222,34 +222,34 @@
      :require [[kushi.ui.icon :refer [icon]]]
      :samples ["accent"
                [icon {:colorway :accent
-                      :text-size   :xxxlarge} :star]
+                      :size   :3xl} :star]
 
                "negative"
                [icon {:colorway :negative
-                      :text-size   :xxxlarge} :cancel]
+                      :size   :3xl} :cancel]
 
                "positive"
                [icon {:colorway :positive
-                      :text-size   :xxxlarge} :check-circle]
+                      :size   :3xl} :check-circle]
 
                "warning"
                [icon {:colorway :warning
-                      :text-size   :xxxlarge} :warning]]}
+                      :size   :3xl} :warning]]}
     
     {:label   "Semantic colorways"
      :desc    "Examples of semantic coloring of icons"
      :require [[kushi.ui.icon :refer [icon]]]
      :samples [[icon {:colorway :accent
-                      :text-size   :xxxlarge} :star]
+                      :size   :3xl} :star]
 
                [icon {:colorway :negative
-                      :text-size   :xxxlarge} :cancel]
+                      :size   :3xl} :cancel]
 
                [icon {:colorway :positive
-                      :text-size   :xxxlarge} :check-circle]
+                      :size   :3xl} :check-circle]
 
                [icon {:colorway :warning
-                      :text-size   :xxxlarge} :warning]]}
+                      :size   :3xl} :warning]]}
     
     {:label         [:span "Various icons" [:span " (hover to view icon name)"]]
      :label/modal   "Various icons"
@@ -257,8 +257,8 @@
      :require       '[[kushi.ui.icon :refer [icon]]]
      :row-style     {:flex-wrap :wrap
                      :gap       :2em}
-     :attrs/display {:text-size :xxxlarge
-                     :text-weight :light}
+     :attrs/display {:size :3xl
+                     :weight :light}
      :render-as     :icons-with-tooltips
      :samples       [:auto-awesome
                      :help
@@ -300,21 +300,21 @@
                      :menu]}]))
 
 #_{
-          :text-size         {:default :medium
+          :size         {:default :base
                           :desc    "Corresponds to the font-size based on Kushi's font-size scale."
                           :demo    {:label           "Text sizes"
                                     :attrs           {}
                                     :variant-labels? false
-                                    ;; :x-variants [:text-weight]
+                                    ;; :x-variants [:weight]
                                     :args            [:star]
                                     :row-style       {:width           "100%"
                                                       :justify-content "space-between"}}}
           
-          :text-weight       {:default :normal
+          :weight       {:default :normal
                           :desc    "Corresponds to the font-weight based on Kushi's font-weight scale."
                           :demo    {:label           "Weights"
                                     :attrs           {}
-                                    :attrs/display   {:text-size :xxxlarge}
+                                    :attrs/display   {:size :3xl}
                                     :variant-labels? false
                                     :args            [:star]
                                     :row-style       {:width           "100%"
@@ -323,13 +323,13 @@
           :colorway {:default nil
                      :desc    "Colorway of the icon. Can also be a named color from Kushi's design system, e.g `:red`, `:purple`, `:gold`, etc."
                      :demo    [{:label           "Colorways"
-                                  :attrs           {:text-size :xxxlarge}
+                                  :attrs           {:size :3xl}
                                   :args            [:star]
                                   :variant-labels? false
                                   :variant-scale   :colorway/named}
                                {:label           "Colorways, filled icon"
                                 :attrs           {:icon-filled true
-                                                  :text-size       :xxxlarge}
+                                                  :size       :3xl}
                                 :args            [:star]
                                 :variant-labels? false
                                 :variant-scale   :colorway/named
@@ -341,21 +341,21 @@
                          :desc    "Filled or not filled"
                          :demo    {:label         "Filled icon"
                                    :attrs         {}
-                                   :attrs/display {:text-size :xxxlarge}
+                                   :attrs/display {:size :3xl}
                                    :args          [:star]}}
           
           :icon-style   {:schema  (into #{} defs/icon-style)
                          :default :outlined
                          :desc    "Style of icon"
                          :demo    {:label "Icon styles"
-                                   :attrs {:text-size :xxxlarge}
+                                   :attrs {:size :3xl}
                                    :args  [:login]}}
           
           :inert       {:schema  boolean?
                          :default false
                          :desc    "Determines whether the icon will feature hover and active styles"
                          :demo    {:label "Inert or interactive styling"
-                                   :attrs {:text-size       :xxxlarge
+                                   :attrs {:size       :3xl
                                            :icon-filled? true 
                                            :colorway     :positive}
                                    :args  [:star]}}

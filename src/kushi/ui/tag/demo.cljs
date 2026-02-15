@@ -19,7 +19,7 @@
                :x-variants     [:surface/tag],
                :snippets-label "Colorways",
                :attrs/snippet  {:surface :solid},
-               ;; :attrs/display  {:text-size :small},
+               ;; :attrs/display  {:size :sm},
                :label          "Colorways ... surfaces × shapes",
                :rows?          true})}
 
@@ -50,10 +50,10 @@
 
    {:label   "size"
     ;;  :label/modal "Colorways ..."
-    :desc    "Text sizes from xxxsmall to xxxlarge"
+    :desc    "Text sizes from 3xs to 3xl"
     ;; :row-style {:border "1px solid red"}
     :samples (samples-with-variant
-              {:variant :text-size
+              {:variant :size
               ;; :variant-labels? false
                :attrs   {:surface  :solid
                          :colorway :accent}
@@ -108,14 +108,14 @@
     :samples (samples [[tag
                         {:colorway     :accent,
                         ;;  :surface      :minimal,
-                         :stroke       :medium
+                         :stroke       :md
                          :stroke-align :inside
                          :stroke-width :2px}
                         "New"]
                        [tag
                         {:colorway     :accent,
                         ;;  :surface      :outline,
-                         :stroke       :medium
+                         :stroke       :md
                          :stroke-align :outside
                          :stroke-width :2px}
                         "New"]])}
@@ -213,12 +213,12 @@
 ;; TODO remove section-label
 ;; TODO hoist reqs up to a higher level
 ;; (def sizes
-;;   [:xxsmall
-;;    :xsmall
-;;    :small
-;;    :medium
-;;    :large
-;;    :xlarge])
+;;   [:2xs
+;;    :xs
+;;    :sm
+;;    :base
+;;    :lg
+;;    :xl])
 
 ;; (def examples
 ;;   (let [playground-tag-rows-container
@@ -236,7 +236,7 @@
 ;;             :gtc--max-content:max-content)]
 ;;     [(merge
 ;;       (component-examples/sizes-snippet-scale 'tag "Done")
-;;       {:desc            "Text sizes from xxsmall to xlarge"
+;;       {:desc            "Text sizes from 2xs to xl"
 ;;        :row-attrs       (sx :md:ai--fe)
 ;;        :container-attrs playground-tag-rows-container24
 ;;        :examples        (for [sz sizes]
@@ -245,7 +245,7 @@
 ;;                            :args  ["Done"]})})
      
 ;;      {:desc            "Colorway variant"
-;;       :sx-attrs        (sx-call (sx :fs--$text-size-small))
+;;       :sx-attrs        (sx-call (sx :fs--$text-sm))
 ;;       :container-attrs playground-tag-rows-container4
 ;;       :variants+       [:minimal]
 ;;       :examples        (for [colorway component-examples/colors]
@@ -254,7 +254,7 @@
 ;;                           :attrs {:colorway colorway}})}
 
 ;;      #_{:desc            "Shape"
-;;       :sx-attrs        (sx-call (sx :fs--$text-size-small))
+;;       :sx-attrs        (sx-call (sx :fs--$text-sm))
 ;;       :container-attrs playground-tag-rows-container4
 ;;       :variants+       [:minimal]
 ;;       :examples        (for [s [:rounded :pill :sharp]]
@@ -264,7 +264,7 @@
 
 ;;      #_{:desc            "With icons"
 ;;       :reqs            '[[kushi.ui.icon :refer [icon]]]
-;;       :sx-attrs        (sx-call (sx :fs--$text-size-small))
+;;       :sx-attrs        (sx-call (sx :fs--$text-sm))
 ;;       :container-attrs playground-tag-rows-container4
 ;;       :variants+       [:minimal]
 ;;       :examples        [{:label "Icon tag"
@@ -277,7 +277,7 @@
 ;;                          :args  [[icon :pets] "Pets"]}]}
 
 ;;      #_{:desc            "Weight"
-;;       :sx-attrs        (sx-call (sx :fs--$text-size-small))
+;;       :sx-attrs        (sx-call (sx :fs--$text-sm))
 ;;       :container-attrs playground-tag-rows-container4
 ;;       :variants+       [:minimal]
 ;;       :examples        (for [s (rest component-examples/type-weights)]
@@ -287,7 +287,7 @@
 
 ;;      #_{:desc            "Max width"
 ;;       :reqs            '[[kushi.ui.icon :refer [icon]]]
-;;       :sx-attrs        (sx-call (sx :fs--$text-size-small))
+;;       :sx-attrs        (sx-call (sx :fs--$text-sm))
 ;;       :container-attrs (sx :gtc--max-content)
 ;;       :variants+       [:minimal]
 ;;       :examples        [{:label "Max width"

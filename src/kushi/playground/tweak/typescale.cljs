@@ -25,7 +25,7 @@
 (defn code-block [x]
   [:div.relative
    [:textarea
-    (merge-attrs (sx :fs--$small
+    (merge-attrs (sx :fs--$sm
                      :.code
                      :bgc--white
                      :b--1px:solid:$neutral-200
@@ -78,7 +78,7 @@
                                       ["nth-child(even)_.type-tweaker-type-size-class-name:visibility" :hidden])
                              [:span (sx :.flex-row-fs #_:min-width--200px)
                               [:span (sx :.type-tweaker-type-size-class-name
-                                         :.xxsmall
+                                         :.2xs
                                          :ff--$code-font-stack
                                          :.inline-block
                                          :min-width--125px)
@@ -102,7 +102,7 @@
                           [[:div
                             (sx :.flex-row-c :gap--1.5rem :mbs--2rem)
                             [button
-                             (sx :fs--$small
+                             (sx :fs--$sm
                                  {:on-click #(do (let [[_ to-reset _] (data/diff init-scale @state)]
                                                    (doseq [[size-kw _] to-reset]
                                                      (domo/set-css-var! js/document.body
@@ -111,7 +111,7 @@
                                                  (reset! state init-scale))})
                              "Reset"]
                             [button
-                             (sx :fs--$small
+                             (sx :fs--$sm
                                  {:on-click #(reset! copy-view? (not @copy-view?))})
                              "Copy data..."]]
                            [:div
@@ -146,7 +146,7 @@
                              (sx :.flex-row-c)
                              [button
                               (merge-attrs
-                               (sx :fs--$small)
+                               (sx :fs--$sm)
                                {:on-click #(reset! copy-view? (not @copy-view?))})
                               [icon :west]
                               "Back to controls"]]]]))))))

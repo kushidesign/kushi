@@ -17,16 +17,14 @@
               ($ button {:on-click #(set-state! dec)} "-")
               ($ :span state)
               ($ button {:on-click #(set-state! inc)} "+"))))
-    (!? &attrs)
+    ;; (!? &attrs)
     (into
-     [:div (merge-attrs 
-            (sx ".ks-box"
-                :.relative)
+     [:div (merge-attrs (sx ".ks-box" :.relative)
 
-            (!? :pp (decoration/stroke-width-cssvar (:stroke-width &props) "button"))
+            (decoration/stroke-width-cssvar (:stroke-width &props) "button")
 
             ;; no classics
-            (!? (decoration/shadow-and-stroke-attrs &props))
+            (decoration/shadow-and-stroke-attrs &props)
             &attrs
             )]
      &children)))

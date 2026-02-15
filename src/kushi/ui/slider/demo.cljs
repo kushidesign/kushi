@@ -89,9 +89,9 @@
 
      (f "Supplied step values"
         (sx-call [slider
-                  {:steps            ["xsmall" "medium" "large" "xlarge"]
+                  {:steps            ["xs" "base" "lg" "xl"]
                    :step-marker      :label 
-                   :label-size-class :medium}]) )
+                   :label-size-class :text-base}]) )
      
      (f "Supplied step values, custom horizontal shift for first and last values"
         (sx-call [slider
@@ -103,7 +103,7 @@
                    :step-marker      
                    :dot
                    :label-size-class 
-                   :small
+                   :sm
                    :labels-attrs     
                    (sx [:_.kushi-slider-step-label:first-child>span:translate
                         :-25%:-50%]

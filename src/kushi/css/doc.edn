@@ -3,7 +3,7 @@
 ;; -----------------------------------------------------------------------------
 
 [ 
- :.small
+ :.sm
  :pb--1em
  :last-child {:c     :blue
               :hover {:c   :gray
@@ -33,7 +33,7 @@
 
 ;; 2) Unpack vectorized & hydrate-tokenized
 [ 
- :.small
+ :.sm
  ["pb" "1em"]       ;; <-
  ["after:c" "red"]  ;; <-
  [:after:content "\"my after text\""]

@@ -84,7 +84,7 @@
   {:none   [["0" "transparent"]]
    :xsoft  [[:$stroke-width "color-mix(in oklch, currentColor var(--xsoft-stroke-transparency, 15%), var(--stroke-transparency-mix-color, transparent))"]]
    :soft   [[:$stroke-width "color-mix(in oklch, currentColor var(--soft-stroke-transparency, 30%), var(--stroke-transparency-mix-color, transparent)"]]
-   :medium [[:$stroke-width "color-mix(in oklch, currentColor var(--medium-stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))"]]
+   :md [[:$stroke-width "color-mix(in oklch, currentColor var(--md-stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))"]]
    :hard   [[:$stroke-width "color-mix(in oklch, currentColor var(--hard-stroke-transparency, 70%), var(--stroke-transparency-mix-color, transparent))"]]
    :xhard  [[:$stroke-width "color-mix(in oklch, currentColor var(--xhard-stroke-transparency, 100%), var(--stroke-transparency-mix-color, transparent))"]]
    })
@@ -102,15 +102,15 @@
 
 (def shadow-presets
   {
-   :xxxsmall [:$shadow-xxxsmall]
-   :xxsmall [:$shadow-xxsmall]
-   :xsmall  [:$shadow-xsmall]
-   :small   [:$shadow-small]
-   :medium  [:$shadow-medium]
-   :large   [:$shadow-large]
-   :xlarge  [:$shadow-xlarge]
-   :xxlarge [:$shadow-xxlarge]
-   :xxxlarge [:$shadow-xxxlarge]
+   :3xs [:$shadow-3xs]
+   :2xs [:$shadow-2xs]
+   :xs  [:$shadow-xs]
+   :sm   [:$shadow-sm]
+   :md  [:$shadow-md]
+   :lg   [:$shadow-lg]
+   :xl  [:$shadow-xl]
+   :2xl [:$shadow-2xl]
+   :3xl [:$shadow-3xl]
    })
 
 (def shadow-presets-key-set (->> shadow-presets keys (into #{})))
@@ -153,7 +153,7 @@
                :data-ks-stroke-align stroke-align}
 
               only-simple-shadow?
-              {:data-ks-shadow shadow}
+              {:data-ks-shadow-size shadow}
 
               (or stroke shadow)
               {:style {:box-shadow (box-shadow 

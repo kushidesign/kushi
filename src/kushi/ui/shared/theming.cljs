@@ -9,8 +9,8 @@
   {:shape       #{"rounded" "sharp" "pill" "circle"}
    :surface     defs/basic-surfaces-set-of-strs
    :colorway    (into #{} (mapv name defs/all-colors))
-   :text-weight defs/basic-weights-set-of-strs
-   :text-size   defs/basic-sizes-set-of-strs})
+   :weight defs/basic-weights-set-of-strs
+   :size   defs/basic-sizes-set-of-strs})
 
 (def variant-defaults
   {:colorway "neutral"

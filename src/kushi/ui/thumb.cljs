@@ -11,7 +11,7 @@
   {:doc          "Thumb docstring"
    :props/shared [[:colorway {:default :neutral}]
                   [:inert {:default false}]
-                  :text-size
+                  :size
                   :packing
                   :stroke
                   :stroke-align

@@ -53,6 +53,14 @@
             [malli.core :as malli]))
 
 
+(let [k  :rounded
+      sz :12px]
+  (? (css-rule ".foo"
+               [{:shape  k
+                  ;; :size sz
+                 :width  :200px
+                 :height :100px
+                 :border :1px:solid:silver}])))
 
 ;; Validation
 
@@ -75,12 +83,12 @@
 
 #_(let [s                               "neutral"
         convex-light-mode-grad          #(str "linear-gradient(180deg, transparent, transparent 15%, " % ")")
-        convex-light-mode-shadow-color  #(str "color-mix(in oklch, transparent, var(--background-color-" s "-hard" % ") var(--convex-shadow-strength, 10%))")
+        convex-light-mode-shadow-color  #(str "color-mix(in oklch, transparent, var(--background-color-" s "-hard" % ") var(--convex-shadow-opacity, 10%))")
         css-fn                          (fn [fname & args] (str fname "(" (string/join ", " args) ")"))
         convex-light-mode-shadow-color+ #(color-mix "in oklch"
                                                     ["transparent"]
                                                     [(str "var(--background-color-" s "-hard" % ")")
-                                                     "var(--convex-shadow-strength, 10%)"])]
+                                                     "var(--convex-shadow-opacity, 10%)"])]
 
     ;; (? (convex-light-mode-shadow-color+ "-3"))
     (? (linear-gradient "45deg" [:$blue-250||$yellow-500||gold|| :50%] :red))
@@ -92,8 +100,8 @@
 ;;  (println (css-rule* 
 ;;   "[data-ks-colorway= \"neutral\"]"
 ;;   [{"[data-ks-surface= \"convex\"]" 
-;;     {"@supports(color: color-mix(in oklch, red, red))" {:bgi       "linear-gradient(180deg, transparent, transparent 15%, color-mix(in oklch, transparent, var(--background-color-neutral-hard-3) var(--convex-shadow-strength, 10%)))",
-;;                                                         :hover:bgi "linear-gradient(180deg, transparent, transparent 15%, color-mix(in oklch, transparent, var(--background-color-neutral-hard-4) var(--convex-shadow-strength, 10%)))"},
+;;     {"@supports(color: color-mix(in oklch, red, red))" {:bgi       "linear-gradient(180deg, transparent, transparent 15%, color-mix(in oklch, transparent, var(--background-color-neutral-hard-3) var(--convex-shadow-opacity, 10%)))",
+;;                                                         :hover:bgi "linear-gradient(180deg, transparent, transparent 15%, color-mix(in oklch, transparent, var(--background-color-neutral-hard-4) var(--convex-shadow-opacity, 10%)))"},
 ;;      :bgi                                            "linear-gradient(180deg, transparent, transparent 15%, var(--background-color-neutral-soft-3))",
 ;;      :hover:bgi                                      "linear-gradient(180deg, transparent, transparent 15%, var(--background-color-neutral-soft-4))",
 ;;      }}]

@@ -23,7 +23,7 @@
              {:style           (css-vars-map sticker-fg-color sticker-bg-bgc)
               :data-ks-display :flex-row-center
               :class           (css :.kushi-playground-color-text-sample-sticker
-                                    :fs--$kushi-playground-text-sample-sticker_font-size||$text-size-small
+                                    :fs--$kushi-playground-text-sample-sticker_font-size||$font-size-sm
                                     :sm:w--54px
                                     :sm:h--54px
                                     :w--44px
@@ -137,7 +137,7 @@
                   :mbs--4.5rem)
          [:h2 
           (sx :.kushi-playground-color-scale-wrapper-header
-              :fs--$text-size-xlarge
+              :fs--$text-xl
               :fw--$semi-bold
               :tt--capitalize
               :pbs--2em
@@ -219,7 +219,7 @@
     (into [flex-row
            (merge-attrs
             (sx :.kushi-playground-color-sample-grid-column
-                :border-radius--$shape-rounded-large
+                :border-radius--$shape-rounded-lg
                 :jc--sb
                 ;; [:gap column-gap]
                 )
@@ -245,14 +245,14 @@
                          :dark:bgc--black
                          :outline--7px:solid:white
                          :dark:outline--7px:solid:black
-                         :last-child:beer--$shape-rounded-large
-                         :last-child:bser--$shape-rounded-large
-                         :first-child:bssr--$shape-rounded-large
-                         :first-child:besr--$shape-rounded-large
+                         :last-child:beer--$shape-rounded-lg
+                         :last-child:bser--$shape-rounded-lg
+                         :first-child:bssr--$shape-rounded-lg
+                         :first-child:besr--$shape-rounded-lg
                          [:gap :$row-gap]
                          [:before:content :$before-content]
                          [:before:d :$before-display]
-                         :before:fs--$text-size-xsmall
+                         :before:fs--$text-xs
                          :before:ff--$code-font-stack
                          :before:fw--$wee-bold
                          :before:ta--inline-end
@@ -278,7 +278,7 @@
                                  [:bgc :$bgc]
                                  [:before:content :$before-content]
                                  :before:d--none
-                                 :before:fs--$text-size-xsmall
+                                 :before:fs--$text-xs
                                  :before:ff--$code-font-stack
                                  :before:fw--$wee-bold
                                  :before:position--absolute

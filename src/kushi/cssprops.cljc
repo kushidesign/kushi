@@ -5,6 +5,8 @@
   #?(:cljs
      (:require-macros [kushi.util])))
 
+;; cherries are props picked out for importance based on frequency of usage
+;; hands are marking props for short-handing
 (def by-alphabetical-index
  (apply
   array-map

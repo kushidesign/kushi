@@ -12,12 +12,12 @@
    #_{:samples (samples [[:div (sx :display--flex :gap--1rem)
                         [switch {:at              (at)
                                  :on?             true
-                                 :text-size          :xxxlarge
+                                 :size          :3xl
                                  :shape         :rounded
                                  :track-inset-gap :1px}]
                         [switch {:at              (at)
                                  :on?             true
-                                 :text-size          :xxxlarge
+                                 :size          :3xl
                                  :shape         :rounded-absolute
                                  :track-inset-gap :1px}]]])}
    {:samples (samples-with-variant
@@ -26,7 +26,7 @@
                :label         "Contour",
                :attrs         {:at              (at)
                                :on?             true
-                               :text-size          :xxxlarge
+                               :size          :3xl
                                :track-inset-gap :1px}})}
    ]
   [
@@ -34,9 +34,9 @@
     :desc    "Basic"
     :samples (samples [[flex-row (sx :gap--1rem)
                         [switch {:colorway :neutral
-                                 :text-size   :xxxlarge}]
+                                 :size   :3xl}]
                         [switch {:colorway :neutral
-                                 :text-size   :xxxlarge
+                                 :size   :3xl
                                  :on?      true}]]])}
 
 
@@ -47,12 +47,12 @@
                :label           "Colorway",
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
-               :attrs           {:text-size :xxxlarge
+               :attrs           {:size :3xl
                                  :on?    true}})}
 
    
    {:samples (samples-with-variant
-              {:variant :text-size,
+              {:variant :size,
                :label   "size",
                :attrs   {:on? true}})}
 
@@ -62,36 +62,36 @@
                :label         "Contour",
                :attrs         {:at              (at)
                                :on?             true
-                               :text-size          :xxxlarge}})}
+                               :size          :3xl}})}
 
    ;; why rows not working?
    {:samples (samples-with-variant
-              {:variant         :text-size
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :text-size/large-xxxlarge,
+               :variant-scale   :size/lg-3xl,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Convex thumb",
                :attrs           {:on?         true
                                  :thumb-props {:surface :convex-light-mode
-                                               :class (css {:--convex-shadow-strength      :40%
-                                                            :dark:--convex-shadow-strength :70%})}}})}
+                                               :class (css {:--convex-shadow-opacity      :40%
+                                                            :dark:--convex-shadow-opacity :70%})}}})}
 
    {:samples (samples-with-variant
-              {:variant         :text-size
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :text-size/large-xxxlarge,
+               :variant-scale   :size/lg-3xl,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Oversized thumb",
                :attrs           {:on?                true
                                  :thumb-scale-factor 1.25
-                                 :thumb-props        {:stroke  :medium}}})}
+                                 :thumb-props        {:stroke  :md}}})}
 
    {:samples (samples-with-variant
-              {:variant         :text-size
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :text-size/large-xxxlarge,
+               :variant-scale   :size/lg-3xl,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Labeled thumb",
@@ -99,9 +99,9 @@
                                  :thumb-label-off "OFF"}})}
    
    {:samples (samples-with-variant
-              {:variant         :text-size
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :text-size/large-xxxlarge,
+               :variant-scale   :size/lg-3xl,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Labeled thumb, on",
@@ -110,9 +110,9 @@
                                  :thumb-label-off "OFF"}})}
    
    {:samples (samples-with-variant
-              {:variant         :text-size
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :text-size/large-xxxlarge,
+               :variant-scale   :size/lg-3xl,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Icon thumb",
@@ -120,9 +120,9 @@
                                  :thumb-icon-off :visibility-off}})}
    
    {:samples (samples-with-variant
-              {:variant         :text-size
+              {:variant         :size
                :variant-labels? false
-               :variant-scale   :text-size/large-xxxlarge,
+               :variant-scale   :size/lg-3xl,
                :row-style       {:justify-content :flex-start
                                  :gap             :1rem}
                :label           "Icon thumb, on",
@@ -134,10 +134,10 @@
     :desc    "Disabled"
     :samples (samples [[flex-row (sx :gap--1rem) 
                         [switch {:colorway :neutral
-                                 :text-size   :xxxlarge
+                                 :size   :3xl
                                  :disabled true}]
                         [switch {:colorway :neutral
-                                 :text-size   :xxxlarge
+                                 :size   :3xl
                                  :on?      true
                                  :disabled true}]]])}
    

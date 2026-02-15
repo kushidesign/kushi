@@ -7,7 +7,7 @@
    #?(:clj [kushi.ui.ordered :refer [ordered-set]])
    [bling.util :as util]))
 
-;; TODO - make a subvec utility for generating scales like :medium-xxxlarge
+;; TODO - make a subvec utility for generating scales like :md-3xl
 (defn- tshirt-size-with-prefix [])
 
 (defn- tshirt-size* [prefix postfix cast-fn with-size-str]
@@ -20,17 +20,17 @@
       cast-fn))
 
 (defn tshirt-sizes
-  {:examples [{:call   '(tshirt-sizes [:small :medium :large]
+  {:examples [{:call   '(tshirt-sizes [:sm :md :lg]
                                       {:number-of-sizes 3
                                        :prefix          :rounded
                                        :cast-fn         keyword})
-               :result [:rounded-xxxsmall
-                        :rounded-xxsmall
-                        :rounded-xsmall
-                        :rounded-medium
-                        :rounded-xlarge
-                        :rounded-xxlarge
-                        :rounded-xxxlarge]}]}
+               :result [:rounded-3xs
+                        :rounded-2xs
+                        :rounded-xs
+                        :rounded-md
+                        :rounded-xl
+                        :rounded-2xl
+                        :rounded-3xl]}]}
   [[a default b]
    {:keys [prefix postfix cast-fn]
     n     :number-of-sizes
@@ -44,46 +44,49 @@
                   [(f (util/as-str default))]
                   (for [i rng] (f (with-size-str i b)))))))
 
-(def xxxsmall-xxxlarge
- [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
+(def sizes-3xs-3xl
+ [:3xs :2xs :xs :sm :md :lg :xl :2xl :3xl])
+
+(def font-sizes-3xs-3xl
+ [:3xs :2xs :xs :sm :base :lg :xl :2xl :3xl])
 
 (def shapes-rounded
   [:rounded
-   :rounded-xxxsmall
-   :rounded-xxsmall
-   :rounded-xsmall
-   :rounded-small
-   :rounded-medium
-   :rounded-large
-   :rounded-xlarge
-   :rounded-xxlarge
-   :rounded-xxxlarge])
+   :rounded-3xs
+   :rounded-2xs
+   :rounded-xs
+   :rounded-sm
+   :rounded-md
+   :rounded-lg
+   :rounded-xl
+   :rounded-2xl
+   :rounded-3xl])
 
 (def shapes-rounded-absolute
   [:rounded-absolute
-   :rounded-xxxsmall-absolute
-   :rounded-xxsmall-absolute
-   :rounded-xsmall-absolute
-   :rounded-small-absolute
-   :rounded-medium-absolute
-   :rounded-large-absolute
-   :rounded-xlarge-absolute
-   :rounded-xxlarge-absolute
-   :rounded-xxxlarge-absolute])
+   :rounded-3xs-absolute
+   :rounded-2xs-absolute
+   :rounded-xs-absolute
+   :rounded-sm-absolute
+   :rounded-md-absolute
+   :rounded-lg-absolute
+   :rounded-xl-absolute
+   :rounded-2xl-absolute
+   :rounded-3xl-absolute])
 
-(def shapes-rounded-medium-xxxlarge
-  [:rounded-medium
-   :rounded-large
-   :rounded-xlarge
-   :rounded-xxlarge
-   :rounded-xxxlarge])
+(def shapes-rounded-md-3xl
+  [:rounded-md
+   :rounded-lg
+   :rounded-xl
+   :rounded-2xl
+   :rounded-3xl])
 
-(def shapes-rounded-medium-xxxlarge-absolute
-  [:rounded-medium-absolute
-   :rounded-large-absolute
-   :rounded-xlarge-absolute
-   :rounded-xxlarge-absolute
-   :rounded-xxxlarge-absolute])
+(def shapes-rounded-md-3xl-absolute
+  [:rounded-md-absolute
+   :rounded-lg-absolute
+   :rounded-xl-absolute
+   :rounded-2xl-absolute
+   :rounded-3xl-absolute])
 
 (def shapes-basic
   [:pill :rounded :sharp])
@@ -105,9 +108,9 @@
                           shapes-auxillary))))
 
 (def strokes
-  [:none :xsoft :soft :medium :hard :xhard])
+  [:none :xsoft :soft :md :hard :xhard])
 
-(def shadows xxxsmall-xxxlarge)
+(def shadow-sizes sizes-3xs-3xl)
 
 (def icon-style
   [:rounded :outlined :sharp])
@@ -129,25 +132,33 @@
 (def shadow-colors
   (apply conj colorways-named colorways-semantic))
 
-(def text-sizes-xxsmall-large
-  [:xxsmall :xsmall :small :medium :large])
+(def font-sizes-2xs-lg
+  [:2xs :xs :sm :base :lg])
 
-(def text-sizes-xxsmall-xlarge
-  [:xxsmall :xsmall :small :medium :large :xlarge])
+(def font-sizes-2xs-xl
+  [:2xs :xs :sm :base :lg :xl])
 
-(def text-sizes-xsmall-xxlarge
-  [:xsmall :small :medium :large :xlarge :xxlarge])
+(def font-sizes-xs-2xl
+  [:xs :sm :base :lg :xl :2xl])
 
-(def text-sizes-xsmall-xxxlarge
-  [:xsmall :small :medium :large :xlarge :xxlarge :xxxlarge])
+(def font-sizes-xs-3xl
+  [:xs :sm :base :lg :xl :2xl :3xl])
 
-(def text-sizes-large-xxxlarge
-  [:large :xlarge :xxlarge :xxxlarge])
+(def font-sizes-lg-3xl
+  [:lg :xl :2xl :3xl])
           
-(def text-sizes xxxsmall-xxxlarge)
+(def font-sizes font-sizes-3xs-3xl)
 
-(def text-weights
-  [:thin :extra-light :light :normal :wee-bold :semi-bold :bold :extra-bold :heavy])
+(def weights
+  [:thin
+   :extra-light
+   :light 
+   :normal
+   :wee-bold
+   :semi-bold 
+   :bold 
+   :extra-bold
+   :heavy])
 
 
 ;; TODO - why both basic and simple?
@@ -174,6 +185,9 @@
 
 (def surfaces 
   (apply conj surfaces-basic surfaces-light-mode ))
+
+;; (def displays
+;;   )
 
 (def positions 
   [:fixed-inline-start-inside
@@ -202,12 +216,12 @@
           shapes-basic+rounded
           shapes-rounded
           shapes
-          shapes-rounded-medium-xxxlarge
+          shapes-rounded-md-3xl
           shapes-rounded-absolute
           shapes-rounded+rounded-absolute
-          shapes-rounded-medium-xxxlarge-absolute
+          shapes-rounded-md-3xl-absolute
           strokes
-          shadows
+          shadow-sizes
           shadow-colors
           icon-style
           spinner-type
@@ -216,13 +230,13 @@
           colorways-named
           colorways-semantic
           colorways
-          text-sizes-xsmall-xxlarge
-          text-sizes-xxsmall-xlarge
-          text-sizes-xxsmall-large
-          text-sizes-xsmall-xxxlarge
-          text-sizes-large-xxxlarge
-          text-sizes
-          text-weights
+          font-sizes-xs-2xl
+          font-sizes-2xs-xl
+          font-sizes-2xs-lg
+          font-sizes-xs-3xl
+          font-sizes-lg-3xl
+          font-sizes
+          weights
           surfaces-basic
           surfaces
           surfaces-simple]))
@@ -256,98 +270,104 @@
    {}
    variants*))
 
+
+#?(:cljs
+   ()
+   :clj
+   (!? variants))
+
 (def variants-by-custom-opt-key
-  {:text-weight                            (:text-weights/set variants)
-   :text-size/xxsmall-large                (:text-sizes-xxsmall-large/set variants)
-   :text-size/xxsmall-xlarge               (:text-sizes-xxsmall-xlarge/set variants)
-   :text-size/xsmall-xxxlarge              (:text-sizes-xsmall-xxxlarge/set variants)
-   :text-size/xsmall-xxlarge               (:text-sizes-xsmall-xxlarge/set variants)
-   :text-size/large-xxxlarge               (:text-sizes-large-xxxlarge/set variants)
-   :text-size                              (:text-sizes/set variants)
-   :colorway                               (:colorways/set variants)
-   :colorway/named                         (:colorways-named/set variants)
-   :colorway/semantic                      (:colorways-semantic/set variants)
-   :surface/basic                          (:surfaces-basic/set variants)
-   :surface                                (:surfaces/set variants)
-   :surface/simple                         (:surfaces-simple/set variants)
-   :packing                                (:packings/set variants)
-   :position                               (:positions/set variants)
-   :spinner-type                           (:spinner-type/set variants)
-   :shape                                  (:shapes/set variants)
-   :shape/basic                            (:shapes-basic/set variants)
-   :shape/rounded                          (:shapes-rounded/set variants)
-   :shape/basic+rounded                    (:shapes-basic+rounded/set variants)
-   :shape/auxillary                        (:shapes-auxillary/set variants)
-   :shape/rounded-medium-xxxlarge          (:shapes-rounded-medium-xxxlarge/set variants)
-   :shape/rounded-absolute                 (:shapes-rounded-absolute/set variants)
-   :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/set variants)
-   :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/set variants)
-   :stroke                                 (:strokes/set variants)
-   :shadow                                 (:shadows/set variants)
-   :shadow-color                           (:shadow-colors/set variants)
-   :icon-style                             (:icon-style/set variants)})
+  {:weight                         (:weights/set variants)
+   :size/font-sizes-2xs-lg         (:font-sizes-2xs-lg/set variants)
+   :size/font-sizes-2xs-xl         (:font-sizes-2xs-xl/set variants)
+   :size/font-sizes-xs-3xl         (:font-sizes-xs-3xl/set variants)
+   :size/font-sizes-xs-2xl         (:font-sizes-xs-2xl/set variants)
+   :size/lg-3xl                    (:font-sizes-lg-3xl/set variants)
+   :size                           (:sizes/set variants)
+   :colorway                       (:colorways/set variants)
+   :colorway/named                 (:colorways-named/set variants)
+   :colorway/semantic              (:colorways-semantic/set variants)
+   :surface/basic                  (:surfaces-basic/set variants)
+   :surface                        (:surfaces/set variants)
+   :surface/simple                 (:surfaces-simple/set variants)
+   :packing                        (:packings/set variants)
+   :position                       (:positions/set variants)
+   :spinner-type                   (:spinner-type/set variants)
+   :shape                          (:shapes/set variants)
+   :shape/basic                    (:shapes-basic/set variants)
+   :shape/rounded                  (:shapes-rounded/set variants)
+   :shape/basic+rounded            (:shapes-basic+rounded/set variants)
+   :shape/auxillary                (:shapes-auxillary/set variants)
+   :shape/rounded-md-3xl           (:shapes-rounded-md-3xl/set variants)
+   :shape/rounded-absolute         (:shapes-rounded-absolute/set variants)
+   :shape/rounded-md-3xl-absolute  (:shapes-rounded-md-3xl-absolute/set variants)
+   :shape/rounded+rounded-absolute (:shapes-rounded+rounded-absolute/set variants)
+   :stroke                         (:strokes/set variants)
+   :shadow-size                    (:shadow-sizes/set variants)
+   :shadow-color                   (:shadow-colors/set variants)
+   :icon-style                     (:icon-style/set variants)})
 
 (def enum-variants-by-custom-opt-key
-  {:text-weight                            (:text-weights/enum variants)
-   :text-size/xxsmall-large                (:text-sizes-xxsmall-large/enum variants)
-   :text-size/xxsmall-xlarge               (:text-sizes-xxsmall-xlarge/enum variants)
-   :text-size/xsmall-xxxlarge              (:text-sizes-xsmall-xxxlarge/enum variants)
-   :text-size/xsmall-xxlarge               (:text-sizes-xsmall-xxlarge/enum variants)
-   :text-size/large-xxxlarge               (:text-sizes-large-xxxlarge/enum variants)
-   :text-size                              (:text-sizes/enum variants)
-   :colorway                               (:colorways/enum variants)
-   :colorway/named                         (:colorways-named/enum variants)
-   :colorway/semantic                      (:colorways-semantic/enum variants)
-   :surface/basic                          (:surfaces-basic/enum variants)
-   :surface                                (:surfaces/enum variants)
-   :surface/simple                         (:surfaces-simple/enum variants)
-   :packing                                (:packings/enum variants)
-   :position                               (:positions/enum variants)
-   :spinner-type                           (:spinner-type/enum variants)
-   :shape                                  (:shapes/enum variants)
-   :shape/basic                            (:shapes-basic/enum variants)
-   :shape/rounded                          (:shapes-rounded/enum variants)
-   :shape/basic+rounded                    (:shapes-basic+rounded/enum variants)
-   :shape/auxillary                        (:shapes-auxillary/enum variants)
-   :shape/rounded-medium-xxxlarge          (:shapes-rounded-medium-xxxlarge/enum variants)
-   :shape/rounded-absolute                 (:shapes-rounded-absolute/enum variants)
-   :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/enum variants)
-   :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/enum variants)
-   :stroke                                 (:strokes/enum variants)
-   :shadow                                 (:shadows/enum variants)
-   :shadow-color                           (:shadow-colors/enum variants)
-   :icon-style                             (:icon-style/enum variants)})
+  {:weight                         (:weights/enum variants)
+   :size/font-sizes-2xs-lg         (:font-sizes-2xs-lg/enum variants)
+   :size/font-sizes-2xs-xl         (:font-sizes-2xs-xl/enum variants)
+   :size/font-sizes-xs-3xl         (:font-sizes-xs-3xl/enum variants)
+   :size/font-sizes-xs-2xl         (:font-sizes-xs-2xl/enum variants)
+   :size/font-sizes-lg-3xl         (:font-sizes-lg-3xl/enum variants)
+   :size                           (:sizes/enum variants)
+   :colorway                       (:colorways/enum variants)
+   :colorway/named                 (:colorways-named/enum variants)
+   :colorway/semantic              (:colorways-semantic/enum variants)
+   :surface/basic                  (:surfaces-basic/enum variants)
+   :surface                        (:surfaces/enum variants)
+   :surface/simple                 (:surfaces-simple/enum variants)
+   :packing                        (:packings/enum variants)
+   :position                       (:positions/enum variants)
+   :spinner-type                   (:spinner-type/enum variants)
+   :shape                          (:shapes/enum variants)
+   :shape/basic                    (:shapes-basic/enum variants)
+   :shape/rounded                  (:shapes-rounded/enum variants)
+   :shape/basic+rounded            (:shapes-basic+rounded/enum variants)
+   :shape/auxillary                (:shapes-auxillary/enum variants)
+   :shape/rounded-md-3xl           (:shapes-rounded-md-3xl/enum variants)
+   :shape/rounded-absolute         (:shapes-rounded-absolute/enum variants)
+   :shape/rounded-md-3xl-absolute  (:shapes-rounded-md-3xl-absolute/enum variants)
+   :shape/rounded+rounded-absolute (:shapes-rounded+rounded-absolute/enum variants)
+   :stroke                         (:strokes/enum variants)
+   :shadow-size                    (:shadow-sizes/enum variants)
+   :shadow-color                   (:shadow-colors/enum variants)
+   :icon-style                     (:icon-style/enum variants)})
 
 (def ordered-variants-by-custom-opt-key
-  {:text-weight                            (:text-weights/vector variants)
-   :text-size/xxsmall-large                (:text-sizes-xxsmall-large/vector variants)
-   :text-size/xxsmall-xlarge               (:text-sizes-xxsmall-xlarge/vector variants)
-   :text-size/xsmall-xxxlarge              (:text-sizes-xsmall-xxxlarge/vector variants)
-   :text-size/xsmall-xxlarge               (:text-sizes-xsmall-xxlarge/vector variants)
-   :text-size/large-xxxlarge               (:text-sizes-large-xxxlarge/vector variants)
-   :text-size                              (:text-sizes/vector variants)
-   :colorway                               (:colorways/vector variants)
-   :colorway/named                         (:colorways-named/vector variants)
-   :colorway/semantic                      (:colorways-semantic/vector variants)
-   :surface/basic                          (:surfaces-basic/vector variants)
-   :surface                                (:surfaces/vector variants)
-   :surface/simple                         (:surfaces-simple/vector variants)
-   :packing                                (:packings/vector variants)
-   :position                               (:positions/vector variants)
-   :spinner-type                           (:spinner-type/vector variants)
-   :shape                                  (:shapes/vector variants)
-   :shape/basic                            (:shapes-basic/vector variants)
-   :shape/rounded                          (:shapes-rounded/vector variants)
-   :shape/basic+rounded                    (:shapes-basic+rounded/vector variants)
-   :shape/auxillary                        (:shapes-auxillary/vector variants)
-   :shape/rounded-medium-xxxlarge          (:shapes-rounded-medium-xxxlarge/vector variants)
-   :shape/rounded-absolute                 (:shapes-rounded-absolute/vector variants)
-   :shape/rounded-medium-xxxlarge-absolute (:shapes-rounded-medium-xxxlarge-absolute/vector variants)
-   :shape/rounded+rounded-absolute         (:shapes-rounded+rounded-absolute/vector variants)
-   :stroke                                 (:strokes/vector variants)
-   :shadow                                 (:shadows/vector variants)
-   :shadow-color                           (:shadow-colors/vector variants)
-   :icon-style                             (:icon-style/vector variants)})
+  {:weight                         (:weights/vector variants)
+   :size/font-sizes-2xs-lg         (:font-sizes-2xs-lg/vector variants)
+   :size/font-sizes-2xs-xl         (:font-sizes-2xs-xl/vector variants)
+   :size/font-sizes-xs-3xl         (:font-sizes-xs-3xl/vector variants)
+   :size/font-sizes-xs-2xl         (:font-sizes-xs-2xl/vector variants)
+   :size/font-sizes-lg-3xl         (:font-sizes-lg-3xl/vector variants)
+   :size                           (:sizes/vector variants)
+   :colorway                       (:colorways/vector variants)
+   :colorway/named                 (:colorways-named/vector variants)
+   :colorway/semantic              (:colorways-semantic/vector variants)
+   :surface/basic                  (:surfaces-basic/vector variants)
+   :surface                        (:surfaces/vector variants)
+   :surface/simple                 (:surfaces-simple/vector variants)
+   :packing                        (:packings/vector variants)
+   :position                       (:positions/vector variants)
+   :spinner-type                   (:spinner-type/vector variants)
+   :shape                          (:shapes/vector variants)
+   :shape/basic                    (:shapes-basic/vector variants)
+   :shape/rounded                  (:shapes-rounded/vector variants)
+   :shape/basic+rounded            (:shapes-basic+rounded/vector variants)
+   :shape/auxillary                (:shapes-auxillary/vector variants)
+   :shape/rounded-md-3xl           (:shapes-rounded-md-3xl/vector variants)
+   :shape/rounded-absolute         (:shapes-rounded-absolute/vector variants)
+   :shape/rounded-md-3xl-absolute  (:shapes-rounded-md-3xl-absolute/vector variants)
+   :shape/rounded+rounded-absolute (:shapes-rounded+rounded-absolute/vector variants)
+   :stroke                         (:strokes/vector variants)
+   :shadow-size                    (:shadow-sizes/vector variants)
+   :shadow-color                   (:shadow-colors/vector variants)
+   :icon-style                     (:icon-style/vector variants)})
 
 
 
@@ -385,13 +405,13 @@
 (def props
 
   {
-   :text-size        {:default  nil
+   :size             {:default  nil
                       :desc     "Corresponds to the font-size based on Kushi's font-size scale."
                       :class?   true
                       :data-ks? true 
                       :fq?      true}
 
-   :text-weight      {:default  nil
+   :weight           {:default  nil
                       :desc     "Corresponds to the font-weight based on Kushi's font-weight scale."
                       :class?   true
                       :data-ks? true 
@@ -419,73 +439,99 @@
                       :data-ks? true 
                       :fq?      true}
 
-  ;;  :shadows                   {
-  ;;                              ;; :schema        #(and (vector? %) (every? (fn [k] (and (keyword? k) (->> k name (re-find #"^--\S+|^\$\S+"))) ) %))
-  ;;                              ;; TODO maybe :$myvar or "var(--myvar)" or "0 0 10px red" (legit shadow string)
-  ;;                              :schema        [:vector [:and :string [:re #"^var\(--[^\)\s]+\)"]]]
-  ;;                              :desc          "Vector of design tokens which are values for the CSS box-shadow property."
-  ;;                              :default       nil
-  ;;                              :when-not-nil  ""
-  ;;                              :style-tokens? true  
-  ;;                              }
+  ;;  :shadow           {:schema   [:or
+  ;;                                :string         ; <-css shadow value 
+  ;;                                [:vector :any]] ; <-vector of values
+  ;;                     ;; provide example
+  ;;                     :desc     "Supply a custom drop shadow via a vector"
+  ;;                     :default  nil
+  ;;                     :class?   true
+  ;;                     :data-ks? true }
    
-   ;; change to shadow
    :shadow           {:schema   [:or
-                                 [:and :keyword (:shadows/enum variants)]
+                                 [:and :keyword (:shadow-sizes/enum variants)]
                                  ;;TODO  validate :$my-custom-prop
                                  :string ; <-css shadow value 
                                  [:vector :any]] ; <-vector of values
-                      :desc     "Controls the drop shadow. If a keyword such as `:xxsmall` or `:large` is used, and not combined with a `:stroke`, correspondes to a design token from Kushi's shadow scale."
+                      ;; provide example
+                      :desc     "If a keyword such as `:2xs` or `:lg` is used, and not combined with a `:stroke`, correspondes to a design token from Kushi's shadow scale."
                       :default  nil
                       :class?   true
                       :data-ks? true }
 
-   :shadow-color     {:desc     "Controls the drop shadow color. Takes effect if a value such as `:xxsmall` or `:large` is supplied to the `:shadow` prop."
+   :shadow-color     {:desc     "Controls the drop shadow color. Takes effect if a value such as `:2xs` or `:lg` is supplied to the `:shadow-size` prop."
                       :class?   true
                       :data-ks? true 
+                      :local-token? true
                       :default  nil}
 
-   :shadow-strength  {:schema  [:or
+   :shadow-opacity  {:schema  [:or
                                 :keyword
-                                :string]
-                      :desc    "Controls the drop shadow strength. Takes effect if a value such as `:xxsmall` or `:large` is supplied to the `:shadow` prop."
+                                :string] ;; <- maybe just :keyword?
+                      :desc    "Controls the drop shadow strength. Takes effect if a value such as `:2xs` or `:lg` is supplied to the `:shadow` prop."
+                      :local-token? true
                       :default nil}
 
    :stroke           {:schema   [:or 
-                                 [:enum :none :xsoft :soft :medium :hard :xhard]
+                                 #_[:enum :none :xsoft :soft :md :hard :xhard]
                                  [:tuple
-                                  {:examples [[:1px :red]
+                                  {:desc     "For adding both a width and color"
+                                   :examples [
+                                              ;; TODO - add :desc to each of these examples?
+                                              [:1px :red]
                                               [:2em :$accent-400]
                                               ["4px" "rgb(0 0 0 / 0.5)"]
                                               ["var(--my-width, 1px)" "aliceblue"]]}
-                                  [:or :string :keyword] [:or :string :keyword]]
+                                  [:or :string :keyword]
+                                  [:or :string :keyword]]
                                  [:vector 
-                                  {:examples [[[:3px :$red-500]
+                                  {:desc     "For creating multi-strokes"
+                                   :examples [[[:3px :$red-500]
                                                [:3px :$green-500]
                                                [:3px :$blue-500]]]}
                                   [:tuple [:or :string :keyword] [:or :string :keyword]]]]
                       :desc     "Can be set a number of different ways"
                       :default  nil
                       :class?   true
-                      :data-ks? true 
-                      }
+                      :data-ks? true}
+
+   :stroke-opacity   {:schema [:or
+                               [:float {:min 0.0
+                                        :max 1.0}]
+                               [:value 0]
+                               [:value 1]
+                               #_[:fn 
+                                  {:error/message "Must be a string or keyword starting with representing a percentage from 0%-100%"}
+                                  (fn [x]
+                                    (and (or (string? x) (keyword? x))
+                                         (re-find #"^0\%$|^100%$|^[0-9][0-9]?(?:\.[0-9]+)?$" (name x))))]]
+
+                      :local-token? true
+                      :desc   "Opacity of the stroke. Only applies when a `:surface` value is provided. Locally sets the value of `--stroke-opacity`."}
 
    :stroke-color     {:schema [:or :keyword :string]
                       :desc   "Controls the stroke color, unless `:stroke` is set as a tuple or vector containing a color value(s)."
                       ;; leave :default off for now
                       ;; :default  "currentColor"
+                      :local-token? true
                       :class? true
                       }
 
-   :stroke-align     {:schema   [:enum :inside :outside]
-                      :default  nil
-                      :desc     "Alignment of the stroke. Only applies when a `:surface` value is provided."
-                      :class?   true
-                      :data-ks? true}
+   :stroke-align     {:schema       [:enum :inside :outside]
+                      :default      nil
+                      :desc         "Alignment of the stroke. Only applies when a `:surface` value is provided."
+                      :local-token? true
+                      :class?       true
+                      :data-ks?     true}
 
-   :stroke-width     {:schema [:or :string :keyword]
-                      :desc   "Width of the stroke. Only applies when a `:surface` value is provided. Locally sets the value of `--stroke-width`."}
-
+   :stroke-width     {:schema       [:or :string :keyword]
+                      :default      nil
+                      :local-token? true 
+                      :desc         "Width of the stroke.
+                               Only applies when a `:surface` value is provided.
+                               If set, a stroke will be rendered with the currentColor and a default opacity of 50%.
+                               Locally sets the value of `--stroke-width`.
+                               "}
 
    :packing          {:default  nil
                       :desc     "General amount of padding inside the element."
@@ -529,10 +575,6 @@
                       :desc    "HTML `required` attribute for elements such as input etc."
                       :default nil}
 
-   ;; Leave out for brevity
-   ;; :text-transform   {:desc    "Equivalent to the css text-transform property."
-   ;;                    :default nil}
-   
    :icon-enhanceable {:schema   :boolean
                       :desc     "Element is enhanceable with an icon."
                       :default  nil
@@ -545,29 +587,45 @@
    :icon-filled      {:desc    "Filled or not filled"
                       :schema  :boolean
                       :default false} ;; why false and not nil
-
+   
    :spinner-type     {:desc    "The design of the spinner"
                       :default :donut}})
+
+(def local-tokens
+  (reduce-kv (fn [coll k v]
+               (if (:local-token? v) (conj coll k) coll))
+             #{} 
+             props))
+
+(def local-token-transformers
+  {:shadow-color (fn [_ v]
+                   (when (contains? (:shadow-color variants-by-custom-opt-key) v)
+                     {"--shadow-color"           (str "var(--" (name v) "-700)")
+                      "--shadow-color-dark-mode" (str "var(--" (name v) "-300)")}))})
 
 (def shared-props-enum
   (->> props keys (into [:enum])))
 
+
 (def prop-families
   ;; TODO - should packing be in here?
-  {:container [:text-size                    ;; change to font-size
-               :text-weight                  ;; change to font-weight
+  {:container [:size
+               :weight
                :display
                :position
 
                :colorway                     ;; add twists and turns 
-               :shape                        ;; add shapes
-               :surface                      ;; add surfaces
-               :stroke                       ;; presets from soft-hard or custom
+               :shape                        ;; add shapes like squircle and blob
+               :surface                      ;; add surfaces like ?
+
+               :stroke                       ;; custom vector only?
+               :stroke-opacity 
                :stroke-align 
                :stroke-width
-               :shadow                       ;; change to shadow-size - but isn't it multi?
+
+               :shadow
                :shadow-color
-               :shadow-strength
+               :shadow-opacity
 
                :background-image-behavior
                :inert                        ;; change to interactive and flip logic
@@ -576,10 +634,19 @@
                ;; :transition ;; include?
                ]})
 
+
 (def generic-props
   (into #{} (:container prop-families)))
-
 
 ;; Just use sx for both defui components and [:div ] components
 ;; Validate everything the same way
 ;; how do you 
+
+;; utility-classes for hiccup, mostly for layout:
+;; position
+;; display
+;; items (align-items)
+;; font-size ? really
+;; font-weight ? really
+;; wireframes
+;; bg/fg-primary ? really

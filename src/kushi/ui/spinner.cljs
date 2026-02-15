@@ -30,7 +30,7 @@
   {:docs         "A spinner"
    :summary      "Round & round"
    :props/shared [:spinner-type 
-                  :text-size       
+                  :size       
                   [:colorway {:default nil}]]}
   
   [& args]

@@ -133,7 +133,7 @@
     :desc     {:en "Styling of code blocks"}
     :ns       '[kushi.ui.code]
     :tags     ["code" "color" "typography" "block"]}
-   [:--code-font-size                  :$text-size-small
+   [:--code-font-size                  :$font-size-sm
     :--code-padding-inline             :0.2em
     :--code-padding-block              :0.08em
     :--code-border-radius              :3px
@@ -148,16 +148,16 @@
     :desc     {:en "Controls the weight of type"}
     :category ["font-weight"]
     :tags     ["font-weight" "typography"]}
-   [:--text-weight-thin                                   100
-    :--text-weight-extra-light                            200
-    :--text-weight-light                                  300
-    :--text-weight-normal                                 400
-    :--text-weight-wee-bold                               500
-    :--text-weight-semi-bold                              600
-    :--text-weight-bold                                   700
-    :--text-weight-extra-bold                             800
-    :--text-weight-heavy                                  900
-    :--text-weight-root-font-size                         :1rem
+   [:--font-weight-thin                                   100
+    :--font-weight-extra-light                            200
+    :--font-weight-light                                  300
+    :--font-weight-normal                                 400
+    :--font-weight-wee-bold                               500
+    :--font-weight-semi-bold                              600
+    :--font-weight-bold                                   700
+    :--font-weight-extra-bold                             800
+    :--font-weight-heavy                                  900
+    :--font-weight-root-font-size                         :1rem
     ]
 
 
@@ -166,45 +166,45 @@
     :desc     {:en "Controls the size of type"}
     :category ["font-size"]
     :tags     ["font-size" "typography"]}
-   [:--text-size-xxxxsmall                              :0.64rem
-    :--text-size-xxxsmall                               :0.67rem
-    :--text-size-xxsmall                                :0.71rem
-    :--text-size-xsmall                                 :0.77rem
-    :--text-size-small                                  :0.86rem
-    :--text-size-medium                                 :1rem
-    :--text-size-large                                  :1.21rem
-    :--text-size-xlarge                                 :1.485rem
-    :--text-size-xxlarge                                :1.86rem
-    :--text-size-xxxlarge                               :2.36rem
-    :--text-size-xxxxlarge                              :3.03rem
+   [:--font-size-4xs    :0.64rem
+    :--font-size-3xs     :0.67rem
+    :--font-size-2xs      :0.71rem
+    :--font-size-xs       :0.77rem
+    :--font-size-sm        :0.86rem
+    :--font-size-base       :1rem
+    :--font-size-lg        :1.21rem
+    :--font-size-xl       :1.485rem
+    :--font-size-2xl      :1.86rem
+    :--font-size-3xl     :2.36rem
+    :--font-size-4xl    :3.03rem
 
-    :--text-size-xxxxsmall-b                            :0.655rem
-    :--text-size-xxxsmall-b                             :0.685rem
-    :--text-size-xxsmall-b                              :0.733rem
-    :--text-size-xsmall-b                               :0.805rem
-    :--text-size-small-b                                :0.92rem
-    :--text-size-medium-b                               :1.1rem
-    :--text-size-large-b                                :1.33rem
-    :--text-size-xlarge-b                               :1.655rem
-    :--text-size-xxlarge-b                              :2.085rem
-    :--text-size-xxxlarge-b                             :2.68rem
-    :--text-size-xxxxlarge-b                            :3.475rem]
+    :--font-size-4xs-b  :0.655rem
+    :--font-size-3xs-b   :0.685rem
+    :--font-size-2xs-b    :0.733rem
+    :--font-size-xs-b     :0.805rem
+    :--font-size-sm-b      :0.92rem
+    :--font-size-base-b     :1.1rem
+    :--font-size-lg-b      :1.33rem
+    :--font-size-xl-b     :1.655rem
+    :--font-size-2xl-b    :2.085rem
+    :--font-size-3xl-b   :2.68rem
+    :--font-size-4xl-b  :3.475rem]
 
 
    ;; Intended for css prop `letterspacing`
-   {:family   "Tracking"
-    :desc     {:en "Controls the tracking of the type"}
-    :category ["Tracking"]
-    :tags     ["font-size" "typography" "tracking"]}
-   [:--tracking-xxxtight                               :-0.09em
-    :--tracking-xxtight                                :-0.06em
-    :--tracking-xtight                                 :-0.03em
-    :--tracking-tight                                  :-0.01em
-    :--tracking-default                                :0em
-    :--tracking-loose                                  :0.04em
-    :--tracking-xloose                                 :0.08em
-    :--tracking-xxloose                                :0.12em
-    :--tracking-xxxloose                               :0.16em]
+   {:family   "Letter spacing"
+    :desc     {:en "Controls the tracking (aka letter spacing) of the type"}
+    :category ["letter-spacing"]
+    :tags     ["font-size" "typography" "tracking" "letter-spacing"]}
+   [:--letter-spacing-3xtight                               :-0.09em
+    :--letter-spacing-2xtight                                :-0.06em
+    :--letter-spacing-xtight                                 :-0.03em
+    :--letter-spacing-tight                                  :-0.01em
+    :--letter-spacing-base                                :0em
+    :--letter-spacing-loose                                  :0.04em
+    :--letter-spacing-xloose                                 :0.08em
+    :--letter-spacing-2xloose                                :0.12em
+    :--letter-spacing-3xloose                               :0.16em]
 
 
    ;; Intended for css props `border-width` for inputs
@@ -254,24 +254,6 @@
     ]
 
 
-   ;; Shadows
-   ;; ------------------------------------------------------
-   {:family   "Shadows"
-    :desc     {:en "Styling for shadows"}
-    :category ["shadows"]
-    :ns       '[kushi.ui.button]
-    :tags     ["shadows" "pane" "surfaces"]}
-   [:--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 15%), transparent)"
-    :--shadow-xxxsmall          "0 1px 3px -1px var(--transparent-shadow-color)"
-    :--shadow-xxsmall           "0 3px 6px -2px var(--transparent-shadow-color)"
-    :--shadow-xsmall            "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"
-    :--shadow-small             "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"
-    :--shadow-medium            "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"
-    :--shadow-large             "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"
-    :--shadow-xlarge            "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"
-    :--shadow-xxlarge           "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"
-    :--shadow-xxxlarge          "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"]
-
 
    ;; Buttons
    ;; ------------------------------------------------------
@@ -301,8 +283,7 @@
     :ns       '[kushi.ui.tag]
     :tags     ["tag"]}
    ;; Tags
-   [:--tag-border-width                       :1px
-    ]
+   [:--tag-border-width :1px]
 
 
    ;; pane - floating layer abstraction
@@ -316,8 +297,8 @@
    [:--pane-background-color                 :$background-color
     :--pane-background-color-dark-mode       :$background-color-dark-mode
     :--pane-background-image                 :white
-    :--pane-box-shadow                       :$shadow-large
-    :--pane-box-shadow-dark-mode             :$shadow-large
+    :--pane-box-shadow                       :$shadow-lg
+    :--pane-box-shadow-dark-mode             :$shadow-lg
     :--pane-border-width                     :0px
     :--pane-border-style                     :solid
     :--pane-border-color                     :transparent
@@ -332,7 +313,7 @@
     :--pane-min-height                       :35px
     :--pane-padding-inline                   :1em
     :--pane-padding-block                    :0.5em
-    :--pane-border-radius                    :$shape-rounded-medium-absolute
+    :--pane-border-radius                    :$shape-rounded-md-absolute
     :--pane-offset                           :7px
     :--pane-viewport-padding                 :5px 
     :--pane-flip-viewport-edge-threshold     :32px 
@@ -369,8 +350,8 @@
     :tags     ["pane" "tooltip" "typography" "floating"]}
    [:--tooltip-line-height    1.45
     :--tooltip-font-family    :$sans-serif-font-stack
-    :--tooltip-font-size      :$text-size-xsmall
-    :--tooltip-font-weight    :$text-weight-wee-bold
+    :--tooltip-font-size      :$font-size-xs
+    :--tooltip-font-weight    :$font-weight-wee-bold
     :--tooltip-text-transform :none
     ]
 
@@ -555,7 +536,7 @@
    [
     :--modal-box-shadow             :$pane-box-shadow
     :--modal-box-shadow-dark-mode   :$pane-box-shadow-dark-mode
-    :--modal-border-radius          :$shape-rounded-medium-absolute
+    :--modal-border-radius          :$shape-rounded-md-absolute
     :--modal-border-width           :0px
     :--modal-border-style           :solid
     :--modal-border-color           :$gray-150
@@ -593,6 +574,7 @@
 
 
    ;; Intended for css props: border-radius
+   ;; TODO - should these be --border-radius-rounded-xs ?  ... instead of shape
    ;; ------------------------------------------------------
    
    ;; Absolute versions for panes, cards, etc.
@@ -600,16 +582,16 @@
     :desc     {:en "Controls the roundedness of corners on panes, cards, etc. Value is independent of font-size"}
     :category ["border-radius"]
     :tags     ["border-radius" "corners" "rounded"]}
-   [:--shape-rounded-xxxsmall-absolute  :0.0625rem        ;; 1px
-    :--shape-rounded-xxsmall-absolute   :0.125rem         ;; 2px
-    :--shape-rounded-xsmall-absolute    :0.25rem          ;; 4px
-    :--shape-rounded-small-absolute     :0.375rem         ;; 6px
-    :--shape-rounded-medium-absolute    :0.5rem           ;; 8px
-    :--shape-rounded-large-absolute     :0.75rem          ;; 12px
-    :--shape-rounded-xlarge-absolute    :1rem           ;; 16px
-    :--shape-rounded-xxlarge-absolute   :1.25rem          ;; 20px
-    :--shape-rounded-xxxlarge-absolute  :1.5625rem        ;; 25px
-    :--shape-rounded-absolute           :$shape-rounded-medium-absolute
+   [:--shape-rounded-3xs-absolute  :0.0625rem        ;; 1px
+    :--shape-rounded-2xs-absolute   :0.125rem         ;; 2px
+    :--shape-rounded-xs-absolute    :0.25rem          ;; 4px
+    :--shape-rounded-sm-absolute     :0.375rem         ;; 6px
+    :--shape-rounded-md-absolute    :0.5rem           ;; 8px
+    :--shape-rounded-lg-absolute     :0.75rem          ;; 12px
+    :--shape-rounded-xl-absolute    :1rem           ;; 16px
+    :--shape-rounded-2xl-absolute   :1.25rem          ;; 20px
+    :--shape-rounded-3xl-absolute  :1.5625rem        ;; 25px
+    :--shape-rounded-absolute           :$shape-rounded-md-absolute
     ]
    
    ;; Relative (to type size) versions for buttons, badges
@@ -617,21 +599,22 @@
     :desc     {:en "Controls the roundedness of corners on panes, cards, etc. Value is relative to font-size"}
     :category ["border-radius"]
     :tags     ["border-radius" "corners" "rounded"]}
-   [:--shape-rounded-xxxsmall :0.04375em  
-    :--shape-rounded-xxsmall  :0.0875em  
-    :--shape-rounded-xsmall   :0.175em   
-    :--shape-rounded-small    :0.2625em  
-    :--shape-rounded-medium   :0.35em    
-    :--shape-rounded-large    :0.475em   
-    :--shape-rounded-xlarge   :0.625em     
-    :--shape-rounded-xxlarge  :0.775em   
-    :--shape-rounded-xxxlarge :0.925em 
-    :--shape-rounded          :$shape-rounded-medium
+   [:--shape-rounded-3xs :0.04375em  
+    :--shape-rounded-2xs  :0.0875em  
+    :--shape-rounded-xs   :0.175em   
+    :--shape-rounded-sm    :0.2625em  
+    :--shape-rounded-md   :0.35em    
+    :--shape-rounded-lg    :0.475em   
+    :--shape-rounded-xl   :0.625em     
+    :--shape-rounded-2xl  :0.775em   
+    :--shape-rounded-3xl :0.925em 
+    :--shape-rounded          :$shape-rounded-md
     :--border-weight          :1px
     ]
 
 
    ;; Intended for css animations and transitions
+   ;; todo - should these be --transition-timing-function-linear-curve
    ;; ------------------------------------------------------
    {:family   "Animation and transition timing functions"
     :desc     {:en ""}
@@ -645,21 +628,23 @@
     :--timing-ease-out-curve-extreme "cubic-bezier(0.190, 0.510, 0.125, 0.905)"
     :--transition-timing-function    :$timing-linear-curve]
 
+
+   ;; todo - should these be --transition-duration-instant
    {:family   "Animation and transition duration"
     :desc     {:en ""}
     :category ["transition-duration"]
     :tags     ["animation" "cubic-bezier" "timing" "transition-duration"]}
    [:--transition-duration         :$transition-fast
     :--transition-instant          :0ms
-    :--transition-xxxfast          :50ms
-    :--transition-xxfast           :100ms
+    :--transition-3xfast           :50ms
+    :--transition-2xfast           :100ms
     :--transition-xfast            :175ms
     :--transition-fast             :250ms
-    :--transition-moderate         :500ms
+    :--transition-base             :500ms
     :--transition-slow             :700ms
     :--transition-xslow            :1s
-    :--transition-xxslow           :2s
-    :--transition-xxxslow          :4s
+    :--transition-2xslow           :2s
+    :--transition-3xslow           :4s
     :--spinner-animation-duration  :900ms
     :--loading-spinner-height      :0.8em]
 

@@ -31,8 +31,8 @@
     :class    
     (css :.kushi-playground-examples-modal-trigger
          :pb--0.4em
-         :fw--$text-weight-wee-bold
-         :fs--$text-size-xxsmall
+         :fw--$font-weight-wee-bold
+         :fs--$text-2xs
          ;; :.accent.minimal:hover:background-color--$accent-50
          ;; :dark:.accent.minimal:hover:background-color--$accent-800
 
@@ -49,8 +49,8 @@
          )
     :on-click
     (fn* [] (open-kushi-modal modal-id))}
-   [icon {:text-size    :small
-          :text-weight  :extra-bold
+   [icon {:size    :sm
+          :weight  :extra-bold
           :surface :transparent
           :class   :kushi-playground-examples-modal-trigger-icon}
     :code]

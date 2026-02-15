@@ -95,7 +95,7 @@
        :surface      :minimal
        :class         (css
                        ".kushi-modal-close-button"
-                       {:fs                 :$text-size-large
+                       {:fs                 :$font-size-lg
                         :pb                 :0.4rem
                         :pis                :0.4rem
                         :pie                :0.399rem
@@ -220,7 +220,7 @@
                 {:class (css
                          ".kushi-modal-title-and-description"
                          :.flex-col-fs
-                         :.large
+                         :.lg
                          :gap--1em)
                  :id    title-id}
                 (when modal-title 
@@ -231,7 +231,7 @@
                 (when description
                   [:p {:class (css
                                ".kushi-modal-description"
-                               :.small)
+                               :.sm)
                        :id    desc-id}
                    description])])]
             children)])))

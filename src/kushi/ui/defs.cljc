@@ -93,51 +93,49 @@
           :lapis 266]))
 
 
-
-
 (def basic-colors
- (keys basic-colors*)
+  (into [] (keys basic-colors*))
   #_[
-   :blue
-   :sky
-   :azure
-   :aqua
-   :cyan
-   :teal
-   :mint
-   :emerald
-   :jade
-   :green
-   :matcha
-   :lime
-   :acid
-   :citron
-   :yellow
-   :banana
-   :gold
-   :apricot
-   :amber
-   :orange
-   :coral
-   :red
-   :ruby
-   :rose
-  ;;  :crimson
-   :pink
-   :magenta
-   :plum
-   :purple
-   :violet
-   :indigo
-   :lapis
-   :blue
-   :sky
-   
+     :blue
+     :sky
+     :azure
+     :aqua
+     :cyan
+     :teal
+     :mint
+     :emerald
+     :jade
+     :green
+     :matcha
+     :lime
+     :acid
+     :citron
+     :yellow
+     :banana
+     :gold
+     :apricot
+     :amber
+     :orange
+     :coral
+     :red
+     :ruby
+     :rose
+     ;;  :crimson
+     :pink
+     :magenta
+     :plum
+     :purple
+     :violet
+     :indigo
+     :lapis
+     :blue
+     :sky
+     
 
-   ;;  :gray
-   ;;  :sand
-   ;;  :slate
-   ])
+     ;;  :gray
+     ;;  :sand
+     ;;  :slate
+     ])
 
 (def semantic-colors
   [:neutral
@@ -146,30 +144,32 @@
    :warning
    :negative])
 
+
+
 (def all-colors
   (apply 
    conj
    basic-colors
    semantic-colors))
 
-(def xxsmall-xlarge
-  [:xxsmall
-   :xsmall
-   :small
-   :medium
-   :large
-   :xlarge])
+(def sizes-2xs-xl
+  [:2xs
+   :xs
+   :sm
+   :md
+   :lg
+   :xl])
 
-(def xxxsmall-xxxlarge
-  [:xxxsmall
-   :xxsmall
-   :xsmall
-   :small
-   :medium
-   :large
-   :xlarge
-   :xxlarge
-   :xxxlarge])
+(def sizes-3xs-3xl
+  [:3xs
+   :2xs
+   :xs
+   :sm
+   :md
+   :lg
+   :xl
+   :2xl
+   :3xl])
 
 (def weights
   [:thin
@@ -183,15 +183,15 @@
    :heavy])
 
 (def sizes 
-  [:xxxsmall
-   :xxsmall
-   :xsmall
-   :small
-   :medium
-   :large
-   :xlarge
-   :xxlarge
-   :xxxlarge])
+  [:3xs
+   :2xs
+   :xs
+   :sm
+   :md
+   :lg
+   :xl
+   :2xl
+   :3xl])
 
 (def surfaces 
   [:solid-classic :solid :soft-classic :soft :faint :outline :minimal :transparent])
@@ -206,19 +206,19 @@
   (into #{} (map name weights)))
 
 (def basic-sizes-vector
-  xxxsmall-xxxlarge)
+  sizes-3xs-3xl)
 
 (def size-enum
-  (into [] (concat [:enum] xxxsmall-xxxlarge)))
+  (into [] (concat [:enum] sizes-3xs-3xl)))
 
 (def colorway-enum
   (into [] (concat [:enum] basic-colors)))
 
 (def basic-sizes-set
-  (into #{} xxxsmall-xxxlarge))
+  (into #{} sizes-3xs-3xl))
 
 (def basic-sizes-set-of-strs
-  (into #{} (map name xxxsmall-xxxlarge)))
+  (into #{} (map name sizes-3xs-3xl)))
 
 (def basic-surfaces-set
   (into #{} basic-surfaces-vector))
@@ -227,14 +227,14 @@
   (into #{} (map name basic-surfaces-vector)))
 
 (def variants-ordered 
-  {'xxsmall-xlarge  
-   xxsmall-xlarge
+  {'sizes-xs-xl  
+   sizes-2xs-xl
 
-   'xxxsmall-xxxlarge 
-   xxxsmall-xxxlarge 
+   'sizes-3xs-3xl 
+   sizes-3xs-3xl 
    
    :defaults
-   {'size            xxxsmall-xxxlarge
+   {'size            sizes-3xs-3xl
     'weight          weights
     'shape           basic-shapes
     'surface         basic-surfaces-vector
@@ -245,16 +245,16 @@
     'packing         packing}})
 
 (def variants-ordered-kw
-  {:xxsmall-xlarge  
-   xxsmall-xlarge
+  {:sizes-2xs-xl  
+   sizes-2xs-xl
 
-   :xxxsmall-xxxlarge 
-   xxxsmall-xxxlarge 
+   :3xs-3xl 
+   sizes-3xs-3xl 
    
    :defaults
-   {:text-size            xxxsmall-xxxlarge
-    :text-weight          weights
-    :shape         basic-shapes
+   {:size       sizes-3xs-3xl
+    :weight     weights
+    :shape           basic-shapes
     :surface         basic-surfaces-vector
     :colorway        basic-colors
     :semantic-colors semantic-colors

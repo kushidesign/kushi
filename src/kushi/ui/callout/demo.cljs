@@ -17,11 +17,11 @@
     )
 
 (def sizes
-  [:xxsmall
-   :xsmall
-   :small
-   :medium
-   :large])
+  [:2xs
+   :xs
+   :sm
+   :base
+   :lg])
 
 (def demos
   (let [row-style     {:flex-direction        :column
@@ -33,12 +33,12 @@
                         [kushi.ui.link :refer [link]]]
         variant-scale [:faint :soft :solid :outline]]
 
-    [{:label     "Text sizes from xxsmall to xxlarge"
+    [{:label     "Text sizes from 2xs to 2xl"
       :row-attrs (sx :gtc--100px:600px)
-      :desc      "Text sizes from xxxsmall to xxxlarge"
+      :desc      "Text sizes from 3xs to 3xl"
       :samples   (samples-with-variant
-                  {:variant       :text-size
-                   :variant-scale :text-size/xxsmall-large
+                  {:variant       :size
+                   :variant-scale :size/2xs-lg
                    :attrs         {:colorway :accent}
                    :args          [[flex-row (sx {:jc :sb})
                                     [icon :info]
@@ -56,7 +56,7 @@
         :desc      "Surfaces"
         :samples   (samples-with-variant
                     {:variant       :surface
-                     :variant-scale :text-size/xxsmall-large
+                     :variant-scale :size/2xs-lg
                      :attrs         {:colorway :accent
                                      :stroke   :hard}
                      :args          [[flex-row (sx {:jc :sb})
@@ -87,7 +87,7 @@
 
      {:label     "Surfaces"
       :row-attrs (sx :gtc--100px:600px)
-      :desc      "Text sizes from xxxsmall to xxxlarge"
+      :desc      "Text sizes from 3xs to 3xl"
       :samples   (samples-with-variant
                   {:variant       :surface
                    :variant-scale :surface/simple
@@ -511,12 +511,12 @@
                       :close]]]])}]
 
 
-    #_[{:label     "Text sizes from xxsmall to xlarge"
+    #_[{:label     "Text sizes from 2xs to xl"
       :row-style row-style
       :require   require
       :samples   (samples-with-variant 
-                  {:variant         :text-size
-                   :variant-scale   :text-size/xxsmall-xlarge
+                  {:variant         :size
+                   :variant-scale   :size/2xs-xl
                    :attrs           {:header-text [:span "Please check out the "
                                                    [link (merge-attrs (sx :ws--n)
                                                                       {:href "#"})
@@ -696,12 +696,12 @@
                                        :surface     surface}})})]
 
 
-      (into [{:desc            "Text sizes from xxsmall to xlarge"
+      (into [{:desc            "Text sizes from 2xs to xl"
               :row-attrs       row-attrs #_(sx :md:ai--fe)
               :container-attrs container-attrs
               :snippets        '[[callout
                                   (merge-attrs
-                                   (sx :.large)
+                                   (sx :.lg)
                                    {:header-text [:span "Please check out the "
                                                    [link (merge-attrs (sx :ws--n)
                                                                       {:href "#"})

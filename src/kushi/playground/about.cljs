@@ -144,7 +144,7 @@
          (sx :>p:lh--1.7)
          [:h2 
           (sx
-           :fs--$text-size-large
+           :fs--$text-lg
            :fw--$semi-bold
            [:bbs "1px solid var(--gray-300)"]
            [:dark:bbs "1px solid var(--gray-700)"]
@@ -155,7 +155,7 @@
                 start
                 end]
                (case label
-                 "Size"     ["size" "xxxsmall" "xxxxlarge"]
+                 "Size"     ["size" "3xs" "4xl"]
                  "Weight"   ["weight" "thin" "heavy"]
                  "Tracking" ["tracking" "xxxtight" "xxxxloose"])]
            [prose
@@ -185,7 +185,7 @@
                               :tooltip-class (css :.kushi-playground-typescale-example-text-tooltip
                                                    :.code
                                                    :fw--$wee-bold
-                                                   :fs--$text-size-small)}))
+                                                   :fs--$text-sm)}))
              "The quick sand fox."]]])))
 
 (defn- formatted-code [s]
@@ -215,17 +215,17 @@
 
 (def typography-tokens-snippet
   '[:span
-    (sx :fs--$text-size-xxlarge
+    (sx :fs--$text-2xl
         :fw--$bold
         :letter-spacing--$xloose)
     "My text "])
 
 
 ;; (def typography-utility-classes-snippet
-;;   '[:span (trans (sx :.xxlarge :.bold :.xloose :.uppercase :.italic)) "My text"] )
+;;   '[:span (trans (sx :.2xl :.bold :.xloose :.uppercase :.italic)) "My text"] )
 
 
-(def typescale [:xxxsmall :xxsmall :xsmall :small :medium :large :xlarge :xxlarge :xxxlarge :xxxxlarge])
+(def typescale [:3xs :2xs :xs :sm :base :lg :xl :2xl :3xl :4xl])
 
 
 (defn kushi-typography-about

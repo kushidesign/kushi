@@ -26,7 +26,7 @@
     {:before {:content     "\"All colorways, all surfaces\""
               :position    :absolute
               :bottom      "calc(100% + 1em)"
-              :fs          :$xsmall
+              :fs          :$xs
               :font-family :$serif-font-stack
               :font-style  :italic}})
   
@@ -36,7 +36,7 @@
                     {:before:content "\"Colorways\""})]
           (for [colorway ["bonkers" "accent" "positive" "warning" "negative"]] 
             [switch 
-             (merge-attrs (sx :fs--$xxxlarge)
+             (merge-attrs (sx :fs--$3xl)
                           {:colorway colorway
                            :on?      true})]))
 
@@ -44,7 +44,7 @@
                      {:before:content "\"Colorways\""})]
           (for [colorway ["bonkers" "accent" "positive" "warning" "negative"]] 
             [button
-             (merge-attrs (sx :fs--$small :fw--$wee-bold :.loose)
+             (merge-attrs (sx :fs--$sm :fw--$wee-bold :.loose)
                           {:colorway colorway
                            :surface  :solid})
              "Button"]))
@@ -52,7 +52,7 @@
                      {:before:content "\"Colorways\""})]
           (for [colorway ["neutral" "accent" "positive" "warning" "negative"]] 
             [button
-             (merge-attrs (sx :fs--$small :fw--$wee-bold :.loose)
+             (merge-attrs (sx :fs--$sm :fw--$wee-bold :.loose)
                           {:colorway colorway
                            :surface  :faint})
              "Button"]))
@@ -68,7 +68,7 @@
     {:before {:content     "\"All colorways, all surfaces\""
               :position    :absolute
               :bottom      "calc(100% + 1em)"
-              :fs          :$xsmall
+              :fs          :$xs
               :font-family :$serif-font-stack
               :font-style  :italic}})
   [:<> 
@@ -79,7 +79,7 @@
                    (into [:div (sx :.flex-row-fs :gap--0.5em)]  
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [button 
-                            (merge-attrs (sx :fs--$medium)
+                            (merge-attrs (sx :fs--$base)
                                          {:colorway       colorway
                                           :surface        surface
                                           :contour          shape
@@ -91,7 +91,7 @@
                    {:before:content "\"Icon button\""})]
          (for [shape ["round" "sharp" "pill"]] 
            [icon-button 
-            (merge-attrs (sx :fs--$xxxlarge)
+            (merge-attrs (sx :fs--$3xl)
                          {:contour shape
                           :-icon  [icon :pets]})]))
 
@@ -99,7 +99,7 @@
                    {:before:content "\"Icon button with packing\""})]
          (for [packing ["compact" "roomy"]] 
            [icon-button 
-            (merge-attrs (sx :fs--$xxxlarge)
+            (merge-attrs (sx :fs--$3xl)
                          {:-packing packing
                           :-icon    [icon :pets]})]))
    #_#_#_ #_ 
@@ -107,7 +107,7 @@
                    {:before:content "\"Shape\""})]
          (for [shape ["round" "sharp" "pill"]] 
            [button 
-            (merge-attrs (sx :fs--$small)
+            (merge-attrs (sx :fs--$sm)
                          {:surface        "outline"
                           :contour          shape
                           :start-enhancer [icon :pets]})
@@ -117,7 +117,7 @@
                    {:before:content "\"Packing\""})]
          (for [packing ["compact" nil "roomy"]] 
            [button 
-            (merge-attrs (sx :fs--$small)
+            (merge-attrs (sx :fs--$sm)
                          {:surface        "outline"
                           :-packing        packing
                           :start-enhancer [icon :pets]})
@@ -129,7 +129,7 @@
          (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
            [button 
             (merge-attrs {:style (css-vars-map _stroke-width)
-                          :class (css :fs--$small
+                          :class (css :fs--$sm
                                       [:--outlined-button-stroke-width :$_stroke-width]
                                       [:--outlined-button-stroke-align "center"])}
                          {:surface        "outline"
@@ -143,7 +143,7 @@
          (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
            [button 
             (merge-attrs {:style (css-vars-map _stroke-width)
-                          :class (css :fs--$small
+                          :class (css :fs--$sm
                                       [:--outlined-button-stroke-width :$_stroke-width]
                                       [:--outlined-button-stroke-align "center"])}
                          {:surface        "outline"
@@ -157,8 +157,8 @@
                    {:before:content "\"Box shadow\""})]
          (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
            [button 
-            (merge-attrs {:class (css :fs--$small
-                                      [:--box-shadow-strength "20%"]
+            (merge-attrs {:class (css :fs--$sm
+                                      [:--box-shadow-opacity "20%"]
                                       [:--box-shadow-blur-radius "5px"]
                                       [:--box-shadow-offset-x "5px"]
                                       [:--box-shadow-offset-y "5px"]
@@ -184,7 +184,7 @@
     {:before {:content     "\"All colorways, all surfaces\""
               :position    :absolute
               :bottom      "calc(100% + 1em)"
-              :fs          :$xsmall
+              :fs          :$xs
               :font-family :$serif-font-stack
               :font-style  :italic}})
   [:<> 
@@ -195,7 +195,7 @@
                    (into [:div (sx :.flex-row-fs :gap--0.5em)]  
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [tag 
-                            (merge-attrs (sx :fs--$small)
+                            (merge-attrs (sx :fs--$sm)
                                          {:colorway       colorway
                                           :surface        surface
                                           :contour          shape
@@ -209,7 +209,7 @@
                    (into [:div (sx :.flex-row-fs :gap--0.5em)]  
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [tag 
-                            (merge-attrs (sx :fs--$small)
+                            (merge-attrs (sx :fs--$sm)
                                          {:colorway colorway
                                           :surface  surface
                                           :contour    shape})
@@ -219,7 +219,7 @@
                    {:before:content "\"Shape\""})]
          (for [shape ["round" "sharp" "pill" "round" "sharp" "pill"]] 
            [tag 
-            (merge-attrs (sx :fs--$large
+            (merge-attrs (sx :fs--$lg
                              ["nth-child(4):tt" :lowercase]
                              ["nth-child(5):tt" :lowercase]
                              ["nth-child(6):tt" :lowercase])
@@ -231,7 +231,7 @@
                    {:before:content "\"Packing\""})]
          (for [packing ["compact" nil "roomy" "compact" nil "roomy"]] 
            [tag 
-            (merge-attrs (sx :fs--$large
+            (merge-attrs (sx :fs--$lg
                              ["nth-child(4):tt" :lowercase]
                              ["nth-child(5):tt" :lowercase]
                              ["nth-child(6):tt" :lowercase])
@@ -245,7 +245,7 @@
          (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
            [tag 
             (merge-attrs {:style (css-vars-map _stroke-width)
-                          :class (css :fs--$small
+                          :class (css :fs--$sm
                                       [:--outlined-button-stroke-width :$_stroke-width]
                                       [:--outlined-button-stroke-align "center"])}
                          {:surface        "outline"
@@ -258,7 +258,7 @@
          (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
            [tag 
             (merge-attrs {:style (css-vars-map _stroke-width)
-                          :class (css :fs--$small
+                          :class (css :fs--$sm
                                       [:--outlined-button-stroke-width :$_stroke-width]
                                       [:--outlined-button-stroke-align "center"])}
                          {:surface        "outline"
@@ -272,7 +272,7 @@
          (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
            [tag 
             (merge-attrs {:style (css-vars-map _stroke-width)
-                          :class (css :fs--$small
+                          :class (css :fs--$sm
                                       :.lowercase
                                       [:--outlined-button-stroke-width :$_stroke-width]
                                       [:--outlined-button-stroke-align "center"])}
@@ -286,8 +286,8 @@
                    {:before:content "\"Box shadow\""})]
          (for [_stroke-width ["1px" "2px" "3px" "4px" "5px"]] 
            [tag 
-            (merge-attrs {:class (css :fs--$small
-                                      [:--box-shadow-strength "20%"]
+            (merge-attrs {:class (css :fs--$sm
+                                      [:--box-shadow-opacity "20%"]
                                       [:--box-shadow-blur-radius "5px"]
                                       [:--box-shadow-offset-x "5px"]
                                       [:--box-shadow-offset-y "5px"]
@@ -448,7 +448,7 @@
 
 (defn callout-dev-samples []
   [callout
-   (merge-attrs (sx :.large :.accent) 
+   (merge-attrs (sx :.lg :.accent) 
                 {:-header-text  [:span
                                  "Please check out the "
                                  [link (merge-attrs (sx :ws--n) {:href "#"})
@@ -464,7 +464,7 @@
                    (into [:div (sx :.flex-col-fs :gap--0.5em)]  
                          (for [colorway [nil "accent" "positive" "warning" "negative"]]
                            [callout
-                            (merge-attrs (sx :.large :.accent) 
+                            (merge-attrs (sx :.lg :.accent) 
                                          {:-header-text [:span
                                                          "Please check out the "
                                                          [link (merge-attrs
@@ -530,7 +530,7 @@
     [:div (sx :.flex-row-fs :w--300px :min-height--75px :p--10px :.wireframe)
      [avatar 
       (merge {:src avatar-1}
-             (sx :w--50px :fs--$large))
+             (sx :w--50px :fs--$lg))
       "JC"]]
 
     [:div (sx :.flex-col-fs :h--300px :min-width--75px :.wireframe)
@@ -561,7 +561,7 @@
                     [avatar (merge-attrs {:surface  surface
                                           :colorway colorway
                                           :contour    :circle}
-                                         (sx :h--48px :.large))
+                                         (sx :h--48px :.lg))
                      "JC"]))))
 
     #_[:div (sx :w--700px)
@@ -589,7 +589,7 @@
    ;; button with spinner example
     #_[button
        (merge-attrs
-        (sx :fs--$xxxlarge)
+        (sx :fs--$3xl)
         {:on-click (fn [e]
                      (let [el       (-> e .-target)
                            loading? (= "loading" (.-ariaLabel el))]
@@ -622,7 +622,7 @@
                "Click to open modal"]
          [modal (merge-attrs 
                  (sx :min-width--300px
-                     :_.kushi-modal-description:fs--$small
+                     :_.kushi-modal-description:fs--$sm
                  ;; [:--modal-border-radius :0px]
                  ;; [:--modal-backdrop-color :beige]
                      )
@@ -642,7 +642,7 @@
                                           (fn [] 
                                             [:div
                                              (sx :.flex-row-c
-                                                 :fs--$xxxlarge
+                                                 :fs--$3xl
                                                  :padding--0.25em)
                                              "💃🏽"])
                                           popover-el))
@@ -658,7 +658,7 @@
                                                  (fn [] 
                                                    [:div
                                                     (sx :.flex-row-c
-                                                        :fs--$xxxlarge
+                                                        :fs--$3xl
                                                         :padding--0.25em)
                                                     "💃🏽"])
                                                  popover-el))

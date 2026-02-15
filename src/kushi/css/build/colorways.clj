@@ -29,7 +29,7 @@
         #(color-mix "in oklch"
                     :transparent 
                     [(css-varize "background-color-" s "-hard" %)
-                     :$convex-shadow-strength||10%])
+                     :$convex-shadow-opacity||10%])
 
 
         base-light-mode

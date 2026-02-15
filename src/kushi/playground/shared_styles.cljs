@@ -59,9 +59,9 @@
    :c                       :$accent-750
    "has-ancestor(.dark):c"    :$accent-100
    :mbs                     :7px
-   :fs                      :$kushi-playground-codebox-snippet_font-size||$text-size-xsmall
-   :_.code:fs               :$kushi-playground-codebox-snippet_font-size||$text-size-xsmall
-   :_code:fs                :$kushi-playground-codebox-snippet_font-size||$text-size-xsmall
+   :fs                      :$kushi-playground-codebox-snippet_font-size||$font-size-xs
+   :_.code:fs               :$kushi-playground-codebox-snippet_font-size||$font-size-xs
+   :_code:fs                :$kushi-playground-codebox-snippet_font-size||$font-size-xs
    :_.code:bgc              :transparent
    :_code:bgc               :transparent
    :fw                      400
@@ -96,7 +96,7 @@
    :xl:w      :$components-menu-width})
 
 (defcss "@layer kushi-playground-shared .kushi-playground-meta-desc-label"
-  {:fs         :$kushi-playground-meta-desc-label_font-size||$text-size-xsmall
+  {:fs         :$kushi-playground-meta-desc-label_font-size||$font-size-xs
    :fw         :$kushi-playground-meta-desc-label_font-weight||$wee-bold
    :font-style :$kushi-playground-meta-desc-label_font-style||italic
    :tt         :$kushi-playground-meta-desc-label_text-transform||uppercase
@@ -274,8 +274,8 @@
 
 
 (defcss "@layer kushi-playground-shared .component-section-header-label"
-  {:fw :$text-weight-semi-bold
-   :fs :$text-size-xlarge
+  {:fw :$font-weight-semi-bold
+   :fs :$font-size-xl
    :tt :capitalize
    :lh :0.75em})
 

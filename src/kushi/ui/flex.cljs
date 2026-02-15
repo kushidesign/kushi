@@ -25,8 +25,8 @@
                   :inert
                   :surface
                   :colorway
-                  :text-size
-                  :text-weight]
+                  :size
+                  :weight]
    :props        {:tag {:schema  :keyword
                         :desc    "HTML tag to use."
                         :default :div}}}
@@ -43,8 +43,8 @@
                   :inert
                   :surface
                   :colorway
-                  :text-size
-                  :text-weight]
+                  :size
+                  :weight]
    :props        {:tag {:schema  :keyword
                         :desc    "HTML tag to use."
                         :default :div}}}

@@ -17,15 +17,15 @@
                          Kushi's design system, e.g `:red`, `:purple`, `:gold`,
                          etc. Only applies when fallback text is used."}
               size           
-              {:schema    #{:xxxsmall
-                          :xxsmall
-                          :xsmall
-                          :small
-                          :medium
-                          :large
-                          :xlarge
-                          :xxlarge
-                          :xxxlarge}
+              {:schema    #{:3xs
+                          :2xs
+                          :xs
+                          :sm
+                          :base
+                          :lg
+                          :xl
+                          :2xl
+                          :3xl}
                :default nil
                :desc    "Corresponds to the font-size based on Kushi's font-size
                          scale."}
@@ -42,7 +42,7 @@
            (merge-attrs
             {:class               (css ".kushi-prose"
                                        {:line-height  :1.75
-                                        :font-weight :$prose-font-weight
+                                        :weight :$prose-font-weight
                                         :font-family :$prose-font-family
                                         :color       :$prose-color})
              :data-ks-size     size

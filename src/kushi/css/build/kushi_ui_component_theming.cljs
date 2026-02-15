@@ -47,7 +47,7 @@
    "font-size"                  "var(--code-font-size)",
    "background-color"           "var(--code-background-color)",
    "padding-block"              "var(--code-padding-block)",
-   "border-radius"              "var(--code-border-radius, var(--rounded-small-absolute))",
+   "border-radius"              "var(--code-border-radius, var(--rounded-sm-absolute))",
   ;;  "border-width"               "var(--code-border-width, 1px)",
   ;;  "border-color"               "var(--code-border-color, var(--neutral-200))",
   ;;  "border-style"               "var(--code-border-style, solid)",
@@ -179,13 +179,9 @@
 
    "--xsoft-stroke-transparency"                      "15%"
    "--soft-stroke-transparency"                       "30%"
-   "--medium-stroke-transparency"                     "50%"
+   "--md-stroke-transparency"                     "50%"
    "--hard-stroke-transparency"                       "70%"
    "--xhard-stroke-transparency"                      "100%"
-
-   ;; Shadows
-   :--shadow-color                                  "black"
-   :dark:--shadow-color                             "white"
 
    ;; TODO - add these scales for legacy browser support of colored shadows
    ;; legacy
@@ -195,7 +191,7 @@
    ;; :--shadow-color-red-hex         "#f908244d" ; <- this would be in :root
    
    ;; Convex
-   :--convex-shadow-strength                        "25%"
+   :--convex-shadow-opacity                        "25%"
 
    })
 
@@ -548,10 +544,10 @@
 
 ;; Convex
 (defcss "[data-ks-surface=convex], [data-ks-surface=convex-light-mode]"
-  {:--convex-shadow-strength      "20%"
-   :dark:--convex-shadow-strength "30%"
-   :--convex-shadow-lightness-bgc "calc(var(--lightness-bgc) - (var(--convex-shadow-strength) / 3))"
-   :--convex-shadow-chroma        "calc(var(--chroma-bgc) + (var(--convex-shadow-strength) / 6))"
+  {:--convex-shadow-opacity      "20%"
+   :dark:--convex-shadow-opacity "30%"
+   :--convex-shadow-lightness-bgc "calc(var(--lightness-bgc) - (var(--convex-shadow-opacity) / 3))"
+   :--convex-shadow-chroma        "calc(var(--chroma-bgc) + (var(--convex-shadow-opacity) / 6))"
    :--convex-shadow-chroma-hover  "calc(var(--convex-shadow-chroma) var(--chroma-shift-op, +) calc(2 * var(--chroma-shift)))"
    :--convex-shadow-chroma-active "calc(var(--convex-shadow-chroma) var(--chroma-shift-op, +) calc(3 * var(--chroma-shift)))"
    "[data-ks-colorway=neutral]"   {:--convex-shadow-chroma        "var(--chroma-bgc)"
@@ -571,39 +567,55 @@
    "[data-ks-stroke=none]"          {:--stroke-transparency :0%}
    "[data-ks-stroke=xsoft]"         {:--stroke-transparency :$xsoft-stroke-transparency}
    "[data-ks-stroke=soft]"          {:--stroke-transparency :$soft-stroke-transparency}
-   "[data-ks-stroke=medium]"        {:--stroke-transparency :$medium-stroke-transparency}
+   "[data-ks-stroke=md]"            {:--stroke-transparency :$md-stroke-transparency}
    "[data-ks-stroke=hard]"          {:--stroke-transparency :$hard-stroke-transparency}
    "[data-ks-stroke=xhard]"         {:--stroke-transparency :$xhard-stroke-transparency}})
 
 ;; Surface shadowing ---------------------------------------------------------------------------------------------------------
 (defcss "[data-ks-surface][data-ks-shadow]" 
   {
-   "[data-ks-shadow=xxxsmall]"       {:--shadow :$shadow-xxxsmall}
-   "[data-ks-shadow=xxsmall]"        {:--shadow :$shadow-xxsmall}
-   "[data-ks-shadow=xsmall]"         {:--shadow :$shadow-xsmall}
-   "[data-ks-shadow=small]"          {:--shadow :$shadow-small}
-   "[data-ks-shadow=medium]"         {:--shadow :$shadow-medium}
-   "[data-ks-shadow=large]"          {:--shadow :$shadow-large}
-   "[data-ks-shadow=xlarge]"         {:--shadow :$shadow-xlarge}
-   "[data-ks-shadow=xxlarge]"        {:--shadow :$shadow-xxlarge}
-   "[data-ks-shadow=xxxlarge]"       {:--shadow :$shadow-xxxlarge}
-   "[data-ks-shadow-color=positive]" {:--shadow-color :$positive-500},
-   "[data-ks-shadow-color=neutral]"  {:--shadow-color :$neutral-500},
-   "[data-ks-shadow-color=negative]" {:--shadow-color :$negative-500},
-   "[data-ks-shadow-color=purple]"   {:--shadow-color :$purple-500},
-   "[data-ks-shadow-color=magenta]"  {:--shadow-color :$magenta-500},
-   "[data-ks-shadow-color=accent]"   {:--shadow-color :$accent-500},
-   "[data-ks-shadow-color=sand]"    {:--shadow-color :$sand-500},
-   "[data-ks-shadow-color=slate]"    {:--shadow-color :$slate-500},
-   "[data-ks-shadow-color=blue]"     {:--shadow-color :$blue-500},
-   "[data-ks-shadow-color=orange]"   {:--shadow-color :$orange-500},
-   "[data-ks-shadow-color=gray]"     {:--shadow-color :$gray-500},
-   "[data-ks-shadow-color=warning]"  {:--shadow-color :$warning-500},
-   "[data-ks-shadow-color=green]"    {:--shadow-color :$green-500},
-   "[data-ks-shadow-color=gold]"     {:--shadow-color :$gold-500},
-   "[data-ks-shadow-color=lime]"     {:--shadow-color :$lime-500},
-   "[data-ks-shadow-color=yellow]"   {:--shadow-color :$yellow-500},
-   "[data-ks-shadow-color=red]"      {:--shadow-color :$red-500}})
+   :--transparent-shadow-color     "color-mix(in oklch, var(--shadow-color, black) var(--shadow-opacity, 15%), transparent)"
+   :--shadow-3xs                   "0 1px 3px -1px var(--transparent-shadow-color)"
+   :--shadow-2xs                   "0 3px 6px -2px var(--transparent-shadow-color)"
+   :--shadow-xs                    "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"
+   :--shadow-sm                    "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"
+   :--shadow-md                    "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"
+   :--shadow-lg                    "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"
+   :--shadow-xl                    "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"
+   :--shadow-2xl                   "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"
+   :--shadow-3xl                   "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"
+   :--shadow-color                 :black
+   :dark                           {:--transparent-shadow-color 
+                                    "color-mix(in oklch, var(--shadow-color-dark-mode, white) var(--shadow-opacity, 15%), transparent)"}
+
+   "[data-ks-shadow=3xs]"            {:box-shadow :$shadow-3xs}
+   "[data-ks-shadow=2xs]"            {:box-shadow :$shadow-2xs}
+   "[data-ks-shadow=xs]"             {:box-shadow :$shadow-xs}
+   "[data-ks-shadow=sm]"             {:box-shadow :$shadow-sm}
+   "[data-ks-shadow=md]"             {:box-shadow :$shadow-md}
+   "[data-ks-shadow=lg]"             {:box-shadow :$shadow-lg}
+   "[data-ks-shadow=xl]"             {:box-shadow :$shadow-xl}
+   "[data-ks-shadow=2xl]"            {:box-shadow :$shadow-2xl}
+   "[data-ks-shadow=3xl]"            {:box-shadow :$shadow-3xl}
+
+  ;;  "[data-ks-shadow-color=positive]" {:--shadow-color :$positive-500},
+  ;;  "[data-ks-shadow-color=neutral]"  {:--shadow-color :$neutral-500},
+  ;;  "[data-ks-shadow-color=negative]" {:--shadow-color :$negative-500},
+  ;;  "[data-ks-shadow-color=purple]"   {:--shadow-color :$purple-500},
+  ;;  "[data-ks-shadow-color=magenta]"  {:--shadow-color :$magenta-500},
+  ;;  "[data-ks-shadow-color=accent]"   {:--shadow-color :$accent-500},
+  ;;  "[data-ks-shadow-color=sand]"     {:--shadow-color :$sand-500},
+  ;;  "[data-ks-shadow-color=slate]"    {:--shadow-color :$slate-500},
+  ;;  "[data-ks-shadow-color=blue]"     {:--shadow-color :$blue-500},
+  ;;  "[data-ks-shadow-color=orange]"   {:--shadow-color :$orange-500},
+  ;;  "[data-ks-shadow-color=gray]"     {:--shadow-color :$gray-500},
+  ;;  "[data-ks-shadow-color=warning]"  {:--shadow-color :$warning-500},
+  ;;  "[data-ks-shadow-color=green]"    {:--shadow-color :$green-500},
+  ;;  "[data-ks-shadow-color=gold]"     {:--shadow-color :$gold-500},
+  ;;  "[data-ks-shadow-color=lime]"     {:--shadow-color :$lime-500},
+  ;;  "[data-ks-shadow-color=yellow]"   {:--shadow-color :$yellow-500},
+  ;;  "[data-ks-shadow-color=red]"      {:--shadow-color :$red-500}
+   })
 
 
 ;; Shadows experimentation cruft ------------------------------------------------------
@@ -637,7 +649,7 @@
 ;;    :--shadow-color-red-h-s-l         "10 100 50" ; <- this would be in :root
 ;;    :--shadow-color-h-s-l             :$shadow-color-red-h-s-l})
 
-;; super legacy-version, no support for shadow-strength
+;; super legacy-version, no support for shadow-opacity
 ;; (defcss "[data-ks-surface][data-ks-shadow][data-ks-shadow-color=red]" 
 ;;   {
 ;;    :--shadow-color-red-hex         "#f908244d" ; <- this would be in :root
@@ -647,17 +659,17 @@
 ;; modern version
 #_(defcss "[data-ks-surface][data-ks-shadow]" 
   {
-   :--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 20%), transparent)"
-  ;;  :--transparent-shadow-color-1 "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 2%), transparent)"
-  ;;  :--transparent-shadow-color-2 "color-mix(in oklch, var(--shadow-color, black) var(--shadow-strength, 12%), transparent)"
+   :--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-opacity, 20%), transparent)"
+  ;;  :--transparent-shadow-color-1 "color-mix(in oklch, var(--shadow-color, black) var(--shadow-opacity, 2%), transparent)"
+  ;;  :--transparent-shadow-color-2 "color-mix(in oklch, var(--shadow-color, black) var(--shadow-opacity, 12%), transparent)"
    })
 
 ;; legacy version
 ;; (defcss "[data-ks-surface][data-ks-shadow]" 
 ;;   {:--shadow-color-h-s-l     "0 0 0"
-;;    :--shadow-strength      "20%"
+;;    :--shadow-opacity      "20%"
 ;;    ;; TODO - figure out whether the slash "/" syntax works in older browsers
-;;    :--transparent-shadow-color "hsl(var(--shadow-color-h-s-l) / var(--shadow-strength))"})
+;;    :--transparent-shadow-color "hsl(var(--shadow-color-h-s-l) / var(--shadow-opacity))"})
 
 ;; super-legacy version
 ;; (defcss "[data-ks-surface][data-ks-shadow]" 

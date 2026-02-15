@@ -248,8 +248,8 @@
 
 
 '{:data-ks    [:position
-               :text-size
-               :text-weight
+               :size
+               :weight
                :display]
 
   :classnames [:colorway-red
@@ -257,7 +257,7 @@
                :stroke-align-outside
                :surface-soft
                :shape-rounded
-               :shadow-xxlarge
+               :shadow-2xl
                :packing-roomy
                :end-enhancer
                :start-enhancer

@@ -70,8 +70,8 @@
    :border-style               :$code-border-style||solid
    :beer                       0
    :besr                       0
-   :bser                       :$shape-rounded-medium-absolute,
-   :bssr                       :$shape-rounded-medium-absolute,
+   :bser                       :$shape-rounded-md-absolute,
+   :bssr                       :$shape-rounded-md-absolute,
    :bbew                       0
    ">*:nth-child(2):line-height" "revert"
    :p                          :1rem})
@@ -116,7 +116,7 @@
         [:block-start :inline-end]})
       attrs)
      [icon (sx :.kushi-playground-copy-to-clipboard-button-icon
-               :fs--medium) mui.svg/content-copy]]))
+               :fs--md) mui.svg/content-copy]]))
 
 (defn- snippet-section
   [{:keys [preview-section
@@ -140,7 +140,7 @@
      (sx :.kushi-playground-code-snippet
           :.kushi-code-block
           :.code
-          :.xsmall
+          :.xs
           :xsm:p--1.5em
           :position--relative
           :p--1.0em
@@ -148,15 +148,15 @@
           :xsm:pie--2.25em
           :w--100%
           :lh--1.2
-          :fs--$text-size-xsmall-b
+          :fs--$text-xs-b
           :p--1rem
           {">*:nth-child(2):line-height" "revert"})
      (if bottom-half?
        (sx :bser--0
            :bssr--0
-           :beer--$shape-rounded-medium-absolute
-           :besr--$shape-rounded-medium-absolute)
-       (sx :br--$shape-rounded-medium-absolute)))
+           :beer--$shape-rounded-md-absolute
+           :besr--$shape-rounded-md-absolute)
+       (sx :br--$shape-rounded-md-absolute)))
     (when-let [attrs (some->> copyable
                               (hash-map :text-to-copy)
                               (merge-attrs 
@@ -254,7 +254,7 @@
       (into [flex-col (sx ".kushi-playground-snippets-modal-requires"
                           :gap--2.25rem)
              [snippet-section
-              {:header             (into [:div (sx :.small :mbe--1em)]
+              {:header             (into [:div (sx :.sm :mbe--1em)]
                                          (desc->hiccup
                                           "Paste into the `:require` section of your `:ns` form:"))
                :preformatted       (formatted-code reqs-str)

@@ -26,8 +26,8 @@
       #_ 
        {:label   "Different sizes",
         :samples (samples-with-variant
-                  {:variant       :text-size,
-                   :variant-scale :text-size/xsmall-xxxlarge,
+                  {:variant       :size,
+                   :variant-scale :size/xs-3xl,
                    :attrs         {:end-enhancer   :east
                                    :defaultChecked true} })}
 
@@ -53,62 +53,62 @@
                     [
                      "thin"
                      [flex-row
-                      {:text-size   :xlarge
-                       :text-weight :thin}
+                      {:size   :xl
+                       :weight :thin}
                       [checkbox]
                       [:label "Sign me up"]]
 
                      "extra-light"
                      [flex-row
-                      {:text-size   :xlarge
-                       :text-weight :extra-light}
+                      {:size   :xl
+                       :weight :extra-light}
                       [checkbox]
                       [:label "Sign me up"]]
 
                      "normal"
                      [flex-row
-                      {:text-size   :xlarge
-                       :text-weight :normal}
+                      {:size   :xl
+                       :weight :normal}
                       [checkbox]
                       [:label "Sign me up"]]
 
                      "wee-bold"
                      [flex-row
-                      {:text-size   :xlarge
-                       :text-weight :wee-bold}
+                      {:size   :xl
+                       :weight :wee-bold}
                       [checkbox]
                       [:label "Sign me up"]]
 
                      "semi-bold"
                      [flex-row
-                      {:text-size   :xlarge
-                       :text-weight :semi-bold}
+                      {:size   :xl
+                       :weight :semi-bold}
                       [checkbox]
                       [:label "Sign me up"]]
 
                      "bold"
                      [flex-row
-                      {:text-size   :xlarge
-                       :text-weight :bold}
+                      {:size   :xl
+                       :weight :bold}
                       [checkbox]
                       [:label "Sign me up"]]
 
                      "extra-bold"
                      [flex-row
-                      {:text-size   :xlarge
-                       :text-weight :extra-bold}
+                      {:size   :xl
+                       :weight :extra-bold}
                       [checkbox]
                       [:label "Sign me up"]]
 
                      "heavy"
                      [flex-row
-                      {:text-size   :xlarge
-                       :text-weight :heavy}
+                      {:size   :xl
+                       :weight :heavy}
                       [checkbox]
                       [:label "Sign me up"]]])
 
         #_(samples-with-variant
-                    {:variant         :text-weight
+                    {:variant         :weight
                      :variant-labels? false
                      :args            ["Make it shiny" [icon :auto-awesome]]})}]))
 

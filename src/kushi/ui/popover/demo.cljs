@@ -15,7 +15,7 @@
    (sx :.my-popover-content
        :position--relative
        :.flex-row-fs
-       :fs--$text-size-small
+       :fs--$text-sm
        :ai--fs
        :pi--1.5em
        :xsm:pi--2.5em
@@ -32,7 +32,7 @@
              :_.kushi-text-input-label:min-width--7em
              :_.kushi-input-inline:gtc--36%:64%)
     [:h2 (sx :.my-form-header
-             :fs--$text-size-medium
+             :fs--$text-base
              :fw--$semi-bold
              :mbe--0.75em)
      "Example Popover Form"]
@@ -58,7 +58,7 @@
          :.neutral
          :.top-right-corner-inside
          {:position      :absolute
-          :fs            :$text-size-small
+          :fs            :$font-size-sm
           :zi            1
           :opacity       :$popover-close-button-opacity
           :margin-inline :$popover-close-button-margin-inline||$icon-button-padding-inline
@@ -78,7 +78,7 @@
       :samples       (samples 
                       [[button
                         (merge-attrs 
-                         {:text-size :small}
+                         {:size :sm}
                          (popover-attrs
                           {:f (fn [popover-el]
                                 (rdom/render
@@ -86,7 +86,7 @@
                                    [:div 
                                     (sx :d--flex
                                         :jc--center
-                                        :fs--$text-size-xxxlarge 
+                                        :fs--$text-3xl 
                                         :padding--0.25em)
                                     "💃🏽"])
                                  popover-el))}))
@@ -96,11 +96,11 @@
       :header/dialog "Popover"
       :require       '[[kushi.ui.button :refer [button]]
                        [reagent.dom :as rdom :refer [render]]]
-      :row-attrs     (sx :_.ks-button:fs--$text-size-small)
+      :row-attrs     (sx :_.ks-button:fs--$text-sm)
       :samples       (samples 
                       [[button
                         (merge-attrs
-                         {:text-size :small}
+                         {:size :sm}
                          (popover-attrs
                           {:popover-class (css {:--popover-background-color           :$purple-100
                                                 :--popover-background-color-dark-mode :$purple-900})
@@ -109,7 +109,7 @@
                                              (fn [] 
                                                [:div
                                                 (sx :.flex-row-c
-                                                    :fs--$text-size-xxxlarge
+                                                    :fs--$text-3xl
                                                     :padding--0.25em)
                                                 "💃🏽"])
                                              popover-el))}))
@@ -119,11 +119,11 @@
       :header/dialog "Popover"
       :require       '[[kushi.ui.button :refer [button]]
                        [reagent.dom :as rdom :refer [render]]]
-      :row-attrs     (sx :_.ks-button:fs--$text-size-small)
+      :row-attrs     (sx :_.ks-button:fs--$text-sm)
       :samples       (samples 
                       [[button
                         (merge-attrs 
-                         {:text-size :small}
+                         {:size :sm}
                          (popover-attrs
                           {:placement :r
                            :f         (fn [popover-el]
@@ -131,7 +131,7 @@
                                          (fn [] 
                                            [:div
                                             (sx :.flex-row-c
-                                                :fs--$text-size-xxxlarge
+                                                :fs--$text-3xl
                                                 :padding--0.25em)
                                             "💃🏽"])
                                          popover-el))}))
@@ -141,11 +141,11 @@
       :header/dialog "Popover"
       :require       '[[kushi.ui.button :refer [button]]
                        [reagent.dom :as rdom :refer [render]]]
-      :row-attrs     (sx :_.ks-button:fs--$text-size-small)
+      :row-attrs     (sx :_.ks-button:fs--$text-sm)
       :samples       (samples 
                       [[button
                         (merge-attrs
-                         {:text-size :small}
+                         {:size :sm}
                          (popover-attrs
                           {:placement :r
                            :arrow?    false
@@ -154,7 +154,7 @@
                                          (fn [] 
                                            [:div
                                             (sx :.flex-row-c
-                                                :fs--$text-size-xxxlarge
+                                                :fs--$text-3xl
                                                 :padding--0.25em)
                                             "💃🏽"])
                                          popover-el))}))
@@ -164,11 +164,11 @@
       :header/dialog "Popover"
       :require       '[[kushi.ui.button :refer [button]]
                        [reagent.dom :as rdom :refer [render]]]
-      :row-attrs     (sx :_.ks-button:fs--$text-size-small)
+      :row-attrs     (sx :_.ks-button:fs--$text-sm)
       :samples       (samples 
                       [[button
                         (merge-attrs
-                         {:text-size :small}
+                         {:size :sm}
                          (popover-attrs
                           {:placement :r
                            :arrow?    false
@@ -179,7 +179,7 @@
                                             (sx :.my-popover-content
                                                 :display--flex
                                                 :position--relative
-                                                :fs--$text-size-small
+                                                :fs--$text-sm
                                                 :ai--fs
                                                 :pi--1.5em
                                                 :xsm:pi--2.5em
@@ -197,8 +197,8 @@
                                                       :_.ks-text-input-label:min-width--7em
                                                       :_.ks-input-inline:gtc--36%:64%)
                                              [:h2 (sx :.my-form-header
-                                                      :fs--$text-size-medium
-                                                      :fw--$text-weight-semi-bold
+                                                      :fs--$text-base
+                                                      :fw--$font-weight-semi-bold
                                                       :mbe--0.75em)
                                               "Example Popover Form"]
                                              [text-field
@@ -221,7 +221,7 @@
                                                :surface          :minimal
                                                :data-ks-position :top-right-corner-inside}
                                               (sx :.ks-popover-close-button
-                                                  {:fs            :$text-size-small
+                                                  {:fs            :$font-size-sm
                                                    :zi            1
                                                    :opacity       :$popover-close-button-opacity
                                                    :margin-inline :$popover-close-button-margin-inline||$icon-button-padding-inline
@@ -234,10 +234,10 @@
       :header/dialog "Popover"
       :require       '[[kushi.ui.button :refer [button]]
                        [reagent.dom :as rdom :refer [render]]]
-      :row-attrs     (sx :_.ks-button:fs--$text-size-small)
+      :row-attrs     (sx :_.ks-button:fs--$text-sm)
       :samples       (samples [[button
                                 (merge-attrs
-                                 {:text-size :small}
+                                 {:size :sm}
                                  (popover-attrs
                                   {:f (fn
                                         [el]
@@ -250,7 +250,7 @@
                                               :min-height--100%
                                               :p--1rem)
                                           [button (merge-attrs 
-                                                   (sx :fs--$text-size-small)
+                                                   (sx :fs--$text-sm)
                                                    {:on-click dismiss-popover!})
                                            "Close"]]
                                          el))})) 
@@ -260,10 +260,10 @@
       :header/dialog "Popover"
       :require       '[[kushi.ui.button :refer [button]]
                        [reagent.dom :as rdom :refer [render]]]
-      :row-attrs     (sx :_.ks-button:fs--$text-size-small)
+      :row-attrs     (sx :_.ks-button:fs--$text-sm)
       :samples       (samples [[button
                                 (merge-attrs
-                                 {:text-size :small}
+                                 {:size :sm}
                                  (popover-attrs
                                   {:f             (fn
                                                     [el]
@@ -271,7 +271,7 @@
                                                      [:div
                                                       (merge-attrs (sx :ai--c :min-height--100% :p--1rem)
                                                                    {:data-ks-display :flex-col-center})
-                                                      [:p (sx :fs--$text-size-small)
+                                                      [:p (sx :fs--$text-sm)
                                                        "I will close automatically,"
                                                        [:br]
                                                        "after 5000ms"]]

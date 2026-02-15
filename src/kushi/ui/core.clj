@@ -34,7 +34,7 @@
     :html-attr/height 
     :html-attr/width
 
-    ; Release this once you use text-size and text-weight
+    ; Release this once you use font-size and text-weight
     ; :size
     })
 
@@ -486,17 +486,17 @@
         ;; trims the props to only give data-ks-attrs what it needs at runtime,
         ;; which are the :default and :data-ks? :data-ks (data trans fn) entries
         defaults-by-prop
-        (!? {:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
+        (!? #_{:when @debug?} (defaults-by-prop* props-with-schemas dbgf))
 
         data-ks-attrs-map-with-defaults
-        (!? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when (= sym 'box)#_@debug?} 
-         (assoc (kushi.ui.extract/data-ks-attrs {} 
-                                                defaults-by-prop
-                                                (when @debug? :debug) #_:comptime)
+        (!? (symbol "comptime:data-ks-attrs-map-with-defaults") {:when (= sym 'box) #_@debug?} 
+            (assoc (kushi.ui.extract/data-ks-attrs {} 
+                                                   defaults-by-prop
+                                                   (when @debug? :debug) #_:comptime)
 
-                ;; TODO - perhaps make this optional from config?
-                :data-ks-defui
-                (:fn/loc-str fn-info)))
+                   ;; TODO - perhaps make this optional from config?
+                   :data-ks-defui
+                   (:fn/loc-str fn-info)))
 
         ;; ks-classes-with-defaults
         ;; (!? (symbol "comptime:ks-classes-with-defaults") {:when @debug?} 
@@ -504,7 +504,7 @@
         ;;                                  defaults-by-prop 
         ;;                                  (when @debug? :debug)
         ;;                                  #_:comptime))
-
+        
         props-keys   
         (let [ks (keys merged-props)]
           (issue-html-attribute-name-clash-warnings ks fn-info)
@@ -553,7 +553,8 @@
                  :props/custom
                  (:props m)
                  :malli-schema
-                 malli-schema))]
+                 malli-schema
+                 ))]
 
     `(defn ~sym 
        ~mm
@@ -566,24 +567,24 @@
                                      (select-keys ~defaults-by-prop (-> extracted*# :props keys))
                                      :runtime))
 
-            ;;  data-ks-attrs_#        (? (kushi.ui.core/data-ks-attrs 
-            ;;                         (:props extracted*#)
-            ;;                         ~defaults-by-prop))
+             ;;  data-ks-attrs_#        (? (kushi.ui.core/data-ks-attrs 
+             ;;                         (:props extracted*#)
+             ;;                         ~defaults-by-prop))
              
              data-ks-attrs#        (!? 'data-ks-attrs#
                                        (merge ~data-ks-attrs-map-with-defaults
                                               props->data-ks-attrs#))
 
-            ;;  ks-classes*#           (kushi.ui.core/ks-classes 
-            ;;                          (:props extracted*#)
-            ;;                          (select-keys ~defaults-by-prop (-> extracted*# :props keys))
-            ;;                          :runtime)
-
-            ;;  ks-classes#            (!? 'ks-classes#
-            ;;                            (kushi.ui.core/merged-ks-classes
-            ;;                             ~ks-classes-with-defaults
-            ;;                             ks-classes*#))
-            ;;  _#                    (? (= data-ks-attrs_# data-ks-attrs#))            
+             ;;  ks-classes*#           (kushi.ui.core/ks-classes 
+             ;;                          (:props extracted*#)
+             ;;                          (select-keys ~defaults-by-prop (-> extracted*# :props keys))
+             ;;                          :runtime)
+             
+             ;;  ks-classes#            (!? 'ks-classes#
+             ;;                            (kushi.ui.core/merged-ks-classes
+             ;;                             ~ks-classes-with-defaults
+             ;;                             ks-classes*#))
+             ;;  _#                    (? (= data-ks-attrs_# data-ks-attrs#))            
              
              props#                (merge ~user-props-with-default-values
                                           (dissoc (:props extracted*#) :at))
@@ -596,49 +597,50 @@
                                     ;; :&data-ks-attrs data-ks-attrs#
                                     :&children (:children extracted*#)
                                     :args      args#}
-             {:keys ~ks}  extracted#]
+             {:keys ~ks}  extracted#
+             ]
 
-        ;; Dev-only runtime malli validation ===================================
+         ;; Dev-only runtime malli validation ===================================
          
          (when ^boolean js/goog.DEBUG
            
-          ;;  ------------------------------------------------------------------
-          ;;  Internal dev only, debugging specific instance of component ------
-          ;;  comment this block out if not debugging
+           ;;  ------------------------------------------------------------------
+           ;;  Internal dev only, debugging specific instance of component ------
+           ;;  comment this block out if not debugging
            
-          ;;  1. Set kushi.core/debug-defui to the name (symbol) of the
-          ;;     component you want to debug.
+           ;;  1. Set kushi.core/debug-defui to the name (symbol) of the
+           ;;     component you want to debug.
            
-          ;;  2. At the call-site in consuming app, give the instance of that
-          ;;     component a unique :data-ks-debug value in the attrs map.
+           ;;  2. At the call-site in consuming app, give the instance of that
+           ;;     component a unique :data-ks-debug value in the attrs map.
            
-          ;;  3. Set the data-ks-debug# binding below to match the value you
-          ;;     chose in step 2.
+           ;;  3. Set the data-ks-debug# binding below to match the value you
+           ;;     chose in step 2.
            
            (when (= (quote ~sym) (quote ~debug-defui))
-               (let [data-ks-debug# :foobang]
-                 (when (some-> extracted*#
-                                 ?
-                                 :attrs
-                                 :data-ks-debug
-                                 (= data-ks-debug#))
-                       (? "extracted" extracted#)
-                       (? "extracted*" extracted*#))))
+             (let [data-ks-debug# :foobang]
+               (when (some-> extracted*#
+                             :attrs
+                             :data-ks-debug
+                             (= data-ks-debug#))
+                 (? "extracted" extracted#)
+                 (? "extracted*" extracted*#))))
            
-          ;;  End of internal dev only, debugging specific instance of component
-          ;;  ------------------------------------------------------------------
+           ;;  End of internal dev only, debugging specific instance of component
+           ;;  ------------------------------------------------------------------
            
-          ;;  Dev-only, this is where runtime malli validation happens
-           (kushi.ui.core/validate*2
-            (assoc ~mm 
-                   :fn-info
-                   ~fn-info
-                   :props
-                   props#
-                   :data-ks-at
-                   (:data-ks-at data-ks-attrs#))))
+           ;;  Dev-only, this is where runtime malli validation happens
+           (do 
+             (kushi.ui.core/validate*2
+              (assoc ~mm 
+                     :fn-info
+                     ~fn-info
+                     :props
+                     props#
+                     :data-ks-at
+                     (:data-ks-at data-ks-attrs#)))))
          
-        ;; End of dev-only runtime malli validation ============================
+         ;; End of dev-only runtime malli validation ============================
          
          ~body))))
 
