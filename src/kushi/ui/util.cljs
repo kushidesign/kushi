@@ -181,11 +181,11 @@
 ;; TODO remove code from theming with shadow layers
 (def stroke-presets
   {:none   [["0" "transparent"]]
-   :xsoft  [[:$stroke-width "color-mix(in oklch, currentColor var(--xsoft-stroke-transparency, 15%), var(--stroke-transparency-mix-color, transparent))"]]
-   :soft   [[:$stroke-width "color-mix(in oklch, currentColor var(--soft-stroke-transparency, 30%), var(--stroke-transparency-mix-color, transparent)"]]
-   :md [[:$stroke-width "color-mix(in oklch, currentColor var(--md-stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))"]]
-   :hard   [[:$stroke-width "color-mix(in oklch, currentColor var(--hard-stroke-transparency, 70%), var(--stroke-transparency-mix-color, transparent))"]]
-   :xhard  [[:$stroke-width "color-mix(in oklch, currentColor var(--xhard-stroke-transparency, 100%), var(--stroke-transparency-mix-color, transparent))"]]
+   :xsoft  [[:$stroke-width "color-mix(in oklch, currentColor var(--xsoft-stroke-opacity, 15%), var(--stroke-opacity-mix-color, transparent))"]]
+   :soft   [[:$stroke-width "color-mix(in oklch, currentColor var(--soft-stroke-opacity, 30%), var(--stroke-opacity-mix-color, transparent)"]]
+   :md [[:$stroke-width "color-mix(in oklch, currentColor var(--md-stroke-opacity, 50%), var(--stroke-opacity-mix-color, transparent))"]]
+   :hard   [[:$stroke-width "color-mix(in oklch, currentColor var(--hard-stroke-opacity, 70%), var(--stroke-opacity-mix-color, transparent))"]]
+   :xhard  [[:$stroke-width "color-mix(in oklch, currentColor var(--xhard-stroke-opacity, 100%), var(--stroke-opacity-mix-color, transparent))"]]
    })
 
 (def stroke-presets-key-set (->> stroke-presets keys (into #{})))

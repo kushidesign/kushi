@@ -430,12 +430,10 @@
 
    :colorway         {:default  nil ;;  <- TODO should this be nil?
                       :desc     "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc."
-                      :class?   true
                       :data-ks? true }
 
    :shape            {:desc     "Shape of the element, corresponds to a Kushi's border-radius scale"
                       :default  nil
-                      :class?   true
                       :data-ks? true 
                       :fq?      true}
 
@@ -456,21 +454,18 @@
                       ;; provide example
                       :desc     "If a keyword such as `:2xs` or `:lg` is used, and not combined with a `:stroke`, correspondes to a design token from Kushi's shadow scale."
                       :default  nil
-                      :class?   true
-                      :data-ks? true }
+                      :data-ks? true}
 
-   :shadow-color     {:desc     "Controls the drop shadow color. Takes effect if a value such as `:2xs` or `:lg` is supplied to the `:shadow-size` prop."
-                      :class?   true
-                      :data-ks? true 
+   :shadow-color     {:desc         "Controls the drop shadow color. Takes effect if a value such as `:2xs` or `:lg` is supplied to the `:shadow-size` prop."
                       :local-token? true
-                      :default  nil}
+                      :default      nil}
 
-   :shadow-opacity  {:schema  [:or
-                                :keyword
-                                :string] ;; <- maybe just :keyword?
-                      :desc    "Controls the drop shadow strength. Takes effect if a value such as `:2xs` or `:lg` is supplied to the `:shadow` prop."
+   :shadow-opacity   {:schema       [:or
+                                     :keyword
+                                     :string] ;; <- maybe just :keyword?
+                      :desc         "Controls the drop shadow strength. Takes effect if a value such as `:2xs` or `:lg` is supplied to the `:shadow` prop."
                       :local-token? true
-                      :default nil}
+                      :default      nil}
 
    :stroke           {:schema   [:or 
                                  #_[:enum :none :xsoft :soft :md :hard :xhard]
@@ -492,50 +487,45 @@
                                   [:tuple [:or :string :keyword] [:or :string :keyword]]]]
                       :desc     "Can be set a number of different ways"
                       :default  nil
-                      :class?   true
                       :data-ks? true}
 
-   :stroke-opacity   {:schema [:or
-                               [:float {:min 0.0
-                                        :max 1.0}]
-                               [:value 0]
-                               [:value 1]
-                               #_[:fn 
-                                  {:error/message "Must be a string or keyword starting with representing a percentage from 0%-100%"}
-                                  (fn [x]
-                                    (and (or (string? x) (keyword? x))
-                                         (re-find #"^0\%$|^100%$|^[0-9][0-9]?(?:\.[0-9]+)?$" (name x))))]]
+   :stroke-opacity   {:schema       [:or
+                                     [:float {:min 0.0
+                                              :max 1.0}]
+                                     [:value 0]
+                                     [:value 1]
+                                     #_[:fn 
+                                        {:error/message "Must be a string or keyword starting with representing a percentage from 0%-100%"}
+                                        (fn [x]
+                                          (and (or (string? x) (keyword? x))
+                                               (re-find #"^0\%$|^100%$|^[0-9][0-9]?(?:\.[0-9]+)?$" (name x))))]]
 
                       :local-token? true
-                      :desc   "Opacity of the stroke. Only applies when a `:surface` value is provided. Locally sets the value of `--stroke-opacity`."}
+                      :desc         "Opacity of the stroke. Only applies when a `:surface` value is provided. Locally sets the value of `--stroke-opacity`."}
 
-   :stroke-color     {:schema [:or :keyword :string]
-                      :desc   "Controls the stroke color, unless `:stroke` is set as a tuple or vector containing a color value(s)."
+   :stroke-color     {:schema       [:or :keyword :string]
+                      :desc         "Controls the stroke color, unless `:stroke` is set as a tuple or vector containing a color value(s)."
                       ;; leave :default off for now
                       ;; :default  "currentColor"
                       :local-token? true
-                      :class? true
                       }
 
    :stroke-align     {:schema       [:enum :inside :outside]
                       :default      nil
                       :desc         "Alignment of the stroke. Only applies when a `:surface` value is provided."
-                      :local-token? true
-                      :class?       true
                       :data-ks?     true}
 
    :stroke-width     {:schema       [:or :string :keyword]
                       :default      nil
                       :local-token? true 
+                      :data-ks?     true
                       :desc         "Width of the stroke.
-                               Only applies when a `:surface` value is provided.
-                               If set, a stroke will be rendered with the currentColor and a default opacity of 50%.
-                               Locally sets the value of `--stroke-width`.
-                               "}
+                                     Only applies when a `:surface` value is provided.
+                                     If set, a stroke will be rendered with the currentColor and a default opacity of 50%.
+                                     Locally sets the value of `--stroke-width`."}
 
    :packing          {:default  nil
                       :desc     "General amount of padding inside the element."
-                      :class?   true 
                       :data-ks? true}
 
    ;; TODO should this just be [:or :string :keyword] , :string for text, :keyword for icon ?
@@ -543,23 +533,23 @@
                       :default      nil
                       :when-not-nil ""
                       :desc         "Content at the inline-end position preceding the element text. Typically an icon."
-                      :class?       true}
+                      }
 
    :start-enhancer   {:schema       [:or :string :keyword [:vector :any]]
                       :default      nil
                       :when-not-nil ""
                       :desc         "Content at the inline-start position following the element text. Typically an icon."
-                      :class?       true}
+                      }
 
    :transition       {:schema   :boolean
                       :desc     "When `true` this will enable Kushi's default css `transition-*` values on the element and the elements `:before` and `:after` pseudo-elements"
                       :default  true
-                      :class?   true 
+                      ;; :class?   true 
                       :data-ks? true}
 
    :surface          {:desc     "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."
                       :default  nil ;;  <- TODO should this be nil?
-                      :class?   true 
+                      ;; :class?   true 
                       :data-ks? true}
 
    ;; Should this become :interactive?
@@ -567,7 +557,7 @@
    :inert            {:schema   :boolean
                       :desc     "Surface is not interactive meaning no hover or active states."
                       :default  nil
-                      :class?   true
+                      ;; :class?   true
                       :data-ks? true}
 
    ;; Need this since it is an html attribut already?
@@ -578,7 +568,6 @@
    :icon-enhanceable {:schema   :boolean
                       :desc     "Element is enhanceable with an icon."
                       :default  nil
-                      :class?   true
                       :data-ks? true }
 
    :icon-style       {:desc    "Drawn style of icon, e.g. rounded, outlined, sharp"
@@ -607,6 +596,9 @@
                       "--shadow-color-dark-mode" (if kushi-color? 
                                                    (str "var(--" s "-300)")
                                                    s)}))})
+
+(def data-ks-transformers 
+  {:stroke-width (fn [_ _] {"data-ks-stroke" ""})})
 
 (def shared-props-enum
   (->> props keys (into [:enum])))

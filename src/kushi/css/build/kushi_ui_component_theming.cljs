@@ -173,15 +173,9 @@
    "--tag-padding-block-xroomy"                       "0.6em"
 
    "--transition-duration"                            :$transition-xxxfast
-   ;; data-ks-surface=outline
-   "--outlined-element-stroke-transparency"           "30%"
-   "--outlined-element-stroke-transparency-dark-mode" "30%"
 
-   "--xsoft-stroke-transparency"                      "15%"
-   "--soft-stroke-transparency"                       "30%"
-   "--md-stroke-transparency"                     "50%"
-   "--hard-stroke-transparency"                       "70%"
-   "--xhard-stroke-transparency"                      "100%"
+   "--stroked-element-stroke-opacity"           "30%"
+   "--stroked-element-stroke-opacity-dark-mode" "30%"
 
    ;; TODO - add these scales for legacy browser support of colored shadows
    ;; legacy
@@ -556,20 +550,15 @@
    :background-image              "linear-gradient(180deg, transparent, transparent 15%, oklch(var(--convex-shadow-lightness-bgc) calc(var(--convex-shadow-chroma) + calc(1 * var(--chroma-shift))) var(--colorway-hue)))"
    :hover:background-image        "linear-gradient(180deg, transparent, transparent 15%, oklch(calc(var(--convex-shadow-lightness-bgc) var(--chroma-shift-op, -) 4%) var(--convex-shadow-chroma-hover) var(--colorway-hue)))"
    :active:background-image       "linear-gradient(180deg, transparent, transparent 15%, oklch(calc(var(--convex-shadow-lightness-bgc) var(--chroma-shift-op, -) 8%) var(--convex-shadow-chroma-active) var(--colorway-hue)))"
-   :dark                          {:--chroma-shift-op "+"}
-   })
+   :dark                          {:--chroma-shift-op "+"}})
+
 
 ; Surface stroking ---------------------------------------------------------------------------------------------------------
 (defcss "[data-ks-surface][data-ks-stroke]"
   {"[data-ks-stroke-align=outside]" {"--stroke-inset" ""}
-   :--box-shadow-for-stroke         "var(--stroke-inset, inset) 0 0 0 var(--stroke-width, var(--element-stroke-width, 1px)) color-mix(in oklch, currentColor var(--stroke-transparency, 50%), var(--stroke-transparency-mix-color, transparent))" 
-   :box-shadow                      "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)" 
-   "[data-ks-stroke=none]"          {:--stroke-transparency :0%}
-   "[data-ks-stroke=xsoft]"         {:--stroke-transparency :$xsoft-stroke-transparency}
-   "[data-ks-stroke=soft]"          {:--stroke-transparency :$soft-stroke-transparency}
-   "[data-ks-stroke=md]"            {:--stroke-transparency :$md-stroke-transparency}
-   "[data-ks-stroke=hard]"          {:--stroke-transparency :$hard-stroke-transparency}
-   "[data-ks-stroke=xhard]"         {:--stroke-transparency :$xhard-stroke-transparency}})
+   :--box-shadow-for-stroke         "var(--stroke-inset, inset) 0 0 0 var(--stroke-width, var(--element-stroke-width, 1px)) color-mix(in oklch, currentColor var(--stroke-opacity, 50%), var(--stroke-opacity-mix-color, transparent))" 
+   :box-shadow                      "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)"})
+
 
 ;; Surface shadowing ---------------------------------------------------------------------------------------------------------
 (defcss "[data-ks-surface][data-ks-shadow]" 

@@ -1374,16 +1374,29 @@
           class-selector))]
     (some->> cls (hash-map :class))))
 
+
 (defn- data-ks-attrs [m+]
   (reduce-kv (fn [m k v] 
-               (assoc m
-                      (keyword (str "data-ks-" (name k)))
-                      (cond (true? v)
-                            ""
-                            (symbol? v)
-                            v
-                            :else
-                            (as-str v))))
+               (if (some-> props/props k :data-ks?)
+                 ;; tODO debug ? :trace macro here
+                 (or #_(? :trace (some-> k 
+                                         (get variants/data-ks-transformers)
+                                         (apply [k v])
+                                         (->> (merge m))))
+
+                     (some-> (get variants/data-ks-transformers k)
+                             (apply [k v])
+                             (->> (merge m)))
+
+                     (assoc m
+                            (keyword (str "data-ks-" (name k)))
+                            (cond (true? v)
+                                  ""
+                                  (symbol? v)
+                                  v
+                                  :else
+                                  (as-str v))))
+                 m))
              {}
              (:props m+)))
 
