@@ -3,7 +3,7 @@
  ;;  [taoensso.tufte :as tufte]
    [babashka.process :refer [shell]] ;; for testing
    [bling.core :refer [bling callout point-of-interest]]
-   [bling.explain :refer [explain-malli]]
+   [bling.explain :refer [explain-malli explain-malli*]]
    [bling.hifi :refer [hifi]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string :refer [replace] :rename {replace sr}]
@@ -583,30 +583,30 @@
        v))))
 
 
-;; HHHHHHHHH     HHHHHHHHHLLLLLLLLLLL             PPPPPPPPPPPPPPPPP   
-;; H:::::::H     H:::::::HL:::::::::L             P::::::::::::::::P  
-;; H:::::::H     H:::::::HL:::::::::L             P::::::PPPPPP:::::P 
-;; HH::::::H     H::::::HHLL:::::::LL             PP:::::P     P:::::P
-;;   H:::::H     H:::::H    L:::::L                 P::::P     P:::::P
-;;   H:::::H     H:::::H    L:::::L                 P::::P     P:::::P
-;;   H::::::HHHHH::::::H    L:::::L                 P::::PPPPPP:::::P 
-;;   H:::::::::::::::::H    L:::::L                 P:::::::::::::PP  
-;;   H:::::::::::::::::H    L:::::L                 P::::PPPPPPPPP    
-;;   H::::::HHHHH::::::H    L:::::L                 P::::P            
-;;   H:::::H     H:::::H    L:::::L                 P::::P            
-;;   H:::::H     H:::::H    L:::::L         LLLLLL  P::::P            
-;; HH::::::H     H::::::HHLL:::::::LLLLLLLLL:::::LPP::::::PP          
-;; H:::::::H     H:::::::HL::::::::::::::::::::::LP::::::::P          
-;; H:::::::H     H:::::::HL::::::::::::::::::::::LP::::::::P          
-;; HHHHHHHHH     HHHHHHHHHLLLLLLLLLLLLLLLLLLLLLLLLPPPPPPPPPP          
+;; HHHHHHHHH     HHHHHHHHH LLLLLLLLLLL              PPPPPPPPPPPPPPPPP   
+;; H:::::::H     H:::::::H L:::::::::L              P::::::::::::::::P  
+;; H:::::::H     H:::::::H L:::::::::L              P::::::PPPPPP:::::P 
+;; HH::::::H     H::::::HH LL:::::::LL              PP:::::P     P:::::P
+;;   H:::::H     H:::::H     L:::::L                  P::::P     P:::::P
+;;   H:::::H     H:::::H     L:::::L                  P::::P     P:::::P
+;;   H::::::HHHHH::::::H     L:::::L                  P::::PPPPPP:::::P 
+;;   H:::::::::::::::::H     L:::::L                  P:::::::::::::PP  
+;;   H:::::::::::::::::H     L:::::L                  P::::PPPPPPPPP    
+;;   H::::::HHHHH::::::H     L:::::L                  P::::P            
+;;   H:::::H     H:::::H     L:::::L                  P::::P            
+;;   H:::::H     H:::::H     L:::::L         LLLLLL   P::::P            
+;; HH::::::H     H::::::HH LL:::::::LLLLLLLLL:::::L PP::::::PP          
+;; H:::::::H     H:::::::H L::::::::::::::::::::::L P::::::::P          
+;; H:::::::H     H:::::::H L::::::::::::::::::::::L P::::::::P          
+;; HHHHHHHHH     HHHHHHHHH LLLLLLLLLLLLLLLLLLLLLLLL PPPPPPPPPP          
 ;; -----------------------------------------------------------------------------
 ;; API Helpers
 ;; -----------------------------------------------------------------------------
 
+;; TOOD - Use new bling.core/file-info-str
 
-(defn- file+line+col [m]
-  (let [{:keys [file line column]} (meta m)]
-    (str (or file "[unresolved ns]") ":" line ":" column)))
+(defn- file+line+col-map [{:keys [file line column]}]
+  {:file (or file "[unresolved ns]") :line line :column column})
 
 (defn- loc-id
   "Returns classname based on namespace and line + column.
@@ -1389,7 +1389,10 @@
                              (->> (merge m)))
 
                      (assoc m
-                            (keyword (str "data-ks-" (name k)))
+                            (keyword (str "data-ks-"
+                                          (name k) 
+                                          (when (= k :surface)
+                                            "2")))
                             (cond (true? v)
                                   ""
                                   (symbol? v)
@@ -1401,34 +1404,49 @@
              (:props m+)))
 
 
-(defn- validated* [x &form opts schema]
+(defn- validated* [x &form schema opts]
   (if (validate schema x)
     x
-    (callout {:type :warning :label "bad :style value"} x)
-    #_(explain-malli schema
-                   x
-                   (merge {:file-info-str (file+line+col &form)
-                           :spacing       :compact
-                           :callout-opts  {:colorway :subtle}}
-                          opts))))
+    #_(callout {:type  :warning
+                :label "bad :style value"} x)
+    (explain-malli* schema
+                    x
+                    (merge {
+                            :display-schema? false
+                            :form            x
+                            :spacing         :compact
+                            :callout-opts    (assoc
+                                              (file+line+col-map (meta &form))
+                                              :label-theme
+                                              :marquee)}
+                           (file+line+col-map (meta &form))
+                           opts))))
 
-(defn- hydrate-style-attribute-value [m &form &env selector]
-  (if-let [x (when-let [x (:style m)]
+
+(defn- hydrate-style-attribute-value 
+  [m &form &env selector]
+  (if-let [x (:style m) #_(when-let [x (:style m)]
                (when (or (map? x)
                          (string? x) 
                          (symbol? x))
-                 (let [validated (partial validated* x &form {:highlighted-problem-section-label (bling "Bad value for " [:purple :style] " entry supplied to " [:purple "kushi.core/sx2"])})]
+                 (let [schema schemas/style-map-for-style-attribute
+                       opts   {:highlighted-problem-section-label 
+                               (bling [:italic
+                                       "Bad value for "
+                                       [:purple :style]
+                                       " entry supplied to "
+                                       [:purple "kushi.core/sx2"]])}]
                    (cond (map? x)
-                         (validated schemas/style-map-for-style-attribute)
+                         ;; TODO Move this validation down into sx2*
+                         (validated* x &form schema opts)
                          (string? x)
-                         (validated schemas/style-string-for-style-attribute)
+                         (validated* x &form schema opts)
                          :else
                          x))))]
     (assoc m
            :style 
            (if (map? x)
              (let [{:keys [conformed-args]} (conformed-args [x])
-
                    ret                      (->> conformed-args
                                                  grouped-css-declarations
                                                  :grouped
@@ -1445,7 +1463,26 @@
     m))
 
 ;; TODO - reconcile if selector is "#foo" and :id is something else
+
+;; TODO Move into sx2* - ?
+;; Sanitize with Malli transformers and decoders
+;; You need to sanitize everything that is not going to the css pipeline
+;; 
+
 (defn- sx2* [m &form &env]
+  #_(? &form)
+  (validated*
+   &form
+   &form
+   schemas/sx2-form
+
+   ;; TODO maybe this should be a fallback if the bling.explain/explain-malli
+   ;; cannot surface a precise error message?
+   
+   {:highlighted-problem-section-label 
+    (bling [:italic "Invalid value supplied to: "]
+           [:bold (hifi (symbol "sx2"))])})
+
   (let [selector      (:selector m)
         m             (dissoc m :selector)
         m             (hydrate-style-attribute-value m &form &env selector)

@@ -49,7 +49,7 @@
                (str "HTML attribute name clash"
                     "\n\n"
                     (bling.hifi/hifi k {:find {:pred  #(= % k)
-                                               :class :highlight-error-underlined}})
+                                               :class :highlight-error}})
                     "\n\n"
                     "You might want to choose a different name\n"
                     "for your custom attribute."

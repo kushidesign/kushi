@@ -631,8 +631,8 @@
                ;; :transition              ;; include?
                ]})
 
+;; fix colorway
 
-;; fix stroke
 ;; fix stroke + shadow
 
 ;; test packing 
