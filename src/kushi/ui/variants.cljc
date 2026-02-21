@@ -3,9 +3,11 @@
    [clojure.string :as string]
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.util :refer [keyed]]
+   [malli.core]
    [kushi.ui.defs :as defs]
    #?(:clj [kushi.ui.ordered :refer [ordered-set]])
-   [bling.util :as util]))
+   [bling.util :as util]
+   ))
 
 ;; TODO - make a subvec utility for generating scales like :md-3xl
 (defn- tshirt-size-with-prefix [])
@@ -271,11 +273,6 @@
    variants*))
 
 
-#?(:cljs
-   ()
-   :clj
-   (!? variants))
-
 (def variants-by-custom-opt-key
   {:weight                         (:weights/set variants)
    :size/font-sizes-2xs-lg         (:font-sizes-2xs-lg/set variants)
@@ -283,7 +280,7 @@
    :size/font-sizes-xs-3xl         (:font-sizes-xs-3xl/set variants)
    :size/font-sizes-xs-2xl         (:font-sizes-xs-2xl/set variants)
    :size/lg-3xl                    (:font-sizes-lg-3xl/set variants)
-   :size                           (:sizes/set variants)
+   :size                           (:font-sizes/set variants)
    :colorway                       (:colorways/set variants)
    :colorway/named                 (:colorways-named/set variants)
    :colorway/semantic              (:colorways-semantic/set variants)
@@ -314,7 +311,7 @@
    :size/font-sizes-xs-3xl         (:font-sizes-xs-3xl/enum variants)
    :size/font-sizes-xs-2xl         (:font-sizes-xs-2xl/enum variants)
    :size/font-sizes-lg-3xl         (:font-sizes-lg-3xl/enum variants)
-   :size                           (:sizes/enum variants)
+   :size                           (:font-sizes/enum variants)
    :colorway                       (:colorways/enum variants)
    :colorway/named                 (:colorways-named/enum variants)
    :colorway/semantic              (:colorways-semantic/enum variants)
@@ -345,7 +342,7 @@
    :size/font-sizes-xs-3xl         (:font-sizes-xs-3xl/vector variants)
    :size/font-sizes-xs-2xl         (:font-sizes-xs-2xl/vector variants)
    :size/font-sizes-lg-3xl         (:font-sizes-lg-3xl/vector variants)
-   :size                           (:sizes/vector variants)
+   :size                           (:font-sizes/vector variants)
    :colorway                       (:colorways/vector variants)
    :colorway/named                 (:colorways-named/vector variants)
    :colorway/semantic              (:colorways-semantic/vector variants)
@@ -368,7 +365,6 @@
    :shadow-size                    (:shadow-sizes/vector variants)
    :shadow-color                   (:shadow-colors/vector variants)
    :icon-style                     (:icon-style/vector variants)})
-
 
 
 (def variants-by-custom-opt-key-set
@@ -402,10 +398,12 @@
 (defn enhancer? [x]
   (or (string? x) (keyword? x) (vector? x)))
 
+(defn percentage? [x]
+  (re-find #"^0\%$|^100%$|^[0-9][0-9]?(?:\.[0-9]+)?$" (name x)))
+
 (def props
 
-  {
-   :size             {:default  nil
+  {:size             {:default  nil
                       :desc     "Corresponds to the font-size based on Kushi's font-size scale."
                       :class?   true
                       :data-ks? true 
@@ -490,16 +488,11 @@
                       :data-ks? true}
 
    :stroke-opacity   {:schema       [:or
-                                     [:float {:min 0.0
-                                              :max 1.0}]
-                                     [:value 0]
-                                     [:value 1]
-                                     #_[:fn 
-                                        {:error/message "Must be a string or keyword starting with representing a percentage from 0%-100%"}
-                                        (fn [x]
-                                          (and (or (string? x) (keyword? x))
-                                               (re-find #"^0\%$|^100%$|^[0-9][0-9]?(?:\.[0-9]+)?$" (name x))))]]
-
+                                     [:float {:min 0.0 :max 1.0}]
+                                     [:enum 0 1]
+                                     [:and 
+                                      [:or :string :keyword]
+                                      [:fn kushi.ui.variants/percentage?]]]
                       :local-token? true
                       :desc         "Opacity of the stroke. Only applies when a `:surface` value is provided. Locally sets the value of `--stroke-opacity`."}
 
@@ -580,6 +573,31 @@
    :spinner-type     {:desc    "The design of the spinner"
                       :default :donut}})
 
+
+#?(:cljs
+   ()
+   :clj
+   (do 
+    ;;  (!? font-sizes)
+    ;;  (!? :pp (keys variants))
+     #_(m/validate [] "100%")))
+
+(def malli-map-keys
+  "These are used for validation"
+  (!? (reduce-kv
+       (fn [vc k m]
+         (conj vc
+               [k
+                (!? :- (-> m
+                           (dissoc :schema :default)
+                           (assoc :optional true)
+                           (merge (when-not (nil? (:default m))
+                                    {:default (:default m)})))) 
+                (or (:schema m)
+                    (k enum-variants-by-custom-opt-key))]))
+       []
+       props)))
+
 (def local-tokens
   (reduce-kv (fn [coll k v]
                (if (:local-token? v) (conj coll k) coll))
@@ -655,3 +673,4 @@
 ;; font-weight ? really
 ;; wireframes
 ;; bg/fg-primary ? really
+
