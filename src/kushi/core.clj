@@ -22,7 +22,9 @@
    [kushi.ui.variants :as props]
    [kushi.util :as util :refer [as-str keyed maybe more-than-one?
                                 partition-by-pred vec-of-vecs?]]
-   [malli.core :refer [validate]]
+   [malli.core :as m :refer [validate]]
+   [malli.util :as mu]
+   [malli.transform :as mt]
    [kushi.ui.variants :as variants]))
 
 ;; EEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRR   RRRRRRRRRRRRRRRRR   
@@ -1403,24 +1405,30 @@
              {}
              (:props m+)))
 
+(def SchemaWithDefaults
+  [:map
+   [:x {:optional true :default 10} :int]
+   [:y :int]])
+
 
 (defn- validated* [x &form schema opts]
   (if (validate schema x)
     x
     #_(callout {:type  :warning
                 :label "bad :style value"} x)
-    (explain-malli* schema
-                    x
-                    (merge {
-                            :display-schema? false
-                            :form            x
-                            :spacing         :compact
-                            :callout-opts    (assoc
-                                              (file+line+col-map (meta &form))
-                                              :label-theme
-                                              :marquee)}
-                           (file+line+col-map (meta &form))
-                           opts))))
+    (do (explain-malli* schema
+                        x
+                        (merge {:display-schema? false
+                                :form            x
+                                :spacing         :compact
+                                :callout-opts    (assoc
+                                                  (file+line+col-map (meta &form))
+                                                  :label-theme
+                                                  :marquee)}
+                               (file+line+col-map (meta &form))
+                               opts))
+        
+        #_(? (select-keys x schema)))))
 
 
 (defn- hydrate-style-attribute-value 
@@ -1462,6 +1470,20 @@
              x))
     m))
 
+(defn- theme-styles* [ret]
+  (some-> ret
+          :props
+          (select-keys variants/local-tokens)
+          (->> (reduce-kv
+                (fn [m k v]
+                  (or (some-> (get variants/local-token-transformers k)
+                              (apply [k v]))
+                      (assoc m 
+                             (str "--" (name k))
+                             (name v))))
+                {})
+               (hash-map :style))))
+
 ;; TODO - reconcile if selector is "#foo" and :id is something else
 
 ;; TODO Move into sx2* - ?
@@ -1470,47 +1492,24 @@
 ;; 
 
 (defn- sx2* [m &form &env]
-  #_(? &form)
-  (validated*
-   &form
-   &form
-   schemas/sx2-form
-
-   ;; TODO maybe this should be a fallback if the bling.explain/explain-malli
-   ;; cannot surface a precise error message?
-   
-   {:highlighted-problem-section-label 
-    (bling [:italic "Invalid value supplied to: "]
-           [:bold (hifi (symbol "sx2"))])})
+  
 
   (let [selector      (:selector m)
         m             (dissoc m :selector)
         m             (hydrate-style-attribute-value m &form &env selector)
         ret           (props+attrs+css m)
         args          (if selector [selector m] [m])
-
         ;; Validator
         m+            (merge ret (classes+class-binding args &form &env))
         class-map     (class-map selector m+)
         data-ks-attrs (data-ks-attrs m+)
-        theme-styles  (some-> ret
-                              :props
-                              (select-keys variants/local-tokens)
-                              (->> (reduce-kv
-                                    (fn [m k v]
-                                      (or (some-> (get variants/local-token-transformers k)
-                                                  (apply [k v]))
-                                          (assoc m 
-                                                 (str "--" (name k))
-                                                 (name v))))
-                                    {})
-                                   (hash-map :style)))]
-    {:attrs          (merge data-ks-attrs
+        theme-styles  (theme-styles* ret)]
+    {:dynamic-props? (boolean (some->> m+ :props vals (some symbol?)))
+     :attrs          (merge data-ks-attrs
                             (select-keys m+ [:data-ks-at])
                             (:attrs m+) 
                             class-map
-                            theme-styles)
-     :dynamic-props? (boolean (some->> m+ :props vals (some symbol?)))}))
+                            theme-styles)}))
 
 
 (defn ^:public validator-stub [m]
@@ -1525,7 +1524,7 @@
               :style
               (merge (:style m1) (:style m2))))))
 
-;; 
+
 (defmacro ^:public sx2
   "Returns an html attributes map.
    
@@ -1576,20 +1575,26 @@
        :data-ks-at my.ns:L11:C3}"
 
   [& args]
-
-  (let [attrs-coll*     (reduce (fn [acc x]
-                                  (if-let [ret (cond (symbol? x)
-                                                     x
-                                                     (map? x)
-                                                     (sx2* x &form &env))]
-                                    (conj acc ret)
-                                    acc))
-                                [] 
-                                args)
+  
+  (let [args-cleaned   (validated*
+                        &form
+                        &form
+                        schemas/sx2-args
+                        {:preamble-section-body
+                         (bling (hifi (symbol "kushi.core/sx2")))})       
+        attrs-coll*    (reduce (fn [acc x]
+                                 (if-let [ret (cond (symbol? x)
+                                                    x
+                                                    (map? x)
+                                                    (sx2* x &form &env))]
+                                   (conj acc ret)
+                                   acc))
+                               [] 
+                               args)
         dynamic-props? (boolean (some :dynamic-props? attrs-coll*))
         attrs-coll     (mapv :attrs attrs-coll*)]
 
-    (keyed [attrs-coll* dynamic-props? attrs-coll])
+    #_(keyed [attrs-coll* dynamic-props? attrs-coll])
 
     (if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
       ;; A single map has been passed to sx2

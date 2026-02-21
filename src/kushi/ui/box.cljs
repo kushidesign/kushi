@@ -2,7 +2,7 @@
   (:require
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.core :refer (merge-attrs sx)]
-   [kushi.ui.core :refer (defui)]
+   [kushi.ui.core :refer (defui2)]
    [kushi.ui.decoration :as decoration]
    [clojure.string :as string]))
 
