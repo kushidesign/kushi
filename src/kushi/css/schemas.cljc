@@ -1,9 +1,10 @@
-(ns kushi.css.schemas
+(ns ^:dev/always kushi.css.schemas
   (:require
    [bling.hifi]
    [bling.core :refer [bling print-bling callout]]
    [bling.explain :refer [explain-malli]]
    [fireworks.core :refer [? !?]]
+   [kushi.ui.variants :refer [malli-map-keys]]
    [malli.core :as m]
    [malli.generator :as mg]
    [malli.dev.pretty]
@@ -56,9 +57,9 @@
 
 (def css-prop-for-style-attribute
   [:and
-   {:error/message "Value must be a string or keyword"}
-   [:or {:error/message "Value must be a string or keyword"} string? keyword?]
-   [:fn {:error/message (str "Must satisfy css property regex:\n "
+   {:error/message "String or keyword"}
+   [:or {:error/message "String or keyword"} string? keyword?]
+   [:fn {:error/message (str "Should pass css property regex:\n "
                              (bling.hifi/hifi (re-pattern css-prop-for-style-attribute-re-base)))}
     #(re-find (re-pattern css-prop-for-style-attribute-re-base)
               (name %))]])
@@ -77,29 +78,27 @@
    css-prop-for-style-attribute
    css-value-for-style-attribute-style-map])
 
-(def sx2-form
-  [:schema {:registry {::sx-map-default
+(def sx2-args
+  [:schema {:ns 'kushi.css.schemas
+            :name 'sx2-args
+            :registry {::sx-map-default
                        [:map-of
                         keyword-or-string?
                         [:or
                          keyword-or-string?
                          [:ref ::sx-map-default]]]}}
-   [:cat
-    [:symbol {:value 'sx2}]
-    [:+
-     [:or
-      [:symbol {:error/message "A symbol bound to an valid sx map"}]
-      [:map
-       {:error/message "A valid sx style map"}
-       [:style {:optional true}
-        [:or
-         style-map-for-style-attribute
-         style-string-for-style-attribute]]
-       [::m/default
-        [:ref ::sx-map-default]
-        #_[:map-of
-           [:or string? keyword?]
-           [:ref ::sx-map-default]]]]]]]])
+   [:+
+    [:or
+     (into [:map
+            {:error/message "Valid sx map"}
+            [:style {:optional true}
+             [:or
+              style-map-for-style-attribute
+              style-string-for-style-attribute]]
+            [::m/default
+             [:ref ::sx-map-default]]]
+           (!? {:find {:pred #(nil? %)}} malli-map-keys))
+     [:symbol {:error/message "Symbol bound to an valid sx map"}]]]])
 
 #_(println
    (-> [:map
