@@ -261,3 +261,59 @@
                       #"\[([a-z-\*\|\$\~\^]+)=([^\"\]]+)\]"
                       "[$1=\"$2\"]")
        v))
+
+(defn ^:public when->
+  "If `(= (pred x) true)`, returns x, otherwise nil.
+   Useful in a `clojure.core/some->` threading form."
+  [x pred]
+  (when (or (true? (pred x))
+            (when (set? pred) (contains? pred x)))
+    x))
+
+(defn ^:public when->>
+  "If (= (pred x) true), returns x, otherwise nil.
+   Useful in a `clojure.core/some->>` threading form."
+  [pred x]
+  (when (or (true? (pred x))
+            (when (set? pred) (contains? pred x)))
+    x))
+
+(defn insert-at [vc i elem]
+  (into (conj (subvec vc 0 i) elem)
+        (subvec vc i)))
+
+(defn- ml-str-with-adjusted-indentation [s]
+  (let [re #"\n( +)"
+        n  (some->> s
+                    str
+                    (re-seq re)
+                    (group-by #(count (second %)))
+                    keys
+                    (apply min))
+        f  (fn [[a]] (str "\n" (subs a (inc n))))
+        s  (string/replace s re f)]
+    s))
+
+(defn str-ml
+  {:doc "Takes a multi-line string and normalizes the indentation.
+         Useful for multi-line strings that are nested inside data structures,
+         because some editors automatically format these for readability, but
+         the resulting strings have unexpected indentations on lines after the
+         first."
+   :examples '[{:desc "String as map entry value"
+                :forms [[(ml-str "Line one
+                                  Line two
+                                  Line three
+                                    - Line four")
+                         "Line one\nLine two\nLine three\n  - Line four"]]}]}
+  [s]
+  (ml-str-with-adjusted-indentation s))
+
+(defn string-ml? [x]
+  (boolean (and (string? x) (re-find #"\n" x))))
+
+(defn ml-str->vec [s]
+  (-> s
+      str-ml
+      (string/split #"\n")
+      vec))
