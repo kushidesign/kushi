@@ -556,54 +556,69 @@
 ; Surface stroking ---------------------------------------------------------------------------------------------------------
 (defcss "[data-ks-surface][data-ks-stroke]"
   {"[data-ks-stroke-align=outside]" {"--stroke-inset" ""}
-   :--box-shadow-for-stroke         "var(--stroke-inset, inset) 0 0 0 var(--stroke-width, var(--element-stroke-width, 1px)) color-mix(in oklch, currentColor var(--stroke-opacity, 50%), var(--stroke-opacity-mix-color, transparent))" 
-   :box-shadow                      "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)"})
+   :--box-shadow-for-stroke         "var(--stroke-inset, inset) 0 0 0 var(--stroke-width, var(--element-stroke-width, 1px)) var(--transparent-stroke-color)" 
+   :--transparent-stroke-color      "color-mix(in oklch, var(--stroke-color, currentColor) var(--stroke-opacity, 60%), var(--stroke-opacity-mix-color, transparent))"
+   :dark                            {:--transparent-stroke-color "color-mix(in oklch, var(--stroke-color-dark-mode, currentColor) var(--stroke-opacity, 60%), var(--stroke-opacity-mix-color, transparent))"}
+
+  ;; maybe use this in the future?
+  ;;  :box-shadow                      "var(--box-shadow-for-stroke, 0 0 0 transparent), var(--shadow, 0 0 0 transparent)"
+   })
 
 
 ;; Surface shadowing ---------------------------------------------------------------------------------------------------------
-(defcss "[data-ks-surface][data-ks-shadow]" 
+(defcss "[data-ks-surface][data-ks-shadow-size]" 
   {
-   :--transparent-shadow-color     "color-mix(in oklch, var(--shadow-color, black) var(--shadow-opacity, 15%), transparent)"
-   :--shadow-3xs                   "0 1px 3px -1px var(--transparent-shadow-color)"
-   :--shadow-2xs                   "0 3px 6px -2px var(--transparent-shadow-color)"
-   :--shadow-xs                    "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"
-   :--shadow-sm                    "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"
-   :--shadow-md                    "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"
-   :--shadow-lg                    "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"
-   :--shadow-xl                    "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"
-   :--shadow-2xl                   "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"
-   :--shadow-3xl                   "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"
-   :--shadow-color                 :black
-   :dark                           {:--transparent-shadow-color 
-                                    "color-mix(in oklch, var(--shadow-color-dark-mode, white) var(--shadow-opacity, 15%), transparent)"}
+   :--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-opacity, 15%), transparent)"
+  ;;  :--shadow-3xs               "0 1px 3px -1px var(--transparent-shadow-color)"
+  ;;  :--shadow-2xs               "0 3px 6px -2px var(--transparent-shadow-color)"
+  ;;  :--shadow-xs                "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"
+  ;;  :--shadow-sm                "0 7px 13px -3px var(--transparent-shadow-color), 0 2px 3px -3px var(--transparent-shadow-color)"
+  ;;  :--shadow-md                "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"
+  ;;  :--shadow-lg                "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"
+  ;;  :--shadow-xl                "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"
+  ;;  :--shadow-2xl               "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"
+  ;;  :--shadow-3xl               "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"
+   :--box-shadow-for-shadow    "0 0 0 0 transparent"
+   ;;  :--box-shadow-for-stroke        "0 0 0 0 transparent"
+   :--shadow-color             :black
+   :dark                       {:--transparent-shadow-color "color-mix(in oklch, var(--shadow-color-dark-mode, white) var(--shadow-opacity, 15%), transparent)"}
 
-   "[data-ks-shadow=3xs]"            {:box-shadow :$shadow-3xs}
-   "[data-ks-shadow=2xs]"            {:box-shadow :$shadow-2xs}
-   "[data-ks-shadow=xs]"             {:box-shadow :$shadow-xs}
-   "[data-ks-shadow=sm]"             {:box-shadow :$shadow-sm}
-   "[data-ks-shadow=md]"             {:box-shadow :$shadow-md}
-   "[data-ks-shadow=lg]"             {:box-shadow :$shadow-lg}
-   "[data-ks-shadow=xl]"             {:box-shadow :$shadow-xl}
-   "[data-ks-shadow=2xl]"            {:box-shadow :$shadow-2xl}
-   "[data-ks-shadow=3xl]"            {:box-shadow :$shadow-3xl}
+   "[data-ks-shadow-size=3xs]"   {:--box-shadow-for-shadow :$shadow-3xs
+                                  :--shadow-3xs            "0 1px 3px -1px var(--transparent-shadow-color)"}
+   "[data-ks-shadow-size=2xs]"   {:--box-shadow-for-shadow :$shadow-2xs
+                                  :--shadow-2xs            "0 3px 6px -2px var(--transparent-shadow-color)"}
+   "[data-ks-shadow-size=xs]"    {:--box-shadow-for-shadow :$shadow-xs
+                                  :--shadow-xs             "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"}
+   "[data-ks-shadow-size=sm]"    {:--box-shadow-for-shadow :$shadow-sm
+                                  :--shadow-md             "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"}
+   "[data-ks-shadow-size=md]"    {:--box-shadow-for-shadow :$shadow-md
+                                  :--shadow-md             "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"}
+   "[data-ks-shadow-size=lg]"    {:--box-shadow-for-shadow :$shadow-lg
+                                  :--shadow-lg             "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"}
+   "[data-ks-shadow-size=xl]"    {:--box-shadow-for-shadow :$shadow-xl
+                                  :--shadow-xl             "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"}
+   "[data-ks-shadow-size=2xl]"   {:--box-shadow-for-shadow :$shadow-2xl
+                                  :--shadow-2xl            "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"}
+   "[data-ks-shadow-size=3xl]"   {:--box-shadow-for-shadow :$shadow-3xl
+                                  :--shadow-3xl               "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"}
 
-  ;;  "[data-ks-shadow-color=positive]" {:--shadow-color :$positive-500},
-  ;;  "[data-ks-shadow-color=neutral]"  {:--shadow-color :$neutral-500},
-  ;;  "[data-ks-shadow-color=negative]" {:--shadow-color :$negative-500},
-  ;;  "[data-ks-shadow-color=purple]"   {:--shadow-color :$purple-500},
-  ;;  "[data-ks-shadow-color=magenta]"  {:--shadow-color :$magenta-500},
-  ;;  "[data-ks-shadow-color=accent]"   {:--shadow-color :$accent-500},
-  ;;  "[data-ks-shadow-color=sand]"     {:--shadow-color :$sand-500},
-  ;;  "[data-ks-shadow-color=slate]"    {:--shadow-color :$slate-500},
-  ;;  "[data-ks-shadow-color=blue]"     {:--shadow-color :$blue-500},
-  ;;  "[data-ks-shadow-color=orange]"   {:--shadow-color :$orange-500},
-  ;;  "[data-ks-shadow-color=gray]"     {:--shadow-color :$gray-500},
-  ;;  "[data-ks-shadow-color=warning]"  {:--shadow-color :$warning-500},
-  ;;  "[data-ks-shadow-color=green]"    {:--shadow-color :$green-500},
-  ;;  "[data-ks-shadow-color=gold]"     {:--shadow-color :$gold-500},
-  ;;  "[data-ks-shadow-color=lime]"     {:--shadow-color :$lime-500},
-  ;;  "[data-ks-shadow-color=yellow]"   {:--shadow-color :$yellow-500},
-  ;;  "[data-ks-shadow-color=red]"      {:--shadow-color :$red-500}
+   ;;  "[data-ks-shadow-color=positive]" {:--shadow-color :$positive-500},
+   ;;  "[data-ks-shadow-color=neutral]"  {:--shadow-color :$neutral-500},
+   ;;  "[data-ks-shadow-color=negative]" {:--shadow-color :$negative-500},
+   ;;  "[data-ks-shadow-color=purple]"   {:--shadow-color :$purple-500},
+   ;;  "[data-ks-shadow-color=magenta]"  {:--shadow-color :$magenta-500},
+   ;;  "[data-ks-shadow-color=accent]"   {:--shadow-color :$accent-500},
+   ;;  "[data-ks-shadow-color=sand]"     {:--shadow-color :$sand-500},
+   ;;  "[data-ks-shadow-color=slate]"    {:--shadow-color :$slate-500},
+   ;;  "[data-ks-shadow-color=blue]"     {:--shadow-color :$blue-500},
+   ;;  "[data-ks-shadow-color=orange]"   {:--shadow-color :$orange-500},
+   ;;  "[data-ks-shadow-color=gray]"     {:--shadow-color :$gray-500},
+   ;;  "[data-ks-shadow-color=warning]"  {:--shadow-color :$warning-500},
+   ;;  "[data-ks-shadow-color=green]"    {:--shadow-color :$green-500},
+   ;;  "[data-ks-shadow-color=gold]"     {:--shadow-color :$gold-500},
+   ;;  "[data-ks-shadow-color=lime]"     {:--shadow-color :$lime-500},
+   ;;  "[data-ks-shadow-color=yellow]"   {:--shadow-color :$yellow-500},
+   ;;  "[data-ks-shadow-color=red]"      {:--shadow-color :$red-500}
    })
 
 

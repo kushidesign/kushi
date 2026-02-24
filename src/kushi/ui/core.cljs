@@ -19,6 +19,7 @@
 (def ks-classes kushi.ui.extract/ks-classes)
 (def merged-ks-classes kushi.ui.extract/merged-ks-classes)
 
+
 ;; Extraction ------------------------------------------------------------------
 (def extract kushi.ui.extract/extract)
 
@@ -31,7 +32,6 @@
     custom-props   :props/custom
     supplied-props :props
     :as            m}]
-  ;; (? m)
   (when (and supplied-props malli-schema) 
     (let [user-spacing 
           nil

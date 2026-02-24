@@ -2,10 +2,11 @@
   (:require [clojure.test :refer :all]
             [clojure.edn :as edn]
             [clojure.data :as data]
+            [kushi.ui.variants]
             [kushi.css.sandbox]
             [fireworks.core :refer [? !? ?> !?> pprint]]
             [fireworks.sample :as sample]
-            [bling.core :refer [bling callout point-of-interest]]
+            [bling.core :as bling :refer [bling callout point-of-interest]]
             [bling.explain :refer [explain-malli]]
             [bling.util :as util]
             [bling.sample]
@@ -52,22 +53,56 @@
             [kushi.css.shorthand :as shorthand]
             [malli.core :as malli]))
 
+(fireworks.core/config! {:non-coll-length-limit 66
+                         :non-coll-mapkey-length-limit 33})
+
+;; (? (malli/explain [:or :string [:and [:int {:max 10}]]] 11))
+
+#_(? (explain-malli [:or :string [:int {:max 10}]] 11))
+#_(? (explain-malli [:map [:foo :int]] {:guh "hi" :buh 3}))
 
 (let [k  :rounded
       sz :12px]
-  (? (css-rule ".foo"
-               [{:shape  k
-                  ;; :size sz
-                 :width  :200px
-                 :height :100px
-                 :border :1px:solid:silver}])))
+  (sx2 {:selector    ".ks-baaa"
+        :props/custom [:map 
+                       [:dude {:desc     "hi"
+                               :optional true}
+                        [:enum :foo :bar :baz]]]
+        :shape        k
+        :style        {:color :red}
+        :size         :sm
+        :shadow-size  :md 
+        :shadow-color :green
+        :width        :200px
+        :height       :100px
+        :border       :1px:solid:silver}))
+
+
+
+;; (kushi.core/defui3
+;;   boxer
+;;   {}
+;;   [& args]
+;;   [:p (sx ".ks-boxer" {:stroke-width :1px}) "hi"])
+
+;; (? (boxer))
+
+#_(? (malli/validate [:or
+                    [:float {:min 0.0
+                             :max 1.0}]
+                    [:enum 0 1]
+                    [:and
+                     [:or :string :keyword]
+                     [:fn
+                      kushi.ui.variants/percentage?]]
+                    :symbol]
+                   :80%))
+
 
 ;; Validation
 
-;; 1) Pull out any ks-specific properties
-;; 2) Create map with defaults
-;; 3) Deal with strokes and shadows?
-;; 4) Put map together
+;; 1) Issue warning if stroke prop other than `:stroke-width` is supplied (without stroke-width)
+;; 2) Same for shadow ^^^
 
 ;; Still need to do jams at runtime? maybe not as you could mark thing
 ;; Or if yes you could wrap in a runtime-checking function?
