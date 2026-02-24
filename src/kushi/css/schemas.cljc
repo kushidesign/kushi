@@ -1,3 +1,4 @@
+;; TODO - should this be in kushi.schemas, not totally css specific
 (ns ^:dev/always kushi.css.schemas
   (:require
    [bling.hifi]
@@ -87,18 +88,20 @@
                         [:or
                          keyword-or-string?
                          [:ref ::sx-map-default]]]}}
-   [:+
-    [:or
-     (into [:map
+   [:cat
+    [:symbol {:value 'sx2}]
+    [:+
+     [:or
+      (into [:map
             {:error/message "Valid sx map"}
             [:style {:optional true}
-             [:or
+              [:or
               style-map-for-style-attribute
               style-string-for-style-attribute]]
             [::m/default
-             [:ref ::sx-map-default]]]
-           (!? {:find {:pred #(nil? %)}} malli-map-keys))
-     [:symbol {:error/message "Symbol bound to an valid sx map"}]]]])
+              [:ref ::sx-map-default]]]
+            (!? {:find {:pred #(= :shadow-size %)}} malli-map-keys))
+      [:symbol {:error/message "Symbol bound to an valid sx map"}]]]]])
 
 #_(println
    (-> [:map
