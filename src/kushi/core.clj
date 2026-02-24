@@ -21,7 +21,9 @@
    [kushi.ui.core :refer [html-attrs]]
    [kushi.ui.variants :as props]
    [kushi.util :as util :refer [as-str keyed maybe more-than-one?
-                                partition-by-pred vec-of-vecs?]]
+                                partition-by-pred vec-of-vecs?
+                                when->
+                                when->>]]
    [malli.core :as m :refer [validate]]
    [malli.util :as mu]
    [malli.transform :as mt]
@@ -1306,18 +1308,18 @@
    (fn [acc k v]
      (let [ks
            (cond 
-                 ;; kushi prop variants such as `:display`, `:stroke`, etc.
-                 (contains? props/generic-props k)
+                 ;; kushi-specific shared props for variants such as:
+                 ;; :stroke, :shadow-size, :colorway, :display, :position, etc.
+                 (contains? props/shared-props-keys k)
                  [:props k]
                  
-                 ;; Any html attribute such as `:id` `:class` `:name` etc
-                 (contains? html-attrs k)
-                 [:attrs k]
-
-                 ;; A data-* attribute
+                 ;; A :data-* attribute
                  (-> k util/as-str (string/starts-with? "data-"))
                  [:attrs k]
 
+                 ;; Any html attribute such as :id, :class, :name, etc.
+                 (contains? html-attrs k)
+                 [:attrs k]
 
                  ;; css syntax such as `:color`,
                  ;; or kushi-specific css stacked syntax like `:_p:hover:color`
@@ -1326,7 +1328,8 @@
                      (!? {:when (= k :w)} (css-prop? k))
                      (!? {:when (= k :debug)}
                          (and (s/valid? ::specs/css-prop-stack k)
-                              (not (s/valid? ::specs/css-prop-standard-potential k)))))
+                              (not (s/valid? ::specs/css-prop-standard-potential
+                                             k)))))
                  [:css k]
 
                  ;; user custom props
@@ -1405,30 +1408,43 @@
              {}
              (:props m+)))
 
-(def SchemaWithDefaults
-  [:map
-   [:x {:optional true :default 10} :int]
-   [:y :int]])
+
+(defn- validate-sx2 [&form schema opts]
+  (when-not (validate schema &form)
+    (let [problems    (explain-malli* 
+                       schema
+                       &form
+                       (merge {:display-schema? false
+                               :form            &form
+                               :spacing         :compact
+                               :callout-opts    (assoc
+                                                 (file+line+col-map (meta &form))
+                                                 :label-theme
+                                                 :marquee)}
+                              (file+line+col-map (meta &form))
+                              opts))
 
 
-(defn- validated* [x &form schema opts]
-  (if (validate schema x)
-    x
-    #_(callout {:type  :warning
-                :label "bad :style value"} x)
-    (do (explain-malli* schema
-                        x
-                        (merge {:display-schema? false
-                                :form            x
-                                :spacing         :compact
-                                :callout-opts    (assoc
-                                                  (file+line+col-map (meta &form))
-                                                  :label-theme
-                                                  :marquee)}
-                               (file+line+col-map (meta &form))
-                               opts))
-        
-        #_(? (select-keys x schema)))))
+
+          ;; bad-entries (!? (reduce (fn [acc {:keys [in]}]
+          ;;                           (if-let [[i k]
+          ;;                                    (some-> in
+          ;;                                            (when-> #(and (= 2 (count %))
+          ;;                                                          #_(keyword? (nth % 1)))))]
+          ;;                             (update-in acc [i] conj k )
+          ;;                             acc))
+          ;;                         {}
+          ;;                         problems))
+
+          ;; stripped    (reduce-kv
+          ;;              (fn [vc i bad-keys]
+          ;;                (assoc-in vc
+          ;;                          [i]
+          ;;                          (apply dissoc (nth vc i) bad-keys)))
+          ;;              (vec args)
+          ;;              bad-entries)
+          ]
+      #_stripped)))
 
 
 (defn- hydrate-style-attribute-value 
@@ -1446,9 +1462,9 @@
                                        [:purple "kushi.core/sx2"]])}]
                    (cond (map? x)
                          ;; TODO Move this validation down into sx2*
-                         (validated* x &form schema opts)
+                         (validate-sx2-args x &form schema opts)
                          (string? x)
-                         (validated* x &form schema opts)
+                         (validate-sx2-args x &form schema opts)
                          :else
                          x))))]
     (assoc m
@@ -1470,19 +1486,20 @@
              x))
     m))
 
-(defn- theme-styles* [ret]
-  (some-> ret
-          :props
+(defn- theme-styles*
+  "If some of the kushi-specific shared props such as `:shadow-color` are meant
+   to set local tokens in the `style` attribute, e.g. `--shadow-color`, then
+   merge those into the style map here, with optional transformation."
+  [props]
+  (some-> props
           (select-keys variants/local-tokens)
           (->> (reduce-kv
                 (fn [m k v]
-                  (or (some-> (get variants/local-token-transformers k)
-                              (apply [k v]))
-                      (assoc m 
-                             (str "--" (name k))
-                             (name v))))
-                {})
-               (hash-map :style))))
+                  (merge m
+                         (or (some-> (get variants/local-token-transformers k)
+                                     (apply [k v]))
+                             {(str "--" (name k)) (name v) })))
+                {}))))
 
 ;; TODO - reconcile if selector is "#foo" and :id is something else
 
@@ -1492,24 +1509,49 @@
 ;; 
 
 (defn- sx2* [m &form &env]
-  
-
   (let [selector      (:selector m)
         m             (dissoc m :selector)
         m             (hydrate-style-attribute-value m &form &env selector)
         ret           (props+attrs+css m)
         args          (if selector [selector m] [m])
-        ;; Validator
         m+            (merge ret (classes+class-binding args &form &env))
+        props         (:props m+)
         class-map     (class-map selector m+)
         data-ks-attrs (data-ks-attrs m+)
-        theme-styles  (theme-styles* ret)]
-    {:dynamic-props? (boolean (some->> m+ :props vals (some symbol?)))
+        theme-styles  (theme-styles* props)
+        style-map     {:style (merge theme-styles
+                                     (some-> m+ :attrs :style))}]
+    
+    ;; put bad props in here ^
+    ;; so you can later use them with a defmacro component
+    ;; that might override defaults
+    ;;     See if bad props, use defaults instead, if defined 
+    ;;     Validate custom props
+    ;;     Do you have a different version of sx that pulls out these custom
+    ;;     props?
+    ;;     Or does the component macro code check for them in the user-props
+    ;;     slot?
+
+    (when-not (get props :stroke-width)
+      (when-let [k (first (filter 
+                           #(contains? #{:stroke-color 
+                                         :stroke-opacity 
+                                         :stroke-align}
+                                       %)
+                           (-> props keys seq)))]
+        (callout (merge {:type            :warning
+                         :label-theme     :marquee
+                         :border-notches? true
+                         :side-label      (bling.core/file-info-str (meta &form))}
+                        )
+                 "Attempting to set " (hifi k) " without setting " (hifi :stroke-width))))
+
+    {:dynamic-props? (boolean (some->> props vals (some symbol?)))
      :attrs          (merge data-ks-attrs
                             (select-keys m+ [:data-ks-at])
                             (:attrs m+) 
                             class-map
-                            theme-styles)}))
+                            style-map)}))
 
 
 (defn ^:public validator-stub [m]
@@ -1575,14 +1617,11 @@
        :data-ks-at my.ns:L11:C3}"
 
   [& args]
-  
-  (let [args-cleaned   (validated*
-                        &form
-                        &form
-                        schemas/sx2-args
-                        {:preamble-section-body
-                         (bling (hifi (symbol "kushi.core/sx2")))})       
-        attrs-coll*    (reduce (fn [acc x]
+  (validate-sx2
+   &form
+   (!? {:find {:pred #(= % :shadow-size)}} schemas/sx2-args)
+   {:preamble-section-body (bling (hifi (symbol "kushi.core/sx2")))})
+  (let [attrs-coll*    (reduce (fn [acc x]
                                  (if-let [ret (cond (symbol? x)
                                                     x
                                                     (map? x)
@@ -1617,6 +1656,62 @@
           `(apply kushi.core/merge-attrs-stub
                   ~attrs-coll)))))
 
+(defmacro defui3
+  [sym m _ body]
+  (let [
+        ;; mm {:doc "My doc"}
+        ]
+    #_(? (->> body
+            second
+            ?
+            rest
+            ?
+            (reduce (fn [acc x]
+                      (if-let [ret (cond (symbol? x)
+                                         x
+                                         (map? x)
+                                         (sx2* x &form &env))]
+                        (conj acc ret)
+                        acc))
+                    [])))
+
+
+;; Validation
+
+;; 1) Issue warning if stroke prop other than `:stroke-width` is supplied (without stroke-width)
+;; 2) Same for shadow ^^^
+
+;; Still need to do jams at runtime? maybe not as you could mark thing
+;; Or if yes you could wrap in a runtime-checking function?
+
+
+    
+
+    ;; nail down sx semantics - an optional leading string or not? start with not
+
+    ;; sx in body will work, but will give unresolved ns class
+
+    ;; maybe need to walk body and manually supply selector based on value of 
+    ;; &form from the defui - something like "ns-where-defui-happened__L11_C44__1"
+
+    ;; Would this work recursively? like if you used a defui within a defui definition?
+
+    ;; Should be able to use most of the stuff from defui wrt defaults 
+   
+    
+    ;; defui questions
+    ;;     Can you pass an additional entry to sx that would be pulled out during
+    ;;     macro-expansion and then used to augment the baseline schema , for adding
+    ;;     component-specific custom props
+
+    ;; defui basics
+    ;; basically construct a spec from the meta-map, and
+
+   `(defn ~sym 
+      ~m
+      [& args#]
+      ~body)
+    ))
 
 ;; -----------------------------------------------------------------------------
 ;; sx2 End 

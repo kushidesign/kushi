@@ -3,10 +3,10 @@
    [clojure.string :as string]
    [fireworks.core :refer [? !? ?> !?>]]
    [kushi.ui.util :refer [keyed]]
+   [kushi.util :refer [when-> as-str insert-at str-ml]]
    [malli.core]
    [kushi.ui.defs :as defs]
    #?(:clj [kushi.ui.ordered :refer [ordered-set]])
-   [bling.util :as util]
    ))
 
 ;; TODO - make a subvec utility for generating scales like :md-3xl
@@ -14,7 +14,7 @@
 
 (defn- tshirt-size* [prefix postfix cast-fn with-size-str]
   (-> prefix
-      util/as-str 
+      as-str 
       (str (when prefix "-")
            with-size-str
            (when postfix "-")
@@ -36,14 +36,14 @@
   [[a default b]
    {:keys [prefix postfix cast-fn]
     n     :number-of-sizes
-    :or   {cast-fn util/as-str}}]
+    :or   {cast-fn as-str}}]
   (into [] 
         (let [rng           (range (inc n))
               f             (partial tshirt-size* prefix postfix cast-fn)
               with-size-str #(str (string/join (repeat %1 "x"))
-                                  (util/as-str %2))]
+                                  (as-str %2))]
           (concat (for [i (reverse rng)] (f (with-size-str i a)))
-                  [(f (util/as-str default))]
+                  [(f (as-str default))]
                   (for [i rng] (f (with-size-str i b)))))))
 
 (def sizes-3xs-3xl
@@ -134,6 +134,9 @@
 (def shadow-colors
   (apply conj colorways-named colorways-semantic))
 
+(def stroke-colors
+  (apply conj colorways-named colorways-semantic))
+
 (def font-sizes-2xs-lg
   [:2xs :xs :sm :base :lg])
 
@@ -222,9 +225,9 @@
           shapes-rounded-absolute
           shapes-rounded+rounded-absolute
           shapes-rounded-md-3xl-absolute
-          strokes
           shadow-sizes
           shadow-colors
+          stroke-colors
           icon-style
           spinner-type
           packings
@@ -302,6 +305,7 @@
    :stroke                         (:strokes/set variants)
    :shadow-size                    (:shadow-sizes/set variants)
    :shadow-color                   (:shadow-colors/set variants)
+   :stroke-color                   (:shadow-colors/set variants)
    :icon-style                     (:icon-style/set variants)})
 
 (def enum-variants-by-custom-opt-key
@@ -333,6 +337,7 @@
    :stroke                         (:strokes/enum variants)
    :shadow-size                    (:shadow-sizes/enum variants)
    :shadow-color                   (:shadow-colors/enum variants)
+   :stroke-color                   (:stroke-colors/enum variants)
    :icon-style                     (:icon-style/enum variants)})
 
 (def ordered-variants-by-custom-opt-key
@@ -364,6 +369,7 @@
    :stroke                         (:strokes/vector variants)
    :shadow-size                    (:shadow-sizes/vector variants)
    :shadow-color                   (:shadow-colors/vector variants)
+   :stroke-color                   (:stroke-colors/vector variants)
    :icon-style                     (:icon-style/vector variants)})
 
 
@@ -399,18 +405,19 @@
   (or (string? x) (keyword? x) (vector? x)))
 
 (defn percentage? [x]
-  (re-find #"^0\%$|^100%$|^[0-9][0-9]?(?:\.[0-9]+)?$" (name x)))
+  (re-find #"^0\%$|^100%$|^[0-9][0-9]?(?:\.[0-9]+)?%$" (name x)))
 
 (def props
-
   {:size             {:default  nil
-                      :desc     "Corresponds to the font-size based on Kushi's font-size scale."
+                      :desc     "Corresponds to the font-size based on Kushi's
+                                 font-size scale."
                       :class?   true
                       :data-ks? true 
                       :fq?      true}
 
    :weight           {:default  nil
-                      :desc     "Corresponds to the font-weight based on Kushi's font-weight scale."
+                      :desc     "Corresponds to the font-weight based on Kushi's
+                                 font-weight scale."
                       :class?   true
                       :data-ks? true 
                       :fq?      true}
@@ -421,47 +428,57 @@
                       :data-ks? true }
 
    :display          {:schema   [:or :string :keyword [:vector :keyword]]
-                      :desc     "A utility class dictating the element's display properties."
+                      :desc     "A utility class dictating the element's
+                                 display properties."
                       :default  nil
                       :class?   true
                       :data-ks? true }
 
    :colorway         {:default  nil ;;  <- TODO should this be nil?
-                      :desc     "Colorway of the element. Must be a named color from Kushi's design system e.g `:red` `:purple` `:gold`, `:positive`, etc."
+                      :desc     (str-ml
+                                 "Colorway of the element. Must be a named color
+                                  from Kushi's design system e.g `:red` `:purple`
+                                  `:gold`, `:positive`, etc.")
                       :data-ks? true }
 
-   :shape            {:desc     "Shape of the element, corresponds to a Kushi's border-radius scale"
+   :shape            {:desc     (str-ml
+                                 "Shape of the element, corresponds to a Kushi's
+                                  border-radius scale")
                       :default  nil
                       :data-ks? true 
                       :fq?      true}
 
-  ;;  :shadow           {:schema   [:or
-  ;;                                :string         ; <-css shadow value 
-  ;;                                [:vector :any]] ; <-vector of values
-  ;;                     ;; provide example
-  ;;                     :desc     "Supply a custom drop shadow via a vector"
-  ;;                     :default  nil
-  ;;                     :class?   true
-  ;;                     :data-ks? true }
+   ;;  :shadow           {:schema   [:or
+   ;;                                :string         ; <-css shadow value 
+   ;;                                [:vector :any]] ; <-vector of values
+   ;;                     ;; provide example
+   ;;                     :desc     "Supply a custom drop shadow via a vector"
+   ;;                     :default  nil
+   ;;                     :class?   true
+   ;;                     :data-ks? true }
    
-   :shadow           {:schema   [:or
-                                 [:and :keyword (:shadow-sizes/enum variants)]
-                                 ;;TODO  validate :$my-custom-prop
-                                 :string ; <-css shadow value 
-                                 [:vector :any]] ; <-vector of values
-                      ;; provide example
-                      :desc     "If a keyword such as `:2xs` or `:lg` is used, and not combined with a `:stroke`, correspondes to a design token from Kushi's shadow scale."
-                      :default  nil
-                      :data-ks? true}
+   :shadow-size      {:desc         (str-ml
+                                     "If a keyword such as `:2xs` or `:lg` is used,
+                                  and not combined with a `:stroke`, correspondes
+                                  to a design token from Kushi's shadow scale.")
+                      :local-token? true ; <- TODO  not really a local token, but sets :box-shadow in style
+                      :default      nil
+                      :data-ks?     true}
 
-   :shadow-color     {:desc         "Controls the drop shadow color. Takes effect if a value such as `:2xs` or `:lg` is supplied to the `:shadow-size` prop."
+   :shadow-color     {:desc         (str-ml 
+                                     "Controls the drop shadow color. Takes 
+                                      effect if a value such as `:2xs` or `:lg`
+                                      is supplied to the `:shadow-size` prop.")
                       :local-token? true
                       :default      nil}
 
    :shadow-opacity   {:schema       [:or
                                      :keyword
                                      :string] ;; <- maybe just :keyword?
-                      :desc         "Controls the drop shadow strength. Takes effect if a value such as `:2xs` or `:lg` is supplied to the `:shadow` prop."
+                      :desc         (str-ml
+                                     "Controls the drop shadow strength. Takes
+                                      effect if a value such as `:2xs` or `:lg`
+                                      is supplied to the `:shadow` prop.")
                       :local-token? true
                       :default      nil}
 
@@ -488,34 +505,47 @@
                       :data-ks? true}
 
    :stroke-opacity   {:schema       [:or
-                                     [:float {:min 0.0 :max 1.0}]
+                                     [:float {:min 0.0
+                                              :max 1.0}]
                                      [:enum 0 1]
                                      [:and 
                                       [:or :string :keyword]
                                       [:fn kushi.ui.variants/percentage?]]]
                       :local-token? true
-                      :desc         "Opacity of the stroke. Only applies when a `:surface` value is provided. Locally sets the value of `--stroke-opacity`."}
+                      :desc         (str-ml
+                                     "Opacity of the stroke. Only applies when a
+                                      `:surface` value is provided. Locally sets
+                                      the value of `--stroke-opacity`.")}
 
    :stroke-color     {:schema       [:or :keyword :string]
-                      :desc         "Controls the stroke color, unless `:stroke` is set as a tuple or vector containing a color value(s)."
+                      :desc         (str-ml
+                                     "Controls the stroke color, unless `:stroke`
+                                      is set as a tuple or vector containing a
+                                      color value(s).")
                       ;; leave :default off for now
                       ;; :default  "currentColor"
-                      :local-token? true
-                      }
+                      :local-token? true}
 
-   :stroke-align     {:schema       [:enum :inside :outside]
-                      :default      nil
-                      :desc         "Alignment of the stroke. Only applies when a `:surface` value is provided."
-                      :data-ks?     true}
+   :stroke-align     {:schema   [:enum :inside :outside]
+                      :default  nil
+                      :desc     (str-ml
+                                 "Alignment of the stroke. Only applies when
+                                      a `:surface` value is provided.")
+                      :data-ks? true}
 
    :stroke-width     {:schema       [:or :string :keyword]
                       :default      nil
                       :local-token? true 
                       :data-ks?     true
-                      :desc         "Width of the stroke.
-                                     Only applies when a `:surface` value is provided.
-                                     If set, a stroke will be rendered with the currentColor and a default opacity of 50%.
-                                     Locally sets the value of `--stroke-width`."}
+                      :desc         (str-ml
+                                     "Width of the stroke. Only applies when a
+                                      `:surface` value is provided. If set, a
+                                      stroke will be rendered with the value of
+                                      `currentColor`(or value of `:stroke-color`),
+                                      and a default opacity of `50%` (or the value
+                                      of `:stroke-opacity`). Locally sets the
+                                      value of `--stroke-width`, and Locally sets
+                                      a `--box-shadow-for-stroke value.")}
 
    :packing          {:default  nil
                       :desc     "General amount of padding inside the element."
@@ -525,22 +555,32 @@
    :end-enhancer     {:schema       [:or :string :keyword [:vector :any]]
                       :default      nil
                       :when-not-nil ""
-                      :desc         "Content at the inline-end position preceding the element text. Typically an icon."
+                      :desc         (str-ml
+                                     "Content at the inline-end position preceding
+                                      the element text. Typically an icon.")
                       }
 
    :start-enhancer   {:schema       [:or :string :keyword [:vector :any]]
                       :default      nil
                       :when-not-nil ""
-                      :desc         "Content at the inline-start position following the element text. Typically an icon."
+                      :desc         (str-ml
+                                     "Content at the inline-start position following
+                                      the element text. Typically an icon.")
                       }
 
    :transition       {:schema   :boolean
-                      :desc     "When `true` this will enable Kushi's default css `transition-*` values on the element and the elements `:before` and `:after` pseudo-elements"
+                      :desc     (str-ml "When `true` this will enable Kushi's
+                                         default css `transition-*` values on
+                                         the element and the elements `:before`
+                                         and `:after` pseudo-elements")
                       :default  true
                       ;; :class?   true 
                       :data-ks? true}
 
-   :surface          {:desc     "Surface variant. Composition of two or more of the following characteristics: background color, foreground color, contrast, surface bevel, and stroke."
+   :surface          {:desc     (str-ml "Surface variant. Composition of two or
+                                         more of the following characteristics:
+                                         background color, foreground color, 
+                                         contrast, surface bevel, and stroke.")
                       :default  nil ;;  <- TODO should this be nil?
                       ;; :class?   true 
                       :data-ks? true}
@@ -548,22 +588,28 @@
    ;; Should this become :interactive?
    ;; TODO - maybe defaults to true, but not for certain tags such as :button :link and similar components
    :inert            {:schema   :boolean
-                      :desc     "Surface is not interactive meaning no hover or active states."
+                      :desc     (str-ml
+                                 "Surface is not interactive meaning no
+                                  hover or active states.")
                       :default  nil
                       ;; :class?   true
                       :data-ks? true}
 
    ;; Need this since it is an html attribut already?
    :required         {:schema  :boolean
-                      :desc    "HTML `required` attribute for elements such as input etc."
+                      :desc    (str-ml
+                                "HTML `required` attribute for elements
+                                 such as input etc.")
                       :default nil}
 
    :icon-enhanceable {:schema   :boolean
-                      :desc     "Element is enhanceable with an icon."
+                      :desc     (str-ml
+                                 "Element is enhanceable with an icon.")
                       :default  nil
                       :data-ks? true }
 
-   :icon-style       {:desc    "Drawn style of icon, e.g. rounded, outlined, sharp"
+   :icon-style       {:desc    (str-ml "Drawn style of icon, e.g. rounded,
+                                        outlined, sharp")
                       :default :outlined}
 
    :icon-filled      {:desc    "Filled or not filled"
@@ -571,8 +617,11 @@
                       :default false} ;; why false and not nil
    
    :spinner-type     {:desc    "The design of the spinner"
-                      :default :donut}})
+                      :default :donut}
 
+   :props/custom     {:schema   [:vector :any]
+                      :desc     (str-ml "For extra props.")
+                      :default  nil}})
 
 #?(:cljs
    ()
@@ -583,20 +632,38 @@
      #_(m/validate [] "100%")))
 
 (def malli-map-keys
-  "These are used for validation"
-  (!? (reduce-kv
-       (fn [vc k m]
-         (conj vc
-               [k
-                (!? :- (-> m
-                           (dissoc :schema :default)
-                           (assoc :optional true)
-                           (merge (when-not (nil? (:default m))
-                                    {:default (:default m)})))) 
-                (or (:schema m)
-                    (k enum-variants-by-custom-opt-key))]))
-       []
-       props)))
+  "These are used for validation of args to sx during macroexpansion, and also
+   during runtime, in dev mode.
+
+   Produces a vector of vecs like:
+   [:shadow-size
+    {...}
+    <schema>]
+   
+   This vector is used to construct a schema in kushi.css.schemas:
+   (into [:map {...}] <vector>)"
+  (reduce-kv
+      (fn [vc k m]
+        (conj vc
+              [k
+               (!? :no-file k (-> m
+                                  (dissoc :schema :default)
+                                  (assoc :optional true)
+                                  (merge (when-not (nil? (:default m))
+                                           {:default (:default m)})))) 
+               (!? {:when (= k :shadow-size)}
+                   (let [schema       (or (:schema m)
+                                          (k enum-variants-by-custom-opt-key))
+                         with-symbol  (if (some-> schema
+                                                  (when-> vector?)
+                                                  first
+                                                  (= :or))
+                                        (conj schema :symbol)
+                                        [:or schema :symbol])
+                         with-options (insert-at with-symbol 1 {:bling.explain/display-schema? true})]
+                     with-options))]))
+      []
+      props))
 
 (def local-tokens
   (reduce-kv (fn [coll k v]
@@ -604,22 +671,47 @@
              #{} 
              props))
 
+(defn shadow-or-stroke-box-shadow [_ _]
+  {"box-shadow"
+   "var(--box-shadow-for-shadow, 0 0 0 0 transparent), var(--box-shadow-for-stroke, 0 0 0 0 transparent)"})
+
+(defn shadow-or-stroke-color [kw _ v]
+  (let [kushi-color? (contains? (kw variants-by-custom-opt-key) 
+                                (if (string? v) (keyword v) v))
+        s            (as-str v)
+        f            #(if kushi-color? (str "var(--" s "-" % ")") s)]
+    {(str "--" (name kw))              (f 700)
+     (str "--" (name kw) "-dark-mode") (f 300)}))
+
 (def local-token-transformers
-  {:shadow-color (fn [_ v]
-                   (let [kushi-color? (contains? (:shadow-color variants-by-custom-opt-key) v)
-                         s (util/as-str v)]
-                     {"--shadow-color"           (if kushi-color? 
+  {:shadow-color (partial shadow-or-stroke-color :shadow-color)
+   :shadow-size  shadow-or-stroke-box-shadow
+   :stroke-width shadow-or-stroke-box-shadow
+   :stroke-color (partial shadow-or-stroke-color :stroke-color)
+   #_(fn [_ v]
+                   (let [kushi-color? (contains?
+                                       (:stroke-color variants-by-custom-opt-key)
+                                       v)
+                         s            (as-str v)]
+                     {"--stroke-color"           (if kushi-color? 
                                                    (str "var(--" s "-700)")
                                                    s)
-                      "--shadow-color-dark-mode" (if kushi-color? 
+                      "--stroke-color-dark-mode" (if kushi-color? 
                                                    (str "var(--" s "-300)")
-                                                   s)}))})
+                                                   s)}))
+   
+   })
 
 (def data-ks-transformers 
   {:stroke-width (fn [_ _] {"data-ks-stroke" ""})})
 
+
+(def shared-props-keys
+  (!? (->> props keys (apply hash-set))))
+
+
 (def shared-props-enum
-  (->> props keys (into [:enum])))
+  (into [:enum] shared-props-keys))
 
 
 (def prop-families
