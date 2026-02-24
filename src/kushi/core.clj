@@ -1542,8 +1542,7 @@
         (callout (merge {:type            :warning
                          :label-theme     :marquee
                          :border-notches? true
-                         :side-label      (bling.core/file-info-str (meta &form))}
-                        )
+                         :side-label      (bling.core/file-info-str (meta &form))})
                  "Attempting to set " (hifi k) " without setting " (hifi :stroke-width))))
 
     {:dynamic-props? (boolean (some->> props vals (some symbol?)))
@@ -1676,16 +1675,17 @@
                     [])))
 
 
-;; Validation
+      ;; Validation
 
-;; 1) Issue warning if stroke prop other than `:stroke-width` is supplied (without stroke-width)
-;; 2) Same for shadow ^^^
+      ;; 1) Issue warning if stroke prop other than `:stroke-width` is supplied (without stroke-width)
+      ;; 2) Same for shadow ^^^
 
-;; Still need to do jams at runtime? maybe not as you could mark thing
-;; Or if yes you could wrap in a runtime-checking function?
+      ;; Still need to do jams at runtime? maybe not as you could mark thing
+      ;; Or if yes you could wrap in a runtime-checking function?
 
 
     
+    ;; Address
 
     ;; nail down sx semantics - an optional leading string or not? start with not
 
@@ -1701,8 +1701,8 @@
     
     ;; defui questions
     ;;     Can you pass an additional entry to sx that would be pulled out during
-    ;;     macro-expansion and then used to augment the baseline schema , for adding
-    ;;     component-specific custom props
+    ;;     macro-expansion and then used to augment the baseline schema, for adding
+    ;;     component-specific custom props?
 
     ;; defui basics
     ;; basically construct a spec from the meta-map, and
