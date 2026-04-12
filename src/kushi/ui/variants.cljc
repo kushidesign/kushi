@@ -434,12 +434,13 @@
                       :class?   true
                       :data-ks? true }
 
-   :colorway         {:default  nil ;;  <- TODO should this be nil?
-                      :desc     (str-ml
-                                 "Colorway of the element. Must be a named color
-                                  from Kushi's design system e.g `:red` `:purple`
-                                  `:gold`, `:positive`, etc.")
-                      :data-ks? true }
+   :colorway         {:default            :nil ;;  <- TODO should this be nil?
+                      :default-on-invalid :neutral
+                      :desc               (str-ml
+                                           "Colorway of the element. Must be a named color
+                                            from Kushi's design system e.g `:red` `:purple`
+                                            `:gold`, `:positive`, etc.")
+                      :data-ks?           true }
 
    :shape            {:desc     (str-ml
                                  "Shape of the element, corresponds to a Kushi's
@@ -544,7 +545,7 @@
                                       `currentColor`(or value of `:stroke-color`),
                                       and a default opacity of `50%` (or the value
                                       of `:stroke-opacity`). Locally sets the
-                                      value of `--stroke-width`, and Locally sets
+                                      value of `--stroke-width`, and locally sets
                                       a `--box-shadow-for-stroke value.")}
 
    :packing          {:default  nil
@@ -619,9 +620,9 @@
    :spinner-type     {:desc    "The design of the spinner"
                       :default :donut}
 
-   :props/custom     {:schema   [:vector :any]
-                      :desc     (str-ml "For extra props.")
-                      :default  nil}})
+   :props/custom     {:schema  [:vector :any]
+                      :desc    (str-ml "For extra props.")
+                      :default nil}})
 
 #?(:cljs
    ()
@@ -658,8 +659,8 @@
                                                   (when-> vector?)
                                                   first
                                                   (= :or))
-                                        (conj schema :symbol)
-                                        [:or schema :symbol])
+                                        (insert-at schema 1 :symbol)
+                                        [:or :symbol schema])
                          with-options (insert-at with-symbol 1 {:bling.explain/display-schema? true})]
                      with-options))]))
       []
@@ -671,9 +672,18 @@
              #{} 
              props))
 
-(defn shadow-or-stroke-box-shadow [_ _]
-  {"box-shadow"
-   "var(--box-shadow-for-shadow, 0 0 0 0 transparent), var(--box-shadow-for-stroke, 0 0 0 0 transparent)"})
+(def defaults-on-invalid
+  (reduce-kv (fn [m k v]
+               (or (some->> v :default-on-invalid (assoc m k))
+                   m))
+             {} 
+             props))
+
+(defn shadow-or-stroke-box-shadow [kw v]
+  (cond-> {:box-shadow
+           "var(--box-shadow-for-shadow, 0 0 0 0 transparent), var(--box-shadow-for-stroke, 0 0 0 0 transparent)"}
+    (= kw :stroke-width)
+    (assoc (str "--" (name kw)) (as-str v))))
 
 (defn shadow-or-stroke-color [kw _ v]
   (let [kushi-color? (contains? (kw variants-by-custom-opt-key) 
@@ -689,16 +699,16 @@
    :stroke-width shadow-or-stroke-box-shadow
    :stroke-color (partial shadow-or-stroke-color :stroke-color)
    #_(fn [_ v]
-                   (let [kushi-color? (contains?
-                                       (:stroke-color variants-by-custom-opt-key)
-                                       v)
-                         s            (as-str v)]
-                     {"--stroke-color"           (if kushi-color? 
-                                                   (str "var(--" s "-700)")
-                                                   s)
-                      "--stroke-color-dark-mode" (if kushi-color? 
-                                                   (str "var(--" s "-300)")
-                                                   s)}))
+       (let [kushi-color? (contains?
+                           (:stroke-color variants-by-custom-opt-key)
+                           v)
+             s            (as-str v)]
+         {"--stroke-color"           (if kushi-color? 
+                                       (str "var(--" s "-700)")
+                                       s)
+          "--stroke-color-dark-mode" (if kushi-color? 
+                                       (str "var(--" s "-300)")
+                                       s)}))
    
    })
 

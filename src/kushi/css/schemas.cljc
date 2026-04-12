@@ -61,7 +61,7 @@
    {:error/message "String or keyword"}
    [:or {:error/message "String or keyword"} string? keyword?]
    [:fn {:error/message (str "Should pass css property regex:\n "
-                             (bling.hifi/hifi (re-pattern css-prop-for-style-attribute-re-base)))}
+                             (re-pattern css-prop-for-style-attribute-re-base))}
     #(re-find (re-pattern css-prop-for-style-attribute-re-base)
               (name %))]])
 
@@ -92,16 +92,16 @@
     [:symbol {:value 'sx2}]
     [:+
      [:or
+      [:symbol {:error/message "Symbol bound to an valid sx map"}]
       (into [:map
-            {:error/message "Valid sx map"}
-            [:style {:optional true}
+             {:error/message "Valid sx map"}
+             [:style {:optional true}
               [:or
-              style-map-for-style-attribute
-              style-string-for-style-attribute]]
-            [::m/default
+               style-map-for-style-attribute
+               style-string-for-style-attribute]]
+             [::m/default
               [:ref ::sx-map-default]]]
-            (!? {:find {:pred #(= :shadow-size %)}} malli-map-keys))
-      [:symbol {:error/message "Symbol bound to an valid sx map"}]]]]])
+            (!? {:find {:pred #(= :shadow-size %)}} malli-map-keys))]]]])
 
 #_(println
    (-> [:map

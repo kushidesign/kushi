@@ -6,7 +6,13 @@
    [domo.core :as domo] ;; Should these go somewhere else?
    [kushi.css.build.css-reset]
    [kushi.css.build.kushi-ui-component-theming] ;; for testing
-  ;;  [malli.core :as m]
+   [kushi.validate :refer [validate-sx2]]
+
+   ;; These all need to be stubbed
+   [kushi.css.schemas :as schemas]
+   [bling.core :refer [bling]]
+   [bling.hifi :refer [hifi]]
+   [malli.core :as m]
    )
  (:require-macros [kushi.core]))
 
@@ -243,6 +249,8 @@
   (reduce merge-attrs* maps))
 
 
-(defn validator-stub [m]
-  #_(println "validator")
-  m)
+(defn validator [attrs-coll sx-args opts]
+  (validate-sx2 (concat ['sx2] sx-args)
+                schemas/sx2-args
+                opts)
+  (apply merge-attrs attrs-coll))

@@ -8,7 +8,7 @@
    [clojure.spec.alpha :as s]
    [clojure.string :as string :refer [replace] :rename {replace sr}]
    [clojure.walk :as walk :refer [postwalk prewalk]]
-   [fireworks.core :refer [!? ? pprint]]
+   [fireworks.core :refer [!? ? ?flop pprint]]
    [fireworks.sample]
    [kushi.css.build.colorways :refer [colorway-args colorway-selector]]
    [kushi.css.defs :as defs]
@@ -24,6 +24,7 @@
                                 partition-by-pred vec-of-vecs?
                                 when->
                                 when->>]]
+   [kushi.validate :refer [validate-sx2]]
    [malli.core :as m :refer [validate]]
    [malli.util :as mu]
    [malli.transform :as mt]
@@ -607,10 +608,6 @@
 ;; API Helpers
 ;; -----------------------------------------------------------------------------
 
-;; TOOD - Use new bling.core/file-info-str
-
-(defn- file+line+col-map [{:keys [file line column]}]
-  {:file (or file "[unresolved ns]") :line line :column column})
 
 (defn- loc-id
   "Returns classname based on namespace and line + column.
@@ -864,7 +861,7 @@
   [args &form &env fname sel]
   (let [{:keys [conformed-args
                 invalid-args]}
-        (conformed-args args)
+        (? (conformed-args args))
 
         ret                       
         (some->> conformed-args
@@ -1052,6 +1049,7 @@
 
 
 (defn css-rule* [sel args &form &env]
+  (!? (keyed [sel args &form &env]))
   ;; Check if user supplied bad at-rule name, forgetting a leading "@".
   #_(when (= sel ".colorway-neutral")
     (!? :pp args #_(-> args first keys)))
@@ -1062,6 +1060,8 @@
                     (when (contains? '#{sx defcss} sym)
                       (str "kushi.core/" sym)))
                   "kushi.core/css-rule")] 
+
+   (!? (keyed [sel fname]))
    (if (bad-at-rule-name? sel)
 
      (bad-at-rule-name-warning sel &form)
@@ -1306,37 +1306,40 @@
   [m]
   (reduce-kv 
    (fn [acc k v]
-     (let [ks
+     (let [data-*?
+           (-> k util/as-str (string/starts-with? "data-"))
+
+           ks
            (cond 
-                 ;; kushi-specific shared props for variants such as:
-                 ;; :stroke, :shadow-size, :colorway, :display, :position, etc.
-                 (contains? props/shared-props-keys k)
-                 [:props k]
-                 
-                 ;; A :data-* attribute
-                 (-> k util/as-str (string/starts-with? "data-"))
-                 [:attrs k]
+             ;; kushi-specific shared props for variants such as:
+             ;; :stroke, :shadow-size, :colorway, :display, :position, etc.
+             (contains? props/shared-props-keys k)
+             [:props k]
+             
+             ;; A :data-* attribute
+             data-*?
+             [:attrs k]
 
-                 ;; Any html attribute such as :id, :class, :name, etc.
-                 (contains? html-attrs k)
-                 [:attrs k]
+             ;; Any html attribute such as :id, :class, :name, etc.
+             (contains? html-attrs k)
+             [:attrs k]
 
-                 ;; css syntax such as `:color`,
-                 ;; or kushi-specific css stacked syntax like `:_p:hover:color`
-                 (or (s/valid? ::specs/css-custom-prop k)
-                     (and (vector? k) (seq k))
-                     (!? {:when (= k :w)} (css-prop? k))
-                     (!? {:when (= k :debug)}
-                         (and (s/valid? ::specs/css-prop-stack k)
-                              (not (s/valid? ::specs/css-prop-standard-potential
-                                             k)))))
-                 [:css k]
+             ;; css syntax such as `:color`,
+             ;; or kushi-specific css stacked syntax like `:_p:hover:color`
+             (or (s/valid? ::specs/css-custom-prop k)
+                 (and (vector? k) (seq k))
+                 (!? {:when (= k :w)} (css-prop? k))
+                 (!? {:when (= k :debug)}
+                     (and (s/valid? ::specs/css-prop-stack k)
+                          (not (s/valid? ::specs/css-prop-standard-potential
+                                         k)))))
+             [:css k]
 
-                 ;; user custom props
-                 :else
-                 [:custom-props k])
+             ;; user custom props
+             :else
+             [:custom-props k])
            v
-           v]
+           (if data-*? (as-str v) v)]
        (if ks (assoc-in acc ks v) acc)))
    {:props        {}
     :attrs        {}
@@ -1409,42 +1412,7 @@
              (:props m+)))
 
 
-(defn- validate-sx2 [&form schema opts]
-  (when-not (validate schema &form)
-    (let [problems    (explain-malli* 
-                       schema
-                       &form
-                       (merge {:display-schema? false
-                               :form            &form
-                               :spacing         :compact
-                               :callout-opts    (assoc
-                                                 (file+line+col-map (meta &form))
-                                                 :label-theme
-                                                 :marquee)}
-                              (file+line+col-map (meta &form))
-                              opts))
 
-
-
-          ;; bad-entries (!? (reduce (fn [acc {:keys [in]}]
-          ;;                           (if-let [[i k]
-          ;;                                    (some-> in
-          ;;                                            (when-> #(and (= 2 (count %))
-          ;;                                                          #_(keyword? (nth % 1)))))]
-          ;;                             (update-in acc [i] conj k )
-          ;;                             acc))
-          ;;                         {}
-          ;;                         problems))
-
-          ;; stripped    (reduce-kv
-          ;;              (fn [vc i bad-keys]
-          ;;                (assoc-in vc
-          ;;                          [i]
-          ;;                          (apply dissoc (nth vc i) bad-keys)))
-          ;;              (vec args)
-          ;;              bad-entries)
-          ]
-      #_stripped)))
 
 
 (defn- hydrate-style-attribute-value 
@@ -1493,12 +1461,15 @@
   [props]
   (some-> props
           (select-keys variants/local-tokens)
+          !?
           (->> (reduce-kv
                 (fn [m k v]
+                  (!? :no-file {:margin-top 4} k)
                   (merge m
-                         (or (some-> (get variants/local-token-transformers k)
-                                     (apply [k v]))
-                             {(str "--" (name k)) (name v) })))
+                         (or (!? :transformers (some-> (get variants/local-token-transformers k)
+                                                       !?
+                                                       (apply [k v])))
+                             (!? :- {(str "--" (name k)) (name v)}))))
                 {}))))
 
 ;; TODO - reconcile if selector is "#foo" and :id is something else
@@ -1507,6 +1478,46 @@
 ;; Sanitize with Malli transformers and decoders
 ;; You need to sanitize everything that is not going to the css pipeline
 ;; 
+
+(defn- sx2-poi [props k {:keys [file line column]} floating-label-opts] 
+  (bling.core/point-of-interest
+   {:margin-top             1
+    :header-file-info-style {:font-style :italic}
+    :form                   (-> (bling.hifi/hifi 
+                                 (list
+                                  'sx2
+                                  (bling.hifi/double-truncated-map props k)))
+                                (bling.core/with-floating-label
+                                  floating-label-opts))
+    :file                   file
+    :line                   line
+    :column                 column}))
+
+
+(defn- warn-on-missing-stroke-width! [props &form]
+  (when-not (get props :stroke-width)
+    (when-let [k (first (filter 
+                         #(contains? #{:stroke-color 
+                                       :stroke-opacity 
+                                       :stroke-align}
+                                     %)
+                         (-> props keys seq)))]
+      (callout {:type            :warning
+                :label-theme     :marquee
+                :border-notches? true
+                :side-label      (bling.core/file-info-str (meta &form))}
+               (bling [:p
+                       "Unless you supply a value for "
+                       (hifi :stroke-width) ","
+                       [:br]
+                       "no stroke will be rendered."]
+                      (sx2-poi props
+                               k
+                               (meta &form)
+                               {:line-index  2
+                                :label-text  "<- Missing :stroke-width"
+                                :label-style {:color :warning}}))))))
+
 
 (defn- sx2* [m &form &env]
   (let [selector      (:selector m)
@@ -1532,18 +1543,7 @@
     ;;     Or does the component macro code check for them in the user-props
     ;;     slot?
 
-    (when-not (get props :stroke-width)
-      (when-let [k (first (filter 
-                           #(contains? #{:stroke-color 
-                                         :stroke-opacity 
-                                         :stroke-align}
-                                       %)
-                           (-> props keys seq)))]
-        (callout (merge {:type            :warning
-                         :label-theme     :marquee
-                         :border-notches? true
-                         :side-label      (bling.core/file-info-str (meta &form))})
-                 "Attempting to set " (hifi k) " without setting " (hifi :stroke-width))))
+    (warn-on-missing-stroke-width! props &form)
 
     {:dynamic-props? (boolean (some->> props vals (some symbol?)))
      :attrs          (merge data-ks-attrs
@@ -1553,9 +1553,13 @@
                             style-map)}))
 
 
-(defn ^:public validator-stub [m]
-  (!? 'validator-stub m))
+;; Move impl into a cljc file?
+(defn ^:public validator
+  "This exists if we are testing sx macro in JVM clojure, stub for runtime kushi-core.cljs/validator"
+  [attrs-coll _ _]
+  (? "kushi-core.clj/validator (clj stub for runtime cljs)" attrs-coll))
 
+;; Move impl into a cljc file?
 (defn ^:public merge-attrs-stub [& maps]
   (let [[m1 m2] maps]
     (!? 'merge-attrs-stub 
@@ -1565,6 +1569,8 @@
               :style
               (merge (:style m1) (:style m2))))))
 
+
+;; TODO (defcss {:--foo {:. :7%}})    ; <- the :. causes stack overflow
 
 (defmacro ^:public sx2
   "Returns an html attributes map.
@@ -1616,33 +1622,79 @@
        :data-ks-at my.ns:L11:C3}"
 
   [& args]
-  (validate-sx2
-   &form
-   (!? {:find {:pred #(= % :shadow-size)}} schemas/sx2-args)
-   {:preamble-section-body (bling (hifi (symbol "kushi.core/sx2")))})
-  (let [attrs-coll*    (reduce (fn [acc x]
-                                 (if-let [ret (cond (symbol? x)
-                                                    x
-                                                    (map? x)
-                                                    (sx2* x &form &env))]
-                                   (conj acc ret)
-                                   acc))
-                               [] 
-                               args)
-        dynamic-props? (boolean (some :dynamic-props? attrs-coll*))
-        attrs-coll     (mapv :attrs attrs-coll*)]
+  
+  (let [validate-sx2-opts
+        {:preamble-section-body (bling (hifi (symbol "kushi.core/sx2")))
+         :form-meta             (meta &form)}
+
+        ;; Validate arguments against malli specs
+        ;; Print warnings via bling.explain/explain-malli
+        ;; Return map of fallback values for invalid entry values
+        {:keys [fallbacks-for-invalid-entries]}
+        (validate-sx2
+         &form
+         (!? {:find {:pred #(= % :shadow-size)}} schemas/sx2-args)
+         validate-sx2-opts)
+
+
+        ;; Merge fallback values for invalid entries, if applicable
+        args
+        (map-indexed (fn [i x] 
+                       (if (map? x)
+                         (merge x (get fallbacks-for-invalid-entries i))
+                         x))
+                     args)
+
+        ;; Vector of maps or symbols bound to maps
+        ;; If map literal (and not symbol) shape will be:
+        ;;   {:dynamic-props? false
+        ;;    :attrs          {...
+        ;;                     :data-whatever ...
+        ;;                     :class         ...
+        ;;                     :style         ...
+        ;;                     ...}}
+        attrs-coll*    
+        (reduce (fn [acc x]
+                  (if-let [ret (cond (symbol? x)
+                                     x
+                                     (map? x)
+                                     (sx2* x &form &env))]
+                    (conj acc ret)
+                    acc))
+                [] 
+                args)
+
+        dynamic-props? 
+        (boolean (some :dynamic-props? attrs-coll*))
+
+        attrs-coll     
+        (mapv :attrs attrs-coll*)]
 
     #_(keyed [attrs-coll* dynamic-props? attrs-coll])
 
-    (if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
-      ;; A single map has been passed to sx2
-      (if dynamic-props?
-        `(kushi.core/validator-stub ~m)
-        `~m)
-      ;; Multiple maps have been passed to sx2
-      (if dynamic-props?
-        `(kushi.core/validator-stub (apply kushi.core/merge-attrs ~attrs-coll))
-        `(apply kushi.core/merge-attrs ~attrs-coll)))
+
+    (if dynamic-props?
+      ;; validate map at runtime, dev-only
+      (let [sx-args (vec (rest &form))]
+        `(kushi.core/validator ~attrs-coll 
+                               ~sx-args
+                               ~validate-sx2-opts))
+      `(apply kushi.core/merge-attrs ~attrs-coll))
+
+    #_(if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
+
+        ;; A single map has been passed to sx2
+        (if dynamic-props?
+          ;; validate map at runtime, dev-only
+          `(kushi.core/validator-stub ~&form ~validate-sx2-opts)
+          `~attrs-coll)
+
+        ;; Multiple maps have been passed to sx2
+        (if dynamic-props?
+          ;; validate merged map at runtime, dev-only
+          `(kushi.core/validator-stub ~&form ~validate-sx2-opts)
+          `~attrs-coll)
+        )
 
     ;; for testing in pure jvm clj env
     #_(if-let [m (when (= 1 (count attrs-coll)) (nth attrs-coll 0 nil))]
@@ -2128,9 +2180,9 @@
                           [style-map-no-css-vars])))]
 
      (? {:display-metadata?            false
-         :coll-limit                   100
-         :non-coll-mapkey-length-limit 80
-         :non-coll-length-limit        80}
+         :print-length                   100
+         :scalar-mapkey-max-length 80
+         :scalar-max-length        80}
 
       (if sx-attrs-map
         (merge (let [convert-cssvar-name

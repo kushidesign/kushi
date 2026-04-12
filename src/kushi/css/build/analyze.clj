@@ -748,7 +748,7 @@
 
         _
         (when debug-layer?
-          (!? {:coll-limit 300} (mapv #(-> % :macro-sym) rulesets)))
+          (!? {:print-length 300} (mapv #(-> % :macro-sym) rulesets)))
 
         ns 
         (some-> rulesets seq first :ns)

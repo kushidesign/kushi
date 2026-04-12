@@ -174,7 +174,7 @@
   (? :no-file 
      {:label                 label
       :display-metadata?     false
-      :non-coll-length-limit 21}
+      :scalar-max-length 21}
      x))
 
 (def debug-defui nil)
@@ -660,7 +660,7 @@
         mm {:doc desc :summary summary :props props}
         ret (list 'defui ^:public sym mm args-vc body)]
     (!? (keyed [sym mm args-vc body]))
-    (? {:non-coll-length-limit 500} props #_ret)
+    (? {:scalar-max-length 500} props #_ret)
     `nil))
 
 
