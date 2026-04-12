@@ -5,6 +5,29 @@
   #?(:cljs
      (:require-macros [kushi.util])))
 
+(defn ^:public when->
+  "If `(= (pred x) true)`, returns x, otherwise nil.
+   Useful in a `clojure.core/some->` threading form."
+  [x pred]
+  (when (or (true? (pred x))
+            (when (set? pred) (contains? pred x)))
+    x))
+
+(defn ^:public when->>
+  "If (= (pred x) true), returns x, otherwise nil.
+   Useful in a `clojure.core/some->>` threading form."
+  [pred x]
+  (when (or (true? (pred x))
+            (when (set? pred) (contains? pred x)))
+    x))
+
+;; TODO - convert all to when-> or when->> and delete
+(defn ^:public maybe [x pred]
+  (when (if (set? pred)
+          (contains? pred x)
+          (pred x))
+    x))
+
 (defn as-str [x]
   (str (if (or (keyword? x) (symbol? x)) (name x) x)))
 
@@ -21,26 +44,60 @@
        (map #(nth % 0 nil))
        string/join))
 
-(defn cssfn-string
-  "(cssfn-string \"hsla\" \"100deg\" \"50%\" \"33%\" \"0.8\")
-   => \"hsla(100deg, 50%, 33%, 0.8)\"
+;; TODO - get this to support ||
+;; Check out kushi.css.hydrated/hydrated-css-var
+(defn extract-cssvar-token [s]
+  (some-> s
+          (when-> #(string/starts-with? % "$"))
+          (subs 1)))
 
-   Note that is works differently for css calc()
 
-   (cssfn-string \"calc\" \"1px\" \"+\" \"1px\")
-   => \"calc(1px + 1px)\"
+(defn css-varize [& args] (str "var(--" (apply str args) ")"))
 
-   "
-  [s args]
-  (str s
+(defn- s->cssvar [s] 
+  (if-let [token (extract-cssvar-token s)]
+    (css-varize token)
+    s))
+
+(defn kw->cssvar  [x]
+  (if-let [token (some-> x
+                         (when-> keyword?)
+                         name
+                         extract-cssvar-token)]
+    (css-varize token)
+    (as-str x)))
+
+
+;; Supports up to 2 fallbacks
+(defn kw->cssvar2  [x] 
+  (if-let [token (some-> x
+                         (when-> keyword?)
+                         name
+                         extract-cssvar-token)]
+    (let [[token fallback1 fallback2] (string/split token #"\|\|")]
+      (css-varize token 
+                  (some->> fallback1 s->cssvar (str ", "))
+                  (some->> fallback2 s->cssvar (str ", "))))
+    (as-str x)))
+
+
+(defn css-fn [fname & args] (str fname "(" (string/join ", " args) ")"))
+
+
+(defn- cssfn-color-string
+  "(cssfn-color-string \"hsla\" \"100deg\" \"50%\" \"33%\" \"0.8\")
+   => \"hsla(100deg 50% 33% / 0.8)\""
+  [nm args]
+  (str (as-str nm)
        "("
-       (string/join (if (= "calc" s) " " ", ")
-                    (map #(if (keyword? %)
-                            (name %)
-                            %)
-                         args))
+       (string/join " " (mapv kw->cssvar2 args))
        ")"))
 
+(defn ^:public oklch
+  "(oklch \"100%\" \"0.2\" \"33\" \"0.8\")
+   => \"oklch(100% 0.2 33 / 0.8)\""
+  [& args]
+  (cssfn-color-string "oklch" args))
 
 (defn deep-merge [& maps]
   (apply merge-with (fn [& args]
@@ -153,13 +210,6 @@
     c1)))
 
 
-(defn maybe [x pred]
-  (when (if (set? pred)
-          (contains? pred x)
-          (pred x))
-    x))
-
-
 
 (defn vec-of-vecs? [v]
   (and (vector? v)
@@ -196,44 +246,6 @@
        (into {} (map (juxt transform identity) vars))))))
 
 
-;; TODO - get this to support ||
-;; Check out kushi.css.hydrated/hydrated-css-var
-(defn extract-cssvar-token [s]
-  (some-> s
-          (maybe #(string/starts-with? % "$"))
-          (subs 1)))
-
-
-(defn css-varize [& args] (str "var(--" (apply str args) ")"))
-
-(defn- s->cssvar [s] 
-  (if-let [token (extract-cssvar-token s)]
-    (css-varize token)
-    s))
-
-(defn kw->cssvar  [x]
-  (if-let [token (some-> x
-                         (maybe keyword?)
-                         name
-                         extract-cssvar-token)]
-    (css-varize token)
-    (as-str x)))
-
-
-;; Supports up to 2 fallbacks
-(defn kw->cssvar2  [x] 
-  (if-let [token (some-> x
-                         (maybe keyword?)
-                         name
-                         extract-cssvar-token)]
-    (let [[token fallback1 fallback2] (string/split token #"\|\|")]
-      (css-varize token 
-                  (some->> fallback1 s->cssvar (str ", "))
-                  (some->> fallback2 s->cssvar (str ", "))))
-    (as-str x)))
-
-
-(defn css-fn [fname & args] (str fname "(" (string/join ", " args) ")"))
 
 
 (defn map-css-tuple-args [coll]
@@ -262,21 +274,6 @@
                       "[$1=\"$2\"]")
        v))
 
-(defn ^:public when->
-  "If `(= (pred x) true)`, returns x, otherwise nil.
-   Useful in a `clojure.core/some->` threading form."
-  [x pred]
-  (when (or (true? (pred x))
-            (when (set? pred) (contains? pred x)))
-    x))
-
-(defn ^:public when->>
-  "If (= (pred x) true), returns x, otherwise nil.
-   Useful in a `clojure.core/some->>` threading form."
-  [pred x]
-  (when (or (true? (pred x))
-            (when (set? pred) (contains? pred x)))
-    x))
 
 (defn insert-at [vc i elem]
   (into (conj (subvec vc 0 i) elem)
