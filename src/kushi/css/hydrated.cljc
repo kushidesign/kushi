@@ -3,13 +3,15 @@
    [fireworks.core :refer [? !? ?> !?>]]
    [clojure.spec.alpha :as s]
    [clojure.string :as string]
-   [clojure.walk :refer [prewalk]]
+   [clojure.walk :refer [prewalk postwalk]]
    [fireworks.macros :refer [keyed]]
    [kushi.css.defs :as defs]
    [kushi.css.media :as media]
    [kushi.css.shorthand :as shorthand]
+   [kushi.cssfn]
    [kushi.css.specs :as specs]
-   [kushi.util :refer [more-than-one? partition-by-pred vec-of-vecs?]]))
+   [kushi.util :refer [more-than-one? partition-by-pred vec-of-vecs? when-> when->>]]
+   [clojure.walk :as walk]))
 
 ;; TODO - would there ever be any quoted backticks in css val?
 (defn str+ [s]
@@ -60,20 +62,36 @@
              (string/join ", "))]
         ret))
 
-(defn runtime-vars-hydrated [nv]
-  (let [runtime-vars-hydrated (str+ nv)
+(defn runtime-vars-hydrated [v]
+  (let [runtime-vars-hydrated (str+ v)
         ret                   (hydrated-css-var runtime-vars-hydrated)]
     ret))
 
+
+;; Should this be multi-arity so we can do `(hydrated-val :1px:solid:red)` ?
 (defn hydrated-val 
+  "For hydrating values that are potentially shorthand or cssvars."
   [p v]
-  (let [nv (as-str v)
-        np (as-str p)]
-    (if-let [m (and (not (re-find #"[-: ]" nv))
+  (let [v (as-str v)
+        p (as-str p)]
+    (if-let [m (and (not (re-find #"[-: ]" v)) 
                     (get-in shorthand/shorthand-syntax
-                            [:enums np]))]
-      (get m nv (runtime-vars-hydrated nv))
-      (runtime-vars-hydrated nv))))
+                            [:enums p]))]
+      (get m v (runtime-vars-hydrated v))
+      (runtime-vars-hydrated v)))
+  #_(cond
+      (css-fn? v)
+      (hydrated-css-fn v)
+
+      :else
+      (let [nv (as-str v)
+            np (as-str p)]
+        (if-let [m (and (not (re-find #"[-: ]" nv))
+                        (get-in shorthand/shorthand-syntax
+                                [:enums np]))]
+          (get m nv (runtime-vars-hydrated nv))
+          (runtime-vars-hydrated nv)))))
+
 
 (defn hydrated-prop 
   [v]
@@ -449,6 +467,7 @@
         (let [hp (hydrated-prop (nth x 0 nil))]
           [hp
            ;; This should hydrate css-vars like :$wtf
+           ;; Also hydrate lists like '(linear-gradient "180deg" [:red] ...)
            (hydrated-val hp (nth x 1 nil))])
 
         ;; Return vector of hydrated-style-vecs
@@ -477,8 +496,171 @@
         [(str mod) sec]
         v))))
 
+
+(defn- hydrate-vector-values [prop v]
+  (cond 
+    (s/valid? ::specs/vector-of-scalars v)
+    [prop (string/join ", " v)]
+
+    ;; (s/valid? ::specs/vector-of-cssfns v)
+    ;; [prop (string/join ", " (mapv hydrated-css-fn v))]
+
+    ;; (s/valid? ::specs/vector-of-scalars-and-cssfns v)
+    ;; [prop (string/join ", " (mapv #(if (list? %) (hydrated-css-fn %) %) v))]
+    ))
+
+(defn- hydrate-vectors-containing-css-value-vectors 
+  "For hydrating values represented as nested vectors.
+   ```clojure
+   [:box-shadow  [[:2px (calc '(+ :2px :3px)) 0 (oklch :30% 0.3 44 0.8)]
+                  [:2px :4px 0 :blue]]]
+   ; =>
+   [:box-shadow
+    [\"2px calc((2px + 3px)) 0 oklch(30% 0.3 44 / 0.8)\"
+     \"2px 4px 0 blue\"]]
+   ```"
+  [x]
+  (if-let [[prop v] (some-> x 
+                            (when-> vector?)
+                            (when-> #(= (count %) 2)))]
+    (if (and (or (string? prop) (keyword? prop))
+            (s/valid? ::specs/vector-containing-css-value-vectors v))
+      [prop 
+       (mapv #(if (vector? %)
+                (let [children->strs 
+                       (mapv (fn [x] (hydrated-val prop x)) %)]
+                  (string/join " " children->strs))
+                %)
+             v)]
+      x)
+    x))
+
+
+(defn hydrate-layered-values [x]
+  (if-let [[prop v] (some-> x 
+                            (when-> vector?)
+                            (when-> #(= (count %) 2)))]
+    (if (and (or (string? prop) (keyword? prop))
+             (vector? v))
+      (or (hydrate-vector-values prop v)
+          x)
+      x)
+    x))
+
+(defn- resolve-css-fn
+  "(resolve-css-fn 'calc) => #'kushi.cssfn/css-calc"
+  [cssfn-sym]
+  (resolve (symbol (str "kushi.cssfn/css-" cssfn-sym))))
+
+(defn- cssfn? [x]
+  (s/valid? ::specs/cssfn x))
+
+(defn- quoted-cssfn? [x]
+  (s/valid? ::specs/quoted-cssfn-list x))
+
+(defn- normalized-css-fn-seq*
+  "If cssfn list is a Cons like `(quote (calc (+ 1 2)))`, it gets converted to
+   `(calc (+ 1 2))`"
+  [v]
+  (if (s/valid? ::specs/quoted-cssfn-list v)
+   (second v)
+   v))
+
+;; (defn- linear-gradient-walk [fallback x]
+;;   (if (css-fn? x)
+;;     (let [[cssfn-sym & args] (normalized-css-fn-seq* x)]
+;;       (if-let [f (resolve-css-fn cssfn-sym)]
+;;         (apply f args)
+;;         fallback))
+;;     x))
+
+(defn- cssfn-arg [x]
+  (if (vector? x)
+    (string/join " " (mapv cssfn-arg x))
+    (-> x as-str symbol)))
+
+(defn- hydrated-cssfn
+  "For hydrating values represented as nested vectors.
+
+   ```clojure
+   ;; arithmetic functions like calc, clamp, min, max convert to infix
+   '(calc (+ :2px :3px))
+   ; =>
+   \"calc(2px + 3px)\"
+
+   ;; Most css fns use comma-separated values, but some of those values are
+   ;; space-separated
+   '(linear-gradient :45deg [:red :15%] [:white :33% :66%] :green)
+   =>
+   \"linear-gradient-walk(45deg, red 15%, white 33%, green)\"
+
+   ;; Filter functions don't use comma separated vals!
+   '(drop-shadow [:4px :2px :3px :black])
+   ; =>
+   \"drop-shadow(4px 2px 3px black)\"
+   ```"
+  [x]
+  (if (cssfn? x)
+    (let [[cssfn-sym & args :as form] x]
+      (cond 
+        ;; Arithmetic ops needs to be converted to infix
+        (contains? '#{+ - * /} cssfn-sym)
+        (->> args
+             (mapv cssfn-arg)
+             (interpose cssfn-sym)
+             pr-str)
+
+        ;; Does not need to be wrapped in "()", and always take single,
+        ;; first arg, which should be a css arithmetic fn like '(+ 1 3)
+        (contains? '#{calc abs} cssfn-sym)
+        (str cssfn-sym (first args))
+        
+        ;; Take more than one expression and uses space syntax
+        (contains? '#{'rgb rgba hsl hsla hwb lab lch oklab oklch color drop-shadow} cssfn-sym)
+        (str cssfn-sym "(" (string/join " " (mapv cssfn-arg args)) ")")
+
+        :else
+        (str cssfn-sym "(" (string/join ", " (mapv cssfn-arg args)) ")"))
+
+      #_(if-let [f (resolve-css-fn cssfn-sym)]
+          (apply f args)
+          #_(cond
+            ;; TODO - which other fn need this kind of walk?
+            ;; box-shadow? text-shadow?
+              (= f #'kushi.cssfn/css-linear-gradient)
+              (apply f (walk/postwalk (partial linear-gradient-walk fallback) args))
+              :else
+              (apply f args))
+          (apply kushi.cssfn/css-fn
+                 (mapv (partial hydrated-val nil) x))))
+    x))
+
+(defn- dequote-cssfn [x]
+  (if (quoted-cssfn? x)
+    (normalized-css-fn-seq* x)
+    x))
+
+(defn kw->cssvar [x]
+  (some->> x 
+           (when->> keyword?)
+           name
+           (re-find #"^\$\S+")))
+
+(defn- hydrated-css-var2 [x]
+  (or (some->> x kw->cssvar hydrated-css-var)
+      x))
+
+
+;; Are there any 
+
+
 (defn hydrated-stacks [flattened-to-vecs]
   (->> flattened-to-vecs
+       (postwalk hydrated-css-var2)
+       (prewalk dequote-cssfn)
+       (postwalk hydrated-cssfn)
+       (postwalk hydrate-vectors-containing-css-value-vectors)
+       (postwalk hydrate-layered-values)
        (prewalk hydrated-stacks1)
        distinct
        vec

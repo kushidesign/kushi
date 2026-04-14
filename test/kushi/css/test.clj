@@ -6,7 +6,7 @@
             [kushi.css.sandbox]
             [fireworks.core :refer [? !? ?> !?> pprint]]
             [fireworks.sample :as sample]
-            [bling.core :as bling :refer [bling callout point-of-interest]]
+            [bling.core :as bling :refer [print-bling bling callout point-of-interest]]
             [bling.explain :refer [explain-malli]]
             [bling.util :as util]
             [bling.sample]
@@ -44,39 +44,127 @@
                                 keyed
                                 nameable?
                                 as-str
-                                kw->cssvar
-                                color-mix
-                                linear-gradient]]
+                                kw->cssvar2
+                                when->
+                                when->>
+                                ]]
             [kushi.colors2 :refer [oklch-colors]]
             [taoensso.tufte :as tufte :refer [p profile]]
             [me.flowthing.pp :as pp]
             [kushi.css.shorthand :as shorthand]
             [malli.core :as malli]))
 
-(fireworks.core/config! {:non-coll-length-limit 66
-                         :non-coll-mapkey-length-limit 33})
 
-;; (? (malli/explain [:or :string [:and [:int {:max 10}]]] 11))
+(fireworks.core/config! {:scalar-max-length 33
+                         :scalar-depth-1-max-length 33
+                         :scalar-mapkey-max-length 33})
 
-#_(? (explain-malli [:or :string [:int {:max 10}]] 11))
-#_(? (explain-malli [:map [:foo :int]] {:guh "hi" :buh 3}))
 
-(let [k  :rounded
-      sz :12px]
-  (sx2 {:selector    ".ks-baaa"
-        :props/custom [:map 
-                       [:dude {:desc     "hi"
-                               :optional true}
-                        [:enum :foo :bar :baz]]]
-        :shape        k
-        :style        {:color :red}
-        :size         :sm
-        :shadow-size  :md 
-        :shadow-color :green
-        :width        :200px
-        :height       :100px
-        :border       :1px:solid:silver}))
+;; (? (calc (+ :$my-val (- 2 (/ 10 3)))))
 
+
+;; (? (s/valid? ::specs/vector-of-cssfns
+;;              [(css-linear-gradient "to bottom" "#0000 50%" :$transparent-black-09)
+;;               (linear-gradient "to bottom" "#0000 50%" [:$classic-trim-color :80%])]))
+
+
+;; (? (s/valid? ::specs/cssfn (quote (calc ($ :2px :3px)))))
+
+;; (s/explain ::specs/quoted-cssfn-list (list 'quote (list 'calc ('$ :2px :3px))))
+
+;; (? (css-rule*
+;;     ".foo"
+;;     {:width '(calc (+ :2px :3px))}
+;;     nil
+;;     nil))
+
+(println
+ (css-rule
+  ".foo"
+  {
+   ;;  :filter      '(drop-shadow :2px :4px (okm yellow 200 / 0.3))
+   ;;  :line-height      '(abs (+ 2 :$my-num))
+   
+
+   ;; Fix
+  ;;  "& .gold" {:width :30px}
+
+   :background-image '(linear-gradient "180deg"
+                                       [:transparent]
+                                       [:transparent :15%]
+                                       [(oklch :$convex-shadow-lightness
+                                               :$convex-shadow-chroma 
+                                               :$colorway-hue)])
+  ;;  :font-family      ["Arial" "Helvetica" "fantasy"]
+  ;;  :box-shadow       [[:2px '(calc (+ :2px :3px)) 0 '(oklch :30% 0.3 44 / 0.8)]
+  ;;                     [:2px :4px 0 :blue]
+  ;;                     [:2px :6px 0 :$yellow-500]]
+   }))
+
+
+#_(? (css-rule
+    ".foo"
+    { 
+     
+     ;; :hover:--convex-shadow-lightness-shift (calc (+ :$convex-shadow-lightness-shift-base :$lightness-shift))
+     
+     ;; calc* fn usage, expects a list
+     ;;  :background-color (calc '(- :$convex-shadow-lightness-shift-base :$lightness-shift))
+     
+   
+     ;;  :bgi "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
+     
+     ;; :box-shadow 2px 2px 0 red, 4px 4px 0 orange, 6px 6px 0 gold
+     
+     ;; :box-shadow [[:2px '(calc ($ :2px :3px)) 0 '(oklch :30% 0.3 44 0.8)] [:2px :4px 0 :blue] :2px:6px:0:$yellow-500]
+     
+     :width '(calc ($ :2px :3px))
+   
+     ;; :line-height '(min (+ 1.5 2) :$line-height2)
+     
+     ;; :box-shadow [[:2px (calc '(+ :2px :3px)) 0 (oklch :30% 0.3 44 0.8)] [:2px :4px 0 :blue] :2px:6px:0:$yellow-500]
+     
+     ;; :bgi ['(linear-gradient "to bottom" "#0000 50%" :$transparent-black-09)
+     ;;       (linear-gradient "to bottom" "#0000 50%" [:$classic-trim-color :80%])]
+     ;; :mask-mode [:alpha :luminance]
+     ;; :animation-iteration-count [:infinite 3 1]
+     
+     ;; :hover {:bgi [(linear-gradient "to bottom" "#fff 50%" :$transparent-black-09)
+     ;;               (linear-gradient "to bottom" "#fff 50%" [:$classic-trim-color :80%])]}
+     
+   
+     ;; :background-color '(oklch :$convex-shadow-lightness :$convex-shadow-chroma :$colorway-hue 0.4)
+     
+     ;;  ;;  :border :1px:solid:okm-purple-400
+     
+     ;; :background-image '(linear-gradient "180deg"
+     ;;                                     [:transparent]
+     ;;                                     [:transparent :15%]
+     ;;                                     [(oklch :$convex-shadow-lightness
+     ;;                                             :$convex-shadow-chroma 
+     ;;                                             :$colorway-hue)])
+     }))
+
+#_(? :+ (= 
+       (!? :+ (css-rule* ".foo"
+                         [{
+                            :hover:--convex-shadow-lightness-shift "calc(var(--convex-shadow-lightness-shift-base) + var(--lightness-shift))"
+                            :background-image                      "linear-gradient(180deg, transparent, transparent 15%, oklch(var(--convex-shadow-lightness) var(--convex-shadow-chroma) var(--colorway-hue)))"
+                           }]
+                         nil
+                         nil))
+       (!? :+ (css-rule* ".foo"
+                         [{
+                           :hover:--convex-shadow-lightness-shift (calc :$convex-shadow-lightness-shift-base + :$lightness-shift)
+                           :background-image                      (linear-gradient "180deg"
+                                                                                   [:transparent]
+                                                                                   [:transparent :15%]
+                                                                                   [(oklch :$convex-shadow-lightness
+                                                                                           :$convex-shadow-chroma 
+                                                                                           :$colorway-hue)])
+                           }]
+                         nil
+                         nil))))
 
 
 ;; (kushi.core/defui3
@@ -254,7 +342,7 @@
     (reduce-kv (fn [acc k v] (conj acc (list 'defcss k v))) [] am)))
 
 ;; (? :pp (css->kushi sample-css2))
-;; #_(? :pp {:non-coll-mapkey-length-limit 79}
+;; #_(? :pp {:scalar-mapkey-max-length 79}
 ;;  #_(css->kushi kushi.css.build.css-legacy/css-reset)
 ;;    #_(css->kushi kushi.css.build.css-legacy/design-tokens)
 ;;    (css->kushi kushi.css.build.css-legacy/kushi-ui-theming) 

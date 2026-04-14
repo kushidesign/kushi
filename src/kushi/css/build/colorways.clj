@@ -1,6 +1,7 @@
 (ns kushi.css.build.colorways
   (:require [fireworks.core :refer [? !? ?> !?>]]
-            [kushi.util :refer [kw->cssvar as-str color-mix linear-gradient css-varize]]
+            [kushi.util :refer [kw->cssvar as-str css-varize]]
+            [kushi.cssfn :refer [css-color-mix css-linear-gradient]]
             [clojure.string :as string]))
 
 (defn colorway-selector [s]
@@ -20,13 +21,13 @@
         (fn [level] (keyword (str "$background-color-" s level )))
 
         convex-light-mode-grad 
-        #(linear-gradient :180deg :transparent [:transparent :15%] %)
+        #(css-linear-gradient :180deg :transparent [:transparent :15%] %)
 
         convex-dark-mode-grad 
-        #(linear-gradient :360deg :transparent [:transparent :15%] %)
+        #(css-linear-gradient :360deg :transparent [:transparent :15%] %)
 
         convex-light-mode-shadow-color 
-        #(color-mix "in oklch"
+        #(css-color-mix "in oklch"
                     :transparent 
                     [(css-varize "background-color-" s "-hard" %)
                      :$convex-shadow-opacity||10%])

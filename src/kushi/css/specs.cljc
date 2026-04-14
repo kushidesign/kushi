@@ -265,13 +265,71 @@
 
 
 ;; ## Specs for css-values -----------------------------------------------------
+
+(s/def ::cssfn-list
+  (s/and list?
+         #(symbol? (first %))))
+
+(s/def ::quoted-cssfn-list
+  (s/and seq?
+         #(= 2 (count %))
+         #(= 'quote (first %))
+         #(s/valid? ::cssfn-list (second %))))
+
+(s/def ::cssfn
+  (s/or
+   :quoted-css-fn-list
+   ::quoted-cssfn-list
+   :cssfn-list
+   ::cssfn-list))
+
+(s/def ::vector-of-cssfns
+  (s/coll-of ::cssfn
+             :kind vector?))
+
+(s/def ::vector-of-scalars
+  (s/coll-of ::s|kw|num
+             :kind vector?))
+
+(s/def ::vector-of-scalars-and-cssfns
+  (s/coll-of (s/or :scalar ::s|kw|num :cssfn ::cssfn)
+             :kind vector?))
+
+(s/def ::css-value-vector
+  (s/or :vector-of-cssfns
+        ::vector-of-cssfns
+        :vector-of-scalars
+        ::vector-of-scalars
+        :vector-of-scalars-and-cssfns
+        ::vector-of-scalars-and-cssfns))
+
+(s/def ::vector-containing-css-value-vectors
+  (s/and vector?
+         #(some (fn [v] (s/valid? ::css-value-vector v)) %)
+         #(every? (fn [v] (s/valid? ::css-value-base v)) %)))
+
+(s/def ::css-value-base
+  (s/or :s|kw|num
+        ::s|kw|num
+        :cssfn
+        ::cssfn
+        :css-value-vector
+        ::css-value-vector))
+
+;; TODO - can you use css-value-base here?
 (s/def ::css-value
-  ::s|kw|num
-  #_(s/and ::s|kw|num
-         #(if (string? %)
-            (not (re-find only-valid-in-css-values-supplied-as-keywords-re
-                          %))
-            true)))
+  (s/or :s|kw|num
+        ::s|kw|num
+        :cssfn
+        ::cssfn
+        :vector-of-cssfns
+        ::vector-of-cssfns
+        :vector-of-scalars
+        ::vector-of-scalars
+        :vector-of-scalars-and-cssfns
+        ::vector-of-scalars-and-cssfns
+        :vector-containing-css-value-vectors
+        ::vector-containing-css-value-vectors))
 
 
 
@@ -431,10 +489,10 @@
    :style-map          ::style-map
    :css-rule-call      ::css-rule-call
    :class-binding      symbol?  ;; <- intended for dynamic classnames (maybe remove?)
-
+   
    ;; ! removed :logic-sexp
    ;; :logic-sexp    ::logic-sexp
-
+   
    ;; ! removed vectorized props
    ;; :top-level-vec ::top-level-vec
    ))

@@ -16,6 +16,7 @@
 (ns ^{:kushi/layer "kushi-ui-theming"} kushi.css.build.kushi-ui-component-theming
   (:require
    [kushi.colors]
+   [kushi.util :refer [linear-gradient oklch calc]]
    [cuerdas.core]
    [bling.hifi]
    [kushi.css.build.macros :refer [defcolorway defcss css-string]]))
@@ -392,7 +393,7 @@
    :--lightness-shift           :-4%
    :dark:--lightness-shift      :4%
    :color                       :$fgc
-   :hover:bgc                   :$hover-bgc
+   "&:hover, &.ks-hover"        {:bgc :$hover-bgc}
    :active:bgc                  :$active-bgc
    "[data-ks-colorway=sand]"      {:--chroma-shift :2%}
    "[data-ks-colorway=secondary]" {:color :$foreground-color-secondary
@@ -450,6 +451,9 @@
                        :--chroma-fgc              :25%
                        "[data-ks-colorway=sand]" {:--chroma-bgc    :14%
                                                   :--lightness-bgc :28%}}})
+
+
+;; TODO - Dupe???
 
 ;; Convex, dark
 (defcss "[data-ks-surface=convex]"
@@ -529,18 +533,48 @@
 ;; Convex
 (defcss "[data-ks-surface=convex], [data-ks-surface=convex-light-mode]"
   {
-   :--convex-shadow-lightness-shift-base        "-7%"
-   :--convex-shadow-lightness-shift             "var(--convex-shadow-lightness-shift-base)"
-   :hover:--convex-shadow-lightness-shift       "calc(var(--convex-shadow-lightness-shift-base) + var(--lightness-shift))"
-   :active:--convex-shadow-lightness-shift      "calc(var(--convex-shadow-lightness-shift-base) + (2 * var(--lightness-shift)))"
-   :dark:--convex-shadow-lightness-shift-base   "-13%"
+   :--convex-shadow-lightness-shift-base      "-7%"
+   :--convex-shadow-lightness-shift           "var(--convex-shadow-lightness-shift-base)"
+   "&:hover, &.ks-hover"                      {:--convex-shadow-lightness-shift "calc(var(--convex-shadow-lightness-shift-base) + var(--lightness-shift))"}
+   :active:--convex-shadow-lightness-shift    "calc(var(--convex-shadow-lightness-shift-base) + (2 * var(--lightness-shift)))"
+   :dark:--convex-shadow-lightness-shift-base "-13%"
 
-   :--convex-shadow-lightness                   "calc(var(--lightness-bgc) + var(--convex-shadow-lightness-shift))"
-   :--convex-shadow-chroma                      "calc(var(--chroma-bgc) + 3%)"
-   :hover:--convex-shadow-chroma                "calc(var(--chroma-bgc) + 6%)"
-   :active:--convex-shadow-chroma               "calc(var(--chroma-bgc) + 9%)"
-   :background-image                            "linear-gradient(180deg, transparent, transparent 15%, oklch(var(--convex-shadow-lightness) var(--convex-shadow-chroma) var(--colorway-hue)))"
+   :--convex-shadow-lightness                 "calc(var(--lightness-bgc) + var(--convex-shadow-lightness-shift))"
+   :--convex-shadow-chroma                    "calc(var(--chroma-bgc) + 3%)"
+   :hover:--convex-shadow-chroma              "calc(var(--chroma-bgc) + 6%)"
+   :active:--convex-shadow-chroma             "calc(var(--chroma-bgc) + 9%)"
+   ;;  :background-image                          "linear-gradient(180deg, transparent, transparent 15%, oklch(var(--convex-shadow-lightness) var(--convex-shadow-chroma) var(--colorway-hue)))"
+   :background-image                          (linear-gradient "180deg"
+                                                               [:transparent]
+                                                               [:transparent :15%]
+                                                               [(oklch :$convex-shadow-lightness
+                                                                       :$convex-shadow-chroma 
+                                                                       :$colorway-hue)])
    })
+
+
+;; maybe before you do this you can set up test suite with the artificial hover and active states.
+
+;; maybe start with just calcs + vars
+
+;; focus on low-hanging fruit
+
+
+;; copy and paste
+;; change to vector
+;; reduce into array-map
+;;     use regex to convert all vars, one-fallback-level-deep
+;;     use regex to convert starts-with, ends-with calcs to lists
+
+;; do equality check in test namespace
+
+
+
+;; make a color-mix cssfn
+;; box-shadow cssfn
+
+;; vector versions, for multiple shadows, gradients, etc, but only lists
+;; 
 
 
 (defcss "[data-ks-colorway=neutral][data-ks-surface=convex], [data-ks-colorway=neutral][data-ks-surface=convex-light-mode]"

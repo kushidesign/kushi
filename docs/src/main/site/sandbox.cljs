@@ -865,52 +865,6 @@
             :close]]]])
 
 
-  ;; Random lasertag stuff -----------------------------------------------------
-
-  ;;  (? :no-file lasertag/js-built-ins-by-built-in)
-  ;;  (? :no-file (lasertag/tag-map (aget "hi" "concat")))
-  ;;  (? :no-file (lasertag/tag-map (aget #js [1 2 3] "concat")))
-
-  ;;  (? :no-file (lasertag/tag-map js/String))
-
-
-   ;; This is all the cached tag-maps you need for js/built-ins
-   ;; but more in all-tags like :js :built-in :non-constructor
-   #_(? :no-file 
-      (reduce-kv (fn [m built-in v]
-                   (assoc m
-                          built-in 
-                          (assoc v
-                                 :cached-tag-map 
-                                 (lasertag/tag-map built-in))))
-                 {} 
-                 jsi/js-built-ins-by-built-in))
-
-
-   ;;  (? :no-file (lasertag/tag-map 10))
-   ;;  (? :no-file (lasertag/tag-map 100))
-   ;;  (? :no-file (lasertag/tag-map 3.14))
-   ;;  (? :no-file (lasertag/tag-map 42))
-   ;;  (? :no-file (lasertag/tag-map 99.99M))
-   ;;  (? :no-file (lasertag/tag-map (js/BigInt "999999999999")))
-   ;;  (? :no-file (lasertag/tag-map ##Inf))
-   ;;  (? :no-file (lasertag/tag-map ##-Inf))
-   ;;  (? :no-file 'NaN (lasertag/tag-map js/NaN))
-
-;; Experimental macro calls
-
-;; #_(defui bang 
-;;   {:doc  "This is bang docstring"
-;;    :opts {:foo {:schema number?} 
-;;           :bar {:schema string?}}}
-;;   (let [{:keys [foo bar]} &opts]
-;;     (js/console.log &data-ks-attrs &opts foo bar)))
-
-;; (bang {:foo 3 :bar "buzz"})
-
-#_(pprint (? :data {1 2 3 :x}))
-
-
 ;; (? (:colorway kushi.ui.variants/variants-by-custom-opt-key))
 
 

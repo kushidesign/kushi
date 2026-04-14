@@ -93,7 +93,6 @@
 
    [lasertag.core :as lasertag :refer [tag tag-map]]
    
-   [lasertag.cljs-interop :as jsi]
    [kushi.ui.defs :as defs]))
 
    (js/console.clear)

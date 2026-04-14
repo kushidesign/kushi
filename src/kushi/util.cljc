@@ -1,9 +1,14 @@
 (ns kushi.util
-  (:require [clojure.string :as string]
-            [fireworks.core :refer [? !? ?> !?>]]
-            )
+  (:require
+   [fireworks.core :refer [? !? ?> !?>]]
+   [fireworks.pp :refer [pprint]]
+   [bling.explain :refer [explain-malli]]
+   [bling.core :refer [bling]]
+   [bling.hifi :refer [hifi]]
+   [clojure.string :as string]
+   [clojure.walk :as walk])
   #?(:cljs
-     (:require-macros [kushi.util])))
+     (:require-macros [kushi.util :refer [fallback-value]])))
 
 (defn ^:public when->
   "If `(= (pred x) true)`, returns x, otherwise nil.
@@ -37,12 +42,60 @@
 (defn stringify [x]
   (if (nameable? x) (name x) (str x)))
 
-(defn kebab->shorthand [x] 
+(defn kebab->shorthand [x]
   (->> (-> x
            stringify
            (string/split #"-"))
        (map #(nth % 0 nil))
        string/join))
+
+(defn- normalize-blank-lines
+  "Any blank lines with whitespace will be collapsed to an empty string"
+  [s]
+  (->> s
+       string/split-lines
+       (mapv #(if (and (string/blank? %) (some-> % count pos?))
+                ""
+                %))
+       (string/join "\n")))
+
+(defn- ml-str-with-adjusted-indentation [s]
+  (let [re #"\n( +)"
+        s  (normalize-blank-lines s)
+        n  (some->> s
+                    str
+                    (re-seq re)
+                    (group-by #(count (second %)))
+                    keys
+                    (apply min))
+        f  (fn [[a]] (str "\n" (subs a (inc n))))
+        s  (string/replace s re f)]
+    s))
+
+(defn str-ml
+  {:doc "Takes a multi-line string and normalizes the indentation.
+         Useful for multi-line strings that are nested inside data structures,
+         because some editors automatically format these for readability, but
+         the resulting strings have unexpected indentations on lines after the
+         first."
+   :examples '[{:desc "String as map entry value"
+                :forms [[(ml-str "Line one
+                                  Line two
+                                  Line three
+                                    - Line four")
+                         "Line one\nLine two\nLine three\n  - Line four"]]}]}
+  [s]
+  (ml-str-with-adjusted-indentation s))
+
+(defn string-ml? [x]
+  (boolean (and (string? x) (re-find #"\n" x))))
+
+(defn ml-str->vec [s]
+  (-> s
+      str-ml
+      (string/split #"\n")
+      vec))
+
 
 ;; TODO - get this to support ||
 ;; Check out kushi.css.hydrated/hydrated-css-var
@@ -54,7 +107,7 @@
 
 (defn css-varize [& args] (str "var(--" (apply str args) ")"))
 
-(defn- s->cssvar [s] 
+(defn- s->cssvar [s]
   (if-let [token (extract-cssvar-token s)]
     (css-varize token)
     s))
@@ -69,35 +122,33 @@
 
 
 ;; Supports up to 2 fallbacks
-(defn kw->cssvar2  [x] 
+(defn kw->cssvar2  [x]
   (if-let [token (some-> x
                          (when-> keyword?)
                          name
                          extract-cssvar-token)]
     (let [[token fallback1 fallback2] (string/split token #"\|\|")]
-      (css-varize token 
+      (css-varize token
                   (some->> fallback1 s->cssvar (str ", "))
                   (some->> fallback2 s->cssvar (str ", "))))
     (as-str x)))
 
 
-(defn css-fn [fname & args] (str fname "(" (string/join ", " args) ")"))
+(let [transforms {:keys keyword
+                  :strs str
+                  :syms identity}]
+  (defmacro ^:public keyed
+    "Create a map in which, for each symbol S in vars, (keyword S) is a
+       key mapping to the value of S in the current scope. If passed an optional
+     :strs or :syms first argument, use strings or symbols as the keys."
+    ([vars] `(keyed :keys ~vars))
+    ([key-type vars]
+     (let [transform (comp (partial list `quote)
+                           (transforms key-type))]
+       (into {} (map (juxt transform identity) vars))))))
 
 
-(defn- cssfn-color-string
-  "(cssfn-color-string \"hsla\" \"100deg\" \"50%\" \"33%\" \"0.8\")
-   => \"hsla(100deg 50% 33% / 0.8)\""
-  [nm args]
-  (str (as-str nm)
-       "("
-       (string/join " " (mapv kw->cssvar2 args))
-       ")"))
 
-(defn ^:public oklch
-  "(oklch \"100%\" \"0.2\" \"33\" \"0.8\")
-   => \"oklch(100% 0.2 33 / 0.8)\""
-  [& args]
-  (cssfn-color-string "oklch" args))
 
 (defn deep-merge [& maps]
   (apply merge-with (fn [& args]
@@ -232,85 +283,24 @@
     [(:valid ret*) (:invalid ret*)]))
 
 
-(let [transforms {:keys keyword
-                  :strs str
-                  :syms identity}]
-  (defmacro ^:public keyed
-    "Create a map in which, for each symbol S in vars, (keyword S) is a
-       key mapping to the value of S in the current scope. If passed an optional
-     :strs or :syms first argument, use strings or symbols as the keys."
-    ([vars] `(keyed :keys ~vars))
-    ([key-type vars]
-     (let [transform (comp (partial list `quote)
-                           (transforms key-type))]
-       (into {} (map (juxt transform identity) vars))))))
-
-
 
 
 (defn map-css-tuple-args [coll]
   (map #(let [x (if (vector? %) % [%])]
           (->> x
                (map kw->cssvar2)
-               (string/join " "))) 
+               (string/join " ")))
        coll))
 
-(defn color-mix [color-space & args] 
-  (->> args
-       map-css-tuple-args
-       (into ["color-mix" color-space])
-       (apply css-fn)))
-
-(defn linear-gradient [direction & args] 
-  (->> args
-       map-css-tuple-args
-       (into ["linear-gradient" direction])
-       (apply css-fn)))
 
 (defn double-quote-data-attr-selector-values [v]
   (if (re-find #"=" v)
-      (string/replace v
-                      #"\[([a-z-\*\|\$\~\^]+)=([^\"\]]+)\]"
-                      "[$1=\"$2\"]")
-       v))
+    (string/replace v
+                    #"\[([a-z-\*\|\$\~\^]+)=([^\"\]]+)\]"
+                    "[$1=\"$2\"]")
+    v))
 
 
 (defn insert-at [vc i elem]
   (into (conj (subvec vc 0 i) elem)
         (subvec vc i)))
-
-(defn- ml-str-with-adjusted-indentation [s]
-  (let [re #"\n( +)"
-        n  (some->> s
-                    str
-                    (re-seq re)
-                    (group-by #(count (second %)))
-                    keys
-                    (apply min))
-        f  (fn [[a]] (str "\n" (subs a (inc n))))
-        s  (string/replace s re f)]
-    s))
-
-(defn str-ml
-  {:doc "Takes a multi-line string and normalizes the indentation.
-         Useful for multi-line strings that are nested inside data structures,
-         because some editors automatically format these for readability, but
-         the resulting strings have unexpected indentations on lines after the
-         first."
-   :examples '[{:desc "String as map entry value"
-                :forms [[(ml-str "Line one
-                                  Line two
-                                  Line three
-                                    - Line four")
-                         "Line one\nLine two\nLine three\n  - Line four"]]}]}
-  [s]
-  (ml-str-with-adjusted-indentation s))
-
-(defn string-ml? [x]
-  (boolean (and (string? x) (re-find #"\n" x))))
-
-(defn ml-str->vec [s]
-  (-> s
-      str-ml
-      (string/split #"\n")
-      vec))
