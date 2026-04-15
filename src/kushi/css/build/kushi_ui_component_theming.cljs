@@ -354,6 +354,22 @@
                     :--chroma-shift :0%}})
 
 (defcss "[data-ks-surface=solid], [data-ks-surface=solid-classic], [data-ks-surface=soft], [data-ks-surface=soft-classic], [data-ks-surface=faint], [data-ks-surface=convex], [data-ks-surface=minimal], [data-ks-surface=transparent], [data-ks-surface=minimal-light-mode], [data-ks-surface=convex-light-mode]"
+  #_
+    {:--hover-bgc-chroma  '(calc (+ :$chroma-bgc :$chroma-shift))
+     :--hover-bgc         '(oklch
+                            (calc (+ :$lightness-bgc :$lightness-shift))
+                            :$hover-bgc-chroma
+                            :$colorway-hue)
+     :--active-bgc-chroma '(calc (+ :$chroma-bgc (calc (* 2 :$chroma-shift))))
+     :--active-bgc        '(oklch
+                            (calc (+ :$lightness-bgc (* 2 :$lightness-shift)))
+                            :$active-bgc-chroma
+                            :$colorway-hue)
+     :--bgc               '(oklch :$lightness-bgc :$chroma-bgc :$colorway-hue)
+     :--fgc               '(oklch :$lightness-fgc :$chroma-fgc :$colorway-hue)
+     "[data-ks-inert]"      {:bgc          :$bgc
+                             :--hover-bgc  :$bgc
+                             :--active-bgc :$bgc}}
   {:--hover-bgc-chroma  "calc(var(--chroma-bgc) + var(--chroma-shift))"
    :--hover-bgc         "oklch(calc(var(--lightness-bgc) + var(--lightness-shift)) var(--hover-bgc-chroma) var(--colorway-hue))"
    :--active-bgc-chroma "calc(var(--chroma-bgc) + calc(2 * var(--chroma-shift)))"
@@ -501,8 +517,33 @@
 
 ;; Classic details
 (defcss "[data-ks-surface=solid-classic], [data-ks-surface=soft-classic]"
+  #_
+    {:box-shadow [[:inset 0 0 0 :1px :$transparent-black-10]
+                  [:inset 0 :-2px :1px :$transparent-black-20]
+                  [:inset 0 0 0 :1px :$classic-trim-color]
+                  [:inset
+                   0
+                   :4px
+                   :2px
+                   :-2px
+                   :$top-rim-highlight-color, var (--transparent-white-80)]
+                  [:inset 0 :2px :1px :-1px :$transparent-white-80]]
+     :bgi        ['(linear-gradient [:to :bottom] [:#0000 :50%] :$transparent-black-09)
+                  '(linear-gradient [:to :bottom] [:#0000 :50%] [:$classic-trim-color :80%])]
+     :z-index    0
+     :after      {:content          "\"\""
+                  :position         :absolute
+                  :border-radius    :inherit
+                  :pointer-events   :none
+                  :inset            0
+                  :z-index          -1
+                  :border           :2px:solid:#0000
+                  :background-clip  :content-box
+                  :background-color :inherit
+                  :background-image '(linear-gradient :$transparent-black-05 :#0000 :$transparent-white-10)
+                  :box-shadow       [:inset 0 :2px :3px :-1px :$transparent-white-30]}}
   {:box-shadow "inset 0 0 0 1px var(--transparent-black-10), inset 0 -2px 1px var(--transparent-black-20), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--top-rim-highlight-color, var(--transparent-white-80)), inset 0 2px 1px -1px var(--transparent-white-80)"
-   :bgi        "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
+   :bgi        "linear-gradient(to bottom, #0000 50%, var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
    :z-index    0
    :after      {:content          "\"\""
                 :position         :absolute
@@ -517,6 +558,22 @@
                 :box-shadow       "inset 0 2px 3px -1px var(--transparent-white-30)"}})
 
 (defcss "[data-ks-surface=soft-classic]"
+  #_{:dark:text-shadow [[0 :0px :2px :$transparent-black-40] [0 :-0.5px :0px :$transparent-black-70]]
+   :text-shadow      [0 :0.5px :0px :$transparent-white-100]
+   :box-shadow       [[:inset 0 0 0 :1px :$transparent-black-05]
+                      [:inset 0 :-2px :1px :$transparent-black-10]
+                      [:inset 0 0 0 :1px :$classic-trim-color]
+                      [:inset 0 :4px :2px :-2px :$transparent-white-100]
+                      [:inset 0 :2px :1px :-1px :$transparent-white-100]]
+   :dark:box-shadow  [[:inset 0 0 0 :1px :$transparent-black-05]
+                      [:inset 0 :-2px :1px :$transparent-black-10]
+                      [:inset 0 0 0 :1px :$classic-trim-color-dark]
+                      [:inset 0 :4px :2px :-2px :$transparent-white-60]
+                      [:inset 0 :2px :1px :-1px :$transparent-white-60]]
+   :bgi              ['(linear-gradient :to-bottom [:#0000 :50%] :$transparent-black-09)
+                      '(linear-gradient :to-bottom [:#0000 :50%] [:$classic-trim-color :80%])]
+   :dark:bgi         ['(linear-gradient :to-bottom [:#0000 :50%] :$transparent-black-09)
+                      '(linear-gradient :to-bottom [:#0000 :50%] [:$classic-trim-color-dark :80%])]}
   {:dark:text-shadow "0 0px 2px var(--transparent-black-40), 0 -0.5px 0px var(--transparent-black-70)"
    :text-shadow      "0 0.5px 0px var(--transparent-white-100)"
    :box-shadow       "inset 0 0 0 1px var(--transparent-black-05), inset 0 -2px 1px var(--transparent-black-10), inset 0 0 0 1px var(--classic-trim-color), inset 0 4px 2px -2px var(--transparent-white-100), inset 0 2px 1px -1px var(--transparent-white-100)"
@@ -532,8 +589,7 @@
 
 ;; Convex
 (defcss "[data-ks-surface=convex], [data-ks-surface=convex-light-mode]"
-  {
-   :--convex-shadow-lightness-shift-base      "-7%"
+  {:--convex-shadow-lightness-shift-base      "-7%"
    :--convex-shadow-lightness-shift           "var(--convex-shadow-lightness-shift-base)"
    "&:hover, &.ks-hover"                      {:--convex-shadow-lightness-shift "calc(var(--convex-shadow-lightness-shift-base) + var(--lightness-shift))"}
    :active:--convex-shadow-lightness-shift    "calc(var(--convex-shadow-lightness-shift-base) + (2 * var(--lightness-shift)))"
@@ -543,14 +599,48 @@
    :--convex-shadow-chroma                    "calc(var(--chroma-bgc) + 3%)"
    :hover:--convex-shadow-chroma              "calc(var(--chroma-bgc) + 6%)"
    :active:--convex-shadow-chroma             "calc(var(--chroma-bgc) + 9%)"
-   ;;  :background-image                          "linear-gradient(180deg, transparent, transparent 15%, oklch(var(--convex-shadow-lightness) var(--convex-shadow-chroma) var(--colorway-hue)))"
+   ;;  :background-image                      "linear-gradient(180deg, transparent, transparent 15%, oklch(var(--convex-shadow-lightness) var(--convex-shadow-chroma) var(--colorway-hue)))"
    :background-image                          (linear-gradient "180deg"
                                                                [:transparent]
                                                                [:transparent :15%]
                                                                [(oklch :$convex-shadow-lightness
-                                                                       :$convex-shadow-chroma 
-                                                                       :$colorway-hue)])
-   })
+                                                                       :$convex-shadow-chroma
+                                                                       :$colorway-hue)])})
+
+;; I have an existing clojure function that takes structural syntax to represent CSS property values, and converts it to a css string
+;; It is described below, each example has a comment, then the clojure syntax, then a `=>` character (representing "converts to"), then the resulting css string
+
+;; I would like you to make me a clojure function that goes the other way. Meaning it would take the example output, and convert it to the structured input. The function would be general and work for any css property value
+
+
+;;  ;; keywords with a leading `$` get converted to css vars
+;;  :$chroma-bgc -> "(var(--chroma-bgc)"
+
+;;  ;; css fns are represented by quoted lists. Such lists starting with `calc` symbol get converted to css calc with infix notation
+;;  '(calc (+ :$chroma-bgc :3%)) "calc(var(--chroma-bgc) + 3%)"
+
+;;  ;; css fns quoted lists starting with `oklch` symbol (or other color fns) get turned into space-seperated css fn calls
+;;  '(calc (+ :$chroma-bgc :3%)) "calc(var(--chroma-bgc) + 3%)"
+
+;;  ;; all other css fns quoted lists started with a symbol get turned into comma-separated css fn calls
+;;  '(translate :10px :12px) -> "translate(10px, 12px)"
+
+;;  ;; if a css fns quoted list contains a vector, it gets hydrated into a space-separated value pair 
+;;  '(linear-gradient :10deg :transparent [:red :15%] [:blue :30% :45%]) -> "linear-gradient(10deg, transparent, red 15%, blue 30% 45%)"
+
+;;  ;; Vectors (that are not within css functions) get converted to comma-separated lists
+;;  ["Arial" "Helvetica" "fantasy"] "Arial, Helvetica, fantasy"
+
+;;  ;; An exception to the above rule is when vectors are nested (that are not within css functions) in another vector(also that are not within css functions), then they get space-separated
+;;  [[:2px '(calc (+ :2px :3px)) 0 '(oklch :30% 0.3 44 / 0.8)] [:2px :4px 0 :blue] [:2px :6px 0 :$yellow-500]] -> "2px calc(2px + 3px) 0 oklch(30% 0.3 44 / 0.8), 2px 4px 0 blue, 2px 6px 0 var(--yellow-500)"
+
+{
+ :$chroma-bgc "(var(--chroma-bgc)"
+ '(calc (+ :$chroma-bgc :3%)) "calc(var(--chroma-bgc) + 3%)"
+ ["Arial" "Helvetica" "fantasy"] "Arial, Helvetica, fantasy"
+ '(linear-gradient "180deg" :transparent [:transparent :15% :$bang] [(oklch :$convex-shadow-lightness :$convex-shadow-chroma :$colorway-hue)]) "linear-gradient(180deg, transparent, transparent 15% var(--bang), oklch(var(--convex-shadow-lightness) var(--convex-shadow-chroma) var(--colorway-hue)))"
+ [[:2px '(calc (+ :2px :3px)) 0 '(oklch :30% 0.3 44 / 0.8)] [:2px :4px 0 :blue] [:2px :6px 0 :$yellow-500]] "2px calc(2px + 3px) 0 oklch(30% 0.3 44 / 0.8), 2px 4px 0 blue, 2px 6px 0 var(--yellow-500)"
+ }
 
 
 ;; maybe before you do this you can set up test suite with the artificial hover and active states.
@@ -596,6 +686,68 @@
 
 ;; Surface shadowing ---------------------------------------------------------------------------------------------------------
 (defcss "[data-ks-surface][data-ks-shadow-size]"
+  #_
+    {:--transparent-shadow-color     '(color-mix
+                                       [:in :oklch]
+                                       [:$shadow-color, black :$shadow-opacity, 15%]
+                                       :transparent)
+    ;;  :--shadow-3xs                   [0 :1px :3px :-1px :$transparent-shadow-color]
+    ;;  :--shadow-2xs                   [0 :3px :6px :-2px :$transparent-shadow-color]
+    ;;  :--shadow-xs                    [[0 :5px :12px :-4px :$transparent-shadow-color]
+    ;;                                   [0 :2px :6px :-4px :$transparent-shadow-color]]
+    ;;  :--shadow-sm                    [[0 :7px :13px :-3px :$transparent-shadow-color]
+    ;;                                   [0 :2px :3px :-3px :$transparent-shadow-color]]
+    ;;  :--shadow-md                    [[0 :11px :21px :-6px :$transparent-shadow-color]
+    ;;                                   [0 :3px :7px :-5px :$transparent-shadow-color]]
+    ;;  :--shadow-lg                    [[0 :16px :26px :-8px :$transparent-shadow-color]
+    ;;                                   [0 :4px :10px :-8px :$transparent-shadow-color]]
+    ;;  :--shadow-xl                    [[0 :22px :36px :-12px :$transparent-shadow-color]
+    ;;                                   [0 :8px :10px :-9px :$transparent-shadow-color]]
+    ;;  :--shadow-2xl                   [[0 :25px :52px :-11px :$transparent-shadow-color]
+    ;;                                   [0 :9px :10px :-10px :$transparent-shadow-color]]
+    ;;  :--shadow-3xl                   [[0 :27px :60px :-14px :$transparent-shadow-color]
+    ;;                                   [0 :10px :10px :-12px :$transparent-shadow-color]]
+     :--box-shadow-for-shadow        [0 0 0 0 :transparent]
+    ;;  :--box-shadow-for-stroke        [0 0 0 0 :transparent]
+     :--shadow-color                 :black
+     :dark                           {:--transparent-shadow-color "color-mix(in oklch, var(--shadow-color-dark-mode, white) var(--shadow-opacity, 15%), transparent)"}
+     "[data-ks-shadow-size=3xs]"       {:--box-shadow-for-shadow :$shadow-3xs
+                                        :--shadow-3xs            "0 1px 3px -1px var(--transparent-shadow-color)"}
+     "[data-ks-shadow-size=2xs]"       {:--box-shadow-for-shadow :$shadow-2xs
+                                        :--shadow-2xs            "0 3px 6px -2px var(--transparent-shadow-color)"}
+     "[data-ks-shadow-size=xs]"        {:--box-shadow-for-shadow :$shadow-xs
+                                        :--shadow-xs             "0 5px 12px -4px var(--transparent-shadow-color), 0 2px 6px -4px var(--transparent-shadow-color)"}
+     "[data-ks-shadow-size=sm]"        {:--box-shadow-for-shadow :$shadow-sm
+                                        :--shadow-md             "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"}
+     "[data-ks-shadow-size=md]"        {:--box-shadow-for-shadow :$shadow-md
+                                        :--shadow-md             "0 11px 21px -6px var(--transparent-shadow-color), 0 3px 7px -5px var(--transparent-shadow-color)"}
+     "[data-ks-shadow-size=lg]"        {:--box-shadow-for-shadow :$shadow-lg
+                                        :--shadow-lg             "0 16px 26px -8px var(--transparent-shadow-color), 0 4px 10px -8px var(--transparent-shadow-color)"}
+     "[data-ks-shadow-size=xl]"        {:--box-shadow-for-shadow :$shadow-xl
+                                        :--shadow-xl             "0 22px 36px -12px var(--transparent-shadow-color), 0 8px 10px -9px var(--transparent-shadow-color)"}
+     "[data-ks-shadow-size=2xl]"       {:--box-shadow-for-shadow :$shadow-2xl
+                                        :--shadow-2xl            "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"}
+     "[data-ks-shadow-size=3xl]"       {:--box-shadow-for-shadow :$shadow-3xl
+                                        :--shadow-3xl            "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"}
+    ;;  "[data-ks-shadow-color=positive]" {:--shadow-color :$positive-500}
+    ;;  "[data-ks-shadow-color=neutral]"  {:--shadow-color :$neutral-500}
+    ;;  "[data-ks-shadow-color=negative]" {:--shadow-color :$negative-500}
+    ;;  "[data-ks-shadow-color=purple]"   {:--shadow-color :$purple-500}
+    ;;  "[data-ks-shadow-color=magenta]"  {:--shadow-color :$magenta-500}
+    ;;  "[data-ks-shadow-color=accent]"   {:--shadow-color :$accent-500}
+    ;;  "[data-ks-shadow-color=sand]"     {:--shadow-color :$sand-500}
+    ;;  "[data-ks-shadow-color=slate]"    {:--shadow-color :$slate-500}
+    ;;  "[data-ks-shadow-color=blue]"     {:--shadow-color :$blue-500}
+    ;;  "[data-ks-shadow-color=orange]"   {:--shadow-color :$orange-500}
+    ;;  "[data-ks-shadow-color=gray]"     {:--shadow-color :$gray-500}
+    ;;  "[data-ks-shadow-color=warning]"  {:--shadow-color :$warning-500}
+    ;;  "[data-ks-shadow-color=green]"    {:--shadow-color :$green-500}
+    ;;  "[data-ks-shadow-color=gold]"     {:--shadow-color :$gold-500}
+    ;;  "[data-ks-shadow-color=lime]"     {:--shadow-color :$lime-500}
+    ;;  "[data-ks-shadow-color=yellow]"   {:--shadow-color :$yellow-500}
+    ;;  "[data-ks-shadow-color=red]"      {:--shadow-color :$red-500}
+     }
+
   {:--transparent-shadow-color "color-mix(in oklch, var(--shadow-color, black) var(--shadow-opacity, 15%), transparent)"
    ;;  :--shadow-3xs               "0 1px 3px -1px var(--transparent-shadow-color)"
    ;;  :--shadow-2xs               "0 3px 6px -2px var(--transparent-shadow-color)"
@@ -628,7 +780,7 @@
    "[data-ks-shadow-size=2xl]"   {:--box-shadow-for-shadow :$shadow-2xl
                                   :--shadow-2xl            "0 25px 52px -11px var(--transparent-shadow-color), 0 9px 10px -10px var(--transparent-shadow-color)"}
    "[data-ks-shadow-size=3xl]"   {:--box-shadow-for-shadow :$shadow-3xl
-                                  :--shadow-3xl               "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"}
+                                  :--shadow-3xl            "0 27px 60px -14px var(--transparent-shadow-color), 0 10px 10px -12px var(--transparent-shadow-color)"}
 
    ;;  "[data-ks-shadow-color=positive]" {:--shadow-color :$positive-500},
    ;;  "[data-ks-shadow-color=neutral]"  {:--shadow-color :$neutral-500},
