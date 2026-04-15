@@ -1,5 +1,6 @@
 (ns kushi.util
   (:require
+   [kushi.css.shorthand :as shorthand]
    [fireworks.core :refer [? !? ?> !?>]]
    [fireworks.pp :refer [pprint]]
    [bling.explain :refer [explain-malli]]
@@ -304,3 +305,323 @@
 (defn insert-at [vc i elem]
   (into (conj (subvec vc 0 i) elem)
         (subvec vc i)))
+
+
+
+
+
+(defn parse-numeric-string [s]
+  #?(:clj  (if (string/includes? s ".")
+             (Double/parseDouble s)
+             (Long/parseLong s))
+     :cljs (if (string/includes? s ".")
+             (js/parseFloat s)
+             (js/parseInt s 10))))
+
+;; Constants & Regexes for css-str->clj
+(def css-math-ops-syms #{'+ '- '* '/})
+(def css-math-ops-strs ["+" "-" "*" "/"])
+(def css-color-fns #{"oklch" "rgb" "rgba" "hsl" "hsla" "lch" "lab" "color"})
+
+(def numeric-re #"^-?\d+(\.\d+)?$")
+(def string-literal-re #"^\"(.*)\"$|^'(.*)'$")
+(def css-var-re #"(?s)^var\((.*)\)$")
+(def css-fn-re #"(?s)^([a-zA-Z-]+)\((.*)\)$")
+(def css-fn-check-re #"(?s)^[a-zA-Z-]+\(.*$")
+(def surrounding-parens-re #"(?s)^\(.*\)$")
+
+(defn cssval->ks
+  "Converts a standard css property value string to kushi syntax.
+   For dev, converting code at repl, or tool use with rewrite-clj etc."
+  [css-str]
+  (letfn [
+          ;; Splits a string by a given delimiter, but only at the top level
+          ;; (depth 0). Ignores delimiters inside nested parentheses or quotes.
+          (split-top-level 
+           [s delim-char]
+            (loop [chars    (seq s)
+                   depth    0
+                   in-quote nil
+                   current  []
+                   result   []]
+              (if (empty? chars)
+                (let [last-str (string/trim (apply str current))]
+                  (if (empty? last-str) result (conj result last-str)))
+                (let [c         (first chars)
+                      new-quote (cond
+                                  (and (nil? in-quote) 
+                                       (or (= c \")
+                                           (= c \')))
+                                  c
+
+                                  (= in-quote c) 
+                                  nil
+
+                                  :else 
+                                  in-quote)
+                      new-depth (if new-quote 
+                                  depth
+                                  (cond (= c \() (inc depth)
+                                        (= c \)) (dec depth)
+                                        :else depth))]
+                  (if (and (zero? new-depth)
+                           (nil? new-quote)
+                           (= c delim-char))
+                    (recur (rest chars) 
+                           new-depth
+                           new-quote
+                           []
+                           (let [trimmed (string/trim (apply str current))]
+                             (if (empty? trimmed) 
+                               result 
+                               (conj result trimmed))))
+                    (recur (rest chars) 
+                           new-depth
+                           new-quote
+                           (conj current c)
+                           result))))))
+
+          ;; Converts a base string literal into its corresponding clj type:
+          ;; math operator symbol, number, explicitly quoted string, or keyword.
+          (parse-literal [s]
+            (cond
+              (some #{(str s)} css-math-ops-strs) (symbol s)
+              
+              (re-matches numeric-re s)
+              (parse-numeric-string s)
+
+              (re-matches string-literal-re s)
+              (let [[_ d-q s-q] (re-matches string-literal-re s)]
+                (or d-q s-q))
+
+              :else
+              (keyword s)))
+
+          ;; Parses a css custom prop (var) into a keyword.
+          ;; Chains any fallback values together using the '||' separator.
+          (parse-var [s]
+            (let [[_ inner-args] (re-matches css-var-re s)
+                  parts          (split-top-level inner-args \,)
+                  var-name       (let [v (string/trim (first parts))]
+                                   (if (string/starts-with? v "--")
+                                     (str "$" (subs v 2))
+                                     (str "$" v)))
+                  fallbacks      (map (fn [fallback-str]
+                                        (let [parsed (parse-node fallback-str)]
+                                          (cond
+                                            (keyword? parsed) (name parsed)
+                                            (symbol? parsed) (name parsed)
+                                            :else (str parsed))))
+                                      (rest parts))]
+              (keyword (string/join "||" (cons var-name fallbacks)))))
+
+
+          ;; Helper to construct a quoted list representing a css function call,
+          ;; parsing its arguments recursively based on the specified delimiter.
+          (build-fn-call [fn-name args-str delim]
+            (apply list 
+                   (symbol fn-name)
+                   (map parse-node (split-top-level args-str delim))))
+
+
+          ;; Identifies the specific css function and routes it to the correct
+          ;; formatting logic (e.g., calc prefixing vs space-separated vs
+          ;;  comma-separated etc).
+          (parse-func [s]
+            (let [[_ fn-name args-str] (re-matches css-fn-re s)]
+              (cond
+                (= fn-name "calc")
+                (list 'calc (parse-node args-str))
+
+                (css-color-fns fn-name)
+                (build-fn-call fn-name args-str \space)
+
+                :else
+                (build-fn-call fn-name args-str \,))))
+
+
+          ;; The core recursive fn. Determines the type of the current string
+          ;; fragment and dispatches to the appropriate parsing function.
+          (parse-node [s]
+            (let [s           (string/trim s)
+                  s           (if (re-matches surrounding-parens-re s)
+                                (string/trim (subs s 1 (dec (count s))))
+                                s)
+                  comma-parts (split-top-level s \,)
+                  space-parts (split-top-level s \space)]
+              
+              (cond
+                (> (count comma-parts) 1)
+                (mapv parse-node comma-parts)
+
+                (> (count space-parts) 1)
+                (let [parts (mapv parse-node space-parts)]
+                  (if (some css-math-ops-syms parts)
+                    (loop [res (nth parts 0)
+                           idx 1]
+                      (if (< idx (count parts))
+                        (recur (list (nth parts idx)
+                                     res
+                                     (nth parts (inc idx)))
+                               (+ idx 2))
+                        res))
+                    parts))
+
+                (string/starts-with? s "var(")
+                (parse-var s)
+
+                (re-matches css-fn-check-re s)
+                (parse-func s)
+
+                :else
+                (parse-literal s))))]
+    
+    (parse-node css-str)))
+
+
+(defn tokenized-css-shorthand-value->double-vector [x]
+  (or (some-> x
+              (when-> keyword?)
+              name
+              (when-> #(re-find #":" %))
+              (string/split #":")
+              (->> (mapv keyword))
+              vector)
+      x))
+
+
+(defn css-str-prop-values->structured-syntax [vc]
+  (->> vc
+       (map-indexed 
+        (fn [i v]
+          (if (even? i)
+            (if (and (string? v)
+                     (not (re-find #" " v)))
+              (keyword v)
+              v)
+            ;; values
+            (if (vector? v)
+              (css-str-prop-values->structured-syntax v)
+              (cond
+                (= v "\"\"")
+                "\"\""
+
+                (string? v)
+                (cssval->ks v)
+
+                (keyword? v)
+                (tokenized-css-shorthand-value->double-vector v)
+
+                :else
+                v)))))
+       (apply array-map))) 
+
+
+(defn- legacy-sx-args->vec [args classes]
+  (reduce (fn [acc x]
+            (cond (keyword? x)
+                  (if (re-find #"--" (name x))
+                    (apply conj acc
+                           (let [[k v] (string/split (name x) #"--")
+                                 k     (or (get-in shorthand/shorthand-syntax [1 k])
+                                           (get-in shorthand/shorthand-syntax [2 k])
+                                           (get-in shorthand/shorthand-syntax [3 k])
+                                           k)
+                                 v     (or (get-in shorthand/shorthand-syntax [:enums k v])
+                                           v)]
+
+                             [k v]))
+                    (swap! classes conj (name x)))
+                  (vector? x)
+                  (apply conj acc x)
+                  (map? x)
+                  (apply conj acc (reduce-kv (fn [vc k v] (conj vc k v)) [] x))
+                  :else
+                  x))
+          []
+          args))
+
+
+(defn legacy-sx-call->sx2 
+  "This can be used to transform sx calls to newer syntax
+
+   (legacy-sx-call->sx2 
+    '(merge-attrs
+      (sx \".ks-callout\"
+          :position--relative
+          :d--flex
+          :flex-direction--row
+          :jc--c
+          :ai--c
+          :w--100%
+          :gap--$icon-enhanceable-gap
+          [:--padding-block-start \"calc (var (--callout-padding-block) * var (--callout-padding-block-start-reduction-ratio, 1))\"]
+          [:--padding-block-end   :$callout-padding-block]
+          [:--padding-inline      :$callout-padding-inline]
+          :pi--$_padding-inline
+          :pbs--$_padding-block-start
+          :pbe--$_padding-block-end)
+
+      {:aria-busy  loading
+       :aria-label (when loading \"loading\")}
+
+      (when stroke-width
+        {:style {\"--_stroke-width\" (name stroke-width)}})
+
+      (when-not (false? inert) {:data-ks-inert \"\"})
+      (when loading {:data-ks-ui-spinner \"\"})
+
+      &attrs))
+
+      =>
+          
+      (sx
+        {:position              :relative
+          :display               :flex
+          :flex-direction        :row
+          :justify-content       :center
+          :align-items           :center
+          :width                 :100%
+          :gap                   :$icon-enhanceable-gap
+          :--padding-block-start '(calc
+                                  (* :$callout-padding-block :$callout-padding-block-start-reduction-ratio||1))
+          :--padding-block-end   :$callout-padding-block
+          :--padding-inline      :$callout-padding-inline
+          :padding-inline        :$_padding-inline
+          :padding-block-start   :$_padding-block-start
+          :padding-block-end     :$_padding-block-end}
+        {:aria-busy loading :aria-label '(when loading \"loading\")}
+        (when stroke-width {:style {\"--_stroke-width\" '(name stroke-width)}})
+        (when-not '(false? inert) {:data-ks-inert \"\"})
+        (when loading {:data-ks-ui-spinner \"\"})
+        &attrs)"
+  [coll]
+  (let [merge-attrs? (-> coll first (= 'merge-attrs))
+
+        coll         (if merge-attrs?
+                       (rest coll)
+                       coll)
+
+        vc           (mapv (fn [x]
+                             (cond
+                               (some-> x (when-> list?) first (= 'sx))
+                               (let [[_ a & args*] x
+                                     class         (when (and (string? a)
+                                                              (string/starts-with? a "."))
+                                                     a)
+                                     args          (if class args* (cons a args*))
+                                     classes       (atom [])
+                                     ;; flat vec of kvs
+                                     kvs           (legacy-sx-args->vec args classes)]
+                                 (kushi.util/css-str-prop-values->structured-syntax kvs))
+
+                               (map? x)
+                               x
+
+                               (list? x)
+                               (cons (first x) (rest x))
+
+                               :else
+                               x))
+                           coll)]
+    (cons 'sx (if merge-attrs? vc (rest vc)))))
