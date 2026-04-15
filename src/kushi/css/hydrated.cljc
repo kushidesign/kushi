@@ -509,7 +509,7 @@
     ;; [prop (string/join ", " (mapv #(if (list? %) (hydrated-css-fn %) %) v))]
     ))
 
-(defn- hydrate-vectors-containing-css-value-vectors 
+(defn hydrate-vectors-containing-css-value-vectors 
   "For hydrating values represented as nested vectors.
    ```clojure
    [:box-shadow  [[:2px (calc '(+ :2px :3px)) 0 (oklch :30% 0.3 44 0.8)]
@@ -547,11 +547,6 @@
       x)
     x))
 
-(defn- resolve-css-fn
-  "(resolve-css-fn 'calc) => #'kushi.cssfn/css-calc"
-  [cssfn-sym]
-  (resolve (symbol (str "kushi.cssfn/css-" cssfn-sym))))
-
 (defn- cssfn? [x]
   (s/valid? ::specs/cssfn x))
 
@@ -579,7 +574,7 @@
     (string/join " " (mapv cssfn-arg x))
     (-> x as-str symbol)))
 
-(defn- hydrated-cssfn
+(defn hydrated-cssfn
   "For hydrating values represented as nested vectors.
 
    ```clojure
@@ -635,7 +630,7 @@
                  (mapv (partial hydrated-val nil) x))))
     x))
 
-(defn- dequote-cssfn [x]
+(defn dequote-cssfn [x]
   (if (quoted-cssfn? x)
     (normalized-css-fn-seq* x)
     x))
@@ -646,7 +641,7 @@
            name
            (re-find #"^\$\S+")))
 
-(defn- hydrated-css-var2 [x]
+(defn hydrated-css-var2 [x]
   (or (some->> x kw->cssvar hydrated-css-var)
       x))
 
@@ -656,11 +651,6 @@
 
 (defn hydrated-stacks [flattened-to-vecs]
   (->> flattened-to-vecs
-       (postwalk hydrated-css-var2)
-       (prewalk dequote-cssfn)
-       (postwalk hydrated-cssfn)
-       (postwalk hydrate-vectors-containing-css-value-vectors)
-       (postwalk hydrate-layered-values)
        (prewalk hydrated-stacks1)
        distinct
        vec
