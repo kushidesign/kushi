@@ -11,6 +11,8 @@
             [bling.explain :refer [explain-malli]]
             [bling.util :as util]
             [bling.sample]
+            [bling.banner :refer [banner]]
+            [bling.fonts.isometric-1 :refer [isometric-1]]
             [kushi.core :refer [ansi-colorized-css-block
                                 css-block-data
                                 css-block
@@ -48,18 +50,24 @@
                                 kw->cssvar2
                                 when->
                                 when->>
-                                cssval->ks]]
+                                cssval->ks
+                                printcss]]
             [kushi.colors2 :refer [oklch-colors]]
             [taoensso.tufte :as tufte :refer [p profile]]
             [me.flowthing.pp :as pp]
             [kushi.css.shorthand :as shorthand]
             [malli.core :as malli]))
 
+(printcss 
+ (css-rule ".bang"
+           {:color            :red
+            :background-color :blue}))
 
-(fireworks.core/config! {:scalar-max-length 33
-                         :scalar-depth-1-max-length 33
-                         :scalar-mapkey-max-length 33})
 
+
+#_(fireworks.core/config! {:scalar-max-length 33
+                           :scalar-depth-1-max-length 33
+                           :scalar-mapkey-max-length 33})
 
 ;; (? (calc (+ :$my-val (- 2 (/ 10 3)))))
 
@@ -117,34 +125,34 @@
   (->> coll
        kushi.util/css-str-prop-values->structured-syntax))
 
-(? :+
-   (kushi.util/legacy-sx-call->sx2
-    '(merge-attrs
-      (sx ".ks-callout"
-          :position--relative
-          :d--flex
-          :flex-direction--row
-          :jc--c
-          :ai--c
-          :w--100%
-          :gap--$icon-enhanceable-gap
-          [:--padding-block-start "calc(var(--callout-padding-block) * var(--callout-padding-block-start-reduction-ratio, 1))"]
-          [:--padding-block-end   :$callout-padding-block]
-          [:--padding-inline      :$callout-padding-inline]
-          :pi--$_padding-inline
-          :pbs--$_padding-block-start
-          :pbe--$_padding-block-end)
+#_(? :+
+     (kushi.util/legacy-sx-call->sx2
+      '(merge-attrs
+        (sx ".ks-callout"
+            :position--relative
+            :d--flex
+            :flex-direction--row
+            :jc--c
+            :ai--c
+            :w--100%
+            :gap--$icon-enhanceable-gap
+            [:--padding-block-start "calc(var(--callout-padding-block) * var(--callout-padding-block-start-reduction-ratio, 1))"]
+            [:--padding-block-end   :$callout-padding-block]
+            [:--padding-inline      :$callout-padding-inline]
+            :pi--$_padding-inline
+            :pbs--$_padding-block-start
+            :pbe--$_padding-block-end)
 
-      {:aria-busy  loading
-       :aria-label (when loading "loading")}
+        {:aria-busy  loading
+         :aria-label (when loading "loading")}
 
-      (when stroke-width
-        {:style {"--_stroke-width" (name stroke-width)}})
+        (when stroke-width
+          {:style {"--_stroke-width" (name stroke-width)}})
 
-      (when-not (false? inert) {:data-ks-inert ""})
-      (when loading {:data-ks-ui-spinner ""})
+        (when-not (false? inert) {:data-ks-inert ""})
+        (when loading {:data-ks-ui-spinner ""})
 
-      &attrs)))
+        &attrs)))
 
 
 
@@ -222,46 +230,47 @@
                         [:2px :6px 0 :$yellow-500]]}))
 
 
-#_(? (css-rule
-      ".foo"
-      {;; :hover:--convex-shadow-lightness-shift (calc (+ :$convex-shadow-lightness-shift-base :$lightness-shift))
+#_(printcss
+   (css-rule
+    ".foo"
+    {;; :hover:--convex-shadow-lightness-shift (calc (+ :$convex-shadow-lightness-shift-base :$lightness-shift))
 
-       ;; calc* fn usage, expects a list
-       ;;  :background-color (calc '(- :$convex-shadow-lightness-shift-base :$lightness-shift))
-
-
-       ;;  :bgi "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
-
-       ;; :box-shadow 2px 2px 0 red, 4px 4px 0 orange, 6px 6px 0 gold
-
-       ;; :box-shadow [[:2px '(calc ($ :2px :3px)) 0 '(oklch :30% 0.3 44 0.8)] [:2px :4px 0 :blue] :2px:6px:0:$yellow-500]
-
-       :width '(calc ($ :2px :3px))
-
-       ;; :line-height '(min (+ 1.5 2) :$line-height2)
-
-       ;; :box-shadow [[:2px (calc '(+ :2px :3px)) 0 (oklch :30% 0.3 44 0.8)] [:2px :4px 0 :blue] :2px:6px:0:$yellow-500]
-
-       ;; :bgi ['(linear-gradient "to bottom" "#0000 50%" :$transparent-black-09)
-       ;;       (linear-gradient "to bottom" "#0000 50%" [:$classic-trim-color :80%])]
-       ;; :mask-mode [:alpha :luminance]
-       ;; :animation-iteration-count [:infinite 3 1]
-
-       ;; :hover {:bgi [(linear-gradient "to bottom" "#fff 50%" :$transparent-black-09)
-       ;;               (linear-gradient "to bottom" "#fff 50%" [:$classic-trim-color :80%])]}
+     ;; calc* fn usage, expects a list
+     ;;  :background-color (calc '(- :$convex-shadow-lightness-shift-base :$lightness-shift))
 
 
-       ;; :background-color '(oklch :$convex-shadow-lightness :$convex-shadow-chroma :$colorway-hue 0.4)
+     ;;  :bgi "linear-gradient(to bottom,#0000 50%,var(--transparent-black-09)),linear-gradient(to bottom,#0000 50%, var(--classic-trim-color) 80%)"
 
-       ;;  ;;  :border :1px:solid:okm-purple-400
+     ;; :box-shadow 2px 2px 0 red, 4px 4px 0 orange, 6px 6px 0 gold
 
-       ;; :background-image '(linear-gradient "180deg"
-       ;;                                     [:transparent]
-       ;;                                     [:transparent :15%]
-       ;;                                     [(oklch :$convex-shadow-lightness
-       ;;                                             :$convex-shadow-chroma 
-       ;;                                             :$colorway-hue)])
-       }))
+     ;; :box-shadow [[:2px '(calc ($ :2px :3px)) 0 '(oklch :30% 0.3 44 0.8)] [:2px :4px 0 :blue] :2px:6px:0:$yellow-500]
+
+     :width       '(calc (+ :2px :3px))
+
+     :line-height '(min (+ 1.5 2) :$line-height2)
+
+     :box-shadow  [[:2px (calc '(+ :2px :3px)) 0 (oklch :30% 0.3 44 0.8)] [:2px :4px 0 :blue] :2px:6px:0:$yellow-500]
+
+     :bgi         ['(linear-gradient "to bottom" "#0000 50%" :$transparent-black-09)
+                   '(linear-gradient "to bottom" "#0000 50%" [:$classic-trim-color :80%])]
+     ;; :mask-mode [:alpha :luminance]
+     ;; :animation-iteration-count [:infinite 3 1]
+
+     ;; :hover {:bgi [(linear-gradient "to bottom" "#fff 50%" :$transparent-black-09)
+     ;;               (linear-gradient "to bottom" "#fff 50%" [:$classic-trim-color :80%])]}
+
+
+     ;; :background-color '(oklch :$convex-shadow-lightness :$convex-shadow-chroma :$colorway-hue 0.4)
+
+     ;;  ;;  :border :1px:solid:okm-purple-400
+
+     ;; :background-image '(linear-gradient "180deg"
+     ;;                                     [:transparent]
+     ;;                                     [:transparent :15%]
+     ;;                                     [(oklch :$convex-shadow-lightness
+     ;;                                             :$convex-shadow-chroma 
+     ;;                                             :$colorway-hue)])
+     }))
 
 #_(? :+ (=
          (!? :+ (css-rule* ".foo"
@@ -397,9 +406,9 @@
 ;; (!? (css-rule* ".foo" [:ai--$ai] nil nil))
 ;; (!? (css-rule* ".foo" [:aj--$ai] nil nil))
 
-(def sample-css
+#_(def sample-css
 
-  "
+    "
 /* End of things from legacy, kushi.ui.basetheme/ui -------------------------*/
 
 

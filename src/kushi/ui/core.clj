@@ -424,18 +424,20 @@
         ;
         ;
         ;
-        ;     Props that are unique to the component, each an entry of:
-        ;
-        ;     [:keyword [:map
-        ;                [:schema {:optional? true}]
-        ;                [:desc :string]
-        ;                [:default {:optional? true} :any]]]
+        ;     Props that are unique to the component:
         ;
         ;     :props {...
         ;             :my-custom-prop {:schema  string?
         ;                              :desc    "prop desc"
         ;                              :default "foo"}
         ;             ...}}
+        ;      
+        ;     The scheme for a prop:
+        ;     [:keyword [:map
+        ;                [:schema {:optional? true}]
+        ;                [:desc :string]
+        ;                [:default {:optional? true} :any]]]
+        ;
         ;
         ;
    _    ; <- The args vector, should always be [& args]
@@ -510,8 +512,6 @@
           (issue-html-attribute-name-clash-warnings ks fn-info)
           (into [] ks))
 
-        
-        ;; TODO - process body here for different frameworks
         ;; TODO - maybe wrap body here if elevated is in the mix?
         body        
         (do 
@@ -561,6 +561,8 @@
        [& args#]
        (let [extracted*#           (!? 'extracted*# (kushi.ui.core/extract args# ~props-keys ~fn-info))
 
+
+             ;; V2 - This is not needed
              props->data-ks-attrs# (!?
                                     (kushi.ui.core/data-ks-attrs 
                                      (:props extracted*#)
@@ -571,6 +573,7 @@
              ;;                         (:props extracted*#)
              ;;                         ~defaults-by-prop))
              
+             ;; V2 - This is not needed
              data-ks-attrs#        (!? 'data-ks-attrs#
                                        (merge ~data-ks-attrs-map-with-defaults
                                               props->data-ks-attrs#))
@@ -589,11 +592,14 @@
              props#                (merge ~user-props-with-default-values
                                           (dissoc (:props extracted*#) :at))
              extracted#            {:&props    props#
+
+                                    ;; V2 Not needed ?
                                     :&attrs    (kushi.core/merge-attrs
                                                 (:attrs extracted*#)
                                                 data-ks-attrs#
                                                 #_ks-classes#
                                                 )
+
                                     ;; :&data-ks-attrs data-ks-attrs#
                                     :&children (:children extracted*#)
                                     :args      args#}
@@ -643,6 +649,9 @@
          ;; End of dev-only runtime malli validation ============================
          
          ~body))))
+
+
+;; TODO - 
 
 
 (defmacro fn->defui [form]
