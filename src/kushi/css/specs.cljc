@@ -2,7 +2,10 @@
   (:require 
    [fireworks.core :refer [? !? ?> !?>]]
    [clojure.string :as string]
-   [clojure.spec.alpha :as s]))
+   [clojure.spec.alpha :as s]
+   [kushi.util :as util :refer [keyed partition-by-spec]]
+   
+   [kushi.css.defs :as defs]))
 
 ;; ----------------------------------------------------------------------------
 ;; # Helper fns 
@@ -344,9 +347,22 @@
   (s/and ::s|kw
          #(string/starts-with? (name %) "--")))
 
+(s/def ::bare-pseudo-class
+  #(let [nm (name %)]
+     (when-not (string/starts-with? nm ":")
+       (when-let [[_ x] (re-find #"^([a-z]+)" nm)]
+         (contains? defs/pseudo-classes-set (keyword x))))))
+
+(s/def ::namespaced-kw
+  #(let [nm (str %)]
+     (re-find #"^:[a-z0-9-_\.]+/[a-z]+$" nm)))
+
 (s/def ::css-prop-stack
   (s/and ::s|kw
-         #(re-find css-prop-stack-re (name %))))
+         #(not (s/valid? ::namespaced-kw %))
+         #(re-find css-prop-stack-re (name %))
+        ;;  #(not (s/valid? ::bare-pseudo-class %))
+         ))
 
 (s/def ::at-rule
   (s/and ::s|kw
@@ -483,18 +499,9 @@
 (s/def ::valid-sx-arg
   (s/or 
    :supplied-selector ::supplied-selector
-   :class-kw           ::class-kw
-   :tokenized          ::tokenized
-   :style-vec          ::style-vec
    :style-map          ::style-map
+   ;; TODO - what is this css-rule ... some-kind of nested thing? ... take out?
    :css-rule-call      ::css-rule-call
-   :class-binding      symbol?  ;; <- intended for dynamic classnames (maybe remove?)
-   
-   ;; ! removed :logic-sexp
-   ;; :logic-sexp    ::logic-sexp
-   
-   ;; ! removed vectorized props
-   ;; :top-level-vec ::top-level-vec
    ))
 
 (s/def ::sx-args
@@ -503,3 +510,23 @@
 (s/def ::quoted-symbol
   (s/and (s/coll-of symbol? :kind seq? :count 2)
          #(= 'quote (first %))))
+
+(defn conformed-args 
+  "Returns a vector of `[conformed-args invalid-args]`"
+  [args]
+  (let [conformed-args*           
+        (s/conform ::sx-args args)
+
+        invalid-args?             
+        (= conformed-args* :clojure.spec.alpha/invalid)
+
+        [valid-args
+         invalid-args]            
+        (when invalid-args?
+          (partition-by-spec ::valid-sx-arg args))
+
+        conformed-args            
+        (if invalid-args?
+          (s/conform ::sx-args valid-args)
+          conformed-args*)]
+    (keyed [conformed-args invalid-args])))

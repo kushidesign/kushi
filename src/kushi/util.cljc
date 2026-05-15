@@ -7,6 +7,7 @@
    [bling.core :refer [bling]]
    [bling.hifi :refer [hifi]]
    [clojure.string :as str]
+   [clojure.spec.alpha :as s]
    [clojure.walk :as walk])
   #?(:cljs
      (:require-macros [kushi.util :refer [fallback-value]])))
@@ -271,6 +272,17 @@
 (defn more-than-one? [coll]
   (> (count coll) 1))
 
+(defn partition-by-spec
+  "Given a coll and a spec, returns a vector of two vectors. The first vector
+   contains all the values from coll that satisfy the spec. The second vector
+   contains all the values from the coll that do not satisfy the spec."
+  [spec coll]
+  (let [ret* (reduce (fn [acc v]
+                       (let [k (if (s/valid? spec v) :valid :invalid)]
+                         (assoc acc k (conj (k acc) v))))
+                     {:valid [] :invalid []}
+                     coll)]
+    [(:valid ret*) (:invalid ret*)]))
 
 (defn partition-by-pred [pred coll]
   "Given a coll and a pred, returns a vector of two vectors. The first vector
@@ -634,6 +646,20 @@
 
 (declare beautify-css)
 
+(def default-beautify-css-theme 
+  {:selectors      :magenta
+   :curly-brackets :blue
+   :round-brackets :yellow
+   :semi-colons    :gray
+   :properties     :green
+   :values         :neutral
+   :vars           :blue
+   :commas         :red
+   :colons         :red
+   :numbers        :neutral
+   :cssfn          :purple
+   :psuedo-colons  :green})
+
 (defn printcss 
   ([s]
    (printcss s nil))
@@ -643,20 +669,7 @@
                   (merge
                    (dissoc opts :theme)
                    {:indentation 2
-                    :theme       (merge {:selectors      :magenta
-                                         :curly-brackets :blue
-                                         :round-brackets :yellow
-                                         :semi-colons    :gray
-                                         :properties     :green
-                                         :values         :neutral
-                                         :vars           :blue
-                                         :commas         :red
-                                         :colons         :red
-                                         :numbers        :neutral
-                                         :cssfn          :purple
-                                         :psuedo-colons  :green
-                                         }
-                                        (:theme opts))})))))
+                    :theme       default-beautify-css-theme})))))
 
 
 
@@ -910,6 +923,7 @@
         (str (make-indent indent indent-spaces)
              (format-selector full-str theme))))))
 
+;; TODO - respect no-color
 (defn beautify-css
   "Formats and syntax highlights a valid CSS string for Clojure/Babashka.
   Maintains exact alignment for layered values and left-justifies properties.
@@ -924,7 +938,7 @@
     (beautify-css \".btn { color: red; }\" {:indentation 2})"
   [css-string & [opts]]
   (let [indent-spaces (:indentation opts 2)
-        theme         (:theme opts {})
+        theme         (get opts :theme default-beautify-css-theme)
         align-vals?   (:align-values? opts true)
         tokens        (re-seq css-token-re css-string)]
     (loop [toks        tokens
@@ -1008,3 +1022,5 @@
                    (conj chunk t)
                    out
                    align-stack)))))))
+
+(defn spaces [n] (str/join (repeat n " ")))

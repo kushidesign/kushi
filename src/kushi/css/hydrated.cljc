@@ -432,7 +432,9 @@
   "If x is vec and first el is string or keyword representing a 'stack' 
    string/split the 'stack' into a sequence"
   [x]
-  (if-let [stack (or (stack1 x) (stack2 x))]
+  (println "\n\n")
+  (? :- x)
+  (if-let [stack (or (? :no-file (stack1 x)) (? :no-file (stack2 x)))]
     (let [[_ v]         x
           prop?         (s/valid? ::specs/s|kw|num v)
           last-index    (-> stack count dec)
@@ -651,6 +653,7 @@
 
 (defn hydrated-stacks [flattened-to-vecs]
   (->> flattened-to-vecs
+       ?
        (prewalk hydrated-stacks1)
        distinct
        vec

@@ -13,10 +13,8 @@
             [bling.sample]
             [bling.banner :refer [banner]]
             [bling.fonts.isometric-1 :refer [isometric-1]]
-            [kushi.core :refer [ansi-colorized-css-block
-                                css-block-data
+            [kushi.core :refer [css-block-data
                                 css-block
-                                nested-css-block
                                 css-rule
                                 css-rule*
                                 css
@@ -66,22 +64,32 @@
 
 ;; TODO
 ;; outlaw stack shorthand such as `:1px:solid:$border-color` on value side?
-(printcss 
- (css-rule ".bang"
-           {:w                :$foo
-            :h                '(calc (+ 2 3))
-            ;; :border           [[:1px :solid :$border-color]]
-            :border           :1px:solid:$border-color
-            :box-shadow       [[0 0 :10px '(max :8px (calc (* 2 :3px))) :blue]
-                               [0 0 :10px :12px :blue]]
-            :font-family      ["Arial" "Helvetica" :$fallback-font-stack]
-            :background-color :blue
-            ;; [:width :height]  :30px
-            ;; "&:hover"                 {:color :orange}
+;; outlaw stack on prop side? Yes. Maybe use :media/sm for @media.
+(def myccc
+  (css-rule ".bang"
+            {
+            ;;  :w                :$foo
+            ;;  :h                '(calc (+ 2 3))
+            ;;  ;; :border           [[:1px :solid :$border-color]]
+            ;;  :border           :1px:solid:$border-color
+            ;;  :box-shadow       [[0 0 :10px '(max :8px (calc (* 2 :3px))) :blue]
+            ;;                     [0 0 :10px :12px :blue]]
+            ;;  :font-family      ["Arial" "Helvetica" :$fallback-font-stack]
+            ;;  :background-color :blue
+            ;;  "p"                 {:color :orange}
+
+             ;; TODO figure out how to correct this in hydrate 
+            ;;  :p:c                 '(light-dark :orange
+            ;;                                    :pink)
+
+            :p>li:hover             {:color :gold}
+
             ;; "@media min-width(680px)" {:color :orange}
-            }))
+             }))
 
+(printcss myccc)
 
+#_(? (s/valid? ::specs/css-prop-stack :hover))
 
 
 

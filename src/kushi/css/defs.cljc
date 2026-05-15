@@ -153,8 +153,8 @@
    :future ;;()
    ])
 
-;; (def pseudo-classes
-;;   (into #{} pseudo-classes*))
+(def pseudo-classes-set
+  (into #{} pseudo-classes*))
 
 (def at-rules
   #{"keyframes"
